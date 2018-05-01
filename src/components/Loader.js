@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import debounce from '../libs/debounce';
 
 const DELAY_LOADING_STATE_CHANGE_IN_MILISECONDS = 1000;
 
@@ -11,10 +12,11 @@ class LoaderContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: true
+      loading: false
     };
+    this.componentWillReceiveProps = debounce(this.updateLoader.bind(this), 100);
   }
-  componentWillReceiveProps ({ loading }) {
+  updateLoader ({ loading }) {
     setTimeout(() => {
       this.setState({ loading });
     }, DELAY_LOADING_STATE_CHANGE_IN_MILISECONDS);

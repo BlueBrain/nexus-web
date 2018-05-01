@@ -8,7 +8,6 @@ import { getOrgList, getDomainsList, getSchemasList, getInstancesList } from '@b
 import ListElement from './ListElement';
 
 import { navigate } from '../store/actions';
-import { getToken } from '../auth';
 
 const relations = {
   'org': {
@@ -98,6 +97,11 @@ class List extends React.PureComponent {
     if (props[relations[props.entity]['parent']] !== this.props[relations[props.entity]['parent']]) {
       this.fetchResults(props);
     }
+    // Reload lists if authentication has occured
+    // TODO is there a better way to trigger this?
+    if (props.token !== this.props.token) {
+      this.fetchResults(props);
+    }
     const conditionForRendering = this.state.results.length > 0 && ((relations[props.entity]['parent'] && props[relations[props.entity]['parent']]) || props.entity === 'org')
     if (!conditionForRendering) {
       this.setState({ total: 0 });
@@ -109,13 +113,13 @@ class List extends React.PureComponent {
       return;
     }
 
-    const { api, pageSize, org, domain, schema, ver, instance } = props;
+    const { api, pageSize, org, domain, schema, ver, instance, token } = props;
     const options = { fields: 'all', deprecated: false, from: offset, size: pageSize };
     const boundary = [org, domain, schema, ver, instance].indexOf(props[entity]);
     const uriParts = [org, domain, schema, ver, instance].slice(0, boundary);
     const parts = uriParts.filter(element => element);
     this.setState({ status: 'loading', results: [] });
-    relations[entity]['fetch'](parts, options, api, false, getToken())
+    relations[entity]['fetch'](parts, options, api, false, token)
       .then(({ results, total }) => {
         this.setState({
           status: 'fulfilled',
@@ -182,7 +186,7 @@ class List extends React.PureComponent {
   }
 }
 
-function mapStateToProps({ pick, config }) {
+function mapStateToProps({ pick, config, auth }) {
   const state = pick
   return {
     pageSize: config.pageSize,
@@ -191,7 +195,8 @@ function mapStateToProps({ pick, config }) {
     domain: state.domain,
     schema: state.schema,
     ver: state.ver,
-    instance: state.instance
+    instance: state.instance,
+    token: auth.token
   };
 }
 
@@ -212,7 +217,8 @@ List.propTypes = {
   entity: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   splitPattern: PropTypes.any,
-  fetchListFailed: PropTypes.func.isRequired
+  fetchListFailed: PropTypes.func.isRequired,
+  token: PropTypes.string
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(List);

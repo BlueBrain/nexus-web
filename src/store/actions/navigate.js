@@ -17,6 +17,14 @@ const navigate = url => {
   }
 }
 
+const goToSearch = query => {
+  console.log('going to search: ', query);
+  return (dispatch, getState) => {
+      const basename = getState().routing.location.basename || '';
+      dispatch(push(`${basename}/search?q=${query}`));
+  }
+}
+
 const goToEntityByID = id => {
   return (dispatch, getState) => {
     let API = getState().config.api;
@@ -93,5 +101,6 @@ export default {
   goDown,
   reconcileRoutes,
   fetchListFailed,
-  goToEntityByID
+  goToEntityByID,
+  goToSearch
 }

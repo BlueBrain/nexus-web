@@ -1,38 +1,11 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import styled from 'styled-jss';
 import PropTypes from 'prop-types';
-import List from './List';
-import Instance from './Instance';
 import Header from './Header';
 import { connect } from 'react-redux';
-import { login } from '../auth';
 import { navigate, loading } from '../store/actions';
-import BreadCrumb from './BreadCrumb';
 import { version } from '../../package.json';
 import Loader from './Loader';
-
-const MainBlock = styled('main')({
-  display: 'flex',
-  flexGrow: 1,
-  width: '100%',
-  justifyContent: 'space-around',
-  padding: '0.5em',
-  boxSizing: 'border-box'
-});
-
-const Footer = styled('footer')({
-  display: 'flex',
-  height: '3em',
-  justifyContent: 'center',
-  alignItems: 'center',
-  color: 'gray',
-  backgroundColor: '#f7f9fa'
-});
-
-const A = styled('a')({
-  color: 'gray'
-});
 
 class App extends Component {
   constructor(props) {
@@ -40,7 +13,6 @@ class App extends Component {
   }
   componentDidMount() {
     this.props.startListeningToRequests();
-    login(window.location);
     this.props.reconcileRoutes();
   }
   componentWillReceiveProps() {
@@ -48,28 +20,14 @@ class App extends Component {
   }
   render() {
     const { base } = this.props.config;
-    const schemasPattern = new RegExp(/schemas\/[^/]*\/[^/]*\//);
     return (
       <React.Fragment>
         <Loader />
         { Header(base) }
-        <BreadCrumb />
-        <MainBlock>
-            <List name = "Organizations" entity="org" />
-            <List name = "Domains" entity="domain" />
-            <List name = "Schemas" entity="schema" splitPattern = { schemasPattern }/>
-            <List name = "Instances" entity="instance" />
-            <Instance />
-        </MainBlock>
-        <Footer>
-          Version { version } &nbsp;|&nbsp;
-          <A
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://github.com/BlueBrain/nexus-explorer/issues">
-            Submit an issue
-          </A>
-        </Footer>
+        {this.props.children}
+        <footer>
+          Version { version } &nbsp;|&nbsp;<a target="_blank" rel="noopener noreferrer" href="https://github.com"> Submit an issue</a>
+        </footer>
       </React.Fragment>
     );
   }
@@ -78,7 +36,8 @@ class App extends Component {
 App.propTypes = {
   config: PropTypes.any.isRequired,
   reconcileRoutes: PropTypes.func.isRequired,
-  startListeningToRequests: PropTypes.func.isRequired
+  startListeningToRequests: PropTypes.func.isRequired,
+  children: PropTypes.element
 };
 
 function mapStateToProps (state) {
