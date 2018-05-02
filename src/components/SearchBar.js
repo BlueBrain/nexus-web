@@ -1,5 +1,6 @@
 import React from "react";
 import { Search, WithStore, Dropdown } from "@bbp/nexus-react";
+import PropTypes from 'prop-types';
 import { searchBar, navigate } from "../store/actions";
 import { Relationship } from "./shapes";
 
@@ -37,6 +38,16 @@ const SearchRecommendationsDropdown = ({
     {hits - results.length > 0 && <div className="paddingless"><a onClick={onSubmit} className="nudge-on-hover padding half"><span>See more</span></a></div>}
   </Dropdown>
 );
+
+SearchRecommendationsDropdown.propTypes = {
+  down: PropTypes.bool.isRequired,
+  value: PropTypes.string.isRequired,
+  results: PropTypes.number.isRequired,
+  hits: PropTypes.number.isRequired,
+  api: PropTypes.string.isRequired,
+  goToEntityByID: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired
+};
 
 const RecommendationsList = (results, api, goToEntityByID) => (
   <React.Fragment>

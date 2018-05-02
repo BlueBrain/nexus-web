@@ -16,7 +16,6 @@ class App extends Component {
     this.props.reconcileRoutes();
   }
   componentWillReceiveProps() {
-    console.log('hello', this.props.location)
     this.props.reconcileRoutes();
   }
   render() {
