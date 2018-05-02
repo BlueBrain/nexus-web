@@ -8,7 +8,7 @@ const Explore = () => {
   return (
     <React.Fragment>
       <BreadCrumb />
-      <main className="flex">
+      <main className="flex padding half">
         <List name="Organizations" entity="org" />
         <List name="Domains" entity="domain" />
         <List name="Schemas" entity="schema" splitPattern={schemasPattern} />

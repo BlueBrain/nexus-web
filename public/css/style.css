@@ -80,6 +80,7 @@ a.nudge-on-hover {
 }
 .search-feedback {
   margin-bottom: 0.5em;
+  padding-bottom: 0.5em;
 }
 .border-bottom {
   border-bottom: 1px solid rgba(180, 195, 202, .07059);
@@ -95,7 +96,6 @@ ul#search-results {
   flex-grow: 1;
   width: 100%;
   justify-content: space-around;
-  padding: 0.5em;
   box-sizing: border-box;
 }
 .flex.center {
@@ -259,7 +259,11 @@ header h1 {
   border-radius: 2px;
 }
 
-
+.spinner {
+  height: 3em;
+  width: 3em;
+  margin-top: 3em;
+}
 .modal-footer {
   width: 100%;
   box-sizing: border-box;
@@ -304,7 +308,15 @@ section {
   flex-direction: column;
   justify-content: flex-start;
 }
-
+.space-between {
+  justify-content: space-between;
+}
+.grow {
+  flex-grow: 1;
+}
+.center {
+  align-self: center;
+}
 header {
   display: flex;
   align-items: center;
