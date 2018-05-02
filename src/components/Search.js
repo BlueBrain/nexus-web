@@ -2,7 +2,7 @@ import React from "react";
 import { bindActionCreators } from "redux";
 import PropTypes from "prop-types";
 import ReactPaginate from "react-paginate";
-import { WithStore } from "@bbp/nexus-react";
+import { WithStore, Spinner } from "@bbp/nexus-react";
 import { navigate, searchResults, auth } from "../store/actions";
 import Relationship from "./shapes/Relationship";
 import { connect } from "react-redux";
@@ -82,12 +82,18 @@ const SearchResults = (query, pageParams) => {
             goToEntityByID: navigate.goToEntityByID
           }}
         >
-          {({ hits, results, goToEntityByID, api, loggedIn, loginURI }) => {
+          {({ hits, results, goToEntityByID, api, loggedIn, loginURI, pending }) => {
+            console.log(pending);
             return (
               <section className="padding column full flex space-between">
                 <h1 className="search-feedback border-bottom">
                   Search results for &quot;{query}&quot;
                 </h1>
+                {pending &&
+                  <div className="center grow spinner">
+                    <Spinner />
+                  </div>
+                }
                 {!!results.length &&
                   SearchResultsFound(
                     results,
@@ -96,9 +102,11 @@ const SearchResults = (query, pageParams) => {
                     goToEntityByID,
                     api
                   )}
-                {!results.length && (
-                  <div className="center">
-                    <p>There doesnt seem to be anything here</p>
+                {!results.length && !pending && (
+                  <div className="center grow">
+                    <h3>Hmmmm...</h3>
+                    <p>We didn&#39;t manage to find any instances matching &quot;{query}&quot;
+                    </p>
                     {!loggedIn && (
                       <p>
                         Expecting something different? try{" "}

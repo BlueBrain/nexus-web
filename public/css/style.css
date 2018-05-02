@@ -259,7 +259,11 @@ header h1 {
   border-radius: 2px;
 }
 
-
+.spinner {
+  height: 3em;
+  width: 3em;
+  margin-top: 3em;
+}
 .modal-footer {
   width: 100%;
   box-sizing: border-box;
@@ -309,6 +313,9 @@ section {
 }
 .grow {
   flex-grow: 1;
+}
+.center {
+  align-self: center;
 }
 header {
   display: flex;
