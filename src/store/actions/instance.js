@@ -1,6 +1,5 @@
 import { getInstance } from '@bbp/nexus-js-helpers';
 import * as types from './types';
-import { getToken } from '../../auth';
 
 export default {
   fetchInstance,
@@ -14,9 +13,9 @@ function fetchInstance () {
     let state = getState()
     const { org, domain, schema, ver, instance } = state.pick
     const { api } = state.config
-    const access_token = getToken();
+    const { token } = state.auth
     dispatch(fetchInstanceStarted())
-    return getInstance([org, domain, schema, ver, instance], {}, api, access_token)
+    return getInstance([org, domain, schema, ver, instance], {}, api, token)
     .then(response => {
       if (response.ok) {
         return response.json();
@@ -28,7 +27,7 @@ function fetchInstance () {
         throw new Error('Instance is not defined');
       }
       dispatch(fetchInstanceFulfilled(instance))
-      return fetchIncomingOutgoing(instance.links, access_token);
+      return fetchIncomingOutgoing(instance.links, token);
     })
     .then(([incoming, outgoing]) => {
       dispatch(instanceLinksAdded({ incoming: incoming.results, outgoing: outgoing.results }));

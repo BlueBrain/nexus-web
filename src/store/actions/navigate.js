@@ -17,6 +17,13 @@ const navigate = url => {
   }
 }
 
+const goToSearch = query => {
+  return (dispatch, getState) => {
+      const basename = getState().routing.location.basename || '';
+      dispatch(push(`${basename}/search?q=${query}`));
+  }
+}
+
 const goToEntityByID = id => {
   return (dispatch, getState) => {
     let API = getState().config.api;
@@ -67,6 +74,9 @@ const pickEntity = ({ entity, id }) => {
 const reconcileRoutes = () => {
   return (dispatch, getState) => {
     const newPath = getState().routing.location.pathname;
+    if (newPath.indexOf('/search') >= 0) {
+      // TODO might have to do something here
+    }
     const entityList = newPath.slice(1, newPath.length).split('/');
     const [ org='', domain='', schema='', ver='', instance='' ] = entityList;
     const oldInstance = getState().pick.instance;
@@ -93,5 +103,6 @@ export default {
   goDown,
   reconcileRoutes,
   fetchListFailed,
-  goToEntityByID
+  goToEntityByID,
+  goToSearch
 }

@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import FontAwesome from 'react-fontawesome';
 import { getDomainsList, getSchemasList, getInstancesList, getInstance  } from '@bbp/nexus-js-helpers';
 import { navigate } from '../store/actions';
-import { getToken } from '../auth';
 
 const relations = {
     'org': getDomainsList,
@@ -117,7 +116,7 @@ class ListElementContainer extends React.PureComponent {
     this.setState({ active: props.active });
   }
   processAmount () {
-    const { entity, id, config, org, domain, schema, ver, instance } = this.props;
+    const { entity, id, config, org, domain, schema, ver, instance, token } = this.props;
     if (entity === 'instance') { return; }
     const boundary = [org, domain, schema, ver, instance].indexOf(this.props[entity]);
     const uriParts = [org, domain, schema, ver, instance].slice(0, boundary);
@@ -134,7 +133,7 @@ class ListElementContainer extends React.PureComponent {
       parts.push(id);
     }
     this.setState({ status: 'loading' });
-    return relations[entity](parts, { deprecated: false }, config.api, false, getToken())
+    return relations[entity](parts, { deprecated: false }, config.api, false, token)
       .then(({ total=0 }) => {
         this.setState({
           status: 'fulfilled',
@@ -155,7 +154,7 @@ class ListElementContainer extends React.PureComponent {
   }
 }
 
-function mapStateToProps({ pick, config }) {
+function mapStateToProps({ pick, config, auth }) {
   const state = pick
   return {
     config: config,
@@ -163,7 +162,8 @@ function mapStateToProps({ pick, config }) {
     domain: state.domain,
     schema: state.schema,
     ver: state.ver,
-    instance: state.instance
+    instance: state.instance,
+    token: auth.token
   };
 }
 
@@ -184,7 +184,8 @@ ListElementContainer.propTypes = {
   domain: PropTypes.string,
   schema: PropTypes.string,
   ver: PropTypes.string,
-  instance: PropTypes.string
+  instance: PropTypes.string,
+  token: PropTypes.string
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListElementContainer);

@@ -6,7 +6,6 @@ import { navigate } from '../../store/actions';
 import FontAwesome from 'react-fontawesome';
 import ReactTooltip from 'react-tooltip';
 import Type from './Type';
-import { getToken } from '../../auth';
 import { guidGenerator } from '../../libs/utils';
 
 const KeyLinkComponent = ({ isExternalLink, id, goToEntityByID, children }) => {
@@ -138,7 +137,7 @@ class RelationshipContainer extends React.Component {
   fetchInstance() {
     if (this.state.isOntology) { return; }
     if (this.state.isExternalLink) { return; }
-    const access_token = getToken();
+    const access_token = this.props.token;
     const requestOptions = access_token? { headers: { "Authorization": "Bearer "+ access_token } }: {};
     return fetch(this.props.value['@id'], requestOptions)
       .then(response => response.json())
@@ -162,8 +161,9 @@ class RelationshipContainer extends React.Component {
   render() { return RelationshipComponent({...this.props, ...this.state}) }
 }
 
-function mapStateToProps({ config }) {
+function mapStateToProps({ config, auth }) {
   return {
+    token: auth.token,
     api: config.api
   };
 }
@@ -180,6 +180,7 @@ RelationshipContainer.propTypes = {
   api: PropTypes.string.isRequired,
   label: PropTypes.string,
   goToEntityByID: PropTypes.func.isRequired,
+  token: PropTypes.string
 };
 
 

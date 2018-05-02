@@ -1,7 +1,7 @@
 {
   "name": "nexus-explorer",
   "description": "Service which allows you to explore Nexus platform",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": "Bluebrain project",
   "license": "Apache-2.0",
   "main": "index.js",
@@ -15,7 +15,8 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@bbp/nexus-js-helpers": "^0.4.0",
+    "@bbp/nexus-js-helpers": "^0.4.2",
+    "@bbp/nexus-react": "0.0.5",
     "history": "^4.7.2",
     "moment": "^2.22.1",
     "pretty-bytes": "^4.0.2",
@@ -34,6 +35,7 @@
     "react-tabs": "^2.2.2",
     "react-tooltip": "^3.5.0",
     "redux": "^3.7.2",
+    "redux-localstorage": "^0.4.1",
     "redux-thunk": "2.2.0",
     "store": "^2.0.12",
     "styled-jss": "^2.2.2"
