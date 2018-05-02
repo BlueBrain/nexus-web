@@ -56,8 +56,17 @@ a:hover {
 .padding {
   padding: 1em;
 }
+.padding.half {
+  padding: 0.5em;
+}
+.paddingless {
+  padding: 0;
+}
 .dropdown {
   z-index: 1;
+}
+a.nudge-on-hover {
+  color: #555;
 }
 .close {
   float: right;
@@ -71,6 +80,9 @@ a:hover {
 }
 .search-feedback {
   margin-bottom: 0.5em;
+}
+.border-bottom {
+  border-bottom: 1px solid rgba(180, 195, 202, .07059);
 }
 ul#search-results {
   margin: 0; padding: 0;

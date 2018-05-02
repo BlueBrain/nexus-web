@@ -23,7 +23,7 @@ const SearchRecommendationsDropdown = ({
         />
       </div>
     )}
-    <div className="padding">
+    <div className="padding border-bottom">
       {results.length ? (
         <div>
           Displaying: {results.length}
@@ -34,7 +34,7 @@ const SearchRecommendationsDropdown = ({
       )}
       {RecommendationsList(results, api, goToEntityByID)}
     </div>
-    {hits - results.length > 0 && <a className="nudge-on-hover"><span>check out the rest of the results</span></a>}
+    {hits - results.length > 0 && <div className="paddingless"><a onClick={onSubmit} className="nudge-on-hover padding half"><span>See more</span></a></div>}
   </Dropdown>
 );
 

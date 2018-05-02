@@ -1,12 +1,38 @@
 import React from "react";
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
+import ReactPaginate from 'react-paginate';
 import { WithStore } from "@bbp/nexus-react";
 import { navigate, searchResults } from "../store/actions";
 import Relationship from "./shapes/Relationship";
 import { connect } from 'react-redux';
 
-const SearchResults = query => {
+const DEFAULT_PAGE_SIZE = 20;
+
+const Paginate = ({ totalPages, selected, handlePageClick }) => {
+  return <ReactPaginate
+    containerClassName="pagination column-footer"
+    previousLabel={"<"}
+    nextLabel={">"}
+    breakLabel={<a href="">...</a>}
+    breakClassName={"break-me"}
+    pageCount={totalPages}
+    marginPagesDisplayed={2}
+    pageRangeDisplayed={3}
+    onPageChange={handlePageClick}
+    subContainerClassName={"pages pagination"}
+    activeClassName={"active"}
+    forcePage={selected}
+  />
+}
+
+Paginate.propTypes = {
+  totalPages: PropTypes.number.isRequired,
+  selected: PropTypes.any.isRequired,
+  handlePageClick: PropTypes.func.isRequired,
+};
+
+const SearchResults = (query, pageParams) => {
   return (
     <main className="flex">
       <div className="wrapper">
@@ -24,11 +50,12 @@ const SearchResults = query => {
         >
           {({ hits, results, goToEntityByID, api }) => {
             return (
-              <section className="column full">
-                <h1>Search results for &quot;{query}&quot;</h1>
+              <section className="column full padding">
+                <h1 className="search-feedback border-bottom">Search results for &quot;{query}&quot;</h1>
                 <hr />
 
                 {!!results.length && (
+                  <React.Fragment>
                   <ul id="search-results">
                     {results.map(result => {
                       return (
@@ -51,12 +78,11 @@ const SearchResults = query => {
                     ) : (
                       <div>No instances found</div>
                     )}
-                    {hits - results.length > 0 && (
-                      <li>
-                        <a>check out the rest of the results</a>
-                      </li>
-                    )}
                   </ul>
+                  {hits - results.length > 0 && (
+                    Paginate({ totalPages: hits / pageParams.pageSize, ...pageParams })
+                  )}
+                  </React.Fragment>
                 )}
               </section>
             );
@@ -68,21 +94,41 @@ const SearchResults = query => {
 };
 
 class SearchResultsContainer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      from: 0,
+      selected: null,
+    };
+    this.pageSize = this.props.pageSize || DEFAULT_PAGE_SIZE;
+  }
   componentWillMount () {
-    let { query, api, token } = this.props;
-    this.props.search({ query, api, token })
+    this.search(this.props);
+  }
+  componentWillReceiveProps (props) {
+    this.search(props);
+  }
+  handlePageClick({ selected }) {
+    const from = Math.ceil(selected * this.pageSize);
+    this.setState({ from, selected }, () => this.search(this.props));
+  }
+  search (props) {
+    let { query, api, token } = props;
+    let { from } = this.state;
+    this.props.search({ query, api, token, from, size: this.pageSize });
   }
   render() {
-    return SearchResults(this.props.query);
+    let { selected } = this.state;
+    return SearchResults(this.props.query, { pageSize: this.pageSize, selected, handlePageClick: this.handlePageClick.bind(this) });
   }
 }
-
 
 SearchResultsContainer.propTypes = {
   search: PropTypes.func.isRequired,
   api: PropTypes.string.isRequired,
   query: PropTypes.string,
-  token: PropTypes.string
+  token: PropTypes.string,
+  pageSize: PropTypes.number
 };
 
 function mapStateToProps ({ routing, config, auth }) {
