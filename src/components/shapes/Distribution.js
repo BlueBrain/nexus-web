@@ -67,7 +67,7 @@ const Preview = (mediaType, downloadURL) => {
  * @param {string} uri
  * @param {string} fileName
  */
-function fetchAttachment(uri, fileNamem, token) {
+function fetchAttachment(uri, fileName, token) {
   return () => {
     downloadAttachment(uri, fileName, token);
   };
