@@ -4,7 +4,7 @@ export default {
   startListeningToRequests,
 }
 
-const wrapFetch = (requestMade, requestResolved) => {
+const wrapFetch = (requestMade, requestResolved, requestAnauthorized) => {
   const fetch = global.fetch
   global.fetch = function () {
     const args = arguments
@@ -12,6 +12,9 @@ const wrapFetch = (requestMade, requestResolved) => {
       requestMade()
       fetch(...args)
         .then(response => {
+          if (response.status === 401) {
+            requestAnauthorized()
+          }
           requestResolved()
           resolve(response)
         })
@@ -25,7 +28,17 @@ const wrapFetch = (requestMade, requestResolved) => {
 
 function startListeningToRequests() {
   return dispatch => {
-    wrapFetch(() => dispatch(requestMade()), () => dispatch(requestResolved()));
+    wrapFetch(
+      () => dispatch(requestMade()),
+      () => dispatch(requestResolved()),
+      () => dispatch(requestUnauthorized())
+    );
+  }
+}
+
+function requestUnauthorized() {
+  return {
+    type: types.REQUEST_UNAUTHORIZED,
   }
 }
 

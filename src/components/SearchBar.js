@@ -1,8 +1,8 @@
 import React from "react";
-import { Search, WithStore, Dropdown } from "@bbp/nexus-react";
+import { Search, WithStore, Dropdown, Shapes } from "@bbp/nexus-react";
 import PropTypes from 'prop-types';
 import { searchBar, navigate } from "../store/actions";
-import { Relationship } from "./shapes";
+const { Relationship } = Shapes;
 
 const SearchRecommendationsDropdown = ({
   down,
@@ -101,7 +101,6 @@ const SearchBar = () => (
           error={error}
           search={value => search({ query: value, api, token })}
           onSubmit={value => {
-            console.log('value: ', value);
             goToSearch(value)}
           }
         >
