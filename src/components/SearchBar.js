@@ -101,7 +101,6 @@ const SearchBar = () => (
           error={error}
           search={value => search({ query: value, api, token })}
           onSubmit={value => {
-            console.log('value: ', value);
             goToSearch(value)}
           }
         >

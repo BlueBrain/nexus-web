@@ -82,7 +82,6 @@ const SearchResults = (query, pageParams) => {
           }}
         >
           {({ hits, results, goToEntityByID, api, loggedIn, loginURI, pending }) => {
-            console.log(pending);
             return (
               <section className="padding column full flex space-between">
                 <h1 className="search-feedback border-bottom">

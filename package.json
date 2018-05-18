@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@bbp/nexus-js-helpers": "^0.4.2",
-    "@bbp/nexus-react": "0.0.5",
+    "@bbp/nexus-react": "0.0.7",
     "history": "^4.7.2",
     "moment": "^2.22.1",
     "pretty-bytes": "^4.0.2",

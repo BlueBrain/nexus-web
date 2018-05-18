@@ -73,7 +73,6 @@ const pickEntity = ({ entity, id }) => {
 
 const reconcileRoutes = () => {
   return (dispatch, getState) => {
-    console.log('reconcileRoutes: ', getState());
     const newPath = decodeURI(getState().routing.location.pathname);
     if (newPath.indexOf('/search') >= 0) {
       // TODO might have to do something here
