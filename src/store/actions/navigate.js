@@ -13,7 +13,7 @@ const entityKeys = [
 const navigate = url => {
   return (dispatch, getState) => {
     const basename = getState().routing.location.basename || '';
-    dispatch(push(`${basename}/${url}`));
+    dispatch(push(encodeURI(`${basename}/${url}`)));
   }
 }
 
@@ -73,7 +73,8 @@ const pickEntity = ({ entity, id }) => {
 
 const reconcileRoutes = () => {
   return (dispatch, getState) => {
-    const newPath = getState().routing.location.pathname;
+    console.log('reconcileRoutes: ', getState());
+    const newPath = decodeURI(getState().routing.location.pathname);
     if (newPath.indexOf('/search') >= 0) {
       // TODO might have to do something here
     }

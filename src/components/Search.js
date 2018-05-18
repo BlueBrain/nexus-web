@@ -2,12 +2,11 @@ import React from "react";
 import { bindActionCreators } from "redux";
 import PropTypes from "prop-types";
 import ReactPaginate from "react-paginate";
-import { WithStore, Spinner } from "@bbp/nexus-react";
-import { navigate, searchResults, auth } from "../store/actions";
-import Relationship from "./shapes/Relationship";
+import { WithStore, Spinner, Shapes } from "@bbp/nexus-react";
+import { navigate, searchResults } from "../store/actions";
 import { connect } from "react-redux";
 import { getParameterByName } from "../libs/url";
-
+const { Relationship } = Shapes;
 const DEFAULT_PAGE_SIZE = 20;
 
 const Paginate = ({ totalPages, selected, handlePageClick }) => {

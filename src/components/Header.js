@@ -16,7 +16,7 @@ const Header = base => (
         mapDispatchToProps={{
           navigate: navigate.navigate
         }}
-      >{({ navigate}) => <a href="/" onClick={() => navigate('/')}><h1>Explorer</h1></a>}
+      >{({ navigate}) => <a href="/" onClick={() => navigate('')}><h1>Explorer</h1></a>}
       </WithStore>
     </div>
     <SearchBar />

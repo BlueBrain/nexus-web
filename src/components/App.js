@@ -14,6 +14,7 @@ class App extends Component {
   componentDidMount() {
     this.props.startListeningToRequests();
     this.props.reconcileRoutes();
+    console.log('component mounted', this.props)
   }
   componentWillReceiveProps() {
     this.props.reconcileRoutes();
