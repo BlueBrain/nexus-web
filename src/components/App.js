@@ -26,7 +26,7 @@ class App extends Component {
         { Header(base) }
         {this.props.children}
         <footer>
-          Version { version } &nbsp;|&nbsp;<a target="_blank" rel="noopener noreferrer" href="https://github.com"> Submit an issue</a>
+          Version { version } &nbsp;|&nbsp;<a target="_blank" rel="noopener noreferrer" href="https://github.com/bluebrain/nexus-explorer/issues"> Submit an issue</a>
         </footer>
       </React.Fragment>
     );
