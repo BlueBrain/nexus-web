@@ -93,7 +93,7 @@ class List extends React.PureComponent {
   componentDidMount() {
     this.fetchResults(this.props);
   }
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     if (props[relations[props.entity]['parent']] !== this.props[relations[props.entity]['parent']]) {
       this.fetchResults(props);
     }

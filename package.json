@@ -1,7 +1,7 @@
 {
   "name": "nexus-explorer",
   "description": "Service which allows you to explore Nexus platform",
-  "version": "0.4.4",
+  "version": "0.4.6",
   "author": "Bluebrain project",
   "license": "Apache-2.0",
   "main": "index.js",
@@ -15,36 +15,36 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@bbp/nexus-js-helpers": "^0.4.2",
-    "@bbp/nexus-react": "0.0.12",
+    "@bbp/nexus-js-helpers": "^0.4.3",
+    "@bbp/nexus-react": "0.0.13",
     "history": "^4.7.2",
-    "moment": "^2.22.1",
-    "pretty-bytes": "^4.0.2",
+    "moment": "^2.22.2",
+    "pretty-bytes": "^5.1.0",
     "querystring": "^0.2.0",
-    "react": "^16.3.2",
+    "react": "^16.4.1",
     "react-copy-to-clipboard": "^5.0.1",
-    "react-dom": "^16.3.2",
+    "react-dom": "^16.4.1",
     "react-fontawesome": "^1.6.1",
-    "react-json-view": "^1.16.1",
+    "react-json-view": "^1.19.0",
     "react-motion": "^0.5.2",
-    "react-paginate": "^5.2.2",
+    "react-paginate": "^5.2.3",
     "react-redux": "^5.0.7",
-    "react-responsive-modal": "^2.0.1",
-    "react-router": "^4.2.0",
+    "react-responsive-modal": "^3.1.0",
+    "react-router": "^4.3.1",
     "react-router-redux": "^5.0.0-alpha.9",
     "react-tabs": "^2.2.2",
-    "react-tooltip": "^3.5.0",
-    "redux": "^3.7.2",
+    "react-tooltip": "^3.6.1",
+    "redux": "^4.0.0",
     "redux-localstorage": "^0.4.1",
-    "redux-thunk": "2.2.0",
+    "redux-thunk": "^2.3.0",
     "store": "^2.0.12",
-    "styled-jss": "^2.2.2"
+    "styled-jss": "^2.2.3"
   },
   "devDependencies": {
-    "babel-preset-react-app": "^3.1.1",
+    "babel-preset-react-app": "^3.1.2",
     "envsub": "^3.1.0",
-    "eslint": "^4.19.1",
-    "eslint-plugin-react": "^7.7.0",
-    "parcel-bundler": "^1.7.1"
+    "eslint": "^5.1.0",
+    "eslint-plugin-react": "^7.10.0",
+    "parcel-bundler": "^1.9.7"
   }
 }

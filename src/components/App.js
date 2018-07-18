@@ -15,7 +15,7 @@ class App extends Component {
     this.props.startListeningToRequests();
     this.props.reconcileRoutes();
   }
-  componentWillReceiveProps() {
+  UNSAFE_componentWillReceiveProps() {
     this.props.reconcileRoutes();
   }
   render() {

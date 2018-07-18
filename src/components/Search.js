@@ -131,10 +131,10 @@ class SearchResultsContainer extends React.Component {
     };
     this.pageSize = this.props.pageSize || DEFAULT_PAGE_SIZE;
   }
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.search(this.props);
   }
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     this.search(props);
   }
   handlePageClick({ selected }) {

@@ -112,7 +112,7 @@ class ListElementContainer extends React.PureComponent {
   componentDidMount() {
     this.processAmount()
   }
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     this.setState({ active: props.active });
   }
   processAmount () {
