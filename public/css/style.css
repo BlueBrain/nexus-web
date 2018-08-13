@@ -249,7 +249,7 @@ header h1 {
 }
 .modal-content {
   width: 100%;
-  min-width: 400px;
+  min-width: 1080px;
   transform: all 500ms;
   padding: 1em;
   box-shadow: 0 12px 15px 0 rgba(0,0,0,0.25);
@@ -405,6 +405,16 @@ h1 .copy, h2 .copy, h3.copy {
   padding: 20px;
   margin: 20px;
 }
+
+.instance-content.container {
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  box-sizing: border-box;
+  position: relative;
+  align-items: flex-start;
+}
+
 .instance-content ul:first-child {
   padding: 0; margin: 0;
 }
@@ -585,7 +595,8 @@ ul.pagination {
 .property {
   padding: 0;
   display: flex;
-  width: 100%;
+  width: auto;
+  margin: 5px;
 }
 .property .container {
   padding: 0.5em;
@@ -627,9 +638,10 @@ ul.pagination {
   font-style: italic;
 }
 .property-list.container {
-  margin: 0.5em 0;
+  margin: 5px;
   border-left: 0.5em solid rgba(185, 233, 212, 0.8);
   padding: 0 0.5em;
+  width: auto;
 }
 
 .unbordered-box {

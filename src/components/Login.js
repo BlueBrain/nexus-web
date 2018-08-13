@@ -18,10 +18,13 @@ const CopyToken = styled("small")({
   }
 });
 
-
 const CopyTokenContainer = ({ copied }) => (
   <CopyToken>
-    <a className={copied ? "copied" : ""} target="_blank" rel="noopener noreferrer">
+    <a
+      className={copied ? "copied" : ""}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       {" "}
       copy token{" "}
     </a>
@@ -42,9 +45,11 @@ const Login = () => (
   >
     {({ name, loginURI, authenticate, logout, token }) => (
       <Fragment>
+        {token && (
           <CopyToClipboard text={"copy token to clipboard"} value={token}>
-            <CopyTokenContainer/>
+            <CopyTokenContainer />
           </CopyToClipboard>
+        )}
         <div className="login-block">
           <Auth.Container
             name={name}
