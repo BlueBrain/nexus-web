@@ -5,23 +5,6 @@ import { navigate } from "../store/actions";
 import BreadCrumb from './BreadCrumb';
 
 function mapStateToInstanceContainerProps({ instance, pick }) {
-  if (instance.data) {
-    instance.data.metaFields = [
-      "distribution",
-      "@id",
-      "@context",
-      "@type",
-      "nxv:deprecated",
-      "nxv:rev",
-      "links",
-      "resolvedLinks",
-      "metaFields",
-      "numFields"
-    ];
-    instance.data.numFields = Object.keys(instance).filter(
-      key => instance.data.metaFields.indexOf(key) < 0
-    ).length;
-  }
   return {
     ...instance,
     open: !!pick.instance
@@ -50,7 +33,8 @@ const Explore = () => {
           <Instance
             goDown={goDown}
             goToEntityByID={goToEntityByID}
-            data={data}
+            data={data.source}
+            resolvedLinks={data.resolvedLinks}
             open={open}
           />
         )}
