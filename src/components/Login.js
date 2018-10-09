@@ -1,4 +1,5 @@
 import React, { Fragment } from "react";
+import PropTypes from "prop-types";
 import styled from "styled-jss";
 import { Auth, WithStore } from "@bbp/nexus-react";
 import { auth } from "../store/actions";
@@ -30,6 +31,10 @@ const CopyTokenContainer = ({ copied }) => (
     </a>
   </CopyToken>
 );
+
+CopyTokenContainer.propTypes = {
+  copied: PropTypes.bool
+};
 
 const Login = () => (
   <WithStore

@@ -1,4 +1,4 @@
-FROM nginx:mainline
+FROM nginx:mainline-alpine
 
 # Put our build artifact and custom conf in the right places
 RUN chgrp -R 0 /var/cache/nginx && chmod g+wx /var/cache/nginx
@@ -20,12 +20,11 @@ RUN chgrp 0 index.html && chmod g+w index.html
 RUN cp -a index.html index.html.template
 
 # Default values for environment variables
-ENV BASE_PATH="/explorer"
+ENV BASE_PATH=""
 ENV BASE_URI="https://bbp-nexus.epfl.ch/staging"
 
-# Use /bin/bash, not /bin/sh (dash), to fix npm scripts and local `docker run` SIGINT handling.
-CMD ["/bin/bash","-c","envsubst '$BASE_PATH' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf \
-    && envsubst '$BASE_URI $BASE_PATH' < index.html.template > index.html \
+CMD ["/bin/sh","-c","envsubst '$BASE_PATH' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf \
+    && envsubst '$BASE_URI' < index.html.template > index.html \
     && nginx -g 'daemon off;'"]
 
 EXPOSE 8000
