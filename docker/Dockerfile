@@ -24,7 +24,7 @@ ENV BASE_PATH=""
 ENV BASE_URI="https://bbp-nexus.epfl.ch/staging"
 
 CMD ["/bin/sh","-c","envsubst '$BASE_PATH' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf \
-    && envsubst '$BASE_URI' < index.html.template > index.html \
+    && envsubst '$BASE_URI $BASE_PATH' < index.html.template > index.html \
     && nginx -g 'daemon off;'"]
 
 EXPOSE 8000
