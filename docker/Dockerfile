@@ -1,4 +1,4 @@
-FROM nginx:mainline-alpine
+FROM nginx:stable-alpine
 
 # Put our build artifact and custom conf in the right places
 RUN chgrp -R 0 /var/cache/nginx && chmod g+wx /var/cache/nginx
