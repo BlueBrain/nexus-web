@@ -1,21 +1,24 @@
-const nodeExternals = require('webpack-node-externals');
+const webpack = require('webpack');
+const path = require('path');
+const isDev = process.env.NODE_ENV === 'development';
+const mode = isDev ? 'development' : 'production';
 
 const configs = [
   {
     entry: {
-      browser: './src/index.tsx',
+      client: [
+        './src/index.tsx'
+      ],
     },
     output: {
-      path: __dirname + '/dist',
+      path: path.join(__dirname, 'dist'),
       filename: '[name].js',
     },
-    // Currently we need to add '.ts' to the resolve.extensions array.
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx'],
     },
-
     devtool: 'source-map',
-
+    mode: mode,
     module: {
       rules: [
         {
@@ -24,36 +27,12 @@ const configs = [
         },
       ],
     },
-    externals: {
-      react: 'React',
-      'react-dom': 'ReactDOM',
-    },
-  },
-  {
-    entry: {
-      server: './src/server.ts',
-    },
-    output: {
-      path: __dirname + '/dist',
-      filename: '[name].js',
-    },
-    resolve: {
-      extensions: ['.ts', '.tsx', '.js', '.jsx'],
-    },
-
-    devtool: 'source-map',
-
-    module: {
-      rules: [
-        {
-          test: /\.tsx?$/,
-          loader: 'ts-loader',
-        },
-      ],
-    },
-    target: 'node',
-    externals: [nodeExternals()],
+    plugins: [new webpack.HotModuleReplacementPlugin()],
   },
 ];
+
+if (isDev) {
+  configs[0].entry.client.push('webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000');
+}
 
 module.exports = configs;

@@ -7,24 +7,26 @@
   "main": "index.js",
   "repository": "github:bluebrain/nexus-explorer",
   "scripts": {
-    "build": "webpack --mode production",
-    "start": "node dist/server.js",
-    "develop": "nodemon src/server.ts --exec ts-node",
+    "build": "NODE_ENV=production tsc --jsx react --outDir dist src/server.ts && NODE_ENV=production webpack --mode production",
+    "start": "NODE_ENV=development ts-node src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 0",
-    "lint": ""
+    "lint": "tslint src/**/*"
   },
   "dependencies": {
     "express": "^4.16.4",
+    "morgan": "^1.9.1",
     "react": "^16.5.2",
-    "react-dom": "^16.5.2"
+    "react-dom": "^16.5.2",
+    "serve-static": "^1.13.2"
   },
   "devDependencies": {
     "@types/express": "^4.16.0",
     "@types/jest": "^23.3.5",
+    "@types/morgan": "^1.7.35",
     "@types/react": "^16.4.18",
     "@types/react-dom": "^16.0.9",
+    "@types/webpack-env": "^1.13.6",
     "jest": "^23.6.0",
-    "nodemon": "^1.18.4",
     "source-map-loader": "^0.2.4",
     "ts-jest": "^23.10.4",
     "ts-loader": "^5.2.2",
@@ -34,6 +36,7 @@
     "typescript": "^3.1.3",
     "webpack": "^4.20.2",
     "webpack-cli": "^3.1.2",
-    "webpack-node-externals": "^1.7.2"
+    "webpack-dev-middleware": "^3.4.0",
+    "webpack-hot-middleware": "^2.24.3"
   }
 }
