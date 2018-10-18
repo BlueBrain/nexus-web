@@ -11,7 +11,15 @@ app.use(morgan('dev'));
 const html = ({ body }: { body: string }) => `
   <!DOCTYPE html>
   <html>
+    <style>
+      body {
+        background-color: pink;
+        color: white;
+        padding: 2em;
+      }
+    </style>
     <head>
+      <title>Kenny is the best</title>
     </head>
     <body style="margin:0">
       <div id="app">${body}</div>
