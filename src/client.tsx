@@ -1,9 +1,12 @@
 import React = require('react');
 import ReactDOM = require('react-dom');
+import { BrowserRouter } from 'react-router-dom';
 import App from './shared/App';
 
 ReactDOM.hydrate(
-  <App />,
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>,
   document.getElementById('app'),
 );
 

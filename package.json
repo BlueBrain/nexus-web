@@ -4,11 +4,11 @@
   "version": "1.0.0-alpha",
   "author": "Bluebrain project",
   "license": "Apache-2.0",
-  "main": "index.js",
+  "main": "./dist/server/index.js",
   "repository": "github:bluebrain/nexus-explorer",
   "scripts": {
     "build": "(export NODE_ENV=production; tsc && webpack --mode production)",
-    "start": "NODE_ENV=development DEBUG=* ts-node src/server.ts",
+    "start": "NODE_ENV=development DEBUG=* ts-node src/server/index.tsx",
     "test": "echo \"Error: no test specified\" && exit 0",
     "lint": "tslint src/**/*"
   },
@@ -17,6 +17,9 @@
     "morgan": "^1.9.1",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
+    "react-helmet": "^5.2.0",
+    "react-router": "^4.3.1",
+    "react-router-dom": "^4.3.1",
     "serve-static": "^1.13.2"
   },
   "devDependencies": {
@@ -25,8 +28,12 @@
     "@types/morgan": "^1.7.35",
     "@types/react": "^16.4.18",
     "@types/react-dom": "^16.0.9",
+    "@types/react-helmet": "^5.0.7",
+    "@types/react-router": "^4.0.32",
+    "@types/react-router-dom": "^4.3.1",
     "@types/webpack-env": "^1.13.6",
     "jest": "^23.6.0",
+    "nodemon": "^1.18.4",
     "source-map-loader": "^0.2.4",
     "ts-jest": "^23.10.4",
     "ts-loader": "^5.2.2",
