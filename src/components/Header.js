@@ -8,7 +8,7 @@ import { navigate } from '../store/actions';
 const Header = base => (
   <header>
     <div className="logo-block">
-      <a className="logo" href={base + "/home/"}>
+      <a className="logo" href={base + "/"}>
         <img src={logo} />
       </a>
       <WithStore
