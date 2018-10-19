@@ -2,8 +2,8 @@ const path = require('path');
 
 const config = {
   entry: {
-    client: [
-      './src/index.tsx'
+    bundle: [
+      './src/client.tsx'
     ],
   },
   output: {

@@ -1,6 +1,6 @@
 import React = require('react');
 import ReactDOM = require('react-dom');
-import App from './App';
+import App from './shared/App';
 
 ReactDOM.hydrate(
   <App />,
@@ -9,9 +9,9 @@ ReactDOM.hydrate(
 
 if (module.hot) {
   console.log('Its hot');
-  module.hot.accept('./App', () => {
+  module.hot.accept('./shared/App', () => {
     /* tslint:disable-next-line */
-    const NextApp: React.StatelessComponent<{}> = require('./App').default;
+    const NextApp: React.StatelessComponent<{}> = require('./shared/App').default;
     ReactDOM.hydrate(
       <NextApp />,
       document.getElementById('app'),

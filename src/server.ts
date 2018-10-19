@@ -2,7 +2,7 @@ import express = require('express');
 import morgan = require('morgan');
 import React = require('react');
 import { renderToString } from 'react-dom/server';
-import App from './App';
+import App from './shared/App';
 import { join } from 'path';
 
 const app = express();
@@ -24,7 +24,7 @@ const html = ({ body }: { body: string }) => `
     <body style="margin:0">
       <div id="app">${body}</div>
     </body>
-    <script src="/public/client.js" defer></script>
+    <script src="/public/bundle.js" defer></script>
   </html>
 `;
 
@@ -37,9 +37,9 @@ if (process.env.NODE_ENV === 'development') {
   const devConfig = Object.assign({}, webpackConfig, {
     mode: 'development',
     entry: Object.assign({}, webpackConfig.entry, {
-      client: [
-        ...webpackConfig.entry.client,
-        'webpack-hot-middleware/client?name=client',
+      bundle: [
+        ...webpackConfig.entry.bundle,
+        'webpack-hot-middleware/client',
       ],
     }),
     plugins: [...webpackConfig.plugins, new webpack.HotModuleReplacementPlugin()],
@@ -58,7 +58,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.get('/', (req: express.Request, res: express.Response) => {
-  const body = renderToString(React.createElement(App));
+  const body: string = renderToString(React.createElement(App));
   res.send(html({ body }));
 });
 
