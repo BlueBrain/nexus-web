@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-      "rootDir": ".",
-      "outDir": "./dist/",
+      "rootDir": "./src",
+      "outDir": "./dist",
       "module": "commonjs",
       "target": "esnext",
       "moduleResolution": "node",
@@ -14,14 +14,11 @@
       "noEmitOnError": true,
       "lib": [
         "dom",
-        "es2015",
-        "es2016",
-        "es2017",
         "esnext"
       ],
-      // "allowSyntheticDefaultImports": true
+      "allowSyntheticDefaultImports": true
   },
   "exclude": [
       "node_modules"
-  ]
+  ],
 }

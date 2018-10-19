@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React = require('react');
+import ReactDOM = require('react-dom');
 import App from './App';
 
 ReactDOM.hydrate(

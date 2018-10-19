@@ -7,8 +7,8 @@
   "main": "index.js",
   "repository": "github:bluebrain/nexus-explorer",
   "scripts": {
-    "build": "NODE_ENV=production tsc --jsx react --outDir dist src/server.ts && NODE_ENV=production webpack --mode production",
-    "start": "NODE_ENV=development ts-node src/server.ts",
+    "build": "(export NODE_ENV=production; tsc && webpack --mode production)",
+    "start": "NODE_ENV=development DEBUG=* ts-node src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 0",
     "lint": "tslint src/**/*"
   },

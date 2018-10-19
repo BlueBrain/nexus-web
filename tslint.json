@@ -4,6 +4,11 @@
         "tslint-config-airbnb"
     ],
     "jsRules": {},
-    "rules": {},
+    "rules": {
+        "import-name": [ true, {
+            "react": "React",
+            "react-dom": "ReactDOM",
+        }],
+    },
     "rulesDirectory": []
 }
