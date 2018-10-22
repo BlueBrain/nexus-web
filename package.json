@@ -1,7 +1,7 @@
 {
   "name": "nexus-explorer",
   "description": "Service which allows you to explore Nexus platform",
-  "version": "0.4.11",
+  "version": "0.4.12",
   "author": "Bluebrain project",
   "license": "Apache-2.0",
   "main": "index.js",
