@@ -1,7 +1,7 @@
 {
   "name": "nexus-explorer",
   "description": "Service which allows you to explore Nexus platform",
-  "version": "0.4.11",
+  "version": "0.4.13",
   "author": "Bluebrain project",
   "license": "Apache-2.0",
   "main": "index.js",
@@ -10,7 +10,7 @@
     "build": "parcel build public/index.html --public-url ./ && envsub --env npm_package_version dist/index.html",
     "build-docker": "npm run build && docker build -f docker/Dockerfile -t ${npm_package_name} .",
     "start": "parcel public/index.html -p 8000 --log-level 3",
-    "start-docker": "docker run --rm -p 8000:8000 ${npm_package_name}",
+    "start-docker": "docker run --rm --init -p 8000:8000 ${npm_package_name}",
     "test": "echo \"Error: no test specified\" && exit 0",
     "lint": "eslint ."
   },
