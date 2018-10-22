@@ -12,11 +12,13 @@ const Header = base => (
         <img src={logo} />
       </a>
       <WithStore
-        mapStateToProps={() => ({})}
+        mapStateToProps={(state) => ({
+          config: state.config
+        })}
         mapDispatchToProps={{
           navigate: navigate.navigate
         }}
-      >{({ navigate}) => <a href="/" onClick={() => navigate('')}><h1>Explorer</h1></a>}
+      >{({ config, navigate }) => <a href={config.appPath ? config.appPath : "/" } onClick={() => navigate('')}><h1>Explorer</h1></a>}
       </WithStore>
     </div>
     <SearchBar />

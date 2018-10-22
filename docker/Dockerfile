@@ -20,7 +20,7 @@ RUN chgrp 0 index.html && chmod g+w index.html
 RUN cp -a index.html index.html.template
 
 # Default values for environment variables
-ENV BASE_PATH=""
+ENV BASE_PATH="/staging/explorer"
 ENV BASE_URI="https://bbp-nexus.epfl.ch/staging"
 
 CMD ["/bin/sh","-c","envsubst '$BASE_PATH' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf \
