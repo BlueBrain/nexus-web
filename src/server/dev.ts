@@ -1,4 +1,4 @@
-import { Express} from 'express';
+import { Express } from 'express';
 
 export function setupDevEnvironment(app: Express) {
   console.log('Dev mode, loading webpack stuff');

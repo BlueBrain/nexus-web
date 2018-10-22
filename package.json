@@ -10,7 +10,7 @@
     "build": "(export NODE_ENV=production; tsc && webpack --mode production)",
     "start": "NODE_ENV=development DEBUG=* ts-node src/server/index.tsx",
     "test": "echo \"Error: no test specified\" && exit 0",
-    "lint": "tslint src/**/*"
+    "lint": "tslint --project tsconfig.json"
   },
   "dependencies": {
     "express": "^4.16.4",

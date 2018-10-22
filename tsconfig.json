@@ -1,24 +1,24 @@
 {
   "compilerOptions": {
-      "rootDir": "./src",
-      "outDir": "./dist",
-      "module": "commonjs",
-      "target": "esnext",
-      "moduleResolution": "node",
-      "jsx": "react",
-      "experimentalDecorators": true, 
-      "sourceMap": true,
-      "strict": true,
-      "noFallthroughCasesInSwitch": true,
-      "noImplicitReturns": true,
-      "noEmitOnError": true,
-      "lib": [
-        "dom",
-        "esnext"
-      ],
-      "allowSyntheticDefaultImports": true
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "module": "commonjs",
+    "target": "esnext",
+    "moduleResolution": "node",
+    "jsx": "react",
+    "experimentalDecorators": true,
+    "sourceMap": true,
+    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noEmitOnError": true,
+    "lib": [
+      "dom",
+      "esnext"
+    ],
+    "allowSyntheticDefaultImports": true
   },
   "exclude": [
-      "node_modules"
-  ],
+    "node_modules"
+  ]
 }

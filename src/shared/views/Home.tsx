@@ -1,10 +1,7 @@
 import React = require('react');
-import MainLayout from '../layouts/MainLayout';
 
 const Home: React.StatelessComponent = () => (
-  <MainLayout>
-    <p>this is home</p>
-  </MainLayout>
+  <p>this is home</p>
 );
 
 export default Home;

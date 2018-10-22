@@ -1,11 +1,8 @@
-import React = require('react');
-import { ReactElement } from 'react';
-import { HelmetProps, HelmetData } from 'react-helmet';
-import { renderToString } from 'react-dom/server'
+import { HelmetData } from 'react-helmet';
 
 /**
- * 
- * @param body 
+ *
+ * @param body
  * @returns string The HTML document
  */
 const html = ({ body, helmet }: { body: string, helmet: HelmetData }): string => `
@@ -31,6 +28,6 @@ const html = ({ body, helmet }: { body: string, helmet: HelmetData }): string =>
     </body>
     <script src="/public/bundle.js" defer></script>
   </html>
-`
+`;
 
 export default html;

@@ -3,13 +3,12 @@ import express = require('express');
 import morgan = require('morgan');
 import React = require('react');
 import { renderToString } from 'react-dom/server';
-import { StaticRouter, matchPath, RouteProps } from 'react-router-dom';
+import { StaticRouter } from 'react-router-dom';
 import Helmet from 'react-helmet';
-import App from '../shared/App';
-import routes from '../shared/routes';
 import html from './html';
+import App from '../shared/App';
 
-// Create a expres app
+// Create a express app
 const app: express.Express = express();
 // enable logs
 app.use(morgan('dev'));
@@ -31,7 +30,7 @@ app.get('*', (req: express.Request, res: express.Response) => {
   const body: string = renderToString(
     <StaticRouter location={req.url} context={{}}>
       <App />
-    </StaticRouter>
+    </StaticRouter>,
   );
   // Compute header data
   const helmet = Helmet.renderStatic();
