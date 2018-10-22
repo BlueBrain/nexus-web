@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Header component Should render correctly 1`] = `
+<ul>
+  <li
+    key="/lol"
+  >
+    <Link
+      replace={false}
+      to="/lol"
+    >
+      lol
+    </Link>
+  </li>
+</ul>
+`;

@@ -1,12 +1,12 @@
 import React = require('react');
 import { Link } from 'react-router-dom';
 
-interface LinkProp {
+export interface LinkProp {
   name: string;
   url: string;
 }
 
-interface HeaderProps {
+export interface HeaderProps {
   links: LinkProp[];
 }
 
