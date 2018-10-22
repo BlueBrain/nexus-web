@@ -25,4 +25,3 @@ const MainLayout: React.StatelessComponent = ({ children }) => (
 );
 
 export default MainLayout;
-

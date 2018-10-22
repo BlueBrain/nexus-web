@@ -4,6 +4,7 @@ import morgan = require('morgan');
 import React = require('react');
 import { renderToString } from 'react-dom/server';
 import { StaticRouter, matchPath, RouteProps } from 'react-router-dom';
+import Helmet from 'react-helmet';
 import App from '../shared/App';
 import routes from '../shared/routes';
 import html from './html';
@@ -24,13 +25,17 @@ if (process.env.NODE_ENV === 'development') {
 app.get('*', (req: express.Request, res: express.Response) => {
   // we need the first RouteProps item that matches the request URL. Empty object if no match
   // const activeRoute: RouteProps = routes.filter(route => matchPath(req.url, route)).pop() || {};
-  console.log(req.url)
+  // now we need to fetch any required data before we render our app
+
+  // render an HTML string of our app
   const body: string = renderToString(
     <StaticRouter location={req.url} context={{}}>
       <App />
     </StaticRouter>
   );
-  res.send(html({ body }));
+  // Compute header data
+  const helmet = Helmet.renderStatic();
+  res.send(html({ body, helmet }));
 });
 
 app.listen(8000, () => {
