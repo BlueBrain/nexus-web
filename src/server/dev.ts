@@ -17,8 +17,7 @@ export function setupDevEnvironment(app: Express) {
   const compiler = webpack(devConfig);
 
   app.use(require('webpack-dev-middleware')(compiler, {
-    mode: 'development',
-    publicPath: '/public',
+    publicPath: devConfig.output.publicPath,
   }));
 
   app.use(require('webpack-hot-middleware')(compiler, {
