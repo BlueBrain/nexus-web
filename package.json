@@ -7,7 +7,7 @@
   "main": "index.js",
   "repository": "github:bluebrain/nexus-explorer",
   "scripts": {
-    "build": "parcel build public/index.html --public-url ./ && envsub --env npm_package_version dist/index.html",
+    "build": "parcel build public/index.html --public-url ./ && envsub --env npm_package_version --env BASE_PATH=\"\" dist/index.html",
     "build-docker": "npm run build && docker build -f docker/Dockerfile -t ${npm_package_name} .",
     "start": "parcel public/index.html -p 8000 --log-level 3",
     "start-docker": "docker run --rm --init -p 8000:8000 ${npm_package_name}",
