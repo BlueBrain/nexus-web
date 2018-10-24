@@ -23,6 +23,13 @@ const config = {
         test: /\.tsx?$/,
         loader: 'ts-loader',
       },
+      {
+        test: /\.css$/,
+        use: [
+          'to-string-loader',
+          'css-loader'
+        ]
+      }
     ],
   },
   plugins: [

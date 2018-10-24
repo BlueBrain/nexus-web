@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Header component Should render correctly 1`] = `
+<div
+  className="Header"
+>
+  <ul>
+    <li
+      key="0"
+    >
+      <p>
+        lol
+      </p>
+    </li>
+  </ul>
+</div>
+`;

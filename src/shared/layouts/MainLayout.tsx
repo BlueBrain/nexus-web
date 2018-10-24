@@ -1,5 +1,6 @@
 import React = require('react');
 import Helmet from 'react-helmet';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 
 const TITLE = 'Nexus Explorer - Search thousands of datasets using Nexus';
@@ -27,8 +28,8 @@ const MainLayout: React.StatelessComponent = ({ children }) => (
     </Helmet>
     <Header
       links={[
-        { name: 'Home', url: '/' },
-        { name: 'Sample', url: '/sample' },
+        <Link to="/">Home</Link>,
+        <Link to="/sample">Sample</Link>,
       ]}
     />
     {children}

@@ -1,17 +1,14 @@
 import React = require('react');
 import { shallow, render } from 'enzyme';
-import Header, { LinkProp } from '../Header';
+import Header, { HeaderProps } from '.';
 
-const links: LinkProp[] = [
-  {
-    name: 'lol',
-    url: '/lol',
-  },
+const links: React.ReactNode[] = [
+  <p>lol</p>,
 ];
 
 describe('Header component', () => {
   it('Should render correctly', () => {
-    const tree = shallow(<Header links={links} />, { context: {} });
+    const tree = shallow(<Header links={links} />);
     expect(tree).toMatchSnapshot();
   });
 });
