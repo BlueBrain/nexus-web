@@ -4,7 +4,7 @@ export default {
   startListeningToRequests,
 }
 
-const wrapFetch = (requestMade, requestResolved, requestAnauthorized) => {
+const wrapFetch = (requestMade, requestResolved, requestUnauthorized) => {
   const fetch = global.fetch
   global.fetch = function () {
     const args = arguments
@@ -13,7 +13,7 @@ const wrapFetch = (requestMade, requestResolved, requestAnauthorized) => {
       fetch(...args)
         .then(response => {
           if (response.status === 401) {
-            requestAnauthorized()
+            requestUnauthorized()
           }
           requestResolved()
           resolve(response)
