@@ -13,9 +13,10 @@ const app: express.Express = express();
 // enable logs
 app.use(morgan('dev'));
 // server static assets from the /public directory
-app.use('/public', express.static(join(__dirname, '../public')));
+app.use('/public', express.static(join(__dirname, 'public')));
+
 // if in Dev mode, setup HMR and all the fancy stuff
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV !== 'production') {
   const { setupDevEnvironment } = require('./dev');
   setupDevEnvironment(app);
 }

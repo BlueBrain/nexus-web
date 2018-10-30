@@ -12,15 +12,7 @@ const html = ({ body, helmet }: { body: string, helmet: HelmetData }): string =>
       ${helmet.title.toString()}
       ${helmet.meta.toString()}
       ${helmet.link.toString()}
-      <style>
-        body {
-          background-color: #ff6666;
-          color: white;
-          font-family: Arial, Helvetica, sans-serif;
-          margin: 0;
-          padding: 2em;
-        }
-      </style>
+      <link rel="stylesheet" href="/public/bundle.css" />
       <base href="/" />
     </head>
     <body ${helmet.bodyAttributes.toString()}>

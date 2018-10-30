@@ -12,12 +12,14 @@ export function setupDevEnvironment(app: Express) {
         'webpack-hot-middleware/client',
       ],
     }),
-    plugins: [...webpackConfig.plugins, new webpack.HotModuleReplacementPlugin()],
+    plugins: [new webpack.HotModuleReplacementPlugin(), ...webpackConfig.plugins],
   });
+
   const compiler = webpack(devConfig);
 
   app.use(require('webpack-dev-middleware')(compiler, {
     publicPath: devConfig.output.publicPath,
+    serverSideRender: true,
   }));
 
   app.use(require('webpack-hot-middleware')(compiler, {

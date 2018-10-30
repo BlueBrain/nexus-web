@@ -2,9 +2,11 @@ const path = require('path');
 const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const devMode = process.env.NODE_ENV !== 'production';
 
 const config = [
   {
+    name: 'client',
     entry: {
       bundle: [
         './src/client/index.tsx',
@@ -29,9 +31,7 @@ const config = [
         {
           test: /\.(le|sa|sc|c)ss$/,
           use: [
-            {
-              loader: MiniCssExtractPlugin.loader,
-            },
+            devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
             'css-loader',
             'less-loader',
           ]
@@ -46,6 +46,7 @@ const config = [
     ],
   },
   {
+    name: 'server',
     entry: {
       server: './src/server/index.tsx',
     },
@@ -71,6 +72,9 @@ const config = [
       ]
     },
     target: 'node',
+    node: {
+      __dirname: false,
+    },
     externals: [nodeExternals()],
   }
 ];

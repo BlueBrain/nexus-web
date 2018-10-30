@@ -25,6 +25,7 @@ module.exports = {
       {
         test: /\.(le|sa|sc|c)ss$/,
         use: [
+          'style-loader',
           'css-loader',
           'less-loader',
         ]

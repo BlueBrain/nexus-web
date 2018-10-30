@@ -3,7 +3,7 @@ import ReactDOM = require('react-dom');
 import { BrowserRouter } from 'react-router-dom';
 import App from '../shared/App';
 
-ReactDOM.hydrate(
+const renderApp = () => ReactDOM.hydrate(
   <BrowserRouter>
     <App />
   </BrowserRouter>,
@@ -15,8 +15,12 @@ if (module.hot) {
   module.hot.accept('../shared/App', () => {
     const NextApp: React.StatelessComponent<{}> = require('../shared/App').default;
     ReactDOM.hydrate(
-      <NextApp />,
+      <BrowserRouter>
+        <NextApp />
+      </BrowserRouter>,
       document.getElementById('app'),
     );
   });
 }
+
+renderApp();
