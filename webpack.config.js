@@ -36,11 +36,21 @@ const config = [
             {
               loader: 'less-loader',
               options: {
-                javascriptEnabled: true
-              }
-            }
-          ]
-        }
+                javascriptEnabled: true,
+              },
+            },
+          ],
+        },
+        {
+          test: /\.(jpg|png|svg)$/,
+          use: {
+            loader: 'file-loader',
+            options: {
+              name: '/public/images/[name].[ext]',
+              emitFile: false,
+            },
+          }
+        },
       ],
     },
     plugins: [
@@ -72,8 +82,18 @@ const config = [
         {
           test: /\.(le|sa|sc|c)ss$/,
           // we can ignore the .css files, handled in client config
-          use: 'null-loader',
-        }
+          loader: 'null-loader',
+        },
+        {
+          test: /\.(jpg|png|svg)$/,
+          use: {
+            loader: 'file-loader',
+            options: {
+              name: '/public/images/[name].[ext]',
+              emitFile: false,
+            },
+          }
+        },
       ]
     },
     target: 'node',
