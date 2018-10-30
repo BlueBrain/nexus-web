@@ -46,10 +46,9 @@ const config = [
           use: {
             loader: 'file-loader',
             options: {
-              name: '/public/images/[name].[ext]',
-              emitFile: false,
+              outputPath: 'public/assets/',
             },
-          }
+          },
         },
       ],
     },
@@ -89,10 +88,9 @@ const config = [
           use: {
             loader: 'file-loader',
             options: {
-              name: '/public/images/[name].[ext]',
-              emitFile: false,
+              outputPath: 'public/assets/',
             },
-          }
+          },
         },
       ]
     },

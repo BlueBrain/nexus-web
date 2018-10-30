@@ -29,7 +29,13 @@ module.exports = {
           'css-loader',
           'less-loader',
         ]
-      }
+      },
+      {
+        test: /\.(jpg|png|svg)$/,
+        use: {
+          loader: 'file-loader',
+        },
+      },
     ],
   },
   resolve: {

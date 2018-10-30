@@ -11,7 +11,7 @@ const renderApp = () => ReactDOM.hydrate(
 );
 
 if (module.hot) {
-  console.log('Its hot');
+  console.log('It\'s hot!');
   module.hot.accept('../shared/App', () => {
     const NextApp: React.StatelessComponent<{}> = require('../shared/App').default;
     ReactDOM.hydrate(

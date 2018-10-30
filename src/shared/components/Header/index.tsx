@@ -1,12 +1,11 @@
 import React = require('react');
-import logo from './logo.svg';
 import './Header.less';
+
+const logo = require('../../logo.svg');
 
 export interface HeaderProps {
   links: React.ReactNode[];
 }
-
-console.log(logo);
 
 const Header: React.StatelessComponent<HeaderProps> = ({ links }) => (
   <div className="Header">
