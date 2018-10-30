@@ -33,7 +33,12 @@ const config = [
           use: [
             devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
             'css-loader',
-            'less-loader',
+            {
+              loader: 'less-loader',
+              options: {
+                javascriptEnabled: true
+              }
+            }
           ]
         }
       ],
