@@ -1,4 +1,5 @@
 import React = require('react');
+import './Header.less';
 
 export interface HeaderProps {
   links: React.ReactNode[];

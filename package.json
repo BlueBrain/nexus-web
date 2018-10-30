@@ -9,12 +9,14 @@
   "scripts": {
     "build": "(export NODE_ENV=production; tsc && webpack --mode production)",
     "start": "NODE_ENV=development DEBUG=* ts-node src/server/index.tsx",
+    "dev": "NODE_ENV=development DEBUG=* webpack --mode development",
     "test": "jest src",
     "lint": "tslint --project tsconfig.json",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
   "dependencies": {
+    "antd": "^3.10.2",
     "express": "^4.16.4",
     "morgan": "^1.9.1",
     "react": "^16.5.2",
@@ -54,9 +56,14 @@
     "jest": "^23.6.0",
     "jest-environment-enzyme": "^7.0.0",
     "jest-enzyme": "^7.0.0",
+    "less": "^3.8.1",
+    "less-loader": "^4.1.0",
+    "mini-css-extract-plugin": "^0.4.4",
     "nodemon": "^1.18.4",
+    "null-loader": "^0.1.1",
     "react-docgen-typescript-loader": "^3.0.0",
     "source-map-loader": "^0.2.4",
+    "style-loader": "^0.23.1",
     "ts-jest": "^23.10.4",
     "ts-loader": "^5.2.2",
     "ts-node": "^7.0.1",
@@ -66,7 +73,8 @@
     "webpack": "^4.20.2",
     "webpack-cli": "^3.1.2",
     "webpack-dev-middleware": "^3.4.0",
-    "webpack-hot-middleware": "^2.24.3"
+    "webpack-hot-middleware": "^2.24.3",
+    "webpack-node-externals": "^1.7.2"
   },
   "jest": {
     "preset": "ts-jest",

@@ -3,7 +3,7 @@ import { Express } from 'express';
 export function setupDevEnvironment(app: Express) {
   console.log('Dev mode, loading webpack stuff');
   const webpack = require('webpack');
-  const webpackConfig = require('../../webpack.config');
+  const webpackConfig = require('../../webpack.config')[0];
   const devConfig = Object.assign({}, webpackConfig, {
     mode: 'development',
     entry: Object.assign({}, webpackConfig.entry, {

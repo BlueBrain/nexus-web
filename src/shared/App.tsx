@@ -4,6 +4,8 @@ import routes from '../shared/routes';
 import NotFound from './views/404';
 import MainLayout from './layouts/MainLayout';
 
+import './App.less';
+
 export default class App extends React.Component {
   render() {
     return (

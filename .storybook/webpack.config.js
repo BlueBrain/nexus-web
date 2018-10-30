@@ -21,6 +21,13 @@ module.exports = {
           'ts-loader',
           require.resolve("react-docgen-typescript-loader"),
         ]
+      },
+      {
+        test: /\.(le|sa|sc|c)ss$/,
+        use: [
+          'css-loader',
+          'less-loader',
+        ]
       }
     ],
   },
