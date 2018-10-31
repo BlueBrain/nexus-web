@@ -1,18 +1,18 @@
 {
-  "name": "nexus-explorer",
-  "description": "Service which allows you to explore Nexus platform",
+  "name": "nexus-web",
+  "description": "The interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.",
   "version": "1.0.0-alpha",
   "author": "Bluebrain project",
   "license": "Apache-2.0",
-  "main": "./dist/server/index.js",
+  "main": "dist/server.js",
   "repository": "github:bluebrain/nexus-explorer",
   "scripts": {
-    "build": "NODE_ENV=production webpack --mode production",
     "start": "NODE_ENV=development DEBUG=* webpack --mode development --config-name server && node dist/server.js",
+    "build": "NODE_ENV=production webpack --mode production",
     "test": "jest src",
     "lint": "tslint --project tsconfig.json",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "start:storybook": "start-storybook -p 6006",
+    "build:storybook": "build-storybook"
   },
   "dependencies": {
     "antd": "^3.10.2",
