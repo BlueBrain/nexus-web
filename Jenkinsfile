@@ -8,8 +8,8 @@ pipeline {
     agent any
 
     environment {
-        imageStream = 'nexus-explorer'
-        imageBuildName = 'explorer-build'
+        imageStream = 'nexus-web'
+        imageBuildName = 'nexus-web-build'
     }
 
     stages {
@@ -54,7 +54,7 @@ pipeline {
             }
             steps {
                 sh 'npm run build'
-                sh 'mkdir deployment && mv dist deployment && mv docker deployment'
+                sh 'mkdir deployment && mv dist deployment && mv package.json deployment'
                 sh "oc start-build ${imageBuildName} --from-dir=deployment --follow"
             }
         }
