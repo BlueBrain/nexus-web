@@ -54,7 +54,7 @@ pipeline {
             }
             steps {
                 sh 'npm run build'
-                sh 'mkdir deployment && mv dist deployment && mv package.json deployment'
+                sh 'mkdir deployment && mv dist deployment && mv package.json deployment && mv Dockerfile deployment'
                 sh "oc start-build ${imageBuildName} --from-dir=deployment --follow"
             }
         }
