@@ -42,7 +42,7 @@ pipeline {
                 }
                 stage('Test') {
                     steps {
-                        sh 'exit 0'
+                        sh 'npm run test'
                     }
                 }
             }

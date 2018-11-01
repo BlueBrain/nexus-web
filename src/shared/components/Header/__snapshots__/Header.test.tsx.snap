@@ -4,6 +4,11 @@ exports[`Header component Should render correctly 1`] = `
 <div
   className="Header"
 >
+  <img
+    alt="Nexus"
+    className="logo"
+    src="/mock/path"
+  />
   <ul>
     <li
       key="0"
