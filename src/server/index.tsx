@@ -14,6 +14,7 @@ const app: express.Express = express();
 app.use(morgan('dev'));
 // server static assets from the /public directory
 app.use('/public', express.static(join(__dirname, 'public')));
+app.use('/staging/web/public', express.static(join(__dirname, 'public')));
 
 // if in Dev mode, setup HMR and all the fancy stuff
 if (process.env.NODE_ENV !== 'production') {
@@ -26,10 +27,12 @@ app.get('*', (req: express.Request, res: express.Response) => {
   // we need the first RouteProps item that matches the request URL. Empty object if no match
   // const activeRoute: RouteProps = routes.filter(route => matchPath(req.url, route)).pop() || {};
   // now we need to fetch any required data before we render our app
+  // const url = req.url.replace('/staging/web/', '/');
 
+  const base: string = process.env.BASE || '/';
   // render an HTML string of our app
   const body: string = renderToString(
-    <StaticRouter location={req.url} context={{}}>
+    <StaticRouter location={req.url} context={{}} basename={base}>
       <App />
     </StaticRouter>,
   );

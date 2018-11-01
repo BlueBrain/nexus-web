@@ -1,5 +1,7 @@
 import { HelmetData } from 'react-helmet';
 
+const base: string = process.env.BASE || '/';
+
 /**
  *
  * @param body
@@ -12,13 +14,16 @@ const html = ({ body, helmet }: { body: string, helmet: HelmetData }): string =>
       ${helmet.title.toString()}
       ${helmet.meta.toString()}
       ${helmet.link.toString()}
-      <link rel="stylesheet" href="public/bundle.css" />
-      <base href="/staging/web/" />
+      <link rel="stylesheet" href="${base}public/bundle.css" />
+      <base href="${base}" />
     </head>
     <body ${helmet.bodyAttributes.toString()}>
       <div id="app">${body}</div>
+      <script>
+        window.__BASE__ = '${base}';
+      </script>
     </body>
-    <script src="public/bundle.js" defer></script>
+    <script src="${base}public/bundle.js" defer></script>
   </html>
 `;
 

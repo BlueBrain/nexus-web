@@ -15,7 +15,7 @@ const config = [
     output: {
       path: path.join(__dirname, 'dist/public'),
       filename: '[name].js',
-      publicPath: '/public',
+      publicPath: '/',
     },
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx'],
