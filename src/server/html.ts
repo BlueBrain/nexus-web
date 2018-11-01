@@ -13,6 +13,7 @@ const html = ({ body, helmet }: { body: string, helmet: HelmetData }): string =>
       ${helmet.meta.toString()}
       ${helmet.link.toString()}
       <link rel="stylesheet" href="public/bundle.css" />
+      <base href="/staging/web/" />
     </head>
     <body ${helmet.bodyAttributes.toString()}>
       <div id="app">${body}</div>
