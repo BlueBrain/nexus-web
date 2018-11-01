@@ -12,13 +12,12 @@ const html = ({ body, helmet }: { body: string, helmet: HelmetData }): string =>
       ${helmet.title.toString()}
       ${helmet.meta.toString()}
       ${helmet.link.toString()}
-      <link rel="stylesheet" href="/public/bundle.css" />
-      <base href="/" />
+      <link rel="stylesheet" href="public/bundle.css" />
     </head>
     <body ${helmet.bodyAttributes.toString()}>
       <div id="app">${body}</div>
     </body>
-    <script src="/public/bundle.js" defer></script>
+    <script src="public/bundle.js" defer></script>
   </html>
 `;
 
