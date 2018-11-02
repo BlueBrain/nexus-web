@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const devMode = process.env.NODE_ENV !== 'production';
-const base = process.env.BASE || '';
+const base = process.env.BASE_PATH || '';
 
 const config = [
   {

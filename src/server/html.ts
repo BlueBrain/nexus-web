@@ -1,6 +1,6 @@
 import { HelmetData } from 'react-helmet';
 
-const base: string = process.env.BASE || '/';
+const base: string = process.env.BASE_PATH || '/';
 
 /**
  *

@@ -1,6 +1,6 @@
 import { Express } from 'express';
 
-const base: string = process.env.BASE || '/';
+const base: string = process.env.BASE_PATH || '/';
 
 export function setupDevEnvironment(app: Express) {
   console.log('Dev mode, loading webpack stuff');

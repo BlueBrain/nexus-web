@@ -10,7 +10,7 @@ import App from '../shared/App';
 
 // Create a express app
 const app: express.Express = express();
-const rawBase: string = process.env.BASE || '';
+const rawBase: string = process.env.BASE_PATH || '';
 // remove trailing slash
 const base: string = rawBase.replace(/\/$/, '');
 // enable logs
