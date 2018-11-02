@@ -7,9 +7,9 @@
   "main": "index.js",
   "repository": "github:bluebrain/nexus-explorer",
   "scripts": {
-    "build": "parcel build public/index.html --public-url ./ && envsub --env npm_package_version dist/index.html",
+    "build": "parcel build public/index.html --no-source-maps --log-level 3 --public-url ./ && envsub --env npm_package_version dist/index.html",
     "build-docker": "npm run build && docker build -f docker/Dockerfile -t ${npm_package_name} .",
-    "start": "parcel public/index.html -p 8000 --log-level 3",
+    "start": "parcel public/index.html --no-source-maps -p 8000 --log-level 3",
     "start-docker": "docker run --rm --init -p 8000:8000 ${npm_package_name}",
     "test": "echo \"Error: no test specified\" && exit 0",
     "lint": "eslint ."
@@ -41,10 +41,9 @@
     "styled-jss": "^2.2.3"
   },
   "devDependencies": {
-    "babel-preset-react-app": "^3.1.2",
     "envsub": "^3.1.0",
     "eslint": "^5.1.0",
     "eslint-plugin-react": "^7.10.0",
-    "parcel-bundler": "^1.9.7"
+    "parcel-bundler": "^1.10.3"
   }
 }
