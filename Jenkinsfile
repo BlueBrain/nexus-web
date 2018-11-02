@@ -54,7 +54,7 @@ pipeline {
             }
             steps {
                 sh 'npm run build'
-                sh "oc start-build ${imageBuildName} --from-dir=dist --follow"
+                sh "oc start-build ${imageBuildName} --from-directory=dist --follow"
             }
         }
 
