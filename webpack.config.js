@@ -100,7 +100,7 @@ const config = [
     node: {
       __dirname: false,
     },
-    externals: [nodeExternals()],
+    externals: devMode ? [nodeExternals()] : [],
   }
 ];
 
