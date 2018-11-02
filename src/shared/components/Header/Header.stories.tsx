@@ -16,8 +16,10 @@ storiesOf('Components/Header', module)
       <a href="#">Settings</a>,
     ]} />
     ~~~
-  `)(() => <Header links={[
-    <a href="#">Home</a>,
-    <a href="#">Settings</a>,
-  ]} />,
+  `)(() => <div style={{ margin: '50px 40px 0px' }}><Header
+    name="Mark Hamil"
+    links={[
+      <a href="#">Home</a>,
+      <a href="#">Settings</a>,
+    ]} /></div>,
 ));

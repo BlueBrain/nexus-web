@@ -1,7 +1,54 @@
 .Header {
-  background-color: #ff6666;
+  display: flex;
+  justify-content: space-between;
+  height: 60px;
+  background-color: #f0f0f0;
+
+  &::after {
+    border-radius: 100%;
+    box-shadow: 0 0 40px #abbac9;
+    content: "";
+    height: 20px;
+    left: 5%;
+    position: absolute;
+    right: 5%;
+    top: 40px;
+    width: 90%;
+    z-index: -1;
+  }
   
-  .logo {
-    width: 50px;
+  .logo-block {
+    display: flex;
+    align-items: center;
+    padding-left: 1em;
+
+    .logo {
+      background-color: #fff;
+      border-radius: 50%;
+      margin-right: .5em;
+      padding: .5em;
+      box-shadow: 0 2px 5px 0 rgba(49,49,93,.1), 0 1px 2px 0 rgba(0,0,0,.08);
+      transition: box-shadow .08s ease-in,color .08s ease-in;
+
+      img {
+        height: 2em;
+        width: 2em;
+      }
+    }
+
+    h1 {
+      color: #45c7f4;
+      margin: 0%;
+    }
+  }
+
+  .menu-block {
+    display: flex;
+    justify-content: center;
+    padding-right: 1em;
+
+    .ant-dropdown-link {
+      align-self: center;
+    }
   }
 }
