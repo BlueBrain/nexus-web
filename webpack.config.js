@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const devMode = process.env.NODE_ENV !== 'production';
+const base = process.env.BASE || '';
 
 const config = [
   {
@@ -13,7 +14,7 @@ const config = [
       ],
     },
     output: {
-      path: path.join(__dirname, 'dist/public'),
+      path: path.join(__dirname, 'dist/public/'),
       filename: '[name].js',
     },
     resolve: {
@@ -46,6 +47,7 @@ const config = [
             loader: 'file-loader',
             options: {
               outputPath: 'assets/',
+              publicPath: '',
             },
           },
         },
@@ -87,7 +89,8 @@ const config = [
           use: {
             loader: 'file-loader',
             options: {
-              outputPath: 'public/assets/',
+              outputPath: '/public/assets/',
+              publicPath: `${base}public/assets/`,
             },
           },
         },

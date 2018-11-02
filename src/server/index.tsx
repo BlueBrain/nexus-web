@@ -10,11 +10,13 @@ import App from '../shared/App';
 
 // Create a express app
 const app: express.Express = express();
+const rawBase: string = process.env.BASE || '';
+// remove trailing slash
+const base: string = rawBase.replace(/\/$/, '');
 // enable logs
 app.use(morgan('dev'));
 // server static assets from the /public directory
-app.use('/public', express.static(join(__dirname, 'public')));
-app.use('/staging/web/public', express.static(join(__dirname, 'public')));
+app.use(`${base}/public`, express.static(join(__dirname, 'public')));
 
 // if in Dev mode, setup HMR and all the fancy stuff
 if (process.env.NODE_ENV !== 'production') {
@@ -28,10 +30,6 @@ app.get('*', (req: express.Request, res: express.Response) => {
   // const activeRoute: RouteProps = routes.filter(route => matchPath(req.url, route)).pop() || {};
   // now we need to fetch any required data before we render our app
   // const url = req.url.replace('/staging/web/', '/');
-
-  const rawBase: string = process.env.BASE || '';
-  // remove trailing slash
-  const base: string = rawBase.replace(/\/$/, '');
 
   // render an HTML string of our app
   const body: string = renderToString(

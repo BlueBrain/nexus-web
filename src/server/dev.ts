@@ -9,7 +9,7 @@ export function setupDevEnvironment(app: Express) {
   const devConfig = Object.assign({}, webpackConfig, {
     mode: 'development',
     output: Object.assign({}, webpackConfig.output, {
-      publicPath: base,
+      publicPath: `${base}public/`,
     }),
     entry: Object.assign({}, webpackConfig.entry, {
       bundle: [
