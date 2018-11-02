@@ -1,11 +1,16 @@
 import { Express } from 'express';
 
+const base: string = process.env.BASE || '/';
+
 export function setupDevEnvironment(app: Express) {
   console.log('Dev mode, loading webpack stuff');
   const webpack = require('webpack');
   const webpackConfig = require('../../webpack.config')[0];
   const devConfig = Object.assign({}, webpackConfig, {
     mode: 'development',
+    output: Object.assign({}, webpackConfig.output, {
+      publicPath: base,
+    }),
     entry: Object.assign({}, webpackConfig.entry, {
       bundle: [
         ...webpackConfig.entry.bundle,

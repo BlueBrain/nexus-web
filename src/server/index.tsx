@@ -29,7 +29,10 @@ app.get('*', (req: express.Request, res: express.Response) => {
   // now we need to fetch any required data before we render our app
   // const url = req.url.replace('/staging/web/', '/');
 
-  const base: string = process.env.BASE || '/';
+  const rawBase: string = process.env.BASE || '';
+  // remove trailing slash
+  const base: string = rawBase.replace(/\/$/, '');
+
   // render an HTML string of our app
   const body: string = renderToString(
     <StaticRouter location={req.url} context={{}} basename={base}>

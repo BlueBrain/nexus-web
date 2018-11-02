@@ -3,7 +3,9 @@ import ReactDOM = require('react-dom');
 import { BrowserRouter } from 'react-router-dom';
 import App from '../shared/App';
 
-const base: string = (window as any)['__BASE__'] || '/';
+const rawBase: string = (window as any)['__BASE__'] || '/';
+// remove trailing slash
+const base: string = rawBase.replace(/\/$/, '');
 
 const renderApp = () => ReactDOM.hydrate(
   <BrowserRouter basename={base}>

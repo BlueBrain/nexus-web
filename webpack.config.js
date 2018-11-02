@@ -15,7 +15,6 @@ const config = [
     output: {
       path: path.join(__dirname, 'dist/public'),
       filename: '[name].js',
-      publicPath: '/',
     },
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx'],
@@ -46,7 +45,7 @@ const config = [
           use: {
             loader: 'file-loader',
             options: {
-              outputPath: 'public/assets/',
+              outputPath: 'assets/',
             },
           },
         },
