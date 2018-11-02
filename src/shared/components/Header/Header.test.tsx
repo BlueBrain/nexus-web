@@ -8,7 +8,7 @@ const links: React.ReactNode[] = [
 
 describe('Header component', () => {
   it('Should render correctly', () => {
-    const tree = shallow(<Header links={links} />);
+    const tree = shallow(<Header name="Mark Hamil" links={links} />);
     expect(tree).toMatchSnapshot();
   });
 });

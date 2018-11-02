@@ -1,22 +1,59 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Header component Should render correctly 1`] = `
-<div
+<header
   className="Header"
 >
-  <img
-    alt="Nexus"
-    className="logo"
-    src="/mock/path"
-  />
-  <ul>
-    <li
-      key="0"
+  <div
+    className="logo-block"
+  >
+    <a
+      className="logo"
+      href=""
     >
-      <p>
-        lol
-      </p>
-    </li>
-  </ul>
-</div>
+      <img
+        alt="Nexus"
+        src="/mock/path"
+      />
+    </a>
+    <h1>
+      Nexus
+    </h1>
+  </div>
+  <div
+    className="menu-block"
+  >
+    <Dropdown
+      mouseEnterDelay={0.15}
+      mouseLeaveDelay={0.1}
+      overlay={
+        <Menu
+          className=""
+          focusable={false}
+          prefixCls="ant-menu"
+          theme="light"
+        >
+          <MenuItem>
+            <p>
+              lol
+            </p>
+          </MenuItem>
+        </Menu>
+      }
+      placement="bottomLeft"
+      prefixCls="ant-dropdown"
+    >
+      <a
+        className="ant-dropdown-link"
+        href="#"
+      >
+        Mark Hamil
+         
+        <Icon
+          type="down"
+        />
+      </a>
+    </Dropdown>
+  </div>
+</header>
 `;
