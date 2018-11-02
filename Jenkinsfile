@@ -54,7 +54,8 @@ pipeline {
             }
             steps {
                 sh 'npm run build'
-                sh "oc start-build ${imageBuildName} --from-dir=dist --follow"
+                sh 'tar -zcvf dist.tar.gz dist'
+                sh "oc start-build ${imageBuildName} --from-archive=dist.tar.gz --follow"
             }
         }
 
