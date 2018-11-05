@@ -26,7 +26,7 @@ const Header: React.StatelessComponent<HeaderProps> = ({ name, links }) => {
       </div>
       <div className="menu-block">
         <Dropdown overlay={menu}>
-          <a className="ant-dropdown-link" href="#">
+          <a className="menu-dropdown ant-dropdown-link">
             {name} <Icon type="down" />
           </a>
         </Dropdown>
