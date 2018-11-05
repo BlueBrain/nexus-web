@@ -27,6 +27,7 @@ const MainLayout: React.StatelessComponent = ({ children }) => (
       <meta name="theme-color" content="#00c9fd" />
     </Helmet>
     <Header
+      name="Mark Hamil"
       links={[
         <Link to="/">Home</Link>,
         <Link to="/sample">Sample</Link>,
