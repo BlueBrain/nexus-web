@@ -1,12 +1,14 @@
+@import "../../lib.less";
+
 .Header {
   display: flex;
   justify-content: space-between;
   height: 60px;
-  background-color: #f0f0f0;
+  background-color: @header-background-color;
 
   &::after {
     border-radius: 100%;
-    box-shadow: 0 0 40px #abbac9;
+    box-shadow: 0 0 40px darken(@header-background-color, 20%);
     content: "";
     height: 20px;
     left: 5%;
@@ -37,7 +39,7 @@
     }
 
     h1 {
-      color: #45c7f4;
+      color: @primary-color;
       margin: 0%;
     }
   }
