@@ -1,4 +1,4 @@
-import { RouteProps } from 'react-router';
+import { RouteProps } from 'react-router-dom';
 import Home from './views/Home';
 import Sample from './views/Sample';
 

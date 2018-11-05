@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "antd": "^3.10.2",
+    "cookie-parser": "^1.4.3",
     "express": "^4.16.4",
     "morgan": "^1.9.1",
     "react": "^16.5.2",
@@ -32,6 +33,7 @@
     "@storybook/addon-links": "^4.0.0-rc.2",
     "@storybook/addons": "^4.0.0-rc.2",
     "@storybook/react": "^4.0.0-rc.2",
+    "@types/cookie-parser": "^1.4.1",
     "@types/enzyme": "^3.1.14",
     "@types/express": "^4.16.0",
     "@types/jest": "^23.3.5",
