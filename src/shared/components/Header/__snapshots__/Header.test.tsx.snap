@@ -35,8 +35,15 @@ exports[`Header component Should render correctly 1`] = `
         >
           <MenuItem>
             <p>
-              lol
+              A p tag
             </p>
+          </MenuItem>
+          <MenuItem>
+            <a
+              href="/somepage"
+            >
+              A link to some page
+            </a>
           </MenuItem>
         </Menu>
       }
@@ -44,8 +51,7 @@ exports[`Header component Should render correctly 1`] = `
       prefixCls="ant-dropdown"
     >
       <a
-        className="ant-dropdown-link"
-        href="#"
+        className="menu-dropdown ant-dropdown-link"
       >
         Mark Hamil
          
