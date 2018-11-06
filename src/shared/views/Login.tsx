@@ -1,4 +1,4 @@
-import React = require('react');
+import * as React from 'react';
 
 const Login: React.StatelessComponent = () => (
   <p>LOGIN</p>

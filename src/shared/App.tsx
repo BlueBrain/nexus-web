@@ -12,28 +12,23 @@ export default class App extends React.Component {
   render() {
     return (
       <MainLayout>
-      <Switch>
-        {routes.map(({ path, exact, component: C, ...rest }) => (
+        <Switch>
+          {routes.map(({ path, ...rest }) => (
+            <PrivateRoute
+              key={path}
+              path={path}
+              {...rest}
+            />
+          ))}
           <Route
-            {...rest}
-            key={path}
-            path={path}
-            exact={exact}
-            render={props => (
-              // @ts-ignore
-              <C {...props} {...rest} />
-            )}
+            path="/login"
+            exact={false}
+            component={Login}
           />
-        ))}
-        <Route
-          path="/login"
-          exact={false}
-          component={Login}
-        />
-        <Route
-          component={NotFound}
-        />
-      </Switch>
+          <Route
+            component={NotFound}
+          />
+        </Switch>
       </MainLayout>
     );
   }
