@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 const Login: React.StatelessComponent = () => (
-  <p>LOGIN</p>
+  <a href="authSuccess?access_token=aksmdkadadasdad">LOGIN</a>
 );
 
 export default Login;
