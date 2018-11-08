@@ -1,7 +1,11 @@
 @import '../../lib.less';
 
+/**
+* Organisation Cards
+*/
 .OrgCard {
   background-color: #fff;
+  margin: 5px;
   box-shadow: 0 2px 5px 0 rgba(49, 49, 93, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.08);
 
   .content {
@@ -13,12 +17,45 @@
       margin-right: 10px;
     }
     .org-name {
+      margin: 0;
       flex-grow: 1;
       font-weight: bold;
-      margin: 0;
+      font-size: 1.3em;
     }
     .project-number {
       margin: 0;
+      .number {
+        font-weight: bold;
+      }
     }
+    .edit-button {
+      display: none;
+    }
+  }
+
+  &:hover,
+  &:focus,
+  &:focus-within {
+    background-color: fade(@primary-color, 5%);
+
+    .content {
+      .edit-button {
+        display: block;
+        margin-left: 10px;
+      }
+    }
+  }
+}
+
+/**
+* Organisation List
+*/
+.OrgList {
+  @height: 300px;
+  .scrollBar();
+  .orgs {
+    max-height: @height;
+    min-height: @height;
+    overflow-y: auto;
   }
 }

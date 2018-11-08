@@ -1,29 +1,42 @@
 import * as React from 'react';
-import { Avatar, Card } from 'antd';
+import { Avatar, Button, Card } from 'antd';
 
 import './Orgs.less';
 
-interface OrgCardProps {
+export interface OrgCardProps {
   name: string;
   projectNumber: number;
   logo?: string;
+  onEdit?: () => void;
 }
 
 const OrgCard: React.SFC<OrgCardProps> = ({
   name,
   projectNumber,
   logo = '',
+  onEdit,
 }) => {
   return (
-    <Card className="OrgCard">
+    <Card className="OrgCard" tabIndex={1}>
       <div className="content">
         <div className="logo">
-          <Avatar shape="square" size={64} icon="user" src={logo} />
+          <Avatar shape="square" size={32} icon="team" src={logo} />
         </div>
         <p className="org-name">{name}</p>
         <p className="project-number">
-          {projectNumber} project{projectNumber > 1 && 's'}
+          <span className="number">{projectNumber}</span> project
+          {projectNumber > 1 && 's'}
         </p>
+        {onEdit && (
+          <Button
+            className="edit-button"
+            type="primary"
+            tabIndex={1}
+            onClick={onEdit}
+          >
+            Edit
+          </Button>
+        )}
       </div>
     </Card>
   );
