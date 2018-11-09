@@ -10,6 +10,9 @@ import html from './html';
 import App from '../shared/App';
 import AuthContext from '../shared/context/AuthContext';
 
+const isDev = process.env.NODE_ENV !== 'production';
+const cookieName = isDev ? '_Host-nexusAuth' : '__Host-nexusAuth';
+
 // Create a express app
 const app: express.Express = express();
 const rawBase: string = process.env.BASE_PATH || '';
@@ -31,13 +34,15 @@ if (process.env.NODE_ENV !== 'production') {
 // Oauth provider should redirect to this url
 // Setup client cookie with AccessToken and redirect to home page
 // TODO: redirect to the page user was trying to access before auth
-app.get('/authSuccess', (req: express.Request, res: express.Response) => {
+app.get(`${base}/authSuccess`, (req: express.Request, res: express.Response) => {
   const { access_token } = req.query;
   res.cookie(
-    'nexusAuth',
+    cookieName,
     JSON.stringify({ accessToken: access_token }),
     {
       maxAge: 900000,
+      secure: isDev ? false : true,
+      sameSite: 'strict',
     },
   );
   res.redirect(`${base}/`);
@@ -53,7 +58,7 @@ app.get('*', (req: express.Request, res: express.Response) => {
   // Get token from Client's cookie 🍪
   let accessToken: string | undefined = undefined;
   try {
-    const { nexusAuth } = req.cookies;
+    const nexusAuth = req.cookies[cookieName];
     accessToken = JSON.parse(nexusAuth);
   } catch (e) {
     console.log('No token in cookie');

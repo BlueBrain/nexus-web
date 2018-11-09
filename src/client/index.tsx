@@ -7,12 +7,15 @@ import AuthContext, { AuthContextState } from '../shared/context/AuthContext';
 const rawBase: string = (window as any)['__BASE__'] || '/';
 // remove trailing slash
 const base: string = rawBase.replace(/\/$/, '');
+// Are we running with SSL
+const isSecure = location.protocol === 'https';
+const cookieName = isSecure ? '__Host-nexusAuth' : '_Host-nexusAuth';
 
 // get auth data from cookies
 // TODO: this is a POC, this code needs to be improved and tested
 function getAuthData(): AuthContextState {
   const all: string[] = decodeURIComponent(document.cookie).split(';');
-  const rawAuthCookie: string = all.filter(cookie => cookie.includes('nexusAuth='))[0];
+  const rawAuthCookie: string = all.filter(cookie => cookie.includes(`${cookieName}=`))[0];
   if (!rawAuthCookie) {
     return {
       authenticated: false,
@@ -20,7 +23,7 @@ function getAuthData(): AuthContextState {
   }
   let authCookie: {accessToken: string};
   try {
-    authCookie = JSON.parse(rawAuthCookie.replace('nexusAuth=', ''));
+    authCookie = JSON.parse(rawAuthCookie.replace(`${cookieName}=`, ''));
   } catch (e) {
     return {
       authenticated: false,
