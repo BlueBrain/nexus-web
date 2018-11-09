@@ -20,13 +20,17 @@ const OrgList: React.SFC<OrgListProps> = ({ orgs }) => {
 
   return (
     <div className="OrgList">
-      <Input placeholder="Filter by name" onChange={handleChange} />
-      <p>
+      <Input
+        className="filter"
+        placeholder="Filter by name"
+        onChange={handleChange}
+      />
+      <p className="result">
         Found {items.length} organization{items.length > 1 && 's'}
       </p>
       <div className="orgs">
-        {items.map(org => (
-          <OrgCard key={org.name} {...org} />
+        {items.map((org, i) => (
+          <OrgCard key={org.name + i} {...org} />
         ))}
       </div>
     </div>

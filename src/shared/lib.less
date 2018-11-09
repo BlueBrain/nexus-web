@@ -25,11 +25,11 @@
   }
   /* Track */
   ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: @header-background-color;
   }
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: #888;
+    background: shade(@header-background-color, 20%);
   }
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {

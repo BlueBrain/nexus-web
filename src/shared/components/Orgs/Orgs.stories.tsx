@@ -12,6 +12,10 @@ const orgs: OrgCardProps[] = [
   { name: 'Nexus', projectNumber: 1200 },
   { name: 'BBP', projectNumber: 300 },
   { name: 'HBP', projectNumber: 1 },
+  { name: 'HBP', projectNumber: 1 },
+  { name: 'HBP', projectNumber: 1 },
+  { name: 'HBP', projectNumber: 1 },
+  { name: 'HBP', projectNumber: 1 },
 ];
 
 storiesOf('Components/Orgs', module)
