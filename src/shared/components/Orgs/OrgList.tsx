@@ -6,9 +6,12 @@ import './Orgs.less';
 
 export interface OrgListProps {
   orgs: OrgCardProps[];
+  onOrgClick?: (name: string) => void;
 }
 
-const OrgList: React.SFC<OrgListProps> = ({ orgs }) => {
+const Search = Input.Search;
+
+const OrgList: React.SFC<OrgListProps> = ({ orgs, onOrgClick = () => {} }) => {
   const [items, setItems] = React.useState(orgs);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,7 +23,7 @@ const OrgList: React.SFC<OrgListProps> = ({ orgs }) => {
 
   return (
     <div className="OrgList">
-      <Input
+      <Search
         className="filter"
         placeholder="Filter by name"
         onChange={handleChange}
@@ -30,7 +33,11 @@ const OrgList: React.SFC<OrgListProps> = ({ orgs }) => {
       </p>
       <div className="orgs">
         {items.map((org, i) => (
-          <OrgCard key={org.name + i} {...org} />
+          <OrgCard
+            key={org.name + i}
+            {...org}
+            onClick={() => onOrgClick(org.name)}
+          />
         ))}
       </div>
     </div>

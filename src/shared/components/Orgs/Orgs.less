@@ -51,11 +51,42 @@
 * Organisation List
 */
 .OrgList {
+  background-color: @header-background-color;
   @height: 300px;
   .scrollBar();
+  .result {
+    margin-top: 10px;
+    padding-left: 5px;
+  }
   .orgs {
     max-height: @height;
     min-height: @height;
     overflow-y: auto;
+  }
+}
+
+/**
+* Organisation Dropdown
+*/
+.OrgDropdown {
+  background: @header-background-color;
+
+  &.ant-popover-open {
+    background: shade(@header-background-color, 20%);
+  }
+  .org-name {
+    margin: auto;
+  }
+
+  &:hover {
+    background-color: shade(@header-background-color, 20%);
+  }
+}
+.OrgDropdownPopover {
+  width: 400px;
+  .org-menu {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
   }
 }

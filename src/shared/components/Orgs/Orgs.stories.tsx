@@ -6,16 +6,17 @@ import { withKnobs, text, number } from '@storybook/addon-knobs';
 
 import OrgList from './OrgList';
 import OrgCard, { OrgCardProps } from './OrgCard';
-const logo = require('../../logo.svg');
+import OrgDropdown from './OrgDropdown';
+import Header from '../Header';
 
+const logo = require('../../logo.svg');
 const orgs: OrgCardProps[] = [
   { name: 'Nexus', projectNumber: 1200 },
   { name: 'BBP', projectNumber: 300 },
   { name: 'HBP', projectNumber: 1 },
-  { name: 'HBP', projectNumber: 1 },
-  { name: 'HBP', projectNumber: 1 },
-  { name: 'HBP', projectNumber: 1 },
-  { name: 'HBP', projectNumber: 1 },
+  { name: 'NASA', projectNumber: 912839 },
+  { name: 'Tesla', projectNumber: 3 },
+  { name: 'Rolex', projectNumber: 3424 },
 ];
 
 storiesOf('Components/Orgs', module)
@@ -44,6 +45,7 @@ storiesOf('Components/Orgs', module)
               name={org}
               projectNumber={projects}
               logo={logo}
+              onClick={action('org-click')}
               onEdit={action('edit-button-click')}
             />
           </div>
@@ -65,9 +67,39 @@ storiesOf('Components/Orgs', module).add(
     return (
       <React.Fragment>
         <div style={{ margin: '50px 40px 0px' }}>
-          <OrgList orgs={orgs} />
+          <OrgList orgs={orgs} onOrgClick={action('org-selected')} />
         </div>
       </React.Fragment>
     );
   })
 );
+
+storiesOf('Components/Orgs', module)
+  .addDecorator(withKnobs)
+  .add(
+    'OrgDropdown',
+    withInfo(`
+    The Organization Dropdown is used mainly in the header component.
+    It allows to display the selected organization as well as
+    navigating and filtering all available organizations.
+
+    ~~~js
+      <OrgDropdown />
+    ~~~
+  `)(() => {
+      return (
+        <React.Fragment>
+          <div style={{ margin: '50px 40px 0px' }}>
+            <h2>Organization Dropdown</h2>
+            <OrgDropdown orgs={orgs} />
+          </div>
+          <div style={{ margin: '50px 40px 0px' }}>
+            <h2>Organization Dopdown in header</h2>
+            <Header name="Mark Hamil" links={[]}>
+              <OrgDropdown orgs={orgs} />
+            </Header>
+          </div>
+        </React.Fragment>
+      );
+    })
+  );

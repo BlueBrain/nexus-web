@@ -7,6 +7,7 @@ export interface OrgCardProps {
   name: string;
   projectNumber: number;
   logo?: string;
+  onClick?: () => void;
   onEdit?: () => void;
 }
 
@@ -15,9 +16,10 @@ const OrgCard: React.SFC<OrgCardProps> = ({
   projectNumber,
   logo = '',
   onEdit,
+  onClick = () => {},
 }) => {
   return (
-    <Card className="OrgCard" tabIndex={1}>
+    <Card className="OrgCard" tabIndex={1} onClick={onClick}>
       <div className="content">
         <div className="logo">
           <Avatar shape="square" size={32} icon="team" src={logo} />
