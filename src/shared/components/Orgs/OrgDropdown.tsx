@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Button, Popover } from 'antd';
+import { Button, Icon, Popover } from 'antd';
 import { OrgCardProps } from './OrgCard';
 import OrgList from './OrgList';
+import { any } from 'prop-types';
 
 export interface OrgDropDownProps {
   activeName?: string;
@@ -12,6 +13,7 @@ export interface OrgDropDownProps {
 const OrgDropdown: React.SFC<OrgDropDownProps> = ({
   activeName,
   orgs = [],
+  key = '',
 }) => {
   const [selected, setSelected] = React.useState(activeName);
 
@@ -34,12 +36,13 @@ const OrgDropdown: React.SFC<OrgDropDownProps> = ({
       placement="bottom"
       trigger="click"
       content={overlay}
-      key={Math.random()}
+      key={key}
     >
       <div className="OrgDropdown">
         <p className="org-name">
-          {selected ? selected : 'select an organization'}
+          {selected ? selected : 'Select an organization'}
         </p>
+        <Icon type="down" />
       </div>
     </Popover>
   );

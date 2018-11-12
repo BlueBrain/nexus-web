@@ -69,14 +69,19 @@
 * Organisation Dropdown
 */
 .OrgDropdown {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   background: @header-background-color;
+  width: 10em;
 
   &.ant-popover-open {
     background: shade(@header-background-color, 20%);
   }
   .org-name {
-    margin: auto;
-    cursor: pointer;
+    text-align: center;
+    margin: 0;
+    cursor: default;
   }
 
   &:hover {

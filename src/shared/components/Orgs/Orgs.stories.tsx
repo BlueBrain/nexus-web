@@ -90,20 +90,14 @@ storiesOf('Components/Orgs', module)
       return (
         <React.Fragment>
           <div style={{ margin: '50px 40px 0px' }}>
-            <h2>Organization Dopdown in header</h2>
-            <Header name="Mark Hamil" links={[]}>
-              <OrgDropdown orgs={orgs} />
-            </Header>
-          </div>
-          <div style={{ margin: '50px 40px 0px' }}>
-            <h2>Organization Dopdown in header</h2>
-            <Header name="Mark Hamil" links={[]}>
-              <OrgDropdown orgs={orgs} />
-            </Header>
-          </div>
-          <div style={{ margin: '50px 40px 0px' }}>
             <h2>Organization Dropdown</h2>
             <OrgDropdown orgs={orgs} />
+          </div>
+          <div style={{ margin: '50px 40px 0px' }}>
+            <h2>Organization Dopdown in header</h2>
+            <Header name="Mark Hamil" links={[]}>
+              <OrgDropdown orgs={orgs} />
+            </Header>
           </div>
         </React.Fragment>
       );
