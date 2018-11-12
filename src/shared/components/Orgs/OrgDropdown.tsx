@@ -6,6 +6,7 @@ import OrgList from './OrgList';
 export interface OrgDropDownProps {
   activeName?: string;
   orgs?: OrgCardProps[];
+  key?: any;
 }
 
 const OrgDropdown: React.SFC<OrgDropDownProps> = ({
@@ -13,10 +14,16 @@ const OrgDropdown: React.SFC<OrgDropDownProps> = ({
   orgs = [],
 }) => {
   const [selected, setSelected] = React.useState(activeName);
+  const [visible, setVisible] = React.useState(false);
+
+  const handleOrgSelected = (name: string) => {
+    setVisible(false);
+    setSelected(name);
+  };
 
   const overlay = (
     <div className="OrgDropdownPopover">
-      <OrgList orgs={orgs} onOrgClick={name => setSelected(name)} />
+      <OrgList orgs={orgs} onOrgClick={name => handleOrgSelected(name)} />
       <div className="org-menu">
         <Button type="primary">Create New</Button>
         <Button>Explore All</Button>
@@ -24,7 +31,13 @@ const OrgDropdown: React.SFC<OrgDropDownProps> = ({
     </div>
   );
   return (
-    <Popover placement="bottomLeft" trigger="click" content={overlay}>
+    <Popover
+      openClassName="dropdown-open"
+      placement="bottom"
+      trigger="click"
+      content={overlay}
+      key={Math.random()}
+    >
       <div className="OrgDropdown">
         <p className="org-name">
           {selected ? selected : 'select an organization'}
