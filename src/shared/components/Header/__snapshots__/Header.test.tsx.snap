@@ -21,6 +21,9 @@ exports[`Header component Should render correctly 1`] = `
     </h1>
   </div>
   <div
+    className="selectors"
+  />
+  <div
     className="menu-block"
   >
     <Dropdown
