@@ -34,7 +34,10 @@ const OrgCard: React.SFC<OrgCardProps> = ({
             className="edit-button"
             type="primary"
             tabIndex={1}
-            onClick={onEdit}
+            onClick={(e: React.SyntheticEvent) => {
+              e.stopPropagation();
+              onEdit();
+            }}
           >
             Edit
           </Button>

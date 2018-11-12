@@ -14,10 +14,8 @@ const OrgDropdown: React.SFC<OrgDropDownProps> = ({
   orgs = [],
 }) => {
   const [selected, setSelected] = React.useState(activeName);
-  const [visible, setVisible] = React.useState(false);
 
   const handleOrgSelected = (name: string) => {
-    setVisible(false);
     setSelected(name);
   };
 
