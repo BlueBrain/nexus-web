@@ -52,15 +52,15 @@
 */
 .OrgList {
   // background-color: @header-background-color;
-  @height: 300px;
+  // @height: 300px;
   .scrollBar();
   .result {
     margin-top: 10px;
     padding-left: 5px;
   }
   .orgs {
-    max-height: @height;
-    min-height: @height;
+    // max-height: @height;
+    // min-height: @height;
     overflow-y: auto;
   }
 }
@@ -89,10 +89,16 @@
   }
 }
 .OrgDropdownPopover {
+  @height: 100px;
   width: 400px;
   .org-menu {
     display: flex;
     justify-content: space-between;
     margin-top: 10px;
+  }
+  .orgs {
+    max-height: @height + 165;
+    min-height: @height;
+    overflow-y: auto;
   }
 }
