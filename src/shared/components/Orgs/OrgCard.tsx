@@ -7,8 +7,8 @@ export interface OrgCardProps {
   name: string;
   projectNumber: number;
   logo?: string;
-  onClick?: () => void;
-  onEdit?: () => void;
+  onClick?(): void;
+  onEdit?(): void;
 }
 
 const OrgCard: React.SFC<OrgCardProps> = ({

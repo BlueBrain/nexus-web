@@ -6,7 +6,7 @@ import './Orgs.less';
 
 export interface OrgListProps {
   orgs: OrgCardProps[];
-  onOrgClick?: (name: string) => void;
+  onOrgClick?(name: string): void;
 }
 
 const Search = Input.Search;
