@@ -8,7 +8,7 @@ const rawBase: string = (window as any)['__BASE__'] || '/';
 // remove trailing slash
 const base: string = rawBase.replace(/\/$/, '');
 // Are we running with SSL
-const isSecure = location.protocol === 'https';
+const isSecure = location.protocol === 'https:';
 const cookieName = isSecure ? '__Host-nexusAuth' : '_Host-nexusAuth';
 
 // get auth data from cookies
