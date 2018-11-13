@@ -56,7 +56,7 @@ exports[`Header component Should render correctly 1`] = `
       <a
         className="menu-dropdown ant-dropdown-link"
       >
-        Mark Hamil
+        Mark Hamill
          
         <Icon
           type="down"

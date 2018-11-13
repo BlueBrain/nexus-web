@@ -8,7 +8,7 @@ exports[`login component should render correctly 1`] = `
     actions={
       Array [
         <a
-          href="https://keycloack.com"
+          href="https://keycloack.org"
         >
           Login 
           <Icon

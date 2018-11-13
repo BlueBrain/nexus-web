@@ -3,8 +3,10 @@ import { shallow, mount } from 'enzyme';
 
 import Login from './index';
 
-const shallowLogin = shallow(<Login loginURL="https://keycloack.com" />);
-const fullDOMLogin = mount(<Login loginURL="https://keycloack.com" />);
+const authProvider = 'https://keycloack.org';
+const loginComponent = <Login loginURL={authProvider} />;
+const shallowLogin = shallow(loginComponent);
+const fullDOMLogin = mount(loginComponent);
 
 describe('login component', () => {
   it('should render correctly', () => {
@@ -18,6 +20,6 @@ describe('login component', () => {
         .find('a')
         .getDOMNode()
         .getAttribute('href')
-    ).toEqual('https://keycloack.com');
+    ).toEqual(authProvider);
   });
 });

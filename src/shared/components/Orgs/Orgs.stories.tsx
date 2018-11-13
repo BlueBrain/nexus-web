@@ -91,7 +91,7 @@ storiesOf('Components/Orgs', module)
         <React.Fragment>
           <div style={{ margin: '50px 40px 0px' }}>
             <h2>Organization Dopdown in header</h2>
-            <Header name="Mark Hamil" links={[]}>
+            <Header name="Mark Hamill" links={[]}>
               <OrgDropdown orgs={orgs} />
             </Header>
           </div>

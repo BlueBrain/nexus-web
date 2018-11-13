@@ -7,8 +7,8 @@ const links: React.ReactNode[] = [
   <a href="/somepage">A link to some page</a>,
 ];
 
-const shallowHeader = shallow(<Header name="Mark Hamil" links={links} />);
-const fullDOMHeader = mount(<Header name="Mark Hamil" links={links} />);
+const shallowHeader = shallow(<Header name="Mark Hamill" links={links} />);
+const fullDOMHeader = mount(<Header name="Mark Hamill" links={links} />);
 
 describe('Header component', () => {
   it('Should render correctly', () => {
@@ -30,7 +30,9 @@ describe('Header component', () => {
 
   describe('Menu Block', () => {
     it('Should display the user name followed by a space', () => {
-      expect(fullDOMHeader.find('.menu-dropdown').text()).toEqual('Mark Hamil ');
+      expect(fullDOMHeader.find('.menu-dropdown').text()).toEqual(
+        'Mark Hamill '
+      );
     });
   });
 });

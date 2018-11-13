@@ -10,7 +10,7 @@ storiesOf('Components/Login', module).add(
     The Login component allows to redirect to the Auth Provider page.
 
     ~~~js
-      <Login loginURL="https://keycloak.com?redirect=https://nexus.com" />
+      <Login loginURL="https://keycloak.org?redirect=https://bbp.epfl.ch/nexus/" />
     ~~~
   `)(() => (
     <div style={{ margin: '50px 40px 0px' }}>

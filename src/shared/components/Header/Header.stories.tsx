@@ -12,7 +12,7 @@ storiesOf('Components/Header', module).add(
     It is used to display the user name and navigation links
 
     ~~~js
-    <Header name="Mark Hamil" links={[
+    <Header name="Mark Hamill" links={[
       <a href="#">Home</a>,
       <a href="#">Settings</a>,
     ]} />
@@ -20,7 +20,7 @@ storiesOf('Components/Header', module).add(
   `)(() => (
     <div style={{ margin: '50px 40px 0px' }}>
       <Header
-        name="Mark Hamil"
+        name="Mark Hamill"
         links={[<a href="#">Home</a>, <a href="#">Settings</a>]}
       />
     </div>
