@@ -9,7 +9,11 @@ const MainLayout: React.StatelessComponent = ({ children }) => (
   <React.Fragment>
     <Helmet>
       <meta charSet="utf-8" />
-      <link rel="shortcut icon" type="image/x-icon" href="/public/favicon.ico" />
+      <link
+        rel="shortcut icon"
+        type="image/x-icon"
+        href="/public/favicon.ico"
+      />
       <title>{TITLE}</title>
       <meta
         id="app-description"
@@ -23,15 +27,15 @@ const MainLayout: React.StatelessComponent = ({ children }) => (
       <meta property="og:image:height" content="315" />
       <meta property="og:site_name" content="Nexus Explorer" />
       <meta property="og:title" content={TITLE} />
-      <meta property="og:description" content="A quality description of the Nexus Application" />
+      <meta
+        property="og:description"
+        content="A quality description of the Nexus Application"
+      />
       <meta name="theme-color" content="#00c9fd" />
     </Helmet>
     <Header
-      name="Mark Hamil"
-      links={[
-        <Link to="/">Home</Link>,
-        <Link to="/sample">Sample</Link>,
-      ]}
+      name="Mark Hamill"
+      links={[<Link to="/">Home</Link>, <Link to="/sample">Sample</Link>]}
     />
     {children}
   </React.Fragment>

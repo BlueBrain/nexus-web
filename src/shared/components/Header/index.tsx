@@ -1,4 +1,4 @@
-import React = require('react');
+import * as React from 'react';
 import { Menu, Dropdown, Icon } from 'antd';
 import './Header.less';
 
