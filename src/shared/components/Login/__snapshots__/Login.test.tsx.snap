@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`login component should render correctly 1`] = `
+<div
+  className="Login"
+>
+  <Card
+    actions={
+      Array [
+        <a
+          href="https://keycloack.com"
+        >
+          Login 
+          <Icon
+            type="login"
+          />
+        </a>,
+      ]
+    }
+    cover={
+      <img
+        alt="Nexus logo"
+        className="logo"
+        src="/mock/path"
+      />
+    }
+  >
+    <p
+      className="message"
+    >
+      please login to continue.
+    </p>
+  </Card>
+</div>
+`;

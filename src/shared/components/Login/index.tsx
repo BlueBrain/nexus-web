@@ -1,12 +1,26 @@
 import * as React from 'react';
+import { Card, Icon } from 'antd';
 
 import './Login.less';
 
-export interface LoginProps {}
+const logo = require('../../logo.svg');
 
-const Login: React.SFC<LoginProps> = () => (
+export interface LoginProps {
+  loginURL: string;
+}
+
+const Login: React.SFC<LoginProps> = ({ loginURL }) => (
   <div className="Login">
-    <a>Login</a>
+    <Card
+      cover={<img className="logo" alt="Nexus logo" src={logo} />}
+      actions={[
+        <a key="login" href={loginURL}>
+          Login <Icon type="login" />
+        </a>,
+      ]}
+    >
+      <p className="message">please login to continue.</p>
+    </Card>
   </div>
 );
 
