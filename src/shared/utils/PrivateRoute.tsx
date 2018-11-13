@@ -3,7 +3,16 @@ import { Route, RouteProps, Redirect } from 'react-router-dom';
 
 import AuthContext from '../context/AuthContext';
 
-const PrivateRoute: React.SFC<RouteProps> = ({ path, component: C, ...rest }) => (
+export interface PrivateRouteProps extends RouteProps {
+  wrapper?: React.ComponentType;
+}
+
+const PrivateRoute: React.SFC<PrivateRouteProps> = ({
+  path,
+  component: C,
+  wrapper: W,
+  ...rest
+}) => (
   // @ts-ignore
   <AuthContext.Consumer>
     {({ authenticated }) => (

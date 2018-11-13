@@ -1,7 +1,11 @@
-import React = require('react');
+import * as React from 'react';
+
+import MainLayout from '../layouts/MainLayout';
 
 const Home: React.StatelessComponent = () => (
-  <p>this is home</p>
+  <MainLayout>
+    <p style={{ marginTop: 50 }}>Welcome. Coming soon...</p>
+  </MainLayout>
 );
 
 export default Home;

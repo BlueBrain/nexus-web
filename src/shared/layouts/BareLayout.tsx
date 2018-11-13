@@ -1,11 +1,9 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
-import { Link } from 'react-router-dom';
-import Header from '../components/Header';
 
 const TITLE = 'Nexus Explorer - Search thousands of datasets using Nexus';
 
-const MainLayout: React.StatelessComponent = ({ children }) => (
+const BareLayout: React.StatelessComponent = ({ children }) => (
   <React.Fragment>
     <Helmet>
       <meta charSet="utf-8" />
@@ -33,12 +31,8 @@ const MainLayout: React.StatelessComponent = ({ children }) => (
       />
       <meta name="theme-color" content="#00c9fd" />
     </Helmet>
-    <Header
-      name="Mark Hamill"
-      links={[<Link to="/">Home</Link>, <Link to="/sample">Sample</Link>]}
-    />
     {children}
   </React.Fragment>
 );
 
-export default MainLayout;
+export default BareLayout;
