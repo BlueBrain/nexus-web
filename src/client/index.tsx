@@ -14,14 +14,16 @@ const cookieName = isSecure ? '__Host-nexusAuth' : '_Host-nexusAuth';
 // get auth data from cookies
 // TODO: this is a POC, this code needs to be improved and tested
 function getAuthData(): AuthContextState {
-  const all: string[] = decodeURIComponent(document.cookie).split(';');
-  const rawAuthCookie: string = all.filter(cookie => cookie.includes(`${cookieName}=`))[0];
+  const all: string[] = decodeURIComponent(document.cookie).split('; ');
+  const rawAuthCookie: string = all.filter(cookie =>
+    cookie.includes(`${cookieName}=`)
+  )[0];
   if (!rawAuthCookie) {
     return {
       authenticated: false,
     };
   }
-  let authCookie: {accessToken: string};
+  let authCookie: { accessToken: string };
   try {
     authCookie = JSON.parse(rawAuthCookie.replace(`${cookieName}=`, ''));
   } catch (e) {
@@ -35,27 +37,29 @@ function getAuthData(): AuthContextState {
   };
 }
 
-const renderApp = () => ReactDOM.hydrate(
-  <AuthContext.Provider value={getAuthData()}>
-    <BrowserRouter basename={base}>
-      <App />
-    </BrowserRouter>
-  </AuthContext.Provider>,
-  document.getElementById('app'),
-);
+const renderApp = () =>
+  ReactDOM.hydrate(
+    <AuthContext.Provider value={getAuthData()}>
+      <BrowserRouter basename={base}>
+        <App />
+      </BrowserRouter>
+    </AuthContext.Provider>,
+    document.getElementById('app')
+  );
 
 // DEVELOPMENT ONLY
 // if Hot module Replacement is enables
 // render app with new bundle.
 if (module.hot) {
-  console.log('It\'s hot!');
+  console.log("It's hot!");
   module.hot.accept('../shared/App', () => {
-    const NextApp: React.StatelessComponent<{}> = require('../shared/App').default;
+    const NextApp: React.StatelessComponent<{}> = require('../shared/App')
+      .default;
     ReactDOM.hydrate(
       <BrowserRouter basename={base}>
         <NextApp />
       </BrowserRouter>,
-      document.getElementById('app'),
+      document.getElementById('app')
     );
   });
 }
