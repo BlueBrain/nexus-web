@@ -1,24 +1,12 @@
-@import "../../lib.less";
+@import '../../lib.less';
 
 .Header {
   display: flex;
   justify-content: space-between;
   height: 60px;
   background-color: @header-background-color;
+  box-shadow: 0px 26px 40px -21px shade(@header-background-color, 20%);
 
-  &::after {
-    border-radius: 100%;
-    box-shadow: 0 0 40px darken(@header-background-color, 20%);
-    content: "";
-    height: 20px;
-    left: 5%;
-    position: absolute;
-    right: 5%;
-    top: 40px;
-    width: 90%;
-    z-index: -1;
-  }
-  
   .logo-block {
     display: flex;
     align-items: center;
@@ -27,10 +15,11 @@
     .logo {
       background-color: #fff;
       border-radius: 50%;
-      margin-right: .5em;
-      padding: .5em;
-      box-shadow: 0 2px 5px 0 rgba(49,49,93,.1), 0 1px 2px 0 rgba(0,0,0,.08);
-      transition: box-shadow .08s ease-in,color .08s ease-in;
+      margin-right: 0.5em;
+      padding: 0.5em;
+      box-shadow: 0 2px 5px 0 rgba(49, 49, 93, 0.1),
+        0 1px 2px 0 rgba(0, 0, 0, 0.08);
+      transition: box-shadow 0.08s ease-in, color 0.08s ease-in;
 
       img {
         height: 2em;
@@ -41,6 +30,22 @@
     h1 {
       color: @primary-color;
       margin: 0%;
+    }
+  }
+
+  .selectors {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-grow: 1;
+    margin-left: 10px;
+
+    .OrgDropdown {
+      border-left: shade(@header-background-color, 20%) 1px solid;
+      border-right: shade(@header-background-color, 20%) 1px solid;
+      padding: 5px;
+      height: 100%;
+      max-width: 30%;
     }
   }
 

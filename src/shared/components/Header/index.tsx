@@ -7,12 +7,19 @@ const logo = require('../../logo.svg');
 export interface HeaderProps {
   name: string;
   links: React.ReactNode[];
+  children?: React.ReactChild;
 }
 
-const Header: React.StatelessComponent<HeaderProps> = ({ name, links }) => {
+const Header: React.StatelessComponent<HeaderProps> = ({
+  name,
+  links,
+  children,
+}) => {
   const menu = (
     <Menu>
-      {links.map((link, i) => <Menu.Item key={i}>{link}</Menu.Item>)}
+      {links.map((link, i) => (
+        <Menu.Item key={i}>{link}</Menu.Item>
+      ))}
     </Menu>
   );
 
@@ -24,6 +31,7 @@ const Header: React.StatelessComponent<HeaderProps> = ({ name, links }) => {
         </a>
         <h1>Nexus</h1>
       </div>
+      <div className="selectors">{children}</div>
       <div className="menu-block">
         <Dropdown overlay={menu}>
           <a className="menu-dropdown ant-dropdown-link">

@@ -1,0 +1,104 @@
+@import '../../lib.less';
+
+/**
+* Organisation Cards
+*/
+.OrgCard {
+  background-color: #fff;
+  margin: 5px;
+  box-shadow: 0 2px 5px 0 rgba(49, 49, 93, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.08);
+
+  .content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .logo {
+      margin-right: 10px;
+    }
+    .org-name {
+      margin: 0;
+      flex-grow: 1;
+      font-weight: bold;
+      font-size: 1.3em;
+    }
+    .project-number {
+      margin: 0;
+      .number {
+        font-weight: bold;
+      }
+    }
+    .edit-button {
+      display: none;
+    }
+  }
+
+  &:hover,
+  &:focus,
+  &:focus-within {
+    background-color: fade(@primary-color, 5%);
+
+    .content {
+      .edit-button {
+        display: block;
+        margin-left: 10px;
+      }
+    }
+  }
+}
+
+/**
+* Organisation List
+*/
+.OrgList {
+  // background-color: @header-background-color;
+  // @height: 300px;
+  .scrollBar();
+  .result {
+    margin-top: 10px;
+    padding-left: 5px;
+  }
+  .orgs {
+    // max-height: @height;
+    // min-height: @height;
+    overflow-y: auto;
+  }
+}
+
+/**
+* Organisation Dropdown
+*/
+.OrgDropdown {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: @header-background-color;
+  width: 10em;
+
+  &.ant-popover-open {
+    background: shade(@header-background-color, 20%);
+  }
+  .org-name {
+    text-align: center;
+    margin: 0;
+    cursor: default;
+  }
+
+  &:hover {
+    background-color: shade(@header-background-color, 20%);
+  }
+}
+.OrgDropdownPopover {
+  @height: 100px;
+  width: 400px;
+  .org-menu {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  .orgs {
+    max-height: @height + 165;
+    min-height: @height;
+    overflow-y: auto;
+  }
+}
