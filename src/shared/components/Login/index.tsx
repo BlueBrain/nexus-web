@@ -34,10 +34,16 @@ const Login: React.SFC<LoginProps> = ({ realms }) => {
         cover={<img className="logo" alt="Nexus logo" src={logo} />}
         actions={[
           <a className="link" key="login" href={realm.authorizationEndpoint}>
-            Log in with{' '}
-            <Dropdown overlay={menu}>
-              <span className="realm">{realm.name}</span>
-            </Dropdown>{' '}
+            {realms.length === 1 ? (
+              'Log in '
+            ) : (
+              <React.Fragment>
+                Log in with{' '}
+                <Dropdown overlay={menu}>
+                  <span className="realm">{realm.name}</span>
+                </Dropdown>{' '}
+              </React.Fragment>
+            )}
             <Icon type="login" />
           </a>,
         ]}

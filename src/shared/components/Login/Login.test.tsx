@@ -1,10 +1,27 @@
 import React = require('react');
 import { shallow, mount } from 'enzyme';
 
-import Login from './index';
+import Login, { Realm } from './index';
 
 const authProvider = 'https://keycloack.org';
-const loginComponent = <Login loginURL={authProvider} />;
+const realms: Realm[] = [
+  {
+    name: 'BBP',
+    authorizationEndpoint:
+      'https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth',
+  },
+  {
+    name: 'HBP',
+    authorizationEndpoint:
+      'https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth',
+  },
+  {
+    name: 'Google',
+    authorizationEndpoint:
+      'https://accounts.google.com/.well-known/openid-configuration',
+  },
+];
+const loginComponent = <Login realms={realms} />;
 const shallowLogin = shallow(loginComponent);
 const fullDOMLogin = mount(loginComponent);
 
@@ -13,13 +30,13 @@ describe('login component', () => {
     expect(shallowLogin).toMatchSnapshot();
   });
 
-  it('should have an anchor tag with correct href attribute', () => {
+  it('should have an anchor tag and href attribute should be first Realm', () => {
     expect(fullDOMLogin.find('a')).toBeTruthy();
     expect(
       fullDOMLogin
         .find('a')
         .getDOMNode()
         .getAttribute('href')
-    ).toEqual(authProvider);
+    ).toEqual(realms[0].authorizationEndpoint);
   });
 });
