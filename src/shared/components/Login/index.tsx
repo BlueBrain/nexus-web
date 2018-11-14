@@ -1,27 +1,51 @@
 import * as React from 'react';
-import { Card, Icon } from 'antd';
+import { Card, Dropdown, Icon, Menu } from 'antd';
 
 import './Login.less';
 
 const logo = require('../../logo.svg');
 
+export type Realm = {
+  name: string;
+  authorizationEndpoint: string;
+};
+
 export interface LoginProps {
-  loginURL: string;
+  realms: Realm[];
+  busy?: boolean;
 }
 
-const Login: React.SFC<LoginProps> = ({ loginURL }) => (
-  <div className="Login">
-    <Card
-      cover={<img className="logo" alt="Nexus logo" src={logo} />}
-      actions={[
-        <a key="login" href={loginURL}>
-          Login <Icon type="login" />
-        </a>,
-      ]}
+const Login: React.SFC<LoginProps> = ({ realms }) => {
+  const [realm, setRealm] = React.useState(realms[0]);
+
+  const menu = (
+    <Menu
+      onClick={({ key }) => setRealm(realms.filter(r => r.name === key)[0])}
     >
-      <p className="message">please login to continue.</p>
-    </Card>
-  </div>
-);
+      {realms.map(realm => (
+        <Menu.Item key={realm.name}>{realm.name}</Menu.Item>
+      ))}
+    </Menu>
+  );
+
+  return (
+    <div className="Login">
+      <Card
+        cover={<img className="logo" alt="Nexus logo" src={logo} />}
+        actions={[
+          <a className="link" key="login" href={realm.authorizationEndpoint}>
+            Log in with{' '}
+            <Dropdown overlay={menu}>
+              <span className="realm">{realm.name}</span>
+            </Dropdown>{' '}
+            <Icon type="login" />
+          </a>,
+        ]}
+      >
+        <p className="message">Please log in to continue.</p>
+      </Card>
+    </div>
+  );
+};
 
 export default Login;

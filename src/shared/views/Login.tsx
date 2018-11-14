@@ -1,8 +1,8 @@
 import * as React from 'react';
-import LoginBox from '../components/Login';
+import LoginBox, { Realm } from '../components/Login';
 
-const Login: React.StatelessComponent = () => (
-  <LoginBox loginURL="https://bbp-nexus.epfl.ch/staging/v1/oauth2/authorize?redirect=http://localhost:8000/authSuccess" />
-);
+const realms: Realm[] = [{ name: 'BBP', authorizationEndpoint: '' }];
+
+const Login: React.StatelessComponent = () => <LoginBox realms={realms} />;
 
 export default Login;
