@@ -12,21 +12,20 @@ import './App.less';
 export default class App extends React.Component {
   render() {
     return (
-      <Switch>
-        {routes.map(({ path, ...rest }) => (
-          <PrivateRoute key={path} path={path} wrapper={MainLayout} {...rest} />
-        ))}
-        <Route
-          path="/login"
-          exact={false}
-          render={matchProps => (
-            <BareLayout>
-              <Login />
-            </BareLayout>
-          )}
-        />
-        <Route component={NotFound} />
-      </Switch>
+      <MainLayout>
+        <Switch>
+          {routes.map(({ path, ...rest }) => (
+            <PrivateRoute
+              key={path}
+              path={path}
+              wrapper={MainLayout}
+              {...rest}
+            />
+          ))}
+          <Route path="/login" exact={false} component={Login} />
+          <Route component={NotFound} />
+        </Switch>
+      </MainLayout>
     );
   }
 }

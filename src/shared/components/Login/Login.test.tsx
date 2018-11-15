@@ -1,5 +1,5 @@
 import React = require('react');
-import { shallow, mount } from 'enzyme';
+import { mount } from 'enzyme';
 
 import Login, { Realm } from './index';
 
@@ -21,22 +21,57 @@ const realms: Realm[] = [
       'https://accounts.google.com/.well-known/openid-configuration',
   },
 ];
-const loginComponent = <Login realms={realms} />;
-const shallowLogin = shallow(loginComponent);
-const fullDOMLogin = mount(loginComponent);
+const loginComponent = <Login realms={[realms[1]]} />;
+const wrapper = mount(loginComponent);
 
 describe('login component', () => {
   it('should render correctly', () => {
-    expect(shallowLogin).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
-  it('should have an anchor tag and href attribute should be first Realm', () => {
-    expect(fullDOMLogin.find('a')).toBeTruthy();
-    expect(
-      fullDOMLogin
-        .find('a')
-        .getDOMNode()
-        .getAttribute('href')
-    ).toEqual(realms[0].authorizationEndpoint);
+  describe('with only 1 realm', () => {
+    it('anchor tag text should just be Log in', () => {
+      expect(wrapper.find('a.link')).toHaveLength(1);
+    });
+    it('href attribute should be second Realm', () => {
+      expect(
+        wrapper
+          .find('a.link')
+          .getDOMNode()
+          .getAttribute('href')
+      ).toEqual(realms[1].authorizationEndpoint);
+    });
+
+    it('anchor tag text should only display Log in', () => {
+      expect(wrapper.find('a.link').text()).toEqual('Log in ');
+    });
+  });
+
+  describe('with more than 1 realm', () => {
+    beforeAll(() => {
+      // change props and pass all realms
+      wrapper.setProps({ realms });
+    });
+
+    it('should render correctly', () => {
+      expect(wrapper).toMatchSnapshot();
+    });
+
+    it('should have an anchor tag', () => {
+      expect(wrapper.find('a.link')).toHaveLength(1);
+    });
+
+    it('href attribute should be second Realm still', () => {
+      expect(
+        wrapper
+          .find('a.link')
+          .getDOMNode()
+          .getAttribute('href')
+      ).toEqual(realms[1].authorizationEndpoint);
+    });
+
+    it("anchor tag text should display Realm's name", () => {
+      expect(wrapper.find('a').text()).toEqual('Log in with HBP ');
+    });
   });
 });

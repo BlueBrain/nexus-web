@@ -15,7 +15,7 @@ export interface LoginProps {
   busy?: boolean;
 }
 
-const Login: React.SFC<LoginProps> = ({ realms }) => {
+const Login: React.ComponentType<LoginProps> = ({ realms }) => {
   const [realm, setRealm] = React.useState(realms[0]);
 
   const menu = (
