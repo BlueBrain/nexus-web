@@ -12,10 +12,16 @@ export type Realm = {
 
 export interface LoginProps {
   realms: Realm[];
+  clientId: string;
+  hostName: string;
   busy?: boolean;
 }
 
-const Login: React.ComponentType<LoginProps> = ({ realms }) => {
+const Login: React.ComponentType<LoginProps> = ({
+  realms,
+  clientId,
+  hostName,
+}) => {
   const [realm, setRealm] = React.useState(realms[0]);
 
   const menu = (
@@ -33,7 +39,13 @@ const Login: React.ComponentType<LoginProps> = ({ realms }) => {
       <Card
         cover={<img className="logo" alt="Nexus logo" src={logo} />}
         actions={[
-          <a className="link" key="login" href={realm.authorizationEndpoint}>
+          <a
+            className="link"
+            key="login"
+            href={`${
+              realm.authorizationEndpoint
+            }?client_id=${clientId}&redirect_uri=${hostName}/accessSuccess`}
+          >
             {realms.length === 1 ? (
               'Log in '
             ) : (

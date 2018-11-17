@@ -1,6 +1,6 @@
-import * as React from "react";
+import * as React from 'react';
 
-declare module "react" {
+declare module 'react' {
   function useState<T>(initialState: T | (() => T)): [T, (newState: T) => void];
   function useEffect(
     create: () => void | (() => void),
@@ -26,12 +26,12 @@ declare module "react" {
   const useLayoutEffect: typeof useEffect;
 }
 
-declare module "*.svg" {
+declare module '*.svg' {
   const content: any;
   export default content;
 }
 
-declare module "*.png" {
+declare module '*.png' {
   const content: any;
   export default content;
 }

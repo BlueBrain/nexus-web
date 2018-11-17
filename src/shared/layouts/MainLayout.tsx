@@ -1,11 +1,21 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
+import { AuthState } from '../store/reducers/auth';
 
-const TITLE = 'Nexus Explorer - Search thousands of datasets using Nexus';
+const TITLE =
+  'Nexus - Transform your data into a fully searchable linked-data graph';
 
-const MainLayout: React.StatelessComponent = ({ children }) => (
+export interface MainLayoutProps {
+  authenticated: boolean;
+}
+
+const MainLayout: React.SFC<MainLayoutProps> = ({
+  authenticated,
+  children,
+}) => (
   <React.Fragment>
     <Helmet>
       <meta charSet="utf-8" />
@@ -34,11 +44,15 @@ const MainLayout: React.StatelessComponent = ({ children }) => (
       <meta name="theme-color" content="#00c9fd" />
     </Helmet>
     <Header
-      name="Mark Hamill"
+      name={authenticated ? 'Mark Hamill' : ''}
       links={[<Link to="/">Home</Link>, <Link to="/sample">Sample</Link>]}
     />
     {children}
   </React.Fragment>
 );
 
-export default MainLayout;
+const mapStateToProps = ({ auth }: { auth: AuthState }) => ({
+  authenticated: auth.authenticated,
+});
+
+export default connect(mapStateToProps)(MainLayout);

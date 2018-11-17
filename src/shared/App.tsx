@@ -15,12 +15,7 @@ export default class App extends React.Component {
       <MainLayout>
         <Switch>
           {routes.map(({ path, ...rest }) => (
-            <PrivateRoute
-              key={path}
-              path={path}
-              wrapper={MainLayout}
-              {...rest}
-            />
+            <PrivateRoute key={path} path={path} {...rest} />
           ))}
           <Route path="/login" exact={false} component={Login} />
           <Route component={NotFound} />
