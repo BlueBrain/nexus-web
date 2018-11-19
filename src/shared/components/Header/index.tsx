@@ -8,12 +8,14 @@ export interface HeaderProps {
   name?: string;
   links?: React.ReactNode[];
   children?: React.ReactChild;
+  onLoginClick?(): void;
 }
 
 const Header: React.StatelessComponent<HeaderProps> = ({
   name = '',
   links = [],
   children,
+  onLoginClick,
 }) => {
   const menu = (
     <Menu>

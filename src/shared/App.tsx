@@ -14,10 +14,14 @@ export default class App extends React.Component {
     return (
       <MainLayout>
         <Switch>
+<<<<<<< HEAD
           {routes.map(({ path, ...rest }) => (
             <PrivateRoute key={path} path={path} {...rest} />
+=======
+          {routes.map(({ path, component: C, ...rest }) => (
+            <Route key={path} path={path} component={C} {...rest} />
+>>>>>>> login action in header
           ))}
-          <Route path="/login" exact={false} component={Login} />
           <Route component={NotFound} />
         </Switch>
       </MainLayout>

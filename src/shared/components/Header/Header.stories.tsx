@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
 import { withInfo } from '@storybook/addon-info';
 
 import Header from './index';
@@ -12,17 +13,30 @@ storiesOf('Components/Header', module).add(
     It is used to display the user name and navigation links
 
     ~~~js
-    <Header name="Mark Hamill" links={[
-      <a href="#">Home</a>,
-      <a href="#">Settings</a>,
-    ]} />
-    ~~~
-  `)(() => (
-    <div style={{ margin: '50px 40px 0px' }}>
       <Header
         name="Mark Hamill"
-        links={[<a href="#">Home</a>, <a href="#">Settings</a>]}
+        links={[<a href="#">Log out</a>, <a href="#">Settings</a>]}
       />
-    </div>
+      <Header onLoginClick={action('login-link-click')} />
+      <Header displayLogin={false} />
+    ~~~
+  `)(() => (
+    <React.Fragment>
+      <div style={{ margin: '50px 40px 0px' }}>
+        <h2>Name + menu</h2>
+        <Header
+          name="Mark Hamill"
+          links={[<a href="#">Log out</a>, <a href="#">Settings</a>]}
+        />
+      </div>
+      <div style={{ margin: '50px 40px 0px' }}>
+        <h2>No name + login link</h2>
+        <Header onLoginClick={action('login-link-click')} />
+      </div>
+      <div style={{ margin: '50px 40px 0px' }}>
+        <h2>No name + no login link</h2>
+        <Header displayLogin={false} />
+      </div>
+    </React.Fragment>
   ))
 );
