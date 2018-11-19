@@ -31,11 +31,15 @@ storiesOf('Components/Login', module).add(
     <React.Fragment>
       <div style={{ margin: '50px 40px 0px' }}>
         <h2>1 Realm to choose from:</h2>
-        <Login realms={[realms[0]]} />
+        <Login
+          clientId="nexus-web"
+          hostName="http://nexus"
+          realms={[realms[0]]}
+        />
       </div>
       <div style={{ margin: '50px 40px 0px' }}>
         <h2>3 Realms to choose from:</h2>
-        <Login realms={realms} />
+        <Login clientId="nexus-web" hostName="http://nexus" realms={realms} />
       </div>
     </React.Fragment>
   ))

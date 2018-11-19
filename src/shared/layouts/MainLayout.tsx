@@ -2,6 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router-dom';
+import { push } from 'react-router-redux';
 import Header from '../components/Header';
 import { AuthState } from '../store/reducers/auth';
 
@@ -10,10 +11,12 @@ const TITLE =
 
 export interface MainLayoutProps {
   authenticated: boolean;
+  goTo(url: string): void;
 }
 
 const MainLayout: React.SFC<MainLayoutProps> = ({
   authenticated,
+  goTo,
   children,
 }) => (
   <React.Fragment>
@@ -44,8 +47,9 @@ const MainLayout: React.SFC<MainLayoutProps> = ({
       <meta name="theme-color" content="#00c9fd" />
     </Helmet>
     <Header
-      name={authenticated ? 'Mark Hamill' : ''}
+      name={authenticated ? 'Mark Hamill' : undefined}
       links={[<Link to="/">Home</Link>, <Link to="/sample">Sample</Link>]}
+      onLoginClick={() => goTo('/login')}
     />
     {children}
   </React.Fragment>
@@ -55,4 +59,11 @@ const mapStateToProps = ({ auth }: { auth: AuthState }) => ({
   authenticated: auth.authenticated,
 });
 
-export default connect(mapStateToProps)(MainLayout);
+const mapDispatchToProps = (dispatch: any) => ({
+  goTo: (url: string) => dispatch(push(url)),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MainLayout);

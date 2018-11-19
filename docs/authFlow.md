@@ -21,4 +21,10 @@ we are using a cookie and not local-storage so server gets the token
 
 ## Token but realms is gone (edge case)
 
+- delete token
+- go to #2
+
 ## Token but no realm (edge case)
+
+- delete token
+- go to #1

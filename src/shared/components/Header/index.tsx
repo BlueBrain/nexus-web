@@ -7,12 +7,14 @@ const logo = require('../../logo.svg');
 export interface HeaderProps {
   name?: string;
   links?: React.ReactNode[];
+  displayLogin?: boolean;
   children?: React.ReactChild;
   onLoginClick?(): void;
 }
 
 const Header: React.StatelessComponent<HeaderProps> = ({
   name = '',
+  displayLogin = true,
   links = [],
   children,
   onLoginClick,
@@ -35,13 +37,17 @@ const Header: React.StatelessComponent<HeaderProps> = ({
       </div>
       <div className="selectors">{children}</div>
       <div className="menu-block">
-        {name !== '' && (
+        {name ? (
           <Dropdown overlay={menu}>
             <a className="menu-dropdown ant-dropdown-link">
               {name} <Icon type="down" />
             </a>
           </Dropdown>
-        )}
+        ) : displayLogin ? (
+          <a className="menu-dropdown ant-dropdown-link" onClick={onLoginClick}>
+            login <Icon type="login" />
+          </a>
+        ) : null}
       </div>
     </header>
   );

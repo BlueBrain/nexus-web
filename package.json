@@ -16,8 +16,10 @@
   },
   "dependencies": {
     "antd": "^3.10.2",
+    "connected-react-router": "^5.0.1",
     "cookie-parser": "^1.4.3",
     "express": "^4.16.4",
+    "history": "^4.7.2",
     "morgan": "^1.9.1",
     "react": "^16.7.0-alpha.2",
     "react-dom": "^16.7.0-alpha.2",
@@ -25,6 +27,7 @@
     "react-redux": "^5.1.1",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
+    "react-router-redux": "^4.0.8",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0"
   },
@@ -48,6 +51,7 @@
     "@types/react-redux": "^6.0.9",
     "@types/react-router": "^4.0.32",
     "@types/react-router-dom": "^4.3.1",
+    "@types/react-router-redux": "^5.0.16",
     "@types/storybook__addon-actions": "^3.4.1",
     "@types/storybook__addon-info": "^3.4.2",
     "@types/storybook__addon-knobs": "^3.4.1",

@@ -6,6 +6,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
 import Helmet from 'react-helmet';
 import html from './html';
 import App from '../shared/App';
@@ -72,17 +73,24 @@ app.get('*', (req: express.Request, res: express.Response) => {
     console.log('No token in cookie');
   }
 
+  // Router
+  const memoryHistory = createMemoryHistory({
+    initialEntries: [req.url],
+  });
+
   // Redux store
-  const store = createStore({
+  const store = createStore(memoryHistory, {
     auth: {
       accessToken,
       authenticated: accessToken !== undefined,
-      clientId: 'bbp-nexus-staging',
+      clientId: process.env.CLIENT_ID || 'bbp-nexus-staging',
+      // This is temporary until Realm API is available
       authorizationEndpoint:
         'https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth',
+      // This is temporary until Realm API is available
       endSessionEndpoint:
         'https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/logout',
-      redirectHostName: 'http://localhost:8000',
+      redirectHostName: `${req.protocol}:://${req.headers.host}`,
     },
   });
 

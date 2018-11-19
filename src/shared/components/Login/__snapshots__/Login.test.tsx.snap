@@ -2,6 +2,8 @@
 
 exports[`login component should render correctly 1`] = `
 <Login
+  clientId="nexus-web"
+  hostName="http://nexus"
   realms={
     Array [
       Object {
@@ -19,7 +21,7 @@ exports[`login component should render correctly 1`] = `
         Array [
           <a
             className="link"
-            href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth"
+            href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth?client_id=nexus-web&redirect_uri=http://nexus/accessSuccess"
           >
             Log in 
             <Icon
@@ -72,7 +74,7 @@ exports[`login component should render correctly 1`] = `
             <span>
               <a
                 className="link"
-                href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth"
+                href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth?client_id=nexus-web&redirect_uri=http://nexus/accessSuccess"
                 key="login"
               >
                 Log in 
@@ -116,6 +118,8 @@ exports[`login component should render correctly 1`] = `
 
 exports[`login component with more than 1 realm should render correctly 1`] = `
 <Login
+  clientId="nexus-web"
+  hostName="http://nexus"
   realms={
     Array [
       Object {
@@ -141,7 +145,7 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
         Array [
           <a
             className="link"
-            href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth"
+            href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth?client_id=nexus-web&redirect_uri=http://nexus/accessSuccess"
           >
             <React.Fragment>
               Log in with
@@ -229,7 +233,7 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
             <span>
               <a
                 className="link"
-                href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth"
+                href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth?client_id=nexus-web&redirect_uri=http://nexus/accessSuccess"
                 key="login"
               >
                 Log in with

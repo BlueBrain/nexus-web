@@ -1,27 +1,40 @@
-import { createStore, applyMiddleware, compose } from 'redux';
+import {
+  createStore,
+  combineReducers,
+  applyMiddleware,
+  compose,
+  Store,
+} from 'redux';
 import thunk from 'redux-thunk';
+import { connectRouter, routerMiddleware } from 'connected-react-router';
 import reducers from './reducers';
+import { History } from 'history';
 
-const reduxStore = (preloadedState: object = {}) =>
-  createStore(
-    reducers,
+export default function configureStore(
+  history: History,
+  preloadedState: object = {}
+): Store {
+  const store = createStore(
+    combineReducers({ router: connectRouter(history), ...reducers }),
     preloadedState,
     compose(
       // typeof window === 'object' &&
       //   (window as any).__REDUX_DEVTOOLS_EXTENSION__ &&
       //   (window as any).__REDUX_DEVTOOLS_EXTENSION__(),
-      applyMiddleware(thunk)
+      applyMiddleware(thunk, routerMiddleware(history))
     )
   );
 
-// DEVELOPMENT ONLY
-// if Hot module Replacement is enables
-// replace store's reducers with new ones.
-if (module.hot) {
-  module.hot.accept('./reducers', () => {
-    const newReducers = require('./reducers');
-    reduxStore().replaceReducer(newReducers);
-  });
+  // DEVELOPMENT ONLY
+  // if Hot module Replacement is enables
+  // replace store's reducers with new ones.
+  if (module.hot) {
+    module.hot.accept('./reducers', () => {
+      const newReducers = require('./reducers');
+      store.replaceReducer(newReducers);
+    });
+  }
+  return store;
 }
 
-export default reduxStore;
+// export default reduxStore;

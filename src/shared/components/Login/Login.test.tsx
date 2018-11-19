@@ -21,7 +21,9 @@ const realms: Realm[] = [
       'https://accounts.google.com/.well-known/openid-configuration',
   },
 ];
-const loginComponent = <Login realms={[realms[1]]} />;
+const loginComponent = (
+  <Login clientId="nexus-web" hostName="http://nexus" realms={[realms[1]]} />
+);
 const wrapper = mount(loginComponent);
 
 describe('login component', () => {
@@ -39,7 +41,11 @@ describe('login component', () => {
           .find('a.link')
           .getDOMNode()
           .getAttribute('href')
-      ).toEqual(realms[1].authorizationEndpoint);
+      ).toEqual(
+        `${
+          realms[1].authorizationEndpoint
+        }?client_id=nexus-web&redirect_uri=http://nexus/accessSuccess`
+      );
     });
 
     it('anchor tag text should only display Log in', () => {
@@ -67,7 +73,11 @@ describe('login component', () => {
           .find('a.link')
           .getDOMNode()
           .getAttribute('href')
-      ).toEqual(realms[1].authorizationEndpoint);
+      ).toEqual(
+        `${
+          realms[1].authorizationEndpoint
+        }?client_id=nexus-web&redirect_uri=http://nexus/accessSuccess`
+      );
     });
 
     it("anchor tag text should display Realm's name", () => {
