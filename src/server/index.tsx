@@ -11,7 +11,6 @@ import Helmet from 'react-helmet';
 import html from './html';
 import App from '../shared/App';
 import createStore from '../shared/store';
-import AuthContext from '../shared/context/AuthContext';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const cookieName = isDev ? '_Host-nexusAuth' : '__Host-nexusAuth';
@@ -83,13 +82,13 @@ app.get('*', (req: express.Request, res: express.Response) => {
     auth: {
       accessToken,
       authenticated: accessToken !== undefined,
-      clientId: process.env.CLIENT_ID || 'bbp-nexus-staging',
+      clientId: process.env.CLIENT_ID || 'nexus-staging',
       // This is temporary until Realm API is available
       authorizationEndpoint:
-        'https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth',
+        'http://staging.nexus.ocp.bbp.epfl.ch/auth/realms/nexus-internal/protocol/openid-connect/auth',
       // This is temporary until Realm API is available
       endSessionEndpoint:
-        'https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/logout',
+        'http://staging.nexus.ocp.bbp.epfl.ch/auth/realms/nexus-internal/protocol/openid-connect/logout',
       redirectHostName: `${req.protocol}:://${req.headers.host}`,
     },
   });
@@ -97,13 +96,9 @@ app.get('*', (req: express.Request, res: express.Response) => {
   // render an HTML string of our app
   const body: string = renderToString(
     <Provider store={store}>
-      <AuthContext.Provider
-        value={{ accessToken, authenticated: accessToken !== undefined }}
-      >
-        <StaticRouter location={req.url} context={{}} basename={base}>
-          <App />
-        </StaticRouter>
-      </AuthContext.Provider>
+      <StaticRouter location={req.url} context={{}} basename={base}>
+        <App />
+      </StaticRouter>
     </Provider>
   );
   // Compute header data

@@ -11,12 +11,16 @@ const TITLE =
 
 export interface MainLayoutProps {
   authenticated: boolean;
+  logoutUrl: string;
+  hostName: string;
   goTo(url: string): void;
 }
 
 const MainLayout: React.SFC<MainLayoutProps> = ({
   authenticated,
   goTo,
+  logoutUrl,
+  hostName,
   children,
 }) => (
   <React.Fragment>
@@ -47,8 +51,8 @@ const MainLayout: React.SFC<MainLayoutProps> = ({
       <meta name="theme-color" content="#00c9fd" />
     </Helmet>
     <Header
-      name={authenticated ? 'Mark Hamill' : undefined}
-      links={[<Link to="/">Home</Link>, <Link to="/sample">Sample</Link>]}
+      name={authenticated ? 'Welcome' : undefined}
+      links={[<a href={`${logoutUrl}?redirect_uri=${hostName}`}>log out</a>]}
       onLoginClick={() => goTo('/login')}
     />
     {children}
@@ -57,6 +61,8 @@ const MainLayout: React.SFC<MainLayoutProps> = ({
 
 const mapStateToProps = ({ auth }: { auth: AuthState }) => ({
   authenticated: auth.authenticated,
+  logoutUrl: auth.endSessionEndpoint || '',
+  hostName: auth.authorizationEndpoint || '',
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
