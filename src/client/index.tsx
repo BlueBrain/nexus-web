@@ -6,7 +6,6 @@ import { ConnectedRouter } from 'connected-react-router';
 import { createBrowserHistory } from 'history';
 import App from '../shared/App';
 import configureStore from '../shared/store';
-import AuthContext, { AuthContextState } from '../shared/context/AuthContext';
 
 const rawBase: string = (window as any)['__BASE__'] || '/';
 // remove trailing slash
