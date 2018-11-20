@@ -12,14 +12,14 @@ we are using a cookie and not local-storage so server gets the token
 
 - display login link in header
 - call nexus without bearer token
-- start using token once use is logged in
+- start using token once user is logged in
 
 ## 3- Token and 1+ realms
 
 - restore session
 - call nexus with bearer token
 
-## Token but realms is gone (edge case)
+## Token but used realm is gone (edge case)
 
 - delete token
 - go to #2

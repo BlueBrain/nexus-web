@@ -3,7 +3,6 @@ import { mount } from 'enzyme';
 
 import Login, { Realm } from './index';
 
-const authProvider = 'https://keycloack.org';
 const realms: Realm[] = [
   {
     name: 'BBP',
