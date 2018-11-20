@@ -38,7 +38,7 @@ if (process.env.NODE_ENV !== 'production') {
 // TODO: redirect to the page user was trying to access before auth
 // TODO: This is a temporary solution until `list Realm` is implement
 app.get(
-  `${base}/authSuccess`,
+  `${base}/authRedirect`,
   (req: express.Request, res: express.Response) => {
     const { access_token } = req.query;
     res.cookie(

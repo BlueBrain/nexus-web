@@ -21,7 +21,7 @@ exports[`login component should render correctly 1`] = `
         Array [
           <a
             className="link"
-            href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth?client_id=nexus-web&redirect_uri=http://nexus/accessSuccess"
+            href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth?client_id=nexus-web&redirect_uri=http://nexus/authRedirect"
           >
             Log in 
             <Icon
@@ -74,7 +74,7 @@ exports[`login component should render correctly 1`] = `
             <span>
               <a
                 className="link"
-                href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth?client_id=nexus-web&redirect_uri=http://nexus/accessSuccess"
+                href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth?client_id=nexus-web&redirect_uri=http://nexus/authRedirect"
                 key="login"
               >
                 Log in 
@@ -145,7 +145,7 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
         Array [
           <a
             className="link"
-            href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth?client_id=nexus-web&redirect_uri=http://nexus/accessSuccess"
+            href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth?client_id=nexus-web&redirect_uri=http://nexus/authRedirect"
           >
             <React.Fragment>
               Log in with
@@ -233,7 +233,7 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
             <span>
               <a
                 className="link"
-                href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth?client_id=nexus-web&redirect_uri=http://nexus/accessSuccess"
+                href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth?client_id=nexus-web&redirect_uri=http://nexus/authRedirect"
                 key="login"
               >
                 Log in with

@@ -44,7 +44,7 @@ const Login: React.ComponentType<LoginProps> = ({
             key="login"
             href={`${
               realm.authorizationEndpoint
-            }?client_id=${clientId}&redirect_uri=${hostName}/accessSuccess`}
+            }?client_id=${clientId}&redirect_uri=${hostName}/authRedirect`}
           >
             {realms.length === 1 ? (
               'Log in '
