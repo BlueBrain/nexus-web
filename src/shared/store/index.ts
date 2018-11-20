@@ -18,9 +18,7 @@ export default function configureStore(
     combineReducers({ router: connectRouter(history), ...reducers }),
     preloadedState,
     compose(
-      // typeof window === 'object' &&
-      //   (window as any).__REDUX_DEVTOOLS_EXTENSION__ &&
-      //   (window as any).__REDUX_DEVTOOLS_EXTENSION__(),
+      // TODO: add dev tools
       applyMiddleware(thunk, routerMiddleware(history))
     )
   );
