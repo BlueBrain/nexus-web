@@ -8,7 +8,15 @@ const base: string = process.env.BASE_PATH || '/';
  * @param body
  * @returns string The HTML document
  */
-const html = ({ body, helmet }: { body: string, helmet: HelmetData }): string => `
+const html = ({
+  body,
+  helmet,
+  preloadedState,
+}: {
+  body: string;
+  helmet: HelmetData;
+  preloadedState: object;
+}): string => `
   <!doctype html>
   <html ${helmet.htmlAttributes.toString()}>
     <head>
@@ -24,6 +32,12 @@ const html = ({ body, helmet }: { body: string, helmet: HelmetData }): string =>
       <div id="app">${body}</div>
       <script>
         window.__BASE__ = '${base}';
+        // WARNING: See the following for security issues around embedding JSON in HTML:
+        // http://redux.js.org/recipes/ServerRendering.html#security-considerations
+        window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(
+          /</g,
+          '\\u003c'
+        )};
       </script>
     </body>
     <script src="${base}public/bundle.js" defer></script>

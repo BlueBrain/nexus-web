@@ -1,8 +1,11 @@
-import React = require('react');
-import ReactDOM = require('react-dom');
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
+import { ConnectedRouter } from 'connected-react-router';
+import { createBrowserHistory } from 'history';
 import App from '../shared/App';
-import AuthContext, { AuthContextState } from '../shared/context/AuthContext';
+import configureStore from '../shared/store';
 
 const rawBase: string = (window as any)['__BASE__'] || '/';
 // remove trailing slash
@@ -10,42 +13,23 @@ const base: string = rawBase.replace(/\/$/, '');
 // Are we running with SSL
 const isSecure = location.protocol === 'https:';
 const cookieName = isSecure ? '__Host-nexusAuth' : '_Host-nexusAuth';
+// Grab preloaded state
+const preloadedState: object = (window as any).__PRELOADED_STATE__;
+// setup browser history
+const history = createBrowserHistory({ basename: base });
+// create redux store
+const store = configureStore(history, preloadedState);
 
-// get auth data from cookies
-// TODO: this is a POC, this code needs to be improved and tested
-function getAuthData(): AuthContextState {
-  const all: string[] = decodeURIComponent(document.cookie).split('; ');
-  const rawAuthCookie: string = all.filter(cookie =>
-    cookie.includes(`${cookieName}=`)
-  )[0];
-  if (!rawAuthCookie) {
-    return {
-      authenticated: false,
-    };
-  }
-  let authCookie: { accessToken: string };
-  try {
-    authCookie = JSON.parse(rawAuthCookie.replace(`${cookieName}=`, ''));
-  } catch (e) {
-    return {
-      authenticated: false,
-    };
-  }
-  return {
-    authenticated: true,
-    accessToken: authCookie.accessToken,
-  };
-}
-
-const renderApp = () =>
-  ReactDOM.hydrate(
-    <AuthContext.Provider value={getAuthData()}>
-      <BrowserRouter basename={base}>
+const renderApp = () => {
+  return ReactDOM.hydrate(
+    <Provider store={store}>
+      <ConnectedRouter history={history}>
         <App />
-      </BrowserRouter>
-    </AuthContext.Provider>,
+      </ConnectedRouter>
+    </Provider>,
     document.getElementById('app')
   );
+};
 
 // DEVELOPMENT ONLY
 // if Hot module Replacement is enables
@@ -56,9 +40,11 @@ if (module.hot) {
     const NextApp: React.StatelessComponent<{}> = require('../shared/App')
       .default;
     ReactDOM.hydrate(
-      <BrowserRouter basename={base}>
-        <NextApp />
-      </BrowserRouter>,
+      <Provider store={store}>
+        <BrowserRouter basename={base}>
+          <NextApp />
+        </BrowserRouter>
+      </Provider>,
       document.getElementById('app')
     );
   });

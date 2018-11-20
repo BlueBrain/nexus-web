@@ -5,15 +5,19 @@ import './Header.less';
 const logo = require('../../logo.svg');
 
 export interface HeaderProps {
-  name: string;
-  links: React.ReactNode[];
+  name?: string;
+  links?: React.ReactNode[];
+  displayLogin?: boolean;
   children?: React.ReactChild;
+  onLoginClick?(): void;
 }
 
 const Header: React.StatelessComponent<HeaderProps> = ({
-  name,
-  links,
+  name = '',
+  displayLogin = true,
+  links = [],
   children,
+  onLoginClick,
 }) => {
   const menu = (
     <Menu>
@@ -33,11 +37,17 @@ const Header: React.StatelessComponent<HeaderProps> = ({
       </div>
       <div className="selectors">{children}</div>
       <div className="menu-block">
-        <Dropdown overlay={menu}>
-          <a className="menu-dropdown ant-dropdown-link">
-            {name} <Icon type="down" />
+        {name ? (
+          <Dropdown overlay={menu}>
+            <a className="menu-dropdown ant-dropdown-link">
+              {name} <Icon type="down" />
+            </a>
+          </Dropdown>
+        ) : displayLogin ? (
+          <a className="menu-dropdown ant-dropdown-link" onClick={onLoginClick}>
+            login <Icon type="login" />
           </a>
-        </Dropdown>
+        ) : null}
       </div>
     </header>
   );

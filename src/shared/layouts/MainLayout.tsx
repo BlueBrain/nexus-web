@@ -1,11 +1,27 @@
-import React = require('react');
+import * as React from 'react';
+import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
-import { Link } from 'react-router-dom';
+import { push } from 'connected-react-router';
 import Header from '../components/Header';
+import { AuthState } from '../store/reducers/auth';
 
-const TITLE = 'Nexus Explorer - Search thousands of datasets using Nexus';
+const TITLE =
+  'Nexus - Transform your data into a fully searchable linked-data graph';
 
-const MainLayout: React.StatelessComponent = ({ children }) => (
+export interface MainLayoutProps {
+  authenticated: boolean;
+  logoutUrl: string;
+  hostName: string;
+  goTo(url: string): void;
+}
+
+const MainLayout: React.SFC<MainLayoutProps> = ({
+  authenticated,
+  goTo,
+  logoutUrl,
+  hostName,
+  children,
+}) => (
   <React.Fragment>
     <Helmet>
       <meta charSet="utf-8" />
@@ -34,11 +50,25 @@ const MainLayout: React.StatelessComponent = ({ children }) => (
       <meta name="theme-color" content="#00c9fd" />
     </Helmet>
     <Header
-      name="Mark Hamill"
-      links={[<Link to="/">Home</Link>, <Link to="/sample">Sample</Link>]}
+      name={authenticated ? 'Welcome' : undefined}
+      links={[<a href={`${logoutUrl}?redirect_uri=${hostName}`}>log out</a>]}
+      onLoginClick={() => goTo('/login')}
     />
     {children}
   </React.Fragment>
 );
 
-export default MainLayout;
+const mapStateToProps = ({ auth }: { auth: AuthState }) => ({
+  authenticated: auth.authenticated,
+  logoutUrl: auth.endSessionEndpoint || '',
+  hostName: auth.authorizationEndpoint || '',
+});
+
+const mapDispatchToProps = (dispatch: any) => ({
+  goTo: (url: string) => dispatch(push(url)),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MainLayout);

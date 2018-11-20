@@ -8,7 +8,7 @@ const links: React.ReactNode[] = [
 ];
 
 const shallowHeader = shallow(<Header name="Mark Hamill" links={links} />);
-const fullDOMHeader = mount(<Header name="Mark Hamill" links={links} />);
+const wrapper = mount(<Header name="Mark Hamill" links={links} />);
 
 describe('Header component', () => {
   it('Should render correctly', () => {
@@ -22,17 +22,25 @@ describe('Header component', () => {
 
   describe('Logo Block', () => {
     it('Should diplay the Nexus logo followed by the App name', () => {
-      expect(fullDOMHeader.find('.logo-block').children()).toHaveLength(2);
-      expect(fullDOMHeader.find('.logo')).toBeTruthy();
-      expect(fullDOMHeader.find('h1').text()).toEqual('Nexus');
+      expect(wrapper.find('.logo-block').children()).toHaveLength(2);
+      expect(wrapper.find('.logo')).toBeTruthy();
+      expect(wrapper.find('h1').text()).toEqual('Nexus');
     });
   });
 
   describe('Menu Block', () => {
     it('Should display the user name followed by a space', () => {
-      expect(fullDOMHeader.find('.menu-dropdown').text()).toEqual(
-        'Mark Hamill '
-      );
+      expect(wrapper.find('.menu-dropdown').text()).toEqual('Mark Hamill ');
+    });
+
+    it('Should display login link', () => {
+      wrapper.setProps({ name: '' });
+      expect(wrapper.find('.menu-dropdown').text()).toEqual('login ');
+    });
+
+    it('Should NOT display login link', () => {
+      wrapper.setProps({ displayLogin: false });
+      expect(wrapper.find('.menu-dropdown').children()).toHaveLength(0);
     });
   });
 });

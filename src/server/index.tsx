@@ -1,14 +1,16 @@
 import { join } from 'path';
-import * as express  from 'express';
+import * as express from 'express';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
-import * as React  from 'react';
+import * as React from 'react';
+import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
 import Helmet from 'react-helmet';
 import html from './html';
 import App from '../shared/App';
-import AuthContext from '../shared/context/AuthContext';
+import createStore from '../shared/store';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const cookieName = isDev ? '_Host-nexusAuth' : '__Host-nexusAuth';
@@ -34,19 +36,25 @@ if (process.env.NODE_ENV !== 'production') {
 // Oauth provider should redirect to this url
 // Setup client cookie with AccessToken and redirect to home page
 // TODO: redirect to the page user was trying to access before auth
-app.get(`${base}/authSuccess`, (req: express.Request, res: express.Response) => {
-  const { access_token } = req.query;
-  res.cookie(
-    cookieName,
-    JSON.stringify({ accessToken: access_token }),
-    {
-      maxAge: 900000,
-      secure: isDev ? false : true,
-      sameSite: 'strict',
-    },
-  );
-  res.redirect(`${base}/`);
-});
+// TODO: This is a temporary solution until `list Realm` is implement
+app.get(
+  `${base}/authRedirect`,
+  (req: express.Request, res: express.Response) => {
+    const { access_token } = req.query;
+    res.cookie(
+      cookieName,
+      JSON.stringify({
+        accessToken: access_token,
+      }),
+      {
+        maxAge: 900000,
+        secure: isDev ? false : true,
+        sameSite: 'strict',
+      }
+    );
+    res.redirect(`${base}/`);
+  }
+);
 
 // For all routes
 app.get('*', (req: express.Request, res: express.Response) => {
@@ -64,17 +72,38 @@ app.get('*', (req: express.Request, res: express.Response) => {
     console.log('No token in cookie');
   }
 
+  // Router
+  const memoryHistory = createMemoryHistory({
+    initialEntries: [req.url],
+  });
+
+  // Redux store
+  const store = createStore(memoryHistory, {
+    auth: {
+      accessToken,
+      authenticated: accessToken !== undefined,
+      clientId: process.env.CLIENT_ID || 'nexus-staging',
+      // This is temporary until Realm API is available
+      authorizationEndpoint:
+        'https://bbp-nexus.epfl.ch/auth/realms/nexus-internal/protocol/openid-connect/auth',
+      // This is temporary until Realm API is available
+      endSessionEndpoint:
+        'https://bbp-nexus.epfl.ch/auth/realms/nexus-internal/protocol/openid-connect/logout',
+      redirectHostName: `${req.protocol}:://${req.headers.host}`,
+    },
+  });
+
   // render an HTML string of our app
   const body: string = renderToString(
-    <AuthContext.Provider value={{ accessToken, authenticated: accessToken !== undefined }}>
+    <Provider store={store}>
       <StaticRouter location={req.url} context={{}} basename={base}>
         <App />
       </StaticRouter>
-    </AuthContext.Provider>,
+    </Provider>
   );
   // Compute header data
   const helmet = Helmet.renderStatic();
-  res.send(html({ body, helmet }));
+  res.send(html({ body, helmet, preloadedState: store.getState() }));
 });
 
 app.listen(8000, () => {
