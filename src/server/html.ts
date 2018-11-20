@@ -32,6 +32,8 @@ const html = ({
       <div id="app">${body}</div>
       <script>
         window.__BASE__ = '${base}';
+        // WARNING: See the following for security issues around embedding JSON in HTML:
+        // http://redux.js.org/recipes/ServerRendering.html#security-considerations
         window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(
           /</g,
           '\\u003c'
