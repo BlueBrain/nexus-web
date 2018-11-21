@@ -2,6 +2,7 @@ import { AuthActions } from '../actions/auth';
 
 export interface AuthState {
   authenticated: boolean;
+  tokenData?: object;
   clientId?: string;
   accessToken?: string;
   authorizationEndpoint?: string;

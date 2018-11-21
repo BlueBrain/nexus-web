@@ -8,6 +8,7 @@ import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import Helmet from 'react-helmet';
+import * as jwtDecode from 'jwt-decode';
 import html from './html';
 import App from '../shared/App';
 import createStore from '../shared/store';
@@ -33,26 +34,27 @@ if (process.env.NODE_ENV !== 'production') {
   setupDevEnvironment(app);
 }
 
-// Oauth provider should redirect to this url
 // Setup client cookie with AccessToken and redirect to home page
 // TODO: redirect to the page user was trying to access before auth
-// TODO: This is a temporary solution until `list Realm` is implement
 app.get(
-  `${base}/authRedirect`,
+  `${base}/authSuccess`,
   (req: express.Request, res: express.Response) => {
-    const { access_token } = req.query;
+    const { error, access_token } = req.query;
     console.log(req.query);
-    res.cookie(
-      cookieName,
-      JSON.stringify({
-        accessToken: access_token,
-      }),
-      {
-        maxAge: 900000,
-        secure: isDev ? false : true,
-        sameSite: 'strict',
-      }
-    );
+    if (!error) {
+      const token = jwtDecode(access_token);
+      res.cookie(
+        cookieName,
+        JSON.stringify({
+          accessToken: access_token,
+        }),
+        {
+          maxAge: (token as any)['exp'],
+          secure: isDev ? false : true,
+          sameSite: 'strict',
+        }
+      );
+    }
     res.redirect(`${base}/`);
   }
 );
@@ -60,9 +62,28 @@ app.get(
 // User wants to logout, clear cookie
 app.get(`${base}/authLogout`, (req: express.Request, res: express.Response) => {
   res.clearCookie(cookieName);
-  res.cookie(cookieName, {}, { expires: new Date(), maxAge: Date.now() });
   res.redirect(`${base}/`);
 });
+
+// We need to get the browser to send the access token to the server
+app.get(
+  `${base}/authRedirect`,
+  (req: express.Request, res: express.Response) => {
+    res.clearCookie(cookieName);
+    res.send(`
+  <!doctype html>
+  <html>
+    <head></head>
+    <body>
+      <h1>Redirecting...</h1>
+      <script type="text/javascript">
+        window.location.href = window.location.href.replace('authRedirect#', 'authSuccess?');
+      </script>
+    </body>
+  </html>
+  `);
+  }
+);
 
 // For all routes
 app.get('*', (req: express.Request, res: express.Response) => {
@@ -73,11 +94,14 @@ app.get('*', (req: express.Request, res: express.Response) => {
 
   // Get token from Client's cookie 🍪
   let accessToken: string | undefined = undefined;
+  let tokenData: string | undefined = undefined;
   try {
-    const nexusAuth = req.cookies[cookieName];
-    accessToken = JSON.parse(nexusAuth);
+    const nexusCookie = req.cookies[cookieName];
+    const cookieData = JSON.parse(nexusCookie);
+    accessToken = cookieData.accessToken;
+    tokenData = jwtDecode(accessToken as string);
   } catch (e) {
-    console.log('No token in cookie');
+    console.error(e);
   }
 
   // Router
@@ -89,14 +113,17 @@ app.get('*', (req: express.Request, res: express.Response) => {
   const store = createStore(memoryHistory, {
     auth: {
       accessToken,
+      tokenData,
       authenticated: accessToken !== undefined,
-      clientId: process.env.CLIENT_ID || 'nexus-staging',
+      clientId: process.env.CLIENT_ID || 'nexus-web',
       // This is temporary until Realm API is available
       authorizationEndpoint:
-        'https://bbp-nexus.epfl.ch/auth/realms/nexus-internal/protocol/openid-connect/auth',
+        process.env.AUTH_ENDPOINT ||
+        'http://staging.nexus.ocp.bbp.epfl.ch/auth/realms/nexus-internal/protocol/openid-connect/auth',
       // This is temporary until Realm API is available
       endSessionEndpoint:
-        'https://bbp-nexus.epfl.ch/auth/realms/nexus-internal/protocol/openid-connect/logout',
+        process.env.LOGOUT_ENDPOINT ||
+        'http://staging.nexus.ocp.bbp.epfl.ch/auth/realms/nexus-internal/protocol/openid-connect/logout',
       redirectHostName: `${process.env.HOST_NAME ||
         `${req.protocol}://${req.headers.host}`}${base}`,
     },

@@ -13,6 +13,7 @@ export interface MainLayoutProps {
   logoutUrl: string;
   hostName: string;
   goTo(url: string): void;
+  name: string;
 }
 
 const MainLayout: React.SFC<MainLayoutProps> = ({
@@ -20,6 +21,7 @@ const MainLayout: React.SFC<MainLayoutProps> = ({
   goTo,
   logoutUrl,
   hostName,
+  name,
   children,
 }) => (
   <React.Fragment>
@@ -50,7 +52,7 @@ const MainLayout: React.SFC<MainLayoutProps> = ({
       <meta name="theme-color" content="#00c9fd" />
     </Helmet>
     <Header
-      name={authenticated ? 'Welcome' : undefined}
+      name={authenticated ? name : undefined}
       links={[
         <a href={`${logoutUrl}?redirect_uri=${hostName}/authLogout`}>
           log out
@@ -64,6 +66,7 @@ const MainLayout: React.SFC<MainLayoutProps> = ({
 
 const mapStateToProps = ({ auth }: { auth: AuthState }) => ({
   authenticated: auth.authenticated,
+  name: auth.tokenData ? (auth.tokenData as any)['name'] : '',
   logoutUrl: auth.endSessionEndpoint || '',
   hostName: auth.redirectHostName || '',
 });

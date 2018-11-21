@@ -10,9 +10,6 @@ import configureStore from '../shared/store';
 const rawBase: string = (window as any)['__BASE__'] || '/';
 // remove trailing slash
 const base: string = rawBase.replace(/\/$/, '');
-// Are we running with SSL
-const isSecure = location.protocol === 'https:';
-const cookieName = isSecure ? '__Host-nexusAuth' : '_Host-nexusAuth';
 // Grab preloaded state
 const preloadedState: object = (window as any).__PRELOADED_STATE__;
 // setup browser history
