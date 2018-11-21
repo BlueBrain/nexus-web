@@ -41,6 +41,7 @@ app.get(
   `${base}/authRedirect`,
   (req: express.Request, res: express.Response) => {
     const { access_token } = req.query;
+    console.log(req.query);
     res.cookie(
       cookieName,
       JSON.stringify({
@@ -59,6 +60,7 @@ app.get(
 // User wants to logout, clear cookie
 app.get(`${base}/authLogout`, (req: express.Request, res: express.Response) => {
   res.clearCookie(cookieName);
+  res.cookie(cookieName, {}, { expires: new Date(), maxAge: Date.now() });
   res.redirect(`${base}/`);
 });
 
