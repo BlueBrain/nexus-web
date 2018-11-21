@@ -51,7 +51,11 @@ const MainLayout: React.SFC<MainLayoutProps> = ({
     </Helmet>
     <Header
       name={authenticated ? 'Welcome' : undefined}
-      links={[<a href={`${logoutUrl}?redirect_uri=${hostName}`}>log out</a>]}
+      links={[
+        <a href={`${logoutUrl}?redirect_uri=${hostName}/authLogout`}>
+          log out
+        </a>,
+      ]}
       onLoginClick={() => goTo('/login')}
     />
     {children}
@@ -61,7 +65,7 @@ const MainLayout: React.SFC<MainLayoutProps> = ({
 const mapStateToProps = ({ auth }: { auth: AuthState }) => ({
   authenticated: auth.authenticated,
   logoutUrl: auth.endSessionEndpoint || '',
-  hostName: auth.authorizationEndpoint || '',
+  hostName: auth.redirectHostName || '',
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

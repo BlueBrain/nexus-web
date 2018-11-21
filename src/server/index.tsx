@@ -56,6 +56,12 @@ app.get(
   }
 );
 
+// User wants to logout, clear cookie
+app.get(`${base}/authLogout`, (req: express.Request, res: express.Response) => {
+  res.clearCookie(cookieName);
+  res.redirect(`${base}/`);
+});
+
 // For all routes
 app.get('*', (req: express.Request, res: express.Response) => {
   // we need the first RouteProps item that matches the request URL. Empty object if no match
