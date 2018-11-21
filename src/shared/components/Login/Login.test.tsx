@@ -43,7 +43,7 @@ describe('login component', () => {
       ).toEqual(
         `${
           realms[1].authorizationEndpoint
-        }?client_id=nexus-web&redirect_uri=http://nexus/authRedirect`
+        }?client_id=nexus-web&response_type=token&scope=openid&nonce=123456&redirect_uri=http://nexus/authRedirect`
       );
     });
 
@@ -75,7 +75,7 @@ describe('login component', () => {
       ).toEqual(
         `${
           realms[1].authorizationEndpoint
-        }?client_id=nexus-web&redirect_uri=http://nexus/authRedirect`
+        }?client_id=nexus-web&response_type=token&scope=openid&nonce=123456&redirect_uri=http://nexus/authRedirect`
       );
     });
 
