@@ -90,7 +90,7 @@ app.get('*', (req: express.Request, res: express.Response) => {
       endSessionEndpoint:
         'https://bbp-nexus.epfl.ch/auth/realms/nexus-internal/protocol/openid-connect/logout',
       redirectHostName: `${process.env.HOST_NAME ||
-        `${req.protocol}://${req.headers.host}`}/${base}`,
+        `${req.protocol}://${req.headers.host}`}${base}`,
     },
   });
 
