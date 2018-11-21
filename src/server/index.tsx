@@ -89,7 +89,8 @@ app.get('*', (req: express.Request, res: express.Response) => {
       // This is temporary until Realm API is available
       endSessionEndpoint:
         'https://bbp-nexus.epfl.ch/auth/realms/nexus-internal/protocol/openid-connect/logout',
-      redirectHostName: `${req.protocol}:://${req.headers.host}`,
+      redirectHostName: `${process.env.HOST_NAME ||
+        `${req.protocol}://${req.headers.host}`}/${base}`,
     },
   });
 

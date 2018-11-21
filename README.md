@@ -2,30 +2,56 @@
 
 > Transform your data into a fully searchable linked-data graph
 
-Nexus Web is the interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science. 
+Nexus Web is the interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.
 
 ## Development
 
 Install dependencies:
-``` npm i ```
+
+```sh
+npm i
+```
 
 To start the Nexus in development mode, run:
-``` npm run start ```
+
+```sh
+npm run start
+```
 
 Lint code:
-``` npm run lint```
+
+```sh
+npm run lint
+```
 
 Run unit tests:
-``` npm test ```
+
+```sh
+npm test
+```
 
 ## Build for production
 
 Compile app in `dist/` folder.
-``` npm run build ```
+
+```sh
+npm run build
+```
 
 You can run the app with:
-``` node dist/server.js ```
+
+```sh
+node dist/server.js
+```
 
 ## Build a Docker image
 
-``` docker build . --tag=nexus-web ```
+```sh
+docker build . --tag=nexus-web
+```
+
+## ENV variables list
+
+- `BASE_PATH`: The base of the app: i.e. `/staging/web` if hosted on `https://bbp-nexus.epfl.ch/staging/web` (default is `/`)
+- `HOST_NAME`: name of host where application is available from: i.e. `https://bbp-nexus.epfl.ch` (default is protocol + host where server is running from)
+- `CLIENT_ID`: The application name used for _OpenID Connect_ authentication
