@@ -22,6 +22,7 @@
     "history": "^4.7.2",
     "jwt-decode": "^2.2.0",
     "morgan": "^1.9.1",
+    "nexus-sdk": "file:../nexus-webapp-commons/nexus-sdk-js",
     "react": "^16.7.0-alpha.2",
     "react-dom": "^16.7.0-alpha.2",
     "react-helmet": "^5.2.0",
