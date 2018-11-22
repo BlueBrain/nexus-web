@@ -68,7 +68,7 @@ app.get(
 // User wants to logout, clear cookie
 app.get(`${base}/authLogout`, (req: express.Request, res: express.Response) => {
   res.cookie(cookieName, {}, { path: base, maxAge: -1 });
-  res.clearCookie(cookieName, { path: base });
+  res.clearCookie(cookieName, { domain: 'bbp-nexus.epfl.ch', path: base });
   res.redirect(`${base}/`);
 });
 
