@@ -79,7 +79,6 @@ app.get(`${base}/authLogout`, (req: express.Request, res: express.Response) => {
       httpOnly: true,
     }
   );
-  // res.clearCookie(cookieName, { domain: 'bbp-nexus.epfl.ch', path: base });
   res.redirect(`${base}/`);
 });
 
@@ -92,7 +91,6 @@ app.get(
   <html>
     <head></head>
     <body>
-      <h1>Redirecting...</h1>
       <script type="text/javascript">
         window.location.href = window.location.href.replace('authRedirect#', 'authSuccess?');
       </script>
