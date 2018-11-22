@@ -15,7 +15,7 @@ import createStore from '../shared/store';
 import { CookieOptions } from 'express-serve-static-core';
 
 const isDev = process.env.NODE_ENV !== 'production';
-const cookieName = isDev ? '_Host-nexusAuth' : '__Host-nexusAuth';
+const cookieName = isDev ? '_Secure-nexusAuth' : '__Secure-nexusAuth';
 
 // Create a express app
 const app: express.Express = express();
@@ -43,19 +43,23 @@ app.get(
     const { error, access_token } = req.query;
     console.log(req.query);
     if (!error) {
-      const token = jwtDecode(access_token);
-      res.cookie(
-        cookieName,
-        JSON.stringify({
-          accessToken: access_token,
-        }),
-        {
-          maxAge: (token as any)['exp'],
-          secure: isDev ? false : true,
-          sameSite: 'strict',
-          path: base,
-        }
-      );
+      try {
+        const token = jwtDecode(access_token);
+        res.cookie(
+          cookieName,
+          JSON.stringify({
+            accessToken: access_token,
+          }),
+          {
+            maxAge: (token as any)['exp'],
+            secure: isDev ? false : true,
+            sameSite: 'strict',
+            path: base,
+          }
+        );
+      } catch (e) {
+        console.log(e);
+      }
     }
     res.redirect(`${base}/`);
   }
