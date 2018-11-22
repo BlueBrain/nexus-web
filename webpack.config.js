@@ -45,7 +45,7 @@ const config = [
             loader: 'file-loader',
             options: {
               outputPath: 'assets/',
-              publicPath: '',
+              publicPath: 'public/assets/',
             },
           },
         },
@@ -88,7 +88,7 @@ const config = [
             loader: 'file-loader',
             options: {
               outputPath: '/public/assets/',
-              publicPath: `${base}public/assets/`,
+              publicPath: `public/assets/`,
             },
           },
         },

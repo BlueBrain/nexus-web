@@ -12,6 +12,7 @@ import * as jwtDecode from 'jwt-decode';
 import html from './html';
 import App from '../shared/App';
 import createStore from '../shared/store';
+import { CookieOptions } from 'express-serve-static-core';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const cookieName = isDev ? '_Host-nexusAuth' : '__Host-nexusAuth';
@@ -52,6 +53,7 @@ app.get(
           maxAge: (token as any)['exp'],
           secure: isDev ? false : true,
           sameSite: 'strict',
+          path: base,
         }
       );
     }
@@ -61,7 +63,7 @@ app.get(
 
 // User wants to logout, clear cookie
 app.get(`${base}/authLogout`, (req: express.Request, res: express.Response) => {
-  res.clearCookie(cookieName);
+  res.clearCookie(cookieName, { path: base });
   res.redirect(`${base}/`);
 });
 
@@ -69,7 +71,6 @@ app.get(`${base}/authLogout`, (req: express.Request, res: express.Response) => {
 app.get(
   `${base}/authRedirect`,
   (req: express.Request, res: express.Response) => {
-    res.clearCookie(cookieName);
     res.send(`
   <!doctype html>
   <html>
@@ -95,13 +96,15 @@ app.get('*', (req: express.Request, res: express.Response) => {
   // Get token from Client's cookie 🍪
   let accessToken: string | undefined = undefined;
   let tokenData: string | undefined = undefined;
-  try {
-    const nexusCookie = req.cookies[cookieName];
-    const cookieData = JSON.parse(nexusCookie);
-    accessToken = cookieData.accessToken;
-    tokenData = jwtDecode(accessToken as string);
-  } catch (e) {
-    console.error(e);
+  const nexusCookie: string = req.cookies[cookieName];
+  if (nexusCookie) {
+    try {
+      const cookieData = JSON.parse(nexusCookie);
+      accessToken = cookieData.accessToken;
+      tokenData = jwtDecode(accessToken as string);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   // Router
