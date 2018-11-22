@@ -136,11 +136,11 @@ app.get('*', (req: express.Request, res: express.Response) => {
       // This is temporary until Realm API is available
       authorizationEndpoint:
         process.env.AUTH_ENDPOINT ||
-        'http://staging.nexus.ocp.bbp.epfl.ch/auth/realms/nexus-internal/protocol/openid-connect/auth',
+        'https://bbp-nexus.epfl.ch/auth/realms/nexus-internal/protocol/openid-connect/auth',
       // This is temporary until Realm API is available
       endSessionEndpoint:
         process.env.LOGOUT_ENDPOINT ||
-        'http://staging.nexus.ocp.bbp.epfl.ch/auth/realms/nexus-internal/protocol/openid-connect/logout',
+        'https://bbp-nexus.epfl.ch/auth/realms/nexus-internal/protocol/openid-connect/logout',
       redirectHostName: `${process.env.HOST_NAME ||
         `${req.protocol}://${req.headers.host}`}${base}`,
     },

@@ -5,10 +5,9 @@ import { push } from 'connected-react-router';
 import Header from '../components/Header';
 import { AuthState } from '../store/reducers/auth';
 
-const logo = require('../logo.svg');
 const favicon = require('../favicon.png');
 const TITLE = 'A knowledge graph for data-driven science';
-const DESCRITION =
+const DESCRIPTION =
   'Nexus - Transform your data into a fully searchable linked-data graph';
 
 export interface MainLayoutProps {
@@ -32,19 +31,18 @@ const MainLayout: React.SFC<MainLayoutProps> = ({
       <meta charSet="utf-8" />
       <link rel="shortcut icon" type="image/x-icon" href={favicon} />
       <title>{TITLE}</title>
-      <meta
-        id="app-description"
-        name="description"
-        content="A quality description of the Nexus Application"
-      />
-      <meta name="twitter:card" content={DESCRITION} />
+      <meta id="app-description" name="description" content={DESCRIPTION} />
+      <meta name="twitter:card" content={DESCRIPTION} />
       <meta name="twitter:site" content="@bluebrainnexus" />
-      <meta property="og:image" content={logo} />
-      <meta property="og:image:width" content="600" />
-      <meta property="og:image:height" content="315" />
+      <meta
+        property="og:image"
+        content="https://bluebrain.github.io/nexus/assets/img/logo.png"
+      />
+      <meta property="og:image:width" content="745" />
+      <meta property="og:image:height" content="745" />
       <meta property="og:site_name" content="Nexus" />
       <meta property="og:title" content={TITLE} />
-      <meta property="og:description" content={DESCRITION} />
+      <meta property="og:description" content={DESCRIPTION} />
       <meta name="theme-color" content="#00c9fd" />
     </Helmet>
     <Header
