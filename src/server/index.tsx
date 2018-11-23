@@ -12,7 +12,7 @@ import * as jwtDecode from 'jwt-decode';
 import html from './html';
 import App from '../shared/App';
 import createStore from '../shared/store';
-import { CookieOptions } from 'express-serve-static-core';
+import Nexus from 'nexus-sdk';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const cookieName = isDev ? '_Secure-nexusAuth' : '__Secure-nexusAuth';

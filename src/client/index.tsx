@@ -6,13 +6,6 @@ import { ConnectedRouter } from 'connected-react-router';
 import { createBrowserHistory } from 'history';
 import App from '../shared/App';
 import configureStore from '../shared/store';
-import Nexus from 'nexus-sdk';
-
-const nexus: Nexus = new Nexus({
-  environment: 'https://bbp-nexus.epfl.ch/staging/v1',
-});
-
-nexus.listOrganizations();
 
 const rawBase: string = (window as any)['__BASE__'] || '/';
 // remove trailing slash
@@ -39,7 +32,7 @@ const renderApp = () => {
 // if Hot module Replacement is enables
 // render app with new bundle.
 if (module.hot) {
-  console.log("It's hot!");
+  console.log("🔥It's hot!🔥");
   module.hot.accept('../shared/App', () => {
     const NextApp: React.StatelessComponent<{}> = require('../shared/App')
       .default;

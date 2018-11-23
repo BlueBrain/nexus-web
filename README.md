@@ -21,11 +21,7 @@ Nexus Web is the interface of Blue Brain Nexus, the open-source knowledge graph 
 > |       +-- package.json
 > ```
 >
-> You can run `npm run build:commonjs -- -w` on the SDK project and start using it as per the documentation.
-
-<aside class="warning">
-You must replace `meowmeowmeow` with your personal API key.
-</aside>
+> You can run `npm run build:es -- -w` and `npm run build:commonjs -- -w` (at the same time, in 2 separate terminals) on the SDK project and start using it as per the documentation.
 
 Install dependencies:
 
