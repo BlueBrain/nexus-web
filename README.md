@@ -6,6 +6,27 @@ Nexus Web is the interface of Blue Brain Nexus, the open-source knowledge graph 
 
 ## Development
 
+> :warning:
+>
+> **You need to clone [nexus-webapp-commons](https://github.com/BlueBrain/nexus-webapp-commons) at the same level as this project. Reason being this App uses [Nexus JS SDK](https://github.com/BlueBrain/nexus-webapp-commons/tree/master/nexus-sdk-js) which is not yet published on NPM.**
+>
+> Your folder structure should look like that:
+>
+> ```
+> .
+> +-- nexus-web
+> |   +-- package.json
+> +-- nexus-webapp-commons
+> |   +-- nexus-sdk-js
+> |       +-- package.json
+> ```
+>
+> You can run `npm run build:commonjs -- -w` on the SDK project and start using it as per the documentation.
+
+<aside class="warning">
+You must replace `meowmeowmeow` with your personal API key.
+</aside>
+
 Install dependencies:
 
 ```sh
