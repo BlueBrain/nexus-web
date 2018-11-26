@@ -4,18 +4,26 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { ConnectedRouter } from 'connected-react-router';
 import { createBrowserHistory } from 'history';
+import Nexus from 'nexus-sdk';
 import App from '../shared/App';
 import configureStore from '../shared/store';
+import { RootState } from '../shared/store/reducers';
 
+// The app base URL
 const rawBase: string = (window as any)['__BASE__'] || '/';
 // remove trailing slash
 const base: string = rawBase.replace(/\/$/, '');
-// Grab preloaded state
-const preloadedState: object = (window as any).__PRELOADED_STATE__;
 // setup browser history
 const history = createBrowserHistory({ basename: base });
+// Grab preloaded state
+const preloadedState: RootState = (window as any).__PRELOADED_STATE__;
+// create Nexus instance
+const nexus = new Nexus({
+  environment: preloadedState.config.apiEndpoint,
+  token: preloadedState.auth.accessToken,
+});
 // create redux store
-const store = configureStore(history, preloadedState);
+const store = configureStore(history, nexus, preloadedState);
 
 const renderApp = () => {
   return ReactDOM.hydrate(

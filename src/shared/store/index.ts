@@ -11,19 +11,22 @@ import { History } from 'history';
 import Nexus from 'nexus-sdk';
 import reducers from './reducers';
 
+let composeEnhancers = compose;
+try {
+  composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
+} catch (e) {
+  // fail silently
+}
+
 export default function configureStore(
   history: History,
+  nexus: Nexus,
   preloadedState: object = {}
 ): Store {
-  const nexus = new Nexus({
-    environment: 'https://bbp-nexus.epfl.ch/staging/v1',
-    token: '',
-  });
   const store = createStore(
     combineReducers({ router: connectRouter(history), ...reducers }),
     preloadedState,
-    compose(
-      // TODO: add dev tools
+    composeEnhancers(
       applyMiddleware(
         thunk.withExtraArgument({ nexus }),
         routerMiddleware(history)

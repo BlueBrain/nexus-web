@@ -72,3 +72,4 @@ docker build . --tag=nexus-web
 - `BASE_PATH`: The base of the app: i.e. `/staging/web` if hosted on `https://bbp-nexus.epfl.ch/staging/web` (default is `/`)
 - `HOST_NAME`: name of host where application is available from: i.e. `https://bbp-nexus.epfl.ch` (default is protocol + host where server is running from)
 - `CLIENT_ID`: The application name used for _OpenID Connect_ authentication
+- `API_ENDPOINT`: The URL pointing to Nexus API. Default is '/'

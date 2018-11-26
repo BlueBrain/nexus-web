@@ -1,17 +1,20 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
 import { ThunkAction } from 'redux-thunk';
-import Nexus from 'nexus-sdk';
+import Nexus, { Organization } from 'nexus-sdk';
 
 export type Services = {
   nexus: Nexus;
 };
 
+//
+// Action types
+//
 interface FetchOrgsAction extends Action {
   type: 'ORGS_FETCHING';
 }
 interface FetchOrgsActionSuccess extends Action {
   type: 'ORGS_FETCHING_SUCCESS';
-  payload: any;
+  payload: Organization[];
 }
 interface FetchOrgsActionFailure extends Action {
   type: 'ORGS_FETCHING_FAILURE';
@@ -21,7 +24,7 @@ const fetchOrgsAction: ActionCreator<FetchOrgsAction> = () => ({
   type: 'ORGS_FETCHING',
 });
 const fetchOrgsSuccessAction: ActionCreator<FetchOrgsActionSuccess> = (
-  orgs: any
+  orgs: Organization[]
 ) => ({
   type: 'ORGS_FETCHING_SUCCESS',
   payload: orgs,
@@ -43,7 +46,7 @@ const fetchOrgs: ActionCreator<
   ): Promise<FetchOrgsActionSuccess | FetchOrgsActionFailure> => {
     dispatch(fetchOrgsAction());
     try {
-      const orgs = await nexus.listOrganizations();
+      const orgs: Organization[] = await nexus.listOrganizations();
       return dispatch(fetchOrgsSuccessAction(orgs));
     } catch (e) {
       return dispatch(fetchOrgsFailureAction(e));

@@ -4,7 +4,6 @@ import Helmet from 'react-helmet';
 import { push } from 'connected-react-router';
 import Header from '../components/Header';
 import { AuthState } from '../store/reducers/auth';
-import { fetchOrgs } from '../store/actions/orgs';
 
 const favicon = require('../favicon.png');
 const TITLE = 'A knowledge graph for data-driven science';
@@ -16,7 +15,6 @@ export interface MainLayoutProps {
   logoutUrl: string;
   hostName: string;
   goTo(url: string): void;
-  fetchOrgs(): void;
   name: string;
 }
 
@@ -26,7 +24,6 @@ const MainLayout: React.SFC<MainLayoutProps> = ({
   logoutUrl,
   hostName,
   name,
-  fetchOrgs,
   children,
 }) => (
   <React.Fragment>
@@ -57,7 +54,6 @@ const MainLayout: React.SFC<MainLayoutProps> = ({
       ]}
       onLoginClick={() => goTo('/login')}
     />
-    <p onClick={fetchOrgs}>click</p>
     {children}
   </React.Fragment>
 );
@@ -71,7 +67,6 @@ const mapStateToProps = ({ auth }: { auth: AuthState }) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
   goTo: (url: string) => dispatch(push(url)),
-  fetchOrgs: () => dispatch(fetchOrgs()),
 });
 
 export default connect(

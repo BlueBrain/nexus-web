@@ -7,12 +7,13 @@ import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
+import Nexus from 'nexus-sdk';
 import Helmet from 'react-helmet';
 import * as jwtDecode from 'jwt-decode';
 import html from './html';
 import App from '../shared/App';
 import createStore from '../shared/store';
-import Nexus from 'nexus-sdk';
+import { RootState } from '../shared/store/reducers';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const cookieName = isDev ? '_Secure-nexusAuth' : '__Secure-nexusAuth';
@@ -101,7 +102,7 @@ app.get(
 );
 
 // For all routes
-app.get('*', (req: express.Request, res: express.Response) => {
+app.get('*', async (req: express.Request, res: express.Response) => {
   // we need the first RouteProps item that matches the request URL. Empty object if no match
   // const activeRoute: RouteProps = routes.filter(route => matchPath(req.url, route)).pop() || {};
   // now we need to fetch any required data before we render our app
@@ -109,7 +110,7 @@ app.get('*', (req: express.Request, res: express.Response) => {
 
   // Get token from Client's cookie 🍪
   let accessToken: string | undefined = undefined;
-  let tokenData: string | undefined = undefined;
+  let tokenData: object | undefined = undefined;
   const nexusCookie: string = req.cookies[cookieName];
   if (nexusCookie) {
     try {
@@ -121,13 +122,13 @@ app.get('*', (req: express.Request, res: express.Response) => {
     }
   }
 
-  // Router
+  // Setup history server-side
   const memoryHistory = createMemoryHistory({
     initialEntries: [req.url],
   });
 
-  // Redux store
-  const store = createStore(memoryHistory, {
+  // Compute pre-loaded state
+  const preloadedState: RootState = {
     auth: {
       accessToken,
       tokenData,
@@ -144,6 +145,24 @@ app.get('*', (req: express.Request, res: express.Response) => {
       redirectHostName: `${process.env.HOST_NAME ||
         `${req.protocol}://${req.headers.host}`}${base}`,
     },
+    config: {
+      apiEndpoint: process.env.API_ENDPOINT || '/',
+      basePath: base,
+    },
+  };
+
+  // Nexus
+  const nexus = new Nexus({
+    environment: preloadedState.config.apiEndpoint,
+    token: preloadedState.auth.accessToken,
+  });
+  // TODO: move this to the loadData() part of the route
+  const orgs = await nexus.listOrganizations();
+
+  // Redux store
+  const store = createStore(memoryHistory, nexus, {
+    ...preloadedState,
+    orgs: { orgs },
   });
 
   // render an HTML string of our app

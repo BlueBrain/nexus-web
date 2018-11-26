@@ -1,9 +1,25 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { RootState } from '../store/reducers';
+import OrgList from '../components/Orgs/OrgList';
+import { OrgCardProps } from '../components/Orgs/OrgCard';
 
-import MainLayout from '../layouts/MainLayout';
+interface HomeProps {
+  orgs: OrgCardProps[];
+}
 
-const Home: React.StatelessComponent = () => (
-  <p style={{ marginTop: 50 }}>Welcome. Coming soon...</p>
-);
+const Home: React.SFC<HomeProps> = ({ orgs }) =>
+  orgs.length === 0 ? (
+    <p style={{ marginTop: 50 }}>No organizations yet...</p>
+  ) : (
+    <OrgList orgs={orgs} />
+  );
 
-export default Home;
+const mapStateToProps = (state: RootState) => ({
+  orgs:
+    (state.orgs &&
+      state.orgs.orgs.map(o => ({ name: o.name, projectNumber: 0 }))) ||
+    [],
+});
+
+export default connect(mapStateToProps)(Home);
