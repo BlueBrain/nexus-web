@@ -1,9 +1,13 @@
 import { OrgsActions } from '../actions/orgs';
-import { Organization } from 'nexus-sdk';
+import { Organization, Project } from 'nexus-sdk';
 
 export interface OrgsState {
   fetching: boolean;
   orgs: Organization[];
+  activeOrg?: {
+    org: Organization;
+    projects?: Project[];
+  };
 }
 
 const initialState: OrgsState = {
@@ -22,6 +26,14 @@ export default function orgsReducer(
       return { ...state, fetching: false };
     case 'ORGS_FETCHING_SUCCESS':
       return { ...state, fetching: false, orgs: action.payload };
+    case 'ORG_FETCHING_SUCCESS':
+      return {
+        ...state,
+        activeOrg: {
+          org: action.payload.org,
+          projects: action.payload.projects,
+        },
+      };
     default:
       return state;
   }

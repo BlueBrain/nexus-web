@@ -1,25 +1,45 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Project } from 'nexus-sdk';
 import { RootState } from '../store/reducers';
-import OrgList from '../components/Orgs/OrgList';
-import { OrgCardProps } from '../components/Orgs/OrgCard';
+import { fetchOrg } from '../store/actions/orgs';
 
 interface HomeProps {
-  orgs: OrgCardProps[];
+  projects: Project[];
+  fetchOrg(name: string): void;
+  match: any;
 }
 
-const Home: React.SFC<HomeProps> = ({ orgs }) =>
-  orgs.length === 0 ? (
-    <p style={{ marginTop: 50 }}>No organizations yet...</p>
-  ) : (
-    <OrgList orgs={orgs} onOrgClick={name => console.log(name)} />
+const Home: React.SFC<HomeProps> = ({ projects, fetchOrg, match }) => {
+  React.useEffect(
+    () => {
+      fetchOrg(match.params.owner);
+    },
+    [match.params.owner, projects.length]
   );
 
+  if (projects.length === 0) {
+    return <p>no projects</p>;
+  }
+  return (
+    <ul>
+      {projects.map(p => (
+        <li key={p.id}>{p.name}</li>
+      ))}
+    </ul>
+  );
+};
+
 const mapStateToProps = (state: RootState) => ({
-  orgs:
-    (state.orgs &&
-      state.orgs.orgs.map(o => ({ name: o.name, projectNumber: 0 }))) ||
-    [],
+  projects:
+    (state.orgs && state.orgs.activeOrg && state.orgs.activeOrg.projects) || [],
 });
 
-export default connect(mapStateToProps)(Home);
+const mapDispatchToProps = (dispatch: any) => ({
+  fetchOrg: (name: string) => dispatch(fetchOrg(name)),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Home);

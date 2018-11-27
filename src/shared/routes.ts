@@ -1,6 +1,6 @@
 import { RouteProps } from 'react-router-dom';
+import Landing from './views/Landing';
 import Home from './views/Home';
-import Sample from './views/Sample';
 import Login from './views/Login';
 import { fetchOrgs } from './store/actions/orgs';
 
@@ -11,7 +11,7 @@ const routes: RouteWithData[] = [
   {
     path: '/',
     exact: true,
-    component: Home,
+    component: Landing,
     loadData: () => fetchOrgs(),
   },
   {
@@ -19,8 +19,8 @@ const routes: RouteWithData[] = [
     component: Login,
   },
   {
-    path: '/sample',
-    component: Sample,
+    path: '/:owner',
+    component: Home,
   },
 ];
 
