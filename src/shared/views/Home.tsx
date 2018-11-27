@@ -12,7 +12,7 @@ const Home: React.SFC<HomeProps> = ({ orgs }) =>
   orgs.length === 0 ? (
     <p style={{ marginTop: 50 }}>No organizations yet...</p>
   ) : (
-    <OrgList orgs={orgs} />
+    <OrgList orgs={orgs} onOrgClick={name => console.log(name)} />
   );
 
 const mapStateToProps = (state: RootState) => ({

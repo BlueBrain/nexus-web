@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
-import Nexus from 'nexus-sdk';
+import Nexus, { Organization } from 'nexus-sdk';
 import Helmet from 'react-helmet';
 import * as jwtDecode from 'jwt-decode';
 import html from './html';
@@ -156,8 +156,14 @@ app.get('*', async (req: express.Request, res: express.Response) => {
     environment: preloadedState.config.apiEndpoint,
     token: preloadedState.auth.accessToken,
   });
+
   // TODO: move this to the loadData() part of the route
-  const orgs = await nexus.listOrganizations();
+  let orgs: Organization[] = [];
+  try {
+    orgs = await nexus.listOrganizations();
+  } catch (e) {
+    console.log(e);
+  }
 
   // Redux store
   const store = createStore(memoryHistory, nexus, {
