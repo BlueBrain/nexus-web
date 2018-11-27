@@ -103,7 +103,7 @@ export const fetchOrg: ActionCreator<
     try {
       const org: Organization = await nexus.listOrganization(name);
       const projects: Project[] = await org.listProjects();
-      return dispatch(fetchOrgSuccessAction({ org, projects }));
+      return dispatch(fetchOrgSuccessAction(org, projects));
     } catch (e) {
       return dispatch(fetchOrgFailureAction(e));
     }
