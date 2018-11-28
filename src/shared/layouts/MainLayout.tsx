@@ -5,6 +5,8 @@ import { push } from 'connected-react-router';
 import Header from '../components/Header';
 import { AuthState } from '../store/reducers/auth';
 
+import './MainLayout.less';
+
 const favicon = require('../favicon.png');
 const TITLE = 'A knowledge graph for data-driven science';
 const DESCRIPTION =
@@ -54,7 +56,7 @@ const MainLayout: React.SFC<MainLayoutProps> = ({
       ]}
       onLoginClick={() => goTo('/login')}
     />
-    {children}
+    <div className="MainLayout_body">{children}</div>
   </React.Fragment>
 );
 

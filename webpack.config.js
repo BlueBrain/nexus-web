@@ -3,7 +3,6 @@ const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const devMode = process.env.NODE_ENV !== 'production';
-const base = process.env.BASE_PATH || '';
 
 const config = [
   {
@@ -29,7 +28,7 @@ const config = [
         {
           test: /\.(le|sa|sc|c)ss$/,
           use: [
-            MiniCssExtractPlugin.loader,
+            devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
             'css-loader',
             {
               loader: 'less-loader',

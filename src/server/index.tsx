@@ -5,15 +5,16 @@ import * as morgan from 'morgan';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
-import { StaticRouter } from 'react-router-dom';
+import { StaticRouter, matchPath } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
-import Nexus, { Organization } from 'nexus-sdk';
+import Nexus, { Organization } from '@bbp/nexus-sdk';
 import Helmet from 'react-helmet';
 import * as jwtDecode from 'jwt-decode';
 import html from './html';
 import App from '../shared/App';
-import createStore from '../shared/store';
+import createStore, { ThunkAction } from '../shared/store';
 import { RootState } from '../shared/store/reducers';
+import routes, { RouteWithData } from '../shared/routes';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const cookieName = isDev ? '_Secure-nexusAuth' : '__Secure-nexusAuth';
@@ -103,11 +104,6 @@ app.get(
 
 // For all routes
 app.get('*', async (req: express.Request, res: express.Response) => {
-  // we need the first RouteProps item that matches the request URL. Empty object if no match
-  // const activeRoute: RouteProps = routes.filter(route => matchPath(req.url, route)).pop() || {};
-  // now we need to fetch any required data before we render our app
-  // const url = req.url.replace('/staging/web/', '/');
-
   // Get token from Client's cookie 🍪
   let accessToken: string | undefined = undefined;
   let tokenData: object | undefined = undefined;
@@ -157,19 +153,26 @@ app.get('*', async (req: express.Request, res: express.Response) => {
     token: preloadedState.auth.accessToken,
   });
 
-  // TODO: move this to the loadData() part of the route
-  let orgs: Organization[] = [];
-  try {
-    orgs = await nexus.listOrganizations();
-  } catch (e) {
-    console.log(e);
-  }
-
   // Redux store
-  const store = createStore(memoryHistory, nexus, {
-    ...preloadedState,
-    orgs: { orgs },
-  });
+  const store = createStore(memoryHistory, nexus, preloadedState);
+
+  // Get list of matching routes
+  const activeRoutes: RouteWithData[] = routes.filter(route =>
+    matchPath(req.url, route)
+  );
+  // build a list of loadData function
+  const promises: any = [];
+  activeRoutes.forEach(
+    route =>
+      route.loadData &&
+      promises.push(
+        store.dispatch<any>(
+          route.loadData(store.getState(), matchPath(req.url, route))
+        )
+      )
+  );
+  // get data
+  await Promise.all(promises);
 
   // render an HTML string of our app
   const body: string = renderToString(

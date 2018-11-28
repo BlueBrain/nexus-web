@@ -1,5 +1,5 @@
 import { OrgsActions } from '../actions/orgs';
-import { Organization, Project } from 'nexus-sdk';
+import { Organization, Project } from '@bbp/nexus-sdk';
 
 export interface OrgsState {
   fetching: boolean;
@@ -29,6 +29,7 @@ export default function orgsReducer(
     case 'ORG_FETCHING_SUCCESS':
       return {
         ...state,
+        fetching: false,
         activeOrg: {
           org: action.payload.org,
           projects: action.payload.projects,

@@ -5,11 +5,17 @@ import {
   compose,
   Store,
 } from 'redux';
-import thunk from 'redux-thunk';
+import thunk, { ThunkAction } from 'redux-thunk';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { History } from 'history';
-import Nexus from 'nexus-sdk';
+import Nexus from '@bbp/nexus-sdk';
 import reducers from './reducers';
+
+export type Services = {
+  nexus: Nexus;
+};
+
+export type ThunkAction = ThunkAction<Promise<any>, object, Services, any>;
 
 let composeEnhancers = compose;
 try {

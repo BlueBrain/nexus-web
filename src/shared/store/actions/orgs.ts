@@ -1,10 +1,6 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
-import { ThunkAction } from 'redux-thunk';
-import Nexus, { Organization, Project } from 'nexus-sdk';
-
-export type Services = {
-  nexus: Nexus;
-};
+import Nexus, { Organization, Project } from '@bbp/nexus-sdk';
+import { Services, ThunkAction } from '..';
 
 //
 // Action types
@@ -73,9 +69,7 @@ export type OrgsActions =
   | FetchOrgActionSuccess
   | FetchOrgActionFailure;
 
-export const fetchOrgs: ActionCreator<
-  ThunkAction<Promise<any>, object, Services, any>
-> = () => {
+export const fetchOrgs: ActionCreator<ThunkAction> = () => {
   return async (
     dispatch: Dispatch<any>,
     getState,
@@ -91,9 +85,7 @@ export const fetchOrgs: ActionCreator<
   };
 };
 
-export const fetchOrg: ActionCreator<
-  ThunkAction<Promise<any>, object, Services, any>
-> = (name: string) => {
+export const fetchOrg: ActionCreator<ThunkAction> = (name: string) => {
   return async (
     dispatch: Dispatch<any>,
     getState,
@@ -101,7 +93,7 @@ export const fetchOrg: ActionCreator<
   ): Promise<FetchOrgActionSuccess | FetchOrgActionFailure> => {
     dispatch(fetchOrgsAction());
     try {
-      const org: Organization = await nexus.listOrganization(name);
+      const org: Organization = await nexus.getOrganization(name);
       const projects: Project[] = await org.listProjects();
       return dispatch(fetchOrgSuccessAction(org, projects));
     } catch (e) {

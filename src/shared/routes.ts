@@ -1,11 +1,13 @@
-import { RouteProps } from 'react-router-dom';
+import { RouteProps, match } from 'react-router-dom';
 import Landing from './views/Landing';
 import Home from './views/Home';
 import Login from './views/Login';
-import { fetchOrgs } from './store/actions/orgs';
+import { fetchOrgs, fetchOrg } from './store/actions/orgs';
+import { ThunkAction } from './store';
+import { RootState } from './store/reducers';
 
-interface RouteWithData extends RouteProps {
-  loadData?(): void;
+export interface RouteWithData extends RouteProps {
+  loadData?(state: RootState, match: match | null): ThunkAction;
 }
 const routes: RouteWithData[] = [
   {
@@ -19,8 +21,10 @@ const routes: RouteWithData[] = [
     component: Login,
   },
   {
-    path: '/:owner',
+    path: '/:org',
     component: Home,
+    loadData: (state, match) =>
+      fetchOrg(match && match.params && (match.params as any)['org']),
   },
 ];
 
