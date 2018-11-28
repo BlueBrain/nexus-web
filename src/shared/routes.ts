@@ -1,21 +1,30 @@
-import { RouteProps } from 'react-router-dom';
+import { RouteProps, match } from 'react-router-dom';
+import Landing from './views/Landing';
 import Home from './views/Home';
-import Sample from './views/Sample';
 import Login from './views/Login';
+import { fetchOrgs, fetchOrg } from './store/actions/orgs';
+import { ThunkAction } from './store';
+import { RootState } from './store/reducers';
 
-const routes: RouteProps[] = [
+export interface RouteWithData extends RouteProps {
+  loadData?(state: RootState, match: match | null): ThunkAction;
+}
+const routes: RouteWithData[] = [
   {
     path: '/',
     exact: true,
-    component: Home,
+    component: Landing,
+    loadData: () => fetchOrgs(),
   },
   {
     path: '/login',
     component: Login,
   },
   {
-    path: '/sample',
-    component: Sample,
+    path: '/:org',
+    component: Home,
+    loadData: (state, match) =>
+      fetchOrg(match && match.params && (match.params as any)['org']),
   },
 ];
 
