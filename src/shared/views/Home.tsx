@@ -2,7 +2,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Project } from '@bbp/nexus-sdk';
 import { RootState } from '../store/reducers';
-import { fetchOrg } from '../store/actions/orgs';
+import { fetchOrg } from '../store/actions/nexus';
+import Skeleton from '../components/Skeleton';
 
 interface HomeProps {
   activeOrg: { label: string };
@@ -29,7 +30,20 @@ const Home: React.SFC<HomeProps> = ({
   );
 
   if (busy) {
-    return null;
+    return (
+      <Skeleton
+        itemNumber={5}
+        active
+        avatar
+        paragraph={{
+          rows: 1,
+          width: 0,
+        }}
+        title={{
+          width: '100%',
+        }}
+      />
+    );
   }
   if (projects.length === 0) {
     return <p>no projects</p>;
@@ -44,14 +58,14 @@ const Home: React.SFC<HomeProps> = ({
 };
 
 const mapStateToProps = (state: RootState) => ({
-  activeOrg: (state.orgs &&
-    state.orgs.activeOrg &&
-    state.orgs.activeOrg.org) || { label: '' },
+  activeOrg: (state.nexus &&
+    state.nexus.activeOrg &&
+    state.nexus.activeOrg.org) || { label: '' },
   projects:
-    state.orgs && state.orgs.activeOrg && state.orgs.activeOrg.projects
-      ? state.orgs.activeOrg.projects
+    state.nexus && state.nexus.activeOrg && state.nexus.activeOrg.projects
+      ? state.nexus.activeOrg.projects
       : [],
-  busy: (state.orgs && state.orgs.fetching) || false,
+  busy: (state.nexus && state.nexus.fetching) || false,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

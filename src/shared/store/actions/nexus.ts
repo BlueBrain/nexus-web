@@ -6,59 +6,59 @@ import { Services, ThunkAction } from '..';
 // Action types
 //
 interface FetchOrgsAction extends Action {
-  type: 'ORGS_FETCHING';
+  type: '@@nexus/ORGS_FETCHING';
 }
 interface FetchOrgAction extends Action {
-  type: 'ORG_FETCHING';
+  type: '@@nexus/ORG_FETCHING';
 }
 interface FetchOrgsActionSuccess extends Action {
-  type: 'ORGS_FETCHING_SUCCESS';
+  type: '@@nexus/ORGS_FETCHING_SUCCESS';
   payload: Organization[];
 }
 interface FetchOrgActionSuccess extends Action {
-  type: 'ORG_FETCHING_SUCCESS';
+  type: '@@nexus/ORG_FETCHING_SUCCESS';
   payload: {
     org: Organization;
     projects: Project[];
   };
 }
 interface FetchOrgsActionFailure extends Action {
-  type: 'ORGS_FETCHING_FAILURE';
+  type: '@@nexus/ORGS_FETCHING_FAILURE';
 }
 interface FetchOrgActionFailure extends Action {
-  type: 'ORG_FETCHING_FAILURE';
+  type: '@@nexus/ORG_FETCHING_FAILURE';
 }
 
 const fetchOrgsAction: ActionCreator<FetchOrgsAction> = () => ({
-  type: 'ORGS_FETCHING',
+  type: '@@nexus/ORGS_FETCHING',
 });
 const fetchOrgAction: ActionCreator<FetchOrgAction> = () => ({
-  type: 'ORG_FETCHING',
+  type: '@@nexus/ORG_FETCHING',
 });
 const fetchOrgsSuccessAction: ActionCreator<FetchOrgsActionSuccess> = (
   orgs: Organization[]
 ) => ({
-  type: 'ORGS_FETCHING_SUCCESS',
+  type: '@@nexus/ORGS_FETCHING_SUCCESS',
   payload: orgs,
 });
 const fetchOrgSuccessAction: ActionCreator<FetchOrgActionSuccess> = (
   org: Organization,
   projects: Project[]
 ) => ({
-  type: 'ORG_FETCHING_SUCCESS',
+  type: '@@nexus/ORG_FETCHING_SUCCESS',
   payload: { org, projects },
 });
 const fetchOrgsFailureAction: ActionCreator<FetchOrgsActionFailure> = (
   error: any
 ) => ({
   error,
-  type: 'ORGS_FETCHING_FAILURE',
+  type: '@@nexus/ORGS_FETCHING_FAILURE',
 });
 const fetchOrgFailureAction: ActionCreator<FetchOrgActionFailure> = (
   error: any
 ) => ({
   error,
-  type: 'ORG_FETCHING_FAILURE',
+  type: '@@nexus/ORG_FETCHING_FAILURE',
 });
 
 export type OrgsActions =
