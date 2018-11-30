@@ -2,7 +2,7 @@ import { RouteProps, match } from 'react-router-dom';
 import Landing from './views/Landing';
 import Home from './views/Home';
 import Login from './views/Login';
-import { fetchOrgs, fetchOrg } from './store/actions/orgs';
+import { fetchOrgs, fetchOrg } from './store/actions/nexus';
 import { ThunkAction } from './store';
 import { RootState } from './store/reducers';
 

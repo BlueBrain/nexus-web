@@ -1,32 +1,36 @@
-import { OrgsActions } from '../actions/orgs';
 import { Organization, Project } from '@bbp/nexus-sdk';
+import { OrgsActions } from '../actions/nexus';
 
-export interface OrgsState {
+export interface NexusState {
   fetching: boolean;
   orgs: Organization[];
   activeOrg?: {
     org: Organization;
-    projects?: Project[];
+    projects: Project[];
   };
+  // activeProject? {
+  //   project: Project;
+  //   resources: Resource[];
+  // };
 }
 
-const initialState: OrgsState = {
+const initialState: NexusState = {
   fetching: false,
   orgs: [],
 };
 
-export default function orgsReducer(
-  state: OrgsState = initialState,
+export default function nexusReducer(
+  state: NexusState = initialState,
   action: OrgsActions
 ) {
   switch (action.type) {
-    case 'ORGS_FETCHING':
+    case '@@nexus/ORGS_FETCHING':
       return { ...state, fetching: true };
-    case 'ORGS_FETCHING_FAILURE':
+    case '@@nexus/ORGS_FETCHING_FAILURE':
       return { ...state, fetching: false };
-    case 'ORGS_FETCHING_SUCCESS':
+    case '@@nexus/ORGS_FETCHING_SUCCESS':
       return { ...state, fetching: false, orgs: action.payload };
-    case 'ORG_FETCHING_SUCCESS':
+    case '@@nexus/ORG_FETCHING_SUCCESS':
       return {
         ...state,
         fetching: false,
