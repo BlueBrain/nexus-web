@@ -5,6 +5,7 @@ import './Projects.less';
 
 export interface ProjectCardProps {
   name: string;
+  label: string;
   resourceNumber: number;
   logo?: string;
   onClick?(): void;
@@ -13,13 +14,13 @@ export interface ProjectCardProps {
 
 const ProjectCard: React.FunctionComponent<ProjectCardProps> = ({
   name,
+  label,
   resourceNumber,
-  logo = '',
   onEdit,
   onClick = () => {},
 }) => {
   return (
-    <Card className="ProjectCard" tabIndex={1} onClick={onClick}>
+    <Card className={`ProjectCard ${label}`} tabIndex={1} onClick={onClick}>
       <div className="content">
         <p className="project-name">{name}</p>
         <p className="project-number">

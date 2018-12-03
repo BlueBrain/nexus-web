@@ -1,5 +1,67 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { RootState } from '../store/reducers';
+import { fetchResources } from '../store/actions/nexus';
 
-const ProjectView: React.FunctionComponent = () => null;
+interface ProjectViewProps {
+  orgLabel: string;
+  projectLabel: string;
+  resources: { id: string }[];
+  fetchResources(org: string, project: string): void;
+  match: any;
+}
 
-export default ProjectView;
+const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
+  orgLabel,
+  projectLabel,
+  resources,
+  fetchResources,
+  match,
+}) => {
+  React.useEffect(
+    () => {
+      if (
+        orgLabel !== match.params.org ||
+        projectLabel !== match.params.project
+      ) {
+        fetchResources(match.params.org, match.params.project);
+      }
+    },
+    [match.params.org, match.params.project]
+  );
+  return (
+    <React.Fragment>
+      {resources.map(resource => (
+        <p key={resource.id}>{resource.id}</p>
+      ))}
+    </React.Fragment>
+  );
+};
+
+const mapStateToProps = (state: RootState) => ({
+  orgLabel:
+    (state.nexus &&
+      state.nexus.activeProject &&
+      state.nexus.activeProject.org.label) ||
+    '',
+  projectLabel:
+    (state.nexus &&
+      state.nexus.activeProject &&
+      state.nexus.activeProject.project.label) ||
+    '',
+  resources:
+    (state.nexus &&
+      state.nexus.activeProject &&
+      state.nexus.activeProject.resources) ||
+    [],
+});
+
+const mapDispatchToProps = (dispatch: any) => ({
+  fetchResources: (org: string, project: string) =>
+    dispatch(fetchResources(org, project)),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ProjectView);

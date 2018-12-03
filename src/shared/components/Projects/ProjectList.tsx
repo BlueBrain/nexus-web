@@ -41,7 +41,7 @@ const ProjectList: React.FunctionComponent<ProjectListProps> = ({
           <ProjectCard
             key={project.name + i}
             {...project}
-            onClick={() => onProjectClick(project.name)}
+            onClick={() => onProjectClick(project.label)}
           />
         ))}
       </div>

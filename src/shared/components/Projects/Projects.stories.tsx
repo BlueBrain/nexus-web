@@ -8,8 +8,8 @@ import ProjectCard, { ProjectCardProps } from './ProjectCard';
 import ProjectList from './ProjectList';
 
 const projects: ProjectCardProps[] = [
-  { name: 'Thalamus', resourceNumber: 1236 },
-  { name: 'Another Project', resourceNumber: 1 },
+  { name: 'Thalamus', label: 'thalamus', resourceNumber: 1236 },
+  { name: 'Another Project', label: 'another-project', resourceNumber: 1 },
 ];
 
 storiesOf('Components/Projects', module)
@@ -24,7 +24,11 @@ storiesOf('Components/Projects', module)
       return (
         <React.Fragment>
           <div style={{ margin: '50px 40px 0px' }}>
-            <ProjectCard name="Thalamus" resourceNumber={1500} />
+            <ProjectCard
+              name="Thalamus"
+              label="thalamus"
+              resourceNumber={1500}
+            />
           </div>
         </React.Fragment>
       );

@@ -12,7 +12,7 @@ const CustomSkeleton: React.FunctionComponent<CustomSkeletonProps> = ({
 }) => {
   const s = [];
   for (let i = 0; i < itemNumber; i += 1) {
-    s.push(<Skeleton {...rest} />);
+    s.push(<Skeleton key={i} {...rest} />);
   }
   return <React.Fragment>{s}</React.Fragment>;
 };
