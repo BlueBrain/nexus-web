@@ -6,6 +6,7 @@ import { fetchOrgs, fetchOrg } from './store/actions/orgs';
 import { ThunkAction } from './store';
 import { RootState } from './store/reducers';
 import Orgs from './views/Orgs';
+import Resources from './views/Resources';
 
 export interface RouteWithData extends RouteProps {
   loadData?(state: RootState, match: match | null): ThunkAction;
@@ -16,6 +17,10 @@ const routes: RouteWithData[] = [
     exact: true,
     component: Landing,
     loadData: () => fetchOrgs(),
+  },
+  {
+    path: '/resources',
+    component: Resources,
   },
   {
     path: '/orgs',
