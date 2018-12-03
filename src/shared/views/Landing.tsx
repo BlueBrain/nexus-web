@@ -15,7 +15,7 @@ interface LandingProps {
   fetchOrgs(): void;
 }
 
-const Landing: React.SFC<LandingProps> = ({
+const Landing: React.FunctionComponent<LandingProps> = ({
   orgs,
   busy,
   goToProject,

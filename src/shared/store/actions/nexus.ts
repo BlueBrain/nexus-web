@@ -1,5 +1,5 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
-import Nexus, { Organization, Project } from '@bbp/nexus-sdk';
+import Nexus, { Organization, Project, Resource } from '@bbp/nexus-sdk';
 import { Services, ThunkAction } from '..';
 
 //
@@ -8,32 +8,49 @@ import { Services, ThunkAction } from '..';
 interface FetchOrgsAction extends Action {
   type: '@@nexus/ORGS_FETCHING';
 }
-interface FetchOrgAction extends Action {
-  type: '@@nexus/ORG_FETCHING';
+interface FetchProjectsAction extends Action {
+  type: '@@nexus/PROJECTS_FETCHING';
+}
+interface FetchResourcesAction extends Action {
+  type: '@@nexus/RESOURCES_FETCHING';
 }
 interface FetchOrgsActionSuccess extends Action {
   type: '@@nexus/ORGS_FETCHING_SUCCESS';
   payload: Organization[];
 }
-interface FetchOrgActionSuccess extends Action {
-  type: '@@nexus/ORG_FETCHING_SUCCESS';
+interface FetchProjectsActionSuccess extends Action {
+  type: '@@nexus/PROJECTS_FETCHING_SUCCESS';
   payload: {
     org: Organization;
     projects: Project[];
   };
 }
+interface FetchResourcesActionSuccess extends Action {
+  type: '@@nexus/RESOURCES_FETCHING_SUCCESS';
+  payload: {
+    org: Organization;
+    project: Project;
+    resources: Resource[];
+  };
+}
 interface FetchOrgsActionFailure extends Action {
   type: '@@nexus/ORGS_FETCHING_FAILURE';
 }
-interface FetchOrgActionFailure extends Action {
-  type: '@@nexus/ORG_FETCHING_FAILURE';
+interface FetchProjectsActionFailure extends Action {
+  type: '@@nexus/PROJECTS_FETCHING_FAILURE';
+}
+interface FetchResourcesActionFailure extends Action {
+  type: '@@nexus/RESOURCES_FETCHING_FAILURE';
 }
 
 const fetchOrgsAction: ActionCreator<FetchOrgsAction> = () => ({
   type: '@@nexus/ORGS_FETCHING',
 });
-const fetchOrgAction: ActionCreator<FetchOrgAction> = () => ({
-  type: '@@nexus/ORG_FETCHING',
+const fetchProjectsAction: ActionCreator<FetchProjectsAction> = () => ({
+  type: '@@nexus/PROJECTS_FETCHING',
+});
+const fetchResourcesAction: ActionCreator<FetchResourcesAction> = () => ({
+  type: '@@nexus/RESOURCES_FETCHING',
 });
 const fetchOrgsSuccessAction: ActionCreator<FetchOrgsActionSuccess> = (
   orgs: Organization[]
@@ -41,12 +58,18 @@ const fetchOrgsSuccessAction: ActionCreator<FetchOrgsActionSuccess> = (
   type: '@@nexus/ORGS_FETCHING_SUCCESS',
   payload: orgs,
 });
-const fetchOrgSuccessAction: ActionCreator<FetchOrgActionSuccess> = (
+const fetchProjectsSuccessAction: ActionCreator<FetchProjectsActionSuccess> = (
   org: Organization,
   projects: Project[]
 ) => ({
-  type: '@@nexus/ORG_FETCHING_SUCCESS',
+  type: '@@nexus/PROJECTS_FETCHING_SUCCESS',
   payload: { org, projects },
+});
+const fetchResourcesSuccessAction: ActionCreator<
+  FetchResourcesActionSuccess
+> = (org: Organization, project: Project, resources: Resource[]) => ({
+  type: '@@nexus/RESOURCES_FETCHING_SUCCESS',
+  payload: { org, project, resources },
 });
 const fetchOrgsFailureAction: ActionCreator<FetchOrgsActionFailure> = (
   error: any
@@ -54,20 +77,29 @@ const fetchOrgsFailureAction: ActionCreator<FetchOrgsActionFailure> = (
   error,
   type: '@@nexus/ORGS_FETCHING_FAILURE',
 });
-const fetchOrgFailureAction: ActionCreator<FetchOrgActionFailure> = (
+const fetchProjectsFailureAction: ActionCreator<FetchProjectsActionFailure> = (
   error: any
 ) => ({
   error,
-  type: '@@nexus/ORG_FETCHING_FAILURE',
+  type: '@@nexus/PROJECTS_FETCHING_FAILURE',
+});
+const fetchResourcesFailureAction: ActionCreator<
+  FetchResourcesActionFailure
+> = (error: any) => ({
+  error,
+  type: '@@nexus/RESOURCES_FETCHING_FAILURE',
 });
 
 export type OrgsActions =
   | FetchOrgsAction
   | FetchOrgsActionSuccess
   | FetchOrgsActionFailure
-  | FetchOrgAction
-  | FetchOrgActionSuccess
-  | FetchOrgActionFailure;
+  | FetchProjectsAction
+  | FetchProjectsActionSuccess
+  | FetchProjectsActionFailure
+  | FetchResourcesAction
+  | FetchResourcesActionSuccess
+  | FetchResourcesActionFailure;
 
 export const fetchOrgs: ActionCreator<ThunkAction> = () => {
   return async (
@@ -85,19 +117,40 @@ export const fetchOrgs: ActionCreator<ThunkAction> = () => {
   };
 };
 
-export const fetchOrg: ActionCreator<ThunkAction> = (name: string) => {
+export const fetchProjects: ActionCreator<ThunkAction> = (name: string) => {
   return async (
     dispatch: Dispatch<any>,
     getState,
     { nexus }
-  ): Promise<FetchOrgActionSuccess | FetchOrgActionFailure> => {
-    dispatch(fetchOrgsAction());
+  ): Promise<FetchProjectsActionSuccess | FetchProjectsActionFailure> => {
+    dispatch(fetchProjectsAction());
     try {
       const org: Organization = await nexus.getOrganization(name);
       const projects: Project[] = await org.listProjects();
-      return dispatch(fetchOrgSuccessAction(org, projects));
+      return dispatch(fetchProjectsSuccessAction(org, projects));
     } catch (e) {
-      return dispatch(fetchOrgFailureAction(e));
+      return dispatch(fetchProjectsFailureAction(e));
+    }
+  };
+};
+
+export const fetchResources: ActionCreator<ThunkAction> = (
+  orgLabel: string,
+  projectLabel: string
+) => {
+  return async (
+    dispatch: Dispatch<any>,
+    getState,
+    { nexus }
+  ): Promise<FetchResourcesActionSuccess | FetchResourcesActionFailure> => {
+    dispatch(fetchResourcesAction());
+    try {
+      const org: Organization = await nexus.getOrganization(orgLabel);
+      const project: Project = await org.getProject(projectLabel);
+      const resources: Resource[] = await project.listResources();
+      return dispatch(fetchResourcesSuccessAction(org, project, resources));
+    } catch (e) {
+      return dispatch(fetchResourcesFailureAction(e));
     }
   };
 };

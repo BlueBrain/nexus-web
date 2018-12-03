@@ -1,33 +1,31 @@
 import * as React from 'react';
 import { Avatar, Button, Card } from 'antd';
 
-import './Orgs.less';
+import './Projects.less';
 
-export interface OrgCardProps {
+export interface ProjectCardProps {
   name: string;
-  projectNumber: number;
+  label: string;
+  resourceNumber: number;
   logo?: string;
   onClick?(): void;
   onEdit?(): void;
 }
 
-const OrgCard: React.FunctionComponent<OrgCardProps> = ({
+const ProjectCard: React.FunctionComponent<ProjectCardProps> = ({
   name,
-  projectNumber,
-  logo = '',
+  label,
+  resourceNumber,
   onEdit,
   onClick = () => {},
 }) => {
   return (
-    <Card className="OrgCard" tabIndex={1} onClick={onClick}>
+    <Card className={`ProjectCard ${label}`} tabIndex={1} onClick={onClick}>
       <div className="content">
-        <div className="logo">
-          <Avatar shape="square" size={32} icon="team" src={logo} />
-        </div>
-        <p className="org-name">{name}</p>
+        <p className="project-name">{name}</p>
         <p className="project-number">
-          <span className="number">{projectNumber}</span> project
-          {projectNumber > 1 && 's'}
+          <span className="number">{resourceNumber}</span> resource
+          {resourceNumber > 1 && 's'}
         </p>
         {onEdit && (
           <Button
@@ -47,4 +45,4 @@ const OrgCard: React.FunctionComponent<OrgCardProps> = ({
   );
 };
 
-export default OrgCard;
+export default ProjectCard;

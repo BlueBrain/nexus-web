@@ -2,7 +2,12 @@ import { RouteProps, match } from 'react-router-dom';
 import Landing from './views/Landing';
 import Home from './views/Home';
 import Login from './views/Login';
-import { fetchOrgs, fetchOrg } from './store/actions/nexus';
+import Project from './views/Project';
+import {
+  fetchOrgs,
+  fetchProjects,
+  fetchResources,
+} from './store/actions/nexus';
 import { ThunkAction } from './store';
 import { RootState } from './store/reducers';
 
@@ -22,9 +27,20 @@ const routes: RouteWithData[] = [
   },
   {
     path: '/:org',
+    exact: true,
     component: Home,
     loadData: (state, match) =>
-      fetchOrg(match && match.params && (match.params as any)['org']),
+      fetchProjects(match && match.params && (match.params as any)['org']),
+  },
+  {
+    path: '/:org/:project',
+    exact: true,
+    component: Project,
+    loadData: (state, match) =>
+      fetchResources(
+        match && match.params && (match.params as any)['org'],
+        match && match.params && (match.params as any)['project']
+      ),
   },
 ];
 

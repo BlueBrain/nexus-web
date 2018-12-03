@@ -6,13 +6,13 @@ export interface CustomSkeletonProps extends SkeletonProps {
   itemNumber?: number;
 }
 
-const CustomSkeleton: React.SFC<CustomSkeletonProps> = ({
+const CustomSkeleton: React.FunctionComponent<CustomSkeletonProps> = ({
   itemNumber = 1,
   ...rest
 }) => {
   const s = [];
   for (let i = 0; i < itemNumber; i += 1) {
-    s.push(<Skeleton {...rest} />);
+    s.push(<Skeleton key={i} {...rest} />);
   }
   return <React.Fragment>{s}</React.Fragment>;
 };
