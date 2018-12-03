@@ -9,6 +9,7 @@ import {
   fetchProjects,
   fetchResources,
 } from './store/actions/nexus';
+import { RawElasticSearchQuery, RawSparqlQuery } from './views/RawQuery';
 import { ThunkAction } from './store';
 import { RootState } from './store/reducers';
 import {
@@ -34,6 +35,14 @@ const routes: RouteWithData[] = [
     path: '/login',
     breadcrumbLabel: LoginBreadcrumbLabel,
     component: Login,
+  },
+  {
+    path: '/:org/:project/:view/_search',
+    component: RawElasticSearchQuery,
+  },
+  {
+    path: '/:org/:project/graph/sparql',
+    component: RawSparqlQuery,
   },
   {
     path: '/:org',
