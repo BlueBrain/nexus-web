@@ -7,8 +7,6 @@ import { withKnobs, text, number, boolean } from '@storybook/addon-knobs';
 import ResourceList from './ResourceList';
 import ResourceListItem, { ResourceListItemProps } from './ResourceListItem';
 
-const logo = require('../../logo.svg');
-
 const exampleResources = [
   {
     '@id':
