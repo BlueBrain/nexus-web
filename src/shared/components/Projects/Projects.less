@@ -1,0 +1,59 @@
+@import '../../lib.less';
+
+/**
+* Project Cards
+*/
+.ProjectCard {
+  background-color: #fff !important;
+  margin: 5px !important;
+  box-shadow: 0 2px 5px 0 rgba(49, 49, 93, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.08);
+
+  .content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .project-name {
+      margin: 0;
+      flex-grow: 1;
+      font-weight: bold;
+      font-size: 1.3em;
+    }
+    .project-number {
+      margin: 0;
+      .number {
+        font-weight: bold;
+      }
+    }
+    .edit-button {
+      display: none;
+    }
+  }
+
+  &:hover,
+  &:focus,
+  &:focus-within {
+    background-color: fade(@primary-color, 5%);
+
+    .content {
+      .edit-button {
+        display: block;
+        margin-left: 10px;
+      }
+    }
+  }
+}
+
+/**
+* Project List
+*/
+.ProjectList {
+  .scrollBar();
+  .result {
+    margin-top: 10px;
+    padding-left: 5px;
+  }
+  .projects {
+    overflow-y: auto;
+  }
+}
