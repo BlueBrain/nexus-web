@@ -3,17 +3,19 @@ import { connect } from 'react-redux';
 import { Project } from '@bbp/nexus-sdk';
 import { RootState } from '../store/reducers';
 import { fetchOrg } from '../store/actions/nexus';
+import ProjectList from '../components/Projects/ProjectList';
 import Skeleton from '../components/Skeleton';
+import { ProjectCardProps } from '../components/Projects/ProjectCard';
 
 interface HomeProps {
   activeOrg: { label: string };
-  projects: Project[];
+  projects: ProjectCardProps[];
   busy: boolean;
   fetchOrg(name: string): void;
   match: any;
 }
 
-const Home: React.SFC<HomeProps> = ({
+const Home: React.FunctionComponent<HomeProps> = ({
   busy,
   projects,
   fetchOrg,
@@ -48,13 +50,7 @@ const Home: React.SFC<HomeProps> = ({
   if (projects.length === 0) {
     return <p>no projects</p>;
   }
-  return (
-    <ul>
-      {projects.map(p => (
-        <li key={p.id}>{p.name}</li>
-      ))}
-    </ul>
-  );
+  return <ProjectList projects={projects} />;
 };
 
 const mapStateToProps = (state: RootState) => ({
@@ -63,7 +59,10 @@ const mapStateToProps = (state: RootState) => ({
     state.nexus.activeOrg.org) || { label: '' },
   projects:
     state.nexus && state.nexus.activeOrg && state.nexus.activeOrg.projects
-      ? state.nexus.activeOrg.projects
+      ? state.nexus.activeOrg.projects.map(p => ({
+          name: p.name,
+          resourceNumber: 0,
+        }))
       : [],
   busy: (state.nexus && state.nexus.fetching) || false,
 });

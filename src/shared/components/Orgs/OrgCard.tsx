@@ -11,7 +11,7 @@ export interface OrgCardProps {
   onEdit?(): void;
 }
 
-const OrgCard: React.SFC<OrgCardProps> = ({
+const OrgCard: React.FunctionComponent<OrgCardProps> = ({
   name,
   projectNumber,
   logo = '',

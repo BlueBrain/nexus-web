@@ -9,7 +9,7 @@ export interface LoginViewProps {
   hostName: string;
 }
 
-const Login: React.SFC<LoginViewProps> = props => {
+const Login: React.FunctionComponent<LoginViewProps> = props => {
   const realms: Realm[] = [
     { name: 'BBP', authorizationEndpoint: props.authorizationEndpoint },
   ];
