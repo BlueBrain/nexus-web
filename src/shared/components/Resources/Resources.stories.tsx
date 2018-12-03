@@ -2,7 +2,7 @@ import React = require('react');
 import { storiesOf } from '@storybook/react';
 import { withInfo } from '@storybook/addon-info';
 import { action } from '@storybook/addon-actions';
-import { withKnobs, text, number } from '@storybook/addon-knobs';
+import { withKnobs, text, number, boolean } from '@storybook/addon-knobs';
 
 import ResourceList from './ResourceList';
 import ResourceListItem, { ResourceListItemProps } from './ResourceListItem';
@@ -158,6 +158,7 @@ const exampleResources = [
 
 const resources: ResourceListItemProps[] = exampleResources.map(item => ({
   id: item['@id'],
+  _constrainedBy: item._constrainedBy,
 }));
 
 storiesOf('Components/Resources', module)
@@ -174,6 +175,10 @@ storiesOf('Components/Resources', module)
   `)(() => {
       const id = text(`id`, resources[0].id);
       const name = text('Name', null);
+      const _constrainedBy = text(
+        '_constrainedBy',
+        resources[0]._constrainedBy
+      );
       return (
         <React.Fragment>
           <div style={{ margin: '50px 40px 0px' }}>
@@ -181,6 +186,7 @@ storiesOf('Components/Resources', module)
             <ResourceListItem
               id={id}
               name={name}
+              _constrainedBy={_constrainedBy}
               onClick={action('resource-click')}
             />
           </div>
@@ -189,21 +195,24 @@ storiesOf('Components/Resources', module)
     })
   );
 
-storiesOf('Components/Resources', module).add(
-  'ResourceList',
-  withInfo(`
+storiesOf('Components/Resources', module)
+  .addDecorator(withKnobs)
+  .add(
+    'ResourceList',
+    withInfo(`
     The ResourceList component is a collection of ResourceListItem components.
 
     ~~~js
       <ResourceList />
     ~~~
   `)(() => {
-    return (
-      <React.Fragment>
-        <div style={{ margin: '50px 40px 0px' }}>
-          <ResourceList resources={resources} />
-        </div>
-      </React.Fragment>
-    );
-  })
-);
+      const loading = boolean('Loading', false);
+      return (
+        <React.Fragment>
+          <div style={{ margin: '50px 40px 0px' }}>
+            <ResourceList resources={resources} loading={loading} />
+          </div>
+        </React.Fragment>
+      );
+    })
+  );

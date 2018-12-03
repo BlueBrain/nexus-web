@@ -30,9 +30,8 @@ const ResourceList: React.SFC<ResourceListProps> = ({
       <div className="resources">
         <List
           loading={loading}
-          header={() =>
-            `Found ${resources.length} resource${resources.length > 1 && 's'}`
-          }
+          header={`Found ${resources.length} resource${resources.length > 1 &&
+            's'}`}
           dataSource={resources}
           pagination={{
             onChange: page => {
