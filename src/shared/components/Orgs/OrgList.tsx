@@ -11,7 +11,10 @@ export interface OrgListProps {
 
 const Search = Input.Search;
 
-const OrgList: React.SFC<OrgListProps> = ({ orgs, onOrgClick = () => {} }) => {
+const OrgList: React.FunctionComponent<OrgListProps> = ({
+  orgs,
+  onOrgClick = () => {},
+}) => {
   const [items, setItems] = React.useState(orgs);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -17,7 +17,7 @@ export interface LoginProps {
   busy?: boolean;
 }
 
-const Login: React.ComponentType<LoginProps> = ({
+const Login: React.FunctionComponent<LoginProps> = ({
   realms,
   clientId,
   hostName,

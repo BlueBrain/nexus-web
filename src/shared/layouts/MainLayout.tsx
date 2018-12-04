@@ -20,7 +20,7 @@ export interface MainLayoutProps {
   name: string;
 }
 
-const MainLayout: React.SFC<MainLayoutProps> = ({
+const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
   authenticated,
   goTo,
   logoutUrl,

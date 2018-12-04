@@ -1,15 +1,15 @@
 import auth, { AuthState } from './auth';
 import config, { ConfigState } from './config';
-import orgs, { OrgsState } from './orgs';
+import nexus, { NexusState } from './nexus';
 
 export interface RootState {
   auth: AuthState;
   config: ConfigState;
-  orgs?: OrgsState;
+  nexus?: NexusState;
 }
 
 export default {
   auth,
   config,
-  orgs,
+  nexus,
 };

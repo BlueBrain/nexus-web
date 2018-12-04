@@ -1,9 +1,9 @@
 @import '../../lib.less';
 
 /**
-* Organisation Cards
+* Project Cards
 */
-.OrgCard {
+.ProjectCard {
   background-color: #fff !important;
   margin: 5px !important;
   box-shadow: 0 2px 5px 0 rgba(49, 49, 93, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.08);
@@ -13,10 +13,7 @@
     justify-content: space-between;
     align-items: center;
 
-    .logo {
-      margin-right: 10px;
-    }
-    .org-name {
+    .project-name {
       margin: 0;
       flex-grow: 1;
       font-weight: bold;
@@ -48,53 +45,15 @@
 }
 
 /**
-* Organisation List
+* Project List
 */
-.OrgList {
+.ProjectList {
   .scrollBar();
   .result {
     margin-top: 10px;
     padding-left: 5px;
   }
-  .orgs {
-    overflow-y: auto;
-  }
-}
-
-/**
-* Organisation Dropdown
-*/
-.OrgDropdown {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background: @header-background-color;
-  width: 10em;
-
-  &.ant-popover-open {
-    background: shade(@header-background-color, 20%);
-  }
-  .org-name {
-    text-align: center;
-    margin: 0;
-    cursor: default;
-  }
-
-  &:hover {
-    background-color: shade(@header-background-color, 20%);
-  }
-}
-.OrgDropdownPopover {
-  @height: 100px;
-  width: 400px;
-  .org-menu {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-  }
-  .orgs {
-    max-height: @height + 165;
-    min-height: @height;
+  .projects {
     overflow-y: auto;
   }
 }

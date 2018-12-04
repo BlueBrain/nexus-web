@@ -12,7 +12,7 @@ export interface HeaderProps {
   onLoginClick?(): void;
 }
 
-const Header: React.StatelessComponent<HeaderProps> = ({
+const Header: React.FunctionComponent<HeaderProps> = ({
   name = '',
   displayLogin = true,
   links = [],

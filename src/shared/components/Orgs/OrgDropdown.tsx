@@ -10,7 +10,7 @@ export interface OrgDropDownProps {
   key?: any;
 }
 
-const OrgDropdown: React.SFC<OrgDropDownProps> = ({
+const OrgDropdown: React.FunctionComponent<OrgDropDownProps> = ({
   activeName,
   orgs = [],
   key = '',
