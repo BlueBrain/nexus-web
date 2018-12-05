@@ -53,9 +53,7 @@ pipeline {
                 expression { isMaster && !isRelease && !isPR }
             }
             steps {
-                sh 'npm run build'
-                sh 'tar -zcvf dist.tar.gz dist'
-                sh "oc start-build ${imageBuildName} --from-file=dist.tar.gz --follow"
+                sh "oc start-build ${imageBuildName} --from-dir=. --follow"
             }
         }
 
