@@ -5,7 +5,7 @@ import { action } from '@storybook/addon-actions';
 import { withKnobs, text, number, boolean } from '@storybook/addon-knobs';
 
 import ResourceList from './ResourceList';
-import ResourceListItem, { ResourceListItemProps } from './ResourceListItem';
+import ResourceItem, { ResourceItemProps } from './ResourceItem';
 
 const exampleResources = [
   {
@@ -154,9 +154,12 @@ const exampleResources = [
   },
 ];
 
-const resources: ResourceListItemProps[] = exampleResources.map(item => ({
+const resources: ResourceItemProps[] = exampleResources.map(item => ({
   id: item['@id'],
-  _constrainedBy: item._constrainedBy,
+  constrainedBy: item._constrainedBy,
+  type: Array.isArray(item['@type'])
+    ? item['@type'].map(type => new URL(type))
+    : [new URL(item['@type'])],
 }));
 
 storiesOf('Components/Resources', module)
@@ -173,18 +176,17 @@ storiesOf('Components/Resources', module)
   `)(() => {
       const id = text(`id`, resources[0].id);
       const name = text('Name', null);
-      const _constrainedBy = text(
-        '_constrainedBy',
-        resources[0]._constrainedBy
-      );
+      const constrainedBy = text('constrainedBy', resources[0].constrainedBy);
+      const type = resources[0].type;
       return (
         <React.Fragment>
           <div style={{ margin: '50px 40px 0px' }}>
             <h2>Simple Example</h2>
-            <ResourceListItem
+            <ResourceItem
               id={id}
               name={name}
-              _constrainedBy={_constrainedBy}
+              type={type}
+              constrainedBy={constrainedBy}
               onClick={action('resource-click')}
             />
           </div>

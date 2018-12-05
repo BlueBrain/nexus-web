@@ -12,12 +12,26 @@
 @border-radius-base: 4px; // major border radius
 @border-color-base: #d9d9d9; // major border color
 @box-shadow-base: 0 2px 8px rgba(0, 0, 0, 0.15); // major shadow for layers
+@background-color-subtle: rgb(252, 253, 253); // suble tinting to background
 
 // Variables
 @header-background-color: #f0f0f0;
 @box-shadow-color: #abbac9;
 
 // Mixins
+
+// neutralises ugly list styles
+.unstyleList() {
+  list-style: none;
+}
+
+// colors the odd children differently (for list visibility)
+.oddListColor() {
+  &:nth-child(2n + 1) {
+    background-color: @background-color-subtle;
+  }
+}
+
 .scrollBar() {
   /* width */
   ::-webkit-scrollbar {

@@ -2,11 +2,13 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../store/reducers';
 import { fetchResources } from '../store/actions/nexus';
+import ResourceList from '../components/Resources/ResourceList';
+import { Resource } from '@bbp/nexus-sdk';
 
 interface ProjectViewProps {
   orgLabel: string;
   projectLabel: string;
-  resources: { id: string }[];
+  resources: Resource[];
   fetchResources(org: string, project: string): void;
   match: any;
 }
@@ -30,11 +32,14 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
     [match.params.org, match.params.project]
   );
   return (
-    <React.Fragment>
-      {resources.map(resource => (
-        <p key={resource.id}>{resource.id}</p>
-      ))}
-    </React.Fragment>
+    <ResourceList
+      resources={resources.map(({ id, constrainedBy, type }) => ({
+        id,
+        constrainedBy,
+        type,
+      }))}
+      loading={false}
+    />
   );
 };
 
