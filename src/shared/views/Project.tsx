@@ -2,11 +2,13 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../store/reducers';
 import { fetchResources } from '../store/actions/nexus';
+import ResourceList from '../components/Resources/ResourceList';
+import { ResourceItemProps } from '../components/Resources/ResourceItem';
 
 interface ProjectViewProps {
   orgLabel: string;
   projectLabel: string;
-  resources: { id: string }[];
+  resources: ResourceItemProps[];
   fetchResources(org: string, project: string): void;
   match: any;
 }
@@ -31,9 +33,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   );
   return (
     <React.Fragment>
-      {resources.map(resource => (
-        <p key={resource.id}>{resource.id}</p>
-      ))}
+      <ResourceList resources={resources} loading={false} />
     </React.Fragment>
   );
 };
