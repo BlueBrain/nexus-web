@@ -157,7 +157,7 @@ const exampleResources = [
 const resources: ResourceItemProps[] = exampleResources.map(item => ({
   id: item['@id'],
   constrainedBy: item._constrainedBy,
-  type: Array.isArray(item['@type']) ? item['@type'] : new Array(item['@type']),
+  type: Array.isArray(item['@type']) ? item['@type'] : [item['@type']],
 }));
 
 storiesOf('Components/Resources', module)
