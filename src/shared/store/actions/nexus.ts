@@ -148,7 +148,6 @@ export const fetchResources: ActionCreator<ThunkAction> = (
       const org: Organization = await nexus.getOrganization(orgLabel);
       const project: Project = await org.getProject(projectLabel);
       const resources: Resource[] = await project.listResources();
-      console.log({ resources });
       return dispatch(fetchResourcesSuccessAction(org, project, resources));
     } catch (e) {
       return dispatch(fetchResourcesFailureAction(e));
