@@ -53,7 +53,7 @@ pipeline {
                 expression { isMaster && !isRelease && !isPR }
             }
             steps {
-                sh "oc start-build ${imageBuildName} --from-dir=. --follow"
+                sh "oc start-build ${imageBuildName} --follow"
             }
         }
 
