@@ -44,7 +44,7 @@ export default function configureStore(
   );
 
   // DEVELOPMENT ONLY
-  // if Hot module Replacement is enables
+  // if Hot module Replacement is enabled
   // replace store's reducers with new ones.
   if (module.hot) {
     module.hot.accept('./reducers', () => {
