@@ -5,7 +5,6 @@
     "module": "commonjs",
     "target": "esnext",
     "moduleResolution": "node",
-    "esModuleInterop": true,
     "jsx": "react",
     "experimentalDecorators": true,
     "sourceMap": true,
