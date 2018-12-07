@@ -5,6 +5,7 @@
     "module": "commonjs",
     "target": "esnext",
     "moduleResolution": "node",
+    "esModuleInterop": true,
     "jsx": "react",
     "experimentalDecorators": true,
     "sourceMap": true,
@@ -12,21 +13,10 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noEmitOnError": true,
-    "lib": [
-      "dom",
-      "esnext"
-    ],
+    "lib": ["dom", "esnext"],
     "allowSyntheticDefaultImports": true
   },
-  "files": [
-    "custom.d.ts"
-  ],
-  "include": [
-    "src/**/*",
-  ],
-  "exclude": [
-    "node_modules",
-    "src/**/*.test.ts*",
-    "src/**/*.stories.ts*"
-  ]
+  "files": ["custom.d.ts"],
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "src/**/*.test.ts*", "src/**/*.stories.ts*"]
 }
