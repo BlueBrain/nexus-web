@@ -52,7 +52,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
 const mapStateToProps = (state: RootState) => ({
   orgs:
     (state.nexus &&
-      state.nexus.orgs.map(o => ({ name: o.label, projectNumber: 0 }))) ||
+      state.nexus.orgs.map(o => ({ name: o.label, projectNumber: o.projectNumber }))) ||
     [],
   busy: (state.nexus && state.nexus.fetching) || false,
 });
