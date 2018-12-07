@@ -69,7 +69,7 @@ const mapStateToProps = (state: RootState) => ({
       ? state.nexus.activeOrg.projects.map(p => ({
           name: p.name,
           label: p.label,
-          resourceNumber: 0,
+          resourceNumber: p.resourceNumber,
         }))
       : [],
   busy: (state.nexus && state.nexus.fetching) || false,
