@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Avatar, Tooltip } from 'antd';
+import * as Identicon from 'identicon.js';
 import './Types.less';
-
-const Identicon = require('identicon.js');
 
 export interface TypesIconProps {
   type: string[];
@@ -14,7 +13,7 @@ const TypesIcon: React.SFC<TypesIconProps> = ({ type }) => {
     <ul className="types-list">
       {type.map(type => {
         const typeString = type.toString();
-        const imageData = new Identicon(typeString, 420).toString();
+        const imageData: string = new Identicon(typeString, 420).toString();
         return (
           <li className="types-icon">
             <Tooltip title={typeString}>
