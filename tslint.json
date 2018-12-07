@@ -1,0 +1,22 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint-config-airbnb",
+        "tslint-config-prettier"
+    ],
+    "jsRules": {},
+    "rules": {
+        "import-name": [
+            false,
+            {
+                "react": "React",
+                "react-dom": "ReactDOM",
+                "react-helmet": "Helmet"
+            }
+        ],
+        "variable-name": [
+            true,
+            "allow-pascal-case"
+        ]
+    }
+}
