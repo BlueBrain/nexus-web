@@ -29,7 +29,7 @@ const ResourceListItem: React.FunctionComponent<ResourceItemProps> = ({
         title={`${id} ${name}`}
         description={
           <div>
-            {type && <TypesIcon type={type} />}
+            {type && type.length && <TypesIcon type={type} />}
             <span>{constrainedBy}</span>
           </div>
         }

@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@bbp/nexus-sdk": "0.0.3",
+    "@types/md5": "^2.1.33",
     "antd": "^3.10.9",
     "connected-react-router": "^5.0.1",
     "cookie-parser": "^1.4.3",
@@ -23,6 +24,7 @@
     "history": "^4.7.2",
     "identicon.js": "^2.3.3",
     "jwt-decode": "^2.2.0",
+    "md5": "^2.2.1",
     "morgan": "^1.9.1",
     "react": "^16.7.0-alpha.2",
     "react-dom": "^16.7.0-alpha.2",
