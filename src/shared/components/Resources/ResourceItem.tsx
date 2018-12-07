@@ -23,14 +23,13 @@ const ResourceListItem: React.FunctionComponent<ResourceItemProps> = ({
   onEdit,
   onClick = () => {},
 }) => {
-  const validTypes: string[] = type ? type.filter(t => t.length >= 15) : [];
   return (
     <Item className="resource-item">
       <Item.Meta
-        title={`${id} ${name}`}
+        title={`${id}`}
         description={
           <div>
-            {validTypes.length > 0 && <TypesIcon type={validTypes} />}
+            {type && type.length && <TypesIcon type={type} />}
             <span>{constrainedBy}</span>
           </div>
         }
