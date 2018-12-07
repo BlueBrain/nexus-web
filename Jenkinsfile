@@ -2,7 +2,7 @@ String version = env.BRANCH_NAME
 String commitId = env.GIT_COMMIT
 Boolean isRelease = version ==~ /v\d+\.\d+\.\d+.*/
 Boolean isPR = env.CHANGE_ID != null
-Boolean isMaster = version == 'nexus-web'
+Boolean isMaster = version == 'master'
 
 pipeline {
     agent any
