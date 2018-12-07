@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { Avatar, Tooltip } from 'antd';
+import * as Identicon from 'identicon.js';
 import './Types.less';
-
-// must use require because of incompatable bundling
-const Identicon = require('identicon.js');
-const md5 = require('md5');
+import * as md5 from "md5"
 
 export interface TypesIconProps {
   type: string[];

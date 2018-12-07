@@ -26,7 +26,7 @@ const ResourceListItem: React.FunctionComponent<ResourceItemProps> = ({
   return (
     <Item className="resource-item">
       <Item.Meta
-        title={`${id} ${name}`}
+        title={`${id}`}
         description={
           <div>
             {type && type.length && <TypesIcon type={type} />}
