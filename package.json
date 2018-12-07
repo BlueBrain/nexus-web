@@ -21,6 +21,7 @@
     "cookie-parser": "^1.4.3",
     "express": "^4.16.4",
     "history": "^4.7.2",
+    "identicon.js": "^2.3.3",
     "jwt-decode": "^2.2.0",
     "morgan": "^1.9.1",
     "react": "^16.7.0-alpha.2",
