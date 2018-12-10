@@ -46,6 +46,9 @@ export default function nexusReducer(
       return {
         ...state,
         fetching: false,
+        activeOrg: {
+          org: action.payload.org,
+        },
         activeProject: {
           org: action.payload.org,
           project: action.payload.project,
