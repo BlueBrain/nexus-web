@@ -12,50 +12,48 @@ export interface Breadcrumb {
 }
 
 export interface BreadcrumbProps {
-  dividerComponent?: React.Component;
+  dividerComponent?: React.FunctionComponent;
   breadcrumbs: Breadcrumb[];
 }
 
 export interface BreadcrumbContainerProps {
-  dividerComponent?: React.Component;
+  dividerComponent?: React.FunctionComponent;
   state: RootState;
 }
 
-const DefaultDividerComponent: React.FunctionComponent<{
-  key: string;
-}> = props => {
-  return (
-    <li className="breadcrumb-item" {...props}>
-      {<span>{'/'}</span>}
-    </li>
-  );
+const DefaultDividerComponent: React.FunctionComponent = () => {
+  return <span>{'/'}</span>;
 };
 
 const BreadcrumbsListComponent: React.FunctionComponent<BreadcrumbProps> = ({
   breadcrumbs,
-  dividerComponent,
+  dividerComponent = DefaultDividerComponent,
 }) => {
-  console.log({ breadcrumbs });
-  const DividerComponent = dividerComponent;
   return (
     <ul className="breadcrumb-list">
-      {breadcrumbs.map(({ component, path }: Breadcrumb, index: number) => (
-        <React.Fragment key={`breadcrumb-list-${index}`}>
-          <li
-            className={`breadcrumb-item ${
-              // disable the page we're currently viewing from being clicked.
-              index === breadcrumbs.length - 1 ? '-disabled' : ''
-            }`}
-            key={`${path}-${index}`}
-          >
-            <NavLink to={path}>{component}</NavLink>
-          </li>
-          {!!(index < breadcrumbs.length - 1) && (
-            // @ts-ignore
-            <DividerComponent key={`divider-${index}`} />
-          )}
-        </React.Fragment>
-      ))}
+      {breadcrumbs.map(({ component, path }: Breadcrumb, index: number) => {
+        return (
+          <React.Fragment key={`breadcrumb-list-${index}`}>
+            <li
+              className={`breadcrumb-item ${
+                // disable the page we're currently viewing from being clicked.
+                index === breadcrumbs.length - 1 ? '-disabled' : ''
+              }`}
+              key={`${path}-${index}`}
+            >
+              <NavLink to={path}>{component}</NavLink>
+            </li>
+            {!!(index < breadcrumbs.length - 1) && (
+              <li
+                className="breadcrumb-item"
+                key={`breadcrumb-item-divider-${index}`}
+              >
+                {dividerComponent({})}
+              </li>
+            )}
+          </React.Fragment>
+        );
+      })}
     </ul>
   );
 };

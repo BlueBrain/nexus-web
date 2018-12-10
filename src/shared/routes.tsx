@@ -15,7 +15,7 @@ import {
   ProjectBreadcrumbLabel,
   HomeBreadcrumbLabel,
   OrgBreadcrumbLabel,
-} from './components/Breadcrumb/BreadcrumbLabels';
+} from './views/breadcrumbs/BreadcrumbLabels';
 
 export interface RouteWithData extends RouteProps {
   breadcrumbLabel?: any;

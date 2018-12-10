@@ -11,7 +11,7 @@ export const HomeBreadcrumbLabel = (state: RootState) => {
 };
 
 export const OrgBreadcrumbLabel = (state: RootState) => {
-  if (state.nexus && state.nexus.fetching) {
+  if (state.nexus && state.nexus.orgsFetching) {
     return (
       <span>
         <Icon type="bank" /> <Icon type="loading" />
@@ -29,7 +29,7 @@ export const OrgBreadcrumbLabel = (state: RootState) => {
 };
 
 export const ProjectBreadcrumbLabel = (state: RootState) => {
-  if (state.nexus && state.nexus.fetching) {
+  if (state.nexus && state.nexus.projectsFetching) {
     return (
       <span>
         <Icon type="solution" /> <Icon type="loading" />
@@ -41,7 +41,7 @@ export const ProjectBreadcrumbLabel = (state: RootState) => {
     state.nexus.activeProject.project) || { label: '' };
   return (
     <span>
-      <Icon type="bank" /> {activeProject.label || 'project'}
+      <Icon type="solution" /> {activeProject.label || 'project'}
     </span>
   );
 };

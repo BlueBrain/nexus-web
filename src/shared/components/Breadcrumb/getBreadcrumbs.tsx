@@ -61,7 +61,6 @@ const getBreadcrumbs = ({
   state,
 }: GetBreadcrumbProps): Breadcrumb[] => {
   const { pathname } = location;
-  console.log({ pathname });
 
   const matches: Breadcrumb[] = [];
 
@@ -77,7 +76,6 @@ const getBreadcrumbs = ({
     .replace(/\/$/, '')
     .split('/')
     .reduce((previous: any, current: any) => {
-      console.log({ previous, current });
       const pathSection = `${previous}/${current}`;
       const matchingBreadcrumb = maybeMatchRouteBreadcrumbWithPath(
         routes,

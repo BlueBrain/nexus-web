@@ -31,7 +31,8 @@ const Header: React.FunctionComponent<HeaderProps> = ({
     <header className="Header">
       <div className="logo-block">
         <a className="logo" href="">
-          <img src={logo} alt="Nexus" />
+          {/* inline styling to prevent headaches in dev mode */}
+          <img src={logo} alt="Nexus" style={{ height: '2em', width: '2em' }} />
         </a>
         <h1>Nexus</h1>
       </div>
