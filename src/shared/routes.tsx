@@ -11,6 +11,11 @@ import {
 } from './store/actions/nexus';
 import { ThunkAction } from './store';
 import { RootState } from './store/reducers';
+import {
+  ProjectBreadcrumbLabel,
+  HomeBreadcrumbLabel,
+  OrgBreadcrumbLabel,
+} from './components/Breadcrumb/BreadcrumbLabels';
 
 export interface RouteWithData extends RouteProps {
   breadcrumbLabel?: any;
@@ -21,6 +26,7 @@ const routes: RouteWithData[] = [
     path: '/',
     exact: true,
     component: Landing,
+    breadcrumbLabel: HomeBreadcrumbLabel,
     loadData: () => fetchOrgs(),
   },
   {
@@ -31,12 +37,7 @@ const routes: RouteWithData[] = [
     path: '/:org',
     exact: true,
     component: Home,
-    breadcrumbLabel: (state: RootState) => {
-      const activeOrg = (state.nexus &&
-        state.nexus.activeOrg &&
-        state.nexus.activeOrg.org) || { label: '' };
-      return <div>{activeOrg.label || 'org'}</div>;
-    },
+    breadcrumbLabel: OrgBreadcrumbLabel,
     loadData: (state, match) =>
       fetchProjects(match && match.params && (match.params as any)['org']),
   },
@@ -44,12 +45,7 @@ const routes: RouteWithData[] = [
     path: '/:org/:project',
     exact: true,
     component: Project,
-    breadcrumbLabel: (state: RootState) => {
-      const activeProject = (state.nexus &&
-        state.nexus.activeProject &&
-        state.nexus.activeProject.project) || { label: '' };
-      return <div>{activeProject.label || 'project'}</div>;
-    },
+    breadcrumbLabel: ProjectBreadcrumbLabel,
     loadData: (state, match) =>
       fetchResources(
         match && match.params && (match.params as any)['org'],

@@ -1,90 +1,60 @@
 import * as React from 'react';
-import { matchPath } from 'react-router';
 import { RootState } from '../../store/reducers';
 import { NavLink } from 'react-router-dom';
 import routes, { RouteWithData } from '../../routes';
 import { connect } from 'react-redux';
 import './Breadcrumb.less';
+import getBreadcrumbs from './getBreadcrumbs';
 
 export interface Breadcrumb {
-  // should be a component
-  component: React.ReactNode;
+  component: JSX.Element;
   path: string;
 }
 
-export interface GetBreadcrumbProps {
-  state: RootState;
-  location: any;
-  routes: RouteWithData[];
-}
-
 export interface BreadcrumbProps {
-  dividerComponent?: React.FunctionComponent;
+  dividerComponent?: React.Component;
   breadcrumbs: Breadcrumb[];
 }
 
 export interface BreadcrumbContainerProps {
-  dividerComponent?: React.FunctionComponent;
+  dividerComponent?: React.Component;
   state: RootState;
 }
 
-const DefaultDividerComponent: React.FunctionComponent = () => {
-  return <span>{'/'}</span>;
-};
-
-const DEFAULT_MATCH_OPTIONS = { exact: true };
-
-const getBreadcrumbs = ({ location, routes, state }: GetBreadcrumbProps) => {
-  // always show home
-  const matches: Breadcrumb[] = [
-    {
-      component: <div className="breadcrumb-label">{'Home'}</div>,
-      path: '/',
-    },
-  ];
-  const { pathname } = location;
-
-  pathname
-    .replace(/\/$/, '')
-    .split('/')
-    .reduce((previous: any, current: any) => {
-      const pathSection = `${previous}/${current}`;
-      const match = routes.find(
-        matchOptions =>
-          !!matchPath(pathSection, {
-            ...(matchOptions || DEFAULT_MATCH_OPTIONS),
-            path: matchOptions.path,
-          })
-      );
-
-      if (match) {
-        let label = pathSection;
-        if (match.breadcrumbLabel) {
-          label = match.breadcrumbLabel(state);
-        }
-        matches.push({
-          component: <div className="breadcrumb-label">{label}</div>,
-          path: pathSection,
-        });
-      }
-
-      return pathSection;
-    });
-
-  return matches;
+const DefaultDividerComponent: React.FunctionComponent<{
+  key: string;
+}> = props => {
+  return (
+    <li className="breadcrumb-item" {...props}>
+      {<span>{'/'}</span>}
+    </li>
+  );
 };
 
 const BreadcrumbsListComponent: React.FunctionComponent<BreadcrumbProps> = ({
   breadcrumbs,
-  dividerComponent = DefaultDividerComponent,
+  dividerComponent,
 }) => {
+  console.log({ breadcrumbs });
+  const DividerComponent = dividerComponent;
   return (
     <ul className="breadcrumb-list">
       {breadcrumbs.map(({ component, path }: Breadcrumb, index: number) => (
-        <li key={path}>
-          <NavLink to={path}>{component}</NavLink>
-          {!!(index < breadcrumbs.length - 1) && dividerComponent({})}
-        </li>
+        <React.Fragment key={`breadcrumb-list-${index}`}>
+          <li
+            className={`breadcrumb-item ${
+              // disable the page we're currently viewing from being clicked.
+              index === breadcrumbs.length - 1 ? '-disabled' : ''
+            }`}
+            key={`${path}-${index}`}
+          >
+            <NavLink to={path}>{component}</NavLink>
+          </li>
+          {!!(index < breadcrumbs.length - 1) && (
+            // @ts-ignore
+            <DividerComponent key={`divider-${index}`} />
+          )}
+        </React.Fragment>
       ))}
     </ul>
   );
@@ -92,7 +62,7 @@ const BreadcrumbsListComponent: React.FunctionComponent<BreadcrumbProps> = ({
 
 const BreadcrumbsContainer: React.FunctionComponent<
   BreadcrumbContainerProps
-> = ({ dividerComponent = DefaultDividerComponent, state }) => {
+> = ({ dividerComponent, state }) => {
   const location = state.router && state.router.location;
   const breadcrumbs = getBreadcrumbs({ location, routes, state });
   return BreadcrumbsListComponent({ breadcrumbs, dividerComponent });
