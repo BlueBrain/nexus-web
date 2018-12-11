@@ -30,6 +30,7 @@ export default function configureStore(
   preloadedState: object = {}
 ): Store {
   const store = createStore(
+    // @ts-ignore
     combineReducers({ router: connectRouter(history), ...reducers }),
     preloadedState,
     composeEnhancers(

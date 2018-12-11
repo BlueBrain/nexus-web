@@ -76,7 +76,10 @@ const mapStateToProps = (state: RootState) => ({
       state.nexus.activeProject &&
       state.nexus.activeProject.resources) ||
     [],
-  busy: (state.nexus && state.nexus.fetching) || false,
+  busy:
+    (state.nexus &&
+      (state.nexus.projectsFetching || state.nexus.resourcesFetching)) ||
+    false,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

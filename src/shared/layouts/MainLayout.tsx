@@ -4,6 +4,7 @@ import Helmet from 'react-helmet';
 import { push } from 'connected-react-router';
 import Header from '../components/Header';
 import { AuthState } from '../store/reducers/auth';
+import Breadcrumbs from '../components/Breadcrumb/Breadcrumb';
 
 import './MainLayout.less';
 
@@ -56,7 +57,10 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
       ]}
       onLoginClick={() => goTo('/login')}
     />
-    <div className="MainLayout_body">{children}</div>
+    <div className="MainLayout_body">
+      <Breadcrumbs />
+      {children}
+    </div>
   </React.Fragment>
 );
 

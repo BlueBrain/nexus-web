@@ -36,6 +36,7 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
       </p>
       <div className="orgs">
         {items.map((org, i) => (
+          // TODO org cards should be anchor tags with hrefs for SSR
           <OrgCard
             key={org.name + i}
             {...org}

@@ -72,7 +72,10 @@ const mapStateToProps = (state: RootState) => ({
           resourceNumber: p.resourceNumber,
         }))
       : [],
-  busy: (state.nexus && state.nexus.fetching) || false,
+  busy:
+    (state.nexus &&
+      (state.nexus.orgsFetching || state.nexus.projectsFetching)) ||
+    false,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

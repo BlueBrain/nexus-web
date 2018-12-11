@@ -2,8 +2,10 @@ import { Organization, Project, Resource } from '@bbp/nexus-sdk';
 import { OrgsActions } from '../actions/nexus';
 
 export interface NexusState {
-  fetching: boolean;
   orgs: Organization[];
+  orgsFetching?: boolean;
+  projectsFetching?: boolean;
+  resourcesFetching?: boolean;
   activeOrg?: {
     org: Organization;
     projects: Project[];
@@ -16,7 +18,6 @@ export interface NexusState {
 }
 
 const initialState: NexusState = {
-  fetching: false,
   orgs: [],
 };
 
@@ -26,17 +27,19 @@ export default function nexusReducer(
 ) {
   switch (action.type) {
     case '@@nexus/ORGS_FETCHING':
+      return { ...state, orgsFetching: true };
     case '@@nexus/PROJECTS_FETCHING':
+      return { ...state, projectsFetching: true };
     case '@@nexus/RESOURCES_FETCHING':
-      return { ...state, fetching: true };
+      return { ...state, resourcesFetching: true };
     case '@@nexus/ORGS_FETCHING_FAILURE':
-      return { ...state, fetching: false };
+      return { ...state, orgsFetching: false };
     case '@@nexus/ORGS_FETCHING_SUCCESS':
-      return { ...state, fetching: false, orgs: action.payload };
+      return { ...state, orgsFetching: false, orgs: action.payload };
     case '@@nexus/PROJECTS_FETCHING_SUCCESS':
       return {
         ...state,
-        fetching: false,
+        projectsFetching: false,
         activeOrg: {
           org: action.payload.org,
           projects: action.payload.projects,
@@ -45,7 +48,7 @@ export default function nexusReducer(
     case '@@nexus/RESOURCES_FETCHING_SUCCESS':
       return {
         ...state,
-        fetching: false,
+        resourcesFetching: false,
         activeProject: {
           org: action.payload.org,
           project: action.payload.project,
