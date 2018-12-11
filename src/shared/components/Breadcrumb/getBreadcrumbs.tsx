@@ -71,7 +71,7 @@ const getBreadcrumbs = ({
   }
 
   // Now that we've found the home breadcrumb, we can continue using this method
-  // to iterate through the pathsections as defiend as between /'s
+  // to iterate through the pathsections as defined as between /'s
   pathname
     .replace(/\/$/, '')
     .split('/')
