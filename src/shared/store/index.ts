@@ -17,11 +17,11 @@ export type Services = {
 
 export type ThunkAction = ThunkAction<Promise<any>, object, Services, any>;
 
-let composeEnhancers = compose;
+let composeEnhancers: Function;
 try {
   composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
 } catch (e) {
-  // fail silently
+  composeEnhancers = compose;
 }
 
 export default function configureStore(
