@@ -39,8 +39,8 @@ const html = ({
           '\\u003c'
         )};
       </script>
+      <script src="${base}public/bundle.js" defer></script>
     </body>
-    <script src="${base}public/bundle.js" defer></script>
   </html>
 `;
 
