@@ -15,6 +15,7 @@ import {
   ProjectBreadcrumbLabel,
   HomeBreadcrumbLabel,
   OrgBreadcrumbLabel,
+  LoginBreadcrumbLabel,
 } from './views/breadcrumbs/BreadcrumbLabels';
 
 export interface RouteWithData extends RouteProps {
@@ -31,6 +32,7 @@ const routes: RouteWithData[] = [
   },
   {
     path: '/login',
+    breadcrumbLabel: LoginBreadcrumbLabel,
     component: Login,
   },
   {

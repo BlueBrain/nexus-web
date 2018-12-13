@@ -1,6 +1,13 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
-import Nexus, { Organization, Project, Resource } from '@bbp/nexus-sdk';
+import Nexus, {
+  Organization,
+  Project,
+  Resource,
+  PaginationSettings,
+  PaginatedList,
+} from '@bbp/nexus-sdk';
 import { Services, ThunkAction } from '..';
+import { RootState } from '../reducers';
 
 //
 // Action types
@@ -31,6 +38,7 @@ interface FetchResourcesActionSuccess extends Action {
     org: Organization;
     project: Project;
     resources: Resource[];
+    resourcePaginationSettings: PaginationSettings;
   };
 }
 interface FetchOrgsActionFailure extends Action {
@@ -67,9 +75,14 @@ const fetchProjectsSuccessAction: ActionCreator<FetchProjectsActionSuccess> = (
 });
 const fetchResourcesSuccessAction: ActionCreator<
   FetchResourcesActionSuccess
-> = (org: Organization, project: Project, resources: Resource[]) => ({
+> = (
+  org: Organization,
+  project: Project,
+  resources: Resource[],
+  resourcePaginationSettings: PaginationSettings
+) => ({
   type: '@@nexus/RESOURCES_FETCHING_SUCCESS',
-  payload: { org, project, resources },
+  payload: { org, project, resources, resourcePaginationSettings },
 });
 const fetchOrgsFailureAction: ActionCreator<FetchOrgsActionFailure> = (
   error: any
@@ -136,7 +149,8 @@ export const fetchProjects: ActionCreator<ThunkAction> = (name: string) => {
 
 export const fetchResources: ActionCreator<ThunkAction> = (
   orgLabel: string,
-  projectLabel: string
+  projectLabel: string,
+  resourcePaginationSettings: PaginationSettings
 ) => {
   return async (
     dispatch: Dispatch<any>,
@@ -147,8 +161,17 @@ export const fetchResources: ActionCreator<ThunkAction> = (
     try {
       const org: Organization = await nexus.getOrganization(orgLabel);
       const project: Project = await org.getProject(projectLabel);
-      const resources: Resource[] = await project.listResources();
-      return dispatch(fetchResourcesSuccessAction(org, project, resources));
+      const resources: PaginatedList<Resource> = await project.listResources(
+        resourcePaginationSettings
+      );
+      return dispatch(
+        fetchResourcesSuccessAction(
+          org,
+          project,
+          resources,
+          resourcePaginationSettings
+        )
+      );
     } catch (e) {
       return dispatch(fetchResourcesFailureAction(e));
     }

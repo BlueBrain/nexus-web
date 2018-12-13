@@ -10,6 +10,14 @@ export const HomeBreadcrumbLabel = (state: RootState) => {
   );
 };
 
+export const LoginBreadcrumbLabel = (state: RootState) => {
+  return (
+    <span>
+      <Icon type="login" /> Login
+    </span>
+  );
+};
+
 export const OrgBreadcrumbLabel = (state: RootState) => {
   if (state.nexus && state.nexus.orgsFetching) {
     return (
@@ -23,7 +31,7 @@ export const OrgBreadcrumbLabel = (state: RootState) => {
     state.nexus.activeOrg.org) || { label: '' };
   return (
     <span>
-      <Icon type="bank" /> {activeOrg.label || 'project'}
+      <Icon type="bank" /> {activeOrg.label || 'org'}
     </span>
   );
 };

@@ -1,11 +1,20 @@
-import { Organization, Project, Resource } from '@bbp/nexus-sdk';
+import {
+  Organization,
+  Project,
+  Resource,
+  PaginationSettings,
+  PaginatedList,
+} from '@bbp/nexus-sdk';
 import { OrgsActions } from '../actions/nexus';
+
+export const DEFAULT_RESOURCE_PAGINATION_SIZE = 20;
 
 export interface NexusState {
   orgs: Organization[];
   orgsFetching?: boolean;
   projectsFetching?: boolean;
   resourcesFetching?: boolean;
+  resourcePaginationSettings: PaginationSettings;
   activeOrg?: {
     org: Organization;
     projects: Project[];
@@ -13,11 +22,15 @@ export interface NexusState {
   activeProject?: {
     org: Organization;
     project: Project;
-    resources: Resource[];
+    resources: PaginatedList<Resource>;
   };
 }
 
 const initialState: NexusState = {
+  resourcePaginationSettings: {
+    from: 0,
+    size: DEFAULT_RESOURCE_PAGINATION_SIZE,
+  },
   orgs: [],
 };
 
@@ -49,6 +62,7 @@ export default function nexusReducer(
       return {
         ...state,
         resourcesFetching: false,
+        resourcePaginationSettings: action.payload.resourcePaginationSettings,
         activeProject: {
           org: action.payload.org,
           project: action.payload.project,
