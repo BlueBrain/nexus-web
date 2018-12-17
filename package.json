@@ -15,7 +15,7 @@
     "build:storybook": "build-storybook"
   },
   "dependencies": {
-    "@bbp/nexus-sdk": "0.0.4",
+    "@bbp/nexus-sdk": "0.0.5",
     "antd": "^3.10.9",
     "connected-react-router": "^5.0.1",
     "cookie-parser": "^1.4.3",

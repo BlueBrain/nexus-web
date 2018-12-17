@@ -15,6 +15,7 @@ import {
   ProjectBreadcrumbLabel,
   HomeBreadcrumbLabel,
   OrgBreadcrumbLabel,
+  LoginBreadcrumbLabel,
 } from './views/breadcrumbs/BreadcrumbLabels';
 
 export interface RouteWithData extends RouteProps {
@@ -31,6 +32,7 @@ const routes: RouteWithData[] = [
   },
   {
     path: '/login',
+    breadcrumbLabel: LoginBreadcrumbLabel,
     component: Login,
   },
   {
@@ -49,7 +51,8 @@ const routes: RouteWithData[] = [
     loadData: (state, match) =>
       fetchResources(
         match && match.params && (match.params as any)['org'],
-        match && match.params && (match.params as any)['project']
+        match && match.params && (match.params as any)['project'],
+        state && state.nexus && state.nexus.resourcePaginationSettings
       ),
   },
 ];
