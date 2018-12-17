@@ -51,7 +51,8 @@ const routes: RouteWithData[] = [
     loadData: (state, match) =>
       fetchResources(
         match && match.params && (match.params as any)['org'],
-        match && match.params && (match.params as any)['project']
+        match && match.params && (match.params as any)['project'],
+        state && state.nexus && state.nexus.resourcePaginationSettings
       ),
   },
 ];

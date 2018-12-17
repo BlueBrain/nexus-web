@@ -31,7 +31,6 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   resourcePaginationSettings,
   match,
 }) => {
-  console.log({ resourcePaginationSettings });
 
   const onPaginationChange = (page: number, size: number) => {
     const from = size * page;
