@@ -3,8 +3,10 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { push } from 'connected-react-router';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 import { AuthState } from '../store/reducers/auth';
 import Breadcrumbs from '../components/Breadcrumb/Breadcrumb';
+import { version, url as githubIssueURL } from '../../../package.json';
 
 import './MainLayout.less';
 
@@ -61,6 +63,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
       <Breadcrumbs />
       {children}
     </div>
+    <Footer version={version} githubIssueURL={githubIssueURL} />
   </React.Fragment>
 );
 

@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "rootDir": "./src",
+    "rootDir": "./",
     "outDir": "./dist",
     "module": "commonjs",
     "target": "esnext",
@@ -13,7 +13,8 @@
     "noImplicitReturns": true,
     "noEmitOnError": true,
     "lib": ["dom", "esnext"],
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true
   },
   "files": ["custom.d.ts"],
   "include": ["src/**/*"],
