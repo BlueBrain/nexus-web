@@ -16,25 +16,25 @@ export interface ResourceItemProps {
 }
 
 const ResourceListItem: React.FunctionComponent<ResourceItemProps> = ({
-  name,
   constrainedBy,
   type,
-  id: id,
-  onEdit,
+  name,
   onClick = () => {},
 }) => {
   return (
-    <Item className="resource-item">
-      <Item.Meta
-        title={`${id}`}
-        description={
-          <div>
-            {type && type.length && <TypesIcon type={type} />}
-            <span>{constrainedBy}</span>
-          </div>
-        }
-      />
-    </Item>
+    <div className="clickable-container" onClick={onClick}>
+      <Item className="resource-item">
+        <Item.Meta
+          title={name}
+          description={
+            <div>
+              {type && type.length && <TypesIcon type={type} />}
+              <span>{constrainedBy}</span>
+            </div>
+          }
+        />
+      </Item>
+    </div>
   );
 };
 
