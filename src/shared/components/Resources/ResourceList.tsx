@@ -9,8 +9,6 @@ if (typeof window !== 'undefined') {
   ReactJson = require('react-json-view').default;
 }
 
-console.log(ReactJson);
-
 export interface ResourceListProps {
   resources: PaginatedList<Resource>;
   paginationChange: any;
