@@ -39,10 +39,12 @@ const routes: RouteWithData[] = [
   {
     path: '/:org/:project/:view/_search',
     component: RawElasticSearchQuery,
+    breadcrumbLabel: ProjectBreadcrumbLabel,
   },
   {
     path: '/:org/:project/graph/sparql',
     component: RawSparqlQuery,
+    breadcrumbLabel: ProjectBreadcrumbLabel,
   },
   {
     path: '/:org',
