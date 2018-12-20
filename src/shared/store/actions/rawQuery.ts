@@ -17,11 +17,10 @@ interface RawQueryActionFailure extends Action {
   type: '@@rawQuery/QUERYING_FAILURE';
 }
 
-const rawQueryAction: ActionCreator<RawQueryAction> = (query: string) => {
-      console.log('started action');return ({
+const rawQueryAction: ActionCreator<RawQueryAction> = (query: string) => ({
   query,
   type: '@@rawQuery/QUERYING',
-})};
+});
 const rawQuerySuccessAction: ActionCreator<RawQueryActionSuccess> = (
   results: any
 ) => ({
@@ -52,7 +51,6 @@ export const executeRawQuery: ActionCreator<ThunkAction> = (query: string) => {
       const project = await org.getProject('search');
       const sparqlView = await project.getSparqlView();
       const response = await sparqlView.query(query);
-      console.log("res", response);
       const results: SparqlViewQueryResponse = response;
       return dispatch(rawQuerySuccessAction(results));
     } catch (e) {

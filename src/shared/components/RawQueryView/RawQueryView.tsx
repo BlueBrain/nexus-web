@@ -26,7 +26,6 @@ const RawQueryView: React.FunctionComponent<RawQueryViewProps> = ({ viewType, in
 
   const renderCell = (entry: any) => {
     let value: React.ReactNode;
-    console.log('r', entry);
     switch (entry.type) {
       case "uri":
         value = `<${entry.value}>`;
