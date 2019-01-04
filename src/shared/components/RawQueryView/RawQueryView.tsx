@@ -1,17 +1,18 @@
 import * as React from 'react';
-import { Form, Input, Button, Table } from 'antd';
+import { Form, Input, Button, Table, Card } from 'antd';
 import { executeRawQuery } from '../../store/actions/rawQuery';
 import { RawQueryState } from '../../store/reducers/rawQuery';
 import { connect } from 'react-redux';
 import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/lib/views/SparqlView';
-
-// using Import doesn't work for this one, falling back to require()
-const hash = require('object-hash');
+import * as hash from 'object-hash';
 
 export interface RawQueryViewProps {
   viewType: "es" | "sparql";
   initialQuery: string;
+  fetching: boolean;
   response: SparqlViewQueryResponse;
+  wantedOrg: any;
+  wantedProject: any;
   executeRawQuery(query: string): void;
 }
 
@@ -19,10 +20,20 @@ const TextArea = Input.TextArea;
 const FormItem = Form.Item;
 const { Column } = Table;
 
-const RawQueryView: React.FunctionComponent<RawQueryViewProps> = ({ viewType, initialQuery, response, executeRawQuery }) : JSX.Element => {
+const RawQueryView: React.FunctionComponent<RawQueryViewProps> = ({ fetching, initialQuery, response, executeRawQuery }) : JSX.Element => {
   const [query, setQuery] = React.useState(initialQuery);
-  const cols = response && response.head && response.head.vars || [];
-  const data = response && response.results && response.results.bindings || [];
+
+  let cols: string[]
+  let data: any;
+
+  if (response.hasOwnProperty("boolean")) {
+    cols = ["Result"];
+    data = response.boolean;
+  }
+  else {
+    cols = response.head && response.head.vars || [];
+    data = response.results && response.results.bindings || [];
+  }
 
   const renderCell = (entry: any) => {
     let value: React.ReactNode;
@@ -48,6 +59,7 @@ const RawQueryView: React.FunctionComponent<RawQueryViewProps> = ({ viewType, in
   const columns = cols.map((col: string) =>
     <Column title={col} dataIndex={col} key={col} render={entry => renderCell(entry)}/>
   );
+
   return (
     <>
     <Form onSubmit={(e) => {e.preventDefault(); executeRawQuery(query);}}>
@@ -63,14 +75,17 @@ const RawQueryView: React.FunctionComponent<RawQueryViewProps> = ({ viewType, in
         <Button type="primary" htmlType="submit">Execute SPARQL query</Button>
       </FormItem>
     </Form>
-    <Table dataSource={data} pagination={false} rowKey={record => hash(record)}>
-      {columns}
-    </Table>
+    <Card bordered>
+      <Table dataSource={data} pagination={false} rowKey={record => hash(record)} loading={fetching}>
+        {columns}
+      </Table>
+    </Card>
     </>
   );
 };
 
 const mapStateToProps = ({ rawQuery }: { rawQuery: RawQueryState}) => ({
+  fetching: rawQuery.fetching,
   initialQuery: '',
   response: rawQuery.response,
 });

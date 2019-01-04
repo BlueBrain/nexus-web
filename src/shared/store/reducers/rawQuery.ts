@@ -12,9 +12,7 @@ const initialState: RawQueryState = {
     head: {
       vars: [],
     },
-    results: {
-      bindings: [],
-    },
+    results: undefined,
   },
 };
 

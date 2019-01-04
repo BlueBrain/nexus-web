@@ -17,6 +17,7 @@ import {
   HomeBreadcrumbLabel,
   OrgBreadcrumbLabel,
   LoginBreadcrumbLabel,
+  RawQueryBreadcrumbLabel,
 } from './views/breadcrumbs/BreadcrumbLabels';
 
 export interface RouteWithData extends RouteProps {
@@ -44,7 +45,7 @@ const routes: RouteWithData[] = [
   {
     path: '/:org/:project/graph/sparql',
     component: RawSparqlQuery,
-    breadcrumbLabel: ProjectBreadcrumbLabel,
+    breadcrumbLabel: RawQueryBreadcrumbLabel,
   },
   {
     path: '/:org',
