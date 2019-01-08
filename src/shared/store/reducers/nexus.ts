@@ -5,7 +5,7 @@ import {
   PaginationSettings,
   PaginatedList,
 } from '@bbp/nexus-sdk';
-import { OrgsActions } from '../actions/nexus';
+import { OrgsActions, ResourceActions, SchemaActions } from '../actions/nexus';
 
 export const DEFAULT_RESOURCE_PAGINATION_SIZE = 20;
 
@@ -15,7 +15,9 @@ export interface NexusState {
   projectFetching?: boolean;
   projectsFetching?: boolean;
   resourcesFetching?: boolean;
+  schemasFetching?: boolean;
   resourcePaginationSettings: PaginationSettings;
+  schemas?: any;
   activeOrg?: {
     org: Organization;
     projects: Project[];
@@ -27,17 +29,19 @@ export interface NexusState {
   };
 }
 
+const DEFAULT_PAGINATION_SETTINGS = {
+  from: 0,
+  size: DEFAULT_RESOURCE_PAGINATION_SIZE,
+};
+
 const initialState: NexusState = {
-  resourcePaginationSettings: {
-    from: 0,
-    size: DEFAULT_RESOURCE_PAGINATION_SIZE,
-  },
+  resourcePaginationSettings: DEFAULT_PAGINATION_SETTINGS,
   orgs: [],
 };
 
 export default function nexusReducer(
   state: NexusState = initialState,
-  action: OrgsActions
+  action: OrgsActions | ResourceActions | SchemaActions
 ) {
   switch (action.type) {
     case '@@nexus/ORGS_FETCHING':
@@ -50,6 +54,12 @@ export default function nexusReducer(
       return { ...state, projectFetching: true };
     case '@@nexus/RESOURCES_FETCHING':
       return { ...state, resourcesFetching: true };
+    case '@@nexus/RESOURCES_FETCHING_FAILURE':
+      return { ...state, resourcesFetching: false };
+    case '@@nexus/SCHEMAS_FETCHING':
+      return { ...state, schemasFetching: true };
+    case '@@nexus/SCHEMAS_FETCHING_FAILURE':
+      return { ...state, schemasFetching: false };
     case '@@nexus/ORGS_FETCHING_FAILURE':
       return { ...state, orgsFetching: false };
     case '@@nexus/ORGS_FETCHING_SUCCESS':
@@ -92,6 +102,12 @@ export default function nexusReducer(
           project: action.payload.project,
           resources: action.payload.resources,
         },
+      };
+    case '@@nexus/SCHEMAS_FETCHING_SUCCESS':
+      return {
+        ...state,
+        schemasFetching: false,
+        schemas: action.payload.schemas,
       };
     default:
       return state;

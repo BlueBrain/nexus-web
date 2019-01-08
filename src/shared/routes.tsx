@@ -8,6 +8,7 @@ import {
   fetchOrgs,
   fetchProjects,
   fetchResources,
+  loadProjectViewData,
 } from './store/actions/nexus';
 import { RawElasticSearchQuery, RawSparqlQuery } from './views/RawQuery';
 import { ThunkAction } from './store';
@@ -51,7 +52,7 @@ const routes: RouteWithData[] = [
     component: Project,
     breadcrumbLabel: ProjectBreadcrumbLabel,
     loadData: (state, match) =>
-      fetchResources(
+      loadProjectViewData(
         match && match.params && (match.params as any)['org'],
         match && match.params && (match.params as any)['project'],
         state && state.nexus && state.nexus.resourcePaginationSettings

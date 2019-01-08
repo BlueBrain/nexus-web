@@ -10,6 +10,7 @@ if (typeof window !== 'undefined') {
 }
 
 export interface ResourceListProps {
+  header?: React.ReactNode;
   resources: PaginatedList<Resource>;
   paginationChange: any;
   paginationSettings: PaginationSettings;
@@ -19,6 +20,7 @@ export interface ResourceListProps {
 const DEFAULT_PAGE_SIZE = 20;
 
 const ResourceList: React.FunctionComponent<ResourceListProps> = ({
+  header = <div />,
   resources,
   paginationChange,
   paginationSettings,
@@ -37,8 +39,12 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
         className="resources-list"
         loading={loading}
         header={
-          <p className="result">{`Found ${total} resource${total > 1 &&
-            's'}`}</p>
+          <div>
+            {header}
+            <p className="result">{`Found ${total} resource${
+              total > 1 ? 's' : ''
+            }`}</p>
+          </div>
         }
         dataSource={results}
         pagination={{
