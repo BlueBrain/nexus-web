@@ -39,7 +39,7 @@ export type RawQueryActions =
   | RawQueryActionSuccess
   | RawQueryActionFailure;
 
-export const executeRawQuery: ActionCreator<ThunkAction> = (query: string) => {
+export const executeRawQuery: ActionCreator<ThunkAction> = (orgName: string, projectName: string, query: string) => {
   return async (
     dispatch: Dispatch<any>,
     getState,
@@ -47,8 +47,8 @@ export const executeRawQuery: ActionCreator<ThunkAction> = (query: string) => {
   ): Promise<RawQueryActionSuccess | RawQueryActionFailure> => {
     dispatch(rawQueryAction());
     try {
-      const org = await nexus.getOrganization('kenny');
-      const project = await org.getProject('search');
+      const org = await nexus.getOrganization(orgName);
+      const project = await org.getProject(projectName);
       const sparqlView = await project.getSparqlView();
       const response = await sparqlView.query(query);
       const results: SparqlViewQueryResponse = response;

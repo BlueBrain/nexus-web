@@ -13,14 +13,14 @@ export interface RawQueryViewProps {
   response: SparqlViewQueryResponse;
   wantedOrg: any;
   wantedProject: any;
-  executeRawQuery(query: string): void;
+  executeRawQuery(orgName: string, projectName: string, query: string): void;
 }
 
 const TextArea = Input.TextArea;
 const FormItem = Form.Item;
 const { Column } = Table;
 
-const RawQueryView: React.FunctionComponent<RawQueryViewProps> = ({ fetching, initialQuery, response, executeRawQuery }) : JSX.Element => {
+const RawQueryView: React.FunctionComponent<RawQueryViewProps> = ({ fetching, initialQuery, response, executeRawQuery, wantedOrg, wantedProject }) : JSX.Element => {
   const [query, setQuery] = React.useState(initialQuery);
 
   let cols: string[]
@@ -47,13 +47,13 @@ const RawQueryView: React.FunctionComponent<RawQueryViewProps> = ({ fetching, in
         value = `"${entry.value}"`;
     }
 
-    const additionalAttributes: any = {}
+    const additionalAttributes: string[] = [];
 
     Object.keys(entry)
       .filter(key => key !== "value")
-      .forEach(key => {additionalAttributes[`data-${key}`] = entry[key]});
+      .forEach(key => {additionalAttributes.push(`"${key}": "${entry[key]}"`)});
 
-    return <span {...additionalAttributes}>{value}</span>;
+    return <span title={additionalAttributes.join(", ")}>{value}</span>;
   };
 
   const columns = cols.map((col: string) =>
@@ -62,7 +62,7 @@ const RawQueryView: React.FunctionComponent<RawQueryViewProps> = ({ fetching, in
 
   return (
     <>
-    <Form onSubmit={(e) => {e.preventDefault(); executeRawQuery(query);}}>
+    <Form onSubmit={(e) => {e.preventDefault(); executeRawQuery(wantedOrg, wantedProject, query);}}>
       <FormItem>
         <TextArea
           className="query"
@@ -91,7 +91,7 @@ const mapStateToProps = ({ rawQuery }: { rawQuery: RawQueryState}) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  executeRawQuery: (query: string): void => dispatch(executeRawQuery(query)),
+  executeRawQuery: (orgName: string, projectName: string, query: string): void => dispatch(executeRawQuery(orgName, projectName, query)),
 });
 
 export default connect(
