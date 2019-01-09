@@ -6,7 +6,8 @@ import './Projects.less';
 
 export interface ProjectListProps {
   projects: ProjectCardProps[];
-  onProjectClick?(name: string): void;
+  onProjectClick?(label: string): void;
+  onProjectEdit?(label: string): void;
 }
 
 const Search = Input.Search;
@@ -14,6 +15,7 @@ const Search = Input.Search;
 const ProjectList: React.FunctionComponent<ProjectListProps> = ({
   projects,
   onProjectClick = () => {},
+  onProjectEdit = () => {},
 }) => {
   const [items, setItems] = React.useState(projects);
 
@@ -42,6 +44,7 @@ const ProjectList: React.FunctionComponent<ProjectListProps> = ({
             key={project.name + i}
             {...project}
             onClick={() => onProjectClick(project.label)}
+            onEdit={() => onProjectEdit(project.label)}
           />
         ))}
       </div>

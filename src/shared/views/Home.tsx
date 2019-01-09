@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Drawer } from 'antd';
 import { RootState } from '../store/reducers';
 import { fetchProjects } from '../store/actions/nexus';
 import ProjectList from '../components/Projects/ProjectList';
 import Skeleton from '../components/Skeleton';
 import { ProjectCardProps } from '../components/Projects/ProjectCard';
 import { push } from 'connected-react-router';
+import ProjectForm from '../components/Projects/ProjectForm';
 
 interface HomeProps {
   activeOrg: { label: string };
@@ -24,6 +26,8 @@ const Home: React.FunctionComponent<HomeProps> = ({
   fetchProjects,
   goTo,
 }) => {
+  const [selectedProject, setSelectedProject] = React.useState('');
+
   React.useEffect(
     () => {
       if (activeOrg.label !== match.params.org) {
@@ -53,10 +57,24 @@ const Home: React.FunctionComponent<HomeProps> = ({
     return <p>no projects</p>;
   }
   return (
-    <ProjectList
-      projects={projects}
-      onProjectClick={(project: string) => goTo(activeOrg.label, project)}
-    />
+    <>
+      <ProjectList
+        projects={projects}
+        onProjectClick={(projectLabel: string) =>
+          goTo(activeOrg.label, projectLabel)
+        }
+        onProjectEdit={(projectLabel: string) =>
+          setSelectedProject(projectLabel)
+        }
+      />
+      <Drawer
+        width={640}
+        visible={!!selectedProject}
+        onClose={() => setSelectedProject('')}
+      >
+        <ProjectForm />
+      </Drawer>
+    </>
   );
 };
 
