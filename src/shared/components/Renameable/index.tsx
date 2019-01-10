@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AutoComplete, Input, Icon, Button } from 'antd';
+import { AutoComplete, Input, Icon, Button, Tooltip } from 'antd';
 import './Renameable.less';
 
 interface RenameableItemProps {
@@ -26,6 +26,10 @@ const RenameableItem: React.FunctionComponent<RenameableItemProps> = ({
     set({ value, editing });
   };
 
+  const enterHandler = function() {};
+
+  const exitHandler = function() {};
+
   React.useEffect(() => {
     if (editing && inputEl && inputEl.current) {
       // false reporting of "never"
@@ -46,7 +50,11 @@ const RenameableItem: React.FunctionComponent<RenameableItemProps> = ({
           onBlur={onPressEnter}
         />
       )}
-      {!editing && value}
+      {!editing && (
+        <Tooltip title="click to edit!" mouseEnterDelay={0.3}>
+          <span>{value}</span>
+        </Tooltip>
+      )}
     </div>
   );
 };
