@@ -81,17 +81,36 @@ class PrefixMappingGroupInput extends React.Component<
 
 export interface ProjectFormProps {
   form: WrappedFormUtils;
+  project?: {
+    label: string;
+    name: string;
+    base?: string;
+    prefixMappings?: PrefixMappingGroupInputState[];
+  };
 }
 
 /**
  * Adaptation of the following example:
  * based on: https://ant.design/components/form/#components-form-demo-dynamic-form-item
  */
-const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({ form }) => {
+const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
+  form,
+  project,
+}) => {
+  // logic for generating dynamic prefix mapping fields in form
+  const currentId =
+    project && project.prefixMappings ? project.prefixMappings.length : 0;
+  const activeKeys =
+    currentId === 0
+      ? []
+      : Array(currentId - 1 + 1)
+          .fill(0)
+          .map((_, idx) => 1 + idx);
   const [prefixMappingKeys, setPrefixMappingKeys] = React.useState({
-    currentId: 0,
-    activeKeys: [],
+    currentId,
+    activeKeys,
   });
+
   const { getFieldDecorator, getFieldValue } = form;
   const formItemLayout = {
     labelCol: {
@@ -156,9 +175,23 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({ form }) => {
       <Form.Item
         label={index === 0 ? 'Prefix Mappings' : ''}
         {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
+        key={key}
       >
         {getFieldDecorator(`prefixMappings[${key}]`, {
-          initialValue: { prefix: '', namespace: '' },
+          initialValue: {
+            prefix:
+              (project &&
+                project.prefixMappings &&
+                project.prefixMappings[index] &&
+                project.prefixMappings[index].prefix) ||
+              '',
+            namespace:
+              (project &&
+                project.prefixMappings &&
+                project.prefixMappings[index] &&
+                project.prefixMappings[index].namespace) ||
+              '',
+          },
           rules: [{ validator: checkPrefix, required: true }],
         })(
           // @ts-ignore
@@ -176,24 +209,23 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({ form }) => {
   );
   return (
     <Form onSubmit={handleSubmit}>
-      <h1>Project: {getFieldValue('name')}</h1>
+      <h1>Project: {getFieldValue('name') || (project && project.name)}</h1>
       <Form.Item label="Name" {...formItemLayout}>
         {getFieldDecorator('name', {
+          initialValue: project ? project.name : '',
           rules: [{ required: true }],
         })(<Input placeholder="Name" />)}
       </Form.Item>
       <Form.Item label="Label" {...formItemLayout}>
         {getFieldDecorator('label', {
+          initialValue: project ? project.label : '',
           rules: [{ required: true }],
         })(<Input placeholder="Label" />)}
       </Form.Item>
       <Form.Item label="Base" {...formItemLayout}>
         {getFieldDecorator('base', {
-          rules: [
-            {
-              required: false,
-            },
-          ],
+          initialValue: project ? project.base : '',
+          rules: [{ required: false }],
         })(<Input placeholder="Base" />)}
       </Form.Item>
       {prefixMappingsItems}

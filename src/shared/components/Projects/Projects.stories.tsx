@@ -74,6 +74,18 @@ storiesOf('Components/Projects', module)
           <div style={{ margin: '50px 40px 0px' }}>
             <ProjectForm />
           </div>
+          <div style={{ margin: '50px 40px 0px' }}>
+            <ProjectForm
+              project={{
+                name: 'My project',
+                label: 'Label',
+                prefixMappings: [
+                  { prefix: 'es', namespace: 'http://asdasd' },
+                  { prefix: 'ex', namespace: 'http://example.com' },
+                ],
+              }}
+            />
+          </div>
         </React.Fragment>
       );
     })
