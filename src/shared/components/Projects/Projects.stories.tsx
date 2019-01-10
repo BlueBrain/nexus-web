@@ -6,6 +6,7 @@ import { withKnobs, text, number } from '@storybook/addon-knobs';
 
 import ProjectCard, { ProjectCardProps } from './ProjectCard';
 import ProjectList from './ProjectList';
+import ProjectForm from './ProjectForm';
 
 const projects: ProjectCardProps[] = [
   { name: 'Thalamus', label: 'thalamus', resourceNumber: 1236 },
@@ -54,6 +55,24 @@ storiesOf('Components/Projects', module)
               projects={projects}
               onProjectClick={action('project-click')}
             />
+          </div>
+        </React.Fragment>
+      );
+    })
+  );
+
+storiesOf('Components/Projects', module)
+  .addDecorator(withKnobs)
+  .add(
+    'ProjectForm',
+    withInfo(`
+      ~~~js
+      ~~~
+  `)(() => {
+      return (
+        <React.Fragment>
+          <div style={{ margin: '50px 40px 0px' }}>
+            <ProjectForm />
           </div>
         </React.Fragment>
       );

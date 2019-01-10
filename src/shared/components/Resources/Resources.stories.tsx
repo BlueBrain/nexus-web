@@ -208,7 +208,7 @@ storiesOf('Components/Resources', module)
       return (
         <React.Fragment>
           <div style={{ margin: '50px 40px 0px' }}>
-            <ResourceList resources={resources} loading={loading} />
+            {/* <ResourceList resources={resources} loading={loading} /> */}
           </div>
         </React.Fragment>
       );
