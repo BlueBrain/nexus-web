@@ -72,7 +72,9 @@ const Home: React.FunctionComponent<HomeProps> = ({
         visible={!!selectedProject}
         onClose={() => setSelectedProject('')}
       >
-        <ProjectForm />
+        <ProjectForm
+          project={{ name: projects[0].name, label: projects[0].label }}
+        />
       </Drawer>
     </>
   );
