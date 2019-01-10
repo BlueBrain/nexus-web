@@ -17,27 +17,44 @@ interface ListProps {
   projectLabel: string;
 }
 
+const DEFAULT_LIST = {
+  name: 'Default List',
+};
+
 const ListsContainer: React.FunctionComponent<ListProps> = ({
   orgLabel,
   projectLabel,
 }) => {
+  const [lists, set] = React.useState([DEFAULT_LIST]);
+  const addNewList = function() {
+    const newList = { name: 'New List' };
+    set(lists.concat(newList));
+  };
+
+  const removeList = function(listIndex: number) {
+    if (listIndex > 0) {
+      const newList = lists.splice(listIndex, 1);
+      set(newList);
+    } else {
+      set([]);
+    }
+  };
+
   return (
     <ul className="list-board">
-      <li className="list">
-        <h2>
-          <Renameable defaultValue={'Some List'} onChange={() => {}} />
-        </h2>
-      </li>
-      <li className="list">
-        <h2>Some List</h2>
-      </li>
-      <li className="list">
-        <h2>Some List</h2>
-      </li>
-      <li className="list">
-        <h2>Some List</h2>
-      </li>
-      <li className="list -new">
+      {lists.map((list, listIndex) => {
+        const { name } = list;
+        return (
+          <li className="list">
+            <Button icon="close" onClick={() => removeList(listIndex)} />
+            <h2>
+              <Renameable defaultValue={name} onChange={() => {}} />
+            </h2>
+            <div>Some stuff....</div>
+          </li>
+        );
+      })}
+      <li className="list -new" onClick={addNewList}>
         <h2>Make a new list</h2>
         <p>{'view resources from project '}</p>
       </li>

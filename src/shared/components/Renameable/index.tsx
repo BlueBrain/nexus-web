@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { AutoComplete, Input, Icon, Button, Tooltip } from 'antd';
+import { Input, Tooltip } from 'antd';
 import './Renameable.less';
 
 interface RenameableItemProps {
   defaultValue: string;
-  onChange: () => void;
+  onChange: (value: string) => void;
 }
 
 const RenameableItem: React.FunctionComponent<RenameableItemProps> = ({
@@ -19,16 +19,13 @@ const RenameableItem: React.FunctionComponent<RenameableItemProps> = ({
 
   const onPressEnter = function(e: any) {
     set({ value, editing: false });
+    onChange(value);
   };
 
   const onInputChange = function(e: any) {
     const value = e.target.value;
     set({ value, editing });
   };
-
-  const enterHandler = function() {};
-
-  const exitHandler = function() {};
 
   React.useEffect(() => {
     if (editing && inputEl && inputEl.current) {
