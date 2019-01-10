@@ -183,6 +183,13 @@ export type ResourceActions =
   | FetchResourcesActionFailure;
 
 // Fetch Schemas!
+interface SelectSchema extends Action {
+  type: '@@nexus/SELECT_SCHEMA';
+  payload: {
+    selectedSchema: string;
+  };
+}
+
 interface FetchSchemasAction extends Action {
   type: '@@nexus/SCHEMAS_FETCHING';
 }
@@ -191,6 +198,7 @@ interface FetchSchemasActionSuccess extends Action {
   type: '@@nexus/SCHEMAS_FETCHING_SUCCESS';
   payload: {
     schemas: any[];
+    types: any[];
   };
 }
 interface FetchSchemasActionFailure extends Action {
@@ -200,17 +208,24 @@ interface FetchSchemasActionFailure extends Action {
 export type SchemaActions =
   | FetchSchemasAction
   | FetchSchemasActionSuccess
-  | FetchSchemasActionFailure;
+  | FetchSchemasActionFailure
+  | SelectSchema;
+
+export const selectSchema: ActionCreator<SelectSchema> = selectedSchema => ({
+  type: '@@nexus/SELECT_SCHEMA',
+  payload: { selectedSchema },
+});
 
 const fetchSchemasAction: ActionCreator<FetchSchemasAction> = () => ({
   type: '@@nexus/SCHEMAS_FETCHING',
 });
 
 const fetchSchemasSuccessAction: ActionCreator<FetchSchemasActionSuccess> = (
-  schemas: any[]
+  schemas: any[],
+  types: any[]
 ) => ({
   type: '@@nexus/SCHEMAS_FETCHING_SUCCESS',
-  payload: { schemas },
+  payload: { schemas, types },
 });
 
 const fetchSchemasFailureAction: ActionCreator<FetchSchemasActionFailure> = (
@@ -251,7 +266,16 @@ export const fetchSchemas: ActionCreator<ThunkAction> = (
       const query = {
         aggs: {
           schemas: {
-            terms: { field: '_constrainedBy' },
+            terms: {
+              size: 50,
+              field: '_constrainedBy',
+            },
+          },
+          types: {
+            terms: {
+              size: 50,
+              field: '@type',
+            },
           },
         },
       };
@@ -261,7 +285,10 @@ export const fetchSchemas: ActionCreator<ThunkAction> = (
       const schemas = response.aggregations.schemas.buckets.map(
         ({ doc_count, key }) => ({ key, count: doc_count })
       );
-      return dispatch(fetchSchemasSuccessAction(schemas));
+      const types = response.aggregations.types.buckets.map(
+        ({ doc_count, key }) => ({ key, count: doc_count })
+      );
+      return dispatch(fetchSchemasSuccessAction(schemas, types));
     } catch (e) {
       return dispatch(fetchSchemasFailureAction(e));
     }

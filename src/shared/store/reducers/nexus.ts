@@ -18,6 +18,7 @@ export interface NexusState {
   schemasFetching?: boolean;
   resourcePaginationSettings: PaginationSettings;
   schemas?: any;
+  types?: any;
   activeOrg?: {
     org: Organization;
     projects: Project[];
@@ -108,6 +109,7 @@ export default function nexusReducer(
         ...state,
         schemasFetching: false,
         schemas: action.payload.schemas,
+        types: action.payload.types,
       };
     default:
       return state;

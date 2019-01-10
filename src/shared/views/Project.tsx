@@ -2,10 +2,17 @@ import * as React from 'react';
 import { PaginatedList, Resource, PaginationSettings } from '@bbp/nexus-sdk';
 import { connect } from 'react-redux';
 import { RootState } from '../store/reducers';
-import { fetchResources, fetchSchemas } from '../store/actions/nexus';
+import {
+  fetchResources,
+  fetchSchemas,
+  selectSchema,
+} from '../store/actions/nexus';
 import ResourceList from '../components/Resources/ResourceList';
 import Skeleton from '../components/Skeleton';
 import { AutoComplete, Input, Icon } from 'antd';
+import TypesIcon from '../components/Types/TypesIcon';
+
+const Option = AutoComplete.Option;
 
 interface ProjectViewProps {
   orgLabel: string;
@@ -14,12 +21,16 @@ interface ProjectViewProps {
   resources: PaginatedList<Resource>;
   resourcePaginationSettings: PaginationSettings;
   schemas?: any;
+  types?: any;
+  selectedSchema?: string;
   fetching: boolean;
   fetchSchemas(org: string, project: string): void;
+  selectSchema(value: string): void;
   fetchResources(
     org: string,
     project: string,
-    resourcePaginationSettings: PaginationSettings
+    resourcePaginationSettings: PaginationSettings,
+    query?: any
   ): void;
   match: any;
 }
@@ -31,13 +42,14 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   resources,
   fetchResources,
   fetchSchemas,
+  selectSchema,
+  selectedSchema,
   fetching,
   resourcePaginationSettings,
   match,
   schemas,
+  types,
 }) => {
-  console.log({ schemas });
-
   const onPaginationChange = (page: number, size: number) => {
     const from = size * page;
     fetchResources(match.params.org, match.params.project, {
@@ -63,47 +75,105 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
     [match.params.org, match.params.project]
   );
 
-  if (busy) {
-    return (
-      <Skeleton
-        itemNumber={10}
-        active
-        avatar
-        paragraph={{
-          rows: 0,
-        }}
-        title={{
-          width: '100%',
-        }}
-      />
-    );
-  }
-  if (resources.total === 0) {
-    return <p>no resources</p>;
-  }
+  // if (busy) {
+  //   return (
+  //     <Skeleton
+  //       itemNumber={10}
+  //       active
+  //       avatar
+  //       paragraph={{
+  //         rows: 0,
+  //       }}
+  //       title={{
+  //         width: '100%',
+  //       }}
+  //     />
+  //   );
+  // }
+  // if (resources.total === 0) {
+  //   return <p>no resources</p>;
+  // }
   return (
     <React.Fragment>
       <ResourceList
+        loading={busy}
         header={
-          <p>Helllo</p>
-          /* <div className="certain-category-search-wrapper" style={{ width: 250 }}>
-      <AutoComplete
-        className="certain-category-search"
-        dropdownClassName="certain-category-search-dropdown"
-        dropdownMatchSelectWidth={false}
-        dropdownStyle={{ width: 300 }}
-        size="large"
-        style={{ width: '100%' }}
-        dataSource={options}
-        placeholder="input here"
-        optionLabelProp="value"
-      >
-        <Input suffix={<Icon type="search" className="certain-category-icon" />} />
-      </AutoComplete>
-    </div> */
+          <div className="certain-category-search-wrapper">
+            {!busy && (
+              <div>
+                <p>Filter</p>
+                <AutoComplete
+                  className="certain-category-search"
+                  dropdownClassName="certain-category-search-dropdown"
+                  dropdownMatchSelectWidth={false}
+                  onSelect={(value, option) => {
+                    console.log(value, option);
+                    selectSchema(value as string);
+                    fetchResources(
+                      match.params.org,
+                      match.params.project,
+                      resourcePaginationSettings
+                    );
+                  }}
+                  value={selectedSchema}
+                  size="large"
+                  style={{ width: '100%', marginBottom: '1em' }}
+                  dataSource={schemas.map(({ key, count }: any) => (
+                    <Option key={key} value={key}>
+                      <a className="certain-search-item-count">
+                        {count} resources
+                      </a>{' '}
+                      {key}
+                    </Option>
+                  ))}
+                  placeholder={`Filter by Schema (${schemas.length} schemas)`}
+                  optionLabelProp="value"
+                >
+                  <Input
+                    suffix={
+                      <Icon type="filter" className="certain-category-icon" />
+                    }
+                  />
+                </AutoComplete>
+
+                <AutoComplete
+                  className="certain-category-search"
+                  dropdownClassName="certain-category-search-dropdown"
+                  dropdownMatchSelectWidth={false}
+                  onSelect={(value, option) => {
+                    console.log(value, option);
+                    // selectSchema(value as string);
+                    // fetchResources(
+                    //   match.params.org,
+                    //   match.params.project,
+                    //   resourcePaginationSettings
+                    // );
+                  }}
+                  size="large"
+                  style={{ width: '100%', marginBottom: '1em' }}
+                  dataSource={types.map(({ key, count }: any) => (
+                    <Option key={key} value={key}>
+                      <TypesIcon type={[key]} />{' '}
+                      <a className="certain-search-item-count">
+                        {count} resources
+                      </a>{' '}
+                      {key}
+                    </Option>
+                  ))}
+                  placeholder={`Filter by @type (${types.length} @types)`}
+                  optionLabelProp="value"
+                >
+                  <Input
+                    suffix={
+                      <Icon type="filter" className="certain-category-icon" />
+                    }
+                  />
+                </AutoComplete>
+              </div>
+            )}
+          </div>
         }
         resources={resources}
-        loading={fetching}
         paginationChange={onPaginationChange}
         paginationSettings={resourcePaginationSettings}
       />
@@ -124,6 +194,8 @@ const mapStateToProps = (state: RootState) => ({
       state.nexus.activeProject.project.label) ||
     '',
   schemas: (state.nexus && state.nexus.schemas) || {},
+  types: (state.nexus && state.nexus.types) || {},
+  selectedSchema: state.nexus && state.nexus.selectedSchema,
   resources: (state.nexus &&
     state.nexus.activeProject &&
     state.nexus.activeProject.resources) || { total: 0, results: [] },
@@ -143,6 +215,7 @@ const mapDispatchToProps = (dispatch: any) => ({
   ) => dispatch(fetchResources(org, project, resourcePaginationSettings)),
   fetchSchemas: (org: string, project: string) =>
     dispatch(fetchSchemas(org, project)),
+  selectSchema: (value: string) => dispatch(selectSchema(value)),
 });
 
 export default connect(
