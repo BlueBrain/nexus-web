@@ -51,12 +51,12 @@ const routes: RouteWithData[] = [
     exact: true,
     component: Project,
     breadcrumbLabel: ProjectBreadcrumbLabel,
-    loadData: (state, match) =>
-      loadProjectViewData(
-        match && match.params && (match.params as any)['org'],
-        match && match.params && (match.params as any)['project'],
-        state && state.nexus && state.nexus.resourcePaginationSettings
-      ),
+    // loadData: (state, match) =>
+    // loadProjectViewData(
+    //   match && match.params && (match.params as any)['org'],
+    //   match && match.params && (match.params as any)['project'],
+    //   state && state.nexus && state.nexus.resourcePaginationSettings
+    // ),
   },
   {
     path: '/:org/:project/_search',

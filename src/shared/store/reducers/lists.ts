@@ -1,3 +1,5 @@
+import { AnyAction } from 'redux';
+
 interface Requestable {
   results: any;
   fetching: boolean;
@@ -34,3 +36,13 @@ const DEFAULT_LIST: List = {
 const initialState: ListState = {
   lists: [DEFAULT_LIST], // Get Initial State from URL or DEFAULT_LIST
 };
+
+export default function listsReducer(
+  state: ListState = initialState,
+  action: AnyAction
+) {
+  switch (action.type) {
+    default:
+      return state;
+  }
+}

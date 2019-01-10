@@ -7,9 +7,15 @@ import {
   PaginatedList,
   ElasticSearchView,
 } from '@bbp/nexus-sdk';
+<<<<<<< HEAD
 import { ThunkAction } from '..';
 import { ProjectActions } from './project';
 import { ElasticSearchViewAggregationResponse } from '@bbp/nexus-sdk/lib/View/ElasticSearchView';
+=======
+import { Services, ThunkAction } from '..';
+import { RootState } from '../reducers';
+import { ElasticSearchViewAggregationResponse } from '@bbp/nexus-sdk/lib/views/ElasticSearchView';
+>>>>>>> add some fancy new elements
 
 //
 // Action types

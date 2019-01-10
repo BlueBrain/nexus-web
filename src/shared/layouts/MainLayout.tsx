@@ -60,10 +60,14 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
       onLoginClick={() => goTo('/login')}
     />
     <div className="MainLayout_body">
-      <Breadcrumbs />
+      <div className="width-constrainer">
+        <Breadcrumbs />
+      </div>
       {children}
     </div>
-    <Footer version={version} githubIssueURL={githubIssueURL} />
+    <div className="width-constrainer">
+      <Footer version={version} githubIssueURL={githubIssueURL} />
+    </div>
   </React.Fragment>
 );
 

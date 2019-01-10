@@ -1,0 +1,24 @@
+@import '../../lib.less';
+.list-board {
+  display: flex;
+  padding: 0;
+  margin: 0;
+  justify-content: center;
+  > .list {
+    .unstyleList();
+    display: block;
+    background-color: @background-color-subtle;
+    padding: 1em;
+    width: 300px;
+    height: calc(100vh - 160px);
+    border-radius: @border-radius-base;
+    margin-right: 1em;
+    box-shadow: @box-shadow-base;
+  }
+  > .list.-new {
+    border: 1px dashed @disabled-color;
+    background-color: transparent;
+    box-shadow: none;
+    cursor: pointer;
+  }
+}
