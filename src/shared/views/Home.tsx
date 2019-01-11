@@ -26,7 +26,9 @@ const Home: React.FunctionComponent<HomeProps> = ({
   fetchProjects,
   goTo,
 }) => {
-  const [selectedProject, setSelectedProject] = React.useState('');
+  const [selectedProject, setSelectedProject] = React.useState<
+    ProjectCardProps | undefined
+  >(undefined);
 
   React.useEffect(
     () => {
@@ -64,17 +66,22 @@ const Home: React.FunctionComponent<HomeProps> = ({
           goTo(activeOrg.label, projectLabel)
         }
         onProjectEdit={(projectLabel: string) =>
-          setSelectedProject(projectLabel)
+          setSelectedProject(projects.filter(p => p.label === projectLabel)[0])
         }
       />
       <Drawer
         width={640}
-        visible={!!selectedProject}
-        onClose={() => setSelectedProject('')}
+        visible={!!(selectedProject && selectedProject.name)}
+        onClose={() => setSelectedProject(undefined)}
       >
-        <ProjectForm
-          project={{ name: projects[0].name, label: projects[0].label }}
-        />
+        {selectedProject && (
+          <ProjectForm
+            project={{
+              name: selectedProject.name,
+              label: selectedProject.label,
+            }}
+          />
+        )}
       </Drawer>
     </>
   );
