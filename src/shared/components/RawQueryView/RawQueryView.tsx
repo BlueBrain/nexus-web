@@ -86,7 +86,7 @@ const RawQueryView: React.FunctionComponent<RawQueryViewProps> = ({ fetching, in
 
 const mapStateToProps = ({ rawQuery }: { rawQuery: RawQueryState}) => ({
   fetching: rawQuery.fetching,
-  initialQuery: '',
+  initialQuery: 'SELECT ?s ?p ?o WHERE {?s ?p ?o} LIMIT 20',
   response: rawQuery.response,
 });
 
