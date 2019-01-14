@@ -5,11 +5,13 @@ import './Renameable.less';
 interface RenameableItemProps {
   defaultValue: string;
   onChange: (value: string) => void;
+  size?: 'large' | 'default' | 'small';
 }
 
 const RenameableItem: React.FunctionComponent<RenameableItemProps> = ({
   defaultValue,
   onChange,
+  size,
 }) => {
   const inputEl = React.useRef(null);
   const [{ value, editing }, set] = React.useState({
@@ -45,6 +47,7 @@ const RenameableItem: React.FunctionComponent<RenameableItemProps> = ({
           onPressEnter={onPressEnter}
           onChange={onInputChange}
           onBlur={onPressEnter}
+          size={size}
         />
       )}
       {!editing && (

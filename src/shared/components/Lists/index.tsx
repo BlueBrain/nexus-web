@@ -84,17 +84,19 @@ const ListsContainer: React.FunctionComponent<ListProps> = ({
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                height: '32px',
+                color: 'rgba(0, 0, 0, 0.65',
               }}
             >
-              <Renameable defaultValue={name} onChange={() => {}} />
+              <Renameable
+                defaultValue={name}
+                onChange={() => {}}
+                size="small"
+              />
               <Icon type="close" onClick={() => removeList(listIndex)} />
             </h3>
             <div
               style={{
                 display: 'flex',
-                // backgroundColor: '#9e9e9e26',
-                // padding: '2px',
                 justifyContent: 'space-between',
               }}
             >
