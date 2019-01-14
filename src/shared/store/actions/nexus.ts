@@ -1,13 +1,12 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
-import Nexus, {
+import {
   Organization,
   Project,
   Resource,
   PaginationSettings,
   PaginatedList,
 } from '@bbp/nexus-sdk';
-import { Services, ThunkAction } from '..';
-import { RootState } from '../reducers';
+import { ThunkAction } from '..';
 
 //
 // Action types

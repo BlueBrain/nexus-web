@@ -87,6 +87,7 @@ export interface ProjectFormProps {
     base?: string;
     prefixMappings?: PrefixMappingGroupInputState[];
   };
+  onSubmit?(project: ProjectFormProps['project']): any;
 }
 
 /**
@@ -96,12 +97,13 @@ export interface ProjectFormProps {
 const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   form,
   project,
+  onSubmit = () => {},
 }) => {
   // logic for generating dynamic prefix mapping fields in form
   const currentId =
     project && project.prefixMappings ? project.prefixMappings.length : 0;
   const activeKeys =
-    currentId === -1
+    currentId === 0
       ? []
       : Array(currentId - 1 + 1)
           .fill(0)
@@ -152,7 +154,13 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
     e.preventDefault();
     form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
+        onSubmit({
+          ...values,
+          prefixMappings:
+            (values.prefixMappings &&
+              values.prefixMappings.filter((p: any) => !!p)) ||
+            [],
+        });
       }
     });
   };
@@ -177,19 +185,19 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
         {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
         key={key}
       >
-        {getFieldDecorator(`prefixMappings[${key}]`, {
+        {getFieldDecorator(`prefixMappings[${key - 1}]`, {
           initialValue: {
             prefix:
               (project &&
                 project.prefixMappings &&
-                project.prefixMappings[key] &&
-                project.prefixMappings[key].prefix) ||
+                project.prefixMappings[key - 1] &&
+                project.prefixMappings[key - 1].prefix) ||
               '',
             namespace:
               (project &&
                 project.prefixMappings &&
-                project.prefixMappings[key] &&
-                project.prefixMappings[key].namespace) ||
+                project.prefixMappings[key - 1] &&
+                project.prefixMappings[key - 1].namespace) ||
               '',
           },
           rules: [{ validator: checkPrefix, required: true }],
