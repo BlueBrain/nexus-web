@@ -52,7 +52,6 @@ export const modifyProject: ActionCreator<ThunkAction> = (
     { nexus }
   ): Promise<ModifyProjectSuccessAction | ModifyProjectFailureAction> => {
     dispatch(modifyProjectAction());
-    console.log('teeee');
     try {
       const project: Project = await Project.update(
         orgLabel,

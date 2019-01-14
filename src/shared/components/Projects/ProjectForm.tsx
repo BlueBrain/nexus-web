@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { Form, Icon, Input, Button } from 'antd';
+import { Form, Icon, Input, Button, Spin } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
+import { bool } from 'prop-types';
+import { boolean } from '@storybook/addon-knobs';
 
 /**
  * Custom from controls, based on:
@@ -87,6 +89,7 @@ export interface ProjectFormProps {
     base?: string;
     prefixMappings?: PrefixMappingGroupInputState[];
   };
+  busy?: boolean;
   onSubmit?(project: ProjectFormProps['project']): any;
 }
 
@@ -97,6 +100,7 @@ export interface ProjectFormProps {
 const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   form,
   project,
+  busy = false,
   onSubmit = () => {},
 }) => {
   // logic for generating dynamic prefix mapping fields in form
@@ -216,38 +220,44 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
     )
   );
   return (
-    <Form onSubmit={handleSubmit}>
-      <h1>Project: {getFieldValue('name') || (project && project.name)}</h1>
-      <Form.Item label="Name" {...formItemLayout}>
-        {getFieldDecorator('name', {
-          initialValue: project ? project.name : '',
-          rules: [{ required: true }],
-        })(<Input placeholder="Name" />)}
-      </Form.Item>
-      <Form.Item label="Label" {...formItemLayout}>
-        {getFieldDecorator('label', {
-          initialValue: project ? project.label : '',
-          rules: [{ required: true }],
-        })(<Input placeholder="Label" />)}
-      </Form.Item>
-      <Form.Item label="Base" {...formItemLayout}>
-        {getFieldDecorator('base', {
-          initialValue: project ? project.base : '',
-          rules: [{ required: false }],
-        })(<Input placeholder="Base" />)}
-      </Form.Item>
-      {prefixMappingsItems}
-      <Form.Item {...formItemLayoutWithOutLabel}>
-        <Button type="dashed" onClick={add} style={{ width: '60%' }}>
-          <Icon type="plus" /> Add prefix mapping
-        </Button>
-      </Form.Item>
-      <Form.Item {...formItemLayoutWithOutLabel}>
-        <Button type="primary" htmlType="submit" className="login-form-button">
-          Save
-        </Button>
-      </Form.Item>
-    </Form>
+    <Spin spinning={busy}>
+      <Form onSubmit={handleSubmit}>
+        <h1>Project: {getFieldValue('name') || (project && project.name)}</h1>
+        <Form.Item label="Name" {...formItemLayout}>
+          {getFieldDecorator('name', {
+            initialValue: project ? project.name : '',
+            rules: [{ required: true }],
+          })(<Input placeholder="Name" />)}
+        </Form.Item>
+        <Form.Item label="Label" {...formItemLayout}>
+          {getFieldDecorator('label', {
+            initialValue: project ? project.label : '',
+            rules: [{ required: true }],
+          })(<Input placeholder="Label" />)}
+        </Form.Item>
+        <Form.Item label="Base" {...formItemLayout}>
+          {getFieldDecorator('base', {
+            initialValue: project ? project.base : '',
+            rules: [{ required: false }],
+          })(<Input placeholder="Base" />)}
+        </Form.Item>
+        {prefixMappingsItems}
+        <Form.Item {...formItemLayoutWithOutLabel}>
+          <Button type="dashed" onClick={add} style={{ width: '60%' }}>
+            <Icon type="plus" /> Add prefix mapping
+          </Button>
+        </Form.Item>
+        <Form.Item {...formItemLayoutWithOutLabel}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="login-form-button"
+          >
+            Save
+          </Button>
+        </Form.Item>
+      </Form>
+    </Spin>
   );
 };
 

@@ -10,6 +10,7 @@ import Skeleton from '../components/Skeleton';
 import { push } from 'connected-react-router';
 import ProjectForm from '../components/Projects/ProjectForm';
 import { CreateProjectPayload } from '@bbp/nexus-sdk/lib/Project/types';
+import { boolean } from '@storybook/addon-knobs';
 
 interface HomeProps {
   activeOrg: { label: string };
@@ -22,7 +23,7 @@ interface HomeProps {
     projectLabel: string,
     rev: number,
     payload: CreateProjectPayload
-  ): void;
+  ): Promise<Project>;
   goTo(o: string, p: string): void;
 }
 
@@ -38,6 +39,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
   const [selectedProject, setSelectedProject] = React.useState<
     Project | undefined
   >(undefined);
+  const [formBusy, setFormBusy] = React.useState<boolean>(false);
 
   React.useEffect(
     () => {
@@ -47,6 +49,17 @@ const Home: React.FunctionComponent<HomeProps> = ({
     },
     [match.params.org]
   );
+
+  const saveProject = (selectedProject: Project, newProject: Project) => {
+    setFormBusy(true);
+    modifyProject(activeOrg.label, newProject.label, selectedProject.version, {
+      name: newProject.name,
+      base: newProject.base,
+      prefixMappings: newProject.prefixMappings || [],
+    })
+      .then((resultProject: Project) => setFormBusy(false))
+      .catch();
+  };
 
   if (busy) {
     return (
@@ -91,13 +104,8 @@ const Home: React.FunctionComponent<HomeProps> = ({
               base: selectedProject.base,
               prefixMappings: selectedProject.prefixMappings,
             }}
-            onSubmit={(p: Project) =>
-              modifyProject(activeOrg.label, p.label, selectedProject.version, {
-                name: p.name,
-                base: p.base,
-                prefixMappings: p.prefixMappings || [],
-              })
-            }
+            onSubmit={(p: Project) => saveProject(selectedProject, p)}
+            busy={formBusy}
           />
         )}
       </Drawer>
