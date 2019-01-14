@@ -7,15 +7,9 @@ import {
   PaginatedList,
   ElasticSearchView,
 } from '@bbp/nexus-sdk';
-<<<<<<< HEAD
-import { ThunkAction } from '..';
-import { ProjectActions } from './project';
+import { ProjectActions } from '../project';
 import { ElasticSearchViewAggregationResponse } from '@bbp/nexus-sdk/lib/View/ElasticSearchView';
-=======
-import { Services, ThunkAction } from '..';
-import { RootState } from '../reducers';
-import { ElasticSearchViewAggregationResponse } from '@bbp/nexus-sdk/lib/views/ElasticSearchView';
->>>>>>> add some fancy new elements
+import { ThunkAction } from '../..';
 
 //
 // Action types
@@ -81,6 +75,17 @@ interface FetchProjectActionFailure extends Action {
 interface FetchResourcesActionFailure extends Action {
   type: '@@nexus/RESOURCES_FETCHING_FAILURE';
 }
+
+export const assignActiveProject: ActionCreator<AssignActiveProject> = (
+  org: Organization,
+  project: Project
+) => ({
+  type: '@@nexus/ASSIGN_ACTIVE_PROJECT',
+  payload: {
+    org,
+    project,
+  },
+});
 
 const fetchOrgsAction: ActionCreator<FetchOrgsAction> = () => ({
   type: '@@nexus/ORGS_FETCHING',
@@ -243,13 +248,11 @@ const fetchSchemasFailureAction: ActionCreator<FetchSchemasActionFailure> = (
 
 export const loadProjectViewData: ActionCreator<ThunkAction> = (
   orgLabel: string,
-  projectLabel: string,
-  resourcePaginationSettings: PaginationSettings
+  projectLabel: string
 ) => {
   return async (dispatch: Dispatch<any>): Promise<any> => {
-    dispatch(
-      fetchResources(orgLabel, projectLabel, resourcePaginationSettings)
-    );
+    console.log('hello', orgLabel, projectLabel);
+    dispatch(assignActiveProject(orgLabel, projectLabel));
     dispatch(fetchSchemas(orgLabel, projectLabel));
   };
 };

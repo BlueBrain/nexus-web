@@ -57,5 +57,3 @@ export default function configureStore(
   }
   return store;
 }
-
-// export default reduxStore;

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Icon } from 'antd';
 import { RootState } from '../../store/reducers';
+import { getProp } from '../../utils';
 
 export const HomeBreadcrumbLabel = (state: RootState) => {
   return (
@@ -26,12 +27,10 @@ export const OrgBreadcrumbLabel = (state: RootState) => {
       </span>
     );
   }
-  const activeOrg = (state.nexus &&
-    state.nexus.activeOrg &&
-    state.nexus.activeOrg.org) || { label: '' };
+  const activeOrgLabel = getProp(state, 'nexus.activeorg.org', 'org');
   return (
     <span>
-      <Icon type="bank" /> {activeOrg.label || 'org'}
+      <Icon type="bank" /> {activeOrgLabel}
     </span>
   );
 };
@@ -44,12 +43,14 @@ export const ProjectBreadcrumbLabel = (state: RootState) => {
       </span>
     );
   }
-  const activeProject = (state.nexus &&
-    state.nexus.activeProject &&
-    state.nexus.activeProject.project) || { label: '' };
+  const activeProjectLabel = getProp(
+    state,
+    'nexus.project.data.label',
+    'project'
+  );
   return (
     <span>
-      <Icon type="solution" /> {activeProject.label || 'project'}
+      <Icon type="solution" /> {activeProjectLabel}
     </span>
   );
 };

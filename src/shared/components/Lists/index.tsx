@@ -8,8 +8,7 @@ import {
   fetchSchemas,
   selectSchema,
 } from '../../store/actions/nexus';
-import FlipCard from '../Animations/FlipCard';
-import { AutoComplete, Input, Icon, Button } from 'antd';
+import { Dropdown, Menu, Input, Icon, Button } from 'antd';
 import './Lists.less';
 
 interface ListProps {
@@ -32,28 +31,95 @@ const ListsContainer: React.FunctionComponent<ListProps> = ({
   };
 
   const removeList = function(listIndex: number) {
-    if (listIndex > 0) {
-      const newList = lists.splice(listIndex, 1);
-      set(newList);
-    } else {
-      set([]);
-    }
+    const newList = lists.filter((value, index) => index !== listIndex);
+    set(newList);
   };
 
+  const transitions = lists.map((list, listIndex) => ({
+    props: { opacity: 1, width: '300px' },
+    item: list,
+    key: `list-${listIndex}`,
+  }));
+
+  const stuff = transitions.map(
+    ({ key, item, props: { ...style } }, listIndex: number) => {
+      const { name } = item;
+
+      const menu = (
+        <Menu>
+          <Menu.Item>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="http://www.alipay.com/"
+            >
+              1st menu item
+            </a>
+          </Menu.Item>
+          <Menu.Item>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="http://www.taobao.com/"
+            >
+              2nd menu item
+            </a>
+          </Menu.Item>
+          <Menu.Item>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="http://www.tmall.com/"
+            >
+              3rd menu item
+            </a>
+          </Menu.Item>
+        </Menu>
+      );
+
+      return (
+        <li className="list" key={key} style={style}>
+          <div>
+            <h3
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                height: '32px',
+              }}
+            >
+              <Renameable defaultValue={name} onChange={() => {}} />
+              <Icon type="close" onClick={() => removeList(listIndex)} />
+            </h3>
+            <div
+              style={{
+                display: 'flex',
+                // backgroundColor: '#9e9e9e26',
+                // padding: '2px',
+                justifyContent: 'space-between',
+              }}
+            >
+              <Input
+                style={{ marginRight: '2px' }}
+                addonAfter={
+                  <Dropdown overlay={menu}>
+                    <a className="ant-dropdown-link">
+                      <Icon type="filter" onClick={() => {}} />
+                    </a>
+                  </Dropdown>
+                }
+                placeholder="Enter text query..."
+              />
+              <Button icon="code" onClick={() => {}} />
+            </div>
+            <div>Some stuff....</div>
+          </div>
+        </li>
+      );
+    }
+  );
   return (
     <ul className="list-board">
-      {lists.map((list, listIndex) => {
-        const { name } = list;
-        return (
-          <li className="list">
-            <Button icon="close" onClick={() => removeList(listIndex)} />
-            <h2>
-              <Renameable defaultValue={name} onChange={() => {}} />
-            </h2>
-            <div>Some stuff....</div>
-          </li>
-        );
-      })}
+      {stuff}
       <li className="list -new" onClick={addNewList}>
         <h2>Make a new list</h2>
         <p>{'view resources from project '}</p>

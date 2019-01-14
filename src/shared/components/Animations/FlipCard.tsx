@@ -11,7 +11,7 @@ interface FlipCardProps {
   orientation?: 'X' | 'Y';
 }
 
-// inspired by: https://codesandbox.io/embed/01yl7knw70
+// example from: https://codesandbox.io/embed/01yl7knw70
 const FlipCard: React.FunctionComponent<FlipCardProps> = ({
   front,
   back,
@@ -26,7 +26,7 @@ const FlipCard: React.FunctionComponent<FlipCardProps> = ({
     config: { mass: 5, tension: 500, friction: 80 },
   });
   return (
-    <div>
+    <React.Fragment>
       <a.div
         className="flip-card back"
         style={{
@@ -41,14 +41,13 @@ const FlipCard: React.FunctionComponent<FlipCardProps> = ({
         style={{
           opacity,
           transform: (transform as any).interpolate(
-            // tslint:disable-line no-console
             (t: string) => `${t} rotate${orientation}(180deg)`
           ),
         }}
       >
         {front}
       </a.div>
-    </div>
+    </React.Fragment>
   );
 };
 
