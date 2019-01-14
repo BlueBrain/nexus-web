@@ -8,10 +8,11 @@ import Skeleton from '../components/Skeleton';
 import { ProjectCardProps } from '../components/Projects/ProjectCard';
 import { push } from 'connected-react-router';
 import ProjectForm from '../components/Projects/ProjectForm';
+import { Project } from '@bbp/nexus-sdk';
 
 interface HomeProps {
   activeOrg: { label: string };
-  projects: ProjectCardProps[];
+  projects: Project[];
   busy: boolean;
   match: any;
   fetchProjects(name: string): void;
@@ -27,7 +28,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
   goTo,
 }) => {
   const [selectedProject, setSelectedProject] = React.useState<
-    ProjectCardProps | undefined
+    Project | undefined
   >(undefined);
 
   React.useEffect(
@@ -79,6 +80,8 @@ const Home: React.FunctionComponent<HomeProps> = ({
             project={{
               name: selectedProject.name,
               label: selectedProject.label,
+              base: selectedProject.base,
+              prefixMappings: selectedProject.prefixMappings,
             }}
           />
         )}
@@ -93,11 +96,7 @@ const mapStateToProps = (state: RootState) => ({
     state.nexus.activeOrg.org) || { label: '' },
   projects:
     state.nexus && state.nexus.activeOrg && state.nexus.activeOrg.projects
-      ? state.nexus.activeOrg.projects.map(p => ({
-          name: p.name,
-          label: p.label,
-          resourceNumber: p.resourceNumber,
-        }))
+      ? state.nexus.activeOrg.projects.map(p => p)
       : [],
   busy:
     (state.nexus &&

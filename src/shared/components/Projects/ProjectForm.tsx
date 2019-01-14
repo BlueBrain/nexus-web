@@ -101,7 +101,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   const currentId =
     project && project.prefixMappings ? project.prefixMappings.length : 0;
   const activeKeys =
-    currentId === 0
+    currentId === -1
       ? []
       : Array(currentId - 1 + 1)
           .fill(0)
@@ -182,14 +182,14 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
             prefix:
               (project &&
                 project.prefixMappings &&
-                project.prefixMappings[index] &&
-                project.prefixMappings[index].prefix) ||
+                project.prefixMappings[key] &&
+                project.prefixMappings[key].prefix) ||
               '',
             namespace:
               (project &&
                 project.prefixMappings &&
-                project.prefixMappings[index] &&
-                project.prefixMappings[index].namespace) ||
+                project.prefixMappings[key] &&
+                project.prefixMappings[key].namespace) ||
               '',
           },
           rules: [{ validator: checkPrefix, required: true }],
