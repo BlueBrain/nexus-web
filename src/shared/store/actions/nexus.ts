@@ -7,6 +7,7 @@ import {
   PaginatedList,
 } from '@bbp/nexus-sdk';
 import { ThunkAction } from '..';
+import { ProjectActions } from './project';
 
 //
 // Action types
@@ -111,7 +112,8 @@ export type OrgsActions =
   | FetchProjectsActionFailure
   | FetchResourcesAction
   | FetchResourcesActionSuccess
-  | FetchResourcesActionFailure;
+  | FetchResourcesActionFailure
+  | ProjectActions;
 
 export const fetchOrgs: ActionCreator<ThunkAction> = () => {
   return async (

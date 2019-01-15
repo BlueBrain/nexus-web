@@ -11,11 +11,15 @@ interface ModifyProjectAction extends Action {
 }
 interface ModifyProjectSuccessAction extends Action {
   type: '@@nexus/PROJECT_MODIFYING_SUCCESS';
-  payload: any;
+  project: Project;
 }
 interface ModifyProjectFailureAction extends Action {
   type: '@@nexus/PROJECT_MODIFYING_FAILURE';
 }
+export type ProjectActions =
+  | ModifyProjectAction
+  | ModifyProjectSuccessAction
+  | ModifyProjectFailureAction;
 
 //
 // Action definitions
@@ -26,8 +30,8 @@ const modifyProjectAction: ActionCreator<ModifyProjectAction> = () => ({
 const modifyProjectSuccessAction: ActionCreator<ModifyProjectSuccessAction> = (
   project: Project
 ) => ({
+  project,
   type: '@@nexus/PROJECT_MODIFYING_SUCCESS',
-  payload: project,
 });
 const modifyProjectFailureAction: ActionCreator<ModifyProjectFailureAction> = (
   error: any

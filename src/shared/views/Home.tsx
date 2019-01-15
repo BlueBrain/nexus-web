@@ -57,7 +57,11 @@ const Home: React.FunctionComponent<HomeProps> = ({
       base: newProject.base,
       prefixMappings: newProject.prefixMappings || [],
     })
-      .then((resultProject: Project) => setFormBusy(false))
+      .then((resultProject: Project) => {
+        setFormBusy(false);
+        setSelectedProject(undefined);
+        fetchProjects(match.params.org);
+      })
       .catch();
   };
 
