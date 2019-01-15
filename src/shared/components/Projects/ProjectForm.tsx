@@ -60,7 +60,12 @@ class PrefixMappingGroupInput extends React.Component<
     return (
       <Input.Group
         compact
-        style={{ width: 'calc(100% - 22px)', marginRight: 8 }}
+        style={
+          {
+            width: 'calc(100% - 22px)',
+            marginRight: 8,
+          } /* icon is 14px + 8px margin-right = 22px*/
+        }
       >
         <Input
           style={{ width: '20%' }}
