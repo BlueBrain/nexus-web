@@ -56,10 +56,10 @@ const ListsContainer: React.FunctionComponent<ListProps> = ({
           );
         }
       )}
-      <li className="list -new" onClick={createList}>
+      <div className="list -new" onClick={createList} key="make-new-list">
         <h2>Make a new list</h2>
         <p>{'view resources from project '}</p>
-      </li>
+      </div>
     </ul>
   );
 };
