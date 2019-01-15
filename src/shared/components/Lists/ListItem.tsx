@@ -7,13 +7,31 @@ import { RootState } from '../../store/reducers';
 import { Dropdown, Menu, Input, Icon, Button } from 'antd';
 import ResourceList from '../Resources/ResourceList';
 import FilterDropdown from './FilterDropdown';
+import { updateList, deleteList } from '../../store/actions/lists';
 
-const ListItemContainer: React.FunctionComponent<List> = ({
-  name,
-  paginationSettings,
-  isFetching,
-  data,
+interface ListItemContainerProps {
+  list: List;
+  listIndex: number;
+  updateList: (listIndex: number, list: List) => void;
+  deleteList: (listIndex: number) => void;
+}
+
+const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
+  list,
+  listIndex,
+  updateList,
+  deleteList,
 }) => {
+  const { name, paginationSettings, isFetching, data } = list;
+
+  const handleUpdate = (value: string) => {
+    updateList(listIndex, { ...list, name: value });
+  };
+
+  const handleDelete = () => {
+    deleteList(listIndex);
+  };
+
   return (
     <div>
       <h3
@@ -23,8 +41,8 @@ const ListItemContainer: React.FunctionComponent<List> = ({
           color: 'rgba(0, 0, 0, 0.65',
         }}
       >
-        <Renameable defaultValue={name} onChange={() => {}} size="small" />
-        <Icon type="close" onClick={() => {}} />
+        <Renameable defaultValue={name} onChange={handleUpdate} size="small" />
+        <Icon type="close" onClick={handleDelete} />
       </h3>
       <div
         style={{
@@ -61,7 +79,11 @@ const ListItemContainer: React.FunctionComponent<List> = ({
 
 const mapStateToProps = (state: RootState) => ({});
 
-const mapDispatchToProps = (dispatch: any) => ({});
+const mapDispatchToProps = (dispatch: any) => ({
+  updateList: (listIndex: number, list: List) =>
+    dispatch(updateList(listIndex, list)),
+  deleteList: (listIndex: number) => dispatch(deleteList(listIndex)),
+});
 
 export default connect(
   mapStateToProps,

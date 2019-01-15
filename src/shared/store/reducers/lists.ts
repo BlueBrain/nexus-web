@@ -51,9 +51,8 @@ export default function listsReducer(
       return [...state, newList];
     case ListActionTypes.DELETE:
       return [
-        ...state.filter(
-          (list, listIndex) => listIndex !== action.payload.listIndex
-        ),
+        ...state.slice(0, action.payload.listIndex),
+        ...state.slice(action.payload.listIndex + 1),
       ];
     case ListActionTypes.UPDATE:
       return [
