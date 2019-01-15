@@ -1,4 +1,4 @@
-import { combineReducers, AnyAction } from 'redux';
+import { combineReducers, AnyAction, Reducer } from 'redux';
 
 export type ActionReducer = (state: any, action: AnyAction) => any;
 
@@ -14,14 +14,14 @@ export interface ActionTypes {
 
 export interface FetchableState<Data> {
   isFetching: boolean;
-  data: Data;
-  error: Error;
+  data: Data | null;
+  error?: Error | null;
 }
 
 export interface AnyFetchableState {
   isFetching: boolean;
-  data?: object | object[];
-  error?: Error;
+  data?: any;
+  error?: Error | null;
 }
 
 export const createReducer = (intialState: any, handlers: ActionHandler) => (
@@ -53,17 +53,21 @@ export const createError = ({ FAILED }: ActionTypes) =>
   });
 
 // For single objects
-export const createFetchReducer = (actionTypes: ActionTypes) =>
-  combineReducers({
+export const createFetchReducer = function(actionTypes: ActionTypes): Reducer {
+  return combineReducers({
     isFetching: createFetching(actionTypes),
     data: createResultData(actionTypes, null),
     error: createError(actionTypes),
   });
+};
 
 // For collections
-export const createFetchListReducer = (actionTypes: ActionTypes) =>
-  combineReducers({
+export const createFetchListReducer = function(
+  actionTypes: ActionTypes
+): Reducer {
+  return combineReducers({
     isFetching: createFetching(actionTypes),
     data: createResultData(actionTypes, []),
     error: createError(actionTypes),
   });
+};

@@ -26,3 +26,18 @@ export const getProp = function getPropertyWithPath(
   }
   return getPropertyWithPath(newObj, pathArray, defaultVal);
 };
+
+/**
+ * moveTo utility - move an array alement to a new index position
+ * @author Richard Scarrott
+ * @param {Array} array
+ * @param {number} from
+ * @param {number} to
+ */
+export const moveTo = function moveArrayElement(
+  array: any[],
+  from: number,
+  to: number
+): any[] {
+  return array.splice(to, 0, array.splice(from, 1)[0]);
+};

@@ -3,26 +3,44 @@ import { connect } from 'react-redux';
 import { RootState } from '../store/reducers';
 import Lists from '../components/Lists';
 import { getProp } from '../utils';
+import { fetchAndAssignProject } from '../store/actions/nexus/projects';
 
 interface ProjectViewProps {
-  orgLabel: string;
   projectLabel: string;
+  match: any;
+  fetchProject(org: string, project: string): void;
 }
 
 const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
-  orgLabel,
+  match,
   projectLabel,
+  fetchProject,
 }) => {
+  React.useEffect(
+    () => {
+      if (projectLabel !== match.params.project) {
+        fetchProject(match.params.org, match.params.project);
+      }
+    },
+    [match.params.project, match.params.org]
+  );
   return (
     <div className="project">
-      <Lists orgLabel={orgLabel} projectLabel={projectLabel} />
+      <Lists />
     </div>
   );
 };
 
 const mapStateToProps = (state: RootState) => ({
-  orgLabel: getProp(state, 'nexus.project.data.orgLabel'),
-  projectLabel: getProp(state, 'nexus.project.data.label'),
+  projectLabel: getProp(state, 'nexus.project.data.project.label'),
 });
 
-export default connect(mapStateToProps)(ProjectView);
+const mapDispatchToProps = (dispatch: any) => ({
+  fetchProject: (org: string, project: string) =>
+    dispatch(fetchAndAssignProject(org, project)),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ProjectView);
