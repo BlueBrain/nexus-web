@@ -6,10 +6,9 @@ import { getProp, uuidv4 } from '../../utils';
 import { List } from '../../store/reducers/lists';
 import ListItem from './ListItem';
 import { createList, initializeProjectList } from '../../store/actions/lists';
-import * as md5 from 'md5';
 
 interface ListProps {
-  lists: List[];
+  lists?: List[];
   orgLabel: string;
   projectLabel: string;
   orgProjectFilterKey: string;
@@ -25,14 +24,14 @@ const ListsContainer: React.FunctionComponent<ListProps> = ({
 }) => {
   React.useEffect(
     () => {
-      if (!lists.length && typeof window !== 'undefined') {
+      if (!lists) {
         initialize();
       }
     },
     [lists]
   );
 
-  const transitions = lists.map(list => ({
+  const transitions = (lists || []).map(list => ({
     props: { opacity: 1, width: '300px' },
     item: list,
     // we need a unique key for react to update the correct element,
@@ -68,7 +67,7 @@ const mapStateToProps = (state: RootState, ownProps: any) => {
   const orgProjectFilterKey = ownProps.orgLabel + ownProps.projectLabel;
   return {
     orgProjectFilterKey,
-    lists: getProp(state, `lists.${orgProjectFilterKey}`, []),
+    lists: getProp(state, `lists.${orgProjectFilterKey}`),
   };
 };
 

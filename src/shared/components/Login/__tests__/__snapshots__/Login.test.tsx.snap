@@ -158,7 +158,6 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                     className=""
                     focusable={false}
                     onClick={[Function]}
-                    prefixCls="ant-menu"
                     theme="light"
                   >
                     <MenuItem>
@@ -173,7 +172,6 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                   </Menu>
                 }
                 placement="bottomLeft"
-                prefixCls="ant-dropdown"
               >
                 <span
                   className="realm"
@@ -246,7 +244,6 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                       className=""
                       focusable={false}
                       onClick={[Function]}
-                      prefixCls="ant-menu"
                       theme="light"
                     >
                       <MenuItem>
@@ -261,44 +258,13 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                     </Menu>
                   }
                   placement="bottomLeft"
-                  prefixCls="ant-dropdown"
                 >
                   <Dropdown
                     defaultVisible={false}
                     mouseEnterDelay={0.15}
                     mouseLeaveDelay={0.1}
                     onVisibleChange={[Function]}
-                    overlay={
-                      <Menu
-                        className=""
-                        expandIcon={
-                          <span
-                            className="ant-dropdown-menu-submenu-arrow"
-                          >
-                            <Icon
-                              className="ant-dropdown-menu-submenu-arrow-icon"
-                              type="right"
-                            />
-                          </span>
-                        }
-                        focusable={false}
-                        mode="vertical"
-                        onClick={[Function]}
-                        prefixCls="ant-menu"
-                        selectable={false}
-                        theme="light"
-                      >
-                        <MenuItem>
-                          BBP
-                        </MenuItem>
-                        <MenuItem>
-                          HBP
-                        </MenuItem>
-                        <MenuItem>
-                          Google
-                        </MenuItem>
-                      </Menu>
-                    }
+                    overlay={[Function]}
                     overlayClassName=""
                     overlayStyle={Object {}}
                     placement="bottomLeft"
@@ -445,68 +411,8 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                       onPopupAlign={[Function]}
                       onPopupVisibleChange={[Function]}
                       onVisibleChange={[Function]}
-                      overlay={
-                        <Menu
-                          className=""
-                          expandIcon={
-                            <span
-                              className="ant-dropdown-menu-submenu-arrow"
-                            >
-                              <Icon
-                                className="ant-dropdown-menu-submenu-arrow-icon"
-                                type="right"
-                              />
-                            </span>
-                          }
-                          focusable={false}
-                          mode="vertical"
-                          onClick={[Function]}
-                          prefixCls="ant-menu"
-                          selectable={false}
-                          theme="light"
-                        >
-                          <MenuItem>
-                            BBP
-                          </MenuItem>
-                          <MenuItem>
-                            HBP
-                          </MenuItem>
-                          <MenuItem>
-                            Google
-                          </MenuItem>
-                        </Menu>
-                      }
-                      popup={
-                        <Menu
-                          className=""
-                          expandIcon={
-                            <span
-                              className="ant-dropdown-menu-submenu-arrow"
-                            >
-                              <Icon
-                                className="ant-dropdown-menu-submenu-arrow-icon"
-                                type="right"
-                              />
-                            </span>
-                          }
-                          focusable={false}
-                          mode="vertical"
-                          onClick={[Function]}
-                          prefixCls="ant-dropdown-menu"
-                          selectable={false}
-                          theme="light"
-                        >
-                          <MenuItem>
-                            BBP
-                          </MenuItem>
-                          <MenuItem>
-                            HBP
-                          </MenuItem>
-                          <MenuItem>
-                            Google
-                          </MenuItem>
-                        </Menu>
-                      }
+                      overlay={[Function]}
+                      popup={[Function]}
                       popupAlign={Object {}}
                       popupClassName=""
                       popupPlacement="bottomLeft"

@@ -39,7 +39,6 @@ exports[`Header component Should render correctly 1`] = `
         <Menu
           className=""
           focusable={false}
-          prefixCls="ant-menu"
           theme="light"
         >
           <MenuItem>
@@ -57,7 +56,6 @@ exports[`Header component Should render correctly 1`] = `
         </Menu>
       }
       placement="bottomLeft"
-      prefixCls="ant-dropdown"
     >
       <a
         className="menu-dropdown ant-dropdown-link"

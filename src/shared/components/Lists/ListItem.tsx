@@ -43,7 +43,7 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
         }}
       >
         <Renameable defaultValue={name} onChange={handleUpdate} size="small" />
-        <Icon type="close" onClick={handleDelete} />
+        <Icon type="close" className="close-button" onClick={handleDelete} />
       </h3>
       <div
         style={{
