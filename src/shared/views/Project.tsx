@@ -7,6 +7,7 @@ import { fetchAndAssignProject } from '../store/actions/nexus/projects';
 
 interface ProjectViewProps {
   projectLabel: string;
+  orgLabel: string;
   match: any;
   fetchProject(org: string, project: string): void;
 }
@@ -14,6 +15,7 @@ interface ProjectViewProps {
 const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   match,
   projectLabel,
+  orgLabel,
   fetchProject,
 }) => {
   React.useEffect(
@@ -26,13 +28,14 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   );
   return (
     <div className="project">
-      <Lists />
+      <Lists projectLabel={match.params.project} orgLabel={match.params.org} />
     </div>
   );
 };
 
 const mapStateToProps = (state: RootState) => ({
   projectLabel: getProp(state, 'nexus.project.data.project.label'),
+  orgLabel: getProp(state, 'nexus.activeOrg.label'),
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

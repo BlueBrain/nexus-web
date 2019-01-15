@@ -1,14 +1,14 @@
-import { AnyAction, Reducer } from 'redux';
+import { AnyAction, Reducer, Action } from 'redux';
 
 // https://medium.com/@mange_vibration/reducer-composition-with-higher-order-reducers-35c3977ed08f
-type Predicate = (action: AnyAction) => boolean;
+type Predicate = (action: Action) => boolean;
 export interface Filter {
   [key: string]: string;
 }
 const createByKey = (predicate: Predicate, mapActionToKey: MapFilterToKey) => (
   reducer: Reducer
 ) => {
-  return (state: any = {}, action: AnyAction) => {
+  return (state: any = {}, action: Action) => {
     if (predicate(action)) {
       const key = mapActionToKey(action);
       return { ...state, [key]: reducer(state[key], action) };

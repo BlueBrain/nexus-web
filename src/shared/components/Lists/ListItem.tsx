@@ -12,6 +12,7 @@ import { updateList, deleteList } from '../../store/actions/lists';
 interface ListItemContainerProps {
   list: List;
   listIndex: number;
+  orgProjectFilterKey: string;
   updateList: (listIndex: number, list: List) => void;
   deleteList: (listIndex: number) => void;
 }
@@ -79,10 +80,11 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
 
 const mapStateToProps = (state: RootState) => ({});
 
-const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = (dispatch: any, { orgProjectFilterKey }: any) => ({
   updateList: (listIndex: number, list: List) =>
-    dispatch(updateList(listIndex, list)),
-  deleteList: (listIndex: number) => dispatch(deleteList(listIndex)),
+    dispatch(updateList(orgProjectFilterKey, listIndex, list)),
+  deleteList: (listIndex: number) =>
+    dispatch(deleteList(orgProjectFilterKey, listIndex)),
 });
 
 export default connect(

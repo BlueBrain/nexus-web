@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@bbp/nexus-sdk": "0.2.1",
+    "@types/redux-localstorage": "^1.0.8",
     "antd": "^3.10.9",
     "connected-react-router": "^5.0.1",
     "cookie-parser": "^1.4.3",

@@ -28,7 +28,7 @@ export const getProp = function getPropertyWithPath(
 };
 
 /**
- * moveTo utility - move an array alement to a new index position
+ * moveTo utility - move an array element to a new index position
  * @author Richard Scarrott
  * @param {Array} array
  * @param {number} from
@@ -42,12 +42,16 @@ export const moveTo = function moveArrayElement(
   return array.splice(to, 0, array.splice(from, 1)[0]);
 };
 
+/**
+ * creates a random UUID
+ * @author https://stackoverflow.com/users/109538/broofa
+ * @export
+ * @returns {string}
+ */
 export function uuidv4(): string {
-  // @ts-ignore
-  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-    (
-      c ^
-      (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
-    ).toString(16)
-  );
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
 }

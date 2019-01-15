@@ -10,6 +10,7 @@ import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { History } from 'history';
 import Nexus from '@bbp/nexus-sdk';
 import reducers from './reducers';
+import { saveState, loadState } from './reducers/localStorage';
 
 export type Services = {
   nexus: Nexus;
@@ -32,8 +33,10 @@ try {
 export default function configureStore(
   history: History,
   nexus: Nexus,
-  preloadedState: object = {}
+  preloadedState: any = {}
 ): Store {
+  // ignore server lists, fetch from local storage when available
+  preloadedState.lists = { ...loadState('lists') };
   const store = createStore(
     // @ts-ignore
     combineReducers({ router: connectRouter(history), ...reducers }),
@@ -45,6 +48,13 @@ export default function configureStore(
       )
     )
   );
+
+  // persist these in the client
+  store.subscribe(() => {
+    saveState({
+      lists: store.getState().lists,
+    });
+  });
 
   // DEVELOPMENT ONLY
   // if Hot module Replacement is enabled

@@ -1,8 +1,13 @@
-import { Action } from 'redux';
+import { Action, Reducer } from 'redux';
 import { FetchableState } from './utils';
 import { Resource, PaginationSettings, PaginatedList } from '@bbp/nexus-sdk';
-import { ListActions, ListActionTypes } from '../actions/lists';
+import {
+  ListActions,
+  ListActionTypes,
+  ProjectListActions,
+} from '../actions/lists';
 import { moveTo } from '../../utils';
+import createByKey from './utils/createByKey';
 
 export interface List extends FetchableState<PaginatedList<Resource>> {
   name: string;
@@ -41,7 +46,7 @@ const DEFAULT_LIST: List = {
 
 const initialState: ListState = [DEFAULT_LIST]; // Get Initial State from URL or DEFAULT_LIST?
 
-export default function listsReducer(
+export function listsReducer(
   state: ListState = initialState,
   action: ListActions
 ) {
@@ -66,5 +71,29 @@ export default function listsReducer(
       ];
     default:
       return state;
+  }
+}
+
+interface ListsByProjectState {
+  [orgAndProjectLabel: string]: ListState;
+}
+
+const listReducerByKey = createByKey(
+  action => action.hasOwnProperty('filterKey'),
+  (action: { filterKey: string }) => action.filterKey
+)(listsReducer as Reducer);
+
+export default function listsByProjectReducer(
+  state: ListsByProjectState = {},
+  action: ListActions | ProjectListActions
+) {
+  switch (action.type) {
+    case 'INITIALIZE_PROJECT_LIST':
+      return {
+        ...state,
+        [action.payload.orgAndProjectLabel]: initialState,
+      };
+    default:
+      return listReducerByKey(state, action);
   }
 }

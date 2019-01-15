@@ -17,6 +17,8 @@ const base: string = rawBase.replace(/\/$/, '');
 const history = createBrowserHistory({ basename: base });
 // Grab preloaded state
 const preloadedState: RootState = (window as any).__PRELOADED_STATE__;
+
+console.log('client', { preloadedState });
 // create Nexus instance
 const nexus = new Nexus({
   environment: preloadedState.config.apiEndpoint,
@@ -24,6 +26,8 @@ const nexus = new Nexus({
 });
 // create redux store
 const store = configureStore(history, nexus, preloadedState);
+
+console.log(store.getState());
 
 const renderApp = () => {
   return ReactDOM.hydrate(

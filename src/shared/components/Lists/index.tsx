@@ -5,18 +5,33 @@ import './Lists.less';
 import { getProp, uuidv4 } from '../../utils';
 import { List } from '../../store/reducers/lists';
 import ListItem from './ListItem';
-import { createList } from '../../store/actions/lists';
+import { createList, initializeProjectList } from '../../store/actions/lists';
 import * as md5 from 'md5';
 
 interface ListProps {
   lists: List[];
+  orgLabel: string;
+  projectLabel: string;
+  orgProjectFilterKey: string;
+  initialize: () => void;
   createList: () => void;
 }
 
 const ListsContainer: React.FunctionComponent<ListProps> = ({
   lists,
   createList,
+  initialize,
+  orgProjectFilterKey,
 }) => {
+  React.useEffect(
+    () => {
+      if (!lists.length && typeof window !== 'undefined') {
+        initialize();
+      }
+    },
+    [lists]
+  );
+
   const transitions = lists.map(list => ({
     props: { opacity: 1, width: '300px' },
     item: list,
@@ -32,7 +47,11 @@ const ListsContainer: React.FunctionComponent<ListProps> = ({
         ({ key, item, props: { ...style } }, listIndex: number) => {
           return (
             <li className="list" key={key} style={style}>
-              <ListItem list={item} listIndex={listIndex} />
+              <ListItem
+                list={item}
+                listIndex={listIndex}
+                orgProjectFilterKey={orgProjectFilterKey}
+              />
             </li>
           );
         }
@@ -45,13 +64,22 @@ const ListsContainer: React.FunctionComponent<ListProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState) => ({
-  lists: getProp(state, 'lists', []),
-});
+const mapStateToProps = (state: RootState, ownProps: any) => {
+  const orgProjectFilterKey = ownProps.orgLabel + ownProps.projectLabel;
+  return {
+    orgProjectFilterKey,
+    lists: getProp(state, `lists.${orgProjectFilterKey}`, []),
+  };
+};
 
-const mapDispatchToProps = (dispatch: any) => ({
-  createList: () => dispatch(createList()),
-});
+const mapDispatchToProps = (dispatch: any, ownProps: any) => {
+  const orgProjectFilterKey = ownProps.orgLabel + ownProps.projectLabel;
+  return {
+    createList: () => dispatch(createList(orgProjectFilterKey)),
+    initialize: () =>
+      dispatch(initializeProjectList(ownProps.orgLabel, ownProps.projectLabel)),
+  };
+};
 
 export default connect(
   mapStateToProps,
