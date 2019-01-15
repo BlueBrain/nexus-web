@@ -106,12 +106,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   // logic for generating dynamic prefix mapping fields in form
   const currentId =
     project && project.prefixMappings ? project.prefixMappings.length : 0;
-  const activeKeys =
-    currentId === 0
-      ? []
-      : Array(currentId - 1 + 1)
-          .fill(0)
-          .map((_, idx) => 1 + idx);
+  const activeKeys = [...Array(currentId + 1).keys()].slice(1);
   const [prefixMappingKeys, setPrefixMappingKeys] = React.useState({
     currentId,
     activeKeys,
