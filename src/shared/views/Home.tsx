@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Drawer } from 'antd';
+import { Drawer, notification } from 'antd';
 import { Project } from '@bbp/nexus-sdk';
 import { RootState } from '../store/reducers';
 import { fetchProjects } from '../store/actions/nexus';
@@ -57,12 +57,32 @@ const Home: React.FunctionComponent<HomeProps> = ({
       base: newProject.base,
       prefixMappings: newProject.prefixMappings || [],
     })
-      .then((resultProject: Project) => {
-        setFormBusy(false);
-        setSelectedProject(undefined);
-        fetchProjects(match.params.org);
-      })
-      .catch();
+      .then(
+        () => {
+          notification.success({
+            message: 'Project saved',
+            duration: 2,
+          });
+          setFormBusy(false);
+          setSelectedProject(undefined);
+          fetchProjects(match.params.org);
+        },
+        action => {
+          notification.warning({
+            message: 'Project NOT saved',
+            description: action.error,
+            duration: 2,
+          });
+          setFormBusy(false);
+        }
+      )
+      .catch(e => {
+        notification.error({
+          message: 'An unknown error occurred',
+          description: e.message,
+          duration: 0,
+        });
+      });
   };
 
   if (busy) {

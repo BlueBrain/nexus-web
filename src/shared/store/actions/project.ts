@@ -65,7 +65,7 @@ export const modifyProject: ActionCreator<ThunkAction> = (
       );
       return dispatch(modifyProjectSuccessAction(project));
     } catch (e) {
-      return dispatch(modifyProjectFailureAction(e));
+      return Promise.reject(dispatch(modifyProjectFailureAction(e.message)));
     }
   };
 };
