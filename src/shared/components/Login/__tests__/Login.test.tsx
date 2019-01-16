@@ -1,7 +1,7 @@
-import React = require('react');
+import * as React from 'react';
 import { mount } from 'enzyme';
 
-import Login, { Realm } from './index';
+import Login, { Realm } from '../index';
 
 const realms: Realm[] = [
   {
