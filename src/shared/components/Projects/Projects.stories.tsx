@@ -6,6 +6,7 @@ import { withKnobs, text, number } from '@storybook/addon-knobs';
 
 import ProjectCard, { ProjectCardProps } from './ProjectCard';
 import ProjectList from './ProjectList';
+import ProjectForm from './ProjectForm';
 
 const projects: ProjectCardProps[] = [
   { name: 'Thalamus', label: 'thalamus', resourceNumber: 1236 },
@@ -53,6 +54,36 @@ storiesOf('Components/Projects', module)
             <ProjectList
               projects={projects}
               onProjectClick={action('project-click')}
+            />
+          </div>
+        </React.Fragment>
+      );
+    })
+  );
+
+storiesOf('Components/Projects', module)
+  .addDecorator(withKnobs)
+  .add(
+    'ProjectForm',
+    withInfo(`
+      ~~~js
+      ~~~
+  `)(() => {
+      return (
+        <React.Fragment>
+          <div style={{ margin: '50px 40px 0px' }}>
+            <ProjectForm />
+          </div>
+          <div style={{ margin: '50px 40px 0px' }}>
+            <ProjectForm
+              project={{
+                name: 'My project',
+                label: 'Label',
+                prefixMappings: [
+                  { prefix: 'es', namespace: 'http://asdasd' },
+                  { prefix: 'ex', namespace: 'http://example.com' },
+                ],
+              }}
             />
           </div>
         </React.Fragment>

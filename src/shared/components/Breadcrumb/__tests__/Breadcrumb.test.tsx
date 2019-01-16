@@ -1,7 +1,6 @@
-import React = require('react');
-import { mount } from 'enzyme';
-import getBreadcrumbs from './getBreadcrumbs';
-import { RouteWithData } from '../../routes';
+import * as React from 'react';
+import getBreadcrumbs from '../getBreadcrumbs';
+import { RouteWithData } from '../../../routes';
 const routes: RouteWithData[] = [
   {
     path: '/',
