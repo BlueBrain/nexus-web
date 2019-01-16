@@ -1,0 +1,857 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for Projects/ProjectForm.tsx</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">All files</a> / <a href="index.html">Projects</a> ProjectForm.tsx
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">33.33% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>16/48</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">18% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>9/50</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">6.25% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>1/16</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">33.33% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>16/48</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import * as React from 'react';
+import { Form, Icon, Input, Button, Spin } from 'antd';
+import { WrappedFormUtils } from 'antd/lib/form/Form';
+import { bool } from 'prop-types';
+import { boolean } from '@storybook/addon-knobs';
+&nbsp;
+/**
+ * Custom from controls, based on:
+ * https://ant.design/components/form/#components-form-demo-customized-form-controls
+ */
+export interface PrefixMappingGroupInputState {
+  prefix: string;
+  namespace: string;
+}
+export interface PrefixMappingGroupInputProps {
+  groupId: string | number;
+  value: any;
+  onChange(state: PrefixMappingGroupInputState): void;
+}
+class PrefixMappingGroupInput extends React.Component&lt;
+  PrefixMappingGroupInputProps,
+  PrefixMappingGroupInputState
+&gt; {
+  // Static method called by Form component
+<span class="fstat-no" title="function not covered" >  static</span> getDerivedStateFromProps(nextProps: PrefixMappingGroupInputProps) {
+<span class="cstat-no" title="statement not covered" >    if ('value' in nextProps) {</span>
+<span class="cstat-no" title="statement not covered" >      return {</span>
+        ...(nextProps.value || {}),
+      };
+    }
+<span class="cstat-no" title="statement not covered" >    return null;</span>
+  }
+&nbsp;
+<span class="fstat-no" title="function not covered" >  constructor(</span>props: PrefixMappingGroupInputProps) {
+<span class="cstat-no" title="statement not covered" >    super(props);</span>
+    const value = <span class="cstat-no" title="statement not covered" >props.value || {};</span>
+<span class="cstat-no" title="statement not covered" >    this.state = {</span>
+      prefix: value.prefix || '',
+      namespace: value.namespace || '',
+    };
+  }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  handlePrefixChange = <span class="fstat-no" title="function not covered" >(e</span>: React.FormEvent&lt;HTMLInputElement&gt;) =&gt; {</span>
+    const prefix = <span class="cstat-no" title="statement not covered" >e.currentTarget.value;</span>
+<span class="cstat-no" title="statement not covered" >    this.setState({</span>
+      prefix,
+    });
+<span class="cstat-no" title="statement not covered" >    this.props.onChange({ ...this.state, prefix });</span>
+  };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  handleNamespaceChange = <span class="fstat-no" title="function not covered" >(e</span>: React.FormEvent&lt;HTMLInputElement&gt;) =&gt; {</span>
+    const namespace = <span class="cstat-no" title="statement not covered" >e.currentTarget.value;</span>
+<span class="cstat-no" title="statement not covered" >    this.setState({</span>
+      namespace,
+    });
+<span class="cstat-no" title="statement not covered" >    this.props.onChange({ ...this.state, namespace });</span>
+  };
+&nbsp;
+<span class="fstat-no" title="function not covered" >  render</span>() {
+<span class="cstat-no" title="statement not covered" >    return (</span>
+      &lt;Input.Group
+        compact
+        style={
+          {
+            width: 'calc(100% - 22px)',
+            marginRight: 8,
+          } /* icon is 14px + 8px margin-right = 22px*/
+        }
+      &gt;
+        &lt;Input
+          style={{ width: '20%' }}
+          name={`prefix[${this.props.groupId}]`}
+          placeholder="prefix"
+          onChange={this.handlePrefixChange}
+          value={this.state.prefix}
+        /&gt;
+        &lt;Input
+          style={{ width: '80%' }}
+          name={`namespace[${this.props.groupId}]`}
+          placeholder="namespace"
+          onChange={this.handleNamespaceChange}
+          value={this.state.namespace}
+        /&gt;
+      &lt;/Input.Group&gt;
+    );
+  }
+}
+&nbsp;
+export interface ProjectFormProps {
+  form: WrappedFormUtils;
+  project?: {
+    label: string;
+    name: string;
+    base?: string;
+    prefixMappings?: PrefixMappingGroupInputState[];
+  };
+  busy?: boolean;
+  onSubmit?(project: ProjectFormProps['project']): any;
+}
+&nbsp;
+/**
+ * Adaptation of the following example:
+ * based on: https://ant.design/components/form/#components-form-demo-dynamic-form-item
+ */
+const ProjectForm: React.FunctionComponent&lt;ProjectFormProps&gt; = ({
+  form,
+  project,
+  busy = false,
+  onSubmit = <span class="fstat-no" title="function not covered" >() </span>=&gt; {},
+}) =&gt; {
+  // logic for generating dynamic prefix mapping fields in form
+  const currentId =
+    project &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >project.prefixMappings </span>? <span class="branch-0 cbranch-no" title="branch not covered" >project.prefixMappings.length </span>: 0;
+  const activeKeys = [...Array(currentId + 1).keys()].slice(1);
+  const [prefixMappingKeys, setPrefixMappingKeys] = React.useState({
+    currentId,
+    activeKeys,
+  });
+&nbsp;
+  const { getFieldDecorator, getFieldValue } = form;
+  const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 5 },
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 19 },
+    },
+  };
+  const formItemLayoutWithOutLabel = {
+    wrapperCol: {
+      xs: { span: 24, offset: 0 },
+      sm: { span: 19, offset: 5 },
+    },
+  };
+&nbsp;
+  const add = <span class="fstat-no" title="function not covered" >(k</span>: any) =&gt; {
+    const { currentId, activeKeys } = <span class="cstat-no" title="statement not covered" >prefixMappingKeys;</span>
+    const newId: number = <span class="cstat-no" title="statement not covered" >currentId + 1;</span>
+    // @ts-ignore
+<span class="cstat-no" title="statement not covered" >    setPrefixMappingKeys({</span>
+      currentId: newId,
+      activeKeys: [...activeKeys, newId],
+    });
+  };
+&nbsp;
+  const remove = <span class="fstat-no" title="function not covered" >(k</span>: any) =&gt; {
+    const { activeKeys } = <span class="cstat-no" title="statement not covered" >prefixMappingKeys;</span>
+<span class="cstat-no" title="statement not covered" >    setPrefixMappingKeys({</span>
+      ...prefixMappingKeys,
+      activeKeys: activeKeys.filter(<span class="fstat-no" title="function not covered" >(k</span>ey: any) =&gt; <span class="cstat-no" title="statement not covered" >key !== k)</span>,
+    });
+  };
+&nbsp;
+  // TODO: implement
+  const handleSubmit = <span class="fstat-no" title="function not covered" >(e</span>: React.SyntheticEvent) =&gt; {
+<span class="cstat-no" title="statement not covered" >    e.preventDefault();</span>
+<span class="cstat-no" title="statement not covered" >    form.validateFields(<span class="fstat-no" title="function not covered" >(e</span>rr, values) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      if (!err) {</span>
+<span class="cstat-no" title="statement not covered" >        onSubmit({</span>
+          ...values,
+          prefixMappings:
+            (values.prefixMappings &amp;&amp;
+              values.prefixMappings.filter(<span class="fstat-no" title="function not covered" >(p</span>: any) =&gt; <span class="cstat-no" title="statement not covered" >!!p)</span>) ||
+            [],
+        });
+      }
+    });
+  };
+&nbsp;
+  const checkPrefix = <span class="fstat-no" title="function not covered" >(</span>
+    rule: {},
+    value: PrefixMappingGroupInputState,
+    callback: (message?: string) =&gt; void
+  ) =&gt; {
+<span class="cstat-no" title="statement not covered" >    if (value.prefix &amp;&amp; value.namespace) {</span>
+<span class="cstat-no" title="statement not covered" >      callback();</span>
+<span class="cstat-no" title="statement not covered" >      return;</span>
+    }
+<span class="cstat-no" title="statement not covered" >    callback('You need to specify both prefix and namespace');</span>
+  };
+&nbsp;
+  // Dynamic form fields
+  const prefixMappingsItems = prefixMappingKeys.activeKeys.map(
+<span class="fstat-no" title="function not covered" >    (k</span>ey: number, index: number) =&gt; (
+<span class="cstat-no" title="statement not covered" >      &lt;Form.Item</span>
+        label={index === 0 ? 'Prefix Mappings' : ''}
+        {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
+        key={key}
+      &gt;
+        {getFieldDecorator(`prefixMappings[${key - 1}]`, {
+          initialValue: {
+            prefix:
+              (project &amp;&amp;
+                project.prefixMappings &amp;&amp;
+                project.prefixMappings[key - 1] &amp;&amp;
+                project.prefixMappings[key - 1].prefix) ||
+              '',
+            namespace:
+              (project &amp;&amp;
+                project.prefixMappings &amp;&amp;
+                project.prefixMappings[key - 1] &amp;&amp;
+                project.prefixMappings[key - 1].namespace) ||
+              '',
+          },
+          rules: [{ validator: checkPrefix, required: true }],
+        })(
+          // @ts-ignore
+          &lt;PrefixMappingGroupInput groupId={`${key}`} /&gt;
+        )}
+        {prefixMappingKeys.activeKeys.length &gt; 0 ? (
+          &lt;Icon
+            className="dynamic-delete-button"
+            type="minus-circle-o"
+            onClick={<span class="fstat-no" title="function not covered" >() </span>=&gt; <span class="cstat-no" title="statement not covered" >remove(key)}</span>
+          /&gt;
+        ) : null}
+      &lt;/Form.Item&gt;
+    )
+  );
+  return (
+    &lt;Spin spinning={busy}&gt;
+      &lt;Form onSubmit={handleSubmit}&gt;
+        &lt;h1&gt;Project: {getFieldValue('name') || (project &amp;&amp; <span class="branch-2 cbranch-no" title="branch not covered" >project.name)</span>}&lt;/h1&gt;
+        &lt;Form.Item label="Name" {...formItemLayout}&gt;
+          {getFieldDecorator('name', {
+            initialValue: project ? <span class="branch-0 cbranch-no" title="branch not covered" >project.name </span>: '',
+            rules: [{ required: true }],
+          })(&lt;Input placeholder="Name" /&gt;)}
+        &lt;/Form.Item&gt;
+        &lt;Form.Item label="Label" {...formItemLayout}&gt;
+          {getFieldDecorator('label', {
+            initialValue: project ? <span class="branch-0 cbranch-no" title="branch not covered" >project.label </span>: '',
+            rules: [{ required: true }],
+          })(&lt;Input placeholder="Label" /&gt;)}
+        &lt;/Form.Item&gt;
+        &lt;Form.Item label="Base" {...formItemLayout}&gt;
+          {getFieldDecorator('base', {
+            initialValue: project ? <span class="branch-0 cbranch-no" title="branch not covered" >project.base </span>: '',
+            rules: [{ required: false }],
+          })(&lt;Input placeholder="Base" /&gt;)}
+        &lt;/Form.Item&gt;
+        {prefixMappingsItems}
+        &lt;Form.Item {...formItemLayoutWithOutLabel}&gt;
+          &lt;Button type="dashed" onClick={add} style={{ width: '60%' }}&gt;
+            &lt;Icon type="plus" /&gt; Add prefix mapping
+          &lt;/Button&gt;
+        &lt;/Form.Item&gt;
+        &lt;Form.Item {...formItemLayoutWithOutLabel}&gt;
+          &lt;Button
+            type="primary"
+            htmlType="submit"
+            className="login-form-button"
+          &gt;
+            Save
+          &lt;/Button&gt;
+        &lt;/Form.Item&gt;
+      &lt;/Form&gt;
+    &lt;/Spin&gt;
+  );
+};
+&nbsp;
+export default Form.create()(ProjectForm);
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Wed Jan 16 2019 08:49:36 GMT+0100 (CET)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>
