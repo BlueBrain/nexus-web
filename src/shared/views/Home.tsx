@@ -1,16 +1,19 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Drawer, notification } from 'antd';
+import { Drawer, notification, Modal, Button, Icon } from 'antd';
 import { Project } from '@bbp/nexus-sdk';
+import { CreateProjectPayload } from '@bbp/nexus-sdk/lib/Project/types';
 import { RootState } from '../store/reducers';
 import { fetchProjects } from '../store/actions/nexus';
-import { modifyProject } from '../store/actions/project';
+import {
+  modifyProject,
+  createProject,
+  ProjectActions,
+} from '../store/actions/project';
 import ProjectList from '../components/Projects/ProjectList';
 import Skeleton from '../components/Skeleton';
 import { push } from 'connected-react-router';
 import ProjectForm from '../components/Projects/ProjectForm';
-import { CreateProjectPayload } from '@bbp/nexus-sdk/lib/Project/types';
-import { boolean } from '@storybook/addon-knobs';
 
 interface HomeProps {
   activeOrg: { label: string };
@@ -18,6 +21,11 @@ interface HomeProps {
   busy: boolean;
   match: any;
   fetchProjects(name: string): void;
+  createProject(
+    orgLabel: string,
+    projectLabel: string,
+    payload: CreateProjectPayload
+  ): Promise<Project>;
   modifyProject(
     orgLabel: string,
     projectLabel: string,
@@ -34,12 +42,14 @@ const Home: React.FunctionComponent<HomeProps> = ({
   activeOrg,
   fetchProjects,
   goTo,
+  createProject,
   modifyProject,
 }) => {
+  const [formBusy, setFormBusy] = React.useState<boolean>(false);
+  const [modalVisible, setModalVisible] = React.useState<boolean>(false);
   const [selectedProject, setSelectedProject] = React.useState<
     Project | undefined
   >(undefined);
-  const [formBusy, setFormBusy] = React.useState<boolean>(false);
 
   React.useEffect(
     () => {
@@ -50,7 +60,44 @@ const Home: React.FunctionComponent<HomeProps> = ({
     [match.params.org]
   );
 
-  const saveProject = (selectedProject: Project, newProject: Project) => {
+  const saveAndCreate = (newProject: Project) => {
+    setFormBusy(true);
+    createProject(activeOrg.label, newProject.label, {
+      name: newProject.name,
+      base: newProject.base || undefined,
+      prefixMappings:
+        newProject.prefixMappings.length === 0
+          ? undefined
+          : newProject.prefixMappings,
+    })
+      .then(
+        () => {
+          notification.success({
+            message: 'Project created',
+            duration: 2,
+          });
+          setFormBusy(false);
+          goTo(activeOrg.label, newProject.label);
+        },
+        (action: { type: string; error: Error }) => {
+          notification.warning({
+            message: 'Project NOT create',
+            description: action.error.message,
+            duration: 2,
+          });
+          setFormBusy(false);
+        }
+      )
+      .catch((error: Error) => {
+        notification.error({
+          message: 'An unknown error occurred',
+          description: error.message,
+          duration: 0,
+        });
+      });
+  };
+
+  const saveAndModify = (selectedProject: Project, newProject: Project) => {
     setFormBusy(true);
     modifyProject(activeOrg.label, newProject.label, selectedProject.version, {
       name: newProject.name,
@@ -64,22 +111,24 @@ const Home: React.FunctionComponent<HomeProps> = ({
             duration: 2,
           });
           setFormBusy(false);
+          setModalVisible(false);
           setSelectedProject(undefined);
+
           fetchProjects(match.params.org);
         },
-        action => {
+        (action: { type: string; error: Error }) => {
           notification.warning({
             message: 'Project NOT saved',
-            description: action.error,
+            description: action.error.message,
             duration: 2,
           });
           setFormBusy(false);
         }
       )
-      .catch(e => {
+      .catch((error: Error) => {
         notification.error({
           message: 'An unknown error occurred',
-          description: e.message,
+          description: error.message,
           duration: 0,
         });
       });
@@ -106,6 +155,16 @@ const Home: React.FunctionComponent<HomeProps> = ({
   }
   return (
     <>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
+        <h1 style={{ marginBottom: 0, marginRight: 8 }}>Projects</h1>
+        <Button
+          type="primary"
+          onClick={() => setModalVisible(true)}
+          size="small"
+        >
+          <Icon type="plus-square" theme="twoTone" style={{ fontSize: 21 }} />
+        </Button>
+      </div>
       <ProjectList
         projects={projects}
         onProjectClick={(projectLabel: string) =>
@@ -115,6 +174,18 @@ const Home: React.FunctionComponent<HomeProps> = ({
           setSelectedProject(projects.filter(p => p.label === projectLabel)[0])
         }
       />
+      <Modal
+        title="New Project"
+        visible={modalVisible}
+        onCancel={() => setModalVisible(false)}
+        confirmLoading={formBusy}
+        footer={null}
+      >
+        <ProjectForm
+          onSubmit={(p: Project) => saveAndCreate(p)}
+          busy={formBusy}
+        />
+      </Modal>
       <Drawer
         width={640}
         visible={!!(selectedProject && selectedProject.name)}
@@ -128,7 +199,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
               base: selectedProject.base,
               prefixMappings: selectedProject.prefixMappings,
             }}
-            onSubmit={(p: Project) => saveProject(selectedProject, p)}
+            onSubmit={(p: Project) => saveAndModify(selectedProject, p)}
             busy={formBusy}
           />
         )}
@@ -154,6 +225,11 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = (dispatch: any) => ({
   fetchProjects: (name: string) => dispatch(fetchProjects(name)),
   goTo: (org: string, project: string) => dispatch(push(`/${org}/${project}`)),
+  createProject: (
+    orgLabel: string,
+    projectLabel: string,
+    payload: CreateProjectPayload
+  ) => dispatch(createProject(orgLabel, projectLabel, payload)),
   modifyProject: (
     orgLabel: string,
     projectLabel: string,
