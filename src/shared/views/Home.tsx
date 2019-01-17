@@ -111,6 +111,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
             duration: 2,
           });
           setFormBusy(false);
+          setModalVisible(false);
           setSelectedProject(undefined);
 
           fetchProjects(match.params.org);
@@ -154,10 +155,16 @@ const Home: React.FunctionComponent<HomeProps> = ({
   }
   return (
     <>
-      <h1>Projects</h1>
-      <Button type="primary" onClick={() => setModalVisible(true)}>
-        <Icon type="plus" />
-      </Button>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
+        <h1 style={{ marginBottom: 0, marginRight: 8 }}>Projects</h1>
+        <Button
+          type="primary"
+          onClick={() => setModalVisible(true)}
+          size="small"
+        >
+          <Icon type="plus-square" theme="twoTone" style={{ fontSize: 21 }} />
+        </Button>
+      </div>
       <ProjectList
         projects={projects}
         onProjectClick={(projectLabel: string) =>
