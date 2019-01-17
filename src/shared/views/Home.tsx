@@ -1,15 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Drawer, notification, Modal, Button, Icon } from 'antd';
+import { Drawer, notification, Modal, Button } from 'antd';
 import { Project } from '@bbp/nexus-sdk';
 import { CreateProjectPayload } from '@bbp/nexus-sdk/lib/Project/types';
 import { RootState } from '../store/reducers';
 import { fetchProjects } from '../store/actions/nexus';
-import {
-  modifyProject,
-  createProject,
-  ProjectActions,
-} from '../store/actions/project';
+import { modifyProject, createProject } from '../store/actions/project';
 import ProjectList from '../components/Projects/ProjectList';
 import Skeleton from '../components/Skeleton';
 import { push } from 'connected-react-router';
@@ -160,10 +156,8 @@ const Home: React.FunctionComponent<HomeProps> = ({
         <Button
           type="primary"
           onClick={() => setModalVisible(true)}
-          size="small"
-        >
-          <Icon type="plus-square" theme="twoTone" style={{ fontSize: 21 }} />
-        </Button>
+          icon="plus-square"
+        />
       </div>
       <ProjectList
         projects={projects}
