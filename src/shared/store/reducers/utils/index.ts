@@ -1,4 +1,4 @@
-import { combineReducers, AnyAction, Reducer } from 'redux';
+import { combineReducers, AnyAction, Reducer, Action } from 'redux';
 
 export * from './createByKey';
 
@@ -34,12 +34,17 @@ export const createReducer = (intialState: any, handlers: ActionHandler) => (
     ? handlers[action.type](state, action)
     : state;
 
-export const createFetching = ({ FETCHING, FULFILLED, FAILED }: ActionTypes) =>
-  createReducer(false, {
-    [FETCHING]: () => true,
+export const createFetching = ({
+  FETCHING,
+  FULFILLED,
+  FAILED,
+}: ActionTypes) => {
+  return createReducer(false, {
+    [FETCHING]: (state, action) => true,
     [FULFILLED]: () => false,
     [FAILED]: () => false,
   });
+};
 
 export const createResultData = (
   { FULFILLED }: ActionTypes,

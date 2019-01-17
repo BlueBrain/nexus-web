@@ -18,6 +18,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   orgLabel,
   fetchProject,
 }) => {
+  console.log("i'm updating only once, yeah?");
   React.useEffect(
     () => {
       if (projectLabel !== match.params.project) {
@@ -34,10 +35,19 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
 };
 
 const mapStateToProps = (state: RootState) => ({
-  projectLabel: getProp(state, 'nexus.project.data.project.label'),
-  orgLabel: getProp(state, 'nexus.activeOrg.label'),
+  projectLabel:
+    (state.nexus &&
+      state.nexus.project &&
+      state.nexus.project.data &&
+      state.nexus.project.data.label) ||
+    '',
+  activeOrg:
+    (state.nexus &&
+      state.nexus.activeOrg &&
+      state.nexus.activeOrg.org &&
+      state.nexus.activeOrg.org.label) ||
+    '',
 });
-
 const mapDispatchToProps = (dispatch: any) => ({
   fetchProject: (org: string, project: string) =>
     dispatch(fetchAndAssignProject(org, project)),

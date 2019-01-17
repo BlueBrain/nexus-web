@@ -1,4 +1,4 @@
-import createByKey, { createGetByKey, Filter } from './createByKey';
+import { createByKey, createGetByKey, Filter } from './createByKey';
 import { Action, AnyAction } from 'redux';
 
 describe('createByKey()', () => {

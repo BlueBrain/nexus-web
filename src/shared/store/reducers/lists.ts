@@ -1,15 +1,25 @@
-import { Action, Reducer } from 'redux';
-import { FetchableState } from './utils';
+import { Action, Reducer, combineReducers } from 'redux';
+import { FetchableState, createFetchReducer } from './utils';
 import { Resource, PaginationSettings, PaginatedList } from '@bbp/nexus-sdk';
 import {
   ListActions,
   ListActionTypes,
   ProjectListActions,
+  listActionPrefix,
 } from '../actions/lists';
 import { moveTo } from '../../utils';
-import createByKey from './utils/createByKey';
+import {
+  createByKey,
+  createByIndex,
+  FilterIndexAction,
+} from './utils/createByKey';
+import {
+  actionTypes,
+  QueryActions,
+  queryResourcesActionPrefix,
+} from '../actions/queryResource';
 
-export interface List extends FetchableState<PaginatedList<Resource>> {
+export interface List {
   name: string;
   query: {
     filters: {
@@ -17,7 +27,10 @@ export interface List extends FetchableState<PaginatedList<Resource>> {
     };
     textQuery?: string;
   };
-  paginationSettings: PaginationSettings;
+  request: FetchableState<{
+    resources: PaginatedList<Resource>;
+    paginationSettings: PaginationSettings;
+  }>;
 }
 
 // serialize / deserialze to URL param
@@ -26,30 +39,34 @@ export interface List extends FetchableState<PaginatedList<Resource>> {
 // then we should update the URL with a serialied array of queries
 export type ListState = List[];
 
-const DEFAULT_RESOURCE_PAGINATION_SIZE = 20;
-
-const DEFAULT_PAGINATION_SETTINGS = {
-  from: 0,
-  size: DEFAULT_RESOURCE_PAGINATION_SIZE,
-};
-
 const DEFAULT_LIST: List = {
   name: 'Default List',
   query: {
     filters: {},
   },
-  isFetching: true,
-  paginationSettings: DEFAULT_PAGINATION_SETTINGS,
-  data: null,
-  error: null,
+  request: {
+    isFetching: false,
+    data: null,
+    error: null,
+  },
 };
 
 const initialState: ListState = [DEFAULT_LIST]; // Get Initial State from URL or DEFAULT_LIST?
 
+const queryReducerByIndex = createByIndex(
+  action => action.hasOwnProperty('filterIndex'),
+  (action: { filterIndex: number }) => action.filterIndex,
+  (state: { requests: any }) => state.requests
+)(combineReducers({ request: createFetchReducer(actionTypes) }));
+
 export function listsReducer(
   state: ListState = initialState,
-  action: ListActions
+  action: ListActions | QueryActions
 ) {
+  if (action.type.startsWith(queryResourcesActionPrefix)) {
+    return queryReducerByIndex(state, action as FilterIndexAction);
+  }
+
   switch (action.type) {
     case ListActionTypes.CREATE:
       const newList = { ...DEFAULT_LIST, name: `New List ${state.length + 1}` };
@@ -74,19 +91,27 @@ export function listsReducer(
   }
 }
 
-interface ListsByProjectState {
-  [orgAndProjectLabel: string]: ListState;
+export interface ListsByProjectState {
+  [orgProjectFilterKey: string]: ListState;
 }
 
 const listReducerByKey = createByKey(
-  action => action.hasOwnProperty('filterKey'),
+  action =>
+    action.hasOwnProperty('filterKey') || action.hasOwnProperty('filterIndex'),
   (action: { filterKey: string }) => action.filterKey
 )(listsReducer as Reducer);
 
 export default function listsByProjectReducer(
   state: ListsByProjectState = {},
-  action: ListActions | ProjectListActions
+  action: ListActions | ProjectListActions | QueryActions
 ) {
+  if (
+    action.type.startsWith(listActionPrefix) ||
+    action.type.startsWith(queryResourcesActionPrefix)
+  ) {
+    return listReducerByKey(state, action);
+  }
+
   switch (action.type) {
     case 'INITIALIZE_PROJECT_LIST':
       return {
@@ -94,6 +119,6 @@ export default function listsByProjectReducer(
         [action.payload.orgAndProjectLabel]: initialState,
       };
     default:
-      return listReducerByKey(state, action);
+      return state;
   }
 }

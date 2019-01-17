@@ -2,72 +2,63 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../../store/reducers';
 import './Lists.less';
-import { getProp, uuidv4 } from '../../utils';
-import { List } from '../../store/reducers/lists';
+import { uuidv4 } from '../../utils';
+import { List, ListsByProjectState } from '../../store/reducers/lists';
 import ListItem from './ListItem';
 import { createList, initializeProjectList } from '../../store/actions/lists';
 
 interface ListProps {
-  lists?: List[];
+  lists: ListsByProjectState;
   orgLabel: string;
   projectLabel: string;
-  orgProjectFilterKey: string;
   initialize: () => void;
   createList: () => void;
 }
 
-const ListsContainer: React.FunctionComponent<ListProps> = ({
-  lists,
-  createList,
-  initialize,
-  orgProjectFilterKey,
-}) => {
-  React.useEffect(
-    () => {
-      if (!lists) {
+const ListsContainer: React.FunctionComponent<ListProps> = React.memo(
+  ({ lists, createList, initialize, orgLabel, projectLabel }) => {
+    const orgProjectFilterKey = orgLabel + projectLabel;
+    const projectLists: List[] = lists[orgProjectFilterKey];
+
+    React.useEffect(() => {
+      if (!projectLists) {
         initialize();
       }
-    },
-    [lists]
-  );
+    });
 
-  const transitions = (lists || []).map(list => ({
-    props: { opacity: 1, width: '300px' },
-    item: list,
-    // we need a unique key for react to update the correct element,
-    // but the list may have similar content
-    // so it's difficult to manually build a unique string
-    key: uuidv4(),
-  }));
+    console.log('big one is updating as well');
 
-  return (
-    <ul className="list-board">
-      {transitions.map(
-        ({ key, item, props: { ...style } }, listIndex: number) => {
+    return (
+      <ul className="list-board">
+        {(projectLists || []).map((list, listIndex: number) => {
           return (
-            <li className="list" key={key} style={style}>
+            <li
+              className="list"
+              key={uuidv4()}
+              style={{ opacity: 1, width: '300px' }}
+            >
               <ListItem
-                list={item}
+                list={list}
                 listIndex={listIndex}
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
                 orgProjectFilterKey={orgProjectFilterKey}
               />
             </li>
           );
-        }
-      )}
-      <div className="list -new" onClick={createList} key="make-new-list">
-        <h2>Make a new list</h2>
-        <p>{'view resources from project '}</p>
-      </div>
-    </ul>
-  );
-};
+        })}
+        <div className="list -new" onClick={createList} key="make-new-list">
+          <h2>Make a new list</h2>
+          <p>{'view resources from project '}</p>
+        </div>
+      </ul>
+    );
+  }
+);
 
-const mapStateToProps = (state: RootState, ownProps: any) => {
-  const orgProjectFilterKey = ownProps.orgLabel + ownProps.projectLabel;
+const mapStateToProps = (state: RootState) => {
   return {
-    orgProjectFilterKey,
-    lists: getProp(state, `lists.${orgProjectFilterKey}`),
+    lists: state.lists || {},
   };
 };
 

@@ -1,23 +1,15 @@
-import { ActionCreator, Action } from 'redux';
+import { ActionCreator, Action, Dispatch } from 'redux';
 import { List } from '../reducers/lists';
+import { ThunkAction } from '..';
+import { FilterPayloadAction, FilterAction, PayloadAction } from './utils';
+
+export const listActionPrefix = 'LIST';
 
 export enum ListActionTypes {
   CREATE = 'LIST_CREATE',
   DELETE = 'LIST_DELETE',
   UPDATE = 'LIST_UPDATE',
   CHANGE_INDEX = 'LIST_CHANGE_INDEX',
-}
-
-interface FilterAction<T> extends Action<T> {
-  filterKey: string;
-}
-
-interface PayloadAction<T, DATA> extends Action<T> {
-  payload: DATA;
-}
-
-interface FilterPayloadAction<T, DATA> extends FilterAction<T> {
-  payload: DATA;
 }
 
 type DeleteListAction = FilterPayloadAction<

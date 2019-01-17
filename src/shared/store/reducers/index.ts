@@ -7,13 +7,13 @@ import rawQuery, {
   rawElasticSearchQueryReducer,
   RawElasticSearchQueryState,
 } from './rawQuery';
-import lists, { ListState } from './lists';
+import lists, { ListsByProjectState } from './lists';
 
 export interface RootState {
   auth: AuthState;
   config: ConfigState;
   nexus?: NexusState;
-  lists?: ListState;
+  lists?: ListsByProjectState;
   router?: StaticRouterProps;
   rawQuery?: RawQueryState;
   rawElasticSearchQuery?: RawElasticSearchQueryState;
