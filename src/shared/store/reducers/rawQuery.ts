@@ -1,7 +1,9 @@
 import { RawQueryActions } from '../actions/rawQuery';
-import { PaginatedList } from '@bbp/nexus-sdk';
+import { PaginatedList, PaginationSettings } from '@bbp/nexus-sdk';
 import { ElasticSearchHit } from '@bbp/nexus-sdk/lib/View/ElasticSearchView';
 import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/lib/View/SparqlView';
+
+const DEFAULT_PAGINATION_SIZE = 20;
 
 export interface RawQueryState {
   fetching: boolean;
@@ -11,6 +13,8 @@ export interface RawQueryState {
 export interface RawElasticSearchQueryState {
   fetching: boolean;
   response: PaginatedList<ElasticSearchHit>;
+  paginationSettings: PaginationSettings;
+  query?: string;
 }
 
 const initialState: RawQueryState = {
@@ -25,9 +29,20 @@ const initialState: RawQueryState = {
 
 const initialElasticSearchState: RawElasticSearchQueryState = {
   fetching: false,
+  query: JSON.stringify({
+    "query": {
+      "term": {
+        "_deprecated": false
+      }
+    }
+  }, null, 2),
   response: {
     total: 0,
     results: []
+  },
+  paginationSettings: {
+    from: 0,
+    size: DEFAULT_PAGINATION_SIZE,
   },
 };
 
@@ -37,9 +52,9 @@ export function rawElasticSearchQueryReducer(
 ) {
   switch (action.type) {
     case '@@rawQuery/QUERYING':
-      return { ...state, fetching: true };
+      return { ...state, fetching: true, query: action.query, paginationSettings: state.query === action.query ? action.paginationSettings : initialElasticSearchState.paginationSettings };
     case '@@rawQuery/QUERYING_FAILURE':
-      return { ...state, fetching: false };
+      return { ...state, fetching: false, paginationSettings: initialElasticSearchState.paginationSettings };
     case '@@rawQuery/QUERYING_SUCCESS':
       return { ...state, fetching: false, response: action.payload };
     default:
