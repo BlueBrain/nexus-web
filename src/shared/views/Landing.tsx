@@ -1,19 +1,26 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
+import { Organization } from '@bbp/nexus-sdk';
 import { RootState } from '../store/reducers';
+import { createOrg, modifyOrg } from '../store/actions/orgs';
 import OrgList from '../components/Orgs/OrgList';
 import { fetchOrgs } from '../store/actions/nexus';
 import Skeleton from '../components/Skeleton';
 import { Button, Modal, Drawer } from 'antd';
 import OrgForm from '../components/Orgs/OrgForm';
-import { Organization } from '@bbp/nexus-sdk';
 
 interface LandingProps {
   orgs: Organization[];
   busy: boolean;
   goToProject(name: string): void;
   fetchOrgs(): void;
+  createOrg: (orgLabel: string, orgName: string) => Promise<Organization>;
+  modifyOrg: (
+    orgLabel: string,
+    rev: number,
+    orgName: string
+  ) => Promise<Organization>;
 }
 
 const Landing: React.FunctionComponent<LandingProps> = ({
@@ -21,6 +28,8 @@ const Landing: React.FunctionComponent<LandingProps> = ({
   busy,
   goToProject,
   fetchOrgs,
+  createOrg,
+  modifyOrg,
 }) => {
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
@@ -111,15 +120,10 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = (dispatch: any) => ({
   goToProject: (org: string) => dispatch(push(`/${org}`)),
   fetchOrgs: () => dispatch(fetchOrgs()),
-  // createOrg: (
-  //   orgLabel: string,
-  //   orgName: string,
-  // ) => dispatch(createOrganization(orgLabel, orgName)),
-  // modifyOrg: (
-  //   orgLabel: string,
-  //   rev: number,
-  //   orgName: string,
-  // ) => dispatch(modifyOrganization(orgLabel, rev, orgName)),
+  createOrg: (orgLabel: string, orgName: string) =>
+    dispatch(createOrg(orgLabel, orgName)),
+  modifyOrg: (orgLabel: string, rev: number, orgName: string) =>
+    dispatch(modifyOrg(orgLabel, rev, orgName)),
 });
 
 export default connect(
