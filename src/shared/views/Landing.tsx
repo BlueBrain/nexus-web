@@ -71,7 +71,6 @@ const Landing: React.FunctionComponent<LandingProps> = ({
   };
   const saveAndModify = (selectedOrg: Organization, newOrg: Organization) => {
     setFormBusy(true);
-    console.log(selectedOrg, newOrg);
     modifyOrg(newOrg.label, (selectedOrg.rev = 1), newOrg.name)
       .then(
         () => {
