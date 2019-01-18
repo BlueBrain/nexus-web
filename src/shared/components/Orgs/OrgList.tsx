@@ -6,7 +6,8 @@ import './Orgs.less';
 
 export interface OrgListProps {
   orgs: OrgCardProps[];
-  onOrgClick?(name: string): void;
+  onOrgClick?(label: string): void;
+  onOrgEdit?(label: string): void;
 }
 
 const Search = Input.Search;
@@ -14,6 +15,7 @@ const Search = Input.Search;
 const OrgList: React.FunctionComponent<OrgListProps> = ({
   orgs,
   onOrgClick = () => {},
+  onOrgEdit = () => {},
 }) => {
   const [items, setItems] = React.useState(orgs);
 
@@ -35,12 +37,13 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
         Found {items.length} organization{items.length > 1 && 's'}
       </p>
       <div className="orgs">
-        {items.map((org, i) => (
+        {items.map((org: OrgCardProps, i) => (
           // TODO org cards should be anchor tags with hrefs for SSR
           <OrgCard
             key={org.name + i}
             {...org}
-            onClick={() => onOrgClick(org.name)}
+            onClick={() => onOrgClick(org.label)}
+            onEdit={() => onOrgEdit(org.label)}
           />
         ))}
       </div>
