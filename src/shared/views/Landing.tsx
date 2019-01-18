@@ -7,13 +7,13 @@ import { createOrg, modifyOrg } from '../store/actions/orgs';
 import OrgList from '../components/Orgs/OrgList';
 import { fetchOrgs } from '../store/actions/nexus';
 import Skeleton from '../components/Skeleton';
-import { Button, Modal, Drawer } from 'antd';
+import { Button, Modal, Drawer, notification } from 'antd';
 import OrgForm from '../components/Orgs/OrgForm';
 
 interface LandingProps {
   orgs: Organization[];
   busy: boolean;
-  goToProject(name: string): void;
+  goTo(orgLabel: string): void;
   fetchOrgs(): void;
   createOrg: (orgLabel: string, orgName: string) => Promise<Organization>;
   modifyOrg: (
@@ -26,7 +26,7 @@ interface LandingProps {
 const Landing: React.FunctionComponent<LandingProps> = ({
   orgs,
   busy,
-  goToProject,
+  goTo,
   fetchOrgs,
   createOrg,
   modifyOrg,
@@ -40,8 +40,68 @@ const Landing: React.FunctionComponent<LandingProps> = ({
     orgs.length === 0 && fetchOrgs();
   }, []);
 
-  const saveAndCreate = () => {};
-  const saveAndModify = () => {};
+  const saveAndCreate = (newOrg: Organization) => {
+    setFormBusy(true);
+    createOrg(newOrg.label, newOrg.name)
+      .then(
+        () => {
+          notification.success({
+            message: 'Organization created',
+            duration: 2,
+          });
+          setFormBusy(false);
+          goTo(newOrg.label);
+        },
+        (action: { type: string; error: Error }) => {
+          notification.warning({
+            message: 'Organization NOT create',
+            description: action.error.message,
+            duration: 2,
+          });
+          setFormBusy(false);
+        }
+      )
+      .catch((error: Error) => {
+        notification.error({
+          message: 'An unknown error occurred',
+          description: error.message,
+          duration: 0,
+        });
+      });
+  };
+  const saveAndModify = (selectedOrg: Organization, newOrg: Organization) => {
+    setFormBusy(true);
+    console.log(selectedOrg, newOrg);
+    modifyOrg(newOrg.label, (selectedOrg.rev = 1), newOrg.name)
+      .then(
+        () => {
+          notification.success({
+            message: 'Organization saved',
+            duration: 2,
+          });
+          setFormBusy(false);
+          setModalVisible(false);
+          setSelectedOrg(undefined);
+
+          fetchOrgs();
+        },
+        (action: { type: string; error: Error }) => {
+          notification.warning({
+            message: 'Organization NOT saved',
+            description: action.error.message,
+            duration: 2,
+          });
+          setFormBusy(false);
+        }
+      )
+      .catch((error: Error) => {
+        notification.error({
+          message: 'An unknown error occurred',
+          description: error.message,
+          duration: 0,
+        });
+      });
+  };
 
   if (busy) {
     return (
@@ -74,9 +134,9 @@ const Landing: React.FunctionComponent<LandingProps> = ({
       </div>
       <OrgList
         orgs={orgs}
-        onOrgClick={goToProject}
-        onOrgEdit={(label: string) =>
-          setSelectedOrg(orgs.filter(o => o.label === label)[0])
+        onOrgClick={goTo}
+        onOrgEdit={(orgLabel: string) =>
+          setSelectedOrg(orgs.filter(o => o.label === orgLabel)[0])
         }
       />
       <Modal
@@ -87,7 +147,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
         footer={null}
       >
         <OrgForm
-          onSubmit={(o: Organization) => saveAndCreate()}
+          onSubmit={(o: Organization) => saveAndCreate(o)}
           busy={formBusy}
         />
       </Modal>
@@ -102,7 +162,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
               name: selectedOrg.name,
               label: selectedOrg.label,
             }}
-            onSubmit={(o: Organization) => saveAndModify()}
+            onSubmit={(o: Organization) => saveAndModify(selectedOrg, o)}
             busy={formBusy}
             mode="edit"
           />
@@ -118,7 +178,7 @@ const mapStateToProps = (state: RootState) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  goToProject: (org: string) => dispatch(push(`/${org}`)),
+  goTo: (org: string) => dispatch(push(`/${org}`)),
   fetchOrgs: () => dispatch(fetchOrgs()),
   createOrg: (orgLabel: string, orgName: string) =>
     dispatch(createOrg(orgLabel, orgName)),

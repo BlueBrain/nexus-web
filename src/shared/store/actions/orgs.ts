@@ -104,7 +104,11 @@ export const modifyOrg: ActionCreator<ThunkAction> = (
   ): Promise<ModifyOrgSuccessAction | ModifyOrgFailureAction> => {
     dispatch(modifyOrgAction());
     try {
-      const org: Organization = await Organization.update(orgLabel, rev, name);
+      const org: Organization = await Organization.update(
+        orgLabel,
+        rev,
+        orgName
+      );
       return dispatch(modifyOrgSuccessAction(org));
     } catch (e) {
       return Promise.reject(dispatch(modifyOrgFailureAction(e)));
