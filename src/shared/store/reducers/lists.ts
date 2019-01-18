@@ -55,8 +55,7 @@ const initialState: ListState = [DEFAULT_LIST]; // Get Initial State from URL or
 
 const queryReducerByIndex = createByIndex(
   action => action.hasOwnProperty('filterIndex'),
-  (action: { filterIndex: number }) => action.filterIndex,
-  (state: { requests: any }) => state.requests
+  (action: { filterIndex: number }) => action.filterIndex
 )(combineReducers({ request: createFetchReducer(actionTypes) }));
 
 export function listsReducer(

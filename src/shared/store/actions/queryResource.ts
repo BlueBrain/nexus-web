@@ -85,7 +85,17 @@ const queryResourcesFailedAction: ActionCreator<FailedQueryAction> = (
   type: QueryResourcesActionTypes.FAILED,
 });
 
+// TODO break out into library
 const makeESQuery = (query?: { filters: any; textQuery?: string }) => {
+  if (query && query.textQuery) {
+    return {
+      query: {
+        query_string: {
+          query: `${query.textQuery}~`,
+        },
+      },
+    };
+  }
   return {};
 };
 
@@ -109,7 +119,6 @@ export const queryResources: ActionCreator<ThunkAction> = (
       >
     | FilterFetchFailedAction<QueryResourcesActionTypes.FAILED>
   > => {
-    console.log("I'm going to query, man", { paginationSettings, query });
     const listState = (getState() as RootState).lists;
     if (query && listState) {
       const list = (listState as any)[filterKey][filterIndex];

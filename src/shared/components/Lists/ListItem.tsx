@@ -6,7 +6,6 @@ import Renameable from '../Renameable';
 import { RootState } from '../../store/reducers';
 import { Dropdown, Menu, Input, Icon, Button, Empty } from 'antd';
 import ResourceList from '../Resources/ResourceList';
-import FilterDropdown from './FilterDropdown';
 import { updateList, deleteList } from '../../store/actions/lists';
 import { queryResources } from '../../store/actions/queryResource';
 import ListControlPanel from './ListControlPanel';
@@ -36,7 +35,6 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
 }) => {
   React.useEffect(
     () => {
-      console.log('I Have Changed!', list.query);
       const {
         request: { isFetching, data, error },
       } = list;

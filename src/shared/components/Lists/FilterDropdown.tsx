@@ -30,7 +30,6 @@ const FilterDropdown: React.FunctionComponent<any> = ({}) => {
         dropdownClassName="certain-category-search-dropdown"
         dropdownMatchSelectWidth={false}
         onSelect={(value, option) => {
-          console.log(value, option);
           // selectSchema(value as string);
           // fetchResources(
           //   match.params.org,

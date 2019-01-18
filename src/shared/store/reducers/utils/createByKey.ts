@@ -24,8 +24,7 @@ export interface FilterIndexAction extends Action {
 
 export const createByIndex = (
   predicate: Predicate,
-  mapActionToIndex: (action: FilterIndexAction) => number,
-  mapStateForReducer: (state: any) => any
+  mapActionToIndex: (action: FilterIndexAction) => number
 ) => (reducer: Reducer) => {
   return (state: any[], action: FilterIndexAction) => {
     if (predicate(action)) {
@@ -33,7 +32,7 @@ export const createByIndex = (
       if (index >= 0 && index < state.length) {
         const newItem = {
           ...state[index],
-          ...reducer(mapStateForReducer(state[index]), action),
+          ...reducer(state[index], action),
         };
         return Object.assign(state.slice(), { [index]: newItem });
       }

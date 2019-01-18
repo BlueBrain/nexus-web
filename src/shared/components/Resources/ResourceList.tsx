@@ -28,7 +28,6 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
   const { from, size } = paginationSettings;
   const totalPages = Math.ceil(total / size);
   const current = Math.ceil((totalPages / total) * (from || 1));
-  console.log({ total, results, from, size, totalPages, current });
   const [selectedResource, setSelectedResource] = React.useState(
     null as Resource | null
   );
