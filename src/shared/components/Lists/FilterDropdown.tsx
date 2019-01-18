@@ -11,11 +11,6 @@ const FilterDropdown: React.FunctionComponent<any> = ({}) => {
         dropdownMatchSelectWidth={false}
         onSelect={(value, option) => {}}
         style={{ width: '100%', marginBottom: '1em' }}
-        // dataSource={schemas.map(({ key, count }: any) => (
-        //   <Option key={key} value={key}>
-        //     <a className="certain-search-item-count">{count} resources</a> {key}
-        //   </Option>
-        // ))}
         placeholder={`Filter by Schema`}
         optionLabelProp="value"
       >
@@ -27,21 +22,8 @@ const FilterDropdown: React.FunctionComponent<any> = ({}) => {
         className="certain-category-search"
         dropdownClassName="certain-category-search-dropdown"
         dropdownMatchSelectWidth={false}
-        onSelect={(value, option) => {
-          // selectSchema(value as string);
-          // fetchResources(
-          //   match.params.org,
-          //   match.params.project,
-          //   resourcePaginationSettings
-          // );
-        }}
+        onSelect={(value, option) => {}}
         style={{ width: '100%', marginBottom: '1em' }}
-        // dataSource={types.map(({ key, count }: any) => (
-        //   <Option key={key} value={key}>
-        //     <TypesIcon type={[key]} />{' '}
-        //     <a className="certain-search-item-count">{count} resources</a> {key}
-        //   </Option>
-        // ))}
         placeholder={`Filter by @type`}
         optionLabelProp="value"
       >
