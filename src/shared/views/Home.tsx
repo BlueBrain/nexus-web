@@ -5,7 +5,11 @@ import { Project } from '@bbp/nexus-sdk';
 import { CreateProjectPayload } from '@bbp/nexus-sdk/lib/Project/types';
 import { RootState } from '../store/reducers';
 import { fetchProjects } from '../store/actions/nexus';
-import { modifyProject, createProject } from '../store/actions/project';
+import {
+  modifyProject,
+  createProject,
+  deprecateProject,
+} from '../store/actions/project';
 import ProjectList from '../components/Projects/ProjectList';
 import Skeleton from '../components/Skeleton';
 import { push } from 'connected-react-router';
@@ -28,6 +32,11 @@ interface HomeProps {
     rev: number,
     payload: CreateProjectPayload
   ): Promise<Project>;
+  deprecateProject(
+    orgLabel: string,
+    projectLabel: string,
+    rev: number
+  ): Promise<void>;
   goTo(o: string, p: string): void;
 }
 
@@ -40,6 +49,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
   goTo,
   createProject,
   modifyProject,
+  deprecateProject,
 }) => {
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
@@ -134,6 +144,18 @@ const Home: React.FunctionComponent<HomeProps> = ({
       });
   };
 
+  const saveAndDeprecate = (selectedProject: Project) => {
+    setFormBusy(true);
+
+    deprecateProject(
+      selectedProject.orgLabel,
+      selectedProject.label,
+      selectedProject.version
+    )
+      .then(() => setFormBusy(false))
+      .catch(e => console.error(e));
+  };
+
   if (busy) {
     return (
       <Skeleton
@@ -198,6 +220,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
               prefixMappings: selectedProject.prefixMappings,
             }}
             onSubmit={(p: Project) => saveAndModify(selectedProject, p)}
+            onDeprecate={() => saveAndDeprecate(selectedProject)}
             busy={formBusy}
             mode="edit"
           />
@@ -235,6 +258,8 @@ const mapDispatchToProps = (dispatch: any) => ({
     rev: number,
     payload: CreateProjectPayload
   ) => dispatch(modifyProject(orgLabel, projectLabel, rev, payload)),
+  deprecateProject: (orgLabel: string, projectLabel: string, rev: number) =>
+    dispatch(deprecateProject(orgLabel, projectLabel, rev)),
 });
 
 export default connect(

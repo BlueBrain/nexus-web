@@ -264,13 +264,15 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
           >
             Save
           </Button>
-          <Button
-            type="danger"
-            onClick={confirmDeprecate}
-            style={{ float: 'right' }}
-          >
-            Deprecate
-          </Button>
+          {mode === 'edit' && (
+            <Button
+              type="danger"
+              onClick={confirmDeprecate}
+              style={{ float: 'right' }}
+            >
+              Deprecate
+            </Button>
+          )}
         </Form.Item>
       </Form>
     </Spin>

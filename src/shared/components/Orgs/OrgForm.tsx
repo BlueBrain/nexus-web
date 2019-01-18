@@ -74,10 +74,10 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
           })(<Input placeholder="Label" disabled={mode === 'edit'} />)}
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>
-          <div>
-            <Button type="primary" htmlType="submit">
-              {mode === 'edit' ? 'Save' : 'Create'}
-            </Button>
+          <Button type="primary" htmlType="submit">
+            {mode === 'edit' ? 'Save' : 'Create'}
+          </Button>
+          {mode === 'edit' && (
             <Button
               type="danger"
               onClick={confirmDeprecate}
@@ -85,7 +85,7 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
             >
               Deprecate
             </Button>
-          </div>
+          )}
         </Form.Item>
       </Form>
     </Spin>
