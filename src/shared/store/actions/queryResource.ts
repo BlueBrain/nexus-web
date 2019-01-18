@@ -9,6 +9,8 @@ import {
   PaginationSettings,
 } from '@bbp/nexus-sdk';
 import { ThunkAction } from '..';
+import { RootState } from '../reducers';
+import { updateList } from './lists';
 
 export const queryResourcesActionPrefix = 'QUERY';
 
@@ -83,6 +85,10 @@ const queryResourcesFailedAction: ActionCreator<FailedQueryAction> = (
   type: QueryResourcesActionTypes.FAILED,
 });
 
+const makeESQuery = (query?: { filters: any; textQuery?: string }) => {
+  return {};
+};
+
 // TODO make higher order compositional function to add "WithFilterKey" or "WithFilterIndex"
 export const queryResources: ActionCreator<ThunkAction> = (
   filterIndex: number,
@@ -90,7 +96,7 @@ export const queryResources: ActionCreator<ThunkAction> = (
   orgLabel: string,
   projectLabel: string,
   paginationSettings: PaginationSettings,
-  query: any = {}
+  query?: any
 ) => {
   return async (
     dispatch: Dispatch<any>,
@@ -103,7 +109,17 @@ export const queryResources: ActionCreator<ThunkAction> = (
       >
     | FilterFetchFailedAction<QueryResourcesActionTypes.FAILED>
   > => {
-    console.log("I'm going to query, man", { paginationSettings });
+    console.log("I'm going to query, man", { paginationSettings, query });
+    const listState = (getState() as RootState).lists;
+    if (query && listState) {
+      const list = (listState as any)[filterKey][filterIndex];
+      dispatch(
+        updateList(orgLabel + projectLabel, filterIndex, {
+          ...list,
+          query,
+        })
+      );
+    }
     dispatch(queryResourcesFetchAction(filterIndex, filterKey));
     try {
       if (!projectLabel || !orgLabel) {
@@ -114,7 +130,10 @@ export const queryResources: ActionCreator<ThunkAction> = (
       const defaultElasticSearchView: ElasticSearchView = await project.getElasticSearchView();
       const resources: PaginatedList<
         Resource
-      > = await defaultElasticSearchView.query(query, paginationSettings);
+      > = await defaultElasticSearchView.query(
+        makeESQuery(query),
+        paginationSettings
+      );
       return dispatch(
         queryResourcesFulfilledAction(
           filterIndex,

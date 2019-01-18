@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { List } from '../../store/reducers/lists';
 import Renameable from '../Renameable';
 import { RootState } from '../../store/reducers';
-import { Dropdown, Menu, Input, Icon, Button } from 'antd';
+import { Dropdown, Menu, Input, Icon, Button, Empty } from 'antd';
 import ResourceList from '../Resources/ResourceList';
 import FilterDropdown from './FilterDropdown';
 import { updateList, deleteList } from '../../store/actions/lists';
@@ -17,7 +17,7 @@ interface ListItemContainerProps {
   orgProjectFilterKey: string;
   updateList: (listIndex: number, list: List) => void;
   deleteList: (listIndex: number) => void;
-  queryResources: (paginationSettings: PaginationSettings, query: any) => void;
+  queryResources: (paginationSettings: PaginationSettings, query?: any) => void;
 }
 
 const DEFAULT_RESOURCE_PAGINATION_SIZE = 20;
@@ -43,9 +43,9 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
       const paginationSettings = data
         ? data.paginationSettings
         : DEFAULT_PAGINATION_SETTINGS;
-      if (!data && !isFetching) {
+      if (!data && !isFetching && !error) {
         // Or when query changes
-        queryResources(paginationSettings, {});
+        queryResources(paginationSettings);
       }
     },
     [list.query]
@@ -67,27 +67,20 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
   const handlePaginationChange = (page: number, size: number) => {
     // NOTE: page begins from 1, not 0.
     // from is the total number of resources beggining from 0, not the page number!
-    queryResources({ size, from: page * size - size }, {});
+    queryResources({ size, from: page * size - size });
   };
 
-  const handleTextQueryChange = (value: string) => {
-    if (value && data) {
+  const handleTextQueryChange = (value?: string) => {
+    if (data) {
       queryResources(data.paginationSettings, {
-        query: {
-          simple_query_string: {
-            query: value,
-          },
-        },
+        filters: query.filters,
+        textQuery: value,
       });
-      // updateList(listIndex, {
-      //   ...list,
-      //   query: { ...list.query, textQuery: value },
-      // });
     }
   };
 
   return (
-    <div>
+    <div style={{ height: '100%' }}>
       <h3
         style={{
           display: 'flex',
@@ -102,7 +95,19 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
         query={query}
         onTextQueryChange={handleTextQueryChange}
       />
-      <div>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '50%',
+        }}
+      >
+        {error && (
+          <Empty
+            description={<span>There was an error loading this data.</span>}
+          />
+        )}
         {data && (
           <ResourceList
             loading={isFetching}
@@ -126,7 +131,7 @@ const mapDispatchToProps = (
     dispatch(updateList(orgProjectFilterKey, listIndex, list)),
   deleteList: (listIndex: number) =>
     dispatch(deleteList(orgProjectFilterKey, listIndex)),
-  queryResources: (paginationSettings: PaginationSettings, query: any) =>
+  queryResources: (paginationSettings: PaginationSettings, query?: any) =>
     dispatch(
       queryResources(
         listIndex,

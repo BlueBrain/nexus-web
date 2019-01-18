@@ -4,7 +4,7 @@ import FilterDropdown from './FilterDropdown';
 
 interface ListControlPanelProps {
   query: { filters: any; textQuery?: string };
-  onTextQueryChange: (value: string) => void;
+  onTextQueryChange: (value?: string) => void;
 }
 
 const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
@@ -16,12 +16,22 @@ const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
   const handleInputChange = (e: any) => {
     const value = e.target.value;
     setTextQueryValue(value);
+    // if cleared or removed, send changed event
+    if (!value) {
+      onTextQueryChange(value);
+    }
   };
 
   const handleInputEnter = () => {
-    if (value) {
-      onTextQueryChange(value);
+    onTextQueryChange(value);
+  };
+
+  const handleBlurEvent = (e: any) => {
+    const blurValue = e.target.value;
+    if (blurValue === query.textQuery) {
+      return;
     }
+    handleInputEnter();
   };
 
   return (
@@ -36,7 +46,9 @@ const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
         value={value}
         ref={inputEl}
         onPressEnter={handleInputEnter}
+        onBlur={handleBlurEvent}
         onChange={handleInputChange}
+        allowClear={true}
         addonAfter={
           <Dropdown overlay={<FilterDropdown />} placement="bottomCenter">
             <a className="ant-dropdown-link">
