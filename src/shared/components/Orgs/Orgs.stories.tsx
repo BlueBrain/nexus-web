@@ -7,16 +7,17 @@ import { withKnobs, text, number } from '@storybook/addon-knobs';
 import OrgList from './OrgList';
 import OrgCard, { OrgCardProps } from './OrgCard';
 import OrgDropdown from './OrgDropdown';
+import OrgForm from './OrgForm';
 import Header from '../Header';
 
 const logo = require('../../logo.svg');
 const orgs: OrgCardProps[] = [
-  { name: 'Nexus', projectNumber: 1200 },
-  { name: 'BBP', projectNumber: 300 },
-  { name: 'HBP', projectNumber: 1 },
-  { name: 'NASA', projectNumber: 912839 },
-  { name: 'Tesla', projectNumber: 3 },
-  { name: 'Rolex', projectNumber: 3424 },
+  { label: 'nexus', name: 'Nexus', projectNumber: 1200 },
+  { label: 'bbp', name: 'BBP', projectNumber: 300 },
+  { label: 'hbp', name: 'HBP', projectNumber: 1 },
+  { label: 'nasa', name: 'NASA', projectNumber: 912839 },
+  { label: 'tesla', name: 'Tesla', projectNumber: 3 },
+  { label: 'rolex', name: 'Rolex', projectNumber: 3424 },
 ];
 
 storiesOf('Components/Orgs', module)
@@ -32,17 +33,19 @@ storiesOf('Components/Orgs', module)
     ~~~
   `)(() => {
       const org = text('Organization', 'Nexus');
+      const label = text('Label', 'nexus');
       const projects = number('Project', 1);
       return (
         <React.Fragment>
           <div style={{ margin: '50px 40px 0px' }}>
             <h2>No logo</h2>
-            <OrgCard name="BBP" projectNumber={123} />
+            <OrgCard name="BBP" projectNumber={123} label="bbp" />
           </div>
           <div style={{ margin: '50px 40px 0px' }}>
             <h2>Logo and edit button</h2>
             <OrgCard
               name={org}
+              label={label}
               projectNumber={projects}
               logo={logo}
               onClick={action('org-click')}
@@ -98,6 +101,25 @@ storiesOf('Components/Orgs', module)
           <div style={{ margin: '50px 40px 0px' }}>
             <h2>Organization Dropdown</h2>
             <OrgDropdown orgs={orgs} />
+          </div>
+        </React.Fragment>
+      );
+    })
+  );
+
+storiesOf('Components/Orgs', module)
+  .addDecorator(withKnobs)
+  .add(
+    'OrgForm',
+    withInfo(`
+
+    ~~~js
+    ~~~
+  `)(() => {
+      return (
+        <React.Fragment>
+          <div style={{ margin: '50px 40px 0px' }}>
+            <OrgForm />
           </div>
         </React.Fragment>
       );

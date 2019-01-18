@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { Form, Icon, Input, Button, Spin } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
-import { bool } from 'prop-types';
-import { boolean } from '@storybook/addon-knobs';
 
 /**
  * Custom from controls, based on:
@@ -155,7 +153,6 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
     });
   };
 
-  // TODO: implement
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     form.validateFields((err, values) => {

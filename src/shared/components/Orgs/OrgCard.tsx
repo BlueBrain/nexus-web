@@ -4,6 +4,7 @@ import { Avatar, Button, Card } from 'antd';
 import './Orgs.less';
 
 export interface OrgCardProps {
+  label: string;
   name: string;
   projectNumber: number;
   logo?: string;
