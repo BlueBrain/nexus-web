@@ -46,14 +46,18 @@ const Home: React.FunctionComponent<HomeProps> = ({
   const [selectedProject, setSelectedProject] = React.useState<
     Project | undefined
   >(undefined);
-
   React.useEffect(
     () => {
-      if (activeOrg.label !== match.params.org) {
+      console.log(match);
+      console.log(activeOrg.label);
+      if (
+        activeOrg.label !== match.params.org ||
+        (projects.length === 0 && !busy)
+      ) {
         fetchProjects(match.params.org);
       }
     },
-    [match.params.org]
+    [match.path]
   );
 
   const saveAndCreate = (newProject: Project) => {
@@ -195,6 +199,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
             }}
             onSubmit={(p: Project) => saveAndModify(selectedProject, p)}
             busy={formBusy}
+            mode="edit"
           />
         )}
       </Drawer>

@@ -96,6 +96,7 @@ export interface ProjectFormProps {
   };
   busy?: boolean;
   onSubmit?(project: ProjectFormProps['project']): any;
+  mode?: 'create' | 'edit';
 }
 
 /**
@@ -107,6 +108,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   project,
   busy = false,
   onSubmit = () => {},
+  mode = 'create',
 }) => {
   // logic for generating dynamic prefix mapping fields in form
   const currentId =
@@ -233,7 +235,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
           {getFieldDecorator('label', {
             initialValue: project ? project.label : '',
             rules: [{ required: true }],
-          })(<Input placeholder="Label" />)}
+          })(<Input placeholder="Label" disabled={mode === 'edit'} />)}
         </Form.Item>
         <Form.Item label="Base" {...formItemLayout}>
           {getFieldDecorator('base', {
