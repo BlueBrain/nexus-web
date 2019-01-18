@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { List } from '../../store/reducers/lists';
 import Renameable from '../Renameable';
 import { RootState } from '../../store/reducers';
-import { Dropdown, Menu, Input, Icon, Button, Empty } from 'antd';
+import { Dropdown, Menu, Input, Icon, Button, Empty, Spin } from 'antd';
 import ResourceList from '../Resources/ResourceList';
 import { updateList, deleteList } from '../../store/actions/lists';
 import { queryResources } from '../../store/actions/queryResource';
@@ -106,6 +106,7 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
             description={<span>There was an error loading this data.</span>}
           />
         )}
+        {!data && isFetching && <Spin />}
         {data && (
           <ResourceList
             loading={isFetching}

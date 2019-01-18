@@ -9,9 +9,7 @@ const FilterDropdown: React.FunctionComponent<any> = ({}) => {
         className="certain-category-search"
         dropdownClassName="certain-category-search-dropdown"
         dropdownMatchSelectWidth={false}
-        onSelect={(value, option) => {
-          console.log(value, option);
-        }}
+        onSelect={(value, option) => {}}
         style={{ width: '100%', marginBottom: '1em' }}
         // dataSource={schemas.map(({ key, count }: any) => (
         //   <Option key={key} value={key}>
