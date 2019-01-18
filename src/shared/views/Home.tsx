@@ -195,6 +195,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
             }}
             onSubmit={(p: Project) => saveAndModify(selectedProject, p)}
             busy={formBusy}
+            mode="edit"
           />
         )}
       </Drawer>
