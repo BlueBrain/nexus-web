@@ -38,12 +38,12 @@ const RawSparqlQueryView: React.FunctionComponent<RawSparqlQueryViewProps> = ({ 
     let value: React.ReactNode;
     switch (entry.type) {
       case "uri":
-        value = `<${entry.value}>`;
+        value = <a href={entry.value}>&lt;{entry.value}&gt;</a>;
         break;
       case "bnode":
       case "literal":
       default:
-        value = `"${entry.value}"`;
+        value = <>{entry.value}</>;
     }
 
     const additionalAttributes: string[] = [];

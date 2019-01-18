@@ -27,7 +27,7 @@ const FormItem = Form.Item;
 const RawElasticSearchQueryView: React.FunctionComponent<RawElasticSearchQueryViewProps> = ({ fetching, initialQuery, response, executeRawQuery, wantedOrg, wantedProject, wantedView }) : JSX.Element => {
   const [query, setQuery] = React.useState(initialQuery);
 
-  const data = response.results.map(result => result._source || {});
+  const data = response.results.map(result => result._source || []);
 
   return (
     <>
@@ -46,7 +46,7 @@ const RawElasticSearchQueryView: React.FunctionComponent<RawElasticSearchQueryVi
       </FormItem>
     </Form>
     <Card bordered>
-      <ReactJson src={data || {}} name="Results" />
+     {!!data.length && (<ReactJson src={data} name="Results" />) || "No data"}
     </Card>
     </>
   );
