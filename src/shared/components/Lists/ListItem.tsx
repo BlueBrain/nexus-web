@@ -9,6 +9,7 @@ import ResourceList from '../Resources/ResourceList';
 import FilterDropdown from './FilterDropdown';
 import { updateList, deleteList } from '../../store/actions/lists';
 import { queryResources } from '../../store/actions/queryResource';
+import ListControlPanel from './ListControlPanel';
 
 interface ListItemContainerProps {
   list: List;
@@ -26,94 +27,94 @@ const DEFAULT_PAGINATION_SETTINGS = {
   size: DEFAULT_RESOURCE_PAGINATION_SIZE,
 };
 
-const ListItemContainer: React.FunctionComponent<
-  ListItemContainerProps
-> = React.memo(
-  ({ list, listIndex, updateList, deleteList, queryResources }) => {
-    React.useEffect(
-      () => {
-        const {
-          request: { isFetching, data, error },
-        } = list;
-        console.log('Im updating', { data });
-        const paginationSettings = data
-          ? data.paginationSettings
-          : DEFAULT_PAGINATION_SETTINGS;
-        if (!data && !isFetching) {
-          // Or when query changes
-          queryResources(paginationSettings, {});
-        }
-      },
-      [list.query]
-    );
-    const {
-      name,
-      request: { isFetching, data, error },
-      query,
-    } = list;
+const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
+  list,
+  listIndex,
+  updateList,
+  deleteList,
+  queryResources,
+}) => {
+  React.useEffect(
+    () => {
+      console.log('I Have Changed!', list.query);
+      const {
+        request: { isFetching, data, error },
+      } = list;
+      const paginationSettings = data
+        ? data.paginationSettings
+        : DEFAULT_PAGINATION_SETTINGS;
+      if (!data && !isFetching) {
+        // Or when query changes
+        queryResources(paginationSettings, {});
+      }
+    },
+    [list.query]
+  );
+  const {
+    name,
+    request: { isFetching, data, error },
+    query,
+  } = list;
 
-    const handleUpdate = (value: string) => {
-      updateList(listIndex, { ...list, name: value });
-    };
+  const handleUpdate = (value: string) => {
+    updateList(listIndex, { ...list, name: value });
+  };
 
-    const handleDelete = () => {
-      deleteList(listIndex);
-    };
+  const handleDelete = () => {
+    deleteList(listIndex);
+  };
 
-    return (
+  const handlePaginationChange = (page: number, size: number) => {
+    // NOTE: page begins from 1, not 0.
+    // from is the total number of resources beggining from 0, not the page number!
+    queryResources({ size, from: page * size - size }, {});
+  };
+
+  const handleTextQueryChange = (value: string) => {
+    if (value && data) {
+      queryResources(data.paginationSettings, {
+        query: {
+          simple_query_string: {
+            query: value,
+          },
+        },
+      });
+      // updateList(listIndex, {
+      //   ...list,
+      //   query: { ...list.query, textQuery: value },
+      // });
+    }
+  };
+
+  return (
+    <div>
+      <h3
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          color: 'rgba(0, 0, 0, 0.65',
+        }}
+      >
+        <Renameable defaultValue={name} onChange={handleUpdate} size="small" />
+        <Icon type="close" className="close-button" onClick={handleDelete} />
+      </h3>
+      <ListControlPanel
+        query={query}
+        onTextQueryChange={handleTextQueryChange}
+      />
       <div>
-        <h3
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            color: 'rgba(0, 0, 0, 0.65',
-          }}
-        >
-          <Renameable
-            defaultValue={name}
-            onChange={handleUpdate}
-            size="small"
+        {data && (
+          <ResourceList
+            loading={isFetching}
+            paginationSettings={data.paginationSettings}
+            paginationChange={handlePaginationChange}
+            resources={data.resources}
           />
-          <Icon type="close" className="close-button" onClick={handleDelete} />
-        </h3>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Input
-            style={{ marginRight: '2px' }}
-            addonAfter={
-              <Dropdown overlay={<FilterDropdown />} placement="bottomCenter">
-                <a className="ant-dropdown-link">
-                  <Icon type="filter" onClick={() => {}} />
-                </a>
-              </Dropdown>
-            }
-            placeholder="Enter text query..."
-          />
-          <Button
-            icon="export"
-            onClick={() => {}}
-            style={{ marginRight: '2px' }}
-          />
-          <Button icon="code" onClick={() => {}} />
-        </div>
-        <div>
-          {data && (
-            <ResourceList
-              loading={isFetching}
-              paginationSettings={data.paginationSettings}
-              paginationChange={() => {}}
-              resources={data.resources}
-            />
-          )}
-        </div>
+        )}
       </div>
-    );
-  }
-);
+    </div>
+  );
+};
 
 const mapStateToProps = (state: RootState) => ({});
 

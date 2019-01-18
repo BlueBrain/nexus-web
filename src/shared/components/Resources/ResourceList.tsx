@@ -17,8 +17,6 @@ export interface ResourceListProps {
   loading?: boolean;
 }
 
-const DEFAULT_PAGE_SIZE = 20;
-
 const ResourceList: React.FunctionComponent<ResourceListProps> = ({
   header = <div />,
   resources,
@@ -28,8 +26,9 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
 }) => {
   const { total, results } = resources;
   const { from, size } = paginationSettings;
-  const totalPages = Math.floor(total / size);
-  const current = Math.floor((totalPages / total) * from + 1);
+  const totalPages = Math.ceil(total / size);
+  const current = Math.ceil((totalPages / total) * (from || 1));
+  console.log({ total, results, from, size, totalPages, current });
   const [selectedResource, setSelectedResource] = React.useState(
     null as Resource | null
   );
@@ -47,20 +46,26 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
           </div>
         }
         dataSource={results}
-        pagination={{
-          total,
-          current,
-          onChange: paginationChange,
-          pageSize: DEFAULT_PAGE_SIZE,
+        pagination={
+          total
+            ? {
+                total,
+                current,
+                onChange: paginationChange,
+                pageSize: size,
+              }
+            : undefined
+        }
+        renderItem={(resource: Resource) => {
+          return (
+            <ResourceItem
+              key={resource.id}
+              name={resource.name}
+              {...resource}
+              onClick={() => setSelectedResource(resource)}
+            />
+          );
         }}
-        renderItem={(resource: Resource) => (
-          <ResourceItem
-            key={resource.id}
-            name={resource.name}
-            {...resource}
-            onClick={() => setSelectedResource(resource)}
-          />
-        )}
       />
       {typeof window !== 'undefined' && (
         <Drawer
@@ -72,7 +77,7 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
           {!!selectedResource && (
             <div>
               <h2>{selectedResource.name}</h2>
-              <ReactJson src={selectedResource.raw} />
+              <ReactJson src={selectedResource.raw} name={null} />
             </div>
           )}
         </Drawer>

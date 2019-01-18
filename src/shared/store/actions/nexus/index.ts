@@ -251,7 +251,6 @@ export const loadProjectViewData: ActionCreator<ThunkAction> = (
   projectLabel: string
 ) => {
   return async (dispatch: Dispatch<any>): Promise<any> => {
-    console.log('hello', orgLabel, projectLabel);
     dispatch(assignActiveProject(orgLabel, projectLabel));
     dispatch(fetchSchemas(orgLabel, projectLabel));
   };

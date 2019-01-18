@@ -26,8 +26,6 @@ const ListsContainer: React.FunctionComponent<ListProps> = React.memo(
       }
     });
 
-    console.log('big one is updating as well');
-
     return (
       <ul className="list-board">
         {(projectLists || []).map((list, listIndex: number) => {

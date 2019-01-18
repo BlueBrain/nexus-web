@@ -103,6 +103,7 @@ export const queryResources: ActionCreator<ThunkAction> = (
       >
     | FilterFetchFailedAction<QueryResourcesActionTypes.FAILED>
   > => {
+    console.log("I'm going to query, man", { paginationSettings });
     dispatch(queryResourcesFetchAction(filterIndex, filterKey));
     try {
       if (!projectLabel || !orgLabel) {
@@ -110,8 +111,7 @@ export const queryResources: ActionCreator<ThunkAction> = (
       }
       const org: Organization = await nexus.getOrganization(orgLabel);
       const project: Project = await org.getProject(projectLabel);
-      const elasticSearchViews: ElasticSearchView[] = await project.listElasticSearchViews();
-      const defaultElasticSearchView: ElasticSearchView = elasticSearchViews[0];
+      const defaultElasticSearchView: ElasticSearchView = await project.getElasticSearchView();
       const resources: PaginatedList<
         Resource
       > = await defaultElasticSearchView.query(query, paginationSettings);
