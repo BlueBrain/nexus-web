@@ -9,7 +9,7 @@ import thunk, { ThunkAction } from 'redux-thunk';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { History } from 'history';
 import Nexus from '@bbp/nexus-sdk';
-import reducers from './reducers';
+import reducers, { RootState } from './reducers';
 import { saveState, loadState } from './reducers/localStorage';
 
 export type Services = {
@@ -52,7 +52,7 @@ export default function configureStore(
   // persist these in the client
   store.subscribe(() => {
     saveState({
-      lists: store.getState().lists,
+      lists: (store.getState() as RootState).lists,
     });
   });
 

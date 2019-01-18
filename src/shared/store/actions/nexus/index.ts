@@ -76,6 +76,14 @@ interface FetchResourcesActionFailure extends Action {
   type: '@@nexus/RESOURCES_FETCHING_FAILURE';
 }
 
+interface AssignActiveProject extends Action {
+  type: '@@nexus/ASSIGN_ACTIVE_PROJECT';
+  payload: {
+    org: Organization;
+    project: Project;
+  };
+}
+
 export const assignActiveProject: ActionCreator<AssignActiveProject> = (
   org: Organization,
   project: Project
