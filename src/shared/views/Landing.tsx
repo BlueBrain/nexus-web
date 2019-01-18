@@ -3,12 +3,14 @@ import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import { RootState } from '../store/reducers';
 import OrgList from '../components/Orgs/OrgList';
-import { OrgCardProps } from '../components/Orgs/OrgCard';
 import { fetchOrgs } from '../store/actions/nexus';
 import Skeleton from '../components/Skeleton';
+import { Button, Modal, Drawer } from 'antd';
+import OrgForm from '../components/Orgs/OrgForm';
+import { Organization } from '@bbp/nexus-sdk';
 
 interface LandingProps {
-  orgs: OrgCardProps[];
+  orgs: Organization[];
   busy: boolean;
   goToProject(name: string): void;
   fetchOrgs(): void;
@@ -20,9 +22,17 @@ const Landing: React.FunctionComponent<LandingProps> = ({
   goToProject,
   fetchOrgs,
 }) => {
+  const [formBusy, setFormBusy] = React.useState<boolean>(false);
+  const [modalVisible, setModalVisible] = React.useState<boolean>(false);
+  const [selectedOrg, setSelectedOrg] = React.useState<
+    Organization | undefined
+  >(undefined);
   React.useEffect(() => {
     orgs.length === 0 && fetchOrgs();
   }, []);
+
+  const saveAndCreate = () => {};
+  const saveAndModify = () => {};
 
   if (busy) {
     return (
@@ -44,24 +54,72 @@ const Landing: React.FunctionComponent<LandingProps> = ({
   return orgs.length === 0 ? (
     <p style={{ marginTop: 50 }}>No organizations yet...</p>
   ) : (
-    <OrgList orgs={orgs} onOrgClick={goToProject} />
+    <>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
+        <h1 style={{ marginBottom: 0, marginRight: 8 }}>Organizations</h1>
+        <Button
+          type="primary"
+          onClick={() => setModalVisible(true)}
+          icon="plus-square"
+        />
+      </div>
+      <OrgList
+        orgs={orgs}
+        onOrgClick={goToProject}
+        onOrgEdit={(label: string) =>
+          setSelectedOrg(orgs.filter(o => o.label === label)[0])
+        }
+      />
+      <Modal
+        title="New Organization"
+        visible={modalVisible}
+        onCancel={() => setModalVisible(false)}
+        confirmLoading={formBusy}
+        footer={null}
+      >
+        <OrgForm
+          onSubmit={(o: Organization) => saveAndCreate()}
+          busy={formBusy}
+        />
+      </Modal>
+      <Drawer
+        width={640}
+        visible={!!(selectedOrg && selectedOrg.name)}
+        onClose={() => setSelectedOrg(undefined)}
+      >
+        {selectedOrg && (
+          <OrgForm
+            org={{
+              name: selectedOrg.name,
+              label: selectedOrg.label,
+            }}
+            onSubmit={(o: Organization) => saveAndModify()}
+            busy={formBusy}
+            mode="edit"
+          />
+        )}
+      </Drawer>
+    </>
   );
 };
 
 const mapStateToProps = (state: RootState) => ({
-  orgs:
-    (state.nexus &&
-      state.nexus.orgs.map(o => ({
-        name: o.label,
-        projectNumber: o.projectNumber,
-      }))) ||
-    [],
+  orgs: (state.nexus && state.nexus.orgs.map(o => o)) || [],
   busy: (state.nexus && state.nexus.orgsFetching) || false,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
   goToProject: (org: string) => dispatch(push(`/${org}`)),
   fetchOrgs: () => dispatch(fetchOrgs()),
+  // createOrg: (
+  //   orgLabel: string,
+  //   orgName: string,
+  // ) => dispatch(createOrganization(orgLabel, orgName)),
+  // modifyOrg: (
+  //   orgLabel: string,
+  //   rev: number,
+  //   orgName: string,
+  // ) => dispatch(modifyOrganization(orgLabel, rev, orgName)),
 });
 
 export default connect(
