@@ -12,7 +12,7 @@ export default class App extends React.Component {
       <MainLayout>
         <Switch>
           {routes.map(({ path, component: C, ...rest }) => (
-            <Route key={path} path={path} component={C} {...rest} />
+            <Route key={path as string} path={path} component={C} {...rest} />
           ))}
           <Route component={NotFound} />
         </Switch>

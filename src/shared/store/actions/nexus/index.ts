@@ -5,9 +5,11 @@ import {
   Resource,
   PaginationSettings,
   PaginatedList,
+  ElasticSearchView,
 } from '@bbp/nexus-sdk';
-import { ThunkAction } from '..';
-import { ProjectActions } from './project';
+import { ProjectActions } from '../project';
+import { ElasticSearchViewAggregationResponse } from '@bbp/nexus-sdk/lib/View/ElasticSearchView';
+import { ThunkAction } from '../..';
 
 //
 // Action types
@@ -73,6 +75,25 @@ interface FetchProjectActionFailure extends Action {
 interface FetchResourcesActionFailure extends Action {
   type: '@@nexus/RESOURCES_FETCHING_FAILURE';
 }
+
+interface AssignActiveProject extends Action {
+  type: '@@nexus/ASSIGN_ACTIVE_PROJECT';
+  payload: {
+    org: Organization;
+    project: Project;
+  };
+}
+
+export const assignActiveProject: ActionCreator<AssignActiveProject> = (
+  org: Organization,
+  project: Project
+) => ({
+  type: '@@nexus/ASSIGN_ACTIVE_PROJECT',
+  payload: {
+    org,
+    project,
+  },
+});
 
 const fetchOrgsAction: ActionCreator<FetchOrgsAction> = () => ({
   type: '@@nexus/ORGS_FETCHING',
@@ -175,6 +196,121 @@ export type OrgsActions =
   | FetchResourcesActionFailure
   | ProjectActions;
 
+export type ResourceActions =
+  | FetchResourcesAction
+  | FetchResourcesActionSuccess
+  | FetchResourcesActionFailure;
+
+// Fetch Schemas!
+interface SelectSchema extends Action {
+  type: '@@nexus/SELECT_SCHEMA';
+  payload: {
+    selectedSchema: string;
+  };
+}
+
+interface FetchSchemasAction extends Action {
+  type: '@@nexus/SCHEMAS_FETCHING';
+}
+
+interface FetchSchemasActionSuccess extends Action {
+  type: '@@nexus/SCHEMAS_FETCHING_SUCCESS';
+  payload: {
+    schemas: any[];
+    types: any[];
+  };
+}
+interface FetchSchemasActionFailure extends Action {
+  type: '@@nexus/SCHEMAS_FETCHING_FAILURE';
+}
+
+export type SchemaActions =
+  | FetchSchemasAction
+  | FetchSchemasActionSuccess
+  | FetchSchemasActionFailure
+  | SelectSchema;
+
+export const selectSchema: ActionCreator<SelectSchema> = selectedSchema => ({
+  type: '@@nexus/SELECT_SCHEMA',
+  payload: { selectedSchema },
+});
+
+const fetchSchemasAction: ActionCreator<FetchSchemasAction> = () => ({
+  type: '@@nexus/SCHEMAS_FETCHING',
+});
+
+const fetchSchemasSuccessAction: ActionCreator<FetchSchemasActionSuccess> = (
+  schemas: any[],
+  types: any[]
+) => ({
+  type: '@@nexus/SCHEMAS_FETCHING_SUCCESS',
+  payload: { schemas, types },
+});
+
+const fetchSchemasFailureAction: ActionCreator<FetchSchemasActionFailure> = (
+  error: any
+) => ({
+  error,
+  type: '@@nexus/SCHEMAS_FETCHING_FAILURE',
+});
+
+export const loadProjectViewData: ActionCreator<ThunkAction> = (
+  orgLabel: string,
+  projectLabel: string
+) => {
+  return async (dispatch: Dispatch<any>): Promise<any> => {
+    dispatch(assignActiveProject(orgLabel, projectLabel));
+    dispatch(fetchSchemas(orgLabel, projectLabel));
+  };
+};
+
+// TODO add types to query
+export const fetchSchemas: ActionCreator<ThunkAction> = (
+  orgLabel: string,
+  projectLabel: string
+) => {
+  return async (
+    dispatch: Dispatch<any>,
+    getState,
+    { nexus }
+  ): Promise<FetchSchemasActionSuccess | FetchSchemasActionFailure> => {
+    dispatch(fetchSchemasAction());
+    try {
+      const org: Organization = await nexus.getOrganization(orgLabel);
+      const project: Project = await org.getProject(projectLabel);
+      const defaultElasticSearchView: ElasticSearchView = await project.getElasticSearchView();
+      const query = {
+        aggs: {
+          schemas: {
+            terms: {
+              size: 50,
+              field: '_constrainedBy',
+            },
+          },
+          types: {
+            terms: {
+              size: 50,
+              field: '@type',
+            },
+          },
+        },
+      };
+      const response: ElasticSearchViewAggregationResponse = await defaultElasticSearchView.aggregation(
+        query
+      );
+      const schemas = response.aggregations.schemas.buckets.map(
+        ({ doc_count, key }) => ({ key, count: doc_count })
+      );
+      const types = response.aggregations.types.buckets.map(
+        ({ doc_count, key }) => ({ key, count: doc_count })
+      );
+      return dispatch(fetchSchemasSuccessAction(schemas, types));
+    } catch (e) {
+      return dispatch(fetchSchemasFailureAction(e));
+    }
+  };
+};
+
 export const fetchOrgs: ActionCreator<ThunkAction> = () => {
   return async (
     dispatch: Dispatch<any>,
@@ -191,7 +327,7 @@ export const fetchOrgs: ActionCreator<ThunkAction> = () => {
   };
 };
 
-export const fetchOrg: ActionCreator<ThunkAction> = (orgName) => {
+export const fetchOrg: ActionCreator<ThunkAction> = orgName => {
   return async (
     dispatch: Dispatch<any>,
     getState,
@@ -224,7 +360,10 @@ export const fetchProjects: ActionCreator<ThunkAction> = (name: string) => {
   };
 };
 
-export const fetchProject: ActionCreator<ThunkAction> = (orgName: string, projectName: string) => {
+export const fetchProject: ActionCreator<ThunkAction> = (
+  orgName: string,
+  projectName: string
+) => {
   return async (
     dispatch: Dispatch<any>,
     getState,
@@ -244,7 +383,8 @@ export const fetchProject: ActionCreator<ThunkAction> = (orgName: string, projec
 export const fetchResources: ActionCreator<ThunkAction> = (
   orgLabel: string,
   projectLabel: string,
-  resourcePaginationSettings: PaginationSettings
+  resourcePaginationSettings: PaginationSettings,
+  query: any = {}
 ) => {
   return async (
     dispatch: Dispatch<any>,
@@ -255,7 +395,11 @@ export const fetchResources: ActionCreator<ThunkAction> = (
     try {
       const org: Organization = await nexus.getOrganization(orgLabel);
       const project: Project = await org.getProject(projectLabel);
-      const resources: PaginatedList<Resource> = await project.listResources(
+      const defaultElasticSearchView: ElasticSearchView = await project.getElasticSearchView();
+      const resources: PaginatedList<
+        Resource
+      > = await defaultElasticSearchView.query(
+        query,
         resourcePaginationSettings
       );
       return dispatch(

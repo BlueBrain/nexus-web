@@ -1,0 +1,25 @@
+@import '../../lib.less';
+
+.list-board {
+  display: flex;
+  padding: 0;
+  margin: 0;
+  justify-content: center;
+  > .list {
+    .unstyleList();
+    .cardlike();
+    flex-grow: 1;
+    display: block;
+    min-width: 300px;
+    max-width: 600px;
+    min-height: calc(100vh - 160px);
+    margin-right: 1em;
+  }
+  > .list.-new {
+    border: 1px dashed @disabled-color;
+    background-color: transparent;
+    box-shadow: none;
+    max-width: 300px;
+    cursor: pointer;
+  }
+}

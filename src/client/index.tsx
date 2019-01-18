@@ -17,6 +17,7 @@ const base: string = rawBase.replace(/\/$/, '');
 const history = createBrowserHistory({ basename: base });
 // Grab preloaded state
 const preloadedState: RootState = (window as any).__PRELOADED_STATE__;
+
 // create Nexus instance
 const nexus = new Nexus({
   environment: preloadedState.config.apiEndpoint,

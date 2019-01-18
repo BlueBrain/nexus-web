@@ -4,12 +4,9 @@ import Landing from './views/Landing';
 import Home from './views/Home';
 import Login from './views/Login';
 import Project from './views/Project';
-import {
-  fetchOrgs,
-  fetchProjects,
-  fetchResources,
-} from './store/actions/nexus';
+import { fetchOrgs, fetchProjects } from './store/actions/nexus';
 import { RawElasticSearchQuery, RawSparqlQuery } from './views/RawQuery';
+import { fetchAndAssignProject } from './store/actions/nexus/projects';
 import { ThunkAction } from './store';
 import { RootState } from './store/reducers';
 import {
@@ -51,10 +48,9 @@ const routes: RouteWithData[] = [
     component: Project,
     breadcrumbLabel: ProjectBreadcrumbLabel,
     loadData: (state, match) =>
-      fetchResources(
+      fetchAndAssignProject(
         match && match.params && (match.params as any)['org'],
-        match && match.params && (match.params as any)['project'],
-        state && state.nexus && state.nexus.resourcePaginationSettings
+        match && match.params && (match.params as any)['project']
       ),
   },
   {

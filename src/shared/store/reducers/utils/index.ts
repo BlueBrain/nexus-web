@@ -1,0 +1,94 @@
+import { combineReducers, AnyAction, Reducer, Action } from 'redux';
+
+export * from './createByKey';
+
+export type ActionReducer = (state: any, action: AnyAction) => any;
+
+export interface ActionHandler {
+  [actionKey: string]: ActionReducer;
+}
+
+export interface ActionTypes {
+  FETCHING: string;
+  FULFILLED: string;
+  FAILED: string;
+}
+
+export interface FetchableState<Data> {
+  isFetching: boolean;
+  data: Data | null;
+  error?: Error | null;
+}
+
+export interface AnyFetchableState {
+  isFetching: boolean;
+  data?: any;
+  error?: Error | null;
+}
+
+export const createReducer = (
+  intialState: any,
+  handlers: ActionHandler,
+  label: string
+) => (state = intialState, action: AnyAction) => {
+  return handlers.hasOwnProperty(action.type)
+    ? handlers[action.type](state, action)
+    : state;
+};
+
+export const createFetching = ({
+  FETCHING,
+  FULFILLED,
+  FAILED,
+}: ActionTypes) => {
+  return createReducer(
+    false,
+    {
+      [FETCHING]: () => true,
+      [FULFILLED]: () => false,
+      [FAILED]: () => false,
+    },
+    'createFetching'
+  );
+};
+
+export const createResultData = (
+  { FULFILLED }: ActionTypes,
+  initialState: [] | null
+) =>
+  createReducer(
+    initialState,
+    {
+      [FULFILLED]: (state, action) => action.payload,
+    },
+    'createResuldData'
+  );
+
+export const createError = ({ FAILED }: ActionTypes) =>
+  createReducer(
+    null,
+    {
+      [FAILED]: (state, action) => action.error,
+    },
+    'createError'
+  );
+
+// For single objects
+export const createFetchReducer = function(actionTypes: ActionTypes): Reducer {
+  return combineReducers({
+    isFetching: createFetching(actionTypes),
+    data: createResultData(actionTypes, null),
+    error: createError(actionTypes),
+  });
+};
+
+// For collections
+export const createFetchListReducer = function(
+  actionTypes: ActionTypes
+): Reducer {
+  return combineReducers({
+    isFetching: createFetching(actionTypes),
+    data: createResultData(actionTypes, []),
+    error: createError(actionTypes),
+  });
+};
