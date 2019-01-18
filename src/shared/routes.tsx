@@ -38,16 +38,6 @@ const routes: RouteWithData[] = [
     component: Login,
   },
   {
-    path: '/:org/:project/:view/_search',
-    component: RawElasticSearchQuery,
-    breadcrumbLabel: ProjectBreadcrumbLabel,
-  },
-  {
-    path: '/:org/:project/graph/sparql',
-    component: RawSparqlQuery,
-    breadcrumbLabel: RawQueryBreadcrumbLabel,
-  },
-  {
     path: '/:org',
     exact: true,
     component: Home,
@@ -66,6 +56,21 @@ const routes: RouteWithData[] = [
         match && match.params && (match.params as any)['project'],
         state && state.nexus && state.nexus.resourcePaginationSettings
       ),
+  },
+  {
+    path: '/:org/:project/_search',
+    component: RawElasticSearchQuery,
+    breadcrumbLabel: RawQueryBreadcrumbLabel,
+  },
+  {
+    path: '/:org/:project/:view/_search',
+    component: RawElasticSearchQuery,
+    breadcrumbLabel: RawQueryBreadcrumbLabel,
+  },
+  {
+    path: '/:org/:project/graph/sparql',
+    component: RawSparqlQuery,
+    breadcrumbLabel: RawQueryBreadcrumbLabel,
   },
 ];
 

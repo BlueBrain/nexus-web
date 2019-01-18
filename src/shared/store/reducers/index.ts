@@ -1,7 +1,7 @@
 import auth, { AuthState } from './auth';
 import config, { ConfigState } from './config';
 import nexus, { NexusState } from './nexus';
-import rawQuery, { RawQueryState } from './rawQuery';
+import rawQuery, { RawQueryState, rawElasticSearchQueryReducer, RawElasticSearchQueryState } from './rawQuery';
 import { StaticRouterProps } from 'react-router';
 
 export interface RootState {
@@ -10,6 +10,7 @@ export interface RootState {
   nexus?: NexusState;
   router?: StaticRouterProps;
   rawQuery?: RawQueryState;
+  rawElasticSearchQuery?: RawElasticSearchQueryState;
 }
 
 export default {
@@ -17,4 +18,5 @@ export default {
   config,
   nexus,
   rawQuery,
+  rawElasticSearchQuery: rawElasticSearchQueryReducer,
 };

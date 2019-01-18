@@ -3,11 +3,10 @@ import { Form, Input, Button, Table, Card } from 'antd';
 import { executeRawQuery } from '../../store/actions/rawQuery';
 import { RawQueryState } from '../../store/reducers/rawQuery';
 import { connect } from 'react-redux';
-import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/lib/views/SparqlView';
+import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/lib/View/SparqlView';
 import * as hash from 'object-hash';
 
-export interface RawQueryViewProps {
-  viewType: "es" | "sparql";
+export interface RawSparqlQueryViewProps {
   initialQuery: string;
   fetching: boolean;
   response: SparqlViewQueryResponse;
@@ -20,7 +19,7 @@ const TextArea = Input.TextArea;
 const FormItem = Form.Item;
 const { Column } = Table;
 
-const RawQueryView: React.FunctionComponent<RawQueryViewProps> = ({ fetching, initialQuery, response, executeRawQuery, wantedOrg, wantedProject }) : JSX.Element => {
+const RawSparqlQueryView: React.FunctionComponent<RawSparqlQueryViewProps> = ({ fetching, initialQuery, response, executeRawQuery, wantedOrg, wantedProject }) : JSX.Element => {
   const [query, setQuery] = React.useState(initialQuery);
 
   let cols: string[]
@@ -69,6 +68,7 @@ const RawQueryView: React.FunctionComponent<RawQueryViewProps> = ({ fetching, in
           value={query}
           placeholder={`Enter a valid SPARQL query`}
           onChange={(e) => setQuery(e.target.value)}
+          autosize
         />
       </FormItem>
       <FormItem>
@@ -97,4 +97,4 @@ const mapDispatchToProps = (dispatch: any) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(RawQueryView);
+)(RawSparqlQueryView);
