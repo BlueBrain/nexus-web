@@ -53,3 +53,11 @@ export const ProjectBreadcrumbLabel = (state: RootState) => {
     </span>
   );
 };
+
+export const RawQueryBreadcrumbLabel = () => {
+  return (
+    <span>
+      <Icon type="search" /> Query
+    </span>
+  );
+};

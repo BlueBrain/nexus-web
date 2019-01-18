@@ -9,6 +9,7 @@ import {
   fetchProjects,
   fetchResources,
 } from './store/actions/nexus';
+import { RawElasticSearchQuery, RawSparqlQuery } from './views/RawQuery';
 import { ThunkAction } from './store';
 import { RootState } from './store/reducers';
 import {
@@ -16,6 +17,7 @@ import {
   HomeBreadcrumbLabel,
   OrgBreadcrumbLabel,
   LoginBreadcrumbLabel,
+  RawQueryBreadcrumbLabel,
 } from './views/breadcrumbs/BreadcrumbLabels';
 
 export interface RouteWithData extends RouteProps {
@@ -54,6 +56,21 @@ const routes: RouteWithData[] = [
         match && match.params && (match.params as any)['project'],
         state && state.nexus && state.nexus.resourcePaginationSettings
       ),
+  },
+  {
+    path: '/:org/:project/_search',
+    component: RawElasticSearchQuery,
+    breadcrumbLabel: RawQueryBreadcrumbLabel,
+  },
+  {
+    path: '/:org/:project/:view/_search',
+    component: RawElasticSearchQuery,
+    breadcrumbLabel: RawQueryBreadcrumbLabel,
+  },
+  {
+    path: '/:org/:project/graph/sparql',
+    component: RawSparqlQuery,
+    breadcrumbLabel: RawQueryBreadcrumbLabel,
   },
 ];
 

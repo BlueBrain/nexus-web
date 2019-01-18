@@ -19,6 +19,9 @@ export type ThunkAction = ThunkAction<Promise<any>, object, Services, any>;
 
 let composeEnhancers: Function = compose;
 try {
+  // DEVELOPMENT ONLY
+  // if the Redux Devtools browser extension is present,
+  // enable its debugging capabilities.
   if ((window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) {
     composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
   }
@@ -44,7 +47,7 @@ export default function configureStore(
   );
 
   // DEVELOPMENT ONLY
-  // if Hot module Replacement is enables
+  // if Hot module Replacement is enabled
   // replace store's reducers with new ones.
   if (module.hot) {
     module.hot.accept('./reducers', () => {
