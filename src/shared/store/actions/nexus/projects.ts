@@ -35,6 +35,11 @@ const fetchProjectsFailedAction: ActionCreator<
   type: ProjectActionTypes.FAILED,
 });
 
+export type ProjectActions =
+  | FetchAction<ProjectActionTypes.FETCHING>
+  | FetchFulfilledAciton<ProjectActionTypes.FULFILLED, Project>
+  | FetchFailedAction<ProjectActionTypes.FAILED>;
+
 export const fetchAndAssignProject: ActionCreator<ThunkAction> = (
   orgLabel: string,
   projectLabel: string

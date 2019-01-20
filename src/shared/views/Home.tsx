@@ -14,13 +14,14 @@ import ProjectList from '../components/Projects/ProjectList';
 import Skeleton from '../components/Skeleton';
 import { push } from 'connected-react-router';
 import ProjectForm from '../components/Projects/ProjectForm';
+import { fetchOrg } from '../store/actions/nexus/activeOrg';
 
 interface HomeProps {
   activeOrg: { label: string };
   projects: Project[];
   busy: boolean;
   match: any;
-  fetchProjects(name: string): void;
+  fetchOrgData(orgLabel: string): void;
   createProject(
     orgLabel: string,
     projectLabel: string,
@@ -45,7 +46,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
   projects,
   match,
   activeOrg,
-  fetchProjects,
+  fetchOrgData,
   goTo,
   createProject,
   modifyProject,
@@ -62,7 +63,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
         activeOrg.label !== match.params.org ||
         (projects.length === 0 && !busy)
       ) {
-        fetchProjects(match.params.org);
+        fetchOrgData(match.params.org);
       }
     },
     [match.path]
@@ -122,7 +123,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
           setModalVisible(false);
           setSelectedProject(undefined);
 
-          fetchProjects(match.params.org);
+          fetchOrgData(match.params.org);
         },
         (action: { type: string; error: Error }) => {
           notification.warning({
@@ -257,24 +258,24 @@ const Home: React.FunctionComponent<HomeProps> = ({
 const mapStateToProps = (state: RootState) => ({
   activeOrg: (state.nexus &&
     state.nexus.activeOrg &&
-    state.nexus.activeOrg.org &&
-    state.nexus.activeOrg.org.data) || { label: '' },
+    state.nexus.activeOrg.data &&
+    state.nexus.activeOrg.data.org) || { label: '' },
   projects:
     state.nexus &&
     state.nexus.activeOrg &&
-    state.nexus.activeOrg.projects &&
-    state.nexus.activeOrg.projects.data
-      ? state.nexus.activeOrg.projects.data.map(p => p)
+    state.nexus.activeOrg.data &&
+    state.nexus.activeOrg.data.projects
+      ? state.nexus.activeOrg.data.projects.map(p => p)
       : [],
   busy:
     (state.nexus &&
       state.nexus.activeOrg &&
-      state.nexus.activeOrg.org.isFetching) ||
+      state.nexus.activeOrg.isFetching) ||
     false,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  fetchProjects: (name: string) => dispatch(fetchProjects(name)),
+  fetchOrgData: (orgLabel: string) => dispatch(fetchOrg(orgLabel)),
   goTo: (org: string, project: string) => dispatch(push(`/${org}/${project}`)),
   createProject: (
     orgLabel: string,

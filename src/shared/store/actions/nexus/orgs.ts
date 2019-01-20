@@ -35,6 +35,11 @@ const fetchOrgsFailedAction: ActionCreator<
   type: OrgsActionTypes.FAILED,
 });
 
+export type OrgsActions =
+  | FetchAction<OrgsActionTypes.FETCHING>
+  | FetchFulfilledAciton<OrgsActionTypes.FULFILLED, Organization[]>
+  | FetchFailedAction<OrgsActionTypes.FAILED>;
+
 export const fetchOrgs: ActionCreator<ThunkAction> = () => {
   return async (
     dispatch: Dispatch<any>,

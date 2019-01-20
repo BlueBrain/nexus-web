@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { RootState } from '../store/reducers';
 import Lists from '../components/Lists';
 import { fetchAndAssignProject } from '../store/actions/nexus/projects';
+import { fetchOrg } from '../store/actions/nexus/activeOrg';
 
 interface ProjectViewProps {
   projectLabel: string;
@@ -42,14 +43,16 @@ const mapStateToProps = (state: RootState) => ({
   activeOrg:
     (state.nexus &&
       state.nexus.activeOrg &&
-      state.nexus.activeOrg.org &&
-      state.nexus.activeOrg.org.data &&
-      state.nexus.activeOrg.org.data.label) ||
+      state.nexus.activeOrg &&
+      state.nexus.activeOrg.data &&
+      state.nexus.activeOrg.data.org.label) ||
     '',
 });
 const mapDispatchToProps = (dispatch: any) => ({
-  fetchProject: (org: string, project: string) =>
-    dispatch(fetchAndAssignProject(org, project)),
+  fetchProject: (org: string, project: string) => {
+    dispatch(fetchOrg(org));
+    dispatch(fetchAndAssignProject(org, project));
+  },
 });
 
 export default connect(
