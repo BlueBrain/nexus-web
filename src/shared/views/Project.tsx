@@ -2,7 +2,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../store/reducers';
 import Lists from '../components/Lists';
-import { getProp } from '../utils';
 import { fetchAndAssignProject } from '../store/actions/nexus/projects';
 
 interface ProjectViewProps {
@@ -18,7 +17,6 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   orgLabel,
   fetchProject,
 }) => {
-  console.log("i'm updating only once, yeah?");
   React.useEffect(
     () => {
       if (projectLabel !== match.params.project) {
@@ -37,15 +35,16 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
 const mapStateToProps = (state: RootState) => ({
   projectLabel:
     (state.nexus &&
-      state.nexus.project &&
-      state.nexus.project.data &&
-      state.nexus.project.data.label) ||
+      state.nexus.activeProject &&
+      state.nexus.activeProject.data &&
+      state.nexus.activeProject.data.label) ||
     '',
   activeOrg:
     (state.nexus &&
       state.nexus.activeOrg &&
       state.nexus.activeOrg.org &&
-      state.nexus.activeOrg.org.label) ||
+      state.nexus.activeOrg.org.data &&
+      state.nexus.activeOrg.org.data.label) ||
     '',
 });
 const mapDispatchToProps = (dispatch: any) => ({

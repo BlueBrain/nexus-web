@@ -210,8 +210,8 @@ const Landing: React.FunctionComponent<LandingProps> = ({
 };
 
 const mapStateToProps = (state: RootState) => ({
-  orgs: (state.nexus && state.nexus.orgs.map(o => o)) || [],
-  busy: (state.nexus && state.nexus.orgsFetching) || false,
+  orgs: (state.nexus && state.nexus.orgs.data) || [],
+  busy: (state.nexus && state.nexus.orgs.isFetching) || false,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
