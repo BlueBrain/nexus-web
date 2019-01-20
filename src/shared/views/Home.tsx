@@ -257,14 +257,19 @@ const Home: React.FunctionComponent<HomeProps> = ({
 const mapStateToProps = (state: RootState) => ({
   activeOrg: (state.nexus &&
     state.nexus.activeOrg &&
-    state.nexus.activeOrg.org) || { label: '' },
+    state.nexus.activeOrg.org &&
+    state.nexus.activeOrg.org.data) || { label: '' },
   projects:
-    state.nexus && state.nexus.activeOrg && state.nexus.activeOrg.projects
-      ? state.nexus.activeOrg.projects.map(p => p)
+    state.nexus &&
+    state.nexus.activeOrg &&
+    state.nexus.activeOrg.projects &&
+    state.nexus.activeOrg.projects.data
+      ? state.nexus.activeOrg.projects.data.map(p => p)
       : [],
   busy:
     (state.nexus &&
-      (state.nexus.orgsFetching || state.nexus.projectsFetching)) ||
+      state.nexus.activeOrg &&
+      state.nexus.activeOrg.org.isFetching) ||
     false,
 });
 

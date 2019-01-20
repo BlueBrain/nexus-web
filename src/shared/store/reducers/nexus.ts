@@ -1,23 +1,13 @@
-import {
-  Organization,
-  Project,
-  Resource,
-  PaginationSettings,
-  PaginatedList,
-} from '@bbp/nexus-sdk';
-import {
-  OrgsActions,
-  ResourceActions,
-  SchemaActions,
-} from '../../actions/nexus';
-import projectReducer from './project';
-import { actionTypes as activeOrgActionTypes } from '../../actions/nexus/activeOrg';
-import { actionTypes as orgsActionTypes } from '../../actions/nexus/orgs';
+import { Organization, Project } from '@bbp/nexus-sdk';
+import { OrgsActions, ResourceActions, SchemaActions } from '../actions/nexus';
+import { actionTypes as activeOrgActionTypes } from '../actions/nexus/activeOrg';
+import { actionTypes as orgsActionTypes } from '../actions/nexus/orgs';
+import { actionTypes as projectActionTypes } from '../actions/nexus/projects';
 import {
   FetchableState,
   createFetchListReducer,
   createFetchReducer,
-} from '../utils';
+} from './utils';
 
 export interface NexusState {
   orgs: FetchableState<Organization[]>;
@@ -38,6 +28,7 @@ const initialState: NexusState = {
 
 const activeOrgReducer = createFetchReducer(activeOrgActionTypes);
 const orgsReducer = createFetchListReducer(orgsActionTypes);
+const projectReducer = createFetchReducer(projectActionTypes);
 
 export default function nexusReducer(
   state: NexusState = initialState,

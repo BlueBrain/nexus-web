@@ -311,22 +311,6 @@ export const fetchSchemas: ActionCreator<ThunkAction> = (
   };
 };
 
-export const fetchOrgs: ActionCreator<ThunkAction> = () => {
-  return async (
-    dispatch: Dispatch<any>,
-    getState,
-    { nexus }
-  ): Promise<FetchOrgsActionSuccess | FetchOrgsActionFailure> => {
-    dispatch(fetchOrgsAction());
-    try {
-      const orgs: Organization[] = await nexus.listOrganizations();
-      return dispatch(fetchOrgsSuccessAction(orgs));
-    } catch (e) {
-      return dispatch(fetchOrgsFailureAction(e));
-    }
-  };
-};
-
 export const fetchOrg: ActionCreator<ThunkAction> = orgName => {
   return async (
     dispatch: Dispatch<any>,

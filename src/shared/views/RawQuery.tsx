@@ -64,11 +64,15 @@ const RawSparqlQueryComponent: React.FunctionComponent<RawQueryProps> = ({
 };
 
 const mapStateToProps = (state: NexusState) => ({
-  activeOrg: (state && state.activeOrg && state.activeOrg.org) || { label: '' },
-  activeProject: (state && state.project && state.project.data) || {
+  activeOrg: (state &&
+    state.activeOrg &&
+    state.activeOrg.org &&
+    state.activeOrg.org.data) || { label: '' },
+  activeProject: (state && state.activeProject && state.activeProject.data) || {
     label: '',
   },
-  busy: (state && state.projectFetching) || false,
+  busy:
+    (state && state.activeProject && state.activeProject.isFetching) || false,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

@@ -5,7 +5,7 @@ import { Organization } from '@bbp/nexus-sdk';
 import { RootState } from '../store/reducers';
 import { createOrg, modifyOrg, deprecateOrg } from '../store/actions/orgs';
 import OrgList from '../components/Orgs/OrgList';
-import { fetchOrgs } from '../store/actions/nexus';
+import { fetchOrgs } from '../store/actions/nexus/orgs';
 import Skeleton from '../components/Skeleton';
 import { Button, Modal, Drawer, notification } from 'antd';
 import OrgForm from '../components/Orgs/OrgForm';
