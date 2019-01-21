@@ -58,7 +58,7 @@ const ListsContainer: React.FunctionComponent<ListProps> = React.memo(
           key="make-new-list"
           style={{ width: '200px' }}
         >
-          <h2>{project.name}</h2>
+          <h2>{project.label}</h2>
           <p>{'view resources from project '}</p>
           <Button onClick={createList}>Make a new list</Button>
           <div style={{ height: '200px' }}>
