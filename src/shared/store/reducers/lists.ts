@@ -91,7 +91,8 @@ export function listsReducer(
       if (state.length === 1) {
         return [...state.concat(clonedList)];
       }
-      return [...state.splice(action.payload.listIndex + 1, 0, clonedList)];
+      state.splice(action.payload.listIndex + 1, 0, clonedList);
+      return [...state];
     case ListActionTypes.CHANGE_INDEX:
       return [
         ...moveTo(state, action.payload.listIndex, action.payload.moveToIndex),
