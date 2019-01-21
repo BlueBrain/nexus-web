@@ -8,6 +8,7 @@ interface ListControlPanelProps {
   onTextQueryChange: (value?: string) => void;
   onFilterChange: (value: { [key: string]: string }) => void;
   onClear: () => void;
+  onCloneList: () => void;
 }
 
 const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
@@ -16,6 +17,7 @@ const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
   onTextQueryChange,
   onFilterChange,
   onClear,
+  onCloneList,
 }) => {
   const inputEl = React.useRef(null);
   const [value, setTextQueryValue] = React.useState(query.textQuery);
@@ -92,7 +94,7 @@ const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
       <Tooltip title="Clone list">
         <Button
           icon="switcher"
-          onClick={() => {}}
+          onClick={onCloneList}
           style={{ marginRight: '2px' }}
         />
       </Tooltip>

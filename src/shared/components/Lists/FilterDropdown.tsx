@@ -40,7 +40,6 @@ const FilterDropdown: React.FunctionComponent<FilterDropdownProps> = ({
                 }
               }}
               onSelect={(value, option) => {
-                console.log('select', value);
                 onFilterChange({ [filterKey]: value as string | null });
               }}
               style={{ width: '100%', marginBottom: '1em' }}

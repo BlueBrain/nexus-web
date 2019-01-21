@@ -9,6 +9,7 @@ export enum ListActionTypes {
   CREATE = 'LIST_CREATE',
   DELETE = 'LIST_DELETE',
   UPDATE = 'LIST_UPDATE',
+  CLONE = 'LIST_CLONE',
   CHANGE_INDEX = 'LIST_CHANGE_INDEX',
 }
 
@@ -20,6 +21,10 @@ type UpdateListAction = FilterPayloadAction<
   ListActionTypes.UPDATE,
   { listIndex: number; list: List }
 >;
+type CloneListAction = FilterPayloadAction<
+  ListActionTypes.CLONE,
+  { listIndex: number; list: List }
+>;
 type ChangeListIndexAction = FilterPayloadAction<
   ListActionTypes.CHANGE_INDEX,
   { listIndex: number; moveToIndex: number }
@@ -29,12 +34,14 @@ export type ListActions =
   | FilterAction<ListActionTypes.CREATE>
   | DeleteListAction
   | UpdateListAction
+  | CloneListAction
   | ChangeListIndexAction;
 
 export const actionTypes = {
   CREATE: ListActionTypes.CREATE,
   DELETE: ListActionTypes.DELETE,
   UPDATE: ListActionTypes.UPDATE,
+  CLONE: ListActionTypes.CLONE,
   CHANGE_INDEX: ListActionTypes.CHANGE_INDEX,
 };
 
@@ -61,6 +68,16 @@ export const updateList: ActionCreator<UpdateListAction> = (
 ) => ({
   filterKey,
   type: ListActionTypes.UPDATE,
+  payload: { listIndex, list },
+});
+
+export const cloneList: ActionCreator<CloneListAction> = (
+  filterKey: string,
+  listIndex: number,
+  list: List
+) => ({
+  filterKey,
+  type: ListActionTypes.CLONE,
   payload: { listIndex, list },
 });
 
