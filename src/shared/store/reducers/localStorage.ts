@@ -22,7 +22,7 @@ export const saveState = (state: any) => {
   try {
     const serializedState = JSON.stringify(state);
     localStorage.setItem('state', serializedState);
-  } catch {
+  } catch (err) {
     // ignore write errors
   }
 };
