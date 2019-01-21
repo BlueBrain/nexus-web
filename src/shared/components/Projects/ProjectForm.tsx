@@ -194,7 +194,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   const prefixMappingsItems = prefixMappingKeys.activeKeys.map(
     (key: number, index: number) => (
       <Form.Item
-        label={index === 0 ? 'Prefix Mappings' : ''}
+        label={index === 0 ? 'API Mappings' : ''}
         {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
         key={key}
       >
