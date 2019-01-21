@@ -48,16 +48,16 @@ const routes: RouteWithData[] = [
     exact: true,
     component: Project,
     breadcrumbLabel: ProjectBreadcrumbLabel,
-    loadData: (state, match) => async (dispatch, getState, stuff) => {
+    loadData: (state, match) => async (dispatch, getState, state) => {
       await fetchOrg(match && match.params && (match.params as any)['org'])(
         dispatch,
         getState,
-        stuff
+        state
       );
       await fetchAndAssignProject(
         match && match.params && (match.params as any)['org'],
         match && match.params && (match.params as any)['project']
-      )(dispatch, getState, stuff);
+      )(dispatch, getState, state);
     },
   },
   {

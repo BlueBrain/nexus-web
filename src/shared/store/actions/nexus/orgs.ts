@@ -1,7 +1,7 @@
 import { ActionCreator, Dispatch } from 'redux';
 import { Organization } from '@bbp/nexus-sdk';
 import { ThunkAction } from '../..';
-import { FetchAction, FetchFulfilledAciton, FetchFailedAction } from '../utils';
+import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
 
 enum OrgsActionTypes {
   FETCHING = '@@nexus/ORGS_FETCHING',
@@ -22,7 +22,7 @@ const fetchOrgsAction: ActionCreator<
 });
 
 const fetchOrgsFulfilledAction: ActionCreator<
-  FetchFulfilledAciton<OrgsActionTypes.FULFILLED, Organization[]>
+  FetchFulfilledAction<OrgsActionTypes.FULFILLED, Organization[]>
 > = (orgs: Organization[]) => ({
   type: OrgsActionTypes.FULFILLED,
   payload: orgs,
@@ -37,7 +37,7 @@ const fetchOrgsFailedAction: ActionCreator<
 
 export type OrgsActions =
   | FetchAction<OrgsActionTypes.FETCHING>
-  | FetchFulfilledAciton<OrgsActionTypes.FULFILLED, Organization[]>
+  | FetchFulfilledAction<OrgsActionTypes.FULFILLED, Organization[]>
   | FetchFailedAction<OrgsActionTypes.FAILED>;
 
 export const fetchOrgs: ActionCreator<ThunkAction> = () => {
@@ -46,7 +46,7 @@ export const fetchOrgs: ActionCreator<ThunkAction> = () => {
     getState,
     { nexus }
   ): Promise<
-    | FetchFulfilledAciton<OrgsActionTypes.FULFILLED, Organization[]>
+    | FetchFulfilledAction<OrgsActionTypes.FULFILLED, Organization[]>
     | FetchFailedAction<OrgsActionTypes.FAILED>
   > => {
     dispatch(fetchOrgsAction());

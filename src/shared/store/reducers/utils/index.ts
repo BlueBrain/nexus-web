@@ -29,15 +29,10 @@ export interface AnyFetchableState {
 export const createReducer = (intialState: any, handlers: ActionHandler) => (
   state = intialState,
   action: AnyAction
-) => {
-  console.log(action.type);
-  if (handlers.hasOwnProperty(action.type)) {
-    console.log(action.type, state, handlers[action.type](state, action));
-  }
-  return handlers.hasOwnProperty(action.type)
+) =>
+  handlers.hasOwnProperty(action.type)
     ? handlers[action.type](state, action)
     : state;
-};
 
 export const createFetching = ({
   FETCHING,

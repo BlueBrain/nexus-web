@@ -1,7 +1,7 @@
 import { ActionCreator, Dispatch } from 'redux';
 import { Organization, Project } from '@bbp/nexus-sdk';
 import { ThunkAction } from '../..';
-import { FetchAction, FetchFulfilledAciton, FetchFailedAction } from '../utils';
+import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
 
 enum OrgActionTypes {
   FETCHING = '@@nexus/ORG_FETCHING',
@@ -22,7 +22,7 @@ const fetchOrgAction: ActionCreator<
 });
 
 const fetchOrgFulfilledAction: ActionCreator<
-  FetchFulfilledAciton<
+  FetchFulfilledAction<
     OrgActionTypes.FULFILLED,
     { org: Organization; projects: Project[] }
   >
@@ -40,7 +40,7 @@ const fetchOrgFailedAction: ActionCreator<
 
 export type ActiveOrgActions =
   | FetchAction<OrgActionTypes.FETCHING>
-  | FetchFulfilledAciton<
+  | FetchFulfilledAction<
       OrgActionTypes.FULFILLED,
       { org: Organization; projects: Project[] }
     >
@@ -52,7 +52,7 @@ export const fetchOrg: ActionCreator<ThunkAction> = orgName => {
     getState,
     { nexus }
   ): Promise<
-    | FetchFulfilledAciton<
+    | FetchFulfilledAction<
         OrgActionTypes.FULFILLED,
         { org: Organization; projects: Project[] }
       >
