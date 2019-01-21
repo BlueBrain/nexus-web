@@ -1,6 +1,7 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
 import { Organization } from '@bbp/nexus-sdk';
 import { ThunkAction } from '..';
+import { CreateOrgPayload } from '@bbp/nexus-sdk/lib/Organization/types';
 
 //
 // Action Types
@@ -106,6 +107,7 @@ const deprecateOrgFailureAction: ActionCreator<DeprecateOrgFailureAction> = (
 //
 export const createOrg: ActionCreator<ThunkAction> = (
   orgLabel: string,
+  orgPayload: CreateOrgPayload,
 ) => {
   return async (
     dispatch: Dispatch<any>,
@@ -114,7 +116,7 @@ export const createOrg: ActionCreator<ThunkAction> = (
   ): Promise<CreateOrgSuccessAction | CreateOrgFailureAction> => {
     dispatch(createOrgAction());
     try {
-      const org: Organization = await Organization.create(orgLabel);
+      const org: Organization = await Organization.create(orgLabel, orgPayload);
       return dispatch(createOrgSuccessAction(org));
     } catch (e) {
       return Promise.reject(dispatch(createOrgFailureAction(e)));
@@ -125,6 +127,7 @@ export const createOrg: ActionCreator<ThunkAction> = (
 export const modifyOrg: ActionCreator<ThunkAction> = (
   orgLabel: string,
   rev: number,
+  orgPayload: CreateOrgPayload,
 ) => {
   return async (
     dispatch: Dispatch<any>,
@@ -136,6 +139,7 @@ export const modifyOrg: ActionCreator<ThunkAction> = (
       const org: Organization = await Organization.update(
         orgLabel,
         rev,
+        orgPayload,
       );
       return dispatch(modifyOrgSuccessAction(org));
     } catch (e) {

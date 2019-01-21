@@ -9,7 +9,7 @@ export interface OrgFormProps {
     description?: string;
   };
   busy?: boolean;
-  onSubmit?(project: OrgFormProps['org']): any;
+  onSubmit?(org: OrgFormProps['org']): any;
   onDeprecate?(): any;
   mode?: 'create' | 'edit';
 }
@@ -70,8 +70,8 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
         <Form.Item label="Description" {...formItemLayout}>
           {getFieldDecorator('description', {
             initialValue: org ? org.description : '',
-            rules: [{ required: true }],
-          })(<Input placeholder="Description" disabled={mode === 'edit'} />)}
+            rules: [{ required: false }],
+          })(<Input placeholder="Description" />)}
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>
           <Button type="primary" htmlType="submit">

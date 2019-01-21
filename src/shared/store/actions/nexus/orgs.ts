@@ -57,13 +57,9 @@ export const fetchOrgs: ActionCreator<ThunkAction> = () => {
     try {
       const orgs: Organization[] = await nexus.listOrganizations();
       const projectsPerOrg = await Promise.all(orgs.map(org => org.listProjects()));
-      const payload = orgs.map((org, index) => {
-        const newOrg = org;
-        // @ts-ignore
-        newOrg.projectNumber = projectsPerOrg[index].length.toString();
-        return newOrg as OrgPayload;
+      orgs.map((org, index) => {
+        (org as OrgPayload).projectNumber = projectsPerOrg[index].length.toString();
       });
-      console.log(projectsPerOrg);
       return dispatch(fetchOrgsFulfilledAction(orgs));
     } catch (e) {
       return dispatch(fetchOrgsFailedAction(e));
