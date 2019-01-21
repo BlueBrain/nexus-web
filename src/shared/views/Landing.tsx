@@ -9,17 +9,18 @@ import { fetchOrgs } from '../store/actions/nexus/orgs';
 import Skeleton from '../components/Skeleton';
 import { Button, Modal, Drawer, notification } from 'antd';
 import OrgForm from '../components/Orgs/OrgForm';
+import { CreateOrgPayload } from '@bbp/nexus-sdk/lib/Organization/types';
 
 interface LandingProps {
   orgs: Organization[];
   busy: boolean;
   goTo(orgLabel: string): void;
   fetchOrgs(): void;
-  createOrg: (orgLabel: string, orgName: string) => Promise<Organization>;
+  createOrg: (orgLabel: string, orgPayload: CreateOrgPayload) => Promise<Organization>;
   modifyOrg: (
     orgLabel: string,
     rev: number,
-    description: string
+    orgPayload: CreateOrgPayload,
   ) => Promise<Organization>;
   deprecateOrg: (orgLabel: string, rev: number) => Promise<void>;
 }
@@ -44,12 +45,12 @@ const Landing: React.FunctionComponent<LandingProps> = ({
 
   const saveAndCreate = (newOrg: Organization) => {
     setFormBusy(true);
-    createOrg(newOrg.label, newOrg.label)
+    createOrg(newOrg.label, { description: newOrg.description || '' })
       .then(
         () => {
           notification.success({
             message: 'Organization created',
-            duration: 2,
+            duration: 5,
           });
           setFormBusy(false);
           goTo(newOrg.label);
@@ -58,7 +59,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           notification.warning({
             message: 'Organization NOT create',
             description: action.error.message,
-            duration: 2,
+            duration: 10,
           });
           setFormBusy(false);
         }
@@ -74,7 +75,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
 
   const saveAndModify = (selectedOrg: Organization, newOrg: Organization) => {
     setFormBusy(true);
-    modifyOrg(newOrg.label, (selectedOrg.rev = 1), newOrg.label)
+    modifyOrg(newOrg.label, selectedOrg.rev, { description: newOrg.description })
       .then(
         () => {
           notification.success({
@@ -156,9 +157,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
     );
   }
 
-  return orgs.length === 0 ? (
-    <p style={{ marginTop: 50 }}>No organizations yet...</p>
-  ) : (
+  return (
     <>
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
         <h1 style={{ marginBottom: 0, marginRight: 8 }}>Organizations</h1>
@@ -168,13 +167,15 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           icon="plus-square"
         />
       </div>
-      <OrgList
-        orgs={orgs}
-        onOrgClick={goTo}
-        onOrgEdit={(orgLabel: string) =>
-          setSelectedOrg(orgs.filter(o => o.label === orgLabel)[0])
-        }
-      />
+      {orgs.length === 0 ? (
+        <p style={{ marginTop: 50 }}>No organizations yet...</p>
+        ) : (<OrgList
+          orgs={orgs}
+          onOrgClick={goTo}
+          onOrgEdit={(orgLabel: string) =>
+            setSelectedOrg(orgs.filter(o => o.label === orgLabel)[0])
+          }
+        />)}
       <Modal
         title="New Organization"
         visible={modalVisible}
@@ -194,9 +195,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
       >
         {selectedOrg && (
           <OrgForm
-            org={{
-              label: selectedOrg.label,
-            }}
+            org={selectedOrg}
             onSubmit={(o: Organization) => saveAndModify(selectedOrg, o)}
             onDeprecate={() => saveAndDeprecate(selectedOrg)}
             busy={formBusy}
@@ -216,10 +215,10 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = (dispatch: any) => ({
   goTo: (org: string) => dispatch(push(`/${org}`)),
   fetchOrgs: () => dispatch(fetchOrgs()),
-  createOrg: (orgLabel: string, orgName: string) =>
-    dispatch(createOrg(orgLabel, orgName)),
-  modifyOrg: (orgLabel: string, rev: number, orgName: string) =>
-    dispatch(modifyOrg(orgLabel, rev, orgName)),
+  createOrg: (orgLabel: string, orgPayload: CreateOrgPayload) =>
+    dispatch(createOrg(orgLabel, orgPayload)),
+  modifyOrg: (orgLabel: string, rev: number, orgPayload: CreateOrgPayload) =>
+    dispatch(modifyOrg(orgLabel, rev, orgPayload)),
   deprecateOrg: (orgLabel: string, rev: number) =>
     dispatch(deprecateOrg(orgLabel, rev)),
 });

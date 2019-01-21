@@ -195,9 +195,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
       />
     );
   }
-  if (projects.length === 0) {
-    return <p>no projects</p>;
-  }
+
   return (
     <>
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
@@ -208,15 +206,19 @@ const Home: React.FunctionComponent<HomeProps> = ({
           icon="plus-square"
         />
       </div>
-      <ProjectList
-        projects={projects}
-        onProjectClick={(projectLabel: string) =>
-          goTo(activeOrg.label, projectLabel)
-        }
-        onProjectEdit={(projectLabel: string) =>
-          setSelectedProject(projects.filter(p => p.label === projectLabel)[0])
-        }
-      />
+      {projects.length === 0 ? (
+        <p>no projects</p>
+        ) : (
+        <ProjectList
+          projects={projects}
+          onProjectClick={(projectLabel: string) =>
+            goTo(activeOrg.label, projectLabel)
+          }
+          onProjectEdit={(projectLabel: string) =>
+            setSelectedProject(projects.filter(p => p.label === projectLabel)[0])
+          }
+        />
+      )}
       <Modal
         title="New Project"
         visible={modalVisible}
