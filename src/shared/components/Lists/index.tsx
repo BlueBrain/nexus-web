@@ -6,17 +6,21 @@ import { uuidv4 } from '../../utils';
 import { List, ListsByProjectState } from '../../store/reducers/lists';
 import ListItem from './ListItem';
 import { createList, initializeProjectList } from '../../store/actions/lists';
+import FileUpload from '../FileUpload';
+import { Button } from 'antd';
+import { Project } from '@bbp/nexus-sdk';
 
 interface ListProps {
   lists: ListsByProjectState;
   orgLabel: string;
   projectLabel: string;
+  project: Project | null | undefined;
   initialize: () => void;
   createList: () => void;
 }
 
 const ListsContainer: React.FunctionComponent<ListProps> = React.memo(
-  ({ lists, createList, initialize, orgLabel, projectLabel }) => {
+  ({ lists, createList, initialize, orgLabel, projectLabel, project }) => {
     const orgProjectFilterKey = orgLabel + projectLabel;
     const projectLists: List[] = lists[orgProjectFilterKey];
 
@@ -25,6 +29,10 @@ const ListsContainer: React.FunctionComponent<ListProps> = React.memo(
         initialize();
       }
     });
+
+    if (!project) {
+      return null;
+    }
 
     return (
       <ul className="list-board">
@@ -45,9 +53,24 @@ const ListsContainer: React.FunctionComponent<ListProps> = React.memo(
             </li>
           );
         })}
-        <div className="list -new" onClick={createList} key="make-new-list">
-          <h2>Make a new list</h2>
+        <div
+          className="side-panel"
+          key="make-new-list"
+          style={{ width: '200px' }}
+        >
+          <h2>{project.name}</h2>
           <p>{'view resources from project '}</p>
+          <Button onClick={createList}>Make a new list</Button>
+          <div style={{ height: '200px' }}>
+            <FileUpload
+              onFileUpload={async file => {
+                const project = await Project.get(orgLabel, projectLabel);
+                console.log({ file });
+                const response = await project.postFile(file);
+                console.log({ response });
+              }}
+            />
+          </div>
         </div>
       </ul>
     );
@@ -57,6 +80,10 @@ const ListsContainer: React.FunctionComponent<ListProps> = React.memo(
 const mapStateToProps = (state: RootState) => {
   return {
     lists: state.lists || {},
+    project:
+      state.nexus &&
+      state.nexus.activeProject &&
+      state.nexus.activeProject.data,
   };
 };
 
