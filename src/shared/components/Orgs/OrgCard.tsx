@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Avatar, Button, Card } from 'antd';
+import { Avatar, Button, Card, Tag } from 'antd';
 
 import './Orgs.less';
 
@@ -8,6 +8,7 @@ export interface OrgCardProps {
   name: string;
   projectNumber: number;
   logo?: string;
+  deprecated?: boolean;
   onClick?(): void;
   onEdit?(): void;
 }
@@ -16,8 +17,9 @@ const OrgCard: React.FunctionComponent<OrgCardProps> = ({
   name,
   projectNumber,
   logo = '',
-  onEdit,
+  deprecated = false,
   onClick = () => {},
+  onEdit = () => {},
 }) => {
   return (
     <Card className="OrgCard" tabIndex={1} onClick={onClick}>
@@ -26,11 +28,12 @@ const OrgCard: React.FunctionComponent<OrgCardProps> = ({
           <Avatar shape="square" size={32} icon="team" src={logo} />
         </div>
         <p className="org-name">{name}</p>
+        {deprecated && <Tag color="red">deprecated</Tag>}
         <p className="project-number">
           <span className="number">{projectNumber}</span> project
           {projectNumber > 1 && 's'}
         </p>
-        {onEdit && (
+        {!deprecated && onEdit && (
           <Button
             className="edit-button"
             type="primary"

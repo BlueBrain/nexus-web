@@ -524,7 +524,6 @@ exports[`Organisation Form component should render correctly 1`] = `
                               >
                                 <Button
                                   block={false}
-                                  className="login-form-button"
                                   ghost={false}
                                   htmlType="submit"
                                   loading={false}
@@ -533,14 +532,14 @@ exports[`Organisation Form component should render correctly 1`] = `
                                 >
                                   <Wave>
                                     <button
-                                      className="ant-btn login-form-button ant-btn-primary"
+                                      className="ant-btn ant-btn-primary"
                                       onClick={[Function]}
                                       type="submit"
                                     >
                                       <span
                                         key=".0"
                                       >
-                                        Save
+                                        Create
                                       </span>
                                     </button>
                                   </Wave>

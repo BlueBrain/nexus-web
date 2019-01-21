@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import { Organization } from '@bbp/nexus-sdk';
 import { RootState } from '../store/reducers';
-import { createOrg, modifyOrg } from '../store/actions/orgs';
+import { createOrg, modifyOrg, deprecateOrg } from '../store/actions/orgs';
 import OrgList from '../components/Orgs/OrgList';
 import { fetchOrgs } from '../store/actions/nexus';
 import Skeleton from '../components/Skeleton';
@@ -21,6 +21,7 @@ interface LandingProps {
     rev: number,
     orgName: string
   ) => Promise<Organization>;
+  deprecateOrg: (orgLabel: string, rev: number) => Promise<void>;
 }
 
 const Landing: React.FunctionComponent<LandingProps> = ({
@@ -30,6 +31,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
   fetchOrgs,
   createOrg,
   modifyOrg,
+  deprecateOrg,
 }) => {
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
@@ -69,6 +71,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
         });
       });
   };
+
   const saveAndModify = (selectedOrg: Organization, newOrg: Organization) => {
     setFormBusy(true);
     modifyOrg(newOrg.label, (selectedOrg.rev = 1), newOrg.name)
@@ -87,6 +90,40 @@ const Landing: React.FunctionComponent<LandingProps> = ({
         (action: { type: string; error: Error }) => {
           notification.warning({
             message: 'Organization NOT saved',
+            description: action.error.message,
+            duration: 2,
+          });
+          setFormBusy(false);
+        }
+      )
+      .catch((error: Error) => {
+        notification.error({
+          message: 'An unknown error occurred',
+          description: error.message,
+          duration: 0,
+        });
+      });
+  };
+
+  const saveAndDeprecate = (selectedOrg: Organization) => {
+    setFormBusy(true);
+
+    deprecateOrg(selectedOrg.label, selectedOrg.rev)
+      .then(
+        () => {
+          notification.success({
+            message: 'Organization deprecated',
+            duration: 2,
+          });
+          setFormBusy(false);
+          setModalVisible(false);
+          setSelectedOrg(undefined);
+
+          fetchOrgs();
+        },
+        (action: { type: string; error: Error }) => {
+          notification.warning({
+            message: 'Organization NOT deprecated',
             description: action.error.message,
             duration: 2,
           });
@@ -162,6 +199,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
               label: selectedOrg.label,
             }}
             onSubmit={(o: Organization) => saveAndModify(selectedOrg, o)}
+            onDeprecate={() => saveAndDeprecate(selectedOrg)}
             busy={formBusy}
             mode="edit"
           />
@@ -183,6 +221,8 @@ const mapDispatchToProps = (dispatch: any) => ({
     dispatch(createOrg(orgLabel, orgName)),
   modifyOrg: (orgLabel: string, rev: number, orgName: string) =>
     dispatch(modifyOrg(orgLabel, rev, orgName)),
+  deprecateOrg: (orgLabel: string, rev: number) =>
+    dispatch(deprecateOrg(orgLabel, rev)),
 });
 
 export default connect(

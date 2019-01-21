@@ -28,13 +28,28 @@ interface ModifyOrgFailureAction extends Action {
   type: '@@nexus/ORG_MODIFYING_FAILURE';
   error: Error;
 }
+
+interface DeprecateOrgAction extends Action {
+  type: '@@nexus/ORG_DEPRECATING';
+}
+interface DeprecateOrgSuccessAction extends Action {
+  type: '@@nexus/ORG_DEPRECATING_SUCCESS';
+}
+interface DeprecateOrgFailureAction extends Action {
+  type: '@@nexus/ORG_DEPRECATING_FAILURE';
+  error: Error;
+}
+
 export type OrgActions =
   | CreateOrgAction
   | CreateOrgSuccessAction
   | CreateOrgFailureAction
   | ModifyOrgAction
   | ModifyOrgSuccessAction
-  | ModifyOrgFailureAction;
+  | ModifyOrgFailureAction
+  | DeprecateOrgAction
+  | DeprecateOrgSuccessAction
+  | DeprecateOrgFailureAction;
 
 //
 // Action definitions
@@ -71,6 +86,21 @@ const modifyOrgFailureAction: ActionCreator<ModifyOrgFailureAction> = (
   type: '@@nexus/ORG_MODIFYING_FAILURE',
 });
 
+const deprecateOrgAction: ActionCreator<DeprecateOrgAction> = () => ({
+  type: '@@nexus/ORG_DEPRECATING',
+});
+const deprecateOrgSuccessAction: ActionCreator<
+  DeprecateOrgSuccessAction
+> = () => ({
+  type: '@@nexus/ORG_DEPRECATING_SUCCESS',
+});
+const deprecateOrgFailureAction: ActionCreator<DeprecateOrgFailureAction> = (
+  error: any
+) => ({
+  error,
+  type: '@@nexus/ORG_DEPRECATING_FAILURE',
+});
+
 //
 // Action implementations
 //
@@ -92,6 +122,7 @@ export const createOrg: ActionCreator<ThunkAction> = (
     }
   };
 };
+
 export const modifyOrg: ActionCreator<ThunkAction> = (
   orgLabel: string,
   rev: number,
@@ -112,6 +143,25 @@ export const modifyOrg: ActionCreator<ThunkAction> = (
       return dispatch(modifyOrgSuccessAction(org));
     } catch (e) {
       return Promise.reject(dispatch(modifyOrgFailureAction(e)));
+    }
+  };
+};
+
+export const deprecateOrg: ActionCreator<ThunkAction> = (
+  orgLabel: string,
+  rev: number
+) => {
+  return async (
+    dispatch: Dispatch<any>,
+    getState,
+    { nexus }
+  ): Promise<DeprecateOrgSuccessAction | DeprecateOrgFailureAction> => {
+    dispatch(deprecateOrgAction());
+    try {
+      await Organization.deprecate(orgLabel, rev);
+      return dispatch(deprecateOrgSuccessAction());
+    } catch (e) {
+      return Promise.reject(dispatch(deprecateOrgFailureAction(e)));
     }
   };
 };

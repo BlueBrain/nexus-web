@@ -29,13 +29,28 @@ interface ModifyProjectFailureAction extends Action {
   type: '@@nexus/PROJECT_MODIFYING_FAILURE';
   error: Error;
 }
+
+interface DeprecateProjectAction extends Action {
+  type: '@@nexus/PROJECT_DEPRECATING';
+}
+interface DeprecateProjectSuccessAction extends Action {
+  type: '@@nexus/PROJECT_DEPRECATING_SUCCESS';
+}
+interface DeprecateProjectFailureAction extends Action {
+  type: '@@nexus/PROJECT_DEPRECATING_FAILURE';
+  error: Error;
+}
+
 export type ProjectActions =
   | CreateProjectAction
   | CreateProjectSuccessAction
   | CreateProjectFailureAction
   | ModifyProjectAction
   | ModifyProjectSuccessAction
-  | ModifyProjectFailureAction;
+  | ModifyProjectFailureAction
+  | DeprecateProjectAction
+  | DeprecateProjectSuccessAction
+  | DeprecateProjectFailureAction;
 
 //
 // Action definitions
@@ -70,6 +85,21 @@ const modifyProjectFailureAction: ActionCreator<ModifyProjectFailureAction> = (
 ) => ({
   error,
   type: '@@nexus/PROJECT_MODIFYING_FAILURE',
+});
+
+const deprecateProjectAction: ActionCreator<DeprecateProjectAction> = () => ({
+  type: '@@nexus/PROJECT_DEPRECATING',
+});
+const deprecateProjectSuccessAction: ActionCreator<
+  DeprecateProjectSuccessAction
+> = (project: Project) => ({
+  type: '@@nexus/PROJECT_DEPRECATING_SUCCESS',
+});
+const deprecateProjectFailureAction: ActionCreator<
+  DeprecateProjectFailureAction
+> = (error: any) => ({
+  error,
+  type: '@@nexus/PROJECT_DEPRECATING_FAILURE',
 });
 
 //
@@ -120,6 +150,26 @@ export const modifyProject: ActionCreator<ThunkAction> = (
       return dispatch(modifyProjectSuccessAction(project));
     } catch (e) {
       return Promise.reject(dispatch(modifyProjectFailureAction(e)));
+    }
+  };
+};
+
+export const deprecateProject: ActionCreator<ThunkAction> = (
+  orgLabel: string,
+  projectLabel: string,
+  rev: number
+) => {
+  return async (
+    dispatch: Dispatch<any>,
+    getState,
+    { nexus }
+  ): Promise<DeprecateProjectSuccessAction | DeprecateProjectFailureAction> => {
+    dispatch(deprecateProjectAction());
+    try {
+      await Project.deprecate(orgLabel, projectLabel, rev);
+      return dispatch(deprecateProjectSuccessAction());
+    } catch (e) {
+      return Promise.reject(dispatch(deprecateProjectFailureAction(e)));
     }
   };
 };

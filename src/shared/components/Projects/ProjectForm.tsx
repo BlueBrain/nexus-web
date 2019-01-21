@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Icon, Input, Button, Spin } from 'antd';
+import { Form, Icon, Input, Button, Spin, Modal } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 /**
@@ -94,6 +94,7 @@ export interface ProjectFormProps {
   };
   busy?: boolean;
   onSubmit?(project: ProjectFormProps['project']): any;
+  onDeprecate?(): any;
   mode?: 'create' | 'edit';
 }
 
@@ -106,6 +107,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   project,
   busy = false,
   onSubmit = () => {},
+  onDeprecate = () => {},
   mode = 'create',
 }) => {
   // logic for generating dynamic prefix mapping fields in form
@@ -178,6 +180,14 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
       return;
     }
     callback('You need to specify both prefix and namespace');
+  };
+
+  const confirmDeprecate = () => {
+    Modal.confirm({
+      title: 'Deprecate Project',
+      content: 'Are you sure?',
+      onOk: onDeprecate,
+    });
   };
 
   // Dynamic form fields
@@ -254,6 +264,15 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
           >
             Save
           </Button>
+          {mode === 'edit' && (
+            <Button
+              type="danger"
+              onClick={confirmDeprecate}
+              style={{ float: 'right' }}
+            >
+              Deprecate
+            </Button>
+          )}
         </Form.Item>
       </Form>
     </Spin>

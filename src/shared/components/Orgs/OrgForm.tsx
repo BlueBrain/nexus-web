@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Input, Button, Spin } from 'antd';
+import { Form, Input, Button, Spin, Modal } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 export interface OrgFormProps {
@@ -10,6 +10,7 @@ export interface OrgFormProps {
   };
   busy?: boolean;
   onSubmit?(project: OrgFormProps['org']): any;
+  onDeprecate?(): any;
   mode?: 'create' | 'edit';
 }
 
@@ -19,6 +20,7 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
   mode,
   busy = false,
   onSubmit = () => {},
+  onDeprecate = () => {},
 }) => {
   const { getFieldDecorator, getFieldValue } = form;
   const formItemLayout = {
@@ -36,6 +38,14 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
       xs: { span: 24, offset: 0 },
       sm: { span: 19, offset: 5 },
     },
+  };
+
+  const confirmDeprecate = () => {
+    Modal.confirm({
+      title: 'Deprecate Organization',
+      content: 'Are you sure?',
+      onOk: onDeprecate,
+    });
   };
 
   const handleSubmit = (e: React.SyntheticEvent) => {
@@ -64,13 +74,18 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
           })(<Input placeholder="Label" disabled={mode === 'edit'} />)}
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="login-form-button"
-          >
-            Save
+          <Button type="primary" htmlType="submit">
+            {mode === 'edit' ? 'Save' : 'Create'}
           </Button>
+          {mode === 'edit' && (
+            <Button
+              type="danger"
+              onClick={confirmDeprecate}
+              style={{ float: 'right' }}
+            >
+              Deprecate
+            </Button>
+          )}
         </Form.Item>
       </Form>
     </Spin>
