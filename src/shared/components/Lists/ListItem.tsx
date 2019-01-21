@@ -77,6 +77,25 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
     }
   };
 
+  const handleFilterUpdate = (value: any) => {
+    if (data) {
+      queryResources(data.paginationSettings, {
+        filters: { ...query.filters, ...value },
+        textQuery: query.textQuery,
+      });
+    }
+  };
+
+  const handleClearFilter = () => {
+    queryResources(
+      data ? data.paginationSettings : DEFAULT_PAGINATION_SETTINGS
+    );
+  };
+
+  const filterValues = data
+    ? { _constrainedBy: data['_constrainedBy'], '@type': data['@type'] }
+    : {};
+
   return (
     <div style={{ height: '100%' }}>
       <h3
@@ -91,7 +110,10 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
       </h3>
       <ListControlPanel
         query={query}
+        filterValues={filterValues}
         onTextQueryChange={handleTextQueryChange}
+        onFilterChange={handleFilterUpdate}
+        onClear={handleClearFilter}
       />
       <div
         style={{
@@ -101,7 +123,7 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
           minHeight: '50%',
         }}
       >
-        {error && (
+        {error && !data && (
           <Empty
             description={<span>There was an error loading this data.</span>}
           />

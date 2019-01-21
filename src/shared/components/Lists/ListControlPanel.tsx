@@ -1,15 +1,21 @@
 import * as React from 'react';
-import { Dropdown, Menu, Input, Icon, Button } from 'antd';
+import { Dropdown, Menu, Input, Icon, Button, Tooltip } from 'antd';
 import FilterDropdown from './FilterDropdown';
 
 interface ListControlPanelProps {
   query: { filters: any; textQuery?: string };
+  filterValues: { [key: string]: { key: string; count: number }[] } | {};
   onTextQueryChange: (value?: string) => void;
+  onFilterChange: (value: { [key: string]: string }) => void;
+  onClear: () => void;
 }
 
 const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
   query,
+  filterValues,
   onTextQueryChange,
+  onFilterChange,
+  onClear,
 }) => {
   const inputEl = React.useRef(null);
   const [value, setTextQueryValue] = React.useState(query.textQuery);
@@ -34,6 +40,10 @@ const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
     handleInputEnter();
   };
 
+  const handleFilterUpdate = (value: any) => {
+    onFilterChange(value);
+  };
+
   return (
     <div
       style={{
@@ -50,21 +60,45 @@ const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
         onChange={handleInputChange}
         allowClear={true}
         addonAfter={
-          <Dropdown overlay={<FilterDropdown />} placement="bottomCenter">
-            <a className="ant-dropdown-link">
-              <Icon type="filter" onClick={() => {}} />
-            </a>
-          </Dropdown>
+          !!Object.keys(filterValues).length && (
+            <Tooltip title="Filter list">
+              <Dropdown
+                overlay={
+                  <FilterDropdown
+                    query={query}
+                    filterValues={filterValues}
+                    onFilterChange={handleFilterUpdate}
+                  />
+                }
+                placement="bottomCenter"
+              >
+                <a className="ant-dropdown-link">
+                  <Icon type="filter" onClick={() => {}} />
+                </a>
+              </Dropdown>
+            </Tooltip>
+          )
         }
         placeholder="Enter text query..."
       />
-      <Button icon="export" onClick={() => {}} style={{ marginRight: '2px' }} />
-      <Button
-        icon="switcher"
-        onClick={() => {}}
-        style={{ marginRight: '2px' }}
-      />
-      <Button icon="code" onClick={() => {}} />
+      <Tooltip title="Clear filters">
+        <Button
+          icon="close-circle"
+          onClick={onClear}
+          style={{ marginRight: '2px' }}
+        />
+      </Tooltip>
+      {/* <Button icon="export" onClick={() => {}} style={{ marginRight: '2px' }} /> */}
+      <Tooltip title="Clone list">
+        <Button
+          icon="switcher"
+          onClick={() => {}}
+          style={{ marginRight: '2px' }}
+        />
+      </Tooltip>
+      <Tooltip title="View ElasticSearch Query">
+        <Button icon="code" onClick={() => {}} />
+      </Tooltip>
     </div>
   );
 };

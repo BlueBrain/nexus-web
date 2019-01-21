@@ -22,18 +22,12 @@ const ResourceListItem: React.FunctionComponent<ResourceItemProps> = ({
   onClick = () => {},
 }) => {
   return (
-    <div className="clickable-container" onClick={onClick}>
-      <Item className="resource-item">
-        <Item.Meta
-          title={name}
-          description={
-            <div>
-              {type && type.length && <TypesIcon type={type} />}
-              <span>{constrainedBy}</span>
-            </div>
-          }
-        />
-      </Item>
+    <div className="clickable-container resource-item" onClick={onClick}>
+      <div className="name">
+        <em>{name}</em>
+      </div>
+      {/* <div className="schema">{constrainedBy}</div> */}
+      {type && type.length && <TypesIcon type={type} />}
     </div>
   );
 };

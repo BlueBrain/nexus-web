@@ -30,6 +30,8 @@ export interface List {
   request: FetchableState<{
     resources: PaginatedList<Resource>;
     paginationSettings: PaginationSettings;
+    _constrainedBy: any[];
+    '@type': any[];
   }>;
 }
 
