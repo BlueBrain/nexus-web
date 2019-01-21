@@ -18,31 +18,43 @@ const FilterDropdown: React.FunctionComponent<FilterDropdownProps> = ({
   return (
     <div className="filter-dropdown">
       {Object.keys(filterValues).map(filterKey => {
+        const value = query.filters && query.filters[filterKey];
         return (
-          <AutoComplete
-            key={filterKey}
-            className="certain-category-search"
-            dropdownClassName="certain-category-search-dropdown"
-            dropdownMatchSelectWidth={false}
-            value={query.filters && query.filters[filterKey]}
-            dataSource={filterValues[filterKey].map(({ key, count }) => (
-              <Option key={key}>
-                <span>{key}</span>
-                <span>{count}</span>
-              </Option>
-            ))}
-            onSelect={(value, option) => {
-              onFilterChange({ [filterKey]: value as string | null });
-            }}
-            style={{ width: '100%', marginBottom: '1em' }}
-            placeholder={`Filter by ${filterKey}`}
-            optionLabelProp="value"
-          >
-            <Input
-              addonBefore={filterKey}
-              suffix={<Icon type="filter" className="certain-category-icon" />}
-            />
-          </AutoComplete>
+          <>
+            <label>{filterKey}</label>
+            <AutoComplete
+              key={filterKey}
+              className="certain-category-search"
+              dropdownClassName="certain-category-search-dropdown"
+              dropdownMatchSelectWidth={false}
+              value={value}
+              dataSource={filterValues[filterKey].map(({ key, count }) => (
+                <Option key={key}>
+                  <span>{key}</span>
+                  <span>{count}</span>
+                </Option>
+              ))}
+              onChange={value => {
+                if (!value) {
+                  onFilterChange({ [filterKey]: null });
+                }
+              }}
+              onSelect={(value, option) => {
+                console.log('select', value);
+                onFilterChange({ [filterKey]: value as string | null });
+              }}
+              style={{ width: '100%', marginBottom: '1em' }}
+              placeholder={`Filter by ${filterKey}`}
+              optionLabelProp="value"
+            >
+              <Input
+                allowClear={!!value}
+                suffix={
+                  <Icon type="filter" className="certain-category-icon" />
+                }
+              />
+            </AutoComplete>
+          </>
         );
       })}
     </div>
