@@ -58,8 +58,6 @@ const Home: React.FunctionComponent<HomeProps> = ({
   >(undefined);
   React.useEffect(
     () => {
-      console.log(match);
-      console.log(activeOrg.label);
       if (
         activeOrg.label !== match.params.org ||
         (projects.length === 0 && !busy)
