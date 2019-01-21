@@ -152,8 +152,34 @@ const Home: React.FunctionComponent<HomeProps> = ({
       selectedProject.label,
       selectedProject.version
     )
-      .then(() => setFormBusy(false))
-      .catch(e => console.error(e));
+      .then(
+        () => {
+          notification.success({
+            message: 'Project successfully deprecated',
+            duration: 2,
+          });
+          setFormBusy(false);
+          setModalVisible(false);
+          setSelectedProject(undefined);
+
+          fetchProjects(match.params.org);
+        },
+        (action: { type: string; error: Error }) => {
+          notification.warning({
+            message: 'Project NOT deprecated',
+            description: action.error.message,
+            duration: 2,
+          });
+          setFormBusy(false);
+        }
+      )
+      .catch((error: Error) => {
+        notification.error({
+          message: 'An unknown error occurred',
+          description: error.message,
+          duration: 0,
+        });
+      });
   };
 
   if (busy) {

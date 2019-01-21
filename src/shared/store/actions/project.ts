@@ -164,9 +164,8 @@ export const deprecateProject: ActionCreator<ThunkAction> = (
     getState,
     { nexus }
   ): Promise<DeprecateProjectSuccessAction | DeprecateProjectFailureAction> => {
-    dispatch(deprecateProject());
+    dispatch(deprecateProjectAction());
     try {
-      console.log(orgLabel, projectLabel, rev);
       await Project.deprecate(orgLabel, projectLabel, rev);
       return dispatch(deprecateProjectSuccessAction());
     } catch (e) {
