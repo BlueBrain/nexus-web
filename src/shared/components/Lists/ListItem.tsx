@@ -169,6 +169,7 @@ const mapDispatchToProps = (
     ),
 });
 
+// TODO: move this at view level
 export default connect(
   mapStateToProps,
   mapDispatchToProps
