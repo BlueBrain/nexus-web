@@ -16,7 +16,7 @@ type DeleteListAction = FilterPayloadAction<
   ListActionTypes.DELETE,
   { listIndex: number }
 >;
-type UpdateListAciton = FilterPayloadAction<
+type UpdateListAction = FilterPayloadAction<
   ListActionTypes.UPDATE,
   { listIndex: number; list: List }
 >;
@@ -28,7 +28,7 @@ type ChangeListIndexAction = FilterPayloadAction<
 export type ListActions =
   | FilterAction<ListActionTypes.CREATE>
   | DeleteListAction
-  | UpdateListAciton
+  | UpdateListAction
   | ChangeListIndexAction;
 
 export const actionTypes = {
@@ -54,7 +54,7 @@ export const deleteList: ActionCreator<DeleteListAction> = (
   type: ListActionTypes.DELETE,
 });
 
-export const updateList: ActionCreator<UpdateListAciton> = (
+export const updateList: ActionCreator<UpdateListAction> = (
   filterKey: string,
   listIndex: number,
   list: List

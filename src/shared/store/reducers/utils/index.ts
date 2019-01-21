@@ -26,52 +26,38 @@ export interface AnyFetchableState {
   error?: Error | null;
 }
 
-export const createReducer = (
-  intialState: any,
-  handlers: ActionHandler,
-  label: string
-) => (state = intialState, action: AnyAction) => {
-  return handlers.hasOwnProperty(action.type)
+export const createReducer = (intialState: any, handlers: ActionHandler) => (
+  state = intialState,
+  action: AnyAction
+) =>
+  handlers.hasOwnProperty(action.type)
     ? handlers[action.type](state, action)
     : state;
-};
 
 export const createFetching = ({
   FETCHING,
   FULFILLED,
   FAILED,
 }: ActionTypes) => {
-  return createReducer(
-    false,
-    {
-      [FETCHING]: () => true,
-      [FULFILLED]: () => false,
-      [FAILED]: () => false,
-    },
-    'createFetching'
-  );
+  return createReducer(false, {
+    [FETCHING]: () => true,
+    [FULFILLED]: () => false,
+    [FAILED]: () => false,
+  });
 };
 
 export const createResultData = (
   { FULFILLED }: ActionTypes,
   initialState: [] | null
 ) =>
-  createReducer(
-    initialState,
-    {
-      [FULFILLED]: (state, action) => action.payload,
-    },
-    'createResuldData'
-  );
+  createReducer(initialState, {
+    [FULFILLED]: (state, action) => action.payload,
+  });
 
 export const createError = ({ FAILED }: ActionTypes) =>
-  createReducer(
-    null,
-    {
-      [FAILED]: (state, action) => action.error,
-    },
-    'createError'
-  );
+  createReducer(null, {
+    [FAILED]: (state, action) => action.error,
+  });
 
 // For single objects
 export const createFetchReducer = function(actionTypes: ActionTypes): Reducer {

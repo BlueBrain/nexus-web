@@ -4,7 +4,7 @@ export interface FetchAction<T> extends Action<T> {
   type: T;
 }
 
-export interface FetchFulfilledAciton<T, DATA> extends FetchAction<T> {
+export interface FetchFulfilledAction<T, DATA> extends FetchAction<T> {
   payload: DATA;
 }
 

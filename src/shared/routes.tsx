@@ -4,7 +4,8 @@ import Landing from './views/Landing';
 import Home from './views/Home';
 import Login from './views/Login';
 import Project from './views/Project';
-import { fetchOrgs, fetchProjects } from './store/actions/nexus';
+import { fetchOrgs } from './store/actions/nexus/orgs';
+import { fetchOrg } from './store/actions/nexus/activeOrg';
 import { RawElasticSearchQuery, RawSparqlQuery } from './views/RawQuery';
 import { fetchAndAssignProject } from './store/actions/nexus/projects';
 import { ThunkAction } from './store';
@@ -40,18 +41,24 @@ const routes: RouteWithData[] = [
     component: Home,
     breadcrumbLabel: OrgBreadcrumbLabel,
     loadData: (state, match) =>
-      fetchProjects(match && match.params && (match.params as any)['org']),
+      fetchOrg(match && match.params && (match.params as any)['org']),
   },
   {
     path: '/:org/:project',
     exact: true,
     component: Project,
     breadcrumbLabel: ProjectBreadcrumbLabel,
-    loadData: (state, match) =>
-      fetchAndAssignProject(
+    loadData: (state, match) => async (dispatch, getState, state) => {
+      await fetchOrg(match && match.params && (match.params as any)['org'])(
+        dispatch,
+        getState,
+        state
+      );
+      await fetchAndAssignProject(
         match && match.params && (match.params as any)['org'],
         match && match.params && (match.params as any)['project']
-      ),
+      )(dispatch, getState, state);
+    },
   },
   {
     path: '/:org/:project/_search',

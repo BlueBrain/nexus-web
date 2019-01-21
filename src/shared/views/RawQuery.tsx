@@ -2,9 +2,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import RawSparqlQueryView from '../components/RawQueryView/RawSparqlQueryView';
 import RawElasticSearchQueryView from '../components/RawQueryView/RawElasticSearchQueryView';
-import { fetchProject } from '../store/actions/nexus';
 import { NexusState } from '../store/reducers/nexus';
 import { RouteComponentProps, match } from 'react-router';
+import { fetchAndAssignProject } from '../store/actions/nexus/projects';
+import { fetchOrg } from '../store/actions/nexus/activeOrg';
 
 interface RawQueryProps extends RouteComponentProps {
   activeOrg: { label: string };
@@ -64,16 +65,22 @@ const RawSparqlQueryComponent: React.FunctionComponent<RawQueryProps> = ({
 };
 
 const mapStateToProps = (state: NexusState) => ({
-  activeOrg: (state && state.activeOrg && state.activeOrg.org) || { label: '' },
-  activeProject: (state && state.project && state.project.data) || {
+  activeOrg: (state &&
+    state.activeOrg &&
+    state.activeOrg.data &&
+    state.activeOrg.data.org) || { label: '' },
+  activeProject: (state && state.activeProject && state.activeProject.data) || {
     label: '',
   },
-  busy: (state && state.projectFetching) || false,
+  busy:
+    (state && state.activeProject && state.activeProject.isFetching) || false,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  fetchProject: (orgName: string, projectName: string) =>
-    dispatch(fetchProject(orgName, projectName)),
+  fetchProject: (org: string, project: string) => {
+    dispatch(fetchOrg(org));
+    dispatch(fetchAndAssignProject(org, project));
+  },
 });
 
 export const RawSparqlQuery = connect(

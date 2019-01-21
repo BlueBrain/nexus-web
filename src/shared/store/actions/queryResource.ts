@@ -1,5 +1,5 @@
 import { ActionCreator, Dispatch, Action } from 'redux';
-import { FetchFulfilledAciton, FetchFailedAction } from './utils';
+import { FetchFulfilledAction, FetchFailedAction } from './utils';
 import {
   PaginatedList,
   Resource,
@@ -30,12 +30,12 @@ interface FilterFetchAction<T> extends Action<T> {
   type: T;
   filterIndex: number;
 }
-interface FilterFetchFulfilledAciton<T, DATA>
-  extends FetchFulfilledAciton<T, DATA> {}
+interface FilterFetchFulfilledAction<T, DATA>
+  extends FetchFulfilledAction<T, DATA> {}
 interface FilterFetchFailedAction<T> extends FetchFailedAction<T> {}
 
 type FetchQueryAction = FilterFetchAction<QueryResourcesActionTypes.FETCHING>;
-type FulfilledQueryAction = FilterFetchFulfilledAciton<
+type FulfilledQueryAction = FilterFetchFulfilledAction<
   QueryResourcesActionTypes.FULFILLED,
   QueryResourcesFulfilledPayload
 >;
@@ -113,7 +113,7 @@ export const queryResources: ActionCreator<ThunkAction> = (
     getState,
     { nexus }
   ): Promise<
-    | FilterFetchFulfilledAciton<
+    | FilterFetchFulfilledAction<
         QueryResourcesActionTypes.FULFILLED,
         QueryResourcesFulfilledPayload
       >

@@ -1,7 +1,7 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
 import { Project } from '@bbp/nexus-sdk';
 import { ThunkAction } from '../..';
-import { FetchAction, FetchFulfilledAciton, FetchFailedAction } from '../utils';
+import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
 
 enum ProjectActionTypes {
   FETCHING = '@@nexus/PROJECT_FETCHING',
@@ -22,7 +22,7 @@ const fetchProjectsAction: ActionCreator<
 });
 
 const fetchProjectsFulfilledAction: ActionCreator<
-  FetchFulfilledAciton<ProjectActionTypes.FULFILLED, Project>
+  FetchFulfilledAction<ProjectActionTypes.FULFILLED, Project>
 > = (project: Project) => ({
   type: ProjectActionTypes.FULFILLED,
   payload: project,
@@ -35,6 +35,11 @@ const fetchProjectsFailedAction: ActionCreator<
   type: ProjectActionTypes.FAILED,
 });
 
+export type ProjectActions =
+  | FetchAction<ProjectActionTypes.FETCHING>
+  | FetchFulfilledAction<ProjectActionTypes.FULFILLED, Project>
+  | FetchFailedAction<ProjectActionTypes.FAILED>;
+
 export const fetchAndAssignProject: ActionCreator<ThunkAction> = (
   orgLabel: string,
   projectLabel: string
@@ -42,7 +47,7 @@ export const fetchAndAssignProject: ActionCreator<ThunkAction> = (
   return async (
     dispatch: Dispatch<any>
   ): Promise<
-    | FetchFulfilledAciton<ProjectActionTypes.FULFILLED, Project>
+    | FetchFulfilledAction<ProjectActionTypes.FULFILLED, Project>
     | FetchFailedAction<ProjectActionTypes.FAILED>
   > => {
     dispatch(fetchProjectsAction());

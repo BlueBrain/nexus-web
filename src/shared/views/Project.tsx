@@ -2,8 +2,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../store/reducers';
 import Lists from '../components/Lists';
-import { getProp } from '../utils';
 import { fetchAndAssignProject } from '../store/actions/nexus/projects';
+import { fetchOrg } from '../store/actions/nexus/activeOrg';
 
 interface ProjectViewProps {
   projectLabel: string;
@@ -18,7 +18,6 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   orgLabel,
   fetchProject,
 }) => {
-  console.log("i'm updating only once, yeah?");
   React.useEffect(
     () => {
       if (projectLabel !== match.params.project) {
@@ -37,20 +36,23 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
 const mapStateToProps = (state: RootState) => ({
   projectLabel:
     (state.nexus &&
-      state.nexus.project &&
-      state.nexus.project.data &&
-      state.nexus.project.data.label) ||
+      state.nexus.activeProject &&
+      state.nexus.activeProject.data &&
+      state.nexus.activeProject.data.label) ||
     '',
   activeOrg:
     (state.nexus &&
       state.nexus.activeOrg &&
-      state.nexus.activeOrg.org &&
-      state.nexus.activeOrg.org.label) ||
+      state.nexus.activeOrg &&
+      state.nexus.activeOrg.data &&
+      state.nexus.activeOrg.data.org.label) ||
     '',
 });
 const mapDispatchToProps = (dispatch: any) => ({
-  fetchProject: (org: string, project: string) =>
-    dispatch(fetchAndAssignProject(org, project)),
+  fetchProject: (org: string, project: string) => {
+    dispatch(fetchOrg(org));
+    dispatch(fetchAndAssignProject(org, project));
+  },
 });
 
 export default connect(

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'antd';
 import { RootState } from '../../store/reducers';
-import { getProp } from '../../utils';
 
 export const HomeBreadcrumbLabel = (state: RootState) => {
   return (
@@ -20,14 +19,24 @@ export const LoginBreadcrumbLabel = (state: RootState) => {
 };
 
 export const OrgBreadcrumbLabel = (state: RootState) => {
-  if (state.nexus && state.nexus.orgsFetching) {
+  if (
+    state.nexus &&
+    state.nexus.activeOrg &&
+    state.nexus.activeOrg.isFetching
+  ) {
     return (
       <span>
         <Icon type="bank" /> <Icon type="loading" />
       </span>
     );
   }
-  const activeOrgLabel = getProp(state, 'nexus.activeorg.org', 'org');
+  // TODO what should be the behavior if nothing is found?
+  const activeOrgLabel =
+    (state.nexus &&
+      state.nexus.activeOrg &&
+      state.nexus.activeOrg.data &&
+      state.nexus.activeOrg.data.org.label) ||
+    'org';
   return (
     <span>
       <Icon type="bank" /> {activeOrgLabel}
@@ -36,18 +45,25 @@ export const OrgBreadcrumbLabel = (state: RootState) => {
 };
 
 export const ProjectBreadcrumbLabel = (state: RootState) => {
-  if (state.nexus && state.nexus.projectsFetching) {
+  if (
+    state.nexus &&
+    state.nexus.activeProject &&
+    state.nexus.activeProject &&
+    state.nexus.activeProject.isFetching
+  ) {
     return (
       <span>
         <Icon type="solution" /> <Icon type="loading" />
       </span>
     );
   }
-  const activeProjectLabel = getProp(
-    state,
-    'nexus.project.data.label',
-    'project'
-  );
+  // TODO what should be the behavior if nothing is found?
+  const activeProjectLabel =
+    (state.nexus &&
+      state.nexus.activeProject &&
+      state.nexus.activeProject.data &&
+      state.nexus.activeProject.data.label) ||
+    'project';
   return (
     <span>
       <Icon type="solution" /> {activeProjectLabel}
