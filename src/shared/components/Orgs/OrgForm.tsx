@@ -6,7 +6,7 @@ export interface OrgFormProps {
   form: WrappedFormUtils;
   org?: {
     label: string;
-    name: string;
+    description?: string;
   };
   busy?: boolean;
   onSubmit?(project: OrgFormProps['org']): any;
@@ -60,18 +60,18 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
   return (
     <Spin spinning={busy}>
       <Form onSubmit={handleSubmit}>
-        <h1>Organization: {getFieldValue('name') || (org && org.name)}</h1>
-        <Form.Item label="Name" {...formItemLayout}>
-          {getFieldDecorator('name', {
-            initialValue: org ? org.name : '',
-            rules: [{ required: true }],
-          })(<Input placeholder="Name" />)}
-        </Form.Item>
+        <h1>Organization: {getFieldValue('label') || (org && org.label)}</h1>
         <Form.Item label="Label" {...formItemLayout}>
           {getFieldDecorator('label', {
             initialValue: org ? org.label : '',
             rules: [{ required: true }],
           })(<Input placeholder="Label" disabled={mode === 'edit'} />)}
+        </Form.Item>
+        <Form.Item label="Description" {...formItemLayout}>
+          {getFieldDecorator('description', {
+            initialValue: org ? org.description : '',
+            rules: [{ required: true }],
+          })(<Input placeholder="Description" disabled={mode === 'edit'} />)}
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>
           <Button type="primary" htmlType="submit">

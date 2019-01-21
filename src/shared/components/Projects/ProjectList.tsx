@@ -21,7 +21,7 @@ const ProjectList: React.FunctionComponent<ProjectListProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const filtered = projects.filter(project =>
-      project.name
+      project.label
         .toLocaleLowerCase()
         .includes(e.target.value.toLocaleLowerCase())
     );
@@ -41,7 +41,7 @@ const ProjectList: React.FunctionComponent<ProjectListProps> = ({
       <div className="projects">
         {items.map((project, i) => (
           <ProjectCard
-            key={project.name + i}
+            key={project.label + i}
             {...project}
             onClick={() => onProjectClick(project.label)}
             onEdit={() => onProjectEdit(project.label)}

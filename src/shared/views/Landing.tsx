@@ -19,7 +19,7 @@ interface LandingProps {
   modifyOrg: (
     orgLabel: string,
     rev: number,
-    orgName: string
+    description: string
   ) => Promise<Organization>;
   deprecateOrg: (orgLabel: string, rev: number) => Promise<void>;
 }
@@ -44,7 +44,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
 
   const saveAndCreate = (newOrg: Organization) => {
     setFormBusy(true);
-    createOrg(newOrg.label, newOrg.name)
+    createOrg(newOrg.label, newOrg.label)
       .then(
         () => {
           notification.success({
@@ -74,7 +74,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
 
   const saveAndModify = (selectedOrg: Organization, newOrg: Organization) => {
     setFormBusy(true);
-    modifyOrg(newOrg.label, (selectedOrg.rev = 1), newOrg.name)
+    modifyOrg(newOrg.label, (selectedOrg.rev = 1), newOrg.label)
       .then(
         () => {
           notification.success({
@@ -189,13 +189,12 @@ const Landing: React.FunctionComponent<LandingProps> = ({
       </Modal>
       <Drawer
         width={640}
-        visible={!!(selectedOrg && selectedOrg.name)}
+        visible={!!(selectedOrg && selectedOrg.label)}
         onClose={() => setSelectedOrg(undefined)}
       >
         {selectedOrg && (
           <OrgForm
             org={{
-              name: selectedOrg.name,
               label: selectedOrg.label,
             }}
             onSubmit={(o: Organization) => saveAndModify(selectedOrg, o)}

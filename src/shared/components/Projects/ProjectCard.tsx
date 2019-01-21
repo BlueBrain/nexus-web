@@ -4,19 +4,17 @@ import { Button, Card, Tag } from 'antd';
 import './Projects.less';
 
 export interface ProjectCardProps {
-  name: string;
   label: string;
-  resourceNumber: number;
   deprecated?: boolean;
+  resourceNumber?: number;
   logo?: string;
   onClick?(): void;
   onEdit?(): void;
 }
 
 const ProjectCard: React.FunctionComponent<ProjectCardProps> = ({
-  name,
   label,
-  resourceNumber,
+  resourceNumber = 0,
   onEdit,
   deprecated = false,
   onClick = () => {},
@@ -24,7 +22,7 @@ const ProjectCard: React.FunctionComponent<ProjectCardProps> = ({
   return (
     <Card className={`ProjectCard ${label}`} tabIndex={1} onClick={onClick}>
       <div className="content">
-        <p className="project-name">{name}</p>
+        <p className="project-name">{label}</p>
         {deprecated && <Tag color="red">deprecated</Tag>}
         <p className="project-number">
           <span className="number">{resourceNumber}</span> resource

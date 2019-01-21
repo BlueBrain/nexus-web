@@ -72,12 +72,11 @@ const Home: React.FunctionComponent<HomeProps> = ({
   const saveAndCreate = (newProject: Project) => {
     setFormBusy(true);
     createProject(activeOrg.label, newProject.label, {
-      name: newProject.name,
       base: newProject.base || undefined,
-      prefixMappings:
-        newProject.prefixMappings.length === 0
+      apiMappings:
+        newProject.apiMappings.length === 0
           ? undefined
-          : newProject.prefixMappings,
+          : newProject.apiMappings,
     })
       .then(
         () => {
@@ -108,10 +107,9 @@ const Home: React.FunctionComponent<HomeProps> = ({
 
   const saveAndModify = (selectedProject: Project, newProject: Project) => {
     setFormBusy(true);
-    modifyProject(activeOrg.label, newProject.label, selectedProject.version, {
-      name: newProject.name,
+    modifyProject(activeOrg.label, newProject.label, selectedProject.rev, {
       base: newProject.base,
-      prefixMappings: newProject.prefixMappings || [],
+      apiMappings: newProject.apiMappings || [],
     })
       .then(
         () => {
@@ -149,7 +147,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
     deprecateProject(
       selectedProject.orgLabel,
       selectedProject.label,
-      selectedProject.version
+      selectedProject.rev
     )
       .then(
         () => {
@@ -233,16 +231,15 @@ const Home: React.FunctionComponent<HomeProps> = ({
       </Modal>
       <Drawer
         width={640}
-        visible={!!(selectedProject && selectedProject.name)}
+        visible={!!(selectedProject && selectedProject.label)}
         onClose={() => setSelectedProject(undefined)}
       >
         {selectedProject && (
           <ProjectForm
             project={{
-              name: selectedProject.name,
               label: selectedProject.label,
               base: selectedProject.base,
-              prefixMappings: selectedProject.prefixMappings,
+              apiMappings: selectedProject.apiMappings,
             }}
             onSubmit={(p: Project) => saveAndModify(selectedProject, p)}
             onDeprecate={() => saveAndDeprecate(selectedProject)}

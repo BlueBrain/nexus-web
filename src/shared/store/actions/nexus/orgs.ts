@@ -1,5 +1,5 @@
 import { ActionCreator, Dispatch } from 'redux';
-import { Organization } from '@bbp/nexus-sdk';
+import { Organization, Project } from '@bbp/nexus-sdk';
 import { ThunkAction } from '../..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
 
@@ -7,6 +7,10 @@ enum OrgsActionTypes {
   FETCHING = '@@nexus/ORGS_FETCHING',
   FULFILLED = '@@nexus/ORGS_FETCHING_FULFILLED',
   FAILED = '@@nexus/ORGS_FETCHING_FAILED',
+}
+
+export interface OrgPayload extends Organization {
+  projectNumber: string;
 }
 
 export const actionTypes = {
@@ -22,8 +26,8 @@ const fetchOrgsAction: ActionCreator<
 });
 
 const fetchOrgsFulfilledAction: ActionCreator<
-  FetchFulfilledAction<OrgsActionTypes.FULFILLED, Organization[]>
-> = (orgs: Organization[]) => ({
+  FetchFulfilledAction<OrgsActionTypes.FULFILLED, OrgPayload[]>
+> = (orgs: OrgPayload[]) => ({
   type: OrgsActionTypes.FULFILLED,
   payload: orgs,
 });
@@ -37,7 +41,7 @@ const fetchOrgsFailedAction: ActionCreator<
 
 export type OrgsActions =
   | FetchAction<OrgsActionTypes.FETCHING>
-  | FetchFulfilledAction<OrgsActionTypes.FULFILLED, Organization[]>
+  | FetchFulfilledAction<OrgsActionTypes.FULFILLED, OrgPayload[]>
   | FetchFailedAction<OrgsActionTypes.FAILED>;
 
 export const fetchOrgs: ActionCreator<ThunkAction> = () => {
@@ -46,12 +50,20 @@ export const fetchOrgs: ActionCreator<ThunkAction> = () => {
     getState,
     { nexus }
   ): Promise<
-    | FetchFulfilledAction<OrgsActionTypes.FULFILLED, Organization[]>
+    | FetchFulfilledAction<OrgsActionTypes.FULFILLED, OrgPayload[]>
     | FetchFailedAction<OrgsActionTypes.FAILED>
   > => {
     dispatch(fetchOrgsAction());
     try {
       const orgs: Organization[] = await nexus.listOrganizations();
+      const projectsPerOrg = await Promise.all(orgs.map(org => org.listProjects()));
+      const payload = orgs.map((org, index) => {
+        const newOrg = org;
+        // @ts-ignore
+        newOrg.projectNumber = projectsPerOrg[index].length.toString();
+        return newOrg as OrgPayload;
+      });
+      console.log(projectsPerOrg);
       return dispatch(fetchOrgsFulfilledAction(orgs));
     } catch (e) {
       return dispatch(fetchOrgsFailedAction(e));

@@ -21,7 +21,7 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const filtered = orgs.filter(org =>
-      org.name.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase())
+      org.label.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase())
     );
     setItems(filtered);
   };
@@ -40,7 +40,7 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
         {items.map((org: OrgCardProps, i) => (
           // TODO org cards should be anchor tags with hrefs for SSR
           <OrgCard
-            key={org.name + i}
+            key={org.label + i}
             {...org}
             onClick={() => onOrgClick(org.label)}
             onEdit={() => onOrgEdit(org.label)}

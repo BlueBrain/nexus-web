@@ -5,8 +5,8 @@ import './Orgs.less';
 
 export interface OrgCardProps {
   label: string;
-  name: string;
-  projectNumber: number;
+  projectNumber?: number;
+  description?: string;
   logo?: string;
   deprecated?: boolean;
   onClick?(): void;
@@ -14,8 +14,9 @@ export interface OrgCardProps {
 }
 
 const OrgCard: React.FunctionComponent<OrgCardProps> = ({
-  name,
-  projectNumber,
+  label,
+  projectNumber = 0,
+  description = '',
   logo = '',
   deprecated = false,
   onClick = () => {},
@@ -27,7 +28,7 @@ const OrgCard: React.FunctionComponent<OrgCardProps> = ({
         <div className="logo">
           <Avatar shape="square" size={32} icon="team" src={logo} />
         </div>
-        <p className="org-name">{name}</p>
+        <p className="org-name">{label}</p>
         {deprecated && <Tag color="red">deprecated</Tag>}
         <p className="project-number">
           <span className="number">{projectNumber}</span> project
@@ -47,6 +48,9 @@ const OrgCard: React.FunctionComponent<OrgCardProps> = ({
           </Button>
         )}
       </div>
+      {description && (<p className="org-description">
+          {description}
+        </p>)}
     </Card>
   );
 };
