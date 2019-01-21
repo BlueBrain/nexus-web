@@ -11,13 +11,17 @@ import {
 import { ThunkAction } from '..';
 import { RootState } from '../reducers';
 import { updateList } from './lists';
+import {
+  ElasticSearchViewAggregationResponse,
+  ElasticSearchViewQueryResponse,
+} from '@bbp/nexus-sdk/lib/View/ElasticSearchView';
 
 export const queryResourcesActionPrefix = 'QUERY';
 
 enum QueryResourcesActionTypes {
   FETCHING = 'QUERY_RESOURCE_FETCHING',
   FULFILLED = 'QUERY_RESOURCE_FULFILLED',
-  FAILED = 'QUERY_REOSURCE_FAILED',
+  FAILED = 'QUERY_RESOURCE_FAILED',
 }
 
 export const actionTypes = {
@@ -60,18 +64,27 @@ const queryResourcesFetchAction: ActionCreator<FetchQueryAction> = (
 interface QueryResourcesFulfilledPayload {
   resources: PaginatedList<Resource>;
   paginationSettings: PaginationSettings;
+  _constrainedBy: any[];
+  '@type': any[];
 }
 
 const queryResourcesFulfilledAction: ActionCreator<FulfilledQueryAction> = (
   filterIndex: number,
   filterKey: string,
   resources: PaginatedList<Resource>,
-  paginationSettings: PaginationSettings
+  paginationSettings: PaginationSettings,
+  constrainedBy: any[],
+  types: any[]
 ) => ({
   filterIndex,
   filterKey,
   type: QueryResourcesActionTypes.FULFILLED,
-  payload: { resources, paginationSettings },
+  payload: {
+    resources,
+    paginationSettings,
+    _constrainedBy: constrainedBy,
+    '@type': types,
+  },
 });
 
 const queryResourcesFailedAction: ActionCreator<FailedQueryAction> = (
@@ -87,11 +100,28 @@ const queryResourcesFailedAction: ActionCreator<FailedQueryAction> = (
 
 // TODO break out into library
 const makeESQuery = (query?: { filters: any; textQuery?: string }) => {
-  if (query && query.textQuery) {
-    return {
-      query: {
+  if (query) {
+    const must = [];
+    if (Object.keys(query.filters).length) {
+      Object.keys(query.filters)
+        .filter(key => !!query.filters[key])
+        .forEach(key => {
+          must.push({
+            term: { [key]: query.filters[key] },
+          });
+        });
+    }
+    if (query.textQuery) {
+      must.push({
         query_string: {
           query: `${query.textQuery}~`,
+        },
+      });
+    }
+    return {
+      query: {
+        bool: {
+          must,
         },
       },
     };
@@ -134,21 +164,50 @@ export const queryResources: ActionCreator<ThunkAction> = (
       if (!projectLabel || !orgLabel) {
         throw new Error('No active org or project');
       }
+      const formattedQuery = makeESQuery(query);
       const org: Organization = await nexus.getOrganization(orgLabel);
       const project: Project = await org.getProject(projectLabel);
       const defaultElasticSearchView: ElasticSearchView = await project.getElasticSearchView();
       const resources: PaginatedList<
         Resource
       > = await defaultElasticSearchView.query(
-        makeESQuery(query),
+        formattedQuery,
         paginationSettings
+      );
+      const aggregationQuery = {
+        ...formattedQuery,
+        aggs: {
+          schemas: {
+            terms: {
+              size: 999,
+              field: '_constrainedBy',
+            },
+          },
+          types: {
+            terms: {
+              size: 999,
+              field: '@type',
+            },
+          },
+        },
+      };
+      const aggregationResponse: ElasticSearchViewAggregationResponse = await defaultElasticSearchView.aggregation(
+        aggregationQuery
+      );
+      const schemas = aggregationResponse.aggregations.schemas.buckets.map(
+        ({ doc_count, key }) => ({ key, count: doc_count })
+      );
+      const types = aggregationResponse.aggregations.types.buckets.map(
+        ({ doc_count, key }) => ({ key, count: doc_count })
       );
       return dispatch(
         queryResourcesFulfilledAction(
           filterIndex,
           filterKey,
           resources,
-          paginationSettings
+          paginationSettings,
+          schemas,
+          types
         )
       );
     } catch (e) {

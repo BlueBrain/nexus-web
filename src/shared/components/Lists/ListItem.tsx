@@ -6,7 +6,7 @@ import Renameable from '../Renameable';
 import { RootState } from '../../store/reducers';
 import { Dropdown, Menu, Input, Icon, Button, Empty, Spin } from 'antd';
 import ResourceList from '../Resources/ResourceList';
-import { updateList, deleteList } from '../../store/actions/lists';
+import { updateList, deleteList, cloneList } from '../../store/actions/lists';
 import { queryResources } from '../../store/actions/queryResource';
 import ListControlPanel from './ListControlPanel';
 
@@ -16,6 +16,7 @@ interface ListItemContainerProps {
   orgProjectFilterKey: string;
   updateList: (listIndex: number, list: List) => void;
   deleteList: (listIndex: number) => void;
+  cloneList: () => void;
   queryResources: (paginationSettings: PaginationSettings, query?: any) => void;
 }
 
@@ -31,6 +32,7 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
   listIndex,
   updateList,
   deleteList,
+  cloneList,
   queryResources,
 }) => {
   React.useEffect(
@@ -77,6 +79,25 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
     }
   };
 
+  const handleFilterUpdate = (value: any) => {
+    if (data) {
+      queryResources(data.paginationSettings, {
+        filters: { ...query.filters, ...value },
+        textQuery: query.textQuery,
+      });
+    }
+  };
+
+  const handleClearFilter = () => {
+    queryResources(
+      data ? data.paginationSettings : DEFAULT_PAGINATION_SETTINGS
+    );
+  };
+
+  const filterValues = data
+    ? { _constrainedBy: data['_constrainedBy'], '@type': data['@type'] }
+    : {};
+
   return (
     <div style={{ height: '100%' }}>
       <h3
@@ -91,7 +112,11 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
       </h3>
       <ListControlPanel
         query={query}
+        filterValues={filterValues}
         onTextQueryChange={handleTextQueryChange}
+        onFilterChange={handleFilterUpdate}
+        onClear={handleClearFilter}
+        onCloneList={cloneList}
       />
       <div
         style={{
@@ -101,7 +126,7 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
           minHeight: '50%',
         }}
       >
-        {error && (
+        {error && !data && (
           <Empty
             description={<span>There was an error loading this data.</span>}
           />
@@ -124,12 +149,13 @@ const mapStateToProps = (state: RootState) => ({});
 
 const mapDispatchToProps = (
   dispatch: any,
-  { orgProjectFilterKey, orgLabel, projectLabel, listIndex }: any
+  { orgProjectFilterKey, orgLabel, projectLabel, listIndex, list }: any
 ) => ({
   updateList: (listIndex: number, list: List) =>
     dispatch(updateList(orgProjectFilterKey, listIndex, list)),
   deleteList: (listIndex: number) =>
     dispatch(deleteList(orgProjectFilterKey, listIndex)),
+  cloneList: () => dispatch(cloneList(orgProjectFilterKey, listIndex, list)),
   queryResources: (paginationSettings: PaginationSettings, query?: any) =>
     dispatch(
       queryResources(

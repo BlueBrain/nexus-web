@@ -30,6 +30,8 @@ export interface List {
   request: FetchableState<{
     resources: PaginatedList<Resource>;
     paginationSettings: PaginationSettings;
+    _constrainedBy: any[];
+    '@type': any[];
   }>;
 }
 
@@ -81,6 +83,16 @@ export function listsReducer(
           listIndex === action.payload.listIndex ? action.payload.list : list
         ),
       ];
+    case ListActionTypes.CLONE:
+      const clonedList = {
+        ...action.payload.list,
+        name: `Clone of ${action.payload.list.name}`,
+      };
+      if (state.length === 1) {
+        return [...state.concat(clonedList)];
+      }
+      state.splice(action.payload.listIndex + 1, 0, clonedList);
+      return [...state];
     case ListActionTypes.CHANGE_INDEX:
       return [
         ...moveTo(state, action.payload.listIndex, action.payload.moveToIndex),
