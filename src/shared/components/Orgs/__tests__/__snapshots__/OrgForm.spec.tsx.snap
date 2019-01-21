@@ -28,549 +28,511 @@ exports[`Organisation Form component should render correctly 1`] = `
     }
   >
     <Spin
-      prefixCls="ant-spin"
       size="default"
       spinning={false}
       wrapperClassName=""
     >
-      <Animate
-        animation={Object {}}
+      <div
         className="ant-spin-nested-loading"
-        component="div"
-        componentProps={Object {}}
-        onAppear={[Function]}
-        onEnd={[Function]}
-        onEnter={[Function]}
-        onLeave={[Function]}
-        style={null}
-        transitionAppear={false}
-        transitionEnter={true}
-        transitionLeave={true}
-        transitionName="fade"
       >
         <div
-          className="ant-spin-nested-loading"
-          style={null}
+          className="ant-spin-container"
+          key="container"
         >
-          <AnimateChild
-            animation={Object {}}
-            key="container"
-            transitionAppear={false}
-            transitionEnter={true}
-            transitionLeave={true}
-            transitionName="fade"
+          <Form
+            hideRequiredMark={false}
+            layout="horizontal"
+            onSubmit={[Function]}
           >
-            <div
-              className="ant-spin-container"
-              key="container"
+            <form
+              className="ant-form ant-form-horizontal"
+              onSubmit={[Function]}
             >
-              <Form
-                hideRequiredMark={false}
-                layout="horizontal"
-                onSubmit={[Function]}
-                prefixCls="ant-form"
+              <h1>
+                Organization: 
+              </h1>
+              <FormItem
+                colon={true}
+                hasFeedback={false}
+                label="Name"
+                labelCol={
+                  Object {
+                    "sm": Object {
+                      "span": 5,
+                    },
+                    "xs": Object {
+                      "span": 24,
+                    },
+                  }
+                }
+                wrapperCol={
+                  Object {
+                    "sm": Object {
+                      "span": 19,
+                    },
+                    "xs": Object {
+                      "span": 24,
+                    },
+                  }
+                }
               >
-                <form
-                  className="ant-form ant-form-horizontal"
-                  onSubmit={[Function]}
+                <Row
+                  className="ant-form-item"
+                  gutter={0}
                 >
-                  <h1>
-                    Organization: 
-                  </h1>
-                  <FormItem
-                    colon={true}
-                    hasFeedback={false}
-                    label="Name"
-                    labelCol={
-                      Object {
-                        "sm": Object {
-                          "span": 5,
-                        },
-                        "xs": Object {
-                          "span": 24,
-                        },
-                      }
-                    }
-                    prefixCls="ant-form"
-                    wrapperCol={
-                      Object {
-                        "sm": Object {
-                          "span": 19,
-                        },
-                        "xs": Object {
-                          "span": 24,
-                        },
-                      }
-                    }
+                  <div
+                    className="ant-row ant-form-item"
                   >
-                    <Row
-                      className="ant-form-item"
-                      gutter={0}
+                    <Col
+                      className="ant-form-item-label"
+                      key="label"
+                      sm={
+                        Object {
+                          "span": 5,
+                        }
+                      }
+                      xs={
+                        Object {
+                          "span": 24,
+                        }
+                      }
                     >
                       <div
-                        className="ant-row ant-form-item"
+                        className="ant-form-item-label ant-col-xs-24 ant-col-sm-5"
                       >
-                        <Col
-                          className="ant-form-item-label"
-                          key="label"
-                          sm={
-                            Object {
-                              "span": 5,
-                            }
-                          }
-                          xs={
-                            Object {
-                              "span": 24,
-                            }
-                          }
+                        <label
+                          className="ant-form-item-required"
+                          htmlFor="name"
+                          onClick={[Function]}
+                          title="Name"
                         >
-                          <div
-                            className="ant-form-item-label ant-col-xs-24 ant-col-sm-5"
-                          >
-                            <label
-                              className="ant-form-item-required"
-                              htmlFor="name"
-                              onClick={[Function]}
-                              title="Name"
-                            >
-                              Name
-                            </label>
-                          </div>
-                        </Col>
-                        <Col
-                          className="ant-form-item-control-wrapper"
-                          key="wrapper"
-                          sm={
-                            Object {
-                              "span": 19,
-                            }
-                          }
-                          xs={
-                            Object {
-                              "span": 24,
-                            }
-                          }
+                          Name
+                        </label>
+                      </div>
+                    </Col>
+                    <Col
+                      className="ant-form-item-control-wrapper"
+                      key="wrapper"
+                      sm={
+                        Object {
+                          "span": 19,
+                        }
+                      }
+                      xs={
+                        Object {
+                          "span": 24,
+                        }
+                      }
+                    >
+                      <div
+                        className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19"
+                      >
+                        <div
+                          className="ant-form-item-control"
                         >
-                          <div
-                            className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19"
+                          <span
+                            className="ant-form-item-children"
                           >
-                            <div
-                              className="ant-form-item-control"
-                            >
-                              <span
-                                className="ant-form-item-children"
-                              >
-                                <Input
-                                  data-__field={
+                            <Input
+                              data-__field={
+                                Object {
+                                  "name": "name",
+                                }
+                              }
+                              data-__meta={
+                                Object {
+                                  "initialValue": "",
+                                  "name": "name",
+                                  "originalProps": Object {
+                                    "disabled": false,
+                                    "placeholder": "Name",
+                                    "type": "text",
+                                  },
+                                  "ref": null,
+                                  "rules": Array [
                                     Object {
-                                      "name": "name",
-                                    }
-                                  }
-                                  data-__meta={
+                                      "required": true,
+                                    },
+                                  ],
+                                  "trigger": "onChange",
+                                  "validate": Array [
                                     Object {
-                                      "initialValue": "",
-                                      "name": "name",
-                                      "originalProps": Object {
-                                        "disabled": false,
-                                        "placeholder": "Name",
-                                        "prefixCls": "ant-input",
-                                        "type": "text",
-                                      },
-                                      "ref": null,
                                       "rules": Array [
                                         Object {
                                           "required": true,
                                         },
                                       ],
-                                      "trigger": "onChange",
-                                      "validate": Array [
-                                        Object {
-                                          "rules": Array [
-                                            Object {
-                                              "required": true,
-                                            },
-                                          ],
-                                          "trigger": Array [
-                                            "onChange",
-                                          ],
-                                        },
+                                      "trigger": Array [
+                                        "onChange",
                                       ],
-                                      "valuePropName": "value",
-                                    }
+                                    },
+                                  ],
+                                  "valuePropName": "value",
+                                }
+                              }
+                              disabled={false}
+                              id="name"
+                              onChange={[Function]}
+                              placeholder="Name"
+                              type="text"
+                              value=""
+                            >
+                              <input
+                                className="ant-input"
+                                data-__field={
+                                  Object {
+                                    "name": "name",
                                   }
-                                  disabled={false}
-                                  id="name"
-                                  onChange={[Function]}
-                                  placeholder="Name"
-                                  prefixCls="ant-input"
-                                  type="text"
-                                  value=""
-                                >
-                                  <input
-                                    className="ant-input"
-                                    data-__field={
+                                }
+                                data-__meta={
+                                  Object {
+                                    "initialValue": "",
+                                    "name": "name",
+                                    "originalProps": Object {
+                                      "disabled": false,
+                                      "placeholder": "Name",
+                                      "type": "text",
+                                    },
+                                    "ref": null,
+                                    "rules": Array [
                                       Object {
-                                        "name": "name",
-                                      }
-                                    }
-                                    data-__meta={
+                                        "required": true,
+                                      },
+                                    ],
+                                    "trigger": "onChange",
+                                    "validate": Array [
                                       Object {
-                                        "initialValue": "",
-                                        "name": "name",
-                                        "originalProps": Object {
-                                          "disabled": false,
-                                          "placeholder": "Name",
-                                          "prefixCls": "ant-input",
-                                          "type": "text",
-                                        },
-                                        "ref": null,
                                         "rules": Array [
                                           Object {
                                             "required": true,
                                           },
                                         ],
-                                        "trigger": "onChange",
-                                        "validate": Array [
-                                          Object {
-                                            "rules": Array [
-                                              Object {
-                                                "required": true,
-                                              },
-                                            ],
-                                            "trigger": Array [
-                                              "onChange",
-                                            ],
-                                          },
+                                        "trigger": Array [
+                                          "onChange",
                                         ],
-                                        "valuePropName": "value",
-                                      }
-                                    }
-                                    disabled={false}
-                                    id="name"
-                                    onChange={[Function]}
-                                    onKeyDown={[Function]}
-                                    placeholder="Name"
-                                    type="text"
-                                    value=""
-                                  />
-                                </Input>
-                              </span>
-                              <Animate
-                                animation={Object {}}
-                                component=""
-                                componentProps={Object {}}
-                                key="help"
-                                onAppear={[Function]}
-                                onEnd={[Function]}
-                                onEnter={[Function]}
-                                onLeave={[Function]}
-                                transitionAppear={true}
-                                transitionEnter={true}
-                                transitionLeave={true}
-                                transitionName="show-help"
+                                      },
+                                    ],
+                                    "valuePropName": "value",
+                                  }
+                                }
+                                disabled={false}
+                                id="name"
+                                onChange={[Function]}
+                                onKeyDown={[Function]}
+                                placeholder="Name"
+                                type="text"
+                                value=""
                               />
-                            </div>
-                          </div>
-                        </Col>
+                            </Input>
+                          </span>
+                          <Animate
+                            animation={Object {}}
+                            component=""
+                            componentProps={Object {}}
+                            key="help"
+                            onAppear={[Function]}
+                            onEnd={[Function]}
+                            onEnter={[Function]}
+                            onLeave={[Function]}
+                            transitionAppear={true}
+                            transitionEnter={true}
+                            transitionLeave={true}
+                            transitionName="show-help"
+                          />
+                        </div>
                       </div>
-                    </Row>
-                  </FormItem>
-                  <FormItem
-                    colon={true}
-                    hasFeedback={false}
-                    label="Label"
-                    labelCol={
-                      Object {
-                        "sm": Object {
-                          "span": 5,
-                        },
-                        "xs": Object {
-                          "span": 24,
-                        },
-                      }
-                    }
-                    prefixCls="ant-form"
-                    wrapperCol={
-                      Object {
-                        "sm": Object {
-                          "span": 19,
-                        },
-                        "xs": Object {
-                          "span": 24,
-                        },
-                      }
-                    }
+                    </Col>
+                  </div>
+                </Row>
+              </FormItem>
+              <FormItem
+                colon={true}
+                hasFeedback={false}
+                label="Label"
+                labelCol={
+                  Object {
+                    "sm": Object {
+                      "span": 5,
+                    },
+                    "xs": Object {
+                      "span": 24,
+                    },
+                  }
+                }
+                wrapperCol={
+                  Object {
+                    "sm": Object {
+                      "span": 19,
+                    },
+                    "xs": Object {
+                      "span": 24,
+                    },
+                  }
+                }
+              >
+                <Row
+                  className="ant-form-item"
+                  gutter={0}
+                >
+                  <div
+                    className="ant-row ant-form-item"
                   >
-                    <Row
-                      className="ant-form-item"
-                      gutter={0}
+                    <Col
+                      className="ant-form-item-label"
+                      key="label"
+                      sm={
+                        Object {
+                          "span": 5,
+                        }
+                      }
+                      xs={
+                        Object {
+                          "span": 24,
+                        }
+                      }
                     >
                       <div
-                        className="ant-row ant-form-item"
+                        className="ant-form-item-label ant-col-xs-24 ant-col-sm-5"
                       >
-                        <Col
-                          className="ant-form-item-label"
-                          key="label"
-                          sm={
-                            Object {
-                              "span": 5,
-                            }
-                          }
-                          xs={
-                            Object {
-                              "span": 24,
-                            }
-                          }
+                        <label
+                          className="ant-form-item-required"
+                          htmlFor="label"
+                          onClick={[Function]}
+                          title="Label"
                         >
-                          <div
-                            className="ant-form-item-label ant-col-xs-24 ant-col-sm-5"
-                          >
-                            <label
-                              className="ant-form-item-required"
-                              htmlFor="label"
-                              onClick={[Function]}
-                              title="Label"
-                            >
-                              Label
-                            </label>
-                          </div>
-                        </Col>
-                        <Col
-                          className="ant-form-item-control-wrapper"
-                          key="wrapper"
-                          sm={
-                            Object {
-                              "span": 19,
-                            }
-                          }
-                          xs={
-                            Object {
-                              "span": 24,
-                            }
-                          }
+                          Label
+                        </label>
+                      </div>
+                    </Col>
+                    <Col
+                      className="ant-form-item-control-wrapper"
+                      key="wrapper"
+                      sm={
+                        Object {
+                          "span": 19,
+                        }
+                      }
+                      xs={
+                        Object {
+                          "span": 24,
+                        }
+                      }
+                    >
+                      <div
+                        className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19"
+                      >
+                        <div
+                          className="ant-form-item-control"
                         >
-                          <div
-                            className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19"
+                          <span
+                            className="ant-form-item-children"
                           >
-                            <div
-                              className="ant-form-item-control"
-                            >
-                              <span
-                                className="ant-form-item-children"
-                              >
-                                <Input
-                                  data-__field={
+                            <Input
+                              data-__field={
+                                Object {
+                                  "name": "label",
+                                }
+                              }
+                              data-__meta={
+                                Object {
+                                  "initialValue": "",
+                                  "name": "label",
+                                  "originalProps": Object {
+                                    "disabled": false,
+                                    "placeholder": "Label",
+                                    "type": "text",
+                                  },
+                                  "ref": null,
+                                  "rules": Array [
                                     Object {
-                                      "name": "label",
-                                    }
-                                  }
-                                  data-__meta={
+                                      "required": true,
+                                    },
+                                  ],
+                                  "trigger": "onChange",
+                                  "validate": Array [
                                     Object {
-                                      "initialValue": "",
-                                      "name": "label",
-                                      "originalProps": Object {
-                                        "disabled": false,
-                                        "placeholder": "Label",
-                                        "prefixCls": "ant-input",
-                                        "type": "text",
-                                      },
-                                      "ref": null,
                                       "rules": Array [
                                         Object {
                                           "required": true,
                                         },
                                       ],
-                                      "trigger": "onChange",
-                                      "validate": Array [
-                                        Object {
-                                          "rules": Array [
-                                            Object {
-                                              "required": true,
-                                            },
-                                          ],
-                                          "trigger": Array [
-                                            "onChange",
-                                          ],
-                                        },
+                                      "trigger": Array [
+                                        "onChange",
                                       ],
-                                      "valuePropName": "value",
-                                    }
+                                    },
+                                  ],
+                                  "valuePropName": "value",
+                                }
+                              }
+                              disabled={false}
+                              id="label"
+                              onChange={[Function]}
+                              placeholder="Label"
+                              type="text"
+                              value=""
+                            >
+                              <input
+                                className="ant-input"
+                                data-__field={
+                                  Object {
+                                    "name": "label",
                                   }
-                                  disabled={false}
-                                  id="label"
-                                  onChange={[Function]}
-                                  placeholder="Label"
-                                  prefixCls="ant-input"
-                                  type="text"
-                                  value=""
-                                >
-                                  <input
-                                    className="ant-input"
-                                    data-__field={
+                                }
+                                data-__meta={
+                                  Object {
+                                    "initialValue": "",
+                                    "name": "label",
+                                    "originalProps": Object {
+                                      "disabled": false,
+                                      "placeholder": "Label",
+                                      "type": "text",
+                                    },
+                                    "ref": null,
+                                    "rules": Array [
                                       Object {
-                                        "name": "label",
-                                      }
-                                    }
-                                    data-__meta={
+                                        "required": true,
+                                      },
+                                    ],
+                                    "trigger": "onChange",
+                                    "validate": Array [
                                       Object {
-                                        "initialValue": "",
-                                        "name": "label",
-                                        "originalProps": Object {
-                                          "disabled": false,
-                                          "placeholder": "Label",
-                                          "prefixCls": "ant-input",
-                                          "type": "text",
-                                        },
-                                        "ref": null,
                                         "rules": Array [
                                           Object {
                                             "required": true,
                                           },
                                         ],
-                                        "trigger": "onChange",
-                                        "validate": Array [
-                                          Object {
-                                            "rules": Array [
-                                              Object {
-                                                "required": true,
-                                              },
-                                            ],
-                                            "trigger": Array [
-                                              "onChange",
-                                            ],
-                                          },
+                                        "trigger": Array [
+                                          "onChange",
                                         ],
-                                        "valuePropName": "value",
-                                      }
-                                    }
-                                    disabled={false}
-                                    id="label"
-                                    onChange={[Function]}
-                                    onKeyDown={[Function]}
-                                    placeholder="Label"
-                                    type="text"
-                                    value=""
-                                  />
-                                </Input>
-                              </span>
-                              <Animate
-                                animation={Object {}}
-                                component=""
-                                componentProps={Object {}}
-                                key="help"
-                                onAppear={[Function]}
-                                onEnd={[Function]}
-                                onEnter={[Function]}
-                                onLeave={[Function]}
-                                transitionAppear={true}
-                                transitionEnter={true}
-                                transitionLeave={true}
-                                transitionName="show-help"
+                                      },
+                                    ],
+                                    "valuePropName": "value",
+                                  }
+                                }
+                                disabled={false}
+                                id="label"
+                                onChange={[Function]}
+                                onKeyDown={[Function]}
+                                placeholder="Label"
+                                type="text"
+                                value=""
                               />
-                            </div>
-                          </div>
-                        </Col>
+                            </Input>
+                          </span>
+                          <Animate
+                            animation={Object {}}
+                            component=""
+                            componentProps={Object {}}
+                            key="help"
+                            onAppear={[Function]}
+                            onEnd={[Function]}
+                            onEnter={[Function]}
+                            onLeave={[Function]}
+                            transitionAppear={true}
+                            transitionEnter={true}
+                            transitionLeave={true}
+                            transitionName="show-help"
+                          />
+                        </div>
                       </div>
-                    </Row>
-                  </FormItem>
-                  <FormItem
-                    colon={true}
-                    hasFeedback={false}
-                    prefixCls="ant-form"
-                    wrapperCol={
-                      Object {
-                        "sm": Object {
+                    </Col>
+                  </div>
+                </Row>
+              </FormItem>
+              <FormItem
+                colon={true}
+                hasFeedback={false}
+                wrapperCol={
+                  Object {
+                    "sm": Object {
+                      "offset": 5,
+                      "span": 19,
+                    },
+                    "xs": Object {
+                      "offset": 0,
+                      "span": 24,
+                    },
+                  }
+                }
+              >
+                <Row
+                  className="ant-form-item"
+                  gutter={0}
+                >
+                  <div
+                    className="ant-row ant-form-item"
+                  >
+                    <Col
+                      className="ant-form-item-control-wrapper"
+                      key="wrapper"
+                      sm={
+                        Object {
                           "offset": 5,
                           "span": 19,
-                        },
-                        "xs": Object {
+                        }
+                      }
+                      xs={
+                        Object {
                           "offset": 0,
                           "span": 24,
-                        },
+                        }
                       }
-                    }
-                  >
-                    <Row
-                      className="ant-form-item"
-                      gutter={0}
                     >
                       <div
-                        className="ant-row ant-form-item"
+                        className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-xs-offset-0 ant-col-sm-19 ant-col-sm-offset-5"
                       >
-                        <Col
-                          className="ant-form-item-control-wrapper"
-                          key="wrapper"
-                          sm={
-                            Object {
-                              "offset": 5,
-                              "span": 19,
-                            }
-                          }
-                          xs={
-                            Object {
-                              "offset": 0,
-                              "span": 24,
-                            }
-                          }
+                        <div
+                          className="ant-form-item-control"
                         >
-                          <div
-                            className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-xs-offset-0 ant-col-sm-19 ant-col-sm-offset-5"
+                          <span
+                            className="ant-form-item-children"
                           >
-                            <div
-                              className="ant-form-item-control"
+                            <Button
+                              block={false}
+                              ghost={false}
+                              htmlType="submit"
+                              loading={false}
+                              type="primary"
                             >
-                              <span
-                                className="ant-form-item-children"
-                              >
-                                <Button
-                                  block={false}
-                                  ghost={false}
-                                  htmlType="submit"
-                                  loading={false}
-                                  prefixCls="ant-btn"
-                                  type="primary"
+                              <Wave>
+                                <button
+                                  className="ant-btn ant-btn-primary"
+                                  onClick={[Function]}
+                                  type="submit"
                                 >
-                                  <Wave>
-                                    <button
-                                      className="ant-btn ant-btn-primary"
-                                      onClick={[Function]}
-                                      type="submit"
-                                    >
-                                      <span
-                                        key=".0"
-                                      >
-                                        Create
-                                      </span>
-                                    </button>
-                                  </Wave>
-                                </Button>
-                              </span>
-                              <Animate
-                                animation={Object {}}
-                                component=""
-                                componentProps={Object {}}
-                                key="help"
-                                onAppear={[Function]}
-                                onEnd={[Function]}
-                                onEnter={[Function]}
-                                onLeave={[Function]}
-                                transitionAppear={true}
-                                transitionEnter={true}
-                                transitionLeave={true}
-                                transitionName="show-help"
-                              />
-                            </div>
-                          </div>
-                        </Col>
+                                  <span
+                                    key=".0"
+                                  >
+                                    Create
+                                  </span>
+                                </button>
+                              </Wave>
+                            </Button>
+                          </span>
+                          <Animate
+                            animation={Object {}}
+                            component=""
+                            componentProps={Object {}}
+                            key="help"
+                            onAppear={[Function]}
+                            onEnd={[Function]}
+                            onEnter={[Function]}
+                            onLeave={[Function]}
+                            transitionAppear={true}
+                            transitionEnter={true}
+                            transitionLeave={true}
+                            transitionName="show-help"
+                          />
+                        </div>
                       </div>
-                    </Row>
-                  </FormItem>
-                </form>
-              </Form>
-            </div>
-          </AnimateChild>
+                    </Col>
+                  </div>
+                </Row>
+              </FormItem>
+            </form>
+          </Form>
         </div>
-      </Animate>
+      </div>
     </Spin>
   </OrgForm>
 </Form(OrgForm)>
