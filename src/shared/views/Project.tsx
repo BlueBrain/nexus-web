@@ -27,7 +27,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
     [match.params.project, match.params.org]
   );
   return (
-    <div className="project">
+    <div className="project full-width">
       <Lists projectLabel={match.params.project} orgLabel={match.params.org} />
     </div>
   );

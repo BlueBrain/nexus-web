@@ -69,6 +69,7 @@ const mapDispatchToProps = (dispatch: any, ownProps: any) => {
   };
 };
 
+// TODO: move this at view level
 export default connect(
   mapStateToProps,
   mapDispatchToProps
