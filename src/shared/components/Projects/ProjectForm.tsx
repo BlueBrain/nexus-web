@@ -88,6 +88,7 @@ export interface ProjectFormProps {
   form: WrappedFormUtils;
   project?: {
     label: string;
+    description?: string;
     base?: string;
     apiMappings?: PrefixMappingGroupInputState[];
   };
@@ -237,6 +238,12 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
             rules: [{ required: true }],
           })(<Input placeholder="Label" disabled={mode === 'edit'} />)}
         </Form.Item>
+        <Form.Item label="Description" {...formItemLayout}>
+          {getFieldDecorator('description', {
+            initialValue: project ? project.description : '',
+            rules: [{ required: false }],
+          })(<Input placeholder="Description" />)}
+        </Form.Item>
         <Form.Item label="Base" {...formItemLayout}>
           {getFieldDecorator('base', {
             initialValue: project ? project.base : '',
@@ -246,7 +253,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
         {apiMappingsItems}
         <Form.Item {...formItemLayoutWithOutLabel}>
           <Button type="dashed" onClick={add} style={{ width: '60%' }}>
-            <Icon type="plus" /> Add prefix mapping
+            <Icon type="plus" /> Add API mapping
           </Button>
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>

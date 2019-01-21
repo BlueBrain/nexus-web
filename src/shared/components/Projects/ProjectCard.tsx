@@ -6,6 +6,7 @@ import './Projects.less';
 export interface ProjectCardProps {
   label: string;
   deprecated?: boolean;
+  description?: string;
   resourceNumber?: number;
   logo?: string;
   onClick?(): void;
@@ -15,6 +16,7 @@ export interface ProjectCardProps {
 const ProjectCard: React.FunctionComponent<ProjectCardProps> = ({
   label,
   resourceNumber = 0,
+  description = '',
   onEdit,
   deprecated = false,
   onClick = () => {},
@@ -42,6 +44,11 @@ const ProjectCard: React.FunctionComponent<ProjectCardProps> = ({
           </Button>
         )}
       </div>
+      {description && (
+        <p className="project-description">
+          {description}
+        </p>
+      )}
     </Card>
   );
 };

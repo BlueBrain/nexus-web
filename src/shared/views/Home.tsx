@@ -73,6 +73,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
     setFormBusy(true);
     createProject(activeOrg.label, newProject.label, {
       base: newProject.base || undefined,
+      description: newProject.description || '',
       apiMappings:
         newProject.apiMappings.length === 0
           ? undefined
@@ -109,6 +110,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
     setFormBusy(true);
     modifyProject(activeOrg.label, newProject.label, selectedProject.rev, {
       base: newProject.base,
+      description: newProject.description,
       apiMappings: newProject.apiMappings || [],
     })
       .then(
@@ -240,6 +242,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
           <ProjectForm
             project={{
               label: selectedProject.label,
+              description: selectedProject.description || '',
               base: selectedProject.base,
               apiMappings: selectedProject.apiMappings,
             }}
