@@ -16,7 +16,7 @@
     "build:storybook": "build-storybook"
   },
   "dependencies": {
-    "@bbp/nexus-sdk": "0.2.1",
+    "@bbp/nexus-sdk": "1.0.0-beta.0",
     "@types/redux-localstorage": "^1.0.8",
     "antd": "^3.10.9",
     "connected-react-router": "^5.0.1",

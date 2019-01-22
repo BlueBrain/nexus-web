@@ -71,7 +71,7 @@ const RawElasticSearchQueryView: React.FunctionComponent<RawElasticSearchQueryVi
         itemLayout="vertical"
         loading={fetching}
         header={
-          <p className="result">{`Found ${total} resource${total > 1 ? 's' : ''}`}</p>
+          <p className="result">{`Found ${total} result${total > 1 ? 's' : ''}`}</p>
         }
         dataSource={data}
         pagination={{

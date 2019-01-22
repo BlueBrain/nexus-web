@@ -4,8 +4,8 @@ import { RootState } from '../store/reducers';
 import Lists from '../components/Lists';
 import { fetchAndAssignProject } from '../store/actions/nexus/projects';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
-import { Project, Organization } from '@bbp/nexus-sdk';
-import { Button, Empty } from 'antd';
+import { Project } from '@bbp/nexus-sdk';
+import { Empty } from 'antd';
 
 interface ProjectViewProps {
   project: Project | null;
