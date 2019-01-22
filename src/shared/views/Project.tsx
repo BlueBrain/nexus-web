@@ -9,11 +9,13 @@ import { Button, Empty } from 'antd';
 
 interface ProjectViewProps {
   project: Project | null;
+  error: Error | null;
   match: any;
   fetchProject(org: string, project: string): void;
 }
 
 const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
+  error,
   match,
   project,
   fetchProject,
@@ -29,7 +31,15 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   );
   return (
     <div className="project">
-      {!project && (
+      {!project && error && (
+        <>
+          <h1 style={{ marginBottom: 0, marginRight: 8 }}>
+            {match.params.project}
+          </h1>
+          <Empty description="There was a problem while loading this project!" />
+        </>
+      )}
+      {!project && !error && (
         <>
           <h1 style={{ marginBottom: 0, marginRight: 8 }}>
             {match.params.project}
@@ -59,6 +69,11 @@ const mapStateToProps = (state: RootState) => ({
       state.nexus.activeProject &&
       state.nexus.activeProject.data &&
       state.nexus.activeProject.data) ||
+    null,
+  error:
+    (state.nexus &&
+      state.nexus.activeProject &&
+      state.nexus.activeProject.error) ||
     null,
 });
 const mapDispatchToProps = (dispatch: any) => ({

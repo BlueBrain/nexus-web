@@ -7,8 +7,10 @@ import { List, ListsByProjectState } from '../../store/reducers/lists';
 import ListItem from './ListItem';
 import { createList, initializeProjectList } from '../../store/actions/lists';
 import FileUpload from '../FileUpload';
-import { Button } from 'antd';
+import { Button, Empty, Modal } from 'antd';
 import { Project } from '@bbp/nexus-sdk';
+import ResourceForm from '../Resources/ResourceForm';
+import useForceUpdate from 'use-force-update';
 
 interface ListProps {
   lists: ListsByProjectState;
@@ -23,7 +25,7 @@ const ListsContainer: React.FunctionComponent<ListProps> = React.memo(
   ({ lists, createList, initialize, orgLabel, projectLabel, project }) => {
     const orgProjectFilterKey = orgLabel + projectLabel;
     const projectLists: List[] = lists[orgProjectFilterKey];
-
+    const forceUpdate = useForceUpdate();
     React.useEffect(() => {
       if (!projectLists) {
         initialize();
@@ -53,6 +55,11 @@ const ListsContainer: React.FunctionComponent<ListProps> = React.memo(
             </li>
           );
         })}
+        {!(projectLists || []).length && (
+          <div style={{ opacity: 1, width: '50%', marginTop: '5%' }}>
+            <Empty description>No lists</Empty>
+          </div>
+        )}
         <div
           className="side-panel"
           key="make-new-list"
@@ -61,14 +68,22 @@ const ListsContainer: React.FunctionComponent<ListProps> = React.memo(
           <h2>Resources</h2>
           <p>view resources from a project</p>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <Button
-              style={{ margin: '0.5em 0' }}
-              type="primary"
-              onClick={() => {}}
-              icon="plus-square"
-            >
-              Create Resource
-            </Button>
+            <ResourceForm
+              project={project}
+              onSuccess={() => forceUpdate()}
+              render={(updateFormVisible: () => void) => {
+                return (
+                  <Button
+                    style={{ margin: '0.5em 0' }}
+                    type="primary"
+                    onClick={updateFormVisible}
+                    icon="plus-square"
+                  >
+                    Create Resource
+                  </Button>
+                );
+              }}
+            />
             <Button
               style={{ margin: '0.5em 0' }}
               onClick={createList}
@@ -78,14 +93,7 @@ const ListsContainer: React.FunctionComponent<ListProps> = React.memo(
             </Button>
           </div>
           <div style={{ height: '200px', margin: '0.5em 0' }}>
-            <FileUpload
-              onFileUpload={async file => {
-                const project = await Project.get(orgLabel, projectLabel);
-                console.log({ file });
-                const response = await project.postFile(file);
-                console.log({ response });
-              }}
-            />
+            <FileUpload onFileUpload={async file => {}} />
           </div>
         </div>
       </ul>

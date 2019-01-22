@@ -23,7 +23,6 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
     onChange(info: any) {
       const status = info.file.status;
       if (status !== 'uploading') {
-        console.log(info.file, info.fileList);
       }
       if (status === 'done') {
         message.success(`${info.file.name} file uploaded successfully.`);

@@ -30,8 +30,10 @@ const FilterDropdown: React.FunctionComponent<FilterDropdownProps> = ({
               value={value}
               dataSource={filterValues[filterKey].map(({ key, count }) => (
                 <Option key={key}>
-                  <span>{key}</span>
-                  <span>{count}</span>
+                  <div className="schema-value">
+                    <span>{key}</span>
+                    <span>{count}</span>
+                  </div>
                 </Option>
               ))}
               onChange={value => {
