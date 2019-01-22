@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Drawer, notification, Modal, Button } from 'antd';
+import { Drawer, notification, Modal, Button, Empty } from 'antd';
 import { Project } from '@bbp/nexus-sdk';
 import { CreateProjectPayload } from '@bbp/nexus-sdk/lib/Project/types';
 import { RootState } from '../store/reducers';
@@ -17,7 +17,7 @@ import ProjectForm from '../components/Projects/ProjectForm';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
 
 interface HomeProps {
-  activeOrg: { label: string };
+  activeOrg: { label: string; description?: string };
   projects: Project[];
   busy: boolean;
   match: any;
@@ -200,8 +200,10 @@ const Home: React.FunctionComponent<HomeProps> = ({
 
   return (
     <>
+      <h1 style={{ marginBottom: 0, marginRight: 8 }}>{activeOrg.label}</h1>
+      {activeOrg.description && <p>{activeOrg.description}</p>}
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
-        <h1 style={{ marginBottom: 0, marginRight: 8 }}>Projects</h1>
+        <h2 style={{ marginBottom: 0, marginRight: 8 }}>Projects</h2>
         <Button
           type="primary"
           onClick={() => setModalVisible(true)}
@@ -209,15 +211,17 @@ const Home: React.FunctionComponent<HomeProps> = ({
         />
       </div>
       {projects.length === 0 ? (
-        <p>no projects</p>
-        ) : (
+        <Empty description="No projects" />
+      ) : (
         <ProjectList
           projects={projects}
           onProjectClick={(projectLabel: string) =>
             goTo(activeOrg.label, projectLabel)
           }
           onProjectEdit={(projectLabel: string) =>
-            setSelectedProject(projects.filter(p => p.label === projectLabel)[0])
+            setSelectedProject(
+              projects.filter(p => p.label === projectLabel)[0]
+            )
           }
         />
       )}

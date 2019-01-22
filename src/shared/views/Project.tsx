@@ -4,20 +4,21 @@ import { RootState } from '../store/reducers';
 import Lists from '../components/Lists';
 import { fetchAndAssignProject } from '../store/actions/nexus/projects';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
+import { Project, Organization } from '@bbp/nexus-sdk';
+import { Button, Empty } from 'antd';
 
 interface ProjectViewProps {
-  projectLabel: string;
-  orgLabel: string;
+  project: Project | null;
   match: any;
   fetchProject(org: string, project: string): void;
 }
 
 const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   match,
-  projectLabel,
-  orgLabel,
+  project,
   fetchProject,
 }) => {
+  const projectLabel = project ? project.label : null;
   React.useEffect(
     () => {
       if (projectLabel !== match.params.project) {
@@ -27,26 +28,48 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
     [match.params.project, match.params.org]
   );
   return (
-    <div className="project full-width">
-      <Lists projectLabel={match.params.project} orgLabel={match.params.org} />
+    <div className="project">
+      {!project && (
+        <>
+          <h1 style={{ marginBottom: 0, marginRight: 8 }}>
+            {match.params.project}
+          </h1>
+          <Empty description="No project data found here..." />
+        </>
+      )}
+      {project && (
+        <>
+          <h1 style={{ marginBottom: 0, marginRight: 8 }}>{project.label}</h1>
+          {project.description && <p>{project.description}</p>}
+          <div
+            style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}
+          >
+            <h2 style={{ marginBottom: 0, marginRight: 8 }}>Resources</h2>
+            <Button
+              type="primary"
+              // onClick={() => setModalVisible(true)}
+              icon="plus-square"
+            >
+              Create Resource
+            </Button>
+          </div>
+          <Lists
+            projectLabel={match.params.project}
+            orgLabel={match.params.org}
+          />
+        </>
+      )}
     </div>
   );
 };
 
 const mapStateToProps = (state: RootState) => ({
-  projectLabel:
+  project:
     (state.nexus &&
       state.nexus.activeProject &&
       state.nexus.activeProject.data &&
-      state.nexus.activeProject.data.label) ||
-    '',
-  activeOrg:
-    (state.nexus &&
-      state.nexus.activeOrg &&
-      state.nexus.activeOrg &&
-      state.nexus.activeOrg.data &&
-      state.nexus.activeOrg.data.org.label) ||
-    '',
+      state.nexus.activeProject.data) ||
+    null,
 });
 const mapDispatchToProps = (dispatch: any) => ({
   fetchProject: (org: string, project: string) => {
