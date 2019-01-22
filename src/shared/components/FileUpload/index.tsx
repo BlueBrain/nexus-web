@@ -35,11 +35,6 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
 
   return (
     <div>
-      <Switch
-        checkedChildren={<Icon type="folder-open" />}
-        unCheckedChildren={<Icon type="file-add" />}
-        onChange={setDirectoryMode}
-      />
       <Dragger {...draggerProps} directory={directoryMode}>
         <p className="ant-upload-drag-icon">
           <Icon type="inbox" />
@@ -53,6 +48,23 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
           <p className="ant-upload-hint">Single or bulk upload.</p>
         )}
       </Dragger>
+      <div
+        style={{ display: 'flex', flexDirection: 'column', margin: '0.5em 0' }}
+      >
+        <Switch
+          checkedChildren={
+            <div>
+              <Icon type="folder-open" /> <span>Directories</span>
+            </div>
+          }
+          unCheckedChildren={
+            <div>
+              <Icon type="file-add" /> <span>Single/Bulk</span>
+            </div>
+          }
+          onChange={setDirectoryMode}
+        />
+      </div>
     </div>
   );
 };

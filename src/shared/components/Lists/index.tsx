@@ -77,7 +77,7 @@ const ListsContainer: React.FunctionComponent<ListProps> = React.memo(
               New List
             </Button>
           </div>
-          <div style={{ height: '200px' }}>
+          <div style={{ height: '200px', margin: '0.5em 0' }}>
             <FileUpload
               onFileUpload={async file => {
                 const project = await Project.get(orgLabel, projectLabel);
