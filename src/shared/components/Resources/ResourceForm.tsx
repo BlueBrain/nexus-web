@@ -186,7 +186,6 @@ const ResourceFormModal: React.FunctionComponent<ResourceFormModalProps> = ({
   const [modalVisible, setModalVisible] = React.useState(false);
   const [formBusy, setFormBusy] = React.useState(false);
   const saveAndCreate = async (resourceToCreate: any) => {
-    console.log('saving', { resourceToCreate });
     const { schemaId, payload } = resourceToCreate;
     setFormBusy(true);
     try {

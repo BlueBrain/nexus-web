@@ -93,14 +93,7 @@ const ListsContainer: React.FunctionComponent<ListProps> = React.memo(
             </Button>
           </div>
           <div style={{ height: '200px', margin: '0.5em 0' }}>
-            <FileUpload
-              onFileUpload={async file => {
-                // const project = await Project.get(orgLabel, projectLabel);
-                console.log({ file });
-                // const response = await project.postFile(file);
-                // console.log({ response });
-              }}
-            />
+            <FileUpload onFileUpload={async file => {}} />
           </div>
         </div>
       </ul>
