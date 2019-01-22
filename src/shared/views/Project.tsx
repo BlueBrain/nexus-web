@@ -36,7 +36,10 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
           <h1 style={{ marginBottom: 0, marginRight: 8 }}>
             {match.params.project}
           </h1>
-          <Empty description="There was a problem while loading this project!" />
+          <Empty
+            style={{ marginTop: '25%' }}
+            description="There was a problem while loading this project!"
+          />
         </>
       )}
       {!project && !error && (
@@ -44,7 +47,10 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
           <h1 style={{ marginBottom: 0, marginRight: 8 }}>
             {match.params.project}
           </h1>
-          <Empty description="No project data found here..." />
+          <Empty
+            style={{ marginTop: '25%' }}
+            description="No project data found here..."
+          />
         </>
       )}
       {project && (
