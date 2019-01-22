@@ -56,11 +56,27 @@ const ListsContainer: React.FunctionComponent<ListProps> = React.memo(
         <div
           className="side-panel"
           key="make-new-list"
-          style={{ width: '200px' }}
+          style={{ width: '240px', padding: '0 1em' }}
         >
-          <h2>{project.label}</h2>
-          <p>{'view resources from project '}</p>
-          <Button onClick={createList}>Make a new list</Button>
+          <h2>Resources</h2>
+          <p>view resources from a project</p>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <Button
+              style={{ margin: '0.5em 0' }}
+              type="primary"
+              onClick={() => {}}
+              icon="plus-square"
+            >
+              Create Resource
+            </Button>
+            <Button
+              style={{ margin: '0.5em 0' }}
+              onClick={createList}
+              icon="plus-square"
+            >
+              New List
+            </Button>
+          </div>
           <div style={{ height: '200px' }}>
             <FileUpload
               onFileUpload={async file => {

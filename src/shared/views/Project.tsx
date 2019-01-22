@@ -39,19 +39,9 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
       )}
       {project && (
         <>
-          <h1 style={{ marginBottom: 0, marginRight: 8 }}>{project.label}</h1>
-          {project.description && <p>{project.description}</p>}
-          <div
-            style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}
-          >
-            <h2 style={{ marginBottom: 0, marginRight: 8 }}>Resources</h2>
-            <Button
-              type="primary"
-              // onClick={() => setModalVisible(true)}
-              icon="plus-square"
-            >
-              Create Resource
-            </Button>
+          <div>
+            <h1 style={{ marginBottom: 0, marginRight: 8 }}>{project.label}</h1>
+            {project.description && <p>{project.description}</p>}{' '}
           </div>
           <Lists
             projectLabel={match.params.project}

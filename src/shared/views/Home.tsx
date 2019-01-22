@@ -208,7 +208,9 @@ const Home: React.FunctionComponent<HomeProps> = ({
           type="primary"
           onClick={() => setModalVisible(true)}
           icon="plus-square"
-        />
+        >
+          Create Project
+        </Button>
       </div>
       {projects.length === 0 ? (
         <Empty description="No projects" />
