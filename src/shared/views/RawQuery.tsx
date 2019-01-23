@@ -6,6 +6,7 @@ import { NexusState } from '../store/reducers/nexus';
 import { RouteComponentProps, match } from 'react-router';
 import { fetchAndAssignProject } from '../store/actions/nexus/projects';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
+import * as queryString from 'query-string';
 
 interface RawQueryProps extends RouteComponentProps {
   activeOrg: { label: string };
@@ -14,11 +15,18 @@ interface RawQueryProps extends RouteComponentProps {
   busy: boolean;
   fetchProject(orgName: string, projectName: string): void;
   match: match<{ org: string; project: string; view?: string }>;
+  location: any;
 }
 
 export const RawElasticSearchQueryComponent: React.FunctionComponent<
   RawQueryProps
-> = ({ match, activeOrg, activeProject, fetchProject }): JSX.Element => {
+> = ({
+  match,
+  activeOrg,
+  activeProject,
+  fetchProject,
+  location,
+}): JSX.Element => {
   React.useEffect(
     () => {
       if (
@@ -30,8 +38,10 @@ export const RawElasticSearchQueryComponent: React.FunctionComponent<
     },
     [match.params.org, match.params.project]
   );
+  const query = queryString.parse(location.search).query;
   return (
     <RawElasticSearchQueryView
+      initialQuery={query}
       wantedOrg={match.params.org}
       wantedProject={match.params.project}
       wantedView={match.params.view}

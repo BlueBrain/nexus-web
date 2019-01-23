@@ -7,7 +7,7 @@ import { RootState } from '../../store/reducers';
 import { Icon, Empty, Spin } from 'antd';
 import ResourceList from '../Resources/ResourceList';
 import { updateList, deleteList, cloneList } from '../../store/actions/lists';
-import { queryResources } from '../../store/actions/queryResource';
+import { queryResources, makeESQuery } from '../../store/actions/queryResource';
 import ListControlPanel from './ListControlPanel';
 
 interface ListItemContainerProps {
@@ -121,7 +121,9 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
         onFilterChange={handleFilterUpdate}
         onClear={handleClearFilter}
         onCloneList={cloneList}
-        queryPath={`/${orgLabel}/${projectLabel}/${list.view}/_search`}
+        queryPath={`/${orgLabel}/${projectLabel}/${
+          list.view
+        }/_search?query=${JSON.stringify(makeESQuery(query))}`}
       />
       <div
         style={{

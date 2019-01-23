@@ -21,14 +21,31 @@ export interface RawElasticSearchQueryViewProps {
   wantedOrg: string;
   wantedProject: string;
   wantedView?: string;
-  executeRawQuery(orgName: string, projectName: string, viewID: string | undefined, query: string, paginationSettings: PaginationSettings): void;
+  executeRawQuery(
+    orgName: string,
+    projectName: string,
+    viewID: string | undefined,
+    query: string,
+    paginationSettings: PaginationSettings
+  ): void;
 }
 
 const TextArea = Input.TextArea;
 const FormItem = Form.Item;
 const ListItem = List.Item;
 
-const RawElasticSearchQueryView: React.FunctionComponent<RawElasticSearchQueryViewProps> = ({ fetching, initialQuery, paginationSettings, response, executeRawQuery, wantedOrg, wantedProject, wantedView }) : JSX.Element => {
+const RawElasticSearchQueryView: React.FunctionComponent<
+  RawElasticSearchQueryViewProps
+> = ({
+  fetching,
+  initialQuery,
+  paginationSettings,
+  response,
+  executeRawQuery,
+  wantedOrg,
+  wantedProject,
+  wantedView,
+}): JSX.Element => {
   const [query, setQuery] = React.useState(initialQuery);
 
   const data = response.results.map(result => result._source || []);
@@ -44,66 +61,110 @@ const RawElasticSearchQueryView: React.FunctionComponent<RawElasticSearchQueryVi
       from,
       size: pageSize,
     };
-    executeRawQuery(wantedOrg, wantedProject, wantedView, query, paginationSettings);
+    executeRawQuery(
+      wantedOrg,
+      wantedProject,
+      wantedView,
+      query,
+      paginationSettings
+    );
   };
 
   return (
     <>
-    <Form onSubmit={(e) => {e.preventDefault(); executeRawQuery(wantedOrg, wantedProject, wantedView, query, paginationSettings);}}>
-      <FormItem>
-        <TextArea
-          className="query"
-          value={query}
-          placeholder={`Enter a valid ElasticSearch query`}
-          onChange={(e) => setQuery(e.target.value)}
-          autosize
-        />
-      </FormItem>
-      <FormItem>
-        <Button type="primary" htmlType="submit">Execute ElasticSearch query</Button>
-      </FormItem>
-    </Form>
-    <Card bordered>
-      <List
-        bordered
-        size="small"
-        className="elasticsearch-results"
-        itemLayout="vertical"
-        loading={fetching}
-        header={
-          <p className="result">{`Found ${total} result${total > 1 ? 's' : ''}`}</p>
-        }
-        dataSource={data}
-        pagination={{
-          total,
-          current,
-          pageSize: DEFAULT_PAGE_SIZE,
-          onChange: onPaginationChange,
-          position: "both",
+      <Form
+        onSubmit={e => {
+          e.preventDefault();
+          executeRawQuery(
+            wantedOrg,
+            wantedProject,
+            wantedView,
+            query,
+            paginationSettings
+          );
         }}
-        renderItem={(result?: object) =>
-        <ListItem>
-          {(result && (<ReactJson src={result} name={null} enableClipboard={false} displayObjectSize={false} displayDataTypes={false} />) || '')}
-        </ListItem>
-        }
       >
-
-      </List>
-    </Card>
+        <FormItem>
+          <TextArea
+            className="query"
+            value={query}
+            placeholder={`Enter a valid ElasticSearch query`}
+            onChange={e => setQuery(e.target.value)}
+            autosize
+          />
+        </FormItem>
+        <FormItem>
+          <Button type="primary" htmlType="submit">
+            Execute ElasticSearch query
+          </Button>
+        </FormItem>
+      </Form>
+      <Card bordered>
+        <List
+          bordered
+          size="small"
+          className="elasticsearch-results"
+          itemLayout="vertical"
+          loading={fetching}
+          header={
+            <p className="result">{`Found ${total} result${
+              total > 1 ? 's' : ''
+            }`}</p>
+          }
+          dataSource={data}
+          pagination={{
+            total,
+            current,
+            pageSize: DEFAULT_PAGE_SIZE,
+            onChange: onPaginationChange,
+            position: 'both',
+          }}
+          renderItem={(result?: object) => (
+            <ListItem>
+              {(result && (
+                <ReactJson
+                  src={result}
+                  name={null}
+                  enableClipboard={false}
+                  displayObjectSize={false}
+                  displayDataTypes={false}
+                />
+              )) ||
+                ''}
+            </ListItem>
+          )}
+        />
+      </Card>
     </>
   );
 };
 
-const mapStateToProps = ({ rawElasticSearchQuery }: { rawElasticSearchQuery: RawElasticSearchQueryState}) => ({
+const mapStateToProps = (
+  {
+    rawElasticSearchQuery,
+  }: {
+    rawElasticSearchQuery: RawElasticSearchQueryState;
+  },
+  ownProps: any
+) => ({
   fetching: rawElasticSearchQuery.fetching,
-  initialQuery: JSON.stringify({
-    "query": {
-      "term": {
-        "_deprecated": false
-      }
-    }
-  }, null, 2),
-  paginationSettings: rawElasticSearchQuery.paginationSettings || { from: 0, size: DEFAULT_PAGE_SIZE },
+  initialQuery:
+    ownProps.initialQuery ||
+    JSON.stringify(
+      {
+        query: {
+          term: {
+            _deprecated: false,
+          },
+        },
+      },
+      null,
+      2
+    ),
+  paginationSettings: rawElasticSearchQuery.paginationSettings || {
+    from: 0,
+    size: DEFAULT_PAGE_SIZE,
+  },
   response: rawElasticSearchQuery.response,
 });
 
@@ -113,15 +174,17 @@ const mapDispatchToProps = (dispatch: any) => ({
     projectName: string,
     viewId: string | undefined,
     query: string,
-    paginationSettings: PaginationSettings,
-  ): void => dispatch(
-    executeRawElasticSearchQuery(
-      orgName,
-      projectName,
-      viewId,
-      query,
-      paginationSettings,
-  )),
+    paginationSettings: PaginationSettings
+  ): void =>
+    dispatch(
+      executeRawElasticSearchQuery(
+        orgName,
+        projectName,
+        viewId,
+        query,
+        paginationSettings
+      )
+    ),
 });
 
 export default connect(

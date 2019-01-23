@@ -99,7 +99,7 @@ const queryResourcesFailedAction: ActionCreator<FailedQueryAction> = (
 });
 
 // TODO break out into library
-const makeESQuery = (query?: { filters: any; textQuery?: string }) => {
+export const makeESQuery = (query?: { filters: any; textQuery?: string }) => {
   if (query) {
     const must = [];
     if (Object.keys(query.filters).length) {
