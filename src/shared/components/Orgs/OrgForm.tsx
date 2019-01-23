@@ -64,7 +64,14 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
         <Form.Item label="Label" {...formItemLayout}>
           {getFieldDecorator('label', {
             initialValue: org ? org.label : '',
-            rules: [{ required: true }],
+            rules: [
+              {
+                required: true,
+                whitespace: true,
+                pattern: /^\S+$/g,
+                message: 'Label must be a phrase without spaces',
+              },
+            ],
           })(<Input placeholder="Label" disabled={mode === 'edit'} />)}
         </Form.Item>
         <Form.Item label="Description" {...formItemLayout}>

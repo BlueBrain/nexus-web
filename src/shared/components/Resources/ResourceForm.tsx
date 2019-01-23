@@ -22,7 +22,7 @@ if (typeof window !== 'undefined') {
 export interface CreateResourcePayload {
   resourceId?: string;
   type?: string[];
-  context: { [field: string]: string };
+  context: { [field: string]: string } | any[];
   [field: string]: any;
 }
 
@@ -53,7 +53,7 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
   mode = 'create',
 }) => {
   const [jsonValue, setJsonValue] = React.useState({
-    context: {},
+    context: ['https://bluebrain.github.io/nexus/contexts/resource.json'],
   });
   const { getFieldDecorator, getFieldValue } = form;
   const formItemLayout = {
