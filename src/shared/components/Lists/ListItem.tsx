@@ -133,12 +133,15 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
           minHeight: '50%',
         }}
       >
-        {error && !data && (
-          <Empty
-            description={<span>There was an error loading this data.</span>}
-          />
+        {!data && (
+          <Spin spinning={isFetching}>
+            {error && (
+              <Empty
+                description={<span>There was an error loading this data.</span>}
+              />
+            )}
+          </Spin>
         )}
-        {!data && isFetching && <Spin />}
         {data && (
           <ResourceList
             loading={isFetching}
