@@ -25,7 +25,7 @@ const FilterDropdown: React.FunctionComponent<FilterDropdownProps> = ({
         const value = query.filters && query.filters[filterKey];
         const label = getLabelFromFilterKey(filterKey);
         return (
-          <>
+          <React.Fragment key={filterKey}>
             <label>{label}</label>
             <AutoComplete
               key={filterKey}
@@ -60,7 +60,7 @@ const FilterDropdown: React.FunctionComponent<FilterDropdownProps> = ({
                 }
               />
             </AutoComplete>
-          </>
+          </React.Fragment>
         );
       })}
     </div>

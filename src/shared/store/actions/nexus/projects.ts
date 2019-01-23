@@ -6,6 +6,8 @@ import ElasticSearchView, {
   ElasticSearchViewAggregationResponse,
 } from '@bbp/nexus-sdk/lib/View/ElasticSearchView';
 
+const DEFAULT_AGG_TERM_SIZE = 999;
+
 enum ProjectActionTypes {
   FETCHING = '@@nexus/PROJECT_FETCHING',
   FULFILLED = '@@nexus/PROJECT_FETHCING_FULFILLED',
@@ -61,13 +63,13 @@ export const fetchAndAssignProject: ActionCreator<ThunkAction> = (
         aggs: {
           schemas: {
             terms: {
-              size: 999,
+              size: DEFAULT_AGG_TERM_SIZE,
               field: '_constrainedBy',
             },
           },
           types: {
             terms: {
-              size: 999,
+              size: DEFAULT_AGG_TERM_SIZE,
               field: '@type',
             },
           },

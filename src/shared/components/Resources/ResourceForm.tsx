@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {
   Form,
-  Icon,
   Input,
   Button,
   Spin,
@@ -224,7 +223,7 @@ const ResourceFormModal: React.FunctionComponent<ResourceFormModalProps> = ({
         footer={null}
       >
         <ResourceFormContainer
-          schemas={project['_constrainedBy']}
+          schemas={(project as any)._constrainedBy}
           onSubmit={(r: any) => saveAndCreate(r)}
           busy={formBusy}
         />

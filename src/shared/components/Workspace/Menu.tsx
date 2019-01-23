@@ -1,12 +1,9 @@
 import * as React from 'react';
 import FileUpload from '../FileUpload';
-import { Button, Drawer } from 'antd';
+import { Button, Drawer, Divider } from 'antd';
 import { Project } from '@bbp/nexus-sdk';
 import ResourceForm from '../Resources/ResourceForm';
 import { Link } from 'react-router-dom';
-import { RootState } from '../../store/reducers';
-import { createList } from '../../store/actions/lists';
-import { connect } from 'react-redux';
 
 interface MenuProps {
   project?: Project | null;
@@ -43,7 +40,9 @@ const Menu: React.FunctionComponent<MenuProps> = ({
         height={60}
         onClose={() => setVisible(false)}
       >
-        <p>view resources from a project</p>
+        <p>
+          View resources in your project using pre-defined query-helper lists.
+        </p>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <ResourceForm
             project={project}
@@ -67,6 +66,7 @@ const Menu: React.FunctionComponent<MenuProps> = ({
           >
             New Query
           </Button>
+          <Divider />
           <Link to={`/${orgLabel}/${projectLabel}/graph/sparql`}>
             Sparql Query Editor
           </Link>
@@ -76,31 +76,18 @@ const Menu: React.FunctionComponent<MenuProps> = ({
             ElasticSearch Query Editor
           </Link>
         </div>
-        <div style={{ height: '200px', margin: '0.5em 0' }}>
-          <FileUpload onFileUpload={async file => {}} />
+        <Divider />
+        <div style={{ height: '200px' }}>
+          <FileUpload
+            onFileUpload={async file => {
+              // project.postFile()
+              console.log({ file });
+            }}
+          />
         </div>
       </Drawer>
     </>
   );
 };
 
-const mapStateToProps = (state: RootState) => {
-  return {
-    project:
-      state.nexus &&
-      state.nexus.activeProject &&
-      state.nexus.activeProject.data,
-  };
-};
-
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    createList: (orgProjectFilterKey: string) =>
-      dispatch(createList(orgProjectFilterKey)),
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Menu);
+export default Menu;

@@ -103,7 +103,7 @@ const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
       </Tooltip>
       <Tooltip title="View ElasticSearch query">
         <Link to={queryPath}>
-          <Button icon="code" />
+          <Button icon="search" />
         </Link>
       </Tooltip>
     </div>

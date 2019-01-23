@@ -7,11 +7,13 @@ import { fetchOrg } from '../store/actions/nexus/activeOrg';
 import { Project } from '@bbp/nexus-sdk';
 import { Empty, Button, Switch, Icon, Tooltip } from 'antd';
 import Menu from '../components/Workspace/Menu';
+import { createList } from '../store/actions/lists';
 
 interface ProjectViewProps {
   project: Project | null;
   error: Error | null;
   match: any;
+  createList(orgProjectFilterKey: string): void;
   fetchProject(org: string, project: string): void;
 }
 
@@ -19,6 +21,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   error,
   match,
   project,
+  createList,
   fetchProject,
 }) => {
   const projectLabel = project ? project.label : null;
@@ -60,6 +63,10 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
             <h1 style={{ marginBottom: 0, marginRight: 8 }}>
               {project.label}{' '}
               <Menu
+                project={project}
+                createList={() => {
+                  createList(project.orgLabel + project.label);
+                }}
                 render={(setVisible: () => void, visible: boolean) => (
                   <Tooltip
                     title={visible ? 'Close side-menu' : 'Open side-menu'}
@@ -100,12 +107,16 @@ const mapStateToProps = (state: RootState) => ({
       state.nexus.activeProject.error) ||
     null,
 });
-const mapDispatchToProps = (dispatch: any) => ({
-  fetchProject: (org: string, project: string) => {
-    dispatch(fetchOrg(org));
-    dispatch(fetchAndAssignProject(org, project));
-  },
-});
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    fetchProject: (org: string, project: string) => {
+      dispatch(fetchOrg(org));
+      dispatch(fetchAndAssignProject(org, project));
+    },
+    createList: (orgProjectFilterKey: string) =>
+      dispatch(createList(orgProjectFilterKey)),
+  };
+};
 
 export default connect(
   mapStateToProps,

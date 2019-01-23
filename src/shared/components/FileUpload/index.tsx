@@ -18,11 +18,12 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
     multiple: true,
     customRequest: onFileUpload,
     onPreview: (file: any) => {
-      // do something on click
+      // TODO do something on click, like show resource Edit / Inspect View
     },
     onChange(info: any) {
       const status = info.file.status;
       if (status !== 'uploading') {
+        // do something on upload?
       }
       if (status === 'done') {
         message.success(`${info.file.name} file uploaded successfully.`);
@@ -68,11 +69,4 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState) => ({});
-
-const mapDispatchToProps = (dispatch: any) => ({});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(FileUploader);
+export default FileUploader;

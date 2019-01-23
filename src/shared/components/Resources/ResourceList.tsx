@@ -31,6 +31,7 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
   const [selectedResource, setSelectedResource] = React.useState(
     null as Resource | null
   );
+  console.log({ total });
   return (
     <React.Fragment>
       <List
@@ -46,7 +47,7 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
         }
         dataSource={results}
         pagination={
-          total
+          total && totalPages > 1
             ? {
                 total,
                 current,
