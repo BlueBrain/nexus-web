@@ -46,7 +46,12 @@ const RawElasticSearchQueryView: React.FunctionComponent<
   wantedProject,
   wantedView,
 }): JSX.Element => {
-  const [query, setQuery] = React.useState(initialQuery);
+  const formattedInitialQuery = JSON.stringify(
+    JSON.parse(initialQuery),
+    null,
+    2
+  );
+  const [query, setQuery] = React.useState(formattedInitialQuery);
 
   const data = response.results.map(result => result._source || []);
   const total = response.total || 0;

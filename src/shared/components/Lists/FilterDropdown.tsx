@@ -4,6 +4,10 @@ import './FilterDropdown.less';
 
 const Option = AutoComplete.Option;
 
+const getLabelFromFilterKey = (filterKey: string) => {
+  return filterKey === '_constrainedBy' ? 'schema' : filterKey;
+};
+
 interface FilterDropdownProps {
   query: any;
   filterValues: { [key: string]: { key: string; count: number }[] };
@@ -19,9 +23,10 @@ const FilterDropdown: React.FunctionComponent<FilterDropdownProps> = ({
     <div className="filter-dropdown">
       {Object.keys(filterValues).map(filterKey => {
         const value = query.filters && query.filters[filterKey];
+        const label = getLabelFromFilterKey(filterKey);
         return (
           <>
-            <label>{filterKey}</label>
+            <label>{label}</label>
             <AutoComplete
               key={filterKey}
               className="certain-category-search"
@@ -45,7 +50,7 @@ const FilterDropdown: React.FunctionComponent<FilterDropdownProps> = ({
                 onFilterChange({ [filterKey]: value as string | null });
               }}
               style={{ width: '100%', marginBottom: '1em' }}
-              placeholder={`Filter by ${filterKey}`}
+              placeholder={`Filter by ${label}`}
               optionLabelProp="value"
             >
               <Input

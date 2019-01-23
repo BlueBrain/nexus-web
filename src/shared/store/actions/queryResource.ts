@@ -118,11 +118,18 @@ export const makeESQuery = (query?: { filters: any; textQuery?: string }) => {
         },
       });
     }
+    if (must.length > 1) {
+      return {
+        query: {
+          bool: {
+            must,
+          },
+        },
+      };
+    }
     return {
       query: {
-        bool: {
-          must,
-        },
+        ...must[0],
       },
     };
   }
