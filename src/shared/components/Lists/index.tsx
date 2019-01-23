@@ -89,7 +89,7 @@ const ListsContainer: React.FunctionComponent<ListProps> = React.memo(
               onClick={createList}
               icon="plus-square"
             >
-              New List
+              New Query
             </Button>
           </div>
           <div style={{ height: '200px', margin: '0.5em 0' }}>

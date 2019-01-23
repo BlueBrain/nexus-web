@@ -42,7 +42,7 @@ export interface List {
 export type ListState = List[];
 
 const DEFAULT_LIST: List = {
-  name: 'Default List',
+  name: 'Default Query',
   query: {
     filters: {},
   },
@@ -70,7 +70,10 @@ export function listsReducer(
 
   switch (action.type) {
     case ListActionTypes.CREATE:
-      const newList = { ...DEFAULT_LIST, name: `New List ${state.length + 1}` };
+      const newList = {
+        ...DEFAULT_LIST,
+        name: `New Query ${state.length + 1}`,
+      };
       return [...state, newList];
     case ListActionTypes.DELETE:
       return [

@@ -63,7 +63,7 @@ const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
         allowClear={true}
         addonAfter={
           !!Object.keys(filterValues).length && (
-            <Tooltip title="Filter list">
+            <Tooltip title="Filter query">
               <Dropdown
                 overlay={
                   <FilterDropdown
@@ -91,14 +91,14 @@ const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
         />
       </Tooltip>
       {/* <Button icon="export" onClick={() => {}} style={{ marginRight: '2px' }} /> */}
-      <Tooltip title="Clone list">
+      <Tooltip title="Clone this query">
         <Button
           icon="switcher"
           onClick={onCloneList}
           style={{ marginRight: '2px' }}
         />
       </Tooltip>
-      <Tooltip title="View ElasticSearch Query">
+      <Tooltip title="View ElasticSearch query">
         <Button icon="code" onClick={() => {}} />
       </Tooltip>
     </div>
