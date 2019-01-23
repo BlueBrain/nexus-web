@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AutoComplete, Input, Icon, Menu } from 'antd';
+import { AutoComplete, Input, Icon } from 'antd';
 import './FilterDropdown.less';
 
 const Option = AutoComplete.Option;

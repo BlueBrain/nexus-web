@@ -19,8 +19,11 @@ import {
   queryResourcesActionPrefix,
 } from '../actions/queryResource';
 
+const DEFAULT_VIEW = 'nxv:defaultElasticIndex';
+
 export interface List {
   name: string;
+  view: string;
   query: {
     filters: {
       [filterKey: string]: string[];
@@ -43,6 +46,7 @@ export type ListState = List[];
 
 const DEFAULT_LIST: List = {
   name: 'Default Query',
+  view: DEFAULT_VIEW,
   query: {
     filters: {},
   },

@@ -11,6 +11,7 @@ import { Button, Empty, Modal } from 'antd';
 import { Project } from '@bbp/nexus-sdk';
 import ResourceForm from '../Resources/ResourceForm';
 import useForceUpdate from 'use-force-update';
+import { Link } from 'react-router-dom';
 
 interface ListProps {
   lists: ListsByProjectState;
@@ -91,6 +92,14 @@ const ListsContainer: React.FunctionComponent<ListProps> = React.memo(
             >
               New Query
             </Button>
+            <Link to={`/${orgLabel}/${projectLabel}/graph/sparql`}>
+              Sparql Query Editor
+            </Link>
+            <Link
+              to={`/${orgLabel}/${projectLabel}/nxv:defaultElasticIndex/_search`}
+            >
+              ElasticSearch Query Editor
+            </Link>
           </div>
           <div style={{ height: '200px', margin: '0.5em 0' }}>
             <FileUpload onFileUpload={async file => {}} />

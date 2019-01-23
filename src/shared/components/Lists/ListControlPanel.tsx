@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { Dropdown, Menu, Input, Icon, Button, Tooltip } from 'antd';
+import { Dropdown, Input, Icon, Button, Tooltip } from 'antd';
 import FilterDropdown from './FilterDropdown';
+import { Link } from 'react-router-dom';
 
 interface ListControlPanelProps {
   query: { filters: any; textQuery?: string };
+  queryPath: string;
   filterValues: { [key: string]: { key: string; count: number }[] } | {};
   onTextQueryChange: (value?: string) => void;
   onFilterChange: (value: { [key: string]: string }) => void;
@@ -13,6 +15,7 @@ interface ListControlPanelProps {
 
 const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
   query,
+  queryPath,
   filterValues,
   onTextQueryChange,
   onFilterChange,
@@ -99,7 +102,9 @@ const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
         />
       </Tooltip>
       <Tooltip title="View ElasticSearch query">
-        <Button icon="code" onClick={() => {}} />
+        <Link to={queryPath}>
+          <Button icon="code" />
+        </Link>
       </Tooltip>
     </div>
   );

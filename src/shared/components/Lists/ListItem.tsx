@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { PaginatedList, Resource, PaginationSettings } from '@bbp/nexus-sdk';
+import { PaginationSettings } from '@bbp/nexus-sdk';
 import { connect } from 'react-redux';
 import { List } from '../../store/reducers/lists';
 import Renameable from '../Renameable';
 import { RootState } from '../../store/reducers';
-import { Dropdown, Menu, Input, Icon, Button, Empty, Spin } from 'antd';
+import { Icon, Empty, Spin } from 'antd';
 import ResourceList from '../Resources/ResourceList';
 import { updateList, deleteList, cloneList } from '../../store/actions/lists';
 import { queryResources } from '../../store/actions/queryResource';
@@ -14,6 +14,8 @@ interface ListItemContainerProps {
   list: List;
   listIndex: number;
   orgProjectFilterKey: string;
+  orgLabel: string;
+  projectLabel: string;
   updateList: (listIndex: number, list: List) => void;
   deleteList: (listIndex: number) => void;
   cloneList: () => void;
@@ -33,6 +35,8 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
   updateList,
   deleteList,
   cloneList,
+  orgLabel,
+  projectLabel,
   queryResources,
 }) => {
   React.useEffect(
@@ -117,6 +121,7 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
         onFilterChange={handleFilterUpdate}
         onClear={handleClearFilter}
         onCloneList={cloneList}
+        queryPath={`/${orgLabel}/${projectLabel}/${list.view}/_search`}
       />
       <div
         style={{
