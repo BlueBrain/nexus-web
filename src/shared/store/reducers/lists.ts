@@ -140,3 +140,14 @@ export default function listsByProjectReducer(
       return state;
   }
 }
+
+export const persistanceMapper = (lists: ListsByProjectState) => {
+  Object.keys({ ...lists }).map(filterKey => {
+    lists[filterKey].map(list => ({
+      ...list,
+      request: DEFAULT_LIST.request,
+    }));
+    return lists[filterKey];
+  });
+  return lists;
+};
