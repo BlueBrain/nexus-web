@@ -243,6 +243,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
         width={640}
         visible={!!(selectedProject && selectedProject.label)}
         onClose={() => setSelectedProject(undefined)}
+        title={`Project: ${selectedProject && selectedProject.label}`}
       >
         {selectedProject && (
           <ProjectForm

@@ -60,7 +60,6 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
   return (
     <Spin spinning={busy}>
       <Form onSubmit={handleSubmit}>
-        <h1>Organization: {getFieldValue('label') || (org && org.label)}</h1>
         <Form.Item label="Label" {...formItemLayout}>
           {getFieldDecorator('label', {
             initialValue: org ? org.label : '',

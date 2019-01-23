@@ -16,11 +16,14 @@ interface LandingProps {
   busy: boolean;
   goTo(orgLabel: string): void;
   fetchOrgs(): void;
-  createOrg: (orgLabel: string, orgPayload: CreateOrgPayload) => Promise<Organization>;
+  createOrg: (
+    orgLabel: string,
+    orgPayload: CreateOrgPayload
+  ) => Promise<Organization>;
   modifyOrg: (
     orgLabel: string,
     rev: number,
-    orgPayload: CreateOrgPayload,
+    orgPayload: CreateOrgPayload
   ) => Promise<Organization>;
   deprecateOrg: (orgLabel: string, rev: number) => Promise<void>;
 }
@@ -75,7 +78,9 @@ const Landing: React.FunctionComponent<LandingProps> = ({
 
   const saveAndModify = (selectedOrg: Organization, newOrg: Organization) => {
     setFormBusy(true);
-    modifyOrg(newOrg.label, selectedOrg.rev, { description: newOrg.description })
+    modifyOrg(newOrg.label, selectedOrg.rev, {
+      description: newOrg.description,
+    })
       .then(
         () => {
           notification.success({
@@ -169,13 +174,15 @@ const Landing: React.FunctionComponent<LandingProps> = ({
       </div>
       {orgs.length === 0 ? (
         <p style={{ marginTop: 50 }}>No organizations yet...</p>
-        ) : (<OrgList
+      ) : (
+        <OrgList
           orgs={orgs}
           onOrgClick={goTo}
           onOrgEdit={(orgLabel: string) =>
             setSelectedOrg(orgs.filter(o => o.label === orgLabel)[0])
           }
-        />)}
+        />
+      )}
       <Modal
         title="New Organization"
         visible={modalVisible}
@@ -192,6 +199,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
         width={640}
         visible={!!(selectedOrg && selectedOrg.label)}
         onClose={() => setSelectedOrg(undefined)}
+        title={selectedOrg && selectedOrg.label}
       >
         {selectedOrg && (
           <OrgForm

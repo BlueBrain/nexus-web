@@ -231,7 +231,6 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   return (
     <Spin spinning={busy}>
       <Form onSubmit={handleSubmit}>
-        <h1>Project: {getFieldValue('label') || (project && project.label)}</h1>
         <Form.Item label="Label" {...formItemLayout}>
           {getFieldDecorator('label', {
             initialValue: project ? project.label : '',
