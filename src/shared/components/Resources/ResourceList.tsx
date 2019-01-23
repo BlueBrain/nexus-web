@@ -66,19 +66,15 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
           );
         }}
       />
-      {typeof window !== 'undefined' && (
+      {typeof window !== 'undefined' && selectedResource && (
         <Drawer
           width={640}
           placement="right"
           onClose={() => setSelectedResource(null)}
           visible={!!selectedResource}
+          title={selectedResource.name}
         >
-          {!!selectedResource && (
-            <div>
-              <h2>{selectedResource.name}</h2>
-              <ReactJson src={selectedResource.raw} name={null} />
-            </div>
-          )}
+          <ReactJson src={selectedResource.raw} name={null} />
         </Drawer>
       )}
     </React.Fragment>

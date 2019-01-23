@@ -5,7 +5,8 @@ import Lists from '../components/Lists';
 import { fetchAndAssignProject } from '../store/actions/nexus/projects';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
 import { Project } from '@bbp/nexus-sdk';
-import { Empty } from 'antd';
+import { Empty, Button, Switch, Icon, Tooltip } from 'antd';
+import Menu from '../components/Workspace/Menu';
 
 interface ProjectViewProps {
   project: Project | null;
@@ -56,7 +57,24 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
       {project && (
         <>
           <div>
-            <h1 style={{ marginBottom: 0, marginRight: 8 }}>{project.label}</h1>
+            <h1 style={{ marginBottom: 0, marginRight: 8 }}>
+              {project.label}{' '}
+              <Menu
+                render={(setVisible: () => void, visible: boolean) => (
+                  <Tooltip
+                    title={visible ? 'Close side-menu' : 'Open side-menu'}
+                  >
+                    <Switch
+                      size="small"
+                      checkedChildren={<Icon type="menu-fold" />}
+                      unCheckedChildren={<Icon type="menu-unfold" />}
+                      checked={visible}
+                      onChange={() => setVisible()}
+                    />
+                  </Tooltip>
+                )}
+              />
+            </h1>
             {project.description && <p>{project.description}</p>}{' '}
           </div>
           <Lists
