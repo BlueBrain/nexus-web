@@ -4,16 +4,26 @@ import { RootState } from '../store/reducers';
 import Lists from '../components/Lists';
 import { fetchAndAssignProject } from '../store/actions/nexus/projects';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
-import { Project } from '@bbp/nexus-sdk';
-import { Empty, Button, Switch, Icon, Tooltip } from 'antd';
+import { Project, Resource } from '@bbp/nexus-sdk';
+import { Empty, Switch, Icon, Tooltip } from 'antd';
 import Menu from '../components/Workspace/Menu';
-import { createList } from '../store/actions/lists';
+import { createList, initializeProjectList } from '../store/actions/lists';
+import { CreateResourcePayload } from '../components/Resources/ResourceForm';
+import { ListsByProjectState } from '../store/reducers/lists';
 
 interface ProjectViewProps {
   project: Project | null;
   error: Error | null;
   match: any;
+  lists: ListsByProjectState;
   createList(orgProjectFilterKey: string): void;
+  initialize(orgLabel: string, projectLabel: string): void;
+  createResource(
+    orgLabel: string,
+    projectLabel: string,
+    schemaId: string,
+    payload: CreateResourcePayload
+  ): Promise<Resource>;
   fetchProject(org: string, project: string): void;
 }
 
@@ -22,6 +32,9 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   match,
   project,
   createList,
+  createResource,
+  initialize,
+  lists,
   fetchProject,
 }) => {
   const projectLabel = project ? project.label : null;
@@ -63,6 +76,14 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
             <h1 style={{ marginBottom: 0, marginRight: 8 }}>
               {project.label}{' '}
               <Menu
+                createResource={async (schemaId, payload) =>
+                  await createResource(
+                    project.orgLabel,
+                    project.label,
+                    schemaId,
+                    payload
+                  )
+                }
                 project={project}
                 createList={() => {
                   createList(project.orgLabel + project.label);
@@ -85,8 +106,11 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
             {project.description && <p>{project.description}</p>}{' '}
           </div>
           <Lists
-            projectLabel={match.params.project}
-            orgLabel={match.params.org}
+            lists={lists}
+            initialize={() => {
+              initialize(project.orgLabel, project.label);
+            }}
+            project={project}
           />
         </>
       )}
@@ -106,15 +130,24 @@ const mapStateToProps = (state: RootState) => ({
       state.nexus.activeProject &&
       state.nexus.activeProject.error) ||
     null,
+  lists: state.lists || {},
 });
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    fetchProject: (org: string, project: string) => {
-      dispatch(fetchOrg(org));
-      dispatch(fetchAndAssignProject(org, project));
+    fetchProject: (orgLabel: string, projectLabel: string) => {
+      dispatch(fetchOrg(orgLabel));
+      dispatch(fetchAndAssignProject(orgLabel, projectLabel));
     },
     createList: (orgProjectFilterKey: string) =>
       dispatch(createList(orgProjectFilterKey)),
+    initialize: (orgLabel: string, projectLabel: string) =>
+      dispatch(initializeProjectList(orgLabel, projectLabel)),
+    createResource: async (
+      orgLabel: string,
+      projectLabel: string,
+      schemaId: string,
+      payload: CreateResourcePayload
+    ) => await Resource.create(orgLabel, projectLabel, schemaId, payload),
   };
 };
 

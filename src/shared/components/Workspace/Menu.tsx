@@ -1,13 +1,16 @@
 import * as React from 'react';
 import FileUpload from '../FileUpload';
 import { Button, Drawer, Divider } from 'antd';
-import { Project } from '@bbp/nexus-sdk';
-import ResourceForm from '../Resources/ResourceForm';
+import { Project, Resource } from '@bbp/nexus-sdk';
+import ResourceForm, { CreateResourcePayload } from '../Resources/ResourceForm';
 import { Link } from 'react-router-dom';
-
 interface MenuProps {
   project?: Project | null;
   createList: (orgProjectFilterKey: string) => void;
+  createResource: (
+    schemaId: string,
+    payload: CreateResourcePayload
+  ) => Promise<Resource>;
   render: (
     toggleVisibility: () => void,
     visible: boolean
@@ -16,6 +19,7 @@ interface MenuProps {
 
 const Menu: React.FunctionComponent<MenuProps> = ({
   createList,
+  createResource,
   project,
   render,
 }) => {
@@ -45,6 +49,7 @@ const Menu: React.FunctionComponent<MenuProps> = ({
         </p>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <ResourceForm
+            createResource={createResource}
             project={project}
             render={(updateFormVisible: () => void) => {
               return (

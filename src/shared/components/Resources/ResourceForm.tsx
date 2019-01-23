@@ -9,7 +9,7 @@ import {
   notification,
 } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
-import { Resource, Project } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk';
 
 const Option = AutoComplete.Option;
 
@@ -44,7 +44,6 @@ export interface ResourceFormProps {
  */
 const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
   form,
-  resource,
   schemas,
   busy = false,
   onSubmit = () => {},
@@ -173,12 +172,17 @@ export const ResourceFormContainer = Form.create()(ResourceForm);
 
 interface ResourceFormModalProps {
   project: any;
+  createResource: (
+    schemaId: string,
+    payload: CreateResourcePayload
+  ) => Promise<Resource>;
   render: (updateFormVisible: () => void) => React.ReactElement<any>;
   onSuccess?: () => void;
 }
 
 const ResourceFormModal: React.FunctionComponent<ResourceFormModalProps> = ({
   project,
+  createResource,
   render,
   onSuccess = () => {},
 }) => {
@@ -188,9 +192,8 @@ const ResourceFormModal: React.FunctionComponent<ResourceFormModalProps> = ({
     const { schemaId, payload } = resourceToCreate;
     setFormBusy(true);
     try {
-      const resource = await Resource.create(
-        project.orgLabel,
-        project.label,
+      createResource(encodeURIComponent(schemaId), payload);
+      const resource = await createResource(
         encodeURIComponent(schemaId),
         payload
       );

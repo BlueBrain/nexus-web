@@ -1,29 +1,23 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { RootState } from '../../store/reducers';
 import './Lists.less';
 import { uuidv4 } from '../../utils';
 import { List, ListsByProjectState } from '../../store/reducers/lists';
 import ListItem from './ListItem';
-import { createList, initializeProjectList } from '../../store/actions/lists';
 import { Empty } from 'antd';
 import { Project } from '@bbp/nexus-sdk';
 
 interface ListProps {
   lists: ListsByProjectState;
-  orgLabel: string;
-  projectLabel: string;
-  project: Project | null | undefined;
+  project: Project;
   initialize: () => void;
 }
 
-const ListsContainer: React.FunctionComponent<ListProps> = ({
+const Lists: React.FunctionComponent<ListProps> = ({
   lists,
   initialize,
-  orgLabel,
-  projectLabel,
   project,
 }) => {
+  const { label: projectLabel, orgLabel } = project;
   const orgProjectFilterKey = orgLabel + projectLabel;
   const projectLists: List[] = lists[orgProjectFilterKey];
   React.useEffect(() => {
@@ -57,34 +51,11 @@ const ListsContainer: React.FunctionComponent<ListProps> = ({
       })}
       {!(projectLists || []).length && (
         <div style={{ opacity: 1, width: '50%', marginTop: '5%' }}>
-          <Empty description>No lists</Empty>
+          <Empty description="No Queries" />
         </div>
       )}
     </ul>
   );
 };
 
-const mapStateToProps = (state: RootState) => {
-  return {
-    lists: state.lists || {},
-    project:
-      state.nexus &&
-      state.nexus.activeProject &&
-      state.nexus.activeProject.data,
-  };
-};
-
-const mapDispatchToProps = (dispatch: any, ownProps: any) => {
-  const orgProjectFilterKey = ownProps.orgLabel + ownProps.projectLabel;
-  return {
-    createList: () => dispatch(createList(orgProjectFilterKey)),
-    initialize: () =>
-      dispatch(initializeProjectList(ownProps.orgLabel, ownProps.projectLabel)),
-  };
-};
-
-// TODO: move this at view level
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ListsContainer);
+export default Lists;
