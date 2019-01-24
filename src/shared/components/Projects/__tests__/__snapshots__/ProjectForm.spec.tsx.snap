@@ -48,203 +48,6 @@ exports[`Project Form component should render correctly 1`] = `
               className="ant-form ant-form-horizontal"
               onSubmit={[Function]}
             >
-              <h1>
-                Project: 
-              </h1>
-              <FormItem
-                colon={true}
-                hasFeedback={false}
-                label="Name"
-                labelCol={
-                  Object {
-                    "sm": Object {
-                      "span": 5,
-                    },
-                    "xs": Object {
-                      "span": 24,
-                    },
-                  }
-                }
-                wrapperCol={
-                  Object {
-                    "sm": Object {
-                      "span": 19,
-                    },
-                    "xs": Object {
-                      "span": 24,
-                    },
-                  }
-                }
-              >
-                <Row
-                  className="ant-form-item"
-                  gutter={0}
-                >
-                  <div
-                    className="ant-row ant-form-item"
-                  >
-                    <Col
-                      className="ant-form-item-label"
-                      key="label"
-                      sm={
-                        Object {
-                          "span": 5,
-                        }
-                      }
-                      xs={
-                        Object {
-                          "span": 24,
-                        }
-                      }
-                    >
-                      <div
-                        className="ant-form-item-label ant-col-xs-24 ant-col-sm-5"
-                      >
-                        <label
-                          className="ant-form-item-required"
-                          htmlFor="name"
-                          onClick={[Function]}
-                          title="Name"
-                        >
-                          Name
-                        </label>
-                      </div>
-                    </Col>
-                    <Col
-                      className="ant-form-item-control-wrapper"
-                      key="wrapper"
-                      sm={
-                        Object {
-                          "span": 19,
-                        }
-                      }
-                      xs={
-                        Object {
-                          "span": 24,
-                        }
-                      }
-                    >
-                      <div
-                        className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19"
-                      >
-                        <div
-                          className="ant-form-item-control"
-                        >
-                          <span
-                            className="ant-form-item-children"
-                          >
-                            <Input
-                              data-__field={
-                                Object {
-                                  "name": "name",
-                                }
-                              }
-                              data-__meta={
-                                Object {
-                                  "initialValue": "",
-                                  "name": "name",
-                                  "originalProps": Object {
-                                    "disabled": false,
-                                    "placeholder": "Name",
-                                    "type": "text",
-                                  },
-                                  "ref": null,
-                                  "rules": Array [
-                                    Object {
-                                      "required": true,
-                                    },
-                                  ],
-                                  "trigger": "onChange",
-                                  "validate": Array [
-                                    Object {
-                                      "rules": Array [
-                                        Object {
-                                          "required": true,
-                                        },
-                                      ],
-                                      "trigger": Array [
-                                        "onChange",
-                                      ],
-                                    },
-                                  ],
-                                  "valuePropName": "value",
-                                }
-                              }
-                              disabled={false}
-                              id="name"
-                              onChange={[Function]}
-                              placeholder="Name"
-                              type="text"
-                              value=""
-                            >
-                              <input
-                                className="ant-input"
-                                data-__field={
-                                  Object {
-                                    "name": "name",
-                                  }
-                                }
-                                data-__meta={
-                                  Object {
-                                    "initialValue": "",
-                                    "name": "name",
-                                    "originalProps": Object {
-                                      "disabled": false,
-                                      "placeholder": "Name",
-                                      "type": "text",
-                                    },
-                                    "ref": null,
-                                    "rules": Array [
-                                      Object {
-                                        "required": true,
-                                      },
-                                    ],
-                                    "trigger": "onChange",
-                                    "validate": Array [
-                                      Object {
-                                        "rules": Array [
-                                          Object {
-                                            "required": true,
-                                          },
-                                        ],
-                                        "trigger": Array [
-                                          "onChange",
-                                        ],
-                                      },
-                                    ],
-                                    "valuePropName": "value",
-                                  }
-                                }
-                                disabled={false}
-                                id="name"
-                                onChange={[Function]}
-                                onKeyDown={[Function]}
-                                placeholder="Name"
-                                type="text"
-                                value=""
-                              />
-                            </Input>
-                          </span>
-                          <Animate
-                            animation={Object {}}
-                            component=""
-                            componentProps={Object {}}
-                            key="help"
-                            onAppear={[Function]}
-                            onEnd={[Function]}
-                            onEnter={[Function]}
-                            onLeave={[Function]}
-                            transitionAppear={true}
-                            transitionEnter={true}
-                            transitionLeave={true}
-                            transitionName="show-help"
-                          />
-                        </div>
-                      </div>
-                    </Col>
-                  </div>
-                </Row>
-              </FormItem>
               <FormItem
                 colon={true}
                 hasFeedback={false}
@@ -345,7 +148,10 @@ exports[`Project Form component should render correctly 1`] = `
                                   "ref": null,
                                   "rules": Array [
                                     Object {
+                                      "message": "Label must be a phrase without spaces",
+                                      "pattern": /\\^\\\\S\\+\\$/g,
                                       "required": true,
+                                      "whitespace": true,
                                     },
                                   ],
                                   "trigger": "onChange",
@@ -353,7 +159,10 @@ exports[`Project Form component should render correctly 1`] = `
                                     Object {
                                       "rules": Array [
                                         Object {
+                                          "message": "Label must be a phrase without spaces",
+                                          "pattern": /\\^\\\\S\\+\\$/g,
                                           "required": true,
+                                          "whitespace": true,
                                         },
                                       ],
                                       "trigger": Array [
@@ -390,7 +199,10 @@ exports[`Project Form component should render correctly 1`] = `
                                     "ref": null,
                                     "rules": Array [
                                       Object {
+                                        "message": "Label must be a phrase without spaces",
+                                        "pattern": /\\^\\\\S\\+\\$/g,
                                         "required": true,
+                                        "whitespace": true,
                                       },
                                     ],
                                     "trigger": "onChange",
@@ -398,7 +210,10 @@ exports[`Project Form component should render correctly 1`] = `
                                       Object {
                                         "rules": Array [
                                           Object {
+                                            "message": "Label must be a phrase without spaces",
+                                            "pattern": /\\^\\\\S\\+\\$/g,
                                             "required": true,
+                                            "whitespace": true,
                                           },
                                         ],
                                         "trigger": Array [
@@ -414,6 +229,200 @@ exports[`Project Form component should render correctly 1`] = `
                                 onChange={[Function]}
                                 onKeyDown={[Function]}
                                 placeholder="Label"
+                                type="text"
+                                value=""
+                              />
+                            </Input>
+                          </span>
+                          <Animate
+                            animation={Object {}}
+                            component=""
+                            componentProps={Object {}}
+                            key="help"
+                            onAppear={[Function]}
+                            onEnd={[Function]}
+                            onEnter={[Function]}
+                            onLeave={[Function]}
+                            transitionAppear={true}
+                            transitionEnter={true}
+                            transitionLeave={true}
+                            transitionName="show-help"
+                          />
+                        </div>
+                      </div>
+                    </Col>
+                  </div>
+                </Row>
+              </FormItem>
+              <FormItem
+                colon={true}
+                hasFeedback={false}
+                label="Description"
+                labelCol={
+                  Object {
+                    "sm": Object {
+                      "span": 5,
+                    },
+                    "xs": Object {
+                      "span": 24,
+                    },
+                  }
+                }
+                wrapperCol={
+                  Object {
+                    "sm": Object {
+                      "span": 19,
+                    },
+                    "xs": Object {
+                      "span": 24,
+                    },
+                  }
+                }
+              >
+                <Row
+                  className="ant-form-item"
+                  gutter={0}
+                >
+                  <div
+                    className="ant-row ant-form-item"
+                  >
+                    <Col
+                      className="ant-form-item-label"
+                      key="label"
+                      sm={
+                        Object {
+                          "span": 5,
+                        }
+                      }
+                      xs={
+                        Object {
+                          "span": 24,
+                        }
+                      }
+                    >
+                      <div
+                        className="ant-form-item-label ant-col-xs-24 ant-col-sm-5"
+                      >
+                        <label
+                          className=""
+                          htmlFor="description"
+                          onClick={[Function]}
+                          title="Description"
+                        >
+                          Description
+                        </label>
+                      </div>
+                    </Col>
+                    <Col
+                      className="ant-form-item-control-wrapper"
+                      key="wrapper"
+                      sm={
+                        Object {
+                          "span": 19,
+                        }
+                      }
+                      xs={
+                        Object {
+                          "span": 24,
+                        }
+                      }
+                    >
+                      <div
+                        className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19"
+                      >
+                        <div
+                          className="ant-form-item-control"
+                        >
+                          <span
+                            className="ant-form-item-children"
+                          >
+                            <Input
+                              data-__field={
+                                Object {
+                                  "name": "description",
+                                }
+                              }
+                              data-__meta={
+                                Object {
+                                  "initialValue": "",
+                                  "name": "description",
+                                  "originalProps": Object {
+                                    "disabled": false,
+                                    "placeholder": "Description",
+                                    "type": "text",
+                                  },
+                                  "ref": null,
+                                  "rules": Array [
+                                    Object {
+                                      "required": false,
+                                    },
+                                  ],
+                                  "trigger": "onChange",
+                                  "validate": Array [
+                                    Object {
+                                      "rules": Array [
+                                        Object {
+                                          "required": false,
+                                        },
+                                      ],
+                                      "trigger": Array [
+                                        "onChange",
+                                      ],
+                                    },
+                                  ],
+                                  "valuePropName": "value",
+                                }
+                              }
+                              disabled={false}
+                              id="description"
+                              onChange={[Function]}
+                              placeholder="Description"
+                              type="text"
+                              value=""
+                            >
+                              <input
+                                className="ant-input"
+                                data-__field={
+                                  Object {
+                                    "name": "description",
+                                  }
+                                }
+                                data-__meta={
+                                  Object {
+                                    "initialValue": "",
+                                    "name": "description",
+                                    "originalProps": Object {
+                                      "disabled": false,
+                                      "placeholder": "Description",
+                                      "type": "text",
+                                    },
+                                    "ref": null,
+                                    "rules": Array [
+                                      Object {
+                                        "required": false,
+                                      },
+                                    ],
+                                    "trigger": "onChange",
+                                    "validate": Array [
+                                      Object {
+                                        "rules": Array [
+                                          Object {
+                                            "required": false,
+                                          },
+                                        ],
+                                        "trigger": Array [
+                                          "onChange",
+                                        ],
+                                      },
+                                    ],
+                                    "valuePropName": "value",
+                                  }
+                                }
+                                disabled={false}
+                                id="description"
+                                onChange={[Function]}
+                                onKeyDown={[Function]}
+                                placeholder="Description"
                                 type="text"
                                 value=""
                               />
@@ -736,7 +745,7 @@ exports[`Project Form component should render correctly 1`] = `
                                   <span
                                     key=".1"
                                   >
-                                     Add prefix mapping
+                                     Add API mapping
                                   </span>
                                 </button>
                               </Wave>
