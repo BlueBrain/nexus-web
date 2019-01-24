@@ -90,7 +90,7 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
 
   const confirmDeprecate = () => {
     Modal.confirm({
-      title: 'Deprecate Project',
+      title: 'Deprecate Resource',
       content: 'Are you sure?',
       onOk: onDeprecate,
     });
