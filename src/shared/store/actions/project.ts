@@ -2,7 +2,7 @@ import { Action, ActionCreator, Dispatch } from 'redux';
 import { Project } from '@bbp/nexus-sdk';
 import { ThunkAction } from '..';
 import { CreateProjectPayload } from '@bbp/nexus-sdk/lib/Project/types';
-import { httpGet, httpPatch, httpPut } from '@bbp/nexus-sdk/lib/utils/http';
+import { httpGet, httpPut } from '@bbp/nexus-sdk/lib/utils/http';
 import { IdentityResponse } from '@bbp/nexus-sdk/lib/ACL';
 
 //
@@ -233,17 +233,22 @@ export const makeProjectPublic: ActionCreator<ThunkAction> = (
       };
       const anonymous = await getAnonymous();
 
-      const getACLRevision = async () => {
-        try {
-          const acls = await httpGet(`${endpoint}/acls/${orgLabel}/${projectLabel}`, false);
-          const rev = acls._results[0] && acls._results[0]._rev ? acls._results[0]._rev : 1;
-          return rev;
-        } catch (e) {
-          throw e;
-        }
-      };
+      const acls = await httpGet(`${endpoint}/acls/${orgLabel}/${projectLabel}`, false);
 
-      const rev = await getACLRevision();
+      const alreadyPublic = acls._results.some((result: any) => {
+        return result.acl && result.acl.some((acl: any) => {
+          return acl.identity
+            && acl.identity["@type"] === 'Anonymous'
+            && acl.permissions
+            && acl.permissions.some((permission: any) => permission === 'projects/read');
+        });
+      });
+
+      if (alreadyPublic) {
+        throw new Error('Project is already public');
+      }
+
+      const rev = acls._results[0] && acls._results[0]._rev ? acls._results[0]._rev : 1;
 
       const addACL = async (rev: number = 1) => {
         // We'll add the ACL on the entity itself,
