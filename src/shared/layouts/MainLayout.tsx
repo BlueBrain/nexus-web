@@ -21,6 +21,7 @@ export interface MainLayoutProps {
   hostName: string;
   goTo(url: string): void;
   name: string;
+  canLogin?: boolean;
 }
 
 const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
@@ -30,8 +31,9 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
   hostName,
   name,
   children,
+  canLogin = false,
 }) => (
-  <React.Fragment>
+  <>
     <Helmet>
       <meta charSet="utf-8" />
       <link rel="shortcut icon" type="image/x-icon" href={favicon} />
@@ -57,6 +59,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
           log out
         </a>,
       ]}
+      displayLogin={canLogin}
       onLoginClick={() => goTo('/login')}
     />
     <div className="MainLayout_body">
@@ -68,7 +71,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
     <div>
       <Footer version={version} githubIssueURL={githubIssueURL} />
     </div>
-  </React.Fragment>
+  </>
 );
 
 const mapStateToProps = ({ auth }: { auth: AuthState }) => ({
@@ -76,6 +79,7 @@ const mapStateToProps = ({ auth }: { auth: AuthState }) => ({
   name: auth.tokenData ? (auth.tokenData as any)['name'] : '',
   logoutUrl: auth.endSessionEndpoint || '',
   hostName: auth.redirectHostName || '',
+  canLogin: !!auth.authorizationEndpoint || false,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

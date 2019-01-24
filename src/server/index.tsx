@@ -42,10 +42,12 @@ if (process.env.NODE_ENV !== 'production') {
 app.get(
   `${base}/authSuccess`,
   (req: express.Request, res: express.Response) => {
-    const { error, access_token } = req.query;
+    const { error, access_token, session_state } = req.query;
     if (!error) {
       try {
-        const token = jwtDecode(access_token);
+        // is it session_state or access_token?
+        const receivedToken = access_token || session_state;
+        const token = jwtDecode(receivedToken);
         res.cookie(
           cookieName,
           JSON.stringify({
@@ -130,13 +132,9 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       authenticated: accessToken !== undefined,
       clientId: process.env.CLIENT_ID || 'nexus-web',
       // This is temporary until Realm API is available
-      authorizationEndpoint:
-        process.env.AUTH_ENDPOINT ||
-        'https://bbp-nexus.epfl.ch/auth/realms/nexus-internal/protocol/openid-connect/auth',
+      authorizationEndpoint: process.env.AUTH_ENDPOINT,
       // This is temporary until Realm API is available
-      endSessionEndpoint:
-        process.env.LOGOUT_ENDPOINT ||
-        'https://bbp-nexus.epfl.ch/auth/realms/nexus-internal/protocol/openid-connect/logout',
+      endSessionEndpoint: process.env.LOGOUT_ENDPOINT,
       redirectHostName: `${process.env.HOST_NAME ||
         `${req.protocol}://${req.headers.host}`}${base}`,
     },
