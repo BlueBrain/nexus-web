@@ -6,10 +6,10 @@ export interface OrgFormProps {
   form: WrappedFormUtils;
   org?: {
     label: string;
-    name: string;
+    description?: string;
   };
   busy?: boolean;
-  onSubmit?(project: OrgFormProps['org']): any;
+  onSubmit?(org: OrgFormProps['org']): any;
   onDeprecate?(): any;
   mode?: 'create' | 'edit';
 }
@@ -60,18 +60,24 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
   return (
     <Spin spinning={busy}>
       <Form onSubmit={handleSubmit}>
-        <h1>Organization: {getFieldValue('name') || (org && org.name)}</h1>
-        <Form.Item label="Name" {...formItemLayout}>
-          {getFieldDecorator('name', {
-            initialValue: org ? org.name : '',
-            rules: [{ required: true }],
-          })(<Input placeholder="Name" />)}
-        </Form.Item>
         <Form.Item label="Label" {...formItemLayout}>
           {getFieldDecorator('label', {
             initialValue: org ? org.label : '',
-            rules: [{ required: true }],
+            rules: [
+              {
+                required: true,
+                whitespace: true,
+                pattern: /^\S+$/g,
+                message: 'Label must be a phrase without spaces',
+              },
+            ],
           })(<Input placeholder="Label" disabled={mode === 'edit'} />)}
+        </Form.Item>
+        <Form.Item label="Description" {...formItemLayout}>
+          {getFieldDecorator('description', {
+            initialValue: org ? org.description : '',
+            rules: [{ required: false }],
+          })(<Input placeholder="Description" />)}
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>
           <Button type="primary" htmlType="submit">

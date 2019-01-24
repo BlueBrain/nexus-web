@@ -9,8 +9,8 @@ import ProjectList from './ProjectList';
 import ProjectForm from './ProjectForm';
 
 const projects: ProjectCardProps[] = [
-  { name: 'Thalamus', label: 'thalamus', resourceNumber: 1236 },
-  { name: 'Another Project', label: 'another-project', resourceNumber: 1 },
+  { label: 'thalamus', resourceNumber: 1236 },
+  { label: 'another-project', resourceNumber: 1 },
 ];
 
 storiesOf('Components/Projects', module)
@@ -26,7 +26,6 @@ storiesOf('Components/Projects', module)
         <React.Fragment>
           <div style={{ margin: '50px 40px 0px' }}>
             <ProjectCard
-              name="Thalamus"
               label="thalamus"
               resourceNumber={1500}
             />
@@ -77,9 +76,8 @@ storiesOf('Components/Projects', module)
           <div style={{ margin: '50px 40px 0px' }}>
             <ProjectForm
               project={{
-                name: 'My project',
-                label: 'Label',
-                prefixMappings: [
+                label: 'MyProject',
+                apiMappings: [
                   { prefix: 'es', namespace: 'http://asdasd' },
                   { prefix: 'ex', namespace: 'http://example.com' },
                 ],

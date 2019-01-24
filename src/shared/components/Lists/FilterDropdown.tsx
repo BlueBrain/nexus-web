@@ -1,8 +1,12 @@
 import * as React from 'react';
-import { AutoComplete, Input, Icon, Menu } from 'antd';
+import { AutoComplete, Input, Icon } from 'antd';
 import './FilterDropdown.less';
 
 const Option = AutoComplete.Option;
+
+const getLabelFromFilterKey = (filterKey: string) => {
+  return filterKey === '_constrainedBy' ? 'schema' : filterKey;
+};
 
 interface FilterDropdownProps {
   query: any;
@@ -19,9 +23,10 @@ const FilterDropdown: React.FunctionComponent<FilterDropdownProps> = ({
     <div className="filter-dropdown">
       {Object.keys(filterValues).map(filterKey => {
         const value = query.filters && query.filters[filterKey];
+        const label = getLabelFromFilterKey(filterKey);
         return (
-          <>
-            <label>{filterKey}</label>
+          <React.Fragment key={filterKey}>
+            <label>{label}</label>
             <AutoComplete
               key={filterKey}
               className="certain-category-search"
@@ -30,8 +35,10 @@ const FilterDropdown: React.FunctionComponent<FilterDropdownProps> = ({
               value={value}
               dataSource={filterValues[filterKey].map(({ key, count }) => (
                 <Option key={key}>
-                  <span>{key}</span>
-                  <span>{count}</span>
+                  <div className="schema-value">
+                    <span>{key}</span>
+                    <span>{count}</span>
+                  </div>
                 </Option>
               ))}
               onChange={value => {
@@ -43,7 +50,7 @@ const FilterDropdown: React.FunctionComponent<FilterDropdownProps> = ({
                 onFilterChange({ [filterKey]: value as string | null });
               }}
               style={{ width: '100%', marginBottom: '1em' }}
-              placeholder={`Filter by ${filterKey}`}
+              placeholder={`Filter by ${label}`}
               optionLabelProp="value"
             >
               <Input
@@ -53,7 +60,7 @@ const FilterDropdown: React.FunctionComponent<FilterDropdownProps> = ({
                 }
               />
             </AutoComplete>
-          </>
+          </React.Fragment>
         );
       })}
     </div>

@@ -11,6 +11,7 @@ import { History } from 'history';
 import Nexus from '@bbp/nexus-sdk';
 import reducers, { RootState } from './reducers';
 import { saveState, loadState } from './reducers/localStorage';
+import { persistanceMapper, ListsByProjectState } from './reducers/lists';
 
 export type Services = {
   nexus: Nexus;
@@ -52,7 +53,8 @@ export default function configureStore(
   // persist these in the client
   store.subscribe(() => {
     saveState({
-      lists: (store.getState() as RootState).lists,
+      lists: persistanceMapper((store.getState() as RootState)
+        .lists as ListsByProjectState),
     });
   });
 

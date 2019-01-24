@@ -2,6 +2,11 @@ import { Action, ActionCreator, Dispatch } from 'redux';
 import { Project } from '@bbp/nexus-sdk';
 import { ThunkAction } from '../..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
+import ElasticSearchView, {
+  ElasticSearchViewAggregationResponse,
+} from '@bbp/nexus-sdk/lib/View/ElasticSearchView';
+
+const DEFAULT_AGG_TERM_SIZE = 999;
 
 enum ProjectActionTypes {
   FETCHING = '@@nexus/PROJECT_FETCHING',
@@ -53,7 +58,39 @@ export const fetchAndAssignProject: ActionCreator<ThunkAction> = (
     dispatch(fetchProjectsAction());
     try {
       const project: Project = await Project.get(orgLabel, projectLabel);
-      return dispatch(fetchProjectsFulfilledAction(project));
+      const defaultElasticSearchView: ElasticSearchView = await project.getElasticSearchView();
+      const aggregationQuery = {
+        aggs: {
+          schemas: {
+            terms: {
+              size: DEFAULT_AGG_TERM_SIZE,
+              field: '_constrainedBy',
+            },
+          },
+          types: {
+            terms: {
+              size: DEFAULT_AGG_TERM_SIZE,
+              field: '@type',
+            },
+          },
+        },
+      };
+      const aggregationResponse: ElasticSearchViewAggregationResponse = await defaultElasticSearchView.aggregation(
+        aggregationQuery
+      );
+      const schemas = aggregationResponse.aggregations.schemas.buckets.map(
+        ({ doc_count, key }) => ({ key, count: doc_count })
+      );
+      const types = aggregationResponse.aggregations.types.buckets.map(
+        ({ doc_count, key }) => ({ key, count: doc_count })
+      );
+      return dispatch(
+        fetchProjectsFulfilledAction({
+          ...project,
+          _constrainedBy: schemas,
+          '@type': types,
+        })
+      );
     } catch (e) {
       return dispatch(fetchProjectsFailedAction(e));
     }

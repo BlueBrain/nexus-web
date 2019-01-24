@@ -19,8 +19,11 @@ import {
   queryResourcesActionPrefix,
 } from '../actions/queryResource';
 
+const DEFAULT_VIEW = 'nxv:defaultElasticIndex';
+
 export interface List {
   name: string;
+  view: string;
   query: {
     filters: {
       [filterKey: string]: string[];
@@ -42,7 +45,8 @@ export interface List {
 export type ListState = List[];
 
 const DEFAULT_LIST: List = {
-  name: 'Default List',
+  name: 'Default Query',
+  view: DEFAULT_VIEW,
   query: {
     filters: {},
   },
@@ -70,7 +74,10 @@ export function listsReducer(
 
   switch (action.type) {
     case ListActionTypes.CREATE:
-      const newList = { ...DEFAULT_LIST, name: `New List ${state.length + 1}` };
+      const newList = {
+        ...DEFAULT_LIST,
+        name: `New Query ${state.length + 1}`,
+      };
       return [...state, newList];
     case ListActionTypes.DELETE:
       return [
@@ -133,3 +140,14 @@ export default function listsByProjectReducer(
       return state;
   }
 }
+
+export const persistanceMapper = (lists: ListsByProjectState) => {
+  Object.keys({ ...lists }).map(filterKey => {
+    lists[filterKey].map(list => ({
+      ...list,
+      request: DEFAULT_LIST.request,
+    }));
+    return lists[filterKey];
+  });
+  return lists;
+};

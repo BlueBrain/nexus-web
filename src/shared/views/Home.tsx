@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Drawer, notification, Modal, Button } from 'antd';
+import { Drawer, notification, Modal, Button, Empty } from 'antd';
 import { Project } from '@bbp/nexus-sdk';
 import { CreateProjectPayload } from '@bbp/nexus-sdk/lib/Project/types';
 import { RootState } from '../store/reducers';
@@ -17,7 +17,7 @@ import ProjectForm from '../components/Projects/ProjectForm';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
 
 interface HomeProps {
-  activeOrg: { label: string };
+  activeOrg: { label: string; description?: string };
   projects: Project[];
   busy: boolean;
   match: any;
@@ -72,12 +72,12 @@ const Home: React.FunctionComponent<HomeProps> = ({
   const saveAndCreate = (newProject: Project) => {
     setFormBusy(true);
     createProject(activeOrg.label, newProject.label, {
-      name: newProject.name,
       base: newProject.base || undefined,
-      prefixMappings:
-        newProject.prefixMappings.length === 0
+      description: newProject.description || '',
+      apiMappings:
+        newProject.apiMappings.length === 0
           ? undefined
-          : newProject.prefixMappings,
+          : newProject.apiMappings,
     })
       .then(
         () => {
@@ -108,10 +108,10 @@ const Home: React.FunctionComponent<HomeProps> = ({
 
   const saveAndModify = (selectedProject: Project, newProject: Project) => {
     setFormBusy(true);
-    modifyProject(activeOrg.label, newProject.label, selectedProject.version, {
-      name: newProject.name,
+    modifyProject(activeOrg.label, newProject.label, selectedProject.rev, {
       base: newProject.base,
-      prefixMappings: newProject.prefixMappings || [],
+      description: newProject.description,
+      apiMappings: newProject.apiMappings || [],
     })
       .then(
         () => {
@@ -149,7 +149,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
     deprecateProject(
       selectedProject.orgLabel,
       selectedProject.label,
-      selectedProject.version
+      selectedProject.rev
     )
       .then(
         () => {
@@ -197,28 +197,36 @@ const Home: React.FunctionComponent<HomeProps> = ({
       />
     );
   }
-  if (projects.length === 0) {
-    return <p>no projects</p>;
-  }
+
   return (
     <>
+      <h1 style={{ marginBottom: 0, marginRight: 8 }}>{activeOrg.label}</h1>
+      {activeOrg.description && <p>{activeOrg.description}</p>}
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
-        <h1 style={{ marginBottom: 0, marginRight: 8 }}>Projects</h1>
+        <h2 style={{ marginBottom: 0, marginRight: 8 }}>Projects</h2>
         <Button
           type="primary"
           onClick={() => setModalVisible(true)}
           icon="plus-square"
-        />
+        >
+          Create Project
+        </Button>
       </div>
-      <ProjectList
-        projects={projects}
-        onProjectClick={(projectLabel: string) =>
-          goTo(activeOrg.label, projectLabel)
-        }
-        onProjectEdit={(projectLabel: string) =>
-          setSelectedProject(projects.filter(p => p.label === projectLabel)[0])
-        }
-      />
+      {projects.length === 0 ? (
+        <Empty description="No projects" />
+      ) : (
+        <ProjectList
+          projects={projects}
+          onProjectClick={(projectLabel: string) =>
+            goTo(activeOrg.label, projectLabel)
+          }
+          onProjectEdit={(projectLabel: string) =>
+            setSelectedProject(
+              projects.filter(p => p.label === projectLabel)[0]
+            )
+          }
+        />
+      )}
       <Modal
         title="New Project"
         visible={modalVisible}
@@ -233,16 +241,17 @@ const Home: React.FunctionComponent<HomeProps> = ({
       </Modal>
       <Drawer
         width={640}
-        visible={!!(selectedProject && selectedProject.name)}
+        visible={!!(selectedProject && selectedProject.label)}
         onClose={() => setSelectedProject(undefined)}
+        title={`Project: ${selectedProject && selectedProject.label}`}
       >
         {selectedProject && (
           <ProjectForm
             project={{
-              name: selectedProject.name,
               label: selectedProject.label,
+              description: selectedProject.description || '',
               base: selectedProject.base,
-              prefixMappings: selectedProject.prefixMappings,
+              apiMappings: selectedProject.apiMappings,
             }}
             onSubmit={(p: Project) => saveAndModify(selectedProject, p)}
             onDeprecate={() => saveAndDeprecate(selectedProject)}

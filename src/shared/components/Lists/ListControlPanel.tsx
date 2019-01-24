@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { Dropdown, Menu, Input, Icon, Button, Tooltip } from 'antd';
+import { Dropdown, Input, Icon, Button, Tooltip } from 'antd';
 import FilterDropdown from './FilterDropdown';
+import { Link } from 'react-router-dom';
 
 interface ListControlPanelProps {
   query: { filters: any; textQuery?: string };
+  queryPath: string;
   filterValues: { [key: string]: { key: string; count: number }[] } | {};
   onTextQueryChange: (value?: string) => void;
   onFilterChange: (value: { [key: string]: string }) => void;
@@ -13,6 +15,7 @@ interface ListControlPanelProps {
 
 const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
   query,
+  queryPath,
   filterValues,
   onTextQueryChange,
   onFilterChange,
@@ -63,7 +66,7 @@ const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
         allowClear={true}
         addonAfter={
           !!Object.keys(filterValues).length && (
-            <Tooltip title="Filter list">
+            <Tooltip title="Filter query">
               <Dropdown
                 overlay={
                   <FilterDropdown
@@ -91,15 +94,17 @@ const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
         />
       </Tooltip>
       {/* <Button icon="export" onClick={() => {}} style={{ marginRight: '2px' }} /> */}
-      <Tooltip title="Clone list">
+      <Tooltip title="Clone this query">
         <Button
           icon="switcher"
           onClick={onCloneList}
           style={{ marginRight: '2px' }}
         />
       </Tooltip>
-      <Tooltip title="View ElasticSearch Query">
-        <Button icon="code" onClick={() => {}} />
+      <Tooltip title="View ElasticSearch query">
+        <Link to={queryPath}>
+          <Button icon="search" />
+        </Link>
       </Tooltip>
     </div>
   );

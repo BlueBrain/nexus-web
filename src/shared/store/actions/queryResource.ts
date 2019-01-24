@@ -99,7 +99,7 @@ const queryResourcesFailedAction: ActionCreator<FailedQueryAction> = (
 });
 
 // TODO break out into library
-const makeESQuery = (query?: { filters: any; textQuery?: string }) => {
+export const makeESQuery = (query?: { filters: any; textQuery?: string }) => {
   if (query) {
     const must = [];
     if (Object.keys(query.filters).length) {
@@ -118,11 +118,18 @@ const makeESQuery = (query?: { filters: any; textQuery?: string }) => {
         },
       });
     }
+    if (must.length > 1) {
+      return {
+        query: {
+          bool: {
+            must,
+          },
+        },
+      };
+    }
     return {
       query: {
-        bool: {
-          must,
-        },
+        ...must[0],
       },
     };
   }

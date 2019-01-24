@@ -43,7 +43,6 @@ app.get(
   `${base}/authSuccess`,
   (req: express.Request, res: express.Response) => {
     const { error, access_token } = req.query;
-    console.log(req.query);
     if (!error) {
       try {
         const token = jwtDecode(access_token);

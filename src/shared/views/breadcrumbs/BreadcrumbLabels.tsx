@@ -5,7 +5,7 @@ import { RootState } from '../../store/reducers';
 export const HomeBreadcrumbLabel = (state: RootState) => {
   return (
     <span>
-      <Icon type="home" /> Home
+      <Icon type="home" /> Organizations
     </span>
   );
 };

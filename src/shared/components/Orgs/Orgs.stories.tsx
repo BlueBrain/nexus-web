@@ -12,12 +12,12 @@ import Header from '../Header';
 
 const logo = require('../../logo.svg');
 const orgs: OrgCardProps[] = [
-  { label: 'nexus', name: 'Nexus', projectNumber: 1200 },
-  { label: 'bbp', name: 'BBP', projectNumber: 300 },
-  { label: 'hbp', name: 'HBP', projectNumber: 1 },
-  { label: 'nasa', name: 'NASA', projectNumber: 912839 },
-  { label: 'tesla', name: 'Tesla', projectNumber: 3 },
-  { label: 'rolex', name: 'Rolex', projectNumber: 3424 },
+  { label: 'nexus', projectNumber: 1200 },
+  { label: 'bbp', projectNumber: 300 },
+  { label: 'hbp', projectNumber: 1 },
+  { label: 'nasa', projectNumber: 912839 },
+  { label: 'tesla', projectNumber: 3 },
+  { label: 'rolex', projectNumber: 3424 },
 ];
 
 storiesOf('Components/Orgs', module)
@@ -32,19 +32,17 @@ storiesOf('Components/Orgs', module)
       <OrgCard />
     ~~~
   `)(() => {
-      const org = text('Organization', 'Nexus');
       const label = text('Label', 'nexus');
       const projects = number('Project', 1);
       return (
         <React.Fragment>
           <div style={{ margin: '50px 40px 0px' }}>
             <h2>No logo</h2>
-            <OrgCard name="BBP" projectNumber={123} label="bbp" />
+            <OrgCard projectNumber={123} label="bbp" />
           </div>
           <div style={{ margin: '50px 40px 0px' }}>
             <h2>Logo and edit button</h2>
             <OrgCard
-              name={org}
               label={label}
               projectNumber={projects}
               logo={logo}
