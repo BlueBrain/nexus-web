@@ -248,7 +248,7 @@ export const makeProjectPublic: ActionCreator<ThunkAction> = (
         throw new Error('Project is already public');
       }
 
-      const rev = acls._results[0] && acls._results[0]._rev ? acls._results[0]._rev : 1;
+      const rev = acls._results[0] && acls._results[0]._rev ? acls._results[0]._rev : 0;
 
       const addACL = async (rev: number = 1) => {
         // We'll add the ACL on the entity itself,
