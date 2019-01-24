@@ -55,10 +55,14 @@ export const fetchOrgs: ActionCreator<ThunkAction> = () => {
   > => {
     dispatch(fetchOrgsAction());
     try {
-      const orgs: Organization[] = await nexus.listOrganizations();
-      const projectsPerOrg = await Promise.all(orgs.map(org => org.listProjects()));
+      const orgs: Organization[] = await Organization.list({ size: 100 });
+      const projectsPerOrg = await Promise.all(
+        orgs.map(org => Project.list(org.label, { size: 100 }))
+      );
       orgs.map((org, index) => {
-        (org as OrgPayload).projectNumber = projectsPerOrg[index].length.toString();
+        (org as OrgPayload).projectNumber = projectsPerOrg[
+          index
+        ].length.toString();
       });
       return dispatch(fetchOrgsFulfilledAction(orgs));
     } catch (e) {

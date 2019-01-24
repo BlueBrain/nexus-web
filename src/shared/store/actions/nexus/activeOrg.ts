@@ -60,8 +60,8 @@ export const fetchOrg: ActionCreator<ThunkAction> = orgName => {
   > => {
     dispatch(fetchOrgAction());
     try {
-      const org: Organization = await nexus.getOrganization(orgName);
-      const projects: Project[] = await org.listProjects();
+      const org: Organization = await Organization.get(orgName);
+      const projects: Project[] = await Project.list(orgName, { size: 100 });
       return dispatch(fetchOrgFulfilledAction(org, projects));
     } catch (e) {
       return dispatch(fetchOrgFailedAction(e));

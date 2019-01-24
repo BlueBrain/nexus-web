@@ -7,7 +7,6 @@ export interface ProjectCardProps {
   label: string;
   deprecated?: boolean;
   description?: string;
-  resourceNumber?: number;
   logo?: string;
   onClick?(): void;
   onEdit?(): void;
@@ -15,7 +14,6 @@ export interface ProjectCardProps {
 
 const ProjectCard: React.FunctionComponent<ProjectCardProps> = ({
   label,
-  resourceNumber = 0,
   description = '',
   onEdit,
   deprecated = false,
@@ -26,10 +24,6 @@ const ProjectCard: React.FunctionComponent<ProjectCardProps> = ({
       <div className="content">
         <p className="project-name">{label}</p>
         {deprecated && <Tag color="red">deprecated</Tag>}
-        <p className="project-number">
-          <span className="number">{resourceNumber}</span> resource
-          {resourceNumber > 1 && 's'}
-        </p>
         {!deprecated && onEdit && (
           <Button
             className="edit-button"
@@ -44,11 +38,7 @@ const ProjectCard: React.FunctionComponent<ProjectCardProps> = ({
           </Button>
         )}
       </div>
-      {description && (
-        <p className="project-description">
-          {description}
-        </p>
-      )}
+      {description && <p className="project-description">{description}</p>}
     </Card>
   );
 };
