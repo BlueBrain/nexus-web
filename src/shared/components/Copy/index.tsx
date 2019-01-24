@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-const DEFAULT_REVERT_DELAY = 10000;
+const DEFAULT_REVERT_DELAY = 3000;
 
 type triggerCopy = () => void;
 
