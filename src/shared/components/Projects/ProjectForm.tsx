@@ -88,6 +88,7 @@ export interface ProjectFormProps {
   form: WrappedFormUtils;
   project?: {
     label: string;
+    rev: number,
     description?: string;
     base?: string;
     apiMappings?: PrefixMappingGroupInputState[];
@@ -95,6 +96,7 @@ export interface ProjectFormProps {
   busy?: boolean;
   onSubmit?(project: ProjectFormProps['project']): any;
   onDeprecate?(): any;
+  onMakePublic?(): any;
   mode?: 'create' | 'edit';
 }
 
@@ -108,6 +110,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   busy = false,
   onSubmit = () => {},
   onDeprecate = () => {},
+  onMakePublic = () => {},
   mode = 'create',
 }) => {
   // logic for generating dynamic prefix mapping fields in form
@@ -187,6 +190,14 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
       title: 'Deprecate Project',
       content: 'Are you sure?',
       onOk: onDeprecate,
+    });
+  };
+
+  const confirmMakePublic = () => {
+    Modal.confirm({
+      title: 'Make Project Public',
+      content: 'Are you sure?',
+      onOk: onMakePublic,
     });
   };
 
@@ -271,13 +282,21 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
             Save
           </Button>
           {mode === 'edit' && (
-            <Button
-              type="danger"
-              onClick={confirmDeprecate}
-              style={{ float: 'right' }}
-            >
-              Deprecate
-            </Button>
+            <>
+              <Button
+                type="danger"
+                onClick={confirmDeprecate}
+                style={{ float: 'right' }}
+              >
+                Deprecate
+              </Button>
+              <Button
+                onClick={confirmMakePublic}
+                style={{float: 'right' }}
+              >
+                <Icon type="global" />Make public
+              </Button>
+            </>
           )}
         </Form.Item>
       </Form>
