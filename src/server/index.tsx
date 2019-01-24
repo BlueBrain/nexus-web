@@ -42,10 +42,12 @@ if (process.env.NODE_ENV !== 'production') {
 app.get(
   `${base}/authSuccess`,
   (req: express.Request, res: express.Response) => {
-    const { error, access_token } = req.query;
+    const { error, access_token, session_state } = req.query;
     if (!error) {
       try {
-        const token = jwtDecode(access_token);
+        // is it session_state or access_token?
+        const receivedToken = access_token || session_state;
+        const token = jwtDecode(receivedToken);
         res.cookie(
           cookieName,
           JSON.stringify({
