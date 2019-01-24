@@ -16,8 +16,8 @@ import createStore, { ThunkAction } from '../shared/store';
 import { RootState } from '../shared/store/reducers';
 import routes, { RouteWithData } from '../shared/routes';
 
-const isDev = process.env.NODE_ENV !== 'production';
-const cookieName = isDev ? '_Secure-nexusAuth' : '__Secure-nexusAuth';
+const isSecure = !!process.env.SECURE;
+const cookieName = isSecure ? '__Secure-nexusAuth' : '_Secure-nexusAuth';
 
 // Create a express app
 const app: express.Express = express();
@@ -42,12 +42,10 @@ if (process.env.NODE_ENV !== 'production') {
 app.get(
   `${base}/authSuccess`,
   (req: express.Request, res: express.Response) => {
-    const { error, access_token, session_state } = req.query;
+    const { error, access_token } = req.query;
     if (!error) {
       try {
-        // is it session_state or access_token?
-        const receivedToken = access_token || session_state;
-        const token = jwtDecode(receivedToken);
+        const token = jwtDecode(access_token);
         res.cookie(
           cookieName,
           JSON.stringify({
@@ -55,7 +53,7 @@ app.get(
           }),
           {
             maxAge: (token as any)['exp'],
-            secure: isDev ? false : true,
+            secure: isSecure ? true : false,
             sameSite: 'strict',
             path: base,
             httpOnly: true,
@@ -76,7 +74,7 @@ app.get(`${base}/authLogout`, (req: express.Request, res: express.Response) => {
     {},
     {
       maxAge: -1,
-      secure: isDev ? false : true,
+      secure: isSecure ? true : false,
       sameSite: 'strict',
       path: base,
       httpOnly: true,
