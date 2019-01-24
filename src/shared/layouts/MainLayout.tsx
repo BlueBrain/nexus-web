@@ -17,6 +17,7 @@ const DESCRIPTION =
 
 export interface MainLayoutProps {
   authenticated: boolean;
+  token?: string;
   logoutUrl: string;
   hostName: string;
   goTo(url: string): void;
@@ -25,6 +26,7 @@ export interface MainLayoutProps {
 
 const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
   authenticated,
+  token,
   goTo,
   logoutUrl,
   hostName,
@@ -52,6 +54,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
     </Helmet>
     <Header
       name={authenticated ? name : undefined}
+      token={token}
       links={[
         <a href={`${logoutUrl}?redirect_uri=${hostName}/authLogout`}>
           log out
@@ -73,6 +76,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
 
 const mapStateToProps = ({ auth }: { auth: AuthState }) => ({
   authenticated: auth.authenticated,
+  token: auth.accessToken,
   name: auth.tokenData ? (auth.tokenData as any)['name'] : '',
   logoutUrl: auth.endSessionEndpoint || '',
   hostName: auth.redirectHostName || '',

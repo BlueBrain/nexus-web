@@ -1,11 +1,13 @@
 import * as React from 'react';
-import { Menu, Dropdown, Icon } from 'antd';
+import { Menu, Dropdown, Icon, Button } from 'antd';
 import './Header.less';
+import Copy from '../Copy';
 
 const logo = require('../../logo.svg');
 
 export interface HeaderProps {
   name?: string;
+  token?: string;
   links?: React.ReactNode[];
   displayLogin?: boolean;
   children?: React.ReactChild;
@@ -14,6 +16,7 @@ export interface HeaderProps {
 
 const Header: React.FunctionComponent<HeaderProps> = ({
   name = '',
+  token,
   displayLogin = true,
   links = [],
   children,
@@ -37,6 +40,18 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         <h1>Nexus</h1>
       </div>
       <div className="selectors">{children}</div>
+      <div className="menu-block">
+        {token && (
+          <Copy
+            textToCopy={token}
+            render={(copySuccess, triggerCopy) => (
+              <Button size="small" icon="copy" onClick={() => triggerCopy()}>
+                {copySuccess ? 'Copied!' : 'Token'}
+              </Button>
+            )}
+          />
+        )}
+      </div>
       <div className="menu-block">
         {name ? (
           <Dropdown overlay={menu}>
