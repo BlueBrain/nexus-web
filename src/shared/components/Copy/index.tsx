@@ -21,11 +21,11 @@ const Copy: React.FunctionComponent<CopyProps> = ({
 }) => {
   const [copySuccess, setCopySuccess] = React.useState(false);
   React.useEffect(() => {
-    const timer = setInterval(() => {
+    const timer = setTimeout(() => {
       setCopySuccess(false);
     }, revertDelay);
     return () => {
-      clearInterval(timer);
+      clearTimeout(timer);
     };
   }, []);
 
