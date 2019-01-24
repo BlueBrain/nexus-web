@@ -10,19 +10,13 @@ import {
 } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { Resource } from '@bbp/nexus-sdk';
+import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
 
 const Option = AutoComplete.Option;
 
 let ReactJson: any;
 if (typeof window !== 'undefined') {
   ReactJson = require('react-json-view').default;
-}
-
-export interface CreateResourcePayload {
-  resourceId?: string;
-  type?: string[];
-  context: { [field: string]: string } | any[];
-  [field: string]: any;
 }
 
 export interface ResourceFormProps {
@@ -33,7 +27,10 @@ export interface ResourceFormProps {
   };
   schemas: { key: string; count: number }[];
   busy?: boolean;
-  onSubmit?(resource: ResourceFormProps['resource']): any;
+  onSubmit?(resource: {
+    schemaId: string;
+    payload: CreateResourcePayload;
+  }): any;
   onDeprecate?(): any;
   mode?: 'create' | 'edit';
 }
@@ -51,9 +48,9 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
   mode = 'create',
 }) => {
   const [jsonValue, setJsonValue] = React.useState({
-    context: ['https://bluebrain.github.io/nexus/contexts/resource.json'],
+    context: {},
   });
-  const { getFieldDecorator, getFieldValue } = form;
+  const { getFieldDecorator } = form;
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -73,13 +70,15 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
+
     form.validateFields((err, values) => {
       if (!err) {
+        const { context, ...rest } = jsonValue;
         const payload = {
+          context,
           type: values.type,
           resourceId: values['@id'],
-          context: values.context,
-          ...jsonValue,
+          ...rest,
         };
         onSubmit({
           payload,
@@ -203,6 +202,7 @@ const ResourceFormModal: React.FunctionComponent<ResourceFormModalProps> = ({
         duration: 2,
       });
       onSuccess();
+      setFormBusy(false);
       setModalVisible(false);
     } catch (error) {
       notification.error({

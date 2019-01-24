@@ -2,8 +2,9 @@ import * as React from 'react';
 import FileUpload from '../FileUpload';
 import { Button, Drawer, Divider } from 'antd';
 import { Project, Resource } from '@bbp/nexus-sdk';
-import ResourceForm, { CreateResourcePayload } from '../Resources/ResourceForm';
+import ResourceForm from '../Resources/ResourceForm';
 import { Link } from 'react-router-dom';
+import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
 interface MenuProps {
   project?: Project | null;
   createList: (orgProjectFilterKey: string) => void;

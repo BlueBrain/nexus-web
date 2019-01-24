@@ -4,12 +4,12 @@ import { RootState } from '../store/reducers';
 import Lists from '../components/Lists';
 import { fetchAndAssignProject } from '../store/actions/nexus/projects';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
-import { Project, Resource } from '@bbp/nexus-sdk';
 import { Empty, Switch, Icon, Tooltip } from 'antd';
 import Menu from '../components/Workspace/Menu';
 import { createList, initializeProjectList } from '../store/actions/lists';
-import { CreateResourcePayload } from '../components/Resources/ResourceForm';
 import { ListsByProjectState } from '../store/reducers/lists';
+import { Project, Resource } from '@bbp/nexus-sdk';
+import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
 
 interface ProjectViewProps {
   project: Project | null;
@@ -76,7 +76,10 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
             <h1 style={{ marginBottom: 0, marginRight: 8 }}>
               {project.label}{' '}
               <Menu
-                createResource={async (schemaId, payload) =>
+                createResource={async (
+                  schemaId: string,
+                  payload: CreateResourcePayload
+                ) =>
                   await createResource(
                     project.orgLabel,
                     project.label,

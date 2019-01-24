@@ -31,7 +31,6 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
   const [selectedResource, setSelectedResource] = React.useState(
     null as Resource | null
   );
-  console.log({ total });
   return (
     <React.Fragment>
       <List
