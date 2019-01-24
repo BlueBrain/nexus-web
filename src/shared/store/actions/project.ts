@@ -2,6 +2,8 @@ import { Action, ActionCreator, Dispatch } from 'redux';
 import { Project } from '@bbp/nexus-sdk';
 import { ThunkAction } from '..';
 import { CreateProjectPayload } from '@bbp/nexus-sdk/lib/Project/types';
+import { httpGet, httpPatch, httpPut } from '@bbp/nexus-sdk/lib/utils/http';
+import { IdentityResponse } from '@bbp/nexus-sdk/lib/ACL';
 
 //
 // Action Types
@@ -41,6 +43,17 @@ interface DeprecateProjectFailureAction extends Action {
   error: Error;
 }
 
+interface MakeProjectPublicAction extends Action {
+  type: '@@nexus/PROJECT_MAKING_PUBLIC';
+}
+interface MakeProjectPublicSuccessAction extends Action {
+  type: '@@nexus/PROJECT_MAKING_PUBLIC_SUCCESS';
+}
+interface MakeProjectPublicFailureAction extends Action {
+  type: '@@nexus/PROJECT_MAKING_PUBLIC_FAILURE';
+  error: Error;
+}
+
 export type ProjectActions =
   | CreateProjectAction
   | CreateProjectSuccessAction
@@ -50,7 +63,10 @@ export type ProjectActions =
   | ModifyProjectFailureAction
   | DeprecateProjectAction
   | DeprecateProjectSuccessAction
-  | DeprecateProjectFailureAction;
+  | DeprecateProjectFailureAction
+  | MakeProjectPublicAction
+  | MakeProjectPublicSuccessAction
+  | MakeProjectPublicFailureAction;
 
 //
 // Action definitions
@@ -100,6 +116,21 @@ const deprecateProjectFailureAction: ActionCreator<
 > = (error: any) => ({
   error,
   type: '@@nexus/PROJECT_DEPRECATING_FAILURE',
+});
+
+const makeProjectPublicAction: ActionCreator<MakeProjectPublicAction> = () => ({
+  type: '@@nexus/PROJECT_MAKING_PUBLIC',
+});
+const makeProjectPublicSuccessAction: ActionCreator<
+  MakeProjectPublicSuccessAction
+> = (project: Project) => ({
+  type: '@@nexus/PROJECT_MAKING_PUBLIC_SUCCESS',
+});
+const makeProjectPublicFailureAction: ActionCreator<
+  MakeProjectPublicFailureAction
+> = (error: any) => ({
+  error,
+  type: '@@nexus/PROJECT_MAKING_PUBLIC_FAILURE',
 });
 
 //
@@ -173,3 +204,78 @@ export const deprecateProject: ActionCreator<ThunkAction> = (
     }
   };
 };
+
+export const makeProjectPublic: ActionCreator<ThunkAction> = (
+  orgLabel: string,
+  projectLabel: string,
+  ) => {
+  return async (
+    dispatch: Dispatch<any>,
+    getState,
+    { nexus }
+  ): Promise<MakeProjectPublicSuccessAction | MakeProjectPublicFailureAction> => {
+    dispatch(makeProjectPublicAction());
+    try {
+      // @ts-ignore
+      const endpoint = getState().config.apiEndpoint;
+
+      const getAnonymous = async (): Promise<IdentityResponse> => {
+        try {
+          const identitiesResponse = await httpGet(`${endpoint}/identities`, false);
+          const anonymous = identitiesResponse.identities.find(((identity: IdentityResponse) => identity["@type"] === 'Anonymous'));
+          if (!anonymous) {
+           throw new Error("Error: Cannot find the Anonymous user. It is needed for Nexus to work properly. There is a serious problem. Please notify an administatior.");
+          }
+          return anonymous;
+        } catch (e) {
+          throw e;
+        }
+      };
+      const anonymous = await getAnonymous();
+
+      const getACLRevision = async () => {
+        try {
+          const acls = await httpGet(`${endpoint}/acls/${orgLabel}/${projectLabel}`, false);
+          const rev = acls._results[0] && acls._results[0]._rev ? acls._results[0]._rev : 1;
+          return rev;
+        } catch (e) {
+          throw e;
+        }
+      };
+
+      const rev = await getACLRevision();
+
+      const addACL = async (rev: number = 1) => {
+        // We'll add the ACL on the entity itself,
+        // even if an ancestor already gives the permission.
+        // TODO: use PATCH method instead, once the CORS issue is fixed.
+        try {
+          await httpPut(`${endpoint}/acls/${orgLabel}/${projectLabel}?rev=${rev}`,
+            {
+              // "@type": "Append",
+              "acl": [
+                {
+                  "permissions": [
+                    "projects/read"
+                  ],
+                  "identity": anonymous
+                },
+              ]
+            }, false);
+          return true;
+        } catch (e) {
+          console.log(e);
+          return false;
+        }
+      };
+
+      if (await addACL(rev)) {
+        return dispatch(makeProjectPublicSuccessAction());
+      }
+
+      throw new Error('Could not make project public');
+    } catch (e) {
+      return Promise.reject(dispatch(makeProjectPublicFailureAction(e)));
+    }
+  };
+}
