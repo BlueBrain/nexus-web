@@ -9,6 +9,7 @@ import {
   modifyProject,
   createProject,
   deprecateProject,
+  makeProjectPublic,
 } from '../store/actions/project';
 import ProjectList from '../components/Projects/ProjectList';
 import Skeleton from '../components/Skeleton';
@@ -38,6 +39,10 @@ interface HomeProps {
     projectLabel: string,
     rev: number
   ): Promise<void>;
+  makeProjectPublic(
+    orgLabel: string,
+    projectLabel: string,
+  ): Promise<void>;
   goTo(o: string, p: string): void;
 }
 
@@ -51,6 +56,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
   createProject,
   modifyProject,
   deprecateProject,
+  makeProjectPublic,
 }) => {
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
@@ -181,6 +187,42 @@ const Home: React.FunctionComponent<HomeProps> = ({
       });
   };
 
+  const makePublic = (selectedProject: Project) => {
+    setFormBusy(true);
+    makeProjectPublic(
+      selectedProject.orgLabel,
+      selectedProject.label,
+    )
+      .then(
+        () => {
+          notification.success({
+            message: 'Project is now publicly accessible',
+            duration: 2,
+          });
+          setFormBusy(false);
+          setModalVisible(false);
+          setSelectedProject(undefined);
+
+          fetchProjects(match.params.org);
+        },
+        (action: { type: string; error: Error }) => {
+          notification.warning({
+            message: 'Project NOT made public',
+            description: action.error.message,
+            duration: 2,
+          });
+          setFormBusy(false);
+        }
+      )
+      .catch((error: Error) => {
+        notification.error({
+          message: 'An unknown error occurred',
+          description: error.message,
+          duration: 0,
+        });
+      });
+  };
+
   if (busy) {
     return (
       <Skeleton
@@ -249,12 +291,14 @@ const Home: React.FunctionComponent<HomeProps> = ({
           <ProjectForm
             project={{
               label: selectedProject.label,
+              rev: selectedProject.rev,
               description: selectedProject.description || '',
               base: selectedProject.base,
               apiMappings: selectedProject.apiMappings,
             }}
             onSubmit={(p: Project) => saveAndModify(selectedProject, p)}
             onDeprecate={() => saveAndDeprecate(selectedProject)}
+            onMakePublic={() => makePublic(selectedProject)}
             busy={formBusy}
             mode="edit"
           />
@@ -299,6 +343,8 @@ const mapDispatchToProps = (dispatch: any) => ({
   ) => dispatch(modifyProject(orgLabel, projectLabel, rev, payload)),
   deprecateProject: (orgLabel: string, projectLabel: string, rev: number) =>
     dispatch(deprecateProject(orgLabel, projectLabel, rev)),
+  makeProjectPublic: (orgLabel: string, projectLabel: string) =>
+    dispatch(makeProjectPublic(orgLabel, projectLabel)),
 });
 
 export default connect(
