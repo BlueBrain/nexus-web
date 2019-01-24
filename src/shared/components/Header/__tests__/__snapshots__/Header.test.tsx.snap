@@ -31,6 +31,9 @@ exports[`Header component Should render correctly 1`] = `
   />
   <div
     className="menu-block"
+  />
+  <div
+    className="menu-block"
   >
     <Dropdown
       mouseEnterDelay={0.15}
