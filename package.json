@@ -1,7 +1,7 @@
 {
   "name": "nexus-web",
   "description": "The interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-beta.1",
   "author": "Bluebrain project",
   "license": "Apache-2.0",
   "main": "dist/server.js",
@@ -16,7 +16,7 @@
     "build:storybook": "build-storybook"
   },
   "dependencies": {
-    "@bbp/nexus-sdk": "1.0.0-beta.0",
+    "@bbp/nexus-sdk": "1.0.0-beta.1",
     "@types/redux-localstorage": "^1.0.8",
     "antd": "^3.10.9",
     "connected-react-router": "^5.0.1",
