@@ -77,7 +77,7 @@ const Menu: React.FunctionComponent<MenuProps> = ({
             Sparql Query Editor
           </Link>
           <Link
-            to={`/${orgLabel}/${projectLabel}/nxv:defaultElasticIndex/_search`}
+            to={`/${orgLabel}/${projectLabel}/nxv:defaultElasticSearchIndex/_search`}
           >
             ElasticSearch Query Editor
           </Link>

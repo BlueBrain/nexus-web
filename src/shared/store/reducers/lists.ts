@@ -19,7 +19,7 @@ import {
   queryResourcesActionPrefix,
 } from '../actions/queryResource';
 
-const DEFAULT_VIEW = 'nxv:defaultElasticIndex';
+const DEFAULT_VIEW = 'nxv:defaultElasticSearchIndex';
 
 export interface List {
   name: string;
