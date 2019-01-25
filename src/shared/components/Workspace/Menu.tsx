@@ -83,14 +83,14 @@ const Menu: React.FunctionComponent<MenuProps> = ({
           </Link>
         </div>
         <Divider />
-        <div style={{ height: '200px' }}>
+        {/* <div style={{ height: '200px' }}>
           <FileUpload
             onFileUpload={async file => {
               // project.postFile()
               console.log({ file });
             }}
           />
-        </div>
+        </div> */}
       </Drawer>
     </>
   );
