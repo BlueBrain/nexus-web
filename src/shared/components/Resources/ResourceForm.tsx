@@ -72,7 +72,7 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
     e.preventDefault();
 
     form.validateFields((err, values) => {
-      if (!err) {
+      if (!err && !busy) {
         const { context, ...rest } = jsonValue;
         const payload = {
           context,
@@ -113,6 +113,7 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
         </Form.Item>
         <Form.Item {...formItemLayout} label="schema">
           {getFieldDecorator('schemaId', {
+            initialValue: '_',
             rules: [
               {
                 required: true,
@@ -191,7 +192,6 @@ const ResourceFormModal: React.FunctionComponent<ResourceFormModalProps> = ({
     const { schemaId, payload } = resourceToCreate;
     setFormBusy(true);
     try {
-      createResource(encodeURIComponent(schemaId), payload);
       const resource = await createResource(
         encodeURIComponent(schemaId),
         payload
