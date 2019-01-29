@@ -219,12 +219,18 @@ export const makeProjectPublic: ActionCreator<ThunkAction> = (
       // @ts-ignore
       const endpoint = getState().config.apiEndpoint;
 
+      const publicPermissions = [
+        "projects/read",
+        "resources/read",
+        "views/query",
+      ];
+
       const getAnonymous = async (): Promise<IdentityResponse> => {
         try {
           const identitiesResponse = await httpGet(`${endpoint}/identities`, false);
           const anonymous = identitiesResponse.identities.find(((identity: IdentityResponse) => identity["@type"] === 'Anonymous'));
           if (!anonymous) {
-           throw new Error("Error: Cannot find the Anonymous user. It is needed for Nexus to work properly. There is a serious problem. Please notify an administatior.");
+           throw new Error("Error: Cannot find the Anonymous user. It is needed for Nexus to work properly. There is a serious problem. Please notify an administator.");
           }
           return anonymous;
         } catch (e) {
@@ -240,7 +246,7 @@ export const makeProjectPublic: ActionCreator<ThunkAction> = (
           return acl.identity
             && acl.identity["@type"] === 'Anonymous'
             && acl.permissions
-            && acl.permissions.some((permission: any) => permission === 'projects/read');
+            && publicPermissions.every((value: string) => acl.permissions.includes(value));
         });
       });
 
@@ -248,7 +254,7 @@ export const makeProjectPublic: ActionCreator<ThunkAction> = (
         throw new Error('Project is already public');
       }
 
-      const rev = acls._results[0] && acls._results[0]._rev ? acls._results[0]._rev : 0;
+      const rev = acls._results[0] && acls._results[0]._rev ? acls._results[0]._rev : 1;
 
       const addACL = async (rev: number = 1) => {
         // We'll add the ACL on the entity itself,
@@ -260,9 +266,7 @@ export const makeProjectPublic: ActionCreator<ThunkAction> = (
               // "@type": "Append",
               "acl": [
                 {
-                  "permissions": [
-                    "projects/read"
-                  ],
+                  "permissions": publicPermissions,
                   "identity": anonymous
                 },
               ]
