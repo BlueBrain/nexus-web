@@ -170,7 +170,9 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           type="primary"
           onClick={() => setModalVisible(true)}
           icon="plus-square"
-        />
+        >
+          Create Organization
+        </Button>
       </div>
       {orgs.length === 0 ? (
         <p style={{ marginTop: 50 }}>No organizations yet...</p>
