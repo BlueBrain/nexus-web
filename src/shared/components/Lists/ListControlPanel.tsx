@@ -4,6 +4,7 @@ import FilterDropdown from './FilterDropdown';
 import { Link } from 'react-router-dom';
 
 interface ListControlPanelProps {
+  listIndex: number;
   query: { filters: any; textQuery?: string };
   queryPath: string;
   filterValues: { [key: string]: { key: string; count: number }[] } | {};
@@ -14,6 +15,7 @@ interface ListControlPanelProps {
 }
 
 const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
+  listIndex,
   query,
   queryPath,
   filterValues,
@@ -61,9 +63,10 @@ const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
         value={value}
         ref={inputEl}
         onPressEnter={handleInputEnter}
-        onBlur={handleBlurEvent}
+        // onBlur={handleBlurEvent}
         onChange={handleInputChange}
         allowClear={true}
+        tabIndex={listIndex + 1}
         addonAfter={
           !!Object.keys(filterValues).length && (
             <Tooltip title="Filter query">

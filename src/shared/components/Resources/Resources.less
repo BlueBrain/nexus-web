@@ -34,7 +34,9 @@
   display: flex;
   justify-content: space-between;
   padding: 1em;
-  &:hover {
+  &:hover,
+  &:active,
+  &:focus {
     background-color: @primary-background-subtle;
     .ant-list-item-meta-title {
       margin-left: 0.25em;
@@ -42,7 +44,6 @@
     }
   }
   & > .name {
-    font-weight: bold;
     font-size: 14px;
     width: 70%;
     text-overflow: ellipsis;

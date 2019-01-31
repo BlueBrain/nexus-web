@@ -31,6 +31,21 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
   const [selectedResource, setSelectedResource] = React.useState(
     null as Resource | null
   );
+  const handleKeyPress = (e: KeyboardEvent) => {
+    const code = e.keyCode || e.which;
+    // enter is pressed
+    if (code === 27 && selectedResource) {
+      setSelectedResource(null);
+    }
+  };
+
+  React.useEffect(() => {
+    document.addEventListener('keydown', handleKeyPress, false);
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress, false);
+    };
+  });
+
   return (
     <React.Fragment>
       <List
@@ -55,9 +70,10 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
               }
             : undefined
         }
-        renderItem={(resource: Resource) => {
+        renderItem={(resource: Resource, index: number) => {
           return (
             <ResourceItem
+              index={index}
               key={resource.id}
               name={resource.name}
               {...resource}
