@@ -6,6 +6,8 @@ import './Resources.less';
 import { Meta } from 'antd/lib/list/Item';
 import moment = require('moment');
 
+const MOUSE_ENTER_DELAY = 0.5;
+
 export interface ResourceItemProps extends ResourceMetadataCardProps {
   id: string;
   type?: string[];
@@ -52,7 +54,10 @@ const ResourceMetadataCard: React.FunctionComponent<
 const ResourceListItem: React.FunctionComponent<ResourceItemProps> = props => {
   const { type, name, onClick = () => {} } = props;
   return (
-    <Popover content={<ResourceMetadataCard {...props} />}>
+    <Popover
+      content={<ResourceMetadataCard {...props} />}
+      mouseEnterDelay={MOUSE_ENTER_DELAY}
+    >
       <div className="clickable-container resource-item" onClick={onClick}>
         <div className="name">
           <em>{name}</em>
