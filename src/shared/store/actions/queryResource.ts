@@ -127,6 +127,9 @@ export const makeESQuery = (query?: { filters: any; textQuery?: string }) => {
         },
       };
     }
+    if (must.length === 0) {
+      return {};
+    }
     return {
       query: {
         ...must[0],
