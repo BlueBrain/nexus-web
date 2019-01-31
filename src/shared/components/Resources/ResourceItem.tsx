@@ -40,7 +40,7 @@ const ResourceMetadataCard: React.FunctionComponent<
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div>last updated {moment(updatedAt).fromNow()}</div>
             <div>
-              constrained by <b>{constrainedBy}</b>
+              schema: <b>{constrainedBy}</b>
             </div>
           </div>
         }
