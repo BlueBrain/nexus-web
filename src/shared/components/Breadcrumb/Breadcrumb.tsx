@@ -41,7 +41,9 @@ const BreadcrumbsListComponent: React.FunctionComponent<BreadcrumbProps> = ({
               }`}
               key={`${path}-${index}`}
             >
-              <NavLink to={path}>{component}</NavLink>
+              <NavLink tabIndex={-1} to={path}>
+                {component}
+              </NavLink>
             </li>
             {!!(index < breadcrumbs.length - 1) && (
               <li

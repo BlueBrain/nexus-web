@@ -115,6 +115,7 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
         <Icon type="close" className="close-button" onClick={handleDelete} />
       </h3>
       <ListControlPanel
+        listIndex={listIndex}
         query={query}
         filterValues={filterValues}
         onTextQueryChange={handleTextQueryChange}

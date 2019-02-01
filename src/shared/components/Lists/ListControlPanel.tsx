@@ -4,6 +4,7 @@ import FilterDropdown from './FilterDropdown';
 import { Link } from 'react-router-dom';
 
 interface ListControlPanelProps {
+  listIndex: number;
   query: { filters: any; textQuery?: string };
   queryPath: string;
   filterValues: { [key: string]: { key: string; count: number }[] } | {};
@@ -14,6 +15,7 @@ interface ListControlPanelProps {
 }
 
 const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
+  listIndex,
   query,
   queryPath,
   filterValues,
@@ -22,27 +24,15 @@ const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
   onClear,
   onCloneList,
 }) => {
-  const inputEl = React.useRef(null);
+  const inputEl = React.createRef<Input>();
   const [value, setTextQueryValue] = React.useState(query.textQuery);
   const handleInputChange = (e: any) => {
     const value = e.target.value;
     setTextQueryValue(value);
-    // if cleared or removed, send changed event
-    if (!value) {
-      onTextQueryChange(value);
-    }
   };
 
   const handleInputEnter = () => {
     onTextQueryChange(value);
-  };
-
-  const handleBlurEvent = (e: any) => {
-    const blurValue = e.target.value;
-    if (blurValue === query.textQuery) {
-      return;
-    }
-    handleInputEnter();
   };
 
   const handleFilterUpdate = (value: any) => {
@@ -61,9 +51,10 @@ const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
         value={value}
         ref={inputEl}
         onPressEnter={handleInputEnter}
-        onBlur={handleBlurEvent}
+        // onBlur={handleBlurEvent}
         onChange={handleInputChange}
         allowClear={true}
+        tabIndex={listIndex + 1}
         addonAfter={
           !!Object.keys(filterValues).length && (
             <Tooltip title="Filter query">
