@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { List, Drawer } from 'antd';
+import { Drawer } from 'antd';
 import { PaginatedList, Resource, PaginationSettings } from '@bbp/nexus-sdk';
 import ResourceItem, { ResourceItemProps } from './ResourceItem';
 import './Resources.less';
+import AnimatedList from '../Animations/AnimatedList';
 
 let ReactJson: any;
 if (typeof window !== 'undefined') {
@@ -25,62 +26,28 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
   loading = false,
 }) => {
   const { total, results } = resources;
-  const { from, size } = paginationSettings;
-  const totalPages = Math.ceil(total / size);
-  const current = Math.ceil((totalPages / total) * (from || 1));
   const [selectedResource, setSelectedResource] = React.useState(
     null as Resource | null
   );
-  const handleKeyPress = (e: KeyboardEvent) => {
-    const code = e.keyCode || e.which;
-    // enter is pressed
-    if (code === 27 && selectedResource) {
-      setSelectedResource(null);
-    }
-  };
-
-  React.useEffect(() => {
-    document.addEventListener('keydown', handleKeyPress, false);
-    return () => {
-      document.removeEventListener('keydown', handleKeyPress, false);
-    };
-  });
-
   return (
-    <React.Fragment>
-      <List
-        className="resources-list"
+    <>
+      <AnimatedList
+        header={header}
+        itemComponent={(resource: Resource, index: number) => (
+          <ResourceItem
+            index={index}
+            key={resource.id}
+            name={resource.name}
+            {...resource}
+            onClick={() => setSelectedResource(resource)}
+          />
+        )}
+        itemName="Resource"
+        results={results}
+        total={total}
+        onPaginationChange={paginationChange}
+        paginationSettings={paginationSettings}
         loading={loading}
-        header={
-          <div>
-            {header}
-            <p className="result">{`Found ${total} resource${
-              total > 1 ? 's' : ''
-            }`}</p>
-          </div>
-        }
-        dataSource={results}
-        pagination={
-          total && totalPages > 1
-            ? {
-                total,
-                current,
-                onChange: paginationChange,
-                pageSize: size,
-              }
-            : undefined
-        }
-        renderItem={(resource: Resource, index: number) => {
-          return (
-            <ResourceItem
-              index={index}
-              key={resource.id}
-              name={resource.name}
-              {...resource}
-              onClick={() => setSelectedResource(resource)}
-            />
-          );
-        }}
       />
       {typeof window !== 'undefined' && selectedResource && (
         <Drawer
@@ -93,7 +60,7 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
           <ReactJson src={selectedResource.raw} name={null} />
         </Drawer>
       )}
-    </React.Fragment>
+    </>
   );
 };
 
