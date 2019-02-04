@@ -2,33 +2,57 @@ import * as React from 'react';
 import { Spin, Pagination, Empty, Divider } from 'antd';
 import { PaginationSettings } from '@bbp/nexus-sdk';
 import './AnimatedList.less';
-import { Trail, config, animated } from 'react-spring';
+import { Transition, config, animated } from 'react-spring';
 
-export interface AnimatedListProps<T> {
+const DEFAULT_TRAIL_MS = 100;
+
+const DEFAULT_ANIMATIONS = {
+  from: { transform: 'scale3d(0.8, 0.8, 0.8)', height: 0, opacity: 0 },
+  leave: { transform: 'scale3d(0.8, 0.8, 0.8)', height: 0, opacity: 0 },
+  enter: { transform: 'scale3d(1, 1, 1)', height: 117, opacity: 1 },
+  // update: { background: '#28b4d7' },
+};
+
+export interface AnimatedListProps<Item> {
   header?: React.ReactNode;
-  itemComponent: (item: any, index: number) => React.ReactNode;
+  itemComponent: (item: Item, index: number, state: any) => React.ReactNode;
   itemName?: string;
-  results: any[];
+  results: Item[];
   total: number;
-  onPaginationChange: () => void;
-  paginationSettings: PaginationSettings;
+  makeKey?: (item: Item) => string;
+  onPaginationChange?: () => void;
+  paginationSettings?: PaginationSettings;
   loading?: boolean;
 }
 
 const AnimatedList: React.FunctionComponent<AnimatedListProps<any>> = props => {
   const {
+    makeKey = (item: any) => item.id,
     itemComponent,
     header = <div />,
-    loading = true,
+    loading = false,
     itemName = 'Item',
     total,
     results,
     paginationSettings,
     onPaginationChange,
   } = props;
-  const { from, size } = paginationSettings;
-  const totalPages = Math.ceil(total / size);
-  const current = Math.ceil((totalPages / total) * (from || 1));
+
+  let PaginationSection = null;
+  if (paginationSettings) {
+    const { from, size } = paginationSettings;
+    const totalPages = Math.ceil(total / size);
+    const current = Math.ceil((totalPages / total) * (from || 1));
+    PaginationSection = !!total && totalPages > 1 && (
+      <Pagination
+        total={total}
+        current={current}
+        onChange={onPaginationChange}
+        pageSize={size}
+      />
+    );
+  }
+
   return (
     <div className="list-container">
       <div className="header">
@@ -43,30 +67,25 @@ const AnimatedList: React.FunctionComponent<AnimatedListProps<any>> = props => {
       <div className="list">
         <Spin spinning={loading}>
           {!!total && (
-            <Trail
+            <Transition
+              // unique={true}
+              // reset={true}
+              trail={DEFAULT_TRAIL_MS}
               items={results}
-              keys={item => item.id}
-              from={{ transform: 'scale3d(0.8,0.8,0.8)' }}
-              config={config.gentle}
-              to={{ transform: 'scale3d(1, 1, 1)' }}
+              keys={makeKey}
+              {...DEFAULT_ANIMATIONS}
+              // config={config.gentle}
               native={true}
             >
-              {(item: any, index: number) => props => (
+              {(item: any, state: any, index: number) => props => (
                 <animated.div style={props}>
-                  {itemComponent(item, index)}
+                  {itemComponent(item, index, state)}
                 </animated.div>
               )}
-            </Trail>
+            </Transition>
           )}
           {!total && <Empty />}
-          {!!total && totalPages > 1 && (
-            <Pagination
-              total={total}
-              current={current}
-              onChange={onPaginationChange}
-              pageSize={size}
-            />
-          )}
+          {PaginationSection}
         </Spin>
       </div>
     </div>

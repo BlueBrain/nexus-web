@@ -3,6 +3,7 @@ import { Input } from 'antd';
 import OrgCard, { OrgCardProps } from './OrgCard';
 
 import './Orgs.less';
+import AnimatedList from '../Animations/AnimatedList';
 
 export interface OrgListProps {
   orgs: OrgCardProps[];
@@ -33,11 +34,8 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
         placeholder="Filter by name"
         onChange={handleChange}
       />
-      <p className="result">
-        Found {items.length} organization{items.length > 1 && 's'}
-      </p>
-      <div className="orgs">
-        {items.map((org: OrgCardProps, i) => (
+      <AnimatedList
+        itemComponent={(org, i) => (
           // TODO org cards should be anchor tags with hrefs for SSR
           <OrgCard
             key={org.label + i}
@@ -45,8 +43,13 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
             onClick={() => onOrgClick(org.label)}
             onEdit={() => onOrgEdit(org.label)}
           />
-        ))}
-      </div>
+        )}
+        makeKey={item => item.label}
+        itemName="Organization"
+        loading={!orgs}
+        results={items}
+        total={items.length}
+      />
     </div>
   );
 };
