@@ -94,7 +94,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
         },
         (action: { type: string; error: Error }) => {
           notification.warning({
-            message: 'Project NOT create',
+            message: 'Project NOT created',
             description: action.error.message,
             duration: 2,
           });

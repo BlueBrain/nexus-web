@@ -4,6 +4,7 @@ import { PaginatedList, Resource, PaginationSettings } from '@bbp/nexus-sdk';
 import ResourceItem, { ResourceItemProps } from './ResourceItem';
 import './Resources.less';
 import AnimatedList from '../Animations/AnimatedList';
+import { Link } from 'react-router-dom';
 
 let ReactJson: any;
 if (typeof window !== 'undefined') {
@@ -29,18 +30,47 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
   const [selectedResource, setSelectedResource] = React.useState(
     null as Resource | null
   );
+  const { from, pageSize } = paginationSettings;
+  const totalPages = Math.ceil(total / pageSize);
+  const current = Math.ceil((totalPages / total) * (from || 1));
+  const handleKeyPress = (e: KeyboardEvent) => {
+    const code = e.keyCode || e.which;
+    // enter is pressed
+    if (code === 27) {
+      // Navigate
+    }
+  };
+
+  React.useEffect(() => {
+    document.addEventListener('keydown', handleKeyPress, false);
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress, false);
+    };
+  });
+
   return (
     <>
       <AnimatedList
         header={header}
         itemComponent={(resource: Resource, index: number) => (
-          <ResourceItem
-            index={index}
-            key={resource.id}
-            name={resource.name}
-            {...resource}
-            onClick={() => setSelectedResource(resource)}
-          />
+          <Link
+            to={{
+              pathname: `/${resource.orgLabel}/${resource.projectLabel}/${
+                resource.id
+              }`,
+              state: {
+                modal: true,
+                returnTo: location ? location.pathname : null,
+              },
+            }}
+          >
+            <ResourceItem
+              index={index}
+              key={resource.id}
+              name={resource.name}
+              {...resource}
+            />
+          </Link>
         )}
         itemName="Resource"
         results={results}
@@ -49,17 +79,6 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
         paginationSettings={paginationSettings}
         loading={loading}
       />
-      {typeof window !== 'undefined' && selectedResource && (
-        <Drawer
-          width={640}
-          placement="right"
-          onClose={() => setSelectedResource(null)}
-          visible={!!selectedResource}
-          title={selectedResource.name}
-        >
-          <ReactJson src={selectedResource.raw} name={null} />
-        </Drawer>
-      )}
     </>
   );
 };

@@ -5,7 +5,10 @@ import { action } from '@storybook/addon-actions';
 import { withKnobs, text, number, boolean } from '@storybook/addon-knobs';
 
 import ResourceList from './ResourceList';
+import ResourceView from './ResourceView';
 import ResourceItem, { ResourceItemProps } from './ResourceItem';
+import { Resource } from '@bbp/nexus-sdk';
+import { Modal } from 'antd';
 
 const exampleResources = [
   {
@@ -154,6 +157,7 @@ const exampleResources = [
   },
 ];
 
+<<<<<<< HEAD
 const resources: ResourceItemProps[] = exampleResources.map(
   (item, index: number) => ({
     index,
@@ -163,6 +167,20 @@ const resources: ResourceItemProps[] = exampleResources.map(
     createdAt: item._createdAt,
     updatedAt: item._updatedAt,
   })
+);
+=======
+const resources: ResourceItemProps[] = exampleResources.map((item, index) => ({
+  index,
+  id: item['@id'],
+  updatedAt: item._updatedAt,
+  createdAt: item._createdAt,
+  constrainedBy: item._constrainedBy,
+  type: Array.isArray(item['@type']) ? item['@type'] : [item['@type']],
+}));
+>>>>>>> add simple resource view
+
+const resourceInstances = exampleResources.map(
+  resource => new Resource('org', resource._project, resource)
 );
 
 storiesOf('Components/Resources', module)
@@ -197,6 +215,7 @@ storiesOf('Components/Resources', module)
               createdAt={createdAt}
               index={index}
               onClick={action('resource-click')}
+              {...resources[0]}
             />
           </div>
         </React.Fragment>
@@ -219,9 +238,51 @@ storiesOf('Components/Resources', module)
       return (
         <React.Fragment>
           <div style={{ margin: '50px 40px 0px' }}>
-            {/* <ResourceList resources={resources} loading={loading} /> */}
+            <ResourceList
+              paginationChange={() => {}}
+              paginationSettings={{ from: 0, size: 20 }}
+              resources={{
+                total: resources.length,
+                results: resourceInstances,
+              }}
+              loading={loading}
+            />
           </div>
         </React.Fragment>
+      );
+    })
+  );
+
+storiesOf('Components/ResourceView', module)
+  .addDecorator(withKnobs)
+  .add(
+    'ResourceView',
+    withInfo(`
+    Show a detailed drill-down of a resource.
+
+    ~~~js
+    <ResourceView
+    resource={someResource}
+    error={null}
+    isFetching={loading}
+  />
+    ~~~
+  `)(() => {
+      const loading = boolean('Loading', false);
+      return (
+        <Modal
+          visible={true}
+          width={900}
+          footer={null}
+          closable={false}
+          onCancel={action('resource-modal-closed')}
+        >
+          <ResourceView
+            resource={JSON.parse(JSON.stringify(resourceInstances[0]))}
+            error={null}
+            isFetching={loading}
+          />
+        </Modal>
       );
     })
   );

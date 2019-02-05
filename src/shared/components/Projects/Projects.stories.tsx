@@ -32,30 +32,30 @@ storiesOf('Components/Projects', module)
     })
   );
 
-storiesOf('Components/Projects', module)
-  .addDecorator(withKnobs)
-  .add(
-    'ProjectList',
-    withInfo(`
-      ~~~js
-      <ProjectList
-        projects={projects}
-        onProjectClick={action('project-click')}
-      />
-      ~~~
-  `)(() => {
-      return (
-        <React.Fragment>
-          <div style={{ margin: '50px 40px 0px' }}>
-            <ProjectList
-              projects={projects}
-              onProjectClick={action('project-click')}
-            />
-          </div>
-        </React.Fragment>
-      );
-    })
-  );
+// storiesOf('Components/Projects', module)
+//   .addDecorator(withKnobs)
+//   .add(
+//     'ProjectList',
+//     withInfo(`
+//       ~~~js
+//       <ProjectList
+//         projects={projects}
+//         onProjectClick={action('project-click')}
+//       />
+//       ~~~
+//   `)(() => {
+//       return (
+//         <React.Fragment>
+//           <div style={{ margin: '50px 40px 0px' }}>
+//             <ProjectList
+//               projects={projects}
+//               onProjectClick={action('project-click')}
+//             />
+//           </div>
+//         </React.Fragment>
+//       );
+//     })
+//   );
 
 storiesOf('Components/Projects', module)
   .addDecorator(withKnobs)

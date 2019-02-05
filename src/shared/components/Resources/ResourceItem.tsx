@@ -23,7 +23,7 @@ export interface ResourceMetadataCardProps {
   constrainedBy: string;
 }
 
-const ResourceMetadataCard: React.FunctionComponent<
+export const ResourceMetadataCard: React.FunctionComponent<
   ResourceMetadataCardProps
 > = props => {
   const { constrainedBy, name, createdAt, updatedAt } = props;
@@ -35,7 +35,7 @@ const ResourceMetadataCard: React.FunctionComponent<
             className="name"
             style={{ display: 'flex', justifyContent: 'space-between' }}
           >
-            <em>{name}</em>
+            <em style={{ fontSize: '1.2em' }}>{name}</em>
             <span>{moment(createdAt).format('DD/MM/YYYY')}</span>
           </div>
         }

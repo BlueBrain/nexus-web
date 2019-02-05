@@ -71,6 +71,14 @@ export const ProjectBreadcrumbLabel = (state: RootState) => {
   );
 };
 
+export const ResourceBreadcrumbLabel = (state: RootState) => {
+  return (
+    <span>
+      <Icon type="profile" /> some resource
+    </span>
+  );
+};
+
 export const RawQueryBreadcrumbLabel = () => {
   return (
     <span>
