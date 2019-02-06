@@ -154,11 +154,16 @@ const exampleResources = [
   },
 ];
 
-const resources: ResourceItemProps[] = exampleResources.map(item => ({
-  id: item['@id'],
-  constrainedBy: item._constrainedBy,
-  type: Array.isArray(item['@type']) ? item['@type'] : [item['@type']],
-}));
+const resources: ResourceItemProps[] = exampleResources.map(
+  (item, index: number) => ({
+    index,
+    id: item['@id'],
+    constrainedBy: item._constrainedBy,
+    type: Array.isArray(item['@type']) ? item['@type'] : [item['@type']],
+    createdAt: item._createdAt,
+    updatedAt: item._updatedAt,
+  })
+);
 
 storiesOf('Components/Resources', module)
   .addDecorator(withKnobs)
@@ -176,6 +181,9 @@ storiesOf('Components/Resources', module)
       const name = text('Name', null);
       const constrainedBy = text('constrainedBy', resources[0].constrainedBy);
       const type = resources[0].type;
+      const createdAt = resources[0].createdAt;
+      const updatedAt = resources[0].updatedAt;
+      const index = resources[0].index;
       return (
         <React.Fragment>
           <div style={{ margin: '50px 40px 0px' }}>
@@ -185,6 +193,9 @@ storiesOf('Components/Resources', module)
               name={name}
               type={type}
               constrainedBy={constrainedBy}
+              updatedAt={updatedAt}
+              createdAt={createdAt}
+              index={index}
               onClick={action('resource-click')}
             />
           </div>
