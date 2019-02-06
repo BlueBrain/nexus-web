@@ -146,7 +146,10 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
         {data && (
           <ResourceList
             loading={isFetching}
-            paginationSettings={data.paginationSettings}
+            paginationSettings={{
+              total: data.resources.results.length,
+              ...data.paginationSettings,
+            }}
             paginationChange={handlePaginationChange}
             resources={data.resources}
           />

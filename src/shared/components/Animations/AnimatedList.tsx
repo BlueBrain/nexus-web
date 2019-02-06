@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Spin, Pagination, Empty, Divider } from 'antd';
-import { PaginationSettings } from '@bbp/nexus-sdk';
 import './AnimatedList.less';
 import { Transition, config, animated } from 'react-spring';
 
@@ -10,7 +9,6 @@ const DEFAULT_ANIMATIONS = {
   from: { transform: 'scale3d(0.8, 0.8, 0.8)', height: 0, opacity: 0 },
   leave: { transform: 'scale3d(0.8, 0.8, 0.8)', height: 0, opacity: 0 },
   enter: { transform: 'scale3d(1, 1, 1)', height: 117, opacity: 1 },
-  // update: { background: '#28b4d7' },
 };
 
 export interface AnimatedListProps<Item> {
@@ -20,8 +18,8 @@ export interface AnimatedListProps<Item> {
   results: Item[];
   total: number;
   makeKey?: (item: Item) => string;
-  onPaginationChange?: () => void;
-  paginationSettings?: PaginationSettings;
+  onPaginationChange?: (page: number, pageSize?: number) => void;
+  paginationSettings?: { from: number; total: number };
   loading?: boolean;
 }
 
@@ -40,13 +38,13 @@ const AnimatedList: React.FunctionComponent<AnimatedListProps<any>> = props => {
 
   let PaginationSection = null;
   if (paginationSettings) {
-    const { from, size } = paginationSettings;
+    const { from, total } = paginationSettings;
+    const size = results.length;
     const totalPages = Math.ceil(total / size);
-    const current = Math.ceil((totalPages / total) * (from || 1));
-    PaginationSection = !!total && totalPages > 1 && (
+    PaginationSection = totalPages > 1 && (
       <Pagination
         total={total}
-        current={current}
+        current={from}
         onChange={onPaginationChange}
         pageSize={size}
       />
@@ -68,13 +66,10 @@ const AnimatedList: React.FunctionComponent<AnimatedListProps<any>> = props => {
         <Spin spinning={loading}>
           {!!total && (
             <Transition
-              // unique={true}
-              // reset={true}
               trail={DEFAULT_TRAIL_MS}
               items={results}
               keys={makeKey}
               {...DEFAULT_ANIMATIONS}
-              // config={config.gentle}
               native={true}
             >
               {(item: any, state: any, index: number) => props => (
