@@ -1,7 +1,12 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
-import { PaginatedList, PaginationSettings, ElasticSearchView, SparqlView } from '@bbp/nexus-sdk';
-import { ElasticSearchHit } from '@bbp/nexus-sdk/lib/View/ElasticSearchView';
-import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/lib/View/SparqlView';
+import {
+  PaginatedList,
+  PaginationSettings,
+  ElasticSearchView,
+  SparqlView,
+} from '@bbp/nexus-sdk';
+import { ElasticSearchHit } from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
+import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/lib/View/SparqlView/types';
 import { ThunkAction } from '..';
 
 //
@@ -20,13 +25,16 @@ interface RawQueryActionFailure extends Action {
   type: '@@rawQuery/QUERYING_FAILURE';
 }
 
-const rawQueryAction: ActionCreator<RawQueryAction> = (query: string, paginationSettings) => ({
+const rawQueryAction: ActionCreator<RawQueryAction> = (
+  query: string,
+  paginationSettings
+) => ({
   query,
   paginationSettings,
   type: '@@rawQuery/QUERYING',
 });
 const rawQuerySuccessAction: ActionCreator<RawQueryActionSuccess> = (
-  results: any,
+  results: any
 ) => ({
   type: '@@rawQuery/QUERYING_SUCCESS',
   payload: results,
@@ -43,7 +51,11 @@ export type RawQueryActions =
   | RawQueryActionSuccess
   | RawQueryActionFailure;
 
-export const executeRawQuery: ActionCreator<ThunkAction> = (orgName: string, projectName: string, query: string) => {
+export const executeRawQuery: ActionCreator<ThunkAction> = (
+  orgName: string,
+  projectName: string,
+  query: string
+) => {
   return async (
     dispatch: Dispatch<any>,
     getState,
@@ -56,13 +68,19 @@ export const executeRawQuery: ActionCreator<ThunkAction> = (orgName: string, pro
       const results: SparqlViewQueryResponse = response;
       return dispatch(rawQuerySuccessAction(results));
     } catch (e) {
-      console.log("error", e);
+      console.log('error', e);
       return dispatch(rawQueryFailureAction(e));
     }
   };
 };
 
-export const executeRawElasticSearchQuery: ActionCreator<ThunkAction> = (orgName: string, projectName: string, viewId: string | undefined, query: string, paginationSettings: PaginationSettings) => {
+export const executeRawElasticSearchQuery: ActionCreator<ThunkAction> = (
+  orgName: string,
+  projectName: string,
+  viewId: string | undefined,
+  query: string,
+  paginationSettings: PaginationSettings
+) => {
   return async (
     dispatch: Dispatch<any>,
     getState,
@@ -71,11 +89,14 @@ export const executeRawElasticSearchQuery: ActionCreator<ThunkAction> = (orgName
     dispatch(rawQueryAction(query, paginationSettings));
     try {
       const view = await ElasticSearchView.get(orgName, projectName, viewId);
-      const response = await view.rawQuery(JSON.parse(query), paginationSettings);
+      const response = await view.rawQuery(
+        JSON.parse(query),
+        paginationSettings
+      );
       const results: PaginatedList<ElasticSearchHit> = response;
       return dispatch(rawQuerySuccessAction(results));
     } catch (e) {
-      console.log("error", e);
+      console.log('error', e);
       return dispatch(rawQueryFailureAction(e));
     }
   };

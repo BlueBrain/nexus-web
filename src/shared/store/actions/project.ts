@@ -3,7 +3,7 @@ import { Project } from '@bbp/nexus-sdk';
 import { ThunkAction } from '..';
 import { CreateProjectPayload } from '@bbp/nexus-sdk/lib/Project/types';
 import { httpGet, httpPut } from '@bbp/nexus-sdk/lib/utils/http';
-import { IdentityResponse } from '@bbp/nexus-sdk/lib/ACL';
+import { IdentityResponse, Identity } from '@bbp/nexus-sdk/lib/ACL/types';
 
 //
 // Action Types
@@ -207,30 +207,39 @@ export const deprecateProject: ActionCreator<ThunkAction> = (
 
 export const makeProjectPublic: ActionCreator<ThunkAction> = (
   orgLabel: string,
-  projectLabel: string,
-  ) => {
+  projectLabel: string
+) => {
   return async (
     dispatch: Dispatch<any>,
     getState,
     { nexus }
-  ): Promise<MakeProjectPublicSuccessAction | MakeProjectPublicFailureAction> => {
+  ): Promise<
+    MakeProjectPublicSuccessAction | MakeProjectPublicFailureAction
+  > => {
     dispatch(makeProjectPublicAction());
     try {
       // @ts-ignore
       const endpoint = getState().config.apiEndpoint;
 
       const publicPermissions = [
-        "projects/read",
-        "resources/read",
-        "views/query",
+        'projects/read',
+        'resources/read',
+        'views/query',
       ];
 
       const getAnonymous = async (): Promise<IdentityResponse> => {
         try {
-          const identitiesResponse = await httpGet(`${endpoint}/identities`, false);
-          const anonymous = identitiesResponse.identities.find(((identity: IdentityResponse) => identity["@type"] === 'Anonymous'));
+          const identitiesResponse = await httpGet(
+            `${endpoint}/identities`,
+            false
+          );
+          const anonymous = identitiesResponse.identities.find(
+            (identity: Identity) => identity['@type'] === 'Anonymous'
+          );
           if (!anonymous) {
-           throw new Error("Error: Cannot find the Anonymous user. It is needed for Nexus to work properly. There is a serious problem. Please notify an administator.");
+            throw new Error(
+              'Error: Cannot find the Anonymous user. It is needed for Nexus to work properly. There is a serious problem. Please notify an administator.'
+            );
           }
           return anonymous;
         } catch (e) {
@@ -239,38 +248,52 @@ export const makeProjectPublic: ActionCreator<ThunkAction> = (
       };
       const anonymous = await getAnonymous();
 
-      const acls = await httpGet(`${endpoint}/acls/${orgLabel}/${projectLabel}`, false);
+      const acls = await httpGet(
+        `${endpoint}/acls/${orgLabel}/${projectLabel}`,
+        false
+      );
 
       const alreadyPublic = acls._results.some((result: any) => {
-        return result.acl && result.acl.some((acl: any) => {
-          return acl.identity
-            && acl.identity["@type"] === 'Anonymous'
-            && acl.permissions
-            && publicPermissions.every((value: string) => acl.permissions.includes(value));
-        });
+        return (
+          result.acl &&
+          result.acl.some((acl: any) => {
+            return (
+              acl.identity &&
+              acl.identity['@type'] === 'Anonymous' &&
+              acl.permissions &&
+              publicPermissions.every((value: string) =>
+                acl.permissions.includes(value)
+              )
+            );
+          })
+        );
       });
 
       if (alreadyPublic) {
         throw new Error('Project is already public');
       }
 
-      const rev = acls._results[0] && acls._results[0]._rev ? acls._results[0]._rev : 1;
+      const rev =
+        acls._results[0] && acls._results[0]._rev ? acls._results[0]._rev : 1;
 
       const addACL = async (rev: number = 1) => {
         // We'll add the ACL on the entity itself,
         // even if an ancestor already gives the permission.
         // TODO: use PATCH method instead, once the CORS issue is fixed.
         try {
-          await httpPut(`${endpoint}/acls/${orgLabel}/${projectLabel}?rev=${rev}`,
+          await httpPut(
+            `${endpoint}/acls/${orgLabel}/${projectLabel}?rev=${rev}`,
             {
               // "@type": "Append",
-              "acl": [
+              acl: [
                 {
-                  "permissions": publicPermissions,
-                  "identity": anonymous
+                  permissions: publicPermissions,
+                  identity: anonymous,
                 },
-              ]
-            }, false);
+              ],
+            },
+            false
+          );
           return true;
         } catch (e) {
           console.log(e);
@@ -287,4 +310,4 @@ export const makeProjectPublic: ActionCreator<ThunkAction> = (
       return Promise.reject(dispatch(makeProjectPublicFailureAction(e)));
     }
   };
-}
+};
