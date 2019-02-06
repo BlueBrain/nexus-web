@@ -19,7 +19,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
   return (
     <div className="resource">
       <Spin spinning={isFetching}>
-        {!!resource && (
+        {!!resource && !isFetching && (
           <>
             <ResourceMetadataCard {...resource} />
             {typeof window !== 'undefined' && resource && (

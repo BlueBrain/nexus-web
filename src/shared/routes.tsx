@@ -19,6 +19,7 @@ import {
   RawQueryBreadcrumbLabel,
   ResourceBreadcrumbLabel,
 } from './views/breadcrumbs/BreadcrumbLabels';
+import { fetchAndAssignResource } from './store/actions/nexus/resource';
 
 export interface RouteWithData extends RouteProps {
   breadcrumbLabel?: any;
@@ -81,6 +82,22 @@ const routes: RouteWithData[] = [
     path: '/:org/:project/:resourceId',
     component: Resource,
     breadcrumbLabel: ResourceBreadcrumbLabel,
+    loadData: (state, match) => async (dispatch, getState, state) => {
+      await fetchOrg(match && match.params && (match.params as any)['org'])(
+        dispatch,
+        getState,
+        state
+      );
+      await fetchAndAssignProject(
+        match && match.params && (match.params as any)['org'],
+        match && match.params && (match.params as any)['project']
+      )(dispatch, getState, state);
+      await fetchAndAssignResource(
+        match && match.params && (match.params as any)['org'],
+        match && match.params && (match.params as any)['project'],
+        match && match.params && (match.params as any)['resourceId']
+      )(dispatch, getState, state);
+    },
   },
 ];
 

@@ -1,4 +1,4 @@
-import { Organization, Project, PaginatedList, Resource } from '@bbp/nexus-sdk';
+import { Organization, Project, Resource, PaginatedList } from '@bbp/nexus-sdk';
 import {
   actionTypes as activeOrgActionTypes,
   ActiveOrgActions,

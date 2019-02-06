@@ -47,11 +47,12 @@ export const createFetching = ({
 };
 
 export const createResultData = (
-  { FULFILLED }: ActionTypes,
+  { FULFILLED, FAILED }: ActionTypes,
   initialState: [] | null
 ) =>
   createReducer(initialState, {
     [FULFILLED]: (state, action) => action.payload,
+    [FAILED]: (state, action) => null,
   });
 
 export const createError = ({ FAILED }: ActionTypes) =>

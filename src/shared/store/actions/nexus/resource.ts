@@ -1,10 +1,7 @@
-import { Action, ActionCreator, Dispatch } from 'redux';
+import { ActionCreator, Dispatch } from 'redux';
 import { Project, Resource } from '@bbp/nexus-sdk';
 import { ThunkAction } from '../..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
-import ElasticSearchView, {
-  ElasticSearchViewAggregationResponse,
-} from '@bbp/nexus-sdk/lib/View/ElasticSearchView';
 
 enum ResourceActionTypes {
   FETCHING = '@@nexus/RESOURCE_FETCHING',
