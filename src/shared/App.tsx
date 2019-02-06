@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import routes from '../shared/routes';
 import NotFound from './views/404';
@@ -10,10 +11,11 @@ interface ModalSwitchProps {
   location: any;
   match: any;
   history: any;
+  goDown: () => void;
 }
 
 const ModalSwitch: React.FunctionComponent<ModalSwitchProps> = props => {
-  const { location, children, history, match } = props;
+  const { location, children, history, match, goDown } = props;
   const [previousLocation, setPreviousLocation] = React.useState(null);
   console.log(props, { previousLocation });
   React.useEffect(
@@ -44,7 +46,13 @@ const ModalSwitch: React.FunctionComponent<ModalSwitchProps> = props => {
         {children}
       </Switch>
       {isModal ? (
-        <Modal visible={true}>
+        <Modal
+          visible={true}
+          width={900}
+          footer={null}
+          closable={false}
+          onCancel={() => goDown()}
+        >
           <Switch location={location}>{children}</Switch>
         </Modal>
       ) : null}
@@ -52,13 +60,24 @@ const ModalSwitch: React.FunctionComponent<ModalSwitchProps> = props => {
   );
 };
 
+const mapStateToProps = () => ({});
+
+const mapDispatchToProps = (dispatch: any) => ({
+  goDown: () => {},
+});
+
+const ConnectedModalSwitch = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ModalSwitch);
+
 export default class App extends React.Component {
   render() {
     return (
       <MainLayout>
         <Route
           render={props => (
-            <ModalSwitch {...props}>
+            <ConnectedModalSwitch {...props}>
               {routes.map(({ path, component: C, ...rest }) => (
                 <Route
                   key={path as string}
@@ -68,7 +87,7 @@ export default class App extends React.Component {
                 />
               ))}
               <Route component={NotFound} />
-            </ModalSwitch>
+            </ConnectedModalSwitch>
           )}
         />
       </MainLayout>

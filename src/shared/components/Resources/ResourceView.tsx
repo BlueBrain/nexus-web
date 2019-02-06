@@ -25,7 +25,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
             {typeof window !== 'undefined' && resource && (
               <Card style={{ marginTop: '1em', backgroundColor: '#9e9e9e1a' }}>
                 <ReactJson
-                  src={resource.raw}
+                  src={resource.data}
                   name={null}
                   collapseStringsAfterLength={50}
                 />
