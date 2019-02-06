@@ -1,7 +1,7 @@
 import { RawQueryActions } from '../actions/rawQuery';
 import { PaginatedList, PaginationSettings } from '@bbp/nexus-sdk';
-import { ElasticSearchHit } from '@bbp/nexus-sdk/lib/View/ElasticSearchView';
-import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/lib/View/SparqlView';
+import { ElasticSearchHit } from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
+import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/lib/View/SparqlView/types';
 
 const DEFAULT_PAGINATION_SIZE = 20;
 
@@ -29,16 +29,21 @@ const initialState: RawQueryState = {
 
 const initialElasticSearchState: RawElasticSearchQueryState = {
   fetching: false,
-  query: JSON.stringify({
-    "query": {
-      "term": {
-        "_deprecated": false
-      }
-    }
-  }, null, 2),
+  query: JSON.stringify(
+    {
+      query: {
+        term: {
+          _deprecated: false,
+        },
+      },
+    },
+    null,
+    2
+  ),
   response: {
     total: 0,
-    results: []
+    results: [],
+    index: 1,
   },
   paginationSettings: {
     from: 0,
@@ -52,15 +57,27 @@ export function rawElasticSearchQueryReducer(
 ) {
   switch (action.type) {
     case '@@rawQuery/QUERYING':
-      return { ...state, fetching: true, query: action.query, paginationSettings: state.query === action.query ? action.paginationSettings : initialElasticSearchState.paginationSettings };
+      return {
+        ...state,
+        fetching: true,
+        query: action.query,
+        paginationSettings:
+          state.query === action.query
+            ? action.paginationSettings
+            : initialElasticSearchState.paginationSettings,
+      };
     case '@@rawQuery/QUERYING_FAILURE':
-      return { ...state, fetching: false, paginationSettings: initialElasticSearchState.paginationSettings };
+      return {
+        ...state,
+        fetching: false,
+        paginationSettings: initialElasticSearchState.paginationSettings,
+      };
     case '@@rawQuery/QUERYING_SUCCESS':
       return { ...state, fetching: false, response: action.payload };
     default:
       return state;
   }
-};
+}
 
 export default function rawQueryReducer(
   state: RawQueryState = initialState,

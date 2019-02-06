@@ -1,5 +1,5 @@
 import { ActionCreator, Dispatch } from 'redux';
-import { Organization, Project } from '@bbp/nexus-sdk';
+import { Organization, Project, PaginatedList } from '@bbp/nexus-sdk';
 import { ThunkAction } from '../..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
 
@@ -61,8 +61,10 @@ export const fetchOrg: ActionCreator<ThunkAction> = orgName => {
     dispatch(fetchOrgAction());
     try {
       const org: Organization = await Organization.get(orgName);
-      const projects: Project[] = await Project.list(orgName, { size: 100 });
-      return dispatch(fetchOrgFulfilledAction(org, projects));
+      const projects: PaginatedList<Project> = await Project.list(orgName, {
+        size: 100,
+      });
+      return dispatch(fetchOrgFulfilledAction(org, projects.results));
     } catch (e) {
       return dispatch(fetchOrgFailedAction(e));
     }

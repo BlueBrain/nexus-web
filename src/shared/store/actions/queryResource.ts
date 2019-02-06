@@ -14,7 +14,7 @@ import { updateList } from './lists';
 import {
   ElasticSearchViewAggregationResponse,
   ElasticSearchViewQueryResponse,
-} from '@bbp/nexus-sdk/lib/View/ElasticSearchView';
+} from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
 
 export const queryResourcesActionPrefix = 'QUERY';
 
