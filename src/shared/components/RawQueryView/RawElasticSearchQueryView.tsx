@@ -4,7 +4,7 @@ import { executeRawElasticSearchQuery } from '../../store/actions/rawQuery';
 import { RawElasticSearchQueryState } from '../../store/reducers/rawQuery';
 import { connect } from 'react-redux';
 import { PaginatedList, PaginationSettings } from '@bbp/nexus-sdk';
-import { ElasticSearchHit } from '@bbp/nexus-sdk/lib/View/ElasticSearchView';
+import { ElasticSearchHit } from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
 
 let ReactJson: any;
 if (typeof window !== 'undefined') {

@@ -8,7 +8,7 @@ import {
   ElasticSearchView,
 } from '@bbp/nexus-sdk';
 import { ProjectActions } from '../project';
-import { ElasticSearchViewAggregationResponse } from '@bbp/nexus-sdk/lib/View/ElasticSearchView';
+import { ElasticSearchViewAggregationResponse } from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
 import { ThunkAction } from '../..';
 
 //
@@ -336,8 +336,8 @@ export const fetchProjects: ActionCreator<ThunkAction> = (name: string) => {
     dispatch(fetchProjectsAction());
     try {
       const org: Organization = await nexus.getOrganization(name);
-      const projects: Project[] = await org.listProjects();
-      return dispatch(fetchProjectsSuccessAction(org, projects));
+      const projects: PaginatedList<Project> = await org.listProjects();
+      return dispatch(fetchProjectsSuccessAction(org, projects.results));
     } catch (e) {
       return dispatch(fetchProjectsFailureAction(e));
     }

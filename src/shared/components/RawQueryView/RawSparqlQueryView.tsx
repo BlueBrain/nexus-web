@@ -3,7 +3,7 @@ import { Form, Input, Button, Table, Card } from 'antd';
 import { executeRawQuery } from '../../store/actions/rawQuery';
 import { RawQueryState } from '../../store/reducers/rawQuery';
 import { connect } from 'react-redux';
-import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/lib/View/SparqlView';
+import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/lib/View/SparqlView/types';
 import * as hash from 'object-hash';
 
 export interface RawSparqlQueryViewProps {
