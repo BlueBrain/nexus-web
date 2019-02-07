@@ -6,6 +6,7 @@ import NotFound from './views/404';
 import MainLayout from './layouts/MainLayout';
 import './App.less';
 import { Modal } from 'antd';
+import { push } from 'connected-react-router';
 
 interface ModalSwitchProps {
   location: any;
@@ -46,13 +47,7 @@ const ModalSwitch: React.FunctionComponent<ModalSwitchProps> = props => {
         {children}
       </Switch>
       {isModal ? (
-        <Modal
-          visible={true}
-          width={900}
-          footer={null}
-          closable={false}
-          onCancel={() => goDown()}
-        >
+        <Modal visible={true} width={900} footer={null} onCancel={goDown}>
           <Switch location={location}>{children}</Switch>
         </Modal>
       ) : null}
@@ -62,9 +57,25 @@ const ModalSwitch: React.FunctionComponent<ModalSwitchProps> = props => {
 
 const mapStateToProps = () => ({});
 
-const mapDispatchToProps = (dispatch: any) => ({
-  goDown: () => {},
-});
+const mapDispatchToProps = (dispatch: any, ownProps: any) => {
+  const goDownOnePathSegmentFromPathname = (pathname: string) => {
+    const newPath = [...pathname.split('/')];
+    newPath.pop();
+    return newPath.join('/');
+  };
+  return {
+    goDown: () => {
+      console.log(
+        'goDown',
+        ownProps.location.pathname,
+        goDownOnePathSegmentFromPathname(ownProps.location.pathname)
+      );
+      dispatch(
+        push(goDownOnePathSegmentFromPathname(ownProps.location.pathname))
+      );
+    },
+  };
+};
 
 const ConnectedModalSwitch = connect(
   mapStateToProps,
