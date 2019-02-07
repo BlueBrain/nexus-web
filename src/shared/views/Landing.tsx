@@ -7,13 +7,14 @@ import { createOrg, modifyOrg, deprecateOrg } from '../store/actions/orgs';
 import OrgList from '../components/Orgs/OrgList';
 import { fetchOrgs } from '../store/actions/nexus/orgs';
 import Skeleton from '../components/Skeleton';
-import { Button, Modal, Drawer, notification } from 'antd';
+import { Button, Modal, Drawer, notification, Empty } from 'antd';
 import OrgForm from '../components/Orgs/OrgForm';
 import { CreateOrgPayload } from '@bbp/nexus-sdk/lib/Organization/types';
 
 interface LandingProps {
   orgs: Organization[];
   busy: boolean;
+  error: boolean;
   goTo(orgLabel: string): void;
   fetchOrgs(): void;
   createOrg: (
@@ -31,6 +32,7 @@ interface LandingProps {
 const Landing: React.FunctionComponent<LandingProps> = ({
   orgs,
   busy,
+  error,
   goTo,
   fetchOrgs,
   createOrg,
@@ -164,55 +166,74 @@ const Landing: React.FunctionComponent<LandingProps> = ({
 
   return (
     <>
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
-        <h1 style={{ marginBottom: 0, marginRight: 8 }}>Organizations</h1>
-        <Button
-          type="primary"
-          onClick={() => setModalVisible(true)}
-          icon="plus-square"
-        >
-          Create Organization
-        </Button>
-      </div>
-      {orgs.length === 0 ? (
-        <p style={{ marginTop: 50 }}>No organizations yet...</p>
-      ) : (
-        <OrgList
-          orgs={orgs}
-          onOrgClick={goTo}
-          onOrgEdit={(orgLabel: string) =>
-            setSelectedOrg(orgs.filter(o => o.label === orgLabel)[0])
-          }
+      {!orgs && error && (
+        <Empty
+          style={{ marginTop: '22vh' }}
+          description="There was a problem while loading Organizations"
         />
       )}
-      <Modal
-        title="New Organization"
-        visible={modalVisible}
-        onCancel={() => setModalVisible(false)}
-        confirmLoading={formBusy}
-        footer={null}
-      >
-        <OrgForm
-          onSubmit={(o: Organization) => saveAndCreate(o)}
-          busy={formBusy}
+      {!orgs && !error && (
+        <Empty
+          style={{ marginTop: '22vh' }}
+          description="No Organizations found..."
         />
-      </Modal>
-      <Drawer
-        width={640}
-        visible={!!(selectedOrg && selectedOrg.label)}
-        onClose={() => setSelectedOrg(undefined)}
-        title={selectedOrg && selectedOrg.label}
-      >
-        {selectedOrg && (
-          <OrgForm
-            org={selectedOrg}
-            onSubmit={(o: Organization) => saveAndModify(selectedOrg, o)}
-            onDeprecate={() => saveAndDeprecate(selectedOrg)}
-            busy={formBusy}
-            mode="edit"
-          />
-        )}
-      </Drawer>
+      )}
+      {orgs && (
+        <>
+          <div
+            style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}
+          >
+            <h1 style={{ marginBottom: 0, marginRight: 8 }}>Organizations</h1>
+            <Button
+              type="primary"
+              onClick={() => setModalVisible(true)}
+              icon="plus-square"
+            >
+              Create Organization
+            </Button>
+          </div>
+          {orgs.length === 0 ? (
+            <p style={{ marginTop: 50 }}>No organizations yet...</p>
+          ) : (
+            <OrgList
+              orgs={orgs}
+              onOrgClick={goTo}
+              busy={busy}
+              onOrgEdit={(orgLabel: string) =>
+                setSelectedOrg(orgs.filter(o => o.label === orgLabel)[0])
+              }
+            />
+          )}
+          <Modal
+            title="New Organization"
+            visible={modalVisible}
+            onCancel={() => setModalVisible(false)}
+            confirmLoading={formBusy}
+            footer={null}
+          >
+            <OrgForm
+              onSubmit={(o: Organization) => saveAndCreate(o)}
+              busy={formBusy}
+            />
+          </Modal>
+          <Drawer
+            width={640}
+            visible={!!(selectedOrg && selectedOrg.label)}
+            onClose={() => setSelectedOrg(undefined)}
+            title={selectedOrg && selectedOrg.label}
+          >
+            {selectedOrg && (
+              <OrgForm
+                org={selectedOrg}
+                onSubmit={(o: Organization) => saveAndModify(selectedOrg, o)}
+                onDeprecate={() => saveAndDeprecate(selectedOrg)}
+                busy={formBusy}
+                mode="edit"
+              />
+            )}
+          </Drawer>
+        </>
+      )}
     </>
   );
 };
@@ -220,6 +241,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
 const mapStateToProps = (state: RootState) => ({
   orgs: (state.nexus && state.nexus.orgs.data) || [],
   busy: (state.nexus && state.nexus.orgs.isFetching) || false,
+  error: !!(state.nexus && state.nexus.orgs.error),
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
