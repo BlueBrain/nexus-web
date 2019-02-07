@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { Spin, Card } from 'antd';
-import { ResourceMetadataCard } from './ResourceItem';
+import ResourceMetadataCard from './MetaData';
 
 let ReactJson: any;
 if (typeof window !== 'undefined') {
@@ -21,7 +21,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
       <Spin spinning={isFetching}>
         {!!resource && !isFetching && (
           <>
-            <ResourceMetadataCard {...resource} />
+            <ResourceMetadataCard {...{ ...resource, name: resource.name }} />
             {typeof window !== 'undefined' && resource && (
               <Card style={{ marginTop: '1em', backgroundColor: '#9e9e9e1a' }}>
                 <ReactJson

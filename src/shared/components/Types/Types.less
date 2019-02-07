@@ -19,9 +19,22 @@
 .types-icon {
   display: inline-block;
   position: relative;
-  width: 10px;
-  z-index: 0;
+  // color: @text-color-secondary;
+  // z-index: 0;
+  // margin-right: 1em;
+  // background-color: black;
+  // border-radius: 1em;
   &:hover {
     z-index: 1;
+  }
+  .ant-avatar-sm.ant-avatar-square {
+    width: 18px;
+    margin-right: 0.5em;
+    height: 18px;
+    top: -1px;
+    line-height: 24px;
+  }
+  & > .label {
+    margin-left: 1em;
   }
 }
