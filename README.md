@@ -11,7 +11,14 @@ Nexus Web is the interface of Blue Brain Nexus, the open-source knowledge graph 
 
 ## Roadmap
 
-Nexus Web is in active development, you can find the roadmap [here](./roadmap.md).
+Nexus Web is in active development.
+
+The main goal is:
+
+- support all [Nexus v1](https://bluebrain.github.io/nexus/docs/index.html) operations through a graphic interface
+- build a set of tools to ease, simplify and assist with data ingestion, integration and exploration
+
+You can find the roadmap [here](./roadmap.md).
 
 ## Development
 
