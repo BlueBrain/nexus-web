@@ -22,6 +22,11 @@
   }
 }
 
+.resource-list-item-container {
+  .oddListColor();
+  display: block;
+}
+
 .ant-list-item {
   padding: 1em 0 0;
 }
@@ -30,21 +35,21 @@
 * ResourceListItem
 */
 .resource-item {
-  .oddListColor();
   display: flex;
   justify-content: space-between;
   padding: 1em;
+  transition: all 0.3s;
   &:hover,
   &:active,
   &:focus {
     background-color: @primary-background-subtle;
     .ant-list-item-meta-title {
       margin-left: 0.25em;
-      transition: all 300ms cubic-bezier(0.18, 0.89, 0.32, 1.28) 0s;
+      transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) 0s;
     }
   }
   & > .name {
-    font-size: 14px;
+    font-size: 1.2em;
     width: auto;
     text-overflow: ellipsis;
     overflow-x: hidden;

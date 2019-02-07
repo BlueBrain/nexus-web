@@ -38,9 +38,7 @@ const ResourceListItem: React.FunctionComponent<ResourceItemProps> = props => {
         onKeyPress={handleKeyPress}
         tabIndex={index + 1}
       >
-        <div className="name">
-          <em>{name}</em>
-        </div>
+        <div className="name">{name}</div>
         {type && type.length && <TypesIcon type={type} />}
       </div>
     </Popover>
