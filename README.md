@@ -1,8 +1,17 @@
+[Roadmap](#roadmap) |
+[Development](#development) |
+[Build for Prod](#build-for-production) |
+[License](#license)
+
 # Nexus Web
 
 > Transform your data into a fully searchable linked-data graph
 
-Nexus Web is the interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.
+Nexus Web is the interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science. It allows you to administrate, browse and query you data within [Nexus](https://bluebrain.github.io/nexus/).
+
+## Roadmap
+
+Nexus Web is in active development, you can find the roadmap [here](./roadmap.md).
 
 ## Development
 
@@ -56,5 +65,12 @@ docker build . --tag=nexus-web
 - `HOST_NAME`: name of host where application is available from: i.e. `https://bbp-nexus.epfl.ch` (default is protocol + host where server is running from)
 - `CLIENT_ID`: The application name used for _OpenID Connect_ authentication
 - `API_ENDPOINT`: The URL pointing to Nexus API. Default is '/'
+<<<<<<< HEAD
 - `AUTH_ENDPOINT`: _OpenID Connect_ Authentication endpoint. Empty by default (no auth).
 - `LOGOUT_ENDPOINT`: _OpenID Connect_ Logout endpoint. Empty by default (no logout).
+=======
+
+# License
+
+- [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+>>>>>>> first draft
