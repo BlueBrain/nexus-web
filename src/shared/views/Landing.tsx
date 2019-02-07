@@ -167,7 +167,6 @@ const Landing: React.FunctionComponent<LandingProps> = ({
       />
     );
   }
-  console.log(paginatedOrgs);
   if (!paginatedOrgs && error) {
     <Empty
       style={{ marginTop: '22vh' }}
