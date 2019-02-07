@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PaginationSettings } from '@bbp/nexus-sdk';
+import { PaginationSettings, Resource } from '@bbp/nexus-sdk';
 import { connect } from 'react-redux';
 import { List } from '../../store/reducers/lists';
 import Renameable from '../Renameable';
@@ -9,6 +9,7 @@ import ResourceList from '../Resources/ResourceList';
 import { updateList, deleteList, cloneList } from '../../store/actions/lists';
 import { queryResources, makeESQuery } from '../../store/actions/queryResource';
 import ListControlPanel from './ListControlPanel';
+import { push } from 'connected-react-router';
 
 interface ListItemContainerProps {
   list: List;
@@ -19,6 +20,7 @@ interface ListItemContainerProps {
   updateList: (listIndex: number, list: List) => void;
   deleteList: (listIndex: number) => void;
   cloneList: () => void;
+  navigateToResource: (resource: Resource) => void;
   queryResources: (paginationSettings: PaginationSettings, query?: any) => void;
 }
 
@@ -37,6 +39,7 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
   cloneList,
   orgLabel,
   projectLabel,
+  navigateToResource,
   queryResources,
 }) => {
   React.useEffect(
@@ -145,6 +148,7 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
         )}
         {data && (
           <ResourceList
+            navigateToResource={navigateToResource}
             loading={isFetching}
             paginationSettings={{
               total: data.resources.results.length,
@@ -171,6 +175,16 @@ const mapDispatchToProps = (
   deleteList: (listIndex: number) =>
     dispatch(deleteList(orgProjectFilterKey, listIndex)),
   cloneList: () => dispatch(cloneList(orgProjectFilterKey, listIndex, list)),
+  navigateToResource: (resource: Resource) => {
+    dispatch(
+      push({
+        pathname: `/${orgLabel}/${projectLabel}/${encodeURIComponent(
+          resource.id
+        )}`,
+        state: { modal: true },
+      })
+    );
+  },
   queryResources: (paginationSettings: PaginationSettings, query?: any) =>
     dispatch(
       queryResources(

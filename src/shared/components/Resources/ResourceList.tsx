@@ -17,11 +17,13 @@ export interface ResourceListProps {
   paginationChange: any;
   paginationSettings: { total: number; from: number; pageSize: number };
   loading?: boolean;
+  navigateToResource: (resource: Resource) => void;
 }
 
 const ResourceList: React.FunctionComponent<ResourceListProps> = ({
   header = <div />,
   resources,
+  navigateToResource,
   paginationChange,
   paginationSettings,
   loading = false,
@@ -54,10 +56,11 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
         header={header}
         itemComponent={(resource: Resource, index: number) => (
           <Link
+            className="resource-list-item-container"
             to={{
-              pathname: `/${resource.orgLabel}/${resource.projectLabel}/${
-                resource.id
-              }`,
+              pathname: `/${resource.orgLabel}/${
+                resource.projectLabel
+              }/${encodeURIComponent(resource.id)}`,
               state: {
                 modal: true,
                 returnTo: location ? location.pathname : null,
@@ -69,6 +72,7 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
               key={resource.id}
               name={resource.name}
               {...resource}
+              onClick={() => navigateToResource(resource)}
             />
           </Link>
         )}

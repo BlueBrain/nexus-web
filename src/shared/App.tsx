@@ -39,8 +39,6 @@ const ModalSwitch: React.FunctionComponent<ModalSwitchProps> = props => {
     previousLocation !== location
   ); // not initial render
 
-  console.log({ isModal });
-
   return (
     <div>
       <Switch location={isModal ? previousLocation : location}>
