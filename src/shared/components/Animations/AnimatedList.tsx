@@ -19,7 +19,7 @@ export interface AnimatedListProps<Item> {
   total: number;
   makeKey?: (item: Item) => string;
   onPaginationChange?: (page: number, pageSize?: number) => void;
-  paginationSettings?: { from: number; total: number };
+  paginationSettings?: { from: number; total: number; pageSize: number };
   loading?: boolean;
 }
 
@@ -38,15 +38,17 @@ const AnimatedList: React.FunctionComponent<AnimatedListProps<any>> = props => {
 
   let PaginationSection = null;
   if (paginationSettings) {
-    const { from, total } = paginationSettings;
+    const { from, total, pageSize } = paginationSettings;
     const size = results.length;
-    const totalPages = Math.ceil(total / size);
+    console.log(from, total, size);
+    const totalPages = Math.ceil(total / pageSize);
+    const currentPage = Math.ceil(from / pageSize);
     PaginationSection = totalPages > 1 && (
       <Pagination
         total={total}
-        current={from}
         onChange={onPaginationChange}
-        pageSize={size}
+        pageSize={pageSize}
+        current={currentPage}
       />
     );
   }

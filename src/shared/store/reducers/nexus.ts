@@ -1,4 +1,4 @@
-import { Organization, Project } from '@bbp/nexus-sdk';
+import { Organization, Project, PaginatedList } from '@bbp/nexus-sdk';
 import {
   actionTypes as activeOrgActionTypes,
   ActiveOrgActions,
@@ -18,7 +18,7 @@ import {
 } from './utils';
 
 export interface NexusState {
-  orgs: FetchableState<Organization[]>;
+  orgs: FetchableState<PaginatedList<Organization>>;
   activeOrg?: FetchableState<{ org: Organization; projects: Project[] }>;
   activeProject?: FetchableState<Project>;
 }
@@ -26,7 +26,7 @@ export interface NexusState {
 const initialState: NexusState = {
   orgs: {
     isFetching: false,
-    data: [],
+    data: { total: 0, index: 0, results: [] },
     error: null,
   },
 };

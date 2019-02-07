@@ -10,7 +10,7 @@ export interface OrgListProps {
   busy?: boolean;
   onOrgClick?(label: string): void;
   onOrgEdit?(label: string): void;
-  paginationSettings?: { total: number; index: number };
+  paginationSettings?: { total: number; from: number; pageSize: number };
   onPaginationChange?: (page: number, pageSize?: number) => void;
 }
 
@@ -54,11 +54,12 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
         itemName="Organization"
         loading={busy}
         results={items}
-        total={items.length}
+        total={(paginationSettings && paginationSettings.total) || items.length}
         paginationSettings={
           paginationSettings && {
-            from: paginationSettings.index,
+            from: paginationSettings.from,
             total: paginationSettings.total,
+            pageSize: paginationSettings.pageSize,
           }
         }
       />

@@ -14,7 +14,7 @@ export interface ResourceListProps {
   header?: React.ReactNode;
   resources: PaginatedList<Resource>;
   paginationChange: any;
-  paginationSettings: { total: number; from: number };
+  paginationSettings: { total: number; from: number; pageSize: number };
   loading?: boolean;
 }
 
