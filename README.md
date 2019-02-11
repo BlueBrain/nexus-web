@@ -56,3 +56,5 @@ docker build . --tag=nexus-web
 - `HOST_NAME`: name of host where application is available from: i.e. `https://bbp-nexus.epfl.ch` (default is protocol + host where server is running from)
 - `CLIENT_ID`: The application name used for _OpenID Connect_ authentication
 - `API_ENDPOINT`: The URL pointing to Nexus API. Default is '/'
+- `AUTH_ENDPOINT`: _OpenID Connect_ Authentication endpoint. Empty by default (no auth).
+- `LOGOUT_ENDPOINT`: _OpenID Connect_ Logout endpoint. Empty by default (no logout).
