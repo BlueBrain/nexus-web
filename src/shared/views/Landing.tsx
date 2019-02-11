@@ -211,7 +211,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
             )
           }
           onPaginationChange={() =>
-            fetchOrgs({ from: paginatedOrgs.results.length + 1, size: 20 })
+            fetchOrgs({ from: paginatedOrgs.results.length, size: 20 })
           }
         />
       )}

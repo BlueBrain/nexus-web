@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Input, Pagination } from 'antd';
+import { Input } from 'antd';
 import OrgCard, { OrgCardProps } from './OrgCard';
+import AnimatedList from '../Animations/AnimatedList';
 
 import './Orgs.less';
-import AnimatedList from '../Animations/AnimatedList';
 
 export interface OrgListProps {
   orgs: OrgCardProps[];
