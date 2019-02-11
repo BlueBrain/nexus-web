@@ -1,21 +1,28 @@
 import * as React from 'react';
 import { Input } from 'antd';
 import ProjectCard, { ProjectCardProps } from './ProjectCard';
+import AnimatedList from '../Animations/AnimatedList';
 
 import './Projects.less';
 
 export interface ProjectListProps {
   projects: ProjectCardProps[];
+  busy?: boolean;
   onProjectClick?(label: string): void;
   onProjectEdit?(label: string): void;
+  paginationSettings?: { total: number; from: number; pageSize: number };
+  onPaginationChange?: (page: number, pageSize?: number) => void;
 }
 
 const Search = Input.Search;
 
 const ProjectList: React.FunctionComponent<ProjectListProps> = ({
   projects,
+  busy = false,
   onProjectClick = () => {},
   onProjectEdit = () => {},
+  paginationSettings,
+  onPaginationChange,
 }) => {
   const [items, setItems] = React.useState(projects);
 
@@ -35,19 +42,29 @@ const ProjectList: React.FunctionComponent<ProjectListProps> = ({
         placeholder="Filter by name"
         onChange={handleChange}
       />
-      <p className="result">
-        Found {items.length} project{items.length > 1 && 's'}
-      </p>
-      <div className="projects">
-        {items.map((project, i) => (
+      <AnimatedList
+        itemComponent={(project, i) => (
           <ProjectCard
             key={project.label + i}
             {...project}
             onClick={() => onProjectClick(project.label)}
             onEdit={() => onProjectEdit(project.label)}
           />
-        ))}
-      </div>
+        )}
+        onPaginationChange={onPaginationChange}
+        makeKey={item => item.label}
+        itemName="Projects"
+        loading={busy}
+        results={items}
+        total={(paginationSettings && paginationSettings.total) || items.length}
+        paginationSettings={
+          paginationSettings && {
+            from: paginationSettings.from,
+            total: paginationSettings.total,
+            pageSize: paginationSettings.pageSize,
+          }
+        }
+      />
     </div>
   );
 };

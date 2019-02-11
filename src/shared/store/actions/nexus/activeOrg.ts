@@ -1,5 +1,10 @@
 import { ActionCreator, Dispatch } from 'redux';
-import { Organization, Project, PaginatedList } from '@bbp/nexus-sdk';
+import {
+  Organization,
+  Project,
+  PaginatedList,
+  PaginationSettings,
+} from '@bbp/nexus-sdk';
 import { ThunkAction } from '../..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
 
@@ -24,9 +29,9 @@ const fetchOrgAction: ActionCreator<
 const fetchOrgFulfilledAction: ActionCreator<
   FetchFulfilledAction<
     OrgActionTypes.FULFILLED,
-    { org: Organization; projects: Project[] }
+    { org: Organization; projects: PaginatedList<Project> }
   >
-> = (org: Organization, projects: Project[]) => ({
+> = (org: Organization, projects: PaginatedList<Project>) => ({
   type: OrgActionTypes.FULFILLED,
   payload: { org, projects },
 });
@@ -42,11 +47,14 @@ export type ActiveOrgActions =
   | FetchAction<OrgActionTypes.FETCHING>
   | FetchFulfilledAction<
       OrgActionTypes.FULFILLED,
-      { org: Organization; projects: Project[] }
+      { org: Organization; projects: PaginatedList<Project> }
     >
   | FetchFailedAction<OrgActionTypes.FAILED>;
 
-export const fetchOrg: ActionCreator<ThunkAction> = orgName => {
+export const fetchOrg: ActionCreator<ThunkAction> = (
+  orgName: string,
+  paginationSettings?: PaginationSettings
+) => {
   return async (
     dispatch: Dispatch<any>,
     getState,
@@ -54,17 +62,18 @@ export const fetchOrg: ActionCreator<ThunkAction> = orgName => {
   ): Promise<
     | FetchFulfilledAction<
         OrgActionTypes.FULFILLED,
-        { org: Organization; projects: Project[] }
+        { org: Organization; projects: PaginatedList<Project> }
       >
     | FetchFailedAction<OrgActionTypes.FAILED>
   > => {
     dispatch(fetchOrgAction());
     try {
       const org: Organization = await Organization.get(orgName);
-      const projects: PaginatedList<Project> = await Project.list(orgName, {
-        size: 100,
-      });
-      return dispatch(fetchOrgFulfilledAction(org, projects.results));
+      const projects: PaginatedList<Project> = await Project.list(
+        orgName,
+        paginationSettings
+      );
+      return dispatch(fetchOrgFulfilledAction(org, projects));
     } catch (e) {
       return dispatch(fetchOrgFailedAction(e));
     }

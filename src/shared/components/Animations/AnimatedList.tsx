@@ -40,7 +40,7 @@ const AnimatedList: React.FunctionComponent<AnimatedListProps<any>> = props => {
   if (paginationSettings) {
     const { from, total, pageSize } = paginationSettings;
     const totalPages = Math.ceil(total / pageSize);
-    const currentPage = Math.ceil(from / pageSize);
+    const currentPage = Math.round(from / pageSize) + 1;
     PaginationSection = totalPages > 1 && (
       <Pagination
         total={total}
