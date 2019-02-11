@@ -312,7 +312,7 @@ const mapStateToProps = (state: RootState) => ({
     state.nexus.activeOrg &&
     state.nexus.activeOrg.data &&
     state.nexus.activeOrg.data.projects
-      ? state.nexus.activeOrg.data.projects.map(p => p)
+      ? state.nexus.activeOrg.data.projects.results.map(p => p)
       : [],
   busy:
     (state.nexus &&

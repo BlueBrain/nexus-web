@@ -19,7 +19,10 @@ import {
 
 export interface NexusState {
   orgs: FetchableState<PaginatedList<Organization>>;
-  activeOrg?: FetchableState<{ org: Organization; projects: Project[] }>;
+  activeOrg?: FetchableState<{
+    org: Organization;
+    projects: PaginatedList<Project>;
+  }>;
   activeProject?: FetchableState<Project>;
 }
 

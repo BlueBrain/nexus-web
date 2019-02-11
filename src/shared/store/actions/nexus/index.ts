@@ -12,7 +12,7 @@ interface FetchProjectsActionSuccess extends Action {
   type: '@@nexus/PROJECTS_FETCHING_SUCCESS';
   payload: {
     org: Organization;
-    projects: Project[];
+    projects: PaginatedList<Project>;
   };
 }
 interface FetchProjectsActionFailure extends Action {
@@ -24,7 +24,7 @@ const fetchProjectsAction: ActionCreator<FetchProjectsAction> = () => ({
 });
 const fetchProjectsSuccessAction: ActionCreator<FetchProjectsActionSuccess> = (
   org: Organization,
-  projects: Project[]
+  projects: PaginatedList<Project>
 ) => ({
   type: '@@nexus/PROJECTS_FETCHING_SUCCESS',
   payload: { org, projects },
@@ -37,6 +37,7 @@ const fetchProjectsFailureAction: ActionCreator<FetchProjectsActionFailure> = (
 });
 
 export const fetchProjects: ActionCreator<ThunkAction> = (name: string) => {
+  console.log('plop');
   return async (
     dispatch: Dispatch<any>,
     getState,
