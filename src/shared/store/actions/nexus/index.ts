@@ -95,9 +95,6 @@ export const assignActiveProject: ActionCreator<AssignActiveProject> = (
   },
 });
 
-const fetchOrgsAction: ActionCreator<FetchOrgsAction> = () => ({
-  type: '@@nexus/ORGS_FETCHING',
-});
 const fetchOrgAction: ActionCreator<FetchOrgAction> = () => ({
   type: '@@nexus/ORG_FETCHING',
 });
@@ -109,12 +106,6 @@ const fetchProjectAction: ActionCreator<FetchProjectAction> = () => ({
 });
 const fetchResourcesAction: ActionCreator<FetchResourcesAction> = () => ({
   type: '@@nexus/RESOURCES_FETCHING',
-});
-const fetchOrgsSuccessAction: ActionCreator<FetchOrgsActionSuccess> = (
-  orgs: Organization[]
-) => ({
-  type: '@@nexus/ORGS_FETCHING_SUCCESS',
-  payload: orgs,
 });
 const fetchOrgSuccessAction: ActionCreator<FetchOrgActionSuccess> = (
   org: Organization
@@ -146,12 +137,6 @@ const fetchResourcesSuccessAction: ActionCreator<
 ) => ({
   type: '@@nexus/RESOURCES_FETCHING_SUCCESS',
   payload: { org, project, resources, resourcePaginationSettings },
-});
-const fetchOrgsFailureAction: ActionCreator<FetchOrgsActionFailure> = (
-  error: any
-) => ({
-  error,
-  type: '@@nexus/ORGS_FETCHING_FAILURE',
 });
 const fetchOrgFailureAction: ActionCreator<FetchOrgActionFailure> = (
   error: any

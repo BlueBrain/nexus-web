@@ -1,5 +1,10 @@
 import { ActionCreator, Dispatch } from 'redux';
-import { Organization, Project, PaginatedList } from '@bbp/nexus-sdk';
+import {
+  Organization,
+  Project,
+  PaginatedList,
+  PaginationSettings,
+} from '@bbp/nexus-sdk';
 import { ThunkAction } from '../..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
 
@@ -26,8 +31,8 @@ const fetchOrgsAction: ActionCreator<
 });
 
 const fetchOrgsFulfilledAction: ActionCreator<
-  FetchFulfilledAction<OrgsActionTypes.FULFILLED, OrgPayload[]>
-> = (orgs: OrgPayload[]) => ({
+  FetchFulfilledAction<OrgsActionTypes.FULFILLED, PaginatedList<Organization>>
+> = (orgs: PaginatedList<Organization>) => ({
   type: OrgsActionTypes.FULFILLED,
   payload: orgs,
 });
@@ -41,30 +46,36 @@ const fetchOrgsFailedAction: ActionCreator<
 
 export type OrgsActions =
   | FetchAction<OrgsActionTypes.FETCHING>
-  | FetchFulfilledAction<OrgsActionTypes.FULFILLED, OrgPayload[]>
+  | FetchFulfilledAction<OrgsActionTypes.FULFILLED, PaginatedList<Organization>>
   | FetchFailedAction<OrgsActionTypes.FAILED>;
 
-export const fetchOrgs: ActionCreator<ThunkAction> = () => {
+export const fetchOrgs: ActionCreator<ThunkAction> = (
+  paginationSettings?: PaginationSettings
+) => {
   return async (
     dispatch: Dispatch<any>,
     getState,
     { nexus }
   ): Promise<
-    | FetchFulfilledAction<OrgsActionTypes.FULFILLED, OrgPayload[]>
+    | FetchFulfilledAction<
+        OrgsActionTypes.FULFILLED,
+        PaginatedList<Organization>
+      >
     | FetchFailedAction<OrgsActionTypes.FAILED>
   > => {
     dispatch(fetchOrgsAction());
     try {
       const orgs: PaginatedList<Organization> = await Organization.list({
-        size: 100,
+        size: (paginationSettings && paginationSettings.size) || 20,
+        from: (paginationSettings && paginationSettings.from) || 1,
       });
       const projectsPerOrg: PaginatedList<Project>[] = await Promise.all(
-        orgs.results.map(org => Project.list(org.label, { size: 100 }))
+        orgs.results.map(org => Project.list(org.label))
       );
       orgs.results.map((org, index) => {
         (org as OrgPayload).projectNumber = projectsPerOrg[
           index
-        ].results.length.toString();
+        ].total.toString();
       });
       return dispatch(fetchOrgsFulfilledAction(orgs));
     } catch (e) {

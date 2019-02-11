@@ -1,21 +1,26 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
-import { Organization } from '@bbp/nexus-sdk';
+import {
+  Organization,
+  PaginatedList,
+  PaginationSettings,
+} from '@bbp/nexus-sdk';
 import { RootState } from '../store/reducers';
 import { createOrg, modifyOrg, deprecateOrg } from '../store/actions/orgs';
 import OrgList from '../components/Orgs/OrgList';
-import { fetchOrgs } from '../store/actions/nexus/orgs';
+import { fetchOrgs, OrgPayload } from '../store/actions/nexus/orgs';
 import Skeleton from '../components/Skeleton';
-import { Button, Modal, Drawer, notification } from 'antd';
+import { Button, Modal, Drawer, notification, Empty } from 'antd';
 import OrgForm from '../components/Orgs/OrgForm';
 import { CreateOrgPayload } from '@bbp/nexus-sdk/lib/Organization/types';
 
 interface LandingProps {
-  orgs: Organization[];
+  paginatedOrgs?: PaginatedList<Organization>;
   busy: boolean;
+  error: boolean;
   goTo(orgLabel: string): void;
-  fetchOrgs(): void;
+  fetchOrgs(paginationSettings?: PaginationSettings): any;
   createOrg: (
     orgLabel: string,
     orgPayload: CreateOrgPayload
@@ -29,8 +34,9 @@ interface LandingProps {
 }
 
 const Landing: React.FunctionComponent<LandingProps> = ({
-  orgs,
+  paginatedOrgs = { total: 0, index: 0, results: [] },
   busy,
+  error,
   goTo,
   fetchOrgs,
   createOrg,
@@ -43,7 +49,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
     Organization | undefined
   >(undefined);
   React.useEffect(() => {
-    orgs.length === 0 && fetchOrgs();
+    paginatedOrgs.results.length === 0 && fetchOrgs();
   }, []);
 
   const saveAndCreate = (newOrg: Organization) => {
@@ -161,6 +167,19 @@ const Landing: React.FunctionComponent<LandingProps> = ({
       />
     );
   }
+  if (!paginatedOrgs && error) {
+    <Empty
+      style={{ marginTop: '22vh' }}
+      description="There was a problem while loading Organizations"
+    />;
+  }
+
+  if (!paginatedOrgs && !error) {
+    <Empty
+      style={{ marginTop: '22vh' }}
+      description="No Organizations found..."
+    />;
+  }
 
   return (
     <>
@@ -174,14 +193,25 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           Create Organization
         </Button>
       </div>
-      {orgs.length === 0 ? (
+      {paginatedOrgs.results.length === 0 ? (
         <p style={{ marginTop: 50 }}>No organizations yet...</p>
       ) : (
         <OrgList
-          orgs={orgs}
+          orgs={paginatedOrgs.results}
           onOrgClick={goTo}
+          busy={busy}
+          paginationSettings={{
+            total: paginatedOrgs.total,
+            from: paginatedOrgs.index,
+            pageSize: 20,
+          }}
           onOrgEdit={(orgLabel: string) =>
-            setSelectedOrg(orgs.filter(o => o.label === orgLabel)[0])
+            setSelectedOrg(
+              paginatedOrgs.results.filter(o => o.label === orgLabel)[0]
+            )
+          }
+          onPaginationChange={() =>
+            fetchOrgs({ from: paginatedOrgs.results.length + 1, size: 20 })
           }
         />
       )}
@@ -218,13 +248,15 @@ const Landing: React.FunctionComponent<LandingProps> = ({
 };
 
 const mapStateToProps = (state: RootState) => ({
-  orgs: (state.nexus && state.nexus.orgs.data) || [],
+  paginatedOrgs: (state.nexus && state.nexus.orgs.data) || undefined,
   busy: (state.nexus && state.nexus.orgs.isFetching) || false,
+  error: !!(state.nexus && state.nexus.orgs.error),
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
   goTo: (org: string) => dispatch(push(`/${org}`)),
-  fetchOrgs: () => dispatch(fetchOrgs()),
+  fetchOrgs: (paginationSettings?: PaginationSettings) =>
+    dispatch(fetchOrgs(paginationSettings)),
   createOrg: (orgLabel: string, orgPayload: CreateOrgPayload) =>
     dispatch(createOrg(orgLabel, orgPayload)),
   modifyOrg: (orgLabel: string, rev: number, orgPayload: CreateOrgPayload) =>

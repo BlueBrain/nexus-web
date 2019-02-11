@@ -1,21 +1,28 @@
 import * as React from 'react';
-import { Input } from 'antd';
+import { Input, Pagination } from 'antd';
 import OrgCard, { OrgCardProps } from './OrgCard';
 
 import './Orgs.less';
+import AnimatedList from '../Animations/AnimatedList';
 
 export interface OrgListProps {
   orgs: OrgCardProps[];
+  busy?: boolean;
   onOrgClick?(label: string): void;
   onOrgEdit?(label: string): void;
+  paginationSettings?: { total: number; from: number; pageSize: number };
+  onPaginationChange?: (page: number, pageSize?: number) => void;
 }
 
 const Search = Input.Search;
 
 const OrgList: React.FunctionComponent<OrgListProps> = ({
   orgs,
+  busy = false,
   onOrgClick = () => {},
   onOrgEdit = () => {},
+  paginationSettings,
+  onPaginationChange,
 }) => {
   const [items, setItems] = React.useState(orgs);
 
@@ -33,20 +40,29 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
         placeholder="Filter by name"
         onChange={handleChange}
       />
-      <p className="result">
-        Found {items.length} organization{items.length > 1 && 's'}
-      </p>
-      <div className="orgs">
-        {items.map((org: OrgCardProps, i) => (
-          // TODO org cards should be anchor tags with hrefs for SSR
+      <AnimatedList
+        itemComponent={(org, i) => (
           <OrgCard
             key={org.label + i}
             {...org}
             onClick={() => onOrgClick(org.label)}
             onEdit={() => onOrgEdit(org.label)}
           />
-        ))}
-      </div>
+        )}
+        onPaginationChange={onPaginationChange}
+        makeKey={item => item.label}
+        itemName="Organization"
+        loading={busy}
+        results={items}
+        total={(paginationSettings && paginationSettings.total) || items.length}
+        paginationSettings={
+          paginationSettings && {
+            from: paginationSettings.from,
+            total: paginationSettings.total,
+            pageSize: paginationSettings.pageSize,
+          }
+        }
+      />
     </div>
   );
 };
