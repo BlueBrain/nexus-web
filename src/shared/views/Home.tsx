@@ -19,7 +19,7 @@ import { fetchOrg } from '../store/actions/nexus/activeOrg';
 
 interface HomeProps {
   activeOrg: { label: string; description?: string };
-  projects: Project[];
+  paginatedProjects: Project[];
   busy: boolean;
   match: any;
   fetchOrgData(orgLabel: string): void;
@@ -39,16 +39,13 @@ interface HomeProps {
     projectLabel: string,
     rev: number
   ): Promise<void>;
-  makeProjectPublic(
-    orgLabel: string,
-    projectLabel: string,
-  ): Promise<void>;
+  makeProjectPublic(orgLabel: string, projectLabel: string): Promise<void>;
   goTo(o: string, p: string): void;
 }
 
 const Home: React.FunctionComponent<HomeProps> = ({
   busy,
-  projects,
+  paginatedProjects,
   match,
   activeOrg,
   fetchOrgData,
@@ -67,7 +64,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
     () => {
       if (
         activeOrg.label !== match.params.org ||
-        (projects.length === 0 && !busy)
+        (paginatedProjects.length === 0 && !busy)
       ) {
         fetchOrgData(match.params.org);
       }
@@ -189,10 +186,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
 
   const makePublic = (selectedProject: Project) => {
     setFormBusy(true);
-    makeProjectPublic(
-      selectedProject.orgLabel,
-      selectedProject.label,
-    )
+    makeProjectPublic(selectedProject.orgLabel, selectedProject.label)
       .then(
         () => {
           notification.success({
@@ -254,17 +248,17 @@ const Home: React.FunctionComponent<HomeProps> = ({
           Create Project
         </Button>
       </div>
-      {projects.length === 0 ? (
+      {paginatedProjects.length === 0 ? (
         <Empty description="No projects" />
       ) : (
         <ProjectList
-          projects={projects}
+          projects={paginatedProjects}
           onProjectClick={(projectLabel: string) =>
             goTo(activeOrg.label, projectLabel)
           }
           onProjectEdit={(projectLabel: string) =>
             setSelectedProject(
-              projects.filter(p => p.label === projectLabel)[0]
+              paginatedProjects.filter(p => p.label === projectLabel)[0]
             )
           }
         />
@@ -313,7 +307,7 @@ const mapStateToProps = (state: RootState) => ({
     state.nexus.activeOrg &&
     state.nexus.activeOrg.data &&
     state.nexus.activeOrg.data.org) || { label: '' },
-  projects:
+  paginatedProjects:
     state.nexus &&
     state.nexus.activeOrg &&
     state.nexus.activeOrg.data &&
