@@ -15,6 +15,8 @@ import { Button, Modal, Drawer, notification, Empty } from 'antd';
 import OrgForm from '../components/Orgs/OrgForm';
 import { CreateOrgPayload } from '@bbp/nexus-sdk/lib/Organization/types';
 
+const DISPLAY_PER_PAGE = 20;
+
 interface LandingProps {
   paginatedOrgs?: PaginatedList<Organization>;
   busy: boolean;
@@ -203,15 +205,18 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           paginationSettings={{
             total: paginatedOrgs.total,
             from: paginatedOrgs.index,
-            pageSize: 20,
+            pageSize: DISPLAY_PER_PAGE,
           }}
           onOrgEdit={(orgLabel: string) =>
             setSelectedOrg(
               paginatedOrgs.results.filter(o => o.label === orgLabel)[0]
             )
           }
-          onPaginationChange={() =>
-            fetchOrgs({ from: paginatedOrgs.results.length, size: 20 })
+          onPaginationChange={pageNumber =>
+            fetchOrgs({
+              from: pageNumber * DISPLAY_PER_PAGE - DISPLAY_PER_PAGE,
+              size: DISPLAY_PER_PAGE,
+            })
           }
         />
       )}

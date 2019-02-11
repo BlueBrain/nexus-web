@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Drawer, notification, Modal, Button, Empty } from 'antd';
-import { Project } from '@bbp/nexus-sdk';
+import { Project, PaginatedList, PaginationSettings } from '@bbp/nexus-sdk';
 import { CreateProjectPayload } from '@bbp/nexus-sdk/lib/Project/types';
 import { RootState } from '../store/reducers';
-import { fetchProjects } from '../store/actions/nexus';
 import {
   modifyProject,
   createProject,
@@ -17,12 +16,14 @@ import { push } from 'connected-react-router';
 import ProjectForm from '../components/Projects/ProjectForm';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
 
+const DISPLAY_PER_PAGE = 10;
+
 interface HomeProps {
   activeOrg: { label: string; description?: string };
-  paginatedProjects: Project[];
+  paginatedProjects: PaginatedList<Project>;
   busy: boolean;
   match: any;
-  fetchOrgData(orgLabel: string): void;
+  fetchOrgData(orgLabel: string, paginationSettings?: PaginationSettings): void;
   createProject(
     orgLabel: string,
     projectLabel: string,
@@ -64,7 +65,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
     () => {
       if (
         activeOrg.label !== match.params.org ||
-        (paginatedProjects.length === 0 && !busy)
+        (paginatedProjects.results.length === 0 && !busy)
       ) {
         fetchOrgData(match.params.org);
       }
@@ -164,7 +165,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
           setModalVisible(false);
           setSelectedProject(undefined);
 
-          fetchProjects(match.params.org);
+          fetchOrgData(match.params.org);
         },
         (action: { type: string; error: Error }) => {
           notification.warning({
@@ -197,7 +198,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
           setModalVisible(false);
           setSelectedProject(undefined);
 
-          fetchProjects(match.params.org);
+          fetchOrgData(match.params.org);
         },
         (action: { type: string; error: Error }) => {
           notification.warning({
@@ -248,19 +249,31 @@ const Home: React.FunctionComponent<HomeProps> = ({
           Create Project
         </Button>
       </div>
-      {paginatedProjects.length === 0 ? (
+      {paginatedProjects.total === 0 ? (
         <Empty description="No projects" />
       ) : (
         <ProjectList
-          projects={paginatedProjects}
+          projects={paginatedProjects.results}
           onProjectClick={(projectLabel: string) =>
             goTo(activeOrg.label, projectLabel)
           }
           onProjectEdit={(projectLabel: string) =>
             setSelectedProject(
-              paginatedProjects.filter(p => p.label === projectLabel)[0]
+              paginatedProjects.results.filter(p => p.label === projectLabel)[0]
             )
           }
+          paginationSettings={{
+            total: paginatedProjects.total,
+            from: paginatedProjects.index,
+            pageSize: DISPLAY_PER_PAGE,
+          }}
+          onPaginationChange={pageNumber =>
+            fetchOrgData(match.params.org, {
+              from: DISPLAY_PER_PAGE * pageNumber - DISPLAY_PER_PAGE,
+              size: DISPLAY_PER_PAGE,
+            })
+          }
+          busy={busy}
         />
       )}
       <Modal
@@ -307,13 +320,10 @@ const mapStateToProps = (state: RootState) => ({
     state.nexus.activeOrg &&
     state.nexus.activeOrg.data &&
     state.nexus.activeOrg.data.org) || { label: '' },
-  paginatedProjects:
-    state.nexus &&
+  paginatedProjects: (state.nexus &&
     state.nexus.activeOrg &&
     state.nexus.activeOrg.data &&
-    state.nexus.activeOrg.data.projects
-      ? state.nexus.activeOrg.data.projects.results.map(p => p)
-      : [],
+    state.nexus.activeOrg.data.projects) || { results: [], total: 0, index: 0 },
   busy:
     (state.nexus &&
       state.nexus.activeOrg &&
@@ -322,7 +332,8 @@ const mapStateToProps = (state: RootState) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  fetchOrgData: (orgLabel: string) => dispatch(fetchOrg(orgLabel)),
+  fetchOrgData: (orgLabel: string, paginationSettings?: PaginationSettings) =>
+    dispatch(fetchOrg(orgLabel, paginationSettings)),
   goTo: (org: string, project: string) => dispatch(push(`/${org}/${project}`)),
   createProject: (
     orgLabel: string,
