@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, Icon, Button } from 'antd';
+import { Card, Icon, Button, Tooltip } from 'antd';
 import { Meta } from 'antd/lib/list/Item';
 import moment = require('moment');
 import UserAvatar from '../User/avatar';
@@ -41,14 +41,21 @@ const ResourceMetadataCard: React.FunctionComponent<
             style={{ display: 'flex', justifyContent: 'space-between' }}
           >
             <div style={{ marginRight: '1em' }}>
-              <em style={{ fontSize: '1.2em', marginRight: '4px' }}>{name}</em>
+              <Tooltip title={self}>
+                <em style={{ fontSize: '1.2em', marginRight: '4px' }}>
+                  {name}
+                </em>
+              </Tooltip>
               <Copy
                 textToCopy={self}
                 render={(copySuccess, triggerCopy) => (
-                  <Button
-                    icon={copySuccess ? 'check' : 'copy'}
-                    onClick={() => triggerCopy()}
-                  />
+                  <Tooltip title={copySuccess ? 'Copied!' : 'Copy _self'}>
+                    <Button
+                      size="small"
+                      icon={copySuccess ? 'check' : 'copy'}
+                      onClick={() => triggerCopy()}
+                    />
+                  </Tooltip>
                 )}
               />
             </div>
@@ -62,13 +69,18 @@ const ResourceMetadataCard: React.FunctionComponent<
               {moment(createdAt).format('DD/MM/YYYY')}
             </div>
             <div>
-              <Icon type="file-sync" /> <em>v.{rev}</em>{' '}
+              <Tooltip title={`Revision #${rev}`}>
+                <Icon type="file-sync" /> <em>v.{rev}</em>{' '}
+              </Tooltip>
               {updatedAt !== createdAt && (
                 <span>, last updated {moment(updatedAt).fromNow()}</span>
               )}
             </div>
             <div>
-              schema: <b>{constrainedBy}</b>
+              schema:{' '}
+              <a href={constrainedBy} target="_blank">
+                {constrainedBy}
+              </a>
             </div>
           </div>
         }

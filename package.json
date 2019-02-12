@@ -18,6 +18,7 @@
   "dependencies": {
     "@bbp/nexus-sdk": "1.0.0-beta.3",
     "@types/redux-localstorage": "^1.0.8",
+    "@uiw/react-codemirror": "^1.0.19",
     "antd": "^3.10.9",
     "color-thief-node": "^1.0.2",
     "connected-react-router": "^5.0.1",
