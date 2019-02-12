@@ -5,7 +5,8 @@ import * as morgan from 'morgan';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
-import { StaticRouter, matchPath } from 'react-router-dom';
+import { StaticRouter } from 'react-router-dom';
+import { matchPath } from 'react-router';
 import { createMemoryHistory } from 'history';
 import Nexus, { Organization } from '@bbp/nexus-sdk';
 import Helmet from 'react-helmet';
@@ -15,6 +16,7 @@ import App from '../shared/App';
 import createStore, { ThunkAction } from '../shared/store';
 import { RootState } from '../shared/store/reducers';
 import routes, { RouteWithData } from '../shared/routes';
+import { number } from '@storybook/addon-knobs';
 
 const isSecure = !!process.env.SECURE;
 const cookieName = isSecure ? '__Secure-nexusAuth' : '_Secure-nexusAuth';
@@ -179,7 +181,10 @@ app.get('*', async (req: express.Request, res: express.Response) => {
   );
   // Compute header data
   const helmet = Helmet.renderStatic();
-  res.send(html({ body, helmet, preloadedState: store.getState() }));
+  const status: number = activeRoutes.length === 0 ? 404 : 200;
+  res
+    .status(status)
+    .send(html({ body, helmet, preloadedState: store.getState() }));
 });
 
 app.listen(8000, () => {
