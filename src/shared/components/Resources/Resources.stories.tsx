@@ -157,27 +157,19 @@ const exampleResources = [
   },
 ];
 
-<<<<<<< HEAD
 const resources: ResourceItemProps[] = exampleResources.map(
   (item, index: number) => ({
     index,
     id: item['@id'],
+    self: item._self,
+    rev: item._rev,
+    createdBy: item._createdBy,
     constrainedBy: item._constrainedBy,
     type: Array.isArray(item['@type']) ? item['@type'] : [item['@type']],
     createdAt: item._createdAt,
     updatedAt: item._updatedAt,
   })
 );
-=======
-const resources: ResourceItemProps[] = exampleResources.map((item, index) => ({
-  index,
-  id: item['@id'],
-  updatedAt: item._updatedAt,
-  createdAt: item._createdAt,
-  constrainedBy: item._constrainedBy,
-  type: Array.isArray(item['@type']) ? item['@type'] : [item['@type']],
-}));
->>>>>>> add simple resource view
 
 const resourceInstances = exampleResources.map(
   resource => new Resource('org', resource._project, resource)
@@ -240,8 +232,10 @@ storiesOf('Components/Resources', module)
           <div style={{ margin: '50px 40px 0px' }}>
             <ResourceList
               paginationChange={() => {}}
-              paginationSettings={{ from: 0, size: 20 }}
+              navigateToResource={() => {}}
+              paginationSettings={{ total: 1, from: 0, pageSize: 20 }}
               resources={{
+                index: 1,
                 total: resources.length,
                 results: resourceInstances,
               }}

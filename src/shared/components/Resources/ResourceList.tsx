@@ -1,15 +1,18 @@
 import * as React from 'react';
-import { Drawer } from 'antd';
-import { PaginatedList, Resource, PaginationSettings } from '@bbp/nexus-sdk';
-import ResourceItem, { ResourceItemProps } from './ResourceItem';
+import { Popover } from 'antd';
+import { PaginatedList, Resource } from '@bbp/nexus-sdk';
+import ResourceItem from './ResourceItem';
 import './Resources.less';
 import AnimatedList from '../Animations/AnimatedList';
 import { Link } from 'react-router-dom';
+import ResourceMetadataCard from './MetaData';
 
 let ReactJson: any;
 if (typeof window !== 'undefined') {
   ReactJson = require('react-json-view').default;
 }
+
+const MOUSE_ENTER_DELAY = 0.5;
 
 export interface ResourceListProps {
   header?: React.ReactNode;
@@ -29,52 +32,37 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
   loading = false,
 }) => {
   const { total, results } = resources;
-  const [selectedResource, setSelectedResource] = React.useState(
-    null as Resource | null
-  );
-  const { from, pageSize } = paginationSettings;
-  const totalPages = Math.ceil(total / pageSize);
-  const current = Math.ceil((totalPages / total) * (from || 1));
-  const handleKeyPress = (e: KeyboardEvent) => {
-    const code = e.keyCode || e.which;
-    // enter is pressed
-    if (code === 27) {
-      // Navigate
-    }
-  };
-
-  React.useEffect(() => {
-    document.addEventListener('keydown', handleKeyPress, false);
-    return () => {
-      document.removeEventListener('keydown', handleKeyPress, false);
-    };
-  });
 
   return (
     <>
       <AnimatedList
         header={header}
         itemComponent={(resource: Resource, index: number) => (
-          <Link
-            className="resource-list-item-container"
-            to={{
-              pathname: `/${resource.orgLabel}/${
-                resource.projectLabel
-              }/${encodeURIComponent(resource.id)}`,
-              state: {
-                modal: true,
-                returnTo: location ? location.pathname : null,
-              },
-            }}
+          <Popover
+            content={<ResourceMetadataCard {...resource} />}
+            mouseEnterDelay={MOUSE_ENTER_DELAY}
           >
-            <ResourceItem
-              index={index}
-              key={resource.id}
-              name={resource.name}
-              {...resource}
-              onClick={() => navigateToResource(resource)}
-            />
-          </Link>
+            <Link
+              className="resource-list-item-container"
+              to={{
+                pathname: `/${resource.orgLabel}/${
+                  resource.projectLabel
+                }/${encodeURIComponent(resource.id)}`,
+                state: {
+                  modal: true,
+                  returnTo: location ? location.pathname : null,
+                },
+              }}
+            >
+              <ResourceItem
+                index={index}
+                key={resource.id}
+                name={resource.name}
+                {...resource}
+                onClick={() => navigateToResource(resource)}
+              />
+            </Link>
+          </Popover>
         )}
         itemName="Resource"
         results={results}

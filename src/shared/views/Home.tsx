@@ -272,7 +272,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
             from: paginatedProjects.index,
             pageSize: DISPLAY_PER_PAGE,
           }}
-          onPaginationChange={pageNumber =>
+          onPaginationChange={(pageNumber: number) =>
             fetchOrgData(match.params.org, {
               from: DISPLAY_PER_PAGE * pageNumber - DISPLAY_PER_PAGE,
               size: DISPLAY_PER_PAGE,

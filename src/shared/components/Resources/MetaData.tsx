@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { Card, Icon } from 'antd';
+import { Card, Icon, Button } from 'antd';
 import { Meta } from 'antd/lib/list/Item';
 import moment = require('moment');
 import UserAvatar from '../User/avatar';
 import TypesIcon from '../Types/TypesIcon';
+import Copy from '../Copy';
 
 export interface ResourceMetadataCardProps {
   name?: string;
+  self: string;
   createdAt: string;
   updatedAt: string;
   createdBy: string;
@@ -19,6 +21,7 @@ const ResourceMetadataCard: React.FunctionComponent<
   ResourceMetadataCardProps
 > = props => {
   const {
+    self,
     constrainedBy,
     name,
     createdAt,
@@ -37,8 +40,19 @@ const ResourceMetadataCard: React.FunctionComponent<
             className="name"
             style={{ display: 'flex', justifyContent: 'space-between' }}
           >
-            <em style={{ fontSize: '1.2em' }}>{name}</em>
-            {!!type && <TypesIcon type={type} />}
+            <div style={{ marginRight: '1em' }}>
+              <em style={{ fontSize: '1.2em', marginRight: '4px' }}>{name}</em>
+              <Copy
+                textToCopy={self}
+                render={(copySuccess, triggerCopy) => (
+                  <Button
+                    icon={copySuccess ? 'check' : 'copy'}
+                    onClick={() => triggerCopy()}
+                  />
+                )}
+              />
+            </div>
+            <div>{!!type && <TypesIcon type={type} />}</div>
           </div>
         }
         description={

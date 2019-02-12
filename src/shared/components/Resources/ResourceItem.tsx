@@ -1,10 +1,7 @@
 import * as React from 'react';
-import { Popover } from 'antd';
 import TypesIcon from '../Types/TypesIcon';
 import './Resources.less';
-import ResourceMetadataCard, { ResourceMetadataCardProps } from './MetaData';
-
-const MOUSE_ENTER_DELAY = 0.5;
+import { ResourceMetadataCardProps } from './MetaData';
 
 export interface ResourceItemProps extends ResourceMetadataCardProps {
   id: string;
@@ -27,21 +24,16 @@ const ResourceListItem: React.FunctionComponent<ResourceItemProps> = props => {
   };
 
   return (
-    <Popover
-      content={<ResourceMetadataCard {...props} />}
-      mouseEnterDelay={MOUSE_ENTER_DELAY}
+    <div
+      ref={containerRef}
+      className="clickable-container resource-item"
+      onClick={onClick}
+      onKeyPress={handleKeyPress}
+      tabIndex={index + 1}
     >
-      <div
-        ref={containerRef}
-        className="clickable-container resource-item"
-        onClick={onClick}
-        onKeyPress={handleKeyPress}
-        tabIndex={index + 1}
-      >
-        <div className="name">{name}</div>
-        {type && type.length && <TypesIcon type={type} />}
-      </div>
-    </Popover>
+      <div className="name">{name}</div>
+      {type && type.length && <TypesIcon type={type} />}
+    </div>
   );
 };
 

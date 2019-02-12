@@ -49,12 +49,14 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   );
   return (
     <>
-      <Helmet>
-        <title>{projectLabel}</title>
-        {!!project && !!project.description && (
-          <meta name="description" content={project.description} />
-        )}
-      </Helmet>
+      <Helmet
+        title={projectLabel ? projectLabel : 'Nexus Project'}
+        meta={
+          !!project && !!project.description
+            ? [{ name: 'description', content: project.description }]
+            : []
+        }
+      />
       <div className="project">
         {!project && error && (
           <>
