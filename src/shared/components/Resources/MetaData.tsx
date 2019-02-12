@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card } from 'antd';
+import { Card, Icon } from 'antd';
 import { Meta } from 'antd/lib/list/Item';
 import moment = require('moment');
 import UserAvatar from '../User/avatar';
@@ -11,13 +11,22 @@ export interface ResourceMetadataCardProps {
   updatedAt: string;
   createdBy: string;
   constrainedBy: string;
+  rev: number;
   type?: string[];
 }
 
 const ResourceMetadataCard: React.FunctionComponent<
   ResourceMetadataCardProps
 > = props => {
-  const { constrainedBy, name, createdAt, updatedAt, createdBy, type } = props;
+  const {
+    constrainedBy,
+    name,
+    createdAt,
+    updatedAt,
+    createdBy,
+    type,
+    rev,
+  } = props;
   const [userName] = createdBy.split('/').slice(-1);
   return (
     <Card>
@@ -38,9 +47,12 @@ const ResourceMetadataCard: React.FunctionComponent<
               created by <b>{userName}</b> on{' '}
               {moment(createdAt).format('DD/MM/YYYY')}
             </div>
-            {updatedAt !== createdAt && (
-              <div>last updated {moment(updatedAt).fromNow()}</div>
-            )}
+            <div>
+              <Icon type="file-sync" /> <em>v.{rev}</em>{' '}
+              {updatedAt !== createdAt && (
+                <span>, last updated {moment(updatedAt).fromNow()}</span>
+              )}
+            </div>
             <div>
               schema: <b>{constrainedBy}</b>
             </div>

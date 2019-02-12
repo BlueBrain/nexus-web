@@ -4,6 +4,7 @@ import { RootState } from '../store/reducers';
 import { fetchAndAssignResource } from '../store/actions/nexus/resource';
 import { Resource } from '@bbp/nexus-sdk';
 import ResourceView from '../components/Resources/ResourceView';
+import Helmet from 'react-helmet';
 
 interface ResourceViewProps {
   match: any;
@@ -30,7 +31,14 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
     [match.params.resourceId]
   );
   return (
-    <ResourceView resource={resource} error={error} isFetching={isFetching} />
+    <>
+      {!!resource && (
+        <Helmet>
+          <title>{resource.name}</title>
+        </Helmet>
+      )}
+      <ResourceView resource={resource} error={error} isFetching={isFetching} />
+    </>
   );
 };
 

@@ -3,12 +3,12 @@ import { Spin, Pagination, Empty, Divider } from 'antd';
 import './AnimatedList.less';
 import { Transition, config, animated } from 'react-spring';
 
-const DEFAULT_TRAIL_MS = 100;
+const DEFAULT_TRAIL_MS = 50;
 
 const DEFAULT_ANIMATIONS = {
   from: { transform: 'scale3d(0.8, 0.8, 0.8)', height: 0, opacity: 0 },
   leave: { transform: 'scale3d(0.8, 0.8, 0.8)', height: 0, opacity: 0 },
-  enter: { transform: 'scale3d(1, 1, 1)', height: 117, opacity: 1 },
+  enter: { transform: 'scale3d(1, 1, 1)', height: 'auto', opacity: 1 },
 };
 
 export interface AnimatedListProps<Item> {

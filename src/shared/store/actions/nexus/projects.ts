@@ -56,7 +56,6 @@ export const fetchAndAssignProject: ActionCreator<ThunkAction> = (
     dispatch(fetchProjectsAction());
     try {
       const project: Project = await Project.get(orgLabel, projectLabel);
-      console.log({ project });
       const defaultElasticSearchView: ElasticSearchView = await project.getElasticSearchView();
       const aggregationQuery = {
         aggs: {

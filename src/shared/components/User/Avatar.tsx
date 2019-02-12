@@ -8,12 +8,9 @@ export interface AvatarProps {
 const UserAvatar: React.FunctionComponent<AvatarProps> = props => {
   const { createdBy } = props;
   const [name] = createdBy.split('/').slice(-1);
-  const color = `#${+Math.floor(Math.random() * 16777215).toString(16)}`;
   return (
     <Tooltip title={name}>
-      <Avatar style={{ color: '#f56a00', backgroundColor: '#fde3cf' }}>
-        {name[0].toUpperCase()}
-      </Avatar>
+      <Avatar size="large">{name[0].toUpperCase()}</Avatar>
     </Tooltip>
   );
 };

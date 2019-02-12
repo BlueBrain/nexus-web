@@ -15,6 +15,7 @@ import Skeleton from '../components/Skeleton';
 import { push } from 'connected-react-router';
 import ProjectForm from '../components/Projects/ProjectForm';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
+import Helmet from 'react-helmet';
 
 const DISPLAY_PER_PAGE = 10;
 
@@ -237,6 +238,10 @@ const Home: React.FunctionComponent<HomeProps> = ({
 
   return (
     <>
+      <Helmet>
+        <title>{activeOrg.label}</title>
+        <meta name="description" content={activeOrg.description} />
+      </Helmet>
       <h1 style={{ marginBottom: 0, marginRight: 8 }}>{activeOrg.label}</h1>
       {activeOrg.description && <p>{activeOrg.description}</p>}
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
