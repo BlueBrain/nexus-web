@@ -65,22 +65,13 @@ export const createError = ({ FAILED }: ActionTypes) =>
     },
   });
 
-// For single objects
-export const createFetchReducer = function(actionTypes: ActionTypes): Reducer {
-  return combineReducers({
-    isFetching: createFetching(actionTypes),
-    data: createResultData(actionTypes, null),
-    error: createError(actionTypes),
-  });
-};
-
-// For collections
-export const createFetchListReducer = function(
-  actionTypes: ActionTypes
+export const createFetchReducer = function(
+  actionTypes: ActionTypes,
+  initialData?: any
 ): Reducer {
   return combineReducers({
     isFetching: createFetching(actionTypes),
-    data: createResultData(actionTypes, []),
+    data: createResultData(actionTypes, initialData || null),
     error: createError(actionTypes),
   });
 };

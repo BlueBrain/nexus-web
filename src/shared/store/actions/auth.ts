@@ -43,8 +43,8 @@ const fetchAclsFailedAction: ActionCreator<
  * Identity
  */
 type FetchIdentitiesAction = FetchAction<AuthActionTypes.IDENTITY_FETCHING>;
-const fetchIentitiesAction: ActionCreator<FetchAclsAction> = () => ({
-  type: AuthActionTypes.ACL_FETCHING,
+const fetchIdentitiesAction: ActionCreator<FetchIdentitiesAction> = () => ({
+  type: AuthActionTypes.IDENTITY_FETCHING,
 });
 
 type FetchIdentitiesFulfilledAction = FetchFulfilledAction<
@@ -83,7 +83,10 @@ export type AuthActions =
   | SetAuthenticatedAction
   | FetchAclsAction
   | FetchAclsFulfilledAction
-  | FetchAclsFailedAction;
+  | FetchAclsFailedAction
+  | FetchIdentitiesAction
+  | FetchIdentitiesFulfilledAction
+  | FetchIdentitiesFailedAction;
 
 /**
  *  Actual Actions
@@ -107,7 +110,7 @@ function fetchIdentities() {
   return async (
     dispatch: Dispatch<any>
   ): Promise<FetchIdentitiesFulfilledAction | FetchIdentitiesFailedAction> => {
-    dispatch(fetchIdentities);
+    dispatch(fetchIdentitiesAction);
     try {
       const identities: Identity[] = await ACL.listIdentities();
       return dispatch(fetchIdentitiesFulfilledAction(identities));
@@ -126,6 +129,6 @@ const setAuthenticated = (
 
 export default {
   setAuthenticated,
-  fetchAclsAction,
+  fetchAcls,
   fetchIdentities,
 };

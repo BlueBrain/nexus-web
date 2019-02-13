@@ -24,11 +24,14 @@ const aclsReducer = createFetchReducer({
   FULFILLED: AuthActionTypes.ACL_FULFILLED,
   FAILED: AuthActionTypes.ACL_FAILED,
 });
-const identityReducer = createFetchReducer({
-  FETCHING: AuthActionTypes.IDENTITY_FETCHING,
-  FULFILLED: AuthActionTypes.IDENTITY_FULFILLED,
-  FAILED: AuthActionTypes.IDENTITY_FAILED,
-});
+const identityReducer = createFetchReducer(
+  {
+    FETCHING: AuthActionTypes.IDENTITY_FETCHING,
+    FULFILLED: AuthActionTypes.IDENTITY_FULFILLED,
+    FAILED: AuthActionTypes.IDENTITY_FAILED,
+  },
+  []
+);
 
 function authReducer(
   state: AuthState = initialState,

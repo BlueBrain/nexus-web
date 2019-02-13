@@ -11,11 +11,7 @@ import {
   actionTypes as projectActionTypes,
   ProjectActions,
 } from '../actions/nexus/projects';
-import {
-  FetchableState,
-  createFetchListReducer,
-  createFetchReducer,
-} from './utils';
+import { FetchableState, createFetchReducer } from './utils';
 
 export interface NexusState {
   orgs: FetchableState<PaginatedList<Organization>>;
@@ -35,7 +31,7 @@ const initialState: NexusState = {
 };
 
 const activeOrgReducer = createFetchReducer(activeOrgActionTypes);
-const orgsReducer = createFetchListReducer(orgsActionTypes);
+const orgsReducer = createFetchReducer(orgsActionTypes, []);
 const projectReducer = createFetchReducer(projectActionTypes);
 
 export default function nexusReducer(
