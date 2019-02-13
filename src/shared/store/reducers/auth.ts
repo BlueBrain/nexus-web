@@ -17,17 +17,16 @@ export interface AuthState {
 
 const initialState: AuthState = {
   authenticated: false,
-  identities: [],
 };
 
 const aclsReducer = createFetchReducer({
-  FULFILLED: AuthActionTypes.ACL_FETCHING,
-  FETCHING: AuthActionTypes.ACL_FULFILLED,
+  FETCHING: AuthActionTypes.ACL_FETCHING,
+  FULFILLED: AuthActionTypes.ACL_FULFILLED,
   FAILED: AuthActionTypes.ACL_FAILED,
 });
 const identityReducer = createFetchReducer({
-  FULFILLED: AuthActionTypes.IDENTITY_FETCHING,
-  FETCHING: AuthActionTypes.IDENTITY_FULFILLED,
+  FETCHING: AuthActionTypes.IDENTITY_FETCHING,
+  FULFILLED: AuthActionTypes.IDENTITY_FULFILLED,
   FAILED: AuthActionTypes.IDENTITY_FAILED,
 });
 
@@ -38,13 +37,13 @@ function authReducer(
   if (action.type === 'SET_AUTHENTICATED') {
     return { ...state, authenticated: action.payload };
   }
-  if (action.type.startsWith('@NEXUS_AUTH_ACL_')) {
+  if (action.type.startsWith('@@nexus/AUTH_ACL_')) {
     return {
       ...state,
       acls: aclsReducer(state.acls, action),
     };
   }
-  if (action.type.startsWith('@NEXUS_AUTH_IDENTITY_')) {
+  if (action.type.startsWith('@@nexus/AUTH_IDENTITY_')) {
     return {
       ...state,
       identities: identityReducer(state.identities, action),
