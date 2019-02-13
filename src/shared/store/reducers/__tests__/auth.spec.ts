@@ -41,7 +41,7 @@ describe('Auth Reducer', () => {
         acls: {
           isFetching: false,
           data: null,
-          error: { message: 'this is awful' }, // TODO: this fails, fix createReducer function
+          error: { message: 'this is awful', name: 'Error' },
         },
       });
     });

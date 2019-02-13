@@ -56,7 +56,13 @@ export const createResultData = (
 
 export const createError = ({ FAILED }: ActionTypes) =>
   createReducer(null, {
-    [FAILED]: (state, action) => action.error,
+    [FAILED]: (state, action) => {
+      if (action.error instanceof Error) {
+        return { message: action.error.message, name: action.error.name };
+      }
+
+      return action.error;
+    },
   });
 
 // For single objects
