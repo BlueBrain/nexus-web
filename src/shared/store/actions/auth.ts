@@ -127,8 +127,4 @@ const setAuthenticated = (
   payload: isAuthenticated,
 });
 
-export default {
-  setAuthenticated,
-  fetchAcls,
-  fetchIdentities,
-};
+export { setAuthenticated, fetchAcls, fetchIdentities };
