@@ -3,7 +3,7 @@ import { FetchAction, FetchFulfilledAction, FetchFailedAction } from './utils';
 import { PaginatedList, ACL } from '@bbp/nexus-sdk';
 import { ListACLOptions, Identity } from '@bbp/nexus-sdk/lib/ACL/types';
 
-enum AuthActionTypes {
+export enum AuthActionTypes {
   ACL_FETCHING = '@@nexus/AUTH_ACL_FETCHING',
   ACL_FULFILLED = '@@nexus/AUTH_ACL_FULFILLED',
   ACL_FAILED = '@@nexus/AUTH_ACL_FAILED',
