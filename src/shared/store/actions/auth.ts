@@ -12,12 +12,6 @@ export enum AuthActionTypes {
   IDENTITY_FAILED = '@@nexus/AUTH_IDENTITY_FAILED',
 }
 
-// export const actionTypes = {
-//   ACL_FETCHING: AuthActionTypes.ACL_FETCHING,
-//   ACL_FULFILLED: AuthActionTypes.ACL_FULFILLED,
-//   ACL_FAILED: AuthActionTypes.ACL_FAILED,
-// };
-
 /**
  * ACLs
  */
