@@ -13,8 +13,9 @@ import Helmet from 'react-helmet';
 import * as jwtDecode from 'jwt-decode';
 import html from './html';
 import App from '../shared/App';
-import createStore, { ThunkAction } from '../shared/store';
+import createStore from '../shared/store';
 import { RootState } from '../shared/store/reducers';
+import { fetchIdentities } from '../shared/store/actions/auth';
 import routes, { RouteWithData } from '../shared/routes';
 import { number } from '@storybook/addon-knobs';
 
@@ -152,7 +153,8 @@ app.get('*', async (req: express.Request, res: express.Response) => {
 
   // Redux store
   const store = createStore(memoryHistory, nexus, preloadedState);
-
+  // Get identity data
+  await store.dispatch<any>(fetchIdentities());
   // Get list of matching routes
   const activeRoutes: RouteWithData[] = routes.filter(route =>
     matchPath(req.url, route)
