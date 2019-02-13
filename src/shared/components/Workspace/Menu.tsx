@@ -5,6 +5,7 @@ import { Project, Resource } from '@bbp/nexus-sdk';
 import ResourceForm from '../Resources/ResourceForm';
 import { Link } from 'react-router-dom';
 import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
+import SideMenu from '../Animations/SideMenu';
 interface MenuProps {
   project?: Project | null;
   createList: (orgProjectFilterKey: string) => void;
@@ -38,52 +39,51 @@ const Menu: React.FunctionComponent<MenuProps> = ({
   return (
     <>
       {renderable}
-      <Drawer
-        mask={false}
+      <SideMenu
         visible={visible}
         title="Resources"
-        height={60}
         onClose={() => setVisible(false)}
       >
-        <p>
-          View resources in your project using pre-defined query-helper lists.
-        </p>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <ResourceForm
-            createResource={createResource}
-            project={project}
-            render={(updateFormVisible: () => void) => {
-              return (
-                <Button
-                  style={{ margin: '0.5em 0' }}
-                  type="primary"
-                  onClick={updateFormVisible}
-                  icon="plus-square"
-                >
-                  Create Resource
-                </Button>
-              );
-            }}
-          />
-          <Button
-            style={{ margin: '0.5em 0' }}
-            onClick={() => createList(orgProjectFilterKey)}
-            icon="plus-square"
-          >
-            New Query
-          </Button>
+        <>
+          <p>
+            View resources in your project using pre-defined query-helper lists.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <ResourceForm
+              createResource={createResource}
+              project={project}
+              render={(updateFormVisible: () => void) => {
+                return (
+                  <Button
+                    style={{ margin: '0.5em 0' }}
+                    type="primary"
+                    onClick={updateFormVisible}
+                    icon="plus-square"
+                  >
+                    Create Resource
+                  </Button>
+                );
+              }}
+            />
+            <Button
+              style={{ margin: '0.5em 0' }}
+              onClick={() => createList(orgProjectFilterKey)}
+              icon="plus-square"
+            >
+              New Query
+            </Button>
+            <Divider />
+            <Link to={`/${orgLabel}/${projectLabel}/graph/sparql`}>
+              Sparql Query Editor
+            </Link>
+            <Link
+              to={`/${orgLabel}/${projectLabel}/nxv:defaultElasticSearchIndex/_search`}
+            >
+              ElasticSearch Query Editor
+            </Link>
+          </div>
           <Divider />
-          <Link to={`/${orgLabel}/${projectLabel}/graph/sparql`}>
-            Sparql Query Editor
-          </Link>
-          <Link
-            to={`/${orgLabel}/${projectLabel}/nxv:defaultElasticSearchIndex/_search`}
-          >
-            ElasticSearch Query Editor
-          </Link>
-        </div>
-        <Divider />
-        {/* <div style={{ height: '200px' }}>
+          {/* <div style={{ height: '200px' }}>
           <FileUpload
             onFileUpload={async file => {
               // project.postFile()
@@ -91,7 +91,8 @@ const Menu: React.FunctionComponent<MenuProps> = ({
             }}
           />
         </div> */}
-      </Drawer>
+        </>
+      </SideMenu>
     </>
   );
 };

@@ -8,6 +8,7 @@ import Copy from '../Copy';
 
 export interface ResourceMetadataCardProps {
   name?: string;
+  id: string;
   self: string;
   createdAt: string;
   updatedAt: string;
@@ -21,6 +22,7 @@ const ResourceMetadataCard: React.FunctionComponent<
   ResourceMetadataCardProps
 > = props => {
   const {
+    id,
     self,
     constrainedBy,
     name,
@@ -47,23 +49,25 @@ const ResourceMetadataCard: React.FunctionComponent<
                 </em>
               </Tooltip>
               <Copy
-                textToCopy={self}
+                textToCopy={id}
                 render={(copySuccess, triggerCopy) => (
-                  <Tooltip title={copySuccess ? 'Copied!' : 'Copy _self'}>
+                  <Tooltip title={copySuccess ? 'Copied!' : 'Copy @id'}>
                     <Button
                       size="small"
                       icon={copySuccess ? 'check' : 'copy'}
                       onClick={() => triggerCopy()}
-                    />
+                    >
+                      ID
+                    </Button>
                   </Tooltip>
                 )}
               />
             </div>
-            <div>{!!type && <TypesIcon type={type} />}</div>
           </div>
         }
         description={
           <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div>{!!type && <TypesIcon type={type} />}</div>
             <div>
               created by <b>{userName}</b> on{' '}
               {moment(createdAt).format('DD/MM/YYYY')}
