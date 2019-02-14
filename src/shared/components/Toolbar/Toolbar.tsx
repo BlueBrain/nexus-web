@@ -1,10 +1,20 @@
 import * as React from 'react';
+import {
+  Dropdown,
+  Menu,
+  Icon,
+  Avatar,
+  Button,
+  Tooltip,
+  Input,
+  Popover,
+  Form,
+} from 'antd';
+import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
+import { getUserList, getOrderedPermissions } from '../../utils';
 import RenameableItem from '../Renameable';
 
 import './Toolbar.less';
-import { Dropdown, Menu, Icon, Avatar, Button, Tooltip, Input } from 'antd';
-import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
-import { getUserList, getOrderedPermissions } from '../../utils';
 
 interface ToolbarData {
   menuTitle: string;
@@ -29,6 +39,7 @@ interface ToolbarProps {
   projectName: string;
   onProjectNameChange: (name: string) => any;
   identities: Identity[];
+  onNewPermissionSelected(identity: Identity['@type']): void;
 }
 const Toolbar: React.FunctionComponent<ToolbarProps> = props => {
   // the check icon will belong to the active permission
@@ -41,7 +52,7 @@ const Toolbar: React.FunctionComponent<ToolbarProps> = props => {
     <Menu className="Toolbar-permission-menu">
       <h3 className="title">Change permissions</h3>
       <Menu.Divider />
-      <Menu.Item key="0">
+      <Menu.Item key="0" onClick={() => props.onNewPermissionSelected('User')}>
         <div className="permission-item">
           <Icon type="lock" style={{ color: 'red' }} />
           <span className="permission-name">Private</span>
@@ -49,7 +60,10 @@ const Toolbar: React.FunctionComponent<ToolbarProps> = props => {
         </div>
         <p>Only project members can access this project.</p>
       </Menu.Item>
-      <Menu.Item key="1">
+      <Menu.Item
+        key="1"
+        onClick={() => props.onNewPermissionSelected('Authenticated')}
+      >
         <div className="permission-item">
           <Icon type="bank" />
           <span className="permission-name">Realm</span>
@@ -59,7 +73,7 @@ const Toolbar: React.FunctionComponent<ToolbarProps> = props => {
           Anyone authenticated with the same realm can see and edit the project.
         </p>
       </Menu.Item>
-      <Menu.Item key="2">
+      <Menu.Item key="2" onClick={() => props.onNewPermissionSelected('Group')}>
         <div className="permission-item">
           <Icon type="team" />
           <span className="permission-name">Group</span>
@@ -67,7 +81,10 @@ const Toolbar: React.FunctionComponent<ToolbarProps> = props => {
         </div>
         <p>All members of the group can see and edit the project.</p>
       </Menu.Item>
-      <Menu.Item key="3">
+      <Menu.Item
+        key="3"
+        onClick={() => props.onNewPermissionSelected('Anonymous')}
+      >
         <div className="permission-item">
           <Icon type="global" style={{ color: 'green' }} />
           <span className="permission-name">Public</span>
@@ -82,13 +99,11 @@ const Toolbar: React.FunctionComponent<ToolbarProps> = props => {
   );
 
   const newMemberMenu = (
-    <Menu>
-      <h3>New member</h3>
-      <Menu.Divider />
-      <div>
-        Add a new member to this project <Input />
-      </div>
-    </Menu>
+    <div className="Toolbar-new-member-menu">
+      Add a new member to this project
+      <Input placeholder="Enter name" />
+      <Button type="primary">Add</Button>
+    </div>
   );
 
   return (
@@ -112,9 +127,9 @@ const Toolbar: React.FunctionComponent<ToolbarProps> = props => {
         ))}
       </div>
       <Tooltip placement="right" title="add a new member">
-        <Dropdown overlay={newMemberMenu} trigger={['click']}>
+        <Popover content={newMemberMenu} trigger="click" title="New member">
           <Button type="primary" shape="circle" icon="user-add" />
-        </Dropdown>
+        </Popover>
       </Tooltip>
     </div>
   );
