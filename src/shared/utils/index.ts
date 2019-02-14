@@ -1,3 +1,5 @@
+import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
+
 /**
  * getProp utility - an alternative to lodash.get
  * @author @harish2704, @muffypl, @pi0
@@ -55,3 +57,45 @@ export function uuidv4(): string {
     return v.toString(16);
   });
 }
+
+/**
+ * Given an array of identities, returns a list of usernames or []
+ *
+ * @param {Identity[]} identities an array of identities
+ * @returns {string[]} A list of usernames, or an empty array
+ */
+export const getUserList = (identities: Identity[]) =>
+  identities
+    .filter(identity => identity['@type'] === 'User')
+    .map(identity => identity.subject);
+
+/**
+ *  Given an array of identities, returns a unique list of permissions, in importance order.
+ * - Anonymous
+ * - Authenticated
+ * - User
+ *
+ * If a project has an identity of type anonymous, then is it "public" access
+ * If a project has an identity of type authenticated, then all authenticated users have access
+ * If a project has an identity of type User, only this or these users will have access
+ *
+ * @param {Indentity[]} identities
+ * @returns {string[]} list of ordered permissions
+ */
+export const getOrderedPermissions = (identities: Identity[]): string[] => {
+  const permissionWeight: { [key: string]: number } = {
+    Anonymous: 1,
+    Authenticated: 2,
+    Group: 3,
+    User: 4,
+  };
+
+  const sorted = identities
+    .sort(
+      (idA, idB) =>
+        permissionWeight[idA['@type']] - permissionWeight[idB['@type']]
+    )
+    .map(identity => identity['@type']);
+
+  return [...new Set(sorted)];
+};
