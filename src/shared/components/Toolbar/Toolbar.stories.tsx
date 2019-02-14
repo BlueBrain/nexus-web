@@ -26,7 +26,13 @@ const identities: Identity[] = [
     '@id': 'http://',
     '@type': 'User',
     realm: 'bbp',
-    subject: 'machon',
+    subject: 'julien',
+  },
+  {
+    '@id': 'http://',
+    '@type': 'User',
+    realm: 'bbp',
+    subject: 'kenny',
   },
 ];
 storiesOf('Components/Toolbar', module)

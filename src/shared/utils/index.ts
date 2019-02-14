@@ -82,7 +82,9 @@ export const getUserList = (identities: Identity[]) =>
  * @param {Indentity[]} identities
  * @returns {string[]} list of ordered permissions
  */
-export const getOrderedPermissions = (identities: Identity[]): string[] => {
+export const getOrderedPermissions = (
+  identities: Identity[]
+): Identity['@type'][] => {
   const permissionWeight: { [key: string]: number } = {
     Anonymous: 1,
     Authenticated: 2,
