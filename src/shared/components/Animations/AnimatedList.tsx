@@ -1,20 +1,22 @@
 import * as React from 'react';
 import { Spin, Pagination, Empty, Divider } from 'antd';
 import './AnimatedList.less';
-import { Transition, config, animated } from 'react-spring';
+import { useTransition, animated } from 'react-spring';
 
-const DEFAULT_TRAIL_MS = 100;
+const DEFAULT_TRAIL_MS = 50;
 
 const DEFAULT_ANIMATIONS = {
   from: { transform: 'scale3d(0.8, 0.8, 0.8)', height: 0, opacity: 0 },
   leave: { transform: 'scale3d(0.8, 0.8, 0.8)', height: 0, opacity: 0 },
-  enter: { transform: 'scale3d(1, 1, 1)', height: 117, opacity: 1 },
+  enter: { transform: 'scale3d(1, 1, 1)', height: 'auto', opacity: 1 },
+  trail: DEFAULT_TRAIL_MS,
 };
 
 export interface AnimatedListProps<Item> {
   header?: React.ReactNode;
-  itemComponent: (item: Item, index: number, state: any) => React.ReactNode;
+  itemComponent: (item: Item, index: number) => React.ReactNode;
   itemName?: string;
+  itemClassName?: string;
   results: Item[];
   total: number;
   makeKey?: (item: Item) => string;
@@ -27,6 +29,7 @@ const AnimatedList: React.FunctionComponent<AnimatedListProps<any>> = props => {
   const {
     makeKey = (item: any) => item.id,
     itemComponent,
+    itemClassName,
     header = <div />,
     loading = false,
     itemName = 'Item',
@@ -50,7 +53,7 @@ const AnimatedList: React.FunctionComponent<AnimatedListProps<any>> = props => {
       />
     );
   }
-
+  const transitions = useTransition(results, makeKey, DEFAULT_ANIMATIONS);
   return (
     <div className="list-container">
       <div className="header">
@@ -64,21 +67,12 @@ const AnimatedList: React.FunctionComponent<AnimatedListProps<any>> = props => {
       </div>
       <div className="list">
         <Spin spinning={loading}>
-          {!!total && (
-            <Transition
-              trail={DEFAULT_TRAIL_MS}
-              items={results}
-              keys={makeKey}
-              {...DEFAULT_ANIMATIONS}
-              native={true}
-            >
-              {(item: any, state: any, index: number) => props => (
-                <animated.div style={props}>
-                  {itemComponent(item, index, state)}
-                </animated.div>
-              )}
-            </Transition>
-          )}
+          {!!total &&
+            transitions.map(({ item, key, props }, index: number) => (
+              <animated.div className={itemClassName} style={props} key={key}>
+                {itemComponent(item, index)}
+              </animated.div>
+            ))}
           {!total && <Empty />}
           {PaginationSection}
         </Spin>
