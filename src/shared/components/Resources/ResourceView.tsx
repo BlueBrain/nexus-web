@@ -4,8 +4,10 @@ import { Spin, Button, notification, Icon } from 'antd';
 import ResourceMetadataCard from './MetaData';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import './ResourceEditor.less';
-import { Context } from '@bbp/nexus-sdk/lib/Resource/types';
-require('codemirror/mode/javascript/javascript');
+
+if (typeof window !== 'undefined') {
+  require('codemirror/mode/javascript/javascript');
+}
 
 export interface ResourceViewProps {
   resource: Resource | null;

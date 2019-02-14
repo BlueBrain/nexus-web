@@ -11,13 +11,18 @@ import {
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { Resource } from '@bbp/nexus-sdk';
 import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
+import { UnControlled as CodeMirror } from 'react-codemirror2';
+
+if (typeof window !== 'undefined') {
+  require('codemirror/mode/javascript/javascript');
+}
 
 const Option = AutoComplete.Option;
 
-let ReactJson: any;
-if (typeof window !== 'undefined') {
-  ReactJson = require('react-json-view').default;
-}
+const DEFAULT_RESOURCE = {
+  '@context': ['https://bluebrain.github.io/nexus/contexts/resource.json'],
+  exampleField: 'exampleValue',
+};
 
 export interface ResourceFormProps {
   form: WrappedFormUtils;
@@ -96,8 +101,8 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
     });
   };
 
-  const handleJSONInput = ({ updated_src }: any) => {
-    setJsonValue(updated_src);
+  const handleJSONInput = (editor: any, data: any, value: any) => {
+    setJsonValue(value);
     return jsonValue;
   };
 
@@ -138,12 +143,15 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
             />
           )}
         </Form.Item>
-        <ReactJson
-          src={jsonValue}
-          name={null}
-          onEdit={handleJSONInput}
-          onAdd={handleJSONInput}
-          onDelete={handleJSONInput}
+        <CodeMirror
+          value={JSON.stringify(DEFAULT_RESOURCE, null, 2)}
+          options={{
+            mode: { name: 'javascript', json: true },
+            theme: 'base16-light',
+            lineNumbers: true,
+            viewportMargin: Infinity,
+          }}
+          onChange={handleJSONInput}
         />
         <Form.Item {...formItemLayoutWithOutLabel}>
           <Button
