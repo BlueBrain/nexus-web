@@ -4,7 +4,31 @@ import { withKnobs, text, number } from '@storybook/addon-knobs';
 import { withInfo } from '@storybook/addon-info';
 import Toolbar from './Toolbar';
 import { action } from '@storybook/addon-actions';
+import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
 
+const identities: Identity[] = [
+  {
+    '@id': 'http://anonymous.com',
+    '@type': 'Anonymous',
+  },
+  {
+    '@id': 'http://',
+    '@type': 'Authenticated',
+    realm: 'bbp',
+  },
+  {
+    '@id': 'http://',
+    '@type': 'Group',
+    realm: 'bbp',
+    group: 'mygroup',
+  },
+  {
+    '@id': 'http://',
+    '@type': 'User',
+    realm: 'bbp',
+    subject: 'machon',
+  },
+];
 storiesOf('Components/Toolbar', module)
   .addDecorator(withKnobs)
   .add(
@@ -19,6 +43,7 @@ storiesOf('Components/Toolbar', module)
         <Toolbar
           projectName={projectName}
           onProjectNameChange={action('onProjectNameChange')}
+          identities={identities}
         />
       );
     })
