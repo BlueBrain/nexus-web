@@ -67,7 +67,9 @@ const ResourceMetadataCard: React.FunctionComponent<
         }
         description={
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div>{!!type && <TypesIcon type={type} />}</div>
+            <div style={{ height: 22 }}>
+              {!!type && <TypesIcon type={type} />}
+            </div>
             <div>
               created by <b>{userName}</b> on{' '}
               {moment(createdAt).format('DD/MM/YYYY')}

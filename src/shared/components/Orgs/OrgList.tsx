@@ -33,8 +33,6 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
     setItems(filtered);
   };
 
-  console.log({ items });
-
   return (
     <div className="OrgList">
       <Search

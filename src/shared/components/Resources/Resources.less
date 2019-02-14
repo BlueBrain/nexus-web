@@ -7,12 +7,6 @@
   cursor: pointer;
 }
 
-/**
-* ResourcesList
-*/
-.resources-list {
-}
-
 .ant-list {
   &.resources-list {
     font-size: 10px;
@@ -25,19 +19,6 @@
 .resource-list-item-container {
   .oddListColor();
   display: block;
-}
-
-.ant-list-item {
-  padding: 1em 0 0;
-}
-
-/**
-* ResourceListItem
-*/
-.resource-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 1em;
   transition: all 0.3s;
   &:hover,
   &:active,
@@ -51,8 +32,23 @@
       background-color: white;
     }
   }
+  a {
+    color: @text-color;
+  }
+}
+
+.ant-list-item {
+  padding: 1em 0 0;
+}
+
+/**
+* ResourceListItem
+*/
+.resource-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5em;
   & > .name {
-    font-size: 1.2em;
     width: auto;
     text-overflow: ellipsis;
     overflow-x: hidden;

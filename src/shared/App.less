@@ -1,6 +1,40 @@
 @import '~antd/dist/antd.less';
 @import 'lib.less';
 @import 'styles/close-button.less';
+@import '../../node_modules/codemirror/lib/codemirror.css';
+@import '../../node_modules/codemirror/theme/base16-light.css';
+
+// codemirror styling
+.cm-s-base16-light span.cm-string {
+}
+.cm-s-base16-light span.cm-string.cm-property {
+  color: @link-color;
+}
+.CodeMirror {
+  height: auto;
+  pre {
+    color: @text-color;
+  }
+}
+.sm-string .cm-property {
+  color: @text-color;
+}
+.cm-s-base16-light.CodeMirror {
+  background-color: white;
+}
+.routes-container {
+  width: 100%;
+  height: auto;
+  position: relative;
+  & > .route {
+    position: absolute;
+    width: 100%;
+    padding-bottom: 3em;
+    height: auto;
+    top: 0;
+    left: 0;
+  }
+}
 
 .ant-pagination-prev,
 .ant-pagination-jump-prev,

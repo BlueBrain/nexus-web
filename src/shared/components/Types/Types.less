@@ -19,22 +19,25 @@
 .types-icon {
   display: inline-block;
   position: relative;
-  // color: @text-color-secondary;
-  // z-index: 0;
-  // margin-right: 1em;
-  // background-color: black;
-  // border-radius: 1em;
+  height: 22px;
   &:hover {
     z-index: 1;
   }
-  .ant-avatar-sm.ant-avatar-square {
-    width: 18px;
-    margin-right: 0.5em;
-    height: 18px;
-    top: -1px;
-    line-height: 24px;
+  .ant-tag {
   }
-  & > .label {
-    margin-left: 1em;
+  .ant-avatar-sm.ant-avatar-square {
+    width: 16px;
+    margin-right: 0.5em;
+    height: 16px;
+    top: -6px;
+  }
+  .label {
+    position: relative;
+    max-width: 50px;
+    font-size: 10px;
+    white-space: nowrap;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }

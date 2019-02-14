@@ -238,10 +238,10 @@ const Home: React.FunctionComponent<HomeProps> = ({
 
   return (
     <>
-      <Helmet>
-        <title>{activeOrg.label}</title>
-        <meta name="description" content={activeOrg.description} />
-      </Helmet>
+      <Helmet
+        title={activeOrg.label}
+        meta={[{ name: 'description', content: activeOrg.description }]}
+      />
       <h1 style={{ marginBottom: 0, marginRight: 8 }}>{activeOrg.label}</h1>
       {activeOrg.description && <p>{activeOrg.description}</p>}
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'antd';
+import { Icon, Tooltip } from 'antd';
 import './Footer.less';
 
 export interface FooterProps {
@@ -15,12 +15,14 @@ const Footer: React.FunctionComponent<FooterProps> = ({
 }) => {
   return (
     <footer className="footer-bar">
-      {version && <span className="footerlet">version {version}</span>}
+      {version && <span className="footerlet">version {version}</span>}.
       {githubIssueURL && (
         <span className="footerlet">
-          <a href={githubIssueURL}>
-            <Icon type="github" /> post an issue on github
-          </a>
+          <Tooltip title={'post an issue on github'}>
+            <a href={githubIssueURL}>
+              <Icon type="github" />
+            </a>
+          </Tooltip>
         </span>
       )}
       {children}

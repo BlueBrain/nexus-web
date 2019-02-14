@@ -16,6 +16,7 @@ export interface AnimatedListProps<Item> {
   header?: React.ReactNode;
   itemComponent: (item: Item, index: number) => React.ReactNode;
   itemName?: string;
+  itemClassName?: string;
   results: Item[];
   total: number;
   makeKey?: (item: Item) => string;
@@ -28,6 +29,7 @@ const AnimatedList: React.FunctionComponent<AnimatedListProps<any>> = props => {
   const {
     makeKey = (item: any) => item.id,
     itemComponent,
+    itemClassName,
     header = <div />,
     loading = false,
     itemName = 'Item',
@@ -67,7 +69,7 @@ const AnimatedList: React.FunctionComponent<AnimatedListProps<any>> = props => {
         <Spin spinning={loading}>
           {!!total &&
             transitions.map(({ item, key, props }, index) => (
-              <animated.div style={props} key={key}>
+              <animated.div className={itemClassName} style={props} key={key}>
                 {itemComponent(item, index)}
               </animated.div>
             ))}

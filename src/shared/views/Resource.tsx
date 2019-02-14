@@ -20,24 +20,29 @@ interface ResourceViewProps {
 
 const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
   const { match, resource, error, isFetching, fetchResource } = props;
+  const fetch = () => {
+    fetchResource(
+      match.params.org,
+      match.params.project,
+      match.params.resourceId
+    );
+  };
   React.useEffect(
     () => {
-      fetchResource(
-        match.params.org,
-        match.params.project,
-        match.params.resourceId
-      );
+      fetch();
     },
     [match.params.resourceId]
   );
+
   return (
     <>
-      {!!resource && (
-        <Helmet>
-          <title>{resource.name}</title>
-        </Helmet>
-      )}
-      <ResourceView resource={resource} error={error} isFetching={isFetching} />
+      {!!resource && <Helmet title={resource.name} />}
+      <ResourceView
+        onSuccess={fetch}
+        resource={resource}
+        error={error}
+        isFetching={isFetching}
+      />
     </>
   );
 };

@@ -1,0 +1,28 @@
+@import '../../lib.less';
+
+.resource-editor {
+  border: 1px solid #e8e8e8;
+  transition: all 300 ease;
+  margin-top: 1em;
+  &._invalid {
+    border: 1px solid pink;
+  }
+}
+
+.control-panel {
+  display: flex;
+  padding: 1em;
+  height: 52px;
+  justify-content: space-between;
+  & > .feedback {
+  }
+  & > .controls {
+  }
+}
+
+._positive {
+  color: @success-color;
+}
+._negative {
+  color: @error-color;
+}

@@ -41,8 +41,6 @@ const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
     onFilterChange(value);
   };
 
-  console.log({ query });
-
   return (
     <div
       style={{

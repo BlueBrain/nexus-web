@@ -7,6 +7,7 @@ import MainLayout from './layouts/MainLayout';
 import './App.less';
 import { Modal } from 'antd';
 import { push } from 'connected-react-router';
+import { useTransition, animated } from 'react-spring';
 
 interface ModalSwitchProps {
   location: any;
@@ -18,7 +19,6 @@ interface ModalSwitchProps {
 const ModalSwitch: React.FunctionComponent<ModalSwitchProps> = props => {
   const { location, children, history, match, goDown } = props;
   const [previousLocation, setPreviousLocation] = React.useState(null);
-  console.log(props, { previousLocation });
   React.useEffect(
     () => {
       // set previousLocation if props.location is not modal
@@ -39,11 +39,38 @@ const ModalSwitch: React.FunctionComponent<ModalSwitchProps> = props => {
     previousLocation !== location
   ); // not initial render
 
+  const DEFAULT_ANIMATIONS = {
+    initial: {
+      right: 0,
+      opacity: 1,
+    },
+    from: {
+      right: -50,
+      opacity: 0,
+    },
+    leave: { right: 50, opacity: 0 },
+    enter: {
+      right: 0,
+      opacity: 1,
+    },
+  };
+
+  const modalLocation = isModal ? previousLocation : location;
+  const transitions = useTransition(
+    modalLocation,
+    location => location.pathname,
+    DEFAULT_ANIMATIONS
+  );
+
+  const Route = transitions.map(({ item: location, props, key }) => (
+    <animated.div className="route" key={key} style={props}>
+      <Switch location={location}>{children}</Switch>
+    </animated.div>
+  ));
+
   return (
-    <div>
-      <Switch location={isModal ? previousLocation : location}>
-        {children}
-      </Switch>
+    <div className="routes-container">
+      {Route}
       {isModal ? (
         <Modal visible={true} width={900} footer={null} onCancel={goDown}>
           <Switch location={location}>{children}</Switch>
@@ -63,11 +90,6 @@ const mapDispatchToProps = (dispatch: any, ownProps: any) => {
   };
   return {
     goDown: () => {
-      console.log(
-        'goDown',
-        ownProps.location.pathname,
-        goDownOnePathSegmentFromPathname(ownProps.location.pathname)
-      );
       dispatch(
         push(goDownOnePathSegmentFromPathname(ownProps.location.pathname))
       );

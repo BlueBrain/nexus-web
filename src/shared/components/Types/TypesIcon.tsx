@@ -24,7 +24,7 @@ const TypesIcon: React.SFC<TypesIconProps> = ({ type }) => {
   return (
     <ul className="types-list">
       {type.map((type, index) => {
-        const [color, setColor] = React.useState<string | null>(null);
+        const [colors, setColor] = React.useState<string[] | null>(null);
         const typeString = type.toString();
         // must use a hash as Identicon requires a string of atleast 15 chars
         // (making the resulting image effectively a visual hash)
@@ -32,24 +32,25 @@ const TypesIcon: React.SFC<TypesIconProps> = ({ type }) => {
         const iconSizeInPixels = 20;
         const imageData = new Identicon(typeHash, iconSizeInPixels).toString();
         const src = `data:image/png;base64,${imageData}`;
-        if (!color) {
+        if (!colors) {
           getPaletteFromURL(src).then((colors: [number, number, number][]) => {
             const hexColors = colors.map(color => rgbToHex.apply(null, color));
-            setColor(hexColors[1]);
+            setColor(hexColors);
           });
         }
         let style = {};
-        if (color) {
+        if (colors) {
+          const [backgroundColor, highlightColor] = colors;
           style = {
-            color,
-            backgroundColor: `${color}20`,
-            border: `1px solid ${color}`,
+            backgroundColor,
+            color: highlightColor,
+            border: `1px solid ${highlightColor}50`,
           };
         }
         return (
           <li className="types-icon" key={`${typeHash}-${index}`}>
             <Tooltip title={typeString}>
-              <Tag {...{ style }}>
+              <Tag style={style}>
                 <Avatar size="small" shape="square" src={src} />
                 <span className="label">{typeString}</span>
               </Tag>

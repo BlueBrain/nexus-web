@@ -169,6 +169,7 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
   );
 };
 
+// TODO remove these connects to Project View
 const mapStateToProps = (state: RootState) => ({});
 
 const mapDispatchToProps = (
@@ -181,11 +182,12 @@ const mapDispatchToProps = (
     dispatch(deleteList(orgProjectFilterKey, listIndex)),
   cloneList: () => dispatch(cloneList(orgProjectFilterKey, listIndex, list)),
   navigateToResource: (resource: Resource) => {
+    const pathname = `/${orgLabel}/${projectLabel}/${encodeURIComponent(
+      resource.id
+    )}`;
     dispatch(
       push({
-        pathname: `/${orgLabel}/${projectLabel}/${encodeURIComponent(
-          resource.id
-        )}`,
+        pathname,
         state: { modal: true },
       })
     );

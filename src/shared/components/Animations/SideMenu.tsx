@@ -4,9 +4,9 @@ import './SideMenu.less';
 import { useTransition, animated } from 'react-spring';
 
 const DEFAULT_ANIMATIONS = {
-  from: () => ({ transform: 'translate3d(300px, 0, 0)', opacity: 0 }),
-  leave: () => ({ transform: 'translate3d(300px, 0, 0)', opacity: 0 }),
-  enter: () => ({ transform: 'translate3d(0, 0, 0)', opacity: 1 }),
+  from: () => ({ right: -300, opacity: 0 }),
+  leave: () => ({ right: -300, opacity: 0 }),
+  enter: () => ({ right: 0, opacity: 1 }),
 };
 
 export interface SideMenuProps {

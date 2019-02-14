@@ -37,13 +37,13 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
     <>
       <AnimatedList
         header={header}
+        itemClassName="resource-list-item-container"
         itemComponent={(resource: Resource, index: number) => (
           <Popover
             content={<ResourceMetadataCard {...resource} />}
             mouseEnterDelay={MOUSE_ENTER_DELAY}
           >
             <Link
-              className="resource-list-item-container"
               to={{
                 pathname: `/${resource.orgLabel}/${
                   resource.projectLabel
