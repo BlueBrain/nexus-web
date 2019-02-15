@@ -19,17 +19,22 @@
   253
 ); // for sublte highlighting in lists
 // Variables
-@header-background-color: #f0f0f0;
+@header-background-color: #b1b1b117;
 @box-shadow-color: #abbac9;
 @bounce: cubic-bezier(0.645, 0.045, 0.355, 1);
 @interfaceTransition: 0.3s @bounce;
 @component-background: #fcfdfd;
 body {
   background-color: #9e9e9e1f;
+  background-size: cover;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  // Just for fun! Try them out!
+  // background-color: pink;
+  // background-image: url('https://source.unsplash.com/random/2560x1842/?nature,mountain');
 }
 
 // Mixins
-
 .unstyleList() {
   list-style: none;
 }
