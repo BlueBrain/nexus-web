@@ -15,19 +15,13 @@ interface ListItemContainerProps {
   listIndex: number;
   orgProjectFilterKey: string;
   orgLabel: string;
+  displayPerPage: number;
   projectLabel: string;
   updateList: (listIndex: number, list: List) => void;
   deleteList: (listIndex: number) => void;
   cloneList: () => void;
   queryResources: (paginationSettings: PaginationSettings, query?: any) => void;
 }
-
-const DEFAULT_RESOURCE_PAGINATION_SIZE = 20;
-
-const DEFAULT_PAGINATION_SETTINGS = {
-  from: 0,
-  size: DEFAULT_RESOURCE_PAGINATION_SIZE,
-};
 
 const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
   list,
@@ -38,7 +32,12 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
   orgLabel,
   projectLabel,
   queryResources,
+  displayPerPage,
 }) => {
+  const DEFAULT_PAGINATION_SETTINGS = {
+    from: 0,
+    size: displayPerPage,
+  };
   React.useEffect(
     () => {
       const {
@@ -160,7 +159,9 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState) => ({});
+const mapStateToProps = (state: RootState) => ({
+  displayPerPage: state.uiSettings.pageSizes.resourcesListPageSize,
+});
 
 const mapDispatchToProps = (
   dispatch: any,

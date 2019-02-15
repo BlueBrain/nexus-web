@@ -7,6 +7,8 @@ import {
 } from '@bbp/nexus-sdk';
 import { ThunkAction } from '../..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
+import { UISettingsState } from '../../reducers/ui-settings';
+import { RootState } from '../../reducers';
 
 enum OrgsActionTypes {
   FETCHING = '@@nexus/ORGS_FETCHING',
@@ -65,8 +67,10 @@ export const fetchOrgs: ActionCreator<ThunkAction> = (
   > => {
     dispatch(fetchOrgsAction());
     try {
+      const displayPerPage = (getState() as RootState).uiSettings.pageSizes
+        .orgsListPageSize;
       const orgs: PaginatedList<Organization> = await Organization.list({
-        size: (paginationSettings && paginationSettings.size) || 20,
+        size: (paginationSettings && paginationSettings.size) || displayPerPage,
         from: (paginationSettings && paginationSettings.from) || 0,
       });
       const projectsPerOrg: PaginatedList<Project>[] = await Promise.all(
