@@ -72,7 +72,7 @@ storiesOf('Components/Orgs', module).add(
             orgs={orgs}
             onOrgClick={action('org-selected')}
             onPaginationChange={action('pagination-change')}
-            paginationSettings={{ total: 20, index: 1 }}
+            paginationSettings={{ total: 20, from: 0, pageSize: 20 }}
           />
         </div>
       </React.Fragment>

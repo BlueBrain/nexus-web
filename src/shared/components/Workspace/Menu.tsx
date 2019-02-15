@@ -1,10 +1,10 @@
 import * as React from 'react';
-import FileUpload from '../FileUpload';
-import { Button, Drawer, Divider } from 'antd';
+import { Button, Divider } from 'antd';
 import { Project, Resource } from '@bbp/nexus-sdk';
 import ResourceForm from '../Resources/ResourceForm';
 import { Link } from 'react-router-dom';
 import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
+import SideMenu from './SideMenu';
 interface MenuProps {
   project?: Project | null;
   createList: (orgProjectFilterKey: string) => void;
@@ -38,11 +38,9 @@ const Menu: React.FunctionComponent<MenuProps> = ({
   return (
     <>
       {renderable}
-      <Drawer
-        mask={false}
+      <SideMenu
         visible={visible}
         title="Resources"
-        height={60}
         onClose={() => setVisible(false)}
       >
         <p>
@@ -82,16 +80,7 @@ const Menu: React.FunctionComponent<MenuProps> = ({
             ElasticSearch Query Editor
           </Link>
         </div>
-        <Divider />
-        {/* <div style={{ height: '200px' }}>
-          <FileUpload
-            onFileUpload={async file => {
-              // project.postFile()
-              console.log({ file });
-            }}
-          />
-        </div> */}
-      </Drawer>
+      </SideMenu>
     </>
   );
 };
