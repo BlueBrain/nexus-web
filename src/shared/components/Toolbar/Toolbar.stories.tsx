@@ -41,7 +41,13 @@ storiesOf('Components/Toolbar', module)
     'Toolbar',
     withInfo(`
     ~~~js
-      <Toolbar />
+      <Toolbar
+          projectName="My project"
+          identities={listOfIdentities}
+          onProjectNameChange={newName => {}}
+          onNewPermissionSelected={permissionName => {}}
+          onNewMemberAdded={memberName => {}}
+       />
     ~~~
   `)(() => {
       const projectName = text("Project's name", 'BBP Nexus');
