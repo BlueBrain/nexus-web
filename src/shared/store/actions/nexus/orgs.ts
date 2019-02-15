@@ -65,8 +65,9 @@ export const fetchOrgs: ActionCreator<ThunkAction> = (
   > => {
     dispatch(fetchOrgsAction());
     try {
+      console.log({ paginationSettings });
       const orgs: PaginatedList<Organization> = await Organization.list({
-        size: (paginationSettings && paginationSettings.size) || 20,
+        size: (paginationSettings && paginationSettings.size) || 5,
         from: (paginationSettings && paginationSettings.from) || 0,
       });
       const projectsPerOrg: PaginatedList<Project>[] = await Promise.all(

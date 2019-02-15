@@ -9,7 +9,7 @@ import {
 import { RootState } from '../store/reducers';
 import { createOrg, modifyOrg, deprecateOrg } from '../store/actions/orgs';
 import OrgList from '../components/Orgs/OrgList';
-import { fetchOrgs, OrgPayload } from '../store/actions/nexus/orgs';
+import { fetchOrgs } from '../store/actions/nexus/orgs';
 import Skeleton from '../components/Skeleton';
 import { Button, Modal, Drawer, notification, Empty } from 'antd';
 import OrgForm from '../components/Orgs/OrgForm';
@@ -51,7 +51,11 @@ const Landing: React.FunctionComponent<LandingProps> = ({
     Organization | undefined
   >(undefined);
   React.useEffect(() => {
-    paginatedOrgs.results.length === 0 && fetchOrgs();
+    paginatedOrgs.results.length === 0 &&
+      fetchOrgs({
+        size: DISPLAY_PER_PAGE,
+        from: paginatedOrgs.index,
+      });
   }, []);
 
   const saveAndCreate = (newOrg: Organization) => {
@@ -99,7 +103,10 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           setModalVisible(false);
           setSelectedOrg(undefined);
 
-          fetchOrgs();
+          fetchOrgs({
+            size: DISPLAY_PER_PAGE,
+            from: paginatedOrgs.index,
+          });
         },
         (action: { type: string; error: Error }) => {
           notification.warning({
@@ -133,7 +140,10 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           setModalVisible(false);
           setSelectedOrg(undefined);
 
-          fetchOrgs();
+          fetchOrgs({
+            size: DISPLAY_PER_PAGE,
+            from: paginatedOrgs.index,
+          });
         },
         (action: { type: string; error: Error }) => {
           notification.warning({
