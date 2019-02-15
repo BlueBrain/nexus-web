@@ -1,11 +1,12 @@
-import { Action, Reducer, combineReducers } from 'redux';
+import { Action, Reducer, combineReducers, AnyAction } from 'redux';
 import { FetchableState, createFetchReducer } from './utils';
 import { Resource, PaginationSettings, PaginatedList } from '@bbp/nexus-sdk';
 import {
   ListActions,
   ListActionTypes,
-  ProjectListActions,
   listActionPrefix,
+  ListByProjectActions,
+  ListsByProjectTypes,
 } from '../actions/lists';
 import { moveTo } from '../../utils';
 import {
@@ -44,7 +45,7 @@ export interface List {
 // then we should update the URL with a serialied array of queries
 export type ListState = List[];
 
-const DEFAULT_LIST: List = {
+export const DEFAULT_LIST: List = {
   name: 'Default Query',
   view: DEFAULT_VIEW,
   query: {
@@ -57,7 +58,7 @@ const DEFAULT_LIST: List = {
   },
 };
 
-const initialState: ListState = [DEFAULT_LIST]; // Get Initial State from URL or DEFAULT_LIST?
+export const initialListState: ListState = [DEFAULT_LIST]; // Get Initial State from URL or DEFAULT_LIST?
 
 const queryReducerByIndex = createByIndex(
   action => action.hasOwnProperty('filterIndex'),
@@ -65,12 +66,12 @@ const queryReducerByIndex = createByIndex(
 )(combineReducers({ request: createFetchReducer(actionTypes) }));
 
 export function listsReducer(
-  state: ListState = initialState,
+  state: ListState = initialListState,
   action: ListActions | QueryActions
 ) {
-  if (action.type.startsWith(queryResourcesActionPrefix)) {
-    return queryReducerByIndex(state, action as FilterIndexAction);
-  }
+  // if (action.type.startsWith(queryResourcesActionPrefix)) {
+  //   return queryReducerByIndex(state, action as FilterIndexAction);
+  // }
 
   switch (action.type) {
     case ListActionTypes.CREATE:
@@ -78,7 +79,8 @@ export function listsReducer(
         ...DEFAULT_LIST,
         name: `New Query ${state.length + 1}`,
       };
-      return [...state, newList];
+      state.push(newList);
+      return state;
     case ListActionTypes.DELETE:
       return [
         ...state.slice(0, action.payload.listIndex),
@@ -109,45 +111,65 @@ export function listsReducer(
   }
 }
 
-export interface ListsByProjectState {
-  [orgProjectFilterKey: string]: ListState;
-}
-
-const listReducerByKey = createByKey(
-  action =>
-    action.hasOwnProperty('filterKey') || action.hasOwnProperty('filterIndex'),
-  (action: { filterKey: string }) => action.filterKey
-)(listsReducer as Reducer);
+export interface ListsByProjectState extends Map<string, ListState> {}
 
 export default function listsByProjectReducer(
-  state: ListsByProjectState = {},
-  action: ListActions | ProjectListActions | QueryActions
+  state: ListsByProjectState = new Map(),
+  action: ListActions | ListByProjectActions | QueryActions | AnyAction
 ) {
+  // Operate on the subreducers for a specific list
   if (
-    action.type.startsWith(listActionPrefix) ||
-    action.type.startsWith(queryResourcesActionPrefix)
+    action.hasOwnProperty('filterKey') ||
+    (action.hasOwnProperty('filterIndex') &&
+      (action.type.startsWith(listActionPrefix) ||
+        action.type.startsWith(queryResourcesActionPrefix)))
   ) {
-    return listReducerByKey(state, action);
+    const projectUUID = (action as ListActions).filterKey;
+    return state.set(
+      projectUUID,
+      listsReducer(state.get(projectUUID), action as QueryActions | ListActions)
+    );
   }
 
+  // Create a new list
   switch (action.type) {
-    case 'INITIALIZE_PROJECT_LIST':
-      return {
-        ...state,
-        [action.payload.orgAndProjectLabel]: initialState,
-      };
+    case ListsByProjectTypes.INITIALIZE_PROJECT_LIST:
+      const key = (action as ListByProjectActions).payload.projectUUID;
+      state.set(key, initialListState);
+      return state;
     default:
       return state;
   }
 }
 
-export const persistanceMapper = (lists: ListsByProjectState) => {
-  Object.keys({ ...lists }).map(filterKey => {
-    lists[filterKey].map(list => ({
+export const persistanceLoader = (
+  listsFrom:
+    | {
+        [projectUUID: string]: ListState;
+      }
+    | undefined
+): ListsByProjectState => {
+  const state = new Map();
+  if (!listsFrom) {
+    return state;
+  }
+  Object.keys(listsFrom).forEach(projectUUID => {
+    state.set(projectUUID, listsFrom[projectUUID]);
+  });
+  return state;
+};
+
+export const persistanceExporter = (
+  lists: ListsByProjectState
+): { [projectUUID: string]: ListState } => {
+  const exportState: { [projectUUID: string]: ListState } = {};
+  lists.forEach((listsState, projectUUID) => {
+    exportState[projectUUID] = listsState.map(list => ({
       ...list,
+      // We don't want to cache the API responses, if they're saved there
+      // Instead we just use the default null state.
       request: DEFAULT_LIST.request,
     }));
-    return lists[filterKey];
   });
-  return lists;
+  return exportState;
 };

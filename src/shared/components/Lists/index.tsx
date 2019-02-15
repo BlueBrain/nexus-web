@@ -19,7 +19,7 @@ const Lists: React.FunctionComponent<ListProps> = ({
 }) => {
   const { label: projectLabel, orgLabel } = project;
   const orgProjectFilterKey = orgLabel + projectLabel;
-  const projectLists: List[] = lists[orgProjectFilterKey];
+  const projectLists: List[] | undefined = lists.get(project.uuid);
   React.useEffect(() => {
     if (!projectLists) {
       initialize();

@@ -99,15 +99,14 @@ export enum ListsByProjectTypes {
 
 type InitializeProjectList = PayloadAction<
   ListsByProjectTypes.INITIALIZE_PROJECT_LIST,
-  { orgAndProjectLabel: string }
+  { projectUUID: string }
 >;
 
-export type ProjectListActions = InitializeProjectList;
+export type ListByProjectActions = InitializeProjectList;
 
 export const initializeProjectList: ActionCreator<InitializeProjectList> = (
-  orgLabel: string,
-  projectLabel: string
+  projectUUID: string
 ) => ({
-  payload: { orgAndProjectLabel: orgLabel + projectLabel },
+  payload: { projectUUID },
   type: ListsByProjectTypes.INITIALIZE_PROJECT_LIST,
 });

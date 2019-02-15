@@ -16,7 +16,7 @@ interface ProjectViewProps {
   error: Error | null;
   match: any;
   lists: ListsByProjectState;
-  createList(orgProjectFilterKey: string): void;
+  createList(projectUUID: string): void;
   initialize(orgLabel: string, projectLabel: string): void;
   createResource(
     orgLabel: string,
@@ -89,7 +89,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
                 }
                 project={project}
                 createList={() => {
-                  createList(project.orgLabel + project.label);
+                  createList(project.uuid);
                 }}
                 render={(setVisible: () => void, visible: boolean) => (
                   <Tooltip
@@ -133,7 +133,7 @@ const mapStateToProps = (state: RootState) => ({
       state.nexus.activeProject &&
       state.nexus.activeProject.error) ||
     null,
-  lists: state.lists || {},
+  lists: state.lists || new Map(),
 });
 const mapDispatchToProps = (dispatch: any) => {
   return {
@@ -141,8 +141,7 @@ const mapDispatchToProps = (dispatch: any) => {
       dispatch(fetchOrg(orgLabel));
       dispatch(fetchAndAssignProject(orgLabel, projectLabel));
     },
-    createList: (orgProjectFilterKey: string) =>
-      dispatch(createList(orgProjectFilterKey)),
+    createList: (projectUUID: string) => dispatch(createList(projectUUID)),
     initialize: (orgLabel: string, projectLabel: string) =>
       dispatch(initializeProjectList(orgLabel, projectLabel)),
     createResource: async (

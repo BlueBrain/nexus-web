@@ -101,7 +101,7 @@ function fetchAcls(path: string, aclOptions?: ListACLOptions) {
       const paginatedAcls = await ACL.list(path, aclOptions);
       return dispatch(fetchAclsFulfilledAction(paginatedAcls));
     } catch (error) {
-      return dispatch(fetchAclsFailedAction());
+      return dispatch(fetchAclsFailedAction(error));
     }
   };
 }
@@ -115,7 +115,7 @@ function fetchIdentities() {
       const identities: Identity[] = await ACL.listIdentities();
       return dispatch(fetchIdentitiesFulfilledAction(identities));
     } catch (error) {
-      return dispatch(fetchIdentitiesFailedAction());
+      return dispatch(fetchIdentitiesFailedAction(error));
     }
   };
 }
