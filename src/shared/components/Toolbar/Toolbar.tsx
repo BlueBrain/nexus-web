@@ -1,20 +1,11 @@
 import * as React from 'react';
-import {
-  Dropdown,
-  Menu,
-  Icon,
-  Avatar,
-  Button,
-  Tooltip,
-  Input,
-  Popover,
-  Form,
-} from 'antd';
+import { Dropdown, Menu, Icon, Avatar, Button, Tooltip, Popover } from 'antd';
 import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
 import { getUserList, getOrderedPermissions } from '../../utils';
 import RenameableItem from '../Renameable';
 
 import './Toolbar.less';
+import AddMemberForm from './AddMemberForm';
 
 interface ToolbarData {
   menuTitle: string;
@@ -40,6 +31,7 @@ interface ToolbarProps {
   onProjectNameChange: (name: string) => any;
   identities: Identity[];
   onNewPermissionSelected(identity: Identity['@type']): void;
+  onNewMemberAdded(username: string): void;
 }
 const Toolbar: React.FunctionComponent<ToolbarProps> = props => {
   // the check icon will belong to the active permission
@@ -98,14 +90,6 @@ const Toolbar: React.FunctionComponent<ToolbarProps> = props => {
     </Menu>
   );
 
-  const newMemberMenu = (
-    <div className="Toolbar-new-member-menu">
-      Add a new member to this project
-      <Input placeholder="Enter name" />
-      <Button type="primary">Add</Button>
-    </div>
-  );
-
   return (
     <div className="Toolbar">
       <RenameableItem
@@ -127,7 +111,11 @@ const Toolbar: React.FunctionComponent<ToolbarProps> = props => {
         ))}
       </div>
       <Tooltip placement="right" title="add a new member">
-        <Popover content={newMemberMenu} trigger="click" title="New member">
+        <Popover
+          content={<AddMemberForm onSubmit={props.onNewMemberAdded} />}
+          trigger="click"
+          title={<h3>Add a new member to this project</h3>}
+        >
           <Button type="primary" shape="circle" icon="user-add" />
         </Popover>
       </Tooltip>

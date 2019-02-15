@@ -51,6 +51,7 @@ storiesOf('Components/Toolbar', module)
           onProjectNameChange={action('onProjectNameChange')}
           identities={identities}
           onNewPermissionSelected={action('onNewPermissionSelected')}
+          onNewMemberAdded={action('onNewMemberAdded')}
         />
       );
     })
