@@ -14,14 +14,28 @@
   padding: 0;
 }
 
-// layout
-
 .types-icon {
   display: inline-block;
   position: relative;
-  width: 10px;
-  z-index: 0;
+  height: 22px;
   &:hover {
     z-index: 1;
+  }
+  .ant-tag {
+  }
+  .ant-avatar-sm.ant-avatar-square {
+    width: 16px;
+    margin-right: 0.5em;
+    height: 16px;
+    top: -6px;
+  }
+  .label {
+    position: relative;
+    max-width: 50px;
+    font-size: 10px;
+    white-space: nowrap;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
