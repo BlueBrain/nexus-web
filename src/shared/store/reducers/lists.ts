@@ -39,10 +39,6 @@ export interface List {
   }>;
 }
 
-// serialize / deserialze to URL param
-// maybe with middleware?
-// when something inside lists changes (inisde query, the input)
-// then we should update the URL with a serialied array of queries
 export type ListState = List[];
 
 export const DEFAULT_LIST: List = {
@@ -69,10 +65,9 @@ export function listsReducer(
   state: ListState = initialListState,
   action: ListActions | QueryActions
 ) {
-  // if (action.type.startsWith(queryResourcesActionPrefix)) {
-  //   return queryReducerByIndex(state, action as FilterIndexAction);
-  // }
-
+  if (action.type.startsWith(queryResourcesActionPrefix)) {
+    return queryReducerByIndex(state, action as FilterIndexAction);
+  }
   switch (action.type) {
     case ListActionTypes.CREATE:
       const newList = {
@@ -111,65 +106,49 @@ export function listsReducer(
   }
 }
 
-export interface ListsByProjectState extends Map<string, ListState> {}
+const listReducerByKey = createByKey(
+  action =>
+    action.hasOwnProperty('filterKey') || action.hasOwnProperty('filterIndex'),
+  (action: { filterKey: string }) => action.filterKey
+)(listsReducer as Reducer);
+
+export interface ListsByProjectState {
+  [projectUUID: string]: ListState;
+}
 
 export default function listsByProjectReducer(
-  state: ListsByProjectState = new Map(),
+  state: ListsByProjectState = {},
   action: ListActions | ListByProjectActions | QueryActions | AnyAction
 ) {
   // Operate on the subreducers for a specific list
   if (
-    action.hasOwnProperty('filterKey') ||
-    (action.hasOwnProperty('filterIndex') &&
-      (action.type.startsWith(listActionPrefix) ||
-        action.type.startsWith(queryResourcesActionPrefix)))
+    action.type.startsWith(listActionPrefix) ||
+    action.type.startsWith(queryResourcesActionPrefix)
   ) {
-    const projectUUID = (action as ListActions).filterKey;
-    return state.set(
-      projectUUID,
-      listsReducer(state.get(projectUUID), action as QueryActions | ListActions)
-    );
+    return listReducerByKey(state, action);
   }
 
   // Create a new list
   switch (action.type) {
     case ListsByProjectTypes.INITIALIZE_PROJECT_LIST:
-      const key = (action as ListByProjectActions).payload.projectUUID;
-      state.set(key, initialListState);
-      return state;
+      return {
+        ...state,
+        [(action as ListByProjectActions).payload
+          .projectUUID]: initialListState,
+      };
     default:
       return state;
   }
 }
 
-export const persistanceLoader = (
-  listsFrom:
-    | {
-        [projectUUID: string]: ListState;
-      }
-    | undefined
-): ListsByProjectState => {
-  const state = new Map();
-  if (!listsFrom) {
-    return state;
-  }
-  Object.keys(listsFrom).forEach(projectUUID => {
-    state.set(projectUUID, listsFrom[projectUUID]);
-  });
-  return state;
-};
-
-export const persistanceExporter = (
-  lists: ListsByProjectState
-): { [projectUUID: string]: ListState } => {
-  const exportState: { [projectUUID: string]: ListState } = {};
-  lists.forEach((listsState, projectUUID) => {
-    exportState[projectUUID] = listsState.map(list => ({
+export const persistanceExporter = (lists: ListsByProjectState) => {
+  return Object.keys(lists).reduce((memo: ListsByProjectState, projectUUID) => {
+    memo[projectUUID] = lists[projectUUID].map(list => ({
       ...list,
       // We don't want to cache the API responses, if they're saved there
       // Instead we just use the default null state.
       request: DEFAULT_LIST.request,
     }));
-  });
-  return exportState;
+    return memo;
+  }, {});
 };

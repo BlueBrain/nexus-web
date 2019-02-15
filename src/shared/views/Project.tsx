@@ -133,7 +133,7 @@ const mapStateToProps = (state: RootState) => ({
       state.nexus.activeProject &&
       state.nexus.activeProject.error) ||
     null,
-  lists: state.lists || new Map(),
+  lists: state.lists || {},
 });
 const mapDispatchToProps = (dispatch: any) => {
   return {

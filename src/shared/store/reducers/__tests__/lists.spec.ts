@@ -2,7 +2,7 @@ import listsReducer, {
   initialListState,
   DEFAULT_LIST,
   persistanceExporter,
-  persistanceLoader,
+  ListsByProjectState,
 } from '../lists';
 import {
   ListsByProjectTypes,
@@ -13,9 +13,7 @@ import {
 
 describe('List Reducer', () => {
   it('should return an empty map if by default', () => {
-    expect(
-      listsReducer(undefined, { type: 'I_DONT_DO_ANYTHING' }).size
-    ).toEqual(0);
+    expect(listsReducer(undefined, { type: 'I_DONT_DO_ANYTHING' })).toEqual({});
   });
 
   describe('persistanceExporter()', () => {
@@ -33,20 +31,51 @@ describe('List Reducer', () => {
       });
     });
 
-    it('should work with an empty state', () => {
-      expect(persistanceExporter(new Map())).toEqual({});
-    });
-  });
-
-  describe('persistanceLoader()', () => {
-    it('should return a ListsByProjectState state from the local-storage-provided object', () => {
+    it('should remove the results and replace it with initial values', () => {
       const projectUUID = '1234';
-      const localStorageValue = {
-        [projectUUID]: initialListState,
+      const listState = {
+        [projectUUID]: [
+          {
+            name: 'Default Query',
+            view: 'nxv:defaultElasticSearchIndex',
+            query: {
+              filters: {},
+            },
+            request: {
+              data: {
+                resources: {
+                  total: 3,
+                  index: 1,
+                  results: [],
+                },
+                paginationSettings: { from: 0, size: 20 },
+                '@type': [{ key: 'blah', count: 2 }],
+                _constrainedBy: [{ key: 'blah', count: 2 }],
+              },
+              error: null,
+              isFetching: false,
+            },
+          },
+        ],
       };
-      expect(persistanceLoader(localStorageValue).get(projectUUID)).toEqual(
-        initialListState
-      );
+      expect(persistanceExporter(listState)).toHaveProperty(projectUUID, [
+        {
+          name: 'Default Query',
+          view: 'nxv:defaultElasticSearchIndex',
+          query: {
+            filters: {},
+          },
+          request: {
+            data: null,
+            error: null,
+            isFetching: false,
+          },
+        },
+      ]);
+    });
+
+    it('should work with an empty state', () => {
+      expect(persistanceExporter({})).toEqual({});
     });
   });
 
@@ -59,9 +88,8 @@ describe('List Reducer', () => {
           projectUUID,
         },
       };
-      expect(listsReducer(undefined, action).get(projectUUID)).toEqual(
-        initialListState
-      );
+      const state = listsReducer(undefined, action);
+      expect(state).toHaveProperty(projectUUID, initialListState);
     });
   });
 
@@ -76,12 +104,14 @@ describe('List Reducer', () => {
         ...DEFAULT_LIST,
         name: `New Query 2`,
       };
-      const someOriginalState = new Map();
-      someOriginalState.set(projectUUID, initialListState);
-      expect(listsReducer(someOriginalState, action).get(projectUUID)).toEqual([
-        DEFAULT_LIST,
-        newList,
-      ]);
+      expect(
+        listsReducer(
+          {
+            [projectUUID]: [DEFAULT_LIST],
+          },
+          action
+        )
+      ).toHaveProperty(projectUUID, [DEFAULT_LIST, newList]);
     });
   });
 });

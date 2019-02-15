@@ -11,11 +11,7 @@ import { History } from 'history';
 import Nexus from '@bbp/nexus-sdk';
 import reducers, { RootState } from './reducers';
 import { saveState, loadState } from './reducers/localStorage';
-import {
-  persistanceLoader,
-  ListsByProjectState,
-  persistanceExporter,
-} from './reducers/lists';
+import { ListsByProjectState, persistanceExporter } from './reducers/lists';
 
 export type Services = {
   nexus: Nexus;
@@ -41,7 +37,7 @@ export default function configureStore(
   preloadedState: any = {}
 ): Store {
   // ignore server lists, fetch from local storage when available
-  preloadedState.lists = { ...persistanceLoader(loadState('lists')) };
+  preloadedState.lists = { ...loadState('lists') };
   const store = createStore(
     // @ts-ignore
     combineReducers({ router: connectRouter(history), ...reducers }),
@@ -54,8 +50,8 @@ export default function configureStore(
     )
   );
 
+  // persist these in the client
   if (typeof window !== 'undefined') {
-    // persist these in the client
     store.subscribe(() => {
       saveState({
         lists: persistanceExporter((store.getState() as RootState)
