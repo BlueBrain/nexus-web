@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Form, Input, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
+import './AddMemberForm.less';
+
 interface AddMemberFormProps {
   form: WrappedFormUtils;
   onSubmit(name: string): void;
@@ -22,7 +24,7 @@ const AddMemberForm: React.FunctionComponent<AddMemberFormProps> = props => {
   };
 
   return (
-    <Form onSubmit={handleSubmit} className="Toolbar-new-member-menu">
+    <Form onSubmit={handleSubmit} className="AddMemberForm">
       <Form.Item className="new-member-item">
         {props.form.getFieldDecorator('username', {
           rules: [
