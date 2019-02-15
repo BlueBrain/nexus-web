@@ -18,6 +18,7 @@ import { RootState } from '../shared/store/reducers';
 import { fetchIdentities } from '../shared/store/actions/auth';
 import routes, { RouteWithData } from '../shared/routes';
 import { number } from '@storybook/addon-knobs';
+import { DEFAULT_UI_SETTINGS } from '../shared/store/reducers/ui-settings';
 
 const isSecure = !!process.env.SECURE;
 const cookieName = isSecure ? '__Secure-nexusAuth' : '_Secure-nexusAuth';
@@ -143,6 +144,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       apiEndpoint: process.env.API_ENDPOINT || '/',
       basePath: base,
     },
+    uiSettings: DEFAULT_UI_SETTINGS,
   };
 
   // Nexus

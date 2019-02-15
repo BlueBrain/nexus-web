@@ -15,10 +15,9 @@ import { Button, Modal, Drawer, notification, Empty } from 'antd';
 import OrgForm from '../components/Orgs/OrgForm';
 import { CreateOrgPayload } from '@bbp/nexus-sdk/lib/Organization/types';
 
-const DISPLAY_PER_PAGE = 5;
-
 interface LandingProps {
   paginatedOrgs?: PaginatedList<Organization>;
+  displayPerPage: number;
   busy: boolean;
   error: boolean;
   goTo(orgLabel: string): void;
@@ -44,6 +43,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
   createOrg,
   modifyOrg,
   deprecateOrg,
+  displayPerPage,
 }) => {
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
@@ -53,7 +53,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
   React.useEffect(() => {
     paginatedOrgs.results.length === 0 &&
       fetchOrgs({
-        size: DISPLAY_PER_PAGE,
+        size: displayPerPage,
         from: paginatedOrgs.index,
       });
   }, []);
@@ -104,7 +104,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           setSelectedOrg(undefined);
 
           fetchOrgs({
-            size: DISPLAY_PER_PAGE,
+            size: displayPerPage,
             from: paginatedOrgs.index,
           });
         },
@@ -141,7 +141,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           setSelectedOrg(undefined);
 
           fetchOrgs({
-            size: DISPLAY_PER_PAGE,
+            size: displayPerPage,
             from: paginatedOrgs.index,
           });
         },
@@ -215,7 +215,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           paginationSettings={{
             total: paginatedOrgs.total,
             from: paginatedOrgs.index,
-            pageSize: DISPLAY_PER_PAGE,
+            pageSize: displayPerPage,
           }}
           onOrgEdit={(orgLabel: string) =>
             setSelectedOrg(
@@ -224,8 +224,8 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           }
           onPaginationChange={pageNumber =>
             fetchOrgs({
-              from: pageNumber * DISPLAY_PER_PAGE - DISPLAY_PER_PAGE,
-              size: DISPLAY_PER_PAGE,
+              from: pageNumber * displayPerPage - displayPerPage,
+              size: displayPerPage,
             })
           }
         />
@@ -263,6 +263,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
 };
 
 const mapStateToProps = (state: RootState) => ({
+  displayPerPage: state.uiSettings.pageSizes.orgsListPageSize,
   paginatedOrgs: (state.nexus && state.nexus.orgs.data) || undefined,
   busy: (state.nexus && state.nexus.orgs.isFetching) || false,
   error: !!(state.nexus && state.nexus.orgs.error),

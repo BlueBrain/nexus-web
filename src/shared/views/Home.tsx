@@ -16,11 +16,10 @@ import { push } from 'connected-react-router';
 import ProjectForm from '../components/Projects/ProjectForm';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
 
-const DISPLAY_PER_PAGE = 10;
-
 interface HomeProps {
   activeOrg: { label: string; description?: string };
   paginatedProjects: PaginatedList<Project>;
+  displayPerPage: number;
   busy: boolean;
   match: any;
   fetchOrgData(orgLabel: string, paginationSettings?: PaginationSettings): void;
@@ -55,6 +54,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
   modifyProject,
   deprecateProject,
   makeProjectPublic,
+  displayPerPage,
 }) => {
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
@@ -265,12 +265,12 @@ const Home: React.FunctionComponent<HomeProps> = ({
           paginationSettings={{
             total: paginatedProjects.total,
             from: paginatedProjects.index,
-            pageSize: DISPLAY_PER_PAGE,
+            pageSize: displayPerPage,
           }}
           onPaginationChange={pageNumber =>
             fetchOrgData(match.params.org, {
-              from: DISPLAY_PER_PAGE * pageNumber - DISPLAY_PER_PAGE,
-              size: DISPLAY_PER_PAGE,
+              from: displayPerPage * pageNumber - displayPerPage,
+              size: displayPerPage,
             })
           }
           busy={busy}
@@ -316,6 +316,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
 };
 
 const mapStateToProps = (state: RootState) => ({
+  displayPerPage: state.uiSettings.pageSizes.projectsListPageSize,
   activeOrg: (state.nexus &&
     state.nexus.activeOrg &&
     state.nexus.activeOrg.data &&
