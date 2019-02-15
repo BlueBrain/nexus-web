@@ -153,8 +153,6 @@ app.get('*', async (req: express.Request, res: express.Response) => {
 
   // Redux store
   const store = createStore(memoryHistory, nexus, preloadedState);
-  // Get identity data
-  await store.dispatch<any>(fetchIdentities());
   // Get list of matching routes
   const activeRoutes: RouteWithData[] = routes.filter(route =>
     matchPath(req.url, route)
@@ -171,7 +169,12 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       )
   );
   // get data
-  await Promise.all(promises);
+  try {
+    await store.dispatch<any>(fetchIdentities());
+    await Promise.all(promises);
+  } catch (e) {
+    console.log(e);
+  }
 
   // render an HTML string of our app
   const body: string = renderToString(

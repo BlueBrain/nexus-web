@@ -10,6 +10,7 @@ import { RawElasticSearchQuery, RawSparqlQuery } from './views/RawQuery';
 import { fetchAndAssignProject } from './store/actions/nexus/projects';
 import { ThunkAction } from './store';
 import { RootState } from './store/reducers';
+import { fetchAcls } from './store/actions/auth';
 
 export interface RouteWithData extends RouteProps {
   loadData?(state: RootState, match: match | null): ThunkAction;
@@ -37,15 +38,12 @@ const routes: RouteWithData[] = [
     exact: true,
     component: Project,
     loadData: (state, match) => async (dispatch, getState, state) => {
-      await fetchOrg(match && match.params && (match.params as any)['org'])(
-        dispatch,
-        getState,
-        state
-      );
-      await fetchAndAssignProject(
-        match && match.params && (match.params as any)['org'],
-        match && match.params && (match.params as any)['project']
-      )(dispatch, getState, state);
+      const org = match && match.params && (match.params as any)['org'];
+      const project = match && match.params && (match.params as any)['project'];
+
+      await fetchOrg(org)(dispatch, getState, state);
+      await fetchAcls(`/${org}/${project}`);
+      await fetchAndAssignProject(org, project)(dispatch, getState, state);
     },
   },
   {

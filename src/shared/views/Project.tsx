@@ -10,6 +10,7 @@ import { createList, initializeProjectList } from '../store/actions/lists';
 import { ListsByProjectState } from '../store/reducers/lists';
 import { Project, Resource } from '@bbp/nexus-sdk';
 import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
+import { fetchAcls } from '../store/actions/auth';
 
 interface ProjectViewProps {
   project: Project | null;
@@ -48,6 +49,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   );
   return (
     <div className="project">
+      <p>TOOLBAR</p>
       {!project && error && (
         <>
           <h1 style={{ marginBottom: 0, marginRight: 8 }}>
@@ -139,6 +141,7 @@ const mapDispatchToProps = (dispatch: any) => {
   return {
     fetchProject: (orgLabel: string, projectLabel: string) => {
       dispatch(fetchOrg(orgLabel));
+      dispatch(fetchAcls(`${orgLabel}/${projectLabel}`));
       dispatch(fetchAndAssignProject(orgLabel, projectLabel));
     },
     createList: (orgProjectFilterKey: string) =>
