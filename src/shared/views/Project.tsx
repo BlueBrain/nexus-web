@@ -11,6 +11,7 @@ import { ListsByProjectState } from '../store/reducers/lists';
 import { Project, Resource } from '@bbp/nexus-sdk';
 import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
 import { fetchAcls } from '../store/actions/auth';
+import Toolbar from '../components/Toolbar/Toolbar';
 
 interface ProjectViewProps {
   project: Project | null;
@@ -49,7 +50,13 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   );
   return (
     <div className="project">
-      <p>TOOLBAR</p>
+      <Toolbar
+        projectName={match.params.project}
+        identities={[]}
+        onNewMemberAdded={e => console.log(e)}
+        onNewPermissionSelected={e => console.log(e)}
+        onProjectNameChange={e => console.log(e)}
+      />
       {!project && error && (
         <>
           <h1 style={{ marginBottom: 0, marginRight: 8 }}>
