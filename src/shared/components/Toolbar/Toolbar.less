@@ -1,0 +1,31 @@
+@import '../../lib.less';
+
+.Toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  background-color: @component-background;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+
+  .divider {
+    border-left: 1px solid @border-color-base;
+    height: 16px;
+    margin: 0 10px;
+  }
+
+  .members {
+    margin-right: 5px;
+  }
+}
+
+.Toolbar-permission-menu {
+  .title {
+    margin: 5px 10px 10px;
+  }
+  .permission-item {
+    .permission-name {
+      padding: 0 5px;
+    }
+  }
+}
