@@ -15,7 +15,7 @@ import { Button, Modal, Drawer, notification, Empty } from 'antd';
 import OrgForm from '../components/Orgs/OrgForm';
 import { CreateOrgPayload } from '@bbp/nexus-sdk/lib/Organization/types';
 
-const DISPLAY_PER_PAGE = 20;
+const DISPLAY_PER_PAGE = 5;
 
 interface LandingProps {
   paginatedOrgs?: PaginatedList<Organization>;

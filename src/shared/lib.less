@@ -19,21 +19,22 @@
   253
 ); // for sublte highlighting in lists
 // Variables
-@header-background-color: #f0f0f0;
+@header-background-color: #f0f0f080;
 @box-shadow-color: #abbac9;
 @bounce: cubic-bezier(0.645, 0.045, 0.355, 1);
 @interfaceTransition: 0.3s @bounce;
 @component-background: #fcfdfd;
 body {
   background-color: #9e9e9e1f;
-  background-size: auto 100%;
+  background-size: cover;
   background-repeat: no-repeat;
-  background-position: left top;
-  background-image: url('https://trello-backgrounds.s3.amazonaws.com/SharedBackground/2560x1642/d36efad22658914fa8946114239e5cc6/photo-1473865327424-e85f6d40d354');
+  overflow: hidden;
+  // Just for fun! Try them out!
+  // background-color: pink;
+  // background-image: url('https://source.unsplash.com/random/2560x1842/?nature,mountain');
 }
 
 // Mixins
-
 .unstyleList() {
   list-style: none;
 }
