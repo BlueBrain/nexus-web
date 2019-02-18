@@ -18,14 +18,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const { rawData, onSubmit } = props;
   const [editing, setEditing] = React.useState(false);
   const [valid, setValid] = React.useState(true);
-  const [value, setValue] = React.useState(
-    rawData
-    // resource && {
-    //   context: resource.context,
-    //   type: resource.type,
-    //   ...resource.data,
-    // }
-  );
+  const [value, setValue] = React.useState(rawData);
 
   const handleChange = (editor: any, data: any, value: any) => {
     try {
@@ -77,18 +70,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
       </div>
 
       <CodeMirror
-        value={
-          JSON.stringify(rawData, null, 2)
-          //   JSON.stringify(
-          //   {
-          //     '@context': resource.context,
-          //     '@type': resource.type,
-          //     ...resource.data,
-          //   },
-          //   null,
-          //   2
-          // )
-        }
+        value={JSON.stringify(rawData, null, 2)}
         options={{
           mode: { name: 'javascript', json: true },
           theme: 'base16-light',
