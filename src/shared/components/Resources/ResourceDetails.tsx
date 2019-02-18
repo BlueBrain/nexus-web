@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
-import { Spin, Button, notification, Icon } from 'antd';
-import './ResourceDetails.less';
+import { Spin, notification } from 'antd';
 import ResourceEditor from './ResourceEditor';
 
 export interface ResourceViewProps {
@@ -20,7 +19,6 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
     if (resource) {
       try {
         setFormBusy(true);
-        console.log(resource);
         await resource.update({
           context: resource.context,
           ...value,
