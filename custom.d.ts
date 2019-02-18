@@ -9,15 +9,6 @@ declare module '*.png' {
 }
 
 //
-// ColorThiefNode Types
-//
-declare module 'color-thief-node' {
-  export const getPaletteFromURL: (
-    url: string
-  ) => Promise<[number, number, number][]>;
-}
-
-//
 // Identicon.js Types
 //
 declare class Identicon {

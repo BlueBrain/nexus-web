@@ -3,7 +3,6 @@ import { Avatar, Tooltip, Tag } from 'antd';
 import * as Identicon from 'identicon.js';
 import './Types.less';
 import * as md5 from 'md5';
-import { getPaletteFromURL } from 'color-thief-node';
 
 // https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
 function componentToHex(component: number) {
@@ -20,33 +19,20 @@ export interface TypesIconProps {
 }
 
 const TypesIcon: React.SFC<TypesIconProps> = ({ type }) => {
-  const [colors, setColor] = React.useState<string[] | null>(null);
   const typeString = type.toString();
   // must use a hash as Identicon requires a string of atleast 15 chars
   // (making the resulting image effectively a visual hash)
   const typeHash = md5(typeString);
   const iconSizeInPixels = 20;
-  const imageData = new Identicon(typeHash, iconSizeInPixels).toString();
+  const imageData = new Identicon(typeHash, {
+    size: iconSizeInPixels,
+    background: [255, 255, 255, 0],
+  }).toString();
   const src = `data:image/png;base64,${imageData}`;
-  if (!colors) {
-    getPaletteFromURL(src).then((colors: [number, number, number][]) => {
-      const hexColors = colors.map(color => rgbToHex.apply(null, color));
-      setColor(hexColors);
-    });
-  }
-  let style = {};
-  if (colors) {
-    const [backgroundColor, highlightColor] = colors;
-    style = {
-      backgroundColor,
-      color: highlightColor,
-      border: `1px solid ${highlightColor}50`,
-    };
-  }
   return (
     <li className="types-icon">
       <Tooltip title={typeString}>
-        <Tag style={style}>
+        <Tag>
           <Avatar size="small" shape="square" src={src} />
           <span className="label">{typeString}</span>
         </Tag>
