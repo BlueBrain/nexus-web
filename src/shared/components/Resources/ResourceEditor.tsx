@@ -12,11 +12,12 @@ if (typeof window !== 'undefined') {
 export interface ResourceEditorProps {
   rawData: { [key: string]: any }; // any object
   onSubmit: (rawData: { [key: string]: any }) => void;
+  editing?: boolean;
 }
 
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
-  const { rawData, onSubmit } = props;
-  const [editing, setEditing] = React.useState(false);
+  const { rawData, onSubmit, editing = false } = props;
+  const [isEditing, setEditing] = React.useState(editing);
   const [valid, setValid] = React.useState(true);
   const [value, setValue] = React.useState(rawData);
 
@@ -41,24 +42,24 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     <div className={valid ? 'resource-editor' : 'resource-editor _invalid'}>
       <div className="control-panel">
         <div>
-          {!editing && (
+          {!isEditing && (
             <div className="feedback">
               <Icon type="info-circle" /> Directly edit this resource
             </div>
           )}
-          {editing && valid && (
+          {isEditing && valid && (
             <div className="feedback _positive">
               <Icon type="check-circle" /> Valid
             </div>
           )}
-          {editing && !valid && (
+          {isEditing && !valid && (
             <div className="feedback _negative">
               <Icon type="exclamation-circle" /> Invalid JSON-LD
             </div>
           )}
         </div>
         <div className="controls">
-          {editing && valid && (
+          {isEditing && valid && (
             <Button
               icon="save"
               type="primary"
