@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { AutoComplete, Input, Icon } from 'antd';
 import './FilterDropdown.less';
+import SchemaTypeOption from '../Resources/SchemaOption';
 
 const Option = AutoComplete.Option;
 
@@ -33,12 +34,9 @@ const FilterDropdown: React.FunctionComponent<FilterDropdownProps> = ({
               dropdownClassName="certain-category-search-dropdown"
               dropdownMatchSelectWidth={false}
               value={value}
-              dataSource={filterValues[filterKey].map(({ key, count }) => (
-                <Option key={key}>
-                  <div className="schema-value">
-                    <span>{key}</span>
-                    <span>{count}</span>
-                  </div>
+              dataSource={filterValues[filterKey].map(props => (
+                <Option key={props.key}>
+                  <SchemaTypeOption {...props} />
                 </Option>
               ))}
               onChange={value => {

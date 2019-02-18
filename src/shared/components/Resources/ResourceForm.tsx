@@ -12,6 +12,7 @@ import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { Resource } from '@bbp/nexus-sdk';
 import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
 import ResourceEditor from './ResourceEditor';
+import SchemaTypeOption from './SchemaOption';
 
 const Option = AutoComplete.Option;
 
@@ -117,12 +118,9 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
               dropdownMatchSelectWidth={false}
               dataSource={(schemas as { key: string; count?: number }[])
                 .concat([{ key: '_' }])
-                .map(({ key, count }) => (
-                  <Option key={key}>
-                    <div className="schema-value">
-                      <div>{key}</div>{' '}
-                      {count && <div className="count">{count}</div>}
-                    </div>
+                .map(props => (
+                  <Option key={props.key}>
+                    <SchemaTypeOption {...props} />
                   </Option>
                 ))}
               placeholder={`constrain by Schema`}
