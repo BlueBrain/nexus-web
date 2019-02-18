@@ -10,7 +10,6 @@ interface ListControlPanelProps {
   filterValues: { [key: string]: { key: string; count: number }[] } | {};
   onTextQueryChange: (value?: string) => void;
   onFilterChange: (value: { [key: string]: string }) => void;
-  onRefreshList: () => void;
   onClear: () => void;
   onCloneList: () => void;
 }
@@ -22,7 +21,6 @@ const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
   filterValues,
   onTextQueryChange,
   onFilterChange,
-  onRefreshList,
   onClear,
   onCloneList,
 }) => {
@@ -86,13 +84,7 @@ const ListControlPanel: React.FunctionComponent<ListControlPanelProps> = ({
           style={{ marginRight: '2px' }}
         />
       </Tooltip>
-      <Tooltip title="Refresh list">
-        <Button
-          icon="reload"
-          onClick={onRefreshList}
-          style={{ marginRight: '2px' }}
-        />
-      </Tooltip>
+      {/* <Button icon="export" onClick={() => {}} style={{ marginRight: '2px' }} /> */}
       <Tooltip title="Clone this query">
         <Button
           icon="switcher"

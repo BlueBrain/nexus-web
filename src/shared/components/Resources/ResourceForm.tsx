@@ -11,15 +11,13 @@ import {
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { Resource } from '@bbp/nexus-sdk';
 import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
-import ResourceEditor from './ResourceEditor';
-import SchemaTypeOption from './SchemaOption';
 
 const Option = AutoComplete.Option;
 
-const DEFAULT_RESOURCE = {
-  context: {},
-  '@type': ['MyType'],
-};
+let ReactJson: any;
+if (typeof window !== 'undefined') {
+  ReactJson = require('react-json-view').default;
+}
 
 export interface ResourceFormProps {
   form: WrappedFormUtils;
@@ -49,9 +47,9 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
   onDeprecate = () => {},
   mode = 'create',
 }) => {
-  const [jsonValue, setJsonValue] = React.useState<{ [key: string]: any }>(
-    DEFAULT_RESOURCE
-  );
+  const [jsonValue, setJsonValue] = React.useState({
+    context: {},
+  });
   const { getFieldDecorator } = form;
   const formItemLayout = {
     labelCol: {
@@ -70,10 +68,12 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
     },
   };
 
-  const handleSubmit = (rawData: any) => {
+  const handleSubmit = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+
     form.validateFields((err, values) => {
       if (!err && !busy) {
-        const { context, ...rest } = rawData;
+        const { context, ...rest } = jsonValue;
         const payload = {
           context,
           type: values.type,
@@ -96,9 +96,14 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
     });
   };
 
+  const handleJSONInput = ({ updated_src }: any) => {
+    setJsonValue(updated_src);
+    return jsonValue;
+  };
+
   return (
     <Spin spinning={busy}>
-      <Form>
+      <Form onSubmit={handleSubmit}>
         <Form.Item label="@id" {...formItemLayout}>
           {getFieldDecorator('@id', {
             rules: [{ required: false }],
@@ -121,20 +126,33 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
               className="certain-category-search"
               dropdownClassName="certain-category-search-dropdown"
               dropdownMatchSelectWidth={false}
-              dataSource={(schemas as { key: string; count?: number }[])
-                .concat([{ key: '_' }])
-                .map(({ key, count }) => (
-                  <Option key={key}>
-                    <SchemaTypeOption value={key} count={count} />
-                  </Option>
-                ))}
+              dataSource={schemas.map(({ key, count }) => (
+                <Option key={key}>
+                  <div className="schema-value">
+                    <div>{key}</div> <div className="count">{count}</div>
+                  </div>
+                </Option>
+              ))}
               placeholder={`constrain by Schema`}
               optionLabelProp="value"
             />
           )}
         </Form.Item>
-        <ResourceEditor rawData={jsonValue} onSubmit={handleSubmit} />
+        <ReactJson
+          src={jsonValue}
+          name={null}
+          onEdit={handleJSONInput}
+          onAdd={handleJSONInput}
+          onDelete={handleJSONInput}
+        />
         <Form.Item {...formItemLayoutWithOutLabel}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="login-form-button"
+          >
+            Save
+          </Button>
           {mode === 'edit' && (
             <Button
               type="danger"

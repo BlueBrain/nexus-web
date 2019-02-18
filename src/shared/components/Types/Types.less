@@ -12,36 +12,16 @@
   display: inline-block;
   margin-right: 2em;
   padding: 0;
-  & > .ellipsis {
-    display: inline-block;
-    color: @text-color-secondary;
-    position: relative;
-    top: -4px;
-  }
 }
+
+// layout
 
 .types-icon {
   display: inline-block;
   position: relative;
-  height: 22px;
+  width: 10px;
+  z-index: 0;
   &:hover {
     z-index: 1;
-  }
-  .ant-tag {
-  }
-  .ant-avatar-sm.ant-avatar-square {
-    width: 16px;
-    margin-right: 0.5em;
-    height: 16px;
-    top: -6px;
-  }
-  .label {
-    position: relative;
-    max-width: 50px;
-    font-size: 10px;
-    white-space: nowrap;
-    display: inline-block;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 }
