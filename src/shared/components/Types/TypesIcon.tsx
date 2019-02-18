@@ -44,7 +44,7 @@ const TypesIcon: React.SFC<TypesIconProps> = ({ type }) => {
     };
   }
   return (
-    <li className="types-icon" key={typeHash}>
+    <li className="types-icon">
       <Tooltip title={typeString}>
         <Tag style={style}>
           <Avatar size="small" shape="square" src={src} />
@@ -57,15 +57,29 @@ const TypesIcon: React.SFC<TypesIconProps> = ({ type }) => {
 
 export interface TypesIconListProps {
   type: string[];
+  full?: boolean;
 }
 
 // type represents the field @type
-const TypesIconList: React.SFC<TypesIconListProps> = ({ type }) => {
+const TypesIconList: React.SFC<TypesIconListProps> = ({
+  type,
+  full = false,
+}) => {
+  let typesToDisplay = type;
+  const tooManyTypes = !full && type.length > 3;
+  if (tooManyTypes) {
+    typesToDisplay = [...type].slice(0, 3);
+  }
   return (
     <ul className="types-list">
-      {type.map((type: string) => (
-        <TypesIcon type={type} />
+      {typesToDisplay.map((type: string) => (
+        <TypesIcon type={type} key={type} />
       ))}
+      {tooManyTypes && (
+        <li className="ellipsis">
+          {`...${type.length - typesToDisplay.length}+`}
+        </li>
+      )}
     </ul>
   );
 };

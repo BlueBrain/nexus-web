@@ -97,6 +97,10 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
     );
   };
 
+  const handleListRefresh = () => {
+    handleFilterUpdate({});
+  };
+
   const filterValues = data
     ? { _constrainedBy: data['_constrainedBy'], '@type': data['@type'] }
     : {};
@@ -119,6 +123,7 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
         filterValues={filterValues}
         onTextQueryChange={handleTextQueryChange}
         onFilterChange={handleFilterUpdate}
+        onRefreshList={handleListRefresh}
         onClear={handleClearFilter}
         onCloneList={cloneList}
         queryPath={`/${orgLabel}/${projectLabel}/${
