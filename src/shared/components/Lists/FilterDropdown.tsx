@@ -34,9 +34,9 @@ const FilterDropdown: React.FunctionComponent<FilterDropdownProps> = ({
               dropdownClassName="certain-category-search-dropdown"
               dropdownMatchSelectWidth={false}
               value={value}
-              dataSource={filterValues[filterKey].map(props => (
-                <Option key={props.key}>
-                  <SchemaTypeOption {...props} />
+              dataSource={filterValues[filterKey].map(({ key, count }) => (
+                <Option key={key}>
+                  <SchemaTypeOption value={key} count={count} />
                 </Option>
               ))}
               onChange={value => {

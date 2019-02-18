@@ -118,9 +118,9 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
               dropdownMatchSelectWidth={false}
               dataSource={(schemas as { key: string; count?: number }[])
                 .concat([{ key: '_' }])
-                .map(props => (
-                  <Option key={props.key}>
-                    <SchemaTypeOption {...props} />
+                .map(({ key, count }) => (
+                  <Option key={key}>
+                    <SchemaTypeOption value={key} count={count} />
                   </Option>
                 ))}
               placeholder={`constrain by Schema`}

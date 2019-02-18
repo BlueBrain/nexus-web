@@ -44,7 +44,7 @@ const TypesIcon: React.SFC<TypesIconProps> = ({ type }) => {
     };
   }
   return (
-    <li className="types-icon" key={typeHash}>
+    <li className="types-icon">
       <Tooltip title={typeString}>
         <Tag style={style}>
           <Avatar size="small" shape="square" src={src} />
@@ -64,7 +64,7 @@ const TypesIconList: React.SFC<TypesIconListProps> = ({ type }) => {
   return (
     <ul className="types-list">
       {type.map((type: string) => (
-        <TypesIcon type={type} />
+        <TypesIcon type={type} key={type} />
       ))}
     </ul>
   );
