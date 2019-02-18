@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { Button, Divider } from 'antd';
-import { Project, Resource } from '@bbp/nexus-sdk';
+import { Project, Resource, File } from '@bbp/nexus-sdk';
 import ResourceForm from '../Resources/ResourceForm';
 import { Link } from 'react-router-dom';
 import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
 import SideMenu from './SideMenu';
+import FileUploader from '../FileUpload';
 interface MenuProps {
   project?: Project | null;
   createList: (orgProjectFilterKey: string) => void;
@@ -84,6 +85,19 @@ const Menu: React.FunctionComponent<MenuProps> = ({
             View Project ACLs
           </Link>
         </div>
+        <Divider />
+        <FileUploader
+          onFileUpload={async file => {
+            console.log({ file });
+            const fileInstance = await File.create(
+              orgLabel,
+              projectLabel,
+              file
+            );
+            console.log({ fileInstance });
+            return fileInstance;
+          }}
+        />
       </SideMenu>
     </>
   );
