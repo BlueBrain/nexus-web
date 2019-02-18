@@ -137,7 +137,6 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          minHeight: '50%',
         }}
       >
         {!data && (
