@@ -8,7 +8,7 @@ import { Empty, Switch, Icon, Tooltip } from 'antd';
 import Menu from '../components/Workspace/Menu';
 import { createList, initializeProjectList } from '../store/actions/lists';
 import { ListsByProjectState } from '../store/reducers/lists';
-import { Project, Resource } from '@bbp/nexus-sdk';
+import { Project, Resource, ACL } from '@bbp/nexus-sdk';
 import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
 import { fetchAcls } from '../store/actions/auth';
 import Toolbar from '../components/Toolbar/Toolbar';
@@ -18,6 +18,7 @@ interface ProjectViewProps {
   error: Error | null;
   match: any;
   lists: ListsByProjectState;
+  acls: ACL[];
   createList(orgProjectFilterKey: string): void;
   initialize(orgLabel: string, projectLabel: string): void;
   createResource(
@@ -38,6 +39,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   initialize,
   lists,
   fetchProject,
+  acls,
 }) => {
   const projectLabel = project ? project.label : null;
   React.useEffect(
@@ -52,7 +54,9 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
     <div className="project">
       <Toolbar
         projectName={match.params.project}
-        identities={[]}
+        identities={acls
+          .map(acl => acl.acl.map(i => i.identity))
+          .reduce((flat, toBeFlatten) => flat.concat(toBeFlatten), [])}
         onNewMemberAdded={e => console.log(e)}
         onNewPermissionSelected={e => console.log(e)}
         onProjectNameChange={e => console.log(e)}
@@ -143,12 +147,15 @@ const mapStateToProps = (state: RootState) => ({
       state.nexus.activeProject.error) ||
     null,
   lists: state.lists || {},
+  acls:
+    (state.auth.acls && state.auth.acls.data && state.auth.acls.data.results) ||
+    [],
 });
 const mapDispatchToProps = (dispatch: any) => {
   return {
     fetchProject: (orgLabel: string, projectLabel: string) => {
       dispatch(fetchOrg(orgLabel));
-      dispatch(fetchAcls(`${orgLabel}/${projectLabel}`));
+      dispatch(fetchAcls(`${orgLabel}/${projectLabel}`, { ancestors: true }));
       dispatch(fetchAndAssignProject(orgLabel, projectLabel));
     },
     createList: (orgProjectFilterKey: string) =>

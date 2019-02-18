@@ -42,7 +42,7 @@ const routes: RouteWithData[] = [
       const project = match && match.params && (match.params as any)['project'];
 
       await fetchOrg(org)(dispatch, getState, state);
-      await fetchAcls(`/${org}/${project}`, { ancestors: true });
+      await fetchAcls(`${org}/${project}`, { ancestors: true })(dispatch);
       await fetchAndAssignProject(org, project)(dispatch, getState, state);
     },
   },

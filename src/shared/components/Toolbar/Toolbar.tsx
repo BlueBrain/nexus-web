@@ -38,6 +38,7 @@ const Toolbar: React.FunctionComponent<ToolbarProps> = props => {
   const check = <Icon type="check" style={{ fontWeight: 'bold' }} />;
   const orderedIdentities = getOrderedPermissions(props.identities);
   const toolbarData = getToolbarData(orderedIdentities[0]);
+  console.log('IDENTITY', props.identities);
 
   // List of possible permissions to be set for a project
   const menu = (
