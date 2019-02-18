@@ -19,6 +19,7 @@
     "@bbp/nexus-sdk": "1.0.0-beta.5",
     "@types/redux-localstorage": "^1.0.8",
     "antd": "^3.10.9",
+    "color-thief-node": "^1.0.2",
     "connected-react-router": "^5.0.1",
     "cookie-parser": "^1.4.3",
     "express": "^4.16.4",
