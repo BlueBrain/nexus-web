@@ -42,7 +42,9 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
       <div className="control-panel">
         <div>
           {!editing && (
-            <div className="feedback">Directly edit this resource</div>
+            <div className="feedback">
+              <Icon type="info-circle" /> Directly edit this resource
+            </div>
           )}
           {editing && valid && (
             <div className="feedback _positive">

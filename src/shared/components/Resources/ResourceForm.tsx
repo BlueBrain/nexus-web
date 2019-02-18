@@ -16,6 +16,11 @@ import SchemaTypeOption from './SchemaOption';
 
 const Option = AutoComplete.Option;
 
+const DEFAULT_RESOURCE = {
+  context: {},
+  '@type': ['MyType'],
+};
+
 export interface ResourceFormProps {
   form: WrappedFormUtils;
   resource?: {
@@ -44,9 +49,9 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
   onDeprecate = () => {},
   mode = 'create',
 }) => {
-  const [jsonValue, setJsonValue] = React.useState<{ [key: string]: any }>({
-    context: {},
-  });
+  const [jsonValue, setJsonValue] = React.useState<{ [key: string]: any }>(
+    DEFAULT_RESOURCE
+  );
   const { getFieldDecorator } = form;
   const formItemLayout = {
     labelCol: {
