@@ -41,7 +41,33 @@ storiesOf('Components/ACLs', module)
         '@id': 'asdas',
         '@type': 'Anonymous',
       };
-      return <ACLView identity={anonymous} permissions={[]} />;
+      return (
+        <ACLView
+          identity={anonymous}
+          permissions={[
+            'schemas/write',
+            'views/write',
+            'files/write',
+            'permissions/write',
+            'acls/write',
+            'realms/write',
+            'projects/read',
+            'acls/read',
+            'organizations/create',
+            'organizations/write',
+            'resources/write',
+            'realms/read',
+            'projects/create',
+            'permissions/read',
+            'resources/read',
+            'organizations/read',
+            'resolvers/write',
+            'events/read',
+            'views/query',
+            'projects/write',
+          ]}
+        />
+      );
     })
   )
   .add(
