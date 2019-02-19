@@ -45,6 +45,11 @@ pipeline {
                         sh 'npm run test'
                     }
                 }
+                stage('Stories') {
+                    steps {
+                        sh 'npm run build:storybook'
+                    }
+                }
             }
         }
 
