@@ -50,11 +50,6 @@ pipeline {
                         sh 'npm run build:storybook'
                     }
                 }
-                stage('Build') {
-                    steps {
-                        sh 'npm run build'
-                    }
-                }
             }
         }
 
