@@ -3,22 +3,20 @@ import { Popover } from 'antd';
 import TypesIcon from '../Types/TypesIcon';
 
 import './Resources.less';
-import ResourceMetadataCard, {
-  ResourceMetadataCardProps,
-} from './MetadataCard';
+import ResourceMetadataCard from './MetadataCard';
+import { Resource } from '@bbp/nexus-sdk';
 
 const MOUSE_ENTER_DELAY = 0.5;
 
-export interface ResourceItemProps extends ResourceMetadataCardProps {
-  id: string;
-  type?: string[];
+export interface ResourceItemProps {
+  resource: Resource;
   index: number;
   onClick?(): void;
   onEdit?(): void;
 }
 
 const ResourceListItem: React.FunctionComponent<ResourceItemProps> = props => {
-  const { type, name, index, onClick = () => {} } = props;
+  const { resource, index, onClick = () => {} } = props;
   const containerRef = React.createRef<HTMLDivElement>();
 
   const handleKeyPress = (e: any) => {
@@ -31,7 +29,9 @@ const ResourceListItem: React.FunctionComponent<ResourceItemProps> = props => {
 
   return (
     <Popover
-      content={<ResourceMetadataCard {...props} />}
+      content={
+        <ResourceMetadataCard {...{ ...resource, name: resource.name }} />
+      }
       mouseEnterDelay={MOUSE_ENTER_DELAY}
     >
       <div
@@ -42,9 +42,11 @@ const ResourceListItem: React.FunctionComponent<ResourceItemProps> = props => {
         tabIndex={index + 1}
       >
         <div className="name">
-          <em>{name}</em>
+          <em>{resource.name}</em>
         </div>
-        {type && type.length && <TypesIcon type={type} />}
+        {resource.type && resource.type.length && (
+          <TypesIcon type={resource.type} />
+        )}
       </div>
     </Popover>
   );

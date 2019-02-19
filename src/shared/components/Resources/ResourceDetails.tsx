@@ -39,8 +39,6 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
       }
     }
   };
-  console.log(resource && { raw: resource.raw });
-
   return (
     <div className="resource-details" style={{ width: '100%' }}>
       <Spin spinning={busy} style={{ width: '100%' }}>
@@ -55,7 +53,7 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
         )}
         {!!resource && !error && (
           <>
-            <ResourceMetadataCard {...resource} />
+            <ResourceMetadataCard {...{ ...resource, name: resource.name }} />
             <ResourceEditor
               rawData={{
                 context: resource.context,
