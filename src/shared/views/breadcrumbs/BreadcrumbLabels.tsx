@@ -71,6 +71,33 @@ export const ProjectBreadcrumbLabel = (state: RootState) => {
   );
 };
 
+export const ResourceBreadcrumbLabel = (state: RootState) => {
+  if (
+    state.nexus &&
+    state.nexus.activeResource &&
+    state.nexus.activeResource &&
+    state.nexus.activeResource.isFetching
+  ) {
+    return (
+      <span>
+        <Icon type="profile" /> <Icon type="loading" />
+      </span>
+    );
+  }
+  // TODO what should be the behavior if nothing is found?
+  const activeResourceLabel =
+    (state.nexus &&
+      state.nexus.activeResource &&
+      state.nexus.activeResource.data &&
+      state.nexus.activeResource.data.name) ||
+    'resource';
+  return (
+    <span>
+      <Icon type="profile" /> {activeResourceLabel}
+    </span>
+  );
+};
+
 export const RawQueryBreadcrumbLabel = () => {
   return (
     <span>

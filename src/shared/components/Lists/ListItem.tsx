@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PaginationSettings } from '@bbp/nexus-sdk';
+import { PaginationSettings, Resource } from '@bbp/nexus-sdk';
 import { connect } from 'react-redux';
 import { List } from '../../store/reducers/lists';
 import Renameable from '../Renameable';
@@ -9,7 +9,7 @@ import ResourceList from '../Resources/ResourceList';
 import { updateList, deleteList, cloneList } from '../../store/actions/lists';
 import { queryResources, makeESQuery } from '../../store/actions/queryResource';
 import ListControlPanel from './ListControlPanel';
-
+import { push } from 'connected-react-router';
 interface ListItemContainerProps {
   list: List;
   listIndex: number;
@@ -20,6 +20,7 @@ interface ListItemContainerProps {
   updateList: (listIndex: number, list: List) => void;
   deleteList: (listIndex: number) => void;
   cloneList: () => void;
+  goToResource: (resource: Resource) => void;
   queryResources: (paginationSettings: PaginationSettings, query?: any) => void;
 }
 
@@ -33,6 +34,7 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
   projectLabel,
   queryResources,
   displayPerPage,
+  goToResource,
 }) => {
   const DEFAULT_PAGINATION_SETTINGS = {
     from: 0,
@@ -135,7 +137,6 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          minHeight: '50%',
         }}
       >
         {!data && (
@@ -157,6 +158,7 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
             }}
             paginationChange={handlePaginationChange}
             resources={data.resources}
+            goToResource={goToResource}
           />
         )}
       </div>
@@ -172,6 +174,14 @@ const mapDispatchToProps = (
   dispatch: any,
   { orgProjectFilterKey, orgLabel, projectLabel, listIndex, list }: any
 ) => ({
+  goToResource: (resource: Resource) =>
+    dispatch(
+      push(
+        `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+          resource.id
+        )}`
+      )
+    ),
   updateList: (listIndex: number, list: List) =>
     dispatch(updateList(orgProjectFilterKey, listIndex, list)),
   deleteList: (listIndex: number) =>

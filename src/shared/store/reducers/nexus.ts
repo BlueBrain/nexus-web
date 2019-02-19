@@ -1,4 +1,4 @@
-import { Organization, Project, PaginatedList } from '@bbp/nexus-sdk';
+import { Organization, Project, PaginatedList, Resource } from '@bbp/nexus-sdk';
 import {
   actionTypes as activeOrgActionTypes,
   ActiveOrgActions,
@@ -11,6 +11,10 @@ import {
   actionTypes as projectActionTypes,
   ProjectActions,
 } from '../actions/nexus/projects';
+import {
+  actionTypes as resourceActionTypes,
+  ResourceActions,
+} from '../actions/nexus/resource';
 import { FetchableState, createFetchReducer } from './utils';
 
 export interface NexusState {
@@ -20,6 +24,7 @@ export interface NexusState {
     projects: PaginatedList<Project>;
   }>;
   activeProject?: FetchableState<Project>;
+  activeResource?: FetchableState<Resource>;
 }
 
 const initialState: NexusState = {
@@ -33,10 +38,11 @@ const initialState: NexusState = {
 const activeOrgReducer = createFetchReducer(activeOrgActionTypes);
 const orgsReducer = createFetchReducer(orgsActionTypes, []);
 const projectReducer = createFetchReducer(projectActionTypes);
+const resourceReducer = createFetchReducer(resourceActionTypes);
 
 export default function nexusReducer(
   state: NexusState = initialState,
-  action: ActiveOrgActions | OrgsActions | ProjectActions
+  action: ActiveOrgActions | OrgsActions | ProjectActions | ResourceActions
 ) {
   if (action.type.startsWith('@@nexus/PROJECT_')) {
     return {
@@ -44,11 +50,15 @@ export default function nexusReducer(
       activeProject: projectReducer(state.activeProject, action),
     };
   }
-
+  if (action.type.startsWith('@@nexus/RESOURCE_')) {
+    return {
+      ...state,
+      activeResource: resourceReducer(state.activeResource, action),
+    };
+  }
   if (action.type.startsWith('@@nexus/ORG_')) {
     return { ...state, activeOrg: activeOrgReducer(state.activeOrg, action) };
   }
-
   if (action.type.startsWith('@@nexus/ORGS_')) {
     return { ...state, orgs: orgsReducer(state.orgs, action) };
   }
