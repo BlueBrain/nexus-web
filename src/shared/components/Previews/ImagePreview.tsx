@@ -1,23 +1,20 @@
-import * as React from 'react';
-import { Popover, Card, Avatar } from 'antd';
-import TypesIcon from '../Types/TypesIcon';
-import { File } from '@bbp/nexus-sdk';
+// import * as React from 'react';
+// import { Popover, Card, Avatar } from 'antd';
+// import TypesIcon from '../Types/TypesIcon';
+// import { File } from '@bbp/nexus-sdk';
 
-import './Resources.less';
+// import './Resources.less';
 
-export interface ImagePreviewProps {
-  file: File;
-}
+// export interface ImagePreviewProps {
+//   file: File;
+// }
 
-const ImagePreview: React.FunctionComponent<ImagePreviewProps> = props => {
-  const { mediaType, self } = props;
+// const ImagePreview: React.FunctionComponent<ImagePreviewProps> = props => {
+//   const { file } = props;
+//   const [ attachment, setAttachment] = React.useState(null);
+//   // const fileResponse = await file.getFile();
 
-  // const Preview =
-  //   raw._mediaType && raw._mediaType.includes('image') ? (
-  //     <Avatar src={self} />
-  //   ) : null;
+//   return attachment ? <Avatar src={attachment} />;
+// };
 
-  return <Avatar />;
-};
-
-export default ImagePreview;
+// export default ImagePreview;
