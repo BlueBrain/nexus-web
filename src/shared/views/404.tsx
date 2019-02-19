@@ -1,5 +1,5 @@
-import React = require('react');
+import * as React from 'react';
 
-const NotFound: React.FunctionComponent = () => <p>this is NOT FOUND</p>;
+const NotFound: React.FunctionComponent = () => <p>Page not found</p>;
 
 export default NotFound;

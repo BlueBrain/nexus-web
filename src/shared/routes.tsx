@@ -8,6 +8,7 @@ import Resource from './views/Resource';
 import { fetchOrgs } from './store/actions/nexus/orgs';
 import { fetchOrg } from './store/actions/nexus/activeOrg';
 import { RawElasticSearchQuery, RawSparqlQuery } from './views/RawQuery';
+import ACLView from './views/ACLs';
 import { fetchAndAssignProject } from './store/actions/nexus/projects';
 import { fetchAndAssignResource } from './store/actions/nexus/resource';
 import { ThunkAction } from './store';
@@ -98,6 +99,10 @@ const routes: RouteWithData[] = [
     path: '/:org/:project/graph/sparql',
     component: RawSparqlQuery,
     breadcrumbLabel: RawQueryBreadcrumbLabel,
+  },
+  {
+    path: '/:org/:project/_settings/acls',
+    component: ACLView,
   },
 ];
 
