@@ -96,7 +96,6 @@ function fetchAcls(path: string, aclOptions?: ListACLOptions) {
   return async (
     dispatch: Dispatch<any>
   ): Promise<FetchAclsFulfilledAction | FetchAclsFailedAction> => {
-    console.log('calling', dispatch);
     dispatch(fetchAclsAction);
     try {
       const paginatedAcls = await ACL.list(path, aclOptions);
