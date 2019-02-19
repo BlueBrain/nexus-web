@@ -37,7 +37,7 @@ pipeline {
             parallel {
                 stage('Lint') {
                     steps {
-                        sh 'npm run lint'
+                        sh 'npm run lint -- -c tslint.prod.json'
                     }
                 }
                 stage('Test') {
