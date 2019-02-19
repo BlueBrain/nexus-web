@@ -11,6 +11,8 @@ const MOUSE_ENTER_DELAY = 0.5;
 export interface ResourceItemProps {
   resource: Resource;
   index: number;
+  raw: any;
+  self: string;
   onClick?(): void;
   onEdit?(): void;
 }
@@ -27,6 +29,11 @@ const ResourceListItem: React.FunctionComponent<ResourceItemProps> = props => {
     }
   };
 
+  // const Preview =
+  //   raw._mediaType && raw._mediaType.includes('image') ? (
+  //     <Avatar src={self} />
+  //   ) : null;
+
   return (
     <Popover
       content={
@@ -41,6 +48,7 @@ const ResourceListItem: React.FunctionComponent<ResourceItemProps> = props => {
         onKeyPress={handleKeyPress}
         tabIndex={index + 1}
       >
+        {/* {Preview} */}
         <div className="name">
           <em>{resource.name}</em>
         </div>
