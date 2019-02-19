@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Checkbox, Divider } from 'antd';
+import { Checkbox, Divider, List } from 'antd';
 
 import './ACLs.less';
 import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
@@ -35,16 +35,29 @@ const ACLView: React.FunctionComponent<ACLViewProp> = props => {
   return (
     <div>
       <IdentityBadge {...props.identity} />
-      {groupPermissions(props.permissions).map(group => (
-        <div className="permissions">
-          <p className="name">{group.name}</p>
-          <Checkbox.Group
-            options={group.permissions}
-            defaultValue={group.permissions}
-          />
-          <Divider />
-        </div>
-      ))}
+      <List
+        grid={{
+          gutter: 16,
+          xs: 1,
+          sm: 2,
+          md: 4,
+          lg: 4,
+          xl: 6,
+          xxl: 3,
+        }}
+        dataSource={groupPermissions(props.permissions)}
+        renderItem={(group: GroupedPermission) => (
+          <List.Item className="permissions">
+            <p className="name">{group.name}</p>
+            <Checkbox.Group
+              options={group.permissions}
+              defaultValue={group.permissions}
+              disabled
+            />
+            <Divider />
+          </List.Item>
+        )}
+      />
     </div>
   );
 };
