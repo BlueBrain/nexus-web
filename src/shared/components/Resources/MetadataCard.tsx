@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Card, Icon, Button, Tooltip } from 'antd';
 import { Meta } from 'antd/lib/list/Item';
 import * as moment from 'moment';
-import UserAvatar from '../User/avatar';
+import UserAvatar from '../User/Avatar';
 import TypesIcon from '../Types/TypesIcon';
 import Copy from '../Copy';
 
