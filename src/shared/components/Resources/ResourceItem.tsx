@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { Popover, Card } from 'antd';
+import { Popover } from 'antd';
 import TypesIcon from '../Types/TypesIcon';
 
 import './Resources.less';
-import { Meta } from 'antd/lib/list/Item';
-import moment = require('moment');
+import ResourceMetadataCard, {
+  ResourceMetadataCardProps,
+} from './MetadataCard';
 
 const MOUSE_ENTER_DELAY = 0.5;
 
@@ -15,42 +16,6 @@ export interface ResourceItemProps extends ResourceMetadataCardProps {
   onClick?(): void;
   onEdit?(): void;
 }
-
-export interface ResourceMetadataCardProps {
-  name?: string;
-  createdAt: string;
-  updatedAt: string;
-  constrainedBy: string;
-}
-
-const ResourceMetadataCard: React.FunctionComponent<
-  ResourceMetadataCardProps
-> = props => {
-  const { constrainedBy, name, createdAt, updatedAt } = props;
-  return (
-    <Card>
-      <Meta
-        title={
-          <div
-            className="name"
-            style={{ display: 'flex', justifyContent: 'space-between' }}
-          >
-            <em>{name}</em>
-            <span>{moment(createdAt).format('DD/MM/YYYY')}</span>
-          </div>
-        }
-        description={
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div>last updated {moment(updatedAt).fromNow()}</div>
-            <div>
-              schema: <b>{constrainedBy}</b>
-            </div>
-          </div>
-        }
-      />
-    </Card>
-  );
-};
 
 const ResourceListItem: React.FunctionComponent<ResourceItemProps> = props => {
   const { type, name, index, onClick = () => {} } = props;

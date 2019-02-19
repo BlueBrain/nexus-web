@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { Spin, notification } from 'antd';
 import ResourceEditor from './ResourceEditor';
+import ResourceMetadataCard from './MetadataCard';
 
 export interface ResourceViewProps {
   resource: Resource | null;
@@ -46,15 +47,18 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
     <div className="resource-details" style={{ width: '100%' }}>
       <Spin spinning={busy} style={{ width: '100%' }}>
         {!!resource && (
-          <ResourceEditor
-            rawData={{
-              context: resource.context,
-              type: resource.type,
-              ...resource.data,
-            }}
-            onSubmit={handleSubmit}
-            editing={editing}
-          />
+          <>
+            <ResourceMetadataCard {...resource} />
+            <ResourceEditor
+              rawData={{
+                context: resource.context,
+                type: resource.type,
+                ...resource.data,
+              }}
+              onSubmit={handleSubmit}
+              editing={editing}
+            />
+          </>
         )}
       </Spin>
     </div>
