@@ -20,6 +20,7 @@ import {
   LoginBreadcrumbLabel,
   RawQueryBreadcrumbLabel,
   ResourceBreadcrumbLabel,
+  ACLsBreadcrumbLabel,
 } from './views/breadcrumbs/BreadcrumbLabels';
 import { fetchAcls } from './store/actions/auth';
 
@@ -104,6 +105,7 @@ const routes: RouteWithData[] = [
   {
     path: '/:org/:project/_settings/acls',
     component: ACLView,
+    breadcrumbLabel: ACLsBreadcrumbLabel,
     loadData: (state, match) => {
       const orgLabel = match && match.params && (match.params as any)['org'];
       const projectLabel =

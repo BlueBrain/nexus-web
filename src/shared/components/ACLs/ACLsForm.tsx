@@ -17,7 +17,11 @@ const ACLsForm: React.FunctionComponent<ACLsFormProps> = props => {
       {props.acls.map((acl, index) => (
         <Tabs.TabPane tab={<span>{acl.path}</span>} key={`${index}`}>
           {acl.acl.map(a => (
-            <ACLView identity={a.identity} permissions={a.permissions} />
+            <ACLView
+              identity={a.identity}
+              permissions={a.permissions}
+              key={`${acl.path}-${a.identity}`}
+            />
           ))}
         </Tabs.TabPane>
       ))}
