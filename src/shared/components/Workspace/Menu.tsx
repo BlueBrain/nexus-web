@@ -18,6 +18,7 @@ interface MenuProps {
   ) => React.ReactElement<any>;
 }
 
+// TODO: refactor: remove `Link` from deps and use props instead.
 const Menu: React.FunctionComponent<MenuProps> = ({
   createList,
   createResource,
@@ -78,6 +79,9 @@ const Menu: React.FunctionComponent<MenuProps> = ({
             to={`/${orgLabel}/${projectLabel}/nxv:defaultElasticSearchIndex/_search`}
           >
             ElasticSearch Query Editor
+          </Link>
+          <Link to={`/${orgLabel}/${projectLabel}/_settings/acls`}>
+            View Project ACLs
           </Link>
         </div>
       </SideMenu>

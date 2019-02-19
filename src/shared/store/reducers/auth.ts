@@ -1,12 +1,12 @@
 import { AuthActions, AuthActionTypes } from '../actions/auth';
 import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
-import { createFetchReducer } from './utils';
+import { createFetchReducer, FetchableState } from './utils';
 import { PaginatedList, ACL } from '@bbp/nexus-sdk';
 
 export interface AuthState {
   authenticated: boolean;
   identities?: Identity[];
-  acls?: PaginatedList<ACL>;
+  acls?: FetchableState<PaginatedList<ACL>>;
   tokenData?: object;
   clientId?: string;
   accessToken?: string;

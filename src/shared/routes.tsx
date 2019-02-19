@@ -8,6 +8,7 @@ import Resource from './views/Resource';
 import { fetchOrgs } from './store/actions/nexus/orgs';
 import { fetchOrg } from './store/actions/nexus/activeOrg';
 import { RawElasticSearchQuery, RawSparqlQuery } from './views/RawQuery';
+import ACLView from './views/ACLs';
 import { fetchAndAssignProject } from './store/actions/nexus/projects';
 import { fetchAndAssignResource } from './store/actions/nexus/resource';
 import { ThunkAction } from './store';
@@ -19,7 +20,9 @@ import {
   LoginBreadcrumbLabel,
   RawQueryBreadcrumbLabel,
   ResourceBreadcrumbLabel,
+  ACLsBreadcrumbLabel,
 } from './views/breadcrumbs/BreadcrumbLabels';
+import { fetchAcls } from './store/actions/auth';
 
 export interface RouteWithData extends RouteProps {
   breadcrumbLabel?: any;
@@ -98,6 +101,18 @@ const routes: RouteWithData[] = [
     path: '/:org/:project/graph/sparql',
     component: RawSparqlQuery,
     breadcrumbLabel: RawQueryBreadcrumbLabel,
+  },
+  {
+    path: '/:org/:project/_settings/acls',
+    component: ACLView,
+    breadcrumbLabel: ACLsBreadcrumbLabel,
+    loadData: (state, match) => {
+      const orgLabel = match && match.params && (match.params as any)['org'];
+      const projectLabel =
+        match && match.params && (match.params as any)['project'];
+
+      return fetchAcls(`${orgLabel}/${projectLabel}`, { ancestors: true });
+    },
   },
 ];
 

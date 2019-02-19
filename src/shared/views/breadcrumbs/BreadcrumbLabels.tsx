@@ -105,3 +105,7 @@ export const RawQueryBreadcrumbLabel = () => {
     </span>
   );
 };
+
+export const ACLsBreadcrumbLabel = () => {
+  return <span>ACLs</span>;
+};
