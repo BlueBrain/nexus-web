@@ -28,9 +28,7 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
       itemComponent={(resource: Resource, index: number) => (
         <ResourceItem
           index={index}
-          key={resource.id}
-          name={resource.name}
-          {...resource}
+          resource={resource}
           onClick={() => goToResource(resource)}
         />
       )}
