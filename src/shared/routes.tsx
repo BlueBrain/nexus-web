@@ -21,6 +21,7 @@ import {
   RawQueryBreadcrumbLabel,
   ResourceBreadcrumbLabel,
 } from './views/breadcrumbs/BreadcrumbLabels';
+import { fetchAcls } from './store/actions/auth';
 
 export interface RouteWithData extends RouteProps {
   breadcrumbLabel?: any;
@@ -103,6 +104,13 @@ const routes: RouteWithData[] = [
   {
     path: '/:org/:project/_settings/acls',
     component: ACLView,
+    loadData: (state, match) => {
+      const orgLabel = match && match.params && (match.params as any)['org'];
+      const projectLabel =
+        match && match.params && (match.params as any)['project'];
+
+      return fetchAcls(`${orgLabel}/${projectLabel}`, { ancestors: true });
+    },
   },
 ];
 
