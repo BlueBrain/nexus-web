@@ -68,7 +68,6 @@ export const executeRawQuery: ActionCreator<ThunkAction> = (
       const results: SparqlViewQueryResponse = response;
       return dispatch(rawQuerySuccessAction(results));
     } catch (e) {
-      console.log('error', e);
       return dispatch(rawQueryFailureAction(e));
     }
   };
@@ -96,7 +95,6 @@ export const executeRawElasticSearchQuery: ActionCreator<ThunkAction> = (
       const results: PaginatedList<ElasticSearchHit> = response;
       return dispatch(rawQuerySuccessAction(results));
     } catch (e) {
-      console.log('error', e);
       return dispatch(rawQueryFailureAction(e));
     }
   };

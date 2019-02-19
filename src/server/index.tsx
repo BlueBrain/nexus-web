@@ -64,7 +64,8 @@ app.get(
           }
         );
       } catch (e) {
-        console.log(e);
+        // TODO: add proper logger
+        // fail silently
       }
     }
     res.redirect(`${base}/`);
@@ -117,7 +118,8 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       accessToken = cookieData.accessToken;
       tokenData = jwtDecode(accessToken as string);
     } catch (e) {
-      console.error(e);
+      // TODO: add proper logger
+      // fail silently
     }
   }
 
@@ -192,7 +194,8 @@ app.get('*', async (req: express.Request, res: express.Response) => {
 });
 
 app.listen(8000, () => {
-  console.log('Now listening!');
+  // tslint:disable-next-line:no-console
+  console.log('Nexus Web is listening...');
 });
 
 export default app;
