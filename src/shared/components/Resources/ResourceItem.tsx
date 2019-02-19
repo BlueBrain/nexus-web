@@ -11,8 +11,6 @@ const MOUSE_ENTER_DELAY = 0.5;
 export interface ResourceItemProps {
   resource: Resource;
   index: number;
-  raw: any;
-  self: string;
   onClick?(): void;
   onEdit?(): void;
 }
