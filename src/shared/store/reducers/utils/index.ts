@@ -54,15 +54,15 @@ export const createResultData = (
     [FULFILLED]: (state, action) => action.payload,
   });
 
-export const createError = ({ FAILED }: ActionTypes) =>
+export const createError = ({ FAILED, FULFILLED }: ActionTypes) =>
   createReducer(null, {
     [FAILED]: (state, action) => {
       if (action.error instanceof Error) {
         return { message: action.error.message, name: action.error.name };
       }
-
       return action.error;
     },
+    [FULFILLED]: (state, action) => null,
   });
 
 export const createFetchReducer = function(

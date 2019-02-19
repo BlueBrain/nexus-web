@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
-import { Spin, notification } from 'antd';
+import { Spin, notification, Empty, Card } from 'antd';
 import ResourceEditor from './ResourceEditor';
+import ResourceMetadataCard from './MetadataCard';
 
 export interface ResourceViewProps {
   resource: Resource | null;
@@ -19,10 +20,7 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
     if (resource) {
       try {
         setFormBusy(true);
-        await resource.update({
-          context: resource.context,
-          ...value,
-        });
+        await resource.update(value);
         notification.success({
           message: 'Resource saved',
           description: resource.name,
@@ -41,20 +39,33 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
       }
     }
   };
+  console.log(resource && { raw: resource.raw });
 
   return (
     <div className="resource-details" style={{ width: '100%' }}>
       <Spin spinning={busy} style={{ width: '100%' }}>
-        {!!resource && (
-          <ResourceEditor
-            rawData={{
-              context: resource.context,
-              type: resource.type,
-              ...resource.data,
-            }}
-            onSubmit={handleSubmit}
-            editing={editing}
-          />
+        {!!error && (
+          <div style={{}}>
+            <Card>
+              <Empty
+                description={'There was a problem loading this resource...'}
+              />
+            </Card>
+          </div>
+        )}
+        {!!resource && !error && (
+          <>
+            <ResourceMetadataCard {...resource} />
+            <ResourceEditor
+              rawData={{
+                context: resource.context,
+                type: resource.type,
+                ...resource.data,
+              }}
+              onSubmit={handleSubmit}
+              editing={editing}
+            />
+          </>
         )}
       </Spin>
     </div>
