@@ -4,6 +4,7 @@ import { action } from '@storybook/addon-actions';
 import { withInfo } from '@storybook/addon-info';
 
 import Header from './index';
+import OrgDropdown from '../Orgs/OrgDropdown';
 
 storiesOf('Components/Header', module).add(
   'Header',
@@ -23,10 +24,19 @@ storiesOf('Components/Header', module).add(
   `)(() => (
     <React.Fragment>
       <div style={{ margin: '50px 40px 0px' }}>
+        <h2>Name + menu + token</h2>
+        <Header
+          name="Mark Hamill"
+          links={[<a href="#">Log out</a>, <a href="#">Settings</a>]}
+          token="supercereal"
+        />
+      </div>
+      <div style={{ margin: '50px 40px 0px' }}>
         <h2>Name + menu</h2>
         <Header
           name="Mark Hamill"
           links={[<a href="#">Log out</a>, <a href="#">Settings</a>]}
+          children={<OrgDropdown />}
         />
       </div>
       <div style={{ margin: '50px 40px 0px' }}>

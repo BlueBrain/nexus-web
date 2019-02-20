@@ -39,10 +39,16 @@ const OrgDropdown: React.FunctionComponent<OrgDropDownProps> = ({
       key={key}
     >
       <div className="OrgDropdown">
-        <p className="org-name">
-          {selected ? selected : 'Select an organization'}
-        </p>
-        <Icon type="down" />
+        <Button className="org-name">
+          {selected ? (
+            selected
+          ) : (
+            <>
+              <span>Select an organization</span>
+              <Icon type="down" />
+            </>
+          )}
+        </Button>
       </div>
     </Popover>
   );
