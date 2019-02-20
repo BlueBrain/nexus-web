@@ -57,7 +57,6 @@ export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
       const resource = await project.getResource(resourceId);
       return dispatch(fetchResourceFulfilledAction(resource));
     } catch (e) {
-      console.error(e);
       return dispatch(fetchResourceFailedAction(e));
     }
   };

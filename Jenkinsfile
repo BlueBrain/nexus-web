@@ -37,12 +37,22 @@ pipeline {
             parallel {
                 stage('Lint') {
                     steps {
-                        sh 'npm run lint'
+                        sh 'npm run lint -- -c tslint.prod.json'
                     }
                 }
                 stage('Test') {
                     steps {
                         sh 'npm run test'
+                    }
+                }
+                stage('Stories') {
+                    steps {
+                        sh 'npm run build:storybook'
+                    }
+                }
+                stage('Build') {
+                    steps {
+                        sh 'npm run build'
                     }
                 }
             }

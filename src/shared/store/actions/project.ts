@@ -296,7 +296,6 @@ export const makeProjectPublic: ActionCreator<ThunkAction> = (
           );
           return true;
         } catch (e) {
-          console.log(e);
           return false;
         }
       };
