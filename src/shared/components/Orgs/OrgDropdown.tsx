@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Icon, Popover } from 'antd';
+import { Button, Icon, Popover, Spin } from 'antd';
 import { OrgCardProps } from './OrgCard';
 import OrgList from './OrgList';
 import { any } from 'prop-types';
@@ -8,6 +8,8 @@ export interface OrgDropDownProps {
   activeName?: string;
   orgs?: OrgCardProps[];
   key?: any;
+  busy?: boolean;
+  error?: { message: string; name: string };
   onRefreshClick?(): any;
   onCreateNewClick?(): any;
   onExploreAllClick?(): any;
@@ -17,6 +19,8 @@ const OrgDropdown: React.FunctionComponent<OrgDropDownProps> = ({
   activeName,
   orgs = [],
   key = '',
+  busy = false,
+  error,
   onRefreshClick = () => {},
   onCreateNewClick = () => {},
   onExploreAllClick = () => {},
@@ -28,18 +32,24 @@ const OrgDropdown: React.FunctionComponent<OrgDropDownProps> = ({
   };
 
   const overlay = (
-    <div className="OrgDropdownPopover">
-      <a style={{ float: 'right' }} onClick={onRefreshClick}>
-        refresh <Icon type="redo" />
-      </a>
-      <OrgList orgs={orgs} onOrgClick={name => handleOrgSelected(name)} />
-      <div className="org-menu">
-        <Button type="primary" onClick={onCreateNewClick}>
-          Create New
-        </Button>
-        <Button onClick={onExploreAllClick}>Explore All</Button>
+    <Spin spinning={busy}>
+      <div className="OrgDropdownPopover">
+        <a style={{ float: 'right' }} onClick={onRefreshClick}>
+          refresh <Icon type="redo" />
+        </a>
+        <OrgList
+          orgs={orgs}
+          onOrgClick={name => handleOrgSelected(name)}
+          error={error}
+        />
+        <div className="org-menu">
+          <Button type="primary" onClick={onCreateNewClick}>
+            Create New
+          </Button>
+          <Button onClick={onExploreAllClick}>Explore All</Button>
+        </div>
       </div>
-    </div>
+    </Spin>
   );
   return (
     <Popover
