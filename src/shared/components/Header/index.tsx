@@ -32,14 +32,13 @@ const Header: React.FunctionComponent<HeaderProps> = ({
 
   return (
     <header className="Header">
+      <div className="selectors">{children}</div>
       <div className="logo-block">
         <a className="logo" href="">
-          {/* inline styling to prevent headaches in dev mode */}
-          <img src={logo} alt="Nexus" style={{ height: '2em', width: '2em' }} />
+          <img src={logo} alt="Nexus" />
+          <h1>Nexus</h1>
         </a>
-        <h1>Nexus</h1>
       </div>
-      <div className="selectors">{children}</div>
       <div className="menu-block">
         {token && (
           <Copy
@@ -51,8 +50,6 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             )}
           />
         )}
-      </div>
-      <div className="menu-block">
         {name ? (
           <Dropdown overlay={menu}>
             <a className="menu-dropdown ant-dropdown-link">

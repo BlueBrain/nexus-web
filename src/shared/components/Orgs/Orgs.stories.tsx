@@ -2,13 +2,21 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withInfo } from '@storybook/addon-info';
 import { action } from '@storybook/addon-actions';
-import { withKnobs, text, number } from '@storybook/addon-knobs';
+import {
+  withKnobs,
+  text,
+  number,
+  knob,
+  boolean,
+  select,
+} from '@storybook/addon-knobs';
 
 import OrgList from './OrgList';
 import OrgCard, { OrgCardProps } from './OrgCard';
 import OrgDropdown from './OrgDropdown';
 import OrgForm from './OrgForm';
 import Header from '../Header';
+import { type } from 'os';
 
 const logo = require('../../logo.svg');
 const orgs: OrgCardProps[] = [
@@ -93,12 +101,21 @@ storiesOf('Components/Orgs', module)
       <OrgDropdown />
     ~~~
   `)(() => {
+      const busy = knob('busy', { value: false, type: 'boolean' });
+      const error = knob('error', { value: false, type: 'boolean' });
       return (
         <React.Fragment>
           <div style={{ margin: '50px 40px 0px' }}>
             <h2>Organization Dopdown in header</h2>
             <Header name="Mark Hamill" links={[]}>
-              <OrgDropdown orgs={orgs} />
+              <OrgDropdown
+                busy={busy}
+                orgs={orgs}
+                error={error ? { message: '', name: '' } : undefined}
+                onCreateNewClick={action('onCreateNewClick')}
+                onExploreAllClick={action('onExploreAllClick')}
+                onRefreshClick={action('onRefreshClick')}
+              />
             </Header>
           </div>
           <div style={{ margin: '50px 40px 0px' }}>

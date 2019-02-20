@@ -9,20 +9,27 @@
   background-color: @header-background-color;
 
   .logo-block {
-    display: flex;
-    align-items: center;
-    padding-left: 1em;
+    position: absolute;
+    left: 50%;
+    width: 120px;
+    margin-left: -60px;
     .logo {
       margin-right: 0.5em;
+      height: 32px;
+      display: flex;
+      align-items: center;
       img {
         height: 2em;
         width: 2em;
+        margin: 1px 0;
+        padding-bottom: 2px;
       }
     }
     h1 {
       color: @primary-color;
-      margin: 0%;
+      margin: 0;
       font-weight: 100;
+      display: inline-block;
     }
   }
 
@@ -33,22 +40,20 @@
     flex-grow: 1;
     margin-left: 10px;
     .OrgDropdown {
-      border-left: shade(@header-background-color, 20%) 1px solid;
-      border-right: shade(@header-background-color, 20%) 1px solid;
-      padding: 5px;
       height: 100%;
-      max-width: 30%;
     }
   }
 
   .menu-block {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
+    flex-grow: 1;
     padding-right: 1em;
     align-items: center;
     .menu-dropdown {
       color: @text-color;
       align-self: center;
+      margin-left: 15px;
     }
   }
 }

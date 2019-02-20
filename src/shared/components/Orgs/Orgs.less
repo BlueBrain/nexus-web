@@ -4,10 +4,11 @@
 * Organisation Cards
 */
 .OrgCard {
-  background-color: #fff !important;
   margin: 5px !important;
-  box-shadow: 0 2px 5px 0 rgba(49, 49, 93, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.08);
   cursor: pointer;
+  .ant-card-body {
+    padding: 10px;
+  }
   .content {
     display: flex;
     justify-content: space-between;
@@ -19,7 +20,6 @@
     .org-name {
       margin: 0;
       flex-grow: 1;
-      font-weight: bold;
       font-size: 1.3em;
     }
     .project-number {
@@ -51,6 +51,8 @@
 * Organisation List
 */
 .OrgList {
+  background-color: @component-background;
+  padding-top: 15px;
   .scrollBar();
   .result {
     margin-top: 10px;
@@ -68,20 +70,17 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: @header-background-color;
-  width: 10em;
 
   &.ant-popover-open {
     background: shade(@header-background-color, 20%);
+  }
+  .menu-dropdown {
+    color: @text-color;
   }
   .org-name {
     text-align: center;
     margin: 0;
     cursor: default;
-  }
-
-  &:hover {
-    background-color: shade(@header-background-color, 20%);
   }
 }
 .OrgDropdownPopover {

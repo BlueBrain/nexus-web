@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Input } from 'antd';
+import { Input, Empty } from 'antd';
 import OrgCard, { OrgCardProps } from './OrgCard';
 import AnimatedList from '../Animations/AnimatedList';
 
@@ -8,6 +8,7 @@ import './Orgs.less';
 export interface OrgListProps {
   orgs: OrgCardProps[];
   busy?: boolean;
+  error?: { message: string; name: string };
   onOrgClick?(label: string): void;
   onOrgEdit?(label: string): void;
   paginationSettings?: { total: number; from: number; pageSize: number };
@@ -19,6 +20,7 @@ const Search = Input.Search;
 const OrgList: React.FunctionComponent<OrgListProps> = ({
   orgs,
   busy = false,
+  error = false,
   onOrgClick = () => {},
   onOrgEdit = () => {},
   paginationSettings,
@@ -33,13 +35,23 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
     setItems(filtered);
   };
 
+  if (error) {
+    return (
+      <Empty
+        description={
+          <span>An error happened while retrieving Organizations</span>
+        }
+      />
+    );
+  }
   return (
     <div className="OrgList">
-      <Search
+      {/* Don't display search for now but to be implemented soon */}
+      {/* <Search
         className="filter"
         placeholder="Filter by name"
         onChange={handleChange}
-      />
+      /> */}
       <AnimatedList
         itemComponent={(org, i) => (
           <OrgCard
