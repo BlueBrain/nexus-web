@@ -13,19 +13,9 @@ import { fetchAndAssignProject } from './store/actions/nexus/projects';
 import { fetchAndAssignResource } from './store/actions/nexus/resource';
 import { ThunkAction } from './store';
 import { RootState } from './store/reducers';
-import {
-  ProjectBreadcrumbLabel,
-  HomeBreadcrumbLabel,
-  OrgBreadcrumbLabel,
-  LoginBreadcrumbLabel,
-  RawQueryBreadcrumbLabel,
-  ResourceBreadcrumbLabel,
-  ACLsBreadcrumbLabel,
-} from './views/breadcrumbs/BreadcrumbLabels';
 import { fetchAcls } from './store/actions/auth';
 
 export interface RouteWithData extends RouteProps {
-  breadcrumbLabel?: any;
   loadData?(state: RootState, match: match | null): ThunkAction;
 }
 const routes: RouteWithData[] = [
@@ -33,19 +23,16 @@ const routes: RouteWithData[] = [
     path: '/',
     exact: true,
     component: Landing,
-    breadcrumbLabel: HomeBreadcrumbLabel,
     loadData: () => fetchOrgs(),
   },
   {
     path: '/login',
-    breadcrumbLabel: LoginBreadcrumbLabel,
     component: Login,
   },
   {
     path: '/:org',
     exact: true,
     component: Home,
-    breadcrumbLabel: OrgBreadcrumbLabel,
     loadData: (state, match) =>
       fetchOrg(match && match.params && (match.params as any)['org']),
   },
@@ -53,7 +40,6 @@ const routes: RouteWithData[] = [
     path: '/:org/:project',
     exact: true,
     component: Project,
-    breadcrumbLabel: ProjectBreadcrumbLabel,
     loadData: (state, match) => async (dispatch, getState, state) => {
       await fetchOrg(match && match.params && (match.params as any)['org'])(
         dispatch,
@@ -69,7 +55,6 @@ const routes: RouteWithData[] = [
   {
     path: '/:org/:project/resources/:resourceId',
     component: Resource,
-    breadcrumbLabel: ResourceBreadcrumbLabel,
     loadData: (state, match) => async (dispatch, getState, state) => {
       await fetchOrg(match && match.params && (match.params as any)['org'])(
         dispatch,
@@ -90,22 +75,18 @@ const routes: RouteWithData[] = [
   {
     path: '/:org/:project/_search',
     component: RawElasticSearchQuery,
-    breadcrumbLabel: RawQueryBreadcrumbLabel,
   },
   {
     path: '/:org/:project/:view/_search',
     component: RawElasticSearchQuery,
-    breadcrumbLabel: RawQueryBreadcrumbLabel,
   },
   {
     path: '/:org/:project/graph/sparql',
     component: RawSparqlQuery,
-    breadcrumbLabel: RawQueryBreadcrumbLabel,
   },
   {
     path: '/:org/:project/_settings/acls',
     component: ACLView,
-    breadcrumbLabel: ACLsBreadcrumbLabel,
     loadData: (state, match) => {
       const orgLabel = match && match.params && (match.params as any)['org'];
       const projectLabel =
