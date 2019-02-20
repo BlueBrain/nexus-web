@@ -77,6 +77,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
     setFormBusy(true);
     createProject(activeOrg.label, newProject.label, {
       base: newProject.base || undefined,
+      vocab: newProject.vocab || undefined,
       description: newProject.description || '',
       apiMappings:
         newProject.apiMappings.length === 0
@@ -114,6 +115,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
     setFormBusy(true);
     modifyProject(activeOrg.label, newProject.label, selectedProject.rev, {
       base: newProject.base,
+      vocab: newProject.vocab,
       description: newProject.description,
       apiMappings: newProject.apiMappings || [],
     })
@@ -301,6 +303,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
               rev: selectedProject.rev,
               description: selectedProject.description || '',
               base: selectedProject.base,
+              vocab: selectedProject.vocab,
               apiMappings: selectedProject.apiMappings,
             }}
             onSubmit={(p: Project) => saveAndModify(selectedProject, p)}

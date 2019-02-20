@@ -91,6 +91,7 @@ export interface ProjectFormProps {
     rev: number,
     description?: string;
     base?: string;
+    vocab?: string;
     apiMappings?: PrefixMappingGroupInputState[];
   };
   busy?: boolean;
@@ -239,6 +240,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
       </Form.Item>
     )
   );
+  console.log('proj', project);
   return (
     <Spin spinning={busy}>
       <Form onSubmit={handleSubmit}>
@@ -266,6 +268,12 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
             initialValue: project ? project.base : '',
             rules: [{ required: false }],
           })(<Input placeholder="Base" />)}
+        </Form.Item>
+        <Form.Item label="Vocab" {...formItemLayout}>
+          {getFieldDecorator('vocab', {
+            initialValue: project ? project.vocab : '',
+            rules: [{ required: false }],
+          })(<Input placeholder="Vocab" />)}
         </Form.Item>
         {apiMappingsItems}
         <Form.Item {...formItemLayoutWithOutLabel}>
