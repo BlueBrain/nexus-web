@@ -240,7 +240,6 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
       </Form.Item>
     )
   );
-  console.log('proj', project);
   return (
     <Spin spinning={busy}>
       <Form onSubmit={handleSubmit}>
