@@ -34,21 +34,18 @@ const OrgDropdown: React.FunctionComponent<OrgDropDownProps> = ({
     <Popover
       openClassName="dropdown-open"
       placement="bottom"
-      trigger="click"
       content={overlay}
       key={key}
     >
       <div className="OrgDropdown">
-        <Button className="org-name">
-          {selected ? (
-            selected
-          ) : (
-            <>
-              <span>Select an organization</span>
-              <Icon type="down" />
-            </>
-          )}
-        </Button>
+        {selected ? (
+          selected
+        ) : (
+          <a className="menu-dropdown ant-dropdown-link">
+            Select an organization
+            <Icon type="down" />
+          </a>
+        )}
       </div>
     </Popover>
   );
