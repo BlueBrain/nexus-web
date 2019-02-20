@@ -645,6 +645,200 @@ exports[`Project Form component should render correctly 1`] = `
               <FormItem
                 colon={true}
                 hasFeedback={false}
+                label="Vocab"
+                labelCol={
+                  Object {
+                    "sm": Object {
+                      "span": 5,
+                    },
+                    "xs": Object {
+                      "span": 24,
+                    },
+                  }
+                }
+                wrapperCol={
+                  Object {
+                    "sm": Object {
+                      "span": 19,
+                    },
+                    "xs": Object {
+                      "span": 24,
+                    },
+                  }
+                }
+              >
+                <Row
+                  className="ant-form-item"
+                  gutter={0}
+                >
+                  <div
+                    className="ant-row ant-form-item"
+                  >
+                    <Col
+                      className="ant-form-item-label"
+                      key="label"
+                      sm={
+                        Object {
+                          "span": 5,
+                        }
+                      }
+                      xs={
+                        Object {
+                          "span": 24,
+                        }
+                      }
+                    >
+                      <div
+                        className="ant-form-item-label ant-col-xs-24 ant-col-sm-5"
+                      >
+                        <label
+                          className=""
+                          htmlFor="vocab"
+                          onClick={[Function]}
+                          title="Vocab"
+                        >
+                          Vocab
+                        </label>
+                      </div>
+                    </Col>
+                    <Col
+                      className="ant-form-item-control-wrapper"
+                      key="wrapper"
+                      sm={
+                        Object {
+                          "span": 19,
+                        }
+                      }
+                      xs={
+                        Object {
+                          "span": 24,
+                        }
+                      }
+                    >
+                      <div
+                        className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19"
+                      >
+                        <div
+                          className="ant-form-item-control"
+                        >
+                          <span
+                            className="ant-form-item-children"
+                          >
+                            <Input
+                              data-__field={
+                                Object {
+                                  "name": "vocab",
+                                }
+                              }
+                              data-__meta={
+                                Object {
+                                  "initialValue": "",
+                                  "name": "vocab",
+                                  "originalProps": Object {
+                                    "disabled": false,
+                                    "placeholder": "Vocab",
+                                    "type": "text",
+                                  },
+                                  "ref": null,
+                                  "rules": Array [
+                                    Object {
+                                      "required": false,
+                                    },
+                                  ],
+                                  "trigger": "onChange",
+                                  "validate": Array [
+                                    Object {
+                                      "rules": Array [
+                                        Object {
+                                          "required": false,
+                                        },
+                                      ],
+                                      "trigger": Array [
+                                        "onChange",
+                                      ],
+                                    },
+                                  ],
+                                  "valuePropName": "value",
+                                }
+                              }
+                              disabled={false}
+                              id="vocab"
+                              onChange={[Function]}
+                              placeholder="Vocab"
+                              type="text"
+                              value=""
+                            >
+                              <input
+                                className="ant-input"
+                                data-__field={
+                                  Object {
+                                    "name": "vocab",
+                                  }
+                                }
+                                data-__meta={
+                                  Object {
+                                    "initialValue": "",
+                                    "name": "vocab",
+                                    "originalProps": Object {
+                                      "disabled": false,
+                                      "placeholder": "Vocab",
+                                      "type": "text",
+                                    },
+                                    "ref": null,
+                                    "rules": Array [
+                                      Object {
+                                        "required": false,
+                                      },
+                                    ],
+                                    "trigger": "onChange",
+                                    "validate": Array [
+                                      Object {
+                                        "rules": Array [
+                                          Object {
+                                            "required": false,
+                                          },
+                                        ],
+                                        "trigger": Array [
+                                          "onChange",
+                                        ],
+                                      },
+                                    ],
+                                    "valuePropName": "value",
+                                  }
+                                }
+                                disabled={false}
+                                id="vocab"
+                                onChange={[Function]}
+                                onKeyDown={[Function]}
+                                placeholder="Vocab"
+                                type="text"
+                                value=""
+                              />
+                            </Input>
+                          </span>
+                          <Animate
+                            animation={Object {}}
+                            component=""
+                            componentProps={Object {}}
+                            key="help"
+                            onAppear={[Function]}
+                            onEnd={[Function]}
+                            onEnter={[Function]}
+                            onLeave={[Function]}
+                            transitionAppear={true}
+                            transitionEnter={true}
+                            transitionLeave={true}
+                            transitionName="show-help"
+                          />
+                        </div>
+                      </div>
+                    </Col>
+                  </div>
+                </Row>
+              </FormItem>
+              <FormItem
+                colon={true}
+                hasFeedback={false}
                 wrapperCol={
                   Object {
                     "sm": Object {
