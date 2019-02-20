@@ -8,12 +8,18 @@ export interface OrgDropDownProps {
   activeName?: string;
   orgs?: OrgCardProps[];
   key?: any;
+  onRefreshClick?(): any;
+  onCreateNewClick?(): any;
+  onExploreAllClick?(): any;
 }
 
 const OrgDropdown: React.FunctionComponent<OrgDropDownProps> = ({
   activeName,
   orgs = [],
   key = '',
+  onRefreshClick = () => {},
+  onCreateNewClick = () => {},
+  onExploreAllClick = () => {},
 }) => {
   const [selected, setSelected] = React.useState(activeName);
 
@@ -23,10 +29,15 @@ const OrgDropdown: React.FunctionComponent<OrgDropDownProps> = ({
 
   const overlay = (
     <div className="OrgDropdownPopover">
+      <a style={{ float: 'right' }} onClick={onRefreshClick}>
+        refresh <Icon type="redo" />
+      </a>
       <OrgList orgs={orgs} onOrgClick={name => handleOrgSelected(name)} />
       <div className="org-menu">
-        <Button type="primary">Create New</Button>
-        <Button>Explore All</Button>
+        <Button type="primary" onClick={onCreateNewClick}>
+          Create New
+        </Button>
+        <Button onClick={onExploreAllClick}>Explore All</Button>
       </div>
     </div>
   );

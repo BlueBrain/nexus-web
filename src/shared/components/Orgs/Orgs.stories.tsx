@@ -98,7 +98,12 @@ storiesOf('Components/Orgs', module)
           <div style={{ margin: '50px 40px 0px' }}>
             <h2>Organization Dopdown in header</h2>
             <Header name="Mark Hamill" links={[]}>
-              <OrgDropdown orgs={orgs} />
+              <OrgDropdown
+                orgs={orgs}
+                onCreateNewClick={action('onCreateNewClick')}
+                onExploreAllClick={action('onExploreAllClick')}
+                onRefreshClick={action('onRefreshClick')}
+              />
             </Header>
           </div>
           <div style={{ margin: '50px 40px 0px' }}>

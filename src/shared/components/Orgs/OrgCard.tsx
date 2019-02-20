@@ -23,7 +23,7 @@ const OrgCard: React.FunctionComponent<OrgCardProps> = ({
   onEdit = () => {},
 }) => {
   return (
-    <Card className="OrgCard" tabIndex={1} onClick={onClick}>
+    <Card className="OrgCard" tabIndex={1} onClick={onClick} bordered={false}>
       <div className="content">
         <div className="logo">
           <Avatar shape="square" size={32} icon="team" src={logo} />
@@ -48,9 +48,7 @@ const OrgCard: React.FunctionComponent<OrgCardProps> = ({
           </Button>
         )}
       </div>
-      {description && (<p className="org-description">
-          {description}
-        </p>)}
+      {description && <p className="org-description">{description}</p>}
     </Card>
   );
 };

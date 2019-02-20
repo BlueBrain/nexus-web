@@ -35,11 +35,11 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
 
   return (
     <div className="OrgList">
-      <Search
+      {/* <Search
         className="filter"
         placeholder="Filter by name"
         onChange={handleChange}
-      />
+      /> */}
       <AnimatedList
         itemComponent={(org, i) => (
           <OrgCard
