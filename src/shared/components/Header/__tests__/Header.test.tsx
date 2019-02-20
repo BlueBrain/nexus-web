@@ -22,7 +22,6 @@ describe('Header component', () => {
 
   describe('Logo Block', () => {
     it('Should diplay the Nexus logo followed by the App name', () => {
-      expect(wrapper.find('.logo-block').children()).toHaveLength(2);
       expect(wrapper.find('.logo')).toBeTruthy();
       expect(wrapper.find('h1').text()).toEqual('Nexus');
     });
