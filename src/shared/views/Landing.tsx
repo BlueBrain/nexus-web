@@ -14,12 +14,13 @@ import Skeleton from '../components/Skeleton';
 import { Button, Modal, Drawer, notification, Empty } from 'antd';
 import OrgForm from '../components/Orgs/OrgForm';
 import { CreateOrgPayload } from '@bbp/nexus-sdk/lib/Organization/types';
+import { Link } from 'react-router-dom';
 
 interface LandingProps {
   paginatedOrgs?: PaginatedList<Organization>;
   displayPerPage: number;
   busy: boolean;
-  error: boolean;
+  error?: { message: string; name: string };
   goTo(orgLabel: string): void;
   fetchOrgs(paginationSettings?: PaginationSettings): any;
   createOrg: (
@@ -179,18 +180,36 @@ const Landing: React.FunctionComponent<LandingProps> = ({
       />
     );
   }
-  if (!paginatedOrgs && error) {
-    <Empty
-      style={{ marginTop: '22vh' }}
-      description="There was a problem while loading Organizations"
-    />;
+
+  if (error) {
+    if (error.message === 'Error: Forbidden') {
+      return (
+        <Empty
+          style={{ marginTop: '22vh' }}
+          description={
+            <span>
+              You need to <Link to="/login">login</Link> in order to list
+              Organizations
+            </span>
+          }
+        />
+      );
+    }
+    return (
+      <Empty
+        style={{ marginTop: '22vh' }}
+        description="There was a problem while loading Organizations"
+      />
+    );
   }
 
-  if (!paginatedOrgs && !error) {
-    <Empty
-      style={{ marginTop: '22vh' }}
-      description="No Organizations found..."
-    />;
+  if (paginatedOrgs.results.length === 0 && !error) {
+    return (
+      <Empty
+        style={{ marginTop: '22vh' }}
+        description="No Organizations found..."
+      />
+    );
   }
 
   return (
@@ -205,31 +224,27 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           Create Organization
         </Button>
       </div>
-      {paginatedOrgs.results.length === 0 ? (
-        <p style={{ marginTop: 50 }}>No organizations yet...</p>
-      ) : (
-        <OrgList
-          orgs={paginatedOrgs.results}
-          onOrgClick={goTo}
-          busy={busy}
-          paginationSettings={{
-            total: paginatedOrgs.total,
-            from: paginatedOrgs.index,
-            pageSize: displayPerPage,
-          }}
-          onOrgEdit={(orgLabel: string) =>
-            setSelectedOrg(
-              paginatedOrgs.results.filter(o => o.label === orgLabel)[0]
-            )
-          }
-          onPaginationChange={pageNumber =>
-            fetchOrgs({
-              from: pageNumber * displayPerPage - displayPerPage,
-              size: displayPerPage,
-            })
-          }
-        />
-      )}
+      <OrgList
+        orgs={paginatedOrgs.results}
+        onOrgClick={goTo}
+        busy={busy}
+        paginationSettings={{
+          total: paginatedOrgs.total,
+          from: paginatedOrgs.index,
+          pageSize: displayPerPage,
+        }}
+        onOrgEdit={(orgLabel: string) =>
+          setSelectedOrg(
+            paginatedOrgs.results.filter(o => o.label === orgLabel)[0]
+          )
+        }
+        onPaginationChange={pageNumber =>
+          fetchOrgs({
+            from: pageNumber * displayPerPage - displayPerPage,
+            size: displayPerPage,
+          })
+        }
+      />
       <Modal
         title="New Organization"
         visible={modalVisible}
@@ -266,7 +281,7 @@ const mapStateToProps = (state: RootState) => ({
   displayPerPage: state.uiSettings.pageSizes.orgsListPageSize,
   paginatedOrgs: (state.nexus && state.nexus.orgs.data) || undefined,
   busy: (state.nexus && state.nexus.orgs.isFetching) || false,
-  error: !!(state.nexus && state.nexus.orgs.error),
+  error: (state.nexus && state.nexus.orgs.error) || undefined,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
