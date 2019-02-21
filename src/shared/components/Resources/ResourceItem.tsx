@@ -41,6 +41,7 @@ const ResourceListItem: React.FunctionComponent<ResourceItemProps> = props => {
         onKeyPress={handleKeyPress}
         tabIndex={index + 1}
       >
+        {/* {Preview} */}
         <div className="name">
           <em>{resource.name}</em>
         </div>

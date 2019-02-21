@@ -8,8 +8,9 @@ import { Empty, Switch, Icon, Tooltip } from 'antd';
 import Menu from '../components/Workspace/Menu';
 import { createList, initializeProjectList } from '../store/actions/lists';
 import { ListsByProjectState } from '../store/reducers/lists';
-import { Project, Resource } from '@bbp/nexus-sdk';
+import { Project, Resource, NexusFile } from '@bbp/nexus-sdk';
 import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
+import { createFile } from '../store/actions/nexus/files';
 
 interface ProjectViewProps {
   project: Project | null;
@@ -25,6 +26,7 @@ interface ProjectViewProps {
     payload: CreateResourcePayload
   ): Promise<Resource>;
   fetchProject(org: string, project: string): void;
+  createFile(file: File): void;
 }
 
 const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
@@ -36,6 +38,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   initialize,
   lists,
   fetchProject,
+  createFile,
 }) => {
   const projectLabel = project ? project.label : null;
   React.useEffect(
@@ -88,6 +91,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
                   )
                 }
                 project={project}
+                onFileUpload={createFile}
                 createList={() => {
                   createList(project.orgLabel + project.label);
                 }}
@@ -135,7 +139,7 @@ const mapStateToProps = (state: RootState) => ({
     null,
   lists: state.lists || {},
 });
-const mapDispatchToProps = (dispatch: any) => {
+const mapDispatchToProps = (dispatch: any, ownProps: any) => {
   return {
     fetchProject: (orgLabel: string, projectLabel: string) => {
       dispatch(fetchOrg(orgLabel));
@@ -151,6 +155,9 @@ const mapDispatchToProps = (dispatch: any) => {
       schemaId: string,
       payload: CreateResourcePayload
     ) => await Resource.create(orgLabel, projectLabel, schemaId, payload),
+    createFile: async (file: File) => {
+      dispatch(createFile(file));
+    },
   };
 };
 

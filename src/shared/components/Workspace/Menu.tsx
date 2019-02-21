@@ -1,13 +1,16 @@
 import * as React from 'react';
 import { Button, Divider } from 'antd';
-import { Project, Resource } from '@bbp/nexus-sdk';
+import { Project, Resource, NexusFile } from '@bbp/nexus-sdk';
 import ResourceForm from '../Resources/ResourceForm';
 import { Link } from 'react-router-dom';
 import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
 import SideMenu from './SideMenu';
+import FileUploader from '../FileUpload';
+
 interface MenuProps {
   project?: Project | null;
   createList: (orgProjectFilterKey: string) => void;
+  onFileUpload: (file: File) => void;
   createResource: (
     schemaId: string,
     payload: CreateResourcePayload
@@ -24,6 +27,7 @@ const Menu: React.FunctionComponent<MenuProps> = ({
   createResource,
   project,
   render,
+  onFileUpload,
 }) => {
   const [visible, setVisible] = React.useState(true);
   if (!project) {
@@ -84,6 +88,8 @@ const Menu: React.FunctionComponent<MenuProps> = ({
             View Project ACLs
           </Link>
         </div>
+        <Divider />
+        <FileUploader onFileUpload={onFileUpload} />
       </SideMenu>
     </>
   );

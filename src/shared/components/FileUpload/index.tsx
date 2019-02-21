@@ -1,22 +1,42 @@
 import * as React from 'react';
 import { Upload, Icon, message, Switch } from 'antd';
-import { connect } from 'react-redux';
-import { RootState } from '../../store/reducers';
 
 const Dragger = Upload.Dragger;
 
 interface FileUploaderProps {
-  onFileUpload: (file: any) => Promise<any>;
+  onFileUpload: (file: File) => void;
+}
+
+interface CustomFileRequest {
+  onProgress(event: { percent: number }): void;
+  onError(event: Error, body?: Object): void;
+  onSuccess(body: Object): void;
+  data: Object;
+  filename: String;
+  file: File;
+  withCredentials: Boolean;
+  action: String;
+  headers: Object;
 }
 
 const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
   onFileUpload,
 }) => {
   const [directoryMode, setDirectoryMode] = React.useState(false);
+
+  const handleFileUpload = async (customFileRequest: CustomFileRequest) => {
+    try {
+      await onFileUpload(customFileRequest.file);
+      customFileRequest.onSuccess('Successfully uploaded file');
+    } catch (error) {
+      customFileRequest.onError(error);
+    }
+  };
+
   const draggerProps = {
     name: 'file',
     multiple: true,
-    customRequest: onFileUpload,
+    customRequest: handleFileUpload,
     onPreview: (file: any) => {
       // TODO do something on click, like show resource Edit / Inspect View
     },
