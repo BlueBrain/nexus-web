@@ -27,11 +27,6 @@ const ResourceListItem: React.FunctionComponent<ResourceItemProps> = props => {
     }
   };
 
-  // const Preview =
-  //   raw._mediaType && raw._mediaType.includes('image') ? (
-  //     <Avatar src={self} />
-  //   ) : null;
-
   return (
     <Popover
       content={
