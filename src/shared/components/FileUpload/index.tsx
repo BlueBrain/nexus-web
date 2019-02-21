@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Upload, Icon, message, Switch } from 'antd';
-import { NexusFile } from '@bbp/nexus-sdk';
 
 const Dragger = Upload.Dragger;
 
