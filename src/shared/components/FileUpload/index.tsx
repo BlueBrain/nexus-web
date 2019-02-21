@@ -29,7 +29,6 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
       await onFileUpload(customFileRequest.file);
       customFileRequest.onSuccess('Successfully uploaded file');
     } catch (error) {
-      console.error(error);
       customFileRequest.onError(error);
     }
   };
