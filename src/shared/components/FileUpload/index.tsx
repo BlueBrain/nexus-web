@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { Upload, Icon, message, Switch } from 'antd';
+import { NexusFile } from '@bbp/nexus-sdk';
 
 const Dragger = Upload.Dragger;
 
 interface FileUploaderProps {
-  onFileUpload: (file: any) => Promise<any>;
+  onFileUpload: (file: File) => void;
 }
 
 interface CustomFileRequest {
@@ -26,8 +27,8 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
 
   const handleFileUpload = async (customFileRequest: CustomFileRequest) => {
     try {
-      const fileInstance = await onFileUpload(customFileRequest.file);
-      customFileRequest.onSuccess(fileInstance.raw);
+      await onFileUpload(customFileRequest.file);
+      customFileRequest.onSuccess('Successfully uploaded file');
     } catch (error) {
       console.error(error);
       customFileRequest.onError(error);

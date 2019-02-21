@@ -229,10 +229,9 @@ export const makeProjectPublic: ActionCreator<ThunkAction> = (
 
       const getAnonymous = async (): Promise<IdentityResponse> => {
         try {
-          const identitiesResponse = await httpGet(
-            `${endpoint}/identities`,
-            false
-          );
+          const identitiesResponse = await httpGet(`${endpoint}/identities`, {
+            useBase: false,
+          });
           const anonymous = identitiesResponse.identities.find(
             (identity: Identity) => identity['@type'] === 'Anonymous'
           );
@@ -250,7 +249,7 @@ export const makeProjectPublic: ActionCreator<ThunkAction> = (
 
       const acls = await httpGet(
         `${endpoint}/acls/${orgLabel}/${projectLabel}`,
-        false
+        { useBase: false }
       );
 
       const alreadyPublic = acls._results.some((result: any) => {
