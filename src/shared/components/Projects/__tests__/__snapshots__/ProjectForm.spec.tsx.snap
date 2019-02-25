@@ -911,30 +911,35 @@ exports[`Project Form component should render correctly 1`] = `
                                     key=".0"
                                     type="plus"
                                   >
-                                    <i
-                                      className="anticon anticon-plus"
+                                    <LocaleReceiver
+                                      componentName="Icon"
                                     >
-                                      <IconReact
-                                        className=""
-                                        type="plus-o"
+                                      <i
+                                        aria-label="icon: plus"
+                                        className="anticon anticon-plus"
                                       >
-                                        <svg
-                                          aria-hidden="true"
+                                        <IconReact
                                           className=""
-                                          data-icon="plus"
-                                          fill="currentColor"
-                                          height="1em"
-                                          key="svg-plus"
-                                          viewBox="64 64 896 896"
-                                          width="1em"
+                                          type="plus-o"
                                         >
-                                          <path
-                                            d="M848 474H550V152h-76v322H176c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h298v322h76V550h298c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z"
-                                            key="svg-plus-svg-0"
-                                          />
-                                        </svg>
-                                      </IconReact>
-                                    </i>
+                                          <svg
+                                            aria-hidden="true"
+                                            className=""
+                                            data-icon="plus"
+                                            fill="currentColor"
+                                            height="1em"
+                                            key="svg-plus"
+                                            viewBox="64 64 896 896"
+                                            width="1em"
+                                          >
+                                            <path
+                                              d="M848 474H550V152h-76v322H176c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h298v322h76V550h298c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z"
+                                              key="svg-plus-svg-0"
+                                            />
+                                          </svg>
+                                        </IconReact>
+                                      </i>
+                                    </LocaleReceiver>
                                   </Icon>
                                   <span
                                     key=".1"
