@@ -5,6 +5,7 @@ import TypesIcon from '../Types/TypesIcon';
 import './Resources.less';
 import ResourceMetadataCard from './MetadataCard';
 import { Resource } from '@bbp/nexus-sdk';
+import ResourcePreview from './ResourcePreview';
 
 const MOUSE_ENTER_DELAY = 0.5;
 
@@ -18,6 +19,16 @@ export interface ResourceItemProps {
 const ResourceListItem: React.FunctionComponent<ResourceItemProps> = props => {
   const { resource, index, onClick = () => {} } = props;
   const containerRef = React.createRef<HTMLDivElement>();
+
+  let Preview = null;
+  if (
+    resource.type &&
+    resource.type.includes('File') &&
+    (resource.data as any)['_mediaType'] &&
+    (resource.data as any)['_mediaType'].includes('image')
+  ) {
+    Preview = <ResourcePreview resource={resource} />;
+  }
 
   const handleKeyPress = (e: any) => {
     const code = e.keyCode || e.which;
@@ -41,7 +52,7 @@ const ResourceListItem: React.FunctionComponent<ResourceItemProps> = props => {
         onKeyPress={handleKeyPress}
         tabIndex={index + 1}
       >
-        {/* {Preview} */}
+        {Preview}
         <div className="name">
           <em>{resource.name}</em>
         </div>

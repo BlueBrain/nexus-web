@@ -291,7 +291,7 @@ export const makeProjectPublic: ActionCreator<ThunkAction> = (
                 },
               ],
             },
-            false
+            { useBase: false }
           );
           return true;
         } catch (e) {
