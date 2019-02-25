@@ -27,7 +27,7 @@ const ResourcePreview: React.FunctionComponent<
         setFile(nexusFile);
       })
       .catch((error: Error) => {
-        console.error(error);
+        // Handle error?
       });
   }
 
