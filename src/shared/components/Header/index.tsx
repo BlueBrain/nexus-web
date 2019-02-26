@@ -45,7 +45,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             textToCopy={token}
             render={(copySuccess, triggerCopy) => (
               <Button size="small" icon="copy" onClick={() => triggerCopy()}>
-                {copySuccess ? 'Copied!' : 'Token'}
+                {copySuccess ? 'Token copied!' : 'Copy token'}
               </Button>
             )}
           />
