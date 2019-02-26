@@ -5,7 +5,7 @@ import TypesIcon from '../Types/TypesIcon';
 import './Resources.less';
 import ResourceMetadataCard from './MetadataCard';
 import { Resource } from '@bbp/nexus-sdk';
-import ResourcePreview from './ResourcePreview';
+import ResourcePreview, { hasDisplayableImage } from './ResourcePreview';
 
 const MOUSE_ENTER_DELAY = 0.5;
 
@@ -20,17 +20,9 @@ const ResourceListItem: React.FunctionComponent<ResourceItemProps> = props => {
   const { resource, index, onClick = () => {} } = props;
   const containerRef = React.createRef<HTMLDivElement>();
 
-  let Preview = null;
-  if (
-    resource.type &&
-    resource.type.includes('File') &&
-    (resource.data as any)['_mediaType'] &&
-    (resource.data as any)['_mediaType'].includes('image') &&
-    // Don't download preview if filesize is > than 1MB
-    (resource.data as any)['_bytes'] <= 1000000
-  ) {
-    Preview = <ResourcePreview resource={resource} />;
-  }
+  const Preview = hasDisplayableImage(resource) ? (
+    <ResourcePreview resource={resource} />
+  ) : null;
 
   const handleKeyPress = (e: any) => {
     const code = e.keyCode || e.which;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Popover, Avatar } from 'antd';
+import { Popover, Avatar, notification } from 'antd';
 import './Resources.less';
 import { Resource, NexusFile } from '@bbp/nexus-sdk';
 
@@ -7,6 +7,17 @@ const MOUSE_ENTER_DELAY = 0.5;
 
 export interface ResourcePreviewProps {
   resource: Resource;
+}
+
+export function hasDisplayableImage(resource: Resource): boolean {
+  return (
+    resource.type &&
+    resource.type.includes('File') &&
+    (resource.data as any)['_mediaType'] &&
+    (resource.data as any)['_mediaType'].includes('image') &&
+    // Don't download preview if filesize is > than 1MB
+    (resource.data as any)['_bytes'] <= 1000000
+  );
 }
 
 const ResourcePreview: React.FunctionComponent<
@@ -28,6 +39,13 @@ const ResourcePreview: React.FunctionComponent<
       })
       .catch((error: Error) => {
         // Handle error?
+        notification.error({
+          message: 'A file loading error occured',
+          description: error.message,
+          duration: 0,
+        });
+        // @ts-ignore
+        console.error(error);
       });
   }
 
