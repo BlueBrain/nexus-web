@@ -16,7 +16,7 @@ export function hasDisplayableImage(resource: Resource): boolean {
     (resource.data as any)['_mediaType'] &&
     (resource.data as any)['_mediaType'].includes('image') &&
     // Don't download preview if filesize is > than 1MB
-    (resource.data as any)['_bytes'] <= 1000000
+    (resource.data as any)['_bytes'] <= 1e6
   );
 }
 
@@ -44,7 +44,7 @@ const ResourcePreview: React.FunctionComponent<
           description: error.message,
           duration: 0,
         });
-        // @ts-ignore
+        // tslint:disable-next-line:no-console
         console.error(error);
       });
   }
