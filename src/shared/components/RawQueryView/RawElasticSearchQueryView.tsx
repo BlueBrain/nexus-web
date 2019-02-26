@@ -1,10 +1,18 @@
 import * as React from 'react';
-import { Form, Input, Button, Card, List } from 'antd';
+import { Form, Icon, Button, Card, List } from 'antd';
 import { executeRawElasticSearchQuery } from '../../store/actions/rawQuery';
 import { RawElasticSearchQueryState } from '../../store/reducers/rawQuery';
 import { connect } from 'react-redux';
 import { PaginatedList, PaginationSettings } from '@bbp/nexus-sdk';
 import { ElasticSearchHit } from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
+import { UnControlled as CodeMirror } from 'react-codemirror2';
+
+// Codemirror will not load on the server, so we need to make sure
+// the language support code doesn't load either.
+if (typeof window !== 'undefined') {
+  require('codemirror/mode/javascript/javascript');
+  require('codemirror/addon/display/placeholder');
+}
 
 let ReactJson: any;
 if (typeof window !== 'undefined') {
@@ -30,7 +38,6 @@ export interface RawElasticSearchQueryViewProps {
   ): void;
 }
 
-const TextArea = Input.TextArea;
 const FormItem = Form.Item;
 const ListItem = List.Item;
 
@@ -52,6 +59,7 @@ const RawElasticSearchQueryView: React.FunctionComponent<
     2
   );
   const [query, setQuery] = React.useState(formattedInitialQuery);
+  const [valid, setValid] = React.useState(true);
 
   const data = response.results.map(result => result._source || []);
   const total = response.total || 0;
@@ -75,6 +83,18 @@ const RawElasticSearchQueryView: React.FunctionComponent<
     );
   };
 
+  const handleChange = (editor: any, data: any, value: any) => {
+    try {
+      JSON.parse(value);
+      setQuery(value);
+      setValid(true);
+    } catch (error) {
+      // tslint:disable-next-line:no-console
+      console.log('error', error)
+      setValid(false);
+    }
+  };
+
   return (
     <>
       <Form
@@ -89,17 +109,27 @@ const RawElasticSearchQueryView: React.FunctionComponent<
           );
         }}
       >
+        <>
+        <div className="control-panel">
+          <div>
+            <div className={`feedback ${valid ? "_positive" : "_negative"}`}>
+              <Icon type={valid ? "check-circle" : "exclamation-circle"} /> {valid ? "Valid JSON" : "Invalid JSON"}
+            </div>
+          </div>
+        </div>
+        <CodeMirror
+          value={initialQuery}
+          options={{
+            mode: { name: 'javascript', json: true },
+            theme: 'base16-light',
+            placeholder: 'Enter a valid ElasticSearch query',
+            viewportMargin: Infinity,
+          }}
+          onChange={handleChange}
+        />
+        </>
         <FormItem>
-          <TextArea
-            className="query"
-            value={query}
-            placeholder={`Enter a valid ElasticSearch query`}
-            onChange={e => setQuery(e.target.value)}
-            autosize
-          />
-        </FormItem>
-        <FormItem>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" disabled={!valid}>
             Execute ElasticSearch query
           </Button>
         </FormItem>

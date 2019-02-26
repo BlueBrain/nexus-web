@@ -1,10 +1,19 @@
 import * as React from 'react';
-import { Form, Input, Button, Table, Card } from 'antd';
+import { Form, Icon, Button, Table, Card } from 'antd';
 import { executeRawQuery } from '../../store/actions/rawQuery';
 import { RawQueryState } from '../../store/reducers/rawQuery';
 import { connect } from 'react-redux';
 import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/lib/View/SparqlView/types';
 import * as hash from 'object-hash';
+import { UnControlled as CodeMirror } from 'react-codemirror2';
+
+// Codemirror will not load on the server, so we need to make sure
+// the language support code doesn't load either.
+if (typeof window !== 'undefined') {
+  require('codemirror/mode/sparql/sparql');
+  require('codemirror/addon/display/placeholder');
+}
+
 
 export interface RawSparqlQueryViewProps {
   initialQuery: string;
@@ -15,7 +24,6 @@ export interface RawSparqlQueryViewProps {
   executeRawQuery(orgName: string, projectName: string, query: string): void;
 }
 
-const TextArea = Input.TextArea;
 const FormItem = Form.Item;
 const { Column } = Table;
 
@@ -72,6 +80,16 @@ const RawSparqlQueryView: React.FunctionComponent<RawSparqlQueryViewProps> = ({
     />
   ));
 
+  const handleChange = (editor: any, data: any, value: any) => {
+    try {
+      setQuery(value);
+    } catch (error) {
+      // tslint:disable-next-line:no-console
+      console.log('error', error)
+    }
+  };
+
+
   return (
     <>
       <Form
@@ -80,15 +98,17 @@ const RawSparqlQueryView: React.FunctionComponent<RawSparqlQueryViewProps> = ({
           executeRawQuery(wantedOrg, wantedProject, query);
         }}
       >
-        <FormItem>
-          <TextArea
-            className="query"
-            value={query}
-            placeholder={`Enter a valid SPARQL query`}
-            onChange={e => setQuery(e.target.value)}
-            autosize
-          />
-        </FormItem>
+        <CodeMirror
+
+          value={initialQuery}
+          options={{
+            mode: { name: 'sparql' },
+            theme: 'base16-light',
+            placeholder: 'Enter a valid SPARQL query',
+            viewportMargin: Infinity,
+          }}
+          onChange={handleChange}
+        />
         <FormItem>
           <Button type="primary" htmlType="submit">
             Execute SPARQL query
