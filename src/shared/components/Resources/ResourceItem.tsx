@@ -25,7 +25,9 @@ const ResourceListItem: React.FunctionComponent<ResourceItemProps> = props => {
     resource.type &&
     resource.type.includes('File') &&
     (resource.data as any)['_mediaType'] &&
-    (resource.data as any)['_mediaType'].includes('image')
+    (resource.data as any)['_mediaType'].includes('image') &&
+    // Don't download preview if filesize is > than 1MB
+    (resource.data as any)['_bytes'] <= 1000000
   ) {
     Preview = <ResourcePreview resource={resource} />;
   }
