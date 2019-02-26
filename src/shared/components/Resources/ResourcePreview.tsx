@@ -38,7 +38,6 @@ const ResourcePreview: React.FunctionComponent<
         setFile(nexusFile);
       })
       .catch((error: Error) => {
-        // Handle error?
         notification.error({
           message: 'A file loading error occured',
           description: error.message,
