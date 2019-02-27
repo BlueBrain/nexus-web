@@ -23,6 +23,9 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const [value, setValue] = React.useState(rawData);
 
   const handleChange = (editor: any, data: any, value: any) => {
+    if (!editable) {
+      return;
+    }
     try {
       const parsedVal = JSON.parse(value);
       setValue(parsedVal);

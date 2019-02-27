@@ -31,3 +31,5 @@ declare module Identicon {
 declare module 'identicon.js' {
   export = Identicon;
 }
+
+declare module 'dotparser';
