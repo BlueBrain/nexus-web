@@ -5,7 +5,7 @@ import * as dotParser from 'dotparser';
 // const d3 = Object.assign(d3Base, d3Force);
 
 export default (dotGraph: string, element: HTMLElement) => {
-  console.log(dotParser(dotGraph));
+  // console.log(dotParser(dotGraph));
 
   const svg = d3
     .select(`[id="${element.id}"]`)
