@@ -16,6 +16,8 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
   const [editing, setEditing] = React.useState(false);
   const [busy, setFormBusy] = React.useState(isFetching);
 
+  const isFile = resource && resource.type && resource.type.includes('File');
+
   const handleSubmit = async (value: any) => {
     if (resource) {
       try {
@@ -55,6 +57,7 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
           <>
             <ResourceMetadataCard {...{ ...resource, name: resource.name }} />
             <ResourceEditor
+              editable={!isFile}
               rawData={{
                 context: resource.context,
                 type: resource.type,

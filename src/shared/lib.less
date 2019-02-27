@@ -24,6 +24,8 @@
 @bounce: cubic-bezier(0.645, 0.045, 0.355, 1);
 @interfaceTransition: 0.3s @bounce;
 @component-background: #fcfdfd;
+@maxConstrainedItemWidth: 980px;
+
 body {
   background-color: #9e9e9e1f;
   background-size: cover;
@@ -49,6 +51,11 @@ body {
   box-shadow: @box-shadow-base;
   border-radius: @border-radius-base;
   background-color: @background-color-subtle;
+}
+
+.constrainedWidth() {
+  max-width: @maxConstrainedItemWidth;
+  margin: 0 auto;
 }
 
 .scrollBar() {
