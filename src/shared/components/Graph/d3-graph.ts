@@ -7,12 +7,10 @@ import moment = require('moment');
 function titleOf(string: string) {
   const slash = string.substring(string.lastIndexOf('/') + 1);
   const title = slash.substring(slash.lastIndexOf('#') + 1);
-  const formats = [moment.ISO_8601, 'MM/DD/YYYY  :)  HH*mm*ss'];
+  const formats = [moment.ISO_8601];
   const isValidDate = moment(title, formats, true).isValid();
   return isValidDate ? moment(title).fromNow() : title;
 }
-
-// const d3 = Object.assign(d3Base, d3Force);
 
 export default (dotGraph: string, element: HTMLElement) => {
   const dataset = dotToNodesParser(dotParser(dotGraph));
@@ -36,8 +34,6 @@ export default (dotGraph: string, element: HTMLElement) => {
 
   const linkDistance = 120;
 
-  // var colors = d3.scale.category10();
-
   const links = dataset.edges.map(d => Object.create(d));
   const nodes = dataset.nodes.map(d => Object.create(d));
 
@@ -52,7 +48,6 @@ export default (dotGraph: string, element: HTMLElement) => {
     )
     .force('charge', d3Force.forceManyBody().strength(-10))
     .force('collide', d3.forceCollide().radius(30))
-    // .force("r", d3.forceRadial(nodes).radius(d => (d.level*width/8)+10).strength(d => d.seed === true ? 2:0))
     .force(
       'center',
       d3Force.forceCenter(element.clientWidth / 2, element.clientHeight / 2)
@@ -108,7 +103,6 @@ export default (dotGraph: string, element: HTMLElement) => {
     .style('pointer-events', 'none')
     .attr('class', 'edge-label')
     .append('textPath')
-    // .attr('xlink:href',function(d,i) {return '#edgepath'+i})
     .style('pointer-events', 'none')
     .text(d => {
       return dataset.edges[d.index].label;
@@ -135,34 +129,6 @@ export default (dotGraph: string, element: HTMLElement) => {
     .attr('class', 'label')
     .attr('pointer-events', 'none')
     .text(d => titleOf(`${dataset.nodes[d.index].id}`));
-  // .data(nodes)
-  // .attr('stroke', '#fff')
-  // .attr('stroke-width', 1.5)
-  // .selectAll('circle')
-  // .data(nodes)
-  // .join('circle')
-  // .attr('r', 10)
-  // .attr('fill', () => '#44c7f4')
-  // .call(drag(simulation));
-
-  // const edgelabels = svg
-  //   .selectAll('.edgelabel')
-  //   .data(dataset.links)
-  //   .enter()
-  //   .append('text')
-  //   .style('pointer-events', 'none')
-  //   .attr('class', 'edgeLabel')
-  //   .attr('id', (d, i) => {
-  //     return `edgelabel${i}`;
-  //   })
-  //   .attr('dx', 80)
-  //   .attr('dy', 0)
-  //   .attr('font-size', 10)
-  //   .attr('fill', '#aaa')
-  //   .append('textPath')
-  //   .attr('xlink:href', (d, i) => `#edgepath${i}`)
-  //   .style('pointer-events', 'none')
-  //   .text((d, i) => `my label ${i}`);
 
   simulation.on('tick', () => {
     link
@@ -171,7 +137,6 @@ export default (dotGraph: string, element: HTMLElement) => {
       .attr('x2', d => d.target.x)
       .attr('y2', d => d.target.y);
 
-    // node.attr('cx', d => d.x).attr('cy', d => d.y);
     circles.attr('cx', d => d.x).attr('cy', d => d.y);
     labels.attr('x', d => d.x).attr('y', d => d.y);
     linePaths.attr(
