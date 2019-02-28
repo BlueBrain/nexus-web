@@ -31,9 +31,14 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
       match.params.resourceId
     );
   };
+  // Fetch Resource
   React.useEffect(() => {
     fetch();
-    if (!dotGraph && resource) {
+  }, [match.params.resourceId]);
+
+  // Once we have a legit resource, let's fetch the DOT
+  React.useEffect(() => {
+    if (resource) {
       setBusy(true);
       // cannot use instance method here,
       // because sometimes we'll get 'resource'
@@ -53,7 +58,7 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
           console.error(error);
         });
     }
-  }, [match.params.resourceId]);
+  }, [resource]);
 
   return (
     <>
