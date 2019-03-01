@@ -7,6 +7,8 @@ import GraphVisualizer from '../Graph/GraphVisualizer';
 
 const TabPane = Tabs.TabPane;
 
+const NEXUS_FILE_TYPE = 'File';
+
 export interface ResourceViewProps {
   resource: Resource | null;
   error: Error | null;
@@ -20,7 +22,9 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
   const [editing, setEditing] = React.useState(false);
   const [busy, setFormBusy] = React.useState(isFetching);
 
-  const isFile = resource && resource.type && resource.type.includes('File');
+  // TODO move NexusFileType constant to sdk
+  const isFile =
+    resource && resource.type && resource.type.includes(NEXUS_FILE_TYPE);
 
   const handleSubmit = async (value: any) => {
     if (resource) {
