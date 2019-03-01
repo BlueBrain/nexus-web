@@ -1,3 +1,8 @@
+/*
+  These interfaces describe the output of dotParser js
+  and are just a helpful way to help me transcribe the output
+  into something that d3 can use more easily.
+*/
 export interface Attribute {
   eq: string;
   id: 'label';
@@ -44,6 +49,10 @@ const assignNodeIfDoesntExist = (
   nodes.push(node);
 };
 
+/*
+  This function will take the output from dotParser to parse the dotGraph,
+  and transform it into a common format that makes things easier for d3
+*/
 export default (dotObject: ParsedDotObject[]): NodeEdgeCollection => {
   return dotObject[0].children.reduce(
     (collections: NodeEdgeCollection, statement: EdgeStatement) => {

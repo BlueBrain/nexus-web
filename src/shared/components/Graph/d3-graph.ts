@@ -12,7 +12,16 @@ function titleOf(string: string) {
   return isValidDate ? moment(title).fromNow() : title;
 }
 
-export default (dotGraph: string, element: HTMLElement) => {
+type TeardownCallback = VoidFunction;
+
+/*
+  MakeGraph will build a graph using d3 in a funcitonal way.
+  It will return a teardown Callback that can be called to remove the d3 graph.
+*/
+const makeGraph = (
+  dotGraph: string,
+  element: HTMLElement
+): TeardownCallback => {
   const dataset = dotToNodesParser(dotParser(dotGraph));
   const svg = d3
     .select(`[id="${element.id}"]`)
@@ -161,3 +170,5 @@ export default (dotGraph: string, element: HTMLElement) => {
       .remove();
   };
 };
+
+export default makeGraph;

@@ -1,5 +1,12 @@
 import graph from './d3-graph';
-
+/**
+ * This class will handle stateful aspects of each d3 class instance
+ * I did this to make sure React can keep track of instances and destroy them
+ * as well as report errors
+ *
+ * @export
+ * @class Graph
+ */
 export class Graph {
   private renderError?: Error;
   readonly dotGraph: string;
