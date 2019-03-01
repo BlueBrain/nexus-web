@@ -1,7 +1,11 @@
 @import '../../lib.less';
 
+// This is the container for the d3 graph
+// the d3 svg component will inherit the dimensions of
+// this container
+// It must have a defined height for d3 to render
 .graph-visualizer {
   .interactiveArea();
   height: auto;
-  min-height: 600px;
+  min-height: 600px; // Arbitrary height that I just think looks good
 }
