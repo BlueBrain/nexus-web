@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Icon, Input, Button, Spin, Modal } from 'antd';
+import { Collapse, Form, Icon, Input, Button, Spin, Modal } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 /**
@@ -262,24 +262,28 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
             rules: [{ required: false }],
           })(<Input placeholder="Description" />)}
         </Form.Item>
-        <Form.Item label="Base" {...formItemLayout}>
-          {getFieldDecorator('base', {
-            initialValue: project ? project.base : '',
-            rules: [{ required: false }],
-          })(<Input placeholder="Base" />)}
-        </Form.Item>
-        <Form.Item label="Vocab" {...formItemLayout}>
-          {getFieldDecorator('vocab', {
-            initialValue: project ? project.vocab : '',
-            rules: [{ required: false }],
-          })(<Input placeholder="Vocab" />)}
-        </Form.Item>
-        {apiMappingsItems}
-        <Form.Item {...formItemLayoutWithOutLabel}>
-          <Button type="dashed" onClick={add} style={{ width: '60%' }}>
-            <Icon type="plus" /> Add API mapping
-          </Button>
-        </Form.Item>
+        <Collapse>
+          <Collapse.Panel header="Advanced settings" key="1">
+            <Form.Item label="Base" {...formItemLayout}>
+              {getFieldDecorator('base', {
+                initialValue: project ? project.base : '',
+                rules: [{ required: false }],
+              })(<Input placeholder="Base" />)}
+            </Form.Item>
+            <Form.Item label="Vocab" {...formItemLayout}>
+              {getFieldDecorator('vocab', {
+                initialValue: project ? project.vocab : '',
+                rules: [{ required: false }],
+              })(<Input placeholder="Vocab" />)}
+            </Form.Item>
+            {apiMappingsItems}
+            <Form.Item {...formItemLayoutWithOutLabel}>
+              <Button type="dashed" onClick={add} style={{ width: '60%' }}>
+                <Icon type="plus" /> Add API mapping
+              </Button>
+            </Form.Item>
+          </Collapse.Panel>
+        </Collapse>
         <Form.Item {...formItemLayoutWithOutLabel}>
           <Button
             type="primary"
