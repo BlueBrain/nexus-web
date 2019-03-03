@@ -54,6 +54,7 @@ const assignNodeIfDoesntExist = (
   and transform it into a common format that makes things easier for d3
 */
 export default (dotObject: ParsedDotObject[]): NodeEdgeCollection => {
+  console.log({ dotObject });
   return dotObject[0].children.reduce(
     (collections: NodeEdgeCollection, statement: EdgeStatement) => {
       statement.edge_list.forEach((edge: { id: string }) => {
@@ -65,7 +66,9 @@ export default (dotObject: ParsedDotObject[]): NodeEdgeCollection => {
       const edge = {
         source: statement.edge_list[0].id,
         target: statement.edge_list[1].id,
-        label: statement.attr_list[0].eq,
+        label: !!statement.attr_list.length
+          ? statement.attr_list[0].eq
+          : 'unlabled',
       };
       collections.edges.push(edge);
       return collections;

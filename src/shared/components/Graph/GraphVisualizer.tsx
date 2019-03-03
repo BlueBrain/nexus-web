@@ -1,6 +1,5 @@
 import * as React from 'react';
 import './GraphVisualizer.less';
-import graph from './d3-graph';
 import { uuidv4 } from '../../utils';
 import { Empty } from 'antd';
 import { Graph } from './Graph';
@@ -31,7 +30,9 @@ const GraphVisualizer: React.FunctionComponent<
   return (
     <div className="graph-visualizer" id={uuidv4()} ref={canvasEl}>
       {!!graph && !!graph.error && (
-        <Empty description={'This graph could not be processed'} />
+        <div className="error">
+          <Empty description={'This graph could not be processed'} />
+        </div>
       )}
     </div>
   );
