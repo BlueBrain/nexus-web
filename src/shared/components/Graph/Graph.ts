@@ -21,7 +21,6 @@ export class Graph {
     try {
       this.destroy = graph(this.dotGraph, this.element);
     } catch (error) {
-      console.error(error);
       this.renderError = error;
     }
   }
