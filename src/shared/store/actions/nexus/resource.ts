@@ -68,14 +68,12 @@ export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
     try {
       const project: Project = await Project.get(orgLabel, projectLabel);
       const resource = await project.getResource(resourceId);
-      console.log(resource.self);
       const dotGraph = await Resource.getSelfRawAs(
         resource.self,
         ResourceGetFormat.DOT
       );
       return dispatch(fetchResourceFulfilledAction(resource, dotGraph));
     } catch (e) {
-      console.log(e);
       return dispatch(fetchResourceFailedAction(e));
     }
   };
