@@ -50,20 +50,17 @@ const makeGraph = (
       if (!d3.event.active) simulation.alphaTarget(0.3).restart();
       d.fx = d.x;
       d.fy = d.y;
-      console.log('dragstarted', d);
     }
 
     function dragged(d: any) {
       d.fx = d3.event.x;
       d.fy = d3.event.y;
-      console.log('dragged', d);
     }
 
     function dragended(d: any) {
       if (!d3.event.active) simulation.alphaTarget(0);
       d.fx = null;
       d.fy = null;
-      console.log('dragended', d);
     }
 
     return d3
@@ -158,7 +155,6 @@ const makeGraph = (
       .attr('transform', function transformMe(d: any) {
         if (d.target.x < d.source.x) {
           const bbox = this.getBBox();
-          console.log({ bbox });
           const rx = bbox.x + bbox.width / 2;
           const ry = bbox.y + bbox.height / 2;
           return `rotate(180 ${rx} ${ry})`;
