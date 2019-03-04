@@ -30,8 +30,8 @@ const makeGraph = (
     .attr('height', element.clientHeight);
 
   svg.html(`<filter id="dropshadow" height="130%">
-  <feGaussianBlur in="SourceAlpha" stdDeviation="3"/> <!-- stdDeviation is how much to blur -->
-  <feOffset dx="2" dy="2" result="offsetblur"/> <!-- how much to offset -->
+  <feGaussianBlur in="SourceAlpha" stdDeviation="2"/> <!-- stdDeviation is how much to blur -->
+  <feOffset dx="0" dy="1" result="offsetblur"/> <!-- how much to offset -->
   <feComponentTransfer>
     <feFuncA type="linear" slope="0.3"/> <!-- slope is the opacity of the shadow -->
   </feComponentTransfer>
@@ -43,7 +43,7 @@ const makeGraph = (
 
   const links = dataset.edges.map(d => Object.create(d));
   const nodes = dataset.nodes.map(d => Object.create(d));
-  const linkDistance = 120;
+  const linkDistance = 150;
 
   const drag = (simulation: any) => {
     function dragstarted(d: any) {
@@ -97,7 +97,7 @@ const makeGraph = (
     .append('line')
     .attr('stroke', '#999')
     .attr('stroke-opacity', 0.6)
-    .attr('stroke-width', 2)
+    .attr('stroke-width', 1)
     .attr('class', 'link-line');
 
   const node = svg
@@ -124,6 +124,7 @@ const makeGraph = (
     .append('text')
     .attr('dx', 12)
     .attr('dy', '.35em')
+    .attr('opacity', 0.3)
     .text((d: any) => titleOf(`${dataset.nodes[d.index].id}`));
 
   const lineLabel = svg
@@ -152,18 +153,22 @@ const makeGraph = (
       .attr('y', (d: any) => {
         return (d.source.y + d.target.y) / 2;
       })
-      .attr('transform', function transformMe(d: any) {
-        if (d.target.x < d.source.x) {
-          const bbox = this.getBBox();
-          const rx = bbox.x + bbox.width / 2;
-          const ry = bbox.y + bbox.height / 2;
-          return `rotate(180 ${rx} ${ry})`;
-        }
-        return `rotate(0)`;
+      .attr('transform', (d: any) => {
+        const x = (d.source.x + d.target.x) / 2;
+        const y = (d.source.y + d.target.y) / 2;
+        const angle =
+          Math.atan2(d.target.y - d.source.y, d.target.x - d.source.x) *
+          (180 / Math.PI);
+        return `rotate(${angle} ${x} ${y})`;
       });
   });
 
   function mouseover(this: SVGGElement, d: any) {
+    d3.select(this)
+      .select('text')
+      .transition()
+      .duration(300)
+      .attr('opacity', 1);
     d3.select(this)
       .select('circle')
       .transition()
@@ -172,6 +177,11 @@ const makeGraph = (
   }
 
   function mouseout(this: SVGGElement, d: any) {
+    d3.select(this)
+      .select('text')
+      .transition()
+      .duration(300)
+      .attr('opacity', 0.3);
     d3.select(this)
       .select('circle')
       .transition()
