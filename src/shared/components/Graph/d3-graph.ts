@@ -131,11 +131,9 @@ const makeGraph = (
     .selectAll('.link')
     .append('text')
     .attr('class', 'link-label')
-    .attr('font-family', 'Arial, Helvetica, sans-serif')
-    .attr('fill', '#999')
-    .style('font', 'normal 12px Arial')
     .attr('dy', '.35em')
     .attr('text-anchor', 'middle')
+    .attr('fill', '#f4bf75')
     .text((d: any) => titleOf(dataset.edges[d.index].label));
 
   simulation.on('tick', () => {
@@ -168,7 +166,8 @@ const makeGraph = (
       .select('text')
       .transition()
       .duration(300)
-      .attr('opacity', 1);
+      .attr('opacity', 1)
+      .attr('font-size', '1.2em');
     d3.select(this)
       .select('circle')
       .transition()
@@ -181,7 +180,8 @@ const makeGraph = (
       .select('text')
       .transition()
       .duration(300)
-      .attr('opacity', 0.3);
+      .attr('opacity', 0.3)
+      .attr('font-size', '1em');
     d3.select(this)
       .select('circle')
       .transition()

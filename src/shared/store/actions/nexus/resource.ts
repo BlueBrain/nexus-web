@@ -2,6 +2,7 @@ import { ActionCreator, Dispatch } from 'redux';
 import { Project, Resource } from '@bbp/nexus-sdk';
 import { ThunkAction } from '../..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
+import { ResourceGetFormat } from '@bbp/nexus-sdk/lib/Resource/types';
 
 enum ResourceActionTypes {
   FETCHING = '@@nexus/RESOURCE_FETCHING',
@@ -22,10 +23,16 @@ const fetchResourceAction: ActionCreator<
 });
 
 const fetchResourceFulfilledAction: ActionCreator<
-  FetchFulfilledAction<ResourceActionTypes.FULFILLED, Resource>
-> = (resource: Resource) => ({
+  FetchFulfilledAction<
+    ResourceActionTypes.FULFILLED,
+    { resource: Resource; dotGraph: string }
+  >
+> = (resource: Resource, dotGraph: string) => ({
   type: ResourceActionTypes.FULFILLED,
-  payload: resource,
+  payload: {
+    resource,
+    dotGraph,
+  },
 });
 
 const fetchResourceFailedAction: ActionCreator<
@@ -37,7 +44,10 @@ const fetchResourceFailedAction: ActionCreator<
 
 export type ResourceActions =
   | FetchAction<ResourceActionTypes.FETCHING>
-  | FetchFulfilledAction<ResourceActionTypes.FULFILLED, Resource>
+  | FetchFulfilledAction<
+      ResourceActionTypes.FULFILLED,
+      { resource: Resource; dotGraph: string }
+    >
   | FetchFailedAction<ResourceActionTypes.FAILED>;
 
 export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
@@ -48,15 +58,24 @@ export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
   return async (
     dispatch: Dispatch<any>
   ): Promise<
-    | FetchFulfilledAction<ResourceActionTypes.FULFILLED, Resource>
+    | FetchFulfilledAction<
+        ResourceActionTypes.FULFILLED,
+        { resource: Resource; dotGraph: string }
+      >
     | FetchFailedAction<ResourceActionTypes.FAILED>
   > => {
     dispatch(fetchResourceAction());
     try {
       const project: Project = await Project.get(orgLabel, projectLabel);
       const resource = await project.getResource(resourceId);
-      return dispatch(fetchResourceFulfilledAction(resource));
+      console.log(resource.self);
+      const dotGraph = await Resource.getSelfRawAs(
+        resource.self,
+        ResourceGetFormat.DOT
+      );
+      return dispatch(fetchResourceFulfilledAction(resource, dotGraph));
     } catch (e) {
+      console.log(e);
       return dispatch(fetchResourceFailedAction(e));
     }
   };
