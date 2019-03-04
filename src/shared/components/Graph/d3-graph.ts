@@ -41,10 +41,37 @@ const makeGraph = (
   </feMerge>
 </filter>`);
 
-  const linkDistance = 120;
-
   const links = dataset.edges.map(d => Object.create(d));
   const nodes = dataset.nodes.map(d => Object.create(d));
+  const linkDistance = 120;
+
+  const drag = (simulation: any) => {
+    function dragstarted(d: any) {
+      if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+      console.log('dragstarted', d);
+    }
+
+    function dragged(d: any) {
+      d.fx = d3.event.x;
+      d.fy = d3.event.y;
+      console.log('dragged', d);
+    }
+
+    function dragended(d: any) {
+      if (!d3.event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+      console.log('dragended', d);
+    }
+
+    return d3
+      .drag()
+      .on('start', dragstarted)
+      .on('drag', dragged)
+      .on('end', dragended);
+  };
 
   const simulation = d3Force
     .forceSimulation(nodes)
@@ -55,89 +82,63 @@ const makeGraph = (
         .id((d: any) => d.id)
         .distance(() => linkDistance)
     )
-    .force('charge', d3Force.forceManyBody().strength(-10))
+    .force('charge', d3Force.forceManyBody().strength(-100))
     .force('collide', d3.forceCollide().radius(30))
     .force(
       'center',
       d3Force.forceCenter(element.clientWidth / 2, element.clientHeight / 2)
     );
 
-  const drag = (simulation: any) => {
-    function dragstarted(d: any) {
-      if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-      d.fx = d.x;
-      d.fy = d.y;
-    }
-
-    function dragged(d: any) {
-      d.fx = d3.event.x;
-      d.fy = d3.event.y;
-    }
-
-    function dragended(d: any) {
-      if (!d3.event.active) simulation.alphaTarget(0);
-      d.fx = null;
-      d.fy = null;
-    }
-
-    return d3
-      .drag()
-      .on('start', dragstarted)
-      .on('drag', dragged)
-      .on('end', dragended);
-  };
-
   const link = svg
     .append('g')
-    .attr('class', 'link')
-    .selectAll('g')
+    .attr('class', 'links')
+    .selectAll('.link')
     .data(links)
-    .join('g');
-
-  const lines = link
+    .enter()
+    .append('g')
+    .attr('class', 'link')
     .append('line')
-    .attr('id', (d, i) => `edge-${i}`)
-    .attr('class', 'arrow')
-    .attr('marker-end', 'url(#arrowhead)');
-
-  const linePaths = link
-    .append('path')
     .attr('stroke', '#999')
     .attr('stroke-opacity', 0.6)
     .attr('stroke-width', 2)
-    .attr('class', 'edge-path');
-
-  const edgeLabels = linePaths
-    .append('text')
-    .style('pointer-events', 'none')
-    .attr('class', 'edge-label')
-    .append('textPath')
-    .style('pointer-events', 'none')
-    .text(d => {
-      return dataset.edges[d.index].label;
-    });
+    .attr('class', 'link-line');
 
   const node = svg
     .append('g')
     .attr('class', 'nodes')
-    .selectAll('g')
+    .selectAll('.node')
     .data(nodes)
-    .join('g');
+    .enter()
+    .append('g')
+    .attr('class', 'node')
+    .on('mouseover', mouseover)
+    .on('mouseout', mouseout)
+    // @ts-ignore
+    .call(drag(simulation));
 
   const circles = node
     .append('circle')
     .attr('class', 'node-circle')
-    .attr('r', 20)
+    .attr('r', 8)
     .attr('fill', () => '#44c7f4')
-    .attr('style', 'filter:url(#dropshadow); cursor: pointer;')
-    // @ts-ignore
-    .call(drag(simulation));
+    .attr('style', 'filter:url(#dropshadow); cursor: pointer;');
 
-  const labels = node
+  const nodeLabel = node
     .append('text')
-    .attr('class', 'label')
-    .attr('pointer-events', 'none')
-    .text(d => titleOf(`${dataset.nodes[d.index].id}`));
+    .attr('dx', 12)
+    .attr('dy', '.35em')
+    .text((d: any) => titleOf(`${dataset.nodes[d.index].id}`));
+
+  const lineLabel = svg
+    .selectAll('.link')
+    .append('text')
+    .attr('class', 'link-label')
+    .attr('font-family', 'Arial, Helvetica, sans-serif')
+    .attr('fill', '#999')
+    .style('font', 'normal 12px Arial')
+    .attr('dy', '.35em')
+    .attr('text-anchor', 'middle')
+    .text((d: any) => titleOf(dataset.edges[d.index].label));
 
   simulation.on('tick', () => {
     link
@@ -146,22 +147,41 @@ const makeGraph = (
       .attr('x2', d => d.target.x)
       .attr('y2', d => d.target.y);
 
-    circles.attr('cx', d => d.x).attr('cy', d => d.y);
-    labels.attr('x', d => d.x).attr('y', d => d.y);
-    linePaths.attr(
-      'd',
-      d => `M ${d.source.x} ${d.source.y} L ${d.target.x} ${d.target.y}`
-    );
-    edgeLabels.attr('transform', function(d, i) {
-      if (d.target.x < d.source.x) {
-        const bbox = this.getBBox();
-        const rx = bbox.x + bbox.width / 2;
-        const ry = bbox.y + bbox.height / 2;
-        return `rotate(180 ${rx} ${ry})`;
-      }
-      return 'rotate(0)';
-    });
+    node.attr('transform', (d: any) => `translate(${d.x},${d.y})`);
+    lineLabel
+      .attr('x', (d: any) => {
+        return (d.source.x + d.target.x) / 2;
+      })
+      .attr('y', (d: any) => {
+        return (d.source.y + d.target.y) / 2;
+      })
+      .attr('transform', function transformMe(d: any) {
+        if (d.target.x < d.source.x) {
+          const bbox = this.getBBox();
+          console.log({ bbox });
+          const rx = bbox.x + bbox.width / 2;
+          const ry = bbox.y + bbox.height / 2;
+          return `rotate(180 ${rx} ${ry})`;
+        }
+        return `rotate(0)`;
+      });
   });
+
+  function mouseover(this: SVGGElement, d: any) {
+    d3.select(this)
+      .select('circle')
+      .transition()
+      .duration(300)
+      .attr('r', 16);
+  }
+
+  function mouseout(this: SVGGElement, d: any) {
+    d3.select(this)
+      .select('circle')
+      .transition()
+      .duration(300)
+      .attr('r', 8);
+  }
 
   // returns auto-removal function
   return () => {
