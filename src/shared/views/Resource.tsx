@@ -9,6 +9,7 @@ import Helmet from 'react-helmet';
 interface ResourceViewProps {
   match: any;
   resource: Resource | null;
+  dotGraph: string | null;
   error: Error | null;
   isFetching: boolean | false;
   fetchResource: (
@@ -19,7 +20,7 @@ interface ResourceViewProps {
 }
 
 const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
-  const { match, resource, error, isFetching, fetchResource } = props;
+  const { match, resource, error, isFetching, fetchResource, dotGraph } = props;
   const fetch = () => {
     fetchResource(
       match.params.org,
@@ -27,17 +28,16 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
       match.params.resourceId
     );
   };
-  React.useEffect(
-    () => {
-      fetch();
-    },
-    [match.params.resourceId]
-  );
+  // Fetch Resource
+  React.useEffect(() => {
+    fetch();
+  }, [match.params.resourceId]);
 
   return (
     <>
       {!!resource && <Helmet title={resource.name} />}
       <ResourceView
+        dotGraph={dotGraph}
         onSuccess={fetch}
         resource={resource}
         error={error}
@@ -48,11 +48,17 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
 };
 
 const mapStateToProps = (state: RootState) => ({
+  dotGraph:
+    (state.nexus &&
+      state.nexus.activeResource &&
+      state.nexus.activeResource.data &&
+      state.nexus.activeResource.data.dotGraph) ||
+    null,
   resource:
     (state.nexus &&
       state.nexus.activeResource &&
       state.nexus.activeResource.data &&
-      state.nexus.activeResource.data) ||
+      state.nexus.activeResource.data.resource) ||
     null,
   error:
     (state.nexus &&

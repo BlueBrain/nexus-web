@@ -1,20 +1,30 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
-import { Spin, notification, Empty, Card } from 'antd';
+import { Spin, notification, Empty, Card, Tabs } from 'antd';
 import ResourceEditor from './ResourceEditor';
 import ResourceMetadataCard from './MetadataCard';
+import GraphVisualizer from '../Graph/GraphVisualizer';
+
+const TabPane = Tabs.TabPane;
+
+const NEXUS_FILE_TYPE = 'File';
 
 export interface ResourceViewProps {
   resource: Resource | null;
   error: Error | null;
   isFetching: boolean | false;
   onSuccess: VoidFunction;
+  dotGraph: string | null;
 }
 
 const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
-  const { resource, error, isFetching, onSuccess } = props;
+  const { resource, error, isFetching, onSuccess, dotGraph } = props;
   const [editing, setEditing] = React.useState(false);
   const [busy, setFormBusy] = React.useState(isFetching);
+
+  // TODO move NexusFileType constant to sdk
+  const isFile =
+    resource && resource.type && resource.type.includes(NEXUS_FILE_TYPE);
 
   const handleSubmit = async (value: any) => {
     if (resource) {
@@ -54,15 +64,25 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
         {!!resource && !error && (
           <>
             <ResourceMetadataCard {...{ ...resource, name: resource.name }} />
-            <ResourceEditor
-              rawData={{
-                context: resource.context,
-                type: resource.type,
-                ...resource.data,
-              }}
-              onSubmit={handleSubmit}
-              editing={editing}
-            />
+            <Tabs defaultActiveKey="1">
+              <TabPane tab="JSON" key="1">
+                <ResourceEditor
+                  editable={!isFile}
+                  rawData={{
+                    context: resource.context,
+                    type: resource.type,
+                    ...resource.data,
+                  }}
+                  onSubmit={handleSubmit}
+                  editing={editing}
+                />
+              </TabPane>
+              {dotGraph && (
+                <TabPane tab="Graph" key="2">
+                  <GraphVisualizer dotGraph={dotGraph} />
+                </TabPane>
+              )}
+            </Tabs>
           </>
         )}
       </Spin>

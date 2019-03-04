@@ -133,7 +133,11 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
             />
           )}
         </Form.Item>
-        <ResourceEditor rawData={jsonValue} onSubmit={handleSubmit} />
+        <ResourceEditor
+          editable={true}
+          rawData={jsonValue}
+          onSubmit={handleSubmit}
+        />
         <Form.Item {...formItemLayoutWithOutLabel}>
           {mode === 'edit' && (
             <Button

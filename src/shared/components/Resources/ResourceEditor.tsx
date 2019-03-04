@@ -13,15 +13,19 @@ export interface ResourceEditorProps {
   rawData: { [key: string]: any }; // any object
   onSubmit: (rawData: { [key: string]: any }) => void;
   editing?: boolean;
+  editable: boolean;
 }
 
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
-  const { rawData, onSubmit, editing = false } = props;
+  const { rawData, onSubmit, editing = false, editable = false } = props;
   const [isEditing, setEditing] = React.useState(editing);
   const [valid, setValid] = React.useState(true);
   const [value, setValue] = React.useState(rawData);
 
   const handleChange = (editor: any, data: any, value: any) => {
+    if (!editable) {
+      return;
+    }
     try {
       const parsedVal = JSON.parse(value);
       setValue(parsedVal);
@@ -42,7 +46,12 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     <div className={valid ? 'resource-editor' : 'resource-editor _invalid'}>
       <div className="control-panel">
         <div>
-          {!isEditing && (
+          {!editable && (
+            <div className="feedback">
+              <Icon type="info-circle" /> This resource cannot be edited
+            </div>
+          )}
+          {editable && !isEditing && (
             <div className="feedback">
               <Icon type="info-circle" /> Directly edit this resource
             </div>
@@ -75,6 +84,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
       <CodeMirror
         value={JSON.stringify(rawData, null, 2)}
         options={{
+          readOnly: 'nocursor',
           mode: { name: 'javascript', json: true },
           theme: 'base16-light',
           lineNumbers: true,

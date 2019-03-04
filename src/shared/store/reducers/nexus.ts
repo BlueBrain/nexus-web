@@ -24,7 +24,10 @@ export interface NexusState {
     projects: PaginatedList<Project>;
   }>;
   activeProject?: FetchableState<Project>;
-  activeResource?: FetchableState<Resource>;
+  activeResource?: FetchableState<{
+    resource: Resource;
+    dotGraph: string;
+  }>;
 }
 
 const initialState: NexusState = {

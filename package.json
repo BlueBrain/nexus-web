@@ -16,11 +16,14 @@
     "build:storybook": "build-storybook"
   },
   "dependencies": {
-    "@bbp/nexus-sdk": "1.0.0-beta.11",
+    "@bbp/nexus-sdk": "1.0.0-beta.12",
     "antd": "^3.13.6",
     "codemirror": "^5.44.0",
     "connected-react-router": "^6.3.1",
     "cookie-parser": "^1.4.4",
+    "d3": "^5.9.1",
+    "d3-force": "^2.0.0",
+    "dotparser": "^0.4.0",
     "express": "^4.16.4",
     "history": "^4.7.2",
     "identicon.js": "^2.3.3",
@@ -51,6 +54,7 @@
     "@storybook/addons": "^4.1.13",
     "@storybook/react": "^4.1.13",
     "@types/cookie-parser": "^1.4.1",
+    "@types/d3": "^5.7.1",
     "@types/enzyme": "^3.9.0",
     "@types/express": "^4.16.1",
     "@types/jest": "^24.0.9",
