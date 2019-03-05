@@ -18,7 +18,6 @@ export interface ResourceEditorProps {
 
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const { rawData, onSubmit, editing = false, editable = false } = props;
-  console.log({ props });
   const [isEditing, setEditing] = React.useState(editing);
   const [valid, setValid] = React.useState(true);
   const [value, setValue] = React.useState(rawData);
