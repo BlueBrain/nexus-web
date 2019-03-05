@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Icon } from 'antd';
+import { Button, Icon, message } from 'antd';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import './ResourceEditor.less';
 
@@ -56,12 +56,12 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
               <Icon type="info-circle" /> Directly edit this resource
             </div>
           )}
-          {isEditing && valid && (
+          {editable && isEditing && valid && (
             <div className="feedback _positive">
               <Icon type="check-circle" /> Valid
             </div>
           )}
-          {isEditing && !valid && (
+          {editable && isEditing && !valid && (
             <div className="feedback _negative">
               <Icon type="exclamation-circle" /> Invalid JSON-LD
             </div>
@@ -84,7 +84,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
       <CodeMirror
         value={JSON.stringify(rawData, null, 2)}
         options={{
-          readOnly: 'nocursor',
+          readOnly: editable ? false : 'nocursor',
           mode: { name: 'javascript', json: true },
           theme: 'base16-light',
           lineNumbers: true,
