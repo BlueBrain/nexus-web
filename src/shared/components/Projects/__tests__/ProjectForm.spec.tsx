@@ -2,7 +2,7 @@ import * as React from 'react';
 import { mount } from 'enzyme';
 
 // Need to mock Date.now() because it is used down the line
-// to generate a per-element class, which break snapshot testing.
+// to generate a per-element class, which breaks snapshot testing.
 // Must be done before importing the React component.
 jest.spyOn(Date, 'now').mockImplementation(() => 1234567890123);
 
