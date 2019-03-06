@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Icon, Input, Button, Spin, Modal } from 'antd';
+import { Collapse, Form, Icon, Input, Button, Spin, Modal } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 /**
@@ -127,17 +127,17 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
-      sm: { span: 5 },
+      sm: { span: 6 },
     },
     wrapperCol: {
       xs: { span: 24 },
-      sm: { span: 19 },
+      sm: { span: 18 },
     },
   };
   const formItemLayoutWithOutLabel = {
     wrapperCol: {
       xs: { span: 24, offset: 0 },
-      sm: { span: 19, offset: 5 },
+      sm: { span: 19, offset: 6 },
     },
   };
 
@@ -262,23 +262,29 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
             rules: [{ required: false }],
           })(<Input placeholder="Description" />)}
         </Form.Item>
-        <Form.Item label="Base" {...formItemLayout}>
-          {getFieldDecorator('base', {
-            initialValue: project ? project.base : '',
-            rules: [{ required: false }],
-          })(<Input placeholder="Base" />)}
-        </Form.Item>
-        <Form.Item label="Vocab" {...formItemLayout}>
-          {getFieldDecorator('vocab', {
-            initialValue: project ? project.vocab : '',
-            rules: [{ required: false }],
-          })(<Input placeholder="Vocab" />)}
-        </Form.Item>
-        {apiMappingsItems}
         <Form.Item {...formItemLayoutWithOutLabel}>
-          <Button type="dashed" onClick={add} style={{ width: '60%' }}>
-            <Icon type="plus" /> Add API mapping
-          </Button>
+          <Collapse>
+            <Collapse.Panel header="Advanced settings" key="1">
+              <Form.Item label="Base" {...formItemLayout}>
+                {getFieldDecorator('base', {
+                  initialValue: project ? project.base : '',
+                  rules: [{ required: false }],
+                })(<Input placeholder="Base" />)}
+              </Form.Item>
+              <Form.Item label="Vocab" {...formItemLayout}>
+                {getFieldDecorator('vocab', {
+                  initialValue: project ? project.vocab : '',
+                  rules: [{ required: false }],
+                })(<Input placeholder="Vocab" />)}
+              </Form.Item>
+              {apiMappingsItems}
+              <Form.Item {...formItemLayoutWithOutLabel}>
+                <Button type="dashed" onClick={add} style={{ width: '60%' }}>
+                  <Icon type="plus" /> Add API mapping
+                </Button>
+              </Form.Item>
+            </Collapse.Panel>
+          </Collapse>
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>
           <Button
