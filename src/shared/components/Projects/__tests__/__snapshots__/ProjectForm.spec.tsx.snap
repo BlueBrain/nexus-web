@@ -662,7 +662,7 @@ exports[`Project Form component should render correctly 1`] = `
                                                 "leave": [Function],
                                               }
                                             }
-                                            key="rc_animate_1551798586053"
+                                            key="rc_animate_1234567890123"
                                             transitionAppear={false}
                                             transitionEnter={true}
                                             transitionLeave={true}
@@ -671,7 +671,7 @@ exports[`Project Form component should render correctly 1`] = `
                                               destroyInactivePanel={false}
                                               forceRender={false}
                                               isActive={false}
-                                              key="rc_animate_1551798586053"
+                                              key="rc_animate_1234567890123"
                                               prefixCls="ant-collapse"
                                               role={null}
                                             />
