@@ -174,13 +174,9 @@ app.get('*', async (req: express.Request, res: express.Response) => {
         )
       )
   );
+
   // get data
-  try {
-    await Promise.all(promises);
-  } catch (error) {
-    console.log('something strange happened');
-    console.log(error);
-  }
+  await Promise.all(promises);
 
   const context: { status?: number } = {};
 
