@@ -4,6 +4,7 @@ import { Spin, notification, Empty, Card, Tabs } from 'antd';
 import ResourceEditor from './ResourceEditor';
 import ResourceMetadataCard from './MetadataCard';
 import GraphVisualizer from '../Graph/GraphVisualizer';
+import { RequestErrors } from '../../store/actions/utils/errors';
 
 const TabPane = Tabs.TabPane;
 
@@ -11,7 +12,7 @@ const NEXUS_FILE_TYPE = 'File';
 
 export interface ResourceViewProps {
   resource: Resource | null;
-  error: Error | null;
+  error: RequestErrors | null;
   isFetching: boolean | false;
   onSuccess: VoidFunction;
   dotGraph: string | null;

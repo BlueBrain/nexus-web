@@ -5,12 +5,14 @@ import { fetchAndAssignResource } from '../store/actions/nexus/resource';
 import { Resource } from '@bbp/nexus-sdk';
 import ResourceView from '../components/Resources/ResourceDetails';
 import Helmet from 'react-helmet';
+import Status from '../components/Routing/Status';
+import { RequestErrors } from '../store/actions/utils/errors';
 
 interface ResourceViewProps {
   match: any;
   resource: Resource | null;
   dotGraph: string | null;
-  error: Error | null;
+  error: RequestErrors | null;
   isFetching: boolean | false;
   fetchResource: (
     orgLabel: string,
@@ -36,13 +38,15 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
   return (
     <>
       {!!resource && <Helmet title={resource.name} />}
-      <ResourceView
-        dotGraph={dotGraph}
-        onSuccess={fetch}
-        resource={resource}
-        error={error}
-        isFetching={isFetching}
-      />
+      <Status code={!!error ? error.code : 200}>
+        <ResourceView
+          dotGraph={dotGraph}
+          onSuccess={fetch}
+          resource={resource}
+          error={error}
+          isFetching={isFetching}
+        />
+      </Status>
     </>
   );
 };

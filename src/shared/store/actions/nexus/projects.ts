@@ -3,6 +3,7 @@ import { Project, ElasticSearchView } from '@bbp/nexus-sdk';
 import { ThunkAction } from '../..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
 import { ElasticSearchViewAggregationResponse } from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
+import { formatError } from '../utils/errors';
 
 const DEFAULT_AGG_TERM_SIZE = 999;
 
@@ -90,7 +91,7 @@ export const fetchAndAssignProject: ActionCreator<ThunkAction> = (
         })
       );
     } catch (e) {
-      return dispatch(fetchProjectsFailedAction(e));
+      return dispatch(fetchProjectsFailedAction(formatError(e)));
     }
   };
 };

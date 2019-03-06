@@ -6,7 +6,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
-import { matchPath } from 'react-router';
+import { matchPath, StaticRouterContext } from 'react-router';
 import { createMemoryHistory } from 'history';
 import Nexus, { Organization } from '@bbp/nexus-sdk';
 import Helmet from 'react-helmet';
@@ -175,19 +175,31 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       )
   );
   // get data
-  await Promise.all(promises);
+  try {
+    await Promise.all(promises);
+  } catch (error) {
+    console.log('something strange happened');
+    console.log(error);
+  }
+
+  const context: { status?: number } = {};
 
   // render an HTML string of our app
   const body: string = renderToString(
     <Provider store={store}>
-      <StaticRouter location={req.url} context={{}} basename={base}>
+      <StaticRouter
+        location={req.url}
+        context={context as StaticRouterContext}
+        basename={base}
+      >
         <App />
       </StaticRouter>
     </Provider>
   );
+
+  const { status = 200 } = context;
   // Compute header data
   const helmet = Helmet.renderStatic();
-  const status: number = activeRoutes.length === 0 ? 404 : 200;
   res
     .status(status)
     .send(html({ body, helmet, preloadedState: store.getState() }));
