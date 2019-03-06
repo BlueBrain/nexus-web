@@ -41,7 +41,7 @@ describe('Auth Reducer', () => {
         acls: {
           isFetching: false,
           data: null,
-          error: { message: 'this is awful', name: 'Error' },
+          error: new Error('this is awful'),
         },
       });
     });
@@ -90,7 +90,7 @@ describe('Auth Reducer', () => {
         identities: {
           isFetching: false,
           data: [],
-          error: { name: 'SyntaxError', message: 'this is bad' },
+          error: new SyntaxError('this is bad'),
         },
       });
     });
@@ -119,7 +119,7 @@ describe('Auth Reducer', () => {
         identities: {
           isFetching: false,
           data: initState.identities.data,
-          error: { name: 'SyntaxError', message: 'this is bad' },
+          error: new SyntaxError('this is bad'),
         },
       });
     });
