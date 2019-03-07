@@ -101,3 +101,7 @@ export const getOrderedPermissions = (
 
   return [...new Set(sorted)];
 };
+
+export const asyncTimeout = (timeInMilliseconds: number): Promise<void> => {
+  return new Promise(resolve => setTimeout(resolve, timeInMilliseconds));
+};

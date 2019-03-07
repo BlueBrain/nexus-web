@@ -88,7 +88,7 @@ export interface ProjectFormProps {
   form: WrappedFormUtils;
   project?: {
     label: string;
-    rev: number,
+    rev: number;
     description?: string;
     base?: string;
     vocab?: string;
@@ -241,7 +241,10 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
     )
   );
   return (
-    <Spin spinning={busy}>
+    <Spin
+      spinning={busy}
+      tip="Please be patient while the project is scaffolded."
+    >
       <Form onSubmit={handleSubmit}>
         <Form.Item label="Label" {...formItemLayout}>
           {getFieldDecorator('label', {
@@ -303,11 +306,9 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
               >
                 Deprecate
               </Button>
-              <Button
-                onClick={confirmMakePublic}
-                style={{float: 'right' }}
-              >
-                <Icon type="global" />Make public
+              <Button onClick={confirmMakePublic} style={{ float: 'right' }}>
+                <Icon type="global" />
+                Make public
               </Button>
             </>
           )}

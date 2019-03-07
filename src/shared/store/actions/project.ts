@@ -1,9 +1,12 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
-import { Project } from '@bbp/nexus-sdk';
+import { Project, ElasticSearchView } from '@bbp/nexus-sdk';
 import { ThunkAction } from '..';
 import { CreateProjectPayload } from '@bbp/nexus-sdk/lib/Project/types';
 import { httpGet, httpPut } from '@bbp/nexus-sdk/lib/utils/http';
 import { IdentityResponse, Identity } from '@bbp/nexus-sdk/lib/ACL/types';
+import { asyncTimeout } from '../../utils';
+
+const DEFAULT_ELASTIC_SEARCH_INDEX_ID = 'nxv:defaultElasticSearchIndex';
 
 //
 // Action Types
@@ -133,6 +136,33 @@ const makeProjectPublicFailureAction: ActionCreator<
   type: '@@nexus/PROJECT_MAKING_PUBLIC_FAILURE',
 });
 
+const pollProjectCreated = async (
+  orgLabel: string,
+  projectLabel: string
+): Promise<void> => {
+  let projectReady = false;
+  const pollingTimeInMilliseconds = 500;
+  while (!projectReady) {
+    try {
+      const esView = await ElasticSearchView.get(
+        orgLabel,
+        projectLabel,
+        DEFAULT_ELASTIC_SEARCH_INDEX_ID
+      );
+      // Even if the view is created, it will take some time until we can query,
+      // to make sure we have data in the project, we should make some query here.
+      const { results, total } = await esView.query({});
+      if (!total) {
+        throw new Error('project not yet ready');
+      }
+      projectReady = true;
+    } catch (error) {
+      // TODO do something if not 404
+      await asyncTimeout(pollingTimeInMilliseconds);
+    }
+  }
+};
+
 //
 // Action implementations
 //
@@ -153,6 +183,7 @@ export const createProject: ActionCreator<ThunkAction> = (
         projectLabel,
         payload
       );
+      await pollProjectCreated(orgLabel, projectLabel);
       return dispatch(createProjectSuccessAction(project));
     } catch (e) {
       return Promise.reject(dispatch(createProjectFailureAction(e)));
