@@ -3,7 +3,7 @@ import { Project, Resource } from '@bbp/nexus-sdk';
 import { ThunkAction } from '../..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
 import { ResourceGetFormat } from '@bbp/nexus-sdk/lib/Resource/types';
-import { formatError, RequestErrors } from '../utils/errors';
+import { formatError, RequestError } from '../utils/errors';
 
 enum ResourceActionTypes {
   FETCHING = '@@nexus/RESOURCE_FETCHING',
@@ -38,7 +38,7 @@ const fetchResourceFulfilledAction: ActionCreator<
 
 const fetchResourceFailedAction: ActionCreator<
   FetchFailedAction<ResourceActionTypes.FAILED>
-> = (error: RequestErrors) => ({
+> = (error: RequestError) => ({
   error,
   type: ResourceActionTypes.FAILED,
 });

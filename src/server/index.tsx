@@ -19,6 +19,7 @@ import { fetchIdentities } from '../shared/store/actions/auth';
 import routes, { RouteWithData } from '../shared/routes';
 import { number } from '@storybook/addon-knobs';
 import { DEFAULT_UI_SETTINGS } from '../shared/store/reducers/ui-settings';
+import { HTTP_STATUS_CODES } from '../shared/store/actions/utils/statusCodes';
 
 const isSecure = !!process.env.SECURE;
 const cookieName = isSecure ? '__Secure-nexusAuth' : '_Secure-nexusAuth';
@@ -193,7 +194,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
     </Provider>
   );
 
-  const { status = 200 } = context;
+  const { status = HTTP_STATUS_CODES.OK } = context;
   // Compute header data
   const helmet = Helmet.renderStatic();
   res

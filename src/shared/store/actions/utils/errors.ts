@@ -1,33 +1,25 @@
-export class Forbidden extends Error {
-  readonly code: number = 403;
-}
-export class NotFound extends Error {
-  readonly code: number = 404;
-}
-export class ServiceUnavailable extends Error {
-  readonly code: number = 503;
-}
-export class BadRequest extends Error {
-  readonly code: number = 400;
-}
+import { HTTP_STATUS_TYPE_KEYS, HTTP_STATUSES } from './statusCodes';
 
-export type RequestErrors =
-  | BadRequest
-  | Forbidden
-  | NotFound
-  | ServiceUnavailable;
-
-export const requestErrorTypes: { [errorName: string]: any } = {
-  BadRequest,
-  Forbidden,
-  NotFound,
-  ServiceUnavailable,
-};
+export class RequestError extends Error {
+  readonly message: string;
+  readonly type: string;
+  readonly code: number;
+  constructor(
+    message: string,
+    type: string = HTTP_STATUS_TYPE_KEYS.BAD_REQUEST
+  ) {
+    super(message);
+    this.message = message;
+    this.type = type;
+    this.code = HTTP_STATUSES[type].code;
+  }
+}
 
 export const formatError = (error: Error) => {
-  const errorType = error.message.replace(/ /g, '');
-  if (requestErrorTypes[errorType]) {
-    return new requestErrorTypes[errorType](error.message);
+  const errorType = error.message.replace(/ /g, '_').toUpperCase();
+  const httpErrorType = HTTP_STATUSES[errorType];
+  if (httpErrorType) {
+    return new RequestError(error.message, httpErrorType.type);
   }
-  return new BadRequest(error.message);
+  return new RequestError(error.message);
 };

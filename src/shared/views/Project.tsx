@@ -8,15 +8,19 @@ import { Empty, Switch, Icon, Tooltip } from 'antd';
 import Menu from '../components/Workspace/Menu';
 import { createList, initializeProjectList } from '../store/actions/lists';
 import { ListsByProjectState } from '../store/reducers/lists';
-import { Project, Resource, NexusFile } from '@bbp/nexus-sdk';
+import { Project, Resource } from '@bbp/nexus-sdk';
 import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
 import { createFile } from '../store/actions/nexus/files';
-import { RequestErrors } from '../store/actions/utils/errors';
 import Status from '../components/Routing/Status';
+import { RequestError } from '../store/actions/utils/errors';
+import {
+  HTTP_STATUSES,
+  HTTP_STATUS_TYPE_KEYS,
+} from '../store/actions/utils/statusCodes';
 
 interface ProjectViewProps {
   project: Project | null;
-  error: RequestErrors | null;
+  error: RequestError | null;
   match: any;
   lists: ListsByProjectState;
   createList(orgProjectFilterKey: string): void;
@@ -49,7 +53,9 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
     }
   }, [match.params.project, match.params.org]);
   return (
-    <Status code={!!error ? error.code : 200}>
+    <Status
+      code={!!error ? error.code : HTTP_STATUSES[HTTP_STATUS_TYPE_KEYS.OK].code}
+    >
       <div className="project">
         {!project && error && (
           <>

@@ -6,13 +6,17 @@ import { Resource } from '@bbp/nexus-sdk';
 import ResourceView from '../components/Resources/ResourceDetails';
 import Helmet from 'react-helmet';
 import Status from '../components/Routing/Status';
-import { RequestErrors } from '../store/actions/utils/errors';
+import {
+  HTTP_STATUSES,
+  HTTP_STATUS_TYPE_KEYS,
+} from '../store/actions/utils/statusCodes';
+import { RequestError } from '../store/actions/utils/errors';
 
 interface ResourceViewProps {
   match: any;
   resource: Resource | null;
   dotGraph: string | null;
-  error: RequestErrors | null;
+  error: RequestError | null;
   isFetching: boolean | false;
   fetchResource: (
     orgLabel: string,
@@ -38,7 +42,11 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
   return (
     <>
       {!!resource && <Helmet title={resource.name} />}
-      <Status code={!!error ? error.code : 200}>
+      <Status
+        code={
+          !!error ? error.code : HTTP_STATUSES[HTTP_STATUS_TYPE_KEYS.OK].code
+        }
+      >
         <ResourceView
           dotGraph={dotGraph}
           onSuccess={fetch}
