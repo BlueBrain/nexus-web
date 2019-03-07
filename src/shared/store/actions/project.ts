@@ -5,6 +5,7 @@ import { CreateProjectPayload } from '@bbp/nexus-sdk/lib/Project/types';
 import { httpGet, httpPut } from '@bbp/nexus-sdk/lib/utils/http';
 import { IdentityResponse, Identity } from '@bbp/nexus-sdk/lib/ACL/types';
 import { asyncTimeout } from '../../utils';
+import { notification } from 'antd';
 
 const DEFAULT_ELASTIC_SEARCH_INDEX_ID = 'nxv:defaultElasticSearchIndex';
 
@@ -142,6 +143,8 @@ const pollProjectCreated = async (
 ): Promise<void> => {
   let projectReady = false;
   const pollingTimeInMilliseconds = 500;
+  const shortCircuitIterationCount = 60; // 30 seconds
+  let iterations = 0;
   while (!projectReady) {
     try {
       const esView = await ElasticSearchView.get(
@@ -159,6 +162,16 @@ const pollProjectCreated = async (
     } catch (error) {
       // TODO do something if not 404
       await asyncTimeout(pollingTimeInMilliseconds);
+      iterations += 1;
+      if (iterations >= shortCircuitIterationCount) {
+        projectReady = true;
+        notification.warning({
+          message: 'Project is taking a long time to set up',
+          description:
+            'This process is taking longer than usual. You might have to grab a coffee and come back later.',
+          duration: 0,
+        });
+      }
     }
   }
 };
