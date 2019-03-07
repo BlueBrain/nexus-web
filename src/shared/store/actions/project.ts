@@ -1,10 +1,11 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
-import { Project } from '@bbp/nexus-sdk';
+import { Project, ElasticSearchView } from '@bbp/nexus-sdk';
 import { ThunkAction } from '..';
 import { CreateProjectPayload } from '@bbp/nexus-sdk/lib/Project/types';
 import { httpGet, httpPut } from '@bbp/nexus-sdk/lib/utils/http';
 import { IdentityResponse, Identity } from '@bbp/nexus-sdk/lib/ACL/types';
-
+import { asyncTimeout } from '../../utils';
+import { notification } from 'antd';
 //
 // Action Types
 //
@@ -133,6 +134,41 @@ const makeProjectPublicFailureAction: ActionCreator<
   type: '@@nexus/PROJECT_MAKING_PUBLIC_FAILURE',
 });
 
+const pollProjectCreated = async (
+  orgLabel: string,
+  projectLabel: string
+): Promise<void> => {
+  let projectReady = false;
+  let iterations = 0;
+  const pollingTimeInMilliseconds = 500;
+  const shortCircuitIterationCount = 60; // 30 seconds
+  while (!projectReady) {
+    try {
+      const esView = await ElasticSearchView.get(orgLabel, projectLabel);
+      // Even if the view is created, it will take some time until we can query,
+      // to make sure we have data in the project, we should make some query here.
+      const { total } = await esView.query({});
+      if (!total) {
+        throw new Error('project not yet ready');
+      }
+      projectReady = true;
+    } catch (error) {
+      // TODO: maybe do something if not 404?
+      await asyncTimeout(pollingTimeInMilliseconds);
+      iterations += 1;
+      if (iterations >= shortCircuitIterationCount) {
+        projectReady = true;
+        notification.warning({
+          message: `Project ${projectLabel} is taking too long to set up`,
+          description:
+            'This process is taking longer than usual. You might have to grab a coffee and come back later.',
+          duration: 0,
+        });
+      }
+    }
+  }
+};
+
 //
 // Action implementations
 //
@@ -153,6 +189,7 @@ export const createProject: ActionCreator<ThunkAction> = (
         projectLabel,
         payload
       );
+      await pollProjectCreated(orgLabel, projectLabel);
       return dispatch(createProjectSuccessAction(project));
     } catch (e) {
       return Promise.reject(dispatch(createProjectFailureAction(e)));
