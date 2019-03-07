@@ -78,7 +78,7 @@ const RawElasticSearchQueryView: React.FunctionComponent<
       wantedOrg,
       wantedProject,
       wantedView,
-      query,
+      formattedInitialQuery,
       paginationSettings
     );
   };
