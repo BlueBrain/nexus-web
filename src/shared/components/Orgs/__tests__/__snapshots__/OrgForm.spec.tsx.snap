@@ -82,7 +82,6 @@ exports[`Organisation Form component should render correctly 1`] = `
                   >
                     <Col
                       className="ant-form-item-label"
-                      key="label"
                       sm={
                         Object {
                           "span": 5,
@@ -109,7 +108,6 @@ exports[`Organisation Form component should render correctly 1`] = `
                     </Col>
                     <Col
                       className="ant-form-item-control-wrapper"
-                      key="wrapper"
                       sm={
                         Object {
                           "span": 19,
@@ -288,7 +286,6 @@ exports[`Organisation Form component should render correctly 1`] = `
                   >
                     <Col
                       className="ant-form-item-label"
-                      key="label"
                       sm={
                         Object {
                           "span": 5,
@@ -315,7 +312,6 @@ exports[`Organisation Form component should render correctly 1`] = `
                     </Col>
                     <Col
                       className="ant-form-item-control-wrapper"
-                      key="wrapper"
                       sm={
                         Object {
                           "span": 19,
@@ -473,7 +469,6 @@ exports[`Organisation Form component should render correctly 1`] = `
                   >
                     <Col
                       className="ant-form-item-control-wrapper"
-                      key="wrapper"
                       sm={
                         Object {
                           "offset": 5,
