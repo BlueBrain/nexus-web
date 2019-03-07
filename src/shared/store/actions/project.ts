@@ -166,7 +166,7 @@ const pollProjectCreated = async (
       if (iterations >= shortCircuitIterationCount) {
         projectReady = true;
         notification.warning({
-          message: 'Project is taking a long time to set up',
+          message: `Project ${projectLabel} is taking a long time to set up`,
           description:
             'This process is taking longer than usual. You might have to grab a coffee and come back later.',
           duration: 0,
