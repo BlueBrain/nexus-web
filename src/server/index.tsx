@@ -6,7 +6,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
-import { matchPath } from 'react-router';
+import { matchPath, StaticRouterContext } from 'react-router';
 import { createMemoryHistory } from 'history';
 import Nexus, { Organization } from '@bbp/nexus-sdk';
 import Helmet from 'react-helmet';
@@ -17,8 +17,11 @@ import createStore from '../shared/store';
 import { RootState } from '../shared/store/reducers';
 import { fetchIdentities } from '../shared/store/actions/auth';
 import routes, { RouteWithData } from '../shared/routes';
-import { number } from '@storybook/addon-knobs';
 import { DEFAULT_UI_SETTINGS } from '../shared/store/reducers/ui-settings';
+import {
+  HTTP_STATUSES,
+  HTTP_STATUS_TYPE_KEYS,
+} from '../shared/store/actions/utils/statusCodes';
 
 const isSecure = !!process.env.SECURE;
 const cookieName = isSecure ? '__Secure-nexusAuth' : '_Secure-nexusAuth';
@@ -174,20 +177,28 @@ app.get('*', async (req: express.Request, res: express.Response) => {
         )
       )
   );
+
   // get data
   await Promise.all(promises);
+
+  const context: { status?: number } = {};
 
   // render an HTML string of our app
   const body: string = renderToString(
     <Provider store={store}>
-      <StaticRouter location={req.url} context={{}} basename={base}>
+      <StaticRouter
+        location={req.url}
+        context={context as StaticRouterContext}
+        basename={base}
+      >
         <App />
       </StaticRouter>
     </Provider>
   );
+
+  const { status = HTTP_STATUSES[HTTP_STATUS_TYPE_KEYS.OK].code } = context;
   // Compute header data
   const helmet = Helmet.renderStatic();
-  const status: number = activeRoutes.length === 0 ? 404 : 200;
   res
     .status(status)
     .send(html({ body, helmet, preloadedState: store.getState() }));

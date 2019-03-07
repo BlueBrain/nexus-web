@@ -7,6 +7,7 @@ import {
 } from '@bbp/nexus-sdk';
 import { ThunkAction } from '../..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
+import { formatError } from '../utils/errors';
 
 enum OrgActionTypes {
   FETCHING = '@@nexus/ORG_FETCHING',
@@ -75,7 +76,7 @@ export const fetchOrg: ActionCreator<ThunkAction> = (
       );
       return dispatch(fetchOrgFulfilledAction(org, projects));
     } catch (e) {
-      return dispatch(fetchOrgFailedAction(e));
+      return dispatch(fetchOrgFailedAction(formatError(e)));
     }
   };
 };

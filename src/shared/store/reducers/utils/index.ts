@@ -1,4 +1,5 @@
 import { combineReducers, AnyAction, Reducer, Action } from 'redux';
+import { RequestError } from '../../actions/utils/errors';
 
 export * from './createByKey';
 
@@ -17,13 +18,13 @@ export interface ActionTypes {
 export interface FetchableState<Data> {
   isFetching: boolean;
   data: Data | null;
-  error?: Error | null;
+  error?: RequestError | null;
 }
 
 export interface AnyFetchableState {
   isFetching: boolean;
   data?: any;
-  error?: Error | null;
+  error?: RequestError | null;
 }
 
 export const createReducer = (intialState: any, handlers: ActionHandler) => (
@@ -56,12 +57,7 @@ export const createResultData = (
 
 export const createError = ({ FAILED, FULFILLED }: ActionTypes) =>
   createReducer(null, {
-    [FAILED]: (state, action) => {
-      if (action.error instanceof Error) {
-        return { message: action.error.message, name: action.error.name };
-      }
-      return action.error;
-    },
+    [FAILED]: (state, action) => action.error,
     [FULFILLED]: (state, action) => null,
   });
 
