@@ -83,6 +83,7 @@ exports[`Project Form component should render correctly 1`] = `
                   >
                     <Col
                       className="ant-form-item-label"
+                      key="label"
                       sm={
                         Object {
                           "span": 6,
@@ -109,6 +110,7 @@ exports[`Project Form component should render correctly 1`] = `
                     </Col>
                     <Col
                       className="ant-form-item-control-wrapper"
+                      key="wrapper"
                       sm={
                         Object {
                           "span": 18,
@@ -287,6 +289,7 @@ exports[`Project Form component should render correctly 1`] = `
                   >
                     <Col
                       className="ant-form-item-label"
+                      key="label"
                       sm={
                         Object {
                           "span": 6,
@@ -313,6 +316,7 @@ exports[`Project Form component should render correctly 1`] = `
                     </Col>
                     <Col
                       className="ant-form-item-control-wrapper"
+                      key="wrapper"
                       sm={
                         Object {
                           "span": 18,
@@ -470,6 +474,7 @@ exports[`Project Form component should render correctly 1`] = `
                   >
                     <Col
                       className="ant-form-item-control-wrapper"
+                      key="wrapper"
                       sm={
                         Object {
                           "offset": 6,
@@ -725,6 +730,7 @@ exports[`Project Form component should render correctly 1`] = `
                   >
                     <Col
                       className="ant-form-item-control-wrapper"
+                      key="wrapper"
                       sm={
                         Object {
                           "offset": 6,
