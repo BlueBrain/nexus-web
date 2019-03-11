@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { Form, Icon, Button, Table, Card, notification } from 'antd';
+import { Form, Button, Table, Card, Empty } from 'antd';
 import { executeRawQuery } from '../../store/actions/rawQuery';
 import { RawQueryState } from '../../store/reducers/rawQuery';
 import { connect } from 'react-redux';
 import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/lib/View/SparqlView/types';
 import * as hash from 'object-hash';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
+import { RequestError } from '../../store/actions/utils/errors';
 
 // Codemirror will not load on the server, so we need to make sure
 // the language support code doesn't load either.
@@ -20,6 +21,7 @@ export interface RawSparqlQueryViewProps {
   response: SparqlViewQueryResponse;
   wantedOrg: any;
   wantedProject: any;
+  error: RequestError | null;
   executeRawQuery(orgName: string, projectName: string, query: string): void;
 }
 
@@ -33,6 +35,7 @@ const RawSparqlQueryView: React.FunctionComponent<RawSparqlQueryViewProps> = ({
   executeRawQuery,
   wantedOrg,
   wantedProject,
+  error,
 }): JSX.Element => {
   const [query, setQuery] = React.useState(initialQuery);
 
@@ -48,6 +51,9 @@ const RawSparqlQueryView: React.FunctionComponent<RawSparqlQueryViewProps> = ({
   }
 
   const renderCell = (entry: any) => {
+    if (!entry) {
+      return <>no value</>;
+    }
     let value: React.ReactNode;
     switch (entry.type) {
       case 'uri':
@@ -111,14 +117,25 @@ const RawSparqlQueryView: React.FunctionComponent<RawSparqlQueryViewProps> = ({
         </FormItem>
       </Form>
       <Card bordered>
-        <Table
-          dataSource={data}
-          pagination={false}
-          rowKey={record => hash(record)}
-          loading={fetching}
-        >
-          {columns}
-        </Table>
+        {error && (
+          <Empty
+            description={
+              error.message === 'Bad Request'
+                ? 'The query is malformed'
+                : error.message
+            }
+          />
+        )}
+        {!error && (
+          <Table
+            dataSource={data}
+            pagination={false}
+            rowKey={record => hash(record)}
+            loading={fetching}
+          >
+            {columns}
+          </Table>
+        )}
       </Card>
     </>
   );
@@ -133,7 +150,8 @@ LIMIT 20
 
 const mapStateToProps = ({ rawQuery }: { rawQuery: RawQueryState }) => ({
   fetching: rawQuery.fetching,
-  initialQuery: INITIAL_QUERY,
+  initialQuery: 'SELECT ?s ?p ?o WHERE {?s ?p ?o} LIMIT 20',
+  error: rawQuery.error,
   response: rawQuery.response,
 });
 

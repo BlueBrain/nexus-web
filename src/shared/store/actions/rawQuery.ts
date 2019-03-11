@@ -8,6 +8,7 @@ import {
 import { ElasticSearchHit } from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
 import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/lib/View/SparqlView/types';
 import { ThunkAction } from '..';
+import { formatError, RequestError } from './utils/errors';
 
 //
 // Action types
@@ -23,6 +24,7 @@ interface RawQueryActionSuccess extends Action {
 }
 interface RawQueryActionFailure extends Action {
   type: '@@rawQuery/QUERYING_FAILURE';
+  error: RequestError;
 }
 
 const rawQueryAction: ActionCreator<RawQueryAction> = (
@@ -40,7 +42,7 @@ const rawQuerySuccessAction: ActionCreator<RawQueryActionSuccess> = (
   payload: results,
 });
 const rawQueryFailureAction: ActionCreator<RawQueryActionFailure> = (
-  error: any
+  error: RequestError
 ) => ({
   error,
   type: '@@rawQuery/QUERYING_FAILURE',
@@ -68,7 +70,7 @@ export const executeRawQuery: ActionCreator<ThunkAction> = (
       const results: SparqlViewQueryResponse = response;
       return dispatch(rawQuerySuccessAction(results));
     } catch (e) {
-      return dispatch(rawQueryFailureAction(e));
+      return dispatch(rawQueryFailureAction(formatError(e)));
     }
   };
 };
@@ -95,7 +97,7 @@ export const executeRawElasticSearchQuery: ActionCreator<ThunkAction> = (
       const results: PaginatedList<ElasticSearchHit> = response;
       return dispatch(rawQuerySuccessAction(results));
     } catch (e) {
-      return dispatch(rawQueryFailureAction(e));
+      return dispatch(rawQueryFailureAction(formatError(e)));
     }
   };
 };

@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { Form, Icon, Button, Card, List } from 'antd';
+import { Form, Icon, Button, Card, List, Empty } from 'antd';
 import { executeRawElasticSearchQuery } from '../../store/actions/rawQuery';
 import { RawElasticSearchQueryState } from '../../store/reducers/rawQuery';
 import { connect } from 'react-redux';
 import { PaginatedList, PaginationSettings } from '@bbp/nexus-sdk';
 import { ElasticSearchHit } from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
+import { RequestError } from '../../store/actions/utils/errors';
 
 // Codemirror will not load on the server, so we need to make sure
 // the language support code doesn't load either.
@@ -29,6 +30,7 @@ export interface RawElasticSearchQueryViewProps {
   wantedOrg: string;
   wantedProject: string;
   wantedView?: string;
+  error: RequestError | null;
   executeRawQuery(
     orgName: string,
     projectName: string,
@@ -52,6 +54,7 @@ const RawElasticSearchQueryView: React.FunctionComponent<
   wantedOrg,
   wantedProject,
   wantedView,
+  error,
 }): JSX.Element => {
   const formattedInitialQuery = JSON.stringify(
     JSON.parse(initialQuery),
@@ -90,7 +93,7 @@ const RawElasticSearchQueryView: React.FunctionComponent<
       setValid(true);
     } catch (error) {
       // tslint:disable-next-line:no-console
-      console.log('error', error)
+      console.log('error', error);
       setValid(false);
     }
   };
@@ -110,23 +113,24 @@ const RawElasticSearchQueryView: React.FunctionComponent<
         }}
       >
         <>
-        <div className="control-panel">
-          <div>
-            <div className={`feedback ${valid ? "_positive" : "_negative"}`}>
-              <Icon type={valid ? "check-circle" : "exclamation-circle"} /> {valid ? "Valid JSON" : "Invalid JSON"}
+          <div className="control-panel">
+            <div>
+              <div className={`feedback ${valid ? '_positive' : '_negative'}`}>
+                <Icon type={valid ? 'check-circle' : 'exclamation-circle'} />{' '}
+                {valid ? 'Valid JSON' : 'Invalid JSON'}
+              </div>
             </div>
           </div>
-        </div>
-        <CodeMirror
-          value={initialQuery}
-          options={{
-            mode: { name: 'javascript', json: true },
-            theme: 'base16-light',
-            placeholder: 'Enter a valid ElasticSearch query',
-            viewportMargin: Infinity,
-          }}
-          onChange={handleChange}
-        />
+          <CodeMirror
+            value={initialQuery}
+            options={{
+              mode: { name: 'javascript', json: true },
+              theme: 'base16-light',
+              placeholder: 'Enter a valid ElasticSearch query',
+              viewportMargin: Infinity,
+            }}
+            onChange={handleChange}
+          />
         </>
         <FormItem>
           <Button type="primary" htmlType="submit" disabled={!valid}>
@@ -135,40 +139,51 @@ const RawElasticSearchQueryView: React.FunctionComponent<
         </FormItem>
       </Form>
       <Card bordered>
-        <List
-          bordered
-          size="small"
-          className="elasticsearch-results"
-          itemLayout="vertical"
-          loading={fetching}
-          header={
-            <p className="result">{`Found ${total} result${
-              total > 1 ? 's' : ''
-            }`}</p>
-          }
-          dataSource={data}
-          pagination={{
-            total,
-            current,
-            pageSize: DEFAULT_PAGE_SIZE,
-            onChange: onPaginationChange,
-            position: 'both',
-          }}
-          renderItem={(result?: object) => (
-            <ListItem>
-              {(result && (
-                <ReactJson
-                  src={result}
-                  name={null}
-                  enableClipboard={false}
-                  displayObjectSize={false}
-                  displayDataTypes={false}
-                />
-              )) ||
-                ''}
-            </ListItem>
-          )}
-        />
+        {error && (
+          <Empty
+            description={
+              error.message === 'Bad Request'
+                ? 'The query is malformed'
+                : error.message
+            }
+          />
+        )}
+        {!error && (
+          <List
+            bordered
+            size="small"
+            className="elasticsearch-results"
+            itemLayout="vertical"
+            loading={fetching}
+            header={
+              <p className="result">{`Found ${total} result${
+                total > 1 ? 's' : ''
+              }`}</p>
+            }
+            dataSource={data}
+            pagination={{
+              total,
+              current,
+              pageSize: DEFAULT_PAGE_SIZE,
+              onChange: onPaginationChange,
+              position: 'both',
+            }}
+            renderItem={(result?: object) => (
+              <ListItem>
+                {(result && (
+                  <ReactJson
+                    src={result}
+                    name={null}
+                    enableClipboard={false}
+                    displayObjectSize={false}
+                    displayDataTypes={false}
+                  />
+                )) ||
+                  ''}
+              </ListItem>
+            )}
+          />
+        )}
       </Card>
     </>
   );
