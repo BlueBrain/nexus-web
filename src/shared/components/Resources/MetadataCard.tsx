@@ -53,11 +53,27 @@ const ResourceMetadataCard: React.FunctionComponent<
                 render={(copySuccess, triggerCopy) => (
                   <Tooltip title={copySuccess ? 'Copied!' : 'Copy @id'}>
                     <Button
+                      style={{ margin: '0 1em' }}
                       size="small"
                       icon={copySuccess ? 'check' : 'copy'}
                       onClick={() => triggerCopy()}
                     >
-                      ID
+                      @id
+                    </Button>
+                  </Tooltip>
+                )}
+              />
+
+              <Copy
+                textToCopy={self}
+                render={(copySuccess, triggerCopy) => (
+                  <Tooltip title={copySuccess ? 'Copied!' : 'Copy _self'}>
+                    <Button
+                      size="small"
+                      icon={copySuccess ? 'check' : 'copy'}
+                      onClick={() => triggerCopy()}
+                    >
+                      _self
                     </Button>
                   </Tooltip>
                 )}
