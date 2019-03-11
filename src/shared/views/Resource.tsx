@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../store/reducers';
 import { fetchAndAssignResource } from '../store/actions/nexus/resource';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource, PaginatedList } from '@bbp/nexus-sdk';
 import ResourceView from '../components/Resources/ResourceDetails';
 import Helmet from 'react-helmet';
 import Status from '../components/Routing/Status';
@@ -11,6 +11,8 @@ import {
   HTTP_STATUS_TYPE_KEYS,
 } from '../store/actions/utils/statusCodes';
 import { RequestError } from '../store/actions/utils/errors';
+import { ResourceLink } from '@bbp/nexus-sdk/lib/Resource/types';
+import { push } from 'connected-react-router';
 
 interface ResourceViewProps {
   match: any;
@@ -18,6 +20,10 @@ interface ResourceViewProps {
   dotGraph: string | null;
   error: RequestError | null;
   isFetching: boolean | false;
+  goToResource: (resource: Resource) => void;
+  links: {
+    incoming: PaginatedList<ResourceLink>;
+  } | null;
   fetchResource: (
     orgLabel: string,
     projectLabel: string,
@@ -26,7 +32,16 @@ interface ResourceViewProps {
 }
 
 const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
-  const { match, resource, error, isFetching, fetchResource, dotGraph } = props;
+  const {
+    match,
+    resource,
+    error,
+    isFetching,
+    fetchResource,
+    dotGraph,
+    links,
+    goToResource,
+  } = props;
   const fetch = () => {
     fetchResource(
       match.params.org,
@@ -48,6 +63,8 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
         }
       >
         <ResourceView
+          goToResource={goToResource}
+          links={links}
           dotGraph={dotGraph}
           onSuccess={fetch}
           resource={resource}
@@ -72,6 +89,12 @@ const mapStateToProps = (state: RootState) => ({
       state.nexus.activeResource.data &&
       state.nexus.activeResource.data.resource) ||
     null,
+  links:
+    (state.nexus &&
+      state.nexus.activeResource &&
+      state.nexus.activeResource.data &&
+      state.nexus.activeResource.data.links) ||
+    null,
   error:
     (state.nexus &&
       state.nexus.activeResource &&
@@ -85,6 +108,14 @@ const mapStateToProps = (state: RootState) => ({
 });
 const mapDispatchToProps = (dispatch: any) => {
   return {
+    goToResource: (resource: Resource) =>
+      dispatch(
+        push(
+          `/${resource.orgLabel}/${
+            resource.projectLabel
+          }/resources/${encodeURIComponent(resource.id)}`
+        )
+      ),
     fetchResource: (orgLabel: string, projectLabel: string, id: string) => {
       dispatch(fetchAndAssignResource(orgLabel, projectLabel, id));
     },

@@ -3,10 +3,10 @@ import * as d3Force from 'd3-force';
 import * as dotParser from 'dotparser';
 import dotToNodesParser from './dotToNodesParser';
 import moment = require('moment');
+import { titleOf as getTitle } from '../../utils';
 
 function titleOf(string: string) {
-  const slash = string.substring(string.lastIndexOf('/') + 1);
-  const title = slash.substring(slash.lastIndexOf('#') + 1);
+  const title = getTitle(string);
   const formats = [moment.ISO_8601];
   const isValidDate = moment(title, formats, true).isValid();
   return isValidDate ? moment(title).fromNow() : title;

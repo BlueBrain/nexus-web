@@ -17,6 +17,14 @@
   }
 }
 
+.links-container {
+  display: flex;
+  justify-content: space-between;
+  & > .ant-card {
+    width: calc(100% / 2 - 0.5em);
+  }
+}
+
 .resource-list-item-container {
   .oddListColor();
   display: block;

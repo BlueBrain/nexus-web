@@ -1,10 +1,14 @@
 import * as React from 'react';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource, PaginatedList } from '@bbp/nexus-sdk';
 import { Spin, notification, Empty, Card, Tabs } from 'antd';
 import ResourceEditor from './ResourceEditor';
 import ResourceMetadataCard from './MetadataCard';
 import GraphVisualizer from '../Graph/GraphVisualizer';
 import { RequestError } from '../../store/actions/utils/errors';
+import AnimatedList from '../Animations/AnimatedList';
+import { ResourceLink } from '@bbp/nexus-sdk/lib/Resource/types';
+import ResourceListItem from './ResourceItem';
+import { titleOf } from '../../utils';
 
 const TabPane = Tabs.TabPane;
 
@@ -16,10 +20,22 @@ export interface ResourceViewProps {
   isFetching: boolean | false;
   onSuccess: VoidFunction;
   dotGraph: string | null;
+  goToResource: (resource: Resource) => void;
+  links: {
+    incoming: PaginatedList<ResourceLink>;
+  } | null;
 }
 
 const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
-  const { resource, error, isFetching, onSuccess, dotGraph } = props;
+  const {
+    resource,
+    error,
+    isFetching,
+    onSuccess,
+    dotGraph,
+    links,
+    goToResource,
+  } = props;
   const [editing, setEditing] = React.useState(false);
   const [busy, setFormBusy] = React.useState(isFetching);
 
@@ -52,7 +68,7 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
   };
   return (
     <div className="resource-details" style={{ width: '100%' }}>
-      <Spin spinning={busy} style={{ width: '100%' }}>
+      <Spin spinning={isFetching || busy} style={{ width: '100%' }}>
         {!!error && (
           <div style={{}}>
             <Card>
@@ -78,8 +94,50 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
                   editing={editing}
                 />
               </TabPane>
+              {links && (
+                <TabPane tab="Links" key="2">
+                  <div className="links-container">
+                    <Card>
+                      <AnimatedList
+                        header={<>Incoming</>}
+                        makeKey={(item: ResourceLink) => item.link.id}
+                        results={links.incoming.results}
+                        total={links.incoming.total}
+                        itemComponent={(link: ResourceLink, index: number) => (
+                          <div>
+                            <div>{titleOf(link.predicate)}</div>
+                            <ResourceListItem
+                              index={index}
+                              resource={link.link}
+                              onClick={() => goToResource(link.link)}
+                            />
+                          </div>
+                        )}
+                      />
+                    </Card>
+                    <Card>
+                      <AnimatedList
+                        header={<>Outgoing</>}
+                        makeKey={(item: ResourceLink) => item.link.id}
+                        results={links.incoming.results}
+                        total={links.incoming.total}
+                        itemComponent={(link: ResourceLink, index: number) => (
+                          <div>
+                            <div>{titleOf(link.predicate)}</div>
+                            <ResourceListItem
+                              index={index}
+                              resource={link.link}
+                              onClick={() => goToResource(link.link)}
+                            />
+                          </div>
+                        )}
+                      />
+                    </Card>
+                  </div>
+                </TabPane>
+              )}
               {dotGraph && (
-                <TabPane tab="Graph" key="2">
+                <TabPane tab="Graph" key="3">
                   <GraphVisualizer dotGraph={dotGraph} />
                 </TabPane>
               )}

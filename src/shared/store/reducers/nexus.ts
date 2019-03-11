@@ -16,6 +16,7 @@ import {
   ResourceActions,
 } from '../actions/nexus/resource';
 import { FetchableState, createFetchReducer } from './utils';
+import { ResourceLink } from '@bbp/nexus-sdk/lib/Resource/types';
 
 export interface NexusState {
   orgs: FetchableState<PaginatedList<Organization>>;
@@ -27,6 +28,9 @@ export interface NexusState {
   activeResource?: FetchableState<{
     resource: Resource;
     dotGraph: string;
+    links: {
+      incoming: PaginatedList<ResourceLink>;
+    };
   }>;
 }
 
