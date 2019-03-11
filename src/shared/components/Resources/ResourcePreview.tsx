@@ -28,12 +28,7 @@ const ResourcePreview: React.FunctionComponent<
 
   if (!file) {
     // TODO: Refactor after ES Lists are fetched by Type
-    NexusFile.getSelf(
-      resource.self,
-      resource.orgLabel,
-      resource.projectLabel,
-      true
-    )
+    NexusFile.getSelf(resource.self, true)
       .then((nexusFile: NexusFile) => {
         setFile(nexusFile);
       })
