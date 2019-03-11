@@ -3,6 +3,7 @@ String commitId = env.GIT_COMMIT
 Boolean isRelease = version ==~ /v\d+\.\d+\.\d+.*/
 Boolean isPR = env.CHANGE_ID != null
 Boolean isMaster = version == 'master'
+Boolean isManualBuild = currentBuild.rawBuild.getCauses()[0].toString().contains('UserIdCause')
 
 pipeline {
     agent any
@@ -60,13 +61,23 @@ pipeline {
 
         stage('Build Image') {
             when {
-                expression { isMaster && !isRelease && !isPR }
+                // We build a new image it is a manually triggerred build, or we we are merging back to master
+                expression { isManualBuild || (isMaster && !isRelease && !isPR) }
             }
             steps {
                 sh "oc start-build ${imageBuildName} --follow"
             }
         }
 
+        stage('Promote to dev') {
+            when {
+                expression { isManualBuild }
+            }
+            steps {
+                openshiftTag srcStream: imageStream, srcTag: 'latest', destStream: imageStream, destTag: 'dev', verbose: 'false'
+            }
+        
+        }
         stage('Promote to staging') {
             when {
                 expression { isMaster && !isRelease && !isPR }
