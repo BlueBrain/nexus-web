@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Icon, Button, Table, Card } from 'antd';
+import { Form, Icon, Button, Table, Card, notification } from 'antd';
 import { executeRawQuery } from '../../store/actions/rawQuery';
 import { RawQueryState } from '../../store/reducers/rawQuery';
 import { connect } from 'react-redux';
@@ -80,12 +80,7 @@ const RawSparqlQueryView: React.FunctionComponent<RawSparqlQueryViewProps> = ({
   ));
 
   const handleChange = (editor: any, data: any, value: any) => {
-    try {
-      setQuery(value);
-    } catch (error) {
-      // tslint:disable-next-line:no-console
-      console.log('error', error);
-    }
+    setQuery(value);
   };
 
   return (
