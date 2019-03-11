@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Icon, Button, Table, Card } from 'antd';
+import { Form, Icon, Button, Table, Card, notification } from 'antd';
 import { executeRawQuery } from '../../store/actions/rawQuery';
 import { RawQueryState } from '../../store/reducers/rawQuery';
 import { connect } from 'react-redux';
@@ -13,7 +13,6 @@ if (typeof window !== 'undefined') {
   require('codemirror/mode/sparql/sparql');
   require('codemirror/addon/display/placeholder');
 }
-
 
 export interface RawSparqlQueryViewProps {
   initialQuery: string;
@@ -81,14 +80,8 @@ const RawSparqlQueryView: React.FunctionComponent<RawSparqlQueryViewProps> = ({
   ));
 
   const handleChange = (editor: any, data: any, value: any) => {
-    try {
-      setQuery(value);
-    } catch (error) {
-      // tslint:disable-next-line:no-console
-      console.log('error', error)
-    }
+    setQuery(value);
   };
-
 
   return (
     <>
@@ -98,17 +91,19 @@ const RawSparqlQueryView: React.FunctionComponent<RawSparqlQueryViewProps> = ({
           executeRawQuery(wantedOrg, wantedProject, query);
         }}
       >
-        <CodeMirror
-
-          value={initialQuery}
-          options={{
-            mode: { name: 'sparql' },
-            theme: 'base16-light',
-            placeholder: 'Enter a valid SPARQL query',
-            viewportMargin: Infinity,
-          }}
-          onChange={handleChange}
-        />
+        <div style={{ maxHeight: 600, overflow: 'scroll' }}>
+          <CodeMirror
+            value={initialQuery}
+            options={{
+              mode: { name: 'sparql' },
+              theme: 'base16-light',
+              placeholder: 'Enter a valid SPARQL query',
+              lineNumbers: true,
+              viewportMargin: Infinity,
+            }}
+            onChange={handleChange}
+          />
+        </div>
         <FormItem>
           <Button type="primary" htmlType="submit">
             Execute SPARQL query
@@ -129,9 +124,16 @@ const RawSparqlQueryView: React.FunctionComponent<RawSparqlQueryViewProps> = ({
   );
 };
 
+const INITIAL_QUERY = `
+# Directly edit this query
+SELECT ?s ?p ?o
+WHERE {?s ?p ?o}
+LIMIT 20
+`;
+
 const mapStateToProps = ({ rawQuery }: { rawQuery: RawQueryState }) => ({
   fetching: rawQuery.fetching,
-  initialQuery: 'SELECT ?s ?p ?o WHERE {?s ?p ?o} LIMIT 20',
+  initialQuery: INITIAL_QUERY,
   response: rawQuery.response,
 });
 
