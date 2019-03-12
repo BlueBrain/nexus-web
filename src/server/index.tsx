@@ -126,9 +126,28 @@ app.get('*', async (req: express.Request, res: express.Response) => {
     }
   }
 
+  // Compute path without base path, since MemoryHistory does not
+  // support it.
+  // Code taken from react-router StaticRouter component's private methods.
+  function addLeadingSlash(path: string) {
+    return path.charAt(0) === "/" ? path : `/${path}`;
+  }
+
+  function stripBasename(basename: string, path: string) {
+    if (!basename) return path;
+
+    const base = addLeadingSlash(basename);
+
+    if (path.indexOf(base) !== 0) return path;
+
+    return path.substr(base.length);
+  }
+
+  const path: string = stripBasename(base, req.url);
+
   // Setup history server-side
   const memoryHistory = createMemoryHistory({
-    initialEntries: [req.url],
+    initialEntries: [path],
   });
 
   // Compute pre-loaded state
