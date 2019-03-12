@@ -9,6 +9,7 @@ import AnimatedList from '../Animations/AnimatedList';
 import { ResourceLink } from '@bbp/nexus-sdk/lib/Resource/types';
 import ResourceListItem from './ResourceItem';
 import { titleOf } from '../../utils';
+import Item from 'antd/lib/list/Item';
 
 const TabPane = Tabs.TabPane;
 
@@ -100,39 +101,41 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
                     <Card>
                       <AnimatedList
                         header={<>Incoming</>}
-                        makeKey={(item: ResourceLink) => item.link.id}
+                        makeKey={(item: ResourceLink) =>
+                          item.isExternal
+                            ? (item.link as string)
+                            : (item.link as Resource).id
+                        }
                         results={links.incoming.results}
                         total={links.incoming.total}
-                        itemComponent={(link: ResourceLink, index: number) => (
+                        itemComponent={(
+                          resourceLink: ResourceLink,
+                          index: number
+                        ) => (
                           <div>
-                            <div>{titleOf(link.predicate)}</div>
-                            <ResourceListItem
-                              index={index}
-                              resource={link.link}
-                              onClick={() => goToResource(link.link)}
-                            />
+                            <div>{titleOf(resourceLink.predicate)}</div>
+                            {resourceLink.isExternal ? (
+                              <a
+                                href={resourceLink.link as string}
+                                target="_blank"
+                              >
+                                external link
+                                {/* {resourceLink.link as string} */}
+                              </a>
+                            ) : (
+                              <ResourceListItem
+                                index={index}
+                                resource={resourceLink.link as Resource}
+                                onClick={() =>
+                                  goToResource(resourceLink.link as Resource)
+                                }
+                              />
+                            )}
                           </div>
                         )}
                       />
                     </Card>
-                    <Card>
-                      <AnimatedList
-                        header={<>Outgoing</>}
-                        makeKey={(item: ResourceLink) => item.link.id}
-                        results={links.incoming.results}
-                        total={links.incoming.total}
-                        itemComponent={(link: ResourceLink, index: number) => (
-                          <div>
-                            <div>{titleOf(link.predicate)}</div>
-                            <ResourceListItem
-                              index={index}
-                              resource={link.link}
-                              onClick={() => goToResource(link.link)}
-                            />
-                          </div>
-                        )}
-                      />
-                    </Card>
+                    <Card />
                   </div>
                 </TabPane>
               )}

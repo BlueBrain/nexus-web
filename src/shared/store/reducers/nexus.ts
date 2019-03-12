@@ -28,10 +28,11 @@ export interface NexusState {
   activeResource?: FetchableState<{
     resource: Resource;
     dotGraph: string;
-    links: {
-      incoming: PaginatedList<ResourceLink>;
-    };
   }>;
+  links?: {
+    incoming?: FetchableState<PaginatedList<ResourceLink>>;
+    outgoing?: FetchableState<PaginatedList<ResourceLink>>;
+  };
 }
 
 const initialState: NexusState = {
