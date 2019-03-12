@@ -3,7 +3,8 @@ String commitId = env.GIT_COMMIT
 Boolean isRelease = version ==~ /v\d+\.\d+\.\d+.*/
 Boolean isPR = env.CHANGE_ID != null
 Boolean isMaster = version == 'master'
-Boolean isManualBuild = currentBuild.getBuildCauses()[0].toString().contains('UserIdCause')
+// Boolean isManualBuild = currentBuild.getBuildCauses()[0].toString().contains('UserIdCause')
+Boolean isManualBuild = false
 
 pipeline {
     agent any
@@ -18,6 +19,7 @@ pipeline {
             steps{
                 sh 'echo "Pipeline starting with environment:"'
                 sh 'printenv'
+                sh 'echo "CAUSE ${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause).properties}"'
             }
         }
 
