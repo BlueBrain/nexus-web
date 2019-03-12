@@ -83,7 +83,7 @@ pipeline {
                 expression { isMaster && !isRelease && !isPR }
             }
             steps {
-                openshiftTag srcStream: imageStream, srcTag: 'latest', destStream: imageStream, destTag: "staging,${GIT_COMMIT.substring(0,7)}", verbose: 'false'
+                openshiftTag srcStream: imageStream, srcTag: 'latest', destStream: imageStream, destTag: 'staging', verbose: 'false'
             }
         }
 
