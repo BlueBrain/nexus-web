@@ -61,7 +61,7 @@ pipeline {
 
         stage('Build Image') {
             when {
-                // We build a new image we want to deploy to dev OR if we are merging back to master
+                // We build a new image only if we want to deploy to dev OR if we are merging back to master
                 expression { isDeployToDev || (isMaster && !isRelease && !isPR) }
             }
             steps {
