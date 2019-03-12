@@ -17,7 +17,7 @@ import {
 } from '../actions/nexus/resource';
 import { FetchableState, createFetchReducer } from './utils';
 import { ResourceLink } from '@bbp/nexus-sdk/lib/Resource/types';
-import { linksReducer } from './links';
+import { linksReducer, LinksState } from './links';
 
 export interface NexusState {
   orgs: FetchableState<PaginatedList<Organization>>;
@@ -30,10 +30,7 @@ export interface NexusState {
     resource: Resource;
     dotGraph: string;
   }>;
-  links?: {
-    incoming?: FetchableState<PaginatedList<ResourceLink>>;
-    outgoing?: FetchableState<PaginatedList<ResourceLink>>;
-  };
+  links?: LinksState;
 }
 
 const initialState: NexusState = {

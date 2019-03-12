@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../store/reducers';
 import { fetchAndAssignResource } from '../store/actions/nexus/resource';
-import { Resource, PaginatedList } from '@bbp/nexus-sdk';
+import { Resource, PaginatedList, PaginationSettings } from '@bbp/nexus-sdk';
 import ResourceView from '../components/Resources/ResourceDetails';
 import Helmet from 'react-helmet';
 import Status from '../components/Routing/Status';
@@ -13,6 +13,8 @@ import {
 import { RequestError } from '../store/actions/utils/errors';
 import { ResourceLink } from '@bbp/nexus-sdk/lib/Resource/types';
 import { push } from 'connected-react-router';
+import { fetchLinks } from '../store/actions/nexus/links';
+import { LinksState } from '../store/reducers/links';
 
 interface ResourceViewProps {
   match: any;
@@ -21,9 +23,12 @@ interface ResourceViewProps {
   error: RequestError | null;
   isFetching: boolean | false;
   goToResource: (resource: Resource) => void;
-  links: {
-    incoming: PaginatedList<ResourceLink>;
-  } | null;
+  links: LinksState | null;
+  fetchLinks: (
+    resource: Resource,
+    incomingOrOutgoing: 'incoming' | 'outgoing',
+    paginationSettings: PaginationSettings
+  ) => void;
   fetchResource: (
     orgLabel: string,
     projectLabel: string,
@@ -41,6 +46,7 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
     dotGraph,
     links,
     goToResource,
+    fetchLinks,
   } = props;
   const fetch = () => {
     fetchResource(
@@ -70,6 +76,7 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
           resource={resource}
           error={error}
           isFetching={isFetching}
+          fetchLinks={fetchLinks}
         />
       </Status>
     </>
@@ -89,12 +96,7 @@ const mapStateToProps = (state: RootState) => ({
       state.nexus.activeResource.data &&
       state.nexus.activeResource.data.resource) ||
     null,
-  links:
-    (state.nexus &&
-      state.nexus.activeResource &&
-      state.nexus.activeResource.data &&
-      state.nexus.activeResource.data.links) ||
-    null,
+  links: (state.nexus && state.nexus.links) || null,
   error:
     (state.nexus &&
       state.nexus.activeResource &&
@@ -118,6 +120,13 @@ const mapDispatchToProps = (dispatch: any) => {
       ),
     fetchResource: (orgLabel: string, projectLabel: string, id: string) => {
       dispatch(fetchAndAssignResource(orgLabel, projectLabel, id));
+    },
+    fetchLinks: (
+      resource: Resource,
+      incomingOrOutgoing: 'incoming' | 'outgoing',
+      paginationSettings: PaginationSettings
+    ) => {
+      dispatch(fetchLinks(resource, incomingOrOutgoing, paginationSettings));
     },
   };
 };

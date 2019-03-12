@@ -1,15 +1,12 @@
 import * as React from 'react';
-import { Resource, PaginatedList } from '@bbp/nexus-sdk';
+import { Resource, PaginationSettings } from '@bbp/nexus-sdk';
 import { Spin, notification, Empty, Card, Tabs } from 'antd';
 import ResourceEditor from './ResourceEditor';
 import ResourceMetadataCard from './MetadataCard';
 import GraphVisualizer from '../Graph/GraphVisualizer';
 import { RequestError } from '../../store/actions/utils/errors';
-import AnimatedList from '../Animations/AnimatedList';
-import { ResourceLink } from '@bbp/nexus-sdk/lib/Resource/types';
-import ResourceListItem from './ResourceItem';
-import { titleOf } from '../../utils';
-import Item from 'antd/lib/list/Item';
+import LinksContainer from './Links';
+import { LinksState } from '../../store/reducers/links';
 
 const TabPane = Tabs.TabPane;
 
@@ -22,9 +19,12 @@ export interface ResourceViewProps {
   onSuccess: VoidFunction;
   dotGraph: string | null;
   goToResource: (resource: Resource) => void;
-  links: {
-    incoming: PaginatedList<ResourceLink>;
-  } | null;
+  fetchLinks: (
+    resource: Resource,
+    incomingOrOutgoing: 'incoming' | 'outgoing',
+    paginationSettings: PaginationSettings
+  ) => void;
+  links: LinksState | null;
 }
 
 const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
@@ -36,6 +36,7 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
     dotGraph,
     links,
     goToResource,
+    fetchLinks,
   } = props;
   const [editing, setEditing] = React.useState(false);
   const [busy, setFormBusy] = React.useState(isFetching);
@@ -95,50 +96,14 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
                   editing={editing}
                 />
               </TabPane>
-              {links && (
-                <TabPane tab="Links" key="2">
-                  <div className="links-container">
-                    <Card>
-                      <AnimatedList
-                        header={<>Incoming</>}
-                        makeKey={(item: ResourceLink) =>
-                          item.isExternal
-                            ? (item.link as string)
-                            : (item.link as Resource).id
-                        }
-                        results={links.incoming.results}
-                        total={links.incoming.total}
-                        itemComponent={(
-                          resourceLink: ResourceLink,
-                          index: number
-                        ) => (
-                          <div>
-                            <div>{titleOf(resourceLink.predicate)}</div>
-                            {resourceLink.isExternal ? (
-                              <a
-                                href={resourceLink.link as string}
-                                target="_blank"
-                              >
-                                external link
-                                {/* {resourceLink.link as string} */}
-                              </a>
-                            ) : (
-                              <ResourceListItem
-                                index={index}
-                                resource={resourceLink.link as Resource}
-                                onClick={() =>
-                                  goToResource(resourceLink.link as Resource)
-                                }
-                              />
-                            )}
-                          </div>
-                        )}
-                      />
-                    </Card>
-                    <Card />
-                  </div>
-                </TabPane>
-              )}
+              <TabPane tab="Links" key="2">
+                <LinksContainer
+                  resource={resource}
+                  goToResource={goToResource}
+                  fetchLinks={fetchLinks}
+                  links={links}
+                />
+              </TabPane>
               {dotGraph && (
                 <TabPane tab="Graph" key="3">
                   <GraphVisualizer dotGraph={dotGraph} />
