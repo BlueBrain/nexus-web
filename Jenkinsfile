@@ -61,8 +61,8 @@ pipeline {
 
         stage('Build Image') {
             when {
-                // We build a new image it is a manually triggerred build, or we we are merging back to master
-                expression { isManualBuild || (isMaster && !isRelease && !isPR) }
+                // We build a new image we want to deploy to dev OR if we are merging back to master
+                expression { isDeployToDev || (isMaster && !isRelease && !isPR) }
             }
             steps {
                 sh "oc start-build ${imageBuildName} --follow"
