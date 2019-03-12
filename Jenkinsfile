@@ -3,7 +3,6 @@ String commitId = env.GIT_COMMIT
 Boolean isRelease = version ==~ /v\d+\.\d+\.\d+.*/
 Boolean isPR = env.CHANGE_ID != null
 Boolean isMaster = version == 'master'
-// Boolean isManualBuild = currentBuild.getBuildCauses()[0].toString().contains('UserIdCause')
 Boolean isDeployToDev = env.CHANGE_TITLE.contains('deploy_to_dev')
 
 pipeline {
