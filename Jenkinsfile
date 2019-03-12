@@ -3,6 +3,7 @@ String commitId = env.GIT_COMMIT
 Boolean isRelease = version ==~ /v\d+\.\d+\.\d+.*/
 Boolean isPR = env.CHANGE_ID != null
 Boolean isMaster = version == 'master'
+Boolean isDeployToDev = env.CHANGE_TITLE.contains('deploy_to_dev')
 
 pipeline {
     agent any
@@ -60,19 +61,29 @@ pipeline {
 
         stage('Build Image') {
             when {
-                expression { isMaster && !isRelease && !isPR }
+                // We build a new image only if we want to deploy to dev OR if we are merging back to master
+                expression { isDeployToDev || (isMaster && !isRelease && !isPR) }
             }
             steps {
                 sh "oc start-build ${imageBuildName} --follow"
             }
         }
 
+        stage('Promote to dev') {
+            when {
+                expression { isDeployToDev }
+            }
+            steps {
+                openshiftTag srcStream: imageStream, srcTag: 'latest', destStream: imageStream, destTag: 'dev', verbose: 'false'
+            }
+        
+        }
         stage('Promote to staging') {
             when {
                 expression { isMaster && !isRelease && !isPR }
             }
             steps {
-                openshiftTag srcStream: imageStream, srcTag: 'latest', destStream: imageStream, destTag: "staging,${GIT_COMMIT.substring(0,7)}", verbose: 'false'
+                openshiftTag srcStream: imageStream, srcTag: 'latest', destStream: imageStream, destTag: 'staging', verbose: 'false'
             }
         }
 
