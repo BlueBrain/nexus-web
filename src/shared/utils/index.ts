@@ -105,3 +105,27 @@ export const getOrderedPermissions = (
 export const asyncTimeout = (timeInMilliseconds: number): Promise<void> => {
   return new Promise(resolve => setTimeout(resolve, timeInMilliseconds));
 };
+
+/**
+ * Ensure a path fragment has a leading slash, to compute routes.
+ */
+export const addLeadingSlash = (path: string) => {
+  return path.charAt(0) === "/" ? path : `/${path}`;
+};
+
+/**
+ * Compute route path without base path.
+ *
+ * Useful when using MemoryHistory which does not support `basename`.
+ *
+ * Code taken from react-router StaticRouter component's private methods.
+ */
+export const stripBasename = (basename: string, path: string) => {
+  if (!basename) return path;
+
+  const base = addLeadingSlash(basename);
+
+  if (path.indexOf(base) !== 0) return path;
+
+  return path.substr(base.length);
+};

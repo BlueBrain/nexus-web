@@ -22,6 +22,7 @@ import {
   HTTP_STATUSES,
   HTTP_STATUS_TYPE_KEYS,
 } from '../shared/store/actions/utils/statusCodes';
+import { stripBasename } from '../shared/utils';
 
 const isSecure = !!process.env.SECURE;
 const cookieName = isSecure ? '__Secure-nexusAuth' : '_Secure-nexusAuth';
@@ -126,9 +127,11 @@ app.get('*', async (req: express.Request, res: express.Response) => {
     }
   }
 
+  const path: string = stripBasename(base, req.url);
+
   // Setup history server-side
   const memoryHistory = createMemoryHistory({
-    initialEntries: [req.url],
+    initialEntries: [path],
   });
 
   // Compute pre-loaded state
