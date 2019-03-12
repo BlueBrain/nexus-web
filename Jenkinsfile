@@ -4,7 +4,7 @@ Boolean isRelease = version ==~ /v\d+\.\d+\.\d+.*/
 Boolean isPR = env.CHANGE_ID != null
 Boolean isMaster = version == 'master'
 // Boolean isManualBuild = currentBuild.getBuildCauses()[0].toString().contains('UserIdCause')
-Boolean isManualBuild = false
+Boolean isDeployToDev = env.CHANGE_TITLE.contains('deploy_to_dev')
 
 pipeline {
     agent any
@@ -19,7 +19,6 @@ pipeline {
             steps{
                 sh 'echo "Pipeline starting with environment:"'
                 sh 'printenv'
-                sh 'echo "CAUSE ${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause).properties}"'
             }
         }
 
@@ -73,7 +72,7 @@ pipeline {
 
         stage('Promote to dev') {
             when {
-                expression { isManualBuild }
+                expression { isDeployToDev }
             }
             steps {
                 openshiftTag srcStream: imageStream, srcTag: 'latest', destStream: imageStream, destTag: 'dev', verbose: 'false'
