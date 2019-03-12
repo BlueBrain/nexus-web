@@ -1,4 +1,4 @@
-import { getUserList, getOrderedPermissions } from '..';
+import { getUserList, getOrderedPermissions, addLeadingSlash, stripBasename } from '..';
 import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
 
 const identities: Identity[] = [
@@ -65,6 +65,34 @@ describe('utils functions', () => {
         'User',
         'Unknown',
       ]);
+    });
+  });
+  describe('stripBasename()', () => {
+    it('should keep the path intact when the basename is empty', () => {
+      const basename = '';
+      const path = '/this-is-a-path';
+      expect(stripBasename(basename, path)).toEqual(path);
+    });
+    it('should keep the path intact when the basename is not at the beginning of the path', () => {
+      const basename = 'my-app';  // no leading slash, should be added automatically
+      const path = '/fragment/my-app/this-is-a-path';
+      expect(stripBasename(basename, path)).toEqual(path);
+    });
+    it('should strip the basename from a path starting with it', () => {
+      const basename = '/my-app';
+      const justPath = '/this-is-a-path';
+      const path = `${basename}${justPath}`;
+      expect(stripBasename(basename, path)).toEqual(justPath);
+    });
+  });
+  describe('addLeadingSlash()', () => {
+    it('should keep the path intact if it starts with a slash', () => {
+      const path = '/this-is-a-path';
+      expect(addLeadingSlash(path)).toEqual(path);
+    });
+    it('should add a leading slash when the first character is not a slash', () => {
+      const path = 'this-is-a-path';
+      expect(addLeadingSlash(path)).toEqual(`/${path}`);
     });
   });
 });
