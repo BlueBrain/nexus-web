@@ -1,11 +1,8 @@
 import { ActionCreator, Dispatch } from 'redux';
-import { Project, Resource, PaginatedList } from '@bbp/nexus-sdk';
+import { Project, Resource } from '@bbp/nexus-sdk';
 import { ThunkAction } from '../..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
-import {
-  ResourceGetFormat,
-  ResourceLink,
-} from '@bbp/nexus-sdk/lib/Resource/types';
+import { ResourceGetFormat } from '@bbp/nexus-sdk/lib/Resource/types';
 import { formatError, RequestError } from '../utils/errors';
 
 enum ResourceActionTypes {
@@ -32,9 +29,6 @@ const fetchResourceFulfilledAction: ActionCreator<
     {
       resource: Resource;
       dotGraph: string;
-      links: {
-        incoming: PaginatedList<ResourceLink>;
-      };
     }
   >
 > = (resource: Resource, dotGraph: string, links) => ({
@@ -42,7 +36,6 @@ const fetchResourceFulfilledAction: ActionCreator<
   payload: {
     resource,
     dotGraph,
-    links,
   },
 });
 
@@ -74,10 +67,6 @@ export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
         {
           resource: Resource;
           dotGraph: string;
-          links: {
-            incoming: PaginatedList<ResourceLink>;
-            // outgoing: PaginatedList<ResourceLink>;
-          };
         }
       >
     | FetchFailedAction<ResourceActionTypes.FAILED>
@@ -90,11 +79,7 @@ export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
         resource.self,
         ResourceGetFormat.DOT
       );
-      const incoming = await resource.getIncomingLinks({ from: 0, size: 20 });
-      const links = {
-        incoming,
-      };
-      return dispatch(fetchResourceFulfilledAction(resource, dotGraph, links));
+      return dispatch(fetchResourceFulfilledAction(resource, dotGraph));
     } catch (e) {
       return dispatch(fetchResourceFailedAction(formatError(e)));
     }
