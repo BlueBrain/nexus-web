@@ -450,7 +450,7 @@ exports[`Project Form component should render correctly 1`] = `
                   Object {
                     "sm": Object {
                       "offset": 6,
-                      "span": 19,
+                      "span": 18,
                     },
                     "xs": Object {
                       "offset": 0,
@@ -471,7 +471,7 @@ exports[`Project Form component should render correctly 1`] = `
                       sm={
                         Object {
                           "offset": 6,
-                          "span": 19,
+                          "span": 18,
                         }
                       }
                       xs={
@@ -482,7 +482,7 @@ exports[`Project Form component should render correctly 1`] = `
                       }
                     >
                       <div
-                        className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-xs-offset-0 ant-col-sm-19 ant-col-sm-offset-6"
+                        className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-xs-offset-0 ant-col-sm-18 ant-col-sm-offset-6"
                       >
                         <div
                           className="ant-form-item-control"
@@ -704,7 +704,7 @@ exports[`Project Form component should render correctly 1`] = `
                   Object {
                     "sm": Object {
                       "offset": 6,
-                      "span": 19,
+                      "span": 18,
                     },
                     "xs": Object {
                       "offset": 0,
@@ -725,7 +725,7 @@ exports[`Project Form component should render correctly 1`] = `
                       sm={
                         Object {
                           "offset": 6,
-                          "span": 19,
+                          "span": 18,
                         }
                       }
                       xs={
@@ -736,7 +736,7 @@ exports[`Project Form component should render correctly 1`] = `
                       }
                     >
                       <div
-                        className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-xs-offset-0 ant-col-sm-19 ant-col-sm-offset-6"
+                        className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-xs-offset-0 ant-col-sm-18 ant-col-sm-offset-6"
                       >
                         <div
                           className="ant-form-item-control"

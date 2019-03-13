@@ -137,7 +137,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   const formItemLayoutWithOutLabel = {
     wrapperCol: {
       xs: { span: 24, offset: 0 },
-      sm: { span: 19, offset: 6 },
+      sm: { span: 18, offset: 6 },
     },
   };
 
