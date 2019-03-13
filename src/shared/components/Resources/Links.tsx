@@ -37,7 +37,7 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
 
   return (
     <AnimatedList
-      header={<>{incomingOrOutgoing}</>}
+      header={<h3>{incomingOrOutgoing}</h3>}
       loading={linkState.isFetching}
       makeKey={(item: ResourceLink, index: number) =>
         `${
@@ -47,6 +47,15 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
       results={(linkState.data && linkState.data.results) || []}
       total={(linkState.data && linkState.data.total) || 0}
       paginationSettings={{ from, total, pageSize: linksListPageSize }}
+      onPaginationChange={(page: number, pageSize?: number) => {
+        // NOTE: page begins from 1, not 0.
+        // from is the total number of resources beggining from 0, not the page number!
+        const size = pageSize || linksListPageSize;
+        fetchLinks(resource, incomingOrOutgoing, {
+          size,
+          from: page * size - size,
+        });
+      }}
       itemComponent={(resourceLink: ResourceLink, index: number) => (
         <div>
           <div>{labelOf(resourceLink.predicate)}</div>
