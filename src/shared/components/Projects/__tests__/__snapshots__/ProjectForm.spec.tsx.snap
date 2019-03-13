@@ -41,7 +41,6 @@ exports[`Project Form component should render correctly 1`] = `
           key="container"
         >
           <Form
-            colon={true}
             hideRequiredMark={false}
             layout="horizontal"
             onSubmit={[Function]}
@@ -51,6 +50,7 @@ exports[`Project Form component should render correctly 1`] = `
               onSubmit={[Function]}
             >
               <FormItem
+                colon={true}
                 hasFeedback={false}
                 label="Label"
                 labelCol={
@@ -254,6 +254,7 @@ exports[`Project Form component should render correctly 1`] = `
                 </Row>
               </FormItem>
               <FormItem
+                colon={true}
                 hasFeedback={false}
                 label="Description"
                 labelCol={
@@ -445,6 +446,7 @@ exports[`Project Form component should render correctly 1`] = `
                 </Row>
               </FormItem>
               <FormItem
+                colon={true}
                 hasFeedback={false}
                 wrapperCol={
                   Object {
@@ -699,6 +701,7 @@ exports[`Project Form component should render correctly 1`] = `
                 </Row>
               </FormItem>
               <FormItem
+                colon={true}
                 hasFeedback={false}
                 wrapperCol={
                   Object {

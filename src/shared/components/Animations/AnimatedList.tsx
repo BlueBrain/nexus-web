@@ -19,7 +19,7 @@ export interface AnimatedListProps<Item> {
   itemClassName?: string;
   results: Item[];
   total: number;
-  makeKey?: (item: Item) => string;
+  makeKey?: (item: Item, index: number) => string;
   onPaginationChange?: (page: number, pageSize?: number) => void;
   paginationSettings?: { from: number; total: number; pageSize: number };
   loading?: boolean;
@@ -53,7 +53,10 @@ const AnimatedList: React.FunctionComponent<AnimatedListProps<any>> = props => {
       />
     );
   }
-  const transitions = useTransition(results, makeKey, DEFAULT_ANIMATIONS);
+
+  // Some problem with useTransition's makeKey api :(
+  const keys = results.map(makeKey);
+  const transitions = useTransition(results, keys, DEFAULT_ANIMATIONS);
   return (
     <div className="list-container">
       <div className="header">
@@ -68,11 +71,17 @@ const AnimatedList: React.FunctionComponent<AnimatedListProps<any>> = props => {
       <div className="list">
         <Spin spinning={loading}>
           {!!total &&
-            transitions.map(({ item, key, props }, index: number) => (
-              <animated.div className={itemClassName} style={props} key={key}>
-                {itemComponent(item, index)}
-              </animated.div>
-            ))}
+            transitions.map(({ item, props, key }, index: number) => {
+              return (
+                <animated.div
+                  className={itemClassName}
+                  style={props}
+                  key={keys[index]}
+                >
+                  {itemComponent(item, index)}
+                </animated.div>
+              );
+            })}
           {!total && <Empty />}
           {PaginationSection}
         </Spin>

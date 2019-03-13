@@ -5,8 +5,7 @@ import { Spin, Card } from 'antd';
 import AnimatedList from '../Animations/AnimatedList';
 import { ResourceLink } from '@bbp/nexus-sdk/lib/Resource/types';
 import ResourceListItem from './ResourceItem';
-import { titleOf } from '../../utils';
-import { FetchableState } from '../../store/reducers/utils';
+import { labelOf } from '../../utils';
 import { LinksState } from '../../store/reducers/links';
 
 export interface LinksListProps extends LinksContainerProps {
@@ -22,11 +21,14 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
     resource,
   } = props;
   const linkState = links && links[incomingOrOutgoing];
+  const from = (linkState && linkState.data && linkState.data.index) || 0;
+  const total = (linkState && linkState.data && linkState.data.total) || 0;
+  const paginationSettings = { from, total, size: 5 };
   React.useEffect(() => {
     if (!linkState) {
-      fetchLinks(resource, incomingOrOutgoing, { from: 0, size: 20 });
+      fetchLinks(resource, incomingOrOutgoing, paginationSettings);
     }
-  }, [linkState]);
+  }, [linkState, resource]);
 
   if (!linkState) {
     return <Spin />;
@@ -36,18 +38,20 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
     <AnimatedList
       header={<>{incomingOrOutgoing}</>}
       loading={linkState.isFetching}
-      makeKey={(item: ResourceLink) =>
-        item.isExternal ? (item.link as string) : (item.link as Resource).id
+      makeKey={(item: ResourceLink, index: number) =>
+        `${
+          item.isExternal ? (item.link as string) : (item.link as Resource).id
+        }-${index}`
       }
       results={(linkState.data && linkState.data.results) || []}
       total={(linkState.data && linkState.data.total) || 0}
+      paginationSettings={{ from, total, pageSize: 5 }}
       itemComponent={(resourceLink: ResourceLink, index: number) => (
         <div>
-          <div>{titleOf(resourceLink.predicate)}</div>
+          <div>{labelOf(resourceLink.predicate)}</div>
           {resourceLink.isExternal ? (
             <a href={resourceLink.link as string} target="_blank">
-              external link
-              {/* {resourceLink.link as string} */}
+              {resourceLink.link as string}
             </a>
           ) : (
             <ResourceListItem
