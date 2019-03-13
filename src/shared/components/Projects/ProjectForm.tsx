@@ -137,7 +137,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   const formItemLayoutWithOutLabel = {
     wrapperCol: {
       xs: { span: 24, offset: 0 },
-      sm: { span: 19, offset: 6 },
+      sm: { span: 18, offset: 6 },
     },
   };
 
@@ -266,7 +266,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
           })(<Input placeholder="Description" />)}
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>
-          <Collapse>
+          <Collapse style={{ width: '100%' }}>
             <Collapse.Panel header="Advanced settings" key="1">
               <Form.Item label="Base" {...formItemLayout}>
                 {getFieldDecorator('base', {
