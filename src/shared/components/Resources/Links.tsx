@@ -19,11 +19,12 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
     fetchLinks,
     incomingOrOutgoing,
     resource,
+    linksListPageSize,
   } = props;
   const linkState = links && links[incomingOrOutgoing];
   const from = (linkState && linkState.data && linkState.data.index) || 0;
   const total = (linkState && linkState.data && linkState.data.total) || 0;
-  const paginationSettings = { from, total, size: 5 };
+  const paginationSettings = { from, total, size: linksListPageSize };
   React.useEffect(() => {
     if (!linkState) {
       fetchLinks(resource, incomingOrOutgoing, paginationSettings);
@@ -45,7 +46,7 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
       }
       results={(linkState.data && linkState.data.results) || []}
       total={(linkState.data && linkState.data.total) || 0}
-      paginationSettings={{ from, total, pageSize: 5 }}
+      paginationSettings={{ from, total, pageSize: linksListPageSize }}
       itemComponent={(resourceLink: ResourceLink, index: number) => (
         <div>
           <div>{labelOf(resourceLink.predicate)}</div>
@@ -74,6 +75,7 @@ export interface LinksContainerProps {
     paginationSettings: PaginationSettings
   ) => void;
   resource: Resource;
+  linksListPageSize: number;
   links: LinksState | null;
 }
 

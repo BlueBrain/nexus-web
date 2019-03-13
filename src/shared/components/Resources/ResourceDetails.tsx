@@ -13,6 +13,7 @@ const TabPane = Tabs.TabPane;
 const NEXUS_FILE_TYPE = 'File';
 
 export interface ResourceViewProps {
+  linksListPageSize: number;
   resource: Resource | null;
   error: RequestError | null;
   isFetching: boolean | false;
@@ -29,6 +30,7 @@ export interface ResourceViewProps {
 
 const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
   const {
+    linksListPageSize,
     resource,
     error,
     isFetching,
@@ -102,6 +104,7 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
                   goToResource={goToResource}
                   fetchLinks={fetchLinks}
                   links={links}
+                  linksListPageSize={linksListPageSize}
                 />
               </TabPane>
               {dotGraph && (

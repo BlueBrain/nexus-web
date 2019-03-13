@@ -11,12 +11,12 @@ import {
   HTTP_STATUS_TYPE_KEYS,
 } from '../store/actions/utils/statusCodes';
 import { RequestError } from '../store/actions/utils/errors';
-import { ResourceLink } from '@bbp/nexus-sdk/lib/Resource/types';
 import { push } from 'connected-react-router';
 import { fetchLinks } from '../store/actions/nexus/links';
 import { LinksState } from '../store/reducers/links';
 
 interface ResourceViewProps {
+  linksListPageSize: number;
   match: any;
   resource: Resource | null;
   dotGraph: string | null;
@@ -47,6 +47,7 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
     links,
     goToResource,
     fetchLinks,
+    linksListPageSize,
   } = props;
   const fetch = () => {
     fetchResource(
@@ -77,6 +78,7 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
           error={error}
           isFetching={isFetching}
           fetchLinks={fetchLinks}
+          linksListPageSize={linksListPageSize}
         />
       </Status>
     </>
@@ -84,6 +86,7 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
 };
 
 const mapStateToProps = (state: RootState) => ({
+  linksListPageSize: state.uiSettings.pageSizes.linksListPageSize,
   dotGraph:
     (state.nexus &&
       state.nexus.activeResource &&

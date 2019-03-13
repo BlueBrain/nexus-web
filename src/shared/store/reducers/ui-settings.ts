@@ -9,6 +9,7 @@ export const DEFAULT_UI_SETTINGS = {
     orgsListPageSize: 5,
     projectsListPageSize: 5,
     resourcesListPageSize: 20,
+    linksListPageSize: 10,
   },
 };
 
