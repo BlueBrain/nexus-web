@@ -7,6 +7,7 @@ import GraphVisualizer from '../Graph/GraphVisualizer';
 import { RequestError } from '../../store/actions/utils/errors';
 import LinksContainer from './Links';
 import { LinksState } from '../../store/reducers/links';
+import { LinkDirection } from '../../store/actions/nexus/links';
 
 const TabPane = Tabs.TabPane;
 
@@ -22,7 +23,7 @@ export interface ResourceViewProps {
   goToResource: (resource: Resource) => void;
   fetchLinks: (
     resource: Resource,
-    incomingOrOutgoing: 'incoming' | 'outgoing',
+    linkDirection: LinkDirection,
     paginationSettings: PaginationSettings
   ) => void;
   links: LinksState | null;

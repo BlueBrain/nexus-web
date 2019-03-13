@@ -9,9 +9,10 @@ import { labelOf } from '../../utils';
 import { LinksState } from '../../store/reducers/links';
 
 import './links-container.less';
+import { LinkDirection } from '../../store/actions/nexus/links';
 
 export interface LinksListProps extends LinksContainerProps {
-  incomingOrOutgoing: 'incoming' | 'outgoing';
+  linkDirection: LinkDirection;
 }
 
 const LinksList: React.FunctionComponent<LinksListProps> = props => {
@@ -19,17 +20,17 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
     links,
     goToResource,
     fetchLinks,
-    incomingOrOutgoing,
+    linkDirection,
     resource,
     linksListPageSize,
   } = props;
-  const linkState = links && links[incomingOrOutgoing];
+  const linkState = links && links[linkDirection];
   const from = (linkState && linkState.data && linkState.data.index) || 0;
   const total = (linkState && linkState.data && linkState.data.total) || 0;
   const paginationSettings = { from, total, size: linksListPageSize };
   React.useEffect(() => {
     if (!linkState) {
-      fetchLinks(resource, incomingOrOutgoing, paginationSettings);
+      fetchLinks(resource, linkDirection, paginationSettings);
     }
   }, [linkState, resource]);
 
@@ -39,7 +40,7 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
 
   return (
     <AnimatedList
-      header={<h3 className="title">{incomingOrOutgoing} Links</h3>}
+      header={<h3 className="title">{linkDirection} Links</h3>}
       loading={linkState.isFetching}
       makeKey={(item: ResourceLink, index: number) =>
         `${
@@ -53,7 +54,7 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
         // NOTE: page begins from 1, not 0.
         // from is the total number of resources beggining from 0, not the page number!
         const size = pageSize || linksListPageSize;
-        fetchLinks(resource, incomingOrOutgoing, {
+        fetchLinks(resource, linkDirection, {
           size,
           from: page * size - size,
         });
@@ -82,7 +83,7 @@ export interface LinksContainerProps {
   goToResource: (resource: Resource) => void;
   fetchLinks: (
     resource: Resource,
-    incomingOrOutgoing: 'incoming' | 'outgoing',
+    linkDirection: LinkDirection,
     paginationSettings: PaginationSettings
   ) => void;
   resource: Resource;
@@ -94,11 +95,11 @@ const LinksContainer: React.FunctionComponent<LinksContainerProps> = props => {
   return (
     <div className="links-container">
       <Card>
-        <LinksList incomingOrOutgoing="incoming" {...props} />
+        <LinksList linkDirection={LinkDirection.INCOMING} {...props} />
       </Card>
 
       <Card>
-        <LinksList incomingOrOutgoing="outgoing" {...props} />
+        <LinksList linkDirection={LinkDirection.OUTGOING} {...props} />
       </Card>
     </div>
   );

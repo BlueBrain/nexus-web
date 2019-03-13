@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../store/reducers';
 import { fetchAndAssignResource } from '../store/actions/nexus/resource';
-import { Resource, PaginatedList, PaginationSettings } from '@bbp/nexus-sdk';
+import { Resource, PaginationSettings } from '@bbp/nexus-sdk';
 import ResourceView from '../components/Resources/ResourceDetails';
 import Helmet from 'react-helmet';
 import Status from '../components/Routing/Status';
@@ -12,7 +12,7 @@ import {
 } from '../store/actions/utils/statusCodes';
 import { RequestError } from '../store/actions/utils/errors';
 import { push } from 'connected-react-router';
-import { fetchLinks } from '../store/actions/nexus/links';
+import { fetchLinks, LinkDirection } from '../store/actions/nexus/links';
 import { LinksState } from '../store/reducers/links';
 
 interface ResourceViewProps {
@@ -26,7 +26,7 @@ interface ResourceViewProps {
   links: LinksState | null;
   fetchLinks: (
     resource: Resource,
-    incomingOrOutgoing: 'incoming' | 'outgoing',
+    linkDirection: LinkDirection,
     paginationSettings: PaginationSettings
   ) => void;
   fetchResource: (
@@ -126,10 +126,10 @@ const mapDispatchToProps = (dispatch: any) => {
     },
     fetchLinks: (
       resource: Resource,
-      incomingOrOutgoing: 'incoming' | 'outgoing',
+      linkDirection: LinkDirection,
       paginationSettings: PaginationSettings
     ) => {
-      dispatch(fetchLinks(resource, incomingOrOutgoing, paginationSettings));
+      dispatch(fetchLinks(resource, linkDirection, paginationSettings));
     },
   };
 };

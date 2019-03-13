@@ -12,6 +12,11 @@ import {
 import { ResourceLink } from '@bbp/nexus-sdk/lib/Resource/types';
 import { formatError, RequestError } from '../utils/errors';
 
+export enum LinkDirection {
+  INCOMING = 'incoming',
+  OUTGOING = 'outgoing',
+}
+
 export enum LinksActionTypes {
   FETCHING = '@@nexus/LINKS_FETCHING',
   FULFILLED = '@@nexus/LINKS_FETCHING_FULFILLED',
@@ -26,9 +31,9 @@ export const actionTypes = {
 
 const fetchLinksAction: ActionCreator<
   FetchActionWithKey<LinksActionTypes.FETCHING>
-> = (incomingOrOutgoing: 'incoming' | 'outgoing') => ({
+> = (linkDirection: LinkDirection) => ({
   type: LinksActionTypes.FETCHING,
-  key: incomingOrOutgoing,
+  key: linkDirection,
 });
 
 export interface IncomingOutgoingLinks {
@@ -41,20 +46,17 @@ const fetchLinksFulfilledAction: ActionCreator<
     LinksActionTypes.FULFILLED,
     PaginatedList<ResourceLink>
   >
-> = (
-  incomingOrOutgoing: 'incoming' | 'outgoing',
-  links: PaginatedList<ResourceLink>
-) => ({
+> = (linkDirection: LinkDirection, links: PaginatedList<ResourceLink>) => ({
   type: LinksActionTypes.FULFILLED,
-  key: incomingOrOutgoing,
+  key: linkDirection,
   payload: links,
 });
 
 const fetchResourceFailedAction: ActionCreator<
   FetchFailedAction<LinksActionTypes.FAILED>
-> = (incomingOrOutgoing: 'incoming' | 'outgoing', error: RequestError) => ({
+> = (linkDirection: LinkDirection, error: RequestError) => ({
   error,
-  key: incomingOrOutgoing,
+  key: linkDirection,
   type: LinksActionTypes.FAILED,
 });
 
@@ -68,7 +70,7 @@ export type LinksActions =
 
 export const fetchLinks: ActionCreator<ThunkAction> = (
   resource: Resource,
-  incomingOrOutgoing: 'incoming' | 'outgoing',
+  linkDirection: LinkDirection,
   paginationSettings: PaginationSettings
 ) => {
   return async (
@@ -80,30 +82,24 @@ export const fetchLinks: ActionCreator<ThunkAction> = (
       >
     | FetchFailedAction<LinksActionTypes.FAILED>
   > => {
-    dispatch(fetchLinksAction(incomingOrOutgoing));
+    dispatch(fetchLinksAction(linkDirection));
     try {
-      switch (incomingOrOutgoing) {
-        case 'incoming':
+      switch (linkDirection) {
+        case LinkDirection.INCOMING:
           const incoming = await resource.getIncomingLinks(paginationSettings);
-          return dispatch(
-            fetchLinksFulfilledAction(incomingOrOutgoing, incoming)
-          );
-        case 'outgoing':
+          return dispatch(fetchLinksFulfilledAction(linkDirection, incoming));
+        case LinkDirection.OUTGOING:
           const outgoing = await resource.getOutgoingLinks(paginationSettings);
-          return dispatch(
-            fetchLinksFulfilledAction(incomingOrOutgoing, outgoing)
-          );
+          return dispatch(fetchLinksFulfilledAction(linkDirection, outgoing));
       }
       return dispatch(
         fetchResourceFailedAction(
-          incomingOrOutgoing,
+          linkDirection,
           new Error('Incorrect Fetch Links Action')
         )
       );
     } catch (e) {
-      return dispatch(
-        fetchResourceFailedAction(incomingOrOutgoing, formatError(e))
-      );
+      return dispatch(fetchResourceFailedAction(linkDirection, formatError(e)));
     }
   };
 };
