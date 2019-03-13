@@ -61,17 +61,14 @@ const Home: React.FunctionComponent<HomeProps> = ({
   const [selectedProject, setSelectedProject] = React.useState<
     Project | undefined
   >(undefined);
-  React.useEffect(
-    () => {
-      if (
-        activeOrg.label !== match.params.org ||
-        (paginatedProjects.results.length === 0 && !busy)
-      ) {
-        fetchOrgData(match.params.org);
-      }
-    },
-    [match.path]
-  );
+  React.useEffect(() => {
+    if (
+      activeOrg.label !== match.params.org ||
+      (paginatedProjects.results.length === 0 && !busy)
+    ) {
+      fetchOrgData(match.params.org);
+    }
+  }, [match.path]);
 
   const saveAndCreate = (newProject: Project) => {
     setFormBusy(true);
@@ -284,6 +281,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
         onCancel={() => setModalVisible(false)}
         confirmLoading={formBusy}
         footer={null}
+        width={600}
       >
         <ProjectForm
           onSubmit={(p: Project) => saveAndCreate(p)}
