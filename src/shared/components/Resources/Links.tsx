@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Resource, PaginatedList, PaginationSettings } from '@bbp/nexus-sdk';
+import { Resource, PaginationSettings } from '@bbp/nexus-sdk';
 import { Spin, Card } from 'antd';
 
 import AnimatedList from '../Animations/AnimatedList';
@@ -7,6 +7,8 @@ import { ResourceLink } from '@bbp/nexus-sdk/lib/Resource/types';
 import ResourceListItem from './ResourceItem';
 import { labelOf } from '../../utils';
 import { LinksState } from '../../store/reducers/links';
+
+import './links-container.less';
 
 export interface LinksListProps extends LinksContainerProps {
   incomingOrOutgoing: 'incoming' | 'outgoing';
@@ -37,7 +39,7 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
 
   return (
     <AnimatedList
-      header={<h3>{incomingOrOutgoing}</h3>}
+      header={<h3 className="title">{incomingOrOutgoing} Links</h3>}
       loading={linkState.isFetching}
       makeKey={(item: ResourceLink, index: number) =>
         `${
