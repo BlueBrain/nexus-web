@@ -266,7 +266,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
           })(<Input placeholder="Description" />)}
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>
-          <Collapse style={{ width: '100%' }}>
+          <Collapse>
             <Collapse.Panel header="Advanced settings" key="1">
               <Form.Item label="Base" {...formItemLayout}>
                 {getFieldDecorator('base', {

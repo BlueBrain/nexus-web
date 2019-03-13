@@ -499,11 +499,6 @@ exports[`Project Form component should render correctly 1`] = `
                                   "leave": [Function],
                                 }
                               }
-                              style={
-                                Object {
-                                  "width": "100%",
-                                }
-                              }
                             >
                               <Collapse
                                 accordion={false}
@@ -520,20 +515,10 @@ exports[`Project Form component should render correctly 1`] = `
                                   }
                                 }
                                 prefixCls="ant-collapse"
-                                style={
-                                  Object {
-                                    "width": "100%",
-                                  }
-                                }
                               >
                                 <div
                                   className="ant-collapse"
                                   role={null}
-                                  style={
-                                    Object {
-                                      "width": "100%",
-                                    }
-                                  }
                                 >
                                   <CollapsePanel
                                     accordion={false}
