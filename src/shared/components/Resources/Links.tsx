@@ -28,11 +28,10 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
   const from = (linkState && linkState.data && linkState.data.index) || 0;
   const total = (linkState && linkState.data && linkState.data.total) || 0;
   const paginationSettings = { from, total, size: linksListPageSize };
+
   React.useEffect(() => {
-    if (!linkState) {
-      fetchLinks(resource, linkDirection, paginationSettings);
-    }
-  }, [linkState, resource]);
+    fetchLinks(resource, linkDirection, paginationSettings);
+  }, [resource]);
 
   if (!linkState) {
     return <Spin />;
