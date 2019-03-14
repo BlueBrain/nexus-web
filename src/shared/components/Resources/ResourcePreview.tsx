@@ -7,6 +7,7 @@ const MOUSE_ENTER_DELAY = 0.5;
 
 export interface ResourcePreviewProps {
   resource: Resource;
+  getFilePreview: (selfUrl: string) => Promise<NexusFile>;
 }
 
 export function hasDisplayableImage(resource: Resource): boolean {
@@ -23,12 +24,12 @@ export function hasDisplayableImage(resource: Resource): boolean {
 const ResourcePreview: React.FunctionComponent<
   ResourcePreviewProps
 > = props => {
-  const { resource } = props;
+  const { resource, getFilePreview } = props;
   const [file, setFile] = React.useState<NexusFile | null>(null);
 
   if (!file) {
     // TODO: Refactor after ES Lists are fetched by Type
-    NexusFile.getSelf(resource.self, true)
+    getFilePreview(resource.self)
       .then((nexusFile: NexusFile) => {
         setFile(nexusFile);
       })

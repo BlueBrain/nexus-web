@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PaginatedList, Resource } from '@bbp/nexus-sdk';
+import { PaginatedList, Resource, NexusFile } from '@bbp/nexus-sdk';
 import ResourceItem from './ResourceItem';
 import './Resources.less';
 import AnimatedList from '../Animations/AnimatedList';
@@ -11,6 +11,7 @@ export interface ResourceListProps {
   paginationSettings: { total: number; from: number; pageSize: number };
   loading?: boolean;
   goToResource: (resource: Resource) => void;
+  getFilePreview: (selfUrl: string) => Promise<NexusFile>;
 }
 
 const ResourceList: React.FunctionComponent<ResourceListProps> = ({
@@ -20,6 +21,7 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
   paginationSettings,
   loading = false,
   goToResource,
+  getFilePreview,
 }) => {
   const { total, results } = resources;
   return (
@@ -27,6 +29,7 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
       header={header}
       itemComponent={(resource: Resource, index: number) => (
         <ResourceItem
+          getFilePreview={getFilePreview}
           index={index}
           resource={resource}
           onClick={() => goToResource(resource)}

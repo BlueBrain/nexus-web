@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../store/reducers';
 import { fetchAndAssignResource } from '../store/actions/nexus/resource';
-import { Resource, PaginationSettings } from '@bbp/nexus-sdk';
+import { Resource, PaginationSettings, NexusFile } from '@bbp/nexus-sdk';
 import ResourceView from '../components/Resources/ResourceDetails';
 import Helmet from 'react-helmet';
 import Status from '../components/Routing/Status';
@@ -23,6 +23,7 @@ interface ResourceViewProps {
   error: RequestError | null;
   isFetching: boolean | false;
   goToResource: (resource: Resource) => void;
+  getFilePreview: (selfUrl: string) => Promise<NexusFile>;
   links: LinksState | null;
   fetchLinks: (
     resource: Resource,
@@ -48,6 +49,7 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
     goToResource,
     fetchLinks,
     linksListPageSize,
+    getFilePreview,
   } = props;
   const fetch = () => {
     fetchResource(
@@ -70,6 +72,7 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
         }
       >
         <ResourceView
+          getFilePreview={getFilePreview}
           goToResource={goToResource}
           links={links}
           dotGraph={dotGraph}

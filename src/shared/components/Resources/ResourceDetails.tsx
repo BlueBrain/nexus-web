@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Resource, PaginationSettings } from '@bbp/nexus-sdk';
+import { Resource, PaginationSettings, NexusFile } from '@bbp/nexus-sdk';
 import { Spin, notification, Empty, Card, Tabs } from 'antd';
 import ResourceEditor from './ResourceEditor';
 import ResourceMetadataCard from './MetadataCard';
@@ -21,6 +21,7 @@ export interface ResourceViewProps {
   onSuccess: VoidFunction;
   dotGraph: string | null;
   goToResource: (resource: Resource) => void;
+  getFilePreview: (selfUrl: string) => Promise<NexusFile>;
   fetchLinks: (
     resource: Resource,
     linkDirection: LinkDirection,
@@ -40,6 +41,7 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
     links,
     goToResource,
     fetchLinks,
+    getFilePreview,
   } = props;
   const [editing, setEditing] = React.useState(false);
   const [busy, setFormBusy] = React.useState(isFetching);
@@ -101,6 +103,7 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
               </TabPane>
               <TabPane tab="Links" key="2">
                 <LinksContainer
+                  getFilePreview={getFilePreview}
                   resource={resource}
                   goToResource={goToResource}
                   fetchLinks={fetchLinks}

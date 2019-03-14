@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Resource, PaginationSettings } from '@bbp/nexus-sdk';
+import { Resource, PaginationSettings, NexusFile } from '@bbp/nexus-sdk';
 import { Spin, Card, Icon } from 'antd';
 
 import AnimatedList from '../Animations/AnimatedList';
@@ -23,6 +23,7 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
     linkDirection,
     resource,
     linksListPageSize,
+    getFilePreview,
   } = props;
   const linkState = links && links[linkDirection];
   const from = (linkState && linkState.data && linkState.data.index) || 0;
@@ -84,6 +85,7 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
               </a>
             ) : (
               <ResourceListItem
+                getFilePreview={getFilePreview}
                 predicate={predicate}
                 index={index}
                 resource={resourceLink.link as Resource}
@@ -99,6 +101,7 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
 
 export interface LinksContainerProps {
   goToResource: (resource: Resource) => void;
+  getFilePreview: (selfUrl: string) => Promise<NexusFile>;
   fetchLinks: (
     resource: Resource,
     linkDirection: LinkDirection,

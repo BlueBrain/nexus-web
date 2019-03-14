@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PaginationSettings, Resource } from '@bbp/nexus-sdk';
+import { PaginationSettings, Resource, NexusFile } from '@bbp/nexus-sdk';
 import { connect } from 'react-redux';
 import { List } from '../../store/reducers/lists';
 import Renameable from '../Renameable';
@@ -17,6 +17,7 @@ interface ListItemContainerProps {
   orgLabel: string;
   displayPerPage: number;
   projectLabel: string;
+  getFilePreview: (selfUrl: string) => Promise<NexusFile>;
   updateList: (listIndex: number, list: List) => void;
   deleteList: (listIndex: number) => void;
   cloneList: () => void;
@@ -35,26 +36,24 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
   queryResources,
   displayPerPage,
   goToResource,
+  getFilePreview,
 }) => {
   const DEFAULT_PAGINATION_SETTINGS = {
     from: 0,
     size: displayPerPage,
   };
-  React.useEffect(
-    () => {
-      const {
-        request: { isFetching, data, error },
-      } = list;
-      const paginationSettings = data
-        ? data.paginationSettings
-        : DEFAULT_PAGINATION_SETTINGS;
-      if (!data && !isFetching && !error) {
-        // Or when query changes
-        queryResources(paginationSettings);
-      }
-    },
-    [list.query]
-  );
+  React.useEffect(() => {
+    const {
+      request: { isFetching, data, error },
+    } = list;
+    const paginationSettings = data
+      ? data.paginationSettings
+      : DEFAULT_PAGINATION_SETTINGS;
+    if (!data && !isFetching && !error) {
+      // Or when query changes
+      queryResources(paginationSettings);
+    }
+  }, [list.query]);
   const {
     name,
     request: { isFetching, data, error },
@@ -150,6 +149,7 @@ const ListItemContainer: React.FunctionComponent<ListItemContainerProps> = ({
         )}
         {data && (
           <ResourceList
+            getFilePreview={getFilePreview}
             loading={isFetching}
             paginationSettings={{
               total: data.resources.results.length,
