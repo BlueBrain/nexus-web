@@ -2,13 +2,14 @@ import { join } from 'path';
 import * as express from 'express';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
+import * as promBundle from 'express-prom-bundle';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import { matchPath, StaticRouterContext } from 'react-router';
 import { createMemoryHistory } from 'history';
-import Nexus, { Organization } from '@bbp/nexus-sdk';
+import Nexus from '@bbp/nexus-sdk';
 import Helmet from 'react-helmet';
 import * as jwtDecode from 'jwt-decode';
 import html from './html';
@@ -34,6 +35,10 @@ const rawBase: string = process.env.BASE_PATH || '';
 const base: string = rawBase.replace(/\/$/, '');
 // enable logs
 app.use(morgan('dev'));
+// expose status route
+app.get('/status', (req, res) => res.send('OK'));
+// Prometheus
+app.use(promBundle({ includeMethod: true }));
 // parse cookies
 app.use(cookieParser());
 // server static assets from the /public directory
