@@ -36,9 +36,9 @@ const base: string = rawBase.replace(/\/$/, '');
 // enable logs
 app.use(morgan('dev'));
 // expose status route
-app.get('/status', (req, res) => res.send('OK'));
+app.get(`${base}/status`, (req, res) => res.send('OK'));
 // Prometheus
-app.use(promBundle({ includeMethod: true }));
+app.use(promBundle({ includeMethod: true, metricsPath: `${base}/metrics` }));
 // parse cookies
 app.use(cookieParser());
 // server static assets from the /public directory
