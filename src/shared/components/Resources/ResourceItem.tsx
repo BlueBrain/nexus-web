@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Popover } from 'antd';
 import TypesIcon from '../Types/TypesIcon';
 
-import './Resources.less';
+import './resource-item.less';
 import ResourceMetadataCard from './MetadataCard';
 import { Resource } from '@bbp/nexus-sdk';
 import ResourcePreview, { hasDisplayableImage } from './ResourcePreview';
@@ -14,10 +14,11 @@ export interface ResourceItemProps {
   index: number;
   onClick?(): void;
   onEdit?(): void;
+  predicate?: string;
 }
 
 const ResourceListItem: React.FunctionComponent<ResourceItemProps> = props => {
-  const { resource, index, onClick = () => {} } = props;
+  const { resource, predicate, index, onClick = () => {} } = props;
   const containerRef = React.createRef<HTMLDivElement>();
 
   const Preview = hasDisplayableImage(resource) ? (
@@ -46,13 +47,16 @@ const ResourceListItem: React.FunctionComponent<ResourceItemProps> = props => {
         onKeyPress={handleKeyPress}
         tabIndex={index + 1}
       >
-        {Preview}
-        <div className="name">
-          <em>{resource.name}</em>
+        {predicate && <div className="predicate">{predicate}</div>}
+        <div className="label">
+          {Preview}
+          <div className="name">
+            <em>{resource.name}</em>
+          </div>
+          {resource.type && resource.type.length && (
+            <TypesIcon type={resource.type} />
+          )}
         </div>
-        {resource.type && resource.type.length && (
-          <TypesIcon type={resource.type} />
-        )}
       </div>
     </Popover>
   );

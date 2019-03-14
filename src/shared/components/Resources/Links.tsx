@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Resource, PaginationSettings } from '@bbp/nexus-sdk';
-import { Spin, Card } from 'antd';
+import { Spin, Card, Icon } from 'antd';
 
 import AnimatedList from '../Animations/AnimatedList';
 import { ResourceLink } from '@bbp/nexus-sdk/lib/Resource/types';
@@ -33,21 +33,26 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
     fetchLinks(resource, linkDirection, paginationSettings);
   }, [resource]);
 
-  if (!linkState) {
-    return <Spin />;
-  }
-
   return (
     <AnimatedList
-      header={<h3 className="title">{linkDirection} Links</h3>}
-      loading={linkState.isFetching}
-      makeKey={(item: ResourceLink, index: number) =>
-        `${
-          item.isExternal ? (item.link as string) : (item.link as Resource).id
-        }-${index}`
+      header={
+        <h3 className="title">
+          {linkDirection === LinkDirection.INCOMING ? (
+            <Icon type="download" />
+          ) : (
+            <Icon type="upload" />
+          )}{' '}
+          {linkDirection} Links
+        </h3>
       }
-      results={(linkState.data && linkState.data.results) || []}
-      total={(linkState.data && linkState.data.total) || 0}
+      loading={linkState ? linkState.isFetching : true}
+      makeKey={(item: ResourceLink, index: number) =>
+        `${resource.id}-${
+          item.isExternal ? (item.link as string) : (item.link as Resource).id
+        }-${index}-${linkDirection}`
+      }
+      results={(linkState && linkState.data && linkState.data.results) || []}
+      total={(linkState && linkState.data && linkState.data.total) || 0}
       paginationSettings={{ from, total, pageSize: linksListPageSize }}
       onPaginationChange={(page: number, pageSize?: number) => {
         // NOTE: page begins from 1, not 0.
@@ -58,22 +63,36 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
           from: page * size - size,
         });
       }}
-      itemComponent={(resourceLink: ResourceLink, index: number) => (
-        <div>
-          <div>{labelOf(resourceLink.predicate)}</div>
-          {resourceLink.isExternal ? (
-            <a href={resourceLink.link as string} target="_blank">
-              {resourceLink.link as string}
-            </a>
-          ) : (
-            <ResourceListItem
-              index={index}
-              resource={resourceLink.link as Resource}
-              onClick={() => goToResource(resourceLink.link as Resource)}
-            />
-          )}
-        </div>
-      )}
+      itemComponent={(resourceLink: ResourceLink, index: number) => {
+        const predicate = labelOf(resourceLink.predicate);
+        return (
+          <>
+            {resourceLink.isExternal ? (
+              <a
+                className="clickable-container resource-item"
+                href={resourceLink.link as string}
+                target="_blank"
+              >
+                <div className="predicate">{predicate}</div>
+                <div className="label">
+                  <div className="name">
+                    <em>
+                      {resourceLink.link as string} <Icon type="export" />
+                    </em>
+                  </div>
+                </div>
+              </a>
+            ) : (
+              <ResourceListItem
+                predicate={predicate}
+                index={index}
+                resource={resourceLink.link as Resource}
+                onClick={() => goToResource(resourceLink.link as Resource)}
+              />
+            )}
+          </>
+        );
+      }}
     />
   );
 };
