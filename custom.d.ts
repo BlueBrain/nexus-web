@@ -33,3 +33,31 @@ declare module 'identicon.js' {
 }
 
 declare module 'dotparser';
+
+declare module promBundle {
+  export interface PromBundleOptions {
+    includeMethod?: boolean;
+    includeStatusCode?: boolean;
+    includePath?: boolean;
+    customLabels?: [{ [label: string]: string }];
+    includeUp?: boolean;
+    metricsPath?: string;
+    normalizePath?: (req: Express.Request) => any | [];
+    urlValueParser?: string;
+    formatStatusCode?(res: Express.Response): any;
+    transformLabels?(
+      labels: promBundle.PromBundleOptions['customLabels'],
+      req: Express.Request,
+      res: Express.Response
+    ): any;
+    metricType?: 'histogram' | 'summary';
+    buckets?: [number];
+    percentiles?: [number];
+    autoregister?: boolean;
+    promClient?: any;
+  }
+}
+declare function promBundle(options: promBundle.PromBundleOptions): any;
+declare module 'express-prom-bundle' {
+  export = promBundle;
+}
