@@ -3,7 +3,7 @@ String commitId = env.GIT_COMMIT
 Boolean isRelease = version ==~ /v\d+\.\d+\.\d+.*/
 Boolean isPR = env.CHANGE_ID != null
 Boolean isMaster = version == 'master'
-Boolean isDeployToDev = env.CHANGE_TITLE.contains('deploy_to_dev')
+Boolean isDeployToDev = env.CHANGE_TITLE ? env.CHANGE_TITLE.contains('deploy_to_dev') : false;
 
 pipeline {
     agent any
