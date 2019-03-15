@@ -41,11 +41,25 @@ const TypesIconList: React.SFC<TypesIconListProps> = ({
   type,
   full = false,
 }) => {
+  // sort types alphabetically for consistency
+  // because the graph database isn't aware of order
+  // and otherwise they would just be all over the place!
+  type.sort((a, b) => {
+    if (a < b) {
+      return -1;
+    }
+    if (a > b) {
+      return 1;
+    }
+    return 0;
+  });
+
   let typesToDisplay = type;
   const tooManyTypes = !full && type.length > 3;
   if (tooManyTypes) {
     typesToDisplay = [...type].slice(0, 3);
   }
+
   return (
     <ul className="types-list">
       {typesToDisplay.map((type: string) => (
