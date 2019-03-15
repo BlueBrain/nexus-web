@@ -1,7 +1,7 @@
 {
   "name": "nexus-explorer",
   "description": "Service which allows you to explore Nexus platform",
-  "version": "0.4.16",
+  "version": "0.4.17",
   "author": "Bluebrain project",
   "license": "Apache-2.0",
   "main": "index.js",
@@ -42,8 +42,8 @@
   },
   "devDependencies": {
     "envsub": "^3.1.0",
-    "eslint": "^5.1.0",
+    "eslint": "^5.15.1",
     "eslint-plugin-react": "^7.10.0",
-    "parcel-bundler": "^1.10.3"
+    "parcel-bundler": "^1.12.2"
   }
 }
