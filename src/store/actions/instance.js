@@ -1,5 +1,4 @@
 import { getInstance } from "@bbp/nexus-js-helpers";
-import { auth } from "../actions";
 import * as types from "./types";
 
 export default {
