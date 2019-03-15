@@ -13,7 +13,6 @@ export interface LoginViewProps {
 }
 
 const Login: React.FunctionComponent<LoginViewProps> = props => {
-  console.log({ redirectUrl: props.redirectUrl });
   const realms: Realm[] = [
     { name: 'BBP', authorizationEndpoint: props.authorizationEndpoint },
   ];

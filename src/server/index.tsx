@@ -102,7 +102,6 @@ app.get(
   `${base}/authRedirect`,
   (req: express.Request, res: express.Response) => {
     const { redirectUrl } = req.query;
-    console.log(req.url);
 
     res.send(`
   <!doctype html>
