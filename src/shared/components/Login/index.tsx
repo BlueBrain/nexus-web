@@ -46,9 +46,7 @@ const Login: React.FunctionComponent<LoginProps> = ({
             key="login"
             href={`${
               realm.authorizationEndpoint
-            }?client_id=${clientId}&response_type=token&scope=openid&nonce=123456&redirect_uri=${hostName}/authRedirect?redirectUrl=${encodeURIComponent(
-              redirectUrl
-            )}`}
+            }?client_id=${clientId}&response_type=token&scope=openid&nonce=123456&redirect_uri=${hostName}/authRedirect?redirectUrl=${redirectUrl}`}
           >
             {realms.length === 1 ? (
               'Log in '
