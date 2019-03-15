@@ -25,6 +25,7 @@
 @interfaceTransition: 0.3s @bounce;
 @component-background: #fcfdfd;
 @maxConstrainedItemWidth: 980px;
+@link-hover-color: #28c9fa;
 
 body {
   background-color: #9e9e9e1f;
@@ -44,6 +45,11 @@ body {
   &:nth-of-type(2n + 1) {
     background-color: @background-color-subtle;
   }
+}
+
+.focus() {
+  outline: none;
+  text-decoration: underline;
 }
 
 .cardlike() {

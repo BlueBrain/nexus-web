@@ -4,11 +4,12 @@ import { uuidv4 } from '../../utils';
 import { List, ListsByProjectState } from '../../store/reducers/lists';
 import ListItem from './ListItem';
 import { Empty } from 'antd';
-import { Project } from '@bbp/nexus-sdk';
+import { Project, NexusFile } from '@bbp/nexus-sdk';
 
 interface ListProps {
   lists: ListsByProjectState;
   project: Project;
+  getFilePreview: (selfUrl: string) => Promise<NexusFile>;
   initialize: () => void;
 }
 
@@ -16,6 +17,7 @@ const Lists: React.FunctionComponent<ListProps> = ({
   lists,
   initialize,
   project,
+  getFilePreview,
 }) => {
   const { label: projectLabel, orgLabel } = project;
   const orgProjectFilterKey = orgLabel + projectLabel;
@@ -40,6 +42,7 @@ const Lists: React.FunctionComponent<ListProps> = ({
             style={{ opacity: 1, width: '300px' }}
           >
             <ListItem
+              getFilePreview={getFilePreview}
               list={list}
               listIndex={listIndex}
               orgLabel={orgLabel}

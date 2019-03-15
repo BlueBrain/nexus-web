@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../store/reducers';
 import { fetchAndAssignResource } from '../store/actions/nexus/resource';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource, PaginationSettings, NexusFile } from '@bbp/nexus-sdk';
 import ResourceView from '../components/Resources/ResourceDetails';
 import Helmet from 'react-helmet';
 import Status from '../components/Routing/Status';
@@ -11,13 +11,25 @@ import {
   HTTP_STATUS_TYPE_KEYS,
 } from '../store/actions/utils/statusCodes';
 import { RequestError } from '../store/actions/utils/errors';
+import { push } from 'connected-react-router';
+import { fetchLinks, LinkDirection } from '../store/actions/nexus/links';
+import { LinksState } from '../store/reducers/links';
 
 interface ResourceViewProps {
+  linksListPageSize: number;
   match: any;
   resource: Resource | null;
   dotGraph: string | null;
   error: RequestError | null;
   isFetching: boolean | false;
+  goToResource: (resource: Resource) => void;
+  getFilePreview: (selfUrl: string) => Promise<NexusFile>;
+  links: LinksState | null;
+  fetchLinks: (
+    resource: Resource,
+    linkDirection: LinkDirection,
+    paginationSettings: PaginationSettings
+  ) => void;
   fetchResource: (
     orgLabel: string,
     projectLabel: string,
@@ -26,7 +38,19 @@ interface ResourceViewProps {
 }
 
 const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
-  const { match, resource, error, isFetching, fetchResource, dotGraph } = props;
+  const {
+    match,
+    resource,
+    error,
+    isFetching,
+    fetchResource,
+    dotGraph,
+    links,
+    goToResource,
+    fetchLinks,
+    linksListPageSize,
+    getFilePreview,
+  } = props;
   const fetch = () => {
     fetchResource(
       match.params.org,
@@ -48,11 +72,16 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
         }
       >
         <ResourceView
+          getFilePreview={getFilePreview}
+          goToResource={goToResource}
+          links={links}
           dotGraph={dotGraph}
           onSuccess={fetch}
           resource={resource}
           error={error}
           isFetching={isFetching}
+          fetchLinks={fetchLinks}
+          linksListPageSize={linksListPageSize}
         />
       </Status>
     </>
@@ -60,6 +89,7 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
 };
 
 const mapStateToProps = (state: RootState) => ({
+  linksListPageSize: state.uiSettings.pageSizes.linksListPageSize,
   dotGraph:
     (state.nexus &&
       state.nexus.activeResource &&
@@ -72,6 +102,7 @@ const mapStateToProps = (state: RootState) => ({
       state.nexus.activeResource.data &&
       state.nexus.activeResource.data.resource) ||
     null,
+  links: (state.nexus && state.nexus.links) || null,
   error:
     (state.nexus &&
       state.nexus.activeResource &&
@@ -85,8 +116,23 @@ const mapStateToProps = (state: RootState) => ({
 });
 const mapDispatchToProps = (dispatch: any) => {
   return {
+    goToResource: (resource: Resource) =>
+      dispatch(
+        push(
+          `/${resource.orgLabel}/${
+            resource.projectLabel
+          }/resources/${encodeURIComponent(resource.id)}`
+        )
+      ),
     fetchResource: (orgLabel: string, projectLabel: string, id: string) => {
       dispatch(fetchAndAssignResource(orgLabel, projectLabel, id));
+    },
+    fetchLinks: (
+      resource: Resource,
+      linkDirection: LinkDirection,
+      paginationSettings: PaginationSettings
+    ) => {
+      dispatch(fetchLinks(resource, linkDirection, paginationSettings));
     },
   };
 };

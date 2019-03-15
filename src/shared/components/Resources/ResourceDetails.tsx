@@ -1,25 +1,48 @@
 import * as React from 'react';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource, PaginationSettings, NexusFile } from '@bbp/nexus-sdk';
 import { Spin, notification, Empty, Card, Tabs } from 'antd';
 import ResourceEditor from './ResourceEditor';
 import ResourceMetadataCard from './MetadataCard';
 import GraphVisualizer from '../Graph/GraphVisualizer';
 import { RequestError } from '../../store/actions/utils/errors';
+import LinksContainer from './Links';
+import { LinksState } from '../../store/reducers/links';
+import { LinkDirection } from '../../store/actions/nexus/links';
 
 const TabPane = Tabs.TabPane;
 
 const NEXUS_FILE_TYPE = 'File';
 
 export interface ResourceViewProps {
+  linksListPageSize: number;
   resource: Resource | null;
   error: RequestError | null;
   isFetching: boolean | false;
   onSuccess: VoidFunction;
   dotGraph: string | null;
+  goToResource: (resource: Resource) => void;
+  getFilePreview: (selfUrl: string) => Promise<NexusFile>;
+  fetchLinks: (
+    resource: Resource,
+    linkDirection: LinkDirection,
+    paginationSettings: PaginationSettings
+  ) => void;
+  links: LinksState | null;
 }
 
 const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
-  const { resource, error, isFetching, onSuccess, dotGraph } = props;
+  const {
+    linksListPageSize,
+    resource,
+    error,
+    isFetching,
+    onSuccess,
+    dotGraph,
+    links,
+    goToResource,
+    fetchLinks,
+    getFilePreview,
+  } = props;
   const [editing, setEditing] = React.useState(false);
   const [busy, setFormBusy] = React.useState(isFetching);
 
@@ -52,7 +75,7 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
   };
   return (
     <div className="resource-details" style={{ width: '100%' }}>
-      <Spin spinning={busy} style={{ width: '100%' }}>
+      <Spin spinning={isFetching || busy} style={{ width: '100%' }}>
         {!!error && (
           <div style={{}}>
             <Card>
@@ -78,8 +101,18 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
                   editing={editing}
                 />
               </TabPane>
+              <TabPane tab="Links" key="2">
+                <LinksContainer
+                  getFilePreview={getFilePreview}
+                  resource={resource}
+                  goToResource={goToResource}
+                  fetchLinks={fetchLinks}
+                  links={links}
+                  linksListPageSize={linksListPageSize}
+                />
+              </TabPane>
               {dotGraph && (
-                <TabPane tab="Graph" key="2">
+                <TabPane tab="Graph" key="3">
                   <GraphVisualizer dotGraph={dotGraph} />
                 </TabPane>
               )}

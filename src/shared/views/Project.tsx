@@ -8,7 +8,7 @@ import { Empty, Switch, Icon, Tooltip } from 'antd';
 import Menu from '../components/Workspace/Menu';
 import { createList, initializeProjectList } from '../store/actions/lists';
 import { ListsByProjectState } from '../store/reducers/lists';
-import { Project, Resource } from '@bbp/nexus-sdk';
+import { Project, Resource, NexusFile } from '@bbp/nexus-sdk';
 import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
 import { createFile } from '../store/actions/nexus/files';
 import Status from '../components/Routing/Status';
@@ -33,6 +33,7 @@ interface ProjectViewProps {
   ): Promise<Resource>;
   fetchProject(org: string, project: string): void;
   createFile(file: File): void;
+  getFilePreview: (selfUrl: string) => Promise<NexusFile>;
 }
 
 const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
@@ -45,6 +46,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   lists,
   fetchProject,
   createFile,
+  getFilePreview,
 }) => {
   const projectLabel = project ? project.label : null;
   React.useEffect(() => {
@@ -124,6 +126,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
                 initialize(project.orgLabel, project.label);
               }}
               project={project}
+              getFilePreview={getFilePreview}
             />
           </>
         )}
@@ -148,6 +151,7 @@ const mapStateToProps = (state: RootState) => ({
 });
 const mapDispatchToProps = (dispatch: any, ownProps: any) => {
   return {
+    getFilePreview: (selfUrl: string) => NexusFile.getSelf(selfUrl, true),
     fetchProject: (orgLabel: string, projectLabel: string) => {
       dispatch(fetchOrg(orgLabel));
       dispatch(fetchAndAssignProject(orgLabel, projectLabel));

@@ -16,8 +16,8 @@
     "build:storybook": "build-storybook"
   },
   "dependencies": {
-    "@bbp/nexus-sdk": "1.0.0-beta.12",
     "antd": "^3.15.0",
+    "@bbp/nexus-sdk": "1.0.0-beta.15",
     "codemirror": "^5.44.0",
     "connected-react-router": "^6.3.2",
     "cookie-parser": "^1.4.4",
@@ -43,7 +43,7 @@
     "react-redux": "^6.0.1",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
-    "react-spring": "^8.0.14",
+    "react-spring": "^8.0.15",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0"
   },

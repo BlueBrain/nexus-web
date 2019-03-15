@@ -26,9 +26,12 @@ const fetchResourceAction: ActionCreator<
 const fetchResourceFulfilledAction: ActionCreator<
   FetchFulfilledAction<
     ResourceActionTypes.FULFILLED,
-    { resource: Resource; dotGraph: string }
+    {
+      resource: Resource;
+      dotGraph: string;
+    }
   >
-> = (resource: Resource, dotGraph: string) => ({
+> = (resource: Resource, dotGraph: string, links) => ({
   type: ResourceActionTypes.FULFILLED,
   payload: {
     resource,
@@ -61,7 +64,10 @@ export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
   ): Promise<
     | FetchFulfilledAction<
         ResourceActionTypes.FULFILLED,
-        { resource: Resource; dotGraph: string }
+        {
+          resource: Resource;
+          dotGraph: string;
+        }
       >
     | FetchFailedAction<ResourceActionTypes.FAILED>
   > => {

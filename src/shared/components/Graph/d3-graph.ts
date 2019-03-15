@@ -3,10 +3,10 @@ import * as d3Force from 'd3-force';
 import * as dotParser from 'dotparser';
 import dotToNodesParser from './dotToNodesParser';
 import moment = require('moment');
+import { labelOf } from '../../utils';
 
-function titleOf(string: string) {
-  const slash = string.substring(string.lastIndexOf('/') + 1);
-  const title = slash.substring(slash.lastIndexOf('#') + 1);
+function labelOrData(string: string) {
+  const title = labelOf(string);
   const formats = [moment.ISO_8601];
   const isValidDate = moment(title, formats, true).isValid();
   return isValidDate ? moment(title).fromNow() : title;
@@ -125,7 +125,7 @@ const makeGraph = (
     .attr('dx', 12)
     .attr('dy', '.35em')
     .attr('opacity', 0.3)
-    .text((d: any) => titleOf(`${dataset.nodes[d.index].id}`));
+    .text((d: any) => labelOrData(`${dataset.nodes[d.index].id}`));
 
   const lineLabel = svg
     .selectAll('.link')
@@ -134,7 +134,7 @@ const makeGraph = (
     .attr('dy', '.35em')
     .attr('text-anchor', 'middle')
     .attr('fill', '#f4bf75')
-    .text((d: any) => titleOf(dataset.edges[d.index].label));
+    .text((d: any) => labelOrData(dataset.edges[d.index].label));
 
   simulation.on('tick', () => {
     link
