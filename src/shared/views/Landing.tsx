@@ -203,15 +203,6 @@ const Landing: React.FunctionComponent<LandingProps> = ({
     );
   }
 
-  if (paginatedOrgs.results.length === 0 && !error) {
-    return (
-      <Empty
-        style={{ marginTop: '22vh' }}
-        description="No Organizations found..."
-      />
-    );
-  }
-
   return (
     <>
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
@@ -224,27 +215,34 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           Create Organization
         </Button>
       </div>
-      <OrgList
-        orgs={paginatedOrgs.results}
-        onOrgClick={goTo}
-        busy={busy}
-        paginationSettings={{
-          total: paginatedOrgs.total,
-          from: paginatedOrgs.index,
-          pageSize: displayPerPage,
-        }}
-        onOrgEdit={(orgLabel: string) =>
-          setSelectedOrg(
-            paginatedOrgs.results.filter(o => o.label === orgLabel)[0]
-          )
-        }
-        onPaginationChange={pageNumber =>
-          fetchOrgs({
-            from: pageNumber * displayPerPage - displayPerPage,
-            size: displayPerPage,
-          })
-        }
-      />
+      {paginatedOrgs.total === 0 ? (
+        <Empty
+          style={{ marginTop: '22vh' }}
+          description="No Organizations found..."
+        />
+      ) : (
+        <OrgList
+          orgs={paginatedOrgs.results}
+          onOrgClick={goTo}
+          busy={busy}
+          paginationSettings={{
+            total: paginatedOrgs.total,
+            from: paginatedOrgs.index,
+            pageSize: displayPerPage,
+          }}
+          onOrgEdit={(orgLabel: string) =>
+            setSelectedOrg(
+              paginatedOrgs.results.filter(o => o.label === orgLabel)[0]
+            )
+          }
+          onPaginationChange={pageNumber =>
+            fetchOrgs({
+              from: pageNumber * displayPerPage - displayPerPage,
+              size: displayPerPage,
+            })
+          }
+        />
+      )}
       <Modal
         title="New Organization"
         visible={modalVisible}
