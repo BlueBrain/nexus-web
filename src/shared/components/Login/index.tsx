@@ -13,6 +13,7 @@ export type Realm = {
 export interface LoginProps {
   realms: Realm[];
   clientId: string;
+  redirectUrl: string;
   hostName: string;
   busy?: boolean;
 }
@@ -20,6 +21,7 @@ export interface LoginProps {
 const Login: React.FunctionComponent<LoginProps> = ({
   realms,
   clientId,
+  redirectUrl,
   hostName,
 }) => {
   const [realm, setRealm] = React.useState(realms[0]);
@@ -44,7 +46,9 @@ const Login: React.FunctionComponent<LoginProps> = ({
             key="login"
             href={`${
               realm.authorizationEndpoint
-            }?client_id=${clientId}&response_type=token&scope=openid&nonce=123456&redirect_uri=${hostName}/authRedirect`}
+            }?client_id=${clientId}&response_type=token&scope=openid&nonce=123456&redirect_uri=${hostName}/authRedirect?redirectUrl=${encodeURIComponent(
+              redirectUrl
+            )}`}
           >
             {realms.length === 1 ? (
               'Log in '

@@ -55,7 +55,7 @@ if (process.env.NODE_ENV !== 'production') {
 app.get(
   `${base}/authSuccess`,
   (req: express.Request, res: express.Response) => {
-    const { error, access_token } = req.query;
+    const { error, access_token, redirectUrl } = req.query;
     if (!error) {
       try {
         const token = jwtDecode(access_token);
@@ -77,7 +77,7 @@ app.get(
         // fail silently
       }
     }
-    res.redirect(`${base}/`);
+    res.redirect(redirectUrl);
   }
 );
 
@@ -94,20 +94,23 @@ app.get(`${base}/authLogout`, (req: express.Request, res: express.Response) => {
       httpOnly: true,
     }
   );
-  res.redirect(`${base}/`);
+  res.redirect(`${base}`);
 });
 
 // We need to get the browser to send the access token to the server
 app.get(
   `${base}/authRedirect`,
   (req: express.Request, res: express.Response) => {
+    const { redirectUrl } = req.query;
+    console.log(req.url);
+
     res.send(`
   <!doctype html>
   <html>
     <head></head>
     <body>
       <script type="text/javascript">
-        window.location.href = window.location.href.replace('authRedirect#', 'authSuccess?');
+        window.location.href = window.location.href.replace('authRedirect?redirectUrl=${redirectUrl}#', 'authSuccess?redirectUrl=${redirectUrl}&');
       </script>
     </body>
   </html>
@@ -205,6 +208,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
   );
 
   const { status = HTTP_STATUSES[HTTP_STATUS_TYPE_KEYS.OK].code } = context;
+
   // Compute header data
   const helmet = Helmet.renderStatic();
   res
