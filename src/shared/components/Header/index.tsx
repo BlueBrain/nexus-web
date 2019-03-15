@@ -35,7 +35,11 @@ const Header: React.FunctionComponent<HeaderProps> = ({
       <div className="selectors">{children}</div>
       <div className="logo-block">
         <a className="logo" href="">
-          <img src={logo} alt="Nexus" />
+          {
+            // must add inline styling to prevent this big svg from
+            // flashing the screen on dev mode before styles are loaded
+          }
+          <img style={{ height: '2em', width: '2em' }} src={logo} alt="Nexus" />
           <h1>Nexus</h1>
         </a>
       </div>
