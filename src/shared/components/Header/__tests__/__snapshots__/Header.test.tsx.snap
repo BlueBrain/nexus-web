@@ -17,6 +17,12 @@ exports[`Header component Should render correctly 1`] = `
       <img
         alt="Nexus"
         src="/mock/path"
+        style={
+          Object {
+            "height": "2em",
+            "width": "2em",
+          }
+        }
       />
       <h1>
         Nexus
