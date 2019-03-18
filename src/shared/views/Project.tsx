@@ -61,41 +61,37 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   }, [match.params.project, match.params.org]);
 
   let description;
-  if (!project && error) {
-    description = 'There was a problem while loading this project!';
+  if (error) {
+    switch (error.code) {
+      case HTTP_STATUSES[HTTP_STATUS_TYPE_KEYS.UNAUTHORIZED].code:
+        description = (
+          <div>
+            <p>This project is protected. Try logging in?</p>
+            <Button onClick={onLoginClick}>Log in</Button>
+          </div>
+        );
+        break;
+      case HTTP_STATUSES[HTTP_STATUS_TYPE_KEYS.FORBIDDEN].code:
+        description = (
+          <div>
+            <p>Sorry, you don't have access to this project</p>
+          </div>
+        );
+        break;
+      case HTTP_STATUSES[HTTP_STATUS_TYPE_KEYS.NOT_FOUND].code:
+        description = (
+          <div>
+            <p>This project doesn't exist</p>
+          </div>
+        );
+        break;
+      default:
+        description = 'There was a problem while loading this project!';
+    }
   }
-  if (
-    !project &&
-    error &&
-    error.code === HTTP_STATUSES[HTTP_STATUS_TYPE_KEYS.UNAUTHORIZED].code
-  ) {
-    description = (
-      <div>
-        <p>This project is protected. Try logging in?</p>
-        <Button onClick={onLoginClick}>Log in</Button>
-      </div>
-    );
-  }
-  if (
-    !project &&
-    error &&
-    error.code === HTTP_STATUSES[HTTP_STATUS_TYPE_KEYS.FORBIDDEN].code
-  ) {
-    description = (
-      <div>
-        <p>Sorry, you don't have access to this project</p>
-      </div>
-    );
-  }
-  if (
-    !project &&
-    error &&
-    error.code === HTTP_STATUSES[HTTP_STATUS_TYPE_KEYS.NOT_FOUND].code
-  ) {
-    description = "This project doesn't exist";
-  }
+
   if (!project && !error && isFetching) {
-    description = 'Loading project data...';
+    description = 'Loading project...';
   }
 
   return (
