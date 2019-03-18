@@ -36,9 +36,11 @@ interface ProjectViewProps {
   createFile(file: File): void;
   getFilePreview: (selfUrl: string) => Promise<NexusFile>;
   onLoginClick: VoidFunction;
+  isFetching: boolean;
 }
 
 const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
+  isFetching,
   error,
   match,
   project,
@@ -91,6 +93,9 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
     error.code === HTTP_STATUSES[HTTP_STATUS_TYPE_KEYS.NOT_FOUND].code
   ) {
     description = "This project doesn't exist";
+  }
+  if (!project && !error && isFetching) {
+    description = 'Loading project data...';
   }
 
   return (
@@ -167,6 +172,11 @@ const mapStateToProps = (state: RootState) => ({
       state.nexus.activeProject.data &&
       state.nexus.activeProject.data) ||
     null,
+  isFetching:
+    (state.nexus &&
+      state.nexus.activeProject &&
+      state.nexus.activeProject.isFetching) ||
+    true,
   error:
     (state.nexus &&
       state.nexus.activeProject &&
