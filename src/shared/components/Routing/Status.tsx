@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Route, StaticContext } from 'react-router';
+import { Route } from 'react-router';
 
 interface StatusProps {
   code: number;

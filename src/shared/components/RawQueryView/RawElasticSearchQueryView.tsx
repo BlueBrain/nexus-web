@@ -92,8 +92,6 @@ const RawElasticSearchQueryView: React.FunctionComponent<
       setQuery(value);
       setValid(true);
     } catch (error) {
-      // tslint:disable-next-line:no-console
-      console.log('error', error);
       setValid(false);
     }
   };

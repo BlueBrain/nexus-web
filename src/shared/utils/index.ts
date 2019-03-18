@@ -136,3 +136,5 @@ export const labelOf = (string: string) => {
   const title = slash.substring(slash.lastIndexOf('#') + 1);
   return title;
 };
+
+export const isBrowser = typeof window !== 'undefined';

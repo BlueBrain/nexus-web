@@ -24,7 +24,11 @@ const html = ({
       ${helmet.meta.toString()}
       ${helmet.link.toString()}
       <link rel="shortcut icon" type="image/png" href="${icon}"/>
-      <link rel="stylesheet" href="${base}public/bundle.css" />
+      ${
+        process.env.NODE_ENV !== 'production'
+          ? ''
+          : `<link rel="stylesheet" href="${base}public/bundle.css" />`
+      }
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <base href="${base}" />
     </head>
