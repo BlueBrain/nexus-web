@@ -77,7 +77,7 @@ app.get(
         // fail silently
       }
     }
-    res.redirect(redirectUrl);
+    res.redirect(redirectUrl || `${base}`);
   }
 );
 

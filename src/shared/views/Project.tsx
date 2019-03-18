@@ -4,7 +4,7 @@ import { RootState } from '../store/reducers';
 import Lists from '../components/Lists';
 import { fetchAndAssignProject } from '../store/actions/nexus/projects';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
-import { Empty, Switch, Icon, Tooltip } from 'antd';
+import { Empty, Switch, Icon, Tooltip, Button } from 'antd';
 import Menu from '../components/Workspace/Menu';
 import { createList, initializeProjectList } from '../store/actions/lists';
 import { ListsByProjectState } from '../store/reducers/lists';
@@ -17,6 +17,7 @@ import {
   HTTP_STATUSES,
   HTTP_STATUS_TYPE_KEYS,
 } from '../store/actions/utils/statusCodes';
+import { push } from 'connected-react-router';
 
 interface ProjectViewProps {
   project: Project | null;
@@ -34,9 +35,12 @@ interface ProjectViewProps {
   fetchProject(org: string, project: string): void;
   createFile(file: File): void;
   getFilePreview: (selfUrl: string) => Promise<NexusFile>;
+  onLoginClick: VoidFunction;
+  isFetching: boolean;
 }
 
 const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
+  isFetching,
   error,
   match,
   project,
@@ -47,6 +51,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   fetchProject,
   createFile,
   getFilePreview,
+  onLoginClick,
 }) => {
   const projectLabel = project ? project.label : null;
   React.useEffect(() => {
@@ -54,31 +59,56 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
       fetchProject(match.params.org, match.params.project);
     }
   }, [match.params.project, match.params.org]);
+
+  let description;
+  if (!project && error) {
+    description = 'There was a problem while loading this project!';
+  }
+  if (
+    !project &&
+    error &&
+    error.code === HTTP_STATUSES[HTTP_STATUS_TYPE_KEYS.UNAUTHORIZED].code
+  ) {
+    description = (
+      <div>
+        <p>This project is protected. Try logging in?</p>
+        <Button onClick={onLoginClick}>Log in</Button>
+      </div>
+    );
+  }
+  if (
+    !project &&
+    error &&
+    error.code === HTTP_STATUSES[HTTP_STATUS_TYPE_KEYS.FORBIDDEN].code
+  ) {
+    description = (
+      <div>
+        <p>Sorry, you don't have access to this project</p>
+      </div>
+    );
+  }
+  if (
+    !project &&
+    error &&
+    error.code === HTTP_STATUSES[HTTP_STATUS_TYPE_KEYS.NOT_FOUND].code
+  ) {
+    description = "This project doesn't exist";
+  }
+  if (!project && !error && isFetching) {
+    description = 'Loading project data...';
+  }
+
   return (
     <Status
       code={!!error ? error.code : HTTP_STATUSES[HTTP_STATUS_TYPE_KEYS.OK].code}
     >
       <div className="project">
-        {!project && error && (
+        {!project && (
           <>
             <h1 style={{ marginBottom: 0, marginRight: 8 }}>
               {match.params.project}
             </h1>
-            <Empty
-              style={{ marginTop: '22vh' }}
-              description="There was a problem while loading this project!"
-            />
-          </>
-        )}
-        {!project && !error && (
-          <>
-            <h1 style={{ marginBottom: 0, marginRight: 8 }}>
-              {match.params.project}
-            </h1>
-            <Empty
-              style={{ marginTop: '22vh' }}
-              description="No project data found here..."
-            />
+            <Empty style={{ marginTop: '22vh' }} description={description} />
           </>
         )}
         {project && (
@@ -142,6 +172,11 @@ const mapStateToProps = (state: RootState) => ({
       state.nexus.activeProject.data &&
       state.nexus.activeProject.data) ||
     null,
+  isFetching:
+    (state.nexus &&
+      state.nexus.activeProject &&
+      state.nexus.activeProject.isFetching) ||
+    true,
   error:
     (state.nexus &&
       state.nexus.activeProject &&
@@ -169,6 +204,8 @@ const mapDispatchToProps = (dispatch: any, ownProps: any) => {
     createFile: async (file: File) => {
       dispatch(createFile(file));
     },
+    onLoginClick: () =>
+      dispatch(push('/login', { previousUrl: window.location.href })),
   };
 };
 
