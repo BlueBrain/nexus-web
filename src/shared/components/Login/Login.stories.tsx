@@ -35,11 +35,12 @@ storiesOf('Components/Login', module).add(
           clientId="nexus-web"
           hostName="http://nexus"
           realms={[realms[0]]}
+          redirectUrl="http://nexus"
         />
       </div>
       <div style={{ margin: '50px 40px 0px' }}>
         <h2>3 Realms to choose from:</h2>
-        <Login clientId="nexus-web" hostName="http://nexus" realms={realms} />
+        <Login clientId="nexus-web" hostName="http://nexus" realms={realms} redirectUrl="http://nexus"/>
       </div>
     </React.Fragment>
   ))

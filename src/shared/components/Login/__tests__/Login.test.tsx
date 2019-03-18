@@ -21,7 +21,12 @@ const realms: Realm[] = [
   },
 ];
 const loginComponent = (
-  <Login clientId="nexus-web" hostName="http://nexus" realms={[realms[1]]} />
+  <Login
+    clientId="nexus-web"
+    hostName="http://nexus"
+    realms={[realms[1]]}
+    redirectUrl="http://nexus.bbp.com/my/url/"
+  />
 );
 const wrapper = mount(loginComponent);
 
@@ -43,7 +48,7 @@ describe('login component', () => {
       ).toEqual(
         `${
           realms[1].authorizationEndpoint
-        }?client_id=nexus-web&response_type=token&scope=openid&nonce=123456&redirect_uri=http://nexus/authRedirect`
+        }?client_id=nexus-web&response_type=token&scope=openid&nonce=123456&redirect_uri=http://nexus/authRedirect?redirectUrl=http://nexus.bbp.com/my/url/`
       );
     });
 
@@ -75,7 +80,7 @@ describe('login component', () => {
       ).toEqual(
         `${
           realms[1].authorizationEndpoint
-        }?client_id=nexus-web&response_type=token&scope=openid&nonce=123456&redirect_uri=http://nexus/authRedirect`
+        }?client_id=nexus-web&response_type=token&scope=openid&nonce=123456&redirect_uri=http://nexus/authRedirect?redirectUrl=http://nexus.bbp.com/my/url/`
       );
     });
 

@@ -81,7 +81,8 @@ const mapStateToProps = ({ auth }: { auth: AuthState }) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  goTo: (url: string) => dispatch(push(url)),
+  goTo: (url: string) =>
+    dispatch(push(url, { previousUrl: window.location.href })),
 });
 
 export default connect(
