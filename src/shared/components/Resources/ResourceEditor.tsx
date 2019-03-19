@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Button, Icon, message } from 'antd';
+import { Button, Icon, Switch } from 'antd';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import './ResourceEditor.less';
+import { ResourceGetFormat } from '@bbp/nexus-sdk/lib/Resource/types';
 
 // Codemirror will not load on the server, so we need to make sure
 // the language support code doesn't load either.
@@ -12,16 +13,19 @@ if (typeof window !== 'undefined') {
 export interface ResourceEditorProps {
   rawData: { [key: string]: any }; // any object
   onSubmit: (rawData: { [key: string]: any }) => void;
-  editing?: boolean;
+  onFormatChange?(expanded: boolean): void;
   editable: boolean;
+  editing?: boolean;
 }
 
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
-  const { rawData, onSubmit, editing = false, editable = false } = props;
+  const { rawData, onSubmit, editable, editing = false } = props;
   const [isEditing, setEditing] = React.useState(editing);
   const [valid, setValid] = React.useState(true);
   const [value, setValue] = React.useState(rawData);
-
+  React.useEffect(() => {
+    setEditing(false);
+  }, [rawData]); //only runs when Editor receives new resource to edit
   const handleChange = (editor: any, data: any, value: any) => {
     if (!editable) {
       return;
@@ -41,7 +45,6 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
       onSubmit(value);
     }
   };
-
   return (
     <div className={valid ? 'resource-editor' : 'resource-editor _invalid'}>
       <div className="control-panel">
@@ -68,7 +71,14 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
           )}
         </div>
         <div className="controls">
-          {isEditing && valid && (
+          {!isEditing && valid && (
+            <Switch
+              checkedChildren="expanded"
+              unCheckedChildren="expand"
+              onChange={props.onFormatChange}
+            />
+          )}
+          {editable && isEditing && valid && (
             <Button
               icon="save"
               type="primary"

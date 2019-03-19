@@ -57,7 +57,8 @@ export type ResourceActions =
 export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
   orgLabel: string,
   projectLabel: string,
-  resourceId: string
+  resourceId: string,
+  expanded: boolean
 ) => {
   return async (
     dispatch: Dispatch<any>
@@ -77,7 +78,10 @@ export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
         orgLabel,
         projectLabel,
         '_',
-        resourceId
+        resourceId,
+        {
+          expanded,
+        }
       );
       const dotGraph = await Resource.getSelfRawAs(
         resource.self,
