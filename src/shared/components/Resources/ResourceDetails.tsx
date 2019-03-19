@@ -8,7 +8,6 @@ import { RequestError } from '../../store/actions/utils/errors';
 import LinksContainer from './Links';
 import { LinksState } from '../../store/reducers/links';
 import { LinkDirection } from '../../store/actions/nexus/links';
-import { ResourceGetFormat } from '@bbp/nexus-sdk/lib/Resource/types';
 
 const TabPane = Tabs.TabPane;
 
@@ -93,11 +92,7 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
               <TabPane tab="JSON" key="1">
                 <ResourceEditor
                   editable={!(isFile || resource.expanded)}
-                  rawData={{
-                    context: resource.context,
-                    type: resource.type,
-                    ...resource.data,
-                  }}
+                  rawData={resource.expanded || resource.raw}
                   onFormatChange={fetchResource}
                   onSubmit={handleSubmit}
                   // editing={editing}

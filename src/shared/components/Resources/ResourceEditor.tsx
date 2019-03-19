@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Button, Icon, Switch } from 'antd';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import './ResourceEditor.less';
-import { ResourceGetFormat } from '@bbp/nexus-sdk/lib/Resource/types';
 
 // Codemirror will not load on the server, so we need to make sure
 // the language support code doesn't load either.
@@ -25,7 +24,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const [value, setValue] = React.useState(rawData);
   React.useEffect(() => {
     setEditing(false);
-  }, [rawData]); //only runs when Editor receives new resource to edit
+  }, [rawData]); // only runs when Editor receives new resource to edit
   const handleChange = (editor: any, data: any, value: any) => {
     if (!editable) {
       return;
