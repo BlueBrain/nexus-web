@@ -7,11 +7,15 @@ export interface AvatarProps {
 
 const UserAvatar: React.FunctionComponent<AvatarProps> = props => {
   const { createdBy } = props;
-  let name = createdBy;
-  try {
-    [name] = createdBy.split('/').slice(-1);
-  } catch (e) {
-    // fail silently
+  let name;
+  if (createdBy.length === 0) {
+    name = 'Unknown';
+  } else {
+    try {
+      [name] = createdBy.split('/').slice(-1);
+    } catch (e) {
+      name = createdBy;
+    }
   }
   return (
     <Tooltip title={name}>

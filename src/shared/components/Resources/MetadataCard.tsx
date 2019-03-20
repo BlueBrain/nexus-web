@@ -32,12 +32,15 @@ const ResourceMetadataCard: React.FunctionComponent<
     type,
     rev,
   } = props;
-  let userName = createdBy;
-  // let's try to extract a nice looking user name
-  try {
-    [userName] = createdBy.split('/').slice(-1);
-  } catch (e) {
-    // fail silently
+  let userName;
+  if (createdBy.length === 0) {
+    userName = 'Unknown';
+  } else {
+    try {
+      [userName] = createdBy.split('/').slice(-1);
+    } catch (e) {
+      userName = createdBy;
+    }
   }
   return (
     <Card>
