@@ -27,6 +27,7 @@ export interface ResourceViewProps {
     linkDirection: LinkDirection,
     paginationSettings: PaginationSettings
   ) => void;
+  fetchResource(expanded: boolean): void;
   links: LinksState | null;
 }
 
@@ -42,8 +43,8 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
     goToResource,
     fetchLinks,
     getFilePreview,
+    fetchResource,
   } = props;
-  const [editing, setEditing] = React.useState(false);
   const [busy, setFormBusy] = React.useState(isFetching);
 
   // TODO move NexusFileType constant to sdk
@@ -62,7 +63,6 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
         });
         onSuccess();
         setFormBusy(false);
-        setEditing(false);
       } catch (error) {
         notification.error({
           message: 'An unknown error occurred',
@@ -91,14 +91,10 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
             <Tabs defaultActiveKey="1">
               <TabPane tab="JSON" key="1">
                 <ResourceEditor
-                  editable={!isFile}
-                  rawData={{
-                    context: resource.context,
-                    type: resource.type,
-                    ...resource.data,
-                  }}
+                  editable={!(isFile || resource.expanded)}
+                  rawData={resource.expanded || resource.raw}
+                  onFormatChange={fetchResource}
                   onSubmit={handleSubmit}
-                  editing={editing}
                 />
               </TabPane>
               <TabPane tab="Links" key="2">

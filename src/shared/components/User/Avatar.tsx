@@ -7,7 +7,16 @@ export interface AvatarProps {
 
 const UserAvatar: React.FunctionComponent<AvatarProps> = props => {
   const { createdBy } = props;
-  const [name] = createdBy.split('/').slice(-1);
+  let name;
+  if (createdBy.length === 0) {
+    name = 'Unknown';
+  } else {
+    try {
+      [name] = createdBy.split('/').slice(-1);
+    } catch (e) {
+      name = createdBy;
+    }
+  }
   return (
     <Tooltip title={name}>
       <Avatar size="large">{name[0].toUpperCase()}</Avatar>

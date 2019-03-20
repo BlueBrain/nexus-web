@@ -33,7 +33,8 @@ interface ResourceViewProps {
   fetchResource: (
     orgLabel: string,
     projectLabel: string,
-    resourceId: string
+    resourceId: string,
+    expanded?: boolean
   ) => void;
 }
 
@@ -51,11 +52,12 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
     linksListPageSize,
     getFilePreview,
   } = props;
-  const fetch = () => {
+  const fetch = (expanded = false) => {
     fetchResource(
       match.params.org,
       match.params.project,
-      match.params.resourceId
+      match.params.resourceId,
+      expanded
     );
   };
   // Fetch Resource
@@ -82,6 +84,7 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
           isFetching={isFetching}
           fetchLinks={fetchLinks}
           linksListPageSize={linksListPageSize}
+          fetchResource={fetch}
         />
       </Status>
     </>
@@ -124,8 +127,13 @@ const mapDispatchToProps = (dispatch: any) => {
           }/resources/${encodeURIComponent(resource.id)}`
         )
       ),
-    fetchResource: (orgLabel: string, projectLabel: string, id: string) => {
-      dispatch(fetchAndAssignResource(orgLabel, projectLabel, id));
+    fetchResource: (
+      orgLabel: string,
+      projectLabel: string,
+      id: string,
+      expanded = false
+    ) => {
+      dispatch(fetchAndAssignResource(orgLabel, projectLabel, id, expanded));
     },
     fetchLinks: (
       resource: Resource,

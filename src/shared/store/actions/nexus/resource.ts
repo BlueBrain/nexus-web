@@ -3,6 +3,7 @@ import { Project, Resource } from '@bbp/nexus-sdk';
 import { ThunkAction } from '../..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
 import { ResourceGetFormat } from '@bbp/nexus-sdk/lib/Resource/types';
+import { WILDCARD_SCHEMA_ID } from '@bbp/nexus-sdk/lib/Schema';
 import { formatError, RequestError } from '../utils/errors';
 
 enum ResourceActionTypes {
@@ -57,7 +58,8 @@ export type ResourceActions =
 export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
   orgLabel: string,
   projectLabel: string,
-  resourceId: string
+  resourceId: string,
+  expanded: boolean
 ) => {
   return async (
     dispatch: Dispatch<any>
@@ -73,8 +75,15 @@ export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
   > => {
     dispatch(fetchResourceAction());
     try {
-      const project: Project = await Project.get(orgLabel, projectLabel);
-      const resource = await project.getResource(resourceId);
+      const resource = await Resource.get(
+        orgLabel,
+        projectLabel,
+        WILDCARD_SCHEMA_ID,
+        resourceId,
+        {
+          expanded,
+        }
+      );
       const dotGraph = await Resource.getSelfRawAs(
         resource.self,
         ResourceGetFormat.DOT
