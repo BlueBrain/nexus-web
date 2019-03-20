@@ -3,6 +3,7 @@ import { Project, Resource } from '@bbp/nexus-sdk';
 import { ThunkAction } from '../..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
 import { ResourceGetFormat } from '@bbp/nexus-sdk/lib/Resource/types';
+import { WILDCARD_SCHEMA_ID } from '@bbp/nexus-sdk/lib/Schema';
 import { formatError, RequestError } from '../utils/errors';
 
 enum ResourceActionTypes {
@@ -77,7 +78,7 @@ export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
       const resource = await Resource.get(
         orgLabel,
         projectLabel,
-        '_',
+        WILDCARD_SCHEMA_ID,
         resourceId,
         {
           expanded,
