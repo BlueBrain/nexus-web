@@ -95,7 +95,6 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
                   rawData={resource.expanded || resource.raw}
                   onFormatChange={fetchResource}
                   onSubmit={handleSubmit}
-                  // editing={editing}
                 />
               </TabPane>
               <TabPane tab="Links" key="2">
