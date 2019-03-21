@@ -33,11 +33,14 @@ const identityReducer = createFetchReducer(
   },
   []
 );
-const realmReducer = createFetchReducer({
-  FETCHING: AuthActionTypes.REALM_FETCHING,
-  FULFILLED: AuthActionTypes.REALM_FULFILLED,
-  FAILED: AuthActionTypes.REALM_FAILED,
-});
+const realmReducer = createFetchReducer(
+  {
+    FETCHING: AuthActionTypes.REALM_FETCHING,
+    FULFILLED: AuthActionTypes.REALM_FULFILLED,
+    FAILED: AuthActionTypes.REALM_FAILED,
+  },
+  []
+);
 
 function authReducer(
   state: AuthState = initialState,
