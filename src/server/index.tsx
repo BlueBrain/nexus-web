@@ -23,7 +23,7 @@ import {
   HTTP_STATUSES,
   HTTP_STATUS_TYPE_KEYS,
 } from '../shared/store/actions/utils/statusCodes';
-import { stripBasename } from '../shared/utils';
+import { stripBasename, buildPathFactory } from '../shared/utils';
 
 const isSecure = !!process.env.SECURE;
 const cookieName = isSecure ? '__Secure-nexusAuth' : '_Secure-nexusAuth';
@@ -33,16 +33,20 @@ const app: express.Express = express();
 const rawBase: string = process.env.BASE_PATH || '';
 // remove trailing slash
 const base: string = rawBase.replace(/\/$/, '');
+// Utility fonction to compute the full path depending on the base path
+const buildPath = buildPathFactory(base);
+// base path ending with a slash, for routing purpose
+const fullBasePath = buildPath();
 // enable logs
 app.use(morgan('dev'));
 // expose status route
-app.get(`${base}/status`, (req, res) => res.send('OK'));
+app.get(buildPath('status'), (req, res) => res.send('OK'));
 // Prometheus
-app.use(promBundle({ includeMethod: true, metricsPath: `${base}/metrics` }));
+app.use(promBundle({ includeMethod: true, metricsPath: buildPath('metrics') }));
 // parse cookies
 app.use(cookieParser());
 // server static assets from the /public directory
-app.use(`${base}/public`, express.static(join(__dirname, 'public')));
+app.use(buildPath('public'), express.static(join(__dirname, 'public')));
 
 // if in Dev mode, setup HMR and all the fancy stuff
 if (process.env.NODE_ENV !== 'production') {
@@ -53,7 +57,7 @@ if (process.env.NODE_ENV !== 'production') {
 // Setup client cookie with AccessToken and redirect to home page
 // TODO: redirect to the page user was trying to access before auth
 app.get(
-  `${base}/authSuccess`,
+  buildPath('authSuccess'),
   (req: express.Request, res: express.Response) => {
     const { error, access_token, redirectUrl } = req.query;
     if (!error) {
@@ -68,7 +72,7 @@ app.get(
             maxAge: (token as any)['exp'],
             secure: isSecure ? true : false,
             sameSite: 'strict',
-            path: base,
+            path: fullBasePath,
             httpOnly: true,
           }
         );
@@ -77,12 +81,12 @@ app.get(
         // fail silently
       }
     }
-    res.redirect(redirectUrl || `${base}`);
+    res.redirect(redirectUrl || fullBasePath);
   }
 );
 
 // User wants to logout, clear cookie
-app.get(`${base}/authLogout`, (req: express.Request, res: express.Response) => {
+app.get(buildPath('authLogout'), (req: express.Request, res: express.Response) => {
   res.cookie(
     cookieName,
     {},
@@ -90,16 +94,16 @@ app.get(`${base}/authLogout`, (req: express.Request, res: express.Response) => {
       maxAge: -1,
       secure: isSecure ? true : false,
       sameSite: 'strict',
-      path: base,
+      path: fullBasePath,
       httpOnly: true,
     }
   );
-  res.redirect(`${base}`);
+  res.redirect(fullBasePath);
 });
 
 // We need to get the browser to send the access token to the server
 app.get(
-  `${base}/authRedirect`,
+  buildPath('authRedirect'),
   (req: express.Request, res: express.Response) => {
     const { redirectUrl } = req.query;
 
@@ -153,7 +157,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
     },
     config: {
       apiEndpoint: process.env.API_ENDPOINT || '/',
-      basePath: base,
+      basePath: fullBasePath,
     },
     uiSettings: DEFAULT_UI_SETTINGS,
   };

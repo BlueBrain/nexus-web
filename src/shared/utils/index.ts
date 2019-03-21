@@ -131,6 +131,14 @@ export const stripBasename = (basename: string, path: string) => {
   return path.substr(base.length);
 };
 
+/**
+ * Returns a function that adds the basename to a path.
+ *
+ * If base and path are empty, it returns '/', which is convenient
+ * since routing may not handle empty paths properly.
+ */
+export const buildPathFactory = (base: string) => (path: string = '') => `${base}/${path}`;
+
 // For getting the last part of a uri path as a title or label
 export const labelOf = (string: string) => {
   const slash = string.substring(string.lastIndexOf('/') + 1);
