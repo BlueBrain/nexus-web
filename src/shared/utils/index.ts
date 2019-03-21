@@ -151,19 +151,19 @@ export function getLogoutUrl(
   realms: { label: string; endSessionEndpoint: string }[]
 ): string {
   // find authenticated Identity and get realm name
-  const auths = identities.filter(
+  const identity = identities.find(
     identity => identity['@type'] === 'Authenticated'
   );
-  if (auths.length === 0) {
+  if (identity === undefined) {
     return '';
   }
 
   // find realm with the matching label
-  const matches = realms.filter(realm => realm.label === auths[0].realm);
-  if (matches.length === 0) {
+  const realm = realms.find(realm => realm.label === identity.realm);
+  if (realm === undefined) {
     return '';
   }
 
   // return logout URL
-  return matches[0].endSessionEndpoint;
+  return realm.endSessionEndpoint;
 }
