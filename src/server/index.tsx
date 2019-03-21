@@ -148,10 +148,6 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       tokenData,
       authenticated: accessToken !== undefined,
       clientId: process.env.CLIENT_ID || 'nexus-web',
-      // This is temporary until Realm API is available
-      authorizationEndpoint: process.env.AUTH_ENDPOINT,
-      // This is temporary until Realm API is available
-      endSessionEndpoint: process.env.LOGOUT_ENDPOINT,
       redirectHostName: `${process.env.HOST_NAME ||
         `${req.protocol}://${req.headers.host}`}${base}`,
     },
