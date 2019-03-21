@@ -1,30 +1,45 @@
 import * as React from 'react';
+import { Icon, Tooltip } from 'antd';
 import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
 
 import './ACLs.less';
-import { Icon } from 'antd';
 
-const getIcon = (
-  activePermission: Identity['@type']
-): React.ReactElement<any> => {
-  switch (activePermission) {
+const getTitle = (identity: Identity): React.ReactElement<any> => {
+  switch (identity['@type']) {
     case 'Anonymous':
-      return <Icon type="global" />;
+      return (
+        <Tooltip title="Anyone with the internet">
+          <Icon type="global" />
+        </Tooltip>
+      );
     case 'Authenticated':
-      return <Icon type="crown" />;
+      return (
+        <Tooltip title={identity.realm}>
+          <Icon type="crown" />
+        </Tooltip>
+      );
     case 'Group':
-      return <Icon type="team" />;
+      return (
+        <Tooltip title={identity.group}>
+          <Icon type="team" />
+        </Tooltip>
+      );
     case 'User':
-      return <Icon type="user" />;
+      return (
+        <Tooltip title={identity.subject}>
+          <Icon type="user" />
+        </Tooltip>
+      );
     default:
       return <Icon />;
   }
 };
+
 const IdentityBadge: React.FunctionComponent<Identity> = props => {
   return (
     <div className="Identity-badge">
       <h3>
-        {getIcon(props['@type'])} {props['@type']}
+        {getTitle(props)} {props['@type']}
       </h3>
     </div>
   );
