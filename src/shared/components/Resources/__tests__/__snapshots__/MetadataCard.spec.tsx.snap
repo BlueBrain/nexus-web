@@ -71,7 +71,7 @@ exports[`MetadataCard component should render with Set username 1`] = `
                 </Tooltip>
                 <span>
                   , last updated 
-                  4 hours ago
+                  a day ago
                 </span>
               </div>
               <div>
@@ -3092,7 +3092,7 @@ exports[`MetadataCard component should render with Set username 1`] = `
                     </Tooltip>
                     <span>
                       , last updated 
-                      4 hours ago
+                      a day ago
                     </span>
                   </div>
                   <div>
@@ -3187,7 +3187,7 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                 </Tooltip>
                 <span>
                   , last updated 
-                  4 hours ago
+                  a day ago
                 </span>
               </div>
               <div>
@@ -6208,7 +6208,7 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                     </Tooltip>
                     <span>
                       , last updated 
-                      4 hours ago
+                      a day ago
                     </span>
                   </div>
                   <div>
@@ -6303,7 +6303,7 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                 </Tooltip>
                 <span>
                   , last updated 
-                  4 hours ago
+                  a day ago
                 </span>
               </div>
               <div>
@@ -9324,7 +9324,7 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                     </Tooltip>
                     <span>
                       , last updated 
-                      4 hours ago
+                      a day ago
                     </span>
                   </div>
                   <div>
