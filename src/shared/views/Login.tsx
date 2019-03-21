@@ -2,20 +2,24 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import LoginBox, { Realm } from '../components/Login';
 import { AuthState } from '../store/reducers/auth';
-import { RootState } from '../store/reducers';
-import { StaticRouterProps } from 'react-router';
+import { StaticRouterProps, Redirect } from 'react-router';
+import { push } from 'connected-react-router';
 
 export interface LoginViewProps {
   authorizationEndpoint: string;
+  realms: Realm[];
   clientId: string;
   hostName: string;
   redirectUrl: string;
+  redirect(): void;
 }
 
 const Login: React.FunctionComponent<LoginViewProps> = props => {
-  const realms: Realm[] = [
-    { name: 'BBP', authorizationEndpoint: props.authorizationEndpoint },
-  ];
+  const { realms, redirect } = props;
+  if (realms.length === 0 || !realms) {
+    redirect();
+    return null;
+  }
   return (
     <LoginBox
       realms={realms}
@@ -37,6 +41,7 @@ const mapStateToProps = ({
 
   return {
     authorizationEndpoint: auth.authorizationEndpoint || '',
+    realms: (auth.realms && auth.realms.data && auth.realms.data.results) || [],
     redirectUrl:
       (location && location.state && location.state.previousUrl) ||
       auth.redirectHostName ||
@@ -46,4 +51,11 @@ const mapStateToProps = ({
   };
 };
 
-export default connect(mapStateToProps)(Login);
+const mapDispatchToProps = (dispatch: any) => ({
+  redirect: () => dispatch(push('/')),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Login);

@@ -1,12 +1,13 @@
 import { AuthActions, AuthActionTypes } from '../actions/auth';
 import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
 import { createFetchReducer, FetchableState } from './utils';
-import { PaginatedList, ACL } from '@bbp/nexus-sdk';
+import { PaginatedList, ACL, Realm } from '@bbp/nexus-sdk';
 
 export interface AuthState {
   authenticated: boolean;
-  identities?: Identity[];
+  identities?: FetchableState<Identity[]>;
   acls?: FetchableState<PaginatedList<ACL>>;
+  realms?: FetchableState<PaginatedList<Realm>>;
   tokenData?: object;
   clientId?: string;
   accessToken?: string;
@@ -32,6 +33,14 @@ const identityReducer = createFetchReducer(
   },
   []
 );
+const realmReducer = createFetchReducer(
+  {
+    FETCHING: AuthActionTypes.REALM_FETCHING,
+    FULFILLED: AuthActionTypes.REALM_FULFILLED,
+    FAILED: AuthActionTypes.REALM_FAILED,
+  },
+  []
+);
 
 function authReducer(
   state: AuthState = initialState,
@@ -50,6 +59,12 @@ function authReducer(
     return {
       ...state,
       identities: identityReducer(state.identities, action),
+    };
+  }
+  if (action.type.startsWith('@@nexus/AUTH_REALM_')) {
+    return {
+      ...state,
+      realms: realmReducer(state.realms, action),
     };
   }
   return state;

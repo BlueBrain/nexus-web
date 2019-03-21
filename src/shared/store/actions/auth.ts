@@ -1,6 +1,6 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from './utils';
-import { PaginatedList, ACL } from '@bbp/nexus-sdk';
+import { PaginatedList, ACL, Realm } from '@bbp/nexus-sdk';
 import { ListACLOptions, Identity } from '@bbp/nexus-sdk/lib/ACL/types';
 
 export enum AuthActionTypes {
@@ -10,6 +10,9 @@ export enum AuthActionTypes {
   IDENTITY_FETCHING = '@@nexus/AUTH_IDENTITY_FETCHING',
   IDENTITY_FULFILLED = '@@nexus/AUTH_IDENTITY_FULFILLED',
   IDENTITY_FAILED = '@@nexus/AUTH_IDENTITY_FAILED',
+  REALM_FETCHING = '@@nexus/AUTH_REALM_FETCHING',
+  REALM_FULFILLED = '@@nexus/AUTH_REALM_FULFILLED',
+  REALM_FAILED = '@@nexus/AUTH_REALM_FAILED',
 }
 
 /**
@@ -77,6 +80,33 @@ interface SetAuthenticatedAction extends Action {
 }
 
 /**
+ * Realms
+ */
+type FetchRealmsAction = FetchAction<AuthActionTypes.REALM_FETCHING>;
+const fetchRealmsAction: ActionCreator<FetchRealmsAction> = () => ({
+  type: AuthActionTypes.REALM_FETCHING,
+});
+
+type FetchRealmsFulfilledAction = FetchFulfilledAction<
+  AuthActionTypes.REALM_FULFILLED,
+  PaginatedList<Realm>
+>;
+const fetchRealmsFulfilledAction: ActionCreator<FetchRealmsFulfilledAction> = (
+  realms: PaginatedList<Realm>
+) => ({
+  type: AuthActionTypes.REALM_FULFILLED,
+  payload: realms,
+});
+
+type FetchRealmsFailedAction = FetchFailedAction<AuthActionTypes.REALM_FAILED>;
+const fetchRealmsFailedAction: ActionCreator<
+  FetchFailedAction<AuthActionTypes.REALM_FAILED>
+> = (error: Error) => ({
+  error,
+  type: AuthActionTypes.REALM_FAILED,
+});
+
+/**
  * Export ALL types
  */
 export type AuthActions =
@@ -86,7 +116,10 @@ export type AuthActions =
   | FetchAclsFailedAction
   | FetchIdentitiesAction
   | FetchIdentitiesFulfilledAction
-  | FetchIdentitiesFailedAction;
+  | FetchIdentitiesFailedAction
+  | FetchRealmsAction
+  | FetchRealmsFulfilledAction
+  | FetchRealmsFailedAction;
 
 /**
  *  Actual Actions
@@ -120,6 +153,20 @@ function fetchIdentities() {
   };
 }
 
+function fetchRealms() {
+  return async (
+    dispatch: Dispatch<any>
+  ): Promise<FetchRealmsFulfilledAction | FetchRealmsFailedAction> => {
+    dispatch(fetchIdentitiesAction);
+    try {
+      const data: PaginatedList<Realm> = await Realm.list();
+      return dispatch(fetchRealmsFulfilledAction(data));
+    } catch (error) {
+      return dispatch(fetchRealmsFailedAction(error));
+    }
+  };
+}
+
 const setAuthenticated = (
   isAuthenticated: boolean
 ): SetAuthenticatedAction => ({
@@ -127,4 +174,4 @@ const setAuthenticated = (
   payload: isAuthenticated,
 });
 
-export { setAuthenticated, fetchAcls, fetchIdentities };
+export { setAuthenticated, fetchAcls, fetchIdentities, fetchRealms };

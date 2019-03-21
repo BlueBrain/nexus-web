@@ -8,6 +8,9 @@ import { AuthState } from '../store/reducers/auth';
 import { version, url as githubIssueURL } from '../../../package.json';
 
 import './MainLayout.less';
+import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
+import { Realm } from '@bbp/nexus-sdk';
+import { getLogoutUrl } from '../utils';
 
 const favicon = require('../favicon.png');
 const TITLE = 'A knowledge graph for data-driven science';
@@ -71,14 +74,20 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
   </>
 );
 
-const mapStateToProps = ({ auth }: { auth: AuthState }) => ({
-  authenticated: auth.authenticated,
-  token: auth.accessToken,
-  name: auth.tokenData ? (auth.tokenData as any)['name'] : '',
-  logoutUrl: auth.endSessionEndpoint || '',
-  hostName: auth.redirectHostName || '',
-  canLogin: !!auth.authorizationEndpoint || false,
-});
+const mapStateToProps = ({ auth }: { auth: AuthState }) => {
+  const realms: Realm[] =
+    (auth.realms && auth.realms.data && auth.realms.data.results) || [];
+  const identities: Identity[] =
+    (auth.identities && auth.identities.data) || [];
+  return {
+    authenticated: auth.authenticated,
+    token: auth.accessToken,
+    name: auth.tokenData ? (auth.tokenData as any)['name'] : '',
+    hostName: auth.redirectHostName || '',
+    logoutUrl: getLogoutUrl(identities, realms),
+    canLogin: !!(realms.length > 0),
+  };
+};
 
 const mapDispatchToProps = (dispatch: any) => ({
   goTo: (url: string) =>

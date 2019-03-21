@@ -1,4 +1,5 @@
 import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
+import { Realm } from '@bbp/nexus-sdk';
 
 /**
  * getProp utility - an alternative to lodash.get
@@ -138,3 +139,31 @@ export const labelOf = (string: string) => {
 };
 
 export const isBrowser = typeof window !== 'undefined';
+
+/**
+ * Returns the logout URL of the realm the user is authenticated with
+ *
+ * @param identities
+ * @param realms
+ */
+export function getLogoutUrl(
+  identities: Identity[],
+  realms: { label: string; endSessionEndpoint: string }[]
+): string {
+  // find authenticated Identity and get realm name
+  const identity = identities.find(
+    identity => identity['@type'] === 'Authenticated'
+  );
+  if (identity === undefined) {
+    return '';
+  }
+
+  // find realm with the matching label
+  const realm = realms.find(realm => realm.label === identity.realm);
+  if (realm === undefined) {
+    return '';
+  }
+
+  // return logout URL
+  return realm.endSessionEndpoint;
+}
