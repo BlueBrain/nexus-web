@@ -16,7 +16,7 @@ import html from './html';
 import App from '../shared/App';
 import createStore from '../shared/store';
 import { RootState } from '../shared/store/reducers';
-import { fetchIdentities } from '../shared/store/actions/auth';
+import { fetchIdentities, fetchRealms } from '../shared/store/actions/auth';
 import routes, { RouteWithData } from '../shared/routes';
 import { DEFAULT_UI_SETTINGS } from '../shared/store/reducers/ui-settings';
 import {
@@ -172,6 +172,8 @@ app.get('*', async (req: express.Request, res: express.Response) => {
   const store = createStore(memoryHistory, nexus, preloadedState);
   // Get identity data
   await store.dispatch<any>(fetchIdentities());
+  // Get realms data
+  await store.dispatch<any>(fetchRealms());
   // Get list of matching routes
   const activeRoutes: RouteWithData[] = routes.filter(route =>
     matchPath(req.url, route)
