@@ -5,7 +5,7 @@ import { PaginatedList, ACL, Realm } from '@bbp/nexus-sdk';
 
 export interface AuthState {
   authenticated: boolean;
-  identities?: Identity[];
+  identities?: FetchableState<Identity[]>;
   acls?: FetchableState<PaginatedList<ACL>>;
   realms?: FetchableState<PaginatedList<Realm>>;
   tokenData?: object;
