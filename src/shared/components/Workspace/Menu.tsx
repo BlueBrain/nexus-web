@@ -85,7 +85,7 @@ const Menu: React.FunctionComponent<MenuProps> = ({
             ElasticSearch Query Editor
           </Link>
           <Link to={`/${orgLabel}/${projectLabel}/_settings/acls`}>
-            View Project ACLs
+            View Project's permissions
           </Link>
         </div>
         <Divider />
