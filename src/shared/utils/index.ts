@@ -146,7 +146,10 @@ export const isBrowser = typeof window !== 'undefined';
  * @param identities
  * @param realms
  */
-export function getLogoutUrl(identities: Identity[], realms: Realm[]): string {
+export function getLogoutUrl(
+  identities: Identity[],
+  realms: { label: string; endSessionEndpoint: string }[]
+): string {
   // find authenticated Identity and get realm name
   const auths = identities.filter(
     identity => identity['@type'] === 'Authenticated'

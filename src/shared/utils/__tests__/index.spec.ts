@@ -1,5 +1,12 @@
-import { getUserList, getOrderedPermissions, addLeadingSlash, stripBasename } from '..';
+import {
+  getUserList,
+  getOrderedPermissions,
+  addLeadingSlash,
+  stripBasename,
+  getLogoutUrl,
+} from '..';
 import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
+import { Realm } from '@bbp/nexus-sdk';
 
 const identities: Identity[] = [
   {
@@ -74,7 +81,7 @@ describe('utils functions', () => {
       expect(stripBasename(basename, path)).toEqual(path);
     });
     it('should keep the path intact when the basename is not at the beginning of the path', () => {
-      const basename = 'my-app';  // no leading slash, should be added automatically
+      const basename = 'my-app'; // no leading slash, should be added automatically
       const path = '/fragment/my-app/this-is-a-path';
       expect(stripBasename(basename, path)).toEqual(path);
     });
@@ -93,6 +100,24 @@ describe('utils functions', () => {
     it('should add a leading slash when the first character is not a slash', () => {
       const path = 'this-is-a-path';
       expect(addLeadingSlash(path)).toEqual(`/${path}`);
+    });
+  });
+  describe('getLogoutUrl()', () => {
+    const identities: Identity[] = [
+      { '@id': '1', '@type': 'Authenticated', realm: 'bbp' },
+      { '@id': '2', '@type': 'User', subject: 'julien' },
+    ];
+
+    const realms = [{ label: 'bbp', endSessionEndpoint: 'http://logout' }];
+    it('should return the endsession url', () => {
+      expect(getLogoutUrl(identities, realms)).toEqual(
+        realms[0].endSessionEndpoint
+      );
+    });
+    it('should return an empty string', () => {
+      expect(getLogoutUrl(identities, [])).toEqual('');
+      expect(getLogoutUrl([], realms)).toEqual('');
+      expect(getLogoutUrl([identities[1]], realms)).toEqual('');
     });
   });
 });
