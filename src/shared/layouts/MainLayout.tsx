@@ -77,7 +77,11 @@ const mapStateToProps = ({ auth }: { auth: AuthState }) => ({
   name: auth.tokenData ? (auth.tokenData as any)['name'] : '',
   logoutUrl: auth.endSessionEndpoint || '',
   hostName: auth.redirectHostName || '',
-  canLogin: !!auth.authorizationEndpoint || false,
+  canLogin: !!(
+    auth.realms &&
+    auth.realms.data &&
+    auth.realms.data.results.length > 0
+  ),
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
