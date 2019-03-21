@@ -80,6 +80,7 @@ const mapStateToProps = ({ auth }: { auth: AuthState }) => ({
   canLogin: !!(
     auth.realms &&
     auth.realms.data &&
+    auth.realms.data.results &&
     auth.realms.data.results.length > 0
   ),
 });
