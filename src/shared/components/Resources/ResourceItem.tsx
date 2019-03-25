@@ -57,9 +57,7 @@ const ResourceListItem: React.FunctionComponent<ResourceItemProps> = props => {
         {predicate && <div className="predicate">{predicate}</div>}
         <div className="label">
           {Preview}
-          <div className="name">
-            <em>{resource.name}</em>
-          </div>
+          <div className="name">{resource.name}</div>
           {resource.type && resource.type.length && (
             <TypesIcon type={resource.type} />
           )}

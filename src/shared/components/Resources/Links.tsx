@@ -77,9 +77,7 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
                 <div className="predicate">{predicate}</div>
                 <div className="label">
                   <div className="name">
-                    <em>
-                      {resourceLink.link as string} <Icon type="export" />
-                    </em>
+                    <Icon type="export" /> {resourceLink.link as string}
                   </div>
                 </div>
               </a>
