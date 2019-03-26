@@ -1,6 +1,12 @@
 import * as React from 'react';
 import { mount } from 'enzyme';
 import MetadataCard from '../MetadataCard';
+
+jest.mock('moment', () => () => ({
+  format: () => '20/03/2019',
+  fromNow: () => 'some days ago',
+}));
+
 const metadataCardProps = {
   createdAt: '2019-03-20T09:41:57.248Z',
   updatedAt: '2019-03-20T10:00:20.260Z',
