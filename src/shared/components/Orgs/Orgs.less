@@ -1,60 +1,10 @@
 @import '../../lib.less';
-@orgListCardItemHeight: 44px;
-@smallButtonHeight: 24px;
-/**
-* Organisation Cards
-*/
-.OrgCard {
-  cursor: pointer;
-  background-color: white;
-  .ant-card-body {
-    height: @orgListCardItemHeight;
-    padding: 10px;
-  }
-  .content {
-    height: @smallButtonHeight;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    .logo {
-      margin-right: 10px;
-    }
-    .org-name {
-      margin: 0;
-      flex-grow: 1;
-    }
-    .project-number {
-      margin: 0;
-      .number {
-        font-weight: bold;
-      }
-    }
-    .edit-button {
-      display: none;
-    }
-  }
-
-  &:hover,
-  &:focus,
-  &:focus-within {
-    background-color: fade(@primary-color, 5%);
-
-    .content {
-      .edit-button {
-        display: block;
-        margin-left: 0.5em;
-      }
-    }
-  }
-}
 
 /**
 * Organisation List
 */
 .OrgList {
   background-color: @component-background;
-  padding-top: 15px;
   .scrollBar();
   .result {
     margin-top: 10px;

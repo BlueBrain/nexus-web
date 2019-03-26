@@ -23,6 +23,7 @@ const orgs: OrgCardProps[] = [
   {
     label: 'nexus',
     projectNumber: 1200,
+    deprecated: true,
     description:
       'I was part of something special. Remind me to thank John for a lovely weekend. Eventually, you do plan to have dinosaurs on your dinosaur tour, right? I gave it a cold? I gave it a virus. A computer virus. Hey, take a look at the earthlings. Goodbye!',
   },
