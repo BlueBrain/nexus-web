@@ -34,9 +34,6 @@ const OrgDropdown: React.FunctionComponent<OrgDropDownProps> = ({
   const overlay = (
     <Spin spinning={busy}>
       <div className="OrgDropdownPopover">
-        <a style={{ float: 'right' }} onClick={onRefreshClick}>
-          refresh <Icon type="redo" />
-        </a>
         <OrgList
           orgs={orgs}
           onOrgClick={name => handleOrgSelected(name)}
@@ -46,7 +43,6 @@ const OrgDropdown: React.FunctionComponent<OrgDropDownProps> = ({
           <Button type="primary" onClick={onCreateNewClick}>
             Create New
           </Button>
-          <Button onClick={onExploreAllClick}>Explore All</Button>
         </div>
       </div>
     </Spin>

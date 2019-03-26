@@ -1,15 +1,18 @@
 @import '../../lib.less';
-
+@orgListCardItemHeight: 44px;
+@smallButtonHeight: 24px;
 /**
 * Organisation Cards
 */
 .OrgCard {
-  margin: 5px !important;
   cursor: pointer;
+  background-color: white;
   .ant-card-body {
+    height: @orgListCardItemHeight;
     padding: 10px;
   }
   .content {
+    height: @smallButtonHeight;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -20,7 +23,6 @@
     .org-name {
       margin: 0;
       flex-grow: 1;
-      font-size: 1.3em;
     }
     .project-number {
       margin: 0;
@@ -41,7 +43,7 @@
     .content {
       .edit-button {
         display: block;
-        margin-left: 10px;
+        margin-left: 0.5em;
       }
     }
   }

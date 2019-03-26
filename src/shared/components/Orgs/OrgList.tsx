@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Input, Empty } from 'antd';
+import { Empty } from 'antd';
 import OrgCard, { OrgCardProps } from './OrgCard';
-import AnimatedList from '../Animations/AnimatedList';
 
 import './Orgs.less';
+import AnimatedInfiniteScrollList from '../Animations/AnimatedInfiniteScrollList';
 
 export interface OrgListProps {
   orgs: OrgCardProps[];
@@ -15,8 +15,6 @@ export interface OrgListProps {
   onPaginationChange?: (page: number, pageSize?: number) => void;
 }
 
-const Search = Input.Search;
-
 const OrgList: React.FunctionComponent<OrgListProps> = ({
   orgs,
   busy = false,
@@ -26,15 +24,6 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
   paginationSettings,
   onPaginationChange,
 }) => {
-  const [items, setItems] = React.useState(orgs);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const filtered = orgs.filter(org =>
-      org.label.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase())
-    );
-    setItems(filtered);
-  };
-
   if (error) {
     return (
       <Empty
@@ -46,13 +35,7 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
   }
   return (
     <div className="OrgList">
-      {/* Don't display search for now but to be implemented soon */}
-      {/* <Search
-        className="filter"
-        placeholder="Filter by name"
-        onChange={handleChange}
-      /> */}
-      <AnimatedList
+      <AnimatedInfiniteScrollList
         itemComponent={(org, i) => (
           <OrgCard
             key={org.label + i}
@@ -62,11 +45,10 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
           />
         )}
         onPaginationChange={onPaginationChange}
-        makeKey={item => item.label}
-        itemName="Organization"
+        makeKey={item => item.id}
         loading={busy}
-        results={items}
-        total={(paginationSettings && paginationSettings.total) || items.length}
+        results={orgs}
+        total={(paginationSettings && paginationSettings.total) || orgs.length}
         paginationSettings={
           paginationSettings && {
             from: paginationSettings.from,

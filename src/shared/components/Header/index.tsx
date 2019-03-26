@@ -32,6 +32,10 @@ const Header: React.FunctionComponent<HeaderProps> = ({
 
   return (
     <header className="Header">
+      <div className="">
+        <Button icon="home" />
+        <Button>BBP</Button>
+      </div>
       <div className="selectors">{children}</div>
       <div className="logo-block">
         <a className="logo" href="">

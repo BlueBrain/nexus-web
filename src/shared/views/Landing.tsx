@@ -164,23 +164,6 @@ const Landing: React.FunctionComponent<LandingProps> = ({
       });
   };
 
-  if (busy) {
-    return (
-      <Skeleton
-        itemNumber={5}
-        active
-        avatar
-        paragraph={{
-          rows: 1,
-          width: 0,
-        }}
-        title={{
-          width: '100%',
-        }}
-      />
-    );
-  }
-
   if (error) {
     if (error.message === 'Error: Forbidden') {
       return (
@@ -204,7 +187,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
   }
 
   return (
-    <>
+    <div className="constrained-width">
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
         <h1 style={{ marginBottom: 0, marginRight: 8 }}>Organizations</h1>
         <Button
@@ -271,7 +254,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           />
         )}
       </Drawer>
-    </>
+    </div>
   );
 };
 

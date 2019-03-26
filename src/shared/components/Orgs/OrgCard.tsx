@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Avatar, Button, Card, Tag } from 'antd';
+import { Button, Tag } from 'antd';
 
 import './Orgs.less';
 
@@ -23,33 +23,31 @@ const OrgCard: React.FunctionComponent<OrgCardProps> = ({
   onEdit = () => {},
 }) => {
   return (
-    <Card className="OrgCard" tabIndex={1} onClick={onClick} bordered={false}>
+    <div className="list-card" tabIndex={1} onClick={onClick}>
       <div className="content">
-        <div className="logo">
-          <Avatar shape="square" size={32} icon="team" src={logo} />
-        </div>
-        <p className="org-name">{label}</p>
+        <span className="name">{label}</span>
         {deprecated && <Tag color="red">deprecated</Tag>}
-        <p className="project-number">
-          <span className="number">{projectNumber}</span> project
+        <p className="detail">
+          <span className="number">{projectNumber.toLocaleString()}</span>{' '}
+          project
           {projectNumber > 1 && 's'}
         </p>
         {!deprecated && onEdit && (
           <Button
             className="edit-button"
             type="primary"
+            size="small"
+            icon="edit"
             tabIndex={1}
             onClick={(e: React.SyntheticEvent) => {
               e.stopPropagation();
               onEdit();
             }}
-          >
-            Edit
-          </Button>
+          />
         )}
       </div>
-      {description && <p className="org-description">{description}</p>}
-    </Card>
+      {description && <p className="description">{description}</p>}
+    </div>
   );
 };
 

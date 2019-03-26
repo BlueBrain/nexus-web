@@ -20,10 +20,20 @@ import { type } from 'os';
 
 const logo = require('../../logo.svg');
 const orgs: OrgCardProps[] = [
-  { label: 'nexus', projectNumber: 1200 },
+  {
+    label: 'nexus',
+    projectNumber: 1200,
+    description:
+      'I was part of something special. Remind me to thank John for a lovely weekend. Eventually, you do plan to have dinosaurs on your dinosaur tour, right? I gave it a cold? I gave it a virus. A computer virus. Hey, take a look at the earthlings. Goodbye!',
+  },
   { label: 'bbp', projectNumber: 300 },
   { label: 'hbp', projectNumber: 1 },
-  { label: 'nasa', projectNumber: 912839 },
+  {
+    label: 'nasa',
+    projectNumber: 912839,
+    description:
+      "Is this my espresso machine? Wh-what is-h-how did you get my espresso machine? Eventually, you do plan to have dinosaurs on your dinosaur tour, right? Hey, you know how I'm, like, always trying to save the planet? Here's my chance. I was part of something special.",
+  },
   { label: 'tesla', projectNumber: 3 },
   { label: 'rolex', projectNumber: 3424 },
 ];
