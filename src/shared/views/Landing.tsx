@@ -73,7 +73,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
         },
         (action: { type: string; error: Error }) => {
           notification.warning({
-            message: 'Organization NOT create',
+            message: 'Organization NOT created',
             description: action.error.message,
             duration: 10,
           });
