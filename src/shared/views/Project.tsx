@@ -37,6 +37,7 @@ interface ProjectViewProps {
   getFilePreview: (selfUrl: string) => Promise<NexusFile>;
   onLoginClick: VoidFunction;
   isFetching: boolean;
+  authenticated: boolean;
 }
 
 const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
@@ -52,6 +53,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   createFile,
   getFilePreview,
   onLoginClick,
+  authenticated,
 }) => {
   const projectLabel = project ? project.label : null;
   React.useEffect(() => {
@@ -66,8 +68,10 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
       case HTTP_STATUSES[HTTP_STATUS_TYPE_KEYS.UNAUTHORIZED].code:
         description = (
           <div>
-            <p>This project is protected. Try logging in?</p>
-            <Button onClick={onLoginClick}>Log in</Button>
+            <p>This project is protected.</p>
+            {!authenticated && (
+              <Button onClick={onLoginClick}>Try logging in?</Button>
+            )}
           </div>
         );
         break;
@@ -75,6 +79,9 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
         description = (
           <div>
             <p>Sorry, you don't have access to this project</p>
+            {!authenticated && (
+              <Button onClick={onLoginClick}>Try logging in?</Button>
+            )}
           </div>
         );
         break;
@@ -86,12 +93,12 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
         );
         break;
       default:
-        description = 'There was a problem while loading this project!';
+        description = <p>There was a problem while loading this project!</p>;
     }
   }
 
   if (!project && !error && isFetching) {
-    description = 'Loading project...';
+    description = <p>Loading project...</p>;
   }
 
   return (
@@ -162,6 +169,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
 };
 
 const mapStateToProps = (state: RootState) => ({
+  authenticated: state.auth.authenticated,
   project:
     (state.nexus &&
       state.nexus.activeProject &&
