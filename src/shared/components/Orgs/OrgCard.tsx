@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Tag } from 'antd';
 
-import './list-card.less';
+import '../Animations/list-card.less';
 
 export interface OrgCardProps {
   label: string;

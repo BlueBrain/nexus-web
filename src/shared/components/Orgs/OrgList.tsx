@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Empty } from 'antd';
+import { Empty, Card } from 'antd';
 import OrgCard, { OrgCardProps } from './OrgCard';
 
 import './Orgs.less';
@@ -34,7 +34,12 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
     );
   }
   return (
-    <div className="OrgList">
+    <Card className="OrgList">
+      {paginationSettings && paginationSettings.total && (
+        <p className="result">{`Found ${
+          paginationSettings.total
+        } Organizations${paginationSettings.total > 1 ? 's' : ''}`}</p>
+      )}
       <AnimatedInfiniteScrollList
         itemComponent={(org, i) => (
           <OrgCard
@@ -57,7 +62,7 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
           }
         }
       />
-    </div>
+    </Card>
   );
 };
 
