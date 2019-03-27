@@ -41,6 +41,12 @@ body {
   list-style: none;
 }
 
+.ellipsis () {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .oddListColor() {
   &:nth-of-type(2n + 1) {
     background-color: @background-color-subtle;
@@ -49,7 +55,6 @@ body {
 
 .focus() {
   outline: none;
-  text-decoration: underline;
 }
 
 .cardlike() {
