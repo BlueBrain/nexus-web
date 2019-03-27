@@ -55,7 +55,7 @@ storiesOf('Components/ListItem', module)
               } = element;
               return (
                 <ListItem
-                  label={element.label}
+                  label={label}
                   onClick={action('element-clicked')}
                   detail={
                     deprecated ? <Tag color="red">deprecated</Tag> : undefined
@@ -66,6 +66,7 @@ storiesOf('Components/ListItem', module)
                       <Button
                         icon="edit"
                         className="edit-button"
+                        size="small"
                         type="primary"
                         tabIndex={1}
                         onClick={() => action('edit-clicked')}
