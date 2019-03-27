@@ -48,6 +48,7 @@ storiesOf('Components/Projects', module)
         <React.Fragment>
           <div style={{ margin: '50px 40px 0px' }}>
             <ProjectList
+              activeOrg={'myOrg'}
               projects={projects}
               onProjectClick={action('project-click')}
             />

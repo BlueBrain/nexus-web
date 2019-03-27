@@ -12,14 +12,13 @@ import {
 } from '@storybook/addon-knobs';
 
 import OrgList from './OrgList';
-import OrgCard, { OrgCardProps } from './OrgCard';
 import OrgDropdown from './OrgDropdown';
 import OrgForm from './OrgForm';
 import Header from '../Header';
 import { type } from 'os';
 
 const logo = require('../../logo.svg');
-const orgs: OrgCardProps[] = [
+const orgs = [
   {
     label: 'nexus',
     projectNumber: 1200,
@@ -38,41 +37,6 @@ const orgs: OrgCardProps[] = [
   { label: 'tesla', projectNumber: 3 },
   { label: 'rolex', projectNumber: 3424 },
 ];
-
-storiesOf('Components/Orgs', module)
-  .addDecorator(withKnobs)
-  .add(
-    'OrgCard',
-    withInfo(`
-    The Organization Card component is used across multiple components.
-    It displays the the basic Organization informations.
-
-    ~~~js
-      <OrgCard />
-    ~~~
-  `)(() => {
-      const label = text('Label', 'nexus');
-      const projects = number('Project', 1);
-      return (
-        <React.Fragment>
-          <div style={{ margin: '50px 40px 0px' }}>
-            <h2>No logo</h2>
-            <OrgCard projectNumber={123} label="bbp" />
-          </div>
-          <div style={{ margin: '50px 40px 0px' }}>
-            <h2>Logo and edit button</h2>
-            <OrgCard
-              label={label}
-              projectNumber={projects}
-              logo={logo}
-              onClick={action('org-click')}
-              onEdit={action('edit-button-click')}
-            />
-          </div>
-        </React.Fragment>
-      );
-    })
-  );
 
 storiesOf('Components/Orgs', module).add(
   'OrgList',
