@@ -13,6 +13,7 @@ const DEFAULT_ANIMATIONS = {
 };
 
 export interface AnimatedInfiniteScrollProps<Item> {
+  refreshValue?: string;
   itemComponent: (item: Item, index: number) => React.ReactNode;
   itemClassName?: string;
   results: Item[];
@@ -27,6 +28,7 @@ const AnimatedInfiniteScrollList: React.FunctionComponent<
   AnimatedInfiniteScrollProps<any>
 > = React.memo(props => {
   const {
+    refreshValue,
     makeKey = (item: any) => item.id,
     itemComponent,
     itemClassName,
@@ -36,12 +38,19 @@ const AnimatedInfiniteScrollList: React.FunctionComponent<
     paginationSettings,
     onPaginationChange,
   } = props;
+
   const [listData, setListData] = React.useState<any[]>([]);
   const [paginationLoading, setPaginationLoading] = React.useState(false);
   const resultsEqualChecker = results.map(result => result.id).join('');
+  const reset = paginationSettings ? paginationSettings.from === 1 : true;
+
   React.useEffect(() => {
     setListData(listData.concat(results));
   }, [resultsEqualChecker]);
+
+  React.useEffect(() => {
+    setListData(results);
+  }, [refreshValue]);
 
   React.useEffect(() => {
     if (paginationLoading) {
@@ -69,21 +78,21 @@ const AnimatedInfiniteScrollList: React.FunctionComponent<
 
   // Some problem with useTransition's makeKey api :(
   const keys = listData.map(makeKey);
-  const transitions = useTransition(listData, keys, DEFAULT_ANIMATIONS);
+  // const transitions = useTransition(listData, keys, {
+  //   ...DEFAULT_ANIMATIONS,
+  //   reset,
+  //   unique: true,
+  // });
   return (
     <div className="list-container">
       <div className="list">
-        <Spin spinning={loading && !paginationLoading}>
+        <Spin spinning={loading && !reset}>
           {!!total &&
-            transitions.map(({ item, props, key }, index: number) => {
+            listData.map((item, index: number) => {
               return (
-                <animated.div
-                  className={itemClassName}
-                  style={props}
-                  key={keys[index]}
-                >
+                <div className={itemClassName} key={keys[index]}>
                   {itemComponent(item, index)}
-                </animated.div>
+                </div>
               );
             })}
           {!total && <Empty />}

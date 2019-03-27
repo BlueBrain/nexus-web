@@ -3,7 +3,7 @@ import { Button, Tag } from 'antd';
 
 import '../Animations/list-card.less';
 
-export interface OrgCardProps {
+export interface ListCardProps {
   label: string;
   projectNumber?: number;
   description?: string;
@@ -13,11 +13,10 @@ export interface OrgCardProps {
   onEdit?(): void;
 }
 
-const OrgCard: React.FunctionComponent<OrgCardProps> = ({
+const ListCard: React.FunctionComponent<ListCardProps> = ({
   label,
   projectNumber = 0,
   description = '',
-  logo = '',
   deprecated = false,
   onClick = () => {},
   onEdit = () => {},
@@ -54,4 +53,4 @@ const OrgCard: React.FunctionComponent<OrgCardProps> = ({
   );
 };
 
-export default OrgCard;
+export default ListCard;

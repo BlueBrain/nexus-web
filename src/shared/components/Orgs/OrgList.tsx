@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { Empty, Card } from 'antd';
-import OrgCard, { OrgCardProps } from './OrgCard';
-
+import { Empty } from 'antd';
 import './Orgs.less';
 import AnimatedInfiniteScrollList from '../Animations/AnimatedInfiniteScrollList';
+import ListCard, { ListCardProps } from '../Animations/ListCardComponent';
 
 export interface OrgListProps {
-  orgs: OrgCardProps[];
+  orgs: ListCardProps[];
   busy?: boolean;
   error?: { message: string; name: string };
   onOrgClick?(label: string): void;
@@ -34,7 +33,7 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
     );
   }
   return (
-    <Card className="OrgList">
+    <div className="orgs-list">
       {paginationSettings && paginationSettings.total && (
         <p className="result">{`Found ${
           paginationSettings.total
@@ -42,7 +41,7 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
       )}
       <AnimatedInfiniteScrollList
         itemComponent={(org, i) => (
-          <OrgCard
+          <ListCard
             key={org.label + i}
             {...org}
             onClick={() => onOrgClick(org.label)}
@@ -62,7 +61,7 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
           }
         }
       />
-    </Card>
+    </div>
   );
 };
 

@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { Input } from 'antd';
-import ProjectCard, { ProjectCardProps } from './ProjectCard';
-import AnimatedList from '../Animations/AnimatedList';
-
+import { Card } from 'antd';
+import { ProjectCardProps } from './ProjectCard';
 import './Projects.less';
+import AnimatedInfiniteScrollList from '../Animations/AnimatedInfiniteScrollList';
+import ListCard from '../Animations/ListCardComponent';
 
 export interface ProjectListProps {
+  activeOrg: string;
   projects: ProjectCardProps[];
   busy?: boolean;
   onProjectClick?(label: string): void;
@@ -14,9 +15,8 @@ export interface ProjectListProps {
   onPaginationChange?: (page: number, pageSize?: number) => void;
 }
 
-const Search = Input.Search;
-
 const ProjectList: React.FunctionComponent<ProjectListProps> = ({
+  activeOrg,
   projects,
   busy = false,
   onProjectClick = () => {},
@@ -24,27 +24,17 @@ const ProjectList: React.FunctionComponent<ProjectListProps> = ({
   paginationSettings,
   onPaginationChange,
 }) => {
-  const [items, setItems] = React.useState(projects);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const filtered = projects.filter(project =>
-      project.label
-        .toLocaleLowerCase()
-        .includes(e.target.value.toLocaleLowerCase())
-    );
-    setItems(filtered);
-  };
-
   return (
-    <div className="ProjectList">
-      <Search
-        className="filter"
-        placeholder="Filter by name"
-        onChange={handleChange}
-      />
-      <AnimatedList
+    <div className="projects-list">
+      {paginationSettings && paginationSettings.total && (
+        <p className="result">{`Found ${paginationSettings.total} Project${
+          paginationSettings.total > 1 ? 's' : ''
+        }`}</p>
+      )}
+      <AnimatedInfiniteScrollList
+        refreshValue={activeOrg}
         itemComponent={(project, i) => (
-          <ProjectCard
+          <ListCard
             key={project.label + i}
             {...project}
             onClick={() => onProjectClick(project.label)}
@@ -52,11 +42,12 @@ const ProjectList: React.FunctionComponent<ProjectListProps> = ({
           />
         )}
         onPaginationChange={onPaginationChange}
-        makeKey={item => item.label}
-        itemName="Projects"
+        makeKey={item => item.id}
         loading={busy}
-        results={items}
-        total={(paginationSettings && paginationSettings.total) || items.length}
+        results={projects}
+        total={
+          (paginationSettings && paginationSettings.total) || projects.length
+        }
         paginationSettings={
           paginationSettings && {
             from: paginationSettings.from,

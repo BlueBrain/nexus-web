@@ -11,7 +11,6 @@ import {
   makeProjectPublic,
 } from '../store/actions/project';
 import ProjectList from '../components/Projects/ProjectList';
-import Skeleton from '../components/Skeleton';
 import { push } from 'connected-react-router';
 import ProjectForm from '../components/Projects/ProjectForm';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
@@ -217,25 +216,8 @@ const Home: React.FunctionComponent<HomeProps> = ({
       });
   };
 
-  if (busy) {
-    return (
-      <Skeleton
-        itemNumber={5}
-        active
-        avatar
-        paragraph={{
-          rows: 1,
-          width: 0,
-        }}
-        title={{
-          width: '100%',
-        }}
-      />
-    );
-  }
-
   return (
-    <>
+    <div className="constrained-width">
       <h1 style={{ marginBottom: 0, marginRight: 8 }}>{activeOrg.label}</h1>
       {activeOrg.description && <p>{activeOrg.description}</p>}
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
@@ -252,6 +234,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
         <Empty description="No projects" />
       ) : (
         <ProjectList
+          activeOrg={activeOrg && activeOrg.label}
           projects={paginatedProjects.results}
           onProjectClick={(projectLabel: string) =>
             goTo(activeOrg.label, projectLabel)
@@ -312,7 +295,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
           />
         )}
       </Drawer>
-    </>
+    </div>
   );
 };
 

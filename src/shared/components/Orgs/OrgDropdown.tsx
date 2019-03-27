@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { Button, Icon, Popover, Spin } from 'antd';
-import { OrgCardProps } from './OrgCard';
 import OrgList from './OrgList';
-import { any } from 'prop-types';
+import { ListCardProps } from '../Animations/ListCardComponent';
 
 export interface OrgDropDownProps {
   activeName?: string;
-  orgs?: OrgCardProps[];
+  orgs?: ListCardProps[];
   key?: any;
   busy?: boolean;
   error?: { message: string; name: string };

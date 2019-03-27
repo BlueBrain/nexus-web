@@ -43,7 +43,7 @@
     "react-redux": "^6.0.1",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
-    "react-spring": "^8.0.15",
+    "react-spring": "^8.0.18",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0"
   },
