@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Spin, Pagination, Empty, Divider } from 'antd';
 import './infinite-scroll.less';
 import { useTransition, animated } from 'react-spring';
+import { PaginationSettings, PaginatedList } from '@bbp/nexus-sdk';
+import { FetchableState } from '../../store/reducers/utils';
 
 const DEFAULT_TRAIL_MS = 50;
 
@@ -15,12 +17,10 @@ const DEFAULT_ANIMATIONS = {
 export interface InfiniteScrollProps {
   type?: 'onScroll' | 'onClick';
   itemComponent: (item: any, index: number) => React.ReactElement;
-  items: any[];
-  total: number;
   itemClassName?: string;
   makeKey: (item: any, index: number) => string;
   next: VoidFunction;
-  loading?: boolean;
+  fetchablePaginatedList: FetchableState<PaginatedList<any>>;
 }
 
 const InfiniteScroll: React.FunctionComponent<
@@ -31,43 +31,47 @@ const InfiniteScroll: React.FunctionComponent<
     makeKey,
     itemClassName,
     itemComponent,
-    loading = false,
-    total,
-    items,
+    fetchablePaginatedList,
     next,
     type = 'onClick',
   } = props;
-
-  const stillMoreToLoad = items.length < total;
-  const keys = items.map(makeKey);
-  const transitions = useTransition(items, keys, {
+  const { isFetching, data, error } = fetchablePaginatedList;
+  const [totalItems, setTotalItems] = React.useState<any[]>([]);
+  React.useEffect(() => {
+    if (data) {
+      setTotalItems([...totalItems, ...data.results]);
+    }
+  }, [data && data.index]);
+  const stillMoreToLoad = !!data && totalItems.length < data.total;
+  const keys = totalItems.map(makeKey);
+  const transitions = useTransition(totalItems, keys, {
     ...DEFAULT_ANIMATIONS,
     unique: true,
   });
   return (
     <div className="infinite-scroll">
-      <Spin spinning={loading}>
-        <div className="body">
+      <div className="body">
+        {!!error && <Empty description={error.message} />}
+        {!error && (
           <ul className="list">
-            {!!total &&
-              transitions.map(({ item, props }, index: number) => {
-                return (
-                  <animated.div
-                    className={itemClassName}
-                    style={props}
-                    key={keys[index]}
-                  >
-                    {itemComponent(item, index)}
-                  </animated.div>
-                );
-              })}
-            {!total && <Empty />}
+            {transitions.map(({ item, props }, index: number) => {
+              return (
+                <animated.div
+                  className={itemClassName}
+                  style={props}
+                  key={keys[index]}
+                >
+                  {itemComponent(item, index)}
+                </animated.div>
+              );
+            })}
+            {!data || (!data.total && <Empty />)}
           </ul>
-          <div className="actions">
-            {stillMoreToLoad && <a onClick={next}>LoadMore</a>}
-          </div>
+        )}
+        <div className="actions">
+          {stillMoreToLoad && <a onClick={next}>LoadMore</a>}
         </div>
-      </Spin>
+      </div>
     </div>
   );
 };
