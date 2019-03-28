@@ -3,25 +3,28 @@ import './list-item.less';
 
 export interface ListItemProps {
   label: string;
-  projectNumber?: number;
+  key: string;
   description?: string;
-  logo?: string;
-  deprecated?: boolean;
-  onClick?(): void;
-  onEdit?(): void;
   detail?: React.ReactComponentElement<any>;
   action?: React.ReactComponentElement<any>;
+  onClick?(): void;
 }
 
 const ListItem: React.FunctionComponent<ListItemProps> = ({
   label,
+  key,
   description = '',
   onClick = () => {},
   detail,
   action,
 }) => {
   return (
-    <div className="list-card -compact" tabIndex={1} onClick={onClick}>
+    <div
+      className="list-card -compact"
+      tabIndex={1}
+      onClick={onClick}
+      key={key}
+    >
       <div className="content">
         <span className="label">{label}</span>
         {detail && <div className="detail">{detail}</div>}

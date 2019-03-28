@@ -46,19 +46,29 @@ storiesOf('Components/ListItem', module)
         <div style={{ margin: '50px 40px 0px', width: '50%' }}>
           <p>Good for many use cases, eh?</p>
           <ul>
-            {exampleItems.map(element => {
+            {exampleItems.map((element, index) => {
               const {
                 label,
                 action: elementAction,
+                projectNumber,
                 description,
                 deprecated,
               } = element;
               return (
                 <ListItem
+                  key={`element-${index}`}
                   label={label}
                   onClick={action('element-clicked')}
                   detail={
-                    deprecated ? <Tag color="red">deprecated</Tag> : undefined
+                    <div style={{ display: 'flex' }}>
+                      {deprecated && <Tag color="red">deprecated</Tag>}
+                      {projectNumber && (
+                        <div>
+                          <span className="number">{projectNumber}</span>{' '}
+                          project{projectNumber > 1 && 's'}
+                        </div>
+                      )}
+                    </div>
                   }
                   description={description}
                   action={
