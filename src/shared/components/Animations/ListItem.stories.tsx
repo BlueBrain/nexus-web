@@ -45,7 +45,7 @@ storiesOf('Components/ListItem', module)
       return (
         <div style={{ margin: '50px 40px 0px', width: '50%' }}>
           <p>Good for many use cases, eh?</p>
-          <ul>
+          <ul style={{ margin: 0, padding: 0 }}>
             {exampleItems.map((element, index) => {
               const {
                 label,
@@ -56,10 +56,10 @@ storiesOf('Components/ListItem', module)
               } = element;
               return (
                 <ListItem
-                  key={`element-${index}`}
+                  id={`element-${index}`}
                   label={label}
                   onClick={action('element-clicked')}
-                  detail={
+                  details={
                     <div style={{ display: 'flex' }}>
                       {deprecated && <Tag color="red">deprecated</Tag>}
                       {projectNumber && (
@@ -79,7 +79,12 @@ storiesOf('Components/ListItem', module)
                         size="small"
                         type="primary"
                         tabIndex={1}
-                        onClick={() => action('edit-clicked')}
+                        onClick={(
+                          e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+                        ) => {
+                          action('edit-clicked')();
+                          e.stopPropagation();
+                        }}
                       />
                     ) : (
                       undefined

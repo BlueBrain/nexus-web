@@ -3,36 +3,39 @@ import './list-item.less';
 
 export interface ListItemProps {
   label: string;
-  key: string;
+  id: string;
   description?: string;
-  detail?: React.ReactComponentElement<any>;
+  details?: React.ReactComponentElement<any>;
   action?: React.ReactComponentElement<any>;
-  onClick?(): void;
+  onClick?: (id: string, event: React.MouseEvent) => void;
 }
 
 const ListItem: React.FunctionComponent<ListItemProps> = ({
   label,
-  key,
+  id,
   description = '',
-  onClick = () => {},
-  detail,
+  onClick,
+  details,
   action,
 }) => {
   return (
-    <div
-      className="list-card -compact"
+    <li
+      className="list-item -compact"
       tabIndex={1}
-      onClick={onClick}
-      key={key}
+      onClick={
+        onClick
+          ? (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => onClick(id, e)
+          : undefined
+      }
+      key={id}
     >
       <div className="content">
         <span className="label">{label}</span>
-        {detail && <div className="detail">{detail}</div>}
+        {details && <div className="details">{details}</div>}
         {action && <div className="actions">{action}</div>}
       </div>
-      <div className="fade" />
       {description && <p className="description">{description}</p>}
-    </div>
+    </li>
   );
 };
 

@@ -1,6 +1,7 @@
 @import '../../lib.less';
 
-.list-card {
+.list-item {
+  .unstyleList();
   background-color: @component-background;
   border-radius: 2px;
   cursor: pointer;
@@ -28,8 +29,8 @@
     font-weight: 500;
     flex-grow: 1;
   }
-  > .content > .detail {
-    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+  > .content > .details {
+    display: flex;
   }
   > .content > .actions {
     margin-left: 0.5em;
