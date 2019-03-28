@@ -62,16 +62,13 @@ app.get(
 // For all routes
 app.get('*', async (req: express.Request, res: express.Response) => {
   // Get token from Client's cookie 🍪
-  let accessToken: string | undefined = undefined;
-  let tokenData: object | undefined = undefined;
-  const nexusCookie: string = req.cookies[cookieName];
-  if (nexusCookie) {
+  let user = null;
+  const nexusCookieKey = Object.keys(req.cookies).find(key =>
+    key.startsWith('nexus__user')
+  );
+  if (nexusCookieKey) {
     try {
-      // TODO: cookies has moved
-
-      const cookieData = JSON.parse(nexusCookie);
-      accessToken = cookieData.accessToken;
-      tokenData = jwtDecode(accessToken as string);
+      user = JSON.parse(req.cookies[nexusCookieKey]);
     } catch (e) {
       // fail silently
     }
@@ -87,18 +84,24 @@ app.get('*', async (req: express.Request, res: express.Response) => {
   // Compute pre-loaded state
   const preloadedState: RootState = {
     auth: {
-      accessToken,
-      tokenData,
-      authenticated: accessToken !== undefined,
-      clientId: process.env.CLIENT_ID || 'nexus-web',
-      redirectHostName: `${process.env.HOST_NAME ||
-        `${req.protocol}://${req.headers.host}`}${base}`,
+      accessToken: '',
+      tokenData: {},
+      authenticated: false,
+      clientId: '',
+      redirectHostName: '',
     },
     config: {
       apiEndpoint: process.env.API_ENDPOINT || '/',
       basePath: base,
+      clientId: process.env.CLIENT_ID || 'nexus-web',
+      redirectHostName: `${process.env.HOST_NAME ||
+        `${req.protocol}://${req.headers.host}`}${base}`,
     },
     uiSettings: DEFAULT_UI_SETTINGS,
+    oidc: {
+      user,
+      isLoadingUser: false,
+    },
   };
 
   // Nexus
@@ -106,7 +109,6 @@ app.get('*', async (req: express.Request, res: express.Response) => {
     environment: preloadedState.config.apiEndpoint,
     token: preloadedState.auth.accessToken,
   });
-
   // Redux store
   const store = createStore(memoryHistory, nexus, preloadedState);
   // Get identity data

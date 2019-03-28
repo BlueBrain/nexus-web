@@ -43,7 +43,7 @@ export default function configureStore(
     // @ts-ignore
     combineReducers({
       router: connectRouter(history),
-      oicd: oidcReducer,
+      oidc: oidcReducer,
       ...reducers,
     }),
     preloadedState,

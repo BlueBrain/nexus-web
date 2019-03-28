@@ -1,4 +1,5 @@
 import { StaticRouterProps } from 'react-router';
+import { UserState } from 'redux-oidc';
 import auth, { AuthState } from './auth';
 import config, { ConfigState } from './config';
 import nexus, { NexusState } from './nexus';
@@ -19,6 +20,7 @@ export interface RootState {
   rawQuery?: RawQueryState;
   rawElasticSearchQuery?: RawElasticSearchQueryState;
   uiSettings: UISettingsState;
+  oidc: UserState;
 }
 
 export default {
