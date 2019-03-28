@@ -50,73 +50,6 @@ if (process.env.NODE_ENV !== 'production') {
   setupDevEnvironment(app);
 }
 
-// Setup client cookie with AccessToken and redirect to home page
-// TODO: redirect to the page user was trying to access before auth
-app.get(
-  `${base}/authSuccess`,
-  (req: express.Request, res: express.Response) => {
-    const { error, access_token, redirectUrl } = req.query;
-    if (!error) {
-      try {
-        const token = jwtDecode(access_token);
-        res.cookie(
-          cookieName,
-          JSON.stringify({
-            accessToken: access_token,
-          }),
-          {
-            maxAge: (token as any)['exp'],
-            secure: isSecure ? true : false,
-            sameSite: 'strict',
-            path: base,
-            httpOnly: true,
-          }
-        );
-      } catch (e) {
-        // TODO: add proper logger
-        // fail silently
-      }
-    }
-    res.redirect(redirectUrl || `${base}`);
-  }
-);
-
-// User wants to logout, clear cookie
-app.get(`${base}/authLogout`, (req: express.Request, res: express.Response) => {
-  res.cookie(
-    cookieName,
-    {},
-    {
-      maxAge: -1,
-      secure: isSecure ? true : false,
-      sameSite: 'strict',
-      path: base,
-      httpOnly: true,
-    }
-  );
-  res.redirect(`${base}`);
-});
-
-// We need to get the browser to send the access token to the server
-app.get(
-  `${base}/authRedirect`,
-  (req: express.Request, res: express.Response) => {
-    const { redirectUrl } = req.query;
-
-    res.send(`
-  <!doctype html>
-  <html>
-    <head></head>
-    <body>
-      <script type="text/javascript">
-        window.location.href = window.location.href.replace('authRedirect?redirectUrl=${redirectUrl}#', 'authSuccess?redirectUrl=${redirectUrl}&');
-      </script>
-    </body>
-  </html>
-  `);
-  }
-);
-
 // For all routes
 app.get('*', async (req: express.Request, res: express.Response) => {
   // Get token from Client's cookie 🍪
@@ -125,11 +58,12 @@ app.get('*', async (req: express.Request, res: express.Response) => {
   const nexusCookie: string = req.cookies[cookieName];
   if (nexusCookie) {
     try {
+      // TODO: cookies has moved
+
       const cookieData = JSON.parse(nexusCookie);
       accessToken = cookieData.accessToken;
       tokenData = jwtDecode(accessToken as string);
     } catch (e) {
-      // TODO: add proper logger
       // fail silently
     }
   }
