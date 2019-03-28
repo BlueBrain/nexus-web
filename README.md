@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/BlueBrain/nexus-web/branch/master/graph/badge.svg)](https://codecov.io/gh/BlueBrain/nexus-web)
+
 # Nexus Web
 
 > Transform your data into a fully searchable linked-data graph

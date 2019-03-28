@@ -11,6 +11,7 @@
     "start": "NODE_ENV=development DEBUG=* webpack --mode development --config-name server && node dist/server.js",
     "build": "NODE_ENV=production webpack --mode production",
     "test": "jest --coverage src",
+    "codecov": "codecov",
     "lint": "tslint --project tsconfig.json",
     "start:storybook": "start-storybook -p 6006",
     "build:storybook": "build-storybook"
@@ -79,6 +80,7 @@
     "@types/storybook__react": "^4.0.1",
     "@types/webpack-env": "^1.13.9",
     "babel-loader": "^8.0.4",
+    "codecov": "^3.2.0",
     "css-loader": "^2.1.1",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.10.0",

@@ -44,6 +44,7 @@ pipeline {
                 stage('Test') {
                     steps {
                         sh 'npm run test'
+                        sh "npm run codecov -- --token=\"`oc get secrets codecov-secret --template='{{.data.nexus_web}}' | base64 -d`\""
                     }
                 }
                 stage('Stories') {
