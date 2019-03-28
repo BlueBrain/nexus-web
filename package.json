@@ -11,6 +11,7 @@
     "start": "NODE_ENV=development DEBUG=* webpack --mode development --config-name server && node dist/server.js",
     "build": "NODE_ENV=production webpack --mode production",
     "test": "jest --coverage src",
+    "codecov": "codecov",
     "lint": "tslint --project tsconfig.json",
     "start:storybook": "start-storybook -p 6006",
     "build:storybook": "build-storybook"
