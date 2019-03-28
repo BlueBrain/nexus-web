@@ -4,10 +4,14 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { ConnectedRouter } from 'connected-react-router';
 import { createBrowserHistory } from 'history';
+import { loadUser } from 'redux-oidc';
 import Nexus from '@bbp/nexus-sdk';
+import userManager from './userManager';
 import App from '../shared/App';
 import configureStore from '../shared/store';
 import { RootState } from '../shared/store/reducers';
+import { UserManager } from 'oidc-client';
+import { Store } from 'redux';
 
 // The app base URL
 const rawBase: string = (window as any)['__BASE__'] || '/';
@@ -25,6 +29,51 @@ const nexus = new Nexus({
 });
 // create redux store
 const store = configureStore(history, nexus, preloadedState);
+
+/**
+ * Sets up user token management events and
+ * checks if we have a valid user token or not
+ * If we do I have, the token can be valid, or invalid.
+ * if invalid, we can try to do a silent refresh
+ *
+ * Outcome in all cases is, we have an authenticated user or we don't
+ */
+const setupUserSession = async (userManager: UserManager, store: Store) => {
+  userManager.events.removeUserLoaded(() => console.log('??'));
+  userManager.events.addSilentRenewError(() =>
+    console.log('Error renewing token')
+  );
+  userManager.events.addAccessTokenExpiring(() =>
+    console.log("oh no, it's going to expire")
+  );
+  userManager.events.addAccessTokenExpired(() => {
+    console.log("too late, it's gone");
+    userManager
+      .signinSilent()
+      .then(() => console.log('success'))
+      .catch(err => console.error('No silent renew possible', err));
+  });
+  userManager.events.addSilentRenewError(() =>
+    console.log('snap, error silent renew')
+  );
+  userManager.events.addUserSignedOut(() =>
+    console.log('maaan, user is gooone')
+  );
+
+  let user;
+  try {
+    // do we already have a user?
+    user = await userManager.getUser();
+    // nope, are we receiving a new token?
+    if (!user) user = await userManager.signinRedirectCallback();
+    // if we're here, we now have a user, load it in state
+    loadUser(store, userManager);
+  } catch (e) {
+    console.error(e);
+  }
+  console.log(user);
+  if (!user) await userManager.signinRedirect();
+};
 
 const renderApp = () => {
   return ReactDOM.hydrate(
@@ -57,4 +106,8 @@ if (module.hot) {
   });
 }
 
-renderApp();
+async function main() {
+  await setupUserSession(userManager, store);
+  renderApp();
+}
+main();

@@ -13,6 +13,7 @@ import Nexus from '@bbp/nexus-sdk';
 import Helmet from 'react-helmet';
 import * as jwtDecode from 'jwt-decode';
 import html from './html';
+import silentRefreshHtml from './silent_refresh';
 import App from '../shared/App';
 import createStore from '../shared/store';
 import { RootState } from '../shared/store/reducers';
@@ -49,6 +50,14 @@ if (process.env.NODE_ENV !== 'production') {
   const { setupDevEnvironment } = require('./dev');
   setupDevEnvironment(app);
 }
+
+// silent refresh
+app.get(
+  `${base}/silent_refresh`,
+  (req: express.Request, res: express.Response) => {
+    res.send(silentRefreshHtml());
+  }
+);
 
 // For all routes
 app.get('*', async (req: express.Request, res: express.Response) => {
