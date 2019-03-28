@@ -38,22 +38,25 @@ storiesOf('Components/InfiniteScroll', module)
           />
   />
     ~~~
-  `)(() => {
-      const items = array(`Items`, exampleItems);
-      const loading = boolean('Loading', false);
-      return (
-        <div style={{ margin: '50px 40px 0px' }}>
-          <h2>InfiniteScroll</h2>
-          <InfiniteScroll
-            type="onClick"
-            makeKey={item => item}
-            itemComponent={(item: any, index: number) => <p>{item}</p>}
-            items={items}
-            total={items.length}
-            next={action('pagination-change')}
-            loading={loading}
-          />
-        </div>
-      );
-    })
+  `)(() =>
+      React.createElement(() => {
+        const [state, setState] = React.useState(5);
+        const items = array(`Items`, exampleItems.slice(0, 3));
+        const loading = boolean('Loading', false);
+        return (
+          <div style={{ margin: '50px 40px 0px' }}>
+            <h2>InfiniteScroll {state}</h2>
+            <InfiniteScroll
+              type="onClick"
+              makeKey={item => item}
+              itemComponent={(item: any, index: number) => <p>{item}</p>}
+              items={items}
+              total={exampleItems.length}
+              next={() => setState(state + 1)}
+              loading={loading}
+            />
+          </div>
+        );
+      })
+    )
   );

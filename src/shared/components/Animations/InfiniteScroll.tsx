@@ -38,6 +38,7 @@ const InfiniteScroll: React.FunctionComponent<
     type = 'onClick',
   } = props;
 
+  const stillMoreToLoad = items.length < total;
   const keys = items.map(makeKey);
   const transitions = useTransition(items, keys, {
     ...DEFAULT_ANIMATIONS,
@@ -46,21 +47,26 @@ const InfiniteScroll: React.FunctionComponent<
   return (
     <div className="infinite-scroll">
       <Spin spinning={loading}>
-        <ul className="list">
-          {!!total &&
-            transitions.map(({ item, props }, index: number) => {
-              return (
-                <animated.div
-                  className={itemClassName}
-                  style={props}
-                  key={keys[index]}
-                >
-                  {itemComponent(item, index)}
-                </animated.div>
-              );
-            })}
-          {!total && <Empty />}
-        </ul>
+        <div className="body">
+          <ul className="list">
+            {!!total &&
+              transitions.map(({ item, props }, index: number) => {
+                return (
+                  <animated.div
+                    className={itemClassName}
+                    style={props}
+                    key={keys[index]}
+                  >
+                    {itemComponent(item, index)}
+                  </animated.div>
+                );
+              })}
+            {!total && <Empty />}
+          </ul>
+          <div className="actions">
+            {stillMoreToLoad && <a onClick={next}>LoadMore</a>}
+          </div>
+        </div>
       </Spin>
     </div>
   );
