@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { ConnectedRouter } from 'connected-react-router';
 import { createBrowserHistory } from 'history';
-import { loadUser } from 'redux-oidc';
+import { loadUser, processSilentRenew } from 'redux-oidc';
 import Nexus from '@bbp/nexus-sdk';
 import userManager from './userManager';
 import App from '../shared/App';
@@ -40,25 +40,33 @@ const store = configureStore(history, nexus, preloadedState);
  */
 const setupUserSession = async (userManager: UserManager, store: Store) => {
   userManager.events.removeUserLoaded(() => console.log('??'));
-  userManager.events.addSilentRenewError(() =>
-    console.log('Error renewing token')
-  );
-  userManager.events.addAccessTokenExpiring(() =>
-    console.log("oh no, it's going to expire")
-  );
-  userManager.events.addAccessTokenExpired(() => {
-    console.log("too late, it's gone");
+  userManager.events.addAccessTokenExpiring(() => {
     userManager
       .signinSilent()
-      .then(() => console.log('success'))
-      .catch(err => console.error('No silent renew possible', err));
+      .then(user => {
+        loadUser(store, userManager);
+      })
+      .catch(err => {
+        // console.error('No silent renew possible', err)
+      });
   });
-  userManager.events.addSilentRenewError(() =>
-    console.log('snap, error silent renew')
-  );
-  userManager.events.addUserSignedOut(() =>
-    console.log('maaan, user is gooone')
-  );
+  userManager.events.addAccessTokenExpired(() => {
+    // processSilentRenew()
+    userManager
+      .signinSilent()
+      .then(user => {
+        loadUser(store, userManager);
+      })
+      .catch(err => {
+        // console.error('No silent renew possible', err);
+      });
+  });
+  userManager.events.addSilentRenewError(() => {
+    // console.log('snap, error silent renew')
+  });
+  userManager.events.addUserSignedOut(() => {
+    // console.log('maaan, user is gooone')
+  });
 
   let user;
   try {
@@ -69,9 +77,8 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
     // if we're here, we now have a user, load it in state
     loadUser(store, userManager);
   } catch (e) {
-    console.error(e);
+    // console.error(e);
   }
-  console.log(user);
   if (!user) await userManager.signinRedirect();
 };
 

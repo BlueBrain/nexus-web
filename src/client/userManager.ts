@@ -1,4 +1,4 @@
-import Oidc, { UserManager, WebStorageStateStore, User } from 'oidc-client';
+import { UserManager, WebStorageStateStore } from 'oidc-client';
 import { CookieStorage } from 'cookie-storage';
 
 const cookieStorage = new CookieStorage();
@@ -12,7 +12,7 @@ const userManager = new UserManager({
   client_id: 'nexus-web',
   redirect_uri: 'http://localhost:8000/',
   post_logout_redirect_uri: 'http://localhost:8000/',
-  automaticSilentRenew: true,
+  automaticSilentRenew: false,
   silent_redirect_uri: 'http://localhost:8000/silent_refresh',
 });
 

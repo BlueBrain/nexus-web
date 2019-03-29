@@ -3,7 +3,13 @@ import userManager from './userManager';
 userManager
   .signinSilentCallback()
   .then(
-    any => console.log('Renewed', any),
-    any => console.log('not renewed', any)
+    () => {
+      // console.log('iframe-> Renewed')
+    },
+    error => {
+      // console.log('iframe -> not renewed')
+    }
   )
-  .catch(err => console.error('renew error', err));
+  .catch(err => {
+    // console.error('renew error', err)
+  });

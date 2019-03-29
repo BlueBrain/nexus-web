@@ -11,6 +11,7 @@ import './MainLayout.less';
 import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
 import { Realm } from '@bbp/nexus-sdk';
 import { getLogoutUrl } from '../utils';
+import { UserState } from 'redux-oidc';
 
 const favicon = require('../favicon.png');
 const TITLE =
@@ -74,15 +75,22 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
   </>
 );
 
-const mapStateToProps = ({ auth }: { auth: AuthState }) => {
+const mapStateToProps = ({
+  auth,
+  oidc,
+}: {
+  auth: AuthState;
+  oidc: UserState;
+}) => {
   const realms: Realm[] =
     (auth.realms && auth.realms.data && auth.realms.data.results) || [];
   const identities: Identity[] =
     (auth.identities && auth.identities.data) || [];
   return {
-    authenticated: auth.authenticated,
-    token: auth.accessToken,
-    name: auth.tokenData ? (auth.tokenData as any)['name'] : '',
+    authenticated: oidc.user !== null,
+    token: oidc.user && oidc.user.access_token,
+    name:
+      (oidc.user && oidc.user.profile && oidc.user.profile.name) || 'anonymous',
     hostName: auth.redirectHostName || '',
     logoutUrl: getLogoutUrl(identities, realms),
     canLogin: !!(realms.length > 0),
