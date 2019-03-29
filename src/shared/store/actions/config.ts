@@ -27,8 +27,8 @@ function setPreferredRealm(name: string) {
         realmClientId = `${realm.issuer}:${clientId}`;
       }
     }
-    const realmKey = encodeURIComponent(`nexus__realm:${realmClientId}`);
-    cookieStorage.setItem('nexus__realm', realmClientId);
+    const realmKey = `nexus__user:${realmClientId}`;
+    cookieStorage.setItem('nexus__realm', realmKey);
     return dispatch({
       name: realmKey,
       type: '@@nexus/CONFIG_SET_REALM',
