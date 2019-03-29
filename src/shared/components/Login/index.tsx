@@ -16,6 +16,7 @@ export interface LoginProps {
   redirectUrl: string;
   hostName: string;
   busy?: boolean;
+  onLogin?(e: React.SyntheticEvent): void;
 }
 
 const Login: React.FunctionComponent<LoginProps> = ({
@@ -23,6 +24,7 @@ const Login: React.FunctionComponent<LoginProps> = ({
   clientId,
   redirectUrl,
   hostName,
+  onLogin = () => {},
 }) => {
   const [realm, setRealm] = React.useState(realms[0]);
 
@@ -42,6 +44,7 @@ const Login: React.FunctionComponent<LoginProps> = ({
         cover={<img className="logo" alt="Nexus logo" src={logo} />}
         actions={[
           <a
+            onClick={onLogin}
             className="link"
             key="login"
             href={`${

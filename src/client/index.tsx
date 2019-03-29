@@ -72,15 +72,15 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
   });
   userManager.events.addSilentRenewError(() => {
     store.dispatch(silentRenewError());
-    Nexus.setToken('');
+    Nexus.removeToken();
   });
   userManager.events.addUserSignedOut(() => {
     store.dispatch(userSignedOut());
-    Nexus.setToken('');
+    Nexus.removeToken();
   });
   userManager.events.addUserUnloaded(() => {
     store.dispatch(sessionTerminated());
-    Nexus.setToken('');
+    Nexus.removeToken();
   });
 
   let user;
@@ -94,7 +94,6 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
   } catch (e) {
     // console.error(e);
   }
-  if (!user) await userManager.signinRedirect();
 };
 
 const renderApp = () => {

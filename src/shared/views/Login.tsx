@@ -4,6 +4,7 @@ import LoginBox, { Realm } from '../components/Login';
 import { AuthState } from '../store/reducers/auth';
 import { StaticRouterProps, Redirect } from 'react-router';
 import { push } from 'connected-react-router';
+import userManager from '../../client/userManager';
 
 export interface LoginViewProps {
   authorizationEndpoint: string;
@@ -26,6 +27,10 @@ const Login: React.FunctionComponent<LoginViewProps> = props => {
       clientId={props.clientId}
       hostName={props.hostName}
       redirectUrl={props.redirectUrl}
+      onLogin={(e: React.SyntheticEvent) => {
+        e.preventDefault();
+        userManager.signinRedirect();
+      }}
     />
   );
 };
