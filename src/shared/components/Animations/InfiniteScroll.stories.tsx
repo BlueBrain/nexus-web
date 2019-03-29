@@ -83,7 +83,6 @@ storiesOf('Components/InfiniteScroll/Basic', module)
           <div style={{ margin: '50px 40px 0px' }}>
             <h2>InfiniteScroll</h2>
             <InfiniteScroll
-              type="onClick"
               makeKey={item => item}
               itemComponent={(item: any, index: number) => {
                 return <ListItem label={item} id={`${item}-${index}`} />;
@@ -205,7 +204,6 @@ storiesOf('Components/InfiniteScroll/Simulated/OnClick', module)
           >
             <h2>Stars ✨</h2>
             <InfiniteScroll
-              type="onClick"
               makeKey={({ label, description }, index) => `${label}-${index}`}
               itemComponent={({ label, description }: any, index: number) => {
                 return (
@@ -231,6 +229,9 @@ storiesOf('Components/InfiniteScroll/Simulated/OnScroll', module)
     'InfiniteScroll',
     withInfo(`
     Scroll all the way down and ask for more!
+
+    If you want to use the autofetching on scroll feature, just make sure that a scoll bar exists on the div
+    probably the easiest way is just to add a maxHeight css value
 
     ~~~js
     <InfiniteScroll
@@ -338,7 +339,6 @@ storiesOf('Components/InfiniteScroll/Simulated/OnScroll', module)
                 backgroundColor: 'pink',
                 borderRadius: '4px',
               }}
-              type="onScroll"
               makeKey={({ label, description }, index) => `${label}-${index}`}
               itemComponent={({ label, description }: any, index: number) => {
                 return (

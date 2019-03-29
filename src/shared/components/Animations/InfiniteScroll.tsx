@@ -5,6 +5,7 @@ import './list-item.less';
 import { useTransition, animated, useSpring, config } from 'react-spring';
 import { PaginatedList } from '@bbp/nexus-sdk';
 import { FetchableState } from '../../store/reducers/utils';
+import useInfiniteScroll from '../hooks/useInfiniteScroll';
 
 const DEFAULT_TRAIL_MS = 50;
 
@@ -56,7 +57,6 @@ export const InfiniteScrollLoadMoreButton: React.FunctionComponent<{
 };
 
 export interface InfiniteScrollProps {
-  type?: 'onScroll' | 'onClick';
   itemComponent: (item: any, index: number) => React.ReactElement;
   itemClassName?: string;
   makeKey: (item: any, index: number) => string;
@@ -73,11 +73,11 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
     fetchablePaginatedList,
     next,
     style,
-    type = 'onClick',
   } = props;
   const { isFetching, data, error } = fetchablePaginatedList;
   const [totalItems, setTotalItems] = React.useState<number>(0);
   const [totalItemsList, setTotalItemsList] = React.useState<any[]>([]);
+  const [bind] = useInfiniteScroll(next, isFetching);
   React.useEffect(() => {
     if (data) {
       setTotalItemsList([...totalItemsList, ...data.results]);
@@ -91,7 +91,7 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
     unique: true,
   });
   return (
-    <div className="infinite-scroll" style={style}>
+    <div {...bind} className="infinite-scroll" style={style}>
       {!!error && <Empty description={error.message} />}
       {!error && (
         <ul className="list">
@@ -109,6 +109,7 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
           {!data || (!data.total && <Empty />)}
           {hasMore && (
             <InfiniteScrollLoadMoreButton
+              key="loading-action"
               isFetching={isFetching}
               hasMore={hasMore}
               totalItemsListLength={totalItemsList.length}
