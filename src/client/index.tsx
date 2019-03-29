@@ -13,7 +13,7 @@ import {
   userSignedOut,
 } from 'redux-oidc';
 import Nexus from '@bbp/nexus-sdk';
-import userManager, { getUserManager } from './userManager';
+import getUserManager from './userManager';
 import App from '../shared/App';
 import configureStore from '../shared/store';
 import { RootState } from '../shared/store/reducers';
@@ -45,10 +45,13 @@ const store = configureStore(history, nexus, preloadedState);
  * Outcome in all cases is, we have an authenticated user or we don't
  */
 const setupUserSession = async (userManager: UserManager, store: Store) => {
+  // Raised when a user session has been established (or re-established).
   userManager.events.addUserLoaded(user => {
     loadUser(store, userManager);
     Nexus.setToken(user.access_token);
   });
+
+  // Raised prior to the access token expiring.
   userManager.events.addAccessTokenExpiring(() => {
     store.dispatch(userExpiring());
     userManager
@@ -58,9 +61,11 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
         Nexus.setToken(user.access_token);
       })
       .catch(err => {
-        // console.error('No silent renew possible', err)
+        // TODO: sentry that stuff
       });
   });
+
+  // Raised after the access token has expired.
   userManager.events.addAccessTokenExpired(() => {
     store.dispatch(userExpired());
     userManager
@@ -70,17 +75,23 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
         Nexus.setToken(user.access_token);
       })
       .catch(err => {
-        // console.error('No silent renew possible', err);
+        // TODO: sentry that stuff
       });
   });
+
+  // Raised when the automatic silent renew has failed.
   userManager.events.addSilentRenewError(() => {
     store.dispatch(silentRenewError());
     Nexus.removeToken();
   });
+
+  //  Raised when the user's sign-in status at the OP has changed.
   userManager.events.addUserSignedOut(() => {
     store.dispatch(userSignedOut());
     Nexus.removeToken();
   });
+
+  // Raised when a user session has been terminated.
   userManager.events.addUserUnloaded(() => {
     store.dispatch(sessionTerminated());
     Nexus.removeToken();
@@ -97,7 +108,7 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
     // nope, are we receiving a new token?
     if (!user) user = await userManager.signinRedirectCallback();
   } catch (e) {
-    // console.error(e);
+    // nothing to do, we are just not logged in
   }
 };
 
@@ -134,7 +145,11 @@ if (module.hot) {
 
 async function main() {
   // configure user manager
-  const userManager = getUserManager(store);
+  const userManager = getUserManager(store.getState());
+  // if userManger isn't undefined, setupSession
+  // it could be undefined if there are no realms
+  // to login with for example, or the realm we
+  // logged in with isn't available any more
   if (userManager) {
     await setupUserSession(userManager, store);
   }

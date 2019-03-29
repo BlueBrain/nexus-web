@@ -5,7 +5,7 @@ import { push } from 'connected-react-router';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { AuthState } from '../store/reducers/auth';
-import userManager from '../../client/userManager';
+import getUserManager from '../../client/userManager';
 import { version, url as githubIssueURL } from '../../../package.json';
 
 import './MainLayout.less';
@@ -13,6 +13,8 @@ import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
 import { Realm } from '@bbp/nexus-sdk';
 import { getLogoutUrl } from '../utils';
 import { UserState } from 'redux-oidc';
+import { UserManager } from 'oidc-client';
+import { RootState } from '../store/reducers';
 
 const favicon = require('../favicon.png');
 const TITLE =
@@ -27,6 +29,7 @@ export interface MainLayoutProps {
   goTo(url: string): void;
   name: string;
   canLogin?: boolean;
+  userManager?: UserManager;
 }
 
 const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
@@ -38,10 +41,11 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
   name,
   children,
   canLogin = false,
+  userManager,
 }) => {
   const handleLogout = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    userManager.signoutRedirect();
+    userManager && userManager.signoutRedirect();
   };
   return (
     <>
@@ -85,13 +89,8 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
   );
 };
 
-const mapStateToProps = ({
-  auth,
-  oidc,
-}: {
-  auth: AuthState;
-  oidc: UserState;
-}) => {
+const mapStateToProps = (state: RootState) => {
+  const { auth, oidc } = state;
   const realms: Realm[] =
     (auth.realms && auth.realms.data && auth.realms.data.results) || [];
   const identities: Identity[] =
@@ -104,6 +103,7 @@ const mapStateToProps = ({
     hostName: auth.redirectHostName || '',
     logoutUrl: getLogoutUrl(identities, realms),
     canLogin: !!(realms.length > 0),
+    userManager: getUserManager(state),
   };
 };
 

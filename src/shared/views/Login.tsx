@@ -1,18 +1,17 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import LoginBox, { Realm } from '../components/Login';
-import { AuthState } from '../store/reducers/auth';
-import { StaticRouterProps, Redirect } from 'react-router';
 import { push } from 'connected-react-router';
-import userManager from '../../client/userManager';
+import getUserManager from '../../client/userManager';
+import { RootState } from '../store/reducers';
+import { UserManager } from 'oidc-client';
+import * as configActions from '../store/actions/config';
 
 export interface LoginViewProps {
-  authorizationEndpoint: string;
   realms: Realm[];
-  clientId: string;
-  hostName: string;
-  redirectUrl: string;
   redirect(): void;
+  setPreferredRealm(name: string): void;
+  userManager?: UserManager;
 }
 
 const Login: React.FunctionComponent<LoginViewProps> = props => {
@@ -23,41 +22,29 @@ const Login: React.FunctionComponent<LoginViewProps> = props => {
   }
   return (
     <LoginBox
-      realms={realms}
-      clientId={props.clientId}
-      hostName={props.hostName}
-      redirectUrl={props.redirectUrl}
+      realms={realms.map(r => r.name)}
       onLogin={(e: React.SyntheticEvent) => {
         e.preventDefault();
-        userManager.signinRedirect();
+        props.userManager && props.userManager.signinRedirect();
       }}
+      onRealmSelected={(name: string) => props.setPreferredRealm(name)}
     />
   );
 };
 
-const mapStateToProps = ({
-  auth,
-  router,
-}: {
-  auth: AuthState;
-  router: StaticRouterProps;
-}) => {
-  const location = router.location as { state?: { previousUrl: string } };
+const mapStateToProps = (state: RootState) => {
+  const { auth } = state;
 
   return {
-    authorizationEndpoint: auth.authorizationEndpoint || '',
     realms: (auth.realms && auth.realms.data && auth.realms.data.results) || [],
-    redirectUrl:
-      (location && location.state && location.state.previousUrl) ||
-      auth.redirectHostName ||
-      '',
-    hostName: auth.redirectHostName || '',
-    clientId: auth.clientId || '',
+    userManager: getUserManager(state),
   };
 };
 
 const mapDispatchToProps = (dispatch: any) => ({
   redirect: () => dispatch(push('/')),
+  setPreferredRealm: (name: string) =>
+    dispatch(configActions.setPreferredRealm(name)),
 });
 
 export default connect(
