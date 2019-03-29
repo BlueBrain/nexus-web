@@ -305,6 +305,9 @@ storiesOf('Components/InfiniteScroll/Simulated/OnScroll', module)
           }, 500);
         }, []);
         const next = () => {
+          if (index >= totalItems / pageSize) {
+            return;
+          }
           action('next')();
           setIndex(index + 1);
           setData({

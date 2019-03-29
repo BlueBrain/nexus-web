@@ -2,7 +2,11 @@ import * as React from 'react';
 import { isBrowser } from '../../utils';
 
 // Watch an when a scrolling element reaches the bottom, then callback!
-const useInfiniteScroll = (callback: VoidFunction, isFetching: boolean) => {
+const useInfiniteScroll = (
+  callback: VoidFunction,
+  isFetching: boolean,
+  loadAtPercentRevealed: number
+) => {
   const ref = React.useRef<HTMLDivElement>(null);
   if (!isBrowser) {
     return [{ ref }];
@@ -25,8 +29,8 @@ const useInfiniteScroll = (callback: VoidFunction, isFetching: boolean) => {
     }
     if (
       !isFetching &&
-      ref.current.offsetHeight + ref.current.scrollTop ===
-        ref.current.scrollHeight
+      ref.current.offsetHeight + ref.current.scrollTop >=
+        ref.current.scrollHeight * loadAtPercentRevealed
     ) {
       callback();
     }
