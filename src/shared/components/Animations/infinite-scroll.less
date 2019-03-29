@@ -1,8 +1,11 @@
 @import '../../lib.less';
 
 .infinite-scroll {
-  .body > .list {
+  & > .list {
     margin: 0;
     padding: 0;
+  }
+  & > .list .list-item.-action {
+    text-align: center;
   }
 }
