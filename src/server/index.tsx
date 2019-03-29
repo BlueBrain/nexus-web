@@ -107,7 +107,8 @@ app.get('*', async (req: express.Request, res: express.Response) => {
   // Nexus
   const nexus = new Nexus({
     environment: preloadedState.config.apiEndpoint,
-    token: preloadedState.auth.accessToken,
+    token:
+      (preloadedState.oidc.user && preloadedState.oidc.user.access_token) || '',
   });
   // Redux store
   const store = createStore(memoryHistory, nexus, preloadedState);

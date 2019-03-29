@@ -4,7 +4,14 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { ConnectedRouter } from 'connected-react-router';
 import { createBrowserHistory } from 'history';
-import { loadUser, processSilentRenew } from 'redux-oidc';
+import {
+  loadUser,
+  userExpired,
+  silentRenewError,
+  sessionTerminated,
+  userExpiring,
+  userSignedOut,
+} from 'redux-oidc';
 import Nexus from '@bbp/nexus-sdk';
 import userManager from './userManager';
 import App from '../shared/App';
@@ -25,7 +32,7 @@ const preloadedState: RootState = (window as any).__PRELOADED_STATE__;
 // create Nexus instance
 const nexus = new Nexus({
   environment: preloadedState.config.apiEndpoint,
-  token: preloadedState.auth.accessToken,
+  token: preloadedState.oidc.user && preloadedState.oidc.user.access_token,
 });
 // create redux store
 const store = configureStore(history, nexus, preloadedState);
@@ -40,31 +47,40 @@ const store = configureStore(history, nexus, preloadedState);
  */
 const setupUserSession = async (userManager: UserManager, store: Store) => {
   userManager.events.addAccessTokenExpiring(() => {
+    store.dispatch(userExpiring());
     userManager
       .signinSilent()
       .then(user => {
         loadUser(store, userManager);
+        Nexus.setToken(user.access_token);
       })
       .catch(err => {
         // console.error('No silent renew possible', err)
       });
   });
   userManager.events.addAccessTokenExpired(() => {
-    // processSilentRenew()
+    store.dispatch(userExpired());
     userManager
       .signinSilent()
       .then(user => {
         loadUser(store, userManager);
+        Nexus.setToken(user.access_token);
       })
       .catch(err => {
         // console.error('No silent renew possible', err);
       });
   });
   userManager.events.addSilentRenewError(() => {
-    // console.log('snap, error silent renew')
+    store.dispatch(silentRenewError());
+    Nexus.setToken('');
   });
   userManager.events.addUserSignedOut(() => {
-    // console.log('maaan, user is gooone')
+    store.dispatch(userSignedOut());
+    Nexus.setToken('');
+  });
+  userManager.events.addUserUnloaded(() => {
+    store.dispatch(sessionTerminated());
+    Nexus.setToken('');
   });
 
   let user;
