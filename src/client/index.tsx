@@ -13,7 +13,7 @@ import {
   userSignedOut,
 } from 'redux-oidc';
 import Nexus from '@bbp/nexus-sdk';
-import userManager from './userManager';
+import userManager, { getUserManager } from './userManager';
 import App from '../shared/App';
 import configureStore from '../shared/store';
 import { RootState } from '../shared/store/reducers';
@@ -128,7 +128,10 @@ if (module.hot) {
 }
 
 async function main() {
-  await setupUserSession(userManager, store);
+  const userManager = getUserManager(store);
+  if (userManager) {
+    await setupUserSession(userManager, store);
+  }
   renderApp();
 }
 main();

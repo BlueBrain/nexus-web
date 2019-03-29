@@ -24,7 +24,7 @@ import {
   HTTP_STATUSES,
   HTTP_STATUS_TYPE_KEYS,
 } from '../shared/store/actions/utils/statusCodes';
-import { stripBasename } from '../shared/utils';
+import { stripBasename, hasExpired } from '../shared/utils';
 
 const isSecure = !!process.env.SECURE;
 const cookieName = isSecure ? '__Secure-nexusAuth' : '_Secure-nexusAuth';
@@ -105,17 +105,28 @@ app.get('*', async (req: express.Request, res: express.Response) => {
   };
 
   // Nexus
-  const nexus = new Nexus({
+  let nexus = new Nexus({
     environment: preloadedState.config.apiEndpoint,
-    token:
-      (preloadedState.oidc.user && preloadedState.oidc.user.access_token) || '',
   });
   // Redux store
   const store = createStore(memoryHistory, nexus, preloadedState);
+  // Get realms data as anonymous
+  await store.dispatch<any>(fetchRealms());
+
+  // do we have a valid token?
+  if (
+    preloadedState.oidc.user &&
+    preloadedState.oidc.user.access_token &&
+    preloadedState.oidc.user.expires_at &&
+    !hasExpired(preloadedState.oidc.user.expires_at)
+  ) {
+    nexus = new Nexus({
+      environment: preloadedState.config.apiEndpoint,
+      token: preloadedState.oidc.user.access_token,
+    });
+  }
   // Get identity data
   await store.dispatch<any>(fetchIdentities());
-  // Get realms data
-  await store.dispatch<any>(fetchRealms());
   // Get list of matching routes
   const activeRoutes: RouteWithData[] = routes.filter(route =>
     matchPath(req.url, route)

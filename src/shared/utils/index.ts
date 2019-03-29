@@ -167,3 +167,7 @@ export function getLogoutUrl(
   // return logout URL
   return realm.endSessionEndpoint;
 }
+
+export function hasExpired(timestamp: number): Boolean {
+  return timestamp < Date.now().valueOf() / 10000;
+}
