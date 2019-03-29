@@ -169,5 +169,5 @@ export function getLogoutUrl(
 }
 
 export function hasExpired(timestamp: number): Boolean {
-  return timestamp < Date.now().valueOf() / 10000;
+  return timestamp < Date.now().valueOf() / 1000;
 }

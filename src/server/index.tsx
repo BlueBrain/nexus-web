@@ -11,7 +11,6 @@ import { matchPath, StaticRouterContext } from 'react-router';
 import { createMemoryHistory } from 'history';
 import Nexus from '@bbp/nexus-sdk';
 import Helmet from 'react-helmet';
-import * as jwtDecode from 'jwt-decode';
 import html from './html';
 import silentRefreshHtml from './silent_refresh';
 import App from '../shared/App';
@@ -108,11 +107,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
   let nexus = new Nexus({
     environment: preloadedState.config.apiEndpoint,
   });
-  // Redux store
-  const store = createStore(memoryHistory, nexus, preloadedState);
-  // Get realms data as anonymous
-  await store.dispatch<any>(fetchRealms());
-
+  Nexus.removeToken();
   // do we have a valid token?
   if (
     preloadedState.oidc.user &&
@@ -125,8 +120,12 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       token: preloadedState.oidc.user.access_token,
     });
   }
+  // Redux store
+  const store = createStore(memoryHistory, nexus, preloadedState);
   // Get identity data
   await store.dispatch<any>(fetchIdentities());
+  // Get realms data
+  await store.dispatch<any>(fetchRealms());
   // Get list of matching routes
   const activeRoutes: RouteWithData[] = routes.filter(route =>
     matchPath(req.url, route)

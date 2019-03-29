@@ -32,7 +32,6 @@ const preloadedState: RootState = (window as any).__PRELOADED_STATE__;
 // create Nexus instance
 const nexus = new Nexus({
   environment: preloadedState.config.apiEndpoint,
-  token: preloadedState.oidc.user && preloadedState.oidc.user.access_token,
 });
 // create redux store
 const store = configureStore(history, nexus, preloadedState);
@@ -46,6 +45,10 @@ const store = configureStore(history, nexus, preloadedState);
  * Outcome in all cases is, we have an authenticated user or we don't
  */
 const setupUserSession = async (userManager: UserManager, store: Store) => {
+  userManager.events.addUserLoaded(user => {
+    loadUser(store, userManager);
+    Nexus.setToken(user.access_token);
+  });
   userManager.events.addAccessTokenExpiring(() => {
     store.dispatch(userExpiring());
     userManager
@@ -83,14 +86,17 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
     Nexus.removeToken();
   });
 
-  let user;
   try {
+    let user;
     // do we already have a user?
     user = await userManager.getUser();
+    console.log('got', user);
+    if (user) {
+      // we've loaded a user, refresh it
+      user = await userManager.signinSilent();
+    }
     // nope, are we receiving a new token?
     if (!user) user = await userManager.signinRedirectCallback();
-    // if we're here, we now have a user, load it in state
-    loadUser(store, userManager);
   } catch (e) {
     // console.error(e);
   }
@@ -128,6 +134,7 @@ if (module.hot) {
 }
 
 async function main() {
+  // configure user manager
   const userManager = getUserManager(store);
   if (userManager) {
     await setupUserSession(userManager, store);
