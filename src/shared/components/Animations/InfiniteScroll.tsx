@@ -61,6 +61,7 @@ export interface InfiniteScrollProps {
   itemClassName?: string;
   makeKey: (item: any, index: number) => string;
   next: VoidFunction;
+  style?: React.CSSProperties;
   fetchablePaginatedList: FetchableState<PaginatedList<any>>;
 }
 
@@ -71,6 +72,7 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
     itemComponent,
     fetchablePaginatedList,
     next,
+    style,
     type = 'onClick',
   } = props;
   const { isFetching, data, error } = fetchablePaginatedList;
@@ -89,7 +91,7 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
     unique: true,
   });
   return (
-    <div className="infinite-scroll">
+    <div className="infinite-scroll" style={style}>
       {!!error && <Empty description={error.message} />}
       {!error && (
         <ul className="list">

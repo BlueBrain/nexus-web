@@ -97,7 +97,7 @@ storiesOf('Components/InfiniteScroll/Basic', module)
     })
   );
 
-storiesOf('Components/InfiniteScroll/Simulated', module)
+storiesOf('Components/InfiniteScroll/Simulated/OnClick', module)
   .addDecorator(withKnobs)
   .add(
     'InfiniteScroll',
@@ -206,6 +206,139 @@ storiesOf('Components/InfiniteScroll/Simulated', module)
             <h2>Stars ✨</h2>
             <InfiniteScroll
               type="onClick"
+              makeKey={({ label, description }, index) => `${label}-${index}`}
+              itemComponent={({ label, description }: any, index: number) => {
+                return (
+                  <ListItem
+                    label={label}
+                    description={description}
+                    id={`${label}-${index}`}
+                  />
+                );
+              }}
+              next={next}
+              fetchablePaginatedList={data}
+            />
+          </div>
+        );
+      });
+    })
+  );
+
+storiesOf('Components/InfiniteScroll/Simulated/OnScroll', module)
+  .addDecorator(withKnobs)
+  .add(
+    'InfiniteScroll',
+    withInfo(`
+    Scroll all the way down and ask for more!
+
+    ~~~js
+    <InfiniteScroll
+            makeKey={item => item}
+            itemComponent={(item: any, index: number) => <p>{item}</p>}
+            items={items}
+            total={items.length}
+            next={action('pagination-change')}
+            loading={loading}
+          />
+  />
+    ~~~
+  `)(() => {
+      const starList = [
+        {
+          label: 'Acamar',
+          description: `Originally called آخر النهر‎ ākhir al-nahr in Arabic, meaning "river's end", named because it was the brightest star in the constellation Eridanus (the River). (Before the 16th century, this was the last star in the Eridanus constellation; it was later extended to Achenar, below).`,
+        },
+        {
+          label: 'Achernar',
+          description: `The name was originally Arabic آخر النهر‎ ākhir al-nahr "river's end"`,
+        },
+        {
+          label: 'Dziban',
+          description: `From the traditional name of Dziban or Dsiban for ψ¹ Draconis, derived from Arabic al-dhi’ban, meaning "the two wolves" or "The two jackals".`,
+        },
+        {
+          label: 'Libertas',
+          description: `Name adopted by the IAU following the 2015 NameExoWorlds campaign.[5] Latin for 'liberty' ('Aquila' is Latin for 'eagle', a popular symbol of liberty).`,
+        },
+        {
+          label: 'Lich',
+          description: `A neutron star and pulsar with planets. Name adopted by the IAU following the 2015 NameExoWorlds campaign.[5] A lich is a fictional undead creature known for controlling other undead creatures with magic.[22]`,
+        },
+      ];
+
+      const getStar = () => {
+        return starList[Math.floor(Math.random() * starList.length)];
+      };
+
+      const makeRandom = (pageSize: number) => {
+        const items = [];
+        for (let i = 0; i < pageSize; i += 1) {
+          items.push(getStar());
+        }
+        return items;
+      };
+      const fetchablePaginatedList = object('initial fetachblePaginatedList', {
+        isFetching: true,
+        error: null,
+        data: null,
+      });
+      const pageSize = number('pageSize', 10);
+      const totalItems = number('totalItems', 100);
+      return React.createElement(() => {
+        const [data, setData] = React.useState<
+          FetchableState<PaginatedList<any>>
+        >(fetchablePaginatedList);
+        const [index, setIndex] = React.useState(0);
+        React.useEffect(() => {
+          setTimeout(() => {
+            setData({
+              isFetching: false,
+              error: null,
+              data: {
+                index,
+                total: totalItems,
+                results: makeRandom(pageSize),
+              },
+            });
+          }, 500);
+        }, []);
+        const next = () => {
+          action('next')();
+          setIndex(index + 1);
+          setData({
+            isFetching: true,
+            error: null,
+            data: null,
+          });
+          setTimeout(() => {
+            setData({
+              isFetching: false,
+              error: null,
+              data: {
+                index,
+                total: totalItems,
+                results: makeRandom(pageSize),
+              },
+            });
+          }, 500);
+        };
+        return (
+          <div
+            style={{
+              margin: '50px',
+              width: '300px',
+            }}
+          >
+            <h2>Stars ✨</h2>
+            <InfiniteScroll
+              style={{
+                maxHeight: '600px',
+                overflowY: 'scroll',
+                backgroundColor: 'pink',
+                borderRadius: '4px',
+              }}
+              type="onScroll"
               makeKey={({ label, description }, index) => `${label}-${index}`}
               itemComponent={({ label, description }: any, index: number) => {
                 return (

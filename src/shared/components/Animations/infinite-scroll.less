@@ -11,6 +11,23 @@
   & > .list .list-item.-action > .loading {
     height: 1.5em;
   }
+  &::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    // width: 4px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    margin: 4px;
+  }
+  &::-webkit-scrollbar-track-piece {
+    // background: rgba(0, 0, 0, 0.15);
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+  }
 }
 
 .center-helper {
