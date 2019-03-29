@@ -23,6 +23,7 @@ exports[`login component should render correctly 1`] = `
           <a
             className="link"
             href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth?client_id=nexus-web&response_type=token&scope=openid&nonce=123456&redirect_uri=http://nexus/authRedirect?redirectUrl=http://nexus.bbp.com/my/url/"
+            onClick={[Function]}
           >
             Log in 
             <Icon
@@ -77,6 +78,7 @@ exports[`login component should render correctly 1`] = `
                 className="link"
                 href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth?client_id=nexus-web&response_type=token&scope=openid&nonce=123456&redirect_uri=http://nexus/authRedirect?redirectUrl=http://nexus.bbp.com/my/url/"
                 key="login"
+                onClick={[Function]}
               >
                 Log in 
                 <Icon
@@ -153,6 +155,7 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
           <a
             className="link"
             href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth?client_id=nexus-web&response_type=token&scope=openid&nonce=123456&redirect_uri=http://nexus/authRedirect?redirectUrl=http://nexus.bbp.com/my/url/"
+            onClick={[Function]}
           >
             <React.Fragment>
               Log in with
@@ -240,6 +243,7 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                 className="link"
                 href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth?client_id=nexus-web&response_type=token&scope=openid&nonce=123456&redirect_uri=http://nexus/authRedirect?redirectUrl=http://nexus.bbp.com/my/url/"
                 key="login"
+                onClick={[Function]}
               >
                 Log in with
                  
