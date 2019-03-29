@@ -60,7 +60,7 @@ export interface InfiniteScrollProps {
   itemComponent: (item: any, index: number) => React.ReactElement;
   itemClassName?: string;
   makeKey: (item: any, index: number) => string;
-  next: VoidFunction;
+  loadNextPage: VoidFunction;
   style?: React.CSSProperties;
   fetchablePaginatedList: FetchableState<PaginatedList<any>>;
   loadAtPercentRevealed?: number;
@@ -74,14 +74,18 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
     itemClassName,
     itemComponent,
     fetchablePaginatedList,
-    next,
+    loadNextPage,
     style,
     loadAtPercentRevealed = LOAD_AT_PERCENTAGE_REVEALED,
   } = props;
   const { isFetching, data, error } = fetchablePaginatedList;
   const [totalItems, setTotalItems] = React.useState<number>(0);
   const [totalItemsList, setTotalItemsList] = React.useState<any[]>([]);
-  const [bind] = useInfiniteScroll(next, isFetching, loadAtPercentRevealed);
+  const [bind] = useInfiniteScroll(
+    loadNextPage,
+    isFetching,
+    loadAtPercentRevealed
+  );
   React.useEffect(() => {
     if (data) {
       setTotalItemsList([...totalItemsList, ...data.results]);
@@ -117,7 +121,7 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
               isFetching={isFetching}
               hasMore={hasMore}
               totalItemsListLength={totalItemsList.length}
-              onClick={next}
+              onClick={loadNextPage}
             />
           )}
           {!!totalItems && !isFetching && !hasMore && (

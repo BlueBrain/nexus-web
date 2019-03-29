@@ -87,7 +87,7 @@ storiesOf('Components/InfiniteScroll/Basic', module)
               itemComponent={(item: any, index: number) => {
                 return <ListItem label={item} id={`${item}-${index}`} />;
               }}
-              next={next}
+              loadNextPage={next}
               fetchablePaginatedList={fetchablePaginatedList}
             />
           </div>
@@ -214,7 +214,7 @@ storiesOf('Components/InfiniteScroll/Simulated/OnClick', module)
                   />
                 );
               }}
-              next={next}
+              loadNextPage={next}
               fetchablePaginatedList={data}
             />
           </div>
@@ -352,7 +352,7 @@ storiesOf('Components/InfiniteScroll/Simulated/OnScroll', module)
                   />
                 );
               }}
-              next={next}
+              loadNextPage={next}
               fetchablePaginatedList={data}
             />
           </div>
