@@ -39,7 +39,6 @@ const store = configureStore(history, nexus, preloadedState);
  * Outcome in all cases is, we have an authenticated user or we don't
  */
 const setupUserSession = async (userManager: UserManager, store: Store) => {
-  userManager.events.removeUserLoaded(() => console.log('??'));
   userManager.events.addAccessTokenExpiring(() => {
     userManager
       .signinSilent()
