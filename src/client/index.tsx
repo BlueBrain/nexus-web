@@ -90,7 +90,6 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
     let user;
     // do we already have a user?
     user = await userManager.getUser();
-    console.log('got', user);
     if (user) {
       // we've loaded a user, refresh it
       user = await userManager.signinSilent();
