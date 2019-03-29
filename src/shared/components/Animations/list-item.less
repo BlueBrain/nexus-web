@@ -1,6 +1,8 @@
 @import '../../lib.less';
 
-.list-item {
+// mixin
+
+.listItemLike() {
   .unstyleList();
   background-color: @component-background;
   border-radius: 2px;
@@ -8,7 +10,10 @@
   margin: 0.5em;
   padding: 0.5em;
   position: relative;
-  &:hover,
+}
+
+.list-item {
+  .listItemLike();
   &:focus,
   &:focus-within {
     background-color: fade(@primary-color, 5%);

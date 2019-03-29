@@ -1,0 +1,41 @@
+@import '../../lib.less';
+
+.infinite-scroll {
+  & > .list {
+    margin: 0;
+    padding: 0;
+  }
+  & > .list .list-item.-action {
+    text-align: center;
+  }
+  & > .list .list-item.-end-of-list {
+    text-align: center;
+    background-color: transparent;
+    cursor: default;
+  }
+  & > .list .list-item.-action > .loading {
+    height: 1.5em;
+  }
+  &::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    margin: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+  }
+}
+
+.center-helper {
+  position: absolute;
+  left: 50%;
+  & > .center {
+    position: relative;
+    left: -50%;
+  }
+}
