@@ -60,6 +60,10 @@ app.get(
 
 // For all routes
 app.get('*', async (req: express.Request, res: express.Response) => {
+  // Before we look for a cookie with a token
+  // we need to figure out if the user has a preferred realm
+  const preferredRealmCookie = req.cookies['nexus__realm'];
+  console.log(preferredRealmCookie);
   // Get token from Client's cookie 🍪
   let user = null;
   const nexusCookieKey = Object.keys(req.cookies).find(key =>
