@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Empty } from 'antd';
 import './infinite-scroll.less';
 import './list-item.less';
-import { useTransition, animated, useSpring } from 'react-spring';
+import { useTransition, animated, useSpring, config } from 'react-spring';
 import { PaginatedList } from '@bbp/nexus-sdk';
 import { FetchableState } from '../../store/reducers/utils';
 
@@ -15,6 +15,46 @@ const DEFAULT_ANIMATIONS = {
   trail: DEFAULT_TRAIL_MS,
 };
 
+export const InfiniteScrollLoadMoreButton: React.FunctionComponent<{
+  hasMore: boolean;
+  totalItemsListLength: number;
+  onClick: VoidFunction;
+  isFetching: boolean;
+}> = ({ hasMore, totalItemsListLength, onClick, isFetching }) => {
+  const animatedOpacity = useSpring({
+    opacity: hasMore ? 1 : 0,
+    // TODO why: This doesn't work as described https://www.react-spring.io/docs/hooks/api
+    config: config.molasses,
+    delay: DEFAULT_TRAIL_MS * totalItemsListLength,
+  });
+  const animatedLoadTransition = useTransition(isFetching, null, {
+    from: { position: 'absolute', opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+  });
+  return (
+    <animated.div style={animatedOpacity}>
+      <a onClick={onClick}>
+        <li className="list-item -action -load">
+          <div className="loading">
+            {animatedLoadTransition.map(({ item, props }) =>
+              item ? (
+                <animated.div style={props} className="center-helper">
+                  <div className="center">Loading</div>
+                </animated.div>
+              ) : (
+                <animated.div style={props} className="center-helper">
+                  <div className="center">Load More</div>
+                </animated.div>
+              )
+            )}
+          </div>
+        </li>
+      </a>
+    </animated.div>
+  );
+};
+
 export interface InfiniteScrollProps {
   type?: 'onScroll' | 'onClick';
   itemComponent: (item: any, index: number) => React.ReactElement;
@@ -24,10 +64,7 @@ export interface InfiniteScrollProps {
   fetchablePaginatedList: FetchableState<PaginatedList<any>>;
 }
 
-const InfiniteScroll: React.FunctionComponent<
-  // TODO: Figure out how to typescript
-  InfiniteScrollProps
-> = props => {
+const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
   const {
     makeKey,
     itemClassName,
@@ -45,11 +82,7 @@ const InfiniteScroll: React.FunctionComponent<
       setTotalItems(data.total);
     }
   }, [data && data.index]);
-  const stillMoreToLoad = totalItemsList.length < totalItems;
-  const animatedOpacityOnStillMoreToLoad = useSpring({
-    opacity: stillMoreToLoad ? 1 : 0,
-    delay: DEFAULT_TRAIL_MS * totalItemsList.length,
-  });
+  const hasMore = totalItemsList.length < totalItems;
   const keys = totalItemsList.map(makeKey);
   const transitions = useTransition(totalItemsList, keys, {
     ...DEFAULT_ANIMATIONS,
@@ -72,12 +105,13 @@ const InfiniteScroll: React.FunctionComponent<
             );
           })}
           {!data || (!data.total && <Empty />)}
-          {stillMoreToLoad && (
-            <animated.div style={animatedOpacityOnStillMoreToLoad}>
-              <a onClick={next}>
-                <li className="list-item -action -load">Load More</li>
-              </a>
-            </animated.div>
+          {hasMore && (
+            <InfiniteScrollLoadMoreButton
+              isFetching={isFetching}
+              hasMore={hasMore}
+              totalItemsListLength={totalItemsList.length}
+              onClick={next}
+            />
           )}
         </ul>
       )}
