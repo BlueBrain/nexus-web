@@ -2,22 +2,9 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withInfo } from '@storybook/addon-info';
 
-import Login, { Realm } from './index';
+import Login from './index';
 
-const realms: Realm[] = [
-  {
-    name: 'BBP',
-    authorizationEndpoint: '/#BBP',
-  },
-  {
-    name: 'HBP',
-    authorizationEndpoint: '/#HBP',
-  },
-  {
-    name: 'Google',
-    authorizationEndpoint: '/#Google',
-  },
-];
+const realms: string[] = ['BBP', 'HBP', 'Google'];
 
 storiesOf('Components/Login', module).add(
   'Login',
@@ -31,16 +18,11 @@ storiesOf('Components/Login', module).add(
     <React.Fragment>
       <div style={{ margin: '50px 40px 0px' }}>
         <h2>1 Realm to choose from:</h2>
-        <Login
-          clientId="nexus-web"
-          hostName="http://nexus"
-          realms={[realms[0]]}
-          redirectUrl="http://nexus"
-        />
+        <Login realms={[realms[0]]} />
       </div>
       <div style={{ margin: '50px 40px 0px' }}>
         <h2>3 Realms to choose from:</h2>
-        <Login clientId="nexus-web" hostName="http://nexus" realms={realms} redirectUrl="http://nexus"/>
+        <Login realms={realms} />
       </div>
     </React.Fragment>
   ))

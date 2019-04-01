@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { mount } from 'enzyme';
 
-import Login, { Realm } from '../index';
+import Login from '../index';
 
 const realms: string[] = ['BBP', 'HBP', 'Google'];
 const loginComponent = <Login realms={[realms[1]]} />;
