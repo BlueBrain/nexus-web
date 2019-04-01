@@ -1,33 +1,10 @@
 import * as React from 'react';
 import { mount } from 'enzyme';
 
-import Login, { Realm } from '../index';
+import Login from '../index';
 
-const realms: Realm[] = [
-  {
-    name: 'BBP',
-    authorizationEndpoint:
-      'https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth',
-  },
-  {
-    name: 'HBP',
-    authorizationEndpoint:
-      'https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth',
-  },
-  {
-    name: 'Google',
-    authorizationEndpoint:
-      'https://accounts.google.com/.well-known/openid-configuration',
-  },
-];
-const loginComponent = (
-  <Login
-    clientId="nexus-web"
-    hostName="http://nexus"
-    realms={[realms[1]]}
-    redirectUrl="http://nexus.bbp.com/my/url/"
-  />
-);
+const realms: string[] = ['BBP', 'HBP', 'Google'];
+const loginComponent = <Login realms={[realms[1]]} />;
 const wrapper = mount(loginComponent);
 
 describe('login component', () => {
@@ -38,18 +15,6 @@ describe('login component', () => {
   describe('with only 1 realm', () => {
     it('anchor tag text should just be Log in', () => {
       expect(wrapper.find('a.link')).toHaveLength(1);
-    });
-    it('href attribute should be second Realm', () => {
-      expect(
-        wrapper
-          .find('a.link')
-          .getDOMNode()
-          .getAttribute('href')
-      ).toEqual(
-        `${
-          realms[1].authorizationEndpoint
-        }?client_id=nexus-web&response_type=token&scope=openid&nonce=123456&redirect_uri=http://nexus/authRedirect?redirectUrl=http://nexus.bbp.com/my/url/`
-      );
     });
 
     it('anchor tag text should only display Log in', () => {
@@ -69,19 +34,6 @@ describe('login component', () => {
 
     it('should have an anchor tag', () => {
       expect(wrapper.find('a.link')).toHaveLength(1);
-    });
-
-    it('href attribute should be second Realm still', () => {
-      expect(
-        wrapper
-          .find('a.link')
-          .getDOMNode()
-          .getAttribute('href')
-      ).toEqual(
-        `${
-          realms[1].authorizationEndpoint
-        }?client_id=nexus-web&response_type=token&scope=openid&nonce=123456&redirect_uri=http://nexus/authRedirect?redirectUrl=http://nexus.bbp.com/my/url/`
-      );
     });
 
     it("anchor tag text should display Realm's name", () => {

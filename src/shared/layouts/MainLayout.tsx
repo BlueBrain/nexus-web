@@ -5,12 +5,16 @@ import { push } from 'connected-react-router';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { AuthState } from '../store/reducers/auth';
+import getUserManager from '../../client/userManager';
 import { version, url as githubIssueURL } from '../../../package.json';
 
 import './MainLayout.less';
 import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
 import { Realm } from '@bbp/nexus-sdk';
 import { getLogoutUrl } from '../utils';
+import { UserState } from 'redux-oidc';
+import { UserManager } from 'oidc-client';
+import { RootState } from '../store/reducers';
 
 const favicon = require('../favicon.png');
 const TITLE =
@@ -25,6 +29,7 @@ export interface MainLayoutProps {
   goTo(url: string): void;
   name: string;
   canLogin?: boolean;
+  userManager?: UserManager;
 }
 
 const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
@@ -36,56 +41,69 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
   name,
   children,
   canLogin = false,
-}) => (
-  <>
-    <Helmet>
-      <meta charSet="utf-8" />
-      <link rel="shortcut icon" type="image/x-icon" href={favicon} />
-      <title>{TITLE}</title>
-      <meta id="app-description" name="description" content={DESCRIPTION} />
-      <meta name="twitter:card" content={DESCRIPTION} />
-      <meta name="twitter:site" content="@bluebrainnexus" />
-      <meta
-        property="og:image"
-        content="https://bluebrain.github.io/nexus/assets/img/logo.png"
+  userManager,
+}) => {
+  const handleLogout = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    userManager && userManager.signoutRedirect();
+  };
+  return (
+    <>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <link rel="shortcut icon" type="image/x-icon" href={favicon} />
+        <title>{TITLE}</title>
+        <meta id="app-description" name="description" content={DESCRIPTION} />
+        <meta name="twitter:card" content={DESCRIPTION} />
+        <meta name="twitter:site" content="@bluebrainnexus" />
+        <meta
+          property="og:image"
+          content="https://bluebrain.github.io/nexus/assets/img/logo.png"
+        />
+        <meta property="og:image:width" content="745" />
+        <meta property="og:image:height" content="745" />
+        <meta property="og:site_name" content="Nexus" />
+        <meta property="og:title" content={TITLE} />
+        <meta property="og:description" content={DESCRIPTION} />
+        <meta name="theme-color" content="#00c9fd" />
+      </Helmet>
+      <Header
+        name={authenticated ? name : undefined}
+        token={token}
+        links={[
+          <a
+            href={`${logoutUrl}?redirect_uri=${hostName}/authLogout`}
+            onClick={handleLogout}
+          >
+            log out
+          </a>,
+        ]}
+        displayLogin={canLogin}
+        onLoginClick={() => goTo('/login')}
       />
-      <meta property="og:image:width" content="745" />
-      <meta property="og:image:height" content="745" />
-      <meta property="og:site_name" content="Nexus" />
-      <meta property="og:title" content={TITLE} />
-      <meta property="og:description" content={DESCRIPTION} />
-      <meta name="theme-color" content="#00c9fd" />
-    </Helmet>
-    <Header
-      name={authenticated ? name : undefined}
-      token={token}
-      links={[
-        <a href={`${logoutUrl}?redirect_uri=${hostName}/authLogout`}>
-          log out
-        </a>,
-      ]}
-      displayLogin={canLogin}
-      onLoginClick={() => goTo('/login')}
-    />
-    <div className="MainLayout_body">{children}</div>
-    <div>
-      <Footer version={version} githubIssueURL={githubIssueURL} />
-    </div>
-  </>
-);
+      <div className="MainLayout_body">{children}</div>
+      <div>
+        <Footer version={version} githubIssueURL={githubIssueURL} />
+      </div>
+    </>
+  );
+};
 
-const mapStateToProps = ({ auth }: { auth: AuthState }) => {
+const mapStateToProps = (state: RootState) => {
+  const { auth, oidc } = state;
   const realms: Realm[] =
     (auth.realms && auth.realms.data && auth.realms.data.results) || [];
   const identities: Identity[] =
     (auth.identities && auth.identities.data) || [];
   return {
-    authenticated: auth.authenticated,
-    token: auth.accessToken,
-    name: auth.tokenData ? (auth.tokenData as any)['name'] : '',
+    authenticated: oidc.user !== null,
+    token: oidc.user && oidc.user.access_token,
+    name:
+      (oidc.user && oidc.user.profile && oidc.user.profile.name) || 'anonymous',
     hostName: auth.redirectHostName || '',
     logoutUrl: getLogoutUrl(identities, realms),
     canLogin: !!(realms.length > 0),
+    userManager: getUserManager(state),
   };
 };
 

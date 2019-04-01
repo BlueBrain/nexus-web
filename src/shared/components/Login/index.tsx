@@ -5,33 +5,34 @@ import './Login.less';
 
 const logo = require('../../logo.svg');
 
-export type Realm = {
-  name: string;
-  authorizationEndpoint: string;
-};
-
 export interface LoginProps {
-  realms: Realm[];
-  clientId: string;
-  redirectUrl: string;
-  hostName: string;
-  busy?: boolean;
+  realms: string[];
+  selectedRealm?: string;
+  onLogin?(e: React.SyntheticEvent): void;
+  onRealmSelected?(name: string): void;
 }
 
 const Login: React.FunctionComponent<LoginProps> = ({
   realms,
-  clientId,
-  redirectUrl,
-  hostName,
+  selectedRealm,
+  onLogin = () => {},
+  onRealmSelected = () => {},
 }) => {
-  const [realm, setRealm] = React.useState(realms[0]);
+  const [realm, setRealm] = React.useState(selectedRealm || realms[0]);
 
   const menu = (
     <Menu
-      onClick={({ key }) => setRealm(realms.filter(r => r.name === key)[0])}
+      onClick={({ key, domEvent }) => {
+        domEvent.stopPropagation();
+        const realm = realms.find(r => r === key);
+        if (realm) {
+          setRealm(realm);
+          onRealmSelected(realm);
+        }
+      }}
     >
       {realms.map(realm => (
-        <Menu.Item key={realm.name}>{realm.name}</Menu.Item>
+        <Menu.Item key={realm}>{realm}</Menu.Item>
       ))}
     </Menu>
   );
@@ -41,20 +42,14 @@ const Login: React.FunctionComponent<LoginProps> = ({
       <Card
         cover={<img className="logo" alt="Nexus logo" src={logo} />}
         actions={[
-          <a
-            className="link"
-            key="login"
-            href={`${
-              realm.authorizationEndpoint
-            }?client_id=${clientId}&response_type=token&scope=openid&nonce=123456&redirect_uri=${hostName}/authRedirect?redirectUrl=${redirectUrl}`}
-          >
+          <a onClick={onLogin} className="link" key="login">
             {realms.length === 1 ? (
               'Log in '
             ) : (
               <React.Fragment>
                 Log in with{' '}
                 <Dropdown overlay={menu}>
-                  <span className="realm">{realm.name}</span>
+                  <span className="realm">{realm}</span>
                 </Dropdown>{' '}
               </React.Fragment>
             )}

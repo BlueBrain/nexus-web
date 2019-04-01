@@ -11,8 +11,8 @@ import { matchPath, StaticRouterContext } from 'react-router';
 import { createMemoryHistory } from 'history';
 import Nexus from '@bbp/nexus-sdk';
 import Helmet from 'react-helmet';
-import * as jwtDecode from 'jwt-decode';
 import html from './html';
+import silentRefreshHtml from './silent_refresh';
 import App from '../shared/App';
 import createStore from '../shared/store';
 import { RootState } from '../shared/store/reducers';
@@ -23,7 +23,7 @@ import {
   HTTP_STATUSES,
   HTTP_STATUS_TYPE_KEYS,
 } from '../shared/store/actions/utils/statusCodes';
-import { stripBasename } from '../shared/utils';
+import { stripBasename, hasExpired } from '../shared/utils';
 
 const isSecure = !!process.env.SECURE;
 const cookieName = isSecure ? '__Secure-nexusAuth' : '_Secure-nexusAuth';
@@ -50,87 +50,38 @@ if (process.env.NODE_ENV !== 'production') {
   setupDevEnvironment(app);
 }
 
-// Setup client cookie with AccessToken and redirect to home page
-// TODO: redirect to the page user was trying to access before auth
+// silent refresh
 app.get(
-  `${base}/authSuccess`,
+  `${base}/silent_refresh`,
   (req: express.Request, res: express.Response) => {
-    const { error, access_token, redirectUrl } = req.query;
-    if (!error) {
-      try {
-        const token = jwtDecode(access_token);
-        res.cookie(
-          cookieName,
-          JSON.stringify({
-            accessToken: access_token,
-          }),
-          {
-            maxAge: (token as any)['exp'],
-            secure: isSecure ? true : false,
-            sameSite: 'strict',
-            path: base,
-            httpOnly: true,
-          }
-        );
-      } catch (e) {
-        // TODO: add proper logger
-        // fail silently
-      }
-    }
-    res.redirect(redirectUrl || `${base}`);
-  }
-);
-
-// User wants to logout, clear cookie
-app.get(`${base}/authLogout`, (req: express.Request, res: express.Response) => {
-  res.cookie(
-    cookieName,
-    {},
-    {
-      maxAge: -1,
-      secure: isSecure ? true : false,
-      sameSite: 'strict',
-      path: base,
-      httpOnly: true,
-    }
-  );
-  res.redirect(`${base}`);
-});
-
-// We need to get the browser to send the access token to the server
-app.get(
-  `${base}/authRedirect`,
-  (req: express.Request, res: express.Response) => {
-    const { redirectUrl } = req.query;
-
-    res.send(`
-  <!doctype html>
-  <html>
-    <head></head>
-    <body>
-      <script type="text/javascript">
-        window.location.href = window.location.href.replace('authRedirect?redirectUrl=${redirectUrl}#', 'authSuccess?redirectUrl=${redirectUrl}&');
-      </script>
-    </body>
-  </html>
-  `);
+    res.send(silentRefreshHtml());
   }
 );
 
 // For all routes
 app.get('*', async (req: express.Request, res: express.Response) => {
-  // Get token from Client's cookie 🍪
-  let accessToken: string | undefined = undefined;
-  let tokenData: object | undefined = undefined;
-  const nexusCookie: string = req.cookies[cookieName];
-  if (nexusCookie) {
+  // Before we look for a cookie with a token
+  // we need to figure out if the user has a preferred realm
+  const preferredRealmCookie = req.cookies['nexus__realm'];
+  let nexusCookie;
+  let preferredRealmData: { realmKey?: string; label?: string } = {};
+  let user = null;
+  if (preferredRealmCookie) {
     try {
-      const cookieData = JSON.parse(nexusCookie);
-      accessToken = cookieData.accessToken;
-      tokenData = jwtDecode(accessToken as string);
+      preferredRealmData = JSON.parse(preferredRealmCookie);
+      // Get token from Client's cookie 🍪
+      nexusCookie = preferredRealmData.realmKey
+        ? req.cookies[encodeURIComponent(preferredRealmData.realmKey)]
+        : undefined;
     } catch (e) {
-      // TODO: add proper logger
-      // fail silently
+      // TODO: sentry that stuff
+    }
+    if (nexusCookie) {
+      try {
+        user = JSON.parse(nexusCookie);
+      } catch (e) {
+        // TODO: sentry that stuff
+      }
     }
   }
 
@@ -144,26 +95,44 @@ app.get('*', async (req: express.Request, res: express.Response) => {
   // Compute pre-loaded state
   const preloadedState: RootState = {
     auth: {
-      accessToken,
-      tokenData,
-      authenticated: accessToken !== undefined,
-      clientId: process.env.CLIENT_ID || 'nexus-web',
-      redirectHostName: `${process.env.HOST_NAME ||
-        `${req.protocol}://${req.headers.host}`}${base}`,
+      accessToken: '',
+      tokenData: {},
+      authenticated: false,
+      clientId: '',
+      redirectHostName: '',
     },
     config: {
       apiEndpoint: process.env.API_ENDPOINT || '/',
       basePath: base,
+      clientId: process.env.CLIENT_ID || 'nexus-web',
+      redirectHostName: `${process.env.HOST_NAME ||
+        `${req.protocol}://${req.headers.host}`}${base}`,
+      preferredRealm: preferredRealmData.label || undefined,
     },
     uiSettings: DEFAULT_UI_SETTINGS,
+    oidc: {
+      user,
+      isLoadingUser: false,
+    },
   };
 
   // Nexus
-  const nexus = new Nexus({
+  let nexus = new Nexus({
     environment: preloadedState.config.apiEndpoint,
-    token: preloadedState.auth.accessToken,
   });
-
+  Nexus.removeToken();
+  // do we have a valid token?
+  if (
+    preloadedState.oidc.user &&
+    preloadedState.oidc.user.access_token &&
+    preloadedState.oidc.user.expires_at &&
+    !hasExpired(preloadedState.oidc.user.expires_at)
+  ) {
+    nexus = new Nexus({
+      environment: preloadedState.config.apiEndpoint,
+      token: preloadedState.oidc.user.access_token,
+    });
+  }
   // Redux store
   const store = createStore(memoryHistory, nexus, preloadedState);
   // Get identity data

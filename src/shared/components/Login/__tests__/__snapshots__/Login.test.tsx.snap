@@ -2,17 +2,11 @@
 
 exports[`login component should render correctly 1`] = `
 <Login
-  clientId="nexus-web"
-  hostName="http://nexus"
   realms={
     Array [
-      Object {
-        "authorizationEndpoint": "https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth",
-        "name": "HBP",
-      },
+      "HBP",
     ]
   }
-  redirectUrl="http://nexus.bbp.com/my/url/"
 >
   <div
     className="Login"
@@ -22,7 +16,7 @@ exports[`login component should render correctly 1`] = `
         Array [
           <a
             className="link"
-            href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth?client_id=nexus-web&response_type=token&scope=openid&nonce=123456&redirect_uri=http://nexus/authRedirect?redirectUrl=http://nexus.bbp.com/my/url/"
+            onClick={[Function]}
           >
             Log in 
             <Icon
@@ -75,8 +69,8 @@ exports[`login component should render correctly 1`] = `
             <span>
               <a
                 className="link"
-                href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth?client_id=nexus-web&response_type=token&scope=openid&nonce=123456&redirect_uri=http://nexus/authRedirect?redirectUrl=http://nexus.bbp.com/my/url/"
                 key="login"
+                onClick={[Function]}
               >
                 Log in 
                 <Icon
@@ -124,25 +118,13 @@ exports[`login component should render correctly 1`] = `
 
 exports[`login component with more than 1 realm should render correctly 1`] = `
 <Login
-  clientId="nexus-web"
-  hostName="http://nexus"
   realms={
     Array [
-      Object {
-        "authorizationEndpoint": "https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth",
-        "name": "BBP",
-      },
-      Object {
-        "authorizationEndpoint": "https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth",
-        "name": "HBP",
-      },
-      Object {
-        "authorizationEndpoint": "https://accounts.google.com/.well-known/openid-configuration",
-        "name": "Google",
-      },
+      "BBP",
+      "HBP",
+      "Google",
     ]
   }
-  redirectUrl="http://nexus.bbp.com/my/url/"
 >
   <div
     className="Login"
@@ -152,7 +134,7 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
         Array [
           <a
             className="link"
-            href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth?client_id=nexus-web&response_type=token&scope=openid&nonce=123456&redirect_uri=http://nexus/authRedirect?redirectUrl=http://nexus.bbp.com/my/url/"
+            onClick={[Function]}
           >
             <React.Fragment>
               Log in with
@@ -238,8 +220,8 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
             <span>
               <a
                 className="link"
-                href="https://bbpteam.epfl.ch/auth/realms/BBP/protocol/openid-connect/auth?client_id=nexus-web&response_type=token&scope=openid&nonce=123456&redirect_uri=http://nexus/authRedirect?redirectUrl=http://nexus.bbp.com/my/url/"
                 key="login"
+                onClick={[Function]}
               >
                 Log in with
                  

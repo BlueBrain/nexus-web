@@ -9,6 +9,7 @@ const config = [
     name: 'client',
     entry: {
       bundle: ['./src/client/index.tsx'],
+      silent_refresh: ['./src/client/silent_refresh.ts'],
     },
     output: {
       path: path.join(__dirname, 'dist/public/'),

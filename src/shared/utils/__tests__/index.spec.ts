@@ -4,6 +4,7 @@ import {
   addLeadingSlash,
   stripBasename,
   getLogoutUrl,
+  hasExpired,
 } from '..';
 import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
 import { Realm } from '@bbp/nexus-sdk';
@@ -118,6 +119,18 @@ describe('utils functions', () => {
       expect(getLogoutUrl(identities, [])).toEqual('');
       expect(getLogoutUrl([], realms)).toEqual('');
       expect(getLogoutUrl([identities[1]], realms)).toEqual('');
+    });
+  });
+  describe('hasExpired()', () => {
+    // this is 1987, so unless you time travel and run this test, it will always be in the past
+    const past: number = 536457600;
+    // this is year 4000, si it unless Nexus is still around in 2000 years, this will always be the future
+    const future: number = 64060588800;
+    it('should be expired', () => {
+      expect(hasExpired(past)).toBeTruthy();
+    });
+    it('should NOT be expired', () => {
+      expect(hasExpired(future)).toBeFalsy();
     });
   });
 });

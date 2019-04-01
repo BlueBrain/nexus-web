@@ -1,30 +1,14 @@
-token + realm name is stored in cookie
-when server receives request, it extract the token from the cookie and fetches resources + render app (SSR)
-we are using a cookie and not session so server is stateless.
-we are using a cookie and not local-storage so server gets the token
+# Authentication in Nexus Web
 
-## 1- No token and no realm
+Nexus Web only supports the [Openid Connect implicit flow](https://openid.net/specs/openid-connect-implicit-1_0.html)
 
-- don't display login link in header
-- just call nexus without bearer tokens
+Nexus Web uses serve side rendering technologies, the React/Redux code-base that generates the HTML can run on both the client and the server. In order to get the server to generate the application for an **authenticated** user, we need to pass the client's `Bearer token` to the Nexus Web back-end. That's why we are storing the token in a cookie.
 
-## 2- No token and 1+ realms
+Finally, there are 3 scenarios we can be in, regarding authentication and token:
 
-- display login link in header
-- call nexus without bearer token
-- start using token once user is logged in
+- no token is present (user has never logged in, or has logged out last time, etc...)
+- a valid token is present
+- an invalid/expired token is present
 
-## 3- Token and 1+ realms
-
-- restore session
-- call nexus with bearer token
-
-## Token but used realm is gone (edge case)
-
-- delete token
-- go to #2
-
-## Token but no realm (edge case)
-
-- delete token
-- go to #1
+Those 3 case are described in the sequence diagram below:
+![Authentication flow sequence diagram](./authentication_sequence_diagram.png)

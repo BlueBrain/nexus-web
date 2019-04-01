@@ -7,6 +7,7 @@ import {
 } from 'redux';
 import thunk, { ThunkAction } from 'redux-thunk';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
+import { reducer as oidcReducer } from 'redux-oidc';
 import { History } from 'history';
 import Nexus from '@bbp/nexus-sdk';
 import reducers, { RootState } from './reducers';
@@ -40,7 +41,11 @@ export default function configureStore(
   preloadedState.lists = { ...loadState('lists') };
   const store = createStore(
     // @ts-ignore
-    combineReducers({ router: connectRouter(history), ...reducers }),
+    combineReducers({
+      router: connectRouter(history),
+      oidc: oidcReducer,
+      ...reducers,
+    }),
     preloadedState,
     composeEnhancers(
       applyMiddleware(
