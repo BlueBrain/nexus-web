@@ -3,7 +3,9 @@ import { CookieStorage } from 'cookie-storage';
 import { RootState } from '../shared/store/reducers';
 import { Realm } from '@bbp/nexus-sdk';
 
-const cookieStorage = new CookieStorage();
+const cookieStorage = new CookieStorage({
+  path: '/',
+});
 
 const getUserManager = (state: RootState): UserManager | undefined => {
   const {
