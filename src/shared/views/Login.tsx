@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import LoginBox, { Realm } from '../components/Login';
+import { Realm } from '@bbp/nexus-sdk';
+import LoginBox from '../components/Login';
 import { push } from 'connected-react-router';
 import getUserManager from '../../client/userManager';
 import { RootState } from '../store/reducers';
@@ -11,11 +12,17 @@ export interface LoginViewProps {
   realms: Realm[];
   redirect(): void;
   setPreferredRealm(name: string): void;
+  preferredRealm?: string;
   userManager?: UserManager;
 }
 
 const Login: React.FunctionComponent<LoginViewProps> = props => {
   const { realms, redirect } = props;
+  const defaultRealm: Realm =
+    realms.find(r => r.label === props.preferredRealm) || props.realms[0];
+
+  const [preferredRealm, setPreferredRealm] = React.useState(defaultRealm.name);
+
   if (realms.length === 0 || !realms) {
     redirect();
     return null;
@@ -23,21 +30,29 @@ const Login: React.FunctionComponent<LoginViewProps> = props => {
   return (
     <LoginBox
       realms={realms.map(r => r.name)}
+      selectedRealm={preferredRealm}
       onLogin={(e: React.SyntheticEvent) => {
         e.preventDefault();
+        props.setPreferredRealm(preferredRealm);
         props.userManager && props.userManager.signinRedirect();
       }}
-      onRealmSelected={(name: string) => props.setPreferredRealm(name)}
+      onRealmSelected={(name: string) => setPreferredRealm(name)}
     />
   );
 };
 
 const mapStateToProps = (state: RootState) => {
-  const { auth } = state;
+  const { auth, config } = state;
 
   return {
-    realms: (auth.realms && auth.realms.data && auth.realms.data.results) || [],
+    realms:
+      (auth.realms &&
+        auth.realms.data &&
+        auth.realms.data.results &&
+        auth.realms.data.results.filter(r => r.label !== 'serviceaccounts')) ||
+      [],
     userManager: getUserManager(state),
+    preferredRealm: config.preferredRealm || undefined,
   };
 };
 

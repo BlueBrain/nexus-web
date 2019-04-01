@@ -63,10 +63,19 @@ app.get('*', async (req: express.Request, res: express.Response) => {
   // Before we look for a cookie with a token
   // we need to figure out if the user has a preferred realm
   const preferredRealmCookie = req.cookies['nexus__realm'];
+  let nexusCookie;
+  let preferredRealmData: { realmKey?: string; label?: string } = {};
   let user = null;
   if (preferredRealmCookie) {
-    // Get token from Client's cookie 🍪
-    const nexusCookie = req.cookies[encodeURIComponent(preferredRealmCookie)];
+    try {
+      preferredRealmData = JSON.parse(preferredRealmCookie);
+      // Get token from Client's cookie 🍪
+      nexusCookie = preferredRealmData.realmKey
+        ? req.cookies[encodeURIComponent(preferredRealmData.realmKey)]
+        : undefined;
+    } catch (e) {
+      // TODO: sentry that stuff
+    }
     if (nexusCookie) {
       try {
         user = JSON.parse(nexusCookie);
@@ -98,6 +107,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       clientId: process.env.CLIENT_ID || 'nexus-web',
       redirectHostName: `${process.env.HOST_NAME ||
         `${req.protocol}://${req.headers.host}`}${base}`,
+      preferredRealm: preferredRealmData.label || undefined,
     },
     uiSettings: DEFAULT_UI_SETTINGS,
     oidc: {

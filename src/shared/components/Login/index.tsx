@@ -5,23 +5,20 @@ import './Login.less';
 
 const logo = require('../../logo.svg');
 
-export type Realm = {
-  name: string;
-  authorizationEndpoint: string;
-};
-
 export interface LoginProps {
   realms: string[];
+  selectedRealm?: string;
   onLogin?(e: React.SyntheticEvent): void;
   onRealmSelected?(name: string): void;
 }
 
 const Login: React.FunctionComponent<LoginProps> = ({
   realms,
+  selectedRealm,
   onLogin = () => {},
   onRealmSelected = () => {},
 }) => {
-  const [realm, setRealm] = React.useState(realms[0]);
+  const [realm, setRealm] = React.useState(selectedRealm || realms[0]);
 
   const menu = (
     <Menu

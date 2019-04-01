@@ -19,18 +19,25 @@ function setPreferredRealm(name: string) {
       auth: { realms },
       config: { clientId },
     } = getState();
-    let realmClientId = '';
+    let preferredRealmData = {
+      label: '',
+      realmKey: '',
+    };
     if (realms && realms.data && realms.data.results) {
       // find matching realm
       const realm = realms.data.results.find(realm => realm.name === name);
       if (realm) {
-        realmClientId = `${realm.issuer}:${clientId}`;
+        preferredRealmData = {
+          label: realm.label,
+          realmKey: `${realm.issuer}:${clientId}`,
+        };
       }
     }
-    const realmKey = `nexus__user:${realmClientId}`;
-    cookieStorage.setItem('nexus__realm', realmKey);
+    // append config key
+    preferredRealmData.realmKey = `nexus__user:${preferredRealmData.realmKey}`;
+    cookieStorage.setItem('nexus__realm', JSON.stringify(preferredRealmData));
     return dispatch({
-      name: realmKey,
+      name,
       type: '@@nexus/CONFIG_SET_REALM',
     });
   };
