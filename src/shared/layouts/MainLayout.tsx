@@ -13,9 +13,9 @@ import { Realm } from '@bbp/nexus-sdk';
 import { getLogoutUrl } from '../utils';
 
 const favicon = require('../favicon.png');
-const TITLE = 'A knowledge graph for data-driven science';
-const DESCRIPTION =
-  'Nexus - Transform your data into a fully searchable linked-data graph';
+const TITLE =
+  'Search | Blue Brain Project | The searchable neuroscience knowledge graph';
+const DESCRIPTION = 'Search for neuroscience datasets';
 
 export interface MainLayoutProps {
   authenticated: boolean;
