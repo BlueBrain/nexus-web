@@ -45,6 +45,7 @@ const getUserManager = (state: RootState): UserManager | undefined => {
     post_logout_redirect_uri: redirectHostName,
     automaticSilentRenew: false,
     silent_redirect_uri: `${redirectHostName}/silent_refresh`,
+    ...realm,
   });
 };
 
