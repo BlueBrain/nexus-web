@@ -2,7 +2,7 @@ FROM node:10-alpine as builder
 
 WORKDIR /tmp/nexus-web
 COPY . /tmp/nexus-web
-# use of --max-old-space tp prevent `JavaScript heap out of memory` on docker-hub
+# use of --max-old-space to prevent `JavaScript heap out of memory` on docker-hub
 RUN npm ci && node --max-old-space-size=4096 `which npm` run build
 
 FROM node:10-alpine
