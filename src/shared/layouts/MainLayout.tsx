@@ -17,9 +17,9 @@ import { UserManager } from 'oidc-client';
 import { RootState } from '../store/reducers';
 
 const favicon = require('../favicon.png');
-const TITLE =
-  'Search | Blue Brain Project | The searchable neuroscience knowledge graph';
-const DESCRIPTION = 'Search for neuroscience datasets';
+const TITLE = 'A knowledge graph for data-driven science';
+const DESCRIPTION =
+  'Nexus - Transform your data into a fully searchable linked-data graph';
 
 export interface MainLayoutProps {
   authenticated: boolean;
