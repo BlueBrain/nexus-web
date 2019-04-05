@@ -5,7 +5,7 @@ export const loadState = (path: string) => {
     return;
   }
   try {
-    const serializedState = localStorage.getItem('state');
+    const serializedState = localStorage.getItem('nexus__state');
     if (serializedState === null) {
       return undefined;
     }
@@ -21,7 +21,7 @@ export const saveState = (state: any) => {
   }
   try {
     const serializedState = JSON.stringify(state);
-    localStorage.setItem('state', serializedState);
+    localStorage.setItem('nexus__state', serializedState);
   } catch (err) {
     // ignore write errors
   }
