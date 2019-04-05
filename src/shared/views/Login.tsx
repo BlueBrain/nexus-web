@@ -49,7 +49,9 @@ const mapStateToProps = (state: RootState) => {
       (auth.realms &&
         auth.realms.data &&
         auth.realms.data.results &&
-        auth.realms.data.results.filter(r => r.label !== 'serviceaccounts')) ||
+        auth.realms.data.results.filter(
+          r => r.label !== 'serviceaccounts' && !r.deprecated
+        )) ||
       [],
     userManager: getUserManager(state),
     preferredRealm: config.preferredRealm || undefined,

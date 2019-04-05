@@ -169,7 +169,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
 };
 
 const mapStateToProps = (state: RootState) => ({
-  authenticated: state.auth.authenticated,
+  authenticated: !!state.oidc.user,
   project:
     (state.nexus &&
       state.nexus.activeProject &&
