@@ -18,6 +18,7 @@ const Lists: React.FunctionComponent<ListProps> = ({
   project,
   getFilePreview,
 }) => {
+  console.log('receiving', lists);
   const { label: projectLabel, orgLabel } = project;
   const orgProjectFilterKey = orgLabel + projectLabel;
   const projectLists: List[] = lists;
