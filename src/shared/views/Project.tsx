@@ -63,37 +63,28 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   }, [match.params.project, match.params.org]);
 
   let description;
+  let more;
   if (error) {
     switch (error.code) {
       case HTTP_STATUSES[HTTP_STATUS_TYPE_KEYS.UNAUTHORIZED].code:
-        description = (
-          <div>
-            <p>This project is protected.</p>
-            {!authenticated && (
-              <Button onClick={onLoginClick}>Try logging in?</Button>
-            )}
-          </div>
+        description = <span>This project is protected.</span>;
+        more = !authenticated && (
+          <Button onClick={onLoginClick}>Try logging in?</Button>
         );
         break;
       case HTTP_STATUSES[HTTP_STATUS_TYPE_KEYS.FORBIDDEN].code:
-        description = (
-          <div>
-            <p>Sorry, you don't have access to this project</p>
-            {!authenticated && (
-              <Button onClick={onLoginClick}>Try logging in?</Button>
-            )}
-          </div>
+        description = <span>Sorry, you don't have access to this project</span>;
+        more = !authenticated && (
+          <Button onClick={onLoginClick}>Try logging in?</Button>
         );
         break;
       case HTTP_STATUSES[HTTP_STATUS_TYPE_KEYS.NOT_FOUND].code:
-        description = (
-          <div>
-            <p>This project doesn't exist</p>
-          </div>
-        );
+        description = <span>This project doesn't exist</span>;
         break;
       default:
-        description = <p>There was a problem while loading this project!</p>;
+        description = (
+          <span>There was a problem while loading this project!</span>
+        );
     }
   }
 
@@ -111,7 +102,9 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
             <h1 style={{ marginBottom: 0, marginRight: 8 }}>
               {match.params.project}
             </h1>
-            <Empty style={{ marginTop: '22vh' }} description={description} />
+            <Empty style={{ marginTop: '22vh' }} description={description}>
+              {more}
+            </Empty>
           </>
         )}
         {project && (
