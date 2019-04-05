@@ -39,6 +39,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
 }) => {
   const handleLogout = (e: React.SyntheticEvent) => {
     e.preventDefault();
+    localStorage.removeItem('nexus__state');
     userManager && userManager.signoutRedirect();
   };
   return (

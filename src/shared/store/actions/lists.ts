@@ -1,7 +1,7 @@
 import { ActionCreator, Action, Dispatch } from 'redux';
 import { List } from '../reducers/lists';
-import { ThunkAction } from '..';
 import { FilterPayloadAction, FilterAction, PayloadAction } from './utils';
+import { uuidv4 } from '../../utils';
 
 export const listActionPrefix = 'LIST';
 
@@ -13,6 +13,10 @@ export enum ListActionTypes {
   CHANGE_INDEX = 'LIST_CHANGE_INDEX',
 }
 
+type CreateListAction = FilterPayloadAction<
+  ListActionTypes.CREATE,
+  { id: string }
+>;
 type DeleteListAction = FilterPayloadAction<
   ListActionTypes.DELETE,
   { listIndex: number }
@@ -31,7 +35,7 @@ type ChangeListIndexAction = FilterPayloadAction<
 >;
 
 export type ListActions =
-  | FilterAction<ListActionTypes.CREATE>
+  | CreateListAction
   | DeleteListAction
   | UpdateListAction
   | CloneListAction
@@ -45,10 +49,11 @@ export const actionTypes = {
   CHANGE_INDEX: ListActionTypes.CHANGE_INDEX,
 };
 
-export const createList: ActionCreator<FilterAction<ListActionTypes.CREATE>> = (
+export const createList: ActionCreator<CreateListAction> = (
   filterKey: string
 ) => ({
   filterKey,
+  payload: { id: uuidv4() },
   type: ListActionTypes.CREATE,
 });
 
@@ -99,7 +104,7 @@ export enum ListsByProjectTypes {
 
 type InitializeProjectList = PayloadAction<
   ListsByProjectTypes.INITIALIZE_PROJECT_LIST,
-  { orgAndProjectLabel: string }
+  { orgAndProjectLabel: string; id: string }
 >;
 
 export type ProjectListActions = InitializeProjectList;
@@ -108,6 +113,6 @@ export const initializeProjectList: ActionCreator<InitializeProjectList> = (
   orgLabel: string,
   projectLabel: string
 ) => ({
-  payload: { orgAndProjectLabel: orgLabel + projectLabel },
+  payload: { orgAndProjectLabel: orgLabel + projectLabel, id: uuidv4() },
   type: ListsByProjectTypes.INITIALIZE_PROJECT_LIST,
 });

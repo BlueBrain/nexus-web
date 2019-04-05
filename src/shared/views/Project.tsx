@@ -7,7 +7,7 @@ import { fetchOrg } from '../store/actions/nexus/activeOrg';
 import { Empty, Switch, Icon, Tooltip, Button } from 'antd';
 import Menu from '../components/Workspace/Menu';
 import { createList, initializeProjectList } from '../store/actions/lists';
-import { ListsByProjectState } from '../store/reducers/lists';
+import { List } from '../store/reducers/lists';
 import { Project, Resource, NexusFile } from '@bbp/nexus-sdk';
 import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
 import { createFile } from '../store/actions/nexus/files';
@@ -23,7 +23,7 @@ interface ProjectViewProps {
   project: Project | null;
   error: RequestError | null;
   match: any;
-  lists: ListsByProjectState;
+  lists: List[];
   createList(orgProjectFilterKey: string): void;
   initialize(orgLabel: string, projectLabel: string): void;
   createResource(
@@ -168,26 +168,39 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState) => ({
-  authenticated: !!state.oidc.user,
-  project:
+const mapStateToProps = (state: RootState) => {
+  const orgData =
+    state.nexus && state.nexus.activeOrg && state.nexus.activeOrg.data;
+  const projectData =
     (state.nexus &&
       state.nexus.activeProject &&
-      state.nexus.activeProject.data &&
       state.nexus.activeProject.data) ||
-    null,
-  isFetching:
-    (state.nexus &&
-      state.nexus.activeProject &&
-      state.nexus.activeProject.isFetching) ||
-    true,
-  error:
-    (state.nexus &&
-      state.nexus.activeProject &&
-      state.nexus.activeProject.error) ||
-    null,
-  lists: state.lists || {},
-});
+    null;
+
+  const orgLabel = (orgData && orgData.org.label) || '';
+  const projectLabel = (projectData && projectData.label) || '';
+  const activeListId =
+    (state.lists &&
+      Object.keys(state.lists).find(key => key === orgLabel + projectLabel)) ||
+    '';
+
+  return {
+    authenticated: !!state.oidc.user,
+    project: projectData || null,
+    isFetching:
+      (state.nexus &&
+        state.nexus.activeProject &&
+        state.nexus.activeProject.isFetching) ||
+      true,
+    error:
+      (state.nexus &&
+        state.nexus.activeProject &&
+        state.nexus.activeProject.error) ||
+      null,
+    lists: (state.lists && state.lists[activeListId]) || [],
+  };
+};
+
 const mapDispatchToProps = (dispatch: any, ownProps: any) => {
   return {
     getFilePreview: (selfUrl: string) => NexusFile.getSelf(selfUrl, true),

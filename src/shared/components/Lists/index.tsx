@@ -1,13 +1,12 @@
 import * as React from 'react';
 import './Lists.less';
-import { uuidv4 } from '../../utils';
-import { List, ListsByProjectState } from '../../store/reducers/lists';
+import { List } from '../../store/reducers/lists';
 import ListItem from './ListItem';
 import { Empty } from 'antd';
 import { Project, NexusFile } from '@bbp/nexus-sdk';
 
 interface ListProps {
-  lists: ListsByProjectState;
+  lists: List[];
   project: Project;
   getFilePreview: (selfUrl: string) => Promise<NexusFile>;
   initialize: () => void;
@@ -21,9 +20,10 @@ const Lists: React.FunctionComponent<ListProps> = ({
 }) => {
   const { label: projectLabel, orgLabel } = project;
   const orgProjectFilterKey = orgLabel + projectLabel;
-  const projectLists: List[] = lists[orgProjectFilterKey];
+  const projectLists: List[] = lists;
+
   React.useEffect(() => {
-    if (!projectLists) {
+    if (projectLists.length === 0) {
       initialize();
     }
   });
@@ -38,7 +38,7 @@ const Lists: React.FunctionComponent<ListProps> = ({
         return (
           <li
             className="list"
-            key={uuidv4()}
+            key={list.id}
             style={{ opacity: 1, width: '300px' }}
           >
             <ListItem

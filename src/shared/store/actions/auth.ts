@@ -167,11 +167,4 @@ function fetchRealms() {
   };
 }
 
-const setAuthenticated = (
-  isAuthenticated: boolean
-): SetAuthenticatedAction => ({
-  type: 'SET_AUTHENTICATED',
-  payload: isAuthenticated,
-});
-
-export { setAuthenticated, fetchAcls, fetchIdentities, fetchRealms };
+export { fetchAcls, fetchIdentities, fetchRealms };

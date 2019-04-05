@@ -7,7 +7,7 @@ import {
   ProjectListActions,
   listActionPrefix,
 } from '../actions/lists';
-import { moveTo } from '../../utils';
+import { moveTo, uuidv4 } from '../../utils';
 import {
   createByKey,
   createByIndex,
@@ -24,6 +24,7 @@ const DEFAULT_VIEW = 'nxv:defaultElasticSearchIndex';
 export interface List {
   name: string;
   view: string;
+  id: string;
   query: {
     filters: {
       [filterKey: string]: string[];
@@ -38,15 +39,16 @@ export interface List {
   }>;
 }
 
-// serialize / deserialze to URL param
+// serialize / de-serialise to URL param
 // maybe with middleware?
-// when something inside lists changes (inisde query, the input)
-// then we should update the URL with a serialied array of queries
+// when something inside lists changes (inside query, the input)
+// then we should update the URL with a serialised array of queries
 export type ListState = List[];
 
 const DEFAULT_LIST: List = {
   name: 'Default Query',
   view: DEFAULT_VIEW,
+  id: uuidv4(),
   query: {
     filters: {},
   },
@@ -77,6 +79,7 @@ export function listsReducer(
       const newList = {
         ...DEFAULT_LIST,
         name: `New Query ${state.length + 1}`,
+        id: action.payload.id,
       };
       return [...state, newList];
     case ListActionTypes.DELETE:
