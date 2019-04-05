@@ -7,7 +7,6 @@ describe('Auth Reducer', () => {
       expect(
         authReducer(undefined, { type: AuthActionTypes.ACL_FETCHING })
       ).toEqual({
-        authenticated: false,
         acls: {
           isFetching: true,
           data: null,
@@ -22,7 +21,6 @@ describe('Auth Reducer', () => {
           payload: { total: 10, index: 0, results: [] },
         })
       ).toEqual({
-        authenticated: false,
         acls: {
           isFetching: false,
           data: { total: 10, index: 0, results: [] },
@@ -37,7 +35,6 @@ describe('Auth Reducer', () => {
           error: new Error('this is awful'),
         })
       ).toEqual({
-        authenticated: false,
         acls: {
           isFetching: false,
           data: null,
@@ -51,7 +48,6 @@ describe('Auth Reducer', () => {
       expect(
         authReducer(undefined, { type: AuthActionTypes.IDENTITY_FETCHING })
       ).toEqual({
-        authenticated: false,
         identities: {
           isFetching: true,
           data: [],
@@ -66,7 +62,6 @@ describe('Auth Reducer', () => {
           payload: [{ '@type': 'Anonymous', '@id': 'http://anomymous.com' }],
         })
       ).toEqual({
-        authenticated: false,
         identities: {
           isFetching: false,
           data: [
@@ -86,7 +81,6 @@ describe('Auth Reducer', () => {
           error: new SyntaxError('this is bad'),
         })
       ).toEqual({
-        authenticated: false,
         identities: {
           isFetching: false,
           data: [],
@@ -96,7 +90,6 @@ describe('Auth Reducer', () => {
     });
     it('should return an identity error and keep previous state data', () => {
       const initState = {
-        authenticated: false,
         identities: {
           isFetching: false,
           data: [
@@ -115,7 +108,6 @@ describe('Auth Reducer', () => {
           error: new SyntaxError('this is bad'),
         })
       ).toEqual({
-        authenticated: false,
         identities: {
           isFetching: false,
           data: initState.identities.data,
