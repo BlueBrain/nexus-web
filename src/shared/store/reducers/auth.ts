@@ -4,21 +4,12 @@ import { createFetchReducer, FetchableState } from './utils';
 import { PaginatedList, ACL, Realm } from '@bbp/nexus-sdk';
 
 export interface AuthState {
-  authenticated: boolean;
   identities?: FetchableState<Identity[]>;
   acls?: FetchableState<PaginatedList<ACL>>;
   realms?: FetchableState<PaginatedList<Realm>>;
-  tokenData?: object;
-  clientId?: string;
-  accessToken?: string;
-  authorizationEndpoint?: string;
-  endSessionEndpoint?: string;
-  redirectHostName?: string;
 }
 
-const initialState: AuthState = {
-  authenticated: false,
-};
+const initialState: AuthState = {};
 
 const aclsReducer = createFetchReducer({
   FETCHING: AuthActionTypes.ACL_FETCHING,
@@ -46,9 +37,9 @@ function authReducer(
   state: AuthState = initialState,
   action: AuthActions
 ): AuthState {
-  if (action.type === 'SET_AUTHENTICATED') {
-    return { ...state, authenticated: action.payload };
-  }
+  // if (action.type === 'SET_AUTHENTICATED') {
+  //   return { ...state, authenticated: action.payload };
+  // }
   if (action.type.startsWith('@@nexus/AUTH_ACL_')) {
     return {
       ...state,

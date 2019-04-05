@@ -4,7 +4,6 @@ import Helmet from 'react-helmet';
 import { push } from 'connected-react-router';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { AuthState } from '../store/reducers/auth';
 import getUserManager from '../../client/userManager';
 import { version, url as githubIssueURL } from '../../../package.json';
 
@@ -12,7 +11,6 @@ import './MainLayout.less';
 import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
 import { Realm } from '@bbp/nexus-sdk';
 import { getLogoutUrl } from '../utils';
-import { UserState } from 'redux-oidc';
 import { UserManager } from 'oidc-client';
 import { RootState } from '../store/reducers';
 
@@ -24,8 +22,6 @@ const DESCRIPTION =
 export interface MainLayoutProps {
   authenticated: boolean;
   token?: string;
-  logoutUrl: string;
-  hostName: string;
   goTo(url: string): void;
   name: string;
   canLogin?: boolean;
@@ -36,8 +32,6 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
   authenticated,
   token,
   goTo,
-  logoutUrl,
-  hostName,
   name,
   children,
   canLogin = false,
@@ -71,10 +65,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
         name={authenticated ? name : undefined}
         token={token}
         links={[
-          <a
-            href={`${logoutUrl}?redirect_uri=${hostName}/authLogout`}
-            onClick={handleLogout}
-          >
+          <a href="" onClick={handleLogout}>
             log out
           </a>,
         ]}
@@ -100,7 +91,6 @@ const mapStateToProps = (state: RootState) => {
     token: oidc.user && oidc.user.access_token,
     name:
       (oidc.user && oidc.user.profile && oidc.user.profile.name) || 'anonymous',
-    hostName: auth.redirectHostName || '',
     logoutUrl: getLogoutUrl(identities, realms),
     canLogin: !!(realms.length > 0),
     userManager: getUserManager(state),

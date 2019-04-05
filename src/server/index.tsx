@@ -94,13 +94,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
 
   // Compute pre-loaded state
   const preloadedState: RootState = {
-    auth: {
-      accessToken: '',
-      tokenData: {},
-      authenticated: false,
-      clientId: '',
-      redirectHostName: '',
-    },
+    auth: {},
     config: {
       apiEndpoint: process.env.API_ENDPOINT || '/',
       basePath: base,
