@@ -46,10 +46,21 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
     fetchResource,
   } = props;
   const [busy, setFormBusy] = React.useState(isFetching);
+  const [expanded, setExpanded] = React.useState(false);
+
+  React.useEffect(() => {
+    if (resource && expanded && !resource.expanded) {
+      fetchResource(expanded);
+    }
+  }, [expanded]);
 
   // TODO move NexusFileType constant to sdk
   const isFile =
     resource && resource.type && resource.type.includes(NEXUS_FILE_TYPE);
+
+  const handleFormatChange = () => {
+    setExpanded(!expanded);
+  };
 
   const handleSubmit = async (value: any) => {
     if (resource) {
@@ -91,9 +102,14 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
             <Tabs defaultActiveKey="1">
               <TabPane tab="JSON" key="1">
                 <ResourceEditor
+                  expanded={expanded}
                   editable={!(isFile || resource.expanded)}
-                  rawData={resource.expanded || resource.raw}
-                  onFormatChange={fetchResource}
+                  rawData={
+                    expanded && resource.expanded
+                      ? resource.expanded
+                      : resource.raw
+                  }
+                  onFormatChange={handleFormatChange}
                   onSubmit={handleSubmit}
                 />
               </TabPane>
