@@ -15,10 +15,17 @@ export interface ResourceEditorProps {
   onFormatChange?(expanded: boolean): void;
   editable: boolean;
   editing?: boolean;
+  expanded?: boolean;
 }
 
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
-  const { rawData, onSubmit, editable, editing = false } = props;
+  const {
+    rawData,
+    onSubmit,
+    editable,
+    editing = false,
+    expanded = false,
+  } = props;
   const [isEditing, setEditing] = React.useState(editing);
   const [valid, setValid] = React.useState(true);
   const [value, setValue] = React.useState(rawData);
@@ -74,6 +81,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             <Switch
               checkedChildren="expanded"
               unCheckedChildren="expand"
+              checked={expanded}
               onChange={props.onFormatChange}
             />
           )}
