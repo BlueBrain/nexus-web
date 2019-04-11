@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Popover, Avatar, notification } from 'antd';
+import { Popover, Avatar, notification, Card } from 'antd';
 import './Resources.less';
 import { Resource, NexusFile } from '@bbp/nexus-sdk';
+import useNexusFile from '../hooks/useNexusFile';
 
 const MOUSE_ENTER_DELAY = 0.5;
 
@@ -25,27 +26,10 @@ const ResourcePreview: React.FunctionComponent<
   ResourcePreviewProps
 > = props => {
   const { resource, getFilePreview } = props;
-  const [file, setFile] = React.useState<NexusFile | null>(null);
-
-  if (!file) {
-    // TODO: Refactor after ES Lists are fetched by Type
-    getFilePreview(resource.self)
-      .then((nexusFile: NexusFile) => {
-        setFile(nexusFile);
-      })
-      .catch((error: Error) => {
-        notification.error({
-          message: 'A file loading error occured',
-          description: error.message,
-          duration: 0,
-        });
-        // tslint:disable-next-line:no-console
-        console.error(error);
-      });
-  }
+  const file = useNexusFile(resource, hasDisplayableImage, getFilePreview);
 
   return (
-    <Popover content={'hello'} mouseEnterDelay={MOUSE_ENTER_DELAY}>
+    <>
       {file ? (
         <Avatar
           shape="square"
@@ -54,7 +38,7 @@ const ResourcePreview: React.FunctionComponent<
       ) : (
         <Avatar shape="square" icon="picture" />
       )}
-    </Popover>
+    </>
   );
 };
 
