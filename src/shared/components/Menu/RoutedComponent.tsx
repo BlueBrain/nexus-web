@@ -16,8 +16,7 @@ const RoutedComponent: React.FunctionComponent<RoutedComponentProps> = ({
   routes,
 }) => {
   const [currentRoute, setCurrentRoute] = React.useState('/');
-  // @ts-ignore
-  const [{ ref }, { height }] = useMeasure();
+  const [bind, bounds] = useMeasure();
 
   const pages = routes.map(
     route => ({ style, reference }: { style: any; reference: any }) => (
@@ -42,12 +41,15 @@ const RoutedComponent: React.FunctionComponent<RoutedComponentProps> = ({
   });
   return (
     <div className="routed-component">
-      <div className="route-container" style={{ height }}>
+      <div
+        className="route-container"
+        style={bounds && { height: bounds.height }}
+      >
         {transitions.map(({ item, props, key }) => {
           const Page = pages[item];
           return (
             <Page
-              reference={ref}
+              reference={bind && bind.ref}
               key={key}
               style={{ ...props, width: '100%' }}
             />
