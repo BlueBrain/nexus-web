@@ -13,6 +13,7 @@ import { Realm } from '@bbp/nexus-sdk';
 import { getLogoutUrl } from '../utils';
 import { UserManager } from 'oidc-client';
 import { RootState } from '../store/reducers';
+import WorkspaceSelectorContainer from '../components/Header/WorkspaceSelectorMenu/WorkspaceSelectorContainer';
 
 const favicon = require('../favicon.png');
 const TITLE = 'A knowledge graph for data-driven science';
@@ -72,7 +73,9 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
         ]}
         displayLogin={canLogin}
         onLoginClick={() => goTo('/login')}
-      />
+      >
+        <WorkspaceSelectorContainer />
+      </Header>
       <div className="MainLayout_body">{children}</div>
       <div>
         <Footer version={version} githubIssueURL={githubIssueURL} />

@@ -1,15 +1,26 @@
 import * as React from 'react';
-import { Button } from 'antd';
-import './Header.less';
+import { Button, Popover } from 'antd';
+import { WorkspaceSelectorContainerProps } from './workspaceSelectorContainer';
+import { Organization, Project } from '@bbp/nexus-sdk';
 
-export interface WorkspaceSelectorMenuButtonProps {
-}
+const getButtonLabel = (
+  activeOrg: Organization | null,
+  activeProject: Project | null
+) => (activeProject ? activeProject.label : 'Projects');
 
-const WorkspaceSelectorMenuButton: React.FunctionComponent<WorkspaceSelectorMenuButtonProps> = ({
-}) => {
+export interface WorkspaceSelectorMenuButtonProps
+  extends WorkspaceSelectorContainerProps {}
 
-  return (
-  );
-};
+const WorkspaceSelectorMenuButton: React.FunctionComponent<
+  WorkspaceSelectorMenuButtonProps
+> = ({ activeOrg, activeProject }) => (
+  <Popover
+    placement="bottomLeft"
+    content={<h1>Hello World</h1>}
+    trigger="click"
+  >
+    <Button>{getButtonLabel(activeOrg, activeProject)}</Button>
+  </Popover>
+);
 
 export default WorkspaceSelectorMenuButton;
