@@ -80,3 +80,5 @@ export const fetchOrg: ActionCreator<ThunkAction> = (
     }
   };
 };
+
+export const assignOrgAndFetchOrgProjects = fetchOrg;

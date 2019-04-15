@@ -9,6 +9,7 @@ import {
   PaginatedList,
 } from '@bbp/nexus-sdk';
 import { fetchOrgs } from '../../../store/actions/nexus/orgs';
+import { assignOrgAndFetchOrgProjects } from '../../../store/actions/nexus/activeOrg';
 import { FetchableState } from '../../../store/reducers/utils';
 
 export interface WorkspaceSelectorContainerProps {
@@ -26,7 +27,7 @@ const WorkspaceSelectorContainer: React.FunctionComponent<
 > = ({ children, ...props }) => <WorkspaceSelectorMenuButton {...props} />;
 
 const mapStateToProps = (state: RootState) => ({
-  displayPerPage: state.uiSettings.pageSizes.projectsListPageSize,
+  displayPerPage: state.uiSettings.pageSizes.workspaceSelectorMenuSize,
   orgs: (state.nexus && state.nexus.orgs) || {
     isFetching: false,
     data: null,
@@ -49,7 +50,8 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = (dispatch: any) => ({
   fetchOrgs: (paginationSettings?: PaginationSettings) =>
     dispatch(fetchOrgs(paginationSettings)),
-  selectOrg: (orgLabel: string) => {},
+  selectOrg: (orgLabel: string) =>
+    dispatch(assignOrgAndFetchOrgProjects(orgLabel)),
   selectProject: (orgLabel: string) => {},
 });
 

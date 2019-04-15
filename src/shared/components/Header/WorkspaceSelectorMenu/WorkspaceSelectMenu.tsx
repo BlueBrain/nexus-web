@@ -12,7 +12,14 @@ export interface WorkspaceSelectorMenuProps
 const WorkspaceSelectorMenu: React.FunctionComponent<
   WorkspaceSelectorMenuProps
 > = props => {
-  const { activeOrg, activeProject, orgs, fetchOrgs, displayPerPage } = props;
+  const {
+    activeOrg,
+    activeProject,
+    orgs,
+    fetchOrgs,
+    displayPerPage,
+    selectOrg,
+  } = props;
   const next = () => {
     fetchOrgs({
       size: displayPerPage,
@@ -26,28 +33,27 @@ const WorkspaceSelectorMenu: React.FunctionComponent<
           {
             path: '/',
             component: (path, goTo) => {
-              // const handleClick = (race: string) => () => {
-              //   setRace(race);
-              //   goTo('/class');
-              // };
+              const handleClick = (orgLabel: string) => {
+                selectOrg(orgLabel);
+                goTo('/projects');
+              };
               return (
                 <div>
                   <h3>Select an Org</h3>
                   <InfiniteScroll
                     loadNextPage={next}
                     fetchablePaginatedList={orgs}
-                    makeKey={({ label, description }, index) =>
-                      `${label}-${index}`
-                    }
+                    makeKey={({ label, description }, index) => label}
                     itemComponent={(
                       { label, description }: any,
                       index: number
                     ) => {
                       return (
                         <ListItem
+                          onClick={handleClick}
                           label={label}
                           description={description}
-                          id={`${label}-${index}`}
+                          id={label}
                         />
                       );
                     }}
@@ -57,7 +63,7 @@ const WorkspaceSelectorMenu: React.FunctionComponent<
             },
           },
           {
-            path: '/project',
+            path: '/projects',
             component: (path, goTo) => {
               // const handleClick = (characterCass: string) => () => {
               //   setCharacterClass(characterCass);

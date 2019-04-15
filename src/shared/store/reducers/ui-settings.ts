@@ -6,6 +6,7 @@ import { AnyAction } from 'redux';
 
 export const DEFAULT_UI_SETTINGS = {
   pageSizes: {
+    workspaceSelectorMenuSize: 10,
     orgsListPageSize: 5,
     projectsListPageSize: 5,
     resourcesListPageSize: 20,
