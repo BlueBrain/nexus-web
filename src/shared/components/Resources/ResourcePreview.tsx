@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Popover, Avatar, notification, Card } from 'antd';
+import { Avatar } from 'antd';
 import './Resources.less';
 import { Resource, NexusFile } from '@bbp/nexus-sdk';
 import useNexusFile from '../hooks/useNexusFile';
