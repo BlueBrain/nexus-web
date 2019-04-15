@@ -37,7 +37,7 @@ function setPreferredRealm(name: string) {
     preferredRealmData.realmKey = `nexus__user:${preferredRealmData.realmKey}`;
     cookieStorage.setItem('nexus__realm', JSON.stringify(preferredRealmData));
     return dispatch({
-      name,
+      name: preferredRealmData.label,
       type: '@@nexus/CONFIG_SET_REALM',
     });
   };
