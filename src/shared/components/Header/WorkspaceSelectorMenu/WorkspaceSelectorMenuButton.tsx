@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Button, Popover } from 'antd';
 import { WorkspaceSelectorContainerProps } from './workspaceSelectorContainer';
 import { Organization, Project } from '@bbp/nexus-sdk';
+import WorkspaceSelectorMenu from './WorkspaceSelectMenu';
 
 const getButtonLabel = (
   activeOrg: Organization | null,
@@ -13,14 +14,17 @@ export interface WorkspaceSelectorMenuButtonProps
 
 const WorkspaceSelectorMenuButton: React.FunctionComponent<
   WorkspaceSelectorMenuButtonProps
-> = ({ activeOrg, activeProject }) => (
-  <Popover
-    placement="bottomLeft"
-    content={<h1>Hello World</h1>}
-    trigger="click"
-  >
-    <Button>{getButtonLabel(activeOrg, activeProject)}</Button>
-  </Popover>
-);
+> = props => {
+  const { activeOrg, activeProject } = props;
+  return (
+    <Popover
+      placement="bottomLeft"
+      content={<WorkspaceSelectorMenu {...props} />}
+      trigger="click"
+    >
+      <Button>{getButtonLabel(activeOrg, activeProject)}</Button>
+    </Popover>
+  );
+};
 
 export default WorkspaceSelectorMenuButton;
