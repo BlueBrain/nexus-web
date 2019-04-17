@@ -1,4 +1,5 @@
 import { ActionCreator, Action, Dispatch } from 'redux';
+import { Organization, Project, Resource } from '@bbp/nexus-sdk';
 import { List } from '../reducers/lists';
 import { FilterPayloadAction, FilterAction, PayloadAction } from './utils';
 import { uuidv4 } from '../../utils';
@@ -96,7 +97,9 @@ export const changeIndex: ActionCreator<ChangeListIndexAction> = (
   payload: { listIndex, moveToIndex },
 });
 
-// Project List
+// This makes a nice unique key that we can use to segregate project spaces
+export const makeOrgProjectFilterKey = (org: Organization, project: Project) =>
+  `${org.id}-${project.id}`;
 
 export enum ListsByProjectTypes {
   INITIALIZE_PROJECT_LIST = 'INITIALIZE_PROJECT_LIST',
@@ -110,9 +113,8 @@ type InitializeProjectList = PayloadAction<
 export type ProjectListActions = InitializeProjectList;
 
 export const initializeProjectList: ActionCreator<InitializeProjectList> = (
-  orgLabel: string,
-  projectLabel: string
+  orgProjectFilterKey: string
 ) => ({
-  payload: { orgAndProjectLabel: orgLabel + projectLabel, id: uuidv4() },
+  payload: { orgAndProjectLabel: orgProjectFilterKey, id: uuidv4() },
   type: ListsByProjectTypes.INITIALIZE_PROJECT_LIST,
 });

@@ -31,11 +31,10 @@ export interface List {
     };
     textQuery?: string;
   };
-  request: FetchableState<{
+  results: FetchableState<{
     resources: PaginatedList<Resource>;
-    paginationSettings: PaginationSettings;
-    _constrainedBy: any[];
-    '@type': any[];
+    schemas: string[];
+    types: string[];
   }>;
 }
 
@@ -52,7 +51,7 @@ const DEFAULT_LIST: List = {
   query: {
     filters: {},
   },
-  request: {
+  results: {
     isFetching: false,
     data: null,
     error: null,
@@ -64,7 +63,7 @@ const initialState: ListState = [DEFAULT_LIST]; // Get Initial State from URL or
 const queryReducerByIndex = createByIndex(
   action => action.hasOwnProperty('filterIndex'),
   (action: { filterIndex: number }) => action.filterIndex
-)(combineReducers({ request: createFetchReducer(actionTypes) }));
+)(combineReducers({ results: createFetchReducer(actionTypes) }));
 
 export function listsReducer(
   state: ListState = initialState,
@@ -144,13 +143,14 @@ export default function listsByProjectReducer(
   }
 }
 
+// this is to keep the list settings in the browser via local storage without
+// saving the results of "resources" which is the requested data cached
 export const persistanceMapper = (lists: ListsByProjectState) => {
   Object.keys({ ...lists }).map(filterKey => {
-    lists[filterKey].map(list => ({
+    return lists[filterKey].map(list => ({
       ...list,
-      request: DEFAULT_LIST.request,
+      results: DEFAULT_LIST.results,
     }));
-    return lists[filterKey];
   });
   return lists;
 };

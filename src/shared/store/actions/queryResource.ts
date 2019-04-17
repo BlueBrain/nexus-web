@@ -10,11 +10,15 @@ import {
 } from '@bbp/nexus-sdk';
 import { ThunkAction } from '..';
 import { RootState } from '../reducers';
-import { updateList } from './lists';
+import { updateList, makeOrgProjectFilterKey } from './lists';
 import {
   ElasticSearchViewAggregationResponse,
   ElasticSearchViewQueryResponse,
 } from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
+import { FetchableState } from '../reducers/utils';
+import { List } from '../reducers/lists';
+import { getProject } from '@bbp/nexus-sdk/lib/Project/utils';
+import { isNumber } from 'util';
 
 export const queryResourcesActionPrefix = 'QUERY';
 
@@ -63,17 +67,15 @@ const queryResourcesFetchAction: ActionCreator<FetchQueryAction> = (
 
 interface QueryResourcesFulfilledPayload {
   resources: PaginatedList<Resource>;
-  paginationSettings: PaginationSettings;
-  _constrainedBy: any[];
-  '@type': any[];
+  schemas: string[];
+  types: string[];
 }
 
 const queryResourcesFulfilledAction: ActionCreator<FulfilledQueryAction> = (
   filterIndex: number,
   filterKey: string,
   resources: PaginatedList<Resource>,
-  paginationSettings: PaginationSettings,
-  constrainedBy: any[],
+  schemas: any[],
   types: any[]
 ) => ({
   filterIndex,
@@ -81,9 +83,8 @@ const queryResourcesFulfilledAction: ActionCreator<FulfilledQueryAction> = (
   type: QueryResourcesActionTypes.FULFILLED,
   payload: {
     resources,
-    paginationSettings,
-    _constrainedBy: constrainedBy,
-    '@type': types,
+    schemas,
+    types,
   },
 });
 
@@ -139,14 +140,18 @@ export const makeESQuery = (query?: { filters: any; textQuery?: string }) => {
   return {};
 };
 
+export interface FilterQuery {
+  filters: {};
+  textQuery: string;
+}
+
 // TODO make higher order compositional function to add "WithFilterKey" or "WithFilterIndex"
 export const queryResources: ActionCreator<ThunkAction> = (
-  filterIndex: number,
-  filterKey: string,
-  orgLabel: string,
-  projectLabel: string,
+  id: string,
+  org: Organization,
+  project: Project,
   paginationSettings: PaginationSettings,
-  query?: any
+  query?: FilterQuery
 ) => {
   return async (
     dispatch: Dispatch<any>,
@@ -159,25 +164,31 @@ export const queryResources: ActionCreator<ThunkAction> = (
       >
     | FilterFetchFailedAction<QueryResourcesActionTypes.FAILED>
   > => {
+    const filterKey = makeOrgProjectFilterKey(org, project);
     const listState = (getState() as RootState).lists;
-    if (query && listState) {
-      const list = (listState as any)[filterKey][filterIndex];
+    const targetWorkspace = listState && listState[filterKey];
+    const filterIndex = (targetWorkspace || []).findIndex(
+      (list: List) => list.id === id
+    );
+    const list: List | undefined =
+      (!!targetWorkspace && filterIndex >= 0 && targetWorkspace[filterIndex]) ||
+      undefined;
+    try {
+      if (!list) {
+        throw new Error(
+          `no list found with id ${id} inside project ${project.label}`
+        );
+      }
       dispatch(
-        updateList(orgLabel + projectLabel, filterIndex, {
+        updateList(filterKey, filterIndex, {
           ...list,
           query,
         })
       );
-    }
-    dispatch(queryResourcesFetchAction(filterIndex, filterKey));
-    try {
-      if (!projectLabel || !orgLabel) {
-        throw new Error('No active org or project');
-      }
+      dispatch(queryResourcesFetchAction(filterIndex, filterKey));
       const formattedQuery = makeESQuery(query);
-      const org: Organization = await nexus.getOrganization(orgLabel);
-      const project: Project = await org.getProject(projectLabel);
-      const defaultElasticSearchView: ElasticSearchView = await project.getElasticSearchView();
+      const realProject = await Project.get(org.label, project.label);
+      const defaultElasticSearchView: ElasticSearchView = await realProject.getElasticSearchView();
       const resources: PaginatedList<
         Resource
       > = await defaultElasticSearchView.query(
@@ -210,17 +221,18 @@ export const queryResources: ActionCreator<ThunkAction> = (
       const types = aggregationResponse.aggregations.types.buckets.map(
         ({ doc_count, key }) => ({ key, count: doc_count })
       );
+      console.log({ resources, schemas, types });
       return dispatch(
         queryResourcesFulfilledAction(
           filterIndex,
           filterKey,
           resources,
-          paginationSettings,
           schemas,
           types
         )
       );
     } catch (e) {
+      console.error(e);
       return dispatch(queryResourcesFailedAction(filterIndex, filterKey, e));
     }
   };
