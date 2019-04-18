@@ -67,7 +67,6 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
 
   // Raised after the access token has expired.
   userManager.events.addAccessTokenExpired(() => {
-    console.log('User expired');
     store.dispatch(userExpired());
     userManager
       .signinSilent()
