@@ -2,6 +2,7 @@
 
 .query-component {
   .cardlike();
+  background-color: #f5f6f7;
   width: 400px;
   & > .infinite-scroll {
     max-height: calc(100vh - 300px);
@@ -28,5 +29,16 @@
   }
   & > .infinite-scroll > .list .list-item {
     margin: 0.5em 0;
+  }
+  &.-add {
+    cursor: pointer;
+    padding: 1em;
+    color: hsla(0, 9%, 91%, 0.8);
+    transition: all 85ms ease-in;
+    background-color: #00000050;
+    height: fit-content;
+    &:hover {
+      background-color: #00000070;
+    }
   }
 }

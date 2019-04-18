@@ -3,6 +3,7 @@ import { QueriesContainerProps } from './QueryContainer';
 import Query from './Query';
 import './queries-board.less';
 import { List } from '../../../store/reducers/lists';
+import { Icon } from 'antd';
 
 interface QueriesComponentProps extends QueriesContainerProps {}
 
@@ -34,6 +35,9 @@ const QueriesComponent: React.FunctionComponent<
           />
         );
       })}
+      <div className="query-component -add">
+        <Icon type="plus" /> Add another query list
+      </div>
     </div>
   );
 };
