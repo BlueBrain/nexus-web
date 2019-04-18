@@ -27,6 +27,7 @@ export interface QueriesContainerProps {
   project: Project;
   lists: List[];
   initialize: VoidFunction;
+  goToResource: (resource: Resource) => void;
   queryResources: (
     id: string,
     paginationSettings: PaginationSettings,

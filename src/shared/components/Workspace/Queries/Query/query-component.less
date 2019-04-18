@@ -1,0 +1,11 @@
+@import '../../../../lib.less';
+
+.query-component {
+  .cardlike();
+  background-color: #44c7f4;
+  width: 400px;
+  & > .infinite-scroll {
+    max-height: calc(100vh - 200px);
+    overflow-y: scroll;
+  }
+}

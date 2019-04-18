@@ -8,11 +8,13 @@ interface QueriesComponentProps extends QueriesContainerProps {}
 const QueriesComponent: React.FunctionComponent<
   QueriesComponentProps
 > = props => {
-  const { lists, queryResources } = props;
+  const { lists, queryResources, goToResource } = props;
   return (
     <div className="queries-board">
       {lists.map(list => {
-        return <Query {...{ ...list, queryResources }} key={list.id} />;
+        return (
+          <Query {...{ ...list, queryResources, goToResource }} key={list.id} />
+        );
       })}
     </div>
   );
