@@ -2,10 +2,31 @@
 
 .query-component {
   .cardlike();
-  background-color: #44c7f4;
   width: 400px;
   & > .infinite-scroll {
-    max-height: calc(100vh - 200px);
+    max-height: calc(100vh - 300px);
     overflow-y: scroll;
+  }
+  & > .header {
+    display: flex;
+    justify-content: space-between;
+    color: @text-color; // instead of heading color
+  }
+  & > .controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1em;
+    flex-wrap: wrap;
+  }
+  & > .controls > .search {
+    width: 60%;
+    margin-right: 2px;
+  }
+  & > .controls > .ant-select {
+    width: calc(50% - 2px);
+    margin: 0.5em 0;
+  }
+  & > .infinite-scroll > .list .list-item {
+    margin: 0.5em 0;
   }
 }

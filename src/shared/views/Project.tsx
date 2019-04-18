@@ -5,7 +5,11 @@ import { fetchAndAssignProject } from '../store/actions/nexus/projects';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
 import { Empty, Switch, Icon, Tooltip, Button } from 'antd';
 import Menu from '../components/Workspace/Menu';
-import { createList, initializeProjectList } from '../store/actions/lists';
+import {
+  createList,
+  initializeProjectList,
+  makeOrgProjectFilterKey,
+} from '../store/actions/lists';
 import { List } from '../store/reducers/lists';
 import Nexus, {
   Project,
@@ -134,7 +138,9 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
                   project={project}
                   onFileUpload={createFile}
                   createList={() => {
-                    // createList(makeOrgProjectFilterKey(project.orgL, project.label));
+                    project &&
+                      org &&
+                      createList(makeOrgProjectFilterKey(org, project));
                   }}
                   render={(setVisible: () => void, visible: boolean) => (
                     <Tooltip

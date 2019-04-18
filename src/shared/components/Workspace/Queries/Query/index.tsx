@@ -4,7 +4,11 @@ import { FilterQuery } from '../../../../store/actions/queryResource';
 import { List } from '../../../../store/reducers/lists';
 import QueryComponent from './QueryComponent';
 
-interface QueryContainerProps extends List {
+interface QueryContainerProps {
+  list: List;
+  updateList: (list: List) => void;
+  deleteList: () => void;
+  cloneList: (list: List) => void;
   goToResource: (resource: Resource) => void;
   queryResources: (
     id: string,
@@ -14,8 +18,10 @@ interface QueryContainerProps extends List {
 }
 
 const QueryContainer: React.FunctionComponent<QueryContainerProps> = props => {
-  const { name, id, results, queryResources } = props;
-  console.log({ results });
+  const {
+    list: { name, id, results },
+    queryResources,
+  } = props;
   React.useEffect(() => {
     // TODO do something not to query each time
     const size = 20;

@@ -28,6 +28,9 @@ export interface QueriesContainerProps {
   lists: List[];
   initialize: VoidFunction;
   goToResource: (resource: Resource) => void;
+  updateList: (listIndex: number, list: List) => void;
+  deleteList: (listIndex: number) => void;
+  cloneList: (listIndex: number, list: List) => void;
   queryResources: (
     id: string,
     paginationSettings: PaginationSettings,
