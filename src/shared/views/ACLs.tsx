@@ -20,14 +20,11 @@ const ACLs: React.FunctionComponent<ACLsViewProps> = ({
   busy = false,
   fetchACLData,
 }) => {
-  React.useEffect(
-    () => {
-      if (!acls && !busy) {
-        fetchACLData(match.params.org, match.params.project);
-      }
-    },
-    [match.params.project, match.params.org]
-  );
+  React.useEffect(() => {
+    if (!busy) {
+      fetchACLData(match.params.org, match.params.project);
+    }
+  }, [match.params.project, match.params.org]);
 
   if (busy) {
     return <Spin tip="Loading ACLs..." />;

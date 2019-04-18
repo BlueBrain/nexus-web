@@ -3,11 +3,49 @@ import { CookieStorage } from 'cookie-storage';
 import { RootState } from '../shared/store/reducers';
 import { Realm } from '@bbp/nexus-sdk';
 
-const cookieStorage = new CookieStorage({
-  path: '/',
-});
+/**
+ * this is a massive hack
+ * due to the fact setting up cookies
+ * on stag and prod doesn't seems not to work...
+ * We set user info on both localstorage and cookies.
+ * localstorage is used as a backup.
+ * if only localstorage works, then SSR won't render
+ * auth views.
+ */
+const getStorage = () => {
+  const cookieStorage = new CookieStorage({
+    path: '/',
+    secure: true,
+  });
+
+  return {
+    getItem: (key: string): string | null => {
+      let item = null;
+      if (typeof window !== 'undefined') {
+        item = cookieStorage.getItem(key);
+        if (!item) {
+          item = localStorage.getItem(key);
+        }
+      }
+      return item;
+    },
+    setItem: (key: string, value: string): void => {
+      if (typeof window !== 'undefined') {
+        cookieStorage.setItem(key, value);
+        localStorage.setItem(key, value);
+      }
+    },
+    removeItem: (key: string) => {
+      if (typeof window !== 'undefined') {
+        cookieStorage.removeItem(key);
+        localStorage.removeItem(key);
+      }
+    },
+  };
+};
 
 const getUserManager = (state: RootState): UserManager | undefined => {
+  const storage = getStorage();
   const {
     auth: { realms },
     config: { clientId, redirectHostName, preferredRealm },
@@ -24,10 +62,12 @@ const getUserManager = (state: RootState): UserManager | undefined => {
 
   // if we have a preferred realm, try to find it in the list of available realms
   // otherwise, select first one of the list
+  const validRealms = availableRealms.filter(
+    r => r.label !== 'serviceaccounts'
+  );
   const realm: Realm = preferredRealm
-    ? availableRealms.find(r => r.label === preferredRealm) ||
-      availableRealms[0]
-    : availableRealms[0];
+    ? validRealms.find(r => r.label === preferredRealm) || validRealms[0]
+    : validRealms[0];
 
   if (!realm || !clientId || !redirectHostName) {
     return undefined;
@@ -35,7 +75,7 @@ const getUserManager = (state: RootState): UserManager | undefined => {
 
   return new UserManager({
     userStore: new WebStorageStateStore({
-      store: cookieStorage,
+      store: storage,
       prefix: 'nexus__',
     }),
     authority: realm.issuer,
