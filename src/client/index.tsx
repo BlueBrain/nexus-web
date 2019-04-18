@@ -106,7 +106,9 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
       user = await userManager.signinSilent();
     }
     // nope, are we receiving a new token?
-    if (!user) user = await userManager.signinRedirectCallback();
+    else {
+      user = await userManager.signinRedirectCallback();
+    }
   } catch (e) {
     // nothing to do, we are just not logged in
   }

@@ -3,7 +3,9 @@ import { CookieStorage } from 'cookie-storage';
 import { RootState } from '../reducers';
 import { Realm } from '@bbp/nexus-sdk';
 
-const cookieStorage = new CookieStorage();
+const cookieStorage = new CookieStorage({
+  path: '/',
+});
 
 interface SetPreferredRealmAction extends Action {
   type: '@@nexus/CONFIG_SET_REALM';
