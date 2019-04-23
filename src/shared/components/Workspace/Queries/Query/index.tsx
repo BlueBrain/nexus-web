@@ -22,7 +22,6 @@ const QueryContainer: React.FunctionComponent<QueryContainerProps> = props => {
     list: { name, id, results, query },
     queryResources,
   } = props;
-
   React.useEffect(() => {
     console.log('updating refresh list normal', query);
     // TODO do something not to query each time
