@@ -8,11 +8,21 @@ import { FetchableState } from '../../store/reducers/utils';
 import useInfiniteScroll from '../hooks/useInfiniteScroll';
 
 const DEFAULT_TRAIL_MS = 50;
-
+const LOAD_AT_PERCENTAGE_REVEALED = 0.8;
 const DEFAULT_ANIMATIONS = {
-  from: { transform: 'scale3d(0.8, 0.8, 0.8)', height: 0, opacity: 0 },
-  leave: { transform: 'scale3d(0.8, 0.8, 0.8)', height: 0, opacity: 0 },
-  enter: { transform: 'scale3d(1, 1, 1)', height: 'auto', opacity: 1 },
+  from: {
+    transform: 'scale3d(0.8, 0.8, 0.8)',
+    height: 0,
+    opacity: 0,
+  },
+  enter: {
+    transform: 'scale3d(1, 1, 1)',
+    height: 'auto',
+    opacity: 1,
+  },
+  leave: {
+    display: 'none',
+  },
   trail: DEFAULT_TRAIL_MS,
 };
 
@@ -34,17 +44,28 @@ export const InfiniteScrollLoadMoreButton: React.FunctionComponent<{
     leave: { opacity: 0 },
   });
   return (
-    <animated.div style={animatedOpacity}>
+    <animated.div
+      style={animatedOpacity}
+      key="infinite-scroll-load-more-button"
+    >
       <a onClick={onClick}>
         <li className="list-item -action -load">
           <div className="loading">
             {animatedLoadTransition.map(({ item, props }) =>
               item ? (
-                <animated.div style={props} className="center-helper">
+                <animated.div
+                  style={props}
+                  className="center-helper"
+                  key="load-more-loading"
+                >
                   <div className="center">Loading</div>
                 </animated.div>
               ) : (
-                <animated.div style={props} className="center-helper">
+                <animated.div
+                  style={props}
+                  className="center-helper"
+                  key="load-more"
+                >
                   <div className="center">Load More</div>
                 </animated.div>
               )
@@ -66,8 +87,6 @@ export interface InfiniteScrollProps {
   loadAtPercentRevealed?: number;
 }
 
-const LOAD_AT_PERCENTAGE_REVEALED = 0.8;
-
 const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
   const {
     makeKey,
@@ -79,24 +98,34 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
     loadAtPercentRevealed = LOAD_AT_PERCENTAGE_REVEALED,
   } = props;
   const { isFetching, data, error } = fetchablePaginatedList;
-  const [totalItems, setTotalItems] = React.useState<number>(0);
-  const [totalItemsList, setTotalItemsList] = React.useState<any[]>([]);
+  // concatenated list of all items
+  const [itemsList, setItemsList] = React.useState<any[]>([]);
   const [bind] = useInfiniteScroll(
     loadNextPage,
     isFetching,
     loadAtPercentRevealed
   );
   React.useEffect(() => {
-    if (data) {
-      setTotalItemsList([...totalItemsList, ...data.results]);
-      setTotalItems(data.total);
+    // Reset results if we're on the first paginated page
+    if (data && data.index === 0) {
+      setItemsList([...data.results]);
+      return;
     }
-  }, [data && data.index]);
-  const hasMore = totalItemsList.length < totalItems;
-  const keys = totalItemsList.map(makeKey);
-  const transitions = useTransition(totalItemsList, keys, {
+    // otherwise let's concatenate them
+    if (data) {
+      setItemsList([...itemsList, ...data.results]);
+      return;
+    }
+  }, [data && data.index, data && data.results]);
+  const hasMore = itemsList.length < ((data && data.total) || 0);
+  const keys = itemsList.map(makeKey);
+  // should we count the page as being reset?
+  const shouldReset =
+    data && data.index === 0 && data.results.length < itemsList.length;
+  const transitions = useTransition(itemsList, keys, {
     ...DEFAULT_ANIMATIONS,
-    unique: true,
+    // Don't display trailed (delayed) animations when the page is resetting
+    trail: shouldReset ? undefined : DEFAULT_TRAIL_MS,
   });
   return (
     <div {...bind} className="infinite-scroll" style={style}>
@@ -114,17 +143,17 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
               </animated.div>
             );
           })}
-          {!data || (!data.total && <Empty />)}
+          {!isFetching && (!data || !data.total) && <Empty />}
           {hasMore && (
             <InfiniteScrollLoadMoreButton
               key="loading-action"
               isFetching={isFetching}
               hasMore={hasMore}
-              totalItemsListLength={totalItemsList.length}
+              totalItemsListLength={itemsList.length}
               onClick={loadNextPage}
             />
           )}
-          {!!totalItems && !isFetching && !hasMore && (
+          {!!data && !!data.total && !isFetching && !hasMore && (
             <li className="list-item -action -end-of-list">
               You've reached the end of this list
             </li>
