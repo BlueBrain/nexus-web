@@ -10,6 +10,7 @@ import { Popover, Icon, Input, Tooltip, Button, AutoComplete } from 'antd';
 import TypesIconList from '../../../Types/TypesIcon';
 import RenameableItem from '../../../Renameable';
 import { Type } from '../../../Icons';
+import Search from 'antd/lib/input/Search';
 
 const MOUSE_ENTER_DELAY = 0.5;
 
@@ -25,6 +26,7 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
   const {
     list: {
       name,
+      query,
       results: { error, isFetching, data },
     },
     goToResource,
@@ -36,6 +38,17 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
   const handleOnClick = (resource: Resource) => () => goToResource(resource);
   const handleUpdate = (value: string) => {
     updateList({ ...props.list, name: value });
+  };
+  const handleOnSearch = (value: string) => {
+    const updatedList = {
+      ...props.list,
+      query: {
+        ...props.list.query,
+        textQuery: value,
+      },
+    };
+    console.log('on Search', { value, updatedList });
+    updateList(updatedList);
   };
   const handleDelete = () => {
     deleteList();
@@ -50,16 +63,18 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
     <div className="query-component">
       <h3 className="header">
         <RenameableItem
-          defaultValue={name}
+          defaultValue={`${name} ${isFetching ? 'loading' : ''}`}
           onChange={handleUpdate}
           size="small"
         />
         <Icon type="close" className="close-button" onClick={handleDelete} />
       </h3>
       <div className="controls">
-        <Input
+        <Search
           className="search"
-          // value={value}
+          placeholder="text query"
+          onSearch={handleOnSearch}
+          defaultValue={query && query.textQuery}
           // ref={inputEl}
           // onPressEnter={handleInputEnter}
           // // onBlur={handleBlurEvent}

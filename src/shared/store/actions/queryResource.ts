@@ -11,14 +11,8 @@ import {
 import { ThunkAction } from '..';
 import { RootState } from '../reducers';
 import { updateList, makeOrgProjectFilterKey } from './lists';
-import {
-  ElasticSearchViewAggregationResponse,
-  ElasticSearchViewQueryResponse,
-} from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
-import { FetchableState } from '../reducers/utils';
+import { ElasticSearchViewAggregationResponse } from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
 import { List } from '../reducers/lists';
-import { getProject } from '@bbp/nexus-sdk/lib/Project/utils';
-import { isNumber } from 'util';
 
 export const queryResourcesActionPrefix = 'QUERY';
 
@@ -142,7 +136,7 @@ export const makeESQuery = (query?: { filters: any; textQuery?: string }) => {
 
 export interface FilterQuery {
   filters: {};
-  textQuery: string;
+  textQuery?: string;
 }
 
 // TODO make higher order compositional function to add "WithFilterKey" or "WithFilterIndex"
@@ -179,12 +173,12 @@ export const queryResources: ActionCreator<ThunkAction> = (
           `no list found with id ${id} inside project ${project.label}`
         );
       }
-      dispatch(
-        updateList(filterKey, filterIndex, {
-          ...list,
-          query,
-        })
-      );
+      // dispatch(
+      //   updateList(filterKey, filterIndex, {
+      //     ...list,
+      //     query,
+      //   })
+      // );
       dispatch(queryResourcesFetchAction(filterIndex, filterKey));
       const formattedQuery = makeESQuery(query);
       const realProject = await Project.get(org.label, project.label);

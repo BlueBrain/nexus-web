@@ -26,7 +26,7 @@ import {
   HTTP_STATUS_TYPE_KEYS,
 } from '../store/actions/utils/statusCodes';
 import { push } from 'connected-react-router';
-import QueryContainer from '../components/Workspace/Queries/QueryContainer';
+import QueryContainer from '../components/Workspace/Queries/QueriesContainer';
 
 interface ProjectViewProps {
   project: Project | null;

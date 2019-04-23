@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { QueriesContainerProps } from './QueryContainer';
+import { QueriesContainerProps } from './QueriesContainer';
 import Query from './Query';
 import './queries-board.less';
 import { List } from '../../../store/reducers/lists';

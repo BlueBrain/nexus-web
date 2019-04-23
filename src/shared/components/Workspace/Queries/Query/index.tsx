@@ -19,14 +19,20 @@ interface QueryContainerProps {
 
 const QueryContainer: React.FunctionComponent<QueryContainerProps> = props => {
   const {
-    list: { name, id, results },
+    list: { name, id, results, query },
     queryResources,
   } = props;
+
   React.useEffect(() => {
+    console.log('updating refresh list normal', query);
     // TODO do something not to query each time
+    handleRefreshList();
+  }, [query.textQuery]);
+
+  const handleRefreshList = () => {
     const size = 20;
-    queryResources(id, { size, from: 0 });
-  }, []);
+    queryResources(id, { size, from: 0 }, query);
+  };
 
   const next = () => {
     const size = 20;
