@@ -8,7 +8,7 @@ import { FetchableState } from '../../store/reducers/utils';
 import useInfiniteScroll from '../hooks/useInfiniteScroll';
 
 const DEFAULT_TRAIL_MS = 50;
-
+const LOAD_AT_PERCENTAGE_REVEALED = 0.8;
 const DEFAULT_ANIMATIONS = {
   from: {
     transform: 'scale3d(0.8, 0.8, 0.8)',
@@ -87,8 +87,6 @@ export interface InfiniteScrollProps {
   loadAtPercentRevealed?: number;
 }
 
-const LOAD_AT_PERCENTAGE_REVEALED = 0.8;
-
 const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
   const {
     makeKey,
@@ -100,7 +98,7 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
     loadAtPercentRevealed = LOAD_AT_PERCENTAGE_REVEALED,
   } = props;
   const { isFetching, data, error } = fetchablePaginatedList;
-  // The list of all items
+  // concatenated list of all items
   const [itemsList, setItemsList] = React.useState<any[]>([]);
   const [bind] = useInfiniteScroll(
     loadNextPage,
@@ -121,11 +119,12 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
   }, [data && data.index, data && data.results]);
   const hasMore = itemsList.length < ((data && data.total) || 0);
   const keys = itemsList.map(makeKey);
+  // should we count the page as being reset?
   const shouldReset =
     data && data.index === 0 && data.results.length < itemsList.length;
   const transitions = useTransition(itemsList, keys, {
     ...DEFAULT_ANIMATIONS,
-    // Reset animations on every first paginated page
+    // Don't display trailed (delayed) animations when the page is resetting
     trail: shouldReset ? undefined : DEFAULT_TRAIL_MS,
   });
   return (
