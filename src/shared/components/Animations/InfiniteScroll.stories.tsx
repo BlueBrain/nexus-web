@@ -152,42 +152,57 @@ storiesOf('Components/InfiniteScroll/Simulated/OnClick', module)
       const fetchablePaginatedList = object('initial fetachblePaginatedList', {
         isFetching: true,
         error: null,
-        data: null,
+        data: {
+          index: 0,
+          total: 0,
+          results: [],
+        },
       });
       const pageSize = number('pageSize', 5);
-      const totalItems = number('totalItems', 15);
+      const totalItems = number('totalItems', 100);
       return React.createElement(() => {
         const [data, setData] = React.useState<
           FetchableState<PaginatedList<any>>
         >(fetchablePaginatedList);
-        const [index, setIndex] = React.useState(0);
         React.useEffect(() => {
           setTimeout(() => {
             setData({
               isFetching: false,
               error: null,
               data: {
-                index,
+                index: 0,
                 total: totalItems,
                 results: makeRandom(pageSize),
               },
             });
           }, 500);
         }, []);
+
+        const reset = () => {
+          setData({
+            isFetching: false,
+            error: null,
+            data: {
+              index: 0,
+              total: totalItems,
+              results: makeRandom(pageSize),
+            },
+          });
+        };
+
         const next = () => {
           action('next')();
-          setIndex(index + 1);
           setData({
             isFetching: true,
             error: null,
-            data: null,
+            data: data && data.data,
           });
           setTimeout(() => {
             setData({
               isFetching: false,
               error: null,
               data: {
-                index,
+                index: ((data && data.data && data.data.index) || 0) + 1,
                 total: totalItems,
                 results: makeRandom(pageSize),
               },
@@ -202,7 +217,9 @@ storiesOf('Components/InfiniteScroll/Simulated/OnClick', module)
               width: '50%',
             }}
           >
-            <h2>Stars ✨</h2>
+            <h2 style={{ cursor: 'pointer' }} onClick={reset}>
+              Stars ✨ (click to reset)
+            </h2>
             <InfiniteScroll
               makeKey={({ label, description }, index) => `${label}-${index}`}
               itemComponent={({ label, description }: any, index: number) => {
@@ -282,45 +299,57 @@ storiesOf('Components/InfiniteScroll/Simulated/OnScroll', module)
       const fetchablePaginatedList = object('initial fetachblePaginatedList', {
         isFetching: true,
         error: null,
-        data: null,
+        data: {
+          index: 0,
+          total: 0,
+          results: [],
+        },
       });
-      const pageSize = number('pageSize', 10);
+      const pageSize = number('pageSize', 5);
       const totalItems = number('totalItems', 100);
       return React.createElement(() => {
         const [data, setData] = React.useState<
           FetchableState<PaginatedList<any>>
         >(fetchablePaginatedList);
-        const [index, setIndex] = React.useState(0);
         React.useEffect(() => {
           setTimeout(() => {
             setData({
               isFetching: false,
               error: null,
               data: {
-                index,
+                index: 0,
                 total: totalItems,
                 results: makeRandom(pageSize),
               },
             });
           }, 500);
         }, []);
+
+        const reset = () => {
+          setData({
+            isFetching: false,
+            error: null,
+            data: {
+              index: 0,
+              total: totalItems,
+              results: makeRandom(pageSize),
+            },
+          });
+        };
+
         const next = () => {
-          if (index >= totalItems / pageSize) {
-            return;
-          }
           action('next')();
-          setIndex(index + 1);
           setData({
             isFetching: true,
             error: null,
-            data: null,
+            data: data && data.data,
           });
           setTimeout(() => {
             setData({
               isFetching: false,
               error: null,
               data: {
-                index,
+                index: ((data && data.data && data.data.index) || 0) + 1,
                 total: totalItems,
                 results: makeRandom(pageSize),
               },
@@ -334,7 +363,9 @@ storiesOf('Components/InfiniteScroll/Simulated/OnScroll', module)
               width: '300px',
             }}
           >
-            <h2>Stars ✨</h2>
+            <h2 style={{ cursor: 'pointer' }} onClick={reset}>
+              Stars ✨ (click to reset)
+            </h2>
             <InfiniteScroll
               style={{
                 maxHeight: '600px',
