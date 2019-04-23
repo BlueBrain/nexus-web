@@ -17,6 +17,7 @@ const QueriesComponent: React.FunctionComponent<
     updateList,
     deleteList,
     cloneList,
+    createList,
   } = props;
   return (
     <div className="queries-board">
@@ -35,7 +36,7 @@ const QueriesComponent: React.FunctionComponent<
           />
         );
       })}
-      <div className="query-component -add">
+      <div className="query-component -add" onClick={() => createList()}>
         <Icon type="plus" /> Add another query list
       </div>
     </div>

@@ -15,6 +15,7 @@ import {
   cloneList,
   makeOrgProjectFilterKey,
   initializeProjectList,
+  createList,
 } from '../../../store/actions/lists';
 import QueriesBoard from './QueriesBoard';
 import {
@@ -31,6 +32,7 @@ export interface QueriesContainerProps {
   updateList: (listIndex: number, list: List) => void;
   deleteList: (listIndex: number) => void;
   cloneList: (listIndex: number, list: List) => void;
+  createList: () => void;
   queryResources: (
     id: string,
     paginationSettings: PaginationSettings,
@@ -78,6 +80,7 @@ const mapDispatchToProps = (
         )}`
       )
     ),
+  createList: () => dispatch(createList(makeOrgProjectFilterKey(org, project))),
   updateList: (listIndex: number, list: List) =>
     dispatch(
       updateList(makeOrgProjectFilterKey(org, project), listIndex, list)

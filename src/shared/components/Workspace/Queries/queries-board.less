@@ -1,6 +1,15 @@
 .queries-board {
   display: flex;
+  width: calc(100vw - 1em);
+  height: calc(100vh - 300px);
+  overflow-x: scroll;
   & > .query-component {
+    &:first-child {
+      margin-left: 0;
+    }
+    &:last-child {
+      margin-right: 0;
+    }
     margin: 0 0.5em;
   }
 }
