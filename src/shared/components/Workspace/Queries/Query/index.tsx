@@ -26,7 +26,7 @@ const QueryContainer: React.FunctionComponent<QueryContainerProps> = props => {
     console.log('updating refresh list normal', query);
     // TODO do something not to query each time
     handleRefreshList();
-  }, [query.textQuery]);
+  }, [query && query.textQuery]);
 
   const handleRefreshList = () => {
     const size = 20;
@@ -39,6 +39,7 @@ const QueryContainer: React.FunctionComponent<QueryContainerProps> = props => {
       results && !!results.data
         ? { size, from: results.data.resources.index + 1 * size }
         : { size, from: 0 };
+    console.log('next', { paginationSettings });
     queryResources(id, paginationSettings);
   };
 

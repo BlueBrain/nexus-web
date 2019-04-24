@@ -215,7 +215,7 @@ export const queryResources: ActionCreator<ThunkAction> = (
       const types = aggregationResponse.aggregations.types.buckets.map(
         ({ doc_count, key }) => ({ key, count: doc_count })
       );
-      console.log({ resources, schemas, types });
+      console.log({ resources, schemas, types, paginationSettings });
       return dispatch(
         queryResourcesFulfilledAction(
           filterIndex,
