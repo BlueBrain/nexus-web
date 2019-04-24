@@ -62,7 +62,9 @@ export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
   expanded: boolean
 ) => {
   return async (
-    dispatch: Dispatch<any>
+    dispatch: Dispatch<any>,
+    getState,
+    { nexus }
   ): Promise<
     | FetchFulfilledAction<
         ResourceActionTypes.FULFILLED,
@@ -73,6 +75,7 @@ export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
       >
     | FetchFailedAction<ResourceActionTypes.FAILED>
   > => {
+    const Resource = nexus.Resource;
     dispatch(fetchResourceAction());
     try {
       const resource = await Resource.get(

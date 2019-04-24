@@ -69,6 +69,8 @@ export const fetchOrg: ActionCreator<ThunkAction> = (
   > => {
     dispatch(fetchOrgAction());
     try {
+      const Organization = nexus.Organization;
+      const Project = nexus.Project;
       const org: Organization = await Organization.get(orgName);
       const projects: PaginatedList<Project> = await Project.list(
         orgName,

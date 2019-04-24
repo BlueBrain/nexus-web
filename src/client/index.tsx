@@ -33,6 +33,8 @@ const preloadedState: RootState = (window as any).__PRELOADED_STATE__;
 const nexus = new Nexus({
   environment: preloadedState.config.apiEndpoint,
 });
+Nexus.setEnvironment(preloadedState.config.apiEndpoint);
+console.log({ nexus, Nexus });
 // create redux store
 const store = configureStore(history, nexus, preloadedState);
 
