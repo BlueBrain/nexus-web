@@ -1,5 +1,5 @@
 import { ActionCreator, Dispatch } from 'redux';
-import { Project, Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk';
 import { ThunkAction } from '../..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
 import { ResourceGetFormat } from '@bbp/nexus-sdk/lib/Resource/types';

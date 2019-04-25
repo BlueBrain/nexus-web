@@ -20,6 +20,7 @@ const Login: React.FunctionComponent<LoginViewProps> = props => {
   const { realms, redirect } = props;
   const defaultRealm: Realm =
     realms.find(r => r.label === props.preferredRealm) || props.realms[0];
+  console.log({ realms });
 
   const [preferredRealm, setPreferredRealm] = React.useState(defaultRealm.name);
 
