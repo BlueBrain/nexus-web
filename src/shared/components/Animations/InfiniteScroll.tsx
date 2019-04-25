@@ -103,7 +103,9 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
   const [bind] = useInfiniteScroll(
     loadNextPage,
     isFetching,
-    loadAtPercentRevealed
+    loadAtPercentRevealed,
+    itemsList.length,
+    (data && data.total) || 0
   );
   React.useEffect(() => {
     // Reset results if we're on the first paginated page
