@@ -101,7 +101,7 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
   // concatenated list of all items
   const [itemsList, setItemsList] = React.useState<any[]>([]);
   const [bind] = useInfiniteScroll(
-    loadNextPage,
+    loadNextPage
     isFetching,
     loadAtPercentRevealed,
     itemsList.length,

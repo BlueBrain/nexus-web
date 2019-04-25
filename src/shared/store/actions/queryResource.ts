@@ -139,7 +139,6 @@ export interface FilterQuery {
   textQuery?: string;
 }
 
-// TODO make higher order compositional function to add "WithFilterKey" or "WithFilterIndex"
 export const queryResources: ActionCreator<ThunkAction> = (
   id: string,
   org: Organization,
@@ -158,6 +157,7 @@ export const queryResources: ActionCreator<ThunkAction> = (
       >
     | FilterFetchFailedAction<QueryResourcesActionTypes.FAILED>
   > => {
+    const Project = nexus.Project;
     const filterKey = makeOrgProjectFilterKey(org, project);
     const listState = (getState() as RootState).lists;
     const targetWorkspace = listState && listState[filterKey];
@@ -173,12 +173,6 @@ export const queryResources: ActionCreator<ThunkAction> = (
           `no list found with id ${id} inside project ${project.label}`
         );
       }
-      // dispatch(
-      //   updateList(filterKey, filterIndex, {
-      //     ...list,
-      //     query,
-      //   })
-      // );
       dispatch(queryResourcesFetchAction(filterIndex, filterKey));
       const formattedQuery = makeESQuery(query);
       const realProject = await Project.get(org.label, project.label);
@@ -215,7 +209,6 @@ export const queryResources: ActionCreator<ThunkAction> = (
       const types = aggregationResponse.aggregations.types.buckets.map(
         ({ doc_count, key }) => ({ key, count: doc_count })
       );
-      console.log({ resources, schemas, types, paginationSettings });
       return dispatch(
         queryResourcesFulfilledAction(
           filterIndex,
