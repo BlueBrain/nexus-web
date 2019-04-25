@@ -11,15 +11,19 @@ import TypesIconList from '../../../Types/TypesIcon';
 import RenameableItem from '../../../Renameable';
 import { Type } from '../../../Icons';
 import Search from 'antd/lib/input/Search';
+import { cloneList } from '../../../../store/actions/lists';
 
 const MOUSE_ENTER_DELAY = 0.5;
 
 interface QueryComponentProps {
   list: List;
   goToResource: (resource: Resource) => void;
+  goToQuery: (list: List) => void;
   next: VoidFunction;
   updateList: (list: List) => void;
   deleteList: () => void;
+  cloneList: (list: List) => void;
+  handleRefreshList: () => void;
 }
 
 const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
@@ -29,9 +33,12 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
       query,
       results: { error, isFetching, data },
     },
+    handleRefreshList,
     goToResource,
+    goToQuery,
     updateList,
     deleteList,
+    cloneList,
     next,
   } = props;
   console.log({ props });
@@ -40,18 +47,31 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
     updateList({ ...props.list, name: value });
   };
   const handleOnSearch = (value: string) => {
-    const updatedList = {
+    // update TextQuery value
+    updateList({
       ...props.list,
       query: {
         ...props.list.query,
         textQuery: value,
       },
-    };
-    console.log('on Search', { value, updatedList });
-    updateList(updatedList);
+    });
   };
   const handleDelete = () => {
     deleteList();
+  };
+  const handleClear = () => {
+    // remove the filters
+    // and the textQuery
+    updateList({
+      ...props.list,
+      query: {
+        filters: {},
+      },
+    });
+  };
+
+  const handleCloneList = () => {
+    cloneList({ ...props.list });
   };
 
   const fetchablePaginatedList: FetchableState<PaginatedList<Resource>> = {
@@ -75,35 +95,18 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
           placeholder="text query"
           onSearch={handleOnSearch}
           defaultValue={query && query.textQuery}
-          // ref={inputEl}
-          // onPressEnter={handleInputEnter}
-          // // onBlur={handleBlurEvent}
-          // onChange={handleInputChange}
-          // allowClear={true}
         />
         <Tooltip title="Clear filters">
-          <Button
-            icon="close-circle"
-            // onClick={onClear}
-            style={{ marginRight: '2px' }}
-          />
+          <Button icon="close-circle" onClick={handleClear} />
         </Tooltip>
         <Tooltip title="Refresh list">
-          <Button
-            icon="reload"
-            // onClick={onRefreshList}
-            style={{ marginRight: '2px' }}
-          />
+          <Button icon="reload" onClick={handleRefreshList} />
         </Tooltip>
         <Tooltip title="Clone this query">
-          <Button
-            icon="switcher"
-            // onClick={onCloneList}
-            style={{ marginRight: '2px' }}
-          />
+          <Button icon="switcher" onClick={handleCloneList} />
         </Tooltip>
         <Tooltip title="View ElasticSearch query">
-          <Button icon="search" />
+          <Button icon="search" onClick={() => goToQuery(props.list)} />
         </Tooltip>
         <AutoComplete>
           <Input suffix={Type} />

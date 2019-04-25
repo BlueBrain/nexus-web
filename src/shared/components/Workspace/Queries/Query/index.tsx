@@ -10,6 +10,7 @@ interface QueryContainerProps {
   deleteList: () => void;
   cloneList: (list: List) => void;
   goToResource: (resource: Resource) => void;
+  goToQuery: (list: List) => void;
   queryResources: (
     id: string,
     paginationSettings: PaginationSettings,
@@ -39,11 +40,10 @@ const QueryContainer: React.FunctionComponent<QueryContainerProps> = props => {
       results && !!results.data
         ? { size, from: results.data.resources.index + 1 * size }
         : { size, from: 0 };
-    console.log('next', { paginationSettings });
     queryResources(id, paginationSettings);
   };
 
-  return <QueryComponent {...{ ...props, next }} />;
+  return <QueryComponent {...{ ...props, next, handleRefreshList }} />;
 };
 
 export default QueryContainer;

@@ -21,6 +21,7 @@ import QueriesBoard from './QueriesBoard';
 import {
   queryResources,
   FilterQuery,
+  makeESQuery,
 } from '../../../store/actions/queryResource';
 
 export interface QueriesContainerProps {
@@ -29,6 +30,7 @@ export interface QueriesContainerProps {
   lists: List[];
   initialize: VoidFunction;
   goToResource: (resource: Resource) => void;
+  goToQuery: (list: List) => void;
   updateList: (listIndex: number, list: List) => void;
   deleteList: (listIndex: number) => void;
   cloneList: (listIndex: number, list: List) => void;
@@ -80,11 +82,21 @@ const mapDispatchToProps = (
         )}`
       )
     ),
+  goToQuery: (list: List) =>
+    dispatch(
+      push(
+        `/${org.label}/${project.label}/${
+          list.view
+        }/_search?query=${JSON.stringify(makeESQuery(list.query))}`
+      )
+    ),
   createList: () => dispatch(createList(makeOrgProjectFilterKey(org, project))),
-  updateList: (listIndex: number, list: List) =>
+  updateList: (listIndex: number, list: List) => {
+    console.log('updateList: ', { listIndex, list });
     dispatch(
       updateList(makeOrgProjectFilterKey(org, project), listIndex, list)
-    ),
+    );
+  },
   deleteList: (listIndex: number) =>
     dispatch(deleteList(makeOrgProjectFilterKey(org, project), listIndex)),
   cloneList: (listIndex: number, list: List) =>

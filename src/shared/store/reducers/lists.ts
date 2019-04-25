@@ -96,6 +96,7 @@ export function listsReducer(
       const clonedList = {
         ...action.payload.list,
         name: `Clone of ${action.payload.list.name}`,
+        id: uuidv4(),
       };
       if (state.length === 1) {
         return [...state.concat(clonedList)];
