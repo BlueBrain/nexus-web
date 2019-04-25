@@ -9,13 +9,14 @@ export const createFile: ActionCreator<ThunkAction> = (file: File) => {
     getState,
     { nexus }
   ): Promise<NexusFile | null> => {
+    const NexusFile = nexus.NexusFile;
     const nexusState = (getState() as RootState).nexus;
     if (
       nexusState &&
       nexusState.activeProject &&
       nexusState.activeProject.data
     ) {
-      return await NexusFile.create(
+      return await NexusFile.createFile(
         nexusState.activeProject.data.orgLabel,
         nexusState.activeProject.data.label,
         file

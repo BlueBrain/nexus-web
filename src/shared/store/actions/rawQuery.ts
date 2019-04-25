@@ -65,7 +65,9 @@ export const executeRawQuery: ActionCreator<ThunkAction> = (
   ): Promise<RawQueryActionSuccess | RawQueryActionFailure> => {
     dispatch(rawQueryAction(query));
     try {
-      const sparqlView = await SparqlView.get(orgName, projectName);
+      const Project = nexus.Project;
+      const project = await Project.get(orgName, projectName);
+      const sparqlView = await project.getSparqlView();
       const response = await sparqlView.query(query);
       const results: SparqlViewQueryResponse = response;
       return dispatch(rawQuerySuccessAction(results));
@@ -89,7 +91,9 @@ export const executeRawElasticSearchQuery: ActionCreator<ThunkAction> = (
   ): Promise<RawQueryActionSuccess | RawQueryActionFailure> => {
     dispatch(rawQueryAction(query, paginationSettings));
     try {
-      const view = await ElasticSearchView.get(orgName, projectName, viewId);
+      const Project = nexus.Project;
+      const project = await Project.get(orgName, projectName);
+      const view = await project.getElasticSearchView(viewId);
       const response = await view.rawQuery(
         JSON.parse(query),
         paginationSettings

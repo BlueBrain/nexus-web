@@ -67,6 +67,8 @@ export const fetchOrgs: ActionCreator<ThunkAction> = (
   > => {
     dispatch(fetchOrgsAction());
     try {
+      const Organization = nexus.Organization;
+      const Project = nexus.Project;
       const displayPerPage = (getState() as RootState).uiSettings.pageSizes
         .orgsListPageSize;
       const orgs: PaginatedList<Organization> = await Organization.list({

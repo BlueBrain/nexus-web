@@ -1,5 +1,5 @@
 import { ActionCreator, Dispatch } from 'redux';
-import { Project, Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk';
 import { ThunkAction } from '../..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
 import { ResourceGetFormat } from '@bbp/nexus-sdk/lib/Resource/types';
@@ -62,7 +62,9 @@ export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
   expanded: boolean
 ) => {
   return async (
-    dispatch: Dispatch<any>
+    dispatch: Dispatch<any>,
+    getState,
+    { nexus }
   ): Promise<
     | FetchFulfilledAction<
         ResourceActionTypes.FULFILLED,
@@ -73,6 +75,7 @@ export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
       >
     | FetchFailedAction<ResourceActionTypes.FAILED>
   > => {
+    const Resource = nexus.Resource;
     dispatch(fetchResourceAction());
     try {
       const resource = await Resource.get(

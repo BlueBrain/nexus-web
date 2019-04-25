@@ -8,7 +8,7 @@ import { Empty, Switch, Icon, Tooltip, Button } from 'antd';
 import Menu from '../components/Workspace/Menu';
 import { createList, initializeProjectList } from '../store/actions/lists';
 import { List } from '../store/reducers/lists';
-import { Project, Resource, NexusFile } from '@bbp/nexus-sdk';
+import Nexus, { Project, Resource, NexusFile } from '@bbp/nexus-sdk';
 import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
 import { createFile } from '../store/actions/nexus/files';
 import Status from '../components/Routing/Status';
@@ -178,6 +178,8 @@ const mapStateToProps = (state: RootState) => {
     '';
 
   return {
+    environment: state.config.apiEndpoint,
+    token: state.oidc && state.oidc.user && state.oidc.user.access_token,
     authenticated: !!state.oidc.user,
     project: projectData || null,
     isFetching:
@@ -209,8 +211,18 @@ const mapDispatchToProps = (dispatch: any, ownProps: any) => {
       orgLabel: string,
       projectLabel: string,
       schemaId: string,
-      payload: CreateResourcePayload
-    ) => await Resource.create(orgLabel, projectLabel, schemaId, payload),
+      payload: CreateResourcePayload,
+      environment: string,
+      token?: string
+    ) => {
+      const nexus = new Nexus({ environment, token });
+      return await nexus.Resource.create(
+        orgLabel,
+        projectLabel,
+        schemaId,
+        payload
+      );
+    },
     createFile: async (file: File) => {
       dispatch(createFile(file));
     },
@@ -221,5 +233,27 @@ const mapDispatchToProps = (dispatch: any, ownProps: any) => {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
+  (stateProps, dispatchProps, ownProps) => ({
+    ...ownProps,
+    ...stateProps,
+    ...dispatchProps,
+    createResource: async (
+      orgLabel: string,
+      projectLabel: string,
+      schemaId: string,
+      payload: CreateResourcePayload
+    ) => {
+      const environment = stateProps.environment;
+      const token = stateProps.token;
+      return await dispatchProps.createResource(
+        orgLabel,
+        projectLabel,
+        schemaId,
+        payload,
+        environment,
+        token
+      );
+    },
+  })
 )(ProjectView);

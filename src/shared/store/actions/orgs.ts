@@ -107,7 +107,7 @@ const deprecateOrgFailureAction: ActionCreator<DeprecateOrgFailureAction> = (
 //
 export const createOrg: ActionCreator<ThunkAction> = (
   orgLabel: string,
-  orgPayload: CreateOrgPayload,
+  orgPayload: CreateOrgPayload
 ) => {
   return async (
     dispatch: Dispatch<any>,
@@ -116,6 +116,7 @@ export const createOrg: ActionCreator<ThunkAction> = (
   ): Promise<CreateOrgSuccessAction | CreateOrgFailureAction> => {
     dispatch(createOrgAction());
     try {
+      const Organization = nexus.Organization;
       const org: Organization = await Organization.create(orgLabel, orgPayload);
       return dispatch(createOrgSuccessAction(org));
     } catch (e) {
@@ -127,19 +128,20 @@ export const createOrg: ActionCreator<ThunkAction> = (
 export const modifyOrg: ActionCreator<ThunkAction> = (
   orgLabel: string,
   rev: number,
-  orgPayload: CreateOrgPayload,
+  orgPayload: CreateOrgPayload
 ) => {
   return async (
     dispatch: Dispatch<any>,
     getState,
     { nexus }
   ): Promise<ModifyOrgSuccessAction | ModifyOrgFailureAction> => {
+    const Organization = nexus.Organization;
     dispatch(modifyOrgAction());
     try {
       const org: Organization = await Organization.update(
         orgLabel,
         rev,
-        orgPayload,
+        orgPayload
       );
       return dispatch(modifyOrgSuccessAction(org));
     } catch (e) {
@@ -157,6 +159,7 @@ export const deprecateOrg: ActionCreator<ThunkAction> = (
     getState,
     { nexus }
   ): Promise<DeprecateOrgSuccessAction | DeprecateOrgFailureAction> => {
+    const Organization = nexus.Organization;
     dispatch(deprecateOrgAction());
     try {
       await Organization.deprecate(orgLabel, rev);

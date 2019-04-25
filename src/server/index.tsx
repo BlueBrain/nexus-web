@@ -127,6 +127,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       token: preloadedState.oidc.user.access_token,
     });
   }
+
   // Redux store
   const store = createStore(memoryHistory, nexus, preloadedState);
   // Get identity data

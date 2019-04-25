@@ -33,6 +33,7 @@ const preloadedState: RootState = (window as any).__PRELOADED_STATE__;
 const nexus = new Nexus({
   environment: preloadedState.config.apiEndpoint,
 });
+Nexus.setEnvironment(preloadedState.config.apiEndpoint);
 // create redux store
 const store = configureStore(history, nexus, preloadedState);
 
@@ -49,6 +50,7 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
   userManager.events.addUserLoaded(user => {
     loadUser(store, userManager);
     Nexus.setToken(user.access_token);
+    nexus.setToken(user.access_token);
   });
 
   // Raised prior to the access token expiring.
@@ -59,6 +61,7 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
       .then(user => {
         loadUser(store, userManager);
         Nexus.setToken(user.access_token);
+        nexus.setToken(user.access_token);
       })
       .catch(err => {
         // TODO: sentry that stuff
@@ -73,6 +76,7 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
       .then(user => {
         loadUser(store, userManager);
         Nexus.setToken(user.access_token);
+        nexus.setToken(user.access_token);
       })
       .catch(err => {
         // TODO: sentry that stuff
@@ -83,18 +87,21 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
   userManager.events.addSilentRenewError(() => {
     store.dispatch(silentRenewError());
     Nexus.removeToken();
+    nexus.removeToken();
   });
 
   //  Raised when the user's sign-in status at the OP has changed.
   userManager.events.addUserSignedOut(() => {
     store.dispatch(userSignedOut());
     Nexus.removeToken();
+    nexus.removeToken();
   });
 
   // Raised when a user session has been terminated.
   userManager.events.addUserUnloaded(() => {
     store.dispatch(sessionTerminated());
     Nexus.removeToken();
+    nexus.removeToken();
   });
 
   try {

@@ -2,6 +2,7 @@ import { Action, ActionCreator, Dispatch } from 'redux';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from './utils';
 import { PaginatedList, ACL, Realm } from '@bbp/nexus-sdk';
 import { ListACLOptions, Identity } from '@bbp/nexus-sdk/lib/ACL/types';
+import { ThunkAction } from '..';
 
 export enum AuthActionTypes {
   ACL_FETCHING = '@@nexus/AUTH_ACL_FETCHING',
@@ -125,9 +126,14 @@ export type AuthActions =
  *  Actual Actions
  */
 
-function fetchAcls(path: string, aclOptions?: ListACLOptions) {
+const fetchAcls: ActionCreator<ThunkAction> = (
+  path: string,
+  aclOptions?: ListACLOptions
+) => {
   return async (
-    dispatch: Dispatch<any>
+    dispatch: Dispatch<any>,
+    getState,
+    { nexus }
   ): Promise<FetchAclsFulfilledAction | FetchAclsFailedAction> => {
     dispatch(fetchAclsAction);
     try {
@@ -137,7 +143,7 @@ function fetchAcls(path: string, aclOptions?: ListACLOptions) {
       return dispatch(fetchAclsFailedAction(error));
     }
   };
-}
+};
 
 function fetchIdentities() {
   return async (
@@ -153,10 +159,13 @@ function fetchIdentities() {
   };
 }
 
-function fetchRealms() {
+const fetchRealms: ActionCreator<ThunkAction> = () => {
   return async (
-    dispatch: Dispatch<any>
+    dispatch: Dispatch<any>,
+    getState,
+    { nexus }
   ): Promise<FetchRealmsFulfilledAction | FetchRealmsFailedAction> => {
+    const Realm = nexus.Realm;
     dispatch(fetchIdentitiesAction);
     try {
       const data: PaginatedList<Realm> = await Realm.list();
@@ -165,6 +174,6 @@ function fetchRealms() {
       return dispatch(fetchRealmsFailedAction(error));
     }
   };
-}
+};
 
 export { fetchAcls, fetchIdentities, fetchRealms };
