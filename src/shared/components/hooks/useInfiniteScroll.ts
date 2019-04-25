@@ -5,7 +5,9 @@ import { isBrowser } from '../../utils';
 const useInfiniteScroll = (
   callback: VoidFunction,
   isFetching: boolean,
-  loadAtPercentRevealed: number
+  loadAtPercentRevealed: number,
+  currentTotal: number,
+  total: number
 ) => {
   const ref = React.useRef<HTMLDivElement>(null);
   if (!isBrowser) {
@@ -30,7 +32,8 @@ const useInfiniteScroll = (
     if (
       !isFetching &&
       ref.current.offsetHeight + ref.current.scrollTop >=
-        ref.current.scrollHeight * loadAtPercentRevealed
+        ref.current.scrollHeight * loadAtPercentRevealed &&
+      currentTotal !== total
     ) {
       callback();
     }
