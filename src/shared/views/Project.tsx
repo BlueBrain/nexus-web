@@ -120,8 +120,8 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
         )}
         {project && (
           <>
-            <div>
-              <h1 style={{ marginBottom: 0, marginRight: 8 }}>
+            <div className="project-banner">
+              <h1>
                 {project.label}{' '}
                 <Menu
                   createResource={async (
@@ -157,7 +157,6 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
                   )}
                 />
               </h1>
-              {project.description && <p>{project.description}</p>}{' '}
             </div>
             {!!org && !!project && (
               <QueryContainer org={org} project={project} />
