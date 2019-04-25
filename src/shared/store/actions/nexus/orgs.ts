@@ -67,7 +67,6 @@ export const fetchOrgs: ActionCreator<ThunkAction> = (
   > => {
     dispatch(fetchOrgsAction());
     try {
-      console.log({ nexus });
       const Organization = nexus.Organization;
       const Project = nexus.Project;
       const displayPerPage = (getState() as RootState).uiSettings.pageSizes
