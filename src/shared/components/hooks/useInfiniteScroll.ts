@@ -33,7 +33,7 @@ const useInfiniteScroll = (
       !isFetching &&
       ref.current.offsetHeight + ref.current.scrollTop >=
         ref.current.scrollHeight * loadAtPercentRevealed &&
-      currentTotal !== total
+      currentTotal < total
     ) {
       callback();
     }

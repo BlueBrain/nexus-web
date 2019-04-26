@@ -108,6 +108,11 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
     (data && data.total) || 0
   );
   React.useEffect(() => {
+    console.log(
+      'results have changed, I want to combine them',
+      itemsList,
+      data && data.results
+    );
     // Reset results if we're on the first paginated page
     if (data && data.index === 0) {
       setItemsList([...data.results]);
@@ -129,6 +134,9 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
     // Don't display trailed (delayed) animations when the page is resetting
     trail: shouldReset ? undefined : DEFAULT_TRAIL_MS,
   });
+
+  console.log({ itemsList });
+
   return (
     <div {...bind} className="infinite-scroll" style={style}>
       {!!error && <Empty description={error.message} />}

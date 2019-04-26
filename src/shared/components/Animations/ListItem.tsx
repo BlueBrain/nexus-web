@@ -2,7 +2,7 @@ import * as React from 'react';
 import './list-item.less';
 
 export interface ListItemProps {
-  label: string;
+  label: React.ReactComponentElement<any> | string;
   id: string;
   description?: string;
   details?: React.ReactComponentElement<any>;

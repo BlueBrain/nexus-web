@@ -6,10 +6,9 @@ import ListItem from '../../../Animations/ListItem';
 import { FetchableState } from '../../../../store/reducers/utils';
 import { PaginatedList, Resource } from '@bbp/nexus-sdk';
 import ResourceMetadataCard from '../../../Resources/MetadataCard';
-import { Popover, Icon, Input, Tooltip, Button, AutoComplete } from 'antd';
+import { Popover, Icon, Tooltip, Button } from 'antd';
 import TypesIconList from '../../../Types/TypesIcon';
 import RenameableItem from '../../../Renameable';
-import { cloneList } from '../../../../store/actions/lists';
 import FullTextSearch from './Search';
 import TypesFilter from './Types';
 import SchemasFilter from './Schemas';
@@ -142,24 +141,30 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
         itemComponent={(resource: Resource, index: number) => {
           return (
             <div key={resource.id}>
-              <Popover
-                content={<ResourceMetadataCard {...resource} />}
-                mouseEnterDelay={MOUSE_ENTER_DELAY}
-                key={resource.id}
-              >
-                <ListItem
-                  onClick={handleOnClick(resource)}
-                  label={resource.name}
-                  id={resource.id}
-                  details={
-                    resource.type && resource.type.length ? (
-                      <TypesIconList type={resource.type} />
-                    ) : (
-                      undefined
-                    )
-                  }
-                />
-              </Popover>
+              <ListItem
+                onClick={handleOnClick(resource)}
+                label={
+                  <Popover
+                    content={
+                      <ResourceMetadataCard
+                        {...{ ...resource, name: resource.name }}
+                      />
+                    }
+                    mouseEnterDelay={MOUSE_ENTER_DELAY}
+                    key={resource.id}
+                  >
+                    {resource.name}
+                  </Popover>
+                }
+                id={resource.id}
+                details={
+                  resource.type && resource.type.length ? (
+                    <TypesIconList type={resource.type} />
+                  ) : (
+                    undefined
+                  )
+                }
+              />
             </div>
           );
         }}
