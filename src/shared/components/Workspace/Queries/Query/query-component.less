@@ -2,8 +2,8 @@
 
 .query-component {
   .cardlike();
-  background-color: #f5f6f7;
-  width: 400px;
+  background-color: @primary-card;
+  width: @default-card-width;
   display: flex;
   flex-direction: column;
   max-height: 100%;
@@ -43,13 +43,13 @@
   &.-add {
     cursor: pointer;
     padding: @default-pad;
-    color: hsla(0, 9%, 91%, 0.8);
-    transition: all 85ms ease-in;
-    background-color: #00000050;
+    color: @background-color-subtle;
+    transition: all @fast ease-in;
+    background-color: fade(black, 30%);
     height: fit-content;
     display: block;
     &:hover {
-      background-color: #00000070;
+      background-color: fade(black, 50%);
     }
   }
 }
