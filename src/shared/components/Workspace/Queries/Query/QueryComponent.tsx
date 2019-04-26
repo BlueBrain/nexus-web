@@ -91,6 +91,8 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
     isFetching,
     data: (data && data.resources) || null,
   };
+  const total =
+    (fetchablePaginatedList.data && fetchablePaginatedList.data.total) || 0;
   return (
     <div className="query-component">
       <h3 className="header">
@@ -100,11 +102,7 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
           size="small"
         />
         <div className="count">
-          {fetchablePaginatedList.data &&
-            !!fetchablePaginatedList.data.total &&
-            `${fetchablePaginatedList.data.total} result${
-              fetchablePaginatedList.data.total > 1 ? 's' : ''
-            }`}
+          {total && `${total} result${total > 1 ? 's' : ''}`}
         </div>
         <Icon type="close" className="close-button" onClick={handleDelete} />
       </h3>
@@ -158,11 +156,9 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
                 }
                 id={resource.id}
                 details={
-                  resource.type && resource.type.length ? (
+                  resource.type && !!resource.type.length ? (
                     <TypesIconList type={resource.type} />
-                  ) : (
-                    undefined
-                  )
+                  ) : null
                 }
               />
             </div>

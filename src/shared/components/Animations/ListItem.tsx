@@ -5,8 +5,8 @@ export interface ListItemProps {
   label: React.ReactComponentElement<any> | string;
   id: string;
   description?: string;
-  details?: React.ReactComponentElement<any>;
-  action?: React.ReactComponentElement<any>;
+  details?: React.ReactComponentElement<any> | null;
+  action?: React.ReactComponentElement<any> | null;
   onClick?: (id: string, event: React.MouseEvent) => void;
 }
 
