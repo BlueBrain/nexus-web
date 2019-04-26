@@ -4,14 +4,25 @@
   .cardlike();
   background-color: #f5f6f7;
   width: 400px;
+  display: flex;
+  flex-direction: column;
+  // 6px to display shadow underneath card
+  max-height: 100%;
   & > .infinite-scroll {
-    // max-height: calc(100vh - 300px);
-    // overflow-y: scroll;
+    overflow: hidden;
+    overflow-y: auto;
   }
   & > .header {
     display: flex;
+    align-items: center;
     justify-content: space-between;
     color: @text-color; // instead of heading color
+  }
+  & > .header > .count {
+    font-size: 0.8rem;
+    font-weight: lighter;
+    flex-grow: 1;
+    margin-left: 1em;
   }
   & > .controls {
     display: flex;
@@ -37,6 +48,7 @@
     transition: all 85ms ease-in;
     background-color: #00000050;
     height: fit-content;
+    display: block;
     &:hover {
       background-color: #00000070;
     }

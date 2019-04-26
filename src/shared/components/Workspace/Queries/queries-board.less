@@ -1,16 +1,14 @@
 .queries-board {
-  padding: 1em;
   // 117 = 40 (header) + 42 (project banner) + 35 (footer)
   height: calc(100vh - 117px);
   overflow: hidden;
   overflow-x: scroll;
-  // width: calc(100vw - 1em);
-  // height: calc(100vh - 300px);
-  // overflow-x: scroll;
+  padding: 1em 1em 0;
   & > .wrapper {
     display: flex;
     width: fit-content;
     padding-bottom: 1em;
+    height: 100%;
   }
   & > .wrapper > .query-component {
     &:first-child {

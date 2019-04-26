@@ -10,8 +10,8 @@ import { Popover, Icon, Input, Tooltip, Button, AutoComplete } from 'antd';
 import TypesIconList from '../../../Types/TypesIcon';
 import RenameableItem from '../../../Renameable';
 import { Type } from '../../../Icons';
-import Search from 'antd/lib/input/Search';
 import { cloneList } from '../../../../store/actions/lists';
+import FullTextSearch from './Search';
 
 const MOUSE_ENTER_DELAY = 0.5;
 
@@ -87,14 +87,19 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
           onChange={handleUpdate}
           size="small"
         />
+        <div className="count">
+          {fetchablePaginatedList.data &&
+            !!fetchablePaginatedList.data.total &&
+            `${fetchablePaginatedList.data.total} result${
+              fetchablePaginatedList.data.total > 1 ? 's' : ''
+            }`}
+        </div>
         <Icon type="close" className="close-button" onClick={handleDelete} />
       </h3>
       <div className="controls">
-        <Search
-          className="search"
-          placeholder="text query"
+        <FullTextSearch
           onSearch={handleOnSearch}
-          defaultValue={query && query.textQuery}
+          value={query && query.textQuery}
         />
         <Tooltip title="Clear filters">
           <Button icon="close-circle" onClick={handleClear} />
