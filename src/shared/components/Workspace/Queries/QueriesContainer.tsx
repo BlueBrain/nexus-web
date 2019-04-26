@@ -29,6 +29,7 @@ export interface QueriesContainerProps {
   project: Project;
   lists: List[];
   initialize: VoidFunction;
+  pageSize: number;
   goToResource: (resource: Resource) => void;
   goToQuery: (list: List) => void;
   updateList: (listIndex: number, list: List) => void;
@@ -65,7 +66,7 @@ const mapStateToProps = (
   const projectLists =
     (state.lists && state.lists[makeOrgProjectFilterKey(org, project)]) || [];
   return {
-    displayPerPage: state.uiSettings.pageSizes.resourcesListPageSize,
+    pageSize: state.uiSettings.pageSizes.resourcesListPageSize,
     lists: projectLists,
   };
 };

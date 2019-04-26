@@ -12,6 +12,7 @@ const QueriesComponent: React.FunctionComponent<
 > = props => {
   const {
     lists,
+    pageSize,
     queryResources,
     goToResource,
     goToQuery,
@@ -28,6 +29,7 @@ const QueriesComponent: React.FunctionComponent<
             <Query
               {...{
                 list,
+                pageSize,
                 queryResources,
                 goToResource,
                 goToQuery,

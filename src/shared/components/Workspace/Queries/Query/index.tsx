@@ -6,6 +6,7 @@ import QueryComponent from './QueryComponent';
 
 interface QueryContainerProps {
   list: List;
+  pageSize: number;
   updateList: (list: List) => void;
   deleteList: () => void;
   cloneList: (list: List) => void;
@@ -22,18 +23,17 @@ const QueryContainer: React.FunctionComponent<QueryContainerProps> = props => {
   const {
     list: { name, id, results, query },
     queryResources,
+    pageSize: size,
   } = props;
   React.useEffect(() => {
     handleRefreshList();
   }, [query && query.textQuery, query && query.filters]);
 
   const handleRefreshList = () => {
-    const size = 20;
     queryResources(id, { size, from: 0 }, query);
   };
 
   const next = () => {
-    const size = 20;
     const paginationSettings =
       results && !!results.data
         ? { size, from: results.data.resources.index + 1 * size }
