@@ -9,9 +9,10 @@ import ResourceMetadataCard from '../../../Resources/MetadataCard';
 import { Popover, Icon, Input, Tooltip, Button, AutoComplete } from 'antd';
 import TypesIconList from '../../../Types/TypesIcon';
 import RenameableItem from '../../../Renameable';
-import { Type } from '../../../Icons';
 import { cloneList } from '../../../../store/actions/lists';
 import FullTextSearch from './Search';
+import TypesFilter from './Types';
+import SchemasFilter from './Schemas';
 
 const MOUSE_ENTER_DELAY = 0.5;
 
@@ -41,7 +42,6 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
     cloneList,
     next,
   } = props;
-  console.log({ props });
   const handleOnClick = (resource: Resource) => () => goToResource(resource);
   const handleUpdate = (value: string) => {
     updateList({ ...props.list, name: value });
@@ -72,6 +72,19 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
 
   const handleCloneList = () => {
     cloneList({ ...props.list });
+  };
+
+  const handleFilterChange = (value: { [filterKey: string]: string }) => {
+    updateList({
+      ...props.list,
+      query: {
+        ...props.list.query,
+        filters: {
+          ...props.list.query.filters,
+          ...value,
+        },
+      },
+    });
   };
 
   const fetchablePaginatedList: FetchableState<PaginatedList<Resource>> = {
@@ -113,10 +126,16 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
         <Tooltip title="View ElasticSearch query">
           <Button icon="search" onClick={() => goToQuery(props.list)} />
         </Tooltip>
-        <AutoComplete>
-          <Input suffix={Type} />
-        </AutoComplete>
-        <AutoComplete />
+        <TypesFilter
+          filters={query && query.filters}
+          types={data && data.types}
+          onChange={handleFilterChange}
+        />
+        <SchemasFilter
+          filters={query && query.filters}
+          schemas={data && data.schemas}
+          onChange={handleFilterChange}
+        />
       </div>
       <InfiniteScroll
         makeKey={(resource: Resource) => resource.id}

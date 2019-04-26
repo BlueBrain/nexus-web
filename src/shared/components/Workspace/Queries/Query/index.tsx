@@ -27,7 +27,7 @@ const QueryContainer: React.FunctionComponent<QueryContainerProps> = props => {
     console.log('updating refresh list normal', query);
     // TODO do something not to query each time
     handleRefreshList();
-  }, [query && query.textQuery]);
+  }, [query && query.textQuery, query && query.filters]);
 
   const handleRefreshList = () => {
     const size = 20;

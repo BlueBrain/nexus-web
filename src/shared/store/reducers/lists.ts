@@ -27,14 +27,14 @@ export interface List {
   id: string;
   query: {
     filters: {
-      [filterKey: string]: string[];
+      [filterKey: string]: string;
     };
     textQuery?: string;
   };
   results: FetchableState<{
     resources: PaginatedList<Resource>;
-    schemas: string[];
-    types: string[];
+    schemas: { key: string; count: number }[];
+    types: { key: string; count: number }[];
   }>;
 }
 
