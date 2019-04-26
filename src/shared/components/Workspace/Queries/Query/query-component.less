@@ -21,12 +21,12 @@
     font-size: 0.8rem;
     font-weight: lighter;
     flex-grow: 1;
-    margin-left: 1em;
+    margin-left: @default-pad;
   }
   & > .controls {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 1em;
+    margin-bottom: @default-pad;
     flex-wrap: wrap;
   }
   & > .controls > .search {
@@ -42,7 +42,7 @@
   }
   &.-add {
     cursor: pointer;
-    padding: 1em;
+    padding: @default-pad;
     color: hsla(0, 9%, 91%, 0.8);
     transition: all 85ms ease-in;
     background-color: #00000050;

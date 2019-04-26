@@ -2,7 +2,7 @@
 
 .project-banner {
   background-color: #00000005;
-  padding: 0 1em;
+  padding: 0 @default-pad;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -16,7 +16,7 @@
   }
   & > .label > .description {
     .ellipsis();
-    margin-left: 1em;
+    margin-left: @default-pad;
     max-width: 33vw;
   }
 }

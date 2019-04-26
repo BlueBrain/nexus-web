@@ -26,6 +26,7 @@
 @component-background: #fcfdfd;
 @maxConstrainedItemWidth: 980px;
 @link-hover-color: #28c9fa;
+@default-pad: 1rem;
 
 body {
   background-color: #9e9e9e1f;
@@ -58,7 +59,7 @@ body {
 }
 
 .cardlike() {
-  padding: 1em;
+  padding: @default-pad;
   box-shadow: @box-shadow-base;
   border-radius: @border-radius-base;
   background-color: @background-color-subtle;
