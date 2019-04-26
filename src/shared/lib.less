@@ -19,13 +19,17 @@
   253
 ); // for sublte highlighting in lists
 // Variables
-@header-background-color: #b1b1b117;
+@header-background-color: fade(black, 5%);
 @box-shadow-color: #abbac9;
 @bounce: cubic-bezier(0.645, 0.045, 0.355, 1);
 @interfaceTransition: 0.3s @bounce;
 @component-background: #fcfdfd;
 @maxConstrainedItemWidth: 980px;
 @link-hover-color: #28c9fa;
+@primary-card: #f5f6f7;
+@default-card-width: 400px;
+@default-pad: 1rem;
+@fast: 85ms;
 
 body {
   background-color: #9e9e9e1f;
@@ -33,7 +37,7 @@ body {
   background-repeat: no-repeat;
   // Just for fun! Try them out!
   // background-color: pink;
-  // background-image: url('https://source.unsplash.com/random/2560x1842/?nature,mountain');
+  // background-image: url('https://source.unsplash.com/random/2560x1842/?snow,nature,mountains');
 }
 
 // Mixins
@@ -58,10 +62,11 @@ body {
 }
 
 .cardlike() {
-  padding: 1em;
+  padding: @default-pad;
   box-shadow: @box-shadow-base;
   border-radius: @border-radius-base;
   background-color: @background-color-subtle;
+  height: fit-content;
 }
 
 .interactiveArea() {

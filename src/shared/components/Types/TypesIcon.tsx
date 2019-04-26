@@ -8,7 +8,7 @@ export interface TypesIconProps {
   type: string;
 }
 
-const TypesIcon: React.SFC<TypesIconProps> = ({ type }) => {
+export const TypesIcon: React.SFC<TypesIconProps> = ({ type }) => {
   const typeString = type.toString();
   // must use a hash as Identicon requires a string of atleast 15 chars
   // (making the resulting image effectively a visual hash)
@@ -20,14 +20,14 @@ const TypesIcon: React.SFC<TypesIconProps> = ({ type }) => {
   }).toString();
   const src = `data:image/png;base64,${imageData}`;
   return (
-    <li className="types-icon">
+    <div className="types-icon">
       <Tooltip title={typeString}>
         <Tag>
           <Avatar size="small" shape="square" src={src} />
           <span className="label">{typeString}</span>
         </Tag>
       </Tooltip>
-    </li>
+    </div>
   );
 };
 

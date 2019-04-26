@@ -1,14 +1,22 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../store/reducers';
-import Lists from '../components/Lists';
 import { fetchAndAssignProject } from '../store/actions/nexus/projects';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
-import { Empty, Switch, Icon, Tooltip, Button } from 'antd';
+import { Empty, Switch, Icon, Tooltip, Button, Popover } from 'antd';
 import Menu from '../components/Workspace/Menu';
-import { createList, initializeProjectList } from '../store/actions/lists';
+import {
+  createList,
+  initializeProjectList,
+  makeOrgProjectFilterKey,
+} from '../store/actions/lists';
 import { List } from '../store/reducers/lists';
-import Nexus, { Project, Resource, NexusFile } from '@bbp/nexus-sdk';
+import Nexus, {
+  Project,
+  Resource,
+  NexusFile,
+  Organization,
+} from '@bbp/nexus-sdk';
 import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
 import { createFile } from '../store/actions/nexus/files';
 import Status from '../components/Routing/Status';
@@ -18,9 +26,11 @@ import {
   HTTP_STATUS_TYPE_KEYS,
 } from '../store/actions/utils/statusCodes';
 import { push } from 'connected-react-router';
+import QueryContainer from '../components/Workspace/Queries/QueriesContainer';
 
 interface ProjectViewProps {
   project: Project | null;
+  org: Organization | null;
   error: RequestError | null;
   match: any;
   lists: List[];
@@ -45,6 +55,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   error,
   match,
   project,
+  org,
   createList,
   createResource,
   initialize,
@@ -89,7 +100,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   }
 
   if (!project && !error && isFetching) {
-    description = <p>Loading project...</p>;
+    description = 'Loading project...';
   }
 
   return (
@@ -109,9 +120,21 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
         )}
         {project && (
           <>
-            <div>
-              <h1 style={{ marginBottom: 0, marginRight: 8 }}>
-                {project.label}{' '}
+            <div className="project-banner">
+              <div className="label">
+                <h1 className="name">{project.label} </h1>
+                {!!project.description && (
+                  <Popover
+                    title={project.label}
+                    content={
+                      <div style={{ width: 300 }}>{project.description}</div>
+                    }
+                  >
+                    <div className="description">{project.description}</div>
+                  </Popover>
+                )}
+              </div>
+              <div className="actions">
                 <Menu
                   createResource={async (
                     schemaId: string,
@@ -127,7 +150,9 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
                   project={project}
                   onFileUpload={createFile}
                   createList={() => {
-                    createList(project.orgLabel + project.label);
+                    project &&
+                      org &&
+                      createList(makeOrgProjectFilterKey(org, project));
                   }}
                   render={(setVisible: () => void, visible: boolean) => (
                     <Tooltip
@@ -143,17 +168,11 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
                     </Tooltip>
                   )}
                 />
-              </h1>
-              {project.description && <p>{project.description}</p>}{' '}
+              </div>
             </div>
-            <Lists
-              lists={lists}
-              initialize={() => {
-                initialize(project.orgLabel, project.label);
-              }}
-              project={project}
-              getFilePreview={getFilePreview}
-            />
+            {!!org && !!project && (
+              <QueryContainer org={org} project={project} />
+            )}
           </>
         )}
       </div>
@@ -182,6 +201,7 @@ const mapStateToProps = (state: RootState) => {
     token: state.oidc && state.oidc.user && state.oidc.user.access_token,
     authenticated: !!state.oidc.user,
     project: projectData || null,
+    org: (orgData && orgData.org) || null,
     isFetching:
       (state.nexus &&
         state.nexus.activeProject &&

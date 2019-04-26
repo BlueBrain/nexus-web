@@ -1,0 +1,55 @@
+@import '../../../../lib.less';
+
+.query-component {
+  .cardlike();
+  background-color: @primary-card;
+  width: @default-card-width;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  & > .infinite-scroll {
+    overflow: hidden;
+    overflow-y: auto;
+  }
+  & > .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: @text-color; // instead of default heading color
+  }
+  & > .header > .count {
+    font-size: 0.8rem;
+    font-weight: lighter;
+    flex-grow: 1;
+    margin-left: @default-pad;
+  }
+  & > .controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: @default-pad;
+    flex-wrap: wrap;
+  }
+  & > .controls > .search {
+    width: 60%;
+    margin-right: 2px;
+  }
+  & > .controls > .filter-dropdown {
+    width: calc(50% - 2px);
+    margin: 0.5em 0;
+  }
+  & > .infinite-scroll > .list .list-item {
+    margin: 0.5em 0;
+  }
+  &.-add {
+    cursor: pointer;
+    padding: @default-pad;
+    color: @background-color-subtle;
+    transition: all @fast ease-in;
+    background-color: fade(black, 30%);
+    height: fit-content;
+    display: block;
+    &:hover {
+      background-color: fade(black, 50%);
+    }
+  }
+}

@@ -1,0 +1,24 @@
+@import '../../../lib.less';
+
+.queries-board {
+  // 117 = 40 (header) + 42 (project banner) + 35 (footer)
+  height: calc(100vh - 117px);
+  overflow: hidden;
+  overflow-x: scroll;
+  padding: @default-pad @default-pad 0;
+  & > .wrapper {
+    display: flex;
+    width: fit-content;
+    padding-bottom: @default-pad;
+    height: 100%;
+  }
+  & > .wrapper > .query-component {
+    &:first-child {
+      margin-left: 0;
+    }
+    &:last-child {
+      margin-right: 0;
+    }
+    margin: 0 0.5em;
+  }
+}

@@ -10,11 +10,9 @@ import {
 } from '@bbp/nexus-sdk';
 import { ThunkAction } from '..';
 import { RootState } from '../reducers';
-import { updateList } from './lists';
-import {
-  ElasticSearchViewAggregationResponse,
-  ElasticSearchViewQueryResponse,
-} from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
+import { updateList, makeOrgProjectFilterKey } from './lists';
+import { ElasticSearchViewAggregationResponse } from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
+import { List } from '../reducers/lists';
 
 export const queryResourcesActionPrefix = 'QUERY';
 
@@ -63,17 +61,15 @@ const queryResourcesFetchAction: ActionCreator<FetchQueryAction> = (
 
 interface QueryResourcesFulfilledPayload {
   resources: PaginatedList<Resource>;
-  paginationSettings: PaginationSettings;
-  _constrainedBy: any[];
-  '@type': any[];
+  schemas: string[];
+  types: string[];
 }
 
 const queryResourcesFulfilledAction: ActionCreator<FulfilledQueryAction> = (
   filterIndex: number,
   filterKey: string,
   resources: PaginatedList<Resource>,
-  paginationSettings: PaginationSettings,
-  constrainedBy: any[],
+  schemas: any[],
   types: any[]
 ) => ({
   filterIndex,
@@ -81,9 +77,8 @@ const queryResourcesFulfilledAction: ActionCreator<FulfilledQueryAction> = (
   type: QueryResourcesActionTypes.FULFILLED,
   payload: {
     resources,
-    paginationSettings,
-    _constrainedBy: constrainedBy,
-    '@type': types,
+    schemas,
+    types,
   },
 });
 
@@ -139,14 +134,17 @@ export const makeESQuery = (query?: { filters: any; textQuery?: string }) => {
   return {};
 };
 
-// TODO make higher order compositional function to add "WithFilterKey" or "WithFilterIndex"
+export interface FilterQuery {
+  filters: {};
+  textQuery?: string;
+}
+
 export const queryResources: ActionCreator<ThunkAction> = (
-  filterIndex: number,
-  filterKey: string,
-  orgLabel: string,
-  projectLabel: string,
+  id: string,
+  org: Organization,
+  project: Project,
   paginationSettings: PaginationSettings,
-  query?: any
+  query?: FilterQuery
 ) => {
   return async (
     dispatch: Dispatch<any>,
@@ -159,25 +157,26 @@ export const queryResources: ActionCreator<ThunkAction> = (
       >
     | FilterFetchFailedAction<QueryResourcesActionTypes.FAILED>
   > => {
+    const Project = nexus.Project;
+    const filterKey = makeOrgProjectFilterKey(org, project);
     const listState = (getState() as RootState).lists;
-    if (query && listState) {
-      const list = (listState as any)[filterKey][filterIndex];
-      dispatch(
-        updateList(orgLabel + projectLabel, filterIndex, {
-          ...list,
-          query,
-        })
-      );
-    }
-    dispatch(queryResourcesFetchAction(filterIndex, filterKey));
+    const targetWorkspace = listState && listState[filterKey];
+    const filterIndex = (targetWorkspace || []).findIndex(
+      (list: List) => list.id === id
+    );
+    const list: List | undefined =
+      (!!targetWorkspace && filterIndex >= 0 && targetWorkspace[filterIndex]) ||
+      undefined;
     try {
-      if (!projectLabel || !orgLabel) {
-        throw new Error('No active org or project');
+      if (!list) {
+        throw new Error(
+          `no list found with id ${id} inside project ${project.label}`
+        );
       }
+      dispatch(queryResourcesFetchAction(filterIndex, filterKey));
       const formattedQuery = makeESQuery(query);
-      const org: Organization = await nexus.getOrganization(orgLabel);
-      const project: Project = await org.getProject(projectLabel);
-      const defaultElasticSearchView: ElasticSearchView = await project.getElasticSearchView();
+      const realProject = await Project.get(org.label, project.label);
+      const defaultElasticSearchView: ElasticSearchView = await realProject.getElasticSearchView();
       const resources: PaginatedList<
         Resource
       > = await defaultElasticSearchView.query(
@@ -215,7 +214,6 @@ export const queryResources: ActionCreator<ThunkAction> = (
           filterIndex,
           filterKey,
           resources,
-          paginationSettings,
           schemas,
           types
         )
