@@ -92,7 +92,6 @@ const mapDispatchToProps = (
     ),
   createList: () => dispatch(createList(makeOrgProjectFilterKey(org, project))),
   updateList: (listIndex: number, list: List) => {
-    console.log('updateList: ', { listIndex, list });
     dispatch(
       updateList(makeOrgProjectFilterKey(org, project), listIndex, list)
     );
