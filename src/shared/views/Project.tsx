@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { RootState } from '../store/reducers';
 import { fetchAndAssignProject } from '../store/actions/nexus/projects';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
-import { Empty, Switch, Icon, Tooltip, Button } from 'antd';
+import { Empty, Switch, Icon, Tooltip, Button, Popover } from 'antd';
 import Menu from '../components/Workspace/Menu';
 import {
   createList,
@@ -124,7 +124,14 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
               <div className="label">
                 <h1 className="name">{project.label} </h1>
                 {!!project.description && (
-                  <div className="description">{project.description}</div>
+                  <Popover
+                    title={project.label}
+                    content={
+                      <div style={{ width: 300 }}>{project.description}</div>
+                    }
+                  >
+                    <div className="description">{project.description}</div>
+                  </Popover>
                 )}
               </div>
               <div className="actions">
