@@ -219,7 +219,6 @@ export const queryResources: ActionCreator<ThunkAction> = (
         )
       );
     } catch (e) {
-      console.error(e);
       return dispatch(queryResourcesFailedAction(filterIndex, filterKey, e));
     }
   };
