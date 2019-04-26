@@ -1,0 +1,22 @@
+@import '../lib.less';
+
+.project-banner {
+  background-color: #00000005;
+  padding: 0 1em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  & > .label {
+    display: flex;
+    align-items: center;
+  }
+  & > .label > .name {
+    width: fit-content;
+    margin: 0;
+  }
+  & > .label > .description {
+    .ellipsis();
+    margin-left: 1em;
+    max-width: 33vw;
+  }
+}

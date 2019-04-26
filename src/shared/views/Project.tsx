@@ -121,8 +121,13 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
         {project && (
           <>
             <div className="project-banner">
-              <h1>
-                {project.label}{' '}
+              <div className="label">
+                <h1 className="name">{project.label} </h1>
+                {!!project.description && (
+                  <div className="description">{project.description}</div>
+                )}
+              </div>
+              <div className="actions">
                 <Menu
                   createResource={async (
                     schemaId: string,
@@ -156,7 +161,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
                     </Tooltip>
                   )}
                 />
-              </h1>
+              </div>
             </div>
             {!!org && !!project && (
               <QueryContainer org={org} project={project} />

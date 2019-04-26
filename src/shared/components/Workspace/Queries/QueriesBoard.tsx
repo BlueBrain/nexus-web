@@ -22,24 +22,26 @@ const QueriesComponent: React.FunctionComponent<
   } = props;
   return (
     <div className="queries-board">
-      {lists.map((list: List, index: number) => {
-        return (
-          <Query
-            {...{
-              list,
-              queryResources,
-              goToResource,
-              goToQuery,
-              updateList: (list: List) => updateList(index, list),
-              deleteList: () => deleteList(index),
-              cloneList: (list: List) => cloneList(index, list),
-            }}
-            key={list.id}
-          />
-        );
-      })}
-      <div className="query-component -add" onClick={() => createList()}>
-        <Icon type="plus" /> Add another query list
+      <div className="wrapper">
+        {lists.map((list: List, index: number) => {
+          return (
+            <Query
+              {...{
+                list,
+                queryResources,
+                goToResource,
+                goToQuery,
+                updateList: (list: List) => updateList(index, list),
+                deleteList: () => deleteList(index),
+                cloneList: (list: List) => cloneList(index, list),
+              }}
+              key={list.id}
+            />
+          );
+        })}
+        <div className="query-component -add" onClick={() => createList()}>
+          <Icon type="plus" /> Add another query list
+        </div>
       </div>
     </div>
   );
