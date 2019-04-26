@@ -100,6 +100,7 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
   const { isFetching, data, error } = fetchablePaginatedList;
   // concatenated list of all items
   const [itemsList, setItemsList] = React.useState<any[]>([]);
+
   const [bind] = useInfiniteScroll(
     loadNextPage,
     isFetching,
@@ -107,12 +108,11 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
     itemsList.length,
     (data && data.total) || 0
   );
+
+  // TODO: Is there a cheaper way to do comparing with Arrays of Objects?
+  const resultsComparator = data && JSON.stringify(data.results);
+
   React.useEffect(() => {
-    console.log(
-      'results have changed, I want to combine them',
-      itemsList,
-      data && data.results
-    );
     // Reset results if we're on the first paginated page
     if (data && data.index === 0) {
       setItemsList([...data.results]);
@@ -123,7 +123,7 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
       setItemsList([...itemsList, ...data.results]);
       return;
     }
-  }, [data && data.index, data && data.results]);
+  }, [data && data.index, resultsComparator]);
   const hasMore = itemsList.length < ((data && data.total) || 0);
   const keys = itemsList.map(makeKey);
   // should we count the page as being reset?
@@ -134,8 +134,6 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
     // Don't display trailed (delayed) animations when the page is resetting
     trail: shouldReset ? undefined : DEFAULT_TRAIL_MS,
   });
-
-  console.log({ itemsList });
 
   return (
     <div {...bind} className="infinite-scroll" style={style}>
