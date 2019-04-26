@@ -26,7 +26,7 @@ const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = props => {
   return (
     <Search
       className="search"
-      placeholder="text query"
+      placeholder="Search with text"
       onChange={handleInputChange}
       onSearch={handleOnSearch}
       defaultValue={inputValue}

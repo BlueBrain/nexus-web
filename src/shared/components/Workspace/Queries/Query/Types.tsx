@@ -52,6 +52,7 @@ const TypesFilter: React.FunctionComponent<TypesFilterProps> = props => {
       <AutoComplete
         dropdownMatchSelectWidth={false}
         optionLabelProp="label"
+        placeholder="Filter by Type"
         onChange={handleInputChange}
         onSelect={handleChange}
         value={inputValue}

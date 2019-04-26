@@ -51,6 +51,7 @@ const SchemasFilter: React.FunctionComponent<SchemaFilterProps> = props => {
       <AutoComplete
         dropdownMatchSelectWidth={false}
         optionLabelProp="label"
+        placeholder="Filter by Schema"
         onChange={handleInputChange}
         onSelect={handleChange}
         value={inputValue}
