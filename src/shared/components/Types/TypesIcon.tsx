@@ -8,6 +8,8 @@ export interface TypesIconProps {
   type: string;
 }
 
+const MAX_TYPES_TO_DISPLAY = 2;
+
 export const TypesIcon: React.SFC<TypesIconProps> = ({ type }) => {
   const typeString = type.toString();
   // must use a hash as Identicon requires a string of atleast 15 chars
@@ -55,9 +57,9 @@ const TypesIconList: React.SFC<TypesIconListProps> = ({
   });
 
   let typesToDisplay = type;
-  const tooManyTypes = !full && type.length > 3;
+  const tooManyTypes = !full && type.length > MAX_TYPES_TO_DISPLAY;
   if (tooManyTypes) {
-    typesToDisplay = [...type].slice(0, 3);
+    typesToDisplay = [...type].slice(0, MAX_TYPES_TO_DISPLAY);
   }
 
   return (
