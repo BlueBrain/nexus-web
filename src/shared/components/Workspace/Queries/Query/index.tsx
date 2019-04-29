@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PaginationSettings, Resource } from '@bbp/nexus-sdk';
+import { PaginationSettings, Resource, NexusFile } from '@bbp/nexus-sdk';
 import { FilterQuery } from '../../../../store/actions/queryResource';
 import { List } from '../../../../store/reducers/lists';
 import QueryComponent from './QueryComponent';
@@ -12,6 +12,7 @@ interface QueryContainerProps {
   cloneList: (list: List) => void;
   goToResource: (resource: Resource) => void;
   goToQuery: (list: List) => void;
+  getFilePreview: (selfUrl: string) => Promise<NexusFile>;
   queryResources: (
     id: string,
     paginationSettings: PaginationSettings,

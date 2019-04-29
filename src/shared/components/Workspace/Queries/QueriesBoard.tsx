@@ -10,17 +10,7 @@ interface QueriesComponentProps extends QueriesContainerProps {}
 const QueriesComponent: React.FunctionComponent<
   QueriesComponentProps
 > = props => {
-  const {
-    lists,
-    pageSize,
-    queryResources,
-    goToResource,
-    goToQuery,
-    updateList,
-    deleteList,
-    cloneList,
-    createList,
-  } = props;
+  const { lists, updateList, deleteList, cloneList, createList } = props;
   return (
     <div className="queries-board">
       <div className="wrapper">
@@ -28,11 +18,8 @@ const QueriesComponent: React.FunctionComponent<
           return (
             <Query
               {...{
+                ...props,
                 list,
-                pageSize,
-                queryResources,
-                goToResource,
-                goToQuery,
                 updateList: (list: List) => updateList(index, list),
                 deleteList: () => deleteList(index),
                 cloneList: (list: List) => cloneList(index, list),

@@ -14,6 +14,8 @@
 
 .list-item {
   .listItemLike();
+  display: flex;
+  flex-direction: column;
   &:focus,
   &:focus-within {
     background-color: fade(@primary-color, 5%);
@@ -24,10 +26,33 @@
   &:hover > .content > .actions {
     display: block;
   }
+  > .avatar {
+    background-color: @header-background-color;
+    margin-bottom: @default-pad;
+    border-radius: @border-radius-base;
+  }
+  > .avatar.-small {
+    margin: 0;
+    width: fit-content;
+    height: 100%;
+    margin: 0 1em 0 0;
+  }
+  > .avatar > .wrapper {
+    background-size: contain;
+    background-position: 50%;
+    background-repeat: no-repeat;
+    max-height: 260px;
+  }
+  > .avatar > .wrapper > img {
+    visibility: hidden;
+    max-height: 100%;
+    max-width: 100%;
+  }
   > .content {
     display: flex;
     justify-content: space-between;
     height: 24px;
+    flex-grow: 1;
   }
   > .content > .label {
     .ellipsis();
@@ -50,5 +75,8 @@
   &.-compact > .description {
     z-index: 1;
     .ellipsis();
+  }
+  &.-small {
+    flex-direction: row;
   }
 }
