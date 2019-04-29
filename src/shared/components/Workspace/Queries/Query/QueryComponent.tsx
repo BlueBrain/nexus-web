@@ -6,7 +6,7 @@ import ListItem from '../../../Animations/ListItem';
 import { FetchableState } from '../../../../store/reducers/utils';
 import { PaginatedList, Resource } from '@bbp/nexus-sdk';
 import ResourceMetadataCard from '../../../Resources/MetadataCard';
-import { Popover, Icon, Tooltip, Button } from 'antd';
+import { Popover, Icon, Tooltip, Button, Spin } from 'antd';
 import TypesIconList from '../../../Types/TypesIcon';
 import RenameableItem from '../../../Renameable';
 import FullTextSearch from './Search';
@@ -134,39 +134,46 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
           onChange={handleFilterChange}
         />
       </div>
-      <InfiniteScroll
-        makeKey={(resource: Resource) => resource.id}
-        itemComponent={(resource: Resource, index: number) => {
-          return (
-            <div key={resource.id}>
-              <ListItem
-                onClick={handleOnClick(resource)}
-                label={
-                  <Popover
-                    content={
-                      <ResourceMetadataCard
-                        {...{ ...resource, name: resource.name }}
-                      />
-                    }
-                    mouseEnterDelay={MOUSE_ENTER_DELAY}
-                    key={resource.id}
-                  >
-                    {resource.name}
-                  </Popover>
-                }
-                id={resource.id}
-                details={
-                  resource.type && !!resource.type.length ? (
-                    <TypesIconList type={resource.type} />
-                  ) : null
-                }
-              />
-            </div>
-          );
-        }}
-        loadNextPage={next}
-        fetchablePaginatedList={fetchablePaginatedList}
-      />
+      <Spin spinning={isFetching}>
+        <InfiniteScroll
+          makeKey={(resource: Resource) => resource.id}
+          itemComponent={(resource: Resource, index: number) => {
+            if (!resource.id) {
+              // @ts-ignore
+              console.warn('strange resource found', resource);
+              return null
+            }
+            return (
+              <div key={resource.id}>
+                <ListItem
+                  onClick={handleOnClick(resource)}
+                  label={
+                    <Popover
+                      content={
+                        <ResourceMetadataCard
+                          {...{ ...resource, name: resource.name }}
+                        />
+                      }
+                      mouseEnterDelay={MOUSE_ENTER_DELAY}
+                      key={resource.id}
+                    >
+                      {resource.name}
+                    </Popover>
+                  }
+                  id={resource.id}
+                  details={
+                    resource.type && !!resource.type.length ? (
+                      <TypesIconList type={resource.type} />
+                    ) : null
+                  }
+                />
+              </div>
+            );
+          }}
+          loadNextPage={next}
+          fetchablePaginatedList={fetchablePaginatedList}
+        />
+      </Spin>
     </div>
   );
 };
