@@ -65,7 +65,11 @@ const ResourceMetadataCard: React.FunctionComponent<
                       style={{ margin: '0 1em' }}
                       size="small"
                       icon={copySuccess ? 'check' : 'copy'}
-                      onClick={() => triggerCopy()}
+                      onClick={(e: React.MouseEvent) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        triggerCopy();
+                      }}
                     >
                       @id
                     </Button>
@@ -80,7 +84,11 @@ const ResourceMetadataCard: React.FunctionComponent<
                     <Button
                       size="small"
                       icon={copySuccess ? 'check' : 'copy'}
-                      onClick={() => triggerCopy()}
+                      onClick={(e: React.MouseEvent) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        triggerCopy();
+                      }}
                     >
                       _self
                     </Button>
