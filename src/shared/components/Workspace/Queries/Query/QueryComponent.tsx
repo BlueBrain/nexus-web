@@ -141,8 +141,9 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
           makeKey={(resource: Resource) => resource.id}
           itemComponent={(resource: Resource, index: number) => {
             if (!resource || !resource.id) {
-              //  @ts-ignore trying to debug a hard-to-replicate behavior
+              // trying to debug a hard-to-replicate behavior
               // if this happens to you, let me know!
+              // tslint:disable-next-line:no-console
               console.warn('strange resource found', resource);
               return null;
             }
