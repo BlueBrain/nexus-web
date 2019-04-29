@@ -24,6 +24,7 @@ interface QueryComponentProps {
   deleteList: () => void;
   cloneList: (list: List) => void;
   handleRefreshList: () => void;
+  showSpinner: boolean;
 }
 
 const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
@@ -40,6 +41,7 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
     deleteList,
     cloneList,
     next,
+    showSpinner,
   } = props;
   const handleOnClick = (resource: Resource) => () => goToResource(resource);
   const handleUpdate = (value: string) => {
@@ -134,14 +136,15 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
           onChange={handleFilterChange}
         />
       </div>
-      <Spin spinning={isFetching}>
+      <Spin spinning={showSpinner}>
         <InfiniteScroll
           makeKey={(resource: Resource) => resource.id}
           itemComponent={(resource: Resource, index: number) => {
-            if (!resource.id) {
-              // @ts-ignore
+            if (!resource || !resource.id) {
+              //  @ts-ignore trying to debug a hard-to-replicate behavior
+              // if this happens to you, let me know!
               console.warn('strange resource found', resource);
-              return null
+              return null;
             }
             return (
               <div key={resource.id}>
