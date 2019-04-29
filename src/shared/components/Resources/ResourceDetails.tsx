@@ -8,6 +8,7 @@ import { RequestError } from '../../store/actions/utils/errors';
 import LinksContainer from './Links';
 import { LinksState } from '../../store/reducers/links';
 import { LinkDirection } from '../../store/actions/nexus/links';
+import Helmet from 'react-helmet';
 
 const TabPane = Tabs.TabPane;
 
@@ -98,6 +99,20 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
         )}
         {!!resource && !error && (
           <>
+            <Helmet
+              title={`${resource.name} | ${resource.projectLabel} | ${
+                resource.orgLabel
+              } | Nexus Web`}
+              meta={[
+                // TODO find good ideas for descriptions!
+                {
+                  name: 'description',
+                  content: `
+                    ${resource.name}
+                  `,
+                },
+              ]}
+            />
             <ResourceMetadataCard {...{ ...resource, name: resource.name }} />
             <Tabs defaultActiveKey="1">
               <TabPane tab="JSON" key="1">
