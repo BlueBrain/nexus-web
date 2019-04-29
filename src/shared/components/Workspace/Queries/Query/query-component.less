@@ -4,6 +4,9 @@
   .cardlike();
   background-color: @primary-card;
   width: @default-card-width;
+  min-width: @default-card-width;
+  resize: horizontal;
+  overflow: auto;
   display: flex;
   flex-direction: column;
   max-height: 100%;
@@ -31,7 +34,10 @@
   }
   & > .controls > .search {
     width: 60%;
-    margin-right: 2px;
+    flex-grow: 1;
+  }
+  & > .controls > button {
+    margin-left: 2px;
   }
   & > .controls > .filter-dropdown {
     width: calc(50% - 2px);
