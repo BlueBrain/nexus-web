@@ -104,7 +104,7 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
           size="small"
         />
         <div className="count">
-          {total && `${total} result${total > 1 ? 's' : ''}`}
+          {!!total && `${total} result${total > 1 ? 's' : ''}`}
         </div>
         <Icon type="close" className="close-button" onClick={handleDelete} />
       </h3>
