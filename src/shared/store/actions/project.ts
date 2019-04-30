@@ -153,10 +153,10 @@ const pollProjectCreated = async (project: Project): Promise<void> => {
       // TODO: maybe do something if not 404?
       await asyncTimeout(pollingTimeInMilliseconds);
       iterations += 1;
-      if (iterations >= shortCircuitIterationCount) {
+      if (iterations > shortCircuitIterationCount) {
         projectReady = true;
         notification.warning({
-          message: `Project ${project.label} is taking too long to set up`,
+          message: `Project is taking too long to set up`,
           description:
             'This process is taking longer than usual. You might have to grab a coffee and come back later.',
           duration: 0,

@@ -235,7 +235,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
   }
 
   return (
-    <>
+    <div className="projects-view">
       <h1 style={{ marginBottom: 0, marginRight: 8 }}>{activeOrg.label}</h1>
       {activeOrg.description && <p>{activeOrg.description}</p>}
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
@@ -312,7 +312,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
           />
         )}
       </Drawer>
-    </>
+    </div>
   );
 };
 
