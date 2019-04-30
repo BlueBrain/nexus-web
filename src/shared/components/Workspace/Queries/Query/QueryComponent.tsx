@@ -4,7 +4,7 @@ import './query-component.less';
 import InfiniteScroll from '../../../Animations/InfiniteScroll';
 import ListItem from '../../../Animations/ListItem';
 import { FetchableState } from '../../../../store/reducers/utils';
-import { PaginatedList, Resource } from '@bbp/nexus-sdk';
+import { PaginatedList, Resource, NexusFile } from '@bbp/nexus-sdk';
 import ResourceMetadataCard from '../../../Resources/MetadataCard';
 import { Popover, Icon, Tooltip, Button, Spin } from 'antd';
 import TypesIconList from '../../../Types/TypesIcon';
@@ -18,6 +18,7 @@ const MOUSE_ENTER_DELAY = 0.5;
 interface QueryComponentProps {
   list: List;
   goToResource: (resource: Resource) => void;
+  getFilePreview: (selfUrl: string) => Promise<NexusFile>;
   goToQuery: (list: List) => void;
   next: VoidFunction;
   updateList: (list: List) => void;
@@ -40,6 +41,7 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
     updateList,
     deleteList,
     cloneList,
+    getFilePreview,
     next,
     showSpinner,
   } = props;
@@ -95,6 +97,7 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
   };
   const total =
     (fetchablePaginatedList.data && fetchablePaginatedList.data.total) || 0;
+
   return (
     <div className="query-component">
       <h3 className="header">

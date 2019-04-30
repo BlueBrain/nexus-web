@@ -108,7 +108,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
     <Status
       code={!!error ? error.code : HTTP_STATUSES[HTTP_STATUS_TYPE_KEYS.OK].code}
     >
-      <div className="project">
+      <div className="project-view">
         {!project && (
           <>
             <h1 style={{ marginBottom: 0, marginRight: 8 }}>

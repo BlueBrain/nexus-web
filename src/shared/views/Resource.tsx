@@ -66,7 +66,7 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
   }, [match.params.resourceId]);
 
   return (
-    <>
+    <div className="resource-view">
       {!!resource && <Helmet title={resource.name} />}
       <Status
         code={
@@ -87,7 +87,7 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
           fetchResource={fetch}
         />
       </Status>
-    </>
+    </div>
   );
 };
 

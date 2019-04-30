@@ -16,11 +16,30 @@ const exampleItems = [
   {
     label: 'nexus',
     projectNumber: 1200,
+    avatar: {
+      src:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Morocco_Africa_Flickr_Rosino_December_2005_84514010.jpg/800px-Morocco_Africa_Flickr_Rosino_December_2005_84514010.jpg',
+    },
     description:
       "Yeah, but your scientists were so preoccupied with whether or not they could, they didn't stop to think if they should. You're a very talented young man, with your own clever thoughts and ideas. Do you need a manager? They're using our own satellites against us. And the clock is ticking.",
   },
-  { label: 'bbp', projectNumber: 300, deprecated: true, action: true },
-  { label: 'hbp', projectNumber: 1 },
+  {
+    label: 'bbp',
+    projectNumber: 300,
+    deprecated: true,
+    action: true,
+    avatar: {
+      src: 'https://i.gifer.com/embedded/download/7U30.gif',
+    },
+  },
+  {
+    label: 'hbp',
+    projectNumber: 1,
+    avatar: {
+      src:
+        'https://upload.wikimedia.org/wikipedia/commons/3/34/Gusev_Crater%2C_Mars.jpg',
+    },
+  },
   {
     label: 'nasa',
     projectNumber: 912839,
@@ -28,7 +47,13 @@ const exampleItems = [
       "God creates dinosaurs. God destroys dinosaurs. God creates Man. Man destroys God. Man creates Dinosaurs. Hey, you know how I'm, like, always trying to save the planet? Here's my chance. You really think you can fly that thing? Did he just throw my cat out of the window?",
   },
   { label: 'tesla', projectNumber: 3, deprecated: true },
-  { label: 'rolex', projectNumber: 3424 },
+  {
+    label: 'rolex',
+    projectNumber: 3424,
+    avatar: {
+      src: 'https://cdn.jsdelivr.net/emojione/assets/3.1/png/32/1f31e.png',
+    },
+  },
 ];
 
 storiesOf('Components/ListItem', module)
@@ -48,6 +73,7 @@ storiesOf('Components/ListItem', module)
           <ul style={{ margin: 0, padding: 0 }}>
             {exampleItems.map((element, index) => {
               const {
+                avatar,
                 label,
                 action: elementAction,
                 projectNumber,
@@ -57,6 +83,7 @@ storiesOf('Components/ListItem', module)
               return (
                 <ListItem
                   id={`element-${index}`}
+                  avatar={avatar}
                   label={label}
                   onClick={action('element-clicked')}
                   details={

@@ -5,6 +5,7 @@ import {
   Project,
   Resource,
   PaginationSettings,
+  NexusFile,
 } from '@bbp/nexus-sdk';
 import { RootState } from '../../../store/reducers';
 import { List } from '../../../store/reducers/lists';
@@ -36,6 +37,7 @@ export interface QueriesContainerProps {
   deleteList: (listIndex: number) => void;
   cloneList: (listIndex: number, list: List) => void;
   createList: () => void;
+  getFilePreview: (selfUrl: string) => Promise<NexusFile>;
   queryResources: (
     id: string,
     paginationSettings: PaginationSettings,
@@ -103,6 +105,7 @@ const mapDispatchToProps = (
     dispatch(cloneList(makeOrgProjectFilterKey(org, project), listIndex, list)),
   initialize: () =>
     dispatch(initializeProjectList(makeOrgProjectFilterKey(org, project))),
+  getFilePreview: (selfUrl: string) => NexusFile.getSelf(selfUrl, true),
   queryResources: (
     id: string,
     paginationSettings: PaginationSettings,

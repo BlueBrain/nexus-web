@@ -1,11 +1,13 @@
 import * as React from 'react';
 import './list-item.less';
+import useMeasure from '../hooks/useMeasure';
 
 export interface ListItemProps {
   label: React.ReactComponentElement<any> | string;
   id: string;
   description?: string;
   details?: React.ReactComponentElement<any> | null;
+  avatar?: { src: string } | null;
   action?: React.ReactComponentElement<any> | null;
   onClick?: (id: string, event: React.MouseEvent) => void;
 }
@@ -17,10 +19,13 @@ const ListItem: React.FunctionComponent<ListItemProps> = ({
   onClick,
   details,
   action,
+  avatar,
 }) => {
+  const [bind, bounds] = useMeasure();
+  const avatarClassSwitch = bounds && bounds.height > 100 ? `-big` : `-small`;
   return (
     <li
-      className="list-item -compact"
+      className={`list-item -compact ${avatar ? avatarClassSwitch : ''}`}
       tabIndex={1}
       onClick={
         onClick
@@ -29,6 +34,17 @@ const ListItem: React.FunctionComponent<ListItemProps> = ({
       }
       key={id}
     >
+      {avatar && (
+        // @ts-ignore can't bothered to figure out which HTMLELEMENT type I need for this
+        <div {...bind} className={`avatar ${avatarClassSwitch}`}>
+          <div
+            className="wrapper"
+            style={{ backgroundImage: `url(${avatar.src})` }}
+          >
+            <img src={avatar.src} />
+          </div>
+        </div>
+      )}
       <div className="content">
         <span className="label">{label}</span>
         {details && <div className="details">{details}</div>}
