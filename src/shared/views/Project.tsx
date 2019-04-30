@@ -27,6 +27,7 @@ import {
 } from '../store/actions/utils/statusCodes';
 import { push } from 'connected-react-router';
 import QueryContainer from '../components/Workspace/Queries/QueriesContainer';
+import Helmet from 'react-helmet';
 
 interface ProjectViewProps {
   project: Project | null;
@@ -120,6 +121,17 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
         )}
         {project && (
           <>
+            <Helmet
+              title={`${project.label} | ${org && `${org.label} | `} Nexus Web`}
+              meta={[
+                project.description
+                  ? {
+                      name: 'description',
+                      content: project.description,
+                    }
+                  : {},
+              ]}
+            />
             <div className="project-banner">
               <div className="label">
                 <h1 className="name">{project.label} </h1>

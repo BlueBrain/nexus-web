@@ -78,7 +78,7 @@ export const InfiniteScrollLoadMoreButton: React.FunctionComponent<{
 };
 
 export interface InfiniteScrollProps {
-  itemComponent: (item: any, index: number) => React.ReactElement;
+  itemComponent: (item: any, index: number) => React.ReactElement | null;
   itemClassName?: string;
   makeKey: (item: any, index: number) => string;
   loadNextPage: VoidFunction;
@@ -141,15 +141,19 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
       {!error && (
         <ul className="list">
           {transitions.map(({ item, props }, index: number) => {
-            return (
-              <animated.div
-                className={itemClassName}
-                style={props}
-                key={keys[index]}
-              >
-                {itemComponent(item, index)}
-              </animated.div>
-            );
+            const component = itemComponent(item, index);
+            if (component) {
+              return (
+                <animated.div
+                  className={itemClassName}
+                  style={props}
+                  key={keys[index]}
+                >
+                  {itemComponent(item, index)}
+                </animated.div>
+              );
+            }
+            return null;
           })}
           {!isFetching && (!data || !data.total) && <Empty />}
           {hasMore && (

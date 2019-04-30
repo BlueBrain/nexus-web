@@ -6,7 +6,7 @@ import ListItem from '../../../Animations/ListItem';
 import { FetchableState } from '../../../../store/reducers/utils';
 import { PaginatedList, Resource } from '@bbp/nexus-sdk';
 import ResourceMetadataCard from '../../../Resources/MetadataCard';
-import { Popover, Icon, Tooltip, Button } from 'antd';
+import { Popover, Icon, Tooltip, Button, Spin } from 'antd';
 import TypesIconList from '../../../Types/TypesIcon';
 import RenameableItem from '../../../Renameable';
 import FullTextSearch from './Search';
@@ -24,6 +24,7 @@ interface QueryComponentProps {
   deleteList: () => void;
   cloneList: (list: List) => void;
   handleRefreshList: () => void;
+  showSpinner: boolean;
 }
 
 const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
@@ -40,6 +41,7 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
     deleteList,
     cloneList,
     next,
+    showSpinner,
   } = props;
   const handleOnClick = (resource: Resource) => () => goToResource(resource);
   const handleUpdate = (value: string) => {
@@ -102,7 +104,7 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
           size="small"
         />
         <div className="count">
-          {total && `${total} result${total > 1 ? 's' : ''}`}
+          {!!total && `${total} result${total > 1 ? 's' : ''}`}
         </div>
         <Icon type="close" className="close-button" onClick={handleDelete} />
       </h3>
@@ -134,39 +136,48 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
           onChange={handleFilterChange}
         />
       </div>
-      <InfiniteScroll
-        makeKey={(resource: Resource) => resource.id}
-        itemComponent={(resource: Resource, index: number) => {
-          return (
-            <div key={resource.id}>
-              <ListItem
-                onClick={handleOnClick(resource)}
-                label={
-                  <Popover
-                    content={
-                      <ResourceMetadataCard
-                        {...{ ...resource, name: resource.name }}
-                      />
-                    }
-                    mouseEnterDelay={MOUSE_ENTER_DELAY}
-                    key={resource.id}
-                  >
-                    {resource.name}
-                  </Popover>
-                }
-                id={resource.id}
-                details={
-                  resource.type && !!resource.type.length ? (
-                    <TypesIconList type={resource.type} />
-                  ) : null
-                }
-              />
-            </div>
-          );
-        }}
-        loadNextPage={next}
-        fetchablePaginatedList={fetchablePaginatedList}
-      />
+      <Spin spinning={showSpinner}>
+        <InfiniteScroll
+          makeKey={(resource: Resource) => resource.id}
+          itemComponent={(resource: Resource, index: number) => {
+            if (!resource || !resource.id) {
+              // trying to debug a hard-to-replicate behavior
+              // if this happens to you, let me know!
+              // tslint:disable-next-line:no-console
+              console.warn('strange resource found', resource);
+              return null;
+            }
+            return (
+              <div key={resource.id}>
+                <ListItem
+                  onClick={handleOnClick(resource)}
+                  label={
+                    <Popover
+                      content={
+                        <ResourceMetadataCard
+                          {...{ ...resource, name: resource.name }}
+                        />
+                      }
+                      mouseEnterDelay={MOUSE_ENTER_DELAY}
+                      key={resource.id}
+                    >
+                      {resource.name}
+                    </Popover>
+                  }
+                  id={resource.id}
+                  details={
+                    resource.type && !!resource.type.length ? (
+                      <TypesIconList type={resource.type} />
+                    ) : null
+                  }
+                />
+              </div>
+            );
+          }}
+          loadNextPage={next}
+          fetchablePaginatedList={fetchablePaginatedList}
+        />
+      </Spin>
     </div>
   );
 };
