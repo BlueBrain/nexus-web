@@ -1,6 +1,8 @@
 import * as React from 'react';
 import './list-item.less';
 import useMeasure from '../hooks/useMeasure';
+import { Popover } from 'antd';
+import { PopoverProps } from 'antd/lib/popover';
 
 export interface ListItemProps {
   label: React.ReactComponentElement<any> | string;
@@ -10,6 +12,7 @@ export interface ListItemProps {
   avatar?: { src: string } | null;
   action?: React.ReactComponentElement<any> | null;
   onClick?: (id: string, event: React.MouseEvent) => void;
+  popover?: PopoverProps;
 }
 
 const ListItem: React.FunctionComponent<ListItemProps> = ({
@@ -20,37 +23,40 @@ const ListItem: React.FunctionComponent<ListItemProps> = ({
   details,
   action,
   avatar,
+  popover,
 }) => {
-  const [bind, bounds] = useMeasure();
+  const ContentWrapper: React.FunctionComponent = popover
+    ? ({ children }) => <Popover {...popover}>{children}</Popover>
+    : ({ children }) => <div className="wrapper">{children}</div>;
   return (
-    <li
-      className={`list-item -compact ${avatar ? '-big' : ''}`}
-      tabIndex={1}
-      onClick={
-        onClick
-          ? (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => onClick(id, e)
-          : undefined
-      }
-      key={id}
-    >
-      {avatar && (
-        // @ts-ignore can't bothered to figure out which HTMLELEMENT type I need for this
-        <div {...bind} className={`avatar -big`}>
-          <div
-            className="wrapper"
-            style={{ backgroundImage: `url(${avatar.src})` }}
-          >
-            <img src={avatar.src} />
+    <ContentWrapper key={id}>
+      <li
+        className={`list-item -compact ${avatar ? '-big' : ''}`}
+        tabIndex={1}
+        onClick={
+          onClick
+            ? (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => onClick(id, e)
+            : undefined
+        }
+      >
+        {avatar && (
+          <div className={`avatar -big`}>
+            <div
+              className="wrapper"
+              style={{ backgroundImage: `url(${avatar.src})` }}
+            >
+              <img src={avatar.src} />
+            </div>
           </div>
+        )}
+        <div className="content">
+          <span className="label">{label}</span>
+          {details && <div className="details">{details}</div>}
+          {action && <div className="actions">{action}</div>}
         </div>
-      )}
-      <div className="content">
-        <span className="label">{label}</span>
-        {details && <div className="details">{details}</div>}
-        {action && <div className="actions">{action}</div>}
-      </div>
-      {description && <p className="description">{description}</p>}
-    </li>
+        {description && <p className="description">{description}</p>}
+      </li>
+    </ContentWrapper>
   );
 };
 

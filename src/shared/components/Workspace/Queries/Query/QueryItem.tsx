@@ -21,7 +21,6 @@ const QueryListItem: React.FunctionComponent<QueryListItemProps> = props => {
   const file = useNexusFile(resource, hasDisplayableImage, getFilePreview);
   let avatar = null;
   if (file) {
-    console.log({ file });
     const img = new Image();
     img.src = `data:${file.mediaType};base64,${file.rawFile as string}`;
     avatar = file && {
@@ -30,19 +29,16 @@ const QueryListItem: React.FunctionComponent<QueryListItemProps> = props => {
   }
   return (
     <ListItem
+      popover={{
+        content: (
+          <ResourceMetadataCard {...{ ...resource, name: resource.name }} />
+        ),
+        mouseEnterDelay: MOUSE_ENTER_DELAY,
+        key: resource.id,
+      }}
       avatar={avatar}
       onClick={() => onClick(resource)}
-      label={
-        <Popover
-          content={
-            <ResourceMetadataCard {...{ ...resource, name: resource.name }} />
-          }
-          mouseEnterDelay={MOUSE_ENTER_DELAY}
-          key={resource.id}
-        >
-          {resource.name}
-        </Popover>
-      }
+      label={resource.name}
       id={resource.id}
       details={
         resource.type && !!resource.type.length ? (
