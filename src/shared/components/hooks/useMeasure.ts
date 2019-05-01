@@ -17,7 +17,7 @@ export default function useMeasure() {
     height: 0,
   });
   const [ro] = React.useState(
-    () => new ResizeObserver(([entry]) => set(entry.contentRect))
+    new ResizeObserver(([entry]) => set(entry.contentRect))
   );
   React.useEffect(() => {
     if (ref && ref.current) {
@@ -25,8 +25,14 @@ export default function useMeasure() {
       const { height, width, top, left } = ref.current.getBoundingClientRect();
       set({ height, width, top, left });
     }
-    return ro.disconnect;
-  }, [ref]);
+    return () => {
+      if (ref && ref.current) {
+        ro.unobserve(ref.current);
+      }
+      ro.disconnect();
+    };
+  }, [ref, ro]);
+
   return [{ ref }, bounds] as [
     { ref: React.MutableRefObject<HTMLElement> },
     Bounds

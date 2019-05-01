@@ -12,6 +12,7 @@ import RenameableItem from '../../../Renameable';
 import FullTextSearch from './Search';
 import TypesFilter from './Types';
 import SchemasFilter from './Schemas';
+import QueryListItem from './QueryItem';
 
 const MOUSE_ENTER_DELAY = 0.5;
 
@@ -152,27 +153,10 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
             }
             return (
               <div key={resource.id}>
-                <ListItem
+                <QueryListItem
+                  getFilePreview={getFilePreview}
                   onClick={handleOnClick(resource)}
-                  label={
-                    <Popover
-                      content={
-                        <ResourceMetadataCard
-                          {...{ ...resource, name: resource.name }}
-                        />
-                      }
-                      mouseEnterDelay={MOUSE_ENTER_DELAY}
-                      key={resource.id}
-                    >
-                      {resource.name}
-                    </Popover>
-                  }
-                  id={resource.id}
-                  details={
-                    resource.type && !!resource.type.length ? (
-                      <TypesIconList type={resource.type} />
-                    ) : null
-                  }
+                  resource={resource}
                 />
               </div>
             );

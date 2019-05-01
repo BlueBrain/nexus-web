@@ -31,49 +31,15 @@ export const InfiniteScrollLoadMoreButton: React.FunctionComponent<{
   totalItemsListLength: number;
   onClick: VoidFunction;
   isFetching: boolean;
-}> = ({ hasMore, totalItemsListLength, onClick, isFetching }) => {
-  const animatedOpacity = useSpring({
-    opacity: hasMore ? 1 : 0,
-    // TODO why: This doesn't work as described https://www.react-spring.io/docs/hooks/api
-    config: config.molasses,
-    delay: DEFAULT_TRAIL_MS * totalItemsListLength,
-  });
-  const animatedLoadTransition = useTransition(isFetching, null, {
-    from: { position: 'absolute', opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { opacity: 0 },
-  });
+}> = ({ onClick, isFetching }) => {
   return (
-    <animated.div
-      style={animatedOpacity}
-      key="infinite-scroll-load-more-button"
-    >
-      <a onClick={onClick}>
-        <li className="list-item -action -load">
-          <div className="loading">
-            {animatedLoadTransition.map(({ item, props }) =>
-              item ? (
-                <animated.div
-                  style={props}
-                  className="center-helper"
-                  key="load-more-loading"
-                >
-                  <div className="center">Loading</div>
-                </animated.div>
-              ) : (
-                <animated.div
-                  style={props}
-                  className="center-helper"
-                  key="load-more"
-                >
-                  <div className="center">Load More</div>
-                </animated.div>
-              )
-            )}
-          </div>
-        </li>
-      </a>
-    </animated.div>
+    <a onClick={onClick}>
+      <li className="list-item -action -load">
+        <div className="loading">
+          <div className="center">{isFetching ? 'Loading' : 'Load more'}</div>
+        </div>
+      </li>
+    </a>
   );
 };
 
@@ -164,11 +130,6 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
               totalItemsListLength={itemsList.length}
               onClick={loadNextPage}
             />
-          )}
-          {!!data && !!data.total && !isFetching && !hasMore && (
-            <li className="list-item -action -end-of-list">
-              You've reached the end of this list
-            </li>
           )}
         </ul>
       )}
