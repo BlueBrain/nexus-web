@@ -22,10 +22,9 @@ const ListItem: React.FunctionComponent<ListItemProps> = ({
   avatar,
 }) => {
   const [bind, bounds] = useMeasure();
-  const avatarClassSwitch = bounds && bounds.height > 100 ? `-big` : `-small`;
   return (
     <li
-      className={`list-item -compact ${avatar ? avatarClassSwitch : ''}`}
+      className={`list-item -compact ${avatar ? '-big' : ''}`}
       tabIndex={1}
       onClick={
         onClick
@@ -36,7 +35,7 @@ const ListItem: React.FunctionComponent<ListItemProps> = ({
     >
       {avatar && (
         // @ts-ignore can't bothered to figure out which HTMLELEMENT type I need for this
-        <div {...bind} className={`avatar ${avatarClassSwitch}`}>
+        <div {...bind} className={`avatar -big`}>
           <div
             className="wrapper"
             style={{ backgroundImage: `url(${avatar.src})` }}

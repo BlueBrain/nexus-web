@@ -38,7 +38,7 @@
     "oidc-client": "^1.7.0",
     "prom-client": "^11.2.1",
     "query-string": "^6.3.0",
-    "react": "^16.8.4",
+    "react": "^16.8.6",
     "react-codemirror2": "^5.1.0",
     "react-dom": "^16.8.4",
     "react-helmet": "^5.2.0",
