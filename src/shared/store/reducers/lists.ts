@@ -30,6 +30,7 @@ export interface List {
       _constrainedBy?: string;
       '@type'?: string;
       _deprecated: boolean;
+      [key: string]: any;
     };
     textQuery?: string;
   };
