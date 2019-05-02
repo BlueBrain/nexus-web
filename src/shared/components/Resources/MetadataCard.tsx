@@ -60,7 +60,7 @@ const ResourceMetadataCard: React.FunctionComponent<
               <Copy
                 textToCopy={id}
                 render={(copySuccess, triggerCopy) => (
-                  <Tooltip title={copySuccess ? 'Copied!' : 'Copy @id'}>
+                  <Tooltip title={copySuccess ? 'Copied!' : 'Copy Identifier'}>
                     <Button
                       style={{ margin: '0 1em' }}
                       size="small"
@@ -71,7 +71,7 @@ const ResourceMetadataCard: React.FunctionComponent<
                         triggerCopy();
                       }}
                     >
-                      @id
+                      Identifier
                     </Button>
                   </Tooltip>
                 )}
@@ -80,7 +80,9 @@ const ResourceMetadataCard: React.FunctionComponent<
               <Copy
                 textToCopy={self}
                 render={(copySuccess, triggerCopy) => (
-                  <Tooltip title={copySuccess ? 'Copied!' : 'Copy _self'}>
+                  <Tooltip
+                    title={copySuccess ? 'Copied!' : 'Copy Nexus Address'}
+                  >
                     <Button
                       size="small"
                       icon={copySuccess ? 'check' : 'copy'}
@@ -90,7 +92,7 @@ const ResourceMetadataCard: React.FunctionComponent<
                         triggerCopy();
                       }}
                     >
-                      _self
+                      Nexus Address
                     </Button>
                   </Tooltip>
                 )}
@@ -108,9 +110,7 @@ const ResourceMetadataCard: React.FunctionComponent<
               {moment(createdAt).format('DD/MM/YYYY')}
             </div>
             <div>
-              <Tooltip title={`Revision #${rev}`}>
-                <Icon type="file-sync" /> <em>v.{rev}</em>{' '}
-              </Tooltip>
+              <Icon type="file-sync" /> <em>revision: {rev}</em>{' '}
               {updatedAt !== createdAt && (
                 <span>, last updated {moment(updatedAt).fromNow()}</span>
               )}

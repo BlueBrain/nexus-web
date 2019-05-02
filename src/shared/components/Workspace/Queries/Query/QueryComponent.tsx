@@ -163,7 +163,6 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
       </div>
       <Spin spinning={showSpinner}>
         <InfiniteScroll
-          makeKey={(resource: Resource) => resource.id}
           itemComponent={(resource: Resource, index: number) => {
             if (!resource || !resource.id) {
               // trying to debug a hard-to-replicate behavior

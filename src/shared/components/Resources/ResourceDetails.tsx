@@ -118,7 +118,7 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
               <TabPane tab="JSON" key="1">
                 <ResourceEditor
                   expanded={expanded}
-                  editable={!(isFile || resource.expanded)}
+                  editable={!isFile || !!resource.expanded}
                   rawData={
                     expanded && resource.expanded
                       ? resource.expanded
