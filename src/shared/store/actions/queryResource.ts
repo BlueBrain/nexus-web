@@ -94,17 +94,12 @@ const queryResourcesFailedAction: ActionCreator<FailedQueryAction> = (
   type: QueryResourcesActionTypes.FAILED,
 });
 
-export interface FilterQuery {
-  filters: {};
-  textQuery?: string;
-}
-
 export const queryResources: ActionCreator<ThunkAction> = (
   id: string,
   org: Organization,
   project: Project,
   paginationSettings: PaginationSettings,
-  query?: FilterQuery
+  query?: List['query']
 ) => {
   return async (
     dispatch: Dispatch<any>,
