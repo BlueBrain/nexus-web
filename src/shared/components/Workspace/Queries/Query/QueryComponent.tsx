@@ -29,6 +29,7 @@ interface QueryComponentProps {
 const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
   const {
     list: {
+      id,
       name,
       query,
       results: { error, isFetching, data },
@@ -43,6 +44,7 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
     next,
     showSpinner,
   } = props;
+
   const handleOnClick = (resource: Resource) => () => goToResource(resource);
   const handleUpdate = (value: string) => {
     updateList({ ...props.list, name: value });
@@ -172,7 +174,7 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
               return null;
             }
             return (
-              <div key={resource.id}>
+              <div key={id + resource.id}>
                 <QueryListItem
                   getFilePreview={getFilePreview}
                   onClick={handleOnClick(resource)}

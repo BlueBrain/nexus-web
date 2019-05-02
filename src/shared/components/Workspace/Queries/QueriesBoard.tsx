@@ -15,10 +15,12 @@ const QueriesComponent: React.FunctionComponent<
     <div className="queries-board">
       <div className="wrapper">
         {lists.map((list: List, index: number) => {
+          // We don't need to pass these down
+          const { lists, project, org, ...filteredProps } = props;
           return (
             <Query
               {...{
-                ...props,
+                ...filteredProps,
                 list,
                 updateList: (list: List) => updateList(index, list),
                 deleteList: () => deleteList(index),

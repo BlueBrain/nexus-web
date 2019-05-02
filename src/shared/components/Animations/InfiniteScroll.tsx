@@ -6,25 +6,7 @@ import { PaginatedList } from '@bbp/nexus-sdk';
 import { FetchableState } from '../../store/reducers/utils';
 import useInfiniteScroll from '../hooks/useInfiniteScroll';
 
-const DEFAULT_TRAIL_MS = 50;
 const LOAD_AT_PERCENTAGE_REVEALED = 0.8;
-
-export const InfiniteScrollLoadMoreButton: React.FunctionComponent<{
-  hasMore: boolean;
-  totalItemsListLength: number;
-  onClick: VoidFunction;
-  isFetching: boolean;
-}> = ({ onClick, isFetching }) => {
-  return (
-    <a onClick={onClick}>
-      <li className="list-item -action -load">
-        <div className="loading">
-          <div className="center">{isFetching ? 'Loading' : 'Load more'}</div>
-        </div>
-      </li>
-    </a>
-  );
-};
 
 export interface InfiniteScrollProps {
   itemComponent: (item: any, index: number) => React.ReactElement | null;
@@ -55,7 +37,8 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
   );
 
   // TODO: Is there a cheaper way to do comparing with Arrays of Objects?
-  const resultsComparator = data && JSON.stringify(data.results);
+  const resultsComparator =
+    data && JSON.stringify({ index: data.index, results: data.results });
 
   React.useEffect(() => {
     // Reset results if we're on the first paginated page
@@ -68,7 +51,8 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
       setItemsList([...itemsList, ...data.results]);
       return;
     }
-  }, [data && data.index, resultsComparator]);
+  }, [resultsComparator]);
+
   const hasMore = itemsList.length < ((data && data.total) || 0);
   return (
     <div {...bind} className="infinite-scroll" style={style}>
@@ -80,13 +64,15 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
           })}
           {!isFetching && (!data || !data.total) && <Empty />}
           {hasMore && (
-            <InfiniteScrollLoadMoreButton
-              key="loading-action"
-              isFetching={isFetching}
-              hasMore={hasMore}
-              totalItemsListLength={itemsList.length}
-              onClick={loadNextPage}
-            />
+            <a onClick={loadNextPage}>
+              <li className="list-item -action -load">
+                <div className="loading">
+                  <div className="center">
+                    {isFetching ? 'Loading' : 'Load more'}
+                  </div>
+                </div>
+              </li>
+            </a>
           )}
         </ul>
       )}
