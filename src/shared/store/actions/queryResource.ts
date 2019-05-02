@@ -13,6 +13,7 @@ import { RootState } from '../reducers';
 import { updateList, makeOrgProjectFilterKey } from './lists';
 import { ElasticSearchViewAggregationResponse } from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
 import { List } from '../reducers/lists';
+import { makeESQuery } from './utils/makeESQuery';
 
 export const queryResourcesActionPrefix = 'QUERY';
 
@@ -93,58 +94,12 @@ const queryResourcesFailedAction: ActionCreator<FailedQueryAction> = (
   type: QueryResourcesActionTypes.FAILED,
 });
 
-// TODO break out into library
-export const makeESQuery = (query?: { filters: any; textQuery?: string }) => {
-  if (query) {
-    const must = [];
-    if (Object.keys(query.filters).length) {
-      Object.keys(query.filters)
-        .filter(key => !!query.filters[key])
-        .forEach(key => {
-          must.push({
-            term: { [key]: query.filters[key] },
-          });
-        });
-    }
-    if (query.textQuery) {
-      must.push({
-        query_string: {
-          query: `${query.textQuery}~`,
-        },
-      });
-    }
-    if (must.length > 1) {
-      return {
-        query: {
-          bool: {
-            must,
-          },
-        },
-      };
-    }
-    if (must.length === 0) {
-      return {};
-    }
-    return {
-      query: {
-        ...must[0],
-      },
-    };
-  }
-  return {};
-};
-
-export interface FilterQuery {
-  filters: {};
-  textQuery?: string;
-}
-
 export const queryResources: ActionCreator<ThunkAction> = (
   id: string,
   org: Organization,
   project: Project,
   paginationSettings: PaginationSettings,
-  query?: FilterQuery
+  query?: List['query']
 ) => {
   return async (
     dispatch: Dispatch<any>,

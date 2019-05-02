@@ -19,11 +19,8 @@ import {
   createList,
 } from '../../../store/actions/lists';
 import QueriesBoard from './QueriesBoard';
-import {
-  queryResources,
-  FilterQuery,
-  makeESQuery,
-} from '../../../store/actions/queryResource';
+import { queryResources } from '../../../store/actions/queryResource';
+import { makeESQuery } from '../../../store/actions/utils/makeESQuery';
 
 export interface QueriesContainerProps {
   org: Organization;
@@ -41,7 +38,7 @@ export interface QueriesContainerProps {
   queryResources: (
     id: string,
     paginationSettings: PaginationSettings,
-    query?: FilterQuery
+    query?: List['query']
   ) => void;
 }
 
@@ -109,7 +106,7 @@ const mapDispatchToProps = (
   queryResources: (
     id: string,
     paginationSettings: PaginationSettings,
-    query?: FilterQuery
+    query?: List['query']
   ) => dispatch(queryResources(id, org, project, paginationSettings, query)),
 });
 
