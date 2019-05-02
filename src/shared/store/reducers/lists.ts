@@ -27,7 +27,9 @@ export interface List {
   id: string;
   query: {
     filters: {
-      [filterKey: string]: string;
+      _constrainedBy?: string;
+      '@type'?: string;
+      _deprecated: boolean;
     };
     textQuery?: string;
   };
@@ -44,12 +46,14 @@ export interface List {
 // then we should update the URL with a serialised array of queries
 export type ListState = List[];
 
-const DEFAULT_LIST: List = {
+export const DEFAULT_LIST: List = {
   name: 'Default Query',
   view: DEFAULT_VIEW,
   id: uuidv4(),
   query: {
-    filters: {},
+    filters: {
+      _deprecated: false,
+    },
   },
   results: {
     isFetching: false,
@@ -77,7 +81,7 @@ export function listsReducer(
     case ListActionTypes.CREATE:
       const newList = {
         ...DEFAULT_LIST,
-        name: `New Query ${state.length + 1}`,
+        name: `New Query`,
         id: action.payload.id,
       };
       return [...state, newList];

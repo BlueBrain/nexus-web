@@ -1,13 +1,10 @@
 import * as React from 'react';
-import { List } from '../../../../store/reducers/lists';
+import { List, DEFAULT_LIST } from '../../../../store/reducers/lists';
 import './query-component.less';
 import InfiniteScroll from '../../../Animations/InfiniteScroll';
-import ListItem from '../../../Animations/ListItem';
 import { FetchableState } from '../../../../store/reducers/utils';
 import { PaginatedList, Resource, NexusFile } from '@bbp/nexus-sdk';
-import ResourceMetadataCard from '../../../Resources/MetadataCard';
-import { Popover, Icon, Tooltip, Button, Spin } from 'antd';
-import TypesIconList from '../../../Types/TypesIcon';
+import { Icon, Tooltip, Button, Spin, Switch } from 'antd';
 import RenameableItem from '../../../Renameable';
 import FullTextSearch from './Search';
 import TypesFilter from './Types';
@@ -68,11 +65,22 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
     // and the textQuery
     updateList({
       ...props.list,
+      query: DEFAULT_LIST.query,
+    });
+  };
+  const handleToggleDeprecated = () => {
+    updateList({
+      ...props.list,
       query: {
-        filters: {},
+        ...props.list.query,
+        filters: {
+          ...props.list.query.filters,
+          _deprecated: !props.list.query.filters._deprecated,
+        },
       },
     });
   };
+  const showDeprecated = props.list.query.filters._deprecated;
 
   const handleCloneList = () => {
     cloneList({ ...props.list });
@@ -139,6 +147,19 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
           schemas={data && data.schemas}
           onChange={handleFilterChange}
         />
+        <Tooltip
+          title={
+            showDeprecated
+              ? 'Displaying deprecated resources'
+              : 'Not showing deprecated resources'
+          }
+        >
+          <Switch
+            size="small"
+            onChange={handleToggleDeprecated}
+            checked={showDeprecated}
+          />
+        </Tooltip>
       </div>
       <Spin spinning={showSpinner}>
         <InfiniteScroll
