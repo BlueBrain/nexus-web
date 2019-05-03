@@ -1,5 +1,4 @@
 import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
-import { Realm } from '@bbp/nexus-sdk';
 
 /**
  * getProp utility - an alternative to lodash.get

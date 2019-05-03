@@ -17,7 +17,8 @@
       margin-left: 0;
     }
     &:last-child {
-      margin-right: 0;
+      // necessary beause the queries board padding doesn't contain last element
+      margin-right: @default-pad;
     }
     margin: 0 0.5em;
   }

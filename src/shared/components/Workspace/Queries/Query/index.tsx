@@ -21,7 +21,7 @@ interface QueryContainerProps {
 
 const QueryContainer: React.FunctionComponent<QueryContainerProps> = props => {
   const {
-    list: { name, id, results, query },
+    list: { id, results, query },
     queryResources,
     pageSize: size,
   } = props;
