@@ -83,7 +83,6 @@ storiesOf('Components/InfiniteScroll/Basic', module)
           <div style={{ margin: '50px 40px 0px' }}>
             <h2>InfiniteScroll</h2>
             <InfiniteScroll
-              makeKey={item => item}
               itemComponent={(item: any, index: number) => {
                 return <ListItem label={item} id={`${item}-${index}`} />;
               }}
@@ -221,7 +220,6 @@ storiesOf('Components/InfiniteScroll/Simulated/OnClick', module)
               Stars ✨ (click to reset)
             </h2>
             <InfiniteScroll
-              makeKey={({ label, description }, index) => `${label}-${index}`}
               itemComponent={({ label, description }: any, index: number) => {
                 return (
                   <ListItem
@@ -373,7 +371,6 @@ storiesOf('Components/InfiniteScroll/Simulated/OnScroll', module)
                 backgroundColor: 'pink',
                 borderRadius: '4px',
               }}
-              makeKey={({ label, description }, index) => `${label}-${index}`}
               itemComponent={({ label, description }: any, index: number) => {
                 return (
                   <ListItem

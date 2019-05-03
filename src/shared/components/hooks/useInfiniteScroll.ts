@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { debounce } from '../../utils/debounce';
+import { debounce } from 'ts-debounce';
 import { supportsPassive } from '../../utils/featureDetections';
 import { isBrowser } from '../../utils';
+
+const DEFAULT_DEBOUNCE_MS = 100;
 
 // Watch an when a scrolling element reaches the bottom, then callback!
 const useInfiniteScroll = (
@@ -9,7 +11,8 @@ const useInfiniteScroll = (
   isFetching: boolean,
   loadAtPercentRevealed: number,
   currentTotal: number,
-  total: number
+  total: number,
+  debounceMS: number = DEFAULT_DEBOUNCE_MS
 ) => {
   const ref = React.useRef<HTMLDivElement>(null);
 
@@ -18,7 +21,6 @@ const useInfiniteScroll = (
   }
 
   React.useEffect(() => {
-    const debounceMS = 100;
     const debouncedHandleScroll = debounce(
       handleScroll(currentTotal, total),
       debounceMS

@@ -40,7 +40,13 @@
     margin-left: @default-pad;
   }
   & > .header.-fetching > .renameable-item {
-    background: linear-gradient(-45deg, @nexus-dark, @primary-color);
+    background: linear-gradient(
+      -45deg,
+      @success-color,
+      @primary-color,
+      @nexus-dark,
+      @link-color
+    );
     background-size: 400% 400%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
