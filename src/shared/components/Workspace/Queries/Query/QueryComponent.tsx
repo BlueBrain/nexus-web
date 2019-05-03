@@ -111,7 +111,7 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
 
   return (
     <div className="query-component">
-      <h3 className="header">
+      <h3 className={`header ${isFetching ? '-fetching' : ''}`}>
         <RenameableItem
           defaultValue={`${name} ${isFetching ? 'loading' : ''}`}
           onChange={handleUpdate}
