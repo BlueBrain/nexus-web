@@ -50,11 +50,6 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
     fetchLinks(resource, linkDirection, paginationSettings);
   }, [resource]);
 
-  if (typeof getFilePreview !== 'function') {
-    console.warn('getFielPReview has the wrong type!', getFilePreview);
-    return null;
-  }
-
   const next = () => {
     fetchLinks(resource, linkDirection, {
       ...paginationSettings,
