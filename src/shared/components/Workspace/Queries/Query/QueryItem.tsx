@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Popover } from 'antd';
 import { Resource, NexusFile } from '@bbp/nexus-sdk';
 import ListItem from '../../../Animations/ListItem';
 import ResourceMetadataCard from '../../../Resources/MetadataCard';
@@ -11,13 +10,14 @@ const MOUSE_ENTER_DELAY = 0.5;
 
 export interface QueryListItemProps {
   resource: Resource;
+  predicate?: React.ReactNode;
   onClick?(resource: Resource): void;
   onEdit?(): void;
   getFilePreview: (selfUrl: string) => Promise<NexusFile>;
 }
 
 const QueryListItem: React.FunctionComponent<QueryListItemProps> = props => {
-  const { resource, getFilePreview, onClick = () => {} } = props;
+  const { predicate, resource, getFilePreview, onClick = () => {} } = props;
   const file = useNexusFile(resource, hasDisplayableImage, getFilePreview);
   let avatar = null;
   if (file) {
@@ -38,7 +38,15 @@ const QueryListItem: React.FunctionComponent<QueryListItemProps> = props => {
       }}
       avatar={avatar}
       onClick={() => onClick(resource)}
-      label={resource.name}
+      label={
+        predicate ? (
+          <>
+            <span className="predicate">{predicate}</span> {resource.name}
+          </>
+        ) : (
+          resource.name
+        )
+      }
       id={resource.id}
       details={
         resource.type && !!resource.type.length ? (

@@ -88,6 +88,17 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
               </a>
             ) : (
               <QueryListItem
+                predicate={
+                  linkDirection === LinkDirection.INCOMING ? (
+                    <>
+                      <Icon type="arrow-right" /> {predicate}
+                    </>
+                  ) : (
+                    <>
+                      {predicate} <Icon type="arrow-right" />
+                    </>
+                  )
+                }
                 resource={resourceLink.link as Resource}
                 getFilePreview={getFilePreview}
                 onClick={() => goToResource(resourceLink.link as Resource)}
