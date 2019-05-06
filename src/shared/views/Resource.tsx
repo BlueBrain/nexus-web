@@ -119,6 +119,7 @@ const mapStateToProps = (state: RootState) => ({
 });
 const mapDispatchToProps = (dispatch: any) => {
   return {
+    getFilePreview: (selfUrl: string) => NexusFile.getSelf(selfUrl, true),
     goToResource: (resource: Resource) =>
       dispatch(
         push(

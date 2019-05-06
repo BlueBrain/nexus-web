@@ -4,12 +4,12 @@ import { Spin, Card, Icon } from 'antd';
 
 import AnimatedList from '../Animations/AnimatedList';
 import { ResourceLink } from '@bbp/nexus-sdk/lib/Resource/types';
-import ResourceListItem from './ResourceItem';
 import { labelOf } from '../../utils';
-import { LinksState } from '../../store/reducers/links';
 
 import './links-container.less';
 import { LinkDirection } from '../../store/actions/nexus/links';
+import QueryListItem from '../Workspace/Queries/Query/QueryItem';
+import { LinksState } from '../../store/reducers/links';
 
 export interface LinksListProps extends LinksContainerProps {
   linkDirection: LinkDirection;
@@ -33,6 +33,11 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
   React.useEffect(() => {
     fetchLinks(resource, linkDirection, paginationSettings);
   }, [resource]);
+
+  if (typeof getFilePreview !== 'function') {
+    console.warn('getFielPReview has the wrong type!', getFilePreview);
+    return null;
+  }
 
   return (
     <AnimatedList
@@ -82,11 +87,9 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
                 </div>
               </a>
             ) : (
-              <ResourceListItem
-                getFilePreview={getFilePreview}
-                predicate={predicate}
-                index={index}
+              <QueryListItem
                 resource={resourceLink.link as Resource}
+                getFilePreview={getFilePreview}
                 onClick={() => goToResource(resourceLink.link as Resource)}
               />
             )}
