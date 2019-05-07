@@ -176,7 +176,6 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
             return (
               <div key={id + resource.id}>
                 <QueryListItem
-                  getFilePreview={getFilePreview}
                   onClick={handleOnClick(resource)}
                   resource={resource}
                 />

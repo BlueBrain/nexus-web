@@ -12,20 +12,19 @@ export interface QueryListItemProps {
   predicate?: React.ReactNode;
   onClick?(resource: Resource): void;
   onEdit?(): void;
-  getFilePreview: (selfUrl: string) => Promise<NexusFile>;
 }
 
 const QueryListItem: React.FunctionComponent<QueryListItemProps> = props => {
-  const { predicate, resource, getFilePreview, onClick = () => {} } = props;
-  const { image } = useNexusImage(resource);
+  const { predicate, resource, onClick = () => {} } = props;
+  const imagePreviewProps = useNexusImage(resource);
   return (
     <ListItem
       popover={{
-        content: <ResourceMetadataCard {...{ resource, getFilePreview }} />,
+        content: <ResourceMetadataCard {...{ resource }} />,
         mouseEnterDelay: MOUSE_ENTER_DELAY,
         key: resource.id,
       }}
-      avatar={image}
+      preview={imagePreviewProps}
       onClick={() => onClick(resource)}
       label={
         predicate ? (

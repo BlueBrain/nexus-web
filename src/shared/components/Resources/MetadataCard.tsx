@@ -5,7 +5,6 @@ import * as moment from 'moment';
 import UserAvatar from '../User/Avatar';
 import TypesIcon from '../Types/TypesIcon';
 import Copy from '../Copy';
-import './metadata-card.less';
 import { NexusFile, Resource } from '@bbp/nexus-sdk';
 import ImagePreviewContainer from '../Images/Preview';
 

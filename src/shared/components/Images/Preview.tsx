@@ -19,7 +19,7 @@ export const ImagePreviewComponent: React.FunctionComponent<
   }
   if (loading) {
     return (
-      <div className="cover">
+      <div className="image-preview">
         <div className="wrapper -loading">
           <div className="skeleton" />
         </div>
@@ -28,7 +28,7 @@ export const ImagePreviewComponent: React.FunctionComponent<
   }
   if (image) {
     return (
-      <div className="cover">
+      <div className="image-preview">
         <div
           className="wrapper"
           style={{ backgroundImage: `url(${image.src})` }}

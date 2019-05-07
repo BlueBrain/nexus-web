@@ -1,15 +1,15 @@
 import * as React from 'react';
 import './list-item.less';
-import useMeasure from '../hooks/useMeasure';
 import { Popover } from 'antd';
 import { PopoverProps } from 'antd/lib/popover';
+import { ImagePreviewProps, ImagePreviewComponent } from '../Images/Preview';
 
 export interface ListItemProps {
   label: React.ReactComponentElement<any> | string;
   id: string;
   description?: string;
   details?: React.ReactComponentElement<any> | null;
-  avatar?: { src: string } | null;
+  preview?: ImagePreviewProps;
   action?: React.ReactComponentElement<any> | null;
   onClick?: (id: string, event: React.MouseEvent) => void;
   popover?: PopoverProps;
@@ -22,7 +22,7 @@ const ListItem: React.FunctionComponent<ListItemProps> = ({
   onClick,
   details,
   action,
-  avatar,
+  preview,
   popover,
 }) => {
   const ContentWrapper: React.FunctionComponent = popover
@@ -31,7 +31,7 @@ const ListItem: React.FunctionComponent<ListItemProps> = ({
   return (
     <ContentWrapper key={id}>
       <li
-        className={`list-item -compact ${avatar ? '-big' : ''}`}
+        className={`list-item -compact`}
         tabIndex={1}
         onClick={
           onClick
@@ -39,16 +39,7 @@ const ListItem: React.FunctionComponent<ListItemProps> = ({
             : undefined
         }
       >
-        {avatar && (
-          <div className={`avatar -big`}>
-            <div
-              className="wrapper"
-              style={{ backgroundImage: `url(${avatar.src})` }}
-            >
-              <img src={avatar.src} />
-            </div>
-          </div>
-        )}
+        {preview && <ImagePreviewComponent {...preview} />}
         <div className="content">
           <span className="label">{label}</span>
           {details && <div className="details">{details}</div>}
