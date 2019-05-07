@@ -101,7 +101,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
       <CodeMirror
         value={JSON.stringify(rawData, null, 2)}
         options={{
-          readOnly: editable,
+          readOnly: !editable,
           mode: { name: 'javascript', json: true },
           theme: 'base16-light',
           lineNumbers: true,

@@ -17,6 +17,7 @@ import QueryListItem from '../Workspace/Queries/Query/QueryItem';
 import { LinksState } from '../../store/reducers/links';
 import InfiniteScroll from '../Animations/InfiniteScroll';
 import { FetchableState } from '../../store/reducers/utils';
+import ListItem from '../Animations/ListItem';
 
 export interface LinksListProps extends LinksContainerProps {
   linkDirection: LinkDirection;
@@ -83,12 +84,23 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
                   href={resourceLink.link as string}
                   target="_blank"
                 >
-                  <div className="predicate">{predicate}</div>
-                  <div className="label">
-                    <div className="name">
-                      <Icon type="export" /> {resourceLink.link as string}
-                    </div>
-                  </div>
+                  <ListItem
+                    id={resourceLink.link as string}
+                    label={
+                      <>
+                        {linkDirection === LinkDirection.INCOMING ? (
+                          <span className="predicate">
+                            <Icon type="arrow-right" /> {predicate}
+                          </span>
+                        ) : (
+                          <span className="predicate">
+                            {predicate} <Icon type="arrow-right" />
+                          </span>
+                        )}
+                        <Icon type="export" /> {resourceLink.link as string}
+                      </>
+                    }
+                  />
                 </a>
               ) : (
                 <QueryListItem
