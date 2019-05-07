@@ -1,9 +1,16 @@
 import * as React from 'react';
 import Lightbox from 'react-image-lightbox';
-import 'react-image-lightbox/style.css'; // This only needs to be imported once in your app
+import '../../../../node_modules/react-image-lightbox/style.css';
 
 export interface LightboxProps {
   src: string;
+  children: ({
+    isOpen,
+    setIsOpen,
+  }: {
+    isOpen: boolean;
+    setIsOpen: (isOpen: boolean) => void;
+  }) => React.ReactNode;
 }
 
 const LightboxComponent: React.FunctionComponent<LightboxProps> = props => {
@@ -13,7 +20,9 @@ const LightboxComponent: React.FunctionComponent<LightboxProps> = props => {
 
   return (
     <>
-      <Lightbox mainSrc={src} onCloseRequest={() => setIsOpen(false)} />
+      {isOpen && (
+        <Lightbox mainSrc={src} onCloseRequest={() => setIsOpen(false)} />
+      )}
       {children && (children as any)({ isOpen, setIsOpen })}
     </>
   );
