@@ -39,7 +39,7 @@ exports[`MetadataCard component should render with Set username 1`] = `
 >
   <Card
     className="metadata-card"
-    cover={null}
+    cover={false}
   >
     <div
       className="ant-card metadata-card ant-card-bordered"
@@ -2639,7 +2639,7 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
 >
   <Card
     className="metadata-card"
-    cover={null}
+    cover={false}
   >
     <div
       className="ant-card metadata-card ant-card-bordered"
@@ -5239,7 +5239,7 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
 >
   <Card
     className="metadata-card"
-    cover={null}
+    cover={false}
   >
     <div
       className="ant-card metadata-card ant-card-bordered"
