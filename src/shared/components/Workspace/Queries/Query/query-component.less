@@ -40,17 +40,7 @@
     margin-left: @default-pad;
   }
   & > .header.-fetching > .renameable-item {
-    background: linear-gradient(
-      -45deg,
-      @success-color,
-      @primary-color,
-      @nexus-dark,
-      @link-color
-    );
-    background-size: 400% 400%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: Gradient 4s ease infinite;
+    .textLoadingGradient();
   }
   & > .controls {
     display: flex;
@@ -86,17 +76,5 @@
     &:hover {
       background-color: fade(black, 50%);
     }
-  }
-}
-
-@keyframes Gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
   }
 }

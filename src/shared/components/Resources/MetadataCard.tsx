@@ -1,36 +1,38 @@
 import * as React from 'react';
-import { Card, Icon, Button, Tooltip } from 'antd';
+import { Card, Icon, Button, Tooltip, Skeleton, Spin } from 'antd';
 import { Meta } from 'antd/lib/list/Item';
 import * as moment from 'moment';
 import UserAvatar from '../User/Avatar';
 import TypesIcon from '../Types/TypesIcon';
 import Copy from '../Copy';
+import './metadata-card.less';
+import { NexusFile, Resource } from '@bbp/nexus-sdk';
+import { hasDisplayableImage } from './ResourcePreview';
+import useNexusFile from '../hooks/useNexusFile';
 
 export interface ResourceMetadataCardProps {
-  name?: string;
-  id: string;
-  self: string;
-  createdAt: string;
-  updatedAt: string;
-  createdBy: string;
-  constrainedBy: string;
-  rev: number;
-  type?: string[];
+  resource: Resource;
+  showPreview?: boolean;
+  getFilePreview: (selfUrl: string) => Promise<NexusFile>;
 }
 
 const ResourceMetadataCard: React.FunctionComponent<
   ResourceMetadataCardProps
 > = props => {
   const {
-    id,
-    self,
-    constrainedBy,
-    name,
-    createdAt,
-    updatedAt,
-    createdBy,
-    type,
-    rev,
+    showPreview = false,
+    resource: {
+      rev,
+      type,
+      id,
+      self,
+      constrainedBy,
+      name,
+      createdAt,
+      updatedAt,
+      createdBy,
+    },
+    getFilePreview,
   } = props;
   let userName;
   if (createdBy.length === 0) {
@@ -42,8 +44,43 @@ const ResourceMetadataCard: React.FunctionComponent<
       userName = createdBy;
     }
   }
+  const { file, loading: fileLoading, hasFileInResource } = useNexusFile(
+    props.resource,
+    hasDisplayableImage,
+    getFilePreview
+  );
+
+  const makeCover = () => {
+    if (showPreview && hasFileInResource) {
+      if (fileLoading) {
+        return (
+          <div className="cover">
+            <div className="wrapper -loading">
+              <div className="skeleton" />
+            </div>
+          </div>
+        );
+      }
+      if (file) {
+        const img = new Image();
+        img.src = `data:${file.mediaType};base64,${file.rawFile as string}`;
+        return (
+          <div className="cover">
+            <div
+              className="wrapper"
+              style={{ backgroundImage: `url(${img.src})` }}
+            >
+              <img src={img.src} />
+            </div>
+          </div>
+        );
+      }
+    }
+    return null;
+  };
+
   return (
-    <Card>
+    <Card className="metadata-card" cover={makeCover()}>
       <Meta
         avatar={<UserAvatar createdBy={createdBy} />}
         title={

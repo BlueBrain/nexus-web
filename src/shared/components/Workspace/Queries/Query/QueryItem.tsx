@@ -18,7 +18,7 @@ export interface QueryListItemProps {
 
 const QueryListItem: React.FunctionComponent<QueryListItemProps> = props => {
   const { predicate, resource, getFilePreview, onClick = () => {} } = props;
-  const file = useNexusFile(resource, hasDisplayableImage, getFilePreview);
+  const { file } = useNexusFile(resource, hasDisplayableImage, getFilePreview);
   let avatar = null;
   if (file) {
     const img = new Image();
@@ -30,9 +30,7 @@ const QueryListItem: React.FunctionComponent<QueryListItemProps> = props => {
   return (
     <ListItem
       popover={{
-        content: (
-          <ResourceMetadataCard {...{ ...resource, name: resource.name }} />
-        ),
+        content: <ResourceMetadataCard {...{ resource, getFilePreview }} />,
         mouseEnterDelay: MOUSE_ENTER_DELAY,
         key: resource.id,
       }}
