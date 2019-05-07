@@ -9,13 +9,18 @@ const useNexusFile = (
   getFilePreview: (selfUrl: string) => Promise<NexusFile>
 ) => {
   const [file, setFile] = React.useState<NexusFile | null>(null);
+  const [loading, setLoading] = React.useState(false);
+  const hasFileInResource = predicate(resource);
   React.useEffect(() => {
-    if (!file && predicate(resource)) {
+    if (!file && hasFileInResource) {
+      setLoading(true);
       getFilePreview(resource.self)
         .then((nexusFile: NexusFile) => {
+          setLoading(false);
           setFile(nexusFile);
         })
         .catch((error: Error) => {
+          setLoading(false);
           notification.error({
             message: 'A file loading error occured',
             description: error.message,
@@ -26,7 +31,11 @@ const useNexusFile = (
         });
     }
   }, []);
-  return file;
+  return {
+    file,
+    hasFileInResource,
+    loading,
+  };
 };
 
 export default useNexusFile;

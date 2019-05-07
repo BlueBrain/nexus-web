@@ -113,7 +113,9 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
                 },
               ]}
             />
-            <ResourceMetadataCard {...{ ...resource, name: resource.name }} />
+            <ResourceMetadataCard
+              {...{ resource, getFilePreview, showPreview: true }}
+            />
             <Tabs defaultActiveKey="1">
               <TabPane tab="JSON" key="1">
                 <ResourceEditor

@@ -4,8 +4,6 @@ import './Resources.less';
 import { Resource, NexusFile } from '@bbp/nexus-sdk';
 import useNexusFile from '../hooks/useNexusFile';
 
-const MOUSE_ENTER_DELAY = 0.5;
-
 export interface ResourcePreviewProps {
   resource: Resource;
   getFilePreview: (selfUrl: string) => Promise<NexusFile>;
@@ -26,7 +24,7 @@ const ResourcePreview: React.FunctionComponent<
   ResourcePreviewProps
 > = props => {
   const { resource, getFilePreview } = props;
-  const file = useNexusFile(resource, hasDisplayableImage, getFilePreview);
+  const { file } = useNexusFile(resource, hasDisplayableImage, getFilePreview);
 
   return (
     <>

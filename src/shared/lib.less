@@ -46,6 +46,25 @@ body {
   list-style: none;
 }
 
+.textLoadingGradient () {
+  background: linear-gradient(
+    -45deg,
+    @success-color,
+    @primary-color,
+    @nexus-dark,
+    @link-color
+  );
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: Gradient 4s ease infinite;
+}
+.blockLoadingGradient () {
+  background: linear-gradient(-45deg, @box-shadow-color, white);
+  background-size: 400% 400%;
+  animation: Gradient 4s ease infinite;
+}
+
 .ellipsis () {
   overflow: hidden;
   white-space: nowrap;
@@ -99,5 +118,17 @@ body {
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
     background: #555;
+  }
+}
+
+@keyframes Gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }
