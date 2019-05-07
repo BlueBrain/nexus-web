@@ -12,7 +12,7 @@ const useNexusFile = (
   const [loading, setLoading] = React.useState(false);
   const hasFileInResource = predicate(resource);
   React.useEffect(() => {
-    if (!file && hasFileInResource) {
+    if (hasFileInResource) {
       setLoading(true);
       getFilePreview(resource.self)
         .then((nexusFile: NexusFile) => {
@@ -30,7 +30,7 @@ const useNexusFile = (
           console.error(error);
         });
     }
-  }, []);
+  }, [resource.id]);
   return {
     file,
     hasFileInResource,
