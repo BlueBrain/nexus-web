@@ -2,17 +2,47 @@
 
 exports[`MetadataCard component should render with Set username 1`] = `
 <ResourceMetadataCard
-  constrainedBy="http://schema.org"
-  createdAt="2019-03-20T09:41:57.248Z"
-  createdBy="Julien"
-  id="9756a96b-a053-4bc1-9fc9-7620c9c08bc"
-  rev={12}
-  self="http://my.self"
-  updatedAt="2019-03-20T10:00:20.260Z"
+  getFilePreview={[Function]}
+  resource={
+    Object {
+      "constrainedBy": "https://bluebrain.github.io/nexus/schemas/resource.json",
+      "context": "",
+      "createdAt": "2018-11-14T21:16:54.230Z",
+      "createdBy": "Julien",
+      "data": Object {},
+      "deprecated": false,
+      "id": "https://incf.github.io/nexus/neuroshapes/contexts/schema.json",
+      "name": "https://incf.github.io/neuroshapes/contexts/schema.json",
+      "orgLabel": "anorg",
+      "project": "https://api.com/projects/anorg/testcore",
+      "projectLabel": "testcore",
+      "raw": Object {
+        "@context": "",
+        "@id": "https://incf.github.io/neuroshapes/contexts/schema.json",
+        "_constrainedBy": "https://bluebrain.github.io/nexus/schemas/resource.json",
+        "_createdAt": "2018-11-14T21:16:54.230Z",
+        "_createdBy": "kenny",
+        "_deprecated": false,
+        "_project": "https://api.com/projects/anorg/testcore",
+        "_rev": 2,
+        "_self": "https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json",
+        "_updatedAt": "2018-11-15T08:40:52.735Z",
+        "_updatedBy": "kenny",
+      },
+      "resourceURL": "/resources/anorg/testcore/_/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json",
+      "rev": 2,
+      "self": "https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json",
+      "updatedAt": "2018-11-15T08:40:52.735Z",
+      "updatedBy": "kenny",
+    }
+  }
 >
-  <Card>
+  <Card
+    className="metadata-card"
+    cover={null}
+  >
     <div
-      className="ant-card ant-card-bordered"
+      className="ant-card metadata-card ant-card-bordered"
     >
       <div
         className="ant-card-body"
@@ -56,7 +86,7 @@ exports[`MetadataCard component should render with Set username 1`] = `
                  
                 <em>
                   revision: 
-                  12
+                  2
                 </em>
                  
                 <span>
@@ -68,10 +98,10 @@ exports[`MetadataCard component should render with Set username 1`] = `
                 schema:
                  
                 <a
-                  href="http://schema.org"
+                  href="https://bluebrain.github.io/nexus/schemas/resource.json"
                   target="_blank"
                 >
-                  http://schema.org
+                  https://bluebrain.github.io/nexus/schemas/resource.json
                 </a>
               </div>
             </div>
@@ -99,7 +129,7 @@ exports[`MetadataCard component should render with Set username 1`] = `
                   mouseEnterDelay={0.1}
                   mouseLeaveDelay={0.1}
                   placement="top"
-                  title="http://my.self"
+                  title="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                   transitionName="zoom-big-fast"
                 >
                   <em
@@ -109,15 +139,17 @@ exports[`MetadataCard component should render with Set username 1`] = `
                         "marginRight": "4px",
                       }
                     }
-                  />
+                  >
+                    https://incf.github.io/neuroshapes/contexts/schema.json
+                  </em>
                 </Tooltip>
                 <Copy
                   render={[Function]}
-                  textToCopy="9756a96b-a053-4bc1-9fc9-7620c9c08bc"
+                  textToCopy="https://incf.github.io/nexus/neuroshapes/contexts/schema.json"
                 />
                 <Copy
                   render={[Function]}
-                  textToCopy="http://my.self"
+                  textToCopy="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                 />
               </div>
             </div>
@@ -723,7 +755,7 @@ exports[`MetadataCard component should render with Set username 1`] = `
                       mouseEnterDelay={0.1}
                       mouseLeaveDelay={0.1}
                       placement="top"
-                      title="http://my.self"
+                      title="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                       transitionName="zoom-big-fast"
                     >
                       <Tooltip
@@ -968,10 +1000,10 @@ exports[`MetadataCard component should render with Set username 1`] = `
                         mouseLeaveDelay={0.1}
                         onPopupAlign={[Function]}
                         onVisibleChange={[Function]}
-                        overlay="http://my.self"
+                        overlay="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                         placement="top"
                         prefixCls="ant-tooltip"
-                        title="http://my.self"
+                        title="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                         transitionName="zoom-big-fast"
                         trigger={
                           Array [
@@ -1235,7 +1267,7 @@ exports[`MetadataCard component should render with Set username 1`] = `
                           mouseLeaveDelay={0.1}
                           onPopupAlign={[Function]}
                           onPopupVisibleChange={[Function]}
-                          overlay="http://my.self"
+                          overlay="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                           popup={[Function]}
                           popupAlign={Object {}}
                           popupClassName=""
@@ -1245,7 +1277,7 @@ exports[`MetadataCard component should render with Set username 1`] = `
                           popupVisible={false}
                           prefixCls="ant-tooltip"
                           showAction={Array []}
-                          title="http://my.self"
+                          title="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                           visible={false}
                         >
                           <em
@@ -1258,13 +1290,15 @@ exports[`MetadataCard component should render with Set username 1`] = `
                                 "marginRight": "4px",
                               }
                             }
-                          />
+                          >
+                            https://incf.github.io/neuroshapes/contexts/schema.json
+                          </em>
                         </Trigger>
                       </Tooltip>
                     </Tooltip>
                     <Copy
                       render={[Function]}
-                      textToCopy="9756a96b-a053-4bc1-9fc9-7620c9c08bc"
+                      textToCopy="https://incf.github.io/nexus/neuroshapes/contexts/schema.json"
                     >
                       <Tooltip
                         arrowPointAtCenter={false}
@@ -1873,7 +1907,7 @@ exports[`MetadataCard component should render with Set username 1`] = `
                     </Copy>
                     <Copy
                       render={[Function]}
-                      textToCopy="http://my.self"
+                      textToCopy="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                     >
                       <Tooltip
                         arrowPointAtCenter={false}
@@ -2537,7 +2571,7 @@ exports[`MetadataCard component should render with Set username 1`] = `
                      
                     <em>
                       revision: 
-                      12
+                      2
                     </em>
                      
                     <span>
@@ -2549,10 +2583,10 @@ exports[`MetadataCard component should render with Set username 1`] = `
                     schema:
                      
                     <a
-                      href="http://schema.org"
+                      href="https://bluebrain.github.io/nexus/schemas/resource.json"
                       target="_blank"
                     >
-                      http://schema.org
+                      https://bluebrain.github.io/nexus/schemas/resource.json
                     </a>
                   </div>
                 </div>
@@ -2568,17 +2602,47 @@ exports[`MetadataCard component should render with Set username 1`] = `
 
 exports[`MetadataCard component should render with Unknown username 1`] = `
 <ResourceMetadataCard
-  constrainedBy="http://schema.org"
-  createdAt="2019-03-20T09:41:57.248Z"
-  createdBy=""
-  id="9756a96b-a053-4bc1-9fc9-7620c9c08bc"
-  rev={12}
-  self="http://my.self"
-  updatedAt="2019-03-20T10:00:20.260Z"
+  getFilePreview={[Function]}
+  resource={
+    Object {
+      "constrainedBy": "https://bluebrain.github.io/nexus/schemas/resource.json",
+      "context": "",
+      "createdAt": "2018-11-14T21:16:54.230Z",
+      "createdBy": "",
+      "data": Object {},
+      "deprecated": false,
+      "id": "https://incf.github.io/nexus/neuroshapes/contexts/schema.json",
+      "name": "https://incf.github.io/neuroshapes/contexts/schema.json",
+      "orgLabel": "anorg",
+      "project": "https://api.com/projects/anorg/testcore",
+      "projectLabel": "testcore",
+      "raw": Object {
+        "@context": "",
+        "@id": "https://incf.github.io/neuroshapes/contexts/schema.json",
+        "_constrainedBy": "https://bluebrain.github.io/nexus/schemas/resource.json",
+        "_createdAt": "2018-11-14T21:16:54.230Z",
+        "_createdBy": "kenny",
+        "_deprecated": false,
+        "_project": "https://api.com/projects/anorg/testcore",
+        "_rev": 2,
+        "_self": "https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json",
+        "_updatedAt": "2018-11-15T08:40:52.735Z",
+        "_updatedBy": "kenny",
+      },
+      "resourceURL": "/resources/anorg/testcore/_/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json",
+      "rev": 2,
+      "self": "https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json",
+      "updatedAt": "2018-11-15T08:40:52.735Z",
+      "updatedBy": "kenny",
+    }
+  }
 >
-  <Card>
+  <Card
+    className="metadata-card"
+    cover={null}
+  >
     <div
-      className="ant-card ant-card-bordered"
+      className="ant-card metadata-card ant-card-bordered"
     >
       <div
         className="ant-card-body"
@@ -2622,7 +2686,7 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                  
                 <em>
                   revision: 
-                  12
+                  2
                 </em>
                  
                 <span>
@@ -2634,10 +2698,10 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                 schema:
                  
                 <a
-                  href="http://schema.org"
+                  href="https://bluebrain.github.io/nexus/schemas/resource.json"
                   target="_blank"
                 >
-                  http://schema.org
+                  https://bluebrain.github.io/nexus/schemas/resource.json
                 </a>
               </div>
             </div>
@@ -2665,7 +2729,7 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                   mouseEnterDelay={0.1}
                   mouseLeaveDelay={0.1}
                   placement="top"
-                  title="http://my.self"
+                  title="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                   transitionName="zoom-big-fast"
                 >
                   <em
@@ -2675,15 +2739,17 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                         "marginRight": "4px",
                       }
                     }
-                  />
+                  >
+                    https://incf.github.io/neuroshapes/contexts/schema.json
+                  </em>
                 </Tooltip>
                 <Copy
                   render={[Function]}
-                  textToCopy="9756a96b-a053-4bc1-9fc9-7620c9c08bc"
+                  textToCopy="https://incf.github.io/nexus/neuroshapes/contexts/schema.json"
                 />
                 <Copy
                   render={[Function]}
-                  textToCopy="http://my.self"
+                  textToCopy="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                 />
               </div>
             </div>
@@ -3289,7 +3355,7 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                       mouseEnterDelay={0.1}
                       mouseLeaveDelay={0.1}
                       placement="top"
-                      title="http://my.self"
+                      title="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                       transitionName="zoom-big-fast"
                     >
                       <Tooltip
@@ -3534,10 +3600,10 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                         mouseLeaveDelay={0.1}
                         onPopupAlign={[Function]}
                         onVisibleChange={[Function]}
-                        overlay="http://my.self"
+                        overlay="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                         placement="top"
                         prefixCls="ant-tooltip"
-                        title="http://my.self"
+                        title="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                         transitionName="zoom-big-fast"
                         trigger={
                           Array [
@@ -3801,7 +3867,7 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                           mouseLeaveDelay={0.1}
                           onPopupAlign={[Function]}
                           onPopupVisibleChange={[Function]}
-                          overlay="http://my.self"
+                          overlay="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                           popup={[Function]}
                           popupAlign={Object {}}
                           popupClassName=""
@@ -3811,7 +3877,7 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                           popupVisible={false}
                           prefixCls="ant-tooltip"
                           showAction={Array []}
-                          title="http://my.self"
+                          title="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                           visible={false}
                         >
                           <em
@@ -3824,13 +3890,15 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                                 "marginRight": "4px",
                               }
                             }
-                          />
+                          >
+                            https://incf.github.io/neuroshapes/contexts/schema.json
+                          </em>
                         </Trigger>
                       </Tooltip>
                     </Tooltip>
                     <Copy
                       render={[Function]}
-                      textToCopy="9756a96b-a053-4bc1-9fc9-7620c9c08bc"
+                      textToCopy="https://incf.github.io/nexus/neuroshapes/contexts/schema.json"
                     >
                       <Tooltip
                         arrowPointAtCenter={false}
@@ -4439,7 +4507,7 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                     </Copy>
                     <Copy
                       render={[Function]}
-                      textToCopy="http://my.self"
+                      textToCopy="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                     >
                       <Tooltip
                         arrowPointAtCenter={false}
@@ -5103,7 +5171,7 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                      
                     <em>
                       revision: 
-                      12
+                      2
                     </em>
                      
                     <span>
@@ -5115,10 +5183,10 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                     schema:
                      
                     <a
-                      href="http://schema.org"
+                      href="https://bluebrain.github.io/nexus/schemas/resource.json"
                       target="_blank"
                     >
-                      http://schema.org
+                      https://bluebrain.github.io/nexus/schemas/resource.json
                     </a>
                   </div>
                 </div>
@@ -5134,17 +5202,47 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
 
 exports[`MetadataCard component should render with an extracted username 1`] = `
 <ResourceMetadataCard
-  constrainedBy="http://schema.org"
-  createdAt="2019-03-20T09:41:57.248Z"
-  createdBy="http://user.com/julien"
-  id="9756a96b-a053-4bc1-9fc9-7620c9c08bc"
-  rev={12}
-  self="http://my.self"
-  updatedAt="2019-03-20T10:00:20.260Z"
+  getFilePreview={[Function]}
+  resource={
+    Object {
+      "constrainedBy": "https://bluebrain.github.io/nexus/schemas/resource.json",
+      "context": "",
+      "createdAt": "2018-11-14T21:16:54.230Z",
+      "createdBy": "http://user.com/julien",
+      "data": Object {},
+      "deprecated": false,
+      "id": "https://incf.github.io/nexus/neuroshapes/contexts/schema.json",
+      "name": "https://incf.github.io/neuroshapes/contexts/schema.json",
+      "orgLabel": "anorg",
+      "project": "https://api.com/projects/anorg/testcore",
+      "projectLabel": "testcore",
+      "raw": Object {
+        "@context": "",
+        "@id": "https://incf.github.io/neuroshapes/contexts/schema.json",
+        "_constrainedBy": "https://bluebrain.github.io/nexus/schemas/resource.json",
+        "_createdAt": "2018-11-14T21:16:54.230Z",
+        "_createdBy": "kenny",
+        "_deprecated": false,
+        "_project": "https://api.com/projects/anorg/testcore",
+        "_rev": 2,
+        "_self": "https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json",
+        "_updatedAt": "2018-11-15T08:40:52.735Z",
+        "_updatedBy": "kenny",
+      },
+      "resourceURL": "/resources/anorg/testcore/_/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json",
+      "rev": 2,
+      "self": "https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json",
+      "updatedAt": "2018-11-15T08:40:52.735Z",
+      "updatedBy": "kenny",
+    }
+  }
 >
-  <Card>
+  <Card
+    className="metadata-card"
+    cover={null}
+  >
     <div
-      className="ant-card ant-card-bordered"
+      className="ant-card metadata-card ant-card-bordered"
     >
       <div
         className="ant-card-body"
@@ -5188,7 +5286,7 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                  
                 <em>
                   revision: 
-                  12
+                  2
                 </em>
                  
                 <span>
@@ -5200,10 +5298,10 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                 schema:
                  
                 <a
-                  href="http://schema.org"
+                  href="https://bluebrain.github.io/nexus/schemas/resource.json"
                   target="_blank"
                 >
-                  http://schema.org
+                  https://bluebrain.github.io/nexus/schemas/resource.json
                 </a>
               </div>
             </div>
@@ -5231,7 +5329,7 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                   mouseEnterDelay={0.1}
                   mouseLeaveDelay={0.1}
                   placement="top"
-                  title="http://my.self"
+                  title="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                   transitionName="zoom-big-fast"
                 >
                   <em
@@ -5241,15 +5339,17 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                         "marginRight": "4px",
                       }
                     }
-                  />
+                  >
+                    https://incf.github.io/neuroshapes/contexts/schema.json
+                  </em>
                 </Tooltip>
                 <Copy
                   render={[Function]}
-                  textToCopy="9756a96b-a053-4bc1-9fc9-7620c9c08bc"
+                  textToCopy="https://incf.github.io/nexus/neuroshapes/contexts/schema.json"
                 />
                 <Copy
                   render={[Function]}
-                  textToCopy="http://my.self"
+                  textToCopy="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                 />
               </div>
             </div>
@@ -5855,7 +5955,7 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                       mouseEnterDelay={0.1}
                       mouseLeaveDelay={0.1}
                       placement="top"
-                      title="http://my.self"
+                      title="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                       transitionName="zoom-big-fast"
                     >
                       <Tooltip
@@ -6100,10 +6200,10 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                         mouseLeaveDelay={0.1}
                         onPopupAlign={[Function]}
                         onVisibleChange={[Function]}
-                        overlay="http://my.self"
+                        overlay="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                         placement="top"
                         prefixCls="ant-tooltip"
-                        title="http://my.self"
+                        title="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                         transitionName="zoom-big-fast"
                         trigger={
                           Array [
@@ -6367,7 +6467,7 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                           mouseLeaveDelay={0.1}
                           onPopupAlign={[Function]}
                           onPopupVisibleChange={[Function]}
-                          overlay="http://my.self"
+                          overlay="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                           popup={[Function]}
                           popupAlign={Object {}}
                           popupClassName=""
@@ -6377,7 +6477,7 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                           popupVisible={false}
                           prefixCls="ant-tooltip"
                           showAction={Array []}
-                          title="http://my.self"
+                          title="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                           visible={false}
                         >
                           <em
@@ -6390,13 +6490,15 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                                 "marginRight": "4px",
                               }
                             }
-                          />
+                          >
+                            https://incf.github.io/neuroshapes/contexts/schema.json
+                          </em>
                         </Trigger>
                       </Tooltip>
                     </Tooltip>
                     <Copy
                       render={[Function]}
-                      textToCopy="9756a96b-a053-4bc1-9fc9-7620c9c08bc"
+                      textToCopy="https://incf.github.io/nexus/neuroshapes/contexts/schema.json"
                     >
                       <Tooltip
                         arrowPointAtCenter={false}
@@ -7005,7 +7107,7 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                     </Copy>
                     <Copy
                       render={[Function]}
-                      textToCopy="http://my.self"
+                      textToCopy="https://api.com/resources/anorg/testcore/https%3A%2F%2Fincf.github.io%2Fnexus%2Fneuroshapes%2Fcontexts%2Fschema.json"
                     >
                       <Tooltip
                         arrowPointAtCenter={false}
@@ -7669,7 +7771,7 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                      
                     <em>
                       revision: 
-                      12
+                      2
                     </em>
                      
                     <span>
@@ -7681,10 +7783,10 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                     schema:
                      
                     <a
-                      href="http://schema.org"
+                      href="https://bluebrain.github.io/nexus/schemas/resource.json"
                       target="_blank"
                     >
-                      http://schema.org
+                      https://bluebrain.github.io/nexus/schemas/resource.json
                     </a>
                   </div>
                 </div>
