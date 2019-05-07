@@ -3,8 +3,7 @@ import { Resource, NexusFile } from '@bbp/nexus-sdk';
 import ListItem from '../../../Animations/ListItem';
 import ResourceMetadataCard from '../../../Resources/MetadataCard';
 import TypesIconList from '../../../Types/TypesIcon';
-import { hasDisplayableImage } from '../../../Resources/ResourcePreview';
-import useNexusFile from '../../../hooks/useNexusFile';
+import useNexusImage from '../../../hooks/useNexusImage';
 
 const MOUSE_ENTER_DELAY = 0.5;
 
@@ -18,15 +17,7 @@ export interface QueryListItemProps {
 
 const QueryListItem: React.FunctionComponent<QueryListItemProps> = props => {
   const { predicate, resource, getFilePreview, onClick = () => {} } = props;
-  const { file } = useNexusFile(resource, hasDisplayableImage, getFilePreview);
-  let avatar = null;
-  if (file) {
-    const img = new Image();
-    img.src = `data:${file.mediaType};base64,${file.rawFile as string}`;
-    avatar = file && {
-      src: img.src,
-    };
-  }
+  const { image } = useNexusImage(resource);
   return (
     <ListItem
       popover={{
@@ -34,7 +25,7 @@ const QueryListItem: React.FunctionComponent<QueryListItemProps> = props => {
         mouseEnterDelay: MOUSE_ENTER_DELAY,
         key: resource.id,
       }}
-      avatar={avatar}
+      avatar={image}
       onClick={() => onClick(resource)}
       label={
         predicate ? (

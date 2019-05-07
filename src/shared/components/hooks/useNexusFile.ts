@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { isBrowser } from '../../utils';
 import { Resource, NexusFile } from '@bbp/nexus-sdk';
 import { notification } from 'antd';
 
+const getFilePreview = (selfUrl: string) => NexusFile.getSelf(selfUrl, true);
+
 const useNexusFile = (
   resource: Resource,
-  predicate: (resource: Resource) => boolean,
-  getFilePreview: (selfUrl: string) => Promise<NexusFile>
+  predicate: (resource: Resource) => boolean
 ) => {
   const [file, setFile] = React.useState<NexusFile | null>(null);
   const [loading, setLoading] = React.useState(false);
