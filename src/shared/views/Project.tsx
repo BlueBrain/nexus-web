@@ -28,13 +28,13 @@ import {
 import { push } from 'connected-react-router';
 import QueryContainer from '../components/Workspace/Queries/QueriesContainer';
 import Helmet from 'react-helmet';
+import { Link } from 'react-router-dom';
 
 interface ProjectViewProps {
   project: Project | null;
   org: Organization | null;
   error: RequestError | null;
   match: any;
-  lists: List[];
   createList(orgProjectFilterKey: string): void;
   initialize(orgLabel: string, projectLabel: string): void;
   createResource(
@@ -45,7 +45,7 @@ interface ProjectViewProps {
   ): Promise<Resource>;
   fetchProject(org: string, project: string): void;
   createFile(file: File): void;
-  getFilePreview: (selfUrl: string) => Promise<NexusFile>;
+  goToOrg(orgLabel: string): void;
   onLoginClick: VoidFunction;
   isFetching: boolean;
   authenticated: boolean;
@@ -59,13 +59,11 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   org,
   createList,
   createResource,
-  initialize,
-  lists,
   fetchProject,
   createFile,
-  getFilePreview,
   onLoginClick,
   authenticated,
+  goToOrg,
 }) => {
   const projectLabel = project ? project.label : null;
   React.useEffect(() => {
@@ -134,7 +132,15 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
             />
             <div className="project-banner">
               <div className="label">
-                <h1 className="name">{project.label} </h1>
+                <h1 className="name">
+                  {' '}
+                  {org && (
+                    <span>
+                      <a onClick={() => goToOrg(org.label)}>{org.label}</a> |{' '}
+                    </span>
+                  )}{' '}
+                  {project.label}{' '}
+                </h1>
                 {!!project.description && (
                   <Popover
                     title={project.label}
@@ -224,13 +230,11 @@ const mapStateToProps = (state: RootState) => {
         state.nexus.activeProject &&
         state.nexus.activeProject.error) ||
       null,
-    lists: (state.lists && state.lists[activeListId]) || [],
   };
 };
 
-const mapDispatchToProps = (dispatch: any, ownProps: any) => {
+const mapDispatchToProps = (dispatch: any) => {
   return {
-    getFilePreview: (selfUrl: string) => NexusFile.getSelf(selfUrl, true),
     fetchProject: (orgLabel: string, projectLabel: string) => {
       dispatch(fetchOrg(orgLabel));
       dispatch(fetchAndAssignProject(orgLabel, projectLabel));
@@ -258,6 +262,8 @@ const mapDispatchToProps = (dispatch: any, ownProps: any) => {
     createFile: async (file: File) => {
       dispatch(createFile(file));
     },
+    goToOrg: (orgLabel: string) =>
+      dispatch(push(`/${orgLabel}`, { previousUrl: window.location.href })),
     onLoginClick: () =>
       dispatch(push('/login', { previousUrl: window.location.href })),
   };
