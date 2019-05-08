@@ -3,8 +3,7 @@ import { Resource, NexusFile } from '@bbp/nexus-sdk';
 import ListItem from '../../../Animations/ListItem';
 import ResourceMetadataCard from '../../../Resources/MetadataCard';
 import TypesIconList from '../../../Types/TypesIcon';
-import { hasDisplayableImage } from '../../../Resources/ResourcePreview';
-import useNexusFile from '../../../hooks/useNexusFile';
+import useNexusImage from '../../../hooks/useNexusImage';
 
 const MOUSE_ENTER_DELAY = 0.5;
 
@@ -13,28 +12,19 @@ export interface QueryListItemProps {
   predicate?: React.ReactNode;
   onClick?(resource: Resource): void;
   onEdit?(): void;
-  getFilePreview: (selfUrl: string) => Promise<NexusFile>;
 }
 
 const QueryListItem: React.FunctionComponent<QueryListItemProps> = props => {
-  const { predicate, resource, getFilePreview, onClick = () => {} } = props;
-  const { file } = useNexusFile(resource, hasDisplayableImage, getFilePreview);
-  let avatar = null;
-  if (file) {
-    const img = new Image();
-    img.src = `data:${file.mediaType};base64,${file.rawFile as string}`;
-    avatar = file && {
-      src: img.src,
-    };
-  }
+  const { predicate, resource, onClick = () => {} } = props;
+  const imagePreviewProps = useNexusImage(resource);
   return (
     <ListItem
       popover={{
-        content: <ResourceMetadataCard {...{ resource, getFilePreview }} />,
+        content: <ResourceMetadataCard {...{ resource }} />,
         mouseEnterDelay: MOUSE_ENTER_DELAY,
         key: resource.id,
       }}
-      avatar={avatar}
+      preview={imagePreviewProps}
       onClick={() => onClick(resource)}
       label={
         predicate ? (

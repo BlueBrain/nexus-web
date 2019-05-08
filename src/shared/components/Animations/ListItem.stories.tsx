@@ -12,14 +12,27 @@ import { action } from '@storybook/addon-actions';
 import ListItem from './ListItem';
 import { Tag, Button } from 'antd';
 
+const makePreview = () => {
+  const images = [
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Morocco_Africa_Flickr_Rosino_December_2005_84514010.jpg/800px-Morocco_Africa_Flickr_Rosino_December_2005_84514010.jpg',
+    'https://i.gifer.com/embedded/download/7U30.gif',
+    'https://cdn.jsdelivr.net/emojione/assets/3.1/png/32/1f31e.png',
+    'https://upload.wikimedia.org/wikipedia/commons/3/34/Gusev_Crater%2C_Mars.jpg',
+  ];
+  const image = new Image();
+  image.src = images[Math.floor(Math.random() * Math.floor(images.length))];
+  return {
+    image,
+    loading: false,
+    hasImage: true,
+  };
+};
+
 const exampleItems = [
   {
     label: 'nexus',
     projectNumber: 1200,
-    avatar: {
-      src:
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Morocco_Africa_Flickr_Rosino_December_2005_84514010.jpg/800px-Morocco_Africa_Flickr_Rosino_December_2005_84514010.jpg',
-    },
+    preview: makePreview(),
     description:
       "Yeah, but your scientists were so preoccupied with whether or not they could, they didn't stop to think if they should. You're a very talented young man, with your own clever thoughts and ideas. Do you need a manager? They're using our own satellites against us. And the clock is ticking.",
   },
@@ -28,17 +41,12 @@ const exampleItems = [
     projectNumber: 300,
     deprecated: true,
     action: true,
-    avatar: {
-      src: 'https://i.gifer.com/embedded/download/7U30.gif',
-    },
+    preview: makePreview(),
   },
   {
     label: 'hbp',
     projectNumber: 1,
-    avatar: {
-      src:
-        'https://upload.wikimedia.org/wikipedia/commons/3/34/Gusev_Crater%2C_Mars.jpg',
-    },
+    preview: makePreview(),
   },
   {
     label: 'nasa',
@@ -50,9 +58,7 @@ const exampleItems = [
   {
     label: 'rolex',
     projectNumber: 3424,
-    avatar: {
-      src: 'https://cdn.jsdelivr.net/emojione/assets/3.1/png/32/1f31e.png',
-    },
+    preview: makePreview(),
   },
 ];
 
@@ -73,7 +79,7 @@ storiesOf('Components/ListItem', module)
           <ul style={{ margin: 0, padding: 0 }}>
             {exampleItems.map((element, index) => {
               const {
-                avatar,
+                preview,
                 label,
                 action: elementAction,
                 projectNumber,
@@ -83,7 +89,7 @@ storiesOf('Components/ListItem', module)
               return (
                 <ListItem
                   id={`element-${index}`}
-                  avatar={avatar}
+                  preview={preview}
                   label={label}
                   onClick={action('element-clicked')}
                   details={

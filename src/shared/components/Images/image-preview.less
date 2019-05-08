@@ -1,29 +1,30 @@
 @import '../../lib.less';
 
-.metadata-card {
-  > .ant-card-cover > .cover {
-    background-color: @header-background-color;
-    margin-bottom: @default-pad;
-    border-radius: @border-radius-base;
-  }
-  > .ant-card-cover > .cover > .wrapper {
+.image-preview {
+  background-color: @header-background-color;
+  margin-bottom: @default-pad;
+  border-radius: @border-radius-base;
+  > .wrapper {
     background-size: contain;
     background-position: 50%;
     background-repeat: no-repeat;
     max-height: 600px;
   }
-  > .ant-card-cover > .cover > .wrapper.-loading {
+  > .wrapper.-loading {
     display: flex;
     align-content: center;
     justify-content: center;
     .textLoadingGradient();
   }
-  > .ant-card-cover > .cover > .wrapper > .skeleton {
+  > .wrapper.-loaded {
+    cursor: zoom-in;
+  }
+  > .wrapper > .skeleton {
     .blockLoadingGradient();
     height: 300px;
     width: 500px;
   }
-  > .ant-card-cover > .cover > .wrapper > img {
+  .wrapper > img {
     visibility: hidden;
     max-height: 100%;
     max-width: 100%;

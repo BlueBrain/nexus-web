@@ -116,7 +116,6 @@ const LinksList: React.FunctionComponent<LinksListProps> = props => {
                     )
                   }
                   resource={resourceLink.link as Resource}
-                  getFilePreview={getFilePreview}
                   onClick={() => goToResource(resourceLink.link as Resource)}
                 />
               )}
