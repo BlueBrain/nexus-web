@@ -22,6 +22,8 @@ interface ResourceViewProps {
   dotGraph: string | null;
   error: RequestError | null;
   isFetching: boolean | false;
+  goToOrg: (resource: Resource) => void;
+  goToProject: (resource: Resource) => void;
   goToResource: (resource: Resource) => void;
   getFilePreview: (selfUrl: string) => Promise<NexusFile>;
   links: LinksState | null;
@@ -47,6 +49,8 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
     fetchResource,
     dotGraph,
     links,
+    goToOrg,
+    goToProject,
     goToResource,
     fetchLinks,
     linksListPageSize,
@@ -75,6 +79,8 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
       >
         <ResourceView
           getFilePreview={getFilePreview}
+          goToOrg={goToOrg}
+          goToProject={goToProject}
           goToResource={goToResource}
           links={links}
           dotGraph={dotGraph}
@@ -120,6 +126,9 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = (dispatch: any) => {
   return {
     getFilePreview: (selfUrl: string) => NexusFile.getSelf(selfUrl, true),
+    goToProject: (resource: Resource) =>
+      dispatch(push(`/${resource.orgLabel}/${resource.projectLabel}`)),
+    goToOrg: (resource: Resource) => dispatch(push(`/${resource.orgLabel}`)),
     goToResource: (resource: Resource) =>
       dispatch(
         push(

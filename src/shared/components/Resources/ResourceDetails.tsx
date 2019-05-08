@@ -21,6 +21,8 @@ export interface ResourceViewProps {
   isFetching: boolean | false;
   onSuccess: VoidFunction;
   dotGraph: string | null;
+  goToOrg: (resource: Resource) => void;
+  goToProject: (resource: Resource) => void;
   goToResource: (resource: Resource) => void;
   getFilePreview: (selfUrl: string) => Promise<NexusFile>;
   fetchLinks: (
@@ -41,6 +43,8 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
     onSuccess,
     dotGraph,
     links,
+    goToOrg,
+    goToProject,
     goToResource,
     fetchLinks,
     getFilePreview,
@@ -113,6 +117,16 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
                 },
               ]}
             />
+            <h1 className="name">
+              <span>
+                <a onClick={() => goToOrg(resource)}>{resource.orgLabel}</a> |{' '}
+                <a onClick={() => goToProject(resource)}>
+                  {resource.projectLabel}
+                </a>{' '}
+                |{' '}
+              </span>
+              {resource.name}
+            </h1>
             <ResourceMetadataCard
               {...{ resource, getFilePreview, showPreview: true }}
             />
