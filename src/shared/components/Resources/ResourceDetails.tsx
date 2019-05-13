@@ -27,6 +27,7 @@ export interface ResourceViewProps {
   goToResource: (resource: Resource) => void;
   goToSparqlView: (resource: Resource) => void;
   goToElasticSearchView: (resource: Resource) => void;
+  deprecateResource: (resource: Resource) => void;
   getFilePreview: (selfUrl: string) => Promise<NexusFile>;
   fetchLinks: (
     resource: Resource,
@@ -54,6 +55,7 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
     goToSparqlView,
     goToElasticSearchView,
     fetchResource,
+    deprecateResource,
   } = props;
   const [busy, setFormBusy] = React.useState(isFetching);
   const [expanded, setExpanded] = React.useState(false);
@@ -136,7 +138,12 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
               {...{ resource, getFilePreview, showPreview: true }}
             />
             <ResourceActions
-              {...{ resource, goToElasticSearchView, goToSparqlView }}
+              {...{
+                resource,
+                goToElasticSearchView,
+                goToSparqlView,
+                deprecateResource,
+              }}
             />
             <Tabs defaultActiveKey="1">
               <TabPane tab="JSON" key="1">

@@ -57,9 +57,7 @@ const makeButton = ({
 const makeActions = (
   resource: Resource,
   actionDispatchers: {
-    goToSparqlView: (resource: Resource) => void;
-    goToElasticSearchView: (resource: Resource) => void;
-    [key: string]: any;
+    [key: string]: (resource: Resource) => void;
   }
 ) =>
   actionTypes
@@ -76,17 +74,24 @@ export interface ResourceActionsProps {
   resource: Resource;
   goToSparqlView: (resource: Resource) => void;
   goToElasticSearchView: (resource: Resource) => void;
+  deprecateResource: (resource: Resource) => void;
 }
 
 const ResourceActions: React.FunctionComponent<
   ResourceActionsProps
 > = props => {
-  const { resource, goToSparqlView, goToElasticSearchView } = props;
+  const {
+    resource,
+    goToSparqlView,
+    goToElasticSearchView,
+    deprecateResource,
+  } = props;
   return (
     <Card className="resource-actions">
       {makeActions(resource, {
         goToSparqlView,
         goToElasticSearchView,
+        deprecateResource,
       })}
     </Card>
   );
