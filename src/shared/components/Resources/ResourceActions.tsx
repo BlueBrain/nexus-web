@@ -2,18 +2,12 @@ import * as React from 'react';
 import { Card, Tooltip, Button, Popconfirm } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
 import './resource-actions.less';
-
-const VIEW = 'View';
-const ES_VIEW = 'ElasticSearchView';
-const SPARQL_VIEW = 'SparqlView';
-
-const isOfType = (type: string) => (resource: Resource) =>
-  !!resource.type && resource.type.includes(type);
-
-const isNotDeprecated = (resource: Resource) => !resource.deprecated;
-const isView = isOfType(VIEW);
-const isElasticView = isOfType(ES_VIEW);
-const isSparqlView = isOfType(SPARQL_VIEW);
+import {
+  isNotDeprecated,
+  isElasticView,
+  isSparqlView,
+  isFile,
+} from '../../utils/nexus-maybe';
 
 const actionTypes = [
   {
@@ -37,6 +31,13 @@ const actionTypes = [
     title: 'Query this Sparql view',
     shortTitle: 'Query',
     icon: 'search',
+  },
+  {
+    name: 'downloadFile',
+    predicate: isFile,
+    title: 'Download this file',
+    shortTitle: 'Download',
+    icon: 'download',
   },
 ];
 
@@ -98,6 +99,7 @@ export interface ResourceActionsProps {
   goToSparqlView: (resource: Resource) => void;
   goToElasticSearchView: (resource: Resource) => void;
   deprecateResource: (resource: Resource) => void;
+  downloadFile: (resource: Resource) => void;
 }
 
 const ResourceActions: React.FunctionComponent<
@@ -108,6 +110,7 @@ const ResourceActions: React.FunctionComponent<
     goToSparqlView,
     goToElasticSearchView,
     deprecateResource,
+    downloadFile,
   } = props;
   return (
     <section className="resource-actions">
@@ -115,6 +118,7 @@ const ResourceActions: React.FunctionComponent<
         goToSparqlView,
         goToElasticSearchView,
         deprecateResource,
+        downloadFile,
       })}
     </section>
   );

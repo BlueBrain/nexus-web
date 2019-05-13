@@ -17,7 +17,9 @@ export function hasDisplayableImage(resource: Resource): boolean {
 
 const makeImageFromFile = (file: NexusFile) => {
   const image = new Image();
-  image.src = `data:${file.mediaType};base64,${file.rawFile as string}`;
+  // @ts-ignore
+  const blob = new Blob([file.rawFile], { type: file.mediaType });
+  image.src = URL.createObjectURL(blob);
   return image;
 };
 
