@@ -9,6 +9,7 @@ import LinksContainer from './Links';
 import { LinksState } from '../../store/reducers/links';
 import { LinkDirection } from '../../store/actions/nexus/links';
 import Helmet from 'react-helmet';
+import ResourceActions from './ResourceActions';
 
 const TabPane = Tabs.TabPane;
 
@@ -24,6 +25,8 @@ export interface ResourceViewProps {
   goToOrg: (resource: Resource) => void;
   goToProject: (resource: Resource) => void;
   goToResource: (resource: Resource) => void;
+  goToSparqlView: (resource: Resource) => void;
+  goToElasticSearchView: (resource: Resource) => void;
   getFilePreview: (selfUrl: string) => Promise<NexusFile>;
   fetchLinks: (
     resource: Resource,
@@ -48,6 +51,8 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
     goToResource,
     fetchLinks,
     getFilePreview,
+    goToSparqlView,
+    goToElasticSearchView,
     fetchResource,
   } = props;
   const [busy, setFormBusy] = React.useState(isFetching);
@@ -129,6 +134,9 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
             </h1>
             <ResourceMetadataCard
               {...{ resource, getFilePreview, showPreview: true }}
+            />
+            <ResourceActions
+              {...{ resource, goToElasticSearchView, goToSparqlView }}
             />
             <Tabs defaultActiveKey="1">
               <TabPane tab="JSON" key="1">

@@ -97,7 +97,7 @@ const RawElasticSearchQueryView: React.FunctionComponent<
   };
 
   return (
-    <>
+    <div className="view-view">
       <Form
         onSubmit={e => {
           e.preventDefault();
@@ -183,7 +183,7 @@ const RawElasticSearchQueryView: React.FunctionComponent<
           />
         )}
       </Card>
-    </>
+    </div>
   );
 };
 

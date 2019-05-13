@@ -25,6 +25,8 @@ interface ResourceViewProps {
   goToOrg: (resource: Resource) => void;
   goToProject: (resource: Resource) => void;
   goToResource: (resource: Resource) => void;
+  goToSparqlView: (resource: Resource) => void;
+  goToElasticSearchView: (resource: Resource) => void;
   getFilePreview: (selfUrl: string) => Promise<NexusFile>;
   links: LinksState | null;
   fetchLinks: (
@@ -52,6 +54,8 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
     goToOrg,
     goToProject,
     goToResource,
+    goToSparqlView,
+    goToElasticSearchView,
     fetchLinks,
     linksListPageSize,
     getFilePreview,
@@ -78,6 +82,8 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
         }
       >
         <ResourceView
+          goToElasticSearchView={goToElasticSearchView}
+          goToSparqlView={goToSparqlView}
           getFilePreview={getFilePreview}
           goToOrg={goToOrg}
           goToProject={goToProject}
@@ -135,6 +141,20 @@ const mapDispatchToProps = (dispatch: any) => {
           `/${resource.orgLabel}/${
             resource.projectLabel
           }/resources/${encodeURIComponent(resource.id)}`
+        )
+      ),
+    goToSparqlView: (resource: Resource) =>
+      dispatch(
+        push(
+          `/${resource.orgLabel}/${resource.projectLabel}/${resource.id}/sparql`
+        )
+      ),
+    goToElasticSearchView: (resource: Resource) =>
+      dispatch(
+        push(
+          `/${resource.orgLabel}/${resource.projectLabel}/${
+            resource.id
+          }/_search`
         )
       ),
     fetchResource: (

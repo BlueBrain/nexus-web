@@ -90,7 +90,7 @@ const RawSparqlQueryView: React.FunctionComponent<RawSparqlQueryViewProps> = ({
   };
 
   return (
-    <>
+    <div className="view-view">
       <Form
         onSubmit={e => {
           e.preventDefault();
@@ -137,7 +137,7 @@ const RawSparqlQueryView: React.FunctionComponent<RawSparqlQueryViewProps> = ({
           </Table>
         )}
       </Card>
-    </>
+    </div>
   );
 };
 
