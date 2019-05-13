@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, Tooltip, Button } from 'antd';
+import { Card, Tooltip, Button, Popconfirm } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
 import './resource-actions.less';
 
@@ -10,8 +10,7 @@ const SPARQL_VIEW = 'SparqlView';
 const isOfType = (type: string) => (resource: Resource) =>
   !!resource.type && resource.type.includes(type);
 
-const exists = (something: any) => !!something;
-const isDeprecated = (resource: Resource) => resource.deprecated;
+const isNotDeprecated = (resource: Resource) => !resource.deprecated;
 const isView = isOfType(VIEW);
 const isElasticView = isOfType(ES_VIEW);
 const isSparqlView = isOfType(SPARQL_VIEW);
@@ -19,20 +18,24 @@ const isSparqlView = isOfType(SPARQL_VIEW);
 const actionTypes = [
   {
     name: 'deprecateResource',
-    predicate: exists,
+    predicate: isNotDeprecated,
     title: 'Deprecate this resource',
+    shortTitle: 'Deprecate',
     icon: 'delete',
+    danger: true,
   },
   {
     name: 'goToElasticSearchView',
     predicate: isElasticView,
     title: 'Query this ElasticSearch view',
+    shortTitle: 'Query',
     icon: 'search',
   },
   {
     name: 'goToSparqlView',
     predicate: isSparqlView,
     title: 'Query this Sparql view',
+    shortTitle: 'Query',
     icon: 'search',
   },
 ];
@@ -40,18 +43,37 @@ const actionTypes = [
 const makeButton = ({
   title,
   icon,
-  name,
+  shortTitle,
+  danger,
 }: {
   title: string;
   icon: string;
-  name: string;
+  shortTitle: string;
+  danger?: boolean;
 }) => (resource: Resource, actionToDispatch: (resource: Resource) => void) => (
-  <Tooltip title={title}>
-    <Button
-      icon={icon}
-      onClick={() => actionToDispatch && actionToDispatch(resource)}
-    />
-  </Tooltip>
+  <div className="action" key={`${resource.id}-${title}`}>
+    {danger ? (
+      <Popconfirm
+        title="Are you sure you'd like to deprecate this resource?"
+        onConfirm={() => actionToDispatch && actionToDispatch(resource)}
+        okText="Yes"
+        cancelText="No"
+      >
+        <Button type="danger" icon={icon}>
+          {shortTitle}
+        </Button>
+      </Popconfirm>
+    ) : (
+      <Tooltip title={title}>
+        <Button
+          icon={icon}
+          onClick={() => actionToDispatch && actionToDispatch(resource)}
+        >
+          {shortTitle}
+        </Button>
+      </Tooltip>
+    )}
+  </div>
 );
 
 const makeActions = (
@@ -64,9 +86,10 @@ const makeActions = (
     .filter(action => action.predicate(resource))
     .map(action =>
       makeButton({
+        shortTitle: action.shortTitle,
         title: action.title,
         icon: action.icon,
-        name: action.name,
+        danger: action.danger,
       })(resource, actionDispatchers[action.name])
     );
 
@@ -87,13 +110,13 @@ const ResourceActions: React.FunctionComponent<
     deprecateResource,
   } = props;
   return (
-    <Card className="resource-actions">
+    <section className="resource-actions">
       {makeActions(resource, {
         goToSparqlView,
         goToElasticSearchView,
         deprecateResource,
       })}
-    </Card>
+    </section>
   );
 };
 

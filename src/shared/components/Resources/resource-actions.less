@@ -1,6 +1,11 @@
 @import '../../lib.less';
 
 .resource-actions {
-  padding: @default-pad;
-  margin: @default-pad 0;
+  display: flex;
+  justify-content: flex-end;
+  padding: @default-pad 0;
+  font-size: 0.8rem;
+  > .action {
+    margin-left: 4px;
+  }
 }
