@@ -24,14 +24,33 @@ Object {
 exports[`makeESQuery _constrainedBy should return a must clause with a term query for both _deprecated and _constrainedBy 1`] = `
 Object {
   "query": Object {
-    "term": Object {
-      "_constrainedBy": "mySchema",
+    "bool": Object {
+      "must": Array [
+        Object {
+          "term": Object {
+            "_constrainedBy": "mySchema",
+          },
+        },
+        Object {
+          "term": Object {
+            "_deprecated": false,
+          },
+        },
+      ],
     },
   },
 }
 `;
 
-exports[`makeESQuery deprecated should return a must clause with just the term query 1`] = `Object {}`;
+exports[`makeESQuery deprecated should return a must clause with just the term query 1`] = `
+Object {
+  "query": Object {
+    "term": Object {
+      "_deprecated": false,
+    },
+  },
+}
+`;
 
 exports[`makeESQuery everything at once should return a must clause with the kitchen sink 1`] = `
 Object {
@@ -67,8 +86,19 @@ Object {
 exports[`makeESQuery text query should return a must clause with a query string 1`] = `
 Object {
   "query": Object {
-    "query_string": Object {
-      "query": "banana~",
+    "bool": Object {
+      "must": Array [
+        Object {
+          "term": Object {
+            "_deprecated": false,
+          },
+        },
+        Object {
+          "query_string": Object {
+            "query": "banana~",
+          },
+        },
+      ],
     },
   },
 }
