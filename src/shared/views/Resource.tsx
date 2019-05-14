@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../store/reducers';
-import { fetchAndAssignResource } from '../store/actions/nexus/resource';
+import {
+  fetchAndAssignResource,
+  deprecateResource,
+} from '../store/actions/nexus/resource';
 import { Resource, PaginationSettings, NexusFile } from '@bbp/nexus-sdk';
 import ResourceView from '../components/Resources/ResourceDetails';
 import Helmet from 'react-helmet';
@@ -25,6 +28,9 @@ interface ResourceViewProps {
   goToOrg: (resource: Resource) => void;
   goToProject: (resource: Resource) => void;
   goToResource: (resource: Resource) => void;
+  goToSparqlView: (resource: Resource) => void;
+  deprecateResource: (resource: Resource) => void;
+  goToElasticSearchView: (resource: Resource) => void;
   getFilePreview: (selfUrl: string) => Promise<NexusFile>;
   links: LinksState | null;
   fetchLinks: (
@@ -52,9 +58,12 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
     goToOrg,
     goToProject,
     goToResource,
+    goToSparqlView,
+    goToElasticSearchView,
     fetchLinks,
     linksListPageSize,
     getFilePreview,
+    deprecateResource,
   } = props;
   const fetch = (expanded = false) => {
     fetchResource(
@@ -78,6 +87,9 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
         }
       >
         <ResourceView
+          deprecateResource={deprecateResource}
+          goToElasticSearchView={goToElasticSearchView}
+          goToSparqlView={goToSparqlView}
           getFilePreview={getFilePreview}
           goToOrg={goToOrg}
           goToProject={goToProject}
@@ -125,7 +137,8 @@ const mapStateToProps = (state: RootState) => ({
 });
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    getFilePreview: (selfUrl: string) => NexusFile.getSelf(selfUrl, true),
+    getFilePreview: (selfUrl: string) =>
+      NexusFile.getSelf(selfUrl, { shouldFetchFile: true }),
     goToProject: (resource: Resource) =>
       dispatch(push(`/${resource.orgLabel}/${resource.projectLabel}`)),
     goToOrg: (resource: Resource) => dispatch(push(`/${resource.orgLabel}`)),
@@ -137,6 +150,20 @@ const mapDispatchToProps = (dispatch: any) => {
           }/resources/${encodeURIComponent(resource.id)}`
         )
       ),
+    goToSparqlView: (resource: Resource) =>
+      dispatch(
+        push(
+          `/${resource.orgLabel}/${resource.projectLabel}/${resource.id}/sparql`
+        )
+      ),
+    goToElasticSearchView: (resource: Resource) =>
+      dispatch(
+        push(
+          `/${resource.orgLabel}/${resource.projectLabel}/${
+            resource.id
+          }/_search`
+        )
+      ),
     fetchResource: (
       orgLabel: string,
       projectLabel: string,
@@ -145,6 +172,8 @@ const mapDispatchToProps = (dispatch: any) => {
     ) => {
       dispatch(fetchAndAssignResource(orgLabel, projectLabel, id, expanded));
     },
+    deprecateResource: (resource: Resource) =>
+      dispatch(deprecateResource(resource)),
     fetchLinks: (
       resource: Resource,
       linkDirection: LinkDirection,

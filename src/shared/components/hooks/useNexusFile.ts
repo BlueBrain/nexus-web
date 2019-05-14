@@ -2,7 +2,8 @@ import * as React from 'react';
 import { Resource, NexusFile } from '@bbp/nexus-sdk';
 import { notification } from 'antd';
 
-const getFilePreview = (selfUrl: string) => NexusFile.getSelf(selfUrl, true);
+const getFilePreview = (selfUrl: string) =>
+  NexusFile.getSelf(selfUrl, { shouldFetchFile: true });
 
 const useNexusFile = (
   resource: Resource,

@@ -97,3 +97,42 @@ export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
     }
   };
 };
+
+export const deprecateResource: ActionCreator<ThunkAction> = (
+  resource: Resource
+) => {
+  return async (
+    dispatch: Dispatch<any>,
+    getState,
+    { nexus }
+  ): Promise<
+    | FetchFulfilledAction<
+        ResourceActionTypes.FULFILLED,
+        {
+          resource: Resource;
+          dotGraph: string;
+        }
+      >
+    | FetchFailedAction<ResourceActionTypes.FAILED>
+  > => {
+    const Resource = nexus.Resource;
+    dispatch(fetchResourceAction());
+    try {
+      const deprecatedResource = await Resource.deprecateSelf(
+        resource.self,
+        resource.rev,
+        resource.orgLabel,
+        resource.projectLabel
+      );
+      const dotGraph = await Resource.getSelfRawAs(
+        resource.self,
+        ResourceGetFormat.DOT
+      );
+      return dispatch(
+        fetchResourceFulfilledAction(deprecatedResource, dotGraph)
+      );
+    } catch (e) {
+      return dispatch(fetchResourceFailedAction(formatError(e)));
+    }
+  };
+};

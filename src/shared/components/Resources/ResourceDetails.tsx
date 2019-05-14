@@ -9,10 +9,11 @@ import LinksContainer from './Links';
 import { LinksState } from '../../store/reducers/links';
 import { LinkDirection } from '../../store/actions/nexus/links';
 import Helmet from 'react-helmet';
+import ResourceActions from './ResourceActions';
+import { downloadNexusFile } from '../../utils/download';
+import { isFile } from '../../utils/nexus-maybe';
 
 const TabPane = Tabs.TabPane;
-
-const NEXUS_FILE_TYPE = 'File';
 
 export interface ResourceViewProps {
   linksListPageSize: number;
@@ -24,6 +25,9 @@ export interface ResourceViewProps {
   goToOrg: (resource: Resource) => void;
   goToProject: (resource: Resource) => void;
   goToResource: (resource: Resource) => void;
+  goToSparqlView: (resource: Resource) => void;
+  goToElasticSearchView: (resource: Resource) => void;
+  deprecateResource: (resource: Resource) => void;
   getFilePreview: (selfUrl: string) => Promise<NexusFile>;
   fetchLinks: (
     resource: Resource,
@@ -48,7 +52,10 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
     goToResource,
     fetchLinks,
     getFilePreview,
+    goToSparqlView,
+    goToElasticSearchView,
     fetchResource,
+    deprecateResource,
   } = props;
   const [busy, setFormBusy] = React.useState(isFetching);
   const [expanded, setExpanded] = React.useState(false);
@@ -59,12 +66,12 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
     }
   }, [expanded]);
 
-  // TODO move NexusFileType constant to sdk
-  const isFile =
-    resource && resource.type && resource.type.includes(NEXUS_FILE_TYPE);
-
   const handleFormatChange = () => {
     setExpanded(!expanded);
+  };
+
+  const downloadFile = async (resource: Resource) => {
+    await downloadNexusFile(resource.self);
   };
 
   const handleSubmit = async (value: any) => {
@@ -130,11 +137,20 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
             <ResourceMetadataCard
               {...{ resource, getFilePreview, showPreview: true }}
             />
+            <ResourceActions
+              {...{
+                resource,
+                goToElasticSearchView,
+                goToSparqlView,
+                deprecateResource,
+                downloadFile,
+              }}
+            />
             <Tabs defaultActiveKey="1">
               <TabPane tab="JSON" key="1">
                 <ResourceEditor
                   expanded={expanded}
-                  editable={!isFile || !!resource.expanded}
+                  editable={!isFile(resource) || !!resource.expanded}
                   rawData={
                     expanded && resource.expanded
                       ? resource.expanded
