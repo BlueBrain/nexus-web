@@ -3,8 +3,8 @@ import { NexusFile } from '@bbp/nexus-sdk';
 
 export const downloadNexusFile = async (selfUrl: string) => {
   try {
-    const downloadRawFile = true;
-    const file = await NexusFile.getSelf(selfUrl, downloadRawFile);
+    const shouldFetchFile = true;
+    const file = await NexusFile.getSelf(selfUrl, { shouldFetchFile });
     download(file.filename, file.mediaType, file.rawFile);
   } catch (error) {
     // do something

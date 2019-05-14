@@ -102,7 +102,8 @@ const mapDispatchToProps = (
     dispatch(cloneList(makeOrgProjectFilterKey(org, project), listIndex, list)),
   initialize: () =>
     dispatch(initializeProjectList(makeOrgProjectFilterKey(org, project))),
-  getFilePreview: (selfUrl: string) => NexusFile.getSelf(selfUrl, true),
+  getFilePreview: (selfUrl: string) =>
+    NexusFile.getSelf(selfUrl, { shouldFetchFile: true }),
   queryResources: (
     id: string,
     paginationSettings: PaginationSettings,

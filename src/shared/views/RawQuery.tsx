@@ -7,6 +7,8 @@ import { RouteComponentProps, match } from 'react-router';
 import { fetchAndAssignProject } from '../store/actions/nexus/projects';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
 import * as queryString from 'query-string';
+import { Resource } from '@bbp/nexus-sdk';
+import { push } from 'connected-react-router';
 
 interface RawQueryProps extends RouteComponentProps {
   activeOrg: { label: string };
@@ -27,17 +29,14 @@ export const RawElasticSearchQueryComponent: React.FunctionComponent<
   fetchProject,
   location,
 }): JSX.Element => {
-  React.useEffect(
-    () => {
-      if (
-        activeOrg.label !== match.params.org ||
-        activeProject.label !== match.params.project
-      ) {
-        fetchProject(match.params.org, match.params.project);
-      }
-    },
-    [match.params.org, match.params.project]
-  );
+  React.useEffect(() => {
+    if (
+      activeOrg.label !== match.params.org ||
+      activeProject.label !== match.params.project
+    ) {
+      fetchProject(match.params.org, match.params.project);
+    }
+  }, [match.params.org, match.params.project]);
   const query = queryString.parse(location.search).query;
   return (
     <RawElasticSearchQueryView
@@ -55,17 +54,14 @@ const RawSparqlQueryComponent: React.FunctionComponent<RawQueryProps> = ({
   activeProject,
   fetchProject,
 }): JSX.Element => {
-  React.useEffect(
-    () => {
-      if (
-        activeOrg.label !== match.params.org ||
-        activeProject.label !== match.params.project
-      ) {
-        fetchProject(match.params.org, match.params.project);
-      }
-    },
-    [match.params.org, match.params.project]
-  );
+  React.useEffect(() => {
+    if (
+      activeOrg.label !== match.params.org ||
+      activeProject.label !== match.params.project
+    ) {
+      fetchProject(match.params.org, match.params.project);
+    }
+  }, [match.params.org, match.params.project]);
   return (
     <RawSparqlQueryView
       wantedOrg={match.params.org}
@@ -91,6 +87,9 @@ const mapDispatchToProps = (dispatch: any) => ({
     dispatch(fetchOrg(org));
     dispatch(fetchAndAssignProject(org, project));
   },
+  goToOrg: (orgLabel: string) => dispatch(push(`/${orgLabel}`)),
+  goToProject: (orgLabel: string, projectLabel: string) =>
+    dispatch(push(`/${orgLabel}/${projectLabel}`)),
 });
 
 export const RawSparqlQuery = connect(

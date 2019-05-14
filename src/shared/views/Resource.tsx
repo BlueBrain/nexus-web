@@ -137,7 +137,8 @@ const mapStateToProps = (state: RootState) => ({
 });
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    getFilePreview: (selfUrl: string) => NexusFile.getSelf(selfUrl, true),
+    getFilePreview: (selfUrl: string) =>
+      NexusFile.getSelf(selfUrl, { shouldFetchFile: true }),
     goToProject: (resource: Resource) =>
       dispatch(push(`/${resource.orgLabel}/${resource.projectLabel}`)),
     goToOrg: (resource: Resource) => dispatch(push(`/${resource.orgLabel}`)),

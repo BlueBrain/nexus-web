@@ -7,6 +7,7 @@ import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/lib/View/SparqlView/type
 import * as hash from 'object-hash';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import { RequestError } from '../../store/actions/utils/errors';
+import './view-view.less';
 
 // Codemirror will not load on the server, so we need to make sure
 // the language support code doesn't load either.
@@ -116,7 +117,7 @@ const RawSparqlQueryView: React.FunctionComponent<RawSparqlQueryViewProps> = ({
           </Button>
         </FormItem>
       </Form>
-      <Card bordered>
+      <Card bordered className="results">
         {error && (
           <Empty
             description={

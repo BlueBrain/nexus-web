@@ -7,6 +7,7 @@ import { PaginatedList, PaginationSettings } from '@bbp/nexus-sdk';
 import { ElasticSearchHit } from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import { RequestError } from '../../store/actions/utils/errors';
+import './view-view.less';
 
 // Codemirror will not load on the server, so we need to make sure
 // the language support code doesn't load either.
@@ -136,7 +137,7 @@ const RawElasticSearchQueryView: React.FunctionComponent<
           </Button>
         </FormItem>
       </Form>
-      <Card bordered>
+      <Card bordered className="results">
         {error && (
           <Empty
             description={
