@@ -1,11 +1,5 @@
 import { Action, Dispatch } from 'redux';
-import { CookieStorage } from 'cookie-storage';
 import { RootState } from '../reducers';
-import { Realm } from '@bbp/nexus-sdk';
-
-const cookieStorage = new CookieStorage({
-  path: '/',
-});
 
 interface SetPreferredRealmAction extends Action {
   type: '@@nexus/CONFIG_SET_REALM';
@@ -37,7 +31,7 @@ function setPreferredRealm(name: string) {
     }
     // append config key
     preferredRealmData.realmKey = `nexus__user:${preferredRealmData.realmKey}`;
-    cookieStorage.setItem('nexus__realm', JSON.stringify(preferredRealmData));
+    localStorage.setItem('nexus__realm', JSON.stringify(preferredRealmData));
     return dispatch({
       name: preferredRealmData.label,
       type: '@@nexus/CONFIG_SET_REALM',

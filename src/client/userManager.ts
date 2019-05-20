@@ -1,51 +1,8 @@
-import { UserManager, WebStorageStateStore } from 'oidc-client';
-import { CookieStorage } from 'cookie-storage';
+import { UserManager } from 'oidc-client';
 import { RootState } from '../shared/store/reducers';
 import { Realm } from '@bbp/nexus-sdk';
 
-/**
- * this is a massive hack
- * due to the fact setting up cookies
- * on stag and prod doesn't seems not to work...
- * We set user info on both localstorage and cookies.
- * localstorage is used as a backup.
- * if only localstorage works, then SSR won't render
- * auth views.
- */
-const getStorage = () => {
-  const cookieStorage = new CookieStorage({
-    path: '/',
-    secure: true,
-  });
-
-  return {
-    getItem: (key: string): string | null => {
-      let item = null;
-      if (typeof window !== 'undefined') {
-        item = cookieStorage.getItem(key);
-        if (!item) {
-          item = localStorage.getItem(key);
-        }
-      }
-      return item;
-    },
-    setItem: (key: string, value: string): void => {
-      if (typeof window !== 'undefined') {
-        cookieStorage.setItem(key, value);
-        localStorage.setItem(key, value);
-      }
-    },
-    removeItem: (key: string) => {
-      if (typeof window !== 'undefined') {
-        cookieStorage.removeItem(key);
-        localStorage.removeItem(key);
-      }
-    },
-  };
-};
-
 const getUserManager = (state: RootState): UserManager | undefined => {
-  const storage = getStorage();
   const {
     auth: { realms },
     config: { clientId, redirectHostName, preferredRealm },
@@ -74,17 +31,14 @@ const getUserManager = (state: RootState): UserManager | undefined => {
   }
 
   return new UserManager({
-    userStore: new WebStorageStateStore({
-      store: storage,
-      prefix: 'nexus__',
-    }),
     authority: realm.issuer,
     response_type: 'id_token token',
     client_id: clientId,
     redirect_uri: redirectHostName,
     post_logout_redirect_uri: redirectHostName,
-    automaticSilentRenew: false,
+    automaticSilentRenew: true,
     silent_redirect_uri: `${redirectHostName}/silent_refresh`,
+    loadUserInfo: false,
     ...realm,
   });
 };

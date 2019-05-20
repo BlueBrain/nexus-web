@@ -88,7 +88,7 @@ const mapStateToProps = (state: RootState) => {
   const identities: Identity[] =
     (auth.identities && auth.identities.data) || [];
   return {
-    authenticated: oidc.user !== null,
+    authenticated: oidc.user !== undefined,
     token: oidc.user && oidc.user.access_token,
     name:
       (oidc.user && oidc.user.profile && oidc.user.profile.name) || 'anonymous',
