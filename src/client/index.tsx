@@ -47,7 +47,6 @@ const store = configureStore(history, nexus, preloadedState);
  * Outcome in all cases is, we have an authenticated user or we don't
  */
 const setupUserSession = async (userManager: UserManager, store: Store) => {
-  userManager.clearStaleState();
   // Raised when a user session has been established (or re-established).
   userManager.events.addUserLoaded(user => {
     loadUser(store, userManager);
