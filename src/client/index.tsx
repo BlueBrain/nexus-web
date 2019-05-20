@@ -19,6 +19,7 @@ import configureStore from '../shared/store';
 import { RootState } from '../shared/store/reducers';
 import { UserManager } from 'oidc-client';
 import { Store } from 'redux';
+import { fetchIdentities, fetchRealms } from '../shared/store/actions/auth';
 
 // The app base URL
 const rawBase: string = (window as any)['__BASE__'] || '/';
@@ -87,21 +88,18 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
   userManager.events.addSilentRenewError(() => {
     store.dispatch(silentRenewError());
     Nexus.removeToken();
-    nexus.removeToken();
   });
 
   //  Raised when the user's sign-in status at the OP has changed.
   userManager.events.addUserSignedOut(() => {
     store.dispatch(userSignedOut());
     Nexus.removeToken();
-    nexus.removeToken();
   });
 
   // Raised when a user session has been terminated.
   userManager.events.addUserUnloaded(() => {
     store.dispatch(sessionTerminated());
     Nexus.removeToken();
-    nexus.removeToken();
   });
 
   try {
@@ -122,7 +120,7 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
 };
 
 const renderApp = () => {
-  return ReactDOM.hydrate(
+  return ReactDOM.render(
     <Provider store={store}>
       <ConnectedRouter history={history}>
         <App />
@@ -141,7 +139,7 @@ if (module.hot) {
   module.hot.accept('../shared/App', () => {
     const NextApp: React.StatelessComponent<{}> = require('../shared/App')
       .default;
-    ReactDOM.hydrate(
+    ReactDOM.render(
       <Provider store={store}>
         <BrowserRouter basename={base}>
           <NextApp />
@@ -154,6 +152,7 @@ if (module.hot) {
 
 async function main() {
   // configure user manager
+  await store.dispatch<any>(fetchRealms());
   const userManager = getUserManager(store.getState());
   // if userManger isn't undefined, setupSession
   // it could be undefined if there are no realms
@@ -162,6 +161,7 @@ async function main() {
   if (userManager) {
     await setupUserSession(userManager, store);
   }
+  await store.dispatch<any>(fetchIdentities());
   renderApp();
 }
 main();
