@@ -58,13 +58,14 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
   project,
 }) => {
   const [directoryMode, setDirectoryMode] = React.useState(false);
-  const [storageId, setStorageId] = React.useState('nxv:diskStorageDefault');
+  const [storageId, setStorageId] = React.useState<string | undefined>(
+    undefined
+  );
 
   const handleFileUpload = async (customFileRequest: CustomFileRequest) => {
     try {
-      console.log('uploding to', storageId);
-      debugger;
-      await onFileUpload(customFileRequest.file, { storage: storageId });
+      const options = storageId ? { storage: storageId } : undefined;
+      await onFileUpload(customFileRequest.file, options);
       customFileRequest.onSuccess('Successfully uploaded file');
     } catch (error) {
       customFileRequest.onError(error);
