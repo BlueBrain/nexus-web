@@ -3,6 +3,7 @@ import { Upload, Icon, message, Switch, Select } from 'antd';
 import { Storage, Project } from '@bbp/nexus-sdk';
 import { StorageCommon } from '@bbp/nexus-sdk/lib/Storage/types';
 import { CreateFileOptions } from '@bbp/nexus-sdk/lib/File/types';
+import { labelOf } from '../../utils';
 
 const Dragger = Upload.Dragger;
 
@@ -47,7 +48,9 @@ const StorageMenu = ({
       onChange={onStorageSelected}
     >
       {storages.map((s: StorageCommon) => (
-        <Select.Option key={s['@id']}>{s['@id']}</Select.Option>
+        <Select.Option key={s['@id']} value={s['@id']}>
+          {labelOf(s['@id'])}
+        </Select.Option>
       ))}
     </Select>
   );
