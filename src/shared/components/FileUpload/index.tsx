@@ -1,10 +1,14 @@
 import * as React from 'react';
-import { Upload, Icon, message, Switch } from 'antd';
+import { Upload, Icon, message, Switch, Select } from 'antd';
+import { Storage, Project } from '@bbp/nexus-sdk';
+import { StorageCommon } from '@bbp/nexus-sdk/lib/Storage/types';
+import { CreateFileOptions } from '@bbp/nexus-sdk/lib/File/types';
 
 const Dragger = Upload.Dragger;
 
 interface FileUploaderProps {
-  onFileUpload: (file: File) => void;
+  onFileUpload: (file: File, options?: CreateFileOptions) => void;
+  project: Project;
 }
 
 interface CustomFileRequest {
@@ -19,14 +23,48 @@ interface CustomFileRequest {
   headers: Object;
 }
 
+const StorageMenu = ({
+  orgLabel,
+  projectLabel,
+  onStorageSelected,
+}: {
+  orgLabel: string;
+  projectLabel: string;
+  onStorageSelected(id: string): any;
+}) => {
+  const [storages, setStorages] = React.useState<StorageCommon[]>([]);
+
+  React.useEffect(() => {
+    Storage.list(orgLabel, projectLabel, { deprecated: false })
+      .then(data => setStorages(data._results))
+      .catch(e => setStorages([]));
+  }, []);
+
+  return (
+    <Select
+      style={{ width: 250 }}
+      placeholder="Default storage selected"
+      onChange={onStorageSelected}
+    >
+      {storages.map((s: StorageCommon) => (
+        <Select.Option key={s['@id']}>{s['@id']}</Select.Option>
+      ))}
+    </Select>
+  );
+};
+
 const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
   onFileUpload,
+  project,
 }) => {
   const [directoryMode, setDirectoryMode] = React.useState(false);
+  const [storageId, setStorageId] = React.useState('nxv:diskStorageDefault');
 
   const handleFileUpload = async (customFileRequest: CustomFileRequest) => {
     try {
-      await onFileUpload(customFileRequest.file);
+      console.log('uploding to', storageId);
+      debugger;
+      await onFileUpload(customFileRequest.file, { storage: storageId });
       customFileRequest.onSuccess('Successfully uploaded file');
     } catch (error) {
       customFileRequest.onError(error);
@@ -85,6 +123,11 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
           onChange={setDirectoryMode}
         />
       </div>
+      <StorageMenu
+        orgLabel={project.orgLabel}
+        projectLabel={project.label}
+        onStorageSelected={id => setStorageId(id)}
+      />
     </div>
   );
 };
