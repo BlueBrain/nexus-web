@@ -62,8 +62,6 @@ export const makeESQuery = (query?: List['query']) => {
       });
     }
 
-    console.log({ must, mustNot });
-
     if (must.length >= 1 || mustNot.length >= 1) {
       return {
         query: {
