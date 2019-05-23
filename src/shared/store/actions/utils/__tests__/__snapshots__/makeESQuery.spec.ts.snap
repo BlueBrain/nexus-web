@@ -16,6 +16,29 @@ Object {
           },
         },
       ],
+      "must_not": Array [
+        Object {
+          "bool": Object {
+            "should": Array [
+              Object {
+                "term": Object {
+                  "_constrainedBy": "https://bluebrain.github.io/nexus/schemas/resolver.json",
+                },
+              },
+              Object {
+                "term": Object {
+                  "_constrainedBy": "https://bluebrain.github.io/nexus/schemas/storage.json",
+                },
+              },
+              Object {
+                "term": Object {
+                  "_constrainedBy": "https://bluebrain.github.io/nexus/schemas/view.json",
+                },
+              },
+            ],
+          },
+        },
+      ],
     },
   },
 }
@@ -37,6 +60,29 @@ Object {
           },
         },
       ],
+      "must_not": Array [
+        Object {
+          "bool": Object {
+            "should": Array [
+              Object {
+                "term": Object {
+                  "_constrainedBy": "https://bluebrain.github.io/nexus/schemas/resolver.json",
+                },
+              },
+              Object {
+                "term": Object {
+                  "_constrainedBy": "https://bluebrain.github.io/nexus/schemas/storage.json",
+                },
+              },
+              Object {
+                "term": Object {
+                  "_constrainedBy": "https://bluebrain.github.io/nexus/schemas/view.json",
+                },
+              },
+            ],
+          },
+        },
+      ],
     },
   },
 }
@@ -45,8 +91,37 @@ Object {
 exports[`makeESQuery deprecated should return a must clause with just the term query 1`] = `
 Object {
   "query": Object {
-    "term": Object {
-      "_deprecated": false,
+    "bool": Object {
+      "must": Array [
+        Object {
+          "term": Object {
+            "_deprecated": false,
+          },
+        },
+      ],
+      "must_not": Array [
+        Object {
+          "bool": Object {
+            "should": Array [
+              Object {
+                "term": Object {
+                  "_constrainedBy": "https://bluebrain.github.io/nexus/schemas/resolver.json",
+                },
+              },
+              Object {
+                "term": Object {
+                  "_constrainedBy": "https://bluebrain.github.io/nexus/schemas/storage.json",
+                },
+              },
+              Object {
+                "term": Object {
+                  "_constrainedBy": "https://bluebrain.github.io/nexus/schemas/view.json",
+                },
+              },
+            ],
+          },
+        },
+      ],
     },
   },
 }
@@ -78,6 +153,29 @@ Object {
           },
         },
       ],
+      "must_not": Array [
+        Object {
+          "bool": Object {
+            "should": Array [
+              Object {
+                "term": Object {
+                  "_constrainedBy": "https://bluebrain.github.io/nexus/schemas/resolver.json",
+                },
+              },
+              Object {
+                "term": Object {
+                  "_constrainedBy": "https://bluebrain.github.io/nexus/schemas/storage.json",
+                },
+              },
+              Object {
+                "term": Object {
+                  "_constrainedBy": "https://bluebrain.github.io/nexus/schemas/view.json",
+                },
+              },
+            ],
+          },
+        },
+      ],
     },
   },
 }
@@ -96,6 +194,29 @@ Object {
         Object {
           "query_string": Object {
             "query": "banana~",
+          },
+        },
+      ],
+      "must_not": Array [
+        Object {
+          "bool": Object {
+            "should": Array [
+              Object {
+                "term": Object {
+                  "_constrainedBy": "https://bluebrain.github.io/nexus/schemas/resolver.json",
+                },
+              },
+              Object {
+                "term": Object {
+                  "_constrainedBy": "https://bluebrain.github.io/nexus/schemas/storage.json",
+                },
+              },
+              Object {
+                "term": Object {
+                  "_constrainedBy": "https://bluebrain.github.io/nexus/schemas/view.json",
+                },
+              },
+            ],
           },
         },
       ],

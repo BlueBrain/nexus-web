@@ -30,6 +30,7 @@ export interface List {
       _constrainedBy?: string;
       '@type'?: string;
       _deprecated: boolean;
+      showManagementResources: boolean;
       [key: string]: any;
     };
     textQuery?: string;
@@ -53,6 +54,7 @@ export const DEFAULT_LIST: List = {
   id: uuidv4(),
   query: {
     filters: {
+      showManagementResources: false,
       _deprecated: false,
     },
   },
