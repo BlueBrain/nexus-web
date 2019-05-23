@@ -25,8 +25,14 @@ export interface RawSparqlQueryViewProps {
   response: SparqlViewQueryResponse;
   wantedOrg: any;
   wantedProject: any;
+  wantedView?: string;
   error: RequestError | null;
-  executeRawQuery(orgName: string, projectName: string, query: string): void;
+  executeRawQuery(
+    orgName: string,
+    projectName: string,
+    viewID: string | undefined,
+    query: string
+  ): void;
   reset: VoidFunction;
 }
 
@@ -40,6 +46,7 @@ const RawSparqlQueryView: React.FunctionComponent<RawSparqlQueryViewProps> = ({
   executeRawQuery,
   wantedOrg,
   wantedProject,
+  wantedView,
   error,
   reset,
 }): JSX.Element => {
@@ -103,7 +110,7 @@ const RawSparqlQueryView: React.FunctionComponent<RawSparqlQueryViewProps> = ({
       <Form
         onSubmit={e => {
           e.preventDefault();
-          executeRawQuery(wantedOrg, wantedProject, query);
+          executeRawQuery(wantedOrg, wantedProject, wantedView, query);
         }}
       >
         <div style={{ maxHeight: 600, overflow: 'scroll' }}>
@@ -168,9 +175,9 @@ const mapDispatchToProps = (dispatch: any) => ({
   executeRawQuery: (
     orgName: string,
     projectName: string,
+    viewId: string | undefined,
     query: string
-  ): void => dispatch(executeRawQuery(orgName, projectName, query)),
-  reset: () => dispatch(resetQueryAction()),
+  ): void => dispatch(executeRawQuery(orgName, projectName, viewId, query)),
 });
 
 export default connect(

@@ -81,7 +81,7 @@ const routes: RouteWithData[] = [
     component: RawElasticSearchQuery,
   },
   {
-    path: '/:org/:project/graph/sparql',
+    path: '/:org/:project/:view/sparql',
     component: RawSparqlQuery,
   },
   {

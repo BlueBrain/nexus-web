@@ -59,6 +59,7 @@ export type RawQueryActions =
 export const executeRawQuery: ActionCreator<ThunkAction> = (
   orgName: string,
   projectName: string,
+  viewId: string | undefined,
   query: string
 ) => {
   return async (
@@ -68,9 +69,7 @@ export const executeRawQuery: ActionCreator<ThunkAction> = (
   ): Promise<RawQueryActionSuccess | RawQueryActionFailure> => {
     dispatch(rawQueryAction(query));
     try {
-      const Project = nexus.Project;
-      const project = await Project.get(orgName, projectName);
-      const sparqlView = await project.getSparqlView();
+      const sparqlView = await SparqlView.get(orgName, projectName, viewId);
       const response = await sparqlView.query(query);
       const results: SparqlViewQueryResponse = response;
       return dispatch(rawQuerySuccessAction(results));
