@@ -130,7 +130,7 @@ const RawElasticSearchQueryView: React.FunctionComponent<
             </div>
           </div>
           <CodeMirror
-            value={initialQuery}
+            value={formattedInitialQuery}
             options={{
               mode: { name: 'javascript', json: true },
               theme: 'base16-light',
