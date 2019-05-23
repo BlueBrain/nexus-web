@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { Form, Button, Table, Card, Empty } from 'antd';
-import { executeRawQuery } from '../../store/actions/rawQuery';
+import {
+  executeRawQuery,
+  resetQueryAction,
+} from '../../store/actions/rawQuery';
 import { RawQueryState } from '../../store/reducers/rawQuery';
 import { connect } from 'react-redux';
 import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/lib/View/SparqlView/types';
@@ -24,6 +27,7 @@ export interface RawSparqlQueryViewProps {
   wantedProject: any;
   error: RequestError | null;
   executeRawQuery(orgName: string, projectName: string, query: string): void;
+  reset: VoidFunction;
 }
 
 const FormItem = Form.Item;
@@ -37,8 +41,12 @@ const RawSparqlQueryView: React.FunctionComponent<RawSparqlQueryViewProps> = ({
   wantedOrg,
   wantedProject,
   error,
+  reset,
 }): JSX.Element => {
   const [query, setQuery] = React.useState(initialQuery);
+  React.useEffect(() => {
+    return reset;
+  }, []);
 
   let cols: string[];
   let data: any;
@@ -162,6 +170,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     projectName: string,
     query: string
   ): void => dispatch(executeRawQuery(orgName, projectName, query)),
+  reset: () => dispatch(resetQueryAction()),
 });
 
 export default connect(

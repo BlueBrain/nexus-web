@@ -1,4 +1,4 @@
-import { Action, ActionCreator, Dispatch } from 'redux';
+import { Action, ActionCreator, Dispatch, AnyAction } from 'redux';
 import {
   PaginatedList,
   PaginationSettings,
@@ -26,7 +26,9 @@ interface RawQueryActionFailure extends Action {
   type: '@@rawQuery/QUERYING_FAILURE';
   error: RequestError;
 }
-
+export const resetQueryAction: ActionCreator<AnyAction> = () => ({
+  type: '@@rawQuery/RESET',
+});
 const rawQueryAction: ActionCreator<RawQueryAction> = (
   query: string,
   paginationSettings
@@ -49,6 +51,7 @@ const rawQueryFailureAction: ActionCreator<RawQueryActionFailure> = (
 });
 
 export type RawQueryActions =
+  | { type: '@@rawQuery/RESET' }
   | RawQueryAction
   | RawQueryActionSuccess
   | RawQueryActionFailure;

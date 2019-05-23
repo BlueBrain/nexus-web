@@ -59,6 +59,8 @@ export function rawElasticSearchQueryReducer(
   action: RawQueryActions
 ) {
   switch (action.type) {
+    case '@@rawQuery/RESET':
+      return initialElasticSearchState;
     case '@@rawQuery/QUERYING':
       return {
         ...state,
@@ -94,6 +96,8 @@ export default function rawQueryReducer(
   action: RawQueryActions
 ) {
   switch (action.type) {
+    case '@@rawQuery/RESET':
+      return initialState;
     case '@@rawQuery/QUERYING':
       return { ...state, fetching: true, error: null };
     case '@@rawQuery/QUERYING_FAILURE':
