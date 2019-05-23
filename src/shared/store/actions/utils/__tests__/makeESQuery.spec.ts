@@ -11,6 +11,7 @@ describe('makeESQuery', () => {
         makeESQuery({
           filters: {
             _deprecated: false,
+            showManagementResources: false,
           },
           textQuery: 'banana',
         })
@@ -24,6 +25,7 @@ describe('makeESQuery', () => {
         makeESQuery({
           filters: {
             _deprecated: false,
+            showManagementResources: false,
           },
         })
       ).toMatchSnapshot();
@@ -37,6 +39,7 @@ describe('makeESQuery', () => {
           filters: {
             _constrainedBy: 'mySchema',
             _deprecated: false,
+            showManagementResources: false,
           },
         })
       ).toMatchSnapshot();
@@ -50,6 +53,7 @@ describe('makeESQuery', () => {
           filters: {
             '@type': 'myType',
             _deprecated: true,
+            showManagementResources: false,
           },
         })
       ).toMatchSnapshot();
@@ -64,6 +68,7 @@ describe('makeESQuery', () => {
             '@type': 'myType',
             _constrainedBy: 'mySchemas',
             _deprecated: true,
+            showManagementResources: false,
           },
           textQuery: 'Banana',
         })

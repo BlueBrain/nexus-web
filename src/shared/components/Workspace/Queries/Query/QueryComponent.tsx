@@ -83,6 +83,21 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
     });
   };
   const showDeprecated = props.list.query.filters._deprecated;
+  const handleToggleDisplayManagementResources = () => {
+    updateList({
+      ...props.list,
+      query: {
+        ...props.list.query,
+        filters: {
+          ...props.list.query.filters,
+          showManagementResources: !props.list.query.filters
+            .showManagementResources,
+        },
+      },
+    });
+  };
+  const showManagementResources =
+    props.list.query.filters.showManagementResources;
 
   const handleCloneList = () => {
     cloneList({ ...props.list });
@@ -149,19 +164,38 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
           schemas={data && data.schemas}
           onChange={handleFilterChange}
         />
-        <Tooltip
-          title={
-            showDeprecated
-              ? 'Displaying deprecated resources'
-              : 'Not showing deprecated resources'
-          }
-        >
-          <Switch
-            size="small"
-            onChange={handleToggleDeprecated}
-            checked={showDeprecated}
-          />
-        </Tooltip>
+        <div className="switches">
+          <Tooltip
+            title={
+              showDeprecated
+                ? 'Displaying deprecated resources only'
+                : 'Not showing deprecated resources'
+            }
+          >
+            <Switch
+              // size="small"
+              onChange={handleToggleDeprecated}
+              checked={showDeprecated}
+              checkedChildren={<Icon type="delete" />}
+              unCheckedChildren={<Icon type="delete" />}
+            />
+          </Tooltip>
+          <Tooltip
+            title={
+              showManagementResources
+                ? 'Displaying management resources only'
+                : 'Showing regular resources only'
+            }
+          >
+            <Switch
+              // size="small"
+              onChange={handleToggleDisplayManagementResources}
+              checked={showManagementResources}
+              checkedChildren={<Icon type="setting" />}
+              unCheckedChildren={<Icon type="setting" />}
+            />
+          </Tooltip>
+        </div>
       </div>
       <Spin spinning={showSpinner}>
         <InfiniteScroll
