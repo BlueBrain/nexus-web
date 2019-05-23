@@ -33,6 +33,7 @@ export interface RawSparqlQueryViewProps {
     viewID: string | undefined,
     query: string
   ): void;
+  reset: VoidFunction;
 }
 
 const FormItem = Form.Item;
