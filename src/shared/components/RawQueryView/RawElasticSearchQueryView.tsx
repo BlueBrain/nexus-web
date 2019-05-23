@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { Form, Icon, Button, Card, List, Empty } from 'antd';
-import { executeRawElasticSearchQuery } from '../../store/actions/rawQuery';
+import {
+  executeRawElasticSearchQuery,
+  resetQueryAction,
+} from '../../store/actions/rawQuery';
 import { RawElasticSearchQueryState } from '../../store/reducers/rawQuery';
 import { connect } from 'react-redux';
 import { PaginatedList, PaginationSettings } from '@bbp/nexus-sdk';
@@ -39,6 +42,7 @@ export interface RawElasticSearchQueryViewProps {
     query: string,
     paginationSettings: PaginationSettings
   ): void;
+  reset: VoidFunction;
 }
 
 const FormItem = Form.Item;
@@ -56,7 +60,12 @@ const RawElasticSearchQueryView: React.FunctionComponent<
   wantedProject,
   wantedView,
   error,
+  reset,
 }): JSX.Element => {
+  React.useEffect(() => {
+    return reset;
+  }, []);
+
   const formattedInitialQuery = JSON.stringify(
     JSON.parse(initialQuery),
     null,
@@ -121,7 +130,7 @@ const RawElasticSearchQueryView: React.FunctionComponent<
             </div>
           </div>
           <CodeMirror
-            value={initialQuery}
+            value={formattedInitialQuery}
             options={{
               mode: { name: 'javascript', json: true },
               theme: 'base16-light',
@@ -234,6 +243,7 @@ const mapDispatchToProps = (dispatch: any) => ({
         paginationSettings
       )
     ),
+  reset: () => dispatch(resetQueryAction()),
 });
 
 export default connect(
