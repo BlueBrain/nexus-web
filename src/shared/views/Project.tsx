@@ -29,6 +29,7 @@ import { push } from 'connected-react-router';
 import QueryContainer from '../components/Workspace/Queries/QueriesContainer';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router-dom';
+import { CreateFileOptions } from '@bbp/nexus-sdk/lib/File/types';
 
 interface ProjectViewProps {
   project: Project | null;
@@ -44,7 +45,7 @@ interface ProjectViewProps {
     payload: CreateResourcePayload
   ): Promise<Resource>;
   fetchProject(org: string, project: string): void;
-  createFile(file: File): void;
+  createFile(file: File, options?: CreateFileOptions): void;
   goToOrg(orgLabel: string): void;
   onLoginClick: VoidFunction;
   isFetching: boolean;
@@ -259,8 +260,8 @@ const mapDispatchToProps = (dispatch: any) => {
         payload
       );
     },
-    createFile: async (file: File) => {
-      dispatch(createFile(file));
+    createFile: async (file: File, options?: CreateFileOptions) => {
+      dispatch(createFile(file, options));
     },
     goToOrg: (orgLabel: string) =>
       dispatch(push(`/${orgLabel}`, { previousUrl: window.location.href })),

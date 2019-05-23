@@ -89,7 +89,7 @@ const Menu: React.FunctionComponent<MenuProps> = ({
           </Link>
         </div>
         <Divider />
-        <FileUploader onFileUpload={onFileUpload} />
+        <FileUploader onFileUpload={onFileUpload} project={project} />
       </SideMenu>
     </>
   );
