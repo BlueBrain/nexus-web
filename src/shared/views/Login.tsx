@@ -7,6 +7,7 @@ import getUserManager from '../../client/userManager';
 import { RootState } from '../store/reducers';
 import { UserManager } from 'oidc-client';
 import * as configActions from '../store/actions/config';
+import { notification } from 'antd';
 
 export interface LoginViewProps {
   realms: Realm[];
@@ -31,10 +32,42 @@ const Login: React.FunctionComponent<LoginViewProps> = props => {
     <LoginBox
       realms={realms.map(r => r.name)}
       selectedRealm={preferredRealm}
-      onLogin={(e: React.SyntheticEvent) => {
-        e.preventDefault();
-        props.setPreferredRealm(preferredRealm);
-        props.userManager && props.userManager.signinRedirect();
+      onLogin={async (e: React.SyntheticEvent) => {
+        try {
+          e.preventDefault();
+          props.setPreferredRealm(preferredRealm);
+          props.userManager && (await props.userManager.signinRedirect());
+        } catch (error) {
+          switch (error.message) {
+            case 'Network Error':
+              notification.error({
+                message: 'We could not log you in',
+                description: (
+                  <div>
+                    <p>
+                      Nexus Web could not connect to the openId provider
+                      configured for this instance.
+                    </p>{' '}
+                    <p>Please contact your system administrators.</p>
+                  </div>
+                ),
+                duration: 0,
+              });
+              break;
+            default:
+              notification.error({
+                message: 'We could not log you in',
+                description: (
+                  <div>
+                    <p>An unknown problem occured.</p>{' '}
+                    <p>Please contact your system administrators.</p>
+                  </div>
+                ),
+                duration: 0,
+              });
+              break;
+          }
+        }
       }}
       onRealmSelected={(name: string) => setPreferredRealm(name)}
     />
@@ -43,8 +76,9 @@ const Login: React.FunctionComponent<LoginViewProps> = props => {
 
 const mapStateToProps = (state: RootState) => {
   const { auth, config } = state;
-
+  const userManager = getUserManager(state);
   return {
+    userManager,
     realms:
       (auth.realms &&
         auth.realms.data &&
@@ -53,7 +87,6 @@ const mapStateToProps = (state: RootState) => {
           r => r.label !== 'serviceaccounts' && !r.deprecated
         )) ||
       [],
-    userManager: getUserManager(state),
     preferredRealm: config.preferredRealm || undefined,
   };
 };
