@@ -88,16 +88,11 @@ describe('Auth Reducer', () => {
         },
       });
     });
-    it('should return an identity error and keep previous state data', () => {
+    it('should return an identity error and clear previous state data', () => {
       const initState = {
         identities: {
           isFetching: false,
-          data: [
-            {
-              '@type': 'Anonymous',
-              '@id': 'http://anomymous.com',
-            },
-          ],
+          data: [],
           error: null,
         },
       };
