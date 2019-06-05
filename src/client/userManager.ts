@@ -2,7 +2,7 @@ import { UserManager, WebStorageStateStore } from 'oidc-client';
 import { RootState } from '../shared/store/reducers';
 import { Realm } from '@bbp/nexus-sdk';
 
-const userManagerCache: Map<string, UserManager | undefined> = new Map();
+const userManagerCache: Map<string, UserManager> = new Map();
 
 const getUserManager = (state: RootState): UserManager | undefined => {
   const {
@@ -32,7 +32,7 @@ const getUserManager = (state: RootState): UserManager | undefined => {
     return undefined;
   }
 
-  const cacheKey = `${realm}|${clientId}|${redirectHostName}`;
+  const cacheKey = `${realm}||${clientId}||${redirectHostName}`;
 
   userManagerCache.has(cacheKey) || userManagerCache.set(cacheKey, new UserManager({
     authority: realm.issuer,
