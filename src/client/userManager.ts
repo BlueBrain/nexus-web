@@ -32,7 +32,7 @@ const getUserManager = (state: RootState): UserManager | undefined => {
     return undefined;
   }
 
-  const cacheKey = `${realm}||${clientId}||${redirectHostName}`;
+  const cacheKey = `${realm.label}||${realm.issuer}||${clientId}||${redirectHostName}`;
 
   userManagerCache.has(cacheKey) || userManagerCache.set(cacheKey, new UserManager({
     authority: realm.issuer,
