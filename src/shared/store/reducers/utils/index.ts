@@ -36,28 +36,31 @@ export const createReducer = (intialState: any, handlers: ActionHandler) => (
     : state;
 
 export const createFetching = ({
+  FAILED,
   FETCHING,
   FULFILLED,
-  FAILED,
 }: ActionTypes) => {
   return createReducer(false, {
+    [FAILED]: () => false,
     [FETCHING]: () => true,
     [FULFILLED]: () => false,
-    [FAILED]: () => false,
   });
 };
 
 export const createResultData = (
-  { FULFILLED }: ActionTypes,
+  { FAILED, FETCHING, FULFILLED }: ActionTypes,
   initialState: [] | null
 ) =>
   createReducer(initialState, {
+    [FAILED]: (state, action) => initialState,
+    [FETCHING]: (state, action) => initialState,
     [FULFILLED]: (state, action) => action.payload,
   });
 
-export const createError = ({ FAILED, FULFILLED }: ActionTypes) =>
+export const createError = ({ FAILED, FETCHING, FULFILLED }: ActionTypes) =>
   createReducer(null, {
     [FAILED]: (state, action) => action.error,
+    [FETCHING]: (state, action) => null,
     [FULFILLED]: (state, action) => null,
   });
 
