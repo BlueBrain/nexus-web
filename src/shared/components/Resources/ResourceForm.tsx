@@ -207,6 +207,7 @@ const ResourceFormModal: React.FunctionComponent<ResourceFormModalProps> = ({
       <Modal
         title="New Resource"
         visible={modalVisible}
+        destroyOnClose={true}
         onCancel={() => setModalVisible(false)}
         confirmLoading={formBusy}
         footer={null}
