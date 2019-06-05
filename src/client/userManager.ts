@@ -1,4 +1,4 @@
-import { UserManager } from 'oidc-client';
+import { UserManager, WebStorageStateStore } from 'oidc-client';
 import { RootState } from '../shared/store/reducers';
 import { Realm } from '@bbp/nexus-sdk';
 
@@ -39,6 +39,7 @@ const getUserManager = (state: RootState): UserManager | undefined => {
     automaticSilentRenew: true,
     silent_redirect_uri: `${redirectHostName}/silent_refresh`,
     loadUserInfo: false,
+    userStore: new WebStorageStateStore({ store: window.localStorage }),
     ...realm,
   });
 };
