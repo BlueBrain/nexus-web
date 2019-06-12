@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { AutoComplete, Input } from 'antd';
 import { List } from '../../../../store/reducers/lists';
-import { labelOf } from '../../../../utils';
+import { labelOf, getProp } from '../../../../utils';
 import { SelectValue } from 'antd/lib/select';
 import './filter-dropdown.less';
 
@@ -29,15 +29,6 @@ const SchemasFilter: React.FunctionComponent<SchemaFilterProps> = props => {
     setFilterList(schemas || []);
   }, [schemas]);
 
-  React.useEffect(() => {
-    setFilterList(
-      (schemas || []).filter(({ key }) => {
-        const label = labelOf(key);
-        return inputValue ? label.includes(inputValue) : true;
-      })
-    );
-  }, [inputValue]);
-
   const handleChange = (value: SelectValue) => {
     onChange({ [FILTER_KEY]: value as string });
   };
@@ -55,6 +46,11 @@ const SchemasFilter: React.FunctionComponent<SchemaFilterProps> = props => {
         onChange={handleInputChange}
         onSelect={handleChange}
         value={inputValue}
+        filterOption={(inputValue, option) =>
+          getProp(option, 'props.label', '')
+            .toUpperCase()
+            .includes(inputValue.toUpperCase())
+        }
         dataSource={filterList.map(({ key, count }) => {
           const label = labelOf(key);
           return (

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { AutoComplete, Input } from 'antd';
 import { List } from '../../../../store/reducers/lists';
 import { TypesIcon } from '../../../Types/TypesIcon';
-import { labelOf } from '../../../../utils';
+import { labelOf, getProp } from '../../../../utils';
 import { SelectValue } from 'antd/lib/select';
 import './filter-dropdown.less';
 
@@ -30,15 +30,6 @@ const TypesFilter: React.FunctionComponent<TypesFilterProps> = props => {
     setTypesList(types || []);
   }, [types]);
 
-  React.useEffect(() => {
-    setTypesList(
-      (types || []).filter(({ key }) => {
-        const label = labelOf(key);
-        return inputValue ? label.includes(inputValue) : true;
-      })
-    );
-  }, [inputValue]);
-
   const handleChange = (value: SelectValue) => {
     onChange({ [TYPES_FILTER_KEY]: value as string });
   };
@@ -56,6 +47,11 @@ const TypesFilter: React.FunctionComponent<TypesFilterProps> = props => {
         onChange={handleInputChange}
         onSelect={handleChange}
         value={inputValue}
+        filterOption={(inputValue, option) =>
+          getProp(option, 'props.label', '')
+            .toUpperCase()
+            .includes(inputValue.toUpperCase())
+        }
         dataSource={typesList.map(({ key, count }) => {
           const label = labelOf(key);
           return (
