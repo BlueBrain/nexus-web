@@ -8,6 +8,7 @@ import {
 import { ThunkAction } from '../..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
 import { formatError } from '../utils/errors';
+import { RootState } from '../../reducers';
 
 enum OrgActionTypes {
   FETCHING = '@@nexus/ORG_FETCHING',
@@ -72,10 +73,12 @@ export const fetchOrg: ActionCreator<ThunkAction> = (
       const Organization = nexus.Organization;
       const Project = nexus.Project;
       const org: Organization = await Organization.get(orgName);
-      const projects: PaginatedList<Project> = await Project.list(
-        orgName,
-        paginationSettings
-      );
+      const displayPerPage = (getState() as RootState).uiSettings.pageSizes
+        .orgsListPageSize;
+      const projects: PaginatedList<Project> = await Project.list(orgName, {
+        size: (paginationSettings && paginationSettings.size) || displayPerPage,
+        from: (paginationSettings && paginationSettings.from) || 0,
+      });
       return dispatch(fetchOrgFulfilledAction(org, projects));
     } catch (e) {
       return dispatch(fetchOrgFailedAction(formatError(e)));

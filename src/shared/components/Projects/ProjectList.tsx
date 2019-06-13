@@ -37,11 +37,6 @@ const ProjectList: React.FunctionComponent<ProjectListProps> = ({
 
   return (
     <div className="ProjectList">
-      <Search
-        className="filter"
-        placeholder="Filter by name"
-        onChange={handleChange}
-      />
       <AnimatedList
         itemComponent={(project, i) => (
           <ProjectCard
