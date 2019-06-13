@@ -3,16 +3,28 @@ import { Card, Tooltip, Button, Popconfirm } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
 import './resource-actions.less';
 import {
-  isNotDeprecated,
   isElasticView,
   isSparqlView,
   isFile,
+  chainPredicates,
+  not,
+  isDefaultElasticView,
+  isDeprecated,
 } from '../../utils/nexus-maybe';
+import { string } from 'prop-types';
 
 const actionTypes = [
   {
+    name: 'veryDangerousToDeprecate',
+    predicate: chainPredicates([isDefaultElasticView, not(isDeprecated)]),
+    title: 'Deprecate this resource',
+    shortTitle: 'Dangerously Deprecate',
+    icon: 'delete',
+    danger: true,
+  },
+  {
     name: 'deprecateResource',
-    predicate: isNotDeprecated,
+    predicate: chainPredicates([not(isDeprecated), not(isDefaultElasticView)]),
     title: 'Deprecate this resource',
     shortTitle: 'Deprecate',
     icon: 'delete',
@@ -43,10 +55,12 @@ const actionTypes = [
 
 const makeButton = ({
   title,
+  name,
   icon,
   shortTitle,
   danger,
 }: {
+  name: string;
   title: string;
   icon: string;
   shortTitle: string;
@@ -55,7 +69,20 @@ const makeButton = ({
   <div className="action" key={`${resource.id}-${title}`}>
     {danger ? (
       <Popconfirm
-        title="Are you sure you'd like to deprecate this resource?"
+        title={
+          name === 'veryDangerousToDeprecate' ? (
+            <div>
+              <h3>Warning!</h3>
+              <p>
+                Deprecating this resource <em>WILL ABSOLUTELY</em> break this
+                application for this project. Are you sure you want to deprecate
+                it?
+              </p>
+            </div>
+          ) : (
+            "Are you sure you'd like to deprecate this resource?"
+          )
+        }
         onConfirm={() => actionToDispatch && actionToDispatch(resource)}
         okText="Yes"
         cancelText="No"
@@ -86,12 +113,7 @@ const makeActions = (
   actionTypes
     .filter(action => action.predicate(resource))
     .map(action =>
-      makeButton({
-        shortTitle: action.shortTitle,
-        title: action.title,
-        icon: action.icon,
-        danger: action.danger,
-      })(resource, actionDispatchers[action.name])
+      makeButton(action)(resource, actionDispatchers[action.name])
     );
 
 export interface ResourceActionsProps {
