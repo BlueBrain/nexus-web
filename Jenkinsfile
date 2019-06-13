@@ -17,7 +17,7 @@ pipeline {
         stage('Start Pipeline') {
             steps{
                 sh 'echo "Pipeline starting with environment:"'
-                sh 'printenv'
+                sh 'printenv && npm --version && node --version'
             }
         }
 
