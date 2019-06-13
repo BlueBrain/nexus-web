@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { Upload, Icon, message, Switch, Select } from 'antd';
-import { Storage, Project } from '@bbp/nexus-sdk';
+import { Storage, Project, NexusFile } from '@bbp/nexus-sdk';
 import { StorageCommon } from '@bbp/nexus-sdk/lib/Storage/types';
-import { CreateFileOptions } from '@bbp/nexus-sdk/lib/File/types';
 import { labelOf } from '../../utils';
+import NexusContext from '../NexusContext';
 
 const Dragger = Upload.Dragger;
 
 interface FileUploaderProps {
-  onFileUpload: (file: File, options?: CreateFileOptions) => void;
   project: Project;
 }
 
@@ -57,18 +56,24 @@ const StorageMenu = ({
 };
 
 const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
-  onFileUpload,
   project,
 }) => {
+  const nexus = React.useContext(NexusContext);
   const [directoryMode, setDirectoryMode] = React.useState(false);
   const [storageId, setStorageId] = React.useState<string | undefined>(
     undefined
   );
+  const [fileList, setFileList] = React.useState([]);
 
   const handleFileUpload = async (customFileRequest: CustomFileRequest) => {
     try {
       const options = storageId ? { storage: storageId } : undefined;
-      await onFileUpload(customFileRequest.file, options);
+      await nexus.NexusFile.createFile(
+        project.orgLabel,
+        project.label,
+        customFileRequest.file,
+        options
+      );
       customFileRequest.onSuccess('Successfully uploaded file');
     } catch (error) {
       customFileRequest.onError(error);
@@ -79,18 +84,30 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
     name: 'file',
     multiple: true,
     customRequest: handleFileUpload,
+    previewFile: (file: any) => {
+      console.log(file);
+    },
     onPreview: (file: any) => {
+      console.log(file);
+
+      // goToFile(file);
       // TODO do something on click, like show resource Edit / Inspect View
     },
-    onChange(info: any) {
-      const status = info.file.status;
+    onChange({ file, fileList: newFileList }: any) {
+      console.log({ file, fileList });
+      newFileList.map((file: any) => {
+        file.url = 'https://google.com';
+        return file;
+      });
+      setFileList(newFileList);
+      const status = file.status;
       if (status !== 'uploading') {
         // do something on upload?
       }
       if (status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully.`);
+        message.success(`${file.name} file uploaded successfully.`);
       } else if (status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
+        message.error(`${file.name} file upload failed.`);
       }
     },
   };

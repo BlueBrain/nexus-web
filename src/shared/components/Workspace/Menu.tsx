@@ -10,7 +10,6 @@ import FileUploader from '../FileUpload';
 interface MenuProps {
   project?: Project | null;
   createList: (orgProjectFilterKey: string) => void;
-  onFileUpload: (file: File) => void;
   createResource: (
     schemaId: string,
     payload: CreateResourcePayload
@@ -27,7 +26,6 @@ const Menu: React.FunctionComponent<MenuProps> = ({
   createResource,
   project,
   render,
-  onFileUpload,
 }) => {
   const [visible, setVisible] = React.useState(true);
   if (!project) {
@@ -89,7 +87,7 @@ const Menu: React.FunctionComponent<MenuProps> = ({
           </Link>
         </div>
         <Divider />
-        <FileUploader onFileUpload={onFileUpload} project={project} />
+        <FileUploader project={project} />
       </SideMenu>
     </>
   );

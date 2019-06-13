@@ -11,14 +11,8 @@ import {
   makeOrgProjectFilterKey,
 } from '../store/actions/lists';
 import { List } from '../store/reducers/lists';
-import Nexus, {
-  Project,
-  Resource,
-  NexusFile,
-  Organization,
-} from '@bbp/nexus-sdk';
+import Nexus, { Project, Resource, Organization } from '@bbp/nexus-sdk';
 import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
-import { createFile } from '../store/actions/nexus/files';
 import Status from '../components/Routing/Status';
 import { RequestError } from '../store/actions/utils/errors';
 import {
@@ -28,8 +22,6 @@ import {
 import { push } from 'connected-react-router';
 import QueryContainer from '../components/Workspace/Queries/QueriesContainer';
 import Helmet from 'react-helmet';
-import { Link } from 'react-router-dom';
-import { CreateFileOptions } from '@bbp/nexus-sdk/lib/File/types';
 
 interface ProjectViewProps {
   project: Project | null;
@@ -45,7 +37,6 @@ interface ProjectViewProps {
     payload: CreateResourcePayload
   ): Promise<Resource>;
   fetchProject(org: string, project: string): void;
-  createFile(file: File, options?: CreateFileOptions): void;
   goToOrg(orgLabel: string): void;
   onLoginClick: VoidFunction;
   isFetching: boolean;
@@ -61,7 +52,6 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   createList,
   createResource,
   fetchProject,
-  createFile,
   onLoginClick,
   authenticated,
   goToOrg,
@@ -167,7 +157,6 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
                     )
                   }
                   project={project}
-                  onFileUpload={createFile}
                   createList={() => {
                     project &&
                       org &&
@@ -234,7 +223,7 @@ const mapStateToProps = (state: RootState) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: any) => {
+const mapDispatchToProps = (dispatch: any, ownProps: any) => {
   return {
     fetchProject: (orgLabel: string, projectLabel: string) => {
       dispatch(fetchOrg(orgLabel));
@@ -259,9 +248,6 @@ const mapDispatchToProps = (dispatch: any) => {
         schemaId,
         payload
       );
-    },
-    createFile: async (file: File, options?: CreateFileOptions) => {
-      dispatch(createFile(file, options));
     },
     goToOrg: (orgLabel: string) =>
       dispatch(push(`/${orgLabel}`, { previousUrl: window.location.href })),

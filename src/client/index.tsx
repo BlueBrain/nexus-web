@@ -20,6 +20,7 @@ import { RootState } from '../shared/store/reducers';
 import { UserManager } from 'oidc-client';
 import { Store } from 'redux';
 import { fetchIdentities, fetchRealms } from '../shared/store/actions/auth';
+import NexusContext from '../shared/components/NexusContext';
 
 // The app base URL
 const rawBase: string = (window as any)['__BASE__'] || '/';
@@ -122,9 +123,11 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
 const renderApp = () => {
   return ReactDOM.render(
     <Provider store={store}>
-      <ConnectedRouter history={history}>
-        <App />
-      </ConnectedRouter>
+      <NexusContext.Provider value={nexus}>
+        <ConnectedRouter history={history}>
+          <App />
+        </ConnectedRouter>
+      </NexusContext.Provider>
     </Provider>,
     document.getElementById('app')
   );
