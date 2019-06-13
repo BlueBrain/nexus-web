@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteProps, match } from 'react-router-dom';
-import Landing from './views/Landing';
+import Org from './views/Org';
 import Home from './views/Home';
 import Login from './views/Login';
 import Project from './views/Project';
@@ -22,7 +22,7 @@ const routes: RouteWithData[] = [
   {
     path: '/',
     exact: true,
-    component: Landing,
+    component: Home,
     loadData: () => fetchOrgs(),
   },
   {
@@ -32,7 +32,7 @@ const routes: RouteWithData[] = [
   {
     path: '/:org',
     exact: true,
-    component: Home,
+    component: Org,
     loadData: (state, match) =>
       fetchOrg(match && match.params && (match.params as any)['org']),
   },
