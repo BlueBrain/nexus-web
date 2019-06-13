@@ -45,7 +45,7 @@ const QueryContainer: React.FunctionComponent<QueryContainerProps> = props => {
         ? { size, from: results.data.resources.index + 1 * size }
         : { size, from: 0 };
     setLoadingNext(true);
-    queryResources(id, paginationSettings);
+    queryResources(id, paginationSettings, query);
   };
 
   const showSpinner = results.isFetching && !loadingNext;
