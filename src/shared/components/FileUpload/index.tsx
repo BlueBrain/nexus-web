@@ -84,17 +84,10 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
     name: 'file',
     multiple: true,
     customRequest: handleFileUpload,
-    previewFile: (file: any) => {
-      console.log(file);
-    },
     onPreview: (file: any) => {
-      console.log(file);
-
-      // goToFile(file);
       // TODO do something on click, like show resource Edit / Inspect View
     },
     onChange({ file, fileList: newFileList }: any) {
-      console.log({ file, fileList });
       newFileList.map((file: any) => {
         file.url = 'https://google.com';
         return file;
