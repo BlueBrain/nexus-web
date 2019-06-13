@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Resource, NexusFile } from '@bbp/nexus-sdk';
+import { Resource, NexusFile } from '@bbp/nexus-sdk-legacy';
 import { notification } from 'antd';
 
 const getFilePreview = (selfUrl: string) =>

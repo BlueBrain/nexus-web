@@ -6,8 +6,8 @@ import {
 } from '../../store/actions/rawQuery';
 import { RawElasticSearchQueryState } from '../../store/reducers/rawQuery';
 import { connect } from 'react-redux';
-import { PaginatedList, PaginationSettings } from '@bbp/nexus-sdk';
-import { ElasticSearchHit } from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
+import { PaginatedList, PaginationSettings } from '@bbp/nexus-sdk-legacy';
+import { ElasticSearchHit } from '@bbp/nexus-sdk-legacy/lib/View/ElasticSearchView/types';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import { RequestError } from '../../store/actions/utils/errors';
 import './view-view.less';

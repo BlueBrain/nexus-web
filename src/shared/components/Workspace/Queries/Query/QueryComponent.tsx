@@ -3,7 +3,7 @@ import { List, DEFAULT_LIST } from '../../../../store/reducers/lists';
 import './query-component.less';
 import InfiniteScroll from '../../../Animations/InfiniteScroll';
 import { FetchableState } from '../../../../store/reducers/utils';
-import { PaginatedList, Resource, NexusFile } from '@bbp/nexus-sdk';
+import { PaginatedList, Resource, NexusFile } from '@bbp/nexus-sdk-legacy';
 import { Icon, Tooltip, Button, Spin, Switch } from 'antd';
 import RenameableItem from '../../../Renameable';
 import FullTextSearch from './Search';

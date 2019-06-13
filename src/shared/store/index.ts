@@ -9,7 +9,7 @@ import thunk, { ThunkAction } from 'redux-thunk';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { reducer as oidcReducer } from 'redux-oidc';
 import { History } from 'history';
-import Nexus from '@bbp/nexus-sdk';
+import Nexus from '@bbp/nexus-sdk-legacy';
 import reducers, { RootState } from './reducers';
 import { saveState, loadState } from './reducers/localStorage';
 import { persistanceMapper, ListsByProjectState } from './reducers/lists';

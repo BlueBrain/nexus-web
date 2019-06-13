@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Card, Tooltip, Button, Popconfirm } from 'antd';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk-legacy';
 import './resource-actions.less';
 import {
   isNotDeprecated,

@@ -1,7 +1,7 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from './utils';
-import { PaginatedList, ACL, Realm } from '@bbp/nexus-sdk';
-import { ListACLOptions, Identity } from '@bbp/nexus-sdk/lib/ACL/types';
+import { PaginatedList, ACL, Realm } from '@bbp/nexus-sdk-legacy';
+import { ListACLOptions, Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
 import { ThunkAction } from '..';
 
 export enum AuthActionTypes {

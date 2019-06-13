@@ -1,7 +1,7 @@
 import { RawQueryActions } from '../actions/rawQuery';
-import { PaginatedList, PaginationSettings } from '@bbp/nexus-sdk';
-import { ElasticSearchHit } from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
-import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/lib/View/SparqlView/types';
+import { PaginatedList, PaginationSettings } from '@bbp/nexus-sdk-legacy';
+import { ElasticSearchHit } from '@bbp/nexus-sdk-legacy/lib/View/ElasticSearchView/types';
+import { SparqlViewQueryResponse } from '@bbp/nexus-sdk-legacy/lib/View/SparqlView/types';
 import { RequestError } from '../actions/utils/errors';
 
 const DEFAULT_PAGINATION_SIZE = 20;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PaginationSettings, Resource, NexusFile } from '@bbp/nexus-sdk';
+import { PaginationSettings, Resource, NexusFile } from '@bbp/nexus-sdk-legacy';
 import { List } from '../../../../store/reducers/lists';
 import QueryComponent from './QueryComponent';
 

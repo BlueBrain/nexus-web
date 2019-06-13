@@ -1,4 +1,4 @@
-import { Organization, Project, PaginatedList, Resource } from '@bbp/nexus-sdk';
+import { Organization, Project, PaginatedList, Resource } from '@bbp/nexus-sdk-legacy';
 import {
   actionTypes as activeOrgActionTypes,
   ActiveOrgActions,
@@ -16,7 +16,7 @@ import {
   ResourceActions,
 } from '../actions/nexus/resource';
 import { FetchableState, createFetchReducer } from './utils';
-import { ResourceLink } from '@bbp/nexus-sdk/lib/Resource/types';
+import { ResourceLink } from '@bbp/nexus-sdk-legacy/lib/Resource/types';
 import { linksReducer, LinksState } from './links';
 
 export interface NexusState {

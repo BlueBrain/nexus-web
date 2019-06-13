@@ -6,7 +6,7 @@ import {
 } from '../../store/actions/rawQuery';
 import { RawQueryState } from '../../store/reducers/rawQuery';
 import { connect } from 'react-redux';
-import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/lib/View/SparqlView/types';
+import { SparqlViewQueryResponse } from '@bbp/nexus-sdk-legacy/lib/View/SparqlView/types';
 import * as hash from 'object-hash';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import { RequestError } from '../../store/actions/utils/errors';

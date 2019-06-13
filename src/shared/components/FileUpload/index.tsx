@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Upload, Icon, message, Switch, Select } from 'antd';
-import { Storage, Project } from '@bbp/nexus-sdk';
-import { StorageCommon } from '@bbp/nexus-sdk/lib/Storage/types';
-import { CreateFileOptions } from '@bbp/nexus-sdk/lib/File/types';
+import { Storage, Project } from '@bbp/nexus-sdk-legacy';
+import { StorageCommon } from '@bbp/nexus-sdk-legacy/lib/Storage/types';
+import { CreateFileOptions } from '@bbp/nexus-sdk-legacy/lib/File/types';
 import { labelOf } from '../../utils';
 
 const Dragger = Upload.Dragger;

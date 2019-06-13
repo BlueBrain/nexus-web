@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Checkbox, Divider, Tabs } from 'antd';
-import { ACL } from '@bbp/nexus-sdk';
+import { ACL } from '@bbp/nexus-sdk-legacy';
 
 import './ACLs.less';
-import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
+import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
 import ACLView from './ACLView';
 import IdentityBadge from './IdentityBadge';
 

@@ -1,7 +1,7 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
-import { Organization } from '@bbp/nexus-sdk';
+import { Organization } from '@bbp/nexus-sdk-legacy';
 import { ThunkAction } from '..';
-import { CreateOrgPayload } from '@bbp/nexus-sdk/lib/Organization/types';
+import { CreateOrgPayload } from '@bbp/nexus-sdk-legacy/lib/Organization/types';
 
 //
 // Action Types

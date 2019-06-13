@@ -7,7 +7,7 @@ import { RouteComponentProps, match } from 'react-router';
 import { fetchAndAssignProject } from '../store/actions/nexus/projects';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
 import * as queryString from 'query-string';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk-legacy';
 import { push } from 'connected-react-router';
 
 interface RawQueryProps extends RouteComponentProps {

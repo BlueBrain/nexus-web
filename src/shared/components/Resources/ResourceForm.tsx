@@ -9,8 +9,8 @@ import {
   notification,
 } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
-import { Resource } from '@bbp/nexus-sdk';
-import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
+import { Resource } from '@bbp/nexus-sdk-legacy';
+import { CreateResourcePayload } from '@bbp/nexus-sdk-legacy/lib/Resource/types';
 import ResourceEditor from './ResourceEditor';
 import SchemaTypeOption from './SchemaOption';
 

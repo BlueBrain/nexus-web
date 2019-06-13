@@ -6,7 +6,7 @@ import {
   Resource,
   PaginationSettings,
   NexusFile,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk-legacy';
 import { RootState } from '../../../store/reducers';
 import { List } from '../../../store/reducers/lists';
 import { push } from 'connected-react-router';

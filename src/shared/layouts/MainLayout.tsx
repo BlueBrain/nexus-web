@@ -8,8 +8,8 @@ import getUserManager from '../../client/userManager';
 import { version, url as githubIssueURL } from '../../../package.json';
 
 import './MainLayout.less';
-import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
-import { Realm } from '@bbp/nexus-sdk';
+import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
+import { Realm } from '@bbp/nexus-sdk-legacy';
 import { getLogoutUrl } from '../utils';
 import { UserManager } from 'oidc-client';
 import { RootState } from '../store/reducers';

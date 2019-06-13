@@ -5,7 +5,7 @@ import * as moment from 'moment';
 import UserAvatar from '../User/Avatar';
 import TypesIcon from '../Types/TypesIcon';
 import Copy from '../Copy';
-import { NexusFile, Resource } from '@bbp/nexus-sdk';
+import { NexusFile, Resource } from '@bbp/nexus-sdk-legacy';
 import ImagePreviewContainer from '../Images/Preview';
 
 export interface ResourceMetadataCardProps {

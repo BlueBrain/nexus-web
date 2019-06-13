@@ -1,5 +1,5 @@
 import { ActionCreator, Dispatch } from 'redux';
-import { Resource, PaginatedList, PaginationSettings } from '@bbp/nexus-sdk';
+import { Resource, PaginatedList, PaginationSettings } from '@bbp/nexus-sdk-legacy';
 import { ThunkAction } from '../..';
 import {
   FetchAction,
@@ -9,7 +9,7 @@ import {
   FetchFailedActionWithKey,
   FetchFulfilledActionWithKey,
 } from '../utils';
-import { ResourceLink } from '@bbp/nexus-sdk/lib/Resource/types';
+import { ResourceLink } from '@bbp/nexus-sdk-legacy/lib/Resource/types';
 import { formatError, RequestError } from '../utils/errors';
 
 export enum LinkDirection {

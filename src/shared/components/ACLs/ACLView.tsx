@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Checkbox, Divider, List } from 'antd';
 
 import './ACLs.less';
-import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
+import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
 import IdentityBadge from './IdentityBadge';
 
 type GroupedPermission = {

@@ -13,7 +13,7 @@ import { action } from '@storybook/addon-actions';
 import InfiniteScroll from './InfiniteScroll';
 import ListItem from './ListItem';
 import { FetchableState } from '../../store/reducers/utils';
-import { PaginatedList } from '@bbp/nexus-sdk';
+import { PaginatedList } from '@bbp/nexus-sdk-legacy';
 
 // @ts-ignore
 const shuffleArray = (arr: any[]) =>

@@ -1,6 +1,6 @@
 import { UserManager, WebStorageStateStore } from 'oidc-client';
 import { RootState } from '../shared/store/reducers';
-import { Realm } from '@bbp/nexus-sdk';
+import { Realm } from '@bbp/nexus-sdk-legacy';
 
 const userManagerCache: Map<string, UserManager> = new Map();
 

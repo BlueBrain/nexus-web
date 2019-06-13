@@ -5,7 +5,7 @@ import {
   fetchAndAssignResource,
   deprecateResource,
 } from '../store/actions/nexus/resource';
-import { Resource, PaginationSettings, NexusFile } from '@bbp/nexus-sdk';
+import { Resource, PaginationSettings, NexusFile } from '@bbp/nexus-sdk-legacy';
 import ResourceView from '../components/Resources/ResourceDetails';
 import Helmet from 'react-helmet';
 import Status from '../components/Routing/Status';
