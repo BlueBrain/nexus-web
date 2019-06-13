@@ -56,8 +56,8 @@ export const makeESQuery = (query?: List['query']) => {
     }
     if (query.textQuery) {
       must.push({
-        query_string: {
-          query: `${query.textQuery}~`,
+        match: {
+          _all_fields: query.textQuery,
         },
       });
     }
