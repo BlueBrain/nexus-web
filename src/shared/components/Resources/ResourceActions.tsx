@@ -19,6 +19,15 @@ const actionTypes = [
     predicate: chainPredicates([isDefaultElasticView, not(isDeprecated)]),
     title: 'Deprecate this resource',
     shortTitle: 'Dangerously Deprecate',
+    message: (
+      <div>
+        <h3>Warning!</h3>
+        <p>
+          Deprecating this resource <em>WILL ABSOLUTELY</em> break this
+          application for this project. Are you sure you want to deprecate it?
+        </p>
+      </div>
+    ),
     icon: 'delete',
     danger: true,
   },
@@ -26,6 +35,7 @@ const actionTypes = [
     name: 'deprecateResource',
     predicate: chainPredicates([not(isDeprecated), not(isDefaultElasticView)]),
     title: 'Deprecate this resource',
+    message: "Are you sure you'd like to deprecate this resource?",
     shortTitle: 'Deprecate',
     icon: 'delete',
     danger: true,
@@ -55,14 +65,14 @@ const actionTypes = [
 
 const makeButton = ({
   title,
-  name,
   icon,
   shortTitle,
   danger,
+  message,
 }: {
-  name: string;
   title: string;
   icon: string;
+  message?: React.ReactElement | string;
   shortTitle: string;
   danger?: boolean;
 }) => (resource: Resource, actionToDispatch: (resource: Resource) => void) => (
@@ -70,18 +80,7 @@ const makeButton = ({
     {danger ? (
       <Popconfirm
         title={
-          name === 'veryDangerousToDeprecate' ? (
-            <div>
-              <h3>Warning!</h3>
-              <p>
-                Deprecating this resource <em>WILL ABSOLUTELY</em> break this
-                application for this project. Are you sure you want to deprecate
-                it?
-              </p>
-            </div>
-          ) : (
-            "Are you sure you'd like to deprecate this resource?"
-          )
+          message ? message : 'Are you sure you want to perform this action?'
         }
         onConfirm={() => actionToDispatch && actionToDispatch(resource)}
         okText="Yes"
