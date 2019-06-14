@@ -26,7 +26,9 @@ interface QueryComponentProps {
   showSpinner: boolean;
 }
 
-const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
+const QueryComponent: React.FunctionComponent<QueryComponentProps> = (
+  props: QueryComponentProps
+) => {
   const {
     list: {
       id,
@@ -105,10 +107,9 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
 
   const handleFilterChange = (value: { [filterKey: string]: string }) => {
     const filterKey: string = Object.keys(value)[0];
-    console.log('handle filter change', value[filterKey]);
 
-    // if the value of filter is empty, remove the key from the query
     if (value[filterKey] === '') {
+      // if the value of filter is empty, remove the key from the query
       const {
         [filterKey]: value,
         ...withoutCurrentFilterKey
@@ -117,8 +118,7 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
         ...props.list,
         query: {
           ...props.list.query,
-          // @ts-ignore
-          filters: withoutCurrentFilterKey,
+          filters: withoutCurrentFilterKey as List['query']['filters'],
         },
       });
     } else {
