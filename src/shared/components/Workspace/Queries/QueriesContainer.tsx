@@ -78,7 +78,7 @@ const mapDispatchToProps = (
     dispatch(
       push(
         `/${org.label}/${project.label}/resources/${encodeURIComponent(
-          resource.id
+          resource.raw['@id']
         )}`
       )
     ),

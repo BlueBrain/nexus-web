@@ -7,8 +7,8 @@ import { RouteComponentProps, match } from 'react-router';
 import { fetchAndAssignProject } from '../store/actions/nexus/projects';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
 import * as queryString from 'query-string';
-import { Resource } from '@bbp/nexus-sdk';
 import { push } from 'connected-react-router';
+import { Menu, Dropdown, Icon } from 'antd';
 
 interface RawQueryProps extends RouteComponentProps {
   activeOrg: { label: string };
@@ -16,7 +16,7 @@ interface RawQueryProps extends RouteComponentProps {
   activeView?: { id: string };
   busy: boolean;
   fetchProject(orgName: string, projectName: string): void;
-  match: match<{ org: string; project: string; view?: string }>;
+  match: match<{ org: string; project: string; view: string }>;
   goToOrg(orgLabel: string): void;
   goToProject(orgLabel: string, projectLabel: string): void;
   location: any;
@@ -41,7 +41,21 @@ export const RawElasticSearchQueryComponent: React.FunctionComponent<
       fetchProject(match.params.org, match.params.project);
     }
   }, [match.params.org, match.params.project]);
+  const view = decodeURIComponent(match.params.view);
   const query = queryString.parse(location.search).query;
+  const menu = (
+    <Menu>
+      <Menu.Item key="0">
+        <a href="http://www.alipay.com/">1st menu item</a>
+      </Menu.Item>
+      <Menu.Item key="1">
+        <a href="http://www.taobao.com/">2nd menu item</a>
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item key="3">3rd menu item</Menu.Item>
+    </Menu>
+  );
+
   return (
     <div className="view-view">
       <h1 className="name">
@@ -54,7 +68,12 @@ export const RawElasticSearchQueryComponent: React.FunctionComponent<
           </a>{' '}
           |{' '}
         </span>
-        {match.params.view}
+        <Dropdown overlay={menu}>
+          <a className="ant-dropdown-link">
+            {view}
+            <Icon type="down" />
+          </a>
+        </Dropdown>
       </h1>
       <RawElasticSearchQueryView
         initialQuery={query}
@@ -82,6 +101,7 @@ const RawSparqlQueryComponent: React.FunctionComponent<RawQueryProps> = ({
       fetchProject(match.params.org, match.params.project);
     }
   }, [match.params.org, match.params.project]);
+  const view = decodeURIComponent(match.params.view);
   return (
     <div className="view-view">
       <h1 className="name">
@@ -94,12 +114,12 @@ const RawSparqlQueryComponent: React.FunctionComponent<RawQueryProps> = ({
           </a>{' '}
           |{' '}
         </span>
-        {match.params.view}
+        {view}
       </h1>
       <RawSparqlQueryView
         wantedOrg={match.params.org}
         wantedProject={match.params.project}
-        wantedView={match.params.view}
+        wantedView={view}
       />
     </div>
   );
