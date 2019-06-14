@@ -147,21 +147,23 @@ const mapDispatchToProps = (dispatch: any) => {
         push(
           `/${resource.orgLabel}/${
             resource.projectLabel
-          }/resources/${encodeURIComponent(resource.id)}`
+          }/resources/${encodeURIComponent(resource.raw['@id'])}`
         )
       ),
     goToSparqlView: (resource: Resource) =>
       dispatch(
         push(
-          `/${resource.orgLabel}/${resource.projectLabel}/${resource.id}/sparql`
+          `/${resource.orgLabel}/${resource.projectLabel}/${encodeURIComponent(
+            resource.raw['@id']
+          )}/sparql`
         )
       ),
     goToElasticSearchView: (resource: Resource) =>
       dispatch(
         push(
-          `/${resource.orgLabel}/${resource.projectLabel}/${
-            resource.id
-          }/_search`
+          `/${resource.orgLabel}/${resource.projectLabel}/${encodeURIComponent(
+            resource.raw['@id']
+          )}/_search`
         )
       ),
     fetchResource: (

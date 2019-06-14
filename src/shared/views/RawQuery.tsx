@@ -7,8 +7,11 @@ import { RouteComponentProps, match } from 'react-router';
 import { fetchAndAssignProject } from '../store/actions/nexus/projects';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
 import * as queryString from 'query-string';
-import { Resource } from '@bbp/nexus-sdk';
 import { push } from 'connected-react-router';
+import { Menu, Dropdown, Icon } from 'antd';
+import { listViews } from '../store/actions/nexus/views';
+import { ElasticSearchView, SparqlView, Resource } from '@bbp/nexus-sdk';
+import { isElasticView } from '../utils/nexus-maybe';
 
 interface RawQueryProps extends RouteComponentProps {
   activeOrg: { label: string };
@@ -16,9 +19,11 @@ interface RawQueryProps extends RouteComponentProps {
   activeView?: { id: string };
   busy: boolean;
   fetchProject(orgName: string, projectName: string): void;
-  match: match<{ org: string; project: string; view?: string }>;
+  match: match<{ org: string; project: string; view: string }>;
   goToOrg(orgLabel: string): void;
   goToProject(orgLabel: string, projectLabel: string): void;
+  goToView(orgLabel: string, projectLabel: string, view: Resource): void;
+  listViews(orgLabel: string, projectLabel: string): Promise<Resource[]>;
   location: any;
 }
 
@@ -31,17 +36,38 @@ export const RawElasticSearchQueryComponent: React.FunctionComponent<
   fetchProject,
   goToOrg,
   goToProject,
+  goToView,
   location,
+  listViews,
 }): JSX.Element => {
+  const [views, setViews] = React.useState<Resource[]>([]);
   React.useEffect(() => {
     if (
       activeOrg.label !== match.params.org ||
       activeProject.label !== match.params.project
     ) {
       fetchProject(match.params.org, match.params.project);
+      listViews(match.params.org, match.params.project)
+        .then(setViews)
+        .catch((error: Error) => {
+          // do something
+        });
     }
   }, [match.params.org, match.params.project]);
+  const view = decodeURIComponent(match.params.view);
   const query = queryString.parse(location.search).query;
+  const menu = (
+    <Menu>
+      {views.map((view, index) => (
+        <Menu.Item key={index}>
+          <a onClick={() => goToView(view.orgLabel, view.projectLabel, view)}>
+            {view.name}
+          </a>
+        </Menu.Item>
+      ))}
+    </Menu>
+  );
+
   return (
     <div className="view-view">
       <h1 className="name">
@@ -54,7 +80,12 @@ export const RawElasticSearchQueryComponent: React.FunctionComponent<
           </a>{' '}
           |{' '}
         </span>
-        {match.params.view}
+        <Dropdown overlay={menu}>
+          <a className="ant-dropdown-link">
+            {view}
+            <Icon type="down" />
+          </a>
+        </Dropdown>
       </h1>
       <RawElasticSearchQueryView
         initialQuery={query}
@@ -72,16 +103,36 @@ const RawSparqlQueryComponent: React.FunctionComponent<RawQueryProps> = ({
   activeProject,
   goToOrg,
   goToProject,
+  goToView,
   fetchProject,
+  listViews,
 }): JSX.Element => {
+  const [views, setViews] = React.useState<Resource[]>([]);
   React.useEffect(() => {
     if (
       activeOrg.label !== match.params.org ||
       activeProject.label !== match.params.project
     ) {
       fetchProject(match.params.org, match.params.project);
+      listViews(match.params.org, match.params.project)
+        .then(setViews)
+        .catch((error: Error) => {
+          // do something
+        });
     }
   }, [match.params.org, match.params.project]);
+  const view = decodeURIComponent(match.params.view);
+  const menu = (
+    <Menu>
+      {views.map((view, index) => (
+        <Menu.Item key={index}>
+          <a onClick={() => goToView(view.orgLabel, view.projectLabel, view)}>
+            {view.name}
+          </a>
+        </Menu.Item>
+      ))}
+    </Menu>
+  );
   return (
     <div className="view-view">
       <h1 className="name">
@@ -94,12 +145,17 @@ const RawSparqlQueryComponent: React.FunctionComponent<RawQueryProps> = ({
           </a>{' '}
           |{' '}
         </span>
-        {match.params.view}
+        <Dropdown overlay={menu}>
+          <a className="ant-dropdown-link">
+            {view}
+            <Icon type="down" />
+          </a>
+        </Dropdown>
       </h1>
       <RawSparqlQueryView
         wantedOrg={match.params.org}
         wantedProject={match.params.project}
-        wantedView={match.params.view}
+        wantedView={view}
       />
     </div>
   );
@@ -125,6 +181,18 @@ const mapDispatchToProps = (dispatch: any) => ({
   goToOrg: (orgLabel: string) => dispatch(push(`/${orgLabel}`)),
   goToProject: (orgLabel: string, projectLabel: string) =>
     dispatch(push(`/${orgLabel}/${projectLabel}`)),
+  goToView: (orgLabel: string, projectLabel: string, view: Resource) => {
+    const queryAppendage = isElasticView(view) ? `_search` : `sparql`;
+    return dispatch(
+      push(
+        `/${orgLabel}/${projectLabel}/${encodeURIComponent(
+          view.raw['@id']
+        )}/${queryAppendage}`
+      )
+    );
+  },
+  listViews: (orgLabel: string, projectLabel: string) =>
+    dispatch(listViews(orgLabel, projectLabel)),
 });
 
 export const RawSparqlQuery = connect(

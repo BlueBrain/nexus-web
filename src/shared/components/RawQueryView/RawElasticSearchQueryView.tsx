@@ -74,7 +74,16 @@ const RawElasticSearchQueryView: React.FunctionComponent<
   const [query, setQuery] = React.useState(formattedInitialQuery);
   const [valid, setValid] = React.useState(true);
 
-  const data = response.results.map(result => result._source || []);
+  // Sometimes the results from sparql query are living in this response
+  // That's really bad!
+  // That's because these two queries share redux stuff
+  // This is a quick fix to solve this bug without doing much infrastructure work.
+  let data: any[];
+  if (response && (response as any).head) {
+    data = [];
+  } else {
+    data = response.results.map(result => result._source || []);
+  }
   const total = response.total || 0;
   const { from, size } = paginationSettings;
   const totalPages = Math.floor(total / size);
