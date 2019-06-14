@@ -63,7 +63,6 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
   const [storageId, setStorageId] = React.useState<string | undefined>(
     undefined
   );
-  const [fileList, setFileList] = React.useState([]);
 
   const handleFileUpload = async (customFileRequest: CustomFileRequest) => {
     try {
@@ -88,11 +87,6 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
       // TODO do something on click, like show resource Edit / Inspect View
     },
     onChange({ file, fileList: newFileList }: any) {
-      newFileList.map((file: any) => {
-        file.url = 'https://google.com';
-        return file;
-      });
-      setFileList(newFileList);
       const status = file.status;
       if (status !== 'uploading') {
         // do something on upload?
