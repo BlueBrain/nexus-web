@@ -49,7 +49,9 @@ export const RawElasticSearchQueryComponent: React.FunctionComponent<
       fetchProject(match.params.org, match.params.project);
       listViews(match.params.org, match.params.project)
         .then(setViews)
-        .catch(console.error);
+        .catch((error: Error) => {
+          // do something
+        });
     }
   }, [match.params.org, match.params.project]);
   const view = decodeURIComponent(match.params.view);
@@ -114,7 +116,9 @@ const RawSparqlQueryComponent: React.FunctionComponent<RawQueryProps> = ({
       fetchProject(match.params.org, match.params.project);
       listViews(match.params.org, match.params.project)
         .then(setViews)
-        .catch(console.error);
+        .catch((error: Error) => {
+          // do something
+        });
     }
   }, [match.params.org, match.params.project]);
   const view = decodeURIComponent(match.params.view);
