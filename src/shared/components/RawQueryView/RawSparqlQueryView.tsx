@@ -10,7 +10,7 @@ import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/lib/View/SparqlView/type
 import * as hash from 'object-hash';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import { RequestError } from '../../store/actions/utils/errors';
-import './view-view.less';
+import './view-container.less';
 
 // Codemirror will not load on the server, so we need to make sure
 // the language support code doesn't load either.
@@ -106,14 +106,14 @@ const RawSparqlQueryView: React.FunctionComponent<RawSparqlQueryViewProps> = ({
   };
 
   return (
-    <div className="view-view">
+    <div className="view-container">
       <Form
         onSubmit={e => {
           e.preventDefault();
           executeRawQuery(wantedOrg, wantedProject, wantedView, query);
         }}
       >
-        <div style={{ maxHeight: 600, overflow: 'scroll' }}>
+        <div className="code">
           <CodeMirror
             value={initialQuery}
             options={{

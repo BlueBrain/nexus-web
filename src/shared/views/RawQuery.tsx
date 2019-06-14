@@ -17,6 +17,8 @@ interface RawQueryProps extends RouteComponentProps {
   busy: boolean;
   fetchProject(orgName: string, projectName: string): void;
   match: match<{ org: string; project: string; view?: string }>;
+  goToOrg(orgLabel: string): void;
+  goToProject(orgLabel: string, projectLabel: string): void;
   location: any;
 }
 
@@ -27,6 +29,8 @@ export const RawElasticSearchQueryComponent: React.FunctionComponent<
   activeOrg,
   activeProject,
   fetchProject,
+  goToOrg,
+  goToProject,
   location,
 }): JSX.Element => {
   React.useEffect(() => {
@@ -39,12 +43,26 @@ export const RawElasticSearchQueryComponent: React.FunctionComponent<
   }, [match.params.org, match.params.project]);
   const query = queryString.parse(location.search).query;
   return (
-    <RawElasticSearchQueryView
-      initialQuery={query}
-      wantedOrg={match.params.org}
-      wantedProject={match.params.project}
-      wantedView={match.params.view}
-    />
+    <div className="view-view">
+      <h1 className="name">
+        <span>
+          <a onClick={() => goToOrg(match.params.org)}>{match.params.org}</a> |{' '}
+          <a
+            onClick={() => goToProject(match.params.org, match.params.project)}
+          >
+            {match.params.project}
+          </a>{' '}
+          |{' '}
+        </span>
+        {match.params.view}
+      </h1>
+      <RawElasticSearchQueryView
+        initialQuery={query}
+        wantedOrg={match.params.org}
+        wantedProject={match.params.project}
+        wantedView={match.params.view}
+      />
+    </div>
   );
 };
 
@@ -52,6 +70,8 @@ const RawSparqlQueryComponent: React.FunctionComponent<RawQueryProps> = ({
   match,
   activeOrg,
   activeProject,
+  goToOrg,
+  goToProject,
   fetchProject,
 }): JSX.Element => {
   React.useEffect(() => {
@@ -63,11 +83,25 @@ const RawSparqlQueryComponent: React.FunctionComponent<RawQueryProps> = ({
     }
   }, [match.params.org, match.params.project]);
   return (
-    <RawSparqlQueryView
-      wantedOrg={match.params.org}
-      wantedProject={match.params.project}
-      wantedView={match.params.view}
-    />
+    <div className="view-view">
+      <h1 className="name">
+        <span>
+          <a onClick={() => goToOrg(match.params.org)}>{match.params.org}</a> |{' '}
+          <a
+            onClick={() => goToProject(match.params.org, match.params.project)}
+          >
+            {match.params.project}
+          </a>{' '}
+          |{' '}
+        </span>
+        {match.params.view}
+      </h1>
+      <RawSparqlQueryView
+        wantedOrg={match.params.org}
+        wantedProject={match.params.project}
+        wantedView={match.params.view}
+      />
+    </div>
   );
 };
 

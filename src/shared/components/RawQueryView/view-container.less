@@ -1,11 +1,14 @@
 @import '../../lib.less';
 
-.view-view {
-  padding: 2em;
+.view-container {
   width: 100%;
   > form {
-    max-width: @maxConstrainedItemWidth;
     margin: 0 auto;
+  }
+  > form > .code {
+    max-height: 600;
+    overflow: 'scroll';
+    margin-bottom: @default-pad;
   }
   > .results {
     overflow: scroll;
