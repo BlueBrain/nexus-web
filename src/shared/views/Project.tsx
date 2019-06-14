@@ -260,9 +260,8 @@ const mapDispatchToProps = (dispatch: any) => {
         payload
       );
     },
-    createFile: async (file: File, options?: CreateFileOptions) => {
-      dispatch(createFile(file, options));
-    },
+    createFile: (file: File, options?: CreateFileOptions) =>
+      dispatch(createFile(file, options)),
     goToOrg: (orgLabel: string) =>
       dispatch(push(`/${orgLabel}`, { previousUrl: window.location.href })),
     onLoginClick: () =>
