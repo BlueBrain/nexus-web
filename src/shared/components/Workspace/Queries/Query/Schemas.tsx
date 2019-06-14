@@ -34,6 +34,11 @@ const SchemasFilter: React.FunctionComponent<SchemaFilterProps> = props => {
   };
 
   const handleInputChange = (value: SelectValue) => {
+    // if value has been cleared, call handle change in order
+    // to remove filter from ES query
+    if (value === undefined) {
+      handleChange('');
+    }
     setInputValue(value as string);
   };
 
@@ -46,6 +51,7 @@ const SchemasFilter: React.FunctionComponent<SchemaFilterProps> = props => {
         onChange={handleInputChange}
         onSelect={handleChange}
         value={inputValue}
+        allowClear={true}
         filterOption={(inputValue, option) =>
           getProp(option, 'props.label', '')
             .toUpperCase()

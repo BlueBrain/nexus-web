@@ -104,16 +104,36 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = props => {
   };
 
   const handleFilterChange = (value: { [filterKey: string]: string }) => {
-    updateList({
-      ...props.list,
-      query: {
-        ...props.list.query,
-        filters: {
-          ...props.list.query.filters,
-          ...value,
+    const filterKey: string = Object.keys(value)[0];
+    console.log('handle filter change', value[filterKey]);
+
+    // if the value of filter is empty, remove the key from the query
+    if (value[filterKey] === '') {
+      const {
+        [filterKey]: value,
+        ...withoutCurrentFilterKey
+      } = props.list.query.filters;
+      updateList({
+        ...props.list,
+        query: {
+          ...props.list.query,
+          // @ts-ignore
+          filters: withoutCurrentFilterKey,
         },
-      },
-    });
+      });
+    } else {
+      // otherwise add or modify filterKey
+      updateList({
+        ...props.list,
+        query: {
+          ...props.list.query,
+          filters: {
+            ...props.list.query.filters,
+            ...value,
+          },
+        },
+      });
+    }
   };
 
   const fetchablePaginatedList: FetchableState<PaginatedList<Resource>> = {
