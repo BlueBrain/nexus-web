@@ -56,7 +56,7 @@ export const makeESQuery = (query?: List['query']) => {
     }
     if (query.textQuery) {
       must.push({
-        // from https://github.com/BlueBrain/nexus-kg/pull/675/files#diff-4aa2f8ee4ce4694213bc1e9add6895c0R9
+        // from https://github.com/BlueBrain/nexus-kg/blob/master/src/test/resources/search/query-schema-rev-createdBy-q.json#L10-L12
         match: {
           _all_fields: query.textQuery,
         },
