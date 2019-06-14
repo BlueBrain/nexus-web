@@ -76,7 +76,9 @@ const Menu: React.FunctionComponent<MenuProps> = ({
             New Query
           </Button>
           <Divider />
-          <Link to={`/${orgLabel}/${projectLabel}/graph/sparql`}>
+          <Link
+            to={`/${orgLabel}/${projectLabel}/nxv:defaultSparqlIndex/sparql`}
+          >
             Sparql Query Editor
           </Link>
           <Link
