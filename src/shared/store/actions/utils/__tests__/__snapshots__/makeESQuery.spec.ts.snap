@@ -148,8 +148,8 @@ Object {
           },
         },
         Object {
-          "query_string": Object {
-            "query": "Banana~",
+          "match": Object {
+            "_all_fields": "Banana",
           },
         },
       ],
@@ -192,8 +192,8 @@ Object {
           },
         },
         Object {
-          "query_string": Object {
-            "query": "banana~",
+          "match": Object {
+            "_all_fields": "banana",
           },
         },
       ],
