@@ -1,14 +1,17 @@
 import * as React from 'react';
 import { Upload, Icon, message, Switch, Select } from 'antd';
-import { Storage, Project } from '@bbp/nexus-sdk';
+import { Storage, Project, NexusFile } from '@bbp/nexus-sdk';
 import { StorageCommon } from '@bbp/nexus-sdk/lib/Storage/types';
 import { CreateFileOptions } from '@bbp/nexus-sdk/lib/File/types';
 import { labelOf } from '../../utils';
+import { UploadFile } from 'antd/lib/upload/interface';
 
 const Dragger = Upload.Dragger;
 
 interface FileUploaderProps {
-  onFileUpload: (file: File, options?: CreateFileOptions) => void;
+  onFileUpload: (file: File, options?: CreateFileOptions) => Promise<NexusFile>;
+  makeFileLink: (nexusFile: NexusFile) => string;
+  goToFile: (nexusFile: NexusFile) => void;
   project: Project;
 }
 
@@ -59,16 +62,23 @@ const StorageMenu = ({
 const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
   onFileUpload,
   project,
+  makeFileLink,
+  goToFile,
 }) => {
   const [directoryMode, setDirectoryMode] = React.useState(false);
   const [storageId, setStorageId] = React.useState<string | undefined>(
     undefined
   );
+  const [recentlyUploadedFileList, setRecentlyUploadFileList] = React.useState<
+    NexusFile[]
+  >([]);
+  const [fileList, setFileList] = React.useState<UploadFile[]>([]);
 
   const handleFileUpload = async (customFileRequest: CustomFileRequest) => {
     try {
       const options = storageId ? { storage: storageId } : undefined;
-      await onFileUpload(customFileRequest.file, options);
+      const nexusFile = await onFileUpload(customFileRequest.file, options);
+      setRecentlyUploadFileList([...recentlyUploadedFileList, nexusFile]);
       customFileRequest.onSuccess('Successfully uploaded file');
     } catch (error) {
       customFileRequest.onError(error);
@@ -76,22 +86,38 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
   };
 
   const draggerProps = {
+    fileList,
     name: 'file',
     multiple: true,
     customRequest: handleFileUpload,
-    onPreview: (file: any) => {
-      // TODO do something on click, like show resource Edit / Inspect View
+    onPreview(file: UploadFile) {
+      const myFileIndex = fileList.findIndex(
+        fileToTest => file.uid === fileToTest.uid
+      );
+      const recentlyUploadedFile = recentlyUploadedFileList[myFileIndex];
+      if (recentlyUploadedFile) {
+        goToFile(recentlyUploadedFile);
+      }
     },
-    onChange(info: any) {
-      const status = info.file.status;
+    onChange(info: { file: UploadFile; fileList: UploadFile[] }) {
+      const { file, fileList } = info;
+      const myFileIndex = fileList.findIndex(
+        fileToTest => file.uid === fileToTest.uid
+      );
+      const recentlyUploadedFile = recentlyUploadedFileList[myFileIndex];
+      if (recentlyUploadedFile) {
+        fileList[myFileIndex].url = makeFileLink(recentlyUploadedFile);
+      }
+      const status = file.status;
       if (status !== 'uploading') {
         // do something on upload?
       }
       if (status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully.`);
+        message.success(`${file.name} file uploaded successfully.`);
       } else if (status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
+        message.error(`${file.name} file upload failed.`);
       }
+      setFileList([...fileList]);
     },
   };
 
