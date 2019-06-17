@@ -32,6 +32,29 @@ exports[`Header component Should render correctly 1`] = `
   <div
     className="menu-block"
   >
+    <Popover
+      content={
+        <InformationContent
+          githubIssueURL=""
+          version=""
+        />
+      }
+      mouseEnterDelay={0.1}
+      mouseLeaveDelay={0.1}
+      overlayStyle={Object {}}
+      placement="bottomRight"
+      title="Information"
+      transitionName="zoom-big"
+      trigger="click"
+    >
+      <Button
+        block={false}
+        ghost={false}
+        icon="info-circle"
+        loading={false}
+        size="small"
+      />
+    </Popover>
     <Dropdown
       mouseEnterDelay={0.15}
       mouseLeaveDelay={0.1}
