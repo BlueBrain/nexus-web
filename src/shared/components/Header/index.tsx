@@ -16,6 +16,12 @@ const InformationContent = (props: InformationContentProps) => {
     <>
       <p>Nexus is Open Source and available under the Apache 2 License. </p>
       <p>
+        v{props.version}{' '}
+        <a href={props.githubIssueURL} target="_blank">
+          <Icon type="github" /> post an issue on github
+        </a>
+      </p>
+      <p>
         © 2017-2019
         <a href="https://www.epfl.ch/" target="_blank">
           <img
@@ -27,12 +33,6 @@ const InformationContent = (props: InformationContentProps) => {
         {'| '}
         <a href="https://bluebrain.epfl.ch/" target="_blank">
           <span className="bbp-logo">Blue Brain Project</span>
-        </a>
-      </p>
-      <p>
-        v{props.version}{' '}
-        <a href={props.githubIssueURL} target="_blank">
-          <Icon type="github" /> post an issue on github
         </a>
       </p>
     </>
