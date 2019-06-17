@@ -69,7 +69,7 @@ export const RawElasticSearchQueryComponent: React.FunctionComponent<
   );
 
   return (
-    <div className="view-view">
+    <div className="view-view view-container">
       <h1 className="name">
         <span>
           <a onClick={() => goToOrg(match.params.org)}>{match.params.org}</a> |{' '}
@@ -134,7 +134,7 @@ const RawSparqlQueryComponent: React.FunctionComponent<RawQueryProps> = ({
     </Menu>
   );
   return (
-    <div className="view-view">
+    <div className="view-view view-container">
       <h1 className="name">
         <span>
           <a onClick={() => goToOrg(match.params.org)}>{match.params.org}</a> |{' '}

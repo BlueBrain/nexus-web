@@ -15,7 +15,7 @@ export interface HeaderProps {
 }
 
 const Header: React.FunctionComponent<HeaderProps> = ({
-  name = '',
+  name,
   token,
   displayLogin = true,
   links = [],

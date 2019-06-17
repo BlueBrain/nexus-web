@@ -14,6 +14,7 @@ import { fetchAndAssignResource } from './store/actions/nexus/resource';
 import { ThunkAction } from './store';
 import { RootState } from './store/reducers';
 import { fetchAcls } from './store/actions/auth';
+import User from './views/User';
 
 export interface RouteWithData extends RouteProps {
   loadData?(state: RootState, match: match | null): ThunkAction;
@@ -28,6 +29,10 @@ const routes: RouteWithData[] = [
   {
     path: '/login',
     component: Login,
+  },
+  {
+    path: '/user',
+    component: User,
   },
   {
     path: '/:org',

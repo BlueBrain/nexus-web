@@ -26,6 +26,7 @@ export interface MainLayoutProps {
   name: string;
   canLogin?: boolean;
   userManager?: UserManager;
+  userIdentity: Identity;
 }
 
 const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
@@ -36,12 +37,14 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
   children,
   canLogin = false,
   userManager,
+  userIdentity,
 }) => {
   const handleLogout = (e: React.SyntheticEvent) => {
     e.preventDefault();
     localStorage.removeItem('nexus__state');
     userManager && userManager.signoutRedirect();
   };
+
   return (
     <>
       <Helmet>
@@ -66,8 +69,17 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
         name={authenticated ? name : undefined}
         token={token}
         links={[
+          <a
+            href="/user"
+            onClick={(e: React.SyntheticEvent) => {
+              e.preventDefault();
+              goTo(`/user`);
+            }}
+          >
+            User Info
+          </a>,
           <a href="" onClick={handleLogout}>
-            log out
+            Log out
           </a>,
         ]}
         displayLogin={canLogin}
@@ -90,9 +102,9 @@ const mapStateToProps = (state: RootState) => {
   return {
     authenticated: oidc.user !== undefined,
     token: oidc.user && oidc.user.access_token,
-    name:
-      (oidc.user && oidc.user.profile && oidc.user.profile.name) || 'anonymous',
+    name: oidc.user && oidc.user.profile && oidc.user.profile.name,
     logoutUrl: getLogoutUrl(identities, realms),
+    userIdentity: identities[identities.length - 1],
     canLogin: !!(realms.length > 0),
     userManager: getUserManager(state),
   };
