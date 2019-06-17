@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { push } from 'connected-react-router';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import getUserManager from '../../client/userManager';
 import { version, url as githubIssueURL } from '../../../package.json';
 
@@ -84,11 +83,10 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
         ]}
         displayLogin={canLogin}
         onLoginClick={() => goTo('/login')}
+        version={version}
+        githubIssueURL={githubIssueURL}
       />
       <div className="MainLayout_body">{children}</div>
-      <div>
-        <Footer version={version} githubIssueURL={githubIssueURL} />
-      </div>
     </>
   );
 };
