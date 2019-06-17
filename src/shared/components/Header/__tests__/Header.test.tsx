@@ -7,8 +7,12 @@ const links: React.ReactNode[] = [
   <a href="/somepage">A link to some page</a>,
 ];
 
-const shallowHeader = shallow(<Header name="Mark Hamill" links={links} />);
-const wrapper = mount(<Header name="Mark Hamill" links={links} />);
+const shallowHeader = shallow(
+  <Header name="Mark Hamill" links={links} githubIssueURL="" version="" />
+);
+const wrapper = mount(
+  <Header name="Mark Hamill" links={links} githubIssueURL="" version="" />
+);
 
 describe('Header component', () => {
   it('Should render correctly', () => {

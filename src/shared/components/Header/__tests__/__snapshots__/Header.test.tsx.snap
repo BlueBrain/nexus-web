@@ -33,7 +33,12 @@ exports[`Header component Should render correctly 1`] = `
     className="menu-block"
   >
     <Popover
-      content={<InformationContent />}
+      content={
+        <InformationContent
+          githubIssueURL=""
+          version=""
+        />
+      }
       mouseEnterDelay={0.1}
       mouseLeaveDelay={0.1}
       overlayStyle={Object {}}
