@@ -37,6 +37,7 @@ const SideMenu: React.FunctionComponent<SideMenuProps> = props => {
                     </button>
                   </div>
                 }
+                size="small"
               >
                 <div className="content">{children}</div>
               </Card>
