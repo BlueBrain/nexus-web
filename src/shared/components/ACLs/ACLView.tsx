@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { Checkbox, Divider, List } from 'antd';
+import { Card, Checkbox, Divider, List } from 'antd';
 import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
 import IdentityBadge from './IdentityBadge';
 
 import './ACLs.less';
-import { Card } from 'antd';
 
 type GroupedPermission = {
   name: string;
