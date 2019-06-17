@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Checkbox, Divider, List } from 'antd';
-
-import './ACLs.less';
 import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
 import IdentityBadge from './IdentityBadge';
+
+import './ACLs.less';
+import { Card } from 'antd';
 
 type GroupedPermission = {
   name: string;
@@ -33,7 +34,7 @@ interface ACLViewProp {
 }
 const ACLView: React.FunctionComponent<ACLViewProp> = props => {
   return (
-    <div>
+    <Card className="ACL-card">
       <IdentityBadge {...props.identity} />
       <List
         grid={{
@@ -58,7 +59,7 @@ const ACLView: React.FunctionComponent<ACLViewProp> = props => {
           </List.Item>
         )}
       />
-    </div>
+    </Card>
   );
 };
 
