@@ -8,26 +8,41 @@ const getTitle = (identity: Identity): React.ReactElement<any> => {
   switch (identity['@type']) {
     case 'Anonymous':
       return (
-        <Tooltip title="Anyone with the internet">
-          <Icon type="global" />
+        <Tooltip
+          title={`Anyone with the internet has the following permissions`}
+        >
+          <Icon type="global" /> Anonymous
         </Tooltip>
       );
     case 'Authenticated':
       return (
-        <Tooltip title={identity.realm}>
-          <Icon type="crown" />
+        <Tooltip
+          title={`Users authenticated through the realm ${
+            identity.realm
+          } have the following permissions`}
+        >
+          <Icon type="crown" /> Authenticated to:{' '}
+          <span className="Identity-badge_role">{identity.realm}</span>
         </Tooltip>
       );
     case 'Group':
       return (
-        <Tooltip title={identity.group}>
-          <Icon type="team" />
+        <Tooltip
+          title={`Users who are part of the group ${
+            identity.group
+          } have the following permissions`}
+        >
+          <Icon type="team" /> Part of group:{' '}
+          <span className="Identity-badge_role">{identity.group}</span>
         </Tooltip>
       );
     case 'User':
       return (
-        <Tooltip title={identity.subject}>
-          <Icon type="user" />
+        <Tooltip
+          title={`User ${identity.subject} has the following permissions`}
+        >
+          <Icon type="user" /> User:{' '}
+          <span className="Identity-badge_role">{identity.subject}</span>
         </Tooltip>
       );
     default:
@@ -38,9 +53,7 @@ const getTitle = (identity: Identity): React.ReactElement<any> => {
 const IdentityBadge: React.FunctionComponent<Identity> = props => {
   return (
     <div className="Identity-badge">
-      <h3>
-        {getTitle(props)} {props['@type']}
-      </h3>
+      <h2>{getTitle(props)}</h2>
     </div>
   );
 };

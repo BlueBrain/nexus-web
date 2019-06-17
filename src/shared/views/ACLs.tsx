@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { push } from 'connected-react-router';
 import { Empty, Spin } from 'antd';
 import { ACL } from '@bbp/nexus-sdk';
 import { RootState } from '../store/reducers';
@@ -12,6 +13,8 @@ interface ACLsViewProps {
   busy?: boolean;
   match: any;
   fetchACLData(orgLabel: string, projectLabel: string): void;
+  goToOrg(orgLabel: string): void;
+  goToProject(orgLabel: string, projectLabel: string): void;
 }
 const ACLs: React.FunctionComponent<ACLsViewProps> = ({
   acls,
@@ -19,6 +22,8 @@ const ACLs: React.FunctionComponent<ACLsViewProps> = ({
   match,
   busy = false,
   fetchACLData,
+  goToOrg,
+  goToProject,
 }) => {
   React.useEffect(() => {
     if (!busy) {
@@ -45,7 +50,22 @@ const ACLs: React.FunctionComponent<ACLsViewProps> = ({
       />
     );
   }
-  return <ACLsForm acls={acls} />;
+  const path = `${match.params.org}/${match.params.project}`;
+  return (
+    <div className="acl-view">
+      <h1 className="name">
+        <span>
+          <a onClick={() => goToOrg(match.params.org)}>{match.params.org}</a> |{' '}
+          <a
+            onClick={() => goToProject(match.params.org, match.params.project)}
+          >
+            {match.params.project}
+          </a>{' '}
+        </span>
+      </h1>
+      <ACLsForm acls={acls} path={path} />
+    </div>
+  );
 };
 
 const mapStateToProps = (state: RootState) => ({
@@ -62,7 +82,12 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
   fetchACLData: (orgLabel: string, projectLabel: string) =>
-    dispatch(fetchAcls(`${orgLabel}/${projectLabel}`, { ancestors: true })),
+    dispatch(
+      fetchAcls(`${orgLabel}/${projectLabel}`, { ancestors: true, self: false })
+    ),
+  goToOrg: (orgLabel: string) => dispatch(push(`/${orgLabel}`)),
+  goToProject: (orgLabel: string, projectLabel: string) =>
+    dispatch(push(`/${orgLabel}/${projectLabel}`)),
 });
 
 export default connect(
