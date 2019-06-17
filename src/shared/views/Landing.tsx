@@ -204,7 +204,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
   }
 
   return (
-    <div className="orgs-view">
+    <div className="orgs-view view-container">
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
         <h1 style={{ marginBottom: 0, marginRight: 8 }}>Organizations</h1>
         <Button

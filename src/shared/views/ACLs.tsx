@@ -52,7 +52,7 @@ const ACLs: React.FunctionComponent<ACLsViewProps> = ({
   }
   const path = `${match.params.org}/${match.params.project}`;
   return (
-    <div className="acl-view">
+    <div className="acl-view view-container">
       <h1 className="name">
         <span>
           <a onClick={() => goToOrg(match.params.org)}>{match.params.org}</a> |{' '}

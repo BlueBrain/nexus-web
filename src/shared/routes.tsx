@@ -31,7 +31,7 @@ const routes: RouteWithData[] = [
     component: Login,
   },
   {
-    path: '/user/:userId',
+    path: '/user',
     component: User,
   },
   {

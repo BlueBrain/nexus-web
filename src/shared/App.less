@@ -3,37 +3,20 @@
 @import 'styles/close-button.less';
 @import 'styles/project-banner.less';
 
-.resource-view {
+.view-container {
   padding: 2em 0;
   max-width: @maxConstrainedItemWidth;
   margin: 0 auto;
 }
 
-.project-view {
-}
-
-.acl-view {
-  padding: 2em 0;
-  max-width: @maxConstrainedItemWidth;
-  margin: 0 auto;
-}
-
-.view-view {
-  padding: 2em 0;
-  max-width: @maxConstrainedItemWidth;
-  margin: 0 auto;
-}
-
-.projects-view {
-  max-width: @maxConstrainedItemWidth;
-  margin: 0 auto;
-  padding: 2em 0;
-}
-
-.orgs-view {
-  max-width: @maxConstrainedItemWidth;
-  margin: 0 auto;
-  padding: 2em 0;
+.user-view {
+  .identities-list {
+    margin: 0;
+    padding: 0;
+    .list-item {
+      cursor: auto;
+    }
+  }
 }
 
 .ant-popover {

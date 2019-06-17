@@ -45,13 +45,6 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
     userManager && userManager.signoutRedirect();
   };
 
-  const goToUser = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    if (userIdentity) {
-      goTo(`/user/${encodeURIComponent(userIdentity['@id'])}`);
-    }
-  };
-
   return (
     <>
       <Helmet>
@@ -76,7 +69,13 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
         name={authenticated ? name : undefined}
         token={token}
         links={[
-          <a href="" onClick={goToUser}>
+          <a
+            href="/user"
+            onClick={(e: React.SyntheticEvent) => {
+              e.preventDefault();
+              goTo(`/user`);
+            }}
+          >
             User Info
           </a>,
           <a href="" onClick={handleLogout}>

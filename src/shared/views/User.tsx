@@ -1,24 +1,50 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../store/reducers';
+import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
+import { Card } from 'antd';
+import ListItem from '../components/Animations/ListItem';
 
-export interface UserProps {}
+export interface UserProps {
+  name?: string;
+  identities: Identity[];
+}
 
 const User: React.FunctionComponent<UserProps> = props => {
+  const { name, identities } = props;
   return (
-    <div className="user-view">
-      <h1>User Page</h1>
+    <div className="user-view view-container">
+      <h1>{name}</h1>
+      <h2>Identities</h2>
+      <p>
+        This is a list of the identities you are associated with on the
+        platform.
+      </p>
+      <Card>
+        <ul className="identities-list">
+          {identities
+            .reverse()
+            .map(({ '@id': id, '@type': type, realm, subject }) => (
+              <ListItem
+                id={id}
+                label={
+                  <div>
+                    <em>{type}</em> {subject}
+                  </div>
+                }
+                details={<span>{realm}</span>}
+                description={id}
+              />
+            ))}
+        </ul>
+      </Card>
     </div>
   );
 };
 
-const mapStateToProps = (state: RootState) => {
-  return {};
-};
+const mapStateToProps = ({ auth, oidc }: RootState) => ({
+  name: oidc.user && oidc.user.profile && oidc.user.profile.name,
+  identities: (auth.identities && auth.identities.data) || [],
+});
 
-const mapDispatchToProps = (dispatch: any) => ({});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(User);
+export default connect(mapStateToProps)(User);
