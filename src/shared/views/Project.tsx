@@ -45,7 +45,9 @@ interface ProjectViewProps {
     payload: CreateResourcePayload
   ): Promise<Resource>;
   fetchProject(org: string, project: string): void;
-  createFile(file: File, options?: CreateFileOptions): void;
+  makeFileLink: (nexusFile: NexusFile) => string;
+  goToFile: (nexusFile: NexusFile) => void;
+  createFile(file: File, options?: CreateFileOptions): Promise<NexusFile>;
   goToOrg(orgLabel: string): void;
   onLoginClick: VoidFunction;
   isFetching: boolean;
@@ -65,6 +67,8 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   onLoginClick,
   authenticated,
   goToOrg,
+  makeFileLink,
+  goToFile,
 }) => {
   const projectLabel = project ? project.label : null;
   React.useEffect(() => {
@@ -166,6 +170,8 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
                       payload
                     )
                   }
+                  makeFileLink={makeFileLink}
+                  goToFile={goToFile}
                   project={project}
                   onFileUpload={createFile}
                   createList={() => {
@@ -216,6 +222,10 @@ const mapStateToProps = (state: RootState) => {
     '';
 
   return {
+    makeFileLink: (nexusFile: NexusFile) =>
+      `${state.config.basePath}/${nexusFile.orgLabel}/${
+        nexusFile.projectLabel
+      }/resources/${encodeURIComponent(nexusFile.id)}`,
     environment: state.config.apiEndpoint,
     token: state.oidc && state.oidc.user && state.oidc.user.access_token,
     authenticated: !!state.oidc.user,
@@ -264,6 +274,14 @@ const mapDispatchToProps = (dispatch: any) => {
       dispatch(createFile(file, options)),
     goToOrg: (orgLabel: string) =>
       dispatch(push(`/${orgLabel}`, { previousUrl: window.location.href })),
+    goToFile: (nexusFile: NexusFile) =>
+      dispatch(
+        push(
+          `/${nexusFile.orgLabel}/${
+            nexusFile.projectLabel
+          }/resources/${encodeURIComponent(nexusFile.id)}`
+        )
+      ),
     onLoginClick: () =>
       dispatch(push('/login', { previousUrl: window.location.href })),
   };
