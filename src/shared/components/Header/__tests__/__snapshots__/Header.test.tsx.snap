@@ -50,6 +50,7 @@ exports[`Header component Should render correctly 1`] = `
       <Button
         block={false}
         ghost={false}
+        htmlType="button"
         icon="info-circle"
         loading={false}
         size="small"
@@ -59,11 +60,7 @@ exports[`Header component Should render correctly 1`] = `
       mouseEnterDelay={0.15}
       mouseLeaveDelay={0.1}
       overlay={
-        <Menu
-          className=""
-          focusable={false}
-          theme="light"
-        >
+        <Menu>
           <MenuItem>
             <p>
               A p tag
