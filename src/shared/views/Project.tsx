@@ -25,6 +25,7 @@ import {
   HTTP_STATUSES,
   HTTP_STATUS_TYPE_KEYS,
 } from '../store/actions/utils/statusCodes';
+import { getDestinationParam } from '../utils';
 import { push } from 'connected-react-router';
 import QueryContainer from '../components/Workspace/Queries/QueriesContainer';
 import Helmet from 'react-helmet';
@@ -283,7 +284,7 @@ const mapDispatchToProps = (dispatch: any) => {
         )
       ),
     onLoginClick: () =>
-      dispatch(push('/login', { previousUrl: window.location.href })),
+      dispatch(push(`/login${getDestinationParam()}`, { previousUrl: window.location.href })),
   };
 };
 

@@ -9,7 +9,7 @@ import { version, url as githubIssueURL } from '../../../package.json';
 import './MainLayout.less';
 import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
 import { Realm } from '@bbp/nexus-sdk';
-import { getLogoutUrl } from '../utils';
+import { getLogoutUrl, getDestinationParam } from '../utils';
 import { UserManager } from 'oidc-client';
 import { RootState } from '../store/reducers';
 
@@ -82,7 +82,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
           </a>,
         ]}
         displayLogin={canLogin}
-        onLoginClick={() => goTo('/login')}
+        onLoginClick={() => goTo(`/login${getDestinationParam()}`)}
         version={version}
         githubIssueURL={githubIssueURL}
       />
