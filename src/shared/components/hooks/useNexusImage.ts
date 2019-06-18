@@ -2,42 +2,28 @@ import * as React from 'react';
 import { Resource, NexusFile } from '@bbp/nexus-sdk';
 import useNexusFile from './useNexusFile';
 
-// Don't download preview if filesize is > than 1MB
+// Don't download preview if file size is > than 1MB
 const DEFAULT_DISPLAY_SIZE = 1e6;
 
-function includesAny(s: string, listOfStrings: string[]) {
-  return listOfStrings.reduce(
-    (memo, compareString) => memo || s.includes(compareString),
-    false
-  );
-}
+const imagesExtensions = ['tiff', 'tif', 'jpeg', 'jpg', 'png', 'svg'];
 
-export function hasDisplayableImage(resource: Resource): boolean {
-  // Is a File
-  // has mediaType Image
-  // OR
-  // Includes any of these image names in the filename
+export function hasDisplayableImage(resource: Resource | NexusFile): boolean {
+  if (!resource.type || resource.type !== 'File') {
+    return false;
+  }
+
+  const mediaType = resource.mediaType;
+  const fileExtension: string = [...resource.filename.split('.')].pop() || '';
+
   return (
-    (resource.type &&
-      resource.type.includes('File') &&
-      ((resource.data as any)['_mediaType'] &&
-        (resource.data as any)['_mediaType'].includes('image'))) ||
-    (includesAny((resource.data as any)['_filename'], [
-      'tiff',
-      'tif',
-      'jpeg',
-      'jpg',
-      'png',
-      'svg',
-    ]) &&
-      (resource.data as any)['_bytes'] <= DEFAULT_DISPLAY_SIZE)
+    (mediaType.includes('image') || imagesExtensions.includes(fileExtension)) &&
+    resource.bytes <= DEFAULT_DISPLAY_SIZE
   );
 }
 
 const makeImageFromFile = (file: NexusFile) => {
   const image = new Image();
-  // @ts-ignore
-  const blob = new Blob([file.rawFile], { type: file.mediaType });
+  const blob = new Blob([file.rawFile as BlobPart], { type: file.mediaType });
   image.src = URL.createObjectURL(blob);
   return image;
 };
