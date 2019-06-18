@@ -18,5 +18,12 @@
   },
   "files": ["custom.d.ts"],
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "src/**/*.test.ts*", "src/**/*.stories.ts*"]
+  "exclude": [
+    "node_modules",
+    "src/**/*.(test|spec).ts*",
+    "src/**/*.stories.ts*"
+  ],
+  "awesomeTypescriptLoaderOptions": {
+    "errorsAsWarnings": true
+  }
 }

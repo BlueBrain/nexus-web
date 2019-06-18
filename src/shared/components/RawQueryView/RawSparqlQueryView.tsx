@@ -33,7 +33,7 @@ export interface RawSparqlQueryViewProps {
     viewID: string | undefined,
     query: string
   ): void;
-  reset: VoidFunction;
+  reset?: VoidFunction;
 }
 
 const FormItem = Form.Item;
@@ -48,7 +48,7 @@ const RawSparqlQueryView: React.FunctionComponent<RawSparqlQueryViewProps> = ({
   wantedProject,
   wantedView,
   error,
-  reset,
+  reset = () => {},
 }): JSX.Element => {
   const [query, setQuery] = React.useState(initialQuery);
   React.useEffect(() => {

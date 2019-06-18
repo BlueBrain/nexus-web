@@ -29,6 +29,8 @@ storiesOf('Components/Header', module).add(
           name="Mark Hamill"
           links={[<a href="#">Log out</a>, <a href="#">Settings</a>]}
           token="supercereal"
+          githubIssueURL="some.url"
+          version="v1.1.0"
         />
       </div>
       <div style={{ margin: '50px 40px 0px' }}>
@@ -37,15 +39,25 @@ storiesOf('Components/Header', module).add(
           name="Mark Hamill"
           links={[<a href="#">Log out</a>, <a href="#">Settings</a>]}
           children={<OrgDropdown />}
+          githubIssueURL="some.url"
+          version="v1.1.0"
         />
       </div>
       <div style={{ margin: '50px 40px 0px' }}>
         <h2>No name + login link</h2>
-        <Header onLoginClick={action('login-link-click')} />
+        <Header
+          onLoginClick={action('login-link-click')}
+          githubIssueURL="some.url"
+          version="v1.1.0"
+        />
       </div>
       <div style={{ margin: '50px 40px 0px' }}>
         <h2>No name + no login link</h2>
-        <Header displayLogin={false} />
+        <Header
+          displayLogin={false}
+          githubIssueURL="some.url"
+          version="v1.1.0"
+        />
       </div>
     </React.Fragment>
   ))

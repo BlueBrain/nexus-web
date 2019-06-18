@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, mount } from 'enzyme';
-import Header, { HeaderProps } from '..';
+import Header from '..';
 
 const links: React.ReactNode[] = [
   <p>A p tag</p>,

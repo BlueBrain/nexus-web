@@ -318,4 +318,4 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   );
 };
 
-export default Form.create()(ProjectForm);
+export default Form.create<ProjectFormProps>()(ProjectForm);
