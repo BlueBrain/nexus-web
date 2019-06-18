@@ -45,4 +45,4 @@ const AddMemberForm: React.FunctionComponent<AddMemberFormProps> = props => {
   );
 };
 
-export default Form.create()(AddMemberForm);
+export default Form.create<AddMemberFormProps>()(AddMemberForm);

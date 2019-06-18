@@ -126,6 +126,6 @@ storiesOf('Components/ACLs', module)
           { permissions, identity: user },
         ],
       });
-      return <ACLsForm acls={[acl1, acl2]} />;
+      return <ACLsForm acls={[acl1, acl2]} path="/myorg/myproject" />;
     })
   );

@@ -154,7 +154,9 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
   );
 };
 
-export const ResourceFormContainer = Form.create()(ResourceForm);
+export const ResourceFormContainer = Form.create<ResourceFormProps>()(
+  ResourceForm
+);
 
 interface ResourceFormModalProps {
   project: any;

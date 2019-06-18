@@ -71,7 +71,7 @@ storiesOf('Components/Projects', module)
             <ProjectForm />
           </div>
           <div style={{ margin: '50px 40px 0px' }}>
-            <ProjectForm
+            {/* <ProjectForm
               project={{
                 label: 'MyProject',
                 rev: 1,
@@ -80,7 +80,8 @@ storiesOf('Components/Projects', module)
                   { prefix: 'ex', namespace: 'http://example.com' },
                 ],
               }}
-            />
+
+            /> */}
           </div>
         </React.Fragment>
       );

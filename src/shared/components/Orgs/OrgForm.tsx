@@ -98,4 +98,4 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
   );
 };
 
-export default Form.create()(OrgForm);
+export default Form.create<OrgFormProps>()(OrgForm);

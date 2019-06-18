@@ -16,11 +16,16 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        include: path.resolve(__dirname, "../src"),
-        loader: [
-          'ts-loader',
-          require.resolve("react-docgen-typescript-loader"),
-        ]
+        include: path.resolve(__dirname, '../src'),
+        use: [
+          {
+            loader: require.resolve('ts-loader'),
+          },
+          // Optional
+          {
+            loader: require.resolve('react-docgen-typescript-loader'),
+          },
+        ],
       },
       {
         test: /\.(le|sa|sc|c)ss$/,
@@ -33,7 +38,7 @@ module.exports = {
               javascriptEnabled: true,
             },
           },
-        ]
+        ],
       },
       {
         test: /\.(jpg|png|svg)$/,
@@ -44,6 +49,6 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx']
-  }
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+  },
 };

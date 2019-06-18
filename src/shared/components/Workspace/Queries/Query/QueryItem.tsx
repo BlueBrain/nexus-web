@@ -22,7 +22,6 @@ const QueryListItem: React.FunctionComponent<QueryListItemProps> = props => {
       popover={{
         content: <ResourceMetadataCard {...{ resource }} />,
         mouseEnterDelay: MOUSE_ENTER_DELAY,
-        key: resource.id,
       }}
       preview={imagePreviewProps}
       onClick={() => onClick(resource)}
