@@ -36,7 +36,8 @@ const Login: React.FunctionComponent<LoginViewProps> = props => {
         try {
           e.preventDefault();
           props.setPreferredRealm(preferredRealm);
-          props.userManager && (await props.userManager.signinRedirect());
+          const destination = (new URL(window.location.href)).searchParams.get('destination');
+          props.userManager && (await props.userManager.signinRedirect({redirect_uri: `${window.location.origin}/${destination}`}));
         } catch (error) {
           switch (error.message) {
             case 'Network Error':

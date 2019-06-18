@@ -15,6 +15,7 @@ import { Button, Modal, Drawer, notification, Empty } from 'antd';
 import OrgForm from '../components/Orgs/OrgForm';
 import { CreateOrgPayload } from '@bbp/nexus-sdk/lib/Organization/types';
 import { Link } from 'react-router-dom';
+import { getDestinationParam } from '../utils';
 
 interface LandingProps {
   paginatedOrgs?: PaginatedList<Organization>;
@@ -188,7 +189,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           style={{ marginTop: '22vh' }}
           description={
             <span>
-              You need to <Link to="/login">login</Link> in order to list
+              You need to <Link to={`/login${getDestinationParam()}`}>login</Link> in order to list
               Organizations
             </span>
           }

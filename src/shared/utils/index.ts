@@ -170,3 +170,8 @@ export function getLogoutUrl(
 export function hasExpired(timestamp: number): Boolean {
   return timestamp < Date.now().valueOf() / 1000;
 }
+
+export function getDestinationParam(): string {
+  const destinationPath = encodeURIComponent(window.location.pathname.slice(1));
+  return destinationPath ? `?destination=${destinationPath}` : '';
+}
