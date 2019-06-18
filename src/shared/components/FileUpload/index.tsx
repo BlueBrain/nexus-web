@@ -46,7 +46,7 @@ const StorageMenu = ({
 
   return (
     <Select
-      style={{ width: 250 }}
+      style={{ width: '100%' }}
       placeholder="Default storage selected"
       onChange={onStorageSelected}
     >
