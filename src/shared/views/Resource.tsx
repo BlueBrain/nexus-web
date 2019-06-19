@@ -17,6 +17,7 @@ import { RequestError } from '../store/actions/utils/errors';
 import { push } from 'connected-react-router';
 import { fetchLinks, LinkDirection } from '../store/actions/nexus/links';
 import { LinksState } from '../store/reducers/links';
+import { listRevisions, Revisions } from '../store/actions/nexus/revisions';
 
 interface ResourceViewProps {
   linksListPageSize: number;
@@ -44,6 +45,7 @@ interface ResourceViewProps {
     resourceId: string,
     expanded?: boolean
   ) => void;
+  listRevisions(resource: Resource): Promise<Revisions>;
 }
 
 const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
@@ -64,6 +66,7 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
     linksListPageSize,
     getFilePreview,
     deprecateResource,
+    listRevisions,
   } = props;
   const fetch = (expanded = false) => {
     fetchResource(
@@ -103,6 +106,7 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
           fetchLinks={fetchLinks}
           linksListPageSize={linksListPageSize}
           fetchResource={fetch}
+          listRevisions={listRevisions}
         />
       </Status>
     </div>
@@ -183,6 +187,7 @@ const mapDispatchToProps = (dispatch: any) => {
     ) => {
       dispatch(fetchLinks(resource, linkDirection, paginationSettings));
     },
+    listRevisions: (resource: Resource) => dispatch(listRevisions(resource)),
   };
 };
 

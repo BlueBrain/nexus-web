@@ -7,6 +7,7 @@ import TypesIcon from '../Types/TypesIcon';
 import Copy from '../Copy';
 import { NexusFile, Resource } from '@bbp/nexus-sdk';
 import ImagePreviewContainer from '../Images/Preview';
+import { getUsername } from '../../utils';
 
 export interface ResourceMetadataCardProps {
   resource: Resource;
@@ -30,16 +31,7 @@ const ResourceMetadataCard: React.FunctionComponent<
       createdBy,
     },
   } = props;
-  let userName;
-  if (createdBy.length === 0) {
-    userName = 'Unknown';
-  } else {
-    try {
-      [userName] = createdBy.split('/').slice(-1);
-    } catch (e) {
-      userName = createdBy;
-    }
-  }
+  const userName = getUsername(createdBy);
 
   return (
     <Card

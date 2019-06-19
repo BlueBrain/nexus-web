@@ -85,6 +85,8 @@ export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
         resourceId,
         {
           expanded,
+          // @ts-ignore
+          rev: 2,
         }
       );
       const dotGraph = await Resource.getSelfRawAs(
