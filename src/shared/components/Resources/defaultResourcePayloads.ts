@@ -14,7 +14,7 @@ export const DISK_STORAGE = {
 };
 
 export const REMOTE_STORAGE = {
-  '@context': {}, //optional
+  '@context': {}, // optional
   '@id': '', // optional
   default: false,
   endpoint: '',
@@ -34,7 +34,7 @@ export const S3_STORAGE = {
 };
 
 export const SPARQL_VIEW = {
-  '@context': {}, //optional
+  '@context': {}, // optional
   '@id': '', // optional
   resourceSchemas: [],
   resourceTypes: [],
@@ -44,7 +44,7 @@ export const SPARQL_VIEW = {
 };
 
 export const ELASTIC_SEARCH_VIEW = {
-  '@context': {}, //optional
+  '@context': {}, // optional
   '@id': '', // optional
   resourceSchemas: [],
   resourceTypes: [],
@@ -55,19 +55,19 @@ export const ELASTIC_SEARCH_VIEW = {
 };
 
 export const AGGREGATE_VIEW = {
-  '@context': {}, //optional
+  '@context': {}, // optional
   '@id': '', // optional
   views: [{ project: '', viewId: '' }],
 };
 
 export const IN_PROJECT = {
-  '@context': {}, //optional
+  '@context': {}, // optional
   '@id': '', // optional
   priority: 0,
 };
 
 export const CROSS_PROJECT = {
-  '@context': {}, //optional
+  '@context': {}, // optional
   '@id': '', // optional
   resourceTypes: [],
   projects: [],
