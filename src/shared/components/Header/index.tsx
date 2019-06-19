@@ -47,6 +47,7 @@ export interface HeaderProps {
   displayLogin?: boolean;
   children?: React.ReactChild;
   onLoginClick?(): void;
+  visitHome?(): void;
 }
 
 const Header: React.FunctionComponent<HeaderProps> = ({
@@ -58,6 +59,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   onLoginClick,
   version,
   githubIssueURL,
+  visitHome,
 }) => {
   const menu = (
     <Menu>
@@ -71,7 +73,16 @@ const Header: React.FunctionComponent<HeaderProps> = ({
     <header className="Header">
       <div className="selectors">{children}</div>
       <div className="logo-block">
-        <a className="logo" href="">
+        <a
+          className="logo"
+          href=""
+          onClick={e => {
+            if (visitHome) {
+              e.preventDefault();
+              visitHome();
+            }
+          }}
+        >
           {
             // must add inline styling to prevent this big svg from
             // flashing the screen on dev mode before styles are loaded

@@ -24,7 +24,7 @@ const QueryListItem: React.FunctionComponent<QueryListItemProps> = props => {
         mouseEnterDelay: MOUSE_ENTER_DELAY,
       }}
       preview={imagePreviewProps}
-      onClick={() => onClick(resource)}
+      onTitleClick={() => onClick(resource)}
       label={
         predicate ? (
           <>

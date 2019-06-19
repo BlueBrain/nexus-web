@@ -10,7 +10,7 @@ import { PaginatedList, PaginationSettings } from '@bbp/nexus-sdk';
 import { ElasticSearchHit } from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import { RequestError } from '../../store/actions/utils/errors';
-import './view-container.less';
+import './view-form.less';
 
 // Codemirror will not load on the server, so we need to make sure
 // the language support code doesn't load either.
@@ -116,7 +116,7 @@ const RawElasticSearchQueryView: React.FunctionComponent<
   };
 
   return (
-    <div className="view-container">
+    <div className="view-form">
       <Form
         onSubmit={e => {
           e.preventDefault();

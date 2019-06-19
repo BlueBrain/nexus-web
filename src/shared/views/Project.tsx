@@ -31,6 +31,7 @@ import QueryContainer from '../components/Workspace/Queries/QueriesContainer';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { CreateFileOptions } from '@bbp/nexus-sdk/lib/File/types';
+import usePreviouslyVisited from '../components/hooks/usePreviouslyVisited';
 
 interface ProjectViewProps {
   project: Project | null;
@@ -72,11 +73,16 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   goToFile,
 }) => {
   const projectLabel = project ? project.label : null;
+  const { setPreviouslyVisited } = usePreviouslyVisited('visitedProjects');
   React.useEffect(() => {
     if (projectLabel !== match.params.project) {
       fetchProject(match.params.org, match.params.project);
     }
   }, [match.params.project, match.params.org]);
+
+  if (project) {
+    setPreviouslyVisited(project);
+  }
 
   let description;
   let more;
@@ -115,9 +121,19 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
       <div className="project-view">
         {!project && (
           <>
-            <h1 style={{ marginBottom: 0, marginRight: 8 }}>
-              {match.params.project}
-            </h1>
+            <div className="project-banner">
+              <div className="label">
+                <h1 className="name">
+                  {' '}
+                  {org && (
+                    <span>
+                      <a onClick={() => goToOrg(org.label)}>{org.label}</a> |{' '}
+                    </span>
+                  )}{' '}
+                  {match.params.project.label}
+                </h1>
+              </div>
+            </div>
             <Empty style={{ marginTop: '22vh' }} description={description}>
               {more}
             </Empty>
@@ -284,7 +300,11 @@ const mapDispatchToProps = (dispatch: any) => {
         )
       ),
     onLoginClick: () =>
-      dispatch(push(`/login${getDestinationParam()}`, { previousUrl: window.location.href })),
+      dispatch(
+        push(`/login${getDestinationParam()}`, {
+          previousUrl: window.location.href,
+        })
+      ),
   };
 };
 

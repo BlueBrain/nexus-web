@@ -77,7 +77,6 @@ exports[`Project Form component should render correctly 1`] = `
                 <Row
                   className="ant-form-item"
                   gutter={0}
-                  key="row"
                 >
                   <div
                     className="ant-row ant-form-item"
@@ -96,7 +95,7 @@ exports[`Project Form component should render correctly 1`] = `
                       }
                     >
                       <div
-                        className="ant-col ant-form-item-label ant-col-xs-24 ant-col-sm-6"
+                        className="ant-form-item-label ant-col-xs-24 ant-col-sm-6"
                       >
                         <label
                           className="ant-form-item-required"
@@ -122,7 +121,7 @@ exports[`Project Form component should render correctly 1`] = `
                       }
                     >
                       <div
-                        className="ant-col ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18"
+                        className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18"
                       >
                         <div
                           className="ant-form-item-control"
@@ -281,7 +280,6 @@ exports[`Project Form component should render correctly 1`] = `
                 <Row
                   className="ant-form-item"
                   gutter={0}
-                  key="row"
                 >
                   <div
                     className="ant-row ant-form-item"
@@ -300,7 +298,7 @@ exports[`Project Form component should render correctly 1`] = `
                       }
                     >
                       <div
-                        className="ant-col ant-form-item-label ant-col-xs-24 ant-col-sm-6"
+                        className="ant-form-item-label ant-col-xs-24 ant-col-sm-6"
                       >
                         <label
                           className=""
@@ -326,7 +324,7 @@ exports[`Project Form component should render correctly 1`] = `
                       }
                     >
                       <div
-                        className="ant-col ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18"
+                        className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18"
                       >
                         <div
                           className="ant-form-item-control"
@@ -464,7 +462,6 @@ exports[`Project Form component should render correctly 1`] = `
                 <Row
                   className="ant-form-item"
                   gutter={0}
-                  key="row"
                 >
                   <div
                     className="ant-row ant-form-item"
@@ -485,7 +482,7 @@ exports[`Project Form component should render correctly 1`] = `
                       }
                     >
                       <div
-                        className="ant-col ant-form-item-control-wrapper ant-col-xs-24 ant-col-xs-offset-0 ant-col-sm-18 ant-col-sm-offset-6"
+                        className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-xs-offset-0 ant-col-sm-18 ant-col-sm-offset-6"
                       >
                         <div
                           className="ant-form-item-control"
@@ -495,7 +492,6 @@ exports[`Project Form component should render correctly 1`] = `
                           >
                             <Collapse
                               bordered={true}
-                              expandIconPosition="left"
                               openAnimation={
                                 Object {
                                   "appear": [Function],
@@ -507,10 +503,9 @@ exports[`Project Form component should render correctly 1`] = `
                               <Collapse
                                 accordion={false}
                                 bordered={true}
-                                className="ant-collapse-icon-position-left"
+                                className=""
                                 destroyInactivePanel={false}
                                 expandIcon={[Function]}
-                                expandIconPosition="left"
                                 onChange={[Function]}
                                 openAnimation={
                                   Object {
@@ -522,7 +517,7 @@ exports[`Project Form component should render correctly 1`] = `
                                 prefixCls="ant-collapse"
                               >
                                 <div
-                                  className="ant-collapse ant-collapse-icon-position-left"
+                                  className="ant-collapse"
                                   role={null}
                                 >
                                   <CollapsePanel
@@ -575,41 +570,62 @@ exports[`Project Form component should render correctly 1`] = `
                                           role="button"
                                           tabIndex={0}
                                         >
-                                          <Icon
-                                            className="ant-collapse-arrow"
-                                            type="right"
+                                          <expandIcon
+                                            accordion={false}
+                                            className=""
+                                            destroyInactivePanel={false}
+                                            expandIcon={[Function]}
+                                            forceRender={false}
+                                            header="Advanced settings"
+                                            headerClass=""
+                                            isActive={false}
+                                            onItemClick={[Function]}
+                                            openAnimation={
+                                              Object {
+                                                "appear": [Function],
+                                                "enter": [Function],
+                                                "leave": [Function],
+                                              }
+                                            }
+                                            panelKey="1"
+                                            prefixCls="ant-collapse"
+                                            showArrow={true}
                                           >
-                                            <LocaleReceiver
-                                              componentName="Icon"
+                                            <Icon
+                                              className="ant-collapse-arrow"
+                                              type="right"
                                             >
-                                              <i
-                                                aria-label="icon: right"
-                                                className="anticon anticon-right ant-collapse-arrow"
+                                              <LocaleReceiver
+                                                componentName="Icon"
                                               >
-                                                <IconReact
-                                                  className=""
-                                                  type="right-o"
+                                                <i
+                                                  aria-label="icon: right"
+                                                  className="anticon anticon-right ant-collapse-arrow"
                                                 >
-                                                  <svg
-                                                    aria-hidden="true"
+                                                  <IconReact
                                                     className=""
-                                                    data-icon="right"
-                                                    fill="currentColor"
-                                                    focusable="false"
-                                                    height="1em"
-                                                    key="svg-right"
-                                                    viewBox="64 64 896 896"
-                                                    width="1em"
+                                                    type="right-o"
                                                   >
-                                                    <path
-                                                      d="M765.7 486.8L314.9 134.7A7.97 7.97 0 0 0 302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 0 0 0-50.4z"
-                                                      key="svg-right-svg-0"
-                                                    />
-                                                  </svg>
-                                                </IconReact>
-                                              </i>
-                                            </LocaleReceiver>
-                                          </Icon>
+                                                    <svg
+                                                      aria-hidden="true"
+                                                      className=""
+                                                      data-icon="right"
+                                                      fill="currentColor"
+                                                      height="1em"
+                                                      key="svg-right"
+                                                      viewBox="64 64 896 896"
+                                                      width="1em"
+                                                    >
+                                                      <path
+                                                        d="M765.7 486.8L314.9 134.7A7.97 7.97 0 0 0 302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 0 0 0-50.4z"
+                                                        key="svg-right-svg-0"
+                                                      />
+                                                    </svg>
+                                                  </IconReact>
+                                                </i>
+                                              </LocaleReceiver>
+                                            </Icon>
+                                          </expandIcon>
                                           Advanced settings
                                         </div>
                                         <Animate
@@ -700,7 +716,6 @@ exports[`Project Form component should render correctly 1`] = `
                 <Row
                   className="ant-form-item"
                   gutter={0}
-                  key="row"
                 >
                   <div
                     className="ant-row ant-form-item"
@@ -721,7 +736,7 @@ exports[`Project Form component should render correctly 1`] = `
                       }
                     >
                       <div
-                        className="ant-col ant-form-item-control-wrapper ant-col-xs-24 ant-col-xs-offset-0 ant-col-sm-18 ant-col-sm-offset-6"
+                        className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-xs-offset-0 ant-col-sm-18 ant-col-sm-offset-6"
                       >
                         <div
                           className="ant-form-item-control"

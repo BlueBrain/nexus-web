@@ -4,12 +4,13 @@ import OrgCard, { OrgCardProps } from './OrgCard';
 import AnimatedList from '../Animations/AnimatedList';
 
 import './Orgs.less';
+import { Organization } from '@bbp/nexus-sdk';
 
 export interface OrgListProps {
   orgs: OrgCardProps[];
   busy?: boolean;
   error?: { message: string; name: string };
-  onOrgClick?(label: string): void;
+  onOrgClick?(org: Organization): void;
   onOrgEdit?(label: string): void;
   paginationSettings?: { total: number; from: number; pageSize: number };
   onPaginationChange?: (page: number, pageSize?: number) => void;
@@ -21,7 +22,7 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
   orgs,
   busy = false,
   error = false,
-  onOrgClick = () => {},
+  onOrgClick = (org: Organization) => {},
   onOrgEdit = () => {},
   paginationSettings,
   onPaginationChange,
@@ -57,7 +58,7 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
           <OrgCard
             key={org.label + i}
             {...org}
-            onClick={() => onOrgClick(org.label)}
+            onClick={() => onOrgClick(org)}
             onEdit={() => onOrgEdit(org.label)}
           />
         )}

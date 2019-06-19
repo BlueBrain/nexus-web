@@ -11,6 +11,7 @@ export interface ListItemProps {
   details?: React.ReactComponentElement<any> | null;
   preview?: ImagePreviewProps;
   action?: React.ReactComponentElement<any> | null;
+  onTitleClick?: (id: string, event: React.MouseEvent) => void;
   onClick?: (id: string, event: React.MouseEvent) => void;
   popover?: PopoverProps;
 }
@@ -24,20 +25,29 @@ const ListItem: React.FunctionComponent<ListItemProps> = ({
   action,
   preview,
   popover,
+  onTitleClick,
 }) => {
   const ContentWrapper: React.FunctionComponent = popover
     ? ({ children }) => <Popover {...popover}>{children}</Popover>
     : ({ children }) => <div className="wrapper">{children}</div>;
   return (
     <ContentWrapper key={id}>
-      <li className={`list-item -compact`} tabIndex={1}>
+      <li
+        className={`list-item -compact`}
+        tabIndex={1}
+        onClick={
+          onClick
+            ? (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => onClick(id, e)
+            : undefined
+        }
+      >
         {preview && <ImagePreviewComponent {...preview} />}
         <div
           className="content"
           onClick={
-            onClick
+            onTitleClick
               ? (e: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
-                  onClick(id, e)
+                  onTitleClick(id, e)
               : undefined
           }
         >
