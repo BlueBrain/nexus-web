@@ -5,6 +5,8 @@ import './recently-visited.less';
 import { Icon } from 'antd';
 import { Project } from '@bbp/nexus-sdk';
 
+const DEFAULT_VISITED_MAX = 5;
+
 interface RecentlyVisitedProps {
   visitProject: (project: Project) => void;
 }
@@ -19,7 +21,7 @@ const RecentlyVisited: React.FunctionComponent<RecentlyVisitedProps> = ({
         <Icon type="clock-circle" /> Recently Visited
       </h3>
       <ul>
-        {previouslyVisitedList.slice(0, 5).map(project => {
+        {previouslyVisitedList.slice(0, DEFAULT_VISITED_MAX).map(project => {
           return (
             <ListItem
               onAllClick={() => {
