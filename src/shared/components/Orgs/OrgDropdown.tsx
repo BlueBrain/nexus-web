@@ -39,7 +39,7 @@ const OrgDropdown: React.FunctionComponent<OrgDropDownProps> = ({
         </a>
         <OrgList
           orgs={orgs}
-          onOrgClick={name => handleOrgSelected(name)}
+          onOrgClick={org => handleOrgSelected(org.label)}
           error={error}
         />
         <div className="org-menu">

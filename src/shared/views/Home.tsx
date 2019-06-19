@@ -15,6 +15,7 @@ import Skeleton from '../components/Skeleton';
 import { push } from 'connected-react-router';
 import ProjectForm from '../components/Projects/ProjectForm';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
+import RecentlyVisited from '../components/RecentlyVisited';
 
 interface HomeProps {
   activeOrg: { label: string; description?: string };
@@ -41,6 +42,7 @@ interface HomeProps {
   ): Promise<void>;
   makeProjectPublic(orgLabel: string, projectLabel: string): Promise<void>;
   goTo(o: string, p: string): void;
+  goToProject(Project: Project): void;
 }
 
 const Home: React.FunctionComponent<HomeProps> = ({
@@ -55,6 +57,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
   deprecateProject,
   makeProjectPublic,
   displayPerPage,
+  goToProject,
 }) => {
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
@@ -236,82 +239,89 @@ const Home: React.FunctionComponent<HomeProps> = ({
 
   return (
     <div className="projects-view view-container">
-      <h1 style={{ marginBottom: 0, marginRight: 8 }}>{activeOrg.label}</h1>
-      {activeOrg.description && <p>{activeOrg.description}</p>}
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
-        <h2 style={{ marginBottom: 0, marginRight: 8 }}>Projects</h2>
-        <Button
-          type="primary"
-          onClick={() => setModalVisible(true)}
-          icon="plus-square"
+      <RecentlyVisited visitProject={goToProject} />
+      <div style={{ flexGrow: 1 }}>
+        <h1 style={{ marginBottom: 0, marginRight: 8 }}>{activeOrg.label}</h1>
+        {activeOrg.description && <p>{activeOrg.description}</p>}
+        <div
+          style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}
         >
-          Create Project
-        </Button>
-      </div>
-      {paginatedProjects.total === 0 ? (
-        <Empty description="No projects" />
-      ) : (
-        <ProjectList
-          projects={paginatedProjects.results}
-          onProjectClick={(projectLabel: string) =>
-            goTo(activeOrg.label, projectLabel)
-          }
-          onProjectEdit={(projectLabel: string) =>
-            setSelectedProject(
-              paginatedProjects.results.filter(p => p.label === projectLabel)[0]
-            )
-          }
-          paginationSettings={{
-            total: paginatedProjects.total,
-            from: paginatedProjects.index,
-            pageSize: displayPerPage,
-          }}
-          onPaginationChange={pageNumber =>
-            fetchOrgData(match.params.org, {
-              from: displayPerPage * pageNumber - displayPerPage,
-              size: displayPerPage,
-            })
-          }
-          busy={busy}
-        />
-      )}
-      <Modal
-        title="New Project"
-        visible={modalVisible}
-        onCancel={() => setModalVisible(false)}
-        confirmLoading={formBusy}
-        footer={null}
-        width={600}
-      >
-        <ProjectForm
-          onSubmit={(p: Project) => saveAndCreate(p)}
-          busy={formBusy}
-        />
-      </Modal>
-      <Drawer
-        width={640}
-        visible={!!(selectedProject && selectedProject.label)}
-        onClose={() => setSelectedProject(undefined)}
-        title={`Project: ${selectedProject && selectedProject.label}`}
-      >
-        {selectedProject && (
-          <ProjectForm
-            project={{
-              label: selectedProject.label,
-              rev: selectedProject.rev,
-              description: selectedProject.description || '',
-              base: selectedProject.base,
-              vocab: selectedProject.vocab,
-              apiMappings: selectedProject.apiMappings,
+          <h2 style={{ marginBottom: 0, marginRight: 8 }}>Projects</h2>
+          <Button
+            type="primary"
+            onClick={() => setModalVisible(true)}
+            icon="plus-square"
+          >
+            Create Project
+          </Button>
+        </div>
+        {paginatedProjects.total === 0 ? (
+          <Empty description="No projects" />
+        ) : (
+          <ProjectList
+            projects={paginatedProjects.results}
+            onProjectClick={(projectLabel: string) =>
+              goTo(activeOrg.label, projectLabel)
+            }
+            onProjectEdit={(projectLabel: string) =>
+              setSelectedProject(
+                paginatedProjects.results.filter(
+                  p => p.label === projectLabel
+                )[0]
+              )
+            }
+            paginationSettings={{
+              total: paginatedProjects.total,
+              from: paginatedProjects.index,
+              pageSize: displayPerPage,
             }}
-            onSubmit={(p: Project) => saveAndModify(selectedProject, p)}
-            onDeprecate={() => saveAndDeprecate(selectedProject)}
-            onMakePublic={() => makePublic(selectedProject)}
-            busy={formBusy}
-            mode="edit"
+            onPaginationChange={pageNumber =>
+              fetchOrgData(match.params.org, {
+                from: displayPerPage * pageNumber - displayPerPage,
+                size: displayPerPage,
+              })
+            }
+            busy={busy}
           />
         )}
-      </Drawer>
+        <Modal
+          title="New Project"
+          visible={modalVisible}
+          onCancel={() => setModalVisible(false)}
+          confirmLoading={formBusy}
+          footer={null}
+          width={600}
+        >
+          <ProjectForm
+            onSubmit={(p: Project) => saveAndCreate(p)}
+            busy={formBusy}
+          />
+        </Modal>
+        <Drawer
+          width={640}
+          visible={!!(selectedProject && selectedProject.label)}
+          onClose={() => setSelectedProject(undefined)}
+          title={`Project: ${selectedProject && selectedProject.label}`}
+        >
+          {selectedProject && (
+            <ProjectForm
+              project={{
+                label: selectedProject.label,
+                rev: selectedProject.rev,
+                description: selectedProject.description || '',
+                base: selectedProject.base,
+                vocab: selectedProject.vocab,
+                apiMappings: selectedProject.apiMappings,
+              }}
+              onSubmit={(p: Project) => saveAndModify(selectedProject, p)}
+              onDeprecate={() => saveAndDeprecate(selectedProject)}
+              onMakePublic={() => makePublic(selectedProject)}
+              busy={formBusy}
+              mode="edit"
+            />
+          )}
+        </Drawer>
+      </div>
     </div>
   );
 };
@@ -337,6 +347,8 @@ const mapDispatchToProps = (dispatch: any) => ({
   fetchOrgData: (orgLabel: string, paginationSettings?: PaginationSettings) =>
     dispatch(fetchOrg(orgLabel, paginationSettings)),
   goTo: (org: string, project: string) => dispatch(push(`/${org}/${project}`)),
+  goToProject: (project: Project) =>
+    dispatch(push(`/${project.orgLabel}/${project.label}`)),
   createProject: (
     orgLabel: string,
     projectLabel: string,

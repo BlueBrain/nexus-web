@@ -5,6 +5,7 @@ import {
   Organization,
   PaginatedList,
   PaginationSettings,
+  Project,
 } from '@bbp/nexus-sdk';
 import { RootState } from '../store/reducers';
 import { createOrg, modifyOrg, deprecateOrg } from '../store/actions/orgs';
@@ -16,6 +17,7 @@ import OrgForm from '../components/Orgs/OrgForm';
 import { CreateOrgPayload } from '@bbp/nexus-sdk/lib/Organization/types';
 import { Link } from 'react-router-dom';
 import { getDestinationParam } from '../utils';
+import RecentlyVisited from '../components/RecentlyVisited';
 
 interface LandingProps {
   paginatedOrgs?: PaginatedList<Organization>;
@@ -23,6 +25,7 @@ interface LandingProps {
   busy: boolean;
   error?: { message: string; name: string };
   goTo(orgLabel: string): void;
+  goToProject(Project: Project): void;
   fetchOrgs(paginationSettings?: PaginationSettings): any;
   createOrg: (
     orgLabel: string,
@@ -46,6 +49,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
   modifyOrg,
   deprecateOrg,
   displayPerPage,
+  goToProject,
 }) => {
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
@@ -189,8 +193,9 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           style={{ marginTop: '22vh' }}
           description={
             <span>
-              You need to <Link to={`/login${getDestinationParam()}`}>login</Link> in order to list
-              Organizations
+              You need to{' '}
+              <Link to={`/login${getDestinationParam()}`}>login</Link> in order
+              to list Organizations
             </span>
           }
         />
@@ -206,72 +211,79 @@ const Landing: React.FunctionComponent<LandingProps> = ({
 
   return (
     <div className="orgs-view view-container">
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
-        <h1 style={{ marginBottom: 0, marginRight: 8 }}>Organizations</h1>
-        <Button
-          type="primary"
-          onClick={() => setModalVisible(true)}
-          icon="plus-square"
+      <RecentlyVisited visitProject={goToProject} />
+      <div style={{ flexGrow: 1 }}>
+        <div
+          style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}
         >
-          Create Organization
-        </Button>
-      </div>
-      {paginatedOrgs.total === 0 ? (
-        <Empty
-          style={{ marginTop: '22vh' }}
-          description="No Organizations found..."
-        />
-      ) : (
-        <OrgList
-          orgs={paginatedOrgs.results}
-          onOrgClick={goTo}
-          busy={busy}
-          paginationSettings={{
-            total: paginatedOrgs.total,
-            from: paginatedOrgs.index,
-            pageSize: displayPerPage,
-          }}
-          onOrgEdit={(orgLabel: string) =>
-            setSelectedOrg(
-              paginatedOrgs.results.filter(o => o.label === orgLabel)[0]
-            )
-          }
-          onPaginationChange={pageNumber =>
-            fetchOrgs({
-              from: pageNumber * displayPerPage - displayPerPage,
-              size: displayPerPage,
-            })
-          }
-        />
-      )}
-      <Modal
-        title="New Organization"
-        visible={modalVisible}
-        onCancel={() => setModalVisible(false)}
-        confirmLoading={formBusy}
-        footer={null}
-      >
-        <OrgForm
-          onSubmit={(o: Organization) => saveAndCreate(o)}
-          busy={formBusy}
-        />
-      </Modal>
-      <Drawer
-        width={640}
-        visible={!!(selectedOrg && selectedOrg.label)}
-        onClose={() => setSelectedOrg(undefined)}
-        title={selectedOrg && selectedOrg.label}
-      >
-        {selectedOrg && (
-          <OrgForm
-            org={selectedOrg}
-            onSubmit={(o: Organization) => saveAndModify(selectedOrg, o)}
-            onDeprecate={() => saveAndDeprecate(selectedOrg)}
-            busy={formBusy}
-            mode="edit"
+          <h1 style={{ marginBottom: 0, marginRight: 8 }}>Organizations</h1>
+          <Button
+            type="primary"
+            onClick={() => setModalVisible(true)}
+            icon="plus-square"
+          >
+            Create Organization
+          </Button>
+        </div>
+        {paginatedOrgs.total === 0 ? (
+          <Empty
+            style={{ marginTop: '22vh' }}
+            description="No Organizations found..."
+          />
+        ) : (
+          <OrgList
+            orgs={paginatedOrgs.results}
+            onOrgClick={org => {
+              goTo(org.label);
+            }}
+            busy={busy}
+            paginationSettings={{
+              total: paginatedOrgs.total,
+              from: paginatedOrgs.index,
+              pageSize: displayPerPage,
+            }}
+            onOrgEdit={(orgLabel: string) =>
+              setSelectedOrg(
+                paginatedOrgs.results.filter(o => o.label === orgLabel)[0]
+              )
+            }
+            onPaginationChange={pageNumber =>
+              fetchOrgs({
+                from: pageNumber * displayPerPage - displayPerPage,
+                size: displayPerPage,
+              })
+            }
           />
         )}
-      </Drawer>
+        <Modal
+          title="New Organization"
+          visible={modalVisible}
+          onCancel={() => setModalVisible(false)}
+          confirmLoading={formBusy}
+          footer={null}
+        >
+          <OrgForm
+            onSubmit={(o: Organization) => saveAndCreate(o)}
+            busy={formBusy}
+          />
+        </Modal>
+        <Drawer
+          width={640}
+          visible={!!(selectedOrg && selectedOrg.label)}
+          onClose={() => setSelectedOrg(undefined)}
+          title={selectedOrg && selectedOrg.label}
+        >
+          {selectedOrg && (
+            <OrgForm
+              org={selectedOrg}
+              onSubmit={(o: Organization) => saveAndModify(selectedOrg, o)}
+              onDeprecate={() => saveAndDeprecate(selectedOrg)}
+              busy={formBusy}
+              mode="edit"
+            />
+          )}
+        </Drawer>
+      </div>
     </div>
   );
 };
@@ -285,6 +297,8 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
   goTo: (org: string) => dispatch(push(`/${org}`)),
+  goToProject: (project: Project) =>
+    dispatch(push(`/${project.orgLabel}/${project.label}`)),
   fetchOrgs: (paginationSettings?: PaginationSettings) =>
     dispatch(fetchOrgs(paginationSettings)),
   createOrg: (orgLabel: string, orgPayload: CreateOrgPayload) =>

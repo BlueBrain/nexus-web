@@ -31,6 +31,7 @@ import QueryContainer from '../components/Workspace/Queries/QueriesContainer';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { CreateFileOptions } from '@bbp/nexus-sdk/lib/File/types';
+import usePreviouslyVisited from '../components/hooks/usePreviouslyVisited';
 
 interface ProjectViewProps {
   project: Project | null;
@@ -72,11 +73,16 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   goToFile,
 }) => {
   const projectLabel = project ? project.label : null;
+  const { setPreviouslyVisited } = usePreviouslyVisited('visitedProjects');
   React.useEffect(() => {
     if (projectLabel !== match.params.project) {
       fetchProject(match.params.org, match.params.project);
     }
   }, [match.params.project, match.params.org]);
+
+  if (project) {
+    setPreviouslyVisited(project);
+  }
 
   let description;
   let more;
@@ -284,7 +290,11 @@ const mapDispatchToProps = (dispatch: any) => {
         )
       ),
     onLoginClick: () =>
-      dispatch(push(`/login${getDestinationParam()}`, { previousUrl: window.location.href })),
+      dispatch(
+        push(`/login${getDestinationParam()}`, {
+          previousUrl: window.location.href,
+        })
+      ),
   };
 };
 
