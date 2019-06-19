@@ -60,7 +60,7 @@ const History: React.FunctionComponent<HistoryProps> = props => {
               style={{ width: 'max-content', marginTop: '1em' }}
             >
               {hasChanges ? (
-                <Card>JSON.stringify(changes, null, 2)</Card>
+                <Card>{JSON.stringify(changes, null, 2)}</Card>
               ) : (
                 'No meaningful changes'
               )}
