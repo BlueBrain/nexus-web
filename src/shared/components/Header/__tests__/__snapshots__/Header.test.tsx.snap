@@ -13,6 +13,7 @@ exports[`Header component Should render correctly 1`] = `
     <a
       className="logo"
       href=""
+      onClick={[Function]}
     >
       <img
         alt="Nexus"
