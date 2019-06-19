@@ -121,9 +121,19 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
       <div className="project-view">
         {!project && (
           <>
-            <h1 style={{ marginBottom: 0, marginRight: 8 }}>
-              {match.params.project}
-            </h1>
+            <div className="project-banner">
+              <div className="label">
+                <h1 className="name">
+                  {' '}
+                  {org && (
+                    <span>
+                      <a onClick={() => goToOrg(org.label)}>{org.label}</a> |{' '}
+                    </span>
+                  )}{' '}
+                  {match.params.project.label}
+                </h1>
+              </div>
+            </div>
             <Empty style={{ marginTop: '22vh' }} description={description}>
               {more}
             </Empty>
