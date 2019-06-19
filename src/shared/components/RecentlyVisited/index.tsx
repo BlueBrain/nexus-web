@@ -24,7 +24,7 @@ const RecentlyVisited: React.FunctionComponent<RecentlyVisitedProps> = ({
         {previouslyVisitedList.slice(0, DEFAULT_VISITED_MAX).map(project => {
           return (
             <ListItem
-              onAllClick={() => {
+              onClick={() => {
                 visitProject(project);
               }}
               key={project.label}

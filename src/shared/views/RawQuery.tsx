@@ -70,29 +70,34 @@ export const RawElasticSearchQueryComponent: React.FunctionComponent<
 
   return (
     <div className="view-view view-container">
-      <h1 className="name">
-        <span>
-          <a onClick={() => goToOrg(match.params.org)}>{match.params.org}</a> |{' '}
-          <a
-            onClick={() => goToProject(match.params.org, match.params.project)}
-          >
-            {match.params.project}
-          </a>{' '}
-          |{' '}
-        </span>
-        <Dropdown overlay={menu}>
-          <a className="ant-dropdown-link">
-            {view}
-            <Icon type="down" />
-          </a>
-        </Dropdown>
-      </h1>
-      <RawElasticSearchQueryView
-        initialQuery={query}
-        wantedOrg={match.params.org}
-        wantedProject={match.params.project}
-        wantedView={match.params.view}
-      />
+      <div style={{ flexGrow: 1 }}>
+        <h1 className="name">
+          <span>
+            <a onClick={() => goToOrg(match.params.org)}>{match.params.org}</a>{' '}
+            |{' '}
+            <a
+              onClick={() =>
+                goToProject(match.params.org, match.params.project)
+              }
+            >
+              {match.params.project}
+            </a>{' '}
+            |{' '}
+          </span>
+          <Dropdown overlay={menu}>
+            <a className="ant-dropdown-link">
+              {view}
+              <Icon type="down" />
+            </a>
+          </Dropdown>
+        </h1>
+        <RawElasticSearchQueryView
+          initialQuery={query}
+          wantedOrg={match.params.org}
+          wantedProject={match.params.project}
+          wantedView={match.params.view}
+        />
+      </div>
     </div>
   );
 };
@@ -135,28 +140,33 @@ const RawSparqlQueryComponent: React.FunctionComponent<RawQueryProps> = ({
   );
   return (
     <div className="view-view view-container">
-      <h1 className="name">
-        <span>
-          <a onClick={() => goToOrg(match.params.org)}>{match.params.org}</a> |{' '}
-          <a
-            onClick={() => goToProject(match.params.org, match.params.project)}
-          >
-            {match.params.project}
-          </a>{' '}
-          |{' '}
-        </span>
-        <Dropdown overlay={menu}>
-          <a className="ant-dropdown-link">
-            {view}
-            <Icon type="down" />
-          </a>
-        </Dropdown>
-      </h1>
-      <RawSparqlQueryView
-        wantedOrg={match.params.org}
-        wantedProject={match.params.project}
-        wantedView={view}
-      />
+      <div style={{ flexGrow: 1 }}>
+        <h1 className="name">
+          <span>
+            <a onClick={() => goToOrg(match.params.org)}>{match.params.org}</a>{' '}
+            |{' '}
+            <a
+              onClick={() =>
+                goToProject(match.params.org, match.params.project)
+              }
+            >
+              {match.params.project}
+            </a>{' '}
+            |{' '}
+          </span>
+          <Dropdown overlay={menu}>
+            <a className="ant-dropdown-link">
+              {view}
+              <Icon type="down" />
+            </a>
+          </Dropdown>
+        </h1>
+        <RawSparqlQueryView
+          wantedOrg={match.params.org}
+          wantedProject={match.params.project}
+          wantedView={view}
+        />
+      </div>
     </div>
   );
 };

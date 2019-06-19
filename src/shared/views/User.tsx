@@ -14,30 +14,32 @@ const User: React.FunctionComponent<UserProps> = props => {
   const { name, identities } = props;
   return (
     <div className="user-view view-container">
-      <h1>{name}</h1>
-      <h2>Identities</h2>
-      <p>
-        This is a list of the identities you are associated with on the
-        platform.
-      </p>
-      <Card>
-        <ul className="identities-list">
-          {identities
-            .reverse()
-            .map(({ '@id': id, '@type': type, realm, subject }) => (
-              <ListItem
-                id={id}
-                label={
-                  <div>
-                    <em>{type}</em> {subject}
-                  </div>
-                }
-                details={<span>{realm}</span>}
-                description={id}
-              />
-            ))}
-        </ul>
-      </Card>
+      <div style={{ flexGrow: 1 }}>
+        <h1>{name}</h1>
+        <h2>Identities</h2>
+        <p>
+          This is a list of the identities you are associated with on the
+          platform.
+        </p>
+        <Card>
+          <ul className="identities-list">
+            {identities
+              .reverse()
+              .map(({ '@id': id, '@type': type, realm, subject }) => (
+                <ListItem
+                  id={id}
+                  label={
+                    <div>
+                      <em>{type}</em> {subject}
+                    </div>
+                  }
+                  details={<span>{realm}</span>}
+                  description={id}
+                />
+              ))}
+          </ul>
+        </Card>
+      </div>
     </div>
   );
 };
