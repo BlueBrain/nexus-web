@@ -156,6 +156,7 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
               editable={true}
               rawData={jsonValue}
               onSubmit={handleSubmit}
+              showExpanded={false}
             />
           )}
         </Form.Item>
