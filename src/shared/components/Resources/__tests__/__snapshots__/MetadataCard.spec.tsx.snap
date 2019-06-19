@@ -710,13 +710,6 @@ exports[`MetadataCard component should render with Set username 1`] = `
                         >
                           <span
                             className="ant-avatar-string"
-                            style={
-                              Object {
-                                "WebkitTransform": "scale(-Infinity) translateX(-50%)",
-                                "msTransform": "scale(-Infinity) translateX(-50%)",
-                                "transform": "scale(-Infinity) translateX(-50%)",
-                              }
-                            }
                           >
                             J
                           </span>
@@ -1834,6 +1827,7 @@ exports[`MetadataCard component should render with Set username 1`] = `
                             <Button
                               block={false}
                               ghost={false}
+                              htmlType="button"
                               icon="copy"
                               key="trigger"
                               loading={false}
@@ -1879,6 +1873,7 @@ exports[`MetadataCard component should render with Set username 1`] = `
                                             className=""
                                             data-icon="copy"
                                             fill="currentColor"
+                                            focusable="false"
                                             height="1em"
                                             key="svg-copy"
                                             viewBox="64 64 896 896"
@@ -2443,6 +2438,7 @@ exports[`MetadataCard component should render with Set username 1`] = `
                             <Button
                               block={false}
                               ghost={false}
+                              htmlType="button"
                               icon="copy"
                               key="trigger"
                               loading={false}
@@ -2478,6 +2474,7 @@ exports[`MetadataCard component should render with Set username 1`] = `
                                             className=""
                                             data-icon="copy"
                                             fill="currentColor"
+                                            focusable="false"
                                             height="1em"
                                             key="svg-copy"
                                             viewBox="64 64 896 896"
@@ -2554,6 +2551,7 @@ exports[`MetadataCard component should render with Set username 1`] = `
                               className=""
                               data-icon="file-sync"
                               fill="currentColor"
+                              focusable="false"
                               height="1em"
                               key="svg-file-sync"
                               viewBox="64 64 896 896"
@@ -3310,13 +3308,6 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                         >
                           <span
                             className="ant-avatar-string"
-                            style={
-                              Object {
-                                "WebkitTransform": "scale(-Infinity) translateX(-50%)",
-                                "msTransform": "scale(-Infinity) translateX(-50%)",
-                                "transform": "scale(-Infinity) translateX(-50%)",
-                              }
-                            }
                           >
                             U
                           </span>
@@ -4434,6 +4425,7 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                             <Button
                               block={false}
                               ghost={false}
+                              htmlType="button"
                               icon="copy"
                               key="trigger"
                               loading={false}
@@ -4479,6 +4471,7 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                                             className=""
                                             data-icon="copy"
                                             fill="currentColor"
+                                            focusable="false"
                                             height="1em"
                                             key="svg-copy"
                                             viewBox="64 64 896 896"
@@ -5043,6 +5036,7 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                             <Button
                               block={false}
                               ghost={false}
+                              htmlType="button"
                               icon="copy"
                               key="trigger"
                               loading={false}
@@ -5078,6 +5072,7 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                                             className=""
                                             data-icon="copy"
                                             fill="currentColor"
+                                            focusable="false"
                                             height="1em"
                                             key="svg-copy"
                                             viewBox="64 64 896 896"
@@ -5154,6 +5149,7 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                               className=""
                               data-icon="file-sync"
                               fill="currentColor"
+                              focusable="false"
                               height="1em"
                               key="svg-file-sync"
                               viewBox="64 64 896 896"
@@ -5910,13 +5906,6 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                         >
                           <span
                             className="ant-avatar-string"
-                            style={
-                              Object {
-                                "WebkitTransform": "scale(-Infinity) translateX(-50%)",
-                                "msTransform": "scale(-Infinity) translateX(-50%)",
-                                "transform": "scale(-Infinity) translateX(-50%)",
-                              }
-                            }
                           >
                             J
                           </span>
@@ -7034,6 +7023,7 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                             <Button
                               block={false}
                               ghost={false}
+                              htmlType="button"
                               icon="copy"
                               key="trigger"
                               loading={false}
@@ -7079,6 +7069,7 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                                             className=""
                                             data-icon="copy"
                                             fill="currentColor"
+                                            focusable="false"
                                             height="1em"
                                             key="svg-copy"
                                             viewBox="64 64 896 896"
@@ -7643,6 +7634,7 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                             <Button
                               block={false}
                               ghost={false}
+                              htmlType="button"
                               icon="copy"
                               key="trigger"
                               loading={false}
@@ -7678,6 +7670,7 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                                             className=""
                                             data-icon="copy"
                                             fill="currentColor"
+                                            focusable="false"
                                             height="1em"
                                             key="svg-copy"
                                             viewBox="64 64 896 896"
@@ -7754,6 +7747,7 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                               className=""
                               data-icon="file-sync"
                               fill="currentColor"
+                              focusable="false"
                               height="1em"
                               key="svg-file-sync"
                               viewBox="64 64 896 896"

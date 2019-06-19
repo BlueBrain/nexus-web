@@ -76,6 +76,7 @@ exports[`Organisation Form component should render correctly 1`] = `
                 <Row
                   className="ant-form-item"
                   gutter={0}
+                  key="row"
                 >
                   <div
                     className="ant-row ant-form-item"
@@ -94,7 +95,7 @@ exports[`Organisation Form component should render correctly 1`] = `
                       }
                     >
                       <div
-                        className="ant-form-item-label ant-col-xs-24 ant-col-sm-5"
+                        className="ant-col ant-form-item-label ant-col-xs-24 ant-col-sm-5"
                       >
                         <label
                           className="ant-form-item-required"
@@ -120,7 +121,7 @@ exports[`Organisation Form component should render correctly 1`] = `
                       }
                     >
                       <div
-                        className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19"
+                        className="ant-col ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19"
                       >
                         <div
                           className="ant-form-item-control"
@@ -279,6 +280,7 @@ exports[`Organisation Form component should render correctly 1`] = `
                 <Row
                   className="ant-form-item"
                   gutter={0}
+                  key="row"
                 >
                   <div
                     className="ant-row ant-form-item"
@@ -297,7 +299,7 @@ exports[`Organisation Form component should render correctly 1`] = `
                       }
                     >
                       <div
-                        className="ant-form-item-label ant-col-xs-24 ant-col-sm-5"
+                        className="ant-col ant-form-item-label ant-col-xs-24 ant-col-sm-5"
                       >
                         <label
                           className=""
@@ -323,7 +325,7 @@ exports[`Organisation Form component should render correctly 1`] = `
                       }
                     >
                       <div
-                        className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19"
+                        className="ant-col ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19"
                       >
                         <div
                           className="ant-form-item-control"
@@ -461,6 +463,7 @@ exports[`Organisation Form component should render correctly 1`] = `
                 <Row
                   className="ant-form-item"
                   gutter={0}
+                  key="row"
                 >
                   <div
                     className="ant-row ant-form-item"
@@ -481,7 +484,7 @@ exports[`Organisation Form component should render correctly 1`] = `
                       }
                     >
                       <div
-                        className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-xs-offset-0 ant-col-sm-19 ant-col-sm-offset-5"
+                        className="ant-col ant-form-item-control-wrapper ant-col-xs-24 ant-col-xs-offset-0 ant-col-sm-19 ant-col-sm-offset-5"
                       >
                         <div
                           className="ant-form-item-control"
