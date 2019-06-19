@@ -19,11 +19,12 @@ const History: React.FunctionComponent<HistoryProps> = props => {
   React.useEffect(() => {
     listRevisions(resource)
       .then(setRevisions)
-      .catch(console.error);
+      .catch(error => {
+        // do something?
+      });
   }, [resource.id]);
 
   const userName = getUsername(resource.createdBy);
-  console.log({ revisions });
 
   const history = revisions
     .map((revision: any, index: number) => {
