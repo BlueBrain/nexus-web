@@ -17,6 +17,7 @@ export interface QueryListItemProps {
 const QueryListItem: React.FunctionComponent<QueryListItemProps> = props => {
   const { predicate, resource, onClick = () => {} } = props;
   const imagePreviewProps = useNexusImage(resource);
+
   return (
     <ListItem
       popover={{

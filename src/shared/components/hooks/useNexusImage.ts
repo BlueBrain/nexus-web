@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Resource, NexusFile } from '@bbp/nexus-sdk';
+import Nexus, { Resource, NexusFile } from '@bbp/nexus-sdk';
 import useNexusFile from './useNexusFile';
 
 // Don't download preview if file size is > than 1MB
@@ -8,16 +8,18 @@ const DEFAULT_DISPLAY_SIZE = 1e6;
 const imagesExtensions = ['tiff', 'tif', 'jpeg', 'jpg', 'png', 'svg'];
 
 export function hasDisplayableImage(resource: Resource | NexusFile): boolean {
-  if (!resource.type || resource.type !== 'File') {
+  if (!resource.type || !resource.type.includes('File')) {
     return false;
   }
-
-  const mediaType = resource.mediaType;
-  const fileExtension: string = [...resource.filename.split('.')].pop() || '';
+  const nexusFile = resource as NexusFile;
+  const mediaType = nexusFile.raw['_mediaType'];
+  const bytes = nexusFile.raw['_bytes'];
+  const fileExtension: string =
+    [...nexusFile.raw['_filename'].split('.')].pop() || '';
 
   return (
     (mediaType.includes('image') || imagesExtensions.includes(fileExtension)) &&
-    resource.bytes <= DEFAULT_DISPLAY_SIZE
+    bytes <= DEFAULT_DISPLAY_SIZE
   );
 }
 
