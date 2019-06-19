@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Divider } from 'antd';
 import { Project, Resource, NexusFile } from '@bbp/nexus-sdk';
-import ResourceForm from '../Resources/ResourceForm';
+import ResourceForm from '../Resources/ResourceFormModal';
 import { Link } from 'react-router-dom';
 import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
 import SideMenu from './SideMenu';
@@ -58,7 +58,6 @@ const Menu: React.FunctionComponent<MenuProps> = ({
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <ResourceForm
             createResource={createResource}
-            project={project}
             render={(updateFormVisible: () => void) => {
               return (
                 <Button
