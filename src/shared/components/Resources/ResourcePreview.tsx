@@ -13,7 +13,6 @@ const ResourcePreview: React.FunctionComponent<
 > = props => {
   const { resource } = props;
   const { image } = useNexusImage(resource);
-  console.log({ image });
   return (
     <>
       {image ? (
