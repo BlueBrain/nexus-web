@@ -1,24 +1,70 @@
 import * as React from 'react';
-import {
-  Form,
-  Input,
-  Button,
-  Spin,
-  Modal,
-  AutoComplete,
-  notification,
-} from 'antd';
+import { Cascader, Form, Button, Spin, Modal } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
-import { Resource } from '@bbp/nexus-sdk';
 import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
 import ResourceEditor from './ResourceEditor';
-import SchemaTypeOption from './SchemaOption';
+import { CascaderOptionType } from 'antd/lib/cascader';
+import {
+  DEFAULT_RESOURCE,
+  RESOURCES_SCHEMA_URI,
+  DEFAULT_RESOURCES,
+} from './defaultResourcePayloads';
 
-const Option = AutoComplete.Option;
+import './ResourceForm.less';
 
-const DEFAULT_RESOURCE = {
-  context: {},
-  '@type': ['MyType'],
+const AVAILABLE_SCHEMAS: CascaderOptionType[] = [
+  {
+    value: '_',
+    label: 'Any Resource',
+  },
+  {
+    value: 'Storage',
+    label: 'Storage',
+    children: [
+      { value: 'DiskStorage', label: 'Disk Storage' },
+      { value: 'RemoteStorage', label: 'Remote Storage' },
+      { value: 'S3Storage', label: 'S3 Storage' },
+    ],
+  },
+  {
+    value: 'View',
+    label: 'View',
+    children: [
+      { value: 'SparqlView', label: 'Sparql View' },
+      { value: 'ElasticSearchView', label: 'ElasticSearch View' },
+      { value: 'AggregateSparqlView', label: 'Aggregate Sparql View' },
+      {
+        value: 'AggregateElasticSearchView',
+        label: 'Aggregate ElasticSearch View',
+      },
+    ],
+  },
+  {
+    value: 'Resolver',
+    label: 'Resolver',
+    children: [
+      { value: 'InProject', label: 'In Project' },
+      { value: 'CrossProject', label: 'Cross Project' },
+    ],
+  },
+];
+
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 5 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 19 },
+  },
+};
+
+const formItemLayoutWithOutLabel = {
+  wrapperCol: {
+    xs: { span: 24, offset: 0 },
+    sm: { span: 19, offset: 5 },
+  },
 };
 
 export interface ResourceFormProps {
@@ -27,7 +73,6 @@ export interface ResourceFormProps {
     schemaId: string;
     payload: CreateResourcePayload;
   };
-  schemas: { key: string; count: number }[];
   busy?: boolean;
   onSubmit?(resource: {
     schemaId: string;
@@ -43,7 +88,6 @@ export interface ResourceFormProps {
  */
 const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
   form,
-  schemas,
   busy = false,
   onSubmit = () => {},
   onDeprecate = () => {},
@@ -53,39 +97,33 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
     DEFAULT_RESOURCE
   );
   const { getFieldDecorator } = form;
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 5 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 19 },
-    },
-  };
-  const formItemLayoutWithOutLabel = {
-    wrapperCol: {
-      xs: { span: 24, offset: 0 },
-      sm: { span: 19, offset: 5 },
-    },
-  };
 
   const handleSubmit = (rawData: any) => {
+    form.setFieldsValue({ editorContent: rawData });
     form.validateFields((err, values) => {
       if (!err && !busy) {
-        const { context, ...rest } = rawData;
+        const { resourceTypes, editorContent } = values;
+        const selectedSchema: string =
+          resourceTypes.find((type: string) =>
+            Object.keys(RESOURCES_SCHEMA_URI).includes(type)
+          ) || '_';
+
         const payload = {
-          context,
-          type: values.type,
-          resourceId: values['@id'],
-          ...rest,
+          ...editorContent,
+          type: resourceTypes,
         };
         onSubmit({
           payload,
-          schemaId: values.schemaId,
+          schemaId: RESOURCES_SCHEMA_URI[selectedSchema],
         });
       }
     });
+  };
+
+  const handleTypeChange = (types: string[]) => {
+    const selectedType: string =
+      types.find(type => Object.keys(DEFAULT_RESOURCES).includes(type)) || '_';
+    setJsonValue(DEFAULT_RESOURCES[selectedType]);
   };
 
   const confirmDeprecate = () => {
@@ -98,46 +136,30 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
 
   return (
     <Spin spinning={busy}>
-      <Form>
-        <Form.Item label="@id" {...formItemLayout}>
-          {getFieldDecorator('@id', {
-            rules: [{ required: false }],
+      <Form className="ResourceForm">
+        <Form.Item label="Resource Type" {...formItemLayout}>
+          {getFieldDecorator('resourceTypes', {
+            rules: [{ required: true }],
           })(
-            <Input placeholder="Add your own @id" disabled={mode === 'edit'} />
-          )}
-        </Form.Item>
-        <Form.Item {...formItemLayout} label="schema">
-          {getFieldDecorator('schemaId', {
-            initialValue: '_',
-            rules: [
-              {
-                required: true,
-                message: 'Please select a schema!',
-                type: 'string',
-              },
-            ],
-          })(
-            <AutoComplete
-              className="certain-category-search"
-              dropdownClassName="certain-category-search-dropdown"
-              dropdownMatchSelectWidth={false}
-              dataSource={(schemas as { key: string; count?: number }[])
-                .concat([{ key: '_' }])
-                .map(({ key, count }) => (
-                  <Option key={key}>
-                    <SchemaTypeOption value={key} count={count} />
-                  </Option>
-                ))}
-              placeholder={`constrain by Schema`}
-              optionLabelProp="value"
+            <Cascader
+              options={AVAILABLE_SCHEMAS}
+              disabled={mode === 'edit'}
+              onChange={handleTypeChange}
             />
           )}
         </Form.Item>
-        <ResourceEditor
-          editable={true}
-          rawData={jsonValue}
-          onSubmit={handleSubmit}
-        />
+        <Form.Item {...formItemLayoutWithOutLabel}>
+          {getFieldDecorator('editorContent', {
+            rules: [{ required: false }],
+          })(
+            <ResourceEditor
+              editable={true}
+              rawData={jsonValue}
+              onSubmit={handleSubmit}
+              showExpanded={false}
+            />
+          )}
+        </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>
           {mode === 'edit' && (
             <Button
@@ -154,75 +176,4 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
   );
 };
 
-export const ResourceFormContainer = Form.create<ResourceFormProps>()(
-  ResourceForm
-);
-
-interface ResourceFormModalProps {
-  project: any;
-  createResource: (
-    schemaId: string,
-    payload: CreateResourcePayload
-  ) => Promise<Resource>;
-  render: (updateFormVisible: () => void) => React.ReactElement<any>;
-  onSuccess?: () => void;
-}
-
-const ResourceFormModal: React.FunctionComponent<ResourceFormModalProps> = ({
-  project,
-  createResource,
-  render,
-  onSuccess = () => {},
-}) => {
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const [formBusy, setFormBusy] = React.useState(false);
-  const saveAndCreate = async (resourceToCreate: any) => {
-    const { schemaId, payload } = resourceToCreate;
-    setFormBusy(true);
-    try {
-      const resource = await createResource(
-        encodeURIComponent(schemaId),
-        payload
-      );
-      notification.success({
-        message: 'Resource saved',
-        description: resource.name,
-        duration: 2,
-      });
-      onSuccess();
-      setFormBusy(false);
-      setModalVisible(false);
-    } catch (error) {
-      notification.error({
-        message: 'An unknown error occurred',
-        description: error.message,
-        duration: 0,
-      });
-      setFormBusy(false);
-    }
-  };
-  const updateFormVisible = () => {
-    setModalVisible(!modalVisible);
-  };
-  return (
-    <>
-      <Modal
-        title="New Resource"
-        visible={modalVisible}
-        destroyOnClose={true}
-        onCancel={() => setModalVisible(false)}
-        confirmLoading={formBusy}
-        footer={null}
-      >
-        <ResourceFormContainer
-          schemas={(project as any)._constrainedBy}
-          onSubmit={(r: any) => saveAndCreate(r)}
-          busy={formBusy}
-        />
-      </Modal>
-      {render(updateFormVisible)}
-    </>
-  );
-};
-
-export default ResourceFormModal;
+export default Form.create<ResourceFormProps>()(ResourceForm);

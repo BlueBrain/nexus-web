@@ -16,6 +16,7 @@ export interface ResourceEditorProps {
   editable: boolean;
   editing?: boolean;
   expanded?: boolean;
+  showExpanded?: boolean;
 }
 
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
@@ -25,6 +26,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     editable,
     editing = false,
     expanded = false,
+    showExpanded = true,
   } = props;
   const [isEditing, setEditing] = React.useState(editing);
   const [valid, setValid] = React.useState(true);
@@ -77,7 +79,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
           )}
         </div>
         <div className="controls">
-          {!isEditing && valid && (
+          {showExpanded && !isEditing && valid && (
             <Switch
               checkedChildren="expanded"
               unCheckedChildren="expand"
