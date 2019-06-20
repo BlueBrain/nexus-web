@@ -28,7 +28,7 @@ const RecentlyVisited: React.FunctionComponent<RecentlyVisitedProps> = ({
                 visitProject(project);
               }}
               key={project.label}
-              label={project.label}
+              label={`${project.orgLabel} / ${project.label}`}
               id={project.label}
               description={project.description}
             />

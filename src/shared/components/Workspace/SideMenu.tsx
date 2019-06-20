@@ -13,11 +13,20 @@ export interface SideMenuProps {
   title?: string;
   visible: boolean;
   onClose: () => void;
+  animations?: {
+    from: () => { [key: string]: number };
+    leave: () => { [key: string]: number };
+    enter: () => { [key: string]: number };
+  };
 }
 
 const SideMenu: React.FunctionComponent<SideMenuProps> = props => {
-  const { title, children, visible, onClose } = props;
-  const transitions = useTransition(visible, null, DEFAULT_ANIMATIONS);
+  const { title, children, visible, onClose, animations } = props;
+  const transitions = useTransition(
+    visible,
+    null,
+    animations || DEFAULT_ANIMATIONS
+  );
   return (
     <>
       {transitions.map(

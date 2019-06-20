@@ -12,6 +12,7 @@ import { Realm } from '@bbp/nexus-sdk-legacy';
 import { getLogoutUrl, getDestinationParam } from '../utils';
 import { UserManager } from 'oidc-client';
 import { RootState } from '../store/reducers';
+import NavigationMenuContainer, { NavMenu } from '../components/NavigationMenu';
 
 const favicon = require('../favicon.png');
 const TITLE = 'A knowledge graph for data-driven science';
@@ -43,6 +44,8 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
     localStorage.removeItem('nexus__state');
     userManager && userManager.signoutRedirect();
   };
+
+  const [tackMenu, setTackMenu] = React.useState(true);
 
   return (
     <>
@@ -86,8 +89,24 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
         onLoginClick={() => goTo(`/login${getDestinationParam()}`)}
         version={version}
         githubIssueURL={githubIssueURL}
-      />
-      <div className="MainLayout_body">{children}</div>
+      >
+        <NavigationMenuContainer
+          goToProject={project => goTo(`/${project.orgLabel}/${project.label}`)}
+          render={(visible, toggleVisibility) => {
+            return <a onClick={() => toggleVisibility()}>Projects</a>;
+          }}
+        />
+      </Header>
+      <div className="MainLayout_body">
+        {tackMenu && (
+          <NavMenu
+            goToProject={project =>
+              goTo(`/${project.orgLabel}/${project.label}`)
+            }
+          />
+        )}
+        <div>{children}</div>
+      </div>
     </>
   );
 };
