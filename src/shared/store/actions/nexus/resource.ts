@@ -29,14 +29,12 @@ const fetchResourceFulfilledAction: ActionCreator<
     ResourceActionTypes.FULFILLED,
     {
       resource: Resource;
-      dotGraph: string;
     }
   >
-> = (resource: Resource, dotGraph: string, links) => ({
+> = (resource: Resource, links) => ({
   type: ResourceActionTypes.FULFILLED,
   payload: {
     resource,
-    dotGraph,
   },
 });
 
@@ -49,10 +47,7 @@ const fetchResourceFailedAction: ActionCreator<
 
 export type ResourceActions =
   | FetchAction<ResourceActionTypes.FETCHING>
-  | FetchFulfilledAction<
-      ResourceActionTypes.FULFILLED,
-      { resource: Resource; dotGraph: string }
-    >
+  | FetchFulfilledAction<ResourceActionTypes.FULFILLED, { resource: Resource }>
   | FetchFailedAction<ResourceActionTypes.FAILED>;
 
 export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
@@ -70,7 +65,6 @@ export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
         ResourceActionTypes.FULFILLED,
         {
           resource: Resource;
-          dotGraph: string;
         }
       >
     | FetchFailedAction<ResourceActionTypes.FAILED>
@@ -87,11 +81,7 @@ export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
           expanded,
         }
       );
-      const dotGraph = await Resource.getSelfRawAs(
-        resource.self,
-        ResourceGetFormat.DOT
-      );
-      return dispatch(fetchResourceFulfilledAction(resource, dotGraph));
+      return dispatch(fetchResourceFulfilledAction(resource));
     } catch (e) {
       return dispatch(fetchResourceFailedAction(formatError(e)));
     }
@@ -110,7 +100,6 @@ export const deprecateResource: ActionCreator<ThunkAction> = (
         ResourceActionTypes.FULFILLED,
         {
           resource: Resource;
-          dotGraph: string;
         }
       >
     | FetchFailedAction<ResourceActionTypes.FAILED>
@@ -124,13 +113,7 @@ export const deprecateResource: ActionCreator<ThunkAction> = (
         resource.orgLabel,
         resource.projectLabel
       );
-      const dotGraph = await Resource.getSelfRawAs(
-        resource.self,
-        ResourceGetFormat.DOT
-      );
-      return dispatch(
-        fetchResourceFulfilledAction(deprecatedResource, dotGraph)
-      );
+      return dispatch(fetchResourceFulfilledAction(deprecatedResource));
     } catch (e) {
       return dispatch(fetchResourceFailedAction(formatError(e)));
     }
