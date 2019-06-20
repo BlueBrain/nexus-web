@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Drawer, notification, Modal, Button, Empty } from 'antd';
-import { Project, PaginatedList, PaginationSettings } from '@bbp/nexus-sdk';
-import { CreateProjectPayload } from '@bbp/nexus-sdk/lib/Project/types';
+import { Project, PaginatedList, PaginationSettings } from '@bbp/nexus-sdk-legacy';
+import { CreateProjectPayload } from '@bbp/nexus-sdk-legacy/lib/Project/types';
 import { RootState } from '../store/reducers';
 import {
   modifyProject,

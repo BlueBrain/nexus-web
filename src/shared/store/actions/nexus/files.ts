@@ -1,8 +1,8 @@
 import { ActionCreator, Dispatch } from 'redux';
 import { ThunkAction } from '../..';
-import { NexusFile } from '@bbp/nexus-sdk';
+import { NexusFile } from '@bbp/nexus-sdk-legacy';
 import { RootState } from '../../reducers';
-import { CreateFileOptions } from '@bbp/nexus-sdk/lib/File/types';
+import { CreateFileOptions } from '@bbp/nexus-sdk-legacy/lib/File/types';
 
 export const createFile: ActionCreator<ThunkAction> = (
   file: File,

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Nexus, { Resource, NexusFile } from '@bbp/nexus-sdk';
+import Nexus, { Resource, NexusFile } from '@bbp/nexus-sdk-legacy';
 import useNexusFile from './useNexusFile';
 
 // Don't download preview if file size is > than 1MB

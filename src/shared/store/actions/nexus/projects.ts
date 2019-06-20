@@ -1,8 +1,8 @@
 import { ActionCreator, Dispatch } from 'redux';
-import { Project, ElasticSearchView } from '@bbp/nexus-sdk';
+import { Project, ElasticSearchView } from '@bbp/nexus-sdk-legacy';
 import { ThunkAction } from '../..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
-import { ElasticSearchViewAggregationResponse } from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
+import { ElasticSearchViewAggregationResponse } from '@bbp/nexus-sdk-legacy/lib/View/ElasticSearchView/types';
 import { formatError } from '../utils/errors';
 
 const DEFAULT_AGG_TERM_SIZE = 999;

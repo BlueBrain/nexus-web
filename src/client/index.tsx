@@ -12,7 +12,7 @@ import {
   userExpiring,
   userSignedOut,
 } from 'redux-oidc';
-import Nexus from '@bbp/nexus-sdk';
+import Nexus from '@bbp/nexus-sdk-legacy';
 import getUserManager from './userManager';
 import App from '../shared/App';
 import configureStore from '../shared/store';

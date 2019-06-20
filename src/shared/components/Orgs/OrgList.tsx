@@ -4,7 +4,7 @@ import OrgCard, { OrgCardProps } from './OrgCard';
 import AnimatedList from '../Animations/AnimatedList';
 
 import './Orgs.less';
-import { Organization } from '@bbp/nexus-sdk';
+import { Organization } from '@bbp/nexus-sdk-legacy';
 
 export interface OrgListProps {
   orgs: OrgCardProps[];

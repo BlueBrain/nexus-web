@@ -4,9 +4,9 @@ import {
   PaginationSettings,
   ElasticSearchView,
   SparqlView,
-} from '@bbp/nexus-sdk';
-import { ElasticSearchHit } from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
-import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/lib/View/SparqlView/types';
+} from '@bbp/nexus-sdk-legacy';
+import { ElasticSearchHit } from '@bbp/nexus-sdk-legacy/lib/View/ElasticSearchView/types';
+import { SparqlViewQueryResponse } from '@bbp/nexus-sdk-legacy/lib/View/SparqlView/types';
 import { ThunkAction } from '..';
 import { formatError, RequestError } from './utils/errors';
 

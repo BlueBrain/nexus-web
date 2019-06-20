@@ -1,5 +1,5 @@
 import { isBrowser } from '.';
-import { NexusFile } from '@bbp/nexus-sdk';
+import { NexusFile } from '@bbp/nexus-sdk-legacy';
 
 export const downloadNexusFile = async (selfUrl: string) => {
   try {

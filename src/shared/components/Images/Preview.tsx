@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './image-preview.less';
 import useNexusImage from '../hooks/useNexusImage';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk-legacy';
 import LightboxComponent from './Lightbox';
 
 export interface ImagePreviewProps {

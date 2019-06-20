@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Resource, NexusFile } from '@bbp/nexus-sdk';
+import { Resource, NexusFile } from '@bbp/nexus-sdk-legacy';
 import ListItem from '../../../Animations/ListItem';
 import ResourceMetadataCard from '../../../Resources/MetadataCard';
 import TypesIconList from '../../../Types/TypesIcon';

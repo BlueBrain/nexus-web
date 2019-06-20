@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import { Empty, Spin } from 'antd';
-import { ACL } from '@bbp/nexus-sdk';
+import { ACL } from '@bbp/nexus-sdk-legacy';
 import { RootState } from '../store/reducers';
 import { fetchAcls } from '../store/actions/auth';
 import ACLsForm from '../components/ACLs/ACLsForm';

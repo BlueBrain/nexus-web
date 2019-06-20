@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Realm } from '@bbp/nexus-sdk';
+import { Realm } from '@bbp/nexus-sdk-legacy';
 import LoginBox from '../components/Login';
 import { push } from 'connected-react-router';
 import getUserManager from '../../client/userManager';

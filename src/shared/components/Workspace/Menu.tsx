@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Button, Divider } from 'antd';
-import { Project, Resource, NexusFile } from '@bbp/nexus-sdk';
+import { Project, Resource, NexusFile } from '@bbp/nexus-sdk-legacy';
 import ResourceForm from '../Resources/ResourceFormModal';
 import { Link } from 'react-router-dom';
-import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
+import { CreateResourcePayload } from '@bbp/nexus-sdk-legacy/lib/Resource/types';
 import SideMenu from './SideMenu';
 import FileUploader from '../FileUpload';
 

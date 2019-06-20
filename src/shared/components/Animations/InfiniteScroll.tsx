@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Empty } from 'antd';
 import './infinite-scroll.less';
 import './list-item.less';
-import { PaginatedList } from '@bbp/nexus-sdk';
+import { PaginatedList } from '@bbp/nexus-sdk-legacy';
 import { FetchableState } from '../../store/reducers/utils';
 import useInfiniteScroll from '../hooks/useInfiniteScroll';
 

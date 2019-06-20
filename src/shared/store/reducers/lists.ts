@@ -1,6 +1,6 @@
 import { Action, Reducer, combineReducers } from 'redux';
 import { FetchableState, createFetchReducer } from './utils';
-import { Resource, PaginationSettings, PaginatedList } from '@bbp/nexus-sdk';
+import { Resource, PaginationSettings, PaginatedList } from '@bbp/nexus-sdk-legacy';
 import {
   ListActions,
   ListActionTypes,
