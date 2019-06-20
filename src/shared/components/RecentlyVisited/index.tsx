@@ -15,7 +15,7 @@ const RecentlyVisited: React.FunctionComponent<RecentlyVisitedProps> = ({
   visitProject,
 }) => {
   const { previouslyVisitedList } = usePreviouslyVisited('visitedProjects');
-  return previouslyVisitedList.length ? (
+  return (
     <div className="recently-visited">
       <h3 className="label">
         <Icon type="clock-circle" /> Recently Visited
@@ -36,7 +36,7 @@ const RecentlyVisited: React.FunctionComponent<RecentlyVisitedProps> = ({
         })}
       </ul>
     </div>
-  ) : null;
+  );
 };
 
 export default RecentlyVisited;
