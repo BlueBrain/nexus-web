@@ -3,7 +3,6 @@ import { Resource, PaginationSettings, NexusFile } from '@bbp/nexus-sdk';
 import { Spin, notification, Empty, Card, Tabs } from 'antd';
 import ResourceEditor from './ResourceEditor';
 import ResourceMetadataCard from './MetadataCard';
-import GraphVisualizer from '../Graph/GraphVisualizer';
 import { RequestError } from '../../store/actions/utils/errors';
 import LinksContainer from './Links';
 import { LinksState } from '../../store/reducers/links';
@@ -23,7 +22,6 @@ export interface ResourceViewProps {
   error: RequestError | null;
   isFetching: boolean | false;
   onSuccess: VoidFunction;
-  dotGraph: string | null;
   goToOrg: (resource: Resource) => void;
   goToProject: (resource: Resource) => void;
   goToResource: (resource: Resource) => void;
@@ -48,7 +46,6 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
     error,
     isFetching,
     onSuccess,
-    dotGraph,
     links,
     goToOrg,
     goToProject,
@@ -177,11 +174,6 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
                   linksListPageSize={linksListPageSize}
                 />
               </TabPane>
-              {dotGraph && (
-                <TabPane tab="Graph" key="3">
-                  <GraphVisualizer dotGraph={dotGraph} />
-                </TabPane>
-              )}
             </Tabs>
           </>
         )}

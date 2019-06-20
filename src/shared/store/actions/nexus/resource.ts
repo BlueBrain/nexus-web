@@ -87,10 +87,7 @@ export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
           expanded,
         }
       );
-      const dotGraph = await Resource.getSelfRawAs(
-        resource.self,
-        ResourceGetFormat.DOT
-      );
+      const dotGraph = '';
       return dispatch(fetchResourceFulfilledAction(resource, dotGraph));
     } catch (e) {
       return dispatch(fetchResourceFailedAction(formatError(e)));

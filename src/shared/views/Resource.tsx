@@ -23,7 +23,6 @@ interface ResourceViewProps {
   linksListPageSize: number;
   match: any;
   resource: Resource | null;
-  dotGraph: string | null;
   error: RequestError | null;
   isFetching: boolean | false;
   goToOrg: (resource: Resource) => void;
@@ -55,7 +54,6 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
     error,
     isFetching,
     fetchResource,
-    dotGraph,
     links,
     goToOrg,
     goToProject,
@@ -98,7 +96,6 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
           goToProject={goToProject}
           goToResource={goToResource}
           links={links}
-          dotGraph={dotGraph}
           onSuccess={fetch}
           resource={resource}
           error={error}
@@ -115,12 +112,6 @@ const ResourceViewPage: React.FunctionComponent<ResourceViewProps> = props => {
 
 const mapStateToProps = (state: RootState) => ({
   linksListPageSize: state.uiSettings.pageSizes.linksListPageSize,
-  dotGraph:
-    (state.nexus &&
-      state.nexus.activeResource &&
-      state.nexus.activeResource.data &&
-      state.nexus.activeResource.data.dotGraph) ||
-    null,
   resource:
     (state.nexus &&
       state.nexus.activeResource &&
