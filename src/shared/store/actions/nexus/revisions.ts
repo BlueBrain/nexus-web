@@ -1,6 +1,6 @@
 import { ActionCreator, Dispatch } from 'redux';
 import { ThunkAction } from '../..';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk-legacy';
 import { RootState } from '../../reducers';
 
 export type Revisions = any[];
