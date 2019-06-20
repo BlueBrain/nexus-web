@@ -4,6 +4,8 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { ConnectedRouter } from 'connected-react-router';
 import { createBrowserHistory } from 'history';
+import { createNexusClient } from '@bbp/nexus-sdk';
+import { NexusProvider } from '@bbp/react-nexus';
 import {
   loadUser,
   userExpired,
@@ -31,12 +33,13 @@ const history = createBrowserHistory({ basename: base });
 const preloadedState: RootState = (window as any).__PRELOADED_STATE__;
 
 // create Nexus instance
-const nexus = new Nexus({
+const nexus = createNexusClient({ uri: preloadedState.config.apiEndpoint });
+const nexusLegacy = new Nexus({
   environment: preloadedState.config.apiEndpoint,
 });
 Nexus.setEnvironment(preloadedState.config.apiEndpoint);
 // create redux store
-const store = configureStore(history, nexus, preloadedState);
+const store = configureStore(history, nexusLegacy, preloadedState);
 
 /**
  * Sets up user token management events and
@@ -51,7 +54,7 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
   userManager.events.addUserLoaded(user => {
     loadUser(store, userManager);
     Nexus.setToken(user.access_token);
-    nexus.setToken(user.access_token);
+    nexusLegacy.setToken(user.access_token);
   });
 
   // Raised prior to the access token expiring.
@@ -62,7 +65,7 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
       .then(user => {
         loadUser(store, userManager);
         Nexus.setToken(user.access_token);
-        nexus.setToken(user.access_token);
+        nexusLegacy.setToken(user.access_token);
       })
       .catch(err => {
         // TODO: sentry that stuff
@@ -77,7 +80,7 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
       .then(user => {
         loadUser(store, userManager);
         Nexus.setToken(user.access_token);
-        nexus.setToken(user.access_token);
+        nexusLegacy.setToken(user.access_token);
       })
       .catch(err => {
         // TODO: sentry that stuff
@@ -123,7 +126,9 @@ const renderApp = () => {
   return ReactDOM.render(
     <Provider store={store}>
       <ConnectedRouter history={history}>
-        <App />
+        <NexusProvider nexusClient={nexus}>
+          <App />
+        </NexusProvider>
       </ConnectedRouter>
     </Provider>,
     document.getElementById('app')
