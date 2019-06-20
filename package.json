@@ -60,7 +60,6 @@
     "@storybook/addons": "^5.0.1",
     "@storybook/react": "^5.0.10",
     "@types/cookie-parser": "^1.4.1",
-    "@types/d3": "^5.7.1",
     "@types/enzyme": "^3.9.0",
     "@types/express": "^4.16.1",
     "@types/jest": "^24.0.11",
