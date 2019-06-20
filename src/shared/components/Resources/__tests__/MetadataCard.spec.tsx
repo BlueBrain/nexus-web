@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { mount } from 'enzyme';
 import MetadataCard from '../MetadataCard';
-import { Resource, NexusFile } from '@bbp/nexus-sdk';
+import { Resource, NexusFile } from '@bbp/nexus-sdk-legacy';
 
 jest.mock('moment', () => () => ({
   format: () => '20/03/2019',

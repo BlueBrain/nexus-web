@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tabs } from 'antd';
-import { ACL } from '@bbp/nexus-sdk';
+import { ACL } from '@bbp/nexus-sdk-legacy';
 import ACLView from './ACLView';
 
 import './ACLs.less';

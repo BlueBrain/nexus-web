@@ -3,7 +3,7 @@ import usePreviouslyVisited from '../hooks/usePreviouslyVisited';
 import ListItem from '../Animations/ListItem';
 import './recently-visited.less';
 import { Icon } from 'antd';
-import { Project } from '@bbp/nexus-sdk';
+import { Project } from '@bbp/nexus-sdk-legacy';
 
 const DEFAULT_VISITED_MAX = 5;
 

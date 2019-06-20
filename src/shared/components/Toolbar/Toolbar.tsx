@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Dropdown, Menu, Icon, Avatar, Button, Tooltip, Popover } from 'antd';
-import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
+import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
 import { getUserList, getOrderedPermissions } from '../../utils';
 import RenameableItem from '../Renameable';
 

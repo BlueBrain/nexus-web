@@ -4,7 +4,7 @@ import { withKnobs, text, number } from '@storybook/addon-knobs';
 import { withInfo } from '@storybook/addon-info';
 import Toolbar from './Toolbar';
 import { action } from '@storybook/addon-actions';
-import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
+import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
 
 const identities: Identity[] = [
   {

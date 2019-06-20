@@ -9,6 +9,7 @@ Nexus Web is the interface of Blue Brain Nexus, the open-source knowledge graph 
 ## Development
 
 Install dependencies:
+**Please note you need npm v6.9.0 or above**
 
 ```sh
 npm i

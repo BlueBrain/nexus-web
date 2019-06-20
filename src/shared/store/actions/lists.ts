@@ -1,5 +1,5 @@
 import { ActionCreator, Action, Dispatch } from 'redux';
-import { Organization, Project, Resource } from '@bbp/nexus-sdk';
+import { Organization, Project, Resource } from '@bbp/nexus-sdk-legacy';
 import { List } from '../reducers/lists';
 import { FilterPayloadAction, FilterAction, PayloadAction } from './utils';
 import { uuidv4 } from '../../utils';

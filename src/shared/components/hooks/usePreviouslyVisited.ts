@@ -1,5 +1,5 @@
 import useLocalStorage from './useLocalStorage';
-import { Project } from '@bbp/nexus-sdk';
+import { Project } from '@bbp/nexus-sdk-legacy';
 
 export interface ProjectWithVisitedTime extends Project {
   at: number;

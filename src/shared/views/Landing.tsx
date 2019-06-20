@@ -6,7 +6,7 @@ import {
   PaginatedList,
   PaginationSettings,
   Project,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk-legacy';
 import { RootState } from '../store/reducers';
 import { createOrg, modifyOrg, deprecateOrg } from '../store/actions/orgs';
 import OrgList from '../components/Orgs/OrgList';
@@ -14,7 +14,7 @@ import { fetchOrgs } from '../store/actions/nexus/orgs';
 import Skeleton from '../components/Skeleton';
 import { Button, Modal, Drawer, notification, Empty } from 'antd';
 import OrgForm from '../components/Orgs/OrgForm';
-import { CreateOrgPayload } from '@bbp/nexus-sdk/lib/Organization/types';
+import { CreateOrgPayload } from '@bbp/nexus-sdk-legacy/lib/Organization/types';
 import { Link } from 'react-router-dom';
 import { getDestinationParam } from '../utils';
 import RecentlyVisited from '../components/RecentlyVisited';

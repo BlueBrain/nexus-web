@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Timeline, Card, Icon } from 'antd';
 // import './Hist.less';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk-legacy';
 import { diff } from 'deep-object-diff';
 import moment = require('moment');
 import { getUsername, blacklistKeys } from '../../utils';

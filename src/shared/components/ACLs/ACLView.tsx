@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Card, Checkbox, Divider, List } from 'antd';
-import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
+import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
 import IdentityBadge from './IdentityBadge';
 
 import './ACLs.less';

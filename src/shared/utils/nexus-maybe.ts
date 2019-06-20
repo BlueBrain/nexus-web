@@ -1,4 +1,4 @@
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk-legacy';
 
 const NEXUS_FILE_TYPE = 'File';
 const VIEW = 'View';

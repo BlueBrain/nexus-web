@@ -7,11 +7,11 @@ import {
   Project,
   ElasticSearchView,
   PaginationSettings,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk-legacy';
 import { ThunkAction } from '..';
 import { RootState } from '../reducers';
 import { updateList, makeOrgProjectFilterKey } from './lists';
-import { ElasticSearchViewAggregationResponse } from '@bbp/nexus-sdk/lib/View/ElasticSearchView/types';
+import { ElasticSearchViewAggregationResponse } from '@bbp/nexus-sdk-legacy/lib/View/ElasticSearchView/types';
 import { List } from '../reducers/lists';
 import { makeESQuery } from './utils/makeESQuery';
 

@@ -1,4 +1,4 @@
-import { Identity } from '@bbp/nexus-sdk/lib/ACL/types';
+import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
 
 /**
  * getProp utility - an alternative to lodash.get

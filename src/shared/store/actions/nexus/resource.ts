@@ -1,9 +1,9 @@
 import { ActionCreator, Dispatch } from 'redux';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk-legacy';
 import { ThunkAction } from '../..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
-import { ResourceGetFormat } from '@bbp/nexus-sdk/lib/Resource/types';
-import { WILDCARD_SCHEMA_ID } from '@bbp/nexus-sdk/lib/Schema';
+import { ResourceGetFormat } from '@bbp/nexus-sdk-legacy/lib/Resource/types';
+import { WILDCARD_SCHEMA_ID } from '@bbp/nexus-sdk-legacy/lib/Schema';
 import { formatError, RequestError } from '../utils/errors';
 
 enum ResourceActionTypes {

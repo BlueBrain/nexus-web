@@ -4,7 +4,7 @@ import {
   Project,
   PaginatedList,
   PaginationSettings,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk-legacy';
 import { ThunkAction } from '../..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from '../utils';
 import { formatError } from '../utils/errors';

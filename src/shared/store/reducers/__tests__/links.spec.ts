@@ -6,8 +6,8 @@ import {
   FetchFailedActionWithKey,
 } from '../../actions/utils';
 import { LinksActionTypes } from '../../actions/nexus/links';
-import { PaginatedList } from '@bbp/nexus-sdk';
-import { ResourceLink } from '@bbp/nexus-sdk/lib/Resource/types';
+import { PaginatedList } from '@bbp/nexus-sdk-legacy';
+import { ResourceLink } from '@bbp/nexus-sdk-legacy/lib/Resource/types';
 
 describe('links reducer', () => {
   it('it should return an empty object by default', () => {

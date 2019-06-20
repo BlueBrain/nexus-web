@@ -10,7 +10,7 @@ import * as queryString from 'query-string';
 import { push } from 'connected-react-router';
 import { Menu, Dropdown, Icon } from 'antd';
 import { listViews } from '../store/actions/nexus/views';
-import { ElasticSearchView, SparqlView, Resource } from '@bbp/nexus-sdk';
+import { ElasticSearchView, SparqlView, Resource } from '@bbp/nexus-sdk-legacy';
 import { isElasticView } from '../utils/nexus-maybe';
 
 interface RawQueryProps extends RouteComponentProps {

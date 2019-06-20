@@ -1,9 +1,9 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
-import { Project, ElasticSearchView } from '@bbp/nexus-sdk';
+import { Project, ElasticSearchView } from '@bbp/nexus-sdk-legacy';
 import { ThunkAction } from '..';
-import { CreateProjectPayload } from '@bbp/nexus-sdk/lib/Project/types';
-import { httpGet, httpPut } from '@bbp/nexus-sdk/lib/utils/http';
-import { IdentityResponse, Identity } from '@bbp/nexus-sdk/lib/ACL/types';
+import { CreateProjectPayload } from '@bbp/nexus-sdk-legacy/lib/Project/types';
+import { httpGet, httpPut } from '@bbp/nexus-sdk-legacy/lib/utils/http';
+import { IdentityResponse, Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
 import { asyncTimeout } from '../../utils';
 import { notification } from 'antd';
 //

@@ -16,8 +16,8 @@ import Nexus, {
   Resource,
   NexusFile,
   Organization,
-} from '@bbp/nexus-sdk';
-import { CreateResourcePayload } from '@bbp/nexus-sdk/lib/Resource/types';
+} from '@bbp/nexus-sdk-legacy';
+import { CreateResourcePayload } from '@bbp/nexus-sdk-legacy/lib/Resource/types';
 import { createFile } from '../store/actions/nexus/files';
 import Status from '../components/Routing/Status';
 import { RequestError } from '../store/actions/utils/errors';
@@ -30,7 +30,7 @@ import { push } from 'connected-react-router';
 import QueryContainer from '../components/Workspace/Queries/QueriesContainer';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router-dom';
-import { CreateFileOptions } from '@bbp/nexus-sdk/lib/File/types';
+import { CreateFileOptions } from '@bbp/nexus-sdk-legacy/lib/File/types';
 import usePreviouslyVisited from '../components/hooks/usePreviouslyVisited';
 
 interface ProjectViewProps {
