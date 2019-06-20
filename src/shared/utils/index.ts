@@ -175,3 +175,32 @@ export function getDestinationParam(): string {
   const destinationPath = encodeURIComponent(window.location.pathname.slice(1));
   return destinationPath ? `?destination=${destinationPath}` : '';
 }
+
+/**
+ * Returns a nice username
+ *
+ * @param user a url-like user https://api.bluebrainnexus.io/v1/realms/myrealm/users/kenny
+ * @returns a nice username
+ */
+export function getUsername(user: string): string {
+  let userName;
+  if (user.length === 0) {
+    userName = 'Unknown';
+  } else {
+    try {
+      [userName] = user.split('/').slice(-1);
+    } catch (e) {
+      userName = user;
+    }
+  }
+  return userName;
+}
+
+export function blacklistKeys(raw: { [key: string]: any }, keys: string[]) {
+  return Object.keys(raw)
+    .filter(key => !keys.includes(key))
+    .reduce((obj: any, key) => {
+      obj[key] = raw[key];
+      return obj;
+    }, {});
+}

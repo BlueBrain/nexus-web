@@ -12,6 +12,8 @@ import Helmet from 'react-helmet';
 import ResourceActions from './ResourceActions';
 import { downloadNexusFile } from '../../utils/download';
 import { isFile } from '../../utils/nexus-maybe';
+import History from './History';
+import { Revisions } from '../../store/actions/nexus/revisions';
 
 const TabPane = Tabs.TabPane;
 
@@ -36,6 +38,7 @@ export interface ResourceViewProps {
   ) => void;
   fetchResource(expanded: boolean): void;
   links: LinksState | null;
+  listRevisions(resource: Resource): Promise<Revisions>;
 }
 
 const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
@@ -56,6 +59,7 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
     goToElasticSearchView,
     fetchResource,
     deprecateResource,
+    listRevisions,
   } = props;
   const [busy, setFormBusy] = React.useState(isFetching);
   const [expanded, setExpanded] = React.useState(false);
@@ -159,6 +163,9 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
                   onFormatChange={handleFormatChange}
                   onSubmit={handleSubmit}
                 />
+              </TabPane>
+              <TabPane tab="History" key="history">
+                <History resource={resource} listRevisions={listRevisions} />
               </TabPane>
               <TabPane tab="Links" key="2">
                 <LinksContainer
