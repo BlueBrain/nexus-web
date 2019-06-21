@@ -17,6 +17,9 @@ const config = [
     },
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx'],
+      alias: {
+        react: path.resolve('./node_modules/react'),
+      },
     },
     devtool: 'source-map',
     mode: 'production',
