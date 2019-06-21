@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Button, Divider } from 'antd';
 import SideMenu from '../Workspace/SideMenu';
-import RecentlyVisited from '../RecentlyVisited';
 import { Project } from '@bbp/nexus-sdk-legacy';
 import RoutedComponent from '../Menu/RoutedComponent';
+import NavMenuHome from './Home';
+import NavMenuOrgsContainer from './SelectOrg';
 
 interface NavMenuProps {
   goToProject(Project: Project): void;
@@ -17,18 +17,13 @@ export const NavMenu: React.FunctionComponent<NavMenuProps> = props => {
         {
           path: '/',
           component: (path, goTo) => (
-            <div>
-              Home <a onClick={() => goTo('/about')}>About</a>
-              <RecentlyVisited visitProject={goToProject} />
-            </div>
+            <NavMenuHome {...{ path, goTo, goToProject }} />
           ),
         },
         {
-          path: '/about',
+          path: '/selectOrg',
           component: (path, goTo) => (
-            <div>
-              About <a onClick={() => goTo('/')}>Home</a>
-            </div>
+            <NavMenuOrgsContainer {...{ path, goTo }} />
           ),
         },
       ]}
@@ -42,10 +37,9 @@ interface MenuProps {
     toggleVisibility: () => void
   ) => React.ReactElement<any>;
   goToProject(Project: Project): void;
-  // setTackMenu(): boolean;
 }
 
-const NavigationMenuContainer: React.FunctionComponent<MenuProps> = props => {
+const NavigationMenuComponent: React.FunctionComponent<MenuProps> = props => {
   const { goToProject, render } = props;
 
   const [visible, setVisible] = React.useState(true);
@@ -66,10 +60,10 @@ const NavigationMenuContainer: React.FunctionComponent<MenuProps> = props => {
           enter: () => ({ left: 0, opacity: 1 }),
         }}
       >
-        <NavMenu goToProject={goToProject} />
+        <NavMenu {...{ goToProject }} />
       </SideMenu>
     </>
   );
 };
 
-export default NavigationMenuContainer;
+export default NavigationMenuComponent;
