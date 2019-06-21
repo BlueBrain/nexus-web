@@ -3,6 +3,7 @@ import { Project } from '@bbp/nexus-sdk-legacy';
 import NavigationMenuComponent from './Component';
 import { useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
+import { fetchOrg } from '../../store/actions/nexus/activeOrg';
 
 interface MenuProps {
   render: (
@@ -17,12 +18,14 @@ const NavMenuContainer: React.FunctionComponent<MenuProps> = props => {
 
   const goToProject = (project: Project) =>
     dispatch(push(`/${project.orgLabel}/${project.label}`));
+  const activateOrg = (orgLabel: string) => dispatch(fetchOrg(orgLabel));
 
   return (
     <NavigationMenuComponent
       {...{
         render,
         goToProject,
+        activateOrg,
       }}
     />
   );

@@ -6,12 +6,17 @@ import { Orgs } from '@bbp/react-nexus';
 import ListItem from '../Animations/ListItem';
 import { OrganizationList } from '@bbp/nexus-sdk';
 
+interface NavMenuOrgsContainerProps extends NavMenuPageProps {
+  activateOrg(orgLabel: string): void;
+}
+
 export const NavMenuOrgsContainer: React.FunctionComponent<
-  NavMenuPageProps
+  NavMenuOrgsContainerProps
 > = props => {
-  const { path, goTo } = props;
+  const { path, goTo, activateOrg } = props;
+  const [searchValue, setSearchValue] = React.useState<string>();
   return (
-    <Orgs.List options={{}}>
+    <Orgs.List options={{ label: searchValue }}>
       {({
         data,
         error,
@@ -22,7 +27,18 @@ export const NavMenuOrgsContainer: React.FunctionComponent<
         data: OrganizationList;
       }) => {
         return (
-          <NavMenuSelectOrgPage {...{ path, goTo, error, loading, data }} />
+          <NavMenuSelectOrgPage
+            {...{
+              path,
+              goTo,
+              activateOrg,
+              error,
+              loading,
+              data,
+              setSearchValue,
+              searchValue,
+            }}
+          />
         );
       }}
     </Orgs.List>
@@ -33,12 +49,23 @@ interface NavMenuSelectOrgPageProps extends NavMenuPageProps {
   error: Error;
   loading: boolean;
   data: OrganizationList;
+  searchValue?: string;
+  setSearchValue(value: string): void;
+  activateOrg(orgLabel: string): void;
 }
 
 export const NavMenuSelectOrgPage: React.FunctionComponent<
   NavMenuSelectOrgPageProps
 > = props => {
-  const { path, goTo, loading, data } = props;
+  const {
+    path,
+    goTo,
+    setSearchValue,
+    searchValue,
+    activateOrg,
+    loading,
+    data,
+  } = props;
   return (
     <div>
       <h3>
@@ -47,14 +74,27 @@ export const NavMenuSelectOrgPage: React.FunctionComponent<
         </a>{' '}
         Select an Organziation
       </h3>
-      <Search></Search>
+      <Search
+        allowClear={true}
+        value={searchValue}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          setSearchValue(e.currentTarget.value);
+        }}
+      />
       <div>
         <Spin spinning={loading}>
           {data && !data._total && <Empty>No Orgs found</Empty>}
           <ul>
             {data &&
               data['_results'].map(({ _label }: { _label: string }) => (
-                <ListItem id={_label} label={_label}></ListItem>
+                <ListItem
+                  onClick={() => {
+                    activateOrg(_label);
+                    goTo('/selectProject');
+                  }}
+                  id={_label}
+                  label={_label}
+                ></ListItem>
               ))}
           </ul>
         </Spin>

@@ -4,13 +4,15 @@ import { Project } from '@bbp/nexus-sdk-legacy';
 import RoutedComponent from '../Menu/RoutedComponent';
 import NavMenuHome from './Home';
 import NavMenuOrgsContainer from './SelectOrg';
+import NavMenuProjectsContainer from './SelectProject';
 
 interface NavMenuProps {
   goToProject(Project: Project): void;
+  activateOrg(orgLabel: string): void;
 }
 
 export const NavMenu: React.FunctionComponent<NavMenuProps> = props => {
-  const { goToProject } = props;
+  const { goToProject, activateOrg } = props;
   return (
     <RoutedComponent
       routes={[
@@ -23,7 +25,13 @@ export const NavMenu: React.FunctionComponent<NavMenuProps> = props => {
         {
           path: '/selectOrg',
           component: (path, goTo) => (
-            <NavMenuOrgsContainer {...{ path, goTo }} />
+            <NavMenuOrgsContainer {...{ path, goTo, activateOrg }} />
+          ),
+        },
+        {
+          path: '/selectProject',
+          component: (path, goTo) => (
+            <NavMenuProjectsContainer {...{ path, goTo, activateOrg }} />
           ),
         },
       ]}
@@ -37,10 +45,11 @@ interface MenuProps {
     toggleVisibility: () => void
   ) => React.ReactElement<any>;
   goToProject(Project: Project): void;
+  activateOrg(orgLabel: string): void;
 }
 
 const NavigationMenuComponent: React.FunctionComponent<MenuProps> = props => {
-  const { goToProject, render } = props;
+  const { goToProject, activateOrg, render } = props;
 
   const [visible, setVisible] = React.useState(true);
 
@@ -60,7 +69,7 @@ const NavigationMenuComponent: React.FunctionComponent<MenuProps> = props => {
           enter: () => ({ left: 0, opacity: 1 }),
         }}
       >
-        <NavMenu {...{ goToProject }} />
+        <NavMenu {...{ goToProject, activateOrg }} />
       </SideMenu>
     </>
   );
