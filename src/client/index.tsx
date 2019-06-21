@@ -30,8 +30,23 @@ const rawBase: string = (window as any)['__BASE__'] || '/';
 const base: string = rawBase.replace(/\/$/, '');
 // setup browser history
 const history = createBrowserHistory({ basename: base });
-// Grab preloaded state
+// Grab preloaded state (that comes from the server)
 const preloadedState: RootState = (window as any).__PRELOADED_STATE__;
+// grab client stuff to be put in the initial state
+let preferredRealm;
+try {
+  const realmData = JSON.parse(localStorage.getItem('nexus__realm') || '');
+  realmData && (preferredRealm = realmData.label);
+} catch (e) {
+  preferredRealm = undefined;
+}
+const initialState = {
+  ...preloadedState,
+  config: {
+    ...preloadedState.config,
+    preferredRealm,
+  },
+};
 
 // nexus client middleware for setting token before request
 const setToken: Link = (operation: Operation, forward?: Link) => {
@@ -59,7 +74,7 @@ const nexusLegacy = new Nexus({
 });
 Nexus.setEnvironment(preloadedState.config.apiEndpoint);
 // create redux store
-const store = configureStore(history, nexusLegacy, preloadedState);
+const store = configureStore(history, nexusLegacy, initialState);
 
 /**
  * Sets up user token management events and

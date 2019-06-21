@@ -34,20 +34,24 @@ const getUserManager = (state: RootState): UserManager | undefined => {
 
   const cacheKey = `${realm.label}||${realm.issuer}||${clientId}||${redirectHostName}`;
 
-  userManagerCache.has(cacheKey) || userManagerCache.set(cacheKey, new UserManager({
-    authority: realm.issuer,
-    response_type: 'id_token token',
-    client_id: clientId,
-    redirect_uri: redirectHostName,
-    post_logout_redirect_uri: redirectHostName,
-    automaticSilentRenew: true,
-    silent_redirect_uri: `${redirectHostName}/silent_refresh`,
-    loadUserInfo: false,
-    userStore: new WebStorageStateStore({ store: window.localStorage }),
-    ...realm,
-  }));
+  userManagerCache.has(cacheKey) ||
+    userManagerCache.set(
+      cacheKey,
+      new UserManager({
+        authority: realm.issuer,
+        response_type: 'id_token token',
+        client_id: clientId,
+        redirect_uri: redirectHostName,
+        post_logout_redirect_uri: redirectHostName,
+        automaticSilentRenew: true,
+        silent_redirect_uri: `${redirectHostName}/silent_refresh`,
+        loadUserInfo: false,
+        userStore: new WebStorageStateStore({ store: window.localStorage }),
+        ...realm,
+      })
+    );
 
-return userManagerCache.get(cacheKey);
+  return userManagerCache.get(cacheKey);
 };
 
 export default getUserManager;

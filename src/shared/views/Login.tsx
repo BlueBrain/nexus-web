@@ -13,7 +13,7 @@ export interface LoginViewProps {
   realms: Realm[];
   redirect(): void;
   setPreferredRealm(name: string): void;
-  preferredRealm?: string;
+  preferredRealm?: RootState['config']['preferredRealm'];
   userManager?: UserManager;
 }
 
@@ -36,9 +36,16 @@ const Login: React.FunctionComponent<LoginViewProps> = props => {
         try {
           e.preventDefault();
           props.setPreferredRealm(preferredRealm);
-          const destination = (new URL(window.location.href)).searchParams.get('destination');
-          const redirectUri = destination ? `${window.location.origin}/${destination}` : null;
-          props.userManager && (await props.userManager.signinRedirect({redirect_uri: redirectUri}));
+          const destination = new URL(window.location.href).searchParams.get(
+            'destination'
+          );
+          const redirectUri = destination
+            ? `${window.location.origin}/${destination}`
+            : null;
+          props.userManager &&
+            (await props.userManager.signinRedirect({
+              redirect_uri: redirectUri,
+            }));
         } catch (error) {
           switch (error.message) {
             case 'Network Error':
@@ -71,7 +78,10 @@ const Login: React.FunctionComponent<LoginViewProps> = props => {
           }
         }
       }}
-      onRealmSelected={(name: string) => setPreferredRealm(name)}
+      onRealmSelected={(name: string) => {
+        props.setPreferredRealm(name);
+        setPreferredRealm(name);
+      }}
     />
   );
 };
