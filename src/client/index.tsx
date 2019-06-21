@@ -6,7 +6,7 @@ import { ConnectedRouter } from 'connected-react-router';
 import { createBrowserHistory } from 'history';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { NexusProvider } from '@bbp/react-nexus';
-import { Link, NextLink, Operation, Observable } from '@bbp/nexus-link';
+import { Link, Operation, Observable } from '@bbp/nexus-link';
 import {
   loadUser,
   userExpired,

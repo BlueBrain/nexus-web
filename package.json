@@ -17,9 +17,9 @@
     "build:storybook": "build-storybook"
   },
   "dependencies": {
-    "@bbp/nexus-sdk": "^1.1.2",
+    "@bbp/nexus-sdk": "^1.1.3",
     "@bbp/nexus-sdk-legacy": "npm:@bbp/nexus-sdk@1.0.0-beta.25",
-    "@bbp/react-nexus": "^1.1.2",
+    "@bbp/react-nexus": "^1.1.3",
     "antd": "^3.19.5",
     "codemirror": "^5.44.0",
     "connected-react-router": "^6.3.2",
@@ -39,7 +39,7 @@
     "query-string": "^6.3.0",
     "react": "^16.8.6",
     "react-codemirror2": "^5.1.0",
-    "react-dom": "^16.8.4",
+    "react-dom": "^16.8.6",
     "react-helmet": "^5.2.0",
     "react-image-lightbox": "^5.1.0",
     "react-json-view": "^1.19.1",
