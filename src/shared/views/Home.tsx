@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Drawer, notification, Modal, Button, Empty } from 'antd';
-import { Project, PaginatedList, PaginationSettings } from '@bbp/nexus-sdk-legacy';
+import { AccessControl } from '@bbp/react-nexus';
+import {
+  Project,
+  PaginatedList,
+  PaginationSettings,
+} from '@bbp/nexus-sdk-legacy';
 import { CreateProjectPayload } from '@bbp/nexus-sdk-legacy/lib/Project/types';
 import { RootState } from '../store/reducers';
 import {
@@ -247,13 +252,18 @@ const Home: React.FunctionComponent<HomeProps> = ({
           style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}
         >
           <h2 style={{ marginBottom: 0, marginRight: 8 }}>Projects</h2>
-          <Button
-            type="primary"
-            onClick={() => setModalVisible(true)}
-            icon="plus-square"
+          <AccessControl
+            permissions={['projects/create']}
+            path={`/${activeOrg.label}`}
           >
-            Create Project
-          </Button>
+            <Button
+              type="primary"
+              onClick={() => setModalVisible(true)}
+              icon="plus-square"
+            >
+              Create Project
+            </Button>
+          </AccessControl>
         </div>
         {paginatedProjects.total === 0 ? (
           <Empty description="No projects" />
