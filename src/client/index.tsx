@@ -52,7 +52,7 @@ const setToken: Link = (operation: Operation, forward?: Link) => {
 const nexus = createNexusClient({
   uri: preloadedState.config.apiEndpoint,
   links: [setToken],
-  fetch: fetch,
+  fetch,
 });
 const nexusLegacy = new Nexus({
   environment: preloadedState.config.apiEndpoint,
