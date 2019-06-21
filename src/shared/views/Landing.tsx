@@ -219,7 +219,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}
         >
           <h1 style={{ marginBottom: 0, marginRight: 8 }}>Organizations</h1>
-          <AccessControl permissions={['orgs/create']} path="/">
+          <AccessControl permissions={['organizations/create']} path="/">
             <Button
               type="primary"
               onClick={() => setModalVisible(true)}
