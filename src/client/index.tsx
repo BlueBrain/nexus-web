@@ -6,6 +6,7 @@ import { ConnectedRouter } from 'connected-react-router';
 import { createBrowserHistory } from 'history';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { NexusProvider } from '@bbp/react-nexus';
+import { Link, NextLink, Operation, Observable } from '@bbp/nexus-link';
 import {
   loadUser,
   userExpired,
@@ -32,8 +33,27 @@ const history = createBrowserHistory({ basename: base });
 // Grab preloaded state
 const preloadedState: RootState = (window as any).__PRELOADED_STATE__;
 
+// nexus client middleware for setting token before request
+const setToken: Link = (operation: Operation, forward?: Link) => {
+  const token = localStorage.getItem('nexus__token');
+  const nextOperation = token
+    ? {
+        ...operation,
+        headers: {
+          ...operation.headers,
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    : operation;
+  return forward ? forward(nextOperation) : Observable.of();
+};
+
 // create Nexus instance
-const nexus = createNexusClient({ uri: preloadedState.config.apiEndpoint });
+const nexus = createNexusClient({
+  uri: preloadedState.config.apiEndpoint,
+  links: [setToken],
+  fetch: fetch,
+});
 const nexusLegacy = new Nexus({
   environment: preloadedState.config.apiEndpoint,
 });
@@ -66,6 +86,7 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
         loadUser(store, userManager);
         Nexus.setToken(user.access_token);
         nexusLegacy.setToken(user.access_token);
+        localStorage.setItem('nexus__token', user.access_token);
       })
       .catch(err => {
         // TODO: sentry that stuff
@@ -81,6 +102,7 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
         loadUser(store, userManager);
         Nexus.setToken(user.access_token);
         nexusLegacy.setToken(user.access_token);
+        localStorage.setItem('nexus__token', user.access_token);
       })
       .catch(err => {
         // TODO: sentry that stuff
@@ -91,18 +113,21 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
   userManager.events.addSilentRenewError(() => {
     store.dispatch(silentRenewError());
     Nexus.removeToken();
+    localStorage.removeItem('nexus__token');
   });
 
   //  Raised when the user's sign-in status at the OP has changed.
   userManager.events.addUserSignedOut(() => {
     store.dispatch(userSignedOut());
     Nexus.removeToken();
+    localStorage.removeItem('nexus__token');
   });
 
   // Raised when a user session has been terminated.
   userManager.events.addUserUnloaded(() => {
     store.dispatch(sessionTerminated());
     Nexus.removeToken();
+    localStorage.removeItem('nexus__token');
   });
 
   try {
@@ -147,7 +172,9 @@ if (module.hot) {
     ReactDOM.render(
       <Provider store={store}>
         <BrowserRouter basename={base}>
-          <NextApp />
+          <NexusProvider nexusClient={nexus}>
+            <NextApp />
+          </NexusProvider>
         </BrowserRouter>
       </Provider>,
       document.getElementById('app')
