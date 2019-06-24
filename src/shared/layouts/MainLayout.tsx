@@ -13,6 +13,7 @@ import { getLogoutUrl, getDestinationParam } from '../utils';
 import { UserManager } from 'oidc-client';
 import { RootState } from '../store/reducers';
 import NavMenuContainer from '../components/NavigationMenu/Container';
+import { Button } from 'antd';
 
 const favicon = require('../favicon.png');
 const TITLE = 'A knowledge graph for data-driven science';
@@ -89,8 +90,17 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
         githubIssueURL={githubIssueURL}
       >
         <NavMenuContainer
+          defaultVisibility={false}
           render={(visible, toggleVisibility) => {
-            return <a onClick={() => toggleVisibility()}>Projects</a>;
+            return (
+              <Button
+                icon="project"
+                size="small"
+                onClick={() => toggleVisibility()}
+              >
+                Projects
+              </Button>
+            );
           }}
         />
       </Header>

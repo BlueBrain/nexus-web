@@ -1,10 +1,10 @@
 import * as React from 'react';
 import SideMenu from '../Workspace/SideMenu';
-import { Project } from '@bbp/nexus-sdk-legacy';
 import RoutedComponent from '../Menu/RoutedComponent';
 import NavMenuHome from './Home';
 import NavMenuOrgsContainer from './SelectOrg';
 import NavMenuProjectsContainer from './SelectProject';
+import './nav-menu.less';
 
 interface NavMenuProps {
   goToProject(orgLabel: string, projectLabel: string): void;
@@ -57,12 +57,15 @@ interface MenuProps {
   ) => React.ReactElement<any>;
   goToProject(orgLabel: string, projectLabel: string): void;
   activateOrg(orgLabel: string): void;
+  defaultVisibility?: boolean;
 }
 
 const NavigationMenuComponent: React.FunctionComponent<MenuProps> = props => {
-  const { goToProject, activateOrg, render } = props;
+  const { goToProject, activateOrg, render, defaultVisibility } = props;
 
-  const [visible, setVisible] = React.useState(true);
+  const [visible, setVisible] = React.useState(
+    typeof defaultVisibility !== 'undefined' ? defaultVisibility : true
+  );
 
   const toggleVisibility = () => {
     setVisible(!visible);
@@ -72,6 +75,7 @@ const NavigationMenuComponent: React.FunctionComponent<MenuProps> = props => {
     <>
       {renderable}
       <SideMenu
+        title={'Projects'}
         visible={visible}
         onClose={() => setVisible(false)}
         animations={{
@@ -80,7 +84,9 @@ const NavigationMenuComponent: React.FunctionComponent<MenuProps> = props => {
           enter: () => ({ left: 0, opacity: 1 }),
         }}
       >
-        <NavMenu {...{ goToProject, activateOrg }} />
+        <div className="nav-menu">
+          <NavMenu {...{ goToProject, activateOrg }} />
+        </div>
       </SideMenu>
     </>
   );

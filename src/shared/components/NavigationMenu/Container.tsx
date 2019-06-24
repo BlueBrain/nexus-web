@@ -6,6 +6,7 @@ import { push } from 'connected-react-router';
 import { fetchOrg } from '../../store/actions/nexus/activeOrg';
 
 interface MenuProps {
+  defaultVisibility?: boolean;
   render: (
     visible: boolean,
     toggleVisibility: () => void
@@ -13,7 +14,7 @@ interface MenuProps {
 }
 
 const NavMenuContainer: React.FunctionComponent<MenuProps> = props => {
-  const { render } = props;
+  const { render, defaultVisibility } = props;
   const dispatch = useDispatch();
 
   const goToProject = (orgLabel: string, projectLabel: string) =>
@@ -26,6 +27,7 @@ const NavMenuContainer: React.FunctionComponent<MenuProps> = props => {
         render,
         goToProject,
         activateOrg,
+        defaultVisibility,
       }}
     />
   );

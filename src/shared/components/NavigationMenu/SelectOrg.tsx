@@ -67,8 +67,8 @@ export const NavMenuSelectOrgPage: React.FunctionComponent<
     data,
   } = props;
   return (
-    <div>
-      <h3>
+    <div className="page -select-org">
+      <h3 className="title">
         <a onClick={() => goTo('/')}>
           <Icon type="arrow-left" />
         </a>{' '}
@@ -84,7 +84,7 @@ export const NavMenuSelectOrgPage: React.FunctionComponent<
       <div>
         <Spin spinning={loading}>
           {data && !data._total && <Empty>No Orgs found</Empty>}
-          <ul>
+          <ul className="list">
             {data &&
               data['_results'].map(({ description, _label }) => (
                 <ListItem
@@ -92,6 +92,7 @@ export const NavMenuSelectOrgPage: React.FunctionComponent<
                     activateOrg(_label);
                     goTo(`/selectProject/${_label}`);
                   }}
+                  key={_label}
                   id={_label}
                   label={_label}
                   description={description}

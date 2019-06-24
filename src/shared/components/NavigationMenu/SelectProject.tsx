@@ -68,8 +68,8 @@ export const NavMenuSelectProjectPage: React.FunctionComponent<
     goToProject,
   } = props;
   return (
-    <div>
-      <h3>
+    <div className="page -select-project">
+      <h3 className="title">
         <a onClick={() => goTo('/selectOrg')}>
           <Icon type="arrow-left" />
         </a>{' '}
@@ -85,11 +85,12 @@ export const NavMenuSelectProjectPage: React.FunctionComponent<
       <div>
         <Spin spinning={loading}>
           {data && !data._total && <Empty>No Orgs found</Empty>}
-          <ul>
+          <ul className="list">
             {data &&
               data['_results'].map(
                 ({ _organizationLabel, _label, description }) => (
                   <ListItem
+                    key={_label}
                     onClick={() => goToProject(_organizationLabel, _label)}
                     id={_label}
                     label={`${_organizationLabel} / ${_label}`}

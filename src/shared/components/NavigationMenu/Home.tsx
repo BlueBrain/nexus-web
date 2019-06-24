@@ -1,6 +1,7 @@
 import * as React from 'react';
 import RecentlyVisited from '../RecentlyVisited';
-import { Project } from '@bbp/nexus-sdk-legacy';
+import './nav-menu.less';
+import { Icon } from 'antd';
 
 export interface NavMenuPageProps {
   path: string;
@@ -14,9 +15,11 @@ interface NavMenuHomeProps extends NavMenuPageProps {
 export const NavMenuHome: React.FunctionComponent<NavMenuHomeProps> = props => {
   const { path, goTo, goToProject } = props;
   return (
-    <div>
-      <h3>
-        <a onClick={() => goTo('/selectOrg')}>Select an Organziation</a>
+    <div className="page -home">
+      <h3 className="title">
+        <a onClick={() => goTo('/selectOrg')}>
+          <Icon type="project" /> Select a Project
+        </a>
       </h3>
       <RecentlyVisited visitProject={goToProject} />
     </div>
