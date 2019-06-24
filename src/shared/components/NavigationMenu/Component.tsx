@@ -98,7 +98,16 @@ const NavigationMenuComponent: React.FunctionComponent<MenuProps> = props => {
         }}
       >
         <div className="nav-menu">
-          <NavMenu {...{ pageSize, goToProject, activateOrg }} />
+          <NavMenu
+            {...{
+              pageSize,
+              activateOrg,
+              goToProject: (orgLabel: string, projectLabel: string) => {
+                setVisible(false);
+                goToProject(orgLabel, projectLabel);
+              },
+            }}
+          />
         </div>
       </SideMenu>
     </>
