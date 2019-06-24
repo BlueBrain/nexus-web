@@ -131,9 +131,7 @@ const fetchAcls: ActionCreator<ThunkAction> = (
   aclOptions?: ListACLOptions
 ) => {
   return async (
-    dispatch: Dispatch<any>,
-    getState,
-    { nexusLegacy: nexus }
+    dispatch: Dispatch<any>
   ): Promise<FetchAclsFulfilledAction | FetchAclsFailedAction> => {
     dispatch(fetchAclsAction);
     try {
