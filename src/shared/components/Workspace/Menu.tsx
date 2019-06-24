@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { CreateResourcePayload } from '@bbp/nexus-sdk-legacy/lib/Resource/types';
 import SideMenu from './SideMenu';
 import FileUploader from '../FileUpload';
+import { AccessControl } from '@bbp/react-nexus';
 
 interface MenuProps {
   project?: Project | null;
@@ -56,21 +57,26 @@ const Menu: React.FunctionComponent<MenuProps> = ({
           View resources in your project using pre-defined query-helper lists.
         </p>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <ResourceForm
-            createResource={createResource}
-            render={(updateFormVisible: () => void) => {
-              return (
-                <Button
-                  style={{ margin: '0.5em 0' }}
-                  type="primary"
-                  onClick={updateFormVisible}
-                  icon="plus-square"
-                >
-                  Create Resource
-                </Button>
-              );
-            }}
-          />
+          <AccessControl
+            path={`/${orgLabel}/${projectLabel}`}
+            permissions={['resources/write']}
+          >
+            <ResourceForm
+              createResource={createResource}
+              render={(updateFormVisible: () => void) => {
+                return (
+                  <Button
+                    style={{ margin: '0.5em 0' }}
+                    type="primary"
+                    onClick={updateFormVisible}
+                    icon="plus-square"
+                  >
+                    Create Resource
+                  </Button>
+                );
+              }}
+            />
+          </AccessControl>
           <Button
             style={{ margin: '0.5em 0' }}
             onClick={() => createList(orgProjectFilterKey)}
