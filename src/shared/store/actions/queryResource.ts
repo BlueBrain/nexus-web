@@ -104,7 +104,7 @@ export const queryResources: ActionCreator<ThunkAction> = (
   return async (
     dispatch: Dispatch<any>,
     getState,
-    { nexus }
+    { nexusLegacy }
   ): Promise<
     | FilterFetchFulfilledAction<
         QueryResourcesActionTypes.FULFILLED,
@@ -112,7 +112,7 @@ export const queryResources: ActionCreator<ThunkAction> = (
       >
     | FilterFetchFailedAction<QueryResourcesActionTypes.FAILED>
   > => {
-    const Project = nexus.Project;
+    const Project = nexusLegacy.Project;
     const filterKey = makeOrgProjectFilterKey(org, project);
     const listState = (getState() as RootState).lists;
     const targetWorkspace = listState && listState[filterKey];

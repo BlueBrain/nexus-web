@@ -63,9 +63,7 @@ export const executeRawQuery: ActionCreator<ThunkAction> = (
   query: string
 ) => {
   return async (
-    dispatch: Dispatch<any>,
-    getState,
-    { nexus }
+    dispatch: Dispatch<any>
   ): Promise<RawQueryActionSuccess | RawQueryActionFailure> => {
     dispatch(rawQueryAction(query));
     try {
@@ -89,11 +87,11 @@ export const executeRawElasticSearchQuery: ActionCreator<ThunkAction> = (
   return async (
     dispatch: Dispatch<any>,
     getState,
-    { nexus }
+    { nexusLegacy }
   ): Promise<RawQueryActionSuccess | RawQueryActionFailure> => {
     dispatch(rawQueryAction(query, paginationSettings));
     try {
-      const Project = nexus.Project;
+      const Project = nexusLegacy.Project;
       const project = await Project.get(orgName, projectName);
       const view = await project.getElasticSearchView(viewId);
       const response = await view.rawQuery(

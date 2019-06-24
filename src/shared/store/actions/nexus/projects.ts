@@ -51,14 +51,14 @@ export const fetchAndAssignProject: ActionCreator<ThunkAction> = (
   return async (
     dispatch: Dispatch<any>,
     getState,
-    { nexus }
+    { nexusLegacy }
   ): Promise<
     | FetchFulfilledAction<ProjectActionTypes.FULFILLED, Project>
     | FetchFailedAction<ProjectActionTypes.FAILED>
   > => {
     dispatch(fetchProjectsAction());
     try {
-      const Project = nexus.Project;
+      const Project = nexusLegacy.Project;
       const project: Project = await Project.get(orgLabel, projectLabel);
       const defaultElasticSearchView: ElasticSearchView = await project.getElasticSearchView();
       const aggregationQuery = {

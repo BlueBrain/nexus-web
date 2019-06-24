@@ -59,7 +59,7 @@ export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
   return async (
     dispatch: Dispatch<any>,
     getState,
-    { nexus }
+    { nexusLegacy }
   ): Promise<
     | FetchFulfilledAction<
         ResourceActionTypes.FULFILLED,
@@ -69,7 +69,7 @@ export const fetchAndAssignResource: ActionCreator<ThunkAction> = (
       >
     | FetchFailedAction<ResourceActionTypes.FAILED>
   > => {
-    const Resource = nexus.Resource;
+    const Resource = nexusLegacy.Resource;
     dispatch(fetchResourceAction());
     try {
       const resource = await Resource.get(
@@ -94,7 +94,7 @@ export const deprecateResource: ActionCreator<ThunkAction> = (
   return async (
     dispatch: Dispatch<any>,
     getState,
-    { nexus }
+    { nexusLegacy }
   ): Promise<
     | FetchFulfilledAction<
         ResourceActionTypes.FULFILLED,
@@ -104,7 +104,7 @@ export const deprecateResource: ActionCreator<ThunkAction> = (
       >
     | FetchFailedAction<ResourceActionTypes.FAILED>
   > => {
-    const Resource = nexus.Resource;
+    const Resource = nexusLegacy.Resource;
     dispatch(fetchResourceAction());
     try {
       const deprecatedResource = await Resource.deprecateSelf(

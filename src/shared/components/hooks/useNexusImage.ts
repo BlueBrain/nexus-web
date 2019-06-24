@@ -14,6 +14,7 @@ export function hasDisplayableImage(resource: Resource | NexusFile): boolean {
   const nexusFile = resource as NexusFile;
   const mediaType = nexusFile.raw['_mediaType'];
   const bytes = nexusFile.raw['_bytes'];
+  console.log('doing stuff');
   const fileExtension: string =
     [...nexusFile.raw['_filename'].split('.')].pop() || '';
 

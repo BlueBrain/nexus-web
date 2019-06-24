@@ -57,7 +57,7 @@ export const fetchOrgs: ActionCreator<ThunkAction> = (
   return async (
     dispatch: Dispatch<any>,
     getState,
-    { nexus }
+    { nexusLegacy }
   ): Promise<
     | FetchFulfilledAction<
         OrgsActionTypes.FULFILLED,
@@ -67,8 +67,8 @@ export const fetchOrgs: ActionCreator<ThunkAction> = (
   > => {
     dispatch(fetchOrgsAction());
     try {
-      const Organization = nexus.Organization;
-      const Project = nexus.Project;
+      const Organization = nexusLegacy.Organization;
+      const Project = nexusLegacy.Project;
       const displayPerPage = (getState() as RootState).uiSettings.pageSizes
         .orgsListPageSize;
       const orgs: PaginatedList<Organization> = await Organization.list({

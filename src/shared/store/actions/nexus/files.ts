@@ -11,9 +11,9 @@ export const createFile: ActionCreator<ThunkAction> = (
   return async (
     dispatch: Dispatch<any>,
     getState,
-    { nexus }
+    { nexusLegacy }
   ): Promise<NexusFile | null> => {
-    const NexusFile = nexus.NexusFile;
+    const NexusFile = nexusLegacy.NexusFile;
     const nexusState = (getState() as RootState).nexus;
     if (
       nexusState &&

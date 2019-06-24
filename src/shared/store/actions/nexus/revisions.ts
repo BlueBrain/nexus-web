@@ -8,11 +8,7 @@ export type Revisions = any[];
 export const listRevisions: ActionCreator<ThunkAction> = (
   resource: Resource
 ) => {
-  return async (
-    dispatch: Dispatch<any>,
-    getState,
-    { nexus }
-  ): Promise<Revisions> => {
+  return async (dispatch: Dispatch<any>, getState): Promise<Revisions> => {
     // SDK doesn't provide this functionality so I'll quickly
     // just boot it with fetch
 

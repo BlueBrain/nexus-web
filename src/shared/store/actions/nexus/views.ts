@@ -9,10 +9,10 @@ export const listViews: ActionCreator<ThunkAction> = (
   return async (
     dispatch: Dispatch<any>,
     getState,
-    { nexus }
+    { nexusLegacy }
   ): Promise<Resource[]> => {
-    const Project = nexus.Project;
-    const Resource = nexus.Resource;
+    const Project = nexusLegacy.Project;
+    const Resource = nexusLegacy.Resource;
     const realProject = await Project.get(orgLabel, projectLabel);
     const views = await realProject.listViews();
     // Getting lists as projects because View classes for this SDK
