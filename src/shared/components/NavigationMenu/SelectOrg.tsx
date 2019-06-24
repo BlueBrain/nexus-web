@@ -86,7 +86,7 @@ export const NavMenuSelectOrgPage: React.FunctionComponent<
           {data && !data._total && <Empty>No Orgs found</Empty>}
           <ul>
             {data &&
-              data['_results'].map(({ _label }: { _label: string }) => (
+              data['_results'].map(({ description, _label }) => (
                 <ListItem
                   onClick={() => {
                     activateOrg(_label);
@@ -94,6 +94,7 @@ export const NavMenuSelectOrgPage: React.FunctionComponent<
                   }}
                   id={_label}
                   label={_label}
+                  description={description}
                 ></ListItem>
               ))}
           </ul>

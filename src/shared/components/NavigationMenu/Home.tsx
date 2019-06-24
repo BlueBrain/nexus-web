@@ -8,7 +8,7 @@ export interface NavMenuPageProps {
 }
 
 interface NavMenuHomeProps extends NavMenuPageProps {
-  goToProject(Project: Project): void;
+  goToProject(orgLabel: string, projectLabel: string): void;
 }
 
 export const NavMenuHome: React.FunctionComponent<NavMenuHomeProps> = props => {

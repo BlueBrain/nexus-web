@@ -8,13 +8,14 @@ import { ProjectList } from '@bbp/nexus-sdk';
 
 interface NavMenuProjectsContainerProps extends NavMenuPageProps {
   activateOrg(orgLabel: string): void;
+  goToProject(orgLabel: string, projectLabel: string): void;
   orgLabel: string;
 }
 
 export const NavMenuProjectsContainer: React.FunctionComponent<
   NavMenuProjectsContainerProps
 > = props => {
-  const { path, goTo, orgLabel } = props;
+  const { path, goTo, orgLabel, goToProject } = props;
   const [searchValue, setSearchValue] = React.useState<string>();
   return (
     <Projects.List orgLabel={orgLabel} options={{ label: searchValue }}>
@@ -37,6 +38,7 @@ export const NavMenuProjectsContainer: React.FunctionComponent<
               data,
               setSearchValue,
               searchValue,
+              goToProject,
             }}
           />
         );
@@ -51,12 +53,20 @@ interface NavMenuSelectProjectPageProps extends NavMenuPageProps {
   data: ProjectList;
   searchValue?: string;
   setSearchValue(value: string): void;
+  goToProject(orgLabel: string, projectLabel: string): void;
 }
 
 export const NavMenuSelectProjectPage: React.FunctionComponent<
   NavMenuSelectProjectPageProps
 > = props => {
-  const { path, goTo, setSearchValue, searchValue, loading, data } = props;
+  const {
+    goTo,
+    setSearchValue,
+    searchValue,
+    loading,
+    data,
+    goToProject,
+  } = props;
   return (
     <div>
       <h3>
@@ -77,13 +87,16 @@ export const NavMenuSelectProjectPage: React.FunctionComponent<
           {data && !data._total && <Empty>No Orgs found</Empty>}
           <ul>
             {data &&
-              data['_results'].map(({ _label }) => (
-                <ListItem
-                  // onClick={() => activateOrg(_label)}
-                  id={_label}
-                  label={_label}
-                ></ListItem>
-              ))}
+              data['_results'].map(
+                ({ _organizationLabel, _label, description }) => (
+                  <ListItem
+                    onClick={() => goToProject(_organizationLabel, _label)}
+                    id={_label}
+                    label={`${_organizationLabel} / ${_label}`}
+                    description={description}
+                  ></ListItem>
+                )
+              )}
           </ul>
         </Spin>
       </div>

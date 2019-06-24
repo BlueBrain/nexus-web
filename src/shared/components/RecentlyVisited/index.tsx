@@ -8,7 +8,7 @@ import { Project } from '@bbp/nexus-sdk-legacy';
 const DEFAULT_VISITED_MAX = 5;
 
 interface RecentlyVisitedProps {
-  visitProject: (project: Project) => void;
+  visitProject: (orgLabel: string, projectLabel: string) => void;
 }
 
 const RecentlyVisited: React.FunctionComponent<RecentlyVisitedProps> = ({
@@ -25,7 +25,7 @@ const RecentlyVisited: React.FunctionComponent<RecentlyVisitedProps> = ({
           return (
             <ListItem
               onClick={() => {
-                visitProject(project);
+                visitProject(project.orgLabel, project.label);
               }}
               key={project.label}
               label={`${project.orgLabel} / ${project.label}`}

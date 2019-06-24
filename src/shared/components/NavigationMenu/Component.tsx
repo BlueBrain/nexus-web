@@ -7,7 +7,7 @@ import NavMenuOrgsContainer from './SelectOrg';
 import NavMenuProjectsContainer from './SelectProject';
 
 interface NavMenuProps {
-  goToProject(Project: Project): void;
+  goToProject(orgLabel: string, projectLabel: string): void;
   activateOrg(orgLabel: string): void;
 }
 
@@ -34,7 +34,13 @@ export const NavMenu: React.FunctionComponent<NavMenuProps> = props => {
             const { orgLabel } = params;
             return (
               <NavMenuProjectsContainer
-                {...{ path, goTo, activateOrg, orgLabel }}
+                {...{
+                  path,
+                  goTo,
+                  activateOrg,
+                  goToProject,
+                  orgLabel,
+                }}
               />
             );
           },
@@ -49,7 +55,7 @@ interface MenuProps {
     visible: boolean,
     toggleVisibility: () => void
   ) => React.ReactElement<any>;
-  goToProject(Project: Project): void;
+  goToProject(orgLabel: string, projectLabel: string): void;
   activateOrg(orgLabel: string): void;
 }
 

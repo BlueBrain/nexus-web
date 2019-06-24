@@ -16,8 +16,8 @@ const NavMenuContainer: React.FunctionComponent<MenuProps> = props => {
   const { render } = props;
   const dispatch = useDispatch();
 
-  const goToProject = (project: Project) =>
-    dispatch(push(`/${project.orgLabel}/${project.label}`));
+  const goToProject = (orgLabel: string, projectLabel: string) =>
+    dispatch(push(`/${orgLabel}/${projectLabel}`));
   const activateOrg = (orgLabel: string) => dispatch(fetchOrg(orgLabel));
 
   return (

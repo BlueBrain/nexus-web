@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
-import { useNexus, AccessControl } from '@bbp/react-nexus';
-import { OrganizationList, ListOrgOptions, NexusClient } from '@bbp/nexus-sdk';
+import { AccessControl } from '@bbp/react-nexus';
 import {
   Organization,
   PaginatedList,
@@ -27,7 +26,7 @@ interface LandingProps {
   busy: boolean;
   error?: { message: string; name: string };
   goTo(orgLabel: string): void;
-  goToProject(Project: Project): void;
+  goToProject(orgLabel: string, projectLabel: string): void;
   fetchOrgs(paginationSettings?: PaginationSettings): any;
   createOrg: (
     orgLabel: string,
@@ -301,8 +300,8 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
   goTo: (org: string) => dispatch(push(`/${org}`)),
-  goToProject: (project: Project) =>
-    dispatch(push(`/${project.orgLabel}/${project.label}`)),
+  goToProject: (orgLabel: string, projectLabel: string) =>
+    dispatch(push(`/${orgLabel}/${projectLabel}`)),
   fetchOrgs: (paginationSettings?: PaginationSettings) =>
     dispatch(fetchOrgs(paginationSettings)),
   createOrg: (orgLabel: string, orgPayload: CreateOrgPayload) =>
