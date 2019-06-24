@@ -131,9 +131,7 @@ const fetchAcls: ActionCreator<ThunkAction> = (
   aclOptions?: ListACLOptions
 ) => {
   return async (
-    dispatch: Dispatch<any>,
-    getState,
-    { nexus }
+    dispatch: Dispatch<any>
   ): Promise<FetchAclsFulfilledAction | FetchAclsFailedAction> => {
     dispatch(fetchAclsAction);
     try {
@@ -163,9 +161,9 @@ const fetchRealms: ActionCreator<ThunkAction> = () => {
   return async (
     dispatch: Dispatch<any>,
     getState,
-    { nexus }
+    { nexusLegacy }
   ): Promise<FetchRealmsFulfilledAction | FetchRealmsFailedAction> => {
-    const Realm = nexus.Realm;
+    const Realm = nexusLegacy.Realm;
     dispatch(fetchIdentitiesAction);
     try {
       const data: PaginatedList<Realm> = await Realm.list();

@@ -112,11 +112,11 @@ export const createOrg: ActionCreator<ThunkAction> = (
   return async (
     dispatch: Dispatch<any>,
     getState,
-    { nexus }
+    { nexusLegacy }
   ): Promise<CreateOrgSuccessAction | CreateOrgFailureAction> => {
     dispatch(createOrgAction());
     try {
-      const Organization = nexus.Organization;
+      const Organization = nexusLegacy.Organization;
       const org: Organization = await Organization.create(orgLabel, orgPayload);
       return dispatch(createOrgSuccessAction(org));
     } catch (e) {
@@ -133,9 +133,9 @@ export const modifyOrg: ActionCreator<ThunkAction> = (
   return async (
     dispatch: Dispatch<any>,
     getState,
-    { nexus }
+    { nexusLegacy }
   ): Promise<ModifyOrgSuccessAction | ModifyOrgFailureAction> => {
-    const Organization = nexus.Organization;
+    const Organization = nexusLegacy.Organization;
     dispatch(modifyOrgAction());
     try {
       const org: Organization = await Organization.update(
@@ -157,9 +157,9 @@ export const deprecateOrg: ActionCreator<ThunkAction> = (
   return async (
     dispatch: Dispatch<any>,
     getState,
-    { nexus }
+    { nexusLegacy }
   ): Promise<DeprecateOrgSuccessAction | DeprecateOrgFailureAction> => {
-    const Organization = nexus.Organization;
+    const Organization = nexusLegacy.Organization;
     dispatch(deprecateOrgAction());
     try {
       await Organization.deprecate(orgLabel, rev);

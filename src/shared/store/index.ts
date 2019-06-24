@@ -13,9 +13,11 @@ import Nexus from '@bbp/nexus-sdk-legacy';
 import reducers, { RootState } from './reducers';
 import { saveState, loadState } from './reducers/localStorage';
 import { persistanceMapper, ListsByProjectState } from './reducers/lists';
+import { NexusClient } from '@bbp/nexus-sdk';
 
 export type Services = {
-  nexus: Nexus;
+  nexusLegacy: Nexus;
+  nexus: NexusClient;
 };
 
 export type ThunkAction = ThunkAction<Promise<any>, object, Services, any>;
@@ -34,7 +36,7 @@ try {
 
 export default function configureStore(
   history: History,
-  nexus: Nexus,
+  { nexusLegacy, nexus }: { nexusLegacy: Nexus; nexus: NexusClient },
   preloadedState: any = {}
 ): Store {
   // ignore server lists, fetch from local storage when available
@@ -49,7 +51,7 @@ export default function configureStore(
     preloadedState,
     composeEnhancers(
       applyMiddleware(
-        thunk.withExtraArgument({ nexus }),
+        thunk.withExtraArgument({ nexusLegacy, nexus }),
         routerMiddleware(history)
       )
     )

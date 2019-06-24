@@ -74,7 +74,7 @@ const nexusLegacy = new Nexus({
 });
 Nexus.setEnvironment(preloadedState.config.apiEndpoint);
 // create redux store
-const store = configureStore(history, nexusLegacy, initialState);
+const store = configureStore(history, { nexusLegacy, nexus }, initialState);
 
 /**
  * Sets up user token management events and

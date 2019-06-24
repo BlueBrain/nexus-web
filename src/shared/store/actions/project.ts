@@ -3,7 +3,10 @@ import { Project, ElasticSearchView } from '@bbp/nexus-sdk-legacy';
 import { ThunkAction } from '..';
 import { CreateProjectPayload } from '@bbp/nexus-sdk-legacy/lib/Project/types';
 import { httpGet, httpPut } from '@bbp/nexus-sdk-legacy/lib/utils/http';
-import { IdentityResponse, Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
+import {
+  IdentityResponse,
+  Identity,
+} from '@bbp/nexus-sdk-legacy/lib/ACL/types';
 import { asyncTimeout } from '../../utils';
 import { notification } from 'antd';
 //
@@ -180,9 +183,9 @@ export const createProject: ActionCreator<ThunkAction> = (
   return async (
     dispatch: Dispatch<any>,
     getState,
-    { nexus }
+    { nexusLegacy }
   ): Promise<CreateProjectSuccessAction | CreateProjectFailureAction> => {
-    const Project = nexus.Project;
+    const Project = nexusLegacy.Project;
     dispatch(createProjectAction());
     try {
       const project: Project = await Project.create(
@@ -206,9 +209,9 @@ export const modifyProject: ActionCreator<ThunkAction> = (
   return async (
     dispatch: Dispatch<any>,
     getState,
-    { nexus }
+    { nexusLegacy }
   ): Promise<ModifyProjectSuccessAction | ModifyProjectFailureAction> => {
-    const Project = nexus.Project;
+    const Project = nexusLegacy.Project;
     dispatch(modifyProjectAction());
     try {
       const project: Project = await Project.update(
@@ -232,9 +235,9 @@ export const deprecateProject: ActionCreator<ThunkAction> = (
   return async (
     dispatch: Dispatch<any>,
     getState,
-    { nexus }
+    { nexusLegacy }
   ): Promise<DeprecateProjectSuccessAction | DeprecateProjectFailureAction> => {
-    const Project = nexus.Project;
+    const Project = nexusLegacy.Project;
     dispatch(deprecateProjectAction());
     try {
       await Project.deprecate(orgLabel, projectLabel, rev);
@@ -251,8 +254,7 @@ export const makeProjectPublic: ActionCreator<ThunkAction> = (
 ) => {
   return async (
     dispatch: Dispatch<any>,
-    getState,
-    { nexus }
+    getState
   ): Promise<
     MakeProjectPublicSuccessAction | MakeProjectPublicFailureAction
   > => {
