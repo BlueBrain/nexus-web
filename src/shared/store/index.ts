@@ -17,6 +17,7 @@ import { NexusClient } from '@bbp/nexus-sdk';
 
 export type Services = {
   nexusLegacy: Nexus;
+  nexus: NexusClient;
 };
 
 export type ThunkAction = ThunkAction<Promise<any>, object, Services, any>;
