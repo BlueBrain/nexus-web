@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Avatar, Button, Card, Tag } from 'antd';
 
 import './Orgs.less';
+import { AccessControl } from '@bbp/react-nexus';
 
 export interface OrgCardProps {
   label: string;
@@ -35,17 +36,22 @@ const OrgCard: React.FunctionComponent<OrgCardProps> = ({
           {projectNumber > 1 && 's'}
         </p>
         {!deprecated && onEdit && (
-          <Button
-            className="edit-button"
-            type="primary"
-            tabIndex={1}
-            onClick={(e: React.SyntheticEvent) => {
-              e.stopPropagation();
-              onEdit();
-            }}
+          <AccessControl
+            path={`/${label}`}
+            permissions={['organizations/write']}
           >
-            Edit
-          </Button>
+            <Button
+              className="edit-button"
+              type="primary"
+              tabIndex={1}
+              onClick={(e: React.SyntheticEvent) => {
+                e.stopPropagation();
+                onEdit();
+              }}
+            >
+              Edit
+            </Button>
+          </AccessControl>
         )}
       </div>
       {description && <p className="org-description">{description}</p>}

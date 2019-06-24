@@ -2,9 +2,11 @@ import * as React from 'react';
 import { Button, Card, Tag } from 'antd';
 
 import './Projects.less';
+import { AccessControl } from '@bbp/react-nexus';
 
 export interface ProjectCardProps {
   label: string;
+  orgLabel: string;
   deprecated?: boolean;
   description?: string;
   logo?: string;
@@ -14,6 +16,7 @@ export interface ProjectCardProps {
 
 const ProjectCard: React.FunctionComponent<ProjectCardProps> = ({
   label,
+  orgLabel,
   description = '',
   onEdit,
   deprecated = false,
@@ -25,17 +28,22 @@ const ProjectCard: React.FunctionComponent<ProjectCardProps> = ({
         <p className="project-name">{label}</p>
         {deprecated && <Tag color="red">deprecated</Tag>}
         {!deprecated && onEdit && (
-          <Button
-            className="edit-button"
-            type="primary"
-            tabIndex={1}
-            onClick={(e: React.SyntheticEvent) => {
-              e.stopPropagation();
-              onEdit();
-            }}
+          <AccessControl
+            path={`/${orgLabel}/${label}`}
+            permissions={['projects/write']}
           >
-            Edit
-          </Button>
+            <Button
+              className="edit-button"
+              type="primary"
+              tabIndex={1}
+              onClick={(e: React.SyntheticEvent) => {
+                e.stopPropagation();
+                onEdit();
+              }}
+            >
+              Edit
+            </Button>
+          </AccessControl>
         )}
       </div>
       {description && <p className="project-description">{description}</p>}
