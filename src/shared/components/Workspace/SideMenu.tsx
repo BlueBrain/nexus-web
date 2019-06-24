@@ -47,6 +47,7 @@ const SideMenu: React.FunctionComponent<SideMenuProps> = props => {
                   </div>
                 }
                 size="small"
+                bordered={false}
               >
                 <div className="content">{children}</div>
               </Card>
