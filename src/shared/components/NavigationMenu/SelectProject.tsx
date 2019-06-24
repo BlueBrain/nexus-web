@@ -69,13 +69,14 @@ export const NavMenuSelectProjectPage: React.FunctionComponent<
   } = props;
   return (
     <div className="page -select-project">
-      <h3 className="title">
+      <h4 className="title">
         <a onClick={() => goTo('/selectOrg')}>
           <Icon type="arrow-left" />
         </a>{' '}
         Select a Project
-      </h3>
+      </h4>
       <Search
+        placeholder={'Find a Project by name...'}
         allowClear={true}
         value={searchValue}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,7 +85,7 @@ export const NavMenuSelectProjectPage: React.FunctionComponent<
       />
       <div>
         <Spin spinning={loading}>
-          {data && !data._total && <Empty>No Orgs found</Empty>}
+          {data && !data._total && <Empty>No projects found</Empty>}
           <ul className="list">
             {data &&
               data['_results'].map(

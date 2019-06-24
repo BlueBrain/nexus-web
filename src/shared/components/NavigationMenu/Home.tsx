@@ -16,11 +16,11 @@ export const NavMenuHome: React.FunctionComponent<NavMenuHomeProps> = props => {
   const { path, goTo, goToProject } = props;
   return (
     <div className="page -home">
-      <h3 className="title">
+      <h4 className="title">
         <a onClick={() => goTo('/selectOrg')}>
           <Icon type="project" /> Select a Project
         </a>
-      </h3>
+      </h4>
       <Divider />
       <RecentlyVisited visitProject={goToProject} />
     </div>

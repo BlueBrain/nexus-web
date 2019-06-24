@@ -17,7 +17,7 @@ const List = ({
 }) => {
   const state = useNexus<OrganizationList>(
     nexus => nexus.Organization.list(options),
-    [options && options.label]
+    [options && options.label, options && options.from, options && options.size]
   );
   return children({ ...state });
 };

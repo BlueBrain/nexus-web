@@ -17,9 +17,9 @@ const RecentlyVisited: React.FunctionComponent<RecentlyVisitedProps> = ({
   const { previouslyVisitedList } = usePreviouslyVisited('visitedProjects');
   return (
     <div className="recently-visited">
-      <h3 className="label">
+      <h4 className="label">
         <Icon type="clock-circle" /> Recently Visited
-      </h3>
+      </h4>
       <ul>
         {previouslyVisitedList.slice(0, DEFAULT_VISITED_MAX).map(project => {
           return (
