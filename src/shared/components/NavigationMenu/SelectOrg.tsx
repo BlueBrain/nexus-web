@@ -91,8 +91,6 @@ export const NavMenuSelectOrgPage: React.FunctionComponent<
     size,
   } = props;
 
-  console.log({ props });
-
   return (
     <div className="page -select-org">
       <h4 className="title">
