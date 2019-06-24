@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { NavMenuPageProps } from './Home';
 import Search from 'antd/lib/input/Search';
-import { Icon, Spin, Empty, Pagination } from 'antd';
+import { Spin, Empty, Pagination, Button } from 'antd';
 import Orgs from '../Nexus/Orgs';
 import ListItem from '../Animations/ListItem';
 import { OrganizationList, OrgResponseCommon } from '@bbp/nexus-sdk';
@@ -11,15 +11,16 @@ import { RequestError } from '../../store/actions/utils/errors';
 
 interface NavMenuOrgsContainerProps extends NavMenuPageProps {
   activateOrg(orgLabel: string): void;
+  pageSize: number;
 }
 
 export const NavMenuOrgsContainer: React.FunctionComponent<
   NavMenuOrgsContainerProps
 > = props => {
-  const { path, goTo, activateOrg } = props;
+  const { path, goTo, activateOrg, pageSize } = props;
   const [searchValue, setSearchValue] = React.useState<string>();
   const [{ from, size }, setPagination] = React.useState({
-    size: 2,
+    size: pageSize,
     from: 0,
   });
   return (
@@ -94,9 +95,11 @@ export const NavMenuSelectOrgPage: React.FunctionComponent<
   return (
     <div className="page -select-org">
       <h4 className="title">
-        <a onClick={() => goTo('/')}>
-          <Icon type="arrow-left" />
-        </a>{' '}
+        <Button
+          size="small"
+          onClick={() => goTo('/')}
+          icon="arrow-left"
+        ></Button>{' '}
         Select an Organziation
       </h4>
       <Search

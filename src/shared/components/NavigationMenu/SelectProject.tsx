@@ -1,43 +1,71 @@
 import * as React from 'react';
 import { NavMenuPageProps } from './Home';
 import Search from 'antd/lib/input/Search';
-import { Icon, Spin, Empty } from 'antd';
+import { Button, Spin, Empty, Pagination } from 'antd';
 import Projects from '../Nexus/Projects';
 import ListItem from '../Animations/ListItem';
-import { ProjectList } from '@bbp/nexus-sdk';
+import { ProjectList, ProjectResponseCommon } from '@bbp/nexus-sdk';
+import { FetchableState } from '../../store/reducers/utils';
+import { PaginatedList } from '@bbp/nexus-sdk-legacy';
+import { RequestError } from '../../store/actions/utils/errors';
 
 interface NavMenuProjectsContainerProps extends NavMenuPageProps {
   activateOrg(orgLabel: string): void;
   goToProject(orgLabel: string, projectLabel: string): void;
   orgLabel: string;
+  pageSize: number;
 }
 
 export const NavMenuProjectsContainer: React.FunctionComponent<
   NavMenuProjectsContainerProps
 > = props => {
-  const { path, goTo, orgLabel, goToProject } = props;
+  const { path, goTo, orgLabel, goToProject, pageSize } = props;
   const [searchValue, setSearchValue] = React.useState<string>();
+  const [{ from, size }, setPagination] = React.useState({
+    size: pageSize,
+    from: 0,
+  });
   return (
-    <Projects.List orgLabel={orgLabel} options={{ label: searchValue }}>
+    <Projects.List
+      orgLabel={orgLabel}
+      options={{ from, size, label: searchValue }}
+    >
       {({
         data,
         error,
         loading,
       }: {
         loading: boolean;
-        error: Error;
+        error?: RequestError | null;
         data: ProjectList;
       }) => {
+        const next = (pageNumber: number) => {
+          setPagination({
+            size,
+            from: size * pageNumber - size,
+          });
+        };
+
+        const fetchablePaginatedList = {
+          error,
+          isFetching: loading,
+          data: {
+            total: (data && data['_total']) || 0,
+            results: (data && data['_results']) || [],
+            index: from,
+          },
+        };
+
         return (
           <NavMenuSelectProjectPage
             {...{
               path,
               goTo,
-              error,
-              loading,
-              data,
+              next,
+              fetchablePaginatedList,
               setSearchValue,
               searchValue,
+              size,
               goToProject,
             }}
           />
@@ -48,11 +76,11 @@ export const NavMenuProjectsContainer: React.FunctionComponent<
 };
 
 interface NavMenuSelectProjectPageProps extends NavMenuPageProps {
-  error: Error;
-  loading: boolean;
-  data: ProjectList;
   searchValue?: string;
   setSearchValue(value: string): void;
+  fetchablePaginatedList: FetchableState<PaginatedList<ProjectResponseCommon>>;
+  next: (page: number, pageSize?: number) => void;
+  size: number;
   goToProject(orgLabel: string, projectLabel: string): void;
 }
 
@@ -60,20 +88,24 @@ export const NavMenuSelectProjectPage: React.FunctionComponent<
   NavMenuSelectProjectPageProps
 > = props => {
   const {
+    goToProject,
     goTo,
     setSearchValue,
     searchValue,
-    loading,
-    data,
-    goToProject,
+    fetchablePaginatedList,
+    next,
+    size,
   } = props;
+
   return (
     <div className="page -select-project">
       <h4 className="title">
-        <a onClick={() => goTo('/selectOrg')}>
-          <Icon type="arrow-left" />
-        </a>{' '}
-        Select a Project
+        <Button
+          size="small"
+          onClick={() => goTo('/selectOrg')}
+          icon="arrow-left"
+        ></Button>{' '}
+        Select an Project
       </h4>
       <Search
         placeholder={'Find a Project by name...'}
@@ -84,11 +116,13 @@ export const NavMenuSelectProjectPage: React.FunctionComponent<
         }}
       />
       <div>
-        <Spin spinning={loading}>
-          {data && !data._total && <Empty>No projects found</Empty>}
-          <ul className="list">
-            {data &&
-              data['_results'].map(
+        {fetchablePaginatedList.data && (
+          <Spin spinning={fetchablePaginatedList.isFetching}>
+            <ul className="list">
+              {!fetchablePaginatedList.data.total && (
+                <Empty description="No orgs found" />
+              )}
+              {fetchablePaginatedList.data.results.map(
                 ({ _organizationLabel, _label, description }) => (
                   <ListItem
                     key={_label}
@@ -99,8 +133,20 @@ export const NavMenuSelectProjectPage: React.FunctionComponent<
                   ></ListItem>
                 )
               )}
-          </ul>
-        </Spin>
+              {fetchablePaginatedList.data.total > size && (
+                <Pagination
+                  simple
+                  onChange={next}
+                  current={
+                    Math.round(fetchablePaginatedList.data.index / size) + 1
+                  }
+                  pageSize={size}
+                  total={fetchablePaginatedList.data.total}
+                />
+              )}
+            </ul>
+          </Spin>
+        )}
       </div>
     </div>
   );

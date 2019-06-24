@@ -1,7 +1,7 @@
 import * as React from 'react';
 import RecentlyVisited from '../RecentlyVisited';
 import './nav-menu.less';
-import { Icon, Divider } from 'antd';
+import { Button, Divider } from 'antd';
 
 export interface NavMenuPageProps {
   path: string;
@@ -16,11 +16,13 @@ export const NavMenuHome: React.FunctionComponent<NavMenuHomeProps> = props => {
   const { path, goTo, goToProject } = props;
   return (
     <div className="page -home">
-      <h4 className="title">
-        <a onClick={() => goTo('/selectOrg')}>
-          <Icon type="project" /> Select a Project
-        </a>
-      </h4>
+      <p>
+        Projects are where you can compartmentalize your data and access
+        settings
+      </p>
+      <Button icon="project" onClick={() => goTo('/selectOrg')}>
+        Select a Project
+      </Button>
       <Divider />
       <RecentlyVisited visitProject={goToProject} />
     </div>

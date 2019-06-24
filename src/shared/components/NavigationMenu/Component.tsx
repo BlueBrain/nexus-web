@@ -9,10 +9,11 @@ import './nav-menu.less';
 interface NavMenuProps {
   goToProject(orgLabel: string, projectLabel: string): void;
   activateOrg(orgLabel: string): void;
+  pageSize: number;
 }
 
 export const NavMenu: React.FunctionComponent<NavMenuProps> = props => {
-  const { goToProject, activateOrg } = props;
+  const { pageSize, goToProject, activateOrg } = props;
   return (
     <RoutedComponent
       routes={[
@@ -25,7 +26,11 @@ export const NavMenu: React.FunctionComponent<NavMenuProps> = props => {
         {
           path: '/selectOrg',
           component: (path, goTo) => {
-            return <NavMenuOrgsContainer {...{ path, goTo, activateOrg }} />;
+            return (
+              <NavMenuOrgsContainer
+                {...{ pageSize, path, goTo, activateOrg }}
+              />
+            );
           },
         },
         {
@@ -35,6 +40,7 @@ export const NavMenu: React.FunctionComponent<NavMenuProps> = props => {
             return (
               <NavMenuProjectsContainer
                 {...{
+                  pageSize,
                   path,
                   goTo,
                   activateOrg,
@@ -51,6 +57,7 @@ export const NavMenu: React.FunctionComponent<NavMenuProps> = props => {
 };
 
 interface MenuProps {
+  pageSize: number;
   render: (
     visible: boolean,
     toggleVisibility: () => void
@@ -61,7 +68,13 @@ interface MenuProps {
 }
 
 const NavigationMenuComponent: React.FunctionComponent<MenuProps> = props => {
-  const { goToProject, activateOrg, render, defaultVisibility } = props;
+  const {
+    pageSize,
+    goToProject,
+    activateOrg,
+    render,
+    defaultVisibility,
+  } = props;
 
   const [visible, setVisible] = React.useState(
     typeof defaultVisibility !== 'undefined' ? defaultVisibility : true
@@ -85,7 +98,7 @@ const NavigationMenuComponent: React.FunctionComponent<MenuProps> = props => {
         }}
       >
         <div className="nav-menu">
-          <NavMenu {...{ goToProject, activateOrg }} />
+          <NavMenu {...{ pageSize, goToProject, activateOrg }} />
         </div>
       </SideMenu>
     </>

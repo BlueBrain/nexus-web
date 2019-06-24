@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Project } from '@bbp/nexus-sdk-legacy';
 import NavigationMenuComponent from './Component';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { push } from 'connected-react-router';
 import { fetchOrg } from '../../store/actions/nexus/activeOrg';
+import { RootState } from '../../store/reducers';
 
 interface MenuProps {
   defaultVisibility?: boolean;
@@ -16,6 +17,9 @@ interface MenuProps {
 const NavMenuContainer: React.FunctionComponent<MenuProps> = props => {
   const { render, defaultVisibility } = props;
   const dispatch = useDispatch();
+  const pageSize = useSelector(
+    (state: RootState) => state.uiSettings.pageSizes.resourcesListPageSize
+  );
 
   const goToProject = (orgLabel: string, projectLabel: string) =>
     dispatch(push(`/${orgLabel}/${projectLabel}`));
@@ -25,6 +29,7 @@ const NavMenuContainer: React.FunctionComponent<MenuProps> = props => {
     <NavigationMenuComponent
       {...{
         render,
+        pageSize,
         goToProject,
         activateOrg,
         defaultVisibility,
