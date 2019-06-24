@@ -18,21 +18,26 @@ export const NavMenu: React.FunctionComponent<NavMenuProps> = props => {
       routes={[
         {
           path: '/',
-          component: (path, goTo) => (
-            <NavMenuHome {...{ path, goTo, goToProject }} />
-          ),
+          component: (path, goTo) => {
+            return <NavMenuHome {...{ path, goTo, goToProject }} />;
+          },
         },
         {
           path: '/selectOrg',
-          component: (path, goTo) => (
-            <NavMenuOrgsContainer {...{ path, goTo, activateOrg }} />
-          ),
+          component: (path, goTo) => {
+            return <NavMenuOrgsContainer {...{ path, goTo, activateOrg }} />;
+          },
         },
         {
-          path: '/selectProject',
-          component: (path, goTo) => (
-            <NavMenuProjectsContainer {...{ path, goTo, activateOrg }} />
-          ),
+          path: '/selectProject/:orgLabel',
+          component: (path, goTo, params) => {
+            const { orgLabel } = params;
+            return (
+              <NavMenuProjectsContainer
+                {...{ path, goTo, activateOrg, orgLabel }}
+              />
+            );
+          },
         },
       ]}
     />

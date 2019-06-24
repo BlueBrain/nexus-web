@@ -123,6 +123,8 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
 
   return (
     <div>
+      {/*
+    // @ts-ignore */}
       <Dragger {...draggerProps} directory={directoryMode}>
         <p className="ant-upload-drag-icon">
           <Icon type="inbox" />

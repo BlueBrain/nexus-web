@@ -2,7 +2,7 @@ import * as React from 'react';
 import { NavMenuPageProps } from './Home';
 import Search from 'antd/lib/input/Search';
 import { Icon, Spin, Empty } from 'antd';
-import { Orgs } from '@bbp/react-nexus';
+import Orgs from '../Nexus/Orgs';
 import ListItem from '../Animations/ListItem';
 import { OrganizationList } from '@bbp/nexus-sdk';
 
@@ -90,7 +90,7 @@ export const NavMenuSelectOrgPage: React.FunctionComponent<
                 <ListItem
                   onClick={() => {
                     activateOrg(_label);
-                    goTo('/selectProject');
+                    goTo(`/selectProject/${_label}`);
                   }}
                   id={_label}
                   label={_label}

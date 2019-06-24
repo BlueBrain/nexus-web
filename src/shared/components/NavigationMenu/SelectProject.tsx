@@ -2,28 +2,20 @@ import * as React from 'react';
 import { NavMenuPageProps } from './Home';
 import Search from 'antd/lib/input/Search';
 import { Icon, Spin, Empty } from 'antd';
-import { Projects } from '@bbp/react-nexus';
+import Projects from '../Nexus/Projects';
 import ListItem from '../Animations/ListItem';
 import { ProjectList } from '@bbp/nexus-sdk';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store/reducers';
 
 interface NavMenuProjectsContainerProps extends NavMenuPageProps {
   activateOrg(orgLabel: string): void;
+  orgLabel: string;
 }
 
 export const NavMenuProjectsContainer: React.FunctionComponent<
   NavMenuProjectsContainerProps
 > = props => {
-  const { path, goTo } = props;
+  const { path, goTo, orgLabel } = props;
   const [searchValue, setSearchValue] = React.useState<string>();
-  const orgLabel = useSelector(
-    (state: RootState) =>
-      state.nexus &&
-      state.nexus.activeOrg &&
-      state.nexus.activeOrg.data &&
-      state.nexus.activeOrg.data.org.label
-  );
   return (
     <Projects.List orgLabel={orgLabel} options={{ label: searchValue }}>
       {({
