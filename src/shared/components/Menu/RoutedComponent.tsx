@@ -31,12 +31,6 @@ const RoutedComponent: React.FunctionComponent<RoutedComponentProps> = ({
     return !!matchRoute(path);
   });
 
-  console.log({
-    currentRoute,
-    matchedRoute,
-    matchRoute,
-  });
-
   const Page = matchedRoute
     ? matchedRoute.component(
         currentRoute,
