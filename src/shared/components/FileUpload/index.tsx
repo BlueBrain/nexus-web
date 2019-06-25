@@ -74,18 +74,15 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
   >([]);
   const [fileList, setFileList] = React.useState<UploadFile[]>([]);
 
-  // The types for this are wrong :(
-  // https://github.com/ant-design/ant-design/blob/master/components/upload/interface.tsx#L79
-  const handleFileUpload = (customFileRequest: object) => {
-    const options = storageId ? { storage: storageId } : undefined;
-    onFileUpload((customFileRequest as CustomFileRequest).file, options)
-      .then(nexusFile => {
-        setRecentlyUploadFileList([...recentlyUploadedFileList, nexusFile]);
-        (customFileRequest as CustomFileRequest).onSuccess(
-          'Successfully uploaded file'
-        );
-      })
-      .catch((customFileRequest as CustomFileRequest).onError);
+  const handleFileUpload = async (customFileRequest: CustomFileRequest) => {
+    try {
+      const options = storageId ? { storage: storageId } : undefined;
+      const nexusFile = await onFileUpload(customFileRequest.file, options);
+      setRecentlyUploadFileList([...recentlyUploadedFileList, nexusFile]);
+      customFileRequest.onSuccess('Successfully uploaded file');
+    } catch (error) {
+      customFileRequest.onError(error);
+    }
   };
 
   const draggerProps = {
