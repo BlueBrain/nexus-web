@@ -1,7 +1,6 @@
 import * as React from 'react';
 import './routed-component.less';
-// @ts-ignore
-import * as makeRoute from 'path-match';
+const makeRoute = require('path-match');
 
 interface Route {
   path: string;

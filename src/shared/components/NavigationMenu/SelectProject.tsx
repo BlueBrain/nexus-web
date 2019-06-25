@@ -6,8 +6,8 @@ import Projects from '../Nexus/Projects';
 import ListItem from '../Animations/ListItem';
 import { ProjectList, ProjectResponseCommon } from '@bbp/nexus-sdk';
 import { FetchableState } from '../../store/reducers/utils';
-import { PaginatedList } from '@bbp/nexus-sdk-legacy';
 import { RequestError } from '../../store/actions/utils/errors';
+import { PaginatedList } from '../../utils/types';
 
 interface NavMenuProjectsContainerProps extends NavMenuPageProps {
   activateOrg(orgLabel: string): void;

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Project } from '@bbp/nexus-sdk-legacy';
 import NavigationMenuComponent from './Component';
 import { useDispatch, useSelector } from 'react-redux';
 import { push } from 'connected-react-router';
