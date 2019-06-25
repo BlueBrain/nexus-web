@@ -105,7 +105,7 @@ export const NavMenuSelectProjectPage: React.FunctionComponent<
           onClick={() => goTo('/selectOrg')}
           icon="arrow-left"
         ></Button>{' '}
-        Select an Project
+        Select a Project
       </h4>
       <Search
         placeholder={'Find a Project by name...'}
