@@ -120,7 +120,7 @@ export const NavMenuSelectProjectPage: React.FunctionComponent<
           <Spin spinning={fetchablePaginatedList.isFetching}>
             <ul className="list">
               {!fetchablePaginatedList.data.total && (
-                <Empty description="No orgs found" />
+                <Empty description="No projects found" />
               )}
               {fetchablePaginatedList.data.results.map(
                 ({ _organizationLabel, _label, description }) => (
