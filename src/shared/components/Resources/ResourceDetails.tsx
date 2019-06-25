@@ -144,7 +144,6 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
                 deprecateResource,
                 downloadFile,
                 veryDangerousToDeprecate: (resource: Resource) => {
-                  console.log('deprecate');
                   deprecateResource(resource);
                 },
               }}
