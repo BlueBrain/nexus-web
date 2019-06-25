@@ -121,6 +121,7 @@ export interface ResourceActionsProps {
   goToElasticSearchView: (resource: Resource) => void;
   deprecateResource: (resource: Resource) => void;
   downloadFile: (resource: Resource) => void;
+  veryDangerousToDeprecate: (resource: Resource) => void;
 }
 
 const ResourceActions: React.FunctionComponent<
@@ -132,6 +133,7 @@ const ResourceActions: React.FunctionComponent<
     goToElasticSearchView,
     deprecateResource,
     downloadFile,
+    veryDangerousToDeprecate,
   } = props;
   return (
     <section className="resource-actions">
@@ -140,6 +142,7 @@ const ResourceActions: React.FunctionComponent<
         goToElasticSearchView,
         deprecateResource,
         downloadFile,
+        veryDangerousToDeprecate,
       })}
     </section>
   );

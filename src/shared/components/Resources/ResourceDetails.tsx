@@ -112,9 +112,7 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
         {!!resource && !error && (
           <>
             <Helmet
-              title={`${resource.name} | ${resource.projectLabel} | ${
-                resource.orgLabel
-              } | Nexus Web`}
+              title={`${resource.name} | ${resource.projectLabel} | ${resource.orgLabel} | Nexus Web`}
               meta={[
                 // TODO find good ideas for descriptions!
                 {
@@ -145,6 +143,10 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
                 goToSparqlView,
                 deprecateResource,
                 downloadFile,
+                veryDangerousToDeprecate: (resource: Resource) => {
+                  console.log('deprecate');
+                  deprecateResource(resource);
+                },
               }}
             />
             <Tabs defaultActiveKey="1">
