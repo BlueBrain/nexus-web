@@ -1,13 +1,15 @@
 import * as React from 'react';
 import './routed-component.less';
-const makeRoute = require('path-match');
+import { matchPath } from 'react-router';
 
 interface Route {
   path: string;
   component: (
     path: string,
     goTo: (path: string) => void,
-    params: any
+    urlParams: {
+      [urlPathParam: string]: any;
+    }
   ) => React.ReactNode;
 }
 
@@ -20,21 +22,29 @@ const RoutedComponent: React.FunctionComponent<RoutedComponentProps> = ({
   routes,
   notFound,
 }) => {
-  const [currentRoute, setCurrentRoute] = React.useState('/');
+  const [currentLocation, setCurrentLocation] = React.useState('/');
 
-  const match = makeRoute();
-
-  const matchRoute = (path: string) => match(path)(currentRoute);
-
-  const matchedRoute = routes.find(({ path }) => {
-    return !!matchRoute(path);
-  });
+  const matchedRoute = routes
+    .map(route => {
+      const match = matchPath(currentLocation, {
+        path: route.path,
+        strict: true,
+        exact: true,
+      });
+      return (
+        !!match && {
+          route,
+          match,
+        }
+      );
+    })
+    .find(match => !!match);
 
   const Page = matchedRoute
-    ? matchedRoute.component(
-        currentRoute,
-        setCurrentRoute,
-        matchRoute(matchedRoute.path)
+    ? matchedRoute.route.component(
+        currentLocation,
+        setCurrentLocation,
+        matchedRoute.match.params
       )
     : notFound;
 
