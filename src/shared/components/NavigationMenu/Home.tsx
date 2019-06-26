@@ -16,10 +16,7 @@ export const NavMenuHome: React.FunctionComponent<NavMenuHomeProps> = props => {
   const { path, goTo, goToProject } = props;
   return (
     <div className="page -home">
-      <p>
-        Projects are where you can compartmentalize your data and access
-        settings
-      </p>
+      <p>Projects are where you group and categorize data</p>
       <Button icon="project" onClick={() => goTo('/selectOrg')}>
         Select a Project
       </Button>
