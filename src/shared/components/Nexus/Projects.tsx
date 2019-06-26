@@ -27,7 +27,7 @@ const List = ({
 }) => {
   const state = useNexus<ProjectList>(
     nexus => nexus.Project.list(orgLabel, options),
-    [options && options.label, options && options.from, options && options.size]
+    [orgLabel, ...Object.values(options)]
   );
   return children({ ...state });
 };
