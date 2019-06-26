@@ -15,6 +15,8 @@ export const makeESQuery = (query?: List['query']) => {
   const sort = [
     {
       _createdAt: 'desc',
+    },
+    {
       '@id': 'desc',
     },
   ];
