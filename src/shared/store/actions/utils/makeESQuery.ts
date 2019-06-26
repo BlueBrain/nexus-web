@@ -72,13 +72,13 @@ export const makeESQuery = (query?: List['query']) => {
 
     if (must.length >= 1 || mustNot.length >= 1) {
       return {
+        sort,
         query: {
           bool: {
             must,
             must_not: mustNot,
           },
         },
-        sort,
       };
     }
     if (must.length === 0) {
@@ -87,10 +87,10 @@ export const makeESQuery = (query?: List['query']) => {
       };
     }
     return {
+      sort,
       query: {
         ...must[0],
       },
-      sort,
     };
   }
   return {};
