@@ -41,6 +41,14 @@ Object {
       ],
     },
   },
+  "sort": Array [
+    Object {
+      "_createdAt": "desc",
+    },
+    Object {
+      "@id": "desc",
+    },
+  ],
 }
 `;
 
@@ -85,6 +93,14 @@ Object {
       ],
     },
   },
+  "sort": Array [
+    Object {
+      "_createdAt": "desc",
+    },
+    Object {
+      "@id": "desc",
+    },
+  ],
 }
 `;
 
@@ -124,6 +140,14 @@ Object {
       ],
     },
   },
+  "sort": Array [
+    Object {
+      "_createdAt": "desc",
+    },
+    Object {
+      "@id": "desc",
+    },
+  ],
 }
 `;
 
@@ -178,6 +202,14 @@ Object {
       ],
     },
   },
+  "sort": Array [
+    Object {
+      "_createdAt": "desc",
+    },
+    Object {
+      "@id": "desc",
+    },
+  ],
 }
 `;
 
@@ -222,5 +254,13 @@ Object {
       ],
     },
   },
+  "sort": Array [
+    Object {
+      "_createdAt": "desc",
+    },
+    Object {
+      "@id": "desc",
+    },
+  ],
 }
 `;
