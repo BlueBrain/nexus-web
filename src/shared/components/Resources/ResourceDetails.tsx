@@ -139,12 +139,11 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
             <ResourceActions
               {...{
                 resource,
-                goToElasticSearchView,
-                goToSparqlView,
-                deprecateResource,
-                downloadFile,
-                veryDangerousToDeprecate: (resource: Resource) => {
-                  deprecateResource(resource);
+                actions: {
+                  goToElasticSearchView,
+                  goToSparqlView,
+                  deprecateResource,
+                  downloadFile,
                 },
               }}
             />
