@@ -10,8 +10,9 @@ const Get = ({
   projectLabel: string;
   children: any;
 }) => {
-  const state = useNexus<Project>(nexus =>
-    nexus.Project.get(orgLabel, projectLabel)
+  const state = useNexus<Project>(
+    nexus => nexus.Project.get(orgLabel, projectLabel),
+    [orgLabel, projectLabel]
   );
   return children({ ...state });
 };
