@@ -12,6 +12,13 @@ interface TermFilter {
 
 // TODO break out into library
 export const makeESQuery = (query?: List['query']) => {
+  const sort = [
+    {
+      _createdAt: 'desc',
+      '@id': 'desc',
+    },
+  ];
+
   if (query) {
     const must = [];
     const mustNot: any[] = []; // too lazy to type all of the possible query types!
@@ -71,15 +78,19 @@ export const makeESQuery = (query?: List['query']) => {
             must_not: mustNot,
           },
         },
+        sort,
       };
     }
     if (must.length === 0) {
-      return {};
+      return {
+        sort,
+      };
     }
     return {
       query: {
         ...must[0],
       },
+      sort,
     };
   }
   return {};
