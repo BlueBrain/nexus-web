@@ -64,12 +64,7 @@ storiesOf('Components/Orgs', module).add(
     return (
       <React.Fragment>
         <div style={{ margin: '50px 40px 0px' }}>
-          <OrgList
-            orgs={orgs}
-            onOrgClick={action('org-selected')}
-            onPaginationChange={action('pagination-change')}
-            paginationSettings={{ total: 20, from: 1, pageSize: 20 }}
-          />
+          <OrgList onOrgClick={() => action('org-selected')} />
         </div>
       </React.Fragment>
     );

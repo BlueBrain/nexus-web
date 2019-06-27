@@ -8,7 +8,7 @@ import { AccessControl, useNexus } from '@bbp/react-nexus';
 import './Orgs.less';
 
 export interface OrgListContainerProps {
-  pageSize: number;
+  pageSize?: number;
   onOrgClick?(orgLabel: string): void;
   onOrgEdit?(orgLabel: string): void;
   createOrg?(): void;
