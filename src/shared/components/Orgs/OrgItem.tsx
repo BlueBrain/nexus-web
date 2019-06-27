@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import { AccessControl } from '@bbp/react-nexus';
 import ListItem from '../Animations/ListItem';
 
-export interface OrgCardProps {
+export interface OrgItemProps {
   label: string;
   description?: string;
   numProjects?: number;
@@ -11,7 +11,7 @@ export interface OrgCardProps {
   onEdit?(): void;
 }
 
-const OrgItem: React.FunctionComponent<OrgCardProps> = ({
+const OrgItem: React.FunctionComponent<OrgItemProps> = ({
   label,
   description,
   numProjects,

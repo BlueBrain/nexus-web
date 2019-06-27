@@ -5,10 +5,10 @@ import { action } from '@storybook/addon-actions';
 import { withKnobs, text, number } from '@storybook/addon-knobs';
 
 import OrgList from './OrgList';
-import OrgItem, { OrgCardProps } from './OrgItem';
+import OrgItem, { OrgItemProps } from './OrgItem';
 import OrgForm from './OrgForm';
 
-const orgs: OrgCardProps[] = [
+const orgs: OrgItemProps[] = [
   { label: 'nexus', numProjects: 1200 },
   { label: 'bbp', numProjects: 300 },
   { label: 'hbp', numProjects: 1 },

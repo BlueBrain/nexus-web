@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Input, Empty } from 'antd';
-import OrgItem, { OrgCardProps } from './OrgItem';
+import OrgItem, { OrgItemProps } from './OrgItem';
 import AnimatedList from '../Animations/AnimatedList';
 
 import './Orgs.less';
 import { Organization } from '@bbp/nexus-sdk-legacy';
 
 export interface OrgListProps {
-  orgs: OrgCardProps[];
+  orgs: OrgItemProps[];
   busy?: boolean;
   error?: { message: string; name: string };
   onOrgClick?(org: Organization): void;
