@@ -9,12 +9,12 @@ import OrgItem, { OrgItemProps } from './OrgItem';
 import OrgForm from './OrgForm';
 
 const orgs: OrgItemProps[] = [
-  { label: 'nexus', numProjects: 1200 },
-  { label: 'bbp', numProjects: 300 },
-  { label: 'hbp', numProjects: 1 },
-  { label: 'nasa', numProjects: 912839 },
+  { label: 'nexus', numberOfProjects: 1200 },
+  { label: 'bbp', numberOfProjects: 300 },
+  { label: 'hbp', numberOfProjects: 1 },
+  { label: 'nasa', numberOfProjects: 912839 },
   { label: 'tesla' },
-  { label: 'rolex', numProjects: 3424 },
+  { label: 'rolex', numberOfProjects: 3424 },
 ];
 
 storiesOf('Components/Orgs', module)
@@ -35,13 +35,13 @@ storiesOf('Components/Orgs', module)
         <React.Fragment>
           <div style={{ margin: '50px 40px 0px' }}>
             <h2>No logo</h2>
-            <OrgItem numProjects={123} label="bbp" />
+            <OrgItem numberOfProjects={123} label="bbp" />
           </div>
           <div style={{ margin: '50px 40px 0px' }}>
             <h2>Logo and edit button</h2>
             <OrgItem
               label={label}
-              numProjects={projects}
+              numberOfProjects={projects}
               onClick={action('org-click')}
               onEdit={action('edit-button-click')}
             />

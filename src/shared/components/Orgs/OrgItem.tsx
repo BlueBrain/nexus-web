@@ -6,7 +6,7 @@ import ListItem from '../Animations/ListItem';
 export interface OrgItemProps {
   label: string;
   description?: string;
-  numProjects?: number;
+  numberOfProjects?: number;
   onClick?(): void;
   onEdit?(): void;
 }
@@ -14,7 +14,7 @@ export interface OrgItemProps {
 const OrgItem: React.FunctionComponent<OrgItemProps> = ({
   label,
   description,
-  numProjects,
+  numberOfProjects,
   onClick = () => {},
   onEdit = () => {},
 }) => {
@@ -26,10 +26,10 @@ const OrgItem: React.FunctionComponent<OrgItemProps> = ({
       label={label}
       description={description}
       details={
-        !!numProjects ? (
+        !!numberOfProjects ? (
           <p className="project-number">
-            <span className="number">{numProjects}</span> project
-            {numProjects > 1 && 's'}
+            <span className="number">{numberOfProjects}</span> project
+            {numberOfProjects > 1 && 's'}
           </p>
         ) : null
       }
