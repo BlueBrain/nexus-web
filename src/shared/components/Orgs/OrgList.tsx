@@ -1,83 +1,162 @@
 import * as React from 'react';
-import { Input, Empty } from 'antd';
-import OrgItem, { OrgItemProps } from './OrgItem';
-import AnimatedList from '../Animations/AnimatedList';
-
+import { Empty, Pagination, Spin, Button } from 'antd';
+import { OrgResponseCommon, OrganizationList } from '@bbp/nexus-sdk';
+import { PaginationSettings } from '../../utils/types';
+import Search from 'antd/lib/input/Search';
+import OrgItem from './OrgItem';
+import { AccessControl, useNexus } from '@bbp/react-nexus';
 import './Orgs.less';
-import { Organization } from '@bbp/nexus-sdk-legacy';
 
-export interface OrgListProps {
-  orgs: OrgItemProps[];
-  busy?: boolean;
-  error?: { message: string; name: string };
-  onOrgClick?(org: Organization): void;
-  onOrgEdit?(label: string): void;
-  paginationSettings?: { total: number; from: number; pageSize: number };
-  onPaginationChange?: (page: number, pageSize?: number) => void;
+export interface OrgListContainerProps {
+  pageSize: number;
+  onOrgClick?(orgLabel: string): void;
+  onOrgEdit?(orgLabel: string): void;
+  createOrg?(): void;
 }
 
-const Search = Input.Search;
+export const OrgsListContainer: React.FunctionComponent<
+  OrgListContainerProps
+> = props => {
+  const { pageSize = 20, onOrgClick, onOrgEdit, createOrg } = props;
+  const [searchValue, setSearchValue] = React.useState<string>();
+  const [{ from, size }, setPagination] = React.useState({
+    size: pageSize,
+    from: 0,
+  });
 
-const OrgList: React.FunctionComponent<OrgListProps> = ({
-  orgs,
-  busy = false,
-  error = false,
-  onOrgClick = (org: Organization) => {},
-  onOrgEdit = () => {},
-  paginationSettings,
-  onPaginationChange,
-}) => {
-  const [items, setItems] = React.useState(orgs);
+  const { loading, error, data } = useNexus<OrganizationList>(
+    nexus =>
+      nexus.Organization.list({
+        from,
+        size,
+        label: searchValue,
+        deprecated: false,
+      }),
+    [from, size, searchValue]
+  );
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const filtered = orgs.filter(org =>
-      org.label.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase())
-    );
-    setItems(filtered);
+  const orgs = (data && data._results) || [];
+
+  const paginationSettings = {
+    from,
+    total: (data && data._total) || 0,
+    pageSize: size,
   };
 
-  if (error) {
-    return (
-      <Empty
-        description={
-          <span>An error happened while retrieving Organizations</span>
-        }
-      />
-    );
-  }
+  const onPaginationChange = (pageNumber: number) => {
+    setPagination({
+      size,
+      from: size * pageNumber - size,
+    });
+  };
+
   return (
-    <div className="OrgList">
-      {/* Don't display search for now but to be implemented soon */}
-      {/* <Search
-        className="filter"
-        placeholder="Filter by name"
-        onChange={handleChange}
-      /> */}
-      <AnimatedList
-        itemComponent={(org, i) => (
-          <OrgItem
-            key={org.label + i}
-            {...org}
-            onClick={() => onOrgClick(org)}
-            onEdit={() => onOrgEdit(org.label)}
-          />
-        )}
-        onPaginationChange={onPaginationChange}
-        makeKey={item => item.label}
-        itemName="Organization"
-        loading={busy}
-        results={items}
-        total={(paginationSettings && paginationSettings.total) || items.length}
-        paginationSettings={
-          paginationSettings && {
-            from: paginationSettings.from,
-            total: paginationSettings.total,
-            pageSize: paginationSettings.pageSize,
-          }
-        }
+    <OrgListComponent
+      {...{
+        orgs,
+        loading,
+        error,
+        onOrgClick,
+        onOrgEdit,
+        createOrg,
+        paginationSettings,
+        onPaginationChange,
+        searchValue,
+        setSearchValue,
+      }}
+    />
+  );
+};
+
+export interface OrgListProps {
+  orgs: OrgResponseCommon[];
+  loading?: boolean;
+  error?: Error;
+  onOrgClick?(orgLabel: string): void;
+  onOrgEdit?(orgLabel: string): void;
+  createOrg?(): void;
+  paginationSettings: PaginationSettings;
+  onPaginationChange?(page: number, pageSize?: number): void;
+  searchValue?: string;
+  setSearchValue(value: string): void;
+}
+
+export const OrgListComponent: React.FunctionComponent<
+  OrgListProps
+> = props => {
+  const {
+    orgs,
+    loading,
+    error,
+    onOrgClick,
+    onOrgEdit,
+    createOrg,
+    paginationSettings,
+    onPaginationChange,
+    searchValue,
+    setSearchValue,
+  } = props;
+
+  return (
+    <div className="org-list">
+      <Search
+        placeholder={'Find an Org by name...'}
+        allowClear={true}
+        value={searchValue}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          setSearchValue(e.currentTarget.value);
+        }}
       />
+      <div>
+        <Spin spinning={loading}>
+          <ul className="list">
+            {!!error && (
+              <Empty
+                description={
+                  <span>An error happened while retrieving Organizations</span>
+                }
+              />
+            )}
+            {!error && !paginationSettings.total && (
+              <Empty description="No orgs found">
+                <AccessControl permissions={['organizations/create']} path="/">
+                  <Button
+                    type="primary"
+                    onClick={() => !!createOrg && createOrg()}
+                    icon="plus-square"
+                  >
+                    Create Organization
+                  </Button>
+                </AccessControl>
+              </Empty>
+            )}
+            {!error &&
+              orgs.map(({ _label: label, description }) => (
+                <OrgItem
+                  label={label}
+                  description={description}
+                  onClick={() => !!onOrgClick && onOrgClick(label)}
+                  onEdit={() => !!onOrgEdit && onOrgEdit(label)}
+                />
+              ))}
+            {paginationSettings.total > paginationSettings.pageSize && (
+              <Pagination
+                simple
+                onChange={onPaginationChange}
+                current={
+                  Math.round(
+                    paginationSettings.from / paginationSettings.pageSize
+                  ) + 1
+                }
+                pageSize={paginationSettings.pageSize}
+                total={paginationSettings.total}
+              />
+            )}
+          </ul>
+        </Spin>
+      </div>
     </div>
   );
 };
 
-export default OrgList;
+export default OrgsListContainer;

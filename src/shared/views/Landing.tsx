@@ -236,27 +236,16 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           />
         ) : (
           <OrgList
-            orgs={paginatedOrgs.results}
-            onOrgClick={org => {
-              goTo(org.label);
-            }}
-            busy={busy}
-            paginationSettings={{
-              total: paginatedOrgs.total,
-              from: paginatedOrgs.index,
-              pageSize: displayPerPage,
+            pageSize={displayPerPage}
+            onOrgClick={label => {
+              goTo(label);
             }}
             onOrgEdit={(orgLabel: string) =>
               setSelectedOrg(
                 paginatedOrgs.results.filter(o => o.label === orgLabel)[0]
               )
             }
-            onPaginationChange={pageNumber =>
-              fetchOrgs({
-                from: pageNumber * displayPerPage - displayPerPage,
-                size: displayPerPage,
-              })
-            }
+            createOrg={() => setModalVisible(true)}
           />
         )}
         <Modal
