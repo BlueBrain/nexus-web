@@ -13,7 +13,6 @@ import {
 
 import OrgList from './OrgList';
 import OrgCard, { OrgCardProps } from './OrgCard';
-import OrgDropdown from './OrgDropdown';
 import OrgForm from './OrgForm';
 import Header from '../Header';
 import { type } from 'os';
@@ -87,50 +86,6 @@ storiesOf('Components/Orgs', module).add(
     );
   })
 );
-
-storiesOf('Components/Orgs', module)
-  .addDecorator(withKnobs)
-  .add(
-    'OrgDropdown',
-    withInfo(`
-    The Organization Dropdown is used mainly in the header component.
-    It allows to display the selected organization as well as
-    navigating and filtering all available organizations.
-
-    ~~~js
-      <OrgDropdown />
-    ~~~
-  `)(() => {
-      const busy = knob('busy', { value: false, type: 'boolean' });
-      const error = knob('error', { value: false, type: 'boolean' });
-      return (
-        <React.Fragment>
-          <div style={{ margin: '50px 40px 0px' }}>
-            <h2>Organization Dopdown in header</h2>
-            <Header
-              name="Mark Hamill"
-              links={[]}
-              githubIssueURL="some.url"
-              version="v1.1.0"
-            >
-              <OrgDropdown
-                busy={busy}
-                orgs={orgs}
-                error={error ? { message: '', name: '' } : undefined}
-                onCreateNewClick={action('onCreateNewClick')}
-                onExploreAllClick={action('onExploreAllClick')}
-                onRefreshClick={action('onRefreshClick')}
-              />
-            </Header>
-          </div>
-          <div style={{ margin: '50px 40px 0px' }}>
-            <h2>Organization Dropdown</h2>
-            <OrgDropdown orgs={orgs} />
-          </div>
-        </React.Fragment>
-      );
-    })
-  );
 
 storiesOf('Components/Orgs', module)
   .addDecorator(withKnobs)
