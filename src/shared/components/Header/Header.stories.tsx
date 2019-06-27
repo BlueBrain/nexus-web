@@ -4,7 +4,6 @@ import { action } from '@storybook/addon-actions';
 import { withInfo } from '@storybook/addon-info';
 
 import Header from './index';
-import OrgDropdown from '../Orgs/OrgDropdown';
 
 storiesOf('Components/Header', module).add(
   'Header',
@@ -38,7 +37,6 @@ storiesOf('Components/Header', module).add(
         <Header
           name="Mark Hamill"
           links={[<a href="#">Log out</a>, <a href="#">Settings</a>]}
-          children={<OrgDropdown />}
           githubIssueURL="some.url"
           version="v1.1.0"
         />

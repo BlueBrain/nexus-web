@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Input, Empty } from 'antd';
-import OrgCard, { OrgCardProps } from './OrgCard';
+import OrgItem, { OrgCardProps } from './OrgItem';
 import AnimatedList from '../Animations/AnimatedList';
 
 import './Orgs.less';
@@ -55,7 +55,7 @@ const OrgList: React.FunctionComponent<OrgListProps> = ({
       /> */}
       <AnimatedList
         itemComponent={(org, i) => (
-          <OrgCard
+          <OrgItem
             key={org.label + i}
             {...org}
             onClick={() => onOrgClick(org)}

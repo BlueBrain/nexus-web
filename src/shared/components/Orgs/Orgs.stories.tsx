@@ -2,41 +2,31 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withInfo } from '@storybook/addon-info';
 import { action } from '@storybook/addon-actions';
-import {
-  withKnobs,
-  text,
-  number,
-  knob,
-  boolean,
-  select,
-} from '@storybook/addon-knobs';
+import { withKnobs, text, number } from '@storybook/addon-knobs';
 
 import OrgList from './OrgList';
-import OrgCard, { OrgCardProps } from './OrgCard';
+import OrgItem, { OrgCardProps } from './OrgItem';
 import OrgForm from './OrgForm';
-import Header from '../Header';
-import { type } from 'os';
 
-const logo = require('../../logo.svg');
 const orgs: OrgCardProps[] = [
-  { label: 'nexus', projectNumber: 1200 },
-  { label: 'bbp', projectNumber: 300 },
-  { label: 'hbp', projectNumber: 1 },
-  { label: 'nasa', projectNumber: 912839 },
-  { label: 'tesla', projectNumber: 3 },
-  { label: 'rolex', projectNumber: 3424 },
+  { label: 'nexus', numProjects: 1200 },
+  { label: 'bbp', numProjects: 300 },
+  { label: 'hbp', numProjects: 1 },
+  { label: 'nasa', numProjects: 912839 },
+  { label: 'tesla' },
+  { label: 'rolex', numProjects: 3424 },
 ];
 
 storiesOf('Components/Orgs', module)
   .addDecorator(withKnobs)
   .add(
-    'OrgCard',
+    'OrgItem',
     withInfo(`
     The Organization Card component is used across multiple components.
     It displays the the basic Organization informations.
 
     ~~~js
-      <OrgCard />
+      <OrgItem />
     ~~~
   `)(() => {
       const label = text('Label', 'nexus');
@@ -45,14 +35,13 @@ storiesOf('Components/Orgs', module)
         <React.Fragment>
           <div style={{ margin: '50px 40px 0px' }}>
             <h2>No logo</h2>
-            <OrgCard projectNumber={123} label="bbp" />
+            <OrgItem numProjects={123} label="bbp" />
           </div>
           <div style={{ margin: '50px 40px 0px' }}>
             <h2>Logo and edit button</h2>
-            <OrgCard
+            <OrgItem
               label={label}
-              projectNumber={projects}
-              logo={logo}
+              numProjects={projects}
               onClick={action('org-click')}
               onEdit={action('edit-button-click')}
             />
@@ -69,7 +58,7 @@ storiesOf('Components/Orgs', module).add(
     It allows to filter Organizations by name.
 
     ~~~js
-      <OrgCard />
+      <OrgItem />
     ~~~
   `)(() => {
     return (
