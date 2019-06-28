@@ -48,7 +48,6 @@ export const ViewStatisticsContainer: React.FunctionComponent<
   ViewStatisticsContainerProps
 > = props => {
   const state = useNexus<Statistics>((nexus: NexusClient) =>
-    // @ts-ignore
     nexus.View.pollStatistics(
       props.orgLabel,
       props.projectLabel,
