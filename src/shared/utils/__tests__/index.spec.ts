@@ -5,6 +5,8 @@ import {
   stripBasename,
   getLogoutUrl,
   hasExpired,
+  isToday,
+  howLongAgo,
 } from '..';
 import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
 import { Realm } from '@bbp/nexus-sdk-legacy';
@@ -131,6 +133,39 @@ describe('utils functions', () => {
     });
     it('should NOT be expired', () => {
       expect(hasExpired(future)).toBeFalsy();
+    });
+  });
+  describe('date utils', () => {
+    beforeEach(() => {
+      jest
+        .spyOn(global.Date, 'now')
+        // @ts-ignore
+        .mockImplementationOnce(() => new Date('2019-05-14T11:01:58.135Z'));
+    });
+
+    it('should say that it is today', () => {
+      const date = new Date('2019-05-14T11:01:58.135Z').toUTCString();
+      expect(isToday(date)).toBeTruthy();
+    });
+
+    it('should say that it is NOT today', () => {
+      const date = new Date('2019-06-14T11:01:58.135Z').toUTCString();
+      expect(isToday(date)).toBeFalsy();
+    });
+
+    it('should say there is 1 day diff', () => {
+      const date = new Date('2019-05-13T11:10:39.135Z').toUTCString();
+      expect(howLongAgo(date)).toEqual(1);
+    });
+
+    it('should say there is 0 day diff', () => {
+      const date = new Date('2019-05-14T11:10:39.135Z').toUTCString();
+      expect(howLongAgo(date)).toEqual(0);
+    });
+
+    it('should say there is 0 day diff', () => {
+      const date = new Date('2017-03-30T06:00:33.135Z').toUTCString();
+      expect(howLongAgo(date)).toEqual(775);
     });
   });
 });
