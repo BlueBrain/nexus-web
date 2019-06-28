@@ -8,7 +8,7 @@ import Helmet from 'react-helmet';
 import html from './html';
 import silentRefreshHtml from './silent_refresh';
 import { RootState } from '../shared/store/reducers';
-import { DEFAULT_UI_SETTINGS } from '../shared/store/reducers/ui-settings';
+import { DEFAULT_UI_SETTINGS } from '../shared/utils/consts';
 
 const isSecure = !!process.env.SECURE;
 

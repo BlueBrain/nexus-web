@@ -6,6 +6,7 @@ import Search from 'antd/lib/input/Search';
 import OrgItem from './OrgItem';
 import { AccessControl, useNexus } from '@bbp/react-nexus';
 import './Orgs.less';
+import { DEFAULT_UI_SETTINGS } from '../../utils/consts';
 
 export interface OrgListContainerProps {
   pageSize?: number;
@@ -17,7 +18,12 @@ export interface OrgListContainerProps {
 export const OrgsListContainer: React.FunctionComponent<
   OrgListContainerProps
 > = props => {
-  const { pageSize = 20, onOrgClick, onOrgEdit, createOrg } = props;
+  const {
+    pageSize = DEFAULT_UI_SETTINGS.pageSizes.orgsListPageSize,
+    onOrgClick,
+    onOrgEdit,
+    createOrg,
+  } = props;
   const [searchValue, setSearchValue] = React.useState<string>();
   const [{ from, size }, setPagination] = React.useState({
     size: pageSize,
