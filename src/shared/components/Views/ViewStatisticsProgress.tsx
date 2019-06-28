@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Progress } from 'antd';
+import { Progress, Tooltip } from 'antd';
 import { howLongAgo } from '../../utils';
 
 function getLastUpdatedLabel(lastIndexed: string): string {
@@ -30,16 +30,40 @@ const ViewStatisticsProgress: React.FunctionComponent<
   );
 };
 
+const ViewStatisticsProgressMini: React.FunctionComponent<
+  ViewStatisticsProgressProps
+> = props => {
+  const percent = Math.floor((props.processedEvents / props.totalEvents) * 100);
+  const label =
+    percent === 100
+      ? `last indexed: ${getLastUpdatedLabel(props.lastIndexed)}`
+      : 'indexing...';
+
+  return (
+    <Tooltip title={label}>
+      <Progress type="circle" width={30} percent={percent} />
+    </Tooltip>
+  );
+};
+
 const ViewStatisticsProgressBar: React.FunctionComponent<
   ViewStatisticsProgressProps
 > = props => {
   const percent = Math.floor((props.processedEvents / props.totalEvents) * 100);
+  const label =
+    percent === 100
+      ? `last indexed: ${getLastUpdatedLabel(props.lastIndexed)}`
+      : 'indexing...';
 
   return (
-    <>
+    <Tooltip title={label}>
       <Progress type="line" percent={percent} />
-    </>
+    </Tooltip>
   );
 };
 
-export { ViewStatisticsProgress, ViewStatisticsProgressBar };
+export {
+  ViewStatisticsProgress,
+  ViewStatisticsProgressBar,
+  ViewStatisticsProgressMini,
+};
