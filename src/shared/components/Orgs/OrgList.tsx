@@ -133,22 +133,18 @@ export const OrgListComponent: React.FunctionComponent<
           setSearchValue(e.currentTarget.value);
         }}
       />
-      <div>
-        <Spin spinning={fetchablePaginatedList.isFetching}>
-          <InfiniteScroll
-            loadNextPage={onLoadMore}
-            fetchablePaginatedList={fetchablePaginatedList}
-            itemComponent={({ _label: label, description }) => (
-              <OrgItem
-                label={label}
-                description={description}
-                onClick={() => !!onOrgClick && onOrgClick(label)}
-                onEdit={() => !!onOrgEdit && onOrgEdit(label)}
-              />
-            )}
+      <InfiniteScroll
+        loadNextPage={onLoadMore}
+        fetchablePaginatedList={fetchablePaginatedList}
+        itemComponent={({ _label: label, description }) => (
+          <OrgItem
+            label={label}
+            description={description}
+            onClick={() => !!onOrgClick && onOrgClick(label)}
+            onEdit={() => !!onOrgEdit && onOrgEdit(label)}
           />
-        </Spin>
-      </div>
+        )}
+      />
     </div>
   );
 };
