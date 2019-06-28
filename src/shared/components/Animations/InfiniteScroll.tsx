@@ -24,6 +24,7 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
     style,
     loadAtPercentRevealed = LOAD_AT_PERCENTAGE_REVEALED,
   } = props;
+
   const { isFetching, data, error } = fetchablePaginatedList;
   // concatenated list of all items
   const [itemsList, setItemsList] = React.useState<any[]>([]);
@@ -37,12 +38,19 @@ const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = props => {
   );
 
   // TODO: Is there a cheaper way to do comparing with Arrays of Objects?
-  const resultsComparator =
-    data && JSON.stringify({ index: data.index, results: data.results });
+  const resultsComparator = JSON.stringify({
+    isFetching,
+    error,
+    index: data && data.index,
+    results: data && data.results,
+  });
 
   React.useEffect(() => {
     // Reset results if we're on the first paginated page
-    if (data && data.index === 0) {
+    if (!data || isFetching) {
+      return;
+    }
+    if (data.index === 0) {
       setItemsList([...data.results]);
       return;
     }

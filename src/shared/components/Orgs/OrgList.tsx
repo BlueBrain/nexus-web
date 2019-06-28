@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { Empty, Pagination, Spin, Button } from 'antd';
+import { Spin } from 'antd';
 import { OrgResponseCommon, OrganizationList } from '@bbp/nexus-sdk';
-import { PaginationSettings } from '../../utils/types';
+import { PaginatedList } from '../../utils/types';
 import Search from 'antd/lib/input/Search';
 import OrgItem from './OrgItem';
 import { AccessControl, useNexus } from '@bbp/react-nexus';
 import './Orgs.less';
 import { DEFAULT_UI_SETTINGS } from '../../utils/consts';
+import InfiniteScroll from '../Animations/InfiniteScroll';
+import { FetchableState } from '../../store/reducers/utils';
 
 export interface OrgListContainerProps {
   pageSize?: number;
@@ -24,10 +26,22 @@ export const OrgsListContainer: React.FunctionComponent<
     onOrgEdit,
     createOrg,
   } = props;
-  const [searchValue, setSearchValue] = React.useState<string>();
-  const [{ from, size }, setPagination] = React.useState({
+  const [{ from, size, label, deprecated }, setQuery] = React.useState({
     size: pageSize,
     from: 0,
+    label: '',
+    deprecated: false,
+  });
+  const [fetchablePaginatedList, setPaginatedList] = React.useState<
+    FetchableState<PaginatedList<OrgResponseCommon>>
+  >({
+    error: null,
+    isFetching: true,
+    data: {
+      index: from,
+      total: 0,
+      results: [],
+    },
   });
 
   const { loading, error, data } = useNexus<OrganizationList>(
@@ -35,54 +49,63 @@ export const OrgsListContainer: React.FunctionComponent<
       nexus.Organization.list({
         from,
         size,
-        label: searchValue,
-        deprecated: false,
+        label,
+        deprecated,
       }),
-    [from, size, searchValue]
+    [from, size, label, deprecated]
   );
 
-  const orgs = (data && data._results) || [];
+  React.useEffect(() => {
+    setPaginatedList({
+      error,
+      isFetching: loading,
+      data: {
+        index: from,
+        total: (data && data._total) || 0,
+        results: (data && data._results) || [],
+      },
+    });
+  }, [loading, error, data]);
 
-  const paginationSettings = {
-    from,
-    total: (data && data._total) || 0,
-    pageSize: size,
+  const onLoadMore = () => {
+    setQuery({
+      label,
+      deprecated,
+      size,
+      from: from + size,
+    });
   };
 
-  const onPaginationChange = (pageNumber: number) => {
-    setPagination({
+  const setSearchValue = (value: string) => {
+    setQuery({
+      deprecated,
       size,
-      from: size * pageNumber - size,
+      label: value,
+      from: 0,
     });
   };
 
   return (
     <OrgListComponent
       {...{
-        orgs,
-        loading,
-        error,
+        fetchablePaginatedList,
         onOrgClick,
         onOrgEdit,
         createOrg,
-        paginationSettings,
-        onPaginationChange,
-        searchValue,
+        onLoadMore,
         setSearchValue,
+        searchValue: label,
       }}
     />
   );
 };
 
 export interface OrgListProps {
-  orgs: OrgResponseCommon[];
-  loading?: boolean;
-  error?: Error;
   onOrgClick?(orgLabel: string): void;
   onOrgEdit?(orgLabel: string): void;
   createOrg?(): void;
-  paginationSettings: PaginationSettings;
-  onPaginationChange?(page: number, pageSize?: number): void;
+  fetchablePaginatedList: FetchableState<PaginatedList<OrgResponseCommon>>;
+  onLoadMore(): void;
   searchValue?: string;
   setSearchValue(value: string): void;
 }
@@ -91,14 +114,11 @@ export const OrgListComponent: React.FunctionComponent<
   OrgListProps
 > = props => {
   const {
-    orgs,
-    loading,
-    error,
     onOrgClick,
     onOrgEdit,
     createOrg,
-    paginationSettings,
-    onPaginationChange,
+    fetchablePaginatedList,
+    onLoadMore,
     searchValue,
     setSearchValue,
   } = props;
@@ -114,51 +134,19 @@ export const OrgListComponent: React.FunctionComponent<
         }}
       />
       <div>
-        <Spin spinning={loading}>
-          <ul className="list">
-            {!!error && (
-              <Empty
-                description={
-                  <span>An error happened while retrieving Organizations</span>
-                }
+        <Spin spinning={fetchablePaginatedList.isFetching}>
+          <InfiniteScroll
+            loadNextPage={onLoadMore}
+            fetchablePaginatedList={fetchablePaginatedList}
+            itemComponent={({ _label: label, description }) => (
+              <OrgItem
+                label={label}
+                description={description}
+                onClick={() => !!onOrgClick && onOrgClick(label)}
+                onEdit={() => !!onOrgEdit && onOrgEdit(label)}
               />
             )}
-            {!error && !paginationSettings.total && (
-              <Empty description="No orgs found">
-                <AccessControl permissions={['organizations/create']} path="/">
-                  <Button
-                    type="primary"
-                    onClick={() => !!createOrg && createOrg()}
-                    icon="plus-square"
-                  >
-                    Create Organization
-                  </Button>
-                </AccessControl>
-              </Empty>
-            )}
-            {!error &&
-              orgs.map(({ _label: label, description }) => (
-                <OrgItem
-                  label={label}
-                  description={description}
-                  onClick={() => !!onOrgClick && onOrgClick(label)}
-                  onEdit={() => !!onOrgEdit && onOrgEdit(label)}
-                />
-              ))}
-            {paginationSettings.total > paginationSettings.pageSize && (
-              <Pagination
-                simple
-                onChange={onPaginationChange}
-                current={
-                  Math.round(
-                    paginationSettings.from / paginationSettings.pageSize
-                  ) + 1
-                }
-                pageSize={paginationSettings.pageSize}
-                total={paginationSettings.total}
-              />
-            )}
-          </ul>
+          />
         </Spin>
       </div>
     </div>
