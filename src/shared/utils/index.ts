@@ -239,3 +239,16 @@ export function howLongAgo(date: string): number {
   // + operator to make date a number
   return (+today - +givenDate) / millisecondsInDay;
 }
+
+export function displayTimeFromDate(date: string): string {
+  const givenDate = new Date(date);
+  const hh = givenDate
+    .getHours()
+    .toString()
+    .padStart(2, '0');
+  const mm = givenDate
+    .getMinutes()
+    .toString()
+    .padStart(2, '0');
+  return `${hh}:${mm}`;
+}

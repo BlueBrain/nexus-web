@@ -1,10 +1,19 @@
 import * as React from 'react';
 import { Progress, Tooltip } from 'antd';
-import { howLongAgo } from '../../utils';
+import { howLongAgo, displayTimeFromDate } from '../../utils';
+import { Statistics, NexusClient } from '@bbp/nexus-sdk';
+import { useNexus } from '@bbp/react-nexus';
 
 function getLastUpdatedLabel(lastIndexed: string): string {
   const daysSinceUpdate = howLongAgo(lastIndexed);
-  return daysSinceUpdate === 1 ? 'Today' : `${daysSinceUpdate} days ago`;
+  switch (daysSinceUpdate) {
+    case 0:
+      return `today at ${displayTimeFromDate(lastIndexed)}`;
+    case 1:
+      return `${daysSinceUpdate} day ago`;
+    default:
+      return `${daysSinceUpdate} days ago`;
+  }
 }
 
 type ViewStatisticsProgressProps = {
@@ -41,7 +50,7 @@ const ViewStatisticsProgressMini: React.FunctionComponent<
 
   return (
     <Tooltip title={label}>
-      <Progress type="circle" width={30} percent={percent} />
+      <Progress type="circle" width={25} percent={percent} />
     </Tooltip>
   );
 };
@@ -60,6 +69,36 @@ const ViewStatisticsProgressBar: React.FunctionComponent<
       <Progress type="line" percent={percent} />
     </Tooltip>
   );
+};
+
+export type ViewStatisticsContainerProps = {
+  orgLabel: string;
+  projectLabel: string;
+  resourceId: string;
+};
+
+export const ViewStatisticsContainer: React.FunctionComponent<
+  ViewStatisticsContainerProps
+> = props => {
+  const state = useNexus<Statistics>((nexus: NexusClient) =>
+    nexus.View.pollStatistics(
+      props.orgLabel,
+      props.projectLabel,
+      props.resourceId,
+      { pollTime: 3000 }
+    )
+  );
+
+  if (!state.loading && !state.error) {
+    return (
+      <ViewStatisticsProgressMini
+        totalEvents={state.data.totalEvents}
+        processedEvents={state.data.processedEvents}
+        lastIndexed={state.data.lastProcessedEventDateTime}
+      />
+    );
+  }
+  return null;
 };
 
 export {

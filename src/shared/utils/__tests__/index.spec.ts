@@ -7,6 +7,7 @@ import {
   hasExpired,
   isToday,
   howLongAgo,
+  displayTimeFromDate,
 } from '..';
 import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
 import { Realm } from '@bbp/nexus-sdk-legacy';
@@ -166,6 +167,16 @@ describe('utils functions', () => {
     it('should say there is 0 day diff', () => {
       const date = new Date('2017-03-30T06:00:33.135Z').toUTCString();
       expect(howLongAgo(date)).toEqual(775);
+    });
+
+    it('should display padded hours and minutes', () => {
+      const date = new Date('2017-03-30T06:00:33.135Z').toUTCString();
+      expect(displayTimeFromDate('2017-03-30T06:00:33.135Z')).toEqual('08:00');
+    });
+
+    it('should display time', () => {
+      const date = new Date('2017-03-30T06:00:33.135Z').toUTCString();
+      expect(displayTimeFromDate('2017-03-30T16:10:33.135Z')).toEqual('18:10');
     });
   });
 });

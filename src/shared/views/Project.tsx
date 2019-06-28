@@ -32,6 +32,10 @@ import Helmet from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { CreateFileOptions } from '@bbp/nexus-sdk-legacy/lib/File/types';
 import usePreviouslyVisited from '../components/hooks/usePreviouslyVisited';
+import {
+  ViewStatisticsProgressMini,
+  ViewStatisticsContainer,
+} from '../components/Views/ViewStatisticsProgress';
 
 interface ProjectViewProps {
   project: Project | null;
@@ -142,7 +146,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
         {project && (
           <>
             <Helmet
-              title={`${project.label} | ${org && `${org.label} | `} Nexus Web`}
+              title={`${project.label} | ${org && `${org.label} | `} Nexus`}
               meta={[
                 project.description
                   ? {
@@ -161,8 +165,16 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
                       <a onClick={() => goToOrg(org.label)}>{org.label}</a> |{' '}
                     </span>
                   )}{' '}
-                  {project.label}{' '}
+                  {project.label}
+                  {'  '}
                 </h1>
+                <div style={{ marginLeft: 10 }}>
+                  <ViewStatisticsContainer
+                    orgLabel={(org && org.label) || ''}
+                    projectLabel={project.label}
+                    resourceId="nxv:defaultElasticSearchIndex"
+                  />
+                </div>
                 {!!project.description && (
                   <Popover
                     title={project.label}
