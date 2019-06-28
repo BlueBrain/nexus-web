@@ -32,10 +32,7 @@ import Helmet from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { CreateFileOptions } from '@bbp/nexus-sdk-legacy/lib/File/types';
 import usePreviouslyVisited from '../components/hooks/usePreviouslyVisited';
-import {
-  ViewStatisticsProgressMini,
-  ViewStatisticsContainer,
-} from '../components/Views/ViewStatisticsProgress';
+import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 
 interface ProjectViewProps {
   project: Project | null;
@@ -169,7 +166,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
                   {'  '}
                 </h1>
                 <div style={{ marginLeft: 10 }}>
-                  <ViewStatisticsContainer
+                  <ViewStatisticsProgress
                     orgLabel={(org && org.label) || ''}
                     projectLabel={project.label}
                     resourceId="nxv:defaultElasticSearchIndex"
