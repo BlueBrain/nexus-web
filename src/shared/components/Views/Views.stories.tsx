@@ -4,9 +4,12 @@ import { withInfo } from '@storybook/addon-info';
 import { action } from '@storybook/addon-actions';
 import { withKnobs, text, number } from '@storybook/addon-knobs';
 
-import ViewStatisticsProgress from './ViewStatisticsProgress';
+import {
+  ViewStatisticsProgress,
+  ViewStatisticsProgressBar,
+} from './ViewStatisticsProgress';
 
-storiesOf('Views', module)
+storiesOf('Components/Views', module)
   .addDecorator(withKnobs)
   .add(
     'ViewStatisticsProgress',
@@ -22,12 +25,39 @@ storiesOf('Views', module)
   `)(() => {
       const processedEvents = number('processedEvents', 100);
       const totalEvents = number('totalEvents', 100);
+      const lastIndexed = text('lastIndexed', '2019-06-27T13:37:18.197Z');
       return (
         <React.Fragment>
           <ViewStatisticsProgress
             processedEvents={processedEvents}
             totalEvents={totalEvents}
-            lastIndexed="2019-06-27T13:37:18.197Z"
+            lastIndexed={lastIndexed}
+          />
+        </React.Fragment>
+      );
+    })
+  )
+  .add(
+    'ViewStatisticsProgressBar',
+    withInfo(`
+    Displays the event processed status of a view:
+    - is my view up to date
+    - when was is updated last
+    - if updating, how far in are we?
+
+    ~~~js
+      <ViewStatisticsProgressBar />
+    ~~~
+  `)(() => {
+      const processedEvents = number('processedEvents', 100);
+      const totalEvents = number('totalEvents', 100);
+      const lastIndexed = text('lastIndexed', '2019-06-27T13:37:18.197Z');
+      return (
+        <React.Fragment>
+          <ViewStatisticsProgressBar
+            processedEvents={processedEvents}
+            totalEvents={totalEvents}
+            lastIndexed={lastIndexed}
           />
         </React.Fragment>
       );
