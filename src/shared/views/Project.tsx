@@ -10,7 +10,6 @@ import {
   initializeProjectList,
   makeOrgProjectFilterKey,
 } from '../store/actions/lists';
-import { List } from '../store/reducers/lists';
 import Nexus, {
   Project,
   Resource,
@@ -29,10 +28,10 @@ import { getDestinationParam } from '../utils';
 import { push } from 'connected-react-router';
 import QueryContainer from '../components/Workspace/Queries/QueriesContainer';
 import Helmet from 'react-helmet';
-import { Link } from 'react-router-dom';
 import { CreateFileOptions } from '@bbp/nexus-sdk-legacy/lib/File/types';
 import usePreviouslyVisited from '../components/hooks/usePreviouslyVisited';
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
+import { DEFAULT_ES_INDEX } from '../constants';
 
 interface ProjectViewProps {
   project: Project | null;
@@ -169,7 +168,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
                   <ViewStatisticsProgress
                     orgLabel={(org && org.label) || ''}
                     projectLabel={project.label}
-                    resourceId="nxv:defaultElasticSearchIndex"
+                    resourceId={DEFAULT_ES_INDEX}
                   />
                 </div>
                 {!!project.description && (
