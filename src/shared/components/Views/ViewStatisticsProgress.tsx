@@ -1,20 +1,8 @@
 import * as React from 'react';
 import { Progress, Tooltip } from 'antd';
-import { howLongAgo, displayTimeFromDate } from '../../utils';
+import * as moment from 'moment';
 import { Statistics, NexusClient } from '@bbp/nexus-sdk';
 import { useNexus } from '@bbp/react-nexus';
-
-function getLastUpdatedLabel(lastIndexed: string): string {
-  const daysSinceUpdate = howLongAgo(lastIndexed);
-  switch (daysSinceUpdate) {
-    case 0:
-      return `today at ${displayTimeFromDate(lastIndexed)}`;
-    case 1:
-      return `${daysSinceUpdate} day ago`;
-    default:
-      return `${daysSinceUpdate} days ago`;
-  }
-}
 
 type ViewStatisticsProgressProps = {
   processedEvents: number;
@@ -28,7 +16,9 @@ export const ViewStatisticsProgress: React.FunctionComponent<
   const percent = Math.floor((props.processedEvents / props.totalEvents) * 100);
   const label =
     percent === 100
-      ? `last indexed: ${getLastUpdatedLabel(props.lastIndexed)}`
+      ? `last indexed: ${moment(props.lastIndexed)
+          .startOf()
+          .fromNow()}`
       : 'indexing...';
 
   return (
