@@ -1,15 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { RootState } from '../store/reducers';
-import { fetchAndAssignProject } from '../store/actions/nexus/projects';
-import { fetchOrg } from '../store/actions/nexus/activeOrg';
 import { Empty, Switch, Icon, Tooltip, Button, Popover } from 'antd';
-import Menu from '../components/Workspace/Menu';
-import {
-  createList,
-  initializeProjectList,
-  makeOrgProjectFilterKey,
-} from '../store/actions/lists';
+import { DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
 import Nexus, {
   Project,
   Resource,
@@ -17,6 +9,19 @@ import Nexus, {
   Organization,
 } from '@bbp/nexus-sdk-legacy';
 import { CreateResourcePayload } from '@bbp/nexus-sdk-legacy/lib/Resource/types';
+import { CreateFileOptions } from '@bbp/nexus-sdk-legacy/lib/File/types';
+import { push } from 'connected-react-router';
+import Helmet from 'react-helmet';
+import QueryContainer from '../components/Workspace/Queries/QueriesContainer';
+import { RootState } from '../store/reducers';
+import { fetchAndAssignProject } from '../store/actions/nexus/projects';
+import { fetchOrg } from '../store/actions/nexus/activeOrg';
+import Menu from '../components/Workspace/Menu';
+import {
+  createList,
+  initializeProjectList,
+  makeOrgProjectFilterKey,
+} from '../store/actions/lists';
 import { createFile } from '../store/actions/nexus/files';
 import Status from '../components/Routing/Status';
 import { RequestError } from '../store/actions/utils/errors';
@@ -25,13 +30,8 @@ import {
   HTTP_STATUS_TYPE_KEYS,
 } from '../store/actions/utils/statusCodes';
 import { getDestinationParam } from '../utils';
-import { push } from 'connected-react-router';
-import QueryContainer from '../components/Workspace/Queries/QueriesContainer';
-import Helmet from 'react-helmet';
-import { CreateFileOptions } from '@bbp/nexus-sdk-legacy/lib/File/types';
 import usePreviouslyVisited from '../components/hooks/usePreviouslyVisited';
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
-import { DEFAULT_ES_INDEX } from '../constants';
 
 interface ProjectViewProps {
   project: Project | null;
@@ -168,7 +168,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
                   <ViewStatisticsProgress
                     orgLabel={(org && org.label) || ''}
                     projectLabel={project.label}
-                    resourceId={DEFAULT_ES_INDEX}
+                    resourceId={DEFAULT_ELASTIC_SEARCH_VIEW_ID}
                   />
                 </div>
                 {!!project.description && (
