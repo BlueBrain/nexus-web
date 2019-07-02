@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, Tooltip, Button, Popconfirm } from 'antd';
+import { Tooltip, Button, Popconfirm } from 'antd';
 import { Resource } from '@bbp/nexus-sdk-legacy';
 import './resource-actions.less';
 import {
@@ -11,11 +11,10 @@ import {
   isDefaultElasticView,
   isDeprecated,
 } from '../../utils/nexus-maybe';
-import { string } from 'prop-types';
 
 const actionTypes = [
   {
-    name: 'veryDangerousToDeprecate',
+    name: 'deprecateResource',
     predicate: chainPredicates([isDefaultElasticView, not(isDeprecated)]),
     title: 'Deprecate this resource',
     shortTitle: 'Dangerously Deprecate',
@@ -117,30 +116,18 @@ const makeActions = (
 
 export interface ResourceActionsProps {
   resource: Resource;
-  goToSparqlView: (resource: Resource) => void;
-  goToElasticSearchView: (resource: Resource) => void;
-  deprecateResource: (resource: Resource) => void;
-  downloadFile: (resource: Resource) => void;
+  actions: {
+    [key: string]: (resource: Resource) => void;
+  };
 }
 
 const ResourceActions: React.FunctionComponent<
   ResourceActionsProps
 > = props => {
-  const {
-    resource,
-    goToSparqlView,
-    goToElasticSearchView,
-    deprecateResource,
-    downloadFile,
-  } = props;
+  const { resource, actions } = props;
   return (
     <section className="resource-actions">
-      {makeActions(resource, {
-        goToSparqlView,
-        goToElasticSearchView,
-        deprecateResource,
-        downloadFile,
-      })}
+      {makeActions(resource, actions)}
     </section>
   );
 };

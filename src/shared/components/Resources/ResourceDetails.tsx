@@ -112,9 +112,7 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
         {!!resource && !error && (
           <>
             <Helmet
-              title={`${resource.name} | ${resource.projectLabel} | ${
-                resource.orgLabel
-              } | Nexus Web`}
+              title={`${resource.name} | ${resource.projectLabel} | ${resource.orgLabel} | Nexus Web`}
               meta={[
                 // TODO find good ideas for descriptions!
                 {
@@ -141,10 +139,12 @@ const ResourceDetails: React.FunctionComponent<ResourceViewProps> = props => {
             <ResourceActions
               {...{
                 resource,
-                goToElasticSearchView,
-                goToSparqlView,
-                deprecateResource,
-                downloadFile,
+                actions: {
+                  goToElasticSearchView,
+                  goToSparqlView,
+                  deprecateResource,
+                  downloadFile,
+                },
               }}
             />
             <Tabs defaultActiveKey="1">
