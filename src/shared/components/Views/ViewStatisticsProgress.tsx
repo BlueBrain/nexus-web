@@ -42,7 +42,7 @@ export const ViewStatisticsContainer: React.FunctionComponent<
       props.orgLabel,
       props.projectLabel,
       props.resourceId,
-      { pollTime: 3000 }
+      { pollIntervalMs: 3000 }
     )
   );
 
