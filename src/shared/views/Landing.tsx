@@ -58,13 +58,13 @@ const Landing: React.FunctionComponent<LandingProps> = ({
   const [selectedOrg, setSelectedOrg] = React.useState<
     Organization | undefined
   >(undefined);
-  React.useEffect(() => {
-    paginatedOrgs.results.length === 0 &&
-      fetchOrgs({
-        size: displayPerPage,
-        from: paginatedOrgs.index,
-      });
-  }, []);
+  // React.useEffect(() => {
+  //   paginatedOrgs.results.length === 0 &&
+  //     fetchOrgs({
+  //       size: displayPerPage,
+  //       from: paginatedOrgs.index,
+  //     });
+  // }, []);
 
   const saveAndCreate = (newOrg: Organization) => {
     setFormBusy(true);
@@ -229,36 +229,15 @@ const Landing: React.FunctionComponent<LandingProps> = ({
             </Button>
           </AccessControl>
         </div>
-        {paginatedOrgs.total === 0 ? (
-          <Empty
-            style={{ marginTop: '22vh' }}
-            description="No Organizations found..."
-          />
-        ) : (
-          <OrgList
-            orgs={paginatedOrgs.results}
-            onOrgClick={org => {
-              goTo(org.label);
-            }}
-            busy={busy}
-            paginationSettings={{
-              total: paginatedOrgs.total,
-              from: paginatedOrgs.index,
-              pageSize: displayPerPage,
-            }}
-            onOrgEdit={(orgLabel: string) =>
-              setSelectedOrg(
-                paginatedOrgs.results.filter(o => o.label === orgLabel)[0]
-              )
-            }
-            onPaginationChange={pageNumber =>
-              fetchOrgs({
-                from: pageNumber * displayPerPage - displayPerPage,
-                size: displayPerPage,
-              })
-            }
-          />
-        )}
+
+        <OrgList
+          onOrgEdit={(orgLabel: string) =>
+            setSelectedOrg(
+              paginatedOrgs.results.filter(o => o.label === orgLabel)[0]
+            )
+          }
+        />
+
         <Modal
           title="New Organization"
           visible={modalVisible}

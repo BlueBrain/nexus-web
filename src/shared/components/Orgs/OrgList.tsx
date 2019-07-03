@@ -1,83 +1,145 @@
 import * as React from 'react';
-import { Input, Empty } from 'antd';
-import OrgItem, { OrgItemProps } from './OrgItem';
-import AnimatedList from '../Animations/AnimatedList';
-
+import { OrgResponseCommon, OrganizationList } from '@bbp/nexus-sdk';
+import * as InfiniteScroll from 'react-infinite-scroll-component';
+import Search from 'antd/lib/input/Search';
+import OrgItem from './OrgItem';
+import { useNexus } from '@bbp/react-nexus';
 import './Orgs.less';
-import { Organization } from '@bbp/nexus-sdk-legacy';
+import { Spin } from 'antd';
 
-export interface OrgListProps {
-  orgs: OrgItemProps[];
-  busy?: boolean;
-  error?: { message: string; name: string };
-  onOrgClick?(org: Organization): void;
-  onOrgEdit?(label: string): void;
-  paginationSettings?: { total: number; from: number; pageSize: number };
-  onPaginationChange?: (page: number, pageSize?: number) => void;
+const DEFAULT_PAGE_SIZE = 20;
+
+export interface OrgListContainerProps {
+  pageSize?: number;
+  onOrgClick?(orgLabel: string): void;
+  onOrgEdit?(orgLabel: string): void;
 }
 
-const Search = Input.Search;
+export const OrgsListContainer: React.FunctionComponent<
+  OrgListContainerProps
+> = props => {
+  const { pageSize = DEFAULT_PAGE_SIZE, onOrgClick, onOrgEdit } = props;
 
-const OrgList: React.FunctionComponent<OrgListProps> = ({
-  orgs,
-  busy = false,
-  error = false,
-  onOrgClick = (org: Organization) => {},
-  onOrgEdit = () => {},
-  paginationSettings,
-  onPaginationChange,
-}) => {
-  const [items, setItems] = React.useState(orgs);
+  const [{ from, size, label, deprecated }, setQuery] = React.useState({
+    size: 4,
+    from: 0,
+    label: '',
+    deprecated: false,
+  });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const filtered = orgs.filter(org =>
-      org.label.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase())
-    );
-    setItems(filtered);
+  const { loading, error, data } = useNexus<OrganizationList>(
+    nexus =>
+      nexus.Organization.list({
+        from,
+        size,
+        label,
+        deprecated,
+      }),
+    [from, size, label, deprecated]
+  );
+
+  const onLoadMore = () => {
+    setQuery({
+      label,
+      deprecated,
+      size,
+      from: from + size,
+    });
   };
 
-  if (error) {
-    return (
-      <Empty
-        description={
-          <span>An error happened while retrieving Organizations</span>
-        }
-      />
-    );
-  }
+  const setSearchValue = (value: string) => {
+    setQuery({
+      deprecated,
+      size,
+      label: value,
+      from: 0,
+    });
+  };
+
   return (
-    <div className="OrgList">
-      {/* Don't display search for now but to be implemented soon */}
-      {/* <Search
-        className="filter"
-        placeholder="Filter by name"
-        onChange={handleChange}
-      /> */}
-      <AnimatedList
-        itemComponent={(org, i) => (
-          <OrgItem
-            key={org.label + i}
-            {...org}
-            onClick={() => onOrgClick(org)}
-            onEdit={() => onOrgEdit(org.label)}
-          />
-        )}
-        onPaginationChange={onPaginationChange}
-        makeKey={item => item.label}
-        itemName="Organization"
-        loading={busy}
-        results={items}
-        total={(paginationSettings && paginationSettings.total) || items.length}
-        paginationSettings={
-          paginationSettings && {
-            from: paginationSettings.from,
-            total: paginationSettings.total,
-            pageSize: paginationSettings.pageSize,
-          }
-        }
+    <OrgListComponent
+      {...{
+        loading,
+        onOrgClick,
+        onOrgEdit,
+        onLoadMore,
+        setSearchValue,
+        searchValue: label,
+        page: from,
+        total: (data && data._total) || 0,
+        results: (data && data._results) || [],
+      }}
+    />
+  );
+};
+
+export interface OrgListProps {
+  onOrgClick?(orgLabel: string): void;
+  onOrgEdit?(orgLabel: string): void;
+  results: OrgResponseCommon[];
+  page: number;
+  total: number;
+  onLoadMore(): void;
+  searchValue?: string;
+  setSearchValue(value: string): void;
+}
+
+export const OrgListComponent: React.FunctionComponent<
+  OrgListProps
+> = props => {
+  const {
+    onOrgClick,
+    onOrgEdit,
+    results,
+    onLoadMore,
+    page,
+    total,
+    searchValue,
+    setSearchValue,
+  } = props;
+
+  const [items, setItems] = React.useState<OrgResponseCommon[]>([]);
+  const hasMore = items.length < total;
+
+  React.useEffect(() => {
+    if (page === 0) {
+      setItems(results);
+      return;
+    }
+    setItems([...items, ...results]);
+  }, [page, results]);
+
+  return (
+    <div className="org-list">
+      <Search
+        placeholder={'Find an Org by name...'}
+        allowClear={true}
+        value={searchValue}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          setSearchValue(e.currentTarget.value);
+        }}
       />
+      <div className="scroll" id="scroll-me">
+        <InfiniteScroll
+          dataLength={total}
+          next={onLoadMore}
+          hasMore={hasMore}
+          loader={<Spin spinning={true}>Loading</Spin>}
+          scrollableTarget="scroll-me"
+        >
+          {items.map(({ _label: label, description }, index) => (
+            <OrgItem
+              key={`${label}-${index}`}
+              label={label}
+              description={description}
+              onClick={() => !!onOrgClick && onOrgClick(label)}
+              onEdit={() => !!onOrgEdit && onOrgEdit(label)}
+            />
+          ))}
+        </InfiniteScroll>
+      </div>
     </div>
   );
 };
 
-export default OrgList;
+export default OrgsListContainer;
