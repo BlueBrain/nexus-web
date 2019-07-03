@@ -21,7 +21,7 @@ export const OrgsListContainer: React.FunctionComponent<
   const { pageSize = DEFAULT_PAGE_SIZE, onOrgClick, onOrgEdit } = props;
 
   const [{ from, size, label, deprecated }, setQuery] = React.useState({
-    size: 4,
+    size: pageSize,
     from: 0,
     label: '',
     deprecated: false,
