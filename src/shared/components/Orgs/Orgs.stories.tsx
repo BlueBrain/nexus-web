@@ -4,9 +4,27 @@ import { withInfo } from '@storybook/addon-info';
 import { action } from '@storybook/addon-actions';
 import { withKnobs, text, number } from '@storybook/addon-knobs';
 
-import OrgList from './OrgList';
+import { OrgListComponent } from './OrgList';
 import OrgItem, { OrgItemProps } from './OrgItem';
 import OrgForm from './OrgForm';
+
+const makeFakeOrg = () => {
+  return {
+    '@id': 'http://dev.nexus.ocp.bbp.epfl.ch/v1/orgs/asdf',
+    '@type': 'Organization',
+    description: 'this is a description',
+    _createdAt: '2019-06-28T08:10:12.447662Z',
+    _createdBy:
+      'http://dev.nexus.ocp.bbp.epfl.ch/v1/realms/github/users/kenjinp',
+    _deprecated: false,
+    _label: 'asdf',
+    _rev: 1,
+    _updatedAt: '2019-06-28T08:10:12.447662Z',
+    _updatedBy:
+      'http://dev.nexus.ocp.bbp.epfl.ch/v1/realms/github/users/kenjinp',
+    _uuid: '645cf585-a209-4dc2-88ce-a47055132500',
+  };
+};
 
 const orgs: OrgItemProps[] = [
   { label: 'nexus', numberOfProjects: 1200 },
@@ -64,11 +82,14 @@ storiesOf('Components/Orgs', module).add(
     return (
       <React.Fragment>
         <div style={{ margin: '50px 40px 0px' }}>
-          <OrgList
-            orgs={orgs}
+          <OrgListComponent
             onOrgClick={action('org-selected')}
-            onPaginationChange={action('pagination-change')}
-            paginationSettings={{ total: 20, from: 1, pageSize: 20 }}
+            onOrgEdit={action('org-editing!')}
+            results={[makeFakeOrg(), makeFakeOrg()]}
+            page={0}
+            total={2}
+            onLoadMore={action('org-load-more')}
+            setSearchValue={action('org-search')}
           />
         </div>
       </React.Fragment>
