@@ -11,8 +11,8 @@ const DEFAULT_PAGE_SIZE = 20;
 
 export interface OrgListContainerProps {
   pageSize?: number;
-  onOrgClick?(orgLabel: string): void;
-  onOrgEdit?(orgLabel: string): void;
+  onOrgClick?(org: OrgResponseCommon): void;
+  onOrgEdit?(org: OrgResponseCommon): void;
 }
 
 export const OrgsListContainer: React.FunctionComponent<
@@ -74,8 +74,8 @@ export const OrgsListContainer: React.FunctionComponent<
 };
 
 export interface OrgListProps {
-  onOrgClick?(orgLabel: string): void;
-  onOrgEdit?(orgLabel: string): void;
+  onOrgClick?(org: OrgResponseCommon): void;
+  onOrgEdit?(org: OrgResponseCommon): void;
   results: OrgResponseCommon[];
   page: number;
   total: number;
@@ -127,13 +127,13 @@ export const OrgListComponent: React.FunctionComponent<
           loader={<Spin spinning={true}>Loading</Spin>}
           scrollableTarget="scroll-me"
         >
-          {items.map(({ _label: label, description }, index) => (
+          {items.map((org, index) => (
             <OrgItem
-              key={`${label}-${index}`}
-              label={label}
-              description={description}
-              onClick={() => !!onOrgClick && onOrgClick(label)}
-              onEdit={() => !!onOrgEdit && onOrgEdit(label)}
+              key={`${org._label}-${index}`}
+              label={org._label}
+              description={org.description}
+              onClick={() => !!onOrgClick && onOrgClick(org)}
+              onEdit={() => !!onOrgEdit && onOrgEdit(org)}
             />
           ))}
         </InfiniteScroll>

@@ -9,9 +9,8 @@ import OrgList from '../components/Orgs/OrgList';
 import { Button, Modal, Drawer, notification, Empty } from 'antd';
 import OrgForm from '../components/Orgs/OrgForm';
 import { CreateOrgPayload } from '@bbp/nexus-sdk-legacy/lib/Organization/types';
-import { Link } from 'react-router-dom';
-import { getDestinationParam } from '../utils';
 import RecentlyVisited from '../components/RecentlyVisited';
+import { OrgResponseCommon } from '@bbp/nexus-sdk';
 
 interface LandingProps {
   paginatedOrgs?: PaginatedList<Organization>;
@@ -42,7 +41,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
   const [selectedOrg, setSelectedOrg] = React.useState<
-    Organization | undefined
+    OrgResponseCommon | undefined
   >(undefined);
 
   const saveAndCreate = (newOrg: Organization) => {
@@ -75,9 +74,12 @@ const Landing: React.FunctionComponent<LandingProps> = ({
       });
   };
 
-  const saveAndModify = (selectedOrg: Organization, newOrg: Organization) => {
+  const saveAndModify = (
+    selectedOrg: OrgResponseCommon,
+    newOrg: Organization
+  ) => {
     setFormBusy(true);
-    modifyOrg(newOrg.label, selectedOrg.rev, {
+    modifyOrg(newOrg.label, selectedOrg._rev, {
       description: newOrg.description,
     })
       .then(
@@ -108,10 +110,10 @@ const Landing: React.FunctionComponent<LandingProps> = ({
       });
   };
 
-  const saveAndDeprecate = (selectedOrg: Organization) => {
+  const saveAndDeprecate = (selectedOrg: OrgResponseCommon) => {
     setFormBusy(true);
 
-    deprecateOrg(selectedOrg.label, selectedOrg.rev)
+    deprecateOrg(selectedOrg._label, selectedOrg._rev)
       .then(
         () => {
           notification.success({
@@ -160,11 +162,9 @@ const Landing: React.FunctionComponent<LandingProps> = ({
         </div>
 
         <OrgList
-          onOrgEdit={(orgLabel: string) =>
-            setSelectedOrg(
-              paginatedOrgs.results.filter(o => o.label === orgLabel)[0]
-            )
-          }
+          pageSize={displayPerPage}
+          onOrgClick={org => goTo(org._label)}
+          onOrgEdit={org => setSelectedOrg(org)}
         />
 
         <Modal
@@ -181,13 +181,16 @@ const Landing: React.FunctionComponent<LandingProps> = ({
         </Modal>
         <Drawer
           width={640}
-          visible={!!(selectedOrg && selectedOrg.label)}
+          visible={!!(selectedOrg && selectedOrg._label)}
           onClose={() => setSelectedOrg(undefined)}
-          title={selectedOrg && selectedOrg.label}
+          title={selectedOrg && selectedOrg._label}
         >
           {selectedOrg && (
             <OrgForm
-              org={selectedOrg}
+              org={{
+                label: selectedOrg._label,
+                description: selectedOrg.description,
+              }}
               onSubmit={(o: Organization) => saveAndModify(selectedOrg, o)}
               onDeprecate={() => saveAndDeprecate(selectedOrg)}
               busy={formBusy}

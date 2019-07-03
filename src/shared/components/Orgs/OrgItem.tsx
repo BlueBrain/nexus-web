@@ -42,6 +42,7 @@ const OrgItem: React.FunctionComponent<OrgItemProps> = ({
             <Button
               className="edit-button"
               type="primary"
+              size="small"
               tabIndex={1}
               onClick={(e: React.SyntheticEvent) => {
                 e.stopPropagation();
