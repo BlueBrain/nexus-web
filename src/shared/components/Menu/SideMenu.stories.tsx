@@ -6,7 +6,7 @@ import { action } from '@storybook/addon-actions';
 import SideMenu from './SideMenu';
 import { Divider, Button } from 'antd';
 
-storiesOf('Components/SideMenu', module)
+storiesOf('Components/Menus/SideMenu', module)
   .addDecorator(withKnobs)
   .add(
     'SideMenu',
@@ -24,11 +24,31 @@ storiesOf('Components/SideMenu', module)
     ~~~
   `)(() => {
       const title = text('Title', 'What a header!');
-      const open = boolean('Opened?', true);
+      const openright = boolean('Opened Right?', true);
+      const openleft = boolean('Opened Left?', true);
       return (
         <div style={{ margin: '50px 40px 0px' }}>
           <h2>Side Menu</h2>
-          <SideMenu title={title} visible={open} onClose={action('on-close')}>
+          <SideMenu
+            title={title}
+            visible={openright}
+            onClose={action('on-close')}
+          >
+            <Button type="primary" style={{ width: '100%', margin: '1em 0' }}>
+              Serious Button
+            </Button>
+            <Button style={{ width: '100%', margin: '1em 0' }}>
+              Another Button
+            </Button>
+            <Divider />
+            <p>You had better pay attention to this important text!</p>
+          </SideMenu>
+          <SideMenu
+            title={title}
+            visible={openleft}
+            side="left"
+            onClose={action('on-close')}
+          >
             <Button type="primary" style={{ width: '100%', margin: '1em 0' }}>
               Serious Button
             </Button>

@@ -3,21 +3,29 @@ import { Icon, Card } from 'antd';
 import './SideMenu.less';
 import { useTransition, animated } from 'react-spring';
 
-const DEFAULT_ANIMATIONS = {
-  from: () => ({ right: -300, opacity: 0 }),
-  leave: () => ({ right: -300, opacity: 0 }),
-  enter: () => ({ right: 0, opacity: 1 }),
+const ANIMATIONS = {
+  left: {
+    from: () => ({ left: -300, opacity: 0 }),
+    leave: () => ({ left: -300, opacity: 0 }),
+    enter: () => ({ left: 0, opacity: 1 }),
+  },
+  right: {
+    from: () => ({ right: -300, opacity: 0 }),
+    leave: () => ({ right: -300, opacity: 0 }),
+    enter: () => ({ right: 0, opacity: 1 }),
+  },
 };
 
 export interface SideMenuProps {
   title?: string;
   visible: boolean;
   onClose: () => void;
+  side?: 'left' | 'right';
 }
 
 const SideMenu: React.FunctionComponent<SideMenuProps> = props => {
-  const { title, children, visible, onClose } = props;
-  const transitions = useTransition(visible, null, DEFAULT_ANIMATIONS);
+  const { title, children, visible, onClose, side = 'right' } = props;
+  const transitions = useTransition(visible, null, ANIMATIONS[side]);
   return (
     <>
       {transitions.map(
@@ -38,6 +46,7 @@ const SideMenu: React.FunctionComponent<SideMenuProps> = props => {
                   </div>
                 }
                 size="small"
+                bordered={false}
               >
                 <div className="content">{children}</div>
               </Card>

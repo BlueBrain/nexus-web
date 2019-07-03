@@ -4,7 +4,7 @@ import { Project, Resource, NexusFile } from '@bbp/nexus-sdk-legacy';
 import ResourceForm from '../Resources/ResourceFormModal';
 import { Link } from 'react-router-dom';
 import { CreateResourcePayload } from '@bbp/nexus-sdk-legacy/lib/Resource/types';
-import SideMenu from './SideMenu';
+import SideMenu from '../Menu/SideMenu';
 import FileUploader from '../FileUpload';
 import { AccessControl } from '@bbp/react-nexus';
 
