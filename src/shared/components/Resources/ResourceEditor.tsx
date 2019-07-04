@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Icon, Switch } from 'antd';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import './ResourceEditor.less';
-import { filterMetadataFromPayload } from '../../utils/resources';
+import { filterMetadataFromPayload } from '../../utils';
 
 // Codemirror will not load on the server, so we need to make sure
 // the language support code doesn't load either.

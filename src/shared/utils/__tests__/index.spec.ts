@@ -5,6 +5,7 @@ import {
   stripBasename,
   getLogoutUrl,
   hasExpired,
+  filterMetadataFromPayload,
 } from '..';
 import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
 
@@ -130,6 +131,16 @@ describe('utils functions', () => {
     });
     it('should NOT be expired', () => {
       expect(hasExpired(future)).toBeFalsy();
+    });
+  });
+  describe('filterMetadataFromPayload()', () => {
+    it('should return an object with some metadata properties removed', () => {
+      expect(
+        filterMetadataFromPayload({
+          name: 'bob',
+          _rev: 99999,
+        })
+      ).toEqual({ name: 'bob' });
     });
   });
 });

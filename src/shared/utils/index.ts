@@ -1,5 +1,6 @@
+import { ResourcePayload } from '@bbp/nexus-sdk';
 import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
-
+import { RESOURCE_METADATA_KEYS } from '../../constants';
 /**
  * getProp utility - an alternative to lodash.get
  * @author @harish2704, @muffypl, @pi0
@@ -203,4 +204,18 @@ export function blacklistKeys(raw: { [key: string]: any }, keys: string[]) {
       obj[key] = raw[key];
       return obj;
     }, {});
+}
+
+export function filterMetadataFromPayload(payload: {
+  [key: string]: any;
+}): ResourcePayload {
+  return Object.keys(payload)
+    .filter(key => !RESOURCE_METADATA_KEYS.includes(key))
+    .reduce(
+      (prev, currentKey) => ({
+        ...prev,
+        [currentKey]: payload[currentKey],
+      }),
+      {}
+    );
 }

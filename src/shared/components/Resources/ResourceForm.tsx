@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Cascader, Form, Button, Spin, Modal } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
-import { CreateResourcePayload } from '@bbp/nexus-sdk-legacy/lib/Resource/types';
 import ResourceEditor from './ResourceEditor';
 import { CascaderOptionType } from 'antd/lib/cascader';
 import {
@@ -11,7 +10,8 @@ import {
 } from './defaultResourcePayloads';
 
 import './ResourceForm.less';
-import { filterMetadataFromPayload } from '../../utils/resources';
+import { filterMetadataFromPayload } from '../../utils';
+import { ResourcePayload } from '@bbp/nexus-sdk';
 
 const AVAILABLE_SCHEMAS: CascaderOptionType[] = [
   {
@@ -72,13 +72,10 @@ export interface ResourceFormProps {
   form: WrappedFormUtils;
   resource?: {
     schemaId: string;
-    payload: CreateResourcePayload;
+    payload: ResourcePayload;
   };
   busy?: boolean;
-  onSubmit?(resource: {
-    schemaId: string;
-    payload: CreateResourcePayload;
-  }): any;
+  onSubmit?(resource: { schemaId: string; payload: ResourcePayload }): any;
   onDeprecate?(): any;
   mode?: 'create' | 'edit';
 }
