@@ -1,83 +1,62 @@
 import * as React from 'react';
-import { Input, Empty } from 'antd';
-import OrgItem, { OrgItemProps } from './OrgItem';
-import AnimatedList from '../Animations/AnimatedList';
+import { NexusClient } from '@bbp/nexus-sdk';
+import { useNexusContext } from '@bbp/react-nexus';
+import InfiniteSearch from '../List/InfiniteSearch';
 
-import './Orgs.less';
-import { Organization } from '@bbp/nexus-sdk-legacy';
+const DEFAULT_PAGE_SIZE = 20;
 
-export interface OrgListProps {
-  orgs: OrgItemProps[];
-  busy?: boolean;
-  error?: { message: string; name: string };
-  onOrgClick?(org: Organization): void;
-  onOrgEdit?(label: string): void;
-  paginationSettings?: { total: number; from: number; pageSize: number };
-  onPaginationChange?: (page: number, pageSize?: number) => void;
-}
+const OrgListContainer: React.FunctionComponent<{
+  children: any;
+  defaultSearchValue?: string;
+  height?: number;
+}> = props => {
+  const nexus: NexusClient = useNexusContext();
+  const [orgs, setOrgs] = React.useState<any>({
+    total: 0,
+    items: [],
+    searchValue: props.defaultSearchValue,
+    includeDeprecated: false,
+  });
 
-const Search = Input.Search;
-
-const OrgList: React.FunctionComponent<OrgListProps> = ({
-  orgs,
-  busy = false,
-  error = false,
-  onOrgClick = (org: Organization) => {},
-  onOrgEdit = () => {},
-  paginationSettings,
-  onPaginationChange,
-}) => {
-  const [items, setItems] = React.useState(orgs);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const filtered = orgs.filter(org =>
-      org.label.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase())
+  // initial load
+  React.useEffect(() => {
+    nexus.Organization.list({
+      size: DEFAULT_PAGE_SIZE,
+      label: orgs.searchValue,
+      deprecated: orgs.includeDeprecated,
+    }).then(res =>
+      setOrgs({ ...orgs, total: res._total, items: res._results })
     );
-    setItems(filtered);
+  }, []);
+
+  const loadMore = ({ searchValue }: { searchValue: string }) => {
+    // if filters have changed, we need to reset:
+    // - the entire list back to []
+    // - the from index back to 0
+    const newFilter: boolean = searchValue !== orgs.searchValue;
+    nexus.Organization.list({
+      size: DEFAULT_PAGE_SIZE,
+      from: newFilter ? 0 : orgs.items.length,
+      label: searchValue,
+      deprecated: orgs.includeDeprecated,
+    }).then(res => {
+      setOrgs({
+        searchValue,
+        total: res._total,
+        items: newFilter ? res._results : [...orgs.items, ...res._results],
+      });
+    });
   };
-
-  if (error) {
-    return (
-      <Empty
-        description={
-          <span>An error happened while retrieving Organizations</span>
-        }
-      />
-    );
-  }
   return (
-    <div className="OrgList">
-      {/* Don't display search for now but to be implemented soon */}
-      {/* <Search
-        className="filter"
-        placeholder="Filter by name"
-        onChange={handleChange}
-      /> */}
-      <AnimatedList
-        itemComponent={(org, i) => (
-          <OrgItem
-            key={org.label + i}
-            {...org}
-            onClick={() => onOrgClick(org)}
-            onEdit={() => onOrgEdit(org.label)}
-          />
-        )}
-        onPaginationChange={onPaginationChange}
-        makeKey={item => item.label}
-        itemName="Organization"
-        loading={busy}
-        results={items}
-        total={(paginationSettings && paginationSettings.total) || items.length}
-        paginationSettings={
-          paginationSettings && {
-            from: paginationSettings.from,
-            total: paginationSettings.total,
-            pageSize: paginationSettings.pageSize,
-          }
-        }
-      />
-    </div>
+    <InfiniteSearch
+      onLoadMore={loadMore}
+      hasMore={orgs.items.length < orgs.total}
+      defaultSearchValue={props.defaultSearchValue}
+      height={props.height}
+    >
+      {props.children && props.children({ items: orgs.items })}
+    </InfiniteSearch>
   );
 };
 
-export default OrgList;
+export default OrgListContainer;

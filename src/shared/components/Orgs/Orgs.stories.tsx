@@ -3,19 +3,8 @@ import { storiesOf } from '@storybook/react';
 import { withInfo } from '@storybook/addon-info';
 import { action } from '@storybook/addon-actions';
 import { withKnobs, text, number } from '@storybook/addon-knobs';
-
-import OrgList from './OrgList';
-import OrgItem, { OrgItemProps } from './OrgItem';
+import OrgItem from './OrgItem';
 import OrgForm from './OrgForm';
-
-const orgs: OrgItemProps[] = [
-  { label: 'nexus', numberOfProjects: 1200 },
-  { label: 'bbp', numberOfProjects: 300 },
-  { label: 'hbp', numberOfProjects: 1 },
-  { label: 'nasa', numberOfProjects: 912839 },
-  { label: 'tesla' },
-  { label: 'rolex', numberOfProjects: 3424 },
-];
 
 storiesOf('Components/Orgs', module)
   .addDecorator(withKnobs)
@@ -50,31 +39,6 @@ storiesOf('Components/Orgs', module)
       );
     })
   );
-
-storiesOf('Components/Orgs', module).add(
-  'OrgList',
-  withInfo(`
-    The Organization List component is a collection of Organization Card Components.
-    It allows to filter Organizations by name.
-
-    ~~~js
-      <OrgItem />
-    ~~~
-  `)(() => {
-    return (
-      <React.Fragment>
-        <div style={{ margin: '50px 40px 0px' }}>
-          <OrgList
-            orgs={orgs}
-            onOrgClick={action('org-selected')}
-            onPaginationChange={action('pagination-change')}
-            paginationSettings={{ total: 20, from: 1, pageSize: 20 }}
-          />
-        </div>
-      </React.Fragment>
-    );
-  })
-);
 
 storiesOf('Components/Orgs', module)
   .addDecorator(withKnobs)

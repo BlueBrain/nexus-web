@@ -1,34 +1,23 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
-import { useNexus, AccessControl } from '@bbp/react-nexus';
-import { OrganizationList, ListOrgOptions, NexusClient } from '@bbp/nexus-sdk';
-import {
-  Organization,
-  PaginatedList,
-  PaginationSettings,
-  Project,
-} from '@bbp/nexus-sdk-legacy';
+import { AccessControl } from '@bbp/react-nexus';
+import { Organization, PaginatedList, Project } from '@bbp/nexus-sdk-legacy';
 import { RootState } from '../store/reducers';
 import { createOrg, modifyOrg, deprecateOrg } from '../store/actions/orgs';
 import OrgList from '../components/Orgs/OrgList';
-import { fetchOrgs } from '../store/actions/nexus/orgs';
-import Skeleton from '../components/Skeleton';
 import { Button, Modal, Drawer, notification, Empty } from 'antd';
 import OrgForm from '../components/Orgs/OrgForm';
 import { CreateOrgPayload } from '@bbp/nexus-sdk-legacy/lib/Organization/types';
-import { Link } from 'react-router-dom';
-import { getDestinationParam } from '../utils';
 import RecentlyVisited from '../components/RecentlyVisited';
+import { OrgResponseCommon } from '@bbp/nexus-sdk';
+import OrgItem from '../components/Orgs/OrgItem';
 
 interface LandingProps {
   paginatedOrgs?: PaginatedList<Organization>;
   displayPerPage: number;
-  busy: boolean;
-  error?: { message: string; name: string };
   goTo(orgLabel: string): void;
   goToProject(Project: Project): void;
-  fetchOrgs(paginationSettings?: PaginationSettings): any;
   createOrg: (
     orgLabel: string,
     orgPayload: CreateOrgPayload
@@ -43,10 +32,7 @@ interface LandingProps {
 
 const Landing: React.FunctionComponent<LandingProps> = ({
   paginatedOrgs = { total: 0, index: 0, results: [] },
-  busy,
-  error,
   goTo,
-  fetchOrgs,
   createOrg,
   modifyOrg,
   deprecateOrg,
@@ -56,15 +42,8 @@ const Landing: React.FunctionComponent<LandingProps> = ({
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
   const [selectedOrg, setSelectedOrg] = React.useState<
-    Organization | undefined
+    OrgResponseCommon | undefined
   >(undefined);
-  React.useEffect(() => {
-    paginatedOrgs.results.length === 0 &&
-      fetchOrgs({
-        size: displayPerPage,
-        from: paginatedOrgs.index,
-      });
-  }, []);
 
   const saveAndCreate = (newOrg: Organization) => {
     setFormBusy(true);
@@ -96,9 +75,12 @@ const Landing: React.FunctionComponent<LandingProps> = ({
       });
   };
 
-  const saveAndModify = (selectedOrg: Organization, newOrg: Organization) => {
+  const saveAndModify = (
+    selectedOrg: OrgResponseCommon,
+    newOrg: Organization
+  ) => {
     setFormBusy(true);
-    modifyOrg(newOrg.label, selectedOrg.rev, {
+    modifyOrg(newOrg.label, selectedOrg._rev, {
       description: newOrg.description,
     })
       .then(
@@ -110,11 +92,6 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           setFormBusy(false);
           setModalVisible(false);
           setSelectedOrg(undefined);
-
-          fetchOrgs({
-            size: displayPerPage,
-            from: paginatedOrgs.index,
-          });
         },
         (action: { type: string; error: Error }) => {
           notification.warning({
@@ -134,10 +111,10 @@ const Landing: React.FunctionComponent<LandingProps> = ({
       });
   };
 
-  const saveAndDeprecate = (selectedOrg: Organization) => {
+  const saveAndDeprecate = (selectedOrg: OrgResponseCommon) => {
     setFormBusy(true);
 
-    deprecateOrg(selectedOrg.label, selectedOrg.rev)
+    deprecateOrg(selectedOrg._label, selectedOrg._rev)
       .then(
         () => {
           notification.success({
@@ -147,11 +124,6 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           setFormBusy(false);
           setModalVisible(false);
           setSelectedOrg(undefined);
-
-          fetchOrgs({
-            size: displayPerPage,
-            from: paginatedOrgs.index,
-          });
         },
         (action: { type: string; error: Error }) => {
           notification.warning({
@@ -171,46 +143,6 @@ const Landing: React.FunctionComponent<LandingProps> = ({
       });
   };
 
-  if (busy) {
-    return (
-      <Skeleton
-        itemNumber={5}
-        active
-        avatar
-        paragraph={{
-          rows: 1,
-          width: 0,
-        }}
-        title={{
-          width: '100%',
-        }}
-      />
-    );
-  }
-
-  if (error) {
-    if (error.message === 'Error: Forbidden') {
-      return (
-        <Empty
-          style={{ marginTop: '22vh' }}
-          description={
-            <span>
-              You need to{' '}
-              <Link to={`/login${getDestinationParam()}`}>login</Link> in order
-              to list Organizations
-            </span>
-          }
-        />
-      );
-    }
-    return (
-      <Empty
-        style={{ marginTop: '22vh' }}
-        description="There was a problem while loading Organizations"
-      />
-    );
-  }
-
   return (
     <div className="orgs-view view-container">
       <RecentlyVisited visitProject={goToProject} />
@@ -229,36 +161,20 @@ const Landing: React.FunctionComponent<LandingProps> = ({
             </Button>
           </AccessControl>
         </div>
-        {paginatedOrgs.total === 0 ? (
-          <Empty
-            style={{ marginTop: '22vh' }}
-            description="No Organizations found..."
-          />
-        ) : (
-          <OrgList
-            orgs={paginatedOrgs.results}
-            onOrgClick={org => {
-              goTo(org.label);
-            }}
-            busy={busy}
-            paginationSettings={{
-              total: paginatedOrgs.total,
-              from: paginatedOrgs.index,
-              pageSize: displayPerPage,
-            }}
-            onOrgEdit={(orgLabel: string) =>
-              setSelectedOrg(
-                paginatedOrgs.results.filter(o => o.label === orgLabel)[0]
-              )
-            }
-            onPaginationChange={pageNumber =>
-              fetchOrgs({
-                from: pageNumber * displayPerPage - displayPerPage,
-                size: displayPerPage,
-              })
-            }
-          />
-        )}
+
+        <OrgList>
+          {({ items }: { items: OrgResponseCommon[] }) =>
+            items.map(i => (
+              <OrgItem
+                key={i['@id']}
+                label={i._label}
+                onClick={() => goTo(i._label)}
+                onEdit={() => setSelectedOrg(i)}
+              />
+            ))
+          }
+        </OrgList>
+
         <Modal
           title="New Organization"
           visible={modalVisible}
@@ -273,13 +189,16 @@ const Landing: React.FunctionComponent<LandingProps> = ({
         </Modal>
         <Drawer
           width={640}
-          visible={!!(selectedOrg && selectedOrg.label)}
+          visible={!!(selectedOrg && selectedOrg._label)}
           onClose={() => setSelectedOrg(undefined)}
-          title={selectedOrg && selectedOrg.label}
+          title={selectedOrg && selectedOrg._label}
         >
           {selectedOrg && (
             <OrgForm
-              org={selectedOrg}
+              org={{
+                label: selectedOrg._label,
+                description: selectedOrg.description,
+              }}
               onSubmit={(o: Organization) => saveAndModify(selectedOrg, o)}
               onDeprecate={() => saveAndDeprecate(selectedOrg)}
               busy={formBusy}
@@ -295,16 +214,12 @@ const Landing: React.FunctionComponent<LandingProps> = ({
 const mapStateToProps = (state: RootState) => ({
   displayPerPage: state.uiSettings.pageSizes.orgsListPageSize,
   paginatedOrgs: (state.nexus && state.nexus.orgs.data) || undefined,
-  busy: (state.nexus && state.nexus.orgs.isFetching) || false,
-  error: (state.nexus && state.nexus.orgs.error) || undefined,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
   goTo: (org: string) => dispatch(push(`/${org}`)),
   goToProject: (project: Project) =>
     dispatch(push(`/${project.orgLabel}/${project.label}`)),
-  fetchOrgs: (paginationSettings?: PaginationSettings) =>
-    dispatch(fetchOrgs(paginationSettings)),
   createOrg: (orgLabel: string, orgPayload: CreateOrgPayload) =>
     dispatch(createOrg(orgLabel, orgPayload)),
   modifyOrg: (orgLabel: string, rev: number, orgPayload: CreateOrgPayload) =>
