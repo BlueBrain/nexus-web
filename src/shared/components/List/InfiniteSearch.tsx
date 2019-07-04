@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Input, Spin } from 'antd';
 import * as InfiniteScroll from 'react-infinite-scroller';
 
+import './InfiniteSearch.less';
+
 export type InfiniteSearchProps = {
   onLoadMore({ searchValue }: { searchValue: string }): void;
   hasMore: boolean;
@@ -15,12 +17,10 @@ const InfiniteSearch: React.FunctionComponent<InfiniteSearchProps> = props => {
   );
 
   return (
-    <div
-      className="org-list"
-      style={{ height: props.height, overflow: 'auto' }}
-    >
+    <div className="infinite-search">
       <Input.Search
-        placeholder={'Find an Org by name...'}
+        className="search"
+        placeholder={'Search...'}
         allowClear={true}
         value={searchValue}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,15 +28,23 @@ const InfiniteSearch: React.FunctionComponent<InfiniteSearchProps> = props => {
           onLoadMore({ searchValue: e.currentTarget.value });
         }}
       />
-      <InfiniteScroll
-        pageStart={0}
-        loadMore={() => onLoadMore({ searchValue })}
-        hasMore={hasMore}
-        loader={<Spin spinning={true}>Loading</Spin>}
-        useWindow={!props.height}
+      <div
+        className="scroll"
+        style={{
+          height: props.height,
+          overflowY: props.height ? 'scroll' : 'initial',
+        }}
       >
-        {props.children}
-      </InfiniteScroll>
+        <InfiniteScroll
+          pageStart={0}
+          loadMore={() => onLoadMore({ searchValue })}
+          hasMore={hasMore}
+          loader={<Spin spinning={true}>Loading</Spin>}
+          useWindow={!props.height}
+        >
+          {props.children}
+        </InfiniteScroll>
+      </div>
     </div>
   );
 };
