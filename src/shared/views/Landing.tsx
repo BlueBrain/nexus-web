@@ -11,6 +11,7 @@ import OrgForm from '../components/Orgs/OrgForm';
 import { CreateOrgPayload } from '@bbp/nexus-sdk-legacy/lib/Organization/types';
 import RecentlyVisited from '../components/RecentlyVisited';
 import { OrgResponseCommon } from '@bbp/nexus-sdk';
+import OrgItem from '../components/Orgs/OrgItem';
 
 interface LandingProps {
   paginatedOrgs?: PaginatedList<Organization>;
@@ -161,11 +162,18 @@ const Landing: React.FunctionComponent<LandingProps> = ({
           </AccessControl>
         </div>
 
-        <OrgList
-          pageSize={displayPerPage}
-          onOrgClick={org => goTo(org._label)}
-          onOrgEdit={org => setSelectedOrg(org)}
-        />
+        <OrgList>
+          {({ items }: { items: OrgResponseCommon[] }) =>
+            items.map(i => (
+              <OrgItem
+                key={i['@id']}
+                label={i._label}
+                onClick={() => goTo(i._label)}
+                onEdit={() => setSelectedOrg(i)}
+              />
+            ))
+          }
+        </OrgList>
 
         <Modal
           title="New Organization"

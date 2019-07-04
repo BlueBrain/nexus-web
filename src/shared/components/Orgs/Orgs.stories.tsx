@@ -2,9 +2,7 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withInfo } from '@storybook/addon-info';
 import { action } from '@storybook/addon-actions';
-import { withKnobs, text, number } from '@storybook/addon-knobs';
-
-import { OrgListComponent } from './OrgList';
+import { withKnobs, text, number, boolean } from '@storybook/addon-knobs';
 import OrgItem, { OrgItemProps } from './OrgItem';
 import OrgForm from './OrgForm';
 
@@ -69,33 +67,34 @@ storiesOf('Components/Orgs', module)
     })
   );
 
-storiesOf('Components/Orgs', module).add(
-  'OrgList',
-  withInfo(`
-    The Organization List component is a collection of Organization Card Components.
-    It allows to filter Organizations by name.
+// storiesOf('Components/Orgs', module).add(
+//   'OrgList',
+//   withInfo(`
+//     The Organization List component is capable of rendering a list of .....
+//     It allows to filter Organizations by name.
 
-    ~~~js
-      <OrgItem />
-    ~~~
-  `)(() => {
-    return (
-      <React.Fragment>
-        <div style={{ margin: '50px 40px 0px' }}>
-          <OrgListComponent
-            onOrgClick={action('org-selected')}
-            onOrgEdit={action('org-editing!')}
-            results={[makeFakeOrg(), makeFakeOrg()]}
-            page={0}
-            total={2}
-            onLoadMore={action('org-load-more')}
-            setSearchValue={action('org-search')}
-          />
-        </div>
-      </React.Fragment>
-    );
-  })
-);
+//     ~~~js
+//       <OrgList />
+//     ~~~
+//   `)(() => {
+//     const [items, setItems] = React.useState([]);
+//     const loadMore = () => console.log('');
+//     const hasMore = boolean('hasMore', false);
+//     const dataLength = number('dataLength', 0);
+
+//     return (
+//       <React.Fragment>
+//         <div style={{ margin: '50px 40px 0px' }}>
+//           <InfiniteSearch onLoadMore={loadMore} hasMore={hasMore}>
+//             {items.map(i => (
+//               <p>lol</p>
+//             ))}
+//           </InfiniteSearch>
+//         </div>
+//       </React.Fragment>
+//     );
+//   })
+// );
 
 storiesOf('Components/Orgs', module)
   .addDecorator(withKnobs)

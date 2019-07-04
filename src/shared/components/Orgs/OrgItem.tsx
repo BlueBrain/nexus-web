@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from 'antd';
-import { AccessControl } from '@bbp/react-nexus';
+// import { AccessControl } from '@bbp/react-nexus';
 import ListItem from '../Animations/ListItem';
 
 export interface OrgItemProps {
@@ -35,24 +35,24 @@ const OrgItem: React.FunctionComponent<OrgItemProps> = ({
       }
       action={
         onEdit ? (
-          <AccessControl
-            path={`/${label}`}
-            permissions={['organizations/write']}
+          // <AccessControl
+          //   path={`/${label}`}
+          //   permissions={['organizations/write']}
+          // >
+          <Button
+            className="edit-button"
+            type="primary"
+            size="small"
+            tabIndex={1}
+            onClick={(e: React.SyntheticEvent) => {
+              e.stopPropagation();
+              onEdit();
+            }}
           >
-            <Button
-              className="edit-button"
-              type="primary"
-              size="small"
-              tabIndex={1}
-              onClick={(e: React.SyntheticEvent) => {
-                e.stopPropagation();
-                onEdit();
-              }}
-            >
-              Edit
-            </Button>
-          </AccessControl>
-        ) : null
+            Edit
+          </Button>
+        ) : // </AccessControl>
+        null
       }
     />
   );
