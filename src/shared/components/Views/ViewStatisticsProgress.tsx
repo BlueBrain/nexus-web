@@ -37,13 +37,15 @@ export type ViewStatisticsContainerProps = {
 export const ViewStatisticsContainer: React.FunctionComponent<
   ViewStatisticsContainerProps
 > = props => {
-  const state = useNexus<Statistics>((nexus: NexusClient) =>
-    nexus.View.pollStatistics(
-      props.orgLabel,
-      props.projectLabel,
-      props.resourceId,
-      { pollIntervalMs: 3000 }
-    )
+  const state = useNexus<Statistics>(
+    (nexus: NexusClient) =>
+      nexus.View.pollStatistics(
+        props.orgLabel,
+        props.projectLabel,
+        props.resourceId,
+        { pollIntervalMs: 3000 }
+      ),
+    [props.resourceId]
   );
 
   if (!state.loading && !state.error) {
