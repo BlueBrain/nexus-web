@@ -4,11 +4,11 @@ import { withInfo } from '@storybook/addon-info';
 import { action } from '@storybook/addon-actions';
 import { withKnobs, text, number } from '@storybook/addon-knobs';
 
-import ProjectItem, { ProjectItemProps } from './ProjectItem';
+import ProjectCard, { ProjectCardProps } from './ProjectCard';
 import ProjectList from './ProjectList';
 import ProjectForm from './ProjectForm';
 
-const projects: ProjectItemProps[] = [
+const projects: ProjectCardProps[] = [
   { label: 'thalamus', orgLabel: 'bbp' },
   { label: 'another-project', orgLabel: 'another-org' },
 ];
@@ -25,7 +25,7 @@ storiesOf('Components/Projects', module)
       return (
         <React.Fragment>
           <div style={{ margin: '50px 40px 0px' }}>
-            <ProjectItem label="thalamus" orgLabel="bbp" />
+            <ProjectCard label="thalamus" orgLabel="bbp" />
           </div>
         </React.Fragment>
       );

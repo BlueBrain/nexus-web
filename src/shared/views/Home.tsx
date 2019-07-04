@@ -22,7 +22,7 @@ import ProjectForm from '../components/Projects/ProjectForm';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
 import RecentlyVisited from '../components/RecentlyVisited';
 import { ProjectResponseCommon } from '@bbp/nexus-sdk';
-import ProjectItem from '../components/Projects/ProjectItem';
+import ProjectCard from '../components/Projects/ProjectCard';
 
 interface HomeProps {
   activeOrg: { label: string; description?: string };
@@ -273,7 +273,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
           <ProjectList orgLabel={activeOrg.label}>
             {({ items }: { items: ProjectResponseCommon[] }) =>
               items.map(i => (
-                <ProjectItem label={i._label} orgLabel={i._organizationLabel} />
+                <ProjectCard label={i._label} orgLabel={i._organizationLabel} />
               ))
             }
           </ProjectList>
