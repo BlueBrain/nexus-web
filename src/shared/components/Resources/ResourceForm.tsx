@@ -11,6 +11,7 @@ import {
 } from './defaultResourcePayloads';
 
 import './ResourceForm.less';
+import { filterMetadataFromPayload } from '../../utils/resources';
 
 const AVAILABLE_SCHEMAS: CascaderOptionType[] = [
   {
@@ -108,10 +109,11 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
             Object.keys(RESOURCES_SCHEMA_URI).includes(type)
           ) || '_';
 
-        const payload = {
+        const payload = filterMetadataFromPayload({
           ...editorContent,
           type: resourceTypes,
-        };
+        });
+
         onSubmit({
           payload,
           schemaId: RESOURCES_SCHEMA_URI[selectedSchema],
