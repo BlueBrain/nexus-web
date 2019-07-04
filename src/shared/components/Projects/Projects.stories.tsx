@@ -4,11 +4,11 @@ import { withInfo } from '@storybook/addon-info';
 import { action } from '@storybook/addon-actions';
 import { withKnobs, text, number } from '@storybook/addon-knobs';
 
-import ProjectCard, { ProjectCardProps } from './ProjectCard';
+import ProjectItem, { ProjectItemProps } from './ProjectItem';
 import ProjectList from './ProjectList';
 import ProjectForm from './ProjectForm';
 
-const projects: ProjectCardProps[] = [
+const projects: ProjectItemProps[] = [
   { label: 'thalamus', orgLabel: 'bbp' },
   { label: 'another-project', orgLabel: 'another-org' },
 ];
@@ -25,32 +25,7 @@ storiesOf('Components/Projects', module)
       return (
         <React.Fragment>
           <div style={{ margin: '50px 40px 0px' }}>
-            <ProjectCard label="thalamus" orgLabel="bbp" />
-          </div>
-        </React.Fragment>
-      );
-    })
-  );
-
-storiesOf('Components/Projects', module)
-  .addDecorator(withKnobs)
-  .add(
-    'ProjectList',
-    withInfo(`
-      ~~~js
-      <ProjectList
-        projects={projects}
-        onProjectClick={action('project-click')}
-      />
-      ~~~
-  `)(() => {
-      return (
-        <React.Fragment>
-          <div style={{ margin: '50px 40px 0px' }}>
-            <ProjectList
-              projects={projects}
-              onProjectClick={action('project-click')}
-            />
+            <ProjectItem label="thalamus" orgLabel="bbp" />
           </div>
         </React.Fragment>
       );

@@ -21,6 +21,8 @@ import { push } from 'connected-react-router';
 import ProjectForm from '../components/Projects/ProjectForm';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
 import RecentlyVisited from '../components/RecentlyVisited';
+import { ProjectResponseCommon } from '@bbp/nexus-sdk';
+import ProjectItem from '../components/Projects/ProjectItem';
 
 interface HomeProps {
   activeOrg: { label: string; description?: string };
@@ -268,31 +270,13 @@ const Home: React.FunctionComponent<HomeProps> = ({
         {paginatedProjects.total === 0 ? (
           <Empty description="No projects" />
         ) : (
-          <ProjectList
-            projects={paginatedProjects.results}
-            onProjectClick={(projectLabel: string) =>
-              goTo(activeOrg.label, projectLabel)
+          <ProjectList orgLabel={activeOrg.label}>
+            {({ items }: { items: ProjectResponseCommon[] }) =>
+              items.map(i => (
+                <ProjectItem label={i._label} orgLabel={i._organizationLabel} />
+              ))
             }
-            onProjectEdit={(projectLabel: string) =>
-              setSelectedProject(
-                paginatedProjects.results.filter(
-                  p => p.label === projectLabel
-                )[0]
-              )
-            }
-            paginationSettings={{
-              total: paginatedProjects.total,
-              from: paginatedProjects.index,
-              pageSize: displayPerPage,
-            }}
-            onPaginationChange={pageNumber =>
-              fetchOrgData(match.params.org, {
-                from: displayPerPage * pageNumber - displayPerPage,
-                size: displayPerPage,
-              })
-            }
-            busy={busy}
-          />
+          </ProjectList>
         )}
         <Modal
           title="New Project"
