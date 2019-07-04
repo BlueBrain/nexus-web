@@ -7,7 +7,6 @@ import {
   hasExpired,
 } from '..';
 import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
-import { Realm } from '@bbp/nexus-sdk-legacy';
 
 const identities: Identity[] = [
   {

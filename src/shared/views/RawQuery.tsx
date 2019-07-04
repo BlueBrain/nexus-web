@@ -10,8 +10,9 @@ import * as queryString from 'query-string';
 import { push } from 'connected-react-router';
 import { Menu, Dropdown, Icon } from 'antd';
 import { listViews } from '../store/actions/nexus/views';
-import { ElasticSearchView, SparqlView, Resource } from '@bbp/nexus-sdk-legacy';
+import { Resource } from '@bbp/nexus-sdk-legacy';
 import { isElasticView } from '../utils/nexus-maybe';
+import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 
 interface RawQueryProps extends RouteComponentProps {
   activeOrg: { label: string };
@@ -69,36 +70,51 @@ export const RawElasticSearchQueryComponent: React.FunctionComponent<
   );
 
   return (
-    <div className="view-view view-container">
-      <div style={{ flexGrow: 1 }}>
-        <h1 className="name">
-          <span>
-            <a onClick={() => goToOrg(match.params.org)}>{match.params.org}</a>{' '}
-            |{' '}
-            <a
-              onClick={() =>
-                goToProject(match.params.org, match.params.project)
-              }
-            >
-              {match.params.project}
-            </a>{' '}
-            |{' '}
-          </span>
-          <Dropdown overlay={menu}>
-            <a className="ant-dropdown-link">
-              {view}
-              <Icon type="down" />
-            </a>
-          </Dropdown>
-        </h1>
-        <RawElasticSearchQueryView
-          initialQuery={query}
-          wantedOrg={match.params.org}
-          wantedProject={match.params.project}
-          wantedView={match.params.view}
-        />
+    <>
+      <div className="project-banner no-bg" style={{ marginBottom: 20 }}>
+        <div className="label">
+          <h1 className="name">
+            <span>
+              <a onClick={() => goToOrg(match.params.org)}>
+                {match.params.org}
+              </a>{' '}
+              |{' '}
+              <a
+                onClick={() =>
+                  goToProject(match.params.org, match.params.project)
+                }
+              >
+                {match.params.project}
+              </a>{' '}
+              |{' '}
+            </span>
+            <Dropdown overlay={menu}>
+              <a className="ant-dropdown-link">
+                {view}
+                <Icon type="down" />
+              </a>
+            </Dropdown>{' '}
+          </h1>
+          <div style={{ marginLeft: 10 }}>
+            <ViewStatisticsProgress
+              orgLabel={match.params.org}
+              projectLabel={match.params.project}
+              resourceId={match.params.view}
+            />
+          </div>
+        </div>
       </div>
-    </div>
+      <div className="view-view view-container">
+        <div style={{ flexGrow: 1 }}>
+          <RawElasticSearchQueryView
+            initialQuery={query}
+            wantedOrg={match.params.org}
+            wantedProject={match.params.project}
+            wantedView={match.params.view}
+          />
+        </div>
+      </div>
+    </>
   );
 };
 
@@ -139,35 +155,50 @@ const RawSparqlQueryComponent: React.FunctionComponent<RawQueryProps> = ({
     </Menu>
   );
   return (
-    <div className="view-view view-container">
-      <div style={{ flexGrow: 1 }}>
-        <h1 className="name">
-          <span>
-            <a onClick={() => goToOrg(match.params.org)}>{match.params.org}</a>{' '}
-            |{' '}
-            <a
-              onClick={() =>
-                goToProject(match.params.org, match.params.project)
-              }
-            >
-              {match.params.project}
-            </a>{' '}
-            |{' '}
-          </span>
-          <Dropdown overlay={menu}>
-            <a className="ant-dropdown-link">
-              {view}
-              <Icon type="down" />
-            </a>
-          </Dropdown>
-        </h1>
-        <RawSparqlQueryView
-          wantedOrg={match.params.org}
-          wantedProject={match.params.project}
-          wantedView={view}
-        />
+    <>
+      <div className="project-banner no-bg" style={{ marginBottom: 20 }}>
+        <div className="label">
+          <h1 className="name">
+            <span>
+              <a onClick={() => goToOrg(match.params.org)}>
+                {match.params.org}
+              </a>{' '}
+              |{' '}
+              <a
+                onClick={() =>
+                  goToProject(match.params.org, match.params.project)
+                }
+              >
+                {match.params.project}
+              </a>{' '}
+              |{' '}
+            </span>
+            <Dropdown overlay={menu}>
+              <a className="ant-dropdown-link">
+                {view}
+                <Icon type="down" />
+              </a>
+            </Dropdown>{' '}
+          </h1>
+          <div style={{ marginLeft: 10 }}>
+            <ViewStatisticsProgress
+              orgLabel={match.params.org}
+              projectLabel={match.params.project}
+              resourceId={match.params.view}
+            />
+          </div>
+        </div>
       </div>
-    </div>
+      <div className="view-view view-container">
+        <div style={{ flexGrow: 1 }}>
+          <RawSparqlQueryView
+            wantedOrg={match.params.org}
+            wantedProject={match.params.project}
+            wantedView={view}
+          />
+        </div>
+      </div>
+    </>
   );
 };
 
