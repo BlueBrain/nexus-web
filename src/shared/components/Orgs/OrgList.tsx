@@ -41,9 +41,9 @@ const OrgListContainer: React.FunctionComponent<{
       deprecated: orgs.includeDeprecated,
     }).then(res => {
       setOrgs({
+        searchValue,
         total: res._total,
         items: newFilter ? res._results : [...orgs.items, ...res._results],
-        searchValue,
       });
     });
   };
