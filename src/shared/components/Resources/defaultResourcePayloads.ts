@@ -59,10 +59,17 @@ export const ELASTIC_SEARCH_VIEW = {
   mapping: {},
 };
 
-export const AGGREGATE_VIEW = {
+export const AGGREGATE_ES_VIEW = {
   '@context': {}, // optional
   '@id': '', // optional
   '@type': 'AggregateElasticSearchView',
+  views: [{ project: '', viewId: '' }],
+};
+
+export const AGGREGATE_SPARQL_VIEW = {
+  '@context': {}, // optional
+  '@id': '', // optional
+  '@type': 'AggregateSparqlView',
   views: [{ project: '', viewId: '' }],
 };
 
@@ -89,8 +96,8 @@ export const DEFAULT_RESOURCES: { [key: string]: any } = {
   S3Storage: S3_STORAGE,
   SparqlView: SPARQL_VIEW,
   ElasticSearchView: ELASTIC_SEARCH_VIEW,
-  AggregateSparqlView: AGGREGATE_VIEW,
-  AggregateElasticSearchView: AGGREGATE_VIEW,
+  AggregateSparqlView: AGGREGATE_SPARQL_VIEW,
+  AggregateElasticSearchView: AGGREGATE_ES_VIEW,
   InProject: IN_PROJECT,
   CrossProject: CROSS_PROJECT,
   _: DEFAULT_RESOURCE,
