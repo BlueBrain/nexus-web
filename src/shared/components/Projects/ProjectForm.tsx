@@ -87,8 +87,8 @@ class PrefixMappingGroupInput extends React.Component<
 export interface ProjectFormProps {
   form: WrappedFormUtils;
   project?: {
-    label: string;
-    rev: number;
+    _label: string;
+    _rev: number;
     description?: string;
     base?: string;
     vocab?: string;
@@ -247,8 +247,8 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
     >
       <Form onSubmit={handleSubmit}>
         <Form.Item label="Label" {...formItemLayout}>
-          {getFieldDecorator('label', {
-            initialValue: project ? project.label : '',
+          {getFieldDecorator('_label', {
+            initialValue: project ? project._label : '',
             rules: [
               {
                 required: true,
