@@ -23,7 +23,7 @@ const OrgListContainer: React.FunctionComponent<{
     nexus.Organization.list({
       size: DEFAULT_PAGE_SIZE,
       label: orgs.searchValue,
-      // deprecated: orgs.includeDeprecated,
+      deprecated: orgs.includeDeprecated,
     }).then(res =>
       setOrgs({ ...orgs, total: res._total, items: res._results })
     );
@@ -38,7 +38,7 @@ const OrgListContainer: React.FunctionComponent<{
       size: DEFAULT_PAGE_SIZE,
       from: newFilter ? 0 : orgs.items.length,
       label: searchValue,
-      // deprecated: orgs.includeDeprecated,
+      deprecated: orgs.includeDeprecated,
     }).then(res => {
       setOrgs({
         searchValue,
