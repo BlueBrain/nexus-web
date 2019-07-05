@@ -142,7 +142,11 @@ const QueryComponent: React.FunctionComponent<QueryComponentProps> = (
     data: (data && data.resources) || null,
   };
   const total =
-    (fetchablePaginatedList.data && fetchablePaginatedList.data.total) || 0;
+    (fetchablePaginatedList.data &&
+      fetchablePaginatedList.data.total &&
+      // @ts-ignore
+      fetchablePaginatedList.data.total.value) ||
+    0;
 
   return (
     <div className="query-component">
