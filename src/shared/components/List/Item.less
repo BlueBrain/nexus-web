@@ -13,6 +13,21 @@
   max-width: 100%;
   > .body {
     flex-grow: 1;
-    max-width: 90%;
+    max-width: 100%;
+  }
+  > .actions {
+    background-image: linear-gradient(
+      to right,
+      transparent,
+      @component-background,
+      @component-background;
+    );
+    display: flex;
+    height: 100%;
+    justify-content: flex-end;
+    padding: @default-pad @default-pad @default-pad calc(4 * @default-pad);
+    position: absolute;
+    right: 0;
+    top: 0;
   }
 }
