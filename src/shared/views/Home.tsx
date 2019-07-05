@@ -250,7 +250,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
   return (
     <div className="projects-view view-container">
       <RecentlyVisited visitProject={goToProject} />
-      <div style={{ flexGrow: 1 }}>
+      <div style={{ flexGrow: 1, overflow: 'auto' }}>
         <h1 style={{ marginBottom: 0, marginRight: 8 }}>{activeOrg.label}</h1>
         {activeOrg.description && <p>{activeOrg.description}</p>}
         <div

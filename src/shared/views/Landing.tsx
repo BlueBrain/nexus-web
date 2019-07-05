@@ -147,7 +147,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
   return (
     <div className="orgs-view view-container">
       <RecentlyVisited visitProject={goToProject} />
-      <div style={{ flexGrow: 1 }}>
+      <div style={{ flexGrow: 1, overflow: 'auto' }}>
         <div
           style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}
         >
