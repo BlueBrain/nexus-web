@@ -6,7 +6,7 @@ import {
   isElasticView,
   isSparqlView,
   isFile,
-  chainPredicates,
+  and,
   not,
   isDefaultElasticView,
   isDeprecated,
@@ -15,7 +15,7 @@ import {
 const actionTypes = [
   {
     name: 'deprecateResource',
-    predicate: chainPredicates([isDefaultElasticView, not(isDeprecated)]),
+    predicate: and([isDefaultElasticView, not(isDeprecated)]),
     title: 'Deprecate this resource',
     shortTitle: 'Dangerously Deprecate',
     message: (
@@ -32,7 +32,7 @@ const actionTypes = [
   },
   {
     name: 'deprecateResource',
-    predicate: chainPredicates([not(isDeprecated), not(isDefaultElasticView)]),
+    predicate: and([not(isDeprecated), not(isDefaultElasticView)]),
     title: 'Deprecate this resource',
     message: "Are you sure you'd like to deprecate this resource?",
     shortTitle: 'Deprecate',
