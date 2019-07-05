@@ -105,7 +105,7 @@ export const RawElasticSearchQueryComponent: React.FunctionComponent<
         </div>
       </div>
       <div className="view-view view-container">
-        <div style={{ flexGrow: 1 }}>
+        <div style={{ width: '100%' }}>
           <RawElasticSearchQueryView
             initialQuery={query}
             wantedOrg={match.params.org}
@@ -190,11 +190,11 @@ const RawSparqlQueryComponent: React.FunctionComponent<RawQueryProps> = ({
         </div>
       </div>
       <div className="view-view view-container">
-        <div style={{ flexGrow: 1 }}>
+        <div style={{ width: '100%' }}>
           <RawSparqlQueryView
             wantedOrg={match.params.org}
             wantedProject={match.params.project}
-            wantedView={view}
+            wantedView={encodeURIComponent(view)}
           />
         </div>
       </div>
