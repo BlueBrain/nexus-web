@@ -286,6 +286,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
                     >
                       <Button
                         className="edit-button"
+                        size="small"
                         type="primary"
                         tabIndex={1}
                         onClick={(e: React.SyntheticEvent) => {
