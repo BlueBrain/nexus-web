@@ -36,6 +36,7 @@ const InfiniteSearch: React.FunctionComponent<InfiniteSearchProps> = props => {
         }}
       >
         <InfiniteScroll
+          element="ul"
           pageStart={0}
           loadMore={() => onLoadMore({ searchValue })}
           hasMore={hasMore}

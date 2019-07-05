@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
+import { OrgResponseCommon } from '@bbp/nexus-sdk';
 import { AccessControl } from '@bbp/react-nexus';
 import { Organization, PaginatedList, Project } from '@bbp/nexus-sdk-legacy';
+import { CreateOrgPayload } from '@bbp/nexus-sdk-legacy/lib/Organization/types';
 import { RootState } from '../store/reducers';
 import { createOrg, modifyOrg, deprecateOrg } from '../store/actions/orgs';
 import OrgList from '../components/Orgs/OrgList';
 import { Button, Modal, Drawer, notification, Empty } from 'antd';
 import OrgForm from '../components/Orgs/OrgForm';
-import { CreateOrgPayload } from '@bbp/nexus-sdk-legacy/lib/Organization/types';
 import RecentlyVisited from '../components/RecentlyVisited';
-import { OrgResponseCommon } from '@bbp/nexus-sdk';
 import OrgItem from '../components/Orgs/OrgItem';
+import ListItem from '../components/List/Item';
 
 interface LandingProps {
   paginatedOrgs?: PaginatedList<Organization>;
@@ -146,7 +147,7 @@ const Landing: React.FunctionComponent<LandingProps> = ({
   return (
     <div className="orgs-view view-container">
       <RecentlyVisited visitProject={goToProject} />
-      <div style={{ flexGrow: 1 }}>
+      <div style={{ flexGrow: 1, overflow: 'auto' }}>
         <div
           style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}
         >
@@ -165,12 +166,31 @@ const Landing: React.FunctionComponent<LandingProps> = ({
         <OrgList>
           {({ items }: { items: OrgResponseCommon[] }) =>
             items.map(i => (
-              <OrgItem
+              <ListItem
                 key={i['@id']}
-                label={i._label}
                 onClick={() => goTo(i._label)}
-                onEdit={() => setSelectedOrg(i)}
-              />
+                actions={[
+                  <AccessControl
+                    path={`/${i._label}`}
+                    permissions={['organizations/write']}
+                  >
+                    <Button
+                      className="edit-button"
+                      type="primary"
+                      size="small"
+                      tabIndex={1}
+                      onClick={(e: React.SyntheticEvent) => {
+                        e.stopPropagation();
+                        setSelectedOrg(i);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                  </AccessControl>,
+                ]}
+              >
+                <OrgItem {...i} />
+              </ListItem>
             ))
           }
         </OrgList>

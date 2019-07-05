@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Tag } from 'antd';
-import { OrgResponseCommon } from '@bbp/nexus-sdk';
+import { ProjectResponseCommon } from '@bbp/nexus-sdk';
 
-import './OrgItem.less';
+import './ProjectItem.less';
 
-export const OrgItem: React.FunctionComponent<OrgResponseCommon> = props => {
+const ProjectItem: React.FunctionComponent<ProjectResponseCommon> = props => {
   return (
-    <div className="org-item">
+    <div className="project-item">
       <p className="label">{props._label}</p>
       {props._deprecated && <Tag color="red">deprecated</Tag>}
       {props.description && <p className="description">{props.description}</p>}
@@ -14,4 +14,4 @@ export const OrgItem: React.FunctionComponent<OrgResponseCommon> = props => {
   );
 };
 
-export default OrgItem;
+export default ProjectItem;

@@ -100,7 +100,7 @@ exports[`Project Form component should render correctly 1`] = `
                       >
                         <label
                           className="ant-form-item-required"
-                          htmlFor="label"
+                          htmlFor="_label"
                           onClick={[Function]}
                           title="Label"
                         >
@@ -133,13 +133,13 @@ exports[`Project Form component should render correctly 1`] = `
                             <Input
                               data-__field={
                                 Object {
-                                  "name": "label",
+                                  "name": "_label",
                                 }
                               }
                               data-__meta={
                                 Object {
                                   "initialValue": "",
-                                  "name": "label",
+                                  "name": "_label",
                                   "originalProps": Object {
                                     "disabled": false,
                                     "placeholder": "Label",
@@ -174,7 +174,7 @@ exports[`Project Form component should render correctly 1`] = `
                                 }
                               }
                               disabled={false}
-                              id="label"
+                              id="_label"
                               onChange={[Function]}
                               placeholder="Label"
                               type="text"
@@ -184,13 +184,13 @@ exports[`Project Form component should render correctly 1`] = `
                                 className="ant-input"
                                 data-__field={
                                   Object {
-                                    "name": "label",
+                                    "name": "_label",
                                   }
                                 }
                                 data-__meta={
                                   Object {
                                     "initialValue": "",
-                                    "name": "label",
+                                    "name": "_label",
                                     "originalProps": Object {
                                       "disabled": false,
                                       "placeholder": "Label",
@@ -225,7 +225,7 @@ exports[`Project Form component should render correctly 1`] = `
                                   }
                                 }
                                 disabled={false}
-                                id="label"
+                                id="_label"
                                 onChange={[Function]}
                                 onKeyDown={[Function]}
                                 placeholder="Label"

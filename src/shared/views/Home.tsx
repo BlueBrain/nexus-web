@@ -2,12 +2,12 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Drawer, notification, Modal, Button, Empty } from 'antd';
 import { AccessControl } from '@bbp/react-nexus';
+import { ProjectPayload, ProjectResponseCommon } from '@bbp/nexus-sdk';
 import {
   Project,
   PaginatedList,
   PaginationSettings,
 } from '@bbp/nexus-sdk-legacy';
-import { CreateProjectPayload } from '@bbp/nexus-sdk-legacy/lib/Project/types';
 import { RootState } from '../store/reducers';
 import {
   modifyProject,
@@ -21,6 +21,8 @@ import { push } from 'connected-react-router';
 import ProjectForm from '../components/Projects/ProjectForm';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
 import RecentlyVisited from '../components/RecentlyVisited';
+import ListItem from '../components/List/Item';
+import ProjectItem from '../components/Projects/ProjectItem';
 
 interface HomeProps {
   activeOrg: { label: string; description?: string };
@@ -32,13 +34,13 @@ interface HomeProps {
   createProject(
     orgLabel: string,
     projectLabel: string,
-    payload: CreateProjectPayload
+    payload: ProjectPayload
   ): Promise<Project>;
   modifyProject(
     orgLabel: string,
     projectLabel: string,
     rev: number,
-    payload: CreateProjectPayload
+    payload: ProjectPayload
   ): Promise<Project>;
   deprecateProject(
     orgLabel: string,
@@ -67,7 +69,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
   const [selectedProject, setSelectedProject] = React.useState<
-    Project | undefined
+    ProjectResponseCommon | undefined
   >(undefined);
   React.useEffect(() => {
     if (
@@ -78,16 +80,13 @@ const Home: React.FunctionComponent<HomeProps> = ({
     }
   }, [match.path]);
 
-  const saveAndCreate = (newProject: Project) => {
+  const saveAndCreate = (newProject: ProjectResponseCommon) => {
     setFormBusy(true);
-    createProject(activeOrg.label, newProject.label, {
+    createProject(activeOrg.label, newProject._label, {
       base: newProject.base || undefined,
       vocab: newProject.vocab || undefined,
       description: newProject.description || '',
-      apiMappings:
-        newProject.apiMappings.length === 0
-          ? undefined
-          : newProject.apiMappings,
+      apiMappings: newProject.apiMappings || undefined,
     })
       .then(
         () => {
@@ -96,7 +95,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
             duration: 2,
           });
           setFormBusy(false);
-          goTo(activeOrg.label, newProject.label);
+          goTo(activeOrg.label, newProject._label);
         },
         (action: { type: string; error: Error }) => {
           notification.warning({
@@ -116,9 +115,12 @@ const Home: React.FunctionComponent<HomeProps> = ({
       });
   };
 
-  const saveAndModify = (selectedProject: Project, newProject: Project) => {
+  const saveAndModify = (
+    selectedProject: ProjectResponseCommon,
+    newProject: ProjectResponseCommon
+  ) => {
     setFormBusy(true);
-    modifyProject(activeOrg.label, newProject.label, selectedProject.rev, {
+    modifyProject(activeOrg.label, newProject._label, selectedProject._rev, {
       base: newProject.base,
       vocab: newProject.vocab,
       description: newProject.description,
@@ -154,13 +156,13 @@ const Home: React.FunctionComponent<HomeProps> = ({
       });
   };
 
-  const saveAndDeprecate = (selectedProject: Project) => {
+  const saveAndDeprecate = (selectedProject: ProjectResponseCommon) => {
     setFormBusy(true);
 
     deprecateProject(
-      selectedProject.orgLabel,
-      selectedProject.label,
-      selectedProject.rev
+      selectedProject._organizationLabel,
+      selectedProject._label,
+      selectedProject._rev
     )
       .then(
         () => {
@@ -192,9 +194,12 @@ const Home: React.FunctionComponent<HomeProps> = ({
       });
   };
 
-  const makePublic = (selectedProject: Project) => {
+  const makePublic = (selectedProject: ProjectResponseCommon) => {
     setFormBusy(true);
-    makeProjectPublic(selectedProject.orgLabel, selectedProject.label)
+    makeProjectPublic(
+      selectedProject._organizationLabel,
+      selectedProject._label
+    )
       .then(
         () => {
           notification.success({
@@ -245,7 +250,7 @@ const Home: React.FunctionComponent<HomeProps> = ({
   return (
     <div className="projects-view view-container">
       <RecentlyVisited visitProject={goToProject} />
-      <div style={{ flexGrow: 1 }}>
+      <div style={{ flexGrow: 1, overflow: 'auto' }}>
         <h1 style={{ marginBottom: 0, marginRight: 8 }}>{activeOrg.label}</h1>
         {activeOrg.description && <p>{activeOrg.description}</p>}
         <div
@@ -268,31 +273,37 @@ const Home: React.FunctionComponent<HomeProps> = ({
         {paginatedProjects.total === 0 ? (
           <Empty description="No projects" />
         ) : (
-          <ProjectList
-            projects={paginatedProjects.results}
-            onProjectClick={(projectLabel: string) =>
-              goTo(activeOrg.label, projectLabel)
+          <ProjectList orgLabel={activeOrg.label}>
+            {({ items }: { items: ProjectResponseCommon[] }) =>
+              items.map(i => (
+                <ListItem
+                  key={i['@id']}
+                  onClick={() => goTo(i._organizationLabel, i._label)}
+                  actions={[
+                    <AccessControl
+                      path={`/${i._organizationLabel}/${i._label}`}
+                      permissions={['projects/write']}
+                    >
+                      <Button
+                        className="edit-button"
+                        size="small"
+                        type="primary"
+                        tabIndex={1}
+                        onClick={(e: React.SyntheticEvent) => {
+                          e.stopPropagation();
+                          setSelectedProject(i);
+                        }}
+                      >
+                        Edit
+                      </Button>
+                    </AccessControl>,
+                  ]}
+                >
+                  <ProjectItem {...i} />
+                </ListItem>
+              ))
             }
-            onProjectEdit={(projectLabel: string) =>
-              setSelectedProject(
-                paginatedProjects.results.filter(
-                  p => p.label === projectLabel
-                )[0]
-              )
-            }
-            paginationSettings={{
-              total: paginatedProjects.total,
-              from: paginatedProjects.index,
-              pageSize: displayPerPage,
-            }}
-            onPaginationChange={pageNumber =>
-              fetchOrgData(match.params.org, {
-                from: displayPerPage * pageNumber - displayPerPage,
-                size: displayPerPage,
-              })
-            }
-            busy={busy}
-          />
+          </ProjectList>
         )}
         <Modal
           title="New Project"
@@ -303,27 +314,29 @@ const Home: React.FunctionComponent<HomeProps> = ({
           width={600}
         >
           <ProjectForm
-            onSubmit={(p: Project) => saveAndCreate(p)}
+            onSubmit={(p: ProjectResponseCommon) => saveAndCreate(p)}
             busy={formBusy}
           />
         </Modal>
         <Drawer
           width={640}
-          visible={!!(selectedProject && selectedProject.label)}
+          visible={!!(selectedProject && selectedProject._label)}
           onClose={() => setSelectedProject(undefined)}
-          title={`Project: ${selectedProject && selectedProject.label}`}
+          title={`Project: ${selectedProject && selectedProject._label}`}
         >
           {selectedProject && (
             <ProjectForm
               project={{
-                label: selectedProject.label,
-                rev: selectedProject.rev,
+                _label: selectedProject._label,
+                _rev: selectedProject._rev,
                 description: selectedProject.description || '',
                 base: selectedProject.base,
                 vocab: selectedProject.vocab,
                 apiMappings: selectedProject.apiMappings,
               }}
-              onSubmit={(p: Project) => saveAndModify(selectedProject, p)}
+              onSubmit={(p: ProjectResponseCommon) =>
+                saveAndModify(selectedProject, p)
+              }
               onDeprecate={() => saveAndDeprecate(selectedProject)}
               onMakePublic={() => makePublic(selectedProject)}
               busy={formBusy}
@@ -362,13 +375,13 @@ const mapDispatchToProps = (dispatch: any) => ({
   createProject: (
     orgLabel: string,
     projectLabel: string,
-    payload: CreateProjectPayload
+    payload: ProjectPayload
   ) => dispatch(createProject(orgLabel, projectLabel, payload)),
   modifyProject: (
     orgLabel: string,
     projectLabel: string,
     rev: number,
-    payload: CreateProjectPayload
+    payload: ProjectPayload
   ) => dispatch(modifyProject(orgLabel, projectLabel, rev, payload)),
   deprecateProject: (orgLabel: string, projectLabel: string, rev: number) =>
     dispatch(deprecateProject(orgLabel, projectLabel, rev)),
