@@ -22,8 +22,8 @@ storiesOf('Components/Projects', module)
           <div style={{ margin: '50px 40px 0px' }}>
             <ProjectForm
               project={{
-                label: 'MyProject',
-                rev: 1,
+                _label: 'MyProject',
+                _rev: 1,
                 apiMappings: [
                   { prefix: 'es', namespace: 'http://asdasd' },
                   { prefix: 'ex', namespace: 'http://example.com' },
