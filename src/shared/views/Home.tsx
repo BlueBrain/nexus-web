@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Drawer, notification, Modal, Button, Empty } from 'antd';
 import { AccessControl } from '@bbp/react-nexus';
-import { ProjectPayload } from '@bbp/nexus-sdk';
+import { ProjectPayload, ProjectResponseCommon } from '@bbp/nexus-sdk';
 import {
   Project,
   PaginatedList,
@@ -21,7 +21,6 @@ import { push } from 'connected-react-router';
 import ProjectForm from '../components/Projects/ProjectForm';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
 import RecentlyVisited from '../components/RecentlyVisited';
-import { ProjectResponseCommon } from '@bbp/nexus-sdk';
 import ListItem from '../components/List/Item';
 import ProjectItem from '../components/Projects/ProjectItem';
 
