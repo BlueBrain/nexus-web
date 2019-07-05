@@ -8,14 +8,15 @@ const Item: React.FunctionComponent<{
 }> = props => {
   const [hovered, setHovered] = React.useState<boolean>(false);
   return (
-    <div
+    <li
       className="ListItem"
       onClick={props.onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {props.children} {hovered && props.actions}
-    </div>
+      <div className="body">{props.children}</div>
+      {hovered && <div className="actions">{props.actions}</div>}
+    </li>
   );
 };
 
