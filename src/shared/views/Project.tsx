@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { connect, ReactReduxContext } from 'react-redux';
 import { Empty, Switch, Icon, Tooltip, Button, Popover } from 'antd';
 import { DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
 import Nexus, {
@@ -8,7 +8,10 @@ import Nexus, {
   NexusFile,
   Organization,
 } from '@bbp/nexus-sdk-legacy';
-import { CreateResourcePayload } from '@bbp/nexus-sdk-legacy/lib/Resource/types';
+import {
+  CreateResourcePayload,
+  ResourceResponse,
+} from '@bbp/nexus-sdk-legacy/lib/Resource/types';
 import { CreateFileOptions } from '@bbp/nexus-sdk-legacy/lib/File/types';
 import { push } from 'connected-react-router';
 import Helmet from 'react-helmet';
@@ -29,9 +32,10 @@ import {
   HTTP_STATUSES,
   HTTP_STATUS_TYPE_KEYS,
 } from '../store/actions/utils/statusCodes';
-import { getDestinationParam } from '../utils';
+import { getDestinationParam, labelOf } from '../utils';
 import usePreviouslyVisited from '../components/hooks/usePreviouslyVisited';
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
+import { useNexusContext } from '@bbp/react-nexus';
 
 interface ProjectViewProps {
   project: Project | null;
@@ -51,6 +55,7 @@ interface ProjectViewProps {
   goToFile: (nexusFile: NexusFile) => void;
   createFile(file: File, options?: CreateFileOptions): Promise<NexusFile>;
   goToOrg(orgLabel: string): void;
+  goToSearch(orgLabel: string, projectLabel: string, searchId: string): void;
   onLoginClick: VoidFunction;
   isFetching: boolean;
   authenticated: boolean;
@@ -69,15 +74,29 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   onLoginClick,
   authenticated,
   goToOrg,
+  goToSearch,
   makeFileLink,
   goToFile,
 }) => {
+  const nexus = useNexusContext();
+  const [searchViews, setSearchViews] = React.useState<any>({
+    items: [],
+  });
+
   const projectLabel = project ? project.label : null;
   const { setPreviouslyVisited } = usePreviouslyVisited('visitedProjects');
+
   React.useEffect(() => {
     if (projectLabel !== match.params.project) {
       fetchProject(match.params.org, match.params.project);
     }
+    nexus.Resource.list(match.params.org, match.params.project, {
+      deprecated: false,
+      type: 'SearchViewConfig',
+    }).then(res => {
+      // @ts-ignore
+      setSearchViews({ items: res._results });
+    });
   }, [match.params.project, match.params.org]);
 
   if (project) {
@@ -171,6 +190,21 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
                     resourceId={DEFAULT_ELASTIC_SEARCH_VIEW_ID}
                   />
                 </div>
+                {!!searchViews.items.length &&
+                  searchViews.items.map((searchView: ResourceResponse) => (
+                    <div
+                      style={{ marginLeft: 10 }}
+                      onClick={() => {
+                        goToSearch(
+                          match.params.org,
+                          match.params.project,
+                          encodeURIComponent(searchView[`@id`])
+                        );
+                      }}
+                    >
+                      <Button size="small">{labelOf(searchView['@id'])}</Button>
+                    </div>
+                  ))}
                 {!!project.description && (
                   <Popover
                     title={project.label}
@@ -307,6 +341,8 @@ const mapDispatchToProps = (dispatch: any) => {
           }/resources/${encodeURIComponent(nexusFile.id)}`
         )
       ),
+    goToSearch: (orgLabel: string, projectLabel: string, searchId: string) =>
+      dispatch(push(`/${orgLabel}/${projectLabel}/search/${searchId}`)),
     onLoginClick: () =>
       dispatch(
         push(`/login${getDestinationParam()}`, {

@@ -5,6 +5,7 @@ import Home from './views/Home';
 import Login from './views/Login';
 import Project from './views/Project';
 import Resource from './views/Resource';
+import Search from './views/Search';
 import { fetchOrgs } from './store/actions/nexus/orgs';
 import { fetchOrg } from './store/actions/nexus/activeOrg';
 import { RawElasticSearchQuery, RawSparqlQuery } from './views/RawQuery';
@@ -56,6 +57,11 @@ const routes: RouteWithData[] = [
         match && match.params && (match.params as any)['project']
       )(dispatch, getState, state);
     },
+  },
+  {
+    path: '/:org/:project/search/:searchViewId',
+    exact: true,
+    component: Search,
   },
   {
     path: '/:org/:project/resources/:resourceId',
