@@ -26,6 +26,7 @@ export interface MainLayoutProps {
   canLogin?: boolean;
   userManager?: UserManager;
   userIdentity: Identity;
+  orgTitle?: string;
 }
 
 const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
@@ -37,6 +38,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
   canLogin = false,
   userManager,
   userIdentity,
+  orgTitle,
 }) => {
   const handleLogout = (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -68,6 +70,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
         visitHome={() => goTo('/')}
         name={authenticated ? name : undefined}
         token={token}
+        title={orgTitle}
         links={[
           <a
             href="/user"
@@ -93,7 +96,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
 };
 
 const mapStateToProps = (state: RootState) => {
-  const { auth, oidc } = state;
+  const { auth, oidc, router } = state;
   const realms: Realm[] =
     (auth.realms && auth.realms.data && auth.realms.data.results) || [];
   const identities: Identity[] =
@@ -106,6 +109,9 @@ const mapStateToProps = (state: RootState) => {
     userIdentity: identities[identities.length - 1],
     canLogin: !!(realms.length > 0),
     userManager: getUserManager(state),
+    orgTitle:
+      // @ts-ignore
+      router && router.location && router.location.pathname.split('/')[1],
   };
 };
 

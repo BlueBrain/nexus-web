@@ -48,6 +48,7 @@ export interface HeaderProps {
   children?: React.ReactChild;
   onLoginClick?(): void;
   visitHome?(): void;
+  title?: string;
 }
 
 const Header: React.FunctionComponent<HeaderProps> = ({
@@ -60,6 +61,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   version,
   githubIssueURL,
   visitHome,
+  title,
 }) => {
   const menu = (
     <Menu>
@@ -88,7 +90,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             // flashing the screen on dev mode before styles are loaded
           }
           <img style={{ height: '2em', width: '2em' }} src={logo} alt="Nexus" />
-          <h1>Nexus</h1>
+          <h1>{title || 'Nexus'}</h1>
         </a>
       </div>
       <div className="menu-block">
