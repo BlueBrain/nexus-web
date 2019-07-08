@@ -15,6 +15,12 @@ import { RootState } from '../store/reducers';
 import NavDrawerContainer from '../components/Menu/NavDrawer';
 import { Button, Divider } from 'antd';
 import RecentlyVisited from '../components/RecentlyVisited';
+import { OrgResponseCommon, ProjectResponseCommon } from '@bbp/nexus-sdk';
+import OrgList from '../components/Orgs/OrgList';
+import OrgItem from '../components/Orgs/OrgItem';
+import ListItem from '../components/List/Item';
+import ProjectList from '../components/Projects/ProjectList';
+import ProjectItem from '../components/Projects/ProjectItem';
 
 const favicon = require('../favicon.png');
 const TITLE = 'A knowledge graph for data-driven science';
@@ -105,6 +111,66 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
                     </Button>
                     <Divider />
                     <RecentlyVisited visitProject={goToProject} />
+                  </div>
+                );
+              },
+            },
+            {
+              path: '/selectOrg',
+              component: (path, goTo) => {
+                return (
+                  <div className="page -select-org">
+                    <h4 className="title">
+                      <Button
+                        size="small"
+                        onClick={() => goTo('/')}
+                        icon="arrow-left"
+                      ></Button>{' '}
+                      Select an Organziation
+                    </h4>
+                    <OrgList>
+                      {({ items }: { items: OrgResponseCommon[] }) =>
+                        items.map(i => (
+                          <ListItem
+                            key={i['@id']}
+                            onClick={() => goTo(`/selectProject/${i._label}`)}
+                          >
+                            <OrgItem {...i} />
+                          </ListItem>
+                        ))
+                      }
+                    </OrgList>
+                  </div>
+                );
+              },
+            },
+            {
+              path: '/selectProject/:orgLabel',
+              component: (path, goTo, { orgLabel }) => {
+                return (
+                  <div className="page -select-project">
+                    <h4 className="title">
+                      <Button
+                        size="small"
+                        onClick={() => goTo('/')}
+                        icon="arrow-left"
+                      ></Button>{' '}
+                      Select a Project
+                    </h4>
+                    <ProjectList orgLabel={orgLabel}>
+                      {({ items }: { items: ProjectResponseCommon[] }) =>
+                        items.map(i => (
+                          <ListItem
+                            key={i['@id']}
+                            onClick={() =>
+                              goToProject(i._organizationLabel, i._label)
+                            }
+                          >
+                            <ProjectItem {...i} />
+                          </ListItem>
+                        ))
+                      }
+                    </ProjectList>
                   </div>
                 );
               },
