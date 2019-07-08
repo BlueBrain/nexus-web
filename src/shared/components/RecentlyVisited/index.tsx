@@ -1,8 +1,8 @@
 import * as React from 'react';
 import usePreviouslyVisited from '../hooks/usePreviouslyVisited';
-import ListItem from '../Animations/ListItem';
 import './recently-visited.less';
-import { Icon } from 'antd';
+import { Icon, Tag } from 'antd';
+import ListItem from '../List/Item';
 
 const DEFAULT_VISITED_MAX = 5;
 
@@ -27,10 +27,17 @@ const RecentlyVisited: React.FunctionComponent<RecentlyVisitedProps> = ({
                 visitProject(project.orgLabel, project.label);
               }}
               key={project.label}
-              label={project.label}
-              id={project.label}
-              description={project.description}
-            />
+            >
+              <div className="project-item">
+                <p className="label">
+                  {project.orgLabel} / {project.label}
+                </p>
+                {project.deprecated && <Tag color="red">deprecated</Tag>}
+                {project.description && (
+                  <p className="description">{project.description}</p>
+                )}
+              </div>
+            </ListItem>
           );
         })}
       </ul>

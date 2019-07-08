@@ -5,8 +5,6 @@ import { push } from 'connected-react-router';
 import Header from '../components/Header';
 import getUserManager from '../../client/userManager';
 import { version, url as githubIssueURL } from '../../../package.json';
-
-import './MainLayout.less';
 import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
 import { Realm } from '@bbp/nexus-sdk-legacy';
 import { getLogoutUrl, getDestinationParam } from '../utils';
@@ -21,6 +19,7 @@ import OrgItem from '../components/Orgs/OrgItem';
 import ListItem from '../components/List/Item';
 import ProjectList from '../components/Projects/ProjectList';
 import ProjectItem from '../components/Projects/ProjectItem';
+import './MainLayout.less';
 
 const favicon = require('../favicon.png');
 const TITLE = 'A knowledge graph for data-driven science';
