@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Timeline, Card, Icon } from 'antd';
-// import './Hist.less';
 import { Resource } from '@bbp/nexus-sdk-legacy';
 import { diff } from 'deep-object-diff';
 import moment = require('moment');
 import { getUsername, blacklistKeys } from '../../utils';
 import { Revisions } from '../../store/actions/nexus/revisions';
+import './History.less';
 
 export interface HistoryProps {
   resource: Resource;
@@ -30,9 +30,7 @@ const History: React.FunctionComponent<HistoryProps> = props => {
     .map((revision: any, index: number) => {
       if (index === 0) {
         return (
-          <Timeline.Item
-            dot={<Icon type="star" style={{ fontSize: '16px' }} />}
-          >
+          <Timeline.Item className="created-at" dot={<Icon type="star" />}>
             <div>
               created by <b>{userName}</b> on{' '}
               {moment(resource.createdAt).format('DD/MM/YYYY')}
@@ -71,7 +69,7 @@ const History: React.FunctionComponent<HistoryProps> = props => {
     })
     .reverse();
 
-  return <Timeline>{history}</Timeline>;
+  return <Timeline style={{ padding: '1em' }}>{history}</Timeline>;
 };
 
 export default History;
