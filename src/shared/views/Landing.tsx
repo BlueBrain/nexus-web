@@ -18,7 +18,7 @@ interface LandingProps {
   paginatedOrgs?: PaginatedList<Organization>;
   displayPerPage: number;
   goTo(orgLabel: string): void;
-  goToProject(Project: Project): void;
+  goToProject(orgLabel: string, projectLabel: string): void;
   createOrg: (
     orgLabel: string,
     orgPayload: CreateOrgPayload
@@ -238,8 +238,8 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
   goTo: (org: string) => dispatch(push(`/${org}`)),
-  goToProject: (project: Project) =>
-    dispatch(push(`/${project.orgLabel}/${project.label}`)),
+  goToProject: (orgLabel: string, projectLabel: string) =>
+    dispatch(push(`/${orgLabel}/${projectLabel}`)),
   createOrg: (orgLabel: string, orgPayload: CreateOrgPayload) =>
     dispatch(createOrg(orgLabel, orgPayload)),
   modifyOrg: (orgLabel: string, rev: number, orgPayload: CreateOrgPayload) =>

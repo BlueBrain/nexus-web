@@ -49,7 +49,7 @@ interface HomeProps {
   ): Promise<void>;
   makeProjectPublic(orgLabel: string, projectLabel: string): Promise<void>;
   goTo(o: string, p: string): void;
-  goToProject(Project: Project): void;
+  goToProject(orgLabel: string, projectLabel: string): void;
 }
 
 const Home: React.FunctionComponent<HomeProps> = ({
@@ -370,8 +370,8 @@ const mapDispatchToProps = (dispatch: any) => ({
   fetchOrgData: (orgLabel: string, paginationSettings?: PaginationSettings) =>
     dispatch(fetchOrg(orgLabel, paginationSettings)),
   goTo: (org: string, project: string) => dispatch(push(`/${org}/${project}`)),
-  goToProject: (project: Project) =>
-    dispatch(push(`/${project.orgLabel}/${project.label}`)),
+  goToProject: (orgLabel: string, projectLabel: string) =>
+    dispatch(push(`/${orgLabel}/${projectLabel}`)),
   createProject: (
     orgLabel: string,
     projectLabel: string,

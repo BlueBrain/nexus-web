@@ -12,6 +12,9 @@ import { Realm } from '@bbp/nexus-sdk-legacy';
 import { getLogoutUrl, getDestinationParam } from '../utils';
 import { UserManager } from 'oidc-client';
 import { RootState } from '../store/reducers';
+import NavDrawerContainer from '../components/Menu/NavDrawer';
+import { Button, Divider } from 'antd';
+import RecentlyVisited from '../components/RecentlyVisited';
 
 const favicon = require('../favicon.png');
 const TITLE = 'A knowledge graph for data-driven science';
@@ -22,6 +25,7 @@ export interface MainLayoutProps {
   authenticated: boolean;
   token?: string;
   goTo(url: string): void;
+  goToProject(orgLabel: string, projectLabel: string): void;
   name: string;
   canLogin?: boolean;
   userManager?: UserManager;
@@ -32,6 +36,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
   authenticated,
   token,
   goTo,
+  goToProject,
   name,
   children,
   canLogin = false,
@@ -86,7 +91,39 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
         onLoginClick={() => goTo(`/login${getDestinationParam()}`)}
         version={version}
         githubIssueURL={githubIssueURL}
-      />
+      >
+        <NavDrawerContainer
+          routes={[
+            {
+              path: '/',
+              component: (path, goTo) => {
+                return (
+                  <div className="page -home">
+                    <p>Projects are where you group and categorize data</p>
+                    <Button icon="project" onClick={() => goTo('/selectOrg')}>
+                      Select a Project
+                    </Button>
+                    <Divider />
+                    <RecentlyVisited visitProject={goToProject} />
+                  </div>
+                );
+              },
+            },
+          ]}
+          defaultVisibility={false}
+          render={(visible, toggleVisibility) => {
+            return (
+              <Button
+                icon="project"
+                size="small"
+                onClick={() => toggleVisibility()}
+              >
+                Projects
+              </Button>
+            );
+          }}
+        ></NavDrawerContainer>
+      </Header>
       <div className="MainLayout_body">{children}</div>
     </>
   );
@@ -112,6 +149,8 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: any) => ({
   goTo: (url: string) =>
     dispatch(push(url, { previousUrl: window.location.href })),
+  goToProject: (orgLabel: string, projectLabel: string) =>
+    dispatch(push(`/${orgLabel}/${projectLabel}`)),
 });
 
 export default connect(

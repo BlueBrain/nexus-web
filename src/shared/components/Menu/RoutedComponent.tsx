@@ -2,7 +2,7 @@ import * as React from 'react';
 import './routed-component.less';
 import { matchPath } from 'react-router';
 
-interface Route {
+export interface Route {
   path: string;
   component: (
     path: string,
