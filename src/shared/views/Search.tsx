@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { match } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Drawer, List } from 'antd';
+import SideMenu from '../components/Menu/SideMenu';
 
 interface SearchViewProps {
   match: match<{ org: string; project: string; searchViewId: string }>;
@@ -57,6 +59,21 @@ const SearchView: React.FunctionComponent<SearchViewProps> = props => {
   return (
     <div className="search-view view-container">
       <h1 className="name">Search</h1>
+      {aggView && (
+        <SideMenu
+          title={'Projects'}
+          visible={true}
+          onClose={() => {}}
+          side={'left'}
+        >
+          <List
+            dataSource={aggView.views.map(
+              ({ project }: { project: string }) => project
+            )}
+            renderItem={(item: string) => <div>{item}</div>}
+          />
+        </SideMenu>
+      )}
     </div>
   );
 };

@@ -65,7 +65,7 @@ const FacetList: React.FunctionComponent<FilterProps> = props => {
                   style={{ width: '100%' }}
                   onChange={values => handleChange(filter.name, values)}
                 >
-                  <ul className="checkbox-list">
+                  {/* <ul className="checkbox-list">
                     {filters.map(value => {
                       return (
                         <li key={value.id}>
@@ -81,7 +81,7 @@ const FacetList: React.FunctionComponent<FilterProps> = props => {
                         </li>
                       );
                     })}
-                  </ul>
+                  </ul> */}
                 </Checkbox.Group>
               </CollapsePanel>
             );
