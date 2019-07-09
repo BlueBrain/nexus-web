@@ -10,7 +10,7 @@ import { Realm } from '@bbp/nexus-sdk-legacy';
 import { getLogoutUrl, getDestinationParam } from '../utils';
 import { UserManager } from 'oidc-client';
 import { RootState } from '../store/reducers';
-import NavDrawerContainer from '../components/Menu/NavDrawer';
+import NavDrawer from '../components/Menu/NavDrawer';
 import { Button, Divider } from 'antd';
 import RecentlyVisited from '../components/RecentlyVisited';
 import { OrgResponseCommon, ProjectResponseCommon } from '@bbp/nexus-sdk';
@@ -97,7 +97,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
         version={version}
         githubIssueURL={githubIssueURL}
       >
-        <NavDrawerContainer
+        <NavDrawer
           routes={[
             {
               path: '/',
@@ -187,7 +187,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
               </Button>
             );
           }}
-        ></NavDrawerContainer>
+        ></NavDrawer>
       </Header>
       <div className="MainLayout_body">{children}</div>
     </>
