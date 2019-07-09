@@ -16,8 +16,6 @@ const SearchView: React.FunctionComponent<SearchViewProps> = props => {
   const [aggView, setAggView] = React.useState<any>(null);
   const [facets, setFacets] = React.useState<any>(null);
 
-  console.log({ searchView, aggView, facets });
-
   React.useEffect(() => {
     if (aggView) {
       nexus
