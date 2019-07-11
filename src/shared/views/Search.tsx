@@ -93,13 +93,15 @@ const SearchView: React.FunctionComponent<SearchViewProps> = props => {
         </SideMenu>
       )}
       <div className="results">
-        {searchView && searchView.datasetQueryConfig && (
+        {searchView && searchView.datasetQueryConfig && aggView && (
           <DatasetList
             datasetQueryConfig={searchView.datasetQueryConfig}
             aggViewSelfID={aggView['_self']}
             appliedFacets={appliedFacets}
           >
-            {({ items }: { items: any[] }) => <div>Hello</div>}
+            {({ items }: { items: any[] }) =>
+              items.map(item => <div>{item}</div>)
+            }
           </DatasetList>
         )}
       </div>
