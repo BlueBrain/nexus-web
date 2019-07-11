@@ -74,6 +74,7 @@ const nexusLegacy = new Nexus({
 });
 Nexus.setEnvironment(preloadedState.config.apiEndpoint);
 // create redux store
+// @ts-ignore
 const store = configureStore(history, { nexusLegacy, nexus }, initialState);
 
 /**

@@ -1,8 +1,13 @@
 import * as React from 'react';
 import { match } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Drawer, List } from 'antd';
+import { Drawer, List, Switch } from 'antd';
 import SideMenu from '../components/Menu/SideMenu';
+import FacetList, {
+  makeFacets,
+  FacetUpdatePayload,
+} from '../components/Search/FacetList';
+import DatasetList from '../components/Search/Datasets';
 
 interface SearchViewProps {
   match: match<{ org: string; project: string; searchViewId: string }>;
@@ -15,6 +20,8 @@ const SearchView: React.FunctionComponent<SearchViewProps> = props => {
   const [searchView, setSearchView] = React.useState<any>(null);
   const [aggView, setAggView] = React.useState<any>(null);
   const [facets, setFacets] = React.useState<any>(null);
+  const [isFilterPanelVisible, setIsFilterPanelVisible] = React.useState(true);
+  const [appliedFacets, setAppliedFacets] = React.useState({});
 
   React.useEffect(() => {
     if (aggView) {
@@ -27,7 +34,7 @@ const SearchView: React.FunctionComponent<SearchViewProps> = props => {
           },
         })
         .then(res => {
-          setFacets(res);
+          setFacets(makeFacets(res));
         });
     }
   }, [aggView && aggView['@id']]);
@@ -54,24 +61,48 @@ const SearchView: React.FunctionComponent<SearchViewProps> = props => {
     });
   }, [match.url]);
 
+  const handleUpdateFacets = (facetUpdate: FacetUpdatePayload) => {
+    setAppliedFacets({
+      ...appliedFacets,
+      [facetUpdate.facetName]: facetUpdate.values,
+    });
+  };
+
   return (
     <div className="search-view view-container">
-      <h1 className="name">Search</h1>
+      <h1 className="name">
+        <Switch
+          size="small"
+          onChange={() => setIsFilterPanelVisible(!isFilterPanelVisible)}
+        ></Switch>{' '}
+        Search
+      </h1>
       {aggView && (
         <SideMenu
-          title={'Projects'}
-          visible={true}
-          onClose={() => {}}
+          visible={isFilterPanelVisible}
+          onClose={() => setIsFilterPanelVisible(false)}
           side={'left'}
         >
-          <List
-            dataSource={aggView.views.map(
-              ({ project }: { project: string }) => project
-            )}
-            renderItem={(item: string) => <div>{item}</div>}
-          />
+          {facets && (
+            <FacetList
+              appliedFacets={appliedFacets}
+              facets={facets}
+              updateFacets={handleUpdateFacets}
+            />
+          )}
         </SideMenu>
       )}
+      <div className="results">
+        {searchView && searchView.datasetQueryConfig && (
+          <DatasetList
+            datasetQueryConfig={searchView.datasetQueryConfig}
+            aggViewSelfID={aggView['_self']}
+            appliedFacets={appliedFacets}
+          >
+            {({ items }: { items: any[] }) => <div>Hello</div>}
+          </DatasetList>
+        )}
+      </div>
     </div>
   );
 };
