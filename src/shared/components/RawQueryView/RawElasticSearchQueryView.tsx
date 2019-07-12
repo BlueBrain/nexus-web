@@ -84,7 +84,8 @@ const RawElasticSearchQueryView: React.FunctionComponent<
   } else {
     data = response.results.map(result => result._source || []);
   }
-  const total = response.total || 0;
+  // @ts-ignore
+  const total = response.total && response.total.value || 0;
   const { from, size } = paginationSettings;
   const totalPages = Math.floor(total / size);
   const current = Math.floor((totalPages / total) * from + 1);
