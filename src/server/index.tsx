@@ -3,14 +3,11 @@ import * as express from 'express';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
 import * as promBundle from 'express-prom-bundle';
-import * as React from 'react';
 import Helmet from 'react-helmet';
 import html from './html';
 import silentRefreshHtml from './silent_refresh';
 import { RootState } from '../shared/store/reducers';
 import { DEFAULT_UI_SETTINGS } from '../shared/store/reducers/ui-settings';
-
-const isSecure = !!process.env.SECURE;
 
 // Create a express app
 const app: express.Express = express();
