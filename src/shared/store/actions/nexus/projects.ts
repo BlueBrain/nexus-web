@@ -76,6 +76,7 @@ export const fetchAndAssignProject: ActionCreator<ThunkAction> = (
             },
           },
         },
+        track_total_hits: true,
       };
       const aggregationResponse: ElasticSearchViewAggregationResponse = await defaultElasticSearchView.aggregation(
         aggregationQuery

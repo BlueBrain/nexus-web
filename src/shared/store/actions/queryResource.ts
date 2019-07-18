@@ -140,6 +140,7 @@ export const queryResources: ActionCreator<ThunkAction> = (
       );
       const aggregationQuery = {
         ...formattedQuery,
+        track_total_hits: true,
         aggs: {
           schemas: {
             terms: {
