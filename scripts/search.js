@@ -5,12 +5,12 @@ const { createNexusClient } = require('@bbp/nexus-sdk');
 (async function() {
   try {
     const orgLabel = 'search';
-    const projectLabel = 'studio';
+    const projectLabel = 'studio-2';
 
     // Example projects
     const targetProjects = [
-      'jdc-org-emodelcoll-test2/jdc-projectproj38',
-      'jdc-org-emodelcoll-test2/jdc-projectproj55',
+      'jdc-org-emodelcoll-1/jdc-projectproj38',
+      'jdc-org-emodelcoll-1/jdc-projectproj55',
     ];
 
     const nexus = createNexusClient({
@@ -41,20 +41,21 @@ SELECT DISTINCT ?speciesLabel ?speciesID  ?brainRegionID ?brainRegionLabel ?agen
 {
   {
     ?s1 nxs:brainLocation / nxs:brainRegion ?brainRegionID .
-    ?s1 nxv:constrainedBy nshapes:dataset .
+    # ?s1 nxv:constrainedBy nshapes:dataset .
       OPTIONAL { ?brainRegionID rdfs:label ?brainRegionLabel }
   } UNION {
   	?s2 nxs:subject / nxs:species ?speciesID .
-    ?s2 nxv:constrainedBy nshapes:dataset .
+    # ?s2 nxv:constrainedBy nshapes:dataset .
     OPTIONAL { ?speciesID rdfs:label ?speciesLabel }
   } UNION {
   	?s2 nxs:subject / nxs:strain ?strainID .
-    ?s2 nxv:constrainedBy nshapes:dataset .
+    # ?s2 nxv:constrainedBy nshapes:dataset .
     OPTIONAL { ?strainID rdfs:label ?strainLabel }
   } UNION {
      ?s3 nxs:contribution / prov:agent ?agentID .
-     ?s3 nxv:constrainedBy nshapes:dataset .
+     # ?s3 nxv:constrainedBy nshapes:dataset .
      OPTIONAL{ ?agentID schema:familyName ?fName }
+  }
   }
     `;
 
@@ -72,7 +73,7 @@ SELECT DISTINCT ?speciesLabel ?speciesID  ?brainRegionID ?brainRegionLabel ?agen
         brainRegion: `
         Graph ?g {
           VALUES ?search { #{values} }
-          ?s1 nxs:brainLocation / nxs:brainRegion ?search .
+          ?s nxs:brainLocation / nxs:brainRegion ?search .
         }
         `,
       },
