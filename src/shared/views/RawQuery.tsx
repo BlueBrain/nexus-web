@@ -194,7 +194,7 @@ const RawSparqlQueryComponent: React.FunctionComponent<RawQueryProps> = ({
           <RawSparqlQueryView
             wantedOrg={match.params.org}
             wantedProject={match.params.project}
-            wantedView={view}
+            wantedView={encodeURIComponent(view)}
           />
         </div>
       </div>

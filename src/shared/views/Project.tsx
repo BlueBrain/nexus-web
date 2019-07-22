@@ -92,7 +92,7 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
     }
     nexus.Resource.list(match.params.org, match.params.project, {
       deprecated: false,
-      type: 'SearchViewConfig',
+      type: 'nxv:SearchViewConfig',
     }).then(res => {
       // @ts-ignore
       setSearchViews({ items: res._results });

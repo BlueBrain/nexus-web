@@ -14,7 +14,8 @@
     "codecov": "codecov",
     "lint": "tslint --project tsconfig.json",
     "start:storybook": "start-storybook -p 6006",
-    "build:storybook": "build-storybook"
+    "build:storybook": "build-storybook",
+    "search-scripts": "parcel build scripts/search.js --target node && node dist/search.js"
   },
   "dependencies": {
     "@bbp/nexus-sdk": "^1.1.5",
@@ -85,6 +86,7 @@
     "@types/storybook__addon-links": "^3.3.4",
     "@types/storybook__react": "^4.0.1",
     "@types/webpack-env": "^1.13.9",
+    "abort-controller": "^3.0.0",
     "babel-loader": "^8.0.4",
     "codecov": "^3.2.0",
     "css-loader": "^2.1.1",
@@ -99,6 +101,7 @@
     "less-loader": "^4.1.0",
     "mini-css-extract-plugin": "^0.5.0",
     "null-loader": "^0.1.1",
+    "parcel-bundler": "^1.12.3",
     "prettier": "^1.16.4",
     "react-docgen-typescript-loader": "^3.0.1",
     "source-map-loader": "^0.2.4",
