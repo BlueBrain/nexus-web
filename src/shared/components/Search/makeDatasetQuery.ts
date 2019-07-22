@@ -26,8 +26,6 @@ export const makeDatasetQuery = (
       // }
       const unparsedQuery = datasetQueryConfig.graphs[key];
 
-      console.log({ unparsedQuery });
-
       // we dont need to parse this for now...
       // mainly because I don't know how to handle these query caes
       // where you always want it to be used
