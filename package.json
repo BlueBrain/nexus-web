@@ -20,6 +20,7 @@
     "@bbp/nexus-sdk": "^1.1.5",
     "@bbp/nexus-sdk-legacy": "npm:@bbp/nexus-sdk@1.0.0-beta.25",
     "@bbp/react-nexus": "^1.1.5",
+    "@types/redux-logger": "^3.0.7",
     "antd": "^3.19.5",
     "codemirror": "^5.44.0",
     "connected-react-router": "^6.3.2",
@@ -51,6 +52,7 @@
     "redux": "^4.0.1",
     "redux-logger": "^3.0.6",
     "redux-oidc": "^3.1.2",
+    "redux-promise": "^0.6.0",
     "redux-thunk": "^2.3.0",
     "resize-observer-polyfill": "^1.5.1",
     "ts-debounce": "^1.0.0"
