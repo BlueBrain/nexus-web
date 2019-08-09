@@ -14,6 +14,8 @@ import reducers, { RootState } from './reducers';
 import { saveState, loadState } from './reducers/localStorage';
 import { persistanceMapper, ListsByProjectState } from './reducers/lists';
 import { NexusClient } from '@bbp/nexus-sdk';
+import * as reduxLogger from 'redux-logger';
+
 
 export type Services = {
   nexusLegacy: Nexus;
@@ -41,6 +43,7 @@ export default function configureStore(
 ): Store {
   // ignore server lists, fetch from local storage when available
   preloadedState.lists = { ...loadState('lists') };
+  const logger = reduxLogger.createLogger();
   const store = createStore(
     // @ts-ignore
     combineReducers({
@@ -52,7 +55,8 @@ export default function configureStore(
     composeEnhancers(
       applyMiddleware(
         thunk.withExtraArgument({ nexusLegacy, nexus }),
-        routerMiddleware(history)
+        routerMiddleware(history),
+        logger
       )
     )
   );
