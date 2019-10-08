@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteProps, match } from 'react-router-dom';
-import Landing from './views/Landing';
+import OrgsView from './views/OrgsView';
 import Home from './views/Home';
 import Login from './views/Login';
 import Project from './views/Project';
@@ -23,7 +23,7 @@ const routes: RouteWithData[] = [
   {
     path: '/',
     exact: true,
-    component: Landing,
+    component: OrgsView,
     loadData: () => fetchOrgs(),
   },
   {

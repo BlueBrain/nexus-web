@@ -20,14 +20,12 @@ import Skeleton from '../components/Skeleton';
 import { push } from 'connected-react-router';
 import ProjectForm from '../components/Projects/ProjectForm';
 import { fetchOrg } from '../store/actions/nexus/activeOrg';
-import RecentlyVisited from '../components/RecentlyVisited';
 import ListItem from '../components/List/Item';
 import ProjectItem from '../components/Projects/ProjectItem';
 
 interface HomeProps {
   activeOrg: { label: string; description?: string };
   paginatedProjects: PaginatedList<Project>;
-  displayPerPage: number;
   busy: boolean;
   match: any;
   fetchOrgData(orgLabel: string, paginationSettings?: PaginationSettings): void;
@@ -49,7 +47,6 @@ interface HomeProps {
   ): Promise<void>;
   makeProjectPublic(orgLabel: string, projectLabel: string): Promise<void>;
   goTo(o: string, p: string): void;
-  goToProject(Project: Project): void;
 }
 
 const Home: React.FunctionComponent<HomeProps> = ({
@@ -63,8 +60,6 @@ const Home: React.FunctionComponent<HomeProps> = ({
   modifyProject,
   deprecateProject,
   makeProjectPublic,
-  displayPerPage,
-  goToProject,
 }) => {
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
@@ -249,7 +244,6 @@ const Home: React.FunctionComponent<HomeProps> = ({
 
   return (
     <div className="projects-view view-container">
-      <RecentlyVisited visitProject={goToProject} />
       <div style={{ flexGrow: 1, overflow: 'auto' }}>
         <h1 style={{ marginBottom: 0, marginRight: 8 }}>{activeOrg.label}</h1>
         {activeOrg.description && <p>{activeOrg.description}</p>}
@@ -350,7 +344,6 @@ const Home: React.FunctionComponent<HomeProps> = ({
 };
 
 const mapStateToProps = (state: RootState) => ({
-  displayPerPage: state.uiSettings.pageSizes.projectsListPageSize,
   activeOrg: (state.nexus &&
     state.nexus.activeOrg &&
     state.nexus.activeOrg.data &&
@@ -370,8 +363,6 @@ const mapDispatchToProps = (dispatch: any) => ({
   fetchOrgData: (orgLabel: string, paginationSettings?: PaginationSettings) =>
     dispatch(fetchOrg(orgLabel, paginationSettings)),
   goTo: (org: string, project: string) => dispatch(push(`/${org}/${project}`)),
-  goToProject: (project: Project) =>
-    dispatch(push(`/${project.orgLabel}/${project.label}`)),
   createProject: (
     orgLabel: string,
     projectLabel: string,

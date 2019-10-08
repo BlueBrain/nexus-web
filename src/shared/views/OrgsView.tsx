@@ -1,24 +1,20 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
+import { Button, Modal, Drawer, notification } from 'antd';
 import { OrgResponseCommon } from '@bbp/nexus-sdk';
 import { AccessControl } from '@bbp/react-nexus';
-import { Organization, PaginatedList, Project } from '@bbp/nexus-sdk-legacy';
+import { Organization, Project } from '@bbp/nexus-sdk-legacy';
 import { CreateOrgPayload } from '@bbp/nexus-sdk-legacy/lib/Organization/types';
-import { RootState } from '../store/reducers';
+
 import { createOrg, modifyOrg, deprecateOrg } from '../store/actions/orgs';
-import OrgList from '../components/Orgs/OrgList';
-import { Button, Modal, Drawer, notification, Empty } from 'antd';
+import OrgList from '../containers/OrgList';
 import OrgForm from '../components/Orgs/OrgForm';
-import RecentlyVisited from '../components/RecentlyVisited';
 import OrgItem from '../components/Orgs/OrgItem';
 import ListItem from '../components/List/Item';
 
-interface LandingProps {
-  paginatedOrgs?: PaginatedList<Organization>;
-  displayPerPage: number;
+interface OrgsViewProps {
   goTo(orgLabel: string): void;
-  goToProject(Project: Project): void;
   createOrg: (
     orgLabel: string,
     orgPayload: CreateOrgPayload
@@ -31,14 +27,11 @@ interface LandingProps {
   deprecateOrg: (orgLabel: string, rev: number) => Promise<void>;
 }
 
-const Landing: React.FunctionComponent<LandingProps> = ({
-  paginatedOrgs = { total: 0, index: 0, results: [] },
+const OrgsView: React.FunctionComponent<OrgsViewProps> = ({
   goTo,
   createOrg,
   modifyOrg,
   deprecateOrg,
-  displayPerPage,
-  goToProject,
 }) => {
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
@@ -146,7 +139,6 @@ const Landing: React.FunctionComponent<LandingProps> = ({
 
   return (
     <div className="orgs-view view-container">
-      <RecentlyVisited visitProject={goToProject} />
       <div style={{ flexGrow: 1, overflow: 'auto' }}>
         <div
           style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}
@@ -231,15 +223,8 @@ const Landing: React.FunctionComponent<LandingProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState) => ({
-  displayPerPage: state.uiSettings.pageSizes.orgsListPageSize,
-  paginatedOrgs: (state.nexus && state.nexus.orgs.data) || undefined,
-});
-
 const mapDispatchToProps = (dispatch: any) => ({
   goTo: (org: string) => dispatch(push(`/${org}`)),
-  goToProject: (project: Project) =>
-    dispatch(push(`/${project.orgLabel}/${project.label}`)),
   createOrg: (orgLabel: string, orgPayload: CreateOrgPayload) =>
     dispatch(createOrg(orgLabel, orgPayload)),
   modifyOrg: (orgLabel: string, rev: number, orgPayload: CreateOrgPayload) =>
@@ -249,6 +234,6 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 export default connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
-)(Landing);
+)(OrgsView);

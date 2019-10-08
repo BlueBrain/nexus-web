@@ -30,7 +30,7 @@ import {
   HTTP_STATUS_TYPE_KEYS,
 } from '../store/actions/utils/statusCodes';
 import { getDestinationParam } from '../utils';
-import usePreviouslyVisited from '../components/hooks/usePreviouslyVisited';
+import usePreviouslyVisited from '../hooks/usePreviouslyVisited';
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 
 interface ProjectViewProps {
