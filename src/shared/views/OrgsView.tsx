@@ -6,7 +6,7 @@ import { OrgResponseCommon } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 
 import OrgList from '../containers/OrgList';
-import OrgForm, { OrgFormProps } from '../components/Orgs/OrgForm';
+import OrgForm from '../components/Orgs/OrgForm';
 import OrgItem from '../components/Orgs/OrgItem';
 import ListItem from '../components/List/Item';
 
