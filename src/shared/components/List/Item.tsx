@@ -6,16 +6,10 @@ const Item: React.FunctionComponent<{
   onClick?: () => void;
   actions?: React.ReactComponentElement<any>[];
 }> = props => {
-  const [hovered, setHovered] = React.useState<boolean>(false);
   return (
-    <li
-      className="ListItem"
-      onClick={props.onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
+    <li className="ListItem" onClick={props.onClick}>
       <div className="body">{props.children}</div>
-      {hovered && <div className="actions">{props.actions}</div>}
+      {<div className="actions">{props.actions}</div>}
     </li>
   );
 };
