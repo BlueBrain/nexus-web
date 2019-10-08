@@ -3,45 +3,33 @@ import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import { Button, Modal, Drawer, notification } from 'antd';
 import { OrgResponseCommon } from '@bbp/nexus-sdk';
-import { AccessControl } from '@bbp/react-nexus';
-import { Organization, Project } from '@bbp/nexus-sdk-legacy';
-import { CreateOrgPayload } from '@bbp/nexus-sdk-legacy/lib/Organization/types';
+import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 
-import { createOrg, modifyOrg, deprecateOrg } from '../store/actions/orgs';
 import OrgList from '../containers/OrgList';
-import OrgForm from '../components/Orgs/OrgForm';
+import OrgForm, { OrgFormProps } from '../components/Orgs/OrgForm';
 import OrgItem from '../components/Orgs/OrgItem';
 import ListItem from '../components/List/Item';
 
+type NewOrg = {
+  label: string;
+  description?: string;
+};
+
 interface OrgsViewProps {
   goTo(orgLabel: string): void;
-  createOrg: (
-    orgLabel: string,
-    orgPayload: CreateOrgPayload
-  ) => Promise<Organization>;
-  modifyOrg: (
-    orgLabel: string,
-    rev: number,
-    orgPayload: CreateOrgPayload
-  ) => Promise<Organization>;
-  deprecateOrg: (orgLabel: string, rev: number) => Promise<void>;
 }
 
-const OrgsView: React.FunctionComponent<OrgsViewProps> = ({
-  goTo,
-  createOrg,
-  modifyOrg,
-  deprecateOrg,
-}) => {
+const OrgsView: React.FunctionComponent<OrgsViewProps> = ({ goTo }) => {
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
   const [selectedOrg, setSelectedOrg] = React.useState<
     OrgResponseCommon | undefined
   >(undefined);
+  const nexus = useNexusContext();
 
-  const saveAndCreate = (newOrg: Organization) => {
+  const saveAndCreate = (newOrg: NewOrg) => {
     setFormBusy(true);
-    createOrg(newOrg.label, { description: newOrg.description || '' })
+    nexus.Organization.create(newOrg.label, { description: newOrg.description })
       .then(
         () => {
           notification.success({
@@ -69,12 +57,9 @@ const OrgsView: React.FunctionComponent<OrgsViewProps> = ({
       });
   };
 
-  const saveAndModify = (
-    selectedOrg: OrgResponseCommon,
-    newOrg: Organization
-  ) => {
+  const saveAndModify = (selectedOrg: OrgResponseCommon, newOrg: NewOrg) => {
     setFormBusy(true);
-    modifyOrg(newOrg.label, selectedOrg._rev, {
+    nexus.Organization.update(newOrg.label, selectedOrg._rev, {
       description: newOrg.description,
     })
       .then(
@@ -108,7 +93,7 @@ const OrgsView: React.FunctionComponent<OrgsViewProps> = ({
   const saveAndDeprecate = (selectedOrg: OrgResponseCommon) => {
     setFormBusy(true);
 
-    deprecateOrg(selectedOrg._label, selectedOrg._rev)
+    nexus.Organization.deprecate(selectedOrg._label, selectedOrg._rev)
       .then(
         () => {
           notification.success({
@@ -194,10 +179,7 @@ const OrgsView: React.FunctionComponent<OrgsViewProps> = ({
           confirmLoading={formBusy}
           footer={null}
         >
-          <OrgForm
-            onSubmit={(o: Organization) => saveAndCreate(o)}
-            busy={formBusy}
-          />
+          <OrgForm onSubmit={(o: NewOrg) => saveAndCreate(o)} busy={formBusy} />
         </Modal>
         <Drawer
           width={640}
@@ -211,7 +193,7 @@ const OrgsView: React.FunctionComponent<OrgsViewProps> = ({
                 label: selectedOrg._label,
                 description: selectedOrg.description,
               }}
-              onSubmit={(o: Organization) => saveAndModify(selectedOrg, o)}
+              onSubmit={(o: NewOrg) => saveAndModify(selectedOrg, o)}
               onDeprecate={() => saveAndDeprecate(selectedOrg)}
               busy={formBusy}
               mode="edit"
@@ -225,12 +207,6 @@ const OrgsView: React.FunctionComponent<OrgsViewProps> = ({
 
 const mapDispatchToProps = (dispatch: any) => ({
   goTo: (org: string) => dispatch(push(`/${org}`)),
-  createOrg: (orgLabel: string, orgPayload: CreateOrgPayload) =>
-    dispatch(createOrg(orgLabel, orgPayload)),
-  modifyOrg: (orgLabel: string, rev: number, orgPayload: CreateOrgPayload) =>
-    dispatch(modifyOrg(orgLabel, rev, orgPayload)),
-  deprecateOrg: (orgLabel: string, rev: number) =>
-    dispatch(deprecateOrg(orgLabel, rev)),
 });
 
 export default connect(
