@@ -30,7 +30,6 @@ import {
   HTTP_STATUS_TYPE_KEYS,
 } from '../store/actions/utils/statusCodes';
 import { getDestinationParam } from '../utils';
-import usePreviouslyVisited from '../hooks/usePreviouslyVisited';
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 
 interface ProjectViewProps {
@@ -73,16 +72,11 @@ const ProjectView: React.FunctionComponent<ProjectViewProps> = ({
   goToFile,
 }) => {
   const projectLabel = project ? project.label : null;
-  const { setPreviouslyVisited } = usePreviouslyVisited('visitedProjects');
   React.useEffect(() => {
     if (projectLabel !== match.params.project) {
       fetchProject(match.params.org, match.params.project);
     }
   }, [match.params.project, match.params.org]);
-
-  if (project) {
-    setPreviouslyVisited(project);
-  }
 
   let description;
   let more;
