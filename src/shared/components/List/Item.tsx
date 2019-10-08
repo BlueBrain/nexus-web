@@ -9,7 +9,7 @@ const Item: React.FunctionComponent<{
   return (
     <li className="ListItem" onClick={props.onClick}>
       <div className="body">{props.children}</div>
-      {<div className="actions">{props.actions}</div>}
+      <div className="actions">{props.actions}</div>
     </li>
   );
 };
