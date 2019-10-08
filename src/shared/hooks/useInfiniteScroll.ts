@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { debounce } from 'ts-debounce';
-import { supportsPassive } from '../../utils/featureDetections';
-import { isBrowser } from '../../utils';
+import { supportsPassive } from '../utils/featureDetections';
+import { isBrowser } from '../utils';
 
 const DEFAULT_DEBOUNCE_MS = 100;
 

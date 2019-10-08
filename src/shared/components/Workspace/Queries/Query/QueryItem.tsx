@@ -3,7 +3,7 @@ import { Resource, NexusFile } from '@bbp/nexus-sdk-legacy';
 import ListItem from '../../../Animations/ListItem';
 import ResourceMetadataCard from '../../../Resources/MetadataCard';
 import TypesIconList from '../../../Types/TypesIcon';
-import useNexusImage from '../../../hooks/useNexusImage';
+import useNexusImage from '../../../../hooks/useNexusImage';
 
 const MOUSE_ENTER_DELAY = 0.5;
 

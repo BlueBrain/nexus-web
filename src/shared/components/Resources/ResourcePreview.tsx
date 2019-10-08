@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Avatar } from 'antd';
 import './Resources.less';
 import { Resource, NexusFile } from '@bbp/nexus-sdk-legacy';
-import useNexusImage from '../hooks/useNexusImage';
+import useNexusImage from '../../hooks/useNexusImage';
 
 export interface ResourcePreviewProps {
   resource: Resource;

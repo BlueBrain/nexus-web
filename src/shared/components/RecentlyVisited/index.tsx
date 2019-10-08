@@ -1,5 +1,5 @@
 import * as React from 'react';
-import usePreviouslyVisited from '../hooks/usePreviouslyVisited';
+import usePreviouslyVisited from '../../hooks/usePreviouslyVisited';
 import ListItem from '../Animations/ListItem';
 import './recently-visited.less';
 import { Icon } from 'antd';
