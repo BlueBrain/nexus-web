@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
-import { withKnobs, text, number } from '@storybook/addon-knobs';
+import { withKnobs } from '@storybook/addon-knobs';
 import { withInfo } from '@storybook/addon-info';
 import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
 
 import IdentityBadge from './IdentityBadge';
 import ACLView from './ACLView';
 import ACLsForm from './ACLsForm';
-import { ACL } from '@bbp/nexus-sdk-legacy';
+import { ACL } from '@bbp/nexus-sdk';
 
 const anonymous: Identity = {
   '@id': 'http://anonymous',
@@ -96,9 +96,9 @@ storiesOf('Components/ACLs', module)
        />
     ~~~
   `)(() => {
-      const acl1 = new ACL({
+      const acl1: ACL = {
         '@context': '',
-        '@type': 'Authenticated',
+        '@type': 'AccessControlList',
         '@id': '',
         _createdAt: '',
         _createdBy: '',
@@ -110,10 +110,10 @@ storiesOf('Components/ACLs', module)
           { permissions, identity: anonymous },
           { permissions, identity: group },
         ],
-      });
-      const acl2 = new ACL({
+      };
+      const acl2: ACL = {
         '@context': '',
-        '@type': 'Authenticated',
+        '@type': 'AccessControlList',
         '@id': '',
         _createdAt: '',
         _createdBy: '',
@@ -125,7 +125,7 @@ storiesOf('Components/ACLs', module)
           { permissions, identity: authenticated },
           { permissions, identity: user },
         ],
-      });
+      };
       return <ACLsForm acls={[acl1, acl2]} path="/myorg/myproject" />;
     })
   );
