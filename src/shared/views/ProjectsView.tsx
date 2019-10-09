@@ -2,19 +2,13 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Drawer, notification, Modal, Button, Empty } from 'antd';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import { ProjectPayload, ProjectResponseCommon } from '@bbp/nexus-sdk';
+import { ProjectResponseCommon } from '@bbp/nexus-sdk';
 import {
   Project,
   PaginatedList,
   PaginationSettings,
 } from '@bbp/nexus-sdk-legacy';
 import { RootState } from '../store/reducers';
-import {
-  modifyProject,
-  createProject,
-  deprecateProject,
-  makeProjectPublic,
-} from '../store/actions/project';
 import ProjectList from '../containers/ProjectList';
 import Skeleton from '../components/Skeleton';
 import { push } from 'connected-react-router';
@@ -29,23 +23,6 @@ interface ProjectsViewProps {
   busy: boolean;
   match: any;
   fetchOrgData(orgLabel: string, paginationSettings?: PaginationSettings): void;
-  createProject(
-    orgLabel: string,
-    projectLabel: string,
-    payload: ProjectPayload
-  ): Promise<Project>;
-  modifyProject(
-    orgLabel: string,
-    projectLabel: string,
-    rev: number,
-    payload: ProjectPayload
-  ): Promise<Project>;
-  deprecateProject(
-    orgLabel: string,
-    projectLabel: string,
-    rev: number
-  ): Promise<void>;
-  makeProjectPublic(orgLabel: string, projectLabel: string): Promise<void>;
   goTo(o: string, p: string): void;
 }
 
@@ -56,10 +33,6 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
   activeOrg,
   fetchOrgData,
   goTo,
-  createProject,
-  modifyProject,
-  deprecateProject,
-  makeProjectPublic,
 }) => {
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
@@ -195,42 +168,6 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
       });
   };
 
-  const makePublic = (selectedProject: ProjectResponseCommon) => {
-    setFormBusy(true);
-    makeProjectPublic(
-      selectedProject._organizationLabel,
-      selectedProject._label
-    )
-      .then(
-        () => {
-          notification.success({
-            message: 'Project is now publicly accessible',
-            duration: 2,
-          });
-          setFormBusy(false);
-          setModalVisible(false);
-          setSelectedProject(undefined);
-
-          fetchOrgData(match.params.org);
-        },
-        (action: { type: string; error: Error }) => {
-          notification.warning({
-            message: 'Project NOT made public',
-            description: action.error.message,
-            duration: 2,
-          });
-          setFormBusy(false);
-        }
-      )
-      .catch((error: Error) => {
-        notification.error({
-          message: 'An unknown error occurred',
-          description: error.message,
-          duration: 0,
-        });
-      });
-  };
-
   if (busy) {
     return (
       <Skeleton
@@ -338,7 +275,6 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
                 saveAndModify(selectedProject, p)
               }
               onDeprecate={() => saveAndDeprecate(selectedProject)}
-              onMakePublic={() => makePublic(selectedProject)}
               busy={formBusy}
               mode="edit"
             />
@@ -369,21 +305,6 @@ const mapDispatchToProps = (dispatch: any) => ({
   fetchOrgData: (orgLabel: string, paginationSettings?: PaginationSettings) =>
     dispatch(fetchOrg(orgLabel, paginationSettings)),
   goTo: (org: string, project: string) => dispatch(push(`/${org}/${project}`)),
-  createProject: (
-    orgLabel: string,
-    projectLabel: string,
-    payload: ProjectPayload
-  ) => dispatch(createProject(orgLabel, projectLabel, payload)),
-  modifyProject: (
-    orgLabel: string,
-    projectLabel: string,
-    rev: number,
-    payload: ProjectPayload
-  ) => dispatch(modifyProject(orgLabel, projectLabel, rev, payload)),
-  deprecateProject: (orgLabel: string, projectLabel: string, rev: number) =>
-    dispatch(deprecateProject(orgLabel, projectLabel, rev)),
-  makeProjectPublic: (orgLabel: string, projectLabel: string) =>
-    dispatch(makeProjectPublic(orgLabel, projectLabel)),
 });
 
 export default connect(
