@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Drawer, notification, Modal, Button, Empty } from 'antd';
-import { AccessControl } from '@bbp/react-nexus';
+import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { ProjectPayload, ProjectResponseCommon } from '@bbp/nexus-sdk';
 import {
   Project,
@@ -66,6 +66,8 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
   const [selectedProject, setSelectedProject] = React.useState<
     ProjectResponseCommon | undefined
   >(undefined);
+  const nexus = useNexusContext();
+
   React.useEffect(() => {
     if (
       activeOrg.label !== match.params.org ||
@@ -77,7 +79,7 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
 
   const saveAndCreate = (newProject: ProjectResponseCommon) => {
     setFormBusy(true);
-    createProject(activeOrg.label, newProject._label, {
+    nexus.Project.create(activeOrg.label, newProject._label, {
       base: newProject.base || undefined,
       vocab: newProject.vocab || undefined,
       description: newProject.description || '',
@@ -115,12 +117,17 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
     newProject: ProjectResponseCommon
   ) => {
     setFormBusy(true);
-    modifyProject(activeOrg.label, newProject._label, selectedProject._rev, {
-      base: newProject.base,
-      vocab: newProject.vocab,
-      description: newProject.description,
-      apiMappings: newProject.apiMappings || [],
-    })
+    nexus.Project.update(
+      activeOrg.label,
+      newProject._label,
+      selectedProject._rev,
+      {
+        base: newProject.base,
+        vocab: newProject.vocab,
+        description: newProject.description,
+        apiMappings: newProject.apiMappings || [],
+      }
+    )
       .then(
         () => {
           notification.success({
@@ -153,8 +160,7 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
 
   const saveAndDeprecate = (selectedProject: ProjectResponseCommon) => {
     setFormBusy(true);
-
-    deprecateProject(
+    nexus.Project.deprecate(
       selectedProject._organizationLabel,
       selectedProject._label,
       selectedProject._rev
