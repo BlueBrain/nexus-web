@@ -38,8 +38,6 @@ const routes: RouteWithData[] = [
     path: '/:org',
     exact: true,
     component: ProjectsView,
-    loadData: (state, match) =>
-      fetchOrg(match && match.params && (match.params as any)['org']),
   },
   {
     path: '/:org/:project',

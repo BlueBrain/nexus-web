@@ -2,57 +2,62 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Drawer, notification, Modal, Button, Empty } from 'antd';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import { ProjectResponseCommon } from '@bbp/nexus-sdk';
-import {
-  Project,
-  PaginatedList,
-  PaginationSettings,
-} from '@bbp/nexus-sdk-legacy';
-import { RootState } from '../store/reducers';
+import { ProjectResponseCommon, OrgResponseCommon } from '@bbp/nexus-sdk';
+
 import ProjectList from '../containers/ProjectList';
 import Skeleton from '../components/Skeleton';
 import { push } from 'connected-react-router';
 import ProjectForm from '../components/Projects/ProjectForm';
-import { fetchOrg } from '../store/actions/nexus/activeOrg';
 import ListItem from '../components/List/Item';
 import ProjectItem from '../components/Projects/ProjectItem';
 
 interface ProjectsViewProps {
-  activeOrg: { label: string; description?: string };
-  paginatedProjects: PaginatedList<Project>;
-  busy: boolean;
   match: any;
-  fetchOrgData(orgLabel: string, paginationSettings?: PaginationSettings): void;
   goTo(o: string, p: string): void;
 }
 
 const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
-  busy,
-  paginatedProjects,
   match,
-  activeOrg,
-  fetchOrgData,
   goTo,
 }) => {
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
+  const [orgLoadingBusy, setOrgLoadingBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
-  const [selectedProject, setSelectedProject] = React.useState<
-    ProjectResponseCommon | undefined
-  >(undefined);
+  const [activeOrg, setActiveOrg] = React.useState<
+    OrgResponseCommon | null | undefined
+  >(null);
+  const [
+    selectedProject,
+    setSelectedProject,
+  ] = React.useState<ProjectResponseCommon | null>(null);
+
   const nexus = useNexusContext();
 
   React.useEffect(() => {
-    if (
-      activeOrg.label !== match.params.org ||
-      (paginatedProjects.results.length === 0 && !busy)
-    ) {
-      fetchOrgData(match.params.org);
+    if (!activeOrg) {
+      setOrgLoadingBusy(true);
+      nexus.Organization.get(match.params.org)
+        .then((org: OrgResponseCommon) => {
+          setOrgLoadingBusy(false);
+          setActiveOrg(org);
+        })
+        .catch((error: Error) => {
+          setOrgLoadingBusy(false);
+          notification.error({
+            message: `An error occured whilst fetching Organization ${match.params.org}`,
+            description: error.message,
+            duration: 0,
+          });
+        });
     }
-  }, [match.path]);
+  }, [match.path, activeOrg]);
 
   const saveAndCreate = (newProject: ProjectResponseCommon) => {
     setFormBusy(true);
-    nexus.Project.create(activeOrg.label, newProject._label, {
+    if (!activeOrg) {
+      return;
+    }
+    nexus.Project.create(activeOrg._label, newProject._label, {
       base: newProject.base || undefined,
       vocab: newProject.vocab || undefined,
       description: newProject.description || '',
@@ -65,7 +70,7 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
             duration: 2,
           });
           setFormBusy(false);
-          goTo(activeOrg.label, newProject._label);
+          goTo(activeOrg._label, newProject._label);
         },
         (action: { type: string; error: Error }) => {
           notification.warning({
@@ -90,8 +95,11 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
     newProject: ProjectResponseCommon
   ) => {
     setFormBusy(true);
+    if (!activeOrg) {
+      return;
+    }
     nexus.Project.update(
-      activeOrg.label,
+      activeOrg._label,
       newProject._label,
       selectedProject._rev,
       {
@@ -109,9 +117,7 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
           });
           setFormBusy(false);
           setModalVisible(false);
-          setSelectedProject(undefined);
-
-          fetchOrgData(match.params.org);
+          setSelectedProject(null);
         },
         (action: { type: string; error: Error }) => {
           notification.warning({
@@ -146,9 +152,7 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
           });
           setFormBusy(false);
           setModalVisible(false);
-          setSelectedProject(undefined);
-
-          fetchOrgData(match.params.org);
+          setSelectedProject(null);
         },
         (action: { type: string; error: Error }) => {
           notification.warning({
@@ -168,7 +172,7 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
       });
   };
 
-  if (busy) {
+  if (orgLoadingBusy) {
     return (
       <Skeleton
         itemNumber={5}
@@ -187,30 +191,30 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
 
   return (
     <div className="projects-view view-container">
-      <div style={{ flexGrow: 1, overflow: 'auto' }}>
-        <h1 style={{ marginBottom: 0, marginRight: 8 }}>{activeOrg.label}</h1>
-        {activeOrg.description && <p>{activeOrg.description}</p>}
-        <div
-          style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}
-        >
-          <h2 style={{ marginBottom: 0, marginRight: 8 }}>Projects</h2>
-          <AccessControl
-            permissions={['projects/create']}
-            path={`/${activeOrg.label}`}
+      {activeOrg ? (
+        <div style={{ flexGrow: 1, overflow: 'auto' }}>
+          <h1 style={{ marginBottom: 0, marginRight: 8 }}>
+            {activeOrg._label}
+          </h1>
+          {activeOrg.description && <p>{activeOrg.description}</p>}
+          <div
+            style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}
           >
-            <Button
-              type="primary"
-              onClick={() => setModalVisible(true)}
-              icon="plus-square"
+            <h2 style={{ marginBottom: 0, marginRight: 8 }}>Projects</h2>
+            <AccessControl
+              permissions={['projects/create']}
+              path={`/${activeOrg._label}`}
             >
-              Create Project
-            </Button>
-          </AccessControl>
-        </div>
-        {paginatedProjects.total === 0 ? (
-          <Empty description="No projects" />
-        ) : (
-          <ProjectList orgLabel={activeOrg.label}>
+              <Button
+                type="primary"
+                onClick={() => setModalVisible(true)}
+                icon="plus-square"
+              >
+                Create Project
+              </Button>
+            </AccessControl>
+          </div>
+          <ProjectList orgLabel={activeOrg._label}>
             {({ items }: { items: ProjectResponseCommon[] }) =>
               items.map(i => (
                 <ListItem
@@ -241,73 +245,59 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
               ))
             }
           </ProjectList>
-        )}
-        <Modal
-          title="New Project"
-          visible={modalVisible}
-          onCancel={() => setModalVisible(false)}
-          confirmLoading={formBusy}
-          footer={null}
-          width={600}
-        >
-          <ProjectForm
-            onSubmit={(p: ProjectResponseCommon) => saveAndCreate(p)}
-            busy={formBusy}
-          />
-        </Modal>
-        <Drawer
-          width={640}
-          visible={!!(selectedProject && selectedProject._label)}
-          onClose={() => setSelectedProject(undefined)}
-          title={`Project: ${selectedProject && selectedProject._label}`}
-        >
-          {selectedProject && (
+          <Modal
+            title="New Project"
+            visible={modalVisible}
+            onCancel={() => setModalVisible(false)}
+            confirmLoading={formBusy}
+            footer={null}
+            width={600}
+          >
             <ProjectForm
-              project={{
-                _label: selectedProject._label,
-                _rev: selectedProject._rev,
-                description: selectedProject.description || '',
-                base: selectedProject.base,
-                vocab: selectedProject.vocab,
-                apiMappings: selectedProject.apiMappings,
-              }}
-              onSubmit={(p: ProjectResponseCommon) =>
-                saveAndModify(selectedProject, p)
-              }
-              onDeprecate={() => saveAndDeprecate(selectedProject)}
+              onSubmit={(p: ProjectResponseCommon) => saveAndCreate(p)}
               busy={formBusy}
-              mode="edit"
             />
-          )}
-        </Drawer>
-      </div>
+          </Modal>
+          <Drawer
+            width={640}
+            visible={!!(selectedProject && selectedProject._label)}
+            onClose={() => setSelectedProject(null)}
+            title={`Project: ${selectedProject && selectedProject._label}`}
+          >
+            {selectedProject && (
+              <ProjectForm
+                project={{
+                  _label: selectedProject._label,
+                  _rev: selectedProject._rev,
+                  description: selectedProject.description || '',
+                  base: selectedProject.base,
+                  vocab: selectedProject.vocab,
+                  apiMappings: selectedProject.apiMappings,
+                }}
+                onSubmit={(p: ProjectResponseCommon) =>
+                  saveAndModify(selectedProject, p)
+                }
+                onDeprecate={() => saveAndDeprecate(selectedProject)}
+                busy={formBusy}
+                mode="edit"
+              />
+            )}
+          </Drawer>
+        </div>
+      ) : (
+        <div style={{ flexGrow: 1, overflow: 'auto' }}>
+          <Empty description={`No Organization ${match.params.org} Found`} />
+        </div>
+      )}
     </div>
   );
 };
 
-const mapStateToProps = (state: RootState) => ({
-  activeOrg: (state.nexus &&
-    state.nexus.activeOrg &&
-    state.nexus.activeOrg.data &&
-    state.nexus.activeOrg.data.org) || { label: '' },
-  paginatedProjects: (state.nexus &&
-    state.nexus.activeOrg &&
-    state.nexus.activeOrg.data &&
-    state.nexus.activeOrg.data.projects) || { results: [], total: 0, index: 0 },
-  busy:
-    (state.nexus &&
-      state.nexus.activeOrg &&
-      state.nexus.activeOrg.isFetching) ||
-    false,
-});
-
 const mapDispatchToProps = (dispatch: any) => ({
-  fetchOrgData: (orgLabel: string, paginationSettings?: PaginationSettings) =>
-    dispatch(fetchOrg(orgLabel, paginationSettings)),
   goTo: (org: string, project: string) => dispatch(push(`/${org}/${project}`)),
 });
 
 export default connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(ProjectsView);
