@@ -2,47 +2,6 @@ import authReducer from '../auth';
 import { AuthActionTypes } from '../../actions/auth';
 
 describe('Auth Reducer', () => {
-  describe('ACLs', () => {
-    it('should be fetching', () => {
-      expect(
-        authReducer(undefined, { type: AuthActionTypes.ACL_FETCHING })
-      ).toEqual({
-        acls: {
-          isFetching: true,
-          data: null,
-          error: null,
-        },
-      });
-    });
-    it('should return acl data', () => {
-      expect(
-        authReducer(undefined, {
-          type: AuthActionTypes.ACL_FULFILLED,
-          payload: { total: 10, index: 0, results: [] },
-        })
-      ).toEqual({
-        acls: {
-          isFetching: false,
-          data: { total: 10, index: 0, results: [] },
-          error: null,
-        },
-      });
-    });
-    it('should return an acl error', () => {
-      expect(
-        authReducer(undefined, {
-          type: AuthActionTypes.ACL_FAILED,
-          error: new Error('this is awful'),
-        })
-      ).toEqual({
-        acls: {
-          isFetching: false,
-          data: null,
-          error: new Error('this is awful'),
-        },
-      });
-    });
-  });
   describe('Identities', () => {
     it('should be fetching', () => {
       expect(
