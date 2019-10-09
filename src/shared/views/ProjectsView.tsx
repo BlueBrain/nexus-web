@@ -15,7 +15,7 @@ import {
   deprecateProject,
   makeProjectPublic,
 } from '../store/actions/project';
-import ProjectList from '../components/Projects/ProjectList';
+import ProjectList from '../containers/ProjectList';
 import Skeleton from '../components/Skeleton';
 import { push } from 'connected-react-router';
 import ProjectForm from '../components/Projects/ProjectForm';
@@ -23,7 +23,7 @@ import { fetchOrg } from '../store/actions/nexus/activeOrg';
 import ListItem from '../components/List/Item';
 import ProjectItem from '../components/Projects/ProjectItem';
 
-interface HomeProps {
+interface ProjectsViewProps {
   activeOrg: { label: string; description?: string };
   paginatedProjects: PaginatedList<Project>;
   busy: boolean;
@@ -49,7 +49,7 @@ interface HomeProps {
   goTo(o: string, p: string): void;
 }
 
-const Home: React.FunctionComponent<HomeProps> = ({
+const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
   busy,
   paginatedProjects,
   match,
@@ -383,4 +383,4 @@ const mapDispatchToProps = (dispatch: any) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Home);
+)(ProjectsView);

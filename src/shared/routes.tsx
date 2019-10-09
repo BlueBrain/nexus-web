@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteProps, match } from 'react-router-dom';
 import OrgsView from './views/OrgsView';
-import Home from './views/Home';
+import ProjectsView from './views/ProjectsView';
 import Login from './views/Login';
 import Project from './views/Project';
 import Resource from './views/Resource';
@@ -37,7 +37,7 @@ const routes: RouteWithData[] = [
   {
     path: '/:org',
     exact: true,
-    component: Home,
+    component: ProjectsView,
     loadData: (state, match) =>
       fetchOrg(match && match.params && (match.params as any)['org']),
   },
