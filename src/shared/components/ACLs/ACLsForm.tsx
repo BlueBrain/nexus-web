@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Tabs } from 'antd';
-import { ACL } from '@bbp/nexus-sdk-legacy';
+import { ACL } from '@bbp/nexus-sdk';
+
 import ACLView from './ACLView';
 
 import './ACLs.less';
@@ -19,18 +20,19 @@ const ACLsForm: React.FunctionComponent<ACLsFormProps> = (
         <Tabs.TabPane
           tab={
             <p>
-              Permissions applied to: <span>{acl.path}</span>
+              Permissions applied to: <span>{acl._path}</span>
             </p>
           }
           key={`${props.path}-${index}`}
         >
-          {acl.acl.map(a => (
-            <ACLView
-              identity={a.identity}
-              permissions={a.permissions}
-              key={`${props.path}-${acl.path}-${JSON.stringify(a.identity)}`}
-            />
-          ))}
+          {acl.acl &&
+            acl.acl.map(a => (
+              <ACLView
+                identity={a.identity}
+                permissions={a.permissions}
+                key={`${props.path}-${acl._path}-${JSON.stringify(a.identity)}`}
+              />
+            ))}
         </Tabs.TabPane>
       ))}
     </Tabs>

@@ -8,12 +8,11 @@ import Resource from './views/Resource';
 import { fetchOrgs } from './store/actions/nexus/orgs';
 import { fetchOrg } from './store/actions/nexus/activeOrg';
 import { RawElasticSearchQuery, RawSparqlQuery } from './views/RawQuery';
-import ACLView from './views/ACLs';
+import ACLsView from './views/ACLsView';
 import { fetchAndAssignProject } from './store/actions/nexus/projects';
 import { fetchAndAssignResource } from './store/actions/nexus/resource';
 import { ThunkAction } from './store';
 import { RootState } from './store/reducers';
-import { fetchAcls } from './store/actions/auth';
 import User from './views/User';
 
 export interface RouteWithData extends RouteProps {
@@ -89,14 +88,7 @@ const routes: RouteWithData[] = [
   },
   {
     path: '/:org/:project/_settings/acls',
-    component: ACLView,
-    loadData: (state, match) => {
-      const orgLabel = match && match.params && (match.params as any)['org'];
-      const projectLabel =
-        match && match.params && (match.params as any)['project'];
-
-      return fetchAcls(`${orgLabel}/${projectLabel}`, { ancestors: true });
-    },
+    component: ACLsView,
   },
 ];
 

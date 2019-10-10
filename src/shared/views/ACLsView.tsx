@@ -1,33 +1,60 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { push } from 'connected-react-router';
 import { Empty, Spin } from 'antd';
-import { ACL } from '@bbp/nexus-sdk-legacy';
-import { RootState } from '../store/reducers';
-import { fetchAcls } from '../store/actions/auth';
+import { push } from 'connected-react-router';
+import { useNexusContext } from '@bbp/react-nexus';
+
 import ACLsForm from '../components/ACLs/ACLsForm';
+import { ACL } from '@bbp/nexus-sdk';
 
 interface ACLsViewProps {
-  acls?: ACL[];
-  error?: { message: string; name: string };
-  busy?: boolean;
   match: any;
-  fetchACLData(orgLabel: string, projectLabel: string): void;
   goToOrg(orgLabel: string): void;
   goToProject(orgLabel: string, projectLabel: string): void;
 }
 const ACLs: React.FunctionComponent<ACLsViewProps> = ({
-  acls,
-  error,
   match,
-  busy = false,
-  fetchACLData,
   goToOrg,
   goToProject,
 }) => {
+  const path = `${match.params.org}${
+    match.params.project ? `/${match.params.project}` : ''
+  }`;
+
+  const [{ busy, error, acls }, setACLs] = React.useState<{
+    busy: Boolean;
+    error: Error | null;
+    acls: ACL[] | null;
+  }>({
+    busy: false,
+    error: null,
+    acls: null,
+  });
+
+  const nexus = useNexusContext();
+
   React.useEffect(() => {
     if (!busy) {
-      fetchACLData(match.params.org, match.params.project);
+      setACLs({
+        error: null,
+        acls: null,
+        busy: true,
+      });
+      nexus.ACL.list(path)
+        .then(acls => {
+          setACLs({
+            acls: acls._results,
+            busy: false,
+            error: null,
+          });
+        })
+        .catch(error => {
+          setACLs({
+            error,
+            acls: null,
+            busy: false,
+          });
+        });
     }
   }, [match.params.project, match.params.org]);
 
@@ -50,7 +77,7 @@ const ACLs: React.FunctionComponent<ACLsViewProps> = ({
       />
     );
   }
-  const path = `${match.params.org}/${match.params.project}`;
+
   return (
     <div className="acl-view view-container">
       <div style={{ flexGrow: 1 }}>
@@ -73,29 +100,13 @@ const ACLs: React.FunctionComponent<ACLsViewProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState) => ({
-  acls:
-    (state.auth.acls &&
-      state.auth.acls &&
-      state.auth.acls.data &&
-      state.auth.acls.data.results) ||
-    undefined,
-  busy: state.auth.acls && state.auth.acls && state.auth.acls.isFetching,
-  error:
-    (state.auth.acls && state.auth.acls && state.auth.acls.error) || undefined,
-});
-
 const mapDispatchToProps = (dispatch: any) => ({
-  fetchACLData: (orgLabel: string, projectLabel: string) =>
-    dispatch(
-      fetchAcls(`${orgLabel}/${projectLabel}`, { ancestors: true, self: false })
-    ),
   goToOrg: (orgLabel: string) => dispatch(push(`/${orgLabel}`)),
   goToProject: (orgLabel: string, projectLabel: string) =>
     dispatch(push(`/${orgLabel}/${projectLabel}`)),
 });
 
 export default connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(ACLs);
