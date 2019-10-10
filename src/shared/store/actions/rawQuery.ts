@@ -76,32 +76,3 @@ export const executeRawQuery: ActionCreator<ThunkAction> = (
     }
   };
 };
-
-export const executeRawElasticSearchQuery: ActionCreator<ThunkAction> = (
-  orgName: string,
-  projectName: string,
-  viewId: string | undefined,
-  query: string,
-  paginationSettings: PaginationSettings
-) => {
-  return async (
-    dispatch: Dispatch<any>,
-    getState,
-    { nexusLegacy }
-  ): Promise<RawQueryActionSuccess | RawQueryActionFailure> => {
-    dispatch(rawQueryAction(query, paginationSettings));
-    try {
-      const Project = nexusLegacy.Project;
-      const project = await Project.get(orgName, projectName);
-      const view = await project.getElasticSearchView(viewId);
-      const response = await view.rawQuery(
-        JSON.parse(query),
-        paginationSettings
-      );
-      const results: PaginatedList<ElasticSearchHit> = response;
-      return dispatch(rawQuerySuccessAction(results));
-    } catch (e) {
-      return dispatch(rawQueryFailureAction(formatError(e)));
-    }
-  };
-};

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import RawSparqlQueryView from '../components/RawQueryView/RawSparqlQueryView';
-import RawElasticSearchQueryView from '../components/RawQueryView/RawElasticSearchQueryView';
 import { NexusState } from '../store/reducers/nexus';
 import { RouteComponentProps, match } from 'react-router';
 import { fetchAndAssignProject } from '../store/actions/nexus/projects';
@@ -105,14 +104,7 @@ export const RawElasticSearchQueryComponent: React.FunctionComponent<
         </div>
       </div>
       <div className="view-view view-container">
-        <div style={{ flexGrow: 1 }}>
-          <RawElasticSearchQueryView
-            initialQuery={query}
-            wantedOrg={match.params.org}
-            wantedProject={match.params.project}
-            wantedView={match.params.view}
-          />
-        </div>
+        <div style={{ flexGrow: 1 }}></div>
       </div>
     </>
   );
