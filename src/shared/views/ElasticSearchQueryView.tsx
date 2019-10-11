@@ -84,14 +84,12 @@ export const ElasticSearchQueryView: React.FunctionComponent<{
         </div>
       </div>
       <div className="view-view view-container">
-        <div style={{ flexGrow: 1 }}>
-          <ElasticSearchQueryContainer
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
-            initialQuery={query ? JSON.parse(`${query}`) : null}
-            viewId={viewId}
-          />
-        </div>
+        <ElasticSearchQueryContainer
+          orgLabel={orgLabel}
+          projectLabel={projectLabel}
+          initialQuery={query ? JSON.parse(`${query}`) : null}
+          viewId={viewId}
+        />
       </div>
     </>
   );
