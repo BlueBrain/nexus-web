@@ -45,7 +45,7 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
     response && response.hits.hits.map(result => result._source || []);
   const total =
     (response && response.hits.total && response.hits.total.value) || 0;
-  const totalPages = Math.floor(total / size);
+  const totalPages = Math.ceil(total / size);
   const current = Math.floor((totalPages / total) * from + 1);
 
   const handleChange = (editor: any, data: any, value: any) => {
