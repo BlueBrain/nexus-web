@@ -21,11 +21,13 @@ const ElasticSearchQueryContainer: React.FunctionComponent<{
 }> = ({
   orgLabel,
   projectLabel,
-  initialQuery = DEFAULT_QUERY,
+  initialQuery,
   viewId = DEFAULT_ELASTIC_SEARCH_VIEW_ID,
 }) => {
   const nexus = useNexusContext();
-  const [query, setQuery] = React.useState<any>(initialQuery);
+  const [query, setQuery] = React.useState<object>(
+    initialQuery || DEFAULT_QUERY
+  );
   const [{ from, size }, setPagination] = React.useState({
     from: 0,
     size: DEFAULT_PAGE_SIZE,

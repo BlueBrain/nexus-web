@@ -1,13 +1,15 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { RouteComponentProps, match } from 'react-router';
+import { match } from 'react-router';
 import * as queryString from 'query-string';
 import { push } from 'connected-react-router';
 import { Menu, Dropdown, Icon } from 'antd';
+import { ViewList, View } from '@bbp/nexus-sdk';
+import { useNexusContext } from '@bbp/react-nexus';
+
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 import ElasticSearchQueryContainer from '../containers/ElasticSearchQuery';
-import { Project, ElasticSearchView, ViewList } from '@bbp/nexus-sdk';
-import { useNexusContext } from '@bbp/react-nexus';
+
 export const ElasticSearchQueryView: React.FunctionComponent<{
   match: match<{ org: string; project: string; viewId: string }>;
   location: Location;
@@ -18,12 +20,16 @@ export const ElasticSearchQueryView: React.FunctionComponent<{
   const {
     params: { org: orgLabel, project: projectLabel, viewId },
   } = match;
-  const [{ _result: views, total: viewTotal }, setViews] = React.useState<
+  const [{ _results: views, total: viewTotal }, setViews] = React.useState<
     ViewList
   >({
     '@context': {},
     total: 0,
-    _result: [],
+
+    // @ts-ignore TODO fix incorrect typing in SDK
+    // Should be _results not _result!
+    // https://github.com/BlueBrain/nexus/issues/753
+    _results: [],
   });
   const nexus = useNexusContext();
   const view = decodeURIComponent(viewId);
@@ -39,7 +45,7 @@ export const ElasticSearchQueryView: React.FunctionComponent<{
 
   const menu = (
     <Menu>
-      {views.map((view, index) => (
+      {views.map((view: View, index: number) => (
         <Menu.Item key={index}>
           <a onClick={() => goToView(orgLabel, projectLabel, view['@id'])}>
             {view['@id']}

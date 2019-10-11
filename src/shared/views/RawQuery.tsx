@@ -27,89 +27,6 @@ interface RawQueryProps extends RouteComponentProps {
   location: any;
 }
 
-export const RawElasticSearchQueryComponent: React.FunctionComponent<
-  RawQueryProps
-> = ({
-  match,
-  activeOrg,
-  activeProject,
-  fetchProject,
-  goToOrg,
-  goToProject,
-  goToView,
-  location,
-  listViews,
-}): JSX.Element => {
-  const [views, setViews] = React.useState<Resource[]>([]);
-  React.useEffect(() => {
-    if (
-      activeOrg.label !== match.params.org ||
-      activeProject.label !== match.params.project
-    ) {
-      fetchProject(match.params.org, match.params.project);
-      listViews(match.params.org, match.params.project)
-        .then(setViews)
-        .catch((error: Error) => {
-          // do something
-        });
-    }
-  }, [match.params.org, match.params.project]);
-  const view = decodeURIComponent(match.params.view);
-  const query = queryString.parse(location.search).query;
-  const menu = (
-    <Menu>
-      {views.map((view, index) => (
-        <Menu.Item key={index}>
-          <a onClick={() => goToView(view.orgLabel, view.projectLabel, view)}>
-            {view.name}
-          </a>
-        </Menu.Item>
-      ))}
-    </Menu>
-  );
-
-  return (
-    <>
-      <div className="project-banner no-bg" style={{ marginBottom: 20 }}>
-        <div className="label">
-          <h1 className="name">
-            <span>
-              <a onClick={() => goToOrg(match.params.org)}>
-                {match.params.org}
-              </a>{' '}
-              |{' '}
-              <a
-                onClick={() =>
-                  goToProject(match.params.org, match.params.project)
-                }
-              >
-                {match.params.project}
-              </a>{' '}
-              |{' '}
-            </span>
-            <Dropdown overlay={menu}>
-              <a className="ant-dropdown-link">
-                {view}
-                <Icon type="down" />
-              </a>
-            </Dropdown>{' '}
-          </h1>
-          <div style={{ marginLeft: 10 }}>
-            <ViewStatisticsProgress
-              orgLabel={match.params.org}
-              projectLabel={match.params.project}
-              resourceId={match.params.view}
-            />
-          </div>
-        </div>
-      </div>
-      <div className="view-view view-container">
-        <div style={{ flexGrow: 1 }}></div>
-      </div>
-    </>
-  );
-};
-
 const RawSparqlQueryComponent: React.FunctionComponent<RawQueryProps> = ({
   match,
   activeOrg,
@@ -232,8 +149,3 @@ export const RawSparqlQuery = connect(
   mapStateToProps,
   mapDispatchToProps
 )(RawSparqlQueryComponent);
-
-export const RawElasticSearchQuery = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(RawElasticSearchQueryComponent);

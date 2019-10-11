@@ -6,7 +6,8 @@ import { ElasticSearchViewQueryResponse } from '@bbp/nexus-sdk';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/javascript/javascript';
 
-import './view-form.less';
+// TODO move once SparqlQueryView is also refactored
+import '../RawQueryView/view-form.less';
 
 const FormItem = Form.Item;
 const ListItem = List.Item;
@@ -30,8 +31,15 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
   onPaginationChange,
   onQueryChange,
 }): JSX.Element => {
-  const formattedInitialQuery = JSON.stringify(query, null, 2);
+  const [initialQuery, setInitialQuery] = React.useState('');
   const [valid, setValid] = React.useState(true);
+  const [value, setValue] = React.useState();
+
+  React.useEffect(() => {
+    // only on first render!
+    const formattedInitialQuery = JSON.stringify(query, null, 2);
+    setInitialQuery(formattedInitialQuery);
+  }, []);
 
   const data =
     response && response.hits.hits.map(result => result._source || []);
@@ -43,7 +51,7 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
   const handleChange = (editor: any, data: any, value: any) => {
     try {
       JSON.parse(value);
-      onQueryChange(value);
+      setValue(value);
       setValid(true);
     } catch (error) {
       setValid(false);
@@ -55,13 +63,7 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
       <Form
         onSubmit={e => {
           e.preventDefault();
-          // executeRawQuery(
-          //   wantedOrg,
-          //   wantedProject,
-          //   wantedView,
-          //   query,
-          //   paginationSettings
-          // );
+          onQueryChange(JSON.parse(value));
         }}
       >
         <>
@@ -74,7 +76,7 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
             </div>
           </div>
           <CodeMirror
-            value={formattedInitialQuery}
+            value={initialQuery}
             options={{
               mode: { name: 'javascript', json: true },
               theme: 'base16-light',
