@@ -10,7 +10,7 @@ export interface UserProps {
   identities: Identity[];
 }
 
-const User: React.FunctionComponent<UserProps> = props => {
+const UserView: React.FunctionComponent<UserProps> = props => {
   const { name, identities } = props;
   return (
     <div className="user-view view-container">
@@ -49,4 +49,4 @@ const mapStateToProps = ({ auth, oidc }: RootState) => ({
   identities: (auth.identities && auth.identities.data) || [],
 });
 
-export default connect(mapStateToProps)(User);
+export default connect(mapStateToProps)(UserView);
