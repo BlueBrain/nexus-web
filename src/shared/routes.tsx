@@ -7,7 +7,8 @@ import Project from './views/Project';
 import Resource from './views/Resource';
 import { fetchOrgs } from './store/actions/nexus/orgs';
 import { fetchOrg } from './store/actions/nexus/activeOrg';
-import { RawElasticSearchQuery, RawSparqlQuery } from './views/RawQuery';
+import { RawSparqlQuery } from './views/RawQuery';
+import RawElasticSearchQueryView from './views/ElasticSearchQueryView';
 import ACLsView from './views/ACLsView';
 import { fetchAndAssignProject } from './store/actions/nexus/projects';
 import { fetchAndAssignResource } from './store/actions/nexus/resource';
@@ -76,11 +77,11 @@ const routes: RouteWithData[] = [
   },
   {
     path: '/:org/:project/_search',
-    component: RawElasticSearchQuery,
+    component: RawElasticSearchQueryView,
   },
   {
-    path: '/:org/:project/:view/_search',
-    component: RawElasticSearchQuery,
+    path: '/:org/:project/:viewId/_search',
+    component: RawElasticSearchQueryView,
   },
   {
     path: '/:org/:project/:view/sparql',
