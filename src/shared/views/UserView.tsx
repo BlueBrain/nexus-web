@@ -1,17 +1,40 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { RootState } from '../store/reducers';
-import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
-import { Card } from 'antd';
+import { Card, notification, Empty } from 'antd';
+import { IdentityList } from '@bbp/nexus-sdk';
+import { useNexusContext } from '@bbp/react-nexus';
+
 import ListItem from '../components/Animations/ListItem';
+import { RootState } from '../store/reducers';
 
 export interface UserProps {
   name?: string;
-  identities: Identity[];
 }
 
 const UserView: React.FunctionComponent<UserProps> = props => {
-  const { name, identities } = props;
+  const { name } = props;
+  const [{ identities }, setIdentities] = React.useState<IdentityList>({
+    '@context': {},
+    identities: [],
+  });
+
+  const nexus = useNexusContext();
+
+  React.useEffect(() => {
+    nexus.Identity.list()
+      .then(() => {
+        throw new Error('something bad');
+      })
+      .then(setIdentities)
+      .catch(error => {
+        // TODO: show error
+        notification.error({
+          message: 'Problem loading Identities',
+          description: error.message,
+        });
+      });
+  }, [name]);
+
   return (
     <div className="user-view view-container">
       <div style={{ flexGrow: 1 }}>
@@ -23,20 +46,25 @@ const UserView: React.FunctionComponent<UserProps> = props => {
         </p>
         <Card>
           <ul className="identities-list">
-            {identities
-              .reverse()
-              .map(({ '@id': id, '@type': type, realm, subject }) => (
-                <ListItem
-                  id={id}
-                  label={
-                    <div>
-                      <em>{type}</em> {subject}
-                    </div>
-                  }
-                  details={<span>{realm}</span>}
-                  description={id}
-                />
-              ))}
+            {!!identities.length ? (
+              identities
+                .reverse()
+                .map(({ '@id': id, '@type': type, realm, subject }) => (
+                  <ListItem
+                    key={id}
+                    id={id}
+                    label={
+                      <div>
+                        <em>{type}</em> {subject}
+                      </div>
+                    }
+                    details={<span>{realm}</span>}
+                    description={id}
+                  />
+                ))
+            ) : (
+              <Empty description={<span>No Identities Found</span>} />
+            )}
           </ul>
         </Card>
       </div>
@@ -44,9 +72,8 @@ const UserView: React.FunctionComponent<UserProps> = props => {
   );
 };
 
-const mapStateToProps = ({ auth, oidc }: RootState) => ({
+const mapStateToProps = ({ oidc }: RootState) => ({
   name: oidc.user && oidc.user.profile && oidc.user.profile.name,
-  identities: (auth.identities && auth.identities.data) || [],
 });
 
 export default connect(mapStateToProps)(UserView);
