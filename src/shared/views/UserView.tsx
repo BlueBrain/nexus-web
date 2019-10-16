@@ -22,12 +22,8 @@ const UserView: React.FunctionComponent<UserProps> = props => {
 
   React.useEffect(() => {
     nexus.Identity.list()
-      .then(() => {
-        throw new Error('something bad');
-      })
       .then(setIdentities)
       .catch(error => {
-        // TODO: show error
         notification.error({
           message: 'Problem loading Identities',
           description: error.message,
