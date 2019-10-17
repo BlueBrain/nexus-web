@@ -9,6 +9,8 @@ import silentRefreshHtml from './silent_refresh';
 import { RootState } from '../shared/store/reducers';
 import { DEFAULT_UI_SETTINGS } from '../shared/store/reducers/ui-settings';
 
+const PORT_NUMBER = 8000;
+
 // Create a express app
 const app: express.Express = express();
 const rawBase: string = process.env.BASE_PATH || '';
@@ -67,9 +69,9 @@ app.get('*', async (req: express.Request, res: express.Response) => {
   res.send(html({ body, helmet, preloadedState }));
 });
 
-app.listen(8000, () => {
+app.listen(PORT_NUMBER, () => {
   // tslint:disable-next-line:no-console
-  console.log('Nexus Web is listening...');
+  console.log(`Nexus Web is listening on a port ${PORT_NUMBER} ...`);
 });
 
 export default app;
