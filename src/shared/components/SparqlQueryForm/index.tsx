@@ -49,7 +49,6 @@ const SparqlQueryForm: React.FunctionComponent<{
       <Form
         onSubmit={e => {
           e.preventDefault();
-          console.log('onQueryChange', { value });
           onQueryChange(value);
         }}
       >
