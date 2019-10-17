@@ -15,7 +15,12 @@ const ElasticSearchQueryView: React.FunctionComponent<{
   location: Location;
   goToOrg(orgLabel: string): void;
   goToProject(orgLabel: string, projectLabel: string): void;
-  goToView(orgLabel: string, projectLabel: string, viewID: string): void;
+  goToView(
+    orgLabel: string,
+    projectLabel: string,
+    viewID: string,
+    viewType: string[] | string
+  ): void;
 }> = ({ match, location, goToOrg, goToProject, goToView }): JSX.Element => {
   const {
     params: { org: orgLabel, project: projectLabel, viewId },
@@ -47,7 +52,11 @@ const ElasticSearchQueryView: React.FunctionComponent<{
     <Menu>
       {views.map((view: View, index: number) => (
         <Menu.Item key={index}>
-          <a onClick={() => goToView(orgLabel, projectLabel, view['@id'])}>
+          <a
+            onClick={() =>
+              goToView(orgLabel, projectLabel, view['@id'], view['@id'])
+            }
+          >
             {view['@id']}
           </a>
         </Menu.Item>
@@ -99,9 +108,23 @@ const mapDispatchToProps = (dispatch: any) => ({
   goToOrg: (orgLabel: string) => dispatch(push(`/${orgLabel}`)),
   goToProject: (orgLabel: string, projectLabel: string) =>
     dispatch(push(`/${orgLabel}/${projectLabel}`)),
-  goToView: (orgLabel: string, projectLabel: string, viewId: string) => {
+  goToView: (
+    orgLabel: string,
+    projectLabel: string,
+    viewId: string,
+    viewType: string[] | string
+  ) => {
+    const stringifiedViewType = Array.isArray(viewType)
+      ? viewType.join('')
+      : viewType;
     return dispatch(
-      push(`/${orgLabel}/${projectLabel}/${encodeURIComponent(viewId)}/_search`)
+      push(
+        `/${orgLabel}/${projectLabel}/${encodeURIComponent(viewId)}/${
+          stringifiedViewType.toLowerCase().includes('elastic')
+            ? '_search'
+            : 'sparql'
+        }`
+      )
     );
   },
 });

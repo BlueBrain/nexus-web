@@ -6,14 +6,14 @@ import Project from './views/Project';
 import Resource from './views/Resource';
 import { fetchOrgs } from './store/actions/nexus/orgs';
 import { fetchOrg } from './store/actions/nexus/activeOrg';
-import RawElasticSearchQueryView from './views/ElasticSearchQueryView';
+import ElasticSearchQueryView from './views/ElasticSearchQueryView';
+import SparqlQueryView from './views/SparqlQueryView';
 import ACLsView from './views/ACLsView';
 import { fetchAndAssignProject } from './store/actions/nexus/projects';
 import { fetchAndAssignResource } from './store/actions/nexus/resource';
 import { ThunkAction } from './store';
 import { RootState } from './store/reducers';
 import UserView from './views/UserView';
-import SparqlQueryView from './views/SparqlQueryView';
 
 export interface RouteWithData extends RouteProps {
   loadData?(state: RootState, match: match | null): ThunkAction;
@@ -75,12 +75,8 @@ const routes: RouteWithData[] = [
     },
   },
   {
-    path: '/:org/:project/_search',
-    component: RawElasticSearchQueryView,
-  },
-  {
     path: '/:org/:project/:viewId/_search',
-    component: RawElasticSearchQueryView,
+    component: ElasticSearchQueryView,
   },
   {
     path: '/:org/:project/:viewId/sparql',
