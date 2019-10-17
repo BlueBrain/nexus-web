@@ -10,13 +10,15 @@ import { useNexusContext } from '@bbp/react-nexus';
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 import SparqlQueryContainer from '../containers/SparqlQuery';
 
-export const SparqlQueryView: React.FunctionComponent<{
+const SparqlQueryView: React.FunctionComponent<{
   match: match<{ org: string; project: string; viewId: string }>;
   location: Location;
   goToOrg(orgLabel: string): void;
   goToProject(orgLabel: string, projectLabel: string): void;
   goToView(orgLabel: string, projectLabel: string, viewID: string): void;
 }> = ({ match, location, goToOrg, goToProject, goToView }): JSX.Element => {
+  console.table({ goToView, goToOrg });
+
   const {
     params: { org: orgLabel, project: projectLabel, viewId },
   } = match;

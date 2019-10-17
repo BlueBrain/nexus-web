@@ -13,7 +13,7 @@ import { fetchAndAssignResource } from './store/actions/nexus/resource';
 import { ThunkAction } from './store';
 import { RootState } from './store/reducers';
 import UserView from './views/UserView';
-import { SparqlQueryView } from './views/SparqlQueryView';
+import SparqlQueryView from './views/SparqlQueryView';
 
 export interface RouteWithData extends RouteProps {
   loadData?(state: RootState, match: match | null): ThunkAction;

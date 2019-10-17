@@ -10,7 +10,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 import ElasticSearchQueryContainer from '../containers/ElasticSearchQuery';
 
-export const ElasticSearchQueryView: React.FunctionComponent<{
+const ElasticSearchQueryView: React.FunctionComponent<{
   match: match<{ org: string; project: string; viewId: string }>;
   location: Location;
   goToOrg(orgLabel: string): void;
@@ -83,7 +83,7 @@ export const ElasticSearchQueryView: React.FunctionComponent<{
           </div>
         </div>
       </div>
-      <div className="view-view view-container">
+      <div className="view-view view-container -unconstrained-width">
         <ElasticSearchQueryContainer
           orgLabel={orgLabel}
           projectLabel={projectLabel}
