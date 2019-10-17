@@ -82,7 +82,7 @@ export const SparqlQueryView: React.FunctionComponent<{
           </div>
         </div>
       </div>
-      <div className="view-view view-container">
+      <div className="view-view view-container -unconstrained-width">
         <SparqlQueryContainer
           orgLabel={orgLabel}
           projectLabel={projectLabel}
