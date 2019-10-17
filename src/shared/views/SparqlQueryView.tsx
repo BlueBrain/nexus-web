@@ -9,6 +9,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 
 import RawSparqlQueryView from '../components/RawQueryView/RawSparqlQueryView';
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
+import SparqlQueryContainer from '../containers/SparqlQuery';
 
 export const SparqlQueryView: React.FunctionComponent<{
   match: match<{ org: string; project: string; viewId: string }>;
@@ -20,9 +21,7 @@ export const SparqlQueryView: React.FunctionComponent<{
   const {
     params: { org: orgLabel, project: projectLabel, viewId },
   } = match;
-  const [{ _results: views, total: viewTotal }, setViews] = React.useState<
-    ViewList
-  >({
+  const [{ _results: views }, setViews] = React.useState<ViewList>({
     '@context': {},
     total: 0,
 
@@ -33,7 +32,7 @@ export const SparqlQueryView: React.FunctionComponent<{
   });
   const nexus = useNexusContext();
   const decodedViewId = decodeURIComponent(viewId);
-  const targetView = views.find((view: View) => view['@id'] === decodedViewId);
+  // const targetView = views.find((view: View) => view['@id'] === decodedViewId);
   const query = queryString.parse(location.search).query;
 
   React.useEffect(() => {
@@ -85,10 +84,11 @@ export const SparqlQueryView: React.FunctionComponent<{
         </div>
       </div>
       <div className="view-view view-container">
-        <RawSparqlQueryView
-          wantedOrg={orgLabel}
-          wantedProject={projectLabel}
-          wantedView={targetView}
+        <SparqlQueryContainer
+          orgLabel={orgLabel}
+          projectLabel={projectLabel}
+          initialQuery={!!query && query !== 0 ? `${query}` : undefined}
+          viewId={viewId}
         />
       </div>
     </>
