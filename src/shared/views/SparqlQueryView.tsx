@@ -7,7 +7,6 @@ import { Menu, Dropdown, Icon } from 'antd';
 import { ViewList, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
-import RawSparqlQueryView from '../components/RawQueryView/RawSparqlQueryView';
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 import SparqlQueryContainer from '../containers/SparqlQuery';
 

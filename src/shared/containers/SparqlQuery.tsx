@@ -4,8 +4,7 @@ import { DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 
 import SparqlQueryForm from '../components/SparqlQueryForm';
 
-const DEFAULT_QUERY = `
-# Directly edit this query
+const DEFAULT_QUERY = `# Directly edit this query
 SELECT ?s ?p ?o
 WHERE {?s ?p ?o}
 LIMIT 20

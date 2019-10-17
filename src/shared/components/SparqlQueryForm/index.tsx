@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Button, Card, List, Empty, Table } from 'antd';
+import { Form, Button, Card, List, Empty, Table, Tooltip } from 'antd';
 import Column from 'antd/lib/table/Column';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import * as hash from 'object-hash';
@@ -11,6 +11,17 @@ import 'codemirror/mode/sparql/sparql';
 import '../RawQueryView/view-form.less';
 
 const FormItem = Form.Item;
+
+type Entry = {
+  [key: string]: string;
+  datatype: string;
+  value: string;
+  type: string;
+};
+
+type Bindings = {
+  [variableName: string]: Entry;
+}[];
 
 const SparqlQueryForm: React.FunctionComponent<{
   query: string;
@@ -25,17 +36,19 @@ const SparqlQueryForm: React.FunctionComponent<{
   // TODO: Validate Sparql with some cool library
   const [value, setValue] = React.useState(query);
 
-  let columnHeaders: string[] = [];
-  let data: any = [];
   // NOTE: if the query returns a simple boolean value
-  // then we have to make our own column title
-  if (response && response.hasOwnProperty('boolean')) {
-    columnHeaders = ['Result'];
-    data = response.boolean;
-  } else {
-    columnHeaders = (response && response.head && response.head.vars) || [];
-    data = (response && response.results && response.results.bindings) || [];
-  }
+  // then we have to make our own column header
+  const columnHeaders: string[] =
+    (response &&
+      (!!response.boolean
+        ? ['Result']
+        : response.head && response.head.vars)) ||
+    [];
+
+  const data: Bindings =
+    (response &&
+      (!!response.boolean ? response.boolean : response.results.bindings)) ||
+    [];
 
   const handleChange = (editor: any, data: any, value: string) => {
     if (!value) {
@@ -89,36 +102,26 @@ const SparqlQueryForm: React.FunctionComponent<{
             rowKey={record => hash(record)}
             loading={busy}
           >
-            {columnHeaders.map((col: string) => (
+            {columnHeaders.map((columnHeader: string) => (
               <Column
-                title={col}
-                dataIndex={col}
-                key={col}
-                render={(entry: any) => {
+                title={columnHeader}
+                dataIndex={columnHeader}
+                key={columnHeader}
+                render={(entry: Entry) => {
                   if (!entry) {
-                    return <>no value</>;
-                  }
-                  let value: React.ReactNode;
-                  switch (entry.type) {
-                    case 'uri':
-                      value = <a href={entry.value}>&lt;{entry.value}&gt;</a>;
-                      break;
-                    case 'bnode':
-                    case 'literal':
-                    default:
-                      value = <>{entry.value}</>;
+                    return <span className="empty">no value</span>;
                   }
 
-                  const additionalAttributes: string[] = [];
-
-                  Object.keys(entry)
-                    .filter(key => key !== 'value')
-                    .forEach(key => {
-                      additionalAttributes.push(`"${key}": "${entry[key]}"`);
-                    });
-
+                  // TODO: Improve sparql repsonse types visuall
+                  // https://github.com/BlueBrain/nexus/issues/756
                   return (
-                    <span title={additionalAttributes.join(', ')}>{value}</span>
+                    <Tooltip title={entry.datatype}>
+                      {entry.type === 'uri' ? (
+                        <a href={entry.value}>&lt;{entry.value}&gt;</a>
+                      ) : (
+                        entry.value
+                      )}
+                    </Tooltip>
                   );
                 }}
               />
