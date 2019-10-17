@@ -8,7 +8,7 @@ import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/sparql/sparql';
 
 // TODO move once SparqlQueryView is also refactored
-import '../RawQueryView/view-form.less';
+import './view-form.less';
 
 const FormItem = Form.Item;
 

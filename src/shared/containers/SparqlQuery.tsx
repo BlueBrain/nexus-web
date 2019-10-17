@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 
-import SparqlQueryForm from '../components/SparqlQueryForm';
+import SparqlQueryForm from '../components/ViewForm/SparqlQueryForm';
 
 const DEFAULT_QUERY = `# Directly edit this query
 SELECT ?s ?p ?o
