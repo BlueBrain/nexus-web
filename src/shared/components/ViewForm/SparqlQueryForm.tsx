@@ -7,7 +7,6 @@ import * as hash from 'object-hash';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/sparql/sparql';
 
-// TODO move once SparqlQueryView is also refactored
 import './view-form.less';
 
 const FormItem = Form.Item;
