@@ -222,6 +222,7 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
                   onClick={() => goTo(i._organizationLabel, i._label)}
                   actions={[
                     <AccessControl
+                      key={`access-control-${i['@id']}`}
                       path={`/${i._organizationLabel}/${i._label}`}
                       permissions={['projects/write']}
                     >

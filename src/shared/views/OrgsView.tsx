@@ -148,6 +148,7 @@ const OrgsView: React.FunctionComponent<OrgsViewProps> = ({ goTo }) => {
                 onClick={() => goTo(i._label)}
                 actions={[
                   <AccessControl
+                    key={`access-control-${i['@id']}`}
                     path={`/${i._label}`}
                     permissions={['organizations/write']}
                   >
