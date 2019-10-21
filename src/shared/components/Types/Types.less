@@ -18,6 +18,12 @@
     position: relative;
     top: -4px;
   }
+  &.-full {
+    display: block;
+    .label {
+      max-width: none;
+    }
+  }
 }
 
 .types-icon {
@@ -31,6 +37,7 @@
     }
   }
   .ant-tag {
+    height: 22px;
   }
   .ant-avatar-sm.ant-avatar-square {
     transition: opacity 0.3s ease;
