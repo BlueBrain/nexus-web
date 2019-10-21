@@ -4,8 +4,9 @@ import Helmet from 'react-helmet';
 import { push } from 'connected-react-router';
 import { match } from 'react-router';
 import { Spin, Card, Empty, Tabs } from 'antd';
-import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk';
+import { useNexusContext, useNexus } from '@bbp/react-nexus';
+import { Resource, DEFAULT_SCHEMA_ID } from '@bbp/nexus-sdk';
+import MetadataCardContainer from '../containers/MetadataCard';
 
 const TabPane = Tabs.TabPane;
 
@@ -63,6 +64,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
         <Helmet
           title={`${resource.description ||
             resource.name ||
+            resource.label ||
             resource['@id']} | ${projectLabel} | ${orgLabel} | Nexus Web`}
           meta={[
             {
@@ -95,9 +97,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                 </span>
                 {resource.name || resource['@id']}
               </h1>
-              <div>
-                <h1>Resource Metadata Card goes here!</h1>
-              </div>
+              <MetadataCardContainer resource={resource} />
               <Tabs defaultActiveKey="1">
                 <TabPane tab="JSON" key="1">
                   <h1>ResourceEditor Contaienr Goes Here</h1>
