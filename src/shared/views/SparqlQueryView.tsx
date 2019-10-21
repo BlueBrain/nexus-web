@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { match } from 'react-router';
 import * as queryString from 'query-string';
 import { push } from 'connected-react-router';
-import { Menu, Dropdown, Icon } from 'antd';
+import { Menu, Dropdown, Icon, notification } from 'antd';
 import { ViewList, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
@@ -29,21 +29,23 @@ const SparqlQueryView: React.FunctionComponent<{
     '@context': {},
     total: 0,
 
-    // @ts-ignore TODO fix incorrect typing in SDK
+    // @ts-ignore TODO: fix incorrect typing in SDK
     // Should be _results not _result!
     // https://github.com/BlueBrain/nexus/issues/753
     _results: [],
   });
   const nexus = useNexusContext();
   const decodedViewId = decodeURIComponent(viewId);
-  // const targetView = views.find((view: View) => view['@id'] === decodedViewId);
   const query = queryString.parse(location.search).query;
 
   React.useEffect(() => {
     nexus.View.list(orgLabel, projectLabel)
       .then(setViews)
-      .catch(() => {
-        // 503 ?
+      .catch(error => {
+        notification.error({
+          message: 'Problem loading Views',
+          description: error.message,
+        });
       });
   }, [orgLabel, projectLabel]);
 

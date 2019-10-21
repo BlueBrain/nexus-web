@@ -24,7 +24,7 @@ type Bindings = {
 
 const SparqlQueryForm: React.FunctionComponent<{
   query: string;
-  // TODO update response type
+  // TODO: update response type
   // after SDK is updated
   // https://github.com/BlueBrain/nexus/issues/755
   response: any | null;
