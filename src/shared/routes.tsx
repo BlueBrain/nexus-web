@@ -3,7 +3,7 @@ import OrgsView from './views/OrgsView';
 import ProjectsView from './views/ProjectsView';
 import Login from './views/Login';
 import Project from './views/Project';
-import Resource from './views/Resource';
+import ResourceView from './views/ResourceView';
 import { fetchOrgs } from './store/actions/nexus/orgs';
 import { fetchOrg } from './store/actions/nexus/activeOrg';
 import ElasticSearchQueryView from './views/ElasticSearchQueryView';
@@ -56,23 +56,7 @@ const routes: RouteWithData[] = [
   },
   {
     path: '/:org/:project/resources/:resourceId',
-    component: Resource,
-    loadData: (state, match) => async (dispatch, getState, state) => {
-      await fetchOrg(match && match.params && (match.params as any)['org'])(
-        dispatch,
-        getState,
-        state
-      );
-      await fetchAndAssignProject(
-        match && match.params && (match.params as any)['org'],
-        match && match.params && (match.params as any)['project']
-      )(dispatch, getState, state);
-      await fetchAndAssignResource(
-        match && match.params && (match.params as any)['org'],
-        match && match.params && (match.params as any)['project'],
-        match && match.params && (match.params as any)['resourceId']
-      )(dispatch, getState, state);
-    },
+    component: ResourceView,
   },
   {
     path: '/:org/:project/:viewId/_search',
