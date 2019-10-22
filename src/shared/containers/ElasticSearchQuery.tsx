@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
 
-import ElasticSearchQueryForm from '../components/ElasticSearchQueryForm';
+import ElasticSearchQueryForm from '../components/ViewForm/ElasticSearchQueryForm';
 
 const DEFAULT_PAGE_SIZE = 20;
 const DEFAULT_QUERY = {

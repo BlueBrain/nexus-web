@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { RouteProps, match } from 'react-router-dom';
 import OrgsView from './views/OrgsView';
 import ProjectsView from './views/ProjectsView';
@@ -7,8 +6,8 @@ import Project from './views/Project';
 import Resource from './views/Resource';
 import { fetchOrgs } from './store/actions/nexus/orgs';
 import { fetchOrg } from './store/actions/nexus/activeOrg';
-import { RawSparqlQuery } from './views/RawQuery';
-import RawElasticSearchQueryView from './views/ElasticSearchQueryView';
+import ElasticSearchQueryView from './views/ElasticSearchQueryView';
+import SparqlQueryView from './views/SparqlQueryView';
 import ACLsView from './views/ACLsView';
 import { fetchAndAssignProject } from './store/actions/nexus/projects';
 import { fetchAndAssignResource } from './store/actions/nexus/resource';
@@ -76,16 +75,12 @@ const routes: RouteWithData[] = [
     },
   },
   {
-    path: '/:org/:project/_search',
-    component: RawElasticSearchQueryView,
-  },
-  {
     path: '/:org/:project/:viewId/_search',
-    component: RawElasticSearchQueryView,
+    component: ElasticSearchQueryView,
   },
   {
-    path: '/:org/:project/:view/sparql',
-    component: RawSparqlQuery,
+    path: '/:org/:project/:viewId/sparql',
+    component: SparqlQueryView,
   },
   {
     path: '/:org/:project/_settings/acls',

@@ -6,8 +6,7 @@ import { ElasticSearchViewQueryResponse } from '@bbp/nexus-sdk';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/javascript/javascript';
 
-// TODO move once SparqlQueryView is also refactored
-import '../RawQueryView/view-form.less';
+import './view-form.less';
 
 const FormItem = Form.Item;
 const ListItem = List.Item;
