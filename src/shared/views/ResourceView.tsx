@@ -41,7 +41,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
 
   const [{ busy, resource, error }, setResource] = React.useState<{
     busy: boolean;
-    // TODO remove once SDK is updated to allow generic Resource Types
+    // TODO: remove once SDK is updated to allow generic Resource Types
     resource: Resource & { [key: string]: any } | null;
     error: Error | null;
   }>({
@@ -78,7 +78,6 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
           resource._rev,
           value
         );
-        // TODO: push revision change to url
         goToResource(orgLabel, projectLabel, resourceId, _rev);
         notification.success({
           message: 'Resource saved',
@@ -103,23 +102,25 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
   useAsyncEffect(async () => {
     try {
       setResource({
+        resource,
         error: null,
-        resource: null,
         busy: true,
       });
       // TODO: get resource from source endpoint
       const latestResource = await nexus.Resource.get(
         orgLabel,
         projectLabel,
-        resourceId
+        resourceId,
+        { format: expanded ? 'expanded' : 'compacted' }
       );
-      const resource = rev
+      const newResource = rev
         ? await nexus.Resource.get(orgLabel, projectLabel, resourceId, {
             rev: Number(rev),
+            format: expanded ? 'expanded' : 'compacted',
           })
         : latestResource;
       setResource({
-        resource,
+        resource: newResource,
         error: null,
         busy: false,
       });
@@ -127,11 +128,11 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
     } catch (error) {
       setResource({
         error,
-        resource: null,
+        resource,
         busy: false,
       });
     }
-  }, [orgLabel, projectLabel, resourceId, rev]);
+  }, [orgLabel, projectLabel, resourceId, rev, expanded]);
 
   return (
     <div className="resource-view view-container">
@@ -173,7 +174,6 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                 <Alert
                   style={{ margin: '1em 0' }}
                   type="warning"
-                  closeText="I'm aware."
                   message="You are viewing an older version of this resource."
                   closable
                 />
