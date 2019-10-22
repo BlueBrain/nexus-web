@@ -3,27 +3,40 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { push } from 'connected-react-router';
 import { match } from 'react-router';
-import { Spin, Card, Empty, Tabs } from 'antd';
+import { Spin, Card, Empty, Tabs, notification, Alert } from 'antd';
+import * as queryString from 'query-string';
+import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
 
-import ResourceEditor from '../components/Resources/ResourceEditor';
-import MetadataCardComponent from '../components/MetadataCard';
 import { getResourceLabel } from '../utils';
+import MetadataCardComponent from '../components/MetadataCard';
+import ResourceEditor from '../components/Resources/ResourceEditor';
 
 const TabPane = Tabs.TabPane;
 
 interface ResourceViewProps {
+  location: Location;
   match: match<{ org: string; project: string; resourceId: string }>;
   goToOrg: (orgLabel: string) => void;
   goToProject: (orgLabel: string, projectLabel: string) => void;
+  goToResource: (
+    orgLabel: string,
+    projectLabel: string,
+    resourceId: string,
+    revision: number
+  ) => void;
 }
 
 const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
-  const { match, goToOrg, goToProject } = props;
+  const { match, goToOrg, goToProject, goToResource } = props;
   const {
     params: { org: orgLabel, project: projectLabel, resourceId },
   } = match;
+  const { expanded: expandedFromQuery, rev } = queryString.parse(
+    location.search
+  );
+  const [expanded, setExpanded] = React.useState(!!expandedFromQuery);
   const nexus = useNexusContext();
 
   const [{ busy, resource, error }, setResource] = React.useState<{
@@ -37,28 +50,88 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
     error: null,
   });
 
-  React.useEffect(() => {
-    setResource({
-      error: null,
-      resource: null,
-      busy: true,
-    });
-    nexus.Resource.get(orgLabel, projectLabel, resourceId)
-      .then(resource => {
+  const [latestResource, setLatestResource] = React.useState<Resource | null>(
+    null
+  );
+
+  const isLatest =
+    (latestResource && latestResource._rev) === (resource && resource._rev);
+
+  const isEditable = isLatest && !expanded;
+
+  const handleFormatChange = () => {
+    setExpanded(!expanded);
+  };
+
+  const handleEditFormSubmit = async (value: any) => {
+    if (resource) {
+      try {
         setResource({
           resource,
           error: null,
-          busy: false,
+          busy: true,
         });
-      })
-      .catch(error => {
+        const { _rev } = await nexus.Resource.update(
+          orgLabel,
+          projectLabel,
+          resourceId,
+          resource._rev,
+          value
+        );
+        // TODO: push revision change to url
+        goToResource(orgLabel, projectLabel, resourceId, _rev);
+        notification.success({
+          message: 'Resource saved',
+          description: getResourceLabel(resource),
+          duration: 2,
+        });
+      } catch (error) {
+        notification.error({
+          message: 'An unknown error occurred',
+          description: error.message,
+          duration: 0,
+        });
         setResource({
           error,
           resource: null,
           busy: false,
         });
+      }
+    }
+  };
+
+  useAsyncEffect(async () => {
+    try {
+      setResource({
+        error: null,
+        resource: null,
+        busy: true,
       });
-  }, [orgLabel, projectLabel, resourceId]);
+      // TODO: get resource from source endpoint
+      const latestResource = await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        resourceId
+      );
+      const resource = rev
+        ? await nexus.Resource.get(orgLabel, projectLabel, resourceId, {
+            rev: Number(rev),
+          })
+        : latestResource;
+      setResource({
+        resource,
+        error: null,
+        busy: false,
+      });
+      setLatestResource(latestResource);
+    } catch (error) {
+      setResource({
+        error,
+        resource: null,
+        busy: false,
+      });
+    }
+  }, [orgLabel, projectLabel, resourceId, rev]);
 
   return (
     <div className="resource-view view-container">
@@ -96,16 +169,26 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                 </span>
                 {getResourceLabel(resource)}
               </h1>
+              {!isLatest && (
+                <Alert
+                  style={{ margin: '1em 0' }}
+                  type="warning"
+                  closeText="I'm aware."
+                  message="You are viewing an older version of this resource."
+                  closable
+                />
+              )}
               <MetadataCardComponent resource={resource} />
               <Tabs defaultActiveKey="1">
                 <TabPane tab="JSON" key="1">
-                  {/* <ResourceEditor
-                    // expanded={expanded}
-                    editable={true}
+                  <ResourceEditor
+                    busy={busy}
                     rawData={resource}
-                    onFormatChange={() => {}}
-                    onSubmit={() => {}}
-                  /> */}
+                    onSubmit={handleEditFormSubmit}
+                    onFormatChange={handleFormatChange}
+                    editable={isEditable}
+                    expanded={expanded}
+                  />
                 </TabPane>
                 <TabPane tab="History" key="history">
                   <h1>History Container Goes Here</h1>
@@ -124,6 +207,18 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
+    goToResource: (
+      orgLabel: string,
+      projectLabel: string,
+      resourceId: string,
+      revision: number
+    ) => {
+      dispatch(
+        push(
+          `/${orgLabel}/${projectLabel}/resources/${resourceId}?rev=${revision}`
+        )
+      );
+    },
     goToProject: (orgLabel: string, projectLabel: string) =>
       dispatch(push(`/${orgLabel}/${projectLabel}`)),
     goToOrg: (orgLabel: string) => dispatch(push(`/${orgLabel}`)),

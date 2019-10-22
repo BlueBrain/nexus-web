@@ -1,20 +1,17 @@
 import * as React from 'react';
-import { Button, Icon, Switch } from 'antd';
+import { Button, Icon, Switch, Spin } from 'antd';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
+import 'codemirror/mode/javascript/javascript';
+
 import './ResourceEditor.less';
 
-// Codemirror will not load on the server, so we need to make sure
-// the language support code doesn't load either.
-if (typeof window !== 'undefined') {
-  require('codemirror/mode/javascript/javascript');
-}
-
 export interface ResourceEditorProps {
-  rawData: { [key: string]: any }; // any object
+  rawData: { [key: string]: any };
   onSubmit: (rawData: { [key: string]: any }) => void;
   onFormatChange?(expanded: boolean): void;
-  editable: boolean;
+  editable?: boolean;
   editing?: boolean;
+  busy?: boolean;
   expanded?: boolean;
   showExpanded?: boolean;
 }
@@ -22,18 +19,23 @@ export interface ResourceEditorProps {
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const {
     rawData,
+    onFormatChange,
     onSubmit,
-    editable,
+    editable = false,
+    busy = false,
     editing = false,
     expanded = false,
     showExpanded = true,
   } = props;
+
   const [isEditing, setEditing] = React.useState(editing);
   const [valid, setValid] = React.useState(true);
   const [value, setValue] = React.useState(rawData);
+
   React.useEffect(() => {
     setEditing(false);
   }, [rawData]); // only runs when Editor receives new resource to edit
+
   const handleChange = (editor: any, data: any, value: any) => {
     if (!editable) {
       return;
@@ -53,6 +55,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
       onSubmit(value);
     }
   };
+
   return (
     <div className={valid ? 'resource-editor' : 'resource-editor _invalid'}>
       <div className="control-panel">
@@ -84,7 +87,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
               checkedChildren="expanded"
               unCheckedChildren="expand"
               checked={expanded}
-              onChange={props.onFormatChange}
+              onChange={onFormatChange}
             />
           )}
           {editable && isEditing && valid && (
@@ -100,17 +103,19 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         </div>
       </div>
 
-      <CodeMirror
-        value={JSON.stringify(rawData, null, 2)}
-        options={{
-          readOnly: !editable,
-          mode: { name: 'javascript', json: true },
-          theme: 'base16-light',
-          lineNumbers: true,
-          viewportMargin: Infinity,
-        }}
-        onChange={handleChange}
-      />
+      <Spin spinning={busy}>
+        <CodeMirror
+          value={JSON.stringify(rawData, null, 2)}
+          options={{
+            readOnly: !editable,
+            mode: { name: 'javascript', json: true },
+            theme: 'base16-light',
+            lineNumbers: true,
+            viewportMargin: Infinity,
+          }}
+          onChange={handleChange}
+        />
+      </Spin>
     </div>
   );
 };
