@@ -15,7 +15,7 @@ import { Resource } from '@bbp/nexus-sdk';
 import TypesIcon from '../Types/TypesIcon';
 import UserAvatar from '../User/Avatar';
 import Copy from '../Copy';
-import { getUsername } from '../../utils';
+import { getUsername, getResourceLabel } from '../../utils';
 
 import './MetadataCard.less';
 
@@ -38,7 +38,7 @@ const MetadataCardComponent: React.FunctionComponent<{
     },
   } = props;
 
-  const name = props.resource.name || props.resource.label || id;
+  const label = getResourceLabel(props.resource);
   const userName = getUsername(_createdBy);
   const types: string[] = Array.isArray(type) ? type : [type];
 
@@ -46,7 +46,7 @@ const MetadataCardComponent: React.FunctionComponent<{
     <Card
       className="metadata-card"
       cover={preview}
-      title={name}
+      title={label}
       extra={
         <div className="actions">
           <Copy

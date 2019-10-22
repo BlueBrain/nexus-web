@@ -9,6 +9,7 @@ import { Resource } from '@bbp/nexus-sdk';
 
 import ResourceEditor from '../components/Resources/ResourceEditor';
 import MetadataCardComponent from '../components/MetadataCard';
+import { getResourceLabel } from '../utils';
 
 const TabPane = Tabs.TabPane;
 
@@ -20,11 +21,10 @@ interface ResourceViewProps {
 
 const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
   const { match, goToOrg, goToProject } = props;
-  const nexus = useNexusContext();
-
   const {
     params: { org: orgLabel, project: projectLabel, resourceId },
   } = match;
+  const nexus = useNexusContext();
 
   const [{ busy, resource, error }, setResource] = React.useState<{
     busy: boolean;
@@ -64,16 +64,13 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
     <div className="resource-view view-container">
       {!!resource && (
         <Helmet
-          title={`${resource.description ||
-            resource.name ||
-            resource.label ||
-            resource['@id']} | ${projectLabel} | ${orgLabel} | Nexus Web`}
+          title={`${getResourceLabel(
+            resource
+          )} | ${projectLabel} | ${orgLabel} | Nexus Web`}
           meta={[
             {
               name: 'description',
-              content: `
-                    ${resource.description || resource.name || resource['@id']}
-                  `,
+              content: getResourceLabel(resource),
             },
           ]}
         />
@@ -97,7 +94,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                   </a>{' '}
                   |{' '}
                 </span>
-                {resource.name || resource['@id']}
+                {getResourceLabel(resource)}
               </h1>
               <MetadataCardComponent resource={resource} />
               <Tabs defaultActiveKey="1">

@@ -1,4 +1,5 @@
 import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
+import { Resource } from '@bbp/nexus-sdk';
 
 /**
  * getProp utility - an alternative to lodash.get
@@ -203,4 +204,18 @@ export function blacklistKeys(raw: { [key: string]: any }, keys: string[]) {
       obj[key] = raw[key];
       return obj;
     }, {});
+}
+
+/**
+ * Returns a nice human label based on @mfsy 's suggestions
+ *
+ * @param {Resource} resource
+ * @returns {string} human readable label
+ */
+export function getResourceLabel(
+  resource: Resource & {
+    [key: string]: any;
+  }
+) {
+  return resource.name || resource.label || resource['@id'];
 }
