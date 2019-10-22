@@ -12,6 +12,7 @@ import { Resource } from '@bbp/nexus-sdk';
 import { getResourceLabel } from '../utils';
 import MetadataCardComponent from '../components/MetadataCard';
 import ResourceEditor from '../components/Resources/ResourceEditor';
+import HistoryContainer from '../containers/HistoryContainer';
 
 const TabPane = Tabs.TabPane;
 
@@ -191,7 +192,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                   />
                 </TabPane>
                 <TabPane tab="History" key="history">
-                  <h1>History Container Goes Here</h1>
+                  <HistoryContainer resource={resource} />
                 </TabPane>
                 <TabPane tab="Links" key="2">
                   <h1>Links Container Goes Here</h1>
