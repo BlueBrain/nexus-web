@@ -51,9 +51,9 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
     error: null,
   });
 
-  const [latestResource, setLatestResource] = React.useState<Resource | null>(
-    null
-  );
+  const [latestResource, setLatestResource] = React.useState<
+    Resource & { [key: string]: any } | null
+  >(null);
 
   const isLatest =
     (latestResource && latestResource._rev) === (resource && resource._rev);
@@ -159,7 +159,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
               />
             </Card>
           )}
-          {!!resource && !error && (
+          {!!resource && !!latestResource && !error && (
             <>
               <h1 className="name">
                 <span>
@@ -193,7 +193,20 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                 </TabPane>
                 <TabPane tab="History" key="history">
                   <HistoryContainer
-                    resource={resource}
+                    self={
+                      latestResource._self ||
+                      // if expanded
+                      latestResource[
+                        'https://bluebrain.github.io/nexus/vocabulary/self'
+                      ]
+                    }
+                    latestRev={
+                      latestResource._rev ||
+                      // if expanded
+                      latestResource[
+                        'https://bluebrain.github.io/nexus/vocabulary/rev'
+                      ]
+                    }
                     link={(rev: number) => {
                       return (
                         <a

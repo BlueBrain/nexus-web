@@ -12,9 +12,10 @@ import {
 import HistoryComponent from '../components/History';
 
 const HistoryContainer: React.FunctionComponent<{
-  resource: Resource;
+  self: string;
+  latestRev: number;
   link?: (rev: number) => React.ReactNode;
-}> = ({ resource, link }) => {
+}> = ({ self, latestRev, link }) => {
   const [revisions, setRevisions] = React.useState<
     {
       changes: object;
@@ -29,18 +30,13 @@ const HistoryContainer: React.FunctionComponent<{
     orgLabel,
     projectLabel,
     resourceId,
-  } = getResourceLabelsAndIdsFromSelf(resource._self);
+  } = getResourceLabelsAndIdsFromSelf(self);
 
   useAsyncEffect(async () => {
-    const {
-      orgLabel,
-      projectLabel,
-      resourceId,
-    } = getResourceLabelsAndIdsFromSelf(resource._self);
     // This creates an array like [0,1,2,3]
     // so if you have 4 revisions
     // it will be [0,1,2,3]
-    const promises = [...Array(resource._rev).keys()]
+    const promises = [...Array(latestRev).keys()]
       // now map them to resource revisions
       .map((index: number) => {
         return nexus.Resource.get(orgLabel, projectLabel, resourceId, {

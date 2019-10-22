@@ -19,7 +19,11 @@ const HistoryComponent: React.FunctionComponent<{
       {revisions.map((revision, index) => {
         if (index === 0) {
           return (
-            <Timeline.Item className="created-at" dot={<Icon type="star" />}>
+            <Timeline.Item
+              key={index}
+              className="created-at"
+              dot={<Icon type="star" />}
+            >
               <div>
                 {' '}
                 {link && link(index + 1)} created by <b>{revision.userName}</b>{' '}
@@ -29,7 +33,10 @@ const HistoryComponent: React.FunctionComponent<{
           );
         }
         return (
-          <Timeline.Item color={revision.hasChanges ? 'blue' : 'red'}>
+          <Timeline.Item
+            key={index}
+            color={revision.hasChanges ? 'blue' : 'red'}
+          >
             <div>
               {' '}
               {link && link(index + 1)} updated by <b>{revision.userName}</b> on{' '}
