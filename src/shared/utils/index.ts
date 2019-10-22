@@ -219,26 +219,3 @@ export function getResourceLabel(
 ) {
   return resource.name || resource.label || resource['@id'];
 }
-
-/**
- * Returns a resource's administrative info
- *
- * @param {Resource} resource
- * @returns {{
- * orgLabel: string,
- * projectLabel: string,
- * schemaId: string,
- * resourceId: string
- * }}
- */
-export function getResourceLabelsAndIds(resource: Resource) {
-  const [resourceId, schemaId, projectLabel, orgLabel] = resource._self
-    .split('/')
-    .reverse();
-  return {
-    orgLabel,
-    projectLabel,
-    schemaId,
-    resourceId,
-  };
-}
