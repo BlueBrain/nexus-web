@@ -1,19 +1,9 @@
 import * as React from 'react';
 import * as moment from 'moment';
-import {
-  Card,
-  Icon,
-  Button,
-  Tooltip,
-  Divider,
-  Statistic,
-  Descriptions,
-} from 'antd';
-import { Meta } from 'antd/lib/list/Item';
+import { Card, Button, Tooltip, Divider, Descriptions } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
 
 import TypesIcon from '../Types/TypesIcon';
-import UserAvatar from '../User/Avatar';
 import Copy from '../Copy';
 import { getUsername, getResourceLabel } from '../../utils';
 
@@ -23,23 +13,31 @@ const MetadataCardComponent: React.FunctionComponent<{
   // TODO: fix type when sdk has generic Resource types
   resource: Resource & { [key: string]: any };
   preview?: React.ReactNode;
-}> = props => {
-  const {
-    preview,
-    resource: {
-      _rev,
-      '@type': type,
-      '@id': id,
-      _self,
-      _constrainedBy,
-      _createdAt,
-      _updatedAt,
-      _createdBy,
+}> = ({ resource, preview }) => {
+  // in case the resource has been expanded
+  const processedResource = Object.keys(resource).reduce(
+    (memo: { [key: string]: any }, key: string) => {
+      const value = resource[key]['@id'] ? resource[key]['@id'] : resource[key];
+      memo[
+        key.replace('https://bluebrain.github.io/nexus/vocabulary/', '_')
+      ] = value;
+      return memo;
     },
-  } = props;
-
-  const label = getResourceLabel(props.resource);
-  const userName = getUsername(_createdBy);
+    resource
+  );
+  const {
+    '@id': id,
+    '@type': type,
+    _createdBy: createdBy,
+    _createdAt: createdAt,
+    _updatedAt: updatedAt,
+    _constrainedBy: constrainedBy,
+    _rev: rev,
+    _self: self,
+  } = processedResource;
+  console.log({ processedResource });
+  const userName = getUsername(createdBy);
+  const label = getResourceLabel(resource);
   const types: string[] = Array.isArray(type) ? type : [type];
 
   return (
@@ -69,9 +67,9 @@ const MetadataCardComponent: React.FunctionComponent<{
           />
 
           <Copy
-            textToCopy={_self}
+            textToCopy={self}
             render={(copySuccess, triggerCopy) => (
-              <Tooltip title={copySuccess ? 'Copied!' : `Copy ${_self}`}>
+              <Tooltip title={copySuccess ? 'Copied!' : `Copy ${self}`}>
                 <Button
                   size="small"
                   icon={copySuccess ? 'check' : 'copy'}
@@ -92,15 +90,15 @@ const MetadataCardComponent: React.FunctionComponent<{
       <div>
         <Descriptions size={'small'}>
           <Descriptions.Item label="Created">
-            {moment(_createdAt).format('DD/MM/YYYY')} by <b>{userName}</b>
+            {moment(createdAt).format('DD/MM/YYYY')} by <b>{userName}</b>
           </Descriptions.Item>
           <Descriptions.Item label="Updated">
-            {moment(_updatedAt).fromNow()}
+            {moment(updatedAt).fromNow()}
           </Descriptions.Item>
-          <Descriptions.Item label="Revision">{_rev}</Descriptions.Item>
+          <Descriptions.Item label="Revision">{rev}</Descriptions.Item>
           <Descriptions.Item label="Schema">
-            <a href={_constrainedBy} target="_blank">
-              {_constrainedBy}
+            <a href={constrainedBy} target="_blank">
+              {constrainedBy}
             </a>
           </Descriptions.Item>
         </Descriptions>
