@@ -192,7 +192,25 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                   />
                 </TabPane>
                 <TabPane tab="History" key="history">
-                  <HistoryContainer resource={resource} />
+                  <HistoryContainer
+                    resource={resource}
+                    link={(rev: number) => {
+                      return (
+                        <a
+                          onClick={() => {
+                            goToResource(
+                              orgLabel,
+                              projectLabel,
+                              resourceId,
+                              rev
+                            );
+                          }}
+                        >
+                          Revision {rev}
+                        </a>
+                      );
+                    }}
+                  />
                 </TabPane>
                 <TabPane tab="Links" key="2">
                   <h1>Links Container Goes Here</h1>
