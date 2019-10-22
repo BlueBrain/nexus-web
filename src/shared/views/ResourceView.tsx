@@ -4,9 +4,11 @@ import Helmet from 'react-helmet';
 import { push } from 'connected-react-router';
 import { match } from 'react-router';
 import { Spin, Card, Empty, Tabs } from 'antd';
-import { useNexusContext, useNexus } from '@bbp/react-nexus';
-import { Resource, DEFAULT_SCHEMA_ID } from '@bbp/nexus-sdk';
-import MetadataCardContainer from '../containers/MetadataCard';
+import { useNexusContext } from '@bbp/react-nexus';
+import { Resource } from '@bbp/nexus-sdk';
+
+import ResourceEditor from '../components/Resources/ResourceEditor';
+import MetadataCardComponent from '../components/MetadataCard';
 
 const TabPane = Tabs.TabPane;
 
@@ -97,10 +99,16 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                 </span>
                 {resource.name || resource['@id']}
               </h1>
-              <MetadataCardContainer resource={resource} />
+              <MetadataCardComponent resource={resource} />
               <Tabs defaultActiveKey="1">
                 <TabPane tab="JSON" key="1">
-                  <h1>ResourceEditor Contaienr Goes Here</h1>
+                  {/* <ResourceEditor
+                    // expanded={expanded}
+                    editable={true}
+                    rawData={resource}
+                    onFormatChange={() => {}}
+                    onSubmit={() => {}}
+                  /> */}
                 </TabPane>
                 <TabPane tab="History" key="history">
                   <h1>History Container Goes Here</h1>
