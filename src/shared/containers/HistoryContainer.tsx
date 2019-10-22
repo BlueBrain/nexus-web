@@ -50,7 +50,6 @@ const HistoryContainer: React.FunctionComponent<{
 
     const metadataKeys = ['_rev', '_updatedAt', '_updatedBy'];
     const revisions = await Promise.all(promises);
-    console.log({ revisions });
     setRevisions(
       revisions.map((revision: Resource, index: number) => {
         const previous = blacklistKeys(
