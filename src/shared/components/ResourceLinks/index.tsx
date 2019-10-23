@@ -12,10 +12,7 @@ const ResourceLinks: React.FunctionComponent<{
 }> = props => {
   const { busy, error, links, total } = props;
   const scrollParent = React.useRef<HTMLDivElement>(null);
-  const handleLoadMore = () => {
-    console.log('load more plz');
-  };
-  console.log({ links });
+  const handleLoadMore = () => {};
   return (
     <div className="resource-links" ref={scrollParent}>
       <InfiniteScroll
