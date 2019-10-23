@@ -15,6 +15,7 @@ import ResourceEditor from '../components/Resources/ResourceEditor';
 import HistoryContainer from '../containers/HistoryContainer';
 
 const TabPane = Tabs.TabPane;
+const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
 
 interface ResourceViewProps {
   location: Location;
@@ -25,7 +26,10 @@ interface ResourceViewProps {
     orgLabel: string,
     projectLabel: string,
     resourceId: string,
-    revision: number
+    opt: {
+      revision?: number;
+      tab?: string;
+    }
   ) => void;
 }
 
@@ -37,6 +41,8 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
   const { expanded: expandedFromQuery, rev } = queryString.parse(
     location.search
   );
+  const activeTabKey = location.hash || DEFAULT_ACTIVE_TAB_KEY;
+
   const [expanded, setExpanded] = React.useState(!!expandedFromQuery);
   const nexus = useNexusContext();
 
@@ -60,6 +66,13 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
 
   const isEditable = isLatest && !expanded;
 
+  const handleTabChange = (activeTabKey: string) => {
+    goToResource(orgLabel, projectLabel, resourceId, {
+      revision: resource ? resource._rev : undefined,
+      tab: activeTabKey,
+    });
+  };
+
   const handleFormatChange = () => {
     setExpanded(!expanded);
   };
@@ -79,7 +92,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
           resource._rev,
           value
         );
-        goToResource(orgLabel, projectLabel, resourceId, _rev);
+        goToResource(orgLabel, projectLabel, resourceId, { revision: _rev });
         notification.success({
           message: 'Resource saved',
           description: getResourceLabel(resource),
@@ -180,8 +193,8 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                 />
               )}
               <MetadataCardComponent resource={resource} />
-              <Tabs defaultActiveKey="1">
-                <TabPane tab="JSON" key="1">
+              <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
+                <TabPane tab="JSON" key="#JSON">
                   <ResourceEditor
                     busy={busy}
                     rawData={resource}
@@ -191,7 +204,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                     expanded={expanded}
                   />
                 </TabPane>
-                <TabPane tab="History" key="history">
+                <TabPane tab="History" key="#history">
                   <HistoryContainer
                     self={
                       latestResource._self ||
@@ -211,12 +224,9 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                       return (
                         <a
                           onClick={() => {
-                            goToResource(
-                              orgLabel,
-                              projectLabel,
-                              resourceId,
-                              rev
-                            );
+                            goToResource(orgLabel, projectLabel, resourceId, {
+                              revision: rev,
+                            });
                           }}
                         >
                           Revision {rev}
@@ -225,7 +235,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                     }}
                   />
                 </TabPane>
-                <TabPane tab="Links" key="2">
+                <TabPane tab="Links" key="#links">
                   <h1>Links Container Goes Here</h1>
                 </TabPane>
               </Tabs>
@@ -243,11 +253,17 @@ const mapDispatchToProps = (dispatch: any) => {
       orgLabel: string,
       projectLabel: string,
       resourceId: string,
-      revision: number
+      opt: {
+        revision?: number;
+        tab?: string;
+      }
     ) => {
+      const { revision, tab } = opt;
       dispatch(
         push(
-          `/${orgLabel}/${projectLabel}/resources/${resourceId}?rev=${revision}`
+          `/${orgLabel}/${projectLabel}/resources/${resourceId}${
+            revision ? `?rev=${revision}` : ''
+          }${tab ? tab : ''}`
         )
       );
     },
