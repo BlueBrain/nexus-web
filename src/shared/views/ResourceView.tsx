@@ -13,6 +13,7 @@ import { getResourceLabel } from '../utils';
 import MetadataCardComponent from '../components/MetadataCard';
 import ResourceEditor from '../components/Resources/ResourceEditor';
 import HistoryContainer from '../containers/HistoryContainer';
+import ResourceLinksContainer from '../containers/ResourceLinks';
 
 const TabPane = Tabs.TabPane;
 const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
@@ -236,7 +237,24 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                   />
                 </TabPane>
                 <TabPane tab="Links" key="#links">
-                  <h1>Links Container Goes Here</h1>
+                  <div style={{ display: 'flex' }}>
+                    <div>
+                      <h2>Incoming</h2>
+                      <ResourceLinksContainer
+                        self={resource._self}
+                        rev={resource._rev}
+                        direction="incoming"
+                      />
+                    </div>
+                    <div>
+                      <h2>Outgoing</h2>
+                      <ResourceLinksContainer
+                        self={resource._self}
+                        rev={resource._rev}
+                        direction="outgoing"
+                      />
+                    </div>
+                  </div>
                 </TabPane>
               </Tabs>
             </>
