@@ -1,4 +1,9 @@
-import { Organization, Project, PaginatedList, Resource } from '@bbp/nexus-sdk-legacy';
+import {
+  Organization,
+  Project,
+  PaginatedList,
+  Resource,
+} from '@bbp/nexus-sdk-legacy';
 import {
   actionTypes as activeOrgActionTypes,
   ActiveOrgActions,
@@ -16,8 +21,6 @@ import {
   ResourceActions,
 } from '../actions/nexus/resource';
 import { FetchableState, createFetchReducer } from './utils';
-import { ResourceLink } from '@bbp/nexus-sdk-legacy/lib/Resource/types';
-import { linksReducer, LinksState } from './links';
 
 export interface NexusState {
   orgs: FetchableState<PaginatedList<Organization>>;
@@ -30,7 +33,6 @@ export interface NexusState {
     resource: Resource;
     dotGraph: string;
   }>;
-  links?: LinksState;
 }
 
 const initialState: NexusState = {
@@ -60,12 +62,6 @@ export default function nexusReducer(
     return {
       ...state,
       activeResource: resourceReducer(state.activeResource, action),
-    };
-  }
-  if (action.type.startsWith('@@nexus/LINKS_')) {
-    return {
-      ...state,
-      links: linksReducer(state.links, action),
     };
   }
   if (action.type.startsWith('@@nexus/ORG_')) {
