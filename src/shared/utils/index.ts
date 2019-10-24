@@ -242,3 +242,31 @@ export function getResourceLabelsAndIdsFromSelf(self: string) {
     resourceId,
   };
 }
+
+/**
+ * Returns an object with important metadata from an expanded resource
+ *
+ * @param {Resource} ExpandedResource
+ * @returns {Resource}
+ */
+export function getMetadataFromExpandedResource(
+  // TODO: update for https://github.com/BlueBrain/nexus/issues/771
+  expandedResource: Resource
+): Resource {
+  // when the resource has been expanded, all the metadata values
+  // would be replaced by their graph predicate IRI
+  // in this case we put them back as
+  // eg:  _rev instead of https://bluebrain.github.io/nexus/vocabulary/rev
+  return Object.keys(expandedResource).reduce(
+    (memo: { [key: string]: any }, key: string) => {
+      const value = expandedResource[key]['@id']
+        ? expandedResource[key]['@id']
+        : expandedResource[key];
+      memo[
+        key.replace('https://bluebrain.github.io/nexus/vocabulary/', '_')
+      ] = value;
+      return memo;
+    },
+    { ...expandedResource }
+  ) as Resource;
+}

@@ -14,33 +14,20 @@ const MetadataCardComponent: React.FunctionComponent<{
   resource: Resource & { [key: string]: any };
   preview?: React.ReactNode;
 }> = ({ resource, preview }) => {
-  // in case the resource has been expanded, all the metadata values
-  // would be replaced by their graph predicate IRI
-  // in this case we put them back as
-  // eg:  _rev instead of https://bluebrain.github.io/nexus/vocabulary/rev
-  const processedResource = Object.keys(resource).reduce(
-    (memo: { [key: string]: any }, key: string) => {
-      const value = resource[key]['@id'] ? resource[key]['@id'] : resource[key];
-      memo[
-        key.replace('https://bluebrain.github.io/nexus/vocabulary/', '_')
-      ] = value;
-      return memo;
-    },
-    { ...resource }
-  );
   const {
-    '@id': id,
-    '@type': type,
+    _constrainedBy: constrainedBy,
     _createdBy: createdBy,
     _createdAt: createdAt,
     _updatedAt: updatedAt,
-    _constrainedBy: constrainedBy,
     _rev: rev,
     _self: self,
-  } = processedResource;
+    '@type': type,
+    '@id': id,
+  } = resource;
+
   const userName = getUsername(createdBy);
   const label = getResourceLabel(resource);
-  const types: string[] = Array.isArray(type) ? type : [type];
+  const types: string[] = Array.isArray(type) ? type : [type || ''];
 
   return (
     <Card

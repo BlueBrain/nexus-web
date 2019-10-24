@@ -11,11 +11,16 @@ import { useNexusContext } from '@bbp/react-nexus';
 // @ts-ignore
 import { Resource, ResourceLink } from '@bbp/nexus-sdk';
 
-import { getResourceLabel, getResourceLabelsAndIdsFromSelf } from '../utils';
+import {
+  getResourceLabel,
+  getResourceLabelsAndIdsFromSelf,
+  getMetadataFromExpandedResource,
+} from '../utils';
 import MetadataCardComponent from '../components/MetadataCard';
 import ResourceEditor from '../components/Resources/ResourceEditor';
 import HistoryContainer from '../containers/HistoryContainer';
 import ResourceLinksContainer from '../containers/ResourceLinks';
+import ResourceActionsContainer from '../containers/ResourceActions';
 
 const TabPane = Tabs.TabPane;
 const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
@@ -204,7 +209,12 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                   closable
                 />
               )}
-              <MetadataCardComponent resource={resource} />
+              <MetadataCardComponent
+                resource={getMetadataFromExpandedResource(resource)}
+              />
+              <ResourceActionsContainer
+                resource={getMetadataFromExpandedResource(resource)}
+              />
               <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
                 <TabPane tab="JSON" key="#JSON">
                   <ResourceEditor
@@ -254,8 +264,8 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                     <div style={{ width: '48%' }}>
                       <h3>Incoming</h3>
                       <ResourceLinksContainer
-                        self={resource._self}
-                        rev={resource._rev}
+                        self={getMetadataFromExpandedResource(resource)._self}
+                        rev={getMetadataFromExpandedResource(resource)._rev}
                         direction="incoming"
                         onClick={handleGoToInternalLink}
                       />
@@ -263,8 +273,8 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                     <div style={{ width: '48%' }}>
                       <h3>Outgoing</h3>
                       <ResourceLinksContainer
-                        self={resource._self}
-                        rev={resource._rev}
+                        self={getMetadataFromExpandedResource(resource)._self}
+                        rev={getMetadataFromExpandedResource(resource)._rev}
                         direction="outgoing"
                         onClick={handleGoToInternalLink}
                       />
