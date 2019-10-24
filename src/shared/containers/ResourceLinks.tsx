@@ -14,7 +14,6 @@ const ResourceLinksContainer: React.FunctionComponent<{
   onClick?: (link: ResourceLink) => void;
 }> = ({ self, rev, direction, onClick }) => {
   const nexus = useNexusContext();
-  const [searchValue, setSearchValue] = React.useState('');
   const [{ from, size }, setPagination] = React.useState({
     from: 0,
     size: 20,
@@ -45,6 +44,45 @@ const ResourceLinksContainer: React.FunctionComponent<{
 
   useAsyncEffect(async () => {
     try {
+      setPagination({
+        size,
+        from: 0,
+      });
+      setLinks({
+        links,
+        total,
+        busy: true,
+        error: null,
+      });
+      const response = await nexus.Resource.links(
+        orgLabel,
+        projectLabel,
+        resourceId,
+        direction,
+        {
+          rev,
+          size,
+          from: 0,
+        }
+      );
+      setLinks({
+        links: response._results,
+        total: response._total,
+        busy: false,
+        error: null,
+      });
+    } catch (error) {
+      setLinks({
+        error,
+        links,
+        total,
+        busy: false,
+      });
+    }
+  }, [self]);
+
+  useAsyncEffect(async () => {
+    try {
       setLinks({
         links,
         total,
@@ -60,13 +98,12 @@ const ResourceLinksContainer: React.FunctionComponent<{
           rev,
           from,
           size,
-          q: searchValue,
         }
       );
       setLinks({
         links: [...links, ...response._results],
         total: response._total,
-        busy: true,
+        busy: false,
         error: null,
       });
     } catch (error) {
@@ -77,7 +114,8 @@ const ResourceLinksContainer: React.FunctionComponent<{
         busy: false,
       });
     }
-  }, [self, from, size]);
+  }, [from, size]);
+
   return (
     <ResourceLinks
       error={error}

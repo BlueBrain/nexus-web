@@ -1,10 +1,11 @@
 import * as React from 'react';
-import './ResourceLinks.less';
+import { Spin, Empty } from 'antd';
+import * as InfiniteScroll from 'react-infinite-scroller';
 // TODO: update when SDK has ResourceLink
 // @ts-ignore
 import { ResourceLink } from '@bbp/nexus-sdk';
+
 import ListItem from '../List/Item';
-import InfiniteScroll = require('react-infinite-scroller');
 import ResourceLinkItem from './ResourceLinkItem';
 
 const ResourceLinks: React.FunctionComponent<{
@@ -20,31 +21,34 @@ const ResourceLinks: React.FunctionComponent<{
   const hasMore = links.length < total;
   return (
     <div className="resource-links" ref={scrollParent}>
-      <InfiniteScroll
-        pageStart={0}
-        hasMore={hasMore}
-        loadMore={() => {
-          // We will manually load stuff with the load more button
-          // Otherwise there is an infinite loop that I don't
-          // understand
-        }}
-        loader={
-          <ListItem key={'Load More'} onClick={() => onLoadMore(links.length)}>
-            <a>Load More</a>
-          </ListItem>
-        }
-      >
-        {links.map(link => (
-          <ListItem
-            key={link['@id']}
-            onClick={() => {
-              onClick && onClick(link);
+      <Spin spinning={busy}>
+        {!!error && <Empty description={error.message} />}
+        {!error && (
+          <InfiniteScroll
+            pageStart={0}
+            hasMore={hasMore}
+            loadMore={() => {
+              // TODO: resolve loadMore infinite loop
+              // For now a work around is passing empty function
+              // then manually load stuff with the load more button
             }}
+            loader={
+              <ListItem
+                key={'Load More'}
+                onClick={() => onLoadMore(links.length)}
+              >
+                <a>Load More</a>
+              </ListItem>
+            }
           >
-            <ResourceLinkItem link={link} />
-          </ListItem>
-        ))}
-      </InfiniteScroll>
+            {links.map(link => (
+              <ListItem key={link['@id']}>
+                <ResourceLinkItem link={link} onInternalClick={onClick} />
+              </ListItem>
+            ))}
+          </InfiniteScroll>
+        )}
+      </Spin>
     </div>
   );
 };

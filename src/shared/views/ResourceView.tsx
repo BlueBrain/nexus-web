@@ -7,9 +7,11 @@ import { Spin, Card, Empty, Tabs, notification, Alert } from 'antd';
 import * as queryString from 'query-string';
 import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk';
+// TODO: update when SDK has ResourceLink
+// @ts-ignore
+import { Resource, ResourceLink } from '@bbp/nexus-sdk';
 
-import { getResourceLabel } from '../utils';
+import { getResourceLabel, getResourceLabelsAndIdsFromSelf } from '../utils';
 import MetadataCardComponent from '../components/MetadataCard';
 import ResourceEditor from '../components/Resources/ResourceEditor';
 import HistoryContainer from '../containers/HistoryContainer';
@@ -112,6 +114,15 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
         });
       }
     }
+  };
+
+  const handleGoToInternalLink = (link: ResourceLink) => {
+    const {
+      orgLabel,
+      projectLabel,
+      resourceId,
+    } = getResourceLabelsAndIdsFromSelf(link._self);
+    goToResource(orgLabel, projectLabel, resourceId, { tab: '#links' });
   };
 
   useAsyncEffect(async () => {
@@ -241,19 +252,21 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                     style={{ display: 'flex', justifyContent: 'space-between' }}
                   >
                     <div style={{ width: '48%' }}>
-                      <h2>Incoming</h2>
+                      <h3>Incoming</h3>
                       <ResourceLinksContainer
                         self={resource._self}
                         rev={resource._rev}
                         direction="incoming"
+                        onClick={handleGoToInternalLink}
                       />
                     </div>
                     <div style={{ width: '48%' }}>
-                      <h2>Outgoing</h2>
+                      <h3>Outgoing</h3>
                       <ResourceLinksContainer
                         self={resource._self}
                         rev={resource._rev}
                         direction="outgoing"
+                        onClick={handleGoToInternalLink}
                       />
                     </div>
                   </div>
