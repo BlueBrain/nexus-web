@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
+// TODO: update when SDK has ResourceLink
+// @ts-ignore
 import { ResourceLink } from '@bbp/nexus-sdk';
 import { getResourceLabelsAndIdsFromSelf } from '../utils';
 import ResourceLinks from '../components/ResourceLinks';
@@ -9,9 +11,14 @@ const ResourceLinksContainer: React.FunctionComponent<{
   self: string;
   rev: number;
   direction: 'incoming' | 'outgoing';
-  link?: (rev: number) => React.ReactNode;
-}> = ({ self, rev, direction, link }) => {
+  onClick?: (link: ResourceLink) => void;
+}> = ({ self, rev, direction, onClick }) => {
   const nexus = useNexusContext();
+  const [searchValue, setSearchValue] = React.useState('');
+  const [{ from, size }, setPagination] = React.useState({
+    from: 0,
+    size: 20,
+  });
   const [{ busy, error, links, total }, setLinks] = React.useState<{
     busy: boolean;
     error: Error | null;
@@ -28,6 +35,14 @@ const ResourceLinksContainer: React.FunctionComponent<{
     projectLabel,
     resourceId,
   } = getResourceLabelsAndIdsFromSelf(self);
+
+  const handleLoadMore = (from: number) => {
+    setPagination({
+      size,
+      from,
+    });
+  };
+
   useAsyncEffect(async () => {
     try {
       setLinks({
@@ -43,13 +58,14 @@ const ResourceLinksContainer: React.FunctionComponent<{
         direction,
         {
           rev,
-          from: 0,
-          size: 4,
+          from,
+          size,
+          q: searchValue,
         }
       );
       setLinks({
-        links: response._results,
-        total: response.total,
+        links: [...links, ...response._results],
+        total: response._total,
         busy: true,
         error: null,
       });
@@ -61,9 +77,16 @@ const ResourceLinksContainer: React.FunctionComponent<{
         busy: false,
       });
     }
-  }, [self]);
+  }, [self, from, size]);
   return (
-    <ResourceLinks error={error} links={links} total={total} busy={busy} />
+    <ResourceLinks
+      error={error}
+      links={links}
+      total={total}
+      busy={busy}
+      onLoadMore={handleLoadMore}
+      onClick={onClick}
+    />
   );
 };
 

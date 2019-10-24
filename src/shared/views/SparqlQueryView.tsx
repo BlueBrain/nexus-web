@@ -27,8 +27,8 @@ const SparqlQueryView: React.FunctionComponent<{
   } = match;
   const [{ _results: views }, setViews] = React.useState<ViewList>({
     '@context': {},
-    total: 0,
-
+    // @ts-ignore
+    _total: 0,
     // @ts-ignore TODO: fix incorrect typing in SDK
     // Should be _results not _result!
     // https://github.com/BlueBrain/nexus/issues/753
@@ -55,6 +55,8 @@ const SparqlQueryView: React.FunctionComponent<{
         <Menu.Item key={index}>
           <a
             onClick={() =>
+              // TODO: fix
+              // @ts-ignore
               goToView(orgLabel, projectLabel, view['@id'], view['@type'])
             }
           >

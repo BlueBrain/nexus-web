@@ -237,8 +237,10 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                   />
                 </TabPane>
                 <TabPane tab="Links" key="#links">
-                  <div style={{ display: 'flex' }}>
-                    <div>
+                  <div
+                    style={{ display: 'flex', justifyContent: 'space-between' }}
+                  >
+                    <div style={{ width: '48%' }}>
                       <h2>Incoming</h2>
                       <ResourceLinksContainer
                         self={resource._self}
@@ -246,7 +248,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                         direction="incoming"
                       />
                     </div>
-                    <div>
+                    <div style={{ width: '48%' }}>
                       <h2>Outgoing</h2>
                       <ResourceLinksContainer
                         self={resource._self}

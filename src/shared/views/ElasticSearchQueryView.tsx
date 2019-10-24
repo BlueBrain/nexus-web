@@ -25,13 +25,15 @@ const ElasticSearchQueryView: React.FunctionComponent<{
   const {
     params: { org: orgLabel, project: projectLabel, viewId },
   } = match;
-  const [{ _results: views, total: viewTotal }, setViews] = React.useState<
+  const [{ _results: views, _total: viewTotal }, setViews] = React.useState<
     ViewList
   >({
     '@context': {},
-    total: 0,
-
-    // @ts-ignore TODO fix incorrect typing in SDK
+    // TODO Update when typing is fixed in SDK
+    // @ts-ignore
+    _total: 0,
+    // TODO: fix incorrect typing in SDK
+    // @ts-ignore
     // Should be _results not _result!
     // https://github.com/BlueBrain/nexus/issues/753
     _results: [],
