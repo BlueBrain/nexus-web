@@ -227,11 +227,30 @@ export function getResourceLabel(
  * @returns {{
  * orgLabel: string,
  * projectLabel: string,
- * schemaId: string,
  * resourceId: string
  * }}
  */
 export function getResourceLabelsAndIdsFromSelf(self: string) {
+  // for system resource like Files or Schemas
+  const systemResourceTypes = [
+    'files',
+    'views',
+    'schemas',
+    'archives',
+    'resolvers',
+    'storages',
+  ];
+  const [id, project, org, systemResourceType] = self.split('/').reverse();
+
+  if (systemResourceTypes.includes(systemResourceType)) {
+    return {
+      orgLabel: org,
+      projectLabel: project,
+      resourceId: id,
+    };
+  }
+
+  // its a normal resource
   const [resourceId, schemaId, projectLabel, orgLabel] = self
     .split('/')
     .reverse();

@@ -21,6 +21,7 @@ import ResourceEditor from '../components/Resources/ResourceEditor';
 import HistoryContainer from '../containers/HistoryContainer';
 import ResourceLinksContainer from '../containers/ResourceLinks';
 import ResourceActionsContainer from '../containers/ResourceActions';
+import { isDeprecated } from '../utils/nexus-maybe';
 
 const TabPane = Tabs.TabPane;
 const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
@@ -206,6 +207,14 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                   style={{ margin: '1em 0' }}
                   type="warning"
                   message="You are viewing an older version of this resource."
+                  closable
+                />
+              )}
+              {isDeprecated(getMetadataFromExpandedResource(resource)) && (
+                <Alert
+                  style={{ margin: '1em 0' }}
+                  type="warning"
+                  message="This is a deprecated resource."
                   closable
                 />
               )}

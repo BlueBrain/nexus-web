@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { Tooltip, Button, Popconfirm } from 'antd';
-import { Resource } from '@bbp/nexus-sdk-legacy';
-import './resource-actions.less';
+import './ResourceActions.less';
 import {
-  isElasticView,
-  isSparqlView,
   isFile,
   chainPredicates,
   not,
   isDefaultElasticView,
   isDeprecated,
+  isView,
 } from '../../utils/nexus-maybe';
+import { Resource } from '@bbp/nexus-sdk';
 
 const actionTypes = [
   {
@@ -40,16 +39,9 @@ const actionTypes = [
     danger: true,
   },
   {
-    name: 'goToElasticSearchView',
-    predicate: isElasticView,
-    title: 'Query this ElasticSearch view',
-    shortTitle: 'Query',
-    icon: 'search',
-  },
-  {
-    name: 'goToSparqlView',
-    predicate: isSparqlView,
-    title: 'Query this Sparql view',
+    name: 'goToView',
+    predicate: isView,
+    title: 'Query this view',
     shortTitle: 'Query',
     icon: 'search',
   },
@@ -74,14 +66,14 @@ const makeButton = ({
   message?: React.ReactElement | string;
   shortTitle: string;
   danger?: boolean;
-}) => (resource: Resource, actionToDispatch: (resource: Resource) => void) => (
+}) => (resource: Resource, actionToDispatch: () => void) => (
   <div className="action" key={`${resource.id}-${title}`}>
     {danger ? (
       <Popconfirm
         title={
           message ? message : 'Are you sure you want to perform this action?'
         }
-        onConfirm={() => actionToDispatch && actionToDispatch(resource)}
+        onConfirm={() => actionToDispatch && actionToDispatch()}
         okText="Yes"
         cancelText="No"
       >
@@ -93,7 +85,7 @@ const makeButton = ({
       <Tooltip title={title}>
         <Button
           icon={icon}
-          onClick={() => actionToDispatch && actionToDispatch(resource)}
+          onClick={() => actionToDispatch && actionToDispatch()}
         >
           {shortTitle}
         </Button>
@@ -105,26 +97,21 @@ const makeButton = ({
 const makeActions = (
   resource: Resource,
   actionDispatchers: {
-    [key: string]: (resource: Resource) => void;
+    [key: string]: () => void;
   }
 ) =>
   actionTypes
-    // @ts-ignore
     .filter(action => action.predicate(resource))
     .map(action =>
       makeButton(action)(resource, actionDispatchers[action.name])
     );
 
-export interface ResourceActionsProps {
+const ResourceActions: React.FunctionComponent<{
   resource: Resource;
   actions: {
-    [key: string]: (resource: Resource) => void;
+    [key: string]: () => void;
   };
-}
-
-const ResourceActions: React.FunctionComponent<
-  ResourceActionsProps
-> = props => {
+}> = props => {
   const { resource, actions } = props;
   return (
     <section className="resource-actions">
