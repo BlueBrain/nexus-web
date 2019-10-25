@@ -8,26 +8,34 @@ export type InfiniteSearchProps = {
   onLoadMore({ searchValue }: { searchValue: string }): void;
   hasMore: boolean;
   defaultSearchValue?: string;
+  hasSearch?: boolean;
   height?: number;
 };
 const InfiniteSearch: React.FunctionComponent<InfiniteSearchProps> = props => {
-  const { onLoadMore, hasMore, defaultSearchValue } = props;
+  const {
+    onLoadMore,
+    hasMore,
+    defaultSearchValue = '',
+    hasSearch = true,
+  } = props;
   const [searchValue, setSearchValue] = React.useState<string>(
-    defaultSearchValue || ''
+    defaultSearchValue
   );
 
   return (
     <div className="infinite-search">
-      <Input.Search
-        className="search"
-        placeholder={'Search...'}
-        allowClear={true}
-        value={searchValue}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-          setSearchValue(e.currentTarget.value);
-          onLoadMore({ searchValue: e.currentTarget.value });
-        }}
-      />
+      {hasSearch && (
+        <Input.Search
+          className="search"
+          placeholder={'Search...'}
+          allowClear={true}
+          value={searchValue}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setSearchValue(e.currentTarget.value);
+            onLoadMore({ searchValue: e.currentTarget.value });
+          }}
+        />
+      )}
       <div
         className="scroll"
         style={{

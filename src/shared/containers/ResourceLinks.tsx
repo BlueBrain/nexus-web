@@ -7,6 +7,8 @@ import { ResourceLink } from '@bbp/nexus-sdk';
 import { getResourceLabelsAndIdsFromSelf } from '../utils';
 import ResourceLinks from '../components/ResourceLinks';
 
+const PAGE_SIZE = 10;
+
 const ResourceLinksContainer: React.FunctionComponent<{
   self: string;
   rev: number;
@@ -14,16 +16,14 @@ const ResourceLinksContainer: React.FunctionComponent<{
   onClick?: (link: ResourceLink) => void;
 }> = ({ self, rev, direction, onClick }) => {
   const nexus = useNexusContext();
-  const [{ from, size }, setPagination] = React.useState({
-    from: 0,
-    size: 20,
-  });
-  const [{ busy, error, links, total }, setLinks] = React.useState<{
+  const [{ busy, error, links, total, next }, setLinks] = React.useState<{
     busy: boolean;
     error: Error | null;
     links: ResourceLink[];
+    next: string | null;
     total: number;
   }>({
+    next: null,
     busy: false,
     error: null,
     links: [],
@@ -35,72 +35,23 @@ const ResourceLinksContainer: React.FunctionComponent<{
     resourceId,
   } = getResourceLabelsAndIdsFromSelf(self);
 
-  const handleLoadMore = (from: number) => {
-    setPagination({
-      size,
-      from,
-    });
-  };
-
-  useAsyncEffect(async () => {
-    try {
-      setPagination({
-        size,
-        from: 0,
-      });
-      setLinks({
-        links,
-        total,
-        busy: true,
-        error: null,
-      });
-      const response = await nexus.Resource.links(
-        orgLabel,
-        projectLabel,
-        resourceId,
-        direction,
-        {
-          rev,
-          size,
-          from: 0,
-        }
-      );
-      setLinks({
-        links: response._results,
-        total: response._total,
-        busy: false,
-        error: null,
-      });
-    } catch (error) {
-      setLinks({
-        error,
-        links,
-        total,
-        busy: false,
-      });
+  const handleLoadMore = async () => {
+    if (busy || !next) {
+      return;
     }
-  }, [self]);
-
-  useAsyncEffect(async () => {
     try {
       setLinks({
+        next,
         links,
         total,
         busy: true,
         error: null,
       });
-      const response = await nexus.Resource.links(
-        orgLabel,
-        projectLabel,
-        resourceId,
-        direction,
-        {
-          rev,
-          from,
-          size,
-        }
-      );
+      const response = await nexus.httpGet({
+        path: next,
+      });
       setLinks({
+        next: response._next || null,
         links: [...links, ...response._results],
         total: response._total,
         busy: false,
@@ -108,13 +59,59 @@ const ResourceLinksContainer: React.FunctionComponent<{
       });
     } catch (error) {
       setLinks({
+        next,
         error,
         links,
         total,
         busy: false,
       });
     }
-  }, [from, size]);
+  };
+
+  // Reset everything when self prop changes
+  useAsyncEffect(
+    async isMounted => {
+      if (!isMounted()) {
+        return;
+      }
+      try {
+        setLinks({
+          next,
+          links,
+          total,
+          busy: true,
+          error: null,
+        });
+        const response = await nexus.Resource.links(
+          orgLabel,
+          projectLabel,
+          resourceId,
+          direction,
+          {
+            rev,
+            size: PAGE_SIZE,
+            from: 0,
+          }
+        );
+        setLinks({
+          next: response._next || null,
+          links: response._results,
+          total: response._total,
+          busy: false,
+          error: null,
+        });
+      } catch (error) {
+        setLinks({
+          next,
+          error,
+          links,
+          total,
+          busy: false,
+        });
+      }
+    },
+    [self]
+  );
 
   return (
     <ResourceLinks

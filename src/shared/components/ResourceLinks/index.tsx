@@ -1,52 +1,41 @@
 import * as React from 'react';
 import { Spin, Empty } from 'antd';
-import * as InfiniteScroll from 'react-infinite-scroller';
 // TODO: update when SDK has ResourceLink
 // @ts-ignore
 import { ResourceLink } from '@bbp/nexus-sdk';
 
 import ListItem from '../List/Item';
 import ResourceLinkItem from './ResourceLinkItem';
+import InfiniteSearch from '../List/InfiniteSearch';
 
 const ResourceLinks: React.FunctionComponent<{
   busy: boolean;
   error: Error | null;
   links: ResourceLink[];
   total: number;
-  onLoadMore: (from: number) => void;
+  onLoadMore: () => void;
   onClick?: (link: ResourceLink) => void;
 }> = props => {
   const { busy, error, links, total, onLoadMore, onClick } = props;
   const scrollParent = React.useRef<HTMLDivElement>(null);
   const hasMore = links.length < total;
+
   return (
     <div className="resource-links" ref={scrollParent}>
       <Spin spinning={busy}>
         {!!error && <Empty description={error.message} />}
         {!error && (
-          <InfiniteScroll
-            pageStart={0}
+          <InfiniteSearch
+            onLoadMore={onLoadMore}
             hasMore={hasMore}
-            loadMore={() => {
-              // TODO: resolve loadMore infinite loop
-              // For now a work around is passing empty function
-              // then manually load stuff with the load more button
-            }}
-            loader={
-              <ListItem
-                key={'Load More'}
-                onClick={() => onLoadMore(links.length)}
-              >
-                <a>Load More</a>
-              </ListItem>
-            }
+            hasSearch={false}
           >
             {links.map(link => (
               <ListItem key={link['@id']}>
                 <ResourceLinkItem link={link} onInternalClick={onClick} />
               </ListItem>
             ))}
-          </InfiniteScroll>
+          </InfiniteSearch>
         )}
       </Spin>
     </div>
