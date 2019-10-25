@@ -61,7 +61,6 @@ const ResourceActionsContainer: React.FunctionComponent<{
           data
         );
       } catch (error) {
-        console.error(error);
         notification.error({
           message: `Could not download ${getResourceLabel(resource)}`,
           description: error,
