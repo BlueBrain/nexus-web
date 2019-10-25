@@ -1,12 +1,12 @@
 import * as React from 'react';
+import { notification } from 'antd';
+import { connect } from 'react-redux';
+import { push } from 'connected-react-router';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import ResourceActions from '../components/ResourceActions';
 import { getResourceLabelsAndIdsFromSelf, getResourceLabel } from '../utils';
-import { notification } from 'antd';
-import { connect } from 'react-redux';
-import { push } from 'connected-react-router';
 import { download } from '../utils/download';
 
 const ResourceActionsContainer: React.FunctionComponent<{
