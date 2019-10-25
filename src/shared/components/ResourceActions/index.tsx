@@ -8,7 +8,7 @@ import {
   isDefaultElasticView,
   isDeprecated,
   isView,
-} from '../../utils/nexus-maybe';
+} from '../../utils/nexusMaybe';
 import { Resource } from '@bbp/nexus-sdk';
 
 const actionTypes = [
