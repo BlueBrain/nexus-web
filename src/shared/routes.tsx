@@ -10,7 +10,6 @@ import ElasticSearchQueryView from './views/ElasticSearchQueryView';
 import SparqlQueryView from './views/SparqlQueryView';
 import ACLsView from './views/ACLsView';
 import { fetchAndAssignProject } from './store/actions/nexus/projects';
-import { fetchAndAssignResource } from './store/actions/nexus/resource';
 import { ThunkAction } from './store';
 import { RootState } from './store/reducers';
 import UserView from './views/UserView';
