@@ -16,7 +16,7 @@ import {
   getResourceLabelsAndIdsFromSelf,
   getMetadataFromExpandedResource,
 } from '../utils';
-import MetadataCardComponent from '../components/MetadataCard';
+import ResourceCardComponent from '../components/ResourceCard';
 import ResourceEditor from '../components/Resources/ResourceEditor';
 import HistoryContainer from '../containers/HistoryContainer';
 import ResourceLinksContainer from '../containers/ResourceLinks';
@@ -218,7 +218,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                   closable
                 />
               )}
-              <MetadataCardComponent
+              <ResourceCardComponent
                 resource={getMetadataFromExpandedResource(resource)}
               />
               <ResourceActionsContainer

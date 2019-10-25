@@ -7,9 +7,9 @@ import TypesIcon from '../Types/TypesIcon';
 import Copy from '../Copy';
 import { getUsername, getResourceLabel } from '../../utils';
 
-import './MetadataCard.less';
+import './ResourceCard.less';
 
-const MetadataCardComponent: React.FunctionComponent<{
+const ResourceCardComponent: React.FunctionComponent<{
   // TODO: fix type when sdk has generic Resource types
   resource: Resource & { [key: string]: any };
   preview?: React.ReactNode;
@@ -102,4 +102,4 @@ const MetadataCardComponent: React.FunctionComponent<{
   );
 };
 
-export default MetadataCardComponent;
+export default ResourceCardComponent;
