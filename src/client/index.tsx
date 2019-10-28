@@ -60,7 +60,7 @@ const setToken: Link = (operation: Operation, forward?: Link) => {
         },
       }
     : operation;
-  return forward ? forward(nextOperation) : Observable.of();
+  return forward ? forward(nextOperation) : new Observable();
 };
 
 // create Nexus instance

@@ -1,5 +1,5 @@
 import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource, ExpandedResource } from '@bbp/nexus-sdk';
 
 /**
  * getProp utility - an alternative to lodash.get
@@ -269,8 +269,7 @@ export function getResourceLabelsAndIdsFromSelf(self: string) {
  * @returns {Resource}
  */
 export function getMetadataFromExpandedResource(
-  // TODO: update for https://github.com/BlueBrain/nexus/issues/771
-  expandedResource: Resource
+  expandedResource: ExpandedResource
 ): Resource {
   // when the resource has been expanded, all the metadata values
   // would be replaced by their graph predicate IRI

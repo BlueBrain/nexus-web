@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
+import {
+  DEFAULT_SPARQL_VIEW_ID,
+  SparqlViewQueryResponse,
+} from '@bbp/nexus-sdk';
 
 import SparqlQueryForm from '../components/ViewForm/SparqlQueryForm';
 
@@ -25,7 +28,11 @@ const SparqlQueryContainer: React.FunctionComponent<{
   const [query, setQuery] = React.useState<string>(
     initialQuery || DEFAULT_QUERY
   );
-  const [{ response, busy, error }, setResponse] = React.useState({
+  const [{ response, busy, error }, setResponse] = React.useState<{
+    response: SparqlViewQueryResponse | null;
+    busy: boolean;
+    error: Error | null;
+  }>({
     response: null,
     busy: false,
     error: null,

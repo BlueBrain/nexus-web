@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
-// TODO: update when SDK has ResourceLink
-// @ts-ignore
 import { ResourceLink } from '@bbp/nexus-sdk';
 import { getResourceLabelsAndIdsFromSelf } from '../utils';
 import ResourceLinks from '../components/ResourceLinks';

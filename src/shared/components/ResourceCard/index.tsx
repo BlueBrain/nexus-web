@@ -10,8 +10,7 @@ import { getUsername, getResourceLabel } from '../../utils';
 import './ResourceCard.less';
 
 const ResourceCardComponent: React.FunctionComponent<{
-  // TODO: fix type when sdk has generic Resource types
-  resource: Resource & { [key: string]: any };
+  resource: Resource;
   preview?: React.ReactNode;
 }> = ({ resource, preview }) => {
   const {

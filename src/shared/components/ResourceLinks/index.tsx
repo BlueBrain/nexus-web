@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { Spin, Empty } from 'antd';
-// TODO: update when SDK has ResourceLink
-// @ts-ignore
 import { ResourceLink } from '@bbp/nexus-sdk';
 
 import ListItem from '../List/Item';

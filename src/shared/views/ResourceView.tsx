@@ -7,8 +7,6 @@ import { Spin, Card, Empty, Tabs, notification, Alert } from 'antd';
 import * as queryString from 'query-string';
 import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
-// TODO: update when SDK has ResourceLink
-// @ts-ignore
 import { Resource, ResourceLink } from '@bbp/nexus-sdk';
 
 import {
@@ -57,8 +55,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
 
   const [{ busy, resource, error }, setResource] = React.useState<{
     busy: boolean;
-    // TODO: remove once SDK is updated to allow generic Resource Types
-    resource: Resource & { [key: string]: any } | null;
+    resource: Resource | null;
     error: Error | null;
   }>({
     busy: false,
@@ -127,7 +124,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
       orgLabel,
       projectLabel,
       resourceId,
-    } = getResourceLabelsAndIdsFromSelf(link._self);
+    } = getResourceLabelsAndIdsFromSelf((link as Resource)._self);
     goToResource(orgLabel, projectLabel, resourceId, { tab: '#links' });
   };
 
