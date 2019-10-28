@@ -9,7 +9,6 @@ import { useNexusContext } from '@bbp/react-nexus';
 
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 import SparqlQueryContainer from '../containers/SparqlQuery';
-import { ElasticSearchView } from '@bbp/nexus-sdk-legacy';
 
 const SparqlQueryView: React.FunctionComponent<{
   match: match<{ org: string; project: string; viewId: string }>;
