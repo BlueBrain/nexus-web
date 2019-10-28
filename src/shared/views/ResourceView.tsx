@@ -9,17 +9,13 @@ import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, ResourceLink } from '@bbp/nexus-sdk';
 
-import {
-  getResourceLabel,
-  getResourceLabelsAndIdsFromSelf,
-  getMetadataFromExpandedResource,
-} from '../utils';
+import { getResourceLabel, getResourceLabelsAndIdsFromSelf } from '../utils';
 import ResourceCardComponent from '../components/ResourceCard';
-import ResourceEditor from '../components/Resources/ResourceEditor';
 import HistoryContainer from '../containers/HistoryContainer';
 import ResourceLinksContainer from '../containers/ResourceLinks';
 import ResourceActionsContainer from '../containers/ResourceActions';
 import { isDeprecated } from '../utils/nexusMaybe';
+import ResourceEditorContainer from '../containers/ResourceEditor';
 
 const TabPane = Tabs.TabPane;
 const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
@@ -36,12 +32,14 @@ interface ResourceViewProps {
     opt: {
       revision?: number;
       tab?: string;
+      expanded?: boolean;
     }
   ) => void;
 }
 
 const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
   const { match, goToOrg, goToProject, goToResource } = props;
+  const nexus = useNexusContext();
   const {
     params: { org: orgLabel, project: projectLabel, resourceId },
   } = match;
@@ -49,9 +47,6 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
     location.search
   );
   const activeTabKey = location.hash || DEFAULT_ACTIVE_TAB_KEY;
-
-  const [expanded, setExpanded] = React.useState(!!expandedFromQuery);
-  const nexus = useNexusContext();
 
   const [{ busy, resource, error }, setResource] = React.useState<{
     busy: boolean;
@@ -70,8 +65,6 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
   const isLatest =
     (latestResource && latestResource._rev) === (resource && resource._rev);
 
-  const isEditable = isLatest && !expanded;
-
   const handleTabChange = (activeTabKey: string) => {
     goToResource(orgLabel, projectLabel, resourceId, {
       revision: resource ? resource._rev : undefined,
@@ -79,8 +72,12 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
     });
   };
 
-  const handleFormatChange = () => {
-    setExpanded(!expanded);
+  const handleExpanded = (expanded: boolean) => {
+    goToResource(orgLabel, projectLabel, resourceId, {
+      expanded,
+      revision: resource ? resource._rev : undefined,
+      tab: activeTabKey,
+    });
   };
 
   const handleEditFormSubmit = async (value: any) => {
@@ -135,17 +132,15 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
         error: null,
         busy: true,
       });
-      const latestResource = await nexus.Resource.get(
+      const latestResource = (await nexus.Resource.get(
         orgLabel,
         projectLabel,
-        resourceId,
-        { format: expanded ? 'expanded' : 'compacted' }
-      );
+        resourceId
+      )) as Resource;
       const newResource = rev
-        ? await nexus.Resource.get(orgLabel, projectLabel, resourceId, {
+        ? ((await nexus.Resource.get(orgLabel, projectLabel, resourceId, {
             rev: Number(rev),
-            format: expanded ? 'expanded' : 'compacted',
-          })
+          })) as Resource)
         : latestResource;
       setResource({
         resource: newResource,
@@ -160,7 +155,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
         busy: false,
       });
     }
-  }, [orgLabel, projectLabel, resourceId, rev, expanded]);
+  }, [orgLabel, projectLabel, resourceId, rev]);
 
   return (
     <div className="resource-view view-container">
@@ -206,7 +201,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                   closable
                 />
               )}
-              {isDeprecated(getMetadataFromExpandedResource(resource)) && (
+              {isDeprecated(resource) && (
                 <Alert
                   style={{ margin: '1em 0' }}
                   type="warning"
@@ -214,39 +209,25 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                   closable
                 />
               )}
-              <ResourceCardComponent
-                resource={getMetadataFromExpandedResource(resource)}
-              />
-              <ResourceActionsContainer
-                resource={getMetadataFromExpandedResource(resource)}
-              />
+              <ResourceCardComponent resource={resource} />
+              <ResourceActionsContainer resource={resource} />
               <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
                 <TabPane tab="JSON" key="#JSON">
-                  <ResourceEditor
-                    busy={busy}
-                    rawData={resource}
+                  <ResourceEditorContainer
+                    self={resource._self}
+                    rev={resource._rev}
+                    defaultExpanded={
+                      !!expandedFromQuery && expandedFromQuery === 'true'
+                    }
+                    defaultEditable={isLatest}
                     onSubmit={handleEditFormSubmit}
-                    onFormatChange={handleFormatChange}
-                    editable={isEditable}
-                    expanded={expanded}
+                    onExpanded={handleExpanded}
                   />
                 </TabPane>
                 <TabPane tab="History" key="#history">
                   <HistoryContainer
-                    self={
-                      latestResource._self ||
-                      // if expanded
-                      latestResource[
-                        'https://bluebrain.github.io/nexus/vocabulary/self'
-                      ]
-                    }
-                    latestRev={
-                      latestResource._rev ||
-                      // if expanded
-                      latestResource[
-                        'https://bluebrain.github.io/nexus/vocabulary/rev'
-                      ]
-                    }
+                    self={latestResource._self}
+                    latestRev={latestResource._rev}
                     link={(rev: number) => {
                       return (
                         <a
@@ -269,8 +250,8 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                     <div style={{ width: '48%' }}>
                       <h3>Incoming</h3>
                       <ResourceLinksContainer
-                        self={getMetadataFromExpandedResource(resource)._self}
-                        rev={getMetadataFromExpandedResource(resource)._rev}
+                        self={resource._self}
+                        rev={resource._rev}
                         direction="incoming"
                         onClick={handleGoToInternalLink}
                       />
@@ -278,8 +259,8 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                     <div style={{ width: '48%' }}>
                       <h3>Outgoing</h3>
                       <ResourceLinksContainer
-                        self={getMetadataFromExpandedResource(resource)._self}
-                        rev={getMetadataFromExpandedResource(resource)._rev}
+                        self={resource._self}
+                        rev={resource._rev}
                         direction="outgoing"
                         onClick={handleGoToInternalLink}
                       />
@@ -304,14 +285,15 @@ const mapDispatchToProps = (dispatch: any) => {
       opt: {
         revision?: number;
         tab?: string;
+        expanded?: boolean;
       }
     ) => {
-      const { revision, tab } = opt;
+      const { revision, tab, expanded } = opt;
       dispatch(
         push(
           `/${orgLabel}/${projectLabel}/resources/${resourceId}${
             revision ? `?rev=${revision}` : ''
-          }${tab ? tab : ''}`
+          }${expanded ? '&expanded=true' : ''}${tab ? tab : ''}`
         )
       );
     },
