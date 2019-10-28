@@ -3,8 +3,8 @@ import { useAsyncEffect } from 'use-async-effect';
 import { ExpandedResource, ResourceSource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
-import ResourceEditor from '../components/Resources/ResourceEditor';
 import { getResourceLabelsAndIdsFromSelf } from '../utils';
+import ResourceEditor from '../components/ResourceEditor';
 
 const ResourceEditorContainer: React.FunctionComponent<{
   self: string;
