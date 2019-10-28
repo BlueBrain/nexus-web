@@ -45,7 +45,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
 
   useAsyncEffect(
     async isMounted => {
-      if (!isMounted) {
+      if (!isMounted()) {
         return;
       }
       try {
