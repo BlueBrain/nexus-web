@@ -135,7 +135,6 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
         error: null,
         busy: true,
       });
-      // TODO: get resource from source endpoint
       const latestResource = await nexus.Resource.get(
         orgLabel,
         projectLabel,

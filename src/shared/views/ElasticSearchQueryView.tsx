@@ -29,13 +29,7 @@ const ElasticSearchQueryView: React.FunctionComponent<{
     ViewList
   >({
     '@context': {},
-    // TODO Update when typing is fixed in SDK
-    // @ts-ignore
     _total: 0,
-    // TODO: fix incorrect typing in SDK
-    // @ts-ignore
-    // Should be _results not _result!
-    // https://github.com/BlueBrain/nexus/issues/753
     _results: [],
   });
   const nexus = useNexusContext();
