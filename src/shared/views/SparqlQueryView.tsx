@@ -27,11 +27,7 @@ const SparqlQueryView: React.FunctionComponent<{
   } = match;
   const [{ _results: views }, setViews] = React.useState<ViewList>({
     '@context': {},
-    total: 0,
-
-    // @ts-ignore TODO: fix incorrect typing in SDK
-    // Should be _results not _result!
-    // https://github.com/BlueBrain/nexus/issues/753
+    _total: 0,
     _results: [],
   });
   const nexus = useNexusContext();
@@ -54,9 +50,16 @@ const SparqlQueryView: React.FunctionComponent<{
       {views.map((view: View, index: number) => (
         <Menu.Item key={index}>
           <a
-            onClick={() =>
-              goToView(orgLabel, projectLabel, view['@id'], view['@type'])
-            }
+            onClick={() => {
+              if (view['@type']) {
+                return goToView(
+                  orgLabel,
+                  projectLabel,
+                  view['@id'],
+                  view['@type']
+                );
+              }
+            }}
           >
             {view['@id']}
           </a>

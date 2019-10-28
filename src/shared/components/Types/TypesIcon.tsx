@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Avatar, Tooltip, Tag } from 'antd';
-import * as Identicon from 'identicon.js';
+import { Tooltip, Tag } from 'antd';
 import './Types.less';
-import * as md5 from 'md5';
+import { labelOf } from '../../utils';
 
 export interface TypesIconProps {
   type: string;
@@ -12,21 +11,12 @@ const MAX_TYPES_TO_DISPLAY = 2;
 
 export const TypesIcon: React.SFC<TypesIconProps> = ({ type }) => {
   const typeString = type.toString();
-  // must use a hash as Identicon requires a string of atleast 15 chars
-  // (making the resulting image effectively a visual hash)
-  const typeHash = md5(typeString);
-  const iconSizeInPixels = 20;
-  const imageData = new Identicon(typeHash, {
-    size: iconSizeInPixels,
-    background: [255, 255, 255, 0],
-  }).toString();
-  const src = `data:image/png;base64,${imageData}`;
+  const typeLabel = labelOf(typeString);
   return (
     <div className="types-icon">
       <Tooltip title={typeString}>
         <Tag>
-          <Avatar size="small" shape="square" src={src} />
-          <span className="label">{typeString}</span>
+          <span className="label">{typeLabel}</span>
         </Tag>
       </Tooltip>
     </div>
@@ -63,7 +53,7 @@ const TypesIconList: React.SFC<TypesIconListProps> = ({
   }
 
   return (
-    <ul className="types-list">
+    <ul className={`types-list ${!!full ? '-full' : ''}`}>
       {typesToDisplay.map((type: string) => (
         <TypesIcon type={type} key={type} />
       ))}

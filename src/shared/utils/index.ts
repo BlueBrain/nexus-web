@@ -1,4 +1,4 @@
-import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
+import { Resource, Identity } from '@bbp/nexus-sdk';
 
 /**
  * getProp utility - an alternative to lodash.get
@@ -203,4 +203,60 @@ export function blacklistKeys(raw: { [key: string]: any }, keys: string[]) {
       obj[key] = raw[key];
       return obj;
     }, {});
+}
+
+/**
+ * Returns a nice human label based on @mfsy 's suggestions
+ *
+ * @param {Resource} resource
+ * @returns {string} human readable label
+ */
+export function getResourceLabel(
+  resource: Resource & {
+    [key: string]: any;
+  }
+) {
+  return resource.name || resource.label || resource['@id'];
+}
+
+/**
+ * Returns a resource's administrative info
+ *
+ * @param {self} string
+ * @returns {{
+ * orgLabel: string,
+ * projectLabel: string,
+ * resourceId: string
+ * }}
+ */
+export function getResourceLabelsAndIdsFromSelf(self: string) {
+  // for system resource like Files or Schemas
+  const systemResourceTypes = [
+    'files',
+    'views',
+    'schemas',
+    'archives',
+    'resolvers',
+    'storages',
+  ];
+  const [id, project, org, systemResourceType] = self.split('/').reverse();
+
+  if (systemResourceTypes.includes(systemResourceType)) {
+    return {
+      orgLabel: org,
+      projectLabel: project,
+      resourceId: id,
+    };
+  }
+
+  // its a normal resource
+  const [resourceId, schemaId, projectLabel, orgLabel] = self
+    .split('/')
+    .reverse();
+  return {
+    orgLabel,
+    projectLabel,
+    schemaId,
+    resourceId,
+  };
 }
