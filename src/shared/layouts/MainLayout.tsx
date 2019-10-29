@@ -49,7 +49,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
 
   const preloadedState: RootState = (window as any).__PRELOADED_STATE__;
   const apiBase = new URL(preloadedState.config.apiEndpoint);
-  const state = useNexus<serviceVersions>(
+  const versions = useNexus<serviceVersions>(
     (nexus: NexusClient) =>
       nexus.httpGet({ path: `${apiBase.origin}/version`, context: { as: 'json' } }),
   );
@@ -96,7 +96,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
         onLoginClick={() => goTo(`/login${getDestinationParam()}`)}
         version={version}
         githubIssueURL={githubIssueURL}
-        serviceVersions={state.data}
+        serviceVersions={versions.data}
       />
       <div className="MainLayout_body">{children}</div>
     </>
