@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { push } from 'connected-react-router';
-import Header from '../components/Header';
+import  Header, { serviceVersions } from '../components/Header';
 import getUserManager from '../../client/userManager';
 import { version, url as githubIssueURL } from '../../../package.json';
 
@@ -12,6 +12,9 @@ import { Realm } from '@bbp/nexus-sdk-legacy';
 import { getLogoutUrl, getDestinationParam } from '../utils';
 import { UserManager } from 'oidc-client';
 import { RootState } from '../store/reducers';
+import { NexusClient } from '@bbp/nexus-sdk';
+import { useNexus } from '@bbp/react-nexus';
+
 
 const favicon = require('../favicon.png');
 const TITLE = 'A knowledge graph for data-driven science';
@@ -43,6 +46,13 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
     localStorage.removeItem('nexus__state');
     userManager && userManager.signoutRedirect();
   };
+
+  const preloadedState: RootState = (window as any).__PRELOADED_STATE__;
+  const apiBase = new URL(preloadedState.config.apiEndpoint);
+  const state = useNexus<serviceVersions>(
+    (nexus: NexusClient) =>
+      nexus.httpGet({ path: `${apiBase.origin}/version`, context: { as: 'json' } }),
+  );
 
   return (
     <>
@@ -86,6 +96,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
         onLoginClick={() => goTo(`/login${getDestinationParam()}`)}
         version={version}
         githubIssueURL={githubIssueURL}
+        serviceVersions={state.data}
       />
       <div className="MainLayout_body">{children}</div>
     </>

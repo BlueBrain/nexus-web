@@ -1,6 +1,15 @@
 import * as React from 'react';
 import { shallow, mount } from 'enzyme';
-import Header from '..';
+import Header, {  serviceVersions } from '..';
+
+const versions:serviceVersions = {
+  admin: '1.0',
+  blazegraph: '1.0',
+  elasticsearch: '1.0',
+  iam: '1.0',
+  kg : '1.0',
+  storage: 'asda'
+};
 
 const links: React.ReactNode[] = [
   <p>A p tag</p>,
@@ -8,10 +17,10 @@ const links: React.ReactNode[] = [
 ];
 
 const shallowHeader = shallow(
-  <Header name="Mark Hamill" links={links} githubIssueURL="" version="" />
+  <Header name="Mark Hamill" links={links} githubIssueURL="" version="" serviceVersions={versions}/>
 );
 const wrapper = mount(
-  <Header name="Mark Hamill" links={links} githubIssueURL="" version="" />
+  <Header name="Mark Hamill" links={links} githubIssueURL="" version="" serviceVersions={versions} />
 );
 
 describe('Header component', () => {
