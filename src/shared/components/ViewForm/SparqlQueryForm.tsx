@@ -38,9 +38,9 @@ const SparqlQueryForm: React.FunctionComponent<{
         : response.head && (response as SelectQueryResponse).head.vars)) ||
     [];
 
-  const data: any =
+  const data: any[] =
     (response &&
-      (!!(response as AskQueryResponse).boolean ? (response as AskQueryResponse).boolean.toString() : (response as SelectQueryResponse).results.bindings)) ||
+      (!!(response as AskQueryResponse).boolean ? [(response as AskQueryResponse).boolean.toString()] : (response as SelectQueryResponse).results.bindings)) ||
     [];
 
   const handleChange = (editor: any, data: any, value: string) => {
