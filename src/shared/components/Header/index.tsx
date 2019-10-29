@@ -2,7 +2,9 @@ import * as React from 'react';
 import { Menu, Dropdown, Icon, Button, Popover } from 'antd';
 import './Header.less';
 import Copy from '../Copy';
-
+import { NexusClient } from '@bbp/nexus-sdk';
+import { useNexus } from '@bbp/react-nexus';
+import { RootState } from '../../../shared/store/reducers';
 const logo = require('../../logo.svg');
 const epflLogo = require('../../EPFL-logo.svg');
 
@@ -10,6 +12,32 @@ interface InformationContentProps {
   version: string;
   githubIssueURL: string;
 }
+
+const VersionInfo = () => {
+  const preloadedState: RootState = (window as any).__PRELOADED_STATE__;
+  const apiBase = new URL(preloadedState.config.apiEndpoint);
+  type versions = {
+    admin: string;
+    blazegraph: string;
+    elasticsearch: string;
+    iam: string;
+    kg : string;
+    storage: string;
+  };
+  const state = useNexus<versions>(
+    (nexus: NexusClient) =>
+      nexus.httpGet({ path: `${apiBase.origin}/version`, context: { as: 'json' } }),
+  );
+  return (state.data? <> 
+      <p><h4>Nexus Services</h4></p>
+      <p><label>Admin</label> v{state.data.admin}</p>
+      <p><label>IAm</label> v{state.data.iam}</p>
+      <p><label>Knowledge Graph</label> v{state.data.kg}</p>
+      <p><h4>Index Services</h4></p>
+      <p><label>Blaze Graph</label> v{state.data.blazegraph}</p>
+      <p><label>Elastic Search</label> v{state.data.elasticsearch}</p>
+    </> : null);
+};
 
 const InformationContent = (props: InformationContentProps) => {
   return (
@@ -33,8 +61,9 @@ const InformationContent = (props: InformationContentProps) => {
         {'| '}
         <a href="https://bluebrain.epfl.ch/" target="_blank">
           <span className="bbp-logo">Blue Brain Project</span>
-        </a>
+        </a> 
       </p>
+      <VersionInfo />
     </>
   );
 };

@@ -69,9 +69,11 @@ const nexus = createNexusClient({
   uri: preloadedState.config.apiEndpoint,
   links: [setToken],
 });
+
 const nexusLegacy = new Nexus({
   environment: preloadedState.config.apiEndpoint,
 });
+
 Nexus.setEnvironment(preloadedState.config.apiEndpoint);
 // create redux store
 const store = configureStore(history, { nexusLegacy, nexus }, initialState);
