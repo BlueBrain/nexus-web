@@ -1,18 +1,19 @@
 import * as React from 'react';
-import { Upload, Icon, message, Switch, Select } from 'antd';
-import { Storage, Project, NexusFile } from '@bbp/nexus-sdk-legacy';
-import { StorageCommon } from '@bbp/nexus-sdk-legacy/lib/Storage/types';
-import { CreateFileOptions } from '@bbp/nexus-sdk-legacy/lib/File/types';
+import { Upload, Icon, message, Switch, Select, notification } from 'antd';
+import { UploadFile } from 'antd/lib/upload/interface';
+import { NexusFile, Storage } from '@bbp/nexus-sdk';
+
 import { labelOf } from '../../utils';
-import { UploadFile, RcCustomRequestOptions } from 'antd/lib/upload/interface';
 
 const Dragger = Upload.Dragger;
 
 interface FileUploaderProps {
-  onFileUpload: (file: File, options?: CreateFileOptions) => Promise<NexusFile>;
+  onFileUpload: (file: File, storageId?: string) => Promise<NexusFile>;
   makeFileLink: (nexusFile: NexusFile) => string;
   goToFile: (nexusFile: NexusFile) => void;
-  project: Project;
+  orgLabel: string;
+  projectLabel: string;
+  storages: Storage[];
 }
 
 interface CustomFileRequest {
@@ -28,29 +29,21 @@ interface CustomFileRequest {
 }
 
 const StorageMenu = ({
-  orgLabel,
-  projectLabel,
   onStorageSelected,
+  storages,
 }: {
   orgLabel: string;
   projectLabel: string;
+  storages: Storage[];
   onStorageSelected(id: string): any;
 }) => {
-  const [storages, setStorages] = React.useState<StorageCommon[]>([]);
-
-  React.useEffect(() => {
-    Storage.list(orgLabel, projectLabel, { deprecated: false })
-      .then(data => setStorages(data._results))
-      .catch(e => setStorages([]));
-  }, []);
-
   return (
     <Select
       style={{ width: '100%' }}
       placeholder="Default storage selected"
       onChange={onStorageSelected}
     >
-      {storages.map((s: StorageCommon) => (
+      {storages.map((s: Storage) => (
         <Select.Option key={s['@id']} value={s['@id']}>
           {labelOf(s['@id'])}
         </Select.Option>
@@ -61,24 +54,29 @@ const StorageMenu = ({
 
 const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
   onFileUpload,
-  project,
+  orgLabel,
+  projectLabel,
   makeFileLink,
   goToFile,
+  storages,
 }) => {
   const [directoryMode, setDirectoryMode] = React.useState(false);
   const [storageId, setStorageId] = React.useState<string | undefined>(
     undefined
   );
-  const [recentlyUploadedFileList, setRecentlyUploadFileList] = React.useState<
-    NexusFile[]
-  >([]);
+  const [fileIndex, setFileIndex] = React.useState<{
+    [uid: string]: NexusFile;
+  }>({});
   const [fileList, setFileList] = React.useState<UploadFile[]>([]);
 
   const handleFileUpload = (customFileRequest: RcCustomRequestOptions) => {
     const options = storageId ? { storage: storageId } : undefined;
     onFileUpload(customFileRequest.file, options)
       .then(nexusFile => {
-        setRecentlyUploadFileList([...recentlyUploadedFileList, nexusFile]);
+        setFileIndex({
+          ...fileIndex,
+          [(customFileRequest.file as File & { uid: string }).uid]: nexusFile,
+        });
         customFileRequest.onSuccess(
           { message: 'Successfully uploaded file' },
           customFileRequest.file
@@ -86,6 +84,10 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
       })
       .catch(error => {
         customFileRequest.onError(error);
+        notification.error({
+          message: `Could not upload file ${customFileRequest.file.name}`,
+          description: error.message,
+        });
       });
   };
 
@@ -95,31 +97,20 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
     multiple: true,
     customRequest: handleFileUpload,
     onPreview(file: UploadFile) {
-      const myFileIndex = fileList.findIndex(
-        fileToTest => file.uid === fileToTest.uid
-      );
-      const recentlyUploadedFile = recentlyUploadedFileList[myFileIndex];
-      if (recentlyUploadedFile) {
-        goToFile(recentlyUploadedFile);
+      const nexusFile = fileIndex[file.uid];
+      if (nexusFile) {
+        goToFile(nexusFile);
       }
     },
     onChange(info: { file: UploadFile; fileList: UploadFile[] }) {
       const { file, fileList } = info;
-      const myFileIndex = fileList.findIndex(
-        fileToTest => file.uid === fileToTest.uid
-      );
-      const recentlyUploadedFile = recentlyUploadedFileList[myFileIndex];
-      if (recentlyUploadedFile) {
-        fileList[myFileIndex].url = makeFileLink(recentlyUploadedFile);
-      }
       const status = file.status;
-      if (status !== 'uploading') {
-        // do something on upload?
+      const nexusFile = fileIndex[file.uid];
+      if (nexusFile) {
+        file.url = makeFileLink(nexusFile);
       }
       if (status === 'done') {
         message.success(`${file.name} file uploaded successfully.`);
-      } else if (status === 'error') {
-        message.error(`${file.name} file upload failed.`);
       }
       setFileList([...fileList]);
     },
@@ -158,8 +149,9 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
         />
       </div>
       <StorageMenu
-        orgLabel={project.orgLabel}
-        projectLabel={project.label}
+        storages={storages}
+        orgLabel={orgLabel}
+        projectLabel={projectLabel}
         onStorageSelected={id => setStorageId(id)}
       />
     </div>

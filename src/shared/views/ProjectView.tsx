@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { match } from 'react-router';
 import { useAsyncEffect } from 'use-async-effect';
 import {
@@ -7,14 +6,18 @@ import {
   ProjectResponseCommon,
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
 } from '@bbp/nexus-sdk';
-import { useNexusContext } from '@bbp/react-nexus';
-import { Spin, notification, Popover } from 'antd';
+import { useNexusContext, AccessControl } from '@bbp/react-nexus';
+import { Spin, notification, Popover, Empty, Button, Divider } from 'antd';
 
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
+import SideMenu from '../components/Menu/SideMenu';
+import { Link } from 'react-router-dom';
+import FileUploadContainer from '../containers/FileUploadContainer';
 
 const ProjectView: React.FunctionComponent<{
   match: match<{ orgLabel: string; projectLabel: string }>;
-}> = ({ match }) => {
+  goToOrg: (orgLabel: string) => void;
+}> = ({ match, goToOrg }) => {
   const nexus = useNexusContext();
 
   const {
@@ -32,6 +35,8 @@ const ProjectView: React.FunctionComponent<{
     busy: false,
     error: null,
   });
+
+  const [menuVisible, setMenuVisible] = React.useState(true);
 
   useAsyncEffect(
     async isMounted => {
@@ -55,7 +60,7 @@ const ProjectView: React.FunctionComponent<{
         });
       } catch (error) {
         notification.error({
-          message: 'Could not load project',
+          message: `Could not load project ${projectLabel}`,
           description: error.message,
         });
         setState({
@@ -73,46 +78,100 @@ const ProjectView: React.FunctionComponent<{
     <Spin spinning={busy}>
       <div className="project-view">
         {!!project && !!org && (
-          <div className="project-banner">
-            <div className="label">
-              <h1 className="name">
-                {' '}
-                {org && (
-                  <span>
-                    <a onClick={() => {}}>{org._label}</a> |{' '}
-                  </span>
-                )}{' '}
-                {project._label}
-                {'  '}
-              </h1>
-              <div style={{ marginLeft: 10 }}>
-                <ViewStatisticsContainer
-                  orgLabel={org._label}
-                  projectLabel={project._label}
-                  resourceId={DEFAULT_ELASTIC_SEARCH_VIEW_ID}
-                />
+          <>
+            <div className="project-banner">
+              <div className="label">
+                <h1 className="name">
+                  {' '}
+                  {org && (
+                    <span>
+                      <Link to={`/${orgLabel}`}>{org._label}</Link> |{' '}
+                    </span>
+                  )}{' '}
+                  {project._label}
+                  {'  '}
+                </h1>
+                <div style={{ marginLeft: 10 }}>
+                  <ViewStatisticsContainer
+                    orgLabel={org._label}
+                    projectLabel={project._label}
+                    resourceId={DEFAULT_ELASTIC_SEARCH_VIEW_ID}
+                  />
+                </div>
+                {!!project.description && (
+                  <Popover
+                    title={project._label}
+                    content={
+                      <div style={{ width: 300 }}>{project.description}</div>
+                    }
+                  >
+                    <div className="description">{project.description}</div>
+                  </Popover>
+                )}
               </div>
-              {!!project.description && (
-                <Popover
-                  title={project._label}
-                  content={
-                    <div style={{ width: 300 }}>{project.description}</div>
-                  }
-                >
-                  <div className="description">{project.description}</div>
-                </Popover>
-              )}
             </div>
-          </div>
+            <div className="actions">
+              <SideMenu
+                visible={menuVisible}
+                title="Resources"
+                onClose={() => setMenuVisible(false)}
+              >
+                <p>
+                  View resources in your project using pre-defined query-helper
+                  lists.
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {/* <AccessControl
+            path={`/${orgLabel}/${projectLabel}`}
+            permissions={['resources/write']}
+          >
+            <ResourceForm
+              createResource={createResource}
+              render={(updateFormVisible: () => void) => {
+                return (
+                  <Button
+                    style={{ margin: '0.5em 0' }}
+                    type="primary"
+                    onClick={updateFormVisible}
+                    icon="plus-square"
+                  >
+                    Create Resource
+                  </Button>
+                );
+              }}
+            />
+          </AccessControl> */}
+                  <Link
+                    to={`/${orgLabel}/${projectLabel}/nxv:defaultSparqlIndex/sparql`}
+                  >
+                    Sparql Query Editor
+                  </Link>
+                  <Link
+                    to={`/${orgLabel}/${projectLabel}/nxv:defaultElasticSearchIndex/_search`}
+                  >
+                    ElasticSearch Query Editor
+                  </Link>
+                  <Link to={`/${orgLabel}/${projectLabel}/_settings/acls`}>
+                    View Project's permissions
+                  </Link>
+                </div>
+                <AccessControl
+                  path={`/${orgLabel}/${projectLabel}`}
+                  permissions={['files/write']}
+                >
+                  <Divider />
+                  <FileUploadContainer
+                    projectLabel={projectLabel}
+                    orgLabel={orgLabel}
+                  />
+                </AccessControl>
+              </SideMenu>
+            </div>
+          </>
         )}
       </div>
     </Spin>
   );
 };
 
-const mapDispatchToProps = (dispatch: any) => ({});
-
-export default connect(
-  null,
-  mapDispatchToProps
-)(ProjectView);
+export default ProjectView;
