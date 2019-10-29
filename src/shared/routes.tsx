@@ -34,7 +34,7 @@ const routes: RouteWithData[] = [
     component: ProjectsView,
   },
   {
-    path: '/:org/:project',
+    path: '/:orgLabel/:projectLabel',
     exact: true,
     component: ProjectView,
   },
