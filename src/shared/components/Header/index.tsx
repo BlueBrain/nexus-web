@@ -2,10 +2,7 @@ import * as React from 'react';
 import { Menu, Dropdown, Icon, Button, Popover } from 'antd';
 import './Header.less';
 import Copy from '../Copy';
-import { NexusClient } from '@bbp/nexus-sdk';
-import { useNexus } from '@bbp/react-nexus';
-import { RootState } from '../../../shared/store/reducers';
-import { OmitProps } from 'antd/lib/transfer/renderListBody';
+
 const logo = require('../../logo.svg');
 const epflLogo = require('../../EPFL-logo.svg');
 
