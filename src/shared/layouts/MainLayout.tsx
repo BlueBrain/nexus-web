@@ -29,6 +29,7 @@ export interface MainLayoutProps {
   canLogin?: boolean;
   userManager?: UserManager;
   userIdentity: Identity;
+  apiEndpoint: string;
 }
 
 const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
@@ -40,6 +41,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
   canLogin = false,
   userManager,
   userIdentity,
+  apiEndpoint
 }) => {
   const handleLogout = (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -47,8 +49,8 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
     userManager && userManager.signoutRedirect();
   };
 
-  const preloadedState: RootState = (window as any).__PRELOADED_STATE__;
-  const apiBase = new URL(preloadedState.config.apiEndpoint);
+  
+  const apiBase = new URL(apiEndpoint);
   const versions = useNexus<serviceVersions>(
     (nexus: NexusClient) =>
       nexus.httpGet({ path: `${apiBase.origin}/version`, context: { as: 'json' } }),
@@ -104,7 +106,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
 };
 
 const mapStateToProps = (state: RootState) => {
-  const { auth, oidc } = state;
+  const { auth, oidc, config } = state;
   const realms: Realm[] =
     (auth.realms && auth.realms.data && auth.realms.data.results) || [];
   const identities: Identity[] =
@@ -117,6 +119,7 @@ const mapStateToProps = (state: RootState) => {
     userIdentity: identities[identities.length - 1],
     canLogin: !!(realms.length > 0),
     userManager: getUserManager(state),
+    apiEndpoint: config.apiEndpoint,
   };
 };
 
