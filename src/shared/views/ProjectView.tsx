@@ -14,6 +14,7 @@ import SideMenu from '../components/Menu/SideMenu';
 import { Link } from 'react-router-dom';
 import FileUploadContainer from '../containers/FileUploadContainer';
 import ResourceFormContainer from '../containers/ResourceFormContainer';
+import ResourceListBoardContainer from '../containers/ResourceListBoardContainer';
 
 const ProjectView: React.FunctionComponent<{
   match: match<{ orgLabel: string; projectLabel: string }>;
@@ -111,6 +112,10 @@ const ProjectView: React.FunctionComponent<{
                 )}
               </div>
             </div>
+            <ResourceListBoardContainer
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+            />
             <div className="actions">
               <SideMenu
                 visible={menuVisible}
