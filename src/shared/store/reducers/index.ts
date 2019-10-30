@@ -7,13 +7,11 @@ import rawQuery, {
   rawElasticSearchQueryReducer,
   RawElasticSearchQueryState,
 } from './rawQuery';
-import lists, { ListsByProjectState } from './lists';
 import uiSettingsReducer, { UISettingsState } from './ui-settings';
 
 export interface RootState {
   auth: AuthState;
   config: ConfigState;
-  lists?: ListsByProjectState;
   router?: StaticRouterProps;
   rawQuery?: RawQueryState;
   rawElasticSearchQuery?: RawElasticSearchQueryState;
@@ -25,7 +23,6 @@ export default {
   auth,
   config,
   rawQuery,
-  lists,
   rawElasticSearchQuery: rawElasticSearchQueryReducer,
   uiSettings: uiSettingsReducer,
 };
