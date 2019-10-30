@@ -3,8 +3,9 @@ import { DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
 
 import { uuidv4 } from '../utils';
 import ResourceListBoardComponent from '../components/ResourceListBoard';
+import ResourceListContainer from './ResourceListContainer';
 
-export type ResourceList = {
+export type ResourceBoardList = {
   name: string;
   view: string;
   id: string;
@@ -20,7 +21,7 @@ export type ResourceList = {
   };
 };
 
-export const DEFAULT_LIST: ResourceList = {
+export const DEFAULT_LIST: ResourceBoardList = {
   name: 'Default Query',
   view: DEFAULT_ELASTIC_SEARCH_VIEW_ID,
   id: uuidv4(),
@@ -35,10 +36,10 @@ export const DEFAULT_LIST: ResourceList = {
 const ResourceListBoardContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
-}> = props => {
-  const [resourceLists, setResourceLists] = React.useState<ResourceList[]>([
-    DEFAULT_LIST,
-  ]);
+}> = ({ orgLabel, projectLabel }) => {
+  const [resourceLists, setResourceLists] = React.useState<ResourceBoardList[]>(
+    [DEFAULT_LIST]
+  );
 
   const createList = () => {
     setResourceLists([...resourceLists, DEFAULT_LIST]);
@@ -47,21 +48,13 @@ const ResourceListBoardContainer: React.FunctionComponent<{
   return (
     <ResourceListBoardComponent createList={createList}>
       {resourceLists.map((list, index: number) => {
-        // We don't need to pass these down
-        // const { lists, project, org, ...filteredProps } = props;
-        // return (
-        //   <Query
-        //     {...{
-        //       ...filteredProps,
-        //       list,
-        //       updateList: (list: List) => updateList(index, list),
-        //       deleteList: () => deleteList(index),
-        //       cloneList: (list: List) => cloneList(index, list),
-        //     }}
-        //     key={list.id}
-        //   />
-        // );
-        return <h1>hello I am {list.name}</h1>;
+        return (
+          <ResourceListContainer
+            list={list}
+            projectLabel={projectLabel}
+            orgLabel={orgLabel}
+          />
+        );
       })}
     </ResourceListBoardComponent>
   );

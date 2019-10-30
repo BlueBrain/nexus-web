@@ -1,4 +1,4 @@
-import { ResourceList } from '../../../containers/ResourceListBoardContainer';
+import { ResourceBoardList } from '../../../containers/ResourceListBoardContainer';
 
 const managementSchemas = [
   'https://bluebrain.github.io/nexus/schemas/resolver.json',
@@ -11,7 +11,7 @@ interface TermFilter {
 }
 
 // TODO break out into library
-export const makeESQuery = (query?: ResourceList['query']) => {
+export const makeESQuery = (query?: ResourceBoardList['query']) => {
   const sort = [
     {
       _createdAt: 'desc',

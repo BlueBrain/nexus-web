@@ -11,8 +11,6 @@ import { reducer as oidcReducer } from 'redux-oidc';
 import { History } from 'history';
 import Nexus from '@bbp/nexus-sdk-legacy';
 import reducers, { RootState } from './reducers';
-import { saveState, loadState } from './reducers/localStorage';
-import { persistanceMapper, ListsByProjectState } from './reducers/lists';
 import { NexusClient } from '@bbp/nexus-sdk';
 
 export type Services = {
@@ -40,7 +38,6 @@ export default function configureStore(
   preloadedState: any = {}
 ): Store {
   // ignore server lists, fetch from local storage when available
-  preloadedState.lists = { ...loadState('lists') };
   const store = createStore(
     // @ts-ignore
     combineReducers({
@@ -56,14 +53,6 @@ export default function configureStore(
       )
     )
   );
-
-  // persist these in the client
-  store.subscribe(() => {
-    saveState({
-      lists: persistanceMapper((store.getState() as RootState)
-        .lists as ListsByProjectState),
-    });
-  });
 
   // DEVELOPMENT ONLY
   // if Hot module Replacement is enabled
