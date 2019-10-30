@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
-import ResourceFormModal from '../components/Resources/ResourceFormModal';
+import ResourceFormModal from '../components/ResourceForm/ResourceFormModal';
 import { ResourcePayload } from '@bbp/nexus-sdk';
 
 const ResourceFormContainer: React.FunctionComponent<{
