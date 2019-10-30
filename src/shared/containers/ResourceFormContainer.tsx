@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Button } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
-import ResourceFormModal from '../components/ResourceForm/ResourceFormModal';
 import { ResourcePayload } from '@bbp/nexus-sdk';
+
+import ResourceFormModal from '../components/ResourceForm/ResourceFormModal';
 
 const ResourceFormContainer: React.FunctionComponent<{
   orgLabel: string;

@@ -134,7 +134,7 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
 
   return (
     <Spin spinning={busy}>
-      <Form className="ResourceForm">
+      <Form className="resource-form">
         <Form.Item label="Resource Type" {...formItemLayout}>
           {getFieldDecorator('resourceTypes', {
             rules: [{ required: true }],

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Modal, notification } from 'antd';
-import ResourceForm from './ResourceForm';
 import { Resource, ResourcePayload } from '@bbp/nexus-sdk';
+
+import ResourceForm from './ResourceForm';
 
 interface ResourceFormModalProps {
   createResource: (
