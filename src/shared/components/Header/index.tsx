@@ -9,28 +9,44 @@ const epflLogo = require('../../EPFL-logo.svg');
 interface InformationContentProps {
   version: string;
   githubIssueURL: string;
-  serviceVersions?: serviceVersions;
+  serviceVersions?: ServiceVersions;
 }
 
-export  type serviceVersions = {
+export type ServiceVersions = {
   admin: string;
   blazegraph: string;
   elasticsearch: string;
   iam: string;
-  kg : string;
+  kg: string;
   storage: string;
 };
 
-const VersionInfo = (props: serviceVersions) => {
-  return (<> 
-      <p><h4>Nexus Services</h4></p>
-      <p><label>Admin</label> v{props.admin}</p>
-      <p><label>IAm</label> v{props.iam}</p>
-      <p><label>Knowledge Graph</label> v{props.kg}</p>
-      <p><h4>Index Services</h4></p>
-      <p><label>Blaze Graph</label> v{props.blazegraph}</p>
-      <p><label>Elastic Search</label> v{props.elasticsearch}</p>
-    </>);
+const VersionInfo = (props: ServiceVersions) => {
+  return (
+    <>
+      <p>
+        <h4>Nexus Services</h4>
+      </p>
+      <p>
+        <label>Admin</label> v{props.admin}
+      </p>
+      <p>
+        <label>IAm</label> v{props.iam}
+      </p>
+      <p>
+        <label>Knowledge Graph</label> v{props.kg}
+      </p>
+      <p>
+        <h4>Index Services</h4>
+      </p>
+      <p>
+        <label>Blaze Graph</label> v{props.blazegraph}
+      </p>
+      <p>
+        <label>Elastic Search</label> v{props.elasticsearch}
+      </p>
+    </>
+  );
 };
 
 const InformationContent = (props: InformationContentProps) => {
@@ -55,9 +71,11 @@ const InformationContent = (props: InformationContentProps) => {
         {'| '}
         <a href="https://bluebrain.epfl.ch/" target="_blank">
           <span className="bbp-logo">Blue Brain Project</span>
-        </a> 
+        </a>
       </p>
-     { props.serviceVersions ?  <VersionInfo { ...props.serviceVersions}/> : null}
+      {props.serviceVersions ? (
+        <VersionInfo {...props.serviceVersions} />
+      ) : null}
     </>
   );
 };
@@ -71,7 +89,7 @@ export interface HeaderProps {
   children?: React.ReactChild;
   onLoginClick?(): void;
   visitHome?(): void;
-  serviceVersions?: serviceVersions;
+  serviceVersions?: ServiceVersions;
 }
 
 const Header: React.FunctionComponent<HeaderProps> = ({
@@ -84,7 +102,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   version,
   githubIssueURL,
   visitHome,
-  serviceVersions
+  serviceVersions,
 }) => {
   const menu = (
     <Menu>

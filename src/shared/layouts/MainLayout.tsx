@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { push } from 'connected-react-router';
-import  Header, { serviceVersions } from '../components/Header';
+import  Header, { ServiceVersions } from '../components/Header';
 import getUserManager from '../../client/userManager';
 import { version, url as githubIssueURL } from '../../../package.json';
 
@@ -51,7 +51,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
 
   
   const apiBase = new URL(apiEndpoint);
-  const versions = useNexus<serviceVersions>(
+  const versions = useNexus<ServiceVersions>(
     (nexus: NexusClient) =>
       nexus.httpGet({ path: `${apiBase.origin}/version`, context: { as: 'json' } }),
   );
