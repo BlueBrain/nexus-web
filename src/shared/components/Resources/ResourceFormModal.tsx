@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { Modal, notification } from 'antd';
-import { Resource } from '@bbp/nexus-sdk-legacy';
-import { CreateResourcePayload } from '@bbp/nexus-sdk-legacy/lib/Resource/types';
 import ResourceForm from './ResourceForm';
+import { Resource, ResourcePayload } from '@bbp/nexus-sdk';
 
 interface ResourceFormModalProps {
   createResource: (
     schemaId: string,
-    payload: CreateResourcePayload
+    payload: ResourcePayload
   ) => Promise<Resource>;
   render: (updateFormVisible: () => void) => React.ReactElement<any>;
   onSuccess?: () => void;

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Cascader, Form, Button, Spin, Modal } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
-import { CreateResourcePayload } from '@bbp/nexus-sdk-legacy/lib/Resource/types';
-import ResourceEditor from '../ResourceEditor';
 import { CascaderOptionType } from 'antd/lib/cascader';
+import { ResourcePayload } from '@bbp/nexus-sdk';
+
+import ResourceEditor from '../ResourceEditor';
 import {
   DEFAULT_RESOURCE,
   RESOURCES_SCHEMA_URI,
@@ -71,13 +72,10 @@ export interface ResourceFormProps {
   form: WrappedFormUtils;
   resource?: {
     schemaId: string;
-    payload: CreateResourcePayload;
+    payload: ResourcePayload;
   };
   busy?: boolean;
-  onSubmit?(resource: {
-    schemaId: string;
-    payload: CreateResourcePayload;
-  }): any;
+  onSubmit?(resource: { schemaId: string; payload: ResourcePayload }): any;
   onDeprecate?(): any;
   mode?: 'create' | 'edit';
 }
@@ -140,6 +138,7 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
         <Form.Item label="Resource Type" {...formItemLayout}>
           {getFieldDecorator('resourceTypes', {
             rules: [{ required: true }],
+            initialValue: ['_'],
           })(
             <Cascader
               options={AVAILABLE_SCHEMAS}

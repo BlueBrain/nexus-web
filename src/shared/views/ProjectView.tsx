@@ -7,12 +7,13 @@ import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
 } from '@bbp/nexus-sdk';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { Spin, notification, Popover, Empty, Button, Divider } from 'antd';
+import { Spin, notification, Popover, Divider } from 'antd';
 
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
 import SideMenu from '../components/Menu/SideMenu';
 import { Link } from 'react-router-dom';
 import FileUploadContainer from '../containers/FileUploadContainer';
+import ResourceFormContainer from '../containers/ResourceFormContainer';
 
 const ProjectView: React.FunctionComponent<{
   match: match<{ orgLabel: string; projectLabel: string }>;
@@ -121,26 +122,15 @@ const ProjectView: React.FunctionComponent<{
                   lists.
                 </p>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  {/* <AccessControl
-            path={`/${orgLabel}/${projectLabel}`}
-            permissions={['resources/write']}
-          >
-            <ResourceForm
-              createResource={createResource}
-              render={(updateFormVisible: () => void) => {
-                return (
-                  <Button
-                    style={{ margin: '0.5em 0' }}
-                    type="primary"
-                    onClick={updateFormVisible}
-                    icon="plus-square"
+                  <AccessControl
+                    path={`/${orgLabel}/${projectLabel}`}
+                    permissions={['resources/write']}
                   >
-                    Create Resource
-                  </Button>
-                );
-              }}
-            />
-          </AccessControl> */}
+                    <ResourceFormContainer
+                      orgLabel={orgLabel}
+                      projectLabel={projectLabel}
+                    />
+                  </AccessControl>
                   <Link
                     to={`/${orgLabel}/${projectLabel}/nxv:defaultSparqlIndex/sparql`}
                   >
