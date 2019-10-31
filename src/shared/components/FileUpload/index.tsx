@@ -4,7 +4,7 @@ import { Storage, Project, NexusFile } from '@bbp/nexus-sdk-legacy';
 import { StorageCommon } from '@bbp/nexus-sdk-legacy/lib/Storage/types';
 import { CreateFileOptions } from '@bbp/nexus-sdk-legacy/lib/File/types';
 import { labelOf } from '../../utils';
-import { UploadFile } from 'antd/lib/upload/interface';
+import { UploadFile, RcCustomRequestOptions } from 'antd/lib/upload/interface';
 
 const Dragger = Upload.Dragger;
 
@@ -74,15 +74,19 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
   >([]);
   const [fileList, setFileList] = React.useState<UploadFile[]>([]);
 
-  const handleFileUpload = async (customFileRequest: CustomFileRequest) => {
-    try {
-      const options = storageId ? { storage: storageId } : undefined;
-      const nexusFile = await onFileUpload(customFileRequest.file, options);
-      setRecentlyUploadFileList([...recentlyUploadedFileList, nexusFile]);
-      customFileRequest.onSuccess('Successfully uploaded file');
-    } catch (error) {
-      customFileRequest.onError(error);
-    }
+  const handleFileUpload = (customFileRequest: RcCustomRequestOptions) => {
+    const options = storageId ? { storage: storageId } : undefined;
+    onFileUpload(customFileRequest.file, options)
+      .then(nexusFile => {
+        setRecentlyUploadFileList([...recentlyUploadedFileList, nexusFile]);
+        customFileRequest.onSuccess(
+          { message: 'Successfully uploaded file' },
+          customFileRequest.file
+        );
+      })
+      .catch(error => {
+        customFileRequest.onError(error);
+      });
   };
 
   const draggerProps = {

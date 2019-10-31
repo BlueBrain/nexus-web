@@ -710,6 +710,13 @@ exports[`MetadataCard component should render with Set username 1`] = `
                         >
                           <span
                             className="ant-avatar-string"
+                            style={
+                              Object {
+                                "WebkitTransform": "scale(1) translateX(-50%)",
+                                "msTransform": "scale(1) translateX(-50%)",
+                                "transform": "scale(1) translateX(-50%)",
+                              }
+                            }
                           >
                             J
                           </span>
@@ -3308,6 +3315,13 @@ exports[`MetadataCard component should render with Unknown username 1`] = `
                         >
                           <span
                             className="ant-avatar-string"
+                            style={
+                              Object {
+                                "WebkitTransform": "scale(1) translateX(-50%)",
+                                "msTransform": "scale(1) translateX(-50%)",
+                                "transform": "scale(1) translateX(-50%)",
+                              }
+                            }
                           >
                             U
                           </span>
@@ -5906,6 +5920,13 @@ exports[`MetadataCard component should render with an extracted username 1`] = `
                         >
                           <span
                             className="ant-avatar-string"
+                            style={
+                              Object {
+                                "WebkitTransform": "scale(1) translateX(-50%)",
+                                "msTransform": "scale(1) translateX(-50%)",
+                                "transform": "scale(1) translateX(-50%)",
+                              }
+                            }
                           >
                             J
                           </span>

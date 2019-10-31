@@ -27,7 +27,7 @@ pipeline {
             }
             steps {
                 checkout scm
-                sh 'npm ci'
+                sh 'yarn'
             }
         }
 
@@ -38,23 +38,23 @@ pipeline {
             parallel {
                 stage('Lint') {
                     steps {
-                        sh 'npm run lint -- -c tslint.prod.json'
+                        sh 'yarn lint -- -c tslint.prod.json'
                     }
                 }
                 stage('Test') {
                     steps {
-                        sh 'npm run test'
-                        sh "npm run codecov -- --token=\"`oc get secrets codecov-secret --template='{{.data.nexus_web}}' | base64 -d`\""
+                        sh 'yarn test'
+                        sh "yarn codecov -- --token=\"`oc get secrets codecov-secret --template='{{.data.nexus_web}}' | base64 -d`\""
                     }
                 }
                 stage('Stories') {
                     steps {
-                        sh 'npm run build:storybook'
+                        sh 'yarn build:storybook'
                     }
                 }
                 stage('Build') {
                     steps {
-                        sh 'npm run build'
+                        sh 'yarn build'
                     }
                 }
             }
@@ -77,7 +77,7 @@ pipeline {
             steps {
                 openshiftTag srcStream: imageStream, srcTag: 'latest', destStream: imageStream, destTag: 'dev', verbose: 'false'
             }
-        
+
         }
         stage('Promote to staging') {
             when {
