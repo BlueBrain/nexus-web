@@ -53,7 +53,7 @@ const HistoryContainer: React.FunctionComponent<{
           metadataKeys
         );
         const current = blacklistKeys(revision, metadataKeys);
-        const changes = diff(current, previous);
+        const changes = diff(previous, current);
         const hasChanges = JSON.stringify(changes, null, 2) !== '{}';
 
         return {
