@@ -10,14 +10,15 @@ export type ResourceBoardList = {
   view: string;
   id: string;
   query: {
-    filters: {
-      _constrainedBy?: string;
-      '@type'?: string;
-      _deprecated: boolean;
-      showManagementResources: boolean;
-      [key: string]: any;
-    };
-    textQuery?: string;
+    from?: number;
+    size?: number;
+    deprecated?: boolean;
+    rev?: number;
+    type?: string;
+    createdBy?: string;
+    updatedBy?: string;
+    schema?: string;
+    q?: string;
   };
 };
 
@@ -26,10 +27,7 @@ export const DEFAULT_LIST: ResourceBoardList = {
   view: DEFAULT_ELASTIC_SEARCH_VIEW_ID,
   id: 'default',
   query: {
-    filters: {
-      showManagementResources: false,
-      _deprecated: false,
-    },
+    deprecated: false,
   },
 };
 
@@ -55,6 +53,13 @@ const ResourceListBoardContainer: React.FunctionComponent<{
     setResourceLists(filteredList);
   };
 
+  const handleCloneList = (list: ResourceBoardList) => {
+    setResourceLists([
+      ...resourceLists,
+      { ...list, id: uuidv4(), name: `clone of ${list.name}` },
+    ]);
+  };
+
   return (
     <ResourceListBoardComponent createList={createList}>
       {resourceLists.map((list, index: number) => {
@@ -64,6 +69,7 @@ const ResourceListBoardContainer: React.FunctionComponent<{
             projectLabel={projectLabel}
             orgLabel={orgLabel}
             onDeleteList={handleDeleteList}
+            onCloneList={handleCloneList}
           />
         );
       })}

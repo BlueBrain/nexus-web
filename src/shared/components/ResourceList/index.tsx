@@ -16,8 +16,10 @@ const ResourceListComponent: React.FunctionComponent<{
   total?: number;
   error?: Error;
   onDelete(): void;
+  onClone(): void;
   onUpdate(list: ResourceBoardList): void;
   onLoadMore({ searchValue }: { searchValue: string }): void;
+  onRefresh(): void;
   makeResourceUri(resourceId: string): string;
   goToResource(resourceId: string): void;
 }> = ({
@@ -29,10 +31,13 @@ const ResourceListComponent: React.FunctionComponent<{
   onLoadMore,
   onUpdate,
   onDelete,
+  onClone,
+  onRefresh,
   makeResourceUri,
   goToResource,
 }) => {
   const { name } = list;
+  const showDeprecated = false;
 
   const handleUpdate = (value: string) => {
     onUpdate({ ...list, name: value });
@@ -40,6 +45,28 @@ const ResourceListComponent: React.FunctionComponent<{
 
   const handleDelete = () => {
     onDelete();
+  };
+
+  const handleClear = () => {
+    onUpdate({ ...list, query: {} });
+  };
+
+  const handleCloneList = () => {
+    onClone();
+  };
+
+  const handleToggleDeprecated = () => {
+    onUpdate({
+      ...list,
+      query: {
+        ...list.query,
+        deprecated: !list.query.deprecated,
+      },
+    });
+  };
+
+  const handleRefreshList = () => {
+    onRefresh();
   };
 
   const hasMore = resources.length < Number(total || 0);
@@ -57,7 +84,33 @@ const ResourceListComponent: React.FunctionComponent<{
         </div>
         <Icon type="close" className="close-button" onClick={handleDelete} />
       </h3>
-      <div className="controls"></div>
+      <div className="controls">
+        <Tooltip title="Clear filters">
+          <Button icon="close-circle" onClick={handleClear} />
+        </Tooltip>
+        <Tooltip title="Refresh list">
+          <Button icon="reload" onClick={handleRefreshList} />
+        </Tooltip>
+        <Tooltip title="Clone this query">
+          <Button icon="switcher" onClick={handleCloneList} />
+        </Tooltip>
+        <div className="switches">
+          <Tooltip
+            title={
+              list.query.deprecated
+                ? 'Displaying deprecated resources only'
+                : 'Not showing deprecated resources'
+            }
+          >
+            <Switch
+              onChange={handleToggleDeprecated}
+              checked={list.query.deprecated}
+              checkedChildren={<Icon type="delete" />}
+              unCheckedChildren={<Icon type="delete" />}
+            />
+          </Tooltip>
+        </div>
+      </div>
       <Spin spinning={busy}>
         {!!error && <Empty description={error.message} />}
         {!error && (

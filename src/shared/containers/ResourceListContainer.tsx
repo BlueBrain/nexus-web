@@ -13,15 +13,12 @@ const ResourceListContainer: React.FunctionComponent<{
   projectLabel: string;
   defaultList: ResourceBoardList;
   onDeleteList: (id: string) => void;
-  // cloneList: (list: ResourceBoardList) => void;
-}> = ({ defaultList, orgLabel, projectLabel, onDeleteList }) => {
+  onCloneList: (list: ResourceBoardList) => void;
+}> = ({ defaultList, orgLabel, projectLabel, onDeleteList, onCloneList }) => {
   const history = useHistory();
   const basePath = useSelector((state: RootState) => state.config.basePath);
   const [list, setList] = React.useState<ResourceBoardList>(defaultList);
-  const [{ q }, setQuery] = React.useState<{
-    q?: string;
-  }>({});
-
+  const [toggleForceReload, setToggleForceReload] = React.useState(false);
   const makeResourceUri = (resourceId: string) => {
     return `${basePath}/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
       resourceId
@@ -33,15 +30,18 @@ const ResourceListContainer: React.FunctionComponent<{
   };
 
   const { loading: busy, error, data } = useNexus(
-    nexus =>
-      nexus.Resource.list(orgLabel, projectLabel, {
-        q,
-      }),
-    [q]
+    nexus => nexus.Resource.list(orgLabel, projectLabel, list.query),
+    [JSON.stringify(list.query), toggleForceReload]
   );
 
   const handleLoadMore = ({ searchValue }: { searchValue: string }) => {
-    setQuery({ q: searchValue });
+    setList({
+      ...list,
+      query: {
+        ...list.query,
+        q: searchValue,
+      },
+    });
   };
 
   const handleDelete = () => {
@@ -50,6 +50,14 @@ const ResourceListContainer: React.FunctionComponent<{
 
   const handleUpdate = (list: ResourceBoardList) => {
     setList(list);
+  };
+
+  const handleClone = () => {
+    onCloneList(list);
+  };
+
+  const handleRefreshList = () => {
+    setToggleForceReload(!toggleForceReload);
   };
 
   return (
@@ -62,6 +70,8 @@ const ResourceListContainer: React.FunctionComponent<{
       onUpdate={handleUpdate}
       onLoadMore={handleLoadMore}
       onDelete={handleDelete}
+      onClone={handleClone}
+      onRefresh={handleRefreshList}
       makeResourceUri={makeResourceUri}
       goToResource={goToResource}
     />
