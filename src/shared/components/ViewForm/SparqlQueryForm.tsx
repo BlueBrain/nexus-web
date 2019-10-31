@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Form, Button, Card, List, Empty, Table, Tooltip } from 'antd';
+import { Form, Button, Card, Empty, Table, Tooltip } from 'antd';
 import Column from 'antd/lib/table/Column';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import * as hash from 'object-hash';
+import { AskQueryResponse, SelectQueryResponse, SparqlViewQueryResponse } from '@bbp/nexus-sdk';
 
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/sparql/sparql';
@@ -18,16 +19,9 @@ type Entry = {
   type: string;
 };
 
-type Bindings = {
-  [variableName: string]: Entry;
-}[];
-
 const SparqlQueryForm: React.FunctionComponent<{
   query: string;
-  // TODO: update response type
-  // after SDK is updated
-  // https://github.com/BlueBrain/nexus/issues/755
-  response: any | null;
+  response: SparqlViewQueryResponse | null;
   busy: boolean;
   error: Error | null;
   onQueryChange: (query: string) => void;
@@ -35,18 +29,18 @@ const SparqlQueryForm: React.FunctionComponent<{
   // TODO: Validate Sparql with some cool library
   const [value, setValue] = React.useState(query);
 
-  // NOTE: if the query returns a simple boolean value
+  // NOTE: if the query returns a simple boolean value (for example, ASK query)
   // then we have to make our own column header
   const columnHeaders: string[] =
     (response &&
-      (!!response.boolean
+      (!!(response as AskQueryResponse).boolean
         ? ['Result']
-        : response.head && response.head.vars)) ||
+        : response.head && (response as SelectQueryResponse).head.vars)) ||
     [];
 
-  const data: Bindings =
+  const data: any[] =
     (response &&
-      (!!response.boolean ? response.boolean : response.results.bindings)) ||
+      (!!(response as AskQueryResponse).boolean ? [(response as AskQueryResponse).boolean.toString()] : (response as SelectQueryResponse).results.bindings)) ||
     [];
 
   const handleChange = (editor: any, data: any, value: string) => {
