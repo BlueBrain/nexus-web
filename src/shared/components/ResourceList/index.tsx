@@ -16,15 +16,31 @@ const ResourceListComponent: React.FunctionComponent<{
   total?: number;
   error?: Error;
   onDelete(): void;
-  onLoadMore(): void;
-}> = ({ busy, list, total, error, resources, onLoadMore }) => {
+  onUpdate(list: ResourceBoardList): void;
+  onLoadMore({ searchValue }: { searchValue: string }): void;
+  makeResourceUri(resourceId: string): string;
+  goToResource(resourceId: string): void;
+}> = ({
+  busy,
+  list,
+  total,
+  error,
+  resources,
+  onLoadMore,
+  onUpdate,
+  onDelete,
+  makeResourceUri,
+  goToResource,
+}) => {
   const { name } = list;
 
   const handleUpdate = (value: string) => {
-    // updateList({ ...props.list, name: value });
+    onUpdate({ ...list, name: value });
   };
 
-  const handleDelete = () => {};
+  const handleDelete = () => {
+    onDelete();
+  };
 
   const hasMore = resources.length < Number(total || 0);
 
@@ -41,17 +57,21 @@ const ResourceListComponent: React.FunctionComponent<{
         </div>
         <Icon type="close" className="close-button" onClick={handleDelete} />
       </h3>
+      <div className="controls"></div>
       <Spin spinning={busy}>
         {!!error && <Empty description={error.message} />}
         {!error && (
-          <InfiniteSearch
-            onLoadMore={onLoadMore}
-            hasMore={hasMore}
-            hasSearch={false}
-          >
+          <InfiniteSearch onLoadMore={onLoadMore} hasMore={hasMore}>
             {resources.map(resource => {
               return (
-                <ListItem key={resource['@id']}>{resource['@id']}</ListItem>
+                <ListItem
+                  key={resource['@id']}
+                  onClick={() => goToResource(resource['@id'])}
+                >
+                  <a href={makeResourceUri(resource['@id'])}>
+                    {resource['@id']}
+                  </a>
+                </ListItem>
               );
             })}
           </InfiniteSearch>

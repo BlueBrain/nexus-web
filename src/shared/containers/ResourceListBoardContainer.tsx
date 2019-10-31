@@ -24,7 +24,7 @@ export type ResourceBoardList = {
 export const DEFAULT_LIST: ResourceBoardList = {
   name: 'Default Query',
   view: DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-  id: uuidv4(),
+  id: 'default',
   query: {
     filters: {
       showManagementResources: false,
@@ -33,16 +33,27 @@ export const DEFAULT_LIST: ResourceBoardList = {
   },
 };
 
+const makeDefaultList = () => ({
+  ...DEFAULT_LIST,
+  id: uuidv4(),
+});
+
 const ResourceListBoardContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
 }> = ({ orgLabel, projectLabel }) => {
   const [resourceLists, setResourceLists] = React.useState<ResourceBoardList[]>(
-    [DEFAULT_LIST]
+    [makeDefaultList()]
   );
 
   const createList = () => {
-    setResourceLists([...resourceLists, DEFAULT_LIST]);
+    setResourceLists([...resourceLists, makeDefaultList()]);
+  };
+
+  const handleDeleteList = (id: string) => {
+    const filteredList = resourceLists.filter(list => list.id !== id);
+    console.log({ id, filteredList });
+    setResourceLists(filteredList);
   };
 
   return (
@@ -50,9 +61,10 @@ const ResourceListBoardContainer: React.FunctionComponent<{
       {resourceLists.map((list, index: number) => {
         return (
           <ResourceListContainer
-            list={list}
+            defaultList={list}
             projectLabel={projectLabel}
             orgLabel={orgLabel}
+            onDeleteList={handleDeleteList}
           />
         );
       })}
