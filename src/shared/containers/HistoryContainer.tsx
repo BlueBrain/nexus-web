@@ -65,7 +65,7 @@ const HistoryContainer: React.FunctionComponent<{
         };
       })
     );
-  }, [orgLabel, projectLabel, resourceId]);
+  }, [orgLabel, projectLabel, resourceId, latestRev]);
 
   return <HistoryComponent revisions={revisions} link={link} />;
 };
