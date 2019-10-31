@@ -1,18 +1,17 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { useNexus } from '@bbp/react-nexus';
 import { ResourceList, Resource } from '@bbp/nexus-sdk';
 
 import { ResourceBoardList } from './ResourceListBoardContainer';
 import ResourceListComponent from '../components/ResourceList';
-import { useSelector } from 'react-redux';
 import { RootState } from '../store/reducers';
 
 const ResourceListContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
   defaultList: ResourceBoardList;
-  // updateList: (list: ResourceBoardList) => void;
   onDeleteList: (id: string) => void;
   // cloneList: (list: ResourceBoardList) => void;
 }> = ({ defaultList, orgLabel, projectLabel, onDeleteList }) => {

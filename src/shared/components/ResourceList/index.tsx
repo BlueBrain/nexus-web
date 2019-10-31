@@ -68,7 +68,13 @@ const ResourceListComponent: React.FunctionComponent<{
                   key={resource['@id']}
                   onClick={() => goToResource(resource['@id'])}
                 >
-                  <a href={makeResourceUri(resource['@id'])}>
+                  <a
+                    href={makeResourceUri(resource['@id'])}
+                    onClick={e => {
+                      e.preventDefault();
+                      goToResource(resource['@id']);
+                    }}
+                  >
                     {resource['@id']}
                   </a>
                 </ListItem>
