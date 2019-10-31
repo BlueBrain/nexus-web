@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Upload, Icon, message, Switch, Select, notification } from 'antd';
-import { UploadFile } from 'antd/lib/upload/interface';
+import { UploadFile, RcCustomRequestOptions } from 'antd/lib/upload/interface';
 import { NexusFile, Storage } from '@bbp/nexus-sdk';
 
 import { labelOf } from '../../utils';
@@ -14,18 +14,6 @@ interface FileUploaderProps {
   orgLabel: string;
   projectLabel: string;
   storages: Storage[];
-}
-
-interface CustomFileRequest {
-  onProgress(event: { percent: number }): void;
-  onError(event: Error, body?: Object): void;
-  onSuccess(body: Object): void;
-  data: Object;
-  filename: String;
-  file: File;
-  withCredentials: Boolean;
-  action: String;
-  headers: Object;
 }
 
 const StorageMenu = ({
@@ -70,9 +58,8 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
   const [fileList, setFileList] = React.useState<UploadFile[]>([]);
 
   const handleFileUpload = (customFileRequest: RcCustomRequestOptions) => {
-    const options = storageId ? { storage: storageId } : undefined;
-    onFileUpload(customFileRequest.file, options)
-      .then(nexusFile => {
+    onFileUpload(customFileRequest.file, storageId)
+      .then((nexusFile: NexusFile) => {
         setFileIndex({
           ...fileIndex,
           [(customFileRequest.file as File & { uid: string }).uid]: nexusFile,
@@ -82,7 +69,7 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
           customFileRequest.file
         );
       })
-      .catch(error => {
+      .catch((error: Error) => {
         customFileRequest.onError(error);
         notification.error({
           message: `Could not upload file ${customFileRequest.file.name}`,

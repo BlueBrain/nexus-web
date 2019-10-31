@@ -24,7 +24,9 @@ const ResourceListContainer: React.FunctionComponent<{
   }>({});
 
   const makeResourceUri = (resourceId: string) => {
-    return `${basePath}/${orgLabel}/${projectLabel}/resources/${resourceId}`;
+    return `${basePath}/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+      resourceId
+    )}`;
   };
 
   const goToResource = (resourceId: string) => {

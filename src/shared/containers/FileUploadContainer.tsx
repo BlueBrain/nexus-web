@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { push } from 'connected-react-router';
+import { useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { Storage, NexusFile } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
@@ -10,19 +10,21 @@ import { RootState } from '../store/reducers';
 const FileUploadContainer: React.FunctionComponent<{
   projectLabel: string;
   orgLabel: string;
-  makeFileLink: (
-    orgLabel: string,
-    projectLabel: string,
-    nexusFile: NexusFile
-  ) => string;
-  goToFile: (
-    orgLabel: string,
-    projectLabel: string,
-    nexusFile: NexusFile
-  ) => void;
-}> = ({ orgLabel, projectLabel, makeFileLink, goToFile }) => {
+}> = ({ orgLabel, projectLabel }) => {
   const nexus = useNexusContext();
+  const history = useHistory();
+  const basePath = useSelector((state: RootState) => state.config.basePath);
   const [storages, setStorages] = React.useState<Storage[]>([]);
+
+  const makeResourceUri = (resourceId: string) => {
+    return `${basePath}/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+      resourceId
+    )}`;
+  };
+
+  const goToResource = (resourceId: string) => {
+    history.push(makeResourceUri(resourceId));
+  };
 
   const onFileUpload = async (file: File, storageId?: string) => {
     const formData = new FormData();
@@ -60,41 +62,12 @@ const FileUploadContainer: React.FunctionComponent<{
           storages,
           orgLabel,
           makeFileLink: (nexusFile: NexusFile) =>
-            makeFileLink(orgLabel, projectLabel, nexusFile),
-          goToFile: (nexusFile: NexusFile) =>
-            goToFile(orgLabel, projectLabel, nexusFile),
+            makeResourceUri(nexusFile['@id']),
+          goToFile: (nexusFile: NexusFile) => goToResource(nexusFile['@id']),
         }}
       />
     )
   );
 };
 
-const mapStateToProps = (state: RootState) => {
-  return {
-    makeFileLink: (
-      orgLabel: string,
-      projectLabel: string,
-      nexusFile: NexusFile
-    ) =>
-      `${
-        state.config.basePath
-      }/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
-        nexusFile['@id']
-      )}`,
-  };
-};
-
-const mapDispatchToProps = (dispatch: any) => ({
-  goToFile: (orgLabel: string, projectLabel: string, nexusFile: NexusFile) =>
-    dispatch(
-      push(
-        `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
-          nexusFile['@id']
-        )}`
-      )
-    ),
-});
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(FileUploadContainer);
+export default FileUploadContainer;
