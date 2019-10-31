@@ -37,6 +37,16 @@ exports[`Header component Should render correctly 1`] = `
       content={
         <InformationContent
           githubIssueURL=""
+          serviceVersions={
+            Object {
+              "admin": "1.0",
+              "blazegraph": "1.0",
+              "elasticsearch": "1.0",
+              "iam": "1.0",
+              "kg": "1.0",
+              "storage": "asda",
+            }
+          }
           version=""
         />
       }

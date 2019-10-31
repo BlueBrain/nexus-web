@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { push } from 'connected-react-router';
-import Header from '../components/Header';
+import  Header, { ServiceVersions } from '../components/Header';
 import getUserManager from '../../client/userManager';
 import { version, url as githubIssueURL } from '../../../package.json';
 
@@ -12,6 +12,9 @@ import { Realm } from '@bbp/nexus-sdk-legacy';
 import { getLogoutUrl, getDestinationParam } from '../utils';
 import { UserManager } from 'oidc-client';
 import { RootState } from '../store/reducers';
+import { NexusClient } from '@bbp/nexus-sdk';
+import { useNexus } from '@bbp/react-nexus';
+
 
 const favicon = require('../favicon.png');
 const TITLE = 'A knowledge graph for data-driven science';
@@ -26,6 +29,7 @@ export interface MainLayoutProps {
   canLogin?: boolean;
   userManager?: UserManager;
   userIdentity: Identity;
+  apiEndpoint: string;
 }
 
 const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
@@ -37,12 +41,20 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
   canLogin = false,
   userManager,
   userIdentity,
+  apiEndpoint
 }) => {
   const handleLogout = (e: React.SyntheticEvent) => {
     e.preventDefault();
     localStorage.removeItem('nexus__state');
     userManager && userManager.signoutRedirect();
   };
+
+  
+  const apiBase = new URL(apiEndpoint);
+  const versions = useNexus<ServiceVersions>(
+    (nexus: NexusClient) =>
+      nexus.httpGet({ path: `${apiBase.origin}/version`, context: { as: 'json' } }),
+  );
 
   return (
     <>
@@ -86,6 +98,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
         onLoginClick={() => goTo(`/login${getDestinationParam()}`)}
         version={version}
         githubIssueURL={githubIssueURL}
+        serviceVersions={versions.data}
       />
       <div className="MainLayout_body">{children}</div>
     </>
@@ -93,7 +106,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
 };
 
 const mapStateToProps = (state: RootState) => {
-  const { auth, oidc } = state;
+  const { auth, oidc, config } = state;
   const realms: Realm[] =
     (auth.realms && auth.realms.data && auth.realms.data.results) || [];
   const identities: Identity[] =
@@ -106,6 +119,7 @@ const mapStateToProps = (state: RootState) => {
     userIdentity: identities[identities.length - 1],
     canLogin: !!(realms.length > 0),
     userManager: getUserManager(state),
+    apiEndpoint: config.apiEndpoint,
   };
 };
 

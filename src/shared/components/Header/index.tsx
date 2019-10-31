@@ -9,7 +9,45 @@ const epflLogo = require('../../EPFL-logo.svg');
 interface InformationContentProps {
   version: string;
   githubIssueURL: string;
+  serviceVersions?: ServiceVersions;
 }
+
+export type ServiceVersions = {
+  admin: string;
+  blazegraph: string;
+  elasticsearch: string;
+  iam: string;
+  kg: string;
+  storage: string;
+};
+
+const VersionInfo = (props: ServiceVersions) => {
+  return (
+    <>
+      <p>
+        <h4>Nexus Services</h4>
+      </p>
+      <p>
+        <label>Admin</label> v{props.admin}
+      </p>
+      <p>
+        <label>IAm</label> v{props.iam}
+      </p>
+      <p>
+        <label>Knowledge Graph</label> v{props.kg}
+      </p>
+      <p>
+        <h4>Index Services</h4>
+      </p>
+      <p>
+        <label>Blaze Graph</label> v{props.blazegraph}
+      </p>
+      <p>
+        <label>Elastic Search</label> v{props.elasticsearch}
+      </p>
+    </>
+  );
+};
 
 const InformationContent = (props: InformationContentProps) => {
   return (
@@ -35,6 +73,9 @@ const InformationContent = (props: InformationContentProps) => {
           <span className="bbp-logo">Blue Brain Project</span>
         </a>
       </p>
+      {props.serviceVersions ? (
+        <VersionInfo {...props.serviceVersions} />
+      ) : null}
     </>
   );
 };
@@ -48,6 +89,7 @@ export interface HeaderProps {
   children?: React.ReactChild;
   onLoginClick?(): void;
   visitHome?(): void;
+  serviceVersions?: ServiceVersions;
 }
 
 const Header: React.FunctionComponent<HeaderProps> = ({
@@ -60,6 +102,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   version,
   githubIssueURL,
   visitHome,
+  serviceVersions,
 }) => {
   const menu = (
     <Menu>
@@ -107,6 +150,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             <InformationContent
               version={version}
               githubIssueURL={githubIssueURL}
+              serviceVersions={serviceVersions}
             />
           }
           trigger="click"
