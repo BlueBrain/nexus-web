@@ -126,8 +126,8 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
   });
 
   // Raised when the automatic silent renew has failed.
-  userManager.events.addSilentRenewError(() => {
-    store.dispatch(silentRenewError());
+  userManager.events.addSilentRenewError((error: Error) => {
+    store.dispatch(silentRenewError(error));
     Nexus.removeToken();
     localStorage.removeItem('nexus__token');
   });

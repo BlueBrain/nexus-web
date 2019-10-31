@@ -100,7 +100,7 @@ const SparqlQueryView: React.FunctionComponent<{
         <SparqlQueryContainer
           orgLabel={orgLabel}
           projectLabel={projectLabel}
-          initialQuery={!!query && query !== 0 ? `${query}` : undefined}
+          initialQuery={Array.isArray(query) ? query.join(',') : query}
           viewId={viewId}
         />
       </div>

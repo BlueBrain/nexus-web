@@ -16,7 +16,7 @@ LIMIT 20
 const SparqlQueryContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
-  initialQuery?: string;
+  initialQuery?: string | null;
   viewId?: string;
 }> = ({
   orgLabel,
