@@ -95,11 +95,10 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
           resource._rev,
           value
         );
-        setLatestResource(value);
         goToResource(orgLabel, projectLabel, resourceId, { revision: _rev });
         notification.success({
           message: 'Resource saved',
-          description: getResourceLabel(value),
+          description: getResourceLabel(resource),
           duration: 2,
         });
       } catch (error) {
