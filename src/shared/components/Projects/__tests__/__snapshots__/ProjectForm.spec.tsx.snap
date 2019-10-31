@@ -81,6 +81,7 @@ exports[`Project Form component should render correctly 1`] = `
                 >
                   <div
                     className="ant-row ant-form-item"
+                    style={Object {}}
                   >
                     <Col
                       className="ant-form-item-label"
@@ -97,6 +98,7 @@ exports[`Project Form component should render correctly 1`] = `
                     >
                       <div
                         className="ant-col ant-form-item-label ant-col-xs-24 ant-col-sm-6"
+                        style={Object {}}
                       >
                         <label
                           className="ant-form-item-required"
@@ -123,6 +125,7 @@ exports[`Project Form component should render correctly 1`] = `
                     >
                       <div
                         className="ant-col ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18"
+                        style={Object {}}
                       >
                         <div
                           className="ant-form-item-control"
@@ -285,6 +288,7 @@ exports[`Project Form component should render correctly 1`] = `
                 >
                   <div
                     className="ant-row ant-form-item"
+                    style={Object {}}
                   >
                     <Col
                       className="ant-form-item-label"
@@ -301,6 +305,7 @@ exports[`Project Form component should render correctly 1`] = `
                     >
                       <div
                         className="ant-col ant-form-item-label ant-col-xs-24 ant-col-sm-6"
+                        style={Object {}}
                       >
                         <label
                           className=""
@@ -327,6 +332,7 @@ exports[`Project Form component should render correctly 1`] = `
                     >
                       <div
                         className="ant-col ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18"
+                        style={Object {}}
                       >
                         <div
                           className="ant-form-item-control"
@@ -345,7 +351,6 @@ exports[`Project Form component should render correctly 1`] = `
                                   "initialValue": "",
                                   "name": "description",
                                   "originalProps": Object {
-                                    "disabled": false,
                                     "placeholder": "Description",
                                     "type": "text",
                                   },
@@ -371,7 +376,6 @@ exports[`Project Form component should render correctly 1`] = `
                                   "valuePropName": "value",
                                 }
                               }
-                              disabled={false}
                               id="description"
                               onChange={[Function]}
                               placeholder="Description"
@@ -390,7 +394,6 @@ exports[`Project Form component should render correctly 1`] = `
                                     "initialValue": "",
                                     "name": "description",
                                     "originalProps": Object {
-                                      "disabled": false,
                                       "placeholder": "Description",
                                       "type": "text",
                                     },
@@ -416,7 +419,6 @@ exports[`Project Form component should render correctly 1`] = `
                                     "valuePropName": "value",
                                   }
                                 }
-                                disabled={false}
                                 id="description"
                                 onChange={[Function]}
                                 onKeyDown={[Function]}
@@ -468,6 +470,7 @@ exports[`Project Form component should render correctly 1`] = `
                 >
                   <div
                     className="ant-row ant-form-item"
+                    style={Object {}}
                   >
                     <Col
                       className="ant-form-item-control-wrapper"
@@ -486,6 +489,7 @@ exports[`Project Form component should render correctly 1`] = `
                     >
                       <div
                         className="ant-col ant-form-item-control-wrapper ant-col-xs-24 ant-col-xs-offset-0 ant-col-sm-18 ant-col-sm-offset-6"
+                        style={Object {}}
                       >
                         <div
                           className="ant-form-item-control"
@@ -704,6 +708,7 @@ exports[`Project Form component should render correctly 1`] = `
                 >
                   <div
                     className="ant-row ant-form-item"
+                    style={Object {}}
                   >
                     <Col
                       className="ant-form-item-control-wrapper"
@@ -722,6 +727,7 @@ exports[`Project Form component should render correctly 1`] = `
                     >
                       <div
                         className="ant-col ant-form-item-control-wrapper ant-col-xs-24 ant-col-xs-offset-0 ant-col-sm-18 ant-col-sm-offset-6"
+                        style={Object {}}
                       >
                         <div
                           className="ant-form-item-control"

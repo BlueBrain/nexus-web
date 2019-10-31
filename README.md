@@ -9,28 +9,28 @@ Nexus Web is the interface of Blue Brain Nexus, the open-source knowledge graph 
 ## Development
 
 Install dependencies:
-**Please note you need npm v6.9.0 or above**
+**Please note you need npm v6.9.0 or above or yarn**
 
 ```sh
-npm i
+yarn
 ```
 
 To start the Nexus in development mode, run:
 
 ```sh
-npm run start
+yarn start
 ```
 
 Lint code:
 
 ```sh
-npm run lint
+yarn lint
 ```
 
 Run unit tests:
 
 ```sh
-npm test
+yarn test
 ```
 
 ## Build for production
@@ -38,7 +38,7 @@ npm test
 Compile app in `dist/` folder.
 
 ```sh
-npm run build
+yarn build
 ```
 
 You can run the app with:
