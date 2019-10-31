@@ -52,7 +52,6 @@ const ResourceListBoardContainer: React.FunctionComponent<{
 
   const handleDeleteList = (id: string) => {
     const filteredList = resourceLists.filter(list => list.id !== id);
-    console.log({ id, filteredList });
     setResourceLists(filteredList);
   };
 
