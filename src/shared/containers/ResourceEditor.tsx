@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { useAsyncEffect } from 'use-async-effect';
-import { ExpandedResource, ResourceSource } from '@bbp/nexus-sdk';
+import { ExpandedResource, ResourceSource, Resource, NexusClient } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import { getResourceLabelsAndIdsFromSelf } from '../utils';
 import ResourceEditor from '../components/ResourceEditor';
+
 
 const ResourceEditorContainer: React.FunctionComponent<{
   self: string;
@@ -23,6 +24,8 @@ const ResourceEditorContainer: React.FunctionComponent<{
 }) => {
   const nexus = useNexusContext();
   const [expanded, setExpanded] = React.useState(defaultExpanded);
+  const [showMetaData, setShowMetaData] = React.useState<boolean>(false);
+  
   const {
     orgLabel,
     projectLabel,
@@ -30,7 +33,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
   } = getResourceLabelsAndIdsFromSelf(self);
   const [{ busy, resource, error }, setResource] = React.useState<{
     busy: boolean;
-    resource: ResourceSource | ExpandedResource | null;
+    resource: ResourceSource | ExpandedResource | Resource |null;
     error: Error | null;
   }>({
     busy: false,
@@ -43,6 +46,23 @@ const ResourceEditorContainer: React.FunctionComponent<{
     setExpanded(!expanded);
   };
 
+  const handleMetaDataChange = () => {
+    setShowMetaData(!showMetaData);
+  };
+
+  const getNewResource = async () => {
+    if(expanded) {
+      return  await nexus.Resource.get(orgLabel, projectLabel, resourceId, {
+        rev,
+        format: 'expanded',
+      })
+    } 
+    if(showMetaData) {
+      return await nexus.Resource.get(orgLabel, projectLabel, resourceId);
+    } 
+    return await nexus.Resource.getSource(orgLabel, projectLabel, resourceId);
+  }
+
   useAsyncEffect(
     async isMounted => {
       if (!isMounted()) {
@@ -54,12 +74,8 @@ const ResourceEditorContainer: React.FunctionComponent<{
           error: null,
           busy: true,
         });
-        const newResource = expanded
-          ? await nexus.Resource.get(orgLabel, projectLabel, resourceId, {
-              rev,
-              format: 'expanded',
-            })
-          : await nexus.Resource.getSource(orgLabel, projectLabel, resourceId);
+
+        const  newResource =  await getNewResource();
 
         setResource({
           resource: newResource,
@@ -74,7 +90,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
         });
       }
     },
-    [self, rev, expanded]
+    [self, rev, expanded, showMetaData]
   );
 
   return (
@@ -84,8 +100,10 @@ const ResourceEditorContainer: React.FunctionComponent<{
         rawData={resource}
         onSubmit={onSubmit}
         onFormatChange={handleFormatChange}
-        editable={defaultEditable && !expanded}
+        onMetaDataChange={handleMetaDataChange}
+        editable={defaultEditable && !expanded && !showMetaData}
         expanded={expanded}
+        metaData={showMetaData}
       />
     )
   );

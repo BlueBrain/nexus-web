@@ -9,10 +9,12 @@ export interface ResourceEditorProps {
   rawData: { [key: string]: any };
   onSubmit: (rawData: { [key: string]: any }) => void;
   onFormatChange?(expanded: boolean): void;
+  onMetaDataChange?(expanded: boolean): void;
   editable?: boolean;
   editing?: boolean;
   busy?: boolean;
   expanded?: boolean;
+  metaData?: boolean;
   showExpanded?: boolean;
 }
 
@@ -20,11 +22,13 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const {
     rawData,
     onFormatChange,
+    onMetaDataChange,
     onSubmit,
     editable = false,
     busy = false,
     editing = false,
     expanded = false,
+    metaData = false,
     showExpanded = true,
   } = props;
 
@@ -88,6 +92,14 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
               unCheckedChildren="expand"
               checked={expanded}
               onChange={onFormatChange}
+            />
+          )}
+          {!expanded && !isEditing && valid && (
+            <Switch
+              checkedChildren="Meta Data"
+              unCheckedChildren="Show Meta Data"
+              checked={metaData}
+              onChange={onMetaDataChange}
             />
           )}
           {editable && isEditing && valid && (

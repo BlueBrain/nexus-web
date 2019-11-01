@@ -21,7 +21,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
     orgLabel: string,
     projectLabel: string,
     resourceId: string,
-    revision: number,
+    revision: number
   ) => void;
 }> = ({ resource, goToView, goToResource }) => {
   const {
@@ -105,7 +105,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     orgLabel: string,
     projectLabel: string,
     resourceId: string,
-    revision: number,
+    revision: number
   ) => {
     dispatch(
       push(
