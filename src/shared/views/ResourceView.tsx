@@ -7,7 +7,7 @@ import { Spin, Card, Empty, Tabs, notification, Alert } from 'antd';
 import * as queryString from 'query-string';
 import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource, ResourceLink } from '@bbp/nexus-sdk';
+import { Resource, ResourceLink, NexusFile } from '@bbp/nexus-sdk';
 
 import { getResourceLabel, getResourceLabelsAndIdsFromSelf } from '../utils';
 import ResourceCardComponent from '../components/ResourceCard';
@@ -16,6 +16,8 @@ import ResourceLinksContainer from '../containers/ResourceLinks';
 import ResourceActionsContainer from '../containers/ResourceActions';
 import { isDeprecated } from '../utils/nexusMaybe';
 import ResourceEditorContainer from '../containers/ResourceEditor';
+
+
 
 const TabPane = Tabs.TabPane;
 const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
@@ -58,6 +60,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
     error: null,
   });
 
+  const [previewImage, setPreviewImage] = React.useState<string>('');
   const [latestResource, setLatestResource] = React.useState<
     Resource & { [key: string]: any } | null
   >(null);
@@ -142,6 +145,16 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
             rev: Number(rev),
           })) as Resource)
         : latestResource;
+        if(newResource["@type"] === 'File') {
+          const file = await nexus.File.get(orgLabel, projectLabel, resourceId, { as : 'json'}) as NexusFile;
+          console.log(file._mediaType);
+          if(file._mediaType.includes('image')) {
+            const rawData = await nexus.File.get(orgLabel, projectLabel, resourceId, { as : 'blob'}) as Blob;
+            const blob = new Blob([rawData], { type: file._mediaType });
+            const src = URL.createObjectURL(blob);
+            setPreviewImage(src);
+          }
+        }
       setResource({
         resource: newResource,
         error: null,
@@ -156,7 +169,11 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
       });
     }
   }, [orgLabel, projectLabel, resourceId, rev]);
-
+  
+  const Preview = () => {
+    return (!!previewImage ?  null : <img src={previewImage} />)
+  }
+  
   return (
     <div className="resource-view view-container">
       {!!resource && (
@@ -209,7 +226,8 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                   closable
                 />
               )}
-              <ResourceCardComponent resource={resource} />
+              <ResourceCardComponent resource={resource}  preview={Preview} />
+              <img src={previewImage} />
               <ResourceActionsContainer resource={resource} />
               <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
                 <TabPane tab="JSON" key="#JSON">

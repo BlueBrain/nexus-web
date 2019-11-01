@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Resource, NexusFile } from '@bbp/nexus-sdk-legacy';
+import { Resource } from '@bbp/nexus-sdk-legacy';
 import ListItem from '../../../Animations/ListItem';
 import ResourceMetadataCard from '../../../Resources/MetadataCard';
 import TypesIconList from '../../../Types/TypesIcon';
-import useNexusImage from '../../../../hooks/useNexusImage';
+
 
 const MOUSE_ENTER_DELAY = 0.5;
 
@@ -16,15 +16,12 @@ export interface QueryListItemProps {
 
 const QueryListItem: React.FunctionComponent<QueryListItemProps> = props => {
   const { predicate, resource, onClick = () => {} } = props;
-  const imagePreviewProps = useNexusImage(resource);
-
   return (
     <ListItem
       popover={{
         content: <ResourceMetadataCard {...{ resource }} />,
         mouseEnterDelay: MOUSE_ENTER_DELAY,
       }}
-      preview={imagePreviewProps}
       onTitleClick={() => onClick(resource)}
       label={
         predicate ? (
