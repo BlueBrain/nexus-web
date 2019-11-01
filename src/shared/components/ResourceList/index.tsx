@@ -35,9 +35,9 @@ const ResourceListComponent: React.FunctionComponent<{
   onRefresh,
   makeResourceUri,
   goToResource,
+  children,
 }) => {
   const { name } = list;
-  const showDeprecated = false;
 
   const handleUpdate = (value: string) => {
     onUpdate({ ...list, name: value });
@@ -94,6 +94,7 @@ const ResourceListComponent: React.FunctionComponent<{
         <Tooltip title="Clone this query">
           <Button icon="switcher" onClick={handleCloneList} />
         </Tooltip>
+        {children}
         <div className="switches">
           <Tooltip
             title={

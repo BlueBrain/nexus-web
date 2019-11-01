@@ -7,6 +7,8 @@ import { ResourceList, Resource } from '@bbp/nexus-sdk';
 import { ResourceBoardList } from './ResourceListBoardContainer';
 import ResourceListComponent from '../components/ResourceList';
 import { RootState } from '../store/reducers';
+import TypeDropdownFilterContainer from './TypeDropdownFilter';
+import SchemaDropdownFilterContainer from './SchemaDropdownFilters';
 
 const ResourceListContainer: React.FunctionComponent<{
   orgLabel: string;
@@ -60,6 +62,26 @@ const ResourceListContainer: React.FunctionComponent<{
     setToggleForceReload(!toggleForceReload);
   };
 
+  const handleTypeChange = (value: string) => {
+    setList({
+      ...list,
+      query: {
+        ...list.query,
+        type: !!value ? value : undefined,
+      },
+    });
+  };
+
+  const handleSchemaChange = (value: string) => {
+    setList({
+      ...list,
+      query: {
+        ...list.query,
+        schema: !!value ? value : undefined,
+      },
+    });
+  };
+
   return (
     <ResourceListComponent
       busy={busy}
@@ -74,7 +96,18 @@ const ResourceListContainer: React.FunctionComponent<{
       onRefresh={handleRefreshList}
       makeResourceUri={makeResourceUri}
       goToResource={goToResource}
-    />
+    >
+      <TypeDropdownFilterContainer
+        orgLabel={orgLabel}
+        projectLabel={projectLabel}
+        onChange={handleTypeChange}
+      />
+      <SchemaDropdownFilterContainer
+        orgLabel={orgLabel}
+        projectLabel={projectLabel}
+        onChange={handleSchemaChange}
+      />
+    </ResourceListComponent>
   );
 };
 
