@@ -216,7 +216,7 @@ export function getResourceLabel(
     [key: string]: any;
   }
 ) {
-  return resource.name || resource.label || resource['@id'];
+  return resource.name || resource.label || labelOf(resource['@id']);
 }
 
 /**

@@ -45,8 +45,11 @@
   & > .controls {
     display: flex;
     justify-content: space-between;
-    margin-bottom: @default-pad;
+    margin-bottom: @half-pad;
     flex-wrap: wrap;
+    &.-squished {
+      justify-content: flex-end;
+    }
   }
   & > .controls > .search {
     width: 60%;

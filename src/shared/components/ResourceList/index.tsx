@@ -3,11 +3,16 @@ import { Icon, Tooltip, Button, Spin, Switch, Empty } from 'antd';
 import { ResourceList } from '@bbp/nexus-sdk';
 
 import RenameableItem from '../Renameable';
+import InfiniteSearch from '../List/InfiniteSearch';
+import ListItem from '../Animations/ListItem';
+import { ResourceBoardList } from '../../containers/ResourceListBoardContainer';
+import ResourceCardComponent from '../ResourceCard';
+import { getResourceLabel } from '../../utils';
+import TypesIconList from '../Types/TypesIcon';
 
 import './ResourceList.less';
-import InfiniteSearch from '../List/InfiniteSearch';
-import ListItem from '../List/Item';
-import { ResourceBoardList } from '../../containers/ResourceListBoardContainer';
+
+const RESOURCE_CARD_MOUSE_ENTER_DELAY = 0.5;
 
 const ResourceListComponent: React.FunctionComponent<{
   busy: boolean;
@@ -94,24 +99,22 @@ const ResourceListComponent: React.FunctionComponent<{
         <Tooltip title="Clone this query">
           <Button icon="switcher" onClick={handleCloneList} />
         </Tooltip>
-        {children}
-        <div className="switches">
-          <Tooltip
-            title={
-              list.query.deprecated
-                ? 'Displaying deprecated resources only'
-                : 'Not showing deprecated resources'
-            }
-          >
-            <Switch
-              onChange={handleToggleDeprecated}
-              checked={list.query.deprecated}
-              checkedChildren={<Icon type="delete" />}
-              unCheckedChildren={<Icon type="delete" />}
-            />
-          </Tooltip>
-        </div>
+        <Tooltip
+          title={
+            list.query.deprecated
+              ? 'Displaying deprecated resources only'
+              : 'Not showing deprecated resources'
+          }
+        >
+          <Switch
+            onChange={handleToggleDeprecated}
+            checked={list.query.deprecated}
+            checkedChildren={<Icon type="delete" />}
+            unCheckedChildren={<Icon type="delete" />}
+          />
+        </Tooltip>
       </div>
+      <div className="controls">{children}</div>
       <Spin spinning={busy}>
         {!!error && <Empty description={error.message} />}
         {!error && (
@@ -119,19 +122,33 @@ const ResourceListComponent: React.FunctionComponent<{
             {resources.map(resource => {
               return (
                 <ListItem
-                  key={resource['@id']}
+                  popover={{
+                    content: <ResourceCardComponent resource={resource} />,
+                    mouseEnterDelay: RESOURCE_CARD_MOUSE_ENTER_DELAY,
+                  }}
                   onClick={() => goToResource(resource['@id'])}
-                >
-                  <a
-                    href={makeResourceUri(resource['@id'])}
-                    onClick={e => {
-                      e.preventDefault();
-                      goToResource(resource['@id']);
-                    }}
-                  >
-                    {resource['@id']}
-                  </a>
-                </ListItem>
+                  label={
+                    <a
+                      href={makeResourceUri(resource['@id'])}
+                      onClick={e => {
+                        e.preventDefault();
+                        goToResource(resource['@id']);
+                      }}
+                    >
+                      {getResourceLabel(resource)}
+                    </a>
+                  }
+                  id={resource['@id']}
+                  details={
+                    !!resource['@type'] ? (
+                      Array.isArray(resource['@type']) ? (
+                        <TypesIconList type={resource['@type']} />
+                      ) : (
+                        <TypesIconList type={[resource['@type']]} />
+                      )
+                    ) : null
+                  }
+                />
               );
             })}
           </InfiniteSearch>
