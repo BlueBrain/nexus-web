@@ -89,7 +89,7 @@ const ResourceListComponent: React.FunctionComponent<{
         </div>
         <Icon type="close" className="close-button" onClick={handleDelete} />
       </h3>
-      <div className="controls">
+      <div className="controls -squished">
         <Tooltip title="Clear filters">
           <Button icon="close-circle" onClick={handleClear} />
         </Tooltip>
@@ -122,6 +122,7 @@ const ResourceListComponent: React.FunctionComponent<{
             {resources.map(resource => {
               return (
                 <ListItem
+                  key={resource['@id']}
                   popover={{
                     content: <ResourceCardComponent resource={resource} />,
                     mouseEnterDelay: RESOURCE_CARD_MOUSE_ENTER_DELAY,

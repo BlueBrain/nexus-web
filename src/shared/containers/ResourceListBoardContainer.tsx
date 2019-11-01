@@ -65,6 +65,7 @@ const ResourceListBoardContainer: React.FunctionComponent<{
       {resourceLists.map((list, index: number) => {
         return (
           <ResourceListContainer
+            key={list.id}
             defaultList={list}
             projectLabel={projectLabel}
             orgLabel={orgLabel}

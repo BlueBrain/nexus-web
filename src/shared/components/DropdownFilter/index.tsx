@@ -57,11 +57,11 @@ const DropdownFilter: React.FunctionComponent<{
         onSelect={handleChange}
         value={inputValue}
         allowClear={true}
-        filterOption={(inputValue, option) =>
-          getProp(option, 'props.label', '')
+        filterOption={(inputValue, option) => {
+          return getProp(option, 'props.value', '')
             .toUpperCase()
-            .includes(inputValue.toUpperCase())
-        }
+            .includes(inputValue.toUpperCase());
+        }}
         dataSource={dataSource}
       >
         <Input />

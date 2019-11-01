@@ -11,9 +11,7 @@ export const TypeDropdownItem: React.FunctionComponent<{
   label: string;
 }> = ({ count, key, label }) => {
   return (
-    // Option does in fact have a label property, the ts warning is a lie.
-    // @ts-ignore (overloaded Options props with label, it works!)
-    <Option key={key} value={key} label={label}>
+    <Option key={key} value={key} title={label}>
       <div className="drop-option">
         <div className="label">
           <span className="count">({count})</span> {label}
@@ -30,9 +28,7 @@ export const DropdownItem: React.FunctionComponent<{
   label: string;
 }> = ({ count, key, label }) => {
   return (
-    // Option does in fact have a label property, the ts warning is a lie.
-    // @ts-ignore (overloaded Options props with label, it works!)
-    <Option key={key} value={key} label={label}>
+    <Option key={key} value={key} title={label}>
       <div className="drop-option">
         <div className="label">
           <span className="count">({count})</span> {label}
