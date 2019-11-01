@@ -34,11 +34,6 @@ const DropdownFilter: React.FunctionComponent<{
   };
 
   const handleInputChange = (value: SelectValue) => {
-    // if value has been cleared, call handle change in order
-    // to remove filter from ES query
-    if (value === undefined) {
-      handleChange('');
-    }
     setInputValue(value as string);
   };
 
@@ -51,7 +46,7 @@ const DropdownFilter: React.FunctionComponent<{
     <div className="dropdown-filter">
       <AutoComplete
         dropdownMatchSelectWidth={false}
-        optionLabelProp="label"
+        optionLabelProp="title"
         placeholder={placeholder}
         onChange={handleInputChange}
         onSelect={handleChange}
