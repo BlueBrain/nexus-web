@@ -29,22 +29,11 @@ const FileUploadContainer: React.FunctionComponent<{
   const onFileUpload = async (file: File, storageId?: string) => {
     const formData = new FormData();
     formData.append('file', file);
-    return await nexus.File.create(
-      orgLabel,
-      projectLabel,
-      {
-        '@id': file.name,
-        file: formData,
-        storage: storageId,
-      },
-      // TODO: fix! https://github.com/BlueBrain/nexus/issues/784
-      // @ts-ignore
-      {
-        extraHeaders: {
-          'Content-Type': '',
-        },
-      }
-    );
+    return await nexus.File.create(orgLabel, projectLabel, {
+      '@id': file.name,
+      file: formData,
+      storage: storageId,
+    });
   };
 
   React.useEffect(() => {
