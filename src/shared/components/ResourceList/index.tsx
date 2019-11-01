@@ -11,6 +11,7 @@ import { getResourceLabel } from '../../utils';
 import TypesIconList from '../Types/TypesIcon';
 
 import './ResourceList.less';
+import useMeasure from '../../hooks/useMeasure';
 
 const RESOURCE_CARD_MOUSE_ENTER_DELAY = 0.5;
 
@@ -19,7 +20,7 @@ const ResourceListComponent: React.FunctionComponent<{
   list: ResourceBoardList;
   resources: ResourceList<{}>['_results'];
   total?: number;
-  error?: Error;
+  error: Error | null;
   onDelete(): void;
   onClone(): void;
   onUpdate(list: ResourceBoardList): void;
@@ -42,6 +43,7 @@ const ResourceListComponent: React.FunctionComponent<{
   goToResource,
   children,
 }) => {
+  const [{ ref }, { height }] = useMeasure();
   const { name } = list;
 
   const handleUpdate = (value: string) => {
@@ -118,41 +120,47 @@ const ResourceListComponent: React.FunctionComponent<{
       <Spin spinning={busy}>
         {!!error && <Empty description={error.message} />}
         {!error && (
-          <InfiniteSearch onLoadMore={onLoadMore} hasMore={hasMore}>
-            {resources.map(resource => {
-              return (
-                <ListItem
-                  key={resource['@id']}
-                  popover={{
-                    content: <ResourceCardComponent resource={resource} />,
-                    mouseEnterDelay: RESOURCE_CARD_MOUSE_ENTER_DELAY,
-                  }}
-                  onClick={() => goToResource(resource['@id'])}
-                  label={
-                    <a
-                      href={makeResourceUri(resource['@id'])}
-                      onClick={e => {
-                        e.preventDefault();
-                        goToResource(resource['@id']);
-                      }}
-                    >
-                      {getResourceLabel(resource)}
-                    </a>
-                  }
-                  id={resource['@id']}
-                  details={
-                    !!resource['@type'] ? (
-                      Array.isArray(resource['@type']) ? (
-                        <TypesIconList type={resource['@type']} />
-                      ) : (
-                        <TypesIconList type={[resource['@type']]} />
-                      )
-                    ) : null
-                  }
-                />
-              );
-            })}
-          </InfiniteSearch>
+          <div className="height-tester" style={{ height: '100%' }} ref={ref}>
+            <InfiniteSearch
+              onLoadMore={onLoadMore}
+              hasMore={hasMore}
+              height={height + 100} // additional padding for extra chonky list items
+            >
+              {resources.map(resource => {
+                return (
+                  <ListItem
+                    key={resource['@id']}
+                    popover={{
+                      content: <ResourceCardComponent resource={resource} />,
+                      mouseEnterDelay: RESOURCE_CARD_MOUSE_ENTER_DELAY,
+                    }}
+                    onClick={() => goToResource(resource['@id'])}
+                    label={
+                      <a
+                        href={makeResourceUri(resource['@id'])}
+                        onClick={e => {
+                          e.preventDefault();
+                          goToResource(resource['@id']);
+                        }}
+                      >
+                        {getResourceLabel(resource)}
+                      </a>
+                    }
+                    id={resource['@id']}
+                    details={
+                      !!resource['@type'] ? (
+                        Array.isArray(resource['@type']) ? (
+                          <TypesIconList type={resource['@type']} />
+                        ) : (
+                          <TypesIconList type={[resource['@type']]} />
+                        )
+                      ) : null
+                    }
+                  />
+                );
+              })}
+            </InfiniteSearch>
+          </div>
         )}
       </Spin>
     </div>
