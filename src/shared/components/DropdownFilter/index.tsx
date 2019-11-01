@@ -34,6 +34,14 @@ const DropdownFilter: React.FunctionComponent<{
   };
 
   const handleInputChange = (value: SelectValue) => {
+    // if value's undefined, we want to trigger
+    // a handleChange even so the parent knows
+    // to update, if you remove this block
+    // the parent won't refresh if the value
+    // is cleared using the clear button
+    if (value === undefined) {
+      handleChange('');
+    }
     setInputValue(value as string);
   };
 
