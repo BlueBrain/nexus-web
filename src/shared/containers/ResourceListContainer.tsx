@@ -94,13 +94,15 @@ const ResourceListContainer: React.FunctionComponent<{
   );
 
   const handleLoadMore = async ({ searchValue }: { searchValue: string }) => {
-    setList({
-      ...list,
-      query: {
-        ...list.query,
-        q: searchValue,
-      },
-    });
+    if (searchValue !== list.query.q) {
+      return setList({
+        ...list,
+        query: {
+          ...list.query,
+          q: searchValue,
+        },
+      });
+    }
     if (busy || !next) {
       return;
     }

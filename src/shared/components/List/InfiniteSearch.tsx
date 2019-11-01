@@ -5,20 +5,15 @@ import * as InfiniteScroll from 'react-infinite-scroller';
 import './InfiniteSearch.less';
 
 export type InfiniteSearchProps = {
-  onLoadMore({ searchValue }: { searchValue: string }): void;
+  onLoadMore({ searchValue }: { searchValue?: string }): void;
   hasMore: boolean;
   defaultSearchValue?: string;
   hasSearch?: boolean;
   height?: number;
 };
 const InfiniteSearch: React.FunctionComponent<InfiniteSearchProps> = props => {
-  const {
-    onLoadMore,
-    hasMore,
-    defaultSearchValue = '',
-    hasSearch = true,
-  } = props;
-  const [searchValue, setSearchValue] = React.useState<string>(
+  const { onLoadMore, hasMore, defaultSearchValue, hasSearch = true } = props;
+  const [searchValue, setSearchValue] = React.useState<string | undefined>(
     defaultSearchValue
   );
 

@@ -125,6 +125,7 @@ const ResourceListComponent: React.FunctionComponent<{
               onLoadMore={onLoadMore}
               hasMore={hasMore}
               height={height + 100} // additional padding for extra chonky list items
+              defaultSearchValue={list.query.q}
             >
               {resources.map(resource => {
                 return (
