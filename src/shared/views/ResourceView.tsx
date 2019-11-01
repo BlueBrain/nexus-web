@@ -219,7 +219,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                     defaultExpanded={
                       !!expandedFromQuery && expandedFromQuery === 'true'
                     }
-                    defaultEditable={isLatest}
+                    defaultEditable={isLatest && !isDeprecated(resource)}
                     onSubmit={handleEditFormSubmit}
                     onExpanded={handleExpanded}
                   />

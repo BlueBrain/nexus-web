@@ -17,7 +17,13 @@ const ResourceActionsContainer: React.FunctionComponent<{
     viewId: string,
     viewType: string[] | string
   ) => void;
-}> = ({ resource, goToView }) => {
+  goToResource: (
+    orgLabel: string,
+    projectLabel: string,
+    resourceId: string,
+    revision: number,
+  ) => void;
+}> = ({ resource, goToView, goToResource }) => {
   const {
     orgLabel,
     projectLabel,
@@ -28,16 +34,19 @@ const ResourceActionsContainer: React.FunctionComponent<{
   const actions = {
     deprecateResource: async () => {
       try {
-        await nexus.Resource.deprecate(
+        const deprectatedResource = await nexus.Resource.deprecate(
           orgLabel,
           projectLabel,
           resourceId,
           resource._rev
         );
+
         notification.success({
           message: `Deprecated ${getResourceLabel(resource)}`,
         });
-        location && location.reload();
+
+        const { _rev } = deprectatedResource;
+        goToResource(orgLabel, projectLabel, resourceId, _rev);
       } catch (error) {
         notification.error({
           message: `Could not deprecate ${getResourceLabel(resource)}`,
@@ -88,6 +97,20 @@ const mapDispatchToProps = (dispatch: any) => ({
           stringifiedViewType.toLowerCase().includes('elastic')
             ? '_search'
             : 'sparql'
+        }`
+      )
+    );
+  },
+  goToResource: (
+    orgLabel: string,
+    projectLabel: string,
+    resourceId: string,
+    revision: number,
+  ) => {
+    dispatch(
+      push(
+        `/${orgLabel}/${projectLabel}/resources/${resourceId}${
+          revision ? `?rev=${revision}` : ''
         }`
       )
     );
