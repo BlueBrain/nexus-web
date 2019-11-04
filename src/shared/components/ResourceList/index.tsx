@@ -53,7 +53,7 @@ const ResourceListComponent: React.FunctionComponent<{
         ...list,
         query: {
           ...list.query,
-          size: Math.ceil(wrapperHeight / 37.97),
+          size: Math.ceil(wrapperHeight / 40),
         },
       });
     }
