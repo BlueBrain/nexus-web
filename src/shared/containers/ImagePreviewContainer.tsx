@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { notification } from 'antd';
 import { useAsyncEffect } from 'use-async-effect/';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, NexusFile } from '@bbp/nexus-sdk';
@@ -6,7 +7,6 @@ import { Resource, NexusFile } from '@bbp/nexus-sdk';
 import { isFile } from '../utils/nexusMaybe';
 import { getResourceLabelsAndIdsFromSelf } from '../utils';
 import ImagePreviewComponent from '../components/Images/Preview';
-import { notification } from 'antd';
 
 // Only preview images lower than 3MB in size
 const MAX_BYTES_TO_PREVIEW = 3000000;
