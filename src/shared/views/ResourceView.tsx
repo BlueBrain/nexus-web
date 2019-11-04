@@ -16,7 +16,7 @@ import ResourceLinksContainer from '../containers/ResourceLinks';
 import ResourceActionsContainer from '../containers/ResourceActions';
 import { isDeprecated } from '../utils/nexusMaybe';
 import ResourceEditorContainer from '../containers/ResourceEditor';
-import { ImagePreviewComponent } from '../components/Images/Preview';
+import ImagePreviewContainer from '../containers/ImagePreviewContainer';
 
 const TabPane = Tabs.TabPane;
 const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
@@ -58,10 +58,6 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
     resource: null,
     error: null,
   });
-
-  const [previewImageSrc, setPreviewImageSrc] = React.useState<
-    string | undefined
-  >(undefined);
   const [latestResource, setLatestResource] = React.useState<
     Resource & { [key: string]: any } | null
   >(null);
@@ -82,14 +78,6 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
       revision: resource ? resource._rev : undefined,
       tab: activeTabKey,
     });
-  };
-
-  const makePreviewImage = (previewImageSrc: string) => {
-    const img = new Image();
-    img.src = previewImageSrc;
-    return (
-      <ImagePreviewComponent loading={false} hasImage={true} image={img} />
-    );
   };
 
   const handleEditFormSubmit = async (value: any) => {
@@ -154,22 +142,6 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
             rev: Number(rev),
           })) as Resource)
         : latestResource;
-      if (newResource['@type'] === 'File') {
-        const file = (await nexus.File.get(orgLabel, projectLabel, resourceId, {
-          as: 'json',
-        })) as NexusFile;
-        if (file._mediaType.includes('image')) {
-          const rawData = (await nexus.File.get(
-            orgLabel,
-            projectLabel,
-            resourceId,
-            { as: 'blob' }
-          )) as Blob;
-          const blob = new Blob([rawData], { type: file._mediaType });
-          const src = URL.createObjectURL(blob);
-          setPreviewImageSrc(src);
-        }
-      }
       setResource({
         resource: newResource,
         error: null,
@@ -239,11 +211,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
               )}
               <ResourceCardComponent
                 resource={resource}
-                preview={
-                  previewImageSrc
-                    ? makePreviewImage(previewImageSrc)
-                    : undefined
-                }
+                preview={<ImagePreviewContainer resource={resource} />}
               />
               <ResourceActionsContainer resource={resource} />
               <Tabs activeKey={activeTabKey} onChange={handleTabChange}>

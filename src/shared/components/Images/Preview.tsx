@@ -1,24 +1,16 @@
 import * as React from 'react';
-import './image-preview.less';
-import useNexusImage from '../../hooks/useNexusImage';
-import { Resource } from '@bbp/nexus-sdk-legacy';
+
 import LightboxComponent from './Lightbox';
 
-export interface ImagePreviewProps {
-  loading: boolean;
-  hasImage: boolean;
+import './image-preview.less';
+
+const ImagePreviewComponent: React.FunctionComponent<{
+  busy: boolean;
   image: HTMLImageElement | null;
-}
+}> = props => {
+  const { busy, image } = props;
 
-export const ImagePreviewComponent: React.FunctionComponent<
-  ImagePreviewProps
-> = props => {
-  const { loading, hasImage, image } = props;
-
-  if (!hasImage) {
-    return null;
-  }
-  if (loading) {
+  if (busy) {
     return (
       <div className="image-preview">
         <div className="wrapper -loading">
@@ -52,11 +44,4 @@ export const ImagePreviewComponent: React.FunctionComponent<
   return null;
 };
 
-export const ImagePreviewContainer: React.FunctionComponent<{
-  resource: Resource;
-}> = props => {
-  const imagePreviewProps = useNexusImage(props.resource);
-  return <ImagePreviewComponent {...imagePreviewProps} />;
-};
-
-export default ImagePreviewContainer;
+export default ImagePreviewComponent;
