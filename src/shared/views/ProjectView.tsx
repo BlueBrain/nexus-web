@@ -77,95 +77,93 @@ const ProjectView: React.FunctionComponent<{
   );
 
   return (
-    <Spin spinning={busy}>
-      <div className="project-view">
-        {!!project && !!org && (
-          <>
-            <div className="project-banner">
-              <div className="label">
-                <h1 className="name">
-                  {' '}
-                  {org && (
-                    <span>
-                      <Link to={`/${orgLabel}`}>{org._label}</Link> |{' '}
-                    </span>
-                  )}{' '}
-                  {project._label}
-                  {'  '}
-                </h1>
-                <div style={{ marginLeft: 10 }}>
-                  <ViewStatisticsContainer
-                    orgLabel={org._label}
-                    projectLabel={project._label}
-                    resourceId={DEFAULT_ELASTIC_SEARCH_VIEW_ID}
-                  />
-                </div>
-                {!!project.description && (
-                  <Popover
-                    title={project._label}
-                    content={
-                      <div style={{ width: 300 }}>{project.description}</div>
-                    }
-                  >
-                    <div className="description">{project.description}</div>
-                  </Popover>
-                )}
+    <div className="project-view">
+      {!!project && !!org && (
+        <>
+          <div className="project-banner">
+            <div className="label">
+              <h1 className="name">
+                {' '}
+                {org && (
+                  <span>
+                    <Link to={`/${orgLabel}`}>{org._label}</Link> |{' '}
+                  </span>
+                )}{' '}
+                {project._label}
+                {'  '}
+              </h1>
+              <div style={{ marginLeft: 10 }}>
+                <ViewStatisticsContainer
+                  orgLabel={org._label}
+                  projectLabel={project._label}
+                  resourceId={DEFAULT_ELASTIC_SEARCH_VIEW_ID}
+                />
               </div>
+              {!!project.description && (
+                <Popover
+                  title={project._label}
+                  content={
+                    <div style={{ width: 300 }}>{project.description}</div>
+                  }
+                >
+                  <div className="description">{project.description}</div>
+                </Popover>
+              )}
             </div>
-            <ResourceListBoardContainer
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-            />
-            <div className="actions">
-              <SideMenu
-                visible={menuVisible}
-                title="Resources"
-                onClose={() => setMenuVisible(false)}
-              >
-                <p>
-                  View resources in your project using pre-defined query-helper
-                  lists.
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <AccessControl
-                    path={`/${orgLabel}/${projectLabel}`}
-                    permissions={['resources/write']}
-                  >
-                    <ResourceFormContainer
-                      orgLabel={orgLabel}
-                      projectLabel={projectLabel}
-                    />
-                  </AccessControl>
-                  <Link
-                    to={`/${orgLabel}/${projectLabel}/nxv:defaultSparqlIndex/sparql`}
-                  >
-                    Sparql Query Editor
-                  </Link>
-                  <Link
-                    to={`/${orgLabel}/${projectLabel}/nxv:defaultElasticSearchIndex/_search`}
-                  >
-                    ElasticSearch Query Editor
-                  </Link>
-                  <Link to={`/${orgLabel}/${projectLabel}/_settings/acls`}>
-                    View Project's permissions
-                  </Link>
-                </div>
+          </div>
+          <ResourceListBoardContainer
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+          />
+          <div className="actions">
+            <SideMenu
+              visible={menuVisible}
+              title="Resources"
+              onClose={() => setMenuVisible(false)}
+            >
+              <p>
+                View resources in your project using pre-defined query-helper
+                lists.
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <AccessControl
                   path={`/${orgLabel}/${projectLabel}`}
-                  permissions={['files/write']}
+                  permissions={['resources/write']}
                 >
-                  <Divider />
-                  <FileUploadContainer
-                    projectLabel={projectLabel}
+                  <ResourceFormContainer
                     orgLabel={orgLabel}
+                    projectLabel={projectLabel}
                   />
                 </AccessControl>
-              </SideMenu>
-            </div>
-          </>
-        )}
-      </div>
-    </Spin>
+                <Link
+                  to={`/${orgLabel}/${projectLabel}/nxv:defaultSparqlIndex/sparql`}
+                >
+                  Sparql Query Editor
+                </Link>
+                <Link
+                  to={`/${orgLabel}/${projectLabel}/nxv:defaultElasticSearchIndex/_search`}
+                >
+                  ElasticSearch Query Editor
+                </Link>
+                <Link to={`/${orgLabel}/${projectLabel}/_settings/acls`}>
+                  View Project's permissions
+                </Link>
+              </div>
+              <AccessControl
+                path={`/${orgLabel}/${projectLabel}`}
+                permissions={['files/write']}
+              >
+                <Divider />
+                <FileUploadContainer
+                  projectLabel={projectLabel}
+                  orgLabel={orgLabel}
+                />
+              </AccessControl>
+            </SideMenu>
+          </div>
+        </>
+      )}
+    </div>
   );
 };
 

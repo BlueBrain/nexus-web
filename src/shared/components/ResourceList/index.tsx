@@ -87,7 +87,12 @@ const ResourceListComponent: React.FunctionComponent<{
           size="small"
         />
         <div className="count">
-          {!!total && `${total} result${total > 1 ? 's' : ''}`}
+          {!!resources.length && (
+            <>
+              <b>{resources.length.toLocaleString()}</b> /{' '}
+            </>
+          )}
+          {!!total && `${total.toLocaleString()} result${total > 1 ? 's' : ''}`}
         </div>
         <Icon type="close" className="close-button" onClick={handleDelete} />
       </h3>
@@ -130,7 +135,7 @@ const ResourceListComponent: React.FunctionComponent<{
               dataLength={resources.length}
               onLoadMore={onLoadMore}
               hasMore={hasMore}
-              height={height + 100} // additional padding for extra chonky list items
+              height={height - 50} // additional padding for extra chonky list items
               defaultSearchValue={list.query.q}
             >
               {resources.map(resource => {

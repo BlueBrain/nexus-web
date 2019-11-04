@@ -2,6 +2,7 @@
 
 .resource-list {
   .cardlike();
+  height: 100%;
   background-color: @primary-card;
   width: @default-card-width;
   min-width: @default-card-width;
@@ -50,6 +51,9 @@
     &.-squished {
       justify-content: flex-end;
     }
+  }
+  & > .controls > .dropdown-filter {
+    width: 49%;
   }
   & > .controls > .search {
     width: 60%;

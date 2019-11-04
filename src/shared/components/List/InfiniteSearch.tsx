@@ -2,8 +2,6 @@ import * as React from 'react';
 import { Input } from 'antd';
 import * as InfiniteScroll from 'react-infinite-scroll-component';
 
-import { uuidv4 } from '../../utils';
-
 import './InfiniteSearch.less';
 
 export type InfiniteSearchProps = {
@@ -25,7 +23,6 @@ const InfiniteSearch: React.FunctionComponent<InfiniteSearchProps> = props => {
   const [searchValue, setSearchValue] = React.useState<string | undefined>(
     defaultSearchValue
   );
-  const scrollId = uuidv4();
 
   return (
     <div className="infinite-search">
@@ -41,24 +38,17 @@ const InfiniteSearch: React.FunctionComponent<InfiniteSearchProps> = props => {
           }}
         />
       )}
-      <div
-        className="scroll"
-        id={scrollId}
-        style={{
-          height: props.height,
-          overflowY: props.height ? 'scroll' : 'initial',
-        }}
+      <InfiniteScroll
+        className="infinite-scoller"
+        dataLength={dataLength}
+        next={() => onLoadMore({ searchValue })}
+        hasMore={hasMore}
+        loader={<h4>Loading...</h4>}
+        height={props.height}
+        scrollThreshold={'100px'}
       >
-        <InfiniteScroll
-          dataLength={dataLength}
-          next={() => onLoadMore({ searchValue })}
-          hasMore={hasMore}
-          loader={<h4>Loading...</h4>}
-          scrollableTarget={!!props.height && scrollId}
-        >
-          {props.children}
-        </InfiniteScroll>
-      </div>
+        {props.children}
+      </InfiniteScroll>
     </div>
   );
 };
