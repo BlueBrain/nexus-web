@@ -41,7 +41,13 @@ const ImagePreviewContainer: React.FunctionComponent<{
 
   useAsyncEffect(
     async isMounted => {
-      if (!isMounted() || !isFile(resource)) {
+      if (
+        !isMounted() || // not rendered
+        !isFile(resource) || // not a file
+        // is not a file of type image less than (default of 3MB)
+        (!(resource as NexusFile)._mediaType.includes('image') &&
+          (resource as NexusFile)._bytes <= maxBytes)
+      ) {
         return;
       }
 
@@ -51,27 +57,18 @@ const ImagePreviewContainer: React.FunctionComponent<{
           error: null,
           busy: true,
         });
-        const file = (await nexus.File.get(orgLabel, projectLabel, resourceId, {
-          as: 'json',
-        })) as NexusFile;
-
-        if (file._mediaType.includes('image') && file._bytes <= maxBytes) {
-          const rawData = (await nexus.File.get(
-            orgLabel,
-            projectLabel,
-            resourceId,
-            { as: 'blob' }
-          )) as Blob;
-          const blob = new Blob([rawData], { type: file._mediaType });
-          const src = URL.createObjectURL(blob);
-          return setImage({
-            imageSrc: src,
-            error: null,
-            busy: false,
-          });
-        }
-        setImage({
-          imageSrc,
+        const rawData = (await nexus.File.get(
+          orgLabel,
+          projectLabel,
+          resourceId,
+          { as: 'blob' }
+        )) as Blob;
+        const blob = new Blob([rawData], {
+          type: (resource as NexusFile)._mediaType,
+        });
+        const src = URL.createObjectURL(blob);
+        return setImage({
+          imageSrc: src,
           error: null,
           busy: false,
         });
