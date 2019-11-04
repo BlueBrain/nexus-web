@@ -43,8 +43,21 @@ const ResourceListComponent: React.FunctionComponent<{
   goToResource,
   children,
 }) => {
-  const [{ ref }, { height }] = useMeasure();
+  const [{ ref: listHeightRef }, { height: listHeight }] = useMeasure();
+  const [{ ref: wrapperHeightRef }, { height: wrapperHeight }] = useMeasure();
   const { name } = list;
+
+  React.useEffect(() => {
+    if (wrapperHeight) {
+      onUpdate({
+        ...list,
+        query: {
+          ...list.query,
+          size: Math.ceil(wrapperHeight / 37.97),
+        },
+      });
+    }
+  }, [listHeight, wrapperHeight]);
 
   const handleUpdate = (value: string) => {
     onUpdate({ ...list, name: value });
@@ -79,63 +92,59 @@ const ResourceListComponent: React.FunctionComponent<{
   const hasMore = resources.length < Number(total || 0);
 
   return (
-    <div className="resource-list">
-      <h3 className={`header ${busy ? '-fetching' : ''}`}>
-        <RenameableItem
-          defaultValue={name}
-          onChange={handleUpdate}
-          size="small"
-        />
-        <div className="count">
-          {!!resources.length && (
-            <>
-              <b>{resources.length.toLocaleString()}</b> /{' '}
-            </>
-          )}
-          {!!total && `${total.toLocaleString()} result${total > 1 ? 's' : ''}`}
-        </div>
-        <Icon type="close" className="close-button" onClick={handleDelete} />
-      </h3>
-      <div className="controls -squished">
-        <Tooltip title="Clear filters">
-          <Button icon="close-circle" onClick={handleClear} />
-        </Tooltip>
-        <Tooltip title="Refresh list">
-          <Button icon="reload" onClick={handleRefreshList} />
-        </Tooltip>
-        <Tooltip title="Clone this query">
-          <Button icon="switcher" onClick={handleCloneList} />
-        </Tooltip>
-        <Tooltip
-          title={
-            list.query.deprecated
-              ? 'Displaying deprecated resources only'
-              : 'Not showing deprecated resources'
-          }
-        >
-          <Switch
-            onChange={handleToggleDeprecated}
-            checked={list.query.deprecated}
-            checkedChildren={<Icon type="delete" />}
-            unCheckedChildren={<Icon type="delete" />}
+    <div className="resource-list-height-tester" ref={wrapperHeightRef}>
+      <div className="resource-list" ref={listHeightRef}>
+        <h3 className={`header ${busy ? '-fetching' : ''}`}>
+          <RenameableItem
+            defaultValue={name}
+            onChange={handleUpdate}
+            size="small"
           />
-        </Tooltip>
-      </div>
-      <div className="controls">{children}</div>
-      <Spin spinning={busy}>
-        {!!error && <Empty description={error.message} />}
-        {!error && (
-          <div
-            className="height-tester"
-            id={`list-scroll-${list.id}`}
-            style={{ height: '100%' }}
-            ref={ref}
+          <div className="count">
+            {!!resources.length && (
+              <>
+                <b>{resources.length.toLocaleString()}</b> /{' '}
+              </>
+            )}
+            {!!total &&
+              `${total.toLocaleString()} result${total > 1 ? 's' : ''}`}
+          </div>
+          <Icon type="close" className="close-button" onClick={handleDelete} />
+        </h3>
+        <div className="controls -squished">
+          <Tooltip title="Clear filters">
+            <Button icon="close-circle" onClick={handleClear} />
+          </Tooltip>
+          <Tooltip title="Refresh list">
+            <Button icon="reload" onClick={handleRefreshList} />
+          </Tooltip>
+          <Tooltip title="Clone this query">
+            <Button icon="switcher" onClick={handleCloneList} />
+          </Tooltip>
+          <Tooltip
+            title={
+              list.query.deprecated
+                ? 'Displaying deprecated resources only'
+                : 'Not showing deprecated resources'
+            }
           >
+            <Switch
+              onChange={handleToggleDeprecated}
+              checked={list.query.deprecated}
+              checkedChildren={<Icon type="delete" />}
+              unCheckedChildren={<Icon type="delete" />}
+            />
+          </Tooltip>
+        </div>
+        <div className="controls">{children}</div>
+        <Spin spinning={busy}>
+          {!!error && <Empty description={error.message} />}
+          {!error && (
             <InfiniteSearch
               dataLength={resources.length}
               onLoadMore={onLoadMore}
               hasMore={hasMore}
-              height={height - 50} // additional padding for extra chonky list items
+              height={wrapperHeight - 200} // additional padding for extra chonky list items
               defaultSearchValue={list.query.q}
             >
               {resources.map(resource => {
@@ -172,9 +181,9 @@ const ResourceListComponent: React.FunctionComponent<{
                 );
               })}
             </InfiniteSearch>
-          </div>
-        )}
-      </Spin>
+          )}
+        </Spin>
+      </div>
     </div>
   );
 };
