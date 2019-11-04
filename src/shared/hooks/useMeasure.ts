@@ -9,7 +9,7 @@ interface Bounds {
 }
 
 export default function useMeasure() {
-  const ref = React.useRef<HTMLElement>();
+  const ref = React.useRef<HTMLDivElement>(null);
   const [bounds, set] = React.useState<Bounds>({
     left: 0,
     top: 0,
@@ -34,7 +34,7 @@ export default function useMeasure() {
   }, [ref, ro]);
 
   return [{ ref }, bounds] as [
-    { ref: React.MutableRefObject<HTMLElement> },
+    { ref: React.MutableRefObject<HTMLDivElement> },
     Bounds
   ];
 }

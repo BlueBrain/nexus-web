@@ -49,6 +49,7 @@ const OrgListContainer: React.FunctionComponent<{
   };
   return (
     <InfiniteSearch
+      dataLength={orgs.items.length}
       onLoadMore={loadMore}
       hasMore={orgs.items.length < orgs.total}
       defaultSearchValue={props.defaultSearchValue}

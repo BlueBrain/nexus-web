@@ -24,6 +24,7 @@ const ResourceLinks: React.FunctionComponent<{
         {!!error && <Empty description={error.message} />}
         {!error && (
           <InfiniteSearch
+            dataLength={links.length}
             onLoadMore={onLoadMore}
             hasMore={hasMore}
             hasSearch={false}
