@@ -85,7 +85,19 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             </div>
           )}
         </div>
+        
         <div className="controls">
+          {!expanded && !isEditing && valid && (
+            <>
+              <Switch
+                checkedChildren="Meta Data"
+                unCheckedChildren="Show Meta Data"
+                checked={metaData}
+                onChange={onMetaDataChange}
+              />
+              {' '}
+            </>
+          )}
           {showExpanded && !isEditing && valid && (
             <Switch
               checkedChildren="expanded"
@@ -94,14 +106,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
               onChange={onFormatChange}
             />
           )}
-          {!expanded && !isEditing && valid && (
-            <Switch
-              checkedChildren="Meta Data"
-              unCheckedChildren="Show Meta Data"
-              checked={metaData}
-              onChange={onMetaDataChange}
-            />
-          )}
+
           {editable && isEditing && valid && (
             <Button
               icon="save"
