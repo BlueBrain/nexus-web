@@ -43,21 +43,8 @@ const ResourceListComponent: React.FunctionComponent<{
   goToResource,
   children,
 }) => {
-  const [{ ref: listHeightRef }, { height: listHeight }] = useMeasure();
   const [{ ref: wrapperHeightRef }, { height: wrapperHeight }] = useMeasure();
   const { name } = list;
-
-  React.useEffect(() => {
-    if (wrapperHeight) {
-      onUpdate({
-        ...list,
-        query: {
-          ...list.query,
-          size: Math.ceil(wrapperHeight / 40),
-        },
-      });
-    }
-  }, [listHeight, wrapperHeight]);
 
   const handleUpdate = (value: string) => {
     onUpdate({ ...list, name: value });
@@ -93,7 +80,7 @@ const ResourceListComponent: React.FunctionComponent<{
 
   return (
     <div className="resource-list-height-tester" ref={wrapperHeightRef}>
-      <div className="resource-list" ref={listHeightRef}>
+      <div className="resource-list">
         <h3 className={`header ${busy ? '-fetching' : ''}`}>
           <RenameableItem
             defaultValue={name}
