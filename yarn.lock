@@ -1985,10 +1985,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-infinite-scroller@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@types/react-infinite-scroller/-/react-infinite-scroller-1.2.1.tgz#1cd747ef8f50d3c883e375c0491a906e5436fcb2"
-  integrity sha512-64bpbqdSgtmy1zSZ2AQoFzguwZO7TyKjqJRTEnfNMCAQbnrX90kz+rYufZyY9CmzhwpXMwRO8xR9fMQnbYUkgQ==
+"@types/react-infinite-scroll-component@^4.2.5":
+  version "4.2.5"
+  resolved "https://registry.yarnpkg.com/@types/react-infinite-scroll-component/-/react-infinite-scroll-component-4.2.5.tgz#63111919c7e5fd86c8f1b019889bcd1a190d45c7"
+  integrity sha512-Vo2ykqsvATeFgAAz0IBvO7fgpx9Q2kHG/KJJRNTrdWL06ghTG0t/l/+oY1Z5Zl5PJoLArEHu8D4Yq0kD8jx8ow==
   dependencies:
     "@types/react" "*"
 
@@ -9721,12 +9721,10 @@ react-image-lightbox@^5.1.0:
     prop-types "^15.6.2"
     react-modal "^3.6.1"
 
-react-infinite-scroller@^1.2.4:
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/react-infinite-scroller/-/react-infinite-scroller-1.2.4.tgz#f67eaec4940a4ce6417bebdd6e3433bfc38826e9"
-  integrity sha512-/oOa0QhZjXPqaD6sictN2edFMsd3kkMiE19Vcz5JDgHpzEJVqYcmq+V3mkwO88087kvKGe1URNksHEOt839Ubw==
-  dependencies:
-    prop-types "^15.5.8"
+react-infinite-scroll-component@^4.5.3:
+  version "4.5.3"
+  resolved "https://registry.yarnpkg.com/react-infinite-scroll-component/-/react-infinite-scroll-component-4.5.3.tgz#008c2ec358628b490117ffc4aa6ce6982b26f8be"
+  integrity sha512-8O0PIeYZx0xFVS1ChLlLl/1obn64vylzXeheLsm+t0qUibmet7U6kDaKFg6jVRQJwDikWBTcyqEFFsxrbFCO5w==
 
 react-input-autosize@^2.2.2:
   version "2.2.2"

@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { Input, Spin } from 'antd';
-import * as InfiniteScroll from 'react-infinite-scroller';
+import { Input } from 'antd';
+import * as InfiniteScroll from 'react-infinite-scroll-component';
+
+import { uuidv4 } from '../../utils';
 
 import './InfiniteSearch.less';
 
@@ -10,12 +12,20 @@ export type InfiniteSearchProps = {
   defaultSearchValue?: string;
   hasSearch?: boolean;
   height?: number;
+  dataLength: number;
 };
 const InfiniteSearch: React.FunctionComponent<InfiniteSearchProps> = props => {
-  const { onLoadMore, hasMore, defaultSearchValue, hasSearch = true } = props;
+  const {
+    onLoadMore,
+    hasMore,
+    defaultSearchValue,
+    hasSearch = true,
+    dataLength = 0, // what number are we at right now?
+  } = props;
   const [searchValue, setSearchValue] = React.useState<string | undefined>(
     defaultSearchValue
   );
+  const scrollId = uuidv4();
 
   return (
     <div className="infinite-search">
@@ -33,18 +43,18 @@ const InfiniteSearch: React.FunctionComponent<InfiniteSearchProps> = props => {
       )}
       <div
         className="scroll"
+        id={scrollId}
         style={{
           height: props.height,
           overflowY: props.height ? 'scroll' : 'initial',
         }}
       >
         <InfiniteScroll
-          element="ul"
-          pageStart={0}
-          loadMore={() => onLoadMore({ searchValue })}
+          dataLength={dataLength}
+          next={() => onLoadMore({ searchValue })}
           hasMore={hasMore}
-          loader={<Spin spinning={true}>Loading</Spin>}
-          useWindow={!props.height}
+          loader={<h4>Loading...</h4>}
+          scrollableTarget={!!props.height && scrollId}
         >
           {props.children}
         </InfiniteScroll>

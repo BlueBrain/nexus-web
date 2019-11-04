@@ -50,6 +50,7 @@ const ProjectListContainer: React.FunctionComponent<{
   };
   return (
     <InfiniteSearch
+      dataLength={projects.items.length}
       onLoadMore={loadMore}
       hasMore={projects.items.length < projects.total}
       defaultSearchValue={props.defaultSearchValue}

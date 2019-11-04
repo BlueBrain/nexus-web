@@ -120,8 +120,14 @@ const ResourceListComponent: React.FunctionComponent<{
       <Spin spinning={busy}>
         {!!error && <Empty description={error.message} />}
         {!error && (
-          <div className="height-tester" style={{ height: '100%' }} ref={ref}>
+          <div
+            className="height-tester"
+            id={`list-scroll-${list.id}`}
+            style={{ height: '100%' }}
+            ref={ref}
+          >
             <InfiniteSearch
+              dataLength={resources.length}
               onLoadMore={onLoadMore}
               hasMore={hasMore}
               height={height + 100} // additional padding for extra chonky list items
