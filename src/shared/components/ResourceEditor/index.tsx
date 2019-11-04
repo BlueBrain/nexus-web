@@ -85,7 +85,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             </div>
           )}
         </div>
-        
+
         <div className="controls">
           {!expanded && !isEditing && valid && (
             <>
@@ -94,8 +94,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
                 unCheckedChildren="Show Meta Data"
                 checked={metaData}
                 onChange={onMetaDataChange}
-              />
-              {' '}
+              />{' '}
             </>
           )}
           {showExpanded && !isEditing && valid && (
