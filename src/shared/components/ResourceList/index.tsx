@@ -1,17 +1,33 @@
 import * as React from 'react';
-import { Icon, Tooltip, Button, Spin, Switch, Empty } from 'antd';
+import { Icon, Tooltip, Button, Spin, Switch, Empty, Popover } from 'antd';
 import { ResourceList } from '@bbp/nexus-sdk';
 
 import RenameableItem from '../Renameable';
 import InfiniteSearch from '../List/InfiniteSearch';
-import ListItem from '../Animations/ListItem';
-import { ResourceBoardList } from '../../containers/ResourceListBoardContainer';
+import ListItem from '../List/Item';
 import ResourceCardComponent from '../ResourceCard';
 import { getResourceLabel } from '../../utils';
 import TypesIconList from '../Types/TypesIcon';
+import useMeasure from '../../hooks/useMeasure';
 
 import './ResourceList.less';
-import useMeasure from '../../hooks/useMeasure';
+
+export type ResourceBoardList = {
+  name: string;
+  view: string;
+  id: string;
+  query: {
+    from?: number;
+    size?: number;
+    deprecated?: boolean;
+    rev?: number;
+    type?: string;
+    createdBy?: string;
+    updatedBy?: string;
+    schema?: string;
+    q?: string;
+  };
+};
 
 const RESOURCE_CARD_MOUSE_ENTER_DELAY = 0.5;
 
@@ -138,12 +154,12 @@ const ResourceListComponent: React.FunctionComponent<{
                 return (
                   <ListItem
                     key={resource['@id']}
-                    popover={{
-                      content: <ResourceCardComponent resource={resource} />,
-                      mouseEnterDelay: RESOURCE_CARD_MOUSE_ENTER_DELAY,
-                    }}
                     onClick={() => goToResource(resource['@id'])}
-                    label={
+                  >
+                    <Popover
+                      content={<ResourceCardComponent resource={resource} />}
+                      mouseEnterDelay={RESOURCE_CARD_MOUSE_ENTER_DELAY}
+                    >
                       <a
                         href={makeResourceUri(resource['@id'])}
                         onClick={e => {
@@ -153,18 +169,14 @@ const ResourceListComponent: React.FunctionComponent<{
                       >
                         {getResourceLabel(resource)}
                       </a>
-                    }
-                    id={resource['@id']}
-                    details={
-                      !!resource['@type'] ? (
-                        Array.isArray(resource['@type']) ? (
+                      {!!resource['@type'] &&
+                        (Array.isArray(resource['@type']) ? (
                           <TypesIconList type={resource['@type']} />
                         ) : (
                           <TypesIconList type={[resource['@type']]} />
-                        )
-                      ) : null
-                    }
-                  />
+                        ))}
+                    </Popover>
+                  </ListItem>
                 );
               })}
             </InfiniteSearch>

@@ -39,7 +39,7 @@ const InfiniteSearch: React.FunctionComponent<InfiniteSearchProps> = props => {
         />
       )}
       <InfiniteScroll
-        className="infinite-scoller"
+        className="infinite-scroller"
         dataLength={dataLength}
         next={() => onLoadMore({ searchValue })}
         hasMore={hasMore}

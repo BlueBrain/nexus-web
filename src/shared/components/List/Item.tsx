@@ -4,7 +4,7 @@ import './Item.less';
 
 const Item: React.FunctionComponent<{
   onClick?: () => void;
-  actions?: React.ReactComponentElement<any>[];
+  actions?: React.ReactElement | React.ReactElement[];
 }> = props => {
   return (
     <li className="ListItem" onClick={props.onClick}>

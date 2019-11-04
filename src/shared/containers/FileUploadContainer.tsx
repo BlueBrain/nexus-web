@@ -30,7 +30,6 @@ const FileUploadContainer: React.FunctionComponent<{
     const formData = new FormData();
     formData.append('file', file);
     return await nexus.File.create(orgLabel, projectLabel, {
-      '@id': file.name,
       file: formData,
       storage: storageId,
     });

@@ -4,23 +4,7 @@ import { DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
 import { uuidv4 } from '../utils';
 import ResourceListBoardComponent from '../components/ResourceListBoard';
 import ResourceListContainer from './ResourceListContainer';
-
-export type ResourceBoardList = {
-  name: string;
-  view: string;
-  id: string;
-  query: {
-    from?: number;
-    size?: number;
-    deprecated?: boolean;
-    rev?: number;
-    type?: string;
-    createdBy?: string;
-    updatedBy?: string;
-    schema?: string;
-    q?: string;
-  };
-};
+import { ResourceBoardList } from '../components/ResourceList';
 
 export const DEFAULT_LIST: ResourceBoardList = {
   name: 'Default Query',

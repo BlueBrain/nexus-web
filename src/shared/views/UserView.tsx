@@ -4,7 +4,7 @@ import { Card, notification, Empty } from 'antd';
 import { IdentityList } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
-import ListItem from '../components/Animations/ListItem';
+import ListItem from '../components/List/Item';
 import { RootState } from '../store/reducers';
 
 export interface UserProps {
@@ -46,17 +46,12 @@ const UserView: React.FunctionComponent<UserProps> = props => {
               identities
                 .reverse()
                 .map(({ '@id': id, '@type': type, realm, subject }) => (
-                  <ListItem
-                    key={id}
-                    id={id}
-                    label={
-                      <div>
-                        <em>{type}</em> {subject}
-                      </div>
-                    }
-                    details={<span>{realm}</span>}
-                    description={id}
-                  />
+                  <ListItem key={id}>
+                    <div>
+                      <em>{type}</em> {subject}
+                      <p>{realm}</p>
+                    </div>
+                  </ListItem>
                 ))
             ) : (
               <Empty description={<span>No Identities Found</span>} />

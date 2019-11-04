@@ -5,8 +5,9 @@ import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
 
-import { ResourceBoardList } from './ResourceListBoardContainer';
-import ResourceListComponent from '../components/ResourceList';
+import ResourceListComponent, {
+  ResourceBoardList,
+} from '../components/ResourceList';
 import { RootState } from '../store/reducers';
 import TypeDropdownFilterContainer from './TypeDropdownFilter';
 import SchemaDropdownFilterContainer from './SchemaDropdownFilters';
