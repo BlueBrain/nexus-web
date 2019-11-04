@@ -41,10 +41,7 @@ const ImagePreviewContainer: React.FunctionComponent<{
 
   useAsyncEffect(
     async isMounted => {
-      if (!isMounted()) {
-        return;
-      }
-      if (!isFile(resource)) {
+      if (!isMounted() || !isFile(resource)) {
         return;
       }
 
