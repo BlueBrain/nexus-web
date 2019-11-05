@@ -40,7 +40,7 @@ const ACLs: React.FunctionComponent<ACLsViewProps> = ({
         acls: null,
         busy: true,
       });
-      nexus.ACL.list(path)
+      nexus.ACL.list(path, { ancestors: true })
         .then(acls => {
           setACLs({
             acls: acls._results,
