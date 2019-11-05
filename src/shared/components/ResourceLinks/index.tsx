@@ -22,7 +22,7 @@ const ResourceLinks: React.FunctionComponent<{
   return (
     <div className="resource-links" ref={scrollParent}>
       {firstLoad ? (
-        <Skeleton active></Skeleton>
+        <Skeleton active />
       ) : (
         <>
           {!!error && <Empty description={error.message} />}
