@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Spin, Empty, Skeleton } from 'antd';
+import { Empty, Skeleton } from 'antd';
 import { ResourceLink } from '@bbp/nexus-sdk';
 
 import ListItem from '../List/Item';
