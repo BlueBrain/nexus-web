@@ -9,12 +9,11 @@ import thunk, { ThunkAction } from 'redux-thunk';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { reducer as oidcReducer } from 'redux-oidc';
 import { History } from 'history';
-import Nexus from '@bbp/nexus-sdk-legacy';
-import reducers, { RootState } from './reducers';
 import { NexusClient } from '@bbp/nexus-sdk';
 
+import reducers, { RootState } from './reducers';
+
 export type Services = {
-  nexusLegacy: Nexus;
   nexus: NexusClient;
 };
 
@@ -34,7 +33,7 @@ try {
 
 export default function configureStore(
   history: History,
-  { nexusLegacy, nexus }: { nexusLegacy: Nexus; nexus: NexusClient },
+  { nexus }: { nexus: NexusClient },
   preloadedState: any = {}
 ): Store {
   // ignore server lists, fetch from local storage when available
@@ -48,7 +47,7 @@ export default function configureStore(
     preloadedState,
     composeEnhancers(
       applyMiddleware(
-        thunk.withExtraArgument({ nexusLegacy, nexus }),
+        thunk.withExtraArgument({ nexus }),
         routerMiddleware(history)
       )
     )

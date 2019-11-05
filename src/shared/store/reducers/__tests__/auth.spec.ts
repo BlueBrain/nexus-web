@@ -1,4 +1,4 @@
-import authReducer from '../auth';
+import authReducer, { AuthState } from '../auth';
 import { AuthActionTypes } from '../../actions/auth';
 
 describe('Auth Reducer', () => {
@@ -18,17 +18,22 @@ describe('Auth Reducer', () => {
       expect(
         authReducer(undefined, {
           type: AuthActionTypes.IDENTITY_FULFILLED,
-          payload: [{ '@type': 'Anonymous', '@id': 'http://anomymous.com' }],
+          payload: {
+            '@context': 'http://context.com/',
+            identities: [
+              { '@type': 'Anonymous', '@id': 'http://anomymous.com' },
+            ],
+          },
         })
       ).toEqual({
         identities: {
           isFetching: false,
-          data: [
-            {
-              '@type': 'Anonymous',
-              '@id': 'http://anomymous.com',
-            },
-          ],
+          data: {
+            '@context': 'http://context.com/',
+            identities: [
+              { '@type': 'Anonymous', '@id': 'http://anomymous.com' },
+            ],
+          },
           error: null,
         },
       });
@@ -48,15 +53,17 @@ describe('Auth Reducer', () => {
       });
     });
     it('should return an identity error and clear previous state data', () => {
-      const initState = {
+      const initState: AuthState = {
         identities: {
           isFetching: false,
-          data: [],
+          data: {
+            '@context': '',
+            identities: [],
+          },
           error: null,
         },
       };
       expect(
-        // @ts-ignore
         authReducer(initState, {
           type: AuthActionTypes.IDENTITY_FAILED,
           error: new SyntaxError('this is bad'),
@@ -64,7 +71,7 @@ describe('Auth Reducer', () => {
       ).toEqual({
         identities: {
           isFetching: false,
-          data: initState.identities.data,
+          data: [],
           error: new SyntaxError('this is bad'),
         },
       });

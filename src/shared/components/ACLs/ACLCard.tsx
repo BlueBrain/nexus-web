@@ -32,7 +32,7 @@ interface ACLViewProp {
   identity: Identity;
   permissions: string[];
 }
-const ACLView: React.FunctionComponent<ACLViewProp> = props => {
+const ACLCard: React.FunctionComponent<ACLViewProp> = props => {
   return (
     <Card className="ACL-card">
       <IdentityBadge {...props.identity} />
@@ -63,4 +63,4 @@ const ACLView: React.FunctionComponent<ACLViewProp> = props => {
   );
 };
 
-export default ACLView;
+export default ACLCard;

@@ -1,8 +1,10 @@
 import * as React from 'react';
+import { Store } from 'redux';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { ConnectedRouter } from 'connected-react-router';
+import { UserManager } from 'oidc-client';
 import { createBrowserHistory } from 'history';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { NexusProvider } from '@bbp/react-nexus';
@@ -15,13 +17,11 @@ import {
   userExpiring,
   userSignedOut,
 } from 'redux-oidc';
-import Nexus from '@bbp/nexus-sdk-legacy';
+
 import getUserManager from './userManager';
 import App from '../shared/App';
 import configureStore from '../shared/store';
 import { RootState } from '../shared/store/reducers';
-import { UserManager } from 'oidc-client';
-import { Store } from 'redux';
 import { fetchIdentities, fetchRealms } from '../shared/store/actions/auth';
 
 // The app base URL
@@ -69,12 +69,9 @@ const nexus = createNexusClient({
   uri: preloadedState.config.apiEndpoint,
   links: [setToken],
 });
-const nexusLegacy = new Nexus({
-  environment: preloadedState.config.apiEndpoint,
-});
-Nexus.setEnvironment(preloadedState.config.apiEndpoint);
+
 // create redux store
-const store = configureStore(history, { nexusLegacy, nexus }, initialState);
+const store = configureStore(history, { nexus }, initialState);
 
 /**
  * Sets up user token management events and
@@ -88,8 +85,6 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
   // Raised when a user session has been established (or re-established).
   userManager.events.addUserLoaded(user => {
     loadUser(store, userManager);
-    Nexus.setToken(user.access_token);
-    nexusLegacy.setToken(user.access_token);
     localStorage.setItem('nexus__token', user.access_token);
   });
 
@@ -100,8 +95,6 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
       .signinSilent()
       .then(user => {
         loadUser(store, userManager);
-        Nexus.setToken(user.access_token);
-        nexusLegacy.setToken(user.access_token);
         localStorage.setItem('nexus__token', user.access_token);
       })
       .catch(err => {
@@ -116,8 +109,6 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
       .signinSilent()
       .then(user => {
         loadUser(store, userManager);
-        Nexus.setToken(user.access_token);
-        nexusLegacy.setToken(user.access_token);
         localStorage.setItem('nexus__token', user.access_token);
       })
       .catch(err => {
@@ -128,21 +119,18 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
   // Raised when the automatic silent renew has failed.
   userManager.events.addSilentRenewError((error: Error) => {
     store.dispatch(silentRenewError(error));
-    Nexus.removeToken();
     localStorage.removeItem('nexus__token');
   });
 
   //  Raised when the user's sign-in status at the OP has changed.
   userManager.events.addUserSignedOut(() => {
     store.dispatch(userSignedOut());
-    Nexus.removeToken();
     localStorage.removeItem('nexus__token');
   });
 
   // Raised when a user session has been terminated.
   userManager.events.addUserUnloaded(() => {
     store.dispatch(sessionTerminated());
-    Nexus.removeToken();
     localStorage.removeItem('nexus__token');
   });
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Tooltip } from 'antd';
-import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
+import { Identity } from '@bbp/nexus-sdk';
 
 import './ACLs.less';
 
@@ -17,9 +17,7 @@ const getTitle = (identity: Identity): React.ReactElement<any> => {
     case 'Authenticated':
       return (
         <Tooltip
-          title={`Users authenticated through the realm ${
-            identity.realm
-          } have the following permissions`}
+          title={`Users authenticated through the realm ${identity.realm} have the following permissions`}
         >
           <Icon type="crown" /> Authenticated to:{' '}
           <span className="Identity-badge_role">{identity.realm}</span>
@@ -28,9 +26,7 @@ const getTitle = (identity: Identity): React.ReactElement<any> => {
     case 'Group':
       return (
         <Tooltip
-          title={`Users who are part of the group ${
-            identity.group
-          } have the following permissions`}
+          title={`Users who are part of the group ${identity.group} have the following permissions`}
         >
           <Icon type="team" /> Part of group:{' '}
           <span className="Identity-badge_role">{identity.group}</span>

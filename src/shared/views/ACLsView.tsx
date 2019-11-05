@@ -2,10 +2,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Empty, Spin } from 'antd';
 import { push } from 'connected-react-router';
+import { ACL } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import ACLsForm from '../components/ACLs/ACLsForm';
-import { ACL } from '@bbp/nexus-sdk';
 
 interface ACLsViewProps {
   match: any;
@@ -40,7 +40,7 @@ const ACLs: React.FunctionComponent<ACLsViewProps> = ({
         acls: null,
         busy: true,
       });
-      nexus.ACL.list(path)
+      nexus.ACL.list(path, { ancestors: true })
         .then(acls => {
           setACLs({
             acls: acls._results,
@@ -58,26 +58,6 @@ const ACLs: React.FunctionComponent<ACLsViewProps> = ({
     }
   }, [match.params.project, match.params.org]);
 
-  if (busy) {
-    return <Spin tip="Loading ACLs..." />;
-  }
-  if (error) {
-    return (
-      <Empty
-        style={{ marginTop: '22vh' }}
-        description={<span>Error while retrieving ALCs: {error.message}</span>}
-      />
-    );
-  }
-  if (!acls) {
-    return (
-      <Empty
-        style={{ marginTop: '22vh' }}
-        description={'No ACLs to display...'}
-      />
-    );
-  }
-
   return (
     <div className="acl-view view-container">
       <div style={{ flexGrow: 1 }}>
@@ -94,7 +74,23 @@ const ACLs: React.FunctionComponent<ACLsViewProps> = ({
             </a>{' '}
           </span>
         </h1>
-        <ACLsForm acls={acls} path={path} />
+        {busy && <Spin tip="Loading ACLs..." />}
+        {error && (
+          <Empty
+            style={{ marginTop: '22vh' }}
+            description={
+              <span>Error while retrieving ALCs: {error.message}</span>
+            }
+          />
+        )}
+        {!acls ||
+          (acls.length === 0 && (
+            <Empty
+              style={{ marginTop: '22vh' }}
+              description={'No ACLs to display...'}
+            />
+          ))}
+        {acls && <ACLsForm acls={acls} path={path} />}
       </div>
     </div>
   );
