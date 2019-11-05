@@ -10,7 +10,6 @@ const getUserManager = (state: RootState): UserManager | undefined => {
     auth: { realms },
     config: { clientId, redirectHostName, preferredRealm },
   } = state;
-  // @ts-ignore
   const availableRealms: Realm[] =
     (realms &&
       realms.data &&
