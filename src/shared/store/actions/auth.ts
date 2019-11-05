@@ -1,8 +1,8 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
-import { FetchAction, FetchFulfilledAction, FetchFailedAction } from './utils';
-import { PaginatedList, ACL, Realm } from '@bbp/nexus-sdk-legacy';
-import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
+import { PaginatedList, Realm, IdentityList } from '@bbp/nexus-sdk';
+
 import { ThunkAction } from '..';
+import { FetchAction, FetchFulfilledAction, FetchFailedAction } from './utils';
 
 export enum AuthActionTypes {
   IDENTITY_FETCHING = '@@nexus/AUTH_IDENTITY_FETCHING',
@@ -23,11 +23,11 @@ const fetchIdentitiesAction: ActionCreator<FetchIdentitiesAction> = () => ({
 
 type FetchIdentitiesFulfilledAction = FetchFulfilledAction<
   AuthActionTypes.IDENTITY_FULFILLED,
-  Identity[]
+  IdentityList
 >;
 const fetchIdentitiesFulfilledAction: ActionCreator<
   FetchIdentitiesFulfilledAction
-> = (identities: Identity[]) => ({
+> = (identities: IdentityList) => ({
   type: AuthActionTypes.IDENTITY_FULFILLED,
   payload: identities,
 });
@@ -93,30 +93,31 @@ export type AuthActions =
  *  Actual Actions
  */
 
-function fetchIdentities() {
+const fetchIdentities: ActionCreator<ThunkAction> = () => {
   return async (
-    dispatch: Dispatch<any>
+    dispatch: Dispatch<any>,
+    getState,
+    { nexus }
   ): Promise<FetchIdentitiesFulfilledAction | FetchIdentitiesFailedAction> => {
     dispatch(fetchIdentitiesAction);
     try {
-      const identities: Identity[] = await ACL.listIdentities();
+      const identities: IdentityList = await nexus.Identity.list();
       return dispatch(fetchIdentitiesFulfilledAction(identities));
     } catch (error) {
       return dispatch(fetchIdentitiesFailedAction(error));
     }
   };
-}
+};
 
 const fetchRealms: ActionCreator<ThunkAction> = () => {
   return async (
     dispatch: Dispatch<any>,
     getState,
-    { nexusLegacy }
+    { nexus }
   ): Promise<FetchRealmsFulfilledAction | FetchRealmsFailedAction> => {
-    const Realm = nexusLegacy.Realm;
     dispatch(fetchIdentitiesAction);
     try {
-      const data: PaginatedList<Realm> = await Realm.list();
+      const data: PaginatedList<Realm> = await nexus.Realm.list();
       return dispatch(fetchRealmsFulfilledAction(data));
     } catch (error) {
       return dispatch(fetchRealmsFailedAction(error));

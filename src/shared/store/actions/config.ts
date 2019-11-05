@@ -19,13 +19,13 @@ function setPreferredRealm(name: string) {
       label: '',
       realmKey: '',
     };
-    if (realms && realms.data && realms.data.results) {
+    if (realms && realms.data && realms.data._results) {
       // find matching realm
-      const realm = realms.data.results.find(realm => realm.name === name);
+      const realm = realms.data._results.find(realm => realm.name === name);
       if (realm) {
         preferredRealmData = {
-          label: realm.label,
-          realmKey: `${realm.issuer}:${clientId}`,
+          label: realm._label,
+          realmKey: `${realm._issuer}:${clientId}`,
         };
       }
     }

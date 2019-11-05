@@ -18,7 +18,12 @@ describe('Auth Reducer', () => {
       expect(
         authReducer(undefined, {
           type: AuthActionTypes.IDENTITY_FULFILLED,
-          payload: [{ '@type': 'Anonymous', '@id': 'http://anomymous.com' }],
+          payload: {
+            '@context': 'http://context.com/',
+            identities: [
+              { '@type': 'Anonymous', '@id': 'http://anomymous.com' },
+            ],
+          },
         })
       ).toEqual({
         identities: {
