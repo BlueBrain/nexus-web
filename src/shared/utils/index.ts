@@ -1,4 +1,4 @@
-import { Resource, Identity, IdentityList } from '@bbp/nexus-sdk';
+import { Resource, Identity } from '@bbp/nexus-sdk';
 
 /**
  * getProp utility - an alternative to lodash.get

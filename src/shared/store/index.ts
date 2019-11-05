@@ -11,7 +11,7 @@ import { reducer as oidcReducer } from 'redux-oidc';
 import { History } from 'history';
 import { NexusClient } from '@bbp/nexus-sdk';
 
-import reducers, { RootState } from './reducers';
+import reducers from './reducers';
 
 export type Services = {
   nexus: NexusClient;

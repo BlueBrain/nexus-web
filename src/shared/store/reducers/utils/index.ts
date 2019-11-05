@@ -1,8 +1,6 @@
 import { combineReducers, AnyAction, Reducer, Action } from 'redux';
 import { RequestError } from '../../actions/utils/errors';
 
-export * from './createByKey';
-
 export type ActionReducer = (state: any, action: AnyAction) => any;
 
 export interface ActionHandler {

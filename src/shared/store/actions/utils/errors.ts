@@ -14,12 +14,3 @@ export class RequestError extends Error {
     this.code = HTTP_STATUSES[type].code;
   }
 }
-
-export const formatError = (error: Error) => {
-  const errorType = error.message.replace(/ /g, '_').toUpperCase();
-  const httpErrorType = HTTP_STATUSES[errorType];
-  if (httpErrorType) {
-    return new RequestError(error.message, httpErrorType.type);
-  }
-  return new RequestError(error.message);
-};
