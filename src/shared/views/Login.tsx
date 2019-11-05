@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Realm } from '@bbp/nexus-sdk-legacy';
-import LoginBox from '../components/Login';
+import { notification } from 'antd';
+import { Realm } from '@bbp/nexus-sdk';
 import { push } from 'connected-react-router';
+import { UserManager } from 'oidc-client';
+
+import LoginBox from '../components/Login';
 import getUserManager from '../../client/userManager';
 import { RootState } from '../store/reducers';
-import { UserManager } from 'oidc-client';
 import * as configActions from '../store/actions/config';
-import { notification } from 'antd';
 
 export interface LoginViewProps {
   realms: Realm[];
@@ -20,7 +21,7 @@ export interface LoginViewProps {
 const Login: React.FunctionComponent<LoginViewProps> = props => {
   const { realms, redirect } = props;
   const defaultRealm: Realm =
-    realms.find(r => r.label === props.preferredRealm) || props.realms[0];
+    realms.find(r => r._label === props.preferredRealm) || props.realms[0];
 
   const [preferredRealm, setPreferredRealm] = React.useState(defaultRealm.name);
 
@@ -94,9 +95,9 @@ const mapStateToProps = (state: RootState) => {
     realms:
       (auth.realms &&
         auth.realms.data &&
-        auth.realms.data.results &&
-        auth.realms.data.results.filter(
-          r => r.label !== 'serviceaccounts' && !r.deprecated
+        auth.realms.data._results &&
+        auth.realms.data._results.filter(
+          r => r._label !== 'serviceaccounts' && !r._deprecated
         )) ||
       [],
     preferredRealm: config.preferredRealm || undefined,
