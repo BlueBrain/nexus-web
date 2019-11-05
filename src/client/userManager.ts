@@ -11,13 +11,7 @@ const getUserManager = (state: RootState): UserManager | undefined => {
     config: { clientId, redirectHostName, preferredRealm },
   } = state;
   const availableRealms: Realm[] =
-    (realms &&
-      realms.data &&
-      realms.data &&
-      realms.data._results &&
-      realms.data._results.length > 0 &&
-      realms.data._results) ||
-    [];
+    (realms && realms.data && realms.data && realms.data._results) || [];
 
   // if we have a preferred realm, try to find it in the list of available realms
   // otherwise, select first one of the list
