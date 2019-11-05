@@ -1,3 +1,4 @@
+import { Identity } from '@bbp/nexus-sdk';
 import {
   getUserList,
   getOrderedPermissions,
@@ -6,7 +7,6 @@ import {
   getLogoutUrl,
   hasExpired,
 } from '..';
-import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
 
 const identities: Identity[] = [
   {

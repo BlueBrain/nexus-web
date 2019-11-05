@@ -2,7 +2,7 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withKnobs } from '@storybook/addon-knobs';
 import { withInfo } from '@storybook/addon-info';
-import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
+import { Identity } from '@bbp/nexus-sdk';
 
 import IdentityBadge from './IdentityBadge';
 import ACLCard from './ACLCard';
