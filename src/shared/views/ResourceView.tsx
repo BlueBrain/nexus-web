@@ -7,7 +7,7 @@ import { Spin, Card, Empty, Tabs, notification, Alert } from 'antd';
 import * as queryString from 'query-string';
 import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource, ResourceLink } from '@bbp/nexus-sdk';
+import { Resource, ResourceLink, NexusFile } from '@bbp/nexus-sdk';
 
 import { getResourceLabel, getResourceLabelsAndIdsFromSelf } from '../utils';
 import ResourceCardComponent from '../components/ResourceCard';
@@ -16,6 +16,7 @@ import ResourceLinksContainer from '../containers/ResourceLinks';
 import ResourceActionsContainer from '../containers/ResourceActions';
 import { isDeprecated } from '../utils/nexusMaybe';
 import ResourceEditorContainer from '../containers/ResourceEditor';
+import ImagePreviewContainer from '../containers/ImagePreviewContainer';
 
 const TabPane = Tabs.TabPane;
 const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
@@ -57,7 +58,6 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
     resource: null,
     error: null,
   });
-
   const [latestResource, setLatestResource] = React.useState<
     Resource & { [key: string]: any } | null
   >(null);
@@ -209,7 +209,10 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                   closable
                 />
               )}
-              <ResourceCardComponent resource={resource} />
+              <ResourceCardComponent
+                resource={resource}
+                preview={<ImagePreviewContainer resource={resource} />}
+              />
               <ResourceActionsContainer resource={resource} />
               <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
                 <TabPane tab="JSON" key="#JSON">
