@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Collapse, Form, Icon, Input, Button, Spin, Modal } from 'antd';
+import { Collapse, Form, Icon, Input, Button, Spin, Modal, Row, Col } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 /**
@@ -121,7 +121,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
     activeKeys,
   });
 
-  const { getFieldDecorator, getFieldValue } = form;
+  const { getFieldDecorator } = form;
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -280,24 +280,28 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
           </Collapse>
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="login-form-button"
-          >
-            Save
-          </Button>
-          {mode === 'edit' && (
-            <>
+          <Row type="flex" justify="end" gutter={16}>
+            <Col>
               <Button
-                type="danger"
-                onClick={confirmDeprecate}
-                style={{ float: 'right' }}
+                type="primary"
+                htmlType="submit"
               >
-                Deprecate
+                Save
               </Button>
-            </>
-          )}
+            </Col>
+            {mode === 'edit' && (
+              <>
+                <Col>
+                  <Button
+                    type="danger"
+                    onClick={confirmDeprecate}
+                  >
+                    Deprecate
+                  </Button>
+                </Col>
+              </>
+            )}
+          </Row>
         </Form.Item>
       </Form>
     </Spin>
