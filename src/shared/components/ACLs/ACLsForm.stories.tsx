@@ -5,7 +5,7 @@ import { withInfo } from '@storybook/addon-info';
 import { Identity } from '@bbp/nexus-sdk-legacy/lib/ACL/types';
 
 import IdentityBadge from './IdentityBadge';
-import ACLView from './ACLView';
+import ACLCard from './ACLCard';
 import ACLsForm from './ACLsForm';
 import { ACL } from '@bbp/nexus-sdk';
 
@@ -74,10 +74,10 @@ storiesOf('Components/ACLs', module)
     })
   )
   .add(
-    'ACLView',
+    'ACLCard',
     withInfo(`
     ~~~js
-      <ACLView
+      <ACLCard
        />
     ~~~
   `)(() => {
@@ -85,7 +85,7 @@ storiesOf('Components/ACLs', module)
         '@id': 'asdas',
         '@type': 'Anonymous',
       };
-      return <ACLView identity={anonymous} permissions={permissions} />;
+      return <ACLCard identity={anonymous} permissions={permissions} />;
     })
   )
   .add(
