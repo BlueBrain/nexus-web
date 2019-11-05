@@ -28,7 +28,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
 }) => {
   const nexus = useNexusContext();
   const [expanded, setExpanded] = React.useState(defaultExpanded);
-  const [showMetaData, setShowMetaData] = React.useState<boolean>(false);
+  const [showMetadata, setShowMetadata] = React.useState<boolean>(false);
 
   const {
     orgLabel,
@@ -51,7 +51,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
   };
 
   const handleMetaDataChange = () => {
-    setShowMetaData(!showMetaData);
+    setShowMetadata(!showMetadata);
   };
 
   const getNewResource = async () => {
@@ -61,7 +61,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
         format: 'expanded',
       });
     }
-    if (showMetaData) {
+    if (showMetadata) {
       return await nexus.Resource.get(orgLabel, projectLabel, resourceId);
     }
     return await nexus.Resource.getSource(orgLabel, projectLabel, resourceId);
@@ -94,7 +94,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
         });
       }
     },
-    [self, rev, expanded, showMetaData]
+    [self, rev, expanded, showMetadata]
   );
 
   return (
@@ -104,10 +104,10 @@ const ResourceEditorContainer: React.FunctionComponent<{
         rawData={resource}
         onSubmit={onSubmit}
         onFormatChange={handleFormatChange}
-        onMetaDataChange={handleMetaDataChange}
-        editable={defaultEditable && !expanded && !showMetaData}
+        onMetadataChange={handleMetaDataChange}
+        editable={defaultEditable && !expanded && !showMetadata}
         expanded={expanded}
-        metaData={showMetaData}
+        showMetadata={showMetadata}
       />
     )
   );
