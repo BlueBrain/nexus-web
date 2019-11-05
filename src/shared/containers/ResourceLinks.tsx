@@ -14,18 +14,13 @@ const ResourceLinksContainer: React.FunctionComponent<{
   onClick?: (link: ResourceLink) => void;
 }> = ({ self, rev, direction, onClick }) => {
   const nexus = useNexusContext();
-  const [
-    { firstLoad, busy, error, links, total, next },
-    setLinks,
-  ] = React.useState<{
-    firstLoad: boolean;
+  const [{ busy, error, links, total, next }, setLinks] = React.useState<{
     busy: boolean;
     error: Error | null;
     links: ResourceLink[];
     next: string | null;
     total: number;
   }>({
-    firstLoad: true,
     next: null,
     busy: false,
     error: null,
@@ -47,7 +42,6 @@ const ResourceLinksContainer: React.FunctionComponent<{
         next,
         links,
         total,
-        firstLoad: false,
         busy: true,
         error: null,
       });
@@ -58,7 +52,6 @@ const ResourceLinksContainer: React.FunctionComponent<{
         next: response._next || null,
         links: [...links, ...response._results],
         total: response._total,
-        firstLoad: false,
         busy: false,
         error: null,
       });
@@ -68,7 +61,6 @@ const ResourceLinksContainer: React.FunctionComponent<{
         error,
         links,
         total,
-        firstLoad: false,
         busy: false,
       });
     }
@@ -85,7 +77,6 @@ const ResourceLinksContainer: React.FunctionComponent<{
           next,
           links,
           total,
-          firstLoad: true,
           busy: true,
           error: null,
         });
@@ -104,7 +95,6 @@ const ResourceLinksContainer: React.FunctionComponent<{
           next: response._next || null,
           links: response._results,
           total: response._total,
-          firstLoad: false,
           busy: false,
           error: null,
         });
@@ -114,7 +104,6 @@ const ResourceLinksContainer: React.FunctionComponent<{
           error,
           links,
           total,
-          firstLoad: false,
           busy: false,
         });
       }
@@ -127,7 +116,7 @@ const ResourceLinksContainer: React.FunctionComponent<{
       error={error}
       links={links}
       total={total}
-      firstLoad={firstLoad}
+      busy={busy}
       onLoadMore={handleLoadMore}
       onClick={onClick}
     />
