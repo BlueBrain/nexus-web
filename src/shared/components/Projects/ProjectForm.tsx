@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Collapse, Form, Icon, Input, Button, Spin, Modal } from 'antd';
+import { Collapse, Form, Icon, Input, Button, Spin, Modal, Row, Col } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 /**
@@ -97,7 +97,6 @@ export interface ProjectFormProps {
   busy?: boolean;
   onSubmit?(project: ProjectFormProps['project']): any;
   onDeprecate?(): any;
-  onMakePublic?(): any;
   mode?: 'create' | 'edit';
 }
 
@@ -111,7 +110,6 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   busy = false,
   onSubmit = () => {},
   onDeprecate = () => {},
-  onMakePublic = () => {},
   mode = 'create',
 }) => {
   // logic for generating dynamic prefix mapping fields in form
@@ -123,7 +121,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
     activeKeys,
   });
 
-  const { getFieldDecorator, getFieldValue } = form;
+  const { getFieldDecorator } = form;
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -191,14 +189,6 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
       title: 'Deprecate Project',
       content: 'Are you sure?',
       onOk: onDeprecate,
-    });
-  };
-
-  const confirmMakePublic = () => {
-    Modal.confirm({
-      title: 'Make Project Public',
-      content: 'Are you sure?',
-      onOk: onMakePublic,
     });
   };
 
@@ -290,28 +280,28 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
           </Collapse>
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="login-form-button"
-          >
-            Save
-          </Button>
-          {mode === 'edit' && (
-            <>
+          <Row type="flex" justify="end" gutter={16}>
+            <Col>
               <Button
-                type="danger"
-                onClick={confirmDeprecate}
-                style={{ float: 'right' }}
+                type="primary"
+                htmlType="submit"
               >
-                Deprecate
+                Save
               </Button>
-              <Button onClick={confirmMakePublic} style={{ float: 'right' }}>
-                <Icon type="global" />
-                Make public
-              </Button>
-            </>
-          )}
+            </Col>
+            {mode === 'edit' && (
+              <>
+                <Col>
+                  <Button
+                    type="danger"
+                    onClick={confirmDeprecate}
+                  >
+                    Deprecate
+                  </Button>
+                </Col>
+              </>
+            )}
+          </Row>
         </Form.Item>
       </Form>
     </Spin>
