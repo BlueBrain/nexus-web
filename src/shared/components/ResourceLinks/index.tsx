@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Spin, Empty } from 'antd';
+import { Empty, Skeleton } from 'antd';
 import { ResourceLink } from '@bbp/nexus-sdk';
 
 import ListItem from '../List/Item';
@@ -17,26 +17,31 @@ const ResourceLinks: React.FunctionComponent<{
   const { busy, error, links, total, onLoadMore, onClick } = props;
   const scrollParent = React.useRef<HTMLDivElement>(null);
   const hasMore = links.length < total;
+  const firstLoad = busy && links.length === 0;
 
   return (
     <div className="resource-links" ref={scrollParent}>
-      <Spin spinning={busy}>
-        {!!error && <Empty description={error.message} />}
-        {!error && (
-          <InfiniteSearch
-            dataLength={links.length}
-            onLoadMore={onLoadMore}
-            hasMore={hasMore}
-            hasSearch={false}
-          >
-            {links.map(link => (
-              <ListItem key={link['@id']}>
-                <ResourceLinkItem link={link} onInternalClick={onClick} />
-              </ListItem>
-            ))}
-          </InfiniteSearch>
-        )}
-      </Spin>
+      {firstLoad ? (
+        <Skeleton active />
+      ) : (
+        <>
+          {!!error && <Empty description={error.message} />}
+          {!error && (
+            <InfiniteSearch
+              dataLength={links.length}
+              onLoadMore={onLoadMore}
+              hasMore={hasMore}
+              hasSearch={false}
+            >
+              {links.map(link => (
+                <ListItem key={link['@id']}>
+                  <ResourceLinkItem link={link} onInternalClick={onClick} />
+                </ListItem>
+              ))}
+            </InfiniteSearch>
+          )}
+        </>
+      )}
     </div>
   );
 };
