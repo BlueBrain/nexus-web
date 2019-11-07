@@ -8,11 +8,13 @@ import {
   labelOf,
 } from '../utils';
 
-import Graph from '../components/Graph/Graph';
+import Graph from '../components/Graph';
+import { useHistory } from 'react-router';
 
 const GraphContainer: React.FunctionComponent<{
   resource: Resource;
 }> = ({ resource }) => {
+  const history = useHistory();
   const nexus = useNexusContext();
   
   const [{ busy, error, links, total, next }, setLinks] = React.useState<{
@@ -82,9 +84,11 @@ const GraphContainer: React.FunctionComponent<{
     },
     // Link Nodes
     ...links.map(link => ({
+      classes: `${!(link as Resource)._self ? 'external' : 'internal'}`,
       data: {
         id: link['@id'],
         label: labelOf(link['@id']),
+        isExternal: !(link as Resource)._self,
       },
     })),
     // Link Edges
@@ -100,10 +104,14 @@ const GraphContainer: React.FunctionComponent<{
     })),
   ];
 
-  console.log({ elements });
-
-  const handleNodeClick = () => {
-    console.log('click!');
+  const handleNodeClick = (id: string, isExternal: boolean) => {
+    if (isExternal) {
+      open(id);
+      return;
+    }
+    history.push(
+      `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(id)}#graph`
+    );
   };
 
   return <Graph elements={elements} onNodeClick={handleNodeClick} />;

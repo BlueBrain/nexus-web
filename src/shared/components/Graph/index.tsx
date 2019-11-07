@@ -1,0 +1,95 @@
+import * as React from 'react';
+import * as cytoscape from 'cytoscape';
+import { Switch } from 'antd';
+
+const Graph: React.FunctionComponent<{
+  elements: cytoscape.ElementDefinition[];
+  onNodeClick?(id: string, isExternal: boolean): void;
+}> = ({ elements, onNodeClick }) => {
+  const container = React.useRef<HTMLDivElement>(null);
+  const [showLabels, setShowLabels] = React.useState(false);
+
+  React.useEffect(() => {
+    const graph = cytoscape({
+      elements,
+      container: container.current,
+      style: [
+        {
+          selector: 'node[label]',
+          style: {
+            label: 'data(label)',
+          },
+        },
+        {
+          selector: 'edge[label]',
+          style: showLabels
+            ? {
+                // @ts-ignore
+                'edge-text-rotation': 'autorotate',
+                label: 'data(label)',
+              }
+            : {},
+        },
+        {
+          selector: '.external',
+          style: {
+            'background-color': '#00adee',
+          },
+        },
+        {
+          selector: '.internal',
+          style: {
+            'background-color': '#ff6666',
+          },
+        },
+      ],
+      layout: {
+        name: 'cose',
+        idealEdgeLength: 100,
+        nodeOverlap: 20,
+        refresh: 20,
+        fit: true,
+        padding: 100,
+        randomize: false,
+        componentSpacing: 100,
+        nodeRepulsion: 400000,
+        edgeElasticity: 100,
+        nestingFactor: 5,
+        gravity: 10,
+        numIter: 1000,
+        initialTemp: 200,
+        coolingFactor: 0.95,
+        minTemp: 1.0,
+      },
+    }).on('tap', 'node', (e: cytoscape.EventObject) => {
+      onNodeClick && onNodeClick(e.target.id(), e.target.data('isExternal'));
+    });
+
+    return () => {
+      graph.destroy();
+    };
+  }, [container, elements, showLabels]);
+
+  return (
+    <div>
+      <Switch
+        checked={showLabels}
+        onChange={() => {
+          setShowLabels(!showLabels);
+        }}
+      >
+        Show Labels
+      </Switch>
+      <div
+        ref={container}
+        style={{
+          background: 'white',
+          height: '600px',
+          width: '100%',
+        }}
+      ></div>
+    </div>
+  );
+};
+
+export default Graph;
