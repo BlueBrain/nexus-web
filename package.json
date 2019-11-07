@@ -94,6 +94,7 @@
     "jest-enzyme": "^7.0.2",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
+    "lint-staged": "^9.4.2",
     "mini-css-extract-plugin": "^0.5.0",
     "null-loader": "^0.1.1",
     "prettier": "^1.16.4",
@@ -128,6 +129,16 @@
   "prettier": {
     "singleQuote": true,
     "trailingComma": "es5"
+  },
+  "lint-staged": {
+    "*.{ts, tsx, js, jsx}": [
+      "prettier --write",
+      "git add"
+    ],
+    "!(package).json": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "husky": {
     "hooks": {

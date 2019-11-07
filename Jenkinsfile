@@ -41,6 +41,11 @@ pipeline {
                         sh 'yarn lint -- -c tslint.prod.json'
                     }
                 }
+                stage('Prettier') {
+                    steps {
+                        sh 'yarn prettier -c ./src/**/*.ts'
+                    }
+                }
                 stage('Test') {
                     steps {
                         sh 'yarn test'
