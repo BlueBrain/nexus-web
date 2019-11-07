@@ -9,6 +9,7 @@ import ElasticSearchQueryView from './views/ElasticSearchQueryView';
 import SparqlQueryView from './views/SparqlQueryView';
 import ACLsView from './views/ACLsView';
 import UserView from './views/UserView';
+import StudioView from './views/StudioView'
 
 const routes: RouteProps[] = [
   {
@@ -37,6 +38,11 @@ const routes: RouteProps[] = [
   {
     path: '/:orgLabel/:projectLabel/resources/:resourceId',
     component: ResourceView,
+  },
+  {
+    path: '/:orgLabel/:projectLabel/studios/:resourceId',
+    exact: true,
+    component: StudioView,
   },
   {
     path: '/:orgLabel/:projectLabel/:viewId/_search',
