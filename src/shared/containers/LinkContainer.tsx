@@ -12,7 +12,6 @@ const LinkContainer: React.FunctionComponent<{
   return (
     <Link
       goTo={() => {
-        console.log({ viewName, pathOptions, path });
         goTo(viewName, pathOptions);
       }}
       path={path}
