@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { match } from 'react-router';
 import * as queryString from 'query-string';
-import { Menu, Dropdown, Icon, notification } from 'antd';
+import { Menu, Dropdown, Icon, notification, Tooltip } from 'antd';
 import { ViewList, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Link } from 'react-router-dom';
@@ -69,8 +69,16 @@ const SparqlQueryView: React.FunctionComponent<{
         <div className="label">
           <h1 className="name">
             <span>
-              <Link to={`/${orgLabel}`}>{orgLabel}</Link>|{' '}
-              <Link to={`/${orgLabel}/${projectLabel}`}>{projectLabel}</Link> |{' '}
+              <Link to="/">
+                <Tooltip title="Back to all organizations" placement="right">
+                  <Icon type="home" />
+                </Tooltip>
+              </Link>
+              {' | '}
+              <Link to={`/${orgLabel}`}>{orgLabel}</Link>
+              {' | '}
+              <Link to={`/${orgLabel}/${projectLabel}`}>{projectLabel}</Link>
+              {' | '}
             </span>
             <Dropdown overlay={menu}>
               <span>
