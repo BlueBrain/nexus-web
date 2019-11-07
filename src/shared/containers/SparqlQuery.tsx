@@ -53,8 +53,6 @@ const SparqlQueryContainer: React.FunctionComponent<{
         });
       })
       .catch(error => {
-        console.log('error', error);
-        
         setResponse({
           error,
           response: null,
