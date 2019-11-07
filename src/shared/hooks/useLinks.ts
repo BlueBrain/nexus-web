@@ -1,62 +1,45 @@
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+
+import routes from '../routes';
 import { RootState } from '../store/reducers';
+
+export type PathOptions = {
+  orgLabel?: string;
+  projectLabel?: string;
+  resourceId?: string;
+  viewId?: string;
+  [key: string]: any;
+};
 
 const useLinks = () => {
   const history = useHistory();
   const basePath = useSelector((state: RootState) => state.config.basePath);
 
-  const makeResourceUri = (
-    orgLabel: string,
-    projectLabel: string,
-    resourceId: string
+  const makeUriFromPathOptions = (
+    viewName: string,
+    pathOptions: PathOptions
   ) => {
-    return `${basePath}/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
-      resourceId
-    )}`;
+    const view = routes.find(route => route.name === viewName);
+    if (!view) {
+      return;
+    }
+    const path = Object.keys(pathOptions).reduce((path, key) => {
+      return path.replace(`:${key}`, encodeURIComponent(pathOptions[key]));
+    }, `${basePath}${(view.path as string) || ''}`);
+    return path;
   };
 
-  const goToResource = (
-    orgLabel: string,
-    projectLabel: string,
-    resourceId: string
-  ) => {
-    history.push(makeResourceUri(orgLabel, projectLabel, resourceId));
-  };
-
-  const makeProjectUri = (orgLabel: string, projectLabel: string) => {
-    return `${basePath}/${orgLabel}/${projectLabel}`;
-  };
-
-  const goToProject = (orgLabel: string, projectLabel: string) => {
-    history.push(makeProjectUri(orgLabel, projectLabel));
-  };
-
-  const makeOrgUri = (orgLabel: string) => {
-    return `${basePath}/${orgLabel}`;
-  };
-
-  const goToOrg = (orgLabel: string) => {
-    history.push(makeOrgUri(orgLabel));
-  };
-
-  const makeOrgsListUri = () => {
-    return `${basePath}/`;
-  };
-
-  const goToOrgsList = () => {
-    history.push(makeOrgsListUri());
+  const goTo = (viewName: string, pathOptions: PathOptions) => {
+    const path = makeUriFromPathOptions(viewName, pathOptions);
+    if (path) {
+      return history.push(path);
+    }
   };
 
   return {
-    makeResourceUri,
-    goToResource,
-    makeProjectUri,
-    goToProject,
-    makeOrgUri,
-    goToOrg,
-    makeOrgsListUri,
-    goToOrgsList,
+    makeUriFromPathOptions,
+    goTo,
   };
 };
 

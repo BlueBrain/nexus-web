@@ -16,12 +16,12 @@ import ResourceFormContainer from '../containers/ResourceFormContainer';
 import ResourceListBoardContainer from '../containers/ResourceListBoardContainer';
 import useLinks from '../hooks/useLinks';
 import { Link } from 'react-router-dom';
+import LinkContainer from '../containers/LinkContainer';
 
 const ProjectView: React.FunctionComponent<{
   match: match<{ orgLabel: string; projectLabel: string }>;
 }> = ({ match }) => {
   const nexus = useNexusContext();
-  const linkHelpers = useLinks();
   const {
     params: { orgLabel, projectLabel },
   } = match;
@@ -83,13 +83,16 @@ const ProjectView: React.FunctionComponent<{
           <div className="project-banner">
             <div className="label">
               <h1 className="name">
-                <a href={linkHelpers.makeOrgsListUri()}>Orgs</a>
+                <LinkContainer viewName="OrgsView">Orgs</LinkContainer>
                 {' | '}
                 {org && (
                   <span>
-                    <a href={linkHelpers.makeOrgUri(org._label)}>
+                    <LinkContainer
+                      viewName="ProjectsView"
+                      pathOptions={{ orgLabel: org._label }}
+                    >
                       {org._label}
-                    </a>{' '}
+                    </LinkContainer>{' '}
                     |{' '}
                   </span>
                 )}{' '}
