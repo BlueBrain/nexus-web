@@ -52,8 +52,7 @@ const ResourceCardComponent: React.FunctionComponent<{
                 </Button>
               </Tooltip>
             )}
-          />
-
+          />{' '}
           <Copy
             textToCopy={self}
             render={(copySuccess, triggerCopy) => (
