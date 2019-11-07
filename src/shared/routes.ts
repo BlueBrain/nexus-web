@@ -1,4 +1,5 @@
-import { RouteProps, match } from 'react-router-dom';
+import { RouteProps } from 'react-router-dom';
+
 import OrgsView from './views/OrgsView';
 import ProjectsView from './views/ProjectsView';
 import ProjectView from './views/ProjectView';
@@ -7,14 +8,9 @@ import ResourceView from './views/ResourceView';
 import ElasticSearchQueryView from './views/ElasticSearchQueryView';
 import SparqlQueryView from './views/SparqlQueryView';
 import ACLsView from './views/ACLsView';
-import { ThunkAction } from './store';
-import { RootState } from './store/reducers';
 import UserView from './views/UserView';
 
-export interface RouteWithData extends RouteProps {
-  loadData?(state: RootState, match: match | null): ThunkAction;
-}
-const routes: RouteWithData[] = [
+const routes: RouteProps[] = [
   {
     path: '/',
     exact: true,
@@ -29,7 +25,7 @@ const routes: RouteWithData[] = [
     component: UserView,
   },
   {
-    path: '/:org',
+    path: '/:orgLabel',
     exact: true,
     component: ProjectsView,
   },
@@ -39,19 +35,19 @@ const routes: RouteWithData[] = [
     component: ProjectView,
   },
   {
-    path: '/:org/:project/resources/:resourceId',
+    path: '/:orgLabel/:projectLabel/resources/:resourceId',
     component: ResourceView,
   },
   {
-    path: '/:org/:project/:viewId/_search',
+    path: '/:orgLabel/:projectLabel/:viewId/_search',
     component: ElasticSearchQueryView,
   },
   {
-    path: '/:org/:project/:viewId/sparql',
+    path: '/:orgLabel/:projectLabel/:viewId/sparql',
     component: SparqlQueryView,
   },
   {
-    path: '/:org/:project/_settings/acls',
+    path: '/:orgLabel/:projectLabel/_settings/acls',
     component: ACLsView,
   },
 ];

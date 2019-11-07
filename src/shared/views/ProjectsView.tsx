@@ -10,9 +10,10 @@ import Skeleton from '../components/Skeleton';
 import ProjectForm from '../components/Projects/ProjectForm';
 import ListItem from '../components/List/Item';
 import ProjectItem from '../components/Projects/ProjectItem';
+import { match } from 'react-router';
 
 interface ProjectsViewProps {
-  match: any;
+  match: match<{ orgLabel: string }>;
   goTo(o: string, p: string): void;
 }
 
@@ -36,7 +37,7 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
   React.useEffect(() => {
     if (!activeOrg) {
       setOrgLoadingBusy(true);
-      nexus.Organization.get(match.params.org)
+      nexus.Organization.get(match.params.orgLabel)
         .then((org: OrgResponseCommon) => {
           setOrgLoadingBusy(false);
           setActiveOrg(org);
@@ -44,7 +45,7 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
         .catch((error: Error) => {
           setOrgLoadingBusy(false);
           notification.error({
-            message: `An error occured whilst fetching Organization ${match.params.org}`,
+            message: `An error occured whilst fetching Organization ${match.params.orgLabel}`,
             description: error.message,
             duration: 0,
           });
@@ -287,7 +288,9 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
         </div>
       ) : (
         <div style={{ flexGrow: 1, overflow: 'auto' }}>
-          <Empty description={`No Organization ${match.params.org} Found`} />
+          <Empty
+            description={`No Organization ${match.params.orgLabel} Found`}
+          />
         </div>
       )}
     </div>
