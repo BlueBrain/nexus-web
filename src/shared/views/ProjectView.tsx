@@ -7,7 +7,7 @@ import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
 } from '@bbp/nexus-sdk';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { notification, Popover, Divider } from 'antd';
+import { notification, Popover, Divider, Tooltip, Icon } from 'antd';
 import { Link } from 'react-router-dom';
 
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
@@ -81,7 +81,11 @@ const ProjectView: React.FunctionComponent<{
           <div className="project-banner">
             <div className="label">
               <h1 className="name">
-                <Link to="/">Orgs</Link>
+                <Link to="/">
+                  <Tooltip title="Back to all organizations" placement="right">
+                    <Icon type="home" />
+                  </Tooltip>
+                </Link>
                 {' | '}
                 {org && (
                   <span>
