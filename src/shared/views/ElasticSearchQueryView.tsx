@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { match } from 'react-router';
 import * as queryString from 'query-string';
-import { push } from 'connected-react-router';
 import { Menu, Dropdown, Icon } from 'antd';
 import { ViewList, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
@@ -10,6 +8,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 import ElasticSearchQueryContainer from '../containers/ElasticSearchQuery';
 import LinkContainer from '../containers/LinkContainer';
+import { getResourceLabel, labelOf } from '../utils';
 
 const ElasticSearchQueryView: React.FunctionComponent<{
   match: match<{ orgLabel: string; projectLabel: string; viewId: string }>;
@@ -26,7 +25,7 @@ const ElasticSearchQueryView: React.FunctionComponent<{
     _results: [],
   });
   const nexus = useNexusContext();
-  const view = decodeURIComponent(viewId);
+  const decodedViewId = decodeURIComponent(viewId);
   const query = queryString.parse(location.search).query;
 
   React.useEffect(() => {
@@ -58,7 +57,7 @@ const ElasticSearchQueryView: React.FunctionComponent<{
                 viewId: view['@id'],
               }}
             >
-              {view['@id']}
+              {getResourceLabel(view)}
             </LinkContainer>
           </Menu.Item>
         );
@@ -93,10 +92,10 @@ const ElasticSearchQueryView: React.FunctionComponent<{
               |{' '}
             </span>
             <Dropdown overlay={menu}>
-              <a className="ant-dropdown-link">
-                {view}
+              <span>
+                {labelOf(decodedViewId)}
                 <Icon type="down" />
-              </a>
+              </span>
             </Dropdown>{' '}
           </h1>
           <div style={{ marginLeft: 10 }}>
