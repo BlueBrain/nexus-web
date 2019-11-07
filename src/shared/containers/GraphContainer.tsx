@@ -4,6 +4,8 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { ResourceLink } from '@bbp/nexus-sdk';
 import { getResourceLabelsAndIdsFromSelf } from '../utils';
 
+import Graph from '../components/Graph/Graph';
+
 interface GraphContainerProps {
   self: string;
 }
@@ -76,6 +78,7 @@ const GraphContainer: React.FunctionComponent<GraphContainerProps> = ({ self }) 
       {links && links.map(link => (
         <p>{link['@id']}</p>
       ))}
+      <Graph />
     </div>
   )
 }
