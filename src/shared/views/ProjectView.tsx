@@ -85,7 +85,8 @@ const ProjectView: React.FunctionComponent<{
                 {' | '}
                 {org && (
                   <span>
-                    <Link to={`/${org._label}`}>{org._label}</Link>|{' '}
+                    <Link to={`/${org._label}`}>{org._label}</Link>
+                    {' | '}
                   </span>
                 )}{' '}
                 {project._label}
