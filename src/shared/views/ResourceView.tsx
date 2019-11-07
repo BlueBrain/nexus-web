@@ -12,6 +12,7 @@ import { Resource, ResourceLink, NexusFile } from '@bbp/nexus-sdk';
 import { getResourceLabel, getResourceLabelsAndIdsFromSelf } from '../utils';
 import ResourceCardComponent from '../components/ResourceCard';
 import HistoryContainer from '../containers/HistoryContainer';
+import GraphContainer from '../containers/GraphContainer';
 import ResourceLinksContainer from '../containers/ResourceLinks';
 import ResourceActionsContainer from '../containers/ResourceActions';
 import { isDeprecated } from '../utils/nexusMaybe';
@@ -269,6 +270,9 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                       />
                     </div>
                   </div>
+                </TabPane>
+                <TabPane tab="Graph" key="#graph">
+                  <GraphContainer />
                 </TabPane>
               </Tabs>
             </>
