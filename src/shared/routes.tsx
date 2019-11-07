@@ -29,7 +29,7 @@ const routes: RouteWithData[] = [
     component: UserView,
   },
   {
-    path: '/:org',
+    path: '/:orgLabel',
     exact: true,
     component: ProjectsView,
   },
@@ -39,19 +39,19 @@ const routes: RouteWithData[] = [
     component: ProjectView,
   },
   {
-    path: '/:org/:project/resources/:resourceId',
+    path: '/:orgLabel/:projectLabel/resources/:resourceId',
     component: ResourceView,
   },
   {
-    path: '/:org/:project/:viewId/_search',
+    path: '/:orgLabel/:projectLabel/:viewId/_search',
     component: ElasticSearchQueryView,
   },
   {
-    path: '/:org/:project/:viewId/sparql',
+    path: '/:orgLabel/:projectLabel/:viewId/sparql',
     component: SparqlQueryView,
   },
   {
-    path: '/:org/:project/_settings/acls',
+    path: '/:orgLabel/:projectLabel/_settings/acls',
     component: ACLsView,
   },
 ];

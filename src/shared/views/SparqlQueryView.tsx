@@ -11,7 +11,7 @@ import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 import SparqlQueryContainer from '../containers/SparqlQuery';
 
 const SparqlQueryView: React.FunctionComponent<{
-  match: match<{ org: string; project: string; viewId: string }>;
+  match: match<{ orgLabel: string; projectLabel: string; viewId: string }>;
   location: Location;
   goToOrg(orgLabel: string): void;
   goToProject(orgLabel: string, projectLabel: string): void;
@@ -23,7 +23,7 @@ const SparqlQueryView: React.FunctionComponent<{
   ): void;
 }> = ({ match, location, goToOrg, goToProject, goToView }): JSX.Element => {
   const {
-    params: { org: orgLabel, project: projectLabel, viewId },
+    params: { orgLabel, projectLabel, viewId },
   } = match;
   const [{ _results: views }, setViews] = React.useState<ViewList>({
     '@context': {},

@@ -83,9 +83,7 @@ const ProjectView: React.FunctionComponent<{
           <div className="project-banner">
             <div className="label">
               <h1 className="name">
-                <a href={linkHelpers.makeOrgsListUri()}>
-                  <Icon type="bank" />
-                </a>
+                <a href={linkHelpers.makeOrgsListUri()}>Orgs</a>
                 {' | '}
                 {org && (
                   <span>

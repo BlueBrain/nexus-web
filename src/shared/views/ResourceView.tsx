@@ -23,7 +23,7 @@ const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
 
 interface ResourceViewProps {
   location: Location;
-  match: match<{ org: string; project: string; resourceId: string }>;
+  match: match<{ orgLabel: string; projectLabel: string; resourceId: string }>;
   goToOrg: (orgLabel: string) => void;
   goToProject: (orgLabel: string, projectLabel: string) => void;
   goToResource: (
@@ -42,7 +42,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
   const { match, goToOrg, goToProject, goToResource } = props;
   const nexus = useNexusContext();
   const {
-    params: { org: orgLabel, project: projectLabel, resourceId },
+    params: { orgLabel, projectLabel, resourceId },
   } = match;
   const { expanded: expandedFromQuery, rev } = queryString.parse(
     location.search

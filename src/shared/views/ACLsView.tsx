@@ -56,7 +56,7 @@ const ACLs: React.FunctionComponent<ACLsViewProps> = ({
           });
         });
     }
-  }, [match.params.project, match.params.org]);
+  }, [match.params.orgLabel, match.params.projectLabel]);
 
   return (
     <div className="acl-view view-container">
