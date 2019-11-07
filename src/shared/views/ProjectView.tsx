@@ -7,16 +7,14 @@ import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
 } from '@bbp/nexus-sdk';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { notification, Popover, Divider, Icon } from 'antd';
+import { notification, Popover, Divider } from 'antd';
+import { Link } from 'react-router-dom';
 
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
 import SideMenu from '../components/Menu/SideMenu';
 import FileUploadContainer from '../containers/FileUploadContainer';
 import ResourceFormContainer from '../containers/ResourceFormContainer';
 import ResourceListBoardContainer from '../containers/ResourceListBoardContainer';
-import useLinks from '../hooks/useLinks';
-import { Link } from 'react-router-dom';
-import LinkContainer from '../containers/LinkContainer';
 
 const ProjectView: React.FunctionComponent<{
   match: match<{ orgLabel: string; projectLabel: string }>;
@@ -83,17 +81,11 @@ const ProjectView: React.FunctionComponent<{
           <div className="project-banner">
             <div className="label">
               <h1 className="name">
-                <LinkContainer viewName="OrgsView">Orgs</LinkContainer>
+                <Link to="/">Orgs</Link>
                 {' | '}
                 {org && (
                   <span>
-                    <LinkContainer
-                      viewName="ProjectsView"
-                      pathOptions={{ orgLabel: org._label }}
-                    >
-                      {org._label}
-                    </LinkContainer>{' '}
-                    |{' '}
+                    <Link to={`/${org._label}`}>{org._label}</Link>|{' '}
                   </span>
                 )}{' '}
                 {project._label}

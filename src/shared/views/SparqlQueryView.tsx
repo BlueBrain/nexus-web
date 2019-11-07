@@ -4,10 +4,10 @@ import * as queryString from 'query-string';
 import { Menu, Dropdown, Icon, notification } from 'antd';
 import { ViewList, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Link } from 'react-router-dom';
 
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 import SparqlQueryContainer from '../containers/SparqlQuery';
-import LinkContainer from '../containers/LinkContainer';
 import { getResourceLabel, labelOf } from '../utils';
 
 const SparqlQueryView: React.FunctionComponent<{
@@ -43,23 +43,20 @@ const SparqlQueryView: React.FunctionComponent<{
         const stringifiedViewType = Array.isArray(view['@type'])
           ? view['@type'].join('')
           : view['@type'];
-        const viewName = (stringifiedViewType || '')
+        const pathAppendage = (stringifiedViewType || '')
           .toLowerCase()
           .includes('elastic')
-          ? 'ElasticSearchQueryView'
-          : 'SparqlQueryView';
+          ? '_search'
+          : 'sparql';
         return (
           <Menu.Item key={index}>
-            <LinkContainer
-              viewName={viewName}
-              pathOptions={{
-                orgLabel,
-                projectLabel,
-                viewId: view['@id'],
-              }}
+            <Link
+              to={`/${orgLabel}/${projectLabel}/${encodeURIComponent(
+                view['@id']
+              )}/${pathAppendage}`}
             >
               {getResourceLabel(view)}
-            </LinkContainer>
+            </Link>
           </Menu.Item>
         );
       })}
@@ -72,25 +69,8 @@ const SparqlQueryView: React.FunctionComponent<{
         <div className="label">
           <h1 className="name">
             <span>
-              <LinkContainer
-                viewName="ProjectsView"
-                pathOptions={{
-                  orgLabel,
-                }}
-              >
-                {orgLabel}
-              </LinkContainer>
-              |{' '}
-              <LinkContainer
-                viewName="ProjectView"
-                pathOptions={{
-                  orgLabel,
-                  projectLabel,
-                }}
-              >
-                {projectLabel}
-              </LinkContainer>{' '}
-              |{' '}
+              <Link to={`/${orgLabel}`}>{orgLabel}</Link>|{' '}
+              <Link to={`/${orgLabel}/${projectLabel}`}>{projectLabel}</Link> |{' '}
             </span>
             <Dropdown overlay={menu}>
               <span>
