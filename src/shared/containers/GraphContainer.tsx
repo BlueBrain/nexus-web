@@ -72,7 +72,10 @@ const GraphContainer: React.FunctionComponent<GraphContainerProps> = ({ self }) 
     <div>
       <h1>* Under construction *</h1>
       <p>Resource: {resourceId}</p>
-      <p>Outgoing links: {links && links.length}</p>
+      <p>Outgoing links: TOTAL {links && links.length}</p>
+      {links && links.map(link => (
+        <p>{link['@id']}</p>
+      ))}
     </div>
   )
 }
