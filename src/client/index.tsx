@@ -140,13 +140,16 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
     user = await userManager.getUser();
     if (user) {
       // we've loaded a user, refresh it
+      console.log('we have a user');
       user = await userManager.signinSilent();
     }
     // nope, are we receiving a new token?
     else {
+      console.log('no user');
       user = await userManager.signinRedirectCallback();
     }
   } catch (e) {
+    console.log('error user');
     // nothing to do, we are just not logged in
   }
 };
@@ -187,6 +190,8 @@ if (module.hot) {
 }
 
 async function main() {
+  // remove old token if any
+  localStorage.removeItem('nexus__token');
   // configure user manager
   await store.dispatch<any>(fetchRealms());
   const userManager = getUserManager(store.getState());
