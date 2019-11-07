@@ -66,18 +66,15 @@ const GraphContainer: React.FunctionComponent<GraphContainerProps> = ({ self }) 
       }
     },
     [self]
-  );
+  );  
 
-  console.log('links', links);
-  
-
-	return (
-		<div>
-			<h1>* Under construction *</h1>
+  return (
+    <div>
+      <h1>* Under construction *</h1>
       <p>Resource: {resourceId}</p>
       <p>Outgoing links: {links && links.length}</p>
-		</div>
-	)
+    </div>
+  )
 }
 
 export default GraphContainer;
