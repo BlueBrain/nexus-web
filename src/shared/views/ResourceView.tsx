@@ -272,9 +272,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                   </div>
                 </TabPane>
                 <TabPane tab="Graph" key="#graph">
-                  <GraphContainer
-                    self={resource._self}
-                  />
+                  <GraphContainer resource={resource} />
                 </TabPane>
               </Tabs>
             </>

@@ -1664,6 +1664,11 @@
   dependencies:
     "@types/express" "*"
 
+"@types/cytoscape@^3.8.5":
+  version "3.8.5"
+  resolved "https://registry.yarnpkg.com/@types/cytoscape/-/cytoscape-3.8.5.tgz#03ddef3ec5a1c6e441d115dc103098a907698f27"
+  integrity sha512-5LsDfbW67YCn5rSb95xjTM1ieE1MdhnqTZreRGtoBS7iaoT6wqag2xXOlGEVf9/CnvVnLuPt1ZdTzAlccs9IyQ==
+
 "@types/enzyme@^3.9.0":
   version "3.10.3"
   resolved "https://registry.yarnpkg.com/@types/enzyme/-/enzyme-3.10.3.tgz#02b6c5ac7d0472005944a652e79045e2f6c66804"
@@ -3755,6 +3760,14 @@ cyclist@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-1.0.1.tgz#596e9698fd0c80e12038c2b82d6eb1b35b6224d9"
 
+cytoscape@^3.12.0:
+  version "3.12.0"
+  resolved "https://registry.yarnpkg.com/cytoscape/-/cytoscape-3.12.0.tgz#01489ad1bedeb93886ef727aa2de7be17c641840"
+  integrity sha512-PUE2xLt+3jmY2mYzDErsQ1OCj3lnLQZ6cohA+EmQEg5/g9NuMsundsjWyQ1+UnEfTN4HxfwNHcQKBpDdnsBX7w==
+  dependencies:
+    heap "^0.2.6"
+    lodash.debounce "^4.0.8"
+
 d@1, d@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/d/-/d-1.0.1.tgz#8698095372d58dbee346ffd0c7093f99f8f9eb5a"
@@ -5259,6 +5272,11 @@ hastscript@^5.0.0:
 he@^1.1.1, he@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
+
+heap@^0.2.6:
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/heap/-/heap-0.2.6.tgz#087e1f10b046932fc8594dd9e6d378afc9d1e5ac"
+  integrity sha1-CH4fELBGky/IWU3Z5tN4r8nR5aw=
 
 highlight.js@~9.12.0:
   version "9.12.0"
