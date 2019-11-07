@@ -16,7 +16,7 @@ const GraphContainer: React.FunctionComponent<{
 }> = ({ resource }) => {
   const history = useHistory();
   const nexus = useNexusContext();
-  
+
   const [{ busy, error, links, total, next }, setLinks] = React.useState<{
     busy: boolean;
     error: Error | null;
