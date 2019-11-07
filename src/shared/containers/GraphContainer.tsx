@@ -3,7 +3,7 @@ import * as React from 'react';
 const GraphContainer = () => {
 	return (
 		<div>
-			Graph goes here
+			Under construction
 		</div>
 	)
 }
