@@ -40,7 +40,7 @@ const routes: RouteProps[] = [
     component: ResourceView,
   },
   {
-    path: '/:orgLabel/:projectLabel/studios/:resourceId',
+    path: '/:orgLabel/:projectLabel/studios/:studioId',
     exact: true,
     component: StudioView,
   },
