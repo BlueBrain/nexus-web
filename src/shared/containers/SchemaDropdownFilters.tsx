@@ -4,10 +4,11 @@ import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
   ElasticSearchViewQueryResponse,
 } from '@bbp/nexus-sdk';
+
 import DropdownFilter from '../components/DropdownFilter';
 
 // must be explicitly set for elasticSearch, default is 10
-const RESULTS_SIZE = 100;
+const RESULTS_SIZE = 10000;
 
 const SchemaDropdownFilterContainer: React.FunctionComponent<{
   orgLabel: string;

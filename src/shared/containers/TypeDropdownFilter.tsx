@@ -9,7 +9,7 @@ import DropdownFilter from '../components/DropdownFilter';
 import { TypeDropdownItem } from '../components/DropdownFilter/DropdownItem';
 
 // must be explicitly set for elasticSearch, default is 10
-const RESULTS_SIZE = 100;
+const RESULTS_SIZE = 10000;
 
 const TypeDropdownFilterContainer: React.FunctionComponent<{
   orgLabel: string;
