@@ -157,7 +157,11 @@ const ResourceListComponent: React.FunctionComponent<{
                     onClick={() => goToResource(resource['@id'])}
                   >
                     <Popover
-                      content={<ResourceCardComponent resource={resource} />}
+                      content={
+                        <div style={{ width: 600 }}>
+                          <ResourceCardComponent resource={resource} />
+                        </div>
+                      }
                       mouseEnterDelay={RESOURCE_CARD_MOUSE_ENTER_DELAY}
                     >
                       <a

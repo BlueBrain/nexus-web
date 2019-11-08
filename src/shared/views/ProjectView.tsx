@@ -7,21 +7,19 @@ import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
 } from '@bbp/nexus-sdk';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { Spin, notification, Popover, Divider } from 'antd';
+import { notification, Popover, Divider, Tooltip, Icon } from 'antd';
+import { Link } from 'react-router-dom';
 
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
 import SideMenu from '../components/Menu/SideMenu';
-import { Link } from 'react-router-dom';
 import FileUploadContainer from '../containers/FileUploadContainer';
 import ResourceFormContainer from '../containers/ResourceFormContainer';
 import ResourceListBoardContainer from '../containers/ResourceListBoardContainer';
 
 const ProjectView: React.FunctionComponent<{
   match: match<{ orgLabel: string; projectLabel: string }>;
-  goToOrg: (orgLabel: string) => void;
-}> = ({ match, goToOrg }) => {
+}> = ({ match }) => {
   const nexus = useNexusContext();
-
   const {
     params: { orgLabel, projectLabel },
   } = match;
@@ -83,10 +81,16 @@ const ProjectView: React.FunctionComponent<{
           <div className="project-banner">
             <div className="label">
               <h1 className="name">
-                {' '}
+                <Link to="/">
+                  <Tooltip title="Back to all organizations" placement="right">
+                    <Icon type="home" />
+                  </Tooltip>
+                </Link>
+                {' | '}
                 {org && (
                   <span>
-                    <Link to={`/${orgLabel}`}>{org._label}</Link> |{' '}
+                    <Link to={`/${org._label}`}>{org._label}</Link>
+                    {' | '}
                   </span>
                 )}{' '}
                 {project._label}

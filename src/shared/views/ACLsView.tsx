@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Empty, Spin } from 'antd';
+import { Link } from 'react-router-dom';
+import { Empty, Spin, Tooltip, Icon } from 'antd';
 import { push } from 'connected-react-router';
 import { ACL } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
@@ -17,6 +18,9 @@ const ACLs: React.FunctionComponent<ACLsViewProps> = ({
   goToOrg,
   goToProject,
 }) => {
+  const {
+    params: { orgLabel, projectLabel },
+  } = match;
   const path = `${match.params.org}${
     match.params.project ? `/${match.params.project}` : ''
   }`;
@@ -56,22 +60,22 @@ const ACLs: React.FunctionComponent<ACLsViewProps> = ({
           });
         });
     }
-  }, [match.params.project, match.params.org]);
+  }, [match.params.orgLabel, match.params.projectLabel]);
 
   return (
     <div className="acl-view view-container">
       <div style={{ flexGrow: 1 }}>
         <h1 className="name">
           <span>
-            <a onClick={() => goToOrg(match.params.org)}>{match.params.org}</a>{' '}
-            |{' '}
-            <a
-              onClick={() =>
-                goToProject(match.params.org, match.params.project)
-              }
-            >
-              {match.params.project}
-            </a>{' '}
+            <Link to="/">
+              <Tooltip title="Back to all organizations" placement="right">
+                <Icon type="home" />
+              </Tooltip>
+            </Link>
+            {' | '}
+            <Link to={`/${orgLabel}`}>{orgLabel}</Link>
+            {' | '}
+            <Link to={`/${orgLabel}/${projectLabel}`}>{projectLabel}</Link>
           </span>
         </h1>
         {busy && <Spin tip="Loading ACLs..." />}
