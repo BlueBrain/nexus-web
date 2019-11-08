@@ -9,7 +9,7 @@ import ElasticSearchQueryView from './views/ElasticSearchQueryView';
 import SparqlQueryView from './views/SparqlQueryView';
 import ACLsView from './views/ACLsView';
 import UserView from './views/UserView';
-import StudioView from './views/StudioView'
+import StudioView from './views/StudioView';
 
 const routes: RouteProps[] = [
   {
