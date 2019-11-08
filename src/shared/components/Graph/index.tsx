@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as cytoscape from 'cytoscape';
-import { Switch } from 'antd';
+import { Switch, Button, Card } from 'antd';
+import { number } from '@storybook/addon-knobs';
 
 const Graph: React.FunctionComponent<{
   elements: cytoscape.ElementDefinition[];
@@ -8,6 +9,12 @@ const Graph: React.FunctionComponent<{
 }> = ({ elements, onNodeClick }) => {
   const container = React.useRef<HTMLDivElement>(null);
   const [showLabels, setShowLabels] = React.useState(false);
+  const [showResourcePreview, setShowResourcePreview] = React.useState(false);
+  const [resourcePreviewCoords, setResourcePreviewCoords] = React.useState<{
+    x?: number,
+    y?: number,
+  }>({});
+  const [selectedResource, setSelectedResource] = React.useState<any>('');
 
   React.useEffect(() => {
     const graph = cytoscape({
@@ -64,12 +71,26 @@ const Graph: React.FunctionComponent<{
       },
     }).on('tap', 'node', (e: cytoscape.EventObject) => {
       onNodeClick && onNodeClick(e.target.id(), e.target.data('isExternal'));
-    });
+    }).on('mouseover', 'node', (e: cytoscape.EventObject) => {
+      // show a resorce preview tooltip
+      setResourcePreviewCoords({
+        x: e.originalEvent.clientX - 100,
+        y: e.originalEvent.clientY - 400,
+      });
+      console.log('e.target.position()', e);
+      
+      setShowResourcePreview(true);
+      setSelectedResource(e.target.id());      
+    }).on('mouseout', 'node', () => setShowResourcePreview(false));
 
     return () => {
       graph.destroy();
     };
   }, [container, elements, showLabels]);
+  
+  const onClickGoToResource = () => {    
+    // onNodeClick(selectedResource, false);
+  }
 
   return (
     <div>
@@ -78,9 +99,7 @@ const Graph: React.FunctionComponent<{
           checkedChildren={'hide labels'}
           unCheckedChildren={'show labels'}
           checked={showLabels}
-          onChange={() => {
-            setShowLabels(!showLabels);
-          }}
+          onChange={() => setShowLabels(!showLabels)}
         />
       </div>
       <div
@@ -92,6 +111,19 @@ const Graph: React.FunctionComponent<{
           marginTop: '1em',
         }}
       ></div>
+      <Card
+        size="small"
+        title="Resource"
+        style={{
+          display: showResourcePreview ? 'block' : 'none',
+          position: 'absolute',
+          top: resourcePreviewCoords.y,
+          left: resourcePreviewCoords.x,
+          height: '100px',
+          maxWidth: '300px',
+        }}>
+        <Button type="link" onClick={onClickGoToResource}>{selectedResource}</Button>
+      </Card>   
     </div>
   );
 };
