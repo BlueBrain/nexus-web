@@ -62,9 +62,17 @@ const ResourceEditorContainer: React.FunctionComponent<{
       });
     }
     if (showMetadata) {
-      return await nexus.Resource.get(orgLabel, projectLabel, resourceId);
+      return await nexus.Resource.get(orgLabel, projectLabel, resourceId, {
+        rev,
+      });
     }
-    return await nexus.Resource.getSource(orgLabel, projectLabel, resourceId);
+    return await nexus.Resource.getSource(
+      orgLabel,
+      projectLabel,
+      resourceId,
+      undefined,
+      { rev }
+    );
   };
 
   useAsyncEffect(
