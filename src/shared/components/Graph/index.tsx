@@ -75,6 +75,8 @@ const Graph: React.FunctionComponent<{
         coolingFactor: 0.95,
         minTemp: 1.0,
       },
+    }).on('tap', 'node', (e: cytoscape.EventObject) => {
+      // we should expand a graph here when user clicks on a node 
     }).on('mouseover', 'node', (e: cytoscape.EventObject) => {
       // show a resorce preview tooltip
       setResourcePreviewCoords({
