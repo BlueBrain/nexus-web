@@ -76,9 +76,7 @@ const Graph: React.FunctionComponent<{
       setResourcePreviewCoords({
         x: e.originalEvent.clientX - 100,
         y: e.originalEvent.clientY - 400,
-      });
-      console.log('e.target.position()', e);
-      
+      });      
       setShowResourcePreview(true);
       setSelectedResource(e.target.id());      
     }).on('mouseout', 'node', () => setShowResourcePreview(false));
