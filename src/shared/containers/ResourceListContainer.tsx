@@ -188,11 +188,13 @@ const ResourceListContainer: React.FunctionComponent<{
       goToResource={goToResource}
     >
       <TypeDropdownFilterContainer
+        deprecated={!!list.query.deprecated}
         orgLabel={orgLabel}
         projectLabel={projectLabel}
         onChange={handleTypeChange}
       />
       <SchemaDropdownFilterContainer
+        deprecated={!!list.query.deprecated}
         orgLabel={orgLabel}
         projectLabel={projectLabel}
         onChange={handleSchemaChange}
