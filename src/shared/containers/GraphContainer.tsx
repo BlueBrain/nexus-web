@@ -1,16 +1,20 @@
 import * as React from 'react';
 import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
-import { ResourceLink } from '@bbp/nexus-sdk';
-import { getResourceLabelsAndIdsFromSelf } from '../utils';
+import { ResourceLink, Resource } from '@bbp/nexus-sdk';
+import {
+  getResourceLabelsAndIdsFromSelf,
+  getResourceLabel,
+  labelOf,
+} from '../utils';
 
-import Graph from '../components/Graph/Graph';
+import Graph from '../components/Graph';
+import { useHistory } from 'react-router';
 
-interface GraphContainerProps {
-  self: string;
-}
-
-const GraphContainer: React.FunctionComponent<GraphContainerProps> = ({ self }) => {
+const GraphContainer: React.FunctionComponent<{
+  resource: Resource;
+}> = ({ resource }) => {
+  const history = useHistory();
   const nexus = useNexusContext();
   
   const [{ busy, error, links, total, next }, setLinks] = React.useState<{
@@ -30,7 +34,7 @@ const GraphContainer: React.FunctionComponent<GraphContainerProps> = ({ self }) 
     orgLabel,
     projectLabel,
     resourceId,
-  } = getResourceLabelsAndIdsFromSelf(self);
+  } = getResourceLabelsAndIdsFromSelf(resource._self);
 
   useAsyncEffect(
     async isMounted => {
@@ -49,7 +53,7 @@ const GraphContainer: React.FunctionComponent<GraphContainerProps> = ({ self }) 
           orgLabel,
           projectLabel,
           resourceId,
-          'outgoing',
+          'outgoing'
         );
         setLinks({
           next: response._next || null,
@@ -69,19 +73,48 @@ const GraphContainer: React.FunctionComponent<GraphContainerProps> = ({ self }) 
       }
     },
     [self]
-  );  
+  );
 
-  return (
-    <div>
-      <h1>* Under construction *</h1>
-      <p>Resource: {resourceId}</p>
-      <p>Outgoing links: TOTAL {links && links.length}</p>
-      {links && links.map(link => (
-        <p>{link['@id']}</p>
-      ))}
-      <Graph />
-    </div>
-  )
-}
+  const elements: cytoscape.ElementDefinition[] = [
+    {
+      data: {
+        id: resource['@id'],
+        label: getResourceLabel(resource),
+      },
+    },
+    // Link Nodes
+    ...links.map(link => ({
+      classes: `${!(link as Resource)._self ? 'external' : 'internal'}`,
+      data: {
+        id: link['@id'],
+        label: labelOf(link['@id']),
+        isExternal: !(link as Resource)._self,
+      },
+    })),
+    // Link Edges
+    ...links.map(link => ({
+      data: {
+        id: `edge-${resource['@id']}-${link['@id']}`,
+        source: resource['@id'],
+        target: link['@id'],
+        label: Array.isArray(link.paths)
+          ? link.paths.map(pathName => labelOf(pathName)).join(',')
+          : labelOf(link.paths),
+      },
+    })),
+  ];
+
+  const handleNodeClick = (id: string, isExternal: boolean) => {
+    if (isExternal) {
+      open(id);
+      return;
+    }
+    history.push(
+      `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(id)}#graph`
+    );
+  };
+
+  return <Graph elements={elements} onNodeClick={handleNodeClick} />;
+};
 
 export default GraphContainer;
