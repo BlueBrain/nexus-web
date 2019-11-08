@@ -9,13 +9,16 @@ import {
 } from '../utils';
 
 import Graph from '../components/Graph';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
+import { DEFAULT_ACTIVE_TAB_KEY } from '../views/ResourceView';
 
 const GraphContainer: React.FunctionComponent<{
   resource: Resource;
 }> = ({ resource }) => {
   const history = useHistory();
   const nexus = useNexusContext();
+  const location = useLocation();
+  const activeTabKey = location.hash || DEFAULT_ACTIVE_TAB_KEY;
 
   const [{ busy, error, links, total, next }, setLinks] = React.useState<{
     busy: boolean;
@@ -98,7 +101,7 @@ const GraphContainer: React.FunctionComponent<{
         source: resource['@id'],
         target: link['@id'],
         label: Array.isArray(link.paths)
-          ? link.paths.map(pathName => labelOf(pathName)).join(',')
+          ? link.paths.map(pathName => labelOf(pathName)).join(', ')
           : labelOf(link.paths),
       },
     })),
@@ -110,7 +113,9 @@ const GraphContainer: React.FunctionComponent<{
       return;
     }
     history.push(
-      `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(id)}#graph`
+      `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+        id
+      )}${activeTabKey}`
     );
   };
 
