@@ -24,9 +24,10 @@ const Graph: React.FunctionComponent<{
           selector: 'edge[label]',
           style: showLabels
             ? {
+                label: 'data(label)',
+                // this style is not included in the types
                 // @ts-ignore
                 'edge-text-rotation': 'autorotate',
-                label: 'data(label)',
               }
             : {},
         },
@@ -72,20 +73,23 @@ const Graph: React.FunctionComponent<{
 
   return (
     <div>
-      <Switch
-        checked={showLabels}
-        onChange={() => {
-          setShowLabels(!showLabels);
-        }}
-      >
-        Show Labels
-      </Switch>
+      <div>
+        <Switch
+          checkedChildren={'hide labels'}
+          unCheckedChildren={'show labels'}
+          checked={showLabels}
+          onChange={() => {
+            setShowLabels(!showLabels);
+          }}
+        />
+      </div>
       <div
         ref={container}
         style={{
           background: 'white',
           height: '600px',
           width: '100%',
+          marginTop: '1em',
         }}
       ></div>
     </div>
