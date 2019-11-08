@@ -12,6 +12,7 @@ interface GraphContainerProps {
 
 const GraphContainer: React.FunctionComponent<GraphContainerProps> = ({ self }) => {
   const nexus = useNexusContext();
+  
   const [{ busy, error, links, total, next }, setLinks] = React.useState<{
     busy: boolean;
     error: Error | null;
