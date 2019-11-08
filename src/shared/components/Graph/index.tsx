@@ -14,7 +14,13 @@ const Graph: React.FunctionComponent<{
     x?: number,
     y?: number,
   }>({});
-  const [selectedResource, setSelectedResource] = React.useState<any>('');
+  const [selectedResource, setSelectedResource] = React.useState<{
+    id: string,
+    isExternal: boolean,
+  }>({
+    id: '',
+    isExternal: false,
+  });
 
   React.useEffect(() => {
     const graph = cytoscape({
@@ -69,16 +75,17 @@ const Graph: React.FunctionComponent<{
         coolingFactor: 0.95,
         minTemp: 1.0,
       },
-    }).on('tap', 'node', (e: cytoscape.EventObject) => {
-      onNodeClick && onNodeClick(e.target.id(), e.target.data('isExternal'));
     }).on('mouseover', 'node', (e: cytoscape.EventObject) => {
       // show a resorce preview tooltip
       setResourcePreviewCoords({
         x: e.originalEvent.clientX - 100,
-        y: e.originalEvent.clientY - 400,
+        y: e.originalEvent.clientY - 420,
       });      
       setShowResourcePreview(true);
-      setSelectedResource(e.target.id());      
+      setSelectedResource({
+        id: e.target.id(),
+        isExternal: e.target.data('isExternal'),
+      });      
     }).on('mouseout', 'node', () => setShowResourcePreview(false));
 
     return () => {
@@ -86,8 +93,9 @@ const Graph: React.FunctionComponent<{
     };
   }, [container, elements, showLabels]);
   
-  const onClickGoToResource = () => {    
-    // onNodeClick(selectedResource, false);
+  const onClickGoToResource = () => {
+    const { id, isExternal } = selectedResource;    
+    onNodeClick && onNodeClick(id, isExternal);
   }
 
   return (
@@ -109,19 +117,18 @@ const Graph: React.FunctionComponent<{
           marginTop: '1em',
         }}
       ></div>
-      <Card
+      {showResourcePreview && (<Card
         size="small"
-        title="Resource"
+        title={`${selectedResource && selectedResource.isExternal ? 'External Resource' : 'Internal Resource'}`}
         style={{
-          display: showResourcePreview ? 'block' : 'none',
           position: 'absolute',
           top: resourcePreviewCoords.y,
           left: resourcePreviewCoords.x,
           height: '100px',
           maxWidth: '300px',
         }}>
-        <Button type="link" onClick={onClickGoToResource}>{selectedResource}</Button>
-      </Card>   
+        <Button type="link" onClick={onClickGoToResource}>{selectedResource && selectedResource.id}</Button>
+      </Card>)} 
     </div>
   );
 };
