@@ -76,10 +76,6 @@ const Graph: React.FunctionComponent<{
     };
   }, [container, elements, showLabels]);
 
-  const handleClose = () => {
-    setShowAlert(false);
-  };
-
   return (
     <div>
       <div>
@@ -93,10 +89,10 @@ const Graph: React.FunctionComponent<{
       <div style={{ padding: '20px 0 0' }}>
         {showAlert ? (
           <Alert
-            message="Click and hold a node to go to a resource"
+            message="Click and hold to visit a resource"
             type="info"
             closable
-            afterClose={() => handleClose()}
+            afterClose={() => setShowAlert(false)}
           />
         ) : null}
       </div>
