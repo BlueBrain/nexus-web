@@ -65,11 +65,13 @@ const Graph: React.FunctionComponent<{
         coolingFactor: 0.95,
         minTemp: 1.0,
       },
-    }).on('tap', 'node', (e: cytoscape.EventObject) => {
-      // expand a graph here?
-    }).on('taphold', 'node', (e: cytoscape.EventObject) => {
-      onNodeClick && onNodeClick(e.target.id(), e.target.data('isExternal'));
-    });
+    })
+      .on('tap', 'node', (e: cytoscape.EventObject) => {
+        // TODO: expand a graph here?
+      })
+      .on('taphold', 'node', (e: cytoscape.EventObject) => {
+        onNodeClick && onNodeClick(e.target.id(), e.target.data('isExternal'));
+      });
 
     return () => {
       graph.destroy();
