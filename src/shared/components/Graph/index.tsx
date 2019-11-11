@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as cytoscape from 'cytoscape';
-import { Switch, Button, Card } from 'antd';
+import { Alert, Switch, Button, Card } from 'antd';
+
 import { number } from '@storybook/addon-knobs';
 
 const Graph: React.FunctionComponent<{
@@ -9,18 +10,7 @@ const Graph: React.FunctionComponent<{
 }> = ({ elements, onNodeClick }) => {
   const container = React.useRef<HTMLDivElement>(null);
   const [showLabels, setShowLabels] = React.useState(false);
-  const [showResourcePreview, setShowResourcePreview] = React.useState(false);
-  const [resourcePreviewCoords, setResourcePreviewCoords] = React.useState<{
-    x?: number,
-    y?: number,
-  }>({});
-  const [selectedResource, setSelectedResource] = React.useState<{
-    id: string,
-    isExternal: boolean,
-  }>({
-    id: '',
-    isExternal: false,
-  });
+  const [showAlert, setShowAlert] = React.useState(true);
 
   React.useEffect(() => {
     const graph = cytoscape({
@@ -76,29 +66,19 @@ const Graph: React.FunctionComponent<{
         minTemp: 1.0,
       },
     }).on('tap', 'node', (e: cytoscape.EventObject) => {
-      // we should expand a graph here when user clicks on a node 
-    }).on('mouseover', 'node', (e: cytoscape.EventObject) => {
-      // show a resorce preview tooltip      
-      setResourcePreviewCoords({
-        x: e.originalEvent.offsetX,
-        y: e.originalEvent.offsetY,
-      });      
-      setShowResourcePreview(true);
-      setSelectedResource({
-        id: e.target.id(),
-        isExternal: e.target.data('isExternal'),
-      });      
-    }).on('mouseout', 'node', () => setShowResourcePreview(false));
+      // expand a graph here?
+    }).on('taphold', 'node', (e: cytoscape.EventObject) => {
+      onNodeClick && onNodeClick(e.target.id(), e.target.data('isExternal'));
+    });
 
     return () => {
       graph.destroy();
     };
   }, [container, elements, showLabels]);
-  
-  const onClickGoToResource = () => {
-    const { id, isExternal } = selectedResource;    
-    onNodeClick && onNodeClick(id, isExternal);
-  }
+
+  const handleClose = () => {
+    setShowAlert(false);
+  };
 
   return (
     <div>
@@ -110,6 +90,16 @@ const Graph: React.FunctionComponent<{
           onChange={() => setShowLabels(!showLabels)}
         />
       </div>
+      <div style={{ padding: '20px 0 0' }}>
+        {showAlert ? (
+          <Alert
+            message="Click and hold a node to go to a resource"
+            type="info"
+            closable
+            afterClose={() => handleClose()}
+          />
+        ) : null}
+      </div>
       <div
         ref={container}
         style={{
@@ -119,17 +109,6 @@ const Graph: React.FunctionComponent<{
           marginTop: '1em',
         }}
       ></div>
-      {showResourcePreview && (<Card
-        size="small"
-        title={`${selectedResource && selectedResource.isExternal ? 'External Resource' : 'Internal Resource'}`}
-        style={{
-          position: 'absolute',
-          top: resourcePreviewCoords.y,
-          left: resourcePreviewCoords.x,
-          height: '100px',
-        }}>
-        <Button type="link" onClick={onClickGoToResource}>{selectedResource && selectedResource.id}</Button>
-      </Card>)} 
     </div>
   );
 };

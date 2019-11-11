@@ -87,6 +87,7 @@ const GraphContainer: React.FunctionComponent<{
       classes: `${!(link as Resource)._self ? 'external' : 'internal'}`,
       data: {
         id: link['@id'],
+        // label: labelOf(<a href={`/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(link['@id'])}#graph`}>{link['@id']}</a>),
         label: labelOf(link['@id']),
         isExternal: !(link as Resource)._self,
       },
