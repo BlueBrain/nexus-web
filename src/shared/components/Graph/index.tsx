@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as cytoscape from 'cytoscape';
-import { Switch } from 'antd';
+import { Alert, Switch, Button, Card } from 'antd';
+
+import { number } from '@storybook/addon-knobs';
 
 const Graph: React.FunctionComponent<{
   elements: cytoscape.ElementDefinition[];
@@ -8,6 +10,7 @@ const Graph: React.FunctionComponent<{
 }> = ({ elements, onNodeClick }) => {
   const container = React.useRef<HTMLDivElement>(null);
   const [showLabels, setShowLabels] = React.useState(false);
+  const [showAlert, setShowAlert] = React.useState(true);
 
   React.useEffect(() => {
     const graph = cytoscape({
@@ -63,6 +66,8 @@ const Graph: React.FunctionComponent<{
         minTemp: 1.0,
       },
     }).on('tap', 'node', (e: cytoscape.EventObject) => {
+      // expand a graph here?
+    }).on('taphold', 'node', (e: cytoscape.EventObject) => {
       onNodeClick && onNodeClick(e.target.id(), e.target.data('isExternal'));
     });
 
@@ -78,10 +83,18 @@ const Graph: React.FunctionComponent<{
           checkedChildren={'hide labels'}
           unCheckedChildren={'show labels'}
           checked={showLabels}
-          onChange={() => {
-            setShowLabels(!showLabels);
-          }}
+          onChange={() => setShowLabels(!showLabels)}
         />
+      </div>
+      <div style={{ padding: '20px 0 0' }}>
+        {showAlert ? (
+          <Alert
+            message="Click and hold to visit a resource"
+            type="info"
+            closable
+            afterClose={() => setShowAlert(false)}
+          />
+        ) : null}
       </div>
       <div
         ref={container}
