@@ -78,9 +78,7 @@ const Graph: React.FunctionComponent<{
     }).on('tap', 'node', (e: cytoscape.EventObject) => {
       // we should expand a graph here when user clicks on a node 
     }).on('mouseover', 'node', (e: cytoscape.EventObject) => {
-      // show a resorce preview tooltip
-      console.log(e);
-      
+      // show a resorce preview tooltip      
       setResourcePreviewCoords({
         x: e.originalEvent.offsetX,
         y: e.originalEvent.offsetY,
