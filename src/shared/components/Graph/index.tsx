@@ -79,9 +79,11 @@ const Graph: React.FunctionComponent<{
       // we should expand a graph here when user clicks on a node 
     }).on('mouseover', 'node', (e: cytoscape.EventObject) => {
       // show a resorce preview tooltip
+      console.log(e);
+      
       setResourcePreviewCoords({
-        x: e.originalEvent.clientX - 100,
-        y: e.originalEvent.clientY - 420,
+        x: e.originalEvent.offsetX,
+        y: e.originalEvent.offsetY,
       });      
       setShowResourcePreview(true);
       setSelectedResource({
@@ -127,7 +129,6 @@ const Graph: React.FunctionComponent<{
           top: resourcePreviewCoords.y,
           left: resourcePreviewCoords.x,
           height: '100px',
-          maxWidth: '300px',
         }}>
         <Button type="link" onClick={onClickGoToResource}>{selectedResource && selectedResource.id}</Button>
       </Card>)} 
