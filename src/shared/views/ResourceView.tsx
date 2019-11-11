@@ -271,10 +271,9 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                     </div>
                   </div>
                 </TabPane>
-                {/*
-                  // TODO: Add graph view when the epic branch is merged!
-                  // https://github.com/BlueBrain/nexus/issues/820
-                */}
+                <TabPane tab="Graph" key="#graph">
+                  <GraphContainer resource={resource} />
+                </TabPane>
               </Tabs>
             </>
           )}
