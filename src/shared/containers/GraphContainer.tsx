@@ -72,7 +72,7 @@ const GraphContainer: React.FunctionComponent<{
         });
       }
     },
-    [resource._self]
+    [self]
   );
 
   const elements: cytoscape.ElementDefinition[] = [
@@ -113,8 +113,6 @@ const GraphContainer: React.FunctionComponent<{
       `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(id)}#graph`
     );
   };
-
-  if (busy || error) return null;
 
   return <Graph elements={elements} onNodeClick={handleNodeClick} />;
 };
