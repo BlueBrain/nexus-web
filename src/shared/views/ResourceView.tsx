@@ -159,10 +159,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
   }, [orgLabel, projectLabel, resourceId, rev]);
 
   return (
-    <div
-      className="resource-view view-container -unconstrained-width"
-      style={{ padding: 0 }}
-    >
+    <div className="resource-view view-container -unconstrained-width">
       {!!resource && (
         <Helmet
           title={`${getResourceLabel(
@@ -178,7 +175,12 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
       )}
       <div
         className="resource-details"
-        style={{ width: '40%', padding: '1em' }}
+        style={{
+          width: '60%',
+          minWidth: '600px',
+          padding: '1em',
+          margin: '1em',
+        }}
       >
         <Spin spinning={busy} style={{ width: '100%' }}>
           {!!error && (
@@ -287,8 +289,6 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
         style={{
           width: '100%',
           padding: '1em',
-          backgroundColor: '#e2edf5',
-          boxShadow: 'inset 4px 4px 8px 2px #00000008',
         }}
       >
         {resource && <GraphContainer resource={resource} />}

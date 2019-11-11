@@ -4,6 +4,8 @@ import { Alert, Switch, Button, Card } from 'antd';
 
 import { Switch, Button, Tooltip } from 'antd';
 
+import './GraphComponent.less';
+
 const DEFAULT_LAYOUT = {
   name: 'cose',
   idealEdgeLength: 100,
@@ -98,13 +100,8 @@ const Graph: React.FunctionComponent<{
   }, [container, elements, showLabels]);
 
   return (
-    <div
-      className="graph-component"
-      style={{
-        height: '100%',
-        width: '100%',
-      }}
-    >
+    <div className="graph-component">
+      <div className="graph" ref={container}></div>
       {!!graph.current && (
         <div className="controls">
           <Switch
@@ -115,13 +112,13 @@ const Graph: React.FunctionComponent<{
               setShowLabels(!showLabels);
             }}
           />
-          <Tooltip title="re-center">
+          <Tooltip title="Recenter">
             <Button icon="border-inner" onClick={handleLayoutClick('center')} />
           </Tooltip>
-          <Tooltip title="array in lines">
+          <Tooltip title="Array nodes in lines">
             <Button icon="small-dash" onClick={handleLayoutClick('lines')} />
           </Tooltip>
-          <Tooltip title="array nodes as grid">
+          <Tooltip title="Array nodes as grid">
             <Button icon="table" onClick={handleLayoutClick('grid')} />
           </Tooltip>
           <div style={{ padding: '20px 0 0' }}>
@@ -136,14 +133,6 @@ const Graph: React.FunctionComponent<{
           </div>
         </div>
       )}
-      <div
-        ref={container}
-        style={{
-          height: '600px',
-          width: '100%',
-          marginTop: '1em',
-        }}
-      ></div>
     </div>
   );
 };
