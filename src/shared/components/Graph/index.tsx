@@ -52,6 +52,7 @@ const Graph: React.FunctionComponent<{
   React.useEffect(() => {
     graph.current = cytoscape({
       elements,
+      wheelSensitivity: 0.2,
       container: container.current,
       style: [
         {
@@ -102,6 +103,14 @@ const Graph: React.FunctionComponent<{
   return (
     <div className="graph-component">
       <div className="graph" ref={container}></div>
+      <div className="legend">
+        <div>
+          <span className="node -external" /> External Link
+        </div>
+        <div>
+          <span className="node -internal" /> Internal Link
+        </div>
+      </div>
       {!!graph.current && (
         <div className="controls">
           <Switch
@@ -112,15 +121,6 @@ const Graph: React.FunctionComponent<{
               setShowLabels(!showLabels);
             }}
           />
-          <Tooltip title="Recenter">
-            <Button icon="border-inner" onClick={handleLayoutClick('center')} />
-          </Tooltip>
-          <Tooltip title="Array nodes in lines">
-            <Button icon="small-dash" onClick={handleLayoutClick('lines')} />
-          </Tooltip>
-          <Tooltip title="Array nodes as grid">
-            <Button icon="table" onClick={handleLayoutClick('grid')} />
-          </Tooltip>
           <div style={{ padding: '20px 0 0' }}>
             {showAlert ? (
               <Alert
@@ -130,6 +130,20 @@ const Graph: React.FunctionComponent<{
                 afterClose={() => setShowAlert(false)}
               />
             ) : null}
+          </div>
+          <div>
+            <Tooltip title="Recenter">
+              <Button
+                icon="border-inner"
+                onClick={handleLayoutClick('center')}
+              />
+            </Tooltip>
+            <Tooltip title="Array nodes in lines">
+              <Button icon="small-dash" onClick={handleLayoutClick('lines')} />
+            </Tooltip>
+            <Tooltip title="Array nodes as grid">
+              <Button icon="table" onClick={handleLayoutClick('grid')} />
+            </Tooltip>
           </div>
         </div>
       )}

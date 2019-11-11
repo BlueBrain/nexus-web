@@ -18,6 +18,7 @@ import ResourceActionsContainer from '../containers/ResourceActions';
 import { isDeprecated } from '../utils/nexusMaybe';
 import ResourceEditorContainer from '../containers/ResourceEditor';
 import ImagePreviewContainer from '../containers/ImagePreviewContainer';
+import useMeasure from '../hooks/useMeasure';
 
 const TabPane = Tabs.TabPane;
 export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
@@ -42,6 +43,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
   const { match, goToOrg, goToProject, goToResource } = props;
   const nexus = useNexusContext();
   const location = useLocation();
+  const [{ ref }, { width }] = useMeasure();
   const {
     params: { orgLabel, projectLabel, resourceId },
   } = match;
@@ -285,13 +287,24 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
         </Spin>
       </div>
       <div
+        ref={ref}
         className="graph-wrapper"
         style={{
           width: '100%',
-          padding: '1em',
+          height: '100%',
+          position: 'relative',
         }}
       >
-        {resource && <GraphContainer resource={resource} />}
+        <div
+          style={{
+            width,
+            position: 'fixed',
+            height: '100%',
+            maxHeight: 'calc(100vh - 40px)',
+          }}
+        >
+          {resource && <GraphContainer resource={resource} />}
+        </div>
       </div>
     </div>
   );
