@@ -50,6 +50,7 @@ const Graph: React.FunctionComponent<{
   React.useEffect(() => {
     graph.current = cytoscape({
       elements,
+      maxZoom: 1,
       wheelSensitivity: 0.2,
       container: container.current,
       style: [
