@@ -1,11 +1,12 @@
 import * as React from 'react';
 import * as cytoscape from 'cytoscape';
 import { Alert, Switch, Button, Tooltip } from 'antd';
+import * as cola from 'cytoscape-cola';
 
 import './GraphComponent.less';
 
 const DEFAULT_LAYOUT = {
-  name: 'cose',
+  name: 'cola',
   idealEdgeLength: 100,
   nodeOverlap: 20,
   refresh: 20,
@@ -26,11 +27,21 @@ const DEFAULT_LAYOUT = {
 const Graph: React.FunctionComponent<{
   elements: cytoscape.ElementDefinition[];
   onNodeClick?(id: string, isExternal: boolean): void;
-}> = ({ elements, onNodeClick }) => {
+  onNodeExpand?(id: string, isExternal: boolean): void;
+}> = ({ elements, onNodeClick, onNodeExpand }) => {
   const container = React.useRef<HTMLDivElement>(null);
   const [showLabels, setShowLabels] = React.useState(false);
   const [showAlert, setShowAlert] = React.useState(true);
   const graph = React.useRef<cytoscape.Core>();
+
+  if (graph.current) {
+    graph.current.on('tap', 'node', (e: cytoscape.EventObject) => {
+      onNodeExpand && onNodeExpand(e.target.id(), e.target.data('isExternal'));
+    });
+    graph.current.on('taphold', 'node', (e: cytoscape.EventObject) => {
+      onNodeClick && onNodeClick(e.target.id(), e.target.data('isExternal'));
+    });
+  }
 
   const handleLayoutClick = (type: string) => () => {
     if (type === 'center') {
@@ -83,6 +94,7 @@ const Graph: React.FunctionComponent<{
     if (graph.current) {
       graph.current.elements().remove();
       graph.current.add(elements);
+      graph.current.layout(DEFAULT_LAYOUT).run();
     }
   };
 
@@ -95,21 +107,15 @@ const Graph: React.FunctionComponent<{
   }, [JSON.stringify(elements)]);
 
   React.useEffect(() => {
+    cytoscape.use(cola);
     graph.current = cytoscape({
       elements,
       style,
       maxZoom: 1,
       wheelSensitivity: 0.2,
       container: container.current,
-    })
-      .on('tap', 'node', (e: cytoscape.EventObject) => {
-        // TODO: expand a graph here?
-      })
-      .on('taphold', 'node', (e: cytoscape.EventObject) => {
-        onNodeClick && onNodeClick(e.target.id(), e.target.data('isExternal'));
-      });
+    });
     replaceElements(elements);
-    graph.current.layout(DEFAULT_LAYOUT).run();
     return () => {
       graph.current && graph.current.destroy();
     };
