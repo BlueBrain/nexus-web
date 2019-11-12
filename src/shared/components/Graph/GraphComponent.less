@@ -1,16 +1,24 @@
+@import '../../lib.less';
+
 .graph-component {
   height: 100%;
   width: 100%;
-  & > .controls {
+  & > .top {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
-    display: flex;
     margin-top: 1em;
-    justify-content: space-between;
     button {
       margin-right: 4px;
+    }
+    .alert {
+      margin: 1em;
+    }
+    .controls {
+      justify-content: space-between;
+      display: flex;
+      width: 100%;
     }
   }
   & > .legend {
@@ -24,9 +32,9 @@
     height: 1em;
     width: 1em;
     border-radius: 50%;
-    background-color: #00adee;
+    background-color: @link-color;
     &.-internal {
-      background-color: #ff6666;
+      background-color: @internal-link-color;
     }
   }
   & > .graph {

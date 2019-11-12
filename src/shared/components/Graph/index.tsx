@@ -1,8 +1,6 @@
 import * as React from 'react';
 import * as cytoscape from 'cytoscape';
-import { Alert, Switch, Button, Card } from 'antd';
-
-import { Switch, Button, Tooltip } from 'antd';
+import { Alert, Switch, Button, Tooltip } from 'antd';
 
 import './GraphComponent.less';
 
@@ -111,7 +109,7 @@ const Graph: React.FunctionComponent<{
           <span className="node -internal" /> Internal Link
         </div>
       </div>
-      {!!graph.current && (
+      <div className="top">
         <div className="controls">
           <Switch
             checkedChildren={'hide labels'}
@@ -121,16 +119,6 @@ const Graph: React.FunctionComponent<{
               setShowLabels(!showLabels);
             }}
           />
-          <div style={{ padding: '20px 0 0' }}>
-            {showAlert ? (
-              <Alert
-                message="Click and hold to visit a resource"
-                type="info"
-                closable
-                afterClose={() => setShowAlert(false)}
-              />
-            ) : null}
-          </div>
           <div>
             <Tooltip title="Recenter">
               <Button
@@ -146,7 +134,17 @@ const Graph: React.FunctionComponent<{
             </Tooltip>
           </div>
         </div>
-      )}
+        <div className="alert">
+          {showAlert ? (
+            <Alert
+              message="Click and hold to visit a resource"
+              type="info"
+              closable
+              afterClose={() => setShowAlert(false)}
+            />
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 };
