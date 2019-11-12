@@ -8,12 +8,14 @@ const ResourceListBoardComponent: React.FunctionComponent<{
 }> = props => {
   const { createList, children } = props;
   return (
-    <>
-      {children}
-      <div className="resource-list -add" onClick={() => createList()}>
-        <Icon type="plus" /> Add another resource list
+    <div className="list-board">
+      <div className="wrapper">
+        {children}
+        <div className="resource-list -add" onClick={() => createList()}>
+          <Icon type="plus" /> Add another resource list
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 
