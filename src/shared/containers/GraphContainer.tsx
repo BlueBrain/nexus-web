@@ -128,6 +128,12 @@ const GraphContainer: React.FunctionComponent<{
         'outgoing'
       );
 
+      const targetNode = elements.find(element => element.data.id === id);
+      if (!targetNode) {
+        return;
+      }
+      targetNode.classes = `${targetNode.classes} -visited`;
+      targetNode.data.visited = true;
       setElements([
         ...elements,
 

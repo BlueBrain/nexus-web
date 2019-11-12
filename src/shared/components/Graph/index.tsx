@@ -22,6 +22,9 @@ const DEFAULT_LAYOUT = {
   initialTemp: 200,
   coolingFactor: 0.95,
   minTemp: 1.0,
+  nodeSpacing() {
+    return 40;
+  },
 };
 
 const Graph: React.FunctionComponent<{
@@ -37,6 +40,10 @@ const Graph: React.FunctionComponent<{
   React.useEffect(() => {
     if (graph.current) {
       graph.current.on('tap', 'node', (e: cytoscape.EventObject) => {
+        const { visited } = e.target.data();
+        if (visited) {
+          return;
+        }
         onNodeExpand &&
           onNodeExpand(e.target.id(), e.target.data('isExternal'));
       });
@@ -95,6 +102,12 @@ const Graph: React.FunctionComponent<{
       selector: '.internal',
       style: {
         'background-color': '#ff6666',
+      },
+    },
+    {
+      selector: '.-visited',
+      style: {
+        'background-color': '#ffd3d3',
       },
     },
   ];
