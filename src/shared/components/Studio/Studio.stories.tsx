@@ -36,6 +36,13 @@ storiesOf('Components/Studio', module)
           <br />
           <h3>Empty list</h3>
           <StudioList studios={[]} busy={busy} />
+          <br />
+          <h3>Error</h3>
+          <StudioList
+            studios={[]}
+            busy={busy}
+            error={new Error('Not authorized')}
+          />
         </div>
       );
     })

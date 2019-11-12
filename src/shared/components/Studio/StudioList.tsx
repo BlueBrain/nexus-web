@@ -1,10 +1,9 @@
 import * as React from 'react';
+import { Empty, Spin } from 'antd';
 
-import InfiniteSearch from '../List/InfiniteSearch';
 import ListItem from '../List/Item';
 
 import './Studio.less';
-import { Empty, Spin } from 'antd';
 
 type StudioItemProps = {
   id: string;
@@ -24,27 +23,24 @@ const StudioItem: React.FC<StudioItemProps> = ({ name, description }) => {
 const StudioList: React.FC<{
   studios: StudioItemProps[];
   busy?: boolean;
+  error?: Error | null;
   goToStudio?(studioId: string): void;
-}> = ({ studios, busy, goToStudio = () => {} }) => {
+}> = ({ studios, busy, error, goToStudio = () => {} }) => {
   const noStudios = studios.length === 0;
   return (
     <div className="studio-list">
       <h3>Studios</h3>
       <Spin spinning={busy}>
-        {noStudios && <Empty description="No studios available" />}
+        {error && <Empty description={error.message || 'An error occurred'} />}
+        {!error && noStudios && <Empty description="No studios available" />}
         {!noStudios && (
-          <InfiniteSearch
-            dataLength={studios.length}
-            hasMore={false}
-            onLoadMore={() => {}}
-            hasSearch={false}
-          >
+          <div>
             {studios.map(studio => (
               <ListItem onClick={() => goToStudio(studio.id)} key={studio.id}>
                 <StudioItem {...studio} />
               </ListItem>
             ))}
-          </InfiniteSearch>
+          </div>
         )}
       </Spin>
     </div>
