@@ -15,6 +15,7 @@ import SideMenu from '../components/Menu/SideMenu';
 import FileUploadContainer from '../containers/FileUploadContainer';
 import ResourceFormContainer from '../containers/ResourceFormContainer';
 import ResourceListBoardContainer from '../containers/ResourceListBoardContainer';
+import StudioListContainer from '../containers/StudioListContainer';
 
 const ProjectView: React.FunctionComponent<{
   match: match<{ orgLabel: string; projectLabel: string }>;
@@ -115,10 +116,18 @@ const ProjectView: React.FunctionComponent<{
               )}
             </div>
           </div>
-          <ResourceListBoardContainer
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
-          />
+          <div className="list-board">
+            <div className="wrapper">
+              <ResourceListBoardContainer
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+              />
+              <StudioListContainer
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+              />
+            </div>
+          </div>
           <div className="actions">
             <SideMenu
               visible={menuVisible}
