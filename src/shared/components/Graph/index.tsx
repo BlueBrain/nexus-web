@@ -47,45 +47,60 @@ const Graph: React.FunctionComponent<{
     }
   };
 
+  const style = [
+    {
+      selector: 'node[label]',
+      style: {
+        label: 'data(label)',
+      },
+    },
+    {
+      selector: 'edge[label]',
+      style: showLabels
+        ? {
+            label: 'data(label)',
+            // this style is not included in the types
+            // @ts-ignore
+            'edge-text-rotation': 'autorotate',
+          }
+        : {},
+    },
+    {
+      selector: '.external',
+      style: {
+        'background-color': '#00adee',
+      },
+    },
+    {
+      selector: '.internal',
+      style: {
+        'background-color': '#ff6666',
+      },
+    },
+  ];
+
+  const replaceElements = (elements: cytoscape.ElementDefinition[]) => {
+    if (graph.current) {
+      graph.current.elements().remove();
+      graph.current.add(elements);
+    }
+  };
+
+  React.useEffect(() => {
+    graph.current && graph.current.style(style);
+  }, [showLabels]);
+
+  React.useEffect(() => {
+    replaceElements(elements);
+  }, [JSON.stringify(elements)]);
+
   React.useEffect(() => {
     graph.current = cytoscape({
       elements,
+      style,
       maxZoom: 1,
       wheelSensitivity: 0.2,
       container: container.current,
-      style: [
-        {
-          selector: 'node[label]',
-          style: {
-            label: 'data(label)',
-          },
-        },
-        {
-          selector: 'edge[label]',
-          style: showLabels
-            ? {
-                label: 'data(label)',
-                // this style is not included in the types
-                // @ts-ignore
-                'edge-text-rotation': 'autorotate',
-              }
-            : {},
-        },
-        {
-          selector: '.external',
-          style: {
-            'background-color': '#00adee',
-          },
-        },
-        {
-          selector: '.internal',
-          style: {
-            'background-color': '#ff6666',
-          },
-        },
-      ],
-
-      layout: DEFAULT_LAYOUT,
     })
       .on('tap', 'node', (e: cytoscape.EventObject) => {
         // TODO: expand a graph here?
@@ -93,11 +108,12 @@ const Graph: React.FunctionComponent<{
       .on('taphold', 'node', (e: cytoscape.EventObject) => {
         onNodeClick && onNodeClick(e.target.id(), e.target.data('isExternal'));
       });
-
+    replaceElements(elements);
+    graph.current.layout(DEFAULT_LAYOUT).run();
     return () => {
       graph.current && graph.current.destroy();
     };
-  }, [container, elements, showLabels]);
+  }, [container]);
 
   return (
     <div className="graph-component">
