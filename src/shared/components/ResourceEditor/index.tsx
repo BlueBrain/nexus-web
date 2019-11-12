@@ -127,6 +127,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             mode: { name: 'javascript', json: true },
             theme: 'base16-light',
             lineNumbers: true,
+            lineWrapping: true,
             viewportMargin: Infinity,
           }}
           onChange={handleChange}

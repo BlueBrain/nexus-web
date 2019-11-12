@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { push } from 'connected-react-router';
-import { match } from 'react-router';
+import { match, useLocation } from 'react-router';
 import { Spin, Card, Empty, Tabs, notification, Alert } from 'antd';
 import * as queryString from 'query-string';
 import { useAsyncEffect } from 'use-async-effect';
@@ -19,12 +19,12 @@ import { isDeprecated } from '../utils/nexusMaybe';
 import ResourceEditorContainer from '../containers/ResourceEditor';
 import ImagePreviewContainer from '../containers/ImagePreviewContainer';
 import SchemaLinkContainer from '../containers/SchemaLink';
+import useMeasure from '../hooks/useMeasure';
 
 const TabPane = Tabs.TabPane;
-const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
+export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
 
 interface ResourceViewProps {
-  location: Location;
   match: match<{ orgLabel: string; projectLabel: string; resourceId: string }>;
   goToOrg: (orgLabel: string) => void;
   goToProject: (orgLabel: string, projectLabel: string) => void;
@@ -43,6 +43,8 @@ interface ResourceViewProps {
 const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
   const { match, goToOrg, goToProject, goToResource } = props;
   const nexus = useNexusContext();
+  const location = useLocation();
+  const [{ ref }, { width }] = useMeasure();
   const {
     params: { orgLabel, projectLabel, resourceId },
   } = match;
@@ -160,7 +162,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
   }, [orgLabel, projectLabel, resourceId, rev]);
 
   return (
-    <div className="resource-view view-container">
+    <div className="resource-view view-container -unconstrained-width">
       {!!resource && (
         <Helmet
           title={`${getResourceLabel(
@@ -174,7 +176,15 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
           ]}
         />
       )}
-      <div className="resource-details" style={{ width: '100%' }}>
+      <div
+        className="resource-details"
+        style={{
+          width: '60%',
+          minWidth: '600px',
+          padding: '1em',
+          margin: '1em',
+        }}
+      >
         <Spin spinning={busy} style={{ width: '100%' }}>
           {!!error && (
             <Card>
@@ -273,13 +283,30 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                     </div>
                   </div>
                 </TabPane>
-                <TabPane tab="Graph" key="#graph">
-                  <GraphContainer resource={resource} />
-                </TabPane>
               </Tabs>
             </>
           )}
         </Spin>
+      </div>
+      <div
+        ref={ref}
+        className="graph-wrapper"
+        style={{
+          width: '100%',
+          height: '100%',
+          position: 'relative',
+        }}
+      >
+        <div
+          style={{
+            width,
+            position: 'fixed',
+            height: '100%',
+            maxHeight: 'calc(100vh - 40px)',
+          }}
+        >
+          {resource && <GraphContainer resource={resource} />}
+        </div>
       </div>
     </div>
   );
