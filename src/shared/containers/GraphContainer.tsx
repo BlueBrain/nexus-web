@@ -1,15 +1,16 @@
 import * as React from 'react';
+import { notification } from 'antd';
 import { useAsyncEffect } from 'use-async-effect';
+import { useHistory, useLocation } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { ResourceLink, Resource } from '@bbp/nexus-sdk';
+
 import {
   getResourceLabelsAndIdsFromSelf,
   getResourceLabel,
   labelOf,
 } from '../utils';
-
 import Graph from '../components/Graph';
-import { useHistory, useLocation } from 'react-router';
 import { DEFAULT_ACTIVE_TAB_KEY } from '../views/ResourceView';
 
 const GraphContainer: React.FunctionComponent<{
@@ -98,8 +99,11 @@ const GraphContainer: React.FunctionComponent<{
           })),
         ];
         setElements(newElements);
-        console.log({ elements, newElements });
       } catch (error) {
+        notification.error({
+          message: `Could not fetch resource info for node ${resourceId}`,
+          description: error.message,
+        });
         setLinks({
           next,
           error,
@@ -112,45 +116,49 @@ const GraphContainer: React.FunctionComponent<{
     [resource._self]
   );
 
-  console.log('RENDER', { elements });
-
   const handleNodeExpand = async (id: string, isExternal: boolean) => {
     if (isExternal) {
       return;
     }
-    console.log({ id });
-    const response = await nexus.Resource.links(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(id),
-      'outgoing'
-    );
+    try {
+      const response = await nexus.Resource.links(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(id),
+        'outgoing'
+      );
 
-    setElements([
-      ...elements,
+      setElements([
+        ...elements,
 
-      // Link Nodes
-      ...response._results.map(link => ({
-        classes: `${!(link as Resource)._self ? 'external' : 'internal'}`,
-        data: {
-          id: link['@id'],
-          label: labelOf(link['@id']),
-          isExternal: !(link as Resource)._self,
-        },
-      })),
+        // Link Nodes
+        ...response._results.map(link => ({
+          classes: `${!(link as Resource)._self ? 'external' : 'internal'}`,
+          data: {
+            id: link['@id'],
+            label: labelOf(link['@id']),
+            isExternal: !(link as Resource)._self,
+          },
+        })),
 
-      // Link Edges
-      ...response._results.map(link => ({
-        data: {
-          id: `edge-${resource['@id']}-${link['@id']}`,
-          source: id,
-          target: link['@id'],
-          label: Array.isArray(link.paths)
-            ? link.paths.map(pathName => labelOf(pathName)).join(', ')
-            : labelOf(link.paths),
-        },
-      })),
-    ]);
+        // Link Edges
+        ...response._results.map(link => ({
+          data: {
+            id: `edge-${resource['@id']}-${link['@id']}`,
+            source: id,
+            target: link['@id'],
+            label: Array.isArray(link.paths)
+              ? link.paths.map(pathName => labelOf(pathName)).join(', ')
+              : labelOf(link.paths),
+          },
+        })),
+      ]);
+    } catch (error) {
+      notification.error({
+        message: `Could not fetch resource info for node ${id}`,
+        description: error.message,
+      });
+    }
   };
 
   const handleNodeClick = (id: string, isExternal: boolean) => {
