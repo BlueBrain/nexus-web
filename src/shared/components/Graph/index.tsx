@@ -34,14 +34,23 @@ const Graph: React.FunctionComponent<{
   const [showAlert, setShowAlert] = React.useState(true);
   const graph = React.useRef<cytoscape.Core>();
 
-  if (graph.current) {
-    graph.current.on('tap', 'node', (e: cytoscape.EventObject) => {
-      onNodeExpand && onNodeExpand(e.target.id(), e.target.data('isExternal'));
-    });
-    graph.current.on('taphold', 'node', (e: cytoscape.EventObject) => {
-      onNodeClick && onNodeClick(e.target.id(), e.target.data('isExternal'));
-    });
-  }
+  React.useEffect(() => {
+    if (graph.current) {
+      graph.current.on('tap', 'node', (e: cytoscape.EventObject) => {
+        onNodeExpand &&
+          onNodeExpand(e.target.id(), e.target.data('isExternal'));
+      });
+      graph.current.on('taphold', 'node', (e: cytoscape.EventObject) => {
+        onNodeClick && onNodeClick(e.target.id(), e.target.data('isExternal'));
+      });
+    }
+    return () => {
+      if (graph.current) {
+        graph.current.removeListener('tap');
+        graph.current.removeListener('taphold');
+      }
+    };
+  });
 
   const handleLayoutClick = (type: string) => () => {
     if (type === 'center') {
