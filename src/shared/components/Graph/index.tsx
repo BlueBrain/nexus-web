@@ -35,7 +35,29 @@ const Graph: React.FunctionComponent<{
   const container = React.useRef<HTMLDivElement>(null);
   const [showLabels, setShowLabels] = React.useState(false);
   const [showAlert, setShowAlert] = React.useState(true);
+  const [layoutType, setLayoutType] = React.useState(DEFAULT_LAYOUT.name);
   const graph = React.useRef<cytoscape.Core>();
+
+  const forceLayout = () => {
+    if (graph.current) {
+      if (layoutType === DEFAULT_LAYOUT.name) {
+        graph.current && graph.current.layout(DEFAULT_LAYOUT).run();
+        return;
+      }
+      if (layoutType === 'lines') {
+        graph.current && graph.current.layout({ name: 'breadthfirst' }).run();
+        return;
+      }
+      if (layoutType === 'grid') {
+        graph.current && graph.current.layout({ name: 'grid' }).run();
+        return;
+      }
+    }
+  };
+
+  React.useEffect(() => {
+    forceLayout();
+  }, [layoutType]);
 
   React.useEffect(() => {
     if (graph.current) {
@@ -60,18 +82,7 @@ const Graph: React.FunctionComponent<{
   });
 
   const handleLayoutClick = (type: string) => () => {
-    if (type === 'center') {
-      graph.current && graph.current.layout(DEFAULT_LAYOUT).run();
-      return;
-    }
-    if (type === 'lines') {
-      graph.current && graph.current.layout({ name: 'breadthfirst' }).run();
-      return;
-    }
-    if (type === 'grid') {
-      graph.current && graph.current.layout({ name: 'grid' }).run();
-      return;
-    }
+    setLayoutType(type);
   };
 
   const style = [
@@ -116,7 +127,7 @@ const Graph: React.FunctionComponent<{
     if (graph.current) {
       graph.current.elements().remove();
       graph.current.add(elements);
-      graph.current.layout(DEFAULT_LAYOUT).run();
+      forceLayout();
     }
   };
 
@@ -167,15 +178,26 @@ const Graph: React.FunctionComponent<{
           <div>
             <Tooltip title="Recenter">
               <Button
+                type={
+                  layoutType === DEFAULT_LAYOUT.name ? 'primary' : 'default'
+                }
                 icon="border-inner"
-                onClick={handleLayoutClick('center')}
+                onClick={handleLayoutClick(DEFAULT_LAYOUT.name)}
               />
             </Tooltip>
             <Tooltip title="Array nodes in lines">
-              <Button icon="small-dash" onClick={handleLayoutClick('lines')} />
+              <Button
+                type={layoutType === 'lines' ? 'primary' : 'default'}
+                icon="small-dash"
+                onClick={handleLayoutClick('lines')}
+              />
             </Tooltip>
             <Tooltip title="Array nodes as grid">
-              <Button icon="table" onClick={handleLayoutClick('grid')} />
+              <Button
+                type={layoutType === 'grid' ? 'primary' : 'default'}
+                icon="table"
+                onClick={handleLayoutClick('grid')}
+              />
             </Tooltip>
           </div>
         </div>
