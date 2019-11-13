@@ -13,6 +13,25 @@ import {
 import Graph from '../components/Graph';
 import { DEFAULT_ACTIVE_TAB_KEY } from '../views/ResourceView';
 
+const MAX_LABEL_LENGTH = 20;
+
+const makeNode = (link: ResourceLink) => {
+  let label = labelOf(link['@id']);
+  label =
+    label.length > MAX_LABEL_LENGTH
+      ? `${label.slice(0, MAX_LABEL_LENGTH)}...`
+      : label;
+
+  return {
+    classes: `${!(link as Resource)._self ? 'external' : 'internal'}`,
+    data: {
+      label,
+      id: link['@id'],
+      isExternal: !(link as Resource)._self,
+    },
+  };
+};
+
 const GraphContainer: React.FunctionComponent<{
   resource: Resource;
 }> = ({ resource }) => {
@@ -78,14 +97,7 @@ const GraphContainer: React.FunctionComponent<{
             },
           },
           // Link Nodes
-          ...response._results.map(link => ({
-            classes: `${!(link as Resource)._self ? 'external' : 'internal'}`,
-            data: {
-              id: link['@id'],
-              label: labelOf(link['@id']),
-              isExternal: !(link as Resource)._self,
-            },
-          })),
+          ...response._results.map(makeNode),
           // Link Edges
           ...response._results.map(link => ({
             data: {
@@ -138,14 +150,7 @@ const GraphContainer: React.FunctionComponent<{
         ...elements,
 
         // Link Nodes
-        ...response._results.map(link => ({
-          classes: `${!(link as Resource)._self ? 'external' : 'internal'}`,
-          data: {
-            id: link['@id'],
-            label: labelOf(link['@id']),
-            isExternal: !(link as Resource)._self,
-          },
-        })),
+        ...response._results.map(makeNode),
 
         // Link Edges
         ...response._results.map(link => ({
