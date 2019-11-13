@@ -71,9 +71,6 @@ const Graph: React.FunctionComponent<{
       graph.current.on('mouseover', 'node', (e: cytoscape.EventObject) => {
         onNodeHoverOver && onNodeHoverOver(e.target.id(), e.target.data('isExternal'));
       });
-      // graph.current.on('mouseout', 'node', (e: cytoscape.EventObject) => {
-      //   onNodeHoverOver && onNodeHoverOver('', false);
-      // });
     }
     return () => {
       if (graph.current) {

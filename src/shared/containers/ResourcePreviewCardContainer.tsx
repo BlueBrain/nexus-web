@@ -22,53 +22,53 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
       });
 
     useAsyncEffect(async isMounted => {
-			if (!isMounted()) {
-				return;
-			}
+      if (!isMounted()) {
+        return;
+      }
 
-			try {
-				setResource({
-					resource,
-					error: null,
-					busy: true,
-				});
-				const nextResource = (await nexus.Resource.get(
-					orgLabel,
-					projectLabel,
-					encodeURIComponent(resourceId)
-				)) as Resource;
-				setResource({
-					resource: nextResource,
-					error: null,
-					busy: false,
-				});
-			} catch (error) {
-				setResource({
-					error,
-					resource,
-					busy: false,
-				});
-			}
-		}, [orgLabel, projectLabel, resourceId]);
-	
-	if (resource) {		
-		return (
-			<div style={{
-				margin: '20px',
+      try {
+        setResource({
+          resource,
+          error: null,
+          busy: true,
+        });
+        const nextResource = (await nexus.Resource.get(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(resourceId)
+        )) as Resource;
+        setResource({
+          resource: nextResource,
+          error: null,
+          busy: false,
+        });
+      } catch (error) {
+        setResource({
+          error,
+          resource,
+          busy: false,
+        });
+      }
+    }, [orgLabel, projectLabel, resourceId]);
+  
+  if (resource) {		
+    return (
+      <div style={{
+        margin: '20px',
         position: 'absolute',
         bottom: 0,
-				right: 0,
-				maxWidth: '600px',
+        right: 0,
+        maxWidth: '600px',
       }}>
-				{busy && (
-					<p>Loading...</p>
-				)}
+        {busy && (
+          <p>Loading...</p>
+        )}
         <ResourceCard resource={resource} />
     </div>
-		);
-	}
+    );
+  }
 
-	return null;
+  return null;
 }
 
 export default ResourcePreviewCardContainer;
