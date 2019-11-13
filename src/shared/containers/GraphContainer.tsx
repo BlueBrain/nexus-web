@@ -244,10 +244,7 @@ const GraphContainer: React.FunctionComponent<{
     setSelectedResource(resourceId);
   }
 
-  if (busy || error) return null;
-
-  console.log('selectedResource', selectedResource);
-  
+  if (busy || error) return null;  
 
   return (
     <>

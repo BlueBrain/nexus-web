@@ -3,8 +3,6 @@ import * as React from 'react';
 const ResourcePreviewCard: React.FunctionComponent<{
   loading:boolean,
 }> = ({ loading }) => {
-  console.log('loading....', loading);
-  
   return (
     <div style={{
         margin: '30px',
