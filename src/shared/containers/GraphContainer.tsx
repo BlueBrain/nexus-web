@@ -32,6 +32,19 @@ const makeNode = (link: ResourceLink) => {
   };
 };
 
+const makeBlankNodes = (path: string, resourceId: string, linkId: string) => {
+  const label = labelOf(path);
+
+  return {
+    classes: `blank-node`,
+    data: {
+      id: `${resourceId}-${path}-${linkId}`,
+      isBlankNode: true,
+      pathLabel: label,
+    },
+  };
+};
+
 const GraphContainer: React.FunctionComponent<{
   resource: Resource;
 }> = ({ resource }) => {
@@ -98,17 +111,57 @@ const GraphContainer: React.FunctionComponent<{
           },
           // Link Nodes
           ...response._results.map(makeNode),
-          // Link Edges
-          ...response._results.map(link => ({
-            data: {
-              id: `edge-${resource['@id']}-${link['@id']}`,
-              source: resource['@id'],
-              target: link['@id'],
-              label: Array.isArray(link.paths)
-                ? link.paths.map(pathName => labelOf(pathName)).join(', ')
-                : labelOf(link.paths),
+
+          // Link Path Nodes and Edges
+          ...response._results.reduce(
+            (pathNodes: cytoscape.ElementDefinition[], link) => {
+              const path = Array.isArray(link.paths)
+                ? link.paths
+                : [link.paths];
+
+              const blankNodes = path.map((path: string) =>
+                makeBlankNodes(path, resource['@id'], link['@id'])
+              );
+
+              // TODO connect with edges
+              const edges = blankNodes.map((blankNode, index) => {
+                if (index === 0) {
+                  return {
+                    data: {
+                      id: `edge-${resource['@id']}-${blankNode.data.id}`,
+                      source: resource['@id'],
+                      target: blankNode.data.id,
+                      label: blankNode.data.pathLabel,
+                    },
+                  };
+                }
+                return {
+                  data: {
+                    id: `edge-${blankNode.data.id}-${blankNodes[index - 1].data.id}`,
+                    source: blankNode.data.id,
+                    target: blankNodes[index - 1].data.id,
+                    label: blankNode.data.pathLabel,
+                  },
+                };
+              });
+
+              // There's always one more edge than blank node
+              return [
+                ...pathNodes,
+                ...blankNodes,
+                ...edges,
+                {
+                  data: {
+                    id: `edge-${link['@id']}-${blankNodes[blankNodes.length - 1].data.id}`,
+                    source: blankNodes[blankNodes.length - 1].data.id,
+                    target: link['@id'],
+                    label: blankNodes[blankNodes.length - 1].data.pathLabel,
+                  },
+                },
+              ];
             },
-          })),
+            []
+          ),
         ];
         setElements(newElements);
       } catch (error) {
@@ -152,17 +205,54 @@ const GraphContainer: React.FunctionComponent<{
         // Link Nodes
         ...response._results.map(makeNode),
 
-        // Link Edges
-        ...response._results.map(link => ({
-          data: {
-            id: `edge-${id}-${link['@id']}`,
-            source: id,
-            target: link['@id'],
-            label: Array.isArray(link.paths)
-              ? link.paths.map(pathName => labelOf(pathName)).join(', ')
-              : labelOf(link.paths),
+        // Link Path Nodes and Edges
+        ...response._results.reduce(
+          (pathNodes: cytoscape.ElementDefinition[], link) => {
+            const path = Array.isArray(link.paths) ? link.paths : [link.paths];
+
+            const blankNodes = path.map((path: string) =>
+              makeBlankNodes(path, id, link['@id'])
+            );
+
+            // TODO connect with edges
+            const edges = blankNodes.map((blankNode, index) => {
+              if (index === 0) {
+                return {
+                  data: {
+                    id: `edge-${id}-${blankNode.data.id}`,
+                    source: id,
+                    target: blankNode.data.id,
+                    label: blankNode.data.pathLabel,
+                  },
+                };
+              }
+              return {
+                data: {
+                  id: `edge-${blankNode.data.id}-${blankNodes[index - 1].data.id}`,
+                  source: blankNode.data.id,
+                  target: blankNodes[index - 1].data.id,
+                  label: blankNode.data.pathLabel,
+                },
+              };
+            });
+
+            // There's always one more edge than blank node
+            return [
+              ...pathNodes,
+              ...blankNodes,
+              ...edges,
+              {
+                data: {
+                  id: `edge-${link['@id']}-${blankNodes[blankNodes.length - 1].data.id}`,
+                  source: blankNodes[blankNodes.length - 1].data.id,
+                  target: link['@id'],
+                  label: blankNodes[blankNodes.length - 1].data.pathLabel,
+                },
+              },
+            ];
           },
-        })),
+          []
+        ),
       ]);
     } catch (error) {
       notification.error({
