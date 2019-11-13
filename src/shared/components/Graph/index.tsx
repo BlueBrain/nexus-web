@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as cytoscape from 'cytoscape';
-import { Alert, Button, Tooltip } from 'antd';
+import { Alert, Button } from 'antd';
 import * as cola from 'cytoscape-cola';
 import * as dagre from 'cytoscape-dagre';
 
@@ -14,10 +14,20 @@ const LAYOUTS: {
 } = {
   COLA: {
     name: 'cola',
+    label: 'Forced Graph',
+  },
+  BREADTH: {
+    name: 'breadthfirst',
+    label: 'breadthFirst',
   },
   DAGRE: {
     name: 'dagre',
+    label: 'Tree',
     rankDir: 'LR',
+    nodeSep: 50,
+    edgeSep: 50,
+    rankSep: 300,
+    ranker: 'longest-path',
   },
 };
 
@@ -176,7 +186,7 @@ const Graph: React.FunctionComponent<{
                   type={layoutKey === layoutType ? 'primary' : 'default'}
                   onClick={handleLayoutClick(layoutKey)}
                 >
-                  {LAYOUTS[layoutKey].name}
+                  {LAYOUTS[layoutKey].label}
                 </Button>
               );
             })}
