@@ -150,7 +150,7 @@ const GraphContainer: React.FunctionComponent<{
         // Link Edges
         ...response._results.map(link => ({
           data: {
-            id: `edge-${resource['@id']}-${link['@id']}`,
+            id: `edge-${id}-${link['@id']}`,
             source: id,
             target: link['@id'],
             label: Array.isArray(link.paths)
