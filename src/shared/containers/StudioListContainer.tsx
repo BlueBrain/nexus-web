@@ -24,7 +24,7 @@ const StudioListContainer: React.FunctionComponent<{
   ] = React.useState<{
     busy: boolean;
     error: Error | null;
-    resources: Resource[];
+    resources: Resource<{ label: string; description?: string }>[];
     next: string | null;
     total: number;
   }>({
@@ -58,12 +58,27 @@ const StudioListContainer: React.FunctionComponent<{
           busy: true,
           error: null,
         });
+
+        // get all resources of type studio
         const response = await nexus.Resource.list(orgLabel, projectLabel, {
           type: DEFAULT_STUDIO_TYPE,
         });
+        // we need to get the metadata for each of them
+        const studios = await Promise.all(
+          response._results.map(resource =>
+            nexus.Resource.get(
+              orgLabel,
+              projectLabel,
+              encodeURIComponent(resource['@id'])
+            )
+          )
+        );
         setResources({
           next: response._next || null,
-          resources: response._results,
+          resources: studios as Resource<{
+            label: string;
+            description?: string;
+          }>[],
           total: response._total,
           busy: false,
           error: null,
@@ -89,7 +104,7 @@ const StudioListContainer: React.FunctionComponent<{
     <StudioList
       studios={resources.map(r => ({
         id: r['@id'],
-        name: r['@id'], // TODO: Nexus does not return metadata when we use the Resource API. We will have to fetch metadata from ES https://github.com/BlueBrain/nexus/issues/858
+        name: r.label,
         description: r.description,
       }))}
       busy={busy}
