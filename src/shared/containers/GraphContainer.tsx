@@ -11,6 +11,7 @@ import {
   labelOf,
 } from '../utils';
 import Graph from '../components/Graph';
+import ResourcePreviewCardContainer from './ResourcePreviewCardContainer';
 import { DEFAULT_ACTIVE_TAB_KEY } from '../views/ResourceView';
 
 const MAX_LABEL_LENGTH = 20;
@@ -104,6 +105,7 @@ const GraphContainer: React.FunctionComponent<{
   const location = useLocation();
   const activeTabKey = location.hash || DEFAULT_ACTIVE_TAB_KEY;
 
+  const [selectedResource, setSelectedResource] = React.useState<string>('');
   const [elements, setElements] = React.useState<cytoscape.ElementDefinition[]>(
     []
   );
@@ -234,14 +236,30 @@ const GraphContainer: React.FunctionComponent<{
     );
   };
 
+  const showResourcePreview = (resourceId: string) => {
+    console.log('showing.....', resourceId);
+
+    setSelectedResource(resourceId);
+  }
+
   if (busy || error) return null;
 
   return (
-    <Graph
-      elements={elements}
-      onNodeClick={handleNodeClick}
-      onNodeExpand={handleNodeExpand}
-    />
+    <>
+      <Graph
+        elements={elements}
+        onNodeClick={handleNodeClick}
+        onNodeExpand={handleNodeExpand}
+        onNodeHoverOver={showResourcePreview}
+      />
+      {!!selectedResource && (
+        <ResourcePreviewCardContainer
+          resourceId={selectedResource}
+          projectLabel={projectLabel}
+          orgLabel={orgLabel}
+        />
+      )}
+    </>
   );
 };
 

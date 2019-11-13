@@ -28,7 +28,8 @@ const Graph: React.FunctionComponent<{
   elements: cytoscape.ElementDefinition[];
   onNodeClick?(id: string, isExternal: boolean): void;
   onNodeExpand?(id: string, isExternal: boolean): void;
-}> = ({ elements, onNodeClick, onNodeExpand }) => {
+  onNodeHoverOver?(id: string): void;
+}> = ({ elements, onNodeClick, onNodeExpand, onNodeHoverOver }) => {
   const container = React.useRef<HTMLDivElement>(null);
   const [showAlert, setShowAlert] = React.useState(true);
   const [layoutBusy, setLayoutBusy] = React.useState(false);
@@ -66,6 +67,12 @@ const Graph: React.FunctionComponent<{
       });
       graph.current.on('taphold', 'node', (e: cytoscape.EventObject) => {
         onNodeClick && onNodeClick(e.target.id(), e.target.data('isExternal'));
+      });
+      graph.current.on('mouseover', 'node', (e: cytoscape.EventObject) => {
+        onNodeHoverOver && onNodeHoverOver(e.target.id());
+      });
+      graph.current.on('mouseout', 'node', (e: cytoscape.EventObject) => {
+        onNodeHoverOver && onNodeHoverOver('');
       });
     }
     return () => {
