@@ -1,16 +1,23 @@
 import * as React from 'react';
 
-const ResourcePreviewCard: React.FunctionComponent<{}> = () => {
+const ResourcePreviewCard: React.FunctionComponent<{
+  loading:boolean,
+}> = ({ loading }) => {
+  console.log('loading....', loading);
+  
   return (
     <div style={{
-        margin: '10px 15px',
+        margin: '30px',
         position: 'absolute',
+        bottom: 0,
+        right: 0,
         padding: '20px',
         border: '1px solid grey',
         borderRadius: '4px',
         background: 'white',
       }}>
-        Popup!
+        {loading ? 'Loading...' : <p>Popup!</p>}
+        Hello
     </div>
   );
 }

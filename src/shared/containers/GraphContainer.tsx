@@ -240,11 +240,14 @@ const GraphContainer: React.FunctionComponent<{
     if (isExternal) {
       return;
     }
-    
+
     setSelectedResource(resourceId);
   }
 
   if (busy || error) return null;
+
+  console.log('selectedResource', selectedResource);
+  
 
   return (
     <>

@@ -21,37 +21,43 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
         error: null,
       });
 
-    useAsyncEffect(async () => {
-        try {
-          setResource({
-            resource,
-            error: null,
-            busy: true,
-          });
-          const nextResource = (await nexus.Resource.get(
-            orgLabel,
-            projectLabel,
-            encodeURIComponent(resourceId)
-          )) as Resource;
-          setResource({
-            resource: nextResource,
-            error: null,
-            busy: true,
-          });
+    useAsyncEffect(async isMounted => {
+			if (!isMounted()) {
+				return;
+			}
 
-        //   console.log('resource', nextResource);
-          
-        } catch (error) {
-          setResource({
-            error,
-            resource,
-            busy: false,
-          });
-        }
-      }, [orgLabel, projectLabel, resourceId]);
+			try {
+				setResource({
+					resource,
+					error: null,
+					busy: true,
+				});
+				const nextResource = (await nexus.Resource.get(
+					orgLabel,
+					projectLabel,
+					encodeURIComponent(resourceId)
+				)) as Resource;
+				setResource({
+					resource: nextResource,
+					error: null,
+					busy: false,
+				});
+
+			//   console.log('resource', nextResource);
+				
+			} catch (error) {
+				setResource({
+					error,
+					resource,
+					busy: false,
+				});
+			}
+		}, [orgLabel, projectLabel, resourceId]);
     
   return (
-    <ResourcePreviewCard />
+    <ResourcePreviewCard
+      loading={busy}
+    />
   );
 }
 
