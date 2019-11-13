@@ -39,7 +39,7 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
             busy: true,
           });
 
-          console.log('resource', nextResource);
+        //   console.log('resource', nextResource);
           
         } catch (error) {
           setResource({
