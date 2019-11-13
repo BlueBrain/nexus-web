@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource, ResourceLink, NexusFile } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk';
 
-import ResourcePreviewCard from '../components/Graph/ResourcePreviewCard';
+import ResourceCard from '../components/ResourceCard';
 
 const ResourcePreviewCardContainer: React.FunctionComponent<{
     orgLabel: string,
@@ -42,9 +42,6 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
 					error: null,
 					busy: false,
 				});
-
-			//   console.log('resource', nextResource);
-				
 			} catch (error) {
 				setResource({
 					error,
@@ -53,12 +50,25 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
 				});
 			}
 		}, [orgLabel, projectLabel, resourceId]);
-    
-  return (
-    <ResourcePreviewCard
-      loading={busy}
-    />
-  );
+	
+	if (resource) {		
+		return (
+			<div style={{
+				margin: '20px',
+        position: 'absolute',
+        bottom: 0,
+				right: 0,
+				maxWidth: '600px',
+      }}>
+				{busy && (
+					<p>Loading...</p>
+				)}
+        <ResourceCard resource={resource} />
+    </div>
+		);
+	}
+
+	return null;
 }
 
 export default ResourcePreviewCardContainer;
