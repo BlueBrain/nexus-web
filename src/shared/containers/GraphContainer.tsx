@@ -236,9 +236,11 @@ const GraphContainer: React.FunctionComponent<{
     );
   };
 
-  const showResourcePreview = (resourceId: string) => {
-    console.log('showing.....', resourceId);
-
+  const showResourcePreview = (resourceId: string, isExternal: boolean) => {
+    if (isExternal) {
+      return;
+    }
+    
     setSelectedResource(resourceId);
   }
 

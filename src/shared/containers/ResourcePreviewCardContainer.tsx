@@ -6,10 +6,10 @@ import { Resource, ResourceLink, NexusFile } from '@bbp/nexus-sdk';
 import ResourcePreviewCard from '../components/Graph/ResourcePreviewCard';
 
 const ResourcePreviewCardContainer: React.FunctionComponent<{
-    resourceId: string,
-    projectLabel: string,
     orgLabel: string,
-}> = ({ resourceId, projectLabel, orgLabel }) => {
+    projectLabel: string,
+    resourceId: string,
+}> = ({ orgLabel, projectLabel, resourceId }) => {
     const nexus = useNexusContext();
     const [{ busy, resource, error }, setResource] = React.useState<{
         busy: boolean;
@@ -31,13 +31,16 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
           const nextResource = (await nexus.Resource.get(
             orgLabel,
             projectLabel,
-            resourceId
+            encodeURIComponent(resourceId)
           )) as Resource;
           setResource({
             resource: nextResource,
             error: null,
             busy: true,
           });
+
+          console.log('resource', nextResource);
+          
         } catch (error) {
           setResource({
             error,
