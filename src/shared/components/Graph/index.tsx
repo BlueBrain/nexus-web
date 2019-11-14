@@ -34,6 +34,7 @@ const Graph: React.FunctionComponent<{
   const [showAlert, setShowAlert] = React.useState(true);
   const [layoutBusy, setLayoutBusy] = React.useState(false);
   const [layoutType, setLayoutType] = React.useState(DEFAULT_LAYOUT);
+  const [cursorPointer, setCursorPointer] = React.useState(false);
   const graph = React.useRef<cytoscape.Core>();
 
   const forceLayout = () => {
@@ -69,16 +70,22 @@ const Graph: React.FunctionComponent<{
         onNodeClick && onNodeClick(e.target.id(), e.target.data('isExternal'));
       });
       graph.current.on('mouseover', 'node', (e: cytoscape.EventObject) => {
+        setCursorPointer(true);
         if (e.target.data().isBlankNode) return;
-        
+
         onNodeHoverOver && onNodeHoverOver(e.target.id(), e.target.data('isExternal'));
       });
+      graph.current.on('mouseout', 'node', (e: cytoscape.EventObject) => {
+        setCursorPointer(false);
+      });
     }
+
     return () => {
       if (graph.current) {
         graph.current.removeListener('tap');
         graph.current.removeListener('taphold');
         graph.current.removeListener('mouseover');
+        graph.current.removeListener('mouseout');
       }
     };
   });
@@ -190,7 +197,9 @@ const Graph: React.FunctionComponent<{
 
   return (
     <div className="graph-component">
-      <div className="graph" ref={container}></div>
+      <div className="graph" ref={container} style={cursorPointer ? {
+        cursor: 'pointer'
+      } : {}}></div>
       <div className="legend">
         <div>
           <span className="node -external" /> External Link
