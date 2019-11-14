@@ -4,6 +4,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
 
 import ResourceCard from '../components/ResourceCard';
+import ResourceCardCollapsed from '../components/ResourceCard/ResourceCardCollapsed';
 
 const ResourcePreviewCardContainer: React.FunctionComponent<{
     orgLabel: string,
@@ -11,6 +12,7 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
     resourceId: string,
 }> = ({ orgLabel, projectLabel, resourceId }) => {
     const nexus = useNexusContext();
+    const [showFullCard, setShowFullCard] = React.useState(false);
     const [{ busy, resource, error }, setResource] = React.useState<{
         busy: boolean;
         resource: Resource | null;
@@ -63,7 +65,11 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
         {busy && (
           <p>Loading...</p>
         )}
-        <ResourceCard resource={resource} />
+        {showFullCard ? (
+          <ResourceCard resource={resource} />
+        ) : (
+          <ResourceCardCollapsed resource={resource} />
+        )}
     </div>
     );
   }
