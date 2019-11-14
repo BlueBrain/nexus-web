@@ -2,36 +2,27 @@ import * as React from 'react';
 import * as cytoscape from 'cytoscape';
 import { Alert, Button } from 'antd';
 import * as cola from 'cytoscape-cola';
-import * as dagre from 'cytoscape-dagre';
 
 import './GraphComponent.less';
 
 const LAYOUTS: {
   [layoutName: string]: {
     name: string;
-    [key: string]: any;
+    [optionKey: string]: any;
   };
 } = {
   COLA: {
     name: 'cola',
     label: 'Forced Graph',
+    maxSimulationTime: 1000,
   },
-  BREADTH: {
+  BREADTH_FIRST: {
     name: 'breadthfirst',
-    label: 'breadthFirst',
-  },
-  DAGRE: {
-    name: 'dagre',
     label: 'Tree',
-    rankDir: 'LR',
-    nodeSep: 50,
-    edgeSep: 50,
-    rankSep: 300,
-    ranker: 'longest-path',
   },
 };
 
-const DEFAULT_LAYOUT = 'DAGRE';
+const DEFAULT_LAYOUT = 'BREADTH_FIRST';
 
 const Graph: React.FunctionComponent<{
   elements: cytoscape.ElementDefinition[];
@@ -40,12 +31,22 @@ const Graph: React.FunctionComponent<{
 }> = ({ elements, onNodeClick, onNodeExpand }) => {
   const container = React.useRef<HTMLDivElement>(null);
   const [showAlert, setShowAlert] = React.useState(true);
+  const [layoutBusy, setLayoutBusy] = React.useState(false);
   const [layoutType, setLayoutType] = React.useState(DEFAULT_LAYOUT);
   const graph = React.useRef<cytoscape.Core>();
 
   const forceLayout = () => {
     if (graph.current) {
-      graph.current && graph.current.layout(LAYOUTS[layoutType]).run();
+      setLayoutBusy(true);
+      graph.current &&
+        graph.current
+          .layout({
+            ...LAYOUTS[layoutType],
+            stop() {
+              setLayoutBusy(false);
+            },
+          })
+          .run();
     }
   };
 
@@ -91,11 +92,14 @@ const Graph: React.FunctionComponent<{
       selector: 'edge',
       style: {
         width: 2,
+        'line-color': '#8a8b8b',
       },
     },
     {
       selector: 'node[label]',
       style: {
+        'text-outline-color': 'white',
+        'text-outline-width': 2,
         label: 'data(label)',
       },
     },
@@ -103,8 +107,8 @@ const Graph: React.FunctionComponent<{
       selector: 'edge[label]',
       style: {
         label: 'data(label)',
-        // this style is not included in the types
-        // @ts-ignore
+        'text-outline-color': 'white',
+        'text-outline-width': 2,
         'edge-text-rotation': 'autorotate',
       },
     },
@@ -152,7 +156,6 @@ const Graph: React.FunctionComponent<{
 
   React.useEffect(() => {
     cytoscape.use(cola);
-    cytoscape.use(dagre);
     graph.current = cytoscape({
       elements,
       style,
@@ -183,6 +186,7 @@ const Graph: React.FunctionComponent<{
             {Object.keys(LAYOUTS).map(layoutKey => {
               return (
                 <Button
+                  disabled={layoutBusy}
                   type={layoutKey === layoutType ? 'primary' : 'default'}
                   onClick={handleLayoutClick(layoutKey)}
                 >

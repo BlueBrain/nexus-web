@@ -63,4 +63,3 @@ declare module 'express-prom-bundle' {
 }
 
 declare module 'cytoscape-cola';
-declare module 'cytoscape-dagre';

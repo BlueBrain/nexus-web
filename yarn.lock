@@ -3767,13 +3767,6 @@ cytoscape-cola@^2.3.0:
   dependencies:
     webcola "^3.3.6"
 
-cytoscape-dagre@^2.2.2:
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/cytoscape-dagre/-/cytoscape-dagre-2.2.2.tgz#5f32a85c0ba835f167efee531df9e89ac58ff411"
-  integrity sha512-zsg36qNwua/L2stJSWkcbSDcvW3E6VZf6KRe6aLnQJxuXuz89tMqI5EVYVKEcNBgzTEzFMFv0PE3T0nD4m6VDw==
-  dependencies:
-    dagre "^0.8.2"
-
 cytoscape@^3.12.0:
   version "3.12.0"
   resolved "https://registry.yarnpkg.com/cytoscape/-/cytoscape-3.12.0.tgz#01489ad1bedeb93886ef727aa2de7be17c641840"
@@ -3823,14 +3816,6 @@ d@1, d@^1.0.1:
   dependencies:
     es5-ext "^0.10.50"
     type "^1.0.1"
-
-dagre@^0.8.2:
-  version "0.8.4"
-  resolved "https://registry.yarnpkg.com/dagre/-/dagre-0.8.4.tgz#26b9fb8f7bdc60c6110a0458c375261836786061"
-  integrity sha512-Dj0csFDrWYKdavwROb9FccHfTC4fJbyF/oJdL9LNZJ8WUvl968P6PAKEriGqfbdArVJEmmfA+UyumgWEwcHU6A==
-  dependencies:
-    graphlib "^2.1.7"
-    lodash "^4.17.4"
 
 dashdash@^1.12.0:
   version "1.14.1"
@@ -5207,13 +5192,6 @@ good-listener@^1.2.2:
 graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.9, graceful-fs@^4.2.0, graceful-fs@^4.2.2:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.3.tgz#4a12ff1b60376ef09862c2093edd908328be8423"
-
-graphlib@^2.1.7:
-  version "2.1.7"
-  resolved "https://registry.yarnpkg.com/graphlib/-/graphlib-2.1.7.tgz#b6a69f9f44bd9de3963ce6804a2fc9e73d86aecc"
-  integrity sha512-TyI9jIy2J4j0qgPmOOrHTCtpPqJGN/aurBwc6ZT+bRii+di1I+Wv3obRhVrmBEXet+qkMaEX67dXrwsd3QQM6w==
-  dependencies:
-    lodash "^4.17.5"
 
 growly@^1.3.0:
   version "1.3.0"
