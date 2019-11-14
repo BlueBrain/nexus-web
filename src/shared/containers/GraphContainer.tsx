@@ -32,8 +32,8 @@ const makeNode = async (
       ? `${label.slice(0, MAX_LABEL_LENGTH)}...`
       : label;
   return {
-    classes: `${isExternal ? 'external' : 'internal'} ${
-      isExpandable ? 'expandable' : ''
+    classes: `${isExternal ? '-external' : '-internal'} ${
+      isExpandable ? '-expandable' : '-expanded'
     }`,
     data: {
       label,
@@ -176,7 +176,7 @@ const GraphContainer: React.FunctionComponent<{
 
         const newElements: cytoscape.ElementDefinition[] = [
           {
-            classes: 'expandable main',
+            classes: '-expandable -main',
             data: {
               id: resource['@id'],
               label: getResourceLabel(resource),
@@ -228,7 +228,10 @@ const GraphContainer: React.FunctionComponent<{
       if (!targetNode) {
         return;
       }
-      targetNode.classes = `${targetNode.classes} -visited`;
+      targetNode.classes = (targetNode.classes || '').replace(
+        '-expandable',
+        '-expanded'
+      );
       targetNode.data.visited = true;
       setElements([
         ...elements,
