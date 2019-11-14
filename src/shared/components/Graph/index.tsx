@@ -34,7 +34,7 @@ const Graph: React.FunctionComponent<{
   const [showAlert, setShowAlert] = React.useState(true);
   const [layoutBusy, setLayoutBusy] = React.useState(false);
   const [layoutType, setLayoutType] = React.useState(DEFAULT_LAYOUT);
-  const [cursorPointer, setCursorPointer] = React.useState(false);
+  const [cursorPointer, setCursorPointer] = React.useState<string | null>(null);
   const graph = React.useRef<cytoscape.Core>();
 
   const forceLayout = () => {
@@ -59,8 +59,8 @@ const Graph: React.FunctionComponent<{
   React.useEffect(() => {
     if (graph.current) {
       graph.current.on('tap', 'node', (e: cytoscape.EventObject) => {
-        const { visited, isBlankNode, isExpandable } = e.target.data();
-        if (visited || isBlankNode || !isExpandable) {
+        const { isBlankNode, isExpandable } = e.target.data();
+        if (isBlankNode || !isExpandable) {
           return;
         }
         onNodeExpand &&
@@ -70,13 +70,20 @@ const Graph: React.FunctionComponent<{
         onNodeClick && onNodeClick(e.target.id(), e.target.data('isExternal'));
       });
       graph.current.on('mouseover', 'node', (e: cytoscape.EventObject) => {
-        setCursorPointer(true);
-        if (e.target.data().isBlankNode) return;
+        const { isBlankNode, isExpandable } = e.target.data();
+
+        if (isExpandable) {
+          setCursorPointer('pointer');
+        } else {
+          setCursorPointer('grab');
+        }
+
+        if (isBlankNode) return;
 
         onNodeHoverOver && onNodeHoverOver(e.target.id(), e.target.data('isExternal'));
       });
       graph.current.on('mouseout', 'node', (e: cytoscape.EventObject) => {
-        setCursorPointer(false);
+        setCursorPointer(null);
       });
     }
 
@@ -198,7 +205,7 @@ const Graph: React.FunctionComponent<{
   return (
     <div className="graph-component">
       <div className="graph" ref={container} style={cursorPointer ? {
-        cursor: 'pointer'
+        cursor: cursorPointer,
       } : {}}></div>
       <div className="legend">
         <div>
