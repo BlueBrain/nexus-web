@@ -8,37 +8,32 @@ type Dashboard = {
   dashboard: string;
   view: string;
 }
-interface DashBoardListProps {
-  dashboards: DashBoard[];
+interface DashboardListProps {
+  dashboards: Dashboard[];
   orgLabel: string;
   projectLabel: string;
 }
 
-const DashBoardList: React.FunctionComponent<DashBoardListProps> = ({
+const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   dashboards,
   orgLabel,
   projectLabel,
 }) => {
-  const [dashBoards, setDashBoards] = React.useState<Resource[]>([]);
-  const [selectedDashBoard, setSelectedDashBoard] = React.useState<Resource>();
+  const [dashBoards, setDashboards] = React.useState<Resource[]>([]);
+  const [selectedDashboard, setSelectedDashboard] = React.useState<Resource>();
   const nexus = useNexusContext();
-  const selectDashBoard = (id: string) => {
+  const selectDashboard = (id: string) => {
     const dashboard = dashBoards.find(d => d['@id'] === id);
-    setSelectedDashBoard(dashboard);
+    setSelectedDashboard(dashboard);
   };
   useAsyncEffect(async () => {
     const dashboardList: Resource[] = [];
     for (let i = 0; i < dashboards.length; i +=1) {
-      const id: string[] = dashboards[i].dashboard.split('/');
-      const dashboard = (await nexus.Resource.get(
-        orgLabel,
-        projectLabel,
-        id[id.length - 1]
-      )) as Resource;
+      const dashboard = await nexus.httpGet({ path : dashboards[i].dashboard }) as Resource;
       dashboardList.push(dashboard);
     }
-    setDashBoards(dashboardList);
-    setSelectedDashBoard(dashboardList[0]);
+    setDashboards(dashboardList);
+    setSelectedDashboard(dashboardList[0]);
   }, [dashboards]);
   return (
     <>
@@ -50,17 +45,17 @@ const DashBoardList: React.FunctionComponent<DashBoardListProps> = ({
             id: w['@id'],
           }))}
           onSelected={(id: string) => {
-            selectDashBoard(id);
+            selectDashboard(id);
           }}
           position="left"
         >
-          {selectedDashBoard ? 'Result Table Under Construction' : null}
+          {selectedDashboard ? 'Result Table Under Construction' : null}
         </TabList>
       ) : (
-        'No DashBoards are available'
+        'No Dashboards are available'
       )}
     </>
   );
 };
 
-export default DashBoardList;
+export default DashboardList;

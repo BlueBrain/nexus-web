@@ -4,14 +4,14 @@ import { Tabs } from 'antd';
 
 const { TabPane } = Tabs;
 
-type WorkspaceItem = {
+type TabItem = {
   id: string;
   label: string;
   description: string;
 };
 
 type TabListProps = {
-  items: WorkspaceItem[];
+  items: TabItem[];
   onSelected: (activeKey: string) => void;
   defaultActiveId?: string;
   position?: 'left' | 'right' | 'top' | 'bottom' | undefined;

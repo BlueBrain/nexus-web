@@ -3,7 +3,7 @@ import { match } from 'react-router';
 import { useAsyncEffect } from 'use-async-effect';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import WorkSpaceList from '../containers/WorkSpaceList';
+import WorkspaceList from '../containers/WorkspaceList';
 
 type StudioViewProps = {
   match: match<{ orgLabel: string; projectLabel: string; studioId: string }>;
@@ -12,7 +12,7 @@ type StudioViewProps = {
 const StudioView: React.FunctionComponent<StudioViewProps> = props => {
   const { match } = props;
   const [isStudio, setIsStudio] = React.useState<boolean>(false);
-  const [workSpaceIds, setWorkSpaceIds] = React.useState<string[]>([]);
+  const [workSpaceIds, setWorkspaceIds] = React.useState<string[]>([]);
   const nexus = useNexusContext();
   const {
     params: { orgLabel, projectLabel, studioId },
@@ -28,14 +28,14 @@ const StudioView: React.FunctionComponent<StudioViewProps> = props => {
       setIsStudio(true);
     }
     const workspaceIds: string[] = activeResource['workspaces'];
-    setWorkSpaceIds(workspaceIds);
+    setWorkspaceIds(workspaceIds);
   }, [studioId]);
   return (
     <h4>
       {' '}
       {isStudio ? (
         <div className="studio-view">
-          <WorkSpaceList
+          <WorkspaceList
             orgLabel={orgLabel}
             projectLabel={projectLabel}
             workSpaceIds={workSpaceIds}
