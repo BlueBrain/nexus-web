@@ -179,6 +179,9 @@ const Graph: React.FunctionComponent<{
         <div>
           <span className="node -internal" /> Internal Link
         </div>
+        <div>
+          <span className="node -blank-node" /> Blank Node
+        </div>
       </div>
       <div className="top">
         <div className="controls">
