@@ -66,7 +66,7 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
           <p>Loading...</p>
         )}
         {showFullCard ? (
-          <ResourceCard resource={resource} />
+          <ResourceCard resource={resource} onClickCollapse={() => setShowFullCard(false)} />
         ) : (
           <ResourceCardCollapsed resource={resource} onClickExpand={() => setShowFullCard(true)} />
         )}

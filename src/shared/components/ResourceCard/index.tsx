@@ -12,7 +12,8 @@ import './ResourceCard.less';
 const ResourceCardComponent: React.FunctionComponent<{
   resource: Resource;
   preview?: React.ReactNode;
-}> = ({ resource, preview }) => {
+  onClickCollapse?(): void;
+}> = ({ resource, preview, onClickCollapse }) => {
   const {
     _constrainedBy: constrainedBy,
     _createdBy: createdBy,
@@ -71,6 +72,12 @@ const ResourceCardComponent: React.FunctionComponent<{
               </Tooltip>
             )}
           />
+          {!!onClickCollapse && (
+            <>
+              <span>&nbsp;</span>
+              <Button onClick={onClickCollapse} shape="circle" icon="down" size="small" />
+            </>
+          )}
         </div>
       }
     >
