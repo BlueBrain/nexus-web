@@ -3,7 +3,7 @@ import { notification } from 'antd';
 import { useAsyncEffect } from 'use-async-effect';
 import { useHistory, useLocation } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
-import { ResourceLink, Resource } from '@bbp/nexus-sdk';
+import { ResourceLink, Resource, PaginatedList } from '@bbp/nexus-sdk';
 
 import {
   getResourceLabelsAndIdsFromSelf,
@@ -16,18 +16,30 @@ import { DEFAULT_ACTIVE_TAB_KEY } from '../views/ResourceView';
 
 const MAX_LABEL_LENGTH = 20;
 
-const makeNode = (link: ResourceLink) => {
+const makeNode = async (
+  link: ResourceLink,
+  getResourceLinks: (self: string) => Promise<PaginatedList<ResourceLink>>
+) => {
+  const isExternal = !(link as Resource)._self;
+  let isExpandable = !isExternal; // External resources are never expandable
+  if (!isExternal) {
+    const response = await getResourceLinks((link as Resource)._self);
+    isExpandable = !!response._total;
+  }
   let label = labelOf(link['@id']);
   label =
     label.length > MAX_LABEL_LENGTH
       ? `${label.slice(0, MAX_LABEL_LENGTH)}...`
       : label;
   return {
-    classes: `${!(link as Resource)._self ? 'external' : 'internal'}`,
+    classes: `${isExternal ? 'external' : 'internal'} ${
+      isExpandable ? 'expandable' : ''
+    }`,
     data: {
       label,
+      isExternal,
+      isExpandable,
       id: link['@id'],
-      isExternal: !(link as Resource)._self,
     },
   };
 };
@@ -104,6 +116,9 @@ const GraphContainer: React.FunctionComponent<{
   const nexus = useNexusContext();
   const location = useLocation();
   const activeTabKey = location.hash || DEFAULT_ACTIVE_TAB_KEY;
+  const { orgLabel, projectLabel } = getResourceLabelsAndIdsFromSelf(
+    resource._self
+  );
 
   const [selectedResource, setSelectedResource] = React.useState<string>('');
   const [elements, setElements] = React.useState<cytoscape.ElementDefinition[]>(
@@ -122,11 +137,20 @@ const GraphContainer: React.FunctionComponent<{
     links: [],
     total: 0,
   });
-  const {
-    orgLabel,
-    projectLabel,
-    resourceId,
-  } = getResourceLabelsAndIdsFromSelf(resource._self);
+
+  const getResourceLinks = async (self: string) => {
+    const {
+      orgLabel,
+      projectLabel,
+      resourceId,
+    } = getResourceLabelsAndIdsFromSelf(self);
+    return await nexus.Resource.links(
+      orgLabel,
+      projectLabel,
+      resourceId,
+      'outgoing'
+    );
+  };
 
   useAsyncEffect(
     async isMounted => {
@@ -141,12 +165,7 @@ const GraphContainer: React.FunctionComponent<{
           busy: true,
           error: null,
         });
-        const response = await nexus.Resource.links(
-          orgLabel,
-          projectLabel,
-          resourceId,
-          'outgoing'
-        );
+        const response = await getResourceLinks(resource._self);
         setLinks({
           next: response._next || null,
           links: response._results,
@@ -157,13 +176,16 @@ const GraphContainer: React.FunctionComponent<{
 
         const newElements: cytoscape.ElementDefinition[] = [
           {
+            classes: 'expandable main',
             data: {
               id: resource['@id'],
               label: getResourceLabel(resource),
             },
           },
           // Link Nodes
-          ...response._results.map(makeNode),
+          ...(await Promise.all(
+            response._results.map(link => makeNode(link, getResourceLinks))
+          )),
 
           // Link Path Nodes and Edges
           ...createNodesAndEdgesFromResourceLinks(
@@ -174,7 +196,7 @@ const GraphContainer: React.FunctionComponent<{
         setElements(newElements);
       } catch (error) {
         notification.error({
-          message: `Could not fetch resource info for node ${resourceId}`,
+          message: `Could not fetch resource info for node ${resource['@id']}`,
           description: error.message,
         });
         setLinks({
@@ -194,6 +216,7 @@ const GraphContainer: React.FunctionComponent<{
       return;
     }
     try {
+      // TODO: should get from self not ID if its in another project
       const response = await nexus.Resource.links(
         orgLabel,
         projectLabel,
@@ -211,7 +234,9 @@ const GraphContainer: React.FunctionComponent<{
         ...elements,
 
         // Link Nodes
-        ...response._results.map(makeNode),
+        ...(await Promise.all(
+          response._results.map(link => makeNode(link, getResourceLinks))
+        )),
 
         // Link Path Nodes and Edges
         ...createNodesAndEdgesFromResourceLinks(response._results, id),
