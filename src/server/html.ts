@@ -29,6 +29,20 @@ const html = ({
           ? ''
           : `<link rel="stylesheet" href="${base}public/bundle.css" />`
       }
+      ${
+        process.env.GTAG
+          ? `<!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=${process.env.GTAG}"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', '${process.env.GTAG}');
+      </script>
+      `
+          : ``
+      }
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <base href="${base}" />
     </head>
