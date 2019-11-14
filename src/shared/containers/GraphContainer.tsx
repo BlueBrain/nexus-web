@@ -21,7 +21,6 @@ const makeNode = (link: ResourceLink) => {
     label.length > MAX_LABEL_LENGTH
       ? `${label.slice(0, MAX_LABEL_LENGTH)}...`
       : label;
-
   return {
     classes: `${!(link as Resource)._self ? 'external' : 'internal'}`,
     data: {
@@ -32,9 +31,61 @@ const makeNode = (link: ResourceLink) => {
   };
 };
 
+const createNodesAndEdgesFromResourceLinks = (
+  resourceLinks: ResourceLink[],
+  originId: string
+) => {
+  return resourceLinks.reduce(
+    (pathNodes: cytoscape.ElementDefinition[], link) => {
+      const path = Array.isArray(link.paths) ? link.paths : [link.paths];
+
+      const blankNodes = path.map((path: string) =>
+        makeBlankNodes(path, originId, link['@id'])
+      );
+
+      // connect blank nodes with edges
+      const edges = blankNodes.map((blankNode, index) => {
+        if (index === 0) {
+          return {
+            data: {
+              id: `edge-${originId}-${blankNode.data.id}`,
+              source: originId,
+              target: blankNode.data.id,
+              label: blankNode.data.pathLabel,
+            },
+          };
+        }
+        return {
+          data: {
+            id: `edge-${blankNode.data.id}-${blankNodes[index - 1].data.id}`,
+            source: blankNode.data.id,
+            target: blankNodes[index - 1].data.id,
+            label: blankNode.data.pathLabel,
+          },
+        };
+      });
+
+      // There's always one more edge than blank node
+      return [
+        ...pathNodes,
+        ...blankNodes,
+        ...edges,
+        {
+          data: {
+            id: `edge-${link['@id']}-${blankNodes[blankNodes.length - 1].data.id}`,
+            source: blankNodes[blankNodes.length - 1].data.id,
+            target: link['@id'],
+            label: blankNodes[blankNodes.length - 1].data.pathLabel,
+          },
+        },
+      ];
+    },
+    []
+  );
+};
+
 const makeBlankNodes = (path: string, resourceId: string, linkId: string) => {
   const label = labelOf(path);
-
   return {
     classes: `blank-node`,
     data: {
@@ -113,54 +164,9 @@ const GraphContainer: React.FunctionComponent<{
           ...response._results.map(makeNode),
 
           // Link Path Nodes and Edges
-          ...response._results.reduce(
-            (pathNodes: cytoscape.ElementDefinition[], link) => {
-              const path = Array.isArray(link.paths)
-                ? link.paths
-                : [link.paths];
-
-              const blankNodes = path.map((path: string) =>
-                makeBlankNodes(path, resource['@id'], link['@id'])
-              );
-
-              // TODO connect with edges
-              const edges = blankNodes.map((blankNode, index) => {
-                if (index === 0) {
-                  return {
-                    data: {
-                      id: `edge-${resource['@id']}-${blankNode.data.id}`,
-                      source: resource['@id'],
-                      target: blankNode.data.id,
-                      label: blankNode.data.pathLabel,
-                    },
-                  };
-                }
-                return {
-                  data: {
-                    id: `edge-${blankNode.data.id}-${blankNodes[index - 1].data.id}`,
-                    source: blankNode.data.id,
-                    target: blankNodes[index - 1].data.id,
-                    label: blankNode.data.pathLabel,
-                  },
-                };
-              });
-
-              // There's always one more edge than blank node
-              return [
-                ...pathNodes,
-                ...blankNodes,
-                ...edges,
-                {
-                  data: {
-                    id: `edge-${link['@id']}-${blankNodes[blankNodes.length - 1].data.id}`,
-                    source: blankNodes[blankNodes.length - 1].data.id,
-                    target: link['@id'],
-                    label: blankNodes[blankNodes.length - 1].data.pathLabel,
-                  },
-                },
-              ];
-            },
-            []
+          ...createNodesAndEdgesFromResourceLinks(
+            response._results,
+            resource['@id']
           ),
         ];
         setElements(newElements);
@@ -206,53 +212,7 @@ const GraphContainer: React.FunctionComponent<{
         ...response._results.map(makeNode),
 
         // Link Path Nodes and Edges
-        ...response._results.reduce(
-          (pathNodes: cytoscape.ElementDefinition[], link) => {
-            const path = Array.isArray(link.paths) ? link.paths : [link.paths];
-
-            const blankNodes = path.map((path: string) =>
-              makeBlankNodes(path, id, link['@id'])
-            );
-
-            // TODO connect with edges
-            const edges = blankNodes.map((blankNode, index) => {
-              if (index === 0) {
-                return {
-                  data: {
-                    id: `edge-${id}-${blankNode.data.id}`,
-                    source: id,
-                    target: blankNode.data.id,
-                    label: blankNode.data.pathLabel,
-                  },
-                };
-              }
-              return {
-                data: {
-                  id: `edge-${blankNode.data.id}-${blankNodes[index - 1].data.id}`,
-                  source: blankNode.data.id,
-                  target: blankNodes[index - 1].data.id,
-                  label: blankNode.data.pathLabel,
-                },
-              };
-            });
-
-            // There's always one more edge than blank node
-            return [
-              ...pathNodes,
-              ...blankNodes,
-              ...edges,
-              {
-                data: {
-                  id: `edge-${link['@id']}-${blankNodes[blankNodes.length - 1].data.id}`,
-                  source: blankNodes[blankNodes.length - 1].data.id,
-                  target: link['@id'],
-                  label: blankNodes[blankNodes.length - 1].data.pathLabel,
-                },
-              },
-            ];
-          },
-          []
-        ),
+        ...createNodesAndEdgesFromResourceLinks(response._results, id),
       ]);
     } catch (error) {
       notification.error({
