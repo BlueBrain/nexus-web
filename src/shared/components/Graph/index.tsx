@@ -69,6 +69,8 @@ const Graph: React.FunctionComponent<{
         onNodeClick && onNodeClick(e.target.id(), e.target.data('isExternal'));
       });
       graph.current.on('mouseover', 'node', (e: cytoscape.EventObject) => {
+        if (e.target.data().isBlankNode) return;
+        
         onNodeHoverOver && onNodeHoverOver(e.target.id(), e.target.data('isExternal'));
       });
     }
