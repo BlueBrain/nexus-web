@@ -50,61 +50,74 @@ const createNodesAndEdgesFromResourceLinks = (
 ) => {
   return resourceLinks.reduce(
     (pathNodes: cytoscape.ElementDefinition[], link) => {
-      const path = Array.isArray(link.paths) ? link.paths : [link.paths];
+      const paths = Array.isArray(link.paths) ? link.paths : [link.paths];
 
-      const blankNodes = path.map((path: string) =>
-        makeBlankNodes(path, originId, link['@id'])
-      );
+      const blankNodes = paths
+        .map((path, index) => {
+          if (index === paths.length - 1) {
+            return null;
+          }
+          return makeBlankNodes(path, originId, link['@id']);
+        })
+        .filter(Boolean) as cytoscape.ElementDefinition[];
 
-      // connect blank nodes with edges
-      const edges = blankNodes.map((blankNode, index) => {
+      const edges = paths.map((path, index) => {
+        const label = labelOf(path);
+        const blankNode = blankNodes[index];
+        if (!blankNodes.length) {
+          return {
+            data: {
+              label,
+              id: `edge-${originId}-${link['@id']}`,
+              source: originId,
+              target: link['@id'],
+            },
+          };
+        }
         if (index === 0) {
           return {
             data: {
-              id: `edge-${originId}-${blankNode.data.id}`,
+              label,
+              id: `edge-${originId}-${blankNode && blankNode.data.id}`,
               source: originId,
-              target: blankNode.data.id,
-              label: blankNode.data.pathLabel,
+              target: blankNode && blankNode.data.id,
+            },
+          };
+        }
+        const prev = blankNodes[index - 1];
+        if (index === paths.length - 1) {
+          return {
+            data: {
+              label,
+              id: `edge-${prev && prev.data.id}-${link['@id']}`,
+              source: prev && prev.data.id,
+              target: link['@id'],
             },
           };
         }
         return {
           data: {
-            id: `edge-${blankNode.data.id}-${blankNodes[index - 1].data.id}`,
-            source: blankNode.data.id,
-            target: blankNodes[index - 1].data.id,
-            label: blankNode.data.pathLabel,
+            label,
+            id: `edge-${prev && prev.data.id}-${blankNode &&
+              blankNode.data.id}`,
+            source: prev && prev.data.id,
+            target: blankNode && blankNode.data.id,
           },
         };
       });
 
-      // There's always one more edge than blank node
-      return [
-        ...pathNodes,
-        ...blankNodes,
-        ...edges,
-        {
-          data: {
-            id: `edge-${link['@id']}-${blankNodes[blankNodes.length - 1].data.id}`,
-            source: blankNodes[blankNodes.length - 1].data.id,
-            target: link['@id'],
-            label: blankNodes[blankNodes.length - 1].data.pathLabel,
-          },
-        },
-      ];
+      return [...pathNodes, ...blankNodes, ...edges];
     },
     []
   );
 };
 
 const makeBlankNodes = (path: string, resourceId: string, linkId: string) => {
-  const label = labelOf(path);
   return {
     classes: `blank-node`,
     data: {
       id: `${resourceId}-${path}-${linkId}`,
       isBlankNode: true,
-      pathLabel: label,
     },
   };
 };
@@ -173,7 +186,6 @@ const GraphContainer: React.FunctionComponent<{
           busy: false,
           error: null,
         });
-
         const newElements: cytoscape.ElementDefinition[] = [
           {
             classes: '-expandable -main',
@@ -271,9 +283,9 @@ const GraphContainer: React.FunctionComponent<{
     }
 
     setSelectedResource(resourceId);
-  }
+  };
 
-  if (busy || error) return null;  
+  if (busy || error) return null;
 
   return (
     <>

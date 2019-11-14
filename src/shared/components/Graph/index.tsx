@@ -13,7 +13,7 @@ const LAYOUTS: {
 } = {
   COLA: {
     name: 'cola',
-    label: 'Forced Graph',
+    label: 'Graph',
     maxSimulationTime: 1000,
   },
   BREADTH_FIRST: {
@@ -80,7 +80,8 @@ const Graph: React.FunctionComponent<{
 
         if (isBlankNode) return;
 
-        onNodeHoverOver && onNodeHoverOver(e.target.id(), e.target.data('isExternal'));
+        onNodeHoverOver &&
+          onNodeHoverOver(e.target.id(), e.target.data('isExternal'));
       });
       graph.current.on('mouseout', 'node', (e: cytoscape.EventObject) => {
         setCursorPointer(null);
@@ -212,9 +213,17 @@ const Graph: React.FunctionComponent<{
 
   return (
     <div className="graph-component">
-      <div className="graph" ref={container} style={cursorPointer ? {
-        cursor: cursorPointer,
-      } : {}}></div>
+      <div
+        className="graph"
+        ref={container}
+        style={
+          cursorPointer
+            ? {
+                cursor: cursorPointer,
+              }
+            : {}
+        }
+      ></div>
       <div className="legend">
         <div>
           <span className="node -external" /> External Link
