@@ -76,6 +76,7 @@ const Graph: React.FunctionComponent<{
       if (graph.current) {
         graph.current.removeListener('tap');
         graph.current.removeListener('taphold');
+        graph.current.removeListener('mouseover');
       }
     };
   });
