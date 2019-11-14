@@ -85,6 +85,12 @@ const Graph: React.FunctionComponent<{
       graph.current.on('mouseout', 'node', (e: cytoscape.EventObject) => {
         setCursorPointer(null);
       });
+      graph.current.on('mousedown', 'node', (e: cytoscape.EventObject) => {
+        setCursorPointer('grabbing');
+      });
+      graph.current.on('mouseup', 'node', (e: cytoscape.EventObject) => {
+        setCursorPointer('grab');
+      });
     }
 
     return () => {
@@ -93,6 +99,8 @@ const Graph: React.FunctionComponent<{
         graph.current.removeListener('taphold');
         graph.current.removeListener('mouseover');
         graph.current.removeListener('mouseout');
+        graph.current.removeListener('mousedown');
+        graph.current.removeListener('mouseup');
       }
     };
   });
