@@ -5,7 +5,7 @@ import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import WorkSpaceList from '../containers/WorkSpaceList';
 
-interface StudioViewProps {
+type StudioViewProps = {
   match: match<{ orgLabel: string; projectLabel: string; studioId: string }>;
 }
 
