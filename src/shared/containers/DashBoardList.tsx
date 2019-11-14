@@ -4,7 +4,7 @@ import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
 
-interface DashBoard {
+type Dashboard = {
   dashboard: string;
   view: string;
 }
