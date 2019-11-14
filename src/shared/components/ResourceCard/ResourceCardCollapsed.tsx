@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
-import { Card, Button } from 'antd';
+import { Card, Button, Skeleton } from 'antd';
 import { getResourceLabel } from '../../utils';
 
 import TypesIcon from '../Types/TypesIcon';
@@ -8,13 +8,25 @@ import TypesIcon from '../Types/TypesIcon';
 const ResourceCardCollapsed: React.FunctionComponent<{
   onClickExpand(): void;
   resource: Resource;
-}> = ({ onClickExpand, resource }) => {
+  busy: boolean,
+}> = ({ onClickExpand, resource, busy }) => {
   const {
     '@type': type,
     '@id': id,
   } = resource;
   const types: string[] = Array.isArray(type) ? type : [type || ''];
   const label = getResourceLabel(resource);
+
+  if (busy) {
+    return (
+      <Card bodyStyle={{ 
+        padding: '0px 10px',
+        width: '200px',
+      }}>
+        <Skeleton active paragraph={{ rows: 1 }} />
+      </Card>
+    );
+  }
   
   return (
     <Card

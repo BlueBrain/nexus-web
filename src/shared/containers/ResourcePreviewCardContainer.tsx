@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
+import { Card } from 'antd';
 
 import ResourceCard from '../components/ResourceCard';
 import ResourceCardCollapsed from '../components/ResourceCard/ResourceCardCollapsed';
@@ -62,15 +63,12 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
         right: 0,
         maxWidth: '600px',
       }}>
-        {busy && (
-          <p>Loading...</p>
-        )}
         {showFullCard ? (
           <ResourceCard resource={resource} onClickCollapse={() => setShowFullCard(false)} />
         ) : (
-          <ResourceCardCollapsed resource={resource} onClickExpand={() => setShowFullCard(true)} />
+          <ResourceCardCollapsed resource={resource} onClickExpand={() => setShowFullCard(true)} busy={busy} />
         )}
-    </div>
+      </div>
     );
   }
 
