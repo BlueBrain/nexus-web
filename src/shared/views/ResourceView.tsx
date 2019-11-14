@@ -7,7 +7,7 @@ import { Spin, Card, Empty, Tabs, notification, Alert } from 'antd';
 import * as queryString from 'query-string';
 import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource, ResourceLink, NexusFile } from '@bbp/nexus-sdk';
+import { Resource, ResourceLink } from '@bbp/nexus-sdk';
 
 import { getResourceLabel, getResourceLabelsAndIdsFromSelf } from '../utils';
 import ResourceCardComponent from '../components/ResourceCard';
