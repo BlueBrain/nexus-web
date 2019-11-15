@@ -1,3 +1,4 @@
+![Build Status](https://github.com/BlueBrain/nexus-web/workflows/Review/badge.svg)
 [![codecov](https://codecov.io/gh/BlueBrain/nexus-web/branch/master/graph/badge.svg)](https://codecov.io/gh/BlueBrain/nexus-web)
 
 # Nexus Web
@@ -60,6 +61,7 @@ docker build . --tag=nexus-web
 - `CLIENT_ID`: The application name used for _OpenID Connect_ authentication (default is `nexus-web`)
 - `API_ENDPOINT`: The URL pointing to Nexus API. Default is '/'
 - `SECURE`: Is nexus web running in https or not. Default is `false`
+- `GTAG`: The Google Analytics Identifier. GA won't be present unless an ID is specified.
 
 ## Getting involved
 
