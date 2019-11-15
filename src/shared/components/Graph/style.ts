@@ -19,9 +19,9 @@ const style = [
         height: 36,
         width: 36,
         shape: 'diamond',
-        'background-color': 'white',
+        'background-color': '#9dfcc5',
         'border-color': '#8a8b8b',
-        'border-width': 2,
+        'border-width': 3,
       },
     },
     {

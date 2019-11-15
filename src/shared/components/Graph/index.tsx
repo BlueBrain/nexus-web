@@ -183,16 +183,15 @@ const Graph: React.FunctionComponent<{
             <Button onClick={onReset}>Reset</Button>
           </div>
         </div>
-        <div className="alert">
-          {showAlert ? (
-            <Alert
-              message="Click and hold to visit a resource"
-              type="info"
-              closable
-              afterClose={() => setShowAlert(false)}
-            />
-          ) : null}
-        </div>
+        {showAlert ? (
+          <Alert
+            style={{ margin: '7px 5px 0 0' }}
+            message="Click and hold to visit a resource"
+            type="info"
+            closable
+            afterClose={() => setShowAlert(false)}
+          />
+        ) : null}
       </div>
     </div>
   );
