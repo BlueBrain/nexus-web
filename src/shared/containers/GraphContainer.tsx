@@ -133,7 +133,13 @@ const GraphContainer: React.FunctionComponent<{
     resource._self
   );
   const [reset, setReset] = React.useState(false);
-  const [selectedResource, setSelectedResource] = React.useState<string>('');
+  const [{ selectedResourceId, isSelectedExternal }, setSelectedResource] = React.useState<{
+    selectedResourceId: string,
+    isSelectedExternal: boolean | null,
+  }>({
+    selectedResourceId: '',
+    isSelectedExternal: null,
+  });
   const [elements, setElements] = React.useState<cytoscape.ElementDefinition[]>(
     []
   );
@@ -281,13 +287,11 @@ const GraphContainer: React.FunctionComponent<{
   };
 
   const showResourcePreview = (resourceId: string, isExternal: boolean) => {
-    if (isExternal) {
-      setSelectedResource('');
-      return;
-    }
-
-    setSelectedResource(resourceId);
-  };
+    setSelectedResource({
+      selectedResourceId: resourceId,
+      isSelectedExternal: isExternal,
+    });
+  }
 
   if (busy || error) return null;
 
@@ -300,11 +304,12 @@ const GraphContainer: React.FunctionComponent<{
         onNodeHoverOver={showResourcePreview}
         onReset={handleReset}
       />
-      {!!selectedResource && (
+      {!!selectedResourceId && (
         <ResourcePreviewCardContainer
-          resourceId={selectedResource}
+          resourceId={selectedResourceId}
           projectLabel={projectLabel}
           orgLabel={orgLabel}
+          isExternal={isSelectedExternal}
         />
       )}
     </>

@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
-import { Card } from 'antd';
 
 import ResourceCard from '../components/ResourceCard';
 import ResourceCardCollapsed from '../components/ResourceCard/ResourceCardCollapsed';
@@ -11,7 +10,8 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
     orgLabel: string,
     projectLabel: string,
     resourceId: string,
-}> = ({ orgLabel, projectLabel, resourceId }) => {
+    isExternal: boolean | null,
+}> = ({ orgLabel, projectLabel, resourceId, isExternal }) => {
     const nexus = useNexusContext();
     const [showFullCard, setShowFullCard] = React.useState(false);
     const [{ busy, resource, error }, setResource] = React.useState<{
@@ -26,6 +26,15 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
 
     useAsyncEffect(async isMounted => {
       if (!isMounted()) {
+        return;
+      }
+
+      if (isExternal) {
+        setResource({
+          resource: null,
+          error: null,
+          busy: false,
+        });
         return;
       }
 
@@ -53,8 +62,27 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
         });
       }
     }, [orgLabel, projectLabel, resourceId]);
+
+  if (isExternal) {
+    return (
+      <div style={{
+        margin: '20px',
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        maxWidth: '600px',
+      }}>
+        <ResourceCardCollapsed resourceId={resourceId} busy={busy} isExternal />
+      </div>
+    )
+  }
   
-  if (resource) {		
+  if (resource) {
+    const {
+      '@type': type,
+    } = resource;
+    const types: string[] = Array.isArray(type) ? type : [type || ''];
+
     return (
       <div style={{
         margin: '20px',
@@ -66,7 +94,7 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
         {showFullCard ? (
           <ResourceCard resource={resource} onClickCollapse={() => setShowFullCard(false)} />
         ) : (
-          <ResourceCardCollapsed resource={resource} onClickExpand={() => setShowFullCard(true)} busy={busy} />
+          <ResourceCardCollapsed resourceId={resourceId} onClickExpand={() => setShowFullCard(true)} busy={busy} types={types} />
         )}
       </div>
     );
