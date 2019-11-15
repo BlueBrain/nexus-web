@@ -130,6 +130,7 @@ const Graph: React.FunctionComponent<{
       selector: 'edge',
       style: {
         width: 2,
+        'curve-style': 'bezier',
         'target-arrow-shape': 'triangle',
         'line-color': '#8a8b8b',
       },
@@ -137,6 +138,7 @@ const Graph: React.FunctionComponent<{
     {
       selector: 'node[label]',
       style: {
+        'text-margin-y': -10,
         'text-outline-color': 'white',
         'text-outline-width': 2,
         label: 'data(label)',
