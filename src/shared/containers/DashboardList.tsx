@@ -38,7 +38,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     }
     setDashboards(dashboardList);
     setSelectedDashboard(dashboardList[0]);
-  }, [dashboards]);
+  }, [orgLabel, projectLabel]);
   return (
     <>
       {dashBoards.length > 0 ? (
