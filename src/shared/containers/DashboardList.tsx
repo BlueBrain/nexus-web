@@ -28,7 +28,6 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     setSelectedDashboard(dashboard);
   };
   useAsyncEffect(async () => {
-    console.log('feching dashboards');
     const dashboardList: Resource[] = [];
     for (let i = 0; i < dashboards.length; i += 1) {
       const dashboard = (await nexus.Resource.get(
