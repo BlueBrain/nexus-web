@@ -17,7 +17,7 @@ const FileUploadContainer: React.FunctionComponent<{
   const [storages, setStorages] = React.useState<Storage[]>([]);
 
   const makeResourceUri = (resourceId: string) => {
-    return `${basePath}/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+    return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
       resourceId
     )}`;
   };
