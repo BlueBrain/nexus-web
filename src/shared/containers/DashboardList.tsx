@@ -7,7 +7,7 @@ import TabList from '../components/Tabs/TabList';
 type Dashboard = {
   dashboard: string;
   view: string;
-}
+};
 interface DashboardListProps {
   dashboards: Dashboard[];
   orgLabel: string;
@@ -28,8 +28,10 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   };
   useAsyncEffect(async () => {
     const dashboardList: Resource[] = [];
-    for (let i = 0; i < dashboards.length; i +=1) {
-      const dashboard = await nexus.httpGet({ path : dashboards[i].dashboard }) as Resource;
+    for (let i = 0; i < dashboards.length; i += 1) {
+      const dashboard = (await nexus.httpGet({
+        path: dashboards[i].dashboard,
+      })) as Resource;
       dashboardList.push(dashboard);
     }
     setDashboards(dashboardList);

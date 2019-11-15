@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { match } from 'react-router';
-import { useAsyncEffect } from 'use-async-effect';
-import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Link } from 'react-router-dom';
+import { Tooltip, Icon } from 'antd';
+
 import StudioContainer from '../containers/StudioContainer';
 
 type StudioViewProps = {
@@ -17,11 +18,30 @@ const StudioView: React.FunctionComponent<StudioViewProps> = props => {
   } = match;
 
   return (
-    <StudioContainer
-      orgLabel={orgLabel}
-      projectLabel={projectLabel}
-      studioId={studioId}
-    />
+    <>
+      <div className="project-banner no-bg" style={{ marginBottom: 20 }}>
+        <div className="label">
+          <h1 className="name">
+            <span>
+              <Link to="/">
+                <Tooltip title="Back to all organizations" placement="right">
+                  <Icon type="home" />
+                </Tooltip>
+              </Link>
+              {' | '}
+              <Link to={`/${orgLabel}`}>{orgLabel}</Link>
+              {' | '}
+              <Link to={`/${orgLabel}/${projectLabel}`}>{projectLabel}</Link>
+            </span>
+          </h1>
+        </div>
+      </div>
+      <StudioContainer
+        orgLabel={orgLabel}
+        projectLabel={projectLabel}
+        studioId={studioId}
+      />
+    </>
   );
 };
 

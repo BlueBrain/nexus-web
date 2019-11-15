@@ -10,30 +10,43 @@ type StudioContainerProps = {
   studioId: string;
 };
 
+type StudioResource = Resource<{
+  label: string;
+  description?: string;
+  workspaces: [string];
+}>;
+
 const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
   orgLabel,
   projectLabel,
   studioId,
 }) => {
-  const [isStudio, setIsStudio] = React.useState<boolean>(false);
+  const [
+    studioResource,
+    setStudioResource,
+  ] = React.useState<StudioResource | null>(null);
   const [workSpaceIds, setWorkspaceIds] = React.useState<string[]>([]);
   const nexus = useNexusContext();
   useAsyncEffect(async () => {
-    const activeResource = (await nexus.Resource.get(
+    const studioResource = (await nexus.Resource.get(
       orgLabel,
       projectLabel,
       studioId
-    )) as Resource;
-    if (activeResource['@type'] === 'Studio') {
-      setIsStudio(true);
+    )) as StudioResource;
+    if (studioResource['@type'] === 'Studio') {
+      setStudioResource(studioResource);
     }
-    const workspaceIds: string[] = activeResource['workspaces'];
+    const workspaceIds: string[] = studioResource['workspaces'];
     setWorkspaceIds(workspaceIds);
   }, [orgLabel, projectLabel, studioId]);
   return (
     <>
-      {isStudio ? (
+      {studioResource ? (
         <div className="studio-view">
+          <h1 className="title">{studioResource.label}</h1>
+          {studioResource.description && (
+            <p className="description">Some description</p>
+          )}
           <WorkspaceList
             orgLabel={orgLabel}
             projectLabel={projectLabel}
