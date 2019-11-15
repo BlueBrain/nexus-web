@@ -155,13 +155,16 @@ const Graph: React.FunctionComponent<{
       ></div>
       <div className="legend">
         <div>
-          <span className="node -external" /> External Link
+          <span className="node -main" />Origin
         </div>
         <div>
-          <span className="node -internal" /> Internal Link
+          <span className="node -external" />External Link
         </div>
         <div>
-          <span className="node -blank-node" /> Blank Node
+          <span className="node -internal" />Internal Link
+        </div>
+        <div>
+          <span className="node -blank-node" />Blank Node
         </div>
       </div>
       <div className="top">
@@ -183,16 +186,15 @@ const Graph: React.FunctionComponent<{
             <Button onClick={onReset}>Reset</Button>
           </div>
         </div>
-        <div className="alert">
-          {showAlert ? (
-            <Alert
-              message="Click and hold to visit a resource"
-              type="info"
-              closable
-              afterClose={() => setShowAlert(false)}
-            />
-          ) : null}
-        </div>
+        {showAlert ? (
+          <Alert
+            style={{ margin: '7px 5px 0 0' }}
+            message="Click and hold to visit a resource"
+            type="info"
+            closable
+            afterClose={() => setShowAlert(false)}
+          />
+        ) : null}
       </div>
     </div>
   );
