@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
@@ -8,7 +7,6 @@ import { Resource } from '@bbp/nexus-sdk';
 import ResourceListComponent, {
   ResourceBoardList,
 } from '../components/ResourceList';
-import { RootState } from '../store/reducers';
 import TypeDropdownFilterContainer from './TypeDropdownFilter';
 import SchemaDropdownFilterContainer from './SchemaDropdownFilters';
 
@@ -21,7 +19,6 @@ const ResourceListContainer: React.FunctionComponent<{
 }> = ({ defaultList, orgLabel, projectLabel, onDeleteList, onCloneList }) => {
   const nexus = useNexusContext();
   const history = useHistory();
-  const basePath = useSelector((state: RootState) => state.config.basePath);
   const [list, setList] = React.useState<ResourceBoardList>(defaultList);
   const [toggleForceReload, setToggleForceReload] = React.useState(false);
   const [
@@ -41,7 +38,7 @@ const ResourceListContainer: React.FunctionComponent<{
     total: 0,
   });
   const makeResourceUri = (resourceId: string) => {
-    return `${basePath}/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+    return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
       resourceId
     )}`;
   };
