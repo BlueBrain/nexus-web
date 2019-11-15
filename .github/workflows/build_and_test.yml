@@ -1,9 +1,9 @@
-name: TestAndBuild
+name: Review
 
 on: [pull_request]
 
 jobs:
-  install:
+  test-and-build:
     runs-on: ubuntu-latest
 
     steps:
