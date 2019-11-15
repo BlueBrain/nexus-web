@@ -6,13 +6,13 @@ import TabList from '../components/Tabs/TabList';
 import DashboardList from './DashboardListContainer';
 
 type WorkspaceListProps = {
-  workSpaceIds: string[];
+  workspaceIds: string[];
   orgLabel: string;
   projectLabel: string;
 };
 
 const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
-  workSpaceIds,
+  workspaceIds,
   orgLabel,
   projectLabel,
 }) => {
@@ -25,10 +25,10 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   };
   useAsyncEffect(async () => {
     const workSpaceList: Resource[] = [];
-    for (let i = 0; i < workSpaceIds.length; i += 1) {
+    for (let i = 0; i < workspaceIds.length; i += 1) {
       try {
         const workspace = (await nexus.httpGet({
-          path: workSpaceIds[i],
+          path: workspaceIds[i],
         })) as Resource;
         workSpaceList.push(workspace);
       } catch (error) {
@@ -37,7 +37,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
     }
     setWorkspaces(workSpaceList);
     setSelectedWorkspace(workSpaceList[0]);
-  }, [orgLabel, projectLabel, workSpaceIds]);
+  }, [orgLabel, projectLabel, workspaceIds]);
   return (
     <>
       {workspaces.length > 0 ? (

@@ -50,7 +50,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
           <WorkspaceList
             orgLabel={orgLabel}
             projectLabel={projectLabel}
-            workSpaceIds={workspaceIds}
+            workspaceIds={workspaceIds}
           />
         </div>
       ) : (
