@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { match } from 'react-router';
-import { useNexusContext } from '@bbp/react-nexus';
 import { Link } from 'react-router-dom';
 import { Tooltip, Icon } from 'antd';
 
@@ -12,7 +11,6 @@ type StudioViewProps = {
 
 const StudioView: React.FunctionComponent<StudioViewProps> = props => {
   const { match } = props;
-  const nexus = useNexusContext();
   const {
     params: { orgLabel, projectLabel, studioId },
   } = match;
