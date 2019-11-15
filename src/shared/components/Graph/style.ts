@@ -14,6 +14,17 @@ const style = [
       },
     },
     {
+      selector: '.-main',
+      style: {
+        height: 36,
+        width: 36,
+        shape: 'diamond',
+        'background-color': 'white',
+        'border-color': '#8a8b8b',
+        'border-width': 2,
+      },
+    },
+    {
       selector: 'edge',
       style: {
         width: 2,
