@@ -3,40 +3,46 @@ import { useAsyncEffect } from 'use-async-effect';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
-import DashboardList from './DashboardList';
+import DashboardList from './DashboardListContainer';
 
-interface WorkspaceListProps {
+type WorkspaceListProps = {
   workSpaceIds: string[];
   orgLabel: string;
   projectLabel: string;
-}
+};
 
 const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   workSpaceIds,
   orgLabel,
   projectLabel,
 }) => {
-  const [workSpaces, setWorkspaces] = React.useState<Resource[]>([]);
+  const [workspaces, setWorkspaces] = React.useState<Resource[]>([]);
   const [selectedWorkspace, setSelectedWorkspace] = React.useState<Resource>();
   const nexus = useNexusContext();
   const selectWorkspace = (id: string) => {
-    const w = workSpaces.find(w => w['@id'] === id);
+    const w = workspaces.find(w => w['@id'] === id);
     setSelectedWorkspace(w);
   };
   useAsyncEffect(async () => {
     const workSpaceList: Resource[] = [];
-    for (let i = 0; i < workSpaceIds.length; i +=1) {
-      const workspace = await nexus.httpGet({ path : workSpaceIds[i]}) as Resource;
-      workSpaceList.push(workspace);
+    for (let i = 0; i < workSpaceIds.length; i += 1) {
+      try {
+        const workspace = (await nexus.httpGet({
+          path: workSpaceIds[i],
+        })) as Resource;
+        workSpaceList.push(workspace);
+      } catch (error) {
+        // TODO: display error to the user
+      }
     }
     setWorkspaces(workSpaceList);
     setSelectedWorkspace(workSpaceList[0]);
   }, [orgLabel, projectLabel, workSpaceIds]);
   return (
     <>
-      {workSpaces.length > 0 ? (
+      {workspaces.length > 0 ? (
         <TabList
-          items={workSpaces.map(w => ({
+          items={workspaces.map(w => ({
             label: w.label,
             description: w.description,
             id: w['@id'],
@@ -45,7 +51,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
             selectWorkspace(id);
           }}
           defaultActiveId={
-            selectedWorkspace ? selectedWorkspace['@id'] : workSpaces[0]['@id']
+            selectedWorkspace ? selectedWorkspace['@id'] : workspaces[0]['@id']
           }
           position="top"
         >

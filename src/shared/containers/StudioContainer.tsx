@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useAsyncEffect } from 'use-async-effect';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import WorkspaceList from './WorkspaceList';
+import WorkspaceList from './WorkspaceListContainer';
 
 type StudioContainerProps = {
   orgLabel: string;
@@ -25,7 +25,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
     studioResource,
     setStudioResource,
   ] = React.useState<StudioResource | null>(null);
-  const [workSpaceIds, setWorkspaceIds] = React.useState<string[]>([]);
+  const [workspaceIds, setWorkspaceIds] = React.useState<string[]>([]);
   const nexus = useNexusContext();
   useAsyncEffect(async () => {
     const studioResource = (await nexus.Resource.get(
@@ -45,16 +45,16 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
         <div className="studio-view">
           <h1 className="title">{studioResource.label}</h1>
           {studioResource.description && (
-            <p className="description">Some description</p>
+            <p className="description">{studioResource.description}</p>
           )}
           <WorkspaceList
             orgLabel={orgLabel}
             projectLabel={projectLabel}
-            workSpaceIds={workSpaceIds}
+            workSpaceIds={workspaceIds}
           />
         </div>
       ) : (
-        <h4>'The Resource is not a Studio'</h4>
+        <h4>The Resource is not a Studio</h4>
       )}
     </>
   );

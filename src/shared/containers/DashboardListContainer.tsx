@@ -19,31 +19,37 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   orgLabel,
   projectLabel,
 }) => {
-  const [dashBoards, setDashboards] = React.useState<Resource[]>([]);
+  const [dashboardResources, setDashboardResources] = React.useState<
+    Resource[]
+  >([]);
   const [selectedDashboard, setSelectedDashboard] = React.useState<Resource>();
   const nexus = useNexusContext();
   const selectDashboard = (id: string) => {
-    const dashboard = dashBoards.find(d => d['@id'] === id);
+    const dashboard = dashboardResources.find(d => d['@id'] === id);
     setSelectedDashboard(dashboard);
   };
   useAsyncEffect(async () => {
     const dashboardList: Resource[] = [];
     for (let i = 0; i < dashboards.length; i += 1) {
-      const dashboard = (await nexus.Resource.get(
-        orgLabel,
-        projectLabel,
-        encodeURIComponent(dashboards[i].dashboard)
-      )) as Resource;
-      dashboardList.push(dashboard);
+      try {
+        const dashboard = (await nexus.Resource.get(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(dashboards[i].dashboard)
+        )) as Resource;
+        dashboardList.push(dashboard);
+      } catch (error) {
+        // TODO: display an error to the user
+      }
     }
-    setDashboards(dashboardList);
+    setDashboardResources(dashboardList);
     setSelectedDashboard(dashboardList[0]);
   }, [orgLabel, projectLabel]);
   return (
     <>
-      {dashBoards.length > 0 ? (
+      {dashboardResources.length > 0 ? (
         <TabList
-          items={dashBoards.map(w => ({
+          items={dashboardResources.map(w => ({
             label: w.label,
             description: w.description,
             id: w['@id'],
