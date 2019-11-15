@@ -19,7 +19,6 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   orgLabel,
   projectLabel,
 }) => {
-  console.log(dashboards);
   const [dashBoards, setDashboards] = React.useState<Resource[]>([]);
   const [selectedDashboard, setSelectedDashboard] = React.useState<Resource>();
   const nexus = useNexusContext();
