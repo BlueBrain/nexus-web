@@ -11,39 +11,15 @@ jobs:
       - name: install dependencies
         run: |
           yarn
-
-  build:
-    needs: install
-    runs-on: ubuntu-latest
-
-    steps:
       - name: build project
         run: |
           yarn build
-
-  test:
-    needs: install
-    runs-on: ubuntu-latest
-
-    steps:
       - name: test
         run: |
           yarn test
-
-  lint:
-    needs: install
-    runs-on: ubuntu-latest
-
-    steps:
       - name: lint
         run: |
           yarn lint
-
-  prettier:
-    needs: install
-    runs-on: ubuntu-latest
-
-    steps:
       - name: prettier
         run: |
           yarn prettier -c ./src/**/*.ts
