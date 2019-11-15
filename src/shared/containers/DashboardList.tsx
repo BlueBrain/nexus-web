@@ -19,6 +19,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   orgLabel,
   projectLabel,
 }) => {
+  console.log(dashboards);
   const [dashBoards, setDashboards] = React.useState<Resource[]>([]);
   const [selectedDashboard, setSelectedDashboard] = React.useState<Resource>();
   const nexus = useNexusContext();
@@ -27,11 +28,14 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     setSelectedDashboard(dashboard);
   };
   useAsyncEffect(async () => {
+    console.log('feching dashboards');
     const dashboardList: Resource[] = [];
     for (let i = 0; i < dashboards.length; i += 1) {
-      const dashboard = (await nexus.httpGet({
-        path: dashboards[i].dashboard,
-      })) as Resource;
+      const dashboard = (await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(dashboards[i].dashboard)
+      )) as Resource;
       dashboardList.push(dashboard);
     }
     setDashboards(dashboardList);
