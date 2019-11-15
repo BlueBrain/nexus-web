@@ -1,21 +1,17 @@
 import * as React from 'react';
-import { Resource } from '@bbp/nexus-sdk';
 import { Card, Button, Skeleton } from 'antd';
-import { getResourceLabel } from '../../utils';
 
+import { labelOf } from '../../utils';
 import TypesIcon from '../Types/TypesIcon';
 
 const ResourceCardCollapsed: React.FunctionComponent<{
-  onClickExpand(): void;
-  resource: Resource;
+  onClickExpand?(): void;
+  resourceId: string;
   busy: boolean,
-}> = ({ onClickExpand, resource, busy }) => {
-  const {
-    '@type': type,
-    '@id': id,
-  } = resource;
-  const types: string[] = Array.isArray(type) ? type : [type || ''];
-  const label = getResourceLabel(resource);
+  types?: string[],
+  isExternal?: boolean,
+}> = ({ onClickExpand, resourceId, busy, isExternal, types }) => {
+  const label: string = labelOf(resourceId);
 
   if (busy) {
     return (
@@ -31,14 +27,20 @@ const ResourceCardCollapsed: React.FunctionComponent<{
   return (
     <Card
       headStyle={{ fontSize: '12px' }}
-      bodyStyle={{ padding: '10px 7px 5px 7px' }}
+      bodyStyle={{
+        padding: '10px 7px 5px 7px',
+        fontSize: '12px',
+      }}
       title={<span>{label}&nbsp;</span>}
       size="small"
-      extra={<Button onClick={onClickExpand} shape="circle" icon="up" size="small" />}
-      style={{ maxWidth: '600px' }}
+      extra={isExternal ? null : <Button onClick={onClickExpand} shape="circle" icon="up" size="small" />}
+      style={{ maxWidth: '400px' }}
     >
-      {!!type && (
-        <div>{!!type && <TypesIcon type={types} full={true} />}</div>
+      {!!types && (
+        <div>{!!types && <TypesIcon type={types} full={true} />}</div>
+      )}
+      {!!isExternal && (
+        <a href={resourceId} target="_blank">{resourceId}</a>
       )}
     </Card>
   )
