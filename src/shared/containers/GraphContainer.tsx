@@ -119,7 +119,7 @@ const GraphContainer: React.FunctionComponent<{
   const { orgLabel, projectLabel } = getResourceLabelsAndIdsFromSelf(
     resource._self
   );
-
+  const [reset, setReset] = React.useState(false);
   const [selectedResource, setSelectedResource] = React.useState<string>('');
   const [elements, setElements] = React.useState<cytoscape.ElementDefinition[]>(
     []
@@ -208,7 +208,7 @@ const GraphContainer: React.FunctionComponent<{
         });
       }
     },
-    [resource._self]
+    [resource._self, reset]
   );
 
   const handleNodeExpand = async (id: string, isExternal: boolean) => {
@@ -252,6 +252,10 @@ const GraphContainer: React.FunctionComponent<{
     }
   };
 
+  const handleReset = () => {
+    setReset(!reset);
+  };
+
   const handleNodeClick = (id: string, isExternal: boolean) => {
     if (isExternal) {
       open(id);
@@ -271,9 +275,9 @@ const GraphContainer: React.FunctionComponent<{
     }
 
     setSelectedResource(resourceId);
-  }
+  };
 
-  if (busy || error) return null;  
+  if (busy || error) return null;
 
   return (
     <>
@@ -282,6 +286,7 @@ const GraphContainer: React.FunctionComponent<{
         onNodeClick={handleNodeClick}
         onNodeExpand={handleNodeExpand}
         onNodeHoverOver={showResourcePreview}
+        onReset={handleReset}
       />
       {!!selectedResource && (
         <ResourcePreviewCardContainer
