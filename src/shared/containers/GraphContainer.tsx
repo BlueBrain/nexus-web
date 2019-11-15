@@ -250,7 +250,7 @@ const GraphContainer: React.FunctionComponent<{
         '-expandable',
         '-expanded'
       );
-      targetNode.data.visited = true;
+      targetNode.data.isExpandable = false;
       setElements([
         ...elements,
 

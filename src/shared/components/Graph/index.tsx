@@ -155,16 +155,20 @@ const Graph: React.FunctionComponent<{
       ></div>
       <div className="legend">
         <div>
-          <span className="node -main" />Origin
+          <span className="node -main" />
+          Origin
         </div>
         <div>
-          <span className="node -external" />External Link
+          <span className="node -external" />
+          External Link
         </div>
         <div>
-          <span className="node -internal" />Internal Link
+          <span className="node -internal" />
+          Internal Link
         </div>
         <div>
-          <span className="node -blank-node" />Blank Node
+          <span className="node -blank-node" />
+          Blank Node
         </div>
       </div>
       <div className="top">
