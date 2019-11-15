@@ -13,7 +13,7 @@ const LAYOUTS: {
 } = {
   COLA: {
     name: 'cola',
-    label: 'Forced Graph',
+    label: 'Graph',
     maxSimulationTime: 1000,
   },
   BREADTH_FIRST: {
