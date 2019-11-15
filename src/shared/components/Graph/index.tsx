@@ -29,7 +29,8 @@ const Graph: React.FunctionComponent<{
   onNodeClick?(id: string, isExternal: boolean): void;
   onNodeExpand?(id: string, isExternal: boolean): void;
   onNodeHoverOver?(id: string, isExternal: boolean): void;
-}> = ({ elements, onNodeClick, onNodeExpand, onNodeHoverOver }) => {
+  onReset?(): void;
+}> = ({ elements, onNodeClick, onNodeExpand, onNodeHoverOver, onReset }) => {
   const container = React.useRef<HTMLDivElement>(null);
   const [showAlert, setShowAlert] = React.useState(true);
   const [layoutBusy, setLayoutBusy] = React.useState(false);
@@ -80,7 +81,8 @@ const Graph: React.FunctionComponent<{
 
         if (isBlankNode) return;
 
-        onNodeHoverOver && onNodeHoverOver(e.target.id(), e.target.data('isExternal'));
+        onNodeHoverOver &&
+          onNodeHoverOver(e.target.id(), e.target.data('isExternal'));
       });
       graph.current.on('mouseout', 'node', (e: cytoscape.EventObject) => {
         setCursorPointer(null);
@@ -212,9 +214,17 @@ const Graph: React.FunctionComponent<{
 
   return (
     <div className="graph-component">
-      <div className="graph" ref={container} style={cursorPointer ? {
-        cursor: cursorPointer,
-      } : {}}></div>
+      <div
+        className="graph"
+        ref={container}
+        style={
+          cursorPointer
+            ? {
+                cursor: cursorPointer,
+              }
+            : {}
+        }
+      ></div>
       <div className="legend">
         <div>
           <span className="node -external" /> External Link
@@ -240,6 +250,9 @@ const Graph: React.FunctionComponent<{
                 </Button>
               );
             })}
+          </div>
+          <div>
+            <Button onClick={onReset}>Reset</Button>
           </div>
         </div>
         <div className="alert">
