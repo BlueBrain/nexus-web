@@ -29,7 +29,8 @@ const Graph: React.FunctionComponent<{
   onNodeClick?(id: string, isExternal: boolean): void;
   onNodeExpand?(id: string, isExternal: boolean): void;
   onNodeHoverOver?(id: string, isExternal: boolean): void;
-}> = ({ elements, onNodeClick, onNodeExpand, onNodeHoverOver }) => {
+  onReset?(): void;
+}> = ({ elements, onNodeClick, onNodeExpand, onNodeHoverOver, onReset }) => {
   const container = React.useRef<HTMLDivElement>(null);
   const [showAlert, setShowAlert] = React.useState(true);
   const [layoutBusy, setLayoutBusy] = React.useState(false);
@@ -249,6 +250,9 @@ const Graph: React.FunctionComponent<{
                 </Button>
               );
             })}
+          </div>
+          <div>
+            <Button onClick={onReset}>Reset</Button>
           </div>
         </div>
         <div className="alert">
