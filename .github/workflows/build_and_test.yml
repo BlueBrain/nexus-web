@@ -1,4 +1,4 @@
-name: CI
+name: TestAndBuild
 
 on: [push]
 
@@ -11,15 +11,15 @@ jobs:
       - name: install dependencies
         run: |
           yarn
-      - name: build project
-        run: |
-          yarn build
-      - name: test
-        run: |
-          yarn test
       - name: lint
         run: |
           yarn lint
       - name: prettier
         run: |
           yarn prettier -c ./src/**/*.ts
+      - name: test
+        run: |
+          yarn test
+      - name: build project
+        run: |
+          yarn build
