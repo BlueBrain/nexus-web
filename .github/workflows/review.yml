@@ -1,0 +1,25 @@
+name: Review
+
+on: [pull_request]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: install dependencies 🚀
+        run: |
+          yarn
+      - name: linting ✨
+        run: |
+          yarn lint
+      - name: prettier 💅
+        run: |
+          yarn prettier -c ./src/**/*.ts
+      - name: running test 🛫🛬
+        run: |
+          yarn test
+      - name: build project 👷
+        run: |
+          yarn build
