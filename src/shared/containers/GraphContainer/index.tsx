@@ -70,7 +70,7 @@ const GraphContainer: React.FunctionComponent<{
       resourceId,
       'incoming'
     );
-    //return total from both
+    // return total from both
 
     return outgoingLinks;
   };
