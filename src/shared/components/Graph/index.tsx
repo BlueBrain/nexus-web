@@ -194,7 +194,12 @@ const Graph: React.FunctionComponent<{
             })}
           </div>
           <div>
-            <Button onClick={onRecenter}>Re-center</Button>
+            <Button
+              disabled={layoutBusy}
+              onClick={onRecenter}
+            >
+              Origin
+            </Button>
             <Button onClick={onReset}>Reset</Button>
           </div>
         </div>
