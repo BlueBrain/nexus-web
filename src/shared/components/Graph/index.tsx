@@ -32,7 +32,8 @@ const Graph: React.FunctionComponent<{
   onNodeExpand?(id: string, isExternal: boolean): void;
   onNodeHoverOver?(id: string, isExternal: boolean): void;
   onReset?(): void;
-}> = ({ elements, onNodeClick, onNodeExpand, onNodeHoverOver, onReset }) => {
+  onRecenter?(): void;
+}> = ({ elements, onNodeClick, onNodeExpand, onNodeHoverOver, onReset, onRecenter }) => {
   const container = React.useRef<HTMLDivElement>(null);
   const [showAlert, setShowAlert] = React.useState(true);
   const [layoutBusy, setLayoutBusy] = React.useState(false);
@@ -187,6 +188,7 @@ const Graph: React.FunctionComponent<{
             })}
           </div>
           <div>
+            <Button onClick={onRecenter}>Re-center</Button>
             <Button onClick={onReset}>Reset</Button>
           </div>
         </div>
