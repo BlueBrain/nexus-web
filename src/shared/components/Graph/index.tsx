@@ -32,8 +32,7 @@ const Graph: React.FunctionComponent<{
   onNodeExpand?(id: string, isExternal: boolean): void;
   onNodeHoverOver?(id: string, isExternal: boolean): void;
   onReset?(): void;
-  onRecenter?(): void;
-}> = ({ elements, onNodeClick, onNodeExpand, onNodeHoverOver, onReset, onRecenter }) => {
+}> = ({ elements, onNodeClick, onNodeExpand, onNodeHoverOver, onReset  }) => {
   const container = React.useRef<HTMLDivElement>(null);
   const [showAlert, setShowAlert] = React.useState(true);
   const [layoutBusy, setLayoutBusy] = React.useState(false);
@@ -113,6 +112,14 @@ const Graph: React.FunctionComponent<{
   const handleLayoutClick = (type: string) => () => {
     setLayoutType(type);
   };
+
+
+  const onRecenter = () => {
+    if (graph.current) {
+      graph.current.center();
+      graph.current.fit();
+    }
+  }
 
   const replaceElements = (elements: cytoscape.ElementDefinition[]) => {
     if (graph.current) {

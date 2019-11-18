@@ -274,11 +274,6 @@ const GraphContainer: React.FunctionComponent<{
     setReset(!reset);
   };
 
-  const handleRecenter = () => {
-    console.log('clicked recenter');
-    
-  }
-
   const handleNodeClick = (id: string, isExternal: boolean) => {
     if (isExternal) {
       open(id);
@@ -308,7 +303,6 @@ const GraphContainer: React.FunctionComponent<{
         onNodeExpand={handleNodeExpand}
         onNodeHoverOver={showResourcePreview}
         onReset={handleReset}
-        onRecenter={handleRecenter}
       />
       {!!selectedResourceId && (
         <ResourcePreviewCardContainer
