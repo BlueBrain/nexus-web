@@ -1,5 +1,3 @@
-import { redirectSuccess } from "redux-oidc";
-
 const style = [
     {
       selector: 'node',
