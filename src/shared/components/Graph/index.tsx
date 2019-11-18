@@ -20,12 +20,13 @@ export const LAYOUTS: {
       const { label } = edge.data();
       // lets define the edge lengths based on how long
       // the labels will end up being
-      return 100 + label.length * 8;
+      return 50 + label.length * 8;
     },
   },
   breadthFirst: {
     name: 'breadthfirst',
     label: 'Tree',
+    animate: true,
   },
 };
 
@@ -203,6 +204,7 @@ const Graph: React.FunctionComponent<{
               return (
                 <Button
                   disabled={layoutBusy}
+                  size="small"
                   type={layoutKey === layout ? 'primary' : 'default'}
                   onClick={handleLayoutClick(layoutKey)}
                 >
@@ -214,15 +216,16 @@ const Graph: React.FunctionComponent<{
           <div>
             <Button
               type={collapsed ? 'primary' : 'default'}
+              size="small"
               disabled={layoutBusy}
               onClick={onCollapse}
             >
               {collapsed ? 'Expand Paths' : 'Collapse Paths'}
             </Button>
-            <Button disabled={layoutBusy} onClick={onRecenter}>
+            <Button disabled={layoutBusy} size="small" onClick={onRecenter}>
               Origin
             </Button>
-            <Button disabled={layoutBusy} onClick={onReset}>
+            <Button disabled={layoutBusy} size="small" onClick={onReset}>
               Reset
             </Button>
           </div>
