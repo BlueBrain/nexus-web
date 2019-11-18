@@ -55,22 +55,21 @@ const Graph: React.FunctionComponent<{
 }) => {
   const container = React.useRef<HTMLDivElement>(null);
   const [showAlert, setShowAlert] = React.useState(true);
-  const [layoutBusy, setLayoutBusy] = React.useState(false);
   const [cursorPointer, setCursorPointer] = React.useState<string | null>(null);
+  const layoutInstance = React.useRef<cytoscape.Layouts>();
   const graph = React.useRef<cytoscape.Core>();
 
   const forceLayout = () => {
     if (graph.current) {
-      setLayoutBusy(true);
-      graph.current &&
-        graph.current
-          .layout({
-            ...LAYOUTS[layout],
-            stop() {
-              setLayoutBusy(false);
-            },
-          })
-          .run();
+      if (layoutInstance.current) {
+        layoutInstance.current.stop();
+      }
+      layoutInstance.current = graph.current
+        .elements()
+        .makeLayout({
+          ...LAYOUTS[layout],
+        })
+        .run();
     }
   };
 
@@ -203,7 +202,6 @@ const Graph: React.FunctionComponent<{
             {Object.keys(LAYOUTS).map(layoutKey => {
               return (
                 <Button
-                  disabled={layoutBusy}
                   size="small"
                   type={layoutKey === layout ? 'primary' : 'default'}
                   onClick={handleLayoutClick(layoutKey)}
@@ -217,15 +215,14 @@ const Graph: React.FunctionComponent<{
             <Button
               type={collapsed ? 'primary' : 'default'}
               size="small"
-              disabled={layoutBusy}
               onClick={onCollapse}
             >
               {collapsed ? 'Expand Paths' : 'Collapse Paths'}
             </Button>
-            <Button disabled={layoutBusy} size="small" onClick={onRecenter}>
+            <Button size="small" onClick={onRecenter}>
               Origin
             </Button>
-            <Button disabled={layoutBusy} size="small" onClick={onReset}>
+            <Button size="small" onClick={onReset}>
               Reset
             </Button>
           </div>
