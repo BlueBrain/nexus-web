@@ -3,124 +3,13 @@ import { notification } from 'antd';
 import { useAsyncEffect } from 'use-async-effect';
 import { useHistory, useLocation } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
-import { ResourceLink, Resource, PaginatedList } from '@bbp/nexus-sdk';
+import { ResourceLink, Resource } from '@bbp/nexus-sdk';
 
-import {
-  getResourceLabelsAndIdsFromSelf,
-  getResourceLabel,
-  labelOf,
-} from '../utils';
-import Graph from '../components/Graph';
-import ResourcePreviewCardContainer from './ResourcePreviewCardContainer';
-import { DEFAULT_ACTIVE_TAB_KEY } from '../views/ResourceView';
-
-const MAX_LABEL_LENGTH = 20;
-
-const makeNode = async (
-  link: ResourceLink,
-  getResourceLinks: (self: string) => Promise<PaginatedList<ResourceLink>>
-) => {
-  const isExternal = !(link as Resource)._self;
-  let isExpandable = !isExternal; // External resources are never expandable
-  if (!isExternal) {
-    const response = await getResourceLinks((link as Resource)._self);
-    isExpandable = !!response._total;
-  }
-  let label = labelOf(link['@id']);
-  label =
-    label.length > MAX_LABEL_LENGTH
-      ? `${label.slice(0, MAX_LABEL_LENGTH)}...`
-      : label;
-  return {
-    classes: `${isExternal ? '-external' : '-internal'} ${
-      isExpandable ? '-expandable' : '-expanded'
-    }`,
-    data: {
-      label,
-      isExternal,
-      isExpandable,
-      id: link['@id'],
-    },
-  };
-};
-
-const createNodesAndEdgesFromResourceLinks = (
-  resourceLinks: ResourceLink[],
-  originId: string
-) => {
-  return resourceLinks.reduce(
-    (pathNodes: cytoscape.ElementDefinition[], link) => {
-      const paths = Array.isArray(link.paths) ? link.paths : [link.paths];
-
-      const blankNodes = paths
-        .map((path, index) => {
-          if (index === paths.length - 1) {
-            return null;
-          }
-          return makeBlankNodes(path, originId, link['@id']);
-        })
-        .filter(Boolean) as cytoscape.ElementDefinition[];
-
-      const edges = paths.map((path, index) => {
-        const label = labelOf(path);
-        const blankNode = blankNodes[index];
-        if (!blankNodes.length) {
-          return {
-            data: {
-              label,
-              id: `edge-${originId}-${link['@id']}`,
-              source: originId,
-              target: link['@id'],
-            },
-          };
-        }
-        if (index === 0) {
-          return {
-            data: {
-              label,
-              id: `edge-${originId}-${blankNode && blankNode.data.id}`,
-              source: originId,
-              target: blankNode && blankNode.data.id,
-            },
-          };
-        }
-        const prev = blankNodes[index - 1];
-        if (index === paths.length - 1) {
-          return {
-            data: {
-              label,
-              id: `edge-${prev && prev.data.id}-${link['@id']}`,
-              source: prev && prev.data.id,
-              target: link['@id'],
-            },
-          };
-        }
-        return {
-          data: {
-            label,
-            id: `edge-${prev && prev.data.id}-${blankNode &&
-              blankNode.data.id}`,
-            source: prev && prev.data.id,
-            target: blankNode && blankNode.data.id,
-          },
-        };
-      });
-
-      return [...pathNodes, ...blankNodes, ...edges];
-    },
-    []
-  );
-};
-
-const makeBlankNodes = (path: string, resourceId: string, linkId: string) => {
-  return {
-    classes: `blank-node`,
-    data: {
-      id: `${resourceId}-${path}-${linkId}`,
-      isBlankNode: true,
-    },
-  };
-};
+import { getResourceLabelsAndIdsFromSelf, getResourceLabel } from '../../utils';
+import Graph from '../../components/Graph';
+import ResourcePreviewCardContainer from './../ResourcePreviewCardContainer';
+import { DEFAULT_ACTIVE_TAB_KEY } from '../../views/ResourceView';
+import { createNodesAndEdgesFromResourceLinks, makeNode } from './Graph';
 
 const GraphContainer: React.FunctionComponent<{
   resource: Resource;
@@ -133,9 +22,12 @@ const GraphContainer: React.FunctionComponent<{
     resource._self
   );
   const [reset, setReset] = React.useState(false);
-  const [{ selectedResourceId, isSelectedExternal }, setSelectedResource] = React.useState<{
-    selectedResourceId: string,
-    isSelectedExternal: boolean | null,
+  const [
+    { selectedResourceId, isSelectedExternal },
+    setSelectedResource,
+  ] = React.useState<{
+    selectedResourceId: string;
+    isSelectedExternal: boolean | null;
   }>({
     selectedResourceId: '',
     isSelectedExternal: null,
@@ -291,7 +183,7 @@ const GraphContainer: React.FunctionComponent<{
       selectedResourceId: resourceId,
       isSelectedExternal: isExternal,
     });
-  }
+  };
 
   if (busy || error) return null;
 
