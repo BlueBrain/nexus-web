@@ -113,10 +113,10 @@ const Graph: React.FunctionComponent<{
     setLayoutType(type);
   };
 
-  const onRecenter = () => {
+  const onRecenter = () => {    
     if (graph.current) {
-      graph.current.center();
-      graph.current.fit();
+      const origin = graph.current.elements()[0];
+      graph.current.center(origin);
     }
   }
 
