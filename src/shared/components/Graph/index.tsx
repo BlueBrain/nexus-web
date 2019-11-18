@@ -138,16 +138,34 @@ const Graph: React.FunctionComponent<{
     }
   };
 
-  const replaceElements = (elements: cytoscape.ElementDefinition[]) => {
+  const updateElements = (elements: cytoscape.ElementDefinition[]) => {
     if (graph.current) {
-      graph.current.elements().remove();
-      graph.current.add(elements);
+      const elementIds = graph.current.elements().map(element => element.id());
+
+      // update old elements
+      graph.current.elements().forEach(graphElement => {
+        const match = elements.find(
+          dataElement => graphElement.id() === dataElement.data.id
+        );
+        if (match) {
+          graphElement.data(match.data);
+          match.classes && graphElement.classes(match.classes);
+        }
+      });
+
+      // update graph with only the new elements
+      const newElements = elements.filter(
+        element => !elementIds.includes(element.data.id || '')
+      );
+
+      graph.current.add(newElements);
+
       forceLayout();
     }
   };
 
   React.useEffect(() => {
-    replaceElements(elements);
+    updateElements(elements);
   }, [JSON.stringify(elements)]);
 
   React.useEffect(() => {
@@ -159,7 +177,6 @@ const Graph: React.FunctionComponent<{
       wheelSensitivity: 0.2,
       container: container.current,
     });
-    replaceElements(elements);
     return () => {
       graph.current && graph.current.destroy();
     };
