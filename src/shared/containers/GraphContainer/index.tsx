@@ -199,6 +199,19 @@ const GraphContainer: React.FunctionComponent<{
   const handleLayoutChange = (layout: string) => {
     setLayout(layout);
   };
+  
+  const loadIncomingLinks = async () => {
+    // const response = await nexus.Resource.links(
+    //   orgLabel,
+    //   projectLabel,
+    //   encodeURIComponent(resource['@id']),
+    //   'incoming',
+    // );
+
+    // console.log('response', response);
+    
+
+  }
 
   if (error) return null;
 

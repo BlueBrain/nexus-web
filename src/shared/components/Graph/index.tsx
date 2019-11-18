@@ -40,6 +40,7 @@ const Graph: React.FunctionComponent<{
   onNodeExpand?(id: string, isExternal: boolean): void;
   onNodeHoverOver?(id: string, isExternal: boolean): void;
   onReset?(): void;
+<<<<<<< HEAD
   onCollapse?(): void;
   onLayoutChange?(type: string): void;
   layout?: string;
@@ -57,10 +58,18 @@ const Graph: React.FunctionComponent<{
   layout = DEFAULT_LAYOUT,
   loading,
 }) => {
+=======
+  onShowIncomingLinks?(): void;
+}> = ({ elements, onNodeClick, onNodeExpand, onNodeHoverOver, onReset, onShowIncomingLinks }) => {
+>>>>>>> Add a button to show incoming links
   const container = React.useRef<HTMLDivElement>(null);
   const [showAlert, setShowAlert] = React.useState(true);
   const [cursorPointer, setCursorPointer] = React.useState<string | null>(null);
+<<<<<<< HEAD
   const layoutInstance = React.useRef<cytoscape.Layouts>();
+=======
+  const [showIncomingLinks, setShowIncomingLinks] = React.useState(false);
+>>>>>>> Add a button to show incoming links
   const graph = React.useRef<cytoscape.Core>();
 
   const forceLayout = () => {
@@ -186,18 +195,17 @@ const Graph: React.FunctionComponent<{
     };
   }, [container]);
 
+  const onClickShowIncomingLinks = () => {
+    setShowIncomingLinks(!showIncomingLinks);
+    onShowIncomingLinks && onShowIncomingLinks();
+  }
+
   return (
     <div className="graph-component">
       <div
         className="graph"
         ref={container}
-        style={
-          cursorPointer
-            ? {
-                cursor: cursorPointer,
-              }
-            : {}
-        }
+        style={cursorPointer? { cursor: cursorPointer } : {}}
       ></div>
       <GraphLegend />
       <div className="top">
@@ -217,9 +225,20 @@ const Graph: React.FunctionComponent<{
           </div>
           <div>
             <Button
+<<<<<<< HEAD
               type={collapsed ? 'primary' : 'default'}
               size="small"
               onClick={onCollapse}
+=======
+              disabled={layoutBusy}
+              onClick={onClickShowIncomingLinks}
+            >
+              {showIncomingLinks ? 'Remove incoming links' : 'Show incoming links'}
+            </Button>
+            <Button
+              disabled={layoutBusy}
+              onClick={onRecenter}
+>>>>>>> Add a button to show incoming links
             >
               {collapsed ? 'Expand Paths' : 'Collapse Paths'}
             </Button>
