@@ -6,7 +6,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { ResourceLink, Resource } from '@bbp/nexus-sdk';
 
 import { getResourceLabelsAndIdsFromSelf, getResourceLabel } from '../../utils';
-import Graph from '../../components/Graph';
+import Graph, { DEFAULT_LAYOUT } from '../../components/Graph';
 import ResourcePreviewCardContainer from './../ResourcePreviewCardContainer';
 import { DEFAULT_ACTIVE_TAB_KEY } from '../../views/ResourceView';
 import { createNodesAndEdgesFromResourceLinks, makeNode } from './Graph';
@@ -22,6 +22,8 @@ const GraphContainer: React.FunctionComponent<{
     resource._self
   );
   const [reset, setReset] = React.useState(false);
+  const [collapsed, setCollapsed] = React.useState(true);
+  const [layout, setLayout] = React.useState(DEFAULT_LAYOUT);
   const [
     { selectedResourceId, isSelectedExternal },
     setSelectedResource,
@@ -100,7 +102,8 @@ const GraphContainer: React.FunctionComponent<{
           // Link Path Nodes and Edges
           ...createNodesAndEdgesFromResourceLinks(
             response._results,
-            resource['@id']
+            resource['@id'],
+            collapsed
           ),
         ];
         setElements(newElements);
@@ -118,7 +121,7 @@ const GraphContainer: React.FunctionComponent<{
         });
       }
     },
-    [resource._self, reset]
+    [resource._self, reset, collapsed]
   );
 
   const handleNodeExpand = async (id: string, isExternal: boolean) => {
@@ -152,7 +155,11 @@ const GraphContainer: React.FunctionComponent<{
         )),
 
         // Link Path Nodes and Edges
-        ...createNodesAndEdgesFromResourceLinks(response._results, id),
+        ...createNodesAndEdgesFromResourceLinks(
+          response._results,
+          id,
+          collapsed
+        ),
       ]);
     } catch (error) {
       notification.error({
@@ -185,6 +192,14 @@ const GraphContainer: React.FunctionComponent<{
     });
   };
 
+  const handleCollapse = () => {
+    setCollapsed(!collapsed);
+  };
+
+  const handleLayoutChange = (layout: string) => {
+    setLayout(layout);
+  };
+
   if (busy || error) return null;
 
   return (
@@ -195,6 +210,10 @@ const GraphContainer: React.FunctionComponent<{
         onNodeExpand={handleNodeExpand}
         onNodeHoverOver={showResourcePreview}
         onReset={handleReset}
+        collapsed={collapsed}
+        onCollapse={handleCollapse}
+        onLayoutChange={handleLayoutChange}
+        layout={layout}
       />
       {!!selectedResourceId && (
         <ResourcePreviewCardContainer

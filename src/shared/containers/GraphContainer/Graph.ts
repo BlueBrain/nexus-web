@@ -34,11 +34,26 @@ export const makeNode = async (
 
 export const createNodesAndEdgesFromResourceLinks = (
   resourceLinks: ResourceLink[],
-  originId: string
+  originId: string,
+  collapsed: boolean
 ) => {
   return resourceLinks.reduce(
     (pathNodes: cytoscape.ElementDefinition[], link) => {
       const paths = Array.isArray(link.paths) ? link.paths : [link.paths];
+
+      if (collapsed) {
+        return [
+          ...pathNodes,
+          {
+            data: {
+              label: paths.map(path => labelOf(path)).join(' / '),
+              id: `edge-${originId}-${link['@id']}`,
+              source: originId,
+              target: link['@id'],
+            },
+          },
+        ];
+      }
 
       const blankNodes = paths
         .map((path, index) => {
