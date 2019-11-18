@@ -56,12 +56,23 @@ const GraphContainer: React.FunctionComponent<{
       projectLabel,
       resourceId,
     } = getResourceLabelsAndIdsFromSelf(self);
-    return await nexus.Resource.links(
+
+    const outgoingLinks = await nexus.Resource.links(
       orgLabel,
       projectLabel,
       resourceId,
       'outgoing'
     );
+
+    const incomingLinks = await nexus.Resource.links(
+      orgLabel,
+      projectLabel,
+      resourceId,
+      'incoming'
+    );
+    //return total from both
+
+    return outgoingLinks;
   };
 
   useAsyncEffect(
@@ -69,6 +80,7 @@ const GraphContainer: React.FunctionComponent<{
       if (!isMounted()) {
         return;
       }
+      
       try {
         setLoading(true);
         setLinks({
@@ -77,31 +89,67 @@ const GraphContainer: React.FunctionComponent<{
           total,
           error: null,
         });
-        const response = await getResourceLinks(resource._self);
+
+        const {
+          orgLabel,
+          projectLabel,
+          resourceId,
+        } = getResourceLabelsAndIdsFromSelf(resource._self);
+
+        const outgoingLinks = await nexus.Resource.links(
+          orgLabel,
+          projectLabel,
+          resourceId,
+          'outgoing'
+        );
+    
+        const incomingLinks = await nexus.Resource.links(
+          orgLabel,
+          projectLabel,
+          resourceId,
+          'incoming'
+        );
+
         setLinks({
           next: response._next || null,
           links: response._results,
           total: response._total,
           error: null,
         });
+
         const newElements: cytoscape.ElementDefinition[] = [
           {
             classes: '-expandable -main',
             data: {
-              id: resource['@id'],
+              id: resourceId,
               label: getResourceLabel(resource),
             },
           },
-          // Link Nodes
+
+          // Outgoing Link Nodes
           ...(await Promise.all(
-            response._results.map(link => makeNode(link, getResourceLinks))
+            outgoingLinks._results.map(link => makeNode(link, getResourceLinks))
           )),
 
-          // Link Path Nodes and Edges
+          // Incoming Link Nodes
+          ...(await Promise.all(
+            incomingLinks._results.map(link => makeNode(link, getResourceLinks))
+          )),
+
+          // Outgoing Link Path Nodes and Edges
           ...createNodesAndEdgesFromResourceLinks(
-            response._results,
-            resource['@id'],
-            collapsed
+            outgoingLinks._results,
+            resourceId,
+            collapsed,
+            'outgoing'
+          ),
+
+          // Outgoing Link Path Nodes and Edges
+          ...createNodesAndEdgesFromResourceLinks(
+            incomingLinks._results,
+            resourceId,
+            collapsed,
+            'incoming'
           ),
         ];
         setElements(newElements);
@@ -157,7 +205,7 @@ const GraphContainer: React.FunctionComponent<{
         ...createNodesAndEdgesFromResourceLinks(
           response._results,
           id,
-          collapsed
+          collapsed,
         ),
       ]);
     } catch (error) {
@@ -199,19 +247,6 @@ const GraphContainer: React.FunctionComponent<{
   const handleLayoutChange = (layout: string) => {
     setLayout(layout);
   };
-  
-  const loadIncomingLinks = async () => {
-    // const response = await nexus.Resource.links(
-    //   orgLabel,
-    //   projectLabel,
-    //   encodeURIComponent(resource['@id']),
-    //   'incoming',
-    // );
-
-    // console.log('response', response);
-    
-
-  }
 
   if (error) return null;
 

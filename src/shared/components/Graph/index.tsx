@@ -61,7 +61,6 @@ const Graph: React.FunctionComponent<{
   const [showAlert, setShowAlert] = React.useState(true);
   const [cursorPointer, setCursorPointer] = React.useState<string | null>(null);
   const layoutInstance = React.useRef<cytoscape.Layouts>();
-  const [showIncomingLinks, setShowIncomingLinks] = React.useState(false);
   const graph = React.useRef<cytoscape.Core>();
 
   const forceLayout = () => {
@@ -187,6 +186,13 @@ const Graph: React.FunctionComponent<{
     };
   }, [container]);
 
+<<<<<<< HEAD
+=======
+  const onClickHideIncomingLinks = () => {
+    // something
+  }
+
+>>>>>>> Load both incoming and outgoing links
   return (
     <div className="graph-component">
       <div
@@ -211,6 +217,9 @@ const Graph: React.FunctionComponent<{
             })}
           </div>
           <div>
+            <Button onClick={onClickHideIncomingLinks} size="small">
+              Hide incoming links
+            </Button>
             <Button
               type={collapsed ? 'primary' : 'default'}
               size="small"

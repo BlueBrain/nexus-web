@@ -83,6 +83,12 @@ const style = [
         'border-width': 2,
       },
     },
+    {
+      selector: '.incoming',
+      style: {
+        'line-color': 'red',
+      }
+    }
   ];
   
   export default style;
