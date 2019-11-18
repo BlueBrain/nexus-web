@@ -113,6 +113,13 @@ const Graph: React.FunctionComponent<{
     setLayoutType(type);
   };
 
+  const onRecenter = () => {    
+    if (graph.current) {
+      const origin = graph.current.elements()[0];
+      graph.current.center(origin);
+    }
+  }
+
   const replaceElements = (elements: cytoscape.ElementDefinition[]) => {
     if (graph.current) {
       graph.current.elements().remove();
@@ -187,6 +194,12 @@ const Graph: React.FunctionComponent<{
             })}
           </div>
           <div>
+            <Button
+              disabled={layoutBusy}
+              onClick={onRecenter}
+            >
+              Origin
+            </Button>
             <Button onClick={onReset}>Reset</Button>
           </div>
         </div>
