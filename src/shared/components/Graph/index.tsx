@@ -7,24 +7,29 @@ import style from './style';
 
 import './GraphComponent.less';
 
-const LAYOUTS: {
+export const LAYOUTS: {
   [layoutName: string]: {
     name: string;
     [optionKey: string]: any;
   };
 } = {
-  COLA: {
+  cola: {
     name: 'cola',
     label: 'Graph',
-    maxSimulationTime: 1000,
+    edgeLength(edge: cytoscape.EdgeSingular) {
+      const { label } = edge.data();
+      // lets define the edge lengths based on how long
+      // the labels will end up being
+      return 100 + label.length * 8;
+    },
   },
-  BREADTH_FIRST: {
+  breadthFirst: {
     name: 'breadthfirst',
     label: 'Tree',
   },
 };
 
-const DEFAULT_LAYOUT = 'BREADTH_FIRST';
+export const DEFAULT_LAYOUT = 'breadthFirst';
 
 const Graph: React.FunctionComponent<{
   elements: cytoscape.ElementDefinition[];
@@ -32,11 +37,24 @@ const Graph: React.FunctionComponent<{
   onNodeExpand?(id: string, isExternal: boolean): void;
   onNodeHoverOver?(id: string, isExternal: boolean): void;
   onReset?(): void;
-}> = ({ elements, onNodeClick, onNodeExpand, onNodeHoverOver, onReset }) => {
+  onCollapse?(): void;
+  onLayoutChange?(type: string): void;
+  layout?: string;
+  collapsed?: boolean;
+}> = ({
+  elements,
+  onNodeClick,
+  onNodeExpand,
+  onNodeHoverOver,
+  onReset,
+  collapsed,
+  onCollapse,
+  onLayoutChange,
+  layout = DEFAULT_LAYOUT,
+}) => {
   const container = React.useRef<HTMLDivElement>(null);
   const [showAlert, setShowAlert] = React.useState(true);
   const [layoutBusy, setLayoutBusy] = React.useState(false);
-  const [layoutType, setLayoutType] = React.useState(DEFAULT_LAYOUT);
   const [cursorPointer, setCursorPointer] = React.useState<string | null>(null);
   const graph = React.useRef<cytoscape.Core>();
 
@@ -46,7 +64,7 @@ const Graph: React.FunctionComponent<{
       graph.current &&
         graph.current
           .layout({
-            ...LAYOUTS[layoutType],
+            ...LAYOUTS[layout],
             stop() {
               setLayoutBusy(false);
             },
@@ -57,7 +75,7 @@ const Graph: React.FunctionComponent<{
 
   React.useEffect(() => {
     forceLayout();
-  }, [layoutType]);
+  }, [layout]);
 
   React.useEffect(() => {
     if (graph.current) {
@@ -110,15 +128,15 @@ const Graph: React.FunctionComponent<{
   });
 
   const handleLayoutClick = (type: string) => () => {
-    setLayoutType(type);
+    onLayoutChange && onLayoutChange(type);
   };
 
-  const onRecenter = () => {    
+  const onRecenter = () => {
     if (graph.current) {
       const origin = graph.current.elements()[0];
       graph.current.center(origin);
     }
-  }
+  };
 
   const replaceElements = (elements: cytoscape.ElementDefinition[]) => {
     if (graph.current) {
@@ -185,7 +203,7 @@ const Graph: React.FunctionComponent<{
               return (
                 <Button
                   disabled={layoutBusy}
-                  type={layoutKey === layoutType ? 'primary' : 'default'}
+                  type={layoutKey === layout ? 'primary' : 'default'}
                   onClick={handleLayoutClick(layoutKey)}
                 >
                   {LAYOUTS[layoutKey].label}
@@ -195,12 +213,18 @@ const Graph: React.FunctionComponent<{
           </div>
           <div>
             <Button
+              type={collapsed ? 'primary' : 'default'}
               disabled={layoutBusy}
-              onClick={onRecenter}
+              onClick={onCollapse}
             >
+              {collapsed ? 'Expand Paths' : 'Collapse Paths'}
+            </Button>
+            <Button disabled={layoutBusy} onClick={onRecenter}>
               Origin
             </Button>
-            <Button onClick={onReset}>Reset</Button>
+            <Button disabled={layoutBusy} onClick={onReset}>
+              Reset
+            </Button>
           </div>
         </div>
         {showAlert ? (
