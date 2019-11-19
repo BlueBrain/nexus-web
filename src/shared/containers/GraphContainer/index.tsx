@@ -37,19 +37,18 @@ const GraphContainer: React.FunctionComponent<{
   const [elements, setElements] = React.useState<cytoscape.ElementDefinition[]>(
     []
   );
-  const [{ busy, error, links, total, next }, setLinks] = React.useState<{
-    busy: boolean;
+  const [{ error, links, total, next }, setLinks] = React.useState<{
     error: Error | null;
     links: ResourceLink[];
     next: string | null;
     total: number;
   }>({
     next: null,
-    busy: false,
     error: null,
     links: [],
     total: 0,
   });
+  const [loading, setLoading] = React.useState(false);
 
   const getResourceLinks = async (self: string) => {
     const {
@@ -71,11 +70,11 @@ const GraphContainer: React.FunctionComponent<{
         return;
       }
       try {
+        setLoading(true);
         setLinks({
           next,
           links,
           total,
-          busy: true,
           error: null,
         });
         const response = await getResourceLinks(resource._self);
@@ -83,7 +82,6 @@ const GraphContainer: React.FunctionComponent<{
           next: response._next || null,
           links: response._results,
           total: response._total,
-          busy: false,
           error: null,
         });
         const newElements: cytoscape.ElementDefinition[] = [
@@ -117,9 +115,9 @@ const GraphContainer: React.FunctionComponent<{
           error,
           links,
           total,
-          busy: false,
         });
       }
+      setLoading(false);
     },
     [resource._self, reset, collapsed]
   );
@@ -129,6 +127,7 @@ const GraphContainer: React.FunctionComponent<{
       return;
     }
     try {
+      setLoading(true);
       // TODO: should get from self not ID if its in another project
       const response = await nexus.Resource.links(
         orgLabel,
@@ -167,6 +166,7 @@ const GraphContainer: React.FunctionComponent<{
         description: error.message,
       });
     }
+    setLoading(false);
   };
 
   const handleReset = () => {
@@ -200,7 +200,7 @@ const GraphContainer: React.FunctionComponent<{
     setLayout(layout);
   };
 
-  if (busy || error) return null;
+  if (error) return null;
 
   return (
     <>
@@ -214,6 +214,7 @@ const GraphContainer: React.FunctionComponent<{
         onCollapse={handleCollapse}
         onLayoutChange={handleLayoutChange}
         layout={layout}
+        loading={loading}
       />
       {!!selectedResourceId && (
         <ResourcePreviewCardContainer
