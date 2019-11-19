@@ -84,7 +84,6 @@ const GraphContainer: React.FunctionComponent<{
           total: response._total,
           error: null,
         });
-
         const newElements: cytoscape.ElementDefinition[] = [
           {
             classes: '-expandable -main',
@@ -97,6 +96,7 @@ const GraphContainer: React.FunctionComponent<{
           ...(await Promise.all(
             response._results.map(link => makeNode(link, getResourceLinks))
           )),
+          
           // Link Path Nodes and Edges
           ...createNodesAndEdgesFromResourceLinks(
             response._results,
