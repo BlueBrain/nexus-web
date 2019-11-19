@@ -72,6 +72,7 @@ const GraphContainer: React.FunctionComponent<{
         return;
       }
       try {
+        setLoading(true);
         setLinks({
           next,
           links,
@@ -121,6 +122,7 @@ const GraphContainer: React.FunctionComponent<{
           busy: false,
         });
       }
+      setLoading(false);
     },
     [resource._self, reset, collapsed]
   );
