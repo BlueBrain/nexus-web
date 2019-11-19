@@ -2,7 +2,9 @@ import * as React from 'react';
 import { Table } from 'antd';
 import './ResultTable.less';
 import moment from 'moment';
-import Search from 'antd/lib/input/Search';
+import { Input } from 'antd';
+
+const { Search } = Input;
 
 const PAGE_SIZE = 10;
 
