@@ -56,14 +56,12 @@ const GraphContainer: React.FunctionComponent<{
       projectLabel,
       resourceId,
     } = getResourceLabelsAndIdsFromSelf(self);
-    const outgoingLinks = await nexus.Resource.links(
+    return await nexus.Resource.links(
       orgLabel,
       projectLabel,
       resourceId,
       'outgoing'
     );
-
-    return outgoingLinks;
   };
 
   useAsyncEffect(
@@ -71,7 +69,6 @@ const GraphContainer: React.FunctionComponent<{
       if (!isMounted()) {
         return;
       }
-      
       try {
         setLoading(true);
         setLinks({
@@ -80,20 +77,7 @@ const GraphContainer: React.FunctionComponent<{
           total,
           error: null,
         });
-
-        const {
-          orgLabel,
-          projectLabel,
-          resourceId,
-        } = getResourceLabelsAndIdsFromSelf(resource._self);
-
-        const response = await nexus.Resource.links(
-          orgLabel,
-          projectLabel,
-          resourceId,
-          'outgoing'
-        );
-
+        const response = await getResourceLinks(resource._self);
         setLinks({
           next: response._next || null,
           links: response._results,
@@ -105,21 +89,19 @@ const GraphContainer: React.FunctionComponent<{
           {
             classes: '-expandable -main',
             data: {
-              id: resourceId,
+              id: resource['@id'],
               label: getResourceLabel(resource),
             },
           },
-
           // Link Nodes
           ...(await Promise.all(
             response._results.map(link => makeNode(link, getResourceLinks))
           )),
-          
           // Link Path Nodes and Edges
           ...createNodesAndEdgesFromResourceLinks(
             response._results,
-            resourceId,
-            collapsed,
+            resource['@id'],
+            collapsed
           ),
         ];
         setElements(newElements);
@@ -175,7 +157,7 @@ const GraphContainer: React.FunctionComponent<{
         ...createNodesAndEdgesFromResourceLinks(
           response._results,
           id,
-          collapsed,
+          collapsed
         ),
       ]);
     } catch (error) {

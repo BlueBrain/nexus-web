@@ -35,8 +35,7 @@ export const makeNode = async (
 export const createNodesAndEdgesFromResourceLinks = (
   resourceLinks: ResourceLink[],
   originId: string,
-  collapsed: boolean,
-  linkType?: string,
+  collapsed: boolean
 ) => {
   return resourceLinks.reduce(
     (pathNodes: cytoscape.ElementDefinition[], link) => {
