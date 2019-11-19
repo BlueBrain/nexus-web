@@ -37,15 +37,13 @@ const GraphContainer: React.FunctionComponent<{
   const [elements, setElements] = React.useState<cytoscape.ElementDefinition[]>(
     []
   );
-  const [{ busy, error, links, total, next }, setLinks] = React.useState<{
-    busy: boolean;
+  const [{ error, links, total, next }, setLinks] = React.useState<{
     error: Error | null;
     links: ResourceLink[];
     next: string | null;
     total: number;
   }>({
     next: null,
-    busy: false,
     error: null,
     links: [],
     total: 0,
@@ -77,7 +75,6 @@ const GraphContainer: React.FunctionComponent<{
           next,
           links,
           total,
-          busy: true,
           error: null,
         });
         const response = await getResourceLinks(resource._self);
@@ -85,7 +82,6 @@ const GraphContainer: React.FunctionComponent<{
           next: response._next || null,
           links: response._results,
           total: response._total,
-          busy: false,
           error: null,
         });
         const newElements: cytoscape.ElementDefinition[] = [
@@ -119,7 +115,6 @@ const GraphContainer: React.FunctionComponent<{
           error,
           links,
           total,
-          busy: false,
         });
       }
       setLoading(false);
@@ -205,7 +200,7 @@ const GraphContainer: React.FunctionComponent<{
     setLayout(layout);
   };
 
-  if (busy || error) return null;
+  if (error) return null;
 
   return (
     <>
