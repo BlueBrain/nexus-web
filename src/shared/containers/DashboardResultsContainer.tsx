@@ -33,7 +33,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
         encodeURIComponent(props.viewId),
         props.dataQuery
       ),
-    [props.dataQuery, props.viewId] // only trigger new call if we have a new query and a new view
+    []
   );
 
   if (error) {
