@@ -39,13 +39,15 @@ const GraphContainer: React.FunctionComponent<{
   );
   const [{ error, links, total, next }, setLinks] = React.useState<{
     error: Error | null;
-    links: ResourceLink[];
+    incomingLinks: ResourceLink[];
+    outgoingLinks: ResourceLink[];
     next: string | null;
     total: number;
   }>({
     next: null,
     error: null,
-    links: [],
+    incomingLinks: [],
+    outgoingLinks: [],
     total: 0,
   });
   const [loading, setLoading] = React.useState(false);
@@ -64,13 +66,12 @@ const GraphContainer: React.FunctionComponent<{
       'outgoing'
     );
 
-    const incomingLinks = await nexus.Resource.links(
-      orgLabel,
-      projectLabel,
-      resourceId,
-      'incoming'
-    );
-    // return total from both
+    // const incomingLinks = await nexus.Resource.links(
+    //   orgLabel,
+    //   projectLabel,
+    //   resourceId,
+    //   'incoming'
+    // );
 
     return outgoingLinks;
   };
@@ -132,9 +133,9 @@ const GraphContainer: React.FunctionComponent<{
           )),
 
           // Incoming Link Nodes
-          ...(await Promise.all(
-            incomingLinks._results.map(link => makeNode(link, getResourceLinks))
-          )),
+          // ...(await Promise.all(
+          //   incomingLinks._results.map(link => makeNode(link, getResourceLinks))
+          // )),
 
           // Outgoing Link Path Nodes and Edges
           ...createNodesAndEdgesFromResourceLinks(
@@ -145,12 +146,12 @@ const GraphContainer: React.FunctionComponent<{
           ),
 
           // Outgoing Link Path Nodes and Edges
-          ...createNodesAndEdgesFromResourceLinks(
-            incomingLinks._results,
-            resourceId,
-            collapsed,
-            'incoming'
-          ),
+          // ...createNodesAndEdgesFromResourceLinks(
+          //   incomingLinks._results,
+          //   resourceId,
+          //   collapsed,
+          //   'incoming'
+          // ),
         ];
         setElements(newElements);
       } catch (error) {
@@ -161,7 +162,8 @@ const GraphContainer: React.FunctionComponent<{
         setLinks({
           next,
           error,
-          links,
+          incomingLinks,
+          outgoingLinks,
           total,
         });
       }
