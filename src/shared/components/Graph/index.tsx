@@ -258,7 +258,7 @@ const Graph: React.FunctionComponent<{
         {loading && (
           <Alert
             style={{ margin: '7px 5px 0 0' }}
-            message="Loading new nodes..."
+            message="Loading..."
             type="info"
           />
         )}
