@@ -5,6 +5,8 @@ import * as cola from 'cytoscape-cola';
 
 import style from './style';
 
+import GraphLegend from './GraphLegend';
+
 import './GraphComponent.less';
 
 export const LAYOUTS: {
@@ -189,32 +191,9 @@ const Graph: React.FunctionComponent<{
       <div
         className="graph"
         ref={container}
-        style={
-          cursorPointer
-            ? {
-                cursor: cursorPointer,
-              }
-            : {}
-        }
+        style={cursorPointer? { cursor: cursorPointer } : {}}
       ></div>
-      <div className="legend">
-        <div>
-          <span className="node -main" />
-          Origin
-        </div>
-        <div>
-          <span className="node -external" />
-          External Link
-        </div>
-        <div>
-          <span className="node -internal" />
-          Internal Link
-        </div>
-        <div>
-          <span className="node -blank-node" />
-          Blank Node
-        </div>
-      </div>
+      <GraphLegend />
       <div className="top">
         <div className="controls">
           <div>
