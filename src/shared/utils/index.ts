@@ -260,3 +260,17 @@ export function getResourceLabelsAndIdsFromSelf(self: string) {
     resourceId,
   };
 }
+
+/**
+ * Returns a project and org labels from url
+ *
+ * @param {projectUrl} string
+ * @returns {
+  * [org: string, proj: string]
+  * }
+  */
+export const parseProjectUrl = (projectUrl: string) => {
+  const projectUrlR = /projects\/([\w-]+)\/([\w-]+)\/?$/;
+  const [, org, proj] = projectUrl.match(projectUrlR) as string[];
+  return [org, proj];
+};

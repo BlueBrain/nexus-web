@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Table } from 'antd';
 import './ResultTable.less';
 import moment from 'moment';
-import { Input } from 'antd';
+import { Input, Table } from 'antd';
+import { parseProjectUrl } from '../../utils/index'
 
 const { Search } = Input;
 
@@ -40,7 +40,7 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
               break;
             case 'Project':
               render = (projectURI: string) => {
-                const [org, project] = ['1', '2'];
+                const [org, project] = parseProjectUrl(projectURI);
                 return (
                   <span>
                     <b>{org}</b> / {project}
