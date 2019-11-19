@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useNexus } from '@bbp/react-nexus';
 import { Spin, Alert } from 'antd';
-import ResulTable from '../components/ResultsTable/ResultsTable';
+import ResultsTable from '../components/ResultsTable/ResultsTable';
 
 export type Binding = {
   [key: string]: {
@@ -91,7 +91,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
   return (
     <Spin spinning={loading}>
       {data && (
-        <ResulTable
+        <ResultsTable
           headerProperties={headerProperties}
           items={items}
           handleClick={props.handleClick}
