@@ -50,6 +50,7 @@ const GraphContainer: React.FunctionComponent<{
     links: [],
     total: 0,
   });
+  const [loading, setLoading] = React.useState(false);
 
   const getResourceLinks = async (self: string) => {
     const {
@@ -129,6 +130,7 @@ const GraphContainer: React.FunctionComponent<{
       return;
     }
     try {
+      setLoading(true);
       // TODO: should get from self not ID if its in another project
       const response = await nexus.Resource.links(
         orgLabel,
@@ -167,6 +169,7 @@ const GraphContainer: React.FunctionComponent<{
         description: error.message,
       });
     }
+    setLoading(false);
   };
 
   const handleReset = () => {
@@ -214,6 +217,7 @@ const GraphContainer: React.FunctionComponent<{
         onCollapse={handleCollapse}
         onLayoutChange={handleLayoutChange}
         layout={layout}
+        loading={loading}
       />
       {!!selectedResourceId && (
         <ResourcePreviewCardContainer

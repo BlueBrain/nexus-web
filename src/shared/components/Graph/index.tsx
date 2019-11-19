@@ -42,6 +42,7 @@ const Graph: React.FunctionComponent<{
   onLayoutChange?(type: string): void;
   layout?: string;
   collapsed?: boolean;
+  loading: boolean,
 }> = ({
   elements,
   onNodeClick,
@@ -52,6 +53,7 @@ const Graph: React.FunctionComponent<{
   onCollapse,
   onLayoutChange,
   layout = DEFAULT_LAYOUT,
+  loading,
 }) => {
   const container = React.useRef<HTMLDivElement>(null);
   const [showAlert, setShowAlert] = React.useState(true);
@@ -253,6 +255,13 @@ const Graph: React.FunctionComponent<{
             afterClose={() => setShowAlert(false)}
           />
         ) : null}
+        {loading && (
+          <Alert
+            style={{ margin: '7px 5px 0 0' }}
+            message="Loading new nodes..."
+            type="info"
+          />
+        )}
       </div>
     </div>
   );
