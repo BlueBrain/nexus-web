@@ -83,8 +83,11 @@ const Graph: React.FunctionComponent<{
 
   const onRecenter = () => {
     if (graph.current) {
-      const origin = graph.current.elements()[0];
-      graph.current.center(origin);
+      const origin = elements.find(element => element.data.isOrigin);
+      
+      if (origin && origin.data && origin.data.id) {
+        graph.current.center(graph.current.getElementById(origin.data.id));
+      }
     }
   };
 
