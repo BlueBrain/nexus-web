@@ -6,10 +6,11 @@ import TypesIcon from '../Types/TypesIcon';
 const ResourceCardCollapsed: React.FunctionComponent<{
   onClickExpand?(): void;
   label: string;
+  resourceUrl: string;
   busy: boolean;
   types?: string[];
   isExternal?: boolean;
-}> = ({ onClickExpand, label, busy, isExternal, types }) => {
+}> = ({ onClickExpand, label, resourceUrl, busy, isExternal, types }) => {
   if (busy) {
     return (
       <Card
@@ -48,8 +49,8 @@ const ResourceCardCollapsed: React.FunctionComponent<{
         <div>{!!types && <TypesIcon type={types} full={true} />}</div>
       )}
       {!!isExternal && (
-        <a href={label} target="_blank">
-          {label}
+        <a href={resourceUrl} target="_blank">
+          {resourceUrl}
         </a>
       )}
     </Card>

@@ -77,7 +77,12 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
     const label = labelOf(resourceId);
     return (
       <ResourcePreviewCard>
-        <ResourceCardCollapsed label={label} busy={busy} isExternal />
+        <ResourceCardCollapsed
+          label={label}
+          resourceUrl={resourceSelf}
+          busy={busy}
+          isExternal
+        />
       </ResourcePreviewCard>
     );
   }
@@ -97,6 +102,7 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
         ) : (
           <ResourceCardCollapsed
             label={label}
+            resourceUrl={resourceSelf}
             onClickExpand={() => setShowFullCard(true)}
             busy={busy}
             types={types}
