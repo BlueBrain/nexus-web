@@ -124,23 +124,13 @@ const Graph: React.FunctionComponent<{
     }
   };
 
+  // Callbacks must be refreshed on each prop/state change
+  // otherwise the state referenced in each callback
+  // passed as props by parents will be stale
   React.useEffect(() => {
-    forceLayout();
-  }, [layout]);
-
-  React.useEffect(() => {
-    updateElements(elements);
-  }, [JSON.stringify(elements)]);
-
-  React.useEffect(() => {
-    cytoscape.use(cola);
-    graph.current = cytoscape({
-      elements,
-      style,
-      maxZoom: 1,
-      wheelSensitivity: 0.2,
-      container: container.current,
-    });
+    if (!graph.current) {
+      return;
+    }
     graph.current.on('tap', 'node', (e: cytoscape.EventObject) => {
       const { isBlankNode, isExpandable } = e.target.data();
       if (isBlankNode || !isExpandable) {
@@ -175,13 +165,38 @@ const Graph: React.FunctionComponent<{
       setCursorPointer('grab');
     });
     return () => {
+      if (!graph.current) {
+        return;
+      }
+      graph.current.removeListener('tap');
+      graph.current.removeListener('taphold');
+      graph.current.removeListener('mouseover');
+      graph.current.removeListener('mouseout');
+      graph.current.removeListener('mousedown');
+      graph.current.removeListener('mouseup');
+    };
+  });
+
+  React.useEffect(() => {
+    forceLayout();
+  }, [layout]);
+
+  React.useEffect(() => {
+    updateElements(elements);
+  }, [JSON.stringify(elements)]);
+
+  React.useEffect(() => {
+    cytoscape.use(cola);
+    graph.current = cytoscape({
+      elements,
+      style,
+      maxZoom: 1,
+      wheelSensitivity: 0.2,
+      container: container.current,
+    });
+
+    return () => {
       if (graph.current) {
-        graph.current.removeListener('tap');
-        graph.current.removeListener('taphold');
-        graph.current.removeListener('mouseover');
-        graph.current.removeListener('mouseout');
-        graph.current.removeListener('mousedown');
-        graph.current.removeListener('mouseup');
         graph.current.destroy();
       }
     };
@@ -201,6 +216,7 @@ const Graph: React.FunctionComponent<{
             {Object.keys(LAYOUTS).map(layoutKey => {
               return (
                 <Button
+                  key={layoutKey}
                   size="small"
                   type={layoutKey === layout ? 'primary' : 'default'}
                   onClick={handleLayoutClick(layoutKey)}
