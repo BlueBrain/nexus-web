@@ -6,26 +6,28 @@ import { Resource } from '@bbp/nexus-sdk';
 import ResourceCard from '../components/ResourceCard';
 import ResourceCardCollapsed from '../components/ResourceCard/ResourceCardCollapsed';
 import ResourcePreviewCard from '../components/ResourceCard/ResourcePreviewCard';
+import { getResourceLabelsAndIdsFromSelf } from '../utils';
 
 const ResourcePreviewCardContainer: React.FunctionComponent<{
-    orgLabel: string,
-    projectLabel: string,
-    resourceId: string,
-    isExternal: boolean | null,
-}> = ({ orgLabel, projectLabel, resourceId, isExternal }) => {
-    const nexus = useNexusContext();
-    const [showFullCard, setShowFullCard] = React.useState(false);
-    const [{ busy, resource, error }, setResource] = React.useState<{
-        busy: boolean;
-        resource: Resource | null;
-        error: Error | null;
-      }>({
-        busy: false,
-        resource: null,
-        error: null,
-      });
+  resourceSelf: string;
+  isExternal: boolean | null;
+}> = ({ resourceSelf, isExternal }) => {
+  const nexus = useNexusContext();
+  const [showFullCard, setShowFullCard] = React.useState(false);
+  const [{ busy, resource, error }, setResource] = React.useState<{
+    busy: boolean;
+    resource: Resource | null;
+    error: Error | null;
+  }>({
+    busy: false,
+    resource: null,
+    error: null,
+  });
 
-    useAsyncEffect(async isMounted => {
+  const { resourceId } = getResourceLabelsAndIdsFromSelf(resourceSelf);
+
+  useAsyncEffect(
+    async isMounted => {
       if (!isMounted()) {
         return;
       }
@@ -45,11 +47,9 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
           error: null,
           busy: true,
         });
-        const nextResource = (await nexus.Resource.get(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(resourceId)
-        )) as Resource;
+        const nextResource = (await nexus.httpGet({
+          path: resourceSelf,
+        })) as Resource;
         setResource({
           resource: nextResource,
           error: null,
@@ -62,34 +62,42 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
           busy: false,
         });
       }
-    }, [orgLabel, projectLabel, resourceId]);
+    },
+    [resourceSelf]
+  );
 
-  if (isExternal) {
-    return (
-      <ResourcePreviewCard>
-        <ResourceCardCollapsed resourceId={resourceId} busy={busy} isExternal />
-      </ResourcePreviewCard>
-    )
-  }
-  
   if (resource) {
-    const {
-      '@type': type,
-    } = resource;
+    if (isExternal) {
+      return (
+        <ResourcePreviewCard>
+          <ResourceCardCollapsed resource={resource} busy={busy} isExternal />
+        </ResourcePreviewCard>
+      );
+    }
+
+    const { '@type': type } = resource;
     const types: string[] = Array.isArray(type) ? type : [type || ''];
 
     return (
       <ResourcePreviewCard>
         {showFullCard ? (
-          <ResourceCard resource={resource} onClickCollapse={() => setShowFullCard(false)} />
+          <ResourceCard
+            resource={resource}
+            onClickCollapse={() => setShowFullCard(false)}
+          />
         ) : (
-          <ResourceCardCollapsed resourceId={resourceId} onClickExpand={() => setShowFullCard(true)} busy={busy} types={types} />
+          <ResourceCardCollapsed
+            resource={resource}
+            onClickExpand={() => setShowFullCard(true)}
+            busy={busy}
+            types={types}
+          />
         )}
       </ResourcePreviewCard>
     );
   }
 
   return null;
-}
+};
 
 export default ResourcePreviewCardContainer;

@@ -1,29 +1,33 @@
 import * as React from 'react';
 import { Card, Button, Skeleton } from 'antd';
+import { Resource } from '@bbp/nexus-sdk';
 
-import { labelOf } from '../../utils';
+import { labelOf, getResourceLabel } from '../../utils';
 import TypesIcon from '../Types/TypesIcon';
 
 const ResourceCardCollapsed: React.FunctionComponent<{
   onClickExpand?(): void;
-  resourceId: string;
-  busy: boolean,
-  types?: string[],
-  isExternal?: boolean,
-}> = ({ onClickExpand, resourceId, busy, isExternal, types }) => {
-  const label: string = labelOf(resourceId);
+  resource: Resource;
+  busy: boolean;
+  types?: string[];
+  isExternal?: boolean;
+}> = ({ onClickExpand, resource, busy, isExternal, types }) => {
+  const label: string = getResourceLabel(resource);
+  const resourceId = resource['@id'];
 
   if (busy) {
     return (
-      <Card bodyStyle={{ 
-        padding: '0px 10px',
-        width: '200px',
-      }}>
+      <Card
+        bodyStyle={{
+          padding: '0px 10px',
+          width: '200px',
+        }}
+      >
         <Skeleton active paragraph={{ rows: 1 }} />
       </Card>
     );
   }
-  
+
   return (
     <Card
       headStyle={{ fontSize: '12px' }}
@@ -33,17 +37,28 @@ const ResourceCardCollapsed: React.FunctionComponent<{
       }}
       title={<span>{label}&nbsp;</span>}
       size="small"
-      extra={isExternal ? null : <Button onClick={onClickExpand} shape="circle" icon="up" size="small" />}
+      extra={
+        isExternal ? null : (
+          <Button
+            onClick={onClickExpand}
+            shape="circle"
+            icon="up"
+            size="small"
+          />
+        )
+      }
       style={{ maxWidth: '400px' }}
     >
       {!!types && (
         <div>{!!types && <TypesIcon type={types} full={true} />}</div>
       )}
       {!!isExternal && (
-        <a href={resourceId} target="_blank">{resourceId}</a>
+        <a href={resourceId} target="_blank">
+          {resourceId}
+        </a>
       )}
     </Card>
-  )
-}
+  );
+};
 
 export default ResourceCardCollapsed;

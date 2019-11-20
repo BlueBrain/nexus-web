@@ -25,13 +25,13 @@ const GraphContainer: React.FunctionComponent<{
   const [collapsed, setCollapsed] = React.useState(true);
   const [layout, setLayout] = React.useState(DEFAULT_LAYOUT);
   const [
-    { selectedResourceId, isSelectedExternal },
+    { selectedResourceSelf, isSelectedExternal },
     setSelectedResource,
   ] = React.useState<{
-    selectedResourceId: string;
+    selectedResourceSelf: string;
     isSelectedExternal: boolean | null;
   }>({
-    selectedResourceId: '',
+    selectedResourceSelf: '',
     isSelectedExternal: null,
   });
   const [elements, setElements] = React.useState<cytoscape.ElementDefinition[]>(
@@ -195,12 +195,12 @@ const GraphContainer: React.FunctionComponent<{
   };
 
   const showResourcePreview = (id: string, data: ElementNodeData) => {
-    const { isBlankNode, isExpandable, self, isExternal } = data;
-    if (isBlankNode) {
+    const { isBlankNode, self, isExternal } = data;
+    if (isBlankNode || !self) {
       return;
     }
     setSelectedResource({
-      selectedResourceId: id,
+      selectedResourceSelf: self,
       isSelectedExternal: isExternal,
     });
   };
@@ -229,11 +229,9 @@ const GraphContainer: React.FunctionComponent<{
         layout={layout}
         loading={loading}
       />
-      {!!selectedResourceId && (
+      {!!selectedResourceSelf && (
         <ResourcePreviewCardContainer
-          resourceId={selectedResourceId}
-          projectLabel={projectLabel}
-          orgLabel={orgLabel}
+          resourceSelf={selectedResourceSelf}
           isExternal={isSelectedExternal}
         />
       )}
