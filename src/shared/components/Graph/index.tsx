@@ -44,7 +44,7 @@ const Graph: React.FunctionComponent<{
   onLayoutChange?(type: string): void;
   layout?: string;
   collapsed?: boolean;
-  loading: boolean,
+  loading: boolean;
 }> = ({
   elements,
   onNodeClick,
@@ -77,60 +77,6 @@ const Graph: React.FunctionComponent<{
     }
   };
 
-  React.useEffect(() => {
-    forceLayout();
-  }, [layout]);
-
-  React.useEffect(() => {
-    if (graph.current) {
-      graph.current.on('tap', 'node', (e: cytoscape.EventObject) => {
-        const { isBlankNode, isExpandable } = e.target.data();
-        if (isBlankNode || !isExpandable) {
-          return;
-        }
-        onNodeExpand &&
-          onNodeExpand(e.target.id(), e.target.data('isExternal'));
-      });
-      graph.current.on('taphold', 'node', (e: cytoscape.EventObject) => {
-        onNodeClick && onNodeClick(e.target.id(), e.target.data('isExternal'));
-      });
-      graph.current.on('mouseover', 'node', (e: cytoscape.EventObject) => {
-        const { isBlankNode, isExpandable } = e.target.data();
-
-        if (isExpandable) {
-          setCursorPointer('pointer');
-        } else {
-          setCursorPointer('grab');
-        }
-
-        if (isBlankNode) return;
-
-        onNodeHoverOver &&
-          onNodeHoverOver(e.target.id(), e.target.data('isExternal'));
-      });
-      graph.current.on('mouseout', 'node', (e: cytoscape.EventObject) => {
-        setCursorPointer(null);
-      });
-      graph.current.on('mousedown', 'node', (e: cytoscape.EventObject) => {
-        setCursorPointer('grabbing');
-      });
-      graph.current.on('mouseup', 'node', (e: cytoscape.EventObject) => {
-        setCursorPointer('grab');
-      });
-    }
-
-    return () => {
-      if (graph.current) {
-        graph.current.removeListener('tap');
-        graph.current.removeListener('taphold');
-        graph.current.removeListener('mouseover');
-        graph.current.removeListener('mouseout');
-        graph.current.removeListener('mousedown');
-        graph.current.removeListener('mouseup');
-      }
-    };
-  });
-
   const handleLayoutClick = (type: string) => () => {
     onLayoutChange && onLayoutChange(type);
   };
@@ -142,31 +88,45 @@ const Graph: React.FunctionComponent<{
     }
   };
 
+  // We must atomically update the elements on the graph
+  // Instead of removing them all and injecting new elements
+  // so that each element will preserve its positioning
+  // which creates a nicer effect for users
+  // as the elements won't jump around while navigating
   const updateElements = (elements: cytoscape.ElementDefinition[]) => {
     if (graph.current) {
-      const elementIds = graph.current.elements().map(element => element.id());
-
-      // update old elements
+      // Updating old elements
       graph.current.elements().forEach(graphElement => {
         const match = elements.find(
           dataElement => graphElement.id() === dataElement.data.id
         );
+        // update old elements
         if (match) {
           graphElement.data(match.data);
           match.classes && graphElement.classes(match.classes);
+          return;
         }
+        // delete elements on graph that aren't in the elements list anymore
+        graphElement.remove();
       });
 
-      // update graph with only the new elements
+      // Adding new elements
+      const graphElementIds = graph.current
+        .elements()
+        .map(element => element.id());
       const newElements = elements.filter(
-        element => !elementIds.includes(element.data.id || '')
+        element => !graphElementIds.includes(element.data.id || '')
       );
-
       graph.current.add(newElements);
 
+      // Animate graph with the updated elements
       forceLayout();
     }
   };
+
+  React.useEffect(() => {
+    forceLayout();
+  }, [layout]);
 
   React.useEffect(() => {
     updateElements(elements);
@@ -181,8 +141,49 @@ const Graph: React.FunctionComponent<{
       wheelSensitivity: 0.2,
       container: container.current,
     });
+    graph.current.on('tap', 'node', (e: cytoscape.EventObject) => {
+      const { isBlankNode, isExpandable } = e.target.data();
+      if (isBlankNode || !isExpandable) {
+        return;
+      }
+      onNodeExpand && onNodeExpand(e.target.id(), e.target.data('isExternal'));
+    });
+    graph.current.on('taphold', 'node', (e: cytoscape.EventObject) => {
+      onNodeClick && onNodeClick(e.target.id(), e.target.data('isExternal'));
+    });
+    graph.current.on('mouseover', 'node', (e: cytoscape.EventObject) => {
+      const { isBlankNode, isExpandable } = e.target.data();
+
+      if (isExpandable) {
+        setCursorPointer('pointer');
+      } else {
+        setCursorPointer('grab');
+      }
+
+      if (isBlankNode) return;
+
+      onNodeHoverOver &&
+        onNodeHoverOver(e.target.id(), e.target.data('isExternal'));
+    });
+    graph.current.on('mouseout', 'node', (e: cytoscape.EventObject) => {
+      setCursorPointer(null);
+    });
+    graph.current.on('mousedown', 'node', (e: cytoscape.EventObject) => {
+      setCursorPointer('grabbing');
+    });
+    graph.current.on('mouseup', 'node', (e: cytoscape.EventObject) => {
+      setCursorPointer('grab');
+    });
     return () => {
-      graph.current && graph.current.destroy();
+      if (graph.current) {
+        graph.current.removeListener('tap');
+        graph.current.removeListener('taphold');
+        graph.current.removeListener('mouseover');
+        graph.current.removeListener('mouseout');
+        graph.current.removeListener('mousedown');
+        graph.current.removeListener('mouseup');
+        graph.current.destroy();
+      }
     };
   }, [container]);
 
@@ -191,7 +192,7 @@ const Graph: React.FunctionComponent<{
       <div
         className="graph"
         ref={container}
-        style={cursorPointer? { cursor: cursorPointer } : {}}
+        style={cursorPointer ? { cursor: cursorPointer } : {}}
       ></div>
       <GraphLegend />
       <div className="top">
