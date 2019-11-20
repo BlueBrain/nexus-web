@@ -99,6 +99,7 @@ const GraphContainer: React.FunctionComponent<{
             data: {
               id: resource['@id'],
               label: getResourceLabel(resource),
+              isOrigin: true,
             },
           },
           // Link Nodes
