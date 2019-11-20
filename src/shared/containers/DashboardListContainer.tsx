@@ -33,6 +33,15 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
       resourceId
     )}`;
   };
+  const handleClick = (selfUrl: string) => {
+    const {
+      orgLabel,
+      projectLabel,
+      resourceId,
+    } = getResourceLabelsAndIdsFromSelf(selfUrl);
+    const path = makeResourceUri(orgLabel, projectLabel, resourceId);
+    history.push(path);
+  };
   const history = useHistory();
   const [dashboardResources, setDashboardResources] = React.useState<
     Resource[]
@@ -77,19 +86,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         >
           {selectedDashboard ? (
             <DashboardResultsContainer
-              handleClick={(selfUrl: string) => {
-                const {
-                  orgLabel,
-                  projectLabel,
-                  resourceId,
-                } = getResourceLabelsAndIdsFromSelf(selfUrl);
-                const path = makeResourceUri(
-                  orgLabel,
-                  projectLabel,
-                  resourceId
-                );
-                history.push(path);
-              }}
+              handleClick={handleClick}
               orgLabel={orgLabel}
               projectLabel={projectLabel}
               viewId={dashboards[0].view}
