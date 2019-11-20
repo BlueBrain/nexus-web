@@ -2,7 +2,7 @@ import * as React from 'react';
 import './ResultTable.less';
 import * as moment from 'moment';
 import { Input, Table } from 'antd';
-import { parseProjectUrl } from '../../utils/index'
+import { parseProjectUrl } from '../../utils/index';
 
 const { Search } = Input;
 

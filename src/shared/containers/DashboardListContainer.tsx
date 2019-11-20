@@ -3,6 +3,10 @@ import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
 import DashboardResultsContainer from './DashboardResultsContainer';
+import { getResourceLabelsAndIdsFromSelf } from '../utils';
+import { useHistory } from 'react-router-dom';
+import { RootState } from '../store/reducers';
+import { useSelector } from 'react-redux';
 
 type Dashboard = {
   dashboard: string;
@@ -19,6 +23,17 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   orgLabel,
   projectLabel,
 }) => {
+  const basePath = useSelector((state: RootState) => state.config.basePath);
+  const makeResourceUri = (
+    orgLabel: string,
+    projectLabel: string,
+    resourceId: string
+  ) => {
+    return `${basePath}/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+      resourceId
+    )}`;
+  };
+  const history = useHistory();
   const [dashboardResources, setDashboardResources] = React.useState<
     Resource[]
   >([]);
@@ -62,8 +77,18 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         >
           {selectedDashboard ? (
             <DashboardResultsContainer
-              handleClick={(self: string) => {
-                /* TODO Logic to display/navigate to resources */
+              handleClick={(selfUrl: string) => {
+                const {
+                  orgLabel,
+                  projectLabel,
+                  resourceId,
+                } = getResourceLabelsAndIdsFromSelf(selfUrl);
+                const path = makeResourceUri(
+                  orgLabel,
+                  projectLabel,
+                  resourceId
+                );
+                history.push(path);
               }}
               orgLabel={orgLabel}
               projectLabel={projectLabel}
