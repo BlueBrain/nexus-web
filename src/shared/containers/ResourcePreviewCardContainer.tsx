@@ -6,7 +6,11 @@ import { Resource } from '@bbp/nexus-sdk';
 import ResourceCard from '../components/ResourceCard';
 import ResourceCardCollapsed from '../components/ResourceCard/ResourceCardCollapsed';
 import ResourcePreviewCard from '../components/ResourceCard/ResourcePreviewCard';
-import { getResourceLabelsAndIdsFromSelf } from '../utils';
+import {
+  getResourceLabelsAndIdsFromSelf,
+  labelOf,
+  getResourceLabel,
+} from '../utils';
 
 const ResourcePreviewCardContainer: React.FunctionComponent<{
   resourceSelf: string;
@@ -66,15 +70,17 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
     [resourceSelf]
   );
 
-  if (resource) {
-    if (isExternal) {
-      return (
-        <ResourcePreviewCard>
-          <ResourceCardCollapsed resource={resource} busy={busy} isExternal />
-        </ResourcePreviewCard>
-      );
-    }
+  if (isExternal) {
+    const label = labelOf(resourceId);
+    return (
+      <ResourcePreviewCard>
+        <ResourceCardCollapsed label={label} busy={busy} isExternal />
+      </ResourcePreviewCard>
+    );
+  }
 
+  if (resource) {
+    const label = getResourceLabel(resource);
     const { '@type': type } = resource;
     const types: string[] = Array.isArray(type) ? type : [type || ''];
 
@@ -87,7 +93,7 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
           />
         ) : (
           <ResourceCardCollapsed
-            resource={resource}
+            label={label}
             onClickExpand={() => setShowFullCard(true)}
             busy={busy}
             types={types}

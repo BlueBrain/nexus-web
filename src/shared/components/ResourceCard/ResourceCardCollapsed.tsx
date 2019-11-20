@@ -1,20 +1,15 @@
 import * as React from 'react';
 import { Card, Button, Skeleton } from 'antd';
-import { Resource } from '@bbp/nexus-sdk';
 
-import { labelOf, getResourceLabel } from '../../utils';
 import TypesIcon from '../Types/TypesIcon';
 
 const ResourceCardCollapsed: React.FunctionComponent<{
   onClickExpand?(): void;
-  resource: Resource;
+  label: string;
   busy: boolean;
   types?: string[];
   isExternal?: boolean;
-}> = ({ onClickExpand, resource, busy, isExternal, types }) => {
-  const label: string = getResourceLabel(resource);
-  const resourceId = resource['@id'];
-
+}> = ({ onClickExpand, label, busy, isExternal, types }) => {
   if (busy) {
     return (
       <Card
@@ -53,8 +48,8 @@ const ResourceCardCollapsed: React.FunctionComponent<{
         <div>{!!types && <TypesIcon type={types} full={true} />}</div>
       )}
       {!!isExternal && (
-        <a href={resourceId} target="_blank">
-          {resourceId}
+        <a href={label} target="_blank">
+          {label}
         </a>
       )}
     </Card>
