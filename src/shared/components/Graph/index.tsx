@@ -9,6 +9,16 @@ import GraphLegend from './GraphLegend';
 
 import './GraphComponent.less';
 
+export type ElementNodeData = {
+  label: string;
+  isExternal: boolean;
+  isExpandable: boolean;
+  isOrigin?: boolean;
+  isBlankNode?: boolean;
+  self?: string;
+  id: string;
+};
+
 export const LAYOUTS: {
   [layoutName: string]: {
     name: string;
@@ -36,9 +46,9 @@ export const DEFAULT_LAYOUT = 'breadthFirst';
 
 const Graph: React.FunctionComponent<{
   elements: cytoscape.ElementDefinition[];
-  onNodeClick?(id: string, isExternal: boolean): void;
-  onNodeExpand?(id: string, isExternal: boolean): void;
-  onNodeHoverOver?(id: string, isExternal: boolean): void;
+  onNodeClick?(id: string, data: ElementNodeData): void;
+  onNodeClickAndHold?(id: string, data: ElementNodeData): void;
+  onNodeHover?(id: string, idata: ElementNodeData): void;
   onReset?(): void;
   onCollapse?(): void;
   onLayoutChange?(type: string): void;
@@ -48,8 +58,8 @@ const Graph: React.FunctionComponent<{
 }> = ({
   elements,
   onNodeClick,
-  onNodeExpand,
-  onNodeHoverOver,
+  onNodeClickAndHold,
+  onNodeHover,
   onReset,
   collapsed,
   onCollapse,
@@ -135,28 +145,19 @@ const Graph: React.FunctionComponent<{
       return;
     }
     graph.current.on('tap', 'node', (e: cytoscape.EventObject) => {
-      const { isBlankNode, isExpandable } = e.target.data();
-      if (isBlankNode || !isExpandable) {
-        return;
-      }
-      onNodeExpand && onNodeExpand(e.target.id(), e.target.data('isExternal'));
+      onNodeClick && onNodeClick(e.target.id(), e.target.data());
     });
     graph.current.on('taphold', 'node', (e: cytoscape.EventObject) => {
-      onNodeClick && onNodeClick(e.target.id(), e.target.data('isExternal'));
+      onNodeClickAndHold && onNodeClickAndHold(e.target.id(), e.target.data());
     });
     graph.current.on('mouseover', 'node', (e: cytoscape.EventObject) => {
-      const { isBlankNode, isExpandable } = e.target.data();
-
+      const { isExpandable } = e.target.data();
       if (isExpandable) {
         setCursorPointer('pointer');
       } else {
         setCursorPointer('grab');
       }
-
-      if (isBlankNode) return;
-
-      onNodeHoverOver &&
-        onNodeHoverOver(e.target.id(), e.target.data('isExternal'));
+      onNodeHover && onNodeHover(e.target.id(), e.target.data());
     });
     graph.current.on('mouseout', 'node', (e: cytoscape.EventObject) => {
       setCursorPointer(null);
