@@ -92,9 +92,7 @@ const GraphContainer: React.FunctionComponent<{
         });
         
         return Promise.all(fetchedLinks.map(async link => await makeNode(link, getResourceLinks)))
-      }).then(linkNodes => {
-        setLoading(false);
-        
+      }).then(linkNodes => {        
         const newElements: cytoscape.ElementDefinition[] = [
           {
             classes: '-expandable -main',
@@ -112,14 +110,18 @@ const GraphContainer: React.FunctionComponent<{
             collapsed
           ),
         ];
+
         setElements(newElements);
+        setLoading(false);
       })
       .catch(error => {
         notification.error({
           message: `Could not fetch resource info for node ${resource['@id']}`,
           description: error.message,
         });
-      })
+
+        setLoading(false);
+      });
     }, [resource._self, reset, collapsed]);
 
   const handleNodeExpand = async (id: string, isExternal: boolean) => {
