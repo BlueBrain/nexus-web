@@ -24,6 +24,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   projectLabel,
 }) => {
   const basePath = useSelector((state: RootState) => state.config.basePath);
+  const history = useHistory();
   const makeResourceUri = (
     orgLabel: string,
     projectLabel: string,
@@ -42,7 +43,6 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     const path = makeResourceUri(orgLabel, projectLabel, resourceId);
     history.push(path);
   };
-  const history = useHistory();
   const [dashboardResources, setDashboardResources] = React.useState<
     Resource[]
   >([]);
