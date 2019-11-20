@@ -28,7 +28,7 @@ const GraphContainer: React.FunctionComponent<{
     { selectedResourceSelf, isSelectedExternal },
     setSelectedResource,
   ] = React.useState<{
-    selectedResourceSelf: string;
+    selectedResourceSelf: string | null;
     isSelectedExternal: boolean | null;
   }>({
     selectedResourceSelf: '',
@@ -196,11 +196,11 @@ const GraphContainer: React.FunctionComponent<{
 
   const showResourcePreview = (id: string, data: ElementNodeData) => {
     const { isBlankNode, self, isExternal } = data;
-    if (isBlankNode || !self) {
+    if (isBlankNode) {
       return;
     }
     setSelectedResource({
-      selectedResourceSelf: self,
+      selectedResourceSelf: self || id,
       isSelectedExternal: isExternal,
     });
   };

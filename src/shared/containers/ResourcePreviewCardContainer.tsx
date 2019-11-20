@@ -53,6 +53,9 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
         });
         const nextResource = (await nexus.httpGet({
           path: resourceSelf,
+          headers: {
+            Accept: 'application/json',
+          },
         })) as Resource;
         setResource({
           resource: nextResource,
