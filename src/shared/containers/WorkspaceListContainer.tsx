@@ -30,10 +30,14 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
           path: workspaceId,
         });
       })
-    ).then(values => {
-      setWorkspaces(values);
-      setSelectedWorkspace(values[0] as Resource);
-    });
+    )
+      .then(values => {
+        setWorkspaces(values);
+        setSelectedWorkspace(values[0] as Resource);
+      })
+      .catch(e => {
+        // Fail silently.
+      });
   }, [workspaceIds]);
 
   return (
