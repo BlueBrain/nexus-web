@@ -266,16 +266,14 @@ export function getResourceLabelsAndIdsFromSelf(self: string) {
  *
  * @param {projectUrl} string
  * @returns {
-  * [org: string, proj: string]
-  * }
-  */
+ * [org: string, proj: string]
+ * }
+ */
 export const parseProjectUrl = (projectUrl: string) => {
   const projectUrlR = /projects\/([\w-]+)\/([\w-]+)\/?$/;
   const [, org, proj] = projectUrl.match(projectUrlR) as string[];
   return [org, proj];
 };
-
-
 
 /**
  * this function changes cameCasedString to Camel Cased String
@@ -287,7 +285,9 @@ export const camelCaseToLabelString = (labelString: string): string => {
     labelString
       // insert a space before all caps
       .replace(/([A-Z])/g, ' $1')
-      // uppercase the first character
+      // upper case the first character
       .replace(/^./, str => str.toUpperCase())
+      // remove potential white spaces from both sides of the string
+      .trim()
   );
 };
