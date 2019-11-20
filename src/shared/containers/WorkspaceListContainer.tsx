@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useAsyncEffect } from 'use-async-effect';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
@@ -23,21 +22,20 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
     const w = workspaces.find(w => w['@id'] === id);
     setSelectedWorkspace(w);
   };
-  useAsyncEffect(async () => {
-    const workSpaceList: Resource[] = [];
-    for (let i = 0; i < workspaceIds.length; i += 1) {
-      try {
-        const workspace = (await nexus.httpGet({
-          path: workspaceIds[i],
-        })) as Resource;
-        workSpaceList.push(workspace);
-      } catch (error) {
-        // TODO: display error to the user
-      }
-    }
-    setWorkspaces(workSpaceList);
-    setSelectedWorkspace(workSpaceList[0]);
-  }, [orgLabel, projectLabel, workspaceIds]);
+
+  React.useEffect(() => {
+    Promise.all(
+      workspaceIds.map(workspaceId => {
+        return nexus.httpGet({
+          path: workspaceId,
+        });
+      })
+    ).then(values => {
+      setWorkspaces(values);
+      setSelectedWorkspace(values[0] as Resource);
+    });
+  }, [workspaceIds]);
+
   return (
     <>
       {workspaces.length > 0 ? (

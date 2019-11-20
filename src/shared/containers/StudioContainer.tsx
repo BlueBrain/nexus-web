@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useAsyncEffect } from 'use-async-effect';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import WorkspaceList from './WorkspaceListContainer';
@@ -27,17 +26,19 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
   ] = React.useState<StudioResource | null>(null);
   const [workspaceIds, setWorkspaceIds] = React.useState<string[]>([]);
   const nexus = useNexusContext();
-  useAsyncEffect(async () => {
-    const studioResource = (await nexus.Resource.get(
-      orgLabel,
-      projectLabel,
-      studioId
-    )) as StudioResource;
-    if (studioResource['@type'] === 'Studio') {
-      setStudioResource(studioResource);
-    }
-    const workspaceIds: string[] = studioResource['workspaces'];
-    setWorkspaceIds(workspaceIds);
+  React.useEffect(() => {
+    nexus.Resource.get(orgLabel, projectLabel, studioId)
+      .then(value => {
+        if (value['@type'] === 'Studio') {
+          const studioResource: StudioResource = value as StudioResource;
+          setStudioResource(studioResource);
+          const workspaceIds: string[] = studioResource['workspaces'];
+          setWorkspaceIds(workspaceIds);
+        }
+      })
+      .catch(e => {
+        //Fail Silently
+      });
   }, [orgLabel, projectLabel, studioId]);
   return (
     <>
