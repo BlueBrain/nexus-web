@@ -6,7 +6,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { ResourceLink, Resource } from '@bbp/nexus-sdk';
 
 import { getResourceLabelsAndIdsFromSelf, getResourceLabel } from '../../utils';
-import Graph, { DEFAULT_LAYOUT } from '../../components/Graph';
+import Graph, { DEFAULT_LAYOUT, ElementNodeData } from '../../components/Graph';
 import ResourcePreviewCardContainer from './../ResourcePreviewCardContainer';
 import { DEFAULT_ACTIVE_TAB_KEY } from '../../views/ResourceView';
 import { createNodesAndEdgesFromResourceLinks, makeNode } from './Graph';
@@ -25,13 +25,13 @@ const GraphContainer: React.FunctionComponent<{
   const [collapsed, setCollapsed] = React.useState(true);
   const [layout, setLayout] = React.useState(DEFAULT_LAYOUT);
   const [
-    { selectedResourceId, isSelectedExternal },
+    { selectedResourceSelf, isSelectedExternal },
     setSelectedResource,
   ] = React.useState<{
-    selectedResourceId: string;
+    selectedResourceSelf: string | null;
     isSelectedExternal: boolean | null;
   }>({
-    selectedResourceId: '',
+    selectedResourceSelf: '',
     isSelectedExternal: null,
   });
   const [elements, setElements] = React.useState<cytoscape.ElementDefinition[]>(
@@ -65,23 +65,20 @@ const GraphContainer: React.FunctionComponent<{
     );
   };
 
-    React.useEffect(() => {
-      setLoading(true);
+  React.useEffect(() => {
+    setLoading(true);
 
-      setLinks({
-        next,
-        links,
-        total,
-        error: null,
-      });
+    setLinks({
+      next,
+      links,
+      total,
+      error: null,
+    });
 
-      let fetchedLinks: ResourceLink[];
+    let fetchedLinks: ResourceLink[];
 
-      const fetchLinks = async () => {
-        return await getResourceLinks(resource._self);
-      }
-
-      fetchLinks().then(response => {
+    getResourceLinks(resource._self)
+      .then(response => {
         fetchedLinks = response._results;
 
         setLinks({
@@ -90,9 +87,12 @@ const GraphContainer: React.FunctionComponent<{
           total: response._total,
           error: null,
         });
-        
-        return Promise.all(fetchedLinks.map(async link => await makeNode(link, getResourceLinks)))
-      }).then(linkNodes => {        
+
+        return Promise.all(
+          fetchedLinks.map(async link => await makeNode(link, getResourceLinks))
+        );
+      })
+      .then(linkNodes => {
         const newElements: cytoscape.ElementDefinition[] = [
           {
             classes: '-expandable -main',
@@ -123,21 +123,17 @@ const GraphContainer: React.FunctionComponent<{
 
         setLoading(false);
       });
-    }, [resource._self, reset, collapsed]);
+  }, [resource._self, reset, collapsed]);
 
-  const handleNodeExpand = async (id: string, isExternal: boolean) => {
-    if (isExternal) {
+  const handleNodeClick = async (id: string, data: ElementNodeData) => {
+    const { isBlankNode, isExternal, isExpandable, self } = data;
+    if (isBlankNode || isExternal || !isExpandable || !self) {
       return;
     }
     try {
       setLoading(true);
       // TODO: should get from self not ID if its in another project
-      const response = await nexus.Resource.links(
-        orgLabel,
-        projectLabel,
-        encodeURIComponent(id),
-        'outgoing'
-      );
+      const response = await getResourceLinks(self);
 
       const targetNode = elements.find(element => element.data.id === id);
       if (!targetNode) {
@@ -176,22 +172,35 @@ const GraphContainer: React.FunctionComponent<{
     setReset(!reset);
   };
 
-  const handleNodeClick = (id: string, isExternal: boolean) => {    
+  const handleVisitResource = (id: string, data: ElementNodeData) => {
+    const { isExternal, self } = data;
     if (isExternal) {
       open(id);
       return;
     }
+    if (!self) {
+      return;
+    }
+    const {
+      orgLabel,
+      projectLabel,
+      resourceId,
+    } = getResourceLabelsAndIdsFromSelf(self);
 
     history.push(
       `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
-        id
+        resourceId
       )}${activeTabKey}`
     );
   };
 
-  const showResourcePreview = (resourceId: string, isExternal: boolean) => {
+  const showResourcePreview = (id: string, data: ElementNodeData) => {
+    const { isBlankNode, self, isExternal } = data;
+    if (isBlankNode) {
+      return;
+    }
     setSelectedResource({
-      selectedResourceId: resourceId,
+      selectedResourceSelf: self || id,
       isSelectedExternal: isExternal,
     });
   };
@@ -211,8 +220,8 @@ const GraphContainer: React.FunctionComponent<{
       <Graph
         elements={elements}
         onNodeClick={handleNodeClick}
-        onNodeExpand={handleNodeExpand}
-        onNodeHoverOver={showResourcePreview}
+        onNodeClickAndHold={handleVisitResource}
+        onNodeHover={showResourcePreview}
         onReset={handleReset}
         collapsed={collapsed}
         onCollapse={handleCollapse}
@@ -220,11 +229,9 @@ const GraphContainer: React.FunctionComponent<{
         layout={layout}
         loading={loading}
       />
-      {!!selectedResourceId && (
+      {!!selectedResourceSelf && (
         <ResourcePreviewCardContainer
-          resourceId={selectedResourceId}
-          projectLabel={projectLabel}
-          orgLabel={orgLabel}
+          resourceSelf={selectedResourceSelf}
           isExternal={isSelectedExternal}
         />
       )}

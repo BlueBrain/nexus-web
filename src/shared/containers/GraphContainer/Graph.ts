@@ -8,10 +8,11 @@ export const makeNode = async (
   link: ResourceLink,
   getResourceLinks: (self: string) => Promise<PaginatedList<ResourceLink>>
 ) => {
-  const isExternal = !(link as Resource)._self;
+  const self = (link as Resource)._self;
+  const isExternal = !self;
   let isExpandable = !isExternal; // External resources are never expandable
   if (!isExternal) {
-    const response = await getResourceLinks((link as Resource)._self);
+    const response = await getResourceLinks(self);
     isExpandable = !!response._total;
   }
   let label = labelOf(link['@id']);
@@ -27,6 +28,7 @@ export const makeNode = async (
       label,
       isExternal,
       isExpandable,
+      self,
       id: link['@id'],
     },
   };
