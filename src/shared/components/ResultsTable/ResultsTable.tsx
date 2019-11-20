@@ -1,6 +1,6 @@
 import * as React from 'react';
 import './ResultTable.less';
-import moment from 'moment';
+import * as moment from 'moment';
 import { Input, Table } from 'antd';
 import { parseProjectUrl } from '../../utils/index'
 

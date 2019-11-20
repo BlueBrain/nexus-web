@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useNexus } from '@bbp/react-nexus';
 import { Spin, Alert } from 'antd';
 import ResultsTable from '../components/ResultsTable/ResultsTable';
+import { camelCaseToLabelString } from '../utils';
 
 export type Binding = {
   [key: string]: {
@@ -58,7 +59,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
         (headVar: string) => !(headVar === 'total' || headVar === 'self')
       )
       .map((headVar: string) => ({
-        title: headVar, // TODO: get the matching title from somewhere?
+        title: camelCaseToLabelString(headVar), // TODO: get the matching title from somewhere?
         dataIndex: headVar,
       }));
 
