@@ -260,3 +260,34 @@ export function getResourceLabelsAndIdsFromSelf(self: string) {
     resourceId,
   };
 }
+
+/**
+ * Returns a project and org labels from url
+ *
+ * @param {projectUrl} string
+ * @returns {
+ * [org: string, proj: string]
+ * }
+ */
+export const parseProjectUrl = (projectUrl: string) => {
+  const projectUrlR = /projects\/([\w-]+)\/([\w-]+)\/?$/;
+  const [, org, proj] = projectUrl.match(projectUrlR) as string[];
+  return [org, proj];
+};
+
+/**
+ * this function changes cameCasedString to Camel Cased String
+ * @author https://stackoverflow.com/questions/4149276/how-to-convert-camelcase-to-camel-case
+ * @param labelString String in camelCase
+ */
+export const camelCaseToLabelString = (labelString: string): string => {
+  return (
+    labelString
+      // insert a space before all caps
+      .replace(/([A-Z])/g, ' $1')
+      // upper case the first character
+      .replace(/^./, str => str.toUpperCase())
+      // remove potential white spaces from both sides of the string
+      .trim()
+  );
+};

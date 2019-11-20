@@ -6,6 +6,7 @@ import {
   stripBasename,
   getLogoutUrl,
   hasExpired,
+  camelCaseToLabelString,
 } from '..';
 
 const identities: Identity[] = [
@@ -130,6 +131,22 @@ describe('utils functions', () => {
     });
     it('should NOT be expired', () => {
       expect(hasExpired(future)).toBeFalsy();
+    });
+  });
+  describe('camelCaseToLabelString()', () => {
+    const camelCaseString = 'somethingWonderful';
+    const notCamelCase = 'What is going on';
+    const almostCamelCase = 'FineAnyway';
+    it('should format a camelCaseString to Camel Case String', () => {
+      expect(camelCaseToLabelString(camelCaseString)).toEqual(
+        'Something Wonderful'
+      );
+    });
+    it('just return the original string', () => {
+      expect(camelCaseToLabelString(notCamelCase)).toEqual(notCamelCase);
+    });
+    it('should format the almost CamelCaseString anyway', () => {
+      expect(camelCaseToLabelString(almostCamelCase)).toEqual('Fine Anyway');
     });
   });
 });

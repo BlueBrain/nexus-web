@@ -3,6 +3,7 @@ import { useAsyncEffect } from 'use-async-effect';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
+import DashboardResultsContainer from './DashboardResultsContainer';
 
 type Dashboard = {
   dashboard: string;
@@ -59,7 +60,17 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
           }}
           position="left"
         >
-          {selectedDashboard ? 'Result Table Under Construction' : null}
+          {selectedDashboard ? (
+            <DashboardResultsContainer
+              handleClick={(self: string) => {
+                /* TODO Logic to display/navigate to resources */
+              }}
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              viewId={dashboards[0].view}
+              dataQuery={selectedDashboard['dataQuery']}
+            />
+          ) : null}
         </TabList>
       ) : (
         'No Dashboards are available'
