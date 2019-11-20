@@ -56,6 +56,7 @@ const GraphContainer: React.FunctionComponent<{
       projectLabel,
       resourceId,
     } = getResourceLabelsAndIdsFromSelf(self);
+
     return await nexus.Resource.links(
       orgLabel,
       projectLabel,
@@ -64,26 +65,34 @@ const GraphContainer: React.FunctionComponent<{
     );
   };
 
-  useAsyncEffect(
-    async isMounted => {
-      if (!isMounted()) {
-        return;
+    React.useEffect(() => {
+      setLoading(true);
+
+      setLinks({
+        next,
+        links,
+        total,
+        error: null,
+      });
+
+      let fetchedLinks: ResourceLink[];
+
+      const fetchLinks = async () => {
+        return await getResourceLinks(resource._self);
       }
-      try {
-        setLoading(true);
-        setLinks({
-          next,
-          links,
-          total,
-          error: null,
-        });
-        const response = await getResourceLinks(resource._self);
+
+      fetchLinks().then(response => {
+        fetchedLinks = response._results;
+
         setLinks({
           next: response._next || null,
-          links: response._results,
+          links: fetchedLinks,
           total: response._total,
           error: null,
         });
+        
+        return Promise.all(fetchedLinks.map(async link => await makeNode(link, getResourceLinks)))
+      }).then(linkNodes => {        
         const newElements: cytoscape.ElementDefinition[] = [
           {
             classes: '-expandable -main',
@@ -93,33 +102,27 @@ const GraphContainer: React.FunctionComponent<{
             },
           },
           // Link Nodes
-          ...(await Promise.all(
-            response._results.map(link => makeNode(link, getResourceLinks))
-          )),
+          ...linkNodes,
           // Link Path Nodes and Edges
           ...createNodesAndEdgesFromResourceLinks(
-            response._results,
+            fetchedLinks,
             resource['@id'],
             collapsed
           ),
         ];
+
         setElements(newElements);
-      } catch (error) {
+        setLoading(false);
+      })
+      .catch(error => {
         notification.error({
           message: `Could not fetch resource info for node ${resource['@id']}`,
           description: error.message,
         });
-        setLinks({
-          next,
-          error,
-          links,
-          total,
-        });
-      }
-      setLoading(false);
-    },
-    [resource._self, reset, collapsed]
-  );
+
+        setLoading(false);
+      });
+    }, [resource._self, reset, collapsed]);
 
   const handleNodeExpand = async (id: string, isExternal: boolean) => {
     if (isExternal) {
@@ -172,11 +175,12 @@ const GraphContainer: React.FunctionComponent<{
     setReset(!reset);
   };
 
-  const handleNodeClick = (id: string, isExternal: boolean) => {
+  const handleNodeClick = (id: string, isExternal: boolean) => {    
     if (isExternal) {
       open(id);
       return;
     }
+
     history.push(
       `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
         id
