@@ -115,9 +115,24 @@ const Graph: React.FunctionComponent<{
       const graphElementIds = graph.current
         .elements()
         .map(element => element.id());
-      const newElements = elements.filter(
-        element => !graphElementIds.includes(element.data.id || '')
-      );
+      const newElements = elements
+        .filter(element => !graphElementIds.includes(element.data.id || ''))
+        .map(newElement => {
+          // If I have a parent, assign my initial position to be the same
+          // that way it will appear I emerge out of my parent element
+          // instead of 0,0
+          if (newElement.data.parentId && graph.current) {
+            const parentEl = graph.current.getElementById(newElement.data.parentId);
+            const position = parentEl.position();
+            return {
+              position: {
+                ...position
+              },
+              ...newElement,
+            };
+          }
+          return newElement;
+        });
       graph.current.add(newElements);
 
       // Animate graph with the updated elements
