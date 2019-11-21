@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { notification } from 'antd';
-import { useAsyncEffect } from 'use-async-effect';
 import { useHistory, useLocation } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { ResourceLink, Resource } from '@bbp/nexus-sdk';
