@@ -1,88 +1,113 @@
-const style = [
-    {
-      selector: 'node',
-      style: {
-        height: 16,
-        width: 16,
-      },
+const COLORS = {
+  line: '#8a8b8b',
+  blankNode: '#faad14',
+  external: '#00adee',
+  internal: '#ff6666',
+  background: 'white',
+};
+
+const nodeStyles = [
+  {
+    selector: 'node',
+    style: {
+      height: 18,
+      width: 18,
+      opacity: 0,
+      'transition-property': 'background-color border-color',
+      'transition-duration': '0.3s',
+      'transition-timing-function': 'ease-in-sine',
     },
-    {
-      selector: '.-expandable',
-      style: {
-        height: 24,
-        width: 24,
-      },
+  },
+  {
+    selector: 'node[?isExternal]',
+    style: {
+      'background-color': COLORS.background,
+      'border-color': COLORS.external,
+      'border-width': 2,
     },
-    {
-      selector: '.-main',
-      style: {
-        height: 36,
-        width: 36,
-        shape: 'diamond',
-        'background-color': '#9dfcc5',
-        'border-color': '#8a8b8b',
-        'border-width': 3,
-      },
+  },
+  {
+    selector: 'node[!isExternal]',
+    style: {
+      'background-color': COLORS.internal,
+      'border-color': COLORS.internal,
+      'border-width': 2,
     },
-    {
-      selector: 'edge',
-      style: {
-        width: 2,
-        'curve-style': 'bezier',
-        'target-arrow-shape': 'triangle',
-        'line-color': '#8a8b8b',
-      },
+  },
+  {
+    selector: 'node[?isBlankNode]',
+    style: {
+      width: 12,
+      height: 12,
+      'background-color': COLORS.background,
+      'border-color': COLORS.blankNode,
+      'border-width': 2,
     },
-    {
-      selector: 'node[label]',
-      style: {
-        'text-margin-y': -10,
-        'text-outline-color': 'white',
-        'text-outline-width': 2,
-        label: 'data(label)',
-      },
+  },
+  {
+    selector: 'node[?isExpandable]',
+    style: {
+      height: 26,
+      width: 26,
     },
-    {
-      selector: 'edge[label]',
-      style: {
-        label: 'data(label)',
-        'text-outline-color': 'white',
-        'text-outline-width': 2,
-        'edge-text-rotation': 'autorotate',
-      },
+  },
+  {
+    selector: 'node[!isExpandable][!isExternal][!isBlankNode]',
+    style: {
+      'background-color': COLORS.background,
+      'border-color': COLORS.internal,
+      'border-width': 2,
     },
-    {
-      selector: '.blank-node',
-      style: {
-        width: 12,
-        height: 12,
-        'background-color': 'white',
-        'border-color': '#faad14',
-        'border-width': 2,
-      },
+  },
+  {
+    selector: 'node[?isOrigin]',
+    style: {
+      height: 32,
+      width: 32,
+      shape: 'diamond',
     },
-    {
-      selector: '.-external',
-      style: {
-        'background-color': 'white',
-        'border-color': '#00adee',
-        'border-width': 2,
-      },
+  },
+  {
+    selector: 'node[?isExpanded]',
+    style: {
+      'background-color': COLORS.background,
+      'border-color': COLORS.internal,
+      'border-width': 2,
     },
-    {
-      selector: '.-internal',
-      style: {
-        'background-color': '#ff6666',
-      },
+  },
+];
+const edgeStyles = [
+  {
+    selector: 'edge',
+    style: {
+      width: 2,
+      'curve-style': 'bezier',
+      'target-arrow-shape': 'triangle',
+      'target-arrow-color': COLORS.line,
+      'line-color': COLORS.line,
     },
-    {
-      selector: '.-internal.-expanded',
-      style: {
-        'background-color': 'white',
-        'border-color': '#ff6666',
-        'border-width': 2,
-      },
+  },
+];
+
+const labelStyles = [
+  {
+    selector: 'node[label]',
+    style: {
+      'text-margin-y': -10,
+      'text-outline-color': 'white',
+      'text-outline-width': 2,
+      label: 'data(label)',
     },
-  ];
-  
-  export default style;
+  },
+  {
+    selector: 'edge[label]',
+    style: {
+      label: 'data(label)',
+      'text-outline-color': 'white',
+      'text-outline-width': 2,
+      'edge-text-rotation': 'autorotate',
+    },
+  },
+];
+
+export default [...nodeStyles, ...edgeStyles, ...labelStyles];

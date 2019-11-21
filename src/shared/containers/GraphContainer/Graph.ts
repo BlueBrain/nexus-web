@@ -21,9 +21,6 @@ export const makeNode = async (
       ? `${label.slice(0, MAX_LABEL_LENGTH)}...`
       : label;
   return {
-    classes: `${isExternal ? '-external' : '-internal'} ${
-      isExpandable ? '-expandable' : '-expanded'
-    }`,
     data: {
       label,
       isExternal,
@@ -123,7 +120,6 @@ export const makeBlankNodes = (
   linkId: string
 ) => {
   return {
-    classes: `blank-node`,
     data: {
       id: `${resourceId}-${path}-${linkId}`,
       isBlankNode: true,
