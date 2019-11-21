@@ -6,6 +6,7 @@ const MAX_LABEL_LENGTH = 20;
 
 export const makeNode = async (
   link: ResourceLink,
+  parentId: string | null,
   getResourceLinks: (self: string) => Promise<PaginatedList<ResourceLink>>
 ) => {
   const self = (link as Resource)._self;
@@ -26,6 +27,7 @@ export const makeNode = async (
       isExternal,
       isExpandable,
       self,
+      parentId,
       id: link['@id'],
     },
   };

@@ -89,7 +89,10 @@ const GraphContainer: React.FunctionComponent<{
         });
 
         return Promise.all(
-          fetchedLinks.map(async link => await makeNode(link, getResourceLinks))
+          fetchedLinks.map(
+            async link =>
+              await makeNode(link, resource['@id'], getResourceLinks)
+          )
         );
       })
       .then(linkNodes => {
@@ -145,7 +148,7 @@ const GraphContainer: React.FunctionComponent<{
 
         // Link Nodes
         ...(await Promise.all(
-          response._results.map(link => makeNode(link, getResourceLinks))
+          response._results.map(link => makeNode(link, id, getResourceLinks))
         )),
 
         // Link Path Nodes and Edges
