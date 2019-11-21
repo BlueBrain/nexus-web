@@ -18,7 +18,7 @@ type StudioResource = Resource<{
 const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
   orgLabel,
   projectLabel,
-  studioId,
+  studioId
 }) => {
   const [
     studioResource,
