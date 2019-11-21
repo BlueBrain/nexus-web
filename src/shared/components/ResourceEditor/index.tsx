@@ -60,6 +60,10 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     }
   };
 
+  const handleCancel = () => {
+    setEditing(false);
+  };
+
   return (
     <div className={valid ? 'resource-editor' : 'resource-editor _invalid'}>
       <div className="control-panel">
@@ -107,14 +111,23 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
           )}
 
           {editable && isEditing && valid && (
-            <Button
-              icon="save"
-              type="primary"
-              size="small"
-              onClick={handleSubmit}
-            >
-              Save
-            </Button>
+            <>
+              <Button
+                icon="save"
+                type="primary"
+                size="small"
+                onClick={handleSubmit}
+              >
+                Save
+              </Button>{' '}
+              <Button
+                type="danger"
+                size="small"
+                onClick={handleCancel}
+              >
+                Cancel
+              </Button>
+            </>
           )}
         </div>
       </div>
