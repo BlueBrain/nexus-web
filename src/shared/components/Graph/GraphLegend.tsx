@@ -5,7 +5,7 @@ import './GraphLegend.less';
 const GraphLegend: React.FunctionComponent = () => (
   <div className="legend">
     <div>
-      <span className="node -main" />
+      <span className="node -origin" />
       Origin
     </div>
     <div>

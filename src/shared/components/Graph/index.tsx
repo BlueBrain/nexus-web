@@ -15,6 +15,7 @@ export type ElementNodeData = {
   isExpandable: boolean;
   isOrigin?: boolean;
   isBlankNode?: boolean;
+  isExpanded?: boolean;
   self?: string;
   id: string;
 };
@@ -30,9 +31,12 @@ export const LAYOUTS: {
     label: 'Graph',
     edgeLength(edge: cytoscape.EdgeSingular) {
       const { label } = edge.data();
-      // lets define the edge lengths based on how long
-      // the labels will end up being
-      return 50 + label.length * 8;
+      const segments = label.split('/');
+      // defines the labels based on the path length
+      // if the paths are collapsed, this will give
+      // a staggered effect depending how deep the path is.
+      // otherwise, they'll remain the same length
+      return 100 + segments.length * 100;
     },
   },
   breadthFirst: {
@@ -80,6 +84,11 @@ const Graph: React.FunctionComponent<{
       }
       layoutInstance.current = graph.current
         .elements()
+        .animate({
+          style: { opacity: 1 },
+          duration: 400,
+          easing: 'ease-in-sine',
+        })
         .makeLayout({
           ...LAYOUTS[layout],
         })
@@ -94,7 +103,7 @@ const Graph: React.FunctionComponent<{
   const onRecenter = () => {
     if (graph.current) {
       const origin = elements.find(element => element.data.isOrigin);
-      
+
       if (origin && origin.data && origin.data.id) {
         graph.current.center(graph.current.getElementById(origin.data.id));
       }
@@ -115,8 +124,14 @@ const Graph: React.FunctionComponent<{
         );
         // update old elements
         if (match) {
-          graphElement.data(match.data);
-          match.classes && graphElement.classes(match.classes);
+          const matchData = { ...match.data };
+          graphElement.removeData();
+          graphElement.data(matchData);
+          // if the updated classes are null or undefined
+          // because we want to remove all the classes
+          // make sure to pass an empty string
+          // instead of null or undefined!
+          graphElement.classes(match.classes || '');
           return;
         }
         // delete elements on graph that aren't in the elements list anymore

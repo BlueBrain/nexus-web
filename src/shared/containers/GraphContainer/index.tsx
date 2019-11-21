@@ -94,7 +94,6 @@ const GraphContainer: React.FunctionComponent<{
       .then(linkNodes => {
         const newElements: cytoscape.ElementDefinition[] = [
           {
-            classes: '-expandable -main',
             data: {
               id: resource['@id'],
               label: getResourceLabel(resource),
@@ -125,8 +124,8 @@ const GraphContainer: React.FunctionComponent<{
   }, [resource._self, reset, collapsed]);
 
   const handleNodeClick = async (id: string, data: ElementNodeData) => {
-    const { isBlankNode, isExternal, isExpandable, self } = data;
-    if (isBlankNode || isExternal || !isExpandable || !self) {
+    const { isBlankNode, isExternal, isExpandable, self, isExpanded } = data;
+    if (isBlankNode || isExternal || !isExpandable || !self || isExpanded) {
       return;
     }
     try {
@@ -138,11 +137,8 @@ const GraphContainer: React.FunctionComponent<{
       if (!targetNode) {
         return;
       }
-      targetNode.classes = (targetNode.classes || '').replace(
-        '-expandable',
-        '-expanded'
-      );
-      targetNode.data.isExpandable = false;
+
+      targetNode.data.isExpanded = true;
       setElements([
         ...elements,
 
@@ -194,8 +190,8 @@ const GraphContainer: React.FunctionComponent<{
   };
 
   const showResourcePreview = (id: string, data: ElementNodeData) => {
-    const { isBlankNode, self, isExternal } = data;
-    if (isBlankNode) {
+    const { isBlankNode, isOrigin, self, isExternal } = data;
+    if (isBlankNode || isOrigin) {
       return;
     }
     setSelectedResource({
