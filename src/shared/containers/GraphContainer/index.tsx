@@ -5,10 +5,11 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { ResourceLink, Resource } from '@bbp/nexus-sdk';
 
 import { getResourceLabelsAndIdsFromSelf, getResourceLabel } from '../../utils';
-import Graph, { DEFAULT_LAYOUT, ElementNodeData } from '../../components/Graph';
+import Graph, { ElementNodeData } from '../../components/Graph';
 import ResourcePreviewCardContainer from './../ResourcePreviewCardContainer';
 import { DEFAULT_ACTIVE_TAB_KEY } from '../../views/ResourceView';
 import { createNodesAndEdgesFromResourceLinks, makeNode } from './Graph';
+import { DEFAULT_LAYOUT } from '../../components/Graph/LayoutDefinitions';
 
 const GraphContainer: React.FunctionComponent<{
   resource: Resource;

@@ -8,6 +8,7 @@ import style from './style';
 import GraphLegend from './GraphLegend';
 
 import './GraphComponent.less';
+import { DEFAULT_LAYOUT, LAYOUTS } from './LayoutDefinitions';
 
 export type ElementNodeData = {
   label: string;
@@ -19,34 +20,6 @@ export type ElementNodeData = {
   self?: string;
   id: string;
 };
-
-export const LAYOUTS: {
-  [layoutName: string]: {
-    name: string;
-    [optionKey: string]: any;
-  };
-} = {
-  cola: {
-    name: 'cola',
-    label: 'Graph',
-    edgeLength(edge: cytoscape.EdgeSingular) {
-      const { label } = edge.data();
-      const segments = label.split('/');
-      // defines the labels based on the path length
-      // if the paths are collapsed, this will give
-      // a staggered effect depending how deep the path is.
-      // otherwise, they'll remain the same length
-      return 100 + segments.length * 100;
-    },
-  },
-  breadthFirst: {
-    name: 'breadthfirst',
-    label: 'Tree',
-    animate: true,
-  },
-};
-
-export const DEFAULT_LAYOUT = 'breadthFirst';
 
 const Graph: React.FunctionComponent<{
   elements: cytoscape.ElementDefinition[];
