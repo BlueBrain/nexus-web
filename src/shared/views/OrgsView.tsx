@@ -140,6 +140,13 @@ const OrgsView: React.FunctionComponent<OrgsViewProps> = ({ goTo }) => {
           </AccessControl>
         </div>
 
+        <h1
+          onClick={() => {
+            throw new Error('Boo!');
+          }}
+        >
+          TEST
+        </h1>
         <OrgList>
           {({ items }: { items: OrgResponseCommon[] }) =>
             items.map(i => (

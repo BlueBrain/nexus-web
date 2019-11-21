@@ -17,12 +17,44 @@ import {
   userExpiring,
   userSignedOut,
 } from 'redux-oidc';
+import * as StackTrace from 'stacktrace-js';
 
 import getUserManager from './userManager';
 import App from '../shared/App';
 import configureStore from '../shared/store';
 import { RootState } from '../shared/store/reducers';
 import { fetchIdentities, fetchRealms } from '../shared/store/actions/auth';
+
+window.onerror = (errorMessage, url, lineNumber, columnNumber, errorObject) => {
+  // @ts-ignore
+  StackTrace.fromError(errorObject).then(console.log);
+
+  // Send error details to Google Analytics, if the library is already available:
+  // @ts-ignore
+  if (typeof window.ga === 'function') {
+    // In case the "errorObject" is available, use its data, else fallback
+    // on the default "errorMessage" provided:
+    var exceptionDescription = errorMessage;
+    if (
+      typeof errorObject !== 'undefined' &&
+      typeof errorObject.message !== 'undefined'
+    ) {
+      exceptionDescription = errorObject.message;
+    }
+
+    // Format the message to log to Analytics (might also use "errorObject.stack" if defined):
+    exceptionDescription += ' @ ' + url + ':' + lineNumber + ':' + columnNumber;
+
+    // @ts-ignore
+    window.ga('send', 'exception', {
+      exDescription: exceptionDescription,
+      exFatal: true, // Some Error types might be considered as fatal.
+    });
+  }
+
+  // Otherwise, Let the default handler run:
+  return false;
+};
 
 // The app base URL
 const rawBase: string = (window as any)['__BASE__'] || '/';

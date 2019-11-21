@@ -27,7 +27,8 @@ const html = ({
       ${
         process.env.NODE_ENV !== 'production'
           ? ''
-          : `<link rel="stylesheet" href="${base}public/bundle.css" />`
+          : `<link rel="stylesheet" href="${base}public/bundle.css" />
+          `
       }
       ${
         process.env.GTAG
