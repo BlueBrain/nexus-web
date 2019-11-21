@@ -5,8 +5,6 @@ import TabList from '../components/Tabs/TabList';
 import DashboardResultsContainer from './DashboardResultsContainer';
 import { getResourceLabelsAndIdsFromSelf } from '../utils';
 import { useHistory } from 'react-router-dom';
-import { RootState } from '../store/reducers';
-import { useSelector } from 'react-redux';
 
 type Dashboard = {
   dashboard: string;
@@ -23,14 +21,13 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   orgLabel,
   projectLabel,
 }) => {
-  const basePath = useSelector((state: RootState) => state.config.basePath);
   const history = useHistory();
   const makeResourceUri = (
     orgLabel: string,
     projectLabel: string,
     resourceId: string
   ) => {
-    return `${basePath}/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+    return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
       resourceId
     )}`;
   };
