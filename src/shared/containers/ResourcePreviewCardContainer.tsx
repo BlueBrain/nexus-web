@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
+import { notification } from 'antd';
 
 import ResourceCard from '../components/ResourceCard';
 import ResourceCardCollapsed from '../components/ResourceCard/ResourceCardCollapsed';
@@ -30,48 +30,49 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
 
   const { resourceId } = getResourceLabelsAndIdsFromSelf(resourceSelf);
 
-  useAsyncEffect(
-    async isMounted => {
-      if (!isMounted()) {
-        return;
-      }
+  React.useEffect(() => {
+    if (isExternal) {
+      setResource({
+        resource: null,
+        error: null,
+        busy: false,
+      });
+      return;
+    }
 
-      if (isExternal) {
-        setResource({
-          resource: null,
-          error: null,
-          busy: false,
-        });
-        return;
-      }
+    setResource({
+      resource,
+      error: null,
+      busy: true,
+    });
 
-      try {
-        setResource({
-          resource,
-          error: null,
-          busy: true,
-        });
-        const nextResource = (await nexus.httpGet({
-          path: resourceSelf,
-          headers: {
-            Accept: 'application/json',
-          },
-        })) as Resource;
-        setResource({
-          resource: nextResource,
-          error: null,
-          busy: false,
-        });
-      } catch (error) {
-        setResource({
-          error,
-          resource,
-          busy: false,
-        });
-      }
-    },
-    [resourceSelf]
-  );
+    nexus.httpGet({
+      path: resourceSelf,
+      headers: {
+        Accept: 'application/json',
+      },
+    }).then(response => {
+      setResource({
+        resource: response,
+        error: null,
+        busy: false,
+      });
+    }).catch(error => {
+      notification.error({
+        message: "Couldn't load a resource info",
+        description: error.message,
+        duration: 5,
+      });
+
+      setResource({
+        error,
+        resource,
+        busy: false,
+      });
+    });
+  }, [resourceSelf]);
+
+  if (error) return null;
 
   if (isExternal) {
     const label = labelOf(resourceId);
