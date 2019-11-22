@@ -6,6 +6,8 @@ import { ResourceLink, Resource } from '@bbp/nexus-sdk';
 
 import { getResourceLabelsAndIdsFromSelf, getResourceLabel } from '../../utils';
 import Graph, { ElementNodeData } from '../../components/Graph';
+import GraphControlPanel from '../../components/Graph/GraphControlPanel';
+
 import ResourcePreviewCardContainer from './../ResourcePreviewCardContainer';
 import { DEFAULT_ACTIVE_TAB_KEY } from '../../views/ResourceView';
 import {
@@ -23,6 +25,7 @@ const GraphContainer: React.FunctionComponent<{
   const location = useLocation();
   const activeTabKey = location.hash || DEFAULT_ACTIVE_TAB_KEY;
   const [reset, setReset] = React.useState(false);
+  const [centered, setCentered] = React.useState(false);
   const [collapsed, setCollapsed] = React.useState(true);
   const [layout, setLayout] = React.useState(DEFAULT_LAYOUT);
   const [
@@ -191,10 +194,6 @@ const GraphContainer: React.FunctionComponent<{
     setLoading(false);
   };
 
-  const handleReset = () => {
-    setReset(!reset);
-  };
-
   const handleVisitResource = (id: string, data: ElementNodeData) => {
     const { isExternal, self } = data;
     if (isExternal) {
@@ -236,21 +235,34 @@ const GraphContainer: React.FunctionComponent<{
     setLayout(layout);
   };
 
+  const handleReset = () => {
+    setReset(!reset);
+  };
+
+  const handleRecenter = () => {
+    setCentered(!centered);
+  }
+
   if (error) return null;
 
   return (
     <>
+      <GraphControlPanel
+        onReset={handleReset}
+        collapsed={collapsed}
+        onCollapse={handleCollapse}
+        layout={layout}
+        onLayoutChange={handleLayoutChange}
+        loading={loading}
+        onRecenter={handleRecenter}
+      />
       <Graph
         elements={elements}
         onNodeClick={handleNodeClick}
         onNodeClickAndHold={handleVisitResource}
         onNodeHover={showResourcePreview}
-        onReset={handleReset}
-        collapsed={collapsed}
-        onCollapse={handleCollapse}
-        onLayoutChange={handleLayoutChange}
         layout={layout}
-        loading={loading}
+        centered={centered}
       />
       {!!selectedResourceSelf && (
         <ResourcePreviewCardContainer
