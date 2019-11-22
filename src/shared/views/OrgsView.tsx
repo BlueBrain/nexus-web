@@ -142,7 +142,7 @@ const OrgsView: React.FunctionComponent<OrgsViewProps> = ({ goTo }) => {
 
         <h1
           onClick={() => {
-            throw new Error('Boo!');
+            throw new Error('This is a test crash');
           }}
         >
           TEST

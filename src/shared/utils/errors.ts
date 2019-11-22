@@ -1,5 +1,8 @@
 import * as StackTrace from 'stacktrace-js';
 
+/**
+ * Gets stack traces using the source map
+ */
 export const formatError = async (error: Error): Promise<string> => {
   const traces: StackTrace.StackFrame[] = await StackTrace.fromError(error);
   return traces
@@ -11,6 +14,9 @@ export const formatError = async (error: Error): Promise<string> => {
     .replace(/^/, `${error.name}: ${error.message}\n`);
 };
 
+/**
+ * Send an error to Google Analytics if available
+ */
 export const reportError = async (
   error: Error | string,
   fatal: boolean = false
