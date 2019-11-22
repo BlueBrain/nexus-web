@@ -91,9 +91,10 @@ const ResourceActions: React.FunctionComponent<{
     makeActions(resource, actions, actionTypes)
       .then(setActionButtons)
       .catch((error: Error) => {
-        console.error(error);
         notification.error({
-          message: 'There was an error while creating action buttons',
+          message:
+            'There was an error while fetching information about this resource',
+          description: error.message,
         });
       });
   }, [resource._self, resource._rev]);
