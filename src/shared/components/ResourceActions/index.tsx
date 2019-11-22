@@ -1,58 +1,18 @@
 import * as React from 'react';
-import { Tooltip, Button, Popconfirm } from 'antd';
-import './ResourceActions.less';
-import {
-  isFile,
-  chainPredicates,
-  not,
-  isDefaultElasticView,
-  isDeprecated,
-  isView,
-} from '../../utils/nexusMaybe';
+import { Tooltip, Button, Popconfirm, notification } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
 
-const actionTypes = [
-  {
-    name: 'deprecateResource',
-    predicate: chainPredicates([isDefaultElasticView, not(isDeprecated)]),
-    title: 'Deprecate this resource',
-    shortTitle: 'Dangerously Deprecate',
-    message: (
-      <div>
-        <h3>Warning!</h3>
-        <p>
-          Deprecating this resource <em>WILL ABSOLUTELY</em> break this
-          application for this project. Are you sure you want to deprecate it?
-        </p>
-      </div>
-    ),
-    icon: 'delete',
-    danger: true,
-  },
-  {
-    name: 'deprecateResource',
-    predicate: chainPredicates([not(isDeprecated), not(isDefaultElasticView)]),
-    title: 'Deprecate this resource',
-    message: "Are you sure you'd like to deprecate this resource?",
-    shortTitle: 'Deprecate',
-    icon: 'delete',
-    danger: true,
-  },
-  {
-    name: 'goToView',
-    predicate: isView,
-    title: 'Query this view',
-    shortTitle: 'Query',
-    icon: 'search',
-  },
-  {
-    name: 'downloadFile',
-    predicate: isFile,
-    title: 'Download this file',
-    shortTitle: 'Download',
-    icon: 'download',
-  },
-];
+import './ResourceActions.less';
+
+export type ActionType = {
+  name: string;
+  predicate: (resource: Resource) => Promise<boolean>;
+  title: string;
+  shortTitle: string;
+  message?: React.ReactElement | string;
+  icon: string;
+  danger?: boolean;
+};
 
 const makeButton = ({
   title,
@@ -94,30 +54,51 @@ const makeButton = ({
   </div>
 );
 
-const makeActions = (
+const makeActions = async (
   resource: Resource,
   actionDispatchers: {
     [key: string]: () => void;
-  }
-) =>
-  actionTypes
-    .filter(action => action.predicate(resource))
-    .map(action =>
-      makeButton(action)(resource, actionDispatchers[action.name])
-    );
+  },
+  actionTypes: ActionType[]
+) => {
+  const appliedActions = await Promise.all(
+    actionTypes.map(async action => {
+      return await action.predicate(resource);
+    })
+  );
+  const filteredActions = actionTypes.filter(
+    (action, index) => appliedActions[index]
+  );
+
+  return filteredActions.map(action =>
+    makeButton(action)(resource, actionDispatchers[action.name])
+  );
+};
 
 const ResourceActions: React.FunctionComponent<{
   resource: Resource;
   actions: {
     [key: string]: () => void;
   };
+  actionTypes: ActionType[];
 }> = props => {
-  const { resource, actions } = props;
-  return (
-    <section className="resource-actions">
-      {makeActions(resource, actions)}
-    </section>
-  );
+  const { resource, actions, actionTypes } = props;
+  const [actionButtons, setActionButtons] = React.useState<
+    React.ReactElement[]
+  >([]);
+
+  React.useEffect(() => {
+    makeActions(resource, actions, actionTypes)
+      .then(setActionButtons)
+      .catch((error: Error) => {
+        console.error(error);
+        notification.error({
+          message: 'There was an error while creating action buttons',
+        });
+      });
+  }, [resource._self, resource._rev]);
+
+  return <section className="resource-actions">{actionButtons}</section>;
 };
 
 export default ResourceActions;
