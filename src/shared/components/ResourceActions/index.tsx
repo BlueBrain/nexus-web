@@ -54,7 +54,7 @@ const makeButton = ({
   </div>
 );
 
-const makeActions = async (
+const makeActionButtons = async (
   resource: Resource,
   actionDispatchers: {
     [key: string]: () => void;
@@ -66,13 +66,11 @@ const makeActions = async (
       return await action.predicate(resource);
     })
   );
-  const filteredActions = actionTypes.filter(
-    (action, index) => appliedActions[index]
-  );
-
-  return filteredActions.map(action =>
-    makeButton(action)(resource, actionDispatchers[action.name])
-  );
+  return actionTypes
+    .filter((action, index) => appliedActions[index])
+    .map(action =>
+      makeButton(action)(resource, actionDispatchers[action.name])
+    );
 };
 
 const ResourceActions: React.FunctionComponent<{
@@ -88,7 +86,7 @@ const ResourceActions: React.FunctionComponent<{
   >([]);
 
   React.useEffect(() => {
-    makeActions(resource, actions, actionTypes)
+    makeActionButtons(resource, actions, actionTypes)
       .then(setActionButtons)
       .catch((error: Error) => {
         notification.error({
