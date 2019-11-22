@@ -108,11 +108,13 @@ const Graph: React.FunctionComponent<{
           // that way it will appear I emerge out of my parent element
           // instead of 0,0
           if (newElement.data.parentId && graph.current) {
-            const parentEl = graph.current.getElementById(newElement.data.parentId);
+            const parentEl = graph.current.getElementById(
+              newElement.data.parentId
+            );
             const position = parentEl.position();
             return {
               position: {
-                ...position
+                ...position,
               },
               ...newElement,
             };
