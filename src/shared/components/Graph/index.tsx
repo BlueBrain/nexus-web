@@ -26,12 +26,14 @@ const Graph: React.FunctionComponent<{
   onNodeClickAndHold?(id: string, data: ElementNodeData): void;
   onNodeHover?(id: string, idata: ElementNodeData): void;
   layout?: string;
+  centered?: boolean;
 }> = ({
   elements,
   onNodeClick,
   onNodeClickAndHold,
   onNodeHover,
   layout = DEFAULT_LAYOUT,
+  centered,
 }) => {
   const container = React.useRef<HTMLDivElement>(null);
   const [cursorPointer, setCursorPointer] = React.useState<string | null>(null);
@@ -175,6 +177,10 @@ const Graph: React.FunctionComponent<{
   React.useEffect(() => {
     updateElements(elements);
   }, [JSON.stringify(elements)]);
+
+  React.useEffect(() => {
+    onRecenter();    
+  }, [centered]);
 
   React.useEffect(() => {
     cytoscape.use(cola);

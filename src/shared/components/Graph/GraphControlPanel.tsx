@@ -12,7 +12,8 @@ const GraphControlPanel: React.FunctionComponent<{
     onLayoutChange?(type: string): void;
     layout?: string;
     loading: boolean;
-  }> = ({ onReset, onCollapse, collapsed, onLayoutChange, layout = DEFAULT_LAYOUT, loading }) => {
+    onRecenter?(): void;
+  }> = ({ onReset, onCollapse, collapsed, onLayoutChange, layout = DEFAULT_LAYOUT, loading, onRecenter }) => {
   const [showAlert, setShowAlert] = React.useState(true);
 
   const handleLayoutClick = (type: string) => () => {
@@ -44,9 +45,9 @@ const GraphControlPanel: React.FunctionComponent<{
           >
             {collapsed ? 'Expand Paths' : 'Collapse Paths'}
           </Button>
-          {/* <Button size="small" onClick={onRecenter}>
+          <Button size="small" onClick={onRecenter}>
             Origin
-          </Button> */}
+          </Button>
           <Button size="small" onClick={onReset}>
             Reset
           </Button>
