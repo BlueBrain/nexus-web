@@ -18,6 +18,7 @@ import ResourceActionsContainer from '../containers/ResourceActions';
 import { isDeprecated } from '../utils/nexusMaybe';
 import ResourceEditorContainer from '../containers/ResourceEditor';
 import ImagePreviewContainer from '../containers/ImagePreviewContainer';
+import SchemaLinkContainer from '../containers/SchemaLink';
 
 const TabPane = Tabs.TabPane;
 const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
@@ -213,6 +214,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
               <ResourceCardComponent
                 resource={resource}
                 preview={<ImagePreviewContainer resource={resource} />}
+                schemaLink={SchemaLinkContainer}
               />
               <ResourceActionsContainer resource={resource} />
               <Tabs activeKey={activeTabKey} onChange={handleTabChange}>

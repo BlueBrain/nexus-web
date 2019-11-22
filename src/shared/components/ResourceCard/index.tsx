@@ -9,10 +9,21 @@ import { getUsername, getResourceLabel } from '../../utils';
 
 import './ResourceCard.less';
 
+export const DefaultSchemaLink: React.FunctionComponent<{
+  resource: Resource;
+}> = ({ resource: { _constrainedBy: constrainedBy } }) => (
+  <a href={constrainedBy} target="_blank">
+    {constrainedBy}
+  </a>
+);
+
 const ResourceCardComponent: React.FunctionComponent<{
   resource: Resource;
   preview?: React.ReactNode;
-}> = ({ resource, preview }) => {
+  schemaLink?: React.FunctionComponent<{
+    resource: Resource;
+  }>;
+}> = ({ resource, preview, schemaLink = DefaultSchemaLink }) => {
   const {
     _constrainedBy: constrainedBy,
     _createdBy: createdBy,
@@ -84,9 +95,7 @@ const ResourceCardComponent: React.FunctionComponent<{
           </Descriptions.Item>
           <Descriptions.Item label="Revision">{rev}</Descriptions.Item>
           <Descriptions.Item label="Schema">
-            <a href={constrainedBy} target="_blank">
-              {constrainedBy}
-            </a>
+            {schemaLink({ resource })}
           </Descriptions.Item>
         </Descriptions>
         {!!type && (
