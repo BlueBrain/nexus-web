@@ -1,5 +1,18 @@
 import * as StackTrace from 'stacktrace-js';
 
+declare global {
+  interface Window {
+    gtag?: (
+      command: string,
+      hitType: string,
+      fieldsObject: {
+        description: string;
+        fatal?: boolean;
+      }
+    ) => void;
+  }
+}
+
 /**
  * Gets stack traces using the source map
  */
@@ -21,27 +34,13 @@ export const reportError = async (
   error: Error | string,
   fatal: boolean = false
 ): Promise<void> => {
-  const gtag: (
-    command: string,
-    hitType: string,
-    fieldsObject: {
-      description: string;
-      fatal?: boolean;
-    }
-  ) => {} =
-    // @ts-ignore
-    typeof window.gtag === 'function'
-      ? //
-        // @ts-ignore
-        window.gtag
-      : //
-        function() {};
+  if (typeof window.gtag === 'function') {
+    const description =
+      typeof error === 'string' ? error : await formatError(error);
 
-  const description =
-    typeof error === 'string' ? error : await formatError(error);
-
-  gtag('event', 'exception', {
-    description,
-    fatal,
-  });
+    window.gtag('event', 'exception', {
+      description,
+      fatal,
+    });
+  }
 };
