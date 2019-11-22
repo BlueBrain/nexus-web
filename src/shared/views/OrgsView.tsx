@@ -139,6 +139,7 @@ const OrgsView: React.FunctionComponent<OrgsViewProps> = ({ goTo }) => {
             </Button>
           </AccessControl>
         </div>
+
         <OrgList>
           {({ items }: { items: OrgResponseCommon[] }) =>
             items.map(i => (
