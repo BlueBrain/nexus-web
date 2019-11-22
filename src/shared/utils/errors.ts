@@ -35,9 +35,7 @@ export const reportError = async (
         // @ts-ignore
         window.gtag
       : //
-        function() {
-          console.warn('Google Analytics is not available.');
-        };
+        function() {};
 
   const description =
     typeof error === 'string' ? error : await formatError(error);
