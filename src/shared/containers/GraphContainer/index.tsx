@@ -10,7 +10,11 @@ import GraphControlPanel from '../../components/Graph/GraphControlPanel';
 
 import ResourcePreviewCardContainer from './../ResourcePreviewCardContainer';
 import { DEFAULT_ACTIVE_TAB_KEY } from '../../views/ResourceView';
-import { createNodesAndEdgesFromResourceLinks, makeNode } from './Graph';
+import {
+  createNodesAndEdgesFromResourceLinks,
+  makeNode,
+  getListOfChildrenRecursive,
+} from './Graph';
 import { DEFAULT_LAYOUT } from '../../components/Graph/LayoutDefinitions';
 
 const GraphContainer: React.FunctionComponent<{
@@ -129,12 +133,24 @@ const GraphContainer: React.FunctionComponent<{
 
   const handleNodeClick = async (id: string, data: ElementNodeData) => {
     const { isBlankNode, isExternal, isExpandable, self, isExpanded } = data;
-    if (isBlankNode || isExternal || !isExpandable || !self || isExpanded) {
+    if (isBlankNode || isExternal || !self) {
       return;
     }
     try {
+      // Un-expand Node
+      if (isExpanded && isExpandable) {
+        const elementsToRemove = getListOfChildrenRecursive(id, elements);
+
+        const newElements = elements.filter(
+          element => !elementsToRemove.includes(element.data.id || '')
+        );
+
+        setElements([...newElements]);
+        return;
+      }
+
+      // Expand Node
       setLoading(true);
-      // TODO: should get from self not ID if its in another project
       const response = await getResourceLinks(self);
 
       const targetNode = elements.find(element => element.data.id === id);
@@ -143,15 +159,26 @@ const GraphContainer: React.FunctionComponent<{
       }
 
       targetNode.data.isExpanded = true;
+
+      const newNodes = await Promise.all(
+        response._results.map(link => makeNode(link, id, getResourceLinks))
+      );
+
       setElements([
         ...elements,
 
         // Link Nodes
-        ...(await Promise.all(
-          response._results.map(link => makeNode(link, id, getResourceLinks))
-        )),
+        ...newNodes.filter((node: { data: ElementNodeData }) => {
+          // Because some nodes, once expanded,
+          // point to nodes already on the graph
+          // we want to make sure to remove these
+          // to avoid duplication
+          return !elements
+            .map(element => element.data.id || '')
+            .includes(node.data.id);
+        }),
 
-        // Link Path Nodes and Edges
+        // Link Path Nodes (Blank Nodes) and Edges
         ...createNodesAndEdgesFromResourceLinks(
           response._results,
           id,

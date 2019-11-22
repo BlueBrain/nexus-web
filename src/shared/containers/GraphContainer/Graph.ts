@@ -51,6 +51,7 @@ export const createNodesAndEdgesFromResourceLinks = (
               id: `edge-${originId}-${link['@id']}`,
               source: originId,
               target: link['@id'],
+              parentId: originId,
             },
           },
         ];
@@ -75,6 +76,7 @@ export const createNodesAndEdgesFromResourceLinks = (
               id: `edge-${originId}-${link['@id']}`,
               source: originId,
               target: link['@id'],
+              parentId: originId,
             },
           };
         }
@@ -85,6 +87,7 @@ export const createNodesAndEdgesFromResourceLinks = (
               id: `edge-${originId}-${blankNode && blankNode.data.id}`,
               source: originId,
               target: blankNode && blankNode.data.id,
+              parentId: originId,
             },
           };
         }
@@ -96,6 +99,7 @@ export const createNodesAndEdgesFromResourceLinks = (
               id: `edge-${prev && prev.data.id}-${link['@id']}`,
               source: prev && prev.data.id,
               target: link['@id'],
+              parentId: originId,
             },
           };
         }
@@ -106,6 +110,7 @@ export const createNodesAndEdgesFromResourceLinks = (
               blankNode.data.id}`,
             source: prev && prev.data.id,
             target: blankNode && blankNode.data.id,
+            parentId: originId,
           },
         };
       });
@@ -125,6 +130,38 @@ export const makeBlankNodes = (
     data: {
       id: `${resourceId}-${path}-${linkId}`,
       isBlankNode: true,
+      parentId: resourceId,
     },
   };
+};
+
+export const getListOfChildrenRecursive = (
+  parentId: string,
+  elements: cytoscape.ElementDefinition[]
+): string[] => {
+  const targetNode = elements.find(element => element.data.id === parentId);
+  if (!targetNode) {
+    return [];
+  }
+  targetNode.data.isExpanded = false;
+
+  const childIds = elements
+    .filter(
+      element =>
+        element.data.source === parentId || element.data.parentId === parentId
+    )
+    .map(child => child.data.id)
+    .filter(Boolean) as string[];
+
+  const childRecursiveIds = childIds.reduce(
+    (childRecursiveIdsList: string[], id: string) => {
+      return [
+        ...childRecursiveIdsList,
+        ...getListOfChildrenRecursive(id, elements),
+      ];
+    },
+    []
+  );
+
+  return [...childIds, ...childRecursiveIds];
 };
