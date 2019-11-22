@@ -75,6 +75,7 @@ export const createNodesAndEdgesFromResourceLinks = (
               id: `edge-${originId}-${link['@id']}`,
               source: originId,
               target: link['@id'],
+              parentId: link['@id'],
             },
           };
         }
@@ -85,6 +86,7 @@ export const createNodesAndEdgesFromResourceLinks = (
               id: `edge-${originId}-${blankNode && blankNode.data.id}`,
               source: originId,
               target: blankNode && blankNode.data.id,
+              parentId: link['@id'],
             },
           };
         }
@@ -96,6 +98,7 @@ export const createNodesAndEdgesFromResourceLinks = (
               id: `edge-${prev && prev.data.id}-${link['@id']}`,
               source: prev && prev.data.id,
               target: link['@id'],
+              parentId: link['@id'],
             },
           };
         }
@@ -106,6 +109,7 @@ export const createNodesAndEdgesFromResourceLinks = (
               blankNode.data.id}`,
             source: prev && prev.data.id,
             target: blankNode && blankNode.data.id,
+            parentId: link['@id'],
           },
         };
       });
@@ -125,6 +129,7 @@ export const makeBlankNodes = (
     data: {
       id: `${resourceId}-${path}-${linkId}`,
       isBlankNode: true,
+      parentId: linkId,
     },
   };
 };

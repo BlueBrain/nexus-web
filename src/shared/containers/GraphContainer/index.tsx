@@ -127,14 +127,54 @@ const GraphContainer: React.FunctionComponent<{
       });
   }, [resource._self, reset, collapsed]);
 
+  const getListOfChildrenRecursive = (parentId: string): string[] => {
+    const targetNode = elements.find(element => element.data.id === parentId);
+    if (!targetNode) {
+      return [];
+    }
+    targetNode.data.isExpanded = false;
+
+    const childIds = elements
+      .filter(
+        element =>
+          element.data.source === parentId || element.data.parentId === parentId
+      )
+      .map(child => child.data.id)
+      .filter(Boolean) as string[];
+
+    const childRecursiveIds = childIds.reduce(
+      (childRecursiveIdsList: string[], id: string) => {
+        return [...childRecursiveIdsList, ...getListOfChildrenRecursive(id)];
+      },
+      []
+    );
+
+    return [...childIds, ...childRecursiveIds];
+  };
+
   const handleNodeClick = async (id: string, data: ElementNodeData) => {
     const { isBlankNode, isExternal, isExpandable, self, isExpanded } = data;
-    if (isBlankNode || isExternal || !isExpandable || !self || isExpanded) {
+    if (isBlankNode || isExternal || !self) {
       return;
     }
+
+    // Un-expand node
+    if (isExpanded && isExpandable) {
+      const elementsToRemove = getListOfChildrenRecursive(id);
+
+      const newElements = elements.filter(
+        element => !elementsToRemove.includes(element.data.id || '')
+      );
+
+      console.log({ elementsToRemove, newElements });
+
+      setElements([...newElements]);
+      return;
+    }
+
     try {
+      // Expand Node
       setLoading(true);
-      // TODO: should get from self not ID if its in another project
       const response = await getResourceLinks(self);
 
       const targetNode = elements.find(element => element.data.id === id);
