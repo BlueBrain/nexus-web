@@ -5,6 +5,7 @@ import * as cola from 'cytoscape-cola';
 
 import style from './style';
 
+import GraphControlPanel from './GraphControlPanel';
 import GraphLegend from './GraphLegend';
 
 import './GraphComponent.less';
@@ -211,6 +212,7 @@ const Graph: React.FunctionComponent<{
 
   return (
     <div className="graph-component">
+      <GraphControlPanel />
       <div
         className="graph"
         ref={container}
