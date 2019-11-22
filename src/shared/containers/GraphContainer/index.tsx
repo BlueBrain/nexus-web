@@ -8,7 +8,11 @@ import { getResourceLabelsAndIdsFromSelf, getResourceLabel } from '../../utils';
 import Graph, { ElementNodeData } from '../../components/Graph';
 import ResourcePreviewCardContainer from './../ResourcePreviewCardContainer';
 import { DEFAULT_ACTIVE_TAB_KEY } from '../../views/ResourceView';
-import { createNodesAndEdgesFromResourceLinks, makeNode } from './Graph';
+import {
+  createNodesAndEdgesFromResourceLinks,
+  makeNode,
+  getListOfChildrenRecursive,
+} from './Graph';
 import { DEFAULT_LAYOUT } from '../../components/Graph/LayoutDefinitions';
 
 const GraphContainer: React.FunctionComponent<{
@@ -18,9 +22,6 @@ const GraphContainer: React.FunctionComponent<{
   const nexus = useNexusContext();
   const location = useLocation();
   const activeTabKey = location.hash || DEFAULT_ACTIVE_TAB_KEY;
-  const { orgLabel, projectLabel } = getResourceLabelsAndIdsFromSelf(
-    resource._self
-  );
   const [reset, setReset] = React.useState(false);
   const [collapsed, setCollapsed] = React.useState(true);
   const [layout, setLayout] = React.useState(DEFAULT_LAYOUT);
@@ -127,52 +128,24 @@ const GraphContainer: React.FunctionComponent<{
       });
   }, [resource._self, reset, collapsed]);
 
-  const getListOfChildrenRecursive = (parentId: string): string[] => {
-    const targetNode = elements.find(element => element.data.id === parentId);
-    if (!targetNode) {
-      return [];
-    }
-    targetNode.data.isExpanded = false;
-
-    const childIds = elements
-      .filter(
-        element =>
-          element.data.source === parentId || element.data.parentId === parentId
-      )
-      .map(child => child.data.id)
-      .filter(Boolean) as string[];
-
-    const childRecursiveIds = childIds.reduce(
-      (childRecursiveIdsList: string[], id: string) => {
-        return [...childRecursiveIdsList, ...getListOfChildrenRecursive(id)];
-      },
-      []
-    );
-
-    return [...childIds, ...childRecursiveIds];
-  };
-
   const handleNodeClick = async (id: string, data: ElementNodeData) => {
     const { isBlankNode, isExternal, isExpandable, self, isExpanded } = data;
     if (isBlankNode || isExternal || !self) {
       return;
     }
-
-    // Un-expand node
-    if (isExpanded && isExpandable) {
-      const elementsToRemove = getListOfChildrenRecursive(id);
-
-      const newElements = elements.filter(
-        element => !elementsToRemove.includes(element.data.id || '')
-      );
-
-      console.log({ elementsToRemove, newElements });
-
-      setElements([...newElements]);
-      return;
-    }
-
     try {
+      // Un-expand Node
+      if (isExpanded && isExpandable) {
+        const elementsToRemove = getListOfChildrenRecursive(id, elements);
+
+        const newElements = elements.filter(
+          element => !elementsToRemove.includes(element.data.id || '')
+        );
+
+        setElements([...newElements]);
+        return;
+      }
+
       // Expand Node
       setLoading(true);
       const response = await getResourceLinks(self);
@@ -183,15 +156,26 @@ const GraphContainer: React.FunctionComponent<{
       }
 
       targetNode.data.isExpanded = true;
+
+      const newNodes = await Promise.all(
+        response._results.map(link => makeNode(link, id, getResourceLinks))
+      );
+
       setElements([
         ...elements,
 
         // Link Nodes
-        ...(await Promise.all(
-          response._results.map(link => makeNode(link, id, getResourceLinks))
-        )),
+        ...newNodes.filter((node: { data: ElementNodeData }) => {
+          // Because some nodes, once expanded,
+          // point to nodes already on the graph
+          // we want to make sure to remove these
+          // to avoid duplication
+          return !elements
+            .map(element => element.data.id || '')
+            .includes(node.data.id);
+        }),
 
-        // Link Path Nodes and Edges
+        // Link Path Nodes (Blank Nodes) and Edges
         ...createNodesAndEdgesFromResourceLinks(
           response._results,
           id,
