@@ -8,14 +8,7 @@ import Copy from '../Copy';
 import { getUsername, getResourceLabel } from '../../utils';
 
 import './ResourceCard.less';
-
-export const DefaultSchemaLink: React.FunctionComponent<{
-  resource: Resource;
-}> = ({ resource: { _constrainedBy: constrainedBy } }) => (
-  <a href={constrainedBy} target="_blank">
-    {constrainedBy}
-  </a>
-);
+import SchemaLink from '../SchemaLink';
 
 const ResourceCardComponent: React.FunctionComponent<{
   resource: Resource;
@@ -23,7 +16,7 @@ const ResourceCardComponent: React.FunctionComponent<{
   schemaLink?: React.FunctionComponent<{
     resource: Resource;
   }>;
-}> = ({ resource, preview, schemaLink = DefaultSchemaLink }) => {
+}> = ({ resource, preview, schemaLink = SchemaLink }) => {
   const {
     _constrainedBy: constrainedBy,
     _createdBy: createdBy,
