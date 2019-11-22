@@ -5,3 +5,4 @@ node_modules/
 storybook-static/
 coverage/
 .vscode
+yarn-error.log
