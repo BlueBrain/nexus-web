@@ -6,6 +6,8 @@ import { ResourceLink, Resource } from '@bbp/nexus-sdk';
 
 import { getResourceLabelsAndIdsFromSelf, getResourceLabel } from '../../utils';
 import Graph, { ElementNodeData } from '../../components/Graph';
+import GraphControlPanel from '../../components/Graph/GraphControlPanel';
+
 import ResourcePreviewCardContainer from './../ResourcePreviewCardContainer';
 import { DEFAULT_ACTIVE_TAB_KEY } from '../../views/ResourceView';
 import { createNodesAndEdgesFromResourceLinks, makeNode } from './Graph';
@@ -216,17 +218,20 @@ const GraphContainer: React.FunctionComponent<{
 
   return (
     <>
+      <GraphControlPanel
+        onReset={handleReset}
+        collapsed={collapsed}
+        onCollapse={handleCollapse}
+        layout={layout}
+        onLayoutChange={handleLayoutChange}
+        loading={loading}
+      />
       <Graph
         elements={elements}
         onNodeClick={handleNodeClick}
         onNodeClickAndHold={handleVisitResource}
         onNodeHover={showResourcePreview}
-        onReset={handleReset}
-        collapsed={collapsed}
-        onCollapse={handleCollapse}
-        onLayoutChange={handleLayoutChange}
         layout={layout}
-        loading={loading}
       />
       {!!selectedResourceSelf && (
         <ResourcePreviewCardContainer

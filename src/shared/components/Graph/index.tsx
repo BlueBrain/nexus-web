@@ -1,11 +1,9 @@
 import * as React from 'react';
 import * as cytoscape from 'cytoscape';
-import { Alert, Button } from 'antd';
 import * as cola from 'cytoscape-cola';
 
 import style from './style';
 
-import GraphControlPanel from './GraphControlPanel';
 import GraphLegend from './GraphLegend';
 
 import './GraphComponent.less';
@@ -27,26 +25,15 @@ const Graph: React.FunctionComponent<{
   onNodeClick?(id: string, data: ElementNodeData): void;
   onNodeClickAndHold?(id: string, data: ElementNodeData): void;
   onNodeHover?(id: string, idata: ElementNodeData): void;
-  onReset?(): void;
-  onCollapse?(): void;
-  onLayoutChange?(type: string): void;
   layout?: string;
-  collapsed?: boolean;
-  loading: boolean;
 }> = ({
   elements,
   onNodeClick,
   onNodeClickAndHold,
   onNodeHover,
-  onReset,
-  collapsed,
-  onCollapse,
-  onLayoutChange,
   layout = DEFAULT_LAYOUT,
-  loading,
 }) => {
   const container = React.useRef<HTMLDivElement>(null);
-  const [showAlert, setShowAlert] = React.useState(true);
   const [cursorPointer, setCursorPointer] = React.useState<string | null>(null);
   const layoutInstance = React.useRef<cytoscape.Layouts>();
   const graph = React.useRef<cytoscape.Core>();
@@ -68,10 +55,6 @@ const Graph: React.FunctionComponent<{
         })
         .run();
     }
-  };
-
-  const handleLayoutClick = (type: string) => () => {
-    onLayoutChange && onLayoutChange(type);
   };
 
   const onRecenter = () => {
@@ -212,62 +195,12 @@ const Graph: React.FunctionComponent<{
 
   return (
     <div className="graph-component">
-      <GraphControlPanel />
       <div
         className="graph"
         ref={container}
         style={cursorPointer ? { cursor: cursorPointer } : {}}
       ></div>
       <GraphLegend />
-      <div className="top">
-        <div className="controls">
-          <div>
-            {Object.keys(LAYOUTS).map(layoutKey => {
-              return (
-                <Button
-                  key={layoutKey}
-                  size="small"
-                  type={layoutKey === layout ? 'primary' : 'default'}
-                  onClick={handleLayoutClick(layoutKey)}
-                >
-                  {LAYOUTS[layoutKey].label}
-                </Button>
-              );
-            })}
-          </div>
-          <div>
-            <Button
-              type={collapsed ? 'primary' : 'default'}
-              size="small"
-              onClick={onCollapse}
-            >
-              {collapsed ? 'Expand Paths' : 'Collapse Paths'}
-            </Button>
-            <Button size="small" onClick={onRecenter}>
-              Origin
-            </Button>
-            <Button size="small" onClick={onReset}>
-              Reset
-            </Button>
-          </div>
-        </div>
-        {showAlert ? (
-          <Alert
-            style={{ margin: '7px 5px 0 0' }}
-            message="Click and hold to visit a resource"
-            type="info"
-            closable
-            afterClose={() => setShowAlert(false)}
-          />
-        ) : null}
-        {loading && (
-          <Alert
-            style={{ margin: '7px 5px 0 0' }}
-            message="Loading..."
-            type="info"
-          />
-        )}
-      </div>
     </div>
   );
 };
