@@ -5,13 +5,16 @@ import { Resource } from '@bbp/nexus-sdk';
 import './ResourceActions.less';
 
 export type ActionType = {
-  name: string;
+  name: string; // A unique name for your action type
+  // predicate: This function will be called with the resource passed
+  // to test if we want to display this Action Button
   predicate: (resource: Resource) => Promise<boolean>;
-  title: string;
-  shortTitle: string;
+  title: string; // A long title displayed on the confirm popup or tooltip
+  shortTitle: string; // Displayed on Button
+  // message: a longer message to be displayed on on the confirmation popup
   message?: React.ReactElement | string;
-  icon: string;
-  danger?: boolean;
+  icon: string; // An icon for the button
+  danger?: boolean; // should we use a confirmation popup and color the button red?
 };
 
 const makeButton = ({
