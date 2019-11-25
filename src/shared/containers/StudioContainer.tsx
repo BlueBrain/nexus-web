@@ -37,7 +37,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
         }
       })
       .catch(e => {
-        // Fail silently.
+        // TODO: show a meaningful error to the user.
       });
   }, [orgLabel, projectLabel, studioId]);
   return (

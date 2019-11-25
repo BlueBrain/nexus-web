@@ -43,7 +43,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         setSelectedDashboard(values[0]);
       })
       .catch(e => {
-        // Fail silently.
+        // TODO: show a meaningful error to the user.
       });
   }, [orgLabel, projectLabel]);
   return (

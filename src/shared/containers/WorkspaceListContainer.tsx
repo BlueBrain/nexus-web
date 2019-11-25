@@ -36,7 +36,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
         setSelectedWorkspace(values[0] as Resource);
       })
       .catch(e => {
-        // Fail silently.
+        // TODO: show a meaningful error to the user.
       });
   }, [workspaceIds]);
 
