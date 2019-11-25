@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import { Storage, NexusFile } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import FileUploader from '../components/FileUpload';
-import { RootState } from '../store/reducers';
 
 const FileUploadContainer: React.FunctionComponent<{
   projectLabel: string;
@@ -13,11 +11,10 @@ const FileUploadContainer: React.FunctionComponent<{
 }> = ({ orgLabel, projectLabel }) => {
   const nexus = useNexusContext();
   const history = useHistory();
-  const basePath = useSelector((state: RootState) => state.config.basePath);
   const [storages, setStorages] = React.useState<Storage[]>([]);
 
   const makeResourceUri = (resourceId: string) => {
-    return `${basePath}/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+    return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
       resourceId
     )}`;
   };
