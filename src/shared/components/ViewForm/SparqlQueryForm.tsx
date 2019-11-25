@@ -62,7 +62,6 @@ const SparqlQueryForm: React.FunctionComponent<{
     setValue(value);
   };
 
-  console.log('Boo', error);
   return (
     <div className="view-form">
       <Form
