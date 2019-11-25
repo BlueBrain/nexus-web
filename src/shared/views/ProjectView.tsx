@@ -24,13 +24,11 @@ const ProjectView: React.FunctionComponent<{
     params: { orgLabel, projectLabel },
   } = match;
 
-  const [{ org, project, busy, error }, setState] = React.useState<{
-    org: OrgResponseCommon | null;
+  const [{ project, busy, error }, setState] = React.useState<{
     project: ProjectResponseCommon | null;
     busy: boolean;
     error: Error | null;
   }>({
-    org: null,
     project: null,
     busy: false,
     error: null,
@@ -45,15 +43,12 @@ const ProjectView: React.FunctionComponent<{
       }
       try {
         setState({
-          org,
           project,
           error: null,
           busy: true,
         });
-        const activeOrg = await nexus.Organization.get(orgLabel);
         const activeProject = await nexus.Project.get(orgLabel, projectLabel);
         setState({
-          org: activeOrg,
           project: activeProject,
           busy: false,
           error: null,
@@ -64,7 +59,6 @@ const ProjectView: React.FunctionComponent<{
           description: error.message,
         });
         setState({
-          org,
           project,
           error,
           busy: false,
@@ -76,7 +70,7 @@ const ProjectView: React.FunctionComponent<{
 
   return (
     <div className="project-view">
-      {!!project && !!org && (
+      {!!project && (
         <>
           <div className="project-banner">
             <div className="label">
@@ -87,18 +81,16 @@ const ProjectView: React.FunctionComponent<{
                   </Tooltip>
                 </Link>
                 {' | '}
-                {org && (
-                  <span>
-                    <Link to={`/${org._label}`}>{org._label}</Link>
-                    {' | '}
-                  </span>
-                )}{' '}
+                <span>
+                  <Link to={`/${orgLabel}`}>{orgLabel}</Link>
+                  {' | '}
+                </span>{' '}
                 {project._label}
                 {'  '}
               </h1>
               <div style={{ marginLeft: 10 }}>
                 <ViewStatisticsContainer
-                  orgLabel={org._label}
+                  orgLabel={orgLabel}
                   projectLabel={project._label}
                   resourceId={DEFAULT_ELASTIC_SEARCH_VIEW_ID}
                 />
