@@ -3,8 +3,6 @@ import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
 import DashboardResultsContainer from './DashboardResultsContainer';
-import { getResourceLabelsAndIdsFromSelf } from '../utils';
-import { useHistory } from 'react-router-dom';
 import ResourceCardComponent from '../components/ResourceCard';
 import { Button } from 'antd';
 
