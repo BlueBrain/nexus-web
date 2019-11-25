@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, match } from 'react-router-dom';
 import { Empty, Spin, Tooltip, Icon } from 'antd';
 import { push } from 'connected-react-router';
 import { ACL } from '@bbp/nexus-sdk';
@@ -9,7 +9,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import ACLsForm from '../components/ACLs/ACLsForm';
 
 interface ACLsViewProps {
-  match: any;
+  match: match<{ orgLabel: string; projectLabel?: string }>;
 }
 const ACLs: React.FunctionComponent<ACLsViewProps> = ({ match }) => {
   const {
