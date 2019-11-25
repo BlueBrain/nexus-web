@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useAsyncEffect } from 'use-async-effect';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
@@ -29,22 +28,23 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     const dashboard = dashboardResources.find(d => d['@id'] === id);
     setSelectedDashboard(dashboard);
   };
-  useAsyncEffect(async () => {
-    const dashboardList: Resource[] = [];
-    for (let i = 0; i < dashboards.length; i += 1) {
-      try {
-        const dashboard = (await nexus.Resource.get(
+  React.useEffect(() => {
+    Promise.all(
+      dashboards.map(dashboardObject => {
+        return nexus.Resource.get(
           orgLabel,
           projectLabel,
-          encodeURIComponent(dashboards[i].dashboard)
-        )) as Resource;
-        dashboardList.push(dashboard);
-      } catch (error) {
-        // TODO: display an error to the user
-      }
-    }
-    setDashboardResources(dashboardList);
-    setSelectedDashboard(dashboardList[0]);
+          encodeURIComponent(dashboardObject.dashboard)
+        );
+      })
+    )
+      .then(values => {
+        setDashboardResources(values);
+        setSelectedDashboard(values[0]);
+      })
+      .catch(e => {
+        // TODO: show a meaningful error to the user.
+      });
   }, [orgLabel, projectLabel]);
   return (
     <>
