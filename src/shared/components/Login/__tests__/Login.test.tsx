@@ -18,7 +18,7 @@ describe('login component', () => {
     });
 
     it('anchor tag text should only display Log in', () => {
-      expect(wrapper.find('a.link').text()).toEqual('Log in ');
+      expect(wrapper.find('span').first().text()).toEqual('Log in ');
     });
   });
 
@@ -36,8 +36,8 @@ describe('login component', () => {
       expect(wrapper.find('a.link')).toHaveLength(1);
     });
 
-    it("anchor tag text should display Realm's name", () => {
-      expect(wrapper.find('a').text()).toEqual('Log in with HBP ');
+    it("a dropdown should show a Realm's name", () => {
+      expect(wrapper.find('span.realm').text()).toEqual('HBP');
     });
   });
 });
