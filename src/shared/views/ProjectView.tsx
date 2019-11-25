@@ -34,6 +34,11 @@ const ProjectView: React.FunctionComponent<{
   });
 
   const [menuVisible, setMenuVisible] = React.useState(true);
+  const [refreshLists, setRefreshLists] = React.useState(false);
+
+  const handleResourceCreated = () => {
+    setRefreshLists(!refreshLists);
+  };
 
   useAsyncEffect(
     async isMounted => {
@@ -86,6 +91,7 @@ const ProjectView: React.FunctionComponent<{
                 </span>{' '}
                 {project._label}
                 {'  '}
+                refreshLists {refreshLists ? 'yes' : 'no'}
               </h1>
               <div style={{ marginLeft: 10 }}>
                 <ViewStatisticsContainer
@@ -151,7 +157,11 @@ const ProjectView: React.FunctionComponent<{
                   <Divider />
                   <FileUploadContainer
                     projectLabel={projectLabel}
+<<<<<<< HEAD
                     orgLabel={orgLabel}
+=======
+                    onResourceCreated={handleResourceCreated}
+>>>>>>> experimental please waiting for resoruce creation
                   />
                 </AccessControl>
               </SideMenu>

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource, DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
 
 import ResourceListComponent, {
   ResourceBoardList,
@@ -15,9 +15,17 @@ const ResourceListContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
   defaultList: ResourceBoardList;
+  refreshList?: boolean;
   onDeleteList: (id: string) => void;
   onCloneList: (list: ResourceBoardList) => void;
-}> = ({ defaultList, orgLabel, projectLabel, onDeleteList, onCloneList }) => {
+}> = ({
+  defaultList,
+  orgLabel,
+  projectLabel,
+  onDeleteList,
+  onCloneList,
+  refreshList,
+}) => {
   const nexus = useNexusContext();
   const history = useHistory();
   const [list, setList] = React.useState<ResourceBoardList>(defaultList);
@@ -38,6 +46,7 @@ const ResourceListContainer: React.FunctionComponent<{
     resources: [],
     total: 0,
   });
+
   const makeResourceUri = (resourceId: string) => {
     return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
       resourceId
@@ -47,6 +56,17 @@ const ResourceListContainer: React.FunctionComponent<{
   const goToResource = (resourceId: string) => {
     history.push(makeResourceUri(resourceId));
   };
+
+  // Reload if refreshList is updated
+  React.useEffect(() => {
+    const listReloadTimout = 5000; // ES is likely indexing during this time
+    const timeout = setTimeout(() => {
+      setToggleForceReload(!toggleForceReload);
+    }, listReloadTimout);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [refreshList]);
 
   useAsyncEffect(
     async isMounted => {
