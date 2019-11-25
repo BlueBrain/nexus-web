@@ -6,7 +6,7 @@ import { getResourceLabelsAndIdsFromSelf } from '../utils';
 import { useHistory } from 'react-router';
 import SchemaLink from '../components/SchemaLink';
 
-const expandedConstrainedByKey =
+const EXPANDED_CONSTRAINED_BY_KEY =
   'https://bluebrain.github.io/nexus/vocabulary/constrainedBy';
 
 const SchemaLinkContainer: React.FunctionComponent<{
@@ -31,7 +31,7 @@ const SchemaLinkContainer: React.FunctionComponent<{
           Accept: 'application/json', // in case its a file
         },
       })
-      .then(({ [expandedConstrainedByKey]: constrainedBy }) => {
+      .then(({ [EXPANDED_CONSTRAINED_BY_KEY]: constrainedBy }) => {
         schemaId = constrainedBy['@id'];
         const baseUri = nexus.context.uri;
         // Fetch the resource with all resolvers to see if it exists as resolvable inside nexus
