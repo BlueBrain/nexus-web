@@ -45,12 +45,10 @@ const Login: React.FunctionComponent<LoginProps> = ({
         actions={[
           <div>
             {realms.length === 1 ? (
-              'Log in '
+              <span>Log in </span>
             ) : (
               <React.Fragment>
-                <a onClick={onLogin} className="link" key="login">
-                  Log in with{' '}
-                </a>
+                <span>Log in with{' '}</span>
                 <Dropdown overlay={menu} trigger={['click', 'hover']}>
                   <span className="realm">{realm}</span>
                 </Dropdown>{' '}
