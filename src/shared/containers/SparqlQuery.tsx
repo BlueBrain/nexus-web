@@ -31,7 +31,7 @@ const SparqlQueryContainer: React.FunctionComponent<{
   const [{ response, busy, error }, setResponse] = React.useState<{
     response: SparqlViewQueryResponse | null;
     busy: boolean;
-    error: Error | null;
+    error: string | { reason: string } | null;
   }>({
     response: null,
     busy: false,
