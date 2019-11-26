@@ -68,8 +68,9 @@ const ResourceActionsContainer: React.FunctionComponent<{
         <div>
           <h3>Warning!</h3>
           <p>
-            Deprecating this resource <em>WILL ABSOLUTELY</em> break this
-            application for this project. Are you sure you want to deprecate it?
+            This is your default ElasticSearch View. Deprecating this resource
+            will break this application for this project. Are you sure you want
+            to deprecate it?
           </p>
         </div>
       ),
