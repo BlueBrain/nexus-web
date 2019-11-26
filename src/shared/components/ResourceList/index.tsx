@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Tooltip, Button, Spin, Switch, Empty, Popover } from 'antd';
-import { ResourceList } from '@bbp/nexus-sdk';
+import { ResourceList, Resource } from '@bbp/nexus-sdk';
 
 import RenameableItem from '../Renameable';
 import InfiniteSearch from '../List/InfiniteSearch';
@@ -35,6 +35,7 @@ const ResourceListComponent: React.FunctionComponent<{
   busy: boolean;
   list: ResourceBoardList;
   resources: ResourceList<{}>['_results'];
+  schemaLinkContainer?: React.FunctionComponent<{ resource: Resource }>;
   total?: number;
   error: Error | null;
   onDelete(): void;
@@ -58,6 +59,7 @@ const ResourceListComponent: React.FunctionComponent<{
   makeResourceUri,
   goToResource,
   children,
+  schemaLinkContainer,
 }) => {
   const [{ ref: wrapperHeightRef }, { height: wrapperHeight }] = useMeasure();
   const { name } = list;
@@ -159,7 +161,10 @@ const ResourceListComponent: React.FunctionComponent<{
                     <Popover
                       content={
                         <div style={{ width: 600 }}>
-                          <ResourceCardComponent resource={resource} />
+                          <ResourceCardComponent
+                            resource={resource}
+                            schemaLink={schemaLinkContainer}
+                          />
                         </div>
                       }
                       mouseEnterDelay={RESOURCE_CARD_MOUSE_ENTER_DELAY}

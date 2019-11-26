@@ -9,6 +9,7 @@ import ResourceListComponent, {
 } from '../components/ResourceList';
 import TypeDropdownFilterContainer from './TypeDropdownFilter';
 import SchemaDropdownFilterContainer from './SchemaDropdownFilters';
+import SchemaLinkContainer from './SchemaLink';
 
 const ResourceListContainer: React.FunctionComponent<{
   orgLabel: string;
@@ -183,6 +184,7 @@ const ResourceListContainer: React.FunctionComponent<{
       onRefresh={handleRefreshList}
       makeResourceUri={makeResourceUri}
       goToResource={goToResource}
+      schemaLinkContainer={SchemaLinkContainer}
     >
       <TypeDropdownFilterContainer
         deprecated={!!list.query.deprecated}

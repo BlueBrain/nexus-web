@@ -3,7 +3,11 @@ import { Form, Button, Card, Empty, Table, Tooltip } from 'antd';
 import Column from 'antd/lib/table/Column';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import * as hash from 'object-hash';
-import { AskQueryResponse, SelectQueryResponse, SparqlViewQueryResponse } from '@bbp/nexus-sdk';
+import {
+  AskQueryResponse,
+  SelectQueryResponse,
+  SparqlViewQueryResponse,
+} from '@bbp/nexus-sdk';
 
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/sparql/sparql';
@@ -11,6 +15,12 @@ import 'codemirror/mode/sparql/sparql';
 import './view-form.less';
 
 const FormItem = Form.Item;
+
+type NexusSparqlError =
+  | string
+  | {
+      reason: string;
+    };
 
 type Entry = {
   [key: string]: string;
@@ -23,7 +33,7 @@ const SparqlQueryForm: React.FunctionComponent<{
   query: string;
   response: SparqlViewQueryResponse | null;
   busy: boolean;
-  error: Error | null;
+  error: NexusSparqlError | null;
   onQueryChange: (query: string) => void;
 }> = ({ query, response, busy, error, onQueryChange }): JSX.Element => {
   // TODO: Validate Sparql with some cool library
@@ -40,7 +50,9 @@ const SparqlQueryForm: React.FunctionComponent<{
 
   const data: any[] =
     (response &&
-      (!!(response as AskQueryResponse).boolean ? [(response as AskQueryResponse).boolean.toString()] : (response as SelectQueryResponse).results.bindings)) ||
+      (!!(response as AskQueryResponse).boolean
+        ? [(response as AskQueryResponse).boolean.toString()]
+        : (response as SelectQueryResponse).results.bindings)) ||
     [];
 
   const handleChange = (editor: any, data: any, value: string) => {
@@ -80,11 +92,7 @@ const SparqlQueryForm: React.FunctionComponent<{
       <Card bordered className="results">
         {error && (
           <Empty
-            description={
-              error.message === 'Bad Request'
-                ? 'The query is malformed'
-                : error.message
-            }
+            description={typeof error === 'string' ? error : error.reason}
           />
         )}
         {!error && (
