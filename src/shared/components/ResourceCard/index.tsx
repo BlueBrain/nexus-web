@@ -8,12 +8,16 @@ import Copy from '../Copy';
 import { getUsername, getResourceLabel } from '../../utils';
 
 import './ResourceCard.less';
+import SchemaLink from '../SchemaLink';
 
 const ResourceCardComponent: React.FunctionComponent<{
   resource: Resource;
   preview?: React.ReactNode;
   onClickCollapse?(): void;
-}> = ({ resource, preview, onClickCollapse }) => {
+  schemaLink?: React.FunctionComponent<{
+    resource: Resource;
+  }>;
+}> = ({ resource, preview, onClickCollapse, schemaLink = SchemaLink }) => {
   const {
     _constrainedBy: constrainedBy,
     _createdBy: createdBy,
@@ -91,9 +95,7 @@ const ResourceCardComponent: React.FunctionComponent<{
           </Descriptions.Item>
           <Descriptions.Item label="Revision">{rev}</Descriptions.Item>
           <Descriptions.Item label="Schema">
-            <a href={constrainedBy} target="_blank">
-              {constrainedBy}
-            </a>
+            {schemaLink({ resource })}
           </Descriptions.Item>
         </Descriptions>
         {!!type && (

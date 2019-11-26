@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, match } from 'react-router-dom';
 import { Empty, Spin, Tooltip, Icon } from 'antd';
 import { push } from 'connected-react-router';
 import { ACL } from '@bbp/nexus-sdk';
@@ -9,21 +9,13 @@ import { useNexusContext } from '@bbp/react-nexus';
 import ACLsForm from '../components/ACLs/ACLsForm';
 
 interface ACLsViewProps {
-  match: any;
-  goToOrg(orgLabel: string): void;
-  goToProject(orgLabel: string, projectLabel: string): void;
+  match: match<{ orgLabel: string; projectLabel?: string }>;
 }
-const ACLs: React.FunctionComponent<ACLsViewProps> = ({
-  match,
-  goToOrg,
-  goToProject,
-}) => {
+const ACLs: React.FunctionComponent<ACLsViewProps> = ({ match }) => {
   const {
     params: { orgLabel, projectLabel },
   } = match;
-  const path = `${match.params.org}${
-    match.params.project ? `/${match.params.project}` : ''
-  }`;
+  const path = `${orgLabel}${projectLabel ? `/${projectLabel}` : ''}`;
 
   const [{ busy, error, acls }, setACLs] = React.useState<{
     busy: Boolean;
@@ -44,7 +36,7 @@ const ACLs: React.FunctionComponent<ACLsViewProps> = ({
         acls: null,
         busy: true,
       });
-      nexus.ACL.list(path, { ancestors: true })
+      nexus.ACL.list(path, { ancestors: true, self: false })
         .then(acls => {
           setACLs({
             acls: acls._results,
@@ -60,7 +52,7 @@ const ACLs: React.FunctionComponent<ACLsViewProps> = ({
           });
         });
     }
-  }, [match.params.orgLabel, match.params.projectLabel]);
+  }, [orgLabel, projectLabel]);
 
   return (
     <div className="acl-view view-container">
