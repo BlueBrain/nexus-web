@@ -11,7 +11,6 @@ const ResourceFormContainer: React.FunctionComponent<{
 }> = ({ orgLabel, projectLabel }) => {
   const nexus = useNexusContext();
   const createResource = (schemaId: string, payload: ResourcePayload) => {
-    // TODO: bump @bbp/nexus-sdk
     return nexus.Resource.create(orgLabel, projectLabel, payload, schemaId);
   };
 
