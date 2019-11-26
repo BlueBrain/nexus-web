@@ -23,6 +23,7 @@ const Login: React.FunctionComponent<LoginProps> = ({
   const menu = (
     <Menu
       onClick={({ key, domEvent }) => {
+        domEvent.preventDefault();
         domEvent.stopPropagation();
         const realm = realms.find(r => r === key);
         if (realm) {
@@ -42,19 +43,21 @@ const Login: React.FunctionComponent<LoginProps> = ({
       <Card
         cover={<img className="logo" alt="Nexus logo" src={logo} />}
         actions={[
-          <a onClick={onLogin} className="link" key="login">
+          <div>
             {realms.length === 1 ? (
-              'Log in '
+              <span>Log in </span>
             ) : (
               <React.Fragment>
-                Log in with{' '}
-                <Dropdown overlay={menu}>
+                <span>Log in with{' '}</span>
+                <Dropdown overlay={menu} trigger={['click', 'hover']}>
                   <span className="realm">{realm}</span>
                 </Dropdown>{' '}
               </React.Fragment>
             )}
-            <Icon type="login" />
-          </a>,
+            <a onClick={onLogin} className="link" key="login">
+              <Icon type="login" />
+            </a>
+          </div>,
         ]}
       >
         <p className="message">Please log in to continue.</p>

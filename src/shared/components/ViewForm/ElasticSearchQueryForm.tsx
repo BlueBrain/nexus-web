@@ -11,11 +11,23 @@ import './view-form.less';
 const FormItem = Form.Item;
 const ListItem = List.Item;
 
+/**
+ * This is tricky because error can be KG error OR an ElasticSearch Error.
+ *
+ * In the case of ES, the reason message is nested within an error object
+ */
+type NexusESError = {
+  reason?: string;
+  error?: {
+    reason?: string;
+  };
+};
+
 const ElasticSearchQueryForm: React.FunctionComponent<{
   query: object;
   response: ElasticSearchViewQueryResponse<any> | null;
   busy: boolean;
-  error: Error | null;
+  error: NexusESError | null;
   from: number;
   size: number;
   onPaginationChange: (page: number) => void;
@@ -94,11 +106,8 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
       <Card bordered className="results">
         {error && (
           <Empty
-            description={
-              error.message === 'Bad Request'
-                ? 'The query is malformed'
-                : error.message
-            }
+            description={`An error occurred: ${error.reason ||
+              (error.error && error.error.reason)}`}
           />
         )}
         {!error && (
