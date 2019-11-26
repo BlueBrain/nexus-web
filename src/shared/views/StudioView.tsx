@@ -6,7 +6,14 @@ import { Tooltip, Icon } from 'antd';
 import StudioContainer from '../containers/StudioContainer';
 
 type StudioViewProps = {
-  match: match<{ orgLabel: string; projectLabel: string; studioId: string }>;
+  match: match<{
+    orgLabel: string;
+    projectLabel: string;
+    studioId: string;
+    workspaceId: string;
+    dashboardId: string;
+    resourceId: string;
+  }>;
 };
 
 const StudioView: React.FunctionComponent<StudioViewProps> = props => {
@@ -14,7 +21,6 @@ const StudioView: React.FunctionComponent<StudioViewProps> = props => {
   const {
     params: { orgLabel, projectLabel, studioId },
   } = match;
-
   return (
     <>
       <div className="project-banner no-bg" style={{ marginBottom: 20 }}>
