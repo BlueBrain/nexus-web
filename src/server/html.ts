@@ -29,8 +29,9 @@ const html = ({
           ? ''
           : `<link rel="stylesheet" href="${base}public/bundle.css" />`
       }
-      ${process.env.GTAG ?
-        `<!-- Global site tag (gtag.js) - Google Analytics -->
+      ${
+        process.env.GTAG
+          ? `<!-- Global site tag (gtag.js) - Google Analytics -->
       <script async src="https://www.googletagmanager.com/gtag/js?id=${process.env.GTAG}"></script>
       <script>
         window.dataLayer = window.dataLayer || [];
