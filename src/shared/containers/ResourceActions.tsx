@@ -8,6 +8,15 @@ import { useNexusContext } from '@bbp/react-nexus';
 import ResourceActions from '../components/ResourceActions';
 import { getResourceLabelsAndIdsFromSelf, getResourceLabel } from '../utils';
 import { download } from '../utils/download';
+import {
+  isFile,
+  chainPredicates,
+  not,
+  isDefaultElasticView,
+  isDeprecated,
+  isView,
+  toPromise,
+} from '../utils/nexusMaybe';
 
 const ResourceActionsContainer: React.FunctionComponent<{
   resource: Resource;
@@ -30,6 +39,76 @@ const ResourceActionsContainer: React.FunctionComponent<{
     resourceId,
   } = getResourceLabelsAndIdsFromSelf(resource._self);
   const nexus = useNexusContext();
+
+  const isLatestResource = async (resource: Resource) => {
+    // TODO: remove this if / when
+    // https://github.com/BlueBrain/nexus/issues/898 is implemented
+    const latest = await nexus.httpGet({
+      path: resource._self,
+      headers: {
+        Accept: 'application/json', // just in case it's a file
+      },
+    });
+    return resource._rev === latest._rev;
+  };
+
+  const actionTypes = [
+    {
+      name: 'deprecateResource',
+      predicate: async (resource: Resource) => {
+        const isLatest = await isLatestResource(resource);
+        return (
+          isLatest &&
+          chainPredicates([isDefaultElasticView, not(isDeprecated)])(resource)
+        );
+      },
+      title: 'Deprecate this resource',
+      shortTitle: 'Dangerously Deprecate',
+      message: (
+        <div>
+          <h3>Warning!</h3>
+          <p>
+            This is your default ElasticSearch View. Deprecating this resource
+            will break this application for this project. Are you sure you want
+            to deprecate it?
+          </p>
+        </div>
+      ),
+      icon: 'delete',
+      danger: true,
+    },
+    {
+      name: 'deprecateResource',
+      predicate: async (resource: Resource) => {
+        const isLatest = await isLatestResource(resource);
+        return (
+          isLatest &&
+          chainPredicates([not(isDeprecated), not(isDefaultElasticView)])(
+            resource
+          )
+        );
+      },
+      title: 'Deprecate this resource',
+      message: "Are you sure you'd like to deprecate this resource?",
+      shortTitle: 'Deprecate',
+      icon: 'delete',
+      danger: true,
+    },
+    {
+      name: 'goToView',
+      predicate: toPromise(isView),
+      title: 'Query this view',
+      shortTitle: 'Query',
+      icon: 'search',
+    },
+    {
+      name: 'downloadFile',
+      predicate: toPromise(isFile),
+      title: 'Download this file',
+      shortTitle: 'Download',
+      icon: 'download',
+    },
+  ];
 
   const actions = {
     deprecateResource: async () => {
@@ -78,7 +157,13 @@ const ResourceActionsContainer: React.FunctionComponent<{
     },
   };
 
-  return <ResourceActions resource={resource} actions={actions} />;
+  return (
+    <ResourceActions
+      resource={resource}
+      actions={actions}
+      actionTypes={actionTypes}
+    />
+  );
 };
 
 const mapDispatchToProps = (dispatch: any) => ({
