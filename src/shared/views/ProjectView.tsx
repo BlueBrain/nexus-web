@@ -2,12 +2,11 @@ import * as React from 'react';
 import { match } from 'react-router';
 import { useAsyncEffect } from 'use-async-effect';
 import {
-  OrgResponseCommon,
   ProjectResponseCommon,
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
 } from '@bbp/nexus-sdk';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { notification, Popover, Divider, Tooltip, Icon } from 'antd';
+import { notification, Popover, Divider, Tooltip, Icon, Switch } from 'antd';
 import { Link } from 'react-router-dom';
 
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
@@ -106,57 +105,62 @@ const ProjectView: React.FunctionComponent<{
                 </Popover>
               )}
             </div>
+            <div className="actions">
+              <Switch
+                size="small"
+                checked={menuVisible}
+                onChange={setMenuVisible}
+              ></Switch>
+              <SideMenu
+                visible={menuVisible}
+                title="Resources"
+                onClose={() => setMenuVisible(false)}
+              >
+                <p>
+                  View resources in your project using pre-defined query-helper
+                  lists.
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <AccessControl
+                    path={`/${orgLabel}/${projectLabel}`}
+                    permissions={['resources/write']}
+                  >
+                    <ResourceFormContainer
+                      orgLabel={orgLabel}
+                      projectLabel={projectLabel}
+                    />
+                  </AccessControl>
+                  <Link
+                    to={`/${orgLabel}/${projectLabel}/nxv:defaultSparqlIndex/sparql`}
+                  >
+                    Sparql Query Editor
+                  </Link>
+                  <Link
+                    to={`/${orgLabel}/${projectLabel}/nxv:defaultElasticSearchIndex/_search`}
+                  >
+                    ElasticSearch Query Editor
+                  </Link>
+                  <Link to={`/${orgLabel}/${projectLabel}/_settings/acls`}>
+                    View Project's permissions
+                  </Link>
+                </div>
+                <AccessControl
+                  path={`/${orgLabel}/${projectLabel}`}
+                  permissions={['files/write']}
+                >
+                  <Divider />
+                  <FileUploadContainer
+                    projectLabel={projectLabel}
+                    orgLabel={orgLabel}
+                  />
+                </AccessControl>
+              </SideMenu>
+            </div>
           </div>
           <ResourceListBoardContainer
             orgLabel={orgLabel}
             projectLabel={projectLabel}
           />
-          <div className="actions">
-            <SideMenu
-              visible={menuVisible}
-              title="Resources"
-              onClose={() => setMenuVisible(false)}
-            >
-              <p>
-                View resources in your project using pre-defined query-helper
-                lists.
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <AccessControl
-                  path={`/${orgLabel}/${projectLabel}`}
-                  permissions={['resources/write']}
-                >
-                  <ResourceFormContainer
-                    orgLabel={orgLabel}
-                    projectLabel={projectLabel}
-                  />
-                </AccessControl>
-                <Link
-                  to={`/${orgLabel}/${projectLabel}/nxv:defaultSparqlIndex/sparql`}
-                >
-                  Sparql Query Editor
-                </Link>
-                <Link
-                  to={`/${orgLabel}/${projectLabel}/nxv:defaultElasticSearchIndex/_search`}
-                >
-                  ElasticSearch Query Editor
-                </Link>
-                <Link to={`/${orgLabel}/${projectLabel}/_settings/acls`}>
-                  View Project's permissions
-                </Link>
-              </div>
-              <AccessControl
-                path={`/${orgLabel}/${projectLabel}`}
-                permissions={['files/write']}
-              >
-                <Divider />
-                <FileUploadContainer
-                  projectLabel={projectLabel}
-                  orgLabel={orgLabel}
-                />
-              </AccessControl>
-            </SideMenu>
-          </div>
         </>
       )}
     </div>
