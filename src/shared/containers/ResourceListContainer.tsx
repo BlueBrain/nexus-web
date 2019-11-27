@@ -68,24 +68,20 @@ const ResourceListContainer: React.FunctionComponent<{
     };
   }, [refreshList]);
 
-  useAsyncEffect(
-    async isMounted => {
-      if (!isMounted()) {
-        return;
-      }
-      try {
-        setResources({
-          next,
-          resources,
-          total,
-          busy: true,
-          error: null,
-        });
-        const response = await nexus.Resource.list(
-          orgLabel,
-          projectLabel,
-          list.query
-        );
+  React.useEffect(() => {
+    setResources({
+      next,
+      resources,
+      total,
+      busy: true,
+      error: null,
+    });
+
+    nexus.Resource.list(
+      orgLabel,
+      projectLabel,
+      list.query
+    ).then(response => {
         setResources({
           next: response._next || null,
           resources: response._results,
@@ -93,7 +89,7 @@ const ResourceListContainer: React.FunctionComponent<{
           busy: false,
           error: null,
         });
-      } catch (error) {
+    }).catch(error => {
         setResources({
           next,
           error,
@@ -101,9 +97,8 @@ const ResourceListContainer: React.FunctionComponent<{
           total,
           busy: false,
         });
-      }
-    },
-    [
+    });
+  }, [
       // Reset pagination and reload based on these props
       orgLabel,
       projectLabel,
