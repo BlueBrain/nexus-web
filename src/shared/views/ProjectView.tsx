@@ -2,7 +2,6 @@ import * as React from 'react';
 import { match } from 'react-router';
 import { useAsyncEffect } from 'use-async-effect';
 import {
-  OrgResponseCommon,
   ProjectResponseCommon,
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
 } from '@bbp/nexus-sdk';
