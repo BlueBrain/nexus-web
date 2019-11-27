@@ -17,6 +17,7 @@ const ResourceFormContainer: React.FunctionComponent<{
 
   return (
     <ResourceFormModal
+      onSuccess={onResourceCreated}
       createResource={createResource}
       render={(updateFormVisible: () => void) => {
         return (
