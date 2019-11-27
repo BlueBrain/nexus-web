@@ -79,7 +79,12 @@ const ResourceCardComponent: React.FunctionComponent<{
           {!!onClickCollapse && (
             <>
               <span>&nbsp;</span>
-              <Button onClick={onClickCollapse} shape="circle" icon="down" size="small" />
+              <Button
+                onClick={onClickCollapse}
+                shape="circle"
+                icon="down"
+                size="small"
+              />
             </>
           )}
         </div>

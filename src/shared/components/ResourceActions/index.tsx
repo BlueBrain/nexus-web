@@ -1,58 +1,21 @@
 import * as React from 'react';
-import { Tooltip, Button, Popconfirm } from 'antd';
-import './ResourceActions.less';
-import {
-  isFile,
-  chainPredicates,
-  not,
-  isDefaultElasticView,
-  isDeprecated,
-  isView,
-} from '../../utils/nexusMaybe';
+import { Tooltip, Button, Popconfirm, notification } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
 
-const actionTypes = [
-  {
-    name: 'deprecateResource',
-    predicate: chainPredicates([isDefaultElasticView, not(isDeprecated)]),
-    title: 'Deprecate this resource',
-    shortTitle: 'Dangerously Deprecate',
-    message: (
-      <div>
-        <h3>Warning!</h3>
-        <p>
-          Deprecating this resource <em>WILL ABSOLUTELY</em> break this
-          application for this project. Are you sure you want to deprecate it?
-        </p>
-      </div>
-    ),
-    icon: 'delete',
-    danger: true,
-  },
-  {
-    name: 'deprecateResource',
-    predicate: chainPredicates([not(isDeprecated), not(isDefaultElasticView)]),
-    title: 'Deprecate this resource',
-    message: "Are you sure you'd like to deprecate this resource?",
-    shortTitle: 'Deprecate',
-    icon: 'delete',
-    danger: true,
-  },
-  {
-    name: 'goToView',
-    predicate: isView,
-    title: 'Query this view',
-    shortTitle: 'Query',
-    icon: 'search',
-  },
-  {
-    name: 'downloadFile',
-    predicate: isFile,
-    title: 'Download this file',
-    shortTitle: 'Download',
-    icon: 'download',
-  },
-];
+import './ResourceActions.less';
+
+export type ActionType = {
+  name: string; // A unique name for your action type
+  // predicate: This function will be called with the resource passed
+  // to test if we want to display this Action Button
+  predicate: (resource: Resource) => Promise<boolean>;
+  title: string; // A long title displayed on the confirm popup or tooltip
+  shortTitle: string; // Displayed on Button
+  // message: a longer message to be displayed on on the confirmation popup
+  message?: React.ReactElement | string;
+  icon: string; // An icon for the button
+  danger?: boolean; // should we use a confirmation popup and color the button red?
+};
 
 const makeButton = ({
   title,
@@ -94,30 +57,50 @@ const makeButton = ({
   </div>
 );
 
-const makeActions = (
+const makeActionButtons = async (
   resource: Resource,
   actionDispatchers: {
     [key: string]: () => void;
-  }
-) =>
-  actionTypes
-    .filter(action => action.predicate(resource))
+  },
+  actionTypes: ActionType[]
+) => {
+  const appliedActions = await Promise.all(
+    actionTypes.map(async action => {
+      return await action.predicate(resource);
+    })
+  );
+  return actionTypes
+    .filter((action, index) => appliedActions[index])
     .map(action =>
       makeButton(action)(resource, actionDispatchers[action.name])
     );
+};
 
 const ResourceActions: React.FunctionComponent<{
   resource: Resource;
   actions: {
     [key: string]: () => void;
   };
+  actionTypes: ActionType[];
 }> = props => {
-  const { resource, actions } = props;
-  return (
-    <section className="resource-actions">
-      {makeActions(resource, actions)}
-    </section>
-  );
+  const { resource, actions, actionTypes } = props;
+  const [actionButtons, setActionButtons] = React.useState<
+    React.ReactElement[]
+  >([]);
+
+  React.useEffect(() => {
+    makeActionButtons(resource, actions, actionTypes)
+      .then(setActionButtons)
+      .catch((error: Error) => {
+        notification.error({
+          message:
+            'There was an error while fetching information about this resource',
+          description: error.message,
+        });
+      });
+  }, [resource._self, resource._rev]);
+
+  return <section className="resource-actions">{actionButtons}</section>;
 };
 
 export default ResourceActions;
