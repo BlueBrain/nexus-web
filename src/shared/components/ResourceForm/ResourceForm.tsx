@@ -105,10 +105,8 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
           resourceTypes.find((type: string) =>
             Object.keys(RESOURCES_SCHEMA_URI).includes(type)
           ) || '_';
-
         const payload = {
           ...editorContent,
-          type: resourceTypes,
         };
         onSubmit({
           payload,
