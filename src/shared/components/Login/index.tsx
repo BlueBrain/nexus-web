@@ -46,10 +46,10 @@ const Login: React.FunctionComponent<LoginProps> = ({
         bodyStyle={{ borderTop: '1px solid rgba(0, 0, 0, 0.10)' }}
       >
         {realms.length === 1 ? (
-          <Button block onClick={onLogin} type="primary">Log in<Icon type="login" /></Button>
+          <Button className="login-button" block onClick={onLogin} type="primary">Log in<Icon type="login" /></Button>
         ) : (
           <div className="actions">
-            <Button onClick={onLogin} type="primary">Log in<Icon type="login" /></Button>
+            <Button className="login-button" onClick={onLogin} type="primary">Log in<Icon type="login" /></Button>
             <div className="realm-holder">
               <span> with </span>
               <Dropdown overlay={menu} trigger={['click', 'hover']}>
