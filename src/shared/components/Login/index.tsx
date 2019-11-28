@@ -48,11 +48,11 @@ const Login: React.FunctionComponent<LoginProps> = ({
               <a onClick={onLogin} className="link" key="login">Log in <Icon type="login" /></a>
             ) : (
               <React.Fragment>
-                <a onClick={onLogin} className="link" key="login">Log in with{' '}</a>
+                <a onClick={onLogin} className="link" key="login-link">Log in with{' '}</a>
                 <Dropdown overlay={menu} trigger={['click', 'hover']}>
                   <span className="realm">{realm}</span>
                 </Dropdown>{' '}
-                <a onClick={onLogin} className="link" key="login"><Icon type="login" /></a>
+                <a onClick={onLogin} className="link" key="login-button"><Icon type="login" /></a>
               </React.Fragment>
             )}
           </div>,

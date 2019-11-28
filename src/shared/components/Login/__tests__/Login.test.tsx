@@ -32,8 +32,8 @@ describe('login component', () => {
       expect(wrapper).toMatchSnapshot();
     });
 
-    it('should have an anchor tag', () => {
-      expect(wrapper.find('a.link')).toHaveLength(1);
+    it('should have an anchor tag and an icon', () => {
+      expect(wrapper.find('a.link')).toHaveLength(2);
     });
 
     it("a dropdown should show a Realm's name", () => {

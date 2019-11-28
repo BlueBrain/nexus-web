@@ -15,13 +15,11 @@ exports[`login component should render correctly 1`] = `
       actions={
         Array [
           <div>
-            <span>
-              Log in 
-            </span>
             <a
               className="link"
               onClick={[Function]}
             >
+              Log in 
               <Icon
                 type="login"
               />
@@ -72,14 +70,12 @@ exports[`login component should render correctly 1`] = `
           >
             <span>
               <div>
-                <span>
-                  Log in 
-                </span>
                 <a
                   className="link"
                   key="login"
                   onClick={[Function]}
                 >
+                  Log in 
                   <Icon
                     type="login"
                   >
@@ -143,10 +139,13 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
         Array [
           <div>
             <React.Fragment>
-              <span>
+              <a
+                className="link"
+                onClick={[Function]}
+              >
                 Log in with
                  
-              </span>
+              </a>
               <Dropdown
                 mouseEnterDelay={0.15}
                 mouseLeaveDelay={0.1}
@@ -180,15 +179,15 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                 </span>
               </Dropdown>
                
+              <a
+                className="link"
+                onClick={[Function]}
+              >
+                <Icon
+                  type="login"
+                />
+              </a>
             </React.Fragment>
-            <a
-              className="link"
-              onClick={[Function]}
-            >
-              <Icon
-                type="login"
-              />
-            </a>
           </div>,
         ]
       }
@@ -235,10 +234,14 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
           >
             <span>
               <div>
-                <span>
+                <a
+                  className="link"
+                  key="login-link"
+                  onClick={[Function]}
+                >
                   Log in with
                    
-                </span>
+                </a>
                 <Dropdown
                   mouseEnterDelay={0.15}
                   mouseLeaveDelay={0.1}
@@ -447,7 +450,7 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                  
                 <a
                   className="link"
-                  key="login"
+                  key="login-button"
                   onClick={[Function]}
                 >
                   <Icon
