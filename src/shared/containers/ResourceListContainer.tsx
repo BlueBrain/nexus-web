@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
 
@@ -59,16 +58,31 @@ const ResourceListContainer: React.FunctionComponent<{
 
   // Reload if refreshList is updated
   React.useEffect(() => {
-    const listReloadTimout = 5000; // ES is likely indexing during this time
-    const timeout = setTimeout(() => {
-      setToggleForceReload(!toggleForceReload);
-    }, listReloadTimout);
+    console.log('updating......');
+    
+    const subscription = nexus.View.pollStatistics(
+      orgLabel,
+      projectLabel,
+      DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+      { pollIntervalMs: 200 }
+    ).subscribe(data => {
+      console.log('data.remainingEvents', data.remainingEvents);
+      
+      if (!data.remainingEvents) {
+        setToggleForceReload(!toggleForceReload);
+        console.log('toggleForceReload------>', toggleForceReload);
+        subscription.unsubscribe();
+      }      
+    });
     return () => {
-      clearTimeout(timeout);
-    };
-  }, [refreshList]);
+      subscription.unsubscribe();
+    }
+  },
+  [refreshList, toggleForceReload]);
 
   React.useEffect(() => {
+    console.log('loading a new list.......................');
+    
     setResources({
       next,
       resources,
@@ -162,6 +176,8 @@ const ResourceListContainer: React.FunctionComponent<{
   };
 
   const handleRefreshList = () => {
+    console.log('handleRefreshList');
+    
     setToggleForceReload(!toggleForceReload);
   };
 
