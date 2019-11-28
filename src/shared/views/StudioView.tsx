@@ -12,14 +12,14 @@ type StudioViewProps = {
     studioId: string;
     workspaceId: string;
     dashboardId: string;
-    resourceId: string;
+    studioResourceId: string;
   }>;
 };
 
 const StudioView: React.FunctionComponent<StudioViewProps> = props => {
   const { match } = props;
   const {
-    params: { orgLabel, projectLabel, studioId },
+    params: { orgLabel, projectLabel, studioId, workspaceId, dashboardId, studioResourceId},
   } = match;
   return (
     <>
@@ -44,6 +44,9 @@ const StudioView: React.FunctionComponent<StudioViewProps> = props => {
         orgLabel={orgLabel}
         projectLabel={projectLabel}
         studioId={studioId}
+        workspaceId={workspaceId}
+        dashboardId={dashboardId}
+        studioResourceId={studioResourceId}
       />
     </>
   );

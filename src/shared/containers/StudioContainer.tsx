@@ -7,6 +7,9 @@ type StudioContainerProps = {
   orgLabel: string;
   projectLabel: string;
   studioId: string;
+  workspaceId: string;
+  dashboardId: string;
+  studioResourceId: string;
 };
 
 type StudioResource = Resource<{
@@ -18,7 +21,10 @@ type StudioResource = Resource<{
 const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
   orgLabel,
   projectLabel,
-  studioId
+  studioId,
+  workspaceId,
+  dashboardId,
+  studioResourceId,
 }) => {
   const [
     studioResource,
@@ -52,6 +58,9 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
             orgLabel={orgLabel}
             projectLabel={projectLabel}
             workspaceIds={workspaceIds}
+            workspaceId={workspaceId}
+            dashboardId={dashboardId}
+            studioResourceId={studioResourceId}
           />
         </div>
       ) : (
