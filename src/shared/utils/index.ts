@@ -268,6 +268,10 @@ export function getResourceLabelsAndIdsFromSelf(self: string) {
  * @returns {string} Title Case
  */
 export const camelCaseToTitleCase = (camelCase: string): string => {
-  const result = camelCase.replace(/([A-Z])/g, ' $1');
+  const result = camelCase
+    .replace(/([A-Z]+)/g, ' $1')
+    .replace(/([A-Z][a-z])/g, ' $1');
+
+  // capitalize the first letter
   return result.charAt(0).toUpperCase() + result.slice(1);
 };
