@@ -3,6 +3,7 @@ import { Modal, notification } from 'antd';
 import { Resource, ResourcePayload } from '@bbp/nexus-sdk';
 
 import ResourceForm from './ResourceForm';
+import { camelCaseToTitleCase } from '../../utils';
 
 interface ResourceFormModalProps {
   createResource: (
@@ -38,8 +39,10 @@ const ResourceFormModal: React.FunctionComponent<ResourceFormModalProps> = ({
       setModalVisible(false);
     } catch (error) {
       notification.error({
-        message: 'An unknown error occurred',
-        description: error.message,
+        message: !!error['@type']
+          ? camelCaseToTitleCase(error['@type'])
+          : 'Error creating resource',
+        description: error.reason,
         duration: 0,
       });
       setFormBusy(false);
