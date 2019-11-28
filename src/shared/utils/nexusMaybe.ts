@@ -38,6 +38,6 @@ export const isSparqlView = isOfType(SPARQL_VIEW);
 export const isFile = isOfType(NEXUS_FILE_TYPE);
 export const toPromise = (func: Function) => {
   return function() {
-    return Promise.resolve(func(arguments));
+    return Promise.resolve(func(...arguments));
   };
 };
