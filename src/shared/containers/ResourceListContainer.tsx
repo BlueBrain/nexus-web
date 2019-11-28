@@ -58,7 +58,7 @@ const ResourceListContainer: React.FunctionComponent<{
 
   // Reload if refreshList is updated
   React.useEffect(() => {
-    console.log('updating......');
+    // console.log('updating......');
     
     const subscription = nexus.View.pollStatistics(
       orgLabel,
@@ -66,11 +66,11 @@ const ResourceListContainer: React.FunctionComponent<{
       DEFAULT_ELASTIC_SEARCH_VIEW_ID,
       { pollIntervalMs: 200 }
     ).subscribe(data => {
-      console.log('data.remainingEvents', data.remainingEvents);
+      // console.log('data.remainingEvents', data.remainingEvents);
       
       if (!data.remainingEvents) {
         setToggleForceReload(!toggleForceReload);
-        console.log('toggleForceReload------>', toggleForceReload);
+        // console.log('toggleForceReload------>', toggleForceReload);
         subscription.unsubscribe();
       }      
     });
@@ -81,7 +81,7 @@ const ResourceListContainer: React.FunctionComponent<{
   [refreshList, toggleForceReload]);
 
   React.useEffect(() => {
-    console.log('loading a new list.......................');
+    // console.log('loading a new list.......................');
     
     setResources({
       next,
