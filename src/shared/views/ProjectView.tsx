@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { match } from 'react-router';
-import { useAsyncEffect } from 'use-async-effect';
 import {
   ProjectResponseCommon,
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
@@ -54,24 +53,21 @@ const ProjectView: React.FunctionComponent<{
     });
   };
 
-  useAsyncEffect(
-    async isMounted => {
-      if (!isMounted()) {
-        return;
-      }
-      try {
+  React.useEffect(() => {
+    setState({
+      project,
+      error: null,
+      busy: true,
+    });
+
+    nexus.Project.get(orgLabel, projectLabel)
+      .then(response => {
         setState({
-          project,
-          error: null,
-          busy: true,
-        });
-        const activeProject = await nexus.Project.get(orgLabel, projectLabel);
-        setState({
-          project: activeProject,
+          project: response,
           busy: false,
           error: null,
         });
-      } catch (error) {
+      }).catch(error => {
         notification.error({
           message: `Could not load project ${projectLabel}`,
           description: error.message,
@@ -81,7 +77,7 @@ const ProjectView: React.FunctionComponent<{
           error,
           busy: false,
         });
-      }
+      });
     },
     [orgLabel, projectLabel]
   );
