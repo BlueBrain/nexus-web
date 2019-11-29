@@ -100,8 +100,6 @@ const ProjectView: React.FunctionComponent<{
                   {' | '}
                 </span>{' '}
                 {project._label}
-                {'  '}
-                refreshLists {refreshLists ? 'yes' : 'no'}
               </h1>
               <div style={{ marginLeft: 10 }}>
                 <ViewStatisticsContainer
@@ -177,6 +175,7 @@ const ProjectView: React.FunctionComponent<{
           <ResourceListBoardContainer
             orgLabel={orgLabel}
             projectLabel={projectLabel}
+            refreshLists={refreshLists}
           />
         </>
       )}
