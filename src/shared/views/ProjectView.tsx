@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { match } from 'react-router';
-import { useAsyncEffect } from 'use-async-effect';
 import {
   ProjectResponseCommon,
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
@@ -34,25 +33,41 @@ const ProjectView: React.FunctionComponent<{
   });
 
   const [menuVisible, setMenuVisible] = React.useState(true);
+  const [refreshLists, setRefreshLists] = React.useState(false);
 
-  useAsyncEffect(
-    async isMounted => {
-      if (!isMounted()) {
-        return;
+  const handleResourceCreated = () => {
+    let totalEvents: number;
+
+    const subscription = nexus.View.pollStatistics(
+      orgLabel,
+      projectLabel,
+      DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+      { pollIntervalMs: 300 }
+    ).subscribe(data => {
+      if (!totalEvents) {
+        totalEvents = data.totalEvents;         
+      } else if (data.totalEvents !== totalEvents) {
+        setRefreshLists(!refreshLists);
+        subscription.unsubscribe();
       }
-      try {
+    });
+  };
+
+  React.useEffect(() => {
+    setState({
+      project,
+      error: null,
+      busy: true,
+    });
+
+    nexus.Project.get(orgLabel, projectLabel)
+      .then(response => {
         setState({
-          project,
-          error: null,
-          busy: true,
-        });
-        const activeProject = await nexus.Project.get(orgLabel, projectLabel);
-        setState({
-          project: activeProject,
+          project: response,
           busy: false,
           error: null,
         });
-      } catch (error) {
+      }).catch(error => {
         notification.error({
           message: `Could not load project ${projectLabel}`,
           description: error.message,
@@ -62,7 +77,7 @@ const ProjectView: React.FunctionComponent<{
           error,
           busy: false,
         });
-      }
+      });
     },
     [orgLabel, projectLabel]
   );
@@ -128,6 +143,7 @@ const ProjectView: React.FunctionComponent<{
                     <ResourceFormContainer
                       orgLabel={orgLabel}
                       projectLabel={projectLabel}
+                      onResourceCreated={handleResourceCreated}
                     />
                   </AccessControl>
                   <Link
@@ -160,6 +176,7 @@ const ProjectView: React.FunctionComponent<{
           <ResourceListBoardContainer
             orgLabel={orgLabel}
             projectLabel={projectLabel}
+            refreshLists={refreshLists}
           />
         </>
       )}

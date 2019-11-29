@@ -8,7 +8,8 @@ import ResourceFormModal from '../components/ResourceForm/ResourceFormModal';
 const ResourceFormContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
-}> = ({ orgLabel, projectLabel }) => {
+  onResourceCreated?(): void;
+}> = ({ orgLabel, projectLabel, onResourceCreated }) => {
   const nexus = useNexusContext();
   const createResource = (schemaId: string, payload: ResourcePayload) => {
     return nexus.Resource.create(orgLabel, projectLabel, payload, schemaId);
@@ -16,6 +17,7 @@ const ResourceFormContainer: React.FunctionComponent<{
 
   return (
     <ResourceFormModal
+      onSuccess={onResourceCreated}
       createResource={createResource}
       render={(updateFormVisible: () => void) => {
         return (
