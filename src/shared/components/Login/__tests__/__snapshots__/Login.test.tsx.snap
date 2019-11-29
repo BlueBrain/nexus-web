@@ -12,22 +12,10 @@ exports[`login component should render correctly 1`] = `
     className="Login"
   >
     <Card
-      actions={
-        Array [
-          <div>
-            <span>
-              Log in 
-            </span>
-            <a
-              className="link"
-              onClick={[Function]}
-            >
-              <Icon
-                type="login"
-              />
-            </a>
-          </div>,
-        ]
+      bodyStyle={
+        Object {
+          "borderTop": "1px solid rgba(0, 0, 0, 0.10)",
+        }
       }
       cover={
         <img
@@ -36,9 +24,10 @@ exports[`login component should render correctly 1`] = `
           src="/mock/path"
         />
       }
+      size="small"
     >
       <div
-        className="ant-card ant-card-bordered"
+        className="ant-card ant-card-bordered ant-card-small"
       >
         <div
           className="ant-card-cover"
@@ -51,36 +40,150 @@ exports[`login component should render correctly 1`] = `
         </div>
         <div
           className="ant-card-body"
-          style={Object {}}
-        >
-          <p
-            className="message"
-          >
-            Please log in to continue.
-          </p>
-        </div>
-        <ul
-          className="ant-card-actions"
-        >
-          <li
-            key="action-0"
-            style={
-              Object {
-                "width": "100%",
-              }
+          style={
+            Object {
+              "borderTop": "1px solid rgba(0, 0, 0, 0.10)",
             }
+          }
+        >
+          <Button
+            block={true}
+            className="login-button"
+            ghost={false}
+            htmlType="button"
+            loading={false}
+            onClick={[Function]}
+            type="primary"
           >
-            <span>
-              <div>
-                <span>
-                  Log in 
-                </span>
-                <a
-                  className="link"
-                  key="login"
-                  onClick={[Function]}
+            <Wave>
+              <button
+                className="ant-btn login-button ant-btn-primary ant-btn-block"
+                onClick={[Function]}
+                type="button"
+              >
+                <span
+                  key=".0"
                 >
+                  Log in
+                </span>
+                <Icon
+                  key=".1"
+                  type="login"
+                >
+                  <LocaleReceiver
+                    componentName="Icon"
+                  >
+                    <i
+                      aria-label="icon: login"
+                      className="anticon anticon-login"
+                    >
+                      <IconReact
+                        className=""
+                        type="login-o"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          className=""
+                          data-icon="login"
+                          fill="currentColor"
+                          focusable="false"
+                          height="1em"
+                          key="svg-login"
+                          viewBox="64 64 896 896"
+                          width="1em"
+                        >
+                          <path
+                            d="M521.7 82c-152.5-.4-286.7 78.5-363.4 197.7-3.4 5.3.4 12.3 6.7 12.3h70.3c4.8 0 9.3-2.1 12.3-5.8 7-8.5 14.5-16.7 22.4-24.5 32.6-32.5 70.5-58.1 112.7-75.9 43.6-18.4 90-27.8 137.9-27.8 47.9 0 94.3 9.3 137.9 27.8 42.2 17.8 80.1 43.4 112.7 75.9 32.6 32.5 58.1 70.4 76 112.5C865.7 417.8 875 464.1 875 512c0 47.9-9.4 94.2-27.8 137.8-17.8 42.1-43.4 80-76 112.5s-70.5 58.1-112.7 75.9A352.8 352.8 0 0 1 520.6 866c-47.9 0-94.3-9.4-137.9-27.8A353.84 353.84 0 0 1 270 762.3c-7.9-7.9-15.3-16.1-22.4-24.5-3-3.7-7.6-5.8-12.3-5.8H165c-6.3 0-10.2 7-6.7 12.3C234.9 863.2 368.5 942 520.6 942c236.2 0 428-190.1 430.4-425.6C953.4 277.1 761.3 82.6 521.7 82zM395.02 624v-76h-314c-4.4 0-8-3.6-8-8v-56c0-4.4 3.6-8 8-8h314v-76c0-6.7 7.8-10.5 13-6.3l141.9 112a8 8 0 0 1 0 12.6l-141.9 112c-5.2 4.1-13 .4-13-6.3z"
+                            key="svg-login-svg-0"
+                          />
+                        </svg>
+                      </IconReact>
+                    </i>
+                  </LocaleReceiver>
+                </Icon>
+              </button>
+            </Wave>
+          </Button>
+        </div>
+      </div>
+    </Card>
+  </div>
+</Login>
+`;
+
+exports[`login component with more than 1 realm should render correctly 1`] = `
+<Login
+  realms={
+    Array [
+      "BBP",
+      "HBP",
+      "Google",
+    ]
+  }
+>
+  <div
+    className="Login"
+  >
+    <Card
+      bodyStyle={
+        Object {
+          "borderTop": "1px solid rgba(0, 0, 0, 0.10)",
+        }
+      }
+      cover={
+        <img
+          alt="Nexus logo"
+          className="logo"
+          src="/mock/path"
+        />
+      }
+      size="small"
+    >
+      <div
+        className="ant-card ant-card-bordered ant-card-small"
+      >
+        <div
+          className="ant-card-cover"
+        >
+          <img
+            alt="Nexus logo"
+            className="logo"
+            src="/mock/path"
+          />
+        </div>
+        <div
+          className="ant-card-body"
+          style={
+            Object {
+              "borderTop": "1px solid rgba(0, 0, 0, 0.10)",
+            }
+          }
+        >
+          <div
+            className="actions"
+          >
+            <Button
+              block={false}
+              className="login-button"
+              ghost={false}
+              htmlType="button"
+              loading={false}
+              onClick={[Function]}
+              type="primary"
+            >
+              <Wave>
+                <button
+                  className="ant-btn login-button ant-btn-primary"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  <span
+                    key=".0"
+                  >
+                    Log in
+                  </span>
                   <Icon
+                    key=".1"
                     type="login"
                   >
                     <LocaleReceiver
@@ -114,38 +217,14 @@ exports[`login component should render correctly 1`] = `
                       </i>
                     </LocaleReceiver>
                   </Icon>
-                </a>
-              </div>
-            </span>
-          </li>
-        </ul>
-      </div>
-    </Card>
-  </div>
-</Login>
-`;
-
-exports[`login component with more than 1 realm should render correctly 1`] = `
-<Login
-  realms={
-    Array [
-      "BBP",
-      "HBP",
-      "Google",
-    ]
-  }
->
-  <div
-    className="Login"
-  >
-    <Card
-      actions={
-        Array [
-          <div>
-            <React.Fragment>
+                </button>
+              </Wave>
+            </Button>
+            <div
+              className="realm-holder"
+            >
               <span>
-                Log in with
-                 
+                 with 
               </span>
               <Dropdown
                 mouseEnterDelay={0.15}
@@ -173,91 +252,18 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                   ]
                 }
               >
-                <span
-                  className="realm"
-                >
-                  HBP
-                </span>
-              </Dropdown>
-               
-            </React.Fragment>
-            <a
-              className="link"
-              onClick={[Function]}
-            >
-              <Icon
-                type="login"
-              />
-            </a>
-          </div>,
-        ]
-      }
-      cover={
-        <img
-          alt="Nexus logo"
-          className="logo"
-          src="/mock/path"
-        />
-      }
-    >
-      <div
-        className="ant-card ant-card-bordered"
-      >
-        <div
-          className="ant-card-cover"
-        >
-          <img
-            alt="Nexus logo"
-            className="logo"
-            src="/mock/path"
-          />
-        </div>
-        <div
-          className="ant-card-body"
-          style={Object {}}
-        >
-          <p
-            className="message"
-          >
-            Please log in to continue.
-          </p>
-        </div>
-        <ul
-          className="ant-card-actions"
-        >
-          <li
-            key="action-0"
-            style={
-              Object {
-                "width": "100%",
-              }
-            }
-          >
-            <span>
-              <div>
-                <span>
-                  Log in with
-                   
-                </span>
                 <Dropdown
+                  defaultVisible={false}
                   mouseEnterDelay={0.15}
                   mouseLeaveDelay={0.1}
-                  overlay={
-                    <Menu
-                      onClick={[Function]}
-                    >
-                      <MenuItem>
-                        BBP
-                      </MenuItem>
-                      <MenuItem>
-                        HBP
-                      </MenuItem>
-                      <MenuItem>
-                        Google
-                      </MenuItem>
-                    </Menu>
-                  }
+                  onVisibleChange={[Function]}
+                  overlay={[Function]}
+                  overlayClassName=""
+                  overlayStyle={Object {}}
                   placement="bottomLeft"
+                  prefixCls="ant-dropdown"
+                  showAction={Array []}
+                  transitionName="slide-up"
                   trigger={
                     Array [
                       "click",
@@ -265,230 +271,169 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                     ]
                   }
                 >
-                  <Dropdown
-                    defaultVisible={false}
-                    mouseEnterDelay={0.15}
-                    mouseLeaveDelay={0.1}
-                    onVisibleChange={[Function]}
-                    overlay={[Function]}
-                    overlayClassName=""
-                    overlayStyle={Object {}}
-                    placement="bottomLeft"
-                    prefixCls="ant-dropdown"
-                    showAction={Array []}
-                    transitionName="slide-up"
-                    trigger={
+                  <Trigger
+                    action={
                       Array [
                         "click",
                         "hover",
                       ]
                     }
+                    afterPopupVisibleChange={[Function]}
+                    blurDelay={0.15}
+                    builtinPlacements={
+                      Object {
+                        "bottomCenter": Object {
+                          "offset": Array [
+                            0,
+                            4,
+                          ],
+                          "overflow": Object {
+                            "adjustX": 1,
+                            "adjustY": 1,
+                          },
+                          "points": Array [
+                            "tc",
+                            "bc",
+                          ],
+                          "targetOffset": Array [
+                            0,
+                            0,
+                          ],
+                        },
+                        "bottomLeft": Object {
+                          "offset": Array [
+                            0,
+                            4,
+                          ],
+                          "overflow": Object {
+                            "adjustX": 1,
+                            "adjustY": 1,
+                          },
+                          "points": Array [
+                            "tl",
+                            "bl",
+                          ],
+                          "targetOffset": Array [
+                            0,
+                            0,
+                          ],
+                        },
+                        "bottomRight": Object {
+                          "offset": Array [
+                            0,
+                            4,
+                          ],
+                          "overflow": Object {
+                            "adjustX": 1,
+                            "adjustY": 1,
+                          },
+                          "points": Array [
+                            "tr",
+                            "br",
+                          ],
+                          "targetOffset": Array [
+                            0,
+                            0,
+                          ],
+                        },
+                        "topCenter": Object {
+                          "offset": Array [
+                            0,
+                            -4,
+                          ],
+                          "overflow": Object {
+                            "adjustX": 1,
+                            "adjustY": 1,
+                          },
+                          "points": Array [
+                            "bc",
+                            "tc",
+                          ],
+                          "targetOffset": Array [
+                            0,
+                            0,
+                          ],
+                        },
+                        "topLeft": Object {
+                          "offset": Array [
+                            0,
+                            -4,
+                          ],
+                          "overflow": Object {
+                            "adjustX": 1,
+                            "adjustY": 1,
+                          },
+                          "points": Array [
+                            "bl",
+                            "tl",
+                          ],
+                          "targetOffset": Array [
+                            0,
+                            0,
+                          ],
+                        },
+                        "topRight": Object {
+                          "offset": Array [
+                            0,
+                            -4,
+                          ],
+                          "overflow": Object {
+                            "adjustX": 1,
+                            "adjustY": 1,
+                          },
+                          "points": Array [
+                            "br",
+                            "tr",
+                          ],
+                          "targetOffset": Array [
+                            0,
+                            0,
+                          ],
+                        },
+                      }
+                    }
+                    defaultPopupVisible={false}
+                    defaultVisible={false}
+                    destroyPopupOnHide={false}
+                    focusDelay={0}
+                    getDocument={[Function]}
+                    getPopupClassNameFromAlign={[Function]}
+                    hideAction={Array []}
+                    mask={false}
+                    maskClosable={true}
+                    mouseEnterDelay={0.15}
+                    mouseLeaveDelay={0.1}
+                    onPopupAlign={[Function]}
+                    onPopupVisibleChange={[Function]}
+                    onVisibleChange={[Function]}
+                    overlay={[Function]}
+                    popup={[Function]}
+                    popupAlign={Object {}}
+                    popupClassName=""
+                    popupPlacement="bottomLeft"
+                    popupStyle={Object {}}
+                    popupTransitionName="slide-up"
+                    popupVisible={false}
+                    prefixCls="ant-dropdown"
+                    showAction={Array []}
                   >
-                    <Trigger
-                      action={
-                        Array [
-                          "click",
-                          "hover",
-                        ]
-                      }
-                      afterPopupVisibleChange={[Function]}
-                      blurDelay={0.15}
-                      builtinPlacements={
-                        Object {
-                          "bottomCenter": Object {
-                            "offset": Array [
-                              0,
-                              4,
-                            ],
-                            "overflow": Object {
-                              "adjustX": 1,
-                              "adjustY": 1,
-                            },
-                            "points": Array [
-                              "tc",
-                              "bc",
-                            ],
-                            "targetOffset": Array [
-                              0,
-                              0,
-                            ],
-                          },
-                          "bottomLeft": Object {
-                            "offset": Array [
-                              0,
-                              4,
-                            ],
-                            "overflow": Object {
-                              "adjustX": 1,
-                              "adjustY": 1,
-                            },
-                            "points": Array [
-                              "tl",
-                              "bl",
-                            ],
-                            "targetOffset": Array [
-                              0,
-                              0,
-                            ],
-                          },
-                          "bottomRight": Object {
-                            "offset": Array [
-                              0,
-                              4,
-                            ],
-                            "overflow": Object {
-                              "adjustX": 1,
-                              "adjustY": 1,
-                            },
-                            "points": Array [
-                              "tr",
-                              "br",
-                            ],
-                            "targetOffset": Array [
-                              0,
-                              0,
-                            ],
-                          },
-                          "topCenter": Object {
-                            "offset": Array [
-                              0,
-                              -4,
-                            ],
-                            "overflow": Object {
-                              "adjustX": 1,
-                              "adjustY": 1,
-                            },
-                            "points": Array [
-                              "bc",
-                              "tc",
-                            ],
-                            "targetOffset": Array [
-                              0,
-                              0,
-                            ],
-                          },
-                          "topLeft": Object {
-                            "offset": Array [
-                              0,
-                              -4,
-                            ],
-                            "overflow": Object {
-                              "adjustX": 1,
-                              "adjustY": 1,
-                            },
-                            "points": Array [
-                              "bl",
-                              "tl",
-                            ],
-                            "targetOffset": Array [
-                              0,
-                              0,
-                            ],
-                          },
-                          "topRight": Object {
-                            "offset": Array [
-                              0,
-                              -4,
-                            ],
-                            "overflow": Object {
-                              "adjustX": 1,
-                              "adjustY": 1,
-                            },
-                            "points": Array [
-                              "br",
-                              "tr",
-                            ],
-                            "targetOffset": Array [
-                              0,
-                              0,
-                            ],
-                          },
-                        }
-                      }
-                      defaultPopupVisible={false}
-                      defaultVisible={false}
-                      destroyPopupOnHide={false}
-                      focusDelay={0}
-                      getDocument={[Function]}
-                      getPopupClassNameFromAlign={[Function]}
-                      hideAction={Array []}
-                      mask={false}
-                      maskClosable={true}
-                      mouseEnterDelay={0.15}
-                      mouseLeaveDelay={0.1}
-                      onPopupAlign={[Function]}
-                      onPopupVisibleChange={[Function]}
-                      onVisibleChange={[Function]}
-                      overlay={[Function]}
-                      popup={[Function]}
-                      popupAlign={Object {}}
-                      popupClassName=""
-                      popupPlacement="bottomLeft"
-                      popupStyle={Object {}}
-                      popupTransitionName="slide-up"
-                      popupVisible={false}
-                      prefixCls="ant-dropdown"
-                      showAction={Array []}
+                    <span
+                      className="realm ant-dropdown-trigger"
+                      key="trigger"
+                      onClick={[Function]}
+                      onMouseDown={[Function]}
+                      onMouseEnter={[Function]}
+                      onMouseLeave={[Function]}
+                      onTouchStart={[Function]}
                     >
-                      <span
-                        className="realm ant-dropdown-trigger"
-                        key="trigger"
-                        onClick={[Function]}
-                        onMouseDown={[Function]}
-                        onMouseEnter={[Function]}
-                        onMouseLeave={[Function]}
-                        onTouchStart={[Function]}
-                      >
-                        HBP
-                      </span>
-                    </Trigger>
-                  </Dropdown>
+                      HBP
+                    </span>
+                  </Trigger>
                 </Dropdown>
-                 
-                <a
-                  className="link"
-                  key="login"
-                  onClick={[Function]}
-                >
-                  <Icon
-                    type="login"
-                  >
-                    <LocaleReceiver
-                      componentName="Icon"
-                    >
-                      <i
-                        aria-label="icon: login"
-                        className="anticon anticon-login"
-                      >
-                        <IconReact
-                          className=""
-                          type="login-o"
-                        >
-                          <svg
-                            aria-hidden="true"
-                            className=""
-                            data-icon="login"
-                            fill="currentColor"
-                            focusable="false"
-                            height="1em"
-                            key="svg-login"
-                            viewBox="64 64 896 896"
-                            width="1em"
-                          >
-                            <path
-                              d="M521.7 82c-152.5-.4-286.7 78.5-363.4 197.7-3.4 5.3.4 12.3 6.7 12.3h70.3c4.8 0 9.3-2.1 12.3-5.8 7-8.5 14.5-16.7 22.4-24.5 32.6-32.5 70.5-58.1 112.7-75.9 43.6-18.4 90-27.8 137.9-27.8 47.9 0 94.3 9.3 137.9 27.8 42.2 17.8 80.1 43.4 112.7 75.9 32.6 32.5 58.1 70.4 76 112.5C865.7 417.8 875 464.1 875 512c0 47.9-9.4 94.2-27.8 137.8-17.8 42.1-43.4 80-76 112.5s-70.5 58.1-112.7 75.9A352.8 352.8 0 0 1 520.6 866c-47.9 0-94.3-9.4-137.9-27.8A353.84 353.84 0 0 1 270 762.3c-7.9-7.9-15.3-16.1-22.4-24.5-3-3.7-7.6-5.8-12.3-5.8H165c-6.3 0-10.2 7-6.7 12.3C234.9 863.2 368.5 942 520.6 942c236.2 0 428-190.1 430.4-425.6C953.4 277.1 761.3 82.6 521.7 82zM395.02 624v-76h-314c-4.4 0-8-3.6-8-8v-56c0-4.4 3.6-8 8-8h314v-76c0-6.7 7.8-10.5 13-6.3l141.9 112a8 8 0 0 1 0 12.6l-141.9 112c-5.2 4.1-13 .4-13-6.3z"
-                              key="svg-login-svg-0"
-                            />
-                          </svg>
-                        </IconReact>
-                      </i>
-                    </LocaleReceiver>
-                  </Icon>
-                </a>
-              </div>
-            </span>
-          </li>
-        </ul>
+              </Dropdown>
+            </div>
+          </div>
+        </div>
       </div>
     </Card>
   </div>
