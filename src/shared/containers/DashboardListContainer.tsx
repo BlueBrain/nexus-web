@@ -27,13 +27,11 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   studioResourceId,
 }) => {
   const history = useHistory();
-  const [selectedResource, setSelectedResource] = React.useState<Resource>();
   const [dashboardResources, setDashboardResources] = React.useState<
     Resource[]
   >([]);
   const [selectedDashboard, setSelectedDashboard] = React.useState<Resource>();
   const nexus = useNexusContext();
-
 
   const selectDashboard = (id: string) => {
     const dashboard = dashboardResources.find(d => d['@id'] === id);
@@ -68,7 +66,8 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
           (selectedDashboard === undefined ||
             selectedDashboard['@id'] !== dashboardId)
         ) {
-          d = values.find(d => d['@id'] === decodeURIComponent(dashboardId));
+          const id = decodeURIComponent(dashboardId);
+          d = values.find(d => d['@id'] === id);
         } else {
           d = values[0];
         }
@@ -104,7 +103,9 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
                 projectLabel={projectLabel}
                 viewId={dashboards[0].view}
                 workspaceId={workspaceId}
-                dashboardId={dashboardId}
+                dashboardId={
+                  dashboardId ? dashboardId : selectedDashboard['@id']
+                }
                 studioResourceId={studioResourceId}
                 dataQuery={selectedDashboard['dataQuery']}
               />

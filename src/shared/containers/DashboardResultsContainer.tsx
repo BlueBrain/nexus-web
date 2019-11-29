@@ -45,6 +45,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
 }) => {
   const history = useHistory();
   const [selectedResource, setSelectedResource] = React.useState<Resource>();
+  const [error, setError] = React.useState<Error>();
   const [items, setItems] = React.useState<any[]>();
   const [headerProperties, setHeaderProperties] = React.useState<any[]>();
   const nexus = useNexusContext();
@@ -58,31 +59,36 @@ const DashboardResultsContainer: React.FunctionComponent<{
         }
       })
       .catch(e => {
+        setError(e);
         // TODO: show a meaningful error to the user.
       });
   };
 
   const updateResourcePath = (res: Resource) => {
     const path = history.location.pathname.split('/studioResource');
+    let newPath;
     if (path[0].includes('/workspaces') && path[0].includes('/dashboards')) {
-      const newPath = `${path[0]}/studioResource/${encodeURIComponent(
-        res['@id']
-      )}`;
+      newPath = `${path[0]}/studioResource/${encodeURIComponent(res['@id'])}`;
       history.push(newPath);
     } else {
-      const newPath = `${
-        path[0]
-      }/workspaces/${workspaceId}/dashboards/${encodeURIComponent(
-        dashboardId
-      )}/studioResource/${encodeURIComponent(res['@id'])}`;
-      history.push(newPath);
+      if (path[0].includes('/dashboards')) {
+        newPath = `${
+          path[0]
+        }/workspaces/${workspaceId}/dashboards/${encodeURIComponent(
+          dashboardId
+        )}/studioResource/${encodeURIComponent(res['@id'])}`;
+      } else {
+        newPath = `${path[0]}/dashboards/${encodeURIComponent(
+          dashboardId
+        )}/studioResource/${encodeURIComponent(res['@id'])}`;
+        history.push(newPath);
+      }
     }
+    history.push(newPath);
   };
 
   const unSelectResource = () => {
     setSelectedResource(undefined);
-    const path = history.location.pathname.split('/studioResource');
-    history.push(path[0]);
   };
 
   React.useEffect(() => {
@@ -130,19 +136,29 @@ const DashboardResultsContainer: React.FunctionComponent<{
           };
         });
 
-      setItems(tempItems);
       const currentResource = data.results.bindings
-        // we only want resources
         .filter((binding: Binding) => binding.self)
         .find((binding: Binding) => {
           return binding.self.value.includes(studioResourceId);
         });
-      
       if (selectedResource === undefined && currentResource !== undefined) {
         selectResource(currentResource.self.value, false);
       }
+      setItems(tempItems);
+    }).catch(e => {
+      setError(e);
     });
-  }, [orgLabel, projectLabel, dataQuery, viewId, studioResourceId]);
+  }, [orgLabel, projectLabel, dataQuery, viewId]);
+
+  if (error) {
+    return (
+      <Alert
+        message="Error loading dashboard"
+        description={`Something went wrong: ${error.message || error}`}
+        type="error"
+      />
+    );
+  }
 
   return (
     <Spin spinning={selectedResource || items ? false : true}>
