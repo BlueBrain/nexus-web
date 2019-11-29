@@ -56,33 +56,7 @@ const ResourceListContainer: React.FunctionComponent<{
     history.push(makeResourceUri(resourceId));
   };
 
-  // Reload if refreshList is updated
-  React.useEffect(() => {
-    // console.log('updating......');
-    
-    const subscription = nexus.View.pollStatistics(
-      orgLabel,
-      projectLabel,
-      DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-      { pollIntervalMs: 200 }
-    ).subscribe(data => {
-      // console.log('data.remainingEvents', data.remainingEvents);
-      
-      if (!data.remainingEvents) {
-        setToggleForceReload(!toggleForceReload);
-        // console.log('toggleForceReload------>', toggleForceReload);
-        subscription.unsubscribe();
-      }      
-    });
-    return () => {
-      subscription.unsubscribe();
-    }
-  },
-  [refreshList, toggleForceReload]);
-
-  React.useEffect(() => {
-    // console.log('loading a new list.......................');
-    
+  React.useEffect(() => {    
     setResources({
       next,
       resources,
@@ -91,15 +65,18 @@ const ResourceListContainer: React.FunctionComponent<{
       error: null,
     });
 
+    let resourceListResponse: any = [];
+
     nexus.Resource.list(
       orgLabel,
       projectLabel,
       list.query
     ).then(response => {
+      resourceListResponse = response;
         setResources({
-          next: response._next || null,
-          resources: response._results,
-          total: response._total,
+          next: resourceListResponse._next || null,
+          resources: resourceListResponse._results,
+          total: resourceListResponse._total,
           busy: false,
           error: null,
         });
@@ -118,6 +95,7 @@ const ResourceListContainer: React.FunctionComponent<{
       projectLabel,
       JSON.stringify(list.query),
       toggleForceReload,
+      refreshList,
     ]
   );
 
@@ -176,8 +154,6 @@ const ResourceListContainer: React.FunctionComponent<{
   };
 
   const handleRefreshList = () => {
-    console.log('handleRefreshList');
-    
     setToggleForceReload(!toggleForceReload);
   };
 

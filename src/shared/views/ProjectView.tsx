@@ -37,7 +37,21 @@ const ProjectView: React.FunctionComponent<{
   const [refreshLists, setRefreshLists] = React.useState(false);
 
   const handleResourceCreated = () => {
-    setRefreshLists(!refreshLists);
+    let totalEvents: number;
+
+    const subscription = nexus.View.pollStatistics(
+      orgLabel,
+      projectLabel,
+      DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+      { pollIntervalMs: 500 }
+    ).subscribe(data => {
+      if (!totalEvents) {
+        totalEvents = data.totalEvents;         
+      } else if (data.totalEvents !== totalEvents) {
+        setRefreshLists(!refreshLists);
+        subscription.unsubscribe();
+      }
+    });
   };
 
   useAsyncEffect(
