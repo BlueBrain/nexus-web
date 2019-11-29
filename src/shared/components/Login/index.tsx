@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, Dropdown, Icon, Menu } from 'antd';
+import { Card, Dropdown, Icon, Menu, Button } from 'antd';
 
 import './Login.less';
 
@@ -42,25 +42,22 @@ const Login: React.FunctionComponent<LoginProps> = ({
     <div className="Login">
       <Card
         cover={<img className="logo" alt="Nexus logo" src={logo} />}
-        actions={[
-          <div>
-            {realms.length === 1 ? (
-              <span>Log in </span>
-            ) : (
-              <React.Fragment>
-                <span>Log in with{' '}</span>
-                <Dropdown overlay={menu} trigger={['click', 'hover']}>
-                  <span className="realm">{realm}</span>
-                </Dropdown>{' '}
-              </React.Fragment>
-            )}
-            <a onClick={onLogin} className="link" key="login">
-              <Icon type="login" />
-            </a>
-          </div>,
-        ]}
+        size="small"
+        bodyStyle={{ borderTop: '1px solid rgba(0, 0, 0, 0.10)' }}
       >
-        <p className="message">Please log in to continue.</p>
+        {realms.length === 1 ? (
+          <Button className="login-button" block onClick={onLogin} type="primary">Log in<Icon type="login" /></Button>
+        ) : (
+          <div className="actions">
+            <Button className="login-button" onClick={onLogin} type="primary">Log in<Icon type="login" /></Button>
+            <div className="realm-holder">
+              <span> with </span>
+              <Dropdown overlay={menu} trigger={['click', 'hover']}>
+                <span className="realm">{realm}</span>
+              </Dropdown>
+            </div>
+          </div>
+        )}
       </Card>
     </div>
   );
