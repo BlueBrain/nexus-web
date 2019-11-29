@@ -24,7 +24,8 @@ const makeDefaultList = () => ({
 const ResourceListBoardContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
-}> = ({ orgLabel, projectLabel }) => {
+  refreshLists?: boolean;
+}> = ({ orgLabel, projectLabel, refreshLists }) => {
   const [resourceLists, setResourceLists] = React.useState<ResourceBoardList[]>(
     [makeDefaultList()]
   );
@@ -50,6 +51,7 @@ const ResourceListBoardContainer: React.FunctionComponent<{
       {resourceLists.map((list, index: number) => {
         return (
           <ResourceListContainer
+            refreshList={refreshLists}
             key={list.id}
             defaultList={list}
             projectLabel={projectLabel}
