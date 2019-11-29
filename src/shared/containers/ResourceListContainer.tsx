@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource, DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk';
 
 import ResourceListComponent, {
   ResourceBoardList,
