@@ -42,7 +42,7 @@ const ProjectView: React.FunctionComponent<{
       orgLabel,
       projectLabel,
       DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-      { pollIntervalMs: 500 }
+      { pollIntervalMs: 300 }
     ).subscribe(data => {
       if (!totalEvents) {
         totalEvents = data.totalEvents;         
@@ -100,6 +100,8 @@ const ProjectView: React.FunctionComponent<{
                   {' | '}
                 </span>{' '}
                 {project._label}
+                {'  '}
+                refreshLists {refreshLists ? 'yes' : 'no'}
               </h1>
               <div style={{ marginLeft: 10 }}>
                 <ViewStatisticsContainer
@@ -142,6 +144,7 @@ const ProjectView: React.FunctionComponent<{
                     <ResourceFormContainer
                       orgLabel={orgLabel}
                       projectLabel={projectLabel}
+                      onResourceCreated={handleResourceCreated}
                     />
                   </AccessControl>
                   <Link
@@ -165,11 +168,7 @@ const ProjectView: React.FunctionComponent<{
                   <Divider />
                   <FileUploadContainer
                     projectLabel={projectLabel}
-<<<<<<< HEAD
                     orgLabel={orgLabel}
-=======
-                    onResourceCreated={handleResourceCreated}
->>>>>>> experimental please waiting for resoruce creation
                   />
                 </AccessControl>
               </SideMenu>
