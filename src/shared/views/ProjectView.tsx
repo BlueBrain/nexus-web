@@ -100,6 +100,7 @@ const ProjectView: React.FunctionComponent<{
                   {' | '}
                 </span>{' '}
                 {project._label}
+                {'  '}
               </h1>
               <div style={{ marginLeft: 10 }}>
                 <ViewStatisticsContainer
