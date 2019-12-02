@@ -3,8 +3,7 @@ import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
 import DashboardResultsContainer from './DashboardResultsContainer';
-import ResourceCardComponent from '../components/ResourceCard';
-import { Button } from 'antd';
+import { useHistory } from 'react-router-dom';
 
 type Dashboard = {
   dashboard: string;
@@ -14,33 +13,41 @@ interface DashboardListProps {
   dashboards: Dashboard[];
   orgLabel: string;
   projectLabel: string;
+  workspaceId: string;
+  dashboardId: string;
+  studioResourceId: string;
 }
 
 const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   dashboards,
   orgLabel,
   projectLabel,
+  workspaceId,
+  dashboardId,
+  studioResourceId,
 }) => {
-  const [selectedResource, setSelectedResource] = React.useState<Resource>();
+  const history = useHistory();
   const [dashboardResources, setDashboardResources] = React.useState<
     Resource[]
   >([]);
   const [selectedDashboard, setSelectedDashboard] = React.useState<Resource>();
   const nexus = useNexusContext();
-  const handleClick = (selfUrl: string) => {
-    nexus
-      .httpGet({ path: selfUrl })
-      .then(res => {
-        setSelectedResource(res);
-      })
-      .catch(e => {
-        // TODO: show a meaningful error to the user.
-      });
-  };
+
   const selectDashboard = (id: string) => {
     const dashboard = dashboardResources.find(d => d['@id'] === id);
     setSelectedDashboard(dashboard);
+    const path = history.location.pathname.split('/dashboards');
+    let newPath;
+    if (path[0].includes('/workspaces')) {
+      newPath = `${path[0]}/dashboards/${encodeURIComponent(id)}`;
+    } else {
+      newPath = `${
+        path[0]
+      }/workspaces/${workspaceId}/dashboards/${encodeURIComponent(id)}`;
+    }
+    history.push(newPath);
   };
+
   React.useEffect(() => {
     Promise.all(
       dashboards.map(dashboardObject => {
@@ -53,12 +60,23 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     )
       .then(values => {
         setDashboardResources(values);
-        setSelectedDashboard(values[0]);
+        let d;
+        if (
+          dashboardId &&
+          (selectedDashboard === undefined ||
+            selectedDashboard['@id'] !== dashboardId)
+        ) {
+          const id = decodeURIComponent(dashboardId);
+          d = values.find(d => d['@id'] === id);
+        } else {
+          d = values[0];
+        }
+        setSelectedDashboard(d);
       })
       .catch(e => {
         // TODO: show a meaningful error to the user.
       });
-  }, [orgLabel, projectLabel]);
+  }, [orgLabel, projectLabel, dashboardId]);
   return (
     <div>
       {dashboardResources.length > 0 ? (
@@ -73,31 +91,24 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
               selectDashboard(id);
             }}
             position="left"
+            defaultActiveId={
+              dashboardId
+                ? decodeURIComponent(dashboardId)
+                : dashboardResources[0]['@id']
+            }
           >
             {selectedDashboard ? (
-              selectedResource ? (
-                <div className="studio-resource">
-                  <Button
-                    type="primary"
-                    size="small"
-                    className={'studio-back-button'}
-                    icon="caret-left"
-                    onClick={() => setSelectedResource(undefined)}
-                  >
-                    {' '}
-                    Back{' '}
-                  </Button>
-                  <ResourceCardComponent resource={selectedResource} />
-                </div>
-              ) : (
-                <DashboardResultsContainer
-                  handleClick={handleClick}
-                  orgLabel={orgLabel}
-                  projectLabel={projectLabel}
-                  viewId={dashboards[0].view}
-                  dataQuery={selectedDashboard['dataQuery']}
-                />
-              )
+              <DashboardResultsContainer
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+                viewId={dashboards[0].view}
+                workspaceId={workspaceId}
+                dashboardId={
+                  dashboardId ? dashboardId : selectedDashboard['@id']
+                }
+                studioResourceId={studioResourceId}
+                dataQuery={selectedDashboard['dataQuery']}
+              />
             ) : null}
           </TabList>
         </>

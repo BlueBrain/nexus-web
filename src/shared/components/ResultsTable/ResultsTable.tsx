@@ -40,12 +40,15 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
               break;
             case 'Project':
               render = (projectURI: string) => {
-                const [org, project] = parseProjectUrl(projectURI);
-                return (
-                  <span>
-                    <b>{org}</b> / {project}
-                  </span>
-                );
+                if (projectURI) {
+                  const [org, project] = parseProjectUrl(projectURI);
+                  return (
+                    <span>
+                      <b>{org}</b> / {project}
+                    </span>
+                  );
+                }
+                return null;
               };
               break;
             default:

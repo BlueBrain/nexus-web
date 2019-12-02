@@ -3,24 +3,37 @@ import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
 import DashboardList from './DashboardListContainer';
+import { useHistory } from 'react-router-dom';
 
 type WorkspaceListProps = {
   workspaceIds: string[];
   orgLabel: string;
   projectLabel: string;
+  workspaceId: string;
+  dashboardId: string;
+  studioResourceId: string;
 };
 
 const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   workspaceIds,
   orgLabel,
   projectLabel,
+  workspaceId,
+  dashboardId,
+  studioResourceId,
 }) => {
   const [workspaces, setWorkspaces] = React.useState<Resource[]>([]);
   const [selectedWorkspace, setSelectedWorkspace] = React.useState<Resource>();
   const nexus = useNexusContext();
-  const selectWorkspace = (id: string) => {
-    const w = workspaces.find(w => w['@id'] === id);
+  const history = useHistory();
+  const selectWorkspace = (id: string, values: Resource[]) => {
+    const w = values.find(w => w['@id'] === id);
     setSelectedWorkspace(w);
+    const path = history.location.pathname.split('/workspaces');
+    const newPath = `${path[0]}/workspaces/${encodeURIComponent(id)}`;
+    if (!history.location.pathname.includes(newPath)) {
+      history.push(newPath);
+    }
   };
 
   React.useEffect(() => {
@@ -33,12 +46,23 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
     )
       .then(values => {
         setWorkspaces(values);
-        setSelectedWorkspace(values[0] as Resource);
+        let w;
+        if (
+          workspaceId !== undefined &&
+          (selectedWorkspace === undefined ||
+            selectedWorkspace['@id'] !== decodeURIComponent(workspaceId))
+        ) {
+          const id = decodeURIComponent(workspaceId);
+          w = values.find(w => w['@id'] === id);
+        } else {
+          w = values[0];
+        }
+        setSelectedWorkspace(w);
       })
       .catch(e => {
         // TODO: show a meaningful error to the user.
       });
-  }, [workspaceIds]);
+  }, [workspaceIds, workspaceId]);
 
   return (
     <>
@@ -50,10 +74,10 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
             id: w['@id'],
           }))}
           onSelected={(id: string) => {
-            selectWorkspace(id);
+            selectWorkspace(id, workspaces);
           }}
           defaultActiveId={
-            selectedWorkspace ? selectedWorkspace['@id'] : workspaces[0]['@id']
+            workspaceId ? decodeURIComponent(workspaceId) : workspaces[0]['@id']
           }
           position="top"
         >
@@ -63,6 +87,13 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
                 orgLabel={orgLabel}
                 projectLabel={projectLabel}
                 dashboards={selectedWorkspace['dashboards']}
+                workspaceId={
+                  workspaceId
+                    ? workspaceId
+                    : encodeURIComponent(selectedWorkspace['@id'])
+                }
+                dashboardId={dashboardId}
+                studioResourceId={studioResourceId}
               />{' '}
             </div>
           ) : null}

@@ -45,6 +45,23 @@ const routes: RouteProps[] = [
     component: StudioView,
   },
   {
+    path: '/:orgLabel/:projectLabel/studios/:studioId/workspaces/:workspaceId',
+    exact: true,
+    component: StudioView,
+  },
+  {
+    path:
+      '/:orgLabel/:projectLabel/studios/:studioId/workspaces/:workspaceId/dashboards/:dashboardId',
+    exact: true,
+    component: StudioView,
+  },
+  {
+    path:
+      '/:orgLabel/:projectLabel/studios/:studioId/workspaces/:workspaceId/dashboards/:dashboardId/studioResource/:studioResourceId',
+    exact: true,
+    component: StudioView,
+  },
+  {
     path: '/:orgLabel/:projectLabel/:viewId/_search',
     component: ElasticSearchQueryView,
   },
