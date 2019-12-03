@@ -69,11 +69,11 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     try {
       const parsedVal = JSON.parse(value);
       setParsedValue(parsedVal);
-      setEditing(true);
       setValid(true);
     } catch (error) {
       setValid(false);
     }
+    setEditing(true);
     setStringValue(value);
   };
 
