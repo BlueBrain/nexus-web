@@ -33,13 +33,15 @@ const SchemaLinkContainer: React.FunctionComponent<{
       })
       .then(({ [EXPANDED_CONSTRAINED_BY_KEY]: constrainedBy }) => {
         schemaId = constrainedBy['@id'];
-        const baseUri = nexus.context.uri;
-        // Fetch the resource with all resolvers to see if it exists as resolvable inside nexus
-        return nexus.httpGet({
-          path: `${baseUri}/resolvers/${orgLabel}/${projectLabel}/_/${encodeURIComponent(
+
+        return nexus.Resolver.getResource(
+          orgLabel,
+          projectLabel,
+          '_',
+          encodeURIComponent(
             schemaId
-          )}`,
-        });
+          ),
+        )
       })
       .then((resource: Resource) => {
         const { orgLabel, projectLabel } = getResourceLabelsAndIdsFromSelf(
