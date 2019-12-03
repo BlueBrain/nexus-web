@@ -5,7 +5,7 @@ import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
 } from '@bbp/nexus-sdk';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { notification, Popover, Divider, Tooltip, Icon, Switch } from 'antd';
+import { notification, Popover, Divider, Switch } from 'antd';
 import { Link } from 'react-router-dom';
 
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
@@ -13,6 +13,7 @@ import SideMenu from '../components/Menu/SideMenu';
 import FileUploadContainer from '../containers/FileUploadContainer';
 import ResourceFormContainer from '../containers/ResourceFormContainer';
 import ResourceListBoardContainer from '../containers/ResourceListBoardContainer';
+import HomeIcon from '../components/HomeIcon';
 
 const ProjectView: React.FunctionComponent<{
   match: match<{ orgLabel: string; projectLabel: string }>;
@@ -89,11 +90,7 @@ const ProjectView: React.FunctionComponent<{
           <div className="project-banner">
             <div className="label">
               <h1 className="name">
-                <Link to="/">
-                  <Tooltip title="Back to all organizations" placement="right">
-                    <Icon type="home" />
-                  </Tooltip>
-                </Link>
+                <HomeIcon />
                 {' | '}
                 <span>
                   <Link to={`/${orgLabel}`}>{orgLabel}</Link>
