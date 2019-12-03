@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Icon, Switch, Spin } from 'antd';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
+import { UnControlled as CodeMirror, IInstance } from 'react-codemirror2';
 import 'codemirror/mode/javascript/javascript';
 
 import './ResourceEditor.less';
@@ -36,12 +36,32 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const [valid, setValid] = React.useState(true);
   const [value, setValue] = React.useState(rawData);
 
+  const renderCodeMirror = (value: { [key: string]: any }) => {
+    return (
+      <Spin spinning={busy}>
+        <CodeMirror
+          value={JSON.stringify(value, null, 2)}
+          autoCursor={false}
+          options={{
+            readOnly: !editable,
+            mode: { name: 'javascript', json: true },
+            theme: 'base16-light',
+            lineNumbers: true,
+            lineWrapping: true,
+            viewportMargin: Infinity,
+          }}
+          onChange={handleChange}
+        />
+      </Spin>
+    );
+  };
+
   React.useEffect(() => {
     setEditing(false);
   }, [rawData]); // only runs when Editor receives new resource to edit
 
   const handleChange = (editor: any, data: any, value: any) => {
-    if (!editable) {
+    if (!editable || value === JSON.stringify(rawData, null, 2)) {
       return;
     }
     try {
@@ -61,6 +81,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   };
 
   const handleCancel = () => {
+    setValue(rawData);
     setEditing(false);
   };
 
@@ -120,11 +141,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
               >
                 Save
               </Button>{' '}
-              <Button
-                type="danger"
-                size="small"
-                onClick={handleCancel}
-              >
+              <Button type="danger" size="small" onClick={handleCancel}>
                 Cancel
               </Button>
             </>
@@ -132,20 +149,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         </div>
       </div>
 
-      <Spin spinning={busy}>
-        <CodeMirror
-          value={JSON.stringify(rawData, null, 2)}
-          options={{
-            readOnly: !editable,
-            mode: { name: 'javascript', json: true },
-            theme: 'base16-light',
-            lineNumbers: true,
-            lineWrapping: true,
-            viewportMargin: Infinity,
-          }}
-          onChange={handleChange}
-        />
-      </Spin>
+      {renderCodeMirror(value)}
     </div>
   );
 };
