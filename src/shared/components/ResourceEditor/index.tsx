@@ -34,14 +34,16 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
 
   const [isEditing, setEditing] = React.useState(editing);
   const [valid, setValid] = React.useState(true);
-  const [value, setValue] = React.useState(rawData);
+  const [parsedValue, setParsedValue] = React.useState(rawData);
+  const [stringValue, setStringValue] = React.useState(JSON.stringify(rawData, null, 2));
 
-  const renderCodeMirror = (value: { [key: string]: any }) => {
+  const renderCodeMirror = (value: string) => {
     return (
       <Spin spinning={busy}>
         <CodeMirror
-          value={JSON.stringify(value, null, 2)}
+          value={value}
           autoCursor={false}
+          detach={false}
           options={{
             readOnly: !editable,
             mode: { name: 'javascript', json: true },
@@ -66,22 +68,24 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     }
     try {
       const parsedVal = JSON.parse(value);
-      setValue(parsedVal);
+      setParsedValue(parsedVal);
       setEditing(true);
       setValid(true);
     } catch (error) {
       setValid(false);
     }
+    setStringValue(value);
   };
 
   const handleSubmit = () => {
     if (onSubmit) {
-      onSubmit(value);
+      onSubmit(parsedValue);
     }
   };
 
   const handleCancel = () => {
-    setValue(rawData);
+    setStringValue(JSON.stringify(rawData, null, 2));
+    setValid(true);
     setEditing(false);
   };
 
@@ -94,7 +98,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
               <Icon type="info-circle" /> This resource cannot be edited
             </div>
           )}
-          {editable && !isEditing && (
+          {editable && !isEditing && valid && (
             <div className="feedback">
               <Icon type="info-circle" /> Directly edit this resource
             </div>
@@ -131,8 +135,9 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             />
           )}
 
-          {editable && isEditing && valid && (
+          {editable && isEditing && (
             <>
+            {valid ? 
               <Button
                 icon="save"
                 type="primary"
@@ -140,7 +145,8 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
                 onClick={handleSubmit}
               >
                 Save
-              </Button>{' '}
+              </Button> : null }
+              {' '}
               <Button type="danger" size="small" onClick={handleCancel}>
                 Cancel
               </Button>
@@ -149,7 +155,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         </div>
       </div>
 
-      {renderCodeMirror(value)}
+      {renderCodeMirror(stringValue)}
     </div>
   );
 };
