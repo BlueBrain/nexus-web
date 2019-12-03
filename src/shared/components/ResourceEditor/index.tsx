@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Icon, Switch, Spin } from 'antd';
-import { UnControlled as CodeMirror, IInstance } from 'react-codemirror2';
+import { UnControlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/mode/javascript/javascript';
 
 import './ResourceEditor.less';
