@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 import SparqlQueryContainer from '../containers/SparqlQuery';
 import { getResourceLabel, labelOf } from '../utils';
+import HomeIcon from '../components/HomeIcon';
 
 const SparqlQueryView: React.FunctionComponent<{
   match: match<{ orgLabel: string; projectLabel: string; viewId: string }>;
@@ -69,11 +70,7 @@ const SparqlQueryView: React.FunctionComponent<{
         <div className="label">
           <h1 className="name">
             <span>
-              <Link to="/">
-                <Tooltip title="Back to all organizations" placement="right">
-                  <Icon type="home" />
-                </Tooltip>
-              </Link>
+              <HomeIcon />
               {' | '}
               <Link to={`/${orgLabel}`}>{orgLabel}</Link>
               {' | '}
