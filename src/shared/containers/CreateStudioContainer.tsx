@@ -13,7 +13,7 @@ const CreateStudioContainer: React.FC<{
   const [showModal, setShowModal] = React.useState(false);
 
   const generateStudioResource = (label: string) => ({
-    // FIX LATER: '@context': 'https://bluebrainnexus.io/studio/context',
+    // TODO: decide if a context is mandatory for studio creation
     label,
     '@type': 'https://bluebrainnexus.io/studio/vocabulary/Studio',
   });
