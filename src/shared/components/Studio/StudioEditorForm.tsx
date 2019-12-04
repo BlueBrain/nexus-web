@@ -13,9 +13,7 @@ const StudioEditorForm: React.FC<{
 
     form.validateFields((err, values) => {
       if (!err) {
-        console.log('success', values);
-        
-        saveStudio && saveStudio(values);
+        saveStudio && saveStudio(values.label);
       }
     });
   };
