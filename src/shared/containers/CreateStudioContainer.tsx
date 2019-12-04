@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Button, Modal } from 'antd';
 
+import StudioEditorForm from '../components/Studio/StudioEditorForm';
+
 const CreateStudioContainer: React.FC = () => {
   const [showModal, setShowModal] = React.useState(false);
 
@@ -19,8 +21,7 @@ const CreateStudioContainer: React.FC = () => {
         onOk={saveStudio}
         onCancel={() => setShowModal(!showModal)}
       >
-        <div>Hello</div>
-        <p>Create Studio Form goes here</p>
+        <StudioEditorForm />
       </Modal>  
     </div>
   );
