@@ -1,31 +1,48 @@
 import * as React from 'react';
-import { Button, Modal } from 'antd';
+import { Button, Modal, notification } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk';
 
 import StudioEditorForm from '../components/Studio/StudioEditorForm';
 
 const CreateStudioContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
-}> = ({ orgLabel, projectLabel }) => {
+  goToStudio?(studioId: string): void;
+}> = ({ orgLabel, projectLabel, goToStudio }) => {
   const nexus = useNexusContext();
   const [showModal, setShowModal] = React.useState(false);
 
   const generateStudioResource = (label: string) => ({
-    '@context': 'https://bluebrainnexus.io/studio/context',
+    // FIX LATER: '@context': 'https://bluebrainnexus.io/studio/context',
     label,
-    '@type': 'Studio',
+    '@type': 'https://bluebrainnexus.io/studio/vocabulary/Studio',
   });
 
-  const saveStudio = (label: string) => {
-    setShowModal(false);
-
-    nexus.Resource.create(
+  const createStudioResource = async (label: string) => {
+    return await nexus.Resource.create(
       orgLabel,
       projectLabel,
       generateStudioResource(label),
     );
+  }
+
+  const saveStudio = (label: string) => {
+    setShowModal(false);
+
+    createStudioResource(label).then(response => {
+      goToStudio && goToStudio(response['@id']);
+      
+      notification.success({
+        message: 'Studio was created successfully',
+        duration: 2,
+      });
+    }).catch(error => {
+      notification.error({
+        message: 'An error occurred',
+        description: error.reason || error.message,
+        duration: 3,
+      });
+    });
   }
 
   return (

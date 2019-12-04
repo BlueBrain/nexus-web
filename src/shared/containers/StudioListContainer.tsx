@@ -98,7 +98,7 @@ const StudioListContainer: React.FunctionComponent<{
       orgLabel,
       projectLabel,
     ]
-  );
+  );  
 
   return (
     <StudioList

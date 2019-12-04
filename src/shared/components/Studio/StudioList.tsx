@@ -40,6 +40,7 @@ const StudioList: React.FC<{
         <CreateStudioContainer
           orgLabel={orgLabel}
           projectLabel={projectLabel}
+          goToStudio={goToStudio}
         />
         {!noStudios && (
           <div>
