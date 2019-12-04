@@ -7,6 +7,7 @@ const CreateStudioContainer: React.FC = () => {
   const saveStudio = () => {
     // nothing here yet
     setShowModal(false);
+    // save stuff and redirect to studio view
   }
 
   return (
