@@ -22,10 +22,10 @@ export type DashboardAndViewPairing = {
 const DashboardConfigEditorComponent: React.FunctionComponent<{
   form: WrappedFormUtils;
   dashboardViewParing?: DashboardAndViewPairing;
-  onChange?(dashboardViewParing: DashboardAndViewPairing): void;
+  onSubmit?(dashboardViewParing: DashboardAndViewPairing): void;
   viewList?: ResourceList<{}>;
 }> = ({
-  onChange,
+  onSubmit,
   form,
   dashboardViewParing,
   viewList = {
@@ -45,8 +45,8 @@ const DashboardConfigEditorComponent: React.FunctionComponent<{
           label: string;
           view: string;
         };
-        onChange &&
-          onChange({
+        onSubmit &&
+          onSubmit({
             dashboard: {
               description,
               label,
@@ -143,6 +143,6 @@ const DashboardConfigEditorComponent: React.FunctionComponent<{
 export default Form.create<{
   form: WrappedFormUtils;
   dashboardViewParing?: DashboardAndViewPairing;
-  onChange?(dashboardViewParing: DashboardAndViewPairing): void;
+  onSubmit?(dashboardViewParing: DashboardAndViewPairing): void;
   viewList?: ResourceList<{}>;
 }>()(DashboardConfigEditorComponent);

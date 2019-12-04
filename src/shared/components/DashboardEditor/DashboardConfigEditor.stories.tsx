@@ -54,13 +54,24 @@ const viewList = {
     'https://nexusinstance.io/v1/views/bbp/nmc?after=%5B1575451120953,%22https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex%22%5D',
 };
 
-storiesOf('Components/StudioWizard/DashboardQueryEditor', module).add(
-  'DashboardQueryEditor',
+storiesOf('Components/StudioWizard/DashboardConfigEditor', module).add(
+  'DashboardConfigEditorComponent',
   withInfo(`
     A form to edit Studio Dashboards
 
     ~~~js
-    <DashboardQueryEditorComponent />
+    <DashboardConfigEditorComponent
+            viewList={viewList}
+            dashboardViewParing={{
+              dashboard: {
+                label,
+                description,
+              },
+              view: {
+                '@id': 'nxv:defaultSparqlView',
+              },
+            }}
+          />
     ~~~
   `)(() => {
     const label = text('label', 'A good, honest label!');
