@@ -13,6 +13,7 @@ import SideMenu from '../components/Menu/SideMenu';
 import FileUploadContainer from '../containers/FileUploadContainer';
 import ResourceFormContainer from '../containers/ResourceFormContainer';
 import ResourceListBoardContainer from '../containers/ResourceListBoardContainer';
+import StudioListContainer from '../containers/StudioListContainer';
 import HomeIcon from '../components/HomeIcon';
 
 const ProjectView: React.FunctionComponent<{
@@ -46,7 +47,7 @@ const ProjectView: React.FunctionComponent<{
       { pollIntervalMs: 300 }
     ).subscribe(data => {
       if (!totalEvents) {
-        totalEvents = data.totalEvents;         
+        totalEvents = data.totalEvents;
       } else if (data.totalEvents !== totalEvents) {
         setRefreshLists(!refreshLists);
         subscription.unsubscribe();
@@ -68,7 +69,8 @@ const ProjectView: React.FunctionComponent<{
           busy: false,
           error: null,
         });
-      }).catch(error => {
+      })
+      .catch(error => {
         notification.error({
           message: `Could not load project ${projectLabel}`,
           description: error.message,
@@ -79,9 +81,7 @@ const ProjectView: React.FunctionComponent<{
           busy: false,
         });
       });
-    },
-    [orgLabel, projectLabel]
-  );
+  }, [orgLabel, projectLabel]);
 
   return (
     <div className="project-view">
@@ -170,11 +170,18 @@ const ProjectView: React.FunctionComponent<{
               </SideMenu>
             </div>
           </div>
-          <ResourceListBoardContainer
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
-            refreshLists={refreshLists}
-          />
+          <div className="list-board">
+            <div className="wrapper">
+              <ResourceListBoardContainer
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+              />
+              <StudioListContainer
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+              />
+            </div>
+          </div>
         </>
       )}
     </div>
