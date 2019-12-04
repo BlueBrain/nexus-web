@@ -2,12 +2,13 @@ import * as React from 'react';
 import { Input, Form, Tooltip, Icon, Button, Select } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { DEFAULT_SPARQL_VIEW_ID, ResourceList } from '@bbp/nexus-sdk';
+
 import { getResourceLabel } from '../../utils';
 
 const { Option } = Select;
 
 export type DashboardPayload = {
-  description: string;
+  description?: string;
   label: string;
 };
 
@@ -21,7 +22,7 @@ export type DashboardAndViewPairing = {
 const DashboardConfigEditorComponent: React.FunctionComponent<{
   form: WrappedFormUtils;
   dashboardViewParing?: DashboardAndViewPairing;
-  onChange?(dashboardPayload: DashboardPayload): void;
+  onChange?(dashboardViewParing: DashboardAndViewPairing): void;
   viewList?: ResourceList<{}>;
 }> = ({
   onChange,
@@ -33,20 +34,29 @@ const DashboardConfigEditorComponent: React.FunctionComponent<{
     _results: [],
   },
 }) => {
-  const { getFieldDecorator } = form;
-
-  const validate = () => {
-    form.validateFields(err => {
-      console.log(err);
-      if (!err) {
-        console.info('success');
-      }
-    });
-  };
+  const { getFieldDecorator, getFieldsValue, validateFields } = form;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({ target: e.target });
+    validateFields(err => {
+      if (!err) {
+        const { description, label, view } = getFieldsValue() as {
+          description?: string;
+          label: string;
+          view: string;
+        };
+        onChange &&
+          onChange({
+            dashboard: {
+              description,
+              label,
+            },
+            view: {
+              '@id': view,
+            },
+          });
+      }
+    });
   };
 
   const formItemLayout = {
@@ -123,7 +133,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<{
         )}
       </Form.Item>
 
-      <Button type="primary" htmlType="submit" onClick={validate}>
+      <Button type="primary" htmlType="submit">
         Save
       </Button>
     </Form>
@@ -131,8 +141,8 @@ const DashboardConfigEditorComponent: React.FunctionComponent<{
 };
 
 export default Form.create<{
-  dashboardViewParing?: DashboardAndViewPairing;
   form: WrappedFormUtils;
-  onChange?(dashboardPayload: DashboardPayload): void;
+  dashboardViewParing?: DashboardAndViewPairing;
+  onChange?(dashboardViewParing: DashboardAndViewPairing): void;
   viewList?: ResourceList<{}>;
 }>()(DashboardConfigEditorComponent);
