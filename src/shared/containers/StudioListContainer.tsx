@@ -110,7 +110,9 @@ const StudioListContainer: React.FunctionComponent<{
       busy={busy}
       error={error}
       goToStudio={(id: string) => goToStudio(id)}
-    ></StudioList>
+    >
+      <div>Hello</div>
+    </StudioList>
   );
 };
 
