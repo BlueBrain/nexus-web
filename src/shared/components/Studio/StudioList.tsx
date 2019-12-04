@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Empty, Spin} from 'antd';
+import { Empty, Spin } from 'antd';
 
 import ListItem from '../List/Item';
 import CreateStudioContainer from '../../containers/CreateStudioContainer';
@@ -26,7 +26,9 @@ const StudioList: React.FC<{
   busy?: boolean;
   error?: Error | null;
   goToStudio?(studioId: string): void;
-}> = ({ studios, busy, error, goToStudio = () => {} }) => {
+  orgLabel: string,
+  projectLabel: string,
+}> = ({ studios, busy, error, goToStudio = () => {}, orgLabel, projectLabel }) => {
   const noStudios = studios.length === 0;
 
   return (
@@ -35,7 +37,10 @@ const StudioList: React.FC<{
       <Spin spinning={busy}>
         {error && <Empty description={error.message || 'An error occurred'} />}
         {!error && noStudios && <Empty description="No studios available" />}
-        <CreateStudioContainer />
+        <CreateStudioContainer
+          orgLabel={orgLabel}
+          projectLabel={projectLabel}
+        />
         {!noStudios && (
           <div>
             {studios.map(studio => (

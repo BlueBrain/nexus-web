@@ -1,15 +1,31 @@
 import * as React from 'react';
 import { Button, Modal } from 'antd';
+import { useNexusContext } from '@bbp/react-nexus';
+import { Resource } from '@bbp/nexus-sdk';
 
 import StudioEditorForm from '../components/Studio/StudioEditorForm';
 
-const CreateStudioContainer: React.FC = () => {
+const CreateStudioContainer: React.FC<{
+  orgLabel: string;
+  projectLabel: string;
+}> = ({ orgLabel, projectLabel }) => {
+  const nexus = useNexusContext();
   const [showModal, setShowModal] = React.useState(false);
 
-  const saveStudio = () => {
-    // nothing here yet
+  const generateStudioResource = (label: string) => ({
+    '@context': 'https://bluebrainnexus.io/studio/context',
+    label,
+    '@type': 'Studio',
+  });
+
+  const saveStudio = (label: string) => {
     setShowModal(false);
-    // save stuff and redirect to studio view
+
+    nexus.Resource.create(
+      orgLabel,
+      projectLabel,
+      generateStudioResource(label),
+    );
   }
 
   return (
@@ -21,7 +37,7 @@ const CreateStudioContainer: React.FC = () => {
         footer={null}
         onCancel={() => setShowModal(false)}
       >
-        <StudioEditorForm />
+        <StudioEditorForm saveStudio={saveStudio} />
       </Modal>  
     </div>
   );

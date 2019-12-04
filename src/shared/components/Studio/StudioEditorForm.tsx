@@ -2,29 +2,20 @@ import * as React from 'react';
 import { Input, Form, Tooltip, Icon, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
-export type studioPayload = {
-  dataQuery: string;
-  description: string;
-  label: string;
-};
-
 const StudioEditorForm: React.FC<{
   form: WrappedFormUtils;
-  onChange?(studioPayload: studioPayload): void;
-  saveStudio?(studioPayload: studioPayload): void;
-}> = ({ onChange, form }) => {
+  saveStudio?(label: string): void;
+}> = ({ form, saveStudio }) => {
   const { getFieldDecorator } = form;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({ target: e.target });
-  };
 
-  const validate = () => {
-    form.validateFields(err => {
-      console.log(err);
+    form.validateFields((err, values) => {
       if (!err) {
-        console.info('success');
+        console.log('success', values);
+        
+        saveStudio && saveStudio(values);
       }
     });
   };
@@ -40,7 +31,7 @@ const StudioEditorForm: React.FC<{
         label={
           <span>
             Label&nbsp;
-            <Tooltip title="What do you want to call this dashboard?">
+            <Tooltip title="A name of your studio">
               <Icon type="question-circle-o" />
             </Tooltip>
           </span>
@@ -55,25 +46,7 @@ const StudioEditorForm: React.FC<{
           ],
         })(<Input />)}
       </Form.Item>
-      <Form.Item
-        label={
-          <span>
-            Description&nbsp;
-            <Tooltip title="A short description of what's in the dashboard.">
-              <Icon type="question-circle-o" />
-            </Tooltip>
-          </span>
-        }
-      >
-        {getFieldDecorator('description', {
-          rules: [
-            {
-              required: false,
-            },
-          ],
-        })(<Input />)}
-      </Form.Item>
-      <Button type="primary" htmlType="submit" onClick={validate}>
+      <Button type="primary" htmlType="submit">
         Save
       </Button>
     </Form>
@@ -82,5 +55,5 @@ const StudioEditorForm: React.FC<{
 
 export default Form.create<{
   form: WrappedFormUtils;
-  onChange?(studioPayload: studioPayload): void;
+  saveStudio?(label: string): void;
 }>()(StudioEditorForm);
