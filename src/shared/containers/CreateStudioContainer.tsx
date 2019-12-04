@@ -1,16 +1,21 @@
 import * as React from 'react';
 import { Button, Modal } from 'antd';
 
-const CreateStudioContainer = () => {
+const CreateStudioContainer: React.FC = () => {
   const [showModal, setShowModal] = React.useState(false);
+
+  const saveStudio = () => {
+    // nothing here yet
+    setShowModal(false);
+  }
 
   return (
     <div style={{margin: '20px 0 0'}}>
-      <Button type="primary" block onClick={() => setShowModal(!showModal)}>Create Studio</Button>
+      <Button type="primary" block onClick={() => setShowModal(true)}>Create Studio</Button>
       <Modal
         title="Create Studio"
         visible={showModal}
-        onOk={() => console.log('ok')}
+        onOk={saveStudio}
         onCancel={() => setShowModal(!showModal)}
       >
         <div>Hello</div>
