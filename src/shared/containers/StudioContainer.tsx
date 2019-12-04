@@ -49,7 +49,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
   return (
     <>
       {studioResource ? (
-        <div className="studio-view">
+        <>
           <h1 className="title">{studioResource.label}</h1>
           {studioResource.description && (
             <p className="description">{studioResource.description}</p>
@@ -62,7 +62,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
             dashboardId={dashboardId}
             studioResourceId={studioResourceId}
           />
-        </div>
+        </>
       ) : (
         <h4>The Resource is not a Studio</h4>
       )}
