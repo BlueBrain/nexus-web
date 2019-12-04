@@ -7,6 +7,7 @@ import {
   getLogoutUrl,
   hasExpired,
   camelCaseToLabelString,
+  camelCaseToTitleCase,
 } from '..';
 
 const identities: Identity[] = [
@@ -39,6 +40,12 @@ const identities: Identity[] = [
   },
 ];
 describe('utils functions', () => {
+  describe('camelCaseToTitleCase()', () => {
+    it('should convert camelCase strings to Title Case', () => {
+      expect(camelCaseToTitleCase('helloWorld')).toEqual('Hello World');
+      expect(camelCaseToTitleCase('iLoveTheUSA')).toEqual('I Love The USA');
+    });
+  });
   describe('getUserList()', () => {
     it('should return a list of users', () => {
       expect(getUserList(identities)).toEqual(['julien', 'kenny']);

@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { match } from 'react-router';
-import { useAsyncEffect } from 'use-async-effect';
 import {
-  OrgResponseCommon,
   ProjectResponseCommon,
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
 } from '@bbp/nexus-sdk';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { notification, Popover, Divider, Tooltip, Icon } from 'antd';
+import { notification, Popover, Divider, Switch } from 'antd';
 import { Link } from 'react-router-dom';
 
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
@@ -16,6 +14,7 @@ import FileUploadContainer from '../containers/FileUploadContainer';
 import ResourceFormContainer from '../containers/ResourceFormContainer';
 import ResourceListBoardContainer from '../containers/ResourceListBoardContainer';
 import StudioListContainer from '../containers/StudioListContainer';
+import HomeIcon from '../components/HomeIcon';
 
 const ProjectView: React.FunctionComponent<{
   match: match<{ orgLabel: string; projectLabel: string }>;
@@ -25,81 +24,84 @@ const ProjectView: React.FunctionComponent<{
     params: { orgLabel, projectLabel },
   } = match;
 
-  const [{ org, project, busy, error }, setState] = React.useState<{
-    org: OrgResponseCommon | null;
+  const [{ project, busy, error }, setState] = React.useState<{
     project: ProjectResponseCommon | null;
     busy: boolean;
     error: Error | null;
   }>({
-    org: null,
     project: null,
     busy: false,
     error: null,
   });
 
   const [menuVisible, setMenuVisible] = React.useState(true);
+  const [refreshLists, setRefreshLists] = React.useState(false);
 
-  useAsyncEffect(
-    async isMounted => {
-      if (!isMounted()) {
-        return;
+  const handleResourceCreated = () => {
+    let totalEvents: number;
+
+    const subscription = nexus.View.pollStatistics(
+      orgLabel,
+      projectLabel,
+      DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+      { pollIntervalMs: 300 }
+    ).subscribe(data => {
+      if (!totalEvents) {
+        totalEvents = data.totalEvents;
+      } else if (data.totalEvents !== totalEvents) {
+        setRefreshLists(!refreshLists);
+        subscription.unsubscribe();
       }
-      try {
+    });
+  };
+
+  React.useEffect(() => {
+    setState({
+      project,
+      error: null,
+      busy: true,
+    });
+
+    nexus.Project.get(orgLabel, projectLabel)
+      .then(response => {
         setState({
-          org,
-          project,
-          error: null,
-          busy: true,
-        });
-        const activeOrg = await nexus.Organization.get(orgLabel);
-        const activeProject = await nexus.Project.get(orgLabel, projectLabel);
-        setState({
-          org: activeOrg,
-          project: activeProject,
+          project: response,
           busy: false,
           error: null,
         });
-      } catch (error) {
+      })
+      .catch(error => {
         notification.error({
           message: `Could not load project ${projectLabel}`,
           description: error.message,
         });
         setState({
-          org,
           project,
           error,
           busy: false,
         });
-      }
-    },
-    [orgLabel, projectLabel]
-  );
+      });
+  }, [orgLabel, projectLabel]);
 
   return (
     <div className="project-view">
-      {!!project && !!org && (
+      {!!project && (
         <>
           <div className="project-banner">
             <div className="label">
               <h1 className="name">
-                <Link to="/">
-                  <Tooltip title="Back to all organizations" placement="right">
-                    <Icon type="home" />
-                  </Tooltip>
-                </Link>
+                <HomeIcon />
                 {' | '}
-                {org && (
-                  <span>
-                    <Link to={`/${org._label}`}>{org._label}</Link>
-                    {' | '}
-                  </span>
-                )}{' '}
+                <span>
+                  <Link to={`/${orgLabel}`}>{orgLabel}</Link>
+                  {' | '}
+                </span>{' '}
                 {project._label}
                 {'  '}
               </h1>
               <div style={{ marginLeft: 10 }}>
                 <ViewStatisticsContainer
-                  orgLabel={org._label}
+                  orgLabel={orgLabel}
                   projectLabel={project._label}
                   resourceId={DEFAULT_ELASTIC_SEARCH_VIEW_ID}
                 />
@@ -115,6 +117,58 @@ const ProjectView: React.FunctionComponent<{
                 </Popover>
               )}
             </div>
+            <div className="actions">
+              <Switch
+                size="small"
+                checked={menuVisible}
+                onChange={setMenuVisible}
+              ></Switch>
+              <SideMenu
+                visible={menuVisible}
+                title="Resources"
+                onClose={() => setMenuVisible(false)}
+              >
+                <p>
+                  View resources in your project using pre-defined query-helper
+                  lists.
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <AccessControl
+                    path={`/${orgLabel}/${projectLabel}`}
+                    permissions={['resources/write']}
+                  >
+                    <ResourceFormContainer
+                      orgLabel={orgLabel}
+                      projectLabel={projectLabel}
+                      onResourceCreated={handleResourceCreated}
+                    />
+                  </AccessControl>
+                  <Link
+                    to={`/${orgLabel}/${projectLabel}/nxv:defaultSparqlIndex/sparql`}
+                  >
+                    Sparql Query Editor
+                  </Link>
+                  <Link
+                    to={`/${orgLabel}/${projectLabel}/nxv:defaultElasticSearchIndex/_search`}
+                  >
+                    ElasticSearch Query Editor
+                  </Link>
+                  <Link to={`/${orgLabel}/${projectLabel}/_settings/acls`}>
+                    View Project's permissions
+                  </Link>
+                </div>
+                <AccessControl
+                  path={`/${orgLabel}/${projectLabel}`}
+                  permissions={['files/write']}
+                >
+                  <Divider />
+                  <FileUploadContainer
+                    projectLabel={projectLabel}
+                    orgLabel={orgLabel}
+                  />
+                </AccessControl>
+              </SideMenu>
+            </div>
           </div>
           <div className="list-board">
             <div className="wrapper">
@@ -127,52 +181,6 @@ const ProjectView: React.FunctionComponent<{
                 projectLabel={projectLabel}
               />
             </div>
-          </div>
-          <div className="actions">
-            <SideMenu
-              visible={menuVisible}
-              title="Resources"
-              onClose={() => setMenuVisible(false)}
-            >
-              <p>
-                View resources in your project using pre-defined query-helper
-                lists.
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <AccessControl
-                  path={`/${orgLabel}/${projectLabel}`}
-                  permissions={['resources/write']}
-                >
-                  <ResourceFormContainer
-                    orgLabel={orgLabel}
-                    projectLabel={projectLabel}
-                  />
-                </AccessControl>
-                <Link
-                  to={`/${orgLabel}/${projectLabel}/nxv:defaultSparqlIndex/sparql`}
-                >
-                  Sparql Query Editor
-                </Link>
-                <Link
-                  to={`/${orgLabel}/${projectLabel}/nxv:defaultElasticSearchIndex/_search`}
-                >
-                  ElasticSearch Query Editor
-                </Link>
-                <Link to={`/${orgLabel}/${projectLabel}/_settings/acls`}>
-                  View Project's permissions
-                </Link>
-              </div>
-              <AccessControl
-                path={`/${orgLabel}/${projectLabel}`}
-                permissions={['files/write']}
-              >
-                <Divider />
-                <FileUploadContainer
-                  projectLabel={projectLabel}
-                  orgLabel={orgLabel}
-                />
-              </AccessControl>
-            </SideMenu>
           </div>
         </>
       )}

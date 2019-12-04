@@ -1,7 +1,7 @@
 {
   "name": "nexus-web",
   "description": "The interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "author": "Blue Brain project",
   "license": "Apache-2.0",
   "main": "dist/server.js",
@@ -10,7 +10,7 @@
   "scripts": {
     "start": "NODE_ENV=development DEBUG=* webpack --mode development --config-name server && node dist/server.js",
     "build": "NODE_ENV=production webpack --mode production",
-    "test": "jest --coverage src",
+    "test": "jest",
     "codecov": "codecov",
     "lint": "tslint --project tsconfig.json",
     "start:storybook": "start-storybook -p 6006",
@@ -25,6 +25,7 @@
     "connected-react-router": "^6.3.2",
     "cookie-parser": "^1.4.4",
     "cytoscape": "^3.12.0",
+    "cytoscape-cola": "^2.3.0",
     "deep-object-diff": "^1.1.0",
     "express": "^4.16.4",
     "express-prom-bundle": "^5.0.2",
@@ -51,6 +52,7 @@
     "redux-oidc": "^3.1.2",
     "redux-thunk": "^2.3.0",
     "resize-observer-polyfill": "^1.5.1",
+    "stacktrace-js": "^2.0.1",
     "ts-debounce": "^1.0.0",
     "use-async-effect": "^2.2.1"
   },
@@ -85,7 +87,6 @@
     "@types/storybook__react": "^4.0.1",
     "@types/webpack-env": "^1.13.9",
     "babel-loader": "^8.0.4",
-    "codecov": "^3.2.0",
     "css-loader": "^2.1.1",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.10.0",

@@ -37,12 +37,11 @@ const html = ({
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
         gtag('config', '${process.env.GTAG}');
-      </script>
-      `
-          : ``
+      </script>`
+          : ''
       }
+      
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <base href="${base}" />
     </head>

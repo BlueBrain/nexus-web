@@ -23,6 +23,19 @@ import App from '../shared/App';
 import configureStore from '../shared/store';
 import { RootState } from '../shared/store/reducers';
 import { fetchIdentities, fetchRealms } from '../shared/store/actions/auth';
+import { reportError } from '../shared/utils/errors';
+
+// let's report all the nasty errors
+window.onerror = (errorMessage, url, lineNumber, columnNumber, errorObject) => {
+  // send the error object if we have one
+  if (errorObject) {
+    reportError(errorObject, true);
+    return false;
+  }
+  // or let's build a string otherwise.
+  reportError(`${errorMessage} @ ${url}:${lineNumber}:${columnNumber}`, true);
+  return false;
+};
 
 // The app base URL
 const rawBase: string = (window as any)['__BASE__'] || '/';
@@ -98,7 +111,7 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
         localStorage.setItem('nexus__token', user.access_token);
       })
       .catch(err => {
-        // TODO: sentry that stuff
+        reportError(err);
       });
   });
 
@@ -112,7 +125,7 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
         localStorage.setItem('nexus__token', user.access_token);
       })
       .catch(err => {
-        // TODO: sentry that stuff
+        reportError(err);
       });
   });
 

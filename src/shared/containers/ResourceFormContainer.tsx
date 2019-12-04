@@ -8,17 +8,16 @@ import ResourceFormModal from '../components/ResourceForm/ResourceFormModal';
 const ResourceFormContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
-}> = ({ orgLabel, projectLabel }) => {
+  onResourceCreated?(): void;
+}> = ({ orgLabel, projectLabel, onResourceCreated }) => {
   const nexus = useNexusContext();
   const createResource = (schemaId: string, payload: ResourcePayload) => {
-    // CANNOT create resource with schemaID
-    // TODO: update after fix
-    // https://github.com/BlueBrain/nexus/issues/788
-    return nexus.Resource.create(orgLabel, projectLabel, payload);
+    return nexus.Resource.create(orgLabel, projectLabel, payload, schemaId);
   };
 
   return (
     <ResourceFormModal
+      onSuccess={onResourceCreated}
       createResource={createResource}
       render={(updateFormVisible: () => void) => {
         return (

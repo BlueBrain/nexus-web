@@ -1,27 +1,32 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
 
 import ResourceListComponent, {
   ResourceBoardList,
 } from '../components/ResourceList';
-import { RootState } from '../store/reducers';
 import TypeDropdownFilterContainer from './TypeDropdownFilter';
 import SchemaDropdownFilterContainer from './SchemaDropdownFilters';
+import SchemaLinkContainer from './SchemaLink';
 
 const ResourceListContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
   defaultList: ResourceBoardList;
+  refreshList?: boolean;
   onDeleteList: (id: string) => void;
   onCloneList: (list: ResourceBoardList) => void;
-}> = ({ defaultList, orgLabel, projectLabel, onDeleteList, onCloneList }) => {
+}> = ({
+  defaultList,
+  orgLabel,
+  projectLabel,
+  onDeleteList,
+  onCloneList,
+  refreshList,
+}) => {
   const nexus = useNexusContext();
   const history = useHistory();
-  const basePath = useSelector((state: RootState) => state.config.basePath);
   const [list, setList] = React.useState<ResourceBoardList>(defaultList);
   const [toggleForceReload, setToggleForceReload] = React.useState(false);
   const [
@@ -40,8 +45,9 @@ const ResourceListContainer: React.FunctionComponent<{
     resources: [],
     total: 0,
   });
+
   const makeResourceUri = (resourceId: string) => {
-    return `${basePath}/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+    return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
       resourceId
     )}`;
   };
@@ -50,32 +56,31 @@ const ResourceListContainer: React.FunctionComponent<{
     history.push(makeResourceUri(resourceId));
   };
 
-  useAsyncEffect(
-    async isMounted => {
-      if (!isMounted()) {
-        return;
-      }
-      try {
+  React.useEffect(() => {    
+    setResources({
+      next,
+      resources,
+      total,
+      busy: true,
+      error: null,
+    });
+
+    let resourceListResponse: any = [];
+
+    nexus.Resource.list(
+      orgLabel,
+      projectLabel,
+      list.query
+    ).then(response => {
+      resourceListResponse = response;
         setResources({
-          next,
-          resources,
-          total,
-          busy: true,
-          error: null,
-        });
-        const response = await nexus.Resource.list(
-          orgLabel,
-          projectLabel,
-          list.query
-        );
-        setResources({
-          next: response._next || null,
-          resources: response._results,
-          total: response._total,
+          next: resourceListResponse._next || null,
+          resources: resourceListResponse._results,
+          total: resourceListResponse._total,
           busy: false,
           error: null,
         });
-      } catch (error) {
+    }).catch(error => {
         setResources({
           next,
           error,
@@ -83,14 +88,14 @@ const ResourceListContainer: React.FunctionComponent<{
           total,
           busy: false,
         });
-      }
-    },
-    [
+    });
+  }, [
       // Reset pagination and reload based on these props
       orgLabel,
       projectLabel,
       JSON.stringify(list.query),
       toggleForceReload,
+      refreshList,
     ]
   );
 
@@ -186,6 +191,7 @@ const ResourceListContainer: React.FunctionComponent<{
       onRefresh={handleRefreshList}
       makeResourceUri={makeResourceUri}
       goToResource={goToResource}
+      schemaLinkContainer={SchemaLinkContainer}
     >
       <TypeDropdownFilterContainer
         deprecated={!!list.query.deprecated}

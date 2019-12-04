@@ -26,7 +26,6 @@ export interface MainLayoutProps {
   name: string;
   canLogin?: boolean;
   userManager?: UserManager;
-  userIdentity: Identity;
   apiEndpoint: string;
 }
 
@@ -38,7 +37,6 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
   children,
   canLogin = false,
   userManager,
-  userIdentity,
   apiEndpoint,
 }) => {
   const handleLogout = (e: React.SyntheticEvent) => {
@@ -47,10 +45,12 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
     userManager && userManager.signoutRedirect();
   };
 
-  const apiBase = new URL(apiEndpoint);
+  // Remove version from API URL
+  const splits = apiEndpoint.split('/');
+  const apiBase = splits.slice(0, splits.length - 1).join('/');
   const versions = useNexus<ServiceVersions>((nexus: NexusClient) =>
     nexus.httpGet({
-      path: `${apiBase.origin}/version`,
+      path: `${apiBase}/version`,
       context: { as: 'json' },
     })
   );
