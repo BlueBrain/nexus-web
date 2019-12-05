@@ -13,7 +13,7 @@ const AddWorkspace: React.FC = () => {
         footer={null}
         onCancel={() => setShowModal(false)}
       >
-        <p>Hello</p>
+        <p>Hello, I will be updated in the next PR!</p>
       </Modal>
     </>
   );

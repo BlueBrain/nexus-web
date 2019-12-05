@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import WorkspaceList from './WorkspaceListContainer';
+import { notification } from 'antd';
 
+import WorkspaceList from './WorkspaceListContainer';
 import AddWorkspace from '../components/Studio/AddWorkspace';
 import EditStudio from '../components/Studio/EditStudio';
 
@@ -62,10 +63,16 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
           description,
         },
       ).then(response => {
-        // put a notification here
-
+        notification.success({
+          message: 'Studio was edited successfully',
+          duration: 2,
+        });
       }).catch(error => {
-        // same
+        notification.error({
+          message: 'An error occurred',
+          description: error.reason || error.message,
+          duration: 3,
+        });
       });
     }
   }
