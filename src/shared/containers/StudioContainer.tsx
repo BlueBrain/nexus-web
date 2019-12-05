@@ -3,6 +3,9 @@ import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import WorkspaceList from './WorkspaceListContainer';
 
+import AddWorkspace from '../components/Studio/AddWorkspace';
+import EditStudio from '../components/Studio/EditStudio';
+
 type StudioContainerProps = {
   orgLabel: string;
   projectLabel: string;
@@ -32,6 +35,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
   ] = React.useState<StudioResource | null>(null);
   const [workspaceIds, setWorkspaceIds] = React.useState<string[]>([]);
   const nexus = useNexusContext();
+
   React.useEffect(() => {
     nexus.Resource.get(orgLabel, projectLabel, studioId)
       .then(value => {
@@ -46,11 +50,16 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
         // TODO: show a meaningful error to the user.
       });
   }, [orgLabel, projectLabel, studioId]);
+
   return (
     <>
       {studioResource ? (
         <>
-          <h1 className="title">{studioResource.label}</h1>
+          <h1 className="title">
+            {studioResource.label}
+            <EditStudio studio={studioResource} />
+            <AddWorkspace />
+          </h1>
           {studioResource.description && (
             <p className="description">{studioResource.description}</p>
           )}
