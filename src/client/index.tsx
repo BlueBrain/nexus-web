@@ -24,7 +24,6 @@ import App from '../shared/App';
 import configureStore from '../shared/store';
 import { RootState } from '../shared/store/reducers';
 import { fetchIdentities, fetchRealms } from '../shared/store/actions/auth';
-import { AddonStore } from '@storybook/addons';
 
 // The app base URL
 const rawBase: string = (window as any)['__BASE__'] || '/';
