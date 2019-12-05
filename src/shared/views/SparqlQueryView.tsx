@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { match } from 'react-router';
+import { Link } from 'react-router-dom';
 import * as queryString from 'query-string';
-import { Menu, Dropdown, Icon, notification, Tooltip } from 'antd';
+import { Menu, Dropdown, Icon, notification } from 'antd';
 import { ViewList, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Link } from 'react-router-dom';
 
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 import SparqlQueryContainer from '../containers/SparqlQuery';
+import HomeIcon from '../components/HomeIcon';
 import { getResourceLabel, labelOf } from '../utils';
 
 const SparqlQueryView: React.FunctionComponent<{
@@ -69,11 +70,7 @@ const SparqlQueryView: React.FunctionComponent<{
         <div className="label">
           <h1 className="name">
             <span>
-              <Link to="/">
-                <Tooltip title="Back to all organizations" placement="right">
-                  <Icon type="home" />
-                </Tooltip>
-              </Link>
+              <HomeIcon />
               {' | '}
               <Link to={`/${orgLabel}`}>{orgLabel}</Link>
               {' | '}

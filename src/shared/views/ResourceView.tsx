@@ -20,6 +20,7 @@ import ResourceEditorContainer from '../containers/ResourceEditor';
 import ImagePreviewContainer from '../containers/ImagePreviewContainer';
 import useMeasure from '../hooks/useMeasure';
 import SchemaLinkContainer from '../containers/SchemaLink';
+import HomeIcon from '../components/HomeIcon';
 
 const TabPane = Tabs.TabPane;
 export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
@@ -196,6 +197,8 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
           {!!resource && !!latestResource && !error && (
             <>
               <h1 className="name">
+                <HomeIcon />
+                {' | '}
                 <span>
                   <a onClick={() => goToOrg(orgLabel)}>{orgLabel}</a> |{' '}
                   <a onClick={() => goToProject(orgLabel, projectLabel)}>
