@@ -60,6 +60,8 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
 
   React.useEffect(() => {
     setEditing(false);
+    setStringValue(JSON.stringify(rawData, null, 2)); // Update copy of the rawData for the editor.
+    setParsedValue(rawData); // Update parsed value for submit.
   }, [rawData]); // only runs when Editor receives new resource to edit
 
   const handleChange = (editor: any, data: any, value: any) => {
