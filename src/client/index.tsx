@@ -104,7 +104,6 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
         localStorage.setItem('nexus__token', user.access_token);
       })
       .catch(err => {
-        // reportError(err);
         Sentry.captureException(err);
       });
   });
@@ -119,7 +118,6 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
         localStorage.setItem('nexus__token', user.access_token);
       })
       .catch(err => {
-        // reportError(err);
         Sentry.captureException(err);
       });
   });
