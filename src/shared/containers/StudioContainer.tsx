@@ -51,13 +51,25 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
       });
   }, [orgLabel, projectLabel, studioId]);
 
+  const updateStudio = (label: string) => {
+    if (studioResource) {
+      nexus.Resource.update(
+        orgLabel,
+        projectLabel,
+        studioId,
+        studioResource._rev,
+        { label },
+      );
+    }
+  }
+
   return (
     <>
       {studioResource ? (
         <>
           <h1 className="title">
             {studioResource.label}
-            <EditStudio studio={studioResource} />
+            <EditStudio studio={studioResource} onSave={updateStudio} />
             <AddWorkspace />
           </h1>
           {studioResource.description && (

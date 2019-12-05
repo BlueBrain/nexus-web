@@ -11,16 +11,10 @@ type StudioResource = Resource<{
 }>;
 
 const EditStudio: React.FC<{
-  studio: StudioResource | null,
-}> = ({ studio }) => {
-  // we need to get studio somewhere
+  studio: StudioResource | null;
+  onSave?(label: string): void;
+}> = ({ studio, onSave }) => {
   const [showModal, setShowModal] = React.useState(false);
-  console.log('studio', studio);
-  
-
-  const saveStudio = () => {
-    // do something here
-  }
 
   return (
     <>
@@ -31,7 +25,7 @@ const EditStudio: React.FC<{
         footer={null}
         onCancel={() => setShowModal(false)}
       >
-        <StudioEditorForm saveStudio={saveStudio} />
+        <StudioEditorForm saveStudio={onSave} studio={studio} />
       </Modal>  
     </>
   );
