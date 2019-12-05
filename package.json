@@ -19,6 +19,7 @@
   "dependencies": {
     "@bbp/nexus-sdk": "^1.1.8",
     "@bbp/react-nexus": "^1.1.8",
+    "@sentry/browser": "5.9.1",
     "@types/cytoscape": "^3.8.5",
     "antd": "^3.19.5",
     "codemirror": "^5.44.0",
@@ -57,7 +58,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.3.4",
-    "@sentry/browser": "5.9.1",
     "@storybook/addon-actions": "^5.0.10",
     "@storybook/addon-info": "^5.2.0-alpha.30",
     "@storybook/addon-knobs": "^5.0.10",
