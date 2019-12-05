@@ -28,7 +28,6 @@ const DashboardConfigEditorComponent: React.FunctionComponent<{
           label: string;
           viewQuery: string;
         };
-        console.log({ value: getFieldsValue() });
         onSubmit &&
           onSubmit({
             description,
