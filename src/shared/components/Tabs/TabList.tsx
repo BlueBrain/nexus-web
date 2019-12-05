@@ -1,8 +1,11 @@
 import * as React from 'react';
 import './TabList.less';
 import { Tabs } from 'antd';
+import TabElement from './TabElement';
 
 const { TabPane } = Tabs;
+
+
 
 type TabItem = {
   id: string;
@@ -15,7 +18,10 @@ type TabListProps = {
   onSelected: (activeKey: string) => void;
   defaultActiveId?: string;
   position?: 'left' | 'right' | 'top' | 'bottom' | undefined;
+  onEditClick? : ( id : string) => void 
 };
+
+
 
 const TabList: React.FunctionComponent<TabListProps> = ({
   items,
@@ -23,7 +29,9 @@ const TabList: React.FunctionComponent<TabListProps> = ({
   defaultActiveId,
   position = 'left',
   children,
+  onEditClick
 }) => {
+  const editClick = onEditClick?  onEditClick :  ( id: string ) => {};
   return (
     <div className="tab-list">
       <Tabs
@@ -34,10 +42,7 @@ const TabList: React.FunctionComponent<TabListProps> = ({
         {items.map(({ label, description, id }) => (
           <TabPane
             tab={
-              <div className="tab-item">
-                <span className="title ellipsis">{label}</span>
-                <p className="description fade">{description}</p>
-              </div>
+              <TabElement label={label} description={description} id={id} onEditClick={editClick}/>
             }
             key={id}
           >
