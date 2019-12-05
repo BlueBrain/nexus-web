@@ -6,6 +6,7 @@ export interface ConfigState {
   clientId: string;
   redirectHostName: string;
   preferredRealm?: string;
+  sentryDsn?: string;
 }
 
 const initialState: ConfigState = {
