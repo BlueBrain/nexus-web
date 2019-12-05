@@ -12,9 +12,14 @@ type StudioResource = Resource<{
 
 const EditStudio: React.FC<{
   studio: StudioResource | null;
-  onSave?(label: string): void;
+  onSave?(label: string, desription?: string): void;
 }> = ({ studio, onSave }) => {
   const [showModal, setShowModal] = React.useState(false);
+
+  const handleUpdate = (label: string, desription?: string) => {
+    setShowModal(false);
+    onSave && onSave(label, desription);
+  }
 
   return (
     <>
@@ -25,7 +30,7 @@ const EditStudio: React.FC<{
         footer={null}
         onCancel={() => setShowModal(false)}
       >
-        <StudioEditorForm saveStudio={onSave} studio={studio} />
+        <StudioEditorForm saveStudio={handleUpdate} studio={studio} />
       </Modal>  
     </>
   );

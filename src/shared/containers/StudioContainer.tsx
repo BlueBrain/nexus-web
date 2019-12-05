@@ -51,15 +51,22 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
       });
   }, [orgLabel, projectLabel, studioId]);
 
-  const updateStudio = (label: string) => {
+  const updateStudio = async (label: string, description?: string) => {
     if (studioResource) {
-      nexus.Resource.update(
+      await nexus.Resource.update(
         orgLabel,
         projectLabel,
         studioId,
         studioResource._rev,
-        { label },
-      );
+        { label,
+          description,
+        },
+      ).then(response => {
+        // put a notification here
+
+      }).catch(error => {
+        // same
+      });
     }
   }
 
