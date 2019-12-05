@@ -4,6 +4,8 @@ import { useNexusContext } from '@bbp/react-nexus';
 
 import StudioEditorForm from '../components/Studio/StudioEditorForm';
 
+const DEFAULT_STUDIO_TYPE = 'https://bluebrainnexus.io/studio/vocabulary/Studio';
+
 const CreateStudioContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
@@ -15,8 +17,8 @@ const CreateStudioContainer: React.FC<{
   const generateStudioResource = (label: string, description?: string) => ({
     // TODO: decide if a context is mandatory for studio creation
     label,
-    '@type': 'https://bluebrainnexus.io/studio/vocabulary/Studio',
     description,
+    '@type': DEFAULT_STUDIO_TYPE,
   });
 
   const createStudioResource = async (label: string, description?: string) => {
