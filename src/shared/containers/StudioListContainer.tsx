@@ -98,7 +98,7 @@ const StudioListContainer: React.FunctionComponent<{
       orgLabel,
       projectLabel,
     ]
-  );
+  );  
 
   return (
     <StudioList
@@ -110,6 +110,8 @@ const StudioListContainer: React.FunctionComponent<{
       busy={busy}
       error={error}
       goToStudio={(id: string) => goToStudio(id)}
+      orgLabel={orgLabel}
+      projectLabel={projectLabel}
     ></StudioList>
   );
 };
