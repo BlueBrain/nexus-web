@@ -19,6 +19,7 @@
   "dependencies": {
     "@bbp/nexus-sdk": "^1.1.8",
     "@bbp/react-nexus": "^1.1.8",
+    "@sentry/browser": "5.9.1",
     "@types/cytoscape": "^3.8.5",
     "antd": "^3.19.5",
     "codemirror": "^5.44.0",
@@ -52,7 +53,6 @@
     "redux-oidc": "^3.1.2",
     "redux-thunk": "^2.3.0",
     "resize-observer-polyfill": "^1.5.1",
-    "stacktrace-js": "^2.0.1",
     "ts-debounce": "^1.0.0",
     "use-async-effect": "^2.2.1"
   },

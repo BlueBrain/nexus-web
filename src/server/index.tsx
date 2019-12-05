@@ -52,7 +52,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       clientId: process.env.CLIENT_ID || 'nexus-web',
       redirectHostName: `${process.env.HOST_NAME ||
         `${req.protocol}://${req.headers.host}`}${base}`,
-      // preferredRealm: 'github',
+      sentryDsn: process.env.SENTRY_DSN,
     },
     uiSettings: DEFAULT_UI_SETTINGS,
     oidc: {

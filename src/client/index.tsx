@@ -17,25 +17,13 @@ import {
   userExpiring,
   userSignedOut,
 } from 'redux-oidc';
+import * as Sentry from '@sentry/browser';
 
 import getUserManager from './userManager';
 import App from '../shared/App';
 import configureStore from '../shared/store';
 import { RootState } from '../shared/store/reducers';
 import { fetchIdentities, fetchRealms } from '../shared/store/actions/auth';
-import { reportError } from '../shared/utils/errors';
-
-// let's report all the nasty errors
-window.onerror = (errorMessage, url, lineNumber, columnNumber, errorObject) => {
-  // send the error object if we have one
-  if (errorObject) {
-    reportError(errorObject, true);
-    return false;
-  }
-  // or let's build a string otherwise.
-  reportError(`${errorMessage} @ ${url}:${lineNumber}:${columnNumber}`, true);
-  return false;
-};
 
 // The app base URL
 const rawBase: string = (window as any)['__BASE__'] || '/';
@@ -45,6 +33,11 @@ const base: string = rawBase.replace(/\/$/, '');
 const history = createBrowserHistory({ basename: base });
 // Grab preloaded state (that comes from the server)
 const preloadedState: RootState = (window as any).__PRELOADED_STATE__;
+// let's report all the nasty errors id sentry dsn is present
+preloadedState.config.sentryDsn &&
+  Sentry.init({
+    dsn: preloadedState.config.sentryDsn,
+  });
 // grab client stuff to be put in the initial state
 let preferredRealm;
 try {
@@ -111,7 +104,7 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
         localStorage.setItem('nexus__token', user.access_token);
       })
       .catch(err => {
-        reportError(err);
+        Sentry.captureException(err);
       });
   });
 
@@ -125,7 +118,7 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
         localStorage.setItem('nexus__token', user.access_token);
       })
       .catch(err => {
-        reportError(err);
+        Sentry.captureException(err);
       });
   });
 
