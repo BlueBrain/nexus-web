@@ -28,7 +28,7 @@ const StudioEditorForm: React.FC<{
       <Form.Item
         label={
           <span>
-            Label&nbsp;
+            Label{' '}
             <Tooltip title="A name of your studio">
               <Icon type="question-circle-o" />
             </Tooltip>

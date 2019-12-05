@@ -46,7 +46,7 @@ const CreateStudioContainer: React.FC<{
   }
 
   return (
-    <div style={{margin: '20px 0 0'}}>
+    <div className="studio-modal">
       <Button type="primary" block onClick={() => setShowModal(true)}>Create Studio</Button>
       <Modal
         title="Create Studio"
