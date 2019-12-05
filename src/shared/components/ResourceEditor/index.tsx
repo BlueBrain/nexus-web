@@ -34,30 +34,59 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
 
   const [isEditing, setEditing] = React.useState(editing);
   const [valid, setValid] = React.useState(true);
-  const [value, setValue] = React.useState(rawData);
+  const [parsedValue, setParsedValue] = React.useState(rawData);
+  const [stringValue, setStringValue] = React.useState(JSON.stringify(rawData, null, 2));
+
+  const renderCodeMirror = (value: string) => {
+    return (
+      <Spin spinning={busy}>
+        <CodeMirror
+          value={value}
+          autoCursor={false}
+          detach={false}
+          options={{
+            readOnly: !editable,
+            mode: { name: 'javascript', json: true },
+            theme: 'base16-light',
+            lineNumbers: true,
+            lineWrapping: true,
+            viewportMargin: Infinity,
+          }}
+          onChange={handleChange}
+        />
+      </Spin>
+    );
+  };
 
   React.useEffect(() => {
     setEditing(false);
   }, [rawData]); // only runs when Editor receives new resource to edit
 
   const handleChange = (editor: any, data: any, value: any) => {
-    if (!editable) {
+    if (!editable || value === JSON.stringify(rawData, null, 2)) {
       return;
     }
     try {
       const parsedVal = JSON.parse(value);
-      setValue(parsedVal);
-      setEditing(true);
+      setParsedValue(parsedVal);
       setValid(true);
     } catch (error) {
       setValid(false);
     }
+    setEditing(true);
+    setStringValue(value);
   };
 
   const handleSubmit = () => {
     if (onSubmit) {
-      onSubmit(value);
+      onSubmit(parsedValue);
     }
+  };
+
+  const handleCancel = () => {
+    setStringValue(JSON.stringify(rawData, null, 2));
+    setValid(true);
+    setEditing(false);
   };
 
   return (
@@ -69,7 +98,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
               <Icon type="info-circle" /> This resource cannot be edited
             </div>
           )}
-          {editable && !isEditing && (
+          {editable && !isEditing && valid && (
             <div className="feedback">
               <Icon type="info-circle" /> Directly edit this resource
             </div>
@@ -106,32 +135,27 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             />
           )}
 
-          {editable && isEditing && valid && (
-            <Button
-              icon="save"
-              type="primary"
-              size="small"
-              onClick={handleSubmit}
-            >
-              Save
-            </Button>
+          {editable && isEditing && (
+            <>
+            {valid ? 
+              <Button
+                icon="save"
+                type="primary"
+                size="small"
+                onClick={handleSubmit}
+              >
+                Save
+              </Button> : null }
+              {' '}
+              <Button type="danger" size="small" onClick={handleCancel}>
+                Cancel
+              </Button>
+            </>
           )}
         </div>
       </div>
 
-      <Spin spinning={busy}>
-        <CodeMirror
-          value={JSON.stringify(rawData, null, 2)}
-          options={{
-            readOnly: !editable,
-            mode: { name: 'javascript', json: true },
-            theme: 'base16-light',
-            lineNumbers: true,
-            viewportMargin: Infinity,
-          }}
-          onChange={handleChange}
-        />
-      </Spin>
+      {renderCodeMirror(stringValue)}
     </div>
   );
 };

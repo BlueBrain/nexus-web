@@ -13,10 +13,11 @@ import SchemaLink from '../SchemaLink';
 const ResourceCardComponent: React.FunctionComponent<{
   resource: Resource;
   preview?: React.ReactNode;
+  onClickCollapse?(): void;
   schemaLink?: React.FunctionComponent<{
     resource: Resource;
   }>;
-}> = ({ resource, preview, schemaLink = SchemaLink }) => {
+}> = ({ resource, preview, onClickCollapse, schemaLink = SchemaLink }) => {
   const {
     _constrainedBy: constrainedBy,
     _createdBy: createdBy,
@@ -75,6 +76,17 @@ const ResourceCardComponent: React.FunctionComponent<{
               </Tooltip>
             )}
           />
+          {!!onClickCollapse && (
+            <>
+              <span>&nbsp;</span>
+              <Button
+                onClick={onClickCollapse}
+                shape="circle"
+                icon="down"
+                size="small"
+              />
+            </>
+          )}
         </div>
       }
     >
