@@ -32,16 +32,25 @@ storiesOf('Components/Studio', module)
             studios={studios}
             busy={busy}
             goToStudio={action('studio click')}
+            orgLabel="myOrg"
+            projectLabel="myProject"
           />
           <br />
           <h3>Empty list</h3>
-          <StudioList studios={[]} busy={busy} />
+          <StudioList
+            studios={[]}
+            busy={busy}
+            orgLabel="myOrg"
+            projectLabel="myProject"
+          />
           <br />
           <h3>Error</h3>
           <StudioList
             studios={[]}
             busy={busy}
             error={new Error('Not authorized')}
+            orgLabel="myOrg"
+            projectLabel="myProject"
           />
         </div>
       );
