@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const devMode = process.env.NODE_ENV !== 'production';
 
 const config = [
@@ -23,6 +24,9 @@ const config = [
     },
     devtool: 'source-map',
     mode: 'production',
+    optimization: {
+      minimizer: [new TerserPlugin()],
+    },
     module: {
       rules: [
         {
