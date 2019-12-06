@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
-import { Button, Modal } from 'antd';
+import { Button, Modal, Tooltip } from 'antd';
 
 import StudioEditorForm from './StudioEditorForm';
 
@@ -23,7 +23,9 @@ const EditStudio: React.FC<{
 
   return (
     <>
-      <Button className="studio-button" icon="edit" onClick={() => setShowModal(true)} />
+      <Tooltip placement="topLeft" title="Edit Studio" arrowPointAtCenter>
+        <Button className="studio-button" icon="edit" onClick={() => setShowModal(true)} />
+      </Tooltip>
       <Modal
         title="Edit Studio"
         visible={showModal}

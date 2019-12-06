@@ -85,7 +85,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
             <h1 className="title">
               {studioResource.label}
             </h1>
-            <div className="title-buttons">
+            <div>
               <EditStudio studio={studioResource} onSave={updateStudio} />
               <AddWorkspace />
             </div>

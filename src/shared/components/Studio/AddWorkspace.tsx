@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { Button, Modal } from 'antd';
+import { Button, Modal, Tooltip } from 'antd';
 
 const AddWorkspace: React.FC = () => {
   const [showModal, setShowModal] = React.useState(false);
 
   return (
     <>
-      <Button className="studio-button" onClick={() => setShowModal(true)} icon="plus" />
+      <Tooltip placement="topLeft" title="Add Workspace" arrowPointAtCenter>
+        <Button className="studio-button" onClick={() => setShowModal(true)} icon="plus" />
+      </Tooltip>
       <Modal
         title="Create a new Workspace"
         visible={showModal}
