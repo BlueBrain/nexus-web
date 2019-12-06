@@ -6,6 +6,7 @@ import { notification } from 'antd';
 import WorkspaceList from './WorkspaceListContainer';
 import AddWorkspace from '../components/Studio/AddWorkspace';
 import EditStudio from '../components/Studio/EditStudio';
+import StudioHeader from '../components/Studio/StudioHeader';
 
 type StudioContainerProps = {
   orgLabel: string;
@@ -82,7 +83,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
     <>
       {studioResource ? (
         <>
-          <div className="title-container">
+          <StudioHeader>
             <h1 className="title">
               {studioResource.label}
             </h1>
@@ -90,7 +91,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
               <EditStudio studio={studioResource} onSave={updateStudio} />
               <AddWorkspace />
             </div>
-          </div>
+          </StudioHeader>
           {studioResource.description && (
             <p className="description">{studioResource.description}</p>
           )}
