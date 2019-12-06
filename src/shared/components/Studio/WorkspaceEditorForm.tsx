@@ -11,9 +11,9 @@ type WorkspaceResource = Resource<{
 
 const WorkspaceEditorForm: React.FC<{
   form: WrappedFormUtils;
-  saveStudio?(label: string, description?: string): void;
+  saveWorkspace?(label: string, description?: string): void;
   workspace?: WorkspaceResource | null; 
-}> = ({ form, saveStudio, workspace }) => {
+}> = ({ form, saveWorkspace, workspace }) => {
   const { getFieldDecorator } = form;
 
   const formItemLayout = {
@@ -27,7 +27,7 @@ const WorkspaceEditorForm: React.FC<{
     form.validateFields((err, values) => {
       if (!err) {
         const { label, description } = values;
-        saveStudio && saveStudio(label, description);
+        saveWorkspace && saveWorkspace(label, description);
       }
     });
   };
@@ -82,6 +82,6 @@ const WorkspaceEditorForm: React.FC<{
 
 export default Form.create<{
   form: WrappedFormUtils;
-  saveStudio?(label: string): void;
-  studio?: StudioResource | null;
+  saveWorkspace?(label: string): void;
+  studio?: WorkspaceResource | null;
 }>()(WorkspaceEditorForm);
