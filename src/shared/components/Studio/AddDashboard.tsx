@@ -1,24 +1,24 @@
 import * as React from 'react';
 import { Button, Modal } from 'antd';
 
-const AddWorkspace: React.FC = () => {
+const AddDashboard: React.FC = () => {
   const [showModal, setShowModal] = React.useState(false);
 
   return (
     <>
       <Button icon="plus" onClick={() => setShowModal(true)}>
-        Add Workspace
+        Add Dashboard
       </Button>
       <Modal
-        title="Create a new Workspace"
+        title="Create a new Dashboard"
         visible={showModal}
         footer={null}
         onCancel={() => setShowModal(false)}
       >
-        <p>Hello, I will be updated in the next PR!</p>
+        <p>Coming Soon!</p>
       </Modal>
     </>
   );
 };
 
-export default AddWorkspace;
+export default AddDashboard;

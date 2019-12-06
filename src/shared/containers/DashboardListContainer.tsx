@@ -4,6 +4,9 @@ import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
 import DashboardResultsContainer from './DashboardResultsContainer';
 import { useHistory } from 'react-router-dom';
+import { Button } from 'antd';
+import AddDashboard from '../components/Studio/AddDashboard';
+import EditDashboardModal from '../components/Studio/EditDashboardModal';
 
 type Dashboard = {
   dashboard: string;
@@ -31,6 +34,9 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     Resource[]
   >([]);
   const [selectedDashboard, setSelectedDashboard] = React.useState<Resource>();
+  const [editModal, setEditModal] = React.useState<React.ReactElement | null>(
+    null
+  );
   const nexus = useNexusContext();
 
   const selectDashboard = (id: string) => {
@@ -77,10 +83,27 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         // TODO: show a meaningful error to the user.
       });
   }, [orgLabel, projectLabel, dashboardId]);
+
+  const handleElementClick = (id: string) => {
+    const dashboard = dashboardResources.find(
+      dashboard => dashboard['@id'] === id
+    );
+    if (dashboard) {
+      setEditModal(
+        <EditDashboardModal
+          id={id}
+          label={dashboard.label}
+          description={dashboard.description}
+        ></EditDashboardModal>
+      );
+    }
+  };
+
   return (
     <div>
       {dashboardResources.length > 0 ? (
         <>
+          {editModal}
           <TabList
             items={dashboardResources.map(w => ({
               label: w.label,
@@ -96,6 +119,8 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
                 ? decodeURIComponent(dashboardId)
                 : dashboardResources[0]['@id']
             }
+            tabAction={<AddDashboard />}
+            onEditClick={handleElementClick}
           >
             {selectedDashboard ? (
               <DashboardResultsContainer

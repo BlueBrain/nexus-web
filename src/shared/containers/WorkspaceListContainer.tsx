@@ -4,6 +4,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
 import DashboardList from './DashboardListContainer';
 import { useHistory } from 'react-router-dom';
+import AddWorkspace from '../components/Studio/AddWorkspace';
 
 type WorkspaceListProps = {
   workspaceIds: string[];
@@ -80,6 +81,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
             workspaceId ? decodeURIComponent(workspaceId) : workspaces[0]['@id']
           }
           position="top"
+          tabAction={<AddWorkspace />}
         >
           {selectedWorkspace ? (
             <div className="workspace">
