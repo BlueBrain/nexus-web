@@ -3,10 +3,10 @@ import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
 import DashboardResultsContainer from './DashboardResultsContainer';
-import { useHistory } from 'react-router-dom';
-import { Button } from 'antd';
+import { useHistory, Link } from 'react-router-dom';
+import { Modal } from 'antd';
 import AddDashboard from '../components/Studio/AddDashboard';
-import EditDashboardModal from '../components/Studio/EditDashboardModal';
+import DashboardConfigEditor from '../components/DashboardEditor/DashboardConfigEditor';
 
 type Dashboard = {
   dashboard: string;
@@ -34,9 +34,10 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     Resource[]
   >([]);
   const [selectedDashboard, setSelectedDashboard] = React.useState<Resource>();
-  const [editModal, setEditModal] = React.useState<React.ReactElement | null>(
-    null
-  );
+  const [
+    editingDashboard,
+    setEditingDashboard,
+  ] = React.useState<Resource | null>(null);
   const nexus = useNexusContext();
 
   const selectDashboard = (id: string) => {
@@ -56,13 +57,14 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
 
   React.useEffect(() => {
     Promise.all(
-      dashboards && dashboards.map(dashboardObject => {
-        return nexus.Resource.get(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(dashboardObject.dashboard)
-        );
-      })
+      dashboards &&
+        dashboards.map(dashboardObject => {
+          return nexus.Resource.get(
+            orgLabel,
+            projectLabel,
+            encodeURIComponent(dashboardObject.dashboard)
+          );
+        })
     )
       .then(values => {
         setDashboardResources(values);
@@ -89,20 +91,43 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
       dashboard => dashboard['@id'] === id
     );
     if (dashboard) {
-      setEditModal(
-        <EditDashboardModal
-          id={id}
-          label={dashboard.label}
-          description={dashboard.description}
-        ></EditDashboardModal>
-      );
+      setEditingDashboard(dashboard);
     }
   };
 
   return (
     <div>
       <>
-        {editModal}
+        <Modal
+          title={`Edit ${
+            editingDashboard ? editingDashboard.label : 'Dashboard'
+          }`}
+          visible={!!editingDashboard}
+          footer={null}
+          onCancel={() => setEditingDashboard(null)}
+          style={{ minWidth: '75%' }}
+        >
+          {editingDashboard && (
+            <DashboardConfigEditor
+              dashboard={{
+                label: editingDashboard.label,
+                description: editingDashboard.description,
+                dataQuery: editingDashboard.dataQuery,
+              }}
+              linkToSparqlQueryEditor={(dataQuery: string) => {
+                return (
+                  <Link
+                    to={`/${orgLabel}/${projectLabel}/nxv:defaultSparqlIndex/sparql?query=${encodeURIComponent(
+                      dataQuery
+                    )}`}
+                  >
+                    View query in Sparql Editor
+                  </Link>
+                );
+              }}
+            ></DashboardConfigEditor>
+          )}
+        </Modal>
         <TabList
           items={dashboardResources.map(w => ({
             label: w.label,

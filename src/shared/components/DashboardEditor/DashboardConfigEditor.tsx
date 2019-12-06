@@ -7,32 +7,33 @@ import SparqlQueryFormInput from '../ViewForm/SparqlQueryInput';
 
 export type DashboardPayload = {
   description?: string;
-  label: string;
-  viewQuery: string;
+  label?: string;
+  dataQuery: string;
 };
 
 const DashboardConfigEditorComponent: React.FunctionComponent<{
   form: WrappedFormUtils;
   dashboard?: DashboardPayload;
   onSubmit?(dashboard: DashboardPayload): void;
-}> = ({ onSubmit, form, dashboard }) => {
-  const { description, label, viewQuery } = dashboard || {};
+  linkToSparqlQueryEditor?(dataQuery: string): React.ReactElement;
+}> = ({ onSubmit, form, dashboard, linkToSparqlQueryEditor }) => {
+  const { description, label, dataQuery } = dashboard || {};
   const { getFieldDecorator, getFieldsValue, validateFields } = form;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     validateFields(err => {
       if (!err) {
-        const { description, label, viewQuery } = getFieldsValue() as {
+        const { description, label, dataQuery } = getFieldsValue() as {
           description?: string;
           label: string;
-          viewQuery: string;
+          dataQuery: string;
         };
         onSubmit &&
           onSubmit({
             description,
             label,
-            viewQuery,
+            dataQuery,
           });
       }
     });
@@ -85,12 +86,16 @@ const DashboardConfigEditorComponent: React.FunctionComponent<{
             Sparql Query{' '}
             <Tooltip title="A query that will return the elements of the dashboard.">
               <Icon type="question-circle-o" />
-            </Tooltip>
+            </Tooltip>{' '}
+            {linkToSparqlQueryEditor &&
+              linkToSparqlQueryEditor(
+                dataQuery || DEFAULT_DASHBOARD_VIEW_QUERY
+              )}
           </span>
         }
       >
         {getFieldDecorator('viewQuery', {
-          initialValue: viewQuery || DEFAULT_DASHBOARD_VIEW_QUERY,
+          initialValue: dataQuery || DEFAULT_DASHBOARD_VIEW_QUERY,
           rules: [
             {
               required: true,
@@ -112,4 +117,5 @@ export default Form.create<{
   dashboard?: DashboardPayload;
   onSubmit?(dashboard: DashboardPayload): void;
   viewList?: ResourceList<{}>;
+  linkToSparqlQueryEditor?(dataQuery: string): React.ReactElement;
 }>()(DashboardConfigEditorComponent);
