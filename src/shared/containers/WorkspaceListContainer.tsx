@@ -4,7 +4,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
 import DashboardList from './DashboardListContainer';
 import { useHistory } from 'react-router-dom';
-import AddWorkspace from '../components/Studio/AddWorkspace';
+import AddWorkspaceContainer from './AddWorkspaceContainer';
 
 type WorkspaceListProps = {
   workspaceIds: string[];

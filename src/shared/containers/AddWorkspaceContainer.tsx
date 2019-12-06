@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Button, Modal } from 'antd';
 
+import WorkspaceEditorForm from '../components/Studio/WorkspaceEditorForm';
+
 const AddWorkspace: React.FC = () => {
   const [showModal, setShowModal] = React.useState(false);
 
@@ -15,7 +17,7 @@ const AddWorkspace: React.FC = () => {
         footer={null}
         onCancel={() => setShowModal(false)}
       >
-        <p>Hello, I will be updated in the next PR!</p>
+        <WorkspaceEditorForm />
       </Modal>
     </>
   );
