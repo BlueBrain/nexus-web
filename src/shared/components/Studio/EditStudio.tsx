@@ -23,7 +23,7 @@ const EditStudio: React.FC<{
 
   return (
     <>
-      <Button icon="edit" onClick={() => setShowModal(true)} />
+      <Button className="studio-button" icon="edit" onClick={() => setShowModal(true)} />
       <Modal
         title="Edit Studio"
         visible={showModal}

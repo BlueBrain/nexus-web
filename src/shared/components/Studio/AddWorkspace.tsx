@@ -6,7 +6,7 @@ const AddWorkspace: React.FC = () => {
 
   return (
     <>
-      <Button onClick={() => setShowModal(true)} icon="plus" />
+      <Button className="studio-button" onClick={() => setShowModal(true)} icon="plus" />
       <Modal
         title="Create a new Workspace"
         visible={showModal}

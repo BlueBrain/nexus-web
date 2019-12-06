@@ -81,11 +81,15 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
     <>
       {studioResource ? (
         <>
-          <h1 className="title">
-            {studioResource.label}
-            <EditStudio studio={studioResource} onSave={updateStudio} />
-            <AddWorkspace />
-          </h1>
+          <div className="title-container">
+            <h1 className="title">
+              {studioResource.label}
+            </h1>
+            <div className="title-buttons">
+              <EditStudio studio={studioResource} onSave={updateStudio} />
+              <AddWorkspace />
+            </div>
+          </div>
           {studioResource.description && (
             <p className="description">{studioResource.description}</p>
           )}
