@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
+import { notification } from 'antd';
+
 import WorkspaceList from './WorkspaceListContainer';
+import AddWorkspace from '../components/Studio/AddWorkspace';
+import EditStudio from '../components/Studio/EditStudio';
+import StudioHeader from '../components/Studio/StudioHeader';
 
 type StudioContainerProps = {
   orgLabel: string;
@@ -32,6 +37,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
   ] = React.useState<StudioResource | null>(null);
   const [workspaceIds, setWorkspaceIds] = React.useState<string[]>([]);
   const nexus = useNexusContext();
+
   React.useEffect(() => {
     nexus.Resource.get(orgLabel, projectLabel, studioId)
       .then(value => {
@@ -46,14 +52,47 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
         // TODO: show a meaningful error to the user.
       });
   }, [orgLabel, projectLabel, studioId]);
+
+  const updateStudio = async (label: string, description?: string) => {
+    if (studioResource) {
+      await nexus.Resource.update(
+        orgLabel,
+        projectLabel,
+        studioId,
+        studioResource._rev,
+        {
+          label,
+          description,
+        },
+      ).then(response => {
+        notification.success({
+          message: 'Studio was edited successfully',
+          duration: 2,
+        });
+      }).catch(error => {
+        notification.error({
+          message: 'An error occurred',
+          description: error.reason || error.message,
+          duration: 3,
+        });
+      });
+    }
+  }
+
   return (
     <>
       {studioResource ? (
         <>
-          <h1 className="title">{studioResource.label}</h1>
-          {studioResource.description && (
-            <p className="description">{studioResource.description}</p>
-          )}
+          <StudioHeader
+            label={studioResource.label}
+            description={studioResource.description}
+          >
+            <EditStudio
+              studio={studioResource}
+              onSave={updateStudio}
+            />
+            <AddWorkspace />
+          </StudioHeader>
           <WorkspaceList
             orgLabel={orgLabel}
             projectLabel={projectLabel}

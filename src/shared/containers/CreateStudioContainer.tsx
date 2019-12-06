@@ -4,6 +4,8 @@ import { useNexusContext } from '@bbp/react-nexus';
 
 import StudioEditorForm from '../components/Studio/StudioEditorForm';
 
+const DEFAULT_STUDIO_TYPE = 'https://bluebrainnexus.io/studio/vocabulary/Studio';
+
 const CreateStudioContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
@@ -12,24 +14,25 @@ const CreateStudioContainer: React.FC<{
   const nexus = useNexusContext();
   const [showModal, setShowModal] = React.useState(false);
 
-  const generateStudioResource = (label: string) => ({
+  const generateStudioResource = (label: string, description?: string) => ({
     // TODO: decide if a context is mandatory for studio creation
     label,
-    '@type': 'https://bluebrainnexus.io/studio/vocabulary/Studio',
+    description,
+    '@type': DEFAULT_STUDIO_TYPE,
   });
 
-  const createStudioResource = async (label: string) => {
+  const createStudioResource = async (label: string, description?: string) => {
     return await nexus.Resource.create(
       orgLabel,
       projectLabel,
-      generateStudioResource(label),
+      generateStudioResource(label, description),
     );
   }
 
-  const saveStudio = (label: string) => {
+  const saveStudio = (label: string, description?: string) => {
     setShowModal(false);
 
-    createStudioResource(label).then(response => {
+    createStudioResource(label, description).then(response => {
       goToStudio && goToStudio(response['@id']);
       
       notification.success({
