@@ -4,10 +4,20 @@ import './StudioHeader.less';
 
 const StudioHeader: React.FC<{
   children: React.ReactChild[];
-}> = ({ children }) => {
+  label: string;
+  description?: string;
+}> = ({ children, label, description }) => {
   return (
     <div className="studio-header">
-      {children}
+      <h1 className="title">
+        {label}
+      </h1>
+      <div>
+        {children}
+      </div>
+      {description && (
+        <p className="description">{description}</p>
+      )}
     </div>
   );
 }
