@@ -59,7 +59,8 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
         projectLabel,
         studioId,
         studioResource._rev,
-        { label,
+        {
+          label,
           description,
         },
       ).then(response => {
