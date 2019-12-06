@@ -5,8 +5,6 @@ import TabElement from './TabElement';
 
 const { TabPane } = Tabs;
 
-
-
 type TabItem = {
   id: string;
   label: string;
@@ -18,10 +16,9 @@ type TabListProps = {
   onSelected: (activeKey: string) => void;
   defaultActiveId?: string;
   position?: 'left' | 'right' | 'top' | 'bottom' | undefined;
-  onEditClick? : ( id : string) => void 
+  onEditClick?: (id: string) => void;
+  tabAction?: React.ReactElement;
 };
-
-
 
 const TabList: React.FunctionComponent<TabListProps> = ({
   items,
@@ -29,20 +26,27 @@ const TabList: React.FunctionComponent<TabListProps> = ({
   defaultActiveId,
   position = 'left',
   children,
-  onEditClick
+  onEditClick,
+  tabAction,
 }) => {
-  const editClick = onEditClick?  onEditClick :  ( id: string ) => {};
+  const editClick = onEditClick ? onEditClick : (id: string) => {};
   return (
     <div className="tab-list">
       <Tabs
         tabPosition={position}
         onChange={onSelected}
         defaultActiveKey={defaultActiveId}
+        tabBarExtraContent={tabAction}
       >
         {items.map(({ label, description, id }) => (
           <TabPane
             tab={
-              <TabElement label={label} description={description} id={id} onEditClick={editClick}/>
+              <TabElement
+                label={label}
+                description={description}
+                id={id}
+                onEditClick={editClick}
+              />
             }
             key={id}
           >

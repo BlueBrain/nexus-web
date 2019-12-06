@@ -4,7 +4,6 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { notification } from 'antd';
 
 import WorkspaceList from './WorkspaceListContainer';
-import AddWorkspace from '../components/Studio/AddWorkspace';
 import EditStudio from '../components/Studio/EditStudio';
 import StudioHeader from '../components/Studio/StudioHeader';
 
@@ -63,21 +62,23 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
         {
           label,
           description,
-        },
-      ).then(response => {
-        notification.success({
-          message: 'Studio was edited successfully',
-          duration: 2,
+        }
+      )
+        .then(response => {
+          notification.success({
+            message: 'Studio was edited successfully',
+            duration: 2,
+          });
+        })
+        .catch(error => {
+          notification.error({
+            message: 'An error occurred',
+            description: error.reason || error.message,
+            duration: 3,
+          });
         });
-      }).catch(error => {
-        notification.error({
-          message: 'An error occurred',
-          description: error.reason || error.message,
-          duration: 3,
-        });
-      });
     }
-  }
+  };
 
   return (
     <>
@@ -87,11 +88,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
             label={studioResource.label}
             description={studioResource.description}
           >
-            <EditStudio
-              studio={studioResource}
-              onSave={updateStudio}
-            />
-            <AddWorkspace />
+            <EditStudio studio={studioResource} onSave={updateStudio} />
           </StudioHeader>
           <WorkspaceList
             orgLabel={orgLabel}
