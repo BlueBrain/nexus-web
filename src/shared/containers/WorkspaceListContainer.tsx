@@ -84,7 +84,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
             : undefined
         }
         position="top"
-        tabAction={<AddWorkspace />}
+        tabAction={<AddWorkspaceContainer orgLabel={orgLabel} projectLabel={projectLabel} />}
       >
         {selectedWorkspace ? (
           <div className="workspace">

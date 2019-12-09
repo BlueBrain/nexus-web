@@ -4,7 +4,10 @@ import { useNexusContext } from '@bbp/react-nexus';
 
 import WorkspaceEditorForm from '../components/Studio/WorkspaceEditorForm';
 
-const AddWorkspaceContainer: React.FC = () => {
+const AddWorkspaceContainer: React.FC<{
+  orgLabel: string;
+  projectLabel: string;
+}> = ({ orgLabel, projectLabel }) => {
   const nexus = useNexusContext();
   const [showModal, setShowModal] = React.useState(false);
 
@@ -13,6 +16,11 @@ const AddWorkspaceContainer: React.FC = () => {
   });
 
   const createWorkspaceResource = async (label: string, description?: string) => {
+    console.log('orgLabel', orgLabel);
+    console.log('projectLabel', projectLabel);
+    console.log('label', label);
+    
+    
     // return await nexus.Resource.create(
     //   // orgLabel,
     //   // projectLabel,
@@ -23,18 +31,18 @@ const AddWorkspaceContainer: React.FC = () => {
   const saveWorkspace = (label: string, description?: string) => {
     setShowModal(false);
 
-    // generateWorkspaceResource(label, description).then(response => {      
-    //   notification.success({
-    //     message: 'Workspace was created successfully',
-    //     duration: 2,
-    //   });
-    // }).catch(error => {
-    //   notification.error({
-    //     message: 'An error occurred',
-    //     description: error.reason || error.message,
-    //     duration: 3,
-    //   });
-    // });
+    createWorkspaceResource(label, description).then(response => {      
+      notification.success({
+        message: 'Workspace was created successfully',
+        duration: 2,
+      });
+    }).catch(error => {
+      notification.error({
+        message: 'An error occurred',
+        description: error.reason || error.message,
+        duration: 3,
+      });
+    });
   }
 
   return (
@@ -48,7 +56,7 @@ const AddWorkspaceContainer: React.FC = () => {
         footer={null}
         onCancel={() => setShowModal(false)}
       >
-        <WorkspaceEditorForm />
+        <WorkspaceEditorForm saveWorkspace={saveWorkspace} />
       </Modal>
     </>
   );
