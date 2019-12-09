@@ -99,6 +99,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
             workspaceId={workspaceId}
             dashboardId={dashboardId}
             studioResourceId={studioResourceId}
+            studioResource={studioResource}
           />
         </>
       ) : (
