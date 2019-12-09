@@ -4,7 +4,13 @@ import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
 import DashboardList from './DashboardListContainer';
 import { useHistory } from 'react-router-dom';
-import AddWorkspace from '../components/Studio/AddWorkspace';
+import AddWorkspaceContainer from './AddWorkspaceContainer';
+
+type StudioResource = Resource<{
+  label: string;
+  description?: string;
+  workspaces?: [string];
+}>;
 
 type WorkspaceListProps = {
   workspaceIds: string[];
@@ -13,6 +19,7 @@ type WorkspaceListProps = {
   workspaceId: string;
   dashboardId: string;
   studioResourceId: string;
+  studioResource: StudioResource;
 };
 
 const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
@@ -22,6 +29,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   workspaceId,
   dashboardId,
   studioResourceId,
+  studioResource,
 }) => {
   const [workspaces, setWorkspaces] = React.useState<Resource[]>([]);
   const [selectedWorkspace, setSelectedWorkspace] = React.useState<Resource>();
@@ -84,7 +92,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
             : undefined
         }
         position="top"
-        tabAction={<AddWorkspace />}
+        tabAction={<AddWorkspaceContainer orgLabel={orgLabel} projectLabel={projectLabel} studio={studioResource} />}
       >
         {selectedWorkspace ? (
           <div className="workspace">
