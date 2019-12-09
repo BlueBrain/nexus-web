@@ -7,6 +7,7 @@ import { Resource } from '@bbp/nexus-sdk';
 
 import { RootState } from '../store/reducers';
 import StudioList from '../components/Studio/StudioList';
+import CreateStudioContainer from './CreateStudioContainer';
 
 const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';
@@ -111,8 +112,13 @@ const StudioListContainer: React.FunctionComponent<{
       busy={busy}
       error={error}
       goToStudio={(id: string) => goToStudio(id)}
-      orgLabel={orgLabel}
-      projectLabel={projectLabel}
+      createStudioButton={
+        <CreateStudioContainer
+          orgLabel={orgLabel}
+          projectLabel={projectLabel}
+          goToStudio={goToStudio}
+        />
+      }
     ></StudioList>
   );
 };
