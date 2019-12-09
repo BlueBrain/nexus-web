@@ -7,6 +7,8 @@ import WorkspaceEditorForm from '../components/Studio/WorkspaceEditorForm';
 
 const DEFAULT_WORKSPACE_TYPE = 'StudioWorkspace';
 
+const DEFAULT_WORKSPACE_CONTEXT = 'https://bluebrainnexus.io/studio/context';
+
 type StudioResource = Resource<{
   label: string;
   description?: string;
@@ -24,7 +26,7 @@ const AddWorkspaceContainer: React.FC<{
   const [showModal, setShowModal] = React.useState(false);
 
   const generateWorkspaceResource = (label: string, description?: string) => ({
-    '@context': 'https://bluebrainnexus.io/studio/context',
+    '@context': DEFAULT_WORKSPACE_CONTEXT,
     '@type': DEFAULT_WORKSPACE_TYPE,
     label: label,
     description: description,
@@ -44,21 +46,19 @@ const AddWorkspaceContainer: React.FC<{
 
     createWorkspaceResource(label, description).then(async response => {
       const newWorkspaceId = response['@id'];
-      
+
       await nexus.Resource.update(
         orgLabel,
         projectLabel,
-        studio['@id'],
+        encodeURIComponent(studio['@id']),
         studio._rev,
         {
-          workspaces: [newWorkspaceId, ...studio.workspaces || []],
+          workspaces: [newWorkspaceId, ...(studio.workspaces || [])],
+          label: studio.label,
+          description: studio.description,
         }
       )
-    }).then(response => {  
-      console.log('response', response);
-
-      //we need to add workspaceId to studio workspaces
-          
+    }).then(response => {          
       notification.success({
         message: 'Workspace was created successfully',
         duration: 2,
