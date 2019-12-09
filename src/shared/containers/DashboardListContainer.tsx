@@ -3,10 +3,9 @@ import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
 import DashboardResultsContainer from './DashboardResultsContainer';
-import { useHistory, Link } from 'react-router-dom';
-import { Modal } from 'antd';
+import { useHistory } from 'react-router-dom';
 import AddDashboard from '../components/Studio/AddDashboard';
-import DashboardConfigEditor from '../components/DashboardEditor/DashboardConfigEditor';
+import DashboardEditorContainer from './DashboardEditor/DashboardEditorContainer';
 
 type Dashboard = {
   dashboard: string;
@@ -95,52 +94,39 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     }
   };
 
+  console.log(dashboards, selectedDashboard);
+
   return (
     <div>
-      <>
-        <Modal
-          title={`Edit ${
-            editingDashboard ? editingDashboard.label : 'Dashboard'
-          }`}
-          visible={!!editingDashboard}
-          footer={null}
-          onCancel={() => setEditingDashboard(null)}
-          style={{ minWidth: '75%' }}
-        >
+      {dashboardResources.length > 0 ? (
+        <>
           {editingDashboard && (
-            <DashboardConfigEditor
+            // TODO: pass dashboard view
+            <DashboardEditorContainer
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              dashboardId={editingDashboard['@id']}
+              dashboardRev={editingDashboard._rev}
               dashboard={{
                 label: editingDashboard.label,
                 description: editingDashboard.description,
                 dataQuery: editingDashboard.dataQuery,
               }}
-              linkToSparqlQueryEditor={(dataQuery: string) => {
-                return (
-                  <Link
-                    to={`/${orgLabel}/${projectLabel}/nxv:defaultSparqlIndex/sparql?query=${encodeURIComponent(
-                      dataQuery
-                    )}`}
-                  >
-                    View query in Sparql Editor
-                  </Link>
-                );
-              }}
-            ></DashboardConfigEditor>
+            ></DashboardEditorContainer>
           )}
-        </Modal>
-        <TabList
-          items={dashboardResources.map(w => ({
-            label: w.label,
-            description: w.description,
-            id: w['@id'],
-          }))}
-          onSelected={(id: string) => {
-            selectDashboard(id);
-          }}
-          position="left"
-          defaultActiveId={
-            dashboardResources.length
-              ? dashboardId
+          <TabList
+            items={dashboardResources.map(w => ({
+              label: w.label,
+              description: w.description,
+              id: w['@id'],
+            }))}
+            onSelected={(id: string) => {
+              // TODO this should select dashboard based on index, not id!
+              selectDashboard(id);
+            }}
+            position="left"
+            defaultActiveId={
+              dashboardId
                 ? decodeURIComponent(dashboardId)
                 : dashboardResources[0]['@id']
               : undefined

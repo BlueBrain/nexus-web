@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Input, Form, Tooltip, Icon, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { ResourceList } from '@bbp/nexus-sdk';
+import { FormComponentProps } from 'antd/es/form';
 import DEFAULT_DASHBOARD_VIEW_QUERY from './DefaultDashboardViewQuery';
 import SparqlQueryFormInput from '../ViewForm/SparqlQueryInput';
 
@@ -11,12 +12,18 @@ export type DashboardPayload = {
   dataQuery: string;
 };
 
-const DashboardConfigEditorComponent: React.FunctionComponent<{
+export type DashboardConfigEditorProps = {
+  ref?: React.Ref<FormComponentProps<any>>;
   form: WrappedFormUtils;
   dashboard?: DashboardPayload;
   onSubmit?(dashboard: DashboardPayload): void;
+  viewList?: ResourceList<{}>;
   linkToSparqlQueryEditor?(dataQuery: string): React.ReactElement;
-}> = ({ onSubmit, form, dashboard, linkToSparqlQueryEditor }) => {
+};
+
+const DashboardConfigEditorComponent: React.FunctionComponent<
+  DashboardConfigEditorProps
+> = ({ onSubmit, form, dashboard, linkToSparqlQueryEditor }) => {
   const { description, label, dataQuery } = dashboard || {};
   const { getFieldDecorator, getFieldsValue, validateFields } = form;
 
@@ -101,21 +108,27 @@ const DashboardConfigEditorComponent: React.FunctionComponent<{
               required: true,
             },
           ],
-          // @ts-ignore no possible way to fix this typescript nonsense
         })(<SparqlQueryFormInput />)}
       </Form.Item>
-
-      <Button type="primary" htmlType="submit">
-        Save
-      </Button>
     </Form>
   );
 };
 
-export default Form.create<{
-  form: WrappedFormUtils;
-  dashboard?: DashboardPayload;
-  onSubmit?(dashboard: DashboardPayload): void;
-  viewList?: ResourceList<{}>;
-  linkToSparqlQueryEditor?(dataQuery: string): React.ReactElement;
-}>()(DashboardConfigEditorComponent);
+// This wrapping of imperative handle is to provide the form
+// to the parent if the parent decides to use Ref on this form
+// for example, to validate from the parent
+const WrappedForwardDashboardConfigEditorComponent = React.forwardRef<
+  FormComponentProps,
+  DashboardConfigEditorProps
+>((props, ref) => {
+  React.useImperativeHandle(ref, () => props);
+  return <DashboardConfigEditorComponent {...props} ref={ref} />;
+});
+
+type WrappedDashboardConfigFormProps = DashboardConfigEditorProps & {
+  wrappedComponentRef?: React.Ref<FormComponentProps<any>>;
+};
+
+export default Form.create<WrappedDashboardConfigFormProps>()(
+  WrappedForwardDashboardConfigEditorComponent
+);

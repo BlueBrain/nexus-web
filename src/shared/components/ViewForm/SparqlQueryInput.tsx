@@ -33,4 +33,10 @@ const SparqlQueryInput: React.FunctionComponent<{
   );
 };
 
-export default React.forwardRef(SparqlQueryInput);
+export default React.forwardRef<
+  {
+    value: string;
+    onChange: (query: string) => void;
+  },
+  any
+>(SparqlQueryInput);
