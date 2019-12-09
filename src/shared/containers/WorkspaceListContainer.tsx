@@ -16,7 +16,7 @@ type WorkspaceListProps = {
 };
 
 const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
-  workspaceIds,
+  workspaceIds = [],
   orgLabel,
   projectLabel,
   workspaceId,
@@ -67,42 +67,42 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
 
   return (
     <>
-      {workspaces.length > 0 ? (
-        <TabList
-          items={workspaces.map(w => ({
-            label: w.label,
-            description: w.description,
-            id: w['@id'],
-          }))}
-          onSelected={(id: string) => {
-            selectWorkspace(id, workspaces);
-          }}
-          defaultActiveId={
-            workspaceId ? decodeURIComponent(workspaceId) : workspaces[0]['@id']
-          }
-          position="top"
-          tabAction={<AddWorkspace />}
-        >
-          {selectedWorkspace ? (
-            <div className="workspace">
-              <DashboardList
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-                dashboards={selectedWorkspace['dashboards']}
-                workspaceId={
-                  workspaceId
-                    ? workspaceId
-                    : encodeURIComponent(selectedWorkspace['@id'])
-                }
-                dashboardId={dashboardId}
-                studioResourceId={studioResourceId}
-              />{' '}
-            </div>
-          ) : null}
-        </TabList>
-      ) : (
-        'No Workspaces are available for this Studio'
-      )}
+      <TabList
+        items={workspaces.map(w => ({
+          label: w.label,
+          description: w.description,
+          id: w['@id'],
+        }))}
+        onSelected={(id: string) => {
+          selectWorkspace(id, workspaces);
+        }}
+        defaultActiveId={
+          workspaces.length
+            ? workspaceId
+              ? decodeURIComponent(workspaceId)
+              : workspaces[0]['@id']
+            : undefined
+        }
+        position="top"
+        tabAction={<AddWorkspace />}
+      >
+        {selectedWorkspace ? (
+          <div className="workspace">
+            <DashboardList
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              dashboards={selectedWorkspace['dashboards']}
+              workspaceId={
+                workspaceId
+                  ? workspaceId
+                  : encodeURIComponent(selectedWorkspace['@id'])
+              }
+              dashboardId={dashboardId}
+              studioResourceId={studioResourceId}
+            />{' '}
+          </div>
+        ) : null}
+      </TabList>
     </>
   );
 };

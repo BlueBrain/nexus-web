@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { notification } from 'antd';
+import { notification, Empty } from 'antd';
 
 import WorkspaceList from './WorkspaceListContainer';
 import EditStudio from '../components/Studio/EditStudio';
 import StudioHeader from '../components/Studio/StudioHeader';
+
+const STUDIO_TYPE = 'https://bluebrainnexus.io/studio/vocabulary/Studio';
 
 type StudioContainerProps = {
   orgLabel: string;
@@ -40,11 +42,11 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
   React.useEffect(() => {
     nexus.Resource.get(orgLabel, projectLabel, studioId)
       .then(value => {
-        if (value['@type'] === 'Studio') {
+        if (value['@type'] === STUDIO_TYPE) {
           const studioResource: StudioResource = value as StudioResource;
           setStudioResource(studioResource);
           const workspaceIds: string[] = studioResource['workspaces'];
-          setWorkspaceIds(workspaceIds);
+          setWorkspaceIds(workspaceIds || []);
         }
       })
       .catch(e => {
@@ -100,7 +102,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
           />
         </>
       ) : (
-        <h4>The Resource is not a Studio</h4>
+        <Empty />
       )}
     </>
   );

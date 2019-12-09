@@ -101,45 +101,41 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
 
   return (
     <div>
-      {dashboardResources.length > 0 ? (
-        <>
-          {editModal}
-          <TabList
-            items={dashboardResources.map(w => ({
-              label: w.label,
-              description: w.description,
-              id: w['@id'],
-            }))}
-            onSelected={(id: string) => {
-              selectDashboard(id);
-            }}
-            position="left"
-            defaultActiveId={
-              dashboardId
+      <>
+        {editModal}
+        <TabList
+          items={dashboardResources.map(w => ({
+            label: w.label,
+            description: w.description,
+            id: w['@id'],
+          }))}
+          onSelected={(id: string) => {
+            selectDashboard(id);
+          }}
+          position="left"
+          defaultActiveId={
+            dashboardResources.length
+              ? dashboardId
                 ? decodeURIComponent(dashboardId)
                 : dashboardResources[0]['@id']
-            }
-            tabAction={<AddDashboard />}
-            onEditClick={handleElementClick}
-          >
-            {selectedDashboard ? (
-              <DashboardResultsContainer
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-                viewId={dashboards[0].view}
-                workspaceId={workspaceId}
-                dashboardId={
-                  dashboardId ? dashboardId : selectedDashboard['@id']
-                }
-                studioResourceId={studioResourceId}
-                dataQuery={selectedDashboard['dataQuery']}
-              />
-            ) : null}
-          </TabList>
-        </>
-      ) : (
-        'No Dashboards are available'
-      )}
+              : undefined
+          }
+          tabAction={<AddDashboard />}
+          onEditClick={handleElementClick}
+        >
+          {selectedDashboard ? (
+            <DashboardResultsContainer
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              viewId={dashboards[0].view}
+              workspaceId={workspaceId}
+              dashboardId={dashboardId ? dashboardId : selectedDashboard['@id']}
+              studioResourceId={studioResourceId}
+              dataQuery={selectedDashboard['dataQuery']}
+            />
+          ) : null}
+        </TabList>
+      </>
     </div>
   );
 };
