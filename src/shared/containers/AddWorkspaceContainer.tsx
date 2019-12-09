@@ -19,17 +19,15 @@ const AddWorkspaceContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
   studio: StudioResource;
-}> = ({ orgLabel, projectLabel, studio }) => {
-  console.log('studio', studio);
-  
+}> = ({ orgLabel, projectLabel, studio }) => {  
   const nexus = useNexusContext();
   const [showModal, setShowModal] = React.useState(false);
 
   const generateWorkspaceResource = (label: string, description?: string) => ({
+    label,
+    description,
     '@context': DEFAULT_WORKSPACE_CONTEXT,
     '@type': DEFAULT_WORKSPACE_TYPE,
-    label: label,
-    description: description,
     dashboards: [],
   });
 
@@ -39,6 +37,12 @@ const AddWorkspaceContainer: React.FC<{
       projectLabel,
       generateWorkspaceResource(label, description),
     );
+  }
+
+  const updatedWorkspacesList = (newWorkspaceId: string) => {
+    const workSpacelist = Array.isArray(studio.workspaces) ? studio.workspaces : [studio.workspaces];
+
+    return [newWorkspaceId, ...workSpacelist];
   }
 
   const saveWorkspace = (label: string, description?: string) => {
@@ -53,7 +57,7 @@ const AddWorkspaceContainer: React.FC<{
         encodeURIComponent(studio['@id']),
         studio._rev,
         {
-          workspaces: [newWorkspaceId, ...(studio.workspaces || [])],
+          workspaces: updatedWorkspacesList(newWorkspaceId),
           label: studio.label,
           description: studio.description,
         }
