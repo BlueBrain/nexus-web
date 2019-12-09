@@ -1,12 +1,13 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
+import { useNexusContext } from '@bbp/react-nexus';
+import { DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
+import { notification, Modal } from 'antd';
+
 import DashboardConfigEditor, {
   DashboardPayload,
   DashboardConfigEditorProps,
 } from '../../components/DashboardEditor/DashboardConfigEditor';
-import { useNexusContext } from '@bbp/react-nexus';
-import { Link } from 'react-router-dom';
-import { notification, Modal } from 'antd';
-import { DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 
 const DashboardEditorContainer: React.FunctionComponent<{
   orgLabel: string;
@@ -15,19 +16,29 @@ const DashboardEditorContainer: React.FunctionComponent<{
   dashboardRev: number;
   dashboard: DashboardPayload;
   viewId?: string;
+  showEditModal: boolean;
+  setShowEditModal(showEditModal: boolean): void;
 }> = ({
   orgLabel,
   projectLabel,
   dashboard,
   dashboardId,
   dashboardRev,
+  showEditModal,
+  setShowEditModal,
   viewId = DEFAULT_SPARQL_VIEW_ID,
 }) => {
   const formRef = React.useRef<DashboardConfigEditorProps>(null);
   const nexus = useNexusContext();
   const { label, description, dataQuery } = dashboard;
-  const [visible, setVisible] = React.useState(true);
   const [busy, setBusy] = React.useState(false);
+
+  // Launch modal when id is changed (someone selected a new dashboard to edit)
+  React.useEffect(() => {
+    if (!showEditModal) {
+      setShowEditModal(true);
+    }
+  }, [viewId, dashboardId]);
 
   const handleSubmit = async () => {
     if (formRef.current && formRef.current.form) {
@@ -49,6 +60,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
             ...dashboardPayload,
           }
         );
+
         // TODO: find a better way to trigger dashboard reloads
         // So that recently edited dashboards can appear
         // having the correct values
@@ -67,8 +79,8 @@ const DashboardEditorContainer: React.FunctionComponent<{
   return (
     <Modal
       title={`Edit ${label || 'Dashboard'}`}
-      visible={visible}
-      onCancel={() => setVisible(false)}
+      visible={showEditModal}
+      onCancel={() => setShowEditModal(false)}
       onOk={() => handleSubmit()}
       okText={busy ? 'Saving' : 'Save'}
       style={{ minWidth: '75%' }}

@@ -33,6 +33,8 @@ const SparqlQueryInput: React.FunctionComponent<{
   );
 };
 
+// Exposes as forwardRef to be compatible with ant-D forms
+// https://ant.design/components/form/#components-form-demo-customized-form-controls
 export default React.forwardRef<
   {
     value: string;

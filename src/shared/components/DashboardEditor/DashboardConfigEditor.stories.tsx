@@ -50,7 +50,7 @@ storiesOf('Components/StudioWizard/DashboardConfigEditor', module).add(
             dashboard={{
               label,
               description,
-              viewQuery: '',
+              dataQuery: '',
             }}
           />
         </Card>

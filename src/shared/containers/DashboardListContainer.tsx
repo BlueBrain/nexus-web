@@ -37,6 +37,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     editingDashboard,
     setEditingDashboard,
   ] = React.useState<Resource | null>(null);
+  const [showEditModal, setShowEditModal] = React.useState(false);
   const nexus = useNexusContext();
 
   const selectDashboard = (id: string) => {
@@ -91,6 +92,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     );
     if (dashboard) {
       setEditingDashboard(dashboard);
+      setShowEditModal(true);
     }
   };
 
@@ -110,6 +112,8 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
                 description: editingDashboard.description,
                 dataQuery: editingDashboard.dataQuery,
               }}
+              showEditModal={showEditModal}
+              setShowEditModal={setShowEditModal}
             ></DashboardEditorContainer>
           )}
           <TabList
