@@ -94,8 +94,6 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     }
   };
 
-  console.log(dashboards, selectedDashboard);
-
   return (
     <div>
       {dashboardResources.length > 0 ? (

@@ -31,7 +31,6 @@ const DashboardEditorContainer: React.FunctionComponent<{
 
   const handleSubmit = async () => {
     if (formRef.current && formRef.current.form) {
-      console.log(formRef.current.form);
       formRef.current.form.validateFields();
 
       try {
