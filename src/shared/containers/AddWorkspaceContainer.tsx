@@ -67,6 +67,7 @@ const AddWorkspaceContainer: React.FC<{
         message: 'Workspace was created successfully',
         duration: 2,
       });
+      window.location.reload();
     }).catch(error => {
       notification.error({
         message: 'An error occurred',
