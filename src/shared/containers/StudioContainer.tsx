@@ -7,8 +7,6 @@ import WorkspaceList from './WorkspaceListContainer';
 import EditStudio from '../components/Studio/EditStudio';
 import StudioHeader from '../components/Studio/StudioHeader';
 
-const STUDIO_TYPE = 'https://bluebrainnexus.io/studio/vocabulary/Studio';
-
 type StudioContainerProps = {
   orgLabel: string;
   projectLabel: string;
@@ -42,12 +40,10 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
   React.useEffect(() => {
     nexus.Resource.get(orgLabel, projectLabel, studioId)
       .then(value => {
-        if (value['@type'] === STUDIO_TYPE) {
-          const studioResource: StudioResource = value as StudioResource;
-          setStudioResource(studioResource);
-          const workspaceIds: string[] = studioResource['workspaces'];
-          setWorkspaceIds(workspaceIds || []);
-        }
+        const studioResource: StudioResource = value as StudioResource;
+        setStudioResource(studioResource);
+        const workspaceIds: string[] = studioResource['workspaces'];
+        setWorkspaceIds(workspaceIds || []);
       })
       .catch(e => {
         // TODO: show a meaningful error to the user.
