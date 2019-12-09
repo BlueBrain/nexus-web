@@ -62,6 +62,7 @@ const StudioListContainer: React.FunctionComponent<{
         // get all resources of type studio
         const response = await nexus.Resource.list(orgLabel, projectLabel, {
           type: DEFAULT_STUDIO_TYPE,
+          deprecated: false,
         });
         // we need to get the metadata for each of them
         const studios = await Promise.all(
@@ -98,7 +99,7 @@ const StudioListContainer: React.FunctionComponent<{
       orgLabel,
       projectLabel,
     ]
-  );  
+  );
 
   return (
     <StudioList
