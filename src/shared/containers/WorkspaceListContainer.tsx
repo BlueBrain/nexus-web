@@ -37,7 +37,6 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   const history = useHistory();
   const selectWorkspace = (id: string, values: Resource[]) => {
     const w = values.find(w => w['@id'] === id);
-    console.log({ selectWorkspace: id, w });
     setSelectedWorkspace(w);
     const path = history.location.pathname.split('/workspaces');
     const newPath = `${path[0]}/workspaces/${encodeURIComponent(id)}`;
