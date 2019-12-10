@@ -6,6 +6,7 @@ import DashboardResultsContainer from './DashboardResultsContainer';
 import { useHistory } from 'react-router-dom';
 import AddDashboard from '../components/Studio/AddDashboard';
 import DashboardEditorContainer from './DashboardEditor/DashboardEditorContainer';
+import CreateDashboardContainer from './DashboardEditor/CreateDashboardContainer';
 
 type Dashboard = {
   dashboard: string;
@@ -125,7 +126,12 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         }}
         position="left"
         defaultActiveId={`${selectedDashboardIndex}`}
-        tabAction={<AddDashboard />}
+        tabAction={
+          <CreateDashboardContainer
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+          />
+        }
         onEditClick={handleElementClick}
       >
         {selectedDashboardIndex ? (
