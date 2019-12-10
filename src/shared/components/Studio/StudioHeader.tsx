@@ -8,9 +8,11 @@ const StudioHeader: React.FC<{
 }> = ({ children, label, description }) => {
   return (
     <div className="studio-header">
-      <h1 className="title">{label}</h1>
+      <div>
+        <h1 className="title">{label}</h1>
+        {description && <p className="description">{description}</p>}
+      </div>
       <div>{children}</div>
-      {description && <p className="description">{description}</p>}
     </div>
   );
 };

@@ -57,7 +57,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
 
   React.useEffect(() => {
     Promise.all(
-      dashboards.map(dashboardObject => {
+      dashboards && dashboards.map(dashboardObject => {
         return nexus.Resource.get(
           orgLabel,
           projectLabel,
