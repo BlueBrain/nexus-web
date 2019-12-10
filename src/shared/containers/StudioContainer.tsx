@@ -85,6 +85,10 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
     }
   };
 
+  const realoadWorkspaces = () => {
+    fetchAndSetupStudio();
+  }
+
   return (
     <>
       {studioResource ? (
@@ -103,6 +107,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
             dashboardId={dashboardId}
             studioResourceId={studioResourceId}
             studioResource={studioResource}
+            onListUpdate={realoadWorkspaces}
           />
         </>
       ) : (

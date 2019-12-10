@@ -20,6 +20,7 @@ type WorkspaceListProps = {
   dashboardId: string;
   studioResourceId: string;
   studioResource: StudioResource;
+  onListUpdate?(): void;
 };
 
 const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
@@ -30,6 +31,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   dashboardId,
   studioResourceId,
   studioResource,
+  onListUpdate,
 }) => {
   const [workspaces, setWorkspaces] = React.useState<Resource[]>([]);
   const [selectedWorkspace, setSelectedWorkspace] = React.useState<Resource>();
@@ -97,6 +99,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
             orgLabel={orgLabel}
             projectLabel={projectLabel}
             studio={studioResource}
+            onAddWorkspace={onListUpdate}
           />
         }
       >

@@ -19,7 +19,8 @@ const AddWorkspaceContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
   studio: StudioResource;
-}> = ({ orgLabel, projectLabel, studio }) => {  
+  onAddWorkspace?(): void;
+}> = ({ orgLabel, projectLabel, studio, onAddWorkspace }) => {  
   const nexus = useNexusContext();
   const [showModal, setShowModal] = React.useState(false);
 
@@ -66,7 +67,8 @@ const AddWorkspaceContainer: React.FC<{
         message: 'Workspace was created successfully',
         duration: 2,
       });
-      window.location.reload();
+
+      !!onAddWorkspace && onAddWorkspace();
     }).catch(error => {
       notification.error({
         message: 'An error occurred',
