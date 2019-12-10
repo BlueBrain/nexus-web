@@ -60,6 +60,7 @@ const AddWorkspaceContainer: React.FC<{
           workspaces: updatedWorkspacesList(newWorkspaceId),
           label: studio.label,
           description: studio.description,
+          type: studio['@type'],
         }
       )
     }).then(response => {          

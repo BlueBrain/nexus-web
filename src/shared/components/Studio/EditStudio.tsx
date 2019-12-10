@@ -24,7 +24,7 @@ const EditStudio: React.FC<{
   return (
     <>
       <Tooltip placement="topLeft" title="Edit Studio" arrowPointAtCenter>
-        <Button className="studio-button" icon="edit" onClick={() => setShowModal(true)} />
+        <Button className="studio-button" icon="edit" onClick={() => setShowModal(true)}>Edit Studio</Button>
       </Tooltip>
       <Modal
         title="Edit Studio"
