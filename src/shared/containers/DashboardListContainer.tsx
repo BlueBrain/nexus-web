@@ -4,7 +4,6 @@ import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
 import DashboardResultsContainer from './DashboardResultsContainer';
 import { useHistory } from 'react-router-dom';
-import AddDashboard from '../components/Studio/AddDashboard';
 import DashboardEditorContainer from './DashboardEditor/DashboardEditorContainer';
 import CreateDashboardContainer from './DashboardEditor/CreateDashboardContainer';
 
@@ -130,6 +129,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
           <CreateDashboardContainer
             orgLabel={orgLabel}
             projectLabel={projectLabel}
+            workspaceId={workspaceId}
           />
         }
         onEditClick={handleElementClick}

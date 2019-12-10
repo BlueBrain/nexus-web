@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
-import { DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
+import { DEFAULT_SPARQL_VIEW_ID, Resource } from '@bbp/nexus-sdk';
 import { notification, Modal, Button } from 'antd';
 
 import DashboardConfigEditor, {
@@ -14,8 +14,14 @@ export const DASHBOARD_TYPE = 'StudioDashboard';
 const CreateDashboardContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
+  workspaceId: string;
   viewId?: string;
-}> = ({ orgLabel, projectLabel, viewId = DEFAULT_SPARQL_VIEW_ID }) => {
+}> = ({
+  orgLabel,
+  projectLabel,
+  workspaceId,
+  viewId = DEFAULT_SPARQL_VIEW_ID,
+}) => {
   const [showCreateModal, setShowCreateModal] = React.useState(false);
   const formRef = React.useRef<DashboardConfigEditorProps>(null);
   const nexus = useNexusContext();
@@ -38,11 +44,39 @@ const CreateDashboardContainer: React.FunctionComponent<{
           dataQuery: string;
         };
         setBusy(true);
-        await nexus.Resource.create(orgLabel, projectLabel, {
+        const dashboard = await nexus.Resource.create(orgLabel, projectLabel, {
           ...dashboardPayload,
           '@context': STUDIO_CONTEXT['@id'],
           '@type': DASHBOARD_TYPE,
         });
+
+        // Add dashboard to workspace
+        const workspace = await nexus.Resource.get<Resource>(
+          orgLabel,
+          projectLabel,
+          workspaceId
+        );
+        const workspaceSource = await nexus.Resource.getSource<{
+          [key: string]: any;
+        }>(orgLabel, projectLabel, workspaceId);
+        if (workspace) {
+          await nexus.Resource.update(
+            orgLabel,
+            projectLabel,
+            workspaceId,
+            workspace._rev,
+            {
+              ...workspaceSource,
+              dashboards: [
+                ...workspaceSource.dashboards,
+                {
+                  dashboard: dashboard['@id'],
+                  view: viewId,
+                },
+              ],
+            }
+          );
+        }
 
         // TODO: find a better way to trigger dashboard reloads
         // So that recently edited dashboards can appear
