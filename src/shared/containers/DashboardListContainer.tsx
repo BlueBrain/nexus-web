@@ -132,12 +132,14 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         }
         onEditClick={handleElementClick}
       >
-        {selectedDashboardIndex ? (
+        {!!dashboardResources.length && (
           <DashboardResultsContainer
             orgLabel={orgLabel}
             projectLabel={projectLabel}
             viewId={
-              dashboards[selectedDashboardIndex].view || DEFAULT_SPARQL_VIEW_ID
+              (dashboards[selectedDashboardIndex] &&
+                dashboards[selectedDashboardIndex].view) ||
+              DEFAULT_SPARQL_VIEW_ID
             }
             workspaceId={workspaceId}
             dashboardId={
@@ -148,7 +150,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
             studioResourceId={studioResourceId}
             dataQuery={dashboardResources[selectedDashboardIndex].viewQuery}
           />
-        ) : null}
+        )}
       </TabList>
     </div>
   );
