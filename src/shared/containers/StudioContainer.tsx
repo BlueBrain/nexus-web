@@ -7,8 +7,6 @@ import WorkspaceList from './WorkspaceListContainer';
 import EditStudio from '../components/Studio/EditStudio';
 import StudioHeader from '../components/Studio/StudioHeader';
 
-const STUDIO_TYPE = 'https://bluebrainnexus.io/studio/vocabulary/Studio';
-
 type StudioContainerProps = {
   orgLabel: string;
   projectLabel: string;
@@ -40,6 +38,10 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
   const nexus = useNexusContext();
 
   React.useEffect(() => {
+    fetchAndSetupStudio();
+  }, [orgLabel, projectLabel, studioId]);
+
+  const fetchAndSetupStudio = async () => {
     nexus.Resource.get(orgLabel, projectLabel, studioId)
       .then(value => {
         const studioResource: StudioResource = value as StudioResource;
@@ -50,7 +52,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
       .catch(e => {
         // TODO: show a meaningful error to the user.
       });
-  }, [orgLabel, projectLabel, studioId]);
+  }
 
   const updateStudio = async (label: string, description?: string) => {
     if (studioResource) {
@@ -60,11 +62,14 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
         studioId,
         studioResource._rev,
         {
+          ...studioResource,
           label,
           description,
         }
       )
         .then(response => {
+          fetchAndSetupStudio();
+
           notification.success({
             message: 'Studio was edited successfully',
             duration: 2,
