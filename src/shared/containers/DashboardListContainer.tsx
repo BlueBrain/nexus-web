@@ -86,10 +86,8 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
       });
   }, [orgLabel, projectLabel, dashboardId]);
 
-  const handleElementClick = (id: string) => {
-    const dashboard = dashboardResources.find(
-      dashboard => dashboard['@id'] === id
-    );
+  const handleElementClick = (stringifiedIndex: string) => {
+    const dashboard = dashboardResources[Number(stringifiedIndex)];
     if (dashboard) {
       setEditingDashboard(dashboard);
       setShowEditModal(true);
