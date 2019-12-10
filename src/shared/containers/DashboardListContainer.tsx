@@ -4,8 +4,8 @@ import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
 import DashboardResultsContainer from './DashboardResultsContainer';
 import { useHistory } from 'react-router-dom';
-import AddDashboard from '../components/Studio/AddDashboard';
 import DashboardEditorContainer from './DashboardEditor/DashboardEditorContainer';
+import CreateDashboardContainer from './DashboardEditor/CreateDashboardContainer';
 
 type Dashboard = {
   dashboard: string;
@@ -86,10 +86,8 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
       });
   }, [orgLabel, projectLabel, dashboardId]);
 
-  const handleElementClick = (id: string) => {
-    const dashboard = dashboardResources.find(
-      dashboard => dashboard['@id'] === id
-    );
+  const handleElementClick = (stringifiedIndex: string) => {
+    const dashboard = dashboardResources[Number(stringifiedIndex)];
     if (dashboard) {
       setEditingDashboard(dashboard);
       setShowEditModal(true);
@@ -125,7 +123,13 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         }}
         position="left"
         defaultActiveId={`${selectedDashboardIndex}`}
-        tabAction={<AddDashboard />}
+        tabAction={
+          <CreateDashboardContainer
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+            workspaceId={workspaceId}
+          />
+        }
         onEditClick={handleElementClick}
       >
         {selectedDashboardIndex ? (

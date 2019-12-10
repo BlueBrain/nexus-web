@@ -8,6 +8,8 @@ import DashboardConfigEditor, {
   DashboardPayload,
   DashboardConfigEditorProps,
 } from '../../components/DashboardEditor/DashboardConfigEditor';
+import STUDIO_CONTEXT from '../../components/Studio/StudioContext';
+import { DASHBOARD_TYPE } from './CreateDashboardContainer';
 
 const DashboardEditorContainer: React.FunctionComponent<{
   orgLabel: string;
@@ -43,7 +45,13 @@ const DashboardEditorContainer: React.FunctionComponent<{
   const handleSubmit = async () => {
     if (formRef.current && formRef.current.form) {
       formRef.current.form.validateFields();
-
+      const validationErrors = Object.values(
+        formRef.current.form.getFieldsError()
+      ).filter(Boolean);
+      // Invalid Form
+      if (validationErrors.length) {
+        return;
+      }
       try {
         const dashboardPayload = formRef.current.form.getFieldsValue() as {
           description?: string;
@@ -58,6 +66,8 @@ const DashboardEditorContainer: React.FunctionComponent<{
           dashboardRev,
           {
             ...dashboardPayload,
+            '@context': STUDIO_CONTEXT['@id'],
+            '@type': DASHBOARD_TYPE,
           }
         );
 
