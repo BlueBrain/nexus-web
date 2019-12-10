@@ -57,14 +57,13 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
 
   React.useEffect(() => {
     Promise.all(
-      dashboards &&
-        dashboards.map(dashboardObject => {
-          return nexus.Resource.get(
-            orgLabel,
-            projectLabel,
-            encodeURIComponent(dashboardObject.dashboard)
-          );
-        })
+      dashboards.map(dashboardObject => {
+        return nexus.Resource.get(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(dashboardObject.dashboard)
+        );
+      })
     )
       .then(values => {
         setDashboardResources(values);
@@ -131,24 +130,28 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
               dashboardId
                 ? decodeURIComponent(dashboardId)
                 : dashboardResources[0]['@id']
-              : undefined
-          }
-          tabAction={<AddDashboard />}
-          onEditClick={handleElementClick}
-        >
-          {selectedDashboard ? (
-            <DashboardResultsContainer
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-              viewId={dashboards[0].view}
-              workspaceId={workspaceId}
-              dashboardId={dashboardId ? dashboardId : selectedDashboard['@id']}
-              studioResourceId={studioResourceId}
-              dataQuery={selectedDashboard['dataQuery']}
-            />
-          ) : null}
-        </TabList>
-      </>
+            }
+            tabAction={<AddDashboard />}
+            onEditClick={handleElementClick}
+          >
+            {selectedDashboard ? (
+              <DashboardResultsContainer
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+                viewId={dashboards[0].view}
+                workspaceId={workspaceId}
+                dashboardId={
+                  dashboardId ? dashboardId : selectedDashboard['@id']
+                }
+                studioResourceId={studioResourceId}
+                dataQuery={selectedDashboard['dataQuery']}
+              />
+            ) : null}
+          </TabList>
+        </>
+      ) : (
+        'No Dashboards are available'
+      )}
     </div>
   );
 };
