@@ -15,6 +15,7 @@ type TabListProps = {
   items: TabItem[];
   onSelected: (activeKey: string) => void;
   defaultActiveId?: string;
+  activeKey?: string;
   position?: 'left' | 'right' | 'top' | 'bottom' | undefined;
   onEditClick?: (id: string) => void;
   tabAction?: React.ReactElement;
@@ -24,6 +25,7 @@ const TabList: React.FunctionComponent<TabListProps> = ({
   items,
   onSelected,
   defaultActiveId,
+  activeKey,
   position = 'left',
   children,
   onEditClick,
@@ -36,6 +38,7 @@ const TabList: React.FunctionComponent<TabListProps> = ({
         tabPosition={position}
         onChange={onSelected}
         defaultActiveKey={defaultActiveId}
+        activeKey={activeKey}
         tabBarExtraContent={tabAction}
       >
         {items.map(({ label, description, id }) => (

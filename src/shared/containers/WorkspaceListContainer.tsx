@@ -37,6 +37,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   const history = useHistory();
   const selectWorkspace = (id: string, values: Resource[]) => {
     const w = values.find(w => w['@id'] === id);
+    console.log({ selectWorkspace: id, w });
     setSelectedWorkspace(w);
     const path = history.location.pathname.split('/workspaces');
     const newPath = `${path[0]}/workspaces/${encodeURIComponent(id)}`;
@@ -84,7 +85,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
         onSelected={(id: string) => {
           selectWorkspace(id, workspaces);
         }}
-        defaultActiveId={
+        activeKey={
           workspaces.length
             ? workspaceId
               ? decodeURIComponent(workspaceId)
@@ -92,7 +93,13 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
             : undefined
         }
         position="top"
-        tabAction={<AddWorkspaceContainer orgLabel={orgLabel} projectLabel={projectLabel} studio={studioResource} />}
+        tabAction={
+          <AddWorkspaceContainer
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+            studio={studioResource}
+          />
+        }
       >
         {selectedWorkspace ? (
           <div className="workspace">
