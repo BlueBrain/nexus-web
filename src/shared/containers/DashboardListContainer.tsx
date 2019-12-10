@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource, DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
 import DashboardResultsContainer from './DashboardResultsContainer';
@@ -21,7 +21,7 @@ interface DashboardListProps {
 }
 
 const DashboardList: React.FunctionComponent<DashboardListProps> = ({
-  dashboards,
+  dashboards = [],
   orgLabel,
   projectLabel,
   workspaceId,
@@ -32,7 +32,9 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   const [dashboardResources, setDashboardResources] = React.useState<
     Resource[]
   >([]);
-  const [selectedDashboard, setSelectedDashboard] = React.useState<Resource>();
+  const [selectedDashboardIndex, setSelectedDashboardIndex] = React.useState<
+    number
+  >(0);
   const [
     editingDashboard,
     setEditingDashboard,
@@ -40,9 +42,10 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   const [showEditModal, setShowEditModal] = React.useState(false);
   const nexus = useNexusContext();
 
-  const selectDashboard = (id: string) => {
-    const dashboard = dashboardResources.find(d => d['@id'] === id);
-    setSelectedDashboard(dashboard);
+  const selectDashboard = (dashboardIndex: number) => {
+    setSelectedDashboardIndex(dashboardIndex);
+    const dashboard = dashboardResources[dashboardIndex];
+    const id = dashboard['@id'];
     const path = history.location.pathname.split('/dashboards');
     let newPath;
     if (path[0].includes('/workspaces')) {
@@ -57,7 +60,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
 
   React.useEffect(() => {
     Promise.all(
-      dashboards && dashboards.map(dashboardObject => {
+      dashboards.map(dashboardObject => {
         return nexus.Resource.get(
           orgLabel,
           projectLabel,
@@ -67,18 +70,16 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     )
       .then(values => {
         setDashboardResources(values);
-        let d;
         if (
           dashboardId &&
-          (selectedDashboard === undefined ||
-            selectedDashboard['@id'] !== dashboardId)
+          values[selectedDashboardIndex]['@id'] !== dashboardId
         ) {
           const id = decodeURIComponent(dashboardId);
-          d = values.find(d => d['@id'] === id);
-        } else {
-          d = values[0];
+          const selectedDashboardIndex = dashboards.findIndex(
+            d => d.dashboard === id
+          );
+          setSelectedDashboardIndex(selectedDashboardIndex);
         }
-        setSelectedDashboard(d);
       })
       .catch(e => {
         // TODO: show a meaningful error to the user.
@@ -97,61 +98,54 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
 
   return (
     <div>
-      {dashboardResources.length > 0 ? (
-        <>
-          {editingDashboard && (
-            // TODO: pass dashboard view
-            <DashboardEditorContainer
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-              dashboardId={editingDashboard['@id']}
-              dashboardRev={editingDashboard._rev}
-              dashboard={{
-                label: editingDashboard.label,
-                description: editingDashboard.description,
-                dataQuery: editingDashboard.dataQuery,
-              }}
-              showEditModal={showEditModal}
-              setShowEditModal={setShowEditModal}
-            ></DashboardEditorContainer>
-          )}
-          <TabList
-            items={dashboardResources.map(w => ({
-              label: w.label,
-              description: w.description,
-              id: w['@id'],
-            }))}
-            onSelected={(id: string) => {
-              // TODO this should select dashboard based on index, not id!
-              selectDashboard(id);
-            }}
-            position="left"
-            defaultActiveId={
-              dashboardId
-                ? decodeURIComponent(dashboardId)
-                : dashboardResources[0]['@id']
-            }
-            tabAction={<AddDashboard />}
-            onEditClick={handleElementClick}
-          >
-            {selectedDashboard ? (
-              <DashboardResultsContainer
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-                viewId={dashboards[0].view}
-                workspaceId={workspaceId}
-                dashboardId={
-                  dashboardId ? dashboardId : selectedDashboard['@id']
-                }
-                studioResourceId={studioResourceId}
-                dataQuery={selectedDashboard['dataQuery']}
-              />
-            ) : null}
-          </TabList>
-        </>
-      ) : (
-        'No Dashboards are available'
+      {editingDashboard && (
+        // TODO: pass dashboard view
+        <DashboardEditorContainer
+          orgLabel={orgLabel}
+          projectLabel={projectLabel}
+          dashboardId={editingDashboard['@id']}
+          dashboardRev={editingDashboard._rev}
+          dashboard={{
+            label: editingDashboard.label,
+            description: editingDashboard.description,
+            dataQuery: editingDashboard.dataQuery,
+          }}
+          showEditModal={showEditModal}
+          setShowEditModal={setShowEditModal}
+        ></DashboardEditorContainer>
       )}
+      <TabList
+        items={dashboardResources.map((w, index) => ({
+          label: w.label,
+          description: w.description,
+          id: `${index}`, // must be a string
+        }))}
+        onSelected={(stringiedIndex: string) => {
+          selectDashboard(Number(stringiedIndex));
+        }}
+        position="left"
+        defaultActiveId={`${selectedDashboardIndex}`}
+        tabAction={<AddDashboard />}
+        onEditClick={handleElementClick}
+      >
+        {selectedDashboardIndex ? (
+          <DashboardResultsContainer
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+            viewId={
+              dashboards[selectedDashboardIndex].view || DEFAULT_SPARQL_VIEW_ID
+            }
+            workspaceId={workspaceId}
+            dashboardId={
+              dashboardId
+                ? dashboardId
+                : dashboardResources[selectedDashboardIndex]['@id']
+            }
+            studioResourceId={studioResourceId}
+            dataQuery={dashboardResources[selectedDashboardIndex]['dataQuery']}
+          />
+        ) : null}
+      </TabList>
     </div>
   );
 };
