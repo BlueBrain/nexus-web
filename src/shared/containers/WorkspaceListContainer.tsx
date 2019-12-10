@@ -84,7 +84,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
         onSelected={(id: string) => {
           selectWorkspace(id, workspaces);
         }}
-        defaultActiveId={
+        activeKey={
           workspaces.length
             ? workspaceId
               ? decodeURIComponent(workspaceId)
@@ -92,7 +92,13 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
             : undefined
         }
         position="top"
-        tabAction={<AddWorkspaceContainer orgLabel={orgLabel} projectLabel={projectLabel} studio={studioResource} />}
+        tabAction={
+          <AddWorkspaceContainer
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+            studio={studioResource}
+          />
+        }
       >
         {selectedWorkspace ? (
           <div className="workspace">

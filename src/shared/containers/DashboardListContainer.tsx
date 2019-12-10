@@ -122,7 +122,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
           selectDashboard(Number(stringiedIndex));
         }}
         position="left"
-        defaultActiveId={`${selectedDashboardIndex}`}
+        activeKey={`${selectedDashboardIndex}`}
         tabAction={
           <CreateDashboardContainer
             orgLabel={orgLabel}
