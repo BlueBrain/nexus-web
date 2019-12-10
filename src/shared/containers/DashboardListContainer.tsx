@@ -146,7 +146,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
                 : dashboardResources[selectedDashboardIndex]['@id']
             }
             studioResourceId={studioResourceId}
-            dataQuery={dashboardResources[selectedDashboardIndex]['dataQuery']}
+            dataQuery={dashboardResources[selectedDashboardIndex].viewQuery}
           />
         ) : null}
       </TabList>
