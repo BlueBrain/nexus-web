@@ -57,10 +57,8 @@ const AddWorkspaceContainer: React.FC<{
         encodeURIComponent(studio['@id']),
         studio._rev,
         {
+          ...studio,
           workspaces: updatedWorkspacesList(newWorkspaceId),
-          label: studio.label,
-          description: studio.description,
-          type: studio['@type'],
         }
       )
     }).then(response => {          
