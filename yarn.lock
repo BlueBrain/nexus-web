@@ -844,23 +844,23 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@base2/pretty-print-object/-/pretty-print-object-1.0.0.tgz#860ce718b0b73f4009e153541faff2cb6b85d047"
 
-"@bbp/nexus-link@^1.1.8":
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/@bbp/nexus-link/-/nexus-link-1.1.8.tgz#805f434b2198b9cad0021e274854f022a2d451f0"
+"@bbp/nexus-link@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@bbp/nexus-link/-/nexus-link-1.2.0.tgz#759be2a55ed6c3cbdf275fb6001ebb852d2eac10"
   dependencies:
     rxjs "^6.5.2"
 
-"@bbp/nexus-sdk@^1.1.8":
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/@bbp/nexus-sdk/-/nexus-sdk-1.1.8.tgz#780a82e4807e05eb261d677cb54ace6607e632d2"
+"@bbp/nexus-sdk@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@bbp/nexus-sdk/-/nexus-sdk-1.2.0.tgz#3d614355bb78aa522aede36d1388ad07eddddd92"
   dependencies:
-    "@bbp/nexus-link" "^1.1.8"
+    "@bbp/nexus-link" "^1.2.0"
 
-"@bbp/react-nexus@^1.1.8":
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/@bbp/react-nexus/-/react-nexus-1.1.8.tgz#a0581cc01fbbb81682f99976d11483509451ae4a"
+"@bbp/react-nexus@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@bbp/react-nexus/-/react-nexus-1.2.0.tgz#31ac4bdf8b8c29f6b93ad28c2030e0b04c1c2a57"
   dependencies:
-    "@bbp/nexus-link" "^1.1.8"
+    "@bbp/nexus-link" "^1.2.0"
     ts-invariant "0.4.1"
 
 "@cnakazawa/watch@^1.0.3":

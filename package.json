@@ -17,8 +17,8 @@
     "build:storybook": "build-storybook"
   },
   "dependencies": {
-    "@bbp/nexus-sdk": "^1.1.8",
-    "@bbp/react-nexus": "^1.1.8",
+    "@bbp/nexus-sdk": "^1.2.0",
+    "@bbp/react-nexus": "^1.2.0",
     "@sentry/browser": "5.9.1",
     "@types/cytoscape": "^3.8.5",
     "antd": "^3.19.5",
