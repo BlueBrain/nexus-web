@@ -176,10 +176,11 @@ const ProjectView: React.FunctionComponent<{
                 orgLabel={orgLabel}
                 projectLabel={projectLabel}
               />
-              <StudioListContainer
+              {/* Re-enable after release to prod */}
+              {/* <StudioListContainer
                 orgLabel={orgLabel}
                 projectLabel={projectLabel}
-              />
+              /> */}
             </div>
           </div>
         </>
