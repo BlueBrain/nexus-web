@@ -18,6 +18,7 @@ interface DashboardListProps {
   workspaceId: string;
   dashboardId: string;
   studioResourceId: string;
+  onAddDashboard?(): void;
 }
 
 const DashboardList: React.FunctionComponent<DashboardListProps> = ({
@@ -27,6 +28,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   workspaceId,
   dashboardId,
   studioResourceId,
+  onAddDashboard,
 }) => {
   const history = useHistory();
   const [dashboardResources, setDashboardResources] = React.useState<
@@ -128,6 +130,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
             orgLabel={orgLabel}
             projectLabel={projectLabel}
             workspaceId={workspaceId}
+            onSuccess={onAddDashboard}
           />
         }
         onEditClick={handleElementClick}

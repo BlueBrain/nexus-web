@@ -16,11 +16,13 @@ const CreateDashboardContainer: React.FunctionComponent<{
   projectLabel: string;
   workspaceId: string;
   viewId?: string;
+  onSuccess?(): void;
 }> = ({
   orgLabel,
   projectLabel,
   workspaceId,
   viewId = DEFAULT_SPARQL_VIEW_ID,
+  onSuccess,
 }) => {
   const [showCreateModal, setShowCreateModal] = React.useState(false);
   const formRef = React.useRef<DashboardConfigEditorProps>(null);
@@ -81,14 +83,18 @@ const CreateDashboardContainer: React.FunctionComponent<{
         // TODO: find a better way to trigger dashboard reloads
         // So that recently edited dashboards can appear
         // having the correct values
-        location.reload();
+        console.log('done!');
+        
+        !!onSuccess && onSuccess();
       } catch (error) {
         notification.error({
           message: `Could not create dashboard`,
           description: error.reason || error.message,
         });
       } finally {
-        setBusy(false);
+        console.log('done!');
+        
+        !!onSuccess && onSuccess();
       }
     }
   };
