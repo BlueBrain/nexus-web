@@ -4,22 +4,42 @@ import { Alert, Button } from 'antd';
 import { DEFAULT_LAYOUT, LAYOUTS } from './LayoutDefinitions';
 
 import './GraphControlPanel.less';
+import { downloadCanvasAsImage } from '../../utils/download';
 
 const GraphControlPanel: React.FunctionComponent<{
-    onReset?(): void;
-    onCollapse?(): void;
-    collapsed?: boolean;
-    onLayoutChange?(type: string): void;
-    layout?: string;
-    loading: boolean;
-    onRecenter?(): void;
-  }> = ({ onReset, onCollapse, collapsed, onLayoutChange, layout = DEFAULT_LAYOUT, loading, onRecenter }) => {
+  label: string;
+  onReset?(): void;
+  onCollapse?(): void;
+  collapsed?: boolean;
+  onLayoutChange?(type: string): void;
+  layout?: string;
+  loading: boolean;
+  onRecenter?(): void;
+}> = ({
+  label,
+  onReset,
+  onCollapse,
+  collapsed,
+  onLayoutChange,
+  layout = DEFAULT_LAYOUT,
+  loading,
+  onRecenter,
+}) => {
   const [showAlert, setShowAlert] = React.useState(true);
 
   const handleLayoutClick = (type: string) => () => {
     onLayoutChange && onLayoutChange(type);
   };
-  
+
+  const handleDownload = () => {
+    const canvas = document.querySelector(
+      'canvas[data-id="layer2-node"]' // cytoscape canvas
+    ) as HTMLCanvasElement;
+    if (canvas) {
+      downloadCanvasAsImage(`${label} Graph`, canvas);
+    }
+  };
+
   return (
     <div className="graph-control-panel">
       <div className="controls">
@@ -38,6 +58,9 @@ const GraphControlPanel: React.FunctionComponent<{
           })}
         </div>
         <div>
+          <Button icon="download" size="small" onClick={handleDownload}>
+            Save Image
+          </Button>
           <Button
             type={collapsed ? 'primary' : 'default'}
             size="small"
@@ -71,6 +94,6 @@ const GraphControlPanel: React.FunctionComponent<{
       )}
     </div>
   );
-}
+};
 
 export default GraphControlPanel;

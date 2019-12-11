@@ -241,13 +241,14 @@ const GraphContainer: React.FunctionComponent<{
 
   const handleRecenter = () => {
     setCentered(!centered);
-  }
+  };
 
   if (error) return null;
 
   return (
     <>
       <GraphControlPanel
+        label={getResourceLabel(resource)}
         onReset={handleReset}
         collapsed={collapsed}
         onCollapse={handleCollapse}
