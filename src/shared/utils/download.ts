@@ -11,3 +11,15 @@ export const download = (filename: string, mediaType: string, data: any) => {
     document.body.removeChild(elem);
   }
 };
+
+export const downloadCanvasAsImage = (
+  filename: string,
+  canvas: HTMLCanvasElement
+) => {
+  const link = document.createElement('a');
+  link.download = filename;
+  const img = canvas.toDataURL('image/png');
+  link.href = img;
+  link.click();
+  link.remove();
+};
