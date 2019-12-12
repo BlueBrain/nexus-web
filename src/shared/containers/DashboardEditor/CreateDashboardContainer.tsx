@@ -16,16 +16,24 @@ const CreateDashboardContainer: React.FunctionComponent<{
   projectLabel: string;
   workspaceId: string;
   viewId?: string;
+  onSuccess?(): void;
 }> = ({
   orgLabel,
   projectLabel,
   workspaceId,
   viewId = DEFAULT_SPARQL_VIEW_ID,
+  onSuccess,
 }) => {
   const [showCreateModal, setShowCreateModal] = React.useState(false);
   const formRef = React.useRef<DashboardConfigEditorProps>(null);
   const nexus = useNexusContext();
   const [busy, setBusy] = React.useState(false);
+
+  const onSubmit = () => {
+    setBusy(false);
+    setShowCreateModal(false);
+    !!onSuccess && onSuccess();
+  }
 
   const handleSubmit = async () => {
     if (formRef.current && formRef.current.form) {
@@ -54,7 +62,7 @@ const CreateDashboardContainer: React.FunctionComponent<{
         const workspace = await nexus.Resource.get<Resource>(
           orgLabel,
           projectLabel,
-          workspaceId
+          workspaceId,
         );
         const workspaceSource = await nexus.Resource.getSource<{
           [key: string]: any;
@@ -77,18 +85,14 @@ const CreateDashboardContainer: React.FunctionComponent<{
             }
           );
         }
-
-        // TODO: find a better way to trigger dashboard reloads
-        // So that recently edited dashboards can appear
-        // having the correct values
-        location.reload();
+        onSubmit();
       } catch (error) {
         notification.error({
           message: `Could not create dashboard`,
           description: error.reason || error.message,
         });
       } finally {
-        setBusy(false);
+        onSubmit();
       }
     }
   };

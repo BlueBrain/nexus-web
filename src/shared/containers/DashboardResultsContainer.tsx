@@ -26,6 +26,10 @@ type Item = {
   [key: string]: any;
 };
 
+type NexusSparqlError = {
+  reason: string;
+};
+
 const DashboardResultsContainer: React.FunctionComponent<{
   dataQuery: string;
   orgLabel: string;
@@ -45,7 +49,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
 }) => {
   const history = useHistory();
   const [selectedResource, setSelectedResource] = React.useState<Resource>();
-  const [error, setError] = React.useState<Error>();
+  const [error, setError] = React.useState<NexusSparqlError | Error>();
   const [items, setItems] = React.useState<any[]>();
   const [headerProperties, setHeaderProperties] = React.useState<any[]>();
   const nexus = useNexusContext();
@@ -154,7 +158,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
     return (
       <Alert
         message="Error loading dashboard"
-        description={`Something went wrong: ${error.message || error}`}
+        description={`Something went wrong. ${(error as NexusSparqlError).reason || (error as Error).message}`}
         type="error"
       />
     );
