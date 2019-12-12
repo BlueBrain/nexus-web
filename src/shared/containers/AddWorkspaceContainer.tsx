@@ -65,7 +65,6 @@ const AddWorkspaceContainer: React.FC<{
           studioSource.workspaces
         ),
       };
-      console.log({ studioUpdatePayload });
       await nexus.Resource.update(
         orgLabel,
         projectLabel,

@@ -28,7 +28,6 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   studioResource,
   onListUpdate,
 }) => {
-  console.log({ workspaceIds });
   const [workspaces, setWorkspaces] = React.useState<Resource[]>([]);
   const [selectedWorkspace, setSelectedWorkspace] = React.useState<Resource>();
   const nexus = useNexusContext();
