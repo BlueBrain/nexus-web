@@ -4,6 +4,13 @@ import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
 import DashboardList from './DashboardListContainer';
 import { useHistory } from 'react-router-dom';
+import AddWorkspaceContainer from './AddWorkspaceContainer';
+
+type StudioResource = Resource<{
+  label: string;
+  description?: string;
+  workspaces?: [string];
+}>;
 
 type WorkspaceListProps = {
   workspaceIds: string[];
@@ -12,15 +19,19 @@ type WorkspaceListProps = {
   workspaceId: string;
   dashboardId: string;
   studioResourceId: string;
+  studioResource: StudioResource;
+  onListUpdate?(): void;
 };
 
 const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
-  workspaceIds,
+  workspaceIds = [],
   orgLabel,
   projectLabel,
   workspaceId,
   dashboardId,
   studioResourceId,
+  studioResource,
+  onListUpdate,
 }) => {
   const [workspaces, setWorkspaces] = React.useState<Resource[]>([]);
   const [selectedWorkspace, setSelectedWorkspace] = React.useState<Resource>();
@@ -66,41 +77,50 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
 
   return (
     <>
-      {workspaces.length > 0 ? (
-        <TabList
-          items={workspaces.map(w => ({
-            label: w.label,
-            description: w.description,
-            id: w['@id'],
-          }))}
-          onSelected={(id: string) => {
-            selectWorkspace(id, workspaces);
-          }}
-          defaultActiveId={
-            workspaceId ? decodeURIComponent(workspaceId) : workspaces[0]['@id']
-          }
-          position="top"
-        >
-          {selectedWorkspace ? (
-            <div className="workspace">
-              <DashboardList
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-                dashboards={selectedWorkspace['dashboards']}
-                workspaceId={
-                  workspaceId
-                    ? workspaceId
-                    : encodeURIComponent(selectedWorkspace['@id'])
-                }
-                dashboardId={dashboardId}
-                studioResourceId={studioResourceId}
-              />{' '}
-            </div>
-          ) : null}
-        </TabList>
-      ) : (
-        'No Workspaces are available for this Studio'
-      )}
+      <TabList
+        items={workspaces.map(w => ({
+          label: w.label,
+          description: w.description,
+          id: w['@id'],
+        }))}
+        onSelected={(id: string) => {
+          selectWorkspace(id, workspaces);
+        }}
+        activeKey={
+          workspaces.length
+            ? workspaceId
+              ? decodeURIComponent(workspaceId)
+              : workspaces[0]['@id']
+            : undefined
+        }
+        position="top"
+        tabAction={
+          <AddWorkspaceContainer
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+            studio={studioResource}
+            onAddWorkspace={onListUpdate}
+          />
+        }
+      >
+        {selectedWorkspace ? (
+          <div className="workspace">
+            <DashboardList
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              dashboards={selectedWorkspace['dashboards']}
+              workspaceId={
+                workspaceId
+                  ? workspaceId
+                  : encodeURIComponent(selectedWorkspace['@id'])
+              }
+              dashboardId={dashboardId}
+              studioResourceId={studioResourceId}
+              onAddDashboard={onListUpdate}
+            />{' '}
+          </div>
+        ) : null}
+      </TabList>
     </>
   );
 };

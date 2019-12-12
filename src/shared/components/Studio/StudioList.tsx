@@ -25,14 +25,23 @@ const StudioList: React.FC<{
   busy?: boolean;
   error?: Error | null;
   goToStudio?(studioId: string): void;
-}> = ({ studios, busy, error, goToStudio = () => {} }) => {
+  createStudioButton?: React.ReactElement;
+}> = ({
+  studios,
+  busy,
+  error,
+  goToStudio = () => {},
+  createStudioButton = null,
+}) => {
   const noStudios = studios.length === 0;
+
   return (
     <div className="studio-list">
       <h3>Studios</h3>
       <Spin spinning={busy}>
         {error && <Empty description={error.message || 'An error occurred'} />}
         {!error && noStudios && <Empty description="No studios available" />}
+        {createStudioButton}
         {!noStudios && (
           <div>
             {studios.map(studio => (

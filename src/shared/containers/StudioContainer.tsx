@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
+import { notification, Empty } from 'antd';
+
 import WorkspaceList from './WorkspaceListContainer';
+import EditStudio from '../components/Studio/EditStudio';
+import StudioHeader from '../components/Studio/StudioHeader';
 
 type StudioContainerProps = {
   orgLabel: string;
@@ -32,28 +36,69 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
   ] = React.useState<StudioResource | null>(null);
   const [workspaceIds, setWorkspaceIds] = React.useState<string[]>([]);
   const nexus = useNexusContext();
+
   React.useEffect(() => {
+    fetchAndSetupStudio();
+  }, [orgLabel, projectLabel, studioId]);
+
+  const fetchAndSetupStudio = async () => {
     nexus.Resource.get(orgLabel, projectLabel, studioId)
       .then(value => {
-        if (value['@type'] === 'Studio') {
-          const studioResource: StudioResource = value as StudioResource;
-          setStudioResource(studioResource);
-          const workspaceIds: string[] = studioResource['workspaces'];
-          setWorkspaceIds(workspaceIds);
-        }
+        const studioResource: StudioResource = value as StudioResource;
+        setStudioResource(studioResource);
+        const workspaceIds: string[] = studioResource['workspaces'];
+        setWorkspaceIds(Array.isArray(workspaceIds) ? workspaceIds : [workspaceIds]);
       })
       .catch(e => {
         // TODO: show a meaningful error to the user.
       });
-  }, [orgLabel, projectLabel, studioId]);
+  }
+
+  const updateStudio = async (label: string, description?: string) => {
+    if (studioResource) {
+      await nexus.Resource.update(
+        orgLabel,
+        projectLabel,
+        studioId,
+        studioResource._rev,
+        {
+          ...studioResource,
+          label,
+          description,
+        }
+      )
+        .then(response => {
+          fetchAndSetupStudio();
+
+          notification.success({
+            message: 'Studio was edited successfully',
+            duration: 2,
+          });
+        })
+        .catch(error => {
+          notification.error({
+            message: 'An error occurred',
+            description: error.reason || error.message,
+            duration: 3,
+          });
+        });
+    }
+  };
+
+  const realoadWorkspaces = () => {
+    fetchAndSetupStudio();
+  }
+
   return (
     <>
       {studioResource ? (
         <>
-          <h1 className="title">{studioResource.label}</h1>
-          {studioResource.description && (
-            <p className="description">{studioResource.description}</p>
-          )}
+          <StudioHeader
+            label={studioResource.label}
+            description={studioResource.description}
+          >
+            <EditStudio studio={studioResource} onSave={updateStudio} />
+          </StudioHeader>
           <WorkspaceList
             orgLabel={orgLabel}
             projectLabel={projectLabel}
@@ -61,10 +106,12 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
             workspaceId={workspaceId}
             dashboardId={dashboardId}
             studioResourceId={studioResourceId}
+            studioResource={studioResource}
+            onListUpdate={realoadWorkspaces}
           />
         </>
       ) : (
-        <h4>The Resource is not a Studio</h4>
+        <Empty />
       )}
     </>
   );
