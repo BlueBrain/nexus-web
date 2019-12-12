@@ -103,7 +103,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
         }
       >
         {getFieldDecorator('viewQuery', {
-          initialValue: dataQuery,
+          initialValue: dataQuery || DEFAULT_DASHBOARD_VIEW_QUERY,
           rules: [
             {
               required: true,
