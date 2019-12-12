@@ -92,8 +92,8 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     fetchAndSetupDashboards();
   }, [orgLabel, projectLabel, dashboardId, dashboards]);
 
-  const handleElementClick = (stringifiedIndex: string) => {
-    const dashboard = dashboardResources[Number(stringifiedIndex)];
+  const handleElementClick = (stringifiedIndex: string) => {    
+    const dashboard = dashboardResources[Number(stringifiedIndex)];    
     if (dashboard) {
       setEditingDashboard(dashboard);
       setShowEditModal(true);
@@ -117,7 +117,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
           dashboard={{
             label: editingDashboard.label,
             description: editingDashboard.description,
-            dataQuery: editingDashboard.dataQuery,
+            dataQuery: editingDashboard.viewQuery,
           }}
           showEditModal={showEditModal}
           setShowEditModal={setShowEditModal}

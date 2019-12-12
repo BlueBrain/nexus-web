@@ -46,7 +46,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
       }
     });
   };
-
+  
   return (
     <Form onSubmit={handleSubmit}>
       <Form.Item
@@ -103,7 +103,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
         }
       >
         {getFieldDecorator('viewQuery', {
-          initialValue: dataQuery || DEFAULT_DASHBOARD_VIEW_QUERY,
+          initialValue: dataQuery,
           rules: [
             {
               required: true,
