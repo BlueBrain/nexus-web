@@ -5,15 +5,10 @@ import TabList from '../components/Tabs/TabList';
 import DashboardList from './DashboardListContainer';
 import { useHistory } from 'react-router-dom';
 import AddWorkspaceContainer from './AddWorkspaceContainer';
-
-type StudioResource = Resource<{
-  label: string;
-  description?: string;
-  workspaces?: [string];
-}>;
+import { StudioResource } from '../components/Studio/EditStudio';
 
 type WorkspaceListProps = {
-  workspaceIds: string[];
+  workspaceIds: { '@id': string }[];
   orgLabel: string;
   projectLabel: string;
   workspaceId: string;
@@ -33,6 +28,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   studioResource,
   onListUpdate,
 }) => {
+  console.log({ workspaceIds });
   const [workspaces, setWorkspaces] = React.useState<Resource[]>([]);
   const [selectedWorkspace, setSelectedWorkspace] = React.useState<Resource>();
   const nexus = useNexusContext();
@@ -49,7 +45,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
 
   React.useEffect(() => {
     Promise.all(
-      workspaceIds.map(workspaceId => {
+      workspaceIds.map(({ '@id': workspaceId }) => {
         return nexus.Resource.get(
           orgLabel,
           projectLabel,

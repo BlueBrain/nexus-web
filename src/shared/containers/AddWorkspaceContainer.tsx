@@ -4,23 +4,18 @@ import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import WorkspaceEditorForm from '../components/Studio/WorkspaceEditorForm';
+import { StudioResource } from '../components/Studio/EditStudio';
 
 const DEFAULT_WORKSPACE_TYPE = 'StudioWorkspace';
 
 const DEFAULT_WORKSPACE_CONTEXT = 'https://bluebrainnexus.io/studio/context';
-
-type StudioResource = Resource<{
-  label: string;
-  description?: string;
-  workspaces?: [string];
-}>;
 
 const AddWorkspaceContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
   studio: StudioResource;
   onAddWorkspace?(): void;
-}> = ({ orgLabel, projectLabel, studio, onAddWorkspace }) => {  
+}> = ({ orgLabel, projectLabel, studio, onAddWorkspace }) => {
   const nexus = useNexusContext();
   const [showModal, setShowModal] = React.useState(false);
 
@@ -32,51 +27,67 @@ const AddWorkspaceContainer: React.FC<{
     dashboards: [],
   });
 
-  const createWorkspaceResource = async (label: string, description?: string) => {    
+  const createWorkspaceResource = async (
+    label: string,
+    description?: string
+  ) => {
     return await nexus.Resource.create(
       orgLabel,
       projectLabel,
-      generateWorkspaceResource(label, description),
+      generateWorkspaceResource(label, description)
     );
-  }
+  };
 
-  const updatedWorkspacesList = (newWorkspaceId: string) => {
-    const workSpacelist = Array.isArray(studio.workspaces) ? studio.workspaces : [studio.workspaces];
+  const updatedWorkspacesList = (
+    newWorkspaceId: string,
+    workspaces: StudioResource['workspaces']
+  ) => {
+    return [{ '@id': newWorkspaceId }, ...(workspaces || [])];
+  };
 
-    return [newWorkspaceId, ...workSpacelist];
-  }
-
-  const saveWorkspace = (label: string, description?: string) => {
+  const saveWorkspace = async (label: string, description?: string) => {
     setShowModal(false);
-
-    createWorkspaceResource(label, description).then(async response => {
-      const newWorkspaceId = response['@id'];
-
+    try {
+      const createWorkspaceResponse = await createWorkspaceResource(
+        label,
+        description
+      );
+      const studioSource = await nexus.Resource.getSource<StudioResource>(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(studio['@id'])
+      );
+      const newWorkspaceId = createWorkspaceResponse['@id'];
+      const studioUpdatePayload = {
+        ...studioSource,
+        workspaces: updatedWorkspacesList(
+          newWorkspaceId,
+          studioSource.workspaces
+        ),
+      };
+      console.log({ studioUpdatePayload });
       await nexus.Resource.update(
         orgLabel,
         projectLabel,
         encodeURIComponent(studio['@id']),
         studio._rev,
-        {
-          ...studio,
-          workspaces: updatedWorkspacesList(newWorkspaceId),
-        }
-      )
-    }).then(response => {          
+        studioUpdatePayload
+      );
+
       notification.success({
         message: 'Workspace was created successfully',
         duration: 2,
       });
 
       !!onAddWorkspace && onAddWorkspace();
-    }).catch(error => {
+    } catch (error) {
       notification.error({
         message: 'An error occurred',
         description: error.reason || error.message,
         duration: 3,
       });
-    });
-  }
+    }
+  };
 
   return (
     <>

@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { notification, Empty } from 'antd';
 
 import WorkspaceList from './WorkspaceListContainer';
-import EditStudio from '../components/Studio/EditStudio';
+import EditStudio, {
+  StudioResource,
+  StudioResourceResponse,
+} from '../components/Studio/EditStudio';
 import StudioHeader from '../components/Studio/StudioHeader';
 
 type StudioContainerProps = {
@@ -15,12 +17,6 @@ type StudioContainerProps = {
   dashboardId: string;
   studioResourceId: string;
 };
-
-type StudioResource = Resource<{
-  label: string;
-  description?: string;
-  workspaces: [string];
-}>;
 
 const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
   orgLabel,
@@ -34,7 +30,9 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
     studioResource,
     setStudioResource,
   ] = React.useState<StudioResource | null>(null);
-  const [workspaceIds, setWorkspaceIds] = React.useState<string[]>([]);
+  const [workspaceIds, setWorkspaceIds] = React.useState<{ '@id': string }[]>(
+    []
+  );
   const nexus = useNexusContext();
 
   React.useEffect(() => {
@@ -42,17 +40,26 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
   }, [orgLabel, projectLabel, studioId]);
 
   const fetchAndSetupStudio = async () => {
-    nexus.Resource.get(orgLabel, projectLabel, studioId)
-      .then(value => {
-        const studioResource: StudioResource = value as StudioResource;
-        setStudioResource(studioResource);
-        const workspaceIds: string[] = studioResource['workspaces'];
-        setWorkspaceIds(Array.isArray(workspaceIds) ? workspaceIds : [workspaceIds]);
-      })
-      .catch(e => {
-        // TODO: show a meaningful error to the user.
-      });
-  }
+    try {
+      const response = await nexus.Resource.get<StudioResourceResponse>(
+        orgLabel,
+        projectLabel,
+        studioId
+      );
+
+      const studioResourceFromStudioResourceResponse = {
+        ...response,
+        workspaces: (response.workspaces || []).map((id: string) => ({
+          '@id': id,
+        })),
+      };
+
+      setStudioResource(studioResourceFromStudioResourceResponse);
+      setWorkspaceIds(studioResourceFromStudioResourceResponse.workspaces);
+    } catch (error) {
+      // TODO: show a meaningful error to the user.
+    }
+  };
 
   const updateStudio = async (label: string, description?: string) => {
     if (studioResource) {
@@ -87,7 +94,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
 
   const realoadWorkspaces = () => {
     fetchAndSetupStudio();
-  }
+  };
 
   return (
     <>

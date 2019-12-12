@@ -21,6 +21,7 @@ const CreateStudioContainer: React.FC<{
     description,
     '@context': STUDIO_CONTEXT['@id'],
     '@type': DEFAULT_STUDIO_TYPE,
+    workspaces: [],
   });
 
   const makeStudioContext = async () => {
@@ -32,11 +33,7 @@ const CreateStudioContainer: React.FC<{
       );
     } catch (error) {
       if (error['@type'] === 'NotFound') {
-        // @ts-ignore TODO: update resource type in SDK to allow nested objects
-        // https://github.com/BlueBrain/nexus/issues/937
-        await nexus.Resource.create(orgLabel, projectLabel, {
-          ...STUDIO_CONTEXT,
-        });
+        await nexus.Resource.create(orgLabel, projectLabel, STUDIO_CONTEXT);
         return;
       }
       throw error;

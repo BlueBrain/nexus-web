@@ -2,17 +2,12 @@ import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { Input, Form, Tooltip, Icon, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
-
-type StudioResource = Resource<{
-  label: string;
-  description?: string;
-  workspaces?: [string];
-}>;
+import { StudioResource } from './EditStudio';
 
 const StudioEditorForm: React.FC<{
   form: WrappedFormUtils;
   saveStudio?(label: string, description?: string): void;
-  studio?: StudioResource | null; 
+  studio?: StudioResource | null;
 }> = ({ form, saveStudio, studio }) => {
   const { getFieldDecorator } = form;
 
@@ -78,7 +73,7 @@ const StudioEditorForm: React.FC<{
       </Button>
     </Form>
   );
-}
+};
 
 export default Form.create<{
   form: WrappedFormUtils;
