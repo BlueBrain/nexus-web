@@ -60,7 +60,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     history.push(newPath);
   };
 
-  React.useEffect(() => {
+  const fetchAndSetupDashboards = () => {
     Promise.all(
       dashboards.map(dashboardObject => {
         return nexus.Resource.get(
@@ -86,6 +86,10 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
       .catch(e => {
         // TODO: show a meaningful error to the user.
       });
+  };
+
+  React.useEffect(() => {
+    fetchAndSetupDashboards();
   }, [orgLabel, projectLabel, dashboardId, dashboards]);
 
   const handleElementClick = (stringifiedIndex: string) => {
@@ -95,6 +99,11 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
       setShowEditModal(true);
     }
   };
+
+  const updateDashboards = () => {
+    fetchAndSetupDashboards();
+    setEditingDashboard(null);
+  }
 
   return (
     <div>
@@ -112,7 +121,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
           }}
           showEditModal={showEditModal}
           setShowEditModal={setShowEditModal}
-          onSuccess={refreshList}
+          onSuccess={updateDashboards}
         ></DashboardEditorContainer>
       )}
       <TabList
