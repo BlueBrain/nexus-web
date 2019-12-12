@@ -60,7 +60,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     history.push(newPath);
   };
 
-  React.useEffect(() => {
+  React.useEffect(() => {    
     Promise.all(
       dashboards.map(dashboardObject => {
         return nexus.Resource.get(
@@ -86,7 +86,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
       .catch(e => {
         // TODO: show a meaningful error to the user.
       });
-  }, [orgLabel, projectLabel, dashboardId]);
+  }, [orgLabel, projectLabel, dashboardId, dashboards]);
 
   const handleElementClick = (stringifiedIndex: string) => {
     const dashboard = dashboardResources[Number(stringifiedIndex)];

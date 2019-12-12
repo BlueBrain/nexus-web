@@ -56,7 +56,7 @@ const CreateDashboardContainer: React.FunctionComponent<{
         const workspace = await nexus.Resource.get<Resource>(
           orgLabel,
           projectLabel,
-          workspaceId
+          workspaceId,
         );
         const workspaceSource = await nexus.Resource.getSource<{
           [key: string]: any;
@@ -83,8 +83,8 @@ const CreateDashboardContainer: React.FunctionComponent<{
         // TODO: find a better way to trigger dashboard reloads
         // So that recently edited dashboards can appear
         // having the correct values
-        console.log('done!');
-        
+        setBusy(false);
+        setShowCreateModal(false);
         !!onSuccess && onSuccess();
       } catch (error) {
         notification.error({
@@ -92,9 +92,9 @@ const CreateDashboardContainer: React.FunctionComponent<{
           description: error.reason || error.message,
         });
       } finally {
-        console.log('done!');
-        
+        setBusy(false);
         !!onSuccess && onSuccess();
+        setShowCreateModal(false);
       }
     }
   };

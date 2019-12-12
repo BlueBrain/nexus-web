@@ -47,7 +47,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
     }
   };
 
-  React.useEffect(() => {
+  React.useEffect(() => {    
     Promise.all(
       workspaceIds.map(workspaceId => {
         return nexus.httpGet({
