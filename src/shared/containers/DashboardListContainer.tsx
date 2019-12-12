@@ -18,7 +18,7 @@ interface DashboardListProps {
   workspaceId: string;
   dashboardId: string;
   studioResourceId: string;
-  onAddDashboard?(): void;
+  refreshList?(): void;
 }
 
 const DashboardList: React.FunctionComponent<DashboardListProps> = ({
@@ -28,7 +28,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   workspaceId,
   dashboardId,
   studioResourceId,
-  onAddDashboard,
+  refreshList,
 }) => {
   const history = useHistory();
   const [dashboardResources, setDashboardResources] = React.useState<
@@ -112,6 +112,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
           }}
           showEditModal={showEditModal}
           setShowEditModal={setShowEditModal}
+          onSuccess={refreshList}
         ></DashboardEditorContainer>
       )}
       <TabList
@@ -130,7 +131,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
             orgLabel={orgLabel}
             projectLabel={projectLabel}
             workspaceId={workspaceId}
-            onSuccess={onAddDashboard}
+            onSuccess={refreshList}
           />
         }
         onEditClick={handleElementClick}

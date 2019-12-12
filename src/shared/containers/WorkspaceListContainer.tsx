@@ -118,7 +118,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
               }
               dashboardId={dashboardId}
               studioResourceId={studioResourceId}
-              onAddDashboard={onListUpdate}
+              refreshList={onListUpdate}
             />{' '}
           </div>
         ) : null}

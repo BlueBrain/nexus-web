@@ -20,6 +20,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
   viewId?: string;
   showEditModal: boolean;
   setShowEditModal(showEditModal: boolean): void;
+  onSuccess?(): void;
 }> = ({
   orgLabel,
   projectLabel,
@@ -28,6 +29,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
   dashboardRev,
   showEditModal,
   setShowEditModal,
+  onSuccess,
   viewId = DEFAULT_SPARQL_VIEW_ID,
 }) => {
   const formRef = React.useRef<DashboardConfigEditorProps>(null);
@@ -70,11 +72,9 @@ const DashboardEditorContainer: React.FunctionComponent<{
             '@type': DASHBOARD_TYPE,
           }
         );
-
-        // TODO: find a better way to trigger dashboard reloads
-        // So that recently edited dashboards can appear
-        // having the correct values
-        location.reload();
+        
+        setShowEditModal(false);
+        !!onSuccess && onSuccess();
       } catch (error) {
         notification.error({
           message: `Could not update dashboard`,
