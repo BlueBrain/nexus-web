@@ -60,7 +60,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     history.push(newPath);
   };
 
-  React.useEffect(() => {    
+  React.useEffect(() => {
     Promise.all(
       dashboards.map(dashboardObject => {
         return nexus.Resource.get(

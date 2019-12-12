@@ -154,7 +154,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
     });
   }, [orgLabel, projectLabel, dataQuery, viewId]);
 
-  if (error) {    
+  if (error) {
     return (
       <Alert
         message="Error loading dashboard"

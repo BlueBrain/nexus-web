@@ -29,6 +29,12 @@ const CreateDashboardContainer: React.FunctionComponent<{
   const nexus = useNexusContext();
   const [busy, setBusy] = React.useState(false);
 
+  const onSubmit = () => {
+    setBusy(false);
+    setShowCreateModal(false);
+    !!onSuccess && onSuccess();
+  }
+
   const handleSubmit = async () => {
     if (formRef.current && formRef.current.form) {
       formRef.current.form.validateFields();
@@ -79,22 +85,14 @@ const CreateDashboardContainer: React.FunctionComponent<{
             }
           );
         }
-
-        // TODO: find a better way to trigger dashboard reloads
-        // So that recently edited dashboards can appear
-        // having the correct values
-        setBusy(false);
-        setShowCreateModal(false);
-        !!onSuccess && onSuccess();
+        onSubmit();
       } catch (error) {
         notification.error({
           message: `Could not create dashboard`,
           description: error.reason || error.message,
         });
       } finally {
-        setBusy(false);
-        !!onSuccess && onSuccess();
-        setShowCreateModal(false);
+        onSubmit();
       }
     }
   };
