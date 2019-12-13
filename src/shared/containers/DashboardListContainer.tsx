@@ -117,7 +117,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
           dashboard={{
             label: editingDashboard.label,
             description: editingDashboard.description,
-            dataQuery: editingDashboard.viewQuery,
+            dataQuery: editingDashboard.dataQuery,
           }}
           showEditModal={showEditModal}
           setShowEditModal={setShowEditModal}
