@@ -33,7 +33,7 @@ const CreateDashboardContainer: React.FunctionComponent<{
     setBusy(false);
     setShowCreateModal(false);
     !!onSuccess && onSuccess();
-  }
+  };
 
   const handleSubmit = async () => {
     if (formRef.current && formRef.current.form) {
@@ -52,7 +52,7 @@ const CreateDashboardContainer: React.FunctionComponent<{
           dataQuery: string;
         };
         setBusy(true);
-        
+
         const dashboard = await nexus.Resource.create(orgLabel, projectLabel, {
           ...dashboardPayload,
           '@context': STUDIO_CONTEXT['@id'],
@@ -63,7 +63,7 @@ const CreateDashboardContainer: React.FunctionComponent<{
         const workspace = await nexus.Resource.get<Resource>(
           orgLabel,
           projectLabel,
-          workspaceId,
+          workspaceId
         );
         const workspaceSource = await nexus.Resource.getSource<{
           [key: string]: any;

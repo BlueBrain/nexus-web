@@ -12,7 +12,7 @@ type WorkspaceResource = Resource<{
 const WorkspaceEditorForm: React.FC<{
   form: WrappedFormUtils;
   saveWorkspace?(label: string, description?: string): void;
-  workspace?: WorkspaceResource | null; 
+  workspace?: WorkspaceResource | null;
 }> = ({ form, saveWorkspace, workspace }) => {
   const { getFieldDecorator } = form;
 
@@ -20,10 +20,10 @@ const WorkspaceEditorForm: React.FC<{
     labelCol: { span: 6 },
     wrapperCol: { span: 14 },
   };
-  
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
+
     form.validateFields((err, values) => {
       if (!err) {
         const { label, description } = values;
@@ -78,7 +78,7 @@ const WorkspaceEditorForm: React.FC<{
       </Button>
     </Form>
   );
-}
+};
 
 export default Form.create<{
   form: WrappedFormUtils;

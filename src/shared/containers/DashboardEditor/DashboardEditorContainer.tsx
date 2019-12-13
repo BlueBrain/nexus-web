@@ -72,7 +72,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
             '@type': DASHBOARD_TYPE,
           }
         );
-        
+
         setShowEditModal(false);
         !!onSuccess && onSuccess();
       } catch (error) {

@@ -181,7 +181,7 @@ const Graph: React.FunctionComponent<{
   }, [JSON.stringify(elements)]);
 
   React.useEffect(() => {
-    onRecenter();    
+    onRecenter();
   }, [centered]);
 
   React.useEffect(() => {

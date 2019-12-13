@@ -12,7 +12,7 @@ type StudioResource = Resource<{
 const StudioEditorForm: React.FC<{
   form: WrappedFormUtils;
   saveStudio?(label: string, description?: string): void;
-  studio?: StudioResource | null; 
+  studio?: StudioResource | null;
 }> = ({ form, saveStudio, studio }) => {
   const { getFieldDecorator } = form;
 
@@ -78,7 +78,7 @@ const StudioEditorForm: React.FC<{
       </Button>
     </Form>
   );
-}
+};
 
 export default Form.create<{
   form: WrappedFormUtils;

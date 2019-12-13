@@ -35,7 +35,9 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const [isEditing, setEditing] = React.useState(editing);
   const [valid, setValid] = React.useState(true);
   const [parsedValue, setParsedValue] = React.useState(rawData);
-  const [stringValue, setStringValue] = React.useState(JSON.stringify(rawData, null, 2));
+  const [stringValue, setStringValue] = React.useState(
+    JSON.stringify(rawData, null, 2)
+  );
 
   const renderCodeMirror = (value: string) => {
     return (
@@ -139,16 +141,16 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
 
           {editable && isEditing && (
             <>
-            {valid ? 
-              <Button
-                icon="save"
-                type="primary"
-                size="small"
-                onClick={handleSubmit}
-              >
-                Save
-              </Button> : null }
-              {' '}
+              {valid ? (
+                <Button
+                  icon="save"
+                  type="primary"
+                  size="small"
+                  onClick={handleSubmit}
+                >
+                  Save
+                </Button>
+              ) : null}{' '}
               <Button type="danger" size="small" onClick={handleCancel}>
                 Cancel
               </Button>
