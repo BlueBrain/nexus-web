@@ -9,7 +9,7 @@ import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, ResourceLink } from '@bbp/nexus-sdk';
 
-import { getResourceLabel, getResourceLabelsAndIdsFromSelf } from '../utils';
+import { getResourceLabel } from '../utils';
 import ResourceCardComponent from '../components/ResourceCard';
 import HistoryContainer from '../containers/HistoryContainer';
 import GraphContainer from '../containers/GraphContainer';
@@ -122,11 +122,6 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
   };
 
   const handleGoToInternalLink = (link: ResourceLink) => {
-    const {
-      orgLabel,
-      projectLabel,
-      resourceId,
-    } = getResourceLabelsAndIdsFromSelf((link as Resource)._self);
     goToResource(orgLabel, projectLabel, resourceId, { tab: '#links' });
   };
 
