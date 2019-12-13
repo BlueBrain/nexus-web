@@ -10,5 +10,9 @@ describe('Navigate to Dashboards', () => {
       cy.contains('My Studio');
       cy.contains('Amazing description');
       cy.contains('My Workspace');
+<<<<<<< HEAD
+=======
+      cy.contains('My cool dashboard');
+>>>>>>> Add cypress
     });
   });
