@@ -228,7 +228,9 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
               <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
                 <TabPane tab="JSON" key="#JSON">
                   <ResourceEditorContainer
-                    self={resource._self}
+                    resourceId={resource['@id']}
+                    orgLabel={orgLabel}
+                    projectLabel={projectLabel}
                     rev={resource._rev}
                     defaultExpanded={
                       !!expandedFromQuery && expandedFromQuery === 'true'
