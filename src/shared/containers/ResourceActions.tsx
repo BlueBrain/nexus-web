@@ -6,7 +6,7 @@ import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import ResourceActions from '../components/ResourceActions';
-import { getResourceLabelsAndIdsFromSelf, getResourceLabel } from '../utils';
+import { getResourceLabel, getOrgAndProjectFromResource } from '../utils';
 import { download } from '../utils/download';
 import {
   isFile,
@@ -33,11 +33,8 @@ const ResourceActionsContainer: React.FunctionComponent<{
     revision: number
   ) => void;
 }> = ({ resource, goToView, goToResource }) => {
-  const {
-    orgLabel,
-    projectLabel,
-    resourceId,
-  } = getResourceLabelsAndIdsFromSelf(resource._self);
+  const { orgLabel, projectLabel } = getOrgAndProjectFromResource(resource);
+  const resourceId = resource['@id'];
   const nexus = useNexusContext();
 
   const isLatestResource = async (resource: Resource) => {
