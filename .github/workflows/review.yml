@@ -11,12 +11,12 @@ jobs:
       - name: install dependencies 🚀
         run: |
           yarn
-      - name: lint ✨
+      - name: linting ✨
         run: |
           yarn lint
-      - name: check style 💅
+      - name: style 💅
         run: |
-          style
+          yarn style
       - name: running test 🛫🛬
         run: |
           yarn test --coverage src
