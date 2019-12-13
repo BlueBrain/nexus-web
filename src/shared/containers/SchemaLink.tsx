@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
 
-import { getResourceLabelsAndIdsFromSelf } from '../utils';
+import { getOrgAndProjectFromResource } from '../utils';
 import { useHistory } from 'react-router';
 import SchemaLink from '../components/SchemaLink';
 
@@ -14,9 +14,7 @@ const SchemaLinkContainer: React.FunctionComponent<{
 }> = ({ resource }) => {
   const history = useHistory();
   const nexus = useNexusContext();
-  const { orgLabel, projectLabel } = getResourceLabelsAndIdsFromSelf(
-    resource._self
-  );
+  const { orgLabel, projectLabel } = getOrgAndProjectFromResource(resource);
   const [goToSchema, setGoToSchema] = React.useState();
 
   React.useEffect(() => {
@@ -42,8 +40,8 @@ const SchemaLinkContainer: React.FunctionComponent<{
         );
       })
       .then((resource: Resource) => {
-        const { orgLabel, projectLabel } = getResourceLabelsAndIdsFromSelf(
-          resource._self
+        const { orgLabel, projectLabel } = getOrgAndProjectFromResource(
+          resource
         );
         // it exists inside nexus, make sure to navigate there!
         const goToSchema = () => () => {

@@ -220,6 +220,25 @@ export function getResourceLabel(
 }
 
 /**
+ * Returns a resource's project and org label
+ *
+ * @param {resource} Resource
+ * @returns {{
+ * orgLabel: string,
+ * projectLabel: string,
+ * }}
+ */
+export function getOrgAndProjectFromResource(resource: Resource) {
+  const [projectLabel, orgLabel, ...rest] = resource._project
+    .split('/')
+    .reverse();
+  return {
+    orgLabel,
+    projectLabel,
+  };
+}
+
+/**
  * Returns a resource's administrative info
  *
  * @param {self} string
