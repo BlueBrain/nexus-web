@@ -240,7 +240,9 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                 </TabPane>
                 <TabPane tab="History" key="#history">
                   <HistoryContainer
-                    self={latestResource._self}
+                    resourceId={latestResource['@id']}
+                    orgLabel={orgLabel}
+                    projectLabel={projectLabel}
                     latestRev={latestResource._rev}
                     link={(rev: number) => {
                       return (
