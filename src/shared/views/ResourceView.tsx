@@ -266,7 +266,9 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                     <div style={{ width: '48%' }}>
                       <h3>Incoming</h3>
                       <ResourceLinksContainer
-                        self={resource._self}
+                        resourceId={resource['@id']}
+                        orgLabel={orgLabel}
+                        projectLabel={projectLabel}
                         rev={resource._rev}
                         direction="incoming"
                         onClick={handleGoToInternalLink}
@@ -275,7 +277,9 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                     <div style={{ width: '48%' }}>
                       <h3>Outgoing</h3>
                       <ResourceLinksContainer
-                        self={resource._self}
+                        resourceId={resource['@id']}
+                        orgLabel={orgLabel}
+                        projectLabel={projectLabel}
                         rev={resource._rev}
                         direction="outgoing"
                         onClick={handleGoToInternalLink}
