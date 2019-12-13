@@ -239,48 +239,6 @@ export function getOrgAndProjectFromResource(resource: Resource) {
 }
 
 /**
- * Returns a resource's administrative info
- *
- * @param {self} string
- * @returns {{
- * orgLabel: string,
- * projectLabel: string,
- * resourceId: string
- * }}
- */
-export function getResourceLabelsAndIdsFromSelf(self: string) {
-  // for system resource like Files or Schemas
-  const systemResourceTypes = [
-    'files',
-    'views',
-    'schemas',
-    'archives',
-    'resolvers',
-    'storages',
-  ];
-  const [id, project, org, systemResourceType] = self.split('/').reverse();
-
-  if (systemResourceTypes.includes(systemResourceType)) {
-    return {
-      orgLabel: org,
-      projectLabel: project,
-      resourceId: id,
-    };
-  }
-
-  // its a normal resource
-  const [resourceId, schemaId, projectLabel, orgLabel] = self
-    .split('/')
-    .reverse();
-  return {
-    orgLabel,
-    projectLabel,
-    schemaId,
-    resourceId,
-  };
-}
-
-/**
  * Returns a project and org labels from url
  *
  * @param {projectUrl} string

@@ -28,16 +28,10 @@ const GraphContainer: React.FunctionComponent<{
   const [centered, setCentered] = React.useState(false);
   const [collapsed, setCollapsed] = React.useState(true);
   const [layout, setLayout] = React.useState(DEFAULT_LAYOUT);
-  const [
-    { selectedResourceSelf, isSelectedExternal },
-    setSelectedResource,
-  ] = React.useState<{
-    selectedResourceSelf: string | null;
-    isSelectedExternal: boolean | null;
-  }>({
-    selectedResourceSelf: '',
-    isSelectedExternal: null,
-  });
+  const [selectedResource, setSelectedResource] = React.useState<{
+    resourceData?: ElementNodeData['resourceData'];
+    absoluteAddress: string;
+  } | null>(null);
   const [elements, setElements] = React.useState<cytoscape.ElementDefinition[]>(
     []
   );
@@ -229,9 +223,8 @@ const GraphContainer: React.FunctionComponent<{
       return;
     }
     setSelectedResource({
-      selectedResourceSelf:
-        resourceData && resourceData.self ? resourceData.self : id,
-      isSelectedExternal: isExternal,
+      resourceData,
+      absoluteAddress: resourceData ? resourceData.self : id,
     });
   };
 
@@ -273,10 +266,10 @@ const GraphContainer: React.FunctionComponent<{
         layout={layout}
         centered={centered}
       />
-      {!!selectedResourceSelf && (
+      {!!selectedResource && (
         <ResourcePreviewCardContainer
-          resourceSelf={selectedResourceSelf}
-          isExternal={isSelectedExternal}
+          resourceData={selectedResource.resourceData}
+          absoluteAddress={selectedResource.absoluteAddress}
         />
       )}
     </>
