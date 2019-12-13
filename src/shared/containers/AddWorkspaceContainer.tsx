@@ -43,47 +43,54 @@ const AddWorkspaceContainer: React.FC<{
     );
   };
 
-  const updatedWorkspacesList = (newWorkspaceId: string) => {
-    const workSpacelist = Array.isArray(studio.workspaces)
-      ? studio.workspaces
-      : [studio.workspaces];
-
-    return [newWorkspaceId, ...workSpacelist];
+  const updatedWorkspacesList = (
+    newWorkspaceId: string,
+    workspaces: StudioResource['workspaces']
+  ) => {
+    return [newWorkspaceId, ...(workspaces || [])];
   };
 
-  const saveWorkspace = (label: string, description?: string) => {
+  const saveWorkspace = async (label: string, description?: string) => {
     setShowModal(false);
+    try {
+      const createWorkspaceResponse = await createWorkspaceResource(
+        label,
+        description
+      );
+      const studioSource = await nexus.Resource.getSource<StudioResource>(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(studio['@id'])
+      );
+      const newWorkspaceId = createWorkspaceResponse['@id'];
+      const studioUpdatePayload = {
+        ...studioSource,
+        workspaces: updatedWorkspacesList(
+          newWorkspaceId,
+          studioSource.workspaces
+        ),
+      };
+      await nexus.Resource.update(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(studio['@id']),
+        studio._rev,
+        studioUpdatePayload
+      );
 
-    createWorkspaceResource(label, description)
-      .then(async response => {
-        const newWorkspaceId = response['@id'];
-
-        await nexus.Resource.update(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(studio['@id']),
-          studio._rev,
-          {
-            ...studio,
-            workspaces: updatedWorkspacesList(newWorkspaceId),
-          }
-        );
-      })
-      .then(response => {
-        notification.success({
-          message: 'Workspace was created successfully',
-          duration: 2,
-        });
-
-        !!onAddWorkspace && onAddWorkspace();
-      })
-      .catch(error => {
-        notification.error({
-          message: 'An error occurred',
-          description: error.reason || error.message,
-          duration: 3,
-        });
+      notification.success({
+        message: 'Workspace was created successfully',
+        duration: 2,
       });
+
+      !!onAddWorkspace && onAddWorkspace();
+    } catch (error) {
+      notification.error({
+        message: 'An error occurred',
+        description: error.reason || error.message,
+        duration: 3,
+      });
+    }
   };
 
   return (
