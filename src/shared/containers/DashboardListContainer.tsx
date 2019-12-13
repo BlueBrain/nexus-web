@@ -18,7 +18,7 @@ interface DashboardListProps {
   workspaceId: string;
   dashboardId: string;
   studioResourceId: string;
-  onAddDashboard?(): void;
+  refreshList?(): void;
 }
 
 const DashboardList: React.FunctionComponent<DashboardListProps> = ({
@@ -28,7 +28,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   workspaceId,
   dashboardId,
   studioResourceId,
-  onAddDashboard,
+  refreshList,
 }) => {
   const history = useHistory();
   const [dashboardResources, setDashboardResources] = React.useState<
@@ -60,7 +60,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     history.push(newPath);
   };
 
-  React.useEffect(() => {
+  const fetchAndSetupDashboards = () => {
     Promise.all(
       dashboards.map(dashboardObject => {
         return nexus.Resource.get(
@@ -86,6 +86,10 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
       .catch(e => {
         // TODO: show a meaningful error to the user.
       });
+  };
+
+  React.useEffect(() => {
+    fetchAndSetupDashboards();
   }, [orgLabel, projectLabel, dashboardId, dashboards]);
 
   const handleElementClick = (stringifiedIndex: string) => {
@@ -95,6 +99,11 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
       setShowEditModal(true);
     }
   };
+
+  const updateDashboards = () => {
+    fetchAndSetupDashboards();
+    setEditingDashboard(null);
+  }
 
   return (
     <div>
@@ -112,6 +121,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
           }}
           showEditModal={showEditModal}
           setShowEditModal={setShowEditModal}
+          onSuccess={updateDashboards}
         ></DashboardEditorContainer>
       )}
       <TabList
@@ -130,7 +140,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
             orgLabel={orgLabel}
             projectLabel={projectLabel}
             workspaceId={workspaceId}
-            onSuccess={onAddDashboard}
+            onSuccess={refreshList}
           />
         }
         onEditClick={handleElementClick}
@@ -151,7 +161,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
                 : dashboardResources[selectedDashboardIndex]['@id']
             }
             studioResourceId={studioResourceId}
-            dataQuery={dashboardResources[selectedDashboardIndex].viewQuery}
+            dataQuery={dashboardResources[selectedDashboardIndex].dataQuery}
           />
         )}
       </TabList>
