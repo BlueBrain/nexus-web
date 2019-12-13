@@ -147,7 +147,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "npm run lint -- -c tslint.prod.json && npm test"
+      "pre-push": "yarn lint && yarn style && yarn test",
+      "pre-commit": "lint-staged"
     }
   }
 }
