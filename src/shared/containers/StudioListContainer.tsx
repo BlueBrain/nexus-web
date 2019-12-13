@@ -37,7 +37,7 @@ const StudioListContainer: React.FunctionComponent<{
   });
 
   const makeStudioUri = (resourceId: string) => {
-    return `${basePath}/${orgLabel}/${projectLabel}/studios/${encodeURIComponent(
+    return `/${orgLabel}/${projectLabel}/studios/${encodeURIComponent(
       resourceId
     )}`;
   };
