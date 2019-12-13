@@ -35,8 +35,6 @@ const DashboardEditorContainer: React.FunctionComponent<{
   const formRef = React.useRef<DashboardConfigEditorProps>(null);
   const nexus = useNexusContext();
   const { label, description, dataQuery } = dashboard;
-  console.log('dashboard', dashboard);
-  
   const [busy, setBusy] = React.useState(false);
 
   // Launch modal when id is changed (someone selected a new dashboard to edit)
