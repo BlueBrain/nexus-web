@@ -80,7 +80,7 @@ const ResourceLinksContainer: React.FunctionComponent<{
         const response = await nexus.Resource.links(
           orgLabel,
           projectLabel,
-          resourceId,
+          encodeURIComponent(resourceId),
           direction,
           {
             rev,

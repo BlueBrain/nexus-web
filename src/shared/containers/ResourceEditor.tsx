@@ -66,7 +66,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
     return await nexus.Resource.getSource(
       orgLabel,
       projectLabel,
-      resourceId,
+      encodeURIComponent(resourceId),
       undefined,
       { rev }
     );

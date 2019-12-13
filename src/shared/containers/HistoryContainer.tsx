@@ -32,9 +32,14 @@ const HistoryContainer: React.FunctionComponent<{
     const promises = [...Array(latestRev).keys()]
       // now map them to resource revisions
       .map((index: number) => {
-        return nexus.Resource.get(orgLabel, projectLabel, resourceId, {
-          rev: index + 1,
-        });
+        return nexus.Resource.get(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(resourceId),
+          {
+            rev: index + 1,
+          }
+        );
       });
 
     const metadataKeys = ['_rev', '_updatedAt', '_updatedBy'];
