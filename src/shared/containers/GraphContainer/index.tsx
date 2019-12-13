@@ -62,7 +62,7 @@ const GraphContainer: React.FunctionComponent<{
     return await nexus.Resource.links(
       orgLabel,
       projectLabel,
-      resourceId,
+      encodeURIComponent(resourceId),
       'outgoing'
     );
   };
@@ -224,12 +224,13 @@ const GraphContainer: React.FunctionComponent<{
   };
 
   const showResourcePreview = (id: string, data: ElementNodeData) => {
-    const { isBlankNode, isOrigin, isExternal } = data;
+    const { isBlankNode, isOrigin, isExternal, resourceData } = data;
     if (isBlankNode || isOrigin) {
       return;
     }
     setSelectedResource({
-      selectedResourceSelf: id,
+      selectedResourceSelf:
+        resourceData && resourceData.self ? resourceData.self : id,
       isSelectedExternal: isExternal,
     });
   };

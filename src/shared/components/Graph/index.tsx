@@ -21,6 +21,7 @@ export type ElementNodeData = {
     orgLabel: string;
     projectLabel: string;
     resourceId: string;
+    self: string;
   };
   externalAddress?: string;
   id: string;
