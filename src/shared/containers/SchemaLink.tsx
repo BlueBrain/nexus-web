@@ -38,10 +38,8 @@ const SchemaLinkContainer: React.FunctionComponent<{
           orgLabel,
           projectLabel,
           '_',
-          encodeURIComponent(
-            schemaId
-          ),
-        )
+          encodeURIComponent(schemaId)
+        );
       })
       .then((resource: Resource) => {
         const { orgLabel, projectLabel } = getResourceLabelsAndIdsFromSelf(

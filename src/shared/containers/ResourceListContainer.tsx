@@ -56,7 +56,7 @@ const ResourceListContainer: React.FunctionComponent<{
     history.push(makeResourceUri(resourceId));
   };
 
-  React.useEffect(() => {    
+  React.useEffect(() => {
     setResources({
       next,
       resources,
@@ -67,12 +67,9 @@ const ResourceListContainer: React.FunctionComponent<{
 
     let resourceListResponse: any = [];
 
-    nexus.Resource.list(
-      orgLabel,
-      projectLabel,
-      list.query
-    ).then(response => {
-      resourceListResponse = response;
+    nexus.Resource.list(orgLabel, projectLabel, list.query)
+      .then(response => {
+        resourceListResponse = response;
         setResources({
           next: resourceListResponse._next || null,
           resources: resourceListResponse._results,
@@ -80,7 +77,8 @@ const ResourceListContainer: React.FunctionComponent<{
           busy: false,
           error: null,
         });
-    }).catch(error => {
+      })
+      .catch(error => {
         setResources({
           next,
           error,
@@ -88,16 +86,15 @@ const ResourceListContainer: React.FunctionComponent<{
           total,
           busy: false,
         });
-    });
+      });
   }, [
-      // Reset pagination and reload based on these props
-      orgLabel,
-      projectLabel,
-      JSON.stringify(list.query),
-      toggleForceReload,
-      refreshList,
-    ]
-  );
+    // Reset pagination and reload based on these props
+    orgLabel,
+    projectLabel,
+    JSON.stringify(list.query),
+    toggleForceReload,
+    refreshList,
+  ]);
 
   const handleLoadMore = async ({ searchValue }: { searchValue: string }) => {
     if (searchValue !== list.query.q) {

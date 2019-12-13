@@ -14,9 +14,9 @@ jobs:
       - name: linting ✨
         run: |
           yarn lint
-      - name: prettier 💅
+      - name: style 💅
         run: |
-          yarn prettier -c ./src/**/*.ts
+          yarn style
       - name: running test 🛫🛬
         run: |
           yarn test --coverage src

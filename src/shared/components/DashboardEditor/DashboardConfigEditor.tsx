@@ -46,7 +46,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
       }
     });
   };
-  
+
   return (
     <Form onSubmit={handleSubmit}>
       <Form.Item

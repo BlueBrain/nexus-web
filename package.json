@@ -13,6 +13,7 @@
     "test": "jest",
     "codecov": "codecov",
     "lint": "tslint --project tsconfig.json",
+    "style": "prettier --check \"./src/**/*.{ts,tsx,js,jsx,less}\"",
     "start:storybook": "start-storybook -p 6006",
     "build:storybook": "build-storybook"
   },
@@ -97,7 +98,7 @@
     "jest-enzyme": "^7.0.2",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
-    "lint-staged": "^9.4.2",
+    "lint-staged": "^9.5.0",
     "mini-css-extract-plugin": "^0.5.0",
     "null-loader": "^0.1.1",
     "prettier": "^1.16.4",
@@ -135,7 +136,7 @@
     "trailingComma": "es5"
   },
   "lint-staged": {
-    "*.{ts, tsx, js, jsx}": [
+    "*.{ts, tsx, js, jsx, less}": [
       "prettier --write",
       "git add"
     ],
@@ -146,7 +147,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "npm run lint -- -c tslint.prod.json && npm test"
+      "pre-push": "yarn lint && yarn style && yarn test",
+      "pre-commit": "lint-staged"
     }
   }
 }

@@ -1,5 +1,15 @@
 import * as React from 'react';
-import { Collapse, Form, Icon, Input, Button, Spin, Modal, Row, Col } from 'antd';
+import {
+  Collapse,
+  Form,
+  Icon,
+  Input,
+  Button,
+  Spin,
+  Modal,
+  Row,
+  Col,
+} from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 /**
@@ -282,20 +292,14 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
         <Form.Item {...formItemLayoutWithOutLabel}>
           <Row type="flex" justify="end" gutter={16}>
             <Col>
-              <Button
-                type="primary"
-                htmlType="submit"
-              >
+              <Button type="primary" htmlType="submit">
                 Save
               </Button>
             </Col>
             {mode === 'edit' && (
               <>
                 <Col>
-                  <Button
-                    type="danger"
-                    onClick={confirmDeprecate}
-                  >
+                  <Button type="danger" onClick={confirmDeprecate}>
                     Deprecate
                   </Button>
                 </Col>

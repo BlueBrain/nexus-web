@@ -46,30 +46,33 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
       busy: true,
     });
 
-    nexus.httpGet({
-      path: resourceSelf,
-      headers: {
-        Accept: 'application/json',
-      },
-    }).then(response => {
-      setResource({
-        resource: response,
-        error: null,
-        busy: false,
-      });
-    }).catch(error => {
-      notification.error({
-        message: "Couldn't load a resource info",
-        description: error.message,
-        duration: 5,
-      });
+    nexus
+      .httpGet({
+        path: resourceSelf,
+        headers: {
+          Accept: 'application/json',
+        },
+      })
+      .then(response => {
+        setResource({
+          resource: response,
+          error: null,
+          busy: false,
+        });
+      })
+      .catch(error => {
+        notification.error({
+          message: "Couldn't load a resource info",
+          description: error.message,
+          duration: 5,
+        });
 
-      setResource({
-        error,
-        resource,
-        busy: false,
+        setResource({
+          error,
+          resource,
+          busy: false,
+        });
       });
-    });
   }, [resourceSelf]);
 
   if (error) return null;

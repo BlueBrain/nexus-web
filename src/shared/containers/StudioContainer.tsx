@@ -47,12 +47,14 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
         const studioResource: StudioResource = value as StudioResource;
         setStudioResource(studioResource);
         const workspaceIds: string[] = studioResource['workspaces'];
-        setWorkspaceIds(Array.isArray(workspaceIds) ? workspaceIds : [workspaceIds]);
+        setWorkspaceIds(
+          Array.isArray(workspaceIds) ? workspaceIds : [workspaceIds]
+        );
       })
       .catch(e => {
         // TODO: show a meaningful error to the user.
       });
-  }
+  };
 
   const updateStudio = async (label: string, description?: string) => {
     if (studioResource) {
@@ -87,7 +89,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
 
   const realoadWorkspaces = () => {
     fetchAndSetupStudio();
-  }
+  };
 
   return (
     <>

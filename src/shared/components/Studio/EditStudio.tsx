@@ -19,12 +19,18 @@ const EditStudio: React.FC<{
   const handleUpdate = (label: string, desription?: string) => {
     setShowModal(false);
     onSave && onSave(label, desription);
-  }
+  };
 
   return (
     <>
       <Tooltip placement="topLeft" title="Edit Studio" arrowPointAtCenter>
-        <Button className="studio-button" icon="edit" onClick={() => setShowModal(true)}>Edit Studio</Button>
+        <Button
+          className="studio-button"
+          icon="edit"
+          onClick={() => setShowModal(true)}
+        >
+          Edit Studio
+        </Button>
       </Tooltip>
       <Modal
         title="Edit Studio"
@@ -33,9 +39,9 @@ const EditStudio: React.FC<{
         onCancel={() => setShowModal(false)}
       >
         <StudioEditorForm saveStudio={handleUpdate} studio={studio} />
-      </Modal>  
+      </Modal>
     </>
   );
-}
+};
 
 export default EditStudio;

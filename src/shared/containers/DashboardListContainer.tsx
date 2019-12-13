@@ -103,7 +103,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   const updateDashboards = () => {
     fetchAndSetupDashboards();
     setEditingDashboard(null);
-  }
+  };
 
   return (
     <div>
