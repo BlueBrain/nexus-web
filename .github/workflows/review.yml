@@ -11,12 +11,12 @@ jobs:
       - name: install dependencies 🚀
         run: |
           yarn
-      - name: linting ✨
+      - name: lint ✨
         run: |
           yarn lint
-      - name: prettier 💅
+      - name: check style 💅
         run: |
-          yarn prettier -c ./src/**/*.ts
+          style
       - name: running test 🛫🛬
         run: |
           yarn test --coverage src
