@@ -10,9 +10,13 @@ describe('Navigate to Dashboards', () => {
       cy.contains('My Studio');
       cy.contains('Amazing description');
       cy.contains('My Workspace');
-<<<<<<< HEAD
-=======
       cy.contains('My cool dashboard');
->>>>>>> Add cypress
+      cy.contains('Add Workspace').click();
+      cy.get('.workspace-label-input').type('My Workspace');
+      cy.get('.workspace-description-input').type('Simple description');
+      cy.get('form').submit();
+      cy.wait(3000);
+      cy.contains('My Workspace');
+      cy.contains('Simple description');
     });
   });
