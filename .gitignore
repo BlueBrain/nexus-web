@@ -7,3 +7,7 @@ storybook-static/
 coverage/
 .vscode
 yarn-error.log
+cypress/fixtures/
+cypress/plugins/
+cypress/support/
+cypress/integration/examples/

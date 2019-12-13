@@ -58,7 +58,7 @@ const StudioEditorForm: React.FC<{
               message: 'Please input a label!',
             },
           ],
-        })(<Input />)}
+        })(<Input className="studio-label-input" />)}
       </Form.Item>
       <Form.Item
         label={
@@ -72,7 +72,7 @@ const StudioEditorForm: React.FC<{
       >
         {getFieldDecorator('description', {
           initialValue: description,
-        })(<TextArea />)}
+        })(<TextArea className="studio-description-input" />)}
       </Form.Item>
       <Button type="primary" htmlType="submit">
         Save
