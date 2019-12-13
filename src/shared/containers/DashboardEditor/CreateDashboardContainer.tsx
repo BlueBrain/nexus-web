@@ -52,6 +52,8 @@ const CreateDashboardContainer: React.FunctionComponent<{
           dataQuery: string;
         };
         setBusy(true);
+        console.log('dashboardPayload', dashboardPayload);
+        
         const dashboard = await nexus.Resource.create(orgLabel, projectLabel, {
           ...dashboardPayload,
           '@context': STUDIO_CONTEXT['@id'],
