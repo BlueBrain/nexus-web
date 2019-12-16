@@ -16,7 +16,11 @@ type dashboard = { dashboard: string; view: string };
 const DASHBOARD_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/StudioDashboard';
 
+const SPARQL_VIEW_TYPE =
+  'https://bluebrain.github.io/nexus/vocabulary/SparqlView';
 const VIEW_TYPE = 'https://bluebrain.github.io/nexus/vocabulary/View';
+const AGGREGATE_VIEW_TYPE =
+  'https://bluebrain.github.io/nexus/vocabulary/AggregateSparqlView';
 const RESULTS_SIZE = 10000;
 
 type WorkspaceFormProps = {
@@ -134,13 +138,13 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
       }
     )
       .then((results: ElasticSearchViewQueryResponse<any>) => {
-        const workingDB = results.hits.hits.map(hit => {
+        const tempDashbaord = results.hits.hits.map(hit => {
           return {
             ...JSON.parse(hit._source['_original_source']),
             '@id': hit._source['@id'],
           };
         });
-        setDashBoards(workingDB);
+        setDashBoards(tempDashbaord);
       })
       .catch(e => {
         setError(error);
@@ -157,8 +161,21 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
               {
                 term: { _deprecated: false },
               },
+
               {
                 term: { '@type': VIEW_TYPE },
+              },
+              {
+                bool: {
+                  should: [
+                    {
+                      term: { '@type': SPARQL_VIEW_TYPE },
+                    },
+                    {
+                      term: { '@type': AGGREGATE_VIEW_TYPE },
+                    },
+                  ],
+                },
               },
             ],
           },
