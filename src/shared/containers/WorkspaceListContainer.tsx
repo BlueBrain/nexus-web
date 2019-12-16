@@ -5,6 +5,7 @@ import TabList from '../components/Tabs/TabList';
 import DashboardList from './DashboardListContainer';
 import { useHistory } from 'react-router-dom';
 import AddWorkspaceContainer from './AddWorkspaceContainer';
+import WorkspaceForm from './WorkspaceFormContainer';
 
 type StudioResource = Resource<{
   label: string;
@@ -35,6 +36,8 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
 }) => {
   const [workspaces, setWorkspaces] = React.useState<Resource[]>([]);
   const [selectedWorkspace, setSelectedWorkspace] = React.useState<Resource>();
+  const [showEdit, setShowEdit] = React.useState<boolean>(false);
+  const [workspaceToEdit, setWorkSpaceToEdit] = React.useState<string>();
   const nexus = useNexusContext();
   const history = useHistory();
   const selectWorkspace = (id: string, values: Resource[]) => {
@@ -80,6 +83,10 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   return (
     <>
       <TabList
+        onEditClick={workspaceId => {
+          setWorkSpaceToEdit(workspaceId);
+          setShowEdit(true);
+        }}
         items={workspaces.map(w => ({
           label: w.label,
           description: w.description,
@@ -123,6 +130,14 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
           </div>
         ) : null}
       </TabList>
+      {showEdit && workspaceToEdit ? (
+        <WorkspaceForm
+          orgLabel={orgLabel}
+          projectLabel={projectLabel}
+          workspaceId={workspaceToEdit}
+          onCancel={() => setShowEdit(false)}
+        />
+      ) : null}
     </>
   );
 };
