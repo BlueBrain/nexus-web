@@ -45,8 +45,12 @@ const SelectViews: React.FunctionComponent<{
         }}
         defaultValue={defaultView}
       >
-        {viewOptions.map(d => {
-          return <Option value={d}>{getViewName(d)}</Option>;
+        {viewOptions.map((d, index) => {
+          return (
+            <Option key={index.toString()} value={d}>
+              {getViewName(d)}
+            </Option>
+          );
         })}
       </Select>
     </>
