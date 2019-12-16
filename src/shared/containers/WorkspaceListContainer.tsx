@@ -37,7 +37,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   const [workspaces, setWorkspaces] = React.useState<Resource[]>([]);
   const [selectedWorkspace, setSelectedWorkspace] = React.useState<Resource>();
   const [showEdit, setShowEdit] = React.useState<boolean>(false);
-  const [editSpace, setEditSpace] = React.useState<string>();
+  const [workspaceToEdit, setWorkSpaceToEdit] = React.useState<string>();
   const nexus = useNexusContext();
   const history = useHistory();
   const selectWorkspace = (id: string, values: Resource[]) => {
@@ -84,7 +84,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
     <>
       <TabList
         onEditClick={workspaceId => {
-          setEditSpace(workspaceId);
+          setWorkSpaceToEdit(workspaceId);
           setShowEdit(true);
         }}
         items={workspaces.map(w => ({
@@ -130,11 +130,11 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
           </div>
         ) : null}
       </TabList>
-      {showEdit && editSpace ? (
+      {showEdit && workspaceToEdit ? (
         <WorkspaceForm
           orgLabel={orgLabel}
           projectLabel={projectLabel}
-          workspaceId={editSpace}
+          workspaceId={workspaceToEdit}
           onCancel={() => setShowEdit(false)}
         />
       ) : null}
