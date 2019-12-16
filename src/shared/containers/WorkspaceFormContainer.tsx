@@ -67,6 +67,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
   const [label, setLabel] = React.useState<string>();
   const [description, setDescription] = React.useState<string>();
   const [error, setError] = React.useState<NexusSparqlError | Error>();
+  const [namePrompt, setNamePrompt] = React.useState<boolean>(false);
   const nexus = useNexusContext();
   const saveDashBoards = (workspace: Resource) => {
     const newList: dashboard[] = [
@@ -251,11 +252,20 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
                 onChange={handleChange}
               />
             </Form.Item>
-            <Form.Item label={'Name'}>
+            <Form.Item
+              label={'Name'}
+              required
+              extra={namePrompt ? 'Name cannot be empty' : ''}
+            >
               <Input
                 defaultValue={label}
                 onChange={e => {
-                  setLabel(e.target.value);
+                  if (e.target.value.trim().length > 0) {
+                    setLabel(e.target.value);
+                    setNamePrompt(false);
+                  } else {
+                    setNamePrompt(true);
+                  }
                 }}
               />
             </Form.Item>
@@ -270,6 +280,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
             </Form.Item>
             <Form.Item>
               <Button
+                disabled={namePrompt}
                 onClick={e => {
                   saveDashBoards(workspace);
                 }}
