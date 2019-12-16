@@ -24,6 +24,7 @@ const html = ({
       ${helmet.meta.toString()}
       ${helmet.link.toString()}
       <link rel="shortcut icon" type="image/png" href="${icon}"/>
+      <script src="https://www.unpkg.com/systemjs@6.1.7/dist/system.js"></script>
       ${
         process.env.NODE_ENV !== 'production'
           ? ''

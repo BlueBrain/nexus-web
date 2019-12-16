@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { resolve, join } from 'path';
 import * as express from 'express';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
@@ -30,6 +30,10 @@ app.use(`${base}/public`, express.static(join(__dirname, 'public')));
 // if in Dev mode, setup HMR and all the fancy stuff
 if (process.env.NODE_ENV !== 'production') {
   const { setupDevEnvironment } = require('./dev');
+  app.use(
+    `${base}/public/plugins`,
+    express.static(resolve(__dirname, '../plugins'))
+  );
   setupDevEnvironment(app);
 }
 
