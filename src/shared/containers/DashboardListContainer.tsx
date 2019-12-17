@@ -22,7 +22,7 @@ interface DashboardListProps {
 }
 
 const DashboardList: React.FunctionComponent<DashboardListProps> = ({
-  dashboards = [],
+  dashboards,
   orgLabel,
   projectLabel,
   workspaceId,
@@ -90,7 +90,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
 
   React.useEffect(() => {
     fetchAndSetupDashboards();
-  }, [orgLabel, projectLabel, dashboardId, dashboards]);
+  }, [orgLabel, projectLabel, dashboardId, JSON.stringify(dashboards)]);
 
   const handleElementClick = (stringifiedIndex: string) => {
     const dashboard = dashboardResources[Number(stringifiedIndex)];
