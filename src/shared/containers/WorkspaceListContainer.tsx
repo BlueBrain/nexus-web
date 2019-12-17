@@ -138,6 +138,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
           projectLabel={projectLabel}
           workspaceId={workspaceToEdit}
           onCancel={() => setShowEdit(false)}
+          onSuccess={onListUpdate}
         />
       ) : null}
     </>
