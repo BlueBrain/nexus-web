@@ -25,6 +25,18 @@ const html = ({
       ${helmet.link.toString()}
       <link rel="shortcut icon" type="image/png" href="${icon}"/>
       <script src="https://www.unpkg.com/systemjs@6.1.7/dist/system.js"></script>
+      <script src="https://www.unpkg.com/systemjs@6.1.7/dist/extras/named-exports.js"></script>
+      <script type="systemjs-importmap">
+      {
+        "imports": {
+          "react": "https://unpkg.com/react@16.12.0/umd/react.development.js",
+          "react-dom": "https://unpkg.com/react-dom@16/umd/react-dom.development.js",
+          "lodash": "https://unpkg.com/lodash@4.17.10/lodash.js",
+          "vue": "https://unpkg.com/vue@2.6.10/dist/vue.js",
+          "vue-runtime-helpers": "https://unpkg.com/vue-runtime-helpers@1.1.2/dist/index.mjs"
+        }
+      }
+    </script>
       ${
         process.env.NODE_ENV !== 'production'
           ? ''

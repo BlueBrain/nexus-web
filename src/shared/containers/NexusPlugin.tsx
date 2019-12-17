@@ -30,7 +30,6 @@ export default class RenderRemoteComponent extends React.Component<
   }
 
   componentDidCatch(e: Error) {
-    console.error(e);
     this.setState({ hasError: true, loading: false });
   }
 
@@ -38,21 +37,22 @@ export default class RenderRemoteComponent extends React.Component<
     // @ts-ignore
     window.System.import(this.props.url)
       .then(
-        (module: { default: (ref: HTMLDivElement | null) => () => void }) => {
+        (module: {
+          default: ({ ref }: { ref: HTMLDivElement | null }) => () => void;
+        }) => {
           this.setState({
             hasError: false,
             loading: false,
           });
-          this.pluginCallback = module.default(this.container.current);
+          this.pluginCallback = module.default({ ref: this.container.current });
         }
       )
       .catch((error: Error) => {
-        console.error(error);
         this.setState({ hasError: true, loading: false });
       });
   }
 
-  componentWillMount() {
+  componentWillUnmount() {
     this.pluginCallback();
   }
 
