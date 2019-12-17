@@ -28,6 +28,7 @@ type WorkspaceFormProps = {
   projectLabel: string;
   workspaceId: string;
   onCancel: () => void;
+  onSuccess?: () => void;
 };
 
 const SelectViews: React.FunctionComponent<{
@@ -66,6 +67,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
   projectLabel,
   workspaceId,
   onCancel,
+  onSuccess,
 }) => {
   const [workspace, setWorkspace] = React.useState<Resource>();
   const [dashboards, setDashBoards] = React.useState<Resource[]>([]);
@@ -100,6 +102,9 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
       newWorkspace
     )
       .then(result => {
+        if (onSuccess) {
+          onSuccess();
+        }
         onCancel();
       })
       .catch(error => {
