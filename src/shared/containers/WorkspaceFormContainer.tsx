@@ -199,7 +199,9 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
 
   React.useEffect(() => {
     if (workspace && dashboards.length > 0) {
-      const currentDashboards = workspace['dashboards'] as dashboard[];
+      const currentDashboards = workspace['dashboards']
+        ? (workspace['dashboards'] as dashboard[])
+        : [];
       const indices: string[] = currentDashboards.map(c => {
         const index = dashboards.findIndex(w => w['@id'] === c.dashboard);
         return index.toString();
