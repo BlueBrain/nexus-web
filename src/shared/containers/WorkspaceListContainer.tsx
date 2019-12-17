@@ -40,6 +40,10 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   const [workspaceToEdit, setWorkSpaceToEdit] = React.useState<string>();
   const nexus = useNexusContext();
   const history = useHistory();
+  const dashboards =
+    selectedWorkspace && selectedWorkspace['dashboards']
+      ? selectedWorkspace['dashboards']
+      : [];
   const selectWorkspace = (id: string, values: Resource[]) => {
     const w = values.find(w => w['@id'] === id);
     setSelectedWorkspace(w);
@@ -63,17 +67,15 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
       .then(values => {
         setWorkspaces(values);
         let w;
-        if (
-          workspaceId !== undefined &&
-          (selectedWorkspace === undefined ||
-            selectedWorkspace['@id'] !== decodeURIComponent(workspaceId))
-        ) {
+        w = values[0];
+        if (workspaceId !== undefined) {
           const id = decodeURIComponent(workspaceId);
           w = values.find(w => w['@id'] === id);
-        } else {
-          w = values[0];
         }
-        setSelectedWorkspace(w);
+
+        if (w) {
+          setSelectedWorkspace(w);
+        }
       })
       .catch(e => {
         // TODO: show a meaningful error to the user.
@@ -117,7 +119,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
             <DashboardList
               orgLabel={orgLabel}
               projectLabel={projectLabel}
-              dashboards={selectedWorkspace['dashboards']}
+              dashboards={dashboards}
               workspaceId={
                 workspaceId
                   ? workspaceId
