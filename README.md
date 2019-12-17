@@ -64,6 +64,12 @@ docker build . --tag=nexus-web
 - `GTAG`: The Google Analytics Identifier. GA won't be present unless an ID is specified.
 - `SENTRY_DSN`: The sentry URL Nexus Web needs to report errors to. Default is undefined.
 
+## Documentation
+
+### Nexus Plugins
+
+In development mode, you can copy/paste your plugins in the `/plugins` folder. If you want to develop your own plugins, have a look a the [plugin development documentation](./docs/pluginDevelopment.md).
+
 ## Getting involved
 
 Issue tracking is centralized into [the main Blue Brain Nexus repository](https://github.com/BlueBrain/nexus).
