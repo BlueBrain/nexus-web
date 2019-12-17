@@ -53,15 +53,25 @@ const ResourceEditorContainer: React.FunctionComponent<{
 
   const getNewResource = async () => {
     if (expanded) {
-      return await nexus.Resource.get(orgLabel, projectLabel, resourceId, {
-        rev,
-        format: 'expanded',
-      });
+      return await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(resourceId),
+        {
+          rev,
+          format: 'expanded',
+        }
+      );
     }
     if (showMetadata) {
-      return await nexus.Resource.get(orgLabel, projectLabel, resourceId, {
-        rev,
-      });
+      return await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(resourceId),
+        {
+          rev,
+        }
+      );
     }
     return await nexus.Resource.getSource(
       orgLabel,
