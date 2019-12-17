@@ -5,8 +5,8 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, NexusFile } from '@bbp/nexus-sdk';
 
 import { isFile } from '../utils/nexusMaybe';
-import { getResourceLabelsAndIdsFromSelf } from '../utils';
 import ImagePreviewComponent from '../components/Images/Preview';
+import { getOrgAndProjectFromResource } from '../utils';
 
 // Only preview images lower than 3MB in size
 const MAX_BYTES_TO_PREVIEW = 3000000;
@@ -17,11 +17,8 @@ const ImagePreviewContainer: React.FunctionComponent<{
 }> = props => {
   const nexus = useNexusContext();
   const { resource, maxBytes = MAX_BYTES_TO_PREVIEW } = props;
-  const {
-    orgLabel,
-    projectLabel,
-    resourceId,
-  } = getResourceLabelsAndIdsFromSelf(resource['_self']);
+  const { orgLabel, projectLabel } = getOrgAndProjectFromResource(resource);
+  const resourceId = resource['@id'];
 
   const [{ busy, imageSrc, error }, setImage] = React.useState<{
     busy: boolean;

@@ -8,18 +8,21 @@ import {
 } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
-import { getResourceLabelsAndIdsFromSelf } from '../utils';
 import ResourceEditor from '../components/ResourceEditor';
 
 const ResourceEditorContainer: React.FunctionComponent<{
-  self: string;
+  resourceId: string;
+  orgLabel: string;
+  projectLabel: string;
   rev: number;
   defaultExpanded?: boolean;
   defaultEditable?: boolean;
   onSubmit: (value: object) => void;
   onExpanded?: (expanded: boolean) => void;
 }> = ({
-  self,
+  resourceId,
+  orgLabel,
+  projectLabel,
   rev,
   defaultEditable = false,
   defaultExpanded = false,
@@ -29,12 +32,6 @@ const ResourceEditorContainer: React.FunctionComponent<{
   const nexus = useNexusContext();
   const [expanded, setExpanded] = React.useState(defaultExpanded);
   const [showMetadata, setShowMetadata] = React.useState<boolean>(false);
-
-  const {
-    orgLabel,
-    projectLabel,
-    resourceId,
-  } = getResourceLabelsAndIdsFromSelf(self);
   const [{ busy, resource, error }, setResource] = React.useState<{
     busy: boolean;
     resource: ResourceSource | ExpandedResource | Resource | null;
@@ -56,20 +53,30 @@ const ResourceEditorContainer: React.FunctionComponent<{
 
   const getNewResource = async () => {
     if (expanded) {
-      return await nexus.Resource.get(orgLabel, projectLabel, resourceId, {
-        rev,
-        format: 'expanded',
-      });
+      return await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(resourceId),
+        {
+          rev,
+          format: 'expanded',
+        }
+      );
     }
     if (showMetadata) {
-      return await nexus.Resource.get(orgLabel, projectLabel, resourceId, {
-        rev,
-      });
+      return await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(resourceId),
+        {
+          rev,
+        }
+      );
     }
     return await nexus.Resource.getSource(
       orgLabel,
       projectLabel,
-      resourceId,
+      encodeURIComponent(resourceId),
       undefined,
       { rev }
     );
@@ -102,7 +109,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
         });
       }
     },
-    [self, rev, expanded, showMetadata]
+    [resourceId, projectLabel, orgLabel, rev, expanded, showMetadata]
   );
 
   return (
