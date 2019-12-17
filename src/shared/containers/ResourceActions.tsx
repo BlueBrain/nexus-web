@@ -113,7 +113,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
         const deprectatedResource = await nexus.Resource.deprecate(
           orgLabel,
           projectLabel,
-          resourceId,
+          encodeURIComponent(resourceId),
           resource._rev
         );
 
@@ -122,7 +122,12 @@ const ResourceActionsContainer: React.FunctionComponent<{
         });
 
         const { _rev } = deprectatedResource;
-        goToResource(orgLabel, projectLabel, resourceId, _rev);
+        goToResource(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(resourceId),
+          _rev
+        );
       } catch (error) {
         notification.error({
           message: `Could not deprecate ${getResourceLabel(resource)}`,
@@ -131,15 +136,23 @@ const ResourceActionsContainer: React.FunctionComponent<{
       }
     },
     goToView: () => {
-      return goToView(orgLabel, projectLabel, resourceId, resource[
-        '@type'
-      ] as string[]);
+      return goToView(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(resourceId),
+        resource['@type'] as string[]
+      );
     },
     downloadFile: async () => {
       try {
-        const data = await nexus.File.get(orgLabel, projectLabel, resourceId, {
-          as: 'blob',
-        });
+        const data = await nexus.File.get(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(resourceId),
+          {
+            as: 'blob',
+          }
+        );
         return download(
           resource._filename || getResourceLabel(resource),
           resource._mediaType,
