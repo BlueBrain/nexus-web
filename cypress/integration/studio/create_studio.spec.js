@@ -19,5 +19,9 @@ describe('User is not logged in', () => {
     cy.wait(3000);
     cy.contains('My Workspace');
     cy.contains('Simple description');
+    cy.contains('Add Dashboard').click();
+    cy.contains('Create Dashboard');
+    cy.get('.dashboard-label-input').type('My Dashboard');
+    cy.get('.dashboard-description-input').type('Wow amazing');
   });
 });
