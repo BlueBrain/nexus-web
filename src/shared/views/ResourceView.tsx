@@ -9,7 +9,7 @@ import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, ResourceLink } from '@bbp/nexus-sdk';
 
-import { getResourceLabel, getResourceLabelsAndIdsFromSelf } from '../utils';
+import { getResourceLabel } from '../utils';
 import ResourceCardComponent from '../components/ResourceCard';
 import HistoryContainer from '../containers/HistoryContainer';
 import GraphContainer from '../containers/GraphContainer';
@@ -122,11 +122,6 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
   };
 
   const handleGoToInternalLink = (link: ResourceLink) => {
-    const {
-      orgLabel,
-      projectLabel,
-      resourceId,
-    } = getResourceLabelsAndIdsFromSelf((link as Resource)._self);
     goToResource(orgLabel, projectLabel, resourceId, { tab: '#links' });
   };
 
@@ -233,7 +228,9 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
               <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
                 <TabPane tab="JSON" key="#JSON">
                   <ResourceEditorContainer
-                    self={resource._self}
+                    resourceId={resource['@id']}
+                    orgLabel={orgLabel}
+                    projectLabel={projectLabel}
                     rev={resource._rev}
                     defaultExpanded={
                       !!expandedFromQuery && expandedFromQuery === 'true'
@@ -245,7 +242,9 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                 </TabPane>
                 <TabPane tab="History" key="#history">
                   <HistoryContainer
-                    self={latestResource._self}
+                    resourceId={latestResource['@id']}
+                    orgLabel={orgLabel}
+                    projectLabel={projectLabel}
                     latestRev={latestResource._rev}
                     link={(rev: number) => {
                       return (
@@ -269,7 +268,9 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                     <div style={{ width: '48%' }}>
                       <h3>Incoming</h3>
                       <ResourceLinksContainer
-                        self={resource._self}
+                        resourceId={resource['@id']}
+                        orgLabel={orgLabel}
+                        projectLabel={projectLabel}
                         rev={resource._rev}
                         direction="incoming"
                         onClick={handleGoToInternalLink}
@@ -278,7 +279,9 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                     <div style={{ width: '48%' }}>
                       <h3>Outgoing</h3>
                       <ResourceLinksContainer
-                        self={resource._self}
+                        resourceId={resource['@id']}
+                        orgLabel={orgLabel}
+                        projectLabel={projectLabel}
                         rev={resource._rev}
                         direction="outgoing"
                         onClick={handleGoToInternalLink}

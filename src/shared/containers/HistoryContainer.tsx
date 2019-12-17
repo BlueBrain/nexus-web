@@ -4,18 +4,16 @@ import { diff } from 'deep-object-diff';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
-import {
-  getResourceLabelsAndIdsFromSelf,
-  blacklistKeys,
-  getUsername,
-} from '../utils';
+import { blacklistKeys, getUsername } from '../utils';
 import HistoryComponent from '../components/History';
 
 const HistoryContainer: React.FunctionComponent<{
-  self: string;
+  resourceId: string;
+  orgLabel: string;
+  projectLabel: string;
   latestRev: number;
   link?: (rev: number) => React.ReactNode;
-}> = ({ self, latestRev, link }) => {
+}> = ({ resourceId, orgLabel, projectLabel, latestRev, link }) => {
   const [revisions, setRevisions] = React.useState<
     {
       changes: object;
@@ -26,11 +24,6 @@ const HistoryContainer: React.FunctionComponent<{
     }[]
   >([]);
   const nexus = useNexusContext();
-  const {
-    orgLabel,
-    projectLabel,
-    resourceId,
-  } = getResourceLabelsAndIdsFromSelf(self);
 
   useAsyncEffect(async () => {
     // This creates an array like [0,1,2,3]
@@ -39,9 +32,14 @@ const HistoryContainer: React.FunctionComponent<{
     const promises = [...Array(latestRev).keys()]
       // now map them to resource revisions
       .map((index: number) => {
-        return nexus.Resource.get(orgLabel, projectLabel, resourceId, {
-          rev: index + 1,
-        });
+        return nexus.Resource.get(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(resourceId),
+          {
+            rev: index + 1,
+          }
+        );
       });
 
     const metadataKeys = ['_rev', '_updatedAt', '_updatedBy'];

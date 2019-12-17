@@ -1,19 +1,35 @@
 import { ResourceLink, PaginatedList, Resource } from '@bbp/nexus-sdk';
 
-import { labelOf } from '../../utils';
+import { labelOf, getOrgAndProjectFromResource } from '../../utils';
+import { ElementNodeData } from '../../components/Graph';
 
 const MAX_LABEL_LENGTH = 20;
 
 export const makeNode = async (
   link: ResourceLink,
-  parentId: string | null,
-  getResourceLinks: (self: string) => Promise<PaginatedList<ResourceLink>>
-) => {
+  parentId: string | undefined,
+  getResourceLinks: (
+    orgLabel: string,
+    projectLabel: string,
+    resourceId: string
+  ) => Promise<PaginatedList<ResourceLink>>
+): Promise<{ data: ElementNodeData }> => {
   const self = (link as Resource)._self;
   const isExternal = !self;
   let isExpandable = !isExternal; // External resources are never expandable
+  let resourceData;
   if (!isExternal) {
-    const response = await getResourceLinks(self);
+    const { orgLabel, projectLabel } = getOrgAndProjectFromResource(
+      link as Resource
+    );
+    const resourceId = link['@id'];
+    resourceData = {
+      orgLabel,
+      projectLabel,
+      resourceId,
+      self,
+    };
+    const response = await getResourceLinks(orgLabel, projectLabel, resourceId);
     isExpandable = !!response._total;
   }
   let label = labelOf(link['@id']);
@@ -26,9 +42,10 @@ export const makeNode = async (
       label,
       isExternal,
       isExpandable,
-      self,
       parentId,
+      resourceData,
       id: link['@id'],
+      externalAddress: isExternal ? link['@id'] : undefined,
     },
   };
 };

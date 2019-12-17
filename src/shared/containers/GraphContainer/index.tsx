@@ -4,7 +4,7 @@ import { useHistory, useLocation } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { ResourceLink, Resource } from '@bbp/nexus-sdk';
 
-import { getResourceLabelsAndIdsFromSelf, getResourceLabel } from '../../utils';
+import { getResourceLabel, getOrgAndProjectFromResource } from '../../utils';
 import Graph, { ElementNodeData } from '../../components/Graph';
 import GraphControlPanel from '../../components/Graph/GraphControlPanel';
 
@@ -28,16 +28,10 @@ const GraphContainer: React.FunctionComponent<{
   const [centered, setCentered] = React.useState(false);
   const [collapsed, setCollapsed] = React.useState(true);
   const [layout, setLayout] = React.useState(DEFAULT_LAYOUT);
-  const [
-    { selectedResourceSelf, isSelectedExternal },
-    setSelectedResource,
-  ] = React.useState<{
-    selectedResourceSelf: string | null;
-    isSelectedExternal: boolean | null;
-  }>({
-    selectedResourceSelf: '',
-    isSelectedExternal: null,
-  });
+  const [selectedResource, setSelectedResource] = React.useState<{
+    resourceData?: ElementNodeData['resourceData'];
+    absoluteAddress: string;
+  } | null>(null);
   const [elements, setElements] = React.useState<cytoscape.ElementDefinition[]>(
     []
   );
@@ -54,17 +48,15 @@ const GraphContainer: React.FunctionComponent<{
   });
   const [loading, setLoading] = React.useState(false);
 
-  const getResourceLinks = async (self: string) => {
-    const {
-      orgLabel,
-      projectLabel,
-      resourceId,
-    } = getResourceLabelsAndIdsFromSelf(self);
-
+  const getResourceLinks = async (
+    orgLabel: string,
+    projectLabel: string,
+    resourceId: string
+  ) => {
     return await nexus.Resource.links(
       orgLabel,
       projectLabel,
-      resourceId,
+      encodeURIComponent(resourceId),
       'outgoing'
     );
   };
@@ -81,7 +73,9 @@ const GraphContainer: React.FunctionComponent<{
 
     let fetchedLinks: ResourceLink[];
 
-    getResourceLinks(resource._self)
+    const { orgLabel, projectLabel } = getOrgAndProjectFromResource(resource);
+
+    getResourceLinks(orgLabel, projectLabel, resource['@id'])
       .then(response => {
         fetchedLinks = response._results;
 
@@ -132,8 +126,14 @@ const GraphContainer: React.FunctionComponent<{
   }, [resource._self, reset, collapsed]);
 
   const handleNodeClick = async (id: string, data: ElementNodeData) => {
-    const { isBlankNode, isExternal, isExpandable, self, isExpanded } = data;
-    if (isBlankNode || isExternal || !self) {
+    const {
+      isBlankNode,
+      isExternal,
+      isExpandable,
+      resourceData,
+      isExpanded,
+    } = data;
+    if (isBlankNode || isExternal || !resourceData) {
       return;
     }
     try {
@@ -151,7 +151,11 @@ const GraphContainer: React.FunctionComponent<{
 
       // Expand Node
       setLoading(true);
-      const response = await getResourceLinks(self);
+      const response = await getResourceLinks(
+        resourceData.orgLabel,
+        resourceData.projectLabel,
+        resourceData.resourceId
+      );
 
       const targetNode = elements.find(element => element.data.id === id);
       if (!targetNode) {
@@ -195,19 +199,16 @@ const GraphContainer: React.FunctionComponent<{
   };
 
   const handleVisitResource = (id: string, data: ElementNodeData) => {
-    const { isExternal, self } = data;
+    const { isExternal, resourceData } = data;
     if (isExternal) {
       open(id);
       return;
     }
-    if (!self) {
+    if (!resourceData) {
       return;
     }
-    const {
-      orgLabel,
-      projectLabel,
-      resourceId,
-    } = getResourceLabelsAndIdsFromSelf(self);
+
+    const { orgLabel, projectLabel, resourceId } = resourceData;
 
     history.push(
       `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
@@ -217,13 +218,13 @@ const GraphContainer: React.FunctionComponent<{
   };
 
   const showResourcePreview = (id: string, data: ElementNodeData) => {
-    const { isBlankNode, isOrigin, self, isExternal } = data;
+    const { isBlankNode, isOrigin, isExternal, resourceData } = data;
     if (isBlankNode || isOrigin) {
       return;
     }
     setSelectedResource({
-      selectedResourceSelf: self || id,
-      isSelectedExternal: isExternal,
+      resourceData,
+      absoluteAddress: resourceData ? resourceData.self : id,
     });
   };
 
@@ -265,10 +266,10 @@ const GraphContainer: React.FunctionComponent<{
         layout={layout}
         centered={centered}
       />
-      {!!selectedResourceSelf && (
+      {!!selectedResource && (
         <ResourcePreviewCardContainer
-          resourceSelf={selectedResourceSelf}
-          isExternal={isSelectedExternal}
+          resourceData={selectedResource.resourceData}
+          absoluteAddress={selectedResource.absoluteAddress}
         />
       )}
     </>

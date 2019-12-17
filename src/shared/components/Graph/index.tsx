@@ -16,7 +16,14 @@ export type ElementNodeData = {
   isOrigin?: boolean;
   isBlankNode?: boolean;
   isExpanded?: boolean;
-  self?: string;
+  parentId?: string;
+  resourceData?: {
+    orgLabel: string;
+    projectLabel: string;
+    resourceId: string;
+    self: string;
+  };
+  externalAddress?: string;
   id: string;
 };
 

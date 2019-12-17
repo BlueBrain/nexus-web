@@ -2,17 +2,19 @@ import * as React from 'react';
 import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
 import { ResourceLink } from '@bbp/nexus-sdk';
-import { getResourceLabelsAndIdsFromSelf } from '../utils';
+
 import ResourceLinks from '../components/ResourceLinks';
 
 const PAGE_SIZE = 10;
 
 const ResourceLinksContainer: React.FunctionComponent<{
-  self: string;
+  resourceId: string;
+  orgLabel: string;
+  projectLabel: string;
   rev: number;
   direction: 'incoming' | 'outgoing';
   onClick?: (link: ResourceLink) => void;
-}> = ({ self, rev, direction, onClick }) => {
+}> = ({ resourceId, orgLabel, projectLabel, rev, direction, onClick }) => {
   const nexus = useNexusContext();
   const [{ busy, error, links, total, next }, setLinks] = React.useState<{
     busy: boolean;
@@ -27,11 +29,6 @@ const ResourceLinksContainer: React.FunctionComponent<{
     links: [],
     total: 0,
   });
-  const {
-    orgLabel,
-    projectLabel,
-    resourceId,
-  } = getResourceLabelsAndIdsFromSelf(self);
 
   const handleLoadMore = async () => {
     if (busy || !next) {
@@ -83,7 +80,7 @@ const ResourceLinksContainer: React.FunctionComponent<{
         const response = await nexus.Resource.links(
           orgLabel,
           projectLabel,
-          resourceId,
+          encodeURIComponent(resourceId),
           direction,
           {
             rev,
@@ -108,7 +105,7 @@ const ResourceLinksContainer: React.FunctionComponent<{
         });
       }
     },
-    [self]
+    [resourceId, projectLabel, orgLabel]
   );
 
   return (

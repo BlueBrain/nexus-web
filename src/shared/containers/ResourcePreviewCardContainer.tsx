@@ -6,29 +6,25 @@ import { notification } from 'antd';
 import ResourceCard from '../components/ResourceCard';
 import ResourceCardCollapsed from '../components/ResourceCard/ResourceCardCollapsed';
 import ResourcePreviewCard from '../components/ResourceCard/ResourcePreviewCard';
-import {
-  getResourceLabelsAndIdsFromSelf,
-  labelOf,
-  getResourceLabel,
-} from '../utils';
+import { labelOf, getResourceLabel } from '../utils';
+import { ElementNodeData } from '../components/Graph';
 
 const ResourcePreviewCardContainer: React.FunctionComponent<{
-  resourceSelf: string;
-  isExternal: boolean | null;
-}> = ({ resourceSelf, isExternal }) => {
+  resourceData?: ElementNodeData['resourceData'];
+  absoluteAddress: string;
+}> = ({ resourceData, absoluteAddress }) => {
+  const isExternal = !resourceData;
   const nexus = useNexusContext();
   const [showFullCard, setShowFullCard] = React.useState(false);
   const [{ busy, resource, error }, setResource] = React.useState<{
     busy: boolean;
-    resource: Resource | null;
+    resource: Resource<any> | null;
     error: Error | null;
   }>({
     busy: false,
     resource: null,
     error: null,
   });
-
-  const { resourceId } = getResourceLabelsAndIdsFromSelf(resourceSelf);
 
   React.useEffect(() => {
     if (isExternal) {
@@ -46,44 +42,41 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
       busy: true,
     });
 
-    nexus
-      .httpGet({
-        path: resourceSelf,
-        headers: {
-          Accept: 'application/json',
-        },
-      })
-      .then(response => {
-        setResource({
-          resource: response,
-          error: null,
-          busy: false,
-        });
-      })
-      .catch(error => {
-        notification.error({
-          message: "Couldn't load a resource info",
-          description: error.message,
-          duration: 5,
-        });
+    if (resourceData) {
+      const { orgLabel, projectLabel, resourceId } = resourceData;
+      nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(resourceId))
+        .then(resource => {
+          setResource({
+            resource,
+            error: null,
+            busy: false,
+          });
+        })
+        .catch(error => {
+          notification.error({
+            message: "Couldn't load a resource info",
+            description: error.message,
+            duration: 5,
+          });
 
-        setResource({
-          error,
-          resource,
-          busy: false,
+          setResource({
+            error,
+            resource,
+            busy: false,
+          });
         });
-      });
-  }, [resourceSelf]);
+    }
+  }, [resourceData && resourceData.resourceId]);
 
   if (error) return null;
 
   if (isExternal) {
-    const label = labelOf(resourceId);
+    const label = labelOf(absoluteAddress);
     return (
       <ResourcePreviewCard>
         <ResourceCardCollapsed
           label={label}
-          resourceUrl={resourceSelf}
+          resourceUrl={absoluteAddress}
           busy={busy}
           isExternal
         />
@@ -106,7 +99,7 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
         ) : (
           <ResourceCardCollapsed
             label={label}
-            resourceUrl={resourceSelf}
+            resourceUrl={absoluteAddress}
             onClickExpand={() => setShowFullCard(true)}
             busy={busy}
             types={types}
