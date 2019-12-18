@@ -164,21 +164,6 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
   );
 };
 
-// This wrapping of imperative handle is to provide the form
-// to the parent if the parent decides to use Ref on this form
-// for example, to validate from the parent
-const WrappedForwardDashboardConfigEditorComponent = React.forwardRef<
-  FormComponentProps,
-  DashboardConfigEditorProps
->((props, ref) => {
-  React.useImperativeHandle(ref, () => props);
-  return <DashboardConfigEditorComponent {...props} ref={ref} />;
-});
-
-type WrappedDashboardConfigFormProps = DashboardConfigEditorProps & {
-  wrappedComponentRef?: React.Ref<FormComponentProps<any>>;
-};
-
 export default Form.create<DashboardConfigEditorProps>()(
   DashboardConfigEditorComponent
 );
