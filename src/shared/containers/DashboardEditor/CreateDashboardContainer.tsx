@@ -96,7 +96,6 @@ const CreateDashboardContainer: React.FunctionComponent<{
         footer={null}
       >
         <DashboardConfigEditor
-          // wrappedComponentRef={formRef}
           onSubmit={handleSubmit}
           linkToSparqlQueryEditor={(dataQuery: string) => {
             return (
