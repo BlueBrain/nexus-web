@@ -15,6 +15,7 @@ const PORT_NUMBER = 8000;
 // Create a express app
 const app: express.Express = express();
 const rawBase: string = process.env.BASE_PATH || '';
+const pluginsPath = process.env.PLUGINS_PATH || '/public/plugins';
 // remove trailing slash
 const base: string = rawBase.replace(/\/$/, '');
 // enable logs
@@ -46,20 +47,22 @@ app.get(
   }
 );
 
-app.get(`${base}/plugins`, (req: express.Request, res: express.Response) => {
-  let names: string[] = [];
-  console.log(req);
-  try {
-    names = readdirSync(__dirname + '/public/plugins', {
-      withFileTypes: true,
-    })
-      .filter(dirent => dirent.isDirectory())
-      .map(dirent => dirent.name);
-  } catch (e) {
-    console.error(e);
+app.get(
+  `${base}${pluginsPath}`,
+  (req: express.Request, res: express.Response) => {
+    let names: string[] = [];
+    try {
+      names = readdirSync(`${__dirname}/public/plugins`, {
+        withFileTypes: true,
+      })
+        .filter(dirent => dirent.isDirectory())
+        .map(dirent => dirent.name);
+    } catch (e) {
+      console.error(e);
+    }
+    res.send({ names });
   }
-  res.send({ names });
-});
+);
 
 // For all routes
 app.get('*', async (req: express.Request, res: express.Response) => {
@@ -67,6 +70,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
   const preloadedState: RootState = {
     auth: {},
     config: {
+      pluginsPath,
       apiEndpoint: process.env.API_ENDPOINT || '/',
       basePath: base,
       clientId: process.env.CLIENT_ID || 'nexus-web',
