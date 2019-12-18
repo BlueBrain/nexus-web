@@ -14,11 +14,18 @@ export type DashboardPayload = {
   plugins?: string[];
 };
 
+type Plugin = {
+  key: string;
+  title: string;
+  description?: string;
+  chosen: boolean;
+};
+
 export type DashboardConfigEditorProps = {
   ref?: React.Ref<FormComponentProps<any>>;
   form: WrappedFormUtils;
   dashboard?: DashboardPayload;
-  availablePlugins?: any[];
+  availablePlugins?: Plugin[];
   onSubmit?(dashboard: DashboardPayload): void;
   viewList?: ResourceList<{}>;
   linkToSparqlQueryEditor?(dataQuery: string): React.ReactElement;

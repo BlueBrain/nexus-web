@@ -2,14 +2,15 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
+import { useSelector } from 'react-redux';
 import { notification, Modal } from 'antd';
 
 import DashboardConfigEditor, {
   DashboardPayload,
-  DashboardConfigEditorProps,
 } from '../../components/DashboardEditor/DashboardConfigEditor';
 import STUDIO_CONTEXT from '../../components/Studio/StudioContext';
 import { DASHBOARD_TYPE } from './CreateDashboardContainer';
+import { RootState } from '../../store/reducers';
 
 const DashboardEditorContainer: React.FunctionComponent<{
   orgLabel: string;
@@ -35,6 +36,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
   const nexus = useNexusContext();
   const { label, description, dataQuery } = dashboard;
   const [busy, setBusy] = React.useState(false);
+  const plugins = useSelector((state: RootState) => state.config.plugins) || [];
 
   // Launch modal when id is changed (someone selected a new dashboard to edit)
   React.useEffect(() => {
@@ -70,6 +72,15 @@ const DashboardEditorContainer: React.FunctionComponent<{
     }
   };
 
+  const formatPluginSource = () => {
+    return plugins.map(plugin => ({
+      key: plugin,
+      title: plugin,
+      description: `description of ${plugin}`,
+      chosen: false,
+    }));
+  };
+
   return (
     <Modal
       title={`Edit ${label || 'Dashboard'}`}
@@ -85,7 +96,9 @@ const DashboardEditorContainer: React.FunctionComponent<{
           label,
           description,
           dataQuery,
+          plugins: [],
         }}
+        availablePlugins={formatPluginSource()}
         onSubmit={handleSubmit}
         linkToSparqlQueryEditor={(dataQuery: string) => {
           return (

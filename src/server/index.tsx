@@ -47,22 +47,21 @@ app.get(
   }
 );
 
-app.get(
-  `${base}${pluginsPath}`,
-  (req: express.Request, res: express.Response) => {
-    let names: string[] = [];
-    try {
-      names = readdirSync(`${__dirname}/public/plugins`, {
-        withFileTypes: true,
-      })
-        .filter(dirent => dirent.isDirectory())
-        .map(dirent => dirent.name);
-    } catch (e) {
-      console.error(e);
-    }
-    res.send({ names });
+const getPlugins = () => {
+  let plugins;
+
+  try {
+    plugins = readdirSync(`${__dirname}/public/plugins`, {
+      withFileTypes: true,
+    })
+      .filter(dirent => dirent.isDirectory())
+      .map(dirent => dirent.name);
+  } catch (e) {
+    console.error(e);
   }
-);
+
+  return plugins || [];
+};
 
 // For all routes
 app.get('*', async (req: express.Request, res: express.Response) => {
@@ -77,6 +76,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       redirectHostName: `${process.env.HOST_NAME ||
         `${req.protocol}://${req.headers.host}`}${base}`,
       sentryDsn: process.env.SENTRY_DSN,
+      plugins: getPlugins(),
     },
     uiSettings: DEFAULT_UI_SETTINGS,
     oidc: {

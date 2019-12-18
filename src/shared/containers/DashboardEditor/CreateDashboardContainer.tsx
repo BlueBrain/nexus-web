@@ -5,7 +5,6 @@ import { DEFAULT_SPARQL_VIEW_ID, Resource } from '@bbp/nexus-sdk';
 import { notification, Modal, Button } from 'antd';
 
 import DashboardConfigEditor, {
-  DashboardConfigEditorProps,
   DashboardPayload,
 } from '../../components/DashboardEditor/DashboardConfigEditor';
 import STUDIO_CONTEXT from '../../components/Studio/StudioContext';
