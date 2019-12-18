@@ -18,6 +18,7 @@ export type DashboardConfigEditorProps = {
   ref?: React.Ref<FormComponentProps<any>>;
   form: WrappedFormUtils;
   dashboard?: DashboardPayload;
+  availablePlugins?: any[];
   onSubmit?(dashboard: DashboardPayload): void;
   viewList?: ResourceList<{}>;
   linkToSparqlQueryEditor?(dataQuery: string): React.ReactElement;
@@ -25,12 +26,18 @@ export type DashboardConfigEditorProps = {
 
 const DashboardConfigEditorComponent: React.FunctionComponent<
   DashboardConfigEditorProps
-> = ({ onSubmit, form, dashboard, linkToSparqlQueryEditor }) => {
-  const { description, label, dataQuery } = dashboard || {};
+> = ({
+  onSubmit,
+  form,
+  dashboard,
+  availablePlugins,
+  linkToSparqlQueryEditor,
+}) => {
+  const { description, label, dataQuery, plugins = [] } = dashboard || {};
   const { getFieldDecorator, getFieldsValue, validateFields } = form;
-  const [selectedPlugins, setSelectedPlugin] = React.useState<string[]>([
-    'lol',
-  ]);
+  const [selectedPlugins, setSelectedPlugins] = React.useState<string[]>(
+    plugins
+  );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,6 +58,10 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
           });
       }
     });
+  };
+
+  const handlePluginsChange = (nextTargetKeys: string[]) => {
+    setSelectedPlugins(nextTargetKeys);
   };
 
   return (
@@ -112,22 +123,10 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
           ],
         })(
           <Transfer
-            dataSource={[
-              {
-                key: 'asdasd-asd0as-das-d-',
-                title: 'content 1',
-                description: 'description 1',
-                chosen: true,
-              },
-              {
-                key: 'asdasd-asd0as-das-d-2',
-                title: 'content 2',
-                description: 'description 12',
-                chosen: false,
-              },
-            ]}
-            targetKeys={['asdasd-asd0as-das-d-']}
+            dataSource={availablePlugins}
+            targetKeys={selectedPlugins}
             render={item => item.title}
+            onChange={handlePluginsChange}
           />
         )}
         }
