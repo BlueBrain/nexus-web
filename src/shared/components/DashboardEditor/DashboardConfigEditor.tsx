@@ -43,7 +43,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
   const { description, label, dataQuery, plugins = [] } = dashboard || {};
   const { getFieldDecorator, getFieldsValue, validateFields } = form;
   const [selectedPlugins, setSelectedPlugins] = React.useState<string[]>(
-    plugins
+    ["test"]
   );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

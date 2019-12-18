@@ -46,6 +46,8 @@ const DashboardEditorContainer: React.FunctionComponent<{
   }, [viewId, dashboardId]);
 
   const handleSubmit = async (dashboardPayload: DashboardPayload) => {
+    console.log('dashboardPayload');
+    
     try {
       setBusy(true);
       await nexus.Resource.update(
