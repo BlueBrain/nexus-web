@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Input, Form, Tooltip, Icon } from 'antd';
+import { Input, Form, Tooltip, Icon, Transfer, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { ResourceList } from '@bbp/nexus-sdk';
 import { FormComponentProps } from 'antd/es/form';
@@ -11,6 +11,7 @@ export type DashboardPayload = {
   description?: string;
   label?: string;
   dataQuery: string;
+  plugins?: string[];
 };
 
 export type DashboardConfigEditorProps = {
@@ -27,10 +28,14 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
 > = ({ onSubmit, form, dashboard, linkToSparqlQueryEditor }) => {
   const { description, label, dataQuery } = dashboard || {};
   const { getFieldDecorator, getFieldsValue, validateFields } = form;
+  const [selectedPlugins, setSelectedPlugin] = React.useState<string[]>([
+    'lol',
+  ]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     validateFields(err => {
+      console.log('asdasd');
       if (!err) {
         const { description, label, dataQuery } = getFieldsValue() as {
           description?: string;
@@ -42,6 +47,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
             description,
             label,
             dataQuery,
+            plugins: selectedPlugins,
           });
       }
     });
@@ -91,6 +97,44 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
       <Form.Item
         label={
           <span>
+            Plugins{' '}
+            <Tooltip title="Which plugins should Studio load when viewing a resource.">
+              <Icon type="question-circle-o" />
+            </Tooltip>
+          </span>
+        }
+      >
+        {getFieldDecorator('plugins', {
+          rules: [
+            {
+              required: false,
+            },
+          ],
+        })(
+          <Transfer
+            dataSource={[
+              {
+                key: 'asdasd-asd0as-das-d-',
+                title: 'content 1',
+                description: 'description 1',
+                chosen: true,
+              },
+              {
+                key: 'asdasd-asd0as-das-d-2',
+                title: 'content 2',
+                description: 'description 12',
+                chosen: false,
+              },
+            ]}
+            targetKeys={['asdasd-asd0as-das-d-']}
+            render={item => item.title}
+          />
+        )}
+        }
+      </Form.Item>
+      <Form.Item
+        label={
+          <span>
             Sparql Query{' '}
             <Tooltip title="A query that will return the elements of the dashboard.">
               <Icon type="question-circle-o" />
@@ -111,6 +155,11 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
           ],
         })(<SparqlQueryFormInput />)}
       </Form.Item>
+      <Form.Item>
+        <Button htmlType="submit" type="primary">
+          Save
+        </Button>
+      </Form.Item>
     </Form>
   );
 };
@@ -130,6 +179,6 @@ type WrappedDashboardConfigFormProps = DashboardConfigEditorProps & {
   wrappedComponentRef?: React.Ref<FormComponentProps<any>>;
 };
 
-export default Form.create<WrappedDashboardConfigFormProps>()(
-  WrappedForwardDashboardConfigEditorComponent
+export default Form.create<DashboardConfigEditorProps>()(
+  DashboardConfigEditorComponent
 );

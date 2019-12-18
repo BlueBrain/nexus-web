@@ -1,4 +1,5 @@
 import { resolve, join } from 'path';
+import { readdirSync } from 'fs';
 import * as express from 'express';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
@@ -44,6 +45,21 @@ app.get(
     res.send(silentRefreshHtml());
   }
 );
+
+app.get(`${base}/plugins`, (req: express.Request, res: express.Response) => {
+  let names: string[] = [];
+  console.log(req);
+  try {
+    names = readdirSync(__dirname + '/public/plugins', {
+      withFileTypes: true,
+    })
+      .filter(dirent => dirent.isDirectory())
+      .map(dirent => dirent.name);
+  } catch (e) {
+    console.error(e);
+  }
+  res.send({ names });
+});
 
 // For all routes
 app.get('*', async (req: express.Request, res: express.Response) => {
