@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Input, Form, Tooltip, Icon } from 'antd';
+import { Input, Form, Tooltip, Icon, Transfer, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { ResourceList } from '@bbp/nexus-sdk';
 import { FormComponentProps } from 'antd/es/form';
@@ -11,12 +11,21 @@ export type DashboardPayload = {
   description?: string;
   label?: string;
   dataQuery: string;
+  plugins?: string[];
+};
+
+type Plugin = {
+  key: string;
+  title: string;
+  description?: string;
+  chosen: boolean;
 };
 
 export type DashboardConfigEditorProps = {
   ref?: React.Ref<FormComponentProps<any>>;
   form: WrappedFormUtils;
   dashboard?: DashboardPayload;
+  availablePlugins?: Plugin[];
   onSubmit?(dashboard: DashboardPayload): void;
   viewList?: ResourceList<{}>;
   linkToSparqlQueryEditor?(dataQuery: string): React.ReactElement;
@@ -24,9 +33,18 @@ export type DashboardConfigEditorProps = {
 
 const DashboardConfigEditorComponent: React.FunctionComponent<
   DashboardConfigEditorProps
-> = ({ onSubmit, form, dashboard, linkToSparqlQueryEditor }) => {
-  const { description, label, dataQuery } = dashboard || {};
+> = ({
+  onSubmit,
+  form,
+  dashboard,
+  availablePlugins,
+  linkToSparqlQueryEditor,
+}) => {
+  const { description, label, dataQuery, plugins = [] } = dashboard || {};
   const { getFieldDecorator, getFieldsValue, validateFields } = form;
+  const [selectedPlugins, setSelectedPlugins] = React.useState<string[]>(
+    plugins
+  );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,9 +60,14 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
             description,
             label,
             dataQuery,
+            plugins: selectedPlugins,
           });
       }
     });
+  };
+
+  const handlePluginsChange = (nextTargetKeys: string[]) => {
+    setSelectedPlugins(nextTargetKeys);
   };
 
   return (
@@ -91,6 +114,32 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
       <Form.Item
         label={
           <span>
+            Plugins{' '}
+            <Tooltip title="Which plugins should Studio load when viewing a resource.">
+              <Icon type="question-circle-o" />
+            </Tooltip>
+          </span>
+        }
+      >
+        {getFieldDecorator('plugins', {
+          rules: [
+            {
+              required: false,
+            },
+          ],
+        })(
+          <Transfer
+            dataSource={availablePlugins}
+            targetKeys={selectedPlugins}
+            render={item => item.title}
+            onChange={handlePluginsChange}
+          />
+        )}
+        }
+      </Form.Item>
+      <Form.Item
+        label={
+          <span>
             Sparql Query{' '}
             <Tooltip title="A query that will return the elements of the dashboard.">
               <Icon type="question-circle-o" />
@@ -111,25 +160,15 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
           ],
         })(<SparqlQueryFormInput />)}
       </Form.Item>
+      <Form.Item>
+        <Button htmlType="submit" type="primary">
+          Save
+        </Button>
+      </Form.Item>
     </Form>
   );
 };
 
-// This wrapping of imperative handle is to provide the form
-// to the parent if the parent decides to use Ref on this form
-// for example, to validate from the parent
-const WrappedForwardDashboardConfigEditorComponent = React.forwardRef<
-  FormComponentProps,
-  DashboardConfigEditorProps
->((props, ref) => {
-  React.useImperativeHandle(ref, () => props);
-  return <DashboardConfigEditorComponent {...props} ref={ref} />;
-});
-
-type WrappedDashboardConfigFormProps = DashboardConfigEditorProps & {
-  wrappedComponentRef?: React.Ref<FormComponentProps<any>>;
-};
-
-export default Form.create<WrappedDashboardConfigFormProps>()(
-  WrappedForwardDashboardConfigEditorComponent
+export default Form.create<DashboardConfigEditorProps>()(
+  DashboardConfigEditorComponent
 );

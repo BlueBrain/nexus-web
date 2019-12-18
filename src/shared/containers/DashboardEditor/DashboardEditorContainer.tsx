@@ -2,14 +2,15 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
+import { useSelector } from 'react-redux';
 import { notification, Modal } from 'antd';
 
 import DashboardConfigEditor, {
   DashboardPayload,
-  DashboardConfigEditorProps,
 } from '../../components/DashboardEditor/DashboardConfigEditor';
 import STUDIO_CONTEXT from '../../components/Studio/StudioContext';
 import { DASHBOARD_TYPE } from './CreateDashboardContainer';
+import { RootState } from '../../store/reducers';
 
 const DashboardEditorContainer: React.FunctionComponent<{
   orgLabel: string;
@@ -32,10 +33,10 @@ const DashboardEditorContainer: React.FunctionComponent<{
   onSuccess,
   viewId = DEFAULT_SPARQL_VIEW_ID,
 }) => {
-  const formRef = React.useRef<DashboardConfigEditorProps>(null);
   const nexus = useNexusContext();
   const { label, description, dataQuery } = dashboard;
   const [busy, setBusy] = React.useState(false);
+  const plugins = useSelector((state: RootState) => state.config.plugins) || [];
 
   // Launch modal when id is changed (someone selected a new dashboard to edit)
   React.useEffect(() => {
@@ -44,46 +45,40 @@ const DashboardEditorContainer: React.FunctionComponent<{
     }
   }, [viewId, dashboardId]);
 
-  const handleSubmit = async () => {
-    if (formRef.current && formRef.current.form) {
-      formRef.current.form.validateFields();
-      const validationErrors = Object.values(
-        formRef.current.form.getFieldsError()
-      ).filter(Boolean);
-      // Invalid Form
-      if (validationErrors.length) {
-        return;
-      }
-      try {
-        const dashboardPayload = formRef.current.form.getFieldsValue() as {
-          description?: string;
-          label: string;
-          dataQuery: string;
-        };
-        setBusy(true);
-        await nexus.Resource.update(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(dashboardId),
-          dashboardRev,
-          {
-            ...dashboardPayload,
-            '@context': STUDIO_CONTEXT['@id'],
-            '@type': DASHBOARD_TYPE,
-          }
-        );
+  const handleSubmit = async (dashboardPayload: DashboardPayload) => {
+    try {
+      setBusy(true);
+      await nexus.Resource.update(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(dashboardId),
+        dashboardRev,
+        {
+          ...dashboardPayload,
+          '@context': STUDIO_CONTEXT['@id'],
+          '@type': DASHBOARD_TYPE,
+        }
+      );
 
-        setShowEditModal(false);
-        !!onSuccess && onSuccess();
-      } catch (error) {
-        notification.error({
-          message: `Could not update dashboard`,
-          description: error.reason || error.message,
-        });
-      } finally {
-        setBusy(false);
-      }
+      setShowEditModal(false);
+      !!onSuccess && onSuccess();
+    } catch (error) {
+      notification.error({
+        message: `Could not update dashboard`,
+        description: error.reason || error.message,
+      });
+    } finally {
+      setBusy(false);
     }
+  };
+
+  const formatPluginSource = () => {
+    return plugins.map(plugin => ({
+      key: plugin,
+      title: plugin,
+      description: `description of ${plugin}`,
+      chosen: false,
+    }));
   };
 
   return (
@@ -91,18 +86,18 @@ const DashboardEditorContainer: React.FunctionComponent<{
       title={`Edit ${label || 'Dashboard'}`}
       visible={showEditModal}
       onCancel={() => setShowEditModal(false)}
-      onOk={() => handleSubmit()}
-      okText={busy ? 'Saving' : 'Save'}
       style={{ minWidth: '75%' }}
       confirmLoading={busy}
+      footer={null}
     >
       <DashboardConfigEditor
-        wrappedComponentRef={formRef}
         dashboard={{
           label,
           description,
           dataQuery,
+          plugins: [],
         }}
+        availablePlugins={formatPluginSource()}
         onSubmit={handleSubmit}
         linkToSparqlQueryEditor={(dataQuery: string) => {
           return (

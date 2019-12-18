@@ -1,4 +1,5 @@
 import { resolve, join } from 'path';
+import { readdirSync } from 'fs';
 import * as express from 'express';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
@@ -14,6 +15,7 @@ const PORT_NUMBER = 8000;
 // Create a express app
 const app: express.Express = express();
 const rawBase: string = process.env.BASE_PATH || '';
+const pluginsPath = process.env.PLUGINS_PATH || '/public/plugins';
 // remove trailing slash
 const base: string = rawBase.replace(/\/$/, '');
 // enable logs
@@ -45,18 +47,36 @@ app.get(
   }
 );
 
+const getPlugins = () => {
+  let plugins;
+
+  try {
+    plugins = readdirSync(`${__dirname}/public/plugins`, {
+      withFileTypes: true,
+    })
+      .filter(dirent => dirent.isDirectory())
+      .map(dirent => dirent.name);
+  } catch (e) {
+    console.error(e);
+  }
+
+  return plugins || [];
+};
+
 // For all routes
 app.get('*', async (req: express.Request, res: express.Response) => {
   // Compute pre-loaded state
   const preloadedState: RootState = {
     auth: {},
     config: {
+      pluginsPath,
       apiEndpoint: process.env.API_ENDPOINT || '/',
       basePath: base,
       clientId: process.env.CLIENT_ID || 'nexus-web',
       redirectHostName: `${process.env.HOST_NAME ||
         `${req.protocol}://${req.headers.host}`}${base}`,
       sentryDsn: process.env.SENTRY_DSN,
+      plugins: getPlugins(),
     },
     uiSettings: DEFAULT_UI_SETTINGS,
     oidc: {
