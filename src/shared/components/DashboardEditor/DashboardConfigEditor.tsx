@@ -49,7 +49,6 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     validateFields(err => {
-      console.log('asdasd');
       if (!err) {
         const { description, label, dataQuery } = getFieldsValue() as {
           description?: string;

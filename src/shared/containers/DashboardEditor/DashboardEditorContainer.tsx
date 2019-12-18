@@ -91,7 +91,6 @@ const DashboardEditorContainer: React.FunctionComponent<{
       footer={null}
     >
       <DashboardConfigEditor
-        // wrappedComponentRef={formRef}
         dashboard={{
           label,
           description,
