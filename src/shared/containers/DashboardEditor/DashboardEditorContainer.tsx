@@ -34,9 +34,11 @@ const DashboardEditorContainer: React.FunctionComponent<{
   viewId = DEFAULT_SPARQL_VIEW_ID,
 }) => {
   const nexus = useNexusContext();
-  const { label, description, dataQuery } = dashboard;
+  console.log('dashboard', dashboard);
+  
+  const { label, description, dataQuery, plugins } = dashboard;
   const [busy, setBusy] = React.useState(false);
-  const plugins = useSelector((state: RootState) => state.config.plugins) || [];
+  const avaliablePlugins = useSelector((state: RootState) => state.config.plugins) || [];
 
   // Launch modal when id is changed (someone selected a new dashboard to edit)
   React.useEffect(() => {
@@ -45,9 +47,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
     }
   }, [viewId, dashboardId]);
 
-  const handleSubmit = async (dashboardPayload: DashboardPayload) => {
-    console.log('dashboardPayload');
-    
+  const handleSubmit = async (dashboardPayload: DashboardPayload) => {    
     try {
       setBusy(true);
       await nexus.Resource.update(
@@ -75,7 +75,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
   };
 
   const formatPluginSource = () => {
-    return plugins.map(plugin => ({
+    return avaliablePlugins.map(plugin => ({
       key: plugin,
       title: plugin,
       description: `description of ${plugin}`,
@@ -97,7 +97,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
           label,
           description,
           dataQuery,
-          plugins: [],
+          plugins,
         }}
         availablePlugins={formatPluginSource()}
         onSubmit={handleSubmit}

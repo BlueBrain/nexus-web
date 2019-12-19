@@ -35,43 +35,45 @@ const CreateDashboardContainer: React.FunctionComponent<{
   };
 
   const handleSubmit = async (dashboardPayload: DashboardPayload) => {
+    console.log('dashboardPayload', dashboardPayload);
+    
     try {
       setBusy(true);
 
-      const dashboard = await nexus.Resource.create(orgLabel, projectLabel, {
-        ...dashboardPayload,
-        '@context': STUDIO_CONTEXT['@id'],
-        '@type': DASHBOARD_TYPE,
-      });
+      // const dashboard = await nexus.Resource.create(orgLabel, projectLabel, {
+      //   ...dashboardPayload,
+      //   '@context': STUDIO_CONTEXT['@id'],
+      //   '@type': DASHBOARD_TYPE,
+      // });
 
-      // Add dashboard to workspace
-      const workspace = await nexus.Resource.get<Resource>(
-        orgLabel,
-        projectLabel,
-        workspaceId
-      );
-      const workspaceSource = await nexus.Resource.getSource<{
-        [key: string]: any;
-      }>(orgLabel, projectLabel, workspaceId);
-      if (workspace) {
-        await nexus.Resource.update(
-          orgLabel,
-          projectLabel,
-          workspaceId,
-          workspace._rev,
-          {
-            ...workspaceSource,
-            dashboards: [
-              ...workspaceSource.dashboards,
-              {
-                dashboard: dashboard['@id'],
-                view: viewId,
-              },
-            ],
-          }
-        );
-      }
-      onSubmit();
+      // // Add dashboard to workspace
+      // const workspace = await nexus.Resource.get<Resource>(
+      //   orgLabel,
+      //   projectLabel,
+      //   workspaceId
+      // );
+      // const workspaceSource = await nexus.Resource.getSource<{
+      //   [key: string]: any;
+      // }>(orgLabel, projectLabel, workspaceId);
+      // if (workspace) {
+      //   await nexus.Resource.update(
+      //     orgLabel,
+      //     projectLabel,
+      //     workspaceId,
+      //     workspace._rev,
+      //     {
+      //       ...workspaceSource,
+      //       dashboards: [
+      //         ...workspaceSource.dashboards,
+      //         {
+      //           dashboard: dashboard['@id'],
+      //           view: viewId,
+      //         },
+      //       ],
+      //     }
+      //   );
+      // }
+      // onSubmit();
     } catch (error) {
       notification.error({
         message: `Could not create dashboard`,
