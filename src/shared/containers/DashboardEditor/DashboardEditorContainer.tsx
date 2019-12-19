@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 import { notification, Modal } from 'antd';
+import { useSelector } from 'react-redux';
 
 import DashboardConfigEditor, {
   DashboardPayload,
 } from '../../components/DashboardEditor/DashboardConfigEditor';
 import STUDIO_CONTEXT from '../../components/Studio/StudioContext';
 import { DASHBOARD_TYPE } from './CreateDashboardContainer';
+import { RootState } from '../../store/reducers';
 
 const DashboardEditorContainer: React.FunctionComponent<{
   orgLabel: string;
@@ -34,6 +36,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
   const nexus = useNexusContext();
   const { label, description, dataQuery, plugins } = dashboard;
   const [busy, setBusy] = React.useState(false);
+  const availablePlugins = useSelector((state: RootState) => state.config.plugins) || [];
 
   // Launch modal when id is changed (someone selected a new dashboard to edit)
   React.useEffect(() => {
@@ -86,6 +89,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
       footer={null}
     >
       <DashboardConfigEditor
+        availablePlugins={availablePlugins}
         dashboard={{
           label,
           description,
