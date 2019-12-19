@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const devMode = process.env.NODE_ENV !== 'production';
 
 const config = [
@@ -106,6 +107,18 @@ const config = [
       __dirname: false,
     },
     externals: devMode ? [nodeExternals()] : [],
+    plugins: [
+      new CopyWebpackPlugin(
+        [
+          {
+            from: 'plugins/',
+            to: 'public/plugins/',
+            ignore: ['.gitkeep'],
+          },
+        ],
+        { debug: true }
+      ),
+    ],
   },
 ];
 

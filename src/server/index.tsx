@@ -32,10 +32,6 @@ app.use(`${base}/public`, express.static(join(__dirname, 'public')));
 // if in Dev mode, setup HMR and all the fancy stuff
 if (process.env.NODE_ENV !== 'production') {
   const { setupDevEnvironment } = require('./dev');
-  app.use(
-    `${base}/public/plugins`,
-    express.static(resolve(__dirname, '../plugins'))
-  );
   setupDevEnvironment(app);
 }
 
