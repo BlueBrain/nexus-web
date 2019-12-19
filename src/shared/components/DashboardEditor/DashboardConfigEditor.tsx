@@ -26,7 +26,13 @@ export type DashboardConfigEditorProps = {
 
 const DashboardConfigEditorComponent: React.FunctionComponent<
   DashboardConfigEditorProps
-> = ({ onSubmit, form, dashboard, linkToSparqlQueryEditor, availablePlugins }) => {
+> = ({
+  onSubmit,
+  form,
+  dashboard,
+  linkToSparqlQueryEditor,
+  availablePlugins,
+}) => {
   const { description, label, dataQuery, plugins = [] } = dashboard || {};
   const { getFieldDecorator, getFieldsValue, validateFields } = form;
   const [selectedPlugins, setSelectedPlugins] = React.useState<string[]>(

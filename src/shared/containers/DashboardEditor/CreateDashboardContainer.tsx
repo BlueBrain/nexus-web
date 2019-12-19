@@ -29,7 +29,8 @@ const CreateDashboardContainer: React.FunctionComponent<{
   const [showCreateModal, setShowCreateModal] = React.useState(false);
   const nexus = useNexusContext();
   const [busy, setBusy] = React.useState(false);
-  const availablePlugins = useSelector((state: RootState) => state.config.plugins) || [];
+  const availablePlugins =
+    useSelector((state: RootState) => state.config.plugins) || [];
 
   const onSubmit = () => {
     setBusy(false);
