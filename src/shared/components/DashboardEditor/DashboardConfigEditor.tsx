@@ -134,7 +134,6 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
             onChange={handlePluginsChange}
           />
         )}
-        }
       </Form.Item>
       <Form.Item
         label={
