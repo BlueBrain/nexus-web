@@ -42,7 +42,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
     }
   }, [viewId, dashboardId]);
 
-  const handleSubmit = async (dashboardPayload: DashboardPayload) => {    
+  const handleSubmit = async (dashboardPayload: DashboardPayload) => {
     try {
       setBusy(true);
 

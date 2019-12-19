@@ -34,7 +34,7 @@ const CreateDashboardContainer: React.FunctionComponent<{
     !!onSuccess && onSuccess();
   };
 
-  const handleSubmit = async (dashboardPayload: DashboardPayload) => {    
+  const handleSubmit = async (dashboardPayload: DashboardPayload) => {
     try {
       setBusy(true);
 

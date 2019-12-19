@@ -4,10 +4,10 @@ import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { ResourceList } from '@bbp/nexus-sdk';
 import { FormComponentProps } from 'antd/es/form';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../store/reducers';
 
 import DEFAULT_DASHBOARD_VIEW_QUERY from './DefaultDashboardViewQuery';
 import SparqlQueryFormInput from '../ViewForm/SparqlQueryInput';
+import { RootState } from '../../store/reducers';
 
 export type DashboardPayload = {
   description?: string;
@@ -27,16 +27,14 @@ export type DashboardConfigEditorProps = {
 
 const DashboardConfigEditorComponent: React.FunctionComponent<
   DashboardConfigEditorProps
-> = ({
-  onSubmit,
-  form,
-  dashboard,
-  linkToSparqlQueryEditor,
-}) => {
-  const avaliablePlugins = useSelector((state: RootState) => state.config.plugins) || [];
+> = ({ onSubmit, form, dashboard, linkToSparqlQueryEditor }) => {
+  const avaliablePlugins =
+    useSelector((state: RootState) => state.config.plugins) || [];
   const { description, label, dataQuery, plugins = [] } = dashboard || {};
   const { getFieldDecorator, getFieldsValue, validateFields } = form;
-  const [selectedPlugins, setSelectedPlugins] = React.useState<string[]>(plugins);
+  const [selectedPlugins, setSelectedPlugins] = React.useState<string[]>(
+    plugins
+  );
 
   const formatPluginSource = () => {
     return avaliablePlugins.map(plugin => ({
