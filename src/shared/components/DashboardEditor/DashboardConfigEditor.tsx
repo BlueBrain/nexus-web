@@ -3,6 +3,8 @@ import { Input, Form, Tooltip, Icon, Transfer, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { ResourceList } from '@bbp/nexus-sdk';
 import { FormComponentProps } from 'antd/es/form';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/reducers';
 
 import DEFAULT_DASHBOARD_VIEW_QUERY from './DefaultDashboardViewQuery';
 import SparqlQueryFormInput from '../ViewForm/SparqlQueryInput';
@@ -14,18 +16,10 @@ export type DashboardPayload = {
   plugins?: string[];
 };
 
-type Plugin = {
-  key: string;
-  title: string;
-  description?: string;
-  chosen: boolean;
-};
-
 export type DashboardConfigEditorProps = {
   ref?: React.Ref<FormComponentProps<any>>;
   form: WrappedFormUtils;
   dashboard?: DashboardPayload;
-  availablePlugins?: Plugin[];
   onSubmit?(dashboard: DashboardPayload): void;
   viewList?: ResourceList<{}>;
   linkToSparqlQueryEditor?(dataQuery: string): React.ReactElement;
@@ -37,12 +31,21 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
   onSubmit,
   form,
   dashboard,
-  availablePlugins,
   linkToSparqlQueryEditor,
 }) => {
+  const avaliablePlugins = useSelector((state: RootState) => state.config.plugins) || [];
   const { description, label, dataQuery, plugins = [] } = dashboard || {};
   const { getFieldDecorator, getFieldsValue, validateFields } = form;
   const [selectedPlugins, setSelectedPlugins] = React.useState<string[]>(plugins);
+
+  const formatPluginSource = () => {
+    return avaliablePlugins.map(plugin => ({
+      key: plugin,
+      title: plugin,
+      description: `description of ${plugin}`,
+      chosen: false,
+    }));
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -127,7 +130,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
           ],
         })(
           <Transfer
-            dataSource={availablePlugins}
+            dataSource={formatPluginSource()}
             targetKeys={selectedPlugins}
             render={item => item.title}
             onChange={handlePluginsChange}
