@@ -17,6 +17,10 @@ const STUDIO_CONTEXT = {
         '@container': '@set',
         '@type': '@id',
       },
+      plugins: {
+        '@id': 'https://bluebrainnexus.io/studio/vocabulary/plugins',
+        '@container': '@set',
+      },
       dashboards: { '@container': '@set' },
       dashboard: {
         '@id': 'https://bluebrainnexus.io/studio/vocabulary/dashboard',

@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
-import { useSelector } from 'react-redux';
 import { notification, Modal } from 'antd';
+import { useSelector } from 'react-redux';
 
 import DashboardConfigEditor, {
   DashboardPayload,
@@ -34,9 +34,10 @@ const DashboardEditorContainer: React.FunctionComponent<{
   viewId = DEFAULT_SPARQL_VIEW_ID,
 }) => {
   const nexus = useNexusContext();
-  const { label, description, dataQuery } = dashboard;
+  const { label, description, dataQuery, plugins } = dashboard;
   const [busy, setBusy] = React.useState(false);
-  const plugins = useSelector((state: RootState) => state.config.plugins) || [];
+  const availablePlugins =
+    useSelector((state: RootState) => state.config.plugins) || [];
 
   // Launch modal when id is changed (someone selected a new dashboard to edit)
   React.useEffect(() => {
@@ -48,6 +49,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
   const handleSubmit = async (dashboardPayload: DashboardPayload) => {
     try {
       setBusy(true);
+
       await nexus.Resource.update(
         orgLabel,
         projectLabel,
@@ -61,6 +63,12 @@ const DashboardEditorContainer: React.FunctionComponent<{
       );
 
       setShowEditModal(false);
+
+      notification.success({
+        message: `Dashboard ${dashboardPayload.label} was updated successfully`,
+        duration: 5,
+      });
+
       !!onSuccess && onSuccess();
     } catch (error) {
       notification.error({
@@ -70,15 +78,6 @@ const DashboardEditorContainer: React.FunctionComponent<{
     } finally {
       setBusy(false);
     }
-  };
-
-  const formatPluginSource = () => {
-    return plugins.map(plugin => ({
-      key: plugin,
-      title: plugin,
-      description: `description of ${plugin}`,
-      chosen: false,
-    }));
   };
 
   return (
@@ -91,13 +90,13 @@ const DashboardEditorContainer: React.FunctionComponent<{
       footer={null}
     >
       <DashboardConfigEditor
+        availablePlugins={availablePlugins}
         dashboard={{
           label,
           description,
           dataQuery,
-          plugins: [],
+          plugins,
         }}
-        availablePlugins={formatPluginSource()}
         onSubmit={handleSubmit}
         linkToSparqlQueryEditor={(dataQuery: string) => {
           return (

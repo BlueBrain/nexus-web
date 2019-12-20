@@ -14,21 +14,14 @@ export type DashboardPayload = {
   plugins?: string[];
 };
 
-type Plugin = {
-  key: string;
-  title: string;
-  description?: string;
-  chosen: boolean;
-};
-
 export type DashboardConfigEditorProps = {
   ref?: React.Ref<FormComponentProps<any>>;
   form: WrappedFormUtils;
   dashboard?: DashboardPayload;
-  availablePlugins?: Plugin[];
   onSubmit?(dashboard: DashboardPayload): void;
   viewList?: ResourceList<{}>;
   linkToSparqlQueryEditor?(dataQuery: string): React.ReactElement;
+  availablePlugins?: string[];
 };
 
 const DashboardConfigEditorComponent: React.FunctionComponent<
@@ -37,14 +30,27 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
   onSubmit,
   form,
   dashboard,
-  availablePlugins,
   linkToSparqlQueryEditor,
+  availablePlugins,
 }) => {
   const { description, label, dataQuery, plugins = [] } = dashboard || {};
   const { getFieldDecorator, getFieldsValue, validateFields } = form;
   const [selectedPlugins, setSelectedPlugins] = React.useState<string[]>(
     plugins
   );
+
+  const formatPluginSource = () => {
+    if (availablePlugins && availablePlugins.length) {
+      return availablePlugins.map(plugin => ({
+        key: plugin,
+        title: plugin,
+        description: `description of ${plugin}`,
+        chosen: false,
+      }));
+    }
+
+    return [];
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -129,13 +135,12 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
           ],
         })(
           <Transfer
-            dataSource={availablePlugins}
+            dataSource={formatPluginSource()}
             targetKeys={selectedPlugins}
             render={item => item.title}
             onChange={handlePluginsChange}
           />
         )}
-        }
       </Form.Item>
       <Form.Item
         label={

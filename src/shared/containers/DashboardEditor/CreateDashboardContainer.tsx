@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID, Resource } from '@bbp/nexus-sdk';
 import { notification, Modal, Button } from 'antd';
+import { useSelector } from 'react-redux';
 
 import DashboardConfigEditor, {
   DashboardPayload,
 } from '../../components/DashboardEditor/DashboardConfigEditor';
 import STUDIO_CONTEXT from '../../components/Studio/StudioContext';
+import { RootState } from '../../store/reducers';
 
 export const DASHBOARD_TYPE = 'StudioDashboard';
 
@@ -27,6 +29,8 @@ const CreateDashboardContainer: React.FunctionComponent<{
   const [showCreateModal, setShowCreateModal] = React.useState(false);
   const nexus = useNexusContext();
   const [busy, setBusy] = React.useState(false);
+  const availablePlugins =
+    useSelector((state: RootState) => state.config.plugins) || [];
 
   const onSubmit = () => {
     setBusy(false);
@@ -50,6 +54,7 @@ const CreateDashboardContainer: React.FunctionComponent<{
         projectLabel,
         workspaceId
       );
+
       const workspaceSource = await nexus.Resource.getSource<{
         [key: string]: any;
       }>(orgLabel, projectLabel, workspaceId);
@@ -71,6 +76,12 @@ const CreateDashboardContainer: React.FunctionComponent<{
           }
         );
       }
+
+      notification.success({
+        message: `Dashboard ${dashboardPayload.label} was created successfully`,
+        duration: 5,
+      });
+
       onSubmit();
     } catch (error) {
       notification.error({
@@ -79,6 +90,7 @@ const CreateDashboardContainer: React.FunctionComponent<{
       });
     } finally {
       onSubmit();
+      setBusy(false);
     }
   };
 
@@ -96,6 +108,7 @@ const CreateDashboardContainer: React.FunctionComponent<{
         footer={null}
       >
         <DashboardConfigEditor
+          availablePlugins={availablePlugins}
           onSubmit={handleSubmit}
           linkToSparqlQueryEditor={(dataQuery: string) => {
             return (
