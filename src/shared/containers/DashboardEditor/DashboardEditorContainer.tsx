@@ -95,6 +95,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
       okText={busy ? 'Saving' : 'Save'}
       style={{ minWidth: '75%' }}
       confirmLoading={busy}
+      destroyOnClose={true}
     >
       <DashboardConfigEditor
         wrappedComponentRef={formRef}
