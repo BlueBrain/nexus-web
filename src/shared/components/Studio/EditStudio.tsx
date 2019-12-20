@@ -37,6 +37,7 @@ const EditStudio: React.FC<{
         visible={showModal}
         footer={null}
         onCancel={() => setShowModal(false)}
+        destroyOnClose={true}
       >
         <StudioEditorForm saveStudio={handleUpdate} studio={studio} />
       </Modal>

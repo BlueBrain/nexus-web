@@ -83,6 +83,7 @@ const CreateStudioContainer: React.FC<{
         visible={showModal}
         footer={null}
         onCancel={() => setShowModal(false)}
+        destroyOnClose={true}
       >
         <StudioEditorForm saveStudio={saveStudio} />
       </Modal>
