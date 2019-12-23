@@ -61,6 +61,9 @@ const DashboardResultsContainer: React.FunctionComponent<{
         if (setHistory) {
           updateResourcePath(res);
         }
+        if (error) {
+          setError(undefined);
+        }
       })
       .catch(e => {
         setError(e);
@@ -103,6 +106,10 @@ const DashboardResultsContainer: React.FunctionComponent<{
       dataQuery
     )
       .then((result: SparqlViewQueryResponse) => {
+        if (error) {
+          setError(undefined);
+        }
+        
         const data: SelectQueryResponse = result as SelectQueryResponse;
         const tempHeaderProperties: {
           title: string;
@@ -155,6 +162,9 @@ const DashboardResultsContainer: React.FunctionComponent<{
         setError(e);
       });
   }, [orgLabel, projectLabel, dataQuery, viewId]);
+
+  console.log('error', error);
+  
 
   if (error) {
     return (
