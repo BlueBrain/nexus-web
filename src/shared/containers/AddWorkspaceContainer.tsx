@@ -103,6 +103,7 @@ const AddWorkspaceContainer: React.FC<{
         visible={showModal}
         footer={null}
         onCancel={() => setShowModal(false)}
+        destroyOnClose={true}
       >
         <WorkspaceEditorForm saveWorkspace={saveWorkspace} />
       </Modal>
