@@ -106,6 +106,7 @@ const CreateDashboardContainer: React.FunctionComponent<{
         style={{ minWidth: '75%' }}
         confirmLoading={busy}
         footer={null}
+        destroyOnClose={true}
       >
         <DashboardConfigEditor
           availablePlugins={availablePlugins}
