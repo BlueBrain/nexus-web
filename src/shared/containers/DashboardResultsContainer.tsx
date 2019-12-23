@@ -163,8 +163,6 @@ const DashboardResultsContainer: React.FunctionComponent<{
       });
   }, [orgLabel, projectLabel, dataQuery, viewId]);
 
-  console.log('error', error);
-
   if (error) {
     return (
       <Alert
