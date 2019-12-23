@@ -109,7 +109,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
         if (error) {
           setError(undefined);
         }
-        
+
         const data: SelectQueryResponse = result as SelectQueryResponse;
         const tempHeaderProperties: {
           title: string;
@@ -164,7 +164,6 @@ const DashboardResultsContainer: React.FunctionComponent<{
   }, [orgLabel, projectLabel, dataQuery, viewId]);
 
   console.log('error', error);
-  
 
   if (error) {
     return (
