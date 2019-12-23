@@ -54,15 +54,16 @@ const DashboardResultsContainer: React.FunctionComponent<{
   const [headerProperties, setHeaderProperties] = React.useState<any[]>();
   const nexus = useNexusContext();
   const selectResource = (selfUrl: string, setHistory = true) => {
+    if (error) {
+      setError(undefined);
+    }
+
     nexus
       .httpGet({ path: selfUrl })
       .then(res => {
         setSelectedResource(res);
         if (setHistory) {
           updateResourcePath(res);
-        }
-        if (error) {
-          setError(undefined);
         }
       })
       .catch(e => {
@@ -99,6 +100,10 @@ const DashboardResultsContainer: React.FunctionComponent<{
   };
 
   React.useEffect(() => {
+    if (error) {
+      setError(undefined);
+    }
+
     nexus.View.sparqlQuery(
       orgLabel,
       projectLabel,
@@ -106,10 +111,6 @@ const DashboardResultsContainer: React.FunctionComponent<{
       dataQuery
     )
       .then((result: SparqlViewQueryResponse) => {
-        if (error) {
-          setError(undefined);
-        }
-
         const data: SelectQueryResponse = result as SelectQueryResponse;
         const tempHeaderProperties: {
           title: string;
