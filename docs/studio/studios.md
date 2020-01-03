@@ -29,14 +29,14 @@ In the Project View, you will see a list of Studios with the `Create Studio` but
 
 Click the `Create Studio` button.
 
-![Create a studio](../assets/create-a-studio.png)
+![Create a studio](../assets/create-studio-button.png)
 
 ..and fill in a form providing the following:
 
 - `Label`: the name of your new Studio (required field)
 - `Description` for your Studio
 
-![Create a studio form](../assets/create-a-studio-form.png)
+![Create a studio form](../assets/create-studio-form.png)
 
 - Click `Save` and you will be navigated to the Studio View.
 
