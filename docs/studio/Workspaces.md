@@ -3,7 +3,7 @@
 ## What is a workspace?
 
 A workspace is a collection of Dashboards paired with a View. You can have any number of dashboard-view pairings organized into a workspace.
-You can label a workspace and add a description to help uses understand what kind of content they can expect to find there.
+You can label a workspace and add a description to help users understand what kind of content they can expect to find there.
 
 ```json
 {
