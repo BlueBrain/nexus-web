@@ -40,8 +40,9 @@ The created Studio resource will look simmilar to this:
 }
 ```
 
-Once created, the label and the description can be changed.
-
 ### Updating a studio
+
+Once created, a label and a description of a Studio can be changed.
+Just click `Edit Studio` button and update `Label` and `Description` fields.
 
 ### Removing a studio
