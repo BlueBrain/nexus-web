@@ -40,9 +40,13 @@ The created Studio resource will look simmilar to this:
 }
 ```
 
+You can also find your Studios in the Resource List (for example, filter by type `Studio`, or Search by id) and view it in a Resource View.
+
 ### Updating a studio
 
 Once created, a label and a description of a Studio can be changed.
 Just click `Edit Studio` button and update `Label` and `Description` fields.
 
 ### Removing a studio
+
+To remove an unwanted Studio, deprecate it in a Resource View.
