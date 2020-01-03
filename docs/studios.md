@@ -7,14 +7,15 @@
 ### Creating a studio
 
 To create a new studio, select a project.
-There, in a project view, you will see a list of Studios with the 'Create Studio' button.
+There, in a project view, you will see a list of Studios with the `Create Studio` button.
 
 Click `Create Studio` button, and fill in a form providing the following:
 
 - `Label`: a name of your new Studio (requied field)
 - `Description` for your Studio
 
-- Click `Save` and you will be navigated to the Studio view. That's it!
+- Click `Save` and you will be navigated to the Studio view. That's it! Your new Studio is empty for now, but don't worry!
+  We will add Workspaces and Dashboards later.
 
 The created Studio resource will look simmilar to this:
 
