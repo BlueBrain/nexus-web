@@ -7,14 +7,14 @@
 ### Creating a studio
 
 To create a new studio, select a project.
-There, in a project view, you will see a list of Studios with the `Create Studio` button.
+In the Project View, you will see a list of Studios with the `Create Studio` button.
 
-Click `Create Studio` button, and fill in a form providing the following:
+Click the `Create Studio` button, and fill in a form providing the following:
 
-- `Label`: a name of your new Studio (requied field)
+- `Label`: the name of your new Studio (requied field)
 - `Description` for your Studio
 
-- Click `Save` and you will be navigated to the Studio view. That's it! Your new Studio is empty for now, but don't worry!
+- Click `Save` and you will be navigated to the Studio View. That's it! Your new Studio is empty for now, but don't worry!
   We will add Workspaces and Dashboards later.
 
 The created Studio resource will look simmilar to this:
@@ -40,7 +40,7 @@ The created Studio resource will look simmilar to this:
 }
 ```
 
-You can also find your Studios in the Resource List (for example, filter by type `Studio`, or Search by id) and view it in a Resource View.
+You can also find your Studios in the Resource List (for example, filter by type `Studio`, or Search by id) and view it in the Resource View.
 
 ### Updating a studio
 
@@ -49,4 +49,4 @@ Just click `Edit Studio` button and update `Label` and `Description` fields.
 
 ### Removing a studio
 
-To remove an unwanted Studio, deprecate it in a Resource View.
+To remove an unwanted Studio, deprecate it in the Resource View.
