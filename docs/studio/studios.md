@@ -2,13 +2,11 @@
 
 ### What is a Studio?
 
-A studio is a collection of organized queries organized in a table layout for users to quickly access relevant data in a customizable way. Studio authors
-can create a studio to match a specific topic, and create organization schemes called workspaces and dashboards to access various aspects of that data.
+A studio is a collection of organized queries organized in a table layout for users to quickly access relevant data in a customizable way. Studio authors can create a studio to match a specific topic, and create organization schemes called workspaces and dashboards to access various aspects of that data.
+
 For example, a studio might cover all datasets from the `Neocortex`, with a workspace called `Physiology` and a dashboard called `Morphology Pipeline`.
 
 In essence, a studio is a UI layer that performs queries according to a configuration that lives in a Nexus instance as a Resource. It has a `label` for a meaningful title and a `description` field to convey to the users what sort of data they can expect to find there. Most importantly, a studio configuration has a `workspace` collection.
-
-A studio will be given a URI for navigation or sharing
 
 ```json
 {
@@ -21,6 +19,8 @@ A studio will be given a URI for navigation or sharing
   ]
 }
 ```
+
+> Note: A studio will be given a URI for navigation or sharing.
 
 ### Creating a studio
 
