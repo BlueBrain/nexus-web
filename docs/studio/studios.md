@@ -45,29 +45,6 @@ Click the `Create Studio` button.
 That's it! Your new Studio is empty for now, but don't worry!
 We will add Workspaces and Dashboards later.
 
-The created Studio resource will look similar to this:
-
-```json
-{
-    @context: "https://bluebrain.github.io/nexus/contexts/resource.json",
-    @id: "https://nexus.ocp.bbp.epfl.ch/v1/resources/public/project_label/_/f4a8c391-826c-47e8-96f4-03a7e9193f61",
-    @type: "https://bluebrainnexus.io/studio/vocabulary/Studio",
-    description: "Your description",
-    label: "Your label",
-    _constrainedBy: "https://bluebrain.github.io/nexus/schemas/unconstrained.json",
-    _createdAt: "2020-01-03T10:15:57.785966Z",
-    _createdBy: "https://nexus.ocp.bbp.epfl.ch/v1/user_name",
-    _deprecated: false,
-    _incoming: "https://nexus.ocp.bbp.epfl.ch/v1/resources/public/project_label/_/f4a8c391-826c-47e8-96f4-03a7e9193f61/incoming",
-    _outgoing: "https://nexus.ocp.bbp.epfl.ch/v1/resources/public/project_label/_/f4a8c391-826c-47e8-96f4-03a7e9193f61/outgoing",
-    _project: "https://nexus.ocp.bbp.epfl.ch/v1/projects/public/project_label",
-    _rev: 1,
-    _self: "https://nexus.ocp.bbp.epfl.ch/v1/resources/public/project_label/_/f4a8c391-826c-47e8-96f4-03a7e9193f61",
-    _updatedAt: "2020-01-03T10:15:57.785966Z",
-    _updatedBy: "https://nexus.ocp.bbp.epfl.ch/v1/user_name"
-}
-```
-
 You can also find your Studios in the Resource List (for example, filter by type `Studio`, or Search by id) and view it in the Resource View.
 
 ### Updating a studio
