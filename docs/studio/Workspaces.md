@@ -41,7 +41,7 @@ Inside any studio view, click the `Add workspace` button.
 
 ![Empty Workspace Example](../assets/empty-workspace-example.png)
 
-Your Workspace is created, but it will need to have at lease one dashboard/view association for anything to show there.
+Your Workspace is created, but it will need to have at least one dashboard/view association for anything to show there.
 
 You can also find your Workspaces as raw `JSON` configurations in the Resource List (for example, filter by type `StudioWorkspace`, or Search by id) and view it in the Resource View.
 
