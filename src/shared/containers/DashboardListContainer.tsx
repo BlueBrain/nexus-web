@@ -118,6 +118,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
             label: editingDashboard.label,
             description: editingDashboard.description,
             dataQuery: editingDashboard.dataQuery,
+            plugins: editingDashboard.plugins,
           }}
           showEditModal={showEditModal}
           setShowEditModal={setShowEditModal}
@@ -162,6 +163,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
             }
             studioResourceId={studioResourceId}
             dataQuery={dashboardResources[selectedDashboardIndex].dataQuery}
+            plugins={dashboardResources[selectedDashboardIndex].plugins}
           />
         )}
       </TabList>

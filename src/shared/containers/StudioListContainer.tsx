@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
 
-import { RootState } from '../store/reducers';
 import StudioList from '../components/Studio/StudioList';
 import CreateStudioContainer from './CreateStudioContainer';
 
@@ -18,7 +16,6 @@ const StudioListContainer: React.FunctionComponent<{
 }> = ({ orgLabel, projectLabel }) => {
   const nexus = useNexusContext();
   const history = useHistory();
-  const basePath = useSelector((state: RootState) => state.config.basePath);
   const [
     { busy, error, resources, total, next },
     setResources,

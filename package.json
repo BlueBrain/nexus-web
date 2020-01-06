@@ -55,6 +55,7 @@
     "redux-thunk": "^2.3.0",
     "resize-observer-polyfill": "^1.5.1",
     "ts-debounce": "^1.0.0",
+    "ts-invariant": "^0.4.4",
     "use-async-effect": "^2.2.1"
   },
   "devDependencies": {
@@ -88,6 +89,7 @@
     "@types/storybook__react": "^4.0.1",
     "@types/webpack-env": "^1.13.9",
     "babel-loader": "^8.0.4",
+    "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^2.1.1",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.10.0",
