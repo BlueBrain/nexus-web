@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID, Resource } from '@bbp/nexus-sdk';
 import { notification, Modal, Button } from 'antd';
+import { useSelector } from 'react-redux';
 
 import DashboardConfigEditor, {
-  DashboardConfigEditorProps,
+  DashboardPayload,
 } from '../../components/DashboardEditor/DashboardConfigEditor';
 import STUDIO_CONTEXT from '../../components/Studio/StudioContext';
+import { RootState } from '../../store/reducers';
 
 export const DASHBOARD_TYPE = 'StudioDashboard';
 
@@ -25,9 +27,10 @@ const CreateDashboardContainer: React.FunctionComponent<{
   onSuccess,
 }) => {
   const [showCreateModal, setShowCreateModal] = React.useState(false);
-  const formRef = React.useRef<DashboardConfigEditorProps>(null);
   const nexus = useNexusContext();
   const [busy, setBusy] = React.useState(false);
+  const availablePlugins =
+    useSelector((state: RootState) => state.config.plugins) || [];
 
   const onSubmit = () => {
     setBusy(false);
@@ -35,66 +38,59 @@ const CreateDashboardContainer: React.FunctionComponent<{
     !!onSuccess && onSuccess();
   };
 
-  const handleSubmit = async () => {
-    if (formRef.current && formRef.current.form) {
-      formRef.current.form.validateFields();
-      const validationErrors = Object.values(
-        formRef.current.form.getFieldsError()
-      ).filter(Boolean);
-      // Invalid Form
-      if (validationErrors.length) {
-        return;
-      }
-      try {
-        const dashboardPayload = formRef.current.form.getFieldsValue() as {
-          description?: string;
-          label: string;
-          dataQuery: string;
-        };
-        setBusy(true);
+  const handleSubmit = async (dashboardPayload: DashboardPayload) => {
+    try {
+      setBusy(true);
 
-        const dashboard = await nexus.Resource.create(orgLabel, projectLabel, {
-          ...dashboardPayload,
-          '@context': STUDIO_CONTEXT['@id'],
-          '@type': DASHBOARD_TYPE,
-        });
+      const dashboard = await nexus.Resource.create(orgLabel, projectLabel, {
+        ...dashboardPayload,
+        '@context': STUDIO_CONTEXT['@id'],
+        '@type': DASHBOARD_TYPE,
+      });
 
-        // Add dashboard to workspace
-        const workspace = await nexus.Resource.get<Resource>(
+      // Add dashboard to workspace
+      const workspace = await nexus.Resource.get<Resource>(
+        orgLabel,
+        projectLabel,
+        workspaceId
+      );
+
+      const workspaceSource = await nexus.Resource.getSource<{
+        [key: string]: any;
+      }>(orgLabel, projectLabel, workspaceId);
+      if (workspace) {
+        await nexus.Resource.update(
           orgLabel,
           projectLabel,
-          workspaceId
+          workspaceId,
+          workspace._rev,
+          {
+            ...workspaceSource,
+            dashboards: [
+              ...workspaceSource.dashboards,
+              {
+                dashboard: dashboard['@id'],
+                view: viewId,
+              },
+            ],
+          }
         );
-        const workspaceSource = await nexus.Resource.getSource<{
-          [key: string]: any;
-        }>(orgLabel, projectLabel, workspaceId);
-        if (workspace) {
-          await nexus.Resource.update(
-            orgLabel,
-            projectLabel,
-            workspaceId,
-            workspace._rev,
-            {
-              ...workspaceSource,
-              dashboards: [
-                ...workspaceSource.dashboards,
-                {
-                  dashboard: dashboard['@id'],
-                  view: viewId,
-                },
-              ],
-            }
-          );
-        }
-        onSubmit();
-      } catch (error) {
-        notification.error({
-          message: `Could not create dashboard`,
-          description: error.reason || error.message,
-        });
-      } finally {
-        onSubmit();
       }
+
+      notification.success({
+        message: `Dashboard ${dashboardPayload.label} was created successfully`,
+        duration: 5,
+      });
+
+      onSubmit();
+    } catch (error) {
+      notification.error({
+        message: `Could not create dashboard`,
+        description: error.reason || error.message,
+      });
+    } finally {
+      onSubmit();
+      setBusy(false);
     }
   };
 
@@ -107,14 +103,13 @@ const CreateDashboardContainer: React.FunctionComponent<{
         title="Create Dashboard"
         visible={showCreateModal}
         onCancel={() => setShowCreateModal(false)}
-        onOk={() => handleSubmit()}
-        okText={busy ? 'Saving' : 'Save'}
         style={{ minWidth: '75%' }}
         confirmLoading={busy}
+        footer={null}
         destroyOnClose={true}
       >
         <DashboardConfigEditor
-          wrappedComponentRef={formRef}
+          availablePlugins={availablePlugins}
           onSubmit={handleSubmit}
           linkToSparqlQueryEditor={(dataQuery: string) => {
             return (
