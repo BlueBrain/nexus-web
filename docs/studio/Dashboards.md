@@ -10,7 +10,7 @@ An example `Dashbaord` resource looks like this:
 {
   "@context": "https://bluebrainnexus.io/studio/context",
   "@type": "StudioDashboard",
-  "dataQuery": "# This is a simple example query\n# You can directly edit this\nprefix nxv: <https://bluebrain.github.io/nexus/vocabulary/>\nprefix s: <http://schema.org/>\nSELECT DISTINCT ?self ?familyName ?givenName\nWHERE {\n?s nxv:constrainedBy <https://neuroshapes.org/dash/person> ;\n  nxv:self ?self ;\n  s:familyName ?familyName ; \n  s:givenName ?givenName\n}\nLIMIT 20",
+  "dataQuery": "prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/>\nprefix s: <http://schema.org/>\nSELECT DISTINCT ?self ?familyName ?givenName\nWHERE {\n?s nxv:constrainedBy <https://neuroshapes.org/dash/person> ;\n  nxv:self ?self ;\n  s:familyName ?familyName ; \n  s:givenName ?givenName\n}\nLIMIT 20",
   "description": "A list of every scientist",
   "label": "Scientists",
   "plugins": ["nexus-plugin-example"]
@@ -27,7 +27,7 @@ There's also an experimantal `plugin` key in the configuration that can be used 
 
 ## Creating a dashboard?
 
-Inside any `Studio View` that has a `Workspace` and a `Workspace` selected, click the `Add Dashboard` button.
+Inside any `Studio View`, under a selected `Workspace`, click the `Add Dashboard` button.
 
 ![Add a workspace](../assets/add-dashboard-button.png)
 
@@ -53,7 +53,7 @@ You'll find the edit `Dashboard` button by hovering over the label of a dashboar
 
 Clicking that will lead you to a similar form as in the "Creating a dashboard?" section.
 
-After your forms have been edited, simple click save to update the changes.
+After your forms have been edited, simple click `Save` to update the changes.
 
 ## Removing a dashboard?
 
