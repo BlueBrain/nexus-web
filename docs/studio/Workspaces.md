@@ -5,6 +5,8 @@
 A workspace is a collection of `Dashboards` paired with a `View`. You can have any number of `Dashboard`-`View` pairings organized into a `Workspace`.
 You can label a `Workspace` and add a description to help users understand what kind of content they can expect to find there.
 
+> [Dashboard documentation](./Workspaces.md).
+
 ```json
 {
   "@context": "https://bluebrainnexus.io/studio/context",

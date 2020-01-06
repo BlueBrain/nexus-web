@@ -68,7 +68,7 @@ docker build . --tag=nexus-web
 
 ### Nexus Plugins
 
-In development mode, you can copy/paste your plugins in the `/plugins` folder. If you want to develop your own plugins, have a look a the [plugin development documentation](./docs/pluginDevelopment.md).
+In development mode, you can copy/paste your plugins in the `/plugins` folder. If you want to develop your own plugins, have a look at the [plugin development documentation](./docs/pluginDevelopment.md).
 
 ## Getting involved
 
