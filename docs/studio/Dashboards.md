@@ -35,15 +35,16 @@ Inside any `Studio View`, under a selected `Workspace`, click the `Add Dashboard
 
 - `Label`: the name of your new `Dashboard` (required field)
 - `Description`: an optional description for your `Dashboard`
+- `Plugins`: an optional list of plugins to add to the details page of a query result
 - `Sparql Query`: a valid [SPARQL](https://www.w3.org/TR/rdf-sparql-query/)query that conforms to the `dataQuery` field in the configuration.
 
-![Create a workspace form](../assets/edit-dashboard-form.png)
+![Create a workspace form](../assets/edit-dashboard-form-with-plugins.png)
 
 > You can click on the "view query in Sparql Editor" to open the `Sparql Editor` in a new tab to work on your query while querying it against a `Sparql View` in your project, so you can make sure it works and provides the fields you want. Then, you can copy and past that back in the form.
 
 - Click `Save` and the `Dashboard` and its query results should show up!
 
-You can now also add this `Dashboard` to other `Workspaces` accross the project.
+You can now also add this `Dashboard` to other `Workspaces` across the project.
 
 ## Updating a dashboard?
 
