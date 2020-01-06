@@ -10,6 +10,7 @@ import {
 import ResourceCardComponent from '../components/ResourceCard';
 import { useHistory } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
+import { NexusPlugin } from './NexusPlugin';
 
 export type Binding = {
   [key: string]: {
@@ -38,6 +39,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
   workspaceId: string;
   dashboardId: string;
   studioResourceId: string;
+  plugins?: string[];
 }> = ({
   orgLabel,
   projectLabel,
@@ -46,6 +48,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
   workspaceId,
   dashboardId,
   studioResourceId,
+  plugins = [],
 }) => {
   const history = useHistory();
   const [selectedResource, setSelectedResource] = React.useState<Resource>();
@@ -190,6 +193,15 @@ const DashboardResultsContainer: React.FunctionComponent<{
             Back{' '}
           </Button>
           <ResourceCardComponent resource={selectedResource} />
+          {plugins.map(pluginName => (
+            <div style={{ marginTop: 10 }}>
+              <NexusPlugin
+                url={`/public/plugins/${pluginName}/index.js`}
+                nexusClient={nexus}
+                resource={selectedResource}
+              />
+            </div>
+          ))}
         </div>
       ) : (
         <ResultsTable
