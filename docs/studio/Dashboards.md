@@ -25,6 +25,8 @@ The `Dashboard`, once configured, will present the results of your sparql query 
 
 There's also an experimantal `plugin` key in the configuration that can be used to load experimental nexus plugins. These plugins will be loaded into the `Details` page of a resource.
 
+> [plugin development documentation](./docs/pluginDevelopment.md).
+
 ## Creating a dashboard?
 
 Inside any `Studio View`, under a selected `Workspace`, click the `Add Dashboard` button.
