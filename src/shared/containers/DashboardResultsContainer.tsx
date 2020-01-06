@@ -57,6 +57,10 @@ const DashboardResultsContainer: React.FunctionComponent<{
   const [headerProperties, setHeaderProperties] = React.useState<any[]>();
   const nexus = useNexusContext();
   const selectResource = (selfUrl: string, setHistory = true) => {
+    if (error) {
+      setError(undefined);
+    }
+
     nexus
       .httpGet({ path: selfUrl })
       .then(res => {
@@ -99,6 +103,10 @@ const DashboardResultsContainer: React.FunctionComponent<{
   };
 
   React.useEffect(() => {
+    if (error) {
+      setError(undefined);
+    }
+
     nexus.View.sparqlQuery(
       orgLabel,
       projectLabel,
