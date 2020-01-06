@@ -135,6 +135,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
           ],
         })(
           <Transfer
+            listStyle={{ width: '350px' }}
             dataSource={formatPluginSource()}
             targetKeys={selectedPlugins}
             render={item => item.title}
