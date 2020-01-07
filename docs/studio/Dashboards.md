@@ -48,6 +48,47 @@ Inside any `Studio View`, under a selected `Workspace`, click the `Add Dashboard
 
 You can now also add this `Dashboard` to other `Workspaces` across the project.
 
+### Sparql Query Requirements
+
+#### The `?self` variable
+
+In order for the UI to function as intended, you must provide a unique ID variable inside your Sparql statement, labeled as `?self`. This will be used to generate the table and fetch resources when navigating to the details page of a row item. Ideally, this `?self` variable should correspond with the `_self` of a target `Resource` of which to center your query against as a subject. The `?self` variable will never be shown in the table, so you need some other variable in addition to view the results properly, or you'll end up with a table without any rows.
+
+#### Making queries visible
+
+In addition to the `?self` variable, you need to have at minimum one other one defined, which will be displayed on each row. The variable name will label the header of the table column, capitalized.
+
+#### The minimum functioning query with the `?self` variable defined:
+
+![Minimum Query](../assets/minimum-query-example.png)
+
+```sparql
+# This is the minimum functioning query for Studio
+prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/>
+SELECT DISTINCT ?subject ?self
+WHERE {
+?subject nxv:self ?self ;
+}
+LIMIT 20
+```
+
+### Example Sparql Queries
+
+Here's an example of fetching unique Persons using `https://schema.org` properties.
+
+```sparql
+prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/>
+prefix s: <http://schema.org/>
+SELECT DISTINCT ?self ?familyName ?givenName
+WHERE {
+?s nxv:constrainedBy <https://neuroshapes.org/dash/person> ;
+  nxv:self ?self ;
+  s:familyName ?familyName ;
+  s:givenName ?givenName
+}
+LIMIT 20
+```
+
 ## Updating a dashboard?
 
 You'll find the edit `Dashboard` button by hovering over the label of a dashboard
