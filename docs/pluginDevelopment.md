@@ -1,11 +1,11 @@
 # Nexus Plugins development
 
-Your plugin need to export a default function with the following signature:
+Your plugin must export a default function with the following signature:
 
 ```typescript
 export default ({ ref: HTMLElement, nexusClient: NexusClient, resource: Resource<T> }) => {
   return () => {
-    // optional callback   when your plugin is unmounted from the page
+    // optional callback when your plugin is unmounted from the page
   };
 };
 ```
