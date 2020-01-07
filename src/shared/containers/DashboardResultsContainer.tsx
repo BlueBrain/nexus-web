@@ -192,16 +192,18 @@ const DashboardResultsContainer: React.FunctionComponent<{
             {' '}
             Back{' '}
           </Button>
-          <ResourceCardComponent resource={selectedResource} />
-          {plugins.map(pluginName => (
-            <div style={{ marginTop: 10 }}>
-              <NexusPlugin
-                url={`/public/plugins/${pluginName}/index.js`}
-                nexusClient={nexus}
-                resource={selectedResource}
-              />
-            </div>
-          ))}
+          <ResourceCardComponent
+            resource={selectedResource}
+            preview={plugins.map(pluginName => (
+              <div style={{ margin: '1em' }}>
+                <NexusPlugin
+                  url={`/public/plugins/${pluginName}/index.js`}
+                  nexusClient={nexus}
+                  resource={selectedResource}
+                />
+              </div>
+            ))}
+          />
         </div>
       ) : (
         <ResultsTable
