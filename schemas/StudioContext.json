@@ -1,0 +1,39 @@
+{
+  "@context": [
+    {
+      "@base": "https://bluebrainnexus.io/studio/",
+      "@vocab": "https://bluebrainnexus.io/studio/vocabulary/",
+      "dashboard": {
+        "@id": "https://bluebrainnexus.io/studio/vocabulary/dashboard",
+        "@type": "@id"
+      },
+      "dashboards": {
+        "@container": "@set"
+      },
+      "description": {
+        "@id": "http://schema.org/description"
+      },
+      "label": {
+        "@id": "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "name": {
+        "@id": "http://schema.org/name"
+      },
+      "plugins": {
+        "@id": "https://bluebrainnexus.io/studio/vocabulary/plugins",
+        "@container": "@set"
+      },
+      "view": {
+        "@id": "https://bluebrainnexus.io/studio/vocabulary/view",
+        "@type": "@id"
+      },
+      "workspaces": {
+        "@id": "https://bluebrainnexus.io/studio/vocabulary/workspaces",
+        "@type": "@id",
+        "@container": "@set"
+      }
+    },
+    "https://bluebrain.github.io/nexus/contexts/resource.json"
+  ],
+  "@id": "StudioContext"
+}

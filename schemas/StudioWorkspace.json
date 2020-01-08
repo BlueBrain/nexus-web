@@ -1,0 +1,35 @@
+{
+  "@context": [
+    "https://incf.github.io/neuroshapes/contexts/schema.json",
+    {
+      "this": "https://bluebrainnexus.io/studio/shapes/",
+      "studio": "https://bluebrainnexus.io/studio/vocabulary/",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "schema": "http://schema.org/",
+      "nxv": "https://bluebrainnexus.io/studio/vocabs/"
+    }
+  ],
+  "@type": "nxv:Schema",
+  "shapes": [
+    {
+      "@id": "this:StudioWorkspaceShape",
+      "@type": "sh:NodeShape",
+      "targetClass": "studio:StudioWorkspace",
+      "property": [
+        {
+          "path": "rdfs:label",
+          "name": "label",
+          "message": "should contain a label",
+          "datatype": "xsd:string",
+          "minCount": 1
+        },
+        {
+          "path": "schema:description",
+          "name": "description",
+          "datatype": "xsd:string",
+          "minCount": 0
+        }
+      ]
+    }
+  ]
+}
