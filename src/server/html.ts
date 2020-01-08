@@ -29,8 +29,8 @@ const html = ({
       <script type="systemjs-importmap">
       {
         "imports": {
-          "react": "https://unpkg.com/react@16.12.0/umd/react.development.js",
-          "react-dom": "https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+          "react": "https://unpkg.com/react@16.12.0/umd/react.production.min.js",
+          "react-dom": "https://unpkg.com/react-dom@16.12.0/umd/react-dom.production.min.js"
         }
       }
     </script>
@@ -47,7 +47,7 @@ const html = ({
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', '${process.env.GTAG}');
+        gtag('config', '${process.env.GTAG}', { 'anonymize_ip': true });
       </script>`
           : ''
       }
