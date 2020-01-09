@@ -142,8 +142,20 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
             rev: Number(rev),
           })) as Resource)
         : latestResource;
+      const expandedResource = await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        resourceId,
+        { format: 'expanded' }
+      );
       setResource({
-        resource: newResource,
+        // Note: we must fetch the proper, expanded @id. The @id that comes from a normal request or from the URL
+        // could be the contracted one, if the resource was created with a context that has a @base property.
+        // this would make the contracted @id unresolvable. See issue: https://github.com/BlueBrain/nexus/issues/966
+        resource: {
+          ...newResource,
+          '@id': expandedResource['@id'],
+        },
         error: null,
         busy: false,
       });
