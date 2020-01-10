@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Progress, Tooltip } from 'antd';
 import * as moment from 'moment';
-import { Statistics, NexusClient } from '@bbp/nexus-sdk';
-import { useNexus } from '@bbp/react-nexus';
+import { Statistics, PaginatedList } from '@bbp/nexus-sdk';
+import { useNexusContext } from '@bbp/react-nexus';
 
 type ViewStatisticsProgressProps = {
   processedEvents: number;
@@ -37,23 +37,53 @@ export type ViewStatisticsContainerProps = {
 export const ViewStatisticsContainer: React.FunctionComponent<
   ViewStatisticsContainerProps
 > = props => {
-  const state = useNexus<Statistics>(
-    (nexus: NexusClient) =>
-      nexus.View.pollStatistics(
-        props.orgLabel,
-        props.projectLabel,
-        props.resourceId,
-        { pollIntervalMs: 3000 }
-      ),
-    [props.resourceId]
-  );
+  const nexus = useNexusContext();
+  const [{ loading, error, data }, setState] = React.useState<{
+    error: Error | null;
+    data: Statistics | null;
+    loading: boolean;
+  }>({
+    error: null,
+    data: null,
+    loading: false,
+  });
 
-  if (!state.loading && !state.error) {
+  React.useEffect(() => {
+    setState({
+      loading: true,
+      error: null,
+      data: null,
+    });
+    nexus.View.pollStatistics(
+      props.orgLabel,
+      props.projectLabel,
+      props.resourceId, // + 'banana',
+      { pollIntervalMs: 3000 }
+    ).subscribe(
+      ({ _results }) => {
+        setState({
+          data: _results[0],
+          loading: false,
+          error: null,
+        });
+      },
+      error => {
+        setState({
+          error,
+          data: null,
+          loading: false,
+        });
+        console.log('YOO ERROR');
+      }
+    );
+  }, [props.resourceId]);
+
+  if (!loading && !error && data) {
     return (
       <ViewStatisticsProgress
-        totalEvents={state.data.totalEvents}
-        processedEvents={state.data.processedEvents}
-        lastIndexed={state.data.lastProcessedEventDateTime}
+        totalEvents={data.totalEvents}
+        processedEvents={data.processedEvents}
+        lastIndexed={data.lastProcessedEventDateTime}
       />
     );
   }

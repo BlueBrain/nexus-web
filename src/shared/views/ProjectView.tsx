@@ -45,7 +45,8 @@ const ProjectView: React.FunctionComponent<{
       projectLabel,
       DEFAULT_ELASTIC_SEARCH_VIEW_ID,
       { pollIntervalMs: 300 }
-    ).subscribe(data => {
+    ).subscribe(({ _results }) => {
+      const data = _results[0];
       if (!totalEvents) {
         totalEvents = data.totalEvents;
       } else if (data.totalEvents !== totalEvents) {
