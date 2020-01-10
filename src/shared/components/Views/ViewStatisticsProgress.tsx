@@ -57,7 +57,7 @@ export const ViewStatisticsContainer: React.FunctionComponent<
     nexus.View.pollStatistics(
       props.orgLabel,
       props.projectLabel,
-      props.resourceId, // + 'banana',
+      props.resourceId,
       { pollIntervalMs: 3000 }
     ).subscribe(
       ({ _results }) => {
@@ -73,7 +73,6 @@ export const ViewStatisticsContainer: React.FunctionComponent<
           data: null,
           loading: false,
         });
-        console.log('YOO ERROR');
       }
     );
   }, [props.resourceId]);
