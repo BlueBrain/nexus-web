@@ -45,8 +45,7 @@ const ResourceLinkItem: React.FunctionComponent<{
             <TypesIconList type={link['@type']} />
           ) : (
             <TypesIconList type={[link['@type']]} />
-          ))
-        }
+          ))}
       </div>
     </div>
   );
