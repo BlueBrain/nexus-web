@@ -76,7 +76,6 @@ const ResourceListComponent: React.FunctionComponent<{
 }) => {
   const [{ ref: wrapperHeightRef }, { height: wrapperHeight }] = useMeasure();
   const { name } = list;
-  const [sortOptionsToggleOn, toggleSortOptions] = React.useState(false);
   const [sortOption, setSortOption] = React.useState('-_createdAt');
 
   const handleUpdate = (value: string) => {
@@ -109,12 +108,9 @@ const ResourceListComponent: React.FunctionComponent<{
     onRefresh();
   };
 
-  const onClickSort = () => {
-    toggleSortOptions(!sortOptionsToggleOn);
-  };
-
   const onChangeSort = (option: any) => {
     const { key } = option;
+
     setSortOption(key);
     onSortBy(key);
   };
@@ -149,9 +145,9 @@ const ResourceListComponent: React.FunctionComponent<{
           <Icon type="close" className="close-button" onClick={handleDelete} />
         </h3>
         <div className="controls -squished">
-          <Dropdown overlay={sortOptions}>
+          <Dropdown overlay={sortOptions} trigger={['hover', 'click']}>
             <Tooltip title="Sort resources">
-              <Button icon="sort-ascending" onClick={onClickSort} />
+              <Button icon="sort-ascending" />
             </Tooltip>
           </Dropdown>
           <Tooltip title="Clear filters">
