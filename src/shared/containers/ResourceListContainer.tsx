@@ -179,7 +179,6 @@ const ResourceListContainer: React.FunctionComponent<{
       ...list,
       query: {
         ...list.query,
-        // @ts-ignore
         sort: option,
       },
     });
