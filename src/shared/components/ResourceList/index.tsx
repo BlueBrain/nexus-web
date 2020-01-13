@@ -121,7 +121,12 @@ const ResourceListComponent: React.FunctionComponent<{
         </h3>
         <div className="controls -squished">
           <Tooltip title="Sort by date">
-            <Button icon="arrow-down" onClick={onSort} />
+            <Button
+              icon={
+                list.query.sort === '-_createdAt' ? 'arrow-down' : 'arrow-up'
+              }
+              onClick={onSort}
+            />
           </Tooltip>
           <Tooltip title="Clear filters">
             <Button icon="close-circle" onClick={handleClear} />
