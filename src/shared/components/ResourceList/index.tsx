@@ -41,6 +41,7 @@ export type ResourceBoardList = {
 };
 
 const RESOURCE_CARD_MOUSE_ENTER_DELAY = 0.5;
+const DEFAULT_SORT_OPTION = '-_createdAt';
 
 const ResourceListComponent: React.FunctionComponent<{
   busy: boolean;
@@ -76,7 +77,7 @@ const ResourceListComponent: React.FunctionComponent<{
 }) => {
   const [{ ref: wrapperHeightRef }, { height: wrapperHeight }] = useMeasure();
   const { name } = list;
-  const [sortOption, setSortOption] = React.useState('-_createdAt');
+  const [sortOption, setSortOption] = React.useState(DEFAULT_SORT_OPTION);
 
   const handleUpdate = (value: string) => {
     onUpdate({ ...list, name: value });
