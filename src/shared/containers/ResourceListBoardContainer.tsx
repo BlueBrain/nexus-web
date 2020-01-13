@@ -13,6 +13,7 @@ export const DEFAULT_LIST: ResourceBoardList = {
   query: {
     size: 100,
     deprecated: false,
+    sort: '-_createdAt',
   },
 };
 
