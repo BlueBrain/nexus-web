@@ -132,7 +132,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
           </div>
         ) : null}
       </TabList>
-      {showEdit && workspaceToEdit ? (
+      {showEdit && !!workspaceToEdit ? (
         <WorkspaceForm
           orgLabel={orgLabel}
           projectLabel={projectLabel}
