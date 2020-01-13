@@ -1,5 +1,14 @@
 import * as React from 'react';
-import { Icon, Tooltip, Button, Spin, Switch, Empty, Popover } from 'antd';
+import {
+  Icon,
+  Tooltip,
+  Button,
+  Spin,
+  Switch,
+  Empty,
+  Popover,
+  Radio,
+} from 'antd';
 import { ResourceList, Resource } from '@bbp/nexus-sdk';
 
 import RenameableItem from '../Renameable';
@@ -44,7 +53,7 @@ const ResourceListComponent: React.FunctionComponent<{
   onUpdate(list: ResourceBoardList): void;
   onLoadMore({ searchValue }: { searchValue: string }): void;
   onRefresh(): void;
-  onSort(): void;
+  onSortBy(option: string): void;
   makeResourceUri(resourceId: string): string;
   goToResource(resourceId: string): void;
 }> = ({
@@ -58,7 +67,7 @@ const ResourceListComponent: React.FunctionComponent<{
   onDelete,
   onClone,
   onRefresh,
-  onSort,
+  onSortBy,
   makeResourceUri,
   goToResource,
   children,
@@ -66,6 +75,8 @@ const ResourceListComponent: React.FunctionComponent<{
 }) => {
   const [{ ref: wrapperHeightRef }, { height: wrapperHeight }] = useMeasure();
   const { name } = list;
+  const [sortOptionsToggleOn, toggleSortOptions] = React.useState(false);
+  const [sortOption, setSortOption] = React.useState('-_createdAt');
 
   const handleUpdate = (value: string) => {
     onUpdate({ ...list, name: value });
@@ -97,6 +108,17 @@ const ResourceListComponent: React.FunctionComponent<{
     onRefresh();
   };
 
+  const onClickSort = () => {
+    toggleSortOptions(!sortOptionsToggleOn);
+  };
+
+  const onChangeSort = (event: any) => {
+    const { value } = event.target;
+
+    setSortOption(value);
+    onSortBy(value);
+  };
+
   const hasMore = resources.length < Number(total || 0);
 
   return (
@@ -121,12 +143,7 @@ const ResourceListComponent: React.FunctionComponent<{
         </h3>
         <div className="controls -squished">
           <Tooltip title="Sort by date">
-            <Button
-              icon={
-                list.query.sort === '-_createdAt' ? 'arrow-down' : 'arrow-up'
-              }
-              onClick={onSort}
-            />
+            <Button icon="sort-ascending" onClick={onClickSort} />
           </Tooltip>
           <Tooltip title="Clear filters">
             <Button icon="close-circle" onClick={handleClear} />
@@ -152,6 +169,18 @@ const ResourceListComponent: React.FunctionComponent<{
             />
           </Tooltip>
         </div>
+        {sortOptionsToggleOn && (
+          <div className="sort-options">
+            <Radio.Group
+              onChange={event => onChangeSort(event)}
+              value={sortOption}
+            >
+              <Radio value="-_createdAt">Newest</Radio>
+              <Radio value="_createdAt">Oldest</Radio>
+              <Radio value="-@id">By id</Radio>
+            </Radio.Group>
+          </div>
+        )}
         <div className="controls">{children}</div>
         <Spin spinning={busy}>
           {!!error && <Empty description={error.message} />}

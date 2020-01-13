@@ -174,13 +174,13 @@ const ResourceListContainer: React.FunctionComponent<{
     });
   };
 
-  const sortList = () => {
+  const sortList = (option: string) => {
     setList({
       ...list,
       query: {
         ...list.query,
         // @ts-ignore
-        sort: list.query.sort === '-_createdAt' ? '_createdAt' : '-_createdAt',
+        sort: option,
       },
     });
   };
@@ -197,7 +197,7 @@ const ResourceListContainer: React.FunctionComponent<{
       onDelete={handleDelete}
       onClone={handleClone}
       onRefresh={handleRefreshList}
-      onSort={sortList}
+      onSortBy={sortList}
       makeResourceUri={makeResourceUri}
       goToResource={goToResource}
       schemaLinkContainer={SchemaLinkContainer}
