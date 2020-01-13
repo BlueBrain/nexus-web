@@ -174,6 +174,17 @@ const ResourceListContainer: React.FunctionComponent<{
     });
   };
 
+  const sortList = () => {
+    setList({
+      ...list,
+      query: {
+        ...list.query,
+        // @ts-ignore
+        sort: '_createdAt',
+      },
+    });
+  };
+
   return (
     <ResourceListComponent
       busy={busy}
@@ -186,6 +197,7 @@ const ResourceListContainer: React.FunctionComponent<{
       onDelete={handleDelete}
       onClone={handleClone}
       onRefresh={handleRefreshList}
+      onSort={sortList}
       makeResourceUri={makeResourceUri}
       goToResource={goToResource}
       schemaLinkContainer={SchemaLinkContainer}

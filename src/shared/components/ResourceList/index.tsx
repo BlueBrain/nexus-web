@@ -26,6 +26,7 @@ export type ResourceBoardList = {
     updatedBy?: string;
     schema?: string;
     q?: string;
+    sort?: string | string[];
   };
 };
 
@@ -43,6 +44,7 @@ const ResourceListComponent: React.FunctionComponent<{
   onUpdate(list: ResourceBoardList): void;
   onLoadMore({ searchValue }: { searchValue: string }): void;
   onRefresh(): void;
+  onSort(): void;
   makeResourceUri(resourceId: string): string;
   goToResource(resourceId: string): void;
 }> = ({
@@ -56,6 +58,7 @@ const ResourceListComponent: React.FunctionComponent<{
   onDelete,
   onClone,
   onRefresh,
+  onSort,
   makeResourceUri,
   goToResource,
   children,
@@ -117,6 +120,9 @@ const ResourceListComponent: React.FunctionComponent<{
           <Icon type="close" className="close-button" onClick={handleDelete} />
         </h3>
         <div className="controls -squished">
+          <Tooltip title="Sort by date">
+            <Button icon="arrow-down" onClick={onSort} />
+          </Tooltip>
           <Tooltip title="Clear filters">
             <Button icon="close-circle" onClick={handleClear} />
           </Tooltip>
