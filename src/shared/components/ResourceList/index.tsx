@@ -7,7 +7,8 @@ import {
   Switch,
   Empty,
   Popover,
-  Radio,
+  Menu,
+  Dropdown,
 } from 'antd';
 import { ResourceList, Resource } from '@bbp/nexus-sdk';
 
@@ -112,14 +113,20 @@ const ResourceListComponent: React.FunctionComponent<{
     toggleSortOptions(!sortOptionsToggleOn);
   };
 
-  const onChangeSort = (event: any) => {
-    const { value } = event.target;
-
-    setSortOption(value);
-    onSortBy(value);
+  const onChangeSort = (option: any) => {
+    const { key } = option;
+    setSortOption(key);
+    onSortBy(key);
   };
 
   const hasMore = resources.length < Number(total || 0);
+
+  const sortOptions = (
+    <Menu onClick={onChangeSort} selectedKeys={[sortOption]}>
+      <Menu.Item key="-_createdAt">Newest</Menu.Item>
+      <Menu.Item key="_createdAt">Oldest</Menu.Item>
+    </Menu>
+  );
 
   return (
     <div className="resource-list-height-tester" ref={wrapperHeightRef}>
@@ -142,9 +149,11 @@ const ResourceListComponent: React.FunctionComponent<{
           <Icon type="close" className="close-button" onClick={handleDelete} />
         </h3>
         <div className="controls -squished">
-          <Tooltip title="Sort by date">
-            <Button icon="sort-ascending" onClick={onClickSort} />
-          </Tooltip>
+          <Dropdown overlay={sortOptions}>
+            <Tooltip title="Sort resources">
+              <Button icon="sort-ascending" onClick={onClickSort} />
+            </Tooltip>
+          </Dropdown>
           <Tooltip title="Clear filters">
             <Button icon="close-circle" onClick={handleClear} />
           </Tooltip>
@@ -169,18 +178,6 @@ const ResourceListComponent: React.FunctionComponent<{
             />
           </Tooltip>
         </div>
-        {sortOptionsToggleOn && (
-          <div className="sort-options">
-            <Radio.Group
-              onChange={event => onChangeSort(event)}
-              value={sortOption}
-            >
-              <Radio value="-_createdAt">Newest</Radio>
-              <Radio value="_createdAt">Oldest</Radio>
-              <Radio value="-@id">By id</Radio>
-            </Radio.Group>
-          </div>
-        )}
         <div className="controls">{children}</div>
         <Spin spinning={busy}>
           {!!error && <Empty description={error.message} />}
