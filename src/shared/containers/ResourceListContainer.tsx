@@ -180,7 +180,7 @@ const ResourceListContainer: React.FunctionComponent<{
       query: {
         ...list.query,
         // @ts-ignore
-        sort: list.query.sort == '-_createdAt' ? '_createdAt' : '-_createdAt',
+        sort: list.query.sort === '-_createdAt' ? '_createdAt' : '-_createdAt',
       },
     });
   };
