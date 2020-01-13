@@ -851,7 +851,7 @@
   dependencies:
     rxjs "^6.5.2"
 
-"@bbp/nexus-sdk@^1.2.0":
+"@bbp/nexus-sdk@1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@bbp/nexus-sdk/-/nexus-sdk-1.2.1.tgz#e3e490afb4828e32f98e95b9c21231bcafc6f434"
   integrity sha512-L/edn24RFI4/O+iswo0aTfA6z22GjU2/C+kDegIbZ0WL7dUtKbfhGa++4WK/mE1eUX04Fie7pOJzBIqwd/tKuQ==
@@ -859,7 +859,7 @@
     "@bbp/nexus-link" "^1.2.1"
     query-string "^6.9.0"
 
-"@bbp/react-nexus@^1.2.0":
+"@bbp/react-nexus@1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@bbp/react-nexus/-/react-nexus-1.2.1.tgz#0eac701bf4ba0a04d960918f8000ac793f4dfe94"
   integrity sha512-jTqfddeRLc7JDK40ozadGGv8JMc8zi38f8uy/wmUsltAcaoC/DawB/f56x9RUMiVCxlTZgHoiPJgMo9nUFtrjQ==
@@ -3922,6 +3922,7 @@ decamelize@^1.2.0:
 decode-uri-component@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.2.0.tgz#eb3913333458775cb84cd1a1fae062106bb87545"
+  integrity sha1-6zkTMzRYd1y4TNGh+uBiEGu4dUU=
 
 dedent@^0.7.0:
   version "0.7.0"
@@ -9947,6 +9948,7 @@ spdx-license-ids@^3.0.0:
 split-on-first@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/split-on-first/-/split-on-first-1.1.0.tgz#f610afeee3b12bce1d0c30425e76398b78249a5f"
+  integrity sha512-43ZssAJaMusuKWL8sKUBQXHWOpq8d6CfN/u1p4gUzfJkM05C8rxTmYrkIPTXapZpORA6LkkzcUulJ8FqA7Uudw==
 
 split-string@^3.0.1, split-string@^3.0.2:
   version "3.1.0"
@@ -10047,6 +10049,7 @@ strict-uri-encode@^1.0.0:
 strict-uri-encode@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/strict-uri-encode/-/strict-uri-encode-2.0.0.tgz#b9c7330c7042862f6b142dc274bbcc5866ce3546"
+  integrity sha1-ucczDHBChi9rFC3CdLvMWGbONUY=
 
 string-argv@^0.3.0:
   version "0.3.1"
