@@ -8,9 +8,9 @@ import {
   SparqlViewQueryResponse,
 } from '@bbp/nexus-sdk';
 import ResourceCardComponent from '../components/ResourceCard';
-import { useHistory } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { NexusPlugin } from './NexusPlugin';
+import useQueryString from '../hooks/useQueryString';
 
 export type Binding = {
   [key: string]: {
@@ -36,8 +36,6 @@ const DashboardResultsContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
   viewId: string;
-  workspaceId: string;
-  dashboardId: string;
   studioResourceId: string;
   plugins?: string[];
 }> = ({
@@ -45,12 +43,11 @@ const DashboardResultsContainer: React.FunctionComponent<{
   projectLabel,
   dataQuery,
   viewId,
-  workspaceId,
-  dashboardId,
   studioResourceId,
   plugins = [],
 }) => {
-  const history = useHistory();
+  const [queryParams, setQueryString] = useQueryString();
+  const { resourceId } = queryParams;
   const [selectedResource, setSelectedResource] = React.useState<Resource>();
   const [error, setError] = React.useState<NexusSparqlError | Error>();
   const [items, setItems] = React.useState<any[]>();
@@ -75,27 +72,11 @@ const DashboardResultsContainer: React.FunctionComponent<{
       });
   };
 
-  const updateResourcePath = (res: Resource) => {
-    const path = history.location.pathname.split('/studioResource');
-    let newPath;
-    if (path[0].includes('/workspaces') && path[0].includes('/dashboards')) {
-      newPath = `${path[0]}/studioResource/${encodeURIComponent(res['@id'])}`;
-      history.push(newPath);
-    } else {
-      if (path[0].includes('/dashboards')) {
-        newPath = `${
-          path[0]
-        }/workspaces/${workspaceId}/dashboards/${encodeURIComponent(
-          dashboardId
-        )}/studioResource/${encodeURIComponent(res['@id'])}`;
-      } else {
-        newPath = `${path[0]}/dashboards/${encodeURIComponent(
-          dashboardId
-        )}/studioResource/${encodeURIComponent(res['@id'])}`;
-        history.push(newPath);
-      }
-    }
-    history.push(newPath);
+  const updateResourcePath = (resource: Resource) => {
+    setQueryString({
+      ...queryParams,
+      workspaceId: resource['@id'],
+    });
   };
 
   const unSelectResource = () => {

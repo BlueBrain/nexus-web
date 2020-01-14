@@ -3,7 +3,6 @@ import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { notification, Empty } from 'antd';
 
-import WorkspaceList from './WorkspaceListContainer';
 import EditStudio from '../components/Studio/EditStudio';
 import StudioHeader from '../components/Studio/StudioHeader';
 
@@ -11,9 +10,11 @@ type StudioContainerProps = {
   orgLabel: string;
   projectLabel: string;
   studioId: string;
-  workspaceId: string;
-  dashboardId: string;
-  studioResourceId: string;
+  workspaceListComponent(workspaceComponentProps: {
+    workspaceIds: string[];
+    reloadWorkspaces: VoidFunction;
+    studioResource: StudioResource;
+  }): React.ReactElement;
 };
 
 type StudioResource = Resource<{
@@ -26,9 +27,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
   orgLabel,
   projectLabel,
   studioId,
-  workspaceId,
-  dashboardId,
-  studioResourceId,
+  workspaceListComponent,
 }) => {
   const [
     studioResource,
@@ -87,7 +86,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
     }
   };
 
-  const realoadWorkspaces = () => {
+  const reloadWorkspaces = () => {
     fetchAndSetupStudio();
   };
 
@@ -101,16 +100,11 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
           >
             <EditStudio studio={studioResource} onSave={updateStudio} />
           </StudioHeader>
-          <WorkspaceList
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
-            workspaceIds={workspaceIds}
-            workspaceId={workspaceId}
-            dashboardId={dashboardId}
-            studioResourceId={studioResourceId}
-            studioResource={studioResource}
-            onListUpdate={realoadWorkspaces}
-          />
+          {workspaceListComponent({
+            workspaceIds,
+            reloadWorkspaces,
+            studioResource,
+          })}
         </>
       ) : (
         <Empty />
