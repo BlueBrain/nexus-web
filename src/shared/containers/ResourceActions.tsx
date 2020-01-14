@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-
+import ResourceDownloadButton from './ResourceDownloadContainer';
 import ResourceActions from '../components/ResourceActions';
 import { getResourceLabel, getOrgAndProjectFromResource } from '../utils';
 import { download } from '../utils/download';
@@ -102,7 +102,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
       name: 'downloadFile',
       predicate: toPromise(isFile),
       title: 'Download this file',
-      shortTitle: 'Download',
+      shortTitle: 'Download File',
       icon: 'download',
     },
   ];
@@ -172,7 +172,13 @@ const ResourceActionsContainer: React.FunctionComponent<{
       resource={resource}
       actions={actions}
       actionTypes={actionTypes}
-    />
+    >
+      <ResourceDownloadButton
+        orgLabel={orgLabel}
+        projectLabel={projectLabel}
+        resourceId={encodeURIComponent(resourceId)}
+      />
+    </ResourceActions>
   );
 };
 

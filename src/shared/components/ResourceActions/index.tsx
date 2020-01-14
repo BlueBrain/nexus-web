@@ -100,7 +100,12 @@ const ResourceActions: React.FunctionComponent<{
       });
   }, [resource._self, resource._rev]);
 
-  return <section className="resource-actions">{actionButtons}</section>;
+  return (
+    <section className="resource-actions">
+      {actionButtons}
+      {props.children}
+    </section>
+  );
 };
 
 export default ResourceActions;
