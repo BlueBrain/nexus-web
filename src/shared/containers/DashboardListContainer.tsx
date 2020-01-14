@@ -119,11 +119,21 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         ></DashboardEditorContainer>
       )}
       <TabList
-        items={dashboardResources.map((w, index) => ({
-          label: w.label,
-          description: w.description,
-          id: `${index}`, // must be a string
-        }))}
+        items={dashboardResources
+          .map((w, index) => ({
+            label: w.label,
+            description: w.description,
+            id: `${index}`, // must be a string
+          }))
+          .sort(({ label: a }, { label: b }) => {
+            if (a < b) {
+              return -1;
+            }
+            if (a > b) {
+              return 1;
+            }
+            return 0;
+          })}
         onSelected={(stringiedIndex: string) => {
           selectDashboard(Number(stringiedIndex));
         }}

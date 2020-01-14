@@ -88,11 +88,21 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
           setWorkSpaceToEdit(workspaceId);
           setShowEdit(true);
         }}
-        items={workspaces.map(w => ({
-          label: w.label,
-          description: w.description,
-          id: w['@id'],
-        }))}
+        items={workspaces
+          .map(w => ({
+            label: w.label,
+            description: w.description,
+            id: w['@id'],
+          }))
+          .sort(({ label: a }, { label: b }) => {
+            if (a < b) {
+              return -1;
+            }
+            if (a > b) {
+              return 1;
+            }
+            return 0;
+          })}
         onSelected={(id: string) => {
           selectWorkspace(id, workspaces);
         }}
