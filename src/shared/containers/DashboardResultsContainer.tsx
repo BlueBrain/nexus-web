@@ -47,41 +47,37 @@ const DashboardResultsContainer: React.FunctionComponent<{
   plugins = [],
 }) => {
   const [queryParams, setQueryString] = useQueryString();
-  const { resourceId } = queryParams;
   const [selectedResource, setSelectedResource] = React.useState<Resource>();
   const [error, setError] = React.useState<NexusSparqlError | Error>();
   const [items, setItems] = React.useState<any[]>();
   const [headerProperties, setHeaderProperties] = React.useState<any[]>();
   const nexus = useNexusContext();
 
-  const selectResource = (selfUrl: string, setHistory = true) => {
+  const selectResource = (selfUrl: string) => {
     if (error) {
       setError(undefined);
     }
-
     nexus
-      .httpGet({ path: selfUrl })
-      .then(res => {
-        setSelectedResource(res);
-        if (setHistory) {
-          updateResourcePath(res);
-        }
+      .httpGet({ path: selfUrl, headers: { Accept: 'application/json' } })
+      .then(resource => {
+        setSelectedResource(resource);
+        setQueryString({
+          ...queryParams,
+          resourceId: resource['@id'],
+        });
       })
-      .catch(e => {
-        setError(e);
+      .catch(error => {
+        setError(error);
         // TODO: show a meaningful error to the user.
       });
   };
 
-  const updateResourcePath = (resource: Resource) => {
-    setQueryString({
-      ...queryParams,
-      workspaceId: resource['@id'],
-    });
-  };
-
   const unSelectResource = () => {
     setSelectedResource(undefined);
+    setQueryString({
+      ...queryParams,
+      resourceId: undefined,
+    });
   };
 
   React.useEffect(() => {
@@ -140,7 +136,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
             return binding.self.value.includes(studioResourceId);
           });
         if (selectedResource === undefined && currentResource !== undefined) {
-          selectResource(currentResource.self.value, false);
+          selectResource(currentResource.self.value);
         }
         setItems(tempItems);
       })
