@@ -24,6 +24,9 @@ export type DashboardConfigEditorProps = {
   availablePlugins?: string[];
 };
 
+const dashboardSPARQLDocumentationURL =
+  'https://github.com/BlueBrain/nexus-web/blob/master/docs/studio/Dashboards.md#sparql-query-requirements';
+
 const DashboardConfigEditorComponent: React.FunctionComponent<
   DashboardConfigEditorProps
 > = ({
@@ -129,6 +132,10 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
               linkToSparqlQueryEditor(
                 dataQuery || DEFAULT_DASHBOARD_VIEW_QUERY
               )}
+            {' | '}
+            <a href={dashboardSPARQLDocumentationURL} target="_blank">
+              Read Docs
+            </a>
           </span>
         }
       >
@@ -157,12 +164,12 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
                   <Tooltip title="Which plugins should Studio load when viewing a resource.">
                     <Icon type="question-circle-o" />
                   </Tooltip>{' '}
-                  Experimental{' '}
+                  Experimental{' | '}
                   <a
                     target="_blank"
                     href="https://github.com/BlueBrain/nexus-web/blob/master/docs/studio/Dashboards.md#plugins-experimental"
                   >
-                    (Docs)
+                    Read Docs
                   </a>
                 </span>
               }
