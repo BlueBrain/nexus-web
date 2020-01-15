@@ -51,6 +51,11 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
     setQueryString({
       ...queryParams,
       workspaceId: id,
+      // Make sure to deselect dashboards
+      // Some workspaces may share a dashboard with the same @id
+      // remove keys using undefined
+      // https://www.npmjs.com/package/query-string#falsy-values
+      dashboardId: undefined,
     });
   };
 

@@ -53,6 +53,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
   const [items, setItems] = React.useState<any[]>();
   const [headerProperties, setHeaderProperties] = React.useState<any[]>();
   const nexus = useNexusContext();
+
   const selectResource = (selfUrl: string, setHistory = true) => {
     if (error) {
       setError(undefined);
@@ -144,6 +145,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
         setItems(tempItems);
       })
       .catch(e => {
+        console.error(e);
         setError(e);
       });
   }, [orgLabel, projectLabel, dataQuery, viewId]);
