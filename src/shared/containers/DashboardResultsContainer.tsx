@@ -141,7 +141,6 @@ const DashboardResultsContainer: React.FunctionComponent<{
         setItems(tempItems);
       })
       .catch(e => {
-        console.error(e);
         setError(e);
       });
   }, [orgLabel, projectLabel, dataQuery, viewId]);
