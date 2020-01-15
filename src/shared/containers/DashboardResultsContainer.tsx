@@ -8,9 +8,9 @@ import {
   SparqlViewQueryResponse,
 } from '@bbp/nexus-sdk';
 import ResourceCardComponent from '../components/ResourceCard';
-import { useHistory } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { NexusPlugin } from './NexusPlugin';
+import useQueryString from '../hooks/useQueryString';
 
 export type Binding = {
   [key: string]: {
@@ -36,8 +36,6 @@ const DashboardResultsContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
   viewId: string;
-  workspaceId: string;
-  dashboardId: string;
   studioResourceId: string;
   plugins?: string[];
 }> = ({
@@ -45,61 +43,41 @@ const DashboardResultsContainer: React.FunctionComponent<{
   projectLabel,
   dataQuery,
   viewId,
-  workspaceId,
-  dashboardId,
   studioResourceId,
   plugins = [],
 }) => {
-  const history = useHistory();
+  const [queryParams, setQueryString] = useQueryString();
   const [selectedResource, setSelectedResource] = React.useState<Resource>();
   const [error, setError] = React.useState<NexusSparqlError | Error>();
   const [items, setItems] = React.useState<any[]>();
   const [headerProperties, setHeaderProperties] = React.useState<any[]>();
   const nexus = useNexusContext();
-  const selectResource = (selfUrl: string, setHistory = true) => {
+
+  const selectResource = (selfUrl: string) => {
     if (error) {
       setError(undefined);
     }
-
     nexus
-      .httpGet({ path: selfUrl })
-      .then(res => {
-        setSelectedResource(res);
-        if (setHistory) {
-          updateResourcePath(res);
-        }
+      .httpGet({ path: selfUrl, headers: { Accept: 'application/json' } })
+      .then(resource => {
+        setSelectedResource(resource);
+        setQueryString({
+          ...queryParams,
+          resourceId: resource['@id'],
+        });
       })
-      .catch(e => {
-        setError(e);
+      .catch(error => {
+        setError(error);
         // TODO: show a meaningful error to the user.
       });
   };
 
-  const updateResourcePath = (res: Resource) => {
-    const path = history.location.pathname.split('/studioResource');
-    let newPath;
-    if (path[0].includes('/workspaces') && path[0].includes('/dashboards')) {
-      newPath = `${path[0]}/studioResource/${encodeURIComponent(res['@id'])}`;
-      history.push(newPath);
-    } else {
-      if (path[0].includes('/dashboards')) {
-        newPath = `${
-          path[0]
-        }/workspaces/${workspaceId}/dashboards/${encodeURIComponent(
-          dashboardId
-        )}/studioResource/${encodeURIComponent(res['@id'])}`;
-      } else {
-        newPath = `${path[0]}/dashboards/${encodeURIComponent(
-          dashboardId
-        )}/studioResource/${encodeURIComponent(res['@id'])}`;
-        history.push(newPath);
-      }
-    }
-    history.push(newPath);
-  };
-
   const unSelectResource = () => {
     setSelectedResource(undefined);
+    setQueryString({
+      ...queryParams,
+      resourceId: undefined,
+    });
   };
 
   React.useEffect(() => {
@@ -158,7 +136,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
             return binding.self.value.includes(studioResourceId);
           });
         if (selectedResource === undefined && currentResource !== undefined) {
-          selectResource(currentResource.self.value, false);
+          selectResource(currentResource.self.value);
         }
         setItems(tempItems);
       })
