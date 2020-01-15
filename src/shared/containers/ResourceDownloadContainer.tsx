@@ -10,9 +10,6 @@ const ResourceDownloadButton: React.FunctionComponent<{
   resourceId: string;
 }> = props => {
   const nexus = useNexusContext();
-  console.log(props.orgLabel);
-  console.log(props.projectLabel);
-  console.log(props.resourceId);
   const download = (
     orgLabel: string,
     projectLabel: string,
@@ -35,7 +32,6 @@ const ResourceDownloadButton: React.FunctionComponent<{
         refContainer.current.click();
       })
       .catch(error => {
-        console.log(error);
         notification.error({
           message: error.reason,
         });
