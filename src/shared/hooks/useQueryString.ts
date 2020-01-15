@@ -2,7 +2,7 @@ import * as queryString from 'query-string';
 import { useHistory } from 'react-router';
 
 export type QueryParams = {
-  [key: string]: any; // string | string[] | null | undefined;
+  [key: string]: any;
 };
 
 export default function useQueryString() {
