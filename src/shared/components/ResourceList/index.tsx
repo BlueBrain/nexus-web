@@ -1,5 +1,15 @@
 import * as React from 'react';
-import { Icon, Tooltip, Button, Spin, Switch, Empty, Popover } from 'antd';
+import {
+  Icon,
+  Tooltip,
+  Button,
+  Spin,
+  Switch,
+  Empty,
+  Popover,
+  Menu,
+  Dropdown,
+} from 'antd';
 import { ResourceList, Resource } from '@bbp/nexus-sdk';
 
 import RenameableItem from '../Renameable';
@@ -26,10 +36,12 @@ export type ResourceBoardList = {
     updatedBy?: string;
     schema?: string;
     q?: string;
+    sort?: string | string[];
   };
 };
 
 const RESOURCE_CARD_MOUSE_ENTER_DELAY = 0.5;
+const DEFAULT_SORT_OPTION = '-_createdAt';
 
 const ResourceListComponent: React.FunctionComponent<{
   busy: boolean;
@@ -43,6 +55,7 @@ const ResourceListComponent: React.FunctionComponent<{
   onUpdate(list: ResourceBoardList): void;
   onLoadMore({ searchValue }: { searchValue: string }): void;
   onRefresh(): void;
+  onSortBy(option: string): void;
   makeResourceUri(resourceId: string): string;
   goToResource(resourceId: string): void;
 }> = ({
@@ -56,6 +69,7 @@ const ResourceListComponent: React.FunctionComponent<{
   onDelete,
   onClone,
   onRefresh,
+  onSortBy,
   makeResourceUri,
   goToResource,
   children,
@@ -63,6 +77,7 @@ const ResourceListComponent: React.FunctionComponent<{
 }) => {
   const [{ ref: wrapperHeightRef }, { height: wrapperHeight }] = useMeasure();
   const { name } = list;
+  const [sortOption, setSortOption] = React.useState(DEFAULT_SORT_OPTION);
 
   const handleUpdate = (value: string) => {
     onUpdate({ ...list, name: value });
@@ -94,7 +109,21 @@ const ResourceListComponent: React.FunctionComponent<{
     onRefresh();
   };
 
+  const onChangeSort = (option: any) => {
+    const { key } = option;
+
+    setSortOption(key);
+    onSortBy(key);
+  };
+
   const hasMore = resources.length < Number(total || 0);
+
+  const sortOptions = (
+    <Menu onClick={onChangeSort} selectedKeys={[sortOption]}>
+      <Menu.Item key="-_createdAt">Newest</Menu.Item>
+      <Menu.Item key="_createdAt">Oldest</Menu.Item>
+    </Menu>
+  );
 
   return (
     <div className="resource-list-height-tester" ref={wrapperHeightRef}>
@@ -117,6 +146,11 @@ const ResourceListComponent: React.FunctionComponent<{
           <Icon type="close" className="close-button" onClick={handleDelete} />
         </h3>
         <div className="controls -squished">
+          <Dropdown overlay={sortOptions} trigger={['hover', 'click']}>
+            <Tooltip title="Sort resources">
+              <Button icon="sort-ascending" />
+            </Tooltip>
+          </Dropdown>
           <Tooltip title="Clear filters">
             <Button icon="close-circle" onClick={handleClear} />
           </Tooltip>

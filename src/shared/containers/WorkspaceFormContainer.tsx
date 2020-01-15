@@ -252,9 +252,10 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
       />
     );
   }
+
   return (
     <>
-      {workspace && description ? (
+      {workspace ? (
         <Modal
           title={`Edit ${workspace['label']}`}
           visible={true}
@@ -281,12 +282,12 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
               />
             </Form.Item>
             <Form.Item
-              label={'Name'}
+              label={'Label'}
               required
               extra={namePrompt ? 'Name cannot be empty' : ''}
             >
               <Input
-                defaultValue={label}
+                value={label}
                 onChange={e => {
                   if (e.target.value.trim().length > 0) {
                     setLabel(e.target.value);
@@ -299,7 +300,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
             </Form.Item>
             <Form.Item label={'Description'}>
               <Input
-                defaultValue={description}
+                value={description}
                 onChange={e => {
                   e.preventDefault();
                   setDescription(e.target.value);

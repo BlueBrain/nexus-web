@@ -276,7 +276,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                     style={{ display: 'flex', justifyContent: 'space-between' }}
                   >
                     <div style={{ width: '48%' }}>
-                      <h3>Incoming</h3>
+                      <h3 style={{ paddingLeft: '7px' }}>Incoming</h3>
                       <ResourceLinksContainer
                         resourceId={resource['@id']}
                         orgLabel={orgLabel}
@@ -287,7 +287,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
                       />
                     </div>
                     <div style={{ width: '48%' }}>
-                      <h3>Outgoing</h3>
+                      <h3 style={{ paddingLeft: '7px' }}>Outgoing</h3>
                       <ResourceLinksContainer
                         resourceId={resource['@id']}
                         orgLabel={orgLabel}
