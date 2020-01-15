@@ -33,6 +33,26 @@ exports[`Header component Should render correctly 1`] = `
   <div
     className="menu-block"
   >
+    <a
+      className="hide-tablet"
+      href="https://bluebrainnexus.io/docs"
+      target="_blank"
+    >
+      <Icon
+        type="book"
+      />
+       Documentation
+    </a>
+    <a
+      className="hide-tablet"
+      href=""
+      target="_blank"
+    >
+      <Icon
+        type="github"
+      />
+       Report Issue
+    </a>
     <Popover
       content={
         <InformationContent
