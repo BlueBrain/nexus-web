@@ -47,22 +47,20 @@ const CreateDashboardContainer: React.FunctionComponent<{
         '@context': STUDIO_CONTEXT['@id'],
         '@type': DASHBOARD_TYPE,
       });
-
       // Add dashboard to workspace
       const workspace = await nexus.Resource.get<Resource>(
         orgLabel,
         projectLabel,
-        workspaceId
+        encodeURIComponent(workspaceId)
       );
-
       const workspaceSource = await nexus.Resource.getSource<{
         [key: string]: any;
-      }>(orgLabel, projectLabel, workspaceId);
+      }>(orgLabel, projectLabel, encodeURIComponent(workspaceId));
       if (workspace) {
         await nexus.Resource.update(
           orgLabel,
           projectLabel,
-          workspaceId,
+          encodeURIComponent(workspaceId),
           workspace._rev,
           {
             ...workspaceSource,
@@ -76,7 +74,6 @@ const CreateDashboardContainer: React.FunctionComponent<{
           }
         );
       }
-
       notification.success({
         message: `Dashboard ${dashboardPayload.label} was created successfully`,
         duration: 5,

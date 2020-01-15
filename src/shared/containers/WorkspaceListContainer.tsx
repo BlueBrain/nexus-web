@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
+
 import TabList from '../components/Tabs/TabList';
-import DashboardList from './DashboardListContainer';
-import { useHistory } from 'react-router-dom';
 import AddWorkspaceContainer from './AddWorkspaceContainer';
 import WorkspaceForm from './WorkspaceFormContainer';
+import { Dashboard } from './DashboardListContainer';
+import useQueryString from '../hooks/useQueryString';
 
 type StudioResource = Resource<{
   label: string;
@@ -17,29 +18,29 @@ type WorkspaceListProps = {
   workspaceIds: string[];
   orgLabel: string;
   projectLabel: string;
-  workspaceId: string;
-  dashboardId: string;
-  studioResourceId: string;
   studioResource: StudioResource;
   onListUpdate?(): void;
+  dashboardListComponent(dashboardListComponentProps: {
+    dashboards: Dashboard[]; // TODO add Dashboard type
+    workspaceId: string;
+  }): React.ReactElement;
 };
 
 const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   workspaceIds = [],
   orgLabel,
   projectLabel,
-  workspaceId,
-  dashboardId,
-  studioResourceId,
   studioResource,
   onListUpdate,
+  dashboardListComponent,
 }) => {
+  const [queryParams, setQueryString] = useQueryString();
+  const { workspaceId } = queryParams;
   const [workspaces, setWorkspaces] = React.useState<Resource[]>([]);
   const [selectedWorkspace, setSelectedWorkspace] = React.useState<Resource>();
   const [showEdit, setShowEdit] = React.useState<boolean>(false);
   const [workspaceToEdit, setWorkSpaceToEdit] = React.useState<string>();
   const nexus = useNexusContext();
-  const history = useHistory();
   const dashboards =
     selectedWorkspace && selectedWorkspace['dashboards']
       ? selectedWorkspace['dashboards']
@@ -47,11 +48,15 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   const selectWorkspace = (id: string, values: Resource[]) => {
     const w = values.find(w => w['@id'] === id);
     setSelectedWorkspace(w);
-    const path = history.location.pathname.split('/workspaces');
-    const newPath = `${path[0]}/workspaces/${encodeURIComponent(id)}`;
-    if (!history.location.pathname.includes(newPath)) {
-      history.push(newPath);
-    }
+    setQueryString({
+      ...queryParams,
+      workspaceId: id,
+      // Make sure to deselect dashboards
+      // Some workspaces may share a dashboard with the same @id
+      // remove keys using undefined
+      // https://www.npmjs.com/package/query-string#falsy-values
+      dashboardId: undefined,
+    });
   };
 
   React.useEffect(() => {
@@ -72,7 +77,6 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
           const id = decodeURIComponent(workspaceId);
           w = values.find(w => w['@id'] === id);
         }
-
         if (w) {
           setSelectedWorkspace(w);
         }
@@ -89,11 +93,21 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
           setWorkSpaceToEdit(workspaceId);
           setShowEdit(true);
         }}
-        items={workspaces.map(w => ({
-          label: w.label,
-          description: w.description,
-          id: w['@id'],
-        }))}
+        items={workspaces
+          .map(w => ({
+            label: w.label,
+            description: w.description,
+            id: w['@id'],
+          }))
+          .sort(({ label: a }, { label: b }) => {
+            if (a < b) {
+              return -1;
+            }
+            if (a > b) {
+              return 1;
+            }
+            return 0;
+          })}
         onSelected={(id: string) => {
           selectWorkspace(id, workspaces);
         }}
@@ -116,19 +130,12 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
       >
         {selectedWorkspace ? (
           <div className="workspace">
-            <DashboardList
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-              dashboards={dashboards}
-              workspaceId={
-                workspaceId
-                  ? workspaceId
-                  : encodeURIComponent(selectedWorkspace['@id'])
-              }
-              dashboardId={dashboardId}
-              studioResourceId={studioResourceId}
-              refreshList={onListUpdate}
-            />{' '}
+            {dashboardListComponent({
+              dashboards,
+              workspaceId: workspaceId
+                ? workspaceId
+                : encodeURIComponent(selectedWorkspace['@id']),
+            })}{' '}
           </div>
         ) : null}
       </TabList>

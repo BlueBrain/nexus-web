@@ -1,33 +1,15 @@
 import * as React from 'react';
-import { match } from 'react-router';
+import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Tooltip, Icon } from 'antd';
 
 import StudioContainer from '../containers/StudioContainer';
+import WorkspaceList from '../containers/WorkspaceListContainer';
+import DashboardList from '../containers/DashboardListContainer';
 
-type StudioViewProps = {
-  match: match<{
-    orgLabel: string;
-    projectLabel: string;
-    studioId: string;
-    workspaceId: string;
-    dashboardId: string;
-    studioResourceId: string;
-  }>;
-};
+const StudioView: React.FunctionComponent<{}> = () => {
+  const { orgLabel, projectLabel, studioId } = useParams();
 
-const StudioView: React.FunctionComponent<StudioViewProps> = props => {
-  const { match } = props;
-  const {
-    params: {
-      orgLabel,
-      projectLabel,
-      studioId,
-      workspaceId,
-      dashboardId,
-      studioResourceId,
-    },
-  } = match;
   return (
     <>
       <div className="project-banner no-bg" style={{ marginBottom: 20 }}>
@@ -48,14 +30,40 @@ const StudioView: React.FunctionComponent<StudioViewProps> = props => {
         </div>
       </div>
       <div className="studio-view">
-        <StudioContainer
-          orgLabel={orgLabel}
-          projectLabel={projectLabel}
-          studioId={studioId}
-          workspaceId={workspaceId}
-          dashboardId={dashboardId}
-          studioResourceId={studioResourceId}
-        />
+        {orgLabel && projectLabel && studioId && (
+          <StudioContainer
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+            studioId={studioId}
+            workspaceListComponent={({
+              workspaceIds,
+              reloadWorkspaces,
+              studioResource,
+            }) => {
+              return (
+                <WorkspaceList
+                  orgLabel={orgLabel}
+                  projectLabel={projectLabel}
+                  workspaceIds={workspaceIds}
+                  studioResource={studioResource}
+                  onListUpdate={reloadWorkspaces}
+                  dashboardListComponent={({ dashboards, workspaceId }) => {
+                    return (
+                      <DashboardList
+                        orgLabel={orgLabel}
+                        projectLabel={projectLabel}
+                        dashboards={dashboards}
+                        workspaceId={workspaceId}
+                        studioResourceId={studioResource['@id']}
+                        refreshList={reloadWorkspaces}
+                      />
+                    );
+                  }}
+                />
+              );
+            }}
+          />
+        )}
       </div>
     </>
   );

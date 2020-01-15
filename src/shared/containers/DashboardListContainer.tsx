@@ -3,20 +3,20 @@ import { Resource, DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
 import DashboardResultsContainer from './DashboardResultsContainer';
-import { useHistory } from 'react-router-dom';
 import DashboardEditorContainer from './DashboardEditor/DashboardEditorContainer';
 import CreateDashboardContainer from './DashboardEditor/CreateDashboardContainer';
+import useQueryString from '../hooks/useQueryString';
 
-type Dashboard = {
+export type Dashboard = {
   dashboard: string;
   view: string;
 };
+
 interface DashboardListProps {
   dashboards: Dashboard[];
   orgLabel: string;
   projectLabel: string;
   workspaceId: string;
-  dashboardId: string;
   studioResourceId: string;
   refreshList?(): void;
 }
@@ -26,11 +26,11 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   orgLabel,
   projectLabel,
   workspaceId,
-  dashboardId,
   studioResourceId,
   refreshList,
 }) => {
-  const history = useHistory();
+  const [queryParams, setQueryString] = useQueryString();
+  const { dashboardId } = queryParams;
   const [dashboardResources, setDashboardResources] = React.useState<
     Resource[]
   >([]);
@@ -48,16 +48,10 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     setSelectedDashboardIndex(dashboardIndex);
     const dashboard = dashboardResources[dashboardIndex];
     const id = dashboard['@id'];
-    const path = history.location.pathname.split('/dashboards');
-    let newPath;
-    if (path[0].includes('/workspaces')) {
-      newPath = `${path[0]}/dashboards/${encodeURIComponent(id)}`;
-    } else {
-      newPath = `${
-        path[0]
-      }/workspaces/${workspaceId}/dashboards/${encodeURIComponent(id)}`;
-    }
-    history.push(newPath);
+    setQueryString({
+      ...queryParams,
+      dashboardId: id,
+    });
   };
 
   const fetchAndSetupDashboards = () => {
@@ -67,18 +61,34 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
           orgLabel,
           projectLabel,
           encodeURIComponent(dashboardObject.dashboard)
-        );
+        ) as Promise<
+          Resource<{
+            label: string;
+            description?: string;
+            dataQuery: string;
+            plugins: string[];
+          }>
+        >;
       })
     )
       .then(values => {
-        setDashboardResources(values);
+        setDashboardResources(
+          values.sort(({ label: a }, { label: b }) => {
+            if (a < b) {
+              return -1;
+            }
+            if (a > b) {
+              return 1;
+            }
+            return 0;
+          })
+        );
         if (
           dashboardId &&
           values[selectedDashboardIndex]['@id'] !== dashboardId
         ) {
-          const id = decodeURIComponent(dashboardId);
           const selectedDashboardIndex = dashboards.findIndex(
-            d => d.dashboard === id
+            d => d.dashboard === dashboardId
           );
           setSelectedDashboardIndex(selectedDashboardIndex);
         }
@@ -146,26 +156,21 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         }
         onEditClick={handleElementClick}
       >
-        {!!dashboardResources.length && (
-          <DashboardResultsContainer
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
-            viewId={
-              (dashboards[selectedDashboardIndex] &&
-                dashboards[selectedDashboardIndex].view) ||
-              DEFAULT_SPARQL_VIEW_ID
-            }
-            workspaceId={workspaceId}
-            dashboardId={
-              dashboardId
-                ? dashboardId
-                : dashboardResources[selectedDashboardIndex]['@id']
-            }
-            studioResourceId={studioResourceId}
-            dataQuery={dashboardResources[selectedDashboardIndex].dataQuery}
-            plugins={dashboardResources[selectedDashboardIndex].plugins}
-          />
-        )}
+        {!!dashboardResources.length &&
+          !!dashboardResources[selectedDashboardIndex] && (
+            <DashboardResultsContainer
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              viewId={
+                (dashboards[selectedDashboardIndex] &&
+                  dashboards[selectedDashboardIndex].view) ||
+                DEFAULT_SPARQL_VIEW_ID
+              }
+              studioResourceId={studioResourceId}
+              dataQuery={dashboardResources[selectedDashboardIndex].dataQuery}
+              plugins={dashboardResources[selectedDashboardIndex].plugins}
+            />
+          )}
       </TabList>
     </div>
   );
