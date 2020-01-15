@@ -6,6 +6,8 @@ import Copy from '../Copy';
 const logo = require('../../logo.svg');
 const epflLogo = require('../../EPFL-logo.svg');
 
+const documentationURL = 'https://bluebrainnexus.io/docs';
+
 interface InformationContentProps {
   version: string;
   githubIssueURL: string;
@@ -135,6 +137,12 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         </a>
       </div>
       <div className="menu-block">
+        <a href={documentationURL} target="_blank" className="hide-tablet">
+          <Icon type="book" /> Documentation
+        </a>
+        <a href={githubIssueURL} target="_blank" className="hide-tablet">
+          <Icon type="github" /> Report Issue
+        </a>
         {token && (
           <Copy
             textToCopy={token}

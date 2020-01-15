@@ -50,13 +50,26 @@
     flex-grow: 1;
     padding-right: @default-pad;
     align-items: center;
-    & > button {
-      margin-left: 10px;
+    button,
+    a {
+      margin: 5px;
+      font-weight: lighter;
     }
     .menu-dropdown {
       color: @text-color;
       align-self: center;
       margin-left: 10px;
     }
+  }
+}
+
+/*
+  ##Device = Tablets, Ipads (portrait)
+  ##Screen = B/w 768px to 1024px
+*/
+
+@media (max-width: 1024px) {
+  .hide-tablet {
+    display: none;
   }
 }
