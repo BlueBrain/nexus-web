@@ -164,12 +164,12 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
                   <Tooltip title="Which plugins should Studio load when viewing a resource.">
                     <Icon type="question-circle-o" />
                   </Tooltip>{' '}
-                  Experimental{' '}
+                  Experimental{' | '}
                   <a
                     target="_blank"
                     href="https://github.com/BlueBrain/nexus-web/blob/master/docs/studio/Dashboards.md#plugins-experimental"
                   >
-                    (Docs)
+                    Read Docs
                   </a>
                 </span>
               }
