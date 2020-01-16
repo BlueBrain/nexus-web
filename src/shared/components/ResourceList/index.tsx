@@ -41,7 +41,7 @@ export type ResourceBoardList = {
 };
 
 const RESOURCE_CARD_MOUSE_ENTER_DELAY = 0.5;
-const DEFAULT_SORT_OPTION = '-_createdAt';
+const DEFAULT_SORT_OPTION = ['-_createdAt'];
 
 const ResourceListComponent: React.FunctionComponent<{
   busy: boolean;
@@ -119,7 +119,7 @@ const ResourceListComponent: React.FunctionComponent<{
   const hasMore = resources.length < Number(total || 0);
 
   const sortOptions = (
-    <Menu onClick={onChangeSort} selectedKeys={[sortOption]}>
+    <Menu onClick={onChangeSort} selectedKeys={sortOption}>
       <Menu.Item key="-_createdAt">Newest</Menu.Item>
       <Menu.Item key="_createdAt">Oldest</Menu.Item>
     </Menu>
