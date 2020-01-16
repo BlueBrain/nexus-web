@@ -48,6 +48,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
       ? selectedWorkspace['dashboards']
       : [];
   const selectWorkspace = (id: string, values: Resource[]) => {
+    console.log(id, values);
     const w = values.find(w => w['@id'] === id);
     setSelectedWorkspace(w);
     setQueryString({
@@ -73,20 +74,23 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
     )
       .then(values => {
         setWorkspaces(values);
-        let workspaceToSelect;
-        workspaceToSelect = values[0];
-        if (!workspaceId) {
-          const id = workspaceId;
-          workspaceToSelect = values.find(w => w['@id'] === id);
-        }
-        if (workspaceToSelect) {
-          setSelectedWorkspace(workspaceToSelect);
+        if (workspaceId) {
+          const workspaceFilteredById = values.find(
+            w => w['@id'] === workspaceId
+          );
+          setSelectedWorkspace(
+            workspaceFilteredById ? workspaceFilteredById : values[0]
+          );
+        } else {
+          setSelectedWorkspace(values[0]);
         }
       })
       .catch(e => {
         // TODO: show a meaningful error to the user.
       });
   }, [workspaceIds, workspaceId]);
+
+  console.log({ workspaceId, selectedWorkspace, dashboards });
 
   return (
     <>
