@@ -147,6 +147,7 @@ const ResourceListComponent: React.FunctionComponent<{
         </h3>
         <div className="controls -squished">
           {/* TODO: add back when backend stuff is released 
+          https://github.com/BlueBrain/nexus/milestone/7
           <Dropdown overlay={sortOptions} trigger={['hover', 'click']}>
             <Tooltip title="Sort resources">
               <Button icon="sort-ascending" />
