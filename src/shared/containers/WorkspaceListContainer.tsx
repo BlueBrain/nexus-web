@@ -36,8 +36,10 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
 }) => {
   const [queryParams, setQueryString] = useQueryString();
   const { workspaceId } = queryParams;
-  const [workspaces, setWorkspaces] = React.useState<Resource[]>([]);
-  const [selectedWorkspace, setSelectedWorkspace] = React.useState<Resource>();
+  const [workspaces, setWorkspaces] = React.useState<Resource<any>[]>([]);
+  const [selectedWorkspace, setSelectedWorkspace] = React.useState<
+    Resource<any>
+  >();
   const [showEdit, setShowEdit] = React.useState<boolean>(false);
   const [workspaceToEdit, setWorkSpaceToEdit] = React.useState<string>();
   const nexus = useNexusContext();
@@ -71,14 +73,14 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
     )
       .then(values => {
         setWorkspaces(values);
-        let w;
-        w = values[0];
-        if (workspaceId !== undefined) {
-          const id = decodeURIComponent(workspaceId);
-          w = values.find(w => w['@id'] === id);
+        let workspaceToSelect;
+        workspaceToSelect = values[0];
+        if (!workspaceId) {
+          const id = workspaceId;
+          workspaceToSelect = values.find(w => w['@id'] === id);
         }
-        if (w) {
-          setSelectedWorkspace(w);
+        if (workspaceToSelect) {
+          setSelectedWorkspace(workspaceToSelect);
         }
       })
       .catch(e => {
@@ -132,9 +134,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
           <div className="workspace">
             {dashboardListComponent({
               dashboards,
-              workspaceId: workspaceId
-                ? workspaceId
-                : encodeURIComponent(selectedWorkspace['@id']),
+              workspaceId: workspaceId ? workspaceId : selectedWorkspace['@id'],
             })}{' '}
           </div>
         ) : null}
