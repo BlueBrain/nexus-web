@@ -179,7 +179,7 @@ const ResourceListContainer: React.FunctionComponent<{
       ...list,
       query: {
         ...list.query,
-        sort: option,
+        sort: [option, '@id'],
       },
     });
   };
