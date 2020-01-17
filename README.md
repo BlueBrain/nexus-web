@@ -7,6 +7,10 @@
 
 Nexus Web is the interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.
 
+## Contributing
+
+Learn how we use git [in the wiki](https://github.com/BlueBrain/nexus-web/wiki/Git-Flow)
+
 ## Development
 
 Install dependencies:
@@ -63,6 +67,10 @@ docker build . --tag=nexus-web
 - `SECURE`: Is nexus web running in https or not. Default is `false`
 - `GTAG`: The Google Analytics Identifier. GA won't be present unless an ID is specified.
 - `SENTRY_DSN`: The sentry URL Nexus Web needs to report errors to. Default is undefined.
+
+## Deployment
+
+You can find out how to deploy a build [in the wiki](https://github.com/BlueBrain/nexus-web/wiki/Deploying-Your-Nexus-Web-Instance)
 
 ## Documentation
 
