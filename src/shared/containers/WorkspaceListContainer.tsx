@@ -68,19 +68,32 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
           orgLabel,
           projectLabel,
           encodeURIComponent(workspaceId)
-        );
+        ) as Promise<Resource>;
       })
     )
       .then(values => {
-        setWorkspaces(values);
-        let workspaceToSelect;
-        workspaceToSelect = values[0];
-        if (!workspaceId) {
-          const id = workspaceId;
-          workspaceToSelect = values.find(w => w['@id'] === id);
-        }
-        if (workspaceToSelect) {
-          setSelectedWorkspace(workspaceToSelect);
+        setWorkspaces(
+          values.sort(({ _createdAt: dateA }, { _createdAt: dateB }) => {
+            const a = new Date(dateA);
+            const b = new Date(dateB);
+            if (a > b) {
+              return 1;
+            }
+            if (a < b) {
+              return -1;
+            }
+            return 0;
+          })
+        );
+        if (workspaceId) {
+          const workspaceFilteredById = values.find(
+            w => w['@id'] === workspaceId
+          );
+          setSelectedWorkspace(
+            workspaceFilteredById ? workspaceFilteredById : values[0]
+          );
+        } else {
+          setSelectedWorkspace(values[0]);
         }
       })
       .catch(e => {
@@ -95,21 +108,11 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
           setWorkSpaceToEdit(workspaceId);
           setShowEdit(true);
         }}
-        items={workspaces
-          .map(w => ({
-            label: w.label,
-            description: w.description,
-            id: w['@id'],
-          }))
-          .sort(({ label: a }, { label: b }) => {
-            if (a < b) {
-              return -1;
-            }
-            if (a > b) {
-              return 1;
-            }
-            return 0;
-          })}
+        items={workspaces.map(w => ({
+          label: w.label,
+          description: w.description,
+          id: w['@id'],
+        }))}
         onSelected={(id: string) => {
           selectWorkspace(id, workspaces);
         }}
