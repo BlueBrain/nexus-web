@@ -75,10 +75,10 @@ export const ViewStatisticsContainer: React.FunctionComponent<
       </Button>
     );
     notification.open({
-      message: 'This project has finished indexing new Resources',
-      duration: null, // don't auto-close
       btn,
       key,
+      message: 'This project has finished indexing new Resources',
+      duration: null, // don't auto-close
       onClose: close,
     });
   };
