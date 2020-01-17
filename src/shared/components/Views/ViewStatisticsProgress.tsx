@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Progress, Tooltip } from 'antd';
+import { Progress, Tooltip, notification, Button } from 'antd';
 import * as moment from 'moment';
 import { Statistics, PaginatedList } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
@@ -32,12 +32,14 @@ export type ViewStatisticsContainerProps = {
   orgLabel: string;
   projectLabel: string;
   resourceId: string;
+  onClickRefresh?: VoidFunction;
 };
 
 export const ViewStatisticsContainer: React.FunctionComponent<
   ViewStatisticsContainerProps
 > = props => {
   const nexus = useNexusContext();
+  const [eventsAtMount, setEventsAtMount] = React.useState();
   const [{ loading, error, data }, setState] = React.useState<{
     error: Error | null;
     data: Statistics | null;
@@ -47,6 +49,45 @@ export const ViewStatisticsContainer: React.FunctionComponent<
     data: null,
     loading: false,
   });
+
+  const indexCompleteNotification = () => {
+    const key = `open${Date.now()}`;
+    const btn = props.onClickRefresh ? (
+      <Button
+        type="primary"
+        size="small"
+        onClick={() => {
+          notification.close(key);
+          props.onClickRefresh && props.onClickRefresh();
+        }}
+      >
+        Refresh
+      </Button>
+    ) : (
+      <Button
+        type="primary"
+        size="small"
+        onClick={() => {
+          notification.close(key);
+        }}
+      >
+        Got it
+      </Button>
+    );
+    notification.open({
+      message: 'This project has finished indexing new Resources',
+      duration: null, // don't auto-close
+      btn,
+      key,
+      onClose: close,
+    });
+  };
+
+  React.useEffect(() => {
+    if (data && eventsAtMount !== data.totalEvents) {
+      indexCompleteNotification();
+    }
+  }, [eventsAtMount, data]);
 
   React.useEffect(() => {
     setState({
@@ -61,8 +102,12 @@ export const ViewStatisticsContainer: React.FunctionComponent<
       { pollIntervalMs: 3000 }
     ).subscribe(
       ({ _results }) => {
+        const statistics = _results[0];
+        if (!eventsAtMount) {
+          setEventsAtMount(statistics.totalEvents);
+        }
         setState({
-          data: _results[0],
+          data: statistics,
           loading: false,
           error: null,
         });
@@ -75,7 +120,7 @@ export const ViewStatisticsContainer: React.FunctionComponent<
         });
       }
     );
-  }, [props.resourceId]);
+  }, [props.orgLabel, props.projectLabel, props.resourceId]);
 
   if (!loading && !error && data) {
     return (
