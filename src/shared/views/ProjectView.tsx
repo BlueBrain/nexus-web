@@ -37,25 +37,6 @@ const ProjectView: React.FunctionComponent<{
   const [menuVisible, setMenuVisible] = React.useState(true);
   const [refreshLists, setRefreshLists] = React.useState(false);
 
-  const handleResourceCreated = () => {
-    let totalEvents: number;
-
-    const subscription = nexus.View.pollStatistics(
-      orgLabel,
-      projectLabel,
-      DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-      { pollIntervalMs: 300 }
-    ).subscribe(({ _results }) => {
-      const data = _results[0];
-      if (!totalEvents) {
-        totalEvents = data.totalEvents;
-      } else if (data.totalEvents !== totalEvents) {
-        setRefreshLists(!refreshLists);
-        subscription.unsubscribe();
-      }
-    });
-  };
-
   React.useEffect(() => {
     setState({
       project,
@@ -105,6 +86,9 @@ const ProjectView: React.FunctionComponent<{
                   orgLabel={orgLabel}
                   projectLabel={project._label}
                   resourceId={DEFAULT_ELASTIC_SEARCH_VIEW_ID}
+                  onClickRefresh={() => {
+                    setRefreshLists(!refreshLists);
+                  }}
                 />
               </div>
               {!!project.description && (
@@ -141,7 +125,6 @@ const ProjectView: React.FunctionComponent<{
                     <ResourceFormContainer
                       orgLabel={orgLabel}
                       projectLabel={projectLabel}
-                      onResourceCreated={handleResourceCreated}
                     />
                   </AccessControl>
                   <Link
@@ -176,6 +159,7 @@ const ProjectView: React.FunctionComponent<{
               <ResourceListBoardContainer
                 orgLabel={orgLabel}
                 projectLabel={projectLabel}
+                refreshLists={refreshLists}
               />
               <StudioListContainer
                 orgLabel={orgLabel}
