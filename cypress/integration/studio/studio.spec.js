@@ -1,6 +1,6 @@
 describe('Navigate to Dashboards', () => {
   it('Navigates to dashboards', () => {
-    cy.visit('http://staging');
+    cy.visit('http://localhost:8000');
     cy.contains('Organizations');
     cy.contains('login');
     cy.get('.ListItem').click();
