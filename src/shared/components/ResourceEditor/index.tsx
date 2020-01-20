@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Button, Icon, Switch, Spin } from 'antd';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/mode/javascript/javascript';
-import 'codemirror/addon/fold/foldCode';
-import 'codemirror/addon/fold/foldGutter';
+import 'codemirror/addon/fold/foldcode';
+import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
 
 import './ResourceEditor.less';
