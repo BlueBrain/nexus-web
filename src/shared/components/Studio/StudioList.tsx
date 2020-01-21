@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Empty, Spin } from 'antd';
+import useMeasure from '../../hooks/useMeasure';
 
 import ListItem from '../List/Item';
 
@@ -33,25 +34,35 @@ const StudioList: React.FC<{
   goToStudio = () => {},
   createStudioButton = null,
 }) => {
+  const [{ ref: wrapperHeightRef }, { height: wrapperHeight }] = useMeasure();
   const noStudios = studios.length === 0;
 
   return (
-    <div className="studio-list">
-      <h3>Studios</h3>
-      <Spin spinning={busy}>
-        {error && <Empty description={error.message || 'An error occurred'} />}
-        {!error && noStudios && <Empty description="No studios available" />}
-        {createStudioButton}
-        {!noStudios && (
-          <div>
-            {studios.map(studio => (
-              <ListItem onClick={() => goToStudio(studio.id)} key={studio.id}>
-                <StudioItem {...studio} />
-              </ListItem>
-            ))}
-          </div>
-        )}
-      </Spin>
+    <div className="resource-list-height-tester" ref={wrapperHeightRef}>
+      <div className="studio-list">
+        <h3>Studios</h3>
+        <Spin spinning={busy}>
+          {error && (
+            <Empty description={error.message || 'An error occurred'} />
+          )}
+          {!error && noStudios && <Empty description="No studios available" />}
+          {createStudioButton}
+          {!noStudios && (
+            <div
+              style={{
+                overflowY: 'auto',
+                height: wrapperHeight - 200,
+              }}
+            >
+              {studios.map(studio => (
+                <ListItem onClick={() => goToStudio(studio.id)} key={studio.id}>
+                  <StudioItem {...studio} />
+                </ListItem>
+              ))}
+            </div>
+          )}
+        </Spin>
+      </div>
     </div>
   );
 };
