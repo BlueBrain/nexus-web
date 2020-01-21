@@ -51,7 +51,7 @@ const StudioList: React.FC<{
             <div
               style={{
                 overflowY: 'auto',
-                height: wrapperHeight - 200,
+                height: wrapperHeight - 100,
               }}
             >
               {studios.map(studio => (
