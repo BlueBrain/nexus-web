@@ -21,6 +21,8 @@ const StudioItem: React.FC<StudioItemProps> = ({ name, description }) => {
   );
 };
 
+const LIST_HEIGHT_ADJUSTMENT = 100;
+
 const StudioList: React.FC<{
   studios: StudioItemProps[];
   busy?: boolean;
@@ -51,7 +53,7 @@ const StudioList: React.FC<{
             <div
               style={{
                 overflowY: 'auto',
-                height: wrapperHeight - 100,
+                height: wrapperHeight - LIST_HEIGHT_ADJUSTMENT,
               }}
             >
               {studios.map(studio => (
