@@ -13,6 +13,7 @@ import { RootState } from '../store/reducers';
 import { version, url as githubIssueURL } from '../../../package.json';
 
 import './MainLayout.less';
+import ConsentContainer from '../containers/ConsentContainer';
 
 const favicon = require('../favicon.png');
 const TITLE = 'A knowledge graph for data-driven science';
@@ -99,6 +100,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
         githubIssueURL={githubIssueURL}
         serviceVersions={versions.data}
       />
+      <ConsentContainer />
       <div className="MainLayout_body">{children}</div>
     </>
   );
