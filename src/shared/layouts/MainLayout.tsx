@@ -100,7 +100,8 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
         githubIssueURL={githubIssueURL}
         serviceVersions={versions.data}
       />
-      <ConsentContainer />
+      {/* TODO: get tracking code from somewhere */}
+      <ConsentContainer trackingCode={'blahblahblah'} />
       <div className="MainLayout_body">{children}</div>
     </>
   );
