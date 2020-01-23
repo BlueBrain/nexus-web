@@ -28,6 +28,7 @@ export interface MainLayoutProps {
   canLogin?: boolean;
   userManager?: UserManager;
   apiEndpoint: string;
+  gtmCode?: string;
 }
 
 const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
@@ -39,6 +40,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
   canLogin = false,
   userManager,
   apiEndpoint,
+  gtmCode,
 }) => {
   const handleLogout = (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -55,6 +57,8 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
       context: { as: 'json' },
     })
   );
+
+  console.log('gtmCode', gtmCode);
 
   return (
     <>
@@ -100,8 +104,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
         githubIssueURL={githubIssueURL}
         serviceVersions={versions.data}
       />
-      {/* TODO: get tracking code from somewhere */}
-      <ConsentContainer trackingCode={'blahblahblah'} />
+      <ConsentContainer trackingCode={gtmCode || ''} />
       <div className="MainLayout_body">{children}</div>
     </>
   );
@@ -131,6 +134,7 @@ const mapStateToProps = (state: RootState) => {
     canLogin: !!(realms.length > 0),
     userManager: getUserManager(state),
     apiEndpoint: config.apiEndpoint,
+    gtmCode: config.gtmCode,
   };
 };
 
