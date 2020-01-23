@@ -2,6 +2,9 @@ import * as React from 'react';
 import { Button, Icon, Switch, Spin } from 'antd';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/mode/javascript/javascript';
+import 'codemirror/addon/fold/foldcode';
+import 'codemirror/addon/fold/foldgutter';
+import 'codemirror/addon/fold/brace-fold';
 
 import './ResourceEditor.less';
 
@@ -39,6 +42,9 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     JSON.stringify(rawData, null, 2)
   );
 
+  const keyFoldCode = (cm: any) => {
+    cm.foldCode(cm.getCursor());
+  };
   const renderCodeMirror = (value: string) => {
     return (
       <Spin spinning={busy}>
@@ -53,6 +59,12 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             lineNumbers: true,
             lineWrapping: true,
             viewportMargin: Infinity,
+            foldGutter: true,
+            foldCode: true,
+            gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+            extraKeys: {
+              'Ctrl-Q': keyFoldCode,
+            },
           }}
           onChange={handleChange}
         />
