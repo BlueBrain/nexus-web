@@ -58,8 +58,6 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
     })
   );
 
-  console.log('gtmCode', gtmCode);
-
   return (
     <>
       <Helmet>

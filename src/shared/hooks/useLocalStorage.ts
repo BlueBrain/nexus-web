@@ -1,20 +1,18 @@
 import * as React from 'react';
 
 export default function useLocalStorage<T = any>(key: string) {
-  const [value, setValue] = React.useState<T | undefined>();
-
-  React.useEffect(() => {
-    const val = localStorage.getItem(key);
-    setValue(!!val && JSON.parse(val));
-    console.log({ key, value, val });
-  }, []);
+  const val = localStorage.getItem(key);
+  const [value, setValue] = React.useState<T | undefined>(
+    !!val && JSON.parse(val)
+  );
 
   const setLocalStorage = (value: T | undefined) => {
-    if (typeof value === undefined) {
+    if (value === undefined) {
       localStorage.removeItem(key);
-      setValue(undefined);
+      setValue(value);
       return;
     }
+
     localStorage.setItem(key, JSON.stringify(value));
     setValue(value);
   };

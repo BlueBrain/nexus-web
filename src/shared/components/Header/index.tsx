@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Menu, Dropdown, Icon, Button, Popover } from 'antd';
 import './Header.less';
 import Copy from '../Copy';
+import ConsentPreferences from '../ConsentPreferences';
 
 const logo = require('../../logo.svg');
 const epflLogo = require('../../EPFL-logo.svg');
@@ -78,6 +79,7 @@ const InformationContent = (props: InformationContentProps) => {
       {props.serviceVersions ? (
         <VersionInfo {...props.serviceVersions} />
       ) : null}
+      <ConsentPreferences />
     </>
   );
 };

@@ -1,9 +1,24 @@
 import * as React from 'react';
+// @ts-ignore
+import gtmParts from 'react-google-tag-manager';
 import { notification, Button } from 'antd';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 const enableTracking = (trackingCode: string) => {
-  // Do Tracking Stuff
+  const gtm = gtmParts({
+    id: trackingCode,
+    dataLayerName: 'dataLayer',
+    additionalEvents: {},
+    previewVariables: false,
+    scheme: 'https:',
+  });
+
+  return (
+    <div>
+      <div>{gtm.noScriptAsReact()}</div>
+      <div id="react-google-tag-manager-gtm">{gtm.scriptAsReact()}</div>
+    </div>
+  );
 };
 
 const trackingConsentNotification = (onClose: (accepted: boolean) => void) => {
@@ -65,10 +80,9 @@ const ConsentContainer: React.FunctionComponent<{
   }
 
   if (consent && consent.consentToTracking) {
-    // do google stuff
-    enableTracking(trackingCode);
-    console.log('allowing tracking.....');
+    return enableTracking(trackingCode);
   }
+
   return null;
 };
 
