@@ -67,6 +67,7 @@ const ConsentContainer: React.FunctionComponent<{
   if (consent && consent.consentToTracking) {
     // do google stuff
     enableTracking(trackingCode);
+    console.log('allowing tracking.....');
   }
   return null;
 };

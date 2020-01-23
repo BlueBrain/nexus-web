@@ -16,6 +16,8 @@ const PORT_NUMBER = 8000;
 const app: express.Express = express();
 const rawBase: string = process.env.BASE_PATH || '';
 const pluginsPath = process.env.PLUGINS_PATH || '/public/plugins';
+console.log('process.env', process.env.GTM_CODE);
+
 // remove trailing slash
 const base: string = rawBase.replace(/\/$/, '');
 // enable logs
@@ -73,6 +75,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
         `${req.protocol}://${req.headers.host}`}${base}`,
       sentryDsn: process.env.SENTRY_DSN,
       plugins: getPlugins(),
+      gtmCode: process.env.GTM_CODE,
     },
     uiSettings: DEFAULT_UI_SETTINGS,
     oidc: {
