@@ -20,15 +20,15 @@ const enableTracking = (trackingCode: string) => {
   );
 };
 
-interface consentPreferences {
+interface ConsentPreferences {
   consentToTracking: boolean;
   hasSetPreferences: boolean;
 }
 
 const ConsentContainer: React.FunctionComponent<{
   trackingCode: string;
-  consent?: consentPreferences;
-  updateConsent?(consent: consentPreferences): void;
+  consent?: ConsentPreferences;
+  updateConsent?(consent: ConsentPreferences): void;
 }> = ({ trackingCode, consent, updateConsent }) => {
   const onClickAllow = () => {
     updateConsent &&
