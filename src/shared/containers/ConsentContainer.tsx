@@ -2,6 +2,8 @@ import * as React from 'react';
 import gtmParts from 'react-google-tag-manager';
 import { Modal } from 'antd';
 import { ConsentType } from '../layouts/MainLayout';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/reducers';
 
 const enableTracking = (trackingCode: string) => {
   const gtm = gtmParts({
@@ -21,10 +23,11 @@ const enableTracking = (trackingCode: string) => {
 };
 
 const ConsentContainer: React.FunctionComponent<{
-  trackingCode: string;
   consent?: ConsentType;
   updateConsent?(consent: ConsentType): void;
-}> = ({ trackingCode, consent, updateConsent }) => {
+}> = ({ consent, updateConsent }) => {
+  const gtmCode = useSelector((state: RootState) => state.config.gtmCode);
+
   const onClickAllow = () => {
     updateConsent &&
       updateConsent({
@@ -41,26 +44,26 @@ const ConsentContainer: React.FunctionComponent<{
       });
   };
 
+  if (!gtmCode) {
+    return null;
+  }
+
   if (!consent || !consent.hasSetPreferences) {
     return (
       <Modal
-        title="Send data & statistics to the developers?"
         visible={true}
         onOk={onClickAllow}
         onCancel={onClickDontAllow}
         okText="Allow"
         cancelText="Don't allow"
       >
-        <p>
-          Send data to the developers in order to improve Nexus Web by tracking
-          your activity?
-        </p>
+        <h4>Send anonymous data & statistics to the developers?</h4>
       </Modal>
     );
   }
 
   if (consent && consent.consentToTracking) {
-    return enableTracking(trackingCode);
+    return enableTracking(gtmCode);
   }
 
   return null;

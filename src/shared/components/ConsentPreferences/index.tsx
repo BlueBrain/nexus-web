@@ -13,7 +13,7 @@ const ConsentPreferences: React.FunctionComponent<{
       size="small"
       disabled={!consent || !consent.hasSetPreferences}
     >
-      Remove tracking preferences
+      Reset tracking preferences
     </Button>
   );
 };

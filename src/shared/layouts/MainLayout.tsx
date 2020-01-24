@@ -29,7 +29,6 @@ export interface MainLayoutProps {
   canLogin?: boolean;
   userManager?: UserManager;
   apiEndpoint: string;
-  gtmCode?: string;
 }
 
 export type ConsentType = {
@@ -46,7 +45,6 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
   canLogin = false,
   userManager,
   apiEndpoint,
-  gtmCode,
 }) => {
   const handleLogout = (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -114,11 +112,7 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
         consent={consent}
         onClickRemoveConsent={() => setConsent(undefined)}
       />
-      <ConsentContainer
-        trackingCode={gtmCode || ''}
-        consent={consent}
-        updateConsent={setConsent}
-      />
+      <ConsentContainer consent={consent} updateConsent={setConsent} />
       <div className="MainLayout_body">{children}</div>
     </>
   );
@@ -148,7 +142,6 @@ const mapStateToProps = (state: RootState) => {
     canLogin: !!(realms.length > 0),
     userManager: getUserManager(state),
     apiEndpoint: config.apiEndpoint,
-    gtmCode: config.gtmCode,
   };
 };
 
