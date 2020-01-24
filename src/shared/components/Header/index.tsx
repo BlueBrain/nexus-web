@@ -13,6 +13,11 @@ interface InformationContentProps {
   version: string;
   githubIssueURL: string;
   serviceVersions?: ServiceVersions;
+  consent?: {
+    consentToTracking: boolean;
+    hasSetPreferences: boolean;
+  };
+  onClickRemoveConsent?(): void;
 }
 
 export type ServiceVersions = {
@@ -75,7 +80,12 @@ const InformationContent = (props: InformationContentProps) => {
       {props.serviceVersions ? (
         <VersionInfo {...props.serviceVersions} />
       ) : null}
-      <ConsentPreferences />
+      {
+        <ConsentPreferences
+          onClickRemove={props.onClickRemoveConsent}
+          consent={props.consent}
+        />
+      }
     </>
   );
 };
@@ -90,6 +100,11 @@ export interface HeaderProps {
   onLoginClick?(): void;
   visitHome?(): void;
   serviceVersions?: ServiceVersions;
+  consent?: {
+    consentToTracking: boolean;
+    hasSetPreferences: boolean;
+  };
+  onClickRemoveConsent?(): void;
 }
 
 const Header: React.FunctionComponent<HeaderProps> = ({
@@ -103,6 +118,8 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   githubIssueURL,
   visitHome,
   serviceVersions,
+  consent,
+  onClickRemoveConsent,
 }) => {
   const menu = (
     <Menu>
@@ -157,6 +174,8 @@ const Header: React.FunctionComponent<HeaderProps> = ({
               version={version}
               githubIssueURL={githubIssueURL}
               serviceVersions={serviceVersions}
+              consent={consent}
+              onClickRemoveConsent={onClickRemoveConsent}
             />
           }
           trigger="click"

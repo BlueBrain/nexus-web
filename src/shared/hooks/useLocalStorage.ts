@@ -6,8 +6,6 @@ export default function useLocalStorage<T = any>(key: string) {
     !!val && JSON.parse(val)
   );
 
-  console.log('setting new values.....');
-
   const setLocalStorage = (value: T | undefined) => {
     if (value === undefined) {
       localStorage.removeItem(key);
