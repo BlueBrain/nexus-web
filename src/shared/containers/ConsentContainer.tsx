@@ -1,5 +1,4 @@
 import * as React from 'react';
-// @ts-ignore
 import gtmParts from 'react-google-tag-manager';
 import { Modal } from 'antd';
 import { ConsentType } from '../layouts/MainLayout';
@@ -51,7 +50,6 @@ const ConsentContainer: React.FunctionComponent<{
         onCancel={onClickDontAllow}
         okText="Allow"
         cancelText="Don't allow"
-        z-index="1040"
       >
         <p>
           Send data to the developers in order to improve Nexus Web by tracking
