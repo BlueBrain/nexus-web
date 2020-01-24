@@ -16,7 +16,6 @@ const PORT_NUMBER = 8000;
 const app: express.Express = express();
 const rawBase: string = process.env.BASE_PATH || '';
 const pluginsPath = process.env.PLUGINS_PATH || '/public/plugins';
-
 // remove trailing slash
 const base: string = rawBase.replace(/\/$/, '');
 // enable logs

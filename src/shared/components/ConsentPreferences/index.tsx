@@ -22,8 +22,6 @@ const ConsentPreferences: React.FunctionComponent<{}> = () => {
       Remove tracking preferences
     </Button>
   );
-
-  return null;
 };
 
 export default ConsentPreferences;

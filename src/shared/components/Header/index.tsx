@@ -27,9 +27,7 @@ export type ServiceVersions = {
 const VersionInfo = (props: ServiceVersions) => {
   return (
     <>
-      <p>
-        <h4>Nexus Services</h4>
-      </p>
+      <h4>Nexus Services</h4>
       <p>
         <label>Admin</label> v{props.admin}
       </p>
@@ -39,9 +37,7 @@ const VersionInfo = (props: ServiceVersions) => {
       <p>
         <label>Knowledge Graph</label> v{props.kg}
       </p>
-      <p>
-        <h4>Index Services</h4>
-      </p>
+      <h4>Index Services</h4>
       <p>
         <label>Blaze Graph</label> v{props.blazegraph}
       </p>
