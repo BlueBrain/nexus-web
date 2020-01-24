@@ -51,6 +51,7 @@ const ConsentContainer: React.FunctionComponent<{
         onCancel={onClickDontAllow}
         okText="Allow"
         cancelText="Don't allow"
+        z-index="1040"
       >
         <p>
           Send data to the developers in order to improve Nexus Web by tracking
