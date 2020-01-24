@@ -1,8 +1,7 @@
 import * as React from 'react';
 // @ts-ignore
 import gtmParts from 'react-google-tag-manager';
-import { notification, Button } from 'antd';
-import useLocalStorage from '../hooks/useLocalStorage';
+import { Modal } from 'antd';
 
 const enableTracking = (trackingCode: string) => {
   const gtm = gtmParts({
@@ -21,13 +20,50 @@ const enableTracking = (trackingCode: string) => {
   );
 };
 
+interface consentPreferences {
+  consentToTracking: boolean;
+  hasSetPreferences: boolean;
+}
+
 const ConsentContainer: React.FunctionComponent<{
   trackingCode: string;
-  consent?: {
-    consentToTracking: boolean;
-    hasSetPreferences: boolean;
+  consent?: consentPreferences;
+  updateConsent?(consent: consentPreferences): void;
+}> = ({ trackingCode, consent, updateConsent }) => {
+  const onClickAllow = () => {
+    updateConsent &&
+      updateConsent({
+        consentToTracking: true,
+        hasSetPreferences: true,
+      });
   };
-}> = ({ trackingCode, consent }) => {
+
+  const onClickDontAllow = () => {
+    updateConsent &&
+      updateConsent({
+        consentToTracking: false,
+        hasSetPreferences: true,
+      });
+  };
+
+  if (!consent || !consent.hasSetPreferences) {
+    return (
+      <Modal
+        title="Send data & statistics to the developers?"
+        visible={true}
+        onOk={onClickAllow}
+        onCancel={onClickDontAllow}
+        okText="Allow"
+        cancelText="Don't allow"
+      >
+        <p>
+          Send data to the developers in order to improve Nexus Web by tracking
+          your activity?
+        </p>
+      </Modal>
+    );
+  }
+
   if (consent && consent.consentToTracking) {
     return enableTracking(trackingCode);
   }
