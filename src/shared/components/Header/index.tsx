@@ -3,6 +3,7 @@ import { Menu, Dropdown, Icon, Button, Popover } from 'antd';
 import './Header.less';
 import Copy from '../Copy';
 import ConsentPreferences from '../ConsentPreferences';
+import { ConsentType } from '../../layouts/MainLayout';
 
 const logo = require('../../logo.svg');
 const epflLogo = require('../../EPFL-logo.svg');
@@ -13,10 +14,7 @@ interface InformationContentProps {
   version: string;
   githubIssueURL: string;
   serviceVersions?: ServiceVersions;
-  consent?: {
-    consentToTracking: boolean;
-    hasSetPreferences: boolean;
-  };
+  consent?: ConsentType;
   onClickRemoveConsent?(): void;
 }
 
@@ -100,10 +98,7 @@ export interface HeaderProps {
   onLoginClick?(): void;
   visitHome?(): void;
   serviceVersions?: ServiceVersions;
-  consent?: {
-    consentToTracking: boolean;
-    hasSetPreferences: boolean;
-  };
+  consent?: ConsentType;
   onClickRemoveConsent?(): void;
 }
 

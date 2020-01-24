@@ -1,12 +1,9 @@
 import * as React from 'react';
 import { Button } from 'antd';
-import useLocalStorage from '../../hooks/useLocalStorage';
+import { ConsentType } from '../../layouts/MainLayout';
 
 const ConsentPreferences: React.FunctionComponent<{
-  consent?: {
-    consentToTracking: boolean;
-    hasSetPreferences: boolean;
-  };
+  consent?: ConsentType;
   onClickRemove?(): void;
 }> = ({ consent, onClickRemove }) => {
   return (

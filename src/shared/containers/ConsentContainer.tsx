@@ -2,6 +2,7 @@ import * as React from 'react';
 // @ts-ignore
 import gtmParts from 'react-google-tag-manager';
 import { Modal } from 'antd';
+import { ConsentType } from '../layouts/MainLayout';
 
 const enableTracking = (trackingCode: string) => {
   const gtm = gtmParts({
@@ -20,15 +21,10 @@ const enableTracking = (trackingCode: string) => {
   );
 };
 
-interface ConsentPreferences {
-  consentToTracking: boolean;
-  hasSetPreferences: boolean;
-}
-
 const ConsentContainer: React.FunctionComponent<{
   trackingCode: string;
-  consent?: ConsentPreferences;
-  updateConsent?(consent: ConsentPreferences): void;
+  consent?: ConsentType;
+  updateConsent?(consent: ConsentType): void;
 }> = ({ trackingCode, consent, updateConsent }) => {
   const onClickAllow = () => {
     updateConsent &&

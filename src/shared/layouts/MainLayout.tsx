@@ -5,7 +5,6 @@ import { push } from 'connected-react-router';
 import { NexusClient, Identity, Realm } from '@bbp/nexus-sdk';
 import { useNexus } from '@bbp/react-nexus';
 import { UserManager } from 'oidc-client';
-import { notification, Button } from 'antd';
 
 import Header, { ServiceVersions } from '../components/Header';
 import getUserManager from '../../client/userManager';
@@ -13,9 +12,9 @@ import { getLogoutUrl, getDestinationParam } from '../utils';
 import { RootState } from '../store/reducers';
 import { version, url as githubIssueURL } from '../../../package.json';
 import useLocalStorage from '../hooks/useLocalStorage';
+import ConsentContainer from '../containers/ConsentContainer';
 
 import './MainLayout.less';
-import ConsentContainer from '../containers/ConsentContainer';
 
 const favicon = require('../favicon.png');
 const TITLE = 'A knowledge graph for data-driven science';
@@ -32,6 +31,11 @@ export interface MainLayoutProps {
   apiEndpoint: string;
   gtmCode?: string;
 }
+
+export type ConsentType = {
+  consentToTracking: boolean;
+  hasSetPreferences: boolean;
+};
 
 const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
   authenticated,
@@ -50,10 +54,9 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
     userManager && userManager.signoutRedirect();
   };
 
-  const [consent, setConsent] = useLocalStorage<{
-    consentToTracking: boolean;
-    hasSetPreferences: boolean;
-  }>('consentToTracking');
+  const [consent, setConsent] = useLocalStorage<ConsentType>(
+    'consentToTracking'
+  );
 
   // Remove version from API URL
   const splits = apiEndpoint.split('/');
