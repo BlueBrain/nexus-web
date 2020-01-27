@@ -6,13 +6,12 @@ const ConsentPreferences: React.FunctionComponent<{
   consent?: ConsentType;
   onClickRemove?(): void;
 }> = ({ consent, onClickRemove }) => {
+  if (!consent || !consent.hasSetPreferences) {
+    return null;
+  }
+
   return (
-    <Button
-      onClick={onClickRemove}
-      type="default"
-      size="small"
-      disabled={!consent || !consent.hasSetPreferences}
-    >
+    <Button onClick={onClickRemove} type="default" size="small">
       Reset tracking preferences
     </Button>
   );
