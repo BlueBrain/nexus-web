@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { notification } from 'antd';
-import { useAsyncEffect } from 'use-async-effect/';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, NexusFile } from '@bbp/nexus-sdk';
 
@@ -36,31 +35,27 @@ const ImagePreviewContainer: React.FunctionComponent<{
     return <ImagePreviewComponent busy={busy} image={img} />;
   };
 
-  useAsyncEffect(
-    async isMounted => {
-      if (
-        !isMounted() || // not rendered
-        !isFile(resource) || // not a file
-        // is not a file of type image less than (default of 3MB)
-        (!(resource as NexusFile)._mediaType.includes('image') &&
-          (resource as NexusFile)._bytes <= maxBytes)
-      ) {
-        return;
-      }
+  React.useEffect(() => {
+    if (
+      !isFile(resource) || // not a file
+      // is not a file of type image less than (default of 3MB)
+      (!(resource as NexusFile)._mediaType.includes('image') &&
+        (resource as NexusFile)._bytes <= maxBytes)
+    ) {
+      return;
+    }
 
-      try {
-        setImage({
-          imageSrc,
-          error: null,
-          busy: true,
-        });
-        const rawData = (await nexus.File.get(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(resourceId),
-          { as: 'blob' }
-        )) as Blob;
-        const blob = new Blob([rawData], {
+    setImage({
+      imageSrc,
+      error: null,
+      busy: true,
+    });
+
+    nexus.File.get(orgLabel, projectLabel, encodeURIComponent(resourceId), {
+      as: 'blob',
+    })
+      .then(rawData => {
+        const blob = new Blob([rawData as string], {
           type: (resource as NexusFile)._mediaType,
         });
         const src = URL.createObjectURL(blob);
@@ -69,7 +64,8 @@ const ImagePreviewContainer: React.FunctionComponent<{
           error: null,
           busy: false,
         });
-      } catch (error) {
+      })
+      .catch((error: Error) => {
         notification.error({
           message: 'Could not fetch image',
         });
@@ -78,10 +74,8 @@ const ImagePreviewContainer: React.FunctionComponent<{
           error,
           busy: false,
         });
-      }
-    },
-    [resource['@id']]
-  );
+      });
+  }, [resource['@id']]);
 
   return imageSrc ? makePreviewImage(imageSrc) : null;
 };
