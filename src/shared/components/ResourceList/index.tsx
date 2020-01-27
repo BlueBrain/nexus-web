@@ -190,38 +190,38 @@ const ResourceListComponent: React.FunctionComponent<{
             >
               {resources.map(resource => {
                 return (
-                  <ListItem
-                    key={resource['@id']}
-                    onClick={() => goToResource(resource['@id'])}
+                  <a
+                    href={makeResourceUri(resource['@id'])}
+                    onClick={e => {
+                      e.preventDefault();
+                      goToResource(resource['@id']);
+                    }}
                   >
-                    <Popover
-                      content={
-                        <div style={{ width: 600 }}>
-                          <ResourceCardComponent
-                            resource={resource}
-                            schemaLink={schemaLinkContainer}
-                          />
-                        </div>
-                      }
-                      mouseEnterDelay={RESOURCE_CARD_MOUSE_ENTER_DELAY}
+                    <ListItem
+                      key={resource['@id']}
+                      onClick={() => goToResource(resource['@id'])}
                     >
-                      <a
-                        href={makeResourceUri(resource['@id'])}
-                        onClick={e => {
-                          e.preventDefault();
-                          goToResource(resource['@id']);
-                        }}
+                      <Popover
+                        content={
+                          <div style={{ width: 600 }}>
+                            <ResourceCardComponent
+                              resource={resource}
+                              schemaLink={schemaLinkContainer}
+                            />
+                          </div>
+                        }
+                        mouseEnterDelay={RESOURCE_CARD_MOUSE_ENTER_DELAY}
                       >
                         {getResourceLabel(resource)}
-                      </a>
-                      {!!resource['@type'] &&
-                        (Array.isArray(resource['@type']) ? (
-                          <TypesIconList type={resource['@type']} />
-                        ) : (
-                          <TypesIconList type={[resource['@type']]} />
-                        ))}
-                    </Popover>
-                  </ListItem>
+                        {!!resource['@type'] &&
+                          (Array.isArray(resource['@type']) ? (
+                            <TypesIconList type={resource['@type']} />
+                          ) : (
+                            <TypesIconList type={[resource['@type']]} />
+                          ))}
+                      </Popover>
+                    </ListItem>
+                  </a>
                 );
               })}
             </InfiniteSearch>
