@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Card, Empty, Table, Tooltip, notification } from 'antd';
 import Column from 'antd/lib/table/Column';
 import * as hash from 'object-hash';
+import { matchResultUrls } from '../../utils';
 import {
   AskQueryResponse,
   SelectQueryResponse,
@@ -23,24 +24,10 @@ export type Entry = {
   type: string;
 };
 
+
 const getUrl = (entry: string) => {
   try {
-    const projectUrlPattern = /projects\/([\w-]+)\/([\w-]+)\/?$/;
-    const resourceUrlPattern = /resources(\/([\w-]+)\/([\w-]+))/;
-    if (projectUrlPattern.test(entry)) {
-      const [, org, proj] = entry.match(projectUrlPattern) as string[];
-      return `${org}/${proj}`;
-    }
-    if (resourceUrlPattern.test(entry)) {
-      const resourceIdPattern = /_\/([\w-|\W-]+)/;
-      const labels = entry.match(resourceUrlPattern) as string[];
-      if (resourceIdPattern.test(entry)) {
-        const resultArray = entry.match(resourceIdPattern) as string[];
-        if (resultArray !== null && resultArray.length > 1) {
-          return `${labels[1]}/resources/${resultArray[1]}`;
-        }
-      }
-    }
+    return matchResultUrls(entry);
   } catch (error) {
     notification.error({
       message: `Could not parse ${entry}`,
