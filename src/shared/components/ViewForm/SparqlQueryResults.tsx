@@ -9,7 +9,6 @@ import {
 } from '@bbp/nexus-sdk';
 
 import './view-form.less';
-import { parseProjectUrl } from '../../utils';
 
 export type NexusSparqlError =
   | string
@@ -38,7 +37,6 @@ const getUrl = (entry: string) => {
       if (resourceIdPattern.test(entry)) {
         const resultArray = entry.match(resourceIdPattern) as string[];
         if (resultArray !== null && resultArray.length > 1) {
-          console.log(`${labels[1]}/resources/${resultArray[1]}`);
           return `${labels[1]}/resources/${resultArray[1]}`;
         }
       }
