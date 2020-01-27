@@ -57,7 +57,7 @@ const ImagePreviewContainer: React.FunctionComponent<{
         const rawData = (await nexus.File.get(
           orgLabel,
           projectLabel,
-          resourceId,
+          encodeURIComponent(resourceId),
           { as: 'blob' }
         )) as Blob;
         const blob = new Blob([rawData], {
