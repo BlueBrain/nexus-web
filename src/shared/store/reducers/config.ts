@@ -9,6 +9,7 @@ export interface ConfigState {
   sentryDsn?: string;
   pluginsPath: string;
   plugins: string[];
+  gtmCode?: string;
 }
 
 const initialState: ConfigState = {
@@ -18,6 +19,7 @@ const initialState: ConfigState = {
   redirectHostName: '',
   pluginsPath: '/public/plugins',
   plugins: [],
+  gtmCode: '',
 };
 
 export default function configReducer(

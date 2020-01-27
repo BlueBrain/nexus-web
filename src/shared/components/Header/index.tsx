@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Menu, Dropdown, Icon, Button, Popover } from 'antd';
 import './Header.less';
 import Copy from '../Copy';
+import ConsentPreferences from '../ConsentPreferences';
+import { ConsentType } from '../../layouts/MainLayout';
 
 const logo = require('../../logo.svg');
 const epflLogo = require('../../EPFL-logo.svg');
@@ -12,6 +14,8 @@ interface InformationContentProps {
   version: string;
   githubIssueURL: string;
   serviceVersions?: ServiceVersions;
+  consent?: ConsentType;
+  onClickRemoveConsent?(): void;
 }
 
 export type ServiceVersions = {
@@ -26,9 +30,7 @@ export type ServiceVersions = {
 const VersionInfo = (props: ServiceVersions) => {
   return (
     <>
-      <p>
-        <h4>Nexus Services</h4>
-      </p>
+      <h4 className="popover-title">Nexus Services</h4>
       <p>
         <label>Admin</label> v{props.admin}
       </p>
@@ -38,9 +40,7 @@ const VersionInfo = (props: ServiceVersions) => {
       <p>
         <label>Knowledge Graph</label> v{props.kg}
       </p>
-      <p>
-        <h4>Index Services</h4>
-      </p>
+      <h4 className="popover-title">Index Services</h4>
       <p>
         <label>Blaze Graph</label> v{props.blazegraph}
       </p>
@@ -78,6 +78,12 @@ const InformationContent = (props: InformationContentProps) => {
       {props.serviceVersions ? (
         <VersionInfo {...props.serviceVersions} />
       ) : null}
+      {
+        <ConsentPreferences
+          onClickRemove={props.onClickRemoveConsent}
+          consent={props.consent}
+        />
+      }
     </>
   );
 };
@@ -92,6 +98,8 @@ export interface HeaderProps {
   onLoginClick?(): void;
   visitHome?(): void;
   serviceVersions?: ServiceVersions;
+  consent?: ConsentType;
+  onClickRemoveConsent?(): void;
 }
 
 const Header: React.FunctionComponent<HeaderProps> = ({
@@ -105,6 +113,8 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   githubIssueURL,
   visitHome,
   serviceVersions,
+  consent,
+  onClickRemoveConsent,
 }) => {
   const menu = (
     <Menu>
@@ -159,6 +169,8 @@ const Header: React.FunctionComponent<HeaderProps> = ({
               version={version}
               githubIssueURL={githubIssueURL}
               serviceVersions={serviceVersions}
+              consent={consent}
+              onClickRemoveConsent={onClickRemoveConsent}
             />
           }
           trigger="click"
