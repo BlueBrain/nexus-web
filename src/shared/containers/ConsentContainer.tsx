@@ -23,7 +23,7 @@ const enableTracking = (trackingCode: string) => {
   gTagNode.id = 'gTagNode';
   document.head.prepend(gTagNode);
   const j = document.createElement('script');
-  const dl = DATA_LAYER != 'dataLayer' ? '&l=' + DATA_LAYER : '';
+  const dl = DATA_LAYER !== 'dataLayer' ? `&l=${DATA_LAYER}` : '';
   j.async = true;
   j.src = `https://www.googletagmanager.com/gtm.js?id=${trackingCode}${dl}`;
   gTagNode.prepend(j);
