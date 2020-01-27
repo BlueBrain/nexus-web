@@ -27,31 +27,18 @@ const html = ({
       <script src="https://www.unpkg.com/systemjs@6.1.7/dist/system.js"></script>
       <script src="https://www.unpkg.com/systemjs@6.1.7/dist/extras/named-exports.js"></script>
       <script type="systemjs-importmap">
-      {
-        "imports": {
-          "react": "https://unpkg.com/react@16.12.0/umd/react.production.min.js",
-          "react-dom": "https://unpkg.com/react-dom@16.12.0/umd/react-dom.production.min.js"
+        {
+          "imports": {
+            "react": "https://unpkg.com/react@16.12.0/umd/react.production.min.js",
+            "react-dom": "https://unpkg.com/react-dom@16.12.0/umd/react-dom.production.min.js"
+          }
         }
-      }
-    </script>
+      </script>
       ${
         process.env.NODE_ENV !== 'production'
           ? ''
           : `<link rel="stylesheet" href="${base}public/bundle.css" />`
       }
-      ${
-        process.env.GTAG
-          ? `<!-- Global site tag (gtag.js) - Google Analytics -->
-      <script async src="https://www.googletagmanager.com/gtag/js?id=${process.env.GTAG}"></script>
-      <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', '${process.env.GTAG}', { 'anonymize_ip': true });
-      </script>`
-          : ''
-      }
-      
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <base href="${base}" />
     </head>

@@ -11,6 +11,8 @@ import getUserManager from '../../client/userManager';
 import { getLogoutUrl, getDestinationParam } from '../utils';
 import { RootState } from '../store/reducers';
 import { version, url as githubIssueURL } from '../../../package.json';
+import useLocalStorage from '../hooks/useLocalStorage';
+import ConsentContainer from '../containers/ConsentContainer';
 
 import './MainLayout.less';
 
@@ -29,6 +31,11 @@ export interface MainLayoutProps {
   apiEndpoint: string;
 }
 
+export type ConsentType = {
+  consentToTracking: boolean;
+  hasSetPreferences: boolean;
+};
+
 const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
   authenticated,
   token,
@@ -44,6 +51,10 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
     localStorage.removeItem('nexus__state');
     userManager && userManager.signoutRedirect();
   };
+
+  const [consent, setConsent] = useLocalStorage<ConsentType>(
+    'consentToTracking'
+  );
 
   // Remove version from API URL
   const splits = apiEndpoint.split('/');
@@ -98,7 +109,10 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
         version={version}
         githubIssueURL={githubIssueURL}
         serviceVersions={versions.data}
+        consent={consent}
+        onClickRemoveConsent={() => setConsent(undefined)}
       />
+      <ConsentContainer consent={consent} updateConsent={setConsent} />
       <div className="MainLayout_body">{children}</div>
     </>
   );
