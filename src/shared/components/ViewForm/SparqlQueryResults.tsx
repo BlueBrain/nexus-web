@@ -24,7 +24,6 @@ export type Entry = {
   type: string;
 };
 
-
 const getUrl = (entry: string) => {
   try {
     return matchResultUrls(entry);
