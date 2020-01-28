@@ -61,6 +61,24 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
             dataIndex,
             render,
             className: `result-column ${dataIndex}`,
+            sorter: (
+              a: {
+                [key: string]: any;
+              },
+              b: {
+                [key: string]: any;
+              }
+            ) => {
+              const sortA = a[dataIndex];
+              const sortB = b[dataIndex];
+              if (sortA < sortB) {
+                return -1;
+              }
+              if (sortA > sortB) {
+                return 1;
+              }
+              return 0;
+            },
           };
         })
       : []),
