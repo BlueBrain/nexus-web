@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { useParams } from 'react-router';
+import { useParams, useHistory } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { notification } from 'antd';
+import * as queryString from 'query-string';
 
 import Dashboard from '../components/Studio/Dashboard';
 
@@ -12,9 +13,22 @@ type DashboardResource = {
   [key: string]: any;
 };
 
+type QueryParams = {
+  [key: string]: any;
+};
+
 const StudioResourceView: React.FunctionComponent<{}> = () => {
   const nexus = useNexusContext();
   const { orgLabel = '', projectLabel = '', resourceId = '' } = useParams();
+  const history = useHistory();
+  const queryParams: QueryParams =
+    queryString.parse(history.location.search) || {};
+
+  console.log('queryParams', queryParams);
+
+  const { dashboardId } = queryParams;
+  console.log('dashboardId', dashboardId);
+  console.log('resourceId', resourceId);
 
   const [{ dashboard, busy, error }, setState] = React.useState<{
     dashboard: DashboardResource | null;
@@ -33,7 +47,7 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
       busy: true,
     });
 
-    nexus.Resource.get(orgLabel, projectLabel, resourceId)
+    nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(dashboardId))
       .then(response => {
         console.log('response', response);
 
@@ -61,7 +75,12 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
   const { label, description, plugins } = dashboard;
 
   return (
-    <Dashboard label={label} description={description} plugins={plugins} />
+    <Dashboard
+      label={label}
+      description={description}
+      plugins={plugins}
+      resourceId={resourceId}
+    />
   );
 };
 
