@@ -3,8 +3,9 @@ import { useParams, useHistory } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { notification } from 'antd';
 import * as queryString from 'query-string';
+import { Empty } from 'antd';
 
-import Dashboard from '../components/Studio/Dashboard';
+import { NexusPlugin } from '../containers/NexusPlugin';
 
 type DashboardResource = {
   label?: string;
@@ -67,12 +68,23 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
   const { label, description, plugins } = dashboard;
 
   return (
-    <Dashboard
-      label={label}
-      description={description}
-      plugins={plugins}
-      resourceId={resourceId}
-    />
+    <div className="studio-resource-view">
+      <h1>{label}</h1>
+      <p>{description}</p>
+      {plugins && plugins.length > 0 ? (
+        plugins.map(pluginName => (
+          <div className="studio-resource-plugin" key={`plugin-${pluginName}`}>
+            <NexusPlugin
+              url={`/public/plugins/${pluginName}/index.js`}
+              nexusClient={nexus}
+              resource={resourceId}
+            />
+          </div>
+        ))
+      ) : (
+        <Empty description="No plugins configured" />
+      )}
+    </div>
   );
 };
 
