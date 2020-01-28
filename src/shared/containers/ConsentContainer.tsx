@@ -1,25 +1,32 @@
 import * as React from 'react';
-import gtmParts from 'react-google-tag-manager';
 import { Modal } from 'antd';
 import { ConsentType } from '../layouts/MainLayout';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/reducers';
 
-const enableTracking = (trackingCode: string) => {
-  const gtm = gtmParts({
-    id: trackingCode,
-    dataLayerName: 'dataLayer',
-    additionalEvents: {},
-    previewVariables: false,
-    scheme: 'https:',
-  });
+declare global {
+  interface Window {
+    [key: string]: any;
+  }
+}
 
-  return (
-    <div>
-      <div>{gtm.noScriptAsReact()}</div>
-      <div id="react-google-tag-manager-gtm">{gtm.scriptAsReact()}</div>
-    </div>
-  );
+const DATA_LAYER = 'dataLayer';
+
+const enableTracking = (trackingCode: string) => {
+  window[DATA_LAYER] = window[DATA_LAYER] || [];
+  window[`ga-disable-${trackingCode}-1`] = false;
+  window[DATA_LAYER].push({
+    'gtm.start': new Date().getTime(),
+    event: 'gtm.js',
+  });
+  const gTagNode = document.createElement('div');
+  gTagNode.id = 'gTagNode';
+  document.head.prepend(gTagNode);
+  const j = document.createElement('script');
+  const dl = DATA_LAYER !== 'dataLayer' ? `&l=${DATA_LAYER}` : '';
+  j.async = true;
+  j.src = `https://www.googletagmanager.com/gtm.js?id=${trackingCode}${dl}`;
+  gTagNode.prepend(j);
 };
 
 const ConsentContainer: React.FunctionComponent<{
@@ -42,6 +49,7 @@ const ConsentContainer: React.FunctionComponent<{
         consentToTracking: false,
         hasSetPreferences: true,
       });
+    location.reload();
   };
 
   if (!gtmCode) {
@@ -63,7 +71,7 @@ const ConsentContainer: React.FunctionComponent<{
   }
 
   if (consent && consent.consentToTracking) {
-    return enableTracking(gtmCode);
+    enableTracking(gtmCode);
   }
 
   return null;
