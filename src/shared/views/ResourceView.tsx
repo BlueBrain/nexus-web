@@ -7,8 +7,12 @@ import { Spin, Card, Empty, Tabs, notification, Alert } from 'antd';
 import * as queryString from 'query-string';
 import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource, ResourceLink } from '@bbp/nexus-sdk';
-import { getResourceLabel } from '../utils';
+import { Resource, ResourceLink, IncomingLink } from '@bbp/nexus-sdk';
+import {
+  getResourceLabel,
+  getOrgAndProjectFromResource,
+  getOrgAndProjectFromProjectId,
+} from '../utils';
 import ResourceCardComponent from '../components/ResourceCard';
 import HistoryContainer from '../containers/HistoryContainer';
 import GraphContainer from '../containers/GraphContainer';
@@ -120,7 +124,12 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
   };
 
   const handleGoToInternalLink = (link: ResourceLink) => {
-    goToResource(orgLabel, projectLabel, resourceId, { tab: '#links' });
+    const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(
+      (link as IncomingLink)._project
+    );
+    goToResource(orgLabel, projectLabel, encodeURIComponent(link['@id']), {
+      tab: '#links',
+    });
   };
 
   useAsyncEffect(async () => {
@@ -341,13 +350,10 @@ const mapDispatchToProps = (dispatch: any) => {
       }
     ) => {
       const { revision, tab, expanded } = opt;
-      dispatch(
-        push(
-          `/${orgLabel}/${projectLabel}/resources/${resourceId}${
-            revision ? `?rev=${revision}` : ''
-          }${expanded ? '&expanded=true' : ''}${tab ? tab : ''}`
-        )
-      );
+      const pushRoute = `/${orgLabel}/${projectLabel}/resources/${resourceId}${
+        revision ? `?rev=${revision}` : ''
+      }${expanded ? '&expanded=true' : ''}${tab ? tab : ''}`;
+      dispatch(push(pushRoute));
     },
     goToProject: (orgLabel: string, projectLabel: string) =>
       dispatch(push(`/${orgLabel}/${projectLabel}`)),
