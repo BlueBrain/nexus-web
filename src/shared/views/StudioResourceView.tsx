@@ -24,29 +24,26 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
   const queryParams: QueryParams =
     queryString.parse(history.location.search) || {};
   const { dashboardId } = queryParams;
-  const [{ dashboard, busy, error }, setState] = React.useState<{
+  const [{ dashboard }, setDashboard] = React.useState<{
     dashboard: DashboardResource | null;
-    busy: boolean;
-    error: Error | null;
   }>({
     dashboard: null,
-    busy: false,
-    error: null,
+  });
+  const [{ resource }, setResource] = React.useState<{
+    resource: any | null;
+  }>({
+    resource: null,
   });
 
   React.useEffect(() => {
-    setState({
+    setDashboard({
       dashboard,
-      error: null,
-      busy: true,
     });
 
     nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(dashboardId))
       .then(response => {
-        setState({
+        setDashboard({
           dashboard: response,
-          busy: false,
-          error: null,
         });
       })
       .catch(error => {
@@ -54,10 +51,30 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
           message: `Could not load dashboard ${projectLabel}`,
           description: error.message,
         });
-        setState({
+        setDashboard({
           dashboard,
-          error,
-          busy: false,
+        });
+      });
+
+    setResource({
+      resource,
+    });
+
+    console.log('resourceId', resourceId);
+
+    nexus.Resource.get(orgLabel, projectLabel, resourceId)
+      .then(response => {
+        setResource({
+          resource: response,
+        });
+      })
+      .catch(error => {
+        notification.error({
+          message: `Could not load resource ${projectLabel}`,
+          description: error.message,
+        });
+        setResource({
+          resource,
         });
       });
   }, [orgLabel, projectLabel]);
@@ -76,7 +93,7 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
             <NexusPlugin
               url={`/public/plugins/${pluginName}/index.js`}
               nexusClient={nexus}
-              resource={resourceId}
+              resource={resource}
             />
           </div>
         ))
