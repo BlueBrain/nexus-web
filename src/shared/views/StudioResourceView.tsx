@@ -1,17 +1,105 @@
 import * as React from 'react';
-import { useParams } from 'react-router';
+import { useParams, useHistory } from 'react-router';
+import { useNexusContext } from '@bbp/react-nexus';
+import { notification, Empty } from 'antd';
+import * as queryString from 'query-string';
+
+import { NexusPlugin } from '../containers/NexusPlugin';
+
+type DashboardResource = {
+  label?: string;
+  description?: string;
+  plugins?: string[];
+  [key: string]: any;
+};
+
+type QueryParams = {
+  [key: string]: any;
+};
 
 const StudioResourceView: React.FunctionComponent<{}> = () => {
-  const { orgLabel, projectLabel, resourceId } = useParams();
+  const nexus = useNexusContext();
+  const { orgLabel = '', projectLabel = '', resourceId = '' } = useParams();
+  const history = useHistory();
+  const queryParams: QueryParams =
+    queryString.parse(history.location.search) || {};
+  const { dashboardId } = queryParams;
+  const [{ dashboard }, setDashboard] = React.useState<{
+    dashboard: DashboardResource | null;
+  }>({
+    dashboard: null,
+  });
+  const [{ resource }, setResource] = React.useState<{
+    resource: any | null;
+  }>({
+    resource: null,
+  });
 
-  console.log(
-    'orgLabel, projectLabel, resourceId',
-    orgLabel,
-    projectLabel,
-    resourceId
+  React.useEffect(() => {
+    setDashboard({
+      dashboard,
+    });
+
+    nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(dashboardId))
+      .then(response => {
+        setDashboard({
+          dashboard: response,
+        });
+      })
+      .catch(error => {
+        notification.error({
+          message: `Could not load dashboard ${projectLabel}`,
+          description: error.message,
+        });
+        setDashboard({
+          dashboard,
+        });
+      });
+
+    setResource({
+      resource,
+    });
+
+    nexus.Resource.get(orgLabel, projectLabel, resourceId)
+      .then(response => {
+        setResource({
+          resource: response,
+        });
+      })
+      .catch(error => {
+        notification.error({
+          message: `Could not load resource ${projectLabel}`,
+          description: error.message,
+        });
+        setResource({
+          resource,
+        });
+      });
+  }, [orgLabel, projectLabel]);
+
+  if (!dashboard) return null;
+
+  const { label, description, plugins } = dashboard;
+
+  return (
+    <div className="studio-resource-view">
+      <h1>{label}</h1>
+      <p>{description}</p>
+      {plugins && plugins.length > 0 ? (
+        plugins.map(pluginName => (
+          <div className="studio-resource-plugin" key={`plugin-${pluginName}`}>
+            <NexusPlugin
+              url={`/public/plugins/${pluginName}/index.js`}
+              nexusClient={nexus}
+              resource={resource}
+            />
+          </div>
+        ))
+      ) : (
+        <Empty description="No plugins configured" />
+      )}
+    </div>
   );
-
-  return <div>Studio Resource View</div>;
 };
 
 export default StudioResourceView;
