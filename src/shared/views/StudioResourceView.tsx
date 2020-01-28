@@ -23,13 +23,7 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
   const history = useHistory();
   const queryParams: QueryParams =
     queryString.parse(history.location.search) || {};
-
-  console.log('queryParams', queryParams);
-
   const { dashboardId } = queryParams;
-  console.log('dashboardId', dashboardId);
-  console.log('resourceId', resourceId);
-
   const [{ dashboard, busy, error }, setState] = React.useState<{
     dashboard: DashboardResource | null;
     busy: boolean;
@@ -49,8 +43,6 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
 
     nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(dashboardId))
       .then(response => {
-        console.log('response', response);
-
         setState({
           dashboard: response,
           busy: false,
@@ -59,7 +51,7 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
       })
       .catch(error => {
         notification.error({
-          message: `Could not load project ${projectLabel}`,
+          message: `Could not load dashboard ${projectLabel}`,
           description: error.message,
         });
         setState({
