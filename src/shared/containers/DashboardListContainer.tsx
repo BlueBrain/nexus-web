@@ -57,6 +57,12 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   const fetchAndSetupDashboards = () => {
     Promise.all(
       dashboards.map(dashboardObject => {
+        console.log('dashboardObject.dashboard', dashboardObject.dashboard);
+        console.log(
+          'encodeURIComponent(dashboardObject.dashboard)',
+          encodeURIComponent(dashboardObject.dashboard)
+        );
+
         return nexus.Resource.get(
           orgLabel,
           projectLabel,
