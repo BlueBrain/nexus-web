@@ -8917,11 +8917,6 @@ react-focus-lock@^1.18.3:
     prop-types "^15.6.2"
     react-clientside-effect "^1.2.0"
 
-react-google-tag-manager@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/react-google-tag-manager/-/react-google-tag-manager-2.2.1.tgz#b0659c7b19d9263c7cb45d3c019f506529af9077"
-  integrity sha512-8yPbEE3r2z0OWRvJYg1HegKQktH2fIJ2hHCFzAk7+GeOHIK7Vcq+dA0wo2Wf81oHSPMHiOY7nhXIviSVJFV64w==
-
 react-helmet-async@^1.0.2:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/react-helmet-async/-/react-helmet-async-1.0.4.tgz#079ef10b7fefcaee6240fefd150711e62463cc97"
