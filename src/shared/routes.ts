@@ -10,6 +10,7 @@ import SparqlQueryView from './views/SparqlQueryView';
 import ACLsView from './views/ACLsView';
 import UserView from './views/UserView';
 import StudioView from './views/StudioView';
+import StudioResourceView from './views/StudioResourceView';
 
 const routes: RouteProps[] = [
   {
@@ -38,6 +39,10 @@ const routes: RouteProps[] = [
   {
     path: '/:orgLabel/:projectLabel/resources/:resourceId',
     component: ResourceView,
+  },
+  {
+    path: '/:orgLabel/:projectLabel/studio-resources/:resourceId',
+    component: StudioResourceView,
   },
   {
     path: '/:orgLabel/:projectLabel/studios/:studioId',
