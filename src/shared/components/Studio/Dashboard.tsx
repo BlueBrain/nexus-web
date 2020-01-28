@@ -20,7 +20,7 @@ const Dashboard: React.FunctionComponent<{
       <p>{description}</p>
       {plugins && plugins.length > 0 ? (
         plugins.map(pluginName => (
-          <div className="dashboard-plugin">
+          <div className="dashboard-plugin" key={`plugin-${pluginName}`}>
             <NexusPlugin
               url={`/public/plugins/${pluginName}/index.js`}
               nexusClient={nexus}
