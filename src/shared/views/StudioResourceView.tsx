@@ -60,8 +60,6 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
       resource,
     });
 
-    console.log('resourceId', resourceId);
-
     nexus.Resource.get(orgLabel, projectLabel, resourceId)
       .then(response => {
         setResource({
