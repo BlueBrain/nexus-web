@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { useParams, useHistory } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
-import { notification } from 'antd';
+import { notification, Empty } from 'antd';
 import * as queryString from 'query-string';
-import { Empty } from 'antd';
 
 import { NexusPlugin } from '../containers/NexusPlugin';
 
