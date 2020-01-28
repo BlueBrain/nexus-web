@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Empty } from 'antd';
 
 import { NexusPlugin } from '../../containers/NexusPlugin';
 
@@ -17,7 +18,7 @@ const Dashboard: React.FunctionComponent<{
     <div className="dashboard">
       <h1>{label}</h1>
       <p>{description}</p>
-      {plugins &&
+      {plugins && plugins.length > 0 ? (
         plugins.map(pluginName => (
           <div className="dashboard-plugin">
             <NexusPlugin
@@ -26,7 +27,10 @@ const Dashboard: React.FunctionComponent<{
               resource={resourceId}
             />
           </div>
-        ))}
+        ))
+      ) : (
+        <Empty description="No plugins configured" />
+      )}
     </div>
   );
 };
