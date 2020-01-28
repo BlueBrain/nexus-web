@@ -124,8 +124,6 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
   };
 
   useAsyncEffect(async () => {
-    console.log('resourceId-----------', resourceId);
-
     try {
       setResource({
         resource,
