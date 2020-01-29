@@ -1,12 +1,16 @@
 import * as React from 'react';
-import './ResultTable.less';
 import * as moment from 'moment';
 import { Input, Table } from 'antd';
+
 import { parseProjectUrl } from '../../utils/index';
+
+import './ResultTable.less';
 
 const { Search } = Input;
 
 const PAGE_SIZE = 10;
+const MAX_FILTER_LIMIT = 20;
+const MIN_FILTER_LIMIT = 1;
 
 type ResultTableProps = {
   headerProperties?: {
@@ -28,6 +32,18 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
   handleClick,
 }) => {
   const [searchValue, setSearchValue] = React.useState();
+
+  const filteredItems = items.filter(item => {
+    return (
+      Object.values(item)
+        .join(' ')
+        .toLowerCase()
+        .search((searchValue || '').toLowerCase()) >= 0
+    );
+  });
+  const tableItems = searchValue ? filteredItems : items;
+  const total = tableItems.length;
+  const showPagination = total > pageSize;
 
   const columnList = [
     ...(headerProperties
@@ -56,28 +72,59 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
               break;
           }
 
+          const distinctValues = filteredItems.reduce(
+            (memo, item) => {
+              const value = item[dataIndex];
+              if (!memo.includes(value)) {
+                memo.push(value);
+              }
+              return memo;
+            },
+            [] as any[]
+          );
+
+          const filterOptions =
+            distinctValues.length > MIN_FILTER_LIMIT &&
+            distinctValues.length < MAX_FILTER_LIMIT
+              ? {
+                  filters: distinctValues.map(value => ({
+                    value,
+                    text: value,
+                  })),
+                  filterMultiple: false,
+                  onFilter: (filterValue: any, item: any) =>
+                    item[dataIndex] === filterValue,
+                }
+              : {};
+
           return {
             title,
             dataIndex,
             render,
             className: `result-column ${dataIndex}`,
+            sorter: (
+              a: {
+                [key: string]: any;
+              },
+              b: {
+                [key: string]: any;
+              }
+            ) => {
+              const sortA = a[dataIndex];
+              const sortB = b[dataIndex];
+              if (sortA < sortB) {
+                return -1;
+              }
+              if (sortA > sortB) {
+                return 1;
+              }
+              return 0;
+            },
+            ...filterOptions,
           };
         })
       : []),
   ];
-
-  const filteredItems = items.filter(item => {
-    return (
-      Object.values(item)
-        .join(' ')
-        .toLowerCase()
-        .search((searchValue || '').toLowerCase()) >= 0
-    );
-  });
-
-  const tableItems = searchValue ? filteredItems : items;
-  const total = tableItems.length;
-  const showPagination = total > pageSize;
 
   return (
     <div className="result-table">
