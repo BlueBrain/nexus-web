@@ -159,7 +159,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         activeKey={`${selectedDashboardIndex}`}
         tabAction={resourcesWritePermissionsWrapper(tabAction, permissionsPath)}
         onEditClick={handleElementClick}
-        resourcesWritePermissionsWrapper={(child: React.ReactNode) =>
+        permissionsWrapper={(child: React.ReactNode) =>
           resourcesWritePermissionsWrapper(child, permissionsPath)
         }
       >

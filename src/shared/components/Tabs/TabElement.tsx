@@ -6,9 +6,7 @@ type TabElementProps = {
   label: string;
   description: string;
   onEditClick: (elementId: string) => void;
-  resourcesWritePermissionsWrapper?: (
-    child: React.ReactNode
-  ) => React.ReactNode;
+  permissionsWrapper?: (child: React.ReactNode) => React.ReactNode;
 };
 
 const TabElement: React.FunctionComponent<TabElementProps> = ({
@@ -16,7 +14,7 @@ const TabElement: React.FunctionComponent<TabElementProps> = ({
   label,
   description,
   onEditClick,
-  resourcesWritePermissionsWrapper,
+  permissionsWrapper: resourcesWritePermissionsWrapper,
 }) => {
   const [hover, setHover] = React.useState<boolean>(false);
   const show = hover ? 'block' : 'none';
