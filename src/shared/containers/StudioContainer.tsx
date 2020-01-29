@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
-import { useNexusContext, AccessControl } from '@bbp/react-nexus';
+import { useNexusContext } from '@bbp/react-nexus';
 import { notification, Empty } from 'antd';
 
 import EditStudio from '../components/Studio/EditStudio';
