@@ -5,7 +5,7 @@ export const resourcesWritePermissionsWrapper = (
   child: React.ReactNode,
   permissionPath: string
 ) => {
-  const permissions = ['resources/write'];
+  const permissions = ['projects/write'];
   return React.createElement(AccessControl, {
     permissions,
     path: permissionPath,

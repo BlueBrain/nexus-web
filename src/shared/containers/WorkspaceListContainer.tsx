@@ -136,7 +136,9 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
         }
         position="top"
         tabAction={resourcesWritePermissionsWrapper(tabAction, permissionsPath)}
-        studioPermissionsPath={permissionsPath}
+        resourcesWritePermissionsWrapper={(child: React.ReactNode) =>
+          resourcesWritePermissionsWrapper(child, permissionsPath)
+        }
       >
         {selectedWorkspace ? (
           <div className="workspace">
