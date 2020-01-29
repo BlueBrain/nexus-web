@@ -53,7 +53,10 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
         setResource({ resource });
       })
       .catch(error => {
-        // TODO: show a meaningful error to the user.
+        notification.error({
+          message: `Could not load Resource`,
+          description: error.message,
+        });
       });
 
     nexus
@@ -65,7 +68,10 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
         setDashboard({ dashboard });
       })
       .catch(error => {
-        // TODO: show a meaningful error to the user.
+        notification.error({
+          message: `Could not load Dashboard`,
+          description: error.message,
+        });
       });
   }, []);
 
