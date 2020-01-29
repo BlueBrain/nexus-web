@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { Resource, DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
-import { useNexusContext } from '@bbp/react-nexus';
+import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
 import DashboardResultsContainer from './DashboardResultsContainer';
 import DashboardEditorContainer from './DashboardEditor/DashboardEditorContainer';
 import CreateDashboardContainer from './DashboardEditor/CreateDashboardContainer';
 import useQueryString from '../hooks/useQueryString';
+import { studioPermissionsWrapper } from '../utils/permission';
 
 export type Dashboard = {
   dashboard: string;
@@ -31,6 +32,9 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
 }) => {
   const [queryParams, setQueryString] = useQueryString();
   const { dashboardId } = queryParams;
+  const permissionsPath = `${orgLabel}/${projectLabel}/_/${encodeURIComponent(
+    studioResourceId
+  )}`;
   const [dashboardResources, setDashboardResources] = React.useState<
     Resource[]
   >([]);
@@ -115,6 +119,15 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     setEditingDashboard(null);
   };
 
+  const tabAction = (
+    <CreateDashboardContainer
+      orgLabel={orgLabel}
+      projectLabel={projectLabel}
+      workspaceId={workspaceId}
+      onSuccess={refreshList}
+    />
+  );
+
   return (
     <div>
       {editingDashboard && (
@@ -146,15 +159,9 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         }}
         position="left"
         activeKey={`${selectedDashboardIndex}`}
-        tabAction={
-          <CreateDashboardContainer
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
-            workspaceId={workspaceId}
-            onSuccess={refreshList}
-          />
-        }
+        tabAction={studioPermissionsWrapper(tabAction, permissionsPath)}
         onEditClick={handleElementClick}
+        studioPermissionsPath={permissionsPath}
       >
         {!!dashboardResources.length &&
           !!dashboardResources[selectedDashboardIndex] && (

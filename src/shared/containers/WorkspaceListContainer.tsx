@@ -7,6 +7,7 @@ import AddWorkspaceContainer from './AddWorkspaceContainer';
 import WorkspaceForm from './WorkspaceFormContainer';
 import { Dashboard } from './DashboardListContainer';
 import useQueryString from '../hooks/useQueryString';
+import { studioPermissionsWrapper } from '../utils/permission';
 
 type StudioResource = Resource<{
   label: string;
@@ -34,6 +35,9 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   onListUpdate,
   dashboardListComponent,
 }) => {
+  const permissionsPath = `${orgLabel}/${projectLabel}/_/${encodeURIComponent(
+    studioResource['@id']
+  )}`;
   const [queryParams, setQueryString] = useQueryString();
   const { workspaceId } = queryParams;
   const [workspaces, setWorkspaces] = React.useState<Resource<any>[]>([]);
@@ -101,6 +105,15 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
       });
   }, [workspaceIds, workspaceId]);
 
+  const tabAction = (
+    <AddWorkspaceContainer
+      orgLabel={orgLabel}
+      projectLabel={projectLabel}
+      studio={studioResource}
+      onAddWorkspace={onListUpdate}
+    />
+  );
+
   return (
     <>
       <TabList
@@ -124,14 +137,8 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
             : undefined
         }
         position="top"
-        tabAction={
-          <AddWorkspaceContainer
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
-            studio={studioResource}
-            onAddWorkspace={onListUpdate}
-          />
-        }
+        tabAction={studioPermissionsWrapper(tabAction, permissionsPath)}
+        studioPermissionsPath={permissionsPath}
       >
         {selectedWorkspace ? (
           <div className="workspace">

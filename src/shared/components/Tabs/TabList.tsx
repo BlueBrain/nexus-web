@@ -19,6 +19,7 @@ type TabListProps = {
   position?: 'left' | 'right' | 'top' | 'bottom' | undefined;
   onEditClick?: (id: string) => void;
   tabAction?: React.ReactElement;
+  studioPermissionsPath?: string;
 };
 
 const TabList: React.FunctionComponent<TabListProps> = ({
@@ -30,6 +31,7 @@ const TabList: React.FunctionComponent<TabListProps> = ({
   children,
   onEditClick,
   tabAction,
+  studioPermissionsPath,
 }) => {
   const editClick = onEditClick ? onEditClick : (id: string) => {};
   return (
@@ -49,6 +51,7 @@ const TabList: React.FunctionComponent<TabListProps> = ({
                 description={description}
                 id={id}
                 onEditClick={editClick}
+                studioPermissionsPath={studioPermissionsPath}
               />
             }
             key={id}

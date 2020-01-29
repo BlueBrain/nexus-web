@@ -1,11 +1,13 @@
 import { Button } from 'antd';
 import * as React from 'react';
+import { studioPermissionsWrapper } from '../../utils/permission';
 
 type TabElementProps = {
   id: string;
   label: string;
   description: string;
   onEditClick: (elementId: string) => void;
+  studioPermissionsPath?: string;
 };
 
 const TabElement: React.FunctionComponent<TabElementProps> = ({
@@ -13,10 +15,23 @@ const TabElement: React.FunctionComponent<TabElementProps> = ({
   label,
   description,
   onEditClick,
+  studioPermissionsPath,
 }) => {
   const [hover, setHover] = React.useState<boolean>(false);
   const show = hover ? 'block' : 'none';
   const buttonStyle = { display: show };
+  const editButton = (
+    <Button
+      type="primary"
+      icon="edit"
+      size="small"
+      onClick={e => {
+        onEditClick(id);
+        e.stopPropagation();
+      }}
+      style={buttonStyle}
+    />
+  );
   return (
     <div
       className="tab-element-container"
@@ -32,16 +47,9 @@ const TabElement: React.FunctionComponent<TabElementProps> = ({
         <p className="description fade">{description}</p>
       </div>
       <div className={'edit-button-container'}>
-        <Button
-          type="primary"
-          icon="edit"
-          size="small"
-          onClick={e => {
-            onEditClick(id);
-            e.stopPropagation();
-          }}
-          style={buttonStyle}
-        />
+        {studioPermissionsPath
+          ? studioPermissionsWrapper(editButton, studioPermissionsPath)
+          : editButton}
       </div>
     </div>
   );

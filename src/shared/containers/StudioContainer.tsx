@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
-import { useNexusContext } from '@bbp/react-nexus';
+import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { notification, Empty } from 'antd';
 
 import EditStudio from '../components/Studio/EditStudio';
 import StudioHeader from '../components/Studio/StudioHeader';
+import { studioPermissionsWrapper } from '../utils/permission';
+ 
 
 type StudioContainerProps = {
   orgLabel: string;
@@ -90,6 +92,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
     fetchAndSetupStudio();
   };
 
+  const editButton = <EditStudio studio={studioResource} onSave={updateStudio} />;
   return (
     <>
       {studioResource ? (
@@ -98,7 +101,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
             label={studioResource.label}
             description={studioResource.description}
           >
-            <EditStudio studio={studioResource} onSave={updateStudio} />
+          {studioPermissionsWrapper(editButton,`${orgLabel}/${projectLabel}/_/${encodeURIComponent(studioResource['@id'])}`)}
           </StudioHeader>
           {workspaceListComponent({
             workspaceIds,
