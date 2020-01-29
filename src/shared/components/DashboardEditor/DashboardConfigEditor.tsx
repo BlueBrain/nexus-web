@@ -27,9 +27,7 @@ export type DashboardConfigEditorProps = {
 const dashboardSPARQLDocumentationURL =
   'https://github.com/BlueBrain/nexus-web/blob/master/docs/studio/Dashboards.md#sparql-query-requirements';
 
-const DashboardConfigEditorComponent: React.FunctionComponent<
-  DashboardConfigEditorProps
-> = ({
+const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEditorProps> = ({
   onSubmit,
   form,
   dashboard,
@@ -179,7 +177,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
                 listStyle={{ width: '350px' }}
                 dataSource={formatPluginSource()}
                 targetKeys={selectedPlugins}
-                render={item => item.title}
+                render={item => <span>{item.title}</span>}
                 onChange={handlePluginsChange}
               />
             </Panel>

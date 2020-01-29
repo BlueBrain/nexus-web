@@ -5,7 +5,7 @@ import {
   compose,
   Store,
 } from 'redux';
-import thunk, { ThunkAction } from 'redux-thunk';
+import thunk, { ThunkAction as ThunkActionType } from 'redux-thunk';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { reducer as oidcReducer } from 'redux-oidc';
 import { History } from 'history';
@@ -17,7 +17,7 @@ export type Services = {
   nexus: NexusClient;
 };
 
-export type ThunkAction = ThunkAction<Promise<any>, object, Services, any>;
+export type ThunkAction = ThunkActionType<Promise<any>, object, Services, any>;
 
 let composeEnhancers: Function = compose;
 try {

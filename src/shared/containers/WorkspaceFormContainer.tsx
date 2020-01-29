@@ -277,7 +277,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
               <Transfer
                 targetKeys={targetKeys}
                 dataSource={getTransferData()}
-                render={item => item.title}
+                render={item => <span>{item.title}</span>}
                 onChange={handleChange}
               />
             </Form.Item>
