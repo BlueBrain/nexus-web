@@ -1,28 +1,49 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { Card, notification, Empty } from 'antd';
-import { IdentityList } from '@bbp/nexus-sdk';
+import { useSelector } from 'react-redux';
+import { notification, Button, Descriptions, List, Typography } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
+import { push } from 'connected-react-router';
 
-import ListItem from '../components/List/Item';
 import { RootState } from '../store/reducers';
+import { useHistory } from 'react-router';
 
-export interface UserProps {
-  name?: string;
-}
+export type UserPageData = {
+  user?: string;
+  realm?: string;
+  authenticated?: boolean;
+  groups?: string[];
+};
 
-const UserView: React.FunctionComponent<UserProps> = props => {
-  const { name } = props;
-  const [{ identities }, setIdentities] = React.useState<IdentityList>({
-    '@context': {},
-    identities: [],
-  });
+const UserView: React.FunctionComponent<{}> = props => {
+  const name = useSelector(
+    ({ oidc }: RootState) =>
+      oidc.user && oidc.user.profile && oidc.user.profile.name
+  );
+
+  const [userPageData, setUserPageData] = React.useState<UserPageData>({});
+  const history = useHistory();
 
   const nexus = useNexusContext();
 
   React.useEffect(() => {
     nexus.Identity.list()
-      .then(setIdentities)
+      .then(({ identities }) =>
+        setUserPageData(
+          identities.reduce((memo: UserPageData, identity) => {
+            if (identity['@type'] === 'Authenticated') {
+              memo.authenticated = true;
+              memo.realm = identity.realm;
+            }
+            if (identity['@type'] === 'User') {
+              memo.user = identity.subject;
+            }
+            if (identity['@type'] === 'Group') {
+              memo.groups = [...(memo.groups || []), identity.group as string];
+            }
+            return memo;
+          }, {})
+        )
+      )
       .catch(error => {
         notification.error({
           message: 'Problem loading Identities',
@@ -31,40 +52,51 @@ const UserView: React.FunctionComponent<UserProps> = props => {
       });
   }, [name]);
 
+  const UnauthenticatedMessage = () => (
+    <div style={{ flexGrow: 1 }}>
+      <h1>You're Anonymous</h1>
+      <p>
+        You can <Button onClick={() => history.push('login')}>log in</Button> to
+        change that
+      </p>
+    </div>
+  );
+
   return (
     <div className="user-view view-container">
-      <div style={{ flexGrow: 1 }}>
-        <h1>{name}</h1>
-        <h2>Identities</h2>
-        <p>
-          This is a list of the identities you are associated with on the
-          platform.
-        </p>
-        <Card>
-          <ul className="identities-list">
-            {!!identities.length ? (
-              identities
-                .reverse()
-                .map(({ '@id': id, '@type': type, realm, subject }) => (
-                  <ListItem key={id}>
-                    <div>
-                      <em>{type}</em> {subject}
-                      <p>{realm}</p>
-                    </div>
-                  </ListItem>
-                ))
-            ) : (
-              <Empty description={<span>No Identities Found</span>} />
+      {userPageData.authenticated ? (
+        <div style={{ flexGrow: 1 }}>
+          <h1>User Details</h1>
+          <Descriptions bordered>
+            <Descriptions.Item label="User Name">{name}</Descriptions.Item>
+            <Descriptions.Item label="Login Name">
+              {userPageData.user}
+            </Descriptions.Item>
+            <Descriptions.Item label="Realm">
+              {userPageData.realm}
+            </Descriptions.Item>
+            {!!userPageData.groups && !!userPageData.groups.length && (
+              <Descriptions.Item label="Groups">
+                <List
+                  dataSource={userPageData.groups}
+                  pagination={{
+                    total: userPageData.groups.length,
+                  }}
+                  renderItem={group => (
+                    <List.Item>
+                      <Typography.Text mark>{group}</Typography.Text>
+                    </List.Item>
+                  )}
+                ></List>
+              </Descriptions.Item>
             )}
-          </ul>
-        </Card>
-      </div>
+          </Descriptions>
+        </div>
+      ) : (
+        <UnauthenticatedMessage />
+      )}
     </div>
   );
 };
 
-const mapStateToProps = ({ oidc }: RootState) => ({
-  name: oidc.user && oidc.user.profile && oidc.user.profile.name,
-});
-
-export default connect(mapStateToProps)(UserView);
+export default UserView;
