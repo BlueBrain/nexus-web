@@ -62,7 +62,7 @@ const ResourceView: React.FunctionComponent<ResourceViewProps> = props => {
     error: null,
   });
   const [latestResource, setLatestResource] = React.useState<
-    Resource & { [key: string]: any } | null
+    (Resource & { [key: string]: any }) | null
   >(null);
 
   const isLatest =
@@ -355,7 +355,4 @@ const mapDispatchToProps = (dispatch: any) => {
   };
 };
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(ResourceView);
+export default connect(null, mapDispatchToProps)(ResourceView);

@@ -210,7 +210,4 @@ const mapDispatchToProps = (dispatch: any) => ({
   goTo: (org: string) => dispatch(push(`/${org}`)),
 });
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(OrgsView);
+export default connect(null, mapDispatchToProps)(OrgsView);

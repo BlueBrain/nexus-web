@@ -98,7 +98,4 @@ const mapDispatchToProps = (dispatch: any) => ({
     dispatch(push(`/${orgLabel}/${projectLabel}`)),
 });
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(ACLs);
+export default connect(null, mapDispatchToProps)(ACLs);
