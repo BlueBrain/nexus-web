@@ -6,7 +6,7 @@ import DashboardResultsContainer from './DashboardResultsContainer';
 import DashboardEditorContainer from './DashboardEditor/DashboardEditorContainer';
 import CreateDashboardContainer from './DashboardEditor/CreateDashboardContainer';
 import useQueryString from '../hooks/useQueryString';
-import { studioPermissionsWrapper } from '../utils/permission';
+import { resourcesWritePermissionsWrapper } from '../utils/permission';
 
 export type Dashboard = {
   dashboard: string;
@@ -32,9 +32,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
 }) => {
   const [queryParams, setQueryString] = useQueryString();
   const { dashboardId } = queryParams;
-  const permissionsPath = `${orgLabel}/${projectLabel}/_/${encodeURIComponent(
-    studioResourceId
-  )}`;
+  const permissionsPath = `/${orgLabel}/${projectLabel}`;
   const [dashboardResources, setDashboardResources] = React.useState<
     Resource[]
   >([]);
@@ -159,7 +157,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         }}
         position="left"
         activeKey={`${selectedDashboardIndex}`}
-        tabAction={studioPermissionsWrapper(tabAction, permissionsPath)}
+        tabAction={resourcesWritePermissionsWrapper(tabAction, permissionsPath)}
         onEditClick={handleElementClick}
         studioPermissionsPath={permissionsPath}
       >

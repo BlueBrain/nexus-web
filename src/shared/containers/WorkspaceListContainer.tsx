@@ -7,7 +7,7 @@ import AddWorkspaceContainer from './AddWorkspaceContainer';
 import WorkspaceForm from './WorkspaceFormContainer';
 import { Dashboard } from './DashboardListContainer';
 import useQueryString from '../hooks/useQueryString';
-import { studioPermissionsWrapper } from '../utils/permission';
+import { resourcesWritePermissionsWrapper } from '../utils/permission';
 
 type StudioResource = Resource<{
   label: string;
@@ -35,9 +35,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   onListUpdate,
   dashboardListComponent,
 }) => {
-  const permissionsPath = `${orgLabel}/${projectLabel}/_/${encodeURIComponent(
-    studioResource['@id']
-  )}`;
+  const permissionsPath = `/${orgLabel}/${projectLabel}`;
   const [queryParams, setQueryString] = useQueryString();
   const { workspaceId } = queryParams;
   const [workspaces, setWorkspaces] = React.useState<Resource<any>[]>([]);
@@ -137,7 +135,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
             : undefined
         }
         position="top"
-        tabAction={studioPermissionsWrapper(tabAction, permissionsPath)}
+        tabAction={resourcesWritePermissionsWrapper(tabAction, permissionsPath)}
         studioPermissionsPath={permissionsPath}
       >
         {selectedWorkspace ? (

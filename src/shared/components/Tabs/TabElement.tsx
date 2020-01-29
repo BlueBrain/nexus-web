@@ -1,6 +1,6 @@
 import { Button } from 'antd';
 import * as React from 'react';
-import { studioPermissionsWrapper } from '../../utils/permission';
+import { resourcesWritePermissionsWrapper } from '../../utils/permission';
 
 type TabElementProps = {
   id: string;
@@ -48,7 +48,7 @@ const TabElement: React.FunctionComponent<TabElementProps> = ({
       </div>
       <div className={'edit-button-container'}>
         {studioPermissionsPath
-          ? studioPermissionsWrapper(editButton, studioPermissionsPath)
+          ? resourcesWritePermissionsWrapper(editButton, studioPermissionsPath)
           : editButton}
       </div>
     </div>

@@ -5,7 +5,7 @@ import { notification, Empty } from 'antd';
 
 import EditStudio from '../components/Studio/EditStudio';
 import StudioHeader from '../components/Studio/StudioHeader';
-import { studioPermissionsWrapper } from '../utils/permission';
+import { resourcesWritePermissionsWrapper } from '../utils/permission';
 
 type StudioContainerProps = {
   orgLabel: string;
@@ -102,11 +102,9 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
             label={studioResource.label}
             description={studioResource.description}
           >
-            {studioPermissionsWrapper(
+            {resourcesWritePermissionsWrapper(
               editButton,
-              `${orgLabel}/${projectLabel}/_/${encodeURIComponent(
-                studioResource['@id']
-              )}`
+              `/${orgLabel}/${projectLabel}`
             )}
           </StudioHeader>
           {workspaceListComponent({

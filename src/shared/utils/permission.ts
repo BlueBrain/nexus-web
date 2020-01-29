@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { AccessControl } from '@bbp/react-nexus';
 
-export const studioPermissionsWrapper = (
+export const resourcesWritePermissionsWrapper = (
   child: React.ReactNode,
   permissionPath: string
 ) => {
