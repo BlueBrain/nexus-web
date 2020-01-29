@@ -19,11 +19,11 @@ type QueryParams = {
 
 const StudioResourceView: React.FunctionComponent<{}> = () => {
   const nexus = useNexusContext();
-  const { orgLabel = '', projectLabel = '', resourceId = '' } = useParams();
+  const { resourceSelfUrl = '' } = useParams();
   const history = useHistory();
   const queryParams: QueryParams =
     queryString.parse(history.location.search) || {};
-  const { dashboardId } = queryParams;
+  const dashboardUrl = queryParams.dashboard;
   const [{ dashboard }, setDashboard] = React.useState<{
     dashboard: DashboardResource | null;
   }>({
@@ -40,42 +40,34 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
       dashboard,
     });
 
-    nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(dashboardId))
-      .then(response => {
-        setDashboard({
-          dashboard: response,
-        });
-      })
-      .catch(error => {
-        notification.error({
-          message: `Could not load dashboard ${projectLabel}`,
-          description: error.message,
-        });
-        setDashboard({
-          dashboard,
-        });
-      });
-
     setResource({
       resource,
     });
 
-    nexus.Resource.get(orgLabel, projectLabel, resourceId)
-      .then(response => {
-        setResource({
-          resource: response,
-        });
+    nexus
+      .httpGet({
+        path: resourceSelfUrl,
+        headers: { Accept: 'application/json' },
+      })
+      .then(resource => {
+        setResource({ resource });
       })
       .catch(error => {
-        notification.error({
-          message: `Could not load resource ${projectLabel}`,
-          description: error.message,
-        });
-        setResource({
-          resource,
-        });
+        // TODO: show a meaningful error to the user.
       });
-  }, [orgLabel, projectLabel]);
+
+    nexus
+      .httpGet({
+        path: dashboardUrl,
+        headers: { Accept: 'application/json' },
+      })
+      .then(dashboard => {
+        setDashboard({ dashboard });
+      })
+      .catch(error => {
+        // TODO: show a meaningful error to the user.
+      });
+  }, []);
 
   if (!dashboard) return null;
 

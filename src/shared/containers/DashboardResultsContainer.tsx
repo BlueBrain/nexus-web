@@ -1,16 +1,10 @@
 import * as React from 'react';
+import { useHistory } from 'react-router-dom';
 import { Spin, Alert, Button } from 'antd';
 import ResultsTable from '../components/ResultsTable/ResultsTable';
 import { camelCaseToLabelString } from '../utils';
-import {
-  Resource,
-  SelectQueryResponse,
-  SparqlViewQueryResponse,
-} from '@bbp/nexus-sdk';
-import ResourceCardComponent from '../components/ResourceCard';
+import { SelectQueryResponse, SparqlViewQueryResponse } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { NexusPlugin } from './NexusPlugin';
-import useQueryString from '../hooks/useQueryString';
 
 export type Binding = {
   [key: string]: {
@@ -38,6 +32,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
   viewId: string;
   studioResourceId: string;
   plugins?: string[];
+  dashboardUrl: string;
 }> = ({
   orgLabel,
   projectLabel,
@@ -45,39 +40,18 @@ const DashboardResultsContainer: React.FunctionComponent<{
   viewId,
   studioResourceId,
   plugins = [],
+  dashboardUrl,
 }) => {
-  const [queryParams, setQueryString] = useQueryString();
-  const [selectedResource, setSelectedResource] = React.useState<Resource>();
   const [error, setError] = React.useState<NexusSparqlError | Error>();
   const [items, setItems] = React.useState<any[]>();
   const [headerProperties, setHeaderProperties] = React.useState<any[]>();
   const nexus = useNexusContext();
+  const history = useHistory();
 
-  const selectResource = (selfUrl: string) => {
-    if (error) {
-      setError(undefined);
-    }
-    nexus
-      .httpGet({ path: selfUrl, headers: { Accept: 'application/json' } })
-      .then(resource => {
-        setSelectedResource(resource);
-        setQueryString({
-          ...queryParams,
-          resourceId: resource['@id'],
-        });
-      })
-      .catch(error => {
-        setError(error);
-        // TODO: show a meaningful error to the user.
-      });
-  };
+  const goToStudioResource = (selfUrl: string) => {
+    const studioResourceViewLink = `/studio-resources/${selfUrl}?dashboard=${dashboardUrl}`;
 
-  const unSelectResource = () => {
-    setSelectedResource(undefined);
-    setQueryString({
-      ...queryParams,
-      resourceId: undefined,
-    });
+    history.push(studioResourceViewLink);
   };
 
   React.useEffect(() => {
@@ -129,15 +103,6 @@ const DashboardResultsContainer: React.FunctionComponent<{
               key: index.toString(), // used by react component (unique key)
             };
           });
-
-        const currentResource = data.results.bindings
-          .filter((binding: Binding) => binding.self)
-          .find((binding: Binding) => {
-            return binding.self.value.includes(studioResourceId);
-          });
-        if (selectedResource === undefined && currentResource !== undefined) {
-          selectResource(currentResource.self.value);
-        }
         setItems(tempItems);
       })
       .catch(e => {
@@ -157,39 +122,12 @@ const DashboardResultsContainer: React.FunctionComponent<{
   }
 
   return (
-    <Spin spinning={selectedResource || items ? false : true}>
-      {selectedResource ? (
-        <div className="studio-resource">
-          <Button
-            type="primary"
-            size="small"
-            className={'studio-back-button'}
-            icon="caret-left"
-            onClick={unSelectResource}
-          >
-            {' '}
-            Back{' '}
-          </Button>
-          <ResourceCardComponent
-            resource={selectedResource}
-            preview={plugins.map(pluginName => (
-              <div style={{ margin: '1em' }}>
-                <NexusPlugin
-                  url={`/public/plugins/${pluginName}/index.js`}
-                  nexusClient={nexus}
-                  resource={selectedResource}
-                />
-              </div>
-            ))}
-          />
-        </div>
-      ) : (
-        <ResultsTable
-          headerProperties={headerProperties}
-          items={items ? (items as Item[]) : []}
-          handleClick={selectResource}
-        />
-      )}
+    <Spin spinning={items ? false : true}>
+      <ResultsTable
+        headerProperties={headerProperties}
+        items={items ? (items as Item[]) : []}
+        handleClick={goToStudioResource}
+      />
     </Spin>
   );
 };

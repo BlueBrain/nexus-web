@@ -41,7 +41,7 @@ const routes: RouteProps[] = [
     component: ResourceView,
   },
   {
-    path: '/:orgLabel/:projectLabel/studio-resources/:resourceId',
+    path: '/studio-resources/:resourceSelfUrl',
     component: StudioResourceView,
   },
   {
