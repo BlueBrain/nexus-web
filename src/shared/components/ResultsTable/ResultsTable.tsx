@@ -9,6 +9,8 @@ import './ResultTable.less';
 const { Search } = Input;
 
 const PAGE_SIZE = 10;
+const MAX_FILTER_LIMIT = 20;
+const MIN_FILTER_LIMIT = 1;
 
 type ResultTableProps = {
   headerProperties?: {
@@ -70,19 +72,17 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
               break;
           }
 
-          const distinctValues = filteredItems.reduce(
-            (memo, item) => {
-              const value = item[dataIndex];
-              if (!memo.includes(value)) {
-                memo.push(value);
-              }
-              return memo;
-            },
-            [] as any[]
-          );
+          const distinctValues = filteredItems.reduce((memo, item) => {
+            const value = item[dataIndex];
+            if (!memo.includes(value)) {
+              memo.push(value);
+            }
+            return memo;
+          }, [] as any[]);
 
           const filterOptions =
-            distinctValues.length > 1 && distinctValues.length < 20
+            distinctValues.length > MIN_FILTER_LIMIT &&
+            distinctValues.length < MAX_FILTER_LIMIT
               ? {
                   filters: distinctValues.map(value => ({
                     value,
