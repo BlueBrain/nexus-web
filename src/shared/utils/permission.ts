@@ -7,8 +7,8 @@ export const studioPermissionsWrapper = (
 ) => {
   const permissions = ['resources/write'];
   return React.createElement(AccessControl, {
-    path: permissionPath,
     permissions,
+    path: permissionPath,
     children: [child],
   });
 };
