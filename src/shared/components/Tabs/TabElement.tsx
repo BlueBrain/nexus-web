@@ -5,14 +5,14 @@ type TabElementProps = {
   id: string;
   label: string;
   description: string;
-  onEditClick: (elementId: string) => void;
+  editButton?: (id: string) => React.ReactNode;
 };
 
 const TabElement: React.FunctionComponent<TabElementProps> = ({
   id,
   label,
   description,
-  onEditClick,
+  editButton,
 }) => {
   const [hover, setHover] = React.useState<boolean>(false);
   const show = hover ? 'block' : 'none';
@@ -32,16 +32,7 @@ const TabElement: React.FunctionComponent<TabElementProps> = ({
         <p className="description fade">{description}</p>
       </div>
       <div className={'edit-button-container'}>
-        <Button
-          type="primary"
-          icon="edit"
-          size="small"
-          onClick={e => {
-            onEditClick(id);
-            e.stopPropagation();
-          }}
-          style={buttonStyle}
-        />
+        <div style={buttonStyle}>{editButton ? editButton(id) : null}</div>
       </div>
     </div>
   );

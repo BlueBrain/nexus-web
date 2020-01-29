@@ -5,6 +5,7 @@ import { notification, Empty } from 'antd';
 
 import EditStudio from '../components/Studio/EditStudio';
 import StudioHeader from '../components/Studio/StudioHeader';
+import { resourcesWritePermissionsWrapper } from '../utils/permission';
 
 type StudioContainerProps = {
   orgLabel: string;
@@ -90,6 +91,9 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
     fetchAndSetupStudio();
   };
 
+  const editButton = (
+    <EditStudio studio={studioResource} onSave={updateStudio} />
+  );
   return (
     <>
       {studioResource ? (
@@ -98,7 +102,10 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
             label={studioResource.label}
             description={studioResource.description}
           >
-            <EditStudio studio={studioResource} onSave={updateStudio} />
+            {resourcesWritePermissionsWrapper(
+              editButton,
+              `/${orgLabel}/${projectLabel}`
+            )}
           </StudioHeader>
           {workspaceListComponent({
             workspaceIds,

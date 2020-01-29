@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-
+import { Button } from 'antd';
 import TabList from '../components/Tabs/TabList';
 import AddWorkspaceContainer from './AddWorkspaceContainer';
 import WorkspaceForm from './WorkspaceFormContainer';
 import { Dashboard } from './DashboardListContainer';
 import useQueryString from '../hooks/useQueryString';
+import { resourcesWritePermissionsWrapper } from '../utils/permission';
 
 type StudioResource = Resource<{
   label: string;
@@ -34,6 +35,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   onListUpdate,
   dashboardListComponent,
 }) => {
+  const permissionsPath = `/${orgLabel}/${projectLabel}`;
   const [queryParams, setQueryString] = useQueryString();
   const { workspaceId } = queryParams;
   const [workspaces, setWorkspaces] = React.useState<Resource<any>[]>([]);
@@ -101,13 +103,34 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
       });
   }, [workspaceIds, workspaceId]);
 
+  const tabAction = (
+    <AddWorkspaceContainer
+      orgLabel={orgLabel}
+      projectLabel={projectLabel}
+      studio={studioResource}
+      onAddWorkspace={onListUpdate}
+    />
+  );
+
+  const editButtonWrapper = (id: string) => {
+    const editButton = (
+      <Button
+        type="primary"
+        icon="edit"
+        size="small"
+        onClick={e => {
+          setWorkSpaceToEdit(id);
+          setShowEdit(true);
+          e.stopPropagation();
+        }}
+      />
+    );
+    return resourcesWritePermissionsWrapper(editButton, permissionsPath);
+  };
+
   return (
     <>
       <TabList
-        onEditClick={workspaceId => {
-          setWorkSpaceToEdit(workspaceId);
-          setShowEdit(true);
-        }}
         items={workspaces.map(w => ({
           label: w.label,
           description: w.description,
@@ -124,14 +147,8 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
             : undefined
         }
         position="top"
-        tabAction={
-          <AddWorkspaceContainer
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
-            studio={studioResource}
-            onAddWorkspace={onListUpdate}
-          />
-        }
+        tabAction={resourcesWritePermissionsWrapper(tabAction, permissionsPath)}
+        editButton={editButtonWrapper}
       >
         {selectedWorkspace ? (
           <div className="workspace">
