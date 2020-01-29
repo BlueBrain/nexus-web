@@ -82,7 +82,7 @@ export const ViewStatisticsContainer: React.FunctionComponent<
       description: (
         <div>
           Last updated{' '}
-          <span className="flash" key={`${Date.now()}`}>
+          <span className="flash" key={time}>
             {moment(time).format('h:mm:ss a')}
           </span>
         </div>
