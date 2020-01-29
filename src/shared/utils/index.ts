@@ -229,9 +229,20 @@ export function getResourceLabel(
  * }}
  */
 export function getOrgAndProjectFromResource(resource: Resource) {
-  const [projectLabel, orgLabel, ...rest] = resource._project
-    .split('/')
-    .reverse();
+  return getOrgAndProjectFromProjectId(resource._project);
+}
+
+/**
+ * Returns a resource's project and org label
+ *
+ * @param {string} projectId
+ * @returns {{
+ * orgLabel: string,
+ * projectLabel: string,
+ * }}
+ */
+export function getOrgAndProjectFromProjectId(projectId: string) {
+  const [projectLabel, orgLabel, ...rest] = projectId.split('/').reverse();
   return {
     orgLabel,
     projectLabel,
