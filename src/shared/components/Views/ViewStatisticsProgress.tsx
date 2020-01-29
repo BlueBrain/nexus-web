@@ -10,9 +10,7 @@ type ViewStatisticsProgressProps = {
   lastIndexed: string; // UTC Date
 };
 
-export const ViewStatisticsProgress: React.FunctionComponent<
-  ViewStatisticsProgressProps
-> = props => {
+export const ViewStatisticsProgress: React.FunctionComponent<ViewStatisticsProgressProps> = props => {
   const percent = Math.floor((props.processedEvents / props.totalEvents) * 100);
   const label =
     percent === 100
@@ -35,9 +33,7 @@ export type ViewStatisticsContainerProps = {
   onClickRefresh?: VoidFunction;
 };
 
-export const ViewStatisticsContainer: React.FunctionComponent<
-  ViewStatisticsContainerProps
-> = props => {
+export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsContainerProps> = props => {
   const nexus = useNexusContext();
   const [eventsAtMount, setEventsAtMount] = React.useState();
   const [{ loading, error, data }, setState] = React.useState<{
@@ -51,7 +47,8 @@ export const ViewStatisticsContainer: React.FunctionComponent<
   });
 
   const indexCompleteNotification = () => {
-    const key = `open${Date.now()}`;
+    const key = 'IndexComplete';
+    const time = Date.now();
     const btn = props.onClickRefresh ? (
       <Button
         type="primary"
@@ -77,7 +74,15 @@ export const ViewStatisticsContainer: React.FunctionComponent<
     notification.open({
       btn,
       key,
-      message: 'This project has finished indexing new Resources',
+      message: 'This project has finished indexing new Resources ',
+      description: (
+        <div>
+          Last updated{' '}
+          <span className="flash" key={`${Date.now()}`}>
+            {moment(time).format('h:mm:ss a')}
+          </span>
+        </div>
+      ),
       duration: null, // don't auto-close
       onClose: close,
     });
