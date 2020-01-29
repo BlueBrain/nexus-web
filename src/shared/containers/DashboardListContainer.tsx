@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Resource, DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
-import { useNexusContext, AccessControl } from '@bbp/react-nexus';
+import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
 import DashboardResultsContainer from './DashboardResultsContainer';
 import DashboardEditorContainer from './DashboardEditor/DashboardEditorContainer';
