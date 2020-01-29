@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-
+import { Button } from 'antd';
 import TabList from '../components/Tabs/TabList';
 import AddWorkspaceContainer from './AddWorkspaceContainer';
 import WorkspaceForm from './WorkspaceFormContainer';
@@ -112,13 +112,25 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
     />
   );
 
+  const editButtonWrapper = (id: string) => {
+    const editButton = (
+      <Button
+        type="primary"
+        icon="edit"
+        size="small"
+        onClick={e => {
+          setWorkSpaceToEdit(id);
+          setShowEdit(true);
+          e.stopPropagation();
+        }}
+      />
+    );
+    return resourcesWritePermissionsWrapper(editButton, permissionsPath);
+  };
+
   return (
     <>
       <TabList
-        onEditClick={workspaceId => {
-          setWorkSpaceToEdit(workspaceId);
-          setShowEdit(true);
-        }}
         items={workspaces.map(w => ({
           label: w.label,
           description: w.description,
@@ -136,9 +148,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
         }
         position="top"
         tabAction={resourcesWritePermissionsWrapper(tabAction, permissionsPath)}
-        permissionsWrapper={(child: React.ReactNode) =>
-          resourcesWritePermissionsWrapper(child, permissionsPath)
-        }
+        editButton={editButtonWrapper}
       >
         {selectedWorkspace ? (
           <div className="workspace">

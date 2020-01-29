@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Resource, DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
+import { Button } from 'antd';
 import DashboardResultsContainer from './DashboardResultsContainer';
 import DashboardEditorContainer from './DashboardEditor/DashboardEditorContainer';
 import CreateDashboardContainer from './DashboardEditor/CreateDashboardContainer';
@@ -126,6 +127,21 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     />
   );
 
+  const editButtonWrapper = (id: string) => {
+    const editButton = (
+      <Button
+        type="primary"
+        icon="edit"
+        size="small"
+        onClick={e => {
+          handleElementClick(id);
+          e.stopPropagation();
+        }}
+      />
+    );
+    return resourcesWritePermissionsWrapper(editButton, permissionsPath);
+  };
+
   return (
     <div>
       {editingDashboard && (
@@ -158,10 +174,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         position="left"
         activeKey={`${selectedDashboardIndex}`}
         tabAction={resourcesWritePermissionsWrapper(tabAction, permissionsPath)}
-        onEditClick={handleElementClick}
-        permissionsWrapper={(child: React.ReactNode) =>
-          resourcesWritePermissionsWrapper(child, permissionsPath)
-        }
+        editButton={editButtonWrapper}
       >
         {!!dashboardResources.length &&
           !!dashboardResources[selectedDashboardIndex] && (

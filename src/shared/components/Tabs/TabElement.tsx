@@ -5,32 +5,18 @@ type TabElementProps = {
   id: string;
   label: string;
   description: string;
-  onEditClick: (elementId: string) => void;
-  permissionsWrapper?: (child: React.ReactNode) => React.ReactNode;
+  editButton?: (id: string) => React.ReactNode;
 };
 
 const TabElement: React.FunctionComponent<TabElementProps> = ({
   id,
   label,
   description,
-  onEditClick,
-  permissionsWrapper: resourcesWritePermissionsWrapper,
+  editButton,
 }) => {
   const [hover, setHover] = React.useState<boolean>(false);
   const show = hover ? 'block' : 'none';
   const buttonStyle = { display: show };
-  const editButton = (
-    <Button
-      type="primary"
-      icon="edit"
-      size="small"
-      onClick={e => {
-        onEditClick(id);
-        e.stopPropagation();
-      }}
-      style={buttonStyle}
-    />
-  );
   return (
     <div
       className="tab-element-container"
@@ -46,9 +32,7 @@ const TabElement: React.FunctionComponent<TabElementProps> = ({
         <p className="description fade">{description}</p>
       </div>
       <div className={'edit-button-container'}>
-        {resourcesWritePermissionsWrapper
-          ? resourcesWritePermissionsWrapper(editButton)
-          : editButton}
+        <div style={buttonStyle}>{editButton ? editButton(id) : null}</div>
       </div>
     </div>
   );

@@ -17,9 +17,8 @@ type TabListProps = {
   defaultActiveId?: string;
   activeKey?: string;
   position?: 'left' | 'right' | 'top' | 'bottom' | undefined;
-  onEditClick?: (id: string) => void;
   tabAction?: React.ReactElement;
-  permissionsWrapper?: (child: React.ReactNode) => React.ReactNode;
+  editButton?: (id: string) => React.ReactNode;
 };
 
 const TabList: React.FunctionComponent<TabListProps> = ({
@@ -29,11 +28,9 @@ const TabList: React.FunctionComponent<TabListProps> = ({
   activeKey,
   position = 'left',
   children,
-  onEditClick,
   tabAction,
-  permissionsWrapper: resourcesWritePermissionsWrapper,
+  editButton,
 }) => {
-  const editClick = onEditClick ? onEditClick : (id: string) => {};
   return (
     <div className="tab-list">
       <Tabs
@@ -50,8 +47,7 @@ const TabList: React.FunctionComponent<TabListProps> = ({
                 label={label}
                 description={description}
                 id={id}
-                onEditClick={editClick}
-                permissionsWrapper={resourcesWritePermissionsWrapper}
+                editButton={editButton}
               />
             }
             key={id}
