@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
-import {  useLocation, useHistory, useParams } from 'react-router';
+import { useLocation, useHistory, useParams } from 'react-router';
 import { Spin, Card, Empty, Tabs, notification, Alert } from 'antd';
 import * as queryString from 'query-string';
 import { useAsyncEffect } from 'use-async-effect';
@@ -24,9 +24,13 @@ import HomeIcon from '../components/HomeIcon';
 const TabPane = Tabs.TabPane;
 export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
 
-const ResourceViewContainer: React.FunctionComponent<{ render?: (resource: Resource<{
-  [key: string]: any;
-}> | null) => React.ReactElement | null }> = ({ render }) => {
+const ResourceViewContainer: React.FunctionComponent<{
+  render?: (
+    resource: Resource<{
+      [key: string]: any;
+    }> | null
+  ) => React.ReactElement | null;
+}> = ({ render }) => {
   const { orgLabel = '', projectLabel = '', resourceId = '' } = useParams();
   const nexus = useNexusContext();
   const location = useLocation();
@@ -47,8 +51,10 @@ const ResourceViewContainer: React.FunctionComponent<{ render?: (resource: Resou
     }${expanded ? '&expanded=true' : ''}${tab ? tab : ''}`;
     history.push(pushRoute, location.state);
   };
-  const goToProject = (orgLabel: string, projectLabel: string) => history.push(`/${orgLabel}/${projectLabel}`, location.state)
-  const goToOrg = (orgLabel: string) => history.push(`/${orgLabel}`, location.state);
+  const goToProject = (orgLabel: string, projectLabel: string) =>
+    history.push(`/${orgLabel}/${projectLabel}`, location.state);
+  const goToOrg = (orgLabel: string) =>
+    history.push(`/${orgLabel}`, location.state);
   const { expanded: expandedFromQuery, rev } = queryString.parse(
     location.search
   );
@@ -178,18 +184,18 @@ const ResourceViewContainer: React.FunctionComponent<{ render?: (resource: Resou
     <>
       <div className="resource-details">
         {!!resource && (
-        <Helmet
-          title={`${getResourceLabel(
-            resource
-          )} | ${projectLabel} | ${orgLabel} | Nexus Web`}
-          meta={[
-            {
-              name: 'description',
-              content: getResourceLabel(resource),
-            },
-          ]}
-        />
-      )}
+          <Helmet
+            title={`${getResourceLabel(
+              resource
+            )} | ${projectLabel} | ${orgLabel} | Nexus Web`}
+            meta={[
+              {
+                name: 'description',
+                content: getResourceLabel(resource),
+              },
+            ]}
+          />
+        )}
         <Spin spinning={busy} style={{ width: '100%' }}>
           {!!error && (
             <Card>
@@ -303,9 +309,9 @@ const ResourceViewContainer: React.FunctionComponent<{ render?: (resource: Resou
           )}
         </Spin>
       </div>
-        {render && render(resource)}
-      </>
+      {render && render(resource)}
+    </>
   );
 };
 
-export default ResourceViewContainer
+export default ResourceViewContainer;
