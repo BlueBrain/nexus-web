@@ -30,18 +30,8 @@ const DashboardResultsContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
   viewId: string;
-  studioResourceId: string;
-  plugins?: string[];
   dashboardUrl: string;
-}> = ({
-  orgLabel,
-  projectLabel,
-  dataQuery,
-  viewId,
-  studioResourceId,
-  plugins = [],
-  dashboardUrl,
-}) => {
+}> = ({ orgLabel, projectLabel, dataQuery, viewId, dashboardUrl }) => {
   const [error, setError] = React.useState<NexusSparqlError | Error>();
   const [items, setItems] = React.useState<any[]>();
   const [headerProperties, setHeaderProperties] = React.useState<any[]>();
@@ -49,7 +39,11 @@ const DashboardResultsContainer: React.FunctionComponent<{
   const history = useHistory();
 
   const goToStudioResource = (selfUrl: string) => {
-    const studioResourceViewLink = `/studio-resources/${selfUrl}?dashboard=${dashboardUrl}`;
+    const studioResourceViewLink = `/studio-resources/${encodeURIComponent(
+      selfUrl
+    )}?dashboard=${dashboardUrl}`;
+
+    console.log('studioResourceViewLink', studioResourceViewLink);
 
     history.push(studioResourceViewLink);
   };

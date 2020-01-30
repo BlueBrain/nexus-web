@@ -5,6 +5,7 @@ import { notification, Empty } from 'antd';
 import * as queryString from 'query-string';
 
 import { NexusPlugin } from '../containers/NexusPlugin';
+import { labelOf, getOrgAndProjectFromResource } from '../utils';
 
 type DashboardResource = {
   label?: string;
@@ -50,9 +51,13 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
         headers: { Accept: 'application/json' },
       })
       .then(resource => {
+        console.log('resource', resource);
+
         setResource({ resource });
       })
       .catch(error => {
+        console.log('resourceSelfUrl', resourceSelfUrl);
+
         notification.error({
           message: `Could not load Resource`,
           description: error.message,
@@ -73,16 +78,23 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
           description: error.message,
         });
       });
-  }, []);
+  }, [resourceSelfUrl, dashboardUrl]);
 
-  if (!dashboard) return null;
+  const goToStudioResource = (selfUrl: string) => {
+    const studioResourceViewLink = `/studio-resources/${selfUrl}?dashboard=${dashboardUrl}`;
 
-  const { label, description, plugins } = dashboard;
+    history.push(studioResourceViewLink);
+  };
+
+  if (!dashboard || !resource) return null;
+
+  const { plugins } = dashboard;
+  const label = labelOf(resource['@id']);
 
   return (
     <div className="studio-resource-view">
       <h1>{label}</h1>
-      <p>{description}</p>
+      <p>{resource.description}</p>
       {plugins && plugins.length > 0 ? (
         plugins.map(pluginName => (
           <div className="studio-resource-plugin" key={`plugin-${pluginName}`}>
@@ -90,6 +102,7 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
               url={`/public/plugins/${pluginName}/index.js`}
               nexusClient={nexus}
               resource={resource}
+              goToResource={goToStudioResource}
             />
           </div>
         ))
