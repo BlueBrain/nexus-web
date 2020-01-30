@@ -6,12 +6,11 @@ import MainLayout from './layouts/MainLayout';
 
 import './App.less';
 import { Modal } from 'antd';
-import ResourceView from './views/ResourceView';
 import ResourceViewContainer from './containers/ResourceViewContainer';
 
 const App: React.FC = () => {
-  let location = useLocation();
-  let history = useHistory();
+  const location = useLocation();
+  const history = useHistory();
 
   // This piece of state is set when one of the
   // gallery links is clicked. The `background` state
