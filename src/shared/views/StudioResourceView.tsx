@@ -20,7 +20,7 @@ type QueryParams = {
 
 const StudioResourceView: React.FunctionComponent<{}> = () => {
   const nexus = useNexusContext();
-  const { resourceSelfUrl = '' } = useParams();
+  const { orgLabel, projectLabel, resourceId = '' } = useParams();
   const history = useHistory();
   const queryParams: QueryParams =
     queryString.parse(history.location.search) || {};
@@ -36,11 +36,6 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
     resource: null,
   });
 
-  console.log({
-    resourceSelfUrl,
-    dashboardUrl,
-  });
-
   React.useEffect(() => {
     setDashboard({
       dashboard,
@@ -50,20 +45,20 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
       resource,
     });
 
-    nexus
-      .httpGet({
-        path: decodeURIComponent(resourceSelfUrl),
-        headers: { Accept: 'application/json' },
-      })
-      .then(resource => {
-        setResource({ resource });
-      })
-      .catch(error => {
-        notification.error({
-          message: `Could not load Resource`,
-          description: error.message,
-        });
-      });
+    // nexus
+    //   .httpGet({
+    //     path: decodeURIComponent(resourceSelfUrl),
+    //     headers: { Accept: 'application/json' },
+    //   })
+    //   .then(resource => {
+    //     setResource({ resource });
+    //   })
+    //   .catch(error => {
+    //     notification.error({
+    //       message: `Could not load Resource`,
+    //       description: error.message,
+    //     });
+    //   });
 
     nexus
       .httpGet({
@@ -79,10 +74,12 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
           description: error.message,
         });
       });
-  }, [resourceSelfUrl, dashboardUrl]);
+  }, [resourceId, dashboardUrl]);
 
   const goToStudioResource = (selfUrl: string) => {
-    const studioResourceViewLink = `/studio-resources/${selfUrl}?dashboard=${dashboardUrl}`;
+    const studioResourceViewLink = `/${orgLabel}/${projectLabel}/studios/studio-resources/${encodeURIComponent(
+      resourceId
+    )}?dashboard=${dashboardUrl}`;
 
     history.push(studioResourceViewLink);
   };

@@ -31,7 +31,15 @@ const DashboardResultsContainer: React.FunctionComponent<{
   projectLabel: string;
   viewId: string;
   dashboardUrl: string;
-}> = ({ orgLabel, projectLabel, dataQuery, viewId, dashboardUrl }) => {
+  studioResourceId: string;
+}> = ({
+  orgLabel,
+  projectLabel,
+  dataQuery,
+  viewId,
+  studioResourceId,
+  dashboardUrl,
+}) => {
   const [error, setError] = React.useState<NexusSparqlError | Error>();
   const [items, setItems] = React.useState<any[]>();
   const [headerProperties, setHeaderProperties] = React.useState<any[]>();
@@ -39,8 +47,8 @@ const DashboardResultsContainer: React.FunctionComponent<{
   const history = useHistory();
 
   const goToStudioResource = (selfUrl: string) => {
-    const studioResourceViewLink = `/studios/studio-resources/${encodeURIComponent(
-      selfUrl
+    const studioResourceViewLink = `/${orgLabel}/${projectLabel}/studios/studio-resources/${encodeURIComponent(
+      studioResourceId
     )}?dashboard=${dashboardUrl}`;
 
     history.push(studioResourceViewLink);
