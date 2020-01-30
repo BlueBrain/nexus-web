@@ -14,7 +14,7 @@ const warningMessage =
 export type NexusPluginProps<T = any> = {
   url: string;
   resource: Resource<T>;
-  goToResource?: () => void;
+  goToResource?: (selfURL: string) => void;
 };
 
 export type NexusPluginClassProps<T = any> = NexusPluginProps<T> & {
@@ -55,7 +55,7 @@ export class NexusPlugin extends React.Component<
             ref: HTMLDivElement | null;
             nexusClient?: NexusClient;
             resource: Resource;
-            goToResource?: () => void;
+            goToResource?: (selfURL: string) => void;
           }) => () => void;
         }) => {
           this.setState({
