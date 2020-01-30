@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Spin, Alert, Button } from 'antd';
+import { Spin, Alert } from 'antd';
 import ResultsTable from '../components/ResultsTable/ResultsTable';
 import { camelCaseToLabelString } from '../utils';
 import { SelectQueryResponse, SparqlViewQueryResponse } from '@bbp/nexus-sdk';
@@ -47,8 +47,12 @@ const DashboardResultsContainer: React.FunctionComponent<{
   const history = useHistory();
 
   const goToStudioResource = (selfUrl: string) => {
+    // TODO get a resource id from self somehow
+
+    const resourceId = '';
+
     const studioResourceViewLink = `/${orgLabel}/${projectLabel}/studios/studio-resources/${encodeURIComponent(
-      studioResourceId
+      resourceId
     )}?dashboard=${dashboardUrl}`;
 
     history.push(studioResourceViewLink);

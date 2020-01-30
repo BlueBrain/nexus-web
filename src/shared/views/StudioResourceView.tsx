@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { useParams, useHistory } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Resource } from '@bbp/nexus-sdk';
 import { notification, Empty } from 'antd';
 import * as queryString from 'query-string';
 
 import { NexusPlugin } from '../containers/NexusPlugin';
-import { labelOf, getOrgAndProjectFromResource } from '../utils';
+import { labelOf } from '../utils';
 
 type DashboardResource = {
   label?: string;
@@ -20,45 +21,31 @@ type QueryParams = {
 
 const StudioResourceView: React.FunctionComponent<{}> = () => {
   const nexus = useNexusContext();
-  const { orgLabel, projectLabel, resourceId = '' } = useParams();
+  const { orgLabel = '', projectLabel = '', resourceId = '' } = useParams();
   const history = useHistory();
   const queryParams: QueryParams =
     queryString.parse(history.location.search) || {};
   const dashboardUrl = queryParams.dashboard;
-  const [{ dashboard }, setDashboard] = React.useState<{
-    dashboard: DashboardResource | null;
-  }>({
-    dashboard: null,
-  });
-  const [{ resource }, setResource] = React.useState<{
-    resource: any | null;
-  }>({
-    resource: null,
-  });
+  const [dashboard, setDashboard] = React.useState<DashboardResource | null>();
+  const [resource, setResource] = React.useState<Resource | null>();
 
   React.useEffect(() => {
-    setDashboard({
-      dashboard,
-    });
+    setDashboard(dashboard);
+    setResource(resource);
 
-    setResource({
-      resource,
-    });
+    let resourceResponse: any;
 
-    // nexus
-    //   .httpGet({
-    //     path: decodeURIComponent(resourceSelfUrl),
-    //     headers: { Accept: 'application/json' },
-    //   })
-    //   .then(resource => {
-    //     setResource({ resource });
-    //   })
-    //   .catch(error => {
-    //     notification.error({
-    //       message: `Could not load Resource`,
-    //       description: error.message,
-    //     });
-    //   });
+    nexus.Resource.get(orgLabel, projectLabel, resourceId)
+      .then(response => {
+        resourceResponse = response;
+        setResource(resourceResponse);
+      })
+      .catch(error => {
+        notification.error({
+          message: `Could not load Resource`,
+          description: error.message,
+        });
+      });
 
     nexus
       .httpGet({
@@ -66,7 +53,7 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
         headers: { Accept: 'application/json' },
       })
       .then(dashboard => {
-        setDashboard({ dashboard });
+        setDashboard(dashboard);
       })
       .catch(error => {
         notification.error({
