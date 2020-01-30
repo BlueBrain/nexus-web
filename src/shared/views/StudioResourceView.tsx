@@ -6,7 +6,7 @@ import { notification, Empty } from 'antd';
 import * as queryString from 'query-string';
 
 import { NexusPlugin } from '../containers/NexusPlugin';
-import { labelOf } from '../utils';
+import { getResourceLabel } from '../utils';
 
 type DashboardResource = {
   label?: string;
@@ -74,7 +74,7 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
   if (!dashboard || !resource) return null;
 
   const { plugins } = dashboard;
-  const label = labelOf(resource['@id']);
+  const label = getResourceLabel(resource);
 
   return (
     <div className="studio-resource-view">
