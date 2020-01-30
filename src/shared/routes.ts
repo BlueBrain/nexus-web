@@ -32,6 +32,10 @@ const routes: RouteProps[] = [
     component: ProjectsView,
   },
   {
+    path: '/studios/studio-resources/:resourceSelfUrl',
+    component: StudioResourceView,
+  },
+  {
     path: '/:orgLabel/:projectLabel',
     exact: true,
     component: ProjectView,
@@ -39,10 +43,6 @@ const routes: RouteProps[] = [
   {
     path: '/:orgLabel/:projectLabel/resources/:resourceId',
     component: ResourceView,
-  },
-  {
-    path: '/studio-resources/:resourceSelfUrl',
-    component: StudioResourceView,
   },
   {
     path: '/:orgLabel/:projectLabel/studios/:studioId',

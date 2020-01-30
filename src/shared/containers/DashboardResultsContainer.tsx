@@ -39,11 +39,9 @@ const DashboardResultsContainer: React.FunctionComponent<{
   const history = useHistory();
 
   const goToStudioResource = (selfUrl: string) => {
-    const studioResourceViewLink = `/studio-resources/${encodeURIComponent(
+    const studioResourceViewLink = `/studios/studio-resources/${encodeURIComponent(
       selfUrl
     )}?dashboard=${dashboardUrl}`;
-
-    console.log('studioResourceViewLink', studioResourceViewLink);
 
     history.push(studioResourceViewLink);
   };

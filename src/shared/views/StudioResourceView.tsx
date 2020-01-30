@@ -36,6 +36,11 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
     resource: null,
   });
 
+  console.log({
+    resourceSelfUrl,
+    dashboardUrl,
+  });
+
   React.useEffect(() => {
     setDashboard({
       dashboard,
@@ -47,17 +52,13 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
 
     nexus
       .httpGet({
-        path: resourceSelfUrl,
+        path: decodeURIComponent(resourceSelfUrl),
         headers: { Accept: 'application/json' },
       })
       .then(resource => {
-        console.log('resource', resource);
-
         setResource({ resource });
       })
       .catch(error => {
-        console.log('resourceSelfUrl', resourceSelfUrl);
-
         notification.error({
           message: `Could not load Resource`,
           description: error.message,
