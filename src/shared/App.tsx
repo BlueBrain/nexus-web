@@ -7,6 +7,7 @@ import MainLayout from './layouts/MainLayout';
 import './App.less';
 import { Modal } from 'antd';
 import ResourceView from './views/ResourceView';
+import ResourceViewContainer from './containers/ResourceViewContainer';
 
 const App: React.FC = () => {
   let location = useLocation();
@@ -19,9 +20,8 @@ const App: React.FC = () => {
   // use it as the location for the <Switch> so
   // we show the gallery in the background, behind
   // the modal.
-  let background = location.state && location.state.background;
+  const background = location.state && location.state.background;
 
-  console.log({ background });
   return (
     <MainLayout>
       <Switch location={background || location}>
@@ -31,20 +31,24 @@ const App: React.FC = () => {
         <Route component={NotFound} />
       </Switch>
 
+      {
+        // This is where special routes should go that
+        // That are interacted within a modal to provide outside context
+      }
       {background && (
-        <Switch>
-          {routes.map(({ path, component: C, ...rest }) => (
-            <Route key={path as string} path={path} {...rest}>
-              <Modal
-                visible={true}
-                onCancel={() => history.push(background, {})}
-              >
-                <h1>Hello From {path}</h1>
-              </Modal>
-            </Route>
-          ))}
-          <Route component={NotFound} />
-        </Switch>
+        <Route
+          path={'/:orgLabel/:projectLabel/resources/:resourceId'}
+          render={routeProps => (
+            <Modal
+              visible={true}
+              onCancel={() => history.push(background, {})}
+              onOk={() => history.push(location.pathname, {})}
+              okText={'View Details'}
+            >
+              <ResourceViewContainer />
+            </Modal>
+          )}
+        />
       )}
     </MainLayout>
   );
