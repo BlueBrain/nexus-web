@@ -33,7 +33,8 @@ describe('login component', () => {
     });
 
     it("a dropdown should show a Realm's name", () => {
-      expect(wrapper.find('span.realm').text()).toEqual('HBP');
+      // There is an extra space appended to because of the dropdown Icon
+      expect(wrapper.find('span.realm').text()).toEqual('HBP ');
     });
   });
 });
