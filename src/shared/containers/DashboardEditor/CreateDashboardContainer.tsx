@@ -93,7 +93,11 @@ const CreateDashboardContainer: React.FunctionComponent<{
 
   return (
     <>
-      <Button icon="plus" onClick={() => setShowCreateModal(true)}>
+      <Button
+        type="primary"
+        icon="plus"
+        onClick={() => setShowCreateModal(true)}
+      >
         Add Dashboard
       </Button>
       <Modal
