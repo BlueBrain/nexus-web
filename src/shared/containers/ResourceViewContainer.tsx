@@ -3,14 +3,9 @@ import Helmet from 'react-helmet';
 import { useLocation, useHistory, useParams } from 'react-router';
 import { Spin, Card, Empty, Tabs, notification, Alert } from 'antd';
 import * as queryString from 'query-string';
-import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, ResourceLink, IncomingLink } from '@bbp/nexus-sdk';
-import {
-  getResourceLabel,
-  getOrgAndProjectFromResource,
-  getOrgAndProjectFromProjectId,
-} from '../utils';
+import { getResourceLabel, getOrgAndProjectFromProjectId } from '../utils';
 import ResourceCardComponent from '../components/ResourceCard';
 import HistoryContainer from '../containers/HistoryContainer';
 import ResourceLinksContainer from '../containers/ResourceLinks';
@@ -136,48 +131,55 @@ const ResourceViewContainer: React.FunctionComponent<{
     });
   };
 
-  useAsyncEffect(async () => {
-    try {
-      setResource({
-        resource,
-        error: null,
-        busy: true,
+  React.useEffect(() => {
+    setResource({
+      resource,
+      error: null,
+      busy: true,
+    });
+    let latestResource: Resource | null = null;
+    let newResource: Resource | null = null;
+    let expandedResource: Resource | null = null;
+
+    nexus.Resource.get(orgLabel, projectLabel, resourceId)
+      .then(resource => {
+        latestResource = resource as Resource;
+        return rev
+          ? nexus.Resource.get(orgLabel, projectLabel, resourceId, {
+              rev: Number(rev),
+            })
+          : latestResource;
+      })
+      .then(resource => {
+        newResource = resource as Resource;
+        return nexus.Resource.get(orgLabel, projectLabel, resourceId, {
+          format: 'expanded',
+        });
+      })
+      .then(resource => {
+        expandedResource = resource;
+
+        setResource({
+          // Note: we must fetch the proper, expanded @id. The @id that comes from a normal request or from the URL
+          // could be the contracted one, if the resource was created with a context that has a @base property.
+          // this would make the contracted @id unresolvable. See issue: https://github.com/BlueBrain/nexus/issues/966
+          resource: {
+            ...newResource,
+            '@id': expandedResource['@id'],
+          } as Resource,
+          error: null,
+          busy: false,
+        });
+        setLatestResource(latestResource);
+      })
+      .catch(error => {
+        // error
+        setResource({
+          error,
+          resource,
+          busy: false,
+        });
       });
-      const latestResource = (await nexus.Resource.get(
-        orgLabel,
-        projectLabel,
-        resourceId
-      )) as Resource;
-      const newResource = rev
-        ? ((await nexus.Resource.get(orgLabel, projectLabel, resourceId, {
-            rev: Number(rev),
-          })) as Resource)
-        : latestResource;
-      const expandedResource = await nexus.Resource.get(
-        orgLabel,
-        projectLabel,
-        resourceId,
-        { format: 'expanded' }
-      );
-      setResource({
-        // Note: we must fetch the proper, expanded @id. The @id that comes from a normal request or from the URL
-        // could be the contracted one, if the resource was created with a context that has a @base property.
-        // this would make the contracted @id unresolvable. See issue: https://github.com/BlueBrain/nexus/issues/966
-        resource: {
-          ...newResource,
-          '@id': expandedResource['@id'],
-        },
-        error: null,
-        busy: false,
-      });
-      setLatestResource(latestResource);
-    } catch (error) {
-      setResource({
-        error,
-        resource,
-        busy: false,
-      });
-    }
   }, [orgLabel, projectLabel, resourceId, rev]);
 
   return (
