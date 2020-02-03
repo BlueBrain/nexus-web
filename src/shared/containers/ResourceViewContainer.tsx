@@ -198,7 +198,7 @@ const ResourceViewContainer: React.FunctionComponent<{
             ]}
           />
         )}
-        <Spin spinning={busy} style={{ width: '100%' }}>
+        <Spin spinning={busy}>
           {!!error && (
             <Card>
               <Empty
@@ -222,7 +222,6 @@ const ResourceViewContainer: React.FunctionComponent<{
               </h1>
               {!isLatest && (
                 <Alert
-                  style={{ margin: '1em 0' }}
                   type="warning"
                   message="You are viewing an older version of this resource."
                   closable
@@ -230,7 +229,6 @@ const ResourceViewContainer: React.FunctionComponent<{
               )}
               {isDeprecated(resource) && (
                 <Alert
-                  style={{ margin: '1em 0' }}
                   type="warning"
                   message="This is a deprecated resource."
                   closable
@@ -278,33 +276,29 @@ const ResourceViewContainer: React.FunctionComponent<{
                     }}
                   />
                 </TabPane>
-                <TabPane tab="Links" key="#links">
-                  <div
-                    style={{ display: 'flex', justifyContent: 'space-between' }}
-                  >
-                    <div style={{ width: '48%' }}>
-                      <h3 style={{ paddingLeft: '7px' }}>Incoming</h3>
-                      <ResourceLinksContainer
-                        resourceId={resource['@id']}
-                        orgLabel={orgLabel}
-                        projectLabel={projectLabel}
-                        rev={resource._rev}
-                        direction="incoming"
-                        onClick={handleGoToInternalLink}
-                      />
-                    </div>
-                    <div style={{ width: '48%' }}>
-                      <h3 style={{ paddingLeft: '7px' }}>Outgoing</h3>
-                      <ResourceLinksContainer
-                        resourceId={resource['@id']}
-                        orgLabel={orgLabel}
-                        projectLabel={projectLabel}
-                        rev={resource._rev}
-                        direction="outgoing"
-                        onClick={handleGoToInternalLink}
-                      />
-                    </div>
-                  </div>
+                <TabPane tab="Links" key="#links" className="rows">
+                  <section className="links incoming">
+                    <h3>Incoming</h3>
+                    <ResourceLinksContainer
+                      resourceId={resource['@id']}
+                      orgLabel={orgLabel}
+                      projectLabel={projectLabel}
+                      rev={resource._rev}
+                      direction="incoming"
+                      onClick={handleGoToInternalLink}
+                    />
+                  </section>
+                  <section className="links outgoing">
+                    <h3>Outgoing</h3>
+                    <ResourceLinksContainer
+                      resourceId={resource['@id']}
+                      orgLabel={orgLabel}
+                      projectLabel={projectLabel}
+                      rev={resource._rev}
+                      direction="outgoing"
+                      onClick={handleGoToInternalLink}
+                    />
+                  </section>
                 </TabPane>
               </Tabs>
             </>
