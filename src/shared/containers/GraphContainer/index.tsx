@@ -9,7 +9,7 @@ import Graph, { ElementNodeData } from '../../components/Graph';
 import GraphControlPanel from '../../components/Graph/GraphControlPanel';
 
 import ResourcePreviewCardContainer from './../ResourcePreviewCardContainer';
-import { DEFAULT_ACTIVE_TAB_KEY } from '../../views/ResourceView';
+import { DEFAULT_ACTIVE_TAB_KEY } from '../../containers/ResourceViewContainer';
 import {
   createNodesAndEdgesFromResourceLinks,
   makeNode,

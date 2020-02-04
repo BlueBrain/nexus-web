@@ -31,6 +31,13 @@ const rawBase: string = (window as any)['__BASE__'] || '/';
 const base: string = rawBase.replace(/\/$/, '');
 // setup browser history
 const history = createBrowserHistory({ basename: base });
+
+// TODO: decide if we want to remove history state
+// Clear history state (for modal routing, we want the state to be clean when refreshed)
+// OR
+// Keep the state, so we can have the same context loaded (will be slower performance)
+history.location.state = {};
+
 // Grab preloaded state (that comes from the server)
 const preloadedState: RootState = (window as any).__PRELOADED_STATE__;
 // let's report all the nasty errors id sentry dsn is present
