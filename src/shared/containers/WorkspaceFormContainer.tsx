@@ -6,6 +6,7 @@ import {
 } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Alert, Input, Form, Modal, Select, Button, Transfer } from 'antd';
+import TextArea from 'antd/lib/input/TextArea';
 
 type NexusSparqlError = {
   reason: string;
@@ -299,7 +300,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
               />
             </Form.Item>
             <Form.Item label={'Description'}>
-              <Input
+              <TextArea
                 value={description}
                 onChange={e => {
                   e.preventDefault();
