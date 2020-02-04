@@ -21,7 +21,7 @@ type QueryParams = {
 
 const StudioResourceView: React.FunctionComponent<{}> = () => {
   const nexus = useNexusContext();
-  const { orgLabel = '', projectLabel = '', resourceId = '' } = useParams();
+  const { resourceSelfUri = '' } = useParams();
   const history = useHistory();
   const queryParams: QueryParams =
     queryString.parse(history.location.search) || {};
@@ -33,11 +33,22 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
     setDashboard(dashboard);
     setResource(resource);
 
-    let resourceResponse: any;
+    let resourceResponse;
+    let dashboardResource;
 
-    nexus.Resource.get(orgLabel, projectLabel, resourceId)
-      .then(response => {
-        resourceResponse = response;
+    console.log('resourceSelfUri from uri', resourceSelfUri);
+
+    const desocedUri = decodeURIComponent(resourceSelfUri);
+
+    console.log('desocedUri', desocedUri);
+
+    nexus
+      .httpGet({
+        path: decodeURIComponent(resourceSelfUri),
+        headers: { Accept: 'application/json' },
+      })
+      .then(resource => {
+        resourceResponse = resource;
         setResource(resourceResponse);
       })
       .catch(error => {
@@ -53,7 +64,8 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
         headers: { Accept: 'application/json' },
       })
       .then(dashboard => {
-        setDashboard(dashboard);
+        dashboardResource = dashboard;
+        setDashboard(dashboardResource);
       })
       .catch(error => {
         notification.error({
@@ -61,11 +73,11 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
           description: error.message,
         });
       });
-  }, [resourceId, dashboardUrl]);
+  }, [resourceSelfUri, dashboardUrl]);
 
   const goToStudioResource = (selfUrl: string) => {
-    const studioResourceViewLink = `/${orgLabel}/${projectLabel}/studios/studio-resources/${encodeURIComponent(
-      resourceId
+    const studioResourceViewLink = `/studios/studio-resources/${encodeURIComponent(
+      selfUrl
     )}?dashboard=${dashboardUrl}`;
 
     history.push(studioResourceViewLink);
