@@ -130,14 +130,15 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   const editButtonWrapper = (id: string) => {
     const editButton = (
       <Button
-        type="primary"
-        icon="edit"
+        type="link"
         size="small"
         onClick={e => {
           handleElementClick(id);
           e.stopPropagation();
         }}
-      />
+      >
+        Edit
+      </Button>
     );
     return resourcesWritePermissionsWrapper(editButton, permissionsPath);
   };

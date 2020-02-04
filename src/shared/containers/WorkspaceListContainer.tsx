@@ -115,15 +115,16 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   const editButtonWrapper = (id: string) => {
     const editButton = (
       <Button
-        type="primary"
-        icon="edit"
+        type="link"
         size="small"
         onClick={e => {
           setWorkSpaceToEdit(id);
           setShowEdit(true);
           e.stopPropagation();
         }}
-      />
+      >
+        Edit
+      </Button>
     );
     return resourcesWritePermissionsWrapper(editButton, permissionsPath);
   };
