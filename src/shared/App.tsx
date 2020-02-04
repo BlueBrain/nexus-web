@@ -31,8 +31,9 @@ const App: React.FC = () => {
       </Switch>
 
       {
-        // This is where special routes should go that
-        // That are interacted within a modal to provide outside context
+        // This is where special routes should go
+        // that are placed inside a model
+        // when they background state is provided
       }
       {background && (
         <Route
