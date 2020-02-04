@@ -3,6 +3,7 @@ import { Input, Form, Tooltip, Icon, Transfer, Button, Collapse } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { ResourceList } from '@bbp/nexus-sdk';
 import { FormComponentProps } from 'antd/es/form';
+import TextArea from 'antd/lib/input/TextArea';
 
 import DEFAULT_DASHBOARD_VIEW_QUERY from './DefaultDashboardViewQuery';
 import SparqlQueryFormInput from '../ViewForm/SparqlQueryInput';
@@ -119,7 +120,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
               required: false,
             },
           ],
-        })(<Input />)}
+        })(<TextArea />)}
       </Form.Item>
       <Form.Item
         label={
