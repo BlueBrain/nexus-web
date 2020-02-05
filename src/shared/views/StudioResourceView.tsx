@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useParams, useHistory } from 'react-router';
+import { useParams, useHistory, useLocation } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
 import { notification, Empty } from 'antd';
@@ -22,6 +22,7 @@ type QueryParams = {
 const StudioResourceView: React.FunctionComponent<{}> = () => {
   const nexus = useNexusContext();
   const { resourceSelfUri = '' } = useParams();
+  
   const history = useHistory();
   const queryParams: QueryParams =
     queryString.parse(history.location.search) || {};
@@ -36,15 +37,9 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
     let resourceResponse;
     let dashboardResource;
 
-    console.log('resourceSelfUri from uri', resourceSelfUri);
-
-    const desocedUri = decodeURIComponent(resourceSelfUri);
-
-    console.log('desocedUri', desocedUri);
-
     nexus
       .httpGet({
-        path: decodeURIComponent(resourceSelfUri),
+        path: atob(resourceSelfUri),
         headers: { Accept: 'application/json' },
       })
       .then(resource => {
