@@ -71,9 +71,8 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
   }, [resourceSelfUri, dashboardUrl]);
 
   const goToStudioResource = (selfUrl: string) => {
-    const studioResourceViewLink = `/studios/studio-resources/${encodeURIComponent(
-      selfUrl
-    )}?dashboard=${dashboardUrl}`;
+    const base64EncodedUri = btoa(selfUrl);
+    const studioResourceViewLink = `/studios/studio-resources/${base64EncodedUri}?dashboard=${dashboardUrl}`;
 
     history.push(studioResourceViewLink);
   };
