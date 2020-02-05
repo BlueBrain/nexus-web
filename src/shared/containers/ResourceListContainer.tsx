@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
 
@@ -27,6 +27,7 @@ const ResourceListContainer: React.FunctionComponent<{
 }) => {
   const nexus = useNexusContext();
   const history = useHistory();
+  const location = useLocation();
   const [list, setList] = React.useState<ResourceBoardList>(defaultList);
   const [toggleForceReload, setToggleForceReload] = React.useState(false);
   const [
@@ -53,7 +54,7 @@ const ResourceListContainer: React.FunctionComponent<{
   };
 
   const goToResource = (resourceId: string) => {
-    history.push(makeResourceUri(resourceId));
+    history.push(makeResourceUri(resourceId), { background: location });
   };
 
   React.useEffect(() => {

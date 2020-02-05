@@ -2,10 +2,12 @@ import * as React from 'react';
 import { Resource, DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../components/Tabs/TabList';
+import { Button } from 'antd';
 import DashboardResultsContainer from './DashboardResultsContainer';
 import DashboardEditorContainer from './DashboardEditor/DashboardEditorContainer';
 import CreateDashboardContainer from './DashboardEditor/CreateDashboardContainer';
 import useQueryString from '../hooks/useQueryString';
+import { resourcesWritePermissionsWrapper } from '../utils/permission';
 
 export type Dashboard = {
   dashboard: string;
@@ -29,6 +31,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
 }) => {
   const [queryParams, setQueryString] = useQueryString();
   const { dashboardId } = queryParams;
+  const permissionsPath = `/${orgLabel}/${projectLabel}`;
   const [dashboardResources, setDashboardResources] = React.useState<
     Resource[]
   >([]);
@@ -113,6 +116,31 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     setEditingDashboard(null);
   };
 
+  const tabAction = (
+    <CreateDashboardContainer
+      orgLabel={orgLabel}
+      projectLabel={projectLabel}
+      workspaceId={workspaceId}
+      onSuccess={refreshList}
+    />
+  );
+
+  const editButtonWrapper = (id: string) => {
+    const editButton = (
+      <Button
+        type="link"
+        size="small"
+        onClick={e => {
+          handleElementClick(id);
+          e.stopPropagation();
+        }}
+      >
+        Edit
+      </Button>
+    );
+    return resourcesWritePermissionsWrapper(editButton, permissionsPath);
+  };
+
   return (
     <div>
       {editingDashboard && (
@@ -144,15 +172,8 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         }}
         position="left"
         activeKey={`${selectedDashboardIndex}`}
-        tabAction={
-          <CreateDashboardContainer
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
-            workspaceId={workspaceId}
-            onSuccess={refreshList}
-          />
-        }
-        onEditClick={handleElementClick}
+        tabAction={resourcesWritePermissionsWrapper(tabAction, permissionsPath)}
+        editButton={editButtonWrapper}
       >
         {!!dashboardResources.length &&
           !!dashboardResources[selectedDashboardIndex] && (

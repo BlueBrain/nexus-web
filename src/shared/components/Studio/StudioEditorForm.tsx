@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { Input, Form, Tooltip, Icon, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
+import TextArea from 'antd/lib/input/TextArea';
 
 type StudioResource = Resource<{
   label: string;
@@ -71,7 +72,7 @@ const StudioEditorForm: React.FC<{
       >
         {getFieldDecorator('description', {
           initialValue: description,
-        })(<Input />)}
+        })(<TextArea />)}
       </Form.Item>
       <Button type="primary" htmlType="submit">
         Save

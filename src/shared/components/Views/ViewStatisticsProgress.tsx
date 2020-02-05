@@ -51,7 +51,8 @@ export const ViewStatisticsContainer: React.FunctionComponent<
   });
 
   const indexCompleteNotification = () => {
-    const key = `open${Date.now()}`;
+    const key = 'IndexComplete';
+    const time = Date.now();
     const btn = props.onClickRefresh ? (
       <Button
         type="primary"
@@ -77,7 +78,15 @@ export const ViewStatisticsContainer: React.FunctionComponent<
     notification.open({
       btn,
       key,
-      message: 'This project has finished indexing new Resources',
+      message: 'This project has finished indexing new Resources ',
+      description: (
+        <div>
+          Last updated{' '}
+          <span className="flash" key={time}>
+            {moment(time).format('h:mm:ss a')}
+          </span>
+        </div>
+      ),
       duration: null, // don't auto-close
       onClose: close,
     });

@@ -10,9 +10,14 @@ const StudioHeader: React.FC<{
     <div className="studio-header">
       <div>
         <h1 className="title">{label}</h1>
-        {description && <p className="description">{description}</p>}
+        <div className="studio-edit">
+          <div className="description-container">
+            {' '}
+            {description && <p className="description">{description}</p>}
+          </div>
+          <div>{children}</div>
+        </div>
       </div>
-      <div>{children}</div>
     </div>
   );
 };

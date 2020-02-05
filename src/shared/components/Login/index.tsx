@@ -64,7 +64,9 @@ const Login: React.FunctionComponent<LoginProps> = ({
             <div className="realm-holder">
               <span> with </span>
               <Dropdown overlay={menu} trigger={['click', 'hover']}>
-                <span className="realm">{realm}</span>
+                <span className="realm">
+                  {realm} <Icon type="down" />
+                </span>
               </Dropdown>
             </div>
           </div>

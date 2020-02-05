@@ -14,7 +14,8 @@ Learn how we use git [in the wiki](https://github.com/BlueBrain/nexus-web/wiki/G
 ## Development
 
 Install dependencies:
-**Please note you need npm v6.9.0 or above or yarn**
+**Please note you need npm v6.9.0 or above or yarn.**
+**Currently, does not work with yarn 2.**
 
 ```sh
 yarn
