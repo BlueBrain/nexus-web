@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useHistory } from 'react-router-dom';
 import { Spin, Alert } from 'antd';
 import ResultsTable from '../components/ResultsTable/ResultsTable';
 import { camelCaseToLabelString } from '../utils';
@@ -35,6 +36,14 @@ const DashboardResultsContainer: React.FunctionComponent<{
   const [items, setItems] = React.useState<any[]>();
   const [headerProperties, setHeaderProperties] = React.useState<any[]>();
   const nexus = useNexusContext();
+  const history = useHistory();
+
+  const goToStudioResource = (selfUrl: string) => {
+    const base64EncodedUri = btoa(selfUrl);
+    const studioResourceViewLink = `/studios/studio-resources/${base64EncodedUri}?dashboard=${dashboardUrl}`;
+
+    history.push(studioResourceViewLink);
+  };
 
   React.useEffect(() => {
     if (error) {
@@ -108,6 +117,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
       <ResultsTable
         headerProperties={headerProperties}
         items={items ? (items as Item[]) : []}
+        handleClick={goToStudioResource}
         dashboardUrl={dashboardUrl}
       />
     </Spin>
