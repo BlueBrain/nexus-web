@@ -177,7 +177,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
               <Select
                 mode="multiple"
                 style={{ width: '100%' }}
-                placeholder="Please select a plugin"
+                placeholder="Please select one or more plugins"
                 defaultValue={selectedPlugins}
                 onChange={handlePluginsChange}
               >
