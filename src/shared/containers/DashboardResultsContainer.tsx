@@ -118,6 +118,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
         headerProperties={headerProperties}
         items={items ? (items as Item[]) : []}
         handleClick={goToStudioResource}
+        dashboardUrl={dashboardUrl}
       />
     </Spin>
   );
