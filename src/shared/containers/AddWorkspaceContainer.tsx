@@ -95,7 +95,7 @@ const AddWorkspaceContainer: React.FC<{
 
   return (
     <>
-      <Button icon="plus" onClick={() => setShowModal(true)}>
+      <Button type="primary" icon="plus" onClick={() => setShowModal(true)}>
         Add Workspace
       </Button>
       <Modal

@@ -229,9 +229,20 @@ export function getResourceLabel(
  * }}
  */
 export function getOrgAndProjectFromResource(resource: Resource) {
-  const [projectLabel, orgLabel, ...rest] = resource._project
-    .split('/')
-    .reverse();
+  return getOrgAndProjectFromProjectId(resource._project);
+}
+
+/**
+ * Returns a resource's project and org label
+ *
+ * @param {string} projectId
+ * @returns {{
+ * orgLabel: string,
+ * projectLabel: string,
+ * }}
+ */
+export function getOrgAndProjectFromProjectId(projectId: string) {
+  const [projectLabel, orgLabel, ...rest] = projectId.split('/').reverse();
   return {
     orgLabel,
     projectLabel,
@@ -282,4 +293,31 @@ export const camelCaseToTitleCase = (camelCase: string): string => {
     .replace(/( +)/g, ' ');
   // capitalize the first letter
   return result.charAt(0).toUpperCase() + result.slice(1);
+};
+
+/*
+ * Tests for project and resource path in a given string.
+ *
+ * @param {string} entry url string
+ * @returns {string} path (either resource pr project path) or the input url.
+ */
+
+export const matchResultUrls = (entry: string) => {
+  const projectUrlPattern = /projects\/([\w-]+)\/([\w-]+)\/?$/;
+  const resourceUrlPattern = /resources(\/([\w-]+)\/([\w-]+))/;
+  if (projectUrlPattern.test(entry)) {
+    const [, org, proj] = entry.match(projectUrlPattern) as string[];
+    return `${org}/${proj}`;
+  }
+  if (resourceUrlPattern.test(entry)) {
+    const resourceIdPattern = /_\/([\w-|\W-]+)/;
+    const labels = entry.match(resourceUrlPattern) as string[];
+    if (resourceIdPattern.test(entry)) {
+      const resultArray = entry.match(resourceIdPattern) as string[];
+      if (resultArray !== null && resultArray.length > 1) {
+        return `${labels[1]}/resources/${resultArray[1]}`;
+      }
+    }
+  }
+  return entry;
 };

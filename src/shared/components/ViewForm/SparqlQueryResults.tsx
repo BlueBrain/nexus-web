@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Card, Empty, Table, Tooltip } from 'antd';
+import { Card, Empty, Table, Tooltip, notification } from 'antd';
 import Column from 'antd/lib/table/Column';
 import * as hash from 'object-hash';
+import { matchResultUrls } from '../../utils';
 import {
   AskQueryResponse,
   SelectQueryResponse,
@@ -21,6 +22,18 @@ export type Entry = {
   datatype: string;
   value: string;
   type: string;
+};
+
+const getUrl = (entry: string) => {
+  try {
+    return matchResultUrls(entry);
+  } catch (error) {
+    notification.error({
+      message: `Could not parse ${entry}`,
+      description: error.message,
+    });
+  }
+  return entry;
 };
 
 const SparqlQueryResults: React.FunctionComponent<{
@@ -72,7 +85,7 @@ const SparqlQueryResults: React.FunctionComponent<{
                 return (
                   <Tooltip title={entry.datatype}>
                     {entry.type === 'uri' ? (
-                      <a href={entry.value}>&lt;{entry.value}&gt;</a>
+                      <a href={getUrl(entry.value)}>&lt;{entry.value}&gt;</a>
                     ) : (
                       entry.value
                     )}

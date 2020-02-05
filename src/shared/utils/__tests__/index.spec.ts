@@ -8,6 +8,7 @@ import {
   hasExpired,
   camelCaseToLabelString,
   camelCaseToTitleCase,
+  matchResultUrls,
 } from '..';
 
 const identities: Identity[] = [
@@ -154,6 +155,30 @@ describe('utils functions', () => {
     });
     it('should format the almost CamelCaseString anyway', () => {
       expect(camelCaseToLabelString(almostCamelCase)).toEqual('Fine Anyway');
+    });
+  });
+
+  describe('matchResultUrls()', () => {
+    const projectUrl =
+      'https://staging.nexus.ocp.bbp.epfl.ch/v1/projects/public/graphql-ld';
+    const resourceUrl =
+      'https://staging.nexus.ocp.bbp.epfl.ch/v1/resources/public/graphql-ld/_/https:%2F%2Fbluebrainnexus.io%2Fstudio%2Fcontext';
+    const noMatchUrl =
+      'https://bluebrain.github.io/nexus/schemas/unconstrained.json';
+    it('should match a project url', () => {
+      expect(matchResultUrls(projectUrl)).toEqual('public/graphql-ld');
+    });
+
+    it('should match a resource url', () => {
+      expect(matchResultUrls(resourceUrl)).toEqual(
+        '/public/graphql-ld/resources/https:%2F%2Fbluebrainnexus.io%2Fstudio%2Fcontext'
+      );
+    });
+
+    it('return the input when no match is found', () => {
+      expect(matchResultUrls(noMatchUrl)).toEqual(
+        'https://bluebrain.github.io/nexus/schemas/unconstrained.json'
+      );
     });
   });
 });

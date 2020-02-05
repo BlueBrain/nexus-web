@@ -1,11 +1,14 @@
 import * as React from 'react';
-import { Input, Form, Tooltip, Icon, Transfer, Button, Collapse } from 'antd';
+import { Input, Form, Tooltip, Icon, Button, Collapse, Select } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { ResourceList } from '@bbp/nexus-sdk';
 import { FormComponentProps } from 'antd/es/form';
+import TextArea from 'antd/lib/input/TextArea';
 
 import DEFAULT_DASHBOARD_VIEW_QUERY from './DefaultDashboardViewQuery';
 import SparqlQueryFormInput from '../ViewForm/SparqlQueryInput';
+
+const { Option } = Select;
 
 export type DashboardPayload = {
   description?: string;
@@ -45,14 +48,10 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
 
   const formatPluginSource = () => {
     if (availablePlugins && availablePlugins.length) {
-      return availablePlugins.map(plugin => ({
-        key: plugin,
-        title: plugin,
-        description: `description of ${plugin}`,
-        chosen: false,
-      }));
+      return availablePlugins.map(plugin => (
+        <Option key={plugin}>{plugin}</Option>
+      ));
     }
-
     return [];
   };
 
@@ -119,7 +118,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
               required: false,
             },
           ],
-        })(<Input />)}
+        })(<TextArea />)}
       </Form.Item>
       <Form.Item
         label={
@@ -175,13 +174,15 @@ const DashboardConfigEditorComponent: React.FunctionComponent<
               }
               key="1"
             >
-              <Transfer
-                listStyle={{ width: '350px' }}
-                dataSource={formatPluginSource()}
-                targetKeys={selectedPlugins}
-                render={item => item.title}
+              <Select
+                mode="multiple"
+                style={{ width: '100%' }}
+                placeholder="Please select one or more plugins"
+                defaultValue={selectedPlugins}
                 onChange={handlePluginsChange}
-              />
+              >
+                {formatPluginSource()}
+              </Select>
             </Panel>
           </Collapse>
         )}
