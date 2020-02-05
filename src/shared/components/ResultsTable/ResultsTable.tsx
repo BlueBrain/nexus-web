@@ -18,7 +18,6 @@ type ResultTableProps = {
     [dataIndex: string]: any;
   }[];
   pageSize?: number;
-  handleClick: (self: string) => void;
   dashboardUrl: string;
 };
 
@@ -26,7 +25,6 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
   headerProperties,
   items,
   pageSize = PAGE_SIZE,
-  handleClick,
   dashboardUrl,
 }) => {
   const [searchValue, setSearchValue] = React.useState();
@@ -91,9 +89,6 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
   return (
     <div className="result-table">
       <Table
-        onRow={data => ({
-          onClick: event => handleClick(data.self.value),
-        })}
         columns={columnList}
         dataSource={tableItems}
         bordered

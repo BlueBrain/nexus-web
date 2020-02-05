@@ -38,13 +38,6 @@ const DashboardResultsContainer: React.FunctionComponent<{
   const nexus = useNexusContext();
   const history = useHistory();
 
-  const goToStudioResource = (selfUrl: string) => {
-    const base64EncodedUri = btoa(selfUrl);
-    const studioResourceViewLink = `/studios/studio-resources/${base64EncodedUri}?dashboard=${dashboardUrl}`;
-
-    history.push(studioResourceViewLink);
-  };
-
   React.useEffect(() => {
     if (error) {
       setError(undefined);
@@ -117,7 +110,6 @@ const DashboardResultsContainer: React.FunctionComponent<{
       <ResultsTable
         headerProperties={headerProperties}
         items={items ? (items as Item[]) : []}
-        handleClick={goToStudioResource}
         dashboardUrl={dashboardUrl}
       />
     </Spin>
