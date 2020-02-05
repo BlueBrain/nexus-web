@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useHistory } from 'react-router-dom';
 import { Spin, Alert } from 'antd';
 import ResultsTable from '../components/ResultsTable/ResultsTable';
 import { camelCaseToLabelString } from '../utils';
@@ -36,7 +35,6 @@ const DashboardResultsContainer: React.FunctionComponent<{
   const [items, setItems] = React.useState<any[]>();
   const [headerProperties, setHeaderProperties] = React.useState<any[]>();
   const nexus = useNexusContext();
-  const history = useHistory();
 
   React.useEffect(() => {
     if (error) {
