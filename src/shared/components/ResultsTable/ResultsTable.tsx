@@ -92,7 +92,10 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
     <div className="result-table">
       <Table
         onRow={data => ({
-          onClick: event => handleClick(data.self.value),
+          onClick: event => {
+            event.preventDefault();
+            handleClick(data.self.value);
+          },
         })}
         columns={columnList}
         dataSource={tableItems}
