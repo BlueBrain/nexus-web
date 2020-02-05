@@ -13,7 +13,7 @@ const ResourceView: React.FunctionComponent = props => {
         render={resource => (
           <div ref={ref} className="graph-wrapper">
             <div
-              className="fixed-minus-header "
+              className="fixed-minus-header"
               style={{
                 width,
               }}
