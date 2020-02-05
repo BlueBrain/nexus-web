@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Spin, Alert, Button } from 'antd';
+import { Spin, Alert } from 'antd';
 import ResultsTable from '../components/ResultsTable/ResultsTable';
 import { camelCaseToLabelString } from '../utils';
 import { SelectQueryResponse, SparqlViewQueryResponse } from '@bbp/nexus-sdk';
@@ -30,18 +30,8 @@ const DashboardResultsContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
   viewId: string;
-  studioResourceId: string;
-  plugins?: string[];
   dashboardUrl: string;
-}> = ({
-  orgLabel,
-  projectLabel,
-  dataQuery,
-  viewId,
-  studioResourceId,
-  plugins = [],
-  dashboardUrl,
-}) => {
+}> = ({ orgLabel, projectLabel, dataQuery, viewId, dashboardUrl }) => {
   const [error, setError] = React.useState<NexusSparqlError | Error>();
   const [items, setItems] = React.useState<any[]>();
   const [headerProperties, setHeaderProperties] = React.useState<any[]>();
@@ -49,7 +39,8 @@ const DashboardResultsContainer: React.FunctionComponent<{
   const history = useHistory();
 
   const goToStudioResource = (selfUrl: string) => {
-    const studioResourceViewLink = `/studio-resources/${selfUrl}?dashboard=${dashboardUrl}`;
+    const base64EncodedUri = btoa(selfUrl);
+    const studioResourceViewLink = `/studios/studio-resources/${base64EncodedUri}?dashboard=${dashboardUrl}`;
 
     history.push(studioResourceViewLink);
   };

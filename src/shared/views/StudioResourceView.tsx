@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { useParams, useHistory } from 'react-router';
+import { useParams, useHistory, useLocation } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Resource } from '@bbp/nexus-sdk';
 import { notification, Empty } from 'antd';
 import * as queryString from 'query-string';
 
 import { NexusPlugin } from '../containers/NexusPlugin';
+import { getResourceLabel } from '../utils';
 
 type DashboardResource = {
   label?: string;
@@ -19,38 +21,30 @@ type QueryParams = {
 
 const StudioResourceView: React.FunctionComponent<{}> = () => {
   const nexus = useNexusContext();
-  const { resourceSelfUrl = '' } = useParams();
+  const { resourceSelfUri = '' } = useParams();
+
   const history = useHistory();
   const queryParams: QueryParams =
     queryString.parse(history.location.search) || {};
   const dashboardUrl = queryParams.dashboard;
-  const [{ dashboard }, setDashboard] = React.useState<{
-    dashboard: DashboardResource | null;
-  }>({
-    dashboard: null,
-  });
-  const [{ resource }, setResource] = React.useState<{
-    resource: any | null;
-  }>({
-    resource: null,
-  });
+  const [dashboard, setDashboard] = React.useState<DashboardResource | null>();
+  const [resource, setResource] = React.useState<Resource | null>();
 
   React.useEffect(() => {
-    setDashboard({
-      dashboard,
-    });
+    setDashboard(dashboard);
+    setResource(resource);
 
-    setResource({
-      resource,
-    });
+    let resourceResponse;
+    let dashboardResource;
 
     nexus
       .httpGet({
-        path: resourceSelfUrl,
+        path: atob(resourceSelfUri),
         headers: { Accept: 'application/json' },
       })
       .then(resource => {
-        setResource({ resource });
+        resourceResponse = resource;
+        setResource(resourceResponse);
       })
       .catch(error => {
         notification.error({
@@ -65,7 +59,8 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
         headers: { Accept: 'application/json' },
       })
       .then(dashboard => {
-        setDashboard({ dashboard });
+        dashboardResource = dashboard;
+        setDashboard(dashboardResource);
       })
       .catch(error => {
         notification.error({
@@ -73,16 +68,24 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
           description: error.message,
         });
       });
-  }, []);
+  }, [resourceSelfUri, dashboardUrl]);
 
-  if (!dashboard) return null;
+  const goToStudioResource = (selfUrl: string) => {
+    const base64EncodedUri = btoa(selfUrl);
+    const studioResourceViewLink = `/studios/studio-resources/${base64EncodedUri}?dashboard=${dashboardUrl}`;
 
-  const { label, description, plugins } = dashboard;
+    history.push(studioResourceViewLink);
+  };
+
+  if (!dashboard || !resource) return null;
+
+  const { plugins } = dashboard;
+  const label = getResourceLabel(resource);
 
   return (
     <div className="studio-resource-view">
       <h1>{label}</h1>
-      <p>{description}</p>
+      <p>{resource.description}</p>
       {plugins && plugins.length > 0 ? (
         plugins.map(pluginName => (
           <div className="studio-resource-plugin" key={`plugin-${pluginName}`}>
@@ -90,6 +93,7 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
               url={`/public/plugins/${pluginName}/index.js`}
               nexusClient={nexus}
               resource={resource}
+              goToResource={goToStudioResource}
             />
           </div>
         ))

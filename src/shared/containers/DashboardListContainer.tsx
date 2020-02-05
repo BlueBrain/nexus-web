@@ -17,7 +17,6 @@ interface DashboardListProps {
   orgLabel: string;
   projectLabel: string;
   workspaceId: string;
-  studioResourceId: string;
   refreshList?(): void;
 }
 
@@ -26,7 +25,6 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   orgLabel,
   projectLabel,
   workspaceId,
-  studioResourceId,
   refreshList,
 }) => {
   const [queryParams, setQueryString] = useQueryString();
@@ -166,9 +164,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
                   dashboards[selectedDashboardIndex].view) ||
                 DEFAULT_SPARQL_VIEW_ID
               }
-              studioResourceId={studioResourceId}
               dataQuery={dashboardResources[selectedDashboardIndex].dataQuery}
-              plugins={dashboardResources[selectedDashboardIndex].plugins}
               dashboardUrl={dashboardResources[selectedDashboardIndex]['_self']}
             />
           )}
