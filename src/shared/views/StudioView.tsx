@@ -54,7 +54,6 @@ const StudioView: React.FunctionComponent<{}> = () => {
                         projectLabel={projectLabel}
                         dashboards={dashboards}
                         workspaceId={workspaceId}
-                        studioResourceId={studioResource['@id']}
                         refreshList={reloadWorkspaces}
                       />
                     );
