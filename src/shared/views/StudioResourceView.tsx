@@ -22,7 +22,7 @@ type QueryParams = {
 const StudioResourceView: React.FunctionComponent<{}> = () => {
   const nexus = useNexusContext();
   const { resourceSelfUri = '' } = useParams();
-  
+
   const history = useHistory();
   const queryParams: QueryParams =
     queryString.parse(history.location.search) || {};

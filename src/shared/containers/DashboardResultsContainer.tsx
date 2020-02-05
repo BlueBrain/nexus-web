@@ -40,9 +40,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
 
   const goToStudioResource = (selfUrl: string) => {
     console.log('selfUrl original', selfUrl);
-    console.log('encoded selfUrl original', encodeURIComponent(
-      selfUrl
-    ));
+    console.log('encoded selfUrl original', encodeURIComponent(selfUrl));
     const base64 = btoa(selfUrl);
 
     const studioResourceViewLink = `/studios/studio-resources/${base64}?dashboard=${dashboardUrl}`;
