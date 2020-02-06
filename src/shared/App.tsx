@@ -7,6 +7,7 @@ import MainLayout from './layouts/MainLayout';
 import './App.less';
 import { Modal } from 'antd';
 import ResourceViewContainer from './containers/ResourceViewContainer';
+import StudioResourceView from './views/StudioResourceView';
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -32,24 +33,46 @@ const App: React.FC = () => {
 
       {
         // This is where special routes should go
-        // that are placed inside a model
-        // when they background state is provided
+        // that are placed inside a modal
+        // when the background state is provided
       }
-      {background && (
+      {background && [
         <Route
+          key="resource-modal"
           path={'/:orgLabel/:projectLabel/resources/:resourceId'}
           render={routeProps => (
             <Modal
               visible={true}
               onCancel={() => history.push(background, {})}
               onOk={() => history.push(location.pathname, {})}
-              okText={'View Details'}
+              okText="View Details"
             >
               <ResourceViewContainer />
             </Modal>
           )}
-        />
-      )}
+        />,
+        <Route
+          key="studio-resource-modal"
+          path={'/studios/studio-resources/:resourceSelfUri'}
+          render={routeProps => (
+            <Modal
+              visible={true}
+              onCancel={() => history.push(background, {})}
+              onOk={() =>
+                history.push({
+                  pathname: location.pathname,
+                  search: location.search,
+                  state: {},
+                })
+              }
+              okText="View Details"
+              cancelText="Close"
+            >
+              <StudioResourceView />
+            </Modal>
+          )}
+        />,
+      ]}
     </MainLayout>
   );
 };
