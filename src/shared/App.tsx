@@ -58,7 +58,13 @@ const App: React.FC = () => {
             <Modal
               visible={true}
               onCancel={() => history.push(background, {})}
-              onOk={() => history.push(location.pathname, {})}
+              onOk={() =>
+                history.push({
+                  pathname: location.pathname,
+                  search: location.search,
+                  state: {},
+                })
+              }
               okText="View Details"
               cancelText="Close"
             >

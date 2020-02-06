@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useParams, useHistory, useLocation } from 'react-router';
+import { useParams, useHistory } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
 import { notification, Empty } from 'antd';
