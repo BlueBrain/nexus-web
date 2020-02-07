@@ -81,7 +81,7 @@ exports[`Header component Should render correctly 1`] = `
     >
       <Button
         block={false}
-        className="header-info-button"
+        className="qa-header-info-button"
         ghost={false}
         htmlType="button"
         icon="info-circle"
