@@ -81,16 +81,13 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
               break;
           }
 
-          const distinctValues = filteredItems.reduce(
-            (memo, item) => {
-              const value = item[dataIndex];
-              if (value && !memo.includes(value)) {
-                memo.push(value);
-              }
-              return memo;
-            },
-            [] as any[]
-          );
+          const distinctValues = filteredItems.reduce((memo, item) => {
+            const value = item[dataIndex];
+            if (value && !memo.includes(value)) {
+              memo.push(value);
+            }
+            return memo;
+          }, [] as any[]);
 
           const filterOptions =
             distinctValues.length > MIN_FILTER_LIMIT &&

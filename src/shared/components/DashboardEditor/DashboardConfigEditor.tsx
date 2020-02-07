@@ -30,9 +30,7 @@ export type DashboardConfigEditorProps = {
 const dashboardSPARQLDocumentationURL =
   'https://github.com/BlueBrain/nexus-web/blob/master/docs/studio/Dashboards.md#sparql-query-requirements';
 
-const DashboardConfigEditorComponent: React.FunctionComponent<
-  DashboardConfigEditorProps
-> = ({
+const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEditorProps> = ({
   onSubmit,
   form,
   dashboard,

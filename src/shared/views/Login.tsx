@@ -110,7 +110,4 @@ const mapDispatchToProps = (dispatch: any) => ({
     dispatch(configActions.setPreferredRealm(name)),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

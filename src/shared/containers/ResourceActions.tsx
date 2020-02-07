@@ -218,7 +218,4 @@ const mapDispatchToProps = (dispatch: any) => ({
   },
 });
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(ResourceActionsContainer);
+export default connect(null, mapDispatchToProps)(ResourceActionsContainer);
