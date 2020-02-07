@@ -1,4 +1,4 @@
-const homePage = 'http://localhost:8000/';
+import { homePage } from '../../support';
 
 beforeEach(() => {
   cy.visit(homePage);

@@ -1,4 +1,4 @@
-const loginPage = 'http://localhost:8000/login';
+import { loginPage } from '../../support';
 
 beforeEach(() => {
   cy.visit(loginPage);

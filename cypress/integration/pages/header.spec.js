@@ -1,9 +1,4 @@
-const homePage = 'http://localhost:8000/';
-const loginPage = 'http://localhost:8000/login';
-
-const docLink = 'https://bluebrainnexus.io/docs';
-const reportIssueLink =
-  'https://github.com/BlueBrain/nexus/issues/new?labels=frontend,nexus-web';
+import { homePage, docLink, reportIssueLink } from '../../support';
 
 beforeEach(() => {
   cy.visit(homePage);
