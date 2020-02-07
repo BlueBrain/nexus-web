@@ -182,8 +182,7 @@ exports[`Organisation Form component should render correctly 1`] = `
                               type="text"
                               value=""
                             >
-                              <input
-                                className="ant-input"
+                              <ClearableLabeledInput
                                 data-__field={
                                   Object {
                                     "name": "label",
@@ -227,13 +226,122 @@ exports[`Organisation Form component should render correctly 1`] = `
                                   }
                                 }
                                 disabled={false}
+                                element={
+                                  <input
+                                    className="ant-input"
+                                    data-__field={
+                                      Object {
+                                        "name": "label",
+                                      }
+                                    }
+                                    data-__meta={
+                                      Object {
+                                        "initialValue": "",
+                                        "name": "label",
+                                        "originalProps": Object {
+                                          "disabled": false,
+                                          "placeholder": "Label",
+                                          "type": "text",
+                                        },
+                                        "ref": null,
+                                        "rules": Array [
+                                          Object {
+                                            "message": "Label must be a phrase without spaces",
+                                            "pattern": /\\^\\\\S\\+\\$/g,
+                                            "required": true,
+                                            "whitespace": true,
+                                          },
+                                        ],
+                                        "trigger": "onChange",
+                                        "validate": Array [
+                                          Object {
+                                            "rules": Array [
+                                              Object {
+                                                "message": "Label must be a phrase without spaces",
+                                                "pattern": /\\^\\\\S\\+\\$/g,
+                                                "required": true,
+                                                "whitespace": true,
+                                              },
+                                            ],
+                                            "trigger": Array [
+                                              "onChange",
+                                            ],
+                                          },
+                                        ],
+                                        "valuePropName": "value",
+                                      }
+                                    }
+                                    disabled={false}
+                                    id="label"
+                                    onChange={[Function]}
+                                    onKeyDown={[Function]}
+                                    placeholder="Label"
+                                    type="text"
+                                    value=""
+                                  />
+                                }
+                                handleReset={[Function]}
                                 id="label"
+                                inputType="input"
                                 onChange={[Function]}
-                                onKeyDown={[Function]}
                                 placeholder="Label"
+                                prefixCls="ant-input"
                                 type="text"
                                 value=""
-                              />
+                              >
+                                <input
+                                  className="ant-input"
+                                  data-__field={
+                                    Object {
+                                      "name": "label",
+                                    }
+                                  }
+                                  data-__meta={
+                                    Object {
+                                      "initialValue": "",
+                                      "name": "label",
+                                      "originalProps": Object {
+                                        "disabled": false,
+                                        "placeholder": "Label",
+                                        "type": "text",
+                                      },
+                                      "ref": null,
+                                      "rules": Array [
+                                        Object {
+                                          "message": "Label must be a phrase without spaces",
+                                          "pattern": /\\^\\\\S\\+\\$/g,
+                                          "required": true,
+                                          "whitespace": true,
+                                        },
+                                      ],
+                                      "trigger": "onChange",
+                                      "validate": Array [
+                                        Object {
+                                          "rules": Array [
+                                            Object {
+                                              "message": "Label must be a phrase without spaces",
+                                              "pattern": /\\^\\\\S\\+\\$/g,
+                                              "required": true,
+                                              "whitespace": true,
+                                            },
+                                          ],
+                                          "trigger": Array [
+                                            "onChange",
+                                          ],
+                                        },
+                                      ],
+                                      "valuePropName": "value",
+                                    }
+                                  }
+                                  disabled={false}
+                                  id="label"
+                                  onChange={[Function]}
+                                  onKeyDown={[Function]}
+                                  placeholder="Label"
+                                  type="text"
+                                  value=""
+                                />
+                              </ClearableLabeledInput>
                             </Input>
                           </span>
                           <Animate
@@ -381,8 +489,7 @@ exports[`Organisation Form component should render correctly 1`] = `
                               type="text"
                               value=""
                             >
-                              <input
-                                className="ant-input"
+                              <ClearableLabeledInput
                                 data-__field={
                                   Object {
                                     "name": "description",
@@ -418,13 +525,106 @@ exports[`Organisation Form component should render correctly 1`] = `
                                     "valuePropName": "value",
                                   }
                                 }
+                                element={
+                                  <input
+                                    className="ant-input"
+                                    data-__field={
+                                      Object {
+                                        "name": "description",
+                                      }
+                                    }
+                                    data-__meta={
+                                      Object {
+                                        "initialValue": "",
+                                        "name": "description",
+                                        "originalProps": Object {
+                                          "placeholder": "Description",
+                                          "type": "text",
+                                        },
+                                        "ref": null,
+                                        "rules": Array [
+                                          Object {
+                                            "required": false,
+                                          },
+                                        ],
+                                        "trigger": "onChange",
+                                        "validate": Array [
+                                          Object {
+                                            "rules": Array [
+                                              Object {
+                                                "required": false,
+                                              },
+                                            ],
+                                            "trigger": Array [
+                                              "onChange",
+                                            ],
+                                          },
+                                        ],
+                                        "valuePropName": "value",
+                                      }
+                                    }
+                                    id="description"
+                                    onChange={[Function]}
+                                    onKeyDown={[Function]}
+                                    placeholder="Description"
+                                    type="text"
+                                    value=""
+                                  />
+                                }
+                                handleReset={[Function]}
                                 id="description"
+                                inputType="input"
                                 onChange={[Function]}
-                                onKeyDown={[Function]}
                                 placeholder="Description"
+                                prefixCls="ant-input"
                                 type="text"
                                 value=""
-                              />
+                              >
+                                <input
+                                  className="ant-input"
+                                  data-__field={
+                                    Object {
+                                      "name": "description",
+                                    }
+                                  }
+                                  data-__meta={
+                                    Object {
+                                      "initialValue": "",
+                                      "name": "description",
+                                      "originalProps": Object {
+                                        "placeholder": "Description",
+                                        "type": "text",
+                                      },
+                                      "ref": null,
+                                      "rules": Array [
+                                        Object {
+                                          "required": false,
+                                        },
+                                      ],
+                                      "trigger": "onChange",
+                                      "validate": Array [
+                                        Object {
+                                          "rules": Array [
+                                            Object {
+                                              "required": false,
+                                            },
+                                          ],
+                                          "trigger": Array [
+                                            "onChange",
+                                          ],
+                                        },
+                                      ],
+                                      "valuePropName": "value",
+                                    }
+                                  }
+                                  id="description"
+                                  onChange={[Function]}
+                                  onKeyDown={[Function]}
+                                  placeholder="Description"
+                                  type="text"
+                                  value=""
+                                />
+                              </ClearableLabeledInput>
                             </Input>
                           </span>
                           <Animate

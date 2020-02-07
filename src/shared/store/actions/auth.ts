@@ -25,9 +25,9 @@ type FetchIdentitiesFulfilledAction = FetchFulfilledAction<
   AuthActionTypes.IDENTITY_FULFILLED,
   IdentityList
 >;
-const fetchIdentitiesFulfilledAction: ActionCreator<
-  FetchIdentitiesFulfilledAction
-> = (identities: IdentityList) => ({
+const fetchIdentitiesFulfilledAction: ActionCreator<FetchIdentitiesFulfilledAction> = (
+  identities: IdentityList
+) => ({
   type: AuthActionTypes.IDENTITY_FULFILLED,
   payload: identities,
 });
@@ -35,9 +35,9 @@ const fetchIdentitiesFulfilledAction: ActionCreator<
 type FetchIdentitiesFailedAction = FetchFailedAction<
   AuthActionTypes.IDENTITY_FAILED
 >;
-const fetchIdentitiesFailedAction: ActionCreator<
-  FetchFailedAction<AuthActionTypes.IDENTITY_FAILED>
-> = (error: Error) => ({
+const fetchIdentitiesFailedAction: ActionCreator<FetchFailedAction<
+  AuthActionTypes.IDENTITY_FAILED
+>> = (error: Error) => ({
   error,
   type: AuthActionTypes.IDENTITY_FAILED,
 });
@@ -70,9 +70,9 @@ const fetchRealmsFulfilledAction: ActionCreator<FetchRealmsFulfilledAction> = (
 });
 
 type FetchRealmsFailedAction = FetchFailedAction<AuthActionTypes.REALM_FAILED>;
-const fetchRealmsFailedAction: ActionCreator<
-  FetchFailedAction<AuthActionTypes.REALM_FAILED>
-> = (error: Error) => ({
+const fetchRealmsFailedAction: ActionCreator<FetchFailedAction<
+  AuthActionTypes.REALM_FAILED
+>> = (error: Error) => ({
   error,
   type: AuthActionTypes.REALM_FAILED,
 });
