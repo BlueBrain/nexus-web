@@ -186,7 +186,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           <Button
             size="small"
             icon="info-circle"
-            className="header-info-button"
+            className="qa-header-info-button"
           />
         </Popover>
         {name ? (
