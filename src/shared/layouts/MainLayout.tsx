@@ -25,7 +25,7 @@ export interface MainLayoutProps {
   authenticated: boolean;
   token?: string;
   goTo(url: string): void;
-  name: string;
+  name?: string;
   canLogin?: boolean;
   userManager?: UserManager;
   apiEndpoint: string;
@@ -150,7 +150,4 @@ const mapDispatchToProps = (dispatch: any) => ({
     dispatch(push(url, { previousUrl: window.location.href })),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(MainLayout);
+export default connect(mapStateToProps, mapDispatchToProps)(MainLayout);

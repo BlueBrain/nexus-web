@@ -8,6 +8,7 @@ import './App.less';
 import { Modal } from 'antd';
 import ResourceViewContainer from './containers/ResourceViewContainer';
 import StudioResourceView from './views/StudioResourceView';
+import { Location } from 'history';
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -20,7 +21,8 @@ const App: React.FC = () => {
   // use it as the location for the <Switch> so
   // we show the gallery in the background, behind
   // the modal.
-  const background = location.state && location.state.background;
+  const background =
+    location.state && (location.state as { background?: Location }).background;
 
   return (
     <MainLayout>
@@ -43,7 +45,7 @@ const App: React.FC = () => {
           render={routeProps => (
             <Modal
               visible={true}
-              onCancel={() => history.push(background, {})}
+              onCancel={() => history.push(background.pathname, {})}
               onOk={() => history.push(location.pathname, {})}
               okText="View Details"
             >
@@ -57,7 +59,7 @@ const App: React.FC = () => {
           render={routeProps => (
             <Modal
               visible={true}
-              onCancel={() => history.push(background, {})}
+              onCancel={() => history.push(background.pathname, {})}
               onOk={() =>
                 history.push({
                   pathname: location.pathname,

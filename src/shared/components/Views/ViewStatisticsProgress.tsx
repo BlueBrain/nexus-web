@@ -10,9 +10,7 @@ type ViewStatisticsProgressProps = {
   lastIndexed: string; // UTC Date
 };
 
-export const ViewStatisticsProgress: React.FunctionComponent<
-  ViewStatisticsProgressProps
-> = props => {
+export const ViewStatisticsProgress: React.FunctionComponent<ViewStatisticsProgressProps> = props => {
   const percent = Math.floor((props.processedEvents / props.totalEvents) * 100);
   const label =
     percent === 100
@@ -35,9 +33,7 @@ export type ViewStatisticsContainerProps = {
   onClickRefresh?: VoidFunction;
 };
 
-export const ViewStatisticsContainer: React.FunctionComponent<
-  ViewStatisticsContainerProps
-> = props => {
+export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsContainerProps> = props => {
   const nexus = useNexusContext();
   const [eventsAtMount, setEventsAtMount] = React.useState();
   const [{ loading, error, data }, setState] = React.useState<{
@@ -110,6 +106,8 @@ export const ViewStatisticsContainer: React.FunctionComponent<
       props.resourceId,
       { pollIntervalMs: 3000 }
     ).subscribe(
+      // @ts-ignore
+      // TODO fix for v1.3 release
       ({ _results }) => {
         const statistics = _results[0];
         if (!eventsAtMount) {
