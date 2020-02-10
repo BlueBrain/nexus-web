@@ -68,7 +68,13 @@ const ResourceListContainer: React.FunctionComponent<{
 
     let resourceListResponse: any = [];
 
-    nexus.Resource.list(orgLabel, projectLabel, list.query)
+    const { query } = list;
+
+    if (query.q) {
+      query.sort = undefined;
+    }
+
+    nexus.Resource.list(orgLabel, projectLabel, query)
       .then(response => {
         resourceListResponse = response;
         setResources({
@@ -98,13 +104,19 @@ const ResourceListContainer: React.FunctionComponent<{
   ]);
 
   const handleLoadMore = async ({ searchValue }: { searchValue: string }) => {
+    const query = {
+      ...list.query,
+      q: searchValue,
+    };
+
+    if (searchValue) {
+      query.sort = undefined;
+    }
+
     if (searchValue !== list.query.q) {
       return setList({
         ...list,
-        query: {
-          ...list.query,
-          q: searchValue,
-        },
+        query,
       });
     }
     if (busy || !next) {

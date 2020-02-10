@@ -77,6 +77,9 @@ const ResourceListComponent: React.FunctionComponent<{
 }) => {
   const [{ ref: wrapperHeightRef }, { height: wrapperHeight }] = useMeasure();
   const { name } = list;
+
+  console.log('list', list);
+
   const [sortOption, setSortOption] = React.useState(DEFAULT_SORT_OPTION);
 
   const handleUpdate = (value: string) => {
@@ -147,12 +150,14 @@ const ResourceListComponent: React.FunctionComponent<{
         </h3>
         <div className="controls -squished">
           {/* TODO: add back when backend stuff is released
-          https://github.com/BlueBrain/nexus/milestone/7
-          <Dropdown overlay={sortOptions} trigger={['hover', 'click']}>
-            <Tooltip title="Sort resources">
-              <Button icon="sort-ascending" />
-            </Tooltip>
-          </Dropdown> */}
+          https://github.com/BlueBrain/nexus/milestone/7 */}
+          {!list.query.q && (
+            <Dropdown overlay={sortOptions} trigger={['hover', 'click']}>
+              <Tooltip title="Sort resources">
+                <Button icon="sort-ascending" />
+              </Tooltip>
+            </Dropdown>
+          )}
           <Tooltip title="Clear filters">
             <Button icon="close-circle" onClick={handleClear} />
           </Tooltip>
