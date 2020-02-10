@@ -13,8 +13,6 @@ export const DEFAULT_LIST: ResourceBoardList = {
   query: {
     size: 100,
     deprecated: false,
-    // TODO: add back when backend stuff is released
-    // https://github.com/BlueBrain/nexus/milestone/7
     sort: '-_createdAt',
   },
 };
