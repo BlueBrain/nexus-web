@@ -146,13 +146,13 @@ const ResourceListComponent: React.FunctionComponent<{
           <Icon type="close" className="close-button" onClick={handleDelete} />
         </h3>
         <div className="controls -squished">
-          {/* TODO: add back when backend stuff is released
-          https://github.com/BlueBrain/nexus/milestone/7
-          <Dropdown overlay={sortOptions} trigger={['hover', 'click']}>
-            <Tooltip title="Sort resources">
-              <Button icon="sort-ascending" />
-            </Tooltip>
-          </Dropdown> */}
+          {!list.query.q && (
+            <Dropdown overlay={sortOptions} trigger={['hover', 'click']}>
+              <Tooltip title="Sort resources">
+                <Button icon="sort-ascending" />
+              </Tooltip>
+            </Dropdown>
+          )}
           <Tooltip title="Clear filters">
             <Button icon="close-circle" onClick={handleClear} />
           </Tooltip>
