@@ -130,7 +130,8 @@ const mapStateToProps = (state: RootState) => {
   return {
     authenticated: oidc.user !== undefined,
     token: oidc.user && oidc.user.access_token,
-    name: oidc.user && oidc.user.profile && oidc.user.profile.name,
+    name:
+      oidc.user && oidc.user.profile && oidc.user.profile.preferred_username,
     logoutUrl: getLogoutUrl(
       identities,
       realms.map(r => ({
