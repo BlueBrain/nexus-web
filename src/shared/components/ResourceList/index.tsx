@@ -77,9 +77,6 @@ const ResourceListComponent: React.FunctionComponent<{
 }) => {
   const [{ ref: wrapperHeightRef }, { height: wrapperHeight }] = useMeasure();
   const { name } = list;
-
-  console.log('list', list);
-
   const [sortOption, setSortOption] = React.useState(DEFAULT_SORT_OPTION);
 
   const handleUpdate = (value: string) => {
