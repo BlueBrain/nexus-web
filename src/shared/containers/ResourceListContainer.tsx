@@ -68,13 +68,7 @@ const ResourceListContainer: React.FunctionComponent<{
 
     let resourceListResponse: any = [];
 
-    const { query } = list;
-
-    if (query.q) {
-      query.sort = undefined;
-    }
-
-    nexus.Resource.list(orgLabel, projectLabel, query)
+    nexus.Resource.list(orgLabel, projectLabel, list.query)
       .then(response => {
         resourceListResponse = response;
         setResources({
@@ -193,6 +187,7 @@ const ResourceListContainer: React.FunctionComponent<{
       query: {
         ...list.query,
         sort: [option, '@id'],
+        q: undefined,
       },
     });
   };
