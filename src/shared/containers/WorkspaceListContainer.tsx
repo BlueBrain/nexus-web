@@ -95,8 +95,6 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
             workspaceFilteredById ? workspaceFilteredById : values[0]
           );
         } else {
-          console.log('setting the first one....');
-
           setSelectedWorkspace(values[0]);
         }
       })
