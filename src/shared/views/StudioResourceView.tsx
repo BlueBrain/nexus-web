@@ -79,7 +79,12 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
 
   if (!dashboard || !resource) return null;
 
-  const { plugins } = dashboard;
+  const plugins: string[] = !!dashboard.plugins
+    ? Array.isArray(dashboard.plugins)
+      ? dashboard.plugins
+      : [dashboard.plugins]
+    : [];
+
   const label = getResourceLabel(resource);
 
   return (
