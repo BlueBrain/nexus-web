@@ -101,7 +101,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
       .catch(e => {
         // TODO: show a meaningful error to the user.
       });
-  }, [workspaceIds, workspaceId]);
+  }, [workspaceIds]);
 
   const tabAction = (
     <AddWorkspaceContainer
@@ -142,9 +142,8 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
         }}
         activeKey={
           workspaces.length
-            ? workspaceId
-              ? decodeURIComponent(workspaceId)
-              : workspaces[0]['@id']
+            ? (selectedWorkspace && selectedWorkspace['@id']) ||
+              workspaces[0]['@id']
             : undefined
         }
         position="top"
@@ -155,7 +154,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
           <div className="workspace">
             {dashboardListComponent({
               dashboards,
-              workspaceId: workspaceId ? workspaceId : selectedWorkspace['@id'],
+              workspaceId: workspaceId || selectedWorkspace['@id'],
             })}{' '}
           </div>
         ) : null}
