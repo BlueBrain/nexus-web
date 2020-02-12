@@ -32,9 +32,11 @@ const VersionInfo = (props: ServiceVersions) => {
   return (
     <>
       <h4 className="popover-title">Nexus Services</h4>
-      <p>
-        <label>Nexus</label> v{props.nexus}
-      </p>
+      {props.nexus && (
+        <p>
+          <label>Nexus</label> v{props.nexus}
+        </p>
+      )}
       <p>
         <label>Admin</label> v{props.admin}
       </p>
