@@ -3,6 +3,7 @@ import { shallow, mount } from 'enzyme';
 import Header, { ServiceVersions } from '..';
 
 const versions: ServiceVersions = {
+  nexus: '1.0',
   admin: '1.0',
   blazegraph: '1.0',
   elasticsearch: '1.0',

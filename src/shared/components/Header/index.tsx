@@ -19,6 +19,7 @@ interface InformationContentProps {
 }
 
 export type ServiceVersions = {
+  nexus: string;
   admin: string;
   blazegraph: string;
   elasticsearch: string;
@@ -31,6 +32,9 @@ const VersionInfo = (props: ServiceVersions) => {
   return (
     <>
       <h4 className="popover-title">Nexus Services</h4>
+      <p>
+        <label>Nexus</label> v{props.nexus}
+      </p>
       <p>
         <label>Admin</label> v{props.admin}
       </p>
@@ -62,7 +66,7 @@ const InformationContent = (props: InformationContentProps) => {
         </a>
       </p>
       <p>
-        © 2017-2019
+        © 2017-2020
         <a href="https://www.epfl.ch/" target="_blank">
           <img
             style={{ width: '3em', marginBottom: 3 }}
