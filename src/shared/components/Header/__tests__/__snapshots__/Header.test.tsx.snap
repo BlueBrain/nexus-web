@@ -64,6 +64,7 @@ exports[`Header component Should render correctly 1`] = `
               "elasticsearch": "1.0",
               "iam": "1.0",
               "kg": "1.0",
+              "nexus": "1.0",
               "storage": "asda",
             }
           }
