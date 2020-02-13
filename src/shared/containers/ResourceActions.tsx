@@ -15,6 +15,7 @@ import {
   isDefaultElasticView,
   isDeprecated,
   isView,
+  isCompositeView,
   toPromise,
 } from '../utils/nexusMaybe';
 
@@ -93,7 +94,9 @@ const ResourceActionsContainer: React.FunctionComponent<{
     },
     {
       name: 'goToView',
-      predicate: toPromise(isView),
+      predicate: async (resource: Resource) => {
+        return !isCompositeView(resource) && isView(resource);
+      },
       title: 'Query this view',
       shortTitle: 'Query',
       icon: 'search',
