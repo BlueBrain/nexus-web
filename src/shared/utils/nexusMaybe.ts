@@ -5,6 +5,7 @@ const NEXUS_FILE_TYPE = 'File';
 const VIEW = 'View';
 const ES_VIEW = 'ElasticSearchView';
 const SPARQL_VIEW = 'SparqlView';
+const COMPOSITE_VIEW = 'CompositeView';
 
 type predicateFunction = (resource: Resource) => boolean;
 
@@ -30,6 +31,7 @@ export const hasIdOf = (id: string) => (resource: Resource) =>
 export const isDeprecated = (resource: Resource) => resource._deprecated;
 export const isView = isOfType(VIEW);
 export const isElasticView = isOfType(ES_VIEW);
+export const isCompositeView = isOfType(COMPOSITE_VIEW);
 export const isDefaultElasticView = chainPredicates([
   isOfType(ES_VIEW),
   hasIdOf(DEFAULT_ELASTIC_SEARCH_VIEW_ID),
