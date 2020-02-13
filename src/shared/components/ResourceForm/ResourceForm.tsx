@@ -38,6 +38,10 @@ const AVAILABLE_SCHEMAS: CascaderOptionType[] = [
         value: 'AggregateElasticSearchView',
         label: 'Aggregate ElasticSearch View',
       },
+      {
+        value: 'CompositeView',
+        label: 'Composite View',
+      },
     ],
   },
   {
