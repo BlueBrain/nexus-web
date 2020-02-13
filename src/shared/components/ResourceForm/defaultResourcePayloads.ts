@@ -59,6 +59,15 @@ export const ELASTIC_SEARCH_VIEW = {
   mapping: {},
 };
 
+export const COMPOSITE_VIEW = {
+  '@context': {}, // optional
+  '@id': '', // optional
+  '@type': ['CompositeView', 'Beta', 'View'],
+  sources: [],
+  projections: [],
+  rebuildStrategy: '',
+};
+
 export const AGGREGATE_ES_VIEW = {
   '@context': {}, // optional
   '@id': '', // optional
@@ -96,6 +105,7 @@ export const DEFAULT_RESOURCES: { [key: string]: any } = {
   S3Storage: S3_STORAGE,
   SparqlView: SPARQL_VIEW,
   ElasticSearchView: ELASTIC_SEARCH_VIEW,
+  CompositeView: COMPOSITE_VIEW,
   AggregateSparqlView: AGGREGATE_SPARQL_VIEW,
   AggregateElasticSearchView: AGGREGATE_ES_VIEW,
   InProject: IN_PROJECT,
