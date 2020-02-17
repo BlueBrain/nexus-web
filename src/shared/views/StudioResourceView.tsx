@@ -89,8 +89,6 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
 
   const label = getResourceLabel(resource);
 
-  console.log({ resourceSelfUri });
-
   return (
     <div className="studio-resource-view">
       <h1>{label}</h1>
