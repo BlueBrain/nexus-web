@@ -12,13 +12,13 @@ type StudioResource = Resource<{
 
 const EditStudio: React.FC<{
   studio: StudioResource | null;
-  onSave?(label: string, desription?: string): void;
+  onSave?(label: string, description?: string): void;
 }> = ({ studio, onSave }) => {
   const [showModal, setShowModal] = React.useState(false);
 
-  const handleUpdate = (label: string, desription?: string) => {
+  const handleUpdate = (label: string, description?: string) => {
     setShowModal(false);
-    onSave && onSave(label, desription);
+    onSave && onSave(label, description);
   };
 
   return (
