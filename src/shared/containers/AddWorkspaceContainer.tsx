@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, notification } from 'antd';
+import { Button, Modal, notification, message } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
@@ -78,10 +78,11 @@ const AddWorkspaceContainer: React.FC<{
         studioUpdatePayload
       );
 
-      notification.success({
-        message: 'Workspace was created successfully',
-        duration: 2,
-      });
+      message.success(
+        <span>
+          Workspace <em>{label}</em> created
+        </span>
+      );
 
       !!onAddWorkspace && onAddWorkspace();
     } catch (error) {
