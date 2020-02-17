@@ -39,7 +39,6 @@ export class NexusPlugin extends React.Component<
 
   loadExternalPlugin() {
     // @ts-ignore
-    console.log('reloading plugin');
     window.System.import(this.props.url)
       .then(
         (module: {
