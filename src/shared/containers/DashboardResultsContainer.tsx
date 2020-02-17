@@ -113,8 +113,6 @@ const DashboardResultsContainer: React.FunctionComponent<{
     );
   }
 
-  console.log('items', items);
-
   return (
     <Spin spinning={items ? false : true}>
       <ResultsTable
