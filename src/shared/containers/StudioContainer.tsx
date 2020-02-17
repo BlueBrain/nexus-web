@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { notification, Empty } from 'antd';
+import { notification, Empty, message } from 'antd';
 
 import EditStudio from '../components/Studio/EditStudio';
 import StudioHeader from '../components/Studio/StudioHeader';
@@ -72,10 +72,11 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
         .then(response => {
           fetchAndSetupStudio();
 
-          notification.success({
-            message: 'Studio was edited successfully',
-            duration: 2,
-          });
+          message.success(
+            <span>
+              Studio <em>{label}</em> updated
+            </span>
+          );
         })
         .catch(error => {
           notification.error({
