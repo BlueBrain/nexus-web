@@ -116,14 +116,12 @@
     width: 100vw;
     height: 100vh;
   }
-}
 
-.modal-view-unconstrained {
-  max-width: 80vw;
+  &.-unconstrained {
+    max-width: 80vw;
 
-  @media (max-width: 1024px) {
-    max-width: none;
-    width: 100vw;
-    height: 100vh;
+    @media (max-width: 1024px) {
+      max-width: none;
+    }
   }
 }

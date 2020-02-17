@@ -63,7 +63,7 @@ const App: React.FC = () => {
               visible={true}
               onCancel={() => history.push(background.pathname, {})}
               footer={null}
-              className="modal-view-unconstrained"
+              className="modal-view -unconstrained"
               width="inherit"
             >
               <StudioResourceView />
