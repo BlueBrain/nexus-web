@@ -49,6 +49,7 @@ const App: React.FC = () => {
               onOk={() => history.push(location.pathname, {})}
               okText="Graph View"
               className="modal-view"
+              width="inherit"
             >
               <ResourceViewContainer />
             </Modal>
@@ -63,6 +64,7 @@ const App: React.FC = () => {
               onCancel={() => history.push(background.pathname, {})}
               footer={null}
               className="modal-view"
+              width="inherit"
             >
               <StudioResourceView />
             </Modal>
