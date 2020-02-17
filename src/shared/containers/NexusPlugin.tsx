@@ -39,6 +39,7 @@ export class NexusPlugin extends React.Component<
 
   loadExternalPlugin() {
     // @ts-ignore
+    console.log('reloading plugin');
     window.System.import(this.props.url)
       .then(
         (module: {
@@ -77,10 +78,10 @@ export class NexusPlugin extends React.Component<
 
   componentWillUpdate(prevProps: NexusPluginClassProps) {
     // Reload the plugin(and pass in new props to it) when props change
+    // NOTE: will not reload the plugin if nexusClient or goToResource changes
+    // otherwise it will cause too many reloads
     if (
       prevProps.resource !== this.props.resource ||
-      prevProps.nexusClient !== this.props.nexusClient ||
-      prevProps.goToResource !== this.props.goToResource ||
       prevProps.url !== this.props.url
     ) {
       this.loadExternalPlugin();
