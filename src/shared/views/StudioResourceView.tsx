@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useParams, useHistory } from 'react-router';
+import { useParams, useHistory, useLocation } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
 import { notification, Empty } from 'antd';
@@ -24,8 +24,10 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
   const { resourceSelfUri = '' } = useParams();
 
   const history = useHistory();
-  const queryParams: QueryParams =
-    queryString.parse(history.location.search) || {};
+  const location = useLocation();
+
+  const queryParams: QueryParams = queryString.parse(location.search) || {};
+
   const dashboardUrl = queryParams.dashboard;
   const [dashboard, setDashboard] = React.useState<DashboardResource | null>();
   const [resource, setResource] = React.useState<Resource | null>();
@@ -74,7 +76,7 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
     const base64EncodedUri = btoa(selfUrl);
     const studioResourceViewLink = `/studios/studio-resources/${base64EncodedUri}?dashboard=${dashboardUrl}`;
 
-    history.push(studioResourceViewLink);
+    history.push(studioResourceViewLink, location.state);
   };
 
   if (!dashboard || !resource) return null;
