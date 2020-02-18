@@ -63,8 +63,8 @@ const StudioEditorForm: React.FC<{
       <Form.Item
         label={
           <span>
-            Desription{' '}
-            <Tooltip title="A desription of your studio">
+            Description{' '}
+            <Tooltip title="A description of your studio">
               <Icon type="question-circle-o" />
             </Tooltip>
           </span>
