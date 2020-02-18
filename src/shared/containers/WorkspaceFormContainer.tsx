@@ -5,7 +5,16 @@ import {
   ElasticSearchViewQueryResponse,
 } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Alert, Input, Form, Modal, Select, Button, Transfer } from 'antd';
+import {
+  Alert,
+  Input,
+  Form,
+  Modal,
+  Select,
+  Button,
+  Transfer,
+  message,
+} from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 
 type NexusSparqlError = {
@@ -34,9 +43,9 @@ type WorkspaceFormProps = {
 
 const SelectViews: React.FunctionComponent<{
   views: Resource[];
-  defaultView: string;
+  selectedView: string;
   setView: (view: string) => void;
-}> = ({ views, defaultView, setView }) => {
+}> = ({ selectedView, views, setView }) => {
   const { Option } = Select;
   const getViewName = (id: string) => {
     const values = id.split('/');
@@ -49,7 +58,7 @@ const SelectViews: React.FunctionComponent<{
         onChange={(value: string) => {
           setView(value);
         }}
-        defaultValue={defaultView}
+        value={selectedView}
       >
         {viewOptions.map((d, index) => {
           return (
@@ -80,6 +89,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
   const [error, setError] = React.useState<NexusSparqlError | Error>();
   const [namePrompt, setNamePrompt] = React.useState<boolean>(false);
   const nexus = useNexusContext();
+
   const saveDashBoards = (workspace: Resource) => {
     const newList: dashboard[] = [
       ...dashboards
@@ -104,11 +114,21 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
     )
       .then(result => {
         if (onSuccess) {
+          message.success(
+            <span>
+              Workspace <em>{workspace.label}</em> updated
+            </span>
+          );
           onSuccess();
         }
         onCancel();
       })
       .catch(error => {
+        message.error(
+          <span>
+            Workspace <em>{workspace.label}</em> could not be updated
+          </span>
+        );
         setError(error);
       });
   };
@@ -116,9 +136,21 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
   React.useEffect(() => {
     nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(workspaceId))
       .then(workspace => {
-        const workspaceResource = workspace as Resource;
+        const workspaceResource = workspace as Resource<{
+          dashboards: { dashboard: string; view: string }[];
+          label: string;
+          description: string;
+        }>;
         setWorkspace(workspaceResource);
         setLabel(workspaceResource['label']);
+        // Set the first view as the default value
+        // inside the SelectView input
+        if (
+          workspaceResource.dashboards &&
+          workspaceResource['dashboards'].length
+        ) {
+          setViewToAdd(workspaceResource['dashboards'][0].view);
+        }
         setDescription(workspaceResource['description']);
       })
       .catch(error => setError(error));
@@ -198,7 +230,6 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
             };
           })
         );
-        setViewToAdd(results.hits.hits[0]._source['@id']);
       })
       .catch(e => {});
   }, [workspaceId, orgLabel, projectLabel]);
@@ -270,7 +301,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
                 <SelectViews
                   views={views}
                   setView={(view: string) => setViewToAdd(view)}
-                  defaultView={viewToAdd}
+                  selectedView={viewToAdd}
                 />
               ) : null}
             </Form.Item>
