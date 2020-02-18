@@ -37,11 +37,7 @@ export class NexusPlugin extends React.Component<
     invariant(window.System, warningMessage);
   }
 
-  componentDidCatch(e: Error) {
-    this.setState({ hasError: true, loading: false });
-  }
-
-  componentDidMount() {
+  loadExternalPlugin() {
     // @ts-ignore
     window.System.import(this.props.url)
       .then(
@@ -73,6 +69,26 @@ export class NexusPlugin extends React.Component<
       .catch((error: Error) => {
         this.setState({ hasError: true, loading: false });
       });
+  }
+
+  componentDidCatch(e: Error) {
+    this.setState({ hasError: true, loading: false });
+  }
+
+  componentWillUpdate(prevProps: NexusPluginClassProps) {
+    // Reload the plugin(and pass in new props to it) when props change
+    // NOTE: will not reload the plugin if nexusClient or goToResource changes
+    // otherwise it will cause too many reloads
+    if (
+      prevProps.resource !== this.props.resource ||
+      prevProps.url !== this.props.url
+    ) {
+      this.loadExternalPlugin();
+    }
+  }
+
+  componentDidMount() {
+    this.loadExternalPlugin();
   }
 
   componentWillUnmount() {
