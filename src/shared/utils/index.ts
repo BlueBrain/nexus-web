@@ -301,7 +301,6 @@ export const camelCaseToTitleCase = (camelCase: string): string => {
  * @param {string} entry url string
  * @returns {string} path (either resource pr project path) or the input url.
  */
-
 export const matchResultUrls = (entry: string) => {
   const projectUrlPattern = /projects\/([\w-]+)\/([\w-]+)\/?$/;
   const resourceUrlPattern = /resources(\/([\w-]+)\/([\w-]+))/;
@@ -320,4 +319,16 @@ export const matchResultUrls = (entry: string) => {
     }
   }
   return entry;
+};
+
+/*
+ * Tests if a string is an ISO date
+ *
+ * @param {string} string
+ * @returns {boolean} if a string is an ISO date or not
+ */
+export const isISODate = (date: string) => {
+  const iso_date_regex = /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/;
+
+  return iso_date_regex.test(date);
 };
