@@ -108,8 +108,7 @@ export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsCont
     ).subscribe(
       // @ts-ignore
       // TODO fix for v1.3 release
-      ({ _results }) => {
-        const statistics = _results[0];
+      (statistics: Statistics) => {
         if (!eventsAtMount) {
           setEventsAtMount(statistics.totalEvents);
         }
@@ -119,7 +118,7 @@ export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsCont
           error: null,
         });
       },
-      error => {
+      (error: Error) => {
         setState({
           error,
           data: null,
