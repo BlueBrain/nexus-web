@@ -184,11 +184,11 @@ describe('utils functions', () => {
   });
 
   describe('isISODate', () => {
-    const ISOString = '2019-07-29T10:26:06.543Z';
+    const isoString = '2019-07-29T10:26:06.543Z';
     const otherString = 'randomString';
 
     it('returns true if a string is an ISO date', () => {
-      expect(isISODate(ISOString)).toEqual(true);
+      expect(isISODate(isoString)).toEqual(true);
     });
 
     it('returns false if a string is not an ISO date', () => {
