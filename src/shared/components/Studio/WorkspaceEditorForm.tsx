@@ -63,8 +63,8 @@ const WorkspaceEditorForm: React.FC<{
       <Form.Item
         label={
           <span>
-            Desription{' '}
-            <Tooltip title="A desription of your workspace">
+            Description{' '}
+            <Tooltip title="A description of your workspace">
               <Icon type="question-circle-o" />
             </Tooltip>
           </span>
