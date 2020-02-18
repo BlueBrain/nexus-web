@@ -1,11 +1,26 @@
-![Build Status](https://github.com/BlueBrain/nexus-web/workflows/Review/badge.svg)
-[![codecov](https://codecov.io/gh/BlueBrain/nexus-web/branch/master/graph/badge.svg)](https://codecov.io/gh/BlueBrain/nexus-web)
+<p align="center">
+  <a href="https://github.com/BlueBrain/nexus-web" target="_blank" rel="noopener noreferrer">
+    <img width="250" src="https://user-images.githubusercontent.com/5485824/74722078-9e8e6600-5238-11ea-9384-4b794a6b9f66.png" alt="Nexus Web">
+  </a>
+</p>
 
-# Nexus Web
+<p align="center">
+  <img alt="Build Status" src="https://github.com/BlueBrain/nexus-web/workflows/Review/badge.svg">
+  <a href="https://codecov.io/gh/BlueBrain/nexus-web">
+    <img src="https://codecov.io/gh/BlueBrain/nexus-web/branch/master/graph/badge.svg" alt="Coverage Status">
+  </a>
+  <a href="https://twitter.com/intent/follow?screen_name=bluebrainnexus">
+    <img alt="Follow on Twitter" src="https://img.shields.io/twitter/follow/bluebrainnexus.svg?style=social&label=Follow">
+  </a>
+</p>
 
-> Transform your data into a fully searchable linked-data graph
+<p align="center">Nexus Web is the interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.</p>
 
-Nexus Web is the interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.
+<p align="center">
+  <a href="https://bluebrainnexus.io/docs/">Blue Brain Nexus Docs</a> |
+  <a href="#Development">Development</a> |
+  <a href="#Studios">Studios</a>
+</p>
 
 ## Contributing
 
@@ -75,13 +90,17 @@ You can find out how to deploy a build [in the wiki](https://github.com/BlueBrai
 
 ## Documentation
 
-### Studios
+### Studios Feature
 
-You can create studios through the user interface. [Find out more about Studios here](./docs/studios/Studios.md).
+This feature allows data curators to display their data using customisable, persistent queries. Using custom plugins developed with javascript, data curators can format the presentation of the query results any way they like.
+
+You can create studios through the user interface. [Find out more about Studios here](./docs/studio/Studios.md).
 
 ### Nexus Plugins
 
-In development mode, you can copy/paste your plugins in the `/plugins` folder. If you want to develop your own plugins, have a look at the [plugin development documentation](./docs/pluginDevelopment.md).
+Plugins are customisable components used to display in a domain-specific way. You can develop your own plugins! Have a look at the [plugin development documentation](./docs/pluginDevelopment.md) to learn more.
+
+In development mode, you can copy/paste your plugins in the `/plugins` folder.
 
 ## Getting involved
 
