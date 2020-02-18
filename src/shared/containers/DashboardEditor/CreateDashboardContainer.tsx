@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID, Resource } from '@bbp/nexus-sdk';
-import { notification, Modal, Button } from 'antd';
+import { notification, Modal, Button, message } from 'antd';
 import { useSelector } from 'react-redux';
 
 import DashboardConfigEditor, {
@@ -74,10 +74,12 @@ const CreateDashboardContainer: React.FunctionComponent<{
           }
         );
       }
-      notification.success({
-        message: `Dashboard ${dashboardPayload.label} was created successfully`,
-        duration: 5,
-      });
+
+      message.success(
+        <span>
+          Dashboard <em>{dashboardPayload.label}</em> created
+        </span>
+      );
 
       onSubmit();
     } catch (error) {

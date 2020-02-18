@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, notification } from 'antd';
+import { Button, Modal, notification, message } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import StudioEditorForm from '../components/Studio/StudioEditorForm';
@@ -59,10 +59,11 @@ const CreateStudioContainer: React.FC<{
       .then(response => {
         goToStudio && goToStudio(response['@id']);
 
-        notification.success({
-          message: 'Studio was created successfully',
-          duration: 2,
-        });
+        message.success(
+          <span>
+            Studio <em>{label}</em> created
+          </span>
+        );
       })
       .catch(error => {
         notification.error({

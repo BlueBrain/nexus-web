@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
-import { notification, Modal } from 'antd';
+import { notification, Modal, message } from 'antd';
 import { useSelector } from 'react-redux';
 
 import DashboardConfigEditor, {
@@ -64,10 +64,11 @@ const DashboardEditorContainer: React.FunctionComponent<{
 
       setShowEditModal(false);
 
-      notification.success({
-        message: `Dashboard ${dashboardPayload.label} was updated successfully`,
-        duration: 5,
-      });
+      message.success(
+        <span>
+          Dashboard <em>{dashboardPayload.label}</em> updated
+        </span>
+      );
 
       !!onSuccess && onSuccess();
     } catch (error) {
