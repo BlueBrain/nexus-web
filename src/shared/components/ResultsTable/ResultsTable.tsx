@@ -91,8 +91,7 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
           }
 
           const distinctValues = filteredItems.reduce((memo, item) => {
-            let value = item[dataIndex];
-
+            const value = item[dataIndex];
             if (value && !memo.includes(value)) {
               memo.push(value);
             }
