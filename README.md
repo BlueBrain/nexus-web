@@ -19,7 +19,7 @@
 <p align="center">
   <a href="https://bluebrainnexus.io/docs/">Blue Brain Nexus Docs</a> |
   <a href="#Development">Development</a> |
-  <a href="#Studios">Studios</a>
+  <a href="#studios-feature">Studios</a>
 </p>
 
 ## Contributing
