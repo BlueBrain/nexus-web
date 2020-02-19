@@ -91,7 +91,8 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
           }
 
           const distinctValues = filteredItems.reduce((memo, item) => {
-            const value = item[dataIndex];
+            let value = item[dataIndex];
+
             if (value && !memo.includes(value)) {
               memo.push(value);
             }
@@ -104,7 +105,9 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
               ? {
                   filters: distinctValues.map(value => ({
                     value,
-                    text: value,
+                    text: isISODate(value)
+                      ? moment(value).format(DATE_FORMAT)
+                      : value,
                   })),
                   filterMultiple: false,
                   onFilter: (filterValue: any, item: any) =>
