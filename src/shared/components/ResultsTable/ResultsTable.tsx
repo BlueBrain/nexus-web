@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as moment from 'moment';
 import { Input, Table } from 'antd';
 
-import { parseProjectUrl } from '../../utils/index';
+import { parseProjectUrl, isISODate } from '../../utils/index';
 
 import './ResultTable.less';
 
@@ -11,6 +11,7 @@ const { Search } = Input;
 const PAGE_SIZE = 10;
 const MAX_FILTER_LIMIT = 20;
 const MIN_FILTER_LIMIT = 1;
+const DATE_FORMAT = 'DD-MM-YYYY, HH:mm';
 
 type ResultTableProps = {
   headerProperties?: {
@@ -75,6 +76,14 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
                 const base64EncodedUri = btoa(item && item.self.value);
                 const studioResourceViewLink = `/studios/studio-resources/${base64EncodedUri}?dashboard=${dashboardUrl}`;
 
+                if (isISODate(value)) {
+                  return (
+                    <a href={studioResourceViewLink}>
+                      {moment(value).format(DATE_FORMAT)}
+                    </a>
+                  );
+                }
+
                 return <a href={studioResourceViewLink}>{value}</a>;
               };
 
@@ -95,7 +104,9 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
               ? {
                   filters: distinctValues.map(value => ({
                     value,
-                    text: value,
+                    text: isISODate(value)
+                      ? moment(value).format(DATE_FORMAT)
+                      : value,
                   })),
                   filterMultiple: false,
                   onFilter: (filterValue: any, item: any) =>
