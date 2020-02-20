@@ -5,7 +5,9 @@ import { DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
 
 import { uuidv4 } from '../utils';
 import ResourceListBoardComponent from '../components/ResourceListBoard';
-import ResourceListContainer from './ResourceListContainer';
+import ResourceListContainer, {
+  decodeShareableList,
+} from './ResourceListContainer';
 import { ResourceBoardList } from '../components/ResourceList';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { RootState } from '../store/reducers';
@@ -42,9 +44,16 @@ const ResourceListBoardContainer: React.FunctionComponent<{
   >(`resource-lists-${userId}`, [makeDefaultList()]);
 
   React.useEffect(() => {
-    const sharedList = shareList && JSON.parse(atob(shareList));
+    const sharedList = shareList && decodeShareableList(shareList);
+
     if (sharedList) {
-      setResourceLists([sharedList, ...resourceLists]);
+      setResourceLists([
+        {
+          ...sharedList,
+          id: uuidv4(),
+        },
+        ...resourceLists,
+      ]);
       message.success(
         <span>
           Added a new shared query list called <em>{sharedList.name}</em>

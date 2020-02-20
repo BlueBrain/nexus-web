@@ -10,6 +10,14 @@ import TypeDropdownFilterContainer from './TypeDropdownFilter';
 import SchemaDropdownFilterContainer from './SchemaDropdownFilters';
 import SchemaLinkContainer from './SchemaLink';
 
+// Emojis cannot be base64 encoded without URI encoding
+export const encodeShareableList = (list: ResourceBoardList) => {
+  return btoa(encodeURIComponent(JSON.stringify(list)));
+};
+export const decodeShareableList = (base64string: string) => {
+  return JSON.parse(decodeURIComponent(atob(base64string)));
+};
+
 const ResourceListContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
@@ -193,9 +201,9 @@ const ResourceListContainer: React.FunctionComponent<{
     });
   };
 
-  const shareableLink = `${window.location.href}?shareList=${btoa(
-    JSON.stringify(list)
-  )}`;
+  const shareableLink = `${
+    window.location.href
+  }?shareList=${encodeShareableList(list)}`;
 
   return (
     <ResourceListComponent
