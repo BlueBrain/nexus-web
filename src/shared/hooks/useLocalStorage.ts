@@ -1,9 +1,12 @@
 import * as React from 'react';
 
-export default function useLocalStorage<T = any>(key: string) {
+export default function useLocalStorage<T = any>(
+  key: string,
+  defaultValue?: T
+) {
   const val = localStorage.getItem(key);
   const [value, setValue] = React.useState<T | undefined>(
-    !!val && JSON.parse(val)
+    !!val ? JSON.parse(val) : defaultValue
   );
 
   const setLocalStorage = (value: T | undefined) => {

@@ -5,6 +5,9 @@ import { uuidv4 } from '../utils';
 import ResourceListBoardComponent from '../components/ResourceListBoard';
 import ResourceListContainer from './ResourceListContainer';
 import { ResourceBoardList } from '../components/ResourceList';
+import useLocalStorage from '../hooks/useLocalStorage';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/reducers';
 
 export const DEFAULT_LIST: ResourceBoardList = {
   name: 'Default Query',
@@ -27,9 +30,12 @@ const ResourceListBoardContainer: React.FunctionComponent<{
   projectLabel: string;
   refreshLists?: boolean;
 }> = ({ orgLabel, projectLabel, refreshLists }) => {
-  const [resourceLists, setResourceLists] = React.useState<ResourceBoardList[]>(
-    [makeDefaultList()]
+  const userId = useSelector(
+    (state: RootState) => state.oidc.user?.profile.sub
   );
+  const [resourceLists = [], setResourceLists] = useLocalStorage<
+    ResourceBoardList[]
+  >(`resource-lists-${userId}`, [makeDefaultList()]);
 
   const createList = () => {
     setResourceLists([...resourceLists, makeDefaultList()]);
@@ -47,6 +53,13 @@ const ResourceListBoardContainer: React.FunctionComponent<{
     ]);
   };
 
+  const handleListChanged = (updatedList: ResourceBoardList) => {
+    setResourceLists([
+      ...resourceLists.filter(list => list.id !== updatedList.id),
+      updatedList,
+    ]);
+  };
+
   return (
     <ResourceListBoardComponent createList={createList}>
       {resourceLists.map((list, index: number) => {
@@ -54,11 +67,12 @@ const ResourceListBoardContainer: React.FunctionComponent<{
           <ResourceListContainer
             refreshList={refreshLists}
             key={list.id}
-            defaultList={list}
             projectLabel={projectLabel}
             orgLabel={orgLabel}
             onDeleteList={handleDeleteList}
             onCloneList={handleCloneList}
+            list={list}
+            setList={handleListChanged}
           />
         );
       })}

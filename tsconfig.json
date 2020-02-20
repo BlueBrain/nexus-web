@@ -3,7 +3,7 @@
     "rootDir": "./",
     "outDir": "./dist",
     "module": "commonjs",
-    "target": "esnext",
+    "target": "es2018",
     "moduleResolution": "node",
     "jsx": "react",
     "experimentalDecorators": true,

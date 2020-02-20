@@ -13,22 +13,23 @@ import SchemaLinkContainer from './SchemaLink';
 const ResourceListContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
-  defaultList: ResourceBoardList;
   refreshList?: boolean;
   onDeleteList: (id: string) => void;
   onCloneList: (list: ResourceBoardList) => void;
+  list: ResourceBoardList;
+  setList: (list: ResourceBoardList) => void;
 }> = ({
-  defaultList,
   orgLabel,
   projectLabel,
   onDeleteList,
   onCloneList,
+  list,
+  setList,
   refreshList,
 }) => {
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
-  const [list, setList] = React.useState<ResourceBoardList>(defaultList);
   const [toggleForceReload, setToggleForceReload] = React.useState(false);
   const [
     { busy, error, resources, total, next },
