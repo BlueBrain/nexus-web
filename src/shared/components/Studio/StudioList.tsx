@@ -53,7 +53,6 @@ const StudioList: React.FC<{
           onLoadMore={onLoadMore}
           hasMore={hasMore}
           height={500}
-          // height={wrapperHeight - 200} // additional padding for extra chonky list items
           defaultSearchValue={searchQuery}
         >
           {studios.map(studio => {
