@@ -149,8 +149,6 @@ const StudioListContainer: React.FunctionComponent<{
       });
   }, [orgLabel, projectLabel, searchQuery]);
 
-  console.log({ resources });
-
   return (
     <StudioList
       studios={resources.map(r => ({
