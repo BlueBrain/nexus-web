@@ -128,6 +128,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   const editButtonWrapper = (id: string) => {
     const editButton = (
       <Button
+        className="studio-edit-button"
         type="link"
         size="small"
         onClick={e => {
