@@ -9,6 +9,7 @@ import html from './html';
 import silentRefreshHtml from './silent_refresh';
 import { RootState } from '../shared/store/reducers';
 import { DEFAULT_UI_SETTINGS } from '../shared/store/reducers/ui-settings';
+import { Resource } from '@bbp/nexus-sdk';
 
 const PORT_NUMBER = 8000;
 
@@ -61,6 +62,8 @@ const getPlugins = () => {
 
 // For all routes
 app.get('*', async (req: express.Request, res: express.Response) => {
+  const pluginMap = new Map<string, Object>();
+  pluginMap.set('nexus-plugin-test', { '@type': 'StudioDashboard' });
   // Compute pre-loaded state
   const preloadedState: RootState = {
     auth: {},
@@ -74,6 +77,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       sentryDsn: process.env.SENTRY_DSN,
       plugins: getPlugins(),
       gtmCode: process.env.GTM_CODE,
+      pluginsMap: Object.fromEntries(pluginMap),
     },
     uiSettings: DEFAULT_UI_SETTINGS,
     oidc: {
