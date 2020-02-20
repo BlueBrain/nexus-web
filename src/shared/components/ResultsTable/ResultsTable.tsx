@@ -161,6 +161,7 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
             pageSize,
           }
         }
+        scroll={{ x: '100%' }}
         title={() => (
           <div className="header">
             {(showPagination || !!searchValue) && (
