@@ -6,8 +6,7 @@ import { Resource } from '@bbp/nexus-sdk';
 import { notification, Empty } from 'antd';
 import { RootState } from '../store/reducers';
 import { NexusPlugin } from '../containers/NexusPlugin';
-import { getResourceLabel } from '../utils';
-import { isMatch, pick } from 'lodash';
+import { getResourceLabel, matchPlugins } from '../utils';
 
 const StudioResourceView: React.FunctionComponent<{}> = () => {
   const nexus = useNexusContext();
@@ -34,13 +33,7 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
         resourceResponse = resource;
         setResource(resourceResponse);
         if (pluginMap) {
-          const map = new Map(Object.entries(pluginMap));
-          const newPlugins = plugins.filter(p => {
-            const shape = map.get(p);
-            return resource && shape
-              ? isMatch(pick(resource, Object.keys(shape)), shape)
-              : false;
-          });
+          const newPlugins = matchPlugins(pluginMap, plugins, resource);
           setFilteredPlugins(newPlugins);
         }
       })
