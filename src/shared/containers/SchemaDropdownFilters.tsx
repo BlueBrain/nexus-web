@@ -15,7 +15,8 @@ const SchemaDropdownFilterContainer: React.FunctionComponent<{
   projectLabel: string;
   deprecated: boolean;
   onChange(value: string): void;
-}> = ({ orgLabel, projectLabel, onChange, deprecated }) => {
+  value?: string;
+}> = ({ orgLabel, projectLabel, onChange, deprecated, value }) => {
   const { loading: busy, data, error } = useNexus<
     ElasticSearchViewQueryResponse<any>
   >(nexus =>
@@ -55,6 +56,7 @@ const SchemaDropdownFilterContainer: React.FunctionComponent<{
           )) ||
         []
       }
+      defaultSelected={value}
       onChange={onChange}
       placeholder={'Filter by Schema'}
     />

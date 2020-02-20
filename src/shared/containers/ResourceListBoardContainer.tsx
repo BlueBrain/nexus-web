@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useSelector } from 'react-redux';
+import { message } from 'antd';
 import { DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
 
 import { uuidv4 } from '../utils';
@@ -6,8 +8,8 @@ import ResourceListBoardComponent from '../components/ResourceListBoard';
 import ResourceListContainer from './ResourceListContainer';
 import { ResourceBoardList } from '../components/ResourceList';
 import useLocalStorage from '../hooks/useLocalStorage';
-import { useSelector } from 'react-redux';
 import { RootState } from '../store/reducers';
+import useQueryString from '../hooks/useQueryString';
 
 export const DEFAULT_LIST: ResourceBoardList = {
   name: 'Default Query',
@@ -33,9 +35,25 @@ const ResourceListBoardContainer: React.FunctionComponent<{
   const userId = useSelector(
     (state: RootState) => state.oidc.user?.profile.sub
   );
+  const [{ shareList }, setQueryParams] = useQueryString();
+
   const [resourceLists = [], setResourceLists] = useLocalStorage<
     ResourceBoardList[]
   >(`resource-lists-${userId}`, [makeDefaultList()]);
+
+  React.useEffect(() => {
+    const sharedList = shareList && JSON.parse(atob(shareList));
+    if (sharedList) {
+      setResourceLists([sharedList, ...resourceLists]);
+      message.success(
+        <span>
+          Added a new shared query list called <em>{sharedList.name}</em>
+        </span>
+      );
+    }
+
+    setQueryParams({ shareList: undefined });
+  }, [orgLabel, projectLabel, shareList]);
 
   const createList = () => {
     setResourceLists([...resourceLists, makeDefaultList()]);
@@ -54,10 +72,12 @@ const ResourceListBoardContainer: React.FunctionComponent<{
   };
 
   const handleListChanged = (updatedList: ResourceBoardList) => {
-    setResourceLists([
-      ...resourceLists.filter(list => list.id !== updatedList.id),
-      updatedList,
-    ]);
+    const index = resourceLists.findIndex(list => list.id === updatedList.id);
+
+    const newResourceList = [...resourceLists];
+    newResourceList[index] = updatedList;
+
+    setResourceLists(newResourceList);
   };
 
   return (

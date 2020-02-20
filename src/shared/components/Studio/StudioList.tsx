@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Empty, Spin } from 'antd';
-import useMeasure from '../../hooks/useMeasure';
 
+import useMeasure from '../../hooks/useMeasure';
 import ListItem from '../List/Item';
 
 import './Studio.less';
