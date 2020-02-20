@@ -3,12 +3,11 @@ import { useSelector } from 'react-redux';
 import { useParams, useHistory } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
-import { notification, Empty, Select } from 'antd';
+import { notification, Empty } from 'antd';
 import { RootState } from '../store/reducers';
 import { NexusPlugin } from '../containers/NexusPlugin';
 import { getResourceLabel } from '../utils';
 import { isMatch, pick } from 'lodash';
-import { useState } from '@storybook/addons';
 
 const StudioResourceView: React.FunctionComponent<{}> = () => {
   const nexus = useNexusContext();
