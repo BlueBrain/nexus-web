@@ -133,7 +133,7 @@ const ResourceListComponent: React.FunctionComponent<{
       <div className="resource-list">
         <h3 className={`header ${busy ? '-fetching' : ''}`}>
           <RenameableItem
-            defaultValue={!!name ? name : 'Unnamed List'}
+            defaultValue={name || 'Unnamed List'}
             onChange={handleUpdate}
             size="small"
           />
