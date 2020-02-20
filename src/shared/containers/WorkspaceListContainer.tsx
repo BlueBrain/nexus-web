@@ -115,6 +115,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   const editButtonWrapper = (id: string) => {
     const editButton = (
       <Button
+        className="studio-edit-button"
         type="link"
         size="small"
         onClick={e => {
