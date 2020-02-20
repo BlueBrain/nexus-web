@@ -3,6 +3,7 @@ import { Empty, Spin } from 'antd';
 
 import useMeasure from '../../hooks/useMeasure';
 import ListItem from '../List/Item';
+import InfiniteSearch from '../List/InfiniteSearch';
 
 import './Studio.less';
 
@@ -21,50 +22,58 @@ const StudioItem: React.FC<StudioItemProps> = ({ name, description }) => {
   );
 };
 
-const LIST_HEADER_HEIGHT = 100;
-
 const StudioList: React.FC<{
   studios: StudioItemProps[];
   busy?: boolean;
   error?: Error | null;
   goToStudio?(studioId: string): void;
   createStudioButton?: React.ReactElement;
+  onLoadMore({ searchValue }: { searchValue: string }): void;
+  makeResourceUri(resourceId: string): string;
+  total: number;
+  searchQuery: string;
 }> = ({
   studios,
   busy,
   error,
   goToStudio = () => {},
   createStudioButton = null,
+  onLoadMore,
+  makeResourceUri,
+  total,
+  searchQuery,
 }) => {
-  const [{ ref: wrapperHeightRef }, { height: wrapperHeight }] = useMeasure();
-  const noStudios = studios.length === 0;
-
+  const hasMore = studios.length < Number(total || 0);
   return (
-    <div className="resource-list-height-tester" ref={wrapperHeightRef}>
-      <div className="studio-list">
-        <h3>Studios</h3>
-        <Spin spinning={busy}>
-          {error && (
-            <Empty description={error.message || 'An error occurred'} />
-          )}
-          {!error && noStudios && <Empty description="No studios available" />}
-          {createStudioButton}
-          {!noStudios && (
-            <div
-              style={{
-                overflowY: 'auto',
-                height: wrapperHeight - LIST_HEADER_HEIGHT,
-              }}
-            >
-              {studios.map(studio => (
-                <ListItem onClick={() => goToStudio(studio.id)} key={studio.id}>
+    <div className="studio-list">
+      <Spin spinning={busy}>
+        {createStudioButton}
+        <br />
+        <InfiniteSearch
+          dataLength={studios.length}
+          onLoadMore={onLoadMore}
+          hasMore={hasMore}
+          height={500}
+          defaultSearchValue={searchQuery}
+        >
+          {studios.map(studio => {
+            return (
+              <a
+                href={makeResourceUri(studio.id)}
+                key={studio.id}
+                onClick={e => {
+                  e.preventDefault();
+                  goToStudio(studio.id);
+                }}
+              >
+                <ListItem key={studio.id}>
                   <StudioItem {...studio} />
                 </ListItem>
-              ))}
-            </div>
-          )}
-        </Spin>
-      </div>
+              </a>
+            );
+          })}
+        </InfiniteSearch>
+      </Spin>
     </div>
   );
 };
