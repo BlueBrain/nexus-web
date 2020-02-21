@@ -10,25 +10,34 @@ import TypeDropdownFilterContainer from './TypeDropdownFilter';
 import SchemaDropdownFilterContainer from './SchemaDropdownFilters';
 import SchemaLinkContainer from './SchemaLink';
 
+// Emojis cannot be base64 encoded without URI encoding
+export const encodeShareableList = (list: ResourceBoardList) => {
+  return btoa(encodeURIComponent(JSON.stringify(list)));
+};
+export const decodeShareableList = (base64string: string) => {
+  return JSON.parse(decodeURIComponent(atob(base64string)));
+};
+
 const ResourceListContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
-  defaultList: ResourceBoardList;
   refreshList?: boolean;
   onDeleteList: (id: string) => void;
   onCloneList: (list: ResourceBoardList) => void;
+  list: ResourceBoardList;
+  setList: (list: ResourceBoardList) => void;
 }> = ({
-  defaultList,
   orgLabel,
   projectLabel,
   onDeleteList,
   onCloneList,
+  list,
+  setList,
   refreshList,
 }) => {
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
-  const [list, setList] = React.useState<ResourceBoardList>(defaultList);
   const [toggleForceReload, setToggleForceReload] = React.useState(false);
   const [
     { busy, error, resources, total, next },
@@ -192,6 +201,10 @@ const ResourceListContainer: React.FunctionComponent<{
     });
   };
 
+  const shareableLink = `${
+    window.location.href
+  }?shareList=${encodeShareableList(list)}`;
+
   return (
     <ResourceListComponent
       busy={busy}
@@ -208,18 +221,21 @@ const ResourceListContainer: React.FunctionComponent<{
       makeResourceUri={makeResourceUri}
       goToResource={goToResource}
       schemaLinkContainer={SchemaLinkContainer}
+      shareableLink={shareableLink}
     >
       <TypeDropdownFilterContainer
         deprecated={!!list.query.deprecated}
         orgLabel={orgLabel}
         projectLabel={projectLabel}
         onChange={handleTypeChange}
+        value={list.query.type}
       />
       <SchemaDropdownFilterContainer
         deprecated={!!list.query.deprecated}
         orgLabel={orgLabel}
         projectLabel={projectLabel}
         onChange={handleSchemaChange}
+        value={list.query.schema}
       />
     </ResourceListComponent>
   );
