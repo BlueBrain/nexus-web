@@ -35,23 +35,9 @@ const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEdi
   form,
   dashboard,
   linkToSparqlQueryEditor,
-  availablePlugins,
 }) => {
   const { description, label, dataQuery, plugins = [] } = dashboard || {};
   const { getFieldDecorator, getFieldsValue, validateFields } = form;
-  const [selectedPlugins, setSelectedPlugins] = React.useState<string[]>(
-    plugins
-  );
-  const { Panel } = Collapse;
-
-  const formatPluginSource = () => {
-    if (availablePlugins && availablePlugins.length) {
-      return availablePlugins.map(plugin => (
-        <Option key={plugin}>{plugin}</Option>
-      ));
-    }
-    return [];
-  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -67,14 +53,9 @@ const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEdi
             description,
             label,
             dataQuery,
-            plugins: selectedPlugins,
           });
       }
     });
-  };
-
-  const handlePluginsChange = (nextTargetKeys: string[]) => {
-    setSelectedPlugins(nextTargetKeys);
   };
 
   return (
@@ -144,46 +125,6 @@ const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEdi
             },
           ],
         })(<SparqlQueryFormInput />)}
-      </Form.Item>
-      <Form.Item>
-        {getFieldDecorator('plugins', {
-          rules: [
-            {
-              required: false,
-            },
-          ],
-        })(
-          <Collapse>
-            <Panel
-              header={
-                <span>
-                  Plugins{' '}
-                  <Tooltip title="Which plugins should Studio load when viewing a resource.">
-                    <Icon type="question-circle-o" />
-                  </Tooltip>{' '}
-                  Experimental{' | '}
-                  <a
-                    target="_blank"
-                    href="https://github.com/BlueBrain/nexus-web/blob/master/docs/studio/Dashboards.md#plugins-experimental"
-                  >
-                    Read Docs
-                  </a>
-                </span>
-              }
-              key="1"
-            >
-              <Select
-                mode="multiple"
-                style={{ width: '100%' }}
-                placeholder="Please select one or more plugins"
-                defaultValue={selectedPlugins}
-                onChange={handlePluginsChange}
-              >
-                {formatPluginSource()}
-              </Select>
-            </Panel>
-          </Collapse>
-        )}
       </Form.Item>
       <Form.Item>
         <Button htmlType="submit" type="primary">

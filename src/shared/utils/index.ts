@@ -1,4 +1,5 @@
 import { Resource, Identity } from '@bbp/nexus-sdk';
+import { isMatch, pick } from 'lodash';
 
 /**
  * getProp utility - an alternative to lodash.get
@@ -331,4 +332,27 @@ export const isISODate = (date: string) => {
   const isoDateRegex = /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/;
 
   return isoDateRegex.test(date);
+};
+
+/*
+ * filter plugin array using properties in pluginMap and return a matching subset.
+ *
+ * @param {Object} pluginMap
+ * @param {string} plugins
+ * @param {string}
+ * @returns {string[]}
+ */
+export const matchPlugins = (
+  pluginMap: Object,
+  plugins: string[],
+  resource: Resource
+) => {
+  const map = new Map(Object.entries(pluginMap));
+  const newPlugins = plugins.filter(p => {
+    const shape = map.get(p);
+    return resource && shape
+      ? isMatch(pick(resource, Object.keys(shape)), shape)
+      : false;
+  });
+  return newPlugins;
 };
