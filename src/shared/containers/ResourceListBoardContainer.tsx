@@ -41,7 +41,9 @@ const ResourceListBoardContainer: React.FunctionComponent<{
 
   const [resourceLists = [], setResourceLists] = useLocalStorage<
     ResourceBoardList[]
-  >(`resource-lists-${userId}`, [makeDefaultList()]);
+  >(`resource-lists-${userId}-${orgLabel}-${projectLabel}`, [
+    makeDefaultList(),
+  ]);
 
   React.useEffect(() => {
     const sharedList = shareList && decodeShareableList(shareList);
