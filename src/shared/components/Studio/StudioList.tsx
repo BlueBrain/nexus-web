@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Empty, Spin } from 'antd';
+import { Spin } from 'antd';
 
-import useMeasure from '../../hooks/useMeasure';
 import ListItem from '../List/Item';
 import InfiniteSearch from '../List/InfiniteSearch';
 
@@ -53,7 +52,7 @@ const StudioList: React.FC<{
           dataLength={studios.length}
           onLoadMore={onLoadMore}
           hasMore={hasMore}
-          height={500}
+          height={340}
           defaultSearchValue={searchQuery}
         >
           {studios.map(studio => {

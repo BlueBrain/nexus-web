@@ -82,7 +82,7 @@ const ProjectMenu: React.FunctionComponent<{
           <Button
             icon="close"
             onClick={() => setMenuVisible(false)}
-            className="project-menu__close-button"
+            style={{ border: 'none' }}
           />
         }
       >
