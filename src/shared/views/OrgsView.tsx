@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
-import { Button, Modal, Drawer, notification } from 'antd';
+import { Button, Modal, Drawer, notification, message } from 'antd';
 import { OrgResponseCommon, Resource } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 
@@ -48,7 +48,9 @@ const OrgsView: React.FunctionComponent<OrgsViewProps> = ({ goTo }) => {
           )}`
         );
       })
-      .catch(console.log);
+      .catch(error => {
+        message.error(`Resource ${self} could not be found`);
+      });
   }
 
   const saveAndCreate = (newOrg: NewOrg) => {
