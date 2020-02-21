@@ -4,19 +4,14 @@ import {
   ProjectResponseCommon,
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
 } from '@bbp/nexus-sdk';
-import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { notification, Popover, Divider, Switch, Tabs, Icon } from 'antd';
+import { useNexusContext } from '@bbp/react-nexus';
+import { notification, Popover, Switch, Icon } from 'antd';
 import { Link } from 'react-router-dom';
 
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
-import SideMenu from '../components/Menu/SideMenu';
-import FileUploadContainer from '../containers/FileUploadContainer';
-import ResourceFormContainer from '../containers/ResourceFormContainer';
 import ResourceListBoardContainer from '../containers/ResourceListBoardContainer';
-import StudioListContainer from '../containers/StudioListContainer';
 import HomeIcon from '../components/HomeIcon';
-
-const { TabPane } = Tabs;
+import ProjectMenu from '../components/Projects/ProjectMenu';
 
 const ProjectView: React.FunctionComponent<{
   match: match<{ orgLabel: string; projectLabel: string }>;
@@ -38,9 +33,6 @@ const ProjectView: React.FunctionComponent<{
 
   const [menuVisible, setMenuVisible] = React.useState(true);
   const [refreshLists, setRefreshLists] = React.useState(false);
-  const [activeResourceMenuTab, setActiveResourceMenuTab] = React.useState(
-    'Resources'
-  );
 
   React.useEffect(() => {
     setState({
@@ -116,62 +108,12 @@ const ProjectView: React.FunctionComponent<{
                 checkedChildren={<Icon type="menu-unfold" />}
                 unCheckedChildren={<Icon type="menu-fold" />}
               />
-              <SideMenu
-                visible={menuVisible}
-                onClose={() => setMenuVisible(false)}
-              >
-                <Tabs
-                  onChange={(key: string) => setActiveResourceMenuTab(key)}
-                  activeKey={activeResourceMenuTab}
-                >
-                  <TabPane tab="Resources" key="Resources">
-                    <p>
-                      View resources in your project using pre-defined
-                      query-helper lists.
-                    </p>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <AccessControl
-                        path={`/${orgLabel}/${projectLabel}`}
-                        permissions={['resources/write']}
-                      >
-                        <ResourceFormContainer
-                          orgLabel={orgLabel}
-                          projectLabel={projectLabel}
-                        />
-                      </AccessControl>
-                      <Link
-                        to={`/${orgLabel}/${projectLabel}/nxv:defaultSparqlIndex/sparql`}
-                      >
-                        Sparql Query Editor
-                      </Link>
-                      <Link
-                        to={`/${orgLabel}/${projectLabel}/nxv:defaultElasticSearchIndex/_search`}
-                      >
-                        ElasticSearch Query Editor
-                      </Link>
-                      <Link to={`/${orgLabel}/${projectLabel}/_settings/acls`}>
-                        View Project's permissions
-                      </Link>
-                    </div>
-                    <AccessControl
-                      path={`/${orgLabel}/${projectLabel}`}
-                      permissions={['files/write']}
-                    >
-                      <Divider />
-                      <FileUploadContainer
-                        projectLabel={projectLabel}
-                        orgLabel={orgLabel}
-                      />
-                    </AccessControl>
-                  </TabPane>
-                  <TabPane tab="Studios" key="Studios">
-                    <StudioListContainer
-                      orgLabel={orgLabel}
-                      projectLabel={projectLabel}
-                    />
-                  </TabPane>
-                </Tabs>
-              </SideMenu>
+              <ProjectMenu
+                menuVisible={menuVisible}
+                setMenuVisible={setMenuVisible}
+                projectLabel={projectLabel}
+                orgLabel={orgLabel}
+              />
             </div>
           </div>
           <div className="list-board">

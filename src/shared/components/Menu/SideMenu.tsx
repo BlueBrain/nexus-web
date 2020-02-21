@@ -19,12 +19,26 @@ const ANIMATIONS = {
 export interface SideMenuProps {
   title?: string;
   visible: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   side?: 'left' | 'right';
+  tabList?: any;
+  activeTabKey?: any;
+  tabBarExtraContent?: any;
+  onTabChange?: (key: string) => void;
 }
 
 const SideMenu: React.FunctionComponent<SideMenuProps> = props => {
-  const { title, children, visible, onClose, side = 'right' } = props;
+  const {
+    title,
+    children,
+    visible,
+    onClose,
+    side = 'right',
+    tabList,
+    activeTabKey,
+    tabBarExtraContent,
+    onTabChange,
+  } = props;
   const transitions = useTransition(visible, null, ANIMATIONS[side]);
   return (
     <>
@@ -34,17 +48,27 @@ const SideMenu: React.FunctionComponent<SideMenuProps> = props => {
             <animated.div className="side-menu" style={props} key={key}>
               <Card
                 title={
-                  <div className="header">
-                    {!!title && <div className="ant-drawer-title">{title}</div>}
-                    <button
-                      className="ant-drawer-close"
-                      aria-label="Close"
-                      onClick={onClose}
-                    >
-                      <Icon type="close" />
-                    </button>
-                  </div>
+                  (title || onClose) && (
+                    <div className="header">
+                      {!!title && (
+                        <div className="ant-drawer-title">{title}</div>
+                      )}
+                      {!!onClose && (
+                        <button
+                          className="ant-drawer-close"
+                          aria-label="Close"
+                          onClick={onClose}
+                        >
+                          <Icon type="close" />
+                        </button>
+                      )}
+                    </div>
+                  )
                 }
+                tabList={tabList}
+                activeTabKey={activeTabKey}
+                tabBarExtraContent={tabBarExtraContent}
+                onTabChange={onTabChange}
                 size="small"
                 bordered={false}
               >
