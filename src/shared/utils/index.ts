@@ -304,20 +304,22 @@ export const camelCaseToTitleCase = (camelCase: string): string => {
  */
 export const matchResultUrls = (entry: string) => {
   const projectUrlPattern = /projects\/([\w-]+)\/([\w-]+)\/?$/;
-  const resourceUrlPattern = /resources(\/([\w-]+)\/([\w-]+))/;
+  const resourceUrlPattern = /resources\/(.[^/]*)\/(.[^/]*)\/(.[^/]*)\/(.*)/;
+  const fileUrlPattern = /files(\/([\w-]+)\/([\w-]+))/;
   if (projectUrlPattern.test(entry)) {
     const [, org, proj] = entry.match(projectUrlPattern) as string[];
     return `${org}/${proj}`;
   }
   if (resourceUrlPattern.test(entry)) {
-    const resourceIdPattern = /_\/([\w-|\W-]+)/;
     const labels = entry.match(resourceUrlPattern) as string[];
-    if (resourceIdPattern.test(entry)) {
-      const resultArray = entry.match(resourceIdPattern) as string[];
-      if (resultArray !== null && resultArray.length > 1) {
-        return `${labels[1]}/resources/${resultArray[1]}`;
-      }
-    }
+    const [, orgLabel, projectLabel, schema, resourceId] = labels;
+    return `/${orgLabel}/${projectLabel}/resources/${resourceId}`;
+  }
+  if (fileUrlPattern.test(entry)) {
+    const labels = entry.match(fileUrlPattern) as string[];
+    const [resourceId] = entry.split('/').reverse();
+    const [projectLabel, orgLabel] = labels.reverse();
+    return `/${orgLabel}/${projectLabel}/resources/${resourceId}`;
   }
   return entry;
 };

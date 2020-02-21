@@ -161,10 +161,15 @@ describe('utils functions', () => {
   });
 
   describe('matchResultUrls()', () => {
-    const projectUrl =
-      'https://staging.nexus.ocp.bbp.epfl.ch/v1/projects/public/graphql-ld';
+    const projectUrl = 'https://bbpnexus.com/v1/projects/public/graphql-ld';
     const resourceUrl =
-      'https://staging.nexus.ocp.bbp.epfl.ch/v1/resources/public/graphql-ld/_/https:%2F%2Fbluebrainnexus.io%2Fstudio%2Fcontext';
+      'https://bbpnexus.com/v1/resources/public/graphql-ld/_/https:%2F%2Fbluebrainnexus.io%2Fstudio%2Fcontext';
+
+    const fileUrl =
+      'https://bbpnexus.com/v1/files/bbp/nmc/2083e07e-7202-4ceb-9b4e-8eddadb2f646';
+
+    const specialSchemaUrl =
+      'https://dev.nexus.ocp.bbp.epfl.ch/v1/resources/bbp/nmc/datashapes:dataset/reconstructedcell%2F6d43684a-f33d-4a99-9c25-eecd108c1237';
     const noMatchUrl =
       'https://bluebrain.github.io/nexus/schemas/unconstrained.json';
     it('should match a project url', () => {
@@ -174,6 +179,18 @@ describe('utils functions', () => {
     it('should match a resource url', () => {
       expect(matchResultUrls(resourceUrl)).toEqual(
         '/public/graphql-ld/resources/https:%2F%2Fbluebrainnexus.io%2Fstudio%2Fcontext'
+      );
+    });
+
+    it('should match a resource url with special schema', () => {
+      expect(matchResultUrls(specialSchemaUrl)).toEqual(
+        '/bbp/nmc/resources/reconstructedcell%2F6d43684a-f33d-4a99-9c25-eecd108c1237'
+      );
+    });
+
+    it('should match a file url', () => {
+      expect(matchResultUrls(fileUrl)).toEqual(
+        `/bbp/nmc/resources/2083e07e-7202-4ceb-9b4e-8eddadb2f646`
       );
     });
 
