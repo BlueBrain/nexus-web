@@ -1,4 +1,4 @@
-import { Identity } from '@bbp/nexus-sdk';
+import { Identity, Resource } from '@bbp/nexus-sdk';
 import {
   getUserList,
   getOrderedPermissions,
@@ -10,6 +10,7 @@ import {
   camelCaseToTitleCase,
   matchResultUrls,
   isISODate,
+  matchPlugins,
 } from '..';
 
 const identities: Identity[] = [
@@ -193,6 +194,59 @@ describe('utils functions', () => {
 
     it('returns false if a string is not an ISO date', () => {
       expect(isISODate(otherString)).toEqual(false);
+    });
+  });
+
+  describe('matchPlugins', () => {
+    const plugins: string[] = ['plugin1', 'plugin2'];
+    const resource: Resource = {
+      '@context': 'test',
+      '@type': ['type2', 'type1'],
+      '@id': 'test',
+      _incoming: 'test',
+      _outgoing: 'test',
+      _self: 'test',
+      _constrainedBy: 'test',
+      _project: 'test',
+      _rev: 1,
+      _deprecated: false,
+      _createdAt: 'test',
+      _createdBy: 'test',
+      _updatedAt: 'test',
+      _updatedBy: 'test',
+    };
+
+    it('matches a resource when pluginsMap has a matching type', () => {
+      const pluginsMap = {
+        plugin1: {
+          '@type': ['type1'],
+        },
+      };
+      expect(matchPlugins(pluginsMap, plugins, resource)).toEqual(['plugin1']);
+    });
+
+    it('matches a resource with multiple plugins', () => {
+      const pluginsMap = {
+        plugin1: {
+          '@type': ['type1'],
+        },
+        plugin2: {
+          '@type': ['type2'],
+        },
+      };
+      expect(matchPlugins(pluginsMap, plugins, resource)).toEqual([
+        'plugin1',
+        'plugin2',
+      ]);
+    });
+
+    it('does not match a resource when pluginsMap has no matching type', () => {
+      const pluginsMap = {
+        plugin1: {
+          '@type': ['type3'],
+        },
+      };
+      expect(matchPlugins(pluginsMap, plugins, resource)).toEqual([]);
     });
   });
 });
