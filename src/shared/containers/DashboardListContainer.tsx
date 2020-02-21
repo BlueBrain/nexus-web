@@ -186,7 +186,6 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
                 DEFAULT_SPARQL_VIEW_ID
               }
               dataQuery={dashboardResources[selectedDashboardIndex].dataQuery}
-              dashboardUrl={dashboardResources[selectedDashboardIndex]['_self']}
             />
           )}
       </TabList>

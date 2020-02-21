@@ -64,11 +64,6 @@ const getPlugins = () => {
 app.get('*', async (req: express.Request, res: express.Response) => {
   const pluginMap = new Map<string, Object>();
   pluginMap.set('nexus-plugin-test', { '@type': 'StudioDashboard' });
-  console.log('-----------');
-  console.log(process.env.some);
-  console.log(process.env);
-  console.log('-----------');
-
   // Compute pre-loaded state
   const preloadedState: RootState = {
     auth: {},
