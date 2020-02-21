@@ -21,6 +21,7 @@ import TypesIconList from '../Types/TypesIcon';
 import useMeasure from '../../hooks/useMeasure';
 
 import './ResourceList.less';
+import Copy from '../Copy';
 
 export type ResourceBoardList = {
   name: string;
@@ -58,6 +59,7 @@ const ResourceListComponent: React.FunctionComponent<{
   onSortBy(option: string): void;
   makeResourceUri(resourceId: string): string;
   goToResource(resourceId: string): void;
+  shareableLink: string;
 }> = ({
   busy,
   list,
@@ -74,6 +76,7 @@ const ResourceListComponent: React.FunctionComponent<{
   goToResource,
   children,
   schemaLinkContainer,
+  shareableLink,
 }) => {
   const [{ ref: wrapperHeightRef }, { height: wrapperHeight }] = useMeasure();
   const { name } = list;
@@ -130,7 +133,7 @@ const ResourceListComponent: React.FunctionComponent<{
       <div className="resource-list">
         <h3 className={`header ${busy ? '-fetching' : ''}`}>
           <RenameableItem
-            defaultValue={name}
+            defaultValue={name || 'Unnamed List'}
             onChange={handleUpdate}
             size="small"
           />
@@ -146,6 +149,22 @@ const ResourceListComponent: React.FunctionComponent<{
           <Icon type="close" className="close-button" onClick={handleDelete} />
         </h3>
         <div className="controls -squished">
+          <Copy
+            textToCopy={shareableLink}
+            render={(copySuccess, triggerCopy) => (
+              <a
+                href={shareableLink}
+                onClick={e => {
+                  e.preventDefault();
+                  triggerCopy();
+                }}
+              >
+                <Tooltip title={copySuccess ? 'Copied' : 'Copy shareable link'}>
+                  <Button icon="link" />
+                </Tooltip>
+              </a>
+            )}
+          />
           {!list.query.q && (
             <Dropdown overlay={sortOptions} trigger={['hover', 'click']}>
               <Tooltip title="Sort resources">

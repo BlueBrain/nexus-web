@@ -1,5 +1,15 @@
 @import '../../lib.less';
 
+.resource-list-height-tester {
+  margin: 0 0.5em;
+  &:first-of-type {
+    margin-left: 0;
+  }
+  &:last-of-type {
+    margin-right: 0;
+  }
+}
+
 .resource-list {
   .cardlike();
   background-color: @primary-card;
