@@ -9,7 +9,7 @@ import html from './html';
 import silentRefreshHtml from './silent_refresh';
 import { RootState } from '../shared/store/reducers';
 import { DEFAULT_UI_SETTINGS } from '../shared/store/reducers/ui-settings';
-import { Resource } from '@bbp/nexus-sdk';
+import { pluginsMap } from './config/config';
 
 const PORT_NUMBER = 8000;
 
@@ -17,6 +17,7 @@ const PORT_NUMBER = 8000;
 const app: express.Express = express();
 const rawBase: string = process.env.BASE_PATH || '';
 const pluginsPath = process.env.PLUGINS_PATH || '/public/plugins';
+
 // remove trailing slash
 const base: string = rawBase.replace(/\/$/, '');
 // enable logs
@@ -62,13 +63,12 @@ const getPlugins = () => {
 
 // For all routes
 app.get('*', async (req: express.Request, res: express.Response) => {
-  const pluginMap = new Map<string, Object>();
-  pluginMap.set('nexus-plugin-test', { '@type': 'StudioDashboard' });
   // Compute pre-loaded state
   const preloadedState: RootState = {
     auth: {},
     config: {
       pluginsPath,
+      pluginsMap,
       apiEndpoint: process.env.API_ENDPOINT || '/',
       basePath: base,
       clientId: process.env.CLIENT_ID || 'nexus-web',
@@ -77,7 +77,6 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       sentryDsn: process.env.SENTRY_DSN,
       plugins: getPlugins(),
       gtmCode: process.env.GTM_CODE,
-      pluginsMap: Object.fromEntries(pluginMap),
     },
     uiSettings: DEFAULT_UI_SETTINGS,
     oidc: {

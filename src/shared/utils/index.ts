@@ -345,7 +345,7 @@ export const isISODate = (date: string) => {
 export const matchPlugins = (
   pluginMap: Object,
   plugins: string[],
-  resource: any
+  resource: Resource
 ) => {
   const map = new Map(Object.entries(pluginMap));
   const newPlugins = plugins.filter(p => {
