@@ -30,7 +30,7 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
   headerProperties,
   items,
   pageSize = PAGE_SIZE,
-  handleClick
+  handleClick,
 }) => {
   const [searchValue, setSearchValue] = React.useState();
 
