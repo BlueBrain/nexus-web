@@ -2,13 +2,16 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import { Button, Modal, Drawer, notification } from 'antd';
-import { OrgResponseCommon } from '@bbp/nexus-sdk';
+import { OrgResponseCommon, Resource } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 
 import OrgList from '../containers/OrgList';
 import OrgForm from '../components/Orgs/OrgForm';
 import OrgItem from '../components/Orgs/OrgItem';
 import ListItem from '../components/List/Item';
+import useQueryString from '../hooks/useQueryString';
+import { useHistory } from 'react-router';
+import { matchResultUrls, parseProjectUrl } from '../utils';
 
 type NewOrg = {
   label: string;
@@ -26,6 +29,27 @@ const OrgsView: React.FunctionComponent<OrgsViewProps> = ({ goTo }) => {
     OrgResponseCommon | undefined
   >(undefined);
   const nexus = useNexusContext();
+  const history = useHistory();
+
+  const [{ _self: self }] = useQueryString();
+
+  // redirect to ResourceView if self is a resource
+  if (self) {
+    nexus
+      .httpGet({
+        path: self,
+        headers: { Accept: 'application/json' },
+      })
+      .then((resource: Resource) => {
+        const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
+        history.push(
+          `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+            resource['@id']
+          )}`
+        );
+      })
+      .catch(console.log);
+  }
 
   const saveAndCreate = (newOrg: NewOrg) => {
     setFormBusy(true);

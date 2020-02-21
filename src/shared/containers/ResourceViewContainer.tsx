@@ -48,7 +48,7 @@ const ResourceViewContainer: React.FunctionComponent<{
     history.push(pushRoute, location.state);
   };
   const goToSelfResource = (selfUrl: string) => {
-    // TODO we need a way to navigate to the correct place via resource SELF URL
+    history.push(`/?_self=${selfUrl}`);
   };
   const goToProject = (orgLabel: string, projectLabel: string) =>
     history.push(`/${orgLabel}/${projectLabel}`, location.state);
