@@ -1,1 +1,1 @@
-export const pluginsMap = require('./pluginMap.json');
+export const pluginsMap = require('../../../plugin.config.json');
