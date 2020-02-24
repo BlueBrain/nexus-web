@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { useHistory } from 'react-router';
 import { push } from 'connected-react-router';
 import { Button, Modal, Drawer, notification, message } from 'antd';
 import { OrgResponseCommon, Resource } from '@bbp/nexus-sdk';
@@ -10,8 +11,7 @@ import OrgForm from '../components/Orgs/OrgForm';
 import OrgItem from '../components/Orgs/OrgItem';
 import ListItem from '../components/List/Item';
 import useQueryString from '../hooks/useQueryString';
-import { useHistory } from 'react-router';
-import { matchResultUrls, parseProjectUrl } from '../utils';
+import { parseProjectUrl } from '../utils';
 
 type NewOrg = {
   label: string;
