@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
 import ResourceListBoardContainer from '../containers/ResourceListBoardContainer';
 import HomeIcon from '../components/HomeIcon';
-import ProjectMenu from '../containers/ProjectMenuContainer';
+import ProjectMenuContainer from '../containers/ProjectMenuContainer';
 
 const ProjectView: React.FunctionComponent<{
   match: match<{ orgLabel: string; projectLabel: string }>;
@@ -108,7 +108,7 @@ const ProjectView: React.FunctionComponent<{
                 checkedChildren={<Icon type="menu-unfold" />}
                 unCheckedChildren={<Icon type="menu-fold" />}
               />
-              <ProjectMenu
+              <ProjectMenuContainer
                 menuVisible={menuVisible}
                 setMenuVisible={setMenuVisible}
                 projectLabel={projectLabel}
