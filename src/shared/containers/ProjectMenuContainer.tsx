@@ -3,14 +3,12 @@ import { AccessControl } from '@bbp/react-nexus';
 import { Link } from 'react-router-dom';
 import { Divider, Button } from 'antd';
 
-import SideMenu from '../../components/Menu/SideMenu';
-import FileUploadContainer from '../../containers/FileUploadContainer';
-import ResourceFormContainer from '../../containers/ResourceFormContainer';
-import StudioListContainer from '../../containers/StudioListContainer';
+import SideMenu from '../components/Menu/SideMenu';
+import FileUploadContainer from '../containers/FileUploadContainer';
+import ResourceFormContainer from '../containers/ResourceFormContainer';
+import StudioListContainer from '../containers/StudioListContainer';
 
-import './ProjectMenu.less';
-
-const ProjectMenu: React.FunctionComponent<{
+const ProjectMenuContainer: React.FunctionComponent<{
   menuVisible: boolean;
   setMenuVisible: (value: boolean) => void;
   orgLabel: string;
@@ -94,4 +92,4 @@ const ProjectMenu: React.FunctionComponent<{
   );
 };
 
-export default ProjectMenu;
+export default ProjectMenuContainer;

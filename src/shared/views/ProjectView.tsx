@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
 import ResourceListBoardContainer from '../containers/ResourceListBoardContainer';
 import HomeIcon from '../components/HomeIcon';
-import ProjectMenu from '../components/Projects/ProjectMenu';
+import ProjectMenu from '../containers/ProjectMenuContainer';
 
 const ProjectView: React.FunctionComponent<{
   match: match<{ orgLabel: string; projectLabel: string }>;
