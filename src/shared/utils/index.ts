@@ -1,5 +1,11 @@
 import { Resource, Identity } from '@bbp/nexus-sdk';
-import { isMatch, pick } from 'lodash';
+import {
+  isMatch,
+  isMatchWith,
+  difference,
+  isMatchWithCustomizer,
+  pick,
+} from 'lodash';
 
 /**
  * getProp utility - an alternative to lodash.get
@@ -349,11 +355,20 @@ export const matchPlugins = (
   plugins: string[],
   resource: Resource
 ) => {
+  const customizer: isMatchWithCustomizer = (value: any, other: any) => {
+    if (Array.isArray(other) && !Array.isArray(value)) {
+      return other.length === 1 && other.indexOf(value) >= 0;
+    }
+    if (Array.isArray(other) && Array.isArray(value)) {
+      return difference(other, value).length === 0;
+    }
+    return isMatch(value, other);
+  };
   const map = new Map(Object.entries(pluginMap));
   const newPlugins = plugins.filter(p => {
     const shape = map.get(p);
     return resource && shape
-      ? isMatch(pick(resource, Object.keys(shape)), shape)
+      ? isMatchWith(pick(resource, Object.keys(shape)), shape, customizer)
       : false;
   });
   return newPlugins;

@@ -233,6 +233,23 @@ describe('utils functions', () => {
       _updatedBy: 'test',
     };
 
+    const resourceWithNonArrayType: Resource = {
+      '@context': 'test',
+      '@type': 'type2',
+      '@id': 'test',
+      _incoming: 'test',
+      _outgoing: 'test',
+      _self: 'test',
+      _constrainedBy: 'test',
+      _project: 'test',
+      _rev: 1,
+      _deprecated: false,
+      _createdAt: 'test',
+      _createdBy: 'test',
+      _updatedAt: 'test',
+      _updatedBy: 'test',
+    };
+
     it('matches a resource when pluginsMap has a matching type', () => {
       const pluginsMap = {
         plugin1: {
@@ -255,6 +272,20 @@ describe('utils functions', () => {
         'plugin1',
         'plugin2',
       ]);
+    });
+
+    it('matches a resource when resorce @type is not an array', () => {
+      const pluginsMap = {
+        plugin1: {
+          '@type': ['type1'],
+        },
+        plugin2: {
+          '@type': ['type2'],
+        },
+      };
+      expect(
+        matchPlugins(pluginsMap, plugins, resourceWithNonArrayType)
+      ).toEqual(['plugin2']);
     });
 
     it('does not match a resource when pluginsMap has no matching type', () => {
