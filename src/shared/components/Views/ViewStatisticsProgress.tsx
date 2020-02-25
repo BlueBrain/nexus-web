@@ -106,8 +106,6 @@ export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsCont
       props.resourceId,
       { pollIntervalMs: 3000 }
     ).subscribe(
-      // @ts-ignore
-      // TODO fix for v1.3 release
       (statistics: Statistics) => {
         if (!eventsAtMount) {
           setEventsAtMount(statistics.totalEvents);
