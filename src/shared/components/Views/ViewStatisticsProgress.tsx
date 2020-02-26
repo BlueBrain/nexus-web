@@ -100,7 +100,7 @@ export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsCont
       error: null,
       data: null,
     });
-    nexus.View.pollStatistics(
+    const poll = nexus.View.pollStatistics(
       props.orgLabel,
       props.projectLabel,
       props.resourceId,
@@ -124,6 +124,9 @@ export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsCont
         });
       }
     );
+    return () => {
+      poll.unsubscribe();
+    };
   }, [props.orgLabel, props.projectLabel, props.resourceId]);
 
   if (!loading && !error && data) {
