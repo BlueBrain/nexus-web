@@ -10,7 +10,6 @@ import OrgList from '../containers/OrgList';
 import OrgForm from '../components/Orgs/OrgForm';
 import OrgItem from '../components/Orgs/OrgItem';
 import ListItem from '../components/List/Item';
-import useQueryString from '../hooks/useQueryString';
 import { parseProjectUrl } from '../utils';
 
 type NewOrg = {
@@ -22,6 +21,13 @@ interface OrgsViewProps {
   goTo(orgLabel: string): void;
 }
 
+const getUrlParameter = (name: string) => {
+  const filteredName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+  const regex = new RegExp(`[\\?&]${filteredName}=([^&#]*)`);
+  const results = regex.exec(window.location.search);
+  return results === null ? '' : results[1].replace(/\+/g, ' ');
+};
+
 const OrgsView: React.FunctionComponent<OrgsViewProps> = ({ goTo }) => {
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
@@ -30,11 +36,8 @@ const OrgsView: React.FunctionComponent<OrgsViewProps> = ({ goTo }) => {
   >(undefined);
   const nexus = useNexusContext();
   const history = useHistory();
-
-  const [{ _self: self }] = useQueryString();
-
-  // redirect to ResourceView if self is a resource
-  if (self) {
+  const self = getUrlParameter('_self');
+  if (self && self !== '') {
     nexus
       .httpGet({
         path: self,

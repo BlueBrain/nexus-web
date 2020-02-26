@@ -71,9 +71,9 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
             default:
               render = (value: string) => {
                 const item = items.find(item => item[dataIndex] === value);
-                const base64EncodedUri = btoa(item && item.self.value);
-                const studioResourceViewLink = `/studios/studio-resources/${base64EncodedUri}`;
-
+                const studioResourceViewLink = item
+                  ? `/?_self=${item.self.value}`
+                  : '';
                 if (isISODate(value)) {
                   return (
                     <a href={studioResourceViewLink}>

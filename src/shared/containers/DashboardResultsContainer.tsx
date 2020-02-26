@@ -1,9 +1,13 @@
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Spin, Alert } from 'antd';
+import { Spin, Alert, message } from 'antd';
 import ResultsTable from '../components/ResultsTable/ResultsTable';
-import { camelCaseToLabelString } from '../utils';
-import { SelectQueryResponse, SparqlViewQueryResponse } from '@bbp/nexus-sdk';
+import { camelCaseToLabelString, parseProjectUrl } from '../utils';
+import {
+  SelectQueryResponse,
+  SparqlViewQueryResponse,
+  Resource,
+} from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 export type Binding = {
@@ -39,10 +43,25 @@ const DashboardResultsContainer: React.FunctionComponent<{
   const location = useLocation();
 
   const goToStudioResource = (selfUrl: string) => {
-    const base64EncodedUri = btoa(selfUrl);
-    const studioResourceViewLink = `/studios/studio-resources/${base64EncodedUri}`;
-
-    history.push(studioResourceViewLink, { background: location });
+    const studioResourceViewLink = `/?_self=${selfUrl}`;
+    nexus
+      .httpGet({
+        path: selfUrl,
+        headers: { Accept: 'application/json' },
+      })
+      .then((resource: Resource) => {
+        const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
+        history.push(
+          `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+            resource['@id']
+          )}`,
+          { background: location }
+        );
+      })
+      .catch(error => {
+        message.error(`Resource ${self} could not be found`);
+      });
+    // history.push(studioResourceViewLink, { background: location });
   };
 
   React.useEffect(() => {
