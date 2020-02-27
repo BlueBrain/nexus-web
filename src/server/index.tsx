@@ -15,7 +15,10 @@ const PORT_NUMBER = 8000;
 // Create a express app
 const app: express.Express = express();
 const rawBase: string = process.env.BASE_PATH || '';
-const pluginsPath = process.env.PLUGINS_PATH || '/public/plugins';
+
+// to develop plugins locally, change PLUGINS_PATH to '/public/plugins'
+const pluginsPath = process.env.PLUGINS_PATH || '/plugins';
+
 // remove trailing slash
 const base: string = rawBase.replace(/\/$/, '');
 // enable logs
@@ -43,22 +46,6 @@ app.get(
   }
 );
 
-const getPlugins = () => {
-  let plugins;
-
-  try {
-    plugins = readdirSync(`${__dirname}/public/plugins`, {
-      withFileTypes: true,
-    })
-      .filter(dirent => dirent.isDirectory())
-      .map(dirent => dirent.name);
-  } catch (e) {
-    console.error(e);
-  }
-
-  return plugins || [];
-};
-
 // For all routes
 app.get('*', async (req: express.Request, res: express.Response) => {
   // Compute pre-loaded state
@@ -72,7 +59,6 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       redirectHostName: `${process.env.HOST_NAME ||
         `${req.protocol}://${req.headers.host}`}${base}`,
       sentryDsn: process.env.SENTRY_DSN,
-      plugins: getPlugins(),
       gtmCode: process.env.GTM_CODE,
     },
     uiSettings: DEFAULT_UI_SETTINGS,
