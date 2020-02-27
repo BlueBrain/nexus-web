@@ -43,7 +43,6 @@ const DashboardResultsContainer: React.FunctionComponent<{
   const location = useLocation();
 
   const goToStudioResource = (selfUrl: string) => {
-    const studioResourceViewLink = `/?_self=${selfUrl}`;
     nexus
       .httpGet({
         path: selfUrl,
@@ -61,7 +60,6 @@ const DashboardResultsContainer: React.FunctionComponent<{
       .catch(error => {
         message.error(`Resource ${self} could not be found`);
       });
-    // history.push(studioResourceViewLink, { background: location });
   };
 
   React.useEffect(() => {
