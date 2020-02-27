@@ -5,7 +5,7 @@ import { Resource } from '@bbp/nexus-sdk';
 import { notification, Empty } from 'antd';
 import * as queryString from 'query-string';
 
-import { NexusPlugin } from '../containers/NexusPlugin';
+import NexusPlugin from '../containers/NexusPlugin';
 import { getResourceLabel } from '../utils';
 
 type DashboardResource = {
@@ -97,8 +97,7 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
         plugins.map(pluginName => (
           <div className="studio-resource-plugin" key={`plugin-${pluginName}`}>
             <NexusPlugin
-              url={`/public/plugins/${pluginName}/index.js`}
-              nexusClient={nexus}
+              pluginName={pluginName}
               resource={resource}
               goToResource={goToStudioResource}
             />

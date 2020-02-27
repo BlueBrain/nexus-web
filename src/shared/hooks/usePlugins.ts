@@ -7,6 +7,7 @@ import { RootState } from '../store/reducers';
 export type RemotePluginManifest = {
   [pluginName: string]: {
     modulePath: string;
+    absoluteModulePath: string;
     name: string;
     description: string;
     version: string;
@@ -17,7 +18,9 @@ export type RemotePluginManifest = {
 };
 
 export default function usePlugins() {
-  const [manifest, setManifest] = React.useState<RemotePluginManifest | {}>({});
+  const [manifest, setManifest] = React.useState<RemotePluginManifest | null>(
+    null
+  );
   const pluginsPath =
     useSelector((state: RootState) => state.config.pluginsPath) || [];
 
@@ -25,7 +28,16 @@ export default function usePlugins() {
     if (pluginsPath) {
       fetch(`${pluginsPath as string}/manifest.json`)
         .then(resp => resp.json())
-        .then(setManifest)
+        .then(manifest =>
+          setManifest(
+            Object.keys(manifest).reduce((manifest, pluginName) => {
+              manifest[
+                pluginName
+              ].absoluteModulePath = `${pluginsPath}/${manifest[pluginName].modulePath}`;
+              return manifest;
+            }, manifest)
+          )
+        )
         .catch(error => message.error(error.message));
     }
   }, []);

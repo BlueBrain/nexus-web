@@ -36,7 +36,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
   const { label, description, dataQuery, plugins } = dashboard;
   const [busy, setBusy] = React.useState(false);
   const pluginManifest = usePlugins();
-  const availablePlugins = Object.keys(pluginManifest);
+  const availablePlugins = Object.keys(pluginManifest || {});
 
   // Launch modal when id is changed (someone selected a new dashboard to edit)
   React.useEffect(() => {

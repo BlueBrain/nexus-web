@@ -29,7 +29,7 @@ const CreateDashboardContainer: React.FunctionComponent<{
   const nexus = useNexusContext();
   const [busy, setBusy] = React.useState(false);
   const pluginManifest = usePlugins();
-  const availablePlugins = Object.keys(pluginManifest);
+  const availablePlugins = Object.keys(pluginManifest || {});
 
   const onSubmit = () => {
     setBusy(false);
