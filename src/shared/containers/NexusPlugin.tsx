@@ -136,7 +136,7 @@ const HigherOrderNexusPlugin: React.FC<HigherOrderNexusPluginProps> = props => {
   ) : (
     <Empty
       description={
-        // TODO: write and provide link to documentation
+        // TODO: write and provide link to documentation https://github.com/BlueBrain/nexus/issues/1054
         <span>
           Plugin <em>{pluginName}</em> is not described in the Plugins manifest
           and cannot be found.
