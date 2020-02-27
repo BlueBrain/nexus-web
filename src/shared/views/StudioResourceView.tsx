@@ -3,7 +3,6 @@ import { useParams, useHistory } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
 import { notification, Empty } from 'antd';
-import { NexusPlugin } from '../containers/NexusPlugin';
 import { getResourceLabel } from '../utils';
 import ResourcePlugins from '../containers/ResourcePlugins';
 
@@ -36,9 +35,7 @@ const StudioResourceView: React.FunctionComponent<{}> = () => {
   }, [resourceSelfUri]);
 
   const goToStudioResource = (selfUrl: string) => {
-    const base64EncodedUri = btoa(selfUrl);
-    const studioResourceViewLink = `/studios/studio-resources/${base64EncodedUri}`;
-
+    const studioResourceViewLink = `/?_self=${selfUrl}`;
     history.push(studioResourceViewLink);
   };
 
