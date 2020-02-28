@@ -9,20 +9,7 @@ const ResourceView: React.FunctionComponent = props => {
 
   return (
     <div className="resource-view view-container -unconstrained-width">
-      <ResourceViewContainer
-        render={resource => (
-          <div ref={ref} className="graph-wrapper">
-            <div
-              className="fixed-minus-header"
-              style={{
-                width,
-              }}
-            >
-              {resource && <GraphContainer resource={resource} />}
-            </div>
-          </div>
-        )}
-      />
+      <ResourceViewContainer />
     </div>
   );
 };

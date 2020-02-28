@@ -45,9 +45,7 @@ const App: React.FC = () => {
           render={routeProps => (
             <Modal
               visible={true}
-              onCancel={() => history.push(background.pathname, {})}
-              onOk={() => history.push(location.pathname, {})}
-              okText="Graph View"
+              footer={null}
               className="modal-view"
               width="inherit"
             >

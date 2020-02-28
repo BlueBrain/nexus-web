@@ -15,6 +15,8 @@ import ResourceEditorContainer from '../containers/ResourceEditor';
 import ImagePreviewContainer from '../containers/ImagePreviewContainer';
 import SchemaLinkContainer from '../containers/SchemaLink';
 import HomeIcon from '../components/HomeIcon';
+import GraphContainer from '../containers/GraphContainer';
+import useMeasure from '../hooks/useMeasure';
 
 const TabPane = Tabs.TabPane;
 export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
@@ -54,6 +56,7 @@ const ResourceViewContainer: React.FunctionComponent<{
     location.search
   );
   const activeTabKey = location.hash || DEFAULT_ACTIVE_TAB_KEY;
+  const [{ ref }] = useMeasure();
 
   const [{ busy, resource, error }, setResource] = React.useState<{
     busy: boolean;
@@ -300,12 +303,22 @@ const ResourceViewContainer: React.FunctionComponent<{
                     />
                   </section>
                 </TabPane>
+                <TabPane tab="Graph" key="#graph" className="rows">
+                  <div className="graph-wrapper-container">
+                    <div className="fixed-minus-header">
+                      <div ref={ref} className="graph-wrapper">
+                        {resource ? (
+                          <GraphContainer resource={resource as Resource} />
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                </TabPane>
               </Tabs>
             </>
           )}
         </Spin>
       </div>
-      {render && render(resource)}
     </>
   );
 };
