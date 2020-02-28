@@ -5,6 +5,8 @@ import * as React from 'react';
 import invariant from 'ts-invariant';
 import { NexusClient, Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
+import usePlugins, { RemotePluginManifest } from '../hooks/usePlugins';
+import { Empty } from 'antd';
 
 const warningMessage =
   'SystemJS not found. ' +
@@ -23,14 +25,14 @@ export type NexusPluginClassProps<T = any> = NexusPluginProps<T> & {
 
 export class NexusPlugin extends React.Component<
   NexusPluginClassProps,
-  { hasError: boolean; loading: boolean }
+  { error: Error | null; loading: boolean }
 > {
   private container: React.RefObject<HTMLDivElement>;
   private pluginCallback: () => void;
 
   constructor(props: NexusPluginClassProps) {
     super(props);
-    this.state = { hasError: false, loading: true };
+    this.state = { error: null, loading: true };
     this.container = React.createRef();
     this.pluginCallback = () => {};
     // @ts-ignore
@@ -55,7 +57,7 @@ export class NexusPlugin extends React.Component<
           }) => () => void;
         }) => {
           this.setState({
-            hasError: false,
+            error: null,
             loading: false,
           });
           this.pluginCallback = module.default({
@@ -67,12 +69,15 @@ export class NexusPlugin extends React.Component<
         }
       )
       .catch((error: Error) => {
-        this.setState({ hasError: true, loading: false });
+        // TODO provide different error templates for different error types
+        // EX: plugin found, loaded, but is not properly formatted javascript
+        // or EX: plugin cannot be loaded because it was not found at the URL
+        this.setState({ error, loading: false });
       });
   }
 
-  componentDidCatch(e: Error) {
-    this.setState({ hasError: true, loading: false });
+  componentDidCatch(error: Error) {
+    this.setState({ error, loading: false });
   }
 
   componentWillUpdate(prevProps: NexusPluginClassProps) {
@@ -92,24 +97,53 @@ export class NexusPlugin extends React.Component<
   }
 
   componentWillUnmount() {
-    this.pluginCallback();
+    this.pluginCallback &&
+      typeof this.pluginCallback === 'function' &&
+      this.pluginCallback();
   }
 
   render() {
-    if (this.state.hasError) {
-      return <p>Error loading plugin {this.props.url}</p>;
+    if (this.state.error) {
+      return <Empty description={this.state.error.message} />;
     }
     if (this.state.loading) {
+      // TODO show a beautiful loading skeleton to reduce jank
       return <p>loading plugin {this.props.url}...</p>;
     }
     return <div className="remote-component" ref={this.container}></div>;
   }
 }
 
-const HigherOrderNexusPlugin: React.FC<NexusPluginProps> = props => {
-  const nexus = useNexusContext();
+export type HigherOrderNexusPluginProps<T = any> = {
+  pluginName: string;
+  resource: Resource<T>;
+  goToResource?: (selfURL: string) => void;
+};
 
-  return <NexusPlugin nexusClient={nexus} {...props} />;
+const HigherOrderNexusPlugin: React.FC<HigherOrderNexusPluginProps> = props => {
+  const nexus = useNexusContext();
+  const manifest = usePlugins();
+  const { pluginName } = props;
+
+  const pluginData = manifest && manifest[pluginName];
+
+  return pluginData ? (
+    <NexusPlugin
+      {...props}
+      nexusClient={nexus}
+      url={pluginData.absoluteModulePath}
+    />
+  ) : (
+    <Empty
+      description={
+        // TODO: write and provide link to documentation https://github.com/BlueBrain/nexus/issues/1054
+        <span>
+          Plugin <em>{pluginName}</em> is not described in the Plugins manifest
+          and cannot be found.
+        </span>
+      }
+    />
+  );
 };
 
 export default HigherOrderNexusPlugin;
