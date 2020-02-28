@@ -46,6 +46,7 @@ const App: React.FC = () => {
             <Modal
               visible={true}
               footer={null}
+              okText="Graph View"
               className="modal-view"
               width="inherit"
             >
