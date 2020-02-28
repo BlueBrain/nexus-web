@@ -46,7 +46,7 @@ const App: React.FC = () => {
             <Modal
               visible={true}
               footer={null}
-              okText="Graph View"
+              onCancel={() => history.push(background.pathname, {})}
               className="modal-view"
               width="inherit"
             >
