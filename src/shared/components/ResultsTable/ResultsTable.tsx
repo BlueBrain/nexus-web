@@ -24,7 +24,6 @@ type ResultTableProps = {
   }[];
   pageSize?: number;
   handleClick: (self: string) => void;
-  dashboardUrl: string;
 };
 
 const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
@@ -32,7 +31,6 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
   items,
   pageSize = PAGE_SIZE,
   handleClick,
-  dashboardUrl,
 }) => {
   const [searchValue, setSearchValue] = React.useState();
 
@@ -73,9 +71,9 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
             default:
               render = (value: string) => {
                 const item = items.find(item => item[dataIndex] === value);
-                const base64EncodedUri = btoa(item && item.self.value);
-                const studioResourceViewLink = `/studios/studio-resources/${base64EncodedUri}?dashboard=${dashboardUrl}`;
-
+                const studioResourceViewLink = item
+                  ? `/?_self=${item.self.value}`
+                  : '';
                 if (isISODate(value)) {
                   return (
                     <a href={studioResourceViewLink}>

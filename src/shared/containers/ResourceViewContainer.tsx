@@ -17,6 +17,7 @@ import SchemaLinkContainer from '../containers/SchemaLink';
 import HomeIcon from '../components/HomeIcon';
 import GraphContainer from '../containers/GraphContainer';
 import useMeasure from '../hooks/useMeasure';
+import ResourcePlugins from './ResourcePlugins';
 
 const TabPane = Tabs.TabPane;
 export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
@@ -47,6 +48,9 @@ const ResourceViewContainer: React.FunctionComponent<{
       revision ? `?rev=${revision}` : ''
     }${expanded ? '&expanded=true' : ''}${tab ? tab : ''}`;
     history.push(pushRoute, location.state);
+  };
+  const goToSelfResource = (selfUrl: string) => {
+    history.push(`/?_self=${selfUrl}`);
   };
   const goToProject = (orgLabel: string, projectLabel: string) =>
     history.push(`/${orgLabel}/${projectLabel}`, location.state);
@@ -237,11 +241,18 @@ const ResourceViewContainer: React.FunctionComponent<{
                   closable
                 />
               )}
-              <ResourceCardComponent
+              <ResourcePlugins
                 resource={resource}
-                preview={<ImagePreviewContainer resource={resource} />}
-                schemaLink={SchemaLinkContainer}
+                goToResource={goToSelfResource}
+                empty={
+                  <ResourceCardComponent
+                    resource={resource}
+                    preview={<ImagePreviewContainer resource={resource} />}
+                    schemaLink={SchemaLinkContainer}
+                  />
+                }
               />
+
               <ResourceActionsContainer resource={resource} />
               <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
                 <TabPane tab="JSON" key="#JSON">

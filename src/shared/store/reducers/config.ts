@@ -10,6 +10,7 @@ export interface ConfigState {
   pluginsPath: string;
   plugins: string[];
   gtmCode?: string;
+  pluginsMap?: Object;
 }
 
 const initialState: ConfigState = {

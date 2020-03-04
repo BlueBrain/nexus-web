@@ -9,6 +9,7 @@ import html from './html';
 import silentRefreshHtml from './silent_refresh';
 import { RootState } from '../shared/store/reducers';
 import { DEFAULT_UI_SETTINGS } from '../shared/store/reducers/ui-settings';
+import { pluginsMap } from './config/config';
 
 const PORT_NUMBER = 8000;
 
@@ -16,6 +17,7 @@ const PORT_NUMBER = 8000;
 const app: express.Express = express();
 const rawBase: string = process.env.BASE_PATH || '';
 const pluginsPath = process.env.PLUGINS_PATH || '/public/plugins';
+
 // remove trailing slash
 const base: string = rawBase.replace(/\/$/, '');
 // enable logs
@@ -66,6 +68,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
     auth: {},
     config: {
       pluginsPath,
+      pluginsMap,
       apiEndpoint: process.env.API_ENDPOINT || '/',
       basePath: base,
       clientId: process.env.CLIENT_ID || 'nexus-web',
