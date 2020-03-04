@@ -337,7 +337,7 @@ export const matchResultUrls = (entry: string) => {
  * @returns {boolean} if a string is an ISO date or not
  */
 export const isISODate = (date: string) => {
-  const isoDateRegex = /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/;
+  const isoDateRegex = /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.[0-9Z+]{1,9}/;
 
   return isoDateRegex.test(date);
 };

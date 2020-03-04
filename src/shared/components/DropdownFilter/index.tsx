@@ -29,6 +29,10 @@ const DropdownFilter: React.FunctionComponent<{
   } = props;
   const [inputValue, setInputValue] = React.useState(defaultSelected);
 
+  React.useEffect(() => {
+    setInputValue(defaultSelected);
+  }, [defaultSelected]);
+
   const handleChange = (value: SelectValue) => {
     onChange(value as string);
   };

@@ -24,6 +24,10 @@ const InfiniteSearch: React.FunctionComponent<InfiniteSearchProps> = props => {
     defaultSearchValue
   );
 
+  React.useEffect(() => {
+    setSearchValue(defaultSearchValue);
+  }, [defaultSearchValue]);
+
   return (
     <div className="infinite-search">
       {hasSearch && (
