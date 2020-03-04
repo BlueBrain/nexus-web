@@ -2,18 +2,15 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { Resource } from '@bbp/nexus-sdk';
 import { RootState } from '../store/reducers';
-import  NexusPlugin  from '../containers/NexusPlugin';
+import NexusPlugin from '../containers/NexusPlugin';
 import { matchPlugins } from '../utils';
 import usePlugins from '../hooks/usePlugins';
-
-
 
 const ResourcePlugins: React.FunctionComponent<{
   resource?: Resource;
   goToResource?: (selfURL: string) => void;
   empty?: React.ReactElement;
 }> = ({ resource, goToResource, empty = null }) => {
-
   const pluginManifest = usePlugins();
   const availablePlugins = Object.keys(pluginManifest || {});
   const pluginMap = useSelector((state: RootState) => state.config.pluginsMap);
