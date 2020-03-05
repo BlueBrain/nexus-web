@@ -84,6 +84,11 @@ docker build . --tag=nexus-web
 - `GTAG`: The Google Analytics Identifier. GA won't be present unless an ID is specified.
 - `SENTRY_DSN`: The sentry URL Nexus Web needs to report errors to. Default is undefined.
 
+The following concern Plugins. [See how to manage plugin deployments](./docs/plugins.md)
+
+- `PLUGINS_MANIFEST_PATH`: Remote end point where plugins and manifest can be found. for example, `https://bbp-nexus.epfl.ch/plugins`
+- `PLUGINS_CONFIG_PATH`:  A full file path where a plugins configuration can be found.
+
 ## Deployment
 
 You can find out how to deploy a build [in the wiki](https://github.com/BlueBrain/nexus-web/wiki/Deploying-Your-Nexus-Web-Instance)
