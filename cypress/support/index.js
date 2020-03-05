@@ -16,7 +16,7 @@
 // Import commands.js using ES2015 syntax:
 import './commands';
 
-export const homePage = '/';
+export const homePage = 'http://localhost:8000';
 export const loginPage = '/login';
 
 export const docLink = 'https://bluebrainnexus.io/docs';
