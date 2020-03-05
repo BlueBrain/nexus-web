@@ -22,7 +22,7 @@ export default function usePlugins() {
     null
   );
   const pluginsPath =
-    useSelector((state: RootState) => state.config.pluginsPath) || [];
+    useSelector((state: RootState) => state.config.pluginsManifestPath) || [];
 
   React.useEffect(() => {
     if (pluginsPath) {
