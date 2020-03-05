@@ -1,5 +1,5 @@
 import { resolve, join } from 'path';
-import { readdirSync } from 'fs';
+import { readFileSync } from 'fs';
 import * as express from 'express';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
@@ -9,7 +9,6 @@ import html from './html';
 import silentRefreshHtml from './silent_refresh';
 import { RootState } from '../shared/store/reducers';
 import { DEFAULT_UI_SETTINGS } from '../shared/store/reducers/ui-settings';
-import { pluginsMap } from './config/config';
 
 const PORT_NUMBER = 8000;
 
@@ -18,7 +17,22 @@ const app: express.Express = express();
 const rawBase: string = process.env.BASE_PATH || '';
 
 // to develop plugins locally, change PLUGINS_PATH to '/public/plugins'
-const pluginsPath = process.env.PLUGINS_PATH || '/plugins';
+const pluginsManifestPath =
+  process.env.PLUGINS_MANIFEST_PATH || '/public/plugins';
+
+const pluginsConfigPath =
+  process.env.PLUGINS_CONFIG_PATH ||
+  join(__dirname, '/public/plugins/plugins.config.json');
+
+const getpluginsConfig = () => {
+  let pluginsConfig;
+  try {
+    pluginsConfig = JSON.parse(readFileSync(pluginsConfigPath).toString());
+  } catch (e) {
+    console.error(e);
+  }
+  return pluginsConfig || {};
+};
 
 // remove trailing slash
 const base: string = rawBase.replace(/\/$/, '');
@@ -53,8 +67,9 @@ app.get('*', async (req: express.Request, res: express.Response) => {
   const preloadedState: RootState = {
     auth: {},
     config: {
-      pluginsPath,
-      pluginsMap,
+      pluginsManifestPath,
+
+      pluginsMap: getpluginsConfig(),
       apiEndpoint: process.env.API_ENDPOINT || '/',
       basePath: base,
       clientId: process.env.CLIENT_ID || 'nexus-web',
