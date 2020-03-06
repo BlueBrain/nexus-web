@@ -22,7 +22,7 @@ export default function usePlugins() {
     null
   );
   const pluginsPath =
-    useSelector((state: RootState) => state.config.pluginsPath) || [];
+    useSelector((state: RootState) => state.config.pluginsManifestPath) || [];
 
   React.useEffect(() => {
     if (pluginsPath) {
@@ -38,7 +38,11 @@ export default function usePlugins() {
             }, manifest)
           )
         )
-        .catch(error => message.error(error.message));
+        .catch(error =>
+          message.warn(
+            `There was an error while loading the plugins manifest : ${error.message}`
+          )
+        );
     }
   }, []);
 

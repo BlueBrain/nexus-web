@@ -1,14 +1,13 @@
+import { Modal } from 'antd';
 import * as React from 'react';
 import { Route, Switch, useLocation, useHistory } from 'react-router-dom';
+import { Location } from 'history';
 import routes from '../shared/routes';
 import NotFound from './views/404';
 import MainLayout from './layouts/MainLayout';
+import ResourceViewContainer from './containers/ResourceViewContainer';
 
 import './App.less';
-import { Modal } from 'antd';
-import ResourceViewContainer from './containers/ResourceViewContainer';
-import StudioResourceView from './views/StudioResourceView';
-import { Location } from 'history';
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -45,28 +44,12 @@ const App: React.FC = () => {
           render={routeProps => (
             <Modal
               visible={true}
+              footer={null}
               onCancel={() => history.push(background.pathname, {})}
-              onOk={() => history.push(location.pathname, {})}
-              okText="Graph View"
               className="modal-view"
               width="inherit"
             >
               <ResourceViewContainer />
-            </Modal>
-          )}
-        />,
-        <Route
-          key="studio-resource-modal"
-          path={'/studios/studio-resources/:resourceSelfUri'}
-          render={routeProps => (
-            <Modal
-              visible={true}
-              onCancel={() => history.push(background.pathname, {})}
-              footer={null}
-              className="modal-view -unconstrained"
-              width="inherit"
-            >
-              <StudioResourceView />
             </Modal>
           )}
         />,

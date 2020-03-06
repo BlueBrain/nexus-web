@@ -1,4 +1,11 @@
 import { Resource, Identity } from '@bbp/nexus-sdk';
+import {
+  isMatch,
+  isMatchWith,
+  difference,
+  isMatchWithCustomizer,
+  pick,
+} from 'lodash';
 
 /**
  * getProp utility - an alternative to lodash.get
@@ -303,20 +310,22 @@ export const camelCaseToTitleCase = (camelCase: string): string => {
  */
 export const matchResultUrls = (entry: string) => {
   const projectUrlPattern = /projects\/([\w-]+)\/([\w-]+)\/?$/;
-  const resourceUrlPattern = /resources(\/([\w-]+)\/([\w-]+))/;
+  const resourceUrlPattern = /resources\/(.[^/]*)\/(.[^/]*)\/(.[^/]*)\/(.*)/;
+  const fileUrlPattern = /files(\/([\w-]+)\/([\w-]+))/;
   if (projectUrlPattern.test(entry)) {
     const [, org, proj] = entry.match(projectUrlPattern) as string[];
     return `${org}/${proj}`;
   }
   if (resourceUrlPattern.test(entry)) {
-    const resourceIdPattern = /_\/([\w-|\W-]+)/;
     const labels = entry.match(resourceUrlPattern) as string[];
-    if (resourceIdPattern.test(entry)) {
-      const resultArray = entry.match(resourceIdPattern) as string[];
-      if (resultArray !== null && resultArray.length > 1) {
-        return `${labels[1]}/resources/${resultArray[1]}`;
-      }
-    }
+    const [, orgLabel, projectLabel, schema, resourceId] = labels;
+    return `/${orgLabel}/${projectLabel}/resources/${resourceId}`;
+  }
+  if (fileUrlPattern.test(entry)) {
+    const labels = entry.match(fileUrlPattern) as string[];
+    const [resourceId] = entry.split('/').reverse();
+    const [projectLabel, orgLabel] = labels.reverse();
+    return `/${orgLabel}/${projectLabel}/resources/${resourceId}`;
   }
   return entry;
 };
@@ -331,4 +340,36 @@ export const isISODate = (date: string) => {
   const isoDateRegex = /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.[0-9Z+]{1,9}/;
 
   return isoDateRegex.test(date);
+};
+
+/*
+ * filter plugin array using properties in pluginMap and return a matching subset.
+ *
+ * @param {Object} pluginMap
+ * @param {string} plugins
+ * @param {string}
+ * @returns {string[]}
+ */
+export const matchPlugins = (
+  pluginMap: Object,
+  plugins: string[],
+  resource: Resource
+) => {
+  const customizer: isMatchWithCustomizer = (value: any, other: any) => {
+    if (Array.isArray(other) && !Array.isArray(value)) {
+      return other.length === 1 && other.indexOf(value) >= 0;
+    }
+    if (Array.isArray(other) && Array.isArray(value)) {
+      return difference(other, value).length === 0;
+    }
+    return isMatch(value, other);
+  };
+  const map = new Map(Object.entries(pluginMap));
+  const newPlugins = plugins.filter(p => {
+    const shape = map.get(p);
+    return resource && shape
+      ? isMatchWith(pick(resource, Object.keys(shape)), shape, customizer)
+      : false;
+  });
+  return newPlugins;
 };

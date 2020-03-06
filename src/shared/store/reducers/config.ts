@@ -7,8 +7,9 @@ export interface ConfigState {
   redirectHostName: string;
   preferredRealm?: string;
   sentryDsn?: string;
-  pluginsPath: string;
+  pluginsManifestPath: string;
   gtmCode?: string;
+  pluginsMap?: Object;
 }
 
 const initialState: ConfigState = {
@@ -16,7 +17,7 @@ const initialState: ConfigState = {
   basePath: '',
   clientId: '',
   redirectHostName: '',
-  pluginsPath: '/public/plugins',
+  pluginsManifestPath: '/public/plugins',
   gtmCode: '',
 };
 
