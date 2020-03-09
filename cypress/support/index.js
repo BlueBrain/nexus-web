@@ -14,7 +14,15 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+import './commands';
+
+export const homePage = 'http://localhost:8000';
+export const loginPage = 'http://localhost:8000/login';
+
+export const docLink = 'https://bluebrainnexus.io/docs';
+export const reportIssueLink =
+  'https://github.com/BlueBrain/nexus/issues/new?labels=frontend,nexus-web';
