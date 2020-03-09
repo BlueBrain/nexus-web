@@ -87,7 +87,7 @@ docker build . --tag=nexus-web
 The following concern Plugins. [See how to manage plugin deployments](./docs/plugins.md)
 
 - `PLUGINS_MANIFEST_PATH`: Remote end point where plugins and manifest can be found. for example, `https://bbp-nexus.epfl.ch/plugins`
-- `PLUGINS_CONFIG_PATH`:  A full file path where a plugins configuration can be found.
+- `PLUGINS_CONFIG_PATH`: A full file path where a plugins configuration can be found.
 
 ## Deployment
 
@@ -126,3 +126,23 @@ There are several channels provided to address different issues:
 ### When building URLs inside the App
 
 - Don't add the basePath in a URL, it will be added automatically by react-router.
+
+### UI Testing
+
+UI tests are implemented with [Cypress]('https://www.cypress.io/').
+
+To launch Cypress window in order to test UI locally, run:
+
+```sh
+yarn test-ui
+```
+
+Make sure Nexus Web app is running locally and you use staging API, otherwise there won't be data available, and tests are likely to fail.
+
+To run in a headless mode, use the following command:
+
+```sh
+yarn run cypress run --headless --browser chrome
+```
+
+It will run all the test scripts.
