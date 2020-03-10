@@ -78,7 +78,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEdi
               message: 'Please input a label!',
             },
           ],
-        })(<Input />)}
+        })(<Input className="ui-dashboard-label-input" />)}
       </Form.Item>
       <Form.Item
         label={
@@ -97,7 +97,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEdi
               required: false,
             },
           ],
-        })(<TextArea />)}
+        })(<TextArea className="ui-dashboard-description-input" />)}
       </Form.Item>
       <Form.Item
         label={

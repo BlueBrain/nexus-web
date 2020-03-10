@@ -11,6 +11,7 @@
     "start": "NODE_ENV=development DEBUG=* webpack --mode development --config-name server && node dist/server.js",
     "build": "NODE_ENV=production webpack --mode production",
     "test": "jest",
+    "test-ui": "yarn run cypress open",
     "codecov": "codecov",
     "lint": "tslint --project tsconfig.json",
     "style": "prettier --check \"./src/**/*.{ts,tsx,js,jsx,less}\"",
@@ -27,6 +28,7 @@
     "codemirror": "^5.44.0",
     "connected-react-router": "^6.3.2",
     "cookie-parser": "^1.4.4",
+    "cypress": "^4.1.0",
     "cytoscape": "^3.12.0",
     "cytoscape-cola": "^2.3.0",
     "deep-object-diff": "^1.1.0",
@@ -133,7 +135,10 @@
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/__mocks__/fileMock.js",
       "\\.(css|less)$": "<rootDir>/src/__mocks__/styleMock.js"
-    }
+    },
+    "testPathIgnorePatterns": [
+      "<rootDir>/cypress/"
+    ]
   },
   "prettier": {
     "singleQuote": true,
