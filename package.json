@@ -12,7 +12,7 @@
     "build": "NODE_ENV=production webpack --mode production",
     "test": "jest",
     "cy:run": "cypress run",
-    "test-ui": "API_ENDPOINT=https://dev.nexus.ocp.bbp.epfl.ch/v1 start-server-and-test start http://localhost:8000 cy:run",
+    "test-ui": "API_ENDPOINT=http://test start-server-and-test start http://localhost:8000 cy:run",
     "codecov": "codecov",
     "lint": "tslint --project tsconfig.json",
     "style": "prettier --check \"./src/**/*.{ts,tsx,js,jsx,less}\"",

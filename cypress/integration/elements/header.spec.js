@@ -13,10 +13,6 @@ describe('Header', () => {
     cy.contains('a', 'Nexus').should('have.attr', 'href', '');
   });
 
-  it('has the login link', () => {
-    cy.contains('a', 'login');
-  });
-
   it('contains the link to docs', () => {
     cy.contains('a', 'Documentation').should('have.attr', 'href', docLink);
   });
