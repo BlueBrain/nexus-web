@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import { Resource } from '@bbp/nexus-sdk';
-import { RootState } from '../store/reducers';
 import NexusPlugin from '../containers/NexusPlugin';
 import { matchPlugins } from '../utils';
 import usePlugins from '../hooks/usePlugins';
 import { Collapse } from 'antd';
 const { Panel } = Collapse;
+
+export type PluginMapping = {
+  [pluginKey: string]: object;
+};
 
 const ResourcePlugins: React.FunctionComponent<{
   resource?: Resource;
@@ -15,14 +17,23 @@ const ResourcePlugins: React.FunctionComponent<{
 }> = ({ resource, goToResource, empty = null }) => {
   const pluginManifest = usePlugins();
   const availablePlugins = Object.keys(pluginManifest || {});
-  const pluginMap = useSelector((state: RootState) => state.config.pluginsMap);
+  const pluginsMap = Object.keys(pluginManifest || {}).reduce(
+    (mapping, pluginManifestKey) => {
+      if (!pluginManifest) {
+        return mapping;
+      }
+      mapping[pluginManifestKey] = pluginManifest[pluginManifestKey].mapping;
+      return mapping;
+    },
+    {} as PluginMapping
+  );
 
   if (!resource) {
     return null;
   }
 
   const filteredPlugins =
-    pluginMap && matchPlugins(pluginMap, availablePlugins, resource);
+    pluginManifest && matchPlugins(pluginsMap, availablePlugins, resource);
 
   return filteredPlugins && filteredPlugins.length > 0 ? (
     <Collapse
