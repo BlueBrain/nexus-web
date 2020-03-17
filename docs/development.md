@@ -8,6 +8,7 @@
 ## Transpiler and Bundler
 
 Modern JavaScript based projects need two things:
+
 - a transpiler that converts code from one form to a specific ECMA compatible version
 - a bundler, that resolves module dependencies and create a single file for web browsers
 
@@ -33,7 +34,7 @@ You can can try it online using [Babel's playground](https://babeljs.io/en/repl)
 
 In our case, we are using TypeScript's transpiler, which will convert TypeScript (TS) code into JavaScript (JS).
 
-It will convert something like: 
+It will convert something like:
 
 ```typescript
 function add(a: number, b: number): number {
@@ -50,6 +51,7 @@ function add(a, b) {
 ```
 
 Using a transpiler gives you several benefits:
+
 - you can use the latest version of the language, with all the nice new syntax sugar
 - you can configure it, so you can target an even older browser just by tweaking settings
 - it does a static analysis of your code (with static type check in the case of TS) in order to prevent errors
@@ -67,7 +69,6 @@ In order to transpile our code, we are using TypeScript CLI interface:
 For web browsers, we need to stitch all of the modules into a single bundle. This is when a bundler, such as webpack, rollup, browserify comes in.
 
 It will transform something like:
-
 
 ```javascript
 // in src/maths.js
@@ -148,7 +149,7 @@ You start script would look like that:
 
 ### HMR
 
-On the client, traditionally we would take a similar approach with technologies such as *livereload* but we don't want to reload the page *every time* we have a new bundle. The reason for that is, bt reloading the page we loose the current context.
+On the client, traditionally we would take a similar approach with technologies such as _livereload_ but we don't want to reload the page _every time_ we have a new bundle. The reason for that is, bt reloading the page we loose the current context.
 
 If you are editing a popup for example, you after to click on the button that triggers the popup after each reload, or if you are editing step 4 of a form, you have to complete step 1/2/3 before reaching your changes. You can partially solve this by having a very strict stateless application (reload /form/step/2) and re-hydrate the state of your app but if a particular part of your app is dependent on fetching data first, you'll make async calls on each reload (and that data might not be stateless, which means side effects can break your logic).
 
@@ -207,3 +208,23 @@ We use [ts-lint]() with airbnb rules.
 ## Test
 
 We use [jest]() with [enzyme]() for shallow component rendering.
+
+### UI Testing
+
+UI tests are implemented with [Cypress]('https://www.cypress.io/').
+
+To launch Cypress window in order to test UI locally, run:
+
+```sh
+yarn test-ui
+```
+
+Make sure Nexus Web app is running locally and you use staging API, otherwise there won't be data available, and tests are likely to fail.
+
+To run in a headless mode, use the following command:
+
+```sh
+yarn run cypress run --headless --browser chrome
+```
+
+It will run all the test scripts.
