@@ -221,6 +221,7 @@ describe('utils functions', () => {
 
   describe('matchPlugins', () => {
     const plugins: string[] = ['plugin1', 'plugin2'];
+
     const resource: Resource = {
       '@context': 'test',
       '@type': ['type2', 'type1'],
@@ -300,6 +301,66 @@ describe('utils functions', () => {
         },
       };
       expect(matchPlugins(pluginsMap, plugins, resource)).toEqual([]);
+    });
+
+    it('matches a resource with multiple plugins', () => {
+      const plugins: string[] = ['morphology', 'morphology2'];
+      const pluginsMap = {
+        morphology: {
+          '@type': ['ReconstructedCell'],
+          distribution: [
+            {
+              encodingFormat: 'application/swc',
+            },
+          ],
+        },
+      };
+      const resource = {
+        '@context': [
+          'https://bbp.neuroshapes.org',
+          'https://bluebrain.github.io/nexus/contexts/resource.json',
+        ],
+        '@id':
+          'https://bbp.epfl.ch/neurosciencegraph/data/reconstructedcell/a9f73e3e-33c9-4f45-94a7-5d4f925afc57',
+        '@type': [
+          'Entity',
+          'InVitroSliceReconstructedPatchedNeuron',
+          'https://bbp-nexus.epfl.ch/vocabs/bbp/neurosciencegraph/core/v0.1.0/InVitroSliceReconstructedPatchedNeuron',
+          'ReconstructedPatchedCell',
+          'ReconstructedCell',
+          'https://bbp-nexus.epfl.ch/vocabs/bbp/neurosciencegraph/core/v0.1.0/ReconstructedPatchedCell',
+          'https://bbp-nexus.epfl.ch/vocabs/bbp/neurosciencegraph/core/v0.1.0/ReconstructedCell',
+          'Dataset',
+        ],
+        distribution: [
+          {
+            '@type': 'DataDownload',
+            contentSize: {
+              unitCode: 'bytes',
+              value: 245427,
+            },
+            contentUrl:
+              'https://bbp.epfl.ch/neurosciencegraph/data/a91043da-0527-4414-b7e8-3484d426c11f',
+            digest: {
+              algorithm: 'SHA-256',
+              value:
+                '02c666b5ba8ba806470f77f52b5b6b105662bc63f8b3f2da9a560af0bbc6fc07',
+            },
+            encodingFormat: 'application/swc',
+            name: 'file',
+          },
+          {
+            '@type': 'DataDownload',
+            contentUrl: 'http://microcircuits.epfl.ch/#/article/article_3_mph',
+            repository: {
+              '@id': 'http://microcircuits.epfl.ch/#/article/article_3_mph',
+            },
+          },
+        ],
+      };
+      expect(
+        matchPlugins(pluginsMap, plugins, resource as Resource<any>)
+      ).toEqual(['morphology']);
     });
   });
 });
