@@ -307,7 +307,7 @@ describe('utils functions', () => {
       const plugins: string[] = ['morphology', 'morphology2'];
       const pluginsMap = {
         morphology: {
-          // '@type': ['ReconstructedCell'],
+          '@type': ['ReconstructedCell'],
           distribution: [
             {
               encodingFormat: 'application/swc',
