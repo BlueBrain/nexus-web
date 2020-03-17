@@ -20,20 +20,6 @@ const rawBase: string = process.env.BASE_PATH || '';
 const pluginsManifestPath =
   process.env.PLUGINS_MANIFEST_PATH || '/public/plugins';
 
-const pluginsConfigPath =
-  process.env.PLUGINS_CONFIG_PATH ||
-  join(__dirname, '/public/plugins/plugins.config.json');
-
-const getpluginsConfig = () => {
-  let pluginsConfig;
-  try {
-    pluginsConfig = JSON.parse(readFileSync(pluginsConfigPath).toString());
-  } catch (e) {
-    console.error(e);
-  }
-  return pluginsConfig || {};
-};
-
 // remove trailing slash
 const base: string = rawBase.replace(/\/$/, '');
 // enable logs
@@ -68,8 +54,6 @@ app.get('*', async (req: express.Request, res: express.Response) => {
     auth: {},
     config: {
       pluginsManifestPath,
-
-      pluginsMap: getpluginsConfig(),
       apiEndpoint: process.env.API_ENDPOINT || '/',
       basePath: base,
       clientId: process.env.CLIENT_ID || 'nexus-web',

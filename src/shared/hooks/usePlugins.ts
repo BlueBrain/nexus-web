@@ -14,6 +14,7 @@ export type RemotePluginManifest = {
     tags: string[];
     author: string;
     license: string;
+    mapping: object;
   };
 };
 
