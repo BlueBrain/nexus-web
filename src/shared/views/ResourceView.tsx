@@ -1,5 +1,4 @@
 import * as React from 'react';
-import useMeasure from '../hooks/useMeasure';
 import ResourceViewContainer from '../containers/ResourceViewContainer';
 
 const ResourceView: React.FunctionComponent = props => {

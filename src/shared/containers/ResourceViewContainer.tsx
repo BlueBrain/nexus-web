@@ -242,9 +242,20 @@ const ResourceViewContainer: React.FunctionComponent<{
                   closable
                 />
               )}
+              <ResourcePlugins
+                resource={resource}
+                goToResource={goToSelfResource}
+                empty={
+                  <ResourceCardComponent
+                    resource={resource}
+                    preview={<ImagePreviewContainer resource={resource} />}
+                    schemaLink={SchemaLinkContainer}
+                  />
+                }
+              />
               <ResourceActionsContainer resource={resource} />
               <Collapse defaultActiveKey={[]} onChange={() => {}}>
-                <Panel header={'Admin plugins'} key="1">
+                <Panel header={'Admin'} key="1">
                   <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
                     <TabPane tab="JSON" key="#JSON">
                       <ResourceEditorContainer
@@ -324,17 +335,6 @@ const ResourceViewContainer: React.FunctionComponent<{
                   </Tabs>
                 </Panel>
               </Collapse>
-              <ResourcePlugins
-                resource={resource}
-                goToResource={goToSelfResource}
-                empty={
-                  <ResourceCardComponent
-                    resource={resource}
-                    preview={<ImagePreviewContainer resource={resource} />}
-                    schemaLink={SchemaLinkContainer}
-                  />
-                }
-              />
             </>
           )}
         </Spin>

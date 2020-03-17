@@ -87,7 +87,6 @@ docker build . --tag=nexus-web
 The following concern Plugins. [See how to manage plugin deployments](./docs/plugins.md)
 
 - `PLUGINS_MANIFEST_PATH`: Remote end point where plugins and manifest can be found. for example, `https://bbp-nexus.epfl.ch/plugins`
-- `PLUGINS_CONFIG_PATH`: A full file path where a plugins configuration can be found.
 
 ## Deployment
 

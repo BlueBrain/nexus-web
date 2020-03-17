@@ -9,7 +9,6 @@ export interface ConfigState {
   sentryDsn?: string;
   pluginsManifestPath: string;
   gtmCode?: string;
-  pluginsMap?: Object;
 }
 
 const initialState: ConfigState = {
