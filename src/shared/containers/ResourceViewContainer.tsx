@@ -3,7 +3,7 @@ import Helmet from 'react-helmet';
 import { useLocation, useHistory, useParams } from 'react-router';
 import { Spin, Card, Empty, Tabs, notification, Alert, Collapse } from 'antd';
 import * as queryString from 'query-string';
-import { useNexusContext } from '@bbp/react-nexus';
+import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { Resource, ResourceLink, IncomingLink } from '@bbp/nexus-sdk';
 import { getResourceLabel, getOrgAndProjectFromProjectId } from '../utils';
 import ResourceCardComponent from '../components/ResourceCard';
@@ -253,88 +253,95 @@ const ResourceViewContainer: React.FunctionComponent<{
                   />
                 }
               />
-              <ResourceActionsContainer resource={resource} />
-              <Collapse defaultActiveKey={[]} onChange={() => {}}>
-                <Panel header={'Admin'} key="1">
-                  <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
-                    <TabPane tab="JSON" key="#JSON">
-                      <ResourceEditorContainer
-                        resourceId={resource['@id']}
-                        orgLabel={orgLabel}
-                        projectLabel={projectLabel}
-                        rev={resource._rev}
-                        defaultExpanded={
-                          !!expandedFromQuery && expandedFromQuery === 'true'
-                        }
-                        defaultEditable={isLatest && !isDeprecated(resource)}
-                        onSubmit={handleEditFormSubmit}
-                        onExpanded={handleExpanded}
-                      />
-                    </TabPane>
-                    <TabPane tab="History" key="#history">
-                      <HistoryContainer
-                        resourceId={resource['@id']}
-                        orgLabel={orgLabel}
-                        projectLabel={projectLabel}
-                        latestRev={latestResource._rev}
-                        link={(rev: number) => {
-                          return (
-                            <a
-                              onClick={() => {
-                                goToResource(
-                                  orgLabel,
-                                  projectLabel,
-                                  resourceId,
-                                  {
-                                    revision: rev,
-                                  }
-                                );
-                              }}
-                            >
-                              Revision {rev}
-                            </a>
-                          );
-                        }}
-                      />
-                    </TabPane>
-                    <TabPane tab="Links" key="#links" className="rows">
-                      <section className="links incoming">
-                        <h3>Incoming</h3>
-                        <ResourceLinksContainer
+              <AccessControl
+                path={`/${orgLabel}/${projectLabel}`}
+                permissions={['resources/write']}
+              >
+                <Collapse defaultActiveKey={[]} onChange={() => {}}>
+                  <Panel header={'Admin'} key="1">
+                    <ResourceActionsContainer resource={resource} />
+                    <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
+                      <TabPane tab="JSON" key="#JSON">
+                        <ResourceEditorContainer
                           resourceId={resource['@id']}
                           orgLabel={orgLabel}
                           projectLabel={projectLabel}
                           rev={resource._rev}
-                          direction="incoming"
-                          onClick={handleGoToInternalLink}
+                          defaultExpanded={
+                            !!expandedFromQuery && expandedFromQuery === 'true'
+                          }
+                          defaultEditable={isLatest && !isDeprecated(resource)}
+                          onSubmit={handleEditFormSubmit}
+                          onExpanded={handleExpanded}
                         />
-                      </section>
-                      <section className="links outgoing">
-                        <h3>Outgoing</h3>
-                        <ResourceLinksContainer
+                      </TabPane>
+                      <TabPane tab="History" key="#history">
+                        <HistoryContainer
                           resourceId={resource['@id']}
                           orgLabel={orgLabel}
                           projectLabel={projectLabel}
-                          rev={resource._rev}
-                          direction="outgoing"
-                          onClick={handleGoToInternalLink}
+                          latestRev={latestResource._rev}
+                          link={(rev: number) => {
+                            return (
+                              <a
+                                onClick={() => {
+                                  goToResource(
+                                    orgLabel,
+                                    projectLabel,
+                                    resourceId,
+                                    {
+                                      revision: rev,
+                                    }
+                                  );
+                                }}
+                              >
+                                Revision {rev}
+                              </a>
+                            );
+                          }}
                         />
-                      </section>
-                    </TabPane>
-                    <TabPane tab="Graph" key="#graph" className="rows">
-                      <div className="graph-wrapper-container">
-                        <div className="fixed-minus-header">
-                          <div ref={ref} className="graph-wrapper">
-                            {resource ? (
-                              <GraphContainer resource={resource as Resource} />
-                            ) : null}
+                      </TabPane>
+                      <TabPane tab="Links" key="#links" className="rows">
+                        <section className="links incoming">
+                          <h3>Incoming</h3>
+                          <ResourceLinksContainer
+                            resourceId={resource['@id']}
+                            orgLabel={orgLabel}
+                            projectLabel={projectLabel}
+                            rev={resource._rev}
+                            direction="incoming"
+                            onClick={handleGoToInternalLink}
+                          />
+                        </section>
+                        <section className="links outgoing">
+                          <h3>Outgoing</h3>
+                          <ResourceLinksContainer
+                            resourceId={resource['@id']}
+                            orgLabel={orgLabel}
+                            projectLabel={projectLabel}
+                            rev={resource._rev}
+                            direction="outgoing"
+                            onClick={handleGoToInternalLink}
+                          />
+                        </section>
+                      </TabPane>
+                      <TabPane tab="Graph" key="#graph" className="rows">
+                        <div className="graph-wrapper-container">
+                          <div className="fixed-minus-header">
+                            <div ref={ref} className="graph-wrapper">
+                              {resource ? (
+                                <GraphContainer
+                                  resource={resource as Resource}
+                                />
+                              ) : null}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </TabPane>
-                  </Tabs>
-                </Panel>
-              </Collapse>
+                      </TabPane>
+                    </Tabs>
+                  </Panel>
+                </Collapse>
+              </AccessControl>
             </>
           )}
         </Spin>
