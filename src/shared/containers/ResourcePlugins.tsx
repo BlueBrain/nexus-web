@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
-import NexusPlugin from '../containers/NexusPlugin';
+import { Collapse } from 'antd';
+import { useNexusContext } from '@bbp/react-nexus';
+import { NexusPlugin } from '../containers/NexusPlugin';
 import { matchPlugins } from '../utils';
 import usePlugins from '../hooks/usePlugins';
-import { Collapse } from 'antd';
+
 const { Panel } = Collapse;
 
 export type PluginMapping = {
@@ -15,7 +17,8 @@ const ResourcePlugins: React.FunctionComponent<{
   goToResource?: (selfURL: string) => void;
   empty?: React.ReactElement;
 }> = ({ resource, goToResource, empty = null }) => {
-  const pluginManifest = usePlugins();
+  const nexus = useNexusContext();
+  const { data: pluginManifest } = usePlugins();
   const availablePlugins = Object.keys(pluginManifest || {});
   const pluginsMap = Object.keys(pluginManifest || {}).reduce(
     (mapping, pluginManifestKey) => {
@@ -42,20 +45,25 @@ const ResourcePlugins: React.FunctionComponent<{
       )}
       onChange={() => {}}
     >
-      {filteredPlugins.map((pluginName, index) => (
-        <Panel
-          header={pluginManifest && pluginManifest[pluginName].name}
-          key={(index + 1).toString()}
-        >
-          <div className="resource-plugin" key={`plugin-${pluginName}`}>
-            <NexusPlugin
-              pluginName={pluginName}
-              resource={resource}
-              goToResource={goToResource}
-            />
-          </div>
-        </Panel>
-      ))}
+      {filteredPlugins.map((pluginName, index) => {
+        const pluginData = pluginManifest && pluginManifest[pluginName];
+        return pluginData ? (
+          <Panel
+            header={pluginManifest && pluginManifest[pluginName].name}
+            key={(index + 1).toString()}
+          >
+            <div className="resource-plugin" key={`plugin-${pluginName}`}>
+              <NexusPlugin
+                nexusClient={nexus}
+                url={pluginData.absoluteModulePath}
+                pluginName={pluginName}
+                resource={resource}
+                goToResource={goToResource}
+              />
+            </div>
+          </Panel>
+        ) : null;
+      })}
     </Collapse>
   ) : (
     empty
