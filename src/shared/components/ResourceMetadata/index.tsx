@@ -13,12 +13,7 @@ const ResourceMetada: React.FC<{
   }>;
 }> = ({ resource, schemaLink = SchemaLink }) => {
   console.log('resource', resource);
-  const {
-    _constrainedBy: constrainedBy,
-    _createdBy,
-    _createdAt,
-    _rev,
-  } = resource;
+  const { _createdBy, _createdAt, _rev } = resource;
   const userName = getUsername(_createdBy);
 
   return (

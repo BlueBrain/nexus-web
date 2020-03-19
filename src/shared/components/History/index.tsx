@@ -48,7 +48,7 @@ const HistoryComponent: React.FunctionComponent<{
                 {revision.hasChanges ? (
                   <Card>{JSON.stringify(revision.changes, null, 2)}</Card>
                 ) : (
-                  'No meaningful changes'
+                  'No changes'
                 )}
               </div>
             </div>

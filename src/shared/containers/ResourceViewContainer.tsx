@@ -246,14 +246,13 @@ const ResourceViewContainer: React.FunctionComponent<{
               <ResourcePlugins
                 resource={resource}
                 goToResource={goToSelfResource}
-                empty={<h1>test</h1>}
               />
               <AccessControl
                 path={`/${orgLabel}/${projectLabel}`}
                 permissions={['resources/write']}
               >
                 <Collapse defaultActiveKey={[]} onChange={() => {}}>
-                  <Panel header={'Admin'} key="1">
+                  <Panel header={<h3>Admin</h3>} key="1">
                     <ResourceActionsContainer resource={resource} />
                     <ResourceMetadata
                       resource={resource}
