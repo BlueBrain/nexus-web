@@ -9,7 +9,7 @@ import { getResourceLabel, getOrgAndProjectFromProjectId } from '../utils';
 import ResourceCardComponent from '../components/ResourceCard';
 import HistoryContainer from '../containers/HistoryContainer';
 import ResourceLinksContainer from '../containers/ResourceLinks';
-import ResourceActionsContainer from '../containers/ResourceActions';
+import ResourceActionsContainer from '../containers/ResourceActionsContainer';
 import { isDeprecated } from '../utils/nexusMaybe';
 import ResourceEditorContainer from '../containers/ResourceEditor';
 import ImagePreviewContainer from '../containers/ImagePreviewContainer';

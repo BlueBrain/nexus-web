@@ -17,11 +17,7 @@ const ResourceMetada: React.FC<{
     _constrainedBy: constrainedBy,
     _createdBy,
     _createdAt,
-    _updatedAt: updatedAt,
     _rev,
-    _self: self,
-    '@type': type,
-    '@id': id,
   } = resource;
   const userName = getUsername(_createdBy);
 
