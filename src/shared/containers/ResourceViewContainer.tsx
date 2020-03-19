@@ -18,6 +18,7 @@ import HomeIcon from '../components/HomeIcon';
 import GraphContainer from '../containers/GraphContainer';
 import useMeasure from '../hooks/useMeasure';
 import ResourcePlugins from './ResourcePlugins';
+import ResourceMetadata from '../components/ResourceMetadata';
 
 const { Panel } = Collapse;
 const TabPane = Tabs.TabPane;
@@ -245,13 +246,7 @@ const ResourceViewContainer: React.FunctionComponent<{
               <ResourcePlugins
                 resource={resource}
                 goToResource={goToSelfResource}
-                empty={
-                  <ResourceCardComponent
-                    resource={resource}
-                    preview={<ImagePreviewContainer resource={resource} />}
-                    schemaLink={SchemaLinkContainer}
-                  />
-                }
+                empty={<h1>test</h1>}
               />
               <AccessControl
                 path={`/${orgLabel}/${projectLabel}`}
@@ -260,6 +255,10 @@ const ResourceViewContainer: React.FunctionComponent<{
                 <Collapse defaultActiveKey={[]} onChange={() => {}}>
                   <Panel header={'Admin'} key="1">
                     <ResourceActionsContainer resource={resource} />
+                    <ResourceMetadata
+                      resource={resource}
+                      schemaLink={SchemaLinkContainer}
+                    />
                     <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
                       <TabPane tab="JSON" key="#JSON">
                         <ResourceEditorContainer
