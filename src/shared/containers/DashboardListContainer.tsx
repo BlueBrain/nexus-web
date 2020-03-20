@@ -39,6 +39,10 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     number
   >(0);
   const [
+    selectedDashboardResourcesIndex,
+    setSelectedDashboardResourcesIndex,
+  ] = React.useState<number>(0);
+  const [
     editingDashboard,
     setEditingDashboard,
   ] = React.useState<Resource | null>(null);
@@ -46,8 +50,12 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   const nexus = useNexusContext();
 
   const selectDashboard = (dashboardIndex: number) => {
-    setSelectedDashboardIndex(dashboardIndex);
     const dashboard = dashboardResources[dashboardIndex];
+    const dashboardId = dashboard['@id'];
+    const Index = dashboards.findIndex(d => d.dashboard === dashboardId);
+    setSelectedDashboardResourcesIndex(dashboardIndex);
+    setSelectedDashboardIndex(Index);
+
     const id = dashboard['@id'];
     setQueryString({
       ...queryParams,
@@ -73,25 +81,28 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
       })
     )
       .then(values => {
-        setDashboardResources(
-          values.sort(({ label: a }, { label: b }) => {
-            if (a < b) {
-              return -1;
-            }
-            if (a > b) {
-              return 1;
-            }
-            return 0;
-          })
-        );
+        const sorterValues = values.sort(({ label: a }, { label: b }) => {
+          if (a < b) {
+            return -1;
+          }
+          if (a > b) {
+            return 1;
+          }
+          return 0;
+        });
+        setDashboardResources(sorterValues);
         if (
           dashboardId &&
-          values[selectedDashboardIndex]['@id'] !== dashboardId
+          sorterValues[selectedDashboardIndex]['@id'] !== dashboardId
         ) {
           const selectedDashboardIndex = dashboards.findIndex(
             d => d.dashboard === dashboardId
           );
+          const selectedDashboardResourcesIndex = sorterValues.findIndex(
+            d => d['@id'] === dashboardId
+          );
           setSelectedDashboardIndex(selectedDashboardIndex);
+          setSelectedDashboardResourcesIndex(selectedDashboardResourcesIndex);
         }
       })
       .catch(e => {
@@ -172,12 +183,13 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
           selectDashboard(Number(stringiedIndex));
         }}
         position="left"
-        activeKey={`${selectedDashboardIndex}`}
+        activeKey={`${selectedDashboardResourcesIndex}`}
         tabAction={resourcesWritePermissionsWrapper(tabAction, permissionsPath)}
         editButton={editButtonWrapper}
       >
+        {selectedDashboardResourcesIndex}
         {!!dashboardResources.length &&
-          !!dashboardResources[selectedDashboardIndex] && (
+          !!dashboardResources[selectedDashboardResourcesIndex] && (
             <DashboardResultsContainer
               orgLabel={orgLabel}
               projectLabel={projectLabel}
@@ -186,7 +198,9 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
                   dashboards[selectedDashboardIndex].view) ||
                 DEFAULT_SPARQL_VIEW_ID
               }
-              dataQuery={dashboardResources[selectedDashboardIndex].dataQuery}
+              dataQuery={
+                dashboardResources[selectedDashboardResourcesIndex].dataQuery
+              }
             />
           )}
       </TabList>
