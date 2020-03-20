@@ -189,7 +189,6 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         tabAction={resourcesWritePermissionsWrapper(tabAction, permissionsPath)}
         editButton={editButtonWrapper}
       >
-        {selectedDashboardResourcesIndex}
         {!!dashboardResources.length &&
           !!dashboardResources[selectedDashboardResourcesIndex] && (
             <DashboardResultsContainer
