@@ -251,7 +251,7 @@ const ResourceViewContainer: React.FunctionComponent<{
                 path={`/${orgLabel}/${projectLabel}`}
                 permissions={['resources/write']}
               >
-                <Collapse defaultActiveKey={[]} onChange={() => {}}>
+                <Collapse defaultActiveKey="1" onChange={() => {}}>
                   <Panel header={<h3>Admin</h3>} key="1">
                     <ResourceActionsContainer resource={resource} />
                     <ResourceMetadata
