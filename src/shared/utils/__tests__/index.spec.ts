@@ -11,6 +11,7 @@ import {
   matchResultUrls,
   isISODate,
   matchPlugins,
+  pluginsMap,
 } from '..';
 
 const identities: Identity[] = [
@@ -361,6 +362,39 @@ describe('utils functions', () => {
       expect(
         matchPlugins(pluginsMap, plugins, resource as Resource<any>)
       ).toEqual(['morphology']);
+    });
+
+    it('returns plugin mappings array from manifest', () => {
+      const manifest = {
+        'sim-writer-config': {
+          modulePath: 'sim-writer-config.66e2aa60be278e26091a.js',
+          name: 'Sim writer config',
+          description: '',
+          version: '',
+          tags: [],
+          author: '',
+          license: '',
+          mapping: {
+            '@type': ['SimWriterConfiguration'],
+          },
+        },
+        'simulation-campaign': {
+          modulePath: 'simulation-campaign.11f235ae73390d34a43b.js',
+          name: 'Simulation campaign',
+          description: '',
+          version: '',
+          tags: [],
+          author: '',
+          license: '',
+          mapping: {
+            '@type': ['SimulationCampaign'],
+          },
+        },
+      };
+      expect(pluginsMap(manifest)).toEqual({
+        'sim-writer-config': { '@type': ['SimWriterConfiguration'] },
+        'simulation-campaign': { '@type': ['SimulationCampaign'] },
+      });
     });
   });
 });
