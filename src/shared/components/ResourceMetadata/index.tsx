@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as moment from 'moment';
 import { Resource } from '@bbp/nexus-sdk';
+
 import SchemaLink from '../SchemaLink';
 import { getUsername } from '../../utils';
 
@@ -12,7 +13,6 @@ const ResourceMetada: React.FC<{
     resource: Resource;
   }>;
 }> = ({ resource, schemaLink = SchemaLink }) => {
-  console.log('resource', resource);
   const { _createdBy, _createdAt, _rev } = resource;
   const userName = getUsername(_createdBy);
 
