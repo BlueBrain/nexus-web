@@ -83,7 +83,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
       })
     )
       .then(values => {
-        const sorterValues = values.sort(({ label: a }, { label: b }) => {
+        const sortedValues = values.sort(({ label: a }, { label: b }) => {
           if (a < b) {
             return -1;
           }
@@ -92,15 +92,15 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
           }
           return 0;
         });
-        setDashboardResources(sorterValues);
+        setDashboardResources(sortedValues);
         if (
           dashboardId &&
-          sorterValues[selectedDashboardIndex]['@id'] !== dashboardId
+          sortedValues[selectedDashboardIndex]['@id'] !== dashboardId
         ) {
           const selectedDashboardIndex = dashboards.findIndex(
             d => d.dashboard === dashboardId
           );
-          const selectedDashboardResourcesIndex = sorterValues.findIndex(
+          const selectedDashboardResourcesIndex = sortedValues.findIndex(
             d => d['@id'] === dashboardId
           );
           setSelectedDashboardIndex(selectedDashboardIndex);
