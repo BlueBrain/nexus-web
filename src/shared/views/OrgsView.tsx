@@ -1,16 +1,14 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { useHistory, useLocation } from 'react-router';
 import { push } from 'connected-react-router';
-import { Button, Modal, Drawer, notification, message } from 'antd';
-import { OrgResponseCommon, Resource } from '@bbp/nexus-sdk';
+import { Button, Modal, Drawer, notification } from 'antd';
+import { OrgResponseCommon } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 
 import OrgList from '../containers/OrgList';
 import OrgForm from '../components/Orgs/OrgForm';
 import OrgItem from '../components/Orgs/OrgItem';
 import ListItem from '../components/List/Item';
-import { parseProjectUrl } from '../utils';
 
 type NewOrg = {
   label: string;
