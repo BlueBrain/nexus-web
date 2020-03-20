@@ -4,7 +4,7 @@ import { useLocation, useHistory, useParams } from 'react-router';
 import { Spin, Card, Empty, Tabs, notification, Alert, Collapse } from 'antd';
 import * as queryString from 'query-string';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { Resource, ResourceLink, IncomingLink } from '@bbp/nexus-sdk';
+import { Resource, ResourceLink, IncomingLink, Identity } from '@bbp/nexus-sdk';
 import { getResourceLabel, getOrgAndProjectFromProjectId } from '../utils';
 import ResourceCardComponent from '../components/ResourceCard';
 import HistoryContainer from '../containers/HistoryContainer';
@@ -85,6 +85,14 @@ const ResourceViewContainer: React.FunctionComponent<{
       tab: activeTabKey,
     });
   };
+
+  const [identities, setIdentities] = React.useState<Identity[]>([]);
+
+  React.useEffect(() => {
+    nexus.Identity.list().then(({ identities }) => {
+      setIdentities(identities);
+    });
+  }, []); // Run only once.
 
   const handleExpanded = (expanded: boolean) => {
     goToResource(orgLabel, projectLabel, resourceId, {
@@ -181,10 +189,28 @@ const ResourceViewContainer: React.FunctionComponent<{
         setLatestResource(latestResource);
       })
       .catch(error => {
-        // error
+        if (error['@type'] === 'AuthorizationFailed') {
+          const user = identities.find(i => i['@type'] === 'User');
+          const message = user
+            ? "You don't have the permissions to view the resource"
+            : 'Please login to view the resource';
+          notification.error({
+            message: 'Authentication error',
+            description: message,
+            duration: 4,
+          });
+          if (!user) {
+            const destination = location.pathname;
+            history.push(
+              `/login?destination=${encodeURIComponent(destination)}`
+            );
+          }
+        }
+
+        const jsError = new Error(error.reason);
         setResource({
-          error,
           resource,
+          error: jsError,
           busy: false,
         });
       });
@@ -209,9 +235,7 @@ const ResourceViewContainer: React.FunctionComponent<{
         <Spin spinning={busy}>
           {!!error && (
             <Card>
-              <Empty
-                description={'There was a problem loading this resource...'}
-              />
+              <Empty description={error.message} />
             </Card>
           )}
           {!!resource && !!latestResource && !error && (
