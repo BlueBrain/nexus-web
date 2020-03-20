@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { notification } from 'antd';
+import { Button, Tooltip, notification } from 'antd';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import { Resource } from '@bbp/nexus-sdk';
@@ -14,10 +14,9 @@ import {
   not,
   isDefaultElasticView,
   isDeprecated,
-  isView,
-  isCompositeView,
   toPromise,
 } from '../utils/nexusMaybe';
+import Copy from '../components/Copy';
 
 const ResourceActionsContainer: React.FunctionComponent<{
   resource: Resource;
@@ -36,13 +35,14 @@ const ResourceActionsContainer: React.FunctionComponent<{
 }> = ({ resource, goToView, goToResource }) => {
   const { orgLabel, projectLabel } = getOrgAndProjectFromResource(resource);
   const resourceId = resource['@id'];
+  const self = resource._self;
   const nexus = useNexusContext();
 
   const isLatestResource = async (resource: Resource) => {
     // TODO: remove this if / when
     // https://github.com/BlueBrain/nexus/issues/898 is implemented
     const latest = await nexus.httpGet({
-      path: resource._self,
+      path: self,
       headers: {
         Accept: 'application/json', // just in case it's a file
       },
@@ -91,15 +91,6 @@ const ResourceActionsContainer: React.FunctionComponent<{
       shortTitle: 'Deprecate',
       icon: 'delete',
       danger: true,
-    },
-    {
-      name: 'goToView',
-      predicate: async (resource: Resource) => {
-        return !isCompositeView(resource) && isView(resource);
-      },
-      title: 'Query this view',
-      shortTitle: 'Query',
-      icon: 'search',
     },
     {
       name: 'downloadFile',
@@ -171,17 +162,52 @@ const ResourceActionsContainer: React.FunctionComponent<{
   };
 
   return (
-    <ResourceActions
-      resource={resource}
-      actions={actions}
-      actionTypes={actionTypes}
-    >
+    <div className="resource-actions-container">
+      <div className="resource-actions">
+        <Copy
+          textToCopy={resourceId}
+          render={(copySuccess, triggerCopy) => (
+            <Tooltip title={copySuccess ? 'Copied!' : `Copy ${resourceId}`}>
+              <Button
+                onClick={(e: React.MouseEvent) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  triggerCopy();
+                }}
+              >
+                Copy ID
+              </Button>
+            </Tooltip>
+          )}
+        />{' '}
+        <Copy
+          textToCopy={self}
+          render={(copySuccess, triggerCopy) => (
+            <Tooltip title={copySuccess ? 'Copied!' : `Copy ${self}`}>
+              <Button
+                onClick={(e: React.MouseEvent) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  triggerCopy();
+                }}
+              >
+                Copy Nexus Address
+              </Button>
+            </Tooltip>
+          )}
+        />
+        <ResourceActions
+          resource={resource}
+          actions={actions}
+          actionTypes={actionTypes}
+        />
+      </div>
       <ResourceDownloadButton
         orgLabel={orgLabel}
         projectLabel={projectLabel}
         resourceId={encodeURIComponent(resourceId)}
       />
-    </ResourceActions>
+    </div>
   );
 };
 
