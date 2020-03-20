@@ -389,7 +389,7 @@ export type PluginMapping = {
 };
 
 /*
- * Returns plugin mapping
+ * Returns plugins mappings
  *
  * @param {object} plugin Manifest
  * @returns {array} plugins

@@ -8,10 +8,6 @@ import usePlugins from '../hooks/usePlugins';
 
 const { Panel } = Collapse;
 
-export type PluginMapping = {
-  [pluginKey: string]: object;
-};
-
 const ResourcePlugins: React.FunctionComponent<{
   resource?: Resource;
   goToResource?: (selfURL: string) => void;
