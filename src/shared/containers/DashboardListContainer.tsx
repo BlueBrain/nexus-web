@@ -49,12 +49,14 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   const [showEditModal, setShowEditModal] = React.useState(false);
   const nexus = useNexusContext();
 
-  const selectDashboard = (dashboardIndex: number) => {
-    const dashboard = dashboardResources[dashboardIndex];
+  const selectDashboard = (dashboardResourcesIndex: number) => {
+    const dashboard = dashboardResources[dashboardResourcesIndex];
     const dashboardId = dashboard['@id'];
-    const Index = dashboards.findIndex(d => d.dashboard === dashboardId);
-    setSelectedDashboardResourcesIndex(dashboardIndex);
-    setSelectedDashboardIndex(Index);
+    const dashboardsIndex = dashboards.findIndex(
+      d => d.dashboard === dashboardId
+    );
+    setSelectedDashboardResourcesIndex(dashboardResourcesIndex);
+    setSelectedDashboardIndex(dashboardsIndex);
 
     const id = dashboard['@id'];
     setQueryString({
