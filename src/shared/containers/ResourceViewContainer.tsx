@@ -5,19 +5,29 @@ import { Spin, Card, Empty, Tabs, notification, Alert, Collapse } from 'antd';
 import * as queryString from 'query-string';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { Resource, ResourceLink, IncomingLink, Identity } from '@bbp/nexus-sdk';
-import { getResourceLabel, getOrgAndProjectFromProjectId } from '../utils';
 import ResourceCardComponent from '../components/ResourceCard';
 import HistoryContainer from '../containers/HistoryContainer';
 import ResourceLinksContainer from '../containers/ResourceLinks';
-import ResourceActionsContainer from '../containers/ResourceActions';
-import { isDeprecated } from '../utils/nexusMaybe';
+import ResourceActionsContainer from '../containers/ResourceActionsContainer';
 import ResourceEditorContainer from '../containers/ResourceEditor';
-import ImagePreviewContainer from '../containers/ImagePreviewContainer';
 import SchemaLinkContainer from '../containers/SchemaLink';
-import HomeIcon from '../components/HomeIcon';
 import GraphContainer from '../containers/GraphContainer';
-import useMeasure from '../hooks/useMeasure';
+import HomeIcon from '../components/HomeIcon';
+import ResourceMetadata from '../components/ResourceMetadata';
 import ResourcePlugins from './ResourcePlugins';
+import usePlugins from '../hooks/usePlugins';
+import useMeasure from '../hooks/useMeasure';
+import {
+  getResourceLabel,
+  getOrgAndProjectFromProjectId,
+  matchPlugins,
+  pluginsMap,
+} from '../utils';
+import { isDeprecated } from '../utils/nexusMaybe';
+
+export type PluginMapping = {
+  [pluginKey: string]: object;
+};
 
 const { Panel } = Collapse;
 const TabPane = Tabs.TabPane;
@@ -34,6 +44,10 @@ const ResourceViewContainer: React.FunctionComponent<{
   const nexus = useNexusContext();
   const location = useLocation();
   const history = useHistory();
+  const [{ ref }] = useMeasure();
+  const { data: pluginManifest } = usePlugins();
+  const availablePlugins = Object.keys(pluginManifest || {});
+
   const goToResource = (
     orgLabel: string,
     projectLabel: string,
@@ -50,18 +64,22 @@ const ResourceViewContainer: React.FunctionComponent<{
     }${expanded ? '&expanded=true' : ''}${tab ? tab : ''}`;
     history.push(pushRoute, location.state);
   };
+
   const goToSelfResource = (selfUrl: string) => {
     history.push(`/?_self=${selfUrl}`, location.state);
   };
+
   const goToProject = (orgLabel: string, projectLabel: string) =>
     history.push(`/${orgLabel}/${projectLabel}`, location.state);
+
   const goToOrg = (orgLabel: string) =>
     history.push(`/${orgLabel}`, location.state);
+
   const { expanded: expandedFromQuery, rev } = queryString.parse(
     location.search
   );
+
   const activeTabKey = location.hash || DEFAULT_ACTIVE_TAB_KEY;
-  const [{ ref }] = useMeasure();
 
   const [{ busy, resource, error }, setResource] = React.useState<{
     busy: boolean;
@@ -78,6 +96,11 @@ const ResourceViewContainer: React.FunctionComponent<{
 
   const isLatest =
     (latestResource && latestResource._rev) === (resource && resource._rev);
+
+  const filteredPlugins =
+    resource &&
+    pluginManifest &&
+    matchPlugins(pluginsMap(pluginManifest), availablePlugins, resource);
 
   const handleTabChange = (activeTabKey: string) => {
     goToResource(orgLabel, projectLabel, resourceId, {
@@ -266,24 +289,28 @@ const ResourceViewContainer: React.FunctionComponent<{
                   closable
                 />
               )}
-              <ResourcePlugins
-                resource={resource}
-                goToResource={goToSelfResource}
-                empty={
-                  <ResourceCardComponent
-                    resource={resource}
-                    preview={<ImagePreviewContainer resource={resource} />}
-                    schemaLink={SchemaLinkContainer}
-                  />
-                }
-              />
+              {filteredPlugins && filteredPlugins.length > 0 && (
+                <ResourcePlugins
+                  resource={resource}
+                  goToResource={goToSelfResource}
+                />
+              )}
               <AccessControl
                 path={`/${orgLabel}/${projectLabel}`}
                 permissions={['resources/write']}
               >
-                <Collapse defaultActiveKey={[]} onChange={() => {}}>
-                  <Panel header={'Admin'} key="1">
+                <Collapse
+                  defaultActiveKey={
+                    filteredPlugins && filteredPlugins.length > 0 ? [] : 1
+                  }
+                  onChange={() => {}}
+                >
+                  <Panel header={<h3>Admin</h3>} key="1">
                     <ResourceActionsContainer resource={resource} />
+                    <ResourceMetadata
+                      resource={resource}
+                      schemaLink={SchemaLinkContainer}
+                    />
                     <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
                       <TabPane tab="JSON" key="#JSON">
                         <ResourceEditorContainer

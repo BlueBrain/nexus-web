@@ -383,3 +383,22 @@ export const matchPlugins = (
   });
   return newPlugins;
 };
+
+export type PluginMapping = {
+  [pluginKey: string]: object;
+};
+
+/*
+ * Returns plugins mappings
+ *
+ * @param {object} plugin Manifest
+ * @returns {array} plugins
+ */
+export const pluginsMap = (pluginManifest: any) =>
+  Object.keys(pluginManifest || {}).reduce((mapping, pluginManifestKey) => {
+    if (!pluginManifest) {
+      return mapping;
+    }
+    mapping[pluginManifestKey] = pluginManifest[pluginManifestKey].mapping;
+    return mapping;
+  }, {} as PluginMapping);
