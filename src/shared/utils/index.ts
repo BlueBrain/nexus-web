@@ -357,7 +357,12 @@ export const matchPlugins = (
 ) => {
   const customizer: isMatchWithCustomizer = (value: any, other: any) => {
     if (Array.isArray(other) && !Array.isArray(value)) {
-      return other.length === 1 && isMatch(value, other[0]);
+      for (let i = 0; i < other.length; i += 1) {
+        if (isMatch(value, other[i])) {
+          return true;
+        }
+      }
+      return false;
     }
 
     // return true if any object in value array match any object in
