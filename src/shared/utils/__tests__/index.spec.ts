@@ -402,7 +402,7 @@ describe('utils functions', () => {
       const pluginsMap = {
         imagePlugin: {
           '@type': 'File',
-          _mediaType: ['image/png', 'image/jpeg'],
+          _mediaType: ['image//*'],
         },
       };
       const resource = {
@@ -417,7 +417,7 @@ describe('utils functions', () => {
           _algorithm: 'SHA-256',
         },
         _filename: 'P14-12n30.jpg',
-        _mediaType: 'image/jpeg',
+        _mediaType: 'image/png',
         _storage: {
           '@id': 'nxv:diskStorageDefault',
           _rev: 1,

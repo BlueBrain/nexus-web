@@ -356,9 +356,16 @@ export const matchPlugins = (
   resource: Resource
 ) => {
   const customizer: isMatchWithCustomizer = (value: any, other: any) => {
+    // return true if  value  match any object in
+    // other array.
     if (Array.isArray(other) && !Array.isArray(value)) {
       for (let i = 0; i < other.length; i += 1) {
-        if (isMatch(value, other[i])) {
+        if (typeof other[i] === 'string' && typeof value === 'string') {
+          const regex = new RegExp(other[i]);
+          if (regex.test(value)) {
+            return true;
+          }
+        } else if (isMatch(value, other[i])) {
           return true;
         }
       }
@@ -370,7 +377,12 @@ export const matchPlugins = (
     if (Array.isArray(other) && Array.isArray(value)) {
       for (let i = 0; i < value.length; i += 1) {
         for (let j = 0; j < other.length; j += 1) {
-          if (isMatch(value[i], other[j])) {
+          if (typeof other[j] === 'string' && typeof value[i] === 'string') {
+            const regex = new RegExp(other[j]);
+            if (regex.test(value[i])) {
+              return true;
+            }
+          } else if (isMatch(value[i], other[j])) {
             return true;
           }
         }
