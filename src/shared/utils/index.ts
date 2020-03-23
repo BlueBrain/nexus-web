@@ -355,39 +355,42 @@ export const matchPlugins = (
   plugins: string[],
   resource: Resource
 ) => {
+  const matchValueWithArrays = (value: any, other: any[]) => {
+    const found =
+      typeof value === 'string'
+        ? other.some(o => {
+            if (typeof o === 'string') {
+              const regex = new RegExp(o);
+              return regex.test(value);
+            }
+            return false;
+          })
+        : other.some(o => {
+            return isMatch(value, o);
+          });
+    return found;
+  };
+
+  const matchArrays = (value: any[], other: any[]) => {
+    for (let i = 0; i < value.length; i += 1) {
+      if (matchValueWithArrays(value[i], other)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   const customizer: isMatchWithCustomizer = (value: any, other: any) => {
     // return true if  value  match any object in
     // other array.
     if (Array.isArray(other) && !Array.isArray(value)) {
-      for (let i = 0; i < other.length; i += 1) {
-        if (typeof other[i] === 'string' && typeof value === 'string') {
-          const regex = new RegExp(other[i]);
-          if (regex.test(value)) {
-            return true;
-          }
-        } else if (isMatch(value, other[i])) {
-          return true;
-        }
-      }
-      return false;
+      return matchValueWithArrays(value, other);
     }
 
     // return true if any object in value array match any object in
     // other array.
     if (Array.isArray(other) && Array.isArray(value)) {
-      for (let i = 0; i < value.length; i += 1) {
-        for (let j = 0; j < other.length; j += 1) {
-          if (typeof other[j] === 'string' && typeof value[i] === 'string') {
-            const regex = new RegExp(other[j]);
-            if (regex.test(value[i])) {
-              return true;
-            }
-          } else if (isMatch(value[i], other[j])) {
-            return true;
-          }
-        }
-      }
-      return false;
+      return matchArrays(value, other);
     }
     return isMatch(value, other);
   };
