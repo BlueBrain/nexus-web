@@ -402,7 +402,7 @@ describe('utils functions', () => {
       const pluginsMap = {
         imagePlugin: {
           '@type': 'File',
-          _mediaType: ['image//*'],
+          _mediaType: ['image/png', 'image/jpeg'],
         },
       };
       const resource = {
@@ -417,7 +417,7 @@ describe('utils functions', () => {
           _algorithm: 'SHA-256',
         },
         _filename: 'P14-12n30.jpg',
-        _mediaType: 'image/png',
+        _mediaType: 'image/jpeg',
         _storage: {
           '@id': 'nxv:diskStorageDefault',
           _rev: 1,
@@ -441,6 +441,51 @@ describe('utils functions', () => {
       expect(
         matchPlugins(pluginsMap, plugins, resource as Resource<any>)
       ).toEqual(['imagePlugin']);
+    });
+    it('matches a resource with using regex matching', () => {
+      const plugins: string[] = ['regexPlugin'];
+      const pluginsMap = {
+        regexPlugin: {
+          '@type': 'File',
+          _filename: ['P14-/*'],
+        },
+      };
+      const resource = {
+        '@context': 'https://bluebrain.github.io/nexus/contexts/resource.json',
+        '@id':
+          'https://bbp.epfl.ch/neurosciencegraph/data/f53c7f5e-ce6d-4211-ad75-cf524de4e57c',
+        '@type': 'File',
+        _bytes: 203534,
+        _digest: {
+          _value:
+            '236ba60cda6dfa3cf7a33fdd82b814ebf68f46650c3c9689e8ad4eb7eca2e810',
+          _algorithm: 'SHA-256',
+        },
+        _filename: 'P14-12n30.jpg',
+        _mediaType: 'image/jpeg',
+        _storage: {
+          '@id': 'nxv:diskStorageDefault',
+          _rev: 1,
+        },
+        _self:
+          'https://bbp.epfl.ch/nexus/v1/files/bbp/somatosensorycortex/f53c7f5e-ce6d-4211-ad75-cf524de4e57c',
+        _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/file.json',
+        _project:
+          'https://bbp.epfl.ch/nexus/v1/projects/bbp/somatosensorycortex',
+        _rev: 1,
+        _deprecated: false,
+        _createdAt: '2019-09-26T09:49:56.981669Z',
+        _createdBy: 'https://bbp.epfl.ch/nexus/v1/realms/bbp/users/kenny',
+        _updatedAt: '2019-09-26T09:49:56.981669Z',
+        _updatedBy: 'https://bbp.epfl.ch/nexus/v1/realms/bbp/users/kenny',
+        _incoming:
+          'https://bbp.epfl.ch/nexus/v1/files/bbp/somatosensorycortex/f53c7f5e-ce6d-4211-ad75-cf524de4e57c/incoming',
+        _outgoing:
+          'https://bbp.epfl.ch/nexus/v1/files/bbp/somatosensorycortex/f53c7f5e-ce6d-4211-ad75-cf524de4e57c/outgoing',
+      };
+      expect(
+        matchPlugins(pluginsMap, plugins, resource as Resource<any>)
+      ).toEqual(['regexPlugin']);
     });
   });
 });
