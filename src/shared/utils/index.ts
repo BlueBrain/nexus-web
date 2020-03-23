@@ -355,25 +355,23 @@ export const matchPlugins = (
   plugins: string[],
   resource: Resource
 ) => {
-  const matchValueWithArrays = (value: any, other: any[]) => {
-    const found =
-      typeof value === 'string'
-        ? other.some(o => {
-            if (typeof o === 'string') {
-              const regex = new RegExp(o);
-              return regex.test(value);
-            }
-            return false;
-          })
-        : other.some(o => {
-            return isMatch(value, o);
-          });
-    return found;
+  const matchValueWithArray = (value: any, other: any[]) => {
+    return typeof value === 'string'
+      ? other.some(o => {
+          if (typeof o === 'string') {
+            const regex = new RegExp(o);
+            return regex.test(value);
+          }
+          return false;
+        })
+      : other.some(o => {
+          return isMatch(value, o);
+        });
   };
 
   const matchArrays = (value: any[], other: any[]) => {
     for (let i = 0; i < value.length; i += 1) {
-      if (matchValueWithArrays(value[i], other)) {
+      if (matchValueWithArray(value[i], other)) {
         return true;
       }
     }
@@ -384,7 +382,7 @@ export const matchPlugins = (
     // return true if  value  match any object in
     // other array.
     if (Array.isArray(other) && !Array.isArray(value)) {
-      return matchValueWithArrays(value, other);
+      return matchValueWithArray(value, other);
     }
 
     // return true if any object in value array match any object in
