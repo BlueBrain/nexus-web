@@ -5,7 +5,7 @@ import { Spin, Card, Empty, Tabs, notification, Alert, Collapse } from 'antd';
 import * as queryString from 'query-string';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { Resource, ResourceLink, IncomingLink, Identity } from '@bbp/nexus-sdk';
-import ResourceCardComponent from '../components/ResourceCard';
+
 import HistoryContainer from '../containers/HistoryContainer';
 import ResourceLinksContainer from '../containers/ResourceLinks';
 import ResourceActionsContainer from '../containers/ResourceActionsContainer';
@@ -15,6 +15,7 @@ import GraphContainer from '../containers/GraphContainer';
 import HomeIcon from '../components/HomeIcon';
 import ResourceMetadata from '../components/ResourceMetadata';
 import ResourcePlugins from './ResourcePlugins';
+import PluginInfo from './PluginInfo';
 import usePlugins from '../hooks/usePlugins';
 import useMeasure from '../hooks/useMeasure';
 import {
@@ -107,6 +108,19 @@ const ResourceViewContainer: React.FunctionComponent<{
       revision: resource ? resource._rev : undefined,
       tab: activeTabKey,
     });
+  };
+
+  const pluginMock = {
+    modulePath: 'ephys-viewer.5853fbcb4685bfa02e46.js',
+    name: 'Ephys viewer',
+    description: '',
+    version: '',
+    tags: [],
+    author: '',
+    license: '',
+    mapping: {
+      '@type': ['Trace', 'Dataset'],
+    },
   };
 
   const [identities, setIdentities] = React.useState<Identity[]>([]);
@@ -305,7 +319,7 @@ const ResourceViewContainer: React.FunctionComponent<{
                   }
                   onChange={() => {}}
                 >
-                  <Panel header={<h3>Admin</h3>} key="1">
+                  <Panel header="Admin" key="1">
                     <ResourceActionsContainer resource={resource} />
                     <ResourceMetadata
                       resource={resource}
