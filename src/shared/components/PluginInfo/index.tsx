@@ -11,7 +11,7 @@ const PluginInfo: React.FC<{
       <div>
         <p>{description || 'No description provided'}</p>
         <p>
-          <b>Created by </b>
+          <b>Created by: </b>
           {author || 'Unknown'}
         </p>
         <p>
