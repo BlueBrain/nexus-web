@@ -1,16 +1,14 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { useHistory } from 'react-router';
 import { push } from 'connected-react-router';
-import { Button, Modal, Drawer, notification, message } from 'antd';
-import { OrgResponseCommon, Resource } from '@bbp/nexus-sdk';
+import { Button, Modal, Drawer, notification } from 'antd';
+import { OrgResponseCommon } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 
 import OrgList from '../containers/OrgList';
 import OrgForm from '../components/Orgs/OrgForm';
 import OrgItem from '../components/Orgs/OrgItem';
 import ListItem from '../components/List/Item';
-import { parseProjectUrl } from '../utils';
 
 type NewOrg = {
   label: string;
@@ -21,13 +19,6 @@ interface OrgsViewProps {
   goTo(orgLabel: string): void;
 }
 
-const getUrlParameter = (name: string) => {
-  const filteredName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-  const regex = new RegExp(`[\\?&]${filteredName}=([^&#]*)`);
-  const results = regex.exec(window.location.search);
-  return results === null ? '' : results[1].replace(/\+/g, ' ');
-};
-
 const OrgsView: React.FunctionComponent<OrgsViewProps> = ({ goTo }) => {
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
@@ -35,26 +26,6 @@ const OrgsView: React.FunctionComponent<OrgsViewProps> = ({ goTo }) => {
     OrgResponseCommon | undefined
   >(undefined);
   const nexus = useNexusContext();
-  const history = useHistory();
-  const self = getUrlParameter('_self');
-  if (self && self !== '') {
-    nexus
-      .httpGet({
-        path: self,
-        headers: { Accept: 'application/json' },
-      })
-      .then((resource: Resource) => {
-        const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
-        history.push(
-          `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
-            resource['@id']
-          )}`
-        );
-      })
-      .catch(error => {
-        message.error(`Resource ${self} could not be found`);
-      });
-  }
 
   const saveAndCreate = (newOrg: NewOrg) => {
     setFormBusy(true);
