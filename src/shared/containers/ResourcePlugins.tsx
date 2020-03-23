@@ -3,6 +3,7 @@ import { Resource } from '@bbp/nexus-sdk';
 import { Collapse } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 import { NexusPlugin } from '../containers/NexusPlugin';
+import PluginInfo from '../components/PluginInfo';
 import { matchPlugins, pluginsMap } from '../utils';
 import usePlugins from '../hooks/usePlugins';
 
@@ -38,6 +39,7 @@ const ResourcePlugins: React.FunctionComponent<{
           <Panel
             header={pluginManifest && pluginManifest[pluginName].name}
             key={(index + 1).toString()}
+            extra={<PluginInfo plugin={pluginData} />}
           >
             <div className="resource-plugin" key={`plugin-${pluginName}`}>
               <NexusPlugin

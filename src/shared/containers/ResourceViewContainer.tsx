@@ -5,7 +5,7 @@ import { Spin, Card, Empty, Tabs, notification, Alert, Collapse } from 'antd';
 import * as queryString from 'query-string';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { Resource, ResourceLink, IncomingLink, Identity } from '@bbp/nexus-sdk';
-import ResourceCardComponent from '../components/ResourceCard';
+
 import HistoryContainer from '../containers/HistoryContainer';
 import ResourceLinksContainer from '../containers/ResourceLinks';
 import ResourceActionsContainer from '../containers/ResourceActionsContainer';
@@ -305,7 +305,7 @@ const ResourceViewContainer: React.FunctionComponent<{
                   }
                   onChange={() => {}}
                 >
-                  <Panel header={<h3>Admin</h3>} key="1">
+                  <Panel header="Admin" key="1">
                     <ResourceActionsContainer resource={resource} />
                     <ResourceMetadata
                       resource={resource}
