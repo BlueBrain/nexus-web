@@ -196,17 +196,17 @@ const ResourceActionsContainer: React.FunctionComponent<{
             </Tooltip>
           )}
         />
+        <ResourceDownloadButton
+          orgLabel={orgLabel}
+          projectLabel={projectLabel}
+          resourceId={encodeURIComponent(resourceId)}
+        />
         <ResourceActions
           resource={resource}
           actions={actions}
           actionTypes={actionTypes}
         />
       </div>
-      <ResourceDownloadButton
-        orgLabel={orgLabel}
-        projectLabel={projectLabel}
-        resourceId={encodeURIComponent(resourceId)}
-      />
     </div>
   );
 };
