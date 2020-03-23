@@ -355,22 +355,40 @@ export const matchPlugins = (
   plugins: string[],
   resource: Resource
 ) => {
+  const matchValueWithArray = (value: any, other: any[]) => {
+    return typeof value === 'string'
+      ? other.some(o => {
+          if (typeof o === 'string') {
+            const regex = new RegExp(o);
+            return regex.test(value);
+          }
+          return false;
+        })
+      : other.some(o => {
+          return isMatch(value, o);
+        });
+  };
+
+  const matchArrays = (value: any[], other: any[]) => {
+    for (let i = 0; i < value.length; i += 1) {
+      if (matchValueWithArray(value[i], other)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   const customizer: isMatchWithCustomizer = (value: any, other: any) => {
+    // return true if  value  match any object in
+    // other array.
     if (Array.isArray(other) && !Array.isArray(value)) {
-      return other.length === 1 && isMatch(value, other[0]);
+      return matchValueWithArray(value, other);
     }
 
     // return true if any object in value array match any object in
     // other array.
     if (Array.isArray(other) && Array.isArray(value)) {
-      for (let i = 0; i < value.length; i += 1) {
-        for (let j = 0; j < other.length; j += 1) {
-          if (isMatch(value[i], other[j])) {
-            return true;
-          }
-        }
-      }
-      return false;
+      return matchArrays(value, other);
     }
     return isMatch(value, other);
   };
