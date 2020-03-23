@@ -15,7 +15,6 @@ import GraphContainer from '../containers/GraphContainer';
 import HomeIcon from '../components/HomeIcon';
 import ResourceMetadata from '../components/ResourceMetadata';
 import ResourcePlugins from './ResourcePlugins';
-import PluginInfo from './PluginInfo';
 import usePlugins from '../hooks/usePlugins';
 import useMeasure from '../hooks/useMeasure';
 import {
