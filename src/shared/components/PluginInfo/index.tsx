@@ -16,7 +16,7 @@ const PluginInfo: React.FC<{
         </p>
         <p>
           <b>Version: </b>
-          {version || 'no version specified'}
+          {version || 'No version specified'}
         </p>
       </div>
     );
