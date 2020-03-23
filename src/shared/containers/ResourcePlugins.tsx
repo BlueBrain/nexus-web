@@ -16,8 +16,6 @@ const ResourcePlugins: React.FunctionComponent<{
 }> = ({ resource, goToResource, empty = null }) => {
   const nexus = useNexusContext();
   const { data: pluginManifest } = usePlugins();
-  console.log('plugins', pluginManifest);
-
   const availablePlugins = Object.keys(pluginManifest || {});
 
   if (!resource) {

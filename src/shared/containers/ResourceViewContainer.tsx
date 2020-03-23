@@ -110,19 +110,6 @@ const ResourceViewContainer: React.FunctionComponent<{
     });
   };
 
-  const pluginMock = {
-    modulePath: 'ephys-viewer.5853fbcb4685bfa02e46.js',
-    name: 'Ephys viewer',
-    description: '',
-    version: '',
-    tags: [],
-    author: '',
-    license: '',
-    mapping: {
-      '@type': ['Trace', 'Dataset'],
-    },
-  };
-
   const [identities, setIdentities] = React.useState<Identity[]>([]);
 
   React.useEffect(() => {
