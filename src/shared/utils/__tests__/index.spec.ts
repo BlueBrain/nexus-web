@@ -447,7 +447,7 @@ describe('utils functions', () => {
       const pluginsMap = {
         regexPlugin: {
           '@type': 'File',
-          _filename: [/P14-*/],
+          _filename: ['P14-*'],
         },
       };
       const resource = {

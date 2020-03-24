@@ -2,11 +2,10 @@ import { Resource, Identity } from '@bbp/nexus-sdk';
 import {
   isMatch,
   isMatchWith,
-  difference,
+  isRegExp,
   isMatchWithCustomizer,
   pick,
 } from 'lodash';
-import { isRegExp } from 'util';
 
 /**
  * getProp utility - an alternative to lodash.get
@@ -357,14 +356,15 @@ export const matchPlugins = (
   resource: Resource
 ) => {
   const matchValueWithArray = (value: any, other: any[]) => {
+    const regexChars = new RegExp(/[!@#$%^&*(),.?":{}|<>]/, 'g');
     return typeof value === 'string'
       ? other.some(o => {
           if (typeof o === 'string') {
-            return value === o;
-          }
-          if (isRegExp(o)) {
-            const regex = new RegExp(o);
-            return regex.test(value);
+            if (regexChars.test(o)) {
+              const regex = new RegExp(o);
+              return regex.test(value);
+            }
+            return o === value;
           }
           return false;
         })
