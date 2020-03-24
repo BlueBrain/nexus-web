@@ -447,7 +447,7 @@ describe('utils functions', () => {
       const pluginsMap = {
         regexPlugin: {
           '@type': 'File',
-          _filename: ['P14-/*'],
+          _filename: [/P14-*/],
         },
       };
       const resource = {
@@ -486,6 +486,71 @@ describe('utils functions', () => {
       expect(
         matchPlugins(pluginsMap, plugins, resource as Resource<any>)
       ).toEqual(['regexPlugin']);
+    });
+
+    it('matches a resource with nested objects in arrays', () => {
+      const plugins: string[] = ['complexPlugin'];
+      const pluginsMap = {
+        complexPlugin: {
+          '@type': 'File',
+          exoticProperty: [
+            {
+              name: 'Property1',
+              '@type': ['a'],
+            },
+            {
+              name: 'Property2',
+              '@type': ['c'],
+            },
+          ],
+        },
+      };
+      const resource = {
+        '@context': 'https://bluebrain.github.io/nexus/contexts/resource.json',
+        '@id':
+          'https://bbp.epfl.ch/neurosciencegraph/data/f53c7f5e-ce6d-4211-ad75-cf524de4e57c',
+        '@type': 'File',
+        exoticProperty: [
+          {
+            name: 'Property1',
+            '@type': ['a', 'b'],
+          },
+        ],
+      };
+
+      expect(
+        matchPlugins(pluginsMap, plugins, resource as Resource<any>)
+      ).toEqual(['complexPlugin']);
+    });
+
+    it('does not matches a resource with unmatching nested objects in arrays', () => {
+      const plugins: string[] = ['complexPlugin'];
+      const pluginsMap = {
+        complexPlugin: {
+          '@type': 'File',
+          exoticProperty: [
+            {
+              name: 'Property1',
+              '@type': ['a', 'b'],
+            },
+          ],
+        },
+      };
+      const resource = {
+        '@context': 'https://bluebrain.github.io/nexus/contexts/resource.json',
+        '@id':
+          'https://bbp.epfl.ch/neurosciencegraph/data/f53c7f5e-ce6d-4211-ad75-cf524de4e57c',
+        '@type': 'File',
+        exoticProperty: [
+          {
+            name: 'Property1',
+            '@type': ['c'],
+          },
+        ],
+      };
+      expect(
+        matchPlugins(pluginsMap, plugins, resource as Resource<any>)
+      ).toEqual([]);
     });
   });
 });

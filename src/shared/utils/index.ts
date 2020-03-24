@@ -6,6 +6,7 @@ import {
   isMatchWithCustomizer,
   pick,
 } from 'lodash';
+import { isRegExp } from 'util';
 
 /**
  * getProp utility - an alternative to lodash.get
@@ -359,23 +360,23 @@ export const matchPlugins = (
     return typeof value === 'string'
       ? other.some(o => {
           if (typeof o === 'string') {
+            return value === o;
+          }
+          if (isRegExp(o)) {
             const regex = new RegExp(o);
             return regex.test(value);
           }
           return false;
         })
       : other.some(o => {
-          return isMatch(value, o);
+          return customizer(value, o, '', o, value); // Apply the match logic recursively.
         });
   };
 
   const matchArrays = (value: any[], other: any[]) => {
-    for (let i = 0; i < value.length; i += 1) {
-      if (matchValueWithArray(value[i], other)) {
-        return true;
-      }
-    }
-    return false;
+    return value.some(v => {
+      return matchValueWithArray(v, other);
+    });
   };
 
   const customizer: isMatchWithCustomizer = (value: any, other: any) => {
