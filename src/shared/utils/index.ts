@@ -2,7 +2,7 @@ import { Resource, Identity } from '@bbp/nexus-sdk';
 import {
   isMatch,
   isMatchWith,
-  difference,
+  isRegExp,
   isMatchWithCustomizer,
   pick,
 } from 'lodash';
@@ -356,26 +356,27 @@ export const matchPlugins = (
   resource: Resource
 ) => {
   const matchValueWithArray = (value: any, other: any[]) => {
+    const regexChars = new RegExp(/[!@#$%^&*(),.?":{}|<>]/, 'g');
     return typeof value === 'string'
       ? other.some(o => {
           if (typeof o === 'string') {
-            const regex = new RegExp(o);
-            return regex.test(value);
+            if (regexChars.test(o)) {
+              const regex = new RegExp(o);
+              return regex.test(value);
+            }
+            return o === value;
           }
           return false;
         })
       : other.some(o => {
-          return isMatch(value, o);
+          return customizer(value, o, '', o, value); // Apply the match logic recursively.
         });
   };
 
   const matchArrays = (value: any[], other: any[]) => {
-    for (let i = 0; i < value.length; i += 1) {
-      if (matchValueWithArray(value[i], other)) {
-        return true;
-      }
-    }
-    return false;
+    return value.some(v => {
+      return matchValueWithArray(v, other);
+    });
   };
 
   const customizer: isMatchWithCustomizer = (value: any, other: any) => {
