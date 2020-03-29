@@ -7,6 +7,7 @@ import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { Resource, ResourceLink, IncomingLink, Identity } from '@bbp/nexus-sdk';
 
 import HistoryContainer from '../containers/HistoryContainer';
+import DataAccessContainer from '../containers/DataAccessContainer';
 import ResourceLinksContainer from '../containers/ResourceLinks';
 import ResourceActionsContainer from '../containers/ResourceActionsContainer';
 import ResourceEditorContainer from '../containers/ResourceEditor';
@@ -197,7 +198,6 @@ const ResourceViewContainer: React.FunctionComponent<{
       })
       .then(resource => {
         expandedResource = resource;
-
         setResource({
           // Note: we must fetch the proper, expanded @id. The @id that comes from a normal request or from the URL
           // could be the contracted one, if the resource was created with a context that has a @base property.
@@ -391,6 +391,15 @@ const ResourceViewContainer: React.FunctionComponent<{
                       </TabPane>
                     </Tabs>
                   </Panel>
+
+                  {resource['@type'] === 'Entity' ||
+                  resource['@type']?.includes('Entity') ? (
+                    <Panel header="Data Access" key="2">
+                      <DataAccessContainer
+                        resource={resource as Resource}
+                      ></DataAccessContainer>
+                    </Panel>
+                  ) : null}
                 </Collapse>
               </AccessControl>
             </>

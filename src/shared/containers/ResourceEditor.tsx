@@ -111,7 +111,6 @@ const ResourceEditorContainer: React.FunctionComponent<{
     },
     [resourceId, projectLabel, orgLabel, rev, expanded, showMetadata]
   );
-
   return (
     resource && (
       <ResourceEditor
