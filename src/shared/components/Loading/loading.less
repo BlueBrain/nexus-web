@@ -25,7 +25,7 @@
 
 .loading {
   width: 100%;
-  padding: 10px;
+  padding: 0 15px 30px;
   box-sizing: border-box;
   transition: all ease-out 0.5s;
 
@@ -34,18 +34,18 @@
     border-radius: @border-radius-base;
     background-color: @base-color;
     animation: shine @animation-duration infinite ease;
-
     .message {
-      transition: all ease-in-out 0.5s;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      opacity: 1;
     }
   }
 
   .message {
-    display: none;
+    transition: all ease-out 0.5s;
+    opacity: 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   &.default {
