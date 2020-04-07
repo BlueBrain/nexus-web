@@ -298,7 +298,7 @@ const ResourceViewContainer: React.FunctionComponent<{
               )}
               <AccessControl
                 path={`/${orgLabel}/${projectLabel}`}
-                permissions={['resources/test']}
+                permissions={['resources/write']}
                 noAccessComponent={() => (
                   <div>
                     <p>
