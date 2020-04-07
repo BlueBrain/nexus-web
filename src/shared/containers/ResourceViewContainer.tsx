@@ -22,6 +22,7 @@ import {
   getOrgAndProjectFromProjectId,
   matchPlugins,
   pluginsMap,
+  getUsername,
 } from '../utils';
 import { isDeprecated } from '../utils/nexusMaybe';
 
@@ -297,7 +298,37 @@ const ResourceViewContainer: React.FunctionComponent<{
               )}
               <AccessControl
                 path={`/${orgLabel}/${projectLabel}`}
-                permissions={['resources/write']}
+                permissions={['resources/test']}
+                noAccessComponent={() => (
+                  <div>
+                    <p>
+                      <Alert
+                        message={
+                          !filteredPlugins || filteredPlugins.length === 0
+                            ? `There are no plugin configured for this resource, and you don't have admin access. Please ask the resource creator: ${getUsername(
+                                resource['_createdBy']
+                              )} for more information.`
+                            : `It looks like you don't have admin access. Please ask the resource creator: ${getUsername(
+                                resource['_createdBy']
+                              )} for more information.`
+                        }
+                        type="info"
+                      />
+                    </p>
+                    <ResourceEditorContainer
+                      resourceId={resource['@id']}
+                      orgLabel={orgLabel}
+                      projectLabel={projectLabel}
+                      rev={resource._rev}
+                      defaultExpanded={
+                        !!expandedFromQuery && expandedFromQuery === 'true'
+                      }
+                      defaultEditable={false}
+                      onSubmit={() => {}}
+                      onExpanded={handleExpanded}
+                    />
+                  </div>
+                )}
               >
                 <Collapse
                   defaultActiveKey={

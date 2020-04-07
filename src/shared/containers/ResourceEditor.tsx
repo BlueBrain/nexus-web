@@ -1,11 +1,6 @@
 import * as React from 'react';
 import { useAsyncEffect } from 'use-async-effect';
-import {
-  ExpandedResource,
-  ResourceSource,
-  Resource,
-  NexusClient,
-} from '@bbp/nexus-sdk';
+import { ExpandedResource, ResourceSource, Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import ResourceEditor from '../components/ResourceEditor';
