@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource, Identity } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { notification, Empty, message } from 'antd';
-
+import { useHistory } from 'react-router';
 import EditStudio from '../components/Studio/EditStudio';
 import StudioHeader from '../components/Studio/StudioHeader';
+import { getDestinationParam } from '../utils';
 import { resourcesWritePermissionsWrapper } from '../utils/permission';
 
 type StudioContainerProps = {
@@ -36,10 +37,19 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
   ] = React.useState<StudioResource | null>(null);
   const [workspaceIds, setWorkspaceIds] = React.useState<string[]>([]);
   const nexus = useNexusContext();
+  const history = useHistory();
 
   React.useEffect(() => {
     fetchAndSetupStudio();
   }, [orgLabel, projectLabel, studioId]);
+
+  const [identities, setIdentities] = React.useState<Identity[]>([]);
+
+  React.useEffect(() => {
+    nexus.Identity.list().then(({ identities }) => {
+      setIdentities(identities);
+    });
+  }, []); // Run only once.
 
   const fetchAndSetupStudio = async () => {
     nexus.Resource.get(orgLabel, projectLabel, studioId)
@@ -52,7 +62,20 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
         );
       })
       .catch(e => {
-        // TODO: show a meaningful error to the user.
+        if (e['@type'] === 'AuthorizationFailed') {
+          const user = identities.find(i => i['@type'] === 'User');
+          const message = user
+            ? "You don't have the permissions to view the studio"
+            : 'Please login to view the studio';
+          notification.error({
+            message: 'Authentication error',
+            description: message,
+            duration: 4,
+          });
+          if (!user) {
+            history.push(`/login${getDestinationParam()}`);
+          }
+        }
       });
   };
 
