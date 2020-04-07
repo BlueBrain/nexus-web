@@ -65,8 +65,8 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
         if (e['@type'] === 'AuthorizationFailed') {
           const user = identities.find(i => i['@type'] === 'User');
           const message = user
-            ? "You don't have the permissions to view the resource"
-            : 'Please login to view the resource';
+            ? "You don't have the permissions to view the studio"
+            : 'Please login to view the studio';
           notification.error({
             message: 'Authentication error',
             description: message,
