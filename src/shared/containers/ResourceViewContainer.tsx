@@ -23,6 +23,7 @@ import {
   matchPlugins,
   pluginsMap,
   getUsername,
+  getDestinationParam,
 } from '../utils';
 import { isDeprecated } from '../utils/nexusMaybe';
 
@@ -224,10 +225,7 @@ const ResourceViewContainer: React.FunctionComponent<{
             duration: 4,
           });
           if (!user) {
-            const destination = location.pathname;
-            history.push(
-              `/login?destination=${encodeURIComponent(destination)}`
-            );
+            history.push(`/login${getDestinationParam()}`);
           }
         }
 
