@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Spin } from 'antd';
+import { Spin, Collapse, Button } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
-import { Collapse, Button } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import './ExpandableStudioList.less';
