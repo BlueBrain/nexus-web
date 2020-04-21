@@ -10,6 +10,7 @@ import SparqlQueryView from './views/SparqlQueryView';
 import ACLsView from './views/ACLsView';
 import UserView from './views/UserView';
 import StudioView from './views/StudioView';
+import StudioListView from './views/StudioListView';
 
 const routes: RouteProps[] = [
   {
@@ -24,6 +25,14 @@ const routes: RouteProps[] = [
   {
     path: '/user',
     component: UserView,
+  },
+  {
+    path: '/nexus/studio',
+    component: StudioListView,
+  },
+  {
+    path: '/nexus/web',
+    component: OrgsView,
   },
   {
     path: '/:orgLabel',
