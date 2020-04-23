@@ -13,52 +13,21 @@ type StudioItemProps = {
   description?: string;
 };
 
-type StudioResource = Resource<{
-  label: string;
-  description?: string;
-  workspaces: [string];
-}>;
-
-const StudioItem: React.FC<{
-  studio: StudioItemProps;
-}> = ({ studio }) => {
-  const nexus = useNexusContext();
-  const [workspaceIds, setWorkspaceIds] = React.useState<string[]>([]);
-
-  const loadWorkspaces = async () => {
-    await nexus.Resource.get('studios', 'Test', encodeURIComponent(studio.id))
-      .then(response => {
-        const studioResource: StudioResource = response as StudioResource;
-
-        const workspaceIds: string[] = studioResource['workspaces'];
-        setWorkspaceIds(workspaceIds);
-      })
-      .catch(error => console.log('error', error));
-  };
-
-  return (
-    <div>
-      {studio.description && (
-        <p className="description">{studio.description}</p>
-      )}
-      {workspaceIds.length === 0 ? (
-        <button className="more-button" onClick={() => loadWorkspaces()}>
-          More...
-        </button>
-      ) : (
-        <div>Coming soon...</div>
-      )}
-    </div>
-  );
-};
-
 const ExpandableStudioList: React.FC<{
   studios: StudioItemProps[];
   busy?: boolean;
   error?: Error | null;
   goToStudio?(studioId: string): void;
   makeResourceUri(resourceId: string): string;
-}> = ({ studios, busy, error, goToStudio = () => {}, makeResourceUri }) => {
+  loadWorkspaces(studioId: string): void;
+}> = ({
+  studios,
+  busy,
+  error,
+  goToStudio = () => {},
+  makeResourceUri,
+  loadWorkspaces,
+}) => {
   const studioUrlButton = (studio: StudioItemProps) => (
     <a
       href={makeResourceUri(studio.id)}
@@ -81,11 +50,26 @@ const ExpandableStudioList: React.FC<{
           {studios.map((studio, index) => {
             return (
               <Panel
-                header={studio.name}
+                header={
+                  <div className="studio-title-panel">
+                    <div>
+                      <p>{studio.name}</p>
+                      <p>{studio.description}</p>
+                      <button
+                        className="more-button"
+                        onClick={() => loadWorkspaces(studio.id)}
+                      >
+                        More...
+                      </button>
+                    </div>
+                    {studioUrlButton(studio)}
+                  </div>
+                }
                 key={index}
-                extra={studioUrlButton(studio)}
               >
-                <StudioItem studio={studio} />
+                <div className="workspace-list">
+                  Here should appear a workspace list...
+                </div>
               </Panel>
             );
           })}
