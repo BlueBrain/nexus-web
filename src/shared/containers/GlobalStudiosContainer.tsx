@@ -94,17 +94,20 @@ const StudioListContainer: React.FunctionComponent<{
   }, [orgLabel, projectLabel]);
 
   return (
-    <ExpandableStudioList
-      studios={resources.map(r => ({
-        id: r['@id'],
-        name: r.label,
-        description: r.description,
-      }))}
-      makeResourceUri={makeStudioUri}
-      busy={busy}
-      error={error}
-      goToStudio={(id: string) => goToStudio(id)}
-    ></ExpandableStudioList>
+    <div className="global-studio-list">
+      <h1>Studios</h1>
+      <ExpandableStudioList
+        studios={resources.map(r => ({
+          id: r['@id'],
+          name: r.label,
+          description: r.description,
+        }))}
+        makeResourceUri={makeStudioUri}
+        busy={busy}
+        error={error}
+        goToStudio={(id: string) => goToStudio(id)}
+      ></ExpandableStudioList>
+    </div>
   );
 };
 

@@ -61,12 +61,7 @@ const InformationContent = (props: InformationContentProps) => {
   return (
     <>
       <p>Nexus is Open Source and available under the Apache 2 License. </p>
-      <p>
-        v{props.version}{' '}
-        <a href={props.githubIssueURL} target="_blank">
-          <Icon type="github" /> post an issue on github
-        </a>
-      </p>
+      <p>v{props.version} </p>
       <p>
         © 2017-2020
         <a href="https://www.epfl.ch/" target="_blank">
@@ -90,6 +85,12 @@ const InformationContent = (props: InformationContentProps) => {
           consent={props.consent}
         />
       }
+      <a href={documentationURL} target="_blank" className="doc-link">
+        <Icon type="book" /> Documentation
+      </a>
+      <a href={props.githubIssueURL} target="_blank">
+        <Icon type="github" /> Report Issue
+      </a>
     </>
   );
 };
@@ -153,12 +154,18 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         </a>
       </div>
       <div className="menu-block">
-        <a href={documentationURL} target="_blank" className="hide-tablet">
-          <Icon type="book" /> Documentation
+        <a
+          href=""
+          onClick={e => {
+            if (visitHome) {
+              e.preventDefault();
+              visitHome();
+            }
+          }}
+        >
+          Admin
         </a>
-        <a href={githubIssueURL} target="_blank" className="hide-tablet">
-          <Icon type="github" /> Report Issue
-        </a>
+        <a href="nexus/studio">Studio</a>
         {token && (
           <Copy
             textToCopy={token}

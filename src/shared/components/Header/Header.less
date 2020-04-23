@@ -13,11 +13,13 @@
     left: 50%;
     width: 120px;
     margin-left: -60px;
+
     .logo {
       margin-right: 0.5em;
       height: 32px;
       display: flex;
       align-items: center;
+
       img {
         height: 2em;
         width: 2em;
@@ -25,11 +27,17 @@
         padding-bottom: 2px;
       }
     }
+
     h1 {
       color: @primary-color;
       margin: 0;
       font-weight: 100;
       display: inline-block;
+    }
+
+    @media (max-width: 795px) {
+      left: 0;
+      margin-left: 10px;
     }
   }
 
@@ -81,4 +89,8 @@
   .hide-tablet {
     display: none;
   }
+}
+
+.doc-link {
+  padding-right: 10px;
 }
