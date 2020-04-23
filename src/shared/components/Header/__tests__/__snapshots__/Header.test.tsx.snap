@@ -34,12 +34,14 @@ exports[`Header component Should render correctly 1`] = `
     className="menu-block"
   >
     <a
+      className="nav-item"
       href=""
       onClick={[Function]}
     >
       Admin
     </a>
     <a
+      className="nav-item"
       href="nexus/studio"
     >
       Studio
