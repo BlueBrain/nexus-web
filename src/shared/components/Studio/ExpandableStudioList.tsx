@@ -37,7 +37,7 @@ const ExpandableStudioList: React.FC<{
         goToStudio(studio.id);
       }}
     >
-      <Button type="default" size="small">
+      <Button type="primary" size="small">
         Go to Studio
       </Button>
     </a>
@@ -53,7 +53,7 @@ const ExpandableStudioList: React.FC<{
                 header={
                   <div className="studio-title-panel">
                     <div>
-                      <p>{studio.name}</p>
+                      <p className="studio-name">{studio.name}</p>
                       <p>{studio.description}</p>
                       <button
                         className="more-button"

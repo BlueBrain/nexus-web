@@ -155,6 +155,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
       </div>
       <div className="menu-block">
         <a
+          className="nav-item"
           href=""
           onClick={e => {
             if (visitHome) {
@@ -165,7 +166,9 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         >
           Admin
         </a>
-        <a href="nexus/studio">Studio</a>
+        <a className="nav-item" href="nexus/studio">
+          Studio
+        </a>
         {token && (
           <Copy
             textToCopy={token}
