@@ -86,66 +86,24 @@ const StudioListView: React.FC = () => {
           total: 0,
         });
       });
-
-    // setResources({
-    //   next,
-    //   resources,
-    //   total,
-    //   busy: true,
-    //   error: null,
-    // });
-
-    // let response: PaginatedList<Resource>;
-
-    // // get all resources of type studio
-    // nexus.Resource.list(orgLabel, projectLabel, {
-    //   type: DEFAULT_STUDIO_TYPE,
-    //   deprecated: false,
-    //   size: 30,
-    // })
-    //   .then(studioResponse => {
-    //     response = studioResponse;
-    //     return Promise.all(
-    //       response._results.map(resource =>
-    //         nexus.Resource.get(
-    //           orgLabel,
-    //           projectLabel,
-    //           encodeURIComponent(resource['@id'])
-    //         )
-    //       )
-    //     );
-    //   })
-    //   .then(studios => {
-    //     setResources({
-    //       next: response._next || null,
-    //       resources: studios as Resource<{
-    //         label: string;
-    //         description?: string;
-    //       }>[],
-    //       total: response._total,
-    //       busy: false,
-    //       error: null,
-    //     });
-    //   })
-    //   .catch(error => {
-    //     setResources({
-    //       next,
-    //       error,
-    //       resources,
-    //       total,
-    //       busy: false,
-    //     });
-    //   });
   }, []);
 
-  const loadWorkspaces = async (studioId: string) => {
-    await nexus.Resource.get('studios', 'Test', encodeURIComponent(studioId))
-      .then(response => {
-        // const studioResource: StudioResource = response as StudioResource;
-        // const workspaceIds: string[] = studioResource['workspaces'];
-        // console.log('workspaceIds', workspaceIds);
-      })
-      .catch(error => console.log('error', error));
+  const loadWorkspaces = (studio: StudioItem) => {
+    if (studio && studio.workspaces) {
+      return Promise.all(
+        studio.workspaces.map((workspaceId: string) =>
+          nexus.Resource.get(
+            studio.orgLabel,
+            studio.projectLabel,
+            encodeURIComponent(workspaceId)
+          )
+        )
+      ).then((response: any) => {
+        console.log('response', response);
+      });
+    }
+
+    return [];
   };
 
   console.log('studios', studios);

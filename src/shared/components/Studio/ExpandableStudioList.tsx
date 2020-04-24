@@ -1,17 +1,52 @@
 import * as React from 'react';
 import { Spin, Collapse, Button } from 'antd';
 import { useHistory } from 'react-router-dom';
+import { useNexusContext } from '@bbp/react-nexus';
+
 import { StudioItem } from '../../views/StudioListView';
 
 import './ExpandableStudioList.less';
 
 const { Panel } = Collapse;
 
+const StudioListItem: React.FC<{
+  header: React.ReactNode;
+  studio: StudioItem;
+  key: string;
+}> = ({ header, studio, ...props }) => {
+  const nexus = useNexusContext();
+  const [workspaces, setWorkspaces] = React.useState([]);
+
+  //   React.useEffect(() => {
+  //     if (studio && studio.workspaces) {
+  //       Promise.all(
+  //         studio.workspaces.map((workspaceId: string) =>
+  //           nexus.Resource.get(
+  //             studio.orgLabel,
+  //             studio.projectLabel,
+  //             encodeURIComponent(workspaceId)
+  //           )
+  //         )
+  //       ).then((response: any) => {
+  //         console.log('response', response);
+  //       });
+  //     }
+  //   });
+
+  return (
+    <Panel header={header} {...props}>
+      <div className="workspace-list">
+        <h3>Workspaces</h3>
+      </div>
+    </Panel>
+  );
+};
+
 const ExpandableStudioList: React.FC<{
   studios: StudioItem[];
   busy?: boolean;
   error?: Error | null;
-  loadWorkspaces(studioId: string): void;
+  loadWorkspaces(studio: StudioItem): void;
 }> = ({ studios, busy, error, loadWorkspaces }) => {
   const history = useHistory();
 
@@ -45,10 +80,11 @@ const ExpandableStudioList: React.FC<{
   return (
     <div className="expandable-studio-list">
       <Spin spinning={busy}>
-        <Collapse defaultActiveKey={['0']} onChange={() => {}}>
+        <Collapse onChange={() => {}}>
           {studios.map((studio, index) => {
             return (
-              <Panel
+              <StudioListItem
+                studio={studio}
                 header={
                   <div className="studio-title-panel">
                     <div>
@@ -63,22 +99,13 @@ const ExpandableStudioList: React.FC<{
                         <h3 className="studio-name">{studio.label}</h3>
                       </a>
                       <p>{studio.description}</p>
-                      <button
-                        className="more-button"
-                        onClick={() => loadWorkspaces(studio.id)}
-                      >
-                        More...
-                      </button>
+                      <button className="more-button">More...</button>
                     </div>
                     {studioUrlButton(studio)}
                   </div>
                 }
-                key={index}
-              >
-                <div className="workspace-list">
-                  <h3>Workspaces</h3>
-                </div>
-              </Panel>
+                key={`${index}`}
+              />
             );
           })}
         </Collapse>
