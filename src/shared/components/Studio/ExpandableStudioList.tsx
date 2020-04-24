@@ -1,40 +1,39 @@
 import * as React from 'react';
 import { Spin, Collapse, Button } from 'antd';
-import { Resource } from '@bbp/nexus-sdk';
-import { useNexusContext } from '@bbp/react-nexus';
+import { useHistory } from 'react-router-dom';
+import { StudioItem } from '../../views/StudioListView';
 
 import './ExpandableStudioList.less';
 
 const { Panel } = Collapse;
 
-type StudioItemProps = {
-  id: string;
-  name: string;
-  description?: string;
-};
-
 const ExpandableStudioList: React.FC<{
-  studios: StudioItemProps[];
+  studios: StudioItem[];
   busy?: boolean;
   error?: Error | null;
-  goToStudio?(studioId: string): void;
-  makeResourceUri(resourceId: string): string;
   loadWorkspaces(studioId: string): void;
-}> = ({
-  studios,
-  busy,
-  error,
-  goToStudio = () => {},
-  makeResourceUri,
-  loadWorkspaces,
-}) => {
-  const studioUrlButton = (studio: StudioItemProps) => (
+}> = ({ studios, busy, error, loadWorkspaces }) => {
+  const history = useHistory();
+
+  const makeStudioUri = (studio: StudioItem) => {
+    const { orgLabel, projectLabel } = studio;
+
+    return `/${orgLabel}/${projectLabel}/studios/${encodeURIComponent(
+      studio.id
+    )}`;
+  };
+
+  const goToStudio = (studio: StudioItem) => {
+    history.push(makeStudioUri(studio));
+  };
+
+  const studioUrlButton = (studio: StudioItem) => (
     <a
-      href={makeResourceUri(studio.id)}
+      href={makeStudioUri(studio)}
       key={studio.id}
       onClick={e => {
         e.preventDefault();
-        goToStudio(studio.id);
+        goToStudio(studio);
       }}
     >
       <Button type="primary" size="small">
@@ -53,7 +52,16 @@ const ExpandableStudioList: React.FC<{
                 header={
                   <div className="studio-title-panel">
                     <div>
-                      <p className="studio-name">{studio.name}</p>
+                      <a
+                        href={makeStudioUri(studio)}
+                        key={studio.id}
+                        onClick={e => {
+                          e.preventDefault();
+                          goToStudio(studio);
+                        }}
+                      >
+                        <h3 className="studio-name">{studio.label}</h3>
+                      </a>
                       <p>{studio.description}</p>
                       <button
                         className="more-button"
@@ -68,7 +76,7 @@ const ExpandableStudioList: React.FC<{
                 key={index}
               >
                 <div className="workspace-list">
-                  Here should appear a workspace list...
+                  <h3>Workspaces</h3>
                 </div>
               </Panel>
             );
