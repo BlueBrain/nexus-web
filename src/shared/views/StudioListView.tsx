@@ -55,12 +55,12 @@ const StudioListView: React.FC = () => {
           const { label, description, workspaces } = source;
 
           return {
-            id: studio._id,
             label,
             description,
             workspaces,
             orgLabel,
             projectLabel,
+            id: studio._id,
           };
         });
       }
@@ -72,16 +72,16 @@ const StudioListView: React.FC = () => {
         const studioList = parseStudiosFromES(response);
 
         setStudios({
+          total,
           busy: false,
           error: null,
           studios: studioList,
-          total,
         });
       })
       .catch(error => {
         setStudios({
-          busy: false,
           error,
+          busy: false,
           studios: [],
           total: 0,
         });
