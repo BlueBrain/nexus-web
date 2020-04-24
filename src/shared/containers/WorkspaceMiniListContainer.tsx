@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
+import StudioWorkspaceList from '../components/Studio/StudioWorkspaceList';
 import { StudioItem } from '../views/StudioListView';
 
 const WorkspaceMiniListContainer: React.FC<{ studio: StudioItem }> = ({
@@ -21,25 +22,12 @@ const WorkspaceMiniListContainer: React.FC<{ studio: StudioItem }> = ({
           )
         )
       ).then((response: any) => {
-        console.log('response', response);
         setWorkspaces(response);
       });
     }
   }, []);
-  return (
-    <div>
-      {workspaces && workspaces.length > 0 ? (
-        workspaces.map(workspace => (
-          <div>
-            <h3 className="workspace-title">{workspace.label}</h3>
-            <p>{workspace.description}</p>
-          </div>
-        ))
-      ) : (
-        <p>It looks like there are workspace in this project.</p>
-      )}
-    </div>
-  );
+
+  return <StudioWorkspaceList workspaces={workspaces} />;
 };
 
 export default WorkspaceMiniListContainer;
