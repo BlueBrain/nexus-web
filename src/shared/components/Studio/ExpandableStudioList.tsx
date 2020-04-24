@@ -1,66 +1,17 @@
 import * as React from 'react';
 import { Spin, Collapse, Button } from 'antd';
 import { useHistory } from 'react-router-dom';
-import { Resource } from '@bbp/nexus-sdk';
-import { useNexusContext } from '@bbp/react-nexus';
 
+import StudioListItem from './StudioListItem';
 import { StudioItem } from '../../views/StudioListView';
 
 import './ExpandableStudioList.less';
-
-const { Panel } = Collapse;
-
-const StudioListItem: React.FC<{
-  header: React.ReactNode;
-  studio: StudioItem;
-  key: string;
-}> = ({ header, studio, ...props }) => {
-  const nexus = useNexusContext();
-  const [workspaces, setWorkspaces] = React.useState<Resource<any>[]>([]);
-
-  React.useEffect(() => {
-    if (studio && studio.workspaces) {
-      Promise.all(
-        studio.workspaces.map((workspaceId: string) =>
-          nexus.Resource.get(
-            studio.orgLabel,
-            studio.projectLabel,
-            encodeURIComponent(workspaceId)
-          )
-        )
-      ).then((response: any) => {
-        console.log('response', response);
-        setWorkspaces(response);
-      });
-    }
-  }, []);
-
-  return (
-    <Panel header={header} {...props}>
-      <div className="workspace-list">
-        <div>
-          {workspaces && workspaces.length > 0 ? (
-            workspaces.map(workspace => (
-              <div>
-                <h3 className="workspace-title">{workspace.label}</h3>
-                <p>{workspace.description}</p>
-              </div>
-            ))
-          ) : (
-            <p>It looks like there are workspace in this project.</p>
-          )}
-        </div>
-      </div>
-    </Panel>
-  );
-};
 
 const ExpandableStudioList: React.FC<{
   studios: StudioItem[];
   busy?: boolean;
   error?: Error | null;
-  loadWorkspaces(studio: StudioItem): void;
-}> = ({ studios, busy, error, loadWorkspaces }) => {
+}> = ({ studios, busy, error }) => {
   const history = useHistory();
 
   const makeStudioUri = (studio: StudioItem) => {
@@ -112,7 +63,7 @@ const ExpandableStudioList: React.FC<{
                         <h3 className="studio-name">{studio.label}</h3>
                       </a>
                       <p>{studio.description}</p>
-                      {/* <button className="more-button">More...</button> */}
+                      <button className="more-button">More...</button>
                     </div>
                     {studioUrlButton(studio)}
                   </div>

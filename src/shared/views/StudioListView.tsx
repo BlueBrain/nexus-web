@@ -88,26 +88,6 @@ const StudioListView: React.FC = () => {
       });
   }, []);
 
-  const loadWorkspaces = (studio: StudioItem) => {
-    if (studio && studio.workspaces) {
-      return Promise.all(
-        studio.workspaces.map((workspaceId: string) =>
-          nexus.Resource.get(
-            studio.orgLabel,
-            studio.projectLabel,
-            encodeURIComponent(workspaceId)
-          )
-        )
-      ).then((response: any) => {
-        console.log('response', response);
-      });
-    }
-
-    return [];
-  };
-
-  console.log('studios', studios);
-
   return (
     <div className="view-container">
       <div className="global-studio-list">
@@ -116,7 +96,6 @@ const StudioListView: React.FC = () => {
           studios={studios}
           busy={busy}
           error={error}
-          loadWorkspaces={loadWorkspaces}
         ></ExpandableStudioList>
       </div>
     </div>
