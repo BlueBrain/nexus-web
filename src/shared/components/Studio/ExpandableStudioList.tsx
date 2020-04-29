@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Spin, Collapse, Button } from 'antd';
+import { Spin, Collapse, Button, Empty } from 'antd';
 import { useHistory } from 'react-router-dom';
 
 import StudioListItem from './StudioListItem';
@@ -9,9 +9,8 @@ import './ExpandableStudioList.less';
 
 const ExpandableStudioList: React.FC<{
   studios: StudioItem[];
-  busy?: boolean;
-  error?: Error | null;
-}> = ({ studios, busy, error }) => {
+  error: Error | null;
+}> = ({ studios, error }) => {
   const history = useHistory();
 
   const makeStudioUri = (studio: StudioItem) => {
@@ -41,29 +40,43 @@ const ExpandableStudioList: React.FC<{
     </a>
   );
 
+  if (error) {
+    return (
+      <div className="expandable-studio-list">
+        <Empty description={error.message} />
+      </div>
+    );
+  }
+
+  if (studios && studios.length === 0) {
+    return (
+      <div className="expandable-studio-list">
+        <Empty />
+      </div>
+    );
+  }
+
   return (
     <div className="expandable-studio-list">
-      <Spin spinning={busy}>
-        <Collapse onChange={() => {}}>
-          {studios.map((studio, index) => {
-            return (
-              <StudioListItem
-                studio={studio}
-                header={
-                  <div className="studio-title-panel">
-                    <div>
-                      <h3 className="studio-name">{studio.label}</h3>
-                      <p className="studio-description">{studio.description}</p>
-                    </div>
-                    {studioUrlButton(studio)}
+      <Collapse onChange={() => {}}>
+        {studios.map((studio, index) => {
+          return (
+            <StudioListItem
+              studio={studio}
+              header={
+                <div className="studio-title-panel">
+                  <div>
+                    <h3 className="studio-name">{studio.label}</h3>
+                    <p className="studio-description">{studio.description}</p>
                   </div>
-                }
-                key={`${index}`}
-              />
-            );
-          })}
-        </Collapse>
-      </Spin>
+                  {studioUrlButton(studio)}
+                </div>
+              }
+              key={`${index}`}
+            />
+          );
+        })}
+      </Collapse>
     </div>
   );
 };

@@ -23,28 +23,32 @@ const StudioWorkspaceList: React.FC<{
     history.push(makeWorkspaceUri(workspaceId));
   };
 
-  return (
-    <div className="studio-workspace-list">
-      {workspaces && workspaces.length > 0 ? (
-        workspaces.map((workspace: Resource) => (
-          <div key={workspace['@id']} className="list-item">
-            <a
-              href={makeWorkspaceUri(workspace['@id'])}
-              onClick={e => {
-                e.preventDefault();
-                goToWorkspace(workspace['@id']);
-              }}
-            >
-              <h3 className="workspace-title">{workspace.label}</h3>
-            </a>
-            <p className="workspace-description">{workspace.description}</p>
-          </div>
-        ))
-      ) : (
+  if (workspaces && workspaces.length === 0) {
+    return (
+      <div className="studio-workspace-list">
         <p className="workspace-description">
           It looks like there are no workspaces in this project.
         </p>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="studio-workspace-list">
+      {workspaces.map((workspace: Resource) => (
+        <div key={workspace['@id']} className="list-item">
+          <a
+            href={makeWorkspaceUri(workspace['@id'])}
+            onClick={e => {
+              e.preventDefault();
+              goToWorkspace(workspace['@id']);
+            }}
+          >
+            <h3 className="workspace-title">{workspace.label}</h3>
+          </a>
+          <p className="workspace-description">{workspace.description}</p>
+        </div>
+      ))}
     </div>
   );
 };

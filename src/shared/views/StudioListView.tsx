@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Spin } from 'antd';
 import { getOrgAndProjectFromProjectId } from '../utils';
 
 import ExpandableStudioList from '../components/Studio/ExpandableStudioList';
@@ -25,7 +26,7 @@ const StudioListView: React.FC = () => {
     studios: StudioItem[];
     total: number;
   }>({
-    busy: false,
+    busy: true,
     error: null,
     studios: [],
     total: 0,
@@ -92,11 +93,9 @@ const StudioListView: React.FC = () => {
     <div className="view-container">
       <div className="global-studio-list">
         <h1>Studios</h1>
-        <ExpandableStudioList
-          studios={studios}
-          busy={busy}
-          error={error}
-        ></ExpandableStudioList>
+        <Spin spinning={busy}>
+          <ExpandableStudioList studios={studios} error={error} />
+        </Spin>
       </div>
     </div>
   );
