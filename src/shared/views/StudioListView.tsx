@@ -27,8 +27,6 @@ export type StudioItem = {
   orgLabel: string;
 };
 
-// 'studios/aggregate-view/nxv:studioList'
-
 const StudioListView: React.FC = () => {
   const studioView = useSelector((state: RootState) => state.config.studioView);
   const nexus = useNexusContext();
