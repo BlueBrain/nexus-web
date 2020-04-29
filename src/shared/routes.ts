@@ -31,10 +31,6 @@ const routes: RouteProps[] = [
     component: StudioListView,
   },
   {
-    path: '/nexus/web',
-    component: OrgsView,
-  },
-  {
     path: '/:orgLabel',
     exact: true,
     component: ProjectsView,

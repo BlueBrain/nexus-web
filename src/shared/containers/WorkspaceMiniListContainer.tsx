@@ -36,9 +36,9 @@ const WorkspaceMiniListContainer: React.FC<{ studio: StudioItem }> = ({
         })
         .catch(error =>
           setWorkspaces({
+            error,
             workspaces: [],
             busy: false,
-            error,
           })
         );
     }

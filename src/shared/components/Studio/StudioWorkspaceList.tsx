@@ -27,7 +27,7 @@ const StudioWorkspaceList: React.FC<{
     return (
       <div className="studio-workspace-list">
         <p className="workspace-description">
-          It looks like there are no workspaces in this project.
+          It looks like there are no workspaces in this studio.
         </p>
       </div>
     );
