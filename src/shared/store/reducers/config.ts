@@ -9,6 +9,7 @@ export interface ConfigState {
   sentryDsn?: string;
   pluginsManifestPath: string;
   gtmCode?: string;
+  studioView?: string;
 }
 
 const initialState: ConfigState = {

@@ -2,16 +2,14 @@ import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Spin } from 'antd';
 import { getOrgAndProjectFromProjectId } from '../utils';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/reducers';
 
 import ExpandableStudioList from '../components/Studio/ExpandableStudioList';
 
 const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';
 
-// TODO: the following should be coming from somewhere else
-const STUDIOS_ORG = 'studios';
-const STUDIOS_PROJECT = 'aggregate-view';
-const STUDIO_ES_VIEW_ID = 'nxv:studioList';
 const ES_QUERY = {
   query: {
     term: {
@@ -29,7 +27,10 @@ export type StudioItem = {
   orgLabel: string;
 };
 
+// 'studios/aggregate-view/nxv:studioList'
+
 const StudioListView: React.FC = () => {
+  const studioView = useSelector((state: RootState) => state.config.studioView);
   const nexus = useNexusContext();
 
   const [{ busy, error, studios, total }, setStudios] = React.useState<{
@@ -45,31 +46,36 @@ const StudioListView: React.FC = () => {
   });
 
   React.useEffect(() => {
-    nexus.View.elasticSearchQuery(
-      STUDIOS_ORG,
-      STUDIOS_PROJECT,
-      STUDIO_ES_VIEW_ID,
-      ES_QUERY
-    )
-      .then(response => {
-        const total = response.hits.total.value;
-        const studioList = parseStudiosFromES(response);
+    if (studioView) {
+      const studioPath = studioView && studioView.split('/');
+      const [studiosOrg, studiosProject, studiosView] = studioPath;
 
-        setStudios({
-          total,
-          busy: false,
-          error: null,
-          studios: studioList,
+      nexus.View.elasticSearchQuery(
+        studiosOrg,
+        studiosProject,
+        studiosView,
+        ES_QUERY
+      )
+        .then(response => {
+          const total = response.hits.total.value;
+          const studioList = parseStudiosFromES(response);
+
+          setStudios({
+            total,
+            busy: false,
+            error: null,
+            studios: studioList,
+          });
+        })
+        .catch(error => {
+          setStudios({
+            error,
+            busy: false,
+            studios: [],
+            total: 0,
+          });
         });
-      })
-      .catch(error => {
-        setStudios({
-          error,
-          busy: false,
-          studios: [],
-          total: 0,
-        });
-      });
+    }
   }, []);
 
   const parseStudiosFromES = (response: any) => {
