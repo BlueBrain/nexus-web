@@ -52,18 +52,8 @@ const ExpandableStudioList: React.FC<{
                 header={
                   <div className="studio-title-panel">
                     <div>
-                      <a
-                        href={makeStudioUri(studio)}
-                        key={studio.id}
-                        onClick={e => {
-                          e.preventDefault();
-                          goToStudio(studio);
-                        }}
-                      >
-                        <h3 className="studio-name">{studio.label}</h3>
-                      </a>
-                      <p>{studio.description}</p>
-                      <button className="more-button">More...</button>
+                      <h3 className="studio-name">{studio.label}</h3>
+                      <p className="studio-description">{studio.description}</p>
                     </div>
                     {studioUrlButton(studio)}
                   </div>

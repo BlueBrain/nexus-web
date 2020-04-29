@@ -27,7 +27,7 @@ const WorkspaceMiniListContainer: React.FC<{ studio: StudioItem }> = ({
     }
   }, []);
 
-  return <StudioWorkspaceList workspaces={workspaces} />;
+  return <StudioWorkspaceList workspaces={workspaces} studio={studio} />;
 };
 
 export default WorkspaceMiniListContainer;
