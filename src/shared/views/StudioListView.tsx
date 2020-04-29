@@ -8,6 +8,18 @@ import ExpandableStudioList from '../components/Studio/ExpandableStudioList';
 const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';
 
+// TODO: the following should be coming from somewhere else
+const STUDIOS_ORG = 'studios';
+const STUDIOS_PROJECT = 'aggregate-view';
+const STUDIO_ES_VIEW_ID = 'nxv:studioList';
+const ES_QUERY = {
+  query: {
+    term: {
+      '@type': DEFAULT_STUDIO_TYPE,
+    },
+  },
+};
+
 export type StudioItem = {
   id: string;
   label: string;
@@ -33,41 +45,12 @@ const StudioListView: React.FC = () => {
   });
 
   React.useEffect(() => {
-    const orgLabel = 'studios';
-    const projectLabel = 'aggregate-view';
-    const viewId = 'nxv:studioList';
-    const query = {
-      query: {
-        term: {
-          '@type': DEFAULT_STUDIO_TYPE,
-        },
-      },
-    };
-
-    const parseStudiosFromES = (response: any) => {
-      const results = response.hits;
-
-      if (results && results.hits && results.hits.length) {
-        return results.hits.map((studio: any) => {
-          const source = JSON.parse(studio._source._original_source);
-          const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(
-            studio._source._project
-          );
-          const { label, description, workspaces } = source;
-
-          return {
-            label,
-            description,
-            workspaces,
-            orgLabel,
-            projectLabel,
-            id: studio._id,
-          };
-        });
-      }
-    };
-
-    nexus.View.elasticSearchQuery(orgLabel, projectLabel, viewId, query)
+    nexus.View.elasticSearchQuery(
+      STUDIOS_ORG,
+      STUDIOS_PROJECT,
+      STUDIO_ES_VIEW_ID,
+      ES_QUERY
+    )
       .then(response => {
         const total = response.hits.total.value;
         const studioList = parseStudiosFromES(response);
@@ -88,6 +71,29 @@ const StudioListView: React.FC = () => {
         });
       });
   }, []);
+
+  const parseStudiosFromES = (response: any) => {
+    const results = response.hits;
+
+    if (results && results.hits && results.hits.length) {
+      return results.hits.map((studio: any) => {
+        const source = JSON.parse(studio._source._original_source);
+        const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(
+          studio._source._project
+        );
+        const { label, description, workspaces } = source;
+
+        return {
+          label,
+          description,
+          workspaces,
+          orgLabel,
+          projectLabel,
+          id: studio._id,
+        };
+      });
+    }
+  };
 
   return (
     <div className="view-container">

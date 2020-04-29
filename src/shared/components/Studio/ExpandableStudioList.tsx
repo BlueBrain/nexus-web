@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Spin, Collapse, Button, Empty } from 'antd';
+import { Collapse, Button, Empty } from 'antd';
 import { useHistory } from 'react-router-dom';
 
 import StudioListItem from './StudioListItem';
