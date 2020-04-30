@@ -1,9 +1,13 @@
 import * as React from 'react';
 import { Menu, Dropdown, Icon, Button, Popover } from 'antd';
-import './Header.less';
+import { useSelector } from 'react-redux';
+
 import Copy from '../Copy';
 import ConsentPreferences from '../ConsentPreferences';
 import { ConsentType } from '../../layouts/MainLayout';
+import { RootState } from '../../store/reducers';
+
+import './Header.less';
 
 const logo = require('../../logo.svg');
 const epflLogo = require('../../EPFL-logo.svg');
@@ -123,6 +127,8 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   consent,
   onClickRemoveConsent,
 }) => {
+  const studioView = useSelector((state: RootState) => state.config.studioView);
+
   const menu = (
     <Menu>
       {links.map((link, i) => (
@@ -154,21 +160,24 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         </a>
       </div>
       <div className="menu-block">
-        <a
-          className="nav-item"
-          href=""
-          onClick={e => {
-            if (visitHome) {
-              e.preventDefault();
-              visitHome();
-            }
-          }}
-        >
-          Admin
-        </a>
-        <a className="nav-item" href="nexus/studio">
-          Studio
-        </a>
+        {studioView !== '' && [
+          <a
+            className="nav-item"
+            href=""
+            onClick={e => {
+              if (visitHome) {
+                e.preventDefault();
+                visitHome();
+              }
+            }}
+            key="admin-link"
+          >
+            Admin
+          </a>,
+          <a className="nav-item" href="nexus/studio" key="studio-link">
+            Studio
+          </a>,
+        ]}
         {token && (
           <Copy
             textToCopy={token}

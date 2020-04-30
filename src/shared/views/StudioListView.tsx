@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Spin } from 'antd';
+import { Spin, Empty } from 'antd';
 import { getOrgAndProjectFromProjectId } from '../utils';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/reducers';
@@ -37,14 +37,20 @@ const StudioListView: React.FC = () => {
     studios: StudioItem[];
     total: number;
   }>({
-    busy: true,
+    busy: false,
     error: null,
     studios: [],
     total: 0,
   });
 
   React.useEffect(() => {
-    if (studioView) {
+    if (studioView && studioView !== '') {
+      setStudios({
+        total: 0,
+        busy: true,
+        error: null,
+        studios: [],
+      });
       const studioPath = studioView && studioView.split('/');
       const [studiosOrg, studiosProject, studiosView] = studioPath;
 
@@ -73,6 +79,7 @@ const StudioListView: React.FC = () => {
             total: 0,
           });
         });
+    } else {
     }
   }, []);
 
@@ -98,6 +105,17 @@ const StudioListView: React.FC = () => {
       });
     }
   };
+
+  if (studioView == '') {
+    return (
+      <div className="view-container">
+        <div className="global-studio-list">
+          <h1>Studios</h1>
+          <Empty description="There is no Studio list configured. Please contact your administrator." />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="view-container">
