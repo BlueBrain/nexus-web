@@ -106,7 +106,7 @@ const StudioListView: React.FC = () => {
     }
   };
 
-  if (studioView == '') {
+  if (studioView === '') {
     return (
       <div className="view-container">
         <div className="global-studio-list">
