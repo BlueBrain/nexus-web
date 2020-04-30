@@ -36,6 +36,7 @@ exports[`Header component Should render correctly 1`] = `
     <a
       className="nav-item"
       href=""
+      key="admin-link"
       onClick={[Function]}
     >
       Admin
@@ -43,6 +44,7 @@ exports[`Header component Should render correctly 1`] = `
     <a
       className="nav-item"
       href="nexus/studio"
+      key="studio-link"
     >
       Studio
     </a>

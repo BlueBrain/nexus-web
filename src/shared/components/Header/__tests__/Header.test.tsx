@@ -12,6 +12,16 @@ const versions: ServiceVersions = {
   storage: 'asda',
 };
 
+jest.mock('react-redux', () => {
+  const ActualReactRedux = require.requireActual('react-redux');
+  return {
+    ...ActualReactRedux,
+    useSelector: jest.fn().mockImplementation(() => {
+      return 'mockState';
+    }),
+  };
+});
+
 const links: React.ReactNode[] = [
   <p>A p tag</p>,
   <a href="/somepage">A link to some page</a>,
