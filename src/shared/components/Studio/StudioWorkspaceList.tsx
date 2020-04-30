@@ -12,10 +12,10 @@ const StudioWorkspaceList: React.FC<{
   const history = useHistory();
 
   const makeWorkspaceUri = (workspaceId: string) => {
-    const { orgLabel, projectLabel } = studio;
+    const { orgLabel, projectLabel, id } = studio;
 
     return `/${orgLabel}/${projectLabel}/studios/${encodeURIComponent(
-      studio.id
+      id
     )}?workspaceId=${encodeURIComponent(workspaceId)}`;
   };
 

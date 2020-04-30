@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 
 import StudioListItem from './StudioListItem';
 import { StudioItem } from '../../views/StudioListView';
+import { makeStudioUri } from '../../utils';
 
 import './ExpandableStudioList.less';
 
@@ -13,32 +14,30 @@ const ExpandableStudioList: React.FC<{
 }> = ({ studios, error }) => {
   const history = useHistory();
 
-  const makeStudioUri = (studio: StudioItem) => {
-    const { orgLabel, projectLabel } = studio;
-
-    return `/${orgLabel}/${projectLabel}/studios/${encodeURIComponent(
-      studio.id
-    )}`;
-  };
-
   const goToStudio = (studio: StudioItem) => {
-    history.push(makeStudioUri(studio));
+    const { orgLabel, projectLabel, id } = studio;
+
+    history.push(makeStudioUri(orgLabel, projectLabel, id));
   };
 
-  const studioUrlButton = (studio: StudioItem) => (
-    <a
-      href={makeStudioUri(studio)}
-      key={studio.id}
-      onClick={e => {
-        e.preventDefault();
-        goToStudio(studio);
-      }}
-    >
-      <Button type="primary" size="small">
-        Go to Studio
-      </Button>
-    </a>
-  );
+  const studioUrlButton = (studio: StudioItem) => {
+    const { orgLabel, projectLabel, id } = studio;
+
+    return (
+      <a
+        href={makeStudioUri(orgLabel, projectLabel, id)}
+        key={studio.id}
+        onClick={e => {
+          e.preventDefault();
+          goToStudio(studio);
+        }}
+      >
+        <Button type="primary" size="small">
+          Go to Studio
+        </Button>
+      </a>
+    );
+  };
 
   if (error) {
     return (

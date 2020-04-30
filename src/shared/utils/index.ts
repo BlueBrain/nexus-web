@@ -421,3 +421,19 @@ export const pluginsMap = (pluginManifest: any) =>
     mapping[pluginManifestKey] = pluginManifest[pluginManifestKey].mapping;
     return mapping;
   }, {} as PluginMapping);
+
+/*
+ * Returns studio uri
+ *
+ * @param {string} orgLabel
+ * @param {string} projectLabel
+ * @param {string} studioId
+ * @returns {string} studio uri
+ */
+export const makeStudioUri = (
+  orgLabel: string,
+  projectLabel: string,
+  studioId: string
+) => {
+  return `/${orgLabel}/${projectLabel}/studios/${encodeURIComponent(studioId)}`;
+};
