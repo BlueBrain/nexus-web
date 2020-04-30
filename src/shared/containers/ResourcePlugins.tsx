@@ -26,6 +26,25 @@ const ResourcePlugins: React.FunctionComponent<{
     pluginManifest &&
     matchPlugins(pluginsMap(pluginManifest), availablePlugins, resource);
 
+  const pluginDataMap = filteredPlugins
+    ? filteredPlugins
+        .map(pluginName => {
+          if (pluginManifest) {
+            return pluginManifest[pluginName];
+          }
+          return null;
+        })
+        .sort((p1, p2) => {
+          if (p1?.displayPriority && p2?.displayPriority) {
+            return (
+              parseInt(p1.displayPriority, 10) -
+              parseInt(p2.displayPriority, 10)
+            );
+          }
+          return 0;
+        })
+    : [];
+
   return filteredPlugins && filteredPlugins.length > 0 ? (
     <Collapse
       defaultActiveKey={[...Array(filteredPlugins.length).keys()].map(i =>
@@ -33,19 +52,18 @@ const ResourcePlugins: React.FunctionComponent<{
       )}
       onChange={() => {}}
     >
-      {filteredPlugins.map((pluginName, index) => {
-        const pluginData = pluginManifest && pluginManifest[pluginName];
+      {pluginDataMap.map((pluginData, index) => {
         return pluginData ? (
           <Panel
-            header={pluginManifest && pluginManifest[pluginName].name}
+            header={pluginData.name}
             key={(index + 1).toString()}
             extra={<PluginInfo plugin={pluginData} />}
           >
-            <div className="resource-plugin" key={`plugin-${pluginName}`}>
+            <div className="resource-plugin" key={`plugin-${pluginData.name}`}>
               <NexusPlugin
                 nexusClient={nexus}
                 url={pluginData.absoluteModulePath}
-                pluginName={pluginName}
+                pluginName={pluginData.name}
                 resource={resource}
                 goToResource={goToResource}
               />

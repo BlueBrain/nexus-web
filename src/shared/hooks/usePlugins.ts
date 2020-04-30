@@ -14,6 +14,7 @@ export type RemotePluginManifest = {
     author: string;
     license: string;
     mapping: object;
+    displayPriority?: string;
   };
 };
 
