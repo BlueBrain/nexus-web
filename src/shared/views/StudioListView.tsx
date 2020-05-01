@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Spin, Empty } from 'antd';
-import { getOrgAndProjectFromProjectId } from '../utils';
 import { useSelector } from 'react-redux';
-import { RootState } from '../store/reducers';
+import { useHistory } from 'react-router-dom';
 
+import { RootState } from '../store/reducers';
 import ExpandableStudioList from '../components/Studio/ExpandableStudioList';
+import { getOrgAndProjectFromProjectId } from '../utils';
 
 const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';
@@ -30,6 +31,7 @@ export type StudioItem = {
 const StudioListView: React.FC = () => {
   const studioView = useSelector((state: RootState) => state.config.studioView);
   const nexus = useNexusContext();
+  const history = useHistory();
 
   const [{ busy, error, studios, total }, setStudios] = React.useState<{
     busy: boolean;
@@ -106,6 +108,10 @@ const StudioListView: React.FC = () => {
     }
   };
 
+  const goToStudio = (studioUrl: string) => {
+    history.push(studioUrl);
+  };
+
   if (studioView === '') {
     return (
       <div className="view-container">
@@ -122,7 +128,11 @@ const StudioListView: React.FC = () => {
       <div className="global-studio-list">
         <h1>Studios</h1>
         <Spin spinning={busy}>
-          <ExpandableStudioList studios={studios} error={error} />
+          <ExpandableStudioList
+            studios={studios}
+            error={error}
+            goToStudio={goToStudio}
+          />
         </Spin>
       </div>
     </div>

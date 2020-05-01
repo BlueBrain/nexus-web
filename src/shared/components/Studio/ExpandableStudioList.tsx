@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Collapse, Button, Empty } from 'antd';
-import { useHistory } from 'react-router-dom';
 
 import StudioListItem from './StudioListItem';
 import { StudioItem } from '../../views/StudioListView';
@@ -11,13 +10,12 @@ import './ExpandableStudioList.less';
 const ExpandableStudioList: React.FC<{
   studios: StudioItem[];
   error: Error | null;
-}> = ({ studios, error }) => {
-  const history = useHistory();
-
-  const goToStudio = (studio: StudioItem) => {
+  goToStudio(url: string): void;
+}> = ({ studios, error, goToStudio }) => {
+  const onClickGotToStudio = (studio: StudioItem) => {
     const { orgLabel, projectLabel, id } = studio;
-
-    history.push(makeStudioUri(orgLabel, projectLabel, id));
+    const studioUri = makeStudioUri(orgLabel, projectLabel, id);
+    goToStudio(studioUri);
   };
 
   const studioUrlButton = (studio: StudioItem) => {
@@ -29,7 +27,7 @@ const ExpandableStudioList: React.FC<{
         key={studio.id}
         onClick={e => {
           e.preventDefault();
-          goToStudio(studio);
+          onClickGotToStudio(studio);
         }}
       >
         <Button type="primary" size="small">

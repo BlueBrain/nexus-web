@@ -1,26 +1,20 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { StudioItem } from '../../views/StudioListView';
-import { useHistory } from 'react-router-dom';
 
 import './StudioWorkspaceList.less';
 
 const StudioWorkspaceList: React.FC<{
   workspaces: Resource[];
   studio: StudioItem;
-}> = ({ workspaces, studio }) => {
-  const history = useHistory();
-
+  goToWorkspace(url: string): void;
+}> = ({ workspaces, studio, goToWorkspace }) => {
   const makeWorkspaceUri = (workspaceId: string) => {
     const { orgLabel, projectLabel, id } = studio;
 
     return `/${orgLabel}/${projectLabel}/studios/${encodeURIComponent(
       id
     )}?workspaceId=${encodeURIComponent(workspaceId)}`;
-  };
-
-  const goToWorkspace = (workspaceId: string) => {
-    history.push(makeWorkspaceUri(workspaceId));
   };
 
   if (workspaces && workspaces.length === 0) {
@@ -41,7 +35,7 @@ const StudioWorkspaceList: React.FC<{
             href={makeWorkspaceUri(workspace['@id'])}
             onClick={e => {
               e.preventDefault();
-              goToWorkspace(workspace['@id']);
+              goToWorkspace(makeWorkspaceUri(workspace['@id']));
             }}
           >
             <h3 className="workspace-title">{workspace.label}</h3>

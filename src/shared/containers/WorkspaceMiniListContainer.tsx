@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Spin, Empty } from 'antd';
+import { useHistory } from 'react-router-dom';
 
 import StudioWorkspaceList from '../components/Studio/StudioWorkspaceList';
 import { StudioItem } from '../views/StudioListView';
@@ -10,6 +11,7 @@ const WorkspaceMiniListContainer: React.FC<{ studio: StudioItem }> = ({
   studio,
 }) => {
   const nexus = useNexusContext();
+  const history = useHistory();
   const [{ workspaces, busy, error }, setWorkspaces] = React.useState<{
     workspaces: Resource<any>[];
     busy: boolean;
@@ -44,13 +46,21 @@ const WorkspaceMiniListContainer: React.FC<{ studio: StudioItem }> = ({
     }
   }, []);
 
+  const goToWorkspace = (workspaceUrl: string) => {
+    history.push(workspaceUrl);
+  };
+
   if (error) {
     return <Empty description={error.message} />;
   }
 
   return (
     <Spin spinning={busy}>
-      <StudioWorkspaceList workspaces={workspaces} studio={studio} />
+      <StudioWorkspaceList
+        workspaces={workspaces}
+        studio={studio}
+        goToWorkspace={goToWorkspace}
+      />
     </Spin>
   );
 };
