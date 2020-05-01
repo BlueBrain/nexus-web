@@ -12,6 +12,7 @@ import {
   isISODate,
   matchPlugins,
   pluginsMap,
+  makeStudioUri,
 } from '..';
 
 const identities: Identity[] = [
@@ -551,6 +552,19 @@ describe('utils functions', () => {
       expect(
         matchPlugins(pluginsMap, plugins, resource as Resource<any>)
       ).toEqual([]);
+    });
+  });
+
+  describe('makeStudioUri', () => {
+    it('returns studio uri with encoded studio id', () => {
+      const orgLabel = 'org';
+      const projectLabel = 'project';
+      const studioId = 'https://someId';
+      const studioUri = '/org/project/studios/https%3A%2F%2FsomeId';
+
+      expect(makeStudioUri(orgLabel, projectLabel, studioId)).toEqual(
+        studioUri
+      );
     });
   });
 });

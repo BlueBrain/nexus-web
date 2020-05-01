@@ -61,6 +61,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
         `${req.protocol}://${req.headers.host}`}${base}`,
       sentryDsn: process.env.SENTRY_DSN,
       gtmCode: process.env.GTM_CODE,
+      studioView: process.env.STUDIO_VIEW || '',
     },
     uiSettings: DEFAULT_UI_SETTINGS,
     oidc: {

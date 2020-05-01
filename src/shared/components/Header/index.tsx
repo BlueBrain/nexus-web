@@ -1,9 +1,13 @@
 import * as React from 'react';
 import { Menu, Dropdown, Icon, Button, Popover } from 'antd';
-import './Header.less';
+import { useSelector } from 'react-redux';
+
 import Copy from '../Copy';
 import ConsentPreferences from '../ConsentPreferences';
 import { ConsentType } from '../../layouts/MainLayout';
+import { RootState } from '../../store/reducers';
+
+import './Header.less';
 
 const logo = require('../../logo.svg');
 const epflLogo = require('../../EPFL-logo.svg');
@@ -61,12 +65,7 @@ const InformationContent = (props: InformationContentProps) => {
   return (
     <>
       <p>Nexus is Open Source and available under the Apache 2 License. </p>
-      <p>
-        v{props.version}{' '}
-        <a href={props.githubIssueURL} target="_blank">
-          <Icon type="github" /> post an issue on github
-        </a>
-      </p>
+      <p>v{props.version} </p>
       <p>
         © 2017-2020
         <a href="https://www.epfl.ch/" target="_blank">
@@ -90,6 +89,12 @@ const InformationContent = (props: InformationContentProps) => {
           consent={props.consent}
         />
       }
+      <a href={documentationURL} target="_blank" className="doc-link">
+        <Icon type="book" /> Documentation
+      </a>
+      <a href={props.githubIssueURL} target="_blank">
+        <Icon type="github" /> Report Issue
+      </a>
     </>
   );
 };
@@ -122,6 +127,8 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   consent,
   onClickRemoveConsent,
 }) => {
+  const studioView = useSelector((state: RootState) => state.config.studioView);
+
   const menu = (
     <Menu>
       {links.map((link, i) => (
@@ -153,12 +160,24 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         </a>
       </div>
       <div className="menu-block">
-        <a href={documentationURL} target="_blank" className="hide-tablet">
-          <Icon type="book" /> Documentation
-        </a>
-        <a href={githubIssueURL} target="_blank" className="hide-tablet">
-          <Icon type="github" /> Report Issue
-        </a>
+        {studioView !== '' && [
+          <a
+            className="nav-item"
+            href=""
+            onClick={e => {
+              if (visitHome) {
+                e.preventDefault();
+                visitHome();
+              }
+            }}
+            key="admin-link"
+          >
+            Admin
+          </a>,
+          <a className="nav-item" href="nexus/studio" key="studio-link">
+            Studio
+          </a>,
+        ]}
         {token && (
           <Copy
             textToCopy={token}

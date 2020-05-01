@@ -34,24 +34,19 @@ exports[`Header component Should render correctly 1`] = `
     className="menu-block"
   >
     <a
-      className="hide-tablet"
-      href="https://bluebrainnexus.io/docs"
-      target="_blank"
+      className="nav-item"
+      href=""
+      key="admin-link"
+      onClick={[Function]}
     >
-      <Icon
-        type="book"
-      />
-       Documentation
+      Admin
     </a>
     <a
-      className="hide-tablet"
-      href=""
-      target="_blank"
+      className="nav-item"
+      href="nexus/studio"
+      key="studio-link"
     >
-      <Icon
-        type="github"
-      />
-       Report Issue
+      Studio
     </a>
     <Popover
       content={

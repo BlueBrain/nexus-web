@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, PaginatedList } from '@bbp/nexus-sdk';
 
 import StudioList from '../components/Studio/StudioList';
 import CreateStudioContainer from './CreateStudioContainer';
-import { response } from 'express';
 
 const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';
