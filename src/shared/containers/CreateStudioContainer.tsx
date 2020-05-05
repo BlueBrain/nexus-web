@@ -76,7 +76,12 @@ const CreateStudioContainer: React.FC<{
 
   return (
     <div className="studio-modal">
-      <Button type="primary" block onClick={() => setShowModal(true)}>
+      <Button
+        type="primary"
+        block
+        onClick={() => setShowModal(true)}
+        icon="plus-square"
+      >
         Create Studio
       </Button>
       <Modal

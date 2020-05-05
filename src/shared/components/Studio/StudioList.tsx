@@ -52,7 +52,7 @@ const StudioList: React.FC<{
           dataLength={studios.length}
           onLoadMore={onLoadMore}
           hasMore={hasMore}
-          height={340}
+          height={350}
           defaultSearchValue={searchQuery}
         >
           {studios.map(studio => {

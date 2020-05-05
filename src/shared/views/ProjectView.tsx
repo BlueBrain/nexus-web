@@ -5,13 +5,14 @@ import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
 } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { notification, Popover, Switch, Icon } from 'antd';
+import { notification, Popover } from 'antd';
 import { Link } from 'react-router-dom';
 
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
 import ResourceListBoardContainer from '../containers/ResourceListBoardContainer';
 import HomeIcon from '../components/HomeIcon';
-import ProjectMenuContainer from '../containers/ProjectMenuContainer';
+import StudioListContainer from '../containers/StudioListContainer';
+import ProjectTools from '../components/Projects/ProjectTools';
 
 const ProjectView: React.FunctionComponent<{
   match: match<{ orgLabel: string; projectLabel: string }>;
@@ -31,7 +32,6 @@ const ProjectView: React.FunctionComponent<{
     error: null,
   });
 
-  const [menuVisible, setMenuVisible] = React.useState(true);
   const [refreshLists, setRefreshLists] = React.useState(false);
 
   React.useEffect(() => {
@@ -99,22 +99,6 @@ const ProjectView: React.FunctionComponent<{
                 </Popover>
               )}
             </div>
-            <div className="actions">
-              Resources & Studios{' '}
-              <Switch
-                size="small"
-                checked={menuVisible}
-                onChange={setMenuVisible}
-                checkedChildren={<Icon type="menu-unfold" />}
-                unCheckedChildren={<Icon type="menu-fold" />}
-              />
-              <ProjectMenuContainer
-                menuVisible={menuVisible}
-                setMenuVisible={setMenuVisible}
-                projectLabel={projectLabel}
-                orgLabel={orgLabel}
-              />
-            </div>
           </div>
           <div className="list-board">
             <div className="wrapper">
@@ -123,6 +107,14 @@ const ProjectView: React.FunctionComponent<{
                 projectLabel={projectLabel}
                 refreshLists={refreshLists}
               />
+              <div className="studios-container">
+                <h3>Studios</h3>
+                <StudioListContainer
+                  orgLabel={orgLabel}
+                  projectLabel={projectLabel}
+                />
+              </div>
+              <ProjectTools orgLabel={orgLabel} projectLabel={projectLabel} />
             </div>
           </div>
         </>
