@@ -81,7 +81,7 @@ docker build . --tag=nexus-web
 - `CLIENT_ID`: The application name used for _OpenID Connect_ authentication (default is `nexus-web`)
 - `API_ENDPOINT`: The URL pointing to Nexus API. Default is '/'
 - `SECURE`: Is nexus web running in https or not. Default is `false`
-- `GTAG`: The Google Analytics Identifier. GA won't be present unless an ID is specified.
+- `GTM_CODE`: The Google Analytics Identifier. GA won't be present unless an ID is specified.
 - `SENTRY_DSN`: The sentry URL Nexus Web needs to report errors to. Default is undefined.
 
 The following concern Plugins. [See how to manage plugin deployments](./docs/plugins.md)
