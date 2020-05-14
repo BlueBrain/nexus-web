@@ -11,9 +11,11 @@ const ConsentPreferences: React.FunctionComponent<{
   }
 
   return (
-    <Button onClick={onClickRemove} type="default" size="small">
-      Reset tracking preferences
-    </Button>
+    <div>
+      <Button onClick={onClickRemove} type="default" size="small">
+        Reset tracking preferences
+      </Button>
+    </div>
   );
 };
 

@@ -83,18 +83,21 @@ const InformationContent = (props: InformationContentProps) => {
       {props.serviceVersions ? (
         <VersionInfo {...props.serviceVersions} />
       ) : null}
+      <p>
+        <a href={documentationURL} target="_blank">
+          <Icon type="book" /> Documentation
+        </a>
+        {' | '}
+        <a href={props.githubIssueURL} target="_blank">
+          <Icon type="github" /> Report Issue
+        </a>
+      </p>
       {
         <ConsentPreferences
           onClickRemove={props.onClickRemoveConsent}
           consent={props.consent}
         />
       }
-      <a href={documentationURL} target="_blank" className="doc-link">
-        <Icon type="book" /> Documentation
-      </a>
-      <a href={props.githubIssueURL} target="_blank">
-        <Icon type="github" /> Report Issue
-      </a>
     </>
   );
 };
