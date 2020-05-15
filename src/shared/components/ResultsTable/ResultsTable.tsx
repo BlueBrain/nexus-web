@@ -156,7 +156,9 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
         pagination={
           showPagination && {
             total,
-            pageSize,
+            defaultPageSize: PAGE_SIZE,
+            pageSizeOptions: ['10', '20', '50', '100'],
+            showSizeChanger: true,
           }
         }
         scroll={{ x: '100%' }}
