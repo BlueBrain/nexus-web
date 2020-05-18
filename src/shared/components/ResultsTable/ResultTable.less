@@ -1,16 +1,37 @@
+@import './../../lib.less';
+
 .result-table {
   width: 100%;
+
   .header {
     display: flex;
     justify-content: space-between;
+
     .search {
       width: 50%;
     }
+
     .total {
       margin-top: 6px;
     }
   }
+
+  a {
+    color: @text-color;
+
+    &:hover {
+      color: @text-color;
+    }
+  }
+
+  // overrides default blue table row highlight
+  .ant-table-tbody
+    > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
+    > td {
+    background: @table-row-highlight-color !important;
+  }
 }
+
 .result-column {
   cursor: pointer;
   background-color: rgba(255, 255, 255, 0.9);
