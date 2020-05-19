@@ -227,7 +227,7 @@ const ResourceViewContainer: React.FunctionComponent<{
             });
           });
 
-          errorMessage = `You don't have the rights to access that resource, please ask your administrator for help. Organization: ${orgLabel}. Project: ${projectLabel}.`;
+          errorMessage = `You don't have the access rights for this resource located in ${orgLabel} / ${projectLabel}.`;
         } else {
           errorMessage = error.reason;
         }
