@@ -111,14 +111,6 @@ const ResourceViewContainer: React.FunctionComponent<{
     });
   };
 
-  const [identities, setIdentities] = React.useState<Identity[]>([]);
-
-  React.useEffect(() => {
-    nexus.Identity.list().then(({ identities }) => {
-      setIdentities(identities);
-    });
-  }, []); // Run only once.
-
   const handleExpanded = (expanded: boolean) => {
     goToResource(orgLabel, projectLabel, resourceId, {
       expanded,
@@ -215,18 +207,23 @@ const ResourceViewContainer: React.FunctionComponent<{
       })
       .catch(error => {
         if (error['@type'] === 'AuthorizationFailed') {
-          const user = identities.find(i => i['@type'] === 'User');
-          const message = user
-            ? "You don't have the permissions to view the resource"
-            : 'Please login to view the resource';
-          notification.error({
-            message: 'Authentication error',
-            description: message,
-            duration: 4,
+          nexus.Identity.list().then(({ identities }) => {
+            const user = identities.find(i => i['@type'] === 'User');
+
+            if (!user) {
+              history.push(`/login${getDestinationParam()}`);
+            }
+
+            const message = user
+              ? "You don't have the permissions to view the resource"
+              : 'Please login to view the resource';
+
+            notification.error({
+              message: 'Authentication error',
+              description: message,
+              duration: 4,
+            });
           });
-          if (!user) {
-            history.push(`/login${getDestinationParam()}`);
-          }
         }
 
         const jsError = new Error(error.reason);
