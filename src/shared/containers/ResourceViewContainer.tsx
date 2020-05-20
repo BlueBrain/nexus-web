@@ -206,6 +206,8 @@ const ResourceViewContainer: React.FunctionComponent<{
         setLatestResource(latestResource);
       })
       .catch(error => {
+        let errorMessage;
+
         if (error['@type'] === 'AuthorizationFailed') {
           nexus.Identity.list().then(({ identities }) => {
             const user = identities.find(i => i['@type'] === 'User');
@@ -224,9 +226,14 @@ const ResourceViewContainer: React.FunctionComponent<{
               duration: 4,
             });
           });
+
+          errorMessage = `You don't have the access rights for this resource located in ${orgLabel} / ${projectLabel}.`;
+        } else {
+          errorMessage = error.reason;
         }
 
-        const jsError = new Error(error.reason);
+        const jsError = new Error(errorMessage);
+
         setResource({
           resource,
           error: jsError,
