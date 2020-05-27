@@ -27,7 +27,8 @@ const routes: RouteProps[] = [
     component: UserView,
   },
   {
-    path: '/nexus/studio',
+    path: '/studio',
+    exact: true,
     component: StudioListView,
   },
   {

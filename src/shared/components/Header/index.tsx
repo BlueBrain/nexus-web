@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Menu, Dropdown, Icon, Button, Popover } from 'antd';
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import Copy from '../Copy';
 import ConsentPreferences from '../ConsentPreferences';
@@ -177,9 +178,9 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           >
             Admin
           </a>,
-          <a className="nav-item" href="nexus/studio" key="studio-link">
+          <Link className="nav-item" to="/studio" key="studio-link">
             Studio
-          </a>,
+          </Link>,
         ]}
         {token && (
           <Copy
