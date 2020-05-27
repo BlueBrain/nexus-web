@@ -165,9 +165,6 @@ const Header: React.FunctionComponent<HeaderProps> = ({
       </div>
       <div className="menu-block">
         {studioView !== '' && [
-          //   <Link to={`/${orgLabel}/${projectLabel}/nxv:defaultSparqlIndex/sparql`}>
-          //   Admin
-          // </Link>
           <a
             className="nav-item"
             href=""
@@ -181,7 +178,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           >
             Admin
           </a>,
-          <Link className="nav-item" to="/studio">
+          <Link className="nav-item" to="/studio" key="studio-link">
             Studio
           </Link>,
         ]}

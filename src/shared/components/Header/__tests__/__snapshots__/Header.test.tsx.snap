@@ -41,13 +41,13 @@ exports[`Header component Should render correctly 1`] = `
     >
       Admin
     </a>
-    <a
+    <Link
       className="nav-item"
-      href="nexus/studio"
       key="studio-link"
+      to="/studio"
     >
       Studio
-    </a>
+    </Link>
     <Popover
       content={
         <InformationContent

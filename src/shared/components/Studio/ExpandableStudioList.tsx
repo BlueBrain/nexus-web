@@ -45,7 +45,7 @@ const ExpandableStudioList: React.FC<{
     );
   }
 
-  if (studios && studios.length === 0) {
+  if (!studios || (studios && studios.length === 0)) {
     return (
       <div className="expandable-studio-list">
         <Empty />

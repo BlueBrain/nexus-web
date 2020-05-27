@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { shallow, mount } from 'enzyme';
 import Header, { ServiceVersions } from '..';
+import { MemoryRouter } from 'react-router-dom';
 
 const versions: ServiceVersions = {
   nexus: '1.0',
@@ -36,14 +37,17 @@ const shallowHeader = shallow(
     serviceVersions={versions}
   />
 );
+
 const wrapper = mount(
-  <Header
-    name="Mark Hamill"
-    links={links}
-    githubIssueURL=""
-    version=""
-    serviceVersions={versions}
-  />
+  <MemoryRouter>
+    <Header
+      name="Mark Hamill"
+      links={links}
+      githubIssueURL=""
+      version=""
+      serviceVersions={versions}
+    />
+  </MemoryRouter>
 );
 
 describe('Header component', () => {
@@ -69,13 +73,36 @@ describe('Header component', () => {
     });
 
     it('Should display login link', () => {
-      wrapper.setProps({ name: '' });
-      expect(wrapper.find('.menu-dropdown').text()).toEqual('login ');
+      const wrapperNoName = mount(
+        <MemoryRouter>
+          <Header
+            name=""
+            links={links}
+            githubIssueURL=""
+            version=""
+            serviceVersions={versions}
+          />
+        </MemoryRouter>
+      );
+
+      expect(wrapperNoName.find('.menu-dropdown').text()).toEqual('login ');
     });
 
     it('Should NOT display login link', () => {
-      wrapper.setProps({ displayLogin: false });
-      expect(wrapper.find('.menu-dropdown').children()).toHaveLength(0);
+      const wrapperNoLogin = mount(
+        <MemoryRouter>
+          <Header
+            name=""
+            links={links}
+            githubIssueURL=""
+            version=""
+            serviceVersions={versions}
+            displayLogin={false}
+          />
+        </MemoryRouter>
+      );
+
+      expect(wrapperNoLogin.find('.menu-dropdown').children()).toHaveLength(0);
     });
   });
 });
