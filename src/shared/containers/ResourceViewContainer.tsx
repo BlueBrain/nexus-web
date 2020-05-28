@@ -303,35 +303,39 @@ const ResourceViewContainer: React.FunctionComponent<{
                 permissions={['resources/write']}
                 noAccessComponent={() => (
                   <div>
-                    <p>
-                      <Alert
-                        message={
-                          !filteredPlugins || filteredPlugins.length === 0
-                            ? `There are no plugin configured for this resource, and you don't have admin access. Please ask the resource creator: ${getUsername(
-                                resource['_createdBy']
-                              )} for more information.`
-                            : `It looks like you don't have admin access. Please ask the resource creator: ${getUsername(
-                                resource['_createdBy']
-                              )} for more information.`
-                        }
-                        type="info"
-                      />
-                    </p>
-                    <ResourceEditorContainer
-                      resourceId={resource['@id']}
-                      orgLabel={orgLabel}
-                      projectLabel={projectLabel}
-                      rev={resource._rev}
-                      defaultExpanded={
-                        !!expandedFromQuery && expandedFromQuery === 'true'
-                      }
-                      defaultEditable={false}
-                      onSubmit={() => {}}
-                      onExpanded={handleExpanded}
-                    />
+                    {(!filteredPlugins || filteredPlugins.length === 0) && (
+                      <div>
+                        <p>
+                          <Alert
+                            message="This resource does not have plugins configured yet, and you don't have access to edit the resource. You can nonetheless see the resource metadata below."
+                            type="info"
+                          />
+                        </p>
+                        <ResourceEditorContainer
+                          resourceId={resource['@id']}
+                          orgLabel={orgLabel}
+                          projectLabel={projectLabel}
+                          rev={resource._rev}
+                          defaultExpanded={
+                            !!expandedFromQuery && expandedFromQuery === 'true'
+                          }
+                          defaultEditable={false}
+                          onSubmit={() => {}}
+                          onExpanded={handleExpanded}
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
               >
+                {(!filteredPlugins || filteredPlugins.length === 0) && (
+                  <p>
+                    <Alert
+                      message="This resource does not have plugins configured yet. You can nonetheless edit the resource metadata below."
+                      type="info"
+                    />
+                  </p>
+                )}
                 <Collapse
                   defaultActiveKey={
                     filteredPlugins && filteredPlugins.length > 0 ? [] : 1
