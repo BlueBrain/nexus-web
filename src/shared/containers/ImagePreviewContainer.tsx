@@ -36,11 +36,16 @@ const ImagePreviewContainer: React.FunctionComponent<{
   };
 
   React.useEffect(() => {
+    if (!isFile(resource)) {
+      return;
+    }
+    const fileResource: NexusFile = resource as NexusFile;
+    if (!fileResource._mediaType || !fileResource._bytes) {
+      return;
+    }
     if (
-      !isFile(resource) || // not a file
-      // is not a file of type image less than (default of 3MB)
-      (!(resource as NexusFile)._mediaType.includes('image') &&
-        (resource as NexusFile)._bytes <= maxBytes)
+      !fileResource._mediaType.includes('image') &&
+      fileResource._bytes <= maxBytes
     ) {
       return;
     }
