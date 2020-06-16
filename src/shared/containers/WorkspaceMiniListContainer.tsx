@@ -16,10 +16,16 @@ const WorkspaceMiniListContainer: React.FC<{ studio: StudioItem }> = ({
     workspaces: Resource<any>[];
     busy: boolean;
     error: Error | null;
-  }>({ workspaces: [], busy: true, error: null });
+  }>({ workspaces: [], busy: false, error: null });
 
   React.useEffect(() => {
     if (studio && studio.workspaces) {
+      setWorkspaces({
+        workspaces: [],
+        busy: true,
+        error: null,
+      });
+
       Promise.all(
         studio.workspaces.map((workspaceId: string) =>
           nexus.Resource.get(
