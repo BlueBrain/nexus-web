@@ -13,8 +13,15 @@ const DEFAULT_STUDIO_TYPE =
 
 const ES_QUERY = {
   query: {
-    term: {
-      '@type': DEFAULT_STUDIO_TYPE,
+    bool: {
+      must: [
+        {
+          term: { _deprecated: false },
+        },
+        {
+          term: { '@type': DEFAULT_STUDIO_TYPE },
+        },
+      ],
     },
   },
 };
