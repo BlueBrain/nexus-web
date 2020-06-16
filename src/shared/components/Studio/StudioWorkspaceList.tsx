@@ -20,7 +20,7 @@ const StudioWorkspaceList: React.FC<{
   if (workspaces && workspaces.length === 0) {
     return (
       <div className="studio-workspace-list">
-        <p className="workspace-description">
+        <p className="no-workspaces-message">
           It looks like there are no workspaces in this studio.
         </p>
       </div>
