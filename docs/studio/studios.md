@@ -113,7 +113,7 @@ To remove an unwanted Studio, deprecate it in the Resource View.
 
 The 'Studio' link in the Header allows you to access your list of Studios faster.
 
-![Header](../assets/header.png)
+![Studios List](../assets/studios-list.png)
 
 To enable this feature, the following should be done:
 
@@ -151,4 +151,6 @@ In our example it would be:
 
 `STUDIO_VIEW=webapps/nexus-web/nxv:studioList`
 
-Note, that every time when you create a new Studio, the `AggregateElasticSearchView` should be updated.
+#### Note
+
+Every time when you create a new Studio, the `AggregateElasticSearchView` should be updated.
