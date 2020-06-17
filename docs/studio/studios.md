@@ -111,15 +111,17 @@ To remove an unwanted Studio, deprecate it in the Resource View.
 
 ### How to configure the list of Studios on the index page
 
-The 'Studio' link in the Header allows you to access your list of Studios faster.
+The `Studio` link in the Header allows you to access your list of Studios.
 
 ![Studios List](../assets/studios-list.png)
 
 To enable this feature, the following should be done:
 
-1. If you don't have a project to store the application data, create one.
+#### 1. If you don't have a project to store the application data, create one.
 
-2. Create an Aggregated Elastic Search View inside this project, and add the list of all the projects that contain Studio resources. Example:
+#### 2. Create an Aggregated Elastic Search View inside this project, and add all of the projects that contain Studio resources to the list.
+
+Example:
 
 ```json-ld
 {
@@ -143,7 +145,7 @@ To enable this feature, the following should be done:
 }
 ```
 
-3. Ask developers to add an ENV variable that provides a location of the 'AggregateElasticSearchView' as following:
+#### 3. Ask a developer to add an ENV variable with the location of the 'AggregateElasticSearchView' as following:
 
 `STUDIO_VIEW=[yourOrgLabel]/[yourProjectLabel]/[viewId]`
 
@@ -153,4 +155,4 @@ In our example it would be:
 
 #### Note
 
-Every time when you create a new Studio, the `AggregateElasticSearchView` should be updated.
+Every time when you create a new Studio, the `AggregateElasticSearchView` needs to be updated.
