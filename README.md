@@ -83,6 +83,7 @@ docker build . --tag=nexus-web
 - `SECURE`: Is nexus web running in https or not. Default is `false`
 - `GTM_CODE`: The Google Analytics Identifier. GA won't be present unless an ID is specified.
 - `SENTRY_DSN`: The sentry URL Nexus Web needs to report errors to. Default is undefined.
+- `STUDIO_VIEW`: The location of the aggregate elastic search view that contains all the projects: `orgLabel/projectLabel/viewId`
 
 The following concern Plugins. [See how to manage plugin deployments](./docs/plugins.md)
 

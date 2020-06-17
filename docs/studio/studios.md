@@ -108,3 +108,47 @@ Just click `Edit Studio` button and update `Label` and `Description` fields.
 ### Removing a studio
 
 To remove an unwanted Studio, deprecate it in the Resource View.
+
+### How to configure the list of Studios on the index page
+
+The 'Studio' link in the Header allows you to access your list of Studios faster.
+
+![Header](../assets/header.png)
+
+To enable this feature, the following should be done:
+
+1. If you don't have a project to store the application data, create one.
+
+2. Create an Aggregated Elastic Search View inside this project, and add the list of all the projects that contain Studio resources. Example:
+
+```json-ld
+{
+  "@context": "https://bluebrain.github.io/nexus/contexts/view.json",
+  "@id": "nxv:studioList",
+  "@type": ["View", "AggregateElasticSearchView"],
+  "views": [
+    {
+      "project": "c7d70552-4305-111a-trtr-75d757ed9a49",
+      "viewId": "nxv:defaultElasticSearchIndex"
+    },
+    {
+      "project": "86b0ee1e-a6a5-111b-rtrt-938b3c38dfc0",
+      "viewId": "nxv:defaultElasticSearchIndex"
+    },
+    {
+      "project": "a7d693345-8d1d-rtrt-111a-90b6b6ab94ee",
+      "viewId": "nxv:defaultElasticSearchIndex"
+    },
+  ]
+}
+```
+
+3. Ask developers to add an ENV variable that provides a location of the 'AggregateElasticSearchView' as following:
+
+`STUDIO_VIEW=[yourOrgLabel]/[yourProjectLabel]/[viewId]`
+
+In our example it would be:
+
+`STUDIO_VIEW=webapps/nexus-web/nxv:studioList`
+
+Note, that every time when you create a new Studio, the `AggregateElasticSearchView` should be updated.
