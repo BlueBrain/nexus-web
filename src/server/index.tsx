@@ -10,6 +10,8 @@ import silentRefreshHtml from './silent_refresh';
 import { RootState } from '../shared/store/reducers';
 import { DEFAULT_UI_SETTINGS } from '../shared/store/reducers/ui-settings';
 
+import * as socket from 'socket.io';
+
 const PORT_NUMBER = 8000;
 
 // Create a express app
@@ -78,9 +80,20 @@ app.get('*', async (req: express.Request, res: express.Response) => {
   res.send(html({ body, helmet, preloadedState }));
 });
 
-app.listen(PORT_NUMBER, () => {
+const server = app.listen(PORT_NUMBER, () => {
   // tslint:disable-next-line:no-console
   console.log(`Nexus Web is listening on a port ${PORT_NUMBER} ...`);
+});
+
+// Setup socket
+const io = socket(server);
+
+io.on('connection', socket => {
+  console.log('made a socket connection', socket.id);
+
+  socket.on('text', data => {
+    io.sockets.emit('text', data);
+  });
 });
 
 export default app;

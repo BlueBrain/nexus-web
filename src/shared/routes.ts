@@ -11,6 +11,7 @@ import ACLsView from './views/ACLsView';
 import UserView from './views/UserView';
 import StudioView from './views/StudioView';
 import StudioListView from './views/StudioListView';
+import Collaborate from './views/Collaborate';
 
 const routes: RouteProps[] = [
   {
@@ -30,6 +31,11 @@ const routes: RouteProps[] = [
     path: '/studio',
     exact: true,
     component: StudioListView,
+  },
+  {
+    path: '/collaborate',
+    exact: true,
+    component: Collaborate,
   },
   {
     path: '/:orgLabel',

@@ -25,6 +25,8 @@
     "@sentry/browser": "5.9.1",
     "@types/cytoscape": "^3.8.5",
     "@types/lodash": "^4.14.149",
+    "@types/socket.io": "^2.1.8",
+    "@types/socket.io-client": "^1.4.33",
     "antd": "^3.19.5",
     "codemirror": "^5.44.0",
     "connected-react-router": "^6.3.2",
@@ -58,6 +60,8 @@
     "redux-oidc": "^3.1.2",
     "redux-thunk": "^2.3.0",
     "resize-observer-polyfill": "^1.5.1",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0",
     "ts-debounce": "^1.0.0",
     "ts-invariant": "^0.4.4",
     "use-async-effect": "^2.2.1"
