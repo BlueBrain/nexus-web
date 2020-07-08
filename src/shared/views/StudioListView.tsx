@@ -12,6 +12,8 @@ const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';
 
 const ES_QUERY = {
+  from: 0,
+  size: 100,
   query: {
     bool: {
       must: [
