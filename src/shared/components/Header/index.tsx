@@ -1,17 +1,13 @@
 import * as React from 'react';
 import { Menu, Dropdown, Icon, Button, Popover } from 'antd';
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 
 import Copy from '../Copy';
 import ConsentPreferences from '../ConsentPreferences';
 import { ConsentType } from '../../layouts/MainLayout';
-import { RootState } from '../../store/reducers';
 
 import './Header.less';
 
-const logo = require('../../logo.svg');
-const epflLogo = require('../../EPFL-logo.svg');
+const epflLogo = require('../../images/EPFL-logo.svg');
 
 const documentationURL = 'https://bluebrainnexus.io/docs';
 
@@ -111,7 +107,6 @@ export interface HeaderProps {
   displayLogin?: boolean;
   children?: React.ReactChild;
   onLoginClick?(): void;
-  visitHome?(): void;
   serviceVersions?: ServiceVersions;
   consent?: ConsentType;
   onClickRemoveConsent?(): void;
@@ -126,13 +121,10 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   onLoginClick,
   version,
   githubIssueURL,
-  visitHome,
   serviceVersions,
   consent,
   onClickRemoveConsent,
 }) => {
-  const studioView = useSelector((state: RootState) => state.config.studioView);
-
   const menu = (
     <Menu>
       {links.map((link, i) => (
@@ -144,44 +136,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   return (
     <header className="Header">
       <div className="selectors">{children}</div>
-      <div className="logo-block">
-        <a
-          className="logo"
-          href=""
-          onClick={e => {
-            if (visitHome) {
-              e.preventDefault();
-              visitHome();
-            }
-          }}
-        >
-          {
-            // must add inline styling to prevent this big svg from
-            // flashing the screen on dev mode before styles are loaded
-          }
-          <img style={{ height: '2em', width: '2em' }} src={logo} alt="Nexus" />
-          <h1>Nexus</h1>
-        </a>
-      </div>
       <div className="menu-block">
-        {studioView !== '' && [
-          <a
-            className="nav-item"
-            href=""
-            onClick={e => {
-              if (visitHome) {
-                e.preventDefault();
-                visitHome();
-              }
-            }}
-            key="admin-link"
-          >
-            Admin
-          </a>,
-          <Link className="nav-item" to="/studio" key="studio-link">
-            Studio
-          </Link>,
-        ]}
         {token && (
           <Copy
             textToCopy={token}

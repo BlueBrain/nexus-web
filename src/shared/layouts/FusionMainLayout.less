@@ -1,0 +1,51 @@
+@import '../lib.less';
+
+.fusion-main-layout {
+  .logo {
+    padding: 0.5rem 2rem;
+    display: flex;
+    letter-spacing: 1px;
+    color: #ffffff;
+  }
+
+  .fusion-title {
+    font-size: 1.4rem;
+    font-weight: 200;
+    margin-left: 0.7rem;
+  }
+
+  .menu-item {
+    display: flex;
+  }
+
+  .menu-icon {
+    margin-right: 0.7rem;
+    width: 17px;
+  }
+
+  .ant-menu-inline .ant-menu-item,
+  .ant-menu-inline .ant-menu-item:not(:last-child) {
+    margin: 0;
+    padding: 6px 0;
+    height: 52px;
+    border-left: 4px solid #001529;
+    font-weight: 300;
+  }
+
+  .ant-menu.ant-menu-dark .ant-menu-item-selected {
+    background: linear-gradient(45deg, #001529, #2a414b);
+    border-left: 4px solid @primary-color;
+    position: relative;
+  }
+
+  .indicator {
+    background-color: #2a414b;
+    height: 18px;
+    width: 18px;
+    transform: rotate(45deg);
+    position: fixed;
+    z-index: 100;
+    left: 190px;
+    margin-top: 0.7rem;
+  }
+}

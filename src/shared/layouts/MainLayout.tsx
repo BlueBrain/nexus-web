@@ -87,7 +87,6 @@ const MainLayout: React.FunctionComponent<MainLayoutProps> = ({
         <meta name="theme-color" content="#00c9fd" />
       </Helmet>
       <Header
-        visitHome={() => goTo('/')}
         name={authenticated ? name : undefined}
         token={token}
         links={[
