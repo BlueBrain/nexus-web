@@ -1,6 +1,6 @@
 import { RouteProps } from 'react-router-dom';
 
-import OrgsView from './views/OrgsView';
+import OrgsView from '../subapps/admin/views/OrgsListView';
 import ProjectsView from './views/ProjectsView';
 import ProjectView from './views/ProjectView';
 import Login from './views/Login';
@@ -14,11 +14,6 @@ import StudioListView from './views/StudioListView';
 
 const routes: RouteProps[] = [
   {
-    path: '/',
-    exact: true,
-    component: OrgsView,
-  },
-  {
     path: '/login',
     component: Login,
   },
@@ -30,11 +25,6 @@ const routes: RouteProps[] = [
     path: '/studio',
     exact: true,
     component: StudioListView,
-  },
-  {
-    path: '/:orgLabel',
-    exact: true,
-    component: ProjectsView,
   },
   {
     path: '/:orgLabel/:projectLabel',

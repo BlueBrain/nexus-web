@@ -8,7 +8,7 @@ import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import OrgList from '../containers/OrgList';
 import OrgForm from '../components/Orgs/OrgForm';
 import OrgItem from '../components/Orgs/OrgItem';
-import ListItem from '../components/List/Item';
+import ListItem from '../../../shared/components/List/Item';
 
 type NewOrg = {
   label: string;
@@ -19,7 +19,7 @@ interface OrgsViewProps {
   goTo(orgLabel: string): void;
 }
 
-const OrgsView: React.FunctionComponent<OrgsViewProps> = ({ goTo }) => {
+const OrgsListView: React.FunctionComponent<OrgsViewProps> = ({ goTo }) => {
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
   const [selectedOrg, setSelectedOrg] = React.useState<
@@ -210,4 +210,4 @@ const mapDispatchToProps = (dispatch: any) => ({
   goTo: (org: string) => dispatch(push(`/${org}`)),
 });
 
-export default connect(null, mapDispatchToProps)(OrgsView);
+export default connect(null, mapDispatchToProps)(OrgsListView);
