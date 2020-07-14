@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
 import { NexusClient, Identity, Realm } from '@bbp/nexus-sdk';
 import { useNexus } from '@bbp/react-nexus';
 import { UserManager } from 'oidc-client';
+import { Layout, Menu } from 'antd';
 
 import Header, { ServiceVersions } from '../components/Header';
 import getUserManager from '../../client/userManager';
@@ -14,21 +15,20 @@ import useLocalStorage from '../hooks/useLocalStorage';
 import ConsentContainer from '../containers/ConsentContainer';
 import SeoHeaders from './SeoHeaders';
 
-import { Layout, Menu } from 'antd';
-const { Sider, Content } = Layout;
-
 import './FusionMainLayout.less';
+
+const { Sider, Content } = Layout;
 
 const logo = require('../images/logo.svg');
 
 export interface FusionMainLayoutProps {
   authenticated: boolean;
   token?: string;
-  goTo(url: string): void;
   name?: string;
   canLogin?: boolean;
   userManager?: UserManager;
   apiEndpoint: string;
+  children: any[];
 }
 
 export type ConsentType = {
@@ -36,6 +36,14 @@ export type ConsentType = {
   hasSetPreferences: boolean;
 };
 
+export type SubAppProps = {
+  label: string;
+  key: string;
+  route: string;
+  icon: any;
+};
+
+// TODO: move somewhere
 const homeIcon = require('../images/homeIcon.svg');
 const flowIcon = require('../images/flowIcon.svg');
 const gridIcon = require('../images/gridIcon.svg');
@@ -71,25 +79,35 @@ const subAppsConfig = [
 const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   authenticated,
   token,
-  goTo,
   name,
   children,
   canLogin = false,
   userManager,
   apiEndpoint,
 }) => {
+  const dispatch = useDispatch();
+  //   TODO: collapsed version
   const [collapsed, setCollapsed] = React.useState(false);
-  const [selectedItem, setSelectedItem] = React.useState(subAppsConfig[0]);
+  const [selectedItem, setSelectedItem] = React.useState<SubAppProps>(
+    subAppsConfig[0]
+  );
+  const [consent, setConsent] = useLocalStorage<ConsentType>(
+    'consentToTracking'
+  );
+
+  React.useEffect(() => {
+    goTo(selectedItem.route);
+  }, [selectedItem]);
+
+  const goTo = (url: string) => {
+    dispatch(push(url, { previousUrl: window.location.href }));
+  };
 
   const handleLogout = (e: React.SyntheticEvent) => {
     e.preventDefault();
     localStorage.removeItem('nexus__state');
     userManager && userManager.signoutRedirect();
   };
-
-  const [consent, setConsent] = useLocalStorage<ConsentType>(
-    'consentToTracking'
-  );
 
   // Remove version from API URL
   const splits = apiEndpoint.split('/');
@@ -103,13 +121,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
 
   const onSelectSubAbpp = (data: any) => {
     const item = subAppsConfig.find(subApp => subApp.key === data.key);
-    // @ts-ignore
-    setSelectedItem(item);
-    console.log('item', item);
-
-    console.log('selectedItem', data.key, selectedItem);
-
-    goTo(selectedItem.route);
+    setSelectedItem(item as SubAppProps);
   };
 
   return (
@@ -171,16 +183,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
             onClickRemoveConsent={() => setConsent(undefined)}
           />
           <ConsentContainer consent={consent} updateConsent={setConsent} />
-          <Content
-            className="site-layout-background"
-            style={{
-              margin: '24px 16px',
-              padding: 24,
-              minHeight: 280,
-            }}
-          >
-            {children}
-          </Content>
+          <Content className="site-layout-background">{children}</Content>
         </Layout>
       </Layout>
     </>
@@ -215,9 +218,4 @@ const mapStateToProps = (state: RootState) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: any) => ({
-  goTo: (url: string) =>
-    dispatch(push(url, { previousUrl: window.location.href })),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(FusionMainLayout);
+export default connect(mapStateToProps)(FusionMainLayout);
