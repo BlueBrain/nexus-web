@@ -13,7 +13,7 @@ import { Resource } from '@bbp/nexus-sdk';
 
 import routes from '../shared/routes';
 import NotFound from './views/404';
-import MainLayout from './layouts/MainLayout';
+import FusionMainLayout from './layouts/FusionMainLayout';
 import ResourceViewContainer from './containers/ResourceViewContainer';
 import { parseProjectUrl } from './utils';
 import SubApps from '../subapps';
@@ -85,7 +85,7 @@ const App: React.FC = () => {
   ];
 
   return (
-    <MainLayout>
+    <FusionMainLayout>
       <Switch location={background || location}>
         {routesWithSubApps.map(({ path, component: C, ...rest }) => (
           <Route key={path as string} path={path} component={C} {...rest} />
@@ -115,7 +115,7 @@ const App: React.FC = () => {
           )}
         />,
       ]}
-    </MainLayout>
+    </FusionMainLayout>
   );
 };
 
