@@ -29,6 +29,7 @@ export interface FusionMainLayoutProps {
   userManager?: UserManager;
   apiEndpoint: string;
   children: any[];
+  subApps: SubAppProps[];
 }
 
 export type ConsentType = {
@@ -43,47 +44,14 @@ export type SubAppProps = {
   icon: any;
 };
 
-// TODO: move somewhere
 const homeIcon = require('../images/homeIcon.svg');
-const flowIcon = require('../images/flowIcon.svg');
-const gridIcon = require('../images/gridIcon.svg');
-const dbIcon = require('../images/dbIcon.svg');
-const homeIconActive = require('../images/homeIconBlue.svg');
-const flowIconActive = require('../images/flowIconBlue.svg');
-const gridIconActive = require('../images/gridIconBlue.svg');
-const dbIconActive = require('../images/dbIconBlue.svg');
 
-const subApps = [
-  {
-    label: 'Home',
-    key: 'home',
-    route: '/',
-    icon: homeIcon,
-    // TODO: this can be done with css classes
-    iconActive: homeIconActive,
-  },
-  {
-    label: 'Studios',
-    key: 'studios',
-    route: '/',
-    icon: flowIcon,
-    iconActive: flowIconActive,
-  },
-  {
-    label: 'Studios Legacy',
-    key: 'studios-legacy',
-    route: '/studio',
-    icon: gridIcon,
-    iconActive: gridIconActive,
-  },
-  {
-    label: 'Knowledge Admin',
-    key: 'admin',
-    route: '/',
-    icon: dbIcon,
-    iconActive: dbIconActive,
-  },
-];
+const homeApp = {
+  label: 'Home',
+  key: 'home',
+  route: '/',
+  icon: homeIcon,
+};
 
 const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   authenticated,
@@ -92,8 +60,10 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   children,
   canLogin = false,
   userManager,
+  subApps: propSubApps,
   apiEndpoint,
 }) => {
+  const subApps = [homeApp, ...propSubApps];
   const dispatch = useDispatch();
   //   TODO: collapsed version
   const [collapsed, setCollapsed] = React.useState(false);
@@ -156,7 +126,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
               <Menu.Item key={subApp.key}>
                 {selectedItem.key === subApp.key ? (
                   <div className="menu-item">
-                    <img className="menu-icon" src={subApp.iconActive} />
+                    <img className="menu-icon" src={subApp.icon} />
                     <span>{subApp.label}</span>
                     {selectedItem.key === subApp.key && (
                       <span className="indicator" />
