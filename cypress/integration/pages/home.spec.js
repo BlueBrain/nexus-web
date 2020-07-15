@@ -1,8 +1,8 @@
-import { homePage } from '../../support';
+import { adminSubApp } from '../../support';
 
-describe('Homepage', () => {
+describe('Admin SubApp', () => {
   beforeEach(() => {
-    cy.visit(homePage);
+    cy.visit(adminSubApp);
   });
 
   it('has a header', () => {

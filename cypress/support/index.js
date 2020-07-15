@@ -20,7 +20,8 @@
 
 import './commands';
 
-export const homePage = 'http://localhost:8000';
+export const homePage = 'http://localhost:8000/';
+export const adminSubApp = 'http://localhost:8000/admin';
 export const loginPage = 'http://localhost:8000/login';
 
 export const docLink = 'https://bluebrainnexus.io/docs';
