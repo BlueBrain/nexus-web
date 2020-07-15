@@ -19,7 +19,7 @@ import './FusionMainLayout.less';
 
 const { Sider, Content } = Layout;
 
-const logo = require('../images/logo.svg');
+const logo = require('../images/logoDarkBg.svg');
 
 export interface FusionMainLayoutProps {
   authenticated: boolean;
@@ -48,31 +48,40 @@ const homeIcon = require('../images/homeIcon.svg');
 const flowIcon = require('../images/flowIcon.svg');
 const gridIcon = require('../images/gridIcon.svg');
 const dbIcon = require('../images/dbIcon.svg');
+const homeIconActive = require('../images/homeIconBlue.svg');
+const flowIconActive = require('../images/flowIconBlue.svg');
+const gridIconActive = require('../images/gridIconBlue.svg');
+const dbIconActive = require('../images/dbIconBlue.svg');
 
-const subAppsConfig = [
+const subApps = [
   {
     label: 'Home',
     key: 'home',
     route: '/',
     icon: homeIcon,
+    // TODO: this can be done with css classes
+    iconActive: homeIconActive,
   },
   {
     label: 'Studios',
     key: 'studios',
     route: '/',
     icon: flowIcon,
+    iconActive: flowIconActive,
   },
   {
     label: 'Studios Legacy',
     key: 'studios-legacy',
     route: '/studio',
     icon: gridIcon,
+    iconActive: gridIconActive,
   },
   {
     label: 'Knowledge Admin',
     key: 'admin',
     route: '/',
     icon: dbIcon,
+    iconActive: dbIconActive,
   },
 ];
 
@@ -89,7 +98,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   //   TODO: collapsed version
   const [collapsed, setCollapsed] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState<SubAppProps>(
-    subAppsConfig[0]
+    subApps[0]
   );
   const [consent, setConsent] = useLocalStorage<ConsentType>(
     'consentToTracking'
@@ -120,7 +129,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   );
 
   const onSelectSubAbpp = (data: any) => {
-    const item = subAppsConfig.find(subApp => subApp.key === data.key);
+    const item = subApps.find(subApp => subApp.key === data.key);
     setSelectedItem(item as SubAppProps);
   };
 
@@ -132,26 +141,33 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
           <div className="logo">
             {/* must add inline styling to prevent this big svg from flashing
             the screen on dev mode before styles are loaded */}
-            <img width="20px" height="30px" src={logo} alt="Fusion" />
+            <img width="32" height="32" src={logo} alt="Fusion" />
             <span className="fusion-title">Fusion</span>
           </div>
           <Menu
             theme="dark"
             mode="inline"
-            defaultSelectedKeys={[subAppsConfig[0].key]}
+            defaultSelectedKeys={[subApps[0].key]}
             selectedKeys={[selectedItem.key]}
             style={{ height: '100vh' }}
             onClick={onSelectSubAbpp}
           >
-            {subAppsConfig.map(subApp => (
+            {subApps.map(subApp => (
               <Menu.Item key={subApp.key}>
-                <div className="menu-item">
-                  <img className="menu-icon" src={subApp.icon} />
-                  <span>{subApp.label}</span>
-                  {selectedItem.key === subApp.key && (
-                    <span className="indicator" />
-                  )}
-                </div>
+                {selectedItem.key === subApp.key ? (
+                  <div className="menu-item">
+                    <img className="menu-icon" src={subApp.iconActive} />
+                    <span>{subApp.label}</span>
+                    {selectedItem.key === subApp.key && (
+                      <span className="indicator" />
+                    )}
+                  </div>
+                ) : (
+                  <div className="menu-item">
+                    <img className="menu-icon" src={subApp.icon} />
+                    <span>{subApp.label}</span>
+                  </div>
+                )}
               </Menu.Item>
             ))}
           </Menu>

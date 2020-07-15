@@ -1,13 +1,15 @@
 import * as React from 'react';
-import { Menu, Dropdown, Icon, Button, Popover } from 'antd';
+import { Menu, Dropdown, Icon, Popover, Button } from 'antd';
 
 import Copy from '../Copy';
 import ConsentPreferences from '../ConsentPreferences';
-import { ConsentType } from '../../layouts/MainLayout';
+import { ConsentType } from '../../layouts/FusionMainLayout';
 
 import './Header.less';
 
 const epflLogo = require('../../images/EPFL-logo.svg');
+const infoIcon = require('../../images/infoIcon.svg');
+const copyIcon = require('../../images/copyIcon.svg');
 
 const documentationURL = 'https://bluebrainnexus.io/docs';
 
@@ -141,9 +143,17 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           <Copy
             textToCopy={token}
             render={(copySuccess, triggerCopy) => (
-              <Button size="small" icon="copy" onClick={() => triggerCopy()}>
-                {copySuccess ? 'Token copied!' : 'Copy token'}
-              </Button>
+              <button
+                className="copy-token-button"
+                onClick={() => triggerCopy()}
+              >
+                <img src={copyIcon} />{' '}
+                {copySuccess ? (
+                  <span className="button-text">Copied!</span>
+                ) : (
+                  <span className="button-text">Copy token</span>
+                )}
+              </button>
             )}
           />
         )}
@@ -161,11 +171,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           title="Information"
           placement="bottomRight"
         >
-          <Button
-            size="small"
-            icon="info-circle"
-            className="ui-header-info-button"
-          />
+          <img src={infoIcon} className="info-icon" alt="Information" />
         </Popover>
         {name ? (
           <Dropdown overlay={menu}>
