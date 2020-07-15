@@ -38,7 +38,7 @@ exports[`Header component Should render correctly 1`] = `
     >
       <img
         alt="Information"
-        className="info-icon"
+        className="ui-header-info-button"
         src="/mock/path"
       />
     </Popover>
