@@ -1,6 +1,12 @@
 import { Modal, message } from 'antd';
 import * as React from 'react';
-import { Route, Switch, useLocation, useHistory } from 'react-router-dom';
+import {
+  Route,
+  Switch,
+  useLocation,
+  useHistory,
+  RouteProps,
+} from 'react-router-dom';
 import { Location } from 'history';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
@@ -10,6 +16,7 @@ import NotFound from './views/404';
 import MainLayout from './layouts/MainLayout';
 import ResourceViewContainer from './containers/ResourceViewContainer';
 import { parseProjectUrl } from './utils';
+import SubApps from '../subapps';
 
 import './App.less';
 
@@ -65,10 +72,22 @@ const App: React.FC = () => {
   const background =
     location.state && (location.state as { background?: Location }).background;
 
+  // Apply Subapps
+  const routesWithSubApps = [
+    ...routes,
+    ...Object.keys(SubApps).reduce((memo: RouteProps[], subAppKey: string) => {
+      const app = SubApps[subAppKey]();
+      return app.routes.map(route => {
+        route.path = `/${app.namespace}${route.path}`;
+        return route;
+      });
+    }, []),
+  ];
+
   return (
     <MainLayout>
       <Switch location={background || location}>
-        {routes.map(({ path, component: C, ...rest }) => (
+        {routesWithSubApps.map(({ path, component: C, ...rest }) => (
           <Route key={path as string} path={path} component={C} {...rest} />
         ))}
         <Route component={NotFound} />
