@@ -16,6 +16,7 @@ import ConsentContainer from '../containers/ConsentContainer';
 import SeoHeaders from './SeoHeaders';
 
 import './FusionMainLayout.less';
+import { Link, useLocation } from 'react-router-dom';
 
 const { Sider, Content } = Layout;
 
@@ -64,11 +65,14 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   apiEndpoint,
 }) => {
   const subApps = [homeApp, ...propSubApps];
+  const location = useLocation();
   const dispatch = useDispatch();
   //   TODO: collapsed version
   const [collapsed, setCollapsed] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState<SubAppProps>(
-    subApps[0]
+    subApps.find(({ route }) => {
+      return location.pathname === route;
+    }) || subApps[0]
   );
   const [consent, setConsent] = useLocalStorage<ConsentType>(
     'consentToTracking'
@@ -108,12 +112,14 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
       <SeoHeaders />
       <Layout className="fusion-main-layout">
         <Sider trigger={null} collapsible collapsed={collapsed}>
-          <div className="logo">
-            {/* must add inline styling to prevent this big svg from flashing
+          <Link to={'/'}>
+            <div className="logo">
+              {/* must add inline styling to prevent this big svg from flashing
             the screen on dev mode before styles are loaded */}
-            <img width="32" height="32" src={logo} alt="Fusion" />
-            <span className="fusion-title">Fusion</span>
-          </div>
+              <img width="32" height="32" src={logo} alt="Fusion" />
+              <span className="fusion-title">Fusion</span>
+            </div>
+          </Link>
           <Menu
             theme="dark"
             mode="inline"

@@ -171,7 +171,11 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           title="Information"
           placement="bottomRight"
         >
-          <img src={infoIcon} className="info-icon" alt="Information" />
+          <img
+            src={infoIcon}
+            className="ui-header-info-button"
+            alt="Information"
+          />
         </Popover>
         {name ? (
           <Dropdown overlay={menu}>
