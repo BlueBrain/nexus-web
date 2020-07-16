@@ -5,15 +5,18 @@ import ProjectsView from './views/ProjectsView';
 
 const title = 'Admin';
 const namespace = 'admin';
+const icon = require('../../shared/images/dbIcon.svg');
 
 const adminSubappProps = {
   title,
   namespace,
+  icon,
 };
 
 export const AdminSubappContext = React.createContext<{
   title: string;
   namespace: string;
+  icon: string;
 }>(adminSubappProps);
 
 export function useAdminSubappContext() {
@@ -32,8 +35,7 @@ export const AdminSubappProviderHOC = (component: React.FunctionComponent) => {
 
 const Admin: SubApp = () => {
   return {
-    title,
-    namespace,
+    ...adminSubappProps,
     routes: [
       {
         path: '/',

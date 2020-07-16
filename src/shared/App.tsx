@@ -16,11 +16,7 @@ import NotFound from './views/404';
 import FusionMainLayout, { SubAppProps } from './layouts/FusionMainLayout';
 import ResourceViewContainer from './containers/ResourceViewContainer';
 import { parseProjectUrl } from './utils';
-<<<<<<< HEAD
 import SubApps, { SubAppObject, SubApp } from '../subapps';
-=======
-import SubApps, { SubApp } from '../subapps';
->>>>>>> move project list and add context support for subapps
 
 import './App.less';
 
@@ -81,11 +77,11 @@ const App: React.FC = () => {
   const subApps = Array.from(SubApps.values()).reduce(
     (memo: Map<string, SubAppObject>, subApp: SubApp) => {
       const app = subApp();
-      memo.set(app.namespace, app)
-      return memo
+      memo.set(app.namespace, app);
+      return memo;
     },
     new Map()
-  )
+  );
 
   // Apply Subapp routes
   const routesWithSubApps = [
@@ -103,7 +99,7 @@ const App: React.FC = () => {
 
   return (
     <FusionMainLayout
-      subApps={Object.values(subApps).map(subApp => ({
+      subApps={Array.from(subApps.values()).map(subApp => ({
         label: subApp.title,
         key: subApp.title,
         route: `/${subApp.namespace}`,
