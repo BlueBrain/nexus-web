@@ -9,23 +9,24 @@ import OrgList from '../containers/OrgList';
 import OrgForm from '../components/Orgs/OrgForm';
 import OrgItem from '../components/Orgs/OrgItem';
 import ListItem from '../../../shared/components/List/Item';
+import { useHistory } from 'react-router';
+import { useAdminSubappContext } from '..';
 
 type NewOrg = {
   label: string;
   description?: string;
 };
 
-interface OrgsViewProps {
-  goTo(orgLabel: string): void;
-}
-
-const OrgsListView: React.FunctionComponent<OrgsViewProps> = ({ goTo }) => {
+const OrgsListView: React.FunctionComponent = () => {
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
   const [selectedOrg, setSelectedOrg] = React.useState<
     OrgResponseCommon | undefined
   >(undefined);
   const nexus = useNexusContext();
+  const history = useHistory();
+  const subapp = useAdminSubappContext();
+  const goTo = (org: string) => history.push(`/${subapp.namespace}/${org}`);
 
   const saveAndCreate = (newOrg: NewOrg) => {
     setFormBusy(true);
@@ -206,8 +207,4 @@ const OrgsListView: React.FunctionComponent<OrgsViewProps> = ({ goTo }) => {
   );
 };
 
-const mapDispatchToProps = (dispatch: any) => ({
-  goTo: (org: string) => dispatch(push(`/${org}`)),
-});
-
-export default connect(null, mapDispatchToProps)(OrgsListView);
+export default OrgsListView;

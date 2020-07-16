@@ -10,10 +10,7 @@ export type SubAppObject = {
 
 export type SubApp = () => SubAppObject;
 
-const SubApps: {
-  [subAppKey: string]: SubApp;
-} = {
-  Admin,
-};
+const SubApps: Map<string, SubApp> = new Map();
+SubApps.set('Admin', Admin);
 
 export default SubApps;

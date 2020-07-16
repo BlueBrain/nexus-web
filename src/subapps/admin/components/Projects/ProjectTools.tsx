@@ -3,8 +3,8 @@ import { AccessControl } from '@bbp/react-nexus';
 import { Link } from 'react-router-dom';
 import { Divider } from 'antd';
 
-import FileUploadContainer from '../../containers/FileUploadContainer';
-import ResourceFormContainer from '../../containers/ResourceFormContainer';
+import FileUploadContainer from '../../../../shared/containers/FileUploadContainer';
+import ResourceFormContainer from '../../../../shared/containers/ResourceFormContainer';
 
 import './ProjectTools.less';
 
