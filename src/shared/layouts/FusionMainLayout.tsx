@@ -67,7 +67,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   const subApps = [homeApp, ...propSubApps];
   const location = useLocation();
   const dispatch = useDispatch();
-  //   TODO: collapsed version
+  //   TODO: collapsed version https://github.com/BlueBrain/nexus/issues/1322
   const [collapsed, setCollapsed] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState<SubAppProps>(
     subApps.find(({ route }) => {
@@ -130,19 +130,13 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
           >
             {subApps.map(subApp => (
               <Menu.Item key={subApp.key}>
-                {selectedItem.key === subApp.key ? (
-                  <div className="menu-item">
-                    <img className="menu-icon" src={subApp.icon} />
-                    <span>{subApp.label}</span>
-                    {selectedItem.key === subApp.key && (
-                      <span className="indicator" />
-                    )}
-                  </div>
-                ) : (
-                  <div className="menu-item">
-                    <img className="menu-icon" src={subApp.icon} />
-                    <span>{subApp.label}</span>
-                  </div>
+                <div className="menu-item">
+                  {/* TODO: change icons color with CSS to blue when it is selected https://github.com/BlueBrain/nexus/issues/1324 */}
+                  <img className="menu-icon" src={subApp.icon} />
+                  <span>{subApp.label}</span>
+                </div>
+                {selectedItem.key === subApp.key && (
+                  <div className="indicator" />
                 )}
               </Menu.Item>
             ))}

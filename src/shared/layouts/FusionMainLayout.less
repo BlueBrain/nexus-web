@@ -16,6 +16,17 @@
 
   .menu-item {
     display: flex;
+    position: relative;
+  }
+
+  .indicator {
+    background-color: #283d47;
+    height: 18px;
+    width: 18px;
+    transform: rotate(45deg);
+    position: absolute;
+    left: 187px;
+    top: 33%;
   }
 
   .menu-icon {
@@ -30,22 +41,12 @@
     height: 50px;
     border-left: 4px solid #001529;
     font-weight: 300;
+    // make an indicator appear, otherwise it is cut off
+    overflow: visible;
   }
 
   .ant-menu.ant-menu-dark .ant-menu-item-selected {
     background: linear-gradient(45deg, #001529, #2a414b);
     border-left: 4px solid @primary-color;
-    position: relative;
-  }
-
-  .indicator {
-    background-color: #2a414b;
-    height: 18px;
-    width: 18px;
-    transform: rotate(45deg);
-    position: fixed;
-    z-index: 100;
-    left: 190px;
-    margin-top: 0.7rem;
   }
 }
