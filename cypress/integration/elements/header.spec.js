@@ -6,7 +6,7 @@ describe('Header', () => {
   });
 
   it('contains the title', () => {
-    cy.contains('h1', 'Nexus');
+    cy.contains('span.fusion-title', 'Fusion');
   });
 
   it('contains the information button', () => {
@@ -14,7 +14,7 @@ describe('Header', () => {
   });
 
   it('contains the link to the homepage', () => {
-    cy.contains('a', 'Nexus').should('have.attr', 'href', '');
+    cy.contains('a', 'Fusion').should('have.attr', 'href', '/');
   });
 
   it('contains the link to docs', () => {

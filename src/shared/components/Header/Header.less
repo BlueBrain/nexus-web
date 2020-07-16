@@ -3,43 +3,10 @@
 .Header {
   display: flex;
   justify-content: space-between;
-  padding: 4px;
   box-sizing: content-box;
-  height: 32px;
-  background-color: @header-background-color;
-
-  .logo-block {
-    position: absolute;
-    left: 50%;
-    width: 120px;
-    margin-left: -60px;
-
-    .logo {
-      margin-right: 0.5em;
-      height: 32px;
-      display: flex;
-      align-items: center;
-
-      img {
-        height: 2em;
-        width: 2em;
-        margin: 1px 0;
-        padding-bottom: 2px;
-      }
-    }
-
-    h1 {
-      color: @primary-color;
-      margin: 0;
-      font-weight: 100;
-      display: inline-block;
-    }
-
-    @media (max-width: 795px) {
-      left: 0;
-      margin-left: 10px;
-    }
-  }
+  height: 52px;
+  background-color: #ffffff;
+  box-shadow: 2px 3px 3px @subtle-white;
 
   .selectors {
     display: flex;
@@ -70,6 +37,29 @@
       color: @text-color;
       align-self: center;
       margin-left: 10px;
+      bottom: 50px;
+    }
+  }
+
+  .ui-header-info-button {
+    margin: 5px 5px 4px;
+    cursor: pointer;
+  }
+
+  .copy-token-button {
+    height: 30px;
+    width: 115px;
+    border-radius: 4px;
+    outline-style: none;
+    line-height: 1rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-align: left;
+    border: 1px solid @subtle-white;
+    display: flex;
+
+    .button-text {
+      margin-left: 0.4rem;
     }
   }
 }

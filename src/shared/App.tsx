@@ -13,10 +13,10 @@ import { Resource } from '@bbp/nexus-sdk';
 
 import routes from '../shared/routes';
 import NotFound from './views/404';
-import MainLayout from './layouts/MainLayout';
+import FusionMainLayout from './layouts/FusionMainLayout';
 import ResourceViewContainer from './containers/ResourceViewContainer';
 import { parseProjectUrl } from './utils';
-import SubApps from '../subapps';
+import SubApps, { SubAppObject } from '../subapps';
 
 import './App.less';
 
@@ -72,11 +72,27 @@ const App: React.FC = () => {
   const background =
     location.state && (location.state as { background?: Location }).background;
 
-  // Apply Subapps
+  // Invoke SubApps
+  // TODO: maybe it's better to invoke them elsewhere
+  const subApps = Object.keys(SubApps).reduce(
+    (
+      memo: {
+        [key: string]: SubAppObject;
+      },
+      subAppKey: string
+    ) => {
+      const app = SubApps[subAppKey]();
+      memo[subAppKey] = app;
+      return memo;
+    },
+    {}
+  );
+
+  // Apply Subapp routes
   const routesWithSubApps = [
     ...routes,
-    ...Object.keys(SubApps).reduce((memo: RouteProps[], subAppKey: string) => {
-      const app = SubApps[subAppKey]();
+    ...Object.keys(subApps).reduce((memo: RouteProps[], subAppKey: string) => {
+      const app = subApps[subAppKey];
       return app.routes.map(route => {
         route.path = `/${app.namespace}${route.path}`;
         return route;
@@ -85,7 +101,14 @@ const App: React.FC = () => {
   ];
 
   return (
-    <MainLayout>
+    <FusionMainLayout
+      subApps={Object.values(subApps).map(subApp => ({
+        label: subApp.title,
+        key: subApp.title,
+        route: `/${subApp.namespace}`,
+        icon: subApp.icon,
+      }))}
+    >
       <Switch location={background || location}>
         {routesWithSubApps.map(({ path, component: C, ...rest }) => (
           <Route key={path as string} path={path} component={C} {...rest} />
@@ -115,7 +138,7 @@ const App: React.FC = () => {
           )}
         />,
       ]}
-    </MainLayout>
+    </FusionMainLayout>
   );
 };
 
