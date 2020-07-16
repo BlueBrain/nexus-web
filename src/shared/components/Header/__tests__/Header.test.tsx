@@ -60,13 +60,6 @@ describe('Header component', () => {
     expect(shallowHeader.find('.menu-block')).toBeTruthy();
   });
 
-  describe('Logo Block', () => {
-    it('Should diplay the Nexus logo followed by the App name', () => {
-      expect(wrapper.find('.logo')).toBeTruthy();
-      expect(wrapper.find('h1').text()).toEqual('Nexus');
-    });
-  });
-
   describe('Menu Block', () => {
     it('Should display the user name followed by a space', () => {
       expect(wrapper.find('.menu-dropdown').text()).toEqual('Mark Hamill ');

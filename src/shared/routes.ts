@@ -1,7 +1,5 @@
 import { RouteProps } from 'react-router-dom';
 
-import OrgsView from '../subapps/admin/views/OrgsListView';
-import ProjectsView from './views/ProjectsView';
 import ProjectView from './views/ProjectView';
 import Login from './views/Login';
 import ResourceView from './views/ResourceView';
@@ -11,8 +9,14 @@ import ACLsView from './views/ACLsView';
 import UserView from './views/UserView';
 import StudioView from './views/StudioView';
 import StudioListView from './views/StudioListView';
+import Home from './views/Home';
 
 const routes: RouteProps[] = [
+  {
+    path: '/',
+    exact: true,
+    component: Home,
+  },
   {
     path: '/login',
     component: Login,

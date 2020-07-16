@@ -8,46 +8,8 @@ exports[`Header component Should render correctly 1`] = `
     className="selectors"
   />
   <div
-    className="logo-block"
-  >
-    <a
-      className="logo"
-      href=""
-      onClick={[Function]}
-    >
-      <img
-        alt="Nexus"
-        src="/mock/path"
-        style={
-          Object {
-            "height": "2em",
-            "width": "2em",
-          }
-        }
-      />
-      <h1>
-        Nexus
-      </h1>
-    </a>
-  </div>
-  <div
     className="menu-block"
   >
-    <a
-      className="nav-item"
-      href=""
-      key="admin-link"
-      onClick={[Function]}
-    >
-      Admin
-    </a>
-    <Link
-      className="nav-item"
-      key="studio-link"
-      to="/studio"
-    >
-      Studio
-    </Link>
     <Popover
       content={
         <InformationContent
@@ -74,14 +36,10 @@ exports[`Header component Should render correctly 1`] = `
       transitionName="zoom-big"
       trigger="click"
     >
-      <Button
-        block={false}
+      <img
+        alt="Information"
         className="ui-header-info-button"
-        ghost={false}
-        htmlType="button"
-        icon="info-circle"
-        loading={false}
-        size="small"
+        src="/mock/path"
       />
     </Popover>
     <Dropdown
