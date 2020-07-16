@@ -13,10 +13,14 @@ import { Resource } from '@bbp/nexus-sdk';
 
 import routes from '../shared/routes';
 import NotFound from './views/404';
-import FusionMainLayout from './layouts/FusionMainLayout';
+import FusionMainLayout, { SubAppProps } from './layouts/FusionMainLayout';
 import ResourceViewContainer from './containers/ResourceViewContainer';
 import { parseProjectUrl } from './utils';
-import SubApps, { SubAppObject } from '../subapps';
+<<<<<<< HEAD
+import SubApps, { SubAppObject, SubApp } from '../subapps';
+=======
+import SubApps, { SubApp } from '../subapps';
+>>>>>>> move project list and add context support for subapps
 
 import './App.less';
 
@@ -74,30 +78,27 @@ const App: React.FC = () => {
 
   // Invoke SubApps
   // TODO: maybe it's better to invoke them elsewhere
-  const subApps = Object.keys(SubApps).reduce(
-    (
-      memo: {
-        [key: string]: SubAppObject;
-      },
-      subAppKey: string
-    ) => {
-      const app = SubApps[subAppKey]();
-      memo[subAppKey] = app;
-      return memo;
+  const subApps = Array.from(SubApps.values()).reduce(
+    (memo: Map<string, SubAppObject>, subApp: SubApp) => {
+      const app = subApp();
+      memo.set(app.namespace, app)
+      return memo
     },
-    {}
-  );
+    new Map()
+  )
 
   // Apply Subapp routes
   const routesWithSubApps = [
     ...routes,
-    ...Object.keys(subApps).reduce((memo: RouteProps[], subAppKey: string) => {
-      const app = subApps[subAppKey];
-      return app.routes.map(route => {
-        route.path = `/${app.namespace}${route.path}`;
-        return route;
-      });
-    }, []),
+    ...Array.from(subApps.values()).reduce(
+      (memo: RouteProps[], subApp: SubAppObject) => {
+        return subApp.routes.map(route => {
+          route.path = `/${subApp.namespace}${route.path}`;
+          return route;
+        });
+      },
+      []
+    ),
   ];
 
   return (

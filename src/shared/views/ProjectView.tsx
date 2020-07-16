@@ -12,7 +12,7 @@ import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress'
 import ResourceListBoardContainer from '../containers/ResourceListBoardContainer';
 import HomeIcon from '../components/HomeIcon';
 import StudioListContainer from '../containers/StudioListContainer';
-import ProjectTools from '../components/Projects/ProjectTools';
+import ProjectTools from '../../subapps/admin/components/Projects/ProjectTools';
 
 const ProjectView: React.FunctionComponent<{
   match: match<{ orgLabel: string; projectLabel: string }>;

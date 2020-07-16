@@ -1,26 +1,17 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { Drawer, notification, Modal, Button, Empty } from 'antd';
-import { push } from 'connected-react-router';
+import { useHistory, useRouteMatch } from 'react-router';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { ProjectResponseCommon, OrgResponseCommon } from '@bbp/nexus-sdk';
 
 import ProjectList from '../containers/ProjectList';
-import Skeleton from '../components/Skeleton';
+import Skeleton from '../../../shared/components/Skeleton';
 import ProjectForm from '../components/Projects/ProjectForm';
-import ListItem from '../components/List/Item';
+import ListItem from '../../../shared/components/List/Item';
 import ProjectItem from '../components/Projects/ProjectItem';
-import { match } from 'react-router';
+import { useAdminSubappContext } from '..';
 
-interface ProjectsViewProps {
-  match: match<{ orgLabel: string }>;
-  goTo(o: string, p: string): void;
-}
-
-const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
-  match,
-  goTo,
-}) => {
+const ProjectsView: React.FunctionComponent = () => {
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [orgLoadingBusy, setOrgLoadingBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
@@ -33,8 +24,18 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
   ] = React.useState<ProjectResponseCommon | null>(null);
 
   const nexus = useNexusContext();
+  const history = useHistory();
+  const subapp = useAdminSubappContext();
+  const match = useRouteMatch<{ orgLabel: string }>(
+    `/${subapp.namespace}/:orgLabel`
+  );
+  const goTo = (org: string, project: string) =>
+    history.push(`${subapp.namespace}/${org}/${project}`);
 
   React.useEffect(() => {
+    if (!match) {
+      return;
+    }
     if (!activeOrg) {
       setOrgLoadingBusy(true);
       nexus.Organization.get(match.params.orgLabel)
@@ -51,7 +52,7 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
           });
         });
     }
-  }, [match.path, activeOrg]);
+  }, [match?.path, activeOrg]);
 
   const saveAndCreate = (newProject: ProjectResponseCommon) => {
     setFormBusy(true);
@@ -289,7 +290,8 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
       ) : (
         <div style={{ flexGrow: 1, overflow: 'auto' }}>
           <Empty
-            description={`No Organization ${match.params.orgLabel} Found`}
+            description={`No Organization ${match?.params.orgLabel ||
+              ''} Found`}
           />
         </div>
       )}
@@ -297,8 +299,4 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
   );
 };
 
-const mapDispatchToProps = (dispatch: any) => ({
-  goTo: (org: string, project: string) => dispatch(push(`/${org}/${project}`)),
-});
-
-export default connect(null, mapDispatchToProps)(ProjectsView);
+export default ProjectsView;

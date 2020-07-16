@@ -1,6 +1,4 @@
 import { RouteProps } from 'react-router-dom';
-
-import ProjectView from './views/ProjectView';
 import Login from './views/Login';
 import ResourceView from './views/ResourceView';
 import ElasticSearchQueryView from './views/ElasticSearchQueryView';
@@ -30,11 +28,12 @@ const routes: RouteProps[] = [
     exact: true,
     component: StudioListView,
   },
-  {
-    path: '/:orgLabel/:projectLabel',
-    exact: true,
-    component: ProjectView,
-  },
+  // TODO move project view to admin subapp
+  // {
+  //   path: '/:orgLabel/:projectLabel',
+  //   exact: true,
+  //   component: ProjectView,
+  // },
   {
     path: '/:orgLabel/:projectLabel/resources/:resourceId',
     component: ResourceView,
