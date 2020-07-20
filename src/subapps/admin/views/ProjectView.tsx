@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { match } from 'react-router';
+import { useRouteMatch } from 'react-router';
 import {
   ProjectResponseCommon,
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
@@ -8,19 +8,29 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { notification, Popover } from 'antd';
 import { Link } from 'react-router-dom';
 
-import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
-import ResourceListBoardContainer from '../containers/ResourceListBoardContainer';
-import HomeIcon from '../components/HomeIcon';
-import StudioListContainer from '../containers/StudioListContainer';
-import ProjectTools from '../../subapps/admin/components/Projects/ProjectTools';
+import ViewStatisticsContainer from '../../../shared/components/Views/ViewStatisticsProgress';
+import ResourceListBoardContainer from '../../../shared/containers/ResourceListBoardContainer';
+import HomeIcon from '../../../shared/components/HomeIcon';
+import StudioListContainer from '../../../shared/containers/StudioListContainer';
+import ProjectTools from '../components/Projects/ProjectTools';
+import { useAdminSubappContext } from '..';
 
-const ProjectView: React.FunctionComponent<{
-  match: match<{ orgLabel: string; projectLabel: string }>;
-}> = ({ match }) => {
+const ProjectView: React.FunctionComponent = () => {
   const nexus = useNexusContext();
+  const subapp = useAdminSubappContext();
+  const match = useRouteMatch<{ orgLabel: string; projectLabel: string }>(
+    `/${subapp.namespace}/:orgLabel/:projectLabel`
+  );
   const {
     params: { orgLabel, projectLabel },
-  } = match;
+  } = match || {
+    params: {
+      orgLabel: '',
+      projectLabel: '',
+    },
+  };
+
+  console.log({ orgLabel, projectLabel });
 
   const [{ project, busy, error }, setState] = React.useState<{
     project: ProjectResponseCommon | null;

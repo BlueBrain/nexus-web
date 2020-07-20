@@ -2,6 +2,7 @@ import * as React from 'react';
 import OrgsListView from './views/OrgsListView';
 import { SubApp } from '..';
 import ProjectsView from './views/ProjectsView';
+import ProjectView from './views/ProjectView';
 
 const title = 'Admin';
 const namespace = 'admin';
@@ -46,6 +47,11 @@ const Admin: SubApp = () => {
         path: '/:orgLabel',
         exact: true,
         component: AdminSubappProviderHOC(ProjectsView),
+      },
+      {
+        path: '/:orgLabel/:projectLabel',
+        exact: true,
+        component: AdminSubappProviderHOC(ProjectView),
       },
     ],
   };
