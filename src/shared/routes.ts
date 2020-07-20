@@ -51,19 +51,6 @@ const routes: RouteProps[] = [
     exact: true,
     component: StudioView,
   },
-  // TODO move to admin
-  // {
-  //   path: '/:orgLabel/:projectLabel/:viewId/_search',
-  //   component: ElasticSearchQueryView,
-  // },
-  // {
-  //   path: '/:orgLabel/:projectLabel/:viewId/sparql',
-  //   component: SparqlQueryView,
-  // },
-  // {
-  //   path: '/:orgLabel/:projectLabel/_settings/acls',
-  //   component: ACLsView,
-  // },
 ];
 
 export default routes;

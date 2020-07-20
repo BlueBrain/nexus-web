@@ -1,20 +1,27 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Link, match } from 'react-router-dom';
+import { Link, match, useRouteMatch, useHistory } from 'react-router-dom';
 import { Empty, Spin, Tooltip, Icon } from 'antd';
 import { push } from 'connected-react-router';
 import { ACL } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import ACLsForm from '../components/ACLs/ACLsForm';
+import { useAdminSubappContext } from '..';
 
-interface ACLsViewProps {
-  match: match<{ orgLabel: string; projectLabel?: string }>;
-}
-const ACLs: React.FunctionComponent<ACLsViewProps> = ({ match }) => {
+const ACLs: React.FunctionComponent = () => {
+  const { namespace } = useAdminSubappContext();
+  const match = useRouteMatch<{ orgLabel: string; projectLabel: string }>(
+    `/${namespace}/:orgLabel/:projectLabel`
+  );
   const {
     params: { orgLabel, projectLabel },
-  } = match;
+  } = match || {
+    params: {
+      orgLabel: '',
+      projectLabel: '',
+    },
+  };
   const path = `${orgLabel}${projectLabel ? `/${projectLabel}` : ''}`;
 
   const [{ busy, error, acls }, setACLs] = React.useState<{
@@ -59,15 +66,17 @@ const ACLs: React.FunctionComponent<ACLsViewProps> = ({ match }) => {
       <div style={{ flexGrow: 1 }}>
         <h1 className="name">
           <span>
-            <Link to="/">
+            <Link to={`/${namespace}`}>
               <Tooltip title="Back to all organizations" placement="right">
                 <Icon type="home" />
               </Tooltip>
             </Link>
             {' | '}
-            <Link to={`/${orgLabel}`}>{orgLabel}</Link>
+            <Link to={`/${namespace}/${orgLabel}`}>{orgLabel}</Link>
             {' | '}
-            <Link to={`/${orgLabel}/${projectLabel}`}>{projectLabel}</Link>
+            <Link to={`/${namespace}/${orgLabel}/${projectLabel}`}>
+              {projectLabel}
+            </Link>
           </span>
         </h1>
         {busy && <Spin tip="Loading ACLs..." />}
@@ -92,10 +101,4 @@ const ACLs: React.FunctionComponent<ACLsViewProps> = ({ match }) => {
   );
 };
 
-const mapDispatchToProps = (dispatch: any) => ({
-  goToOrg: (orgLabel: string) => dispatch(push(`/${orgLabel}`)),
-  goToProject: (orgLabel: string, projectLabel: string) =>
-    dispatch(push(`/${orgLabel}/${projectLabel}`)),
-});
-
-export default connect(null, mapDispatchToProps)(ACLs);
+export default ACLs;

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { match } from 'react-router';
+import { useRouteMatch, useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import * as queryString from 'query-string';
-import { Menu, Dropdown, Icon, Tooltip } from 'antd';
+import { Menu, Dropdown, Icon } from 'antd';
 import { ViewList, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
@@ -10,14 +10,25 @@ import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 import ElasticSearchQueryContainer from '../containers/ElasticSearchQuery';
 import HomeIcon from '../components/HomeIcon';
 import { getResourceLabel, labelOf } from '../../../shared/utils';
+import { useAdminSubappContext } from '..';
 
-const ElasticSearchQueryView: React.FunctionComponent<{
-  match: match<{ orgLabel: string; projectLabel: string; viewId: string }>;
-  location: Location;
-}> = ({ match, location }): JSX.Element => {
+const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
+  const match = useRouteMatch<{
+    orgLabel: string;
+    projectLabel: string;
+    viewId: string;
+  }>();
+  const location = useLocation();
+  const { namespace } = useAdminSubappContext();
   const {
     params: { orgLabel, projectLabel, viewId },
-  } = match;
+  } = match || {
+    params: {
+      orgLabel: '',
+      projectLabel: '',
+      viewId: '',
+    },
+  };
   const [{ _results: views, _total: viewTotal }, setViews] = React.useState<
     ViewList
   >({
@@ -51,7 +62,7 @@ const ElasticSearchQueryView: React.FunctionComponent<{
         return (
           <Menu.Item key={index}>
             <Link
-              to={`/${orgLabel}/${projectLabel}/${encodeURIComponent(
+              to={`${namespace}/${orgLabel}/${projectLabel}/${encodeURIComponent(
                 view['@id']
               )}/${pathAppendage}`}
             >
@@ -71,9 +82,11 @@ const ElasticSearchQueryView: React.FunctionComponent<{
             <span>
               <HomeIcon />
               {' | '}
-              <Link to={`/${orgLabel}`}>{orgLabel}</Link>
+              <Link to={`/${namespace}/${orgLabel}`}>{orgLabel}</Link>
               {' | '}
-              <Link to={`/${orgLabel}/${projectLabel}`}>{projectLabel}</Link>
+              <Link to={`/${namespace}/${orgLabel}/${projectLabel}`}>
+                {projectLabel}
+              </Link>
               {' | '}
             </span>
             <Dropdown overlay={menu}>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { match } from 'react-router';
+import { useLocation, useRouteMatch } from 'react-router';
 import { Link } from 'react-router-dom';
 import * as queryString from 'query-string';
 import { Menu, Dropdown, Icon, notification } from 'antd';
@@ -10,11 +10,16 @@ import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 import SparqlQueryContainer from '../containers/SparqlQuery';
 import HomeIcon from '../components/HomeIcon';
 import { getResourceLabel, labelOf } from '../../../shared/utils';
+import { useAdminSubappContext } from '..';
 
-const SparqlQueryView: React.FunctionComponent<{
-  match: match<{ orgLabel: string; projectLabel: string; viewId: string }>;
-  location: Location;
-}> = ({ match, location }): JSX.Element => {
+const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
+  const match = useRouteMatch<{
+    orgLabel: string;
+    projectLabel: string;
+    viewId: string;
+  }>();
+  const location = useLocation();
+  const { namespace } = useAdminSubappContext();
   const {
     params: { orgLabel, projectLabel, viewId },
   } = match;
@@ -52,7 +57,7 @@ const SparqlQueryView: React.FunctionComponent<{
         return (
           <Menu.Item key={index}>
             <Link
-              to={`/${orgLabel}/${projectLabel}/${encodeURIComponent(
+              to={`/${namespace}/${orgLabel}/${projectLabel}/${encodeURIComponent(
                 view['@id']
               )}/${pathAppendage}`}
             >
@@ -72,9 +77,11 @@ const SparqlQueryView: React.FunctionComponent<{
             <span>
               <HomeIcon />
               {' | '}
-              <Link to={`/${orgLabel}`}>{orgLabel}</Link>
+              <Link to={`/${namespace}/${orgLabel}`}>{orgLabel}</Link>
               {' | '}
-              <Link to={`/${orgLabel}/${projectLabel}`}>{projectLabel}</Link>
+              <Link to={`/${namespace}/${orgLabel}/${projectLabel}`}>
+                {projectLabel}
+              </Link>
               {' | '}
             </span>
             <Dropdown overlay={menu}>

@@ -3,6 +3,9 @@ import OrgsListView from './views/OrgsListView';
 import { SubApp } from '..';
 import ProjectsView from './views/ProjectsView';
 import ProjectView from './views/ProjectView';
+import ElasticSearchQueryView from './views/ElasticSearchQueryView';
+import SparqlQueryView from './views/SparqlQueryView';
+import ACLsView from './views/ACLsView';
 
 const title = 'Admin';
 const namespace = 'admin';
@@ -52,6 +55,18 @@ const Admin: SubApp = () => {
         path: '/:orgLabel/:projectLabel',
         exact: true,
         component: AdminSubappProviderHOC(ProjectView),
+      },
+      {
+        path: '/:orgLabel/:projectLabel/:viewId/_search',
+        component: AdminSubappProviderHOC(ElasticSearchQueryView),
+      },
+      {
+        path: '/:orgLabel/:projectLabel/:viewId/sparql',
+        component: AdminSubappProviderHOC(SparqlQueryView),
+      },
+      {
+        path: '/:orgLabel/:projectLabel/_settings/acls',
+        component: AdminSubappProviderHOC(ACLsView),
       },
     ],
   };
