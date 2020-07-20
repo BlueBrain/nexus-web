@@ -25,7 +25,7 @@
     width: 18px;
     transform: rotate(45deg);
     position: absolute;
-    left: 187px;
+    right: -9px;
     top: 33%;
   }
 
@@ -34,19 +34,23 @@
     width: 17px;
   }
 
+  .ant-menu-item,
   .ant-menu-inline .ant-menu-item,
   .ant-menu-inline .ant-menu-item:not(:last-child) {
     margin: 0;
-    padding: 5px 0;
     height: 50px;
     border-left: 4px solid #001529;
     font-weight: 300;
     // make an indicator appear, otherwise it is cut off
     overflow: visible;
+    display: flex;
+    align-items: center;
   }
 
   .ant-menu.ant-menu-dark .ant-menu-item-selected {
     background: linear-gradient(45deg, #001529, #2a414b);
     border-left: 4px solid @primary-color;
+    height: 50px;
+    margin: 0;
   }
 }
