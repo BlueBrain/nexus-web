@@ -30,8 +30,6 @@ const ProjectView: React.FunctionComponent = () => {
     },
   };
 
-  console.log({ orgLabel, projectLabel });
-
   const [{ project, busy, error }, setState] = React.useState<{
     project: ProjectResponseCommon | null;
     busy: boolean;
@@ -50,7 +48,6 @@ const ProjectView: React.FunctionComponent = () => {
       error: null,
       busy: true,
     });
-
     nexus.Project.get(orgLabel, projectLabel)
       .then(response => {
         setState({
@@ -70,7 +67,7 @@ const ProjectView: React.FunctionComponent = () => {
           busy: false,
         });
       });
-  }, [orgLabel, projectLabel]);
+  }, [orgLabel, projectLabel, nexus, setState]);
 
   return (
     <div className="project-view">
