@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { Link, match, useRouteMatch, useHistory } from 'react-router-dom';
+import { Link, useRouteMatch } from 'react-router-dom';
 import { Empty, Spin, Tooltip, Icon } from 'antd';
-import { push } from 'connected-react-router';
 import { ACL } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
