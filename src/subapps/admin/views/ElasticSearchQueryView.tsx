@@ -9,7 +9,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 import ElasticSearchQueryContainer from '../containers/ElasticSearchQuery';
 import HomeIcon from '../components/HomeIcon';
-import { getResourceLabel, labelOf } from '../utils';
+import { getResourceLabel, labelOf } from '../../../shared/utils';
 
 const ElasticSearchQueryView: React.FunctionComponent<{
   match: match<{ orgLabel: string; projectLabel: string; viewId: string }>;

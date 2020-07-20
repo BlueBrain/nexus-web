@@ -9,7 +9,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 import SparqlQueryContainer from '../containers/SparqlQuery';
 import HomeIcon from '../components/HomeIcon';
-import { getResourceLabel, labelOf } from '../utils';
+import { getResourceLabel, labelOf } from '../../../shared/utils';
 
 const SparqlQueryView: React.FunctionComponent<{
   match: match<{ orgLabel: string; projectLabel: string; viewId: string }>;

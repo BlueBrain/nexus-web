@@ -8,9 +8,9 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { notification, Popover } from 'antd';
 import { Link } from 'react-router-dom';
 
-import ViewStatisticsContainer from '../../../shared/components/Views/ViewStatisticsProgress';
+import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
 import ResourceListBoardContainer from '../../../shared/containers/ResourceListBoardContainer';
-import HomeIcon from '../../../shared/components/HomeIcon';
+import HomeIcon from '../components/HomeIcon';
 import StudioListContainer from '../../../shared/containers/StudioListContainer';
 import ProjectTools from '../components/Projects/ProjectTools';
 import { useAdminSubappContext } from '..';

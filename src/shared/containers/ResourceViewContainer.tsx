@@ -12,7 +12,7 @@ import ResourceActionsContainer from '../containers/ResourceActionsContainer';
 import ResourceEditorContainer from '../containers/ResourceEditor';
 import SchemaLinkContainer from '../containers/SchemaLink';
 import GraphContainer from '../containers/GraphContainer';
-import HomeIcon from '../components/HomeIcon';
+import HomeIcon from '../../subapps/admin/components/HomeIcon';
 import ResourceMetadata from '../components/ResourceMetadata';
 import ResourcePlugins from './ResourcePlugins';
 import usePlugins from '../hooks/usePlugins';

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Card, Empty, Table, Tooltip, notification } from 'antd';
 import Column from 'antd/lib/table/Column';
 import * as hash from 'object-hash';
-import { matchResultUrls } from '../../utils';
+import { matchResultUrls } from '../../../../shared/utils';
 import {
   AskQueryResponse,
   SelectQueryResponse,
