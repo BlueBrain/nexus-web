@@ -80,9 +80,9 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   );
 
   React.useEffect(() => {
-    // only naviate if not in the subApp path already
+    // only navigate if not in the subApp path already
     if (`/${location.pathname.split('/')[1]}` === selectedItem.route) {
-      // already in the subApp, don't navigate
+      // already in the subApp, don't change location
       return;
     }
     goTo(selectedItem.route);
