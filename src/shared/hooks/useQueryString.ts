@@ -1,18 +1,18 @@
 import * as queryString from 'query-string';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 
 export type QueryParams = {
   [key: string]: any;
 };
 
 export default function useQueryString() {
+  const location = useLocation();
   const history = useHistory();
-  const queryParams: QueryParams =
-    queryString.parse(history.location.search) || {};
+  const queryParams: QueryParams = queryString.parse(location.search) || {};
 
   const setQueryString = (newQueryParams: QueryParams) => {
     history.push(
-      `${history.location.pathname}?${queryString.stringify(newQueryParams)}`
+      `${location.pathname}?${queryString.stringify(newQueryParams)}`
     );
   };
 

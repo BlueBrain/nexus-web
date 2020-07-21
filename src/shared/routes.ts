@@ -1,9 +1,6 @@
 import { RouteProps } from 'react-router-dom';
 import Login from './views/Login';
 import ResourceView from './views/ResourceView';
-import ElasticSearchQueryView from './views/ElasticSearchQueryView';
-import SparqlQueryView from './views/SparqlQueryView';
-import ACLsView from './views/ACLsView';
 import UserView from './views/UserView';
 import StudioView from './views/StudioView';
 import StudioListView from './views/StudioListView';
@@ -28,12 +25,6 @@ const routes: RouteProps[] = [
     exact: true,
     component: StudioListView,
   },
-  // TODO move project view to admin subapp
-  // {
-  //   path: '/:orgLabel/:projectLabel',
-  //   exact: true,
-  //   component: ProjectView,
-  // },
   {
     path: '/:orgLabel/:projectLabel/resources/:resourceId',
     component: ResourceView,
@@ -59,18 +50,6 @@ const routes: RouteProps[] = [
       '/:orgLabel/:projectLabel/studios/:studioId/workspaces/:workspaceId/dashboards/:dashboardId/studioResource/:studioResourceId',
     exact: true,
     component: StudioView,
-  },
-  {
-    path: '/:orgLabel/:projectLabel/:viewId/_search',
-    component: ElasticSearchQueryView,
-  },
-  {
-    path: '/:orgLabel/:projectLabel/:viewId/sparql',
-    component: SparqlQueryView,
-  },
-  {
-    path: '/:orgLabel/:projectLabel/_settings/acls',
-    component: ACLsView,
   },
 ];
 

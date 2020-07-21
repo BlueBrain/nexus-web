@@ -71,14 +71,20 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   const [collapsed, setCollapsed] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState<SubAppProps>(
     subApps.find(({ route }) => {
-      return location.pathname === route;
+      return `/${location.pathname.split('/')[1]}` === route;
     }) || subApps[0]
   );
+
   const [consent, setConsent] = useLocalStorage<ConsentType>(
     'consentToTracking'
   );
 
   React.useEffect(() => {
+    // only navigate if not in the subApp path already
+    if (`/${location.pathname.split('/')[1]}` === selectedItem.route) {
+      // already in the subApp, don't change location
+      return;
+    }
     goTo(selectedItem.route);
   }, [selectedItem]);
 

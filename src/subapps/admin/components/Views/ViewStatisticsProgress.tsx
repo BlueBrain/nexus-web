@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Progress, Tooltip, notification, Button } from 'antd';
 import * as moment from 'moment';
-import { Statistics, PaginatedList } from '@bbp/nexus-sdk';
+import { Statistics } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 type ViewStatisticsProgressProps = {

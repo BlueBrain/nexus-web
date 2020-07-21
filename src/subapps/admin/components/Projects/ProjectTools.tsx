@@ -7,11 +7,13 @@ import FileUploadContainer from '../../../../shared/containers/FileUploadContain
 import ResourceFormContainer from '../../../../shared/containers/ResourceFormContainer';
 
 import './ProjectTools.less';
+import { useAdminSubappContext } from '../..';
 
 const ProjectTools: React.FC<{
   orgLabel: string;
   projectLabel: string;
 }> = ({ orgLabel, projectLabel }) => {
+  const subApp = useAdminSubappContext();
   return (
     <div className="project-tools">
       <h3>Project Tools</h3>
@@ -28,15 +30,19 @@ const ProjectTools: React.FC<{
             projectLabel={projectLabel}
           />
         </AccessControl>
-        <Link to={`/${orgLabel}/${projectLabel}/nxv:defaultSparqlIndex/sparql`}>
+        <Link
+          to={`/${subApp.namespace}/${orgLabel}/${projectLabel}/nxv:defaultSparqlIndex/sparql`}
+        >
           Sparql Query Editor
         </Link>
         <Link
-          to={`/${orgLabel}/${projectLabel}/nxv:defaultElasticSearchIndex/_search`}
+          to={`/${subApp.namespace}/${orgLabel}/${projectLabel}/nxv:defaultElasticSearchIndex/_search`}
         >
           ElasticSearch Query Editor
         </Link>
-        <Link to={`/${orgLabel}/${projectLabel}/_settings/acls`}>
+        <Link
+          to={`/${subApp.namespace}/${orgLabel}/${projectLabel}/_settings/acls`}
+        >
           View Project's permissions
         </Link>
       </div>

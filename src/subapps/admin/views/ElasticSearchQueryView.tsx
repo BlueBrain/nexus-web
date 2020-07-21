@@ -1,24 +1,37 @@
 import * as React from 'react';
-import { match } from 'react-router';
+import { useRouteMatch, useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import * as queryString from 'query-string';
-import { Menu, Dropdown, Icon, notification } from 'antd';
+import { Menu, Dropdown, Icon } from 'antd';
 import { ViewList, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
-import SparqlQueryContainer from '../containers/SparqlQuery';
+import ElasticSearchQueryContainer from '../containers/ElasticSearchQuery';
 import HomeIcon from '../components/HomeIcon';
-import { getResourceLabel, labelOf } from '../utils';
+import { getResourceLabel, labelOf } from '../../../shared/utils';
+import { useAdminSubappContext } from '..';
 
-const SparqlQueryView: React.FunctionComponent<{
-  match: match<{ orgLabel: string; projectLabel: string; viewId: string }>;
-  location: Location;
-}> = ({ match, location }): JSX.Element => {
+const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
+  const match = useRouteMatch<{
+    orgLabel: string;
+    projectLabel: string;
+    viewId: string;
+  }>();
+  const location = useLocation();
+  const { namespace } = useAdminSubappContext();
   const {
     params: { orgLabel, projectLabel, viewId },
-  } = match;
-  const [{ _results: views }, setViews] = React.useState<ViewList>({
+  } = match || {
+    params: {
+      orgLabel: '',
+      projectLabel: '',
+      viewId: '',
+    },
+  };
+  const [{ _results: views, _total: viewTotal }, setViews] = React.useState<
+    ViewList
+  >({
     '@context': {},
     _total: 0,
     _results: [],
@@ -30,11 +43,8 @@ const SparqlQueryView: React.FunctionComponent<{
   React.useEffect(() => {
     nexus.View.list(orgLabel, projectLabel)
       .then(setViews)
-      .catch(error => {
-        notification.error({
-          message: 'Problem loading Views',
-          description: error.message,
-        });
+      .catch(() => {
+        // 503 ?
       });
   }, [orgLabel, projectLabel]);
 
@@ -52,7 +62,7 @@ const SparqlQueryView: React.FunctionComponent<{
         return (
           <Menu.Item key={index}>
             <Link
-              to={`/${orgLabel}/${projectLabel}/${encodeURIComponent(
+              to={`${namespace}/${orgLabel}/${projectLabel}/${encodeURIComponent(
                 view['@id']
               )}/${pathAppendage}`}
             >
@@ -72,9 +82,11 @@ const SparqlQueryView: React.FunctionComponent<{
             <span>
               <HomeIcon />
               {' | '}
-              <Link to={`/${orgLabel}`}>{orgLabel}</Link>
+              <Link to={`/${namespace}/${orgLabel}`}>{orgLabel}</Link>
               {' | '}
-              <Link to={`/${orgLabel}/${projectLabel}`}>{projectLabel}</Link>
+              <Link to={`/${namespace}/${orgLabel}/${projectLabel}`}>
+                {projectLabel}
+              </Link>
               {' | '}
             </span>
             <Dropdown overlay={menu}>
@@ -94,10 +106,10 @@ const SparqlQueryView: React.FunctionComponent<{
         </div>
       </div>
       <div className="view-view view-container -unconstrained-width">
-        <SparqlQueryContainer
+        <ElasticSearchQueryContainer
           orgLabel={orgLabel}
           projectLabel={projectLabel}
-          initialQuery={Array.isArray(query) ? query.join(',') : query}
+          initialQuery={query ? JSON.parse(`${query}`) : null}
           viewId={viewId}
         />
       </div>
@@ -105,4 +117,4 @@ const SparqlQueryView: React.FunctionComponent<{
   );
 };
 
-export default SparqlQueryView;
+export default ElasticSearchQueryView;

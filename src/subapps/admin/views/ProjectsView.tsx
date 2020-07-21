@@ -30,7 +30,7 @@ const ProjectsView: React.FunctionComponent = () => {
     `/${subapp.namespace}/:orgLabel`
   );
   const goTo = (org: string, project: string) =>
-    history.push(`${subapp.namespace}/${org}/${project}`);
+    history.push(`${org}/${project}`);
 
   React.useEffect(() => {
     if (!match) {
