@@ -123,7 +123,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
               {/* must add inline styling to prevent this big svg from flashing
             the screen on dev mode before styles are loaded */}
               <img width="32" height="32" src={logo} alt="Fusion" />
-              <span className="fusion-title">Fusion</span>
+              {!collapsed && <span className="fusion-title">Fusion</span>}
             </div>
           </Link>
           <Menu
@@ -139,10 +139,12 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
                 <div className="menu-item">
                   {/* TODO: change icons color with CSS to blue when it is selected https://github.com/BlueBrain/nexus/issues/1324 */}
                   <img className="menu-icon" src={subApp.icon} />
-                  <span>{subApp.label}</span>
+                  {!collapsed && <span>{subApp.label}</span>}
                 </div>
                 {selectedItem.key === subApp.key && (
-                  <div className="indicator" />
+                  <div
+                    className={`indicator${collapsed ? ' collapsed' : ''}`}
+                  />
                 )}
               </Menu.Item>
             ))}
@@ -173,6 +175,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
             serviceVersions={versions.data}
             consent={consent}
             onClickRemoveConsent={() => setConsent(undefined)}
+            onClickSideBarToggle={() => setCollapsed(!collapsed)}
           />
           <ConsentContainer consent={consent} updateConsent={setConsent} />
           <Content className="site-layout-background">{children}</Content>
