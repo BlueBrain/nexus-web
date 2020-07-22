@@ -4,6 +4,14 @@ exports[`Header component Should render correctly 1`] = `
 <header
   className="Header"
 >
+  <button
+    className="menu-icon"
+    onClick={[Function]}
+  >
+    <img
+      src="/mock/path"
+    />
+  </button>
   <div
     className="selectors"
   />

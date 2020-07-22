@@ -136,7 +136,9 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
                   {!collapsed && <span>{subApp.label}</span>}
                 </div>
                 {selectedItem.key === subApp.key && (
-                  <div className="indicator" />
+                  <div
+                    className={`indicator${collapsed ? ' collapsed' : ''}`}
+                  />
                 )}
               </Menu.Item>
             ))}
