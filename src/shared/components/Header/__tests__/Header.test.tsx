@@ -35,6 +35,7 @@ const shallowHeader = shallow(
     githubIssueURL=""
     version=""
     serviceVersions={versions}
+    onClickSideBarToggle={() => {}}
   />
 );
 
@@ -46,6 +47,7 @@ const wrapper = mount(
       githubIssueURL=""
       version=""
       serviceVersions={versions}
+      onClickSideBarToggle={() => {}}
     />
   </MemoryRouter>
 );
@@ -74,6 +76,7 @@ describe('Header component', () => {
             githubIssueURL=""
             version=""
             serviceVersions={versions}
+            onClickSideBarToggle={() => {}}
           />
         </MemoryRouter>
       );
@@ -91,6 +94,7 @@ describe('Header component', () => {
             version=""
             serviceVersions={versions}
             displayLogin={false}
+            onClickSideBarToggle={() => {}}
           />
         </MemoryRouter>
       );
