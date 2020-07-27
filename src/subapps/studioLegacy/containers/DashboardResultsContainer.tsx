@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Spin, Alert, message } from 'antd';
-import ResultsTable from '../components/ResultsTable/ResultsTable';
-import { camelCaseToLabelString, parseProjectUrl } from '../utils';
+import ResultsTable from '../../../shared/components/ResultsTable/ResultsTable';
+import { camelCaseToLabelString, parseProjectUrl } from '../../../shared/utils';
 import {
   SelectQueryResponse,
   SparqlViewQueryResponse,

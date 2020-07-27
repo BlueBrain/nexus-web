@@ -4,9 +4,9 @@ import { Spin, Empty } from 'antd';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
-import { RootState } from '../store/reducers';
-import ExpandableStudioList from '../components/Studio/ExpandableStudioList';
-import { getOrgAndProjectFromProjectId } from '../utils';
+import { RootState } from '../../../shared/store/reducers';
+import ExpandableStudioList from '../components/ExpandableStudioList';
+import { getOrgAndProjectFromProjectId } from '../../../shared/utils';
 
 const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';

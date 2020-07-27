@@ -1,12 +1,27 @@
 import * as React from 'react';
 import { Resource, Identity } from '@bbp/nexus-sdk';
-import { useNexusContext } from '@bbp/react-nexus';
+import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { notification, Empty, message } from 'antd';
 import { useHistory } from 'react-router';
-import EditStudio from '../components/Studio/EditStudio';
-import StudioHeader from '../components/Studio/StudioHeader';
-import { getDestinationParam } from '../utils';
-import { resourcesWritePermissionsWrapper } from '../utils/permission';
+import EditStudio from '../components/EditStudio';
+import StudioHeader from '../components/StudioHeader';
+
+const resourcesWritePermissionsWrapper = (
+  child: React.ReactNode,
+  permissionPath: string
+) => {
+  const permissions = ['resources/write'];
+  return React.createElement(AccessControl, {
+    permissions,
+    path: permissionPath,
+    children: [child],
+  });
+};
+
+function getDestinationParam(): string {
+  const destinationPath = encodeURIComponent(window.location.pathname.slice(1));
+  return destinationPath ? `?destination=${destinationPath}` : '';
+}
 
 type StudioContainerProps = {
   orgLabel: string;

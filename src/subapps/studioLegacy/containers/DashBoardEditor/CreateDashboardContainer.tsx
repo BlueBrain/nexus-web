@@ -7,8 +7,8 @@ import { notification, Modal, Button, message } from 'antd';
 import DashboardConfigEditor, {
   DashboardPayload,
 } from '../../components/DashboardEditor/DashboardConfigEditor';
-import STUDIO_CONTEXT from '../../components/Studio/StudioContext';
-import usePlugins from '../../hooks/usePlugins';
+import STUDIO_CONTEXT from '../../components/StudioContext';
+import usePlugins from '../../../../shared/hooks/usePlugins';
 
 export const DASHBOARD_TYPE = 'StudioDashboard';
 

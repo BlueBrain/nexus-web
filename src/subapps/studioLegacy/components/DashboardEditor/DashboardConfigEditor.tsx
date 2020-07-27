@@ -6,7 +6,7 @@ import { FormComponentProps } from 'antd/es/form';
 import TextArea from 'antd/lib/input/TextArea';
 
 import DEFAULT_DASHBOARD_VIEW_QUERY from './DefaultDashboardViewQuery';
-import SparqlQueryFormInput from '../../../subapps/admin/components/ViewForm/SparqlQueryInput';
+import SparqlQueryFormInput from '../../../admin/components/ViewForm/SparqlQueryInput';
 
 const { Option } = Select;
 

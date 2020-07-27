@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, PaginatedList } from '@bbp/nexus-sdk';
 
-import StudioList from '../components/Studio/StudioList';
+import StudioList from '../components/StudioList';
 import CreateStudioContainer from './CreateStudioContainer';
 
 const DEFAULT_STUDIO_TYPE =

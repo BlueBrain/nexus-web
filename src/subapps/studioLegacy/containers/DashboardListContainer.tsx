@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Resource, DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import TabList from '../components/Tabs/TabList';
+import TabList from '../../../shared/components/Tabs/TabList';
 import { Button } from 'antd';
 import DashboardResultsContainer from './DashboardResultsContainer';
 import DashboardEditorContainer from './DashboardEditor/DashboardEditorContainer';
 import CreateDashboardContainer from './DashboardEditor/CreateDashboardContainer';
-import useQueryString from '../hooks/useQueryString';
-import { resourcesWritePermissionsWrapper } from '../utils/permission';
+import useQueryString from '../../../shared/hooks/useQueryString';
+import { resourcesWritePermissionsWrapper } from '../../../shared/utils/permission';
 
 export type Dashboard = {
   dashboard: string;
