@@ -16,7 +16,7 @@ import NotFound from './views/404';
 import FusionMainLayout, { SubAppProps } from './layouts/FusionMainLayout';
 import ResourceViewContainer from './containers/ResourceViewContainer';
 import { parseProjectUrl } from './utils';
-import SubApps, { SubAppObject, SubApp } from '../subapps';
+import SubApps, { SubAppObject, SubApp } from '../subapps/index';
 
 import './App.less';
 
@@ -83,19 +83,19 @@ const App: React.FC = () => {
     new Map()
   );
 
+  const subAppRoutes = Array.from(subApps.values())
+    .map((subApp: SubAppObject) => {
+      return subApp.routes.map((route: any) => {
+        route.path = `/${subApp.namespace}${route.path}`;
+        return route;
+      });
+    })
+    .reduce((acc, val) => {
+      return [...acc, ...val];
+    }, []);
+
   // Apply Subapp routes
-  const routesWithSubApps = [
-    ...routes,
-    ...Array.from(subApps.values()).reduce(
-      (memo: RouteProps[], subApp: SubAppObject) => {
-        return subApp.routes.map(route => {
-          route.path = `/${subApp.namespace}${route.path}`;
-          return route;
-        });
-      },
-      []
-    ),
-  ];
+  const routesWithSubApps = [...routes, ...subAppRoutes];
 
   return (
     <FusionMainLayout

@@ -16,15 +16,11 @@ const StudioView: React.FunctionComponent<{}> = () => {
         <div className="label">
           <h1 className="name">
             <span>
-              <Link to="/">
-                <Tooltip title="Back to all organizations" placement="right">
-                  <Icon type="home" />
-                </Tooltip>
+              <Link to={`/admin/${orgLabel}`}>{orgLabel}</Link>
+              {' | '}
+              <Link to={`/admin/${orgLabel}/${projectLabel}`}>
+                {projectLabel}
               </Link>
-              {' | '}
-              <Link to={`/${orgLabel}`}>{orgLabel}</Link>
-              {' | '}
-              <Link to={`/${orgLabel}/${projectLabel}`}>{projectLabel}</Link>
             </span>
           </h1>
         </div>

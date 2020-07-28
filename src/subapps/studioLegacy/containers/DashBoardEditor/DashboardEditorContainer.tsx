@@ -7,9 +7,9 @@ import { notification, Modal, message } from 'antd';
 import DashboardConfigEditor, {
   DashboardPayload,
 } from '../../components/DashboardEditor/DashboardConfigEditor';
-import STUDIO_CONTEXT from '../../components/Studio/StudioContext';
+import STUDIO_CONTEXT from '../../components/StudioContext';
 import { DASHBOARD_TYPE } from './CreateDashboardContainer';
-import usePlugins from '../../hooks/usePlugins';
+import usePlugins from '../../../../shared/hooks/usePlugins';
 
 const DashboardEditorContainer: React.FunctionComponent<{
   orgLabel: string;

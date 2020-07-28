@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
-import { StudioItem } from '../../views/StudioListView';
+import { StudioItem } from '../views/StudioListView';
 
 import './StudioWorkspaceList.less';
 

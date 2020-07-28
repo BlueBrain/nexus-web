@@ -4,7 +4,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Spin, Empty } from 'antd';
 import { useHistory } from 'react-router-dom';
 
-import StudioWorkspaceList from '../components/Studio/StudioWorkspaceList';
+import StudioWorkspaceList from '../components/StudioWorkspaceList';
 import { StudioItem } from '../views/StudioListView';
 
 const WorkspaceMiniListContainer: React.FC<{ studio: StudioItem }> = ({

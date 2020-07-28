@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Button, Modal, notification, message } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 
-import StudioEditorForm from '../components/Studio/StudioEditorForm';
-import STUDIO_CONTEXT from '../components/Studio/StudioContext';
+import StudioEditorForm from '../components/StudioEditorForm';
+import STUDIO_CONTEXT from '../components/StudioContext';
 
 export const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';

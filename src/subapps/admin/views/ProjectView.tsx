@@ -11,7 +11,6 @@ import { Link } from 'react-router-dom';
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
 import ResourceListBoardContainer from '../../../shared/containers/ResourceListBoardContainer';
 import HomeIcon from '../components/HomeIcon';
-import StudioListContainer from '../../../shared/containers/StudioListContainer';
 import ProjectTools from '../components/Projects/ProjectTools';
 import { useAdminSubappContext } from '..';
 
@@ -114,13 +113,6 @@ const ProjectView: React.FunctionComponent = () => {
                 projectLabel={projectLabel}
                 refreshLists={refreshLists}
               />
-              <div className="studios-container">
-                <h3>Studios</h3>
-                <StudioListContainer
-                  orgLabel={orgLabel}
-                  projectLabel={projectLabel}
-                />
-              </div>
               <ProjectTools orgLabel={orgLabel} projectLabel={projectLabel} />
             </div>
           </div>
