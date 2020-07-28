@@ -4,7 +4,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../../../shared/components/Tabs/TabList';
 import { Button } from 'antd';
 import DashboardResultsContainer from './DashboardResultsContainer';
-import DashboardEditorContainer from './DashboardEditor/DashboardEditorContainer';
+import DashboardEditorContainer from './DashBoardEditor/DashboardEditorContainer';
 import CreateDashboardContainer from './DashboardEditor/CreateDashboardContainer';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import { resourcesWritePermissionsWrapper } from '../../../shared/utils/permission';
