@@ -2,12 +2,12 @@ import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Button } from 'antd';
-import TabList from '../components/Tabs/TabList';
+import TabList from '../../../shared/components/Tabs/TabList';
 import AddWorkspaceContainer from './AddWorkspaceContainer';
 import WorkspaceForm from './WorkspaceFormContainer';
 import { Dashboard } from './DashboardListContainer';
-import useQueryString from '../hooks/useQueryString';
-import { resourcesWritePermissionsWrapper } from '../utils/permission';
+import useQueryString from '../../../shared/hooks/useQueryString';
+import { resourcesWritePermissionsWrapper } from '../../../shared/utils/permission';
 
 type StudioResource = Resource<{
   label: string;

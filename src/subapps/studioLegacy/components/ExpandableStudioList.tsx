@@ -2,8 +2,23 @@ import * as React from 'react';
 import { Collapse, Button, Empty } from 'antd';
 
 import StudioListItem from './StudioListItem';
-import { StudioItem } from '../../views/StudioListView';
-import { makeStudioUri } from '../../utils';
+import { StudioItem } from '../views/StudioListView';
+
+/*
+ * Returns studio uri
+ *
+ * @param {string} orgLabel
+ * @param {string} projectLabel
+ * @param {string} studioId
+ * @returns {string} studio uri
+ */
+export const makeStudioUri = (
+  orgLabel: string,
+  projectLabel: string,
+  studioId: string
+) => {
+  return `/${orgLabel}/${projectLabel}/studios/${encodeURIComponent(studioId)}`;
+};
 
 import './ExpandableStudioList.less';
 

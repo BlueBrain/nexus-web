@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Collapse } from 'antd';
 
-import WorkspaceMiniListContainer from '../../containers/WorkspaceMiniListContainer';
-import { StudioItem } from '../../views/StudioListView';
+import WorkspaceMiniListContainer from '../containers/WorkspaceMiniListContainer';
+import { StudioItem } from '../views/StudioListView';
 
 const { Panel } = Collapse;
 

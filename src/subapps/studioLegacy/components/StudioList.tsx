@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Spin } from 'antd';
 
-import ListItem from '../List/Item';
-import InfiniteSearch from '../List/InfiniteSearch';
+import ListItem from '../../../shared/components/List/Item';
+import InfiniteSearch from '../../../shared/components/List/InfiniteSearch';
 
 import './Studio.less';
 

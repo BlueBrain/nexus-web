@@ -6,7 +6,6 @@ import { Divider, Button } from 'antd';
 import SideMenu from '../components/Menu/SideMenu';
 import FileUploadContainer from '../containers/FileUploadContainer';
 import ResourceFormContainer from '../containers/ResourceFormContainer';
-import StudioListContainer from '../containers/StudioListContainer';
 
 const ProjectMenuContainer: React.FunctionComponent<{
   menuVisible: boolean;
@@ -64,9 +63,6 @@ const ProjectMenuContainer: React.FunctionComponent<{
         <FileUploadContainer projectLabel={projectLabel} orgLabel={orgLabel} />
       </AccessControl>,
     ],
-    studios: (
-      <StudioListContainer orgLabel={orgLabel} projectLabel={projectLabel} />
-    ),
   };
 
   return (
