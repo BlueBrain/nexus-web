@@ -6,6 +6,7 @@ import {
   useLocation,
   useHistory,
   RouteProps,
+  Redirect,
 } from 'react-router-dom';
 import { Location } from 'history';
 import { useNexusContext } from '@bbp/react-nexus';
