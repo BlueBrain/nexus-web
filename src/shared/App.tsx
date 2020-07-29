@@ -1,13 +1,6 @@
 import { Modal, message } from 'antd';
 import * as React from 'react';
-import {
-  Route,
-  Switch,
-  useLocation,
-  useHistory,
-  RouteProps,
-  Redirect,
-} from 'react-router-dom';
+import { Route, Switch, useLocation, useHistory } from 'react-router-dom';
 import { Location } from 'history';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
