@@ -3,7 +3,6 @@ import { Redirect, useLocation } from 'react-router-dom';
 
 const ResourceView: React.FunctionComponent = props => {
   const location = useLocation();
-  console.log(location.pathname);
   return (
     <Redirect
       to={{
