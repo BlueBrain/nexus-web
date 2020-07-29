@@ -79,15 +79,6 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
     'consentToTracking'
   );
 
-  // React.useEffect(() => {
-  //   // only navigate if not in the subApp path already
-  //   if (`/${location.pathname.split('/')[1]}` === selectedItem.route) {
-  //     // already in the subApp, don't change location
-  //     return;
-  //   }
-  //   goTo(selectedItem.route);
-  // }, [selectedItem]);
-
   const goTo = (url: string) => {
     dispatch(push(url, { previousUrl: window.location.href }));
   };
