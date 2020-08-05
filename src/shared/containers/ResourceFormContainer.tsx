@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button } from 'antd';
+import { Button, Icon } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 import { ResourcePayload } from '@bbp/nexus-sdk';
 
@@ -25,8 +25,11 @@ const ResourceFormContainer: React.FunctionComponent<{
             style={{ margin: '0.5em 0' }}
             type="primary"
             onClick={updateFormVisible}
-            icon="plus-square"
           >
+            <Icon
+              type="plus-square"
+              style={{ fontSize: '16px', color: 'white' }}
+            />
             Create Resource
           </Button>
         );

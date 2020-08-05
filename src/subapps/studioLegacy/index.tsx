@@ -3,9 +3,9 @@ import { SubApp } from '..';
 import StudioView from './views/StudioView';
 import StudioListView from './views/StudioListView';
 
-const title = 'StudioLegacy';
-const namespace = 'studioLegacy';
-const icon = require('../../shared/images/dbIcon.svg');
+const title = 'Studios';
+const namespace = 'studios';
+const icon = require('../../shared/images/gridIcon.svg');
 
 const studioLegacySubappProps = {
   title,

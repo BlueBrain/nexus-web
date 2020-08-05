@@ -78,7 +78,7 @@ const ProjectView: React.FunctionComponent = () => {
                 <HomeIcon />
                 {' | '}
                 <span>
-                  <Link to={`/${orgLabel}`}>{orgLabel}</Link>
+                  <Link to={`/admin/${orgLabel}`}>{orgLabel}</Link>
                   {' | '}
                 </span>{' '}
                 {project._label}
