@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { push } from 'connected-react-router';
-import { Button, Modal, Drawer, notification } from 'antd';
+import { Button, Modal, Drawer, notification, Icon } from 'antd';
+
 import { OrgResponseCommon } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 
@@ -131,11 +130,11 @@ const OrgsListView: React.FunctionComponent = () => {
         >
           <h1 style={{ marginBottom: 0, marginRight: 8 }}>Organizations</h1>
           <AccessControl permissions={['organizations/create']} path="/">
-            <Button
-              type="primary"
-              onClick={() => setModalVisible(true)}
-              icon="plus-square"
-            >
+            <Button type="primary" onClick={() => setModalVisible(true)}>
+              <Icon
+                type="plus-square"
+                style={{ fontSize: '16px', color: 'white' }}
+              />
               Create Organization
             </Button>
           </AccessControl>
