@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Drawer, notification, Modal, Button, Empty } from 'antd';
+import { Drawer, notification, Modal, Button, Empty, Icon } from 'antd';
 import { useHistory, useRouteMatch } from 'react-router';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { ProjectResponseCommon, OrgResponseCommon } from '@bbp/nexus-sdk';
@@ -207,11 +207,11 @@ const ProjectsView: React.FunctionComponent = () => {
               permissions={['projects/create']}
               path={`/${activeOrg._label}`}
             >
-              <Button
-                type="primary"
-                onClick={() => setModalVisible(true)}
-                icon="plus-square"
-              >
+              <Button type="primary" onClick={() => setModalVisible(true)}>
+                <Icon
+                  type="plus-square"
+                  style={{ fontSize: '16px', color: 'white' }}
+                />
                 Create Project
               </Button>
             </AccessControl>
