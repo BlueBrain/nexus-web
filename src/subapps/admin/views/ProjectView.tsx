@@ -105,6 +105,9 @@ const ProjectView: React.FunctionComponent = () => {
                 </Popover>
               )}
             </div>
+            <Link to={`/studios/${orgLabel}/${projectLabel}/studios`}>
+              Studio Admin
+            </Link>
           </div>
           <div className="list-board">
             <div className="wrapper">

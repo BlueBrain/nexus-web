@@ -61,7 +61,7 @@ const ResourceViewContainer: React.FunctionComponent<{
     }
   ) => {
     const { revision, tab, expanded } = opt;
-    const pushRoute = `/admin/${orgLabel}/${projectLabel}/resources/${resourceId}${
+    const pushRoute = `/${orgLabel}/${projectLabel}/resources/${resourceId}${
       revision ? `?rev=${revision}` : ''
     }${expanded ? '&expanded=true' : ''}${tab ? tab : ''}`;
     history.push(pushRoute, location.state);
@@ -74,8 +74,7 @@ const ResourceViewContainer: React.FunctionComponent<{
   const goToProject = (orgLabel: string, projectLabel: string) =>
     history.push(`/admin/${orgLabel}/${projectLabel}`, location.state);
 
-  const goToOrg = (orgLabel: string) =>
-    history.push(`/admin/${orgLabel}`, location.state);
+  const goToOrg = (orgLabel: string) => history.push(`/admin/${orgLabel}`);
 
   const { expanded: expandedFromQuery, rev } = queryString.parse(
     location.search
