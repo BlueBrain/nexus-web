@@ -61,7 +61,7 @@ const ResourceViewContainer: React.FunctionComponent<{
     }
   ) => {
     const { revision, tab, expanded } = opt;
-    const pushRoute = `/admin/${orgLabel}/${projectLabel}/resources/${resourceId}${
+    const pushRoute = `/${orgLabel}/${projectLabel}/resources/${resourceId}${
       revision ? `?rev=${revision}` : ''
     }${expanded ? '&expanded=true' : ''}${tab ? tab : ''}`;
     history.push(pushRoute, location.state);
