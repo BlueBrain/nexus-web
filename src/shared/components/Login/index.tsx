@@ -3,7 +3,7 @@ import { Card, Dropdown, Icon, Menu, Button } from 'antd';
 
 import './Login.less';
 
-const logo = require('../../logo.svg');
+const logo = require('../../images/logo.svg');
 
 export interface LoginProps {
   realms: string[];

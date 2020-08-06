@@ -12,7 +12,7 @@ import ResourceActionsContainer from '../containers/ResourceActionsContainer';
 import ResourceEditorContainer from '../containers/ResourceEditor';
 import SchemaLinkContainer from '../containers/SchemaLink';
 import GraphContainer from '../containers/GraphContainer';
-import HomeIcon from '../components/HomeIcon';
+import HomeIcon from '../../subapps/admin/components/HomeIcon';
 import ResourceMetadata from '../components/ResourceMetadata';
 import ResourcePlugins from './ResourcePlugins';
 import usePlugins from '../hooks/usePlugins';
@@ -72,10 +72,9 @@ const ResourceViewContainer: React.FunctionComponent<{
   };
 
   const goToProject = (orgLabel: string, projectLabel: string) =>
-    history.push(`/${orgLabel}/${projectLabel}`, location.state);
+    history.push(`/admin/${orgLabel}/${projectLabel}`, location.state);
 
-  const goToOrg = (orgLabel: string) =>
-    history.push(`/${orgLabel}`, location.state);
+  const goToOrg = (orgLabel: string) => history.push(`/admin/${orgLabel}`);
 
   const { expanded: expandedFromQuery, rev } = queryString.parse(
     location.search

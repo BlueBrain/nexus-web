@@ -1,17 +1,16 @@
 import * as React from 'react';
-import { Menu, Dropdown, Icon, Button, Popover } from 'antd';
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Menu, Dropdown, Icon, Popover, Button } from 'antd';
 
 import Copy from '../Copy';
 import ConsentPreferences from '../ConsentPreferences';
-import { ConsentType } from '../../layouts/MainLayout';
-import { RootState } from '../../store/reducers';
+import { ConsentType } from '../../layouts/FusionMainLayout';
 
 import './Header.less';
 
-const logo = require('../../logo.svg');
-const epflLogo = require('../../EPFL-logo.svg');
+const epflLogo = require('../../images/EPFL-logo.svg');
+const infoIcon = require('../../images/infoIcon.svg');
+const copyIcon = require('../../images/copyIcon.svg');
+const menuIcon = require('../../images/menuIcon.svg');
 
 const documentationURL = 'https://bluebrainnexus.io/docs';
 
@@ -111,10 +110,10 @@ export interface HeaderProps {
   displayLogin?: boolean;
   children?: React.ReactChild;
   onLoginClick?(): void;
-  visitHome?(): void;
   serviceVersions?: ServiceVersions;
   consent?: ConsentType;
   onClickRemoveConsent?(): void;
+  onClickSideBarToggle(): void;
 }
 
 const Header: React.FunctionComponent<HeaderProps> = ({
@@ -126,13 +125,11 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   onLoginClick,
   version,
   githubIssueURL,
-  visitHome,
   serviceVersions,
   consent,
   onClickRemoveConsent,
+  onClickSideBarToggle,
 }) => {
-  const studioView = useSelector((state: RootState) => state.config.studioView);
-
   const menu = (
     <Menu>
       {links.map((link, i) => (
@@ -143,52 +140,26 @@ const Header: React.FunctionComponent<HeaderProps> = ({
 
   return (
     <header className="Header">
+      <button className="menu-icon" onClick={onClickSideBarToggle}>
+        <img src={menuIcon} />
+      </button>
       <div className="selectors">{children}</div>
-      <div className="logo-block">
-        <a
-          className="logo"
-          href=""
-          onClick={e => {
-            if (visitHome) {
-              e.preventDefault();
-              visitHome();
-            }
-          }}
-        >
-          {
-            // must add inline styling to prevent this big svg from
-            // flashing the screen on dev mode before styles are loaded
-          }
-          <img style={{ height: '2em', width: '2em' }} src={logo} alt="Nexus" />
-          <h1>Nexus</h1>
-        </a>
-      </div>
       <div className="menu-block">
-        {studioView !== '' && [
-          <a
-            className="nav-item"
-            href=""
-            onClick={e => {
-              if (visitHome) {
-                e.preventDefault();
-                visitHome();
-              }
-            }}
-            key="admin-link"
-          >
-            Admin
-          </a>,
-          <Link className="nav-item" to="/studio" key="studio-link">
-            Studio
-          </Link>,
-        ]}
         {token && (
           <Copy
             textToCopy={token}
             render={(copySuccess, triggerCopy) => (
-              <Button size="small" icon="copy" onClick={() => triggerCopy()}>
-                {copySuccess ? 'Token copied!' : 'Copy token'}
-              </Button>
+              <button
+                className="copy-token-button"
+                onClick={() => triggerCopy()}
+              >
+                <img src={copyIcon} />{' '}
+                {copySuccess ? (
+                  <span className="button-text">Copied!</span>
+                ) : (
+                  <span className="button-text">Copy token</span>
+                )}
+              </button>
             )}
           />
         )}
@@ -206,10 +177,10 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           title="Information"
           placement="bottomRight"
         >
-          <Button
-            size="small"
-            icon="info-circle"
+          <img
+            src={infoIcon}
             className="ui-header-info-button"
+            alt="Information"
           />
         </Popover>
         {name ? (

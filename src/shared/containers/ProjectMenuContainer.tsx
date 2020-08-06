@@ -6,7 +6,6 @@ import { Divider, Button } from 'antd';
 import SideMenu from '../components/Menu/SideMenu';
 import FileUploadContainer from '../containers/FileUploadContainer';
 import ResourceFormContainer from '../containers/ResourceFormContainer';
-import StudioListContainer from '../containers/StudioListContainer';
 
 const ProjectMenuContainer: React.FunctionComponent<{
   menuVisible: boolean;
@@ -44,15 +43,17 @@ const ProjectMenuContainer: React.FunctionComponent<{
             projectLabel={projectLabel}
           />
         </AccessControl>
-        <Link to={`/${orgLabel}/${projectLabel}/nxv:defaultSparqlIndex/sparql`}>
+        <Link
+          to={`/admin/${orgLabel}/${projectLabel}/nxv:defaultSparqlIndex/sparql`}
+        >
           Sparql Query Editor
         </Link>
         <Link
-          to={`/${orgLabel}/${projectLabel}/nxv:defaultElasticSearchIndex/_search`}
+          to={`/admin/${orgLabel}/${projectLabel}/nxv:defaultElasticSearchIndex/_search`}
         >
           ElasticSearch Query Editor
         </Link>
-        <Link to={`/${orgLabel}/${projectLabel}/_settings/acls`}>
+        <Link to={`/admin/${orgLabel}/${projectLabel}/_settings/acls`}>
           View Project's permissions
         </Link>
       </div>,
@@ -64,9 +65,6 @@ const ProjectMenuContainer: React.FunctionComponent<{
         <FileUploadContainer projectLabel={projectLabel} orgLabel={orgLabel} />
       </AccessControl>,
     ],
-    studios: (
-      <StudioListContainer orgLabel={orgLabel} projectLabel={projectLabel} />
-    ),
   };
 
   return (

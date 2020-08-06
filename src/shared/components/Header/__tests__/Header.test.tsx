@@ -35,6 +35,7 @@ const shallowHeader = shallow(
     githubIssueURL=""
     version=""
     serviceVersions={versions}
+    onClickSideBarToggle={() => {}}
   />
 );
 
@@ -46,6 +47,7 @@ const wrapper = mount(
       githubIssueURL=""
       version=""
       serviceVersions={versions}
+      onClickSideBarToggle={() => {}}
     />
   </MemoryRouter>
 );
@@ -58,13 +60,6 @@ describe('Header component', () => {
   it('Should have a logo block and a menu block', () => {
     expect(shallowHeader.find('.logo-block')).toBeTruthy();
     expect(shallowHeader.find('.menu-block')).toBeTruthy();
-  });
-
-  describe('Logo Block', () => {
-    it('Should diplay the Nexus logo followed by the App name', () => {
-      expect(wrapper.find('.logo')).toBeTruthy();
-      expect(wrapper.find('h1').text()).toEqual('Nexus');
-    });
   });
 
   describe('Menu Block', () => {
@@ -81,6 +76,7 @@ describe('Header component', () => {
             githubIssueURL=""
             version=""
             serviceVersions={versions}
+            onClickSideBarToggle={() => {}}
           />
         </MemoryRouter>
       );
@@ -98,6 +94,7 @@ describe('Header component', () => {
             version=""
             serviceVersions={versions}
             displayLogin={false}
+            onClickSideBarToggle={() => {}}
           />
         </MemoryRouter>
       );

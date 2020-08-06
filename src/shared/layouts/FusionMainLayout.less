@@ -1,0 +1,71 @@
+@import '../lib.less';
+
+.fusion-main-layout {
+  .logo {
+    padding: 0.6rem 1.7rem;
+    display: flex;
+    letter-spacing: 1px;
+    color: #ffffff;
+    height: 52px;
+  }
+
+  .fusion-title {
+    font-size: 1.4rem;
+    font-weight: 200;
+    margin-left: 0.7rem;
+  }
+
+  .menu-item {
+    display: flex;
+    position: relative;
+  }
+
+  .indicator {
+    background-color: #283d47;
+    height: 17px;
+    width: 17px;
+    transform: rotate(45deg);
+    position: absolute;
+    right: -8px;
+    top: 33%;
+  }
+
+  .collapsed {
+    background: linear-gradient(45deg, #1b2e39, #2a414b);
+    right: -6px;
+  }
+
+  .menu-icon {
+    padding-right: 0.7rem;
+  }
+
+  .ant-menu-item,
+  .ant-menu-inline .ant-menu-item,
+  .ant-menu-inline .ant-menu-item:not(:last-child) {
+    margin: 0;
+    height: 50px;
+    border-left: 4px solid #001529;
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+  }
+
+  .ant-menu.ant-menu-dark .ant-menu-item-selected {
+    background: linear-gradient(45deg, #001529, #2a414b);
+    border-left: 4px solid @primary-color;
+    height: 50px;
+    margin: 0;
+    overflow: visible;
+  }
+
+  .ant-menu-vertical .ant-menu-item,
+  .ant-menu-vertical .ant-menu-item:not(:last-child) {
+    margin: 0;
+    height: 50px;
+  }
+}
+
+// hides menu item tooltip
+.ant-tooltip.ant-menu-inline-collapsed-tooltip.ant-tooltip-placement-right {
+  display: none !important;
+}

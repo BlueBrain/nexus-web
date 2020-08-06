@@ -61,9 +61,8 @@ const ResourceListBoardContainer: React.FunctionComponent<{
           Added a new shared query list called <em>{sharedList.name}</em>
         </span>
       );
+      setQueryParams({ shareList: undefined });
     }
-
-    setQueryParams({ shareList: undefined });
   }, [orgLabel, projectLabel, shareList]);
 
   const createList = () => {
