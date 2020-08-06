@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, notification, message } from 'antd';
+import { Button, Modal, notification, message, Icon } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
@@ -96,7 +96,8 @@ const AddWorkspaceContainer: React.FC<{
 
   return (
     <>
-      <Button type="primary" icon="plus" onClick={() => setShowModal(true)}>
+      <Button type="primary" onClick={() => setShowModal(true)}>
+        <Icon type="plus-square" style={{ fontSize: '16px', color: 'white' }} />
         Add Workspace
       </Button>
       <Modal

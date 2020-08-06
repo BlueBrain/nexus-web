@@ -74,8 +74,7 @@ const ResourceViewContainer: React.FunctionComponent<{
   const goToProject = (orgLabel: string, projectLabel: string) =>
     history.push(`/admin/${orgLabel}/${projectLabel}`, location.state);
 
-  const goToOrg = (orgLabel: string) =>
-    history.push(`/admin/${orgLabel}`, location.state);
+  const goToOrg = (orgLabel: string) => history.push(`/admin/${orgLabel}`);
 
   const { expanded: expandedFromQuery, rev } = queryString.parse(
     location.search

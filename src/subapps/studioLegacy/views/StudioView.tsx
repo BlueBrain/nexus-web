@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Tooltip, Icon } from 'antd';
-
 import StudioContainer from '../containers/StudioContainer';
 import WorkspaceList from '../containers/WorkspaceListContainer';
 import DashboardList from '../containers/DashboardListContainer';
