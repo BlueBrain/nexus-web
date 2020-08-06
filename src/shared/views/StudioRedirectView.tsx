@@ -6,7 +6,7 @@ const ResourceView: React.FunctionComponent = props => {
   return (
     <Redirect
       to={{
-        pathname: `/studioLegacy${location.pathname}`,
+        pathname: `/studios${location.pathname}`,
         search: location.search,
       }}
     />
