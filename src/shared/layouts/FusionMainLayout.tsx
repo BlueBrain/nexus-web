@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
-import { NexusClient, Identity, Realm } from '@bbp/nexus-sdk';
-import { useNexus } from '@bbp/react-nexus';
+import { Identity, Realm } from '@bbp/nexus-sdk';
 import { UserManager } from 'oidc-client';
 import { Layout, Menu } from 'antd';
 
-import Header, { ServiceVersions } from '../components/Header';
+import Header from '../components/Header';
 import getUserManager from '../../client/userManager';
 import { getLogoutUrl, getDestinationParam } from '../utils';
 import { RootState } from '../store/reducers';
@@ -92,12 +91,6 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   // Remove version from API URL
   const splits = apiEndpoint.split('/');
   const apiBase = splits.slice(0, splits.length - 1).join('/');
-  const versions = useNexus<ServiceVersions>((nexus: NexusClient) =>
-    nexus.httpGet({
-      path: `${apiBase}/version`,
-      context: { as: 'json' },
-    })
-  );
 
   const onSelectSubAbpp = (data: any) => {
     const item = subApps.find(subApp => subApp.key === data.key);
@@ -170,7 +163,6 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
             onLoginClick={() => goTo(`/login${getDestinationParam()}`)}
             version={version}
             githubIssueURL={githubIssueURL}
-            serviceVersions={versions.data}
             consent={consent}
             onClickRemoveConsent={() => setConsent(undefined)}
             onClickSideBarToggle={() => setCollapsed(!collapsed)}

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as packageJson from '../../../../package.json';
 import { Menu, Dropdown, Icon, Popover, Button } from 'antd';
 
 import Copy from '../Copy';
@@ -17,55 +18,14 @@ const documentationURL = 'https://bluebrainnexus.io/docs';
 interface InformationContentProps {
   version: string;
   githubIssueURL: string;
-  serviceVersions?: ServiceVersions;
   consent?: ConsentType;
   onClickRemoveConsent?(): void;
 }
-
-export type ServiceVersions = {
-  nexus: string;
-  admin: string;
-  blazegraph: string;
-  elasticsearch: string;
-  iam: string;
-  kg: string;
-  storage: string;
-};
-
-const VersionInfo = (props: ServiceVersions) => {
-  return (
-    <>
-      <h4 className="popover-title">Nexus Services</h4>
-      {props.nexus && (
-        <p>
-          <label>Nexus</label> v{props.nexus}
-        </p>
-      )}
-      <p>
-        <label>Admin</label> v{props.admin}
-      </p>
-      <p>
-        <label>IAm</label> v{props.iam}
-      </p>
-      <p>
-        <label>Knowledge Graph</label> v{props.kg}
-      </p>
-      <h4 className="popover-title">Index Services</h4>
-      <p>
-        <label>Blaze Graph</label> v{props.blazegraph}
-      </p>
-      <p>
-        <label>Elastic Search</label> v{props.elasticsearch}
-      </p>
-    </>
-  );
-};
 
 const InformationContent = (props: InformationContentProps) => {
   return (
     <>
       <p>Nexus is Open Source and available under the Apache 2 License. </p>
-      <p>v{props.version} </p>
       <p>
         © 2017-2020
         <a href="https://www.epfl.ch/" target="_blank">
@@ -80,9 +40,11 @@ const InformationContent = (props: InformationContentProps) => {
           <span className="bbp-logo">Blue Brain Project</span>
         </a>
       </p>
-      {props.serviceVersions ? (
-        <VersionInfo {...props.serviceVersions} />
-      ) : null}
+      <h4>Nexus Services</h4>
+      <p>
+        Nexus Delta v{props.version} <br />
+        Nexus Fusion v{packageJson.version}
+      </p>
       <p>
         <a href={documentationURL} target="_blank">
           <Icon type="book" /> Documentation
@@ -110,7 +72,6 @@ export interface HeaderProps {
   displayLogin?: boolean;
   children?: React.ReactChild;
   onLoginClick?(): void;
-  serviceVersions?: ServiceVersions;
   consent?: ConsentType;
   onClickRemoveConsent?(): void;
   onClickSideBarToggle(): void;
@@ -125,7 +86,6 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   onLoginClick,
   version,
   githubIssueURL,
-  serviceVersions,
   consent,
   onClickRemoveConsent,
   onClickSideBarToggle,
@@ -168,7 +128,6 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             <InformationContent
               version={version}
               githubIssueURL={githubIssueURL}
-              serviceVersions={serviceVersions}
               consent={consent}
               onClickRemoveConsent={onClickRemoveConsent}
             />
