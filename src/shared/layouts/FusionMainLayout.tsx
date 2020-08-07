@@ -74,6 +74,14 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
     }) || subApps[0]
   );
 
+  React.useEffect(() => {
+    const currentSubApp =
+      subApps.find(({ route }) => {
+        return `/${location.pathname.split('/')[1]}` === route;
+      }) || subApps[0];
+    setSelectedItem(currentSubApp);
+  }, [location]);
+
   const [consent, setConsent] = useLocalStorage<ConsentType>(
     'consentToTracking'
   );
@@ -120,7 +128,9 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
           <Menu
             theme="dark"
             mode="inline"
-            defaultSelectedKeys={[subApps[0].key]}
+            defaultSelectedKeys={
+              selectedItem ? [selectedItem.key] : [subApps[0].key]
+            }
             selectedKeys={[selectedItem.key]}
             style={{ height: '100vh' }}
             onClick={onSelectSubAbpp}
