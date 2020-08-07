@@ -1,17 +1,7 @@
 import * as React from 'react';
 import { shallow, mount } from 'enzyme';
-import Header, { ServiceVersions } from '..';
+import Header from '..';
 import { MemoryRouter } from 'react-router-dom';
-
-const versions: ServiceVersions = {
-  nexus: '1.0',
-  admin: '1.0',
-  blazegraph: '1.0',
-  elasticsearch: '1.0',
-  iam: '1.0',
-  kg: '1.0',
-  storage: 'asda',
-};
 
 jest.mock('react-redux', () => {
   const ActualReactRedux = require.requireActual('react-redux');
@@ -34,7 +24,6 @@ const shallowHeader = shallow(
     links={links}
     githubIssueURL=""
     version=""
-    serviceVersions={versions}
     onClickSideBarToggle={() => {}}
   />
 );
@@ -46,7 +35,6 @@ const wrapper = mount(
       links={links}
       githubIssueURL=""
       version=""
-      serviceVersions={versions}
       onClickSideBarToggle={() => {}}
     />
   </MemoryRouter>
@@ -75,7 +63,6 @@ describe('Header component', () => {
             links={links}
             githubIssueURL=""
             version=""
-            serviceVersions={versions}
             onClickSideBarToggle={() => {}}
           />
         </MemoryRouter>
@@ -92,7 +79,6 @@ describe('Header component', () => {
             links={links}
             githubIssueURL=""
             version=""
-            serviceVersions={versions}
             displayLogin={false}
             onClickSideBarToggle={() => {}}
           />
