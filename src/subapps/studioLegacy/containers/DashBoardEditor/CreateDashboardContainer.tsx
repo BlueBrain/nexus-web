@@ -113,7 +113,7 @@ const CreateDashboardContainer: React.FunctionComponent<{
           linkToSparqlQueryEditor={(dataQuery: string) => {
             return (
               <Link
-                to={`/${orgLabel}/${projectLabel}/${viewId}/sparql?query=${encodeURIComponent(
+                to={`/admin/${orgLabel}/${projectLabel}/${viewId}/sparql?query=${encodeURIComponent(
                   dataQuery
                 )}`}
                 target="_blank"
