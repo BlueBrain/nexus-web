@@ -62,7 +62,7 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
         return (
           <Menu.Item key={index}>
             <Link
-              to={`${namespace}/${orgLabel}/${projectLabel}/${encodeURIComponent(
+              to={`/${namespace}/${orgLabel}/${projectLabel}/${encodeURIComponent(
                 view['@id']
               )}/${pathAppendage}`}
             >
