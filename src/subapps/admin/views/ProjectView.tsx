@@ -5,7 +5,7 @@ import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
 } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { notification, Popover } from 'antd';
+import { notification, Popover, Button } from 'antd';
 import { Link } from 'react-router-dom';
 
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
@@ -105,9 +105,11 @@ const ProjectView: React.FunctionComponent = () => {
                 </Popover>
               )}
             </div>
-            <Link to={`/studios/${orgLabel}/${projectLabel}/studios`}>
-              Studio Admin
-            </Link>
+            <Button type="primary">
+              <Link to={`/studios/${orgLabel}/${projectLabel}/studios`}>
+                Manage Studios for this project
+              </Link>
+            </Button>
           </div>
           <div className="list-board">
             <div className="wrapper">
