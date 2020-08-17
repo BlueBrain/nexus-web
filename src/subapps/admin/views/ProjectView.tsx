@@ -10,7 +10,6 @@ import { Link } from 'react-router-dom';
 
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
 import ResourceListBoardContainer from '../../../shared/containers/ResourceListBoardContainer';
-import HomeIcon from '../components/HomeIcon';
 import ProjectTools from '../components/Projects/ProjectTools';
 import { useAdminSubappContext } from '..';
 
@@ -75,8 +74,6 @@ const ProjectView: React.FunctionComponent = () => {
           <div className="project-banner">
             <div className="label">
               <h1 className="name">
-                <HomeIcon />
-                {' | '}
                 <span>
                   <Link to={`/admin/${orgLabel}`}>{orgLabel}</Link>
                   {' | '}
