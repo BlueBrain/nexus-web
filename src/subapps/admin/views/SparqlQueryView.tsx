@@ -8,7 +8,6 @@ import { useNexusContext } from '@bbp/react-nexus';
 
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 import SparqlQueryContainer from '../containers/SparqlQuery';
-import HomeIcon from '../components/HomeIcon';
 import { getResourceLabel, labelOf } from '../../../shared/utils';
 import { useAdminSubappContext } from '..';
 
@@ -75,8 +74,6 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
         <div className="label">
           <h1 className="name">
             <span>
-              <HomeIcon />
-              {' | '}
               <Link to={`/${namespace}/${orgLabel}`}>{orgLabel}</Link>
               {' | '}
               <Link to={`/${namespace}/${orgLabel}/${projectLabel}`}>

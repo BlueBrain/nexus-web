@@ -104,10 +104,6 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
     const item = subApps.find(subApp => subApp.key === data.key);
     setSelectedItem(item as SubAppProps);
     if (item) {
-      if (`/${location.pathname.split('/')[1]}` === item.route) {
-        // already in the subApp, don't change location
-        return;
-      }
       goTo(item.route);
     }
   };

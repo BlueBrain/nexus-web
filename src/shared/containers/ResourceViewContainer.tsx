@@ -12,7 +12,6 @@ import ResourceActionsContainer from '../containers/ResourceActionsContainer';
 import ResourceEditorContainer from '../containers/ResourceEditor';
 import SchemaLinkContainer from '../containers/SchemaLink';
 import GraphContainer from '../containers/GraphContainer';
-import HomeIcon from '../../subapps/admin/components/HomeIcon';
 import ResourceMetadata from '../components/ResourceMetadata';
 import ResourcePlugins from './ResourcePlugins';
 import usePlugins from '../hooks/usePlugins';
@@ -266,8 +265,6 @@ const ResourceViewContainer: React.FunctionComponent<{
           {!!resource && !!latestResource && !error && (
             <>
               <h1 className="name">
-                <HomeIcon />
-                {' | '}
                 <span>
                   <a onClick={() => goToOrg(orgLabel)}>{orgLabel}</a> |{' '}
                   <a onClick={() => goToProject(orgLabel, projectLabel)}>
