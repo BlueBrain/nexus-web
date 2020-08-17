@@ -1,8 +1,6 @@
-<p align="center">
-  <a href="https://github.com/BlueBrain/nexus-web" target="_blank" rel="noopener noreferrer">
-    <img width="250" src="https://user-images.githubusercontent.com/5485824/74722078-9e8e6600-5238-11ea-9384-4b794a6b9f66.png" alt="Nexus Web">
-  </a>
-</p>
+## Nexus Fusion
+
+> Note: expect this repo to be renamed to https://github.com/BlueBrain/nexus-fusion to match the new application name and Nexus component branding scheme.
 
 <p align="center">
   <img alt="Build Status" src="https://github.com/BlueBrain/nexus-web/workflows/Review/badge.svg">
@@ -14,7 +12,8 @@
   </a>
 </p>
 
-<p align="center">Nexus Web is the interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.</p>
+
+<p align="center">Nexus Fusion (previously Nexus Web) is the interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.</p>
 
 <p align="center">
   <a href="https://bluebrainnexus.io/docs/">Blue Brain Nexus Docs</a> |
@@ -80,9 +79,9 @@ docker build . --tag=nexus-web
 - `HOST_NAME`: name of host where application is available from: i.e. `https://bbp-nexus.epfl.ch` (default is protocol + host where server is running from)
 - `CLIENT_ID`: The application name used for _OpenID Connect_ authentication (default is `nexus-web`)
 - `API_ENDPOINT`: The URL pointing to Nexus API. Default is '/'
-- `SECURE`: Is nexus web running in https or not. Default is `false`
+- `SECURE`: Is Nexus Fusion running in https or not. Default is `false`
 - `GTM_CODE`: The Google Analytics Identifier. GA won't be present unless an ID is specified.
-- `SENTRY_DSN`: The sentry URL Nexus Web needs to report errors to. Default is undefined.
+- `SENTRY_DSN`: The sentry URL Nexus Fusion needs to report errors to. Default is undefined.
 - `STUDIO_VIEW`: The location of the aggregate elastic search view that contains all the projects: `orgLabel/projectLabel/viewId`
 
 The following concern Plugins. [See how to manage plugin deployments](./docs/plugins.md)
