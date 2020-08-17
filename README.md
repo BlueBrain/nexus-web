@@ -1,7 +1,4 @@
-<p align="center">
-  <a href="https://github.com/BlueBrain/nexus-web" target="_blank" rel="noopener noreferrer">
-  </a>
-</p>
+## Nexus Fusion
 
 <p align="center">
   <img alt="Build Status" src="https://github.com/BlueBrain/nexus-web/workflows/Review/badge.svg">
