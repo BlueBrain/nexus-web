@@ -13,7 +13,7 @@
   </a>
 </p>
 
-<p align="center">Nexus Web (soon to be renamed as Nexus Fusion) is the interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.</p>
+<p align="center">Nexus Fusion (previously Nexus Web) is the interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.</p>
 
 <p align="center">
   <a href="https://bluebrainnexus.io/docs/">Blue Brain Nexus Docs</a> |
