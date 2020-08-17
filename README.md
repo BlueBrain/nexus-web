@@ -1,6 +1,6 @@
 ## Nexus Fusion
 
-<p align="center">Note: expect this repo to be renamed to https://github.com/BlueBrain/nexus-fusion to match the new application name and Nexus component branding scheme.</p>
+> Note: expect this repo to be renamed to https://github.com/BlueBrain/nexus-fusion to match the new application name and Nexus component branding scheme.
 
 <p align="center">
   <img alt="Build Status" src="https://github.com/BlueBrain/nexus-web/workflows/Review/badge.svg">
