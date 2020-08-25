@@ -7,7 +7,7 @@ const { Meta } = Card;
 const backgrounds = [
   'linear-gradient( 135deg, #90F7EC 10%, #32CCBC 100%)',
   'linear-gradient( 135deg, #CE9FFC 10%, #7367F0 100%)',
-  'linear-gradient( 135deg, #928DAB 10%, #1F1C2C 100%)',
+  'linear-gradient( 135deg, #65C7F7 10%, #0052D4 100%)',
 ];
 
 const style = {
@@ -63,8 +63,7 @@ const Home: React.FunctionComponent = () => {
         {
           namespace: '/projects',
           title: 'Projects',
-          description:
-            'Visualize query results from Nexus Delta in customizable views',
+          description: 'Create activities to support your data-driven pipeline',
           background: backgrounds[2],
         },
       ].map(HomeLinkCard)}

@@ -3,7 +3,10 @@ import * as React from 'react';
 const ProjectsListView: React.FC<{}> = () => {
   return (
     <div className="view-container">
-      <h1>Hello</h1>
+      <div>
+        <h1>Projects</h1>
+        <p>Project List will be added soon. Stay tuned!</p>
+      </div>
     </div>
   );
 };
