@@ -25,7 +25,9 @@ export function useProjectsSubappContext() {
   return projectsSubappProps;
 }
 
-export const AdminSubappProviderHOC = (component: React.FunctionComponent) => {
+export const ProjectsSubappProviderHOC = (
+  component: React.FunctionComponent
+) => {
   return () => (
     <ProjectsSubappContext.Provider value={projectsSubappProps}>
       {component({})}
@@ -40,7 +42,7 @@ const Projects: SubApp = () => {
       {
         path: '/',
         exact: true,
-        component: AdminSubappProviderHOC(ProjectsListView),
+        component: ProjectsSubappProviderHOC(ProjectsListView),
       },
     ],
   };
