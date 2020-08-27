@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import ActionButton from './ActionButton';
+import ActionButton from '../components/ActionButton';
 
-const CreateNewProject: React.FC<{}> = () => {
+const NewProjectContainer = () => {
   const onClickAddProject = () => {
     console.log('clicked');
   };
@@ -16,4 +16,4 @@ const CreateNewProject: React.FC<{}> = () => {
   );
 };
 
-export default CreateNewProject;
+export default NewProjectContainer;

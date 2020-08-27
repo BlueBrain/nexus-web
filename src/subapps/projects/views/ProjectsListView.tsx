@@ -1,14 +1,14 @@
 import * as React from 'react';
 
 import ProjectCard from '../components/ProjectCard';
-import CreateNewProject from '../components/CreateNewProject';
+import NewProjectContainer from '../containers/NewProjectContainer';
 
 const ProjectsListView: React.FC<{}> = () => {
   return (
     <div className="view-container projects-subapp-container">
       <div>
         <h1>Projects</h1>
-        <CreateNewProject />
+        <NewProjectContainer />
         <br />
         <h2>Personal Projects</h2>
         {/* This is just an example */}
@@ -21,6 +21,8 @@ const ProjectsListView: React.FC<{}> = () => {
         />
         <br />
         <h2>Shared with Me</h2>
+        <br />
+        <h2>Archived Projects</h2>
       </div>
     </div>
   );
