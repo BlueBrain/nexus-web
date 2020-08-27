@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Empty } from 'antd';
 
 import ProjectCard from '../components/ProjectCard';
 import NewProjectContainer from '../containers/NewProjectContainer';
@@ -21,6 +22,7 @@ const ProjectsListView: React.FC<{}> = () => {
         />
         <br />
         <h2>Shared with Me</h2>
+        <Empty />
         <br />
         <h2>Archived Projects</h2>
       </div>

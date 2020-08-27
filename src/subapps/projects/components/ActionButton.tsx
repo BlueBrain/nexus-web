@@ -7,21 +7,26 @@ const addIcon = require('../../../shared/images/addIcon.svg');
 const ActionButton: React.FC<{
   title?: string;
   onClick(): void;
-  type: 'add' | string;
-}> = ({ type, title, onClick }) => {
-  let icon;
+  icon?: 'add' | string;
+  bordered?: boolean;
+}> = ({ icon, title, onClick, bordered }) => {
+  let buttonIcon;
 
-  switch (type) {
+  switch (icon) {
     case 'add':
-      icon = addIcon;
+      buttonIcon = addIcon;
       break;
     default:
-      icon = addIcon;
+      buttonIcon = addIcon;
   }
 
   return (
-    <button className="action-button" onClick={onClick}>
-      <img className="action-button__icon" src={icon} />
+    <button
+      className={`action-button ${bordered ? 'action-button__bordered' : ''}`}
+      onClick={onClick}
+      type="button"
+    >
+      {icon && <img className="action-button__icon" src={buttonIcon} />}
       <span>{title}</span>
     </button>
   );
