@@ -1,0 +1,73 @@
+@import '../../../shared/lib.less';
+
+.project-card {
+  display: flex;
+  max-width: 500px;
+  border: 1px solid @border-color-base;
+  border-radius: 10px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 0.7em;
+  font-size: 13px;
+  background-color: #fff;
+  box-shadow: @box-shadow-base;
+
+  p {
+    margin: 0;
+  }
+
+  .title-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .ant-btn {
+    height: 20px;
+  }
+
+  .card-section {
+    margin: 0.5em;
+  }
+
+  .description {
+    padding: 0.2em 0;
+  }
+
+  .stats {
+    width: 230px;
+    line-height: 1.5em;
+
+    @media (max-width: 650px) {
+      display: none;
+    }
+  }
+
+  .name {
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  .edit-button {
+    border: none;
+    outline-style: none;
+    margin-left: 0.5em;
+    cursor: pointer;
+    opacity: 0.6;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    background-color: inherit;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .arrow-icon {
+    opacity: 0.6;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
