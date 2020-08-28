@@ -398,14 +398,7 @@ export const matchPlugins = (
     }
     return isMatch(value, other);
   };
-  const map = new Map(Object.entries(pluginMap));
-  const newPlugins = plugins.filter(p => {
-    const shape = map.get(p);
-    return resource && shape
-      ? isMatchWith(pick(resource, Object.keys(shape)), shape, customizer)
-      : false;
-  });
-  return newPlugins;
+  return filterPlugins(pluginMap, plugins, resource, customizer);
 };
 
 export type PluginMapping = {
@@ -442,3 +435,43 @@ export const makeStudioUri = (
 ) => {
   return `/${orgLabel}/${projectLabel}/studios/${encodeURIComponent(studioId)}`;
 };
+
+/**
+ *
+ * @param pluginMap
+ * @param plugins
+ * @param resource
+ * @param customizer
+ * @returns {string[]}
+ *
+ */
+
+function filterPlugins(
+  pluginMap: Object,
+  plugins: string[],
+  resource: Resource<{ [key: string]: any }>,
+  customizer: isMatchWithCustomizer
+) {
+  const map = new Map(Object.entries(pluginMap));
+  const newPlugins = plugins.filter(p => {
+    const shape = map.get(p);
+    if (resource && shape) {
+      if (Array.isArray(shape)) {
+        for (let i = 0; i < shape.length; i += 1) {
+          if (
+            isMatchWith(
+              pick(resource, Object.keys(shape[i])),
+              shape[i],
+              customizer
+            )
+          ) {
+            return true;
+          }
+        }
+      }
+      return isMatchWith(pick(resource, Object.keys(shape)), shape, customizer);
+    }
+    return false;
+  });
+  return newPlugins;
+}
