@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { Modal } from 'antd';
+import { useNexusContext } from '@bbp/react-nexus';
 
 import ProjectForm from '../components/ProjectForm';
 import ActionButton from '../components/ActionButton';
 
 const NewProjectContainer: React.FC<{}> = () => {
+  const nexus = useNexusContext();
   const [showForm, setShowForm] = React.useState(false);
 
   const onClickAddProject = () => {
@@ -12,8 +14,10 @@ const NewProjectContainer: React.FC<{}> = () => {
   };
 
   const submitProject = (data: any) => {
-    // create new nexus resource
     console.log('data submitted', data);
+    // create new nexus resource
+
+    // nexus.Resource.create(orgLabel, projectLabel, data, schemaId);
     setShowForm(false);
   };
 
