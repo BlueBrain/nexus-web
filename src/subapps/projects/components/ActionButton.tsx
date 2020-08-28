@@ -8,8 +8,7 @@ const ActionButton: React.FC<{
   title?: string;
   onClick(): void;
   icon?: 'add' | string;
-  bordered?: boolean;
-}> = ({ icon, title, onClick, bordered }) => {
+}> = ({ icon, title, onClick }) => {
   let buttonIcon;
 
   switch (icon) {
@@ -21,11 +20,7 @@ const ActionButton: React.FC<{
   }
 
   return (
-    <button
-      className={`action-button ${bordered ? 'action-button__bordered' : ''}`}
-      onClick={onClick}
-      type="button"
-    >
+    <button className="action-button" onClick={onClick} type="button">
       {icon && <img className="action-button__icon" src={buttonIcon} />}
       <span>{title}</span>
     </button>

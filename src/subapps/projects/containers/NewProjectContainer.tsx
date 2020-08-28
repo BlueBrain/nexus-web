@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Modal } from 'antd';
 
 import ProjectForm from '../components/ProjectForm';
-
 import ActionButton from '../components/ActionButton';
 
 const NewProjectContainer: React.FC<{}> = () => {
@@ -12,8 +11,10 @@ const NewProjectContainer: React.FC<{}> = () => {
     setShowForm(true);
   };
 
-  const submitProject = () => {
+  const submitProject = (data: any) => {
     // create new nexus resource
+    console.log('data submitted', data);
+    setShowForm(false);
   };
 
   const handleCancel = () => {
@@ -34,7 +35,7 @@ const NewProjectContainer: React.FC<{}> = () => {
         width={1000}
         destroyOnClose={true}
       >
-        <ProjectForm onClickCancel={handleCancel} />
+        <ProjectForm onClickCancel={handleCancel} onSubmit={submitProject} />
       </Modal>
     </div>
   );
