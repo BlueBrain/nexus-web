@@ -62,7 +62,7 @@ const ProjectForm: React.FC<{
   const onClickSave = () => {
     if (isValidInput()) {
       const data = {
-        type: 'personal',
+        visibility,
         name,
         description,
         topic,
@@ -70,7 +70,7 @@ const ProjectForm: React.FC<{
         goals,
         questions,
         dueDate: dueDate.utc().format(),
-        visibility,
+        type: 'personal',
       };
 
       onSubmit(data);
