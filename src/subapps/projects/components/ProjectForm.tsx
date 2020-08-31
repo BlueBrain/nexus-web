@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Input, DatePicker, Select, Radio, Row, Col, Button } from 'antd';
+import { Form, Input, DatePicker, Radio, Row, Col, Button, Spin } from 'antd';
 
 const { Item } = Form;
 
@@ -8,7 +8,8 @@ import './ProjectForm.less';
 const ProjectForm: React.FC<{
   onClickCancel(): void;
   onSubmit(data: any): void;
-}> = ({ onClickCancel, onSubmit }) => {
+  busy: boolean;
+}> = ({ onClickCancel, onSubmit, busy }) => {
   const [name, setName] = React.useState<string>('');
   const [nameError, setNameError] = React.useState<boolean>(false);
   const [description, setDescription] = React.useState<string>('');
@@ -80,96 +81,93 @@ const ProjectForm: React.FC<{
   return (
     <Form {...formItemLayout} className="project-form">
       <h2>Create a New Project</h2>
-      <Row gutter={24}>
-        <Col xs={24} sm={24} md={12}>
-          <Item label="Project Type">
-            <Radio.Group value="personal">
-              <Radio.Button value="personal">Personal</Radio.Button>
-              <Radio.Button value="organization" disabled={true}>
-                Organization
-              </Radio.Button>
-            </Radio.Group>
-          </Item>
-          <Item
-            label="Project Name *"
-            validateStatus={nameError ? 'error' : ''}
-            help={nameError && 'Please enter a project name'}
-          >
-            <Input
-              value={name}
-              onChange={event => setName(event.target.value)}
-            />
-          </Item>
-          <Item
-            label="Project Description *"
-            validateStatus={descriptionError ? 'error' : ''}
-            help={descriptionError && 'Please enter a description'}
-          >
-            <Input.TextArea
-              value={description}
-              onChange={event => setDescription(event.target.value)}
-            />
-          </Item>
-          <Item label="Research Topic">
-            <Input
-              value={topic}
-              onChange={event => setTopic(event.target.value)}
-            />
-          </Item>
-          <Item label="Research Question(s)">
-            <Input.TextArea
-              value={questions}
-              onChange={event => setQuestions(event.target.value)}
-            />
-          </Item>
-        </Col>
-        <Col xs={24} sm={24} md={12}>
-          <Item label="Project Visibility">
-            <Radio.Group
-              value={visibility}
-              onChange={event => setVisibility(event.target.value)}
+      <Spin spinning={busy} tip="Please wait...">
+        <Row gutter={24}>
+          <Col xs={24} sm={24} md={12}>
+            <Item label="Project Type">
+              <Radio.Group value="personal">
+                <Radio.Button value="personal">Personal</Radio.Button>
+                <Radio.Button value="organization" disabled={true}>
+                  Organization
+                </Radio.Button>
+              </Radio.Group>
+            </Item>
+            <Item
+              label="Project Name *"
+              validateStatus={nameError ? 'error' : ''}
+              help={nameError && 'Please enter a project name'}
             >
-              <Radio.Button value="public">Public</Radio.Button>
-              <Radio.Button value="private">Private</Radio.Button>
-            </Radio.Group>
-          </Item>
-          <Item
-            label="Provisional End Date *"
-            validateStatus={dateError ? 'error' : ''}
-            help={dateError && 'Please select a due date'}
-          >
-            <DatePicker value={dueDate} onChange={date => setDueDate(date)} />
-          </Item>
-          <Item label="Members">
-            <Select defaultValue="You!">
-              <Select.Option value="jack">Jack</Select.Option>
-            </Select>
-          </Item>
-          <Item label="Hypotheses">
-            <Input.TextArea
-              value={hypotheses}
-              onChange={event => setHypotheses(event.target.value)}
-            />
-          </Item>
-          <Item label="Goals and deliverables">
-            <Input.TextArea
-              value={goals}
-              onChange={event => setGoals(event.target.value)}
-            />
-          </Item>
-        </Col>
-      </Row>
-      <Row>
-        <Col xs={24} sm={24} md={12} style={{ textAlign: 'left' }}>
-          <em>* Mandatory fields</em>
-        </Col>
-        <Col xs={24} sm={24} md={12} style={{ textAlign: 'right' }}>
-          <Button onClick={onClickCancel}>Cancel</Button>
-          <Button onClick={onClickSave} type="primary">
-            Create
-          </Button>
-        </Col>
-      </Row>
+              <Input
+                value={name}
+                onChange={event => setName(event.target.value)}
+              />
+            </Item>
+            <Item
+              label="Project Description *"
+              validateStatus={descriptionError ? 'error' : ''}
+              help={descriptionError && 'Please enter a description'}
+            >
+              <Input.TextArea
+                value={description}
+                onChange={event => setDescription(event.target.value)}
+              />
+            </Item>
+            <Item label="Research Topic">
+              <Input
+                value={topic}
+                onChange={event => setTopic(event.target.value)}
+              />
+            </Item>
+            <Item label="Research Question(s)">
+              <Input.TextArea
+                value={questions}
+                onChange={event => setQuestions(event.target.value)}
+              />
+            </Item>
+          </Col>
+          <Col xs={24} sm={24} md={12}>
+            <Item label="Project Visibility">
+              <Radio.Group
+                value={visibility}
+                onChange={event => setVisibility(event.target.value)}
+              >
+                <Radio.Button value="public">Public</Radio.Button>
+                <Radio.Button value="private">Private</Radio.Button>
+              </Radio.Group>
+            </Item>
+            <Item
+              label="Provisional End Date *"
+              validateStatus={dateError ? 'error' : ''}
+              help={dateError && 'Please select a due date'}
+            >
+              <DatePicker value={dueDate} onChange={date => setDueDate(date)} />
+            </Item>
+            <Item label="Hypotheses">
+              <Input.TextArea
+                value={hypotheses}
+                onChange={event => setHypotheses(event.target.value)}
+              />
+            </Item>
+            <Item label="Goals and deliverables">
+              <Input.TextArea
+                value={goals}
+                onChange={event => setGoals(event.target.value)}
+              />
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={24} sm={24} md={12} style={{ textAlign: 'left' }}>
+            <em>* Mandatory fields</em>
+          </Col>
+          <Col xs={24} sm={24} md={12} style={{ textAlign: 'right' }}>
+            <Button onClick={onClickCancel}>Cancel</Button>
+            <Button onClick={onClickSave} type="primary">
+              Create
+            </Button>
+          </Col>
+        </Row>
+      </Spin>
     </Form>
   );
 };
