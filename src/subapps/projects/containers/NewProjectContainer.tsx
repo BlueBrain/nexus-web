@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { Modal, notification } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../../../shared/store/reducers';
 
 import ProjectForm from '../components/ProjectForm';
 import ActionButton from '../components/ActionButton';
-import { Log } from 'oidc-client';
 
 const NewProjectContainer: React.FC<{}> = () => {
   const nexus = useNexusContext();
@@ -32,7 +31,7 @@ const NewProjectContainer: React.FC<{}> = () => {
 
   const submitProject = (data: any) => {
     setBusy(true);
-    const userOrgLabel = `fusion2-${userName}`;
+    const userOrgLabel = `fusion-${userName}`;
 
     const { name, description } = data;
 

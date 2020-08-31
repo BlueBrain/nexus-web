@@ -59,9 +59,6 @@ const ProjectsView: React.FunctionComponent = () => {
     if (!activeOrg) {
       return;
     }
-
-    console.log('newProject', newProject);
-
     nexus.Project.create(activeOrg._label, newProject._label, {
       base: newProject.base || undefined,
       vocab: newProject.vocab || undefined,
