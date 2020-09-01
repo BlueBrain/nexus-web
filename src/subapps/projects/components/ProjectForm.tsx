@@ -78,6 +78,21 @@ const ProjectForm: React.FC<{
     }
   };
 
+  const onChangeName = (event: any) => {
+    setName(event.target.value);
+    setNameError(false);
+  };
+
+  const onChangeDescription = (event: any) => {
+    setDescription(event.target.value);
+    setDescriptionError(false);
+  };
+
+  const onChangeDate = (date: any) => {
+    setDueDate(date);
+    setDateError(false);
+  };
+
   return (
     <Form {...formItemLayout} className="project-form">
       <h2>Create a New Project</h2>
@@ -97,10 +112,7 @@ const ProjectForm: React.FC<{
               validateStatus={nameError ? 'error' : ''}
               help={nameError && 'Please enter a project name'}
             >
-              <Input
-                value={name}
-                onChange={event => setName(event.target.value)}
-              />
+              <Input value={name} onChange={onChangeName} />
             </Item>
             <Item
               label="Project Description *"
@@ -109,7 +121,7 @@ const ProjectForm: React.FC<{
             >
               <Input.TextArea
                 value={description}
-                onChange={event => setDescription(event.target.value)}
+                onChange={onChangeDescription}
               />
             </Item>
             <Item label="Research Topic">
@@ -140,7 +152,7 @@ const ProjectForm: React.FC<{
               validateStatus={dateError ? 'error' : ''}
               help={dateError && 'Please select a due date'}
             >
-              <DatePicker value={dueDate} onChange={date => setDueDate(date)} />
+              <DatePicker value={dueDate} onChange={onChangeDate} />
             </Item>
             <Item label="Hypotheses">
               <Input.TextArea

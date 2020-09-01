@@ -7,6 +7,8 @@ import { RootState } from '../../../shared/store/reducers';
 import ProjectForm from '../components/ProjectForm';
 import ActionButton from '../components/ActionButton';
 
+const FUSION_PROJECT_TYPE = ['fusionMetadata', 'fusionProject'];
+
 const NewProjectContainer: React.FC<{}> = () => {
   const nexus = useNexusContext();
 
@@ -31,7 +33,7 @@ const NewProjectContainer: React.FC<{}> = () => {
 
   const submitProject = (data: any) => {
     setBusy(true);
-    const userOrgLabel = `fusion-${userName}`;
+    const userOrgLabel = `fusion2-${userName}`;
 
     const { name, description } = data;
 
@@ -64,7 +66,10 @@ const NewProjectContainer: React.FC<{}> = () => {
         });
 
     const createResource = () =>
-      nexus.Resource.create(userOrgLabel, name, data)
+      nexus.Resource.create(userOrgLabel, name, {
+        '@type': FUSION_PROJECT_TYPE,
+        ...data,
+      })
         .then(() => {
           notification.success({
             message: `Project ${name} created successfully`,
