@@ -9,6 +9,24 @@ import ActionButton from '../components/ActionButton';
 
 const FUSION_PROJECT_TYPE = ['fusionMetadata', 'fusionProject'];
 
+export type ProjectMetadata = {
+  name: string;
+  description: string;
+  dueDate: string;
+  visibility?: string;
+  topic?: string;
+  hypotheses?: string;
+  goals?: string;
+  questions?: string;
+  type?: string;
+};
+
+type NexusError = {
+  reason?: string;
+  message?: string;
+  [key: string]: any;
+};
+
 const NewProjectContainer: React.FC<{}> = () => {
   const nexus = useNexusContext();
 
@@ -23,7 +41,7 @@ const NewProjectContainer: React.FC<{}> = () => {
     setShowForm(true);
   };
 
-  const showErrorNotification = (error: any) => {
+  const showErrorNotification = (error: NexusError) => {
     notification.error({
       message: 'An error occurred',
       description: error.message || error.reason || 'An unknown error occurred',
@@ -31,7 +49,7 @@ const NewProjectContainer: React.FC<{}> = () => {
     });
   };
 
-  const submitProject = (data: any) => {
+  const submitProject = (data: ProjectMetadata) => {
     setBusy(true);
     const userOrgLabel = `fusion2-${userName}`;
 
@@ -51,7 +69,7 @@ const NewProjectContainer: React.FC<{}> = () => {
 
     const createProject = () =>
       nexus.Project.create(userOrgLabel, name, {
-        description: description || '',
+        description,
       })
         .then(() => {
           createResource();

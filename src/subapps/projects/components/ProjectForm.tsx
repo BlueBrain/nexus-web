@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Form, Input, DatePicker, Radio, Row, Col, Button, Spin } from 'antd';
 
+import { ProjectMetadata } from '../containers/NewProjectContainer';
+
 const { Item } = Form;
 
 import './ProjectForm.less';
@@ -62,7 +64,7 @@ const ProjectForm: React.FC<{
 
   const onClickSave = () => {
     if (isValidInput()) {
-      const data = {
+      const data: ProjectMetadata = {
         visibility,
         name,
         description,
