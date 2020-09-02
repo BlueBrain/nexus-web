@@ -40,14 +40,14 @@ const ProjectsListView: React.FC<{}> = () => {
   }, []);
   return (
     <div className="view-container projects-subapp-container">
-      <div className={'list-container'}>
+      <div className="list-container">
         <NewProjectContainer />
         <div>
           <h1>Personal Projects</h1>
           {personalProjects
             ? personalProjects.map(v => {
                 return (
-                  <div className={'project-container'}>
+                  <div className="project-container">
                     <ProjectCard
                       name={v._label}
                       description={v.description || ''}
