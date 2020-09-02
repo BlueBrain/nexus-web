@@ -50,7 +50,7 @@ const ProjectsListView: React.FC<{}> = () => {
                   <div className={'project-container'}>
                     <ProjectCard
                       name={v._label}
-                      description={v.description ? v.description : ''}
+                      description={v.description || ''}
                       activitiesNumber={9}
                       collaboratorsNumber={5}
                       status="In progress"
