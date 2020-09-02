@@ -10,7 +10,6 @@ const ProjectView: React.FC = () => {
   return (
     <div className="project-container">
       <ProjectHeader name="Thalamic microcircuit" />
-      <div>Main stuff</div>
     </div>
   );
 };
