@@ -52,7 +52,6 @@ const NewProjectContainer: React.FC<{}> = () => {
   const submitProject = (data: ProjectMetadata) => {
     setBusy(true);
     const userOrgLabel = `fusion-${userName}`;
-
     const { name, description } = data;
 
     const createOrganization = () =>

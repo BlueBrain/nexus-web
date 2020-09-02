@@ -9,7 +9,7 @@ import './ProjectForm.less';
 
 const ProjectForm: React.FC<{
   onClickCancel(): void;
-  onSubmit(data: any): void;
+  onSubmit(data: ProjectMetadata): void;
   busy: boolean;
 }> = ({ onClickCancel, onSubmit, busy }) => {
   const [name, setName] = React.useState<string>('');
