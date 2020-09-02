@@ -65,7 +65,7 @@ const ProjectsListView: React.FC<{}> = () => {
           {sharedProjects
             ? sharedProjects.map(v => {
                 return (
-                  <div className={'project-container'}>
+                  <div className="project-container">
                     <ProjectCard
                       name={v._label}
                       description={v.description || ''}
