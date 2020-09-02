@@ -51,7 +51,7 @@ const NewProjectContainer: React.FC<{}> = () => {
 
   const submitProject = (data: ProjectMetadata) => {
     setBusy(true);
-    const userOrgLabel = `fusion2-${userName}`;
+    const userOrgLabel = `fusion-${userName}`;
 
     const { name, description } = data;
 
@@ -105,6 +105,8 @@ const NewProjectContainer: React.FC<{}> = () => {
   const handleCancel = () => {
     setShowForm(false);
   };
+
+  if (!userName) return null;
 
   return (
     <div>
