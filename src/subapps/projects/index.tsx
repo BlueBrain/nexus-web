@@ -2,6 +2,7 @@ import * as React from 'react';
 import { SubApp } from '..';
 
 import ProjectsListView from './views/ProjectsListView';
+import ProjectView from './views/ProjectView';
 
 const title = 'Projects';
 const namespace = 'projects';
@@ -43,6 +44,11 @@ const Projects: SubApp = () => {
         path: '/',
         exact: true,
         component: ProjectsSubappProviderHOC(ProjectsListView),
+      },
+      {
+        path: '/:label',
+        exact: true,
+        component: ProjectsSubappProviderHOC(ProjectView),
       },
     ],
   };
