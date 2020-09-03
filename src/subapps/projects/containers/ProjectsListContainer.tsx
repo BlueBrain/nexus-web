@@ -40,7 +40,7 @@ const ProjectsListContainer: React.FC<ProjectsListContainerType> = ({
         .map((v: ProjectResponseCommon) => {
           return (
             <div className="list-container">
-              <div className="project-container">
+              <div className="project-card-container">
                 <ProjectCard
                   name={v._label}
                   description={v.description || ''}
