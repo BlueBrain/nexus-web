@@ -21,8 +21,10 @@ const ActionButton: React.FC<{
 
   return (
     <button className="action-button" onClick={onClick} type="button">
-      {icon && <img className="action-button__icon" src={buttonIcon} />}
-      <span>{title}</span>
+      <div className="action-button__body">
+        {icon && <img className="action-button__icon" src={buttonIcon} />}
+        <span>{title}</span>
+      </div>
     </button>
   );
 };
