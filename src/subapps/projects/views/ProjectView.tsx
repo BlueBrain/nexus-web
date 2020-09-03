@@ -6,6 +6,8 @@ import './ProjectView.less';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Project } from '@bbp/nexus-sdk';
 
+import ActivityCard from '../components/ActivityCard';
+
 const ProjectView: React.FC = () => {
   const subapp = useProjectsSubappContext();
   const match = useRouteMatch<{ orgLabel: string; projectLabel: string }>(
@@ -30,8 +32,9 @@ const ProjectView: React.FC = () => {
   return (
     <>
       {project ? (
-        <div className="project-container">
+        <div className="project-view__container">
           <ProjectHeader name={project._label} />
+          <ActivityCard name="Single Cell Models" />
         </div>
       ) : (
         'Project not found'

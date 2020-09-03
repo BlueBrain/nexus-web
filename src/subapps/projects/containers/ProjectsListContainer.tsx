@@ -3,6 +3,8 @@ import { Icon, Button } from 'antd';
 import { ProjectResponseCommon } from '@bbp/nexus-sdk';
 import ProjectCard from '../components/ProjectCard';
 
+import { Status } from '../components/StatusIcon';
+
 type ProjectsListContainerType = {
   projects: ProjectResponseCommon[];
   projectType: string;
@@ -47,7 +49,7 @@ const ProjectsListContainer: React.FC<ProjectsListContainerType> = ({
                   description={v.description || ''}
                   activitiesNumber={9}
                   collaboratorsNumber={5}
-                  status="In progress"
+                  status={Status.inProgress}
                 />
               </div>
             </div>
