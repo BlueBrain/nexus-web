@@ -1,5 +1,6 @@
 import * as React from 'react';
-
+import { Link } from 'react-router-dom';
+import { Tooltip } from 'antd';
 import StatusIcon from './StatusIcon';
 
 import './ProjectCard.less';
@@ -13,6 +14,7 @@ type ProjectCardProps = {
   activitiesNumber: number;
   status: string;
   collaboratorsNumber: number;
+  orgLabel: string;
 };
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
@@ -21,6 +23,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   activitiesNumber,
   collaboratorsNumber,
   status,
+  orgLabel,
 }) => {
   const onClickEditButton = () => {
     console.log('clicked Edit project');
@@ -28,28 +31,30 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
   return (
     <div className="project-card">
-      <div className="card-section">
-        <StatusIcon status={status} />
-      </div>
-      <div className="card-section">
-        <div className="title-container">
-          <span className="name">{name}</span>
-          <button className="edit-button" onClick={onClickEditButton}>
-            <img src={editIcon} />
-          </button>
+      <Tooltip title={status}>
+        <div className="card-section icon">
+          <StatusIcon status={status} />
         </div>
-        <p className="description">{description}</p>
-        <p></p>
+      </Tooltip>
+      <div className="card-section main">
+        <div className="main-info">
+          <div className="title-container">
+            <span className="name">{name}</span>
+            <button className="edit-button" onClick={onClickEditButton}>
+              <img src={editIcon} />
+            </button>
+          </div>
+          <p className="description">{description}</p>
+        </div>
+        <div className="stats">
+          <p>{activitiesNumber} activities</p>
+          <p>{collaboratorsNumber} collaborators</p>
+        </div>
       </div>
-      <div className="card-section stats">
-        <p>{activitiesNumber} activities</p>
-        <p>{collaboratorsNumber} collaborators</p>
-        <p>Status: {status}</p>
-      </div>
-      <div className="card-section">
-        <a href="" className="arrow-icon">
+      <div className="card-section arrow">
+        <Link to={`/projects/${orgLabel}/${name}`}>
           <img src={arrowIcon} />
-        </a>
+        </Link>
       </div>
     </div>
   );

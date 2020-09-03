@@ -43,6 +43,7 @@ const ProjectsListContainer: React.FC<ProjectsListContainerType> = ({
               <div className="project-card-container">
                 <ProjectCard
                   name={v._label}
+                  orgLabel={v._organizationLabel}
                   description={v.description || ''}
                   activitiesNumber={9}
                   collaboratorsNumber={5}
