@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import { ProjectList, Project, ProjectResponseCommon } from '@bbp/nexus-sdk';
+import { useNexusContext } from '@bbp/react-nexus';
+import { ProjectResponseCommon } from '@bbp/nexus-sdk';
 import ProjectCard from '../components/ProjectCard';
+import ProjectsListContainer from '../containers/ProjectsListContainer';
 import NewProjectContainer from '../containers/NewProjectContainer';
 import { RootState } from '../../../shared/store/reducers';
 import './ProjectsListView.less';
@@ -14,6 +15,9 @@ const ProjectsListView: React.FC<{}> = () => {
     ProjectResponseCommon[]
   >();
   const [sharedProjects, setSharedProjects] = React.useState<
+    ProjectResponseCommon[]
+  >();
+  const [archivedProjects, setArchivedProjects] = React.useState<
     ProjectResponseCommon[]
   >();
 
@@ -31,53 +35,44 @@ const ProjectsListView: React.FC<{}> = () => {
     // TODO: Implement pagination.
     nexus.Project.list(undefined, {
       size: 1000,
+      deprecated: false,
     }).then(value => {
       const shared = value._results.filter((v: ProjectResponseCommon) => {
         return v._organizationLabel !== personalOrg;
       });
       setSharedProjects(shared);
     });
+
+    // TODO: Implement pagination.
+    nexus.Project.list(undefined, {
+      size: 1000,
+      deprecated: true,
+    }).then(value => {
+      setArchivedProjects(value._results);
+    });
   }, []);
   return (
     <div className="view-container projects-subapp-container">
-      <div className="list-container">
+      <div>
         <NewProjectContainer />
-        <div>
-          <h1>Personal Projects</h1>
-          {personalProjects
-            ? personalProjects.map(v => {
-                return (
-                  <div className="project-container">
-                    <ProjectCard
-                      name={v._label}
-                      description={v.description || ''}
-                      activitiesNumber={9}
-                      collaboratorsNumber={5}
-                      status="In progress"
-                    />
-                  </div>
-                );
-              })
-            : null}
-        </div>
-        <div>
-          <h1>Shared Projects</h1>
-          {sharedProjects
-            ? sharedProjects.map(v => {
-                return (
-                  <div className="project-container">
-                    <ProjectCard
-                      name={v._label}
-                      description={v.description || ''}
-                      activitiesNumber={9}
-                      collaboratorsNumber={5}
-                      status="In progress"
-                    />
-                  </div>
-                );
-              })
-            : null}
-        </div>
+        {personalProjects ? (
+          <ProjectsListContainer
+            projectType="Personal Projects"
+            projects={personalProjects}
+          />
+        ) : null}
+        {sharedProjects ? (
+          <ProjectsListContainer
+            projectType="Shared Projects"
+            projects={sharedProjects}
+          />
+        ) : null}
+        {archivedProjects ? (
+          <ProjectsListContainer
+            projectType="Archived Projects"
+            projects={archivedProjects}
+          />
+        ) : null}
       </div>
     </div>
   );
