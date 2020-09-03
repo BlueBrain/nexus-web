@@ -20,7 +20,6 @@ const ProjectView: React.FC = () => {
     if (orgLabel && projectLabel) {
       nexus.Project.get(orgLabel, projectLabel)
         .then((value: Project) => {
-          console.log(value);
           setProject(value);
         })
         .catch(error => {
