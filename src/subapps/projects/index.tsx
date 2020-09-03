@@ -46,7 +46,7 @@ const Projects: SubApp = () => {
         component: ProjectsSubappProviderHOC(ProjectsListView),
       },
       {
-        path: '/:project',
+        path: '/:orgLabel/:projectLabel',
         exact: true,
         component: ProjectsSubappProviderHOC(ProjectView),
       },
