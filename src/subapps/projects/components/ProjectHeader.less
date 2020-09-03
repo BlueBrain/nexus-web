@@ -1,0 +1,63 @@
+@import '../../../shared/lib.less';
+
+.project-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 52px;
+  padding: 0 1.5em;
+  background-color: #fff;
+  box-shadow: @box-shadow-base;
+
+  @media (max-width: 900px) {
+    height: 92px;
+  }
+
+  &__name {
+    font-size: 24px;
+    margin-right: 0.5em;
+
+    @media (max-width: 1130px) {
+      font-size: 18px;
+      line-height: 20px;
+    }
+  }
+
+  &__buttons {
+    display: flex;
+    align-items: center;
+
+    @media (max-width: 900px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-grow: 2;
+
+    @media (max-width: 1130px) {
+      line-height: 20px;
+    }
+  }
+
+  .ant-btn {
+    border-radius: 6px;
+    opacity: 0.9;
+
+    &:hover {
+      opacity: 1;
+      color: @text-color;
+      border-color: @text-color;
+    }
+
+    &:focus {
+      color: @text-color;
+      border-color: @text-color;
+      opacity: 0.9;
+    }
+  }
+}
