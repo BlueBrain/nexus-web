@@ -14,6 +14,7 @@ type ProjectCardProps = {
   activitiesNumber: number;
   status: string;
   collaboratorsNumber: number;
+  orgLabel: string;
 };
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
@@ -22,6 +23,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   activitiesNumber,
   collaboratorsNumber,
   status,
+  orgLabel,
 }) => {
   const onClickEditButton = () => {
     console.log('clicked Edit project');
@@ -50,7 +52,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         </div>
       </div>
       <div className="card-section arrow">
-        <Link to={`/projects/${name}`}>
+        <Link to={`/projects/${orgLabel}/${name}`}>
           <img src={arrowIcon} />
         </Link>
       </div>
