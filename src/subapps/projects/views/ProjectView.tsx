@@ -34,7 +34,10 @@ const ProjectView: React.FC = () => {
       {project ? (
         <div className="project-view__container">
           <ProjectHeader name={project._label} />
-          <ActivityCard name="Single Cell Models" />
+          <ActivityCard
+            name="Single Cell Models"
+            description="This is an example summary"
+          />
         </div>
       ) : (
         'Project not found'
