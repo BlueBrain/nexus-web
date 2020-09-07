@@ -5,9 +5,20 @@
   background-color: rgb(247, 245, 245);
   width: 250px;
   border-radius: 10px;
-  border-top: 10px solid @blocked-color;
   padding: 0.5em 1em;
   box-shadow: @box-shadow-base;
+
+  &--blocked {
+    border-top: 10px solid @blocked-color;
+  }
+
+  &--inProgress {
+    border-top: 10px solid @in-progress-color;
+  }
+
+  &--done {
+    border-top: 10px solid @success-color;
+  }
 
   &__main,
   &__subactivities-total {
@@ -18,10 +29,13 @@
     margin: 0 10px;
   }
 
-  p {
+  &__info-line,
+  &__subactivities-total {
     margin: 0;
     font-size: 12px;
     opacity: 0.8;
+    display: flex;
+    align-items: center;
   }
 
   &__title {
@@ -36,7 +50,7 @@
     border-bottom: 1px solid rgb(220, 220, 220);
   }
 
-  &__info-line {
-    margin-left: 10px;
+  &__info-icon {
+    margin-right: 10px;
   }
 }

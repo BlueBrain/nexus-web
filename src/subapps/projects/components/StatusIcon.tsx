@@ -9,10 +9,10 @@ const blockedIconMini = require('../../../shared/images/blockedIconMini.svg');
 const doneIconMini = require('../../../shared/images/doneIconMini.svg');
 
 export enum Status {
-  'inProgress',
-  'blocked',
-  'toDo',
-  'done',
+  inProgress = 'inProgress',
+  blocked = 'blocked',
+  toDo = 'toDo',
+  done = 'done',
 }
 
 const StatusIcon: React.FC<{

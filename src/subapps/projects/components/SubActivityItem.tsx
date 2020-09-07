@@ -14,7 +14,7 @@ const SubActivityItem: React.FC<{
       <StatusIcon status={status} mini={true} />
       <div className="sub-activity__content">
         <h3 className="sub-activity__title">{title}</h3>
-        <p className="total">{activitiesNumber} activities</p>
+        <p className="sub-activity__total">{activitiesNumber} activities</p>
       </div>
     </div>
   );

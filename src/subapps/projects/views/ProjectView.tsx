@@ -7,6 +7,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Project } from '@bbp/nexus-sdk';
 
 import ActivityCard from '../components/ActivityCard';
+import { Status } from '../components/StatusIcon';
 
 const ProjectView: React.FC = () => {
   const subapp = useProjectsSubappContext();
@@ -35,8 +36,23 @@ const ProjectView: React.FC = () => {
         <div className="project-view__container">
           <ProjectHeader name={project._label} />
           <ActivityCard
+            status={Status.blocked}
             name="Single Cell Models"
             description="This is an example summary"
+            codeResourcesTotal={2}
+            dataResourcesTotal={10}
+          />
+          <ActivityCard
+            status={Status.done}
+            name="Single Cell Models"
+            description="This is an example summary"
+            codeResourcesTotal={2}
+          />
+          <ActivityCard
+            status={Status.inProgress}
+            name="Single Cell Models"
+            description="This is an example summary"
+            codeResourcesTotal={2}
           />
         </div>
       ) : (
