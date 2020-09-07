@@ -9,9 +9,9 @@ const blockedIconMini = require('../../../shared/images/blockedIconMini.svg');
 const doneIconMini = require('../../../shared/images/doneIconMini.svg');
 
 export enum Status {
-  inProgress = 'inProgress',
+  inProgress = 'in progress',
   blocked = 'blocked',
-  toDo = 'toDo',
+  toDo = 'not started',
   done = 'done',
 }
 

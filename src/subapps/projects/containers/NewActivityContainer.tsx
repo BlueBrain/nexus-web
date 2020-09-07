@@ -19,7 +19,7 @@ const NewActivityContainer: React.FC<{}> = () => {
         visible={showForm}
         footer={null}
         onCancel={() => setShowForm(false)}
-        width={1000}
+        width={1150}
         destroyOnClose={true}
       >
         <ActivityForm

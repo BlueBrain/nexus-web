@@ -30,7 +30,7 @@ const ActivityCard: React.FC<{
   status,
 }) => {
   return (
-    <div className={`activity-card activity-card--${status}`}>
+    <div className={`activity-card activity-card--${status.replace(' ', '-')}`}>
       <div className="activity-card__main">
         <div className="activity-card__title">
           <StatusIcon status={status} mini={true} />
