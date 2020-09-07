@@ -6,6 +6,9 @@ import './ProjectView.less';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Project } from '@bbp/nexus-sdk';
 
+import ActivityCard from '../components/ActivityCard';
+import { Status } from '../components/StatusIcon';
+
 const ProjectView: React.FC = () => {
   const subapp = useProjectsSubappContext();
   const match = useRouteMatch<{ orgLabel: string; projectLabel: string }>(
@@ -30,8 +33,27 @@ const ProjectView: React.FC = () => {
   return (
     <>
       {project ? (
-        <div className="project-container">
+        <div className="project-view__container">
           <ProjectHeader name={project._label} />
+          <ActivityCard
+            status={Status.blocked}
+            name="Single Cell Models"
+            description="This is an example summary"
+            codeResourcesTotal={2}
+            dataResourcesTotal={10}
+          />
+          <ActivityCard
+            status={Status.done}
+            name="Single Cell Models"
+            description="This is an example summary"
+            codeResourcesTotal={2}
+          />
+          <ActivityCard
+            status={Status.inProgress}
+            name="Single Cell Models"
+            description="This is an example summary"
+            codeResourcesTotal={2}
+          />
         </div>
       ) : (
         'Project not found'

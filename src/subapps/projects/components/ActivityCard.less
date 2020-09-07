@@ -1,0 +1,56 @@
+@import '../../../shared/lib.less';
+
+.activity-card {
+  margin: 1em;
+  background-color: rgb(247, 245, 245);
+  width: 250px;
+  border-radius: 10px;
+  padding: 0.5em 1em;
+  box-shadow: @box-shadow-base;
+
+  &--blocked {
+    border-top: 10px solid @blocked-color;
+  }
+
+  &--inProgress {
+    border-top: 10px solid @in-progress-color;
+  }
+
+  &--done {
+    border-top: 10px solid @success-color;
+  }
+
+  &__main,
+  &__subactivities-total {
+    padding: 0 8px;
+  }
+
+  &__name {
+    margin: 0 10px;
+  }
+
+  &__info-line,
+  &__subactivities-total {
+    margin: 0;
+    font-size: 12px;
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+  }
+
+  &__info {
+    padding: 5px 0;
+    margin: 0.5em 0;
+    border-top: 1px solid rgb(220, 220, 220);
+    border-bottom: 1px solid rgb(220, 220, 220);
+  }
+
+  &__info-icon {
+    margin-right: 10px;
+  }
+}

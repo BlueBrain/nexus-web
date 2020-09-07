@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Tooltip } from 'antd';
-import StatusIcon from './StatusIcon';
+import StatusIcon, { Status } from './StatusIcon';
 
 import './ProjectCard.less';
 
@@ -12,7 +12,7 @@ type ProjectCardProps = {
   name: string;
   description: string;
   activitiesNumber: number;
-  status: string;
+  status: Status;
   collaboratorsNumber: number;
   orgLabel: string;
 };
