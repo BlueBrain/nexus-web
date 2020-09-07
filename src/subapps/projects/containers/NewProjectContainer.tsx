@@ -4,22 +4,10 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../shared/store/reducers';
 
-import ProjectForm from '../components/ProjectForm';
+import ProjectForm, { ProjectMetadata } from '../components/ProjectForm';
 import ActionButton from '../components/ActionButton';
 
 const FUSION_PROJECT_TYPE = ['fusionMetadata', 'fusionProject'];
-
-export type ProjectMetadata = {
-  name: string;
-  description: string;
-  dueDate: string;
-  visibility?: string;
-  topic?: string;
-  hypotheses?: string;
-  goals?: string;
-  questions?: string;
-  type?: string;
-};
 
 type NexusError = {
   reason?: string;

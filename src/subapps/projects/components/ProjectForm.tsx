@@ -1,35 +1,72 @@
 import * as React from 'react';
 import { Form, Input, DatePicker, Radio, Row, Col, Button, Spin } from 'antd';
-
-import { ProjectMetadata } from '../containers/NewProjectContainer';
+import * as moment from 'moment';
 
 const { Item } = Form;
 
 import './ProjectForm.less';
 
+export type ProjectMetadata = {
+  name: string;
+  description: string;
+  dueDate: string;
+  visibility?: string;
+  topic?: string;
+  hypotheses?: string;
+  goals?: string;
+  questions?: string;
+  type?: string;
+};
+
 const ProjectForm: React.FC<{
   onClickCancel(): void;
   onSubmit(data: ProjectMetadata): void;
   busy: boolean;
-}> = ({ onClickCancel, onSubmit, busy }) => {
-  const [name, setName] = React.useState<string>('');
+  project?: ProjectMetadata;
+}> = ({ onClickCancel, onSubmit, busy, project }) => {
+  const [name, setName] = React.useState<string>(project ? project.name : '');
   const [nameError, setNameError] = React.useState<boolean>(false);
-  const [description, setDescription] = React.useState<string>('');
+  const [description, setDescription] = React.useState<string>(
+    project ? project.description : ''
+  );
   const [descriptionError, setDescriptionError] = React.useState<boolean>(
     false
   );
-  const [topic, setTopic] = React.useState<string>('');
-  const [hypotheses, setHypotheses] = React.useState<string>('');
-  const [goals, setGoals] = React.useState<string>('');
-  const [questions, setQuestions] = React.useState<string>('');
-  const [dueDate, setDueDate] = React.useState<any>(null);
+  const [topic, setTopic] = React.useState<string>(
+    project && project.topic ? project.topic : ''
+  );
+  const [hypotheses, setHypotheses] = React.useState<string>(
+    project && project.hypotheses ? project.hypotheses : ''
+  );
+  const [goals, setGoals] = React.useState<string>(
+    project && project.goals ? project.goals : ''
+  );
+  const [questions, setQuestions] = React.useState<string>(
+    project && project.questions ? project.questions : ''
+  );
+  const [dueDate, setDueDate] = React.useState<any>(
+    project ? project.dueDate : null
+  );
   const [dateError, setDateError] = React.useState<boolean>(false);
-  const [visibility, setVisibility] = React.useState('public');
+  const [visibility, setVisibility] = React.useState(
+    project && project.visibility ? project.visibility : 'public'
+  );
 
-  const formItemLayout = {
-    labelCol: { xs: { span: 24 }, sm: { span: 9 } },
-    wrapperCol: { xs: { span: 24 }, sm: { span: 15 } },
-  };
+  const formTitle = project ? 'Edit Project' : 'Create a New Project';
+  const formItemLayout = project
+    ? {}
+    : {
+        labelCol: { xs: { span: 24 }, sm: { span: 9 } },
+        wrapperCol: { xs: { span: 24 }, sm: { span: 15 } },
+      };
+
+  const formColumnLayOut = project
+    ? {}
+    : {
+        xs: 24,
+        sm: 24,
+        md: 12,
+      };
 
   const isEmptyInput = (value: string) => {
     return value.split(' ').join('') === '';
@@ -72,7 +109,7 @@ const ProjectForm: React.FC<{
         hypotheses,
         goals,
         questions,
-        dueDate: dueDate.utc().format(),
+        dueDate,
         type: 'personal',
       };
 
@@ -97,10 +134,10 @@ const ProjectForm: React.FC<{
 
   return (
     <Form {...formItemLayout} className="project-form">
-      <h2>Create a New Project</h2>
+      <h2>{formTitle}</h2>
       <Spin spinning={busy} tip="Please wait...">
         <Row gutter={24}>
-          <Col xs={24} sm={24} md={12}>
+          <Col {...formColumnLayOut}>
             <Item label="Project Type">
               <Radio.Group value="personal">
                 <Radio.Button value="personal">Personal</Radio.Button>
@@ -114,7 +151,11 @@ const ProjectForm: React.FC<{
               validateStatus={nameError ? 'error' : ''}
               help={nameError && 'Please enter a project name'}
             >
-              <Input value={name} onChange={onChangeName} />
+              <Input
+                value={name}
+                onChange={onChangeName}
+                disabled={!!project}
+              />
             </Item>
             <Item
               label="Project Description *"
@@ -139,7 +180,7 @@ const ProjectForm: React.FC<{
               />
             </Item>
           </Col>
-          <Col xs={24} sm={24} md={12}>
+          <Col {...formColumnLayOut}>
             <Item label="Project Visibility">
               <Radio.Group
                 value={visibility}
@@ -154,7 +195,7 @@ const ProjectForm: React.FC<{
               validateStatus={dateError ? 'error' : ''}
               help={dateError && 'Please select a due date'}
             >
-              <DatePicker value={dueDate} onChange={onChangeDate} />
+              <DatePicker value={moment(dueDate)} onChange={onChangeDate} />
             </Item>
             <Item label="Hypotheses">
               <Input.TextArea
@@ -171,13 +212,13 @@ const ProjectForm: React.FC<{
           </Col>
         </Row>
         <Row>
-          <Col xs={24} sm={24} md={12} style={{ textAlign: 'left' }}>
+          <Col {...formColumnLayOut} style={{ textAlign: 'left' }}>
             <em>* Mandatory fields</em>
           </Col>
-          <Col xs={24} sm={24} md={12} style={{ textAlign: 'right' }}>
+          <Col {...formColumnLayOut} style={{ textAlign: 'right' }}>
             <Button onClick={onClickCancel}>Cancel</Button>
             <Button onClick={onClickSave} type="primary">
-              Create
+              {project ? 'Save' : 'Create'}
             </Button>
           </Col>
         </Row>
