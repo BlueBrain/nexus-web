@@ -8,7 +8,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Project, Resource } from '@bbp/nexus-sdk';
 import ProjectForm, { ProjectMetadata } from '../components/ProjectForm';
 
-import ActivityCard from '../components/ActivityCard';
+import ActivityCard from '../components/Activities/ActivityCard';
 import { Status } from '../components/StatusIcon';
 
 const ProjectView: React.FC = () => {
@@ -139,8 +139,8 @@ const ProjectView: React.FC = () => {
   return (
     <>
       {project && projectMetaData ? (
-        <div className="project-container">
-          <ProjectHeader project={projectMetaData}>
+        <div className="project-view__container">
+          <ProjectHeader orgLabel={orgLabel} projectLabel={projectLabel}>
             <Button onClick={() => setEditProject(!editProject)}>
               Project Information
             </Button>

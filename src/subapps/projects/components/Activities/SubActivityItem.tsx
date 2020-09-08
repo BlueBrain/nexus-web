@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import StatusIcon, { Status } from '../components/StatusIcon';
+import StatusIcon, { Status } from '../StatusIcon';
 
 import './SubActivityItem.less';
 
