@@ -1,21 +1,25 @@
 import * as React from 'react';
-import { Button, Modal } from 'antd';
 import ActioButton from '../components/ActionButton';
-import { ProjectMetadata } from './ProjectForm';
 import NewActivityContainer from '../containers/NewActivityContainer';
 
 import './ProjectHeader.less';
 
 const ProjectHeader: React.FC<{
   children?: React.ReactChild;
-  project: ProjectMetadata;
-}> = ({ project, children }) => {
+  orgLabel?: string;
+  projectLabel?: string;
+}> = ({ children, projectLabel, orgLabel }) => {
   return (
     <div className="project-header">
-      <span className="project-header__name">{project.name}</span>
+      <span className="project-header__name">{projectLabel}</span>
       <div className="project-header__actions">
         <div className="project-header__buttons">
-          <NewActivityContainer />
+          {orgLabel && projectLabel && (
+            <NewActivityContainer
+              projectLabel={projectLabel}
+              orgLabel={orgLabel}
+            />
+          )}
           <ActioButton
             icon="Add"
             onClick={() => {}}

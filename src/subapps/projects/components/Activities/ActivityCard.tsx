@@ -1,14 +1,14 @@
 import * as React from 'react';
-import StatusIcon, { Status } from '../components/StatusIcon';
+import StatusIcon, { Status } from '../../components/StatusIcon';
 import SubActivityItem from './SubActivityItem';
 
 import './ActivityCard.less';
 
-const editIcon = require('../../../shared/images/pencil.svg');
-const codeIcon = require('../../../shared/images/codeIcon.svg');
-const dataIcon = require('../../../shared/images/dataIcon.svg');
-const noteIcon = require('../../../shared/images/noteIcon.svg');
-const settingIcon = require('../../../shared/images/settingIcon.svg');
+const editIcon = require('../../../../shared/images/pencil.svg');
+const codeIcon = require('../../../../shared/images/codeIcon.svg');
+const dataIcon = require('../../../../shared/images/dataIcon.svg');
+const noteIcon = require('../../../../shared/images/noteIcon.svg');
+const settingIcon = require('../../../../shared/images/settingIcon.svg');
 
 const subActivities = [
   { title: 'Morphology Release', activitiesNumber: 7, status: Status.blocked },
