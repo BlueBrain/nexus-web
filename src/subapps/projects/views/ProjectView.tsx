@@ -39,7 +39,7 @@ const ProjectView: React.FC = () => {
           description: data.description,
         }
       )
-        .then(result => {
+        .then(resultProject => {
           nexus.Resource.update(
             project._organizationLabel,
             project._label,
@@ -53,6 +53,7 @@ const ProjectView: React.FC = () => {
             .then(result => {
               setEditProject(false);
               setProjectMetaData(data);
+              setProject(resultProject as Project);
               notification.success({
                 message: `Project information Updated`,
               });
@@ -86,7 +87,7 @@ const ProjectView: React.FC = () => {
           setError(error);
         });
     }
-  }, [projectMetaData]);
+  }, []);
 
   React.useEffect(() => {
     if (project) {
