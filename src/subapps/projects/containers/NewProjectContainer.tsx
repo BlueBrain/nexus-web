@@ -33,7 +33,7 @@ const NewProjectContainer: React.FC<{}> = () => {
     notification.error({
       message: 'An error occurred',
       description: error.message || error.reason || 'An unknown error occurred',
-      duration: 0,
+      duration: 3,
     });
   };
 
