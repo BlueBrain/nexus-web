@@ -195,7 +195,10 @@ const ProjectForm: React.FC<{
               validateStatus={dateError ? 'error' : ''}
               help={dateError && 'Please select a due date'}
             >
-              <DatePicker value={moment(dueDate)} onChange={onChangeDate} />
+              <DatePicker
+                value={dueDate ? moment(dueDate) : null}
+                onChange={onChangeDate}
+              />
             </Item>
             <Item label="Hypotheses">
               <Input.TextArea
