@@ -7,6 +7,7 @@ import './ProjectView.less';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Project, Resource } from '@bbp/nexus-sdk';
 import ProjectForm, { ProjectMetadata } from '../components/ProjectForm';
+import ActivitiesContainer from '../containers/ActivitiesContainer';
 
 import ActivityCard from '../components/Activities/ActivityCard';
 import { Status } from '../components/StatusIcon';
@@ -162,25 +163,12 @@ const ProjectView: React.FC = () => {
               />
             </Card>
           ) : null}
-          <ActivityCard
-            status={Status.blocked}
-            name="Single Cell Models"
-            description="This is an example summary"
-            codeResourcesTotal={2}
-            dataResourcesTotal={10}
-          />
-          <ActivityCard
-            status={Status.done}
-            name="Single Cell Models"
-            description="This is an example summary"
-            codeResourcesTotal={2}
-          />
-          <ActivityCard
-            status={Status.inProgress}
-            name="Single Cell Models"
-            description="This is an example summary"
-            codeResourcesTotal={2}
-          />
+          {orgLabel && projectLabel && (
+            <ActivitiesContainer
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+            />
+          )}
         </div>
       ) : (
         'Project not found'
