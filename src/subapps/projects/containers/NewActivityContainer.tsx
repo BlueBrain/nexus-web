@@ -5,11 +5,26 @@ import ActivityForm from '../components/ActivityForm';
 
 import ActioButton from '../components/ActionButton';
 
+import { Status } from '../components/StatusIcon';
+
+export type ActivityMetadata = {
+  name: string;
+  description: string;
+  summary?: string;
+  dueDate: string;
+  status: Status;
+};
+
 const NewActivityContainer: React.FC<{}> = () => {
   const [showForm, setShowForm] = React.useState<boolean>(false);
 
+  const submitActivity = (data: ActivityMetadata) => {
+    console.log('hello!', data);
+    setShowForm(false);
+  };
+
   return (
-    <div>
+    <>
       <ActioButton
         icon="Add"
         onClick={() => setShowForm(true)}
@@ -23,12 +38,12 @@ const NewActivityContainer: React.FC<{}> = () => {
         destroyOnClose={true}
       >
         <ActivityForm
-        //   onClickCancel={handleCancel}
-        //   onSubmit={submitProject}
-        //   busy={busy}
+          onClickCancel={() => setShowForm(false)}
+          onSubmit={submitActivity}
+          //   busy={busy}
         />
       </Modal>
-    </div>
+    </>
   );
 };
 

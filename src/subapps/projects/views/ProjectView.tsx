@@ -139,7 +139,7 @@ const ProjectView: React.FC = () => {
   return (
     <>
       {project && projectMetaData ? (
-        <div className="project-container">
+        <div className="project-view__container">
           <ProjectHeader project={projectMetaData}>
             <Button onClick={() => setEditProject(!editProject)}>
               Project Information
