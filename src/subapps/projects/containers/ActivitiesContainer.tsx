@@ -11,8 +11,8 @@ const ActivitiesContainer: React.FC<{
 
   const [activities, setActivities] = React.useState<any[]>([]);
 
-  const fetchActivities = async (activities: any) => {
-    await Promise.all(
+  const fetchActivities = (activities: any) => {
+    Promise.all(
       activities.map((activity: any) => {
         return nexus.Resource.get(
           orgLabel,
@@ -20,21 +20,24 @@ const ActivitiesContainer: React.FC<{
           encodeURIComponent(activity['@id'])
         );
       })
-    );
+    )
+      .then(response => setActivities(response))
+      .catch(error => console.log(error));
   };
 
   React.useEffect(() => {
-    let activities;
     nexus.Resource.list(orgLabel, projectLabel, {
       type: ACTIVITY_TYPE,
-    }).then(response => {
-      activities = fetchActivities(response._results);
-
-      console.log('activities', activities);
-    });
+    })
+      .then(response => {
+        fetchActivities(response._results);
+      })
+      .catch(error => console.log(error));
   }, []);
 
   if (activities.length === 0) return null;
+
+  console.log('activites', activities);
 
   return (
     <div>
