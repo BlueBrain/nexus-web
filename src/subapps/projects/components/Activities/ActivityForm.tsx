@@ -38,6 +38,12 @@ const ActivityForm: React.FC<{
     wrapperCol: { xs: { span: 24 }, sm: { span: 17 } },
   };
 
+  const columnLayout = {
+    xs: 24,
+    sm: 24,
+    md: 12,
+  };
+
   const isEmptyInput = (value: string) => {
     return value.split(' ').join('') === '';
   };
@@ -105,7 +111,7 @@ const ActivityForm: React.FC<{
       <h2 className="activity-form__title">Create New Activity</h2>
       <Spin spinning={busy} tip="Please wait...">
         <Row gutter={24}>
-          <Col xs={24} sm={24} md={12}>
+          <Col>
             <Item
               label="Name *"
               validateStatus={nameError ? 'error' : ''}
@@ -137,7 +143,7 @@ const ActivityForm: React.FC<{
               </Radio.Group>
             </Item>
           </Col>
-          <Col xs={24} sm={24} md={12}>
+          <Col {...columnLayout}>
             <Item
               label="Provisional End Date *"
               validateStatus={dateError ? 'error' : ''}
@@ -166,10 +172,10 @@ const ActivityForm: React.FC<{
           </Col>
         </Row>
         <Row>
-          <Col xs={24} sm={24} md={12} style={{ textAlign: 'left' }}>
+          <Col {...columnLayout} style={{ textAlign: 'left' }}>
             <em>* Mandatory fields</em>
           </Col>
-          <Col xs={24} sm={24} md={12} style={{ textAlign: 'right' }}>
+          <Col {...columnLayout} style={{ textAlign: 'right' }}>
             <Button onClick={onClickCancel}>Cancel</Button>
             <Button onClick={onClickSubmit} type="primary">
               Create
