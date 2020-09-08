@@ -28,7 +28,10 @@ const ProjectsListView: React.FC<{}> = () => {
   React.useEffect(() => {
     const personalOrg = `fusion-${userName}`;
     // TODO: Implement pagination.
-    nexus.Project.list(personalOrg).then(value => {
+    nexus.Project.list(personalOrg, {
+      size: 1000,
+      deprecated: false,
+    }).then(value => {
       setPersonalProjects(value._results);
     });
 
