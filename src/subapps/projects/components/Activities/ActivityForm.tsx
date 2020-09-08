@@ -111,7 +111,7 @@ const ActivityForm: React.FC<{
       <h2 className="activity-form__title">Create New Activity</h2>
       <Spin spinning={busy} tip="Please wait...">
         <Row gutter={24}>
-          <Col>
+          <Col {...columnLayout}>
             <Item
               label="Name *"
               validateStatus={nameError ? 'error' : ''}
