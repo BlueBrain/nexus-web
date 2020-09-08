@@ -3,9 +3,7 @@ import { Modal, notification } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import ActivityForm from '../components/Activities/ActivityForm';
-
 import ActioButton from '../components/ActionButton';
-
 import { Status } from '../components/StatusIcon';
 
 const ACTIVITY_TYPE = 'FusionActivity';
