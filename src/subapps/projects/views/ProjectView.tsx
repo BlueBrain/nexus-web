@@ -8,6 +8,7 @@ import { useProjectsSubappContext } from '..';
 import ProjectHeader from '../components/ProjectHeader';
 import ProjectForm, { ProjectMetadata } from '../components/ProjectForm';
 import ActivitiesContainer from '../containers/ActivitiesContainer';
+import NewActivityContainer from '../containers/NewActivityContainer';
 
 import './ProjectView.less';
 
@@ -28,6 +29,11 @@ const ProjectView: React.FC = () => {
   const orgLabel = match?.params.orgLabel;
   const nexus = useNexusContext();
   const [editProject, setEditProject] = React.useState<boolean>(false);
+  // switch to trigger activities list update
+  const [refreshActivities, setRefreshActivities] = React.useState<boolean>(
+    false
+  );
+
   const submitProject = (data: ProjectMetadata) => {
     setBusy(true);
     if (project && metaDataResource) {
@@ -136,15 +142,28 @@ const ProjectView: React.FC = () => {
         });
     }
   }, [project]);
+
+  const waitAntReloadActivities = () =>
+    setTimeout(() => setRefreshActivities(!refreshActivities), 3500);
+
   return (
     <>
       {project && projectMetaData ? (
         <div className="project-view__container">
-          <ProjectHeader orgLabel={orgLabel} projectLabel={projectLabel}>
-            <Button onClick={() => setEditProject(!editProject)}>
-              Project Information
-            </Button>
-          </ProjectHeader>
+          {orgLabel && projectLabel && (
+            <ProjectHeader title={projectLabel}>
+              <>
+                <NewActivityContainer
+                  projectLabel={projectLabel}
+                  orgLabel={orgLabel}
+                  onSuccess={waitAntReloadActivities}
+                />
+                <Button onClick={() => setEditProject(!editProject)}>
+                  Project Information
+                </Button>
+              </>
+            </ProjectHeader>
+          )}
           {editProject ? (
             <Card
               style={{
@@ -166,6 +185,7 @@ const ProjectView: React.FC = () => {
             <ActivitiesContainer
               orgLabel={orgLabel}
               projectLabel={projectLabel}
+              refresh={refreshActivities}
             />
           )}
         </div>

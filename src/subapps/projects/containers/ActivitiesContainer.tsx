@@ -16,10 +16,21 @@ type NexusError = {
 const ActivitiesContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
-}> = ({ orgLabel, projectLabel }) => {
+  refresh: boolean;
+}> = ({ orgLabel, projectLabel, refresh }) => {
   const nexus = useNexusContext();
 
   const [activities, setActivities] = React.useState<Activity[]>([]);
+
+  React.useEffect(() => {
+    nexus.Resource.list(orgLabel, projectLabel, {
+      type: ACTIVITY_TYPE,
+    })
+      .then(response => {
+        fetchActivities(response._results);
+      })
+      .catch(error => displayError(error));
+  }, [refresh]);
 
   const displayError = (error: NexusError) => {
     notification.error({
@@ -43,19 +54,7 @@ const ActivitiesContainer: React.FC<{
       .catch(error => displayError(error));
   };
 
-  React.useEffect(() => {
-    nexus.Resource.list(orgLabel, projectLabel, {
-      type: ACTIVITY_TYPE,
-    })
-      .then(response => {
-        fetchActivities(response._results);
-      })
-      .catch(error => displayError(error));
-  }, []);
-
   if (activities.length === 0) return null;
-
-  console.log('activites', activities);
 
   return <ActivitiesBoard activities={activities} />;
 };
