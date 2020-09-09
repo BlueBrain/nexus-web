@@ -35,6 +35,7 @@ const NewActivityContainer: React.FC<{
     })
       .then(() => {
         setShowForm(false);
+        setBusy(false);
 
         notification.success({
           message: `Activity ${name} created successfully`,
@@ -42,6 +43,7 @@ const NewActivityContainer: React.FC<{
       })
       .catch(error => {
         setShowForm(false);
+        setBusy(false);
 
         notification.error({
           message: 'An error occurred',
@@ -64,7 +66,7 @@ const NewActivityContainer: React.FC<{
         footer={null}
         onCancel={() => setShowForm(false)}
         width={1150}
-        destroyOnClose
+        destroyOnClose={true}
       >
         <ActivityForm
           onClickCancel={() => setShowForm(false)}

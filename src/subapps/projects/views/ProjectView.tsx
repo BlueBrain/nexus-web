@@ -1,16 +1,15 @@
 import * as React from 'react';
-import { useProjectsSubappContext } from '..';
-import ProjectHeader from '../components/ProjectHeader';
 import { useRouteMatch } from 'react-router';
 import { Button, notification, Card } from 'antd';
-import './ProjectView.less';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Project, Resource } from '@bbp/nexus-sdk';
+
+import { useProjectsSubappContext } from '..';
+import ProjectHeader from '../components/ProjectHeader';
 import ProjectForm, { ProjectMetadata } from '../components/ProjectForm';
 import ActivitiesContainer from '../containers/ActivitiesContainer';
 
-import ActivityCard from '../components/Activities/ActivityCard';
-import { Status } from '../components/StatusIcon';
+import './ProjectView.less';
 
 const ProjectView: React.FC = () => {
   const subapp = useProjectsSubappContext();
