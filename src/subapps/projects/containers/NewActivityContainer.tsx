@@ -5,6 +5,9 @@ import { useNexusContext } from '@bbp/react-nexus';
 import ActivityForm from '../components/Activities/ActivityForm';
 import ActioButton from '../components/ActionButton';
 import { Status } from '../components/StatusIcon';
+import ActivityTemplateCard, {
+  ActivityTemplate,
+} from '../components/Activities/ActivityTemplateCard';
 
 const ACTIVITY_TYPE = 'FusionActivity';
 
@@ -24,6 +27,7 @@ const NewActivityContainer: React.FC<{
   const nexus = useNexusContext();
 
   const [showForm, setShowForm] = React.useState<boolean>(false);
+  const [showTemplates, setShowTemplates] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
 
   const submitActivity = (data: ActivityMetadata) => {
@@ -57,6 +61,15 @@ const NewActivityContainer: React.FC<{
       });
   };
 
+  const template = {
+    name: 'Single Cell Model',
+    description: 'Preview',
+    version: 1.1,
+    updatedOn: 'yesterday',
+    totalContributors: 2,
+    author: 'Author',
+  };
+
   return (
     <>
       <ActioButton
@@ -77,12 +90,23 @@ const NewActivityContainer: React.FC<{
           busy={busy}
         />
       </Modal>
-      {/* TODO: implement new activities from template */}
       <ActioButton
         icon="Add"
-        onClick={() => {}}
+        onClick={() => setShowTemplates(true)}
         title="Add activities from template"
       />
+      <Modal
+        visible={showTemplates}
+        footer={null}
+        onCancel={() => setShowTemplates(false)}
+        width={700}
+        destroyOnClose={true}
+      >
+        <div>
+          <h2>Templates</h2>
+          <ActivityTemplateCard template={template} />
+        </div>
+      </Modal>
     </>
   );
 };
