@@ -63,8 +63,8 @@ const NewActivityContainer: React.FC<{
 
   const template = {
     name: 'Single Cell Model',
-    description: 'Preview',
-    version: 1.1,
+    description: 'This is an example description',
+    version: 1,
     updatedOn: 'yesterday',
     totalContributors: 2,
     author: 'Author',

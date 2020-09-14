@@ -1,4 +1,9 @@
 import * as React from 'react';
+import { Button } from 'antd';
+
+import './ActivityTemplateCard.less';
+
+const activityIcon = require('../../../../shared/images/settingIcon.svg');
 
 export type ActivityTemplate = {
   name: string;
@@ -23,14 +28,23 @@ const ActivityTemplateCard: React.FC<{
 
   return (
     <div className="activity-template-card">
-      <h3>{name}</h3>
-      <p>
-        Updated on {updatedOn} by {author}
-      </p>
-      <p>v{version}</p>
-      <p>{description}</p>
-      <p>{totalContributors} contributors</p>
-      <button>Details</button>
+      <div className="activity-template-card__header">
+        <img src={activityIcon} className="activity-template-card__icon" />
+        <span className="activity-template-card__title">{name}</span>
+        <p>
+          Updated on {updatedOn} by {author}
+        </p>
+        <p>v{version}</p>
+      </div>
+      <div className="activity-template-card__content">
+        <p className="activity-template-card__description">{description}</p>
+        <p className="activity-template-card__contributors">
+          {totalContributors} contributors
+        </p>
+        <div className="activity-template-card__details-button">
+          <Button type="link">Details</Button>
+        </div>
+      </div>
     </div>
   );
 };
