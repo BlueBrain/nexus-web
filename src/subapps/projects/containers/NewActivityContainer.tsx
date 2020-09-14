@@ -19,7 +19,8 @@ export type ActivityMetadata = {
 const NewActivityContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
-}> = ({ orgLabel, projectLabel }) => {
+  onSuccess(): void;
+}> = ({ orgLabel, projectLabel, onSuccess }) => {
   const nexus = useNexusContext();
 
   const [showForm, setShowForm] = React.useState<boolean>(false);
@@ -34,14 +35,18 @@ const NewActivityContainer: React.FC<{
       ...data,
     })
       .then(() => {
+        onSuccess();
         setShowForm(false);
+        setBusy(false);
 
         notification.success({
           message: `Activity ${name} created successfully`,
+          description: 'Updating activities...',
         });
       })
       .catch(error => {
         setShowForm(false);
+        setBusy(false);
 
         notification.error({
           message: 'An error occurred',
@@ -64,7 +69,7 @@ const NewActivityContainer: React.FC<{
         footer={null}
         onCancel={() => setShowForm(false)}
         width={1150}
-        destroyOnClose
+        destroyOnClose={true}
       >
         <ActivityForm
           onClickCancel={() => setShowForm(false)}
@@ -72,6 +77,12 @@ const NewActivityContainer: React.FC<{
           busy={busy}
         />
       </Modal>
+      {/* TODO: implement new activities from template */}
+      <ActioButton
+        icon="Add"
+        onClick={() => {}}
+        title="Add activities from template"
+      />
     </>
   );
 };

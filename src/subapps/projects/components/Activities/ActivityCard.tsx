@@ -16,21 +16,23 @@ const subActivities = [
   { title: 'E-Models', activitiesNumber: 4, status: Status.inProgress },
 ];
 
-const ActivityCard: React.FC<{
+const codeResourcesTotal = 3;
+const dataResourcesTotal = 1;
+
+export type Activity = {
+  '@id': string;
   status: Status;
   name: string;
-  codeResourcesTotal?: number;
-  dataResourcesTotal?: number;
   description?: string;
-}> = ({
-  name,
-  codeResourcesTotal,
-  dataResourcesTotal,
-  description,
-  status,
-}) => {
+};
+
+const ActivityCard: React.FC<{ activity: Activity }> = ({ activity }) => {
+  const { name, description, status } = activity;
   return (
-    <div className={`activity-card activity-card--${status.replace(' ', '-')}`}>
+    <div
+      className={`activity-card activity-card--${status.replace(' ', '-')}`}
+      key={activity['@id']}
+    >
       <div className="activity-card__main">
         <div className="activity-card__title">
           <StatusIcon status={status} mini={true} />
