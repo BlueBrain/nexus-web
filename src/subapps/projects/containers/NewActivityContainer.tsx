@@ -61,14 +61,24 @@ const NewActivityContainer: React.FC<{
       });
   };
 
-  const template = {
-    name: 'Single Cell Model',
-    description: 'This is an example description',
-    version: 1,
-    updatedOn: 'yesterday',
-    totalContributors: 2,
-    author: 'Author',
-  };
+  const templates = [
+    {
+      name: 'Single Cell Model',
+      description: 'This is an example description',
+      version: 1.0,
+      updatedOn: '2020-09-10T09:40:58Z',
+      totalContributors: 2,
+      author: 'Author',
+    },
+    {
+      name: 'Morphology Visualisation',
+      description: 'This is an example description',
+      version: 1.2,
+      updatedOn: '2020-09-15T09:40:58Z',
+      totalContributors: 1,
+      author: 'Author',
+    },
+  ];
 
   return (
     <>
@@ -103,8 +113,11 @@ const NewActivityContainer: React.FC<{
         destroyOnClose={true}
       >
         <div>
-          <h2>Templates</h2>
-          <ActivityTemplateCard template={template} />
+          <h2>Select Template</h2>
+          {templates.length &&
+            templates.map(template => (
+              <ActivityTemplateCard template={template} />
+            ))}
         </div>
       </Modal>
     </>

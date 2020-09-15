@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Button } from 'antd';
+import * as moment from 'moment';
 
 import './ActivityTemplateCard.less';
 
@@ -26,15 +27,24 @@ const ActivityTemplateCard: React.FC<{
     author,
   } = template;
 
+  const parsedTime = moment(updatedOn)
+    .startOf('hour')
+    .fromNow();
+
   return (
     <div className="activity-template-card">
       <div className="activity-template-card__header">
-        <img src={activityIcon} className="activity-template-card__icon" />
-        <span className="activity-template-card__title">{name}</span>
-        <p>
-          Updated on {updatedOn} by {author}
-        </p>
-        <p>v{version}</p>
+        <div className="activity-template-card__title">
+          <img src={activityIcon} className="activity-template-card__icon" />
+          <span>{name}</span>
+        </div>
+
+        <div className="activity-template-card__title-info">
+          <span>
+            Updated {parsedTime} by {author}
+          </span>
+          <span>v{version}</span>
+        </div>
       </div>
       <div className="activity-template-card__content">
         <p className="activity-template-card__description">{description}</p>
