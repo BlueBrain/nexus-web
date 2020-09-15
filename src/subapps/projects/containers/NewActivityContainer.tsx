@@ -5,9 +5,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import ActivityForm from '../components/Activities/ActivityForm';
 import ActioButton from '../components/ActionButton';
 import { Status } from '../components/StatusIcon';
-import ActivityTemplateCard, {
-  ActivityTemplate,
-} from '../components/Activities/ActivityTemplateCard';
+import TemplateCard from '../components/Activities/TemplateCard';
 
 const ACTIVITY_TYPE = 'FusionActivity';
 
@@ -115,9 +113,7 @@ const NewActivityContainer: React.FC<{
         <div>
           <h2>Select Template</h2>
           {templates.length &&
-            templates.map(template => (
-              <ActivityTemplateCard template={template} />
-            ))}
+            templates.map(template => <TemplateCard template={template} />)}
         </div>
       </Modal>
     </>
