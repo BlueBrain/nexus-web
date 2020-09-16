@@ -30,20 +30,25 @@ const TemplatesList: React.FC<{
                 className="button-no-styling"
                 onClick={() => onClickTemplate(template['@id'])}
               >
-                <TemplateCard template={template} />
+                <TemplateCard
+                  template={template}
+                  selected={template['@id'] === selected}
+                />
               </button>
             ))
           : 'No templates found for this project :('}
       </div>
-      <div className="templates-list__button-box">
-        <Button
-          onClick={onClickAddActivities}
-          type="primary"
-          disabled={!selected}
-        >
-          {selected !== '' ? 'Select Template' : 'Add Activities'}
-        </Button>
-      </div>
+      {selected !== '' && (
+        <div className="templates-list__button-box">
+          <Button
+            onClick={onClickAddActivities}
+            type="primary"
+            disabled={selected === ''}
+          >
+            Add Activities
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

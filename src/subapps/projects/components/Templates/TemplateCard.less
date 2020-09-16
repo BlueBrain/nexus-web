@@ -1,7 +1,7 @@
 @import '../../../../shared/lib.less';
 
 .template-card {
-  opacity: 0.9;
+  opacity: 0.8;
   width: 300px;
   box-shadow: @box-shadow-base;
   border-radius: 10px;
@@ -11,6 +11,10 @@
   &:hover {
     opacity: 1;
     cursor: pointer;
+  }
+
+  &--selected {
+    opacity: 1;
   }
 
   &__header {

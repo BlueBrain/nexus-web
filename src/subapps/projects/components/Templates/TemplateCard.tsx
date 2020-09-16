@@ -20,7 +20,8 @@ export type Template = {
 
 const TemplateCard: React.FC<{
   template: Template;
-}> = ({ template }) => {
+  selected?: boolean;
+}> = ({ template, selected }) => {
   const { name, description, _rev, _updatedAt, _updatedBy } = template;
 
   const parsedTime = moment(_updatedAt)
@@ -33,7 +34,9 @@ const TemplateCard: React.FC<{
   };
 
   return (
-    <div className="template-card">
+    <div
+      className={`template-card ${selected ? 'template-card--selected' : ''}`}
+    >
       <div className="template-card__header">
         <div className="template-card__title">
           <img src={activityIcon} className="template-card__icon" />
