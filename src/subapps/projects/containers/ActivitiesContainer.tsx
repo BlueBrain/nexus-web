@@ -4,8 +4,7 @@ import { notification } from 'antd';
 
 import ActivitiesBoard from '../components/Activities/ActivitiesBoard';
 import { Activity } from '../components/Activities/ActivityCard';
-
-export const ACTIVITY_TYPE = 'FusionActivity';
+import fusionConfig from '../config';
 
 type NexusError = {
   reason?: string;
@@ -24,7 +23,7 @@ const ActivitiesContainer: React.FC<{
 
   React.useEffect(() => {
     nexus.Resource.list(orgLabel, projectLabel, {
-      type: ACTIVITY_TYPE,
+      type: fusionConfig.activityType,
     })
       .then(response => {
         fetchActivities(response._results);

@@ -2,9 +2,12 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
 import { ProjectResponseCommon } from '@bbp/nexus-sdk';
+
 import ProjectsListContainer from '../containers/ProjectsListContainer';
 import NewProjectContainer from '../containers/NewProjectContainer';
 import { RootState } from '../../../shared/store/reducers';
+import fusionConfig from '../config';
+
 import './ProjectsListView.less';
 
 const ProjectsListView: React.FC<{}> = () => {
@@ -24,8 +27,10 @@ const ProjectsListView: React.FC<{}> = () => {
     (state: RootState) => state.oidc.user?.profile.preferred_username
   );
 
+  const { personalOrgPrefix } = fusionConfig;
+
   React.useEffect(() => {
-    const personalOrg = `fusion-${userName}`;
+    const personalOrg = `${personalOrgPrefix}${userName}`;
     // TODO: Implement pagination.
     nexus.Project.list(personalOrg, {
       size: 1000,

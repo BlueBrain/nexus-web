@@ -9,6 +9,7 @@ import ProjectHeader from '../components/ProjectHeader';
 import ProjectForm, { ProjectMetadata } from '../components/ProjectForm';
 import ActivitiesContainer from '../containers/ActivitiesContainer';
 import NewActivityContainer from '../containers/NewActivityContainer';
+import TemplatesContainer from '../containers/TemplatesContainer';
 
 import './ProjectView.less';
 
@@ -158,6 +159,7 @@ const ProjectView: React.FC = () => {
                   orgLabel={orgLabel}
                   onSuccess={waitAntReloadActivities}
                 />
+                <TemplatesContainer />
                 <Button onClick={() => setEditProject(!editProject)}>
                   Project Information
                 </Button>
