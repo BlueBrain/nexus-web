@@ -77,12 +77,6 @@ const NewActivityContainer: React.FC<{
           busy={busy}
         />
       </Modal>
-      {/* TODO: implement new activities from template */}
-      <ActioButton
-        icon="Add"
-        onClick={() => {}}
-        title="Add activities from template"
-      />
     </>
   );
 };
