@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Modal, notification } from 'antd';
+import { Modal, notification, Button } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import ActioButton from '../components/ActionButton';
@@ -56,6 +56,10 @@ const TemplatesContainer: React.FC<{}> = () => {
       .catch(error => displayError(error));
   };
 
+  const addActivitiesFromTemplate = (id: string) => {
+    // TODO: add activities from template to the project
+  };
+
   return (
     <>
       <ActioButton
@@ -71,7 +75,12 @@ const TemplatesContainer: React.FC<{}> = () => {
         width={680}
         destroyOnClose={true}
       >
-        <TemplatesList templates={templates} />
+        <>
+          <TemplatesList
+            templates={templates}
+            onClickAdd={addActivitiesFromTemplate}
+          />
+        </>
       </Modal>
     </>
   );

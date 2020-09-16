@@ -9,6 +9,7 @@ import './TemplateCard.less';
 const activityIcon = require('../../../../shared/images/settingIcon.svg');
 
 export type Template = {
+  '@id': string;
   name: string;
   description: string;
   _rev: number;
@@ -26,8 +27,9 @@ const TemplateCard: React.FC<{
     .startOf('hour')
     .fromNow();
 
-  const onClickDetails = () => {
-    console.log('clicked Details');
+  const onClickDetails = (event: any) => {
+    event.stopPropagation();
+    // TODO: create details page/modal/etc
   };
 
   return (

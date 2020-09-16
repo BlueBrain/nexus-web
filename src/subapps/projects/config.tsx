@@ -4,7 +4,7 @@ const fusionConfig = {
   configProject: 'nexus-web',
 
   // prefix for the org to store personal projects 'prefix-username'
-  personalOrgPrefix: 'fusion2-',
+  personalOrgPrefix: 'fusion-',
 
   // resource types
   templateType: 'FusionTemplate',
