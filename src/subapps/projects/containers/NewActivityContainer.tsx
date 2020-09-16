@@ -5,7 +5,6 @@ import { useNexusContext } from '@bbp/react-nexus';
 import ActivityForm from '../components/Activities/ActivityForm';
 import ActioButton from '../components/ActionButton';
 import { Status } from '../components/StatusIcon';
-import TemplateCard from '../components/Activities/TemplateCard';
 
 const ACTIVITY_TYPE = 'FusionActivity';
 
@@ -25,7 +24,6 @@ const NewActivityContainer: React.FC<{
   const nexus = useNexusContext();
 
   const [showForm, setShowForm] = React.useState<boolean>(false);
-  const [showTemplates, setShowTemplates] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
 
   const submitActivity = (data: ActivityMetadata) => {
@@ -59,25 +57,6 @@ const NewActivityContainer: React.FC<{
       });
   };
 
-  const templates = [
-    {
-      name: 'Single Cell Model',
-      description: 'This is an example description',
-      version: 1.0,
-      updatedOn: '2020-09-10T09:40:58Z',
-      totalContributors: 2,
-      author: 'Author',
-    },
-    {
-      name: 'Morphology Visualisation',
-      description: 'This is an example description',
-      version: 1.2,
-      updatedOn: '2020-09-15T09:40:58Z',
-      totalContributors: 1,
-      author: 'Author',
-    },
-  ];
-
   return (
     <>
       <ActioButton
@@ -97,24 +76,6 @@ const NewActivityContainer: React.FC<{
           onSubmit={submitActivity}
           busy={busy}
         />
-      </Modal>
-      <ActioButton
-        icon="Add"
-        onClick={() => setShowTemplates(true)}
-        title="Add activities from template"
-      />
-      <Modal
-        visible={showTemplates}
-        footer={null}
-        onCancel={() => setShowTemplates(false)}
-        width={700}
-        destroyOnClose={true}
-      >
-        <div>
-          <h2>Select Template</h2>
-          {templates.length &&
-            templates.map(template => <TemplateCard template={template} />)}
-        </div>
       </Modal>
     </>
   );
