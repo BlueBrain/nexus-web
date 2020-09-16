@@ -11,7 +11,7 @@ const TemplatesList: React.FC<{ templates: any[] }> = ({ templates }) => {
       <div className="templates-list__cards">
         {templates.length
           ? templates.map(template => <TemplateCard template={template} />)
-          : 'No templtes found for this project.'}
+          : 'No templates found for this project :('}
       </div>
     </div>
   );

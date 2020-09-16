@@ -1,14 +1,20 @@
 @import '../../../../shared/lib.less';
 
 .template-card {
+  opacity: 0.9;
   width: 300px;
   box-shadow: @box-shadow-base;
   border-radius: 10px;
   margin: 0 0.7em 0.7em 0;
-  border: 1px solid @fusion-dark;
+  border: 1px solid @fusion-dark-bg;
+
+  &:hover {
+    opacity: 1;
+    cursor: pointer;
+  }
 
   &__header {
-    background-color: @fusion-dark;
+    background-color: @fusion-dark-bg;
     color: #fff;
     padding: 0.7em;
     border-radius: 9px 9px 0 0;
