@@ -10,29 +10,22 @@ const dataIcon = require('../../../../shared/images/dataIcon.svg');
 const noteIcon = require('../../../../shared/images/noteIcon.svg');
 const settingIcon = require('../../../../shared/images/settingIcon.svg');
 
-const subActivities = [
-  { title: 'Morphology Release', activitiesNumber: 7, status: Status.blocked },
-  { title: 'ME-Models', activitiesNumber: 2, status: Status.done },
-  { title: 'E-Models', activitiesNumber: 4, status: Status.inProgress },
-];
-
-const codeResourcesTotal = 3;
-const dataResourcesTotal = 1;
-
 export type Activity = {
   '@id': string;
   status: Status;
   name: string;
   description?: string;
+  parent?: {
+    '@id': string;
+  };
+  subactivities: Activity[];
 };
 
 const ActivityCard: React.FC<{ activity: Activity }> = ({ activity }) => {
-  const { name, description, status } = activity;
+  const { name, description, status, subactivities } = activity;
+
   return (
-    <div
-      className={`activity-card activity-card--${status.replace(' ', '-')}`}
-      key={activity['@id']}
-    >
+    <div className={`activity-card activity-card--${status.replace(' ', '-')}`}>
       <div className="activity-card__main">
         <div className="activity-card__title">
           <StatusIcon status={status} mini={true} />
@@ -40,15 +33,13 @@ const ActivityCard: React.FC<{ activity: Activity }> = ({ activity }) => {
           <img src={editIcon} />
         </div>
         <div className="activity-card__info">
-          {codeResourcesTotal && (
-            <div className="activity-card__info-line">
-              <img src={codeIcon} className="activity-card__info-icon" />
-              <span>{codeResourcesTotal} code resources</span>
-            </div>
-          )}
+          <div className="activity-card__info-line">
+            <img src={codeIcon} className="activity-card__info-icon" />
+            <span>Code resources: 0</span>
+          </div>
           <div className="activity-card__info-line">
             <img src={dataIcon} className="activity-card__info-icon" />
-            <span>{dataResourcesTotal || 0} data resources</span>
+            <span>Data resources: 0</span>
           </div>
           <div className="activity-card__info-line">
             <img src={noteIcon} className="activity-card__info-icon" />
@@ -56,17 +47,16 @@ const ActivityCard: React.FC<{ activity: Activity }> = ({ activity }) => {
           </div>
         </div>
       </div>
-      {subActivities && (
+      {subactivities && subactivities.length > 0 && (
         <div className="activity-card__subactivities">
           <div className="activity-card__subactivities-total">
             <img src={settingIcon} className="activity-card__info-icon" />
-            <span>{subActivities.length} activities</span>
+            <span>Activities: {subactivities.length}</span>
           </div>
-          {subActivities.map(subActivity => (
+          {subactivities.map(subactivitiy => (
             <SubActivityItem
-              status={subActivity.status}
-              title={subActivity.title}
-              activitiesNumber={subActivity.activitiesNumber}
+              status={subactivitiy.status}
+              title={subactivitiy.name}
             />
           ))}
         </div>

@@ -38,7 +38,7 @@ const StatusIcon: React.FC<{
       icon = todoIcon;
   }
 
-  return <img src={icon} />;
+  return <img src={icon} width={mini ? '18px' : '35px'} />;
 };
 
 export default StatusIcon;
