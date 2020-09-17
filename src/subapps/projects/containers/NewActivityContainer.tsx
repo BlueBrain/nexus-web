@@ -32,6 +32,7 @@ const NewActivityContainer: React.FC<{
 
     nexus.Resource.create(orgLabel, projectLabel, {
       '@type': ACTIVITY_TYPE,
+      // TODO: add parent automatically
       ...data,
     })
       .then(() => {

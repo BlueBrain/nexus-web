@@ -10,7 +10,7 @@ const ActivitiesBoard: React.FC<{ activities: Activity[] }> = ({
   return (
     <div className="activities-board">
       {activities.map(activity => (
-        <ActivityCard activity={activity} />
+        <ActivityCard activity={activity} key={activity['@id']} />
       ))}
     </div>
   );

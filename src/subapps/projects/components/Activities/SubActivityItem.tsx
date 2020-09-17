@@ -6,7 +6,7 @@ import './SubActivityItem.less';
 
 const SubActivityItem: React.FC<{
   title: string;
-  activitiesNumber: number;
+  activitiesNumber?: number;
   status: Status;
 }> = ({ title, activitiesNumber, status }) => {
   return (
@@ -14,7 +14,10 @@ const SubActivityItem: React.FC<{
       <StatusIcon status={status} mini={true} />
       <div className="sub-activity__content">
         <h3 className="sub-activity__title">{title}</h3>
-        <p className="sub-activity__total">{activitiesNumber} activities</p>
+        {/* TODO: add number of subactivities */}
+        {/* <p className="sub-activity__total">
+          {activitiesNumber || 0} activities
+        </p> */}
       </div>
     </div>
   );
