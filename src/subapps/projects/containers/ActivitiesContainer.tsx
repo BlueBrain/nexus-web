@@ -57,12 +57,10 @@ const ActivitiesContainer: React.FC<{
     activity => !activity.parent
   );
 
-  const childrens: Activity[] = activities.filter(
-    activity => !!activity.parent
-  );
+  const children: Activity[] = activities.filter(activity => !!activity.parent);
 
   const activitiesWithChildren = topLevelActivities.map(activity => {
-    const subactivities = childrens.filter(
+    const subactivities = children.filter(
       subactivity =>
         subactivity.parent && subactivity.parent['@id'] === activity['@id']
     );
@@ -72,8 +70,6 @@ const ActivitiesContainer: React.FC<{
       subactivities,
     };
   });
-
-  console.log('activitiesWithChildren', activitiesWithChildren);
 
   if (activities.length === 0) return null;
 
