@@ -32,6 +32,10 @@ const NewActivityContainer: React.FC<{
 
     nexus.Resource.create(orgLabel, projectLabel, {
       '@type': ACTIVITY_TYPE,
+      parent: {
+        '@id':
+          'https://staging.nexus.ocp.bbp.epfl.ch/v1/resources/fusion2-stafeeva/89898/_/05f7d26a-1865-4cdc-9cc7-6a0f266d462f',
+      },
       ...data,
     })
       .then(() => {

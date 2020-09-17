@@ -53,9 +53,31 @@ const ActivitiesContainer: React.FC<{
       .catch(error => displayError(error));
   };
 
+  const topLevelActivities: Activity[] = activities.filter(
+    activity => !activity.parent
+  );
+
+  const childrens: Activity[] = activities.filter(
+    activity => !!activity.parent
+  );
+
+  const activitiesWithChildren = topLevelActivities.map(activity => {
+    const subactivities = childrens.filter(
+      subactivity =>
+        subactivity.parent && subactivity.parent['@id'] === activity['@id']
+    );
+
+    return {
+      ...activity,
+      subactivities,
+    };
+  });
+
+  console.log('activitiesWithChildren', activitiesWithChildren);
+
   if (activities.length === 0) return null;
 
-  return <ActivitiesBoard activities={activities} />;
+  return <ActivitiesBoard activities={activitiesWithChildren} />;
 };
 
 export default ActivitiesContainer;
