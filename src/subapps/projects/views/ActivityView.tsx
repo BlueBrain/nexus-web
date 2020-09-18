@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useRouteMatch } from 'react-router';
-import { Button } from 'antd';
 
 import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';

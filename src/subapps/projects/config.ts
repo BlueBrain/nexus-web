@@ -9,6 +9,8 @@ const fusionConfig = {
   // resource types
   templateType: 'FusionTemplate',
   activityType: 'FusionActivity',
+  projectMetadataType: 'FusionMetadata',
+  fusionProjectTypes: ['FusionMetadata', 'FusionProject'],
 };
 
 export default fusionConfig;

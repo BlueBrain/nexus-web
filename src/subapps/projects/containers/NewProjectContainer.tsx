@@ -4,10 +4,9 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../shared/store/reducers';
 
+import fusionConfig from '../config';
 import ProjectForm, { ProjectMetadata } from '../components/ProjectForm';
 import ActionButton from '../components/ActionButton';
-
-const FUSION_PROJECT_TYPE = ['fusionMetadata', 'fusionProject'];
 
 type NexusError = {
   reason?: string;
@@ -72,7 +71,7 @@ const NewProjectContainer: React.FC<{}> = () => {
 
     const createResource = () =>
       nexus.Resource.create(userOrgLabel, name, {
-        '@type': FUSION_PROJECT_TYPE,
+        '@type': fusionConfig.fusionProjectTypes,
         ...data,
       })
         .then(() => {
