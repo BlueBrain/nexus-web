@@ -27,7 +27,11 @@ const ProjectView: React.FC = () => {
       {projectLabel && orgLabel ? (
         <div className="project-view__container">
           {orgLabel && projectLabel && (
-            <ProjectPanel orgLabel={orgLabel} projectLabel={projectLabel} />
+            <ProjectPanel
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              onUpdate={waitAntReloadActivities}
+            />
           )}
           {orgLabel && projectLabel && (
             <ActivitiesContainer

@@ -4,8 +4,6 @@ import { Button } from 'antd';
 
 import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
-import NewActivityContainer from '../containers/NewActivityContainer';
-import TemplatesContainer from '../containers/TemplatesContainer';
 
 const ActivityView: React.FC = () => {
   const subapp = useProjectsSubappContext();
@@ -22,7 +20,11 @@ const ActivityView: React.FC = () => {
   return (
     <div className="activity-view">
       {orgLabel && projectLabel && (
-        <ProjectPanel orgLabel={orgLabel} projectLabel={projectLabel} />
+        <ProjectPanel
+          orgLabel={orgLabel}
+          projectLabel={projectLabel}
+          onUpdate={() => {}}
+        />
       )}
     </div>
   );

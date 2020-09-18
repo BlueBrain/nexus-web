@@ -9,7 +9,8 @@ import './ProjectPanel.less';
 const ProjectPanel: React.FC<{
   projectLabel: string;
   orgLabel: string;
-}> = ({ projectLabel, orgLabel }) => {
+  onUpdate(): void;
+}> = ({ projectLabel, orgLabel, onUpdate }) => {
   return (
     <div className="project-panel">
       <span className="project-panel__name">{projectLabel}</span>
@@ -17,8 +18,7 @@ const ProjectPanel: React.FC<{
         <NewActivityContainer
           projectLabel={projectLabel}
           orgLabel={orgLabel}
-          // TODO: update
-          onSuccess={() => {}}
+          onSuccess={onUpdate}
         />
         <TemplatesContainer />
         <ProjectMetaContaier projectLabel={projectLabel} orgLabel={orgLabel} />
