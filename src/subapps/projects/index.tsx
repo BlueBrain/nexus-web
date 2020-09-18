@@ -3,6 +3,7 @@ import { SubApp } from '..';
 
 import ProjectsListView from './views/ProjectsListView';
 import ProjectView from './views/ProjectView';
+import ActivityView from './views/ActivityView';
 
 const title = 'Projects';
 const namespace = 'projects';
@@ -49,6 +50,11 @@ const Projects: SubApp = () => {
         path: '/:orgLabel/:projectLabel',
         exact: true,
         component: ProjectsSubappProviderHOC(ProjectView),
+      },
+      {
+        path: '/:orgLabel/:projectLabel/:activityId',
+        exact: true,
+        component: ProjectsSubappProviderHOC(ActivityView),
       },
     ],
   };
