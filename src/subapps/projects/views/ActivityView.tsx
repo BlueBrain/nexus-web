@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Breadcrumb } from 'antd';
+import { Resource } from '@bbp/nexus-sdk';
 
 import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
 import ActivitiesBoard from '../components/Activities/ActivitiesBoard';
-
-import { Resource } from '@bbp/nexus-sdk';
+import Breadcrumbs from '../components/Breadcrumbs';
 
 type ActivityResource = Resource<{
   parent?: {
@@ -37,6 +36,43 @@ const ActivityView: React.FC = () => {
   const projectLabel = match?.params.projectLabel || '';
   const orgLabel = match?.params.orgLabel || '';
   const activityId = match?.params.activityId || '';
+
+  React.useEffect(() => {
+    nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(activityId))
+      .then(response => {
+        setActivity(response);
+        fetchBreadcrumbs(
+          orgLabel,
+          projectLabel,
+          response as ActivityResource,
+          setBreadcrumbs
+        );
+      })
+      .catch(error => console.error(error));
+
+    nexus.Resource.links(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(activityId),
+      'incoming'
+    )
+      .then(response =>
+        Promise.all(
+          response._results.map(link => {
+            return nexus.Resource.get(
+              orgLabel,
+              projectLabel,
+              encodeURIComponent(link['@id'])
+            );
+          })
+        )
+          .then(response => {
+            setActivities(response);
+          })
+          .catch(error => console.log('error', error))
+      )
+      .catch(error => console.log('e', error));
+  }, []);
 
   const activityToBreadcrumbItem = (activity: ActivityResource) => ({
     label: activity.name,
@@ -75,41 +111,6 @@ const ActivityView: React.FC = () => {
     fetchNext(activity, [activityToBreadcrumbItem(activity)]);
   };
 
-  React.useEffect(() => {
-    nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(activityId))
-      .then(response => {
-        setActivity(response);
-        fetchBreadcrumbs(
-          orgLabel,
-          projectLabel,
-          response as ActivityResource,
-          setBreadcrumbs
-        );
-      })
-      .catch(error => console.error(error));
-
-    nexus.Resource.links(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(activityId),
-      'incoming'
-    )
-      .then(response =>
-        Promise.all(
-          response._results.map(link => {
-            return nexus.Resource.get(
-              orgLabel,
-              projectLabel,
-              encodeURIComponent(link['@id'])
-            );
-          })
-        ).then(response => {
-          setActivities(response);
-        })
-      )
-      .catch(error => console.log('e', error));
-  }, []);
-
   return (
     <div className="activity-view">
       <ProjectPanel
@@ -117,15 +118,7 @@ const ActivityView: React.FC = () => {
         projectLabel={projectLabel}
         onUpdate={() => {}}
       />
-      {activity && (
-        <Breadcrumb separator=">">
-          {breadcrumbs.map(item => (
-            <Breadcrumb.Item key={item.label} href={item.url}>
-              {item.label}
-            </Breadcrumb.Item>
-          ))}
-        </Breadcrumb>
-      )}
+      {activity && <Breadcrumbs crumbs={breadcrumbs} />}
       <ActivitiesBoard
         activities={activities}
         orgLabel={orgLabel}

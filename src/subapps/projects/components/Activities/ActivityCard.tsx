@@ -39,7 +39,6 @@ const ActivityCard: React.FC<{
           <Link to={`/projects/${orgLabel}/${projectLabel}/${activityId}`}>
             <h3 className="activity-card__name">{name}</h3>
           </Link>
-
           <img src={editIcon} />
         </div>
         <div className="activity-card__info">
