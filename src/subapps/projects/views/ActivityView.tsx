@@ -14,7 +14,6 @@ type ActivityResource = Resource<{
     '@id': string;
   };
   name: string;
-  //[key: string]: any;
 }>;
 
 type BreadcrumbItem = {
@@ -37,8 +36,7 @@ const ActivityView: React.FC = () => {
 
   const projectLabel = match?.params.projectLabel;
   const orgLabel = match?.params.orgLabel;
-  // const activityId = match?.params.activityId;
-  const activityId = 'ceede3fc-e033-4c1c-8aca-54a9c0132507';
+  const activityId = match?.params.activityId || '';
 
   const activityToBreadcrumbItem = (activity: ActivityResource) => ({
     label: activity.name,
