@@ -7,6 +7,21 @@ import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
 import ActivitiesBoard from '../components/Activities/ActivitiesBoard';
 
+import { Resource } from '@bbp/nexus-sdk';
+
+type ActivityResource = Resource<{
+  parent?: {
+    '@id': string;
+  };
+  name: string;
+  //[key: string]: any;
+}>;
+
+type BreadcrumbItem = {
+  label: string;
+  url: string;
+};
+
 const ActivityView: React.FC = () => {
   const nexus = useNexusContext();
   const subapp = useProjectsSubappContext();
@@ -18,16 +33,62 @@ const ActivityView: React.FC = () => {
 
   const [activities, setActivities] = React.useState<any[]>([]);
   const [activity, setActivity] = React.useState<any>();
+  const [breadcrumbs, setBreadcrumbs] = React.useState<BreadcrumbItem[]>([]);
 
   const projectLabel = match?.params.projectLabel;
   const orgLabel = match?.params.orgLabel;
   // const activityId = match?.params.activityId;
   const activityId = 'ceede3fc-e033-4c1c-8aca-54a9c0132507';
 
+  const activityToBreadcrumbItem = (activity: ActivityResource) => ({
+    label: activity.name,
+    url: `/projects/${orgLabel}/${projectLabel}/${activity['@id']}`,
+  });
+
+  const fetchBreadcrumbs = (
+    orgLabel: string,
+    projectLabel: string,
+    activity: ActivityResource,
+    setBreadcrumbs: (items: BreadcrumbItem[]) => void
+  ) => {
+    const fetchNext = (activity: ActivityResource, acc: BreadcrumbItem[]) => {
+      if (activity.parent) {
+        nexus.Resource.get(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(activity.parent['@id'])
+        ).then(response => {
+          const activityResource = response as ActivityResource;
+          fetchNext(activityResource, [
+            activityToBreadcrumbItem(activityResource),
+            ...acc,
+          ]);
+        });
+      } else {
+        const homeCrumb = {
+          label: 'Project Home',
+          url: `/projects/${orgLabel}/${projectLabel}`,
+        };
+
+        setBreadcrumbs([homeCrumb, ...acc]);
+      }
+    };
+
+    fetchNext(activity, [activityToBreadcrumbItem(activity)]);
+  };
+
   React.useEffect(() => {
     if (orgLabel && projectLabel) {
       nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(activityId))
-        .then(response => setActivity(response))
+        .then(response => {
+          setActivity(response);
+          fetchBreadcrumbs(
+            orgLabel,
+            projectLabel,
+            response as ActivityResource,
+            setBreadcrumbs
+          );
+        })
         .catch(error => console.error(error));
 
       nexus.Resource.links(
@@ -64,9 +125,11 @@ const ActivityView: React.FC = () => {
       )}
       {activity && (
         <Breadcrumb separator=">">
-          <Breadcrumb.Item>{projectLabel}</Breadcrumb.Item>
-          <Breadcrumb.Item href="">Parent Activity</Breadcrumb.Item>
-          <Breadcrumb.Item href="">{activity.name}</Breadcrumb.Item>
+          {breadcrumbs.map(item => (
+            <Breadcrumb.Item key={item.label} href={item.url}>
+              {item.label}
+            </Breadcrumb.Item>
+          ))}
         </Breadcrumb>
       )}
       <ActivitiesBoard activities={activities} />
