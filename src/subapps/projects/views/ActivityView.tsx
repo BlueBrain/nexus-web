@@ -34,8 +34,8 @@ const ActivityView: React.FC = () => {
   const [activity, setActivity] = React.useState<any>();
   const [breadcrumbs, setBreadcrumbs] = React.useState<BreadcrumbItem[]>([]);
 
-  const projectLabel = match?.params.projectLabel;
-  const orgLabel = match?.params.orgLabel;
+  const projectLabel = match?.params.projectLabel || '';
+  const orgLabel = match?.params.orgLabel || '';
   const activityId = match?.params.activityId || '';
 
   const activityToBreadcrumbItem = (activity: ActivityResource) => ({
@@ -76,51 +76,47 @@ const ActivityView: React.FC = () => {
   };
 
   React.useEffect(() => {
-    if (orgLabel && projectLabel) {
-      nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(activityId))
-        .then(response => {
-          setActivity(response);
-          fetchBreadcrumbs(
-            orgLabel,
-            projectLabel,
-            response as ActivityResource,
-            setBreadcrumbs
-          );
-        })
-        .catch(error => console.error(error));
+    nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(activityId))
+      .then(response => {
+        setActivity(response);
+        fetchBreadcrumbs(
+          orgLabel,
+          projectLabel,
+          response as ActivityResource,
+          setBreadcrumbs
+        );
+      })
+      .catch(error => console.error(error));
 
-      nexus.Resource.links(
-        orgLabel,
-        projectLabel,
-        encodeURIComponent(activityId),
-        'incoming'
-      )
-        .then(response =>
-          Promise.all(
-            response._results.map(link => {
-              return nexus.Resource.get(
-                orgLabel,
-                projectLabel,
-                encodeURIComponent(link['@id'])
-              );
-            })
-          ).then(response => {
-            setActivities(response);
+    nexus.Resource.links(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(activityId),
+      'incoming'
+    )
+      .then(response =>
+        Promise.all(
+          response._results.map(link => {
+            return nexus.Resource.get(
+              orgLabel,
+              projectLabel,
+              encodeURIComponent(link['@id'])
+            );
           })
-        )
-        .catch(error => console.log('e', error));
-    }
+        ).then(response => {
+          setActivities(response);
+        })
+      )
+      .catch(error => console.log('e', error));
   }, []);
 
   return (
     <div className="activity-view">
-      {orgLabel && projectLabel && (
-        <ProjectPanel
-          orgLabel={orgLabel}
-          projectLabel={projectLabel}
-          onUpdate={() => {}}
-        />
-      )}
+      <ProjectPanel
+        orgLabel={orgLabel}
+        projectLabel={projectLabel}
+        onUpdate={() => {}}
+      />
       {activity && (
         <Breadcrumb separator=">">
           {breadcrumbs.map(item => (
@@ -130,7 +126,11 @@ const ActivityView: React.FC = () => {
           ))}
         </Breadcrumb>
       )}
-      <ActivitiesBoard activities={activities} />
+      <ActivitiesBoard
+        activities={activities}
+        orgLabel={orgLabel}
+        projectLabel={projectLabel}
+      />
     </div>
   );
 };

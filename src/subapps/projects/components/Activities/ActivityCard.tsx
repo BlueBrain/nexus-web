@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
+
 import StatusIcon, { Status } from '../../components/StatusIcon';
 import SubActivityItem from './SubActivityItem';
 
@@ -21,15 +23,23 @@ export type Activity = {
   subactivities: Activity[];
 };
 
-const ActivityCard: React.FC<{ activity: Activity }> = ({ activity }) => {
+const ActivityCard: React.FC<{
+  activity: Activity;
+  projectLabel: string;
+  orgLabel: string;
+}> = ({ activity, projectLabel, orgLabel }) => {
   const { name, description, status, subactivities } = activity;
+  const activityId = activity['@id'];
 
   return (
     <div className={`activity-card activity-card--${status.replace(' ', '-')}`}>
       <div className="activity-card__main">
         <div className="activity-card__title">
           <StatusIcon status={status} mini={true} />
-          <h3 className="activity-card__name">{name}</h3>
+          <Link to={`/projects/${orgLabel}/${projectLabel}/${activityId}`}>
+            <h3 className="activity-card__name">{name}</h3>
+          </Link>
+
           <img src={editIcon} />
         </div>
         <div className="activity-card__info">

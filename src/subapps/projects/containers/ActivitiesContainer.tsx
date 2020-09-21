@@ -73,7 +73,13 @@ const ActivitiesContainer: React.FC<{
 
   if (activities.length === 0) return null;
 
-  return <ActivitiesBoard activities={activitiesWithChildren} />;
+  return (
+    <ActivitiesBoard
+      activities={activitiesWithChildren}
+      orgLabel={orgLabel}
+      projectLabel={projectLabel}
+    />
+  );
 };
 
 export default ActivitiesContainer;
