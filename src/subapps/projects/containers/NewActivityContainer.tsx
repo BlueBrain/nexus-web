@@ -5,6 +5,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import ActivityForm from '../components/Activities/ActivityForm';
 import ActioButton from '../components/ActionButton';
 import { Status } from '../components/StatusIcon';
+import { displayError } from '../components/Notifications';
 
 const ACTIVITY_TYPE = 'FusionActivity';
 
@@ -48,13 +49,7 @@ const NewActivityContainer: React.FC<{
       .catch(error => {
         setShowForm(false);
         setBusy(false);
-
-        notification.error({
-          message: 'An error occurred',
-          description:
-            error.message || error.reason || 'An unknown error occurred',
-          duration: 3,
-        });
+        displayError(error, 'An error occurred');
       });
   };
 

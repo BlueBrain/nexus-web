@@ -2,11 +2,13 @@ import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
+import { notification } from 'antd';
 
 import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
 import ActivitiesBoard from '../components/Activities/ActivitiesBoard';
 import Breadcrumbs from '../components/Breadcrumbs';
+import { displayError } from '../components/Notifications';
 
 type ActivityResource = Resource<{
   parent?: {
@@ -48,7 +50,7 @@ const ActivityView: React.FC = () => {
           setBreadcrumbs
         );
       })
-      .catch(error => console.error(error));
+      .catch(error => displayError(error, 'Failed to load activity'));
 
     nexus.Resource.links(
       orgLabel,
@@ -69,9 +71,9 @@ const ActivityView: React.FC = () => {
           .then(response => {
             setActivities(response);
           })
-          .catch(error => console.log('error', error))
+          .catch(error => displayError(error, 'Failed to load activities'))
       )
-      .catch(error => console.log('e', error));
+      .catch(error => displayError(error, 'Failed to load activities'));
   }, []);
 
   const activityToBreadcrumbItem = (activity: ActivityResource) => ({
@@ -85,25 +87,31 @@ const ActivityView: React.FC = () => {
     activity: ActivityResource,
     setBreadcrumbs: (items: BreadcrumbItem[]) => void
   ) => {
+    const homeCrumb = {
+      label: 'Project Home',
+      url: `/projects/${orgLabel}/${projectLabel}`,
+    };
+
     const fetchNext = (activity: ActivityResource, acc: BreadcrumbItem[]) => {
       if (activity.parent) {
         nexus.Resource.get(
           orgLabel,
           projectLabel,
           encodeURIComponent(activity.parent['@id'])
-        ).then(response => {
-          const activityResource = response as ActivityResource;
-          fetchNext(activityResource, [
-            activityToBreadcrumbItem(activityResource),
-            ...acc,
-          ]);
-        });
+        )
+          .then(response => {
+            const activityResource = response as ActivityResource;
+            // fetch parent of a parent recursively
+            fetchNext(activityResource, [
+              activityToBreadcrumbItem(activityResource),
+              ...acc,
+            ]);
+          })
+          .catch(error => {
+            // stay silent and display breadcrumbs without parents that failed to load
+            setBreadcrumbs([homeCrumb, ...acc]);
+          });
       } else {
-        const homeCrumb = {
-          label: 'Project Home',
-          url: `/projects/${orgLabel}/${projectLabel}`,
-        };
-
         setBreadcrumbs([homeCrumb, ...acc]);
       }
     };

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { notification } from 'antd';
 
 import ActivitiesBoard from '../components/Activities/ActivitiesBoard';
 import { Activity } from '../components/Activities/ActivityCard';
 import fusionConfig from '../config';
+import { displayError } from '../components/Notifications';
 
-type NexusError = {
+export type NexusError = {
   reason?: string;
   message?: string;
   [key: string]: any;
@@ -28,16 +28,8 @@ const ActivitiesContainer: React.FC<{
       .then(response => {
         fetchActivities(response._results);
       })
-      .catch(error => displayError(error));
+      .catch(error => displayError(error, 'An error occurred'));
   }, [refresh]);
-
-  const displayError = (error: NexusError) => {
-    notification.error({
-      message: 'An error occurred',
-      description: error.message || error.reason || 'An unknown error occurred',
-      duration: 3,
-    });
-  };
 
   const fetchActivities = (activities: any) => {
     Promise.all(
@@ -50,7 +42,7 @@ const ActivitiesContainer: React.FC<{
       })
     )
       .then(response => setActivities(response as Activity[]))
-      .catch(error => displayError(error));
+      .catch(error => displayError(error, 'An error occurred'));
   };
 
   const topLevelActivities: Activity[] = activities.filter(

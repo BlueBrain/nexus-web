@@ -7,12 +7,7 @@ import { RootState } from '../../../shared/store/reducers';
 import fusionConfig from '../config';
 import ProjectForm, { ProjectMetadata } from '../components/ProjectForm';
 import ActionButton from '../components/ActionButton';
-
-type NexusError = {
-  reason?: string;
-  message?: string;
-  [key: string]: any;
-};
+import { displayError } from '../components/Notifications';
 
 const NewProjectContainer: React.FC<{}> = () => {
   const nexus = useNexusContext();
@@ -28,14 +23,6 @@ const NewProjectContainer: React.FC<{}> = () => {
     setShowForm(true);
   };
 
-  const showErrorNotification = (error: NexusError) => {
-    notification.error({
-      message: 'An error occurred',
-      description: error.message || error.reason || 'An unknown error occurred',
-      duration: 3,
-    });
-  };
-
   const submitProject = (data: ProjectMetadata) => {
     setBusy(true);
     const userOrgLabel = `fusion-${userName}`;
@@ -49,7 +36,7 @@ const NewProjectContainer: React.FC<{}> = () => {
           createProject();
         })
         .catch(error => {
-          showErrorNotification(error);
+          displayError(error, 'An error occurred');
           setShowForm(false);
         });
 
@@ -64,7 +51,7 @@ const NewProjectContainer: React.FC<{}> = () => {
           if (error['@type'] === 'OrganizationNotFound') {
             createOrganization();
           } else {
-            showErrorNotification(error);
+            displayError(error, 'An error occurred');
             setShowForm(false);
           }
         });
@@ -81,7 +68,7 @@ const NewProjectContainer: React.FC<{}> = () => {
           setShowForm(false);
         })
         .catch(error => {
-          showErrorNotification(error);
+          displayError(error, 'An error occurred');
           setShowForm(false);
         });
 
