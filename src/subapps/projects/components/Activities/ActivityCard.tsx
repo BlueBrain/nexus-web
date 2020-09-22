@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import StatusIcon, { Status } from '../../components/StatusIcon';
 import SubActivityItem from './SubActivityItem';
+import { ActivityResource } from '../../views/ActivityView';
 
 import './ActivityCard.less';
 
@@ -12,23 +13,23 @@ const dataIcon = require('../../../../shared/images/dataIcon.svg');
 const noteIcon = require('../../../../shared/images/noteIcon.svg');
 const settingIcon = require('../../../../shared/images/settingIcon.svg');
 
-export type Activity = {
-  '@id': string;
-  status: Status;
-  name: string;
-  description?: string;
-  parent?: {
-    '@id': string;
-  };
-  subactivities: Activity[];
-};
+// export type Activity = {
+//   '@id': string;
+//   status: Status;
+//   name: string;
+//   description?: string;
+//   parent?: {
+//     '@id': string;
+//   };
+// };
 
 const ActivityCard: React.FC<{
-  activity: Activity;
+  activity: ActivityResource;
   projectLabel: string;
   orgLabel: string;
-}> = ({ activity, projectLabel, orgLabel }) => {
-  const { name, description, status, subactivities } = activity;
+  subactivities: ActivityResource[];
+}> = ({ activity, projectLabel, orgLabel, subactivities }) => {
+  const { name, description, status } = activity;
   const activityId = activity['@id'];
 
   return (

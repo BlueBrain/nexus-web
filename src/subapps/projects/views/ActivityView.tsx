@@ -9,15 +9,19 @@ import ProjectPanel from '../components/ProjectPanel';
 import ActivitiesBoard from '../components/Activities/ActivitiesBoard';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { displayError } from '../components/Notifications';
+import { Status } from '../components/StatusIcon';
+import SingleActivityContainer from '../containers/SingleActivityContainer';
 
 import './ActivityView.less';
 
-type ActivityResource = Resource<{
+export type ActivityResource = Resource<{
   parent?: {
     '@id': string;
   };
   name: string;
   _self: string;
+  status: Status;
+  description?: string;
 }>;
 
 type BreadcrumbItem = {
@@ -55,31 +59,17 @@ const ActivityView: React.FC = () => {
       })
       .catch(error => displayError(error, 'Failed to load activity'));
 
-    fetchChildren(activityId);
+    fetchChildren();
   }, []);
 
-  const fetchChildren = (activityId: string) => {
+  const fetchChildren = () => {
     nexus.Resource.links(
       orgLabel,
       projectLabel,
       encodeURIComponent(activityId),
       'incoming'
     )
-      .then(response =>
-        Promise.all(
-          response._results.map(link => {
-            return nexus.Resource.get(
-              orgLabel,
-              projectLabel,
-              encodeURIComponent(link['@id'])
-            );
-          })
-        )
-          .then(response => {
-            setActivities(response);
-          })
-          .catch(error => displayError(error, 'Failed to load activities'))
-      )
+      .then(response => setActivities(response._results))
       .catch(error => displayError(error, 'Failed to load activities'));
   };
 
@@ -126,6 +116,8 @@ const ActivityView: React.FC = () => {
     fetchNext(activity, [activityToBreadcrumbItem(activity)]);
   };
 
+  console.log(activities);
+
   if (!activity) {
     return (
       <div className="activity-view">
@@ -144,11 +136,15 @@ const ActivityView: React.FC = () => {
         activitySelfUrl={activity._self}
       />
       <Breadcrumbs crumbs={breadcrumbs} />
-      <ActivitiesBoard
-        activities={activities}
-        orgLabel={orgLabel}
-        projectLabel={projectLabel}
-      />
+      <ActivitiesBoard>
+        {activities.map(subactivity => (
+          <SingleActivityContainer
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+            activityId={subactivity['@id']}
+          />
+        ))}
+      </ActivitiesBoard>
     </div>
   );
 };
