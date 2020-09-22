@@ -15,13 +15,24 @@ export type ActivityMetadata = {
   summary?: string;
   dueDate: string;
   status: Status;
+  parent?: {
+    '@id': string;
+  };
 };
 
 const NewActivityContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
   onSuccess(): void;
-}> = ({ orgLabel, projectLabel, onSuccess }) => {
+  parentActivityLabel?: string;
+  parentActivitySelfUrl?: string;
+}> = ({
+  orgLabel,
+  projectLabel,
+  onSuccess,
+  parentActivityLabel,
+  parentActivitySelfUrl,
+}) => {
   const nexus = useNexusContext();
 
   const [showForm, setShowForm] = React.useState<boolean>(false);
@@ -31,9 +42,14 @@ const NewActivityContainer: React.FC<{
     setBusy(true);
     const { name } = data;
 
+    if (parentActivitySelfUrl) {
+      data.parent = {
+        '@id': parentActivitySelfUrl,
+      };
+    }
+
     nexus.Resource.create(orgLabel, projectLabel, {
       '@type': ACTIVITY_TYPE,
-      // TODO: add parent automatically
       ...data,
     })
       .then(() => {
@@ -71,6 +87,7 @@ const NewActivityContainer: React.FC<{
           onClickCancel={() => setShowForm(false)}
           onSubmit={submitActivity}
           busy={busy}
+          parentLabel={parentActivityLabel}
         />
       </Modal>
     </>

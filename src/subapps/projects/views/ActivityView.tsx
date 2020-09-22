@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
-import { notification } from 'antd';
+import { Empty } from 'antd';
 
 import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
@@ -10,11 +10,14 @@ import ActivitiesBoard from '../components/Activities/ActivitiesBoard';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { displayError } from '../components/Notifications';
 
+import './ActivityView.less';
+
 type ActivityResource = Resource<{
   parent?: {
     '@id': string;
   };
   name: string;
+  _self: string;
 }>;
 
 type BreadcrumbItem = {
@@ -32,7 +35,7 @@ const ActivityView: React.FC = () => {
   }>(`/${subapp.namespace}/:orgLabel/:projectLabel/:activityId`);
 
   const [activities, setActivities] = React.useState<any[]>([]);
-  const [activity, setActivity] = React.useState<any>();
+  const [activity, setActivity] = React.useState<ActivityResource>();
   const [breadcrumbs, setBreadcrumbs] = React.useState<BreadcrumbItem[]>([]);
 
   const projectLabel = match?.params.projectLabel || '';
@@ -42,7 +45,7 @@ const ActivityView: React.FC = () => {
   React.useEffect(() => {
     nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(activityId))
       .then(response => {
-        setActivity(response);
+        setActivity(response as ActivityResource);
         fetchBreadcrumbs(
           orgLabel,
           projectLabel,
@@ -52,6 +55,10 @@ const ActivityView: React.FC = () => {
       })
       .catch(error => displayError(error, 'Failed to load activity'));
 
+    fetchChildren(activityId);
+  }, []);
+
+  const fetchChildren = (activityId: string) => {
     nexus.Resource.links(
       orgLabel,
       projectLabel,
@@ -74,7 +81,7 @@ const ActivityView: React.FC = () => {
           .catch(error => displayError(error, 'Failed to load activities'))
       )
       .catch(error => displayError(error, 'Failed to load activities'));
-  }, []);
+  };
 
   const activityToBreadcrumbItem = (activity: ActivityResource) => ({
     label: activity.name,
@@ -119,14 +126,24 @@ const ActivityView: React.FC = () => {
     fetchNext(activity, [activityToBreadcrumbItem(activity)]);
   };
 
+  if (!activity) {
+    return (
+      <div className="activity-view">
+        <Empty description="Activity not found" />
+      </div>
+    );
+  }
+
   return (
     <div className="activity-view">
       <ProjectPanel
         orgLabel={orgLabel}
         projectLabel={projectLabel}
         onUpdate={() => {}}
+        activityLabel={activity.name}
+        activitySelfUrl={activity._self}
       />
-      {activity && <Breadcrumbs crumbs={breadcrumbs} />}
+      <Breadcrumbs crumbs={breadcrumbs} />
       <ActivitiesBoard
         activities={activities}
         orgLabel={orgLabel}
