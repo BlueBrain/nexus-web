@@ -139,7 +139,9 @@ const ActivityForm: React.FC<{
                 onChange={event => setStatus(event.target.value)}
               >
                 {Object.values(Status).map(status => (
-                  <Radio.Button value={status}>{status}</Radio.Button>
+                  <Radio.Button key={`option-${status}`} value={status}>
+                    {status}
+                  </Radio.Button>
                 ))}
               </Radio.Group>
             </Item>

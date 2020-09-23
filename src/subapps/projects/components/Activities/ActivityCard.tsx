@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
-import StatusIcon, { Status } from '../../components/StatusIcon';
+import StatusIcon from '../../components/StatusIcon';
 import SubActivityItem from './SubActivityItem';
 import { ActivityResource } from '../../views/ActivityView';
 
@@ -12,16 +12,6 @@ const codeIcon = require('../../../../shared/images/codeIcon.svg');
 const dataIcon = require('../../../../shared/images/dataIcon.svg');
 const noteIcon = require('../../../../shared/images/noteIcon.svg');
 const settingIcon = require('../../../../shared/images/settingIcon.svg');
-
-// export type Activity = {
-//   '@id': string;
-//   status: Status;
-//   name: string;
-//   description?: string;
-//   parent?: {
-//     '@id': string;
-//   };
-// };
 
 const ActivityCard: React.FC<{
   activity: ActivityResource;
@@ -65,6 +55,7 @@ const ActivityCard: React.FC<{
           </div>
           {subactivities.map(subactivitiy => (
             <SubActivityItem
+              key={subactivitiy['@id']}
               status={subactivitiy.status}
               title={subactivitiy.name}
             />

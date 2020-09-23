@@ -41,6 +41,10 @@ const ActivityView: React.FC = () => {
   const [activities, setActivities] = React.useState<any[]>([]);
   const [activity, setActivity] = React.useState<ActivityResource>();
   const [breadcrumbs, setBreadcrumbs] = React.useState<BreadcrumbItem[]>([]);
+  // switch to trigger activities list update
+  const [refreshActivities, setRefreshActivities] = React.useState<boolean>(
+    false
+  );
 
   const projectLabel = match?.params.projectLabel || '';
   const orgLabel = match?.params.orgLabel || '';
@@ -60,7 +64,7 @@ const ActivityView: React.FC = () => {
       .catch(error => displayError(error, 'Failed to load activity'));
 
     fetchChildren();
-  }, []);
+  }, [refreshActivities]);
 
   const fetchChildren = () => {
     nexus.Resource.links(
@@ -89,6 +93,8 @@ const ActivityView: React.FC = () => {
       url: `/projects/${orgLabel}/${projectLabel}`,
     };
 
+    setBreadcrumbs([homeCrumb]);
+
     const fetchNext = (activity: ActivityResource, acc: BreadcrumbItem[]) => {
       if (activity.parent) {
         nexus.Resource.get(
@@ -116,29 +122,24 @@ const ActivityView: React.FC = () => {
     fetchNext(activity, [activityToBreadcrumbItem(activity)]);
   };
 
-  console.log(activities);
-
-  if (!activity) {
-    return (
-      <div className="activity-view">
-        <Empty description="Activity not found" />
-      </div>
-    );
-  }
+  // TODO: find better sollution for this in future, for example, optimistic update
+  const waitAntReloadActivities = () =>
+    setTimeout(() => setRefreshActivities(!refreshActivities), 3500);
 
   return (
     <div className="activity-view">
       <ProjectPanel
         orgLabel={orgLabel}
         projectLabel={projectLabel}
-        onUpdate={() => {}}
-        activityLabel={activity.name}
-        activitySelfUrl={activity._self}
+        onUpdate={waitAntReloadActivities}
+        activityLabel={activity && activity.name}
+        activitySelfUrl={activity && activity._self}
       />
       <Breadcrumbs crumbs={breadcrumbs} />
       <ActivitiesBoard>
         {activities.map(subactivity => (
           <SingleActivityContainer
+            key={`activity-${subactivity['@id']}`}
             orgLabel={orgLabel}
             projectLabel={projectLabel}
             activityId={subactivity['@id']}
