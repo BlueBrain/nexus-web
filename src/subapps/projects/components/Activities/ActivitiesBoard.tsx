@@ -1,19 +1,11 @@
 import * as React from 'react';
 
-import ActivityCard, { Activity } from './ActivityCard';
-
 import './ActivitiesBoard.less';
 
-const ActivitiesBoard: React.FC<{ activities: Activity[] }> = ({
-  activities,
-}) => {
-  return (
-    <div className="activities-board">
-      {activities.map(activity => (
-        <ActivityCard activity={activity} key={activity['@id']} />
-      ))}
-    </div>
-  );
+const ActivitiesBoard: React.FC<{
+  children: React.ReactNode;
+}> = ({ children }) => {
+  return <div className="activities-board">{children}</div>;
 };
 
 export default ActivitiesBoard;

@@ -5,6 +5,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import ActivityForm from '../components/Activities/ActivityForm';
 import ActioButton from '../components/ActionButton';
 import { Status } from '../components/StatusIcon';
+import { displayError } from '../components/Notifications';
 
 const ACTIVITY_TYPE = 'FusionActivity';
 
@@ -14,13 +15,24 @@ export type ActivityMetadata = {
   summary?: string;
   dueDate: string;
   status: Status;
+  parent?: {
+    '@id': string;
+  };
 };
 
 const NewActivityContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
   onSuccess(): void;
-}> = ({ orgLabel, projectLabel, onSuccess }) => {
+  parentActivityLabel?: string;
+  parentActivitySelfUrl?: string;
+}> = ({
+  orgLabel,
+  projectLabel,
+  onSuccess,
+  parentActivityLabel,
+  parentActivitySelfUrl,
+}) => {
   const nexus = useNexusContext();
 
   const [showForm, setShowForm] = React.useState<boolean>(false);
@@ -30,9 +42,14 @@ const NewActivityContainer: React.FC<{
     setBusy(true);
     const { name } = data;
 
+    if (parentActivitySelfUrl) {
+      data.parent = {
+        '@id': parentActivitySelfUrl,
+      };
+    }
+
     nexus.Resource.create(orgLabel, projectLabel, {
       '@type': ACTIVITY_TYPE,
-      // TODO: add parent automatically
       ...data,
     })
       .then(() => {
@@ -48,13 +65,7 @@ const NewActivityContainer: React.FC<{
       .catch(error => {
         setShowForm(false);
         setBusy(false);
-
-        notification.error({
-          message: 'An error occurred',
-          description:
-            error.message || error.reason || 'An unknown error occurred',
-          duration: 3,
-        });
+        displayError(error, 'An error occurred');
       });
   };
 
@@ -76,6 +87,7 @@ const NewActivityContainer: React.FC<{
           onClickCancel={() => setShowForm(false)}
           onSubmit={submitActivity}
           busy={busy}
+          parentLabel={parentActivityLabel}
         />
       </Modal>
     </>

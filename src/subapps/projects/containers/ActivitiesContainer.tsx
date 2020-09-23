@@ -1,16 +1,11 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { notification } from 'antd';
 
 import ActivitiesBoard from '../components/Activities/ActivitiesBoard';
-import { Activity } from '../components/Activities/ActivityCard';
 import fusionConfig from '../config';
-
-type NexusError = {
-  reason?: string;
-  message?: string;
-  [key: string]: any;
-};
+import { displayError } from '../components/Notifications';
+import { ActivityResource } from '../views/ActivityView';
+import ActivityCard from '../components/Activities/ActivityCard';
 
 const ActivitiesContainer: React.FC<{
   orgLabel: string;
@@ -19,7 +14,7 @@ const ActivitiesContainer: React.FC<{
 }> = ({ orgLabel, projectLabel, refresh }) => {
   const nexus = useNexusContext();
 
-  const [activities, setActivities] = React.useState<Activity[]>([]);
+  const [activities, setActivities] = React.useState<ActivityResource[]>([]);
 
   React.useEffect(() => {
     nexus.Resource.list(orgLabel, projectLabel, {
@@ -28,16 +23,8 @@ const ActivitiesContainer: React.FC<{
       .then(response => {
         fetchActivities(response._results);
       })
-      .catch(error => displayError(error));
+      .catch(error => displayError(error, 'An error occurred'));
   }, [refresh]);
-
-  const displayError = (error: NexusError) => {
-    notification.error({
-      message: 'An error occurred',
-      description: error.message || error.reason || 'An unknown error occurred',
-      duration: 3,
-    });
-  };
 
   const fetchActivities = (activities: any) => {
     Promise.all(
@@ -49,15 +36,17 @@ const ActivitiesContainer: React.FC<{
         );
       })
     )
-      .then(response => setActivities(response as Activity[]))
-      .catch(error => displayError(error));
+      .then(response => setActivities(response as ActivityResource[]))
+      .catch(error => displayError(error, 'An error occurred'));
   };
 
-  const topLevelActivities: Activity[] = activities.filter(
+  const topLevelActivities: ActivityResource[] = activities.filter(
     activity => !activity.parent
   );
 
-  const children: Activity[] = activities.filter(activity => !!activity.parent);
+  const children: ActivityResource[] = activities.filter(
+    activity => !!activity.parent
+  );
 
   const activitiesWithChildren = topLevelActivities.map(activity => {
     const subactivities = children.filter(
@@ -73,7 +62,19 @@ const ActivitiesContainer: React.FC<{
 
   if (activities.length === 0) return null;
 
-  return <ActivitiesBoard activities={activitiesWithChildren} />;
+  return (
+    <ActivitiesBoard>
+      {activitiesWithChildren.map(activity => (
+        <ActivityCard
+          activity={activity}
+          subactivities={activity.subactivities}
+          key={activity['@id']}
+          projectLabel={projectLabel}
+          orgLabel={orgLabel}
+        />
+      ))}
+    </ActivitiesBoard>
+  );
 };
 
 export default ActivitiesContainer;
