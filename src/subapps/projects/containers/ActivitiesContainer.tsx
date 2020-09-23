@@ -7,12 +7,6 @@ import { displayError } from '../components/Notifications';
 import { ActivityResource } from '../views/ActivityView';
 import ActivityCard from '../components/Activities/ActivityCard';
 
-export type NexusError = {
-  reason?: string;
-  message?: string;
-  [key: string]: any;
-};
-
 const ActivitiesContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
