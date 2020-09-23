@@ -10,7 +10,9 @@ const ProjectPanel: React.FC<{
   projectLabel: string;
   orgLabel: string;
   onUpdate(): void;
-}> = ({ projectLabel, orgLabel, onUpdate }) => {
+  activityLabel?: string;
+  activitySelfUrl?: string;
+}> = ({ projectLabel, orgLabel, onUpdate, activityLabel, activitySelfUrl }) => {
   return (
     <div className="project-panel">
       <span className="project-panel__name">{projectLabel}</span>
@@ -19,6 +21,8 @@ const ProjectPanel: React.FC<{
           projectLabel={projectLabel}
           orgLabel={orgLabel}
           onSuccess={onUpdate}
+          parentActivityLabel={activityLabel}
+          parentActivitySelfUrl={activitySelfUrl}
         />
         <TemplatesContainer />
         <ProjectMetaContaier projectLabel={projectLabel} orgLabel={orgLabel} />

@@ -1,6 +1,9 @@
 import * as React from 'react';
-import StatusIcon, { Status } from '../../components/StatusIcon';
+import { Link } from 'react-router-dom';
+
+import StatusIcon from '../../components/StatusIcon';
 import SubActivityItem from './SubActivityItem';
+import { ActivityResource } from '../../views/ActivityView';
 
 import './ActivityCard.less';
 
@@ -10,26 +13,23 @@ const dataIcon = require('../../../../shared/images/dataIcon.svg');
 const noteIcon = require('../../../../shared/images/noteIcon.svg');
 const settingIcon = require('../../../../shared/images/settingIcon.svg');
 
-export type Activity = {
-  '@id': string;
-  status: Status;
-  name: string;
-  description?: string;
-  parent?: {
-    '@id': string;
-  };
-  subactivities: Activity[];
-};
-
-const ActivityCard: React.FC<{ activity: Activity }> = ({ activity }) => {
-  const { name, description, status, subactivities } = activity;
+const ActivityCard: React.FC<{
+  activity: ActivityResource;
+  projectLabel: string;
+  orgLabel: string;
+  subactivities: ActivityResource[];
+}> = ({ activity, projectLabel, orgLabel, subactivities }) => {
+  const { name, description, status } = activity;
+  const activityId = activity['@id'];
 
   return (
     <div className={`activity-card activity-card--${status.replace(' ', '-')}`}>
       <div className="activity-card__main">
         <div className="activity-card__title">
           <StatusIcon status={status} mini={true} />
-          <h3 className="activity-card__name">{name}</h3>
+          <Link to={`/projects/${orgLabel}/${projectLabel}/${activityId}`}>
+            <h3 className="activity-card__name">{name}</h3>
+          </Link>
           <img src={editIcon} />
         </div>
         <div className="activity-card__info">
@@ -55,6 +55,7 @@ const ActivityCard: React.FC<{ activity: Activity }> = ({ activity }) => {
           </div>
           {subactivities.map(subactivitiy => (
             <SubActivityItem
+              key={subactivitiy['@id']}
               status={subactivitiy.status}
               title={subactivitiy.name}
             />

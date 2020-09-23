@@ -21,7 +21,8 @@ const ActivityForm: React.FC<{
   onClickCancel(): void;
   onSubmit(data: ActivityMetadata): void;
   busy: boolean;
-}> = ({ onClickCancel, onSubmit, busy }) => {
+  parentLabel?: string | undefined;
+}> = ({ onClickCancel, onSubmit, busy, parentLabel }) => {
   const [name, setName] = React.useState<string>('');
   const [nameError, setNameError] = React.useState<boolean>(false);
   const [description, setDescription] = React.useState<string>('');
@@ -138,7 +139,9 @@ const ActivityForm: React.FC<{
                 onChange={event => setStatus(event.target.value)}
               >
                 {Object.values(Status).map(status => (
-                  <Radio.Button value={status}>{status}</Radio.Button>
+                  <Radio.Button key={`option-${status}`} value={status}>
+                    {status}
+                  </Radio.Button>
                 ))}
               </Radio.Group>
             </Item>
@@ -156,7 +159,7 @@ const ActivityForm: React.FC<{
             </Item>
             <Item label="Parent Activity">
               <Select defaultValue="disabled" disabled>
-                <Select.Option value="disabled">Disabled</Select.Option>
+                <Select.Option value="disabled">{parentLabel}</Select.Option>
               </Select>
             </Item>
             <Item label="Input Activity">
