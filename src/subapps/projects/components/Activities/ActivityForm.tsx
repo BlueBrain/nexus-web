@@ -14,6 +14,7 @@ import * as moment from 'moment';
 
 import { Status } from '../StatusIcon';
 import { ActivityMetadata } from '../../containers/NewActivityContainer';
+import { ActivityResource } from '../../views/ActivityView';
 
 import './ActivityForm.less';
 
@@ -24,17 +25,36 @@ const ActivityForm: React.FC<{
   parentLabel?: string | undefined;
   layout?: 'vertical' | 'horisontal';
   title?: string;
-}> = ({ onClickCancel, onSubmit, busy, parentLabel, layout, title }) => {
-  const [name, setName] = React.useState<string>('');
+  activity?: ActivityResource;
+}> = ({
+  onClickCancel,
+  onSubmit,
+  busy,
+  parentLabel,
+  layout,
+  title,
+  activity,
+}) => {
+  const [name, setName] = React.useState<string>(
+    (activity && activity.name) || ''
+  );
+  const [description, setDescription] = React.useState<string>(
+    (activity && activity.description) || ''
+  );
+  const [summary, setSummary] = React.useState<string>(
+    (activity && activity.summary) || ''
+  );
+  const [status, setStatus] = React.useState<Status>(
+    (activity && activity.status) || Status.toDo
+  );
+  const [dueDate, setDueDate] = React.useState<any>(
+    (activity && activity.dueDate) || null
+  );
+  const [dateError, setDateError] = React.useState<boolean>(false);
   const [nameError, setNameError] = React.useState<boolean>(false);
-  const [description, setDescription] = React.useState<string>('');
   const [descriptionError, setDescriptionError] = React.useState<boolean>(
     false
   );
-  const [summary, setSummary] = React.useState<string>();
-  const [status, setStatus] = React.useState<Status>(Status.toDo);
-  const [dueDate, setDueDate] = React.useState<any>();
-  const [dateError, setDateError] = React.useState<boolean>(false);
 
   const formItemLayout =
     layout === 'vertical'
@@ -95,7 +115,7 @@ const ActivityForm: React.FC<{
   };
 
   const onChangeDate = (date: any) => {
-    setDueDate(date);
+    setDueDate(moment(date).format());
     setDateError(false);
   };
 
@@ -161,6 +181,7 @@ const ActivityForm: React.FC<{
               help={dateError && 'Please select a due date'}
             >
               <DatePicker
+                allowClear={false}
                 value={dueDate ? moment(dueDate) : null}
                 onChange={onChangeDate}
               />

@@ -15,8 +15,26 @@ const ActivityInfoContainer: React.FC<{
 
   const [showForm, setShowForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
+  const [parentLabel, setParentLabel] = React.useState<string>();
 
-  console.log('activity', activity);
+  React.useEffect(() => {
+    if (activity.parent) {
+      nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(activity.parent['@id'])
+      )
+        .then(response => {
+          const parent = response as ActivityResource;
+          setParentLabel(parent.name);
+        })
+        .catch(error => displayError(error, 'Failed to load parent activity'));
+    }
+  }, []);
+
+  const updateActivity = (data: any) => {
+    console.log('data', data);
+  };
 
   return (
     <div>
@@ -32,10 +50,11 @@ const ActivityInfoContainer: React.FC<{
       >
         <ActivityForm
           onClickCancel={() => setShowForm(false)}
-          onSubmit={() => {}}
+          onSubmit={updateActivity}
           busy={busy}
-          parentLabel=""
+          parentLabel={parentLabel}
           layout="vertical"
+          activity={activity}
         />
       </Drawer>
     </div>

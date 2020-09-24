@@ -22,6 +22,8 @@ export type ActivityResource = Resource<{
   _self: string;
   status: Status;
   description?: string;
+  summary?: string;
+  dueDate?: string;
 }>;
 
 type BreadcrumbItem = {

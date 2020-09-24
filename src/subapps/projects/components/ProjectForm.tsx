@@ -128,7 +128,7 @@ const ProjectForm: React.FC<{
   };
 
   const onChangeDate = (date: any) => {
-    setDueDate(date);
+    setDueDate(moment(date).format());
     setDateError(false);
   };
 
@@ -198,6 +198,7 @@ const ProjectForm: React.FC<{
               <DatePicker
                 value={dueDate ? moment(dueDate) : null}
                 onChange={onChangeDate}
+                allowClear={false}
               />
             </Item>
             <Item label="Hypotheses">
