@@ -60,19 +60,18 @@ const ActivitiesContainer: React.FC<{
     };
   });
 
-  if (activities.length === 0) return null;
-
   return (
     <ActivitiesBoard>
-      {activitiesWithChildren.map(activity => (
-        <ActivityCard
-          activity={activity}
-          subactivities={activity.subactivities}
-          key={activity['@id']}
-          projectLabel={projectLabel}
-          orgLabel={orgLabel}
-        />
-      ))}
+      {activities &&
+        activitiesWithChildren.map(activity => (
+          <ActivityCard
+            activity={activity}
+            subactivities={activity.subactivities}
+            key={activity['@id']}
+            projectLabel={projectLabel}
+            orgLabel={orgLabel}
+          />
+        ))}
     </ActivitiesBoard>
   );
 };
