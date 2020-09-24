@@ -84,6 +84,7 @@ const NewActivityContainer: React.FC<{
         destroyOnClose={true}
       >
         <ActivityForm
+          title="Create New Activity"
           onClickCancel={() => setShowForm(false)}
           onSubmit={submitActivity}
           busy={busy}

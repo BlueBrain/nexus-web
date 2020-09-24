@@ -137,7 +137,13 @@ const ActivityView: React.FC = () => {
       />
       <div className="activity-view__panel">
         <Breadcrumbs crumbs={breadcrumbs} />
-        {activity && <ActivityInfoContainer activity={activity} />}
+        {activity && (
+          <ActivityInfoContainer
+            activity={activity}
+            projectLabel={projectLabel}
+            orgLabel={orgLabel}
+          />
+        )}
       </div>
       <ActivitiesBoard>
         {activities.map(subactivity => (
