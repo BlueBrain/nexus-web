@@ -128,6 +128,10 @@ const ActivityView: React.FC = () => {
   const waitAntReloadActivities = () =>
     setTimeout(() => setRefreshActivities(!refreshActivities), 3500);
 
+  const reload = () => {
+    setRefreshActivities(!refreshActivities);
+  };
+
   return (
     <div className="activity-view">
       <ProjectPanel
@@ -144,6 +148,7 @@ const ActivityView: React.FC = () => {
             activity={activity}
             projectLabel={projectLabel}
             orgLabel={orgLabel}
+            onUpdate={reload}
           />
         )}
       </div>

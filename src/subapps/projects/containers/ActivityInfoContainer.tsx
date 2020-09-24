@@ -2,15 +2,17 @@ import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Drawer, Button } from 'antd';
 
-import { displayError } from '../components/Notifications';
+import { displayError, successNotification } from '../components/Notifications';
 import { ActivityResource } from '../views/ActivityView';
 import ActivityForm from '../components/Activities/ActivityForm';
+import fusionConfig from '../config';
 
 const ActivityInfoContainer: React.FC<{
   activity: ActivityResource;
   projectLabel: string;
   orgLabel: string;
-}> = ({ activity, projectLabel, orgLabel }) => {
+  onUpdate(): void;
+}> = ({ activity, projectLabel, orgLabel, onUpdate }) => {
   const nexus = useNexusContext();
 
   const [showForm, setShowForm] = React.useState<boolean>(false);
@@ -33,7 +35,23 @@ const ActivityInfoContainer: React.FC<{
   }, []);
 
   const updateActivity = (data: any) => {
-    console.log('data', data);
+    nexus.Resource.update(
+      orgLabel,
+      projectLabel,
+      activity['@id'],
+      activity._rev,
+      {
+        ...data,
+        parent: activity.parent,
+        '@type': fusionConfig.activityType,
+      }
+    )
+      .then(response => {
+        onUpdate();
+        setShowForm(false);
+        successNotification(`Activity ${data.name} updated successfully`);
+      })
+      .catch(error => displayError(error, 'Failed to update activity'));
   };
 
   return (

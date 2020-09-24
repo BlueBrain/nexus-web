@@ -52,7 +52,7 @@ const ProjectForm: React.FC<{
     project && project.visibility ? project.visibility : 'public'
   );
 
-  const formTitle = project ? 'Edit Project' : 'Create a New Project';
+  const formTitle = project ? null : 'Create a New Project';
   const formItemLayout = project
     ? {}
     : {
@@ -134,7 +134,7 @@ const ProjectForm: React.FC<{
 
   return (
     <Form {...formItemLayout} className="project-form">
-      <h2>{formTitle}</h2>
+      {formTitle && <h2>{formTitle}</h2>}
       <Spin spinning={busy} tip="Please wait...">
         <Row gutter={24}>
           <Col {...formColumnLayOut}>
