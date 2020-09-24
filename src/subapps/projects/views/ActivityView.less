@@ -1,5 +1,34 @@
+@import '../../../shared/lib.less';
+
 .activity-view {
   height: 100%;
   background-color: #fff;
   background-image: url('../../../shared/images/projectGrid.png');
+
+  &__panel {
+    display: flex;
+    justify-content: space-between;
+    height: 52px;
+    align-items: center;
+    background-color: #fff;
+    box-shadow: @box-shadow-base;
+    padding: 0 1.5em 0 1em;
+  }
+
+  .ant-btn {
+    border-radius: 6px;
+    opacity: 0.9;
+
+    &:hover {
+      opacity: 1;
+      color: @text-color;
+      border-color: @text-color;
+    }
+
+    &:focus {
+      color: @text-color;
+      border-color: @text-color;
+      opacity: 0.9;
+    }
+  }
 }

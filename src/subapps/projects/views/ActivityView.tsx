@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
-import { Empty } from 'antd';
 
 import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
@@ -11,6 +10,7 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import { displayError } from '../components/Notifications';
 import { Status } from '../components/StatusIcon';
 import SingleActivityContainer from '../containers/SingleActivityContainer';
+import ActivityInfoContainer from '../containers/ActivityInfoContainer';
 
 import './ActivityView.less';
 
@@ -135,7 +135,10 @@ const ActivityView: React.FC = () => {
         activityLabel={activity && activity.name}
         activitySelfUrl={activity && activity._self}
       />
-      <Breadcrumbs crumbs={breadcrumbs} />
+      <div className="activity-view__panel">
+        <Breadcrumbs crumbs={breadcrumbs} />
+        {activity && <ActivityInfoContainer activity={activity} />}
+      </div>
       <ActivitiesBoard>
         {activities.map(subactivity => (
           <SingleActivityContainer
