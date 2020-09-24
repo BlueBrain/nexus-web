@@ -19,6 +19,8 @@ const ActivitiesContainer: React.FC<{
   React.useEffect(() => {
     nexus.Resource.list(orgLabel, projectLabel, {
       type: fusionConfig.activityType,
+      size: 200,
+      deprecated: false,
     })
       .then(response => {
         fetchActivities(response._results);
