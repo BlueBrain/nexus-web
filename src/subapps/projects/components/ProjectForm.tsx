@@ -52,7 +52,7 @@ const ProjectForm: React.FC<{
     project && project.visibility ? project.visibility : 'public'
   );
 
-  const formTitle = project ? 'Edit Project' : 'Create a New Project';
+  const formTitle = project ? null : 'Create a New Project';
   const formItemLayout = project
     ? {}
     : {
@@ -128,13 +128,13 @@ const ProjectForm: React.FC<{
   };
 
   const onChangeDate = (date: any) => {
-    setDueDate(date);
+    setDueDate(moment(date).format());
     setDateError(false);
   };
 
   return (
     <Form {...formItemLayout} className="project-form">
-      <h2>{formTitle}</h2>
+      {formTitle && <h2>{formTitle}</h2>}
       <Spin spinning={busy} tip="Please wait...">
         <Row gutter={24}>
           <Col {...formColumnLayOut}>
@@ -198,6 +198,7 @@ const ProjectForm: React.FC<{
               <DatePicker
                 value={dueDate ? moment(dueDate) : null}
                 onChange={onChangeDate}
+                allowClear={false}
               />
             </Item>
             <Item label="Hypotheses">

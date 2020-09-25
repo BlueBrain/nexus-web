@@ -21,7 +21,7 @@ const TemplatesList: React.FC<{
 
   return (
     <div className="templates-list">
-      <h2>Add activities from template</h2>
+      <h2>Coming soon...</h2>
       <div className="templates-list__cards">
         {templates.length
           ? templates.map(template => (

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, notification, Card } from 'antd';
+import { Drawer, Button, notification } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Project, Resource } from '@bbp/nexus-sdk';
 
@@ -79,7 +79,7 @@ const ProjectMetaContaier: React.FC<{
                   metaDataResource._rev,
                   {
                     ...data,
-                    '@type': ['fusionMetadata', 'fusionProject'],
+                    '@type': fusionConfig.projectMetadataType,
                   }
                 )
                   .then(result => {
@@ -119,26 +119,23 @@ const ProjectMetaContaier: React.FC<{
 
   return (
     <div>
-      <Button onClick={onClickInfo}>Project Information</Button>
-      {showForm ? (
-        <Card
-          style={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            width: '350px',
-            borderRadius: '1rem',
-            borderColor: '#44c7f4',
-          }}
-        >
-          <ProjectForm
-            onClickCancel={() => setShowForm(false)}
-            onSubmit={submitProject}
-            busy={busy}
-            project={projectMetaData}
-          />
-        </Card>
-      ) : null}
+      <Button onClick={onClickInfo}>Project Info</Button>
+      <Drawer
+        visible={showForm}
+        destroyOnClose={true}
+        onClose={() => setShowForm(false)}
+        title="Edit Project Information"
+        placement="right"
+        closable
+        width={600}
+      >
+        <ProjectForm
+          onClickCancel={() => setShowForm(false)}
+          onSubmit={submitProject}
+          busy={busy}
+          project={projectMetaData}
+        />
+      </Drawer>
     </div>
   );
 };

@@ -14,6 +14,7 @@ import * as moment from 'moment';
 
 import { Status } from '../StatusIcon';
 import { ActivityMetadata } from '../../containers/NewActivityContainer';
+import { ActivityResource } from '../../views/ActivityView';
 
 import './ActivityForm.less';
 
@@ -22,28 +23,55 @@ const ActivityForm: React.FC<{
   onSubmit(data: ActivityMetadata): void;
   busy: boolean;
   parentLabel?: string | undefined;
-}> = ({ onClickCancel, onSubmit, busy, parentLabel }) => {
-  const [name, setName] = React.useState<string>('');
+  layout?: 'vertical' | 'horisontal';
+  title?: string;
+  activity?: ActivityResource;
+}> = ({
+  onClickCancel,
+  onSubmit,
+  busy,
+  parentLabel,
+  layout,
+  title,
+  activity,
+}) => {
+  const [name, setName] = React.useState<string>(
+    (activity && activity.name) || ''
+  );
+  const [description, setDescription] = React.useState<string>(
+    (activity && activity.description) || ''
+  );
+  const [summary, setSummary] = React.useState<string>(
+    (activity && activity.summary) || ''
+  );
+  const [status, setStatus] = React.useState<Status>(
+    (activity && activity.status) || Status.toDo
+  );
+  const [dueDate, setDueDate] = React.useState<any>(
+    (activity && activity.dueDate) || null
+  );
+  const [dateError, setDateError] = React.useState<boolean>(false);
   const [nameError, setNameError] = React.useState<boolean>(false);
-  const [description, setDescription] = React.useState<string>('');
   const [descriptionError, setDescriptionError] = React.useState<boolean>(
     false
   );
-  const [summary, setSummary] = React.useState<string>();
-  const [status, setStatus] = React.useState<Status>(Status.toDo);
-  const [dueDate, setDueDate] = React.useState<any>();
-  const [dateError, setDateError] = React.useState<boolean>(false);
 
-  const formItemLayout = {
-    labelCol: { xs: { span: 24 }, sm: { span: 7 } },
-    wrapperCol: { xs: { span: 24 }, sm: { span: 17 } },
-  };
+  const formItemLayout =
+    layout === 'vertical'
+      ? {}
+      : {
+          labelCol: { xs: { span: 24 }, sm: { span: 7 } },
+          wrapperCol: { xs: { span: 24 }, sm: { span: 17 } },
+        };
 
-  const columnLayout = {
-    xs: 24,
-    sm: 24,
-    md: 12,
-  };
+  const columnLayout =
+    layout === 'vertical'
+      ? {}
+      : {
+          xs: 24,
+          sm: 24,
+          md: 12,
+        };
 
   const isEmptyInput = (value: string) => {
     return value.split(' ').join('') === '';
@@ -87,7 +115,7 @@ const ActivityForm: React.FC<{
   };
 
   const onChangeDate = (date: any) => {
-    setDueDate(date);
+    setDueDate(moment(date).format());
     setDateError(false);
   };
 
@@ -109,7 +137,7 @@ const ActivityForm: React.FC<{
 
   return (
     <Form {...formItemLayout} className="activity-form">
-      <h2 className="activity-form__title">Create New Activity</h2>
+      {title && <h2 className="activity-form__title">{title}</h2>}
       <Spin spinning={busy} tip="Please wait...">
         <Row gutter={24}>
           <Col {...columnLayout}>
@@ -153,6 +181,7 @@ const ActivityForm: React.FC<{
               help={dateError && 'Please select a due date'}
             >
               <DatePicker
+                allowClear={false}
                 value={dueDate ? moment(dueDate) : null}
                 onChange={onChangeDate}
               />
@@ -181,7 +210,7 @@ const ActivityForm: React.FC<{
           <Col {...columnLayout} style={{ textAlign: 'right' }}>
             <Button onClick={onClickCancel}>Cancel</Button>
             <Button onClick={onClickSubmit} type="primary">
-              Create
+              Save
             </Button>
           </Col>
         </Row>

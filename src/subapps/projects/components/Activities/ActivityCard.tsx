@@ -47,21 +47,23 @@ const ActivityCard: React.FC<{
           </div>
         </div>
       </div>
-      {subactivities && subactivities.length > 0 && (
-        <div className="activity-card__subactivities">
-          <div className="activity-card__subactivities-total">
-            <img src={settingIcon} className="activity-card__info-icon" />
-            <span>Activities: {subactivities.length}</span>
-          </div>
-          {subactivities.map(subactivitiy => (
+      <div className="activity-card__subactivities">
+        <div className="activity-card__subactivities-total">
+          <img src={settingIcon} className="activity-card__info-icon" />
+          <span>
+            Activities: {(subactivities && subactivities.length) || 0}
+          </span>
+        </div>
+        {subactivities &&
+          subactivities.length > 0 &&
+          subactivities.map(subactivitiy => (
             <SubActivityItem
               key={subactivitiy['@id']}
               status={subactivitiy.status}
               title={subactivitiy.name}
             />
           ))}
-        </div>
-      )}
+      </div>
     </div>
   );
 };

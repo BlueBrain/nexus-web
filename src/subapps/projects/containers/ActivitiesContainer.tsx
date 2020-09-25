@@ -19,6 +19,8 @@ const ActivitiesContainer: React.FC<{
   React.useEffect(() => {
     nexus.Resource.list(orgLabel, projectLabel, {
       type: fusionConfig.activityType,
+      size: 200,
+      deprecated: false,
     })
       .then(response => {
         fetchActivities(response._results);
@@ -60,19 +62,18 @@ const ActivitiesContainer: React.FC<{
     };
   });
 
-  if (activities.length === 0) return null;
-
   return (
     <ActivitiesBoard>
-      {activitiesWithChildren.map(activity => (
-        <ActivityCard
-          activity={activity}
-          subactivities={activity.subactivities}
-          key={activity['@id']}
-          projectLabel={projectLabel}
-          orgLabel={orgLabel}
-        />
-      ))}
+      {activities &&
+        activitiesWithChildren.map(activity => (
+          <ActivityCard
+            activity={activity}
+            subactivities={activity.subactivities}
+            key={activity['@id']}
+            projectLabel={projectLabel}
+            orgLabel={orgLabel}
+          />
+        ))}
     </ActivitiesBoard>
   );
 };
