@@ -20,11 +20,11 @@ const ActivityInfoContainer: React.FC<{
   const [parentLabel, setParentLabel] = React.useState<string>();
 
   React.useEffect(() => {
-    if (activity.parent) {
+    if (activity.hasParent) {
       nexus.Resource.get(
         orgLabel,
         projectLabel,
-        encodeURIComponent(activity.parent['@id'])
+        encodeURIComponent(activity.hasParent['@id'])
       )
         .then(response => {
           const parent = response as ActivityResource;
@@ -42,7 +42,7 @@ const ActivityInfoContainer: React.FC<{
       activity._rev,
       {
         ...data,
-        parent: activity.parent,
+        parent: activity.hasParent,
         '@type': fusionConfig.activityType,
       }
     )

@@ -15,7 +15,7 @@ export type ActivityMetadata = {
   summary?: string;
   dueDate: string;
   status: Status;
-  parent?: {
+  hasParent?: {
     '@id': string;
   };
 };
@@ -43,7 +43,7 @@ const NewActivityContainer: React.FC<{
     const { name } = data;
 
     if (parentActivitySelfUrl) {
-      data.parent = {
+      data.hasParent = {
         '@id': parentActivitySelfUrl,
       };
     }
