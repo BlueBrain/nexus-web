@@ -15,7 +15,7 @@ import ActivityInfoContainer from '../containers/ActivityInfoContainer';
 import './ActivityView.less';
 
 export type ActivityResource = Resource<{
-  parent?: {
+  hasParent?: {
     '@id': string;
   };
   name: string;
@@ -98,11 +98,11 @@ const ActivityView: React.FC = () => {
     setBreadcrumbs([homeCrumb]);
 
     const fetchNext = (activity: ActivityResource, acc: BreadcrumbItem[]) => {
-      if (activity.parent) {
+      if (activity.hasParent) {
         nexus.Resource.get(
           orgLabel,
           projectLabel,
-          encodeURIComponent(activity.parent['@id'])
+          encodeURIComponent(activity.hasParent['@id'])
         )
           .then(response => {
             const activityResource = response as ActivityResource;
