@@ -43,17 +43,18 @@ const ActivitiesContainer: React.FC<{
   };
 
   const topLevelActivities: ActivityResource[] = activities.filter(
-    activity => !activity.parent
+    activity => !activity.hasParent
   );
 
   const children: ActivityResource[] = activities.filter(
-    activity => !!activity.parent
+    activity => !!activity.hasParent
   );
 
   const activitiesWithChildren = topLevelActivities.map(activity => {
     const subactivities = children.filter(
       subactivity =>
-        subactivity.parent && subactivity.parent['@id'] === activity['@id']
+        subactivity.hasParent &&
+        subactivity.hasParent['@id'] === activity['@id']
     );
 
     return {
