@@ -13,3 +13,10 @@ export const displayError = (error: NexusError, message: string) => {
     duration: 5,
   });
 };
+
+export const successNotification = (message: string) => {
+  notification.success({
+    message,
+    duration: 5,
+  });
+};
