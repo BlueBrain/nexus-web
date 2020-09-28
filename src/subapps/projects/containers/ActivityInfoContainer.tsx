@@ -18,8 +18,18 @@ const ActivityInfoContainer: React.FC<{
   const [showForm, setShowForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
   const [parentLabel, setParentLabel] = React.useState<string>();
+  const [originalPayload, setOriginalPayload] = React.useState<
+    ActivityResource
+  >();
 
   React.useEffect(() => {
+    nexus.Resource.getSource(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(activity['@id'])
+    )
+      .then(response => setOriginalPayload(response as ActivityResource))
+      .catch(error => displayError(error, 'Failed to load original payload'));
     if (activity.hasParent) {
       nexus.Resource.get(
         orgLabel,
@@ -35,6 +45,12 @@ const ActivityInfoContainer: React.FC<{
   }, []);
 
   const updateActivity = (data: any) => {
+    const parent = originalPayload && originalPayload.hasParent;
+
+    if (parent && parent['@id']) {
+      data.hasParent = parent;
+    }
+
     nexus.Resource.update(
       orgLabel,
       projectLabel,
@@ -42,7 +58,6 @@ const ActivityInfoContainer: React.FC<{
       activity._rev,
       {
         ...data,
-        hasParent: activity.hasParent,
         '@type': fusionConfig.activityType,
       }
     )
