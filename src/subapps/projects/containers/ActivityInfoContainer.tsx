@@ -42,7 +42,7 @@ const ActivityInfoContainer: React.FC<{
       activity._rev,
       {
         ...data,
-        parent: activity.hasParent,
+        hasParent: activity.hasParent,
         '@type': fusionConfig.activityType,
       }
     )
