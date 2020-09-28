@@ -20,7 +20,7 @@ const ResourceLinks: React.FunctionComponent<{
   const firstLoad = busy && links.length === 0;
 
   return (
-    <div className="resource-links" ref={scrollParent}>
+    <div className="resource-links" ref={scrollParent} id="yo">
       {firstLoad ? (
         <Skeleton active />
       ) : (
@@ -32,6 +32,7 @@ const ResourceLinks: React.FunctionComponent<{
               onLoadMore={onLoadMore}
               hasMore={hasMore}
               hasSearch={false}
+              scrollParent={scrollParent.current}
             >
               {links.map(link => (
                 <ListItem key={link['@id']}>

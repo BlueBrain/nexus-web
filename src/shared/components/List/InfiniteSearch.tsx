@@ -11,6 +11,7 @@ export type InfiniteSearchProps = {
   hasSearch?: boolean;
   height?: number;
   dataLength: number;
+  scrollParent?: HTMLElement | string | null;
 };
 const InfiniteSearch: React.FunctionComponent<InfiniteSearchProps> = props => {
   const {
@@ -50,6 +51,7 @@ const InfiniteSearch: React.FunctionComponent<InfiniteSearchProps> = props => {
         loader={<h4>Loading...</h4>}
         height={props.height}
         scrollThreshold={'100px'}
+        scrollableTarget={props.scrollParent}
       >
         {props.children}
       </InfiniteScroll>
