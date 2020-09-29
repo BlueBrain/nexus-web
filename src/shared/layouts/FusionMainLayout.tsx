@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
-import { Identity, Realm } from '@bbp/nexus-sdk';
+import { NexusClient, Identity, Realm } from '@bbp/nexus-sdk';
 import { UserManager } from 'oidc-client';
 import { Layout, Menu } from 'antd';
 
@@ -13,6 +13,7 @@ import { version, url as githubIssueURL } from '../../../package.json';
 import useLocalStorage from '../hooks/useLocalStorage';
 import ConsentContainer from '../containers/ConsentContainer';
 import SeoHeaders from './SeoHeaders';
+import { useNexus } from '@bbp/react-nexus';
 
 import './FusionMainLayout.less';
 import { Link, useLocation } from 'react-router-dom';
@@ -73,6 +74,20 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
       return `/${location.pathname.split('/')[1]}` === route;
     }) || subApps[0]
   );
+
+  const versions: any = useNexus<any>((nexus: NexusClient) =>
+    nexus.httpGet({
+      path: `${apiBase}/version`,
+      context: { as: 'json' },
+    })
+  );
+
+  const deltaVersion = React.useMemo(() => {
+    if (versions.data) {
+      return versions.data.delta as string;
+    }
+    return '';
+  }, [versions]);
 
   React.useEffect(() => {
     const currentSubApp =
@@ -167,7 +182,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
             ]}
             displayLogin={canLogin}
             onLoginClick={() => goTo(`/login${getDestinationParam()}`)}
-            version={version}
+            version={deltaVersion}
             githubIssueURL={githubIssueURL}
             consent={consent}
             onClickRemoveConsent={() => setConsent(undefined)}
