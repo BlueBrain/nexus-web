@@ -120,7 +120,9 @@ const App: React.FC = () => {
             <Modal
               visible={true}
               footer={null}
-              onCancel={() => history.push(background.pathname, {})}
+              onCancel={() =>
+                history.push(`${background.pathname}?${background.search}`, {})
+              }
               className="modal-view"
               width="inherit"
             >
