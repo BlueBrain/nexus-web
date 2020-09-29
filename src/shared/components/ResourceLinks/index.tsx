@@ -32,6 +32,7 @@ const ResourceLinks: React.FunctionComponent<{
               onLoadMore={onLoadMore}
               hasMore={hasMore}
               hasSearch={false}
+              scrollParent={scrollParent.current}
             >
               {links.map(link => (
                 <ListItem key={link['@id']}>
