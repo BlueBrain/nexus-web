@@ -20,7 +20,7 @@ const ResourceLinks: React.FunctionComponent<{
   const firstLoad = busy && links.length === 0;
 
   return (
-    <div className="resource-links" ref={scrollParent} id="yo">
+    <div className="resource-links" ref={scrollParent}>
       {firstLoad ? (
         <Skeleton active />
       ) : (
