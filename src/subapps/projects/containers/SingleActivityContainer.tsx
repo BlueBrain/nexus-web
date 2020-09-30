@@ -4,8 +4,9 @@ import { displayError } from '../components/Notifications';
 
 import ActivityCard from '../components/Activities/ActivityCard';
 import { ActivityResource } from '../views/ActivityView';
+import { labelOf } from '../../../shared/utils';
 
-const ActivityPreviewContainer: React.FC<{
+const SignleActivityContainer: React.FC<{
   projectLabel: string;
   orgLabel: string;
   activityId: string;
@@ -22,6 +23,17 @@ const ActivityPreviewContainer: React.FC<{
     fetchChildren();
   }, []);
 
+  const isChild = (link: any) => {
+    if (Array.isArray(link.paths)) {
+      return (
+        link.paths.filter((path: string) => labelOf(path) === 'hasParent')
+          .length > 0
+      );
+    } else {
+      return labelOf(link.paths) === 'hasParent';
+    }
+  };
+
   const fetchChildren = () => {
     nexus.Resource.links(
       orgLabel,
@@ -31,13 +43,15 @@ const ActivityPreviewContainer: React.FC<{
     )
       .then(response =>
         Promise.all(
-          response._results.map(link => {
-            return nexus.Resource.get(
-              orgLabel,
-              projectLabel,
-              encodeURIComponent(link['@id'])
-            );
-          })
+          response._results
+            .filter(link => isChild(link))
+            .map(link => {
+              return nexus.Resource.get(
+                orgLabel,
+                projectLabel,
+                encodeURIComponent(link['@id'])
+              );
+            })
         )
           .then(response => {
             setChildren(response);
@@ -60,4 +74,4 @@ const ActivityPreviewContainer: React.FC<{
   );
 };
 
-export default ActivityPreviewContainer;
+export default SignleActivityContainer;
