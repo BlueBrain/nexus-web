@@ -26,6 +26,7 @@ const ActivityForm: React.FC<{
   layout?: 'vertical' | 'horisontal';
   title?: string;
   activity?: ActivityResource;
+  informedByLabel?: string;
 }> = ({
   onClickCancel,
   onSubmit,
@@ -34,6 +35,7 @@ const ActivityForm: React.FC<{
   layout,
   title,
   activity,
+  informedByLabel,
 }) => {
   const [name, setName] = React.useState<string>(
     (activity && activity.name) || ''
@@ -54,6 +56,9 @@ const ActivityForm: React.FC<{
   const [nameError, setNameError] = React.useState<boolean>(false);
   const [descriptionError, setDescriptionError] = React.useState<boolean>(
     false
+  );
+  const [informedBy, setInformedBy] = React.useState<string | undefined>(
+    informedByLabel
   );
 
   const formItemLayout =
@@ -187,16 +192,16 @@ const ActivityForm: React.FC<{
               />
             </Item>
             <Item label="Parent Activity">
-              <Select defaultValue="disabled" disabled>
-                <Select.Option value="disabled">{parentLabel}</Select.Option>
+              <Select value={parentLabel} disabled>
+                <Select.Option value={parentLabel}>{parentLabel}</Select.Option>
               </Select>
             </Item>
-            <Item label="Input Activity">
-              <Select defaultValue="disabled" disabled>
-                <Select.Option value="disabled">Disabled</Select.Option>
+            <Item label="Informed By">
+              <Select value={informedBy} disabled>
+                <Select.Option value={informedBy}>{informedBy}</Select.Option>
               </Select>
             </Item>
-            <Item label="Output Activity">
+            <Item label="Informs">
               <Select defaultValue="disabled" disabled>
                 <Select.Option value="disabled">Disabled</Select.Option>
               </Select>

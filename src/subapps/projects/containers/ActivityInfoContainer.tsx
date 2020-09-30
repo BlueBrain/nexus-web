@@ -18,6 +18,7 @@ const ActivityInfoContainer: React.FC<{
   const [showForm, setShowForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
   const [parentLabel, setParentLabel] = React.useState<string>();
+  const [informedByLabel, setInfomedByLabel] = React.useState<string>();
   const [originalPayload, setOriginalPayload] = React.useState<
     ActivityResource
   >();
@@ -30,6 +31,7 @@ const ActivityInfoContainer: React.FC<{
     )
       .then(response => setOriginalPayload(response as ActivityResource))
       .catch(error => displayError(error, 'Failed to load original payload'));
+
     if (activity.hasParent) {
       nexus.Resource.get(
         orgLabel,
@@ -39,6 +41,21 @@ const ActivityInfoContainer: React.FC<{
         .then(response => {
           const parent = response as ActivityResource;
           setParentLabel(parent.name);
+        })
+        .catch(error => displayError(error, 'Failed to load parent activity'));
+    }
+
+    if (activity.wasInformedBy) {
+      nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(activity.wasInformedBy['@id'])
+      )
+        .then(response => {
+          console.log('found!', response);
+
+          const inputActivity = response as ActivityResource;
+          setInfomedByLabel(inputActivity.name);
         })
         .catch(error => displayError(error, 'Failed to load parent activity'));
     }
@@ -69,6 +86,8 @@ const ActivityInfoContainer: React.FC<{
       .catch(error => displayError(error, 'Failed to update activity'));
   };
 
+  console.log('informedByLabel', informedByLabel);
+
   return (
     <div>
       <Button onClick={() => setShowForm(true)}>Activity Info</Button>
@@ -86,6 +105,7 @@ const ActivityInfoContainer: React.FC<{
           onSubmit={updateActivity}
           busy={busy}
           parentLabel={parentLabel}
+          informedByLabel={informedByLabel}
           layout="vertical"
           activity={activity}
         />

@@ -25,6 +25,9 @@ export type ActivityResource = Resource<{
   description?: string;
   summary?: string;
   dueDate?: string;
+  wasInformedBy?: {
+    '@id': string;
+  };
 }>;
 
 type BreadcrumbItem = {

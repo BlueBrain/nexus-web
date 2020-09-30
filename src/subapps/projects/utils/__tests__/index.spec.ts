@@ -5,7 +5,7 @@ const linkToSibling: ResourceLink = {
   '@id': '123',
   '@type':
     'https://staging.nexus.ocp.bbp.epfl.ch/v1/vocabs/fusion2-stafeeva/89898/FusionActivity',
-  //  TODO: we should updates links type in nexus-sdk! as paths can be a string and an array
+  //  TODO: we should update link type in nexus-sdk! as paths can be a string and an array
   // @ts-ignore
   paths:
     'https://staging.nexus.ocp.bbp.epfl.ch/v1/vocabs/fusion2-stafeeva/89898/wasInformedBy',
