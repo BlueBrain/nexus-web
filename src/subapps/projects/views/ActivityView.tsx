@@ -99,7 +99,7 @@ const ActivityView: React.FC = () => {
 
             setActivities(children);
             setSiblings(
-              children.map(child => ({ name: child.name, '@id': child['@id'] }))
+              children.map(child => ({ name: child.name, '@id': child._self }))
             );
           })
           .catch(error => displayError(error, 'Failed to load activities'));

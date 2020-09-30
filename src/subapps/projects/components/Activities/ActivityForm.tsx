@@ -62,9 +62,7 @@ const ActivityForm: React.FC<{
   const [descriptionError, setDescriptionError] = React.useState<boolean>(
     false
   );
-  const [informedBy, setInformedBy] = React.useState<string | undefined>(
-    informedByLabel
-  );
+  const [informedBy, setInformedBy] = React.useState<string | undefined>();
 
   const formItemLayout =
     layout === 'vertical'
@@ -129,6 +127,10 @@ const ActivityForm: React.FC<{
     setDateError(false);
   };
 
+  const onChangeInformedBy = (selected: string) => {
+    setInformedBy(selected);
+  };
+
   const onClickSubmit = () => {
     if (isValidInput()) {
       const data: any = {
@@ -137,6 +139,7 @@ const ActivityForm: React.FC<{
         summary,
         dueDate,
         status,
+        wasInformedBy: informedBy,
       };
 
       onSubmit(data);
@@ -202,20 +205,28 @@ const ActivityForm: React.FC<{
               </Select>
             </Item>
             <Item label="Informed By">
-              <Select>
-                {siblings && siblings.length > 0 ? (
-                  siblings.map(sibling => (
-                    <Select.Option
-                      value={sibling['@id']}
-                      key={`sibling-${sibling['@id']}`}
-                    >
-                      {sibling.name}
-                    </Select.Option>
-                  ))
-                ) : (
+              {informedByLabel ? (
+                <Select disabled value={informedByLabel}>
                   <Select.Option value={informedBy}>{informedBy}</Select.Option>
-                )}
-              </Select>
+                </Select>
+              ) : (
+                <Select onChange={onChangeInformedBy} value={informedBy}>
+                  {siblings && siblings.length > 0 ? (
+                    siblings.map(sibling => (
+                      <Select.Option
+                        value={sibling['@id']}
+                        key={`sibling-${sibling['@id']}`}
+                      >
+                        {sibling.name}
+                      </Select.Option>
+                    ))
+                  ) : (
+                    <Select.Option value={informedBy}>
+                      {informedBy}
+                    </Select.Option>
+                  )}
+                </Select>
+              )}
             </Item>
             <Item label="Informs">
               <Select defaultValue="disabled" disabled>
