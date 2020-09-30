@@ -9,16 +9,16 @@ import { isParentLink } from '../utils';
 const SignleActivityContainer: React.FC<{
   projectLabel: string;
   orgLabel: string;
-  activityId: string;
-}> = ({ projectLabel, orgLabel, activityId }) => {
+  activity: ActivityResource;
+}> = ({ projectLabel, orgLabel, activity }) => {
   const nexus = useNexusContext();
-  const [activity, setActivity] = React.useState<ActivityResource>();
+  // const [activity, setActivity] = React.useState<ActivityResource>();
   const [children, setChildren] = React.useState<any[]>([]);
 
   React.useEffect(() => {
-    nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(activityId))
-      .then(response => setActivity(response as ActivityResource))
-      .catch(error => displayError(error, 'Failed to load the activity'));
+    // nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(activityId))
+    //   .then(response => setActivity(response as ActivityResource))
+    //   .catch(error => displayError(error, 'Failed to load the activity'));
 
     fetchChildren();
   }, []);
@@ -27,7 +27,7 @@ const SignleActivityContainer: React.FC<{
     nexus.Resource.links(
       orgLabel,
       projectLabel,
-      encodeURIComponent(activityId),
+      encodeURIComponent(activity['@id']),
       'incoming'
     )
       .then(response =>

@@ -52,8 +52,6 @@ const ActivityInfoContainer: React.FC<{
         encodeURIComponent(activity.wasInformedBy['@id'])
       )
         .then(response => {
-          console.log('found!', response);
-
           const inputActivity = response as ActivityResource;
           setInfomedByLabel(inputActivity.name);
         })
@@ -85,8 +83,6 @@ const ActivityInfoContainer: React.FC<{
       })
       .catch(error => displayError(error, 'Failed to update activity'));
   };
-
-  console.log('informedByLabel', informedByLabel);
 
   return (
     <div>

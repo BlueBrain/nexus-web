@@ -27,6 +27,10 @@ const ActivityForm: React.FC<{
   title?: string;
   activity?: ActivityResource;
   informedByLabel?: string;
+  siblings?: {
+    name: string;
+    '@id': string;
+  }[];
 }> = ({
   onClickCancel,
   onSubmit,
@@ -36,6 +40,7 @@ const ActivityForm: React.FC<{
   title,
   activity,
   informedByLabel,
+  siblings,
 }) => {
   const [name, setName] = React.useState<string>(
     (activity && activity.name) || ''
@@ -197,8 +202,19 @@ const ActivityForm: React.FC<{
               </Select>
             </Item>
             <Item label="Informed By">
-              <Select value={informedBy} disabled>
-                <Select.Option value={informedBy}>{informedBy}</Select.Option>
+              <Select>
+                {siblings && siblings.length > 0 ? (
+                  siblings.map(sibling => (
+                    <Select.Option
+                      value={sibling['@id']}
+                      key={`sibling-${sibling['@id']}`}
+                    >
+                      {sibling.name}
+                    </Select.Option>
+                  ))
+                ) : (
+                  <Select.Option value={informedBy}>{informedBy}</Select.Option>
+                )}
               </Select>
             </Item>
             <Item label="Informs">
