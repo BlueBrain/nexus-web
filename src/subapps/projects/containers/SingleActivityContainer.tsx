@@ -4,7 +4,7 @@ import { displayError } from '../components/Notifications';
 
 import ActivityCard from '../components/Activities/ActivityCard';
 import { ActivityResource } from '../views/ActivityView';
-import { labelOf } from '../../../shared/utils';
+import { isParentLink } from '../utils';
 
 const SignleActivityContainer: React.FC<{
   projectLabel: string;
@@ -18,21 +18,10 @@ const SignleActivityContainer: React.FC<{
   React.useEffect(() => {
     nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(activityId))
       .then(response => setActivity(response as ActivityResource))
-      .catch(error => console.log('error'));
+      .catch(error => displayError(error, 'Failed to load the activity'));
 
     fetchChildren();
   }, []);
-
-  const isChild = (link: any) => {
-    if (Array.isArray(link.paths)) {
-      return (
-        link.paths.filter((path: string) => labelOf(path) === 'hasParent')
-          .length > 0
-      );
-    } else {
-      return labelOf(link.paths) === 'hasParent';
-    }
-  };
 
   const fetchChildren = () => {
     nexus.Resource.links(
@@ -44,7 +33,7 @@ const SignleActivityContainer: React.FC<{
       .then(response =>
         Promise.all(
           response._results
-            .filter(link => isChild(link))
+            .filter(link => isParentLink(link))
             .map(link => {
               return nexus.Resource.get(
                 orgLabel,

@@ -11,6 +11,7 @@ import { displayError } from '../components/Notifications';
 import { Status } from '../components/StatusIcon';
 import SingleActivityContainer from '../containers/SingleActivityContainer';
 import ActivityInfoContainer from '../containers/ActivityInfoContainer';
+import { isParentLink } from '../utils';
 
 import './ActivityView.less';
 
@@ -75,7 +76,9 @@ const ActivityView: React.FC = () => {
       encodeURIComponent(activityId),
       'incoming'
     )
-      .then(response => setActivities(response._results))
+      .then(response =>
+        setActivities(response._results.filter(link => isParentLink(link)))
+      )
       .catch(error => displayError(error, 'Failed to load activities'));
   };
 
