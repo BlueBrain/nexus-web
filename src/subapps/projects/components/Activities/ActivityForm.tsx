@@ -139,8 +139,14 @@ const ActivityForm: React.FC<{
         summary,
         dueDate,
         status,
-        wasInformedBy: informedBy,
+        informedBy,
       };
+
+      if (informedBy) {
+        data.wasInformedBy = {
+          '@id': informedBy,
+        };
+      }
 
       onSubmit(data);
     }

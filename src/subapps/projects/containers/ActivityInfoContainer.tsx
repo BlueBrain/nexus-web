@@ -61,9 +61,14 @@ const ActivityInfoContainer: React.FC<{
 
   const updateActivity = (data: any) => {
     const parent = originalPayload && originalPayload.hasParent;
+    const informedBy = originalPayload && originalPayload.wasInformedBy;
 
     if (parent && parent['@id']) {
       data.hasParent = parent;
+    }
+
+    if (informedBy && informedBy['@id']) {
+      data.wasInformedBy = informedBy;
     }
 
     nexus.Resource.update(
