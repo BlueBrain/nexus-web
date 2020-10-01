@@ -213,7 +213,9 @@ const ActivityForm: React.FC<{
             <Item label="Informed By">
               {informedByLabel ? (
                 <Select disabled value={informedByLabel}>
-                  <Select.Option value={informedBy}>{informedBy}</Select.Option>
+                  <Select.Option value={informedByLabel}>
+                    {informedByLabel}
+                  </Select.Option>
                 </Select>
               ) : (
                 <Select onChange={onChangeInformedBy} value={informedBy}>
