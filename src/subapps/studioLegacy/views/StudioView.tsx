@@ -4,9 +4,36 @@ import { Link } from 'react-router-dom';
 import StudioContainer from '../containers/StudioContainer';
 import WorkspaceList from '../containers/WorkspaceListContainer';
 import DashboardList from '../containers/DashboardListContainer';
+import useQueryString from '../../../shared/hooks/useQueryString';
+
+type StudioContextType = {
+  orgLabel: string;
+  projectLabel: string;
+  studioId: string;
+  workspaceId?: string|undefined,
+  dashboardId?: string|undefined
+}
+
+export const StudioContext = React.createContext<StudioContextType>({
+  orgLabel: '',
+  projectLabel: '',
+  studioId: ''
+});
 
 const StudioView: React.FunctionComponent<{}> = () => {
   const { orgLabel, projectLabel, studioId } = useParams();
+  const [queryParams, setQueryString] = useQueryString();
+  const { workspaceId, dashboardId } = queryParams;
+  const contextValue = {
+    workspaceId,
+    dashboardId,
+    orgLabel : orgLabel as string,
+    projectLabel: projectLabel as string,
+    studioId: studioId as string
+  };
+
+  
+
 
   return (
     <>
@@ -24,39 +51,12 @@ const StudioView: React.FunctionComponent<{}> = () => {
         </div>
       </div>
       <div className="studio-view">
-        {orgLabel && projectLabel && studioId && (
-          <StudioContainer
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
-            studioId={studioId}
-            workspaceListComponent={({
-              workspaceIds,
-              reloadWorkspaces,
-              studioResource,
-            }) => {
-              return (
-                <WorkspaceList
-                  orgLabel={orgLabel}
-                  projectLabel={projectLabel}
-                  workspaceIds={workspaceIds}
-                  studioResource={studioResource}
-                  onListUpdate={reloadWorkspaces}
-                  dashboardListComponent={({ dashboards, workspaceId }) => {
-                    return (
-                      <DashboardList
-                        orgLabel={orgLabel}
-                        projectLabel={projectLabel}
-                        dashboards={dashboards}
-                        workspaceId={workspaceId}
-                        refreshList={reloadWorkspaces}
-                      />
-                    );
-                  }}
-                />
-              );
-            }}
-          />
-        )}
+        <StudioContext.Provider value={contextValue} >
+          {orgLabel && projectLabel && studioId && (
+            <StudioContainer
+            />
+          )}
+        </StudioContext.Provider>
       </div>
     </>
   );

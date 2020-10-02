@@ -3,6 +3,7 @@ import { Resource, DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import TabList from '../../../shared/components/Tabs/TabList';
 import { Button } from 'antd';
+import { StudioContext } from '../views/StudioView';
 import DashboardResultsContainer from './DashboardResultsContainer';
 import DashboardEditorContainer from './DashBoardEditor/DashboardEditorContainer';
 import CreateDashboardContainer from './DashBoardEditor/CreateDashboardContainer';
@@ -16,21 +17,16 @@ export type Dashboard = {
 
 interface DashboardListProps {
   dashboards: Dashboard[];
-  orgLabel: string;
-  projectLabel: string;
-  workspaceId: string;
   refreshList?(): void;
 }
 
 const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   dashboards,
-  orgLabel,
-  projectLabel,
-  workspaceId,
   refreshList,
 }) => {
+  const studioContext = React.useContext(StudioContext);
+  const { orgLabel, projectLabel, studioId, workspaceId, dashboardId } = studioContext;
   const [queryParams, setQueryString] = useQueryString();
-  const { dashboardId } = queryParams;
   const permissionsPath = `/${orgLabel}/${projectLabel}`;
   const [dashboardResources, setDashboardResources] = React.useState<
     Resource[]
@@ -133,7 +129,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     <CreateDashboardContainer
       orgLabel={orgLabel}
       projectLabel={projectLabel}
-      workspaceId={workspaceId}
+      workspaceId={workspaceId as string}
       onSuccess={refreshList}
     />
   );
