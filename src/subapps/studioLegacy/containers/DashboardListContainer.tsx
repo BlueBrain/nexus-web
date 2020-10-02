@@ -25,7 +25,13 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   refreshList,
 }) => {
   const studioContext = React.useContext(StudioContext);
-  const { orgLabel, projectLabel, studioId, workspaceId, dashboardId } = studioContext;
+  const {
+    orgLabel,
+    projectLabel,
+    studioId,
+    workspaceId,
+    dashboardId,
+  } = studioContext;
   const [queryParams, setQueryString] = useQueryString();
   const permissionsPath = `/${orgLabel}/${projectLabel}`;
   const [dashboardResources, setDashboardResources] = React.useState<

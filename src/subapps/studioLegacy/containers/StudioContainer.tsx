@@ -25,7 +25,6 @@ function getDestinationParam(): string {
   return destinationPath ? `?destination=${destinationPath}` : '';
 }
 
-
 type StudioResource = Resource<{
   label: string;
   description?: string;
@@ -41,7 +40,13 @@ const StudioContainer: React.FunctionComponent = () => {
   const nexus = useNexusContext();
   const history = useHistory();
   const studioContext = React.useContext(StudioContext);
-  const { orgLabel, projectLabel, studioId, workspaceId, dashboardId } = studioContext;
+  const {
+    orgLabel,
+    projectLabel,
+    studioId,
+    workspaceId,
+    dashboardId,
+  } = studioContext;
 
   React.useEffect(() => {
     fetchAndSetupStudio();
@@ -139,7 +144,7 @@ const StudioContainer: React.FunctionComponent = () => {
             workspaceIds={workspaceIds}
             studioResource={studioResource}
             onListUpdate={reloadWorkspaces}
-            />
+          />
         </>
       ) : (
         <Empty />

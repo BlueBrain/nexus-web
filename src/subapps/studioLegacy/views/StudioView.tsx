@@ -10,14 +10,14 @@ type StudioContextType = {
   orgLabel: string;
   projectLabel: string;
   studioId: string;
-  workspaceId?: string|undefined,
-  dashboardId?: string|undefined
-}
+  workspaceId?: string | undefined;
+  dashboardId?: string | undefined;
+};
 
 export const StudioContext = React.createContext<StudioContextType>({
   orgLabel: '',
   projectLabel: '',
-  studioId: ''
+  studioId: '',
 });
 
 const StudioView: React.FunctionComponent<{}> = () => {
@@ -27,13 +27,10 @@ const StudioView: React.FunctionComponent<{}> = () => {
   const contextValue = {
     workspaceId,
     dashboardId,
-    orgLabel : orgLabel as string,
+    orgLabel: orgLabel as string,
     projectLabel: projectLabel as string,
-    studioId: studioId as string
+    studioId: studioId as string,
   };
-
-  
-
 
   return (
     <>
@@ -51,11 +48,8 @@ const StudioView: React.FunctionComponent<{}> = () => {
         </div>
       </div>
       <div className="studio-view">
-        <StudioContext.Provider value={contextValue} >
-          {orgLabel && projectLabel && studioId && (
-            <StudioContainer
-            />
-          )}
+        <StudioContext.Provider value={contextValue}>
+          {orgLabel && projectLabel && studioId && <StudioContainer />}
         </StudioContext.Provider>
       </div>
     </>
