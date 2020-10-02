@@ -40,13 +40,7 @@ const StudioContainer: React.FunctionComponent = () => {
   const nexus = useNexusContext();
   const history = useHistory();
   const studioContext = React.useContext(StudioContext);
-  const {
-    orgLabel,
-    projectLabel,
-    studioId,
-    workspaceId,
-    dashboardId,
-  } = studioContext;
+  const { orgLabel, projectLabel, studioId } = studioContext;
 
   React.useEffect(() => {
     fetchAndSetupStudio();
@@ -125,7 +119,11 @@ const StudioContainer: React.FunctionComponent = () => {
   };
 
   const editButton = (
-    <EditStudio studio={studioResource} onSave={updateStudio} />
+    <EditStudio
+      key={Math.random()}
+      studio={studioResource}
+      onSave={updateStudio}
+    />
   );
   return (
     <>

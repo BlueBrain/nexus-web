@@ -5,7 +5,7 @@ import TabElement from './TabElement';
 
 const { TabPane } = Tabs;
 
-type TabItem = {
+export type TabItem = {
   id: string;
   label: string;
   description: string;

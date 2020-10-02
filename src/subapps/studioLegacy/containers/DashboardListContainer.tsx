@@ -25,13 +25,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   refreshList,
 }) => {
   const studioContext = React.useContext(StudioContext);
-  const {
-    orgLabel,
-    projectLabel,
-    studioId,
-    workspaceId,
-    dashboardId,
-  } = studioContext;
+  const { orgLabel, projectLabel, workspaceId, dashboardId } = studioContext;
   const [queryParams, setQueryString] = useQueryString();
   const permissionsPath = `/${orgLabel}/${projectLabel}`;
   const [dashboardResources, setDashboardResources] = React.useState<
@@ -59,11 +53,9 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     );
     setSelectedDashboardResourcesIndex(dashboardResourcesIndex);
     setSelectedDashboardIndex(dashboardsIndex);
-
-    const id = dashboard['@id'];
     setQueryString({
       ...queryParams,
-      dashboardId: id,
+      dashboardId,
     });
   };
 
@@ -116,7 +108,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
 
   React.useEffect(() => {
     fetchAndSetupDashboards();
-  }, [orgLabel, projectLabel, dashboardId, JSON.stringify(dashboards)]);
+  }, [dashboards]);
 
   const handleElementClick = (stringifiedIndex: string) => {
     const dashboard = dashboardResources[Number(stringifiedIndex)];

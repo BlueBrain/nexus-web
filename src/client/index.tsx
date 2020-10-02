@@ -2,7 +2,15 @@ import * as React from 'react';
 import { Store } from 'redux';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  useLocation,
+  useHistory,
+  useParams,
+  Switch,
+} from 'react-router-dom';
+import * as queryString from 'query-string';
 import { ConnectedRouter } from 'connected-react-router';
 import { UserManager } from 'oidc-client';
 import { createBrowserHistory } from 'history';
@@ -24,6 +32,47 @@ import App from '../shared/App';
 import configureStore from '../shared/store';
 import { RootState } from '../shared/store/reducers';
 import { fetchIdentities, fetchRealms } from '../shared/store/actions/auth';
+
+const View: React.FunctionComponent<{}> = () => {
+  const [count, setCount] = React.useState<number>(0);
+  const location = useLocation();
+  const history = useHistory();
+  const params = useParams();
+  type QueryParams = {
+    [key: string]: any;
+  };
+
+  const queryParams: QueryParams = queryString.parse(location.search) || {};
+  React.useEffect(() => {
+    setCount(Math.random());
+  }, [queryParams.X]);
+  return (
+    <>
+      <div>{count}</div>
+      <div>{params.toString()}</div>
+      <button
+        onClick={() => {
+          history.push(`${location.pathname}?X=Y&f=${Math.random()}`);
+        }}
+      >
+        Click me
+      </button>
+    </>
+  );
+};
+
+const App2 = () => {
+  console.log('re-render');
+  return (
+    <div className="App">
+      <header className="App-header">
+        <Switch>
+          <Route key={'1'} path={'/V1/:yo'} component={View} />
+        </Switch>
+      </header>
+    </div>
+  );
+};
 
 // The app base URL
 const rawBase: string = (window as any)['__BASE__'] || '/';
@@ -188,11 +237,12 @@ if (module.hot) {
       .default;
     ReactDOM.render(
       <Provider store={store}>
-        <BrowserRouter basename={base}>
+        <ConnectedRouter history={history}>
           <NexusProvider nexusClient={nexus}>
             <NextApp />
+            <App2 />
           </NexusProvider>
-        </BrowserRouter>
+        </ConnectedRouter>
       </Provider>,
       document.getElementById('app')
     );

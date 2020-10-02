@@ -2,9 +2,10 @@ import * as React from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import StudioContainer from '../containers/StudioContainer';
-import WorkspaceList from '../containers/WorkspaceListContainer';
-import DashboardList from '../containers/DashboardListContainer';
 import useQueryString from '../../../shared/hooks/useQueryString';
+import { useNexusContext } from '@bbp/react-nexus';
+import { Resource } from '@bbp/nexus-sdk';
+import StudioHeader from '../components/StudioHeader';
 
 type StudioContextType = {
   orgLabel: string;
@@ -13,6 +14,11 @@ type StudioContextType = {
   workspaceId?: string | undefined;
   dashboardId?: string | undefined;
 };
+type StudioResource = Resource<{
+  label: string;
+  description?: string;
+  workspaces: [string];
+}>;
 
 export const StudioContext = React.createContext<StudioContextType>({
   orgLabel: '',
@@ -24,6 +30,23 @@ const StudioView: React.FunctionComponent<{}> = () => {
   const { orgLabel, projectLabel, studioId } = useParams();
   const [queryParams, setQueryString] = useQueryString();
   const { workspaceId, dashboardId } = queryParams;
+  const nexus = useNexusContext();
+  const [
+    studioResource,
+    setStudioResource,
+  ] = React.useState<StudioResource | null>(null);
+
+  React.useEffect(() => {
+    if (orgLabel && projectLabel && studioId) {
+      nexus.Resource.get(orgLabel, projectLabel, studioId).then(
+        (value: any) => {
+          const studioResource: StudioResource = value as StudioResource;
+          setStudioResource(studioResource);
+        }
+      );
+    }
+  }, []);
+
   const contextValue = {
     workspaceId,
     dashboardId,
@@ -49,7 +72,7 @@ const StudioView: React.FunctionComponent<{}> = () => {
       </div>
       <div className="studio-view">
         <StudioContext.Provider value={contextValue}>
-          {orgLabel && projectLabel && studioId && <StudioContainer />}
+          <StudioContainer />
         </StudioContext.Provider>
       </div>
     </>

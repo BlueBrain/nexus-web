@@ -29,13 +29,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
 }) => {
   const [queryParams, setQueryString] = useQueryString();
   const studioContext = React.useContext(StudioContext);
-  const {
-    orgLabel,
-    projectLabel,
-    studioId,
-    workspaceId,
-    dashboardId,
-  } = studioContext;
+  const { orgLabel, projectLabel, workspaceId } = studioContext;
   const permissionsPath = `/${orgLabel}/${projectLabel}`;
   const [workspaces, setWorkspaces] = React.useState<Resource<any>[]>([]);
   const [selectedWorkspace, setSelectedWorkspace] = React.useState<
@@ -104,6 +98,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
 
   const tabAction = (
     <AddWorkspaceContainer
+      key={studioResource['@id']}
       orgLabel={orgLabel}
       projectLabel={projectLabel}
       studio={studioResource}
@@ -114,6 +109,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   const editButtonWrapper = (id: string) => {
     const editButton = (
       <Button
+        key={id}
         className="studio-edit-button"
         type="link"
         size="small"
@@ -152,7 +148,11 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
       >
         {selectedWorkspace ? (
           <div className="workspace">
-            <DashboardList dashboards={dashboards} refreshList={() => {}} />{' '}
+            <DashboardList
+              key={workspaceId}
+              dashboards={dashboards}
+              refreshList={() => {}}
+            />{' '}
           </div>
         ) : null}
       </TabList>
