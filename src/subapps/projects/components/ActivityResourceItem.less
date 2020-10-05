@@ -4,6 +4,25 @@
   border: 1px solid @border-color-base;
   border-radius: 10px;
   box-shadow: @box-shadow-base;
-  padding: 0 0.7em;
+  padding: 0.7em;
   font-size: 13px;
+  margin-bottom: 5px;
+
+  &__permission {
+    margin-left: 15px;
+    color: @blocked-color;
+  }
+
+  &__title {
+    font-weight: 500;
+  }
+
+  &__title,
+  &__tag {
+    margin: 0;
+  }
+
+  &__description {
+    margin: 0 0 5px 0;
+  }
 }
