@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Collapse } from 'antd';
 
-import ActionButton from '../components/ActionButton';
+import ActionButton from './ActionButton';
 
 const { Panel } = Collapse;
 
 import './ResourcesPane.less';
 
-const ResourcesPane: React.FC<{}> = () => {
+const ResourcesPane: React.FC<{}> = ({ children }) => {
   return (
     <div className="resources-pane">
       <Collapse>
@@ -26,7 +26,7 @@ const ResourcesPane: React.FC<{}> = () => {
           }
           key="1"
         >
-          <h2>Resources</h2>
+          <div className="resources-pane__content">{children}</div>
         </Panel>
       </Collapse>
     </div>
