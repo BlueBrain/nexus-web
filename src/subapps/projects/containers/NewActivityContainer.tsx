@@ -18,6 +18,9 @@ export type ActivityMetadata = {
   hasParent?: {
     '@id': string;
   };
+  wasInformedBy?: {
+    '@id': string;
+  };
 };
 
 const NewActivityContainer: React.FC<{
@@ -26,12 +29,17 @@ const NewActivityContainer: React.FC<{
   onSuccess(): void;
   parentActivityLabel?: string;
   parentActivitySelfUrl?: string;
+  siblings?: {
+    name: string;
+    '@id': string;
+  }[];
 }> = ({
   orgLabel,
   projectLabel,
   onSuccess,
   parentActivityLabel,
   parentActivitySelfUrl,
+  siblings,
 }) => {
   const nexus = useNexusContext();
 
@@ -89,6 +97,7 @@ const NewActivityContainer: React.FC<{
           onSubmit={submitActivity}
           busy={busy}
           parentLabel={parentActivityLabel}
+          siblings={siblings}
         />
       </Modal>
     </>
