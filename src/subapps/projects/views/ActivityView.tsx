@@ -192,7 +192,14 @@ const ActivityView: React.FC = () => {
           />
         ))}
       </ActivitiesBoard>
-      <ActivityResourcesContainer />
+      {activity && (
+        <ActivityResourcesContainer
+          orgLabel={orgLabel}
+          projectLabel={projectLabel}
+          // onUpdate={waitAntReloadActivities}
+          activityId={activity && activity['@id']}
+        />
+      )}
     </div>
   );
 };

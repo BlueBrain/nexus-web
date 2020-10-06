@@ -1,37 +1,45 @@
 import * as React from 'react';
+import { useNexusContext } from '@bbp/react-nexus';
+import { Resource } from '@bbp/nexus-sdk';
+import { displayError } from '../components/Notifications';
 
 import ResourcesPane from '../components/ResourcesPane';
 import ResourcesList from '../components/ResourcesList';
 
-const ActivityResourcesContainer: React.FC<{}> = () => {
-  const resources = [
-    {
-      '@id': 'test',
-      name: 'Single Cell Electrical Modelling',
-      '@type': 'FusionNote',
-      description:
-        'BBP Internal Documentation about Single Cell Electrical Modelling',
-      permissions: 'read only',
-    },
-    {
-      '@id': 'test-2',
-      name: 'Validation_Canvas.ipynb',
-      '@type': 'FusionCode',
-      description:
-        'Template for validating the the electrical models through a test set (a set of morphologies not used for training).',
-    },
-    {
-      '@id': 'test-3',
-      name: 'BluePyMM_Canvas.ipynb',
-      '@type': 'FusionCode',
-      description:
-        'Template for testing different morphologies on the electrical models.',
-    },
-  ];
+const ActivityResourcesContainer: React.FC<{
+  orgLabel: string;
+  projectLabel: string;
+  activityId: string;
+}> = ({ orgLabel, projectLabel, activityId }) => {
+  const nexus = useNexusContext();
+  const [resources, setResources] = React.useState<Resource[]>();
+
+  React.useEffect(() => {
+    nexus.Resource.links(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(activityId),
+      'outgoing'
+    )
+      .then(response => {
+        Promise.all(
+          response._results.map((activity: any) => {
+            return nexus.Resource.get(
+              orgLabel,
+              projectLabel,
+              encodeURIComponent(activity['@id'])
+            );
+          })
+        )
+          .then(response => setResources(response as Resource[]))
+          .catch(error => displayError(error, 'An error occurred'));
+      })
+      .catch(error => displayError(error, 'An error occurred'));
+  }, []);
 
   return (
     <ResourcesPane>
-      <ResourcesList resources={resources} />
+      {resources && <ResourcesList resources={resources} />}
     </ResourcesPane>
   );
 };

@@ -1,9 +1,11 @@
 import * as React from 'react';
+import { Resource } from '@bbp/nexus-sdk';
+
 import ActivityResourceItem from './ActivityResourceItem';
 
 import './ResourcesList.less';
 
-const ResourcesList: React.FC<{ resources: any[] }> = ({ resources }) => {
+const ResourcesList: React.FC<{ resources: Resource[] }> = ({ resources }) => {
   return (
     <div className="resources-list">
       <div className="resources-list__controls">
