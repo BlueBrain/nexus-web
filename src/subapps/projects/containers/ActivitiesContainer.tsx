@@ -6,15 +6,22 @@ import fusionConfig from '../config';
 import { displayError } from '../components/Notifications';
 import { ActivityResource } from '../views/ActivityView';
 import ActivityCard from '../components/Activities/ActivityCard';
+import ProjectPanel from '../components/ProjectPanel';
 
 const ActivitiesContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
-  refresh: boolean;
-}> = ({ orgLabel, projectLabel, refresh }) => {
+}> = ({ orgLabel, projectLabel }) => {
   const nexus = useNexusContext();
 
   const [activities, setActivities] = React.useState<ActivityResource[]>([]);
+  // switch to trigger activities list update
+  const [refreshActivities, setRefreshActivities] = React.useState<boolean>(
+    false
+  );
+
+  const waitAntReloadActivities = () =>
+    setTimeout(() => setRefreshActivities(!refreshActivities), 3500);
 
   React.useEffect(() => {
     nexus.Resource.list(orgLabel, projectLabel, {
@@ -26,7 +33,7 @@ const ActivitiesContainer: React.FC<{
         fetchActivities(response._results);
       })
       .catch(error => displayError(error, 'An error occurred'));
-  }, [refresh]);
+  }, [refreshActivities]);
 
   const fetchActivities = (activities: any) => {
     Promise.all(
@@ -63,19 +70,32 @@ const ActivitiesContainer: React.FC<{
     };
   });
 
+  const siblings = topLevelActivities.map(sibling => ({
+    name: sibling.name,
+    '@id': sibling._self,
+  }));
+
   return (
-    <ActivitiesBoard>
-      {activities &&
-        activitiesWithChildren.map(activity => (
-          <ActivityCard
-            activity={activity}
-            subactivities={activity.subactivities}
-            key={activity['@id']}
-            projectLabel={projectLabel}
-            orgLabel={orgLabel}
-          />
-        ))}
-    </ActivitiesBoard>
+    <>
+      <ProjectPanel
+        orgLabel={orgLabel}
+        projectLabel={projectLabel}
+        onUpdate={waitAntReloadActivities}
+        siblings={siblings}
+      />
+      <ActivitiesBoard>
+        {activities &&
+          activitiesWithChildren.map(activity => (
+            <ActivityCard
+              activity={activity}
+              subactivities={activity.subactivities}
+              key={activity['@id']}
+              projectLabel={projectLabel}
+              orgLabel={orgLabel}
+            />
+          ))}
+      </ActivitiesBoard>
+    </>
   );
 };
 

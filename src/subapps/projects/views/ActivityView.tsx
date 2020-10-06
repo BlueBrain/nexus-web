@@ -11,6 +11,7 @@ import { displayError } from '../components/Notifications';
 import { Status } from '../components/StatusIcon';
 import SingleActivityContainer from '../containers/SingleActivityContainer';
 import ActivityInfoContainer from '../containers/ActivityInfoContainer';
+import { isParentLink } from '../utils';
 
 import './ActivityView.less';
 
@@ -24,6 +25,9 @@ export type ActivityResource = Resource<{
   description?: string;
   summary?: string;
   dueDate?: string;
+  wasInformedBy?: {
+    '@id': string;
+  };
 }>;
 
 type BreadcrumbItem = {
@@ -47,6 +51,9 @@ const ActivityView: React.FC = () => {
   const [refreshActivities, setRefreshActivities] = React.useState<boolean>(
     false
   );
+  const [siblings, setSiblings] = React.useState<
+    { name: string; '@id': string }[]
+  >([]);
 
   const projectLabel = match?.params.projectLabel || '';
   const orgLabel = match?.params.orgLabel || '';
@@ -75,7 +82,28 @@ const ActivityView: React.FC = () => {
       encodeURIComponent(activityId),
       'incoming'
     )
-      .then(response => setActivities(response._results))
+      .then(response => {
+        Promise.all(
+          response._results
+            .filter(link => isParentLink(link))
+            .map(activity => {
+              return nexus.Resource.get(
+                orgLabel,
+                projectLabel,
+                encodeURIComponent(activity['@id'])
+              );
+            })
+        )
+          .then(response => {
+            const children = response as ActivityResource[];
+
+            setActivities(children);
+            setSiblings(
+              children.map(child => ({ name: child.name, '@id': child._self }))
+            );
+          })
+          .catch(error => displayError(error, 'Failed to load activities'));
+      })
       .catch(error => displayError(error, 'Failed to load activities'));
   };
 
@@ -140,6 +168,7 @@ const ActivityView: React.FC = () => {
         onUpdate={waitAntReloadActivities}
         activityLabel={activity && activity.name}
         activitySelfUrl={activity && activity._self}
+        siblings={siblings}
       />
       <div className="activity-view__panel">
         <Breadcrumbs crumbs={breadcrumbs} />
@@ -158,7 +187,7 @@ const ActivityView: React.FC = () => {
             key={`activity-${subactivity['@id']}`}
             orgLabel={orgLabel}
             projectLabel={projectLabel}
-            activityId={subactivity['@id']}
+            activity={subactivity}
           />
         ))}
       </ActivitiesBoard>

@@ -26,6 +26,11 @@ const ActivityForm: React.FC<{
   layout?: 'vertical' | 'horisontal';
   title?: string;
   activity?: ActivityResource;
+  informedByLabel?: string;
+  siblings?: {
+    name: string;
+    '@id': string;
+  }[];
 }> = ({
   onClickCancel,
   onSubmit,
@@ -34,6 +39,8 @@ const ActivityForm: React.FC<{
   layout,
   title,
   activity,
+  informedByLabel,
+  siblings,
 }) => {
   const [name, setName] = React.useState<string>(
     (activity && activity.name) || ''
@@ -55,6 +62,7 @@ const ActivityForm: React.FC<{
   const [descriptionError, setDescriptionError] = React.useState<boolean>(
     false
   );
+  const [informedBy, setInformedBy] = React.useState<string | undefined>();
 
   const formItemLayout =
     layout === 'vertical'
@@ -119,6 +127,10 @@ const ActivityForm: React.FC<{
     setDateError(false);
   };
 
+  const onChangeInformedBy = (selected: string) => {
+    setInformedBy(selected);
+  };
+
   const onClickSubmit = () => {
     if (isValidInput()) {
       const data: any = {
@@ -127,7 +139,14 @@ const ActivityForm: React.FC<{
         summary,
         dueDate,
         status,
+        informedBy,
       };
+
+      if (informedBy) {
+        data.wasInformedBy = {
+          '@id': informedBy,
+        };
+      }
 
       onSubmit(data);
     }
@@ -187,16 +206,37 @@ const ActivityForm: React.FC<{
               />
             </Item>
             <Item label="Parent Activity">
-              <Select defaultValue="disabled" disabled>
-                <Select.Option value="disabled">{parentLabel}</Select.Option>
+              <Select value={parentLabel} disabled>
+                <Select.Option value={parentLabel}>{parentLabel}</Select.Option>
               </Select>
             </Item>
-            <Item label="Input Activity">
-              <Select defaultValue="disabled" disabled>
-                <Select.Option value="disabled">Disabled</Select.Option>
-              </Select>
+            <Item label="Informed By">
+              {informedByLabel ? (
+                <Select disabled value={informedByLabel}>
+                  <Select.Option value={informedByLabel}>
+                    {informedByLabel}
+                  </Select.Option>
+                </Select>
+              ) : (
+                <Select onChange={onChangeInformedBy} value={informedBy}>
+                  {siblings && siblings.length > 0 ? (
+                    siblings.map(sibling => (
+                      <Select.Option
+                        value={sibling['@id']}
+                        key={`sibling-${sibling['@id']}`}
+                      >
+                        {sibling.name}
+                      </Select.Option>
+                    ))
+                  ) : (
+                    <Select.Option value={informedBy}>
+                      {informedBy}
+                    </Select.Option>
+                  )}
+                </Select>
+              )}
             </Item>
-            <Item label="Output Activity">
+            <Item label="Informs">
               <Select defaultValue="disabled" disabled>
                 <Select.Option value="disabled">Disabled</Select.Option>
               </Select>
