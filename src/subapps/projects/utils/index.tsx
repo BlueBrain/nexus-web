@@ -16,3 +16,19 @@ export const isParentLink = (link: ResourceLink) => {
 
   return labelOf(link.paths) === 'hasParent';
 };
+
+export const isActivityResource = (link: ResourceLink) => {
+  if (Array.isArray(link.paths)) {
+    return (
+      link.paths.filter(
+        (path: string) =>
+          labelOf(path) === 'used' || labelOf(path) === 'wasAssociatedWith'
+      ).length > 0
+    );
+  }
+
+  return (
+    labelOf(link.paths) === 'used' ||
+    labelOf(link.paths) === 'wasAssociatedWith'
+  );
+};
