@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { SubApp } from '..';
 import StudioView from './views/StudioView';
-import StudioTestView from './views/StudioTestView';
 import StudioAdminView from './views/StudioAdminView';
 import StudioListView from './views/StudioListView';
 
@@ -53,10 +52,6 @@ const StudioLegacy: SubApp = () => {
       {
         path: '/:orgLabel/:projectLabel/studios/:studioId',
         component: StudioLegacySubappProviderHOC(StudioView),
-      },
-      {
-        path: '/:orgLabel/:projectLabel/studios-test/:studioId',
-        component: StudioLegacySubappProviderHOC(StudioTestView),
       },
     ],
   };

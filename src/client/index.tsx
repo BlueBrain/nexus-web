@@ -33,47 +33,6 @@ import configureStore from '../shared/store';
 import { RootState } from '../shared/store/reducers';
 import { fetchIdentities, fetchRealms } from '../shared/store/actions/auth';
 
-const View: React.FunctionComponent<{}> = () => {
-  const [count, setCount] = React.useState<number>(0);
-  const location = useLocation();
-  const history = useHistory();
-  const params = useParams();
-  type QueryParams = {
-    [key: string]: any;
-  };
-
-  const queryParams: QueryParams = queryString.parse(location.search) || {};
-  React.useEffect(() => {
-    setCount(Math.random());
-  }, [queryParams.X]);
-  return (
-    <>
-      <div>{count}</div>
-      <div>{params.toString()}</div>
-      <button
-        onClick={() => {
-          history.push(`${location.pathname}?X=Y&f=${Math.random()}`);
-        }}
-      >
-        Click me
-      </button>
-    </>
-  );
-};
-
-const App2 = () => {
-  console.log('re-render');
-  return (
-    <div className="App">
-      <header className="App-header">
-        <Switch>
-          <Route key={'1'} path={'/V1/:yo'} component={View} />
-        </Switch>
-      </header>
-    </div>
-  );
-};
-
 // The app base URL
 const rawBase: string = (window as any)['__BASE__'] || '/';
 // remove trailing slash
@@ -240,7 +199,6 @@ if (module.hot) {
         <ConnectedRouter history={history}>
           <NexusProvider nexusClient={nexus}>
             <NextApp />
-            <App2 />
           </NexusProvider>
         </ConnectedRouter>
       </Provider>,
