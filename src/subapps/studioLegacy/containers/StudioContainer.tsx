@@ -119,11 +119,7 @@ const StudioContainer: React.FunctionComponent = () => {
   };
 
   const editButton = (
-    <EditStudio
-      key={Math.random()}
-      studio={studioResource}
-      onSave={updateStudio}
-    />
+    <EditStudio key={studioId} studio={studioResource} onSave={updateStudio} />
   );
   return (
     <>

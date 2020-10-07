@@ -2,15 +2,6 @@ import * as React from 'react';
 import { Store } from 'redux';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import {
-  BrowserRouter as Router,
-  Route,
-  useLocation,
-  useHistory,
-  useParams,
-  Switch,
-} from 'react-router-dom';
-import * as queryString from 'query-string';
 import { ConnectedRouter } from 'connected-react-router';
 import { UserManager } from 'oidc-client';
 import { createBrowserHistory } from 'history';
