@@ -151,7 +151,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
             <DashboardList
               key={workspaceId}
               dashboards={dashboards}
-              refreshList={() => {}}
+              refreshList={onListUpdate}
             />{' '}
           </div>
         ) : null}

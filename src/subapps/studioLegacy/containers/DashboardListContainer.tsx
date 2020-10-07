@@ -129,6 +129,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
       projectLabel={projectLabel}
       workspaceId={workspaceId as string}
       onSuccess={refreshList}
+      key={workspaceId}
     />
   );
 
@@ -142,6 +143,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
           handleElementClick(id);
           e.stopPropagation();
         }}
+        key={id}
       >
         Edit
       </Button>
@@ -188,6 +190,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
             <DashboardResultsContainer
               orgLabel={orgLabel}
               projectLabel={projectLabel}
+              key={dashboardId}
               viewId={
                 (dashboards[selectedDashboardIndex] &&
                   dashboards[selectedDashboardIndex].view) ||

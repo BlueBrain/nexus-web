@@ -47,6 +47,7 @@ const TabList: React.FunctionComponent<TabListProps> = ({
                 label={label}
                 description={description}
                 id={id}
+                key={id}
                 editButton={editButton}
               />
             }
