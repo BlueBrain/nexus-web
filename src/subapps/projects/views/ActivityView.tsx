@@ -192,6 +192,7 @@ const ActivityView: React.FC = () => {
           />
         ))}
       </ActivitiesBoard>
+
       {activity && (
         <ActivityResourcesContainer
           orgLabel={orgLabel}
