@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { Route, Switch } from 'react-router-dom';
 import GalleryView from './views/GalleryView';
 import routes from '../shared/routes';
-import NotFound from './views/404';
 import FusionMainLayout, { SubAppProps } from './layouts/FusionMainLayout';
 import SubApps, { SubAppObject, SubApp } from '../subapps/index';
+import SubAppsView from './views/SubAppsView';
 import './App.less';
 
 const App: React.FC = () => {
@@ -43,12 +42,7 @@ const App: React.FC = () => {
           icon: subApp.icon,
         }))}
       >
-        <Switch>
-          {routesWithSubApps.map(({ path, component: C, ...rest }) => (
-            <Route key={path as string} path={path} component={C} {...rest} />
-          ))}
-          <Route component={NotFound} />
-        </Switch>
+        <SubAppsView routesWithSubApps={routesWithSubApps} />
         <GalleryView />
       </FusionMainLayout>
     </>
