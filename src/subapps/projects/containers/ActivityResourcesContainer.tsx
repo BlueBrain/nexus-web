@@ -5,7 +5,7 @@ import { Resource } from '@bbp/nexus-sdk';
 import { displayError } from '../components/Notifications';
 import ResourcesPane from '../components/ResourcesPane';
 import ResourcesList from '../components/ResourcesList';
-import { isActivityResource } from '../utils';
+import { isActivityResourceLink } from '../utils';
 
 const ActivityResourcesContainer: React.FC<{
   orgLabel: string;
@@ -25,7 +25,7 @@ const ActivityResourcesContainer: React.FC<{
       .then(response => {
         Promise.all(
           response._results
-            .filter(link => isActivityResource(link))
+            .filter(link => isActivityResourceLink(link))
             .map((activity: any) => {
               return nexus.Resource.get(
                 orgLabel,
