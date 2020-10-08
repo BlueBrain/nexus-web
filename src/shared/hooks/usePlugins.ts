@@ -34,7 +34,7 @@ export default function usePlugins() {
   // This is to fix "Can't perform a React state update on an unmounted component" error.
   // This error is an indication of memory leak.
 
-  const abort = new AbortController();
+  const abortController = new AbortController();
   React.useEffect(() => {
     if (pluginsPath) {
       setManifest({
@@ -42,7 +42,9 @@ export default function usePlugins() {
         error: null,
         data: null,
       });
-      fetch(`${pluginsPath as string}/manifest.json`)
+      fetch(`${pluginsPath as string}/manifest.json`, {
+        signal: abortController.signal,
+      })
         .then(resp => resp.json())
         .then(manifest =>
           setManifest({
@@ -62,7 +64,7 @@ export default function usePlugins() {
             loading: false,
             data: null,
           });
-          return () => abort.abort();
+          return () => abortController.abort();
         });
     }
   }, []);
