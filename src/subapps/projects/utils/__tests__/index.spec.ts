@@ -1,4 +1,4 @@
-import { isParentLink } from '..';
+import { isParentLink, isActivityResourceLink } from '..';
 import { ResourceLink } from '@bbp/nexus-sdk';
 
 const linkToSibling: ResourceLink = {
@@ -45,9 +45,57 @@ const linkToParent: ResourceLink = {
   _updatedBy: 'stafeeva',
 };
 
-describe('isChild', () => {
+const linkToActivityResource: ResourceLink = {
+  '@id': 'ff161f5a-6e77-48d7-b7f6-fe5fa5a97382',
+  '@type': 'FusionCode',
+  paths: [
+    'https://staging.nexus.ocp.bbp.epfl.ch/v1/vocabs/fusion2-stafeeva/89898/wasAssociatedWith',
+  ],
+  _constrainedBy:
+    'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+  _createdAt: '2020-10-06T14:57:20.064Z',
+  _createdBy: 'me',
+  _deprecated: false,
+  _project:
+    'https://staging.nexus.ocp.bbp.epfl.ch/v1/projects/fusion2-stafeeva/89898',
+  _rev: 2,
+  _self: '...',
+  _updatedAt: '2020-10-06T15:01:49.024Z',
+  _updatedBy:
+    'https://staging.nexus.ocp.bbp.epfl.ch/v1/realms/github/users/stafeeva',
+};
+
+const linkToNotes: ResourceLink = {
+  '@id': 'b3c5f79f-278c-4e05-989e-d1fd2aac7793',
+  '@type': 'FusionNote',
+  paths: [
+    'https://staging.nexus.ocp.bbp.epfl.ch/v1/vocabs/fusion2-stafeeva/89898/used',
+  ],
+  _constrainedBy:
+    'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+  _createdAt: '2020-10-06T13:10:44.641Z',
+  _createdBy: 'me',
+  _deprecated: false,
+  _project: '89898',
+  _rev: 1,
+  _self: '...',
+  _updatedAt: '2020-10-06T13:10:44.641Z',
+  _updatedBy:
+    'https://staging.nexus.ocp.bbp.epfl.ch/v1/realms/github/users/stafeeva',
+};
+
+describe('isParent', () => {
   it('should check if it is a link to parent', () => {
     expect(isParentLink(linkToSibling)).toEqual(false);
     expect(isParentLink(linkToParent)).toEqual(true);
+  });
+});
+
+describe('isActivityResource', () => {
+  it('should check if it is a link to an activity resource (notes, code, etc)', () => {
+    expect(isActivityResourceLink(linkToSibling)).toEqual(false);
+    expect(isActivityResourceLink(linkToParent)).toEqual(false);
+    expect(isActivityResourceLink(linkToActivityResource)).toEqual(true);
+    expect(isActivityResourceLink(linkToNotes)).toEqual(true);
   });
 });
