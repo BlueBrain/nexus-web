@@ -30,7 +30,6 @@ const GalleryView: React.FC = () => {
         headers: { Accept: 'application/json' },
       })
       .then((resource: Resource) => {
-        console.log('here ..');
         const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
         // We use history.replace here
         // to replace the /?_self history
