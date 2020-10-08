@@ -16,3 +16,24 @@ export const isParentLink = (link: ResourceLink) => {
 
   return labelOf(link.paths) === 'hasParent';
 };
+
+/**
+ * isActivityResource function - checks if a given link is a code snippet resource or notes
+ * @param {Object}
+ * @returns {boolean}
+ */
+export const isActivityResourceLink = (link: ResourceLink) => {
+  if (Array.isArray(link.paths)) {
+    return (
+      link.paths.filter(
+        (path: string) =>
+          labelOf(path) === 'used' || labelOf(path) === 'wasAssociatedWith'
+      ).length > 0
+    );
+  }
+
+  return (
+    labelOf(link.paths) === 'used' ||
+    labelOf(link.paths) === 'wasAssociatedWith'
+  );
+};
