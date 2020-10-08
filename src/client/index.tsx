@@ -3,6 +3,7 @@ import { Store } from 'redux';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
+import { BrowserRouter } from 'react-router-dom';
 import { UserManager } from 'oidc-client';
 import { createBrowserHistory } from 'history';
 import { createNexusClient } from '@bbp/nexus-sdk';
@@ -187,11 +188,11 @@ if (module.hot) {
       .default;
     ReactDOM.render(
       <Provider store={store}>
-        <ConnectedRouter history={history}>
+        <BrowserRouter basename={base}>
           <NexusProvider nexusClient={nexus}>
             <NextApp />
           </NexusProvider>
-        </ConnectedRouter>
+        </BrowserRouter>
       </Provider>,
       document.getElementById('app')
     );
