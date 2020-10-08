@@ -13,7 +13,7 @@ const ResourcesPane: React.FC<{}> = ({ children }) => {
 
   React.useEffect(() => {
     const parentDiv = document.getElementsByClassName('activity-view')[0];
-    let parentWidth = (parentDiv as HTMLElement).offsetWidth;
+    const parentWidth = (parentDiv as HTMLElement).offsetWidth;
 
     setPaneWidth(parentWidth);
 
@@ -35,7 +35,7 @@ const ResourcesPane: React.FC<{}> = ({ children }) => {
   const onClickAddNotes = (event: any) => {};
 
   return (
-    <div className="resources-pane" style={{ width: paneWidth + 'px' }}>
+    <div className="resources-pane" style={{ width: `${paneWidth}px` }}>
       <Collapse>
         <Panel
           header={
