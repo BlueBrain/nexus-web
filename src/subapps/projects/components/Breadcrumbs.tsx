@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Breadcrumb } from 'antd';
+import { Breadcrumb, Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
 
 import './Breadcrumbs.less';
@@ -16,7 +16,15 @@ const Breadcrumbs: React.FC<{ crumbs: BreadcrumbItem[] }> = ({ crumbs }) => {
         {crumbs.map(item => (
           <Breadcrumb.Item key={item.label}>
             <Link to={item.url}>
-              <span className="breadcrumbs__label">{item.label}</span>
+              {item.label.length > 35 ? (
+                <Tooltip placement="top" title={item.label}>
+                  <span className="breadcrumbs__label">
+                    {`${item.label.slice(0, 35)}...`}
+                  </span>
+                </Tooltip>
+              ) : (
+                <span className="breadcrumbs__label">{item.label}</span>
+              )}
             </Link>
           </Breadcrumb.Item>
         ))}
