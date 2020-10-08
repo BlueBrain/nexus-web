@@ -34,7 +34,7 @@ const ActivityCard: React.FC<{
             {name.length > 40 ? (
               <Tooltip placement="topRight" title={name}>
                 <h3 className="activity-card__name">
-                  {name.slice(0, 40) + '...'}
+                  {`${name.slice(0, 40)}...`}
                 </h3>
               </Tooltip>
             ) : (

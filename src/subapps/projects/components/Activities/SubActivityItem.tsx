@@ -17,7 +17,7 @@ const SubActivityItem: React.FC<{
         {title.length > 25 ? (
           <Tooltip placement="topRight" title={title}>
             <h3 className="sub-activity__title">
-              {title.slice(0, 25) + '...'}
+              {`${title.slice(0, 25)}...`}
             </h3>
           </Tooltip>
         ) : (
