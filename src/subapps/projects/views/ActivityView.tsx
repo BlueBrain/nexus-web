@@ -12,6 +12,7 @@ import { Status } from '../components/StatusIcon';
 import SingleActivityContainer from '../containers/SingleActivityContainer';
 import ActivityInfoContainer from '../containers/ActivityInfoContainer';
 import { isParentLink } from '../utils';
+import ActivityResourcesContainer from '../containers/ActivityResourcesContainer';
 
 import './ActivityView.less';
 
@@ -191,6 +192,15 @@ const ActivityView: React.FC = () => {
           />
         ))}
       </ActivitiesBoard>
+
+      {activity && (
+        <ActivityResourcesContainer
+          orgLabel={orgLabel}
+          projectLabel={projectLabel}
+          // onUpdate={waitAntReloadActivities}
+          activityId={activity && activity['@id']}
+        />
+      )}
     </div>
   );
 };

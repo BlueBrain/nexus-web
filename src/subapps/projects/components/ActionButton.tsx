@@ -19,8 +19,17 @@ const ActionButton: React.FC<{
       buttonIcon = addIcon;
   }
 
+  const onClickActionButton = (event: any) => {
+    event.stopPropagation();
+    onClick();
+  };
+
   return (
-    <button className="action-button" onClick={onClick} type="button">
+    <button
+      className="action-button"
+      onClick={onClickActionButton}
+      type="button"
+    >
       <div className="action-button__body">
         {icon && <img className="action-button__icon" src={buttonIcon} />}
         <span>{title}</span>
