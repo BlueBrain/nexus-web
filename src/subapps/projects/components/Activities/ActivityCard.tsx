@@ -29,10 +29,10 @@ const ActivityCard: React.FC<{
         <div className="activity-card__title">
           <StatusIcon status={status} mini={true} />
           <Link to={`/projects/${orgLabel}/${projectLabel}/${activityId}`}>
-            {name.length > 40 ? (
+            {name.length > 45 ? (
               <Tooltip placement="topRight" title={name}>
                 <h3 className="activity-card__name">
-                  {`${name.slice(0, 40)}...`}
+                  {`${name.slice(0, 45)}...`}
                 </h3>
               </Tooltip>
             ) : (

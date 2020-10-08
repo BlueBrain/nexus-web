@@ -5,7 +5,7 @@
   background-color: rgb(247, 245, 245);
   width: 270px;
   border-radius: 10px;
-  padding: 0.5em 1em;
+  padding: 0.5em;
   box-shadow: @box-shadow-base;
 
   &--blocked {
@@ -66,5 +66,18 @@
   &__list-container {
     max-height: 107px;
     overflow-y: scroll;
+  }
+
+  &__list-container::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  &__list-container::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &__list-container::-webkit-scrollbar-thumb {
+    background-color: @not-started-color;
+    border-radius: 10px;
   }
 }
