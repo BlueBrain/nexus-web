@@ -38,8 +38,6 @@ const ResourcesPane: React.FC<{}> = ({ children }) => {
 
   const onClickAddNotes = (event: any) => {};
 
-  console.log('paneRef', paneRef);
-
   return (
     <div
       ref={paneRef}
