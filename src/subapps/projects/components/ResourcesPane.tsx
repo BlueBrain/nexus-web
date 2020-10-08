@@ -9,24 +9,28 @@ const { Panel } = Collapse;
 import './ResourcesPane.less';
 
 const ResourcesPane: React.FC<{}> = ({ children }) => {
+  const paneRef = React.useRef<HTMLDivElement>(null);
   const [paneWidth, setPaneWidth] = React.useState<number>();
 
+  const resizeObserver = new ResizeObserver(entries => {
+    const width = entries[0].contentRect.width;
+
+    setPaneWidth(width);
+  });
+
   React.useEffect(() => {
-    const parentDiv = document.getElementsByClassName('activity-view')[0];
-    const parentWidth = (parentDiv as HTMLElement).offsetWidth;
-
-    setPaneWidth(parentWidth);
-
-    const resizeObserver = new ResizeObserver(entries => {
-      const width = entries[0].contentRect.width;
-
-      setPaneWidth(width);
-    });
-
-    resizeObserver.observe(parentDiv);
+    if (paneRef && paneRef.current) {
+      resizeObserver.observe(paneRef.current.parentElement as HTMLDivElement);
+    }
 
     return () => {
-      resizeObserver.unobserve(parentDiv);
+      if (paneRef && paneRef.current) {
+        resizeObserver.unobserve(
+          paneRef.current.parentElement as HTMLDivElement
+        );
+      }
+
+      resizeObserver.disconnect();
     };
   }, []);
 
@@ -34,8 +38,14 @@ const ResourcesPane: React.FC<{}> = ({ children }) => {
 
   const onClickAddNotes = (event: any) => {};
 
+  console.log('paneRef', paneRef);
+
   return (
-    <div className="resources-pane" style={{ width: `${paneWidth}px` }}>
+    <div
+      ref={paneRef}
+      className="resources-pane"
+      style={{ width: `${paneWidth}px` }}
+    >
       <Collapse>
         <Panel
           header={
