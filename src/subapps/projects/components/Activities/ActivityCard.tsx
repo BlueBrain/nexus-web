@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { Tooltip } from 'antd';
 
 import StatusIcon from '../../components/StatusIcon';
 import SubActivityItem from './SubActivityItem';
@@ -22,13 +23,23 @@ const ActivityCard: React.FC<{
   const { name, description, status } = activity;
   const activityId = activity['@id'];
 
+  // TODO: add a tooltip
+
   return (
     <div className={`activity-card activity-card--${status.replace(' ', '-')}`}>
       <div className="activity-card__main">
         <div className="activity-card__title">
           <StatusIcon status={status} mini={true} />
           <Link to={`/projects/${orgLabel}/${projectLabel}/${activityId}`}>
-            <h3 className="activity-card__name">{name}</h3>
+            {name.length > 40 ? (
+              <Tooltip placement="topRight" title={name}>
+                <h3 className="activity-card__name">
+                  {name.slice(0, 40) + '...'}
+                </h3>
+              </Tooltip>
+            ) : (
+              <h3 className="activity-card__name">{name}</h3>
+            )}
           </Link>
           <img src={editIcon} />
         </div>
