@@ -5,6 +5,8 @@ import { notification, Empty, message } from 'antd';
 import { useHistory } from 'react-router';
 import EditStudio from '../components/EditStudio';
 import StudioHeader from '../components/StudioHeader';
+import { StudioContext } from '../views/StudioView';
+import WorkspaceList from '../containers/WorkspaceListContainer';
 
 const resourcesWritePermissionsWrapper = (
   child: React.ReactNode,
@@ -23,29 +25,13 @@ function getDestinationParam(): string {
   return destinationPath ? `?destination=${destinationPath}` : '';
 }
 
-type StudioContainerProps = {
-  orgLabel: string;
-  projectLabel: string;
-  studioId: string;
-  workspaceListComponent(workspaceComponentProps: {
-    workspaceIds: string[];
-    reloadWorkspaces: VoidFunction;
-    studioResource: StudioResource;
-  }): React.ReactElement;
-};
-
 type StudioResource = Resource<{
   label: string;
   description?: string;
   workspaces: [string];
 }>;
 
-const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
-  orgLabel,
-  projectLabel,
-  studioId,
-  workspaceListComponent,
-}) => {
+const StudioContainer: React.FunctionComponent = () => {
   const [
     studioResource,
     setStudioResource,
@@ -53,6 +39,8 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
   const [workspaceIds, setWorkspaceIds] = React.useState<string[]>([]);
   const nexus = useNexusContext();
   const history = useHistory();
+  const studioContext = React.useContext(StudioContext);
+  const { orgLabel, projectLabel, studioId } = studioContext;
 
   React.useEffect(() => {
     fetchAndSetupStudio();
@@ -131,7 +119,7 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
   };
 
   const editButton = (
-    <EditStudio studio={studioResource} onSave={updateStudio} />
+    <EditStudio key={studioId} studio={studioResource} onSave={updateStudio} />
   );
   return (
     <>
@@ -146,11 +134,11 @@ const StudioContainer: React.FunctionComponent<StudioContainerProps> = ({
               `/${orgLabel}/${projectLabel}`
             )}
           </StudioHeader>
-          {workspaceListComponent({
-            workspaceIds,
-            reloadWorkspaces,
-            studioResource,
-          })}
+          <WorkspaceList
+            workspaceIds={workspaceIds}
+            studioResource={studioResource}
+            onListUpdate={reloadWorkspaces}
+          />
         </>
       ) : (
         <Empty />

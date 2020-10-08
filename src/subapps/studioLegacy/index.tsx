@@ -51,25 +51,6 @@ const StudioLegacy: SubApp = () => {
       },
       {
         path: '/:orgLabel/:projectLabel/studios/:studioId',
-        exact: true,
-        component: StudioLegacySubappProviderHOC(StudioView),
-      },
-      {
-        path:
-          '/:orgLabel/:projectLabel/studios/:studioId/workspaces/:workspaceId',
-        exact: true,
-        component: StudioLegacySubappProviderHOC(StudioView),
-      },
-      {
-        path:
-          '/:orgLabel/:projectLabel/studios/:studioId/workspaces/:workspaceId/dashboards/:dashboardId',
-        exact: true,
-        component: StudioLegacySubappProviderHOC(StudioView),
-      },
-      {
-        path:
-          '/:orgLabel/:projectLabel/studios/:studioId/workspaces/:workspaceId/dashboards/:dashboardId/studioResource/:studioResourceId',
-        exact: true,
         component: StudioLegacySubappProviderHOC(StudioView),
       },
     ],

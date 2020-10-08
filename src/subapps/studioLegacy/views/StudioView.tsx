@@ -2,11 +2,58 @@ import * as React from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import StudioContainer from '../containers/StudioContainer';
-import WorkspaceList from '../containers/WorkspaceListContainer';
-import DashboardList from '../containers/DashboardListContainer';
+import useQueryString from '../../../shared/hooks/useQueryString';
+import { useNexusContext } from '@bbp/react-nexus';
+import { Resource } from '@bbp/nexus-sdk';
+import StudioHeader from '../components/StudioHeader';
+
+type StudioContextType = {
+  orgLabel: string;
+  projectLabel: string;
+  studioId: string;
+  workspaceId?: string | undefined;
+  dashboardId?: string | undefined;
+};
+type StudioResource = Resource<{
+  label: string;
+  description?: string;
+  workspaces: [string];
+}>;
+
+export const StudioContext = React.createContext<StudioContextType>({
+  orgLabel: '',
+  projectLabel: '',
+  studioId: '',
+});
 
 const StudioView: React.FunctionComponent<{}> = () => {
   const { orgLabel, projectLabel, studioId } = useParams();
+  const [queryParams, setQueryString] = useQueryString();
+  const { workspaceId, dashboardId } = queryParams;
+  const nexus = useNexusContext();
+  const [
+    studioResource,
+    setStudioResource,
+  ] = React.useState<StudioResource | null>(null);
+
+  React.useEffect(() => {
+    if (orgLabel && projectLabel && studioId) {
+      nexus.Resource.get(orgLabel, projectLabel, studioId).then(
+        (value: any) => {
+          const studioResource: StudioResource = value as StudioResource;
+          setStudioResource(studioResource);
+        }
+      );
+    }
+  }, []);
+
+  const contextValue = {
+    workspaceId,
+    dashboardId,
+    orgLabel: orgLabel as string,
+    projectLabel: projectLabel as string,
+    studioId: studioId as string,
+  };
 
   return (
     <>
@@ -24,39 +71,9 @@ const StudioView: React.FunctionComponent<{}> = () => {
         </div>
       </div>
       <div className="studio-view">
-        {orgLabel && projectLabel && studioId && (
-          <StudioContainer
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
-            studioId={studioId}
-            workspaceListComponent={({
-              workspaceIds,
-              reloadWorkspaces,
-              studioResource,
-            }) => {
-              return (
-                <WorkspaceList
-                  orgLabel={orgLabel}
-                  projectLabel={projectLabel}
-                  workspaceIds={workspaceIds}
-                  studioResource={studioResource}
-                  onListUpdate={reloadWorkspaces}
-                  dashboardListComponent={({ dashboards, workspaceId }) => {
-                    return (
-                      <DashboardList
-                        orgLabel={orgLabel}
-                        projectLabel={projectLabel}
-                        dashboards={dashboards}
-                        workspaceId={workspaceId}
-                        refreshList={reloadWorkspaces}
-                      />
-                    );
-                  }}
-                />
-              );
-            }}
-          />
-        )}
+        <StudioContext.Provider value={contextValue}>
+          <StudioContainer />
+        </StudioContext.Provider>
       </div>
     </>
   );
