@@ -23,8 +23,6 @@ const ActivityCard: React.FC<{
   const { name, description, status } = activity;
   const activityId = activity['@id'];
 
-  // TODO: add a tooltip
-
   return (
     <div className={`activity-card activity-card--${status.replace(' ', '-')}`}>
       <div className="activity-card__main">
@@ -65,15 +63,17 @@ const ActivityCard: React.FC<{
             Activities: {(subactivities && subactivities.length) || 0}
           </span>
         </div>
-        {subactivities &&
-          subactivities.length > 0 &&
-          subactivities.map(subactivitiy => (
-            <SubActivityItem
-              key={subactivitiy['@id']}
-              status={subactivitiy.status}
-              title={subactivitiy.name}
-            />
-          ))}
+        <div className="activity-card__list-container">
+          {subactivities &&
+            subactivities.length > 0 &&
+            subactivities.map(subactivitiy => (
+              <SubActivityItem
+                key={subactivitiy['@id']}
+                status={subactivitiy.status}
+                title={subactivitiy.name}
+              />
+            ))}
+        </div>
       </div>
     </div>
   );

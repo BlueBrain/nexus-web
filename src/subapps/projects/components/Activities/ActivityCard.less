@@ -24,9 +24,12 @@
     border-top: 10px solid @not-started-color;
   }
 
-  &__main,
-  &__subactivities-total {
+  &__main {
     padding: 0 8px;
+  }
+
+  &__subactivities-total {
+    padding: 0 8px 5px 8px;
   }
 
   &__name {
@@ -58,5 +61,10 @@
 
   &__info-icon {
     margin-right: 10px;
+  }
+
+  &__list-container {
+    max-height: 107px;
+    overflow-y: scroll;
   }
 }
