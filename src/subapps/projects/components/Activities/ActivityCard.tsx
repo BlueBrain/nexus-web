@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { Tooltip } from 'antd';
 
 import StatusIcon from '../../components/StatusIcon';
 import SubActivityItem from './SubActivityItem';
@@ -28,7 +29,15 @@ const ActivityCard: React.FC<{
         <div className="activity-card__title">
           <StatusIcon status={status} mini={true} />
           <Link to={`/projects/${orgLabel}/${projectLabel}/${activityId}`}>
-            <h3 className="activity-card__name">{name}</h3>
+            {name.length > 45 ? (
+              <Tooltip placement="topRight" title={name}>
+                <h3 className="activity-card__name">
+                  {`${name.slice(0, 45)}...`}
+                </h3>
+              </Tooltip>
+            ) : (
+              <h3 className="activity-card__name">{name}</h3>
+            )}
           </Link>
           <img src={editIcon} />
         </div>
@@ -54,15 +63,17 @@ const ActivityCard: React.FC<{
             Activities: {(subactivities && subactivities.length) || 0}
           </span>
         </div>
-        {subactivities &&
-          subactivities.length > 0 &&
-          subactivities.map(subactivitiy => (
-            <SubActivityItem
-              key={subactivitiy['@id']}
-              status={subactivitiy.status}
-              title={subactivitiy.name}
-            />
-          ))}
+        <div className="activity-card__list-container">
+          {subactivities &&
+            subactivities.length > 0 &&
+            subactivities.map(subactivitiy => (
+              <SubActivityItem
+                key={subactivitiy['@id']}
+                status={subactivitiy.status}
+                title={subactivitiy.name}
+              />
+            ))}
+        </div>
       </div>
     </div>
   );
