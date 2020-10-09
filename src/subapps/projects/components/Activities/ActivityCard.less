@@ -3,9 +3,9 @@
 .activity-card {
   margin: 1em;
   background-color: rgb(247, 245, 245);
-  width: 250px;
+  width: 270px;
   border-radius: 10px;
-  padding: 0.5em 1em;
+  padding: 0.5em;
   box-shadow: @box-shadow-base;
 
   &--blocked {
@@ -24,13 +24,17 @@
     border-top: 10px solid @not-started-color;
   }
 
-  &__main,
-  &__subactivities-total {
+  &__main {
     padding: 0 8px;
+  }
+
+  &__subactivities-total {
+    padding: 0 8px 5px 8px;
   }
 
   &__name {
     margin: 0 10px;
+    line-height: 18px;
   }
 
   &__info-line,
@@ -45,6 +49,7 @@
   &__title {
     display: flex;
     align-items: center;
+    height: 36px;
   }
 
   &__info {
@@ -56,5 +61,23 @@
 
   &__info-icon {
     margin-right: 10px;
+  }
+
+  &__list-container {
+    max-height: 107px;
+    overflow-y: scroll;
+  }
+
+  &__list-container::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  &__list-container::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &__list-container::-webkit-scrollbar-thumb {
+    background-color: @not-started-color;
+    border-radius: 10px;
   }
 }

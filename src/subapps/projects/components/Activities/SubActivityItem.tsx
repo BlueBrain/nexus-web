@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Tooltip } from 'antd';
 
 import StatusIcon, { Status } from '../StatusIcon';
 
@@ -13,11 +14,15 @@ const SubActivityItem: React.FC<{
     <div className="sub-activity">
       <StatusIcon status={status} mini={true} />
       <div className="sub-activity__content">
-        <h3 className="sub-activity__title">{title}</h3>
-        {/* TODO: add number of subactivities */}
-        {/* <p className="sub-activity__total">
-          {activitiesNumber || 0} activities
-        </p> */}
+        {title.length > 25 ? (
+          <Tooltip placement="topRight" title={title}>
+            <h3 className="sub-activity__title">
+              {`${title.slice(0, 25)}...`}
+            </h3>
+          </Tooltip>
+        ) : (
+          <h3 className="sub-activity__title">{title}</h3>
+        )}
       </div>
     </div>
   );
