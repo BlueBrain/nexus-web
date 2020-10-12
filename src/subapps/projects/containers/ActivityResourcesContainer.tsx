@@ -42,7 +42,13 @@ const ActivityResourcesContainer: React.FC<{
 
   return (
     <ResourcesPane>
-      {resources && <ResourcesList resources={resources} />}
+      {resources && (
+        <ResourcesList
+          resources={resources}
+          projectLabel={projectLabel}
+          orgLabel={orgLabel}
+        />
+      )}
     </ResourcesPane>
   );
 };
