@@ -1,26 +1,21 @@
 import * as React from 'react';
-import { Tooltip } from 'antd';
+import { Link } from 'react-router-dom';
 
 import TypeTag from './TypeTag';
 
 import './ActivityResourceItem.less';
 
-const ActivityResourceItem: React.FC<{ item: any }> = ({ item }) => {
-  const { name, description, externalLink } = item;
+const ActivityResourceItem: React.FC<{ item: any; link: string }> = ({
+  item,
+  link,
+}) => {
+  const { name, description } = item;
 
   return (
     <div className="activity-resource-item">
       <p className="activity-resource-item__title">
-        {externalLink ? (
-          <Tooltip placement="topRight" title={externalLink}>
-            <a target="_blank" href={externalLink}>
-              {name}
-            </a>
-          </Tooltip>
-        ) : (
-          name
-        )}
-
+        {/* TODO: Create Projects Specific Resource View */}
+        <Link to={link}>{name}</Link>
         {item.permissions && (
           <span className="activity-resource-item__permission">
             {item.permissions}
