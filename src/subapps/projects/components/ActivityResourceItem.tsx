@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 
 import TypeTag from './TypeTag';
 
@@ -14,8 +15,7 @@ const ActivityResourceItem: React.FC<{ item: any; link: string }> = ({
     <div className="activity-resource-item">
       <p className="activity-resource-item__title">
         {/* TODO: Create Projects Specific Resource View */}
-        <a href={link}>{name}</a>
-
+        <Link to={link}>{name}</Link>
         {item.permissions && (
           <span className="activity-resource-item__permission">
             {item.permissions}
