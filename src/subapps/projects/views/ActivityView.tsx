@@ -29,6 +29,12 @@ export type ActivityResource = Resource<{
   wasInformedBy?: {
     '@id': string;
   };
+  used?: {
+    '@id': string;
+  };
+  wasAssociatedWith?: {
+    '@id': string;
+  };
 }>;
 
 type BreadcrumbItem = {
