@@ -1,3 +1,4 @@
+// this is not used anywhere, just for reference
 export const codeSchema = {
   '@context': {
     '@base':

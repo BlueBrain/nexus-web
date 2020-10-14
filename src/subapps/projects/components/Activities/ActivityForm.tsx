@@ -82,6 +82,10 @@ const ActivityForm: React.FC<{
           md: 12,
         };
 
+  const isEmptyInput = (value: string) => {
+    return value.split(' ').join('') === '';
+  };
+
   const isValidInput = () => {
     let isValid = true;
 

@@ -17,10 +17,10 @@ const LinkCodeForm: React.FC<{
   const [descriptionError, setDescriptionError] = React.useState<boolean>(
     false
   );
-  const [repoUrl, setRepoUrl] = React.useState<string>('');
-  const [repoUrlError, setRepoUrlError] = React.useState<boolean>(false);
+  const [codeRepository, setCodeRepository] = React.useState<string>('');
+  const [codeRepoError, setCodeRepoError] = React.useState<boolean>(false);
   const [codeSampleType, setCodeSampleType] = React.useState<string>('');
-  const [programmingLang, setProgrammingLang] = React.useState<string>('');
+  const [programmingLanguage, setProgrammingLang] = React.useState<string>('');
   const [runtimePlatform, setRuntimePlatform] = React.useState<string>('');
 
   const formItemLayout = {
@@ -45,41 +45,29 @@ const LinkCodeForm: React.FC<{
   };
 
   const onChangeRepoUrl = (event: any) => {
-    setRepoUrl(event.target.value);
-    setRepoUrlError(false);
+    setCodeRepository(event.target.value);
+    setCodeRepoError(false);
   };
 
   const onClickSubmit = () => {
     if (isValidInput()) {
-      onSubmit('hello');
+      onSubmit({
+        name,
+        description,
+        url: codeRepository,
+        codeSampleType,
+        programmingLanguage,
+        runtimePlatform,
+      });
     }
   };
 
   const isValidInput = () => {
-    let isValid = true;
+    setNameError(isEmptyInput(name));
+    setDescriptionError(isEmptyInput(description));
+    setCodeRepoError(isEmptyInput(codeRepository));
 
-    if (isEmptyInput(name)) {
-      setNameError(true);
-      isValid = false;
-    } else {
-      setNameError(false);
-    }
-
-    if (isEmptyInput(description)) {
-      setDescriptionError(true);
-      isValid = false;
-    } else {
-      setDescriptionError(false);
-    }
-
-    if (isEmptyInput(repoUrl)) {
-      setRepoUrlError(true);
-      isValid = false;
-    } else {
-      setRepoUrlError(false);
-    }
-
-    return isValid;
+    return !nameError && !descriptionError && !codeRepoError;
   };
 
   return (
@@ -107,10 +95,10 @@ const LinkCodeForm: React.FC<{
             </Item>
             <Item
               label="Code Path or URL *"
-              validateStatus={repoUrlError ? 'error' : ''}
-              help={repoUrlError && 'Please enter a repository Url'}
+              validateStatus={codeRepoError ? 'error' : ''}
+              help={codeRepoError && 'Please enter a repository Url'}
             >
-              <Input value={repoUrl} onChange={onChangeRepoUrl} />
+              <Input value={codeRepository} onChange={onChangeRepoUrl} />
             </Item>
             <Item label="Code Sample Type">
               <Input
@@ -120,7 +108,7 @@ const LinkCodeForm: React.FC<{
             </Item>
             <Item label="Programming Language">
               <Input
-                value={programmingLang}
+                value={programmingLanguage}
                 onChange={event => setProgrammingLang(event.target.value)}
               />
             </Item>
