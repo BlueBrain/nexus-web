@@ -70,11 +70,31 @@ const ProjectForm: React.FC<{
         md: 12,
       };
 
-  const onClickSave = () => {
-    console.log('isValidInput()', isValidInput(), nameError, descriptionError);
+  const isValidInput = () => {
+    let isValid = true;
+    if (isEmptyInput(name)) {
+      setNameError(isEmptyInput(name));
+      isValid = false;
+    } else {
+      setNameError(false);
+    }
+    if (isEmptyInput(description)) {
+      setDescriptionError(isEmptyInput(description));
+      isValid = false;
+    } else {
+      setDescriptionError(false);
+    }
+    if (!dueDate) {
+      setDateError(true);
+      isValid = false;
+    } else {
+      setDateError(false);
+    }
+    return isValid;
+  };
 
+  const onClickSave = () => {
     if (isValidInput()) {
-      console.log('submitted!');
       const data: ProjectMetadata = {
         visibility,
         name,
@@ -86,42 +106,8 @@ const ProjectForm: React.FC<{
         dueDate,
         type: 'personal',
       };
-      console.log('submitted!');
-      // onSubmit(data);
+      onSubmit(data);
     }
-  };
-
-  const isValidInput = () => {
-    setNameError(isEmptyInput(name));
-    setDescriptionError(isEmptyInput(description));
-    setDateError(!dueDate);
-
-    return !nameError && !descriptionError && !dateError;
-
-    // let isValid = true;
-
-    // if (isEmptyInput(name)) {
-    //   setNameError(isEmptyInput(name));
-    //   isValid = false;
-    // } else {
-    //   setNameError(false);
-    // }
-
-    // if (isEmptyInput(description)) {
-    //   setDescriptionError(isEmptyInput(description));
-    //   isValid = false;
-    // } else {
-    //   setDescriptionError(false);
-    // }
-
-    // if (!dueDate) {
-    //   setDateError(true);
-    //   isValid = false;
-    // } else {
-    //   setDateError(false);
-    // }
-
-    // return isValid;
   };
 
   const onChangeName = (event: any) => {
