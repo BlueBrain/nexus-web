@@ -11,7 +11,7 @@ const fusionConfig = {
   activityType: 'FusionActivity',
   projectMetadataType: 'FusionMetadata',
   fusionProjectTypes: ['FusionMetadata', 'FusionProject'],
-  codeSnippetType: 'FusionCode',
+  codeType: ['SoftwareSourceCode', 'Entity'],
   noteType: 'FusionNote',
 };
 

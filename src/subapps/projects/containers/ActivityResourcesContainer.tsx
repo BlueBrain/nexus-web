@@ -40,8 +40,12 @@ const ActivityResourcesContainer: React.FC<{
       .catch(error => displayError(error, 'An error occurred'));
   }, []);
 
+  const addCodeResource = (data: any) => {
+    console.log('data', data);
+  };
+
   return (
-    <ResourcesPane>
+    <ResourcesPane linkCode={addCodeResource}>
       {resources && (
         <ResourcesList
           resources={resources}

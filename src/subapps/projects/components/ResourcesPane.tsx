@@ -9,7 +9,10 @@ const { Panel } = Collapse;
 
 import './ResourcesPane.less';
 
-const ResourcesPane: React.FC<{}> = ({ children }) => {
+const ResourcesPane: React.FC<{ linkCode(data: any): void }> = ({
+  children,
+  linkCode,
+}) => {
   const paneRef = React.useRef<HTMLDivElement>(null);
   const [paneWidth, setPaneWidth] = React.useState<number>();
   const [showCodeForm, setShowCodeForm] = React.useState<boolean>(false);
@@ -82,7 +85,7 @@ const ResourcesPane: React.FC<{}> = ({ children }) => {
       >
         <LinkCodeForm
           onClickCancel={() => setShowCodeForm(false)}
-          onClickSubmit={() => {}}
+          onSubmit={linkCode}
         />
       </Modal>
     </>

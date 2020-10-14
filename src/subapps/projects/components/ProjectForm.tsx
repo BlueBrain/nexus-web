@@ -2,9 +2,11 @@ import * as React from 'react';
 import { Form, Input, DatePicker, Radio, Row, Col, Button, Spin } from 'antd';
 import * as moment from 'moment';
 
-const { Item } = Form;
+import { isEmptyInput } from '../utils';
 
 import './ProjectForm.less';
+
+const { Item } = Form;
 
 export type ProjectMetadata = {
   name: string;
@@ -67,10 +69,6 @@ const ProjectForm: React.FC<{
         sm: 24,
         md: 12,
       };
-
-  const isEmptyInput = (value: string) => {
-    return value.split(' ').join('') === '';
-  };
 
   const isValidInput = () => {
     let isValid = true;
