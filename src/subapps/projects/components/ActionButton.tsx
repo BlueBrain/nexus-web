@@ -20,8 +20,8 @@ const ActionButton: React.FC<{
   }
 
   const onClickActionButton = (event: any) => {
-    event.stopPropagation();
     onClick();
+    event.stopPropagation();
   };
 
   return (
