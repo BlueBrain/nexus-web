@@ -21,10 +21,12 @@ const links: React.ReactNode[] = [
 const shallowHeader = shallow(
   <Header
     name="Mark Hamill"
+    realms={[]}
     links={links}
     githubIssueURL=""
     version=""
     onClickSideBarToggle={() => {}}
+    performLogin={(name: string) => {}}
   />
 );
 
@@ -32,10 +34,12 @@ const wrapper = mount(
   <MemoryRouter>
     <Header
       name="Mark Hamill"
+      realms={[]}
       links={links}
       githubIssueURL=""
       version=""
       onClickSideBarToggle={() => {}}
+      performLogin={(name: string) => {}}
     />
   </MemoryRouter>
 );
@@ -60,10 +64,12 @@ describe('Header component', () => {
         <MemoryRouter>
           <Header
             name=""
+            realms={[]}
             links={links}
             githubIssueURL=""
             version=""
             onClickSideBarToggle={() => {}}
+            performLogin={(name: string) => {}}
           />
         </MemoryRouter>
       );
@@ -76,11 +82,13 @@ describe('Header component', () => {
         <MemoryRouter>
           <Header
             name=""
+            realms={[]}
             links={links}
             githubIssueURL=""
             version=""
             displayLogin={false}
             onClickSideBarToggle={() => {}}
+            performLogin={(name: string) => {}}
           />
         </MemoryRouter>
       );

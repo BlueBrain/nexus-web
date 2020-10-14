@@ -97,12 +97,14 @@ const store = configureStore(history, { nexus }, initialState);
 const setupUserSession = async (userManager: UserManager, store: Store) => {
   // Raised when a user session has been established (or re-established).
   userManager.events.addUserLoaded(user => {
+    console.log('addUserLoaded');
     loadUser(store, userManager);
     localStorage.setItem('nexus__token', user.access_token);
   });
 
   // Raised prior to the access token expiring.
   userManager.events.addAccessTokenExpiring(() => {
+    console.log('addAccessTokenExpiring');
     store.dispatch(userExpiring());
     userManager
       .signinSilent()
