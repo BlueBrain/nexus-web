@@ -54,10 +54,10 @@ const LinkCodeForm: React.FC<{
       onSubmit({
         name,
         description,
-        url: codeRepository,
         codeSampleType,
         programmingLanguage,
         runtimePlatform,
+        url: codeRepository,
       });
     }
   };
