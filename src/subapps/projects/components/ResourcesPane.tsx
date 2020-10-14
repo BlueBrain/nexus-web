@@ -77,7 +77,7 @@ const ResourcesPane: React.FC<{}> = ({ children }) => {
         visible={showCodeForm}
         footer={null}
         onCancel={() => setShowCodeForm(false)}
-        width={1150}
+        width={600}
         destroyOnClose={true}
       >
         <LinkCodeForm
