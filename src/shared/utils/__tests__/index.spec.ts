@@ -258,6 +258,42 @@ describe('utils functions', () => {
       _updatedBy: 'test',
     };
 
+    const imageResource: Resource = {
+      '@context': 'test',
+      '@type': ['type2', 'type1'],
+      '@id': 'test',
+      image: {},
+      _incoming: 'test',
+      _outgoing: 'test',
+      _self: 'test',
+      _constrainedBy: 'test',
+      _project: 'test',
+      _rev: 1,
+      _deprecated: false,
+      _createdAt: 'test',
+      _createdBy: 'test',
+      _updatedAt: 'test',
+      _updatedBy: 'test',
+    };
+
+    const distributionResource: Resource = {
+      '@context': 'test',
+      '@type': ['type2', 'type1'],
+      '@id': 'test',
+      distribution: [],
+      _incoming: 'test',
+      _outgoing: 'test',
+      _self: 'test',
+      _constrainedBy: 'test',
+      _project: 'test',
+      _rev: 1,
+      _deprecated: false,
+      _createdAt: 'test',
+      _createdBy: 'test',
+      _updatedAt: 'test',
+      _updatedBy: 'test',
+    };
+
     it('matches a resource when pluginsMap has a matching type', () => {
       const pluginsMap = {
         plugin1: {
@@ -552,6 +588,27 @@ describe('utils functions', () => {
       expect(
         matchPlugins(pluginsMap, plugins, resource as Resource<any>)
       ).toEqual([]);
+    });
+
+    it('matches multiple resources with different shapes', () => {
+      const pluginsMap = {
+        plugin1: [
+          {
+            '@type': ['type1'],
+            image: {},
+          },
+          {
+            '@type': ['type1'],
+            distribution: {},
+          },
+        ],
+      };
+      expect(matchPlugins(pluginsMap, plugins, imageResource)).toEqual([
+        'plugin1',
+      ]);
+      expect(matchPlugins(pluginsMap, plugins, distributionResource)).toEqual([
+        'plugin1',
+      ]);
     });
   });
 

@@ -5,8 +5,9 @@ import { Button } from 'antd';
 import TabList from '../../../shared/components/Tabs/TabList';
 import AddWorkspaceContainer from './AddWorkspaceContainer';
 import WorkspaceForm from './WorkspaceFormContainer';
-import { Dashboard } from './DashboardListContainer';
 import useQueryString from '../../../shared/hooks/useQueryString';
+import { StudioContext } from '../views/StudioView';
+import DashboardList from '../containers/DashboardListContainer';
 import { resourcesWritePermissionsWrapper } from '../../../shared/utils/permission';
 
 type StudioResource = Resource<{
@@ -17,27 +18,19 @@ type StudioResource = Resource<{
 
 type WorkspaceListProps = {
   workspaceIds: string[];
-  orgLabel: string;
-  projectLabel: string;
   studioResource: StudioResource;
   onListUpdate?(): void;
-  dashboardListComponent(dashboardListComponentProps: {
-    dashboards: Dashboard[]; // TODO add Dashboard type
-    workspaceId: string;
-  }): React.ReactElement;
 };
 
 const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   workspaceIds = [],
-  orgLabel,
-  projectLabel,
   studioResource,
   onListUpdate,
-  dashboardListComponent,
 }) => {
-  const permissionsPath = `/${orgLabel}/${projectLabel}`;
   const [queryParams, setQueryString] = useQueryString();
-  const { workspaceId } = queryParams;
+  const studioContext = React.useContext(StudioContext);
+  const { orgLabel, projectLabel, workspaceId } = studioContext;
+  const permissionsPath = `/${orgLabel}/${projectLabel}`;
   const [workspaces, setWorkspaces] = React.useState<Resource<any>[]>([]);
   const [selectedWorkspace, setSelectedWorkspace] = React.useState<
     Resource<any>
@@ -105,6 +98,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
 
   const tabAction = (
     <AddWorkspaceContainer
+      key={studioResource['@id']}
       orgLabel={orgLabel}
       projectLabel={projectLabel}
       studio={studioResource}
@@ -115,6 +109,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   const editButtonWrapper = (id: string) => {
     const editButton = (
       <Button
+        key={id}
         className="studio-edit-button"
         type="link"
         size="small"
@@ -153,10 +148,11 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
       >
         {selectedWorkspace ? (
           <div className="workspace">
-            {dashboardListComponent({
-              dashboards,
-              workspaceId: workspaceId || selectedWorkspace['@id'],
-            })}{' '}
+            <DashboardList
+              key={workspaceId}
+              dashboards={dashboards}
+              refreshList={onListUpdate}
+            />{' '}
           </div>
         ) : null}
       </TabList>
