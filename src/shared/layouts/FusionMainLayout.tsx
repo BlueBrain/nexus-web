@@ -24,7 +24,6 @@ const logo = require('../images/logoDarkBg.svg');
 
 const loginCallBack = async (userManager: UserManager) => {
   try {
-    // setPreferredRealm(preferredRealm);
     const destination = new URL(window.location.href).searchParams.get(
       'destination'
     );
