@@ -2,10 +2,11 @@ import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
 
-import { displayError } from '../components/Notifications';
+import { displayError, successNotification } from '../components/Notifications';
 import ResourcesPane from '../components/ResourcesPane';
 import ResourcesList from '../components/ResourcesList';
 import { isActivityResourceLink } from '../utils';
+import fusionConfig from '../config';
 
 const ActivityResourcesContainer: React.FC<{
   orgLabel: string;
@@ -15,7 +16,7 @@ const ActivityResourcesContainer: React.FC<{
   const nexus = useNexusContext();
   const [resources, setResources] = React.useState<Resource[]>();
 
-  React.useEffect(() => {
+  const fetchResources = () =>
     nexus.Resource.links(
       orgLabel,
       projectLabel,
@@ -38,10 +39,21 @@ const ActivityResourcesContainer: React.FC<{
           .catch(error => displayError(error, 'An error occurred'));
       })
       .catch(error => displayError(error, 'An error occurred'));
+
+  React.useEffect(() => {
+    fetchResources();
   }, []);
 
   const addCodeResource = (data: any) => {
-    console.log('data', data);
+    nexus.Resource.create(orgLabel, projectLabel, {
+      '@type': fusionConfig.codeType,
+      ...data,
+    })
+      .then(() => {
+        successNotification('The code resource is added successfully');
+        fetchResources();
+      })
+      .catch(error => displayError(error, 'Failed to save'));
   };
 
   return (

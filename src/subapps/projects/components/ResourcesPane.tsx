@@ -41,6 +41,11 @@ const ResourcesPane: React.FC<{ linkCode(data: any): void }> = ({
 
   const onClickAddNotes = () => {};
 
+  const onClickSave = (data: any) => {
+    linkCode(data);
+    setShowCodeForm(false);
+  };
+
   return (
     <>
       <div
@@ -85,7 +90,7 @@ const ResourcesPane: React.FC<{ linkCode(data: any): void }> = ({
       >
         <LinkCodeForm
           onClickCancel={() => setShowCodeForm(false)}
-          onSubmit={linkCode}
+          onSubmit={onClickSave}
         />
       </Modal>
     </>
