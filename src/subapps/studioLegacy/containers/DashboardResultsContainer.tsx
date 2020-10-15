@@ -116,7 +116,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
       .catch(e => {
         setError(e);
       });
-  }, [orgLabel, projectLabel, dataQuery, viewId]);
+  }, [dataQuery, viewId]);
 
   if (error) {
     return (
