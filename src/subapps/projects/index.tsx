@@ -2,8 +2,11 @@ import * as React from 'react';
 import { SubApp } from '..';
 
 import ProjectsListView from './views/ProjectsListView';
+<<<<<<< HEAD
 import ProjectView from './views/ProjectView';
 import ActivityView from './views/ActivityView';
+=======
+>>>>>>> Revert "Revert "1456 initialize projects subapp (#663)" (#676)"
 
 const title = 'Projects';
 const namespace = 'projects';
