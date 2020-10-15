@@ -106,6 +106,7 @@ const CreateDashboardContainer: React.FunctionComponent<{
         confirmLoading={busy}
         footer={null}
         destroyOnClose={true}
+        key={workspaceId}
       >
         <DashboardConfigEditor
           availablePlugins={availablePlugins}

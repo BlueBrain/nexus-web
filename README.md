@@ -94,17 +94,25 @@ You can find out how to deploy a build [in the wiki](https://github.com/BlueBrai
 
 ## Documentation
 
-### Studios Feature
+The documentation for Nexus Fusion can be found in the [product docs](https://bluebrainnexus.io/docs/fusion/index.html).
 
-This feature allows data curators to display their data using customisable, persistent queries. Using custom plugins developed with javascript, data curators can format the presentation of the query results any way they like.
+> Read more about the Fusion [Architecture](https://bluebrainnexus.io/docs/fusion/architecture.html).
 
-You can create studios through the user interface. [Find out more about Studios here](./docs/studio/Studios.md).
+### Resource-level [Plugins](https://bluebrainnexus.io/docs/fusion/plugins.html)
 
-### Nexus Plugins
+A core component of Studio is the ability for data curators to develop a domain-specific presentation layer for their resources in Nexus Fusion. This allows data consumers to visualize their datasets using graphs, charts, or 3D visualizations, and to present the relevant metadata to the user.
 
-Plugins are customisable components used to display in a domain-specific way. You can develop your own plugins! Have a look at the [plugin development documentation](./docs/pluginDevelopment.md) to learn more.
+Plugins are developed using Javascript and are loaded into the Nexus Fusion instance from the /plugins folder.
 
-In development mode, you can copy/paste your plugins in the `/plugins` folder.
+### [Studios](https://bluebrainnexus.io/docs/fusion/studio.html) Subapp
+
+Studios space allows data curators to display their data using customisable, persistent queries. Using custom plugins developed with JavaScript, data curators can format the presentation of the query results any way they like.
+
+### [Admin](https://bluebrainnexus.io/docs/fusion/admin.html) Subapp
+
+The Nexus Fusion admin app allows you to manage your Nexus Delta instance.
+
+> Learn how to [Add Your Own App](https://bluebrainnexus.io/docs/fusion/add-your-own-app.html)
 
 ## Getting involved
 
