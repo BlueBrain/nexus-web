@@ -5,6 +5,7 @@ import { NexusClient, Identity, Realm } from '@bbp/nexus-sdk';
 import { UserManager } from 'oidc-client';
 import { Layout, Menu, notification } from 'antd';
 import * as configActions from '../store/actions/config';
+import * as authActions from '../store/actions/auth';
 import Header from '../components/Header';
 import getUserManager from '../../client/userManager';
 import { getLogoutUrl, getDestinationParam } from '../utils';
@@ -74,11 +75,15 @@ export interface FusionMainLayoutProps {
   token?: string;
   name?: string;
   canLogin?: boolean;
+  loginError?: {
+    error: Error;
+  };
   userManager?: UserManager;
   apiEndpoint: string;
   children: any[];
   subApps: SubAppProps[];
   setPreferredRealm(name: string): void;
+  performLogin(): void;
 }
 
 export type ConsentType = {
@@ -112,7 +117,9 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   userManager,
   subApps: propSubApps,
   apiEndpoint,
+  loginError,
   setPreferredRealm,
+  performLogin,
 }) => {
   const subApps = [homeApp, ...propSubApps];
   const location = useLocation();
@@ -147,6 +154,22 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
     setSelectedItem(currentSubApp);
   }, [location]);
 
+  React.useEffect(() => {
+    if (loginError) {
+      notification.error({
+        message: 'We could not log you in',
+        description: (
+          <div>
+            <p>We could not log you in due to :</p>{' '}
+            <p>{loginError.error.message}</p>
+            <p>Please contact your system administrators.</p>
+          </div>
+        ),
+        duration: 0,
+      });
+    }
+  }, [loginError]);
+
   const [consent, setConsent] = useLocalStorage<ConsentType>(
     'consentToTracking'
   );
@@ -162,10 +185,8 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   };
 
   const login = async (realmName: string) => {
-    if (userManager) {
-      setPreferredRealm(realmName);
-      loginCallBack(userManager);
-    }
+    setPreferredRealm(realmName);
+    performLogin();
   };
 
   // Remove version from API URL
@@ -281,12 +302,17 @@ const mapStateToProps = (state: RootState) => {
     canLogin: !!(realms.length > 0),
     userManager: getUserManager(state),
     apiEndpoint: config.apiEndpoint,
+    loginError: auth.loginError,
   };
 };
 
 const mapDispatchToProps = (dispatch: any) => ({
-  setPreferredRealm: (name: string) =>
-    dispatch(configActions.setPreferredRealm(name)),
+  setPreferredRealm: (name: string) => {
+    dispatch(configActions.setPreferredRealm(name));
+  },
+  performLogin: () => {
+    dispatch(authActions.performLogin());
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FusionMainLayout);
