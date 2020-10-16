@@ -39,6 +39,7 @@ const ResourcesPane: React.FC<{ linkCode(data: any): void }> = ({
     };
   }, []);
 
+  // TODO: link notes
   const onClickAddNotes = () => {};
 
   const onClickSave = (data: any) => {
