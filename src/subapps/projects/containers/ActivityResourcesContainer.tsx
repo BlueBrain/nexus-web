@@ -12,7 +12,8 @@ const ActivityResourcesContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
   activityId: string;
-}> = ({ orgLabel, projectLabel, activityId }) => {
+  linkCodeToActivity: (codeResourceId: string) => void;
+}> = ({ orgLabel, projectLabel, activityId, linkCodeToActivity }) => {
   const nexus = useNexusContext();
   const [resources, setResources] = React.useState<Resource[]>();
 
@@ -49,9 +50,13 @@ const ActivityResourcesContainer: React.FC<{
       '@type': fusionConfig.codeType,
       ...data,
     })
-      .then(() => {
-        successNotification('The code resource is added successfully');
-        fetchResources();
+      .then(response => {
+        linkCodeToActivity(response['@id']);
+        //  wait for the code resource to be indexed
+        const reloadTimer = setTimeout(() => {
+          fetchResources();
+          clearTimeout(reloadTimer);
+        }, 3000);
       })
       .catch(error => displayError(error, 'Failed to save'));
   };

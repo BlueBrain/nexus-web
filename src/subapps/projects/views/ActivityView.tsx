@@ -7,7 +7,7 @@ import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
 import ActivitiesBoard from '../components/Activities/ActivitiesBoard';
 import Breadcrumbs from '../components/Breadcrumbs';
-import { displayError } from '../components/Notifications';
+import { displayError, successNotification } from '../components/Notifications';
 import { Status } from '../components/StatusIcon';
 import SingleActivityContainer from '../containers/SingleActivityContainer';
 import ActivityInfoContainer from '../containers/ActivityInfoContainer';
@@ -32,9 +32,13 @@ export type ActivityResource = Resource<{
   used?: {
     '@id': string;
   };
-  wasAssociatedWith?: {
-    '@id': string;
-  };
+  wasAssociatedWith?:
+    | {
+        '@id': string;
+      }
+    | {
+        '@id': string;
+      }[];
 }>;
 
 type BreadcrumbItem = {
@@ -167,6 +171,41 @@ const ActivityView: React.FC = () => {
     setRefreshActivities(!refreshActivities);
   };
 
+  const linkCodeToActivity = (codeResourceId: string) => {
+    nexus.Resource.getSource(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(activityId)
+    )
+      .then(response => {
+        const payload = response as ActivityResource;
+
+        if (payload.wasAssociatedWith) {
+          payload.wasAssociatedWith = Array.isArray(payload.wasAssociatedWith)
+            ? [...payload.wasAssociatedWith, { '@id': codeResourceId }]
+            : [payload.wasAssociatedWith, { '@id': codeResourceId }];
+        } else {
+          payload.wasAssociatedWith = { '@id': codeResourceId };
+        }
+
+        activity &&
+          nexus.Resource.update(
+            orgLabel,
+            projectLabel,
+            activityId,
+            activity._rev,
+            {
+              ...payload,
+            }
+          )
+            .then(response => {
+              successNotification('The code resource is added successfully');
+            })
+            .catch(error => displayError(error, 'Failed to add'));
+      })
+      .catch(error => displayError(error, 'Failed to load original payload'));
+  };
+
   return (
     <div className="activity-view">
       <ProjectPanel
@@ -202,7 +241,7 @@ const ActivityView: React.FC = () => {
         <ActivityResourcesContainer
           orgLabel={orgLabel}
           projectLabel={projectLabel}
-          // onUpdate={waitAntReloadActivities}
+          linkCodeToActivity={linkCodeToActivity}
           activityId={activity && activity['@id']}
         />
       )}
