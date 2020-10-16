@@ -188,7 +188,8 @@ const ActivityView: React.FC = () => {
           payload.wasAssociatedWith = { '@id': codeResourceId };
         }
 
-        activity &&
+        return (
+          activity &&
           nexus.Resource.update(
             orgLabel,
             projectLabel,
@@ -198,11 +199,11 @@ const ActivityView: React.FC = () => {
               ...payload,
             }
           )
-            .then(response => {
-              successNotification('The code resource is added successfully');
-            })
-            .catch(error => displayError(error, 'Failed to add'));
+        );
       })
+      .then(() =>
+        successNotification('The code resource is added successfully')
+      )
       .catch(error => displayError(error, 'Failed to load original payload'));
   };
 

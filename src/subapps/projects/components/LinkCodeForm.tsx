@@ -43,17 +43,19 @@ const LinkCodeForm: React.FC<{
     md: 24,
   };
 
-  const onChangeName = (event: any) => {
+  const onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
     setNameError(false);
   };
 
-  const onChangeDescription = (event: any) => {
+  const onChangeDescription = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setDescription(event.target.value);
     setDescriptionError(false);
   };
 
-  const onChangeRepoUrl = (event: any) => {
+  const onChangeRepoUrl = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCodeRepository(event.target.value);
     setCodeRepoError(false);
   };
@@ -76,7 +78,11 @@ const LinkCodeForm: React.FC<{
     setDescriptionError(isEmptyInput(description));
     setCodeRepoError(isEmptyInput(codeRepository));
 
-    return !nameError && !descriptionError && !codeRepoError;
+    return (
+      !isEmptyInput(name) &&
+      !isEmptyInput(description) &&
+      !isEmptyInput(codeRepository)
+    );
   };
 
   return (

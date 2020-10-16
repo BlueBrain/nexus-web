@@ -42,10 +42,12 @@ const ResourcesPane: React.FC<{ linkCode(data: CodeResourceData): void }> = ({
   // TODO: link notes
   const onClickAddNotes = () => {};
 
-  const onClickSave = (data: any) => {
+  const onClickSave = (data: CodeResourceData) => {
     linkCode(data);
     setShowCodeForm(false);
   };
+
+  const onClickAddCode = () => setShowCodeForm(true);
 
   return (
     <>
@@ -61,12 +63,12 @@ const ResourcesPane: React.FC<{ linkCode(data: CodeResourceData): void }> = ({
                 <span className="resources-pane__pane-name">Resources</span>
                 <ActionButton
                   title="Link code"
-                  onClick={() => setShowCodeForm(true)}
+                  onClick={onClickAddCode}
                   icon="Add"
                 />
                 <ActionButton
                   title="Add notes"
-                  onClick={() => onClickAddNotes}
+                  onClick={onClickAddNotes}
                   icon="Add"
                 />
                 <ActionButton
