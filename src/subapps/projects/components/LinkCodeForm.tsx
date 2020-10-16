@@ -7,9 +7,18 @@ import './LinkCodeForm.less';
 
 const { Item } = Form;
 
+export type CodeResourceData = {
+  name: string;
+  description: string;
+  codeSampleType: string;
+  programmingLanguage: string;
+  runtimePlatform: string;
+  url: string;
+};
+
 const LinkCodeForm: React.FC<{
   onClickCancel(): void;
-  onSubmit(data: any): void;
+  onSubmit(data: CodeResourceData): void;
 }> = ({ onClickCancel, onSubmit }) => {
   const [name, setName] = React.useState<string>('');
   const [nameError, setNameError] = React.useState<boolean>(false);

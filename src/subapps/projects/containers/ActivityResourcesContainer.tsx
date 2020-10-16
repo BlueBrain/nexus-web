@@ -2,11 +2,12 @@ import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
 
-import { displayError, successNotification } from '../components/Notifications';
+import { displayError } from '../components/Notifications';
 import ResourcesPane from '../components/ResourcesPane';
 import ResourcesList from '../components/ResourcesList';
 import { isActivityResourceLink } from '../utils';
 import fusionConfig from '../config';
+import { CodeResourceData } from '../components/LinkCodeForm';
 
 const ActivityResourcesContainer: React.FC<{
   orgLabel: string;
@@ -45,7 +46,7 @@ const ActivityResourcesContainer: React.FC<{
     fetchResources();
   }, []);
 
-  const addCodeResource = (data: any) => {
+  const addCodeResource = (data: CodeResourceData) => {
     nexus.Resource.create(orgLabel, projectLabel, {
       '@type': fusionConfig.codeType,
       ...data,
