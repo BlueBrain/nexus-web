@@ -13,7 +13,7 @@ const TypeTag: React.FC<{ type: string | string[] }> = ({ type }) => {
     return <span className="type-tag type-tag--green">code</span>;
   }
 
-  if (!Array.isArray(type) && type === fusionConfig.noteType) {
+  if (type === fusionConfig.noteType) {
     return <span className="type-tag type-tag--purple">notes</span>;
   }
 

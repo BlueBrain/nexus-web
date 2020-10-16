@@ -73,13 +73,13 @@ const ProjectForm: React.FC<{
   const isValidInput = () => {
     let isValid = true;
     if (isEmptyInput(name)) {
-      setNameError(isEmptyInput(name));
+      setNameError(true);
       isValid = false;
     } else {
       setNameError(false);
     }
     if (isEmptyInput(description)) {
-      setDescriptionError(isEmptyInput(description));
+      setDescriptionError(true);
       isValid = false;
     } else {
       setDescriptionError(false);
@@ -106,6 +106,7 @@ const ProjectForm: React.FC<{
         dueDate,
         type: 'personal',
       };
+
       onSubmit(data);
     }
   };
