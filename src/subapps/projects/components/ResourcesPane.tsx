@@ -3,13 +3,13 @@ import { Collapse, Modal } from 'antd';
 import ResizeObserver from 'resize-observer-polyfill';
 
 import ActionButton from './ActionButton';
-import LinkCodeForm from './LinkCodeForm';
+import LinkCodeForm, { CodeResourceData } from './LinkCodeForm';
 
 const { Panel } = Collapse;
 
 import './ResourcesPane.less';
 
-const ResourcesPane: React.FC<{ linkCode(data: any): void }> = ({
+const ResourcesPane: React.FC<{ linkCode(data: CodeResourceData): void }> = ({
   children,
   linkCode,
 }) => {
