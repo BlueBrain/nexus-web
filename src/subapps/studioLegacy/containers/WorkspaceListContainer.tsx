@@ -89,6 +89,15 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
           );
         } else {
           setSelectedWorkspace(values[0]);
+          setQueryString({
+            ...queryParams,
+            workspaceId: values[0]['@id'],
+            // Make sure to deselect dashboards
+            // Some workspaces may share a dashboard with the same @id
+            // remove keys using undefined
+            // https://www.npmjs.com/package/query-string#falsy-values
+            dashboardId: undefined,
+          });
         }
       })
       .catch(e => {
