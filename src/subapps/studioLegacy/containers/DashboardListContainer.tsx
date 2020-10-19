@@ -99,6 +99,10 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
           );
           setSelectedDashboardIndex(selectedDashboardIndex);
           setSelectedDashboardResourcesIndex(selectedDashboardResourcesIndex);
+          setQueryString({
+            ...queryParams,
+            dashboardId,
+          });
         }
       })
       .catch(e => {
