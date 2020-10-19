@@ -47,7 +47,7 @@ const linkToParent: ResourceLink = {
 
 const linkToActivityResource: ResourceLink = {
   '@id': 'ff161f5a-6e77-48d7-b7f6-fe5fa5a97382',
-  '@type': 'FusionCode',
+  '@type': ['FusionCode', 'Entity'],
   paths: [
     'https://staging.nexus.ocp.bbp.epfl.ch/v1/vocabs/fusion2-stafeeva/89898/wasAssociatedWith',
   ],
@@ -67,7 +67,7 @@ const linkToActivityResource: ResourceLink = {
 
 const linkToNotes: ResourceLink = {
   '@id': 'b3c5f79f-278c-4e05-989e-d1fd2aac7793',
-  '@type': 'FusionNote',
+  '@type': ['FusionNote', 'Entity'],
   paths: [
     'https://staging.nexus.ocp.bbp.epfl.ch/v1/vocabs/fusion2-stafeeva/89898/used',
   ],

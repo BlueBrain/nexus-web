@@ -23,19 +23,22 @@ export const isParentLink = (link: ResourceLink) => {
  * @returns {boolean}
  */
 export const isActivityResourceLink = (link: ResourceLink) => {
-  if (Array.isArray(link.paths)) {
+  if (Array.isArray(link['@type'])) {
     return (
-      link.paths.filter(
+      link['@type'].filter(
         (path: string) =>
-          labelOf(path) === 'used' || labelOf(path) === 'wasAssociatedWith'
+          labelOf(path) === 'Entity' || labelOf(path) === 'Agent'
       ).length > 0
     );
   }
 
-  return (
-    labelOf(link.paths) === 'used' ||
-    labelOf(link.paths) === 'wasAssociatedWith'
-  );
+  if (link && link['@type']) {
+    return (
+      labelOf(link['@type']) === 'Entity' || labelOf(link['@type']) === 'Agent'
+    );
+  }
+
+  return null;
 };
 
 /**

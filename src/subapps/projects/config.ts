@@ -12,7 +12,9 @@ const fusionConfig = {
   projectMetadataType: 'FusionMetadata',
   fusionProjectTypes: ['FusionMetadata', 'FusionProject'],
   codeType: ['SoftwareSourceCode', 'Entity'],
-  noteType: 'FusionNote',
+  noteType: ['FusionNote', 'Entity'],
+  agentOrgType: ['Agent', 'Organization'],
+  agentPersonType: ['Agent', 'Person'],
 };
 
 export default fusionConfig;
