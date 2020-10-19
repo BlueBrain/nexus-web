@@ -84,7 +84,7 @@ const ActivityView: React.FC = () => {
       .catch(error => displayError(error, 'Failed to load activity'));
 
     fetchChildren();
-  }, [refreshActivities]);
+  }, [refreshActivities, activityId]);
 
   const fetchChildren = () => {
     nexus.Resource.links(
