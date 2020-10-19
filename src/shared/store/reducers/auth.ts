@@ -1,4 +1,8 @@
-import { AuthActions, AuthActionTypes } from '../actions/auth';
+import {
+  AuthActions,
+  AuthFailedAction,
+  AuthActionTypes,
+} from '../actions/auth';
 import { createFetchReducer, FetchableState } from './utils';
 import { IdentityList, PaginatedList, ACL, Realm } from '@bbp/nexus-sdk';
 
@@ -6,6 +10,9 @@ export interface AuthState {
   identities?: FetchableState<IdentityList>;
   acls?: FetchableState<PaginatedList<ACL>>;
   realms?: FetchableState<PaginatedList<Realm>>;
+  loginError?: {
+    error: Error;
+  };
 }
 
 const initialState: AuthState = {};
@@ -29,8 +36,9 @@ const realmReducer = createFetchReducer(
 
 function authReducer(
   state: AuthState = initialState,
-  action: AuthActions
+  action: AuthActions | AuthFailedAction
 ): AuthState {
+  console.log(action.type);
   if (action.type.startsWith('@@nexus/AUTH_IDENTITY_')) {
     return {
       ...state,
@@ -41,6 +49,16 @@ function authReducer(
     return {
       ...state,
       realms: realmReducer(state.realms, action),
+    };
+  }
+  if (action.type.startsWith('@@nexus/LOGIN_FAILED')) {
+    const authFailedAction = action as AuthFailedAction;
+
+    return {
+      ...state,
+      loginError: {
+        error: authFailedAction.error,
+      },
     };
   }
   return state;

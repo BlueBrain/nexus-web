@@ -18,6 +18,7 @@ const getUserManager = (state: RootState): UserManager | undefined => {
   const validRealms = availableRealms.filter(
     r => r._label !== 'serviceaccounts'
   );
+
   const realm: Realm = preferredRealm
     ? validRealms.find(r => r._label === preferredRealm) || validRealms[0]
     : validRealms[0];

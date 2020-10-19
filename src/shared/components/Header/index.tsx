@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as packageJson from '../../../../package.json';
 import { Menu, Dropdown, Icon, Popover, Button } from 'antd';
-
+import { Realm } from '@bbp/nexus-sdk';
 import Copy from '../Copy';
 import ConsentPreferences from '../ConsentPreferences';
 import { ConsentType } from '../../layouts/FusionMainLayout';
@@ -69,31 +69,54 @@ export interface HeaderProps {
   name?: string;
   token?: string;
   links?: React.ReactNode[];
+  realms: Realm[];
   displayLogin?: boolean;
   children?: React.ReactChild;
-  onLoginClick?(): void;
   consent?: ConsentType;
   onClickRemoveConsent?(): void;
   onClickSideBarToggle(): void;
+  performLogin(realmName: string): void;
 }
 
 const Header: React.FunctionComponent<HeaderProps> = ({
   name,
+  realms,
   token,
   displayLogin = true,
   links = [],
   children,
-  onLoginClick,
   version,
   githubIssueURL,
   consent,
   onClickRemoveConsent,
   onClickSideBarToggle,
+  performLogin,
 }) => {
   const menu = (
     <Menu>
       {links.map((link, i) => (
         <Menu.Item key={i}>{link}</Menu.Item>
+      ))}
+    </Menu>
+  );
+
+  const realmsFilter = realms.filter(
+    r => r._label !== 'serviceaccounts' && !r._deprecated
+  );
+
+  const realmMenu = (
+    <Menu>
+      {realmsFilter.map((r: Realm, i: number) => (
+        <Menu.Item
+          key={i}
+          title={r.name}
+          onClick={e => {
+            e.domEvent.preventDefault();
+            performLogin(realmsFilter[i].name);
+          }}
+        >
+          {r.name}
+        </Menu.Item>
       ))}
     </Menu>
   );
@@ -149,9 +172,11 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             </a>
           </Dropdown>
         ) : displayLogin ? (
-          <a className="menu-dropdown ant-dropdown-link" onClick={onLoginClick}>
-            login <Icon type="login" />
-          </a>
+          <Dropdown overlay={realmMenu}>
+            <a className="menu-dropdown ant-dropdown-link">
+              login <Icon type="login" />
+            </a>
+          </Dropdown>
         ) : null}
       </div>
     </header>

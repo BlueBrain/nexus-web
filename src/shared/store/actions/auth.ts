@@ -1,6 +1,7 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
 import { PaginatedList, Realm, IdentityList } from '@bbp/nexus-sdk';
-
+import getUserManager from '../../../client/userManager';
+import { RootState } from '../reducers';
 import { ThunkAction } from '..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from './utils';
 
@@ -11,6 +12,7 @@ export enum AuthActionTypes {
   REALM_FETCHING = '@@nexus/AUTH_REALM_FETCHING',
   REALM_FULFILLED = '@@nexus/AUTH_REALM_FULFILLED',
   REALM_FAILED = '@@nexus/AUTH_REALM_FAILED',
+  LOGIN_FAILED = '@@nexus/LOGIN_FAILED',
 }
 
 /**
@@ -77,6 +79,13 @@ const fetchRealmsFailedAction: ActionCreator<FetchFailedAction<
   type: AuthActionTypes.REALM_FAILED,
 });
 
+export type AuthFailedAction = FetchFailedAction<AuthActionTypes.LOGIN_FAILED>;
+const authFailedAction: ActionCreator<FetchFailedAction<
+  AuthActionTypes.LOGIN_FAILED
+>> = (error: Error) => ({
+  error,
+  type: AuthActionTypes.LOGIN_FAILED,
+});
 /**
  * Export ALL types
  */
@@ -87,7 +96,8 @@ export type AuthActions =
   | FetchIdentitiesFailedAction
   | FetchRealmsAction
   | FetchRealmsFulfilledAction
-  | FetchRealmsFailedAction;
+  | FetchRealmsFailedAction
+  | AuthFailedAction;
 
 /**
  *  Actual Actions
@@ -125,4 +135,27 @@ const fetchRealms: ActionCreator<ThunkAction> = () => {
   };
 };
 
-export { fetchIdentities, fetchRealms };
+function performLogin() {
+  return async (
+    dispatch: Dispatch<any>,
+    getState: () => RootState
+  ): Promise<any> => {
+    const userManager = getUserManager(getState());
+    try {
+      const destination = new URL(window.location.href).searchParams.get(
+        'destination'
+      );
+      const redirectUri = destination
+        ? `${window.location.origin}/${destination}`
+        : null;
+      userManager &&
+        (await userManager.signinRedirect({
+          redirect_uri: redirectUri,
+        }));
+    } catch (error) {
+      return dispatch(authFailedAction(error));
+    }
+  };
+}
+
+export { fetchIdentities, fetchRealms, performLogin };

@@ -29,6 +29,7 @@ function setPreferredRealm(name: string) {
         };
       }
     }
+
     // append config key
     preferredRealmData.realmKey = `nexus__user:${preferredRealmData.realmKey}`;
     localStorage.setItem('nexus__realm', JSON.stringify(preferredRealmData));

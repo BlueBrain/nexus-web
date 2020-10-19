@@ -3,13 +3,14 @@ import { connect, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
 import { NexusClient, Identity, Realm } from '@bbp/nexus-sdk';
 import { UserManager } from 'oidc-client';
-import { Layout, Menu } from 'antd';
-
+import { Layout, Menu, notification } from 'antd';
+import * as configActions from '../store/actions/config';
+import * as authActions from '../store/actions/auth';
 import Header from '../components/Header';
 import getUserManager from '../../client/userManager';
 import { getLogoutUrl, getDestinationParam } from '../utils';
 import { RootState } from '../store/reducers';
-import { version, url as githubIssueURL } from '../../../package.json';
+import { url as githubIssueURL } from '../../../package.json';
 import useLocalStorage from '../hooks/useLocalStorage';
 import ConsentContainer from '../containers/ConsentContainer';
 import SeoHeaders from './SeoHeaders';
@@ -22,15 +23,67 @@ const { Sider, Content } = Layout;
 
 const logo = require('../images/logoDarkBg.svg');
 
+const loginCallBack = async (userManager: UserManager) => {
+  try {
+    const destination = new URL(window.location.href).searchParams.get(
+      'destination'
+    );
+
+    const redirectUri = destination
+      ? `${window.location.origin}/${destination}`
+      : null;
+    userManager &&
+      (await userManager.signinRedirect({
+        redirect_uri: redirectUri,
+      }));
+  } catch (error) {
+    switch (error.message) {
+      case 'Network Error':
+        notification.error({
+          message: 'We could not log you in',
+          description: (
+            <div>
+              <p>
+                Nexus Web could not connect to the openId provider configured
+                for this instance.
+              </p>{' '}
+              <p>Please contact your system administrators.</p>
+            </div>
+          ),
+          duration: 0,
+        });
+        break;
+      default:
+        notification.error({
+          message: 'We could not log you in',
+          description: (
+            <div>
+              <p>An unknown problem occured.</p>{' '}
+              <p>Please contact your system administrators.</p>
+            </div>
+          ),
+          duration: 0,
+        });
+        break;
+    }
+  }
+};
+
 export interface FusionMainLayoutProps {
   authenticated: boolean;
+  realms: Realm[];
   token?: string;
   name?: string;
   canLogin?: boolean;
+  loginError?: {
+    error: Error;
+  };
   userManager?: UserManager;
   apiEndpoint: string;
   children: any[];
   subApps: SubAppProps[];
+  setPreferredRealm(name: string): void;
+  performLogin(): void;
 }
 
 export type ConsentType = {
@@ -56,6 +109,7 @@ const homeApp = {
 
 const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   authenticated,
+  realms,
   token,
   name,
   children,
@@ -63,6 +117,9 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   userManager,
   subApps: propSubApps,
   apiEndpoint,
+  loginError,
+  setPreferredRealm,
+  performLogin,
 }) => {
   const subApps = [homeApp, ...propSubApps];
   const location = useLocation();
@@ -97,6 +154,22 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
     setSelectedItem(currentSubApp);
   }, [location]);
 
+  React.useEffect(() => {
+    if (loginError) {
+      notification.error({
+        message: 'We could not log you in',
+        description: (
+          <div>
+            <p>We could not log you in due to :</p>{' '}
+            <p>{loginError.error.message}</p>
+            <p>Please contact your system administrators.</p>
+          </div>
+        ),
+        duration: 0,
+      });
+    }
+  }, [loginError]);
+
   const [consent, setConsent] = useLocalStorage<ConsentType>(
     'consentToTracking'
   );
@@ -109,6 +182,11 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
     e.preventDefault();
     localStorage.removeItem('nexus__state');
     userManager && userManager.signoutRedirect();
+  };
+
+  const login = async (realmName: string) => {
+    setPreferredRealm(realmName);
+    performLogin();
   };
 
   // Remove version from API URL
@@ -166,6 +244,8 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
           <Header
             name={authenticated ? name : undefined}
             token={token}
+            realms={realms}
+            performLogin={login}
             links={[
               <a
                 href="/user"
@@ -181,7 +261,6 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
               </a>,
             ]}
             displayLogin={canLogin}
-            onLoginClick={() => goTo(`/login${getDestinationParam()}`)}
             version={deltaVersion}
             githubIssueURL={githubIssueURL}
             consent={consent}
@@ -206,6 +285,7 @@ const mapStateToProps = (state: RootState) => {
       auth.identities.data.identities) ||
     [];
   return {
+    realms,
     authenticated: oidc.user !== undefined,
     token: oidc.user && oidc.user.access_token,
     name:
@@ -217,11 +297,22 @@ const mapStateToProps = (state: RootState) => {
         endSessionEndpoint: r._endSessionEndpoint,
       }))
     ),
+
     userIdentity: identities[identities.length - 1],
     canLogin: !!(realms.length > 0),
     userManager: getUserManager(state),
     apiEndpoint: config.apiEndpoint,
+    loginError: auth.loginError,
   };
 };
 
-export default connect(mapStateToProps)(FusionMainLayout);
+const mapDispatchToProps = (dispatch: any) => ({
+  setPreferredRealm: (name: string) => {
+    dispatch(configActions.setPreferredRealm(name));
+  },
+  performLogin: () => {
+    dispatch(authActions.performLogin());
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(FusionMainLayout);
