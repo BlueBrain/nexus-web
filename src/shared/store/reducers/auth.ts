@@ -52,12 +52,12 @@ function authReducer(
     };
   }
   if (action.type.startsWith('@@nexus/LOGIN_FAILED')) {
-    const ac = action as AuthFailedAction;
+    const authFailedAction = action as AuthFailedAction;
 
     return {
       ...state,
       loginError: {
-        error: ac.error,
+        error: authFailedAction.error,
       },
     };
   }
