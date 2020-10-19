@@ -6,16 +6,19 @@ import { displayError } from '../components/Notifications';
 import ResourcesPane from '../components/ResourcesPane';
 import ResourcesList from '../components/ResourcesList';
 import { isActivityResourceLink } from '../utils';
+import fusionConfig from '../config';
+import { CodeResourceData } from '../components/LinkCodeForm';
 
 const ActivityResourcesContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
   activityId: string;
-}> = ({ orgLabel, projectLabel, activityId }) => {
+  linkCodeToActivity: (codeResourceId: string) => void;
+}> = ({ orgLabel, projectLabel, activityId, linkCodeToActivity }) => {
   const nexus = useNexusContext();
   const [resources, setResources] = React.useState<Resource[]>();
 
-  React.useEffect(() => {
+  const fetchResources = () =>
     nexus.Resource.links(
       orgLabel,
       projectLabel,
@@ -38,10 +41,29 @@ const ActivityResourcesContainer: React.FC<{
           .catch(error => displayError(error, 'An error occurred'));
       })
       .catch(error => displayError(error, 'An error occurred'));
+
+  React.useEffect(() => {
+    fetchResources();
   }, []);
 
+  const addCodeResource = (data: CodeResourceData) => {
+    nexus.Resource.create(orgLabel, projectLabel, {
+      '@type': fusionConfig.codeType,
+      ...data,
+    })
+      .then(response => {
+        linkCodeToActivity(response['@id']);
+        //  wait for the code resource to be indexed
+        const reloadTimer = setTimeout(() => {
+          fetchResources();
+          clearTimeout(reloadTimer);
+        }, 3000);
+      })
+      .catch(error => displayError(error, 'Failed to save'));
+  };
+
   return (
-    <ResourcesPane>
+    <ResourcesPane linkCode={addCodeResource}>
       {resources && (
         <ResourcesList
           resources={resources}

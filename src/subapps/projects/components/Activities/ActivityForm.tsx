@@ -15,6 +15,7 @@ import * as moment from 'moment';
 import { Status } from '../StatusIcon';
 import { ActivityMetadata } from '../../containers/NewActivityContainer';
 import { ActivityResource } from '../../views/ActivityView';
+import { isEmptyInput } from '../../utils';
 
 import './ActivityForm.less';
 
@@ -80,10 +81,6 @@ const ActivityForm: React.FC<{
           sm: 24,
           md: 12,
         };
-
-  const isEmptyInput = (value: string) => {
-    return value.split(' ').join('') === '';
-  };
 
   const isValidInput = () => {
     let isValid = true;

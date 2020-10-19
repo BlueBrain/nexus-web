@@ -37,3 +37,12 @@ export const isActivityResourceLink = (link: ResourceLink) => {
     labelOf(link.paths) === 'wasAssociatedWith'
   );
 };
+
+/**
+ * isEmptyInput function - checks if a given input empty
+ * @param {string}
+ * @returns {boolean}
+ */
+export const isEmptyInput = (value: string) => {
+  return value.split(' ').join('') === '';
+};
