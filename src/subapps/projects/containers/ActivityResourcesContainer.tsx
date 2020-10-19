@@ -44,7 +44,7 @@ const ActivityResourcesContainer: React.FC<{
 
   React.useEffect(() => {
     fetchResources();
-  }, []);
+  }, [activityId]);
 
   const addCodeResource = (data: CodeResourceData) => {
     nexus.Resource.create(orgLabel, projectLabel, {
