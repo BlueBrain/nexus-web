@@ -17,6 +17,7 @@ import {
   userExpiring,
   userSignedOut,
 } from 'redux-oidc';
+import { finalize, first } from 'rxjs/operators';
 import * as Sentry from '@sentry/browser';
 
 import getUserManager from './userManager';
@@ -76,11 +77,62 @@ const setToken: Link = (operation: Operation, forward?: Link) => {
   return forward ? forward(nextOperation) : new Observable();
 };
 
+// TODO add cache.
+// nexus client middleware for creating cache issues
+const setCache: Link = (operation: Operation, forward?: Link) => {
+  const next = forward ? forward(operation) : new Observable();
+  return new Observable(subscription => {
+    const getCachedData = async (cacheName: string, url: string) => {
+      const cacheStorage = await caches.open(cacheName);
+      const cachedResponse = await cacheStorage.match(url);
+      const keys = await cacheStorage.keys();
+
+      if (!cachedResponse || !cachedResponse.ok) {
+        return false;
+      }
+
+      return cachedResponse;
+    };
+
+    const putCacheData = async (
+      cacheName: string,
+      url: string,
+      response: object
+    ) => {
+      const cacheStorage = await caches.open(cacheName);
+      const cachedResponse = await cacheStorage.put(url, response as Response);
+      return;
+    };
+
+    getCachedData('nexus_cache', operation.path as string)
+      .then(response => {
+        if (response) {
+          console.log('cache hit');
+          subscription.next(response);
+          subscription.complete();
+        }
+        console.log('cache miss', { operation, response, next });
+        // we should continue the subscription
+        // if nothing happened
+        next.subscribe((response: any) => {
+          console.log({ response });
+          subscription.next(response);
+          // we need to be able to write to the cache after the response
+          // to do so, we should update the nexus-js repo.
+          // putCacheData('nexus_cache', operation.path as string, response)
+          //   .then()
+          //   .catch(console.error);
+        });
+      })
+      .catch(subscription.error);
+  });
+};
+
 // create Nexus instance
 const nexus = createNexusClient({
   fetch,
   uri: preloadedState.config.apiEndpoint,
-  links: [setToken],
+  links: [setCache, setToken],
 });
 
 // create redux store
