@@ -9,7 +9,7 @@ const ResourcesList: React.FC<{
   resources: Resource[];
   projectLabel: string;
   orgLabel: string;
-}> = ({ resources, projectLabel, orgLabel }) => {
+}> = ({ resources, projectLabel, orgLabel }) => {  
   return (
     <div className="resources-list">
       <div className="resources-list__controls">
@@ -20,7 +20,7 @@ const ResourcesList: React.FC<{
         {resources.map(resource => (
           <ActivityResourceItem
             item={resource}
-            key={resource['@id']}
+            key={`resource-item-${resource['@id']}`}
             link={`/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
               resource['@id']
             )}`}

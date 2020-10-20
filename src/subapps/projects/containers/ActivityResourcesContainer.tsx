@@ -21,22 +21,22 @@ const ActivityResourcesContainer: React.FC<{
   const [resources, setResources] = React.useState<Resource[]>([]);
   const [childResources, setChildResources] = React.useState<Resource[]>([]);
 
-  const fetchLinkedResources = (activityId: string, setData: (data: Resource[]) => void) =>
+  const fetchLinkedResources = (activityResourceId: string, setData: (data: Resource[]) => void) => {
     nexus.Resource.links(
       orgLabel,
       projectLabel,
-      encodeURIComponent(activityId),
+      encodeURIComponent(activityResourceId),
       'outgoing'
     )
       .then(response => {
         Promise.all(
           response._results
             .filter(link => isActivityResourceLink(link))
-            .map((activity: any) => {
+            .map((resource: any) => {
               return nexus.Resource.get(
                 orgLabel,
                 projectLabel,
-                encodeURIComponent(activity['@id'])
+                encodeURIComponent(resource['@id'])
               );
             })
         )
@@ -44,19 +44,28 @@ const ActivityResourcesContainer: React.FC<{
           .catch(error => displayError(error, 'An error occurred'));
       })
       .catch(error => displayError(error, 'An error occurred'));
+  }  
 
   React.useEffect(() => {
     fetchLinkedResources(activityId, setResources);
+  }, [activityId]);
+
+  React.useEffect(() => {
+    setChildResources([]);    
+    fetchChildResources();
+  }, [childrenActivities]);
+
+  
+  const fetchChildResources = () => {
+    const handleChildResources = (data: Resource[]) => {
+      if (data && data.length > 0) {
+        setChildResources([...childResources, ...data]);
+      }
+    }
 
     childrenActivities.forEach(child => {
       fetchLinkedResources(child['@id'], handleChildResources);
-    })
-  }, [activityId, childrenActivities]);
-
-  const handleChildResources = (data: Resource[]) => {
-    if (data && data.length > 0) {
-      setChildResources([...childResources, ...data])
-    }
+    });
   }
 
   const addCodeResource = (data: CodeResourceData) => {
@@ -79,7 +88,7 @@ const ActivityResourcesContainer: React.FC<{
   
   return (
     <ResourcesPane linkCode={addCodeResource}>
-      {resources && (
+      {resourceList.length > 0 && (
         <ResourcesList
           resources={resourceList}
           projectLabel={projectLabel}

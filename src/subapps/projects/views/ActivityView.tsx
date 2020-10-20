@@ -210,9 +210,6 @@ const ActivityView: React.FC = () => {
       .catch(error => displayError(error, 'Failed to load original payload'));
   };
 
-  console.log('acts', activities);
-  
-
   return (
     <div className="activity-view">
       <ProjectPanel
