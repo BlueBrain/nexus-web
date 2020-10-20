@@ -55,7 +55,7 @@ const ActivityView: React.FC = () => {
     activityId: string;
   }>(`/${subapp.namespace}/:orgLabel/:projectLabel/:activityId`);
 
-  const [activities, setActivities] = React.useState<any[]>([]);
+  const [activities, setActivities] = React.useState<ActivityResource[]>([]);
   const [activity, setActivity] = React.useState<ActivityResource>();
   const [breadcrumbs, setBreadcrumbs] = React.useState<BreadcrumbItem[]>([]);
   // switch to trigger activities list update
@@ -129,12 +129,14 @@ const ActivityView: React.FC = () => {
     activity: ActivityResource,
     setBreadcrumbs: (items: BreadcrumbItem[]) => void
   ) => {
+    let crumbs = [];
+
     const homeCrumb = {
       label: 'Project Home',
       url: `/projects/${orgLabel}/${projectLabel}`,
     };
 
-    setBreadcrumbs([homeCrumb]);
+    crumbs = [homeCrumb];
 
     const fetchNext = (activity: ActivityResource, acc: BreadcrumbItem[]) => {
       if (activity.hasParent) {
@@ -153,10 +155,11 @@ const ActivityView: React.FC = () => {
           })
           .catch(error => {
             // stay silent and display breadcrumbs without parents that failed to load
-            setBreadcrumbs([homeCrumb, ...acc]);
+            crumbs = [homeCrumb, ...acc];
           });
       } else {
-        setBreadcrumbs([homeCrumb, ...acc]);
+        crumbs = [homeCrumb, ...acc];
+        setBreadcrumbs(crumbs);
       }
     };
 
@@ -207,6 +210,9 @@ const ActivityView: React.FC = () => {
       .catch(error => displayError(error, 'Failed to load original payload'));
   };
 
+  console.log('acts', activities);
+  
+
   return (
     <div className="activity-view">
       <ProjectPanel
@@ -244,6 +250,7 @@ const ActivityView: React.FC = () => {
           projectLabel={projectLabel}
           linkCodeToActivity={linkCodeToActivity}
           activityId={activity && activity['@id']}
+          childrenActivities={activities}
         />
       )}
     </div>

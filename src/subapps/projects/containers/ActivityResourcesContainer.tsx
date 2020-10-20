@@ -8,17 +8,20 @@ import ResourcesList from '../components/ResourcesList';
 import { isActivityResourceLink } from '../utils';
 import fusionConfig from '../config';
 import { CodeResourceData } from '../components/LinkCodeForm';
+import { ActivityResource } from '../views/ActivityView';
 
 const ActivityResourcesContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
   activityId: string;
   linkCodeToActivity: (codeResourceId: string) => void;
-}> = ({ orgLabel, projectLabel, activityId, linkCodeToActivity }) => {
+  childrenActivities: ActivityResource[];
+}> = ({ orgLabel, projectLabel, activityId, linkCodeToActivity, childrenActivities }) => {
   const nexus = useNexusContext();
-  const [resources, setResources] = React.useState<Resource[]>();
+  const [resources, setResources] = React.useState<Resource[]>([]);
+  const [childResources, setChildResources] = React.useState<Resource[]>([]);
 
-  const fetchResources = () =>
+  const fetchLinkedResources = (activityId: string, setData: (data: Resource[]) => void) =>
     nexus.Resource.links(
       orgLabel,
       projectLabel,
@@ -37,14 +40,24 @@ const ActivityResourcesContainer: React.FC<{
               );
             })
         )
-          .then(response => setResources(response as Resource[]))
+          .then(response => setData(response as Resource[]))
           .catch(error => displayError(error, 'An error occurred'));
       })
       .catch(error => displayError(error, 'An error occurred'));
 
   React.useEffect(() => {
-    fetchResources();
-  }, [activityId]);
+    fetchLinkedResources(activityId, setResources);
+
+    childrenActivities.forEach(child => {
+      fetchLinkedResources(child['@id'], handleChildResources);
+    })
+  }, [activityId, childrenActivities]);
+
+  const handleChildResources = (data: Resource[]) => {
+    if (data && data.length > 0) {
+      setChildResources([...childResources, ...data])
+    }
+  }
 
   const addCodeResource = (data: CodeResourceData) => {
     nexus.Resource.create(orgLabel, projectLabel, {
@@ -55,18 +68,20 @@ const ActivityResourcesContainer: React.FC<{
         linkCodeToActivity(response['@id']);
         //  wait for the code resource to be indexed
         const reloadTimer = setTimeout(() => {
-          fetchResources();
+          fetchLinkedResources(activityId, setResources);
           clearTimeout(reloadTimer);
         }, 3000);
       })
       .catch(error => displayError(error, 'Failed to save'));
   };
 
+  const resourceList = [...resources, ...childResources];
+  
   return (
     <ResourcesPane linkCode={addCodeResource}>
       {resources && (
         <ResourcesList
-          resources={resources}
+          resources={resourceList}
           projectLabel={projectLabel}
           orgLabel={orgLabel}
         />
