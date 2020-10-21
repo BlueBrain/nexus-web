@@ -18,14 +18,11 @@ const ActivityResourcesContainer: React.FC<{
   const nexus = useNexusContext();
   const [resources, setResources] = React.useState<Resource[]>([]);
 
-  const fetchLinkedResources = (
-    activityResourceId: string,
-    setData: (data: Resource[]) => void
-  ) => {
+  const fetchLinkedResources = () => {
     nexus.Resource.links(
       orgLabel,
       projectLabel,
-      encodeURIComponent(activityResourceId),
+      encodeURIComponent(activityId),
       'outgoing'
     )
       .then(response => {
@@ -40,14 +37,14 @@ const ActivityResourcesContainer: React.FC<{
               );
             })
         )
-          .then(response => setData(response as Resource[]))
+          .then(response => setResources(response as Resource[]))
           .catch(error => displayError(error, 'An error occurred'));
       })
       .catch(error => displayError(error, 'An error occurred'));
   };
 
   React.useEffect(() => {
-    fetchLinkedResources(activityId, setResources);
+    fetchLinkedResources();
   }, [activityId]);
 
   const addCodeResource = (data: CodeResourceData) => {
@@ -59,7 +56,7 @@ const ActivityResourcesContainer: React.FC<{
         linkCodeToActivity(response['@id']);
         //  wait for the code resource to be indexed
         const reloadTimer = setTimeout(() => {
-          fetchLinkedResources(activityId, setResources);
+          fetchLinkedResources();
           clearTimeout(reloadTimer);
         }, 3000);
       })
