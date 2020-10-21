@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource, ResourceLink } from '@bbp/nexus-sdk';
 
 import { displayError } from '../components/Notifications';
 import ResourcesPane from '../components/ResourcesPane';
@@ -29,11 +29,11 @@ const ActivityResourcesContainer: React.FC<{
         Promise.all(
           response._results
             .filter(link => isActivityResourceLink(link))
-            .map((resource: any) => {
+            .map((link: ResourceLink) => {
               return nexus.Resource.get(
                 orgLabel,
                 projectLabel,
-                encodeURIComponent(resource['@id'])
+                encodeURIComponent(link['@id'])
               );
             })
         )
