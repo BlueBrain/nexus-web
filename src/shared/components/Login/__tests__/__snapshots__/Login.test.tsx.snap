@@ -57,50 +57,44 @@ exports[`login component should render correctly 1`] = `
           >
             <Wave>
               <button
-                className="ant-btn login-button ant-btn-primary ant-btn-block"
+                className="ant-btn ant-btn-primary ant-btn-block login-button"
                 onClick={[Function]}
                 type="button"
               >
+                <LoadingIcon
+                  existIcon={false}
+                  loading={false}
+                  prefixCls="ant-btn"
+                >
+                  <CSSMotion
+                    motionName="ant-btn-loading-icon-motion"
+                    onAppearActive={[Function]}
+                    onAppearStart={[Function]}
+                    onEnterActive={[Function]}
+                    onEnterStart={[Function]}
+                    onLeaveActive={[Function]}
+                    onLeaveStart={[Function]}
+                    removeOnLeave={true}
+                    visible={false}
+                  >
+                    <DomWrapper />
+                  </CSSMotion>
+                </LoadingIcon>
                 <span
                   key=".0"
                 >
                   Log in
                 </span>
-                <Icon
+                <AntdIcon
                   key=".1"
                   type="login"
                 >
-                  <LocaleReceiver
-                    componentName="Icon"
-                  >
-                    <i
-                      aria-label="icon: login"
-                      className="anticon anticon-login"
-                    >
-                      <IconReact
-                        className=""
-                        type="login-o"
-                      >
-                        <svg
-                          aria-hidden="true"
-                          className=""
-                          data-icon="login"
-                          fill="currentColor"
-                          focusable="false"
-                          height="1em"
-                          key="svg-login"
-                          viewBox="64 64 896 896"
-                          width="1em"
-                        >
-                          <path
-                            d="M521.7 82c-152.5-.4-286.7 78.5-363.4 197.7-3.4 5.3.4 12.3 6.7 12.3h70.3c4.8 0 9.3-2.1 12.3-5.8 7-8.5 14.5-16.7 22.4-24.5 32.6-32.5 70.5-58.1 112.7-75.9 43.6-18.4 90-27.8 137.9-27.8 47.9 0 94.3 9.3 137.9 27.8 42.2 17.8 80.1 43.4 112.7 75.9 32.6 32.5 58.1 70.4 76 112.5C865.7 417.8 875 464.1 875 512c0 47.9-9.4 94.2-27.8 137.8-17.8 42.1-43.4 80-76 112.5s-70.5 58.1-112.7 75.9A352.8 352.8 0 0 1 520.6 866c-47.9 0-94.3-9.4-137.9-27.8A353.84 353.84 0 0 1 270 762.3c-7.9-7.9-15.3-16.1-22.4-24.5-3-3.7-7.6-5.8-12.3-5.8H165c-6.3 0-10.2 7-6.7 12.3C234.9 863.2 368.5 942 520.6 942c236.2 0 428-190.1 430.4-425.6C953.4 277.1 761.3 82.6 521.7 82zM395.02 624v-76h-314c-4.4 0-8-3.6-8-8v-56c0-4.4 3.6-8 8-8h314v-76c0-6.7 7.8-10.5 13-6.3l141.9 112a8 8 0 0 1 0 12.6l-141.9 112c-5.2 4.1-13 .4-13-6.3z"
-                            key="svg-login-svg-0"
-                          />
-                        </svg>
-                      </IconReact>
-                    </i>
-                  </LocaleReceiver>
-                </Icon>
+                  <span
+                    className="anticon"
+                    role="img"
+                    type="login"
+                  />
+                </AntdIcon>
               </button>
             </Wave>
           </Button>
@@ -173,50 +167,44 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
             >
               <Wave>
                 <button
-                  className="ant-btn login-button ant-btn-primary"
+                  className="ant-btn ant-btn-primary login-button"
                   onClick={[Function]}
                   type="button"
                 >
+                  <LoadingIcon
+                    existIcon={false}
+                    loading={false}
+                    prefixCls="ant-btn"
+                  >
+                    <CSSMotion
+                      motionName="ant-btn-loading-icon-motion"
+                      onAppearActive={[Function]}
+                      onAppearStart={[Function]}
+                      onEnterActive={[Function]}
+                      onEnterStart={[Function]}
+                      onLeaveActive={[Function]}
+                      onLeaveStart={[Function]}
+                      removeOnLeave={true}
+                      visible={false}
+                    >
+                      <DomWrapper />
+                    </CSSMotion>
+                  </LoadingIcon>
                   <span
                     key=".0"
                   >
                     Log in
                   </span>
-                  <Icon
+                  <AntdIcon
                     key=".1"
                     type="login"
                   >
-                    <LocaleReceiver
-                      componentName="Icon"
-                    >
-                      <i
-                        aria-label="icon: login"
-                        className="anticon anticon-login"
-                      >
-                        <IconReact
-                          className=""
-                          type="login-o"
-                        >
-                          <svg
-                            aria-hidden="true"
-                            className=""
-                            data-icon="login"
-                            fill="currentColor"
-                            focusable="false"
-                            height="1em"
-                            key="svg-login"
-                            viewBox="64 64 896 896"
-                            width="1em"
-                          >
-                            <path
-                              d="M521.7 82c-152.5-.4-286.7 78.5-363.4 197.7-3.4 5.3.4 12.3 6.7 12.3h70.3c4.8 0 9.3-2.1 12.3-5.8 7-8.5 14.5-16.7 22.4-24.5 32.6-32.5 70.5-58.1 112.7-75.9 43.6-18.4 90-27.8 137.9-27.8 47.9 0 94.3 9.3 137.9 27.8 42.2 17.8 80.1 43.4 112.7 75.9 32.6 32.5 58.1 70.4 76 112.5C865.7 417.8 875 464.1 875 512c0 47.9-9.4 94.2-27.8 137.8-17.8 42.1-43.4 80-76 112.5s-70.5 58.1-112.7 75.9A352.8 352.8 0 0 1 520.6 866c-47.9 0-94.3-9.4-137.9-27.8A353.84 353.84 0 0 1 270 762.3c-7.9-7.9-15.3-16.1-22.4-24.5-3-3.7-7.6-5.8-12.3-5.8H165c-6.3 0-10.2 7-6.7 12.3C234.9 863.2 368.5 942 520.6 942c236.2 0 428-190.1 430.4-425.6C953.4 277.1 761.3 82.6 521.7 82zM395.02 624v-76h-314c-4.4 0-8-3.6-8-8v-56c0-4.4 3.6-8 8-8h314v-76c0-6.7 7.8-10.5 13-6.3l141.9 112a8 8 0 0 1 0 12.6l-141.9 112c-5.2 4.1-13 .4-13-6.3z"
-                              key="svg-login-svg-0"
-                            />
-                          </svg>
-                        </IconReact>
-                      </i>
-                    </LocaleReceiver>
-                  </Icon>
+                    <span
+                      className="anticon"
+                      role="img"
+                      type="login"
+                    />
+                  </AntdIcon>
                 </button>
               </Wave>
             </Button>
@@ -244,7 +232,6 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                     </MenuItem>
                   </Menu>
                 }
-                placement="bottomLeft"
                 trigger={
                   Array [
                     "click",
@@ -252,17 +239,13 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                   ]
                 }
               >
-                <Dropdown
-                  defaultVisible={false}
+                <ForwardRef(Dropdown)
                   mouseEnterDelay={0.15}
                   mouseLeaveDelay={0.1}
-                  onVisibleChange={[Function]}
                   overlay={[Function]}
                   overlayClassName=""
-                  overlayStyle={Object {}}
                   placement="bottomLeft"
                   prefixCls="ant-dropdown"
-                  showAction={Array []}
                   transitionName="slide-up"
                   trigger={
                     Array [
@@ -279,6 +262,7 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                       ]
                     }
                     afterPopupVisibleChange={[Function]}
+                    autoDestroy={false}
                     blurDelay={0.15}
                     builtinPlacements={
                       Object {
@@ -393,7 +377,6 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                       }
                     }
                     defaultPopupVisible={false}
-                    defaultVisible={false}
                     destroyPopupOnHide={false}
                     focusDelay={0}
                     getDocument={[Function]}
@@ -405,7 +388,6 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                     mouseLeaveDelay={0.1}
                     onPopupAlign={[Function]}
                     onPopupVisibleChange={[Function]}
-                    onVisibleChange={[Function]}
                     overlay={[Function]}
                     popup={[Function]}
                     popupAlign={Object {}}
@@ -413,12 +395,12 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                     popupPlacement="bottomLeft"
                     popupStyle={Object {}}
                     popupTransitionName="slide-up"
-                    popupVisible={false}
                     prefixCls="ant-dropdown"
                     showAction={Array []}
+                    stretch="minWidth"
                   >
                     <span
-                      className="realm ant-dropdown-trigger"
+                      className="ant-dropdown-trigger realm"
                       key="trigger"
                       onClick={[Function]}
                       onMouseDown={[Function]}
@@ -428,43 +410,18 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                     >
                       HBP
                        
-                      <Icon
+                      <AntdIcon
                         type="down"
                       >
-                        <LocaleReceiver
-                          componentName="Icon"
-                        >
-                          <i
-                            aria-label="icon: down"
-                            className="anticon anticon-down"
-                          >
-                            <IconReact
-                              className=""
-                              type="down-o"
-                            >
-                              <svg
-                                aria-hidden="true"
-                                className=""
-                                data-icon="down"
-                                fill="currentColor"
-                                focusable="false"
-                                height="1em"
-                                key="svg-down"
-                                viewBox="64 64 896 896"
-                                width="1em"
-                              >
-                                <path
-                                  d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"
-                                  key="svg-down-svg-0"
-                                />
-                              </svg>
-                            </IconReact>
-                          </i>
-                        </LocaleReceiver>
-                      </Icon>
+                        <span
+                          className="anticon"
+                          role="img"
+                          type="down"
+                        />
+                      </AntdIcon>
                     </span>
                   </Trigger>
-                </Dropdown>
+                </ForwardRef(Dropdown)>
               </Dropdown>
             </div>
           </div>

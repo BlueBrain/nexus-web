@@ -58,14 +58,13 @@ exports[`Header component Should render correctly 1`] = `
           </MenuItem>
         </Menu>
       }
-      placement="bottomLeft"
     >
       <a
         className="menu-dropdown ant-dropdown-link"
       >
         Mark Hamill
          
-        <Icon
+        <AntdIcon
           type="down"
         />
       </a>

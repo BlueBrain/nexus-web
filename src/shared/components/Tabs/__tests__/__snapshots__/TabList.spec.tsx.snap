@@ -5,7 +5,6 @@ exports[`TabList component should render correctly 1`] = `
   className="tab-list"
 >
   <Tabs
-    hideAdd={false}
     onChange={[Function]}
     tabPosition="left"
   />
