@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource, ResourceLink } from '@bbp/nexus-sdk';
 
 import { displayError } from '../components/Notifications';
 import ResourcesPane from '../components/ResourcesPane';
@@ -16,9 +16,9 @@ const ActivityResourcesContainer: React.FC<{
   linkCodeToActivity: (codeResourceId: string) => void;
 }> = ({ orgLabel, projectLabel, activityId, linkCodeToActivity }) => {
   const nexus = useNexusContext();
-  const [resources, setResources] = React.useState<Resource[]>();
+  const [resources, setResources] = React.useState<Resource[]>([]);
 
-  const fetchResources = () =>
+  const fetchLinkedResources = () => {
     nexus.Resource.links(
       orgLabel,
       projectLabel,
@@ -29,11 +29,11 @@ const ActivityResourcesContainer: React.FC<{
         Promise.all(
           response._results
             .filter(link => isActivityResourceLink(link))
-            .map((activity: any) => {
+            .map((link: ResourceLink) => {
               return nexus.Resource.get(
                 orgLabel,
                 projectLabel,
-                encodeURIComponent(activity['@id'])
+                encodeURIComponent(link['@id'])
               );
             })
         )
@@ -41,10 +41,11 @@ const ActivityResourcesContainer: React.FC<{
           .catch(error => displayError(error, 'An error occurred'));
       })
       .catch(error => displayError(error, 'An error occurred'));
+  };
 
   React.useEffect(() => {
-    fetchResources();
-  }, []);
+    fetchLinkedResources();
+  }, [activityId]);
 
   const addCodeResource = (data: CodeResourceData) => {
     nexus.Resource.create(orgLabel, projectLabel, {
@@ -55,7 +56,7 @@ const ActivityResourcesContainer: React.FC<{
         linkCodeToActivity(response['@id']);
         //  wait for the code resource to be indexed
         const reloadTimer = setTimeout(() => {
-          fetchResources();
+          fetchLinkedResources();
           clearTimeout(reloadTimer);
         }, 3000);
       })
@@ -64,13 +65,11 @@ const ActivityResourcesContainer: React.FC<{
 
   return (
     <ResourcesPane linkCode={addCodeResource}>
-      {resources && (
-        <ResourcesList
-          resources={resources}
-          projectLabel={projectLabel}
-          orgLabel={orgLabel}
-        />
-      )}
+      <ResourcesList
+        resources={resources}
+        projectLabel={projectLabel}
+        orgLabel={orgLabel}
+      />
     </ResourcesPane>
   );
 };
