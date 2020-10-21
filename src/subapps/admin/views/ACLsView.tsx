@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
-import { Empty, Spin, Tooltip, Icon } from 'antd';
+import { Empty, Spin, Tooltip } from 'antd';
 import { ACL } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import ACLsForm from '../components/ACLs/ACLsForm';
 import { useAdminSubappContext } from '..';
+import Icon from '@ant-design/icons/lib/components/Icon';
 
 const ACLs: React.FunctionComponent = () => {
   const { namespace } = useAdminSubappContext();

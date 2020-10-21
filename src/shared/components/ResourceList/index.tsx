@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-  Icon,
   Tooltip,
   Button,
   Spin,
@@ -10,6 +9,7 @@ import {
   Menu,
   Dropdown,
 } from 'antd';
+import Icon from '@ant-design/icons/lib/components/Icon';
 import { ResourceList, Resource } from '@bbp/nexus-sdk';
 
 import RenameableItem from '../Renameable';
@@ -19,9 +19,9 @@ import ResourceCardComponent from '../ResourceCard';
 import { getResourceLabel } from '../../utils';
 import TypesIconList from '../Types/TypesIcon';
 import useMeasure from '../../hooks/useMeasure';
+import Copy from '../Copy';
 
 import './ResourceList.less';
-import Copy from '../Copy';
 
 export type ResourceBoardList = {
   name: string;

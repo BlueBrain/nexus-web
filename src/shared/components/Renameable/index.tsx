@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { Input, Tooltip } from 'antd';
+import { SizeType } from 'antd/es/config-provider/SizeContext';
 import './Renameable.less';
 
 interface RenameableItemProps {
   defaultValue: string;
   onChange: (value: string) => void;
-  size?: 'large' | 'default' | 'small';
+  size?: SizeType;
 }
 
 const RenameableItem: React.FunctionComponent<RenameableItemProps> = ({

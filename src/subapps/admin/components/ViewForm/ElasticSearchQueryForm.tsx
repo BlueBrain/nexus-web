@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Icon, Button, Card, List, Empty } from 'antd';
+import { Form, Button, Card, List, Empty } from 'antd';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import ReactJson from 'react-json-view';
 import { ElasticSearchViewQueryResponse } from '@bbp/nexus-sdk';
@@ -7,6 +7,7 @@ import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/javascript/javascript';
 
 import './view-form.less';
+import Icon from '@ant-design/icons/lib/components/Icon';
 
 const FormItem = Form.Item;
 const ListItem = List.Item;

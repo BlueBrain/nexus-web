@@ -164,7 +164,7 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
         <Form.Item {...formItemLayoutWithOutLabel}>
           {mode === 'edit' && (
             <Button
-              type="danger"
+              danger
               onClick={confirmDeprecate}
               style={{ float: 'right' }}
             >

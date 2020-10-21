@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { Icon, Card } from 'antd';
-import './SideMenu.less';
+import { Card } from 'antd';
+import Icon from '@ant-design/icons/lib/components/Icon';
 import { useTransition, animated } from 'react-spring';
+
+import './SideMenu.less';
 
 const ANIMATIONS = {
   left: {

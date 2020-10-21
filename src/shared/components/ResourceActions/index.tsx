@@ -40,7 +40,7 @@ const makeButton = ({
         okText="Yes"
         cancelText="No"
       >
-        <Button type="danger" icon={icon}>
+        <Button danger icon={icon}>
           {shortTitle}
         </Button>
       </Popconfirm>

@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, Icon, Switch, Spin } from 'antd';
+import { Button, Switch, Spin } from 'antd';
+import Icon from '@ant-design/icons/lib/components/Icon';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/fold/foldcode';
@@ -163,7 +164,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
                   Save
                 </Button>
               ) : null}{' '}
-              <Button type="danger" size="small" onClick={handleCancel}>
+              <Button danger size="small" onClick={handleCancel}>
                 Cancel
               </Button>
             </>

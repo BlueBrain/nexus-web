@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, Modal, notification, message, Icon } from 'antd';
+import { Button, Modal, notification, message } from 'antd';
+import Icon from '@ant-design/icons/lib/components/Icon';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import StudioEditorForm from '../components/StudioEditorForm';

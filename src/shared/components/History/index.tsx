@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Icon, Timeline, Card, Button } from 'antd';
+import { Timeline, Card } from 'antd';
+import Icon from '@ant-design/icons/lib/components/Icon';
 import * as moment from 'moment';
 
 import './History.less';

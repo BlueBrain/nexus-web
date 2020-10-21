@@ -2,7 +2,8 @@ import * as React from 'react';
 import { useLocation, useRouteMatch } from 'react-router';
 import { Link } from 'react-router-dom';
 import * as queryString from 'query-string';
-import { Menu, Dropdown, Icon, notification } from 'antd';
+import { Menu, Dropdown, notification } from 'antd';
+import Icon from '@ant-design/icons/lib/components/Icon';
 import { ViewList, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 

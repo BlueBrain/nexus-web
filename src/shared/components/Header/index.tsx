@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as packageJson from '../../../../package.json';
-import { Menu, Dropdown, Icon, Popover, Button } from 'antd';
+import { Menu, Dropdown, Popover } from 'antd';
+import Icon from '@ant-design/icons/lib/components/Icon';
 import { Realm } from '@bbp/nexus-sdk';
 import Copy from '../Copy';
 import ConsentPreferences from '../ConsentPreferences';

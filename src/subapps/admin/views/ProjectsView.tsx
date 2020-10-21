@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Drawer, notification, Modal, Button, Empty, Icon } from 'antd';
+import { Drawer, notification, Modal, Button, Empty } from 'antd';
+import Icon from '@ant-design/icons/lib/components/Icon';
 import { useHistory, useRouteMatch } from 'react-router';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { ProjectResponseCommon, OrgResponseCommon } from '@bbp/nexus-sdk';

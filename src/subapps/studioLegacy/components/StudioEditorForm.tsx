@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
-import { Input, Form, Tooltip, Icon, Button } from 'antd';
+import { Input, Form, Tooltip, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import TextArea from 'antd/lib/input/TextArea';
+import Icon from '@ant-design/icons/lib/components/Icon';
 
 type StudioResource = Resource<{
   label: string;

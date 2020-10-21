@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'antd';
+import Icon from '@ant-design/icons/lib/components/Icon';
 
 import './ListBoard.less';
 

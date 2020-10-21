@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Upload, Icon, message, Switch, Select, notification } from 'antd';
+import { Upload, message, Switch, Select, notification } from 'antd';
+import Icon from '@ant-design/icons/lib/components/Icon';
 import { UploadFile, RcCustomRequestOptions } from 'antd/lib/upload/interface';
 import { NexusFile, Storage } from '@bbp/nexus-sdk';
 

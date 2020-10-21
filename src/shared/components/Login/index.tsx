@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Card, Dropdown, Icon, Menu, Button } from 'antd';
+import { Card, Dropdown, Menu, Button } from 'antd';
+import Icon from '@ant-design/icons/lib/components/Icon';
 
 import './Login.less';
 

@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { Input, Form, Tooltip, Icon, Button, Collapse, Select } from 'antd';
+import { Input, Form, Tooltip, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { ResourceList } from '@bbp/nexus-sdk';
 import { FormComponentProps } from 'antd/es/form';
+import Icon from '@ant-design/icons/lib/components/Icon';
 import TextArea from 'antd/lib/input/TextArea';
 
 import DEFAULT_DASHBOARD_VIEW_QUERY from './DefaultDashboardViewQuery';
 import SparqlQueryFormInput from '../../../admin/components/ViewForm/SparqlQueryInput';
-
-const { Option } = Select;
 
 export type DashboardPayload = {
   description?: string;

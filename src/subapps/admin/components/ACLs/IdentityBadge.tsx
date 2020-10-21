@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Icon, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
+import Icon from '@ant-design/icons/lib/components/Icon';
 import { Identity } from '@bbp/nexus-sdk';
 
 import './ACLs.less';

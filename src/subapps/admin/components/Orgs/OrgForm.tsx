@@ -85,7 +85,7 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
           </Button>
           {mode === 'edit' && (
             <Button
-              type="danger"
+              danger
               onClick={confirmDeprecate}
               style={{ float: 'right' }}
             >

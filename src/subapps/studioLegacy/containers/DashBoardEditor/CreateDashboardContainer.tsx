@@ -2,7 +2,8 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID, Resource } from '@bbp/nexus-sdk';
-import { notification, Modal, Button, message, Icon } from 'antd';
+import { notification, Modal, Button, message } from 'antd';
+import Icon from '@ant-design/icons/lib/components/Icon';
 
 import DashboardConfigEditor, {
   DashboardPayload,

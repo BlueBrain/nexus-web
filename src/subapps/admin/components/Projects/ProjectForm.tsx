@@ -1,16 +1,7 @@
 import * as React from 'react';
-import {
-  Collapse,
-  Form,
-  Icon,
-  Input,
-  Button,
-  Spin,
-  Modal,
-  Row,
-  Col,
-} from 'antd';
+import { Collapse, Form, Input, Button, Spin, Modal, Row, Col } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
+import Icon from '@ant-design/icons/lib/components/Icon';
 
 /**
  * Custom from controls, based on:
