@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
+import { Empty } from 'antd';
 
 import ActivityResourceItem from './ActivityResourceItem';
 
@@ -17,7 +18,7 @@ const ResourcesList: React.FC<{
         <div>Filters: coming soon</div>
       </div>
       <div className="resources-list__resources">
-        {resources.map(resource => (
+        {resources.length > 0 ? resources.map(resource => (
           <ActivityResourceItem
             item={resource}
             key={`resource-item-${resource['@id']}`}
@@ -25,7 +26,7 @@ const ResourcesList: React.FC<{
               resource['@id']
             )}`}
           />
-        ))}
+        )): <Empty description="No resources found for this Activity" />}
       </div>
     </div>
   );

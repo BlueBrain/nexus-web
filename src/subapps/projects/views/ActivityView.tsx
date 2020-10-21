@@ -247,7 +247,6 @@ const ActivityView: React.FC = () => {
           projectLabel={projectLabel}
           linkCodeToActivity={linkCodeToActivity}
           activityId={activity && activity['@id']}
-          childrenActivities={activities}
         />
       )}
     </div>

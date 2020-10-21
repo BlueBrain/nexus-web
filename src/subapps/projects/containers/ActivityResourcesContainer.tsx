@@ -8,18 +8,15 @@ import ResourcesList from '../components/ResourcesList';
 import { isActivityResourceLink } from '../utils';
 import fusionConfig from '../config';
 import { CodeResourceData } from '../components/LinkCodeForm';
-import { ActivityResource } from '../views/ActivityView';
 
 const ActivityResourcesContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
   activityId: string;
   linkCodeToActivity: (codeResourceId: string) => void;
-  childrenActivities: ActivityResource[];
-}> = ({ orgLabel, projectLabel, activityId, linkCodeToActivity, childrenActivities }) => {
+}> = ({ orgLabel, projectLabel, activityId, linkCodeToActivity }) => {
   const nexus = useNexusContext();
   const [resources, setResources] = React.useState<Resource[]>([]);
-  const [childResources, setChildResources] = React.useState<Resource[]>([]);
 
   const fetchLinkedResources = (activityResourceId: string, setData: (data: Resource[]) => void) => {
     nexus.Resource.links(
@@ -50,24 +47,6 @@ const ActivityResourcesContainer: React.FC<{
     fetchLinkedResources(activityId, setResources);
   }, [activityId]);
 
-  React.useEffect(() => {
-    setChildResources([]);    
-    fetchChildResources();
-  }, [childrenActivities]);
-
-  
-  const fetchChildResources = () => {
-    const handleChildResources = (data: Resource[]) => {
-      if (data && data.length > 0) {
-        setChildResources([...childResources, ...data]);
-      }
-    }
-
-    childrenActivities.forEach(child => {
-      fetchLinkedResources(child['@id'], handleChildResources);
-    });
-  }
-
   const addCodeResource = (data: CodeResourceData) => {
     nexus.Resource.create(orgLabel, projectLabel, {
       '@type': fusionConfig.codeType,
@@ -83,18 +62,14 @@ const ActivityResourcesContainer: React.FC<{
       })
       .catch(error => displayError(error, 'Failed to save'));
   };
-
-  const resourceList = [...resources, ...childResources];
   
   return (
     <ResourcesPane linkCode={addCodeResource}>
-      {resourceList.length > 0 && (
-        <ResourcesList
-          resources={resourceList}
-          projectLabel={projectLabel}
-          orgLabel={orgLabel}
-        />
-      )}
+      <ResourcesList
+        resources={resources}
+        projectLabel={projectLabel}
+        orgLabel={orgLabel}
+      />
     </ResourcesPane>
   );
 };
