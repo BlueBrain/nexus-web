@@ -18,7 +18,10 @@ const ActivityResourcesContainer: React.FC<{
   const nexus = useNexusContext();
   const [resources, setResources] = React.useState<Resource[]>([]);
 
-  const fetchLinkedResources = (activityResourceId: string, setData: (data: Resource[]) => void) => {
+  const fetchLinkedResources = (
+    activityResourceId: string,
+    setData: (data: Resource[]) => void
+  ) => {
     nexus.Resource.links(
       orgLabel,
       projectLabel,
@@ -41,7 +44,7 @@ const ActivityResourcesContainer: React.FC<{
           .catch(error => displayError(error, 'An error occurred'));
       })
       .catch(error => displayError(error, 'An error occurred'));
-  }  
+  };
 
   React.useEffect(() => {
     fetchLinkedResources(activityId, setResources);
@@ -62,7 +65,7 @@ const ActivityResourcesContainer: React.FC<{
       })
       .catch(error => displayError(error, 'Failed to save'));
   };
-  
+
   return (
     <ResourcesPane linkCode={addCodeResource}>
       <ResourcesList
