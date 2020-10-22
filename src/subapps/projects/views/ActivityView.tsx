@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk';
+import {
+  Resource,
+  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+  ElasticSearchViewQueryResponse,
+} from '@bbp/nexus-sdk';
 
 import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
@@ -13,11 +17,6 @@ import SingleActivityContainer from '../containers/SingleActivityContainer';
 import ActivityInfoContainer from '../containers/ActivityInfoContainer';
 import { isParentLink } from '../utils';
 import ActivityResourcesContainer from '../containers/ActivityResourcesContainer';
-
-import {
-  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-  ElasticSearchViewQueryResponse,
-} from '@bbp/nexus-sdk';
 
 import './ActivityView.less';
 import fusionConfig from '../config';
