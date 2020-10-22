@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { AutoComplete, Input } from 'antd';
-import { SelectValue } from 'antd/lib/select';
-import { DataSourceItemType } from 'antd/lib/auto-complete';
+import { SelectValue, OptionType } from 'antd/lib/select';
+import {} from 'antd/lib/auto-complete';
 
 import { labelOf, getProp } from '../../utils';
 import DropdownItem from './DropdownItem';
@@ -51,14 +51,13 @@ const DropdownFilter: React.FunctionComponent<{
 
   const dataSource = buckets.map(({ key, count }) => {
     const label = labelOf(key);
-    return dropdownItem({ key, count, label }) as DataSourceItemType;
+    return dropdownItem({ key, count, label });
   });
 
   return (
     <div className="dropdown-filter">
       <AutoComplete
         dropdownMatchSelectWidth={false}
-        optionLabelProp="title"
         placeholder={placeholder}
         onChange={handleInputChange}
         onSelect={handleChange}
@@ -69,7 +68,10 @@ const DropdownFilter: React.FunctionComponent<{
             .toUpperCase()
             .includes(inputValue.toUpperCase());
         }}
-        dataSource={dataSource}
+        // @ts-ignore
+        // TODO figure out how to type this correctly, should be
+        // a list of options
+        options={dataSource || []}
       >
         <Input />
       </AutoComplete>
