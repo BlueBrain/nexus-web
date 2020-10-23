@@ -21,14 +21,14 @@ const WorkspaceEditorForm: React.FC<{
     wrapperCol: { span: 14 },
   };
 
-  const handleSubmit = async () => {
-    try {
-      const values = await form.validateFields();
-      const { label, description } = values;
-      saveWorkspace && saveWorkspace(label, description);
-    } catch (error) {
-      // TODO handle errors?
-    }
+  const handleSubmit = ({
+    label,
+    description,
+  }: {
+    label: string;
+    description: string;
+  }) => {
+    saveWorkspace && saveWorkspace(label, description);
   };
 
   const { label, description } = workspace || {
@@ -37,7 +37,7 @@ const WorkspaceEditorForm: React.FC<{
   };
 
   return (
-    <Form {...formItemLayout} onChange={handleSubmit}>
+    <Form {...formItemLayout} onFinish={handleSubmit} form={form}>
       <Form.Item
         label={
           <span>
