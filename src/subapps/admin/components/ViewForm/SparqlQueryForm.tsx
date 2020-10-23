@@ -40,12 +40,7 @@ const SparqlQueryForm: React.FunctionComponent<{
 
   return (
     <div className="view-form">
-      <Form
-        onSubmit={e => {
-          e.preventDefault();
-          onQueryChange(value);
-        }}
-      >
+      <Form onFinish={onQueryChange}>
         <SparqlQueryInput
           value={value}
           onChange={handleChange}
