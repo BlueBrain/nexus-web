@@ -45,7 +45,7 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
 }): JSX.Element => {
   const [initialQuery, setInitialQuery] = React.useState('');
   const [valid, setValid] = React.useState(true);
-  const [value, setValue] = React.useState();
+  const [value, setValue] = React.useState<string>();
 
   React.useEffect(() => {
     // only on first render!
@@ -73,8 +73,7 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
   return (
     <div className="view-form">
       <Form
-        onSubmit={e => {
-          e.preventDefault();
+        onFinish={value => {
           onQueryChange(JSON.parse(value));
         }}
       >
