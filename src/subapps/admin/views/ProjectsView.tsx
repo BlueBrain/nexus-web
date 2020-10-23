@@ -66,25 +66,16 @@ const ProjectsView: React.FunctionComponent = () => {
       description: newProject.description || '',
       apiMappings: newProject.apiMappings || undefined,
     })
-      .then(
-        () => {
-          notification.success({
-            message: 'Project created',
-            duration: 2,
-          });
-          setFormBusy(false);
-          goTo(activeOrg._label, newProject._label);
-        },
-        (action: { type: string; error: Error }) => {
-          notification.warning({
-            message: 'Project NOT created',
-            description: action.error.message,
-            duration: 2,
-          });
-          setFormBusy(false);
-        }
-      )
+      .then(() => {
+        notification.success({
+          message: 'Project created',
+          duration: 2,
+        });
+        setFormBusy(false);
+        goTo(activeOrg._label, newProject._label);
+      })
       .catch((error: Error) => {
+        setFormBusy(false);
         notification.error({
           message: 'An unknown error occurred',
           description: error.message,
@@ -112,26 +103,17 @@ const ProjectsView: React.FunctionComponent = () => {
         apiMappings: newProject.apiMappings || [],
       }
     )
-      .then(
-        () => {
-          notification.success({
-            message: 'Project saved',
-            duration: 2,
-          });
-          setFormBusy(false);
-          setModalVisible(false);
-          setSelectedProject(null);
-        },
-        (action: { type: string; error: Error }) => {
-          notification.warning({
-            message: 'Project NOT saved',
-            description: action.error.message,
-            duration: 2,
-          });
-          setFormBusy(false);
-        }
-      )
+      .then(() => {
+        notification.success({
+          message: 'Project saved',
+          duration: 2,
+        });
+        setFormBusy(false);
+        setModalVisible(false);
+        setSelectedProject(null);
+      })
       .catch((error: Error) => {
+        setFormBusy(false);
         notification.error({
           message: 'An unknown error occurred',
           description: error.message,
@@ -160,7 +142,7 @@ const ProjectsView: React.FunctionComponent = () => {
         (action: { type: string; error: Error }) => {
           notification.warning({
             message: 'Project NOT deprecated',
-            description: action.error.message,
+            description: action?.error?.message,
             duration: 2,
           });
           setFormBusy(false);

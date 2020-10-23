@@ -30,25 +30,16 @@ const OrgsListView: React.FunctionComponent = () => {
   const saveAndCreate = (newOrg: NewOrg) => {
     setFormBusy(true);
     nexus.Organization.create(newOrg.label, { description: newOrg.description })
-      .then(
-        () => {
-          notification.success({
-            message: 'Organization created',
-            duration: 5,
-          });
-          setFormBusy(false);
-          goTo(newOrg.label);
-        },
-        (action: { type: string; error: Error }) => {
-          notification.warning({
-            message: 'Organization NOT created',
-            description: action.error.message,
-            duration: 10,
-          });
-          setFormBusy(false);
-        }
-      )
+      .then(() => {
+        notification.success({
+          message: 'Organization created',
+          duration: 5,
+        });
+        setFormBusy(false);
+        goTo(newOrg.label);
+      })
       .catch((error: Error) => {
+        setFormBusy(false);
         notification.error({
           message: 'An unknown error occurred',
           description: error.message,
@@ -75,7 +66,7 @@ const OrgsListView: React.FunctionComponent = () => {
         (action: { type: string; error: Error }) => {
           notification.warning({
             message: 'Organization NOT saved',
-            description: action.error.message,
+            description: action?.error?.message,
             duration: 2,
           });
           setFormBusy(false);
@@ -94,26 +85,17 @@ const OrgsListView: React.FunctionComponent = () => {
     setFormBusy(true);
 
     nexus.Organization.deprecate(selectedOrg._label, selectedOrg._rev)
-      .then(
-        () => {
-          notification.success({
-            message: 'Organization deprecated',
-            duration: 2,
-          });
-          setFormBusy(false);
-          setModalVisible(false);
-          setSelectedOrg(undefined);
-        },
-        (action: { type: string; error: Error }) => {
-          notification.warning({
-            message: 'Organization NOT deprecated',
-            description: action.error.message,
-            duration: 2,
-          });
-          setFormBusy(false);
-        }
-      )
+      .then(() => {
+        notification.success({
+          message: 'Organization deprecated',
+          duration: 2,
+        });
+        setFormBusy(false);
+        setModalVisible(false);
+        setSelectedOrg(undefined);
+      })
       .catch((error: Error) => {
+        setFormBusy(false);
         notification.error({
           message: 'An unknown error occurred',
           description: error.message,

@@ -132,7 +132,8 @@
   "jest": {
     "preset": "ts-jest",
     "setupFilesAfterEnv": [
-      "jest-enzyme"
+      "jest-enzyme",
+      "./jest.setup.js"
     ],
     "testEnvironment": "enzyme",
     "moduleNameMapper": {
