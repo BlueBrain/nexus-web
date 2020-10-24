@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Input, Form, Tooltip, Button } from 'antd';
 import { ResourceList } from '@bbp/nexus-sdk';
-import Icon from '@ant-design/icons/lib/components/Icon';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import TextArea from 'antd/lib/input/TextArea';
 
 import DEFAULT_DASHBOARD_VIEW_QUERY from './DefaultDashboardViewQuery';
@@ -53,7 +53,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEdi
           <span>
             Label{' '}
             <Tooltip title="What do you want to call this dashboard?">
-              <Icon type="question-circle-o" />
+              <QuestionCircleOutlined />
             </Tooltip>
           </span>
         }
@@ -73,7 +73,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEdi
           <span>
             Description{' '}
             <Tooltip title="A short description of what's in the dashboard.">
-              <Icon type="question-circle-o" />
+              <QuestionCircleOutlined />
             </Tooltip>
           </span>
         }
@@ -93,7 +93,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEdi
           <span>
             Sparql Query{' '}
             <Tooltip title="A query that will return the elements of the dashboard.">
-              <Icon type="question-circle-o" />
+              <QuestionCircleOutlined />
             </Tooltip>{' '}
             {linkToSparqlQueryEditor &&
               linkToSparqlQueryEditor(

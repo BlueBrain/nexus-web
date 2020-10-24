@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { Input, Form, Tooltip, Button } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import Icon from '@ant-design/icons/lib/components/Icon';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 type StudioResource = Resource<{
   label: string;
@@ -36,7 +36,7 @@ const StudioEditorForm: React.FC<{
           <span>
             Label{' '}
             <Tooltip title="A name of your studio">
-              <Icon type="question-circle-o" />
+              <QuestionCircleOutlined />
             </Tooltip>
           </span>
         }
@@ -56,7 +56,7 @@ const StudioEditorForm: React.FC<{
           <span>
             Description{' '}
             <Tooltip title="A description of your studio">
-              <Icon type="question-circle-o" />
+              <QuestionCircleOutlined />
             </Tooltip>
           </span>
         }

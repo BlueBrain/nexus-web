@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Modal, Drawer, notification } from 'antd';
-import Icon from '@ant-design/icons/lib/components/Icon';
+import { PlusSquareOutlined } from '@ant-design/icons';
 import { OrgResponseCommon } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 
@@ -113,8 +113,7 @@ const OrgsListView: React.FunctionComponent = () => {
           <h1 style={{ marginBottom: 0, marginRight: 8 }}>Organizations</h1>
           <AccessControl permissions={['organizations/create']} path="/">
             <Button type="primary" onClick={() => setModalVisible(true)}>
-              <Icon
-                type="plus-square"
+              <PlusSquareOutlined
                 style={{ fontSize: '16px', color: 'white' }}
               />
               Create Organization

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { Input, Form, Tooltip, Button } from 'antd';
-import Icon from '@ant-design/icons/lib/components/Icon';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import TextArea from 'antd/lib/input/TextArea';
 
 type WorkspaceResource = Resource<{
@@ -43,7 +43,7 @@ const WorkspaceEditorForm: React.FC<{
           <span>
             Label{' '}
             <Tooltip title="A name of your workspace">
-              <Icon type="question-circle-o" />
+              <QuestionCircleOutlined />
             </Tooltip>
           </span>
         }
@@ -63,7 +63,7 @@ const WorkspaceEditorForm: React.FC<{
           <span>
             Description{' '}
             <Tooltip title="A description of your workspace">
-              <Icon type="question-circle-o" />
+              <QuestionCircleOutlined />
             </Tooltip>
           </span>
         }
