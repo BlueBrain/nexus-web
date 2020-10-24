@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Modal, notification, message } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import Icon from '@ant-design/icons/lib/components/Icon';
+import { PlusSquareOutlined } from '@ant-design/icons';
 
 import WorkspaceEditorForm from '../components/WorkspaceEditorForm';
 
@@ -98,7 +98,7 @@ const AddWorkspaceContainer: React.FC<{
   return (
     <>
       <Button type="primary" onClick={() => setShowModal(true)}>
-        <Icon type="plus-square" style={{ fontSize: '16px', color: 'white' }} />
+        <PlusSquareOutlined style={{ fontSize: '16px', color: 'white' }} />
         Add Workspace
       </Button>
       <Modal
