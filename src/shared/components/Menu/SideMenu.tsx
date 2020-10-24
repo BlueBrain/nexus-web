@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Card } from 'antd';
-import Icon from '@ant-design/icons/lib/components/Icon';
+import { CloseOutlined } from '@ant-design/icons';
 import { useTransition, animated } from 'react-spring';
 
 import './SideMenu.less';
@@ -61,7 +61,7 @@ const SideMenu: React.FunctionComponent<SideMenuProps> = props => {
                           aria-label="Close"
                           onClick={onClose}
                         >
-                          <Icon type="close" />
+                          <CloseOutlined />
                         </button>
                       )}
                     </div>

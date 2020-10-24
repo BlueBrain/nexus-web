@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { Tooltip } from 'antd';
-import Icon from '@ant-design/icons/lib/components/Icon';
+import {
+  GlobalOutlined,
+  CrownOutlined,
+  TeamOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import { Identity } from '@bbp/nexus-sdk';
 
 import './ACLs.less';
@@ -12,7 +17,7 @@ const getTitle = (identity: Identity): React.ReactElement<any> => {
         <Tooltip
           title={`Anyone with the internet has the following permissions`}
         >
-          <Icon type="global" /> Anonymous
+          <GlobalOutlined /> Anonymous
         </Tooltip>
       );
     case 'Authenticated':
@@ -20,7 +25,7 @@ const getTitle = (identity: Identity): React.ReactElement<any> => {
         <Tooltip
           title={`Users authenticated through the realm ${identity.realm} have the following permissions`}
         >
-          <Icon type="crown" /> Authenticated to:{' '}
+          <CrownOutlined /> Authenticated to:{' '}
           <span className="Identity-badge_role">{identity.realm}</span>
         </Tooltip>
       );
@@ -29,7 +34,7 @@ const getTitle = (identity: Identity): React.ReactElement<any> => {
         <Tooltip
           title={`Users who are part of the group ${identity.group} have the following permissions`}
         >
-          <Icon type="team" /> Part of group:{' '}
+          <TeamOutlined /> Part of group:{' '}
           <span className="Identity-badge_role">{identity.group}</span>
         </Tooltip>
       );
@@ -38,12 +43,12 @@ const getTitle = (identity: Identity): React.ReactElement<any> => {
         <Tooltip
           title={`User ${identity.subject} has the following permissions`}
         >
-          <Icon type="user" /> User:{' '}
+          <UserOutlined /> User:{' '}
           <span className="Identity-badge_role">{identity.subject}</span>
         </Tooltip>
       );
     default:
-      return <Icon />;
+      return <></>;
   }
 };
 

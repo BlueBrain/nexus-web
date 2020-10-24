@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Card, Dropdown, Menu, Button } from 'antd';
-import Icon from '@ant-design/icons/lib/components/Icon';
+import { LoginOutlined, DownOutlined } from '@ant-design/icons';
 
 import './Login.less';
 
@@ -54,19 +54,19 @@ const Login: React.FunctionComponent<LoginProps> = ({
             type="primary"
           >
             Log in
-            <Icon type="login" />
+            <LoginOutlined />
           </Button>
         ) : (
           <div className="actions">
             <Button className="login-button" onClick={onLogin} type="primary">
               Log in
-              <Icon type="login" />
+              <LoginOutlined />
             </Button>
             <div className="realm-holder">
               <span> with </span>
               <Dropdown overlay={menu} trigger={['click', 'hover']}>
                 <span className="realm">
-                  {realm} <Icon type="down" />
+                  {realm} <DownOutlined />
                 </span>
               </Dropdown>
             </div>

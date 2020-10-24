@@ -9,7 +9,7 @@ import {
   Menu,
   Dropdown,
 } from 'antd';
-import Icon from '@ant-design/icons/lib/components/Icon';
+import { CloseOutlined, DeleteOutlined } from '@ant-design/icons';
 import { ResourceList, Resource } from '@bbp/nexus-sdk';
 
 import RenameableItem from '../Renameable';
@@ -146,7 +146,7 @@ const ResourceListComponent: React.FunctionComponent<{
             {!!total &&
               `${total.toLocaleString()} result${total > 1 ? 's' : ''}`}
           </div>
-          <Icon type="close" className="close-button" onClick={handleDelete} />
+          <CloseOutlined className="close-button" onClick={handleDelete} />
         </h3>
         <div className="controls -squished">
           <Copy
@@ -191,8 +191,8 @@ const ResourceListComponent: React.FunctionComponent<{
             <Switch
               onChange={handleToggleDeprecated}
               checked={list.query.deprecated}
-              checkedChildren={<Icon type="delete" />}
-              unCheckedChildren={<Icon type="delete" />}
+              checkedChildren={<DeleteOutlined />}
+              unCheckedChildren={<DeleteOutlined />}
             />
           </Tooltip>
         </div>
