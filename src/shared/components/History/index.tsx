@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Timeline, Card } from 'antd';
-import Icon from '@ant-design/icons/lib/components/Icon';
+import { StarOutlined } from '@ant-design/icons';
 import * as moment from 'moment';
 
 import './History.less';
@@ -23,7 +23,7 @@ const HistoryComponent: React.FunctionComponent<{
             <Timeline.Item
               key={index}
               className="created-at"
-              dot={<Icon type="star" />}
+              dot={<StarOutlined />}
             >
               <div>
                 {' '}

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Collapse, Form, Input, Button, Spin, Modal, Row, Col } from 'antd';
-import Icon from '@ant-design/icons/lib/components/Icon';
+import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
 
 /**
  * Custom from controls, based on:
@@ -209,9 +209,8 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
       >
         <PrefixMappingGroupInput groupId={`${key}`} />
         {prefixMappingKeys.activeKeys.length > 0 ? (
-          <Icon
+          <MinusCircleOutlined
             className="dynamic-delete-button"
-            type="minus-circle-o"
             onClick={() => remove(key)}
           />
         ) : null}
@@ -273,7 +272,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
               {apiMappingsItems}
               <Form.Item {...formItemLayoutWithOutLabel}>
                 <Button type="dashed" onClick={add} style={{ width: '60%' }}>
-                  <Icon type="plus" /> Add API mapping
+                  <PlusCircleOutlined /> Add API mapping
                 </Button>
               </Form.Item>
             </Collapse.Panel>

@@ -1,13 +1,17 @@
 import * as React from 'react';
 import { Form, Button, Card, List, Empty } from 'antd';
+import {
+  CheckCircleOutlined,
+  ExclamationCircleOutlined,
+} from '@ant-design/icons';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import ReactJson from 'react-json-view';
 import { ElasticSearchViewQueryResponse } from '@bbp/nexus-sdk';
+
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/javascript/javascript';
 
 import './view-form.less';
-import Icon from '@ant-design/icons/lib/components/Icon';
 
 const FormItem = Form.Item;
 const ListItem = List.Item;
@@ -81,7 +85,11 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
           <div className="control-panel">
             <div>
               <div className={`feedback ${valid ? '_positive' : '_negative'}`}>
-                <Icon type={valid ? 'check-circle' : 'exclamation-circle'} />{' '}
+                {valid ? (
+                  <CheckCircleOutlined />
+                ) : (
+                  <ExclamationCircleOutlined />
+                )}{' '}
                 {valid ? 'Valid JSON' : 'Invalid JSON'}
               </div>
             </div>
