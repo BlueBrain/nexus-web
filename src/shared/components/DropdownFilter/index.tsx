@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { AutoComplete, Input } from 'antd';
-import { SelectValue, OptionType } from 'antd/lib/select';
-import {} from 'antd/lib/auto-complete';
+import { AutoComplete } from 'antd';
+import { SelectValue } from 'antd/lib/select';
 
 import { labelOf, getProp } from '../../utils';
 import DropdownItem from './DropdownItem';
@@ -68,12 +67,8 @@ const DropdownFilter: React.FunctionComponent<{
             .toUpperCase()
             .includes(inputValue.toUpperCase());
         }}
-        // @ts-ignore
-        // TODO figure out how to type this correctly, should be
-        // a list of options
-        options={dataSource || []}
       >
-        <Input />
+        {dataSource}
       </AutoComplete>
     </div>
   );
