@@ -9,7 +9,15 @@ import {
   Menu,
   Dropdown,
 } from 'antd';
-import { CloseOutlined, DeleteOutlined } from '@ant-design/icons';
+import {
+  CloseCircleOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  LinkOutlined,
+  ReloadOutlined,
+  SortAscendingOutlined,
+  SwitcherOutlined,
+} from '@ant-design/icons';
 import { ResourceList, Resource } from '@bbp/nexus-sdk';
 
 import RenameableItem from '../Renameable';
@@ -160,7 +168,7 @@ const ResourceListComponent: React.FunctionComponent<{
                 }}
               >
                 <Tooltip title={copySuccess ? 'Copied' : 'Copy shareable link'}>
-                  <Button icon="link" />
+                  <Button icon={<LinkOutlined />} />
                 </Tooltip>
               </a>
             )}
@@ -168,18 +176,18 @@ const ResourceListComponent: React.FunctionComponent<{
           {!list.query.q && (
             <Dropdown overlay={sortOptions} trigger={['hover', 'click']}>
               <Tooltip title="Sort resources">
-                <Button icon="sort-ascending" />
+                <Button icon={<SortAscendingOutlined />} />
               </Tooltip>
             </Dropdown>
           )}
           <Tooltip title="Clear filters">
-            <Button icon="close-circle" onClick={handleClear} />
+            <Button icon={<CloseCircleOutlined />} onClick={handleClear} />
           </Tooltip>
           <Tooltip title="Refresh list">
-            <Button icon="reload" onClick={handleRefreshList} />
+            <Button icon={<ReloadOutlined />} onClick={handleRefreshList} />
           </Tooltip>
           <Tooltip title="Clone this query">
-            <Button icon="switcher" onClick={handleCloneList} />
+            <Button icon={<SwitcherOutlined />} onClick={handleCloneList} />
           </Tooltip>
           <Tooltip
             title={
