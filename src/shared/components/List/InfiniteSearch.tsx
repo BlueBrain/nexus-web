@@ -4,6 +4,8 @@ import * as InfiniteScroll from 'react-infinite-scroll-component';
 
 import './InfiniteSearch.less';
 
+const { Search } = Input;
+
 export type InfiniteSearchProps = {
   onLoadMore({ searchValue }: { searchValue?: string }): void;
   hasMore: boolean;
@@ -32,16 +34,17 @@ const InfiniteSearch: React.FunctionComponent<InfiniteSearchProps> = props => {
   return (
     <div className="infinite-search">
       {hasSearch && (
-        <Input.Search
-          className="search"
-          placeholder={'Search...'}
-          allowClear={true}
-          value={searchValue}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setSearchValue(e.currentTarget.value);
-            onLoadMore({ searchValue: e.currentTarget.value });
-          }}
-        />
+        <div className="search">
+          <Search
+            placeholder={'Search...'}
+            allowClear={true}
+            value={searchValue}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setSearchValue(e.currentTarget.value);
+              onLoadMore({ searchValue: e.currentTarget.value });
+            }}
+          />
+        </div>
       )}
       <InfiniteScroll
         className="infinite-scroller"
