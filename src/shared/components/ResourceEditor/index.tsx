@@ -3,8 +3,8 @@ import { Button, Switch, Spin } from 'antd';
 import {
   InfoCircleOutlined,
   CheckCircleOutlined,
-  ExclamationCircleOutlined, 
-  SaveOutlined
+  ExclamationCircleOutlined,
+  SaveOutlined,
 } from '@ant-design/icons';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/mode/javascript/javascript';
