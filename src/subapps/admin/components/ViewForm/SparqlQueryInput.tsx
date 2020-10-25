@@ -9,13 +9,13 @@ import './SparqlQueryInput.less';
 const SparqlQueryInput: React.FunctionComponent<{
   value?: string;
   onChange?: (query: string) => void;
-}> = ({ value = '', onChange }, ref) => {
+}> = ({ value = '', onChange }) => {
   const handleChange = (editor: any, data: any, value: string) => {
     onChange && onChange(value);
   };
 
   return (
-    <div className="sparql-input" ref={ref}>
+    <div className="sparql-input">
       <div className="code">
         <CodeMirror
           value={value}
