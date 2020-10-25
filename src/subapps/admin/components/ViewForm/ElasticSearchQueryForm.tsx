@@ -28,6 +28,7 @@ type NexusESError = {
   };
 };
 
+// TODO this needs to be broken into Input, Result, and Form components.
 const ElasticSearchQueryForm: React.FunctionComponent<{
   query: object;
   response: ElasticSearchViewQueryResponse<any> | null;
@@ -77,8 +78,8 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
   return (
     <div className="view-form">
       <Form
-        onFinish={value => {
-          onQueryChange(JSON.parse(value));
+        onFinish={() => {
+          value && onQueryChange(JSON.parse(value));
         }}
       >
         <>
