@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as moment from 'moment';
 import { Card, Button, Tooltip, Divider, Descriptions } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 import { Resource } from '@bbp/nexus-sdk';
 
 import TypesIcon from '../Types/TypesIcon';
@@ -82,7 +83,7 @@ const ResourceCardComponent: React.FunctionComponent<{
               <Button
                 onClick={onClickCollapse}
                 shape="circle"
-                icon="down"
+                icon={<DownOutlined />}
                 size="small"
               />
             </>

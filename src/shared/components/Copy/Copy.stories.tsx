@@ -4,6 +4,7 @@ import { withInfo } from '@storybook/addon-info';
 import { text } from '@storybook/addon-knobs';
 import Copy from './index';
 import { Button } from 'antd';
+import { CopyOutlined } from '@ant-design/icons';
 
 storiesOf('Components/Copy', module).add(
   'Copy',
@@ -30,7 +31,7 @@ storiesOf('Components/Copy', module).add(
           <Copy
             textToCopy={textToCopy}
             render={(copySuccess, triggerCopy) => (
-              <Button icon="copy" onClick={() => triggerCopy()}>
+              <Button icon={<CopyOutlined />} onClick={() => triggerCopy()}>
                 {copySuccess ? 'Copied!' : textToCopy}
               </Button>
             )}

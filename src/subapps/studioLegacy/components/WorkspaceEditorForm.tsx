@@ -14,8 +14,6 @@ const WorkspaceEditorForm: React.FC<{
   saveWorkspace?(label: string, description?: string): void;
   workspace?: WorkspaceResource | null;
 }> = ({ saveWorkspace, workspace }) => {
-  const [form] = Form.useForm();
-
   const formItemLayout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 14 },
@@ -37,7 +35,7 @@ const WorkspaceEditorForm: React.FC<{
   };
 
   return (
-    <Form {...formItemLayout} onFinish={handleSubmit} form={form}>
+    <Form {...formItemLayout} onFinish={handleSubmit}>
       <Form.Item
         label={
           <span>

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Card, Button, Skeleton } from 'antd';
+import { UpOutlined } from '@ant-design/icons';
 
 import TypesIcon from '../Types/TypesIcon';
 
@@ -38,7 +39,7 @@ const ResourceCardCollapsed: React.FunctionComponent<{
           <Button
             onClick={onClickExpand}
             shape="circle"
-            icon="up"
+            icon={<UpOutlined />}
             size="small"
           />
         )

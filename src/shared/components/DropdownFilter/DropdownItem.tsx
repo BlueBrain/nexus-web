@@ -10,6 +10,8 @@ export const TypeDropdownItem: React.FunctionComponent<{
   key: string;
   label: string;
 }> = ({ count, key, label }) => {
+  console.log({ count, key, label });
+
   return (
     <Option key={key} value={key} title={label}>
       <div className="drop-option">

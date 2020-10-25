@@ -11,6 +11,7 @@ import {
 } from './defaultResourcePayloads';
 
 import './ResourceForm.less';
+import { format } from 'url';
 
 const AVAILABLE_SCHEMAS: CascaderOptionType[] = [
   {
@@ -139,7 +140,7 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
 
   return (
     <Spin spinning={busy}>
-      <Form className="resource-form">
+      <Form className="resource-form" form={form}>
         <Form.Item
           label="Resource Type"
           name="resourceTypes"

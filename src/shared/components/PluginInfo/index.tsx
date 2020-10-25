@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Button, Popover } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 const PluginInfo: React.FC<{
   plugin: any;
@@ -32,7 +33,7 @@ const PluginInfo: React.FC<{
       <Button
         onClick={event => event.stopPropagation()}
         size="small"
-        icon="info-circle"
+        icon={<InfoCircleOutlined />}
       />
     </Popover>
   );

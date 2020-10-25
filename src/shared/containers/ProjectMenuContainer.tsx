@@ -2,6 +2,7 @@ import * as React from 'react';
 import { AccessControl } from '@bbp/react-nexus';
 import { Link } from 'react-router-dom';
 import { Divider, Button } from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
 
 import SideMenu from '../components/Menu/SideMenu';
 import FileUploadContainer from '../containers/FileUploadContainer';
@@ -76,7 +77,7 @@ const ProjectMenuContainer: React.FunctionComponent<{
         activeTabKey={activeResourceMenuTab}
         tabBarExtraContent={
           <Button
-            icon="close"
+            icon={<CloseOutlined />}
             onClick={() => setMenuVisible(false)}
             style={{ border: 'none' }}
           />
