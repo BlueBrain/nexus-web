@@ -36,6 +36,10 @@ const ActivityResourcesContainer: React.FC<{
         : [activity.used['@id']];
     }
 
+    if (activity.contribution) {
+      resources.push(activity.contribution.agent['@id']);
+    }
+
     if (activity.wasAssociatedWith) {
       resources = Array.isArray(activity.wasAssociatedWith)
         ? [

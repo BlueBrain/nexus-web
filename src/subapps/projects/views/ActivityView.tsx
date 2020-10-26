@@ -39,6 +39,11 @@ export type ActivityResource = Resource<{
     | {
         '@id': string;
       }[];
+  contribution?: {
+    agent: {
+      '@id': string;
+    };
+  };
 }>;
 
 type BreadcrumbItem = {

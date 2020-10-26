@@ -14,6 +14,7 @@ const ResourcesSearch: React.FC<{
     { label: 'Notes', value: 'FusionNote' },
     { label: 'Input data', value: 'input-data' },
     { label: 'Output data', value: 'output-data' },
+    { label: 'Agent', value: 'Agent' },
   ];
 
   return (
