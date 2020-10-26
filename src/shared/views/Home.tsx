@@ -8,6 +8,7 @@ const backgrounds = [
   'linear-gradient( 135deg, #90F7EC 10%, #32CCBC 100%)',
   'linear-gradient( 135deg, #CE9FFC 10%, #7367F0 100%)',
   'linear-gradient( 135deg, #65C7F7 10%, #0052D4 100%)',
+  'linear-gradient( 135deg, rgb(247, 144, 187) 10%, rgb(250, 178, 126) 100%)',
 ];
 
 const style = {
@@ -65,6 +66,13 @@ const Home: React.FunctionComponent = () => {
           title: 'Projects',
           description: 'Create activities to support your data-driven pipeline',
           background: backgrounds[2],
+        },
+        {
+          namespace: '/search',
+          title: 'Search',
+          description:
+            'Search through data added to Nexus Delta by you and others',
+          background: backgrounds[3],
         },
       ].map(HomeLinkCard)}
     </div>
