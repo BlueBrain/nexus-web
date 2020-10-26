@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import {
-  Resource,
-  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-  ElasticSearchViewQueryResponse,
-} from '@bbp/nexus-sdk';
+import { Resource, DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
 
 import { displayError } from '../components/Notifications';
 import ResourcesPane from '../components/ResourcesPane';
@@ -12,90 +8,111 @@ import ResourcesList from '../components/ResourcesList';
 import fusionConfig from '../config';
 import { CodeResourceData } from '../components/LinkCodeForm';
 import ResourcesSearch from '../components/ResourcesSearch';
+import { ActivityResource } from '../views/ActivityView';
 
 const ActivityResourcesContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
-  activityId: string;
+  activity: ActivityResource;
   linkCodeToActivity: (codeResourceId: string) => void;
-  linkedResourceIds: string[];
-}> = ({
-  orgLabel,
-  projectLabel,
-  activityId,
-  linkCodeToActivity,
-  linkedResourceIds,
-}) => {
+}> = ({ orgLabel, projectLabel, activity, linkCodeToActivity }) => {
   const nexus = useNexusContext();
 
   const [resources, setResources] = React.useState<Resource[]>([]);
   const [search, setSearch] = React.useState<string>();
   const [typeFilter, setTypeFilter] = React.useState<string[]>();
+  const [busy, setBusy] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     fetchLinkedResources();
-  }, [activityId, typeFilter, search, JSON.stringify(linkedResourceIds)]);
+  }, [typeFilter, search, activity]);
+
+  const getLinkedResourcesIds = () => {
+    let resources: string[] = [];
+
+    if (activity.used) {
+      resources = Array.isArray(activity.used)
+        ? activity.used.map(resource => resource['@id'])
+        : [activity.used['@id']];
+    }
+
+    if (activity.wasAssociatedWith) {
+      resources = Array.isArray(activity.wasAssociatedWith)
+        ? [
+            ...resources,
+            ...activity.wasAssociatedWith.map(resource => resource['@id']),
+          ]
+        : [...resources, activity.wasAssociatedWith['@id']];
+    }
+
+    return resources;
+  };
 
   const fetchLinkedResources = () => {
-    const esQuery: any = {
-      query: {
-        bool: {
-          must: [
-            {
-              term: { _deprecated: false },
-            },
-          ],
-          minimum_should_match: 1,
-          should: [
-            ...linkedResourceIds.map(resourceId => {
-              const mustInclude: any = [
-                {
-                  match: {
-                    // TODO: create and use a proper context/vocab
-                    '@id': `https://staging.nexus.ocp.bbp.epfl.ch/v1/resources/${orgLabel}/${projectLabel}/_/${resourceId}`,
-                  },
-                },
-              ];
+    setResources([]);
+    const linkedResources = getLinkedResourcesIds();
 
-              if (search) {
-                mustInclude.push({
-                  match_phrase: {
-                    _original_source: search,
-                  },
-                });
-              }
+    if (linkedResources.length > 0) {
+      setBusy(true);
 
-              const shouldInclude: any = {};
-
-              if (typeFilter && typeFilter.length) {
-                shouldInclude.minimum_should_match = 1;
-
-                shouldInclude.should = [];
-
-                typeFilter.forEach(filter => {
-                  shouldInclude.should.push({
+      const esQuery: any = {
+        query: {
+          bool: {
+            must: [
+              {
+                term: { _deprecated: false },
+              },
+            ],
+            minimum_should_match: 1,
+            should: [
+              ...linkedResources.map(resourceId => {
+                const mustInclude: any = [
+                  {
                     match: {
                       // TODO: create and use a proper context/vocab
-                      '@type': `https://staging.nexus.ocp.bbp.epfl.ch/v1/vocabs/${orgLabel}/${projectLabel}/${filter}`,
+                      '@id': `https://staging.nexus.ocp.bbp.epfl.ch/v1/resources/${orgLabel}/${projectLabel}/_/${resourceId}`,
+                    },
+                  },
+                ];
+
+                if (search) {
+                  mustInclude.push({
+                    match_phrase: {
+                      _original_source: search,
                     },
                   });
-                });
-              }
+                }
 
-              return {
-                bool: {
-                  must: mustInclude,
-                  ...shouldInclude,
-                },
-              };
-            }),
-          ],
+                const shouldInclude: any = {};
+
+                if (typeFilter && typeFilter.length) {
+                  shouldInclude.minimum_should_match = 1;
+
+                  shouldInclude.should = [];
+
+                  typeFilter.forEach(filter => {
+                    shouldInclude.should.push({
+                      match: {
+                        // TODO: create and use a proper context/vocab
+                        '@type': `https://staging.nexus.ocp.bbp.epfl.ch/v1/vocabs/${orgLabel}/${projectLabel}/${filter}`,
+                      },
+                    });
+                  });
+                }
+
+                return {
+                  bool: {
+                    must: mustInclude,
+                    ...shouldInclude,
+                  },
+                };
+              }),
+            ],
+          },
         },
-      },
-      size: 100,
-    };
+        size: 100,
+      };
 
-    if (linkedResourceIds.length > 0) {
       nexus.View.elasticSearchQuery(
         orgLabel,
         projectLabel,
@@ -113,8 +130,14 @@ const ActivityResourcesContainer: React.FC<{
             })
           );
         })
-        .then(response => setResources(response as Resource[]))
-        .catch(error => displayError(error, 'An error occurred'));
+        .then(response => {
+          setBusy(false);
+          setResources(response as Resource[]);
+        })
+        .catch(error => {
+          setBusy(false);
+          displayError(error, 'An error occurred');
+        });
     }
   };
 
@@ -134,6 +157,8 @@ const ActivityResourcesContainer: React.FC<{
       .catch(error => displayError(error, 'Failed to save'));
   };
 
+  console.log('resources', resources);
+
   return (
     <ResourcesPane linkCode={addCodeResource}>
       <ResourcesSearch
@@ -144,6 +169,7 @@ const ActivityResourcesContainer: React.FC<{
         resources={resources}
         projectLabel={projectLabel}
         orgLabel={orgLabel}
+        busy={busy}
       />
     </ResourcesPane>
   );

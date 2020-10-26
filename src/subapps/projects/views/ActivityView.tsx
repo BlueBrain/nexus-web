@@ -65,7 +65,6 @@ const ActivityView: React.FC = () => {
   const [siblings, setSiblings] = React.useState<
     { name: string; '@id': string }[]
   >([]);
-  const [linkedResources, setLinkedResources] = React.useState<string[]>([]);
 
   const projectLabel = match?.params.projectLabel || '';
   const orgLabel = match?.params.orgLabel || '';
@@ -75,7 +74,6 @@ const ActivityView: React.FC = () => {
     nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(activityId))
       .then(response => {
         setActivity(response as ActivityResource);
-        getLinkedResourcesIds(response as ActivityResource);
         fetchBreadcrumbs(
           orgLabel,
           projectLabel,
@@ -87,27 +85,6 @@ const ActivityView: React.FC = () => {
 
     fetchChildren();
   }, [refreshActivities, activityId]);
-
-  const getLinkedResourcesIds = (activity: ActivityResource) => {
-    let resources: string[] = [];
-
-    if (activity.used) {
-      resources = Array.isArray(activity.used)
-        ? activity.used.map(resource => resource['@id'])
-        : [activity.used['@id']];
-    }
-
-    if (activity.wasAssociatedWith) {
-      resources = Array.isArray(activity.wasAssociatedWith)
-        ? [
-            ...resources,
-            ...activity.wasAssociatedWith.map(resource => resource['@id']),
-          ]
-        : [...resources, activity.wasAssociatedWith['@id']];
-    }
-
-    setLinkedResources(resources);
-  };
 
   const fetchChildren = () => {
     nexus.Resource.links(
@@ -269,8 +246,7 @@ const ActivityView: React.FC = () => {
           orgLabel={orgLabel}
           projectLabel={projectLabel}
           linkCodeToActivity={linkCodeToActivity}
-          activityId={activity && activity['@id']}
-          linkedResourceIds={linkedResources}
+          activity={activity}
         />
       )}
     </div>
