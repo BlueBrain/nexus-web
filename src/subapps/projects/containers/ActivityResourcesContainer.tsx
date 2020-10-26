@@ -8,6 +8,7 @@ import ResourcesList from '../components/ResourcesList';
 import { isActivityResourceLink } from '../utils';
 import fusionConfig from '../config';
 import { CodeResourceData } from '../components/LinkCodeForm';
+import ResourcesSearch from '../components/ResourcesSearch';
 
 const ActivityResourcesContainer: React.FC<{
   orgLabel: string;
@@ -17,6 +18,8 @@ const ActivityResourcesContainer: React.FC<{
 }> = ({ orgLabel, projectLabel, activityId, linkCodeToActivity }) => {
   const nexus = useNexusContext();
   const [resources, setResources] = React.useState<Resource[]>([]);
+  const [search, setSearch] = React.useState<string>();
+  const [typeFilter, setTypeFilter] = React.useState<string[]>();
 
   const fetchLinkedResources = () => {
     nexus.Resource.links(
@@ -45,7 +48,7 @@ const ActivityResourcesContainer: React.FC<{
 
   React.useEffect(() => {
     fetchLinkedResources();
-  }, [activityId]);
+  }, [activityId, typeFilter, search]);
 
   const addCodeResource = (data: CodeResourceData) => {
     nexus.Resource.create(orgLabel, projectLabel, {
@@ -65,6 +68,10 @@ const ActivityResourcesContainer: React.FC<{
 
   return (
     <ResourcesPane linkCode={addCodeResource}>
+      <ResourcesSearch
+        onChangeType={setTypeFilter}
+        onSearchByText={setSearch}
+      />
       <ResourcesList
         resources={resources}
         projectLabel={projectLabel}

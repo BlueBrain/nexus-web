@@ -76,15 +76,10 @@ const ActivityView: React.FC = () => {
   const activityId = match?.params.activityId || '';
 
   React.useEffect(() => {
-    nexus.Resource.getSource(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(activityId)
-    )
+    nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(activityId))
       .then(response => {
         setActivity(response as ActivityResource);
         getLinkedResourcesIds(response as ActivityResource);
-        getLinkedResources();
         fetchBreadcrumbs(
           orgLabel,
           projectLabel,
@@ -115,8 +110,6 @@ const ActivityView: React.FC = () => {
         : [...linkedResources, activity.wasAssociatedWith['@id']];
     }
 
-    console.log('linkedResources', linkedResources);
-
     return linkedResources;
   };
 
@@ -124,37 +117,37 @@ const ActivityView: React.FC = () => {
 
   console.log('idsToFetch', idsToFetch);
 
-  const query = {
-    query: {
-      bool: {
-        must: {
-          terms: {
-            '@id': [
-              'https://staging.nexus.ocp.bbp.epfl.ch/v1/resources/fusion2-stafeeva/89898/_/b3c5f79f-278c-4e05-989e-d1fd2aac779',
-              'https://staging.nexus.ocp.bbp.epfl.ch/v1/resources/fusion2-stafeeva/89898/_/ff161f5a-6e77-48d7-b7f6-fe5fa5a97382',
-              'https://staging.nexus.ocp.bbp.epfl.ch/v1/resources/fusion2-stafeeva/89898/_/d1d9f3fe-aa84-42da-a78b-75905e176e98',
-            ],
-          },
-        },
-        filter: {
-          term: {
-            '@type':
-              'https://staging.nexus.ocp.bbp.epfl.ch/v1/vocabs/fusion2-stafeeva/89898/Entity',
-          },
-        },
-      },
-    },
-    size: 100,
-  };
+  // const query = {
+  //   query: {
+  //     bool: {
+  //       must: {
+  //         terms: {
+  //           '@id': [
+  //             'https://staging.nexus.ocp.bbp.epfl.ch/v1/resources/fusion2-stafeeva/89898/_/b3c5f79f-278c-4e05-989e-d1fd2aac779',
+  //             'https://staging.nexus.ocp.bbp.epfl.ch/v1/resources/fusion2-stafeeva/89898/_/ff161f5a-6e77-48d7-b7f6-fe5fa5a97382',
+  //             'https://staging.nexus.ocp.bbp.epfl.ch/v1/resources/fusion2-stafeeva/89898/_/d1d9f3fe-aa84-42da-a78b-75905e176e98',
+  //           ],
+  //         },
+  //       },
+  //       filter: {
+  //         term: {
+  //           '@type':
+  //             'https://staging.nexus.ocp.bbp.epfl.ch/v1/vocabs/fusion2-stafeeva/89898/Entity',
+  //         },
+  //       },
+  //     },
+  //   },
+  //   size: 100,
+  // };
 
-  const getLinkedResources = () => {
-    nexus.View.elasticSearchQuery(
-      orgLabel,
-      projectLabel,
-      DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-      query
-    ).then(response => console.log('ES response', response));
-  };
+  // const getLinkedResources = () => {
+  //   nexus.View.elasticSearchQuery(
+  //     orgLabel,
+  //     projectLabel,
+  //     DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+  //     query
+  //   ).then(response => console.log('ES response', response));
+  // };
 
   const fetchChildren = () => {
     nexus.Resource.links(

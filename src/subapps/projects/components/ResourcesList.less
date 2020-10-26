@@ -1,31 +1,12 @@
 @import '../../../shared/lib.less';
 
 .resources-list {
-  display: flex;
   height: 420px;
+  overflow-y: scroll;
+  width: 67%;
 
   &__resources {
     border-left: 1px solid @border-color-base;
     padding-left: 20px;
-    width: 67%;
-    overflow-y: scroll;
-  }
-
-  &__controls {
-    width: 33%;
-    margin-right: 20px;
-    margin-left: 5px;
-  }
-
-  &__filters {
-    margin-top: 20px;
-  }
-
-  &__group-title {
-    margin-top: 10px;
-  }
-
-  &__filter {
-    margin: 5px 0;
   }
 }
