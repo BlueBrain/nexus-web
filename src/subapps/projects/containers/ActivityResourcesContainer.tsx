@@ -161,8 +161,6 @@ const ActivityResourcesContainer: React.FC<{
       .catch(error => displayError(error, 'Failed to save'));
   };
 
-  console.log('resources', resources);
-
   return (
     <ResourcesPane linkCode={addCodeResource}>
       <ResourcesSearch

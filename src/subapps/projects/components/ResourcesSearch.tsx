@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Empty, Input, Checkbox } from 'antd';
+import { Input, Checkbox } from 'antd';
 
 const { Search } = Input;
 
