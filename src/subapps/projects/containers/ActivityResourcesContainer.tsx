@@ -37,7 +37,7 @@ const ActivityResourcesContainer: React.FC<{
   }, [activityId, typeFilter, search, JSON.stringify(linkedResourceIds)]);
 
   const fetchLinkedResources = () => {
-    const es_query: any = {
+    const esQuery: any = {
       query: {
         bool: {
           must: [
@@ -48,7 +48,7 @@ const ActivityResourcesContainer: React.FC<{
           minimum_should_match: 1,
           should: [
             ...linkedResourceIds.map(resourceId => {
-              let mustInclude: any = [
+              const mustInclude: any = [
                 {
                   match: {
                     // TODO: create and use a proper context/vocab
@@ -65,7 +65,7 @@ const ActivityResourcesContainer: React.FC<{
                 });
               }
 
-              let shouldInclude: any = {};
+              const shouldInclude: any = {};
 
               if (typeFilter && typeFilter.length) {
                 shouldInclude.minimum_should_match = 1;
@@ -100,7 +100,7 @@ const ActivityResourcesContainer: React.FC<{
         orgLabel,
         projectLabel,
         DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-        es_query
+        esQuery
       )
         .then(response => {
           return Promise.all(
