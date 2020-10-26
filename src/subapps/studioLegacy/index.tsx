@@ -4,11 +4,13 @@ import StudioView from './views/StudioView';
 import StudioAdminView from './views/StudioAdminView';
 import StudioListView from './views/StudioListView';
 
+const subAppType = 'internal';
 const title = 'Studios';
 const namespace = 'studios';
 const icon = require('../../shared/images/gridIcon.svg');
 
 const studioLegacySubappProps = {
+  subAppType,
   title,
   namespace,
   icon,

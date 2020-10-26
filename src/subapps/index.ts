@@ -3,10 +3,12 @@ import Admin from './admin';
 import StudioLegacy from './studioLegacy';
 
 export type SubAppObject = {
+  subAppType: string;
   title: string;
   namespace: string;
   routes: RouteProps[];
   icon?: string;
+  url?: string;
 };
 
 export type SubApp = () => SubAppObject;

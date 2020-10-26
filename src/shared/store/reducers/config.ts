@@ -8,6 +8,7 @@ export interface ConfigState {
   preferredRealm?: string;
   sentryDsn?: string;
   pluginsManifestPath: string;
+  subAppsManifestPath: string;
   gtmCode?: string;
   studioView?: string;
   layoutSettings: {
@@ -22,6 +23,7 @@ const initialState: ConfigState = {
   clientId: '',
   redirectHostName: '',
   pluginsManifestPath: '/public/plugins',
+  subAppsManifestPath: '/public/sub-apps',
   gtmCode: '',
   layoutSettings: {
     logoImg: '',
