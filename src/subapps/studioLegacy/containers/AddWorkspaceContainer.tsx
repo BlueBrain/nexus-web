@@ -97,8 +97,7 @@ const AddWorkspaceContainer: React.FC<{
 
   return (
     <>
-      <Button type="primary" onClick={() => setShowModal(true)}>
-        <PlusSquareOutlined style={{ fontSize: '16px', color: 'white' }} />
+      <Button icon={<PlusSquareOutlined />} onClick={() => setShowModal(true)}>
         Add Workspace
       </Button>
       <Modal
