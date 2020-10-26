@@ -27,29 +27,68 @@ const ActivityResourcesContainer: React.FC<{
   linkedResourceIds,
 }) => {
   const nexus = useNexusContext();
+
   const [resources, setResources] = React.useState<Resource[]>([]);
   const [search, setSearch] = React.useState<string>();
   const [typeFilter, setTypeFilter] = React.useState<string[]>();
 
+  React.useEffect(() => {
+    fetchLinkedResources();
+  }, [activityId, typeFilter, search, JSON.stringify(linkedResourceIds)]);
+
   const fetchLinkedResources = () => {
-    const query = {
+    const es_query: any = {
       query: {
         bool: {
-          minimum_should_match: 1,
-          should: linkedResourceIds.map(resourceId => ({
-            match: {
-              '@id': `https://staging.nexus.ocp.bbp.epfl.ch/v1/resources/${orgLabel}/${projectLabel}/_/${resourceId}`,
-            },
-          })),
           must: [
             {
               term: { _deprecated: false },
             },
-            {
-              term: {
-                '@type': `https://staging.nexus.ocp.bbp.epfl.ch/v1/vocabs/${orgLabel}/${projectLabel}/Entity`,
-              },
-            },
+          ],
+          minimum_should_match: 1,
+          should: [
+            ...linkedResourceIds.map(resourceId => {
+              let mustInclude: any = [
+                {
+                  match: {
+                    // TODO: create and use a proper context/vocab
+                    '@id': `https://staging.nexus.ocp.bbp.epfl.ch/v1/resources/${orgLabel}/${projectLabel}/_/${resourceId}`,
+                  },
+                },
+              ];
+
+              if (search) {
+                mustInclude.push({
+                  match_phrase: {
+                    _original_source: search,
+                  },
+                });
+              }
+
+              let shouldInclude: any = {};
+
+              if (typeFilter && typeFilter.length) {
+                shouldInclude.minimum_should_match = 1;
+
+                shouldInclude.should = [];
+
+                typeFilter.forEach(filter => {
+                  shouldInclude.should.push({
+                    match: {
+                      // TODO: create and use a proper context/vocab
+                      '@type': `https://staging.nexus.ocp.bbp.epfl.ch/v1/vocabs/${orgLabel}/${projectLabel}/${filter}`,
+                    },
+                  });
+                });
+              }
+
+              return {
+                bool: {
+                  must: mustInclude,
+                  ...shouldInclude,
+                },
+              };
+            }),
           ],
         },
       },
@@ -61,7 +100,7 @@ const ActivityResourcesContainer: React.FC<{
         orgLabel,
         projectLabel,
         DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-        query
+        es_query
       )
         .then(response => {
           return Promise.all(
@@ -78,10 +117,6 @@ const ActivityResourcesContainer: React.FC<{
         .catch(error => displayError(error, 'An error occurred'));
     }
   };
-
-  React.useEffect(() => {
-    fetchLinkedResources();
-  }, [activityId, typeFilter, search, JSON.stringify(linkedResourceIds)]);
 
   const addCodeResource = (data: CodeResourceData) => {
     nexus.Resource.create(orgLabel, projectLabel, {

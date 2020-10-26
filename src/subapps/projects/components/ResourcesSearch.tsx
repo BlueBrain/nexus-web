@@ -10,8 +10,8 @@ const ResourcesSearch: React.FC<{
   onSearchByText: (text: string) => void;
 }> = ({ onChangeType, onSearchByText }) => {
   const filters = [
-    { label: 'Code', value: 'code' },
-    { label: 'Notes', value: 'notes' },
+    { label: 'Code', value: 'SoftwareSourceCode' },
+    { label: 'Notes', value: 'FusionNote' },
     { label: 'Input data', value: 'input-data' },
     { label: 'Output data', value: 'output-data' },
   ];

@@ -74,8 +74,6 @@ const ActivityView: React.FC = () => {
   React.useEffect(() => {
     nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(activityId))
       .then(response => {
-        console.log('response', response);
-
         setActivity(response as ActivityResource);
         getLinkedResourcesIds(response as ActivityResource);
         fetchBreadcrumbs(
@@ -198,8 +196,6 @@ const ActivityView: React.FC = () => {
   const reload = () => {
     setRefreshActivities(!refreshActivities);
   };
-
-  console.log('activity', activity);
 
   const linkCodeToActivity = (codeResourceId: string) => {
     nexus.Resource.getSource(
