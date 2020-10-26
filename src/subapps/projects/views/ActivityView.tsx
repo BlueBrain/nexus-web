@@ -1,11 +1,7 @@
 import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
-import {
-  Resource,
-  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-  ElasticSearchViewQueryResponse,
-} from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk';
 
 import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
@@ -19,7 +15,6 @@ import { isParentLink } from '../utils';
 import ActivityResourcesContainer from '../containers/ActivityResourcesContainer';
 
 import './ActivityView.less';
-import fusionConfig from '../config';
 
 export type ActivityResource = Resource<{
   hasParent?: {
@@ -70,6 +65,7 @@ const ActivityView: React.FC = () => {
   const [siblings, setSiblings] = React.useState<
     { name: string; '@id': string }[]
   >([]);
+  const [linkedResources, setLinkedResources] = React.useState<string[]>([]);
 
   const projectLabel = match?.params.projectLabel || '';
   const orgLabel = match?.params.orgLabel || '';
@@ -78,6 +74,8 @@ const ActivityView: React.FC = () => {
   React.useEffect(() => {
     nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(activityId))
       .then(response => {
+        console.log('response', response);
+
         setActivity(response as ActivityResource);
         getLinkedResourcesIds(response as ActivityResource);
         fetchBreadcrumbs(
@@ -93,61 +91,25 @@ const ActivityView: React.FC = () => {
   }, [refreshActivities, activityId]);
 
   const getLinkedResourcesIds = (activity: ActivityResource) => {
-    let linkedResources: string[] = [];
+    let resources: string[] = [];
 
     if (activity.used) {
-      linkedResources = Array.isArray(activity.used)
+      resources = Array.isArray(activity.used)
         ? activity.used.map(resource => resource['@id'])
         : [activity.used['@id']];
     }
 
     if (activity.wasAssociatedWith) {
-      linkedResources = Array.isArray(activity.wasAssociatedWith)
+      resources = Array.isArray(activity.wasAssociatedWith)
         ? [
-            ...linkedResources,
+            ...resources,
             ...activity.wasAssociatedWith.map(resource => resource['@id']),
           ]
-        : [...linkedResources, activity.wasAssociatedWith['@id']];
+        : [...resources, activity.wasAssociatedWith['@id']];
     }
 
-    return linkedResources;
+    setLinkedResources(resources);
   };
-
-  const idsToFetch = activity && getLinkedResourcesIds(activity);
-
-  console.log('idsToFetch', idsToFetch);
-
-  // const query = {
-  //   query: {
-  //     bool: {
-  //       must: {
-  //         terms: {
-  //           '@id': [
-  //             'https://staging.nexus.ocp.bbp.epfl.ch/v1/resources/fusion2-stafeeva/89898/_/b3c5f79f-278c-4e05-989e-d1fd2aac779',
-  //             'https://staging.nexus.ocp.bbp.epfl.ch/v1/resources/fusion2-stafeeva/89898/_/ff161f5a-6e77-48d7-b7f6-fe5fa5a97382',
-  //             'https://staging.nexus.ocp.bbp.epfl.ch/v1/resources/fusion2-stafeeva/89898/_/d1d9f3fe-aa84-42da-a78b-75905e176e98',
-  //           ],
-  //         },
-  //       },
-  //       filter: {
-  //         term: {
-  //           '@type':
-  //             'https://staging.nexus.ocp.bbp.epfl.ch/v1/vocabs/fusion2-stafeeva/89898/Entity',
-  //         },
-  //       },
-  //     },
-  //   },
-  //   size: 100,
-  // };
-
-  // const getLinkedResources = () => {
-  //   nexus.View.elasticSearchQuery(
-  //     orgLabel,
-  //     projectLabel,
-  //     DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-  //     query
-  //   ).then(response => console.log('ES response', response));
-  // };
 
   const fetchChildren = () => {
     nexus.Resource.links(
@@ -312,6 +274,7 @@ const ActivityView: React.FC = () => {
           projectLabel={projectLabel}
           linkCodeToActivity={linkCodeToActivity}
           activityId={activity && activity['@id']}
+          linkedResourceIds={linkedResources}
         />
       )}
     </div>

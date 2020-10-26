@@ -1,11 +1,14 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource, ResourceLink } from '@bbp/nexus-sdk';
+import {
+  Resource,
+  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+  ElasticSearchViewQueryResponse,
+} from '@bbp/nexus-sdk';
 
 import { displayError } from '../components/Notifications';
 import ResourcesPane from '../components/ResourcesPane';
 import ResourcesList from '../components/ResourcesList';
-import { isActivityResourceLink } from '../utils';
 import fusionConfig from '../config';
 import { CodeResourceData } from '../components/LinkCodeForm';
 import ResourcesSearch from '../components/ResourcesSearch';
@@ -15,40 +18,70 @@ const ActivityResourcesContainer: React.FC<{
   projectLabel: string;
   activityId: string;
   linkCodeToActivity: (codeResourceId: string) => void;
-}> = ({ orgLabel, projectLabel, activityId, linkCodeToActivity }) => {
+  linkedResourceIds: string[];
+}> = ({
+  orgLabel,
+  projectLabel,
+  activityId,
+  linkCodeToActivity,
+  linkedResourceIds,
+}) => {
   const nexus = useNexusContext();
   const [resources, setResources] = React.useState<Resource[]>([]);
   const [search, setSearch] = React.useState<string>();
   const [typeFilter, setTypeFilter] = React.useState<string[]>();
 
   const fetchLinkedResources = () => {
-    nexus.Resource.links(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(activityId),
-      'outgoing'
-    )
-      .then(response => {
-        Promise.all(
-          response._results
-            .filter(link => isActivityResourceLink(link))
-            .map((link: ResourceLink) => {
+    const query = {
+      query: {
+        bool: {
+          minimum_should_match: 1,
+          should: linkedResourceIds.map(resourceId => ({
+            match: {
+              '@id': `https://staging.nexus.ocp.bbp.epfl.ch/v1/resources/${orgLabel}/${projectLabel}/_/${resourceId}`,
+            },
+          })),
+          must: [
+            {
+              term: { _deprecated: false },
+            },
+            {
+              term: {
+                '@type': `https://staging.nexus.ocp.bbp.epfl.ch/v1/vocabs/${orgLabel}/${projectLabel}/Entity`,
+              },
+            },
+          ],
+        },
+      },
+      size: 100,
+    };
+
+    if (linkedResourceIds.length > 0) {
+      nexus.View.elasticSearchQuery(
+        orgLabel,
+        projectLabel,
+        DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+        query
+      )
+        .then(response => {
+          return Promise.all(
+            response.hits.hits.map((resource: any) => {
               return nexus.Resource.get(
                 orgLabel,
                 projectLabel,
-                encodeURIComponent(link['@id'])
+                encodeURIComponent(resource._source['@id'])
               );
             })
-        )
-          .then(response => setResources(response as Resource[]))
-          .catch(error => displayError(error, 'An error occurred'));
-      })
-      .catch(error => displayError(error, 'An error occurred'));
+          );
+        })
+        .then(response => setResources(response as Resource[]))
+        .catch(error => displayError(error, 'An error occurred'));
+    }
   };
 
   React.useEffect(() => {
     fetchLinkedResources();
-  }, [activityId, typeFilter, search]);
+  }, [activityId, typeFilter, search, JSON.stringify(linkedResourceIds)]);
 
   const addCodeResource = (data: CodeResourceData) => {
     nexus.Resource.create(orgLabel, projectLabel, {
