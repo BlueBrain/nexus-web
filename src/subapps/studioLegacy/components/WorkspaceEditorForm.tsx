@@ -35,7 +35,7 @@ const WorkspaceEditorForm: React.FC<{
   };
 
   return (
-    <Form {...formItemLayout} onFinish={handleSubmit}>
+    <Form {...formItemLayout} onFinish={handleSubmit} layout="vertical">
       <Form.Item
         label={
           <span>

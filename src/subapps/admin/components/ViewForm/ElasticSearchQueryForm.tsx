@@ -81,6 +81,7 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
         onFinish={() => {
           value && onQueryChange(JSON.parse(value));
         }}
+        layout="vertical"
       >
         <>
           <div className="control-panel">

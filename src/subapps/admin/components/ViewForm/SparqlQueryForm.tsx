@@ -34,7 +34,7 @@ const SparqlQueryForm: React.FunctionComponent<{
 
   return (
     <div className="view-form">
-      <Form onFinish={handleFormSubmit}>
+      <Form onFinish={handleFormSubmit} layout="vertical">
         <FormItem name="input" initialValue={query}>
           <SparqlQueryInput />
         </FormItem>

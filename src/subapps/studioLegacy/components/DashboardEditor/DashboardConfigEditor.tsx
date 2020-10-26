@@ -47,7 +47,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEdi
   };
 
   return (
-    <Form onFinish={handleOnFinish}>
+    <Form onFinish={handleOnFinish} layout="vertical">
       <Form.Item
         label={
           <span>
