@@ -1,11 +1,8 @@
 import * as React from 'react';
 import GalleryView from './views/GalleryView';
 import routes from '../shared/routes';
-import FusionMainLayout, { SubAppProps } from './layouts/FusionMainLayout';
-import SubApps, { SubAppObject, SubApp } from '../subapps/index';
+import FusionMainLayout from './layouts/FusionMainLayout';
 import SubAppsView from './views/SubAppsView';
-import { RootState } from '../shared/store/reducers';
-import { useSelector } from 'react-redux';
 import './App.less';
 import useSubApps from './hooks/useSubApps';
 
