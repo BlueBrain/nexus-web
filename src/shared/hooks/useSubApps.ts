@@ -8,18 +8,15 @@ function addExternalSubApps(
   eSubbApps: ExternalSubApp[]
 ) {
   const icon = require('../images/gridIcon.svg');
-  if (eSubbApps) {
-    for (let i = 0; i < eSubbApps.length; i += 1) {
-      const y = {
-        icon,
-        namespace: eSubbApps[i].title,
-        routes: [],
-        subAppType: 'external',
-        ...eSubbApps[i],
-      };
-      subApps.set(y.title, y);
-    }
-  }
+  eSubbApps.forEach(e => {
+    subApps.set(e.title, {
+      icon,
+      namespace: e.title,
+      routes: [],
+      subAppType: 'external',
+      ...e,
+    });
+  });
   return subApps;
 }
 
@@ -29,6 +26,7 @@ type ExternalSubApp = {
 };
 
 const useSubApps = () => {
+  const [subAppError, setSubAppError] = React.useState<Error>();
   // Invoke SubApps
   const subApps = Array.from(SubApps.values()).reduce(
     (memo: Map<string, SubAppObject>, subApp: SubApp) => {
@@ -42,8 +40,6 @@ const useSubApps = () => {
   const [subAppsState, setSubAppsState] = React.useState<
     Map<string, SubAppObject>
   >(subApps);
-
-  const [subAppError, setSubAppError] = React.useState<Error>();
 
   const subAppsManifestPath =
     useSelector((state: RootState) => state.config.subAppsManifestPath) || [];
@@ -89,7 +85,11 @@ const useSubApps = () => {
     }));
   }, [subAppsState]);
 
-  return [subAppProps, subAppRoutes];
+  return {
+    subAppProps,
+    subAppRoutes,
+    subAppError,
+  };
 };
 
 export default useSubApps;
