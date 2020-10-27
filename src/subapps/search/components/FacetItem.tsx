@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Checkbox, Badge } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
+import './FacetItem.less';
+
 export type Facet = {
   count: number;
   key: string;
@@ -29,15 +31,19 @@ const FacetItem: React.FC<{
       </h4>
       {facets.map(({ label, key, count, selected }) => {
         return (
-          <p style={{ marginBottom: '20px' }} key={key}>
-            <Checkbox checked={selected} onChange={handleSelect(key)}>
+          <div className="item" key={key}>
+            <Checkbox
+              checked={selected}
+              onChange={handleSelect(key)}
+              style={{ width: '100%' }}
+            >
               {label}
+              <Badge
+                count={count}
+                style={{ backgroundColor: '#fff', color: '#999' }}
+              />
             </Checkbox>
-            <Badge
-              count={count}
-              style={{ backgroundColor: '#fff', color: '#999' }}
-            />
-          </p>
+          </div>
         );
       })}
     </div>
