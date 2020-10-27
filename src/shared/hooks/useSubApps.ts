@@ -43,6 +43,8 @@ const useSubApps = () => {
     Map<string, SubAppObject>
   >(subApps);
 
+  const [subAppError, setSubAppError] = React.useState<Error>();
+
   const subAppsManifestPath =
     useSelector((state: RootState) => state.config.subAppsManifestPath) || [];
   const abortController = new AbortController();
@@ -54,12 +56,13 @@ const useSubApps = () => {
         .then(resp => resp.json())
         .then(manifest => {
           const externalSubApps = manifest['subapps'] as ExternalSubApp[];
-          const x = new Map(addExternalSubApps(subAppsState, externalSubApps));
-          setSubAppsState(x);
-          // setESubApps(externalSubApps);
+          const subApps = new Map(
+            addExternalSubApps(subAppsState, externalSubApps)
+          );
+          setSubAppsState(subApps);
         })
         .catch(error => {
-          console.log('error');
+          setSubAppError(error);
         });
     }
   }, []);
@@ -75,7 +78,18 @@ const useSubApps = () => {
       return [...acc, ...val];
     }, []);
 
-  return [subAppsState, subAppRoutes];
+  const subAppProps = React.useMemo(() => {
+    return Array.from(subAppsState.values()).map(subApp => ({
+      label: subApp.title,
+      key: subApp.title,
+      subAppType: subApp.subAppType,
+      url: subApp.url,
+      route: `/${subApp.namespace}`,
+      icon: subApp.icon,
+    }));
+  }, [subAppsState]);
+
+  return [subAppProps, subAppRoutes];
 };
 
 export default useSubApps;

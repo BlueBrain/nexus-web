@@ -10,21 +10,14 @@ import './App.less';
 import useSubApps from './hooks/useSubApps';
 
 const App: React.FC = () => {
-  const [subAppsState, subAppRoutes] = useSubApps();
+  // TODO log the error in to sentry.
+  const [subAppProps, subAppRoutes, subAppError] = useSubApps();
 
   // Apply Subapp routes
   const routesWithSubApps = [...routes, ...subAppRoutes];
+
   return (
-    <FusionMainLayout
-      subApps={Array.from(subAppsState.values()).map(subApp => ({
-        label: subApp.title,
-        key: subApp.title,
-        subAppType: subApp.subAppType,
-        url: subApp.url,
-        route: `/${subApp.namespace}`,
-        icon: subApp.icon,
-      }))}
-    >
+    <FusionMainLayout subApps={subAppProps}>
       <SubAppsView routesWithSubApps={routesWithSubApps} />
       <GalleryView />
     </FusionMainLayout>
