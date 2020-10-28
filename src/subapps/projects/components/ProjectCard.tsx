@@ -7,7 +7,6 @@ import ProjectMetaContainer from '../containers/ProjectMetaContainer';
 import './ProjectCard.less';
 
 const arrowIcon = require('../../../shared/images/arrow.svg');
-const editIcon = require('../../../shared/images/pencil.svg');
 
 type ProjectCardProps = {
   name: string;
