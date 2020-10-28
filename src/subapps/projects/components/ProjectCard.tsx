@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Tooltip } from 'antd';
 import StatusIcon, { Status } from './StatusIcon';
+import ProjectMetaContainer from '../containers/ProjectMetaContainer';
 
 import './ProjectCard.less';
 
@@ -25,10 +26,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   status,
   orgLabel,
 }) => {
-  const onClickEditButton = () => {
-    console.log('clicked Edit project');
-  };
-
   return (
     <div className="project-card">
       <Tooltip title={status}>
@@ -40,9 +37,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         <div className="main-info">
           <div className="title-container">
             <span className="name">{name}</span>
-            <button className="edit-button" onClick={onClickEditButton}>
-              <img src={editIcon} />
-            </button>
+            <ProjectMetaContainer
+              orgLabel={orgLabel}
+              projectLabel={name}
+              showAsIcon
+            />
           </div>
           <p className="description">{description}</p>
         </div>
