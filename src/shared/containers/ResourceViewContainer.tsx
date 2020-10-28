@@ -5,14 +5,7 @@ import { Spin, Card, Empty, Tabs, notification, Alert, Collapse } from 'antd';
 import * as queryString from 'query-string';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { Resource, ResourceLink, IncomingLink, Identity } from '@bbp/nexus-sdk';
-
-import HistoryContainer from '../containers/HistoryContainer';
-import ResourceLinksContainer from '../containers/ResourceLinks';
-import ResourceActionsContainer from '../containers/ResourceActionsContainer';
-import ResourceEditorContainer from '../containers/ResourceEditor';
-import SchemaLinkContainer from '../containers/SchemaLink';
-import GraphContainer from '../containers/GraphContainer';
-import ResourceMetadata from '../components/ResourceMetadata';
+import AdminPlugin from '../containers/AdminPluginContainer';
 import ResourcePlugins from './ResourcePlugins';
 import usePlugins from '../hooks/usePlugins';
 import useMeasure from '../hooks/useMeasure';
@@ -21,7 +14,6 @@ import {
   getOrgAndProjectFromProjectId,
   matchPlugins,
   pluginsMap,
-  getUsername,
   getDestinationParam,
 } from '../utils';
 import { isDeprecated } from '../utils/nexusMaybe';
@@ -30,8 +22,6 @@ export type PluginMapping = {
   [pluginKey: string]: object;
 };
 
-const { Panel } = Collapse;
-const TabPane = Tabs.TabPane;
 export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
 
 const ResourceViewContainer: React.FunctionComponent<{
@@ -299,28 +289,31 @@ const ResourceViewContainer: React.FunctionComponent<{
                 permissions={['resources/write']}
                 noAccessComponent={() => (
                   <div>
-                    {(!filteredPlugins || filteredPlugins.length === 0) && (
-                      <div>
-                        <p>
-                          <Alert
-                            message="This resource does not have plugins configured yet, and you don't have access to edit the resource. You can nonetheless see the resource metadata below."
-                            type="info"
-                          />
-                        </p>
-                        <ResourceEditorContainer
-                          resourceId={resource['@id']}
-                          orgLabel={orgLabel}
-                          projectLabel={projectLabel}
-                          rev={resource._rev}
-                          defaultExpanded={
-                            !!expandedFromQuery && expandedFromQuery === 'true'
-                          }
-                          defaultEditable={false}
-                          onSubmit={() => {}}
-                          onExpanded={handleExpanded}
+                    <div>
+                      <p>
+                        <Alert
+                          message="This resource does not have plugins configured yet, and you don't have access to edit the resource. You can nonetheless see the resource metadata below."
+                          type="info"
                         />
-                      </div>
-                    )}
+                      </p>
+                      <AdminPlugin
+                        editable={false}
+                        orgLabel={orgLabel}
+                        projectLabel={projectLabel}
+                        resourceId={resourceId}
+                        resource={resource}
+                        latestResource={latestResource}
+                        activeTabKey={activeTabKey}
+                        defaultActiveKey={'1'}
+                        expandedFromQuery={expandedFromQuery}
+                        ref={ref}
+                        goToResource={goToResource}
+                        handleTabChange={handleTabChange}
+                        handleGoToInternalLink={handleGoToInternalLink}
+                        handleEditFormSubmit={handleEditFormSubmit}
+                        handleExpanded={handleExpanded}
+                      />
+                    </div>
                   </div>
                 )}
               >
@@ -332,99 +325,23 @@ const ResourceViewContainer: React.FunctionComponent<{
                     />
                   </p>
                 )}
-                <Collapse
-                  defaultActiveKey={
-                    filteredPlugins && filteredPlugins.length > 0 ? [] : 1
-                  }
-                  onChange={() => {}}
-                >
-                  <Panel header="Admin" key="1">
-                    <ResourceActionsContainer resource={resource} />
-                    <ResourceMetadata
-                      resource={resource}
-                      schemaLink={SchemaLinkContainer}
-                    />
-                    <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
-                      <TabPane tab="JSON" key="#JSON">
-                        <ResourceEditorContainer
-                          resourceId={resource['@id']}
-                          orgLabel={orgLabel}
-                          projectLabel={projectLabel}
-                          rev={resource._rev}
-                          defaultExpanded={
-                            !!expandedFromQuery && expandedFromQuery === 'true'
-                          }
-                          defaultEditable={isLatest && !isDeprecated(resource)}
-                          onSubmit={handleEditFormSubmit}
-                          onExpanded={handleExpanded}
-                        />
-                      </TabPane>
-                      <TabPane tab="History" key="#history">
-                        <HistoryContainer
-                          resourceId={resource['@id']}
-                          orgLabel={orgLabel}
-                          projectLabel={projectLabel}
-                          latestRev={latestResource._rev}
-                          link={(rev: number) => {
-                            return (
-                              <a
-                                onClick={() => {
-                                  goToResource(
-                                    orgLabel,
-                                    projectLabel,
-                                    resourceId,
-                                    {
-                                      revision: rev,
-                                    }
-                                  );
-                                }}
-                              >
-                                Revision {rev}
-                              </a>
-                            );
-                          }}
-                        />
-                      </TabPane>
-                      <TabPane tab="Links" key="#links" className="rows">
-                        <section className="links incoming">
-                          <h3>Incoming</h3>
-                          <ResourceLinksContainer
-                            resourceId={resource['@id']}
-                            orgLabel={orgLabel}
-                            projectLabel={projectLabel}
-                            rev={resource._rev}
-                            direction="incoming"
-                            onClick={handleGoToInternalLink}
-                          />
-                        </section>
-                        <section className="links outgoing">
-                          <h3>Outgoing</h3>
-                          <ResourceLinksContainer
-                            resourceId={resource['@id']}
-                            orgLabel={orgLabel}
-                            projectLabel={projectLabel}
-                            rev={resource._rev}
-                            direction="outgoing"
-                            onClick={handleGoToInternalLink}
-                          />
-                        </section>
-                      </TabPane>
-                      <TabPane tab="Graph" key="#graph" className="rows">
-                        <div className="graph-wrapper-container">
-                          <div className="fixed-minus-header">
-                            <div ref={ref} className="graph-wrapper">
-                              {resource ? (
-                                <GraphContainer
-                                  resource={resource as Resource}
-                                />
-                              ) : null}
-                            </div>
-                          </div>
-                        </div>
-                      </TabPane>
-                    </Tabs>
-                  </Panel>
-                </Collapse>
+                <AdminPlugin
+                  editable={isLatest && !isDeprecated(resource)}
+                  orgLabel={orgLabel}
+                  projectLabel={projectLabel}
+                  resourceId={resourceId}
+                  resource={resource}
+                  latestResource={latestResource}
+                  activeTabKey={activeTabKey}
+                  defaultActiveKey={'1'}
+                  expandedFromQuery={expandedFromQuery}
+                  ref={ref}
+                  goToResource={goToResource}
+                  handleTabChange={handleTabChange}
+                  handleGoToInternalLink={handleGoToInternalLink}
+                  handleEditFormSubmit={handleEditFormSubmit}
+                  handleExpanded={handleExpanded}
+                />
               </AccessControl>
             </>
           )}
