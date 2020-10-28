@@ -1,51 +1,32 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource, ResourceLink } from '@bbp/nexus-sdk';
 
 import { displayError } from '../components/Notifications';
 import ResourcesPane from '../components/ResourcesPane';
 import ResourcesList from '../components/ResourcesList';
-import { isActivityResourceLink } from '../utils';
 import fusionConfig from '../config';
 import { CodeResourceData } from '../components/LinkCodeForm';
+import ResourcesSearch from '../components/ResourcesSearch';
+import { ActivityResource } from '../views/ActivityView';
+import { useActivityResources } from '../hooks/useActivityResources';
 
 const ActivityResourcesContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
-  activityId: string;
+  activity: ActivityResource;
   linkCodeToActivity: (codeResourceId: string) => void;
-}> = ({ orgLabel, projectLabel, activityId, linkCodeToActivity }) => {
+}> = ({ orgLabel, projectLabel, activity, linkCodeToActivity }) => {
   const nexus = useNexusContext();
-  const [resources, setResources] = React.useState<Resource[]>([]);
 
-  const fetchLinkedResources = () => {
-    nexus.Resource.links(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(activityId),
-      'outgoing'
-    )
-      .then(response => {
-        Promise.all(
-          response._results
-            .filter(link => isActivityResourceLink(link))
-            .map((link: ResourceLink) => {
-              return nexus.Resource.get(
-                orgLabel,
-                projectLabel,
-                encodeURIComponent(link['@id'])
-              );
-            })
-        )
-          .then(response => setResources(response as Resource[]))
-          .catch(error => displayError(error, 'An error occurred'));
-      })
-      .catch(error => displayError(error, 'An error occurred'));
-  };
-
-  React.useEffect(() => {
-    fetchLinkedResources();
-  }, [activityId]);
+  const [search, setSearch] = React.useState<string>();
+  const [typeFilter, setTypeFilter] = React.useState<string[]>();
+  const { resources, busy, fetchLinkedResources } = useActivityResources(
+    activity,
+    orgLabel,
+    projectLabel,
+    typeFilter,
+    search
+  );
 
   const addCodeResource = (data: CodeResourceData) => {
     nexus.Resource.create(orgLabel, projectLabel, {
@@ -65,10 +46,15 @@ const ActivityResourcesContainer: React.FC<{
 
   return (
     <ResourcesPane linkCode={addCodeResource}>
+      <ResourcesSearch
+        onChangeType={setTypeFilter}
+        onSearchByText={setSearch}
+      />
       <ResourcesList
         resources={resources}
         projectLabel={projectLabel}
         orgLabel={orgLabel}
+        busy={busy}
       />
     </ResourcesPane>
   );
