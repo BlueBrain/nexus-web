@@ -23,6 +23,7 @@ const ResourcesSearch: React.FC<{
       <Search
         placeholder="Search by label or description"
         onSearch={onSearchByText}
+        allowClear
       />
       <div className="resources-search__filters">
         <h3 className="resources-search__group-title">Filters</h3>

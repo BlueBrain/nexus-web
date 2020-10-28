@@ -75,8 +75,9 @@ export const useActivityResources = (
 
                 if (search) {
                   mustInclude.push({
-                    match_phrase: {
-                      _original_source: search,
+                    query_string: {
+                      query: `${search}*`,
+                      default_field: '_original_source',
                     },
                   });
                 }
