@@ -39,6 +39,11 @@ export type ActivityResource = Resource<{
     | {
         '@id': string;
       }[];
+  contribution?: {
+    agent: {
+      '@id': string;
+    };
+  };
 }>;
 
 type BreadcrumbItem = {
@@ -246,7 +251,7 @@ const ActivityView: React.FC = () => {
           orgLabel={orgLabel}
           projectLabel={projectLabel}
           linkCodeToActivity={linkCodeToActivity}
-          activityId={activity && activity['@id']}
+          activity={activity}
         />
       )}
     </div>
