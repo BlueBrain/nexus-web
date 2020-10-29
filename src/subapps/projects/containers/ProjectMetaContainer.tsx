@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Drawer, Button } from 'antd';
+import { Drawer } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Project, Resource } from '@bbp/nexus-sdk';
 
@@ -7,21 +7,22 @@ import fusionConfig from '../config';
 import ProjectForm, { ProjectMetadata } from '../components/ProjectForm';
 import { displayError, successNotification } from '../components/Notifications';
 
-const editIcon = require('../../../shared/images/pencil.svg');
-
 const ProjectMetaContaier: React.FC<{
   orgLabel: string;
   projectLabel: string;
-  showAsIcon?: boolean;
-}> = ({ orgLabel, projectLabel, showAsIcon }) => {
-  const [showForm, setShowForm] = React.useState<boolean>(false);
+  onClose?: () => void;
+}> = ({ orgLabel, projectLabel, onClose }) => {
   const [busy, setBusy] = React.useState<boolean>(false);
   const [projectMetaData, setProjectMetaData] = React.useState<
     ProjectMetadata
   >();
   const [metaDataResource, setMetaDataResource] = React.useState<Resource>();
-  const [error, setError] = React.useState<Error>();
+  const [showForm, setShowForm] = React.useState<boolean>(false);
   const nexus = useNexusContext();
+
+  React.useEffect(() => {
+    fetchProjectMetadata();
+  }, [orgLabel, projectLabel]);
 
   const fetchProjectMetadata = () => {
     return nexus.Resource.list(orgLabel, projectLabel, {
@@ -87,7 +88,6 @@ const ProjectMetaContaier: React.FC<{
                   }
                 )
                   .then(result => {
-                    setShowForm(false);
                     setProjectMetaData(data);
                     successNotification(
                       'Project information is updated succesfully'
@@ -111,32 +111,24 @@ const ProjectMetaContaier: React.FC<{
     }
   };
 
-  const onClickInfo = () => {
-    fetchProjectMetadata();
+  const closeForm = () => {
+    setShowForm(false);
+    onClose && onClose();
   };
 
   return (
     <div>
-      {showAsIcon ? (
-        <div>
-          <button className="edit-button" onClick={onClickInfo}>
-            <img src={editIcon} />
-          </button>
-        </div>
-      ) : (
-        <Button onClick={onClickInfo}>Project Info</Button>
-      )}
       <Drawer
         visible={showForm}
         destroyOnClose={true}
-        onClose={() => setShowForm(false)}
+        onClose={closeForm}
         title="Edit Project Information"
         placement="right"
         closable
         width={600}
       >
         <ProjectForm
-          onClickCancel={() => setShowForm(false)}
+          onClickCancel={closeForm}
           onSubmit={submitProject}
           busy={busy}
           project={projectMetaData}

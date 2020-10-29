@@ -2,11 +2,11 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Tooltip } from 'antd';
 import StatusIcon, { Status } from './StatusIcon';
-import ProjectMetaContainer from '../containers/ProjectMetaContainer';
 
 import './ProjectCard.less';
 
 const arrowIcon = require('../../../shared/images/arrow.svg');
+const editIcon = require('../../../shared/images/pencil.svg');
 
 type ProjectCardProps = {
   name: string;
@@ -15,6 +15,7 @@ type ProjectCardProps = {
   status: Status;
   collaboratorsNumber: number;
   orgLabel: string;
+  onClickEdit(): void;
 };
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
@@ -24,6 +25,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   collaboratorsNumber,
   status,
   orgLabel,
+  onClickEdit,
 }) => {
   return (
     <div className="project-card">
@@ -36,11 +38,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         <div className="main-info">
           <div className="title-container">
             <span className="name">{name}</span>
-            <ProjectMetaContainer
-              orgLabel={orgLabel}
-              projectLabel={name}
-              showAsIcon
-            />
+            <button className="edit-button" onClick={onClickEdit}>
+              <img src={editIcon} />
+            </button>
           </div>
           <p className="description">{description}</p>
         </div>
