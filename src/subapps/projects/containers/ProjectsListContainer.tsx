@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Icon, Button } from 'antd';
 import { ProjectResponseCommon } from '@bbp/nexus-sdk';
-import ProjectCard from '../components/ProjectCard';
 
+import ProjectMetaContainer from '../containers/ProjectMetaContainer';
+import ProjectCard from '../components/ProjectCard';
 import { Status } from '../components/StatusIcon';
 
 type ProjectsListContainerType = {
@@ -14,6 +15,31 @@ const ProjectsListContainer: React.FC<ProjectsListContainerType> = ({
   projectType,
 }) => {
   const [sortOrder, setSortOrder] = React.useState<string>('ASC');
+  const [
+    { selectedOrg, selectedProject },
+    setSelectedProject,
+  ] = React.useState<{
+    selectedOrg: string | null;
+    selectedProject: string | null;
+  }>({
+    selectedOrg: null,
+    selectedProject: null,
+  });
+
+  const onClickEditProject = (orgLabel: string, projectLabel: string) => {
+    setSelectedProject({
+      selectedOrg: orgLabel,
+      selectedProject: projectLabel,
+    });
+  };
+
+  const closeMetadataForm = () => {
+    setSelectedProject({
+      selectedOrg: null,
+      selectedProject: null,
+    });
+  };
+
   return (
     <div>
       <div className="list-header">
@@ -47,17 +73,28 @@ const ProjectsListContainer: React.FC<ProjectsListContainerType> = ({
             >
               <div className="project-card-container">
                 <ProjectCard
+                  key={`project-card-${v._label}`}
                   name={v._label}
                   orgLabel={v._organizationLabel}
                   description={v.description || ''}
                   activitiesNumber={9}
                   collaboratorsNumber={5}
                   status={Status.inProgress}
+                  onClickEdit={() =>
+                    onClickEditProject(v._organizationLabel, v._label)
+                  }
                 />
               </div>
             </div>
           );
         })}
+      {selectedOrg && selectedProject && (
+        <ProjectMetaContainer
+          orgLabel={selectedOrg}
+          projectLabel={selectedProject}
+          onClose={closeMetadataForm}
+        />
+      )}
     </div>
   );
 };

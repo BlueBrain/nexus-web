@@ -1,23 +1,28 @@
 import * as React from 'react';
-import { Drawer, Button, notification } from 'antd';
+import { Drawer } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Project, Resource } from '@bbp/nexus-sdk';
 
 import fusionConfig from '../config';
 import ProjectForm, { ProjectMetadata } from '../components/ProjectForm';
+import { displayError, successNotification } from '../components/Notifications';
 
 const ProjectMetaContaier: React.FC<{
   orgLabel: string;
   projectLabel: string;
-}> = ({ orgLabel, projectLabel }) => {
-  const [showForm, setShowForm] = React.useState<boolean>(false);
+  onClose?: () => void;
+}> = ({ orgLabel, projectLabel, onClose }) => {
   const [busy, setBusy] = React.useState<boolean>(false);
   const [projectMetaData, setProjectMetaData] = React.useState<
     ProjectMetadata
   >();
   const [metaDataResource, setMetaDataResource] = React.useState<Resource>();
-  const [error, setError] = React.useState<Error>();
+  const [showForm, setShowForm] = React.useState<boolean>(false);
   const nexus = useNexusContext();
+
+  React.useEffect(() => {
+    fetchProjectMetadata();
+  }, [orgLabel, projectLabel]);
 
   const fetchProjectMetadata = () => {
     return nexus.Resource.list(orgLabel, projectLabel, {
@@ -46,13 +51,13 @@ const ProjectMetaContaier: React.FC<{
               setProjectMetaData(metaData);
               setShowForm(true);
             })
-            .catch(e => {
-              setError(e);
+            .catch(error => {
+              displayError(error, 'An error occured');
             });
         }
       })
-      .catch(e => {
-        setError(e);
+      .catch(error => {
+        displayError(error, 'An error occured');
       });
   };
 
@@ -72,7 +77,7 @@ const ProjectMetaContaier: React.FC<{
               }
             )
               .then(resultProject => {
-                nexus.Resource.update(
+                return nexus.Resource.update(
                   project._organizationLabel,
                   project._label,
                   metaDataResource['@id'],
@@ -83,54 +88,47 @@ const ProjectMetaContaier: React.FC<{
                   }
                 )
                   .then(result => {
-                    setShowForm(false);
                     setProjectMetaData(data);
-                    notification.success({
-                      message: `Project information Updated`,
-                    });
+                    successNotification(
+                      'Project information is updated succesfully'
+                    );
                     setBusy(false);
                   })
                   .catch(error => {
-                    notification.error({
-                      message: `Could not update Project information`,
-                      description: error.message,
-                    });
+                    displayError(error, 'Could not update Project information');
                     setBusy(false);
                   });
               })
               .catch(error => {
-                notification.error({
-                  message: `Could not update Project information`,
-                  description: error.message,
-                });
+                displayError(error, 'Could not update Project information');
                 setBusy(false);
               });
           }
         })
         .catch(error => {
-          setError(error);
+          displayError(error, 'An error occured');
         });
     }
   };
 
-  const onClickInfo = () => {
-    fetchProjectMetadata();
+  const closeForm = () => {
+    setShowForm(false);
+    onClose && onClose();
   };
 
   return (
     <div>
-      <Button onClick={onClickInfo}>Project Info</Button>
       <Drawer
         visible={showForm}
         destroyOnClose={true}
-        onClose={() => setShowForm(false)}
+        onClose={closeForm}
         title="Edit Project Information"
         placement="right"
         closable
         width={600}
       >
         <ProjectForm
-          onClickCancel={() => setShowForm(false)}
+          onClickCancel={closeForm}
           onSubmit={submitProject}
           busy={busy}
           project={projectMetaData}

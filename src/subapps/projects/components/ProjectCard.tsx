@@ -15,6 +15,7 @@ type ProjectCardProps = {
   status: Status;
   collaboratorsNumber: number;
   orgLabel: string;
+  onClickEdit(): void;
 };
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
@@ -24,11 +25,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   collaboratorsNumber,
   status,
   orgLabel,
+  onClickEdit,
 }) => {
-  const onClickEditButton = () => {
-    console.log('clicked Edit project');
-  };
-
   return (
     <div className="project-card">
       <Tooltip title={status}>
@@ -40,7 +38,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         <div className="main-info">
           <div className="title-container">
             <span className="name">{name}</span>
-            <button className="edit-button" onClick={onClickEditButton}>
+            <button className="edit-button" onClick={onClickEdit}>
               <img src={editIcon} />
             </button>
           </div>

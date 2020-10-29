@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Button } from 'antd';
 
 import NewActivityContainer from '../containers/NewActivityContainer';
 import TemplatesContainer from '../containers/TemplatesContainer';
@@ -24,6 +25,8 @@ const ProjectPanel: React.FC<{
   activitySelfUrl,
   siblings,
 }) => {
+  const [showInfo, setShowInfo] = React.useState<boolean>(false);
+
   return (
     <div className="project-panel">
       <span className="project-panel__name">{projectLabel}</span>
@@ -37,7 +40,14 @@ const ProjectPanel: React.FC<{
           siblings={siblings}
         />
         <TemplatesContainer />
-        <ProjectMetaContaier projectLabel={projectLabel} orgLabel={orgLabel} />
+        <Button onClick={() => setShowInfo(true)}>Project Info</Button>
+        {showInfo && (
+          <ProjectMetaContaier
+            projectLabel={projectLabel}
+            orgLabel={orgLabel}
+            onClose={() => setShowInfo(false)}
+          />
+        )}
       </div>
     </div>
   );
