@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Button, Tooltip, notification } from 'antd';
+import { DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import { Resource } from '@bbp/nexus-sdk';
@@ -72,7 +73,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
           </p>
         </div>
       ),
-      icon: 'delete',
+      icon: <DeleteOutlined />,
       danger: true,
     },
     {
@@ -89,7 +90,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
       title: 'Deprecate this resource',
       message: "Are you sure you'd like to deprecate this resource?",
       shortTitle: 'Deprecate',
-      icon: 'delete',
+      icon: <DeleteOutlined />,
       danger: true,
     },
     {
@@ -97,7 +98,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
       predicate: toPromise(isFile),
       title: 'Download this file',
       shortTitle: 'Download File',
-      icon: 'download',
+      icon: <DownloadOutlined />,
     },
   ];
 
