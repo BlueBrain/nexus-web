@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, Modal, notification, message, Icon } from 'antd';
+import { Button, Modal, notification, message } from 'antd';
+import { PlusSquareOutlined } from '@ant-design/icons';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import StudioEditorForm from '../components/StudioEditorForm';
@@ -77,7 +78,7 @@ const CreateStudioContainer: React.FC<{
   return (
     <div className="studio-modal">
       <Button type="primary" block onClick={() => setShowModal(true)}>
-        <Icon type="plus-square" style={{ fontSize: '16px', color: 'white' }} />
+        <PlusSquareOutlined style={{ fontSize: '16px', color: 'white' }} />
         Create Studio
       </Button>
       <Modal

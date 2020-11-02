@@ -2,7 +2,8 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID, Resource } from '@bbp/nexus-sdk';
-import { notification, Modal, Button, message, Icon } from 'antd';
+import { notification, Modal, Button, message } from 'antd';
+import { PlusSquareOutlined } from '@ant-design/icons';
 
 import DashboardConfigEditor, {
   DashboardPayload,
@@ -94,8 +95,10 @@ const CreateDashboardContainer: React.FunctionComponent<{
 
   return (
     <>
-      <Button type="primary" onClick={() => setShowCreateModal(true)}>
-        <Icon type="plus-square" style={{ fontSize: '16px', color: 'white' }} />
+      <Button
+        icon={<PlusSquareOutlined />}
+        onClick={() => setShowCreateModal(true)}
+      >
         Add Dashboard
       </Button>
       <Modal

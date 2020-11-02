@@ -38,7 +38,6 @@ function authReducer(
   state: AuthState = initialState,
   action: AuthActions | AuthFailedAction
 ): AuthState {
-  console.log(action.type);
   if (action.type.startsWith('@@nexus/AUTH_IDENTITY_')) {
     return {
       ...state,

@@ -1,8 +1,13 @@
 import * as React from 'react';
-import { Form, Icon, Button, Card, List, Empty } from 'antd';
+import { Form, Button, Card, List, Empty } from 'antd';
+import {
+  CheckCircleOutlined,
+  ExclamationCircleOutlined,
+} from '@ant-design/icons';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import ReactJson from 'react-json-view';
 import { ElasticSearchViewQueryResponse } from '@bbp/nexus-sdk';
+
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/javascript/javascript';
 
@@ -23,6 +28,7 @@ type NexusESError = {
   };
 };
 
+// TODO this needs to be broken into Input, Result, and Form components.
 const ElasticSearchQueryForm: React.FunctionComponent<{
   query: object;
   response: ElasticSearchViewQueryResponse<any> | null;
@@ -44,7 +50,7 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
 }): JSX.Element => {
   const [initialQuery, setInitialQuery] = React.useState('');
   const [valid, setValid] = React.useState(true);
-  const [value, setValue] = React.useState();
+  const [value, setValue] = React.useState<string>();
 
   React.useEffect(() => {
     // only on first render!
@@ -72,16 +78,20 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
   return (
     <div className="view-form">
       <Form
-        onSubmit={e => {
-          e.preventDefault();
-          onQueryChange(JSON.parse(value));
+        onFinish={() => {
+          value && onQueryChange(JSON.parse(value));
         }}
+        layout="vertical"
       >
         <>
           <div className="control-panel">
             <div>
               <div className={`feedback ${valid ? '_positive' : '_negative'}`}>
-                <Icon type={valid ? 'check-circle' : 'exclamation-circle'} />{' '}
+                {valid ? (
+                  <CheckCircleOutlined />
+                ) : (
+                  <ExclamationCircleOutlined />
+                )}{' '}
                 {valid ? 'Valid JSON' : 'Invalid JSON'}
               </div>
             </div>

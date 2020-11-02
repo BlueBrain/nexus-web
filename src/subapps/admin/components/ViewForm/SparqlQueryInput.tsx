@@ -7,15 +7,15 @@ import 'codemirror/mode/sparql/sparql';
 import './SparqlQueryInput.less';
 
 const SparqlQueryInput: React.FunctionComponent<{
-  value: string;
-  onChange: (query: string) => void;
-}> = ({ value, onChange }, ref) => {
+  value?: string;
+  onChange?: (query: string) => void;
+}> = ({ value = '', onChange }) => {
   const handleChange = (editor: any, data: any, value: string) => {
-    onChange(value);
+    onChange && onChange(value);
   };
 
   return (
-    <div className="sparql-input" ref={ref}>
+    <div className="sparql-input">
       <div className="code">
         <CodeMirror
           value={value}
@@ -33,12 +33,4 @@ const SparqlQueryInput: React.FunctionComponent<{
   );
 };
 
-// Exposes as forwardRef to be compatible with ant-D forms
-// https://ant.design/components/form/#components-form-demo-customized-form-controls
-export default React.forwardRef<
-  {
-    value: string;
-    onChange: (query: string) => void;
-  },
-  any
->(SparqlQueryInput);
+export default SparqlQueryInput;

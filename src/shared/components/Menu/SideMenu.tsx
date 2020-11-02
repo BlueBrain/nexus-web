@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { Icon, Card } from 'antd';
-import './SideMenu.less';
+import { Card } from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
 import { useTransition, animated } from 'react-spring';
+
+import './SideMenu.less';
 
 const ANIMATIONS = {
   left: {
@@ -59,7 +61,7 @@ const SideMenu: React.FunctionComponent<SideMenuProps> = props => {
                           aria-label="Close"
                           onClick={onClose}
                         >
-                          <Icon type="close" />
+                          <CloseOutlined />
                         </button>
                       )}
                     </div>

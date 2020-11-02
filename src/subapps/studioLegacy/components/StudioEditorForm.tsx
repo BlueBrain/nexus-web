@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
-import { Input, Form, Tooltip, Icon, Button } from 'antd';
-import { WrappedFormUtils } from 'antd/lib/form/Form';
+import { Input, Form, Tooltip, Button } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 type StudioResource = Resource<{
   label: string;
@@ -11,21 +11,12 @@ type StudioResource = Resource<{
 }>;
 
 const StudioEditorForm: React.FC<{
-  form: WrappedFormUtils;
   saveStudio?(label: string, description?: string): void;
   studio?: StudioResource | null;
-}> = ({ form, saveStudio, studio }) => {
-  const { getFieldDecorator } = form;
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    form.validateFields((err, values) => {
-      if (!err) {
-        const { label, description } = values;
-        saveStudio && saveStudio(label, description);
-      }
-    });
+}> = ({ saveStudio, studio }) => {
+  const handleSubmit = (values: { label: string; description: string }) => {
+    const { label, description } = values;
+    saveStudio && saveStudio(label, description);
   };
 
   const formItemLayout = {
@@ -39,40 +30,40 @@ const StudioEditorForm: React.FC<{
   };
 
   return (
-    <Form {...formItemLayout} onSubmit={handleSubmit}>
+    <Form {...formItemLayout} onFinish={handleSubmit} layout="vertical">
       <Form.Item
         label={
           <span>
             Label{' '}
             <Tooltip title="A name of your studio">
-              <Icon type="question-circle-o" />
+              <QuestionCircleOutlined />
             </Tooltip>
           </span>
         }
+        name="label"
+        initialValue={label}
+        rules={[
+          {
+            required: true,
+            message: 'Please input a label!',
+          },
+        ]}
       >
-        {getFieldDecorator('label', {
-          initialValue: label,
-          rules: [
-            {
-              required: true,
-              message: 'Please input a label!',
-            },
-          ],
-        })(<Input className="ui-studio-label-input" />)}
+        <Input className="ui-studio-label-input" />
       </Form.Item>
       <Form.Item
         label={
           <span>
             Description{' '}
             <Tooltip title="A description of your studio">
-              <Icon type="question-circle-o" />
+              <QuestionCircleOutlined />
             </Tooltip>
           </span>
         }
+        name="description"
+        initialValue={description}
       >
-        {getFieldDecorator('description', {
-          initialValue: description,
-        })(<TextArea className="ui-studio-description-input" />)}
+        <TextArea className="ui-studio-description-input" />
       </Form.Item>
       <Button type="primary" htmlType="submit">
         Save
@@ -81,8 +72,4 @@ const StudioEditorForm: React.FC<{
   );
 };
 
-export default Form.create<{
-  form: WrappedFormUtils;
-  saveStudio?(label: string): void;
-  studio?: StudioResource | null;
-}>()(StudioEditorForm);
+export default StudioEditorForm;

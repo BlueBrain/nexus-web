@@ -2,7 +2,8 @@ import * as React from 'react';
 import { useRouteMatch, useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import * as queryString from 'query-string';
-import { Menu, Dropdown, Icon } from 'antd';
+import { Menu, Dropdown } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 import { ViewList, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
@@ -89,7 +90,7 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
             <Dropdown overlay={menu}>
               <span>
                 {labelOf(decodedViewId)}
-                <Icon type="down" />
+                <DownOutlined />
               </span>
             </Dropdown>{' '}
           </h1>

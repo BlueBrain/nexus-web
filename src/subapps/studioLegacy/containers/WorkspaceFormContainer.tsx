@@ -295,7 +295,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
           onCancel={() => onCancel()}
           width={700}
         >
-          <Form>
+          <Form layout="vertical">
             <Form.Item label={'Select View for the Dashboards(s)'}>
               {viewToAdd ? (
                 <SelectViews

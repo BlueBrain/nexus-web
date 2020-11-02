@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Alert, Button } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 
 import { DEFAULT_LAYOUT, LAYOUTS } from './LayoutDefinitions';
 
@@ -58,7 +59,7 @@ const GraphControlPanel: React.FunctionComponent<{
           })}
         </div>
         <div>
-          <Button icon="download" size="small" onClick={handleDownload}>
+          <Button icon={<DownOutlined />} size="small" onClick={handleDownload}>
             Save Image
           </Button>
           <Button

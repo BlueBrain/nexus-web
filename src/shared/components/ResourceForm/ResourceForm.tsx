@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Cascader, Form, Button, Spin, Modal } from 'antd';
-import { WrappedFormUtils } from 'antd/lib/form/Form';
-import { CascaderOptionType } from 'antd/lib/cascader';
+import { CascaderOptionType, CascaderValueType } from 'antd/lib/cascader';
 import { ResourcePayload } from '@bbp/nexus-sdk';
 
 import ResourceEditor from '../ResourceEditor';
@@ -12,6 +11,7 @@ import {
 } from './defaultResourcePayloads';
 
 import './ResourceForm.less';
+import { format } from 'url';
 
 const AVAILABLE_SCHEMAS: CascaderOptionType[] = [
   {
@@ -73,7 +73,6 @@ const formItemLayoutWithOutLabel = {
 };
 
 export interface ResourceFormProps {
-  form: WrappedFormUtils;
   resource?: {
     schemaId: string;
     payload: ResourcePayload;
@@ -89,7 +88,6 @@ export interface ResourceFormProps {
  * based on: https://ant.design/components/form/#components-form-demo-dynamic-form-item
  */
 const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
-  form,
   busy = false,
   onSubmit = () => {},
   onDeprecate = () => {},
@@ -98,31 +96,37 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
   const [jsonValue, setJsonValue] = React.useState<{ [key: string]: any }>(
     DEFAULT_RESOURCE
   );
-  const { getFieldDecorator } = form;
+  const [form] = Form.useForm();
 
-  const handleSubmit = (rawData: any) => {
-    form.setFieldsValue({ editorContent: rawData });
-    form.validateFields((err, values) => {
-      if (!err && !busy) {
-        const { resourceTypes, editorContent } = values;
-        const selectedSchema: string =
-          resourceTypes.find((type: string) =>
-            Object.keys(RESOURCES_SCHEMA_URI).includes(type)
-          ) || '_';
-        const payload = {
-          ...editorContent,
-        };
-        onSubmit({
-          payload,
-          schemaId: RESOURCES_SCHEMA_URI[selectedSchema],
-        });
-      }
-    });
+  const handleSubmit = async (rawData: any) => {
+    try {
+      form.setFieldsValue({ editorContent: rawData });
+      const values = await form.validateFields();
+      const { resourceTypes, editorContent } = values;
+      const selectedSchema: string =
+        resourceTypes.find((type: string) =>
+          Object.keys(RESOURCES_SCHEMA_URI).includes(type)
+        ) || '_';
+      const payload = {
+        ...editorContent,
+      };
+      onSubmit({
+        payload,
+        schemaId: RESOURCES_SCHEMA_URI[selectedSchema],
+      });
+    } catch (error) {
+      // TODO: do something with error
+    }
   };
 
-  const handleTypeChange = (types: string[]) => {
-    const selectedType: string =
-      types.find(type => Object.keys(DEFAULT_RESOURCES).includes(type)) || '_';
+  const handleTypeChange = (
+    value: CascaderValueType,
+    selectedOptions?: CascaderOptionType[] | undefined
+  ) => {
+    const selectedType =
+      value
+        .find(entry => Object.keys(DEFAULT_RESOURCES).includes(`${entry}`))
+        ?.toString() || '_';
     setJsonValue(DEFAULT_RESOURCES[selectedType]);
   };
 
@@ -136,35 +140,36 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
 
   return (
     <Spin spinning={busy}>
-      <Form className="resource-form">
-        <Form.Item label="Resource Type" {...formItemLayout}>
-          {getFieldDecorator('resourceTypes', {
-            rules: [{ required: true }],
-            initialValue: ['_'],
-          })(
-            <Cascader
-              options={AVAILABLE_SCHEMAS}
-              disabled={mode === 'edit'}
-              onChange={handleTypeChange}
-            />
-          )}
+      <Form className="resource-form" form={form}>
+        <Form.Item
+          label="Resource Type"
+          name="resourceTypes"
+          rules={[{ required: true }]}
+          initialValue={['_']}
+          {...formItemLayout}
+        >
+          <Cascader
+            options={AVAILABLE_SCHEMAS}
+            disabled={mode === 'edit'}
+            onChange={handleTypeChange}
+          />
         </Form.Item>
-        <Form.Item {...formItemLayoutWithOutLabel}>
-          {getFieldDecorator('editorContent', {
-            rules: [{ required: false }],
-          })(
-            <ResourceEditor
-              editable={true}
-              rawData={jsonValue}
-              onSubmit={handleSubmit}
-              showExpanded={false}
-            />
-          )}
+        <Form.Item
+          name="editorContent"
+          rules={[{ required: false }]}
+          {...formItemLayoutWithOutLabel}
+        >
+          <ResourceEditor
+            editable={true}
+            rawData={jsonValue}
+            onSubmit={handleSubmit}
+            showExpanded={false}
+          />
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>
           {mode === 'edit' && (
             <Button
-              type="danger"
+              danger
               onClick={confirmDeprecate}
               style={{ float: 'right' }}
             >
@@ -177,4 +182,4 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
   );
 };
 
-export default Form.create<ResourceFormProps>()(ResourceForm);
+export default ResourceForm;

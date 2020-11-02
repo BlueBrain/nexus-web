@@ -1,6 +1,12 @@
 import * as React from 'react';
 import * as packageJson from '../../../../package.json';
-import { Menu, Dropdown, Icon, Popover, Button } from 'antd';
+import { Menu, Dropdown, Popover } from 'antd';
+import {
+  BookOutlined,
+  GithubOutlined,
+  DownOutlined,
+  LoginOutlined,
+} from '@ant-design/icons';
 import { Realm } from '@bbp/nexus-sdk';
 import Copy from '../Copy';
 import ConsentPreferences from '../ConsentPreferences';
@@ -47,11 +53,11 @@ const InformationContent = (props: InformationContentProps) => {
       </p>
       <p>
         <a href={documentationURL} target="_blank">
-          <Icon type="book" /> Documentation
+          <BookOutlined /> Documentation
         </a>
         {' | '}
         <a href={props.githubIssueURL} target="_blank">
-          <Icon type="github" /> Report Issue
+          <GithubOutlined /> Report Issue
         </a>
       </p>
       {
@@ -168,13 +174,13 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         {name ? (
           <Dropdown overlay={menu}>
             <a className="menu-dropdown ant-dropdown-link">
-              {name} <Icon type="down" />
+              {name} <DownOutlined />
             </a>
           </Dropdown>
         ) : displayLogin ? (
           <Dropdown overlay={realmMenu}>
             <a className="menu-dropdown ant-dropdown-link">
-              login <Icon type="login" />
+              login <LoginOutlined />
             </a>
           </Dropdown>
         ) : null}

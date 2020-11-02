@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 
 import './ListBoard.less';
 
@@ -11,7 +11,7 @@ const ResourceListBoardComponent: React.FunctionComponent<{
     <>
       {children}
       <div className="resource-list -add" onClick={() => createList()}>
-        <Icon type="plus" /> Add another resource list
+        <PlusOutlined /> Add another resource list
       </div>
     </>
   );

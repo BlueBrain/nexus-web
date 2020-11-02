@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Button, Modal, Drawer, notification, Icon } from 'antd';
-
+import { Button, Modal, Drawer, notification } from 'antd';
+import { PlusSquareOutlined } from '@ant-design/icons';
 import { OrgResponseCommon } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 
@@ -30,25 +30,16 @@ const OrgsListView: React.FunctionComponent = () => {
   const saveAndCreate = (newOrg: NewOrg) => {
     setFormBusy(true);
     nexus.Organization.create(newOrg.label, { description: newOrg.description })
-      .then(
-        () => {
-          notification.success({
-            message: 'Organization created',
-            duration: 5,
-          });
-          setFormBusy(false);
-          goTo(newOrg.label);
-        },
-        (action: { type: string; error: Error }) => {
-          notification.warning({
-            message: 'Organization NOT created',
-            description: action.error.message,
-            duration: 10,
-          });
-          setFormBusy(false);
-        }
-      )
+      .then(() => {
+        notification.success({
+          message: 'Organization created',
+          duration: 5,
+        });
+        setFormBusy(false);
+        goTo(newOrg.label);
+      })
       .catch((error: Error) => {
+        setFormBusy(false);
         notification.error({
           message: 'An unknown error occurred',
           description: error.message,
@@ -75,7 +66,7 @@ const OrgsListView: React.FunctionComponent = () => {
         (action: { type: string; error: Error }) => {
           notification.warning({
             message: 'Organization NOT saved',
-            description: action.error.message,
+            description: action?.error?.message,
             duration: 2,
           });
           setFormBusy(false);
@@ -94,26 +85,17 @@ const OrgsListView: React.FunctionComponent = () => {
     setFormBusy(true);
 
     nexus.Organization.deprecate(selectedOrg._label, selectedOrg._rev)
-      .then(
-        () => {
-          notification.success({
-            message: 'Organization deprecated',
-            duration: 2,
-          });
-          setFormBusy(false);
-          setModalVisible(false);
-          setSelectedOrg(undefined);
-        },
-        (action: { type: string; error: Error }) => {
-          notification.warning({
-            message: 'Organization NOT deprecated',
-            description: action.error.message,
-            duration: 2,
-          });
-          setFormBusy(false);
-        }
-      )
+      .then(() => {
+        notification.success({
+          message: 'Organization deprecated',
+          duration: 2,
+        });
+        setFormBusy(false);
+        setModalVisible(false);
+        setSelectedOrg(undefined);
+      })
       .catch((error: Error) => {
+        setFormBusy(false);
         notification.error({
           message: 'An unknown error occurred',
           description: error.message,
@@ -131,8 +113,7 @@ const OrgsListView: React.FunctionComponent = () => {
           <h1 style={{ marginBottom: 0, marginRight: 8 }}>Organizations</h1>
           <AccessControl permissions={['organizations/create']} path="/">
             <Button type="primary" onClick={() => setModalVisible(true)}>
-              <Icon
-                type="plus-square"
+              <PlusSquareOutlined
                 style={{ fontSize: '16px', color: 'white' }}
               />
               Create Organization

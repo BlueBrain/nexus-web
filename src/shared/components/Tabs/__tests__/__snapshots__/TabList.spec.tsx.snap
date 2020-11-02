@@ -5,8 +5,12 @@ exports[`TabList component should render correctly 1`] = `
   className="tab-list"
 >
   <Tabs
-    hideAdd={false}
     onChange={[Function]}
+    tabBarExtraContent={
+      Object {
+        "left": undefined,
+      }
+    }
     tabPosition="left"
   />
 </div>

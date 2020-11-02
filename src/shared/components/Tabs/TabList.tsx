@@ -38,7 +38,7 @@ const TabList: React.FunctionComponent<TabListProps> = ({
         onChange={onSelected}
         defaultActiveKey={defaultActiveId}
         activeKey={activeKey}
-        tabBarExtraContent={tabAction}
+        tabBarExtraContent={{ left: tabAction }}
       >
         {items.map(({ label, description, id }) => (
           <TabPane

@@ -13,7 +13,7 @@ export type ActionType = {
   shortTitle: string; // Displayed on Button
   // message: a longer message to be displayed on on the confirmation popup
   message?: React.ReactElement | string;
-  icon: string; // An icon for the button
+  icon: React.ReactElement | string; // An icon for the button
   danger?: boolean; // should we use a confirmation popup and color the button red?
 };
 
@@ -25,7 +25,7 @@ const makeButton = ({
   message,
 }: {
   title: string;
-  icon: string;
+  icon: React.ReactElement | string;
   message?: React.ReactElement | string;
   shortTitle: string;
   danger?: boolean;
@@ -40,7 +40,7 @@ const makeButton = ({
         okText="Yes"
         cancelText="No"
       >
-        <Button type="danger" icon={icon}>
+        <Button danger icon={icon}>
           {shortTitle}
         </Button>
       </Popconfirm>

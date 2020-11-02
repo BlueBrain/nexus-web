@@ -1,16 +1,6 @@
 import * as React from 'react';
-import {
-  Collapse,
-  Form,
-  Icon,
-  Input,
-  Button,
-  Spin,
-  Modal,
-  Row,
-  Col,
-} from 'antd';
-import { WrappedFormUtils } from 'antd/lib/form/Form';
+import { Collapse, Form, Input, Button, Spin, Modal, Row, Col } from 'antd';
+import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
 
 /**
  * Custom from controls, based on:
@@ -22,8 +12,8 @@ export interface PrefixMappingGroupInputState {
 }
 export interface PrefixMappingGroupInputProps {
   groupId: string | number;
-  value: any;
-  onChange(state: PrefixMappingGroupInputState): void;
+  value?: any;
+  onChange?(state: PrefixMappingGroupInputState): void;
 }
 class PrefixMappingGroupInput extends React.Component<
   PrefixMappingGroupInputProps,
@@ -53,7 +43,7 @@ class PrefixMappingGroupInput extends React.Component<
     this.setState({
       prefix,
     });
-    this.props.onChange({ ...this.state, prefix });
+    this.props.onChange && this.props.onChange({ ...this.state, prefix });
   };
 
   handleNamespaceChange = (e: React.FormEvent<HTMLInputElement>) => {
@@ -61,7 +51,7 @@ class PrefixMappingGroupInput extends React.Component<
     this.setState({
       namespace,
     });
-    this.props.onChange({ ...this.state, namespace });
+    this.props.onChange && this.props.onChange({ ...this.state, namespace });
   };
 
   render() {
@@ -95,7 +85,6 @@ class PrefixMappingGroupInput extends React.Component<
 }
 
 export interface ProjectFormProps {
-  form: WrappedFormUtils;
   project?: {
     _label: string;
     _rev: number;
@@ -115,7 +104,6 @@ export interface ProjectFormProps {
  * based on: https://ant.design/components/form/#components-form-demo-dynamic-form-item
  */
 const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
-  form,
   project,
   busy = false,
   onSubmit = () => {},
@@ -131,7 +119,6 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
     activeKeys,
   });
 
-  const { getFieldDecorator } = form;
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -167,18 +154,12 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
     });
   };
 
-  const handleSubmit = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    form.validateFields((err, values) => {
-      if (!err) {
-        onSubmit({
-          ...values,
-          apiMappings:
-            (values.apiMappings &&
-              values.apiMappings.filter((p: any) => !!p)) ||
-            [],
-        });
-      }
+  const handleSubmit = (values: any) => {
+    onSubmit({
+      ...values,
+      apiMappings:
+        (values.apiMappings && values.apiMappings.filter((p: any) => !!p)) ||
+        [],
     });
   };
 
@@ -209,31 +190,27 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
         label={index === 0 ? 'API Mappings' : ''}
         {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
         key={key}
+        name={`apiMappings[${key - 1}]`}
+        initialValue={{
+          prefix:
+            (project &&
+              project.apiMappings &&
+              project.apiMappings[key - 1] &&
+              project.apiMappings[key - 1].prefix) ||
+            '',
+          namespace:
+            (project &&
+              project.apiMappings &&
+              project.apiMappings[key - 1] &&
+              project.apiMappings[key - 1].namespace) ||
+            '',
+        }}
+        rules={[{ validator: checkPrefix, required: true }]}
       >
-        {getFieldDecorator(`apiMappings[${key - 1}]`, {
-          initialValue: {
-            prefix:
-              (project &&
-                project.apiMappings &&
-                project.apiMappings[key - 1] &&
-                project.apiMappings[key - 1].prefix) ||
-              '',
-            namespace:
-              (project &&
-                project.apiMappings &&
-                project.apiMappings[key - 1] &&
-                project.apiMappings[key - 1].namespace) ||
-              '',
-          },
-          rules: [{ validator: checkPrefix, required: true }],
-        })(
-          // @ts-ignore
-          <PrefixMappingGroupInput groupId={`${key}`} />
-        )}
+        <PrefixMappingGroupInput groupId={`${key}`} />
         {prefixMappingKeys.activeKeys.length > 0 ? (
-          <Icon
+          <MinusCircleOutlined
             className="dynamic-delete-button"
-            type="minus-circle-o"
             onClick={() => remove(key)}
           />
         ) : null}
@@ -245,52 +222,65 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
       spinning={busy}
       tip="Please be patient while the project is scaffolded."
     >
-      <Form onSubmit={handleSubmit}>
-        <Form.Item label="Label" {...formItemLayout}>
-          {getFieldDecorator('_label', {
-            initialValue: project ? project._label : '',
-            rules: [
-              {
-                required: true,
-                whitespace: true,
-                pattern: /^\S+$/g,
-                message: 'Label must be a phrase without spaces',
-              },
-            ],
-          })(<Input placeholder="Label" disabled={mode === 'edit'} />)}
+      <Form onFinish={handleSubmit}>
+        <Form.Item
+          label="Label"
+          name="_label"
+          initialValue={project ? project._label : ''}
+          rules={[
+            {
+              required: true,
+              whitespace: true,
+              pattern: /^\S+$/g,
+              message: 'Label must be a phrase without spaces',
+            },
+          ]}
+          {...formItemLayout}
+        >
+          <Input placeholder="Label" disabled={mode === 'edit'} />
         </Form.Item>
-        <Form.Item label="Description" {...formItemLayout}>
-          {getFieldDecorator('description', {
-            initialValue: project ? project.description : '',
-            rules: [{ required: false }],
-          })(<Input placeholder="Description" />)}
+        <Form.Item
+          label="Description"
+          name="description"
+          initialValue={project ? project.description : ''}
+          rules={[{ required: false }]}
+          {...formItemLayout}
+        >
+          <Input placeholder="Description" />
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>
           <Collapse>
             <Collapse.Panel header="Advanced settings" key="1">
-              <Form.Item label="Base" {...formItemLayout}>
-                {getFieldDecorator('base', {
-                  initialValue: project ? project.base : '',
-                  rules: [{ required: false }],
-                })(<Input placeholder="Base" />)}
+              <Form.Item
+                label="Base"
+                name="base"
+                initialValue={project ? project.base : ''}
+                rules={[{ required: false }]}
+                {...formItemLayout}
+              >
+                <Input placeholder="Base" />
               </Form.Item>
-              <Form.Item label="Vocab" {...formItemLayout}>
-                {getFieldDecorator('vocab', {
-                  initialValue: project ? project.vocab : '',
-                  rules: [{ required: false }],
-                })(<Input placeholder="Vocab" />)}
+              <Form.Item
+                label="Vocab"
+                name="vocab"
+                initialValue={project ? project.vocab : ''}
+                rules={[{ required: false }]}
+                {...formItemLayout}
+              >
+                <Input placeholder="Vocab" />
               </Form.Item>
               {apiMappingsItems}
               <Form.Item {...formItemLayoutWithOutLabel}>
                 <Button type="dashed" onClick={add} style={{ width: '60%' }}>
-                  <Icon type="plus" /> Add API mapping
+                  <PlusCircleOutlined /> Add API mapping
                 </Button>
               </Form.Item>
             </Collapse.Panel>
           </Collapse>
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>
-          <Row type="flex" justify="end" gutter={16}>
+          {/* TODO replace flex */}
+          <Row justify="end" gutter={16}>
             <Col>
               <Button type="primary" htmlType="submit">
                 Save
@@ -299,7 +289,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
             {mode === 'edit' && (
               <>
                 <Col>
-                  <Button type="danger" onClick={confirmDeprecate}>
+                  <Button danger onClick={confirmDeprecate}>
                     Deprecate
                   </Button>
                 </Col>
@@ -312,4 +302,4 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   );
 };
 
-export default Form.create<ProjectFormProps>()(ProjectForm);
+export default ProjectForm;

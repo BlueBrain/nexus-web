@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, Icon } from 'antd';
+import { Button } from 'antd';
+import { PlusSquareOutlined } from '@ant-design/icons';
 import { useNexusContext } from '@bbp/react-nexus';
 import { ResourcePayload } from '@bbp/nexus-sdk';
 
@@ -26,10 +27,7 @@ const ResourceFormContainer: React.FunctionComponent<{
             type="primary"
             onClick={updateFormVisible}
           >
-            <Icon
-              type="plus-square"
-              style={{ fontSize: '16px', color: 'white' }}
-            />
+            <PlusSquareOutlined style={{ fontSize: '16px', color: 'white' }} />
             Create Resource
           </Button>
         );

@@ -28,28 +28,16 @@ const SparqlQueryForm: React.FunctionComponent<{
   onQueryChange,
   resultsComponent = SparqlQueryResults,
 }): JSX.Element => {
-  // TODO: Validate Sparql with some cool library
-  const [value, setValue] = React.useState(query);
-
-  const handleChange = (value: string) => {
-    if (!value) {
-      return;
-    }
-    setValue(value);
+  const handleFormSubmit = ({ input }: { input: string }) => {
+    input && onQueryChange(input);
   };
 
   return (
     <div className="view-form">
-      <Form
-        onSubmit={e => {
-          e.preventDefault();
-          onQueryChange(value);
-        }}
-      >
-        <SparqlQueryInput
-          value={value}
-          onChange={handleChange}
-        ></SparqlQueryInput>
+      <Form onFinish={handleFormSubmit} layout="vertical">
+        <FormItem name="input" initialValue={query}>
+          <SparqlQueryInput />
+        </FormItem>
         <FormItem>
           <Button type="primary" htmlType="submit">
             Execute SPARQL query

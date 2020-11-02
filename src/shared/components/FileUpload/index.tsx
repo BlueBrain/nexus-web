@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { Upload, Icon, message, Switch, Select, notification } from 'antd';
+import { Upload, message, Switch, Select, notification } from 'antd';
+import {
+  InboxOutlined,
+  FolderOpenOutlined,
+  FileAddOutlined,
+} from '@ant-design/icons';
 import { UploadFile, RcCustomRequestOptions } from 'antd/lib/upload/interface';
 import { NexusFile, Storage } from '@bbp/nexus-sdk';
 
@@ -107,7 +112,7 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
     <div>
       <Dragger {...draggerProps} directory={directoryMode}>
         <p className="ant-upload-drag-icon">
-          <Icon type="inbox" />
+          <InboxOutlined />
         </p>
         <p className="ant-upload-text">
           Click or drag file to this area to upload
@@ -124,12 +129,12 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
         <Switch
           checkedChildren={
             <div>
-              <Icon type="folder-open" /> <span>Directories</span>
+              <FolderOpenOutlined /> <span>Directories</span>
             </div>
           }
           unCheckedChildren={
             <div>
-              <Icon type="file-add" /> <span>Single/Bulk</span>
+              <FileAddOutlined /> <span>Single/Bulk</span>
             </div>
           }
           onChange={setDirectoryMode}

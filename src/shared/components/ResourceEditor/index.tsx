@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { Button, Icon, Switch, Spin } from 'antd';
+import { Button, Switch, Spin } from 'antd';
+import {
+  InfoCircleOutlined,
+  CheckCircleOutlined,
+  ExclamationCircleOutlined,
+  SaveOutlined,
+} from '@ant-design/icons';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/fold/foldcode';
@@ -111,22 +117,23 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         <div>
           {!editable && (
             <div className="feedback">
-              <Icon type="info-circle" /> This resource cannot be edited
+              <InfoCircleOutlined />
+              This resource cannot be edited
             </div>
           )}
           {editable && !isEditing && valid && (
             <div className="feedback">
-              <Icon type="info-circle" /> Directly edit this resource
+              <InfoCircleOutlined /> Directly edit this resource
             </div>
           )}
           {editable && isEditing && valid && (
             <div className="feedback _positive">
-              <Icon type="check-circle" /> Valid
+              <CheckCircleOutlined /> Valid
             </div>
           )}
           {editable && isEditing && !valid && (
             <div className="feedback _negative">
-              <Icon type="exclamation-circle" /> Invalid JSON-LD
+              <ExclamationCircleOutlined /> Invalid JSON-LD
             </div>
           )}
         </div>
@@ -155,7 +162,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             <>
               {valid ? (
                 <Button
-                  icon="save"
+                  icon={<SaveOutlined />}
                   type="primary"
                   size="small"
                   onClick={handleSubmit}
@@ -163,7 +170,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
                   Save
                 </Button>
               ) : null}{' '}
-              <Button type="danger" size="small" onClick={handleCancel}>
+              <Button danger size="small" onClick={handleCancel}>
                 Cancel
               </Button>
             </>

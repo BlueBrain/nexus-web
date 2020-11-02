@@ -156,7 +156,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   };
 
   return (
-    <div>
+    <>
       {editingDashboard && (
         // TODO: pass dashboard view
         <DashboardEditorContainer
@@ -206,7 +206,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
             />
           )}
       </TabList>
-    </div>
+    </>
   );
 };
 

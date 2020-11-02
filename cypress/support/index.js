@@ -27,3 +27,16 @@ export const loginPage = 'http://localhost:8000/login';
 export const docLink = 'https://bluebrainnexus.io/docs';
 export const reportIssueLink =
   'https://github.com/BlueBrain/nexus/issues/new?labels=frontend,nexus-web';
+
+// This class of errors can be safely ignored
+// https://github.com/quasarframework/quasar/issues/2233
+const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/;
+Cypress.on('uncaught:exception', err => {
+  console.log(
+    'There is an error that should not happen, but is being caught in Cypress.'
+  );
+  /* returning false here prevents Cypress from failing the test */
+  if (resizeObserverLoopErrRe.test(err.message)) {
+    return false;
+  }
+});

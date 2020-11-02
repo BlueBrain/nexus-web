@@ -2,7 +2,8 @@ import * as React from 'react';
 import { useLocation, useRouteMatch } from 'react-router';
 import { Link } from 'react-router-dom';
 import * as queryString from 'query-string';
-import { Menu, Dropdown, Icon, notification } from 'antd';
+import { Menu, Dropdown, notification } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 import { ViewList, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
@@ -84,7 +85,7 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
             <Dropdown overlay={menu}>
               <span>
                 {labelOf(decodedViewId)}
-                <Icon type="down" />
+                <DownOutlined />
               </span>
             </Dropdown>{' '}
           </h1>

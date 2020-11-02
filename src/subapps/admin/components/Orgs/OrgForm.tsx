@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { Form, Input, Button, Spin, Modal } from 'antd';
-import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 export interface OrgFormProps {
-  form: WrappedFormUtils;
   org?: {
     label: string;
     description?: string;
@@ -15,14 +13,12 @@ export interface OrgFormProps {
 }
 
 const OrgForm: React.FunctionComponent<OrgFormProps> = ({
-  form,
   org,
   mode,
   busy = false,
   onSubmit = () => {},
   onDeprecate = () => {},
 }) => {
-  const { getFieldDecorator, getFieldValue } = form;
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -48,36 +44,37 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
     });
   };
 
-  const handleSubmit = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    form.validateFields((err, values) => {
-      if (!err) {
-        onSubmit(values);
-      }
-    });
+  const handleSubmit = (values: OrgFormProps['org']) => {
+    onSubmit(values);
   };
 
   return (
     <Spin spinning={busy}>
-      <Form onSubmit={handleSubmit}>
-        <Form.Item label="Label" {...formItemLayout}>
-          {getFieldDecorator('label', {
-            initialValue: org ? org.label : '',
-            rules: [
-              {
-                required: true,
-                whitespace: true,
-                pattern: /^\S+$/g,
-                message: 'Label must be a phrase without spaces',
-              },
-            ],
-          })(<Input placeholder="Label" disabled={mode === 'edit'} />)}
+      <Form onFinish={handleSubmit}>
+        <Form.Item
+          label="Label"
+          {...formItemLayout}
+          name="label"
+          initialValue={org ? org.label : ''}
+          rules={[
+            {
+              required: true,
+              whitespace: true,
+              pattern: /^\S+$/g,
+              message: 'Label must be a phrase without spaces',
+            },
+          ]}
+        >
+          <Input placeholder="Label" disabled={mode === 'edit'} />
         </Form.Item>
-        <Form.Item label="Description" {...formItemLayout}>
-          {getFieldDecorator('description', {
-            initialValue: org ? org.description : '',
-            rules: [{ required: false }],
-          })(<Input placeholder="Description" />)}
+        <Form.Item
+          label="Description"
+          name="description"
+          initialValue={org ? org.description : ''}
+          rules={[{ required: false }]}
+          {...formItemLayout}
+        >
+          <Input placeholder="Description" />
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>
           <Button type="primary" htmlType="submit">
@@ -85,7 +82,7 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
           </Button>
           {mode === 'edit' && (
             <Button
-              type="danger"
+              danger
               onClick={confirmDeprecate}
               style={{ float: 'right' }}
             >
@@ -98,4 +95,4 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
   );
 };
 
-export default Form.create<OrgFormProps>()(OrgForm);
+export default OrgForm;

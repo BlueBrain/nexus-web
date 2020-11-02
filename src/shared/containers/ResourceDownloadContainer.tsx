@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, Dropdown, Menu, notification } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
+import { DownOutlined } from '@ant-design/icons';
 
 type formatType = 'vnd.graph-viz' | 'n-triples' | 'json';
 
@@ -67,7 +68,7 @@ const ResourceDownloadButton: React.FunctionComponent<{
         download
       </a>
       <Dropdown overlay={menu}>
-        <Button icon="download">Download Metadata</Button>
+        <Button icon={<DownOutlined />}>Download Metadata</Button>
       </Dropdown>
     </div>
   );

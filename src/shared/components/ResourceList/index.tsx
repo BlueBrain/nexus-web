@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-  Icon,
   Tooltip,
   Button,
   Spin,
@@ -10,6 +9,15 @@ import {
   Menu,
   Dropdown,
 } from 'antd';
+import {
+  CloseCircleOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  LinkOutlined,
+  ReloadOutlined,
+  SortAscendingOutlined,
+  SwitcherOutlined,
+} from '@ant-design/icons';
 import { ResourceList, Resource } from '@bbp/nexus-sdk';
 
 import RenameableItem from '../Renameable';
@@ -19,9 +27,9 @@ import ResourceCardComponent from '../ResourceCard';
 import { getResourceLabel } from '../../utils';
 import TypesIconList from '../Types/TypesIcon';
 import useMeasure from '../../hooks/useMeasure';
+import Copy from '../Copy';
 
 import './ResourceList.less';
-import Copy from '../Copy';
 
 export type ResourceBoardList = {
   name: string;
@@ -146,7 +154,7 @@ const ResourceListComponent: React.FunctionComponent<{
             {!!total &&
               `${total.toLocaleString()} result${total > 1 ? 's' : ''}`}
           </div>
-          <Icon type="close" className="close-button" onClick={handleDelete} />
+          <CloseOutlined className="close-button" onClick={handleDelete} />
         </h3>
         <div className="controls -squished">
           <Copy
@@ -160,7 +168,7 @@ const ResourceListComponent: React.FunctionComponent<{
                 }}
               >
                 <Tooltip title={copySuccess ? 'Copied' : 'Copy shareable link'}>
-                  <Button icon="link" />
+                  <Button icon={<LinkOutlined />} />
                 </Tooltip>
               </a>
             )}
@@ -168,18 +176,18 @@ const ResourceListComponent: React.FunctionComponent<{
           {!list.query.q && (
             <Dropdown overlay={sortOptions} trigger={['hover', 'click']}>
               <Tooltip title="Sort resources">
-                <Button icon="sort-ascending" />
+                <Button icon={<SortAscendingOutlined />} />
               </Tooltip>
             </Dropdown>
           )}
           <Tooltip title="Clear filters">
-            <Button icon="close-circle" onClick={handleClear} />
+            <Button icon={<CloseCircleOutlined />} onClick={handleClear} />
           </Tooltip>
           <Tooltip title="Refresh list">
-            <Button icon="reload" onClick={handleRefreshList} />
+            <Button icon={<ReloadOutlined />} onClick={handleRefreshList} />
           </Tooltip>
           <Tooltip title="Clone this query">
-            <Button icon="switcher" onClick={handleCloneList} />
+            <Button icon={<SwitcherOutlined />} onClick={handleCloneList} />
           </Tooltip>
           <Tooltip
             title={
@@ -191,8 +199,8 @@ const ResourceListComponent: React.FunctionComponent<{
             <Switch
               onChange={handleToggleDeprecated}
               checked={list.query.deprecated}
-              checkedChildren={<Icon type="delete" />}
-              unCheckedChildren={<Icon type="delete" />}
+              checkedChildren={<DeleteOutlined />}
+              unCheckedChildren={<DeleteOutlined />}
             />
           </Tooltip>
         </div>
