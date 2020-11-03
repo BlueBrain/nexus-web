@@ -29,7 +29,6 @@ const useAsyncCall = <T, E = Error>(
         });
       })
       .catch(error => {
-        console.log({ error });
         setData({
           error,
           data: null,

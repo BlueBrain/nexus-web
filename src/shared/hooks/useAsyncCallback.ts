@@ -30,7 +30,6 @@ const useAsyncCallback = <C extends (...args: any) => any, T, E = Error>(
           });
         })
         .catch(error => {
-          console.log({ error });
           setData({
             error,
             data: null,
