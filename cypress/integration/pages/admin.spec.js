@@ -19,8 +19,7 @@ describe('Admin SubApp', () => {
   });
 
   it('allows to search for an organization', () => {
-    cy.get('input').then($input => {
-      $input.type('bbp');
-    });
+    cy.wait(300);
+    cy.get('input').type('bbp');
   });
 });
