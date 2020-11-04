@@ -57,7 +57,7 @@ const ActivityInfoContainer: React.FC<{
         })
         .catch(error => displayError(error, 'Failed to load parent activity'));
     }
-  }, []);
+  }, [activity]);
 
   const updateActivity = (data: any) => {
     nexus.Resource.update(
