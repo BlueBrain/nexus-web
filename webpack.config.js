@@ -53,7 +53,7 @@ const config = [
             loader: 'file-loader',
             options: {
               outputPath: 'assets/',
-              publicPath: 'public/assets/',
+              publicPath: '/public/assets/',
             },
           },
         },
