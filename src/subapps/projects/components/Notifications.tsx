@@ -20,3 +20,10 @@ export const successNotification = (message: string) => {
     duration: 5,
   });
 };
+
+export const warning = (message: string) => {
+  notification.warning({
+    message,
+    duration: 5,
+  });
+};

@@ -36,6 +36,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       </Tooltip>
       <div className="card-section main">
         <div className="main-info">
+          <p>
+            Organization: <span className="org">{orgLabel}</span>
+          </p>
           <div className="title-container">
             <span className="name">{name}</span>
             <button className="edit-button" onClick={onClickEdit}>

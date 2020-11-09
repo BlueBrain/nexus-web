@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Icon, Button } from 'antd';
 import { ProjectResponseCommon } from '@bbp/nexus-sdk';
+import { AccessControl } from '@bbp/react-nexus';
 
 import ProjectMetaContainer from '../containers/ProjectMetaContainer';
 import ProjectCard from '../components/ProjectCard';
@@ -51,7 +52,11 @@ const ProjectsListContainer: React.FC<ProjectsListContainerType> = ({
             sortOrder === 'DSC' ? setSortOrder('ASC') : setSortOrder('DSC');
           }}
         >
-          {sortOrder === 'ASC' ? <Icon type="up" /> : <Icon type="down" />}
+          {sortOrder === 'ASC' ? (
+            <Icon type="sort-ascending" />
+          ) : (
+            <Icon type="sort-descending" />
+          )}
         </Button>
       </div>
       {projects
@@ -65,27 +70,33 @@ const ProjectsListContainer: React.FC<ProjectsListContainerType> = ({
             ? 1
             : -1;
         })
-        .map((v: ProjectResponseCommon) => {
+        .map((project: ProjectResponseCommon) => {
           return (
-            <div
-              className="list-container"
-              key={`project-${v._organizationLabel}-${v._label}`}
+            <AccessControl
+              path={`/${project._organizationLabel}/${project._label}`}
+              permissions={['projects/write', 'projects/read']}
+              key={`project-${project._organizationLabel}-${project._label}`}
             >
-              <div className="project-card-container">
-                <ProjectCard
-                  key={`project-card-${v._label}`}
-                  name={v._label}
-                  orgLabel={v._organizationLabel}
-                  description={v.description || ''}
-                  activitiesNumber={9}
-                  collaboratorsNumber={5}
-                  status={Status.inProgress}
-                  onClickEdit={() =>
-                    onClickEditProject(v._organizationLabel, v._label)
-                  }
-                />
+              <div className="list-container">
+                <div className="project-card-container">
+                  <ProjectCard
+                    key={`project-card-${project._label}`}
+                    name={project._label}
+                    orgLabel={project._organizationLabel}
+                    description={project.description || ''}
+                    activitiesNumber={9}
+                    collaboratorsNumber={0}
+                    status={Status.inProgress}
+                    onClickEdit={() =>
+                      onClickEditProject(
+                        project._organizationLabel,
+                        project._label
+                      )
+                    }
+                  />
+                </div>
               </div>
-            </div>
+            </AccessControl>
           );
         })}
       {selectedOrg && selectedProject && (
