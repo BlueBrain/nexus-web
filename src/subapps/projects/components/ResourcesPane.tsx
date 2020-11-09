@@ -56,7 +56,7 @@ const ResourcesPane: React.FC<{ linkCode(data: CodeResourceData): void }> = ({
         className="resources-pane"
         style={{ width: `${paneWidth}px` }}
       >
-        <Collapse>
+        <Collapse defaultActiveKey={['1']}>
           <Panel
             header={
               <div className="resources-pane__header">
