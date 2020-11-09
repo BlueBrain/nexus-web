@@ -17,17 +17,17 @@ const SubActivityItem: React.FC<{
     <div className="sub-activity">
       <StatusIcon status={status} mini={true} />
       <div className="sub-activity__content">
-        {title.length > 25 ? (
-          <Tooltip placement="topRight" title={title}>
-            <h3 className="sub-activity__title">
-              {`${title.slice(0, 25)}...`}
-            </h3>
-          </Tooltip>
-        ) : (
-          <Link to={`/projects/${orgLabel}/${projectLabel}/${activityId}`}>
+        <Link to={`/projects/${orgLabel}/${projectLabel}/${activityId}`}>
+          {title.length > 25 ? (
+            <Tooltip placement="topRight" title={title}>
+              <h3 className="sub-activity__title">
+                {`${title.slice(0, 25)}...`}
+              </h3>
+            </Tooltip>
+          ) : (
             <h3 className="sub-activity__title">{title}</h3>
-          </Link>
-        )}
+          )}
+        </Link>
       </div>
     </div>
   );
