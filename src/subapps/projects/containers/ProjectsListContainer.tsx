@@ -71,27 +71,26 @@ const ProjectsListContainer: React.FC<ProjectsListContainerType> = ({
             : -1;
         })
         .map((project: ProjectResponseCommon) => {
+          const { _organizationLabel, _label, description } = project;
+
           return (
             <AccessControl
-              path={`/${project._organizationLabel}/${project._label}`}
+              path={`/${_organizationLabel}/${_label}`}
               permissions={['projects/write', 'projects/read']}
-              key={`project-${project._organizationLabel}-${project._label}`}
+              key={`project-${_organizationLabel}-${_label}`}
             >
               <div className="list-container">
                 <div className="project-card-container">
                   <ProjectCard
-                    key={`project-card-${project._label}`}
-                    name={project._label}
-                    orgLabel={project._organizationLabel}
-                    description={project.description || ''}
+                    key={`project-card-${_label}`}
+                    name={_label}
+                    orgLabel={_organizationLabel}
+                    description={description || ''}
                     activitiesNumber={9}
                     collaboratorsNumber={0}
                     status={Status.inProgress}
                     onClickEdit={() =>
-                      onClickEditProject(
-                        project._organizationLabel,
-                        project._label
-                      )
+                      onClickEditProject(_organizationLabel, _label)
                     }
                   />
                 </div>
