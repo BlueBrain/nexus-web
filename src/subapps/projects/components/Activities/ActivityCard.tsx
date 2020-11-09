@@ -66,14 +66,12 @@ const ActivityCard: React.FC<{
         <div className="activity-card__list-container">
           {subactivities &&
             subactivities.length > 0 &&
-            subactivities.map(subactivitiy => (
+            subactivities.map(subactivity => (
               <SubActivityItem
-                activityId={subactivitiy['@id']}
+                subactivity={subactivity}
+                key={subactivity['@id']}
                 orgLabel={orgLabel}
                 projectLabel={projectLabel}
-                key={subactivitiy['@id']}
-                status={subactivitiy.status}
-                title={subactivitiy.name}
               />
             ))}
         </div>
