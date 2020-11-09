@@ -45,6 +45,10 @@ interface SearchResponse<T> {
 
 export type UseSearchProps = {
   query?: string;
+  sort?: {
+    key: string;
+    direction: 'desc' | 'asc';
+  };
   pagination?: {
     from: number;
     size: number;
@@ -63,6 +67,10 @@ export type UseSearchProps = {
 export default function useSearch() {
   const [searchProps, setSearchProps] = React.useState<UseSearchProps>({});
   const {
+    sort = {
+      key: '_createdAt',
+      direction: 'desc',
+    },
     query,
     pagination = { from: 0, size: DEFAULT_PAGE_SIZE },
     facetMap = new Map<
@@ -88,7 +96,8 @@ export default function useSearch() {
     body
       // @ts-ignore
       .query(...matchQuery)
-      .filter('term', '_deprecated', false);
+      .filter('term', '_deprecated', false)
+      .sort(sort.key, sort.direction);
 
     facetMap.forEach(({ propertyKey, type, label, value }) => {
       value.forEach(item => {

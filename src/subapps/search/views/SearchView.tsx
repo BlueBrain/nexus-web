@@ -98,15 +98,25 @@ const SearchView: React.FC = () => {
     });
   };
 
+  const handleSortChange = (value: string) => {
+    const [key, direction] = value.split('-');
+    setSearchProps({
+      ...searchProps,
+      sort: {
+        key,
+        direction: direction as 'asc' | 'desc',
+      },
+    });
+  };
+
   console.log({ searchData });
 
+  // Pagination Props
   const total = searchData.data?.hits.total.value || 0;
   const size = searchProps.pagination?.size || 0;
   const from = searchProps.pagination?.from || 0;
   const totalPages = Math.ceil(total / size);
   const current = Math.floor((totalPages / total) * from + 1);
-
-  console.log({ total, size, from, totalPages, current, searchProps });
 
   return (
     <Content style={{ padding: '1em' }}>
@@ -169,9 +179,12 @@ const SearchView: React.FC = () => {
                     </div>
                     <div>
                       sort by:{' '}
-                      <Select defaultValue="date desc">
-                        <Option value="date desc">Newest first</Option>
-                        <Option value="date asc">Oldest first</Option>
+                      <Select
+                        defaultValue="_createdAt-desc"
+                        onChange={handleSortChange}
+                      >
+                        <Option value="_createdAt-desc">Newest first</Option>
+                        <Option value="_createdAt-asc">Oldest first</Option>
                       </Select>
                     </div>
                   </div>
