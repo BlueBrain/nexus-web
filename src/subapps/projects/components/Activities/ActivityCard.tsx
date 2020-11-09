@@ -68,6 +68,9 @@ const ActivityCard: React.FC<{
             subactivities.length > 0 &&
             subactivities.map(subactivitiy => (
               <SubActivityItem
+                activityId={subactivitiy['@id']}
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
                 key={subactivitiy['@id']}
                 status={subactivitiy.status}
                 title={subactivitiy.name}

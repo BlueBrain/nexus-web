@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import { Tooltip } from 'antd';
 
 import StatusIcon, { Status } from '../StatusIcon';
@@ -6,10 +7,12 @@ import StatusIcon, { Status } from '../StatusIcon';
 import './SubActivityItem.less';
 
 const SubActivityItem: React.FC<{
+  activityId: string;
+  orgLabel: string;
+  projectLabel: string;
   title: string;
-  activitiesNumber?: number;
   status: Status;
-}> = ({ title, activitiesNumber, status }) => {
+}> = ({ title, status, activityId, orgLabel, projectLabel }) => {
   return (
     <div className="sub-activity">
       <StatusIcon status={status} mini={true} />
@@ -21,7 +24,9 @@ const SubActivityItem: React.FC<{
             </h3>
           </Tooltip>
         ) : (
-          <h3 className="sub-activity__title">{title}</h3>
+          <Link to={`/projects/${orgLabel}/${projectLabel}/${activityId}`}>
+            <h3 className="sub-activity__title">{title}</h3>
+          </Link>
         )}
       </div>
     </div>
