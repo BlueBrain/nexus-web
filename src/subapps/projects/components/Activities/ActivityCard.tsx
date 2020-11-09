@@ -14,6 +14,8 @@ const dataIcon = require('../../../../shared/images/dataIcon.svg');
 const noteIcon = require('../../../../shared/images/noteIcon.svg');
 const settingIcon = require('../../../../shared/images/settingIcon.svg');
 
+const MAX_TITLE_LENGTH = 45;
+
 const ActivityCard: React.FC<{
   activity: ActivityResource;
   projectLabel: string;
@@ -29,10 +31,10 @@ const ActivityCard: React.FC<{
         <div className="activity-card__title">
           <StatusIcon status={status} mini={true} />
           <Link to={`/projects/${orgLabel}/${projectLabel}/${activityId}`}>
-            {name.length > 45 ? (
+            {name.length > MAX_TITLE_LENGTH ? (
               <Tooltip placement="topRight" title={name}>
                 <h3 className="activity-card__name">
-                  {`${name.slice(0, 45)}...`}
+                  {`${name.slice(0, MAX_TITLE_LENGTH)}...`}
                 </h3>
               </Tooltip>
             ) : (

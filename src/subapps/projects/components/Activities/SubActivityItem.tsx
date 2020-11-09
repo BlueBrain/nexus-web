@@ -7,6 +7,8 @@ import { ActivityResource } from '../../views/ActivityView';
 
 import './SubActivityItem.less';
 
+const MAX_TITLE_LENGTH = 25;
+
 const SubActivityItem: React.FC<{
   orgLabel: string;
   projectLabel: string;
@@ -21,10 +23,10 @@ const SubActivityItem: React.FC<{
         <Link
           to={`/projects/${orgLabel}/${projectLabel}/${subactivity['@id']}`}
         >
-          {name.length > 25 ? (
+          {name.length > MAX_TITLE_LENGTH ? (
             <Tooltip placement="topRight" title={name}>
               <h3 className="sub-activity__title">
-                {`${name.slice(0, 25)}...`}
+                {`${name.slice(0, MAX_TITLE_LENGTH)}...`}
               </h3>
             </Tooltip>
           ) : (
