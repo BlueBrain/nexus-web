@@ -5,7 +5,11 @@ import { Project, Resource } from '@bbp/nexus-sdk';
 
 import fusionConfig from '../config';
 import ProjectForm, { ProjectMetadata } from '../components/ProjectForm';
-import { displayError, successNotification } from '../components/Notifications';
+import {
+  displayError,
+  successNotification,
+  warning,
+} from '../components/Notifications';
 
 const ProjectMetaContaier: React.FC<{
   orgLabel: string;
@@ -54,6 +58,8 @@ const ProjectMetaContaier: React.FC<{
             .catch(error => {
               displayError(error, 'An error occured');
             });
+        } else {
+          warning('No metadata file found for this project');
         }
       })
       .catch(error => {

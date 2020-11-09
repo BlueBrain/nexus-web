@@ -58,6 +58,7 @@ const ProjectsListView: React.FC<{}> = () => {
       setArchivedProjects(value._results);
     });
   }, []);
+
   return (
     <div className="view-container projects-subapp-container">
       <div>
