@@ -14,10 +14,10 @@ export type Facet = {
 const FacetItem: React.FC<{
   title: string;
   facets: Facet[];
-  onChange?: (key: string, value: string) => void;
+  onChange?: (key: string, value: boolean) => void;
 }> = ({ title, facets = [], onChange }) => {
   const handleSelect = (key: string) => (e: CheckboxChangeEvent) => {
-    onChange && onChange(key, e.target.value);
+    onChange && onChange(key, e.target.checked);
   };
 
   return (

@@ -1,14 +1,16 @@
 import * as React from 'react';
 
+export type RemoteCall<T> = {
+  loading: boolean;
+  data: T | null;
+  error: Error | null;
+};
+
 export default function useRemoteCall<T>(
   remoteAction: () => Promise<T>,
   dependency: any[]
 ) {
-  const [remoteCall, setRemoteCall] = React.useState<{
-    loading: boolean;
-    data: T | null;
-    error: Error | null;
-  }>({
+  const [remoteCall, setRemoteCall] = React.useState<RemoteCall<T>>({
     loading: true,
     data: null,
     error: null,

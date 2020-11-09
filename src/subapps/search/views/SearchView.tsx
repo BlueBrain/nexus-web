@@ -4,57 +4,144 @@ import useSearch from '../hooks/useSearch';
 import FacetItem from '../components/FacetItem';
 import ResourceCardComponent from '../../../shared/components/ResourceCard';
 import { Resource } from '@bbp/nexus-sdk';
+import { set } from 'lodash';
 
 const { Header, Content, Footer, Sider } = Layout;
 
 const { Search } = Input;
 const { Option } = Select;
 
-const DEFAULT_PAGE_SIZE = 50;
-
 const SearchView: React.FC = () => {
-  const searchData = useSearch();
+  const [searchData, { searchProps, setSearchProps }] = useSearch();
+
+  React.useEffect(() => {
+    const facetMap = new Map();
+    facetMap.set('type', {
+      propertyKey: '@type',
+      label: 'Type',
+      type: 'terms',
+      value: new Map(),
+    });
+    facetMap.set('Schemas', {
+      propertyKey: '_constrainedBy',
+      label: 'Schemas',
+      type: 'terms',
+      value: new Map(),
+    });
+    facetMap.set('Project', {
+      propertyKey: '_project',
+      label: 'Projecs',
+      type: 'terms',
+      value: new Map(),
+    });
+    setSearchProps({
+      ...searchProps,
+      pagination: {
+        from: 0,
+        size: 20,
+      },
+      facetMap,
+    });
+  }, []);
+
   const [
     selectedResource,
     setSelectedResource,
   ] = React.useState<Resource | null>(null);
-  console.log(searchData);
-  const types =
-    searchData.data?.aggregations.types.buckets.map((bucket: any) => {
-      return {
-        count: bucket.doc_count,
-        key: bucket.key,
-        label: bucket.key,
-        selected: false,
-      };
-    }) || [];
 
   const handleClickItem = (resource: Resource) => () => {
     setSelectedResource(resource);
   };
 
-  const handlePagniationChange = () => {};
+  const handlePagniationChange = (page: number, pageSize?: number) => {
+    const size = searchProps.pagination?.size || 0;
+    setSearchProps({
+      ...searchProps,
+      pagination: {
+        from: (page - 1) * size,
+        size: pageSize || size,
+      },
+    });
+  };
+
+  const handlePageSizeChange = (current: number, size: number) => {
+    setSearchProps({
+      ...searchProps,
+      pagination: {
+        from: searchProps.pagination?.from || 0,
+        size,
+      },
+    });
+  };
+
+  const handleSearch = (value?: string) => {
+    setSearchProps({
+      ...searchProps,
+      query: value,
+    });
+  };
+
+  const handleFacetChanged = (aggKey: string) => (
+    key: string,
+    value: boolean
+  ) => {
+    console.log({ aggKey, key, value });
+
+    if (value) {
+      searchProps.facetMap?.get(aggKey)?.value.set(key, key);
+    } else {
+      searchProps.facetMap?.get(aggKey)?.value.delete(key);
+    }
+
+    setSearchProps({
+      ...searchProps,
+    });
+  };
+
+  console.log({ searchData });
+
+  const total = searchData.data?.hits.total.value || 0;
+  const size = searchProps.pagination?.size || 0;
+  const from = searchProps.pagination?.from || 0;
+  const totalPages = Math.ceil(total / size);
+  const current = Math.floor((totalPages / total) * from + 1);
+
+  console.log({ total, size, from, totalPages, current, searchProps });
 
   return (
     <Content style={{ padding: '1em' }}>
       <Layout>
         <Sider style={{ padding: '1em', background: 'transparent' }}>
           {searchData.data &&
-            Object.keys(searchData.data?.aggregations).map(aggKey => {
+            Object.keys(searchData.data?.aggregations || {}).map(aggKey => {
+              if (!searchProps.facetMap) {
+                return null;
+              }
+              searchProps.facetMap.get(aggKey);
+
               const facets =
                 searchData.data?.aggregations[aggKey]?.buckets.map(
                   (bucket: any) => {
                     const [label] = bucket.key.split('/').reverse();
+                    const selected = searchProps.facetMap
+                      ?.get(aggKey)
+                      ?.value.get(bucket.key);
+
+                    console.log({ selected, key: bucket.key });
                     return {
                       label,
+                      selected,
                       count: bucket.doc_count,
                       key: bucket.key,
-                      selected: false,
                     };
                   }
                 ) || [];
               return (
-                <FacetItem title={aggKey.toLocaleUpperCase()} facets={facets} />
+                <FacetItem
+                  title={aggKey.toLocaleUpperCase()}
+                  facets={facets}
+                  onChange={handleFacetChanged(aggKey)}
+                />
               );
             })}
         </Sider>
@@ -62,7 +149,7 @@ const SearchView: React.FC = () => {
           <Row>
             <Col span={selectedResource ? 12 : 24}>
               <div style={{ margin: '0 0 1em 0' }}>
-                <Search />
+                <Search onSearch={handleSearch} />
               </div>
               <Spin spinning={searchData.loading}>
                 <div style={{ padding: '1em' }}>
@@ -93,10 +180,12 @@ const SearchView: React.FC = () => {
                     grid={{ gutter: 16, column: 4 }}
                     dataSource={searchData.data?.hits.hits || []}
                     pagination={{
+                      total,
+                      current,
+                      pageSize: size,
                       showSizeChanger: true,
-                      defaultPageSize: DEFAULT_PAGE_SIZE,
-                      total: searchData.data?.hits.total.value,
                       onChange: handlePagniationChange,
+                      onShowSizeChange: handlePageSizeChange,
                     }}
                     renderItem={hit => (
                       <List.Item>

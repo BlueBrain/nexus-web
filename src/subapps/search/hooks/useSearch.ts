@@ -3,11 +3,9 @@ import { RequestParams } from '@elastic/elasticsearch';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as bodybuilder from 'bodybuilder';
 
-import useRemoteCall from './useRemoteCall';
+import useRemoteCall, { RemoteCall } from './useRemoteCall';
 import { parseURL } from '../libs/nexusParse';
 import { Resource } from '@bbp/nexus-sdk';
-
-console.log({ bodybuilder });
 
 const DEFAULT_PAGE_SIZE = 20;
 
@@ -51,41 +49,77 @@ export type UseSearchProps = {
     from: number;
     size: number;
   };
+  facetMap?: Map<
+    string,
+    {
+      propertyKey: string;
+      label: string;
+      type: 'terms';
+      value: Map<string, string>;
+    }
+  >;
 };
 
-export default function useSearch(props: UseSearchProps = {}) {
-  const { query, pagination = { from: 0, size: DEFAULT_PAGE_SIZE } } = props;
+export default function useSearch() {
+  const [searchProps, setSearchProps] = React.useState<UseSearchProps>({});
+  const {
+    query,
+    pagination = { from: 0, size: DEFAULT_PAGE_SIZE },
+    facetMap = new Map<
+      string,
+      {
+        propertyKey: string;
+        label: string;
+        type: 'terms';
+        value: Map<string, string>;
+      }
+    >(),
+  } = searchProps;
 
   const nexus = useNexusContext();
 
   const searchNexus = async () => {
     const matchQuery = query
       ? ['match', '_original_source', query]
-      : ['match_all'];
+      : ['match_all', {}];
 
-    const body = bodybuilder()
-      .filter('term', '_deprecated', false)
-      .aggregation('terms', '@type', 'types')
-      .aggregation('terms', '_constrainedBy', 'schemas')
-      .aggregation('terms', '_project', 'projects')
-      .size(pagination.size)
-      .from(pagination.from)
-      .build();
+    const body = bodybuilder();
 
-    console.log({ body });
+    body
+      // @ts-ignore
+      .query(...matchQuery)
+      .filter('term', '_deprecated', false);
+
+    facetMap.forEach(({ propertyKey, type, label, value }) => {
+      value.forEach(item => {
+        body.filter('term', propertyKey, item);
+      });
+      body.aggregation(type, propertyKey, label);
+    });
+
+    body.size(pagination.size).from(pagination.from);
+
+    const finalQuery = body.build();
+
+    console.log('new view post', { body: finalQuery, searchProps });
 
     return await nexus.View.elasticSearchQuery<SearchResponse<Resource>>(
       org,
       project,
       id,
-      body
+      finalQuery
     );
   };
 
-  const remoteResponse = useRemoteCall<SearchResponse<Resource>>(
-    searchNexus,
-    []
-  );
+  const remoteResponse = useRemoteCall<SearchResponse<Resource>>(searchNexus, [
+    searchProps,
+  ]);
 
-  return remoteResponse;
+  return [remoteResponse, { searchProps, setSearchProps }] as [
+    RemoteCall<SearchResponse<Resource>>,
+    {
+      searchProps: UseSearchProps;
+      setSearchProps: React.Dispatch<React.SetStateAction<UseSearchProps>>;
+    }
+  ];
 }
