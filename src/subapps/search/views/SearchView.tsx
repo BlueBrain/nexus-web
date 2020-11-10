@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { Layout, Row, Col, Input, List, Spin, Select } from 'antd';
+import { useHistory, useLocation } from 'react-router-dom';
+
 import useSearch from '../hooks/useSearch';
 import FacetItem from '../components/FacetItem';
 import ResourceCardComponent from '../../../shared/components/ResourceCard';
 import { Resource } from '@bbp/nexus-sdk';
-import { set } from 'lodash';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -12,28 +13,40 @@ const { Search } = Input;
 const { Option } = Select;
 
 const SearchView: React.FC = () => {
+  const history = useHistory();
+  const location = useLocation();
   const [searchData, { searchProps, setSearchProps }] = useSearch();
 
   React.useEffect(() => {
     const facetMap = new Map();
-    facetMap.set('type', {
+    facetMap.set('Types', {
       propertyKey: '@type',
-      label: 'Type',
+      key: 'Types',
+      label: 'Types',
       type: 'terms',
-      value: new Map(),
+      value: new Set(),
     });
     facetMap.set('Schemas', {
       propertyKey: '_constrainedBy',
+      key: 'Schemas',
       label: 'Schemas',
       type: 'terms',
-      value: new Map(),
+      value: new Set(),
     });
-    facetMap.set('Project', {
+    facetMap.set('Projects', {
       propertyKey: '_project',
-      label: 'Projecs',
+      key: 'Projects',
+      label: 'Projects',
       type: 'terms',
-      value: new Map(),
+      value: new Set(),
     });
+    // facetMap.set('Contrib', {
+    //   propertyKey: '_createdBy',
+    //   key: 'Contrib',
+    //   label: 'Contrib',
+    //   type: 'terms',
+    //   value: new Set(),
+    // });
     setSearchProps({
       ...searchProps,
       pagination: {
@@ -88,7 +101,7 @@ const SearchView: React.FC = () => {
     console.log({ aggKey, key, value });
 
     if (value) {
-      searchProps.facetMap?.get(aggKey)?.value.set(key, key);
+      searchProps.facetMap?.get(aggKey)?.value.add(key);
     } else {
       searchProps.facetMap?.get(aggKey)?.value.delete(key);
     }
@@ -109,6 +122,28 @@ const SearchView: React.FC = () => {
     });
   };
 
+  const makeResourceUri = (
+    orgLabel: string,
+    projectLabel: string,
+    resourceId: string
+  ) => {
+    return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+      resourceId
+    )}`;
+  };
+
+  const goToResource = (
+    orgLabel: string,
+    projectLabel: string,
+    resourceId: string
+  ) => {
+    const newURL = makeResourceUri(orgLabel, projectLabel, resourceId);
+
+    history.push(newURL, {
+      background: location,
+    });
+  };
+
   console.log({ searchData });
 
   // Pagination Props
@@ -120,10 +155,13 @@ const SearchView: React.FC = () => {
 
   return (
     <Content style={{ padding: '1em' }}>
+      <div style={{ margin: '0 0 1em 0' }}>
+        <Search onSearch={handleSearch} />
+      </div>
       <Layout>
-        <Sider style={{ padding: '1em', background: 'transparent' }}>
-          {searchData.data &&
-            Object.keys(searchData.data?.aggregations || {}).map(aggKey => {
+        {searchData.data && (
+          <Sider style={{ padding: '1em', background: 'transparent' }}>
+            {Object.keys(searchData.data?.aggregations || {}).map(aggKey => {
               if (!searchProps.facetMap) {
                 return null;
               }
@@ -135,7 +173,7 @@ const SearchView: React.FC = () => {
                     const [label] = bucket.key.split('/').reverse();
                     const selected = searchProps.facetMap
                       ?.get(aggKey)
-                      ?.value.get(bucket.key);
+                      ?.value.has(bucket.key);
 
                     console.log({ selected, key: bucket.key });
                     return {
@@ -154,13 +192,11 @@ const SearchView: React.FC = () => {
                 />
               );
             })}
-        </Sider>
+          </Sider>
+        )}
         <Content>
           <Row>
             <Col span={selectedResource ? 12 : 24}>
-              <div style={{ margin: '0 0 1em 0' }}>
-                <Search onSearch={handleSearch} />
-              </div>
               <Spin spinning={searchData.loading}>
                 <div style={{ padding: '1em' }}>
                   <div
@@ -180,11 +216,12 @@ const SearchView: React.FC = () => {
                     <div>
                       sort by:{' '}
                       <Select
-                        defaultValue="_createdAt-desc"
+                        defaultValue="_updatedAt-desc"
                         onChange={handleSortChange}
                       >
                         <Option value="_createdAt-desc">Newest first</Option>
                         <Option value="_createdAt-asc">Oldest first</Option>
+                        <Option value="_updatedAt-desc">Last updated</Option>
                       </Select>
                     </div>
                   </div>
@@ -222,7 +259,20 @@ const SearchView: React.FC = () => {
             </Col>
             {!!selectedResource && (
               <Col span={12}>
-                <div style={{ padding: '1em' }}>
+                <div
+                  style={{ padding: '1em' }}
+                  onClick={() => {
+                    const [
+                      projectLabel,
+                      orgLabel,
+                    ] = selectedResource._project.split('/').reverse();
+                    goToResource(
+                      orgLabel,
+                      projectLabel,
+                      selectedResource['@id']
+                    );
+                  }}
+                >
                   <ResourceCardComponent resource={selectedResource} />
                 </div>
               </Col>

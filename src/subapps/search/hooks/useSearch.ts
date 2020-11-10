@@ -59,7 +59,7 @@ export type UseSearchProps = {
       propertyKey: string;
       label: string;
       type: 'terms';
-      value: Map<string, string>;
+      value: Set<string>;
     }
   >;
 };
@@ -79,7 +79,7 @@ export default function useSearch() {
         propertyKey: string;
         label: string;
         type: 'terms';
-        value: Map<string, string>;
+        value: Set<string>;
       }
     >(),
   } = searchProps;
