@@ -17,7 +17,6 @@ import './Header.less';
 const epflLogo = require('../../images/EPFL-logo.svg');
 const infoIcon = require('../../images/infoIcon.svg');
 const copyIcon = require('../../images/copyIcon.svg');
-const menuIcon = require('../../images/menuIcon.svg');
 
 const documentationURL = 'https://bluebrainnexus.io/docs';
 
@@ -129,9 +128,6 @@ const Header: React.FunctionComponent<HeaderProps> = ({
 
   return (
     <header className="Header">
-      <button className="menu-icon" onClick={onClickSideBarToggle}>
-        <img src={menuIcon} />
-      </button>
       <div className="selectors">{children}</div>
       <div className="menu-block">
         {token && (
