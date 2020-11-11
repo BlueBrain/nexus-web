@@ -1,73 +1,29 @@
 import * as React from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
+import { Link, useLocation } from 'react-router-dom';
 import { NexusClient, Identity, Realm } from '@bbp/nexus-sdk';
+import { useNexus } from '@bbp/react-nexus';
 import { UserManager } from 'oidc-client';
 import { Layout, Menu, notification } from 'antd';
+import { RightCircleOutlined, LeftCircleOutlined } from '@ant-design/icons';
+
+import Header from '../components/Header';
+import SeoHeaders from './SeoHeaders';
+import ConsentContainer from '../containers/ConsentContainer';
 import * as configActions from '../store/actions/config';
 import * as authActions from '../store/actions/auth';
-import Header from '../components/Header';
-import getUserManager from '../../client/userManager';
-import { getLogoutUrl, getDestinationParam } from '../utils';
 import { RootState } from '../store/reducers';
+import getUserManager from '../../client/userManager';
+import { getLogoutUrl } from '../utils';
 import { url as githubIssueURL } from '../../../package.json';
 import useLocalStorage from '../hooks/useLocalStorage';
-import ConsentContainer from '../containers/ConsentContainer';
-import SeoHeaders from './SeoHeaders';
-import { useNexus } from '@bbp/react-nexus';
 
 import './FusionMainLayout.less';
-import { Link, useLocation } from 'react-router-dom';
 
 const { Sider, Content } = Layout;
 
 const logo = require('../images/logoDarkBg.svg');
-
-const loginCallBack = async (userManager: UserManager) => {
-  try {
-    const destination = new URL(window.location.href).searchParams.get(
-      'destination'
-    );
-
-    const redirectUri = destination
-      ? `${window.location.origin}/${destination}`
-      : null;
-    userManager &&
-      (await userManager.signinRedirect({
-        redirect_uri: redirectUri,
-      }));
-  } catch (error) {
-    switch (error.message) {
-      case 'Network Error':
-        notification.error({
-          message: 'We could not log you in',
-          description: (
-            <div>
-              <p>
-                Nexus Web could not connect to the openId provider configured
-                for this instance.
-              </p>{' '}
-              <p>Please contact your system administrators.</p>
-            </div>
-          ),
-          duration: 0,
-        });
-        break;
-      default:
-        notification.error({
-          message: 'We could not log you in',
-          description: (
-            <div>
-              <p>An unknown problem occured.</p>{' '}
-              <p>Please contact your system administrators.</p>
-            </div>
-          ),
-          duration: 0,
-        });
-        break;
-    }
-  }
-};
 
 export interface FusionMainLayoutProps {
   authenticated: boolean;
@@ -205,7 +161,12 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
     <>
       <SeoHeaders />
       <Layout className="fusion-main-layout">
-        <Sider trigger={null} collapsible collapsed={collapsed}>
+        <Sider
+          trigger={null}
+          collapsible
+          collapsed={collapsed}
+          style={{ height: '100vh' }}
+        >
           <Link to={'/'}>
             <div className="logo">
               {/* must add inline styling to prevent this big svg from flashing
@@ -214,31 +175,40 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
               {!collapsed && <span className="fusion-title">Fusion</span>}
             </div>
           </Link>
-          <Menu
-            theme="dark"
-            mode="inline"
-            defaultSelectedKeys={
-              selectedItem ? [selectedItem.key] : [subApps[0].key]
-            }
-            selectedKeys={[selectedItem.key]}
-            style={{ height: '100vh' }}
-            onClick={onSelectSubAbpp}
-          >
-            {subApps.map(subApp => (
-              <Menu.Item key={subApp.key}>
-                <div className="menu-item">
-                  {/* TODO: change icons color with CSS to blue when it is selected https://github.com/BlueBrain/nexus/issues/1324 */}
-                  <img className="menu-icon" src={subApp.icon} />
-                  {!collapsed && <span>{subApp.label}</span>}
-                </div>
-                {selectedItem.key === subApp.key && (
-                  <div
-                    className={`indicator${collapsed ? ' collapsed' : ''}`}
-                  />
-                )}
-              </Menu.Item>
-            ))}
-          </Menu>
+          <div className="menu-wrapper">
+            <Menu
+              theme="dark"
+              mode="inline"
+              defaultSelectedKeys={
+                selectedItem ? [selectedItem.key] : [subApps[0].key]
+              }
+              selectedKeys={[selectedItem.key]}
+              onClick={onSelectSubAbpp}
+            >
+              {subApps.map(subApp => (
+                <Menu.Item key={subApp.key}>
+                  <div className="menu-item">
+                    {/* TODO: change icons color with CSS to blue when it is selected https://github.com/BlueBrain/nexus/issues/1324 */}
+                    <img className="menu-icon" src={subApp.icon} />
+                    {!collapsed && <span>{subApp.label}</span>}
+                  </div>
+                  {selectedItem.key === subApp.key && (
+                    <div
+                      className={`indicator${collapsed ? ' collapsed' : ''}`}
+                    />
+                  )}
+                </Menu.Item>
+              ))}
+            </Menu>
+            <div className="menu-extras-container">
+              <button
+                className="menu-collapse-button"
+                onClick={() => setCollapsed(!collapsed)}
+              >
+                {collapsed ? <RightCircleOutlined /> : <LeftCircleOutlined />}
+              </button>
+            </div>
+          </div>
         </Sider>
         <Layout className="site-layout">
           <Header
