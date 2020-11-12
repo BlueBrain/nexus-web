@@ -212,10 +212,12 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
                   {!collapsed && (
                     <>
                       <span className="footer-note">Powered by </span>
-                      <img
-                        height="27px"
-                        src={require('../images/logoDarkBg.svg')}
-                      />
+                      <a href="https://bluebrainnexus.io/" target="_blank">
+                        <img
+                          height="27px"
+                          src={require('../images/logoDarkBg.svg')}
+                        />
+                      </a>
                     </>
                   )}
                   <button
