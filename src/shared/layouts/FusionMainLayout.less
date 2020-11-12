@@ -37,13 +37,13 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 100%;
-    padding-bottom: 65px;
   }
 
   .menu-extras-container {
     padding: 0 25px;
-    height: auto;
+    height: 100%;
+    width: 100%;
+    position: relative;
   }
 
   .menu-collapse-button {
@@ -60,6 +60,12 @@
       width: 30px;
       height: 30px;
     }
+  }
+
+  .bottom-item-wrapper {
+    position: fixed;
+    bottom: 10px;
+    width: 155px;
   }
 
   .bottom-item {

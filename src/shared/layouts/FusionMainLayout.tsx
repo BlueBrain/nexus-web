@@ -165,12 +165,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
     <>
       <SeoHeaders />
       <Layout className="fusion-main-layout">
-        <Sider
-          trigger={null}
-          collapsible
-          collapsed={collapsed}
-          style={{ height: '100vh' }}
-        >
+        <Sider trigger={null} collapsible collapsed={collapsed}>
           <a href={layoutSettings.logoLink} target="_blank">
             <div className="logo">
               {/* must add inline styling to prevent this big svg from flashing
@@ -188,6 +183,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
           </a>
           <div className="menu-wrapper">
             <Menu
+              style={{ height: '100vh' }}
               theme="dark"
               mode="inline"
               defaultSelectedKeys={
@@ -212,22 +208,28 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
               ))}
             </Menu>
             <div className="menu-extras-container">
-              <div className="bottom-item">
-                {!collapsed && (
-                  <>
-                    <span className="footer-note">Powered by </span>
-                    <img
-                      height="27px"
-                      src={require('../images/logoDarkBg.svg')}
-                    />
-                  </>
-                )}
-                <button
-                  className="menu-collapse-button"
-                  onClick={() => setCollapsed(!collapsed)}
-                >
-                  {collapsed ? <RightCircleOutlined /> : <LeftCircleOutlined />}
-                </button>
+              <div className="bottom-item-wrapper">
+                <div className="bottom-item">
+                  {!collapsed && (
+                    <>
+                      <span className="footer-note">Powered by </span>
+                      <img
+                        height="27px"
+                        src={require('../images/logoDarkBg.svg')}
+                      />
+                    </>
+                  )}
+                  <button
+                    className="menu-collapse-button"
+                    onClick={() => setCollapsed(!collapsed)}
+                  >
+                    {collapsed ? (
+                      <RightCircleOutlined />
+                    ) : (
+                      <LeftCircleOutlined />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
