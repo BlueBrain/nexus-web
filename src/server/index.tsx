@@ -21,7 +21,7 @@ const pluginsManifestPath =
   process.env.PLUGINS_MANIFEST_PATH || '/public/plugins';
 
 // configure instance logo, header and menu color
-const instanceSettings = {
+const layoutSettings = {
   // logoImg: process.env.LOGO_IMG || '../images/fusion_logo.png',
   logoImg: process.env.LOGO_IMG || '',
   logoLink: process.env.LOGO_LINK || 'https://bluebrainnexus.io/',
@@ -61,6 +61,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
   const preloadedState: RootState = {
     auth: {},
     config: {
+      layoutSettings,
       pluginsManifestPath,
       apiEndpoint: process.env.API_ENDPOINT || '/',
       basePath: base,
@@ -70,7 +71,6 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       sentryDsn: process.env.SENTRY_DSN,
       gtmCode: process.env.GTM_CODE,
       studioView: process.env.STUDIO_VIEW || '',
-      instanceSettings,
     },
     uiSettings: DEFAULT_UI_SETTINGS,
     oidc: {

@@ -10,7 +10,7 @@ export interface ConfigState {
   pluginsManifestPath: string;
   gtmCode?: string;
   studioView?: string;
-  instanceSettings: {
+  layoutSettings: {
     logoImg: string;
     logoLink: string;
     menuColor: string;
@@ -24,7 +24,7 @@ const initialState: ConfigState = {
   redirectHostName: '',
   pluginsManifestPath: '/public/plugins',
   gtmCode: '',
-  instanceSettings: {
+  layoutSettings: {
     logoImg: '',
     logoLink: '',
     menuColor: '',

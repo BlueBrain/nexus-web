@@ -47,18 +47,31 @@
   }
 
   .menu-collapse-button {
-    width: 100%;
     border: none;
     background-color: inherit;
     outline-style: none;
     padding: 0;
     text-align: right;
     cursor: pointer;
+    width: 30px;
+    height: 30px;
 
     svg {
       width: 30px;
       height: 30px;
     }
+  }
+
+  .bottom-item {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .footer-note {
+    color: @subtle-white;
+    font-size: 1em;
+    font-weight: 300;
   }
 
   .ant-menu-item,

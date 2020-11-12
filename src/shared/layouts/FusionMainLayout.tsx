@@ -19,8 +19,6 @@ import { getLogoutUrl } from '../utils';
 import { url as githubIssueURL } from '../../../package.json';
 import useLocalStorage from '../hooks/useLocalStorage';
 
-import logo from '../images/fusion_logo.png';
-
 import './FusionMainLayout.less';
 
 const { Sider, Content } = Layout;
@@ -40,7 +38,7 @@ export interface FusionMainLayoutProps {
   subApps: SubAppProps[];
   setPreferredRealm(name: string): void;
   performLogin(): void;
-  instanceSettings: {
+  layoutSettings: {
     logoLink: string;
     logoImg: string;
     menuColor: string;
@@ -81,7 +79,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   loginError,
   setPreferredRealm,
   performLogin,
-  instanceSettings,
+  layoutSettings,
 }) => {
   const subApps = [homeApp, ...propSubApps];
   const location = useLocation();
@@ -163,8 +161,6 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
     }
   };
 
-  console.log('instanceSettings.logoImg', instanceSettings.logoImg);
-
   return (
     <>
       <SeoHeaders />
@@ -175,16 +171,16 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
           collapsed={collapsed}
           style={{ height: '100vh' }}
         >
-          <a href={instanceSettings.logoLink} target="_blank">
+          <a href={layoutSettings.logoLink} target="_blank">
             <div className="logo">
               {/* must add inline styling to prevent this big svg from flashing
                the screen on dev mode before styles are loaded */}
               <img
                 height="33"
                 src={
-                  instanceSettings.logoImg === ''
+                  layoutSettings.logoImg === ''
                     ? require('../images/fusion_logo.png')
-                    : instanceSettings.logoImg
+                    : layoutSettings.logoImg
                 }
                 alt="Logo"
               />
@@ -216,12 +212,23 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
               ))}
             </Menu>
             <div className="menu-extras-container">
-              <button
-                className="menu-collapse-button"
-                onClick={() => setCollapsed(!collapsed)}
-              >
-                {collapsed ? <RightCircleOutlined /> : <LeftCircleOutlined />}
-              </button>
+              <div className="bottom-item">
+                {!collapsed && (
+                  <>
+                    <span className="footer-note">Powered by </span>
+                    <img
+                      height="27px"
+                      src={require('../images/logoDarkBg.svg')}
+                    />
+                  </>
+                )}
+                <button
+                  className="menu-collapse-button"
+                  onClick={() => setCollapsed(!collapsed)}
+                >
+                  {collapsed ? <RightCircleOutlined /> : <LeftCircleOutlined />}
+                </button>
+              </div>
             </div>
           </div>
         </Sider>
@@ -269,12 +276,13 @@ const mapStateToProps = (state: RootState) => {
       auth.identities.data &&
       auth.identities.data.identities) ||
     [];
-  const { instanceSettings } = config;
+  const { layoutSettings } = config;
 
-  console.log('instanceSettings', instanceSettings);
+  console.log('instanceSettings', layoutSettings);
 
   return {
     realms,
+    layoutSettings,
     authenticated: oidc.user !== undefined,
     token: oidc.user && oidc.user.access_token,
     name:
@@ -286,7 +294,6 @@ const mapStateToProps = (state: RootState) => {
         endSessionEndpoint: r._endSessionEndpoint,
       }))
     ),
-    instanceSettings,
     userIdentity: identities[identities.length - 1],
     canLogin: !!(realms.length > 0),
     userManager: getUserManager(state),
