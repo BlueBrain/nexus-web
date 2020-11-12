@@ -20,6 +20,14 @@ const rawBase: string = process.env.BASE_PATH || '';
 const pluginsManifestPath =
   process.env.PLUGINS_MANIFEST_PATH || '/public/plugins';
 
+// configure instance logo, header and menu color
+const instanceSettings = {
+  // logoImg: process.env.LOGO_IMG || '../images/fusion_logo.png',
+  logoImg: process.env.LOGO_IMG || '',
+  logoLink: process.env.LOGO_LINK || 'https://bluebrainnexus.io/',
+  menuColor: process.env.MENU_COLOR || '',
+};
+
 // remove trailing slash
 const base: string = rawBase.replace(/\/$/, '');
 // enable logs
@@ -62,6 +70,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       sentryDsn: process.env.SENTRY_DSN,
       gtmCode: process.env.GTM_CODE,
       studioView: process.env.STUDIO_VIEW || '',
+      instanceSettings,
     },
     uiSettings: DEFAULT_UI_SETTINGS,
     oidc: {

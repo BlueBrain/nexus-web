@@ -19,11 +19,11 @@ import { getLogoutUrl } from '../utils';
 import { url as githubIssueURL } from '../../../package.json';
 import useLocalStorage from '../hooks/useLocalStorage';
 
+import logo from '../images/fusion_logo.png';
+
 import './FusionMainLayout.less';
 
 const { Sider, Content } = Layout;
-
-const logo = require('../images/logoDarkBg.svg');
 
 export interface FusionMainLayoutProps {
   authenticated: boolean;
@@ -40,6 +40,11 @@ export interface FusionMainLayoutProps {
   subApps: SubAppProps[];
   setPreferredRealm(name: string): void;
   performLogin(): void;
+  instanceSettings: {
+    logoLink: string;
+    logoImg: string;
+    menuColor: string;
+  };
 }
 
 export type ConsentType = {
@@ -76,6 +81,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   loginError,
   setPreferredRealm,
   performLogin,
+  instanceSettings,
 }) => {
   const subApps = [homeApp, ...propSubApps];
   const location = useLocation();
@@ -157,6 +163,8 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
     }
   };
 
+  console.log('instanceSettings.logoImg', instanceSettings.logoImg);
+
   return (
     <>
       <SeoHeaders />
@@ -167,14 +175,21 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
           collapsed={collapsed}
           style={{ height: '100vh' }}
         >
-          <Link to={'/'}>
+          <a href={instanceSettings.logoLink} target="_blank">
             <div className="logo">
               {/* must add inline styling to prevent this big svg from flashing
-            the screen on dev mode before styles are loaded */}
-              <img width="32" height="32" src={logo} alt="Fusion" />
-              {!collapsed && <span className="fusion-title">Fusion</span>}
+               the screen on dev mode before styles are loaded */}
+              <img
+                height="33"
+                src={
+                  instanceSettings.logoImg === ''
+                    ? require('../images/fusion_logo.png')
+                    : instanceSettings.logoImg
+                }
+                alt="Logo"
+              />
             </div>
-          </Link>
+          </a>
           <div className="menu-wrapper">
             <Menu
               theme="dark"
@@ -254,6 +269,10 @@ const mapStateToProps = (state: RootState) => {
       auth.identities.data &&
       auth.identities.data.identities) ||
     [];
+  const { instanceSettings } = config;
+
+  console.log('instanceSettings', instanceSettings);
+
   return {
     realms,
     authenticated: oidc.user !== undefined,
@@ -267,7 +286,7 @@ const mapStateToProps = (state: RootState) => {
         endSessionEndpoint: r._endSessionEndpoint,
       }))
     ),
-
+    instanceSettings,
     userIdentity: identities[identities.length - 1],
     canLogin: !!(realms.length > 0),
     userManager: getUserManager(state),

@@ -10,6 +10,11 @@ export interface ConfigState {
   pluginsManifestPath: string;
   gtmCode?: string;
   studioView?: string;
+  instanceSettings: {
+    logoImg: string;
+    logoLink: string;
+    menuColor: string;
+  };
 }
 
 const initialState: ConfigState = {
@@ -19,6 +24,11 @@ const initialState: ConfigState = {
   redirectHostName: '',
   pluginsManifestPath: '/public/plugins',
   gtmCode: '',
+  instanceSettings: {
+    logoImg: '',
+    logoLink: '',
+    menuColor: '',
+  },
 };
 
 export default function configReducer(
