@@ -20,7 +20,7 @@ const rawBase: string = process.env.BASE_PATH || '';
 const pluginsManifestPath =
   process.env.PLUGINS_MANIFEST_PATH || '/public/plugins';
 
-// configure instance logo, header and menu color
+// configure instance logo
 const layoutSettings = {
   logoImg: process.env.LOGO_IMG || '',
   logoLink: process.env.LOGO_LINK || 'https://www.bluebrainnexus.io/',
