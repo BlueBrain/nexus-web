@@ -13,7 +13,6 @@ export interface ConfigState {
   layoutSettings: {
     logoImg: string;
     logoLink: string;
-    menuColor: string;
   };
 }
 
@@ -27,7 +26,6 @@ const initialState: ConfigState = {
   layoutSettings: {
     logoImg: '',
     logoLink: '',
-    menuColor: '',
   },
 };
 

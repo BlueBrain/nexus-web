@@ -41,7 +41,6 @@ export interface FusionMainLayoutProps {
   layoutSettings: {
     logoLink: string;
     logoImg: string;
-    menuColor: string;
   };
 }
 
@@ -279,8 +278,6 @@ const mapStateToProps = (state: RootState) => {
       auth.identities.data.identities) ||
     [];
   const { layoutSettings } = config;
-
-  console.log('instanceSettings', layoutSettings);
 
   return {
     realms,

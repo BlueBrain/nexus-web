@@ -22,10 +22,8 @@ const pluginsManifestPath =
 
 // configure instance logo, header and menu color
 const layoutSettings = {
-  // logoImg: process.env.LOGO_IMG || '../images/fusion_logo.png',
   logoImg: process.env.LOGO_IMG || '',
-  logoLink: process.env.LOGO_LINK || 'https://bluebrainnexus.io/',
-  menuColor: process.env.MENU_COLOR || '',
+  logoLink: process.env.LOGO_LINK || 'https://www.bluebrainnexus.io/',
 };
 
 // remove trailing slash
