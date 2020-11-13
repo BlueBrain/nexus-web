@@ -165,7 +165,11 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
       <SeoHeaders />
       <Layout className="fusion-main-layout">
         <Sider trigger={null} collapsible collapsed={collapsed}>
-          <a href={layoutSettings.logoLink} target="_blank">
+          <a
+            className="logo-link"
+            href={layoutSettings.logoLink}
+            target="_blank"
+          >
             <div className="logo">
               {/* must add inline styling to prevent this big svg from flashing
                the screen on dev mode before styles are loaded */}
