@@ -14,12 +14,15 @@ import { ConsentType } from '../../layouts/FusionMainLayout';
 
 import './Header.less';
 
+declare var Version: string;
+
 const epflLogo = require('../../images/EPFL-logo.svg');
 const infoIcon = require('../../images/infoIcon.svg');
 const copyIcon = require('../../images/copyIcon.svg');
 
 const documentationURL = 'https://bluebrainnexus.io/docs';
 const repoUrl = 'https://github.com/BlueBrain/nexus-web';
+const releaseNoteUrl = 'https://github.com/BlueBrain/nexus-web/releases';
 
 interface InformationContentProps {
   version: string;
@@ -51,7 +54,7 @@ const InformationContent = (props: InformationContentProps) => {
       <p>
         Nexus Delta v{props.version} <br />
         <a href={`${repoUrl}/commits/${props.commitHash}`}>
-          Nexus Fusion v{packageJson.version}
+          Nexus Fusion {Version}
         </a>
       </p>
       <p>
@@ -61,6 +64,10 @@ const InformationContent = (props: InformationContentProps) => {
         {' | '}
         <a href={props.githubIssueURL} target="_blank">
           <GithubOutlined /> Report Issue
+        </a>
+        {' | '}
+        <a href={releaseNoteUrl} target="_blank">
+          <GithubOutlined /> Fusion Release Notes
         </a>
       </p>
       {

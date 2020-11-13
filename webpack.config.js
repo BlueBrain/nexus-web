@@ -7,7 +7,9 @@ const TerserPlugin = require('terser-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const devMode = process.env.NODE_ENV !== 'production';
 
-const gitRevisionPlugin = new GitRevisionPlugin();
+const gitRevisionPlugin = new GitRevisionPlugin({
+  versionCommand: 'describe --tags',
+});
 
 const config = [
   {
@@ -67,6 +69,7 @@ const config = [
       new webpack.DefinePlugin({
         __isBrowser__: true,
         COMMIT_HASH: JSON.stringify(gitRevisionPlugin.commithash()),
+        Version: JSON.stringify(gitRevisionPlugin.version()),
       }),
       new MiniCssExtractPlugin(),
     ],
