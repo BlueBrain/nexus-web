@@ -5,8 +5,9 @@
   justify-content: space-between;
   box-sizing: content-box;
   height: 52px;
-  background-color: #ffffff;
+  background-color: #001529;
   box-shadow: 2px 3px 3px @subtle-white;
+  border-bottom: 1px solid @icon-color;
 
   .selectors {
     display: flex;
@@ -31,19 +32,35 @@
     a {
       margin: 5px;
       font-weight: lighter;
+      opacity: 0.8;
+
+      &:hover {
+        opacity: 1;
+      }
     }
 
     .menu-dropdown {
-      color: @text-color;
       align-self: center;
-      margin-left: 10px;
+      margin: 5px 5px 4px;
       bottom: 50px;
+      color: @subtle-white;
+      border: 1px solid @subtle-white;
+      border-radius: 4px;
+      padding: 3px 5px;
     }
   }
 
   .ui-header-info-button {
     margin: 5px 5px 4px;
     cursor: pointer;
+    border: 1px solid @subtle-white;
+    border-radius: 4px;
+    padding: 5px;
+    opacity: 0.8;
+
+    &:hover {
+      opacity: 1;
+    }
   }
 
   .copy-token-button {
@@ -58,8 +75,11 @@
     border: 1px solid @subtle-white;
     display: flex;
     align-items: center;
+    background-color: inherit;
+
     .button-text {
       margin-left: 0.4rem;
+      color: @subtle-white;
     }
   }
 }

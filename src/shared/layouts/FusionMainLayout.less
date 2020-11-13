@@ -7,12 +7,7 @@
     letter-spacing: 1px;
     color: #ffffff;
     height: 52px;
-  }
-
-  .fusion-title {
-    font-size: 1.4rem;
-    font-weight: 200;
-    margin-left: 0.7rem;
+    border-bottom: 1px solid @icon-color;
   }
 
   .menu-item {
@@ -43,28 +38,47 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 100%;
-    padding-bottom: 65px;
   }
 
   .menu-extras-container {
     padding: 0 25px;
-    height: auto;
+    height: 100%;
+    width: 100%;
+    position: relative;
   }
 
   .menu-collapse-button {
-    width: 100%;
     border: none;
     background-color: inherit;
     outline-style: none;
     padding: 0;
     text-align: right;
     cursor: pointer;
+    width: 30px;
+    height: 30px;
 
     svg {
       width: 30px;
       height: 30px;
     }
+  }
+
+  .bottom-item-wrapper {
+    position: fixed;
+    bottom: 10px;
+    width: 155px;
+  }
+
+  .bottom-item {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .footer-note {
+    color: @subtle-white;
+    font-size: 1em;
+    font-weight: 300;
   }
 
   .ant-menu-item,
@@ -84,6 +98,12 @@
     height: 50px;
     margin: 0;
     overflow: visible;
+  }
+
+  // overrides weird blue flashing when an item is deselected
+  .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal)
+    .ant-menu-item-selected {
+    background-color: inherit;
   }
 
   .ant-menu-vertical .ant-menu-item,

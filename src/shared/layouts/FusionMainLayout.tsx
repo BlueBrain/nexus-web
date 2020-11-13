@@ -23,8 +23,8 @@ import './FusionMainLayout.less';
 
 const { Sider, Content } = Layout;
 
-const logo = require('../images/logoDarkBg.svg');
 declare var COMMIT_HASH: string;
+
 export interface FusionMainLayoutProps {
   authenticated: boolean;
   realms: Realm[];
@@ -40,6 +40,10 @@ export interface FusionMainLayoutProps {
   subApps: SubAppProps[];
   setPreferredRealm(name: string): void;
   performLogin(): void;
+  layoutSettings: {
+    logoLink: string;
+    logoImg: string;
+  };
 }
 
 export type ConsentType = {
@@ -76,6 +80,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   loginError,
   setPreferredRealm,
   performLogin,
+  layoutSettings,
 }) => {
   const subApps = [homeApp, ...propSubApps];
   const location = useLocation();
@@ -161,22 +166,29 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
     <>
       <SeoHeaders />
       <Layout className="fusion-main-layout">
-        <Sider
-          trigger={null}
-          collapsible
-          collapsed={collapsed}
-          style={{ height: '100vh' }}
-        >
-          <Link to={'/'}>
+        <Sider trigger={null} collapsible collapsed={collapsed}>
+          <a
+            className="logo-link"
+            href={layoutSettings.logoLink}
+            target="_blank"
+          >
             <div className="logo">
               {/* must add inline styling to prevent this big svg from flashing
-            the screen on dev mode before styles are loaded */}
-              <img width="32" height="32" src={logo} alt="Fusion" />
-              {!collapsed && <span className="fusion-title">Fusion</span>}
+               the screen on dev mode before styles are loaded */}
+              <img
+                height="33"
+                src={
+                  layoutSettings.logoImg === ''
+                    ? require('../images/fusion_logo.png')
+                    : layoutSettings.logoImg
+                }
+                alt="Logo"
+              />
             </div>
-          </Link>
+          </a>
           <div className="menu-wrapper">
             <Menu
+              style={{ height: '100vh' }}
               theme="dark"
               mode="inline"
               defaultSelectedKeys={
@@ -201,12 +213,31 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
               ))}
             </Menu>
             <div className="menu-extras-container">
-              <button
-                className="menu-collapse-button"
-                onClick={() => setCollapsed(!collapsed)}
-              >
-                {collapsed ? <RightCircleOutlined /> : <LeftCircleOutlined />}
-              </button>
+              <div className="bottom-item-wrapper">
+                <div className="bottom-item">
+                  {!collapsed && (
+                    <>
+                      <span className="footer-note">Powered by </span>
+                      <a href="https://bluebrainnexus.io/" target="_blank">
+                        <img
+                          height="27px"
+                          src={require('../images/logoDarkBg.svg')}
+                        />
+                      </a>
+                    </>
+                  )}
+                  <button
+                    className="menu-collapse-button"
+                    onClick={() => setCollapsed(!collapsed)}
+                  >
+                    {collapsed ? (
+                      <RightCircleOutlined />
+                    ) : (
+                      <LeftCircleOutlined />
+                    )}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </Sider>
@@ -255,8 +286,11 @@ const mapStateToProps = (state: RootState) => {
       auth.identities.data &&
       auth.identities.data.identities) ||
     [];
+  const { layoutSettings } = config;
+
   return {
     realms,
+    layoutSettings,
     authenticated: oidc.user !== undefined,
     token: oidc.user && oidc.user.access_token,
     name:
@@ -268,7 +302,6 @@ const mapStateToProps = (state: RootState) => {
         endSessionEndpoint: r._endSessionEndpoint,
       }))
     ),
-
     userIdentity: identities[identities.length - 1],
     canLogin: !!(realms.length > 0),
     userManager: getUserManager(state),

@@ -20,6 +20,12 @@ const rawBase: string = process.env.BASE_PATH || '';
 const pluginsManifestPath =
   process.env.PLUGINS_MANIFEST_PATH || '/public/plugins';
 
+// configure instance logo
+const layoutSettings = {
+  logoImg: process.env.LOGO_IMG || '',
+  logoLink: process.env.LOGO_LINK || 'https://www.bluebrainnexus.io/',
+};
+
 // remove trailing slash
 const base: string = rawBase.replace(/\/$/, '');
 // enable logs
@@ -53,6 +59,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
   const preloadedState: RootState = {
     auth: {},
     config: {
+      layoutSettings,
       pluginsManifestPath,
       apiEndpoint: process.env.API_ENDPOINT || '/',
       basePath: base,
