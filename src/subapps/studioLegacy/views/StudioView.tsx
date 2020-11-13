@@ -5,7 +5,6 @@ import StudioContainer from '../containers/StudioContainer';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
-import StudioHeader from '../components/StudioHeader';
 
 type StudioContextType = {
   orgLabel: string;
