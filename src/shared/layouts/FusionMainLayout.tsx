@@ -24,7 +24,7 @@ import './FusionMainLayout.less';
 const { Sider, Content } = Layout;
 
 const logo = require('../images/logoDarkBg.svg');
-
+declare var COMMIT_HASH: string;
 export interface FusionMainLayoutProps {
   authenticated: boolean;
   realms: Realm[];
@@ -234,6 +234,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
             version={deltaVersion}
             githubIssueURL={githubIssueURL}
             consent={consent}
+            commitHash={COMMIT_HASH}
             onClickRemoveConsent={() => setConsent(undefined)}
             onClickSideBarToggle={() => setCollapsed(!collapsed)}
           />

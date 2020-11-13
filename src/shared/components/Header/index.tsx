@@ -14,15 +14,20 @@ import { ConsentType } from '../../layouts/FusionMainLayout';
 
 import './Header.less';
 
+declare var Version: string;
+
 const epflLogo = require('../../images/EPFL-logo.svg');
 const infoIcon = require('../../images/infoIcon.svg');
 const copyIcon = require('../../images/copyIcon.svg');
 
 const documentationURL = 'https://bluebrainnexus.io/docs';
+const repoUrl = 'https://github.com/BlueBrain/nexus-web';
+const releaseNoteUrl = 'https://github.com/BlueBrain/nexus-web/releases';
 
 interface InformationContentProps {
   version: string;
   githubIssueURL: string;
+  commitHash?: string;
   consent?: ConsentType;
   onClickRemoveConsent?(): void;
 }
@@ -48,7 +53,9 @@ const InformationContent = (props: InformationContentProps) => {
       <h4>Nexus Services</h4>
       <p>
         Nexus Delta v{props.version} <br />
-        Nexus Fusion v{packageJson.version}
+        <a href={`${repoUrl}/commits/${props.commitHash}`}>
+          Nexus Fusion {Version}
+        </a>
       </p>
       <p>
         <a href={documentationURL} target="_blank">
@@ -57,6 +64,10 @@ const InformationContent = (props: InformationContentProps) => {
         {' | '}
         <a href={props.githubIssueURL} target="_blank">
           <GithubOutlined /> Report Issue
+        </a>
+        {' | '}
+        <a href={releaseNoteUrl} target="_blank">
+          <GithubOutlined /> Fusion Release Notes
         </a>
       </p>
       {
@@ -78,6 +89,7 @@ export interface HeaderProps {
   displayLogin?: boolean;
   children?: React.ReactChild;
   consent?: ConsentType;
+  commitHash?: string;
   onClickRemoveConsent?(): void;
   onClickSideBarToggle(): void;
   performLogin(realmName: string): void;
@@ -93,6 +105,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   version,
   githubIssueURL,
   consent,
+  commitHash,
   onClickRemoveConsent,
   onClickSideBarToggle,
   performLogin,
@@ -155,6 +168,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
               githubIssueURL={githubIssueURL}
               consent={consent}
               onClickRemoveConsent={onClickRemoveConsent}
+              commitHash={commitHash}
             />
           }
           trigger="click"

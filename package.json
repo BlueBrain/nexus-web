@@ -8,7 +8,7 @@
   "repository": "github:bluebrain/nexus-explorer",
   "url": "https://github.com/BlueBrain/nexus/issues/new?labels=frontend,nexus-web",
   "scripts": {
-    "start": "NODE_ENV=development DEBUG=* webpack --mode development --config-name server && node dist/server.js",
+    "start": "NODE_ENV=development  DEBUG=* webpack --mode development --config-name server && node dist/server.js",
     "build": "NODE_ENV=production webpack --mode production",
     "test": "jest",
     "cy:run": "cypress run",
@@ -35,6 +35,7 @@
     "deep-object-diff": "^1.1.0",
     "express": "^4.16.4",
     "express-prom-bundle": "^5.0.2",
+    "git-revision-webpack-plugin": "^3.0.6",
     "history": "^4.7.2",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.15",
