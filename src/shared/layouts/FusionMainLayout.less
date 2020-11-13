@@ -7,7 +7,7 @@
     letter-spacing: 1px;
     color: #ffffff;
     height: 52px;
-    border-bottom: 1px solid @box-shadow-color;
+    border-bottom: 1px solid @icon-color;
   }
 
   .menu-item {
@@ -98,6 +98,12 @@
     height: 50px;
     margin: 0;
     overflow: visible;
+  }
+
+  // overrides weird blue flashing when an item is deselected
+  .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal)
+    .ant-menu-item-selected {
+    background-color: inherit;
   }
 
   .ant-menu-vertical .ant-menu-item,
