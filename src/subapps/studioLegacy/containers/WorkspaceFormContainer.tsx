@@ -28,6 +28,9 @@ const DASHBOARD_TYPE =
 
 const SPARQL_VIEW_TYPE =
   'https://bluebrain.github.io/nexus/vocabulary/SparqlView';
+
+const ES_VIEW_TYPE =
+  'https://bluebrain.github.io/nexus/vocabulary/ElasticSearchView';
 const VIEW_TYPE = 'https://bluebrain.github.io/nexus/vocabulary/View';
 const AGGREGATE_VIEW_TYPE =
   'https://bluebrain.github.io/nexus/vocabulary/AggregateSparqlView';
@@ -208,6 +211,9 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
                   should: [
                     {
                       term: { '@type': SPARQL_VIEW_TYPE },
+                    },
+                    {
+                      term: { '@type': ES_VIEW_TYPE },
                     },
                     {
                       term: { '@type': AGGREGATE_VIEW_TYPE },
