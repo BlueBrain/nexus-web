@@ -13,8 +13,11 @@ const SubAppsView: React.FC<{
     ({ oidc }: RootState) => oidc && oidc.user !== undefined
   );
   const location = useLocation();
+
   const background =
     location.state && (location.state as { background?: Location }).background;
+
+  const loginUrl = `/login?destination=${location.pathname.replace('/', '')}`;
 
   return (
     <Switch location={background ? background : location}>
@@ -22,12 +25,7 @@ const SubAppsView: React.FC<{
         ({ path, component: SubAppComponent, requireLogin, ...rest }) => (
           <Route key={path as string} path={path} {...rest}>
             {requireLogin && !userLoggedIn ? (
-              <Redirect
-                to={`/login?destination=${window.location.pathname.replace(
-                  '/',
-                  ''
-                )}`}
-              />
+              <Redirect to={loginUrl} />
             ) : (
               <SubAppComponent />
             )}
