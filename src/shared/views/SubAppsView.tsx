@@ -22,7 +22,12 @@ const SubAppsView: React.FC<{
         ({ path, component: SubAppComponent, requireLogin, ...rest }) => (
           <Route key={path as string} path={path} {...rest}>
             {requireLogin && !userLoggedIn ? (
-              <Redirect to="/login" />
+              <Redirect
+                to={`/login?destination=${window.location.pathname.replace(
+                  '/',
+                  ''
+                )}`}
+              />
             ) : (
               <SubAppComponent />
             )}

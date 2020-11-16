@@ -46,6 +46,7 @@ const HomeLinkCard: React.FunctionComponent<{
   return (
     <Link to={namespace} style={{ marginRight: '1em' }}>
       <Card
+        key={`subapp-card-${title}`}
         hoverable
         cover={
           <div
