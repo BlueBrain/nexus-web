@@ -58,6 +58,7 @@ export type SubAppProps = {
   route: string;
   icon: any;
   url?: string;
+  requireLogin: boolean;
 };
 
 const homeIcon = require('../images/homeIcon.svg');
@@ -69,6 +70,7 @@ const homeApp = {
   icon: homeIcon,
   subAppType: 'internal',
   url: undefined,
+  requireLogin: false,
 };
 
 const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
@@ -202,7 +204,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
             >
               {subApps.map(subApp => (
                 <Menu.Item key={subApp.key}>
-                  {subApp.subAppType === 'external' ? (
+                  {subApp.subAppType === 'external' && (
                     <div className="menu-item">
                       <a
                         target="_blank"
@@ -213,12 +215,23 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
                         {!collapsed && <span>{subApp.label}</span>}
                       </a>
                     </div>
-                  ) : (
-                    <div className="menu-item">
-                      {/* TODO: change icons color with CSS to blue when it is selected https://github.com/BlueBrain/nexus/issues/1324 */}
-                      <img className="menu-icon" src={subApp.icon} />
-                      {!collapsed && <span>{subApp.label}</span>}
-                    </div>
+                  )}
+                  {subApp.subAppType !== 'external' &&
+                  subApp.requireLogin &&
+                  !authenticated ? null : (
+                    <Menu.Item key={subApp.key}>
+                      <div className="menu-item">
+                        <img className="menu-icon" src={subApp.icon} />
+                        {!collapsed && <span>{subApp.label}</span>}
+                      </div>
+                      {selectedItem.key === subApp.key && (
+                        <div
+                          className={`indicator${
+                            collapsed ? ' collapsed' : ''
+                          }`}
+                        />
+                      )}
+                    </Menu.Item>
                   )}
                   {selectedItem.key === subApp.key && (
                     <div

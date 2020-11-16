@@ -1,6 +1,9 @@
 import * as React from 'react';
+import { useSelector } from 'react-redux';
 import { Card } from 'antd';
 import { Link } from 'react-router-dom';
+
+import { RootState } from '../store/reducers';
 
 const { Meta } = Card;
 
@@ -14,12 +17,32 @@ const style = {
   width: '100%',
 };
 
+// TODO: Fetch from a config or something
+const subAppsConfig = [
+  {
+    namespace: '/admin',
+    title: 'Admin',
+    description: 'Manage, edit, and query your Nexus Delta knowledge graph',
+    background: backgrounds[0],
+    requireLogin: true,
+  },
+  {
+    namespace: '/studios',
+    title: 'Studios',
+    description:
+      'Visualize query results from Nexus Delta in customizable views',
+    background: backgrounds[1],
+    requireLogin: false,
+  },
+];
+
 const HomeLinkCard: React.FunctionComponent<{
   namespace: string;
   title: string;
   description: string;
   background: string;
-}> = ({ namespace, title, description, background }) => {
+  requireLogin: boolean;
+}> = ({ namespace, title, description, background, requireLogin }) => {
   return (
     <Link to={namespace} style={{ marginRight: '1em' }}>
       <Card
@@ -38,28 +61,22 @@ const HomeLinkCard: React.FunctionComponent<{
 };
 
 const Home: React.FunctionComponent = () => {
+  const useLoggedIn = useSelector(
+    ({ oidc }: RootState) => oidc && oidc.user !== undefined
+  );
+
+  console.log('useLoggedIn', useLoggedIn);
+
   return (
     <div
       className="home-view view-container"
       style={{ display: 'flex', flexWrap: 'wrap' }}
     >
-      {/* TODO: fetch this list from some subApp context */}
-      {[
-        {
-          namespace: '/admin',
-          title: 'Admin',
-          description:
-            'Manage, edit, and query your Nexus Delta knowledge graph',
-          background: backgrounds[0],
-        },
-        {
-          namespace: '/studios',
-          title: 'Studios',
-          description:
-            'Visualize query results from Nexus Delta in customizable views',
-          background: backgrounds[1],
-        },
-      ].map(HomeLinkCard)}
+      {subAppsConfig.map(subApp => {
+        return subApp.requireLogin && !useLoggedIn ? null : (
+          <HomeLinkCard {...subApp} />
+        );
+      })}
     </div>
   );
 };

@@ -8,18 +8,21 @@ const subAppType = 'internal';
 const title = 'Studios';
 const namespace = 'studios';
 const icon = require('../../shared/images/gridIcon.svg');
+const requireLogin = false;
 
 const studioLegacySubappProps = {
   subAppType,
   title,
   namespace,
   icon,
+  requireLogin,
 };
 
 export const StudioLegacySubappContext = React.createContext<{
   title: string;
   namespace: string;
   icon: string;
+  requireLogin: boolean;
 }>(studioLegacySubappProps);
 
 export function useStudioLegacySubappContext() {

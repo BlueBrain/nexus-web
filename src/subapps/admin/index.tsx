@@ -11,18 +11,21 @@ const subAppType = 'internal';
 const title = 'Admin';
 const namespace = 'admin';
 const icon = require('../../shared/images/dbIcon.svg');
+const requireLogin = true;
 
 const adminSubappProps = {
   subAppType,
   title,
   namespace,
   icon,
+  requireLogin,
 };
 
 export const AdminSubappContext = React.createContext<{
   title: string;
   namespace: string;
   icon: string;
+  requireLogin: boolean;
 }>(adminSubappProps);
 
 export function useAdminSubappContext() {

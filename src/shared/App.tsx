@@ -2,6 +2,7 @@ import * as React from 'react';
 import GalleryView from './views/GalleryView';
 import routes from '../shared/routes';
 import FusionMainLayout from './layouts/FusionMainLayout';
+import SubApps, { SubAppObject, SubApp } from '../subapps/index';
 import SubAppsView from './views/SubAppsView';
 import './App.less';
 import useSubApps from './hooks/useSubApps';
