@@ -61,11 +61,9 @@ const HomeLinkCard: React.FunctionComponent<{
 };
 
 const Home: React.FunctionComponent = () => {
-  const useLoggedIn = useSelector(
+  const userLoggedIn = useSelector(
     ({ oidc }: RootState) => oidc && oidc.user !== undefined
   );
-
-  console.log('useLoggedIn', useLoggedIn);
 
   return (
     <div
@@ -73,7 +71,7 @@ const Home: React.FunctionComponent = () => {
       style={{ display: 'flex', flexWrap: 'wrap' }}
     >
       {subAppsConfig.map(subApp => {
-        return subApp.requireLogin && !useLoggedIn ? null : (
+        return subApp.requireLogin && !userLoggedIn ? null : (
           <HomeLinkCard {...subApp} />
         );
       })}
