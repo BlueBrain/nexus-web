@@ -9,7 +9,7 @@ export type SubAppObject = {
   routes: RouteProps[];
   icon?: string;
   url?: string;
-  requireLogin: boolean;
+  requireLogin?: boolean;
 };
 
 export type SubApp = () => SubAppObject;

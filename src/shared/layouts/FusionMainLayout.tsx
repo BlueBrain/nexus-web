@@ -58,7 +58,7 @@ export type SubAppProps = {
   route: string;
   icon: any;
   url?: string;
-  requireLogin: boolean;
+  requireLogin?: boolean;
 };
 
 const homeIcon = require('../images/homeIcon.svg');
@@ -203,9 +203,9 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
               selectedKeys={[selectedItem.key]}
               onClick={onSelectSubAbpp}
             >
-              {subApps.map(subApp => (
-                <Menu.Item key={subApp.key}>
-                  {subApp.subAppType === 'external' && (
+              {subApps.map(subApp => {
+                return subApp.subAppType === 'external' ? (
+                  <Menu.Item key={subApp.key}>
                     <div className="menu-item">
                       <a
                         target="_blank"
@@ -216,31 +216,26 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
                         {!collapsed && <span>{subApp.label}</span>}
                       </a>
                     </div>
-                  )}
-                  {subApp.subAppType !== 'external' &&
-                  subApp.requireLogin &&
-                  !authenticated ? null : (
-                    <Menu.Item key={subApp.key}>
-                      <div className="menu-item">
-                        <img className="menu-icon" src={subApp.icon} />
-                        {!collapsed && <span>{subApp.label}</span>}
-                      </div>
-                      {selectedItem.key === subApp.key && (
-                        <div
-                          className={`indicator${
-                            collapsed ? ' collapsed' : ''
-                          }`}
-                        />
-                      )}
-                    </Menu.Item>
-                  )}
-                  {selectedItem.key === subApp.key && (
-                    <div
-                      className={`indicator${collapsed ? ' collapsed' : ''}`}
-                    />
-                  )}
-                </Menu.Item>
-              ))}
+                    {selectedItem.key === subApp.key && (
+                      <div
+                        className={`indicator${collapsed ? ' collapsed' : ''}`}
+                      />
+                    )}
+                  </Menu.Item>
+                ) : subApp.requireLogin && !authenticated ? null : (
+                  <Menu.Item key={subApp.key}>
+                    <div className="menu-item">
+                      <img className="menu-icon" src={subApp.icon} />
+                      {!collapsed && <span>{subApp.label}</span>}
+                    </div>
+                    {selectedItem.key === subApp.key && (
+                      <div
+                        className={`indicator${collapsed ? ' collapsed' : ''}`}
+                      />
+                    )}
+                  </Menu.Item>
+                );
+              })}
             </Menu>
             <div className="menu-extras-container">
               <div className="bottom-item-wrapper">
