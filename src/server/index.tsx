@@ -25,6 +25,8 @@ const layoutSettings = {
   logoImg: process.env.LOGO_IMG || '',
   logoLink: process.env.LOGO_LINK || 'https://www.bluebrainnexus.io/',
 };
+const subAppsManifestPath =
+  process.env.SUB_APPS_MANIFEST_PATH || '/public/sub-apps';
 
 // remove trailing slash
 const base: string = rawBase.replace(/\/$/, '');
@@ -61,6 +63,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
     config: {
       layoutSettings,
       pluginsManifestPath,
+      subAppsManifestPath,
       apiEndpoint: process.env.API_ENDPOINT || '/',
       basePath: base,
       clientId: process.env.CLIENT_ID || 'nexus-web',

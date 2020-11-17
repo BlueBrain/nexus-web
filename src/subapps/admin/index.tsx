@@ -7,11 +7,13 @@ import ElasticSearchQueryView from './views/ElasticSearchQueryView';
 import SparqlQueryView from './views/SparqlQueryView';
 import ACLsView from './views/ACLsView';
 
+const subAppType = 'internal';
 const title = 'Admin';
 const namespace = 'admin';
 const icon = require('../../shared/images/dbIcon.svg');
 
 const adminSubappProps = {
+  subAppType,
   title,
   namespace,
   icon,

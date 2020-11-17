@@ -52,10 +52,12 @@ export type ConsentType = {
 };
 
 export type SubAppProps = {
+  subAppType: string;
   label: string;
   key: string;
   route: string;
   icon: any;
+  url?: string;
 };
 
 const homeIcon = require('../images/homeIcon.svg');
@@ -65,6 +67,8 @@ const homeApp = {
   key: 'home',
   route: '/',
   icon: homeIcon,
+  subAppType: 'internal',
+  url: undefined,
 };
 
 const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
@@ -157,11 +161,10 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   const onSelectSubAbpp = (data: any) => {
     const item = subApps.find(subApp => subApp.key === data.key);
     setSelectedItem(item as SubAppProps);
-    if (item) {
+    if (item && item.subAppType === 'internal') {
       goTo(item.route);
     }
   };
-
   return (
     <>
       <SeoHeaders />
@@ -199,11 +202,24 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
             >
               {subApps.map(subApp => (
                 <Menu.Item key={subApp.key}>
-                  <div className="menu-item">
-                    {/* TODO: change icons color with CSS to blue when it is selected https://github.com/BlueBrain/nexus/issues/1324 */}
-                    <img className="menu-icon" src={subApp.icon} />
-                    {!collapsed && <span>{subApp.label}</span>}
-                  </div>
+                  {subApp.subAppType === 'external' ? (
+                    <div className="menu-item">
+                      <a
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href={subApp.url ? subApp.url : ''}
+                      >
+                        <img className="menu-icon" src={subApp.icon} />
+                        {!collapsed && <span>{subApp.label}</span>}
+                      </a>
+                    </div>
+                  ) : (
+                    <div className="menu-item">
+                      {/* TODO: change icons color with CSS to blue when it is selected https://github.com/BlueBrain/nexus/issues/1324 */}
+                      <img className="menu-icon" src={subApp.icon} />
+                      {!collapsed && <span>{subApp.label}</span>}
+                    </div>
+                  )}
                   {selectedItem.key === subApp.key && (
                     <div
                       className={`indicator${collapsed ? ' collapsed' : ''}`}

@@ -19,6 +19,6 @@ describe('Admin SubApp', () => {
   });
 
   it('allows to search for an organization', () => {
-    cy.get('input').type('bbp');
+    cy.get('input.ant-input').should('be.visible');
   });
 });
