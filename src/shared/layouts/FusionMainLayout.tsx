@@ -59,6 +59,7 @@ export type SubAppProps = {
   icon: any;
   url?: string;
   requireLogin?: boolean;
+  description?: string;
 };
 
 const homeIcon = require('../images/homeIcon.svg');

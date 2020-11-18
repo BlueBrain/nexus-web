@@ -1,10 +1,12 @@
 import * as React from 'react';
+
 import GalleryView from './views/GalleryView';
 import routes from '../shared/routes';
 import FusionMainLayout from './layouts/FusionMainLayout';
 import SubAppsView from './views/SubAppsView';
-import './App.less';
 import useSubApps from './hooks/useSubApps';
+
+import './App.less';
 
 const App: React.FC = () => {
   // TODO log the error in to sentry.

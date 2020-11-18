@@ -9,6 +9,8 @@ const title = 'Studios';
 const namespace = 'studios';
 const icon = require('../../shared/images/gridIcon.svg');
 const requireLogin = false;
+const description =
+  'Visualize query results from Nexus Delta in customizable views';
 
 const studioLegacySubappProps = {
   subAppType,
@@ -16,6 +18,7 @@ const studioLegacySubappProps = {
   namespace,
   icon,
   requireLogin,
+  description,
 };
 
 export const StudioLegacySubappContext = React.createContext<{
@@ -23,6 +26,7 @@ export const StudioLegacySubappContext = React.createContext<{
   namespace: string;
   icon: string;
   requireLogin: boolean;
+  description: string;
 }>(studioLegacySubappProps);
 
 export function useStudioLegacySubappContext() {

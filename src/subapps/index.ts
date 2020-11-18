@@ -10,6 +10,7 @@ export type SubAppObject = {
   icon?: string;
   url?: string;
   requireLogin?: boolean;
+  description?: string;
 };
 
 export type SubApp = () => SubAppObject;

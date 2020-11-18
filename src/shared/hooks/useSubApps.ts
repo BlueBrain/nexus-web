@@ -84,6 +84,7 @@ const useSubApps = () => {
       route: `/${subApp.namespace}`,
       icon: subApp.icon,
       requireLogin: subApp.requireLogin,
+      description: subApp.description,
     }));
   }, [subAppsState]);
 
