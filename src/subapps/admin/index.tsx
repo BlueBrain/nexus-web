@@ -11,18 +11,24 @@ const subAppType = 'internal';
 const title = 'Admin';
 const namespace = 'admin';
 const icon = require('../../shared/images/dbIcon.svg');
+const requireLogin = true;
+const description = 'Manage, edit, and query your Nexus Delta knowledge graph';
 
 const adminSubappProps = {
   subAppType,
   title,
   namespace,
   icon,
+  requireLogin,
+  description,
 };
 
 export const AdminSubappContext = React.createContext<{
   title: string;
   namespace: string;
   icon: string;
+  requireLogin: boolean;
+  description: string;
 }>(adminSubappProps);
 
 export function useAdminSubappContext() {

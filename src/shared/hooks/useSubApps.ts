@@ -67,6 +67,7 @@ const useSubApps = () => {
     .map((subApp: SubAppObject) => {
       return subApp.routes.map((route: any) => {
         route.path = `/${subApp.namespace}${route.path}`;
+        route.requireLogin = subApp.requireLogin;
         return route;
       });
     })
@@ -82,6 +83,8 @@ const useSubApps = () => {
       url: subApp.url,
       route: `/${subApp.namespace}`,
       icon: subApp.icon,
+      requireLogin: subApp.requireLogin,
+      description: subApp.description,
     }));
   }, [subAppsState]);
 

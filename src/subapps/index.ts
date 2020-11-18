@@ -9,6 +9,8 @@ export type SubAppObject = {
   routes: RouteProps[];
   icon?: string;
   url?: string;
+  requireLogin?: boolean;
+  description?: string;
 };
 
 export type SubApp = () => SubAppObject;
