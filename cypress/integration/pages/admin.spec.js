@@ -6,6 +6,7 @@ describe('Admin SubApp', () => {
   });
 
   it('asks user to log in', () => {
-    cy.url().should('include', '/login');
+    cy.wait(1500);
+    cy.url().should('include', '/login?destination=admin');
   });
 });
