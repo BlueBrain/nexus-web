@@ -29,17 +29,6 @@ const useSubApps = () => {
   const subAppsManifestPath =
     useSelector((state: RootState) => state.config.subAppsManifestPath) || [];
   const [subAppError, setSubAppError] = React.useState<Error>();
-  const [disabledSubApps, setDisabledSubApps] = React.useState<string[]>([]);
-  // Invoke SubApps
-  const subApps = Array.from(SubApps.values()).reduce(
-    (memo: Map<string, SubAppObject>, subApp: SubApp) => {
-      const app = subApp();
-      memo.set(app.namespace, app);
-      return memo;
-    },
-    new Map()
-  );
-
   const [subAppsState, setSubAppsState] = React.useState<
     Map<string, SubAppObject>
   >(new Map());
@@ -79,6 +68,7 @@ const useSubApps = () => {
           }
 
           const subApps = new Map(addExternalSubApps(apps, externalSubApps));
+
           setSubAppsState(subApps);
         })
         .catch(error => {
@@ -89,8 +79,7 @@ const useSubApps = () => {
     }
   }, []);
 
-  const subAppRoutes = Array.from(subApps.values())
-    .filter(subApp => !disabledSubApps.includes(subApp.title))
+  const subAppRoutes = Array.from(subAppsState.values())
     .map((subApp: SubAppObject) => {
       return subApp.routes.map((route: any) => {
         route.path = `/${subApp.namespace}${route.path}`;
@@ -103,18 +92,16 @@ const useSubApps = () => {
     }, []);
 
   const subAppProps = React.useMemo(() => {
-    return Array.from(subAppsState.values())
-      .filter(subApp => !disabledSubApps.includes(subApp.title))
-      .map(subApp => ({
-        label: subApp.title,
-        key: subApp.title,
-        subAppType: subApp.subAppType,
-        url: subApp.url,
-        route: `/${subApp.namespace}`,
-        icon: subApp.icon,
-        requireLogin: subApp.requireLogin,
-        description: subApp.description,
-      }));
+    return Array.from(subAppsState.values()).map(subApp => ({
+      label: subApp.title,
+      key: subApp.title,
+      subAppType: subApp.subAppType,
+      url: subApp.url,
+      route: `/${subApp.namespace}`,
+      icon: subApp.icon,
+      requireLogin: subApp.requireLogin,
+      description: subApp.description,
+    }));
   }, [subAppsState]);
 
   return {
