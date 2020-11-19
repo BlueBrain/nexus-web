@@ -4,6 +4,8 @@ describe('Admin SubApp', () => {
   it('asks user to log in', () => {
     cy.visit(adminSubApp);
     cy.wait(3000);
-    cy.url().should('include', '/login?destination=admin');
+    cy.location().should(loc => {
+      expect(loc.pathname).to.eq('/login');
+    });
   });
 });
