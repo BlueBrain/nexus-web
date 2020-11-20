@@ -7,6 +7,7 @@ import './Login.less';
 const logo = require('../../images/logo.svg');
 
 export interface LoginProps {
+  logoImgUrl?: string;
   realms: string[];
   selectedRealm?: string;
   onLogin?(e: React.SyntheticEvent): void;
@@ -14,6 +15,7 @@ export interface LoginProps {
 }
 
 const Login: React.FunctionComponent<LoginProps> = ({
+  logoImgUrl,
   realms,
   selectedRealm,
   onLogin = () => {},
@@ -42,7 +44,7 @@ const Login: React.FunctionComponent<LoginProps> = ({
   return (
     <div className="Login">
       <Card
-        cover={<img className="logo" alt="Nexus logo" src={logo} />}
+        cover={<img src={logo} className="login-logo" alt="Logo" />}
         size="small"
         bodyStyle={{ borderTop: '1px solid rgba(0, 0, 0, 0.10)' }}
       >
