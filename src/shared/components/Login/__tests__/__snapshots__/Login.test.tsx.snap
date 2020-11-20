@@ -19,7 +19,7 @@ exports[`login component should render correctly 1`] = `
       }
       cover={
         <img
-          alt="Logo"
+          alt="Nexus logo"
           className="login-logo"
           src="/mock/path"
         />
@@ -33,7 +33,7 @@ exports[`login component should render correctly 1`] = `
           className="ant-card-cover"
         >
           <img
-            alt="Logo"
+            alt="Nexus logo"
             className="login-logo"
             src="/mock/path"
           />
@@ -218,7 +218,7 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
       }
       cover={
         <img
-          alt="Logo"
+          alt="Nexus logo"
           className="login-logo"
           src="/mock/path"
         />
@@ -232,7 +232,7 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
           className="ant-card-cover"
         >
           <img
-            alt="Logo"
+            alt="Nexus logo"
             className="login-logo"
             src="/mock/path"
           />
