@@ -5,6 +5,7 @@ import {
   SelectQueryResponse,
   SparqlViewQueryResponse,
   Resource,
+  View,
 } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { omit } from 'lodash';
@@ -45,6 +46,14 @@ const DashboardResultsContainer: React.FunctionComponent<{
   const history = useHistory();
   const location = useLocation();
 
+  const [view, setView] = React.useState<View>();
+
+  React.useEffect(() => {
+    nexus.View.get(orgLabel, projectLabel, viewId).then(result => {
+      setView(result);
+    });
+  }, [viewId]);
+
   const goToStudioResource = (selfUrl: string) => {
     nexus
       .httpGet({
@@ -69,58 +78,63 @@ const DashboardResultsContainer: React.FunctionComponent<{
     if (error) {
       setError(undefined);
     }
+    if (view && view['@type']?.includes('ElasticSearchView')) {
+      // TODO : Execute an ES query and implement display logic.
+      setItems([]);
+    } else {
+      nexus.View.sparqlQuery(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(viewId),
+        dataQuery
+      )
+        .then((result: SparqlViewQueryResponse) => {
+          const data: SelectQueryResponse = result as SelectQueryResponse;
+          const tempHeaderProperties: {
+            title: string;
+            dataIndex: string;
+          }[] = data.head.vars
+            .filter(
+              // we don't want to display total or self url in result table
+              (headVar: string) => !(headVar === 'total' || headVar === 'self')
+            )
+            .map((headVar: string) => ({
+              title: camelCaseToLabelString(headVar), // TODO: get the matching title from somewhere?
+              dataIndex: headVar,
+            }));
+          setHeaderProperties(tempHeaderProperties);
+          // build items
+          const tempItems = data.results.bindings
+            // we only want resources
+            .filter((binding: Binding) => binding.self)
+            .map((binding: Binding, index: number) => {
+              // let's get the value for each headerProperties
+              const properties = tempHeaderProperties.reduce(
+                (prev, curr) => ({
+                  ...prev,
+                  [curr.dataIndex]:
+                    (binding[curr.dataIndex] &&
+                      binding[curr.dataIndex].value) ||
+                    undefined,
+                }),
+                {}
+              );
+              // return item data
 
-    nexus.View.sparqlQuery(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(viewId),
-      dataQuery
-    )
-      .then((result: SparqlViewQueryResponse) => {
-        const data: SelectQueryResponse = result as SelectQueryResponse;
-        const tempHeaderProperties: {
-          title: string;
-          dataIndex: string;
-        }[] = data.head.vars
-          .filter(
-            // we don't want to display total or self url in result table
-            (headVar: string) => !(headVar === 'total' || headVar === 'self')
-          )
-          .map((headVar: string) => ({
-            title: camelCaseToLabelString(headVar), // TODO: get the matching title from somewhere?
-            dataIndex: headVar,
-          }));
-        setHeaderProperties(tempHeaderProperties);
-        // build items
-        const tempItems = data.results.bindings
-          // we only want resources
-          .filter((binding: Binding) => binding.self)
-          .map((binding: Binding, index: number) => {
-            // let's get the value for each headerProperties
-            const properties = tempHeaderProperties.reduce(
-              (prev, curr) => ({
-                ...prev,
-                [curr.dataIndex]:
-                  (binding[curr.dataIndex] && binding[curr.dataIndex].value) ||
-                  undefined,
-              }),
-              {}
-            );
-            // return item data
-
-            return {
-              ...properties, // our properties
-              id: index.toString(), // id is used by antd component
-              self: binding.self, // used in order to load details or resource once selected
-              key: index.toString(), // used by react component (unique key)
-            };
-          });
-        setItems(tempItems);
-      })
-      .catch(e => {
-        setError(e);
-      });
-  }, [dataQuery, viewId]);
+              return {
+                ...properties, // our properties
+                id: index.toString(), // id is used by antd component
+                self: binding.self, // used in order to load details or resource once selected
+                key: index.toString(), // used by react component (unique key)
+              };
+            });
+          setItems(tempItems);
+        })
+        .catch(e => {
+          setError(e);
+        });
+    }
+  }, [dataQuery, view, viewId]);
 
   if (error) {
     return (
