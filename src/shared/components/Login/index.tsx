@@ -7,7 +7,6 @@ import './Login.less';
 const logo = require('../../images/logo.svg');
 
 export interface LoginProps {
-  logoImgUrl?: string;
   realms: string[];
   selectedRealm?: string;
   onLogin?(e: React.SyntheticEvent): void;
@@ -15,7 +14,6 @@ export interface LoginProps {
 }
 
 const Login: React.FunctionComponent<LoginProps> = ({
-  logoImgUrl,
   realms,
   selectedRealm,
   onLogin = () => {},
