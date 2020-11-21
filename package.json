@@ -27,6 +27,7 @@
     "@types/cytoscape": "^3.8.5",
     "@types/lodash": "^4.14.149",
     "antd": "^4.7.2",
+    "bodybuilder": "^2.2.25",
     "codemirror": "^5.44.0",
     "connected-react-router": "^6.3.2",
     "cookie-parser": "^1.4.4",
