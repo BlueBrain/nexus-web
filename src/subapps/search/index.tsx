@@ -5,11 +5,18 @@ import SearchView from './views/SearchView';
 const title = 'Search';
 const namespace = 'search';
 const icon = require('../../shared/images/search.svg');
+const requireLogin = false;
+const description =
+  'Search through data added to Nexus Delta by you and others';
+const subAppType = 'internal';
 
 const subappProps = {
+  subAppType,
   title,
   namespace,
   icon,
+  requireLogin,
+  description,
 };
 
 export const SearchSubappContext = React.createContext<{
