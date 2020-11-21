@@ -49,11 +49,11 @@ const SearchView: React.FC = () => {
     // });
     setSearchProps({
       ...searchProps,
+      facetMap,
       pagination: {
         from: 0,
         size: 20,
       },
-      facetMap,
     });
   }, []);
 
@@ -81,8 +81,8 @@ const SearchView: React.FC = () => {
     setSearchProps({
       ...searchProps,
       pagination: {
-        from: searchProps.pagination?.from || 0,
         size,
+        from: searchProps.pagination?.from || 0,
       },
     });
   };

@@ -110,8 +110,6 @@ export default function useSearch() {
 
     const finalQuery = body.build();
 
-    console.log('new view post', { body: finalQuery, searchProps });
-
     return await nexus.View.elasticSearchQuery<SearchResponse<Resource>>(
       org,
       project,
