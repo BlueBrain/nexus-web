@@ -1,10 +1,9 @@
 import * as React from 'react';
 import * as moment from 'moment';
-import { Input, Table, Button } from 'antd';
+import { Input, Table, Button, Tooltip } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 
 import { parseProjectUrl, isISODate } from '../../utils/index';
-import { download } from '../../utils/download';
 
 import './ResultTable.less';
 
@@ -26,6 +25,7 @@ type ResultTableProps = {
   }[];
   pageSize?: number;
   handleClick: (self: string) => void;
+  download: () => void;
 };
 
 const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
@@ -33,6 +33,7 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
   items,
   pageSize = PAGE_SIZE,
   handleClick,
+  download,
 }) => {
   const [searchValue, setSearchValue] = React.useState();
 
@@ -47,27 +48,6 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
   const tableItems = searchValue ? filteredItems : items;
   const total = tableItems.length;
   const showPagination = total > pageSize;
-
-  console.log('tableItems', tableItems);
-
-  const onClickDownload = () => {
-    console.log('hello!');
-
-    const items = tableItems;
-    const replacer = (key: string, value: string) =>
-      value === null ? '' : value; // specify how you want to handle null values here
-    const header = Object.keys(items[0]);
-    let csv = items.map(row =>
-      header
-        .map(fieldName => JSON.stringify(row[fieldName], replacer))
-        .join(',')
-    );
-    csv.unshift(header.join(','));
-    const csvOutput = csv.join('\r\n');
-
-    console.log(csvOutput);
-    download('test.csv', 'text/csv', csvOutput);
-  };
 
   const columnList = [
     ...(headerProperties
@@ -196,19 +176,21 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
                 }}
               />
             )}
-            <div className="total">
-              {total} {`Result${total > 1 ? 's' : ''}`}
+            <div className="controls">
+              <div className="total">
+                {total} {`Result${total > 1 ? 's' : ''}`}
+              </div>
+              <Tooltip title="Download as .csv">
+                <Button
+                  type="default"
+                  icon={<DownloadOutlined />}
+                  onClick={download}
+                />
+              </Tooltip>
             </div>
           </div>
         )}
       />
-      <Button
-        type="default"
-        icon={<DownloadOutlined />}
-        onClick={onClickDownload}
-      >
-        Download as .csv
-      </Button>
     </div>
   );
 };

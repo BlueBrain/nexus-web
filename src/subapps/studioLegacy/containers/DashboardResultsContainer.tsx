@@ -1,14 +1,18 @@
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Spin, Alert, message } from 'antd';
-import ResultsTable from '../../../shared/components/ResultsTable/ResultsTable';
-import { camelCaseToLabelString, parseProjectUrl } from '../../../shared/utils';
+import { Spin, Alert, message, Button, notification } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
 import {
   SelectQueryResponse,
   SparqlViewQueryResponse,
   Resource,
 } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
+import { omit } from 'lodash';
+
+import ResultsTable from '../../../shared/components/ResultsTable/ResultsTable';
+import { camelCaseToLabelString, parseProjectUrl } from '../../../shared/utils';
+import { download } from '../../../shared/utils/download';
 
 export type Binding = {
   [key: string]: {
@@ -34,7 +38,8 @@ const DashboardResultsContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
   viewId: string;
-}> = ({ orgLabel, projectLabel, dataQuery, viewId }) => {
+  dashboardLabel: string;
+}> = ({ orgLabel, projectLabel, dataQuery, viewId, dashboardLabel }) => {
   const [error, setError] = React.useState<NexusSparqlError | Error>();
   const [items, setItems] = React.useState<any[]>();
   const [headerProperties, setHeaderProperties] = React.useState<any[]>();
@@ -104,6 +109,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
               {}
             );
             // return item data
+
             return {
               ...properties, // our properties
               id: index.toString(), // id is used by antd component
@@ -117,6 +123,32 @@ const DashboardResultsContainer: React.FunctionComponent<{
         setError(e);
       });
   }, [dataQuery, viewId]);
+
+  const onClickDownload = () => {
+    if (items) {
+      const itemsToSave = items.map(item => omit(item, 'id', 'key', 'self'));
+      const fieldValue = (key: string, value: string) =>
+        value === null ? '' : value;
+      const header = Object.keys(itemsToSave[0]);
+
+      let csv = items.map(row =>
+        header
+          .map(fieldName => JSON.stringify(row[fieldName], fieldValue))
+          .join(',')
+      );
+
+      csv.unshift(header.join(','));
+
+      const csvOutput = csv.join('\r\n');
+
+      download(`${dashboardLabel}.csv`, 'text/csv', csvOutput);
+
+      notification.success({
+        message: 'Tabled is saved successfully',
+        duration: 5,
+      });
+    }
+  };
 
   if (error) {
     return (
@@ -135,6 +167,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
         headerProperties={headerProperties}
         items={items ? (items as Item[]) : []}
         handleClick={goToStudioResource}
+        download={onClickDownload}
       />
     </Spin>
   );
