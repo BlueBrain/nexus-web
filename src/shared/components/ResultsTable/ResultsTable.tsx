@@ -1,8 +1,10 @@
 import * as React from 'react';
 import * as moment from 'moment';
-import { Input, Table } from 'antd';
+import { Input, Table, Button } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
 
 import { parseProjectUrl, isISODate } from '../../utils/index';
+import { download } from '../../utils/download';
 
 import './ResultTable.less';
 
@@ -45,6 +47,27 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
   const tableItems = searchValue ? filteredItems : items;
   const total = tableItems.length;
   const showPagination = total > pageSize;
+
+  console.log('tableItems', tableItems);
+
+  const onClickDownload = () => {
+    console.log('hello!');
+
+    const items = tableItems;
+    const replacer = (key: string, value: string) =>
+      value === null ? '' : value; // specify how you want to handle null values here
+    const header = Object.keys(items[0]);
+    let csv = items.map(row =>
+      header
+        .map(fieldName => JSON.stringify(row[fieldName], replacer))
+        .join(',')
+    );
+    csv.unshift(header.join(','));
+    const csvOutput = csv.join('\r\n');
+
+    console.log(csvOutput);
+    download('test.csv', 'text/csv', csvOutput);
+  };
 
   const columnList = [
     ...(headerProperties
@@ -179,6 +202,13 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
           </div>
         )}
       />
+      <Button
+        type="default"
+        icon={<DownloadOutlined />}
+        onClick={onClickDownload}
+      >
+        Download as .csv
+      </Button>
     </div>
   );
 };
