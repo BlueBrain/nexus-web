@@ -131,7 +131,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
         value === null ? '' : value;
       const header = Object.keys(itemsToSave[0]);
 
-      let csv = items.map(row =>
+      const csv = items.map(row =>
         header
           .map(fieldName => JSON.stringify(row[fieldName], fieldValue))
           .join(',')
