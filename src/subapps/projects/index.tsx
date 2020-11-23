@@ -7,8 +7,7 @@ import ActivityView from './views/ActivityView';
 
 const title = 'Projects';
 const namespace = 'projects';
-const description =
-  'Create, Edit, Link and Manage  workflows for your projects';
+const description = 'Create activities to support you data driven pipeline';
 const subAppType = 'internal';
 const icon = require('../../shared/images/flowIcon.svg');
 
