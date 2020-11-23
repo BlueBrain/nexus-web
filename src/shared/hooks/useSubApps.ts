@@ -26,44 +26,60 @@ type ExternalSubApp = {
 };
 
 const useSubApps = () => {
-  const [subAppError, setSubAppError] = React.useState<Error>();
-  // Invoke SubApps
-  const subApps = Array.from(SubApps.values()).reduce(
-    (memo: Map<string, SubAppObject>, subApp: SubApp) => {
-      const app = subApp();
-      memo.set(app.namespace, app);
-      return memo;
-    },
-    new Map()
-  );
-
-  const [subAppsState, setSubAppsState] = React.useState<
-    Map<string, SubAppObject>
-  >(subApps);
-
   const subAppsManifestPath =
     useSelector((state: RootState) => state.config.subAppsManifestPath) || [];
+  const [subAppError, setSubAppError] = React.useState<Error>();
+  const [subAppsState, setSubAppsState] = React.useState<
+    Map<string, SubAppObject>
+  >(new Map());
+
   const abortController = new AbortController();
+
   React.useEffect(() => {
+    let apps: Map<string, SubAppObject>;
+
+    apps = Array.from(SubApps.values()).reduce(
+      (memo: Map<string, SubAppObject>, subApp: SubApp) => {
+        const app = subApp();
+        memo.set(app.namespace, app);
+        return memo;
+      },
+      new Map()
+    );
+
     if (subAppsManifestPath) {
       fetch(`${subAppsManifestPath as string}/manifest.json`, {
         signal: abortController.signal,
       })
         .then(resp => resp.json())
         .then(manifest => {
-          const externalSubApps = manifest['subapps'] as ExternalSubApp[];
-          const subApps = new Map(
-            addExternalSubApps(subAppsState, externalSubApps)
-          );
+          const externalSubApps = manifest.subapps as ExternalSubApp[];
+
+          if (manifest.disabled && manifest.disabled.length > 0) {
+            const disabledSubApps = manifest.disabled.map(
+              (subApp: { title: string }) => subApp.title
+            );
+
+            const enabledApps = new Map(
+              [...apps].filter(([k, v]) => !disabledSubApps.includes(k))
+            );
+
+            apps = enabledApps;
+          }
+
+          const subApps = new Map(addExternalSubApps(apps, externalSubApps));
+
           setSubAppsState(subApps);
         })
         .catch(error => {
           setSubAppError(error);
         });
+    } else {
+      setSubAppsState(apps);
     }
   }, []);
 
-  const subAppRoutes = Array.from(subApps.values())
+  const subAppRoutes = Array.from(subAppsState.values())
     .map((subApp: SubAppObject) => {
       return subApp.routes.map((route: any) => {
         route.path = `/${subApp.namespace}${route.path}`;
