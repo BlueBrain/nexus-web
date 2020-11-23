@@ -9,10 +9,11 @@ const { Panel } = Collapse;
 
 import './ResourcesPane.less';
 
-const ResourcesPane: React.FC<{ linkCode(data: CodeResourceData): void }> = ({
-  children,
-  linkCode,
-}) => {
+const ResourcesPane: React.FC<{
+  linkCode(data: CodeResourceData): void;
+  onTabSelect(tabName: string): void;
+  activeTab: string;
+}> = ({ children, linkCode, onTabSelect }) => {
   const paneRef = React.useRef<HTMLDivElement>(null);
   const [paneWidth, setPaneWidth] = React.useState<number>();
   const [showCodeForm, setShowCodeForm] = React.useState<boolean>(false);
@@ -60,21 +61,18 @@ const ResourcesPane: React.FC<{ linkCode(data: CodeResourceData): void }> = ({
           <Panel
             header={
               <div className="resources-pane__header">
-                <span className="resources-pane__pane-name">Resources</span>
+                <span className="resources-pane__pane-name">Details</span>
                 <ActionButton
-                  title="Link code"
-                  onClick={onClickAddCode}
-                  icon="Add"
+                  title="Activities"
+                  onClick={() => onTabSelect('Activities')}
                 />
                 <ActionButton
-                  title="Add notes"
-                  onClick={onClickAddNotes}
-                  icon="Add"
+                  title="Notes"
+                  onClick={() => onTabSelect('Notes')}
                 />
                 <ActionButton
-                  title="Link or add data"
-                  onClick={() => {}}
-                  icon="Add"
+                  title="Inputs"
+                  onClick={() => onTabSelect('Inputs')}
                 />
               </div>
             }
