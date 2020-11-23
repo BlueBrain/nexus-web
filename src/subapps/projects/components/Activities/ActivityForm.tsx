@@ -63,7 +63,7 @@ const ActivityForm: React.FC<{
   const [descriptionError, setDescriptionError] = React.useState<boolean>(
     false
   );
-  const [informedBy, setInformedBy] = React.useState<string | undefined>();
+  const [informedBy, setInformedBy] = React.useState<string>('');
 
   const formItemLayout =
     layout === 'vertical'
@@ -204,7 +204,9 @@ const ActivityForm: React.FC<{
             </Item>
             <Item label="Parent Activity">
               <Select value={parentLabel} disabled>
-                <Select.Option value={parentLabel}>{parentLabel}</Select.Option>
+                <Select.Option value={parentLabel ? parentLabel : ''}>
+                  {parentLabel}
+                </Select.Option>
               </Select>
             </Item>
             <Item label="Informed By">

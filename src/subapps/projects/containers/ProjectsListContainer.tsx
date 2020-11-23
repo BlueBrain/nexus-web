@@ -1,7 +1,11 @@
 import * as React from 'react';
-import { Icon, Button } from 'antd';
+import { Button } from 'antd';
 import { ProjectResponseCommon } from '@bbp/nexus-sdk';
 import { AccessControl } from '@bbp/react-nexus';
+import {
+  SortAscendingOutlined,
+  SortDescendingOutlined,
+} from '@ant-design/icons';
 
 import ProjectMetaContainer from '../containers/ProjectMetaContainer';
 import ProjectCard from '../components/ProjectCard';
@@ -51,13 +55,14 @@ const ProjectsListContainer: React.FC<ProjectsListContainerType> = ({
           onClick={() => {
             sortOrder === 'DSC' ? setSortOrder('ASC') : setSortOrder('DSC');
           }}
-        >
-          {sortOrder === 'ASC' ? (
-            <Icon type="sort-ascending" />
-          ) : (
-            <Icon type="sort-descending" />
-          )}
-        </Button>
+          icon={
+            sortOrder === 'ASC' ? (
+              <SortAscendingOutlined />
+            ) : (
+              <SortDescendingOutlined />
+            )
+          }
+        />
       </div>
       {projects
         .sort((v1, v2) => {
