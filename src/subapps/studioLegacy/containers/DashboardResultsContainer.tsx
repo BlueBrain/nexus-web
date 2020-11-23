@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Spin, Alert, message, Button, notification } from 'antd';
-import { DownloadOutlined } from '@ant-design/icons';
+import { Spin, Alert, message, notification } from 'antd';
 import {
   SelectQueryResponse,
   SparqlViewQueryResponse,
@@ -12,7 +11,6 @@ import { omit } from 'lodash';
 
 import ResultsTable from '../../../shared/components/ResultsTable/ResultsTable';
 import { camelCaseToLabelString, parseProjectUrl } from '../../../shared/utils';
-import { download } from '../../../shared/utils/download';
 
 export type Binding = {
   [key: string]: {
@@ -124,32 +122,6 @@ const DashboardResultsContainer: React.FunctionComponent<{
       });
   }, [dataQuery, viewId]);
 
-  const onClickDownload = () => {
-    if (items) {
-      const itemsToSave = items.map(item => omit(item, 'id', 'key', 'self'));
-      const fieldValue = (key: string, value: string) =>
-        value === null ? '' : value;
-      const header = Object.keys(itemsToSave[0]);
-
-      const csv = items.map(row =>
-        header
-          .map(fieldName => JSON.stringify(row[fieldName], fieldValue))
-          .join(',')
-      );
-
-      csv.unshift(header.join(','));
-
-      const csvOutput = csv.join('\r\n');
-
-      download(`${dashboardLabel}.csv`, 'text/csv', csvOutput);
-
-      notification.success({
-        message: 'Tabled is saved successfully',
-        duration: 5,
-      });
-    }
-  };
-
   if (error) {
     return (
       <Alert
@@ -167,7 +139,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
         headerProperties={headerProperties}
         items={items ? (items as Item[]) : []}
         handleClick={goToStudioResource}
-        download={onClickDownload}
+        tableLabel={dashboardLabel}
       />
     </Spin>
   );
