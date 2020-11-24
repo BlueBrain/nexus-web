@@ -11,7 +11,6 @@ import './App.less';
 const App: React.FC = () => {
   // TODO log the error in to sentry.
   const { subAppProps, subAppRoutes, subAppError } = useSubApps();
-  console.log(subAppRoutes);
 
   // Apply Subapp routes
   const routesWithSubApps = [...routes, ...subAppRoutes];
