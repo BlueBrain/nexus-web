@@ -4,6 +4,7 @@ import { Button } from 'antd';
 import NewActivityContainer from '../containers/NewActivityContainer';
 import TemplatesContainer from '../containers/TemplatesContainer';
 import ProjectMetaContaier from '../containers/ProjectMetaContainer';
+import NotificationsContainer from '../containers/NotificationsContainer';
 
 import './ProjectPanel.less';
 
@@ -48,6 +49,7 @@ const ProjectPanel: React.FC<{
             onClose={() => setShowInfo(false)}
           />
         )}
+        <NotificationsContainer />
       </div>
     </div>
   );
