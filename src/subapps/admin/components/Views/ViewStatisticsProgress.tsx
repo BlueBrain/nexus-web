@@ -15,7 +15,7 @@ export const ViewStatisticsProgress: React.FunctionComponent<ViewStatisticsProgr
   const label =
     percent === 100
       ? `last indexed: ${moment(props.lastIndexed)
-          .startOf()
+          .startOf('days')
           .fromNow()}`
       : 'indexing...';
 
