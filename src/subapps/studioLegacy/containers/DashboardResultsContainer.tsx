@@ -1,14 +1,16 @@
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Spin, Alert, message } from 'antd';
-import ResultsTable from '../../../shared/components/ResultsTable/ResultsTable';
-import { camelCaseToLabelString, parseProjectUrl } from '../../../shared/utils';
+import { Spin, Alert, message, notification } from 'antd';
 import {
   SelectQueryResponse,
   SparqlViewQueryResponse,
   Resource,
 } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
+import { omit } from 'lodash';
+
+import ResultsTable from '../../../shared/components/ResultsTable/ResultsTable';
+import { camelCaseToLabelString, parseProjectUrl } from '../../../shared/utils';
 
 export type Binding = {
   [key: string]: {
@@ -34,7 +36,8 @@ const DashboardResultsContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
   viewId: string;
-}> = ({ orgLabel, projectLabel, dataQuery, viewId }) => {
+  dashboardLabel: string;
+}> = ({ orgLabel, projectLabel, dataQuery, viewId, dashboardLabel }) => {
   const [error, setError] = React.useState<NexusSparqlError | Error>();
   const [items, setItems] = React.useState<any[]>();
   const [headerProperties, setHeaderProperties] = React.useState<any[]>();
@@ -104,6 +107,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
               {}
             );
             // return item data
+
             return {
               ...properties, // our properties
               id: index.toString(), // id is used by antd component
@@ -135,6 +139,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
         headerProperties={headerProperties}
         items={items ? (items as Item[]) : []}
         handleClick={goToStudioResource}
+        tableLabel={dashboardLabel}
       />
     </Spin>
   );
