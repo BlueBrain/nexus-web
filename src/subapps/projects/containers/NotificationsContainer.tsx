@@ -46,7 +46,7 @@ const NotificationsContainer: React.FC<{}> = () => {
     >
       <Badge count={activities.length}>
         <Button
-          icon={<BellOutlined />}
+          icon={<BellOutlined style={{ color: 'inherit' }} />}
           shape="circle"
           style={{ marginLeft: '7px' }}
         />
