@@ -1,4 +1,4 @@
-FROM node:12-alpine as builder
+FROM tarampampam/node:13.1-alpine as builder
 
 WORKDIR /tmp/nexus-web
 COPY . /tmp/nexus-web

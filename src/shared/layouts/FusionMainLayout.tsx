@@ -1,73 +1,29 @@
 import * as React from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
+import { Link, useLocation } from 'react-router-dom';
 import { NexusClient, Identity, Realm } from '@bbp/nexus-sdk';
+import { useNexus } from '@bbp/react-nexus';
 import { UserManager } from 'oidc-client';
 import { Layout, Menu, notification } from 'antd';
+import { RightCircleOutlined, LeftCircleOutlined } from '@ant-design/icons';
+
+import Header from '../components/Header';
+import SeoHeaders from './SeoHeaders';
+import ConsentContainer from '../containers/ConsentContainer';
 import * as configActions from '../store/actions/config';
 import * as authActions from '../store/actions/auth';
-import Header from '../components/Header';
-import getUserManager from '../../client/userManager';
-import { getLogoutUrl, getDestinationParam } from '../utils';
 import { RootState } from '../store/reducers';
+import getUserManager from '../../client/userManager';
+import { getLogoutUrl } from '../utils';
 import { url as githubIssueURL } from '../../../package.json';
 import useLocalStorage from '../hooks/useLocalStorage';
-import ConsentContainer from '../containers/ConsentContainer';
-import SeoHeaders from './SeoHeaders';
-import { useNexus } from '@bbp/react-nexus';
 
 import './FusionMainLayout.less';
-import { Link, useLocation } from 'react-router-dom';
 
 const { Sider, Content } = Layout;
 
-const logo = require('../images/logoDarkBg.svg');
-
-const loginCallBack = async (userManager: UserManager) => {
-  try {
-    const destination = new URL(window.location.href).searchParams.get(
-      'destination'
-    );
-
-    const redirectUri = destination
-      ? `${window.location.origin}/${destination}`
-      : null;
-    userManager &&
-      (await userManager.signinRedirect({
-        redirect_uri: redirectUri,
-      }));
-  } catch (error) {
-    switch (error.message) {
-      case 'Network Error':
-        notification.error({
-          message: 'We could not log you in',
-          description: (
-            <div>
-              <p>
-                Nexus Web could not connect to the openId provider configured
-                for this instance.
-              </p>{' '}
-              <p>Please contact your system administrators.</p>
-            </div>
-          ),
-          duration: 0,
-        });
-        break;
-      default:
-        notification.error({
-          message: 'We could not log you in',
-          description: (
-            <div>
-              <p>An unknown problem occured.</p>{' '}
-              <p>Please contact your system administrators.</p>
-            </div>
-          ),
-          duration: 0,
-        });
-        break;
-    }
-  }
-};
+declare var COMMIT_HASH: string;
 
 export interface FusionMainLayoutProps {
   authenticated: boolean;
@@ -84,6 +40,10 @@ export interface FusionMainLayoutProps {
   subApps: SubAppProps[];
   setPreferredRealm(name: string): void;
   performLogin(): void;
+  layoutSettings: {
+    logoLink: string;
+    logoImg: string;
+  };
 }
 
 export type ConsentType = {
@@ -92,10 +52,14 @@ export type ConsentType = {
 };
 
 export type SubAppProps = {
+  subAppType: string;
   label: string;
   key: string;
   route: string;
   icon: any;
+  url?: string;
+  requireLogin?: boolean;
+  description?: string;
 };
 
 const homeIcon = require('../images/homeIcon.svg');
@@ -105,6 +69,9 @@ const homeApp = {
   key: 'home',
   route: '/',
   icon: homeIcon,
+  subAppType: 'internal',
+  url: undefined,
+  requireLogin: false,
 };
 
 const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
@@ -120,6 +87,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   loginError,
   setPreferredRealm,
   performLogin,
+  layoutSettings,
 }) => {
   const subApps = [homeApp, ...propSubApps];
   const location = useLocation();
@@ -196,7 +164,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   const onSelectSubAbpp = (data: any) => {
     const item = subApps.find(subApp => subApp.key === data.key);
     setSelectedItem(item as SubAppProps);
-    if (item) {
+    if (item && item.subAppType === 'internal') {
       goTo(item.route);
     }
   };
@@ -206,39 +174,98 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
       <SeoHeaders />
       <Layout className="fusion-main-layout">
         <Sider trigger={null} collapsible collapsed={collapsed}>
-          <Link to={'/'}>
+          <a
+            className="logo-link"
+            href={layoutSettings.logoLink}
+            target="_blank"
+          >
             <div className="logo">
               {/* must add inline styling to prevent this big svg from flashing
-            the screen on dev mode before styles are loaded */}
-              <img width="32" height="32" src={logo} alt="Fusion" />
-              {!collapsed && <span className="fusion-title">Fusion</span>}
+               the screen on dev mode before styles are loaded */}
+              <img
+                height="33"
+                src={
+                  layoutSettings.logoImg === ''
+                    ? require('../images/fusion_logo.png')
+                    : layoutSettings.logoImg
+                }
+                alt="Logo"
+              />
             </div>
-          </Link>
-          <Menu
-            theme="dark"
-            mode="inline"
-            defaultSelectedKeys={
-              selectedItem ? [selectedItem.key] : [subApps[0].key]
-            }
-            selectedKeys={[selectedItem.key]}
-            style={{ height: '100vh' }}
-            onClick={onSelectSubAbpp}
-          >
-            {subApps.map(subApp => (
-              <Menu.Item key={subApp.key}>
-                <div className="menu-item">
-                  {/* TODO: change icons color with CSS to blue when it is selected https://github.com/BlueBrain/nexus/issues/1324 */}
-                  <img className="menu-icon" src={subApp.icon} />
-                  {!collapsed && <span>{subApp.label}</span>}
+          </a>
+          <div className="menu-wrapper">
+            <Menu
+              style={{ height: '100vh' }}
+              theme="dark"
+              mode="inline"
+              defaultSelectedKeys={
+                selectedItem ? [selectedItem.key] : [subApps[0].key]
+              }
+              selectedKeys={[selectedItem.key]}
+              onClick={onSelectSubAbpp}
+            >
+              {subApps.map(subApp => {
+                return subApp.subAppType === 'external' ? (
+                  <Menu.Item key={subApp.key}>
+                    <div className="menu-item">
+                      <a
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href={subApp.url ? subApp.url : ''}
+                      >
+                        <img className="menu-icon" src={subApp.icon} />
+                        {!collapsed && <span>{subApp.label}</span>}
+                      </a>
+                    </div>
+                    {selectedItem.key === subApp.key && (
+                      <div
+                        className={`indicator${collapsed ? ' collapsed' : ''}`}
+                      />
+                    )}
+                  </Menu.Item>
+                ) : subApp.requireLogin && !authenticated ? null : (
+                  <Menu.Item key={subApp.key}>
+                    <div className="menu-item">
+                      <img className="menu-icon" src={subApp.icon} />
+                      {!collapsed && <span>{subApp.label}</span>}
+                    </div>
+                    {selectedItem.key === subApp.key && (
+                      <div
+                        className={`indicator${collapsed ? ' collapsed' : ''}`}
+                      />
+                    )}
+                  </Menu.Item>
+                );
+              })}
+            </Menu>
+            <div className="menu-extras-container">
+              <div className="bottom-item-wrapper">
+                <div className="bottom-item">
+                  {!collapsed && (
+                    <>
+                      <span className="footer-note">Powered by </span>
+                      <a href="https://bluebrainnexus.io/" target="_blank">
+                        <img
+                          height="27px"
+                          src={require('../images/logoDarkBg.svg')}
+                        />
+                      </a>
+                    </>
+                  )}
+                  <button
+                    className="menu-collapse-button"
+                    onClick={() => setCollapsed(!collapsed)}
+                  >
+                    {collapsed ? (
+                      <RightCircleOutlined />
+                    ) : (
+                      <LeftCircleOutlined />
+                    )}
+                  </button>
                 </div>
-                {selectedItem.key === subApp.key && (
-                  <div
-                    className={`indicator${collapsed ? ' collapsed' : ''}`}
-                  />
-                )}
-              </Menu.Item>
-            ))}
-          </Menu>
+              </div>
+            </div>
+          </div>
         </Sider>
         <Layout className="site-layout">
           <Header
@@ -264,6 +291,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
             version={deltaVersion}
             githubIssueURL={githubIssueURL}
             consent={consent}
+            commitHash={COMMIT_HASH}
             onClickRemoveConsent={() => setConsent(undefined)}
             onClickSideBarToggle={() => setCollapsed(!collapsed)}
           />
@@ -284,8 +312,11 @@ const mapStateToProps = (state: RootState) => {
       auth.identities.data &&
       auth.identities.data.identities) ||
     [];
+  const { layoutSettings } = config;
+
   return {
     realms,
+    layoutSettings,
     authenticated: oidc.user !== undefined,
     token: oidc.user && oidc.user.access_token,
     name:
@@ -297,7 +328,6 @@ const mapStateToProps = (state: RootState) => {
         endSessionEndpoint: r._endSessionEndpoint,
       }))
     ),
-
     userIdentity: identities[identities.length - 1],
     canLogin: !!(realms.length > 0),
     userManager: getUserManager(state),

@@ -1,10 +1,15 @@
 const path = require('path');
 const webpack = require('webpack');
+const GitRevisionPlugin = require('git-revision-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const devMode = process.env.NODE_ENV !== 'production';
+
+const gitRevisionPlugin = new GitRevisionPlugin({
+  versionCommand: 'describe --tags',
+});
 
 const config = [
   {
@@ -60,8 +65,11 @@ const config = [
       ],
     },
     plugins: [
+      gitRevisionPlugin,
       new webpack.DefinePlugin({
         __isBrowser__: true,
+        COMMIT_HASH: JSON.stringify(gitRevisionPlugin.commithash()),
+        Version: JSON.stringify(gitRevisionPlugin.version()),
       }),
       new MiniCssExtractPlugin(),
     ],

@@ -74,11 +74,11 @@ const ProjectsView: React.FunctionComponent = () => {
         setFormBusy(false);
         goTo(activeOrg._label, newProject._label);
       })
-      .catch((error: Error) => {
+      .catch(error => {
         setFormBusy(false);
         notification.error({
-          message: 'An unknown error occurred',
-          description: error.message,
+          message: 'An error occurred',
+          description: error.message || error.reason,
           duration: 0,
         });
       });
