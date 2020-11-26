@@ -1,19 +1,11 @@
 import * as React from 'react';
 import ReactMde, { SaveImageHandler } from 'react-mde';
-import Handlebars from 'handlebars';
-import * as Showdown from 'showdown';
 import { Button, Spin } from 'antd';
 import { CloseCircleOutlined, SaveOutlined } from '@ant-design/icons';
 import { Resource } from '@bbp/nexus-sdk';
+import { convertMarkdownHandlebarStringWithData } from '../../utils/markdownTemplate';
 
 import 'react-mde/lib/styles/css/react-mde-all.css';
-
-const converter = new Showdown.Converter({
-  tables: true,
-  simplifiedAutoLink: true,
-  strikethrough: true,
-  tasklists: true,
-});
 
 const MarkdownEditorComponent: React.FC<{
   resource: Resource;
@@ -44,7 +36,7 @@ const MarkdownEditorComponent: React.FC<{
         selectedTab={selectedTab}
         onTabChange={setSelectedTab}
         generateMarkdownPreview={async markdown =>
-          converter.makeHtml(Handlebars.compile(markdown)(resource))
+          convertMarkdownHandlebarStringWithData(markdown, resource)
         }
         readOnly={readOnly}
         paste={
