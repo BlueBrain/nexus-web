@@ -2,9 +2,9 @@ import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as bodybuilder from 'bodybuilder';
 
-import useAsyncCall, { AsyncCall } from './useAsyncCall';
 import { parseURL } from '../libs/nexusParse';
 import { Resource } from '@bbp/nexus-sdk';
+import useAsyncCall, { AsyncCall } from '../../../shared/hooks/useAsynCall';
 
 const DEFAULT_PAGE_SIZE = 20;
 
@@ -117,9 +117,10 @@ export default function useSearch() {
     );
   };
 
-  const remoteResponse = useAsyncCall<SearchResponse<Resource>>(searchNexus, [
-    searchProps,
-  ]);
+  const remoteResponse = useAsyncCall<SearchResponse<Resource>, Error>(
+    searchNexus(),
+    [searchProps]
+  );
 
   return [remoteResponse, { searchProps, setSearchProps }] as [
     AsyncCall<SearchResponse<Resource>>,

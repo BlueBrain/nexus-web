@@ -171,7 +171,7 @@ const SearchView: React.FC = () => {
   console.log({ searchData, searchProps });
 
   const suffix = () => {
-    return null;
+    return <p>banana</p>;
   };
 
   // Pagination Props
@@ -279,14 +279,8 @@ const SearchView: React.FC = () => {
                     renderItem={hit => (
                       <List.Item>
                         <div
+                          className="result-preview-card"
                           onClick={handleClickItem(hit._source)}
-                          style={{
-                            borderRadius: '4px',
-                            background: 'white',
-                            // height: '300px',
-                            // width: '200px',
-                            padding: '1em',
-                          }}
                         >
                           <ResultPreviewItemContainer
                             resource={hit._source as Resource}
@@ -294,7 +288,6 @@ const SearchView: React.FC = () => {
                               DefaultResourcePreviewCard
                             }
                           />
-                          {hit._id}
                         </div>
                       </List.Item>
                     )}

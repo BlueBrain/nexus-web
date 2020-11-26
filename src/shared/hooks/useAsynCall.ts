@@ -1,47 +1,43 @@
 import * as React from 'react';
 
-const useAsyncCall = <T, E = Error>(
-  asyncCall: Promise<T>,
-  dependecy: any[]
-) => {
-  const [{ loading, data, error }, setData] = React.useState<{
-    loading: boolean;
-    data: T | null;
-    error: E | null;
-  }>({
-    loading: false,
+export type AsyncCall<T, E = Error> = {
+  loading: boolean;
+  data: T | null;
+  error: E | null;
+};
+
+export default function useAsyncCall<T, E>(
+  remoteAction: Promise<T>,
+  dependency: any[]
+) {
+  const [remoteCall, setRemoteCall] = React.useState<AsyncCall<T, E>>({
+    loading: true,
     data: null,
     error: null,
   });
 
   React.useEffect(() => {
-    setData({
+    setRemoteCall({
+      loading: true,
       data: null,
       error: null,
-      loading: true,
     });
-    asyncCall
+    remoteAction
       .then(data => {
-        setData({
+        setRemoteCall({
           data,
           error: null,
           loading: false,
         });
       })
       .catch(error => {
-        setData({
+        setRemoteCall({
           error,
-          data: null,
           loading: false,
+          data: null,
         });
       });
-  }, dependecy);
+  }, dependency);
 
-  return {
-    loading,
-    data,
-    error,
-  };
-};
-
-export default useAsyncCall;
+  return remoteCall;
+}
