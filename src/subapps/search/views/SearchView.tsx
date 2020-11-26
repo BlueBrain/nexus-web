@@ -1,5 +1,16 @@
 import * as React from 'react';
-import { Layout, Row, Col, Input, List, Spin, Select, Collapse } from 'antd';
+import {
+  Layout,
+  Row,
+  Col,
+  Input,
+  List,
+  Spin,
+  Select,
+  Collapse,
+  Tag,
+  Button,
+} from 'antd';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import useSearch from '../hooks/useSearch';
@@ -157,7 +168,11 @@ const SearchView: React.FC = () => {
     });
   };
 
-  console.log({ searchData });
+  console.log({ searchData, searchProps });
+
+  const suffix = () => {
+    return null;
+  };
 
   // Pagination Props
   const total = searchData.data?.hits.total.value || 0;
@@ -169,7 +184,12 @@ const SearchView: React.FC = () => {
   return (
     <Content style={{ padding: '1em' }}>
       <div style={{ margin: '0 0 1em 0' }}>
-        <Search onSearch={handleSearch} allowClear size="large" />
+        <Search
+          onSearch={handleSearch}
+          allowClear
+          size="large"
+          suffix={suffix}
+        />
       </div>
       <Layout>
         {searchData.data && (
