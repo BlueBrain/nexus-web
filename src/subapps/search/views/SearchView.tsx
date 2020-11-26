@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Row, Col, Input, List, Spin, Select } from 'antd';
+import { Layout, Row, Col, Input, List, Spin, Select, Collapse } from 'antd';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import useSearch from '../hooks/useSearch';
@@ -7,6 +7,8 @@ import FacetItem from '../components/FacetItem';
 import ResourceCardComponent from '../../../shared/components/ResourceCard';
 import { Resource } from '@bbp/nexus-sdk';
 import { CloseCircleOutlined } from '@ant-design/icons';
+import ResultPreviewItemContainer from '../containers/ResultPreviewItemContainer';
+import DefaultResourcePreviewCard from '!!raw-loader!../templates/DefaultResourcePreviewCard.hbs';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -62,6 +64,16 @@ const SearchView: React.FC = () => {
     selectedResource,
     setSelectedResource,
   ] = React.useState<Resource | null>(null);
+
+  React.useEffect(() => {
+    if (!selectedResource) {
+      return;
+    }
+    const [projectLabel, orgLabel] = selectedResource._project
+      .split('/')
+      .reverse();
+    goToResource(orgLabel, projectLabel, selectedResource['@id']);
+  }, [selectedResource]);
 
   const handleClickItem = (resource: Resource) => () => {
     setSelectedResource(resource);
@@ -256,6 +268,12 @@ const SearchView: React.FC = () => {
                             padding: '1em',
                           }}
                         >
+                          <ResultPreviewItemContainer
+                            resource={hit._source as Resource}
+                            defaultPreviewItemTemplate={
+                              DefaultResourcePreviewCard
+                            }
+                          />
                           {hit._id}
                         </div>
                       </List.Item>
@@ -264,26 +282,6 @@ const SearchView: React.FC = () => {
                 </div>
               </Spin>
             </Col>
-            {!!selectedResource && (
-              <Col span={12}>
-                <div
-                  style={{ padding: '1em' }}
-                  onClick={() => {
-                    const [
-                      projectLabel,
-                      orgLabel,
-                    ] = selectedResource._project.split('/').reverse();
-                    goToResource(
-                      orgLabel,
-                      projectLabel,
-                      selectedResource['@id']
-                    );
-                  }}
-                >
-                  <ResourceCardComponent resource={selectedResource} />
-                </div>
-              </Col>
-            )}
           </Row>
         </Content>
       </Layout>

@@ -114,6 +114,7 @@
     "mini-css-extract-plugin": "^0.5.0",
     "null-loader": "^0.1.1",
     "prettier": "^1.16.4",
+    "raw-loader": "^4.0.2",
     "react-docgen-typescript-loader": "^3.0.1",
     "source-map-loader": "^0.2.4",
     "start-server-and-test": "^1.10.10",
