@@ -29,30 +29,35 @@ const useSubApps = () => {
   const subAppsManifestPath =
     useSelector((state: RootState) => state.config.subAppsManifestPath) || [];
   const [subAppError, setSubAppError] = React.useState<Error>();
+  const apps: Map<string, SubAppObject> = Array.from(SubApps.values()).reduce(
+    (memo: Map<string, SubAppObject>, subApp: SubApp) => {
+      const app = subApp();
+      memo.set(app.namespace, app);
+      return memo;
+    },
+    new Map()
+  );
+
   const [subAppsState, setSubAppsState] = React.useState<
     Map<string, SubAppObject>
-  >(new Map());
+  >(apps);
 
   const abortController = new AbortController();
 
   React.useEffect(() => {
-    let apps: Map<string, SubAppObject>;
-
-    apps = Array.from(SubApps.values()).reduce(
-      (memo: Map<string, SubAppObject>, subApp: SubApp) => {
-        const app = subApp();
-        memo.set(app.namespace, app);
-        return memo;
-      },
-      new Map()
-    );
-
     if (subAppsManifestPath) {
       fetch(`${subAppsManifestPath as string}/manifest.json`, {
         signal: abortController.signal,
       })
         .then(resp => resp.json())
         .then(manifest => {
+          let apps: Map<string, SubAppObject> = Array.from(
+            SubApps.values()
+          ).reduce((memo: Map<string, SubAppObject>, subApp: SubApp) => {
+            const app = subApp();
+            memo.set(app.namespace, app);
+            return memo;
+          }, new Map());
           const externalSubApps = manifest.subapps as ExternalSubApp[];
 
           if (manifest.disabled && manifest.disabled.length > 0) {
@@ -74,22 +79,22 @@ const useSubApps = () => {
         .catch(error => {
           setSubAppError(error);
         });
-    } else {
-      setSubAppsState(apps);
     }
   }, []);
 
-  const subAppRoutes = Array.from(subAppsState.values())
-    .map((subApp: SubAppObject) => {
-      return subApp.routes.map((route: any) => {
-        route.path = `/${subApp.namespace}${route.path}`;
-        route.requireLogin = subApp.requireLogin;
-        return route;
-      });
-    })
-    .reduce((acc, val) => {
-      return [...acc, ...val];
-    }, []);
+  const subAppRoutes = React.useMemo(() => {
+    return Array.from(subAppsState.values())
+      .map((subApp: SubAppObject) => {
+        return subApp.routes.map((route: any) => {
+          route.path = `/${subApp.namespace}${route.path}`;
+          route.requireLogin = subApp.requireLogin;
+          return route;
+        });
+      })
+      .reduce((acc, val) => {
+        return [...acc, ...val];
+      }, []);
+  }, [subAppsState]);
 
   const subAppProps = React.useMemo(() => {
     return Array.from(subAppsState.values()).map(subApp => ({
