@@ -11,6 +11,9 @@ export interface ConfigState {
   subAppsManifestPath: string;
   gtmCode?: string;
   studioView?: string;
+  searchSettings?: {
+    searchConfigProject: string;
+  };
   layoutSettings: {
     logoImg: string;
     logoLink: string;
@@ -28,6 +31,9 @@ const initialState: ConfigState = {
   layoutSettings: {
     logoImg: '',
     logoLink: '',
+  },
+  searchSettings: {
+    searchConfigProject: 'webapps/nexus-web',
   },
 };
 

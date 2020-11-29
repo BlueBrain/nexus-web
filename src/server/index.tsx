@@ -25,6 +25,12 @@ const layoutSettings = {
   logoImg: process.env.LOGO_IMG || '',
   logoLink: process.env.LOGO_LINK || 'https://www.bluebrainnexus.io/',
 };
+
+// configure search settings
+const searchSettings = {
+  searchConfigProject: process.env.SEARCH_CONFIG_PROJECT,
+};
+
 const subAppsManifestPath =
   process.env.SUB_APPS_MANIFEST_PATH || '/public/sub-apps';
 
@@ -61,6 +67,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
   const preloadedState: RootState = {
     auth: {},
     config: {
+      searchSettings,
       layoutSettings,
       pluginsManifestPath,
       subAppsManifestPath,
