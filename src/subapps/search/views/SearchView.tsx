@@ -13,13 +13,14 @@ import {
 } from 'antd';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import useSearch from '../hooks/useSearch';
+import * as useSearchQuery from '../hooks/useSearch';
 import FacetItem from '../components/FacetItem';
 import ResourceCardComponent from '../../../shared/components/ResourceCard';
 import { Resource } from '@bbp/nexus-sdk';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import ResultPreviewItemContainer from '../containers/ResultPreviewItemContainer';
 import DefaultResourcePreviewCard from '!!raw-loader!../templates/DefaultResourcePreviewCard.hbs';
+import useSearch from '../../../shared/hooks/useSearch';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -29,7 +30,11 @@ const { Option } = Select;
 const SearchView: React.FC = () => {
   const history = useHistory();
   const location = useLocation();
-  const [searchData, { searchProps, setSearchProps }] = useSearch();
+  const [
+    searchData,
+    { searchProps, setSearchProps },
+  ] = useSearchQuery.default();
+  const searchConfigStuff = useSearch();
 
   React.useEffect(() => {
     const facetMap = new Map();

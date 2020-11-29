@@ -1,6 +1,11 @@
 import { AnyAction } from 'redux';
 import { createFetchReducer, FetchableState } from './utils';
-import { SearchActionTypes, SearchConfigActions } from '../actions/search';
+import {
+  SearchActionTypes,
+  SearchConfigActions,
+  FetchSearchConfigsFulfilledAction,
+  FetchSearchConfigsFailedAction,
+} from '../actions/search';
 
 export const SearchConfigType = 'nxv:SearchConfig';
 

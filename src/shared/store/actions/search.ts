@@ -1,13 +1,13 @@
-import { Action, ActionCreator, Dispatch } from 'redux';
+import { ActionCreator, Dispatch } from 'redux';
 import { ThunkAction } from '..';
 import { RootState } from '../reducers';
 import { SearchConfig, SearchConfigType } from '../reducers/search';
 import { FetchAction, FetchFailedAction, FetchFulfilledAction } from './utils';
 
-export enum SearchActionTypes {
+export const enum SearchActionTypes {
   SEARCH_CONFIG_FETCHING = '@@nexus/SEARCH_CONFIG_FETCHING',
-  SEARCH_CONFIG_FULFILLED = '@@nexus/SEARCH_CONFIG_FETCHING',
-  SEARCH_CONFIG_FAILED = '@@nexus/SEARCH_CONFIG_FETCHING',
+  SEARCH_CONFIG_FULFILLED = '@@nexus/SEARCH_CONFIG_FULFILLED',
+  SEARCH_CONFIG_FAILED = '@@nexus/SEARCH_CONFIG_FAILED',
 }
 
 /**
@@ -15,27 +15,27 @@ export enum SearchActionTypes {
  */
 
 // Fetching
-type FetchSearchConfigsAction = FetchAction<
+export type FetchSearchConfigsAction = FetchAction<
   SearchActionTypes.SEARCH_CONFIG_FETCHING
 >;
-const FetchSearchConfigsAction: ActionCreator<FetchSearchConfigsAction> = () => ({
+const fetchSearchConfigsAction: ActionCreator<FetchSearchConfigsAction> = () => ({
   type: SearchActionTypes.SEARCH_CONFIG_FETCHING,
 });
 
 // Fulfilled
-type FetchSearchConfigsFulfilledAction = FetchFulfilledAction<
+export type FetchSearchConfigsFulfilledAction = FetchFulfilledAction<
   SearchActionTypes.SEARCH_CONFIG_FULFILLED,
   SearchConfig[]
 >;
 const fetchSearchFulfilledAction: ActionCreator<FetchSearchConfigsFulfilledAction> = (
   searchConfigs: SearchConfig[]
 ) => ({
-  type: SearchActionTypes.SEARCH_CONFIG_FETCHING,
+  type: SearchActionTypes.SEARCH_CONFIG_FULFILLED,
   payload: searchConfigs,
 });
 
 // Failed
-type FetchSearchConfigsFailedAction = FetchFailedAction<
+export type FetchSearchConfigsFailedAction = FetchFailedAction<
   SearchActionTypes.SEARCH_CONFIG_FAILED
 >;
 const fetchSearchConfigFailedAction: ActionCreator<FetchFailedAction<
@@ -53,11 +53,11 @@ export const fetchSearchConfigs: ActionCreator<ThunkAction> = () => {
   ): Promise<
     FetchSearchConfigsFulfilledAction | FetchSearchConfigsFailedAction
   > => {
-    dispatch(FetchSearchConfigsAction);
+    dispatch(fetchSearchConfigsAction());
     try {
       const {
         config: {
-          searchSetting: { searchConfigProject },
+          searchSettings: { searchConfigProject },
         },
       } = getState() as RootState;
 

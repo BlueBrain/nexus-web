@@ -199,6 +199,10 @@ if (module.hot) {
   });
 }
 
+// TODO
+// let's render the app before calling this data
+// or show something like an application loading screen
+// to prevent nasty problems like White-screen-of-deathing
 async function main() {
   // remove old token if any
   localStorage.removeItem('nexus__token');
