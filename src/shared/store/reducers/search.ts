@@ -5,6 +5,9 @@ import {
   SearchConfigActions,
   FetchSearchConfigsFulfilledAction,
   FetchSearchConfigsFailedAction,
+  SearchPreferenceActions,
+  SetSearchPreference,
+  SearchPreferenceTypes,
 } from '../actions/search';
 
 export const SearchConfigType = 'nxv:SearchConfig';
@@ -21,10 +24,12 @@ export const DEFAULT_SEARCH_STATE = {
     data: null,
     error: null,
   },
+  searchPreference: null,
 };
 
 export interface SearchState {
   searchConfigs: FetchableState<SearchConfig[]>;
+  searchPreference: string | null;
 }
 
 const searchConfigsReducer = createFetchReducer(
@@ -38,13 +43,22 @@ const searchConfigsReducer = createFetchReducer(
 
 export default function searchReducer(
   state: SearchState = DEFAULT_SEARCH_STATE,
-  action: SearchConfigActions | AnyAction
+  action: SearchConfigActions | SearchPreferenceActions | AnyAction
 ) {
   if (action.type.startsWith('@@nexus/SEARCH_CONFIG')) {
     return {
       ...state,
       searchConfigs: searchConfigsReducer(state.searchConfigs, action),
     };
+  }
+  if (action.type.startsWith('@@nexus/SEARCH_PREFERENCE')) {
+    switch (action.type) {
+      case SearchPreferenceTypes.SEARCH_PREFERENCE_SET:
+        return {
+          ...state,
+          searchPreference: (action as SearchPreferenceActions).payload,
+        };
+    }
   }
   return state;
 }

@@ -1,4 +1,4 @@
-import { ActionCreator, Dispatch } from 'redux';
+import { Action, ActionCreator, AnyAction, Dispatch } from 'redux';
 import { ThunkAction } from '..';
 import { RootState } from '../reducers';
 import { SearchConfig, SearchConfigType } from '../reducers/search';
@@ -10,6 +10,9 @@ export const enum SearchActionTypes {
   SEARCH_CONFIG_FAILED = '@@nexus/SEARCH_CONFIG_FAILED',
 }
 
+export const enum SearchPreferenceTypes {
+  SEARCH_PREFERENCE_SET = '@@nexus/SEARCH_PREFERENCE_SET',
+}
 /**
  * SearchConfig
  */
@@ -44,6 +47,29 @@ const fetchSearchConfigFailedAction: ActionCreator<FetchFailedAction<
   error,
   type: SearchActionTypes.SEARCH_CONFIG_FAILED,
 });
+
+// SEARCH PREFERENCE
+export type SetSearchPreference = AnyAction & {
+  type: SearchPreferenceTypes.SEARCH_PREFERENCE_SET;
+  payload: string;
+};
+export const setSearchPreference: ActionCreator<SetSearchPreference> = (
+  searchPreference: string
+) => ({
+  payload: searchPreference,
+  type: SearchPreferenceTypes.SEARCH_PREFERENCE_SET,
+});
+
+export const SEARCH_PREFENCE_LOCAL_STORAGE_KEY = 'nexusSearchPreference';
+
+export const setSearchPreferenceToLocalStore: ActionCreator<ThunkAction> = (
+  searchPreference: string
+) => {
+  return async (dispatch: Dispatch<any>): Promise<SetSearchPreference> => {
+    localStorage.setItem(SEARCH_PREFENCE_LOCAL_STORAGE_KEY, searchPreference);
+    return dispatch(setSearchPreference(searchPreference));
+  };
+};
 
 export const fetchSearchConfigs: ActionCreator<ThunkAction> = () => {
   return async (
@@ -92,3 +118,4 @@ export type SearchConfigActions =
   | FetchSearchConfigsAction
   | FetchSearchConfigsFulfilledAction
   | FetchSearchConfigsFailedAction;
+export type SearchPreferenceActions = SetSearchPreference;
