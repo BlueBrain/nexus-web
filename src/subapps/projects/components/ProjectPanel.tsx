@@ -49,7 +49,10 @@ const ProjectPanel: React.FC<{
             onClose={() => setShowInfo(false)}
           />
         )}
-        <NotificationsContainer />
+        <NotificationsContainer
+          orgLabel={orgLabel}
+          projectLabel={projectLabel}
+        />
       </div>
     </div>
   );
