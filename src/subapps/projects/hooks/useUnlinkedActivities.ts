@@ -2,6 +2,8 @@ import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 
+import { displayError } from '../components/Notifications';
+
 type UnlinkedActivity = {
   name: string;
   resourceId: string;
@@ -59,7 +61,10 @@ export const useUnlinkedActivities = (
         setUnlinkedActivities(activities);
       })
       .catch(error => {
-        // show error
+        displayError(
+          error,
+          'An error occurred while fetching detached activities'
+        );
       });
   };
 
