@@ -1,4 +1,4 @@
-const fusionConfig = {
+export const fusionConfig = {
   // org and project to store application data
   configOrg: 'webapps',
   configProject: 'nexus-web',
