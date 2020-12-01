@@ -20,6 +20,7 @@ import { url as githubIssueURL } from '../../../package.json';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 import './FusionMainLayout.less';
+import SearchBarContainer from '../containers/SearchBarContainer';
 
 const { Sider, Content } = Layout;
 
@@ -294,7 +295,9 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
             commitHash={COMMIT_HASH}
             onClickRemoveConsent={() => setConsent(undefined)}
             onClickSideBarToggle={() => setCollapsed(!collapsed)}
-          />
+          >
+            <SearchBarContainer />
+          </Header>
           <ConsentContainer consent={consent} updateConsent={setConsent} />
           <Content className="site-layout-background">{children}</Content>
         </Layout>

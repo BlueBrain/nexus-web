@@ -3,16 +3,14 @@ import { createFetchReducer, FetchableState } from './utils';
 import {
   SearchActionTypes,
   SearchConfigActions,
-  FetchSearchConfigsFulfilledAction,
-  FetchSearchConfigsFailedAction,
   SearchPreferenceActions,
-  SetSearchPreference,
   SearchPreferenceTypes,
 } from '../actions/search';
 
 export const SearchConfigType = 'nxv:SearchConfig';
 
 export type SearchConfig = {
+  id: string;
   label: string;
   view: string;
   description?: string;

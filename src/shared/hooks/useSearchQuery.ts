@@ -2,17 +2,11 @@ import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as bodybuilder from 'bodybuilder';
 
-import { parseURL } from '../libs/nexusParse';
 import { Resource } from '@bbp/nexus-sdk';
-import useAsyncCall, { AsyncCall } from '../../../shared/hooks/useAsynCall';
+import useAsyncCall, { AsyncCall } from './useAsynCall';
+import { parseURL } from '../utils/nexusParse';
 
 const DEFAULT_PAGE_SIZE = 20;
-
-const testViewID =
-  'https://staging.nexus.ocp.bbp.epfl.ch/v1/resources/kenny-test-org-october/kenny-test-project/_/f1f30a61-c342-4a4a-aae0-d116a436082b';
-const { org, project, id } = parseURL(testViewID);
-
-// const RESULTS_SIZE = 99999;
 
 interface SearchResponse<T> {
   took: number;
@@ -63,7 +57,7 @@ export type UseSearchProps = {
   >;
 };
 
-export default function useSearch() {
+export default function useSearchQuery(selfURL?: string | null) {
   const [searchProps, setSearchProps] = React.useState<UseSearchProps>({});
   const {
     sort = {
@@ -86,6 +80,10 @@ export default function useSearch() {
   const nexus = useNexusContext();
 
   const searchNexus = async () => {
+    if (!selfURL) {
+      return null;
+    }
+
     const matchQuery = query
       ? ['match', '_original_source', query]
       : ['match_all', {}];
@@ -108,18 +106,19 @@ export default function useSearch() {
     body.size(pagination.size).from(pagination.from);
 
     const finalQuery = body.build();
+    const { org, project, id } = parseURL(selfURL);
 
     return await nexus.View.elasticSearchQuery<SearchResponse<Resource>>(
       org,
       project,
-      id,
+      encodeURIComponent(id),
       finalQuery
     );
   };
 
-  const remoteResponse = useAsyncCall<SearchResponse<Resource>, Error>(
+  const remoteResponse = useAsyncCall<SearchResponse<Resource> | null, Error>(
     searchNexus(),
-    [searchProps]
+    [searchProps, selfURL]
   );
 
   return [remoteResponse, { searchProps, setSearchProps }] as [

@@ -1,4 +1,5 @@
-import { Action, ActionCreator, AnyAction, Dispatch } from 'redux';
+import { Resource } from '@bbp/nexus-sdk';
+import { ActionCreator, AnyAction, Dispatch } from 'redux';
 import { ThunkAction } from '..';
 import { RootState } from '../reducers';
 import { SearchConfig, SearchConfigType } from '../reducers/search';
@@ -89,21 +90,32 @@ export const fetchSearchConfigs: ActionCreator<ThunkAction> = () => {
 
       const queryNexusForSearchConfigs = async () => {
         const [orgLabel, projectLabel] = searchConfigProject.split('/');
-        const { _results: searchConfigs } = await nexus.Resource.list(
-          orgLabel,
-          projectLabel,
-          {
-            type: SearchConfigType,
-          }
+        const { _results } = await nexus.Resource.list(orgLabel, projectLabel, {
+          type: SearchConfigType,
+        });
+
+        const searchConfigs = await Promise.all(
+          _results.map(
+            async ({ '@id': id }) =>
+              await nexus.Resource.get(
+                orgLabel,
+                projectLabel,
+                encodeURIComponent(id)
+              )
+          ) as Promise<
+            Resource<{ label: String; view: string; description?: string }>
+          >[]
         );
+
         return searchConfigs.map(resource => ({
+          id: resource['@id'],
           label: resource.label,
           view: resource.view,
           description: resource.description,
         }));
       };
 
-      const searchConfigs: SearchConfig[] = await queryNexusForSearchConfigs();
+      const searchConfigs = await queryNexusForSearchConfigs();
       return dispatch(fetchSearchFulfilledAction(searchConfigs));
     } catch (error) {
       return dispatch(fetchSearchConfigFailedAction(error));
