@@ -32,12 +32,12 @@ const NotififcationsPopover: React.FC<{
             <p>Created by {getUsername(activity.createdBy)}</p>
           </div>
           <div className="notifications-popover__actions">
-            <Button type="primary" size="small" onClick={onClickLinkActivity}>
+            {/* <Button type="primary" size="small" onClick={onClickLinkActivity}>
               Link
             </Button>
             <Button type="primary" size="small" onClick={onClickNew}>
               New
-            </Button>
+            </Button> */}
           </div>
         </div>
       ))}
