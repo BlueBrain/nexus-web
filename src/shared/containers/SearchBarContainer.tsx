@@ -1,37 +1,38 @@
-import { AutoComplete, Input } from 'antd';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import SearchBar from '../components/SearchBar';
 import useSearchConfigs from '../hooks/useSearchConfigs';
-import { RootState } from '../store/reducers';
+import useSearchQuery from '../hooks/useSearchQuery';
+
+const DEFAULT_SEARCH_BAR_RESULT_SIZE = 20;
 
 const SearchBarContainer: React.FC = () => {
-  const [focused, setFocused] = React.useState(false);
-  const searchConfigs = useSearchConfigs();
-  //   const searchPreference = useSelector(
-  //     (state: RootState) => state.search.searchPreference
-  //   );
+  const { preferedSearchConfig, searchConfigs } = useSearchConfigs();
 
-  console.log({ searchConfigs });
-
-  const searchPreference = useSelector(
-    (state: RootState) => state.search.searchPreference
+  const [searchResponse, { searchProps, setSearchProps }] = useSearchQuery(
+    preferedSearchConfig?.view
   );
 
-  const handleSetFocused = (val: boolean) => () => {
-    setFocused(val);
+  const handleChange = (value: string) => {
+    setSearchProps({
+      query: value,
+      pagination: {
+        from: 0,
+        size: DEFAULT_SEARCH_BAR_RESULT_SIZE,
+      },
+    });
   };
 
+  const handleSubmit = (value: string) => {};
+
   return (
-    <AutoComplete
-      onFocus={handleSetFocused(true)}
-      onBlur={handleSetFocused(false)}
-    >
-      <Input.Search
-        placeholder="Search"
-        enterButton
-        // style={{ width: focused ? '600px' : '400px' }}
-      />
-    </AutoComplete>
+    <SearchBar
+      query={searchProps.query}
+      searchResponse={searchResponse}
+      onChange={handleChange}
+      onSearch={handleSubmit}
+      searchConfigLoading={searchConfigs.isFetching}
+      searchConfigPreference={preferedSearchConfig}
+    />
   );
 };
 

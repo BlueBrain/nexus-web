@@ -25,6 +25,8 @@ export default function useSearchConfigs() {
     dispatch(fetchSearchConfigs());
   }, []);
 
+  const searchConfigsComparator = JSON.stringify(searchConfigs.data);
+
   // Set search preference default if not already set
   React.useEffect(() => {
     if (
@@ -34,7 +36,7 @@ export default function useSearchConfigs() {
     ) {
       setSearchPreference(searchConfigs.data[0].id);
     }
-  }, [preferedSearchConfigID, searchConfigs.data]);
+  }, [preferedSearchConfigID, searchConfigsComparator]);
 
   const setSearchPreference = (preference: string) => {
     dispatch(setSearchPreferenceToLocalStore(preference));
