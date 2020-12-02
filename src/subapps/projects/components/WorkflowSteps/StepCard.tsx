@@ -23,7 +23,7 @@ const StepCard: React.FC<{
   substeps: StepResource[];
 }> = ({ step, projectLabel, orgLabel, substeps }) => {
   const { name, description, status } = step;
-  const activityId = step['@id'];
+  const stepId = step['@id'];
 
   return (
     <div
@@ -32,7 +32,7 @@ const StepCard: React.FC<{
       <div className="step-card__main">
         <div className="step-card__title">
           {status && <StatusIcon status={status} mini={true} />}
-          <Link to={`/workflow/${orgLabel}/${projectLabel}/${activityId}`}>
+          <Link to={`/workflow/${orgLabel}/${projectLabel}/${stepId}`}>
             {name.length > MAX_TITLE_LENGTH ? (
               <Tooltip placement="topRight" title={name}>
                 <h3 className="step-card__name">
