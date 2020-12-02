@@ -125,7 +125,7 @@ const ActivityView: React.FC = () => {
 
   const activityToBreadcrumbItem = (activity: ActivityResource) => ({
     label: activity.name,
-    url: `/projects/${orgLabel}/${projectLabel}/${activity['@id']}`,
+    url: `/workflow/${orgLabel}/${projectLabel}/${activity['@id']}`,
   });
 
   const fetchBreadcrumbs = (
@@ -138,7 +138,7 @@ const ActivityView: React.FC = () => {
 
     const homeCrumb = {
       label: 'Project Home',
-      url: `/projects/${orgLabel}/${projectLabel}`,
+      url: `/workflow/${orgLabel}/${projectLabel}`,
     };
 
     crumbs = [homeCrumb];

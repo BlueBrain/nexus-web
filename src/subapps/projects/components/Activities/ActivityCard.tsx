@@ -30,7 +30,7 @@ const ActivityCard: React.FC<{
       <div className="activity-card__main">
         <div className="activity-card__title">
           <StatusIcon status={status} mini={true} />
-          <Link to={`/projects/${orgLabel}/${projectLabel}/${activityId}`}>
+          <Link to={`/workflow/${orgLabel}/${projectLabel}/${activityId}`}>
             {name.length > MAX_TITLE_LENGTH ? (
               <Tooltip placement="topRight" title={name}>
                 <h3 className="activity-card__name">

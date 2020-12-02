@@ -53,7 +53,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         </div>
       </div>
       <div className="card-section arrow">
-        <Link to={`/projects/${orgLabel}/${name}`}>
+        <Link to={`/workflow/${orgLabel}/${name}`}>
           <img src={arrowIcon} />
         </Link>
       </div>
