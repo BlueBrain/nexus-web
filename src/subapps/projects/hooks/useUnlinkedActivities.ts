@@ -20,18 +20,16 @@ export const useUnlinkedActivities = (
     UnlinkedActivity[]
   >([]);
 
-  const projPrefix = `<https://staging.nexus.ocp.bbp.epfl.ch/v1/vocabs/${orgLabel}/${projectLabel}/>`;
-
   const unlinkedActivitiesQuery = `PREFIX nxv: <https://bluebrain.github.io/nexus/vocabulary/>
-  PREFIX proj: ${projPrefix}
+  PREFIX prov: <http://www.w3.org/ns/prov#>
   SELECT ?resource ?name ?createdBy ?createdAt
   WHERE {
-    { ?resource <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> proj:FusionActivity ;
-                proj:name ?name ;
+    { ?resource <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> prov:Activity ;
+                <http://schema.org/name> ?name ;
                 nxv:createdBy ?createdBy ;
                 nxv:createdAt ?createdAt
     } MINUS { 
-      ?wfstep <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> proj:WorkflowStep ;
+      ?wfstep <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> nxv:WorkflowStep ;
               nxv:activities ?resource .
     }
   } 
