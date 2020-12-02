@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button } from 'antd';
+import { Button, Tooltip } from 'antd';
 import * as moment from 'moment';
 
 import { getUsername } from '../../../shared/utils';
@@ -32,10 +32,13 @@ const NotififcationsPopover: React.FC<{
             <p>Created by {getUsername(activity.createdBy)}</p>
           </div>
           <div className="notifications-popover__actions">
-            {/* <Button type="primary" size="small" onClick={onClickLinkActivity}>
-              Link
-            </Button>
-            <Button type="primary" size="small" onClick={onClickNew}>
+            <Tooltip title="Link this activity to an existing Workflow Step">
+              <Button type="primary" size="small" onClick={onClickLinkActivity}>
+                Link
+              </Button>
+            </Tooltip>
+
+            {/* <Button type="primary" size="small" onClick={onClickNew}>
               New
             </Button> */}
           </div>
