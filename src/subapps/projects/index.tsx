@@ -3,7 +3,7 @@ import { SubApp } from '..';
 
 import ProjectsListView from './views/ProjectsListView';
 import ProjectView from './views/ProjectView';
-import ActivityView from './views/ActivityView';
+import WorkflowStepView from './views/WorkflowStepView';
 
 const title = 'Workflow';
 const namespace = 'workflow';
@@ -56,9 +56,9 @@ const Projects: SubApp = () => {
         component: ProjectsSubappProviderHOC(ProjectView),
       },
       {
-        path: '/:orgLabel/:projectLabel/:activityId',
+        path: '/:orgLabel/:projectLabel/:stepId',
         exact: true,
-        component: ProjectsSubappProviderHOC(ActivityView),
+        component: ProjectsSubappProviderHOC(WorkflowStepView),
       },
     ],
   };

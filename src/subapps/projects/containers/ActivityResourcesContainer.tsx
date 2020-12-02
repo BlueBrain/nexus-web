@@ -7,13 +7,13 @@ import ResourcesList from '../components/ResourcesList';
 import fusionConfig from '../config';
 import { CodeResourceData } from '../components/LinkCodeForm';
 import ResourcesSearch from '../components/ResourcesSearch';
-import { ActivityResource } from '../views/ActivityView';
-import { useActivityResources } from '../hooks/useActivityResources';
+import { StepResource } from '../views/WorkflowStepView';
+import { useActivityResources } from '../hooks/useStepResources';
 
 const ActivityResourcesContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
-  activity: ActivityResource;
+  activity: StepResource;
   linkCodeToActivity: (codeResourceId: string) => void;
 }> = ({ orgLabel, projectLabel, activity, linkCodeToActivity }) => {
   const nexus = useNexusContext();

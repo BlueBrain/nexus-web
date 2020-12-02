@@ -3,106 +3,101 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Drawer, Button } from 'antd';
 
 import { displayError, successNotification } from '../components/Notifications';
-import { ActivityResource } from '../views/ActivityView';
-import ActivityForm from '../components/Activities/ActivityForm';
+import { StepResource } from '../views/WorkflowStepView';
+import ActivityForm from '../components/WorkflowSteps/ActivityForm';
 import fusionConfig from '../config';
 
-const ActivityInfoContainer: React.FC<{
-  activity: ActivityResource;
+const StepInfoContainer: React.FC<{
+  step: StepResource;
   projectLabel: string;
   orgLabel: string;
   onUpdate(): void;
-}> = ({ activity, projectLabel, orgLabel, onUpdate }) => {
+}> = ({ step, projectLabel, orgLabel, onUpdate }) => {
   const nexus = useNexusContext();
 
   const [showForm, setShowForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
   const [parentLabel, setParentLabel] = React.useState<string>();
   const [informedByLabel, setInfomedByLabel] = React.useState<string>();
-  const [originalPayload, setOriginalPayload] = React.useState<
-    ActivityResource
-  >();
+  const [originalPayload, setOriginalPayload] = React.useState<StepResource>();
 
   React.useEffect(() => {
     nexus.Resource.getSource(
       orgLabel,
       projectLabel,
-      encodeURIComponent(activity['@id'])
+      encodeURIComponent(step['@id'])
     )
-      .then(response => setOriginalPayload(response as ActivityResource))
+      .then(response => setOriginalPayload(response as StepResource))
       .catch(error => displayError(error, 'Failed to load original payload'));
 
-    if (activity.hasParent) {
+    if (step.hasParent) {
       nexus.Resource.get(
         orgLabel,
         projectLabel,
-        encodeURIComponent(activity.hasParent['@id'])
+        encodeURIComponent(step.hasParent['@id'])
       )
         .then(response => {
-          const parent = response as ActivityResource;
+          const parent = response as StepResource;
           setParentLabel(parent.name);
         })
         .catch(error => displayError(error, 'Failed to load parent activity'));
     }
 
-    if (activity.wasInformedBy) {
+    if (step.wasInformedBy) {
       nexus.Resource.get(
         orgLabel,
         projectLabel,
-        encodeURIComponent(activity.wasInformedBy['@id'])
+        encodeURIComponent(step.wasInformedBy['@id'])
       )
         .then(response => {
-          const inputActivity = response as ActivityResource;
-          setInfomedByLabel(inputActivity.name);
+          const inputStep = response as StepResource;
+          setInfomedByLabel(inputStep.name);
         })
-        .catch(error => displayError(error, 'Failed to load parent activity'));
+        .catch(error =>
+          displayError(error, 'Failed to load parent Workflow Step')
+        );
     }
-  }, [activity]);
+  }, [step]);
 
-  const updateActivity = (data: any) => {
-    nexus.Resource.update(
-      orgLabel,
-      projectLabel,
-      activity['@id'],
-      activity._rev,
-      {
-        ...originalPayload,
-        ...data,
-        '@type': fusionConfig.activityType,
-      }
-    )
+  const updateStep = (data: any) => {
+    nexus.Resource.update(orgLabel, projectLabel, step['@id'], step._rev, {
+      ...originalPayload,
+      ...data,
+      '@type': fusionConfig.workflowStepType,
+    })
       .then(response => {
         onUpdate();
         setShowForm(false);
-        successNotification(`Activity ${data.name} updated successfully`);
+        successNotification(`Workflow Step ${data.name} updated successfully`);
       })
-      .catch(error => displayError(error, 'Failed to update activity'));
+      .catch(error => displayError(error, 'Failed to update Workflow Step'));
   };
 
   return (
     <div>
-      <Button onClick={() => setShowForm(true)}>Activity Info</Button>
+      <Button onClick={() => setShowForm(true)}>Step Info</Button>
       <Drawer
         visible={showForm}
         destroyOnClose={true}
         onClose={() => setShowForm(false)}
-        title="Edit Activity information"
+        title="Edit Workflow Step information (will be updated soon)"
         placement="right"
         closable
         width={600}
       >
+        {/* TODO: update activity form to be step form  https://github.com/BlueBrain/nexus/issues/1814*/}
         <ActivityForm
           onClickCancel={() => setShowForm(false)}
-          onSubmit={updateActivity}
+          onSubmit={updateStep}
           busy={busy}
           parentLabel={parentLabel}
           informedByLabel={informedByLabel}
           layout="vertical"
-          activity={activity}
+          activity={step}
         />
       </Drawer>
     </div>
   );
 };
 
-export default ActivityInfoContainer;
+export default StepInfoContainer;

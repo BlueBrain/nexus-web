@@ -52,7 +52,7 @@ const TemplatesContainer: React.FC<{}> = () => {
       <ActioButton
         icon="Add"
         onClick={() => setShowTemplates(true)}
-        title="Add activities from template"
+        title="Add steps from template"
       />
       <Modal
         maskClosable

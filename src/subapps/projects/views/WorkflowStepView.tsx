@@ -5,18 +5,18 @@ import { Resource } from '@bbp/nexus-sdk';
 
 import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
-import ActivitiesBoard from '../components/Activities/ActivitiesBoard';
+import StepsBoard from '../components/WorkflowSteps/StepsBoard';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { displayError, successNotification } from '../components/Notifications';
 import { Status } from '../components/StatusIcon';
-import SingleActivityContainer from '../containers/SingleActivityContainer';
-import ActivityInfoContainer from '../containers/ActivityInfoContainer';
+import SingleStepContainer from '../containers/SingleStepContainer';
+import StepInfoContainer from '../containers/StepInfoContainer';
 import { isParentLink } from '../utils';
 import ActivityResourcesContainer from '../containers/ActivityResourcesContainer';
 
-import './ActivityView.less';
+import './WorkflowStepView.less';
 
-export type ActivityResource = Resource<{
+export type StepResource = Resource<{
   hasParent?: {
     '@id': string;
   };
@@ -51,87 +51,85 @@ type BreadcrumbItem = {
   url: string;
 };
 
-const ActivityView: React.FC = () => {
+const WorkflowStepView: React.FC = () => {
   const nexus = useNexusContext();
   const subapp = useProjectsSubappContext();
   const match = useRouteMatch<{
     orgLabel: string;
     projectLabel: string;
-    activityId: string;
-  }>(`/${subapp.namespace}/:orgLabel/:projectLabel/:activityId`);
+    stepId: string;
+  }>(`/${subapp.namespace}/:orgLabel/:projectLabel/:stepId`);
 
-  const [activities, setActivities] = React.useState<ActivityResource[]>([]);
-  const [activity, setActivity] = React.useState<ActivityResource>();
+  const [steps, setSteps] = React.useState<StepResource[]>([]);
+  const [step, setStep] = React.useState<StepResource>();
   const [breadcrumbs, setBreadcrumbs] = React.useState<BreadcrumbItem[]>([]);
   // switch to trigger activities list update
-  const [refreshActivities, setRefreshActivities] = React.useState<boolean>(
-    false
-  );
+  const [refreshSteps, setRefreshSteps] = React.useState<boolean>(false);
   const [siblings, setSiblings] = React.useState<
     { name: string; '@id': string }[]
   >([]);
 
   const projectLabel = match?.params.projectLabel || '';
   const orgLabel = match?.params.orgLabel || '';
-  const activityId = match?.params.activityId || '';
+  const stepId = match?.params.stepId || '';
 
   React.useEffect(() => {
-    nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(activityId))
+    nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(stepId))
       .then(response => {
-        setActivity(response as ActivityResource);
+        setStep(response as StepResource);
         fetchBreadcrumbs(
           orgLabel,
           projectLabel,
-          response as ActivityResource,
+          response as StepResource,
           setBreadcrumbs
         );
       })
       .catch(error => displayError(error, 'Failed to load activity'));
 
     fetchChildren();
-  }, [refreshActivities, activityId]);
+  }, [refreshSteps, stepId]);
 
   const fetchChildren = () => {
     nexus.Resource.links(
       orgLabel,
       projectLabel,
-      encodeURIComponent(activityId),
+      encodeURIComponent(stepId),
       'incoming'
     )
       .then(response => {
         Promise.all(
           response._results
             .filter(link => isParentLink(link))
-            .map(activity => {
+            .map(step => {
               return nexus.Resource.get(
                 orgLabel,
                 projectLabel,
-                encodeURIComponent(activity['@id'])
+                encodeURIComponent(step['@id'])
               );
             })
         )
           .then(response => {
-            const children = response as ActivityResource[];
+            const children = response as StepResource[];
 
-            setActivities(children);
+            setSteps(children);
             setSiblings(
               children.map(child => ({ name: child.name, '@id': child._self }))
             );
           })
-          .catch(error => displayError(error, 'Failed to load activities'));
+          .catch(error => displayError(error, 'Failed to load Workflow Steps'));
       })
-      .catch(error => displayError(error, 'Failed to load activities'));
+      .catch(error => displayError(error, 'Failed to load Workflow Steps'));
   };
 
-  const activityToBreadcrumbItem = (activity: ActivityResource) => ({
-    label: activity.name,
-    url: `/workflow/${orgLabel}/${projectLabel}/${activity['@id']}`,
+  const stepToBreadcrumbItem = (step: StepResource) => ({
+    label: step.name,
+    url: `/workflow/${orgLabel}/${projectLabel}/${step['@id']}`,
   });
 
   const fetchBreadcrumbs = (
     orgLabel: string,
     projectLabel: string,
-    activity: ActivityResource,
+    step: StepResource,
     setBreadcrumbs: (items: BreadcrumbItem[]) => void
   ) => {
     let crumbs = [];
@@ -143,18 +141,18 @@ const ActivityView: React.FC = () => {
 
     crumbs = [homeCrumb];
 
-    const fetchNext = (activity: ActivityResource, acc: BreadcrumbItem[]) => {
-      if (activity.hasParent) {
+    const fetchNext = (step: StepResource, acc: BreadcrumbItem[]) => {
+      if (step.hasParent) {
         nexus.Resource.get(
           orgLabel,
           projectLabel,
-          encodeURIComponent(activity.hasParent['@id'])
+          encodeURIComponent(step.hasParent['@id'])
         )
           .then(response => {
-            const activityResource = response as ActivityResource;
+            const activityResource = response as StepResource;
             // fetch parent of a parent recursively
             fetchNext(activityResource, [
-              activityToBreadcrumbItem(activityResource),
+              stepToBreadcrumbItem(activityResource),
               ...acc,
             ]);
           })
@@ -168,25 +166,21 @@ const ActivityView: React.FC = () => {
       }
     };
 
-    fetchNext(activity, [activityToBreadcrumbItem(activity)]);
+    fetchNext(step, [stepToBreadcrumbItem(step)]);
   };
 
   // TODO: find better sollution for this in future, for example, optimistic update
   const waitAntReloadActivities = () =>
-    setTimeout(() => setRefreshActivities(!refreshActivities), 3500);
+    setTimeout(() => setRefreshSteps(!refreshSteps), 3500);
 
   const reload = () => {
-    setRefreshActivities(!refreshActivities);
+    setRefreshSteps(!refreshSteps);
   };
 
   const linkCodeToActivity = (codeResourceId: string) => {
-    nexus.Resource.getSource(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(activityId)
-    )
+    nexus.Resource.getSource(orgLabel, projectLabel, encodeURIComponent(stepId))
       .then(response => {
-        const payload = response as ActivityResource;
+        const payload = response as StepResource;
 
         if (payload.wasAssociatedWith) {
           payload.wasAssociatedWith = Array.isArray(payload.wasAssociatedWith)
@@ -197,16 +191,10 @@ const ActivityView: React.FC = () => {
         }
 
         return (
-          activity &&
-          nexus.Resource.update(
-            orgLabel,
-            projectLabel,
-            activityId,
-            activity._rev,
-            {
-              ...payload,
-            }
-          )
+          step &&
+          nexus.Resource.update(orgLabel, projectLabel, stepId, step._rev, {
+            ...payload,
+          })
         );
       })
       .then(() =>
@@ -216,46 +204,46 @@ const ActivityView: React.FC = () => {
   };
 
   return (
-    <div className="activity-view">
+    <div className="workflow-step-view">
       <ProjectPanel
         orgLabel={orgLabel}
         projectLabel={projectLabel}
         onUpdate={waitAntReloadActivities}
-        activityLabel={activity && activity.name}
-        activitySelfUrl={activity && activity._self}
+        activityLabel={step && step.name}
+        activitySelfUrl={step && step._self}
         siblings={siblings}
       />
-      <div className="activity-view__panel">
+      <div className="workflow-step-view__panel">
         <Breadcrumbs crumbs={breadcrumbs} />
-        {activity && (
-          <ActivityInfoContainer
-            activity={activity}
+        {step && (
+          <StepInfoContainer
+            step={step}
             projectLabel={projectLabel}
             orgLabel={orgLabel}
             onUpdate={reload}
           />
         )}
       </div>
-      <ActivitiesBoard>
-        {activities.map(subactivity => (
-          <SingleActivityContainer
-            key={`activity-${subactivity['@id']}`}
+      <StepsBoard>
+        {steps.map(substep => (
+          <SingleStepContainer
+            key={`step-${substep['@id']}`}
             orgLabel={orgLabel}
             projectLabel={projectLabel}
-            activity={subactivity}
+            step={substep}
           />
         ))}
-      </ActivitiesBoard>
-      {activity && (
+      </StepsBoard>
+      {step && (
         <ActivityResourcesContainer
           orgLabel={orgLabel}
           projectLabel={projectLabel}
           linkCodeToActivity={linkCodeToActivity}
-          activity={activity}
+          activity={step}
         />
       )}
     </div>
   );
 };
 
-export default ActivityView;
+export default WorkflowStepView;

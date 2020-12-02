@@ -14,7 +14,7 @@ import * as moment from 'moment';
 
 import { Status } from '../StatusIcon';
 import { ActivityMetadata } from '../../containers/NewActivityContainer';
-import { ActivityResource } from '../../views/ActivityView';
+import { StepResource } from '../../views/WorkflowStepView';
 import { isEmptyInput } from '../../utils';
 
 import './ActivityForm.less';
@@ -26,7 +26,7 @@ const ActivityForm: React.FC<{
   parentLabel?: string | undefined;
   layout?: 'vertical' | 'horisontal';
   title?: string;
-  activity?: ActivityResource;
+  activity?: StepResource;
   informedByLabel?: string;
   siblings?: {
     name: string;

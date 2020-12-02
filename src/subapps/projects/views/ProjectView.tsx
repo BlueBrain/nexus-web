@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 
 import { useProjectsSubappContext } from '..';
-import ActivitiesContainer from '../containers/ActivitiesContainer';
+import WorkflowStepsContainer from '../containers/WorkflowStepsContainer';
 
 import './ProjectView.less';
 
@@ -19,7 +19,7 @@ const ProjectView: React.FC = () => {
       {projectLabel && orgLabel ? (
         <div className="project-view__container">
           {orgLabel && projectLabel && (
-            <ActivitiesContainer
+            <WorkflowStepsContainer
               orgLabel={orgLabel}
               projectLabel={projectLabel}
             />
