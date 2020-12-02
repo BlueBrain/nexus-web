@@ -1,3 +1,6 @@
+// const nxv = 'https://bluebrain.github.io/nexus/vocabulary/';
+// const prov = 'http://www.w3.org/ns/prov#';
+
 export const fusionConfig = {
   // org and project to store application data
   configOrg: 'webapps',
@@ -7,8 +10,9 @@ export const fusionConfig = {
   personalOrgPrefix: 'fusion-',
 
   // resource types
+  workflowStepType: 'nxv:WorkflowStep',
   templateType: 'FusionTemplate',
-  activityType: 'FusionActivity',
+  activityType: 'prov:Activity',
   projectMetadataType: 'FusionMetadata',
   fusionProjectTypes: ['FusionMetadata', 'FusionProject'],
   codeType: ['SoftwareSourceCode', 'Entity'],

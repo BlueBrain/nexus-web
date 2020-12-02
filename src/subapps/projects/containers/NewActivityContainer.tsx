@@ -2,12 +2,11 @@ import * as React from 'react';
 import { Modal, notification } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 
-import ActivityForm from '../components/Activities/ActivityForm';
+import ActivityForm from '../components/WorkflowSteps/ActivityForm';
 import ActioButton from '../components/ActionButton';
 import { Status } from '../components/StatusIcon';
 import { displayError } from '../components/Notifications';
-
-const ACTIVITY_TYPE = 'FusionActivity';
+import fusionConfig from '../config';
 
 export type ActivityMetadata = {
   name: string;
@@ -57,7 +56,7 @@ const NewActivityContainer: React.FC<{
     }
 
     nexus.Resource.create(orgLabel, projectLabel, {
-      '@type': ACTIVITY_TYPE,
+      '@type': fusionConfig.workflowStepType,
       ...data,
     })
       .then(() => {
@@ -66,8 +65,8 @@ const NewActivityContainer: React.FC<{
         setBusy(false);
 
         notification.success({
-          message: `Activity ${name} created successfully`,
-          description: 'Updating activities...',
+          message: `New step ${name} created successfully`,
+          description: 'Updating workflow...',
         });
       })
       .catch(error => {
@@ -82,7 +81,7 @@ const NewActivityContainer: React.FC<{
       <ActioButton
         icon="Add"
         onClick={() => setShowForm(true)}
-        title="Add new activity"
+        title="Add step"
       />
       <Modal
         visible={showForm}
@@ -91,8 +90,9 @@ const NewActivityContainer: React.FC<{
         width={1150}
         destroyOnClose={true}
       >
+        {/* TODO: adapt form https://github.com/BlueBrain/nexus/issues/1814 */}
         <ActivityForm
-          title="Create New Activity"
+          title="Create New Step (will be updated soon)"
           onClickCancel={() => setShowForm(false)}
           onSubmit={submitActivity}
           busy={busy}

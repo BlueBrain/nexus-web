@@ -2,15 +2,15 @@ import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { displayError } from '../components/Notifications';
 
-import ActivityCard from '../components/Activities/ActivityCard';
-import { ActivityResource } from '../views/ActivityView';
+import StepCard from '../components/WorkflowSteps/StepCard';
+import { StepResource } from '../views/WorkflowStepView';
 import { isParentLink } from '../utils';
 
-const SignleActivityContainer: React.FC<{
+const SignleStepContainer: React.FC<{
   projectLabel: string;
   orgLabel: string;
-  activity: ActivityResource;
-}> = ({ projectLabel, orgLabel, activity }) => {
+  step: StepResource;
+}> = ({ projectLabel, orgLabel, step }) => {
   const nexus = useNexusContext();
   const [children, setChildren] = React.useState<any[]>([]);
 
@@ -22,7 +22,7 @@ const SignleActivityContainer: React.FC<{
     nexus.Resource.links(
       orgLabel,
       projectLabel,
-      encodeURIComponent(activity['@id']),
+      encodeURIComponent(step['@id']),
       'incoming'
     )
       .then(response =>
@@ -40,22 +40,22 @@ const SignleActivityContainer: React.FC<{
           .then(response => {
             setChildren(response);
           })
-          .catch(error => displayError(error, 'Failed to load activities'))
+          .catch(error => displayError(error, 'Failed to load Workflow Steps'))
       )
-      .catch(error => displayError(error, 'Failed to load activities'));
+      .catch(error => displayError(error, 'Failed to load Workflow Steps'));
   };
 
-  if (!activity) return null;
+  if (!step) return null;
 
   return (
-    <ActivityCard
-      activity={activity}
-      subactivities={children}
-      key={activity['@id']}
+    <StepCard
+      step={step}
+      substeps={children}
+      key={step['@id']}
       projectLabel={projectLabel}
       orgLabel={orgLabel}
     />
   );
 };
 
-export default SignleActivityContainer;
+export default SignleStepContainer;

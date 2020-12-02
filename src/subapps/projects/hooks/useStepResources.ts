@@ -3,10 +3,10 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
 
 import { displayError } from '../components/Notifications';
-import { ActivityResource } from '../views/ActivityView';
+import { StepResource } from '../views/WorkflowStepView';
 
 export const useActivityResources = (
-  activity: ActivityResource,
+  step: StepResource,
   orgLabel: string,
   projectLabel: string,
   typeFilter: string[] | undefined,
@@ -19,28 +19,28 @@ export const useActivityResources = (
 
   React.useEffect(() => {
     fetchLinkedResources();
-  }, [typeFilter, search, activity]);
+  }, [typeFilter, search, step]);
 
   const getLinkedResourcesIds = () => {
     let resources: string[] = [];
 
-    if (activity.used) {
-      resources = Array.isArray(activity.used)
-        ? activity.used.map(resource => resource['@id'])
-        : [activity.used['@id']];
+    if (step.used) {
+      resources = Array.isArray(step.used)
+        ? step.used.map(resource => resource['@id'])
+        : [step.used['@id']];
     }
 
-    if (activity.contribution) {
-      resources.push(activity.contribution.agent['@id']);
+    if (step.contribution) {
+      resources.push(step.contribution.agent['@id']);
     }
 
-    if (activity.wasAssociatedWith) {
-      resources = Array.isArray(activity.wasAssociatedWith)
+    if (step.wasAssociatedWith) {
+      resources = Array.isArray(step.wasAssociatedWith)
         ? [
             ...resources,
-            ...activity.wasAssociatedWith.map(resource => resource['@id']),
+            ...step.wasAssociatedWith.map(resource => resource['@id']),
           ]
-        : [...resources, activity.wasAssociatedWith['@id']];
+        : [...resources, step.wasAssociatedWith['@id']];
     }
 
     return resources;
