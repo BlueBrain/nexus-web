@@ -63,7 +63,7 @@ const WorkflowStepView: React.FC = () => {
   const [steps, setSteps] = React.useState<StepResource[]>([]);
   const [step, setStep] = React.useState<StepResource>();
   const [breadcrumbs, setBreadcrumbs] = React.useState<BreadcrumbItem[]>([]);
-  // switch to trigger activities list update
+  // switch to trigger step list update
   const [refreshSteps, setRefreshSteps] = React.useState<boolean>(false);
   const [siblings, setSiblings] = React.useState<
     { name: string; '@id': string }[]

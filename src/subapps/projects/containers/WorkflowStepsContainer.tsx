@@ -15,7 +15,7 @@ const WorkflowStepContainer: React.FC<{
   const nexus = useNexusContext();
 
   const [steps, setSteps] = React.useState<StepResource[]>([]);
-  // switch to trigger activities list update
+  // switch to trigger step list update
   const [refreshSteps, setRefreshSteps] = React.useState<boolean>(false);
 
   const waitAntReloadActivities = () =>
