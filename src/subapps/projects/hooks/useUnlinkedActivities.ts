@@ -36,10 +36,10 @@ export const useUnlinkedActivities = (
   LIMIT 100`;
 
   React.useEffect(() => {
-    fetchUnlinkedresources();
+    fetchUnlinkedActivities();
   }, []);
 
-  const fetchUnlinkedresources = () => {
+  const fetchUnlinkedActivities = () => {
     nexus.View.sparqlQuery(
       orgLabel,
       projectLabel,

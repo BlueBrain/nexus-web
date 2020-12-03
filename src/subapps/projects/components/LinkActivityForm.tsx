@@ -15,13 +15,31 @@ const LinkActivityForm: React.FC<{
     createdAt: string;
     createdBy: string;
   };
-}> = ({ activity }) => {
+  stepsList: {
+    id: string;
+    name: string;
+  }[];
+  onSubmit: (value: string) => void;
+}> = ({ activity, stepsList, onSubmit }) => {
+  const [selectedStep, setSelectedStep] = React.useState<string>('');
   const { name, createdBy, createdAt } = activity;
 
   const columnLayout = {
     xs: 12,
     sm: 12,
     md: 6,
+  };
+
+  const renderOptions = () => {
+    return stepsList.map(step => (
+      <Option key={step.id} value={step.id}>
+        {step.name}
+      </Option>
+    ));
+  };
+
+  const onClickSave = () => {
+    onSubmit(selectedStep);
   };
 
   return (
@@ -56,13 +74,16 @@ const LinkActivityForm: React.FC<{
       <div className="link-activity-form__selection">
         <div>
           <span className="link-activity-form__label">Link to Step</span>
-          <Select defaultValue="123">
-            <Option value="123">Pre-filled Step</Option>
+          <Select
+            onChange={(value: string) => setSelectedStep(value)}
+            style={{ width: '150px' }}
+          >
+            {renderOptions()}
           </Select>
         </div>
         <div>
           <Button onClick={() => {}}>Cancel</Button>
-          <Button onClick={() => {}} type="primary">
+          <Button onClick={onClickSave} type="primary">
             Save
           </Button>
         </div>
