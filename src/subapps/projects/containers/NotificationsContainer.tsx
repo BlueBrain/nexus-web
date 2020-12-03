@@ -13,9 +13,13 @@ const NotificationsContainer: React.FC<{
 }> = ({ orgLabel, projectLabel }) => {
   const { unlinkedActivities } = useUnlinkedActivities(orgLabel, projectLabel);
   const [showLinkForm, setShowLinkForm] = React.useState<boolean>(false);
+  const [selectedActivity, setSelectedActivity] = React.useState<any>({});
 
-  const linkActivity = () => {
-    console.log('linkActivity');
+  const linkActivity = (id: string) => {
+    setSelectedActivity(
+      unlinkedActivities.find(activity => activity.resourceId === id)
+    );
+
     setShowLinkForm(true);
   };
 
@@ -55,10 +59,10 @@ const NotificationsContainer: React.FC<{
         visible={showLinkForm}
         footer={null}
         onCancel={() => setShowLinkForm(false)}
-        width={1000}
+        width={600}
         destroyOnClose={true}
       >
-        <LinkActivityForm />
+        <LinkActivityForm activity={selectedActivity} />
       </Modal>
     </>
   );

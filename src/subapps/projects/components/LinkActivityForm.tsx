@@ -1,89 +1,72 @@
 import * as React from 'react';
-import { Form, Input, Col, Row, Button } from 'antd';
+import { Col, Row, Button, Select } from 'antd';
+import * as moment from 'moment';
+
+import { getUsername } from '../../../shared/utils';
 
 import './LinkActivityForm.less';
 
-const { Item } = Form;
+const { Option } = Select;
 
-const LinkActivityForm: React.FC<{}> = () => {
-  const [name, setName] = React.useState<string>('');
-
-  const formItemLayout = {
-    labelCol: { xs: { span: 24 }, sm: { span: 7 } },
-    wrapperCol: { xs: { span: 24 }, sm: { span: 17 } },
+const LinkActivityForm: React.FC<{
+  activity: {
+    name: string;
+    resourceId: string;
+    createdAt: string;
+    createdBy: string;
   };
+}> = ({ activity }) => {
+  const { name, createdBy, createdAt } = activity;
 
   const columnLayout = {
-    xs: 24,
-    sm: 24,
-    md: 12,
+    xs: 12,
+    sm: 12,
+    md: 6,
   };
 
   return (
     <div className="link-activity-form">
       <h2 className="link-activity-form__title">Link Activity to Step</h2>
-      <Form {...formItemLayout}>
-        <Row gutter={24}>
-          <Col {...columnLayout}>
-            <Item label="Resource Name">
-              <Input
-                value={name}
-                onChange={event => setName(event.target.value)}
-              />
-            </Item>
-            <Item label="Activity Type">
-              <Input
-                value={name}
-                onChange={event => setName(event.target.value)}
-              />
-            </Item>
-            <Item label="Created By">
-              <Input
-                value={name}
-                onChange={event => setName(event.target.value)}
-              />
-            </Item>
-            <Item label="Created On">
-              <Input
-                value={name}
-                onChange={event => setName(event.target.value)}
-              />
-            </Item>
-            <Item label="Link to Step">
-              <Input
-                value={name}
-                onChange={event => setName(event.target.value)}
-              />
-            </Item>
-          </Col>
-          <Col {...columnLayout}>
-            <Item label="Input Data">
-              <Input
-                value={name}
-                onChange={event => setName(event.target.value)}
-              />
-            </Item>
-            <Item label="Output Data">
-              <Input
-                value={name}
-                onChange={event => setName(event.target.value)}
-              />
-            </Item>
-            <Item label="Code">
-              <Input
-                value={name}
-                onChange={event => setName(event.target.value)}
-              />
-            </Item>
-            <div>
-              <Button onClick={() => {}}>Cancel</Button>
-              <Button onClick={() => {}} type="primary">
-                Save
-              </Button>
-            </div>
-          </Col>
-        </Row>
-      </Form>
+
+      <Row gutter={24}>
+        <Col {...columnLayout}>
+          <p>Resource name</p>
+          <p>Activity type</p>
+          <p>Created by</p>
+          <p>Created on</p>
+        </Col>
+        <Col {...columnLayout}>
+          <p>{name}</p>
+          <p>{name}</p>
+          <p>{getUsername(createdBy)}</p>
+          <p>{moment(createdAt).format('L')}</p>
+        </Col>
+        <Col {...columnLayout}>
+          <p>Input data</p>
+          <p>Output data</p>
+          <p>Code</p>
+        </Col>
+        <Col {...columnLayout}>
+          <p>{name}</p>
+          <p>{name}</p>
+          <p>{name}</p>
+        </Col>
+      </Row>
+      <br />
+      <div className="link-activity-form__selection">
+        <div>
+          <span className="link-activity-form__label">Link to Step</span>
+          <Select defaultValue="123">
+            <Option value="123">Pre-filled Step</Option>
+          </Select>
+        </div>
+        <div>
+          <Button onClick={() => {}}>Cancel</Button>
+          <Button onClick={() => {}} type="primary">
+            Save
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
