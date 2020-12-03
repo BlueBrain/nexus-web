@@ -39,8 +39,8 @@ export const useUnlinkedActivities = (
     fetchUnlinkedActivities();
   }, []);
 
-  const fetchUnlinkedActivities = () => {
-    nexus.View.sparqlQuery(
+  const fetchUnlinkedActivities = async () => {
+    await nexus.View.sparqlQuery(
       orgLabel,
       projectLabel,
       DEFAULT_SPARQL_VIEW_ID,

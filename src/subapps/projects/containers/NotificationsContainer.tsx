@@ -7,6 +7,7 @@ import NotififcationsPopover from '../components/NotificationsPopover';
 import { useUnlinkedActivities } from '../hooks/useUnlinkedActivities';
 import LinkActivityForm from '../components/LinkActivityForm';
 import fusionConfig from '../config';
+import { displayError, successNotification } from '../components/Notifications';
 
 const NotificationsContainer: React.FC<{
   orgLabel: string;
@@ -54,9 +55,58 @@ const NotificationsContainer: React.FC<{
     setShowLinkForm(true);
   };
 
+  const updateWorkflowStep = (stepId: string, originalPayload: any) => {
+    console.log('selectedActivity', selectedActivity);
+
+    let updatedPayload = originalPayload;
+
+    if (originalPayload[fusionConfig.activityWorkflowLink]) {
+      updatedPayload[fusionConfig.activityWorkflowLink] = Array.isArray(
+        originalPayload[fusionConfig.activityWorkflowLink]
+      )
+        ? [
+            ...originalPayload[fusionConfig.activityWorkflowLink],
+            {
+              '@id': selectedActivity.resourceId,
+            },
+          ]
+        : [
+            originalPayload[fusionConfig.activityWorkflowLink],
+            {
+              '@id': selectedActivity.resourceId,
+            },
+          ];
+    } else {
+      updatedPayload[fusionConfig.activityWorkflowLink] = {
+        '@id': selectedActivity.resourceId,
+      };
+    }
+
+    console.log('updatedPayload', updatedPayload);
+
+    return nexus.Resource.update(
+      orgLabel,
+      projectLabel,
+      stepId,
+      steps.find(step => step['@id'] === stepId)._rev,
+      {
+        ...updatedPayload,
+      }
+    );
+  };
+
   const linkActivity = (stepId: string) => {
     setShowLinkForm(false);
-    console.log('yo! we need to link this activity to:', stepId);
+
+    nexus.Resource.getSource(orgLabel, projectLabel, encodeURIComponent(stepId))
+      .then(response => updateWorkflowStep(stepId, response))
+      .then(() => successNotification('The activity is linked successfully'))
+      .catch(error =>
+        displayError(
+          error,
+          'Oops! Something got wrong - the Activity is not linked.'
+        )
+      );
   };
 
   // TODO: create a new step from an unlinked activity https://github.com/BlueBrain/nexus/issues/1818
