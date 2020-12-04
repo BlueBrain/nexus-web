@@ -10,6 +10,7 @@ import {
   Collapse,
   Tag,
   Button,
+  Card,
 } from 'antd';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -22,6 +23,7 @@ import DefaultResourcePreviewCard from '!!raw-loader!../templates/DefaultResourc
 import useSearchConfigs from '../../../shared/hooks/useSearchConfigs';
 import useSearchQuery from '../../../shared/hooks/useSearchQuery';
 import { parseURL } from '../../../shared/utils/nexusParse';
+import useQueryString from '../../../shared/hooks/useQueryString';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -32,9 +34,20 @@ const SearchView: React.FC = () => {
   const history = useHistory();
   const location = useLocation();
   const searchConfigStuff = useSearchConfigs();
+  const [queryParams, setQueryString] = useQueryString();
   const [searchData, { searchProps, setSearchProps }] = useSearchQuery(
     searchConfigStuff.preferedSearchConfig?.view
   );
+
+  React.useEffect(() => {
+    const { query } = queryParams;
+    if (query) {
+      setSearchProps({
+        ...searchProps,
+        query,
+      });
+    }
+  }, [location.search]);
 
   React.useEffect(() => {
     const facetMap = new Map();
@@ -175,10 +188,6 @@ const SearchView: React.FC = () => {
 
   console.log({ searchData, searchProps });
 
-  const suffix = () => {
-    return <p>banana</p>;
-  };
-
   // Pagination Props
   const total = searchData.data?.hits.total.value || 0;
   const size = searchProps.pagination?.size || 0;
@@ -188,118 +197,125 @@ const SearchView: React.FC = () => {
 
   return (
     <Content style={{ padding: '1em' }}>
-      <div style={{ margin: '0 0 1em 0' }}>
+      {/* <div style={{ margin: '0 0 1em 0' }}>
         <Search
           onSearch={handleSearch}
           allowClear
           size="large"
           suffix={suffix}
         />
-      </div>
+      </div> */}
       <Layout>
         {searchData.data && (
-          <Sider style={{ padding: '1em', background: 'transparent' }}>
-            {Object.keys(searchData.data?.aggregations || {}).map(aggKey => {
-              if (!searchProps.facetMap) {
-                return null;
-              }
-              searchProps.facetMap.get(aggKey);
+          <Sider
+            style={{
+              padding: '1em',
+              background: 'transparent',
+              boxSizing: 'content-box',
+            }}
+          >
+            <Card>
+              {Object.keys(searchData.data?.aggregations || {}).map(aggKey => {
+                if (!searchProps.facetMap) {
+                  return null;
+                }
+                searchProps.facetMap.get(aggKey);
 
-              const facets =
-                searchData.data?.aggregations[aggKey]?.buckets.map(
-                  (bucket: any) => {
-                    const [label] = bucket.key.split('/').reverse();
-                    const selected = searchProps.facetMap
-                      ?.get(aggKey)
-                      ?.value.has(bucket.key);
+                const facets =
+                  searchData.data?.aggregations[aggKey]?.buckets.map(
+                    (bucket: any) => {
+                      const [label] = bucket.key.split('/').reverse();
+                      const selected = searchProps.facetMap
+                        ?.get(aggKey)
+                        ?.value.has(bucket.key);
 
-                    console.log({ selected, key: bucket.key });
-                    return {
-                      label,
-                      selected,
-                      count: bucket.doc_count,
-                      key: bucket.key,
-                    };
-                  }
-                ) || [];
-              return (
-                <FacetItem
-                  title={aggKey.toLocaleUpperCase()}
-                  facets={facets}
-                  onChange={handleFacetChanged(aggKey)}
-                />
-              );
-            })}
+                      console.log({ selected, key: bucket.key });
+                      return {
+                        label,
+                        selected,
+                        count: bucket.doc_count,
+                        key: bucket.key,
+                      };
+                    }
+                  ) || [];
+                return (
+                  <FacetItem
+                    title={aggKey.toLocaleUpperCase()}
+                    facets={facets}
+                    onChange={handleFacetChanged(aggKey)}
+                  />
+                );
+              })}
+            </Card>
           </Sider>
         )}
         <Content>
+          <Row></Row>
           <Row>
-            <Col span={selectedResource ? 12 : 24}>
-              <Spin spinning={searchData.loading}>
-                <div style={{ padding: '1em' }}>
+            <Spin spinning={searchData.loading} style={{ width: '100%' }}>
+              <div style={{ padding: '1em', width: '100%' }}>
+                <div
+                  className="controls"
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
                   <div
-                    className="controls"
-                    style={{ display: 'flex', justifyContent: 'space-between' }}
-                  >
-                    <div
-                      style={{
-                        fontSize: '1.5em',
-                        fontWeight: 'bold',
-                        margin: '0 0 1em 0',
-                      }}
-                    >
-                      {!!total ? (
-                        <span>
-                          Showing {total} of {total} Resources
-                        </span>
-                      ) : (
-                        <span>No Resources found</span>
-                      )}
-                    </div>
-                    <div>
-                      <b>Sort by </b>
-                      <Select
-                        defaultValue="_updatedAt-desc"
-                        onChange={handleSortChange}
-                        bordered={false}
-                      >
-                        <Option value="_createdAt-desc">Newest first</Option>
-                        <Option value="_createdAt-asc">Oldest first</Option>
-                        <Option value="_updatedAt-desc">Last updated</Option>
-                      </Select>
-                    </div>
-                  </div>
-                  <List
-                    itemLayout="horizontal"
-                    grid={{ gutter: 16, column: 4 }}
-                    dataSource={searchData.data?.hits.hits || []}
-                    pagination={{
-                      total,
-                      current,
-                      pageSize: size,
-                      showSizeChanger: true,
-                      onChange: handlePagniationChange,
-                      onShowSizeChange: handlePageSizeChange,
+                    style={{
+                      fontSize: '1.5em',
+                      fontWeight: 'bold',
+                      margin: '0 0 1em 0',
                     }}
-                    renderItem={hit => (
-                      <List.Item>
-                        <div
-                          className="result-preview-card"
-                          onClick={handleClickItem(hit._source)}
-                        >
-                          <ResultPreviewItemContainer
-                            resource={hit._source as Resource}
-                            defaultPreviewItemTemplate={
-                              DefaultResourcePreviewCard
-                            }
-                          />
-                        </div>
-                      </List.Item>
+                  >
+                    {!!total ? (
+                      <span>
+                        Showing {total} of {total} Resources
+                      </span>
+                    ) : (
+                      <span>No Resources found</span>
                     )}
-                  />
+                  </div>
+                  <div>
+                    <b>Sort by </b>
+                    <Select
+                      defaultValue="_updatedAt-desc"
+                      onChange={handleSortChange}
+                      bordered={false}
+                    >
+                      <Option value="_createdAt-desc">Newest first</Option>
+                      <Option value="_createdAt-asc">Oldest first</Option>
+                      <Option value="_updatedAt-desc">Last updated</Option>
+                    </Select>
+                  </div>
                 </div>
-              </Spin>
-            </Col>
+                <List
+                  itemLayout="horizontal"
+                  grid={{ gutter: 16, column: 4 }}
+                  dataSource={searchData.data?.hits.hits || []}
+                  pagination={{
+                    total,
+                    current,
+                    pageSize: size,
+                    showSizeChanger: true,
+                    onChange: handlePagniationChange,
+                    onShowSizeChange: handlePageSizeChange,
+                  }}
+                  renderItem={hit => (
+                    <List.Item>
+                      <div
+                        className="result-preview-card"
+                        onClick={handleClickItem(hit._source)}
+                      >
+                        <ResultPreviewItemContainer
+                          resource={hit._source as Resource}
+                          defaultPreviewItemTemplate={
+                            DefaultResourcePreviewCard
+                          }
+                        />
+                      </div>
+                    </List.Item>
+                  )}
+                />
+              </div>
+            </Spin>
           </Row>
         </Content>
       </Layout>

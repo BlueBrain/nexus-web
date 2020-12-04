@@ -7,6 +7,11 @@ import { AsyncCall } from '../../hooks/useAsynCall';
 import { SearchResponse } from '../../types/search';
 import ResourceHit from './ResourceHit';
 import Hit, { HitType } from './Hit';
+import { OptionType } from 'antd/lib/select';
+
+export enum SearchQuickActions {
+  VISIT = 'visit',
+}
 
 // TODO
 // First option is to search for wahtever in search page
@@ -32,14 +37,14 @@ const SearchBar: React.FC<{
       ) => // option: OptionsType | OptionData | OptionGroupData
       void)
     | undefined;
-  onSearch: (value: string) => void;
+  onSubmit: (value: string, option?: object) => void;
 }> = ({
   query,
   searchResponse,
   searchConfigLoading,
   searchConfigPreference,
   onChange,
-  onSearch,
+  onSubmit,
 }) => {
   const [focused, setFocused] = React.useState(false);
 
@@ -50,7 +55,8 @@ const SearchBar: React.FC<{
   const options = !!query
     ? [
         {
-          value: 'search',
+          key: 'search',
+          value: query,
           label: (
             <Hit type={HitType.UNCERTAIN}>
               <em>{query}</em>
@@ -60,12 +66,14 @@ const SearchBar: React.FC<{
         ...(searchResponse.data?.hits.hits.map(hit => {
           const { _source } = hit;
           return {
+            key: _source._self,
             label: (
               <Hit type={HitType.RESOURCE}>
                 <ResourceHit resource={_source} />
               </Hit>
             ),
-            value: _source['@id'],
+            value: `${SearchQuickActions.VISIT}:${_source._self}`,
+            source: _source,
           };
         }) || []),
         // {
@@ -82,15 +90,17 @@ const SearchBar: React.FC<{
       ]
     : [];
 
-  console.log({ searchResponse });
-
   return (
     <AutoComplete
       onFocus={handleSetFocused(true)}
       onBlur={handleSetFocused(false)}
       options={options}
       onChange={onChange}
-      onSearch={onSearch}
+      onSelect={onSubmit}
+      style={{
+        width: '25%',
+        minWidth: '400px',
+      }}
     >
       <Input.Search
         placeholder="Search or Jump to"
@@ -106,7 +116,7 @@ const SearchBar: React.FC<{
             )
           )
         }
-        style={{ minWidth: focused ? '600px' : '400px' }}
+        // style={{ minWidth: focused ? '600px' : '400px' }}
       />
     </AutoComplete>
   );

@@ -57,15 +57,16 @@ export default function useSearchQuery(selfURL?: string | null) {
       return null;
     }
 
+    // TODO fix query to match @id's as well
     const matchQuery = query
-      ? ['match', '_original_source', query]
+      ? ['wildcard', '_original_source', `${query}*`]
       : ['match_all', {}];
 
     const body = bodybuilder();
 
     body
       // @ts-ignore
-      .query(...matchQuery)
+      .filter(...matchQuery)
       .filter('term', '_deprecated', false)
       .sort(sort.key, sort.direction);
 

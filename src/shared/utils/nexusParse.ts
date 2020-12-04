@@ -1,9 +1,11 @@
 interface ParsedNexusUrl {
+  url: string;
   deployment: string;
+  apiVersion: string;
   entityType: string;
   org: string;
   project: string;
-  schema: string;
+  schema?: string;
   id: string;
 }
 
@@ -20,6 +22,8 @@ const nexusUrlR = new RegExp(
   [
     '^',
     '(https?://.+)', // nexus deployment
+    '/',
+    '(v[1-9]+)', // api verison number
     '/',
     `(${nexusEntities.join('|')})`, // entity type
     '/',
@@ -48,25 +52,46 @@ const nexusUrlR = new RegExp(
 export const parseURL = (nexusUrl: string): ParsedNexusUrl => {
   if (!nexusUrl) throw new Error('selfUrl should be defined');
 
-  const mulEntityTypeR = new RegExp(`(${nexusEntities.join('|')})`, 'g');
-  const mulEntityTypeMatch = nexusUrl.match(mulEntityTypeR);
-  if (mulEntityTypeMatch && mulEntityTypeMatch.length > 1) {
-    throw new Error(
-      'Url contains multiple entity types which is not supported'
-    );
-  }
-
   const matches = nexusUrl.match(nexusUrlR);
+  console.log({ matches });
   if (!matches || matches.length <= 5) {
     throw new Error('Error while parsing selfUrl');
   }
 
+  if (matches[7] === undefined) {
+    // we dont have a schema in this case because the self url was cosntructed via a
+    // non-resource path such as views
+    const [url, deployment, apiVersion, entityType, org, project, id] = matches;
+    return {
+      url,
+      deployment,
+      apiVersion,
+      entityType,
+      org,
+      project,
+      id,
+    };
+  }
+
+  const [
+    url,
+    deployment,
+    apiVersion,
+    entityType,
+    org,
+    project,
+    schema,
+    id,
+  ] = matches;
+
   return {
-    deployment: matches[1],
-    entityType: matches[2].slice(0, -1),
-    org: matches[3],
-    project: matches[4],
-    schema: matches[5],
-    id: matches[6],
+    url,
+    deployment,
+    apiVersion,
+    entityType,
+    org,
+    project,
+    schema,
+    id,
   };
 };
