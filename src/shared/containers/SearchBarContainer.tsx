@@ -5,7 +5,7 @@ import useSearchConfigs from '../hooks/useSearchConfigs';
 import useSearchQuery from '../hooks/useSearchQuery';
 import { parseURL } from '../utils/nexusParse';
 
-const DEFAULT_SEARCH_BAR_RESULT_SIZE = 20;
+const DEFAULT_SEARCH_BAR_RESULT_SIZE = 10;
 
 const SearchBarContainer: React.FC = () => {
   const { preferedSearchConfig, searchConfigs } = useSearchConfigs();
@@ -13,14 +13,12 @@ const SearchBarContainer: React.FC = () => {
   const [searchResponse, { searchProps, setSearchProps }] = useSearchQuery(
     preferedSearchConfig?.view
   );
-
   const history = useHistory();
   const location = useLocation();
 
   const goToResource = (resourceSelfURL: string) => {
     const { org, project, id } = parseURL(resourceSelfURL);
     const path = `/${org}/${project}/resources/${encodeURIComponent(id)}`;
-    console.log({ path, org, project, id });
     history.push(path, {
       background: location,
     });
@@ -30,9 +28,9 @@ const SearchBarContainer: React.FC = () => {
     history.push(`/search?query=${searchProps.query}`);
   };
 
-  const handleChange = (value: string) => {
+  const handleSearch = (searchText: string) => {
     setSearchProps({
-      query: value,
+      query: searchText,
       pagination: {
         from: 0,
         size: DEFAULT_SEARCH_BAR_RESULT_SIZE,
@@ -40,10 +38,8 @@ const SearchBarContainer: React.FC = () => {
     });
   };
 
-  const handleSubmit = (value: string, option?: object) => {
-    console.log('value: ', value);
-
-    if (option && value.includes(`${SearchQuickActions.VISIT}:`)) {
+  const handleSubmit = (value: string) => {
+    if (value.includes(`${SearchQuickActions.VISIT}:`)) {
       const [action, resourceSelfURL] = value.split(
         `${SearchQuickActions.VISIT}:`
       );
@@ -57,7 +53,7 @@ const SearchBarContainer: React.FC = () => {
     <SearchBar
       query={searchProps.query}
       searchResponse={searchResponse}
-      onChange={handleChange}
+      onSearch={handleSearch}
       onSubmit={handleSubmit}
       searchConfigLoading={searchConfigs.isFetching}
       searchConfigPreference={preferedSearchConfig}

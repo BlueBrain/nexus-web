@@ -7,19 +7,12 @@ import { AsyncCall } from '../../hooks/useAsynCall';
 import { SearchResponse } from '../../types/search';
 import ResourceHit from './ResourceHit';
 import Hit, { HitType } from './Hit';
-import { OptionType } from 'antd/lib/select';
 
 import './SearchBar.less';
 
 export enum SearchQuickActions {
   VISIT = 'visit',
 }
-
-// TODO
-// First option is to search for wahtever in search page
-// next options is different
-// directly navigate to resource in project
-// change preferred search config
 
 const SearchBar: React.FC<{
   query?: string;
@@ -33,23 +26,18 @@ const SearchBar: React.FC<{
   >;
   searchConfigLoading: boolean;
   searchConfigPreference?: SearchConfig;
-  onChange:
-    | ((
-        value: string
-      ) => // option: OptionsType | OptionData | OptionGroupData
-      void)
-    | undefined;
-  onSubmit: (value: string, option?: object) => void;
+  onSearch: (value: string) => void;
+  onSubmit: (value: string) => void;
 }> = ({
   query,
   searchResponse,
   searchConfigLoading,
   searchConfigPreference,
-  onChange,
+  onSearch,
   onSubmit,
 }) => {
+  const [value, setValue] = React.useState(query || '');
   const [focused, setFocused] = React.useState(false);
-
   const handleSetFocused = (val: boolean) => () => {
     setFocused(val);
   };
@@ -57,11 +45,11 @@ const SearchBar: React.FC<{
   const options = !!query
     ? [
         {
-          key: 'search',
-          value: query,
+          key: `search-${value}`,
+          value,
           label: (
             <Hit type={HitType.UNCERTAIN}>
-              <em>{query}</em>
+              <em>{value}</em>
             </Hit>
           ),
         },
@@ -92,16 +80,44 @@ const SearchBar: React.FC<{
       ]
     : [];
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter') {
+      console.log('value at enter pressed: ', value);
+    }
+  };
+
+  const handleChange = (value: string) => {
+    setValue(value);
+  };
+
+  const handleSelect = (value: string) => {
+    onSubmit(value);
+    if (value.includes(`${SearchQuickActions.VISIT}:`)) {
+      setValue('');
+      onSearch('');
+    }
+  };
+
+  const handleSearch = (searchText: string) => {
+    onSearch(searchText);
+  };
+
+  console.log(value, !!options.length && options[0].value);
+
   return (
     <AutoComplete
+      className={`search-bar ${!!focused && 'focused'}`}
       onFocus={handleSetFocused(true)}
       onBlur={handleSetFocused(false)}
+      onKeyDown={handleKeyDown}
+      defaultValue={query}
       options={options}
-      onChange={onChange}
-      onSelect={onSubmit}
-      className={`search-bar ${!!focused && 'focused'}`}
-      dropdownClassName={`drop-search`}
-      dropdownMatchSelectWidth={600}
+      onChange={handleChange}
+      onSelect={handleSelect}
+      onSearch={handleSearch}
+      value={value}
+      // dropdownClassName={`drop-search`}
+      // dropdownMatchSelectWidth={600}
     >
       <Input.Search
         className={'search-bar-input'}
