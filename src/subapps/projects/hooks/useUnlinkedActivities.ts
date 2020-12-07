@@ -75,7 +75,7 @@ export const useUnlinkedActivities = (
           ),
         ];
 
-        let parsedActivities: any[] = [];
+        const parsedActivities: any[] = [];
 
         uniqueActivities.forEach(activity => {
           parsedActivities.push(

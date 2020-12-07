@@ -56,7 +56,7 @@ const NotificationsContainer: React.FC<{
   };
 
   const updateWorkflowStep = (stepId: string, originalPayload: any) => {
-    let updatedPayload = originalPayload;
+    const updatedPayload = originalPayload;
 
     if (originalPayload[fusionConfig.activityWorkflowLink]) {
       updatedPayload[fusionConfig.activityWorkflowLink] = Array.isArray(
