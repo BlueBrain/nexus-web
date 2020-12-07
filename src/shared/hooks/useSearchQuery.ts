@@ -81,6 +81,7 @@ export default function useSearchQuery(selfURL?: string | null) {
 
     const finalQuery = body.build();
     const { org, project, id } = parseURL(selfURL);
+    console.log('in', { query });
 
     return await nexus.View.elasticSearchQuery<SearchResponse<Resource>>(
       org,
@@ -89,6 +90,8 @@ export default function useSearchQuery(selfURL?: string | null) {
       finalQuery
     );
   };
+
+  console.log({ searchProps });
 
   const remoteResponse = useAsyncCall<SearchResponse<Resource> | null, Error>(
     searchNexus(),

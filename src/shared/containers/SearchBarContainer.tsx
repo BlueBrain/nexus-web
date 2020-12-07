@@ -25,7 +25,10 @@ const SearchBarContainer: React.FC = () => {
   };
 
   const goToSearch = () => {
-    history.push(`/search?query=${searchProps.query}`);
+    if (searchProps.query) {
+      return history.push(`/search?query=${searchProps.query}`);
+    }
+    history.push(`/search`);
   };
 
   const handleSearch = (searchText: string) => {
@@ -48,12 +51,20 @@ const SearchBarContainer: React.FC = () => {
     return goToSearch();
   };
 
+  const handleClear = () => {
+    setSearchProps({
+      ...searchProps,
+      query: undefined,
+    });
+  };
+
   return !!searchConfigs.data?.length ? (
     <SearchBar
       query={searchProps.query}
       searchResponse={searchResponse}
       onSearch={handleSearch}
       onSubmit={handleSubmit}
+      onClear={handleClear}
       searchConfigLoading={searchConfigs.isFetching}
       searchConfigPreference={preferedSearchConfig}
     />

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { LoadingOutlined } from '@ant-design/icons';
-import { AutoComplete, Input } from 'antd';
+import { AutoComplete, Button, Input } from 'antd';
 import { SearchConfig } from '../../store/reducers/search';
 import { AsyncCall } from '../../hooks/useAsynCall';
 import { SearchResponse } from '../../types/search';
@@ -28,6 +28,7 @@ const SearchBar: React.FC<{
   searchConfigPreference?: SearchConfig;
   onSearch: (value: string) => void;
   onSubmit: (value: string) => void;
+  onClear: () => void;
 }> = ({
   query,
   searchResponse,
@@ -35,12 +36,32 @@ const SearchBar: React.FC<{
   searchConfigPreference,
   onSearch,
   onSubmit,
+  onClear,
 }) => {
   const [value, setValue] = React.useState(query || '');
   const [focused, setFocused] = React.useState(false);
   const handleSetFocused = (val: boolean) => () => {
     setFocused(val);
   };
+  const inputRef = React.useRef<Input>(null);
+
+  // We can use the convention of / for web search
+  // to highlight our search bar
+  // in the future it would be beautiful
+  // to have a central place to attach keyboard
+  // shortcuts
+  React.useEffect(() => {
+    const focusSearch = (e: KeyboardEvent) => {
+      if (e.key === '/' && !focused) {
+        inputRef.current && inputRef.current.focus();
+        e.preventDefault();
+      }
+    };
+    document.addEventListener('keypress', focusSearch);
+    return () => {
+      document.removeEventListener('keypress', focusSearch);
+    };
+  });
 
   const options = !!query
     ? [
@@ -66,17 +87,6 @@ const SearchBar: React.FC<{
             source: _source,
           };
         }) || []),
-        // {
-        //   label: renderTitle('Solutions'),
-        //   options: [
-        //     renderItem('AntDesign UI FAQ', 60100),
-        //     renderItem('AntDesign FAQ', 30010),
-        //   ],
-        // },
-        // {
-        //   label: renderTitle('Articles'),
-        //   options: [renderItem('AntDesign design language', 100000)],
-        // },
       ]
     : [];
 
@@ -96,6 +106,12 @@ const SearchBar: React.FC<{
     onSearch(searchText);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' && !value) {
+      onClear();
+    }
+  };
+
   return (
     <AutoComplete
       className={`search-bar ${!!focused && 'focused'}`}
@@ -106,13 +122,13 @@ const SearchBar: React.FC<{
       onChange={handleChange}
       onSelect={handleSelect}
       onSearch={handleSearch}
+      onKeyDown={handleKeyDown}
       value={value}
-      // dropdownClassName={`drop-search`}
-      // dropdownMatchSelectWidth={600}
     >
       <Input.Search
+        ref={inputRef}
         className={'search-bar-input'}
-        placeholder="Search or Jump to"
+        placeholder="Search or Visit"
         enterButton
         suffix={
           searchConfigLoading ? (
