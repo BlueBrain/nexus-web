@@ -53,7 +53,6 @@ export const parseURL = (nexusUrl: string): ParsedNexusUrl => {
   if (!nexusUrl) throw new Error('selfUrl should be defined');
 
   const matches = nexusUrl.match(nexusUrlR);
-  console.log({ matches });
   if (!matches || matches.length <= 5) {
     throw new Error('Error while parsing selfUrl');
   }

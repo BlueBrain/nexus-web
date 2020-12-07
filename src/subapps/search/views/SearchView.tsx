@@ -140,8 +140,6 @@ const SearchView: React.FC = () => {
     key: string,
     value: boolean
   ) => {
-    console.log({ aggKey, key, value });
-
     if (value) {
       searchProps.facetMap?.get(aggKey)?.value.add(key);
     } else {
@@ -186,8 +184,6 @@ const SearchView: React.FC = () => {
     });
   };
 
-  console.log({ searchData, searchProps });
-
   // Pagination Props
   const total = searchData.data?.hits.total.value || 0;
   const size = searchProps.pagination?.size || 0;
@@ -229,7 +225,6 @@ const SearchView: React.FC = () => {
                         ?.get(aggKey)
                         ?.value.has(bucket.key);
 
-                      console.log({ selected, key: bucket.key });
                       return {
                         label,
                         selected,

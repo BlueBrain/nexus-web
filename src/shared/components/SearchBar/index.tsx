@@ -80,12 +80,6 @@ const SearchBar: React.FC<{
       ]
     : [];
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter') {
-      console.log('value at enter pressed: ', value);
-    }
-  };
-
   const handleChange = (value: string) => {
     setValue(value);
   };
@@ -102,14 +96,11 @@ const SearchBar: React.FC<{
     onSearch(searchText);
   };
 
-  console.log(value, !!options.length && options[0].value);
-
   return (
     <AutoComplete
       className={`search-bar ${!!focused && 'focused'}`}
       onFocus={handleSetFocused(true)}
       onBlur={handleSetFocused(false)}
-      onKeyDown={handleKeyDown}
       defaultValue={query}
       options={options}
       onChange={handleChange}

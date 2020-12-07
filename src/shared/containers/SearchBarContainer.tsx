@@ -43,7 +43,6 @@ const SearchBarContainer: React.FC = () => {
       const [action, resourceSelfURL] = value.split(
         `${SearchQuickActions.VISIT}:`
       );
-      console.log({ action, resourceSelfURL });
       return goToResource(resourceSelfURL);
     }
     return goToSearch();
