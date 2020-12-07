@@ -11,7 +11,7 @@ type UnlinkedActivity = {
   createdBy: string;
   used?: string[];
   generated?: string[];
-  resourceType?: string;
+  resourceType: string;
 };
 
 export const useUnlinkedActivities = (

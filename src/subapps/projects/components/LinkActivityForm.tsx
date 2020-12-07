@@ -16,7 +16,7 @@ const LinkActivityForm: React.FC<{
     createdBy: string;
     usedList?: string[];
     generatedList?: string[];
-    resourceType?: string;
+    resourceType: string;
   };
   stepsList: {
     id: string;
@@ -64,41 +64,81 @@ const LinkActivityForm: React.FC<{
       <h2 className="link-activity-form__title">Link Activity to Step</h2>
 
       <Row gutter={24}>
-        <Col {...columnLayoutProperties}>
-          <p>Resource</p>
-          <p>Activity type</p>
-          {/* TODO: fetch an agent */}
-          <p>Created by</p>
-          <p>Created on</p>
+        <Col xs={24} sm={24} md={12}>
+          <Row>
+            <Col xs={5} sm={5} md={5}>
+              <p>Resource</p>
+            </Col>
+            <Col>
+              <p>
+                <b>{name || labelOf(resourceId)}</b>
+              </p>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={5} sm={5} md={5}>
+              <p>Activity type</p>
+            </Col>
+            {/* TODO: manage multiple types */}
+            <Col>
+              <p>{labelOf(resourceType)}</p>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={5} sm={5} md={5}>
+              {/* TODO: fetch an agent */}
+              <p>Created by</p>
+            </Col>
+            <Col>
+              <p>{getUsername(createdBy)}</p>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={5} sm={5} md={5}>
+              <p>Created on</p>
+            </Col>
+            <Col>
+              <p>{moment(createdAt).format('L')}</p>
+            </Col>
+          </Row>
         </Col>
-        <Col {...columnLayout}>
-          <p>
-            <b>{name || labelOf(resourceId)}</b>
-          </p>
-          {/* TODO: manage multiple types */}
-          <p>{resourceType}</p>
-          <p>{getUsername(createdBy)}</p>
-          <p>{moment(createdAt).format('L')}</p>
-        </Col>
-        <Col {...columnLayoutProperties}>
-          <p>Input data</p>
-          <p>Output data</p>
-          <p>Code</p>
-        </Col>
-        <Col {...columnLayout}>
-          <p>
-            {usedList
-              ? Array.from(usedList).map(outputId => <p>{labelOf(outputId)}</p>)
-              : 'No data'}
-          </p>
-          <p>
-            {generatedList
-              ? Array.from(generatedList).map(outputId => (
-                  <p>{labelOf(outputId)}</p>
-                ))
-              : 'No data'}
-          </p>
-          <p>Coming soon...</p>
+        <Col xs={24} sm={24} md={12}>
+          <Row>
+            <Col xs={5} sm={5} md={5}>
+              <p>Input data</p>
+            </Col>
+            <Col>
+              <p>
+                {usedList
+                  ? Array.from(usedList).map(outputId => (
+                      <p>{labelOf(outputId)}</p>
+                    ))
+                  : 'No data'}
+              </p>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={5} sm={5} md={5}>
+              <p>Output data</p>
+            </Col>
+            <Col>
+              <p>
+                {generatedList
+                  ? Array.from(generatedList).map(outputId => (
+                      <p>{labelOf(outputId)}</p>
+                    ))
+                  : 'No data'}
+              </p>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={5} sm={5} md={5}>
+              <p>Code</p>
+            </Col>
+            <Col>
+              <p>Coming soon...</p>
+            </Col>
+          </Row>
         </Col>
       </Row>
       <br />
