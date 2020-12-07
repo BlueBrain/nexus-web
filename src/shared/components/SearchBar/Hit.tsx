@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { EnterOutlined, FileOutlined, SearchOutlined } from '@ant-design/icons';
 import { match } from 'ts-pattern';
-
-import './hit.less';
 import { SearchQuickActions } from '.';
+
+import './Hit.less';
 
 export enum HitType {
   UNCERTAIN = 'UNCERTAIN',
@@ -27,7 +27,7 @@ const Hit: React.FC<{ type: HitType }> = ({ type, children }) => {
       icon: <SearchOutlined />,
       actionTip: (
         <span className="enter">
-          Search <EnterOutlined />
+          search <EnterOutlined />
         </span>
       ),
     }))

@@ -53,7 +53,7 @@ const SearchBarContainer: React.FC = () => {
     return goToSearch();
   };
 
-  return (
+  return !!searchConfigs.data?.length ? (
     <SearchBar
       query={searchProps.query}
       searchResponse={searchResponse}
@@ -62,7 +62,7 @@ const SearchBarContainer: React.FC = () => {
       searchConfigLoading={searchConfigs.isFetching}
       searchConfigPreference={preferedSearchConfig}
     />
-  );
+  ) : null;
 };
 
 export default SearchBarContainer;

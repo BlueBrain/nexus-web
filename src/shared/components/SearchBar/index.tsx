@@ -9,6 +9,8 @@ import ResourceHit from './ResourceHit';
 import Hit, { HitType } from './Hit';
 import { OptionType } from 'antd/lib/select';
 
+import './SearchBar.less';
+
 export enum SearchQuickActions {
   VISIT = 'visit',
 }
@@ -97,12 +99,12 @@ const SearchBar: React.FC<{
       options={options}
       onChange={onChange}
       onSelect={onSubmit}
-      style={{
-        width: '25%',
-        minWidth: '400px',
-      }}
+      className={`search-bar ${!!focused && 'focused'}`}
+      dropdownClassName={`drop-search`}
+      dropdownMatchSelectWidth={600}
     >
       <Input.Search
+        className={'search-bar-input'}
         placeholder="Search or Jump to"
         enterButton
         suffix={
@@ -116,7 +118,6 @@ const SearchBar: React.FC<{
             )
           )
         }
-        // style={{ minWidth: focused ? '600px' : '400px' }}
       />
     </AutoComplete>
   );
