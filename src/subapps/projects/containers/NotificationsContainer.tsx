@@ -56,8 +56,6 @@ const NotificationsContainer: React.FC<{
   };
 
   const updateWorkflowStep = (stepId: string, originalPayload: any) => {
-    console.log('selectedActivity', selectedActivity);
-
     let updatedPayload = originalPayload;
 
     if (originalPayload[fusionConfig.activityWorkflowLink]) {
@@ -81,8 +79,6 @@ const NotificationsContainer: React.FC<{
         '@id': selectedActivity.resourceId,
       };
     }
-
-    console.log('updatedPayload', updatedPayload);
 
     return nexus.Resource.update(
       orgLabel,
@@ -150,7 +146,7 @@ const NotificationsContainer: React.FC<{
         visible={showLinkForm}
         footer={null}
         onCancel={() => setShowLinkForm(false)}
-        width={600}
+        width={1000}
         destroyOnClose={true}
       >
         <LinkActivityForm
