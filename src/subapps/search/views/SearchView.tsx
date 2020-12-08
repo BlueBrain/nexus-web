@@ -211,9 +211,8 @@ const SearchView: React.FC = () => {
       <Layout>
         {searchResponse.data && (
           <Sider
+            width={'15%'}
             style={{
-              width: '20%',
-              minWidth: '250px',
               background: 'transparent',
               boxSizing: 'content-box',
             }}

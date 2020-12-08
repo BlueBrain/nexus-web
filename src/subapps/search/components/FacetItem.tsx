@@ -32,17 +32,16 @@ const FacetItem: React.FC<{
       {facets.map(({ label, key, count, selected }) => {
         return (
           <div className="item" key={key}>
-            <Checkbox
-              checked={selected}
-              onChange={handleSelect(key)}
-              style={{ width: '100%' }}
-            >
-              <span>{label}</span>
-              <Badge
-                count={count}
-                style={{ backgroundColor: '#fff', color: '#999' }}
-              />
-            </Checkbox>
+            <Checkbox checked={selected} onChange={handleSelect(key)} />
+            <span className="label">{label}</span>{' '}
+            <Badge
+              count={count}
+              style={
+                selected
+                  ? { backgroundColor: '#44c7f4', color: '#fff' }
+                  : { backgroundColor: '#b8babb', color: '#fff' }
+              }
+            />
           </div>
         );
       })}
