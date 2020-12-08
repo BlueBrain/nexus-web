@@ -37,7 +37,7 @@ const FacetItem: React.FC<{
               onChange={handleSelect(key)}
               style={{ width: '100%' }}
             >
-              {label}
+              <span>{label}</span>
               <Badge
                 count={count}
                 style={{ backgroundColor: '#fff', color: '#999' }}

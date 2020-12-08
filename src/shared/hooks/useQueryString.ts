@@ -1,4 +1,4 @@
-import * as queryString from 'query-string';
+import * as queryString from 'qs';
 import { useHistory, useLocation } from 'react-router';
 
 export type QueryParams = {
@@ -8,12 +8,14 @@ export type QueryParams = {
 export default function useQueryString() {
   const location = useLocation();
   const history = useHistory();
-  const queryParams: QueryParams = queryString.parse(location.search) || {};
+  const queryParams: QueryParams =
+    queryString.parse(location.search, { ignoreQueryPrefix: true }) || {};
 
   const setQueryString = (newQueryParams: QueryParams) => {
-    history.push(
-      `${location.pathname}?${queryString.stringify(newQueryParams)}`
-    );
+    const newPath = `${location.pathname}?${queryString.stringify(
+      newQueryParams
+    )}`;
+    history.push(newPath);
   };
 
   return [queryParams, setQueryString] as [

@@ -1,19 +1,54 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as bodybuilder from 'bodybuilder';
-
 import { Resource } from '@bbp/nexus-sdk';
+
 import useAsyncCall, { AsyncCall } from './useAsynCall';
 import { parseURL } from '../utils/nexusParse';
 import { SearchResponse } from '../types/search';
 
+// TODO move to global default list
 const DEFAULT_PAGE_SIZE = 20;
+
+export type SerializedFacetMap = {
+  [propertyKey: string]: string[];
+};
+
+export const serializeSearchFacets = (
+  facetMap: UseSearchProps['facetMap']
+): SerializedFacetMap => {
+  return Array.from(facetMap || []).reduce((memo, [key, value]) => {
+    memo[value.propertyKey] = [...value.value.values()];
+    return memo;
+  }, {} as { [propertyKey: string]: any });
+};
+
+export const parseSerializedSearchFacets = (
+  facetMap: UseSearchProps['facetMap'],
+  serializedSearchFacets: SerializedFacetMap
+) => {
+  facetMap?.forEach(value => {
+    const serializedValue = serializedSearchFacets[value.propertyKey];
+    if (serializedValue) {
+      value.value.clear();
+      serializedValue.forEach(key => {
+        value.value.add(key);
+      });
+    }
+  });
+  return facetMap;
+};
+
+export enum SortDirection {
+  DESCENDING = 'desc',
+  ASCENDING = 'asc',
+}
 
 export type UseSearchProps = {
   query?: string;
   sort?: {
     key: string;
-    direction: 'desc' | 'asc';
+    direction: SortDirection;
   };
   pagination?: {
     from: number;
@@ -30,15 +65,22 @@ export type UseSearchProps = {
   >;
 };
 
+export const DEFAULT_SEARCH_PROPS = {
+  pagination: { from: 0, size: DEFAULT_PAGE_SIZE },
+  sort: {
+    key: '_createdAt',
+    direction: SortDirection.DESCENDING,
+  },
+};
+
 export default function useSearchQuery(selfURL?: string | null) {
-  const [searchProps, setSearchProps] = React.useState<UseSearchProps>({});
+  const [searchProps, setSearchProps] = React.useState<UseSearchProps>({
+    ...DEFAULT_SEARCH_PROPS,
+  });
   const {
-    sort = {
-      key: '_createdAt',
-      direction: 'desc',
-    },
     query,
-    pagination = { from: 0, size: DEFAULT_PAGE_SIZE },
+    sort = DEFAULT_SEARCH_PROPS.sort,
+    pagination = DEFAULT_SEARCH_PROPS.pagination,
     facetMap = new Map<
       string,
       {
@@ -81,7 +123,6 @@ export default function useSearchQuery(selfURL?: string | null) {
 
     const finalQuery = body.build();
     const { org, project, id } = parseURL(selfURL);
-    console.log('in', { query });
 
     return await nexus.View.elasticSearchQuery<SearchResponse<Resource>>(
       org,
@@ -90,8 +131,6 @@ export default function useSearchQuery(selfURL?: string | null) {
       finalQuery
     );
   };
-
-  console.log({ searchProps });
 
   const remoteResponse = useAsyncCall<SearchResponse<Resource> | null, Error>(
     searchNexus(),

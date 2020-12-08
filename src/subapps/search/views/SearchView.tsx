@@ -1,20 +1,52 @@
 import * as React from 'react';
-import { Layout, Row, Input, List, Spin, Select, Card } from 'antd';
+import { Layout, Row, List, Spin, Select, Card } from 'antd';
 import { useHistory, useLocation } from 'react-router-dom';
+import { Resource } from '@bbp/nexus-sdk';
 
 import FacetItem from '../components/FacetItem';
-import { Resource } from '@bbp/nexus-sdk';
 import ResultPreviewItemContainer from '../containers/ResultPreviewItemContainer';
-import DefaultResourcePreviewCard from '!!raw-loader!../templates/DefaultResourcePreviewCard.hbs';
 import useSearchConfigs from '../../../shared/hooks/useSearchConfigs';
-import useSearchQuery from '../../../shared/hooks/useSearchQuery';
+import useSearchQuery, {
+  DEFAULT_SEARCH_PROPS,
+  parseSerializedSearchFacets,
+  SerializedFacetMap,
+  serializeSearchFacets,
+  SortDirection,
+  UseSearchProps,
+} from '../../../shared/hooks/useSearchQuery';
 import useQueryString from '../../../shared/hooks/useQueryString';
+import ActiveFilters from '../components/ActiveFilters';
 
+import DefaultResourcePreviewCard from '!!raw-loader!../templates/DefaultResourcePreviewCard.hbs';
 import './SearchView.less';
 
-const { Header, Content, Footer, Sider } = Layout;
+const generateDefaultSearchFilterMap = () => {
+  const facetMap = new Map();
+  facetMap.set('Schemas', {
+    propertyKey: '_constrainedBy',
+    key: 'Schemas',
+    label: 'Schemas',
+    type: 'terms',
+    value: new Set(),
+  });
+  facetMap.set('Projects', {
+    propertyKey: '_project',
+    key: 'Projects',
+    label: 'Projects',
+    type: 'terms',
+    value: new Set(),
+  });
+  facetMap.set('Types', {
+    propertyKey: '@type',
+    key: 'Types',
+    label: 'Types',
+    type: 'terms',
+    value: new Set(),
+  });
+  return facetMap;
+};
+const { Content, Sider } = Layout;
 
-const { Search } = Input;
 const { Option } = Select;
 
 const SearchView: React.FC = () => {
@@ -26,57 +58,12 @@ const SearchView: React.FC = () => {
     preferedSearchConfig?.view
   );
   const [queryParams, setQueryString] = useQueryString();
+
+  console.log({ searchProps });
+
   React.useEffect(() => {
-    const { query } = queryParams;
-    setSearchProps({
-      ...searchProps,
-      query,
-    });
+    applyQueryParamsToSearchProps();
   }, [location.search]);
-
-  React.useEffect(() => {
-    const facetMap = new Map();
-    facetMap.set('Schemas', {
-      propertyKey: '_constrainedBy',
-      key: 'Schemas',
-      label: 'Schemas',
-      type: 'terms',
-      value: new Set(),
-    });
-    facetMap.set('Projects', {
-      propertyKey: '_project',
-      key: 'Projects',
-      label: 'Projects',
-      type: 'terms',
-      value: new Set(),
-    });
-    facetMap.set('Types', {
-      propertyKey: '@type',
-      key: 'Types',
-      label: 'Types',
-      type: 'terms',
-      value: new Set(),
-    });
-
-    const { query } = queryParams;
-
-    // facetMap.set('Contrib', {
-    //   propertyKey: '_createdBy',
-    //   key: 'Contrib',
-    //   label: 'Contrib',
-    //   type: 'terms',
-    //   value: new Set(),
-    // });
-    setSearchProps({
-      ...searchProps,
-      query,
-      facetMap,
-      pagination: {
-        from: 0,
-        size: 20,
-      },
-    });
-  }, []);
 
   const [
     selectedResource,
@@ -93,13 +80,37 @@ const SearchView: React.FC = () => {
     goToResource(orgLabel, projectLabel, selectedResource['@id']);
   }, [selectedResource]);
 
+  const applyQueryParamsToSearchProps = () => {
+    const facetMap = queryParams.facetMap
+      ? parseSerializedSearchFacets(
+          generateDefaultSearchFilterMap(),
+          queryParams.facetMap as SerializedFacetMap
+        )
+      : generateDefaultSearchFilterMap();
+    setSearchProps({ ...searchProps, ...queryParams, facetMap });
+  };
+
+  const changeSearchProps = ({
+    query,
+    pagination,
+    sort,
+    facetMap,
+  }: UseSearchProps) => {
+    setQueryString({
+      query,
+      pagination,
+      sort,
+      facetMap: serializeSearchFacets(facetMap),
+    });
+  };
+
   const handleClickItem = (resource: Resource) => () => {
     setSelectedResource(resource);
   };
 
   const handlePagniationChange = (page: number, pageSize?: number) => {
     const size = searchProps.pagination?.size || 0;
-    setSearchProps({
+    changeSearchProps({
       ...searchProps,
       pagination: {
         from: (page - 1) * size,
@@ -109,7 +120,7 @@ const SearchView: React.FC = () => {
   };
 
   const handlePageSizeChange = (current: number, size: number) => {
-    setSearchProps({
+    changeSearchProps({
       ...searchProps,
       pagination: {
         size,
@@ -128,18 +139,18 @@ const SearchView: React.FC = () => {
       searchProps.facetMap?.get(aggKey)?.value.delete(key);
     }
 
-    setSearchProps({
+    changeSearchProps({
       ...searchProps,
     });
   };
 
   const handleSortChange = (value: string) => {
     const [key, direction] = value.split('-');
-    setSearchProps({
+    changeSearchProps({
       ...searchProps,
       sort: {
         key,
-        direction: direction as 'asc' | 'desc',
+        direction: direction as SortDirection,
       },
     });
   };
@@ -166,6 +177,10 @@ const SearchView: React.FC = () => {
     });
   };
 
+  const handleClearFilters = () => {
+    changeSearchProps(DEFAULT_SEARCH_PROPS);
+  };
+
   // Pagination Props
   const total = searchResponse.data?.hits.total.value || 0;
   const size = searchProps.pagination?.size || 0;
@@ -181,7 +196,6 @@ const SearchView: React.FC = () => {
         {searchResponse.data && (
           <Sider
             style={{
-              padding: '1em',
               background: 'transparent',
               boxSizing: 'content-box',
             }}
@@ -224,7 +238,12 @@ const SearchView: React.FC = () => {
           </Sider>
         )}
         <Content>
-          <Row></Row>
+          <Row style={{ padding: '0 1em' }}>
+            <ActiveFilters
+              searchProps={searchProps}
+              onClear={handleClearFilters}
+            />
+          </Row>
           <Row>
             <Spin
               size="large"
@@ -237,8 +256,6 @@ const SearchView: React.FC = () => {
               >
                 <div
                   style={{
-                    // fontSize: '1.5em',
-                    // fontWeight: 'bold',
                     margin: '0 0 1em 0',
                   }}
                 >
