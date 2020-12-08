@@ -59,8 +59,6 @@ const SearchView: React.FC = () => {
   );
   const [queryParams, setQueryString] = useQueryString();
 
-  console.log({ searchProps });
-
   React.useEffect(() => {
     applyQueryParamsToSearchProps();
   }, [location.search]);
@@ -87,7 +85,11 @@ const SearchView: React.FC = () => {
           queryParams.facetMap as SerializedFacetMap
         )
       : generateDefaultSearchFilterMap();
-    setSearchProps({ ...searchProps, ...queryParams, facetMap });
+    const newProps = { ...searchProps, ...queryParams, facetMap };
+    if (!queryParams.query) {
+      delete newProps.query;
+    }
+    setSearchProps(newProps);
   };
 
   const changeSearchProps = ({
@@ -181,6 +183,20 @@ const SearchView: React.FC = () => {
     changeSearchProps(DEFAULT_SEARCH_PROPS);
   };
 
+  const handleClearQuery = () => {
+    changeSearchProps({
+      ...searchProps,
+      query: undefined,
+    });
+  };
+
+  const handleClearFacet = (key: string, value: string) => {
+    searchProps.facetMap?.get(key)?.value.delete(value);
+    changeSearchProps({
+      ...searchProps,
+    });
+  };
+
   // Pagination Props
   const total = searchResponse.data?.hits.total.value || 0;
   const size = searchProps.pagination?.size || 0;
@@ -196,6 +212,8 @@ const SearchView: React.FC = () => {
         {searchResponse.data && (
           <Sider
             style={{
+              width: '20%',
+              minWidth: '250px',
               background: 'transparent',
               boxSizing: 'content-box',
             }}
@@ -241,6 +259,8 @@ const SearchView: React.FC = () => {
           <Row style={{ padding: '0 1em' }}>
             <ActiveFilters
               searchProps={searchProps}
+              onClearQuery={handleClearQuery}
+              onClearFacet={handleClearFacet}
               onClear={handleClearFilters}
             />
           </Row>

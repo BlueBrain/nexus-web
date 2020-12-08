@@ -9,50 +9,45 @@ import { CloseCircleFilled, CloseOutlined } from '@ant-design/icons';
 const ActiveFilters: React.FC<{
   searchProps: UseSearchProps;
   onClear: () => void;
-}> = ({ searchProps, onClear }) => {
-  // <TweenOneGroup
-  //           enter={{
-  //             scale: 0.8,
-  //             opacity: 0,
-  //             type: 'from',
-  //             duration: 100,
-  //             onComplete: e => {
-  //               e.target.style = '';
-  //             },
-  //           }}
-  //           leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
-  //           appear={false}
-  //         >
-  //           {tagChild}
-  //         </TweenOneGroup>
-
+  onClearFacet: (key: string, value: string) => void;
+  onClearQuery: () => void;
+}> = ({ searchProps, onClear, onClearQuery, onClearFacet }) => {
   const tagList = [
-    searchProps.query && (
-      <span
-        key={`search-${searchProps.query}`}
-        style={{ display: 'inline-block' }}
-      >
-        <Button className="filter-tag" size="small">
-          <span>
-            Search <b>{searchProps.query}</b>{' '}
+    ...[
+      !!searchProps.query ? (
+        <span
+          key={`search-${searchProps.query}`}
+          style={{ display: 'inline-block' }}
+        >
+          <Button className="filter-tag" size="small" onClick={onClearQuery}>
             <span>
-              <CloseOutlined />
+              Search <b>{searchProps.query}</b>{' '}
+              <span>
+                <CloseOutlined />
+              </span>
             </span>
-          </span>
-        </Button>
-      </span>
-    ),
+          </Button>
+        </span>
+      ) : null,
+    ],
     ...(searchProps.facetMap
       ? Array.from(searchProps.facetMap).map(
           ([key, { propertyKey, type, label: filterGroupLabel, value }]) => {
             return Array.from(value).map(val => {
               const [label] = val.split('/').reverse();
+              const handleClearFacet = () => {
+                onClearFacet(key, val);
+              };
               return (
                 <span
                   key={`${propertyKey}-${val}`}
                   style={{ display: 'inline-block' }}
                 >
-                  <Button className="filter-tag" size="small">
+                  <Button
+                    className="filter-tag"
+                    size="small"
+                    onClick={handleClearFacet}
+                  >
                     <span>
                       {filterGroupLabel} <b>{label}</b> <CloseOutlined />
                     </span>
