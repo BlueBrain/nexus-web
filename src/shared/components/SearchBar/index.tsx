@@ -66,8 +66,8 @@ const SearchBar: React.FC<{
   const options = !!query
     ? [
         {
-          key: `search-${value}`,
           value,
+          key: `search-${value}`,
           label: (
             <Hit type={HitType.UNCERTAIN}>
               <em>{value}</em>
