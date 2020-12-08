@@ -23,7 +23,8 @@ const LinkActivityForm: React.FC<{
     name: string;
   }[];
   onSubmit: (value: string) => void;
-}> = ({ activity, stepsList, onSubmit }) => {
+  onCancel: () => void;
+}> = ({ activity, stepsList, onSubmit, onCancel }) => {
   const [selectedStep, setSelectedStep] = React.useState<string>('');
   const {
     name,
@@ -52,7 +53,6 @@ const LinkActivityForm: React.FC<{
       <h2 className="link-activity-form__title">
         Link Activity to Workflow Step
       </h2>
-
       <Row gutter={24}>
         <Col xs={24} sm={24} md={12}>
           <Row>
@@ -155,7 +155,7 @@ const LinkActivityForm: React.FC<{
           </Select>
         </div>
         <div>
-          <Button onClick={() => {}}>Cancel</Button>
+          <Button onClick={onCancel}>Cancel</Button>
           <Button onClick={onClickSave} type="primary">
             Save
           </Button>

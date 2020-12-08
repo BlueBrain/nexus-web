@@ -163,6 +163,7 @@ const NotificationsContainer: React.FC<{
           activity={selectedActivity}
           stepsList={stepsList}
           onSubmit={linkActivity}
+          onCancel={() => setShowLinkForm(false)}
         />
       </Modal>
     </>
