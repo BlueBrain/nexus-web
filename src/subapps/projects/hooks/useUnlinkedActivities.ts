@@ -4,7 +4,7 @@ import { DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 
 import { displayError } from '../components/Notifications';
 
-type UnlinkedActivity = {
+export type UnlinkedActivity = {
   name?: string;
   resourceId: string;
   createdAt: string;
@@ -75,7 +75,7 @@ export const useUnlinkedActivities = (
           ),
         ];
 
-        const parsedActivities: any[] = [];
+        const parsedActivities: UnlinkedActivity[] = [];
 
         uniqueActivities.forEach(activity => {
           parsedActivities.push(
@@ -138,5 +138,6 @@ export const useUnlinkedActivities = (
 
   return {
     unlinkedActivities,
+    fetchUnlinkedActivities,
   };
 };

@@ -19,8 +19,6 @@ const NotififcationsPopover: React.FC<{
   onClickLinkActivity: (id: string) => void;
   onClickNew: () => void;
 }> = ({ activities, onClickLinkActivity, onClickNew }) => {
-  console.log('activities', activities);
-
   return (
     <div className="notifications-popover">
       <p>
@@ -48,9 +46,9 @@ const NotififcationsPopover: React.FC<{
               </Button>
             </Tooltip>
 
-            <Button type="primary" size="small" onClick={onClickNew}>
+            {/* <Button type="primary" size="small" onClick={onClickNew}>
               New
-            </Button>
+            </Button> */}
           </div>
         </div>
       ))}

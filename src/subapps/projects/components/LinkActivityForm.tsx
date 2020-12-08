@@ -35,18 +35,6 @@ const LinkActivityForm: React.FC<{
     resourceId,
   } = activity;
 
-  const columnLayoutProperties = {
-    xs: 12,
-    sm: 12,
-    md: 3,
-  };
-
-  const columnLayout = {
-    xs: 12,
-    sm: 12,
-    md: 9,
-  };
-
   const renderOptions = () => {
     return stepsList.map(step => (
       <Option key={step.id} value={step.id}>
@@ -61,23 +49,27 @@ const LinkActivityForm: React.FC<{
 
   return (
     <div className="link-activity-form">
-      <h2 className="link-activity-form__title">Link Activity to Step</h2>
+      <h2 className="link-activity-form__title">
+        Link Activity to Workflow Step
+      </h2>
 
       <Row gutter={24}>
         <Col xs={24} sm={24} md={12}>
           <Row>
             <Col xs={5} sm={5} md={5}>
-              <p>Resource</p>
+              <p>
+                <b>Resource</b>
+              </p>
             </Col>
             <Col>
-              <p>
-                <b>{name || labelOf(resourceId)}</b>
-              </p>
+              <p>{name || labelOf(resourceId)}</p>
             </Col>
           </Row>
           <Row>
             <Col xs={5} sm={5} md={5}>
-              <p>Activity type</p>
+              <p>
+                <b>Activity type</b>
+              </p>
             </Col>
             {/* TODO: manage multiple types */}
             <Col>
@@ -87,7 +79,9 @@ const LinkActivityForm: React.FC<{
           <Row>
             <Col xs={5} sm={5} md={5}>
               {/* TODO: fetch an agent */}
-              <p>Created by</p>
+              <p>
+                <b>Created by</b>
+              </p>
             </Col>
             <Col>
               <p>{getUsername(createdBy)}</p>
@@ -95,7 +89,9 @@ const LinkActivityForm: React.FC<{
           </Row>
           <Row>
             <Col xs={5} sm={5} md={5}>
-              <p>Created on</p>
+              <p>
+                <b>Created on</b>
+              </p>
             </Col>
             <Col>
               <p>{moment(createdAt).format('L')}</p>
@@ -105,11 +101,13 @@ const LinkActivityForm: React.FC<{
         <Col xs={24} sm={24} md={12}>
           <Row>
             <Col xs={5} sm={5} md={5}>
-              <p>Input data</p>
+              <p>
+                <b>Input data</b>
+              </p>
             </Col>
             <Col>
               <p>
-                {usedList
+                {usedList && Array.from(usedList).length > 0
                   ? Array.from(usedList).map(outputId => (
                       <p>{labelOf(outputId)}</p>
                     ))
@@ -119,11 +117,13 @@ const LinkActivityForm: React.FC<{
           </Row>
           <Row>
             <Col xs={5} sm={5} md={5}>
-              <p>Output data</p>
+              <p>
+                <b>Output data</b>
+              </p>
             </Col>
             <Col>
               <p>
-                {generatedList
+                {generatedList && Array.from(generatedList).length > 0
                   ? Array.from(generatedList).map(outputId => (
                       <p>{labelOf(outputId)}</p>
                     ))
@@ -133,7 +133,9 @@ const LinkActivityForm: React.FC<{
           </Row>
           <Row>
             <Col xs={5} sm={5} md={5}>
-              <p>Code</p>
+              <p>
+                <b>Code</b>
+              </p>
             </Col>
             <Col>
               <p>Coming soon...</p>

@@ -13,7 +13,10 @@ const NotificationsContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
 }> = ({ orgLabel, projectLabel }) => {
-  const { unlinkedActivities } = useUnlinkedActivities(orgLabel, projectLabel);
+  const { unlinkedActivities, fetchUnlinkedActivities } = useUnlinkedActivities(
+    orgLabel,
+    projectLabel
+  );
   const [showLinkForm, setShowLinkForm] = React.useState<boolean>(false);
   const [selectedActivity, setSelectedActivity] = React.useState<any>();
   const [steps, setSteps] = React.useState<any[]>([]);
@@ -31,7 +34,7 @@ const NotificationsContainer: React.FC<{
     )
       .then(response => setSteps(response))
       .catch(error => {
-        console.log('error');
+        displayError(error, 'Failed to fetch Activities');
       });
   };
 
@@ -49,7 +52,7 @@ const NotificationsContainer: React.FC<{
         fetchActivities(response._results);
       })
       .catch(error => {
-        console.log('error');
+        displayError(error, 'Failed to load the list of Workflow Steps');
       });
 
     setShowLinkForm(true);
@@ -96,11 +99,18 @@ const NotificationsContainer: React.FC<{
 
     nexus.Resource.getSource(orgLabel, projectLabel, encodeURIComponent(stepId))
       .then(response => updateWorkflowStep(stepId, response))
-      .then(() => successNotification('The activity is linked successfully'))
+      .then(() => {
+        successNotification('The activity is linked successfully');
+        //  TODO: find a better solution
+        const reloadTimer = setTimeout(() => {
+          fetchUnlinkedActivities();
+          clearTimeout(reloadTimer);
+        }, 4000);
+      })
       .catch(error =>
         displayError(
           error,
-          'Oops! Something got wrong - the Activity is not linked.'
+          'Oops! Something got wrong - the Activity was not linked'
         )
       );
   };
