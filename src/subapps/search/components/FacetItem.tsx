@@ -16,8 +16,8 @@ const FacetItem: React.FC<{
   facets: Facet[];
   onChange?: (key: string, value: boolean) => void;
 }> = ({ title, facets = [], onChange }) => {
-  const handleSelect = (key: string) => (e: CheckboxChangeEvent) => {
-    onChange && onChange(key, e.target.checked);
+  const handleSelect = (key: string, selected: boolean) => () => {
+    onChange && onChange(key, !selected);
   };
 
   return (
@@ -31,8 +31,8 @@ const FacetItem: React.FC<{
       </h4>
       {facets.map(({ label, key, count, selected }) => {
         return (
-          <div className="item" key={key}>
-            <Checkbox checked={selected} onChange={handleSelect(key)} />
+          <div className="item" key={key} onClick={handleSelect(key, selected)}>
+            <Checkbox checked={selected} />
             <span className="label">{label}</span>{' '}
             <Badge
               count={count}

@@ -143,6 +143,7 @@ const SearchView: React.FC = () => {
 
     changeSearchProps({
       ...searchProps,
+      pagination: DEFAULT_SEARCH_PROPS.pagination,
     });
   };
 
