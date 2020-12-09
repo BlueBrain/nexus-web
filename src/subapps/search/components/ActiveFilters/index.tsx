@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Button, Tag } from 'antd';
+import { Button } from 'antd';
+import { CloseCircleFilled, CloseOutlined } from '@ant-design/icons';
+import { UseSearchProps } from '../../../../shared/hooks/useSearchQuery';
 import { TweenOneGroup } from 'rc-tween-one';
 
 import './ActiveFilters.less';
-import { UseSearchProps } from '../../../../shared/hooks/useSearchQuery';
-import { CloseCircleFilled, CloseOutlined } from '@ant-design/icons';
 
 const ActiveFilters: React.FC<{
   searchProps: UseSearchProps;
