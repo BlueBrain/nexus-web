@@ -1,6 +1,22 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { convertMarkdownHandlebarStringWithData } from '../../../shared/utils/markdownTemplate';
+import useAsyncCall from '../../../shared/hooks/useAsynCall';
+import { getResourceLabel } from '../../../shared/utils';
+import { parseURL } from '../../../shared/utils/nexusParse';
+
+const makeMarkdown = async (template: string, resource: Resource) => {
+  const convertedTemplate = convertMarkdownHandlebarStringWithData(template, {
+    ...resource,
+    type: (Array.isArray(resource['@type'])
+      ? resource['@type']
+      : [resource['@type']]
+    ).map(typeURL => typeURL?.split('/').reverse()[0]),
+    resourceLabel: getResourceLabel(resource),
+    resourceAdminData: parseURL(resource._self),
+  });
+  return convertedTemplate;
+};
 
 const ResultPreviewItemContainer: React.FC<{
   resource: Resource;
@@ -9,12 +25,14 @@ const ResultPreviewItemContainer: React.FC<{
   const markdownHandlebarTemplate =
     resource.previewTemplate || defaultPreviewItemTemplate;
 
-  const convertedTemplate = convertMarkdownHandlebarStringWithData(
-    markdownHandlebarTemplate,
-    resource
+  const markdownData = useAsyncCall<string, Error>(
+    makeMarkdown(markdownHandlebarTemplate, resource),
+    [resource, defaultPreviewItemTemplate]
   );
 
-  return <div dangerouslySetInnerHTML={{ __html: convertedTemplate }}></div>;
+  return !markdownData.error && markdownData.data ? (
+    <div dangerouslySetInnerHTML={{ __html: markdownData.data }}></div>
+  ) : null;
 };
 
 export default ResultPreviewItemContainer;

@@ -19,7 +19,7 @@ const ActiveFilters: React.FC<{
           key={`search-${searchProps.query}`}
           style={{ display: 'inline-block' }}
         >
-          <Button className="filter-tag" size="small" onClick={onClearQuery}>
+          <Button className="filter-tag" onClick={onClearQuery}>
             <span>
               Search <b>{searchProps.query}</b>{' '}
               <span>
@@ -43,11 +43,7 @@ const ActiveFilters: React.FC<{
                   key={`${propertyKey}-${val}`}
                   style={{ display: 'inline-block' }}
                 >
-                  <Button
-                    className="filter-tag"
-                    size="small"
-                    onClick={handleClearFacet}
-                  >
+                  <Button className="filter-tag" onClick={handleClearFacet}>
                     <span>
                       {filterGroupLabel} <b>{label}</b> <CloseOutlined />
                     </span>
@@ -75,7 +71,6 @@ const ActiveFilters: React.FC<{
         <Button
           className="filter-tag"
           icon={<CloseCircleFilled />}
-          size="small"
           onClick={onClear}
         >
           Clear all filters

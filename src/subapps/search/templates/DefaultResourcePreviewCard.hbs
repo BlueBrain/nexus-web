@@ -1,5 +1,11 @@
 <div>
-    {{ "@id" }}
-    {{ label }}
-    {{ "@type"}}
+    <h3>{{ resourceLabel }}</h3>
+    <div style="display:flex;">
+        {{#each type}}
+            <li>
+                <span class="ant-tag">{{this}}</span>
+            </li>
+        {{/each}}
+    </div>
+    <div><span>{{ resourceAdminData.org }}</span> | <span>{{ resourceAdminData.project }}</span></div>
 </div>

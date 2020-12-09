@@ -15,10 +15,12 @@ const nexusEntities = [
   'acls',
   'views',
   'resources',
+  'resolvers',
+  'storages',
   'files',
 ];
 
-const nexusUrlR = new RegExp(
+const nexusUrlRegex = new RegExp(
   [
     '^',
     '(https?://.+)', // nexus deployment
@@ -49,10 +51,11 @@ const nexusUrlR = new RegExp(
  *
  * @param nexusUrl
  */
+
 export const parseURL = (nexusUrl: string): ParsedNexusUrl => {
   if (!nexusUrl) throw new Error('selfUrl should be defined');
 
-  const matches = nexusUrl.match(nexusUrlR);
+  const matches = nexusUrl.match(nexusUrlRegex);
   if (!matches || matches.length <= 5) {
     throw new Error('Error while parsing selfUrl');
   }

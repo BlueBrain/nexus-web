@@ -1,4 +1,18 @@
+@import '../../../shared/lib.less';
+
 .results-wrapper {
   padding: 1em;
   width: 100%;
+}
+
+.result-preview-card {
+  cursor: pointer;
+  background-color: white;
+  border-radius: 2px;
+  padding: 1em;
+  transition: @transition-all-bouncy;
+  &:hover {
+    .highShadow();
+    transform: scale(1.05);
+  }
 }

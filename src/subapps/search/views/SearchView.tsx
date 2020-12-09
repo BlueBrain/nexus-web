@@ -210,49 +210,47 @@ const SearchView: React.FC = () => {
   return (
     <Content style={{ padding: '1em' }}>
       <Layout>
-        {searchResponse.data && (
-          <Sider
-            style={{
-              background: 'transparent',
-            }}
-          >
-            <Card>
-              {Object.keys(searchResponse.data?.aggregations || {}).map(
-                aggKey => {
-                  if (!searchProps.facetMap) {
-                    return null;
-                  }
-                  searchProps.facetMap.get(aggKey);
-
-                  const facets =
-                    searchResponse.data?.aggregations[aggKey]?.buckets.map(
-                      (bucket: any) => {
-                        const [label] = bucket.key.split('/').reverse();
-                        const selected = searchProps.facetMap
-                          ?.get(aggKey)
-                          ?.value.has(bucket.key);
-
-                        return {
-                          label,
-                          selected,
-                          count: bucket.doc_count,
-                          key: bucket.key,
-                        };
-                      }
-                    ) || [];
-                  return (
-                    <FacetItem
-                      key={aggKey}
-                      title={aggKey.toLocaleUpperCase()}
-                      facets={facets}
-                      onChange={handleFacetChanged(aggKey)}
-                    />
-                  );
+        <Sider
+          style={{
+            background: 'transparent',
+          }}
+        >
+          <Card>
+            {Object.keys(searchResponse.data?.aggregations || {}).map(
+              aggKey => {
+                if (!searchProps.facetMap) {
+                  return null;
                 }
-              )}
-            </Card>
-          </Sider>
-        )}
+                searchProps.facetMap.get(aggKey);
+
+                const facets =
+                  searchResponse.data?.aggregations[aggKey]?.buckets.map(
+                    (bucket: any) => {
+                      const [label] = bucket.key.split('/').reverse();
+                      const selected = searchProps.facetMap
+                        ?.get(aggKey)
+                        ?.value.has(bucket.key);
+
+                      return {
+                        label,
+                        selected,
+                        count: bucket.doc_count,
+                        key: bucket.key,
+                      };
+                    }
+                  ) || [];
+                return (
+                  <FacetItem
+                    key={aggKey}
+                    title={aggKey.toLocaleUpperCase()}
+                    facets={facets}
+                    onChange={handleFacetChanged(aggKey)}
+                  />
+                );
+              }
+            )}
+          </Card>
+        </Sider>
         <Content>
           <Row style={{ padding: '0 1em' }}>
             <ActiveFilters
