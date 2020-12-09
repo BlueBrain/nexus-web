@@ -8,7 +8,8 @@ export type AsyncCall<T, E = Error> = {
 
 export default function useAsyncCall<T, E>(
   remoteAction: Promise<T>,
-  dependency: any[]
+  dependency: any[],
+  keepDataOnLoading?: boolean
 ) {
   const [remoteCall, setRemoteCall] = React.useState<AsyncCall<T, E>>({
     loading: true,
@@ -19,7 +20,7 @@ export default function useAsyncCall<T, E>(
   React.useEffect(() => {
     setRemoteCall({
       loading: true,
-      data: null,
+      data: (keepDataOnLoading && remoteCall.data) || null,
       error: null,
     });
     remoteAction

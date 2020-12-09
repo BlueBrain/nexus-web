@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router';
 import SearchBar, { SearchQuickActions } from '../components/SearchBar';
+import useQueryString from '../hooks/useQueryString';
 import useSearchConfigs from '../hooks/useSearchConfigs';
-import useSearchQuery from '../hooks/useSearchQuery';
+import useSearchQuery, { DEFAULT_SEARCH_PROPS } from '../hooks/useSearchQuery';
 import { parseURL } from '../utils/nexusParse';
 
 const DEFAULT_SEARCH_BAR_RESULT_SIZE = 10;
@@ -15,6 +16,7 @@ const SearchBarContainer: React.FC = () => {
   );
   const history = useHistory();
   const location = useLocation();
+  const [queryParams, setQueryString] = useQueryString();
 
   const goToResource = (resourceSelfURL: string) => {
     const { org, project, id } = parseURL(resourceSelfURL);
@@ -26,9 +28,16 @@ const SearchBarContainer: React.FC = () => {
 
   const goToSearch = () => {
     if (searchProps.query) {
-      return history.push(`/search?query=${searchProps.query}`);
+      // reset pagination if we have a search query
+      setQueryString(
+        {
+          ...queryParams,
+          pagination: DEFAULT_SEARCH_PROPS.pagination,
+          query: searchProps.query,
+        },
+        '/search'
+      );
     }
-    history.push(`/search`);
   };
 
   const handleSearch = (searchText: string) => {

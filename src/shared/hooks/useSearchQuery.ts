@@ -134,7 +134,8 @@ export default function useSearchQuery(selfURL?: string | null) {
 
   const remoteResponse = useAsyncCall<SearchResponse<Resource> | null, Error>(
     searchNexus(),
-    [searchProps, selfURL]
+    [searchProps, selfURL],
+    true
   );
 
   return [remoteResponse, { searchProps, setSearchProps }] as [

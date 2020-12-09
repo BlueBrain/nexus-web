@@ -20,6 +20,10 @@ export default function useSearchConfigs() {
   } = useSelector((state: RootState) => state.search);
   const dispatch = useReduxDispatch();
 
+  const searchConfigProject = useSelector(
+    (state: RootState) => state.config.searchSettings.searchConfigProject
+  );
+
   // Fetch configs on bootup
   React.useEffect(() => {
     dispatch(fetchSearchConfigs());
@@ -51,5 +55,6 @@ export default function useSearchConfigs() {
     preferedSearchConfigID,
     preferedSearchConfig,
     setSearchPreference,
+    searchConfigProject,
   };
 }

@@ -108,16 +108,22 @@ const SearchBar: React.FC<{
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter' && !value) {
-      onClear();
+      return onClear();
+    }
+    if (e.key === 'Enter') {
+      // if no option selected, push the value
+      // handleSelect(value);
     }
   };
+
+  console.log({ value, query });
 
   return (
     <AutoComplete
       className={`search-bar ${!!focused && 'focused'}`}
       onFocus={handleSetFocused(true)}
       onBlur={handleSetFocused(false)}
-      defaultValue={query}
+      defaultValue={value}
       options={options}
       onChange={handleChange}
       onSelect={handleSelect}

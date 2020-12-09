@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Row, List, Spin, Select, Card } from 'antd';
+import { Layout, Row, List, Spin, Select, Card, Empty } from 'antd';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Resource } from '@bbp/nexus-sdk';
 
@@ -52,12 +52,18 @@ const { Option } = Select;
 const SearchView: React.FC = () => {
   const history = useHistory();
   const location = useLocation();
-  const { preferedSearchConfig } = useSearchConfigs();
+  const {
+    preferedSearchConfig,
+    searchConfigs,
+    searchConfigProject,
+  } = useSearchConfigs();
 
   const [searchResponse, { searchProps, setSearchProps }] = useSearchQuery(
     preferedSearchConfig?.view
   );
   const [queryParams, setQueryString] = useQueryString();
+
+  const results = searchResponse.data;
 
   React.useEffect(() => {
     applyQueryParamsToSearchProps();
@@ -207,6 +213,34 @@ const SearchView: React.FC = () => {
   const currentSize = searchResponse.data?.hits.hits.length;
   const shouldShowPagination = totalPages > 1;
 
+  if (searchConfigs.data?.length === 0) {
+    return (
+      <Content
+        style={{
+          padding: '1em',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          height: '60%',
+        }}
+      >
+        <Empty
+          description={
+            <>
+              <h2>
+                No Search Config found in project <b>{searchConfigProject}</b>
+              </h2>
+              <p>
+                Ask your administrator to set up a configuration to enable this
+                feature
+              </p>
+            </>
+          }
+        ></Empty>
+      </Content>
+    );
+  }
+
   return (
     <Content style={{ padding: '1em' }}>
       <Layout>
@@ -216,39 +250,38 @@ const SearchView: React.FC = () => {
           }}
         >
           <Card>
-            {Object.keys(searchResponse.data?.aggregations || {}).map(
-              aggKey => {
-                if (!searchProps.facetMap) {
-                  return null;
-                }
-                searchProps.facetMap.get(aggKey);
-
-                const facets =
-                  searchResponse.data?.aggregations[aggKey]?.buckets.map(
-                    (bucket: any) => {
-                      const [label] = bucket.key.split('/').reverse();
-                      const selected = searchProps.facetMap
-                        ?.get(aggKey)
-                        ?.value.has(bucket.key);
-
-                      return {
-                        label,
-                        selected,
-                        count: bucket.doc_count,
-                        key: bucket.key,
-                      };
-                    }
-                  ) || [];
-                return (
-                  <FacetItem
-                    key={aggKey}
-                    title={aggKey.toLocaleUpperCase()}
-                    facets={facets}
-                    onChange={handleFacetChanged(aggKey)}
-                  />
-                );
+            <h2 style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>Filter</span> <Spin spinning={searchResponse.loading} />
+            </h2>
+            {Object.keys(results?.aggregations || {}).map(aggKey => {
+              if (!searchProps.facetMap) {
+                return null;
               }
-            )}
+              searchProps.facetMap.get(aggKey);
+
+              const facets =
+                results?.aggregations[aggKey]?.buckets.map((bucket: any) => {
+                  const [label] = bucket.key.split('/').reverse();
+                  const selected = searchProps.facetMap
+                    ?.get(aggKey)
+                    ?.value.has(bucket.key);
+
+                  return {
+                    label,
+                    selected,
+                    count: bucket.doc_count,
+                    key: bucket.key,
+                  };
+                }) || [];
+              return (
+                <FacetItem
+                  key={aggKey}
+                  title={aggKey.toLocaleUpperCase()}
+                  facets={facets}
+                  onChange={handleFacetChanged(aggKey)}
+                />
+              );
+            })}
           </Card>
         </Sider>
         <Content>
@@ -261,11 +294,12 @@ const SearchView: React.FC = () => {
             />
           </Row>
           <Row>
-            <Spin
+            {/* <Spin
               size="large"
               spinning={searchResponse.loading}
               wrapperClassName="results-wrapper"
-            >
+            > */}
+            <div className="results-wrapper">
               <div
                 className="controls"
                 style={{ display: 'flex', justifyContent: 'space-between' }}
@@ -301,9 +335,10 @@ const SearchView: React.FC = () => {
                 </div>
               </div>
               <List
+                loading={searchResponse.loading}
                 itemLayout="horizontal"
                 grid={{ gutter: 16, column: 4 }}
-                dataSource={searchResponse.data?.hits.hits || []}
+                dataSource={results?.hits.hits || []}
                 pagination={
                   shouldShowPagination && {
                     total,
@@ -328,7 +363,7 @@ const SearchView: React.FC = () => {
                   </List.Item>
                 )}
               />
-            </Spin>
+            </div>
           </Row>
         </Content>
       </Layout>
