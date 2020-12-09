@@ -8,7 +8,6 @@ import {
 } from '@bbp/nexus-sdk';
 import ResultsTable from '../../../shared/components/ResultsTable/ResultsTable';
 import { displayError } from '../components/Notifications';
-import ResourcesPane from '../components/ResourcesPane';
 import fusionConfig from '../config';
 import { CodeResourceData } from '../components/LinkCodeForm';
 import ResourcesSearch from '../components/ResourcesSearch';
@@ -97,6 +96,8 @@ const ActivityResourcesContainer: React.FC<{
       dataQuery
     )
       .then((result: SparqlViewQueryResponse) => {
+        console.log('data', result);
+
         const data: SelectQueryResponse = result as SelectQueryResponse;
         const tempHeaderProperties: {
           title: string;
@@ -153,21 +154,15 @@ const ActivityResourcesContainer: React.FC<{
   };
 
   return (
-    <ResourcesPane
-      linkCode={addCodeResource}
-      onTabSelect={(tabName: string) => setActiveTab(tabName)}
-      activeTab={activeTab}
-    >
-      <div className="resources-list">
-        <Spin spinning={items ? false : true}>
-          <ResultsTable
-            headerProperties={headerProperties}
-            items={items ? (items as Item[]) : []}
-            handleClick={() => {}}
-          />
-        </Spin>
-      </div>
-    </ResourcesPane>
+    <div className="resources-list">
+      <Spin spinning={items ? false : true}>
+        <ResultsTable
+          headerProperties={headerProperties}
+          items={items ? (items as Item[]) : []}
+          handleClick={() => {}}
+        />
+      </Spin>
+    </div>
   );
 };
 

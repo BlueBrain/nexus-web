@@ -8,7 +8,8 @@ const ActionButton: React.FC<{
   title?: string;
   onClick(): void;
   icon?: 'add' | string;
-}> = ({ icon, title, onClick }) => {
+  highlighted?: boolean;
+}> = ({ icon, title, onClick, highlighted }) => {
   let buttonIcon;
 
   switch (icon) {
@@ -26,7 +27,7 @@ const ActionButton: React.FC<{
 
   return (
     <button
-      className="action-button"
+      className={`action-button ${highlighted && 'action-button--highlighted'}`}
       onClick={onClickActionButton}
       type="button"
     >

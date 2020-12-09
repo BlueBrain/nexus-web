@@ -13,6 +13,7 @@ import SingleStepContainer from '../containers/SingleStepContainer';
 import StepInfoContainer from '../containers/StepInfoContainer';
 import { isParentLink } from '../utils';
 import ActivityResourcesContainer from '../containers/ActivityResourcesContainer';
+import ActionButton from '../components/ActionButton';
 
 import './WorkflowStepView.less';
 
@@ -68,6 +69,7 @@ const WorkflowStepView: React.FC = () => {
   const [siblings, setSiblings] = React.useState<
     { name: string; '@id': string }[]
   >([]);
+  const [activeTab, setActiveTab] = React.useState<string>('Overview');
 
   const projectLabel = match?.params.projectLabel || '';
   const orgLabel = match?.params.orgLabel || '';
@@ -203,6 +205,8 @@ const WorkflowStepView: React.FC = () => {
       .catch(error => displayError(error, 'Failed to load original payload'));
   };
 
+  console.log('activeTab', activeTab);
+
   return (
     <div className="workflow-step-view">
       <ProjectPanel
@@ -224,17 +228,45 @@ const WorkflowStepView: React.FC = () => {
           />
         )}
       </div>
-      <StepsBoard>
-        {steps.map(substep => (
-          <SingleStepContainer
-            key={`step-${substep['@id']}`}
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
-            step={substep}
+      {/* Tabs panel */}
+      <div className="tabs">
+        <div className="resources-pane__header">
+          <ActionButton
+            highlighted={activeTab === 'Overview'}
+            title="Overview"
+            onClick={() => setActiveTab('Overview')}
           />
-        ))}
-      </StepsBoard>
-      {step && (
+          <ActionButton
+            title="Activities"
+            highlighted={activeTab === 'Activities'}
+            onClick={() => setActiveTab('Activities')}
+          />
+          <ActionButton
+            title="Notes"
+            onClick={() => setActiveTab('Notes')}
+            highlighted={activeTab === 'Notes'}
+          />
+          <ActionButton
+            title="Inputs"
+            onClick={() => setActiveTab('Inputs')}
+            highlighted={activeTab === 'Inputs'}
+          />
+        </div>
+      </div>
+      {/* Active view */}
+      {activeTab === 'Overview' && (
+        <StepsBoard>
+          {steps.map(substep => (
+            <SingleStepContainer
+              key={`step-${substep['@id']}`}
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              step={substep}
+            />
+          ))}
+        </StepsBoard>
+      )}
+      {activeTab === 'Activities' && step && (
         <ActivityResourcesContainer
           orgLabel={orgLabel}
           projectLabel={projectLabel}
@@ -242,6 +274,8 @@ const WorkflowStepView: React.FC = () => {
           activity={step}
         />
       )}
+      {activeTab === 'Notes' && <div>Notes coming soon</div>}
+      {activeTab === 'Inputs' && <div>Inputs coming soon</div>}
     </div>
   );
 };
