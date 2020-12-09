@@ -11,6 +11,7 @@ export const fusionConfig = {
 
   // resource types
   workflowStepType: 'nxv:WorkflowStep',
+  activityWorkflowLink: 'nxv:activities',
   templateType: 'FusionTemplate',
   activityType: 'prov:Activity',
   projectMetadataType: 'FusionMetadata',

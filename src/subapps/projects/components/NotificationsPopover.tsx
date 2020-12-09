@@ -1,19 +1,22 @@
 import * as React from 'react';
-import { Button } from 'antd';
+import { Button, Tooltip } from 'antd';
 import * as moment from 'moment';
 
-import { getUsername } from '../../../shared/utils';
+import { getUsername, labelOf } from '../../../shared/utils';
 
 import './NotificationsPopover.less';
 
 const NotififcationsPopover: React.FC<{
   activities: {
-    name: string;
+    name?: string;
     resourceId: string;
     createdAt: string;
     createdBy: string;
+    usedList?: string[];
+    generatedList?: string[];
+    resourceType?: string;
   }[];
-  onClickLinkActivity: () => void;
+  onClickLinkActivity: (id: string) => void;
   onClickNew: () => void;
 }> = ({ activities, onClickLinkActivity, onClickNew }) => {
   return (
@@ -27,15 +30,23 @@ const NotififcationsPopover: React.FC<{
           key={`activity-${activity.resourceId}`}
         >
           <div className="notifications-popover__main">
-            <h4>{activity.name}</h4>
+            <h4>{activity.name || labelOf(activity.resourceId)}</h4>
             <p>Created on {moment(activity.createdAt).format('L')}</p>
+            {/* TODO: fetch an agent */}
             <p>Created by {getUsername(activity.createdBy)}</p>
           </div>
           <div className="notifications-popover__actions">
-            {/* <Button type="primary" size="small" onClick={onClickLinkActivity}>
-              Link
-            </Button>
-            <Button type="primary" size="small" onClick={onClickNew}>
+            <Tooltip title="Link this activity to an existing Workflow Step">
+              <Button
+                type="primary"
+                size="small"
+                onClick={() => onClickLinkActivity(activity.resourceId)}
+              >
+                Link
+              </Button>
+            </Tooltip>
+
+            {/* <Button type="primary" size="small" onClick={onClickNew}>
               New
             </Button> */}
           </div>
