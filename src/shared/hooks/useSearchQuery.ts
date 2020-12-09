@@ -107,6 +107,7 @@ export default function useSearchQuery(selfURL?: string | null) {
     const body = bodybuilder();
 
     body
+      // TODO upgrade typescript to enable spread arguments
       // @ts-ignore
       .filter(...matchQuery)
       .filter('term', '_deprecated', false)

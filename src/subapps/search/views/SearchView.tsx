@@ -294,11 +294,6 @@ const SearchView: React.FC = () => {
             />
           </Row>
           <Row>
-            {/* <Spin
-              size="large"
-              spinning={searchResponse.loading}
-              wrapperClassName="results-wrapper"
-            > */}
             <div className="results-wrapper">
               <div
                 className="controls"

@@ -2,7 +2,6 @@ export interface SearchResponse<T> {
   took: number;
   timed_out: boolean;
   _scroll_id?: string;
-  // _shards: ShardsResponse;
   hits: {
     total: {
       value: number;
@@ -15,7 +14,6 @@ export interface SearchResponse<T> {
       _score: number;
       _source: T;
       _version?: number;
-      // _explanation?: Explanation;
       fields?: any;
       highlight?: any;
       inner_hits?: any;

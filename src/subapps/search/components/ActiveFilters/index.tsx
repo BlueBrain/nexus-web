@@ -13,22 +13,15 @@ const ActiveFilters: React.FC<{
   onClearQuery: () => void;
 }> = ({ searchProps, onClear, onClearQuery, onClearFacet }) => {
   const tagList = [
-    <span key="clear-filters" style={{ display: 'inline-block' }}>
-      <Button
-        className="filter-tag"
-        icon={<CloseCircleFilled />}
-        onClick={onClear}
-      >
+    <span className="filter-tag" key="clear-filters">
+      <Button icon={<CloseCircleFilled />} onClick={onClear}>
         Clear all filters
       </Button>
     </span>,
     ...[
       !!searchProps.query ? (
-        <span
-          key={`search-${searchProps.query}`}
-          style={{ display: 'inline-block' }}
-        >
-          <Button className="filter-tag" onClick={onClearQuery}>
+        <span className="filter-tag" key={`search-${searchProps.query}`}>
+          <Button onClick={onClearQuery}>
             <span>
               Search <b>{searchProps.query}</b>{' '}
               <span>
@@ -48,11 +41,8 @@ const ActiveFilters: React.FC<{
                 onClearFacet(key, val);
               };
               return (
-                <span
-                  key={`${propertyKey}-${val}`}
-                  style={{ display: 'inline-block' }}
-                >
-                  <Button className="filter-tag" onClick={handleClearFacet}>
+                <span className="filter-tag" key={`${propertyKey}-${val}`}>
+                  <Button onClick={handleClearFacet}>
                     <span>
                       {filterGroupLabel} <b>{label}</b> <CloseOutlined />
                     </span>
