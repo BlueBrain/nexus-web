@@ -37,30 +37,69 @@ type NexusSparqlError = {
 const ActivityResourcesContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
-  activity: StepResource;
+  workflowStep: StepResource;
   linkCodeToActivity: (codeResourceId: string) => void;
-}> = ({ orgLabel, projectLabel, activity, linkCodeToActivity }) => {
+}> = ({ orgLabel, projectLabel, workflowStep, linkCodeToActivity }) => {
   const nexus = useNexusContext();
   const [activeTab, setActiveTab] = React.useState<string>('Activities');
 
   const [headerProperties, setHeaderProperties] = React.useState<any[]>([]);
   const [items, setItems] = React.useState<any[]>();
-  console.log(activity._self);
+  console.log(workflowStep);
 
   const viewId = 'nxv:defaultSparqlIndex';
+
   const activitiesQuery = `
-          prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/>
-          prefix schema: <http://schema.org/>
-          SELECT  ?self ?activity ?createdAt ?createdBy ?code
-          WHERE {
-            ?activity nxv:self ?self .
-            ?activity <https://staging.nexus.ocp.bbp.epfl.ch/v1/vocabs/fusion-dhaneshnm/new_project/hasParent> <${activity._self}> .
-            ?activity 	rdf:type <https://staging.nexus.ocp.bbp.epfl.ch/v1/vocabs/fusion-dhaneshnm/new_project/FusionActivity> .
-            ?activity nxv:createdAt ?createdAt .
-            ?activity nxv:createdBy ?createdBy .
-            ?activity <https://staging.nexus.ocp.bbp.epfl.ch/v1/vocabs/fusion-dhaneshnm/new_project/wasAssociatedWith> ?code
-          }
-          LIMIT 100`;
+    PREFIX nxv: <https://bluebrain.github.io/nexus/vocabulary/>
+    PREFIX prov: <http://www.w3.org/ns/prov#>
+    SELECT  DISTINCT ?self ?activity ?createdAt ?createdBy ?used ?generated
+    WHERE {
+      ?activity nxv:self ?self ;
+                <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> prov:Activity ;
+                nxv:createdAt ?createdAt ;
+                nxv:createdBy ?createdBy .
+      ?wfstep nxv:self <${encodeURIComponent(workflowStep._self)}> ;
+              nxv:activities ?activity .
+      OPTIONAL { ?activity nxv:used ?used }
+      OPTIONAL { ?activity nxv:generated ?generated }
+    }
+    LIMIT 100
+  `;
+
+  // all activities in the project
+  const activitiesQueryTwo = `
+    PREFIX nxv: <https://bluebrain.github.io/nexus/vocabulary/>
+    PREFIX prov: <http://www.w3.org/ns/prov#>
+    SELECT  ?self ?activity ?createdAt ?createdBy ?used ?generated
+    WHERE {
+      ?activity nxv:self ?self ;
+                <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> prov:Activity ;
+                nxv:createdAt ?createdAt ;
+                nxv:createdBy ?createdBy .
+      OPTIONAL { ?activity nxv:used ?used }
+      OPTIONAL { ?activity nxv:generated ?generated }
+    }
+    LIMIT 100
+  `;
+
+  // `PREFIX nxv: <https://bluebrain.github.io/nexus/vocabulary/>
+  // PREFIX prov: <http://www.w3.org/ns/prov#>
+  // SELECT ?resource ?name ?createdBy ?createdAt ?used ?generated ?resourceType
+  // WHERE {
+  //   { ?resource <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> prov:Activity ;
+  //                 nxv:createdBy ?createdBy ;
+  //                 nxv:createdAt ?createdAt ;
+  //                 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?resourceType
+  //    OPTIONAL { ?resource <http://schema.org/name> ?name }
+  //    OPTIONAL { ?resource nxv:used ?used }
+  //    OPTIONAL { ?resource nxv:generated ?generated }
+  //   } MINUS {
+  //     ?wfstep <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> nxv:WorkflowStep ;
+  //             nxv:activities ?resource .
+  //   }
+  // }
+  // LIMIT 100`;
+
   const notesQuery = `# This is a simple example query
           # You can directly edit this
           prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/>
@@ -153,8 +192,10 @@ const ActivityResourcesContainer: React.FC<{
       .catch(error => displayError(error, 'Failed to save'));
   };
 
+  console.log('items', items);
+
   return (
-    <div className="resources-list">
+    <div className="resources-list" style={{ margin: '20px' }}>
       <Spin spinning={items ? false : true}>
         <ResultsTable
           headerProperties={headerProperties}

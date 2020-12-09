@@ -271,7 +271,7 @@ const WorkflowStepView: React.FC = () => {
           orgLabel={orgLabel}
           projectLabel={projectLabel}
           linkCodeToActivity={linkCodeToActivity}
-          activity={step}
+          workflowStep={step}
         />
       )}
       {activeTab === 'Notes' && <div>Notes coming soon</div>}
