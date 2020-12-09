@@ -1,5 +1,11 @@
-<div>
+<div style="display: block">
     <h3>{{ resourceLabel }}</h3>
+    {{#if description}}
+    <div class="description">
+        <div class="overlay"></div>
+        {{{ description }}}
+    </div>
+    {{/if}}
     <div style="display:flex;">
         {{#each type}}
             <li>

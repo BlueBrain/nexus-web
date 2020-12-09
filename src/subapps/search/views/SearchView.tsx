@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Row, List, Spin, Select, Card, Empty } from 'antd';
+import { Layout, Row, List, Spin, Select, Card, Empty, Result } from 'antd';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Resource } from '@bbp/nexus-sdk';
 
@@ -213,7 +213,7 @@ const SearchView: React.FC = () => {
   const currentSize = searchResponse.data?.hits.hits.length;
   const shouldShowPagination = totalPages > 1;
 
-  if (searchConfigs.data?.length === 0) {
+  if (searchConfigs.data?.length === 0 && !searchConfigs.isFetching) {
     return (
       <Content
         style={{
@@ -224,19 +224,19 @@ const SearchView: React.FC = () => {
           height: '60%',
         }}
       >
-        <Empty
-          description={
+        <Result
+          title={
             <>
               <h2>
                 No Search Config found in project <b>{searchConfigProject}</b>
               </h2>
               <p>
-                Ask your administrator to set up a configuration to enable this
-                feature
+                Ask your administrator to set up a configuration in order to
+                enable this feature
               </p>
             </>
           }
-        ></Empty>
+        ></Result>
       </Content>
     );
   }
@@ -336,7 +336,7 @@ const SearchView: React.FC = () => {
               </div>
               <List
                 loading={searchResponse.loading}
-                itemLayout="horizontal"
+                itemLayout="vertical"
                 grid={{ gutter: 16, column: 4 }}
                 dataSource={results?.hits.hits || []}
                 pagination={
@@ -349,19 +349,29 @@ const SearchView: React.FC = () => {
                     onShowSizeChange: handlePageSizeChange,
                   }
                 }
-                renderItem={hit => (
-                  <List.Item>
-                    <div
-                      className="result-preview-card"
-                      onClick={handleClickItem(hit._source)}
-                    >
-                      <ResultPreviewItemContainer
-                        resource={hit._source as Resource}
-                        defaultPreviewItemTemplate={DefaultResourcePreviewCard}
-                      />
-                    </div>
-                  </List.Item>
-                )}
+                renderItem={hit => {
+                  const { _original_source, ...resourceMetadata } = hit._source;
+                  const resource = {
+                    ...resourceMetadata,
+                    ...JSON.parse(_original_source),
+                  };
+
+                  return (
+                    <List.Item>
+                      <div
+                        className="result-preview-card"
+                        onClick={handleClickItem(resource)}
+                      >
+                        <ResultPreviewItemContainer
+                          resource={resource as Resource}
+                          defaultPreviewItemTemplate={
+                            DefaultResourcePreviewCard
+                          }
+                        />
+                      </div>
+                    </List.Item>
+                  );
+                }}
               />
             </div>
           </Row>

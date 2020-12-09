@@ -8,6 +8,10 @@ import { parseURL } from '../../../shared/utils/nexusParse';
 const makeMarkdown = async (template: string, resource: Resource) => {
   const convertedTemplate = convertMarkdownHandlebarStringWithData(template, {
     ...resource,
+    description: convertMarkdownHandlebarStringWithData(
+      resource.description || '',
+      resource
+    ),
     type: (Array.isArray(resource['@type'])
       ? resource['@type']
       : [resource['@type']]
@@ -15,6 +19,7 @@ const makeMarkdown = async (template: string, resource: Resource) => {
     resourceLabel: getResourceLabel(resource),
     resourceAdminData: parseURL(resource._self),
   });
+
   return convertedTemplate;
 };
 

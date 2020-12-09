@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { LoadingOutlined } from '@ant-design/icons';
-import { AutoComplete, Button, Input } from 'antd';
+import { AutoComplete, Input } from 'antd';
 import { SearchConfig } from '../../store/reducers/search';
 import { AsyncCall } from '../../hooks/useAsynCall';
 import { SearchResponse } from '../../types/search';
@@ -84,7 +84,6 @@ const SearchBar: React.FC<{
               </Hit>
             ),
             value: `${SearchQuickActions.VISIT}:${_source._self}`,
-            source: _source,
           };
         }) || []),
       ]
@@ -98,7 +97,6 @@ const SearchBar: React.FC<{
     onSubmit(value);
     if (value.includes(`${SearchQuickActions.VISIT}:`)) {
       setValue('');
-      onSearch('');
     }
   };
 
@@ -107,16 +105,13 @@ const SearchBar: React.FC<{
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter' && !value) {
+    if (e.key !== 'Enter') {
+      return;
+    }
+    if (!value) {
       return onClear();
     }
-    if (e.key === 'Enter') {
-      // if no option selected, push the value
-      // handleSelect(value);
-    }
   };
-
-  console.log({ value, query });
 
   return (
     <AutoComplete
