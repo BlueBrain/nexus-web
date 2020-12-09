@@ -45,23 +45,26 @@ const ActivityResourcesContainer: React.FC<{
 
   const [headerProperties, setHeaderProperties] = React.useState<any[]>([]);
   const [items, setItems] = React.useState<any[]>();
-  console.log(workflowStep);
+  console.log(workflowStep._self);
 
   const viewId = 'nxv:defaultSparqlIndex';
 
   const activitiesQuery = `
     PREFIX nxv: <https://bluebrain.github.io/nexus/vocabulary/>
     PREFIX prov: <http://www.w3.org/ns/prov#>
-    SELECT  DISTINCT ?self ?activity ?createdAt ?createdBy ?used ?generated
+    SELECT ?self ?resource ?name ?createdBy ?createdAt ?used ?generated ?resourceType
     WHERE {
-      ?activity nxv:self ?self ;
-                <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> prov:Activity ;
+      ?resource nxv:self ?self ;
+                <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <prov:Activity> ;
+                nxv:createdBy ?createdBy ;
                 nxv:createdAt ?createdAt ;
-                nxv:createdBy ?createdBy .
-      ?wfstep nxv:self <${encodeURIComponent(workflowStep._self)}> ;
-              nxv:activities ?activity .
-      OPTIONAL { ?activity nxv:used ?used }
-      OPTIONAL { ?activity nxv:generated ?generated }
+                <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?resourceType .
+      <${workflowStep._self}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> nxv:WorkflowStep ;
+                nxv:activities ?resource .
+                
+      OPTIONAL { ?resource <http://schema.org/name> ?name }
+      OPTIONAL { ?resource nxv:used ?used }
+      OPTIONAL { ?resource nxv:generated ?generated }
     }
     LIMIT 100
   `;
@@ -81,24 +84,6 @@ const ActivityResourcesContainer: React.FC<{
     }
     LIMIT 100
   `;
-
-  // `PREFIX nxv: <https://bluebrain.github.io/nexus/vocabulary/>
-  // PREFIX prov: <http://www.w3.org/ns/prov#>
-  // SELECT ?resource ?name ?createdBy ?createdAt ?used ?generated ?resourceType
-  // WHERE {
-  //   { ?resource <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> prov:Activity ;
-  //                 nxv:createdBy ?createdBy ;
-  //                 nxv:createdAt ?createdAt ;
-  //                 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?resourceType
-  //    OPTIONAL { ?resource <http://schema.org/name> ?name }
-  //    OPTIONAL { ?resource nxv:used ?used }
-  //    OPTIONAL { ?resource nxv:generated ?generated }
-  //   } MINUS {
-  //     ?wfstep <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> nxv:WorkflowStep ;
-  //             nxv:activities ?resource .
-  //   }
-  // }
-  // LIMIT 100`;
 
   const notesQuery = `# This is a simple example query
           # You can directly edit this
