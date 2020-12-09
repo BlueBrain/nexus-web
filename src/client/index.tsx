@@ -24,6 +24,7 @@ import App from '../shared/App';
 import configureStore from '../shared/store';
 import { RootState } from '../shared/store/reducers';
 import { fetchIdentities, fetchRealms } from '../shared/store/actions/auth';
+import { SEARCH_PREFENCE_LOCAL_STORAGE_KEY } from '../shared/store/actions/search';
 
 // The app base URL
 const rawBase: string = (window as any)['__BASE__'] || '/';
@@ -53,11 +54,15 @@ try {
 } catch (e) {
   preferredRealm = undefined;
 }
-const initialState = {
+const initialState: RootState = {
   ...preloadedState,
   config: {
     ...preloadedState.config,
     preferredRealm,
+  },
+  search: {
+    ...preloadedState.search,
+    searchPreference: localStorage.getItem(SEARCH_PREFENCE_LOCAL_STORAGE_KEY),
   },
 };
 
@@ -199,6 +204,10 @@ if (module.hot) {
   });
 }
 
+// TODO
+// let's render the app before calling this data
+// or show something like an application loading screen
+// to prevent nasty problems like White-screen-of-deathing
 async function main() {
   // remove old token if any
   localStorage.removeItem('nexus__token');

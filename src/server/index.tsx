@@ -9,6 +9,8 @@ import html from './html';
 import silentRefreshHtml from './silent_refresh';
 import { RootState } from '../shared/store/reducers';
 import { DEFAULT_UI_SETTINGS } from '../shared/store/reducers/ui-settings';
+import { DEFAULT_SEARCH_CONFIG_PROJECT } from '../shared/store/reducers/config';
+import { DEFAULT_SEARCH_STATE } from '../shared/store/reducers/search';
 
 const PORT_NUMBER = 8000;
 
@@ -25,6 +27,13 @@ const layoutSettings = {
   logoImg: process.env.LOGO_IMG || '',
   logoLink: process.env.LOGO_LINK || 'https://www.bluebrainnexus.io/',
 };
+
+// configure search settings
+const searchSettings = {
+  searchConfigProject:
+    process.env.SEARCH_CONFIG_PROJECT || DEFAULT_SEARCH_CONFIG_PROJECT,
+};
+
 const subAppsManifestPath =
   process.env.SUB_APPS_MANIFEST_PATH || '/public/sub-apps';
 
@@ -61,6 +70,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
   const preloadedState: RootState = {
     auth: {},
     config: {
+      searchSettings,
       layoutSettings,
       pluginsManifestPath,
       subAppsManifestPath,
@@ -78,6 +88,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       user: undefined,
       isLoadingUser: false,
     },
+    search: DEFAULT_SEARCH_STATE,
   };
 
   // render an HTML string of our app

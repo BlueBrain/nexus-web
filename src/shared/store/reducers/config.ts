@@ -1,5 +1,7 @@
 import { ConfigActions } from '../actions/config';
 
+export const DEFAULT_SEARCH_CONFIG_PROJECT = 'webapps/nexus-web';
+
 export interface ConfigState {
   apiEndpoint: string;
   basePath: string;
@@ -11,6 +13,9 @@ export interface ConfigState {
   subAppsManifestPath: string;
   gtmCode?: string;
   studioView?: string;
+  searchSettings: {
+    searchConfigProject: string;
+  };
   layoutSettings: {
     logoImg: string;
     logoLink: string;
@@ -28,6 +33,9 @@ const initialState: ConfigState = {
   layoutSettings: {
     logoImg: '',
     logoLink: '',
+  },
+  searchSettings: {
+    searchConfigProject: DEFAULT_SEARCH_CONFIG_PROJECT,
   },
 };
 
