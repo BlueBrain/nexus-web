@@ -212,7 +212,6 @@ const SearchView: React.FC = () => {
   const current = Math.floor((totalPages / total) * from + 1);
   const currentSize = searchResponse.data?.hits.hits.length;
   const shouldShowPagination = totalPages > 1;
-  const totalPhrase = total === 10000 ? '10000+' : total.toString();
 
   if (searchConfigs.data?.length === 0 && !searchConfigs.isFetching) {
     return (
@@ -309,7 +308,7 @@ const SearchView: React.FC = () => {
                   {!!total ? (
                     <span>
                       <b>
-                        Showing {currentSize} of {totalPhrase} Resources
+                        Showing {currentSize} of {total} Resources
                       </b>
                     </span>
                   ) : (
