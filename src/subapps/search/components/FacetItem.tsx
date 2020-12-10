@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Checkbox, Badge } from 'antd';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
 import './FacetItem.less';
+
+const OVERFLOW_COUNT = 9999;
 
 export type Facet = {
   count: number;
@@ -26,6 +27,7 @@ const FacetItem: React.FC<{
         {title}{' '}
         <Badge
           count={facets.length}
+          overflowCount={OVERFLOW_COUNT}
           style={{ backgroundColor: '#fff', color: '#999' }}
         />
       </h4>
@@ -35,7 +37,9 @@ const FacetItem: React.FC<{
             <Checkbox checked={selected} />
             <span className="label">{label}</span>{' '}
             <Badge
+              key={key}
               count={count}
+              overflowCount={OVERFLOW_COUNT}
               style={
                 selected
                   ? { backgroundColor: '#44c7f4', color: '#fff' }
