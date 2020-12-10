@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Checkbox, Badge } from 'antd';
+import { TOTAL_HITS_TRACKING } from '../../../shared/hooks/useSearchQuery';
 
 import './FacetItem.less';
 
-const OVERFLOW_COUNT = 9999;
+const OVERFLOW_COUNT = TOTAL_HITS_TRACKING;
 
 export type Facet = {
   count: number;

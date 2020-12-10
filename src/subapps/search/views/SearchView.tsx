@@ -248,6 +248,10 @@ const SearchView: React.FC = () => {
         <Sider
           style={{
             background: 'transparent',
+            // flex: '0 0 12%',
+            // minWidth: '200px',
+            // maxWidth: 'inherit',
+            // width: 'inherit',
           }}
         >
           <Card>
