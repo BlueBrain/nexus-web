@@ -1,9 +1,13 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
+import * as prettyByes from 'pretty-bytes';
 import { convertMarkdownHandlebarStringWithData } from '../../../shared/utils/markdownTemplate';
 import useAsyncCall from '../../../shared/hooks/useAsynCall';
 import { getResourceLabel } from '../../../shared/utils';
 import { parseURL } from '../../../shared/utils/nexusParse';
+
+export const FILE_SCHEMA =
+  'https://bluebrain.github.io/nexus/schemas/file.json';
 
 const makeMarkdown = async (template: string, resource: Resource) => {
   const convertedTemplate = convertMarkdownHandlebarStringWithData(template, {
@@ -18,6 +22,9 @@ const makeMarkdown = async (template: string, resource: Resource) => {
     ).map(typeURL => typeURL?.split('/').reverse()[0]),
     resourceLabel: getResourceLabel(resource),
     resourceAdminData: parseURL(resource._self),
+    fileData: resource._constrainedBy === FILE_SCHEMA && {
+      humanReadableFileSize: prettyByes(resource._bytes),
+    },
   });
 
   return convertedTemplate;

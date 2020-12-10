@@ -1,17 +1,25 @@
 <div style="display: block">
-    <h3>{{ resourceLabel }}</h3>
+    <h3 class="title">{{ resourceLabel }}</h3>
     {{#if description}}
     <div class="description">
         <div class="overlay"></div>
         {{{ description }}}
     </div>
     {{/if}}
-    <div style="display:flex;">
+    <div style="display:flex;" class="types">
         {{#each type}}
             <li>
                 <span class="ant-tag">{{this}}</span>
             </li>
         {{/each}}
     </div>
-    <div><span>{{ resourceAdminData.org }}</span> | <span>{{ resourceAdminData.project }}</span></div>
+     {{#if fileData }}
+        <div class="file-data">
+           <span>name: <b>{{ _filename }}</b></span><br/>
+           <span>size: <b>{{ fileData.humanReadableFileSize }}</b></span><br/>
+           <span>type: <b>{{ _mediaType }}</b></span><br/>
+        </div>
+    {{/if}}
+    <div>
+    <span>{{ resourceAdminData.org }}</span> | <span>{{ resourceAdminData.project }}</span></div>
 </div>

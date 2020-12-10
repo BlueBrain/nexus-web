@@ -245,6 +245,7 @@ const SearchView: React.FC = () => {
     <Content style={{ padding: '1em' }}>
       <Layout>
         <Sider
+          width={280}
           style={{
             background: 'transparent',
           }}

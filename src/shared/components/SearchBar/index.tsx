@@ -124,6 +124,7 @@ const SearchBar: React.FC<{
       onSelect={handleSelect}
       onSearch={handleSearch}
       onKeyDown={handleKeyDown}
+      dropdownClassName="search-drop"
       value={value}
     >
       <Input.Search

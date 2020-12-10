@@ -10,6 +10,8 @@ import { SearchResponse } from '../types/search';
 // TODO move to global default list
 const DEFAULT_PAGE_SIZE = 20;
 
+export const TOTAL_HITS_TRACKING = 1000000;
+
 export type SerializedFacetMap = {
   [propertyKey: string]: string[];
 };
@@ -109,6 +111,7 @@ export default function useSearchQuery(selfURL?: string | null) {
     body
       // TODO upgrade typescript to enable spread arguments
       // @ts-ignore
+
       .filter(...matchQuery)
       .filter('term', '_deprecated', false)
       .sort(sort.key, sort.direction);
@@ -117,10 +120,13 @@ export default function useSearchQuery(selfURL?: string | null) {
       value.forEach(item => {
         body.filter('term', propertyKey, item);
       });
-      body.aggregation(type, propertyKey, label);
+      body.aggregation(type, propertyKey, { size: TOTAL_HITS_TRACKING }, label);
     });
 
-    body.size(pagination.size).from(pagination.from);
+    body
+      .size(pagination.size)
+      .from(pagination.from)
+      .rawOption('track_total_hits', TOTAL_HITS_TRACKING);
 
     const finalQuery = body.build();
     const { org, project, id } = parseURL(selfURL);
