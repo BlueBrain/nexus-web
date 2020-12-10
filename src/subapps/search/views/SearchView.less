@@ -15,12 +15,23 @@
     .highShadow();
     transform: scale(1.05);
   }
+  .title {
+    .ellipsis();
+  }
   .description {
     position: relative;
     max-height: 250px;
     overflow: hidden;
     border-bottom: 0;
     margin-bottom: 1em;
+  }
+  .types {
+    width: 100%;
+    flex-wrap: wrap;
+    display: flex;
+    .ant-tag {
+      margin-bottom: 0.5em;
+    }
   }
   .overlay {
     position: absolute;

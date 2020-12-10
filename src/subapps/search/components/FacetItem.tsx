@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Checkbox, Badge } from 'antd';
+import { Checkbox, Badge, Tooltip } from 'antd';
 import { TOTAL_HITS_TRACKING } from '../../../shared/hooks/useSearchQuery';
 
 import './FacetItem.less';
@@ -36,7 +36,9 @@ const FacetItem: React.FC<{
         return (
           <div className="item" key={key} onClick={handleSelect(key, selected)}>
             <Checkbox checked={selected} />
-            <span className="label">{label}</span>{' '}
+            <Tooltip title={key} className="label">
+              <span>{label}</span>{' '}
+            </Tooltip>
             <Badge
               key={key}
               count={count}
