@@ -13,7 +13,8 @@ import SingleStepContainer from '../containers/SingleStepContainer';
 import StepInfoContainer from '../containers/StepInfoContainer';
 import { isParentLink } from '../utils';
 import ActivityResourcesContainer from '../containers/ActivityResourcesContainer';
-import ActionButton from '../components/ActionButton';
+import StepViewTabs from '../components/StepViewTabs';
+import useQueryString from '../../../shared/hooks/useQueryString';
 
 import './WorkflowStepView.less';
 
@@ -69,13 +70,26 @@ const WorkflowStepView: React.FC = () => {
   const [siblings, setSiblings] = React.useState<
     { name: string; '@id': string }[]
   >([]);
-  const [activeTab, setActiveTab] = React.useState<string>('Overview');
+  const [activeTab, setActiveTab] = React.useState<string>();
+  const [queryParams, setQueryString] = useQueryString();
 
   const projectLabel = match?.params.projectLabel || '';
   const orgLabel = match?.params.orgLabel || '';
   const stepId = match?.params.stepId || '';
 
+  console.log('projectLabel', projectLabel, orgLabel, stepId);
+
   React.useEffect(() => {
+    if (queryParams.view) {
+      setActiveTab(queryParams.view);
+    } else {
+      setActiveTab('Overview');
+      setQueryString({
+        ...queryParams,
+        view: 'Overview',
+      });
+    }
+
     nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(stepId))
       .then(response => {
         setStep(response as StepResource);
@@ -205,7 +219,13 @@ const WorkflowStepView: React.FC = () => {
       .catch(error => displayError(error, 'Failed to load original payload'));
   };
 
-  console.log('activeTab', activeTab);
+  const onClickTab = (tab: string) => {
+    setActiveTab(tab);
+    setQueryString({
+      ...queryParams,
+      view: tab,
+    });
+  };
 
   return (
     <div className="workflow-step-view">
@@ -228,32 +248,7 @@ const WorkflowStepView: React.FC = () => {
           />
         )}
       </div>
-      {/* Tabs panel */}
-      <div className="tabs">
-        <div className="resources-pane__header">
-          <ActionButton
-            highlighted={activeTab === 'Overview'}
-            title="Overview"
-            onClick={() => setActiveTab('Overview')}
-          />
-          <ActionButton
-            title="Activities"
-            highlighted={activeTab === 'Activities'}
-            onClick={() => setActiveTab('Activities')}
-          />
-          <ActionButton
-            title="Notes"
-            onClick={() => setActiveTab('Notes')}
-            highlighted={activeTab === 'Notes'}
-          />
-          <ActionButton
-            title="Inputs"
-            onClick={() => setActiveTab('Inputs')}
-            highlighted={activeTab === 'Inputs'}
-          />
-        </div>
-      </div>
-      {/* Active view */}
+      <StepViewTabs activeTab={activeTab} onSelectTab={onClickTab} />
       {activeTab === 'Overview' && (
         <StepsBoard>
           {steps.map(substep => (

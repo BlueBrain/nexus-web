@@ -75,8 +75,6 @@ export const useLinkedActivities = (
       activitiesQuery
     )
       .then((result: SparqlViewQueryResponse) => {
-        console.log('data', result);
-
         const data: SelectQueryResponse = result as SelectQueryResponse;
         const tempHeaderProperties: {
           title: string;
