@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { SelectQueryResponse, SparqlViewQueryResponse } from '@bbp/nexus-sdk';
 
-import { camelCaseToLabelString, parseProjectUrl } from '../../../shared/utils';
+import { camelCaseToLabelString } from '../../../shared/utils';
 import { displayError } from '../components/Notifications';
 
 export type Binding = {

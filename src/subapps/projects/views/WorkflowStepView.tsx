@@ -77,8 +77,6 @@ const WorkflowStepView: React.FC = () => {
   const orgLabel = match?.params.orgLabel || '';
   const stepId = match?.params.stepId || '';
 
-  console.log('projectLabel', projectLabel, orgLabel, stepId);
-
   React.useEffect(() => {
     if (queryParams.view) {
       setActiveTab(queryParams.view);
