@@ -51,22 +51,6 @@ export const useLinkedActivities = (
     LIMIT 100
   `;
 
-  // query to fetch all activities in the project - saved for later
-  const activitiesQueryTwo = `
-    PREFIX nxv: <https://bluebrain.github.io/nexus/vocabulary/>
-    PREFIX prov: <http://www.w3.org/ns/prov#>
-    SELECT  ?self ?activity ?createdAt ?createdBy ?used ?generated
-    WHERE {
-      ?activity nxv:self ?self ;
-                <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> prov:Activity ;
-                nxv:createdAt ?createdAt ;
-                nxv:createdBy ?createdBy .
-      OPTIONAL { ?activity nxv:used ?used }
-      OPTIONAL { ?activity nxv:generated ?generated }
-    }
-    LIMIT 100
-  `;
-
   React.useEffect(() => {
     nexus.View.sparqlQuery(
       orgLabel,
