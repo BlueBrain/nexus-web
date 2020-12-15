@@ -28,7 +28,7 @@ const MarkdownEditorComponent: React.FC<{
   };
 
   return (
-    <div>
+    <div style={{ background: '#fff' }}>
       <ReactMde
         loadingPreview={<Spin spinning={loading} />}
         value={value}
