@@ -127,7 +127,6 @@ exports[`login component should render correctly 1`] = `
                       role="img"
                     >
                       <IconReact
-                        className=""
                         icon={
                           Object {
                             "icon": Object {
@@ -162,7 +161,6 @@ exports[`login component should render correctly 1`] = `
                       >
                         <svg
                           aria-hidden="true"
-                          className=""
                           data-icon="login"
                           fill="currentColor"
                           focusable="false"
@@ -329,7 +327,6 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                         role="img"
                       >
                         <IconReact
-                          className=""
                           icon={
                             Object {
                               "icon": Object {
@@ -364,7 +361,6 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                         >
                           <svg
                             aria-hidden="true"
-                            className=""
                             data-icon="login"
                             fill="currentColor"
                             focusable="false"
@@ -624,7 +620,6 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                             role="img"
                           >
                             <IconReact
-                              className=""
                               icon={
                                 Object {
                                   "icon": Object {
@@ -649,7 +644,6 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                             >
                               <svg
                                 aria-hidden="true"
-                                className=""
                                 data-icon="down"
                                 fill="currentColor"
                                 focusable="false"

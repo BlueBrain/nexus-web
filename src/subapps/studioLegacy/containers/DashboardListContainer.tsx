@@ -194,6 +194,9 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
             <DashboardResultsContainer
               orgLabel={orgLabel}
               projectLabel={projectLabel}
+              dashboardLabel={
+                dashboardResources[selectedDashboardResourcesIndex].label
+              }
               key={dashboardId}
               viewId={
                 (dashboards[selectedDashboardIndex] &&

@@ -1,0 +1,44 @@
+@import '../../lib.less';
+
+// avoids an antd issue where it says the first option is selected by default (it's really not)
+.search-drop {
+  .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+    background-color: transparent;
+  }
+  .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+    background-color: #f5f5f5;
+  }
+}
+
+.search-bar {
+  width: 25%;
+  min-width: 400px;
+  transition: @transition-all-bouncy;
+  .anticon {
+    color: @text-color;
+  }
+  .ant-input-affix-wrapper.ant-input-search.ant-select-selection-search-input {
+    background-color: inherit;
+    transition: @transition-all-bouncy;
+    transition-delay: 0s;
+    input {
+      background-color: transparent;
+      transition: @transition-all-bouncy;
+      transition-delay: 0s;
+      color: white;
+    }
+  }
+  &.focused {
+    width: 40%;
+    .ant-input-affix-wrapper.ant-input-search.ant-select-selection-search-input {
+      background-color: rgb(252, 253, 253);
+      input {
+        background-color: transparent;
+        color: @text-color;
+      }
+    }
+  }
+}
+.drop-search {
+  overflow-y: hidden;
+}

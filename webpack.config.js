@@ -62,6 +62,10 @@ const config = [
             },
           },
         },
+        {
+          test: /\.(hbs|txt)$/,
+          use: 'raw-loader',
+        },
       ],
     },
     plugins: [

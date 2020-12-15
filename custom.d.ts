@@ -8,6 +8,12 @@ declare module '*.png' {
   export default content;
 }
 
+// loading raw text or other files
+declare module '!!raw-loader!*' {
+  const contents: string;
+  export = contents;
+}
+
 //
 // Identicon.js Types
 //
