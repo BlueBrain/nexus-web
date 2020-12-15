@@ -13,9 +13,9 @@ import SingleStepContainer from '../containers/SingleStepContainer';
 import StepInfoContainer from '../containers/StepInfoContainer';
 import { isParentLink } from '../utils';
 import ActivityResourcesContainer from '../containers/ActivityResourcesContainer';
-import StepViewTabs from '../components/StepViewTabs';
+import StepViewTabs, { Tabs } from '../components/StepViewTabs';
 import useQueryString from '../../../shared/hooks/useQueryString';
-import MarkdownEditor from '../../../shared/components/MarkdownEditor';
+import StepDescriptionContainer from '../containers/StepDescriptionContainer';
 
 import './WorkflowStepView.less';
 
@@ -185,8 +185,12 @@ const WorkflowStepView: React.FC = () => {
   };
 
   // TODO: find better sollution for this in future, for example, optimistic update
-  const waitAntReloadActivities = () =>
-    setTimeout(() => setRefreshSteps(!refreshSteps), 3500);
+  const waitAntReload = () => {
+    const reloadTimer = setTimeout(() => {
+      setRefreshSteps(!refreshSteps);
+      clearTimeout(reloadTimer);
+    }, 3500);
+  };
 
   const reload = () => {
     setRefreshSteps(!refreshSteps);
@@ -231,7 +235,7 @@ const WorkflowStepView: React.FC = () => {
       <ProjectPanel
         orgLabel={orgLabel}
         projectLabel={projectLabel}
-        onUpdate={waitAntReloadActivities}
+        onUpdate={waitAntReload}
         activityLabel={step && step.name}
         activitySelfUrl={step && step._self}
         siblings={siblings}
@@ -248,7 +252,7 @@ const WorkflowStepView: React.FC = () => {
         )}
       </div>
       <StepViewTabs activeTab={activeTab} onSelectTab={onClickTab} />
-      {activeTab === 'Overview' && (
+      {activeTab === Tabs.OVERVIEW && (
         <StepsBoard>
           {steps.map(substep => (
             <SingleStepContainer
@@ -260,7 +264,7 @@ const WorkflowStepView: React.FC = () => {
           ))}
         </StepsBoard>
       )}
-      {activeTab === 'Activities' && step && (
+      {activeTab === Tabs.ACTIVITIES && step && (
         <ActivityResourcesContainer
           orgLabel={orgLabel}
           projectLabel={projectLabel}
@@ -268,16 +272,17 @@ const WorkflowStepView: React.FC = () => {
           workflowStep={step}
         />
       )}
-      {activeTab === 'Description' && (
+      {activeTab === Tabs.DESCRIPTION && step && (
         <div className="workflow-step-view__tab-container">
-          <MarkdownEditor
-            resource={step as Resource}
-            readOnly={false}
-            loading={false}
+          <StepDescriptionContainer
+            step={step as Resource}
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+            onUpdate={waitAntReload}
           />
         </div>
       )}
-      {activeTab === 'Inputs' && <div>Inputs coming soon</div>}
+      {activeTab === Tabs.INPUTS && <div>Inputs coming soon</div>}
     </div>
   );
 };
