@@ -1,31 +1,25 @@
 import * as React from 'react';
+import { Spin } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 
+import ResultsTable from '../../../shared/components/ResultsTable/ResultsTable';
 import { displayError } from '../components/Notifications';
-import ResourcesPane from '../components/ResourcesPane';
-import ResourcesList from '../components/ResourcesList';
 import fusionConfig from '../config';
 import { CodeResourceData } from '../components/LinkCodeForm';
-import ResourcesSearch from '../components/ResourcesSearch';
 import { StepResource } from '../views/WorkflowStepView';
-import { useActivityResources } from '../hooks/useStepResources';
+import { useLinkedActivities, ActivityItem } from '../hooks/useActivities';
 
 const ActivityResourcesContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
-  activity: StepResource;
+  workflowStep: StepResource;
   linkCodeToActivity: (codeResourceId: string) => void;
-}> = ({ orgLabel, projectLabel, activity, linkCodeToActivity }) => {
+}> = ({ orgLabel, projectLabel, workflowStep, linkCodeToActivity }) => {
   const nexus = useNexusContext();
-
-  const [search, setSearch] = React.useState<string>();
-  const [typeFilter, setTypeFilter] = React.useState<string[]>();
-  const { resources, busy, fetchLinkedResources } = useActivityResources(
-    activity,
+  const { items, headerProperties } = useLinkedActivities(
     orgLabel,
     projectLabel,
-    typeFilter,
-    search
+    workflowStep._self
   );
 
   const addCodeResource = (data: CodeResourceData) => {
@@ -35,28 +29,20 @@ const ActivityResourcesContainer: React.FC<{
     })
       .then(response => {
         linkCodeToActivity(response['@id']);
-        //  wait for the code resource to be indexed
-        const reloadTimer = setTimeout(() => {
-          fetchLinkedResources();
-          clearTimeout(reloadTimer);
-        }, 3000);
       })
       .catch(error => displayError(error, 'Failed to save'));
   };
 
   return (
-    <ResourcesPane linkCode={addCodeResource}>
-      <ResourcesSearch
-        onChangeType={setTypeFilter}
-        onSearchByText={setSearch}
-      />
-      <ResourcesList
-        resources={resources}
-        projectLabel={projectLabel}
-        orgLabel={orgLabel}
-        busy={busy}
-      />
-    </ResourcesPane>
+    <div className="resources-list" style={{ margin: '20px' }}>
+      <Spin spinning={items ? false : true}>
+        <ResultsTable
+          headerProperties={headerProperties}
+          items={items ? (items as ActivityItem[]) : []}
+          handleClick={() => {}}
+        />
+      </Spin>
+    </div>
   );
 };
 

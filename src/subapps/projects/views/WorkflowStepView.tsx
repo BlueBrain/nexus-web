@@ -13,6 +13,8 @@ import SingleStepContainer from '../containers/SingleStepContainer';
 import StepInfoContainer from '../containers/StepInfoContainer';
 import { isParentLink } from '../utils';
 import ActivityResourcesContainer from '../containers/ActivityResourcesContainer';
+import StepViewTabs from '../components/StepViewTabs';
+import useQueryString from '../../../shared/hooks/useQueryString';
 
 import './WorkflowStepView.less';
 
@@ -68,12 +70,24 @@ const WorkflowStepView: React.FC = () => {
   const [siblings, setSiblings] = React.useState<
     { name: string; '@id': string }[]
   >([]);
+  const [activeTab, setActiveTab] = React.useState<string>();
+  const [queryParams, setQueryString] = useQueryString();
 
   const projectLabel = match?.params.projectLabel || '';
   const orgLabel = match?.params.orgLabel || '';
   const stepId = match?.params.stepId || '';
 
   React.useEffect(() => {
+    if (queryParams.view) {
+      setActiveTab(queryParams.view);
+    } else {
+      setActiveTab('Overview');
+      setQueryString({
+        ...queryParams,
+        view: 'Overview',
+      });
+    }
+
     nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(stepId))
       .then(response => {
         setStep(response as StepResource);
@@ -203,6 +217,14 @@ const WorkflowStepView: React.FC = () => {
       .catch(error => displayError(error, 'Failed to load original payload'));
   };
 
+  const onClickTab = (tab: string) => {
+    setActiveTab(tab);
+    setQueryString({
+      ...queryParams,
+      view: tab,
+    });
+  };
+
   return (
     <div className="workflow-step-view">
       <ProjectPanel
@@ -224,24 +246,29 @@ const WorkflowStepView: React.FC = () => {
           />
         )}
       </div>
-      <StepsBoard>
-        {steps.map(substep => (
-          <SingleStepContainer
-            key={`step-${substep['@id']}`}
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
-            step={substep}
-          />
-        ))}
-      </StepsBoard>
-      {step && (
+      <StepViewTabs activeTab={activeTab} onSelectTab={onClickTab} />
+      {activeTab === 'Overview' && (
+        <StepsBoard>
+          {steps.map(substep => (
+            <SingleStepContainer
+              key={`step-${substep['@id']}`}
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              step={substep}
+            />
+          ))}
+        </StepsBoard>
+      )}
+      {activeTab === 'Activities' && step && (
         <ActivityResourcesContainer
           orgLabel={orgLabel}
           projectLabel={projectLabel}
           linkCodeToActivity={linkCodeToActivity}
-          activity={step}
+          workflowStep={step}
         />
       )}
+      {activeTab === 'Notes' && <div>Notes coming soon</div>}
+      {activeTab === 'Inputs' && <div>Inputs coming soon</div>}
     </div>
   );
 };
