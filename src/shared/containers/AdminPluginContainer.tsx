@@ -8,6 +8,7 @@ import ResourceEditorContainer from '../containers/ResourceEditor';
 import SchemaLinkContainer from '../containers/SchemaLink';
 import GraphContainer from '../containers/GraphContainer';
 import ResourceMetadata from '../components/ResourceMetadata';
+import MarkdownEditorContainer from './MarkdownEditorContainer';
 
 const { Panel } = Collapse;
 const TabPane = Tabs.TabPane;
@@ -77,6 +78,16 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
               defaultEditable={editable}
               onSubmit={handleEditFormSubmit}
               onExpanded={handleExpanded}
+            />
+          </TabPane>
+          <TabPane tab="Description" key="#mde">
+            <MarkdownEditorContainer
+              resourceId={resource['@id']}
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              rev={resource._rev}
+              readOnly={!editable}
+              goToResource={goToResource}
             />
           </TabPane>
           <TabPane tab="History" key="#history">
