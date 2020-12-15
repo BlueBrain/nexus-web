@@ -27,7 +27,7 @@ type ResultTableProps = {
   }[];
   pageSize?: number;
   handleClick: (self: string) => void;
-  tableLabel: string;
+  tableLabel?: string;
 };
 
 const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
