@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
+import { Button } from 'antd';
 
 import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
@@ -254,14 +255,28 @@ const WorkflowStepView: React.FC = () => {
       <StepViewTabs activeTab={activeTab} onSelectTab={onClickTab} />
       {activeTab === Tabs.OVERVIEW && (
         <StepsBoard>
-          {steps.map(substep => (
-            <SingleStepContainer
-              key={`step-${substep['@id']}`}
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-              step={substep}
-            />
-          ))}
+          {steps && steps.length > 0 ? (
+            steps.map(substep => (
+              <SingleStepContainer
+                key={`step-${substep['@id']}`}
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+                step={substep}
+              />
+            ))
+          ) : (
+            <div className="workflow-step-view__tab-container">
+              <h2>This Workflow step does not have any sub-steps.</h2>
+              <h4>
+                Add one from the menu above by clicking on "Add Step" or browse
+                this Step by going to the Activities section.
+              </h4>
+              <br />
+              <Button onClick={() => setActiveTab(Tabs.ACTIVITIES)}>
+                View Activities
+              </Button>
+            </div>
+          )}
         </StepsBoard>
       )}
       {activeTab === Tabs.ACTIVITIES && step && (
