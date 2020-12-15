@@ -3,7 +3,14 @@ import ActionButton from '../components/ActionButton';
 
 import './StepViewTabs.less';
 
-const TABS = ['Overview', 'Activities', 'Notes', 'Inputs'];
+export enum Tabs {
+  OVERVIEW = 'Overview',
+  ACTIVITIES = 'Activities',
+  DESCRIPTION = 'Description',
+  INPUTS = 'Inputs',
+}
+
+const tabs = Object.values(Tabs);
 
 const StepViewTabs: React.FC<{
   onSelectTab: (tab: string) => void;
@@ -12,8 +19,9 @@ const StepViewTabs: React.FC<{
   return (
     <div className="step-view-tabs">
       <div>
-        {TABS.map((tab: string) => (
+        {tabs.map((tab: string) => (
           <ActionButton
+            key={tab}
             highlighted={activeTab === tab}
             title={tab}
             onClick={() => onSelectTab(tab)}

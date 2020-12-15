@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
+import { Button } from 'antd';
 
 import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
@@ -13,8 +14,9 @@ import SingleStepContainer from '../containers/SingleStepContainer';
 import StepInfoContainer from '../containers/StepInfoContainer';
 import { isParentLink } from '../utils';
 import ActivityResourcesContainer from '../containers/ActivityResourcesContainer';
-import StepViewTabs from '../components/StepViewTabs';
+import StepViewTabs, { Tabs } from '../components/StepViewTabs';
 import useQueryString from '../../../shared/hooks/useQueryString';
+import StepDescriptionContainer from '../containers/StepDescriptionContainer';
 
 import './WorkflowStepView.less';
 
@@ -184,8 +186,12 @@ const WorkflowStepView: React.FC = () => {
   };
 
   // TODO: find better sollution for this in future, for example, optimistic update
-  const waitAntReloadActivities = () =>
-    setTimeout(() => setRefreshSteps(!refreshSteps), 3500);
+  const waitAntReload = () => {
+    const reloadTimer = setTimeout(() => {
+      setRefreshSteps(!refreshSteps);
+      clearTimeout(reloadTimer);
+    }, 3500);
+  };
 
   const reload = () => {
     setRefreshSteps(!refreshSteps);
@@ -230,7 +236,7 @@ const WorkflowStepView: React.FC = () => {
       <ProjectPanel
         orgLabel={orgLabel}
         projectLabel={projectLabel}
-        onUpdate={waitAntReloadActivities}
+        onUpdate={waitAntReload}
         activityLabel={step && step.name}
         activitySelfUrl={step && step._self}
         siblings={siblings}
@@ -247,19 +253,33 @@ const WorkflowStepView: React.FC = () => {
         )}
       </div>
       <StepViewTabs activeTab={activeTab} onSelectTab={onClickTab} />
-      {activeTab === 'Overview' && (
+      {activeTab === Tabs.OVERVIEW && (
         <StepsBoard>
-          {steps.map(substep => (
-            <SingleStepContainer
-              key={`step-${substep['@id']}`}
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-              step={substep}
-            />
-          ))}
+          {steps && steps.length > 0 ? (
+            steps.map(substep => (
+              <SingleStepContainer
+                key={`step-${substep['@id']}`}
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+                step={substep}
+              />
+            ))
+          ) : (
+            <div className="workflow-step-view__tab-container">
+              <h2>This Workflow step does not have any sub-steps.</h2>
+              <h4>
+                Add one from the menu above by clicking on "Add Step" or browse
+                this Step by going to the Activities section.
+              </h4>
+              <br />
+              <Button onClick={() => setActiveTab(Tabs.ACTIVITIES)}>
+                View Activities
+              </Button>
+            </div>
+          )}
         </StepsBoard>
       )}
-      {activeTab === 'Activities' && step && (
+      {activeTab === Tabs.ACTIVITIES && step && (
         <ActivityResourcesContainer
           orgLabel={orgLabel}
           projectLabel={projectLabel}
@@ -267,8 +287,17 @@ const WorkflowStepView: React.FC = () => {
           workflowStep={step}
         />
       )}
-      {activeTab === 'Notes' && <div>Notes coming soon</div>}
-      {activeTab === 'Inputs' && <div>Inputs coming soon</div>}
+      {activeTab === Tabs.DESCRIPTION && step && (
+        <div className="workflow-step-view__tab-container">
+          <StepDescriptionContainer
+            step={step as Resource}
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+            onUpdate={waitAntReload}
+          />
+        </div>
+      )}
+      {activeTab === Tabs.INPUTS && <div>Inputs coming soon</div>}
     </div>
   );
 };
