@@ -3,7 +3,7 @@ import ActionButton from '../components/ActionButton';
 
 import './StepViewTabs.less';
 
-const TABS = ['Overview', 'Activities', 'Notes', 'Inputs'];
+const TABS = ['Overview', 'Activities', 'Description', 'Inputs'];
 
 const StepViewTabs: React.FC<{
   onSelectTab: (tab: string) => void;

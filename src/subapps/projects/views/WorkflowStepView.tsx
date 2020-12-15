@@ -15,6 +15,7 @@ import { isParentLink } from '../utils';
 import ActivityResourcesContainer from '../containers/ActivityResourcesContainer';
 import StepViewTabs from '../components/StepViewTabs';
 import useQueryString from '../../../shared/hooks/useQueryString';
+import MarkdownEditor from '../../../shared/components/MarkdownEditor';
 
 import './WorkflowStepView.less';
 
@@ -267,7 +268,15 @@ const WorkflowStepView: React.FC = () => {
           workflowStep={step}
         />
       )}
-      {activeTab === 'Notes' && <div>Notes coming soon</div>}
+      {activeTab === 'Description' && (
+        <div className="workflow-step-view__tab-container">
+          <MarkdownEditor
+            resource={step as Resource}
+            readOnly={false}
+            loading={false}
+          />
+        </div>
+      )}
       {activeTab === 'Inputs' && <div>Inputs coming soon</div>}
     </div>
   );
