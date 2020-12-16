@@ -143,17 +143,11 @@ const Header: React.FunctionComponent<HeaderProps> = ({
     <header className="Header">
       <div className="selectors">{children}</div>
       <div className="menu-block">
-        {name ? (
-          forgeLink === '' ? (
-            <span className="forge-button forge-button--disabled">
-              Forge Templates
-            </span>
-          ) : (
-            <a href={forgeLink} target="_blank" className="forge-button">
-              Forge Templates
-            </a>
-          )
-        ) : null}
+        {name && forgeLink !== '' && (
+          <a href={forgeLink} target="_blank" className="forge-button">
+            Forge Templates
+          </a>
+        )}
         {token && (
           <Copy
             textToCopy={token}
