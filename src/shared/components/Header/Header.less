@@ -31,7 +31,7 @@
     a {
       margin: 0 4px;
       font-weight: lighter;
-      opacity: 0.8;
+      opacity: 0.9;
 
       &:hover {
         opacity: 1;
@@ -89,12 +89,19 @@
     outline-style: none;
     line-height: 1rem;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
     background-color: @alternative-button-color;
     margin-left: 0.4rem;
     color: #fff;
+
+    &--disabled {
+      background-color: @fusion-dark;
+      cursor: not-allowed;
+      opacity: 0.5;
+      margin-right: 7px;
+    }
   }
 }
 

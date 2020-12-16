@@ -26,6 +26,7 @@ const pluginsManifestPath =
 const layoutSettings = {
   logoImg: process.env.LOGO_IMG || '',
   logoLink: process.env.LOGO_LINK || 'https://www.bluebrainnexus.io/',
+  forgeLink: process.env.FORGE_LINK || '',
 };
 
 // configure search settings

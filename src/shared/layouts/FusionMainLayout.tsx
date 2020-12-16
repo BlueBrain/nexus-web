@@ -44,6 +44,7 @@ export interface FusionMainLayoutProps {
   layoutSettings: {
     logoLink: string;
     logoImg: string;
+    forgeLink: string;
   };
 }
 
@@ -291,6 +292,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
             displayLogin={canLogin}
             version={deltaVersion}
             githubIssueURL={githubIssueURL}
+            forgeLink={layoutSettings.forgeLink}
             consent={consent}
             commitHash={COMMIT_HASH}
             onClickRemoveConsent={() => setConsent(undefined)}
