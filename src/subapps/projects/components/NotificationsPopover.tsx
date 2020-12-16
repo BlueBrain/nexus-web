@@ -46,9 +46,9 @@ const NotififcationsPopover: React.FC<{
               </Button>
             </Tooltip>
 
-            {/* <Button type="primary" size="small" onClick={onClickNew}>
+            <Button type="primary" size="small" onClick={onClickNew}>
               New
-            </Button> */}
+            </Button>
           </div>
         </div>
       ))}

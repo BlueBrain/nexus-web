@@ -18,6 +18,9 @@ const NotificationsContainer: React.FC<{
     projectLabel
   );
   const [showLinkForm, setShowLinkForm] = React.useState<boolean>(false);
+  const [showCreateStepForm, setshowCreateStepForm] = React.useState<boolean>(
+    false
+  );
   const [selectedActivity, setSelectedActivity] = React.useState<any>();
   const [steps, setSteps] = React.useState<any[]>([]);
   const nexus = useNexusContext();
@@ -117,7 +120,7 @@ const NotificationsContainer: React.FC<{
 
   // TODO: create a new step from an unlinked activity https://github.com/BlueBrain/nexus/issues/1818
   const addNew = () => {
-    console.log('addNew');
+    setshowCreateStepForm(true);
   };
 
   const stepsList = steps.map(step => ({
@@ -165,6 +168,16 @@ const NotificationsContainer: React.FC<{
           onSubmit={linkActivity}
           onCancel={() => setShowLinkForm(false)}
         />
+      </Modal>
+      <Modal
+        maskClosable
+        visible={showCreateStepForm}
+        footer={null}
+        onCancel={() => setshowCreateStepForm(false)}
+        width={1000}
+        destroyOnClose={true}
+      >
+        <div>hello</div>
       </Modal>
     </>
   );
