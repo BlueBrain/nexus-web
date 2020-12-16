@@ -68,4 +68,36 @@ const MarkdownEditorComponent: React.FC<{
   );
 };
 
+export const MarkdownEditorFormItemComponent: React.FC<{
+  value?: string;
+  resource: Resource;
+  onChange?: (value: string) => void;
+  onSaveImage: SaveImageHandler;
+}> = ({ value, resource, onChange, onSaveImage }) => {
+  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
+    'write'
+  );
+
+  const handleChange = (description: string) => {
+    onChange && onChange(description);
+  };
+
+  return (
+    <div>
+      <ReactMde
+        value={value || ''}
+        onChange={handleChange}
+        selectedTab={selectedTab}
+        onTabChange={setSelectedTab}
+        generateMarkdownPreview={async markdown =>
+          value && convertMarkdownHandlebarStringWithData(markdown, resource)
+        }
+        paste={{
+          saveImage: onSaveImage,
+        }}
+      />
+    </div>
+  );
+};
+
 export default MarkdownEditorComponent;

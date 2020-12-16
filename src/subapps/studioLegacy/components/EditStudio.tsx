@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
-import { Button, Modal, Tooltip } from 'antd';
+import { SaveImageHandler } from 'react-mde';
+import { Button, Modal } from 'antd';
 
 import StudioEditorForm from './StudioEditorForm';
 
@@ -13,7 +14,8 @@ type StudioResource = Resource<{
 const EditStudio: React.FC<{
   studio: StudioResource | null;
   onSave?(label: string, description?: string): void;
-}> = ({ studio, onSave }) => {
+  onSaveImage: SaveImageHandler;
+}> = ({ studio, onSave, onSaveImage }) => {
   const [showModal, setShowModal] = React.useState(false);
 
   const handleUpdate = (label: string, description?: string) => {
@@ -37,7 +39,11 @@ const EditStudio: React.FC<{
         onCancel={() => setShowModal(false)}
         destroyOnClose={true}
       >
-        <StudioEditorForm saveStudio={handleUpdate} studio={studio} />
+        <StudioEditorForm
+          saveStudio={handleUpdate}
+          studio={studio}
+          onSaveImage={onSaveImage}
+        />
       </Modal>
     </>
   );
