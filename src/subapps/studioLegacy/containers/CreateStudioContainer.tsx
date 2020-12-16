@@ -5,6 +5,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 
 import StudioEditorForm from '../components/StudioEditorForm';
 import STUDIO_CONTEXT from '../components/StudioContext';
+import { saveImage } from '../../../shared/containers/MarkdownEditorContainer';
 
 export const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';
@@ -88,7 +89,10 @@ const CreateStudioContainer: React.FC<{
         onCancel={() => setShowModal(false)}
         destroyOnClose={true}
       >
-        <StudioEditorForm saveStudio={saveStudio} />
+        <StudioEditorForm
+          saveStudio={saveStudio}
+          onSaveImage={saveImage(nexus, orgLabel, projectLabel)}
+        />
       </Modal>
     </div>
   );

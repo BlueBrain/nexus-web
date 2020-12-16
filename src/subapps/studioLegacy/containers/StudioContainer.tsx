@@ -7,6 +7,7 @@ import EditStudio from '../components/EditStudio';
 import StudioHeader from '../components/StudioHeader';
 import { StudioContext } from '../views/StudioView';
 import WorkspaceList from '../containers/WorkspaceListContainer';
+import { saveImage } from '../../../shared/containers/MarkdownEditorContainer';
 
 const resourcesWritePermissionsWrapper = (
   child: React.ReactNode,
@@ -119,16 +120,18 @@ const StudioContainer: React.FunctionComponent = () => {
   };
 
   const editButton = (
-    <EditStudio key={studioId} studio={studioResource} onSave={updateStudio} />
+    <EditStudio
+      key={studioId}
+      studio={studioResource}
+      onSave={updateStudio}
+      onSaveImage={saveImage(nexus, orgLabel, projectLabel)}
+    />
   );
   return (
     <>
       {studioResource ? (
         <>
-          <StudioHeader
-            label={studioResource.label}
-            description={studioResource.description}
-          >
+          <StudioHeader resource={studioResource}>
             {resourcesWritePermissionsWrapper(
               editButton,
               `/${orgLabel}/${projectLabel}`

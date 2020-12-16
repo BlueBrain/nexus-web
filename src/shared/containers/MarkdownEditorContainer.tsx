@@ -56,7 +56,7 @@ const saveDescription = (
   });
 };
 
-const saveImage = (
+export const saveImage = (
   nexus: NexusClient,
   orgLabel: string,
   projectLabel: string
