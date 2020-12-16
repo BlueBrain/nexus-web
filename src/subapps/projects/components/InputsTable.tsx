@@ -3,6 +3,8 @@ import { Table, Tag, Button } from 'antd';
 import * as moment from 'moment';
 
 import { labelOf } from '../../../shared/utils';
+import Copy from '../../../shared/components/Copy';
+import { text } from '@storybook/addon-knobs';
 
 export type Input = {
   createdAt: string;
@@ -17,6 +19,7 @@ const { Column } = Table;
 const InputsTable: React.FC<{ inputs: Input[] }> = ({ inputs }) => {
   const tableData = inputs.map(input => ({
     key: input.resourceId,
+    resourceId: input.resourceId,
     createdAt: moment(input.createdAt).format('DD.MM.YYYY - HH:MM'),
     name: input.name,
     description: input.description,
@@ -45,7 +48,25 @@ const InputsTable: React.FC<{ inputs: Input[] }> = ({ inputs }) => {
       <Column
         title="Actions"
         key="actions"
-        render={() => <Button>Copy Id</Button>}
+        dataIndex="resourceId"
+        render={text => {
+          return (
+            <Copy
+              textToCopy={text}
+              render={(copySuccess, triggerCopy) => (
+                <Button
+                  onClick={(e: React.MouseEvent) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    triggerCopy();
+                  }}
+                >
+                  {copySuccess ? 'Copied!' : 'Copy ID'}
+                </Button>
+              )}
+            />
+          );
+        }}
       />
     </Table>
   );
