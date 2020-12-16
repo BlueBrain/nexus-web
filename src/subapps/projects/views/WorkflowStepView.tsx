@@ -17,6 +17,7 @@ import ActivityResourcesContainer from '../containers/ActivityResourcesContainer
 import StepViewTabs, { Tabs } from '../components/StepViewTabs';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import StepDescriptionContainer from '../containers/StepDescriptionContainer';
+import InputsContainer from '../containers/InputsContainer';
 
 import './WorkflowStepView.less';
 
@@ -297,7 +298,13 @@ const WorkflowStepView: React.FC = () => {
           />
         </div>
       )}
-      {activeTab === Tabs.INPUTS && <div>Inputs coming soon</div>}
+      {activeTab === Tabs.INPUTS && step && (
+        <InputsContainer
+          orgLabel={orgLabel}
+          projectLabel={projectLabel}
+          stepId={step._self}
+        />
+      )}
     </div>
   );
 };
