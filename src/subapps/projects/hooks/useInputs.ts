@@ -36,18 +36,18 @@ export const useInputs = (
 
   const fetchInputs = () => {
     const inputsQuery = `
-        PREFIX nxv: <https://bluebrain.github.io/nexus/vocabulary/>
-        PREFIX prov: <http://www.w3.org/ns/prov#>
-        SELECT ?resource ?createdAt ?name ?description ?resourceType
-        WHERE {
-          ?resource nxv:createdAt ?createdAt ;
-                    <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?resourceType .
-          <${workflowStepId}> nxv:inputs ?resource .
-          OPTIONAL { ?resource <http://schema.org/name> ?name }
-          OPTIONAL { ?resource nxv:description ?description }
-        }
-        LIMIT 100
-      `;
+			PREFIX nxv: <https://bluebrain.github.io/nexus/vocabulary/>
+			PREFIX prov: <http://www.w3.org/ns/prov#>
+			SELECT ?resource ?createdAt ?name ?description ?resourceType
+			WHERE {
+					?resource nxv:createdAt ?createdAt ;
+									<http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?resourceType .
+					<${workflowStepId}> nxv:inputs ?resource .
+					OPTIONAL { ?resource <http://schema.org/name> ?name }
+					OPTIONAL { ?resource nxv:description ?description }
+			}
+			LIMIT 100
+    `;
 
     nexus.View.sparqlQuery(
       orgLabel,
