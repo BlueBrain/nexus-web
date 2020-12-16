@@ -143,6 +143,9 @@ const Header: React.FunctionComponent<HeaderProps> = ({
     <header className="Header">
       <div className="selectors">{children}</div>
       <div className="menu-block">
+        {name && (
+          <a className="forge-button">Forge Code snippets and Templates</a>
+        )}
         {token && (
           <Copy
             textToCopy={token}
