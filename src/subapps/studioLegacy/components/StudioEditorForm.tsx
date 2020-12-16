@@ -24,7 +24,7 @@ const StudioEditorForm: React.FC<{
 
   const formItemLayout = {
     labelCol: { span: 6 },
-    wrapperCol: { span: 14 },
+    wrapperCol: { span: 24 },
   };
 
   const { label, description } = studio || {

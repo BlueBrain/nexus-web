@@ -131,10 +131,7 @@ const StudioContainer: React.FunctionComponent = () => {
     <>
       {studioResource ? (
         <>
-          <StudioHeader
-            label={studioResource.label}
-            description={studioResource.description}
-          >
+          <StudioHeader resource={studioResource}>
             {resourcesWritePermissionsWrapper(
               editButton,
               `/${orgLabel}/${projectLabel}`
