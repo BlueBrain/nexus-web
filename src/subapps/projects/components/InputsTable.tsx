@@ -5,6 +5,7 @@ import * as moment from 'moment';
 import { labelOf } from '../../../shared/utils';
 import Copy from '../../../shared/components/Copy';
 import { Input } from '../hooks/useInputs';
+import TypesIconList from '../../../shared/components/Types/TypesIcon';
 
 const { Column } = Table;
 
@@ -27,15 +28,7 @@ const InputsTable: React.FC<{ inputs: Input[] }> = ({ inputs }) => {
         title="Entity Type(s)"
         dataIndex="types"
         key="types"
-        render={types => (
-          <>
-            {types.map((type: string) => (
-              <Tag style={{ margin: 3 }} color="blue" key={type}>
-                {labelOf(type)}
-              </Tag>
-            ))}
-          </>
-        )}
+        render={types => <TypesIconList type={types} full />}
       />
       <Column
         title="Actions"
