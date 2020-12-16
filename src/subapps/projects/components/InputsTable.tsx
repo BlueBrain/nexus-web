@@ -4,15 +4,7 @@ import * as moment from 'moment';
 
 import { labelOf } from '../../../shared/utils';
 import Copy from '../../../shared/components/Copy';
-import { text } from '@storybook/addon-knobs';
-
-export type Input = {
-  createdAt: string;
-  name?: string;
-  resourceId: string;
-  types: string[];
-  description?: string;
-};
+import { Input } from '../hooks/useInputs';
 
 const { Column } = Table;
 

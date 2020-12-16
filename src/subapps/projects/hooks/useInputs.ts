@@ -14,13 +14,21 @@ export type Item = {
   };
 };
 
+export type Input = {
+  createdAt: string;
+  name?: string;
+  resourceId: string;
+  types: string[];
+  description?: string;
+};
+
 export const useInputs = (
   orgLabel: string,
   projectLabel: string,
   workflowStepId: string
 ) => {
   const nexus = useNexusContext();
-  const [inputs, setInputs] = React.useState<any[]>([]);
+  const [inputs, setInputs] = React.useState<Input[]>([]);
 
   React.useEffect(() => {
     fetchInputs();
@@ -49,7 +57,8 @@ export const useInputs = (
     )
       .then((result: SparqlViewQueryResponse) => {
         const data: SelectQueryResponse = result as SelectQueryResponse;
-
+        // we have to do this because sparql duplicates bindings when inputs have multiple types -
+        // creates an entry for each type in the list
         const uniqueInputs = [
           ...new Set(
             data.results.bindings.map((input: Item) => input.resource.value)
@@ -78,8 +87,6 @@ export const useInputs = (
         displayError(error, 'Failed to fetch Workflow Step inputs')
       );
   };
-
-  //   What do we do with same resource but multiple data types
 
   return {
     inputs,
