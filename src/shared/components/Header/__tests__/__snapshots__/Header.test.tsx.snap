@@ -10,11 +10,6 @@ exports[`Header component Should render correctly 1`] = `
   <div
     className="menu-block"
   >
-    <span
-      className="forge-button forge-button--disabled"
-    >
-      Forge Templates
-    </span>
     <Popover
       content={
         <InformationContent
