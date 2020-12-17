@@ -127,11 +127,11 @@ const SearchView: React.FC = () => {
     });
   };
 
-  const handlePageSizeChange = (current: number, size: number) => {
+  const handlePageSizeChange = (size: string) => {
     changeSearchProps({
       ...searchProps,
       pagination: {
-        size,
+        size: Number(size),
         from: searchProps.pagination?.from || 0,
       },
     });
@@ -318,16 +318,32 @@ const SearchView: React.FC = () => {
                   )}
                 </div>
                 <div>
-                  <b>Sort by </b>
-                  <Select
-                    defaultValue="_updatedAt-desc"
-                    onChange={handleSortChange}
-                    bordered={false}
-                  >
-                    <Option value="_createdAt-desc">Newest first</Option>
-                    <Option value="_createdAt-asc">Oldest first</Option>
-                    <Option value="_updatedAt-desc">Last updated</Option>
-                  </Select>
+                  <span>
+                    <b>Results / page </b>
+                    <Select
+                      defaultValue="50"
+                      onChange={handlePageSizeChange}
+                      bordered={false}
+                    >
+                      {['10', '20', '50', '100'].map(numResultsPerPage => (
+                        <Option value={numResultsPerPage}>
+                          {numResultsPerPage} / page
+                        </Option>
+                      ))}
+                    </Select>
+                  </span>{' '}
+                  <span>
+                    <b>Sort by </b>
+                    <Select
+                      defaultValue="_updatedAt-desc"
+                      onChange={handleSortChange}
+                      bordered={false}
+                    >
+                      <Option value="_createdAt-desc">Newest first</Option>
+                      <Option value="_createdAt-asc">Oldest first</Option>
+                      <Option value="_updatedAt-desc">Last updated</Option>
+                    </Select>
+                  </span>
                 </div>
               </div>
               <List
@@ -340,9 +356,8 @@ const SearchView: React.FC = () => {
                     total,
                     current,
                     pageSize: size,
-                    showSizeChanger: true,
+                    showSizeChanger: false,
                     onChange: handlePagniationChange,
-                    onShowSizeChange: handlePageSizeChange,
                   }
                 }
                 renderItem={hit => {
