@@ -13,20 +13,20 @@ import {
 import * as moment from 'moment';
 
 import { Status } from '../StatusIcon';
-import { ActivityMetadata } from '../../containers/NewActivityContainer';
+import { WorkflowStepMetadata } from '../../containers/NewWorkflowStepContainer';
 import { StepResource } from '../../views/WorkflowStepView';
 import { isEmptyInput } from '../../utils';
 
-import './ActivityForm.less';
+import './WorkflowStepForm.less';
 
-const ActivityForm: React.FC<{
+const WorkflowStepForm: React.FC<{
   onClickCancel(): void;
-  onSubmit(data: ActivityMetadata): void;
+  onSubmit(data: WorkflowStepMetadata): void;
   busy: boolean;
   parentLabel?: string | undefined;
   layout?: 'vertical' | 'horisontal';
   title?: string;
-  activity?: StepResource;
+  workflowStep?: StepResource;
   informedByLabel?: string;
   siblings?: {
     name: string;
@@ -39,24 +39,24 @@ const ActivityForm: React.FC<{
   parentLabel,
   layout,
   title,
-  activity,
+  workflowStep,
   informedByLabel,
   siblings,
 }) => {
   const [name, setName] = React.useState<string>(
-    (activity && activity.name) || ''
+    (workflowStep && workflowStep.name) || ''
   );
   const [description, setDescription] = React.useState<string>(
-    (activity && activity.description) || ''
+    (workflowStep && workflowStep.description) || ''
   );
   const [summary, setSummary] = React.useState<string>(
-    (activity && activity.summary) || ''
+    (workflowStep && workflowStep.summary) || ''
   );
   const [status, setStatus] = React.useState<Status>(
-    (activity && activity.status) || Status.toDo
+    (workflowStep && workflowStep.status) || Status.toDo
   );
   const [dueDate, setDueDate] = React.useState<any>(
-    (activity && activity.dueDate) || null
+    (workflowStep && workflowStep.dueDate) || null
   );
   const [dateError, setDateError] = React.useState<boolean>(false);
   const [nameError, setNameError] = React.useState<boolean>(false);
@@ -75,7 +75,7 @@ const ActivityForm: React.FC<{
 
   const columnLayout =
     layout === 'vertical'
-      ? {}
+      ? { xs: 24, sm: 24, md: 24 }
       : {
           xs: 24,
           sm: 24,
@@ -152,15 +152,15 @@ const ActivityForm: React.FC<{
   const { Item } = Form;
 
   return (
-    <Form {...formItemLayout} className="activity-form">
-      {title && <h2 className="activity-form__title">{title}</h2>}
+    <Form {...formItemLayout} className="workflow-step-form">
+      {title && <h2 className="workflow-step-form__title">{title}</h2>}
       <Spin spinning={busy} tip="Please wait...">
         <Row gutter={24}>
           <Col {...columnLayout}>
             <Item
               label="Name *"
               validateStatus={nameError ? 'error' : ''}
-              help={nameError && 'Please enter an activity name'}
+              help={nameError && 'Please enter a name'}
             >
               <Input value={name} onChange={onChangeName} />
             </Item>
@@ -202,7 +202,7 @@ const ActivityForm: React.FC<{
                 onChange={onChangeDate}
               />
             </Item>
-            <Item label="Parent Activity">
+            <Item label="Parent Workflow Step">
               <Select value={parentLabel} disabled>
                 <Select.Option value={parentLabel ? parentLabel : ''}>
                   {parentLabel}
@@ -258,4 +258,4 @@ const ActivityForm: React.FC<{
   );
 };
 
-export default ActivityForm;
+export default WorkflowStepForm;

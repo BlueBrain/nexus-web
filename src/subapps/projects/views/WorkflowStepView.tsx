@@ -238,8 +238,8 @@ const WorkflowStepView: React.FC = () => {
         orgLabel={orgLabel}
         projectLabel={projectLabel}
         onUpdate={waitAntReload}
-        activityLabel={step && step.name}
-        activitySelfUrl={step && step._self}
+        workflowStepLabel={step && step.name}
+        workflowStepSelfUrl={step && step._self}
         siblings={siblings}
       />
       <div className="workflow-step-view__panel">

@@ -8,8 +8,9 @@ import { useUnlinkedActivities } from '../hooks/useUnlinkedActivities';
 import LinkActivityForm from '../components/LinkActivityForm';
 import fusionConfig from '../config';
 import { displayError, successNotification } from '../components/Notifications';
+import WorkflowStepForm from '../components/WorkflowSteps/WorkflowStepForm';
 
-const NotificationsContainer: React.FC<{
+const ActivitiesLinkingContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
 }> = ({ orgLabel, projectLabel }) => {
@@ -174,13 +175,20 @@ const NotificationsContainer: React.FC<{
         visible={showCreateStepForm}
         footer={null}
         onCancel={() => setshowCreateStepForm(false)}
-        width={1000}
+        width={1100}
         destroyOnClose={true}
       >
-        <div>hello</div>
+        <WorkflowStepForm
+          title="Create New Step"
+          onClickCancel={() => setshowCreateStepForm(false)}
+          onSubmit={() => {}}
+          busy={false}
+          parentLabel={''}
+          siblings={[]}
+        />
       </Modal>
     </>
   );
 };
 
-export default NotificationsContainer;
+export default ActivitiesLinkingContainer;

@@ -2,13 +2,13 @@ import * as React from 'react';
 import { Modal, notification } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 
-import ActivityForm from '../components/WorkflowSteps/ActivityForm';
+import WorkflowStepForm from '../components/WorkflowSteps/WorkflowStepForm';
 import ActioButton from '../components/ActionButton';
 import { Status } from '../components/StatusIcon';
 import { displayError } from '../components/Notifications';
 import fusionConfig from '../config';
 
-export type ActivityMetadata = {
+export type WorkflowStepMetadata = {
   name: string;
   description: string;
   summary?: string;
@@ -22,12 +22,12 @@ export type ActivityMetadata = {
   };
 };
 
-const NewActivityContainer: React.FC<{
+const NewWorkflowStepContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
   onSuccess(): void;
-  parentActivityLabel?: string;
-  parentActivitySelfUrl?: string;
+  parentStepLabel?: string;
+  parentStepSelfUrl?: string;
   siblings?: {
     name: string;
     '@id': string;
@@ -36,8 +36,8 @@ const NewActivityContainer: React.FC<{
   orgLabel,
   projectLabel,
   onSuccess,
-  parentActivityLabel,
-  parentActivitySelfUrl,
+  parentStepLabel,
+  parentStepSelfUrl,
   siblings,
 }) => {
   const nexus = useNexusContext();
@@ -45,13 +45,13 @@ const NewActivityContainer: React.FC<{
   const [showForm, setShowForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
 
-  const submitActivity = (data: ActivityMetadata) => {
+  const submitNewStep = (data: WorkflowStepMetadata) => {
     setBusy(true);
     const { name } = data;
 
-    if (parentActivitySelfUrl) {
+    if (parentStepSelfUrl) {
       data.hasParent = {
-        '@id': parentActivitySelfUrl,
+        '@id': parentStepSelfUrl,
       };
     }
 
@@ -66,7 +66,7 @@ const NewActivityContainer: React.FC<{
 
         notification.success({
           message: `New step ${name} created successfully`,
-          description: 'Updating workflow...',
+          description: 'Updating Workflow...',
         });
       })
       .catch(error => {
@@ -91,12 +91,12 @@ const NewActivityContainer: React.FC<{
         destroyOnClose={true}
       >
         {/* TODO: adapt form https://github.com/BlueBrain/nexus/issues/1814 */}
-        <ActivityForm
-          title="Create New Step (will be updated soon)"
+        <WorkflowStepForm
+          title="Create New Step"
           onClickCancel={() => setShowForm(false)}
-          onSubmit={submitActivity}
+          onSubmit={submitNewStep}
           busy={busy}
-          parentLabel={parentActivityLabel}
+          parentLabel={parentStepLabel}
           siblings={siblings}
         />
       </Modal>
@@ -104,4 +104,4 @@ const NewActivityContainer: React.FC<{
   );
 };
 
-export default NewActivityContainer;
+export default NewWorkflowStepContainer;
