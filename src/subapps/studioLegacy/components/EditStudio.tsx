@@ -16,7 +16,11 @@ const EditStudio: React.FC<{
   studio: StudioResource | null;
   onSave?(label: string, description?: string): void;
   onSaveImage: SaveImageHandler;
-}> = ({ studio, onSave, onSaveImage }) => {
+  markdownViewer: React.FC<{
+    template: string;
+    data: object;
+  }>;
+}> = ({ studio, onSave, onSaveImage, markdownViewer }) => {
   const [showModal, setShowModal] = React.useState(false);
 
   const handleUpdate = (label: string, description?: string) => {
@@ -47,6 +51,7 @@ const EditStudio: React.FC<{
           saveStudio={handleUpdate}
           studio={studio}
           onSaveImage={onSaveImage}
+          markdownViewer={markdownViewer}
         />
       </Modal>
     </>

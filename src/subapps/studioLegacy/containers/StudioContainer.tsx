@@ -8,6 +8,7 @@ import StudioHeader from '../components/StudioHeader';
 import { StudioContext } from '../views/StudioView';
 import WorkspaceList from '../containers/WorkspaceListContainer';
 import { saveImage } from '../../../shared/containers/MarkdownEditorContainer';
+import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
 
 const resourcesWritePermissionsWrapper = (
   child: React.ReactNode,
@@ -125,13 +126,17 @@ const StudioContainer: React.FunctionComponent = () => {
       studio={studioResource}
       onSave={updateStudio}
       onSaveImage={saveImage(nexus, orgLabel, projectLabel)}
+      markdownViewer={MarkdownViewerContainer}
     />
   );
   return (
     <>
       {studioResource ? (
         <>
-          <StudioHeader resource={studioResource}>
+          <StudioHeader
+            resource={studioResource}
+            markdownViewer={MarkdownViewerContainer}
+          >
             {resourcesWritePermissionsWrapper(
               editButton,
               `/${orgLabel}/${projectLabel}`
