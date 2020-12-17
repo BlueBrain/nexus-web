@@ -6,6 +6,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import StudioEditorForm from '../components/StudioEditorForm';
 import STUDIO_CONTEXT from '../components/StudioContext';
 import { saveImage } from '../../../shared/containers/MarkdownEditorContainer';
+import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
 
 export const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';
@@ -92,6 +93,7 @@ const CreateStudioContainer: React.FC<{
         <StudioEditorForm
           saveStudio={saveStudio}
           onSaveImage={saveImage(nexus, orgLabel, projectLabel)}
+          markdownViewer={MarkdownViewerContainer}
         />
       </Modal>
     </div>

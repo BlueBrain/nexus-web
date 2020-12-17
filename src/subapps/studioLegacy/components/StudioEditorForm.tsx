@@ -16,7 +16,11 @@ const StudioEditorForm: React.FC<{
   saveStudio?(label: string, description?: string): void;
   studio?: StudioResource | null;
   onSaveImage: SaveImageHandler;
-}> = ({ saveStudio, studio, onSaveImage }) => {
+  markdownViewer: React.FC<{
+    template: string;
+    data: object;
+  }>;
+}> = ({ saveStudio, studio, onSaveImage, markdownViewer }) => {
   const handleSubmit = (values: { label: string; description: string }) => {
     const { label, description } = values;
     saveStudio && saveStudio(label, description);
@@ -69,6 +73,7 @@ const StudioEditorForm: React.FC<{
         <MarkdownEditorFormItemComponent
           resource={studio as Resource}
           onSaveImage={onSaveImage}
+          markdownViewer={markdownViewer}
         />
       </Form.Item>
       <Button type="primary" htmlType="submit">

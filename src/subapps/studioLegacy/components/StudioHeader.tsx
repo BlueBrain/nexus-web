@@ -1,12 +1,15 @@
 import { Resource } from '@bbp/nexus-sdk';
 import * as React from 'react';
-import { convertMarkdownHandlebarStringWithData } from '../../../shared/utils/markdownTemplate';
 
 import './StudioHeader.less';
 
 const StudioHeader: React.FC<{
   resource: Resource;
-}> = ({ children, resource }) => {
+  markdownViewer: React.FC<{
+    template: string;
+    data: object;
+  }>;
+}> = ({ children, resource, markdownViewer: MarkdownViewer }) => {
   const { label, description } = resource;
   return (
     <div className="studio-header">
@@ -19,15 +22,7 @@ const StudioHeader: React.FC<{
           <div className="description-container">
             {' '}
             {description && (
-              <p
-                className="description"
-                dangerouslySetInnerHTML={{
-                  __html: convertMarkdownHandlebarStringWithData(
-                    description,
-                    resource
-                  ),
-                }}
-              />
+              <MarkdownViewer template={description} data={resource} />
             )}
           </div>
         </div>

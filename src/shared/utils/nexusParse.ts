@@ -20,7 +20,7 @@ const nexusEntities = [
   'files',
 ];
 
-const nexusUrlRegex = new RegExp(
+export const nexusUrlRegex = new RegExp(
   [
     '^',
     '(https?://.+)', // nexus deployment
