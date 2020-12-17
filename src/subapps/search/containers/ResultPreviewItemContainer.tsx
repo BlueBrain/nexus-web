@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
-import * as prettyByes from 'pretty-bytes';
+import * as prettyBytes from 'pretty-bytes';
 import { convertMarkdownHandlebarStringWithData } from '../../../shared/utils/markdownTemplate';
 import { getResourceLabel } from '../../../shared/utils';
 import { parseURL } from '../../../shared/utils/nexusParse';
@@ -32,7 +32,7 @@ const ResultPreviewItemContainer: React.FC<{
         resourceLabel: getResourceLabel(resource),
         resourceAdminData: parseURL(resource._self),
         fileData: resource._constrainedBy === FILE_SCHEMA && {
-          humanReadableFileSize: prettyByes(resource._bytes),
+          humanReadableFileSize: prettyBytes(resource._bytes),
         },
       }}
     />
