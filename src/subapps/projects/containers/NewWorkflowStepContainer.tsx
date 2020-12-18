@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Modal, notification } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 
-import WorkflowStepForm from '../components/WorkflowSteps/WorkflowStepForm';
+import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 import ActioButton from '../components/ActionButton';
 import { Status } from '../components/StatusIcon';
 import { displayError } from '../components/Notifications';
@@ -91,7 +91,7 @@ const NewWorkflowStepContainer: React.FC<{
         destroyOnClose={true}
       >
         {/* TODO: adapt form https://github.com/BlueBrain/nexus/issues/1814 */}
-        <WorkflowStepForm
+        <WorkflowStepWithActivityForm
           title="Create New Step"
           onClickCancel={() => setShowForm(false)}
           onSubmit={submitNewStep}

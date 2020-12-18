@@ -20,7 +20,7 @@ import TypesIconsList from '../../../../shared/components/Types/TypesIcon';
 
 import './WorkflowStepForm.less';
 
-const WorkflowStepForm: React.FC<{
+const WorkflowStepWithActivityForm: React.FC<{
   onClickCancel(): void;
   onSubmit(data: WorkflowStepMetadata): void;
   busy: boolean;
@@ -33,8 +33,6 @@ const WorkflowStepForm: React.FC<{
     name: string;
     '@id': string;
   }[];
-  activityName: string;
-  activityTypes: string[];
 }> = ({
   onClickCancel,
   onSubmit,
@@ -45,8 +43,6 @@ const WorkflowStepForm: React.FC<{
   workflowStep,
   informedByLabel,
   siblings,
-  activityName,
-  activityTypes,
 }) => {
   const [name, setName] = React.useState<string>(
     (workflowStep && workflowStep.name) || ''
@@ -154,7 +150,12 @@ const WorkflowStepForm: React.FC<{
     }
   };
 
+  const onSearchActivities = (data: any) => {
+    console.log('smth', data);
+  };
+
   const { Item } = Form;
+  const { Search } = Input;
 
   return (
     <Form {...formItemLayout} className="workflow-step-form">
@@ -162,46 +163,25 @@ const WorkflowStepForm: React.FC<{
       <Spin spinning={busy} tip="Please wait...">
         <Row gutter={24}>
           <Col {...columnLayout}>
-            <Item label="Activity">
-              <span>{activityName}</span>
-            </Item>
-            <Item label="Activity Types">
-              <TypesIconsList type={activityTypes} />
-            </Item>
+            <Search
+              placeholder="Search exisiting activity type"
+              onSearch={onSearchActivities}
+              style={{ marginBottom: 30 }}
+            />
+          </Col>
+        </Row>
+        <Row gutter={24}>
+          <Col {...columnLayout}>
             <Item
-              label="Workflow Step Name *"
+              label="Name *"
               validateStatus={nameError ? 'error' : ''}
               help={nameError && 'Please enter a name'}
             >
               <Input value={name} onChange={onChangeName} />
             </Item>
-            <Item
-              label="Description *"
-              validateStatus={descriptionError ? 'error' : ''}
-              help={descriptionError && 'Please enter a description'}
-            >
-              <Input value={description} onChange={onChangeDescription} />
+            <Item label="Type">
+              <Input value={name} />
             </Item>
-            <Item label="Summary">
-              <Input.TextArea
-                value={summary}
-                onChange={event => setSummary(event.target.value)}
-              />
-            </Item>
-            <Item label="Status">
-              <Radio.Group
-                value={status}
-                onChange={event => setStatus(event.target.value)}
-              >
-                {Object.values(Status).map(status => (
-                  <Radio.Button key={`option-${status}`} value={status}>
-                    {status}
-                  </Radio.Button>
-                ))}
-              </Radio.Group>
-            </Item>
-          </Col>
-          <Col {...columnLayout}>
             <Item
               label="Provisional End Date *"
               validateStatus={dateError ? 'error' : ''}
@@ -212,13 +192,6 @@ const WorkflowStepForm: React.FC<{
                 value={dueDate ? moment(dueDate) : null}
                 onChange={onChangeDate}
               />
-            </Item>
-            <Item label="Parent Workflow Step">
-              <Select value={parentLabel} disabled>
-                <Select.Option value={parentLabel ? parentLabel : ''}>
-                  {parentLabel}
-                </Select.Option>
-              </Select>
             </Item>
             <Item label="Informed By">
               {informedByLabel ? (
@@ -251,6 +224,43 @@ const WorkflowStepForm: React.FC<{
                 <Select.Option value="disabled">Disabled</Select.Option>
               </Select>
             </Item>
+            <Item label="Parent Workflow Step">
+              <Select value={parentLabel} disabled>
+                <Select.Option value={parentLabel ? parentLabel : ''}>
+                  {parentLabel}
+                </Select.Option>
+              </Select>
+            </Item>
+          </Col>
+          <Col {...columnLayout}>
+            <Item label="Status">
+              <Radio.Group
+                value={status}
+                onChange={event => setStatus(event.target.value)}
+              >
+                {Object.values(Status).map(status => (
+                  <Radio.Button key={`option-${status}`} value={status}>
+                    {status}
+                  </Radio.Button>
+                ))}
+              </Radio.Group>
+            </Item>
+            <Item
+              label="Description *"
+              validateStatus={descriptionError ? 'error' : ''}
+              help={descriptionError && 'Please enter a description'}
+            >
+              <Input.TextArea
+                value={description}
+                onChange={onChangeDescription}
+              />
+            </Item>
+            <Item label="Summary">
+              <Input.TextArea
+                value={summary}
+                onChange={event => setSummary(event.target.value)}
+              />
+            </Item>
           </Col>
         </Row>
         <Row>
@@ -269,4 +279,4 @@ const WorkflowStepForm: React.FC<{
   );
 };
 
-export default WorkflowStepForm;
+export default WorkflowStepWithActivityForm;

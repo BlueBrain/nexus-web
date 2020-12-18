@@ -179,9 +179,7 @@ const ActivitiesLinkingContainer: React.FC<{
         destroyOnClose={true}
       >
         <WorkflowStepWithActivityForm
-          activityName={'test'}
-          activityTypes={['test1', 'typeTest2']}
-          title="Create new Workflow Step with Activity"
+          title="Create new Workflow Step"
           onClickCancel={() => setshowCreateStepForm(false)}
           onSubmit={() => {}}
           busy={false}

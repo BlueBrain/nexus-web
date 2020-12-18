@@ -247,10 +247,12 @@ const WorkflowStepForm: React.FC<{
             <em>* Mandatory fields</em>
           </Col>
           <Col {...columnLayout} style={{ textAlign: 'right' }}>
-            <Button onClick={onClickCancel}>Cancel</Button>
-            <Button onClick={onClickSubmit} type="primary">
-              Save
-            </Button>
+            <div className="workflow-step-form__buttons">
+              <Button onClick={onClickCancel}>Cancel</Button>
+              <Button onClick={onClickSubmit} type="primary">
+                Save
+              </Button>
+            </div>
           </Col>
         </Row>
       </Spin>
