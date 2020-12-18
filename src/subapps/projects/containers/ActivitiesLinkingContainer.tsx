@@ -8,7 +8,7 @@ import { useUnlinkedActivities } from '../hooks/useUnlinkedActivities';
 import LinkActivityForm from '../components/LinkActivityForm';
 import fusionConfig from '../config';
 import { displayError, successNotification } from '../components/Notifications';
-import WorkflowStepForm from '../components/WorkflowSteps/WorkflowStepForm';
+import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 
 const ActivitiesLinkingContainer: React.FC<{
   orgLabel: string;
@@ -175,11 +175,13 @@ const ActivitiesLinkingContainer: React.FC<{
         visible={showCreateStepForm}
         footer={null}
         onCancel={() => setshowCreateStepForm(false)}
-        width={1100}
+        width={1200}
         destroyOnClose={true}
       >
-        <WorkflowStepForm
-          title="Create New Step"
+        <WorkflowStepWithActivityForm
+          activityName={'test'}
+          activityTypes={['test1', 'typeTest2']}
+          title="Create new Workflow Step with Activity"
           onClickCancel={() => setshowCreateStepForm(false)}
           onSubmit={() => {}}
           busy={false}

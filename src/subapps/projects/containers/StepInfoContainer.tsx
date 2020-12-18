@@ -80,7 +80,7 @@ const StepInfoContainer: React.FC<{
         visible={showForm}
         destroyOnClose={true}
         onClose={() => setShowForm(false)}
-        title="Edit Workflow Step information (will be updated soon)"
+        title="Edit Workflow Step information"
         placement="right"
         closable
         width={600}
