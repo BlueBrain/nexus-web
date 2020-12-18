@@ -6,6 +6,8 @@ import { convertMarkdownHandlebarStringWithData } from '../utils/markdownTemplat
 import useAsyncCall from '../hooks/useAsynCall';
 import { parseURL } from '../utils/nexusParse';
 import { getResourceLabel } from '../utils';
+import { match, when } from 'ts-pattern';
+import { Skeleton } from 'antd';
 
 export const requestNexusImage = async (
   nexus: NexusClient,
@@ -50,12 +52,25 @@ const MarkdownViewerContainer: React.FC<{
   };
   useAsyncCall<void, Error>(processImages(), [wrapperRef, template, data]);
 
-  return !markdownData.error && markdownData.data ? (
-    <div
-      ref={wrapperRef}
-      dangerouslySetInnerHTML={{ __html: markdownData.data }}
-    ></div>
-  ) : null;
+  return match(markdownData)
+    .with({ loading: true, error: null }, () => (
+      <div>
+        <Skeleton active />
+      </div>
+    ))
+    .with(
+      {
+        error: when(error => !error),
+        data: when(data => !!data),
+      },
+      () => (
+        <div
+          ref={wrapperRef}
+          dangerouslySetInnerHTML={{ __html: markdownData.data || '' }}
+        ></div>
+      )
+    )
+    .run();
 };
 
 export default MarkdownViewerContainer;

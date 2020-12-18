@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { Layout, Row, List, Spin, Select, Card, Empty, Result } from 'antd';
+import { Layout, Row, Spin, Select, Card, Result, Switch } from 'antd';
 import { useHistory, useLocation } from 'react-router-dom';
+import { match } from 'ts-pattern';
+
 import { Resource } from '@bbp/nexus-sdk';
 
 import FacetItem from '../components/FacetItem';
-import ResultPreviewItemContainer from '../containers/ResultPreviewItemContainer';
 import useSearchConfigs from '../../../shared/hooks/useSearchConfigs';
 import useSearchQuery, {
   DEFAULT_SEARCH_PROPS,
@@ -16,9 +17,17 @@ import useSearchQuery, {
 } from '../../../shared/hooks/useSearchQuery';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import ActiveFilters from '../components/ActiveFilters';
+import ResultsGrid from '../components/ResultsGrid';
 
-import DefaultResourcePreviewCard from '!!raw-loader!../templates/DefaultResourcePreviewCard.hbs';
 import './SearchView.less';
+import ResultsTable from '../components/ResultsTable';
+import { AppstoreOutlined, TableOutlined } from '@ant-design/icons';
+import useLocalStorage from '../../../shared/hooks/useLocalStorage';
+
+export enum SEARCH_VIEW_TYPES {
+  TABLE = 'TABLE',
+  GRID = 'GRID',
+}
 
 const generateDefaultSearchFilterMap = () => {
   const facetMap = new Map();
@@ -62,6 +71,10 @@ const SearchView: React.FC = () => {
     preferedSearchConfig?.view
   );
   const [queryParams, setQueryString] = useQueryString();
+
+  const [searchViewType, setSearchViewType] = useLocalStorage<
+    SEARCH_VIEW_TYPES
+  >('SEARCH_VIEW_TYPES', SEARCH_VIEW_TYPES.GRID);
 
   const results = searchResponse.data;
 
@@ -112,7 +125,7 @@ const SearchView: React.FC = () => {
     });
   };
 
-  const handleClickItem = (resource: Resource) => () => {
+  const handleClickItem = (resource: Resource) => {
     setSelectedResource(resource);
   };
 
@@ -127,11 +140,11 @@ const SearchView: React.FC = () => {
     });
   };
 
-  const handlePageSizeChange = (current: number, size: number) => {
+  const handlePageSizeChange = (size: string) => {
     changeSearchProps({
       ...searchProps,
       pagination: {
-        size,
+        size: Number(size),
         from: searchProps.pagination?.from || 0,
       },
     });
@@ -202,6 +215,10 @@ const SearchView: React.FC = () => {
     changeSearchProps({
       ...searchProps,
     });
+  };
+
+  const handleSearchViewSwitchChanged = (value: boolean) => {
+    setSearchViewType(value ? SEARCH_VIEW_TYPES.GRID : SEARCH_VIEW_TYPES.TABLE);
   };
 
   // Pagination Props
@@ -317,58 +334,93 @@ const SearchView: React.FC = () => {
                     </span>
                   )}
                 </div>
-                <div>
-                  <b>Sort by </b>
-                  <Select
-                    defaultValue="_updatedAt-desc"
-                    onChange={handleSortChange}
-                    bordered={false}
-                  >
-                    <Option value="_createdAt-desc">Newest first</Option>
-                    <Option value="_createdAt-asc">Oldest first</Option>
-                    <Option value="_updatedAt-desc">Last updated</Option>
-                  </Select>
+                <div
+                  style={{
+                    width: '30%',
+                    minWidth: '600px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'baseline',
+                  }}
+                >
+                  <div>
+                    <b>Layout</b>{' '}
+                    <Switch
+                      checked={searchViewType === SEARCH_VIEW_TYPES.GRID}
+                      onChange={handleSearchViewSwitchChanged}
+                      size={'small'}
+                    />{' '}
+                    {searchViewType === SEARCH_VIEW_TYPES.GRID
+                      ? 'Grid layout'
+                      : 'Table layout'}
+                  </div>
+                  {'  '}
+                  <div>
+                    <b>Results / page </b>
+                    <Select
+                      defaultValue={(
+                        searchProps.pagination?.size ||
+                        DEFAULT_SEARCH_PROPS.pagination.size
+                      ).toString()}
+                      onChange={handlePageSizeChange}
+                      bordered={false}
+                    >
+                      {['10', '20', '50', '100'].map(numResultsPerPage => (
+                        <Option value={numResultsPerPage}>
+                          {numResultsPerPage} / page
+                        </Option>
+                      ))}
+                    </Select>
+                  </div>
+                  {'  '}
+                  <div>
+                    <b>Sort by </b>
+                    <Select
+                      defaultValue="_updatedAt-desc"
+                      onChange={handleSortChange}
+                      bordered={false}
+                    >
+                      <Option value="_createdAt-desc">Newest first</Option>
+                      <Option value="_createdAt-asc">Oldest first</Option>
+                      <Option value="_updatedAt-desc">Last updated</Option>
+                    </Select>
+                  </div>
                 </div>
               </div>
-              <List
-                loading={searchResponse.loading}
-                itemLayout="vertical"
-                grid={{ gutter: 16, column: 4 }}
-                dataSource={results?.hits.hits || []}
-                pagination={
-                  shouldShowPagination && {
-                    total,
-                    current,
-                    pageSize: size,
-                    showSizeChanger: true,
-                    onChange: handlePagniationChange,
-                    onShowSizeChange: handlePageSizeChange,
-                  }
-                }
-                renderItem={hit => {
-                  const { _original_source, ...resourceMetadata } = hit._source;
-                  const resource = {
-                    ...resourceMetadata,
-                    ...JSON.parse(_original_source),
-                  };
-
-                  return (
-                    <List.Item>
-                      <div
-                        className="result-preview-card"
-                        onClick={handleClickItem(resource)}
-                      >
-                        <ResultPreviewItemContainer
-                          resource={resource as Resource}
-                          defaultPreviewItemTemplate={
-                            DefaultResourcePreviewCard
+              {match(searchViewType)
+                .with(SEARCH_VIEW_TYPES.GRID, () => (
+                  <ResultsGrid
+                    searchResponse={searchResponse}
+                    onClickItem={handleClickItem}
+                    pagination={
+                      shouldShowPagination && {
+                        total,
+                        current,
+                        pageSize: size,
+                        showSizeChanger: false,
+                        onChange: handlePagniationChange,
+                      }
+                    }
+                  />
+                ))
+                .with(SEARCH_VIEW_TYPES.TABLE, () => (
+                  <ResultsTable
+                    searchResponse={searchResponse}
+                    onClickItem={handleClickItem}
+                    pagination={
+                      shouldShowPagination
+                        ? {
+                            total,
+                            current,
+                            pageSize: size,
+                            showSizeChanger: false,
+                            onChange: handlePagniationChange,
                           }
-                        />
-                      </div>
-                    </List.Item>
-                  );
-                }}
-              />
+                        : {}
+                    }
+                  />
+                ))
+                .run()}
             </div>
           </Row>
         </Content>
