@@ -25,6 +25,7 @@ export type StepResource = Resource<{
   hasParent?: {
     '@id': string;
   };
+  type?: string;
   name: string;
   _self: string;
   status: Status;

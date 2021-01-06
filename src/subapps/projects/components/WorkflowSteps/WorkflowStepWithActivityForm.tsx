@@ -16,7 +16,6 @@ import { Status } from '../StatusIcon';
 import { WorkflowStepMetadata } from '../../containers/NewWorkflowStepContainer';
 import { StepResource } from '../../views/WorkflowStepView';
 import { isEmptyInput } from '../../utils';
-import TypesIconsList from '../../../../shared/components/Types/TypesIcon';
 
 import './WorkflowStepForm.less';
 
@@ -46,6 +45,9 @@ const WorkflowStepWithActivityForm: React.FC<{
 }) => {
   const [name, setName] = React.useState<string>(
     (workflowStep && workflowStep.name) || ''
+  );
+  const [type, setType] = React.useState<string>(
+    (workflowStep && workflowStep.type) || ''
   );
   const [description, setDescription] = React.useState<string>(
     (workflowStep && workflowStep.description) || ''
@@ -152,6 +154,7 @@ const WorkflowStepWithActivityForm: React.FC<{
 
   const onSearchActivities = (data: any) => {
     console.log('smth', data);
+    // prefill type and name
   };
 
   const { Item } = Form;
@@ -180,7 +183,7 @@ const WorkflowStepWithActivityForm: React.FC<{
               <Input value={name} onChange={onChangeName} />
             </Item>
             <Item label="Type">
-              <Input value={name} />
+              <Input allowClear />
             </Item>
             <Item
               label="Provisional End Date *"

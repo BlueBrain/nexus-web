@@ -20,6 +20,11 @@ export const fusionConfig = {
   noteType: ['FusionNote', 'Entity'],
   agentOrgType: ['Agent', 'Organization'],
   agentPersonType: ['Agent', 'Person'],
+
+  // project to fetch datamodels from
+  datamodelsOrg: 'fusion2-stafeeva',
+  datamodelsProject: 'datamodels-test',
+  datamodelsActivityId: 'prov:Activity2',
 };
 
 export default fusionConfig;

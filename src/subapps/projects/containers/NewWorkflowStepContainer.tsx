@@ -7,6 +7,7 @@ import ActioButton from '../components/ActionButton';
 import { Status } from '../components/StatusIcon';
 import { displayError } from '../components/Notifications';
 import fusionConfig from '../config';
+import { isSubClass } from '../utils';
 
 export type WorkflowStepMetadata = {
   name: string;
@@ -44,6 +45,48 @@ const NewWorkflowStepContainer: React.FC<{
 
   const [showForm, setShowForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
+  const [subClassesOfActivity, setSubClassesOfActivity] = React.useState<any[]>(
+    []
+  );
+
+  const {
+    datamodelsOrg,
+    datamodelsProject,
+    datamodelsActivityId,
+  } = fusionConfig;
+
+  const fetchSubClasses = (id: string, acc: string[]) => {
+    nexus.Resource.links(
+      datamodelsOrg,
+      datamodelsProject,
+      encodeURIComponent(id),
+      'incoming'
+    )
+      .then((response: any) => {
+        if (response._total > 0) {
+          const links = response._results.filter((link: any) =>
+            isSubClass(link)
+          );
+
+          const linksIds = links.map((link: any) => link['@id']);
+
+          Promise.all(
+            links.map((link: any) => {
+              fetchSubClasses(link['@id'], [...linksIds, ...acc]);
+            })
+          );
+        } else {
+          setSubClassesOfActivity([...acc]);
+        }
+      })
+      .catch(error => console.log('error', error));
+  };
+
+  React.useEffect(() => {
+    fetchSubClasses(datamodelsActivityId, []);
+  }, []);
+
+  console.log('subClassesOfActivity', subClassesOfActivity);
 
   const submitNewStep = (data: WorkflowStepMetadata) => {
     setBusy(true);
