@@ -16,7 +16,7 @@ const MAX_FILTER_LIMIT = 20;
 const MIN_FILTER_LIMIT = 1;
 const DATE_FORMAT = 'DD-MM-YYYY, HH:mm';
 
-type ResultTableProps = {
+export type ResultTableProps = {
   headerProperties?: {
     title: string;
     dataIndex: string;
