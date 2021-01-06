@@ -7,7 +7,7 @@ import ActioButton from '../components/ActionButton';
 import { Status } from '../components/StatusIcon';
 import { displayError } from '../components/Notifications';
 import fusionConfig from '../config';
-import { isSubClass } from '../utils';
+import { useActivitySubClasses } from '../hooks/useActivitySubClasses';
 
 export type WorkflowStepMetadata = {
   name: string;
@@ -45,48 +45,7 @@ const NewWorkflowStepContainer: React.FC<{
 
   const [showForm, setShowForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
-  const [subClassesOfActivity, setSubClassesOfActivity] = React.useState<any[]>(
-    []
-  );
-
-  const {
-    datamodelsOrg,
-    datamodelsProject,
-    datamodelsActivityId,
-  } = fusionConfig;
-
-  const fetchSubClasses = (id: string, acc: string[]) => {
-    nexus.Resource.links(
-      datamodelsOrg,
-      datamodelsProject,
-      encodeURIComponent(id),
-      'incoming'
-    )
-      .then((response: any) => {
-        if (response._total > 0) {
-          const links = response._results.filter((link: any) =>
-            isSubClass(link)
-          );
-
-          const linksIds = links.map((link: any) => link['@id']);
-
-          Promise.all(
-            links.map((link: any) => {
-              fetchSubClasses(link['@id'], [...linksIds, ...acc]);
-            })
-          );
-        } else {
-          setSubClassesOfActivity([...acc]);
-        }
-      })
-      .catch(error => console.log('error', error));
-  };
-
-  React.useEffect(() => {
-    fetchSubClasses(datamodelsActivityId, []);
-  }, []);
-
-  console.log('subClassesOfActivity', subClassesOfActivity);
+  const { subClasses, fetchSubClasses } = useActivitySubClasses();
 
   const submitNewStep = (data: WorkflowStepMetadata) => {
     setBusy(true);
@@ -119,13 +78,14 @@ const NewWorkflowStepContainer: React.FC<{
       });
   };
 
+  const onClickAddStep = () => {
+    fetchSubClasses();
+    setShowForm(true);
+  };
+
   return (
     <>
-      <ActioButton
-        icon="Add"
-        onClick={() => setShowForm(true)}
-        title="Add step"
-      />
+      <ActioButton icon="Add" onClick={onClickAddStep} title="Add step" />
       <Modal
         visible={showForm}
         footer={null}
@@ -133,7 +93,6 @@ const NewWorkflowStepContainer: React.FC<{
         width={1150}
         destroyOnClose={true}
       >
-        {/* TODO: adapt form https://github.com/BlueBrain/nexus/issues/1814 */}
         <WorkflowStepWithActivityForm
           title="Create New Step"
           onClickCancel={() => setShowForm(false)}
@@ -141,6 +100,7 @@ const NewWorkflowStepContainer: React.FC<{
           busy={busy}
           parentLabel={parentStepLabel}
           siblings={siblings}
+          activityList={subClasses}
         />
       </Modal>
     </>

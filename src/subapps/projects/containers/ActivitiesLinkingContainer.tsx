@@ -185,6 +185,7 @@ const ActivitiesLinkingContainer: React.FC<{
           busy={false}
           parentLabel={''}
           siblings={[]}
+          activityList={[]}
         />
       </Modal>
     </>

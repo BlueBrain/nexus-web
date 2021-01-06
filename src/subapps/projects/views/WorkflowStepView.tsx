@@ -25,7 +25,7 @@ export type StepResource = Resource<{
   hasParent?: {
     '@id': string;
   };
-  type?: string;
+  activityType?: string;
   name: string;
   _self: string;
   status: Status;
