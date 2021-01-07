@@ -35,6 +35,9 @@ const searchSettings = {
     process.env.SEARCH_CONFIG_PROJECT || DEFAULT_SEARCH_CONFIG_PROJECT,
 };
 
+// configure datamodels projects
+const dataModelsLocation = process.env.DATA_MODELS || '';
+
 const subAppsManifestPath =
   process.env.SUB_APPS_MANIFEST_PATH || '/public/sub-apps';
 
@@ -83,6 +86,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       sentryDsn: process.env.SENTRY_DSN,
       gtmCode: process.env.GTM_CODE,
       studioView: process.env.STUDIO_VIEW || '',
+      dataModelsLocation,
     },
     uiSettings: DEFAULT_UI_SETTINGS,
     oidc: {

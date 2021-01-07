@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, ResourceLink, PaginatedList } from '@bbp/nexus-sdk';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../shared/store/reducers';
 
 import fusionConfig from '../config';
 import { isSubClass } from '../utils';
@@ -8,6 +10,9 @@ import { displayError } from '../components/Notifications';
 
 export const useActivitySubClasses = () => {
   const nexus = useNexusContext();
+  const dataModelsLocation = useSelector(
+    (state: RootState) => state.config.dataModelsLocation
+  );
   const [subClassesIds, setsubClassesIds] = React.useState<string[]>([]);
   const [subClasses, setSubClasses] = React.useState<
     {
@@ -16,11 +21,9 @@ export const useActivitySubClasses = () => {
     }[]
   >([]);
 
-  const {
-    datamodelsOrg,
-    datamodelsProject,
-    datamodelsActivityId,
-  } = fusionConfig;
+  const [datamodelsOrg, datamodelsProject] = dataModelsLocation.split('/');
+
+  const { datamodelsActivityId } = fusionConfig;
 
   React.useEffect(() => {
     if (subClassesIds && subClassesIds.length > 0) {
