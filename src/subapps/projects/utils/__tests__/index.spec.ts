@@ -1,4 +1,4 @@
-import { isParentLink, isActivityResourceLink } from '..';
+import { isParentLink, isActivityResourceLink, isSubClass } from '..';
 import { ResourceLink } from '@bbp/nexus-sdk';
 
 const linkToSibling: ResourceLink = {
@@ -84,6 +84,27 @@ const linkToNotes: ResourceLink = {
     'https://staging.nexus.ocp.bbp.epfl.ch/v1/realms/github/users/stafeeva',
 };
 
+const subClassLink: ResourceLink = {
+  '@id': 'https://bluebrain.github.io/nexus/vocabulary/SomeOtherResourceTwo',
+  '@type':
+    'https://staging.nexus.ocp.bbp.epfl.ch/v1/vocabs/fusion2-stafeeva/datamodels-test/Class',
+  paths: ['http://www.w3.org/2000/01/rdf-schema#subClassOf'],
+  _self:
+    'https://staging.nexus.ocp.bbp.epfl.ch/v1/resources/fusion2-stafeeva/datamodels-test/_/nxv:SomeOtherResourceTwo',
+  _constrainedBy:
+    'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+  _project:
+    'https://staging.nexus.ocp.bbp.epfl.ch/v1/projects/fusion2-stafeeva/datamodels-test',
+  _rev: 2,
+  _deprecated: false,
+  _createdAt: '2021-01-06T10:53:16.012Z',
+  _createdBy:
+    'https://staging.nexus.ocp.bbp.epfl.ch/v1/realms/github/users/stafeeva',
+  _updatedAt: '2021-01-07T09:13:52.080Z',
+  _updatedBy:
+    'https://staging.nexus.ocp.bbp.epfl.ch/v1/realms/github/users/stafeeva',
+};
+
 describe('isParent', () => {
   it('should check if it is a link to parent', () => {
     expect(isParentLink(linkToSibling)).toEqual(false);
@@ -97,5 +118,11 @@ describe('isActivityResource', () => {
     expect(isActivityResourceLink(linkToParent)).toEqual(false);
     expect(isActivityResourceLink(linkToActivityResource)).toEqual(true);
     expect(isActivityResourceLink(linkToNotes)).toEqual(true);
+  });
+});
+
+describe('isSubClass', () => {
+  it("checks if link's path is subClassOf", () => {
+    expect(isSubClass(subClassLink)).toEqual(true);
   });
 });
