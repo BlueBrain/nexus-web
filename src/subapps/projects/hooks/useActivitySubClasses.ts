@@ -1,13 +1,10 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource, ResourceLink, PaginatedList } from '@bbp/nexus-sdk';
 
 import fusionConfig from '../config';
 import { isSubClass } from '../utils';
-
-export type ActivityResourceType = Resource<{
-  [key: string]: any;
-}>;
+import { displayError } from '../components/Notifications';
 
 export const useActivitySubClasses = () => {
   const nexus = useNexusContext();
@@ -33,17 +30,24 @@ export const useActivitySubClasses = () => {
             datamodelsOrg,
             datamodelsProject,
             encodeURIComponent(id)
-          );
+          ) as Promise<
+            Resource<{
+              label: string;
+            }>
+          >;
         })
-      ).then(data => {
-        const subClassesList = data.map(subClass => ({
-          // @ts-ignore
-          label: subClass.label,
-          ['@id']: subClass['@id'],
-        }));
+      )
+        .then(data => {
+          const subClassesList = data.map(subClass => {
+            return {
+              label: subClass.label,
+              ['@id']: subClass['@id'],
+            };
+          });
 
-        setSubClasses(subClassesList);
-      });
+          setSubClasses(subClassesList);
+        })
+        .catch(error => displayError(error, 'Failed to load activities'));
     }
   }, [subClassesIds.length]);
 
@@ -55,16 +59,16 @@ export const useActivitySubClasses = () => {
         encodeURIComponent(id),
         'incoming'
       )
-        .then((response: any) => {
+        .then((response: PaginatedList<ResourceLink>) => {
           if (response._total > 0) {
-            const links = response._results.filter((link: any) =>
+            const links = response._results.filter((link: ResourceLink) =>
               isSubClass(link)
             );
 
-            const linksIds = links.map((link: any) => link['@id']);
+            const linksIds = links.map((link: ResourceLink) => link['@id']);
 
             Promise.all(
-              links.map((link: any) => {
+              links.map((link: ResourceLink) => {
                 fetchSubClassesRecursively(link['@id'], [...linksIds, ...acc]);
               })
             );
@@ -72,7 +76,7 @@ export const useActivitySubClasses = () => {
             setsubClassesIds([...acc]);
           }
         })
-        .catch(error => console.log('error', error));
+        .catch(error => displayError(error, 'Failed to load activities'));
     };
 
     fetchSubClassesRecursively(datamodelsActivityId, []);

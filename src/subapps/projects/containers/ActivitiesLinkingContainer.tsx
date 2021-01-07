@@ -178,6 +178,7 @@ const ActivitiesLinkingContainer: React.FC<{
         width={1200}
         destroyOnClose={true}
       >
+        {/* TODO: Add linking to new Workflow Step https://github.com/BlueBrain/nexus/issues/1818 */}
         <WorkflowStepWithActivityForm
           title="Create new Workflow Step"
           onClickCancel={() => setshowCreateStepForm(false)}

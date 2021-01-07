@@ -21,7 +21,7 @@ import { isEmptyInput } from '../../utils';
 import TypesIconList from '../../../../shared/components/Types/TypesIcon';
 import { labelOf } from '../../../../shared/utils';
 
-import './WorkflowStepForm.less';
+import './WorkflowStepWithActivityForm.less';
 
 const WorkflowStepWithActivityForm: React.FC<{
   onClickCancel(): void;
@@ -40,6 +40,7 @@ const WorkflowStepWithActivityForm: React.FC<{
     label: string;
     '@id': string;
   }[];
+  allowActivitySearch?: boolean;
 }> = ({
   onClickCancel,
   onSubmit,
@@ -51,6 +52,7 @@ const WorkflowStepWithActivityForm: React.FC<{
   informedByLabel,
   siblings,
   activityList,
+  allowActivitySearch = true,
 }) => {
   const [name, setName] = React.useState<string>(
     (workflowStep && workflowStep.name) || ''
@@ -185,18 +187,20 @@ const WorkflowStepWithActivityForm: React.FC<{
       <Spin spinning={busy} tip="Please wait...">
         <Row gutter={24}>
           <Col {...columnLayout}>
-            <AutoComplete
-              style={{ width: '100%', marginBottom: 30 }}
-              options={activityOptions}
-              filterOption={(inputValue, option) =>
-                option!.value
-                  .toUpperCase()
-                  .indexOf(inputValue.toUpperCase()) !== -1
-              }
-              onSelect={onSelectActivity}
-            >
-              <Search size="large" placeholder="Search exisiting activity" />
-            </AutoComplete>
+            {allowActivitySearch && (
+              <AutoComplete
+                style={{ width: '100%', marginBottom: 30 }}
+                options={activityOptions}
+                filterOption={(inputValue, option) =>
+                  option!.value
+                    .toUpperCase()
+                    .indexOf(inputValue.toUpperCase()) !== -1
+                }
+                onSelect={onSelectActivity}
+              >
+                <Search size="large" placeholder="Search exisiting activity" />
+              </AutoComplete>
+            )}
           </Col>
         </Row>
         <Row gutter={24}>

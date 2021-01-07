@@ -4,7 +4,7 @@ import { Drawer, Button } from 'antd';
 
 import { displayError, successNotification } from '../components/Notifications';
 import { StepResource } from '../views/WorkflowStepView';
-import WorkflowStepForm from '../components/WorkflowSteps/WorkflowStepForm';
+import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 import fusionConfig from '../config';
 
 const StepInfoContainer: React.FC<{
@@ -85,8 +85,7 @@ const StepInfoContainer: React.FC<{
         closable
         width={600}
       >
-        {/* TODO: update activity form to be step form  https://github.com/BlueBrain/nexus/issues/1814*/}
-        <WorkflowStepForm
+        <WorkflowStepWithActivityForm
           onClickCancel={() => setShowForm(false)}
           onSubmit={updateStep}
           busy={busy}
@@ -94,6 +93,8 @@ const StepInfoContainer: React.FC<{
           informedByLabel={informedByLabel}
           layout="vertical"
           workflowStep={step}
+          activityList={[]}
+          allowActivitySearch={false}
         />
       </Drawer>
     </div>
