@@ -1,13 +1,22 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Resource } from '@bbp/nexus-sdk';
 
 import fusionConfig from '../config';
 import { isSubClass } from '../utils';
 
+export type ActivityResourceType = Resource<{
+  [key: string]: any;
+}>;
+
 export const useActivitySubClasses = () => {
   const nexus = useNexusContext();
-  const [subClassesOfActivity, setSubClassesOfActivity] = React.useState<
-    string[]
+  const [subClassesIds, setsubClassesIds] = React.useState<string[]>([]);
+  const [subClasses, setSubClasses] = React.useState<
+    {
+      label: string;
+      ['@id']: string;
+    }[]
   >([]);
 
   const {
@@ -15,6 +24,28 @@ export const useActivitySubClasses = () => {
     datamodelsProject,
     datamodelsActivityId,
   } = fusionConfig;
+
+  React.useEffect(() => {
+    if (subClassesIds && subClassesIds.length > 0) {
+      Promise.all(
+        subClassesIds.map((id: string) => {
+          return nexus.Resource.get(
+            datamodelsOrg,
+            datamodelsProject,
+            encodeURIComponent(id)
+          );
+        })
+      ).then(data => {
+        const subClassesList = data.map(subClass => ({
+          //@ts-ignore
+          label: subClass.label,
+          ['@id']: subClass['@id'],
+        }));
+
+        setSubClasses(subClassesList);
+      });
+    }
+  }, [subClassesIds.length]);
 
   const fetchSubClasses = () => {
     const fetchSubClassesRecursively = (id: string, acc: string[]) => {
@@ -38,7 +69,7 @@ export const useActivitySubClasses = () => {
               })
             );
           } else {
-            setSubClassesOfActivity([...acc]);
+            setsubClassesIds([...acc]);
           }
         })
         .catch(error => console.log('error', error));
@@ -49,6 +80,6 @@ export const useActivitySubClasses = () => {
 
   return {
     fetchSubClasses,
-    subClasses: subClassesOfActivity,
+    subClasses,
   };
 };

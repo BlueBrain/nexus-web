@@ -11,6 +11,7 @@ import { useActivitySubClasses } from '../hooks/useActivitySubClasses';
 
 export type WorkflowStepMetadata = {
   name: string;
+  activityType?: string;
   description: string;
   summary?: string;
   dueDate: string;

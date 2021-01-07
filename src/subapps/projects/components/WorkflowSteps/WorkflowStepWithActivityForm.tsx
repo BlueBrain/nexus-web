@@ -36,7 +36,10 @@ const WorkflowStepWithActivityForm: React.FC<{
     name: string;
     '@id': string;
   }[];
-  activityList: string[];
+  activityList: {
+    label: string;
+    '@id': string;
+  }[];
 }> = ({
   onClickCancel,
   onSubmit,
@@ -75,7 +78,7 @@ const WorkflowStepWithActivityForm: React.FC<{
   const [informedBy, setInformedBy] = React.useState<string>('');
 
   const activityOptions = activityList.map(activity => ({
-    value: labelOf(activity),
+    value: activity.label,
   }));
 
   const formItemLayout =
@@ -143,13 +146,19 @@ const WorkflowStepWithActivityForm: React.FC<{
 
   const onSelectActivity = (value: string) => {
     setName(value);
-    setActivityType(value);
+
+    const selected = activityList.find(activity => activity.label === value);
+
+    if (selected) {
+      setActivityType(selected['@id']);
+    }
   };
 
   const onClickSubmit = () => {
     if (isValidInput()) {
       const data: any = {
         name,
+        activityType,
         description,
         summary,
         dueDate,
