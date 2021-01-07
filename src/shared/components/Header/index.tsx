@@ -37,7 +37,7 @@ const InformationContent = (props: InformationContentProps) => {
       <p>Nexus is Open Source and available under the Apache 2 License. </p>
       <p>
         © 2017-2020
-        <a href="https://www.epfl.ch/">
+        <a href="https://www.epfl.ch/" target="_blank">
           <img
             style={{ width: '3em', marginBottom: 3 }}
             src={epflLogo}
@@ -52,7 +52,7 @@ const InformationContent = (props: InformationContentProps) => {
       <h4>Nexus Services</h4>
       <p>
         Nexus Delta v{props.version} <br />
-        <a href={`${repoUrl}/commits/${props.commitHash}`} target="_blank">
+        <a href={`${repoUrl}/commits/${props.commitHash}`}>
           Nexus Fusion {Version}
         </a>
       </p>
