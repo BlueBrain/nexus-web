@@ -37,7 +37,7 @@ export const useActivitySubClasses = () => {
         })
       ).then(data => {
         const subClassesList = data.map(subClass => ({
-          //@ts-ignore
+          // @ts-ignore
           label: subClass.label,
           ['@id']: subClass['@id'],
         }));
