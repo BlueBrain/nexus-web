@@ -63,8 +63,8 @@ export const useActivitySubClasses = () => {
         })
         .catch(error =>
           setSubClasses({
-            loading: false,
             error,
+            loading: false,
             data: [],
           })
         );
@@ -104,8 +104,8 @@ export const useActivitySubClasses = () => {
         })
         .catch(error =>
           setSubClasses({
-            loading: false,
             error,
+            loading: false,
             data: [],
           })
         );
