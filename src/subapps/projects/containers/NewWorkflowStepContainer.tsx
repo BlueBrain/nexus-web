@@ -46,7 +46,7 @@ const NewWorkflowStepContainer: React.FC<{
 
   const [showForm, setShowForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
-  const { subClasses, fetchSubClasses } = useActivitySubClasses();
+  const { subClasses, fetchSubClasses, error } = useActivitySubClasses();
 
   const submitNewStep = (data: WorkflowStepMetadata) => {
     setBusy(true);
@@ -83,6 +83,8 @@ const NewWorkflowStepContainer: React.FC<{
     fetchSubClasses();
     setShowForm(true);
   };
+
+  if (error) displayError(error, 'Failed to load activities');
 
   return (
     <>

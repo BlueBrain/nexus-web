@@ -6,7 +6,6 @@ import { RootState } from '../../../shared/store/reducers';
 
 import fusionConfig from '../config';
 import { isSubClass } from '../utils';
-import { displayError } from '../components/Notifications';
 
 export const useActivitySubClasses = () => {
   const nexus = useNexusContext();
@@ -14,18 +13,29 @@ export const useActivitySubClasses = () => {
     (state: RootState) => state.config.dataModelsLocation
   );
   const [subClassesIds, setsubClassesIds] = React.useState<string[]>([]);
-  const [subClasses, setSubClasses] = React.useState<
-    {
+  const [subClasses, setSubClasses] = React.useState<{
+    loading: boolean;
+    data: {
       label: string;
       ['@id']: string;
-    }[]
-  >([]);
+    }[];
+    error: Error | null;
+  }>({
+    loading: false,
+    error: null,
+    data: [],
+  });
 
   const [datamodelsOrg, datamodelsProject] = dataModelsLocation.split('/');
 
   const { datamodelsActivityId } = fusionConfig;
 
   React.useEffect(() => {
+    setSubClasses({
+      loading: true,
+      error: null,
+      data: [],
+    });
     if (subClassesIds && subClassesIds.length > 0) {
       Promise.all(
         subClassesIds.map((id: string) => {
@@ -41,16 +51,23 @@ export const useActivitySubClasses = () => {
         })
       )
         .then(data => {
-          const subClassesList = data.map(subClass => {
-            return {
-              label: subClass.label,
-              ['@id']: subClass['@id'],
-            };
+          const subClassesList = data.map(subClass => ({
+            label: subClass.label,
+            ['@id']: subClass['@id'],
+          }));
+          setSubClasses({
+            loading: false,
+            error: null,
+            data: subClassesList,
           });
-
-          setSubClasses(subClassesList);
         })
-        .catch(error => displayError(error, 'Failed to load activities'));
+        .catch(error =>
+          setSubClasses({
+            loading: false,
+            error,
+            data: [],
+          })
+        );
     }
   }, [subClassesIds.length]);
 
@@ -79,7 +96,13 @@ export const useActivitySubClasses = () => {
             setsubClassesIds([...acc]);
           }
         })
-        .catch(error => displayError(error, 'Failed to load activities'));
+        .catch(error =>
+          setSubClasses({
+            loading: false,
+            error,
+            data: [],
+          })
+        );
     };
 
     fetchSubClassesRecursively(datamodelsActivityId, []);
@@ -87,6 +110,8 @@ export const useActivitySubClasses = () => {
 
   return {
     fetchSubClasses,
-    subClasses,
+    subClasses: subClasses.data,
+    error: subClasses.error,
+    loading: subClasses.loading,
   };
 };
