@@ -72,6 +72,12 @@ export const useActivitySubClasses = () => {
   }, [subClassesIds.length]);
 
   const fetchSubClasses = () => {
+    setSubClasses({
+      loading: false,
+      error: null,
+      data: [],
+    });
+
     const fetchSubClassesRecursively = (id: string, acc: string[]) => {
       nexus.Resource.links(
         datamodelsOrg,
