@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Button } from 'antd';
 
-import NewActivityContainer from '../containers/NewActivityContainer';
+import NewWorkflowStepContainer from '../containers/NewWorkflowStepContainer';
 import TemplatesContainer from '../containers/TemplatesContainer';
 import ProjectMetaContaier from '../containers/ProjectMetaContainer';
-import NotificationsContainer from '../containers/NotificationsContainer';
+import ActivitiesLinkingContainer from '../containers/ActivitiesLinkingContainer';
 
 import './ProjectPanel.less';
 
@@ -12,8 +12,8 @@ const ProjectPanel: React.FC<{
   projectLabel: string;
   orgLabel: string;
   onUpdate(): void;
-  activityLabel?: string;
-  activitySelfUrl?: string;
+  workflowStepLabel?: string;
+  workflowStepSelfUrl?: string;
   siblings?: {
     name: string;
     '@id': string;
@@ -22,8 +22,8 @@ const ProjectPanel: React.FC<{
   projectLabel,
   orgLabel,
   onUpdate,
-  activityLabel,
-  activitySelfUrl,
+  workflowStepLabel,
+  workflowStepSelfUrl,
   siblings,
 }) => {
   const [showInfo, setShowInfo] = React.useState<boolean>(false);
@@ -32,12 +32,12 @@ const ProjectPanel: React.FC<{
     <div className="project-panel">
       <span className="project-panel__name">{projectLabel}</span>
       <div className="project-panel__actions">
-        <NewActivityContainer
+        <NewWorkflowStepContainer
           projectLabel={projectLabel}
           orgLabel={orgLabel}
           onSuccess={onUpdate}
-          parentActivityLabel={activityLabel}
-          parentActivitySelfUrl={activitySelfUrl}
+          parentStepLabel={workflowStepLabel}
+          parentStepSelfUrl={workflowStepSelfUrl}
           siblings={siblings}
         />
         <TemplatesContainer />
@@ -49,7 +49,7 @@ const ProjectPanel: React.FC<{
             onClose={() => setShowInfo(false)}
           />
         )}
-        <NotificationsContainer
+        <ActivitiesLinkingContainer
           orgLabel={orgLabel}
           projectLabel={projectLabel}
         />

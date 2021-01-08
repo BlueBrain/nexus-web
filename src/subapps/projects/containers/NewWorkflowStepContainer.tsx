@@ -2,14 +2,16 @@ import * as React from 'react';
 import { Modal, notification } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 
-import ActivityForm from '../components/WorkflowSteps/ActivityForm';
+import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 import ActioButton from '../components/ActionButton';
 import { Status } from '../components/StatusIcon';
 import { displayError } from '../components/Notifications';
 import fusionConfig from '../config';
+import { useActivitySubClasses } from '../hooks/useActivitySubClasses';
 
-export type ActivityMetadata = {
+export type WorkflowStepMetadata = {
   name: string;
+  activityType?: string;
   description: string;
   summary?: string;
   dueDate: string;
@@ -22,12 +24,12 @@ export type ActivityMetadata = {
   };
 };
 
-const NewActivityContainer: React.FC<{
+const NewWorkflowStepContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
   onSuccess(): void;
-  parentActivityLabel?: string;
-  parentActivitySelfUrl?: string;
+  parentStepLabel?: string;
+  parentStepSelfUrl?: string;
   siblings?: {
     name: string;
     '@id': string;
@@ -36,22 +38,23 @@ const NewActivityContainer: React.FC<{
   orgLabel,
   projectLabel,
   onSuccess,
-  parentActivityLabel,
-  parentActivitySelfUrl,
+  parentStepLabel,
+  parentStepSelfUrl,
   siblings,
 }) => {
   const nexus = useNexusContext();
 
   const [showForm, setShowForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
+  const { subClasses, fetchSubClasses, error } = useActivitySubClasses();
 
-  const submitActivity = (data: ActivityMetadata) => {
+  const submitNewStep = (data: WorkflowStepMetadata) => {
     setBusy(true);
     const { name } = data;
 
-    if (parentActivitySelfUrl) {
+    if (parentStepSelfUrl) {
       data.hasParent = {
-        '@id': parentActivitySelfUrl,
+        '@id': parentStepSelfUrl,
       };
     }
 
@@ -66,7 +69,7 @@ const NewActivityContainer: React.FC<{
 
         notification.success({
           message: `New step ${name} created successfully`,
-          description: 'Updating workflow...',
+          description: 'Updating Workflow...',
         });
       })
       .catch(error => {
@@ -76,13 +79,16 @@ const NewActivityContainer: React.FC<{
       });
   };
 
+  const onClickAddStep = () => {
+    fetchSubClasses();
+    setShowForm(true);
+  };
+
+  if (error) displayError(error, 'Failed to load activities');
+
   return (
     <>
-      <ActioButton
-        icon="Add"
-        onClick={() => setShowForm(true)}
-        title="Add step"
-      />
+      <ActioButton icon="Add" onClick={onClickAddStep} title="Add step" />
       <Modal
         visible={showForm}
         footer={null}
@@ -90,18 +96,18 @@ const NewActivityContainer: React.FC<{
         width={1150}
         destroyOnClose={true}
       >
-        {/* TODO: adapt form https://github.com/BlueBrain/nexus/issues/1814 */}
-        <ActivityForm
-          title="Create New Step (will be updated soon)"
+        <WorkflowStepWithActivityForm
+          title="Create New Step"
           onClickCancel={() => setShowForm(false)}
-          onSubmit={submitActivity}
+          onSubmit={submitNewStep}
           busy={busy}
-          parentLabel={parentActivityLabel}
+          parentLabel={parentStepLabel}
           siblings={siblings}
+          activityList={subClasses}
         />
       </Modal>
     </>
   );
 };
 
-export default NewActivityContainer;
+export default NewWorkflowStepContainer;

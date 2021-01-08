@@ -45,10 +45,11 @@ const NotififcationsPopover: React.FC<{
                 Link
               </Button>
             </Tooltip>
-
-            {/* <Button type="primary" size="small" onClick={onClickNew}>
-              New
-            </Button> */}
+            <Tooltip title="Create new Workflow Step with this Activity">
+              <Button type="primary" size="small" onClick={onClickNew}>
+                New
+              </Button>
+            </Tooltip>
           </div>
         </div>
       ))}

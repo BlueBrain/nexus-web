@@ -25,6 +25,7 @@ export type StepResource = Resource<{
   hasParent?: {
     '@id': string;
   };
+  activityType?: string;
   name: string;
   _self: string;
   status: Status;
@@ -238,8 +239,8 @@ const WorkflowStepView: React.FC = () => {
         orgLabel={orgLabel}
         projectLabel={projectLabel}
         onUpdate={waitAntReload}
-        activityLabel={step && step.name}
-        activitySelfUrl={step && step._self}
+        workflowStepLabel={step?.name}
+        workflowStepSelfUrl={step?._self}
         siblings={siblings}
       />
       <div className="workflow-step-view__panel">

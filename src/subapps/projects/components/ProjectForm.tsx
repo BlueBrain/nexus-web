@@ -63,7 +63,7 @@ const ProjectForm: React.FC<{
       };
 
   const formColumnLayOut = project
-    ? {}
+    ? { xs: 24, sm: 24, md: 24 }
     : {
         xs: 24,
         sm: 24,

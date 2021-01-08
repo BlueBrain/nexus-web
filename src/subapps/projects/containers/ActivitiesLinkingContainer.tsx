@@ -8,8 +8,9 @@ import { useUnlinkedActivities } from '../hooks/useUnlinkedActivities';
 import LinkActivityForm from '../components/LinkActivityForm';
 import fusionConfig from '../config';
 import { displayError, successNotification } from '../components/Notifications';
+import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 
-const NotificationsContainer: React.FC<{
+const ActivitiesLinkingContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
 }> = ({ orgLabel, projectLabel }) => {
@@ -18,6 +19,9 @@ const NotificationsContainer: React.FC<{
     projectLabel
   );
   const [showLinkForm, setShowLinkForm] = React.useState<boolean>(false);
+  const [showCreateStepForm, setshowCreateStepForm] = React.useState<boolean>(
+    false
+  );
   const [selectedActivity, setSelectedActivity] = React.useState<any>();
   const [steps, setSteps] = React.useState<any[]>([]);
   const nexus = useNexusContext();
@@ -117,7 +121,7 @@ const NotificationsContainer: React.FC<{
 
   // TODO: create a new step from an unlinked activity https://github.com/BlueBrain/nexus/issues/1818
   const addNew = () => {
-    console.log('addNew');
+    setshowCreateStepForm(true);
   };
 
   const stepsList = steps.map(step => ({
@@ -166,8 +170,27 @@ const NotificationsContainer: React.FC<{
           onCancel={() => setShowLinkForm(false)}
         />
       </Modal>
+      <Modal
+        maskClosable
+        visible={showCreateStepForm}
+        footer={null}
+        onCancel={() => setshowCreateStepForm(false)}
+        width={1200}
+        destroyOnClose={true}
+      >
+        {/* TODO: Adapt linking to new Workflow Step https://github.com/BlueBrain/nexus/issues/1818 */}
+        <WorkflowStepWithActivityForm
+          title="Create new Workflow Step"
+          onClickCancel={() => setshowCreateStepForm(false)}
+          onSubmit={() => {}}
+          busy={false}
+          parentLabel={''}
+          siblings={[]}
+          activityList={[]}
+        />
+      </Modal>
     </>
   );
 };
 
-export default NotificationsContainer;
+export default ActivitiesLinkingContainer;

@@ -9,29 +9,38 @@ import {
   Button,
   Spin,
   Select,
+  AutoComplete,
 } from 'antd';
+import { CloseCircleOutlined } from '@ant-design/icons';
 import * as moment from 'moment';
 
 import { Status } from '../StatusIcon';
-import { ActivityMetadata } from '../../containers/NewActivityContainer';
+import { WorkflowStepMetadata } from '../../containers/NewWorkflowStepContainer';
 import { StepResource } from '../../views/WorkflowStepView';
 import { isEmptyInput } from '../../utils';
+import TypesIconList from '../../../../shared/components/Types/TypesIcon';
+import { labelOf } from '../../../../shared/utils';
 
-import './ActivityForm.less';
+import './WorkflowStepWithActivityForm.less';
 
-const ActivityForm: React.FC<{
+const WorkflowStepWithActivityForm: React.FC<{
   onClickCancel(): void;
-  onSubmit(data: ActivityMetadata): void;
+  onSubmit(data: WorkflowStepMetadata): void;
   busy: boolean;
   parentLabel?: string | undefined;
   layout?: 'vertical' | 'horisontal';
   title?: string;
-  activity?: StepResource;
+  workflowStep?: StepResource;
   informedByLabel?: string;
   siblings?: {
     name: string;
     '@id': string;
   }[];
+  activityList: {
+    label: string;
+    '@id': string;
+  }[];
+  allowActivitySearch?: boolean;
 }> = ({
   onClickCancel,
   onSubmit,
@@ -39,24 +48,29 @@ const ActivityForm: React.FC<{
   parentLabel,
   layout,
   title,
-  activity,
+  workflowStep,
   informedByLabel,
   siblings,
+  activityList,
+  allowActivitySearch = true,
 }) => {
   const [name, setName] = React.useState<string>(
-    (activity && activity.name) || ''
+    (workflowStep && workflowStep.name) || ''
+  );
+  const [activityType, setActivityType] = React.useState<string>(
+    (workflowStep && workflowStep.activityType) || ''
   );
   const [description, setDescription] = React.useState<string>(
-    (activity && activity.description) || ''
+    (workflowStep && workflowStep.description) || ''
   );
   const [summary, setSummary] = React.useState<string>(
-    (activity && activity.summary) || ''
+    (workflowStep && workflowStep.summary) || ''
   );
   const [status, setStatus] = React.useState<Status>(
-    (activity && activity.status) || Status.toDo
+    (workflowStep && workflowStep.status) || Status.toDo
   );
   const [dueDate, setDueDate] = React.useState<any>(
-    (activity && activity.dueDate) || null
+    (workflowStep && workflowStep.dueDate) || null
   );
   const [dateError, setDateError] = React.useState<boolean>(false);
   const [nameError, setNameError] = React.useState<boolean>(false);
@@ -65,17 +79,21 @@ const ActivityForm: React.FC<{
   );
   const [informedBy, setInformedBy] = React.useState<string>('');
 
+  const activityOptions = activityList.map(activity => ({
+    value: activity.label,
+  }));
+
   const formItemLayout =
     layout === 'vertical'
       ? {}
       : {
-          labelCol: { xs: { span: 24 }, sm: { span: 7 } },
-          wrapperCol: { xs: { span: 24 }, sm: { span: 17 } },
+          labelCol: { xs: { span: 24 }, sm: { span: 8 } },
+          wrapperCol: { xs: { span: 24 }, sm: { span: 16 } },
         };
 
   const columnLayout =
     layout === 'vertical'
-      ? {}
+      ? { xs: 24, sm: 24, md: 24 }
       : {
           xs: 24,
           sm: 24,
@@ -128,10 +146,21 @@ const ActivityForm: React.FC<{
     setInformedBy(selected);
   };
 
+  const onSelectActivity = (value: string) => {
+    setName(value);
+
+    const selected = activityList.find(activity => activity.label === value);
+
+    if (selected) {
+      setActivityType(selected['@id']);
+    }
+  };
+
   const onClickSubmit = () => {
     if (isValidInput()) {
       const data: any = {
         name,
+        activityType,
         description,
         summary,
         dueDate,
@@ -150,47 +179,52 @@ const ActivityForm: React.FC<{
   };
 
   const { Item } = Form;
+  const { Search } = Input;
 
   return (
-    <Form {...formItemLayout} className="activity-form">
-      {title && <h2 className="activity-form__title">{title}</h2>}
+    <Form {...formItemLayout} className="workflow-step-form">
+      {title && <h2 className="workflow-step-form__title">{title}</h2>}
       <Spin spinning={busy} tip="Please wait...">
+        <Row gutter={24}>
+          <Col {...columnLayout}>
+            {allowActivitySearch && (
+              <AutoComplete
+                style={{ width: '100%', marginBottom: 30 }}
+                options={activityOptions}
+                filterOption={(inputValue, option) =>
+                  option!.value
+                    .toUpperCase()
+                    .indexOf(inputValue.toUpperCase()) !== -1
+                }
+                onSelect={onSelectActivity}
+              >
+                <Search size="large" placeholder="Search exisiting activity" />
+              </AutoComplete>
+            )}
+          </Col>
+        </Row>
         <Row gutter={24}>
           <Col {...columnLayout}>
             <Item
               label="Name *"
               validateStatus={nameError ? 'error' : ''}
-              help={nameError && 'Please enter an activity name'}
+              help={nameError && 'Please enter a name'}
             >
               <Input value={name} onChange={onChangeName} />
             </Item>
-            <Item
-              label="Description *"
-              validateStatus={descriptionError ? 'error' : ''}
-              help={descriptionError && 'Please enter a description'}
-            >
-              <Input value={description} onChange={onChangeDescription} />
+            <Item label="Activity Type">
+              {activityType && (
+                <div className="workflow-step-form__activity-type">
+                  <TypesIconList type={[activityType]} />
+                  <Button
+                    shape="circle"
+                    type="default"
+                    icon={<CloseCircleOutlined />}
+                    onClick={() => setActivityType('')}
+                  />
+                </div>
+              )}
             </Item>
-            <Item label="Summary">
-              <Input.TextArea
-                value={summary}
-                onChange={event => setSummary(event.target.value)}
-              />
-            </Item>
-            <Item label="Status">
-              <Radio.Group
-                value={status}
-                onChange={event => setStatus(event.target.value)}
-              >
-                {Object.values(Status).map(status => (
-                  <Radio.Button key={`option-${status}`} value={status}>
-                    {status}
-                  </Radio.Button>
-                ))}
-              </Radio.Group>
-            </Item>
-          </Col>
-          <Col {...columnLayout}>
             <Item
               label="Provisional End Date *"
               validateStatus={dateError ? 'error' : ''}
@@ -201,13 +235,6 @@ const ActivityForm: React.FC<{
                 value={dueDate ? moment(dueDate) : null}
                 onChange={onChangeDate}
               />
-            </Item>
-            <Item label="Parent Activity">
-              <Select value={parentLabel} disabled>
-                <Select.Option value={parentLabel ? parentLabel : ''}>
-                  {parentLabel}
-                </Select.Option>
-              </Select>
             </Item>
             <Item label="Informed By">
               {informedByLabel ? (
@@ -240,6 +267,43 @@ const ActivityForm: React.FC<{
                 <Select.Option value="disabled">Disabled</Select.Option>
               </Select>
             </Item>
+            <Item label="Parent Workflow Step">
+              <Select value={parentLabel} disabled>
+                <Select.Option value={parentLabel ? parentLabel : ''}>
+                  {parentLabel}
+                </Select.Option>
+              </Select>
+            </Item>
+          </Col>
+          <Col {...columnLayout}>
+            <Item label="Status">
+              <Radio.Group
+                value={status}
+                onChange={event => setStatus(event.target.value)}
+              >
+                {Object.values(Status).map(status => (
+                  <Radio.Button key={`option-${status}`} value={status}>
+                    {status}
+                  </Radio.Button>
+                ))}
+              </Radio.Group>
+            </Item>
+            <Item
+              label="Description *"
+              validateStatus={descriptionError ? 'error' : ''}
+              help={descriptionError && 'Please enter a description'}
+            >
+              <Input.TextArea
+                value={description}
+                onChange={onChangeDescription}
+              />
+            </Item>
+            <Item label="Summary">
+              <Input.TextArea
+                value={summary}
+                onChange={event => setSummary(event.target.value)}
+              />
+            </Item>
           </Col>
         </Row>
         <Row>
@@ -258,4 +322,4 @@ const ActivityForm: React.FC<{
   );
 };
 
-export default ActivityForm;
+export default WorkflowStepWithActivityForm;

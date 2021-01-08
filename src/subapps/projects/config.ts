@@ -20,6 +20,9 @@ export const fusionConfig = {
   noteType: ['FusionNote', 'Entity'],
   agentOrgType: ['Agent', 'Organization'],
   agentPersonType: ['Agent', 'Person'],
+
+  // project to fetch datamodels from
+  datamodelsActivityId: 'prov:Activity',
 };
 
 export default fusionConfig;

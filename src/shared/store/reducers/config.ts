@@ -21,6 +21,7 @@ export interface ConfigState {
     logoLink: string;
     forgeLink: string;
   };
+  dataModelsLocation: string;
 }
 
 const initialState: ConfigState = {
@@ -39,6 +40,7 @@ const initialState: ConfigState = {
   searchSettings: {
     searchConfigProject: DEFAULT_SEARCH_CONFIG_PROJECT,
   },
+  dataModelsLocation: '',
 };
 
 export default function configReducer(

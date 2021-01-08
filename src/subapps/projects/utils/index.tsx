@@ -18,6 +18,22 @@ export const isParentLink = (link: ResourceLink) => {
 };
 
 /**
+ * isSubClass function - checks if a link resource is linked by path "subClassOf"
+ * @param {Object}
+ * @returns {boolean}
+ */
+export const isSubClass = (link: ResourceLink) => {
+  if (Array.isArray(link.paths)) {
+    return (
+      link.paths.filter((path: string) => labelOf(path) === 'subClassOf')
+        .length > 0
+    );
+  }
+
+  return labelOf(link.paths) === 'subClassOf';
+};
+
+/**
  * isActivityResource function - checks if a given link is a code snippet resource or notes
  * @param {Object}
  * @returns {boolean}
