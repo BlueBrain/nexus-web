@@ -1,14 +1,13 @@
 import { ElasticSearchView, Resource } from '@bbp/nexus-sdk';
 import * as React from 'react';
 import ElasticSearchResultsTable from '../../../../shared/components/ElasticSearchResultsTable';
-import useSearchQuery from '../../../../shared/hooks/useSearchQuery';
+import useSearchQuery from '../../../hooks/useSearchQuery';
 
 const DashboardElasticSearchQueryContainer: React.FC<{
   view: ElasticSearchView;
   dataQuery: string;
-  dashboardLabel: string;
   goToStudioResource: (selfUrl: string) => void;
-}> = ({ view, dataQuery, dashboardLabel, goToStudioResource }) => {
+}> = ({ view, dataQuery, goToStudioResource }) => {
   const [searchResponse, { searchProps, setSearchProps }] = useSearchQuery(
     view._self
   );

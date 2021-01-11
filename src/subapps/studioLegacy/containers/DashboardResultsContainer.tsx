@@ -73,7 +73,6 @@ const DashboardResultsContainer: React.FunctionComponent<{
         <DashboardElasticSearchQueryContainer
           view={viewResult.data as ElasticSearchView}
           dataQuery={dataQuery}
-          dashboardLabel={dashboardLabel}
           goToStudioResource={goToStudioResource}
         />
       )
