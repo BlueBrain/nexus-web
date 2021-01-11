@@ -5,7 +5,7 @@ import { DownloadOutlined } from '@ant-design/icons';
 import { omit } from 'lodash';
 
 import { parseProjectUrl, isISODate } from '../../utils/index';
-import { download } from '../../../shared/utils/download';
+import { download } from '../../utils/download';
 
 import './ResultTable.less';
 
@@ -30,7 +30,7 @@ export type ResultTableProps = {
   tableLabel: string;
 };
 
-const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
+const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
   headerProperties,
   items,
   pageSize = PAGE_SIZE,
@@ -225,4 +225,4 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
   );
 };
 
-export default ResultsTable;
+export default SparqlResultsTable;

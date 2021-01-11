@@ -31,11 +31,16 @@ const querySparqlViewWithDataQuery = ({
   dataQuery,
   viewId,
 }: QuerySparqlViewWithDataQueryProps) => async () => {
-  // const view = await nexus.View.get(orgLabel, projectLabel, viewId);
-  // if (view && view['@type']?.includes('ElasticSearchView')) {
-  //   // TODO : Execute an ES query and implement display logic.
-  //   return [];
-  // }
+  const view = await nexus.View.get(orgLabel, projectLabel, viewId);
+  if (view && view['@type']?.includes('ElasticSearchView')) {
+    const result = await nexus.View.elasticSearchQuery(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(viewId),
+      dataQuery
+    );
+    return result;
+  }
   const result: SparqlViewQueryResponse = await nexus.View.sparqlQuery(
     orgLabel,
     projectLabel,
@@ -109,14 +114,6 @@ const DashboardResultsContainer: React.FunctionComponent<{
   const history = useHistory();
   const location = useLocation();
 
-  const [view, setView] = React.useState<View>();
-
-  React.useEffect(() => {
-    nexus.View.get(orgLabel, projectLabel, viewId).then(result => {
-      setView(result);
-    });
-  }, [viewId]);
-
   const goToStudioResource = (selfUrl: string) => {
     nexus
       .httpGet({
@@ -137,6 +134,11 @@ const DashboardResultsContainer: React.FunctionComponent<{
       });
   };
 
+  const viewResult = useAsyncCall<View, Error>(
+    nexus.View.get(orgLabel, projectLabel, viewId),
+    [orgLabel, projectLabel, viewId]
+  );
+
   const queryResult = useAsyncCall<
     {
       headerProperties: ResultTableProps['headerProperties'];
@@ -151,7 +153,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
       dataQuery,
       viewId,
     })(),
-    [dataQuery, view, viewId]
+    [dataQuery, viewId]
   );
 
   if (queryResult.error) {

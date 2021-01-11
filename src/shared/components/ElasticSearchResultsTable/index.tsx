@@ -4,12 +4,12 @@ import { Resource } from '@bbp/nexus-sdk';
 import { TablePaginationConfig } from 'antd/lib/table';
 import * as prettyBytes from 'pretty-bytes';
 
-import { UseSearchResponse } from '../../../../shared/hooks/useSearchQuery';
-import { FILE_SCHEMA } from '../../containers/ResultPreviewItemContainer';
-import TypesIconList from '../../../../shared/components/Types/TypesIcon';
-import { getResourceLabel } from '../../../../shared/utils';
-import { convertMarkdownHandlebarStringWithData } from '../../../../shared/utils/markdownTemplate';
-import { parseURL } from '../../../../shared/utils/nexusParse';
+import { UseSearchResponse } from '../../hooks/useSearchQuery';
+import TypesIconList from '../Types/TypesIcon';
+import { getResourceLabel } from '../../utils';
+import { convertMarkdownHandlebarStringWithData } from '../../utils/markdownTemplate';
+import { parseURL } from '../../utils/nexusParse';
+import { FILE_SCHEMA } from '../../types/nexus';
 
 export interface ResultsGridProps {
   pagination: TablePaginationConfig;
@@ -17,7 +17,7 @@ export interface ResultsGridProps {
   onClickItem: (resource: Resource) => void;
 }
 
-const ResultsTable: React.FC<ResultsGridProps> = ({
+const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
   pagination,
   searchResponse,
   onClickItem,
@@ -112,4 +112,4 @@ const ResultsTable: React.FC<ResultsGridProps> = ({
   );
 };
 
-export default ResultsTable;
+export default ElasticSearchResultsTable;
