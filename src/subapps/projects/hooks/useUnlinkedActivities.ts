@@ -11,7 +11,7 @@ export type UnlinkedActivity = {
   createdBy: string;
   used?: string[];
   generated?: string[];
-  resourceType: string;
+  resourceType: string | string[];
 };
 
 export const useUnlinkedActivities = (
@@ -108,7 +108,7 @@ export const useUnlinkedActivities = (
                   }
 
                   if (current.resourceType) {
-                    acc.resourceType = current.resourceType;
+                    acc.resourceType.add(current.resourceType);
                   }
 
                   return acc;
@@ -120,7 +120,7 @@ export const useUnlinkedActivities = (
                   resourceId: '',
                   generatedList: new Set(),
                   usedList: new Set(),
-                  resourceType: '',
+                  resourceType: new Set(),
                 }
               )
           );

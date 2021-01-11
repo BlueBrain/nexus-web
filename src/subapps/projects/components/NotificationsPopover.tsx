@@ -14,10 +14,10 @@ const NotififcationsPopover: React.FC<{
     createdBy: string;
     usedList?: string[];
     generatedList?: string[];
-    resourceType?: string;
+    resourceType?: string | string[];
   }[];
   onClickLinkActivity: (id: string) => void;
-  onClickNew: () => void;
+  onClickNew: (id: string) => void;
 }> = ({ activities, onClickLinkActivity, onClickNew }) => {
   return (
     <div className="notifications-popover">
@@ -46,7 +46,11 @@ const NotififcationsPopover: React.FC<{
               </Button>
             </Tooltip>
             <Tooltip title="Create new Workflow Step with this Activity">
-              <Button type="primary" size="small" onClick={onClickNew}>
+              <Button
+                type="primary"
+                size="small"
+                onClick={() => onClickNew(activity.resourceId)}
+              >
                 New
               </Button>
             </Tooltip>

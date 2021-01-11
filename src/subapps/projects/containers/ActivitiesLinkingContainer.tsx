@@ -9,6 +9,8 @@ import LinkActivityForm from '../components/LinkActivityForm';
 import fusionConfig from '../config';
 import { displayError, successNotification } from '../components/Notifications';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
+import { useActivitySubClasses } from '../hooks/useActivitySubClasses';
+import { labelOf } from '../../../shared/utils';
 
 const ActivitiesLinkingContainer: React.FC<{
   orgLabel: string;
@@ -24,9 +26,10 @@ const ActivitiesLinkingContainer: React.FC<{
   );
   const [selectedActivity, setSelectedActivity] = React.useState<any>();
   const [steps, setSteps] = React.useState<any[]>([]);
+  const { subClasses, fetchSubClasses, error } = useActivitySubClasses();
   const nexus = useNexusContext();
 
-  const fetchActivities = (activities: any) => {
+  const fetchWorkflowSteps = (activities: any) => {
     Promise.all(
       activities.map((activity: any) => {
         return nexus.Resource.get(
@@ -53,7 +56,7 @@ const ActivitiesLinkingContainer: React.FC<{
       deprecated: false,
     })
       .then(response => {
-        fetchActivities(response._results);
+        fetchWorkflowSteps(response._results);
       })
       .catch(error => {
         displayError(error, 'Failed to load the list of Workflow Steps');
@@ -119,8 +122,12 @@ const ActivitiesLinkingContainer: React.FC<{
       );
   };
 
-  // TODO: create a new step from an unlinked activity https://github.com/BlueBrain/nexus/issues/1818
-  const addNew = () => {
+  const addNew = (id: string) => {
+    setSelectedActivity(
+      unlinkedActivities.find(activity => activity.resourceId === id)
+    );
+
+    fetchSubClasses();
     setshowCreateStepForm(true);
   };
 
@@ -128,6 +135,18 @@ const ActivitiesLinkingContainer: React.FC<{
     id: step['@id'],
     name: step.name,
   }));
+
+  const defaultActivityType = () => {
+    if (selectedActivity) {
+      const types = Array.from(
+        selectedActivity.resourceType as string[]
+      ).map(type => labelOf(type));
+
+      return types.find(type => type !== 'Activity');
+    }
+
+    return undefined;
+  };
 
   return (
     <>
@@ -178,7 +197,6 @@ const ActivitiesLinkingContainer: React.FC<{
         width={1200}
         destroyOnClose={true}
       >
-        {/* TODO: Adapt linking to new Workflow Step https://github.com/BlueBrain/nexus/issues/1818 */}
         <WorkflowStepWithActivityForm
           title="Create new Workflow Step"
           onClickCancel={() => setshowCreateStepForm(false)}
@@ -186,7 +204,8 @@ const ActivitiesLinkingContainer: React.FC<{
           busy={false}
           parentLabel={''}
           siblings={[]}
-          activityList={[]}
+          activityList={subClasses}
+          defaultActivityType={defaultActivityType()}
         />
       </Modal>
     </>

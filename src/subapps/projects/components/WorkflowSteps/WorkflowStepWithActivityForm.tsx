@@ -41,6 +41,7 @@ const WorkflowStepWithActivityForm: React.FC<{
     '@id': string;
   }[];
   allowActivitySearch?: boolean;
+  defaultActivityType?: string;
 }> = ({
   onClickCancel,
   onSubmit,
@@ -53,6 +54,7 @@ const WorkflowStepWithActivityForm: React.FC<{
   siblings,
   activityList,
   allowActivitySearch = true,
+  defaultActivityType,
 }) => {
   const [name, setName] = React.useState<string>(
     (workflowStep && workflowStep.name) || ''
@@ -82,6 +84,19 @@ const WorkflowStepWithActivityForm: React.FC<{
   const activityOptions = activityList.map(activity => ({
     value: activity.label,
   }));
+
+  React.useEffect(() => {
+    if (defaultActivityType) {
+      const defaultOption = activityList.find(activity =>
+        activity['@id'].includes(defaultActivityType)
+      );
+
+      if (defaultOption) {
+        setName(defaultOption.label);
+        setActivityType(defaultOption['@id']);
+      }
+    }
+  }, [activityList]);
 
   const formItemLayout =
     layout === 'vertical'

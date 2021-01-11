@@ -3,6 +3,7 @@ import { Col, Row, Button, Select } from 'antd';
 import * as moment from 'moment';
 
 import { getUsername, labelOf } from '../../../shared/utils';
+import TypesIconList from '../../../shared/components/Types/TypesIcon';
 
 import './LinkActivityForm.less';
 
@@ -73,7 +74,15 @@ const LinkActivityForm: React.FC<{
             </Col>
             {/* TODO: manage multiple types */}
             <Col>
-              <p>{labelOf(resourceType)}</p>
+              <p className="link-activity-form__types">
+                {resourceType && Array.from(resourceType).length > 0 ? (
+                  <TypesIconList
+                    type={Array.from(resourceType).map(type => labelOf(type))}
+                  />
+                ) : (
+                  'No data'
+                )}
+              </p>
             </Col>
           </Row>
           <Row>
