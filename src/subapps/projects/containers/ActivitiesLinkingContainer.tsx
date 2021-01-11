@@ -11,6 +11,7 @@ import { displayError, successNotification } from '../components/Notifications';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 import { useActivitySubClasses } from '../hooks/useActivitySubClasses';
 import { labelOf } from '../../../shared/utils';
+import { WorkflowStepMetadata } from './NewWorkflowStepContainer';
 
 const ActivitiesLinkingContainer: React.FC<{
   orgLabel: string;
@@ -27,6 +28,7 @@ const ActivitiesLinkingContainer: React.FC<{
   const [selectedActivity, setSelectedActivity] = React.useState<any>();
   const [steps, setSteps] = React.useState<any[]>([]);
   const { subClasses, fetchSubClasses, error } = useActivitySubClasses();
+  const [busy, setBusy] = React.useState<boolean>(false);
   const nexus = useNexusContext();
 
   const fetchWorkflowSteps = (activities: any) => {
@@ -131,6 +133,31 @@ const ActivitiesLinkingContainer: React.FC<{
     setshowCreateStepForm(true);
   };
 
+  const createNewStep = (data: WorkflowStepMetadata) => {
+    setBusy(true);
+
+    data['nxv:activities'] = {
+      '@id': selectedActivity.resourceId,
+    };
+
+    const { name } = data;
+
+    nexus.Resource.create(orgLabel, projectLabel, {
+      '@type': fusionConfig.workflowStepType,
+      ...data,
+    })
+      .then(() => {
+        setshowCreateStepForm(false);
+        setBusy(false);
+        successNotification(`New step ${name} created successfully`);
+      })
+      .catch(error => {
+        setshowCreateStepForm(false);
+        setBusy(false);
+        displayError(error, 'An error occurred');
+      });
+  };
+
   const stepsList = steps.map(step => ({
     id: step['@id'],
     name: step.name,
@@ -200,7 +227,7 @@ const ActivitiesLinkingContainer: React.FC<{
         <WorkflowStepWithActivityForm
           title="Create new Workflow Step"
           onClickCancel={() => setshowCreateStepForm(false)}
-          onSubmit={() => {}}
+          onSubmit={createNewStep}
           busy={false}
           parentLabel={''}
           siblings={[]}

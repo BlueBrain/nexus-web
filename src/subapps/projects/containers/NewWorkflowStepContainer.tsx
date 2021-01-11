@@ -5,7 +5,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 import ActioButton from '../components/ActionButton';
 import { Status } from '../components/StatusIcon';
-import { displayError } from '../components/Notifications';
+import { displayError, successNotification } from '../components/Notifications';
 import fusionConfig from '../config';
 import { useActivitySubClasses } from '../hooks/useActivitySubClasses';
 
@@ -22,6 +22,13 @@ export type WorkflowStepMetadata = {
   wasInformedBy?: {
     '@id': string;
   };
+  'nxv:activities':
+    | {
+        '@id': string;
+      }
+    | {
+        '@id': string;
+      }[];
 };
 
 const NewWorkflowStepContainer: React.FC<{
@@ -67,10 +74,7 @@ const NewWorkflowStepContainer: React.FC<{
         setShowForm(false);
         setBusy(false);
 
-        notification.success({
-          message: `New step ${name} created successfully`,
-          description: 'Updating Workflow...',
-        });
+        successNotification(`New step ${name} created successfully`);
       })
       .catch(error => {
         setShowForm(false);
