@@ -114,17 +114,6 @@ const DashboardSparqlQueryContainer: React.FC<{
     [dataQuery, view]
   );
 
-  if (queryResult.error) {
-    return (
-      <Alert
-        message="Error loading dashboard"
-        description={`Something went wrong. ${(queryResult.error as NexusSparqlError)
-          .reason || (queryResult.error as Error).message}`}
-        type="error"
-      />
-    );
-  }
-
   return (
     <Spin spinning={queryResult.loading}>
       {queryResult.error && (

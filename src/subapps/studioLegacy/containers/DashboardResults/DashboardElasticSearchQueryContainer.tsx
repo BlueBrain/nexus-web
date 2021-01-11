@@ -16,7 +16,7 @@ const DashboardElasticSearchQueryContainer: React.FC<{
     goToStudioResource(resource._self);
   };
 
-  const handlePagniationChange = (page: number, pageSize?: number) => {
+  const handlePaginationChange = (page: number, pageSize?: number) => {
     const size = searchProps.pagination?.size || 0;
     setSearchProps({
       ...searchProps,
@@ -46,7 +46,7 @@ const DashboardElasticSearchQueryContainer: React.FC<{
               current,
               pageSize: size,
               showSizeChanger: false,
-              onChange: handlePagniationChange,
+              onChange: handlePaginationChange,
             }
           : {}
       }
