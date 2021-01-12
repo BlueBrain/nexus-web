@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 import { notification, Modal, message } from 'antd';
+
+import useLinkToDashboardQueryEditor from './hooks/useLinkToDashboardQueryEditor';
 
 import DashboardConfigEditor, {
   DashboardPayload,
@@ -34,10 +35,16 @@ const DashboardEditorContainer: React.FunctionComponent<{
 }) => {
   const nexus = useNexusContext();
   const { label, description, dataQuery, plugins } = dashboard;
+
   const [busy, setBusy] = React.useState(false);
   const pluginManifest = usePlugins();
   const availablePlugins = Object.keys(pluginManifest || {});
 
+  const { linkQueryEditor } = useLinkToDashboardQueryEditor(
+    viewId,
+    orgLabel,
+    projectLabel
+  );
   // Launch modal when id is changed (someone selected a new dashboard to edit)
   React.useEffect(() => {
     if (!showEditModal) {
@@ -99,18 +106,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
           plugins,
         }}
         onSubmit={handleSubmit}
-        linkToSparqlQueryEditor={(dataQuery: string) => {
-          return (
-            <Link
-              to={`/admin/${orgLabel}/${projectLabel}/${viewId}/sparql?query=${encodeURIComponent(
-                dataQuery
-              )}`}
-              target="_blank"
-            >
-              View query in Sparql Editor
-            </Link>
-          );
-        }}
+        linkToSparqlQueryEditor={linkQueryEditor}
       ></DashboardConfigEditor>
     </Modal>
   );

@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { Input, Form, Tooltip, Button } from 'antd';
-import { ResourceList } from '@bbp/nexus-sdk';
+import { View } from '@bbp/nexus-sdk';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import TextArea from 'antd/lib/input/TextArea';
 
-import DEFAULT_DASHBOARD_VIEW_QUERY from './DefaultDashboardViewQuery';
+import DEFAULT_DASHBOARD_VIEW_QUERY, {
+  DEFAULT_DASHBOARD_ES_VIEW_QUERY,
+} from './DefaultDashboardViewQuery';
 import SparqlQueryFormInput from '../../../admin/components/ViewForm/SparqlQueryInput';
 
 export type DashboardPayload = {
@@ -17,20 +19,23 @@ export type DashboardPayload = {
 export type DashboardConfigEditorProps = {
   dashboard?: DashboardPayload;
   onSubmit?(dashboard: DashboardPayload): void;
-  viewList?: ResourceList<{}>;
+  view?: View;
   linkToSparqlQueryEditor?(dataQuery: string): React.ReactElement;
   availablePlugins?: string[];
 };
-
-const dashboardSPARQLDocumentationURL =
-  'https://github.com/BlueBrain/nexus-web/blob/master/docs/studio/Dashboards.md#sparql-query-requirements';
 
 const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEditorProps> = ({
   onSubmit,
   dashboard,
   linkToSparqlQueryEditor,
+  view,
 }) => {
   const { description, label, dataQuery, plugins = [] } = dashboard || {};
+
+  const defaultQuery =
+    view && view['@type']?.includes('ElasticSearchView')
+      ? DEFAULT_DASHBOARD_ES_VIEW_QUERY
+      : DEFAULT_DASHBOARD_VIEW_QUERY;
 
   const handleOnFinish = (values: {
     description?: string;
@@ -90,22 +95,10 @@ const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEdi
       <Form.Item
         name="dataQuery"
         label={
-          <span>
-            Sparql Query{' '}
-            <Tooltip title="A query that will return the elements of the dashboard.">
-              <QuestionCircleOutlined />
-            </Tooltip>{' '}
-            {linkToSparqlQueryEditor &&
-              linkToSparqlQueryEditor(
-                dataQuery || DEFAULT_DASHBOARD_VIEW_QUERY
-              )}
-            {' | '}
-            <a href={dashboardSPARQLDocumentationURL} target="_blank">
-              Read Docs
-            </a>
-          </span>
+          linkToSparqlQueryEditor &&
+          linkToSparqlQueryEditor(dataQuery || defaultQuery)
         }
-        initialValue={dataQuery || DEFAULT_DASHBOARD_VIEW_QUERY}
+        initialValue={dataQuery || defaultQuery}
         rules={[
           {
             required: true,

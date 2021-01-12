@@ -7,6 +7,7 @@ import { Resource } from '@bbp/nexus-sdk';
 
 import FacetItem from '../components/FacetItem';
 import useSearchConfigs from '../../../shared/hooks/useSearchConfigs';
+import ElasticSearchResultsTable from '../../../shared/components/ElasticSearchResultsTable';
 import useSearchQuery, {
   DEFAULT_SEARCH_PROPS,
   parseSerializedSearchFacets,
@@ -18,11 +19,9 @@ import useSearchQuery, {
 import useQueryString from '../../../shared/hooks/useQueryString';
 import ActiveFilters from '../components/ActiveFilters';
 import ResultsGrid from '../components/ResultsGrid';
+import useLocalStorage from '../../../shared/hooks/useLocalStorage';
 
 import './SearchView.less';
-import ResultsTable from '../components/ResultsTable';
-import { AppstoreOutlined, TableOutlined } from '@ant-design/icons';
-import useLocalStorage from '../../../shared/hooks/useLocalStorage';
 
 export enum SEARCH_VIEW_TYPES {
   TABLE = 'TABLE',
@@ -404,7 +403,7 @@ const SearchView: React.FC = () => {
                   />
                 ))
                 .with(SEARCH_VIEW_TYPES.TABLE, () => (
-                  <ResultsTable
+                  <ElasticSearchResultsTable
                     searchResponse={searchResponse}
                     onClickItem={handleClickItem}
                     pagination={

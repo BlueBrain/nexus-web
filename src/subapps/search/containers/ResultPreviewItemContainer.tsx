@@ -5,9 +5,7 @@ import { convertMarkdownHandlebarStringWithData } from '../../../shared/utils/ma
 import { getResourceLabel } from '../../../shared/utils';
 import { parseURL } from '../../../shared/utils/nexusParse';
 import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
-
-export const FILE_SCHEMA =
-  'https://bluebrain.github.io/nexus/schemas/file.json';
+import { FILE_SCHEMA } from '../../../shared/types/nexus';
 
 const ResultPreviewItemContainer: React.FC<{
   resource: Resource;

@@ -8,6 +8,7 @@ const converter = new Showdown.Converter({
   tasklists: true,
 });
 
+// Handlerbar helpers
 export const convertMarkdownHandlebarStringWithData = (
   markdown: string,
   data: object

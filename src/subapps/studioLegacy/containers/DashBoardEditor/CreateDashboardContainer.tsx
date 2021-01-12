@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID, Resource } from '@bbp/nexus-sdk';
 import { notification, Modal, Button, message } from 'antd';
 import { PlusSquareOutlined } from '@ant-design/icons';
-
 import DashboardConfigEditor, {
   DashboardPayload,
 } from '../../components/DashboardEditor/DashboardConfigEditor';
+import useLinkToDashboardQueryEditor from './hooks/useLinkToDashboardQueryEditor';
 import STUDIO_CONTEXT from '../../components/StudioContext';
 import usePlugins from '../../../../shared/hooks/usePlugins';
 
@@ -29,8 +28,14 @@ const CreateDashboardContainer: React.FunctionComponent<{
   const [showCreateModal, setShowCreateModal] = React.useState(false);
   const nexus = useNexusContext();
   const [busy, setBusy] = React.useState(false);
+
   const pluginManifest = usePlugins();
   const availablePlugins = Object.keys(pluginManifest || {});
+  const { linkQueryEditor, view } = useLinkToDashboardQueryEditor(
+    viewId,
+    orgLabel,
+    projectLabel
+  );
 
   const onSubmit = () => {
     setBusy(false);
@@ -114,18 +119,8 @@ const CreateDashboardContainer: React.FunctionComponent<{
         <DashboardConfigEditor
           availablePlugins={availablePlugins}
           onSubmit={handleSubmit}
-          linkToSparqlQueryEditor={(dataQuery: string) => {
-            return (
-              <Link
-                to={`/admin/${orgLabel}/${projectLabel}/${viewId}/sparql?query=${encodeURIComponent(
-                  dataQuery
-                )}`}
-                target="_blank"
-              >
-                View query in Sparql Editor
-              </Link>
-            );
-          }}
+          linkToSparqlQueryEditor={linkQueryEditor}
+          view={view}
         ></DashboardConfigEditor>
       </Modal>
     </>
