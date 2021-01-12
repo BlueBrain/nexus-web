@@ -22,7 +22,7 @@ export const fusionConfig = {
   agentPersonType: ['Agent', 'Person'],
 
   // project to fetch datamodels from
-  datamodelsActivityId: 'prov:Activity2',
+  datamodelsActivityId: 'prov:Activity',
 };
 
 export default fusionConfig;
