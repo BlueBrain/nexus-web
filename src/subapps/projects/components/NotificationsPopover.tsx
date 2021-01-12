@@ -3,6 +3,7 @@ import { Button, Tooltip } from 'antd';
 import * as moment from 'moment';
 
 import { getUsername, labelOf } from '../../../shared/utils';
+import TypesIconList from '../../../shared/components/Types/TypesIcon';
 
 import './NotificationsPopover.less';
 
@@ -31,9 +32,21 @@ const NotififcationsPopover: React.FC<{
         >
           <div className="notifications-popover__main">
             <h4>{activity.name || labelOf(activity.resourceId)}</h4>
-            <p>Created on {moment(activity.createdAt).format('L')}</p>
+            <p className="notifications-popover__types">
+              {activity.resourceType &&
+                Array.from(activity.resourceType).length > 0 && (
+                  <TypesIconList
+                    type={Array.from(activity.resourceType).map(type =>
+                      labelOf(type)
+                    )}
+                  />
+                )}
+            </p>
+            <p>
+              Created on {moment(activity.createdAt).format('L')} by{' '}
+              {getUsername(activity.createdBy)}
+            </p>
             {/* TODO: fetch an agent */}
-            <p>Created by {getUsername(activity.createdBy)}</p>
           </div>
           <div className="notifications-popover__actions">
             <Tooltip title="Link this activity to an existing Workflow Step">
