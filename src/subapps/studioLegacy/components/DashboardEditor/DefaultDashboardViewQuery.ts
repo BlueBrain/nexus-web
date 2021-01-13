@@ -7,4 +7,13 @@ WHERE {
 }
 LIMIT 20`;
 
+export const DEFAULT_DASHBOARD_ES_VIEW_QUERY = `
+{
+  "query": {
+    "term": {
+      "_deprecated": false
+    }
+  }
+}`;
+
 export default DEFAULT_DASHBOARD_VIEW_QUERY;

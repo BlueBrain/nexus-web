@@ -42,6 +42,10 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     editingDashboard,
     setEditingDashboard,
   ] = React.useState<Resource | null>(null);
+
+  const [editingDashboardView, setEditingDashboardView] = React.useState<
+    string
+  >(DEFAULT_SPARQL_VIEW_ID);
   const [showEditModal, setShowEditModal] = React.useState(false);
   const nexus = useNexusContext();
 
@@ -115,9 +119,11 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   }, [dashboards]);
 
   const handleElementClick = (stringifiedIndex: string) => {
-    const dashboard = dashboardResources[Number(stringifiedIndex)];
-    if (dashboard) {
-      setEditingDashboard(dashboard);
+    const dashboardResource = dashboardResources[Number(stringifiedIndex)];
+    const dashboard = dashboards[Number(stringifiedIndex)];
+    if (dashboardResource) {
+      setEditingDashboard(dashboardResource);
+      setEditingDashboardView(dashboard.view);
       setShowEditModal(true);
     }
   };
@@ -134,6 +140,9 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
       workspaceId={workspaceId as string}
       onSuccess={refreshList}
       key={workspaceId}
+      viewId={
+        dashboards.length > 0 ? dashboards[0].view : DEFAULT_SPARQL_VIEW_ID
+      }
     />
   );
 
@@ -171,6 +180,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
             plugins: editingDashboard.plugins,
           }}
           showEditModal={showEditModal}
+          viewId={editingDashboardView}
           setShowEditModal={setShowEditModal}
           onSuccess={updateDashboards}
         ></DashboardEditorContainer>

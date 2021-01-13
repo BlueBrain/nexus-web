@@ -61,7 +61,7 @@ const ResourceViewContainer: React.FunctionComponent<{
   };
 
   const goToProject = (orgLabel: string, projectLabel: string) =>
-    history.push(`/admin/${orgLabel}/${projectLabel}`, location.state);
+    history.push(`/admin/${orgLabel}/${projectLabel}`);
 
   const goToOrg = (orgLabel: string) => history.push(`/admin/${orgLabel}`);
 

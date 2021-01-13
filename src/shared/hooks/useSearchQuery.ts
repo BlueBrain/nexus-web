@@ -12,6 +12,8 @@ const DEFAULT_PAGE_SIZE = 20;
 
 export const TOTAL_HITS_TRACKING = 1000000;
 
+export type UseSearchResponse = AsyncCall<SearchResponse<Resource>>;
+
 export type SerializedFacetMap = {
   [propertyKey: string]: string[];
 };
@@ -146,7 +148,7 @@ export default function useSearchQuery(selfURL?: string | null) {
   );
 
   return [remoteResponse, { searchProps, setSearchProps }] as [
-    AsyncCall<SearchResponse<Resource>>,
+    UseSearchResponse,
     {
       searchProps: UseSearchProps;
       setSearchProps: React.Dispatch<React.SetStateAction<UseSearchProps>>;

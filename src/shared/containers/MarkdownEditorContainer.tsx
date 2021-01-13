@@ -7,6 +7,7 @@ import { match, when } from 'ts-pattern';
 import useAsyncCall from '../hooks/useAsynCall';
 import useAsyncCallback from '../hooks/useAsyncCallback';
 import MarkdownEditorComponent from '../components/MarkdownEditor';
+import MarkdownViewerContainer from './MarkdownViewer';
 
 const fetchResource = (nexus: NexusClient) => async (
   orgLabel: string,
@@ -56,7 +57,7 @@ const saveDescription = (
   });
 };
 
-const saveImage = (
+export const saveImage = (
   nexus: NexusClient,
   orgLabel: string,
   projectLabel: string
@@ -147,6 +148,7 @@ const MarkdownEditorContainer: React.FC<{
           onSave={value => {
             asyncData.data && setSavingData(asyncData.data, value);
           }}
+          markdownViewer={MarkdownViewerContainer}
           onSaveImage={handleSaveImage}
         />
       ) : (
