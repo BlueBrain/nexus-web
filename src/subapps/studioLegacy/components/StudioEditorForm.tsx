@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { Input, Form, Tooltip, Button } from 'antd';
-import TextArea from 'antd/lib/input/TextArea';
+import { SaveImageHandler } from 'react-mde';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+
+import { MarkdownEditorFormItemComponent } from '../../../shared/components/MarkdownEditor';
 
 type StudioResource = Resource<{
   label: string;
@@ -13,7 +15,12 @@ type StudioResource = Resource<{
 const StudioEditorForm: React.FC<{
   saveStudio?(label: string, description?: string): void;
   studio?: StudioResource | null;
-}> = ({ saveStudio, studio }) => {
+  onSaveImage: SaveImageHandler;
+  markdownViewer: React.FC<{
+    template: string;
+    data: object;
+  }>;
+}> = ({ saveStudio, studio, onSaveImage, markdownViewer }) => {
   const handleSubmit = (values: { label: string; description: string }) => {
     const { label, description } = values;
     saveStudio && saveStudio(label, description);
@@ -21,7 +28,7 @@ const StudioEditorForm: React.FC<{
 
   const formItemLayout = {
     labelCol: { span: 6 },
-    wrapperCol: { span: 14 },
+    wrapperCol: { span: 24 },
   };
 
   const { label, description } = studio || {
@@ -61,9 +68,13 @@ const StudioEditorForm: React.FC<{
           </span>
         }
         name="description"
-        initialValue={description}
+        initialValue={studio?.description}
       >
-        <TextArea className="ui-studio-description-input" />
+        <MarkdownEditorFormItemComponent
+          resource={studio as Resource}
+          onSaveImage={onSaveImage}
+          markdownViewer={markdownViewer}
+        />
       </Form.Item>
       <Button type="primary" htmlType="submit">
         Save

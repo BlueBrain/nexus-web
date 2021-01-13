@@ -5,7 +5,7 @@ import { DownloadOutlined } from '@ant-design/icons';
 import { omit } from 'lodash';
 
 import { parseProjectUrl, isISODate } from '../../utils/index';
-import { download } from '../../../shared/utils/download';
+import { download } from '../../utils/download';
 
 import './ResultTable.less';
 
@@ -16,7 +16,7 @@ const MAX_FILTER_LIMIT = 20;
 const MIN_FILTER_LIMIT = 1;
 const DATE_FORMAT = 'DD-MM-YYYY, HH:mm';
 
-type ResultTableProps = {
+export type ResultTableProps = {
   headerProperties?: {
     title: string;
     dataIndex: string;
@@ -30,7 +30,7 @@ type ResultTableProps = {
   tableLabel?: string;
 };
 
-const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
+const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
   headerProperties,
   items,
   pageSize = PAGE_SIZE,
@@ -225,4 +225,4 @@ const ResultsTable: React.FunctionComponent<ResultTableProps> = ({
   );
 };
 
-export default ResultsTable;
+export default SparqlResultsTable;

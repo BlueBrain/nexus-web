@@ -13,7 +13,18 @@ const MarkdownEditorComponent: React.FC<{
   readOnly: boolean;
   onSaveImage?: SaveImageHandler;
   onSave?: (value: string) => void;
-}> = ({ resource, loading, readOnly, onSaveImage, onSave }) => {
+  markdownViewer: React.FC<{
+    template: string;
+    data: object;
+  }>;
+}> = ({
+  resource,
+  loading,
+  readOnly,
+  onSaveImage,
+  onSave,
+  markdownViewer: MarkdownViewer,
+}) => {
   const [value, setValue] = React.useState(resource?.description);
   const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
     'write'
@@ -35,9 +46,9 @@ const MarkdownEditorComponent: React.FC<{
         onChange={setValue}
         selectedTab={selectedTab}
         onTabChange={setSelectedTab}
-        generateMarkdownPreview={async markdown =>
-          convertMarkdownHandlebarStringWithData(markdown, resource)
-        }
+        generateMarkdownPreview={async markdown => (
+          <MarkdownViewer template={markdown} data={resource} />
+        )}
         readOnly={readOnly}
         paste={
           onSaveImage && {
@@ -64,6 +75,48 @@ const MarkdownEditorComponent: React.FC<{
           Cancel
         </Button>
       </div>
+    </div>
+  );
+};
+
+export const MarkdownEditorFormItemComponent: React.FC<{
+  value?: string;
+  resource: Resource;
+  onChange?: (value: string) => void;
+  onSaveImage: SaveImageHandler;
+  markdownViewer: React.FC<{
+    template: string;
+    data: object;
+  }>;
+}> = ({
+  value,
+  resource,
+  onChange,
+  onSaveImage,
+  markdownViewer: MarkdownViewer,
+}) => {
+  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
+    'write'
+  );
+
+  const handleChange = (description: string) => {
+    onChange && onChange(description);
+  };
+
+  return (
+    <div>
+      <ReactMde
+        value={value || ''}
+        onChange={handleChange}
+        selectedTab={selectedTab}
+        onTabChange={setSelectedTab}
+        generateMarkdownPreview={async markdown =>
+          !!value && <MarkdownViewer template={markdown} data={resource} />
+        }
+        paste={{
+          saveImage: onSaveImage,
+        }}
+      />
     </div>
   );
 };
