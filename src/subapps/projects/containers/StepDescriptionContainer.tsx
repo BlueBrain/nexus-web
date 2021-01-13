@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Button } from 'antd';
 
-import MarkdownEditor from '../../../shared/components/MarkdownEditor';
 import { displayError, successNotification } from '../components/Notifications';
+import MarkdownEditorComponent from '../../../shared/components/MarkdownEditor';
+import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
 
 const StepDescriptionContainer: React.FC<{
   step: Resource;
@@ -12,6 +14,7 @@ const StepDescriptionContainer: React.FC<{
   onUpdate(): void;
 }> = ({ step, orgLabel, projectLabel, onUpdate }) => {
   const nexus = useNexusContext();
+  const [isEditing, setIsEditing] = React.useState(false);
 
   const saveDescription = (value: string) => {
     nexus.Resource.getSource(
@@ -43,14 +46,36 @@ const StepDescriptionContainer: React.FC<{
     );
   };
 
-  return null;
-  // TODO: update MarkdownEditor
-  // <MarkdownEditor
-  //   resource={step as Resource}
-  //   readOnly={false}
-  //   loading={false}
-  //   onSave={saveDescription}
-  // />
+  const handleEditingClicked = () => {
+    setIsEditing(!isEditing);
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+  };
+
+  return (
+    <div>
+      {isEditing ? (
+        <MarkdownEditorComponent
+          resource={step as Resource}
+          readOnly={false}
+          loading={false}
+          onSave={saveDescription}
+          onCancel={handleCancel}
+          markdownViewer={MarkdownViewerContainer}
+        />
+      ) : (
+        <MarkdownViewerContainer
+          template={step.description || ''}
+          data={step as Resource}
+        />
+      )}
+      {!isEditing && (
+        <Button onClick={handleEditingClicked}>Edit Description</Button>
+      )}
+    </div>
+  );
 };
 
 export default StepDescriptionContainer;

@@ -13,6 +13,7 @@ const MarkdownEditorComponent: React.FC<{
   readOnly: boolean;
   onSaveImage?: SaveImageHandler;
   onSave?: (value: string) => void;
+  onCancel?: () => void;
   markdownViewer: React.FC<{
     template: string;
     data: object;
@@ -23,6 +24,7 @@ const MarkdownEditorComponent: React.FC<{
   readOnly,
   onSaveImage,
   onSave,
+  onCancel,
   markdownViewer: MarkdownViewer,
 }) => {
   const [value, setValue] = React.useState(resource?.description);
@@ -36,6 +38,7 @@ const MarkdownEditorComponent: React.FC<{
 
   const handleCancel = () => {
     setValue(resource?.description);
+    onCancel && onCancel();
   };
 
   return (
