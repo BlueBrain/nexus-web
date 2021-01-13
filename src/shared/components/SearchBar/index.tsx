@@ -47,11 +47,22 @@ const SearchBar: React.FC<{
 
   // We can use the convention of / for web search
   // to highlight our search bar
-  // in the future it would be beautiful
+  // TODO: in the future it would be beautiful
   // to have a central place to attach keyboard
   // shortcuts
   React.useEffect(() => {
     const focusSearch = (e: KeyboardEvent) => {
+      // only focus the search bar if there's no currently focused input element
+      // or if there's not a modal
+      if (
+        document.activeElement instanceof HTMLTextAreaElement ||
+        document.activeElement instanceof HTMLInputElement ||
+        document.activeElement instanceof HTMLSelectElement ||
+        document.querySelectorAll("[class*='modal']").length
+      ) {
+        return;
+      }
+
       if (e.key === '/' && !focused) {
         inputRef.current && inputRef.current.focus();
         e.preventDefault();
