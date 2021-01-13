@@ -43,14 +43,14 @@ const StepDescriptionContainer: React.FC<{
     );
   };
 
-  return (
-    <MarkdownEditor
-      resource={step as Resource}
-      readOnly={false}
-      loading={false}
-      onSave={saveDescription}
-    />
-  );
+  return null;
+  // TODO: update MarkdownEditor
+  // <MarkdownEditor
+  //   resource={step as Resource}
+  //   readOnly={false}
+  //   loading={false}
+  //   onSave={saveDescription}
+  // />
 };
 
 export default StepDescriptionContainer;
