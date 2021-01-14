@@ -22,6 +22,8 @@ import ResultsGrid from '../components/ResultsGrid';
 import useLocalStorage from '../../../shared/hooks/useLocalStorage';
 
 import './SearchView.less';
+import ResultGridActions from '../components/ResultGridActions';
+import { omit } from 'lodash';
 
 export enum SEARCH_VIEW_TYPES {
   TABLE = 'TABLE',
@@ -66,9 +68,10 @@ const SearchView: React.FC = () => {
     searchConfigProject,
   } = useSearchConfigs();
 
-  const [searchResponse, { searchProps, setSearchProps }] = useSearchQuery(
-    preferedSearchConfig?.view
-  );
+  const [
+    searchResponse,
+    { searchProps, setSearchProps, query },
+  ] = useSearchQuery(preferedSearchConfig?.view);
   const [queryParams, setQueryString] = useQueryString();
 
   const [searchViewType, setSearchViewType] = useLocalStorage<
@@ -308,6 +311,12 @@ const SearchView: React.FC = () => {
               onClearQuery={handleClearQuery}
               onClearFacet={handleClearFacet}
               onClear={handleClearFilters}
+            />
+          </Row>
+          <Row style={{ padding: '0 1em' }}>
+            <ResultGridActions
+              query={omit(query, ['from', 'size', 'aggs', 'aggregation'])}
+              dataset={{ ids: [] }}
             />
           </Row>
           <Row>

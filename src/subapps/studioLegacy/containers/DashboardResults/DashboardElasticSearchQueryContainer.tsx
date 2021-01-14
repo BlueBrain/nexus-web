@@ -9,7 +9,8 @@ const DashboardElasticSearchQueryContainer: React.FC<{
   goToStudioResource: (selfUrl: string) => void;
 }> = ({ view, dataQuery, goToStudioResource }) => {
   const [searchResponse, { searchProps, setSearchProps }] = useSearchQuery(
-    view._self
+    view._self,
+    JSON.parse(dataQuery)
   );
 
   const handleClickItem = (resource: Resource) => {
