@@ -4,7 +4,7 @@ import { push } from 'connected-react-router';
 import { Link, useLocation } from 'react-router-dom';
 import { NexusClient, Identity, Realm } from '@bbp/nexus-sdk';
 import { useNexus } from '@bbp/react-nexus';
-import { UserManager } from 'oidc-client';
+import { Log, UserManager } from 'oidc-client';
 import { Layout, Menu, notification } from 'antd';
 import { RightCircleOutlined, LeftCircleOutlined } from '@ant-design/icons';
 
