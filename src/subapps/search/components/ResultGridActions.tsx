@@ -2,9 +2,14 @@ import * as React from 'react';
 import { Button, Menu, Dropdown, notification } from 'antd';
 import { MenuProps } from 'antd/lib/menu';
 import { match } from 'ts-pattern';
+import { Parser } from 'json2csv';
+
 import { triggerCopy } from '../../../shared/utils/copy';
+import { download } from '../../../shared/utils/download';
 
 export const DATASET_KEY = 'nexus-dataset';
+export const EXPORT_CSV_FILENAME = 'Nexus Search Query';
+export const CSV_MEDIATYPE = 'text/csv';
 
 export type DatasetCollectionSave = {
   ids: string[];
@@ -22,29 +27,31 @@ const handleExportAsESQuery = (query: object) => () => {
 };
 
 const handleExportAsDatset = (dataset: DatasetCollectionSave) => () => {
-  if (!dataset.ids.length) {
-    notification.warning({
-      message: 'Please select items to save into a Dataset collection',
-    });
-    return;
-  }
   localStorage.setItem(DATASET_KEY, JSON.stringify(dataset));
   notification.info({ message: 'Saved selected items as dataset for later.' });
 };
 
-// const handleExportAsCSV = (query: object) => () => {
-//   downloadAsCSV;
-// };
+const handleExportAsCSV = (object: object, fields: string[]) => () => {
+  const json2csvParser = new Parser({ fields });
+  const csv = json2csvParser.parse(object);
+  download(EXPORT_CSV_FILENAME, CSV_MEDIATYPE, csv);
+};
 
 const ResultGridActions: React.FC<{
   query: object;
   dataset: DatasetCollectionSave;
-}> = ({ query, dataset }) => {
+  csv: {
+    data: object;
+    fields: string[];
+  };
+}> = ({ query, dataset, csv }) => {
   const handleMenuClick: MenuProps['onClick'] = e => {
     match(e.key)
       .with(EXPORT_ACTIONS.AS_ES_QUERY, () => handleExportAsESQuery(query)())
       .with(EXPORT_ACTIONS.AS_DATASET, () => handleExportAsDatset(dataset)())
-      // .with(EXPORT_ACTIONS.AS_CSV, () => handleExportAsCSV(query)())
+      .with(EXPORT_ACTIONS.AS_CSV, () =>
+        handleExportAsCSV(csv.data, csv.fields)()
+      )
       .run();
   };
 
@@ -59,10 +66,12 @@ const ResultGridActions: React.FC<{
       <Menu.Item key={EXPORT_ACTIONS.AS_ES_QUERY}>
         As Elastic Search Query
       </Menu.Item>
-      <Menu.Item key={EXPORT_ACTIONS.AS_DATASET}>
-        Selected as Nexus Dataset
-      </Menu.Item>
-      <Menu.Item key={EXPORT_ACTIONS.AS_CSV}>Selected as csv</Menu.Item>
+      {dataset.ids.length && (
+        <Menu.Item key={EXPORT_ACTIONS.AS_DATASET}>
+          Selected as Nexus Dataset
+        </Menu.Item>
+      )}
+      <Menu.Item key={EXPORT_ACTIONS.AS_CSV}>As CSV</Menu.Item>
     </Menu>
   );
   return (

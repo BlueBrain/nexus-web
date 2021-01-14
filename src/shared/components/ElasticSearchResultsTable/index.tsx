@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Table, Tooltip } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
-import { TablePaginationConfig } from 'antd/lib/table';
+import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import * as prettyBytes from 'pretty-bytes';
 
 import { UseSearchResponse } from '../../hooks/useSearchQuery';
@@ -10,16 +10,51 @@ import { getResourceLabel } from '../../utils';
 import { convertMarkdownHandlebarStringWithData } from '../../utils/markdownTemplate';
 import { parseURL } from '../../utils/nexusParse';
 import { FILE_SCHEMA } from '../../types/nexus';
+import { match } from 'ts-pattern';
+import { TableRowSelection } from 'antd/lib/table/interface';
+
+export type ResultTableFields = {
+  title: string;
+  dataIndex: string | string[];
+  key: string;
+};
 
 export interface ResultsGridProps {
+  rowSelection?: TableRowSelection<any>;
   pagination: TablePaginationConfig;
   searchResponse: UseSearchResponse;
+  fields: ResultTableFields[];
   onClickItem: (resource: Resource) => void;
 }
+
+export const DEFAULT_FIELDS = [
+  {
+    title: 'Label',
+    dataIndex: 'label',
+    key: 'label',
+  },
+  {
+    title: 'Project',
+    dataIndex: ['resourceAdminData', 'project'],
+    key: 'project',
+  },
+  {
+    title: 'Schema',
+    dataIndex: '_constrainedBy',
+    key: 'schema',
+  },
+  {
+    title: 'Types',
+    dataIndex: '@type',
+    key: '@type',
+  },
+];
 
 const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
   pagination,
   searchResponse,
+  fields,
+  rowSelection,
   onClickItem,
 }) => {
   const results = (searchResponse.data?.hits.hits || []).map(({ _source }) => {
@@ -32,6 +67,7 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
 
     return {
       ...resource,
+      key: _source._self,
       description: convertMarkdownHandlebarStringWithData(
         resource.description || '',
         resource
@@ -48,51 +84,51 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
     };
   });
 
-  const columns = [
-    {
-      title: 'Label',
-      dataIndex: 'label',
-      key: 'label',
-      render: (text: string, resource: Resource) => {
-        return getResourceLabel(resource);
-      },
-    },
-    {
-      title: 'Project',
-      dataIndex: ['resourceAdminData', 'project'],
-      key: 'project',
-      render: (text: string, resource: Resource) => {
-        return `${resource.resourceAdminData.org} | ${resource.resourceAdminData.project}`;
-      },
-    },
-    {
-      title: 'Schema',
-      dataIndex: '_constrainedBy',
-      key: 'schema',
-      render: (text: string, resource: Resource) => {
-        return (
-          <Tooltip title={resource._constrainedBy}>
-            {text.split('/').reverse()[0]}
-          </Tooltip>
-        );
-      },
-    },
-    {
-      title: 'Types',
-      dataIndex: '@type',
-      key: '@type',
-      render: (text: string, resource: Resource) => {
-        const typeList =
-          !!resource['@type'] &&
-          (Array.isArray(resource['@type']) ? (
-            <TypesIconList type={resource['@type']} />
-          ) : (
-            <TypesIconList type={[resource['@type']]} />
-          ));
-        return typeList;
-      },
-    },
-  ];
+  const columns: ColumnsType<any> = fields.map(field => {
+    // Enrich certain fields with custom rendering
+    return match(field.key)
+      .with('label', () => ({
+        ...field,
+        render: (text: string, resource: Resource) => {
+          return getResourceLabel(resource);
+        },
+      }))
+      .with('project', () => ({
+        ...field,
+        render: (text: string, resource: Resource) => {
+          return `${resource.resourceAdminData.org} | ${resource.resourceAdminData.project}`;
+        },
+      }))
+      .with('schema', () => ({
+        ...field,
+        render: (text: string, resource: Resource) => {
+          return (
+            <Tooltip title={resource._constrainedBy}>
+              {text.split('/').reverse()[0]}
+            </Tooltip>
+          );
+        },
+      }))
+      .with('@type', () => ({
+        ...field,
+        render: (text: string, resource: Resource) => {
+          const typeList =
+            !!resource['@type'] &&
+            (Array.isArray(resource['@type']) ? (
+              <TypesIconList type={resource['@type']} />
+            ) : (
+              <TypesIconList type={[resource['@type']]} />
+            ));
+          return typeList;
+        },
+      }))
+      .otherwise(() => ({
+        ...field,
+        render: (text: string, resource: Resource) => {
+          return text;
+        },
+      }));
+  });
 
   const handleClickItem = (resource: Resource) => () => {
     onClickItem(resource);
@@ -100,6 +136,7 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
 
   return (
     <Table
+      rowSelection={rowSelection}
       dataSource={results}
       columns={columns}
       pagination={pagination}

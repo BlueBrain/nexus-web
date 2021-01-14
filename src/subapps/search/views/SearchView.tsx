@@ -7,7 +7,9 @@ import { Resource } from '@bbp/nexus-sdk';
 
 import FacetItem from '../components/FacetItem';
 import useSearchConfigs from '../../../shared/hooks/useSearchConfigs';
-import ElasticSearchResultsTable from '../../../shared/components/ElasticSearchResultsTable';
+import ElasticSearchResultsTable, {
+  DEFAULT_FIELDS,
+} from '../../../shared/components/ElasticSearchResultsTable';
 import useSearchQuery, {
   DEFAULT_SEARCH_PROPS,
   parseSerializedSearchFacets,
@@ -77,6 +79,10 @@ const SearchView: React.FC = () => {
   const [searchViewType, setSearchViewType] = useLocalStorage<
     SEARCH_VIEW_TYPES
   >('SEARCH_VIEW_TYPES', SEARCH_VIEW_TYPES.GRID);
+
+  const [selectedRowKeys, setSelectedRowKeys] = React.useState<
+    React.ReactText[]
+  >([]);
 
   const results = searchResponse.data;
 
@@ -232,6 +238,17 @@ const SearchView: React.FC = () => {
   const currentSize = searchResponse.data?.hits.hits.length;
   const shouldShowPagination = totalPages > 1;
 
+  // Fields
+  const fields = preferedSearchConfig?.fields || DEFAULT_FIELDS;
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: (selectedRowKeys: React.ReactText[]) => {
+      console.log({ selectedRowKeys });
+      setSelectedRowKeys(selectedRowKeys);
+    },
+  };
+
   if (searchConfigs.data?.length === 0 && !searchConfigs.isFetching) {
     return (
       <Content
@@ -316,7 +333,11 @@ const SearchView: React.FC = () => {
           <Row style={{ padding: '0 1em' }}>
             <ResultGridActions
               query={omit(query, ['from', 'size', 'aggs', 'aggregation'])}
-              dataset={{ ids: [] }}
+              dataset={{ ids: selectedRowKeys.map(key => key.toString()) }}
+              csv={{
+                data: searchResponse.data?.hits.hits || {},
+                fields: fields.map(field => field.key),
+              }}
             />
           </Row>
           <Row>
@@ -341,6 +362,11 @@ const SearchView: React.FC = () => {
                       <b>No Resources found</b>
                     </span>
                   )}
+                  <span style={{ marginLeft: 8 }}>
+                    {selectedRowKeys.length
+                      ? `Selected ${selectedRowKeys.length} items`
+                      : ''}
+                  </span>
                 </div>
                 <div
                   style={{
@@ -413,6 +439,8 @@ const SearchView: React.FC = () => {
                 ))
                 .with(SEARCH_VIEW_TYPES.TABLE, () => (
                   <ElasticSearchResultsTable
+                    rowSelection={rowSelection}
+                    fields={fields}
                     searchResponse={searchResponse}
                     onClickItem={handleClickItem}
                     pagination={
