@@ -17,7 +17,7 @@ describe('Header', () => {
     cy.get('.logo-link').should(
       'have.attr',
       'href',
-      'https://www.bluebrainnexus.io/'
+      'https://bluebrainnexus.io/'
     );
   });
 
