@@ -328,17 +328,16 @@ const SearchView: React.FC = () => {
               onClearQuery={handleClearQuery}
               onClearFacet={handleClearFacet}
               onClear={handleClearFilters}
-            />
-          </Row>
-          <Row style={{ padding: '0 1em' }}>
-            <ResultGridActions
-              query={omit(query, ['from', 'size', 'aggs', 'aggregation'])}
-              dataset={{ ids: selectedRowKeys.map(key => key.toString()) }}
-              csv={{
-                data: searchResponse.data?.hits.hits || {},
-                fields: fields.map(field => field.key),
-              }}
-            />
+            >
+              <ResultGridActions
+                query={omit(query, ['from', 'size', 'aggs', 'aggregation'])}
+                dataset={{ ids: selectedRowKeys.map(key => key.toString()) }}
+                csv={{
+                  data: searchResponse.data?.hits.hits || {},
+                  fields: fields.map(field => field.key),
+                }}
+              />
+            </ActiveFilters>
           </Row>
           <Row>
             <div className="results-wrapper">

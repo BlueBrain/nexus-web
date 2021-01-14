@@ -75,11 +75,9 @@ const ResultGridActions: React.FC<{
     </Menu>
   );
   return (
-    <div>
-      <Dropdown.Button onClick={handleClick} overlay={menu}>
-        Export
-      </Dropdown.Button>
-    </div>
+    <Dropdown.Button onClick={handleClick} overlay={menu}>
+      Export
+    </Dropdown.Button>
   );
 };
 
