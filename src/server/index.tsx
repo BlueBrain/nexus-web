@@ -25,7 +25,7 @@ const pluginsManifestPath =
 // configure instance logo
 const layoutSettings = {
   logoImg: process.env.LOGO_IMG || '',
-  logoLink: process.env.LOGO_LINK || 'https://www.bluebrainnexus.io/',
+  logoLink: process.env.LOGO_LINK || 'https://bluebrainnexus.io/',
   forgeLink: process.env.FORGE_LINK || '',
 };
 
