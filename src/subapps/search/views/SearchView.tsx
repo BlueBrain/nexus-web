@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Layout, Row, Spin, Select, Card, Result, Switch } from 'antd';
 import { useHistory, useLocation } from 'react-router-dom';
 import { match } from 'ts-pattern';
+import { omit } from 'lodash';
 
 import { Resource } from '@bbp/nexus-sdk';
 
@@ -22,10 +23,9 @@ import useQueryString from '../../../shared/hooks/useQueryString';
 import ActiveFilters from '../components/ActiveFilters';
 import ResultsGrid from '../components/ResultsGrid';
 import useLocalStorage from '../../../shared/hooks/useLocalStorage';
+import ResultGridActions from '../components/ResultGridActions';
 
 import './SearchView.less';
-import ResultGridActions from '../components/ResultGridActions';
-import { omit } from 'lodash';
 
 export enum SEARCH_VIEW_TYPES {
   TABLE = 'TABLE',
@@ -244,7 +244,6 @@ const SearchView: React.FC = () => {
   const rowSelection = {
     selectedRowKeys,
     onChange: (selectedRowKeys: React.ReactText[]) => {
-      console.log({ selectedRowKeys });
       setSelectedRowKeys(selectedRowKeys);
     },
   };
