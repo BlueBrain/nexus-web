@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { NexusClient, Identity, Realm } from '@bbp/nexus-sdk';
 import { useNexus } from '@bbp/react-nexus';
 import { UserManager } from 'oidc-client';

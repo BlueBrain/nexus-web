@@ -52,7 +52,7 @@ const InformationContent = (props: InformationContentProps) => {
       <h4>Nexus Services</h4>
       <p>
         Nexus Delta v{props.version} <br />
-        <a href={`${repoUrl}/commits/${props.commitHash}`}>
+        <a href={`${repoUrl}/commits/${props.commitHash}`} target="_blank">
           Nexus Fusion {Version}
         </a>
       </p>
