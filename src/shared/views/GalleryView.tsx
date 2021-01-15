@@ -58,11 +58,10 @@ const GalleryView: React.FC = () => {
   // the modal.
   const background =
     location.state && (location.state as { background?: Location }).background;
-  {
-    // This is where special routes should go
-    // that are placed inside a modal
-    // when the background state is provided
-  }
+
+  // This is where special routes should go
+  // that are placed inside a modal
+  // when the background state is provided
   return (
     <>
       {background && [
@@ -74,7 +73,7 @@ const GalleryView: React.FC = () => {
               visible={true}
               footer={null}
               onCancel={() =>
-                history.push(`${background.pathname}?${background.search}`, {})
+                history.push(`${background.pathname}${background.search}`, {})
               }
               className="modal-view"
               width="inherit"
