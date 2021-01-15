@@ -12,7 +12,6 @@
   </a>
 </p>
 
-
 <p align="center">Nexus Fusion (previously Nexus Web) is the interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.</p>
 
 <p align="center">
@@ -83,6 +82,10 @@ docker build . --tag=nexus-web
 - `GTM_CODE`: The Google Analytics Identifier. GA won't be present unless an ID is specified.
 - `SENTRY_DSN`: The sentry URL Nexus Fusion needs to report errors to. Default is undefined.
 - `STUDIO_VIEW`: The location of the aggregate elastic search view that contains all the projects: `orgLabel/projectLabel/viewId`
+- `LOGO_IMG`: Url for an image to be used as Fusion logo in the Header, for example, `https://drive.boogle.com/jnsjdnsjs`
+- `LOGO_LINK`: Url for the logo, for example, `https://www.epfl.ch`
+- `FORGE_LINK`: Url for the Forge Templates button, for example, `https://some-url.hi`
+- `DATA_MODELS`: The location of the datamodels to be used in Activity lists in Workflow: `orgLabel/projectLabel`
 
 The following concern Plugins. [See how to manage plugin deployments](./docs/plugins.md)
 
