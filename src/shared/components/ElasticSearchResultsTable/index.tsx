@@ -12,12 +12,7 @@ import { parseURL } from '../../utils/nexusParse';
 import { FILE_SCHEMA } from '../../types/nexus';
 import { match } from 'ts-pattern';
 import { TableRowSelection } from 'antd/lib/table/interface';
-
-export type ResultTableFields = {
-  title: string;
-  dataIndex: string | string[];
-  key: string;
-};
+import { ResultTableFields } from '../../types/search';
 
 export interface ResultsGridProps {
   rowSelection?: TableRowSelection<any>;

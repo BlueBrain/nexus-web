@@ -6,7 +6,7 @@ import {
   SearchPreferenceActions,
   SearchPreferenceTypes,
 } from '../actions/search';
-import { ResultTableFields } from '../../components/ElasticSearchResultsTable';
+import { ResultTableFields } from '../../types/search';
 
 export const SearchConfigType = 'nxv:SearchConfig';
 
