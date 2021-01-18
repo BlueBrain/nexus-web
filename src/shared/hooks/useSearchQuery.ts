@@ -150,10 +150,13 @@ export default function useSearchQuery(selfURL?: string | null) {
     }
     const { org, project, id } = parseURL(selfURL);
 
+    const encodedID = encodeURIComponent(id);
+    const usefulId = encodedID === id ? id : encodedID;
+
     return await nexus.View.elasticSearchQuery<SearchResponse<Resource>>(
       org,
       project,
-      encodeURIComponent(id),
+      usefulId,
       body
     );
   };
