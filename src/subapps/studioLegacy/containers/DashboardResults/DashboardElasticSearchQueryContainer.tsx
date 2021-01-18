@@ -3,13 +3,15 @@ import * as React from 'react';
 import ElasticSearchResultsTable, {
   DEFAULT_FIELDS,
 } from '../../../../shared/components/ElasticSearchResultsTable';
+import { ResultTableFields } from '../../../../shared/types/search';
 import useSearchQuery from '../../../hooks/useSearchQuery';
 
 const DashboardElasticSearchQueryContainer: React.FC<{
+  fields?: ResultTableFields[];
   view: ElasticSearchView;
   dataQuery: string;
   goToStudioResource: (selfUrl: string) => void;
-}> = ({ view, dataQuery, goToStudioResource }) => {
+}> = ({ view, dataQuery, fields, goToStudioResource }) => {
   const [searchResponse, { searchProps, setSearchProps }] = useSearchQuery(
     view._self,
     JSON.parse(dataQuery)
@@ -40,7 +42,7 @@ const DashboardElasticSearchQueryContainer: React.FC<{
 
   return (
     <ElasticSearchResultsTable
-      fields={DEFAULT_FIELDS}
+      fields={fields || DEFAULT_FIELDS}
       searchResponse={searchResponse}
       onClickItem={handleClickItem}
       pagination={
