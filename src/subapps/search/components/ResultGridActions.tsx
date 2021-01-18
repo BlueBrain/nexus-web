@@ -4,11 +4,11 @@ import { MenuProps } from 'antd/lib/menu';
 import { match } from 'ts-pattern';
 import { Parser } from 'json2csv';
 
-import { triggerCopy } from '../../../shared/utils/copy';
 import { download } from '../../../shared/utils/download';
+import { triggerCopy } from '../../../shared/utils/copy';
 
 export const DATASET_KEY = 'nexus-dataset';
-export const EXPORT_CSV_FILENAME = 'Nexus Search Query';
+export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
 export const CSV_MEDIATYPE = 'text/csv';
 
 export type DatasetCollectionSave = {

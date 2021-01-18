@@ -332,7 +332,12 @@ const SearchView: React.FC = () => {
                 query={omit(query, ['from', 'size', 'aggs', 'aggregation'])}
                 dataset={{ ids: selectedRowKeys.map(key => key.toString()) }}
                 csv={{
-                  data: searchResponse.data?.hits.hits || {},
+                  data: (searchResponse.data?.hits.hits || []).map(
+                    ({ _source }) => ({
+                      ..._source,
+                      ...JSON.parse(_source._original_source),
+                    })
+                  ),
                   fields: fields.map(field => field.key),
                 }}
               />
