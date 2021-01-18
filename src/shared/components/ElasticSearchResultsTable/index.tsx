@@ -199,7 +199,7 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
         defaultValue={selectedColumns?.map(x => x.title as string)}
         value={selectedColumns?.map(x => x.title as string)}
         onChange={handleColumnSelect}
-        style={{ width: '50%' }}
+        className="select-column"
       >
         {columns?.map(x => {
           return (
@@ -210,10 +210,12 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
         })}
       </Select>
       <Button
+        className="reset"
         onClick={() => {
           setSelectedColumns(columns);
           setSearchValue('');
         }}
+        type="primary"
       >
         {' '}
         Reset

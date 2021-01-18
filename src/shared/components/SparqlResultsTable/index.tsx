@@ -234,6 +234,7 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
                 setSearchValue(e.currentTarget.value);
               }}
             />
+
             <Select
               allowClear
               mode="multiple"
@@ -242,7 +243,7 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
               defaultValue={selectedColumns?.map(x => x.title)}
               value={selectedColumns?.map(x => x.title)}
               onChange={handleColumnSelect}
-              style={{ width: '50%' }}
+              className="select-column"
             >
               {headerProperties?.map(x => {
                 return (
@@ -252,16 +253,20 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
                 );
               })}
             </Select>
+
             <Button
               onClick={() => {
                 setFilteredValues(null);
                 setSelectedColumns(headerProperties);
                 setSearchValue('');
               }}
+              type="primary"
+              className="reset"
             >
               {' '}
               Reset
             </Button>
+
             <div className="controls">
               <div className="total">
                 {total} {`Result${total > 1 ? 's' : ''}`}
