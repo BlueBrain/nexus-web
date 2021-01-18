@@ -2,12 +2,15 @@ import * as React from 'react';
 import { Layout, Row, Spin, Select, Card, Result, Switch } from 'antd';
 import { useHistory, useLocation } from 'react-router-dom';
 import { match } from 'ts-pattern';
+import { omit } from 'lodash';
 
 import { Resource } from '@bbp/nexus-sdk';
 
 import FacetItem from '../components/FacetItem';
 import useSearchConfigs from '../../../shared/hooks/useSearchConfigs';
-import ElasticSearchResultsTable from '../../../shared/components/ElasticSearchResultsTable';
+import ElasticSearchResultsTable, {
+  DEFAULT_FIELDS,
+} from '../../../shared/components/ElasticSearchResultsTable';
 import useSearchQuery, {
   DEFAULT_SEARCH_PROPS,
   parseSerializedSearchFacets,
@@ -20,6 +23,7 @@ import useQueryString from '../../../shared/hooks/useQueryString';
 import ActiveFilters from '../components/ActiveFilters';
 import ResultsGrid from '../components/ResultsGrid';
 import useLocalStorage from '../../../shared/hooks/useLocalStorage';
+import ResultGridActions from '../components/ResultGridActions';
 
 import './SearchView.less';
 
@@ -66,14 +70,19 @@ const SearchView: React.FC = () => {
     searchConfigProject,
   } = useSearchConfigs();
 
-  const [searchResponse, { searchProps, setSearchProps }] = useSearchQuery(
-    preferedSearchConfig?.view
-  );
+  const [
+    searchResponse,
+    { searchProps, setSearchProps, query },
+  ] = useSearchQuery(preferedSearchConfig?.view);
   const [queryParams, setQueryString] = useQueryString();
 
   const [searchViewType, setSearchViewType] = useLocalStorage<
     SEARCH_VIEW_TYPES
   >('SEARCH_VIEW_TYPES', SEARCH_VIEW_TYPES.GRID);
+
+  const [selectedRowKeys, setSelectedRowKeys] = React.useState<
+    React.ReactText[]
+  >([]);
 
   const results = searchResponse.data;
 
@@ -229,6 +238,16 @@ const SearchView: React.FC = () => {
   const currentSize = searchResponse.data?.hits.hits.length;
   const shouldShowPagination = totalPages > 1;
 
+  // Fields
+  const fields = preferedSearchConfig?.fields || DEFAULT_FIELDS;
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: (selectedRowKeys: React.ReactText[]) => {
+      setSelectedRowKeys(selectedRowKeys);
+    },
+  };
+
   if (searchConfigs.data?.length === 0 && !searchConfigs.isFetching) {
     return (
       <Content
@@ -308,7 +327,21 @@ const SearchView: React.FC = () => {
               onClearQuery={handleClearQuery}
               onClearFacet={handleClearFacet}
               onClear={handleClearFilters}
-            />
+            >
+              <ResultGridActions
+                query={omit(query, ['from', 'size', 'aggs', 'aggregation'])}
+                dataset={{ ids: selectedRowKeys.map(key => key.toString()) }}
+                csv={{
+                  data: (searchResponse.data?.hits.hits || []).map(
+                    ({ _source }) => ({
+                      ..._source,
+                      ...JSON.parse(_source._original_source),
+                    })
+                  ),
+                  fields: fields.map(field => field.key),
+                }}
+              />
+            </ActiveFilters>
           </Row>
           <Row>
             <div className="results-wrapper">
@@ -332,6 +365,11 @@ const SearchView: React.FC = () => {
                       <b>No Resources found</b>
                     </span>
                   )}
+                  <span style={{ marginLeft: 8 }}>
+                    {selectedRowKeys.length
+                      ? `Selected ${selectedRowKeys.length} items`
+                      : ''}
+                  </span>
                 </div>
                 <div
                   style={{
@@ -404,6 +442,8 @@ const SearchView: React.FC = () => {
                 ))
                 .with(SEARCH_VIEW_TYPES.TABLE, () => (
                   <ElasticSearchResultsTable
+                    rowSelection={rowSelection}
+                    fields={fields}
                     searchResponse={searchResponse}
                     onClickItem={handleClickItem}
                     pagination={

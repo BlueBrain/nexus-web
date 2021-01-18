@@ -6,6 +6,7 @@ import {
   SearchPreferenceActions,
   SearchPreferenceTypes,
 } from '../actions/search';
+import { ResultTableFields } from '../../types/search';
 
 export const SearchConfigType = 'nxv:SearchConfig';
 
@@ -14,6 +15,7 @@ export type SearchConfig = {
   label: string;
   view: string;
   description?: string;
+  fields?: ResultTableFields[];
 };
 
 export const DEFAULT_SEARCH_STATE = {

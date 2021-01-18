@@ -1,18 +1,21 @@
 import * as React from 'react';
+import { Button } from 'antd';
 import { Resource, DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
+
 import TabList from '../../../shared/components/Tabs/TabList';
-import { Button } from 'antd';
 import { StudioContext } from '../views/StudioView';
 import DashboardResultsContainer from './DashboardResultsContainer';
 import DashboardEditorContainer from './DashBoardEditor/DashboardEditorContainer';
 import CreateDashboardContainer from './DashBoardEditor/CreateDashboardContainer';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import { resourcesWritePermissionsWrapper } from '../../../shared/utils/permission';
+import { ResultTableFields } from '../../../shared/types/search';
 
 export type Dashboard = {
   dashboard: string;
   view: string;
+  fields?: ResultTableFields[];
 };
 
 interface DashboardListProps {
@@ -212,6 +215,9 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
                 (dashboards[selectedDashboardIndex] &&
                   dashboards[selectedDashboardIndex].view) ||
                 DEFAULT_SPARQL_VIEW_ID
+              }
+              fields={
+                dashboardResources[selectedDashboardResourcesIndex].fields
               }
               dataQuery={
                 dashboardResources[selectedDashboardResourcesIndex].dataQuery

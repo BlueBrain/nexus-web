@@ -11,7 +11,7 @@ const ActiveFilters: React.FC<{
   onClear: () => void;
   onClearFacet: (key: string, value: string) => void;
   onClearQuery: () => void;
-}> = ({ searchProps, onClear, onClearQuery, onClearFacet }) => {
+}> = ({ searchProps, onClear, onClearQuery, onClearFacet, children }) => {
   const tagList = [
     <span className="filter-tag" key="clear-filters">
       <Button icon={<CloseCircleFilled />} onClick={onClear}>
@@ -67,6 +67,7 @@ const ActiveFilters: React.FC<{
         leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
       >
         {tagList}
+        {children}
       </TweenOneGroup>
     </div>
   );
