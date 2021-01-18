@@ -68,6 +68,7 @@ const SearchView: React.FC = () => {
     preferedSearchConfig,
     searchConfigs,
     searchConfigProject,
+    setSearchPreference,
   } = useSearchConfigs();
 
   const [
@@ -236,6 +237,10 @@ const SearchView: React.FC = () => {
     });
   };
 
+  const handlePreferredSearchConfigChange = (value: string) => {
+    setSearchPreference(value);
+  };
+
   // Pagination Props
   const total = searchResponse.data?.hits.total.value || 0;
   const size = searchProps.pagination?.size || 0;
@@ -354,6 +359,17 @@ const SearchView: React.FC = () => {
                   })),
                 }}
               />
+              {/* Select Search Config */}
+              <Select
+                value={preferedSearchConfig?.id}
+                loading={searchConfigs.isFetching}
+                onChange={handlePreferredSearchConfigChange}
+                style={{ marginLeft: '2px' }}
+              >
+                {searchConfigs.data?.map(searchConfig => (
+                  <Option value={searchConfig.id}>{searchConfig.label}</Option>
+                ))}
+              </Select>
             </ActiveFilters>
           </Row>
           <Row>
