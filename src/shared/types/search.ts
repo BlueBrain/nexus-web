@@ -23,3 +23,9 @@ export interface SearchResponse<T> {
   };
   aggregations?: any;
 }
+
+export type ResultTableFields = {
+  title: string;
+  dataIndex: string | string[];
+  key: string;
+};

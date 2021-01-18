@@ -8,6 +8,7 @@ import DEFAULT_DASHBOARD_VIEW_QUERY, {
   DEFAULT_DASHBOARD_ES_VIEW_QUERY,
 } from './DefaultDashboardViewQuery';
 import SparqlQueryFormInput from '../../../admin/components/ViewForm/SparqlQueryInput';
+import ElasticSearchQueryInput from '../../../admin/components/ViewForm/ElasticSearchQueryInput';
 
 export type DashboardPayload = {
   description?: string;
@@ -32,8 +33,11 @@ const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEdi
 }) => {
   const { description, label, dataQuery, plugins = [] } = dashboard || {};
 
+  const viewType =
+    view && view['@type']?.includes('ElasticSearchView') ? 'ES' : 'SPARQL';
+
   const defaultQuery =
-    view && view['@type']?.includes('ElasticSearchView')
+    viewType === 'ES'
       ? DEFAULT_DASHBOARD_ES_VIEW_QUERY
       : DEFAULT_DASHBOARD_VIEW_QUERY;
 
@@ -105,7 +109,11 @@ const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEdi
           },
         ]}
       >
-        <SparqlQueryFormInput />
+        {viewType === 'ES' ? (
+          <ElasticSearchQueryInput />
+        ) : (
+          <SparqlQueryFormInput />
+        )}
       </Form.Item>
       <Form.Item>
         <Button htmlType="submit" type="primary">
