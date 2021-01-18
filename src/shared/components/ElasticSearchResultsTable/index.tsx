@@ -23,6 +23,7 @@ export interface ResultsGridProps {
   searchResponse: UseSearchResponse;
   fields: ResultTableFields[];
   onClickItem: (resource: Resource) => void;
+  isStudio?: boolean;
 }
 
 export const DEFAULT_FIELDS = [
@@ -54,6 +55,7 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
   fields,
   rowSelection,
   onClickItem,
+  isStudio,
 }) => {
   const [searchValue, setSearchValue] = React.useState<string>('');
 
@@ -179,6 +181,46 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
   const handleClickItem = (resource: Resource) => () => {
     onClickItem(resource);
   };
+
+  const renderTitle = () => (
+    <div className="header">
+      <Search
+        className="search"
+        value={searchValue}
+        onChange={(e: React.FormEvent<HTMLInputElement>) => {
+          setSearchValue(e.currentTarget.value);
+        }}
+      />
+      <Select
+        allowClear
+        mode="multiple"
+        size={'middle'}
+        placeholder="Please select columns"
+        defaultValue={selectedColumns?.map(x => x.title as string)}
+        value={selectedColumns?.map(x => x.title as string)}
+        onChange={handleColumnSelect}
+        style={{ width: '50%' }}
+      >
+        {columns?.map(x => {
+          return (
+            <Option key={x.title as string} value={x.title as string}>
+              {x.title}
+            </Option>
+          );
+        })}
+      </Select>
+      <Button
+        onClick={() => {
+          setSelectedColumns(columns);
+          setSearchValue('');
+        }}
+      >
+        {' '}
+        Reset
+      </Button>
+    </div>
+  );
+
   return (
     <div className="result-table">
       <Table
@@ -186,44 +228,7 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
         columns={selectedColumns}
         pagination={pagination}
         bordered
-        title={() => (
-          <div className="header">
-            <Search
-              className="search"
-              value={searchValue}
-              onChange={(e: React.FormEvent<HTMLInputElement>) => {
-                setSearchValue(e.currentTarget.value);
-              }}
-            />
-            <Select
-              allowClear
-              mode="multiple"
-              size={'middle'}
-              placeholder="Please select columns"
-              defaultValue={selectedColumns?.map(x => x.title as string)}
-              value={selectedColumns?.map(x => x.title as string)}
-              onChange={handleColumnSelect}
-              style={{ width: '50%' }}
-            >
-              {columns?.map(x => {
-                return (
-                  <Option key={x.title as string} value={x.title as string}>
-                    {x.title}
-                  </Option>
-                );
-              })}
-            </Select>
-            <Button
-              onClick={() => {
-                setSelectedColumns(columns);
-                setSearchValue('');
-              }}
-            >
-              {' '}
-              Reset
-            </Button>
-          </div>
-        )}
+        title={isStudio ? renderTitle : undefined}
         onRow={resource => {
           return {
             onClick: handleClickItem(resource),

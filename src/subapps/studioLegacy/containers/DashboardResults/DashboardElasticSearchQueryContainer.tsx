@@ -42,6 +42,7 @@ const DashboardElasticSearchQueryContainer: React.FC<{
 
   return (
     <ElasticSearchResultsTable
+      isStudio={true}
       fields={fields || DEFAULT_FIELDS}
       searchResponse={searchResponse}
       onClickItem={handleClickItem}
