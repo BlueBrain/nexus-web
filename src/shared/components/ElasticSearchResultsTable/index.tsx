@@ -226,6 +226,7 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
   return (
     <div className="result-table">
       <Table
+        rowSelection={rowSelection}
         dataSource={filteredItems}
         columns={selectedColumns}
         pagination={pagination}
