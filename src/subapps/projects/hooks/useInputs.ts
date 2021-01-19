@@ -75,17 +75,18 @@ export const useInputs = (
           return {
             types,
             createdAt: allInputEntries[0].createdAt.value,
-            name: allInputEntries[0].name.value,
+            name: allInputEntries[0]?.name?.value || 'No name',
             resourceId: allInputEntries[0].resource.value,
-            description: allInputEntries[0].description.value,
+            description:
+              allInputEntries[0]?.description?.value || 'No description',
           };
         });
 
         setInputs(parsedList);
       })
-      .catch(error =>
-        displayError(error, 'Failed to fetch Workflow Step inputs')
-      );
+      .catch(error => {
+        displayError(error, 'Failed to fetch Workflow Step inputs');
+      });
   };
 
   return {
