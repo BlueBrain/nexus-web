@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
-import { notification, Modal, message } from 'antd';
+import { DEFAULT_SPARQL_VIEW_ID, View } from '@bbp/nexus-sdk';
+import { notification, Modal, message, Spin } from 'antd';
 
 import useLinkToDashboardQueryEditor from './hooks/useLinkToDashboardQueryEditor';
 
@@ -11,6 +11,7 @@ import DashboardConfigEditor, {
 import STUDIO_CONTEXT from '../../components/StudioContext';
 import { DASHBOARD_TYPE } from './CreateDashboardContainer';
 import usePlugins from '../../../../shared/hooks/usePlugins';
+import useAsyncCall from '../../../../shared/hooks/useAsynCall';
 
 const DashboardEditorContainer: React.FunctionComponent<{
   orgLabel: string;
@@ -87,6 +88,11 @@ const DashboardEditorContainer: React.FunctionComponent<{
     }
   };
 
+  const viewData = useAsyncCall<View, Error>(
+    nexus.View.get(orgLabel, projectLabel, viewId),
+    [orgLabel, projectLabel, viewId]
+  );
+
   return (
     <Modal
       title={`Edit ${label || 'Dashboard'}`}
@@ -97,17 +103,20 @@ const DashboardEditorContainer: React.FunctionComponent<{
       footer={null}
       destroyOnClose={true}
     >
-      <DashboardConfigEditor
-        availablePlugins={availablePlugins}
-        dashboard={{
-          label,
-          description,
-          dataQuery,
-          plugins,
-        }}
-        onSubmit={handleSubmit}
-        linkToSparqlQueryEditor={linkQueryEditor}
-      ></DashboardConfigEditor>
+      <Spin spinning={viewData.loading}>
+        <DashboardConfigEditor
+          view={viewData.data || undefined}
+          availablePlugins={availablePlugins}
+          dashboard={{
+            label,
+            description,
+            dataQuery,
+            plugins,
+          }}
+          onSubmit={handleSubmit}
+          linkToSparqlQueryEditor={linkQueryEditor}
+        />
+      </Spin>
     </Modal>
   );
 };

@@ -9,14 +9,23 @@ import { parseProjectUrl } from '../../../shared/utils';
 import useAsyncCall from '../../../shared/hooks/useAsynCall';
 import DashboardSparqlQueryContainer from './DashboardResults/DashboardSparqlQueryContainer';
 import DashboardElasticSearchQueryContainer from './DashboardResults/DashboardElasticSearchQueryContainer';
+import { ResultTableFields } from '../../../shared/types/search';
 
 const DashboardResultsContainer: React.FunctionComponent<{
   dataQuery: string;
   orgLabel: string;
   projectLabel: string;
   viewId: string;
+  fields?: ResultTableFields[];
   dashboardLabel: string;
-}> = ({ orgLabel, projectLabel, dataQuery, viewId, dashboardLabel }) => {
+}> = ({
+  orgLabel,
+  projectLabel,
+  dataQuery,
+  viewId,
+  dashboardLabel,
+  fields,
+}) => {
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
@@ -71,6 +80,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
       },
       () => (
         <DashboardElasticSearchQueryContainer
+          fields={fields}
           view={viewResult.data as ElasticSearchView}
           dataQuery={dataQuery}
           goToStudioResource={goToStudioResource}

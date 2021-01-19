@@ -98,12 +98,9 @@ export default function useSearchQuery(selfURL?: string | null) {
 
   const nexus = useNexusContext();
 
-  const searchNexus = async () => {
-    if (!selfURL) {
-      return null;
-    }
-
+  const makeBodyQuery = () => {
     // TODO fix query to match @id's as well
+    // might need backend support
     const matchQuery = query
       ? ['wildcard', '_original_source', `${query}*`]
       : ['match_all', {}];
@@ -113,7 +110,6 @@ export default function useSearchQuery(selfURL?: string | null) {
     body
       // TODO upgrade typescript to enable spread arguments
       // @ts-ignore
-
       .filter(...matchQuery)
       .filter('term', '_deprecated', false)
       .sort(sort.key, sort.direction);
@@ -130,14 +126,22 @@ export default function useSearchQuery(selfURL?: string | null) {
       .from(pagination.from)
       .rawOption('track_total_hits', TOTAL_HITS_TRACKING);
 
-    const finalQuery = body.build();
+    return body.build();
+  };
+
+  const body = makeBodyQuery();
+
+  const searchNexus = async () => {
+    if (!selfURL) {
+      return null;
+    }
     const { org, project, id } = parseURL(selfURL);
 
     return await nexus.View.elasticSearchQuery<SearchResponse<Resource>>(
       org,
       project,
       encodeURIComponent(id),
-      finalQuery
+      body
     );
   };
 
@@ -147,11 +151,12 @@ export default function useSearchQuery(selfURL?: string | null) {
     true
   );
 
-  return [remoteResponse, { searchProps, setSearchProps }] as [
+  return [remoteResponse, { searchProps, setSearchProps, query: body }] as [
     UseSearchResponse,
     {
       searchProps: UseSearchProps;
       setSearchProps: React.Dispatch<React.SetStateAction<UseSearchProps>>;
+      query: object;
     }
   ];
 }

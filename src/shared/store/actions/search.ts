@@ -1,6 +1,7 @@
 import { Resource } from '@bbp/nexus-sdk';
 import { ActionCreator, AnyAction, Dispatch } from 'redux';
 import { ThunkAction } from '..';
+import { ResultTableFields } from '../../types/search';
 import { RootState } from '../reducers';
 import { SearchConfig, SearchConfigType } from '../reducers/search';
 import { FetchAction, FetchFailedAction, FetchFulfilledAction } from './utils';
@@ -103,7 +104,12 @@ export const fetchSearchConfigs: ActionCreator<ThunkAction> = () => {
                 encodeURIComponent(id)
               )
           ) as Promise<
-            Resource<{ label: String; view: string; description?: string }>
+            Resource<{
+              label: String;
+              view: string;
+              description?: string;
+              fields?: ResultTableFields[];
+            }>
           >[]
         );
 
@@ -112,6 +118,9 @@ export const fetchSearchConfigs: ActionCreator<ThunkAction> = () => {
           label: resource.label,
           view: resource.view,
           description: resource.description,
+          fields: Array.isArray(resource.fields)
+            ? resource.fields
+            : [resource.fields],
         }));
       };
 

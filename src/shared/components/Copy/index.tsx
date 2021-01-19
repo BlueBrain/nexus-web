@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { triggerCopy } from '../../utils/copy';
 
 const DEFAULT_REVERT_DELAY = 2500;
 
@@ -23,22 +24,16 @@ const Copy: React.FunctionComponent<CopyProps> = ({
 
   // Must use browser dom manipulation in order to hide the fake textArea,
   // otherwise must use react references and that's too slow
-  const triggerCopy = () => {
+  const handleTriggerCopy = () => {
     if (document && document.queryCommandSupported('copy')) {
-      const textField = document.createElement('textarea');
-      textField.innerText = textToCopy;
-      document.body.appendChild(textField);
-      textField.select();
-      document.execCommand('copy');
-      textField.remove();
-      setCopySuccess(true);
+      triggerCopy(textToCopy);
       setTimeout(() => {
         setCopySuccess(false);
       }, revertDelay);
     }
   };
 
-  return render(copySuccess, triggerCopy);
+  return render(copySuccess, handleTriggerCopy);
 };
 
 export default Copy;

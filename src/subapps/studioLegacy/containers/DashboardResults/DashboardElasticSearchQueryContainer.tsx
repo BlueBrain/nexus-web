@@ -1,15 +1,20 @@
 import { ElasticSearchView, Resource } from '@bbp/nexus-sdk';
 import * as React from 'react';
-import ElasticSearchResultsTable from '../../../../shared/components/ElasticSearchResultsTable';
+import ElasticSearchResultsTable, {
+  DEFAULT_FIELDS,
+} from '../../../../shared/components/ElasticSearchResultsTable';
+import { ResultTableFields } from '../../../../shared/types/search';
 import useSearchQuery from '../../../hooks/useSearchQuery';
 
 const DashboardElasticSearchQueryContainer: React.FC<{
+  fields?: ResultTableFields[];
   view: ElasticSearchView;
   dataQuery: string;
   goToStudioResource: (selfUrl: string) => void;
-}> = ({ view, dataQuery, goToStudioResource }) => {
+}> = ({ view, dataQuery, fields, goToStudioResource }) => {
   const [searchResponse, { searchProps, setSearchProps }] = useSearchQuery(
-    view._self
+    view._self,
+    JSON.parse(dataQuery)
   );
 
   const handleClickItem = (resource: Resource) => {
@@ -37,6 +42,8 @@ const DashboardElasticSearchQueryContainer: React.FC<{
 
   return (
     <ElasticSearchResultsTable
+      isStudio={true}
+      fields={fields || DEFAULT_FIELDS}
       searchResponse={searchResponse}
       onClickItem={handleClickItem}
       pagination={
