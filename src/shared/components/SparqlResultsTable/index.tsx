@@ -1,26 +1,26 @@
 import * as React from 'react';
 import * as moment from 'moment';
-import { Input, Table, Button, Tooltip, notification } from 'antd';
+import { Input, Table, Button, Tooltip, notification, Select } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
-import { omit } from 'lodash';
-
+import { omit, difference } from 'lodash';
 import { parseProjectUrl, isISODate } from '../../utils/index';
 import { download } from '../../utils/download';
-
-import './ResultTable.less';
+import './../../styles/result-table.less';
 
 const { Search } = Input;
+const { Option } = Select;
 
 const PAGE_SIZE = 10;
 const MAX_FILTER_LIMIT = 20;
 const MIN_FILTER_LIMIT = 1;
 const DATE_FORMAT = 'DD-MM-YYYY, HH:mm';
 
+type HeaderProperties = {
+  title: string;
+  dataIndex: string;
+}[];
 export type ResultTableProps = {
-  headerProperties?: {
-    title: string;
-    dataIndex: string;
-  }[];
+  headerProperties?: HeaderProperties;
   items: {
     id: string;
     [dataIndex: string]: any;
@@ -37,7 +37,14 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
   handleClick,
   tableLabel,
 }) => {
-  const [searchValue, setSearchValue] = React.useState();
+  const [selectedColumns, setSelectedColumns] = React.useState<
+    HeaderProperties | undefined
+  >(headerProperties);
+  const [searchValue, setSearchValue] = React.useState<string>('');
+  const [filteredValues, setFilteredValues] = React.useState<Record<
+    string,
+    React.ReactText[] | null
+  > | null>(null);
 
   const filteredItems = items.filter(item => {
     return (
@@ -47,13 +54,13 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
         .search((searchValue || '').toLowerCase()) >= 0
     );
   });
+
   const tableItems = searchValue ? filteredItems : items;
   const total = tableItems.length;
   const showPagination = total > pageSize;
-
   const columnList = [
-    ...(headerProperties
-      ? headerProperties.map(({ title, dataIndex }) => {
+    ...(selectedColumns
+      ? selectedColumns.map(({ title, dataIndex }) => {
           // We can create special renderers for the cells here
           let render;
           switch (title) {
@@ -112,11 +119,14 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
                       : value,
                   })),
                   filterMultiple: false,
-                  onFilter: (filterValue: any, item: any) =>
-                    item[dataIndex] === filterValue,
+                  filteredValue: filteredValues
+                    ? filteredValues[dataIndex]
+                    : null,
+                  onFilter: (filterValue: any, item: any) => {
+                    return item[dataIndex] === filterValue;
+                  },
                 }
               : {};
-
           return {
             title,
             dataIndex,
@@ -147,9 +157,17 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
   ];
 
   const onClickDownload = () => {
+    const allColumnsTitles: string[] = headerProperties
+      ? headerProperties.map(x => x.dataIndex)
+      : [];
+    const selectedColumnTitles = selectedColumns
+      ? selectedColumns.map(x => x.dataIndex)
+      : [];
+    const columnsToOmit = difference(allColumnsTitles, selectedColumnTitles);
+    console.log(columnsToOmit);
     if (tableItems) {
       const itemsToSave = tableItems.map(item =>
-        omit(item, 'id', 'key', 'self')
+        omit(item, 'id', 'key', 'self', ...columnsToOmit)
       );
       const fieldValue = (key: string, value: string) =>
         value === null ? '' : value;
@@ -157,7 +175,7 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
 
       const csv = itemsToSave.map(row =>
         header
-          .map(fieldName => JSON.stringify(row[fieldName], fieldValue))
+          .map((fieldName: any) => JSON.stringify(row[fieldName], fieldValue))
           .join(',')
       );
 
@@ -174,9 +192,21 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
     }
   };
 
+  const handleColumnSelect = (value: string[]) => {
+    if (value && value.length === 0) {
+      setSelectedColumns(headerProperties);
+    } else {
+      const selected = headerProperties?.filter(x => value.includes(x.title));
+      setSelectedColumns(selected);
+    }
+  };
+
   return (
     <div className="result-table">
       <Table
+        onChange={(pagination, filters, sorters) => {
+          setFilteredValues(filters);
+        }}
         onRow={data => ({
           onClick: event => {
             event.preventDefault();
@@ -197,15 +227,46 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
         scroll={{ x: '100%' }}
         title={() => (
           <div className="header">
-            {(showPagination || !!searchValue) && (
-              <Search
-                className="search"
-                value={searchValue}
-                onChange={(e: React.FormEvent<HTMLInputElement>) => {
-                  setSearchValue(e.currentTarget.value);
-                }}
-              />
-            )}
+            <Search
+              className="search"
+              value={searchValue}
+              onChange={(e: React.FormEvent<HTMLInputElement>) => {
+                setSearchValue(e.currentTarget.value);
+              }}
+            />
+
+            <Select
+              allowClear
+              mode="multiple"
+              size={'middle'}
+              placeholder="Please select columns"
+              defaultValue={selectedColumns?.map(x => x.title)}
+              value={selectedColumns?.map(x => x.title)}
+              onChange={handleColumnSelect}
+              className="select-column"
+            >
+              {headerProperties?.map(x => {
+                return (
+                  <Option key={x.dataIndex} value={x.title}>
+                    {x.title}
+                  </Option>
+                );
+              })}
+            </Select>
+
+            <Button
+              onClick={() => {
+                setFilteredValues(null);
+                setSelectedColumns(headerProperties);
+                setSearchValue('');
+              }}
+              type="primary"
+              className="reset"
+            >
+              {' '}
+              Reset
+            </Button>
+
             <div className="controls">
               <div className="total">
                 {total} {`Result${total > 1 ? 's' : ''}`}
