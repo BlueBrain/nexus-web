@@ -57,6 +57,7 @@ export const useInputs = (
     )
       .then((result: SparqlViewQueryResponse) => {
         const data: SelectQueryResponse = result as SelectQueryResponse;
+
         // we have to do this because sparql duplicates bindings when inputs have multiple types -
         // creates an entry for each type in the list
         const uniqueInputs = [

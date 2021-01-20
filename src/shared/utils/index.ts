@@ -475,3 +475,11 @@ function filterPlugins(
   });
   return newPlugins;
 }
+
+export const forceAsArray = <T>(objectOrArray: T | T[] | null | undefined) => {
+  return !!objectOrArray
+    ? Array.isArray(objectOrArray)
+      ? objectOrArray
+      : [objectOrArray]
+    : [];
+};

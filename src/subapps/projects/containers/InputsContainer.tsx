@@ -6,6 +6,7 @@ import { useInputs } from '../hooks/useInputs';
 import InputsTable from '../components/InputsTable';
 import useLocalStorage from '../../../shared/hooks/useLocalStorage';
 import { DATASET_KEY } from '../../search/components/ResultGridActions';
+import { forceAsArray } from '../../../shared/utils';
 
 const InputsContainer: React.FC<{
   orgLabel: string;
@@ -15,8 +16,6 @@ const InputsContainer: React.FC<{
   const { inputs } = useInputs(orgLabel, projectLabel, stepId);
   const [collection, setCollection] = useLocalStorage(DATASET_KEY);
   const nexus = useNexusContext();
-
-  console.log({ inputs });
 
   React.useEffect(() => {
     if (!collection || !collection?.ids.length) {
@@ -41,6 +40,11 @@ const InputsContainer: React.FC<{
         }
       );
 
+      const updatedInputs = [
+        ...forceAsArray(workflowStep['nxv:inputs']),
+        { '@id': datasetResource['@id'] },
+      ];
+
       await nexus.Resource.update(
         orgLabel,
         projectLabel,
@@ -48,10 +52,7 @@ const InputsContainer: React.FC<{
         workflowStep._rev,
         {
           ...workflowStep,
-          'nxv:inputs': [
-            ...inputs.map(({ resourceId }) => ({ '@id': resourceId })),
-            { '@id': datasetResource['@id'] },
-          ],
+          'nxv:inputs': updatedInputs,
         }
       );
       notification.close(key);
