@@ -23,7 +23,7 @@ const InputsContainer: React.FC<{
       return;
     }
 
-    const key = `open${Date.now()}`;
+    const key = `${orgLabel}-${projectLabel}-${stepId}`;
 
     const createInputInWorkflowStep = async () => {
       const workflowStep = await nexus.Resource.get<{
@@ -85,6 +85,9 @@ const InputsContainer: React.FC<{
       description:
         'You have saved a dataset from search. Would you like to add it to this workflow step as an input?',
     });
+    return () => {
+      notification.close(key);
+    };
   }, [collection, orgLabel, projectLabel, stepId]);
 
   return <InputsTable inputs={inputs} />;
