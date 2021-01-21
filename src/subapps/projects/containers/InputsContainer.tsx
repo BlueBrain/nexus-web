@@ -13,7 +13,7 @@ const InputsContainer: React.FC<{
   projectLabel: string;
   stepId: string;
 }> = ({ orgLabel, projectLabel, stepId }) => {
-  const { inputs } = useInputs(orgLabel, projectLabel, stepId);
+  const { inputs, fetchInputs } = useInputs(orgLabel, projectLabel, stepId);
   const [collection, setCollection] = useLocalStorage(DATASET_KEY);
   const nexus = useNexusContext();
 
@@ -25,41 +25,54 @@ const InputsContainer: React.FC<{
     const key = `${orgLabel}-${projectLabel}-${stepId}`;
 
     const createInputInWorkflowStep = async () => {
-      const workflowStep = await nexus.Resource.get<{
-        'nxv:inputs': [];
-        _rev: number;
-      }>(orgLabel, projectLabel, encodeURIComponent(stepId));
-      const datasetResource = await nexus.Resource.create(
-        orgLabel,
-        projectLabel,
-        {
-          '@type': ['nxv:Dataset', 'nxv:Collection'],
-          collection: collection.ids.map((id: string) => ({ '@id': id })),
-          'http://schema.org/name': 'Imported Collection',
-          'nxv:description': 'Imported collection from Search',
-        }
-      );
+      try {
+        const workflowStep = await nexus.Resource.get<{
+          'nxv:inputs': [];
+          _rev: number;
+        }>(orgLabel, projectLabel, encodeURIComponent(stepId));
+        const datasetResource = await nexus.Resource.create(
+          orgLabel,
+          projectLabel,
+          {
+            '@type': ['nxv:Dataset', 'nxv:Collection'],
+            collection: collection.ids.map((id: string) => ({ '@id': id })),
+            'http://schema.org/name': 'Imported Collection',
+            'nxv:description': 'Imported collection from Search',
+          }
+        );
 
-      const updatedInputs = [
-        ...forceAsArray(workflowStep['nxv:inputs']),
-        { '@id': datasetResource['@id'] },
-      ];
+        const updatedInputs = [
+          ...forceAsArray(workflowStep['nxv:inputs']),
+          { '@id': datasetResource['@id'] },
+        ];
 
-      await nexus.Resource.update(
-        orgLabel,
-        projectLabel,
-        encodeURIComponent(stepId),
-        workflowStep._rev,
-        {
-          ...workflowStep,
-          'nxv:inputs': updatedInputs,
-        }
-      );
-      notification.close(key);
-      setCollection(null);
-      // TODO
-      // The user won't see the list updated unless they refresh, because it takes time to propogate.
-      // How to improve that experience?
+        await nexus.Resource.update(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(stepId),
+          workflowStep._rev,
+          {
+            ...workflowStep,
+            'nxv:inputs': updatedInputs,
+          }
+        );
+        notification.close(key);
+        setCollection(null);
+        // TODO: because there is a delay in indexing for SPARQL, this function
+        // might not return the updated list in time.
+        // We might have to implement a memo-ized polling solution
+        fetchInputs();
+        notification.open({
+          message: 'Inputs succesfully updated',
+          description: 'You may have to refresh the page to see changes.',
+        });
+      } catch (error) {
+        notification.error({
+          message: 'Could not import saved collection',
+          description: error.message,
+          duration: null,
+        });
+      }
     };
 
     const btn = (

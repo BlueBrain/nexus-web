@@ -32,7 +32,7 @@ export const useInputs = (
 
   React.useEffect(() => {
     fetchInputs();
-  }, []);
+  }, [orgLabel, projectLabel, workflowStepId]);
 
   const fetchInputs = () => {
     const inputsQuery = `
@@ -92,5 +92,6 @@ export const useInputs = (
 
   return {
     inputs,
+    fetchInputs,
   };
 };
