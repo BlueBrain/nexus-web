@@ -50,10 +50,15 @@ export enum SortDirection {
 
 export type UseSearchProps = {
   query?: string;
-  sort?: {
-    key: string;
-    direction: SortDirection;
-  };
+  sort?:
+    | {
+        key: string;
+        direction: SortDirection;
+      }
+    | {
+        key: string;
+        direction: SortDirection;
+      }[];
   pagination?: {
     from: number;
     size: number;
@@ -83,7 +88,7 @@ export default function useSearchQuery(selfURL?: string | null) {
   });
   const {
     query,
-    sort = DEFAULT_SEARCH_PROPS.sort,
+    sort,
     pagination = DEFAULT_SEARCH_PROPS.pagination,
     facetMap = new Map<
       string,
@@ -111,8 +116,16 @@ export default function useSearchQuery(selfURL?: string | null) {
       // TODO upgrade typescript to enable spread arguments
       // @ts-ignore
       .filter(...matchQuery)
-      .filter('term', '_deprecated', false)
-      .sort(sort.key, sort.direction);
+      .filter('term', '_deprecated', false);
+
+    // Sorting
+    if (Array.isArray(sort)) {
+      sort.forEach(sort => {
+        body.sort(sort.key, sort.direction);
+      });
+    } else {
+      sort && body.sort(sort.key, sort.direction);
+    }
 
     facetMap.forEach(({ propertyKey, type, label, value }) => {
       value.forEach(item => {

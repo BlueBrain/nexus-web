@@ -3,16 +3,21 @@ import { Table, Tooltip, Button, Input, Select } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import * as prettyBytes from 'pretty-bytes';
-import { UseSearchResponse } from '../../hooks/useSearchQuery';
+import {
+  SortDirection,
+  UseSearchProps,
+  UseSearchResponse,
+} from '../../hooks/useSearchQuery';
 import TypesIconList from '../Types/TypesIcon';
 import { getResourceLabel } from '../../utils';
 import { convertMarkdownHandlebarStringWithData } from '../../utils/markdownTemplate';
 import { parseURL } from '../../utils/nexusParse';
 import { FILE_SCHEMA } from '../../types/nexus';
 import { match } from 'ts-pattern';
-import { TableRowSelection } from 'antd/lib/table/interface';
+import { SorterResult, TableRowSelection } from 'antd/lib/table/interface';
 import { ResultTableFields } from '../../types/search';
 import './../../styles/result-table.less';
+import { sortBy } from 'lodash';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -22,8 +27,9 @@ export interface ResultsGridProps {
   pagination: TablePaginationConfig;
   searchResponse: UseSearchResponse;
   fields: ResultTableFields[];
-  onClickItem: (resource: Resource) => void;
   isStudio?: boolean;
+  onClickItem: (resource: Resource) => void;
+  onSort?: (sort: UseSearchProps['sort']) => void;
 }
 
 export const DEFAULT_FIELDS = [
@@ -34,7 +40,7 @@ export const DEFAULT_FIELDS = [
   },
   {
     title: 'Project',
-    dataIndex: ['resourceAdminData', 'project'],
+    dataIndex: '_project', // ['resourceAdminData', 'project'],
     key: 'project',
   },
   {
@@ -54,8 +60,9 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
   searchResponse,
   fields,
   rowSelection,
-  onClickItem,
   isStudio,
+  onClickItem,
+  onSort,
 }) => {
   const [searchValue, setSearchValue] = React.useState<string>('');
 
@@ -121,7 +128,7 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
     return match(field.key)
       .with('label', () => ({
         ...field,
-        sorter: sorter('label'),
+        // sorter: sorter('label'),
         render: (text: string, resource: Resource) => {
           return getResourceLabel(resource);
         },
@@ -182,6 +189,25 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
     onClickItem(resource);
   };
 
+  const handleTableChange = (
+    pagination: TablePaginationConfig,
+    filters: Record<string, React.ReactText[] | null>,
+    sorter: SorterResult<any> | SorterResult<any>[]
+  ) => {
+    console.log({ sorter });
+    const toSortBy = Array.isArray(sorter) ? sorter : [sorter];
+    onSort &&
+      onSort(
+        toSortBy.map(sorter => ({
+          key: `${sorter.columnKey}`,
+          direction:
+            sorter.order === 'ascend'
+              ? SortDirection.ASCENDING
+              : SortDirection.DESCENDING,
+        }))
+      );
+  };
+
   const renderTitle = () => (
     <div className="header">
       <Search
@@ -226,9 +252,10 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
   return (
     <div className="result-table">
       <Table
+        onChange={handleTableChange}
         rowSelection={rowSelection}
         dataSource={filteredItems}
-        columns={selectedColumns}
+        columns={isStudio ? selectedColumns : columns}
         pagination={pagination}
         bordered
         title={isStudio ? renderTitle : undefined}
