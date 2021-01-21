@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Table, Tooltip, Button, Input, Select } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
+import { match } from 'ts-pattern';
+
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
-import * as prettyBytes from 'pretty-bytes';
 import {
   SortDirection,
   UseSearchProps,
@@ -12,8 +13,6 @@ import TypesIconList from '../Types/TypesIcon';
 import { getResourceLabel } from '../../utils';
 import { convertMarkdownHandlebarStringWithData } from '../../utils/markdownTemplate';
 import { parseURL } from '../../utils/nexusParse';
-import { FILE_SCHEMA } from '../../types/nexus';
-import { match } from 'ts-pattern';
 import { SorterResult, TableRowSelection } from 'antd/lib/table/interface';
 import { ResultTableFields } from '../../types/search';
 import './../../styles/result-table.less';
@@ -40,24 +39,28 @@ export const DEFAULT_FIELDS = [
     title: 'Label',
     dataIndex: 'label',
     key: 'label',
+    displayIndex: 0,
   },
   {
     title: 'Project',
     dataIndex: '_project',
     sortable: true,
     key: 'project',
+    displayIndex: 1,
   },
   {
     title: 'Schema',
     dataIndex: '_constrainedBy',
     sortable: true,
     key: 'schema',
+    displayIndex: 2,
   },
   {
     title: 'Types',
     dataIndex: '@type',
     sortable: true,
     key: '@type',
+    displayIndex: 3,
   },
 ];
 
@@ -261,7 +264,9 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
         onChange={handleTableChange}
         rowSelection={rowSelection}
         dataSource={filteredItems}
-        columns={isStudio ? selectedColumns : columns}
+        columns={
+          isStudio ? selectedColumns : sortBy(columns, ['displayIndex', 'key'])
+        }
         pagination={pagination}
         bordered
         title={isStudio ? renderTitle : undefined}

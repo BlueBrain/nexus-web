@@ -29,4 +29,5 @@ export type ResultTableFields = {
   dataIndex: string | string[];
   sortable?: boolean;
   key: string;
+  displayIndex: number;
 };
