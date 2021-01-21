@@ -13,6 +13,7 @@ import {
   matchPlugins,
   pluginsMap,
   makeStudioUri,
+  forceAsArray,
 } from '..';
 
 const identities: Identity[] = [
@@ -622,6 +623,21 @@ describe('utils functions', () => {
       expect(makeStudioUri(orgLabel, projectLabel, studioId)).toEqual(
         studioUri
       );
+    });
+  });
+
+  describe('forceAsArray()', () => {
+    it('returns an array if the input is an object', () => {
+      expect(forceAsArray({ thing: 1 })).toEqual([{ thing: 1 }]);
+      expect(forceAsArray({ thing: 1 })).not.toEqual([]);
+    });
+    it('returns an array if the input is an array', () => {
+      expect(forceAsArray([{ thing: 1 }])).toEqual([{ thing: 1 }]);
+      expect(forceAsArray({ thing: 1 })).not.toEqual([]);
+    });
+    it('returns an empty array if the input is null or undefined', () => {
+      expect(forceAsArray(null)).toEqual([]);
+      expect(forceAsArray(undefined)).toEqual([]);
     });
   });
 });

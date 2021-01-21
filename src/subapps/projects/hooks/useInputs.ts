@@ -32,7 +32,7 @@ export const useInputs = (
 
   React.useEffect(() => {
     fetchInputs();
-  }, []);
+  }, [orgLabel, projectLabel, workflowStepId]);
 
   const fetchInputs = () => {
     const inputsQuery = `
@@ -57,6 +57,7 @@ export const useInputs = (
     )
       .then((result: SparqlViewQueryResponse) => {
         const data: SelectQueryResponse = result as SelectQueryResponse;
+
         // we have to do this because sparql duplicates bindings when inputs have multiple types -
         // creates an entry for each type in the list
         const uniqueInputs = [
@@ -75,20 +76,22 @@ export const useInputs = (
           return {
             types,
             createdAt: allInputEntries[0].createdAt.value,
-            name: allInputEntries[0].name.value,
+            name: allInputEntries[0]?.name?.value || 'No name',
             resourceId: allInputEntries[0].resource.value,
-            description: allInputEntries[0].description.value,
+            description:
+              allInputEntries[0]?.description?.value || 'No description',
           };
         });
 
         setInputs(parsedList);
       })
-      .catch(error =>
-        displayError(error, 'Failed to fetch Workflow Step inputs')
-      );
+      .catch(error => {
+        displayError(error, 'Failed to fetch Workflow Step inputs');
+      });
   };
 
   return {
     inputs,
+    fetchInputs,
   };
 };
