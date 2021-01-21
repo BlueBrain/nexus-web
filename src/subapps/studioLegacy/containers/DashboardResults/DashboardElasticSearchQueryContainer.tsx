@@ -3,6 +3,7 @@ import * as React from 'react';
 import ElasticSearchResultsTable, {
   DEFAULT_FIELDS,
 } from '../../../../shared/components/ElasticSearchResultsTable';
+import { UseSearchProps } from '../../../../shared/hooks/useSearchQuery';
 import { ResultTableFields } from '../../../../shared/types/search';
 import useSearchQuery from '../../../hooks/useSearchQuery';
 
@@ -32,6 +33,13 @@ const DashboardElasticSearchQueryContainer: React.FC<{
     });
   };
 
+  const handleSort = (sort: UseSearchProps['sort']) => {
+    setSearchProps({
+      ...searchProps,
+      sort,
+    });
+  };
+
   // Pagination Props
   const total = searchResponse.data?.hits.total.value || 0;
   const size = searchProps.pagination?.size || 0;
@@ -46,6 +54,7 @@ const DashboardElasticSearchQueryContainer: React.FC<{
       fields={fields || DEFAULT_FIELDS}
       searchResponse={searchResponse}
       onClickItem={handleClickItem}
+      onSort={handleSort}
       pagination={
         shouldShowPagination
           ? {
