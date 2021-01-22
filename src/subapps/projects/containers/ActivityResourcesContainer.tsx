@@ -42,7 +42,6 @@ const ActivityResourcesContainer: React.FC<{
       })
       .catch(error => displayError(error, 'Failed to save'));
   };
-  console.log(headerProperties);
 
   return (
     <div className="resources-list" style={{ margin: '20px' }}>
