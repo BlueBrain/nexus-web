@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Spin } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
-import { isArray } from 'lodash';
 import ResultsTable from '../../../shared/components/SparqlResultsTable';
 import { displayError } from '../components/Notifications';
 import fusionConfig from '../config';
 import { CodeResourceData } from '../components/LinkCodeForm';
 import { StepResource } from '../views/WorkflowStepView';
 import { useLinkedActivities, ActivityItem } from '../hooks/useActivities';
+import { createWorkflowBase } from '../utils/index';
 
 const ActivityResourcesContainer: React.FC<{
   orgLabel: string;
@@ -16,15 +16,7 @@ const ActivityResourcesContainer: React.FC<{
   linkCodeToActivity: (codeResourceId: string) => void;
 }> = ({ orgLabel, projectLabel, workflowStep, linkCodeToActivity }) => {
   const nexus = useNexusContext();
-  let base;
-  if (isArray(workflowStep['@context'])) {
-    const context = workflowStep['@context'] as {
-      [key: string]: any;
-    }[];
-    base = context[0]['@base'];
-  } else {
-    base = workflowStep['@context'];
-  }
+  let base = createWorkflowBase(workflowStep);
 
   const { items, headerProperties } = useLinkedActivities(
     orgLabel,
