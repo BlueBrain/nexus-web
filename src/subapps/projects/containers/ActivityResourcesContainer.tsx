@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { Spin } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
-
-import ResultsTable from '../../../shared/components/SparqlResultsTable';
+import { isArray } from 'lodash';
+import ResultsTable, {
+  HeaderProperties,
+} from '../../../shared/components/SparqlResultsTable';
 import { displayError } from '../components/Notifications';
 import fusionConfig from '../config';
 import { CodeResourceData } from '../components/LinkCodeForm';
@@ -16,10 +18,20 @@ const ActivityResourcesContainer: React.FC<{
   linkCodeToActivity: (codeResourceId: string) => void;
 }> = ({ orgLabel, projectLabel, workflowStep, linkCodeToActivity }) => {
   const nexus = useNexusContext();
+  let base;
+  if (isArray(workflowStep['@context'])) {
+    const context = workflowStep['@context'] as {
+      [key: string]: any;
+    }[];
+    base = context[0]['@base'];
+  } else {
+    base = workflowStep['@context'];
+  }
+
   const { items, headerProperties } = useLinkedActivities(
     orgLabel,
     projectLabel,
-    workflowStep._self
+    `${base}${workflowStep['@id']}`
   );
 
   const addCodeResource = (data: CodeResourceData) => {
@@ -32,11 +44,13 @@ const ActivityResourcesContainer: React.FC<{
       })
       .catch(error => displayError(error, 'Failed to save'));
   };
+  console.log(headerProperties);
 
   return (
     <div className="resources-list" style={{ margin: '20px' }}>
       <Spin spinning={items ? false : true}>
         <ResultsTable
+          tableLabel="Activities"
           headerProperties={headerProperties}
           items={items ? (items as ActivityItem[]) : []}
           handleClick={() => {}}

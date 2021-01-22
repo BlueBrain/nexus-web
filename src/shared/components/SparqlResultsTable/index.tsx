@@ -15,10 +15,11 @@ const MAX_FILTER_LIMIT = 20;
 const MIN_FILTER_LIMIT = 1;
 const DATE_FORMAT = 'DD-MM-YYYY, HH:mm';
 
-type HeaderProperties = {
+export type HeaderProperties = {
   title: string;
   dataIndex: string;
 }[];
+
 export type ResultTableProps = {
   headerProperties?: HeaderProperties;
   items: {
@@ -58,9 +59,13 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
   const tableItems = searchValue ? filteredItems : items;
   const total = tableItems.length;
   const showPagination = total > pageSize;
+  const columnsToSelect =
+    selectedColumns && selectedColumns.length > 0
+      ? selectedColumns
+      : headerProperties;
   const columnList = [
-    ...(selectedColumns
-      ? selectedColumns.map(({ title, dataIndex }) => {
+    ...(columnsToSelect
+      ? columnsToSelect.map(({ title, dataIndex }) => {
           // We can create special renderers for the cells here
           let render;
           switch (title) {
