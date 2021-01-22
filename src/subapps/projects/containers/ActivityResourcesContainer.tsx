@@ -2,9 +2,7 @@ import * as React from 'react';
 import { Spin } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 import { isArray } from 'lodash';
-import ResultsTable, {
-  HeaderProperties,
-} from '../../../shared/components/SparqlResultsTable';
+import ResultsTable from '../../../shared/components/SparqlResultsTable';
 import { displayError } from '../components/Notifications';
 import fusionConfig from '../config';
 import { CodeResourceData } from '../components/LinkCodeForm';
