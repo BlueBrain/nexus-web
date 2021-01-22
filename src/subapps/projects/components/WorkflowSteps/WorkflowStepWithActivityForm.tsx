@@ -277,11 +277,6 @@ const WorkflowStepWithActivityForm: React.FC<{
                 </Select>
               )}
             </Item>
-            <Item label="Informs">
-              <Select defaultValue="disabled" disabled>
-                <Select.Option value="disabled">Disabled</Select.Option>
-              </Select>
-            </Item>
             <Item label="Parent Workflow Step">
               <Select value={parentLabel} disabled>
                 <Select.Option value={parentLabel ? parentLabel : ''}>
