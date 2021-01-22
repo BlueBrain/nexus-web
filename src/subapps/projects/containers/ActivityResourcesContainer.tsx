@@ -16,7 +16,7 @@ const ActivityResourcesContainer: React.FC<{
   linkCodeToActivity: (codeResourceId: string) => void;
 }> = ({ orgLabel, projectLabel, workflowStep, linkCodeToActivity }) => {
   const nexus = useNexusContext();
-  let base = createWorkflowBase(workflowStep);
+  const base = createWorkflowBase(workflowStep);
 
   const { items, headerProperties } = useLinkedActivities(
     orgLabel,
