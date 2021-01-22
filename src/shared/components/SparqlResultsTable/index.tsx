@@ -164,7 +164,6 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
       ? selectedColumns.map(x => x.dataIndex)
       : [];
     const columnsToOmit = difference(allColumnsTitles, selectedColumnTitles);
-    console.log(columnsToOmit);
     if (tableItems) {
       const itemsToSave = tableItems.map(item =>
         omit(item, 'id', 'key', 'self', ...columnsToOmit)

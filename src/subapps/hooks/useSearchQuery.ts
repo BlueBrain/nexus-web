@@ -21,10 +21,15 @@ export enum SortDirection {
 
 export type UseSearchProps = {
   query?: object;
-  sort?: {
-    key: string;
-    direction: SortDirection;
-  };
+  sort?:
+    | {
+        key: string;
+        direction: SortDirection;
+      }
+    | {
+        key: string;
+        direction: SortDirection;
+      }[];
   pagination?: {
     from: number;
     size: number;
@@ -62,10 +67,18 @@ export default function useSearchQueryFromStudio(
 
     body
       .filter('term', '_deprecated', false)
-      .sort(sort.key, sort.direction)
       .size(pagination.size)
       .from(pagination.from)
       .rawOption('track_total_hits', TOTAL_HITS_TRACKING);
+
+    // Sorting
+    if (Array.isArray(sort)) {
+      sort.forEach(sort => {
+        body.sort(sort.key, sort.direction);
+      });
+    } else {
+      sort && body.sort(sort.key, sort.direction);
+    }
 
     const bodyQuery = body.build();
     const { org, project, id } = parseURL(selfURL);

@@ -229,6 +229,13 @@ const SearchView: React.FC = () => {
     setSearchViewType(value ? SEARCH_VIEW_TYPES.GRID : SEARCH_VIEW_TYPES.TABLE);
   };
 
+  const handleSort = (sort: UseSearchProps['sort']) => {
+    setSearchProps({
+      ...searchProps,
+      sort,
+    });
+  };
+
   // Pagination Props
   const total = searchResponse.data?.hits.total.value || 0;
   const size = searchProps.pagination?.size || 0;
@@ -446,6 +453,7 @@ const SearchView: React.FC = () => {
                     fields={fields}
                     searchResponse={searchResponse}
                     onClickItem={handleClickItem}
+                    onSort={handleSort}
                     pagination={
                       shouldShowPagination
                         ? {
