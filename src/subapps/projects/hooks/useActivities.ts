@@ -37,7 +37,7 @@ export const useLinkedActivities = (
     SELECT ?self ?resource ?name ?createdBy ?createdAt ?used ?generated ?resourceType
     WHERE {
       ?resource nxv:self ?self ;
-                <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <prov:Activity> ;
+                <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> prov:Activity ;
                 nxv:createdBy ?createdBy ;
                 nxv:createdAt ?createdAt ;
                 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?resourceType .
