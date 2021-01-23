@@ -1,5 +1,6 @@
 import { labelOf } from '../../../shared/utils';
-import { ResourceLink, Resource } from '@bbp/nexus-sdk';
+import { ResourceLink, Resource, NexusClient } from '@bbp/nexus-sdk';
+import fusionConfig from '../config';
 
 /**
  * isParentLink function - checks if a link created with a property 'hasParent'
@@ -82,4 +83,63 @@ export function createWorkflowBase(workflowStep: Resource) {
     base = workflowStep['@context'];
   }
   return base;
+}
+
+/**
+ *
+ * @param nexus
+ * @param orgLabel
+ * @param projectLabel
+ * @param stepId
+ */
+export async function fetchChildrenForStep(
+  nexus: NexusClient,
+  orgLabel: string,
+  projectLabel: string,
+  stepId: string
+) {
+  const links = await nexus.Resource.links(
+    orgLabel,
+    projectLabel,
+    encodeURIComponent(stepId),
+    'incoming'
+  );
+
+  const children = await Promise.all(
+    links._results
+      .filter(link => isParentLink(link))
+      .map(async step => {
+        const resource = await nexus.Resource.get(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(step['@id'])
+        );
+        return resource;
+      })
+  );
+  return children;
+}
+
+export async function fetchTopLevelSteps(
+  nexus: NexusClient,
+  orgLabel: string,
+  projectLabel: string
+) {
+  const allSteps = await nexus.Resource.list(orgLabel, projectLabel, {
+    type: fusionConfig.workflowStepType,
+    size: 200,
+    deprecated: false,
+  });
+
+  const children = await Promise.all(
+    allSteps._results.map((step: any) => {
+      return nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(step['@id'])
+      );
+    })
+  );
+
+  return children;
 }

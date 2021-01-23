@@ -2,11 +2,12 @@ import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import StepsBoard from '../components/WorkflowSteps/StepsBoard';
-import fusionConfig from '../config';
 import { displayError } from '../components/Notifications';
 import { StepResource } from '../views/WorkflowStepView';
 import StepCard from '../components/WorkflowSteps/StepCard';
 import ProjectPanel from '../components/ProjectPanel';
+import { fetchTopLevelSteps } from '../utils';
+import { NexusClient } from '@bbp/nexus-sdk';
 
 const WorkflowStepContainer: React.FC<{
   orgLabel: string;
@@ -22,29 +23,24 @@ const WorkflowStepContainer: React.FC<{
     setTimeout(() => setRefreshSteps(!refreshSteps), 3500);
 
   React.useEffect(() => {
-    nexus.Resource.list(orgLabel, projectLabel, {
-      type: fusionConfig.workflowStepType,
-      size: 200,
-      deprecated: false,
-    })
-      .then(response => {
-        fetchActivities(response._results);
-      })
-      .catch(error => displayError(error, 'An error occurred'));
+    fetchAllSteps(nexus, orgLabel, projectLabel);
   }, [refreshSteps]);
 
-  const fetchActivities = (activities: any) => {
-    Promise.all(
-      activities.map((activity: any) => {
-        return nexus.Resource.get(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(activity['@id'])
-        );
-      })
-    )
-      .then(response => setSteps(response as StepResource[]))
-      .catch(error => displayError(error, 'An error occurred'));
+  const fetchAllSteps = async (
+    nexus: NexusClient,
+    orgLabel: string,
+    projectLabel: string
+  ) => {
+    try {
+      const allSteps = (await fetchTopLevelSteps(
+        nexus,
+        orgLabel,
+        projectLabel
+      )) as StepResource[];
+      setSteps(allSteps);
+    } catch (e) {
+      displayError(e, 'Failed to fetch workflow steps');
+    }
   };
 
   const topLevelSteps: StepResource[] = steps.filter(step => !step.hasParent);

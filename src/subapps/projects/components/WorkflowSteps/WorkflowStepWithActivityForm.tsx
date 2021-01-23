@@ -31,7 +31,7 @@ const WorkflowStepWithActivityForm: React.FC<{
   layout?: 'vertical' | 'horisontal';
   title?: string;
   workflowStep?: StepResource;
-  informedByLabel?: string;
+  informedByIds?: string[];
   siblings?: {
     name: string;
     '@id': string;
@@ -50,7 +50,7 @@ const WorkflowStepWithActivityForm: React.FC<{
   layout,
   title,
   workflowStep,
-  informedByLabel,
+  informedByIds,
   siblings,
   activityList,
   allowActivitySearch = true,
@@ -79,7 +79,10 @@ const WorkflowStepWithActivityForm: React.FC<{
   const [descriptionError, setDescriptionError] = React.useState<boolean>(
     false
   );
-  const [informedBy, setInformedBy] = React.useState<string>('');
+
+  const [informedBy, setInformedBy] = React.useState<string[]>(
+    informedByIds ? informedByIds : []
+  );
 
   const activityOptions = activityList.map(activity => ({
     value: activity.label,
@@ -157,8 +160,12 @@ const WorkflowStepWithActivityForm: React.FC<{
     setDateError(false);
   };
 
-  const onChangeInformedBy = (selected: string) => {
-    setInformedBy(selected);
+  const onChangeInformedBy = (selected: string[]) => {
+    if (selected) {
+      setInformedBy(selected);
+    } else {
+      setInformedBy([]);
+    }
   };
 
   const onSelectActivity = (value: string) => {
@@ -184,9 +191,9 @@ const WorkflowStepWithActivityForm: React.FC<{
       };
 
       if (informedBy) {
-        data.wasInformedBy = {
-          '@id': informedBy,
-        };
+        data.wasInformedBy = informedBy.map(i => {
+          return { '@id': i };
+        });
       }
 
       onSubmit(data);
@@ -252,30 +259,25 @@ const WorkflowStepWithActivityForm: React.FC<{
               />
             </Item>
             <Item label="Informed By">
-              {informedByLabel ? (
-                <Select disabled value={informedByLabel}>
-                  <Select.Option value={informedByLabel}>
-                    {informedByLabel}
-                  </Select.Option>
-                </Select>
-              ) : (
-                <Select onChange={onChangeInformedBy} value={informedBy}>
-                  {siblings && siblings.length > 0 ? (
-                    siblings.map(sibling => (
-                      <Select.Option
-                        value={sibling['@id']}
-                        key={`sibling-${sibling['@id']}`}
-                      >
-                        {sibling.name}
-                      </Select.Option>
-                    ))
-                  ) : (
-                    <Select.Option value={informedBy}>
-                      {informedBy}
+              <Select
+                mode="multiple"
+                onChange={onChangeInformedBy}
+                value={informedBy}
+                defaultValue={informedBy}
+                allowClear
+                size={'middle'}
+                placeholder="Please select"
+              >
+                {siblings && siblings.length > 0 ? (
+                  siblings.map(sibling => (
+                    <Select.Option value={sibling['@id']} key={sibling['@id']}>
+                      {sibling.name}
                     </Select.Option>
-                  )}
-                </Select>
-              )}
+                  ))
+                ) : (
+                  <Select.Option value={''}>{''}</Select.Option>
+                )}
+              </Select>
             </Item>
             <Item label="Parent Workflow Step">
               <Select value={parentLabel} disabled>

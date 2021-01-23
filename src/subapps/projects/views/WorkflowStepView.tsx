@@ -12,7 +12,7 @@ import { displayError, successNotification } from '../components/Notifications';
 import { Status } from '../components/StatusIcon';
 import SingleStepContainer from '../containers/SingleStepContainer';
 import StepInfoContainer from '../containers/StepInfoContainer';
-import { isParentLink } from '../utils';
+import { fetchChildrenForStep } from '../utils';
 import ActivityResourcesContainer from '../containers/ActivityResourcesContainer';
 import StepViewTabs, { Tabs } from '../components/StepViewTabs';
 import useQueryString from '../../../shared/hooks/useQueryString';
@@ -104,39 +104,23 @@ const WorkflowStepView: React.FC = () => {
       })
       .catch(error => displayError(error, 'Failed to load activity'));
 
-    fetchChildren();
+    fetchChildren(stepId);
   }, [refreshSteps, stepId]);
 
-  const fetchChildren = () => {
-    nexus.Resource.links(
+  const fetchChildren = async (stepId: string) => {
+    const children = (await fetchChildrenForStep(
+      nexus,
       orgLabel,
       projectLabel,
-      encodeURIComponent(stepId),
-      'incoming'
-    )
-      .then(response => {
-        Promise.all(
-          response._results
-            .filter(link => isParentLink(link))
-            .map(step => {
-              return nexus.Resource.get(
-                orgLabel,
-                projectLabel,
-                encodeURIComponent(step['@id'])
-              );
-            })
-        )
-          .then(response => {
-            const children = response as StepResource[];
-
-            setSteps(children);
-            setSiblings(
-              children.map(child => ({ name: child.name, '@id': child._self }))
-            );
-          })
-          .catch(error => displayError(error, 'Failed to load Workflow Steps'));
-      })
-      .catch(error => displayError(error, 'Failed to load Workflow Steps'));
+      stepId
+    )) as StepResource[];
+    setSteps(children);
+    setSiblings(
+      children.map(child => ({
+        name: child.name,
+        '@id': child._self,
+      }))
+    );
   };
 
   const stepToBreadcrumbItem = (step: StepResource) => ({
