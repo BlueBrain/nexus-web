@@ -19,6 +19,11 @@ const NewProjectContainer: React.FC<{}> = () => {
     (state: RootState) => state.oidc.user?.profile.preferred_username
   );
 
+  const identities = useSelector((state: RootState) => state.auth.identities);
+  const authenticatedIdentity = identities?.data?.identities.find(i => {
+    return i['@type'] === 'Authenticated';
+  });
+
   const onClickAddProject = () => {
     setShowForm(true);
   };
@@ -26,8 +31,7 @@ const NewProjectContainer: React.FC<{}> = () => {
   const submitProject = (data: ProjectMetadata) => {
     setBusy(true);
     const userOrgLabel = `${fusionConfig.personalOrgPrefix}${userName}`;
-    const { name, description } = data;
-
+    const { name, description, type, visibility } = data;
     const createOrganization = () =>
       nexus.Organization.create(userOrgLabel, {
         description: 'Personal projects storage',
@@ -46,6 +50,9 @@ const NewProjectContainer: React.FC<{}> = () => {
       })
         .then(() => {
           createResource();
+          if (type === 'personal' && visibility === 'public') {
+            makeProjectPublic(userOrgLabel, name);
+          }
         })
         .catch(error => {
           if (error['@type'] === 'OrganizationNotFound') {
@@ -73,6 +80,23 @@ const NewProjectContainer: React.FC<{}> = () => {
         });
 
     createProject();
+  };
+
+  const makeProjectPublic = async (userOrgLabel: string, name: string) => {
+    try {
+      const response = await nexus.ACL.append(`${userOrgLabel}/${name}`, 0, {
+        acl: [
+          {
+            permissions: ['resources/read', 'projects/read', 'projects/write'],
+            identity: {
+              realm: authenticatedIdentity?.realm,
+            },
+          },
+        ],
+      });
+    } catch (error) {
+      displayError(error, 'Failed to make project public');
+    }
   };
 
   const handleCancel = () => {
