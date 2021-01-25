@@ -345,7 +345,13 @@ const SearchView: React.FC = () => {
                       ...JSON.parse(_source._original_source),
                     })
                   ),
-                  fields: fields.map(field => field.key),
+                  fields: fields.map(field => ({
+                    label: field.title,
+                    value: (Array.isArray(field.dataIndex)
+                      ? field.dataIndex
+                      : [field.dataIndex]
+                    ).join('.'),
+                  })),
                 }}
               />
             </ActiveFilters>
