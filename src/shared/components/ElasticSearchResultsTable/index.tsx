@@ -78,8 +78,14 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
   const results = (searchResponse.data?.hits.hits || []).map(({ _source }) => {
     const { _original_source, ...everythingElse } = _source;
 
+    let parsedSource = {};
+    try {
+      parsedSource = JSON.parse(_original_source);
+    } catch (error) {
+      console.warn(_original_source);
+    }
     const resource = {
-      ...JSON.parse(_original_source),
+      ...parsedSource,
       ...everythingElse,
     };
 

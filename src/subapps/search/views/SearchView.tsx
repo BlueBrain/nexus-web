@@ -345,10 +345,18 @@ const SearchView: React.FC = () => {
                 dataset={{ ids: selectedRowKeys.map(key => key.toString()) }}
                 csv={{
                   data: (searchResponse.data?.hits.hits || []).map(
-                    ({ _source }) => ({
-                      ..._source,
-                      ...JSON.parse(_source._original_source),
-                    })
+                    ({ _source }) => {
+                      let parsedSource = {};
+                      try {
+                        parsedSource = JSON.parse(_source._original_source);
+                      } catch (error) {
+                        console.warn(_source._original_source);
+                      }
+                      return {
+                        ..._source,
+                        ...parsedSource,
+                      };
+                    }
                   ),
                   fields: fields.map(field => ({
                     label: field.title,
