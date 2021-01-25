@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Drawer, Button } from 'antd';
-
+import { fetchChildrenForStep, fetchTopLevelSteps } from '../utils';
 import { displayError, successNotification } from '../components/Notifications';
 import { StepResource } from '../views/WorkflowStepView';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
@@ -18,8 +18,11 @@ const StepInfoContainer: React.FC<{
   const [showForm, setShowForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
   const [parentLabel, setParentLabel] = React.useState<string>();
-  const [informedByLabel, setInfomedByLabel] = React.useState<string>();
+  const [informedByIds, setInformedByIds] = React.useState<string[]>([]);
   const [originalPayload, setOriginalPayload] = React.useState<StepResource>();
+  const [siblings, setSiblings] = React.useState<
+    { name: string; '@id': string }[]
+  >([]);
 
   React.useEffect(() => {
     nexus.Resource.getSource(
@@ -43,21 +46,40 @@ const StepInfoContainer: React.FC<{
         .catch(error => displayError(error, 'Failed to load parent activity'));
     }
 
-    if (step.wasInformedBy) {
-      nexus.Resource.get(
+    setInformedByIds(parseWasInformedById(step));
+
+    fetchChildren(step);
+  }, [step]);
+
+  const fetchChildren = async (step: StepResource) => {
+    let siblingSet;
+    if (step && step.hasParent) {
+      siblingSet = (await fetchChildrenForStep(
+        nexus,
         orgLabel,
         projectLabel,
-        encodeURIComponent(step.wasInformedBy['@id'])
-      )
-        .then(response => {
-          const inputStep = response as StepResource;
-          setInfomedByLabel(inputStep.name);
-        })
-        .catch(error =>
-          displayError(error, 'Failed to load parent Workflow Step')
-        );
+        step.hasParent['@id']
+      )) as StepResource[];
+    } else {
+      const allSteps = (await fetchTopLevelSteps(
+        nexus,
+        orgLabel,
+        projectLabel
+      )) as StepResource[];
+      siblingSet = allSteps.filter(step => !step.hasParent);
     }
-  }, [step]);
+
+    setSiblings(
+      siblingSet
+        .filter(child => {
+          return child['@id'] !== step['@id'];
+        })
+        .map(child => ({
+          name: child.name,
+          '@id': child._self,
+        }))
+    );
+  };
 
   const updateStep = (data: any) => {
     nexus.Resource.update(orgLabel, projectLabel, step['@id'], step._rev, {
@@ -90,7 +112,8 @@ const StepInfoContainer: React.FC<{
           onSubmit={updateStep}
           busy={busy}
           parentLabel={parentLabel}
-          informedByLabel={informedByLabel}
+          informedByIds={informedByIds}
+          siblings={siblings}
           layout="vertical"
           workflowStep={step}
           activityList={[]}
@@ -102,3 +125,23 @@ const StepInfoContainer: React.FC<{
 };
 
 export default StepInfoContainer;
+/**
+ *
+ * @param step
+ * Check wasInformedBy. Add full url Ids.
+ */
+function parseWasInformedById(step: StepResource) {
+  let informedByIds: string[] = [];
+  if (step.wasInformedBy) {
+    if (Array.isArray(step.wasInformedBy)) {
+      informedByIds = step.wasInformedBy.map(i => {
+        const fullId = step._self.replace(step['@id'], i['@id']);
+        return fullId;
+      });
+    } else {
+      const fullId = step._self.replace(step['@id'], step.wasInformedBy['@id']);
+      informedByIds = [fullId];
+    }
+  }
+  return informedByIds;
+}
