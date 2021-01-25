@@ -68,7 +68,7 @@ const NewProjectContainer: React.FC<{}> = () => {
         '@type': fusionConfig.fusionProjectTypes,
         ...data,
       })
-        .then(x => {
+        .then(() => {
           notification.success({
             message: `Project ${name} created successfully`,
           });
