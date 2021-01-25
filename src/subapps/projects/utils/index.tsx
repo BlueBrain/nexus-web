@@ -68,6 +68,7 @@ export const isEmptyInput = (value: string) => {
 };
 
 /**
+ * parse the context and get the 'base' URI of the resource.
  *
  * @param workflowStep
  */
@@ -86,6 +87,7 @@ export function createWorkflowBase(workflowStep: Resource) {
 }
 
 /**
+ * Fetch all children of a given work flow step, represented by the stepId param.
  *
  * @param nexus
  * @param orgLabel
@@ -120,6 +122,13 @@ export async function fetchChildrenForStep(
   return children;
 }
 
+/**
+ * Fetch all workflow steps in a project.
+ *
+ * @param nexus {NexusClient}
+ * @param orgLabel  {string}
+ * @param projectLabel {string}
+ */
 export async function fetchTopLevelSteps(
   nexus: NexusClient,
   orgLabel: string,
