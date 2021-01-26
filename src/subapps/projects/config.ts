@@ -27,36 +27,16 @@ export const fusionConfig = {
   // Default API mappings for project creation.
   defaultAPIMappings: [
     {
-      prefix: 'datashapes',
-      namespace: 'https://neuroshapes.org/dash/',
-    },
-    {
       prefix: 'prov',
       namespace: 'http://www.w3.org/ns/prov#',
-    },
-    {
-      prefix: 'ontologies',
-      namespace: 'https://neuroshapes.org/dash/ontology',
-    },
-    {
-      prefix: 'context',
-      namespace: 'https://incf.github.io/neuroshapes/contexts/',
     },
     {
       prefix: 'provcommonshapes',
       namespace: 'https://provshapes.org/commons/',
     },
     {
-      prefix: 'commonshapes',
-      namespace: 'https://neuroshapes.org/commons/',
-    },
-    {
       prefix: 'provdatashapes',
       namespace: 'https://provshapes.org/datashapes/',
-    },
-    {
-      prefix: 'taxonomies',
-      namespace: 'https://neuroshapes.org/dash/taxonomy',
     },
     {
       prefix: 'schemaorg',
