@@ -47,6 +47,7 @@ const NewProjectContainer: React.FC<{}> = () => {
     const createProject = () =>
       nexus.Project.create(userOrgLabel, name, {
         description,
+        apiMappings: fusionConfig.defaultAPIMappings,
       })
         .then(() => {
           createResource();

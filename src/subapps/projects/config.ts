@@ -23,6 +23,26 @@ export const fusionConfig = {
 
   // project to fetch datamodels from
   datamodelsActivityId: 'prov:Activity',
+
+  // Default API mappings for project creation.
+  defaultAPIMappings: [
+    {
+      prefix: 'prov',
+      namespace: 'http://www.w3.org/ns/prov#',
+    },
+    {
+      prefix: 'provcommonshapes',
+      namespace: 'https://provshapes.org/commons/',
+    },
+    {
+      prefix: 'provdatashapes',
+      namespace: 'https://provshapes.org/datashapes/',
+    },
+    {
+      prefix: 'schemaorg',
+      namespace: 'http://schema.org/',
+    },
+  ],
 };
 
 export default fusionConfig;
