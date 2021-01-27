@@ -77,25 +77,12 @@ export const DEFAULT_SEARCH_PROPS = {
 
 export interface UseSearchQueryProps {
   selfURL?: string | null;
-  // defaultFacetMap?: Map<string, FacetConfig & { value: Set<string> }>;
 }
 
 export default function useSearchQuery(props: UseSearchQueryProps) {
-  const {
-    selfURL,
-    // defaultFacetMap = new Map<
-    //   string,
-    //   {
-    //     propertyKey: string;
-    //     label: string;
-    //     type: 'terms';
-    //     value: Set<string>;
-    //   }
-    // >(),
-  } = props;
+  const { selfURL } = props;
   const [searchProps, setSearchProps] = React.useState<UseSearchProps>({
     ...DEFAULT_SEARCH_PROPS,
-    // facetMap: defaultFacetMap,
   });
   const {
     query,
@@ -109,6 +96,8 @@ export default function useSearchQuery(props: UseSearchQueryProps) {
   const makeBodyQuery = () => {
     // TODO fix query to match @id's as well
     // might need backend support
+    // TODO allow configurable query target
+    // not all ES View mappings will have this property.
     const matchQuery = query
       ? ['wildcard', '_original_source', `${query}*`]
       : ['match_all', {}];
