@@ -83,9 +83,6 @@ const SearchView: React.FC = () => {
     { searchProps, setSearchProps, query },
   ] = useSearchQuery({
     selfURL: preferedSearchConfig?.view,
-    // defaultFacetMap: generateDefaultSearchFilterMap(
-    //   preferedSearchConfig?.facets || []
-    // ),
   });
   const [queryParams, setQueryString] = useQueryString();
 
