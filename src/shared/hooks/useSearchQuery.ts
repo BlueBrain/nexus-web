@@ -6,6 +6,7 @@ import { Resource } from '@bbp/nexus-sdk';
 import useAsyncCall, { AsyncCall } from './useAsynCall';
 import { parseURL } from '../utils/nexusParse';
 import { SearchResponse } from '../types/search';
+import { FacetConfig, FacetType } from '../store/reducers/search';
 
 // TODO move to global default list
 const DEFAULT_PAGE_SIZE = 20;
@@ -63,15 +64,7 @@ export type UseSearchProps = {
     from: number;
     size: number;
   };
-  facetMap?: Map<
-    string,
-    {
-      propertyKey: string;
-      label: string;
-      type: 'terms';
-      value: Set<string>;
-    }
-  >;
+  facetMap?: Map<string, FacetConfig & { value: Set<string> }>;
 };
 
 export const DEFAULT_SEARCH_PROPS = {
@@ -82,23 +75,33 @@ export const DEFAULT_SEARCH_PROPS = {
   },
 };
 
-export default function useSearchQuery(selfURL?: string | null) {
+export interface UseSearchQueryProps {
+  selfURL?: string | null;
+  // defaultFacetMap?: Map<string, FacetConfig & { value: Set<string> }>;
+}
+
+export default function useSearchQuery(props: UseSearchQueryProps) {
+  const {
+    selfURL,
+    // defaultFacetMap = new Map<
+    //   string,
+    //   {
+    //     propertyKey: string;
+    //     label: string;
+    //     type: 'terms';
+    //     value: Set<string>;
+    //   }
+    // >(),
+  } = props;
   const [searchProps, setSearchProps] = React.useState<UseSearchProps>({
     ...DEFAULT_SEARCH_PROPS,
+    // facetMap: defaultFacetMap,
   });
   const {
     query,
     sort,
     pagination = DEFAULT_SEARCH_PROPS.pagination,
-    facetMap = new Map<
-      string,
-      {
-        propertyKey: string;
-        label: string;
-        type: 'terms';
-        value: Set<string>;
-      }
-    >(),
+    facetMap,
   } = searchProps;
 
   const nexus = useNexusContext();
@@ -127,12 +130,21 @@ export default function useSearchQuery(selfURL?: string | null) {
       sort && body.sort(sort.key, sort.direction);
     }
 
-    facetMap.forEach(({ propertyKey, type, label, value }) => {
-      value.forEach(item => {
-        body.filter('term', propertyKey, item);
+    if (facetMap) {
+      facetMap.forEach(({ propertyKey, key, type, value }) => {
+        if (type === FacetType.TERMS) {
+          value.forEach(item => {
+            body.filter('term', propertyKey, item);
+          });
+          body.aggregation(
+            type,
+            propertyKey,
+            { size: TOTAL_HITS_TRACKING },
+            key
+          );
+        }
       });
-      body.aggregation(type, propertyKey, { size: TOTAL_HITS_TRACKING }, label);
-    });
+    }
 
     body
       .size(pagination.size)

@@ -3,7 +3,11 @@ import { ActionCreator, AnyAction, Dispatch } from 'redux';
 import { ThunkAction } from '..';
 import { ResultTableFields } from '../../types/search';
 import { RootState } from '../reducers';
-import { SearchConfig, SearchConfigType } from '../reducers/search';
+import {
+  FacetConfig,
+  SearchConfig,
+  SearchConfigType,
+} from '../reducers/search';
 import { FetchAction, FetchFailedAction, FetchFulfilledAction } from './utils';
 
 export const enum SearchActionTypes {
@@ -109,6 +113,7 @@ export const fetchSearchConfigs: ActionCreator<ThunkAction> = () => {
               view: string;
               description?: string;
               fields?: ResultTableFields[];
+              facets?: FacetConfig[];
             }>
           >[]
         );
@@ -118,9 +123,16 @@ export const fetchSearchConfigs: ActionCreator<ThunkAction> = () => {
           label: resource.label,
           view: resource.view,
           description: resource.description,
-          fields: Array.isArray(resource.fields)
-            ? resource.fields
-            : [resource.fields],
+          fields: resource.fields
+            ? Array.isArray(resource.fields)
+              ? resource.fields
+              : [resource.fields]
+            : [],
+          facets: resource.facets
+            ? Array.isArray(resource.facets)
+              ? resource.facets
+              : [resource.facets]
+            : [],
         }));
       };
 
