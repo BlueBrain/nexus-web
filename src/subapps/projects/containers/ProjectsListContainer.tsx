@@ -91,8 +91,6 @@ const ProjectsListContainer: React.FC<ProjectsListContainerType> = ({
                     name={_label}
                     orgLabel={_organizationLabel}
                     description={description || ''}
-                    activitiesNumber={9}
-                    collaboratorsNumber={0}
                     status={Status.inProgress}
                     onClickEdit={() =>
                       onClickEditProject(_organizationLabel, _label)
