@@ -11,9 +11,9 @@ const editIcon = require('../../../shared/images/pencil.svg');
 type ProjectCardProps = {
   name: string;
   description: string;
-  activitiesNumber: number;
+  activitiesNumber?: number;
   status: Status;
-  collaboratorsNumber: number;
+  collaboratorsNumber?: number;
   orgLabel: string;
   onClickEdit(): void;
 };
@@ -47,10 +47,17 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           </div>
           <p className="description">{description}</p>
         </div>
-        <div className="stats">
-          <p>{activitiesNumber} activities</p>
-          <p>{collaboratorsNumber} collaborators</p>
-        </div>
+        {() => {
+          if (activitiesNumber || collaboratorsNumber) {
+            return (
+              <div className="stats">
+                <p>{activitiesNumber} activities</p>
+                <p>{collaboratorsNumber} collaborators</p>
+              </div>
+            );
+          }
+          return null;
+        }}
       </div>
       <div className="card-section arrow">
         <Link to={`/workflow/${orgLabel}/${name}`}>
