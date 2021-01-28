@@ -11,9 +11,9 @@ const DEFAULT_SEARCH_BAR_RESULT_SIZE = 10;
 const SearchBarContainer: React.FC = () => {
   const { preferedSearchConfig, searchConfigs } = useSearchConfigs();
 
-  const [searchResponse, { searchProps, setSearchProps }] = useSearchQuery(
-    preferedSearchConfig?.view
-  );
+  const [searchResponse, { searchProps, setSearchProps }] = useSearchQuery({
+    selfURL: preferedSearchConfig?.view,
+  });
   const history = useHistory();
   const location = useLocation();
   const [queryParams, setQueryString] = useQueryString();

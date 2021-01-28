@@ -26,34 +26,41 @@ import useLocalStorage from '../../../shared/hooks/useLocalStorage';
 import ResultGridActions from '../components/ResultGridActions';
 
 import './SearchView.less';
+import { FacetConfig, FacetType } from '../../../shared/store/reducers/search';
 
 export enum SEARCH_VIEW_TYPES {
   TABLE = 'TABLE',
   GRID = 'GRID',
 }
 
-const generateDefaultSearchFilterMap = () => {
+const generateDefaultSearchFilterMap = (facets: FacetConfig[]) => {
+  const DEFAULT_FACETS = [
+    {
+      propertyKey: '_constrainedBy',
+      key: 'schemas',
+      label: 'Schemas',
+      type: FacetType.TERMS,
+    },
+    {
+      propertyKey: '_project',
+      key: 'projects',
+      label: 'Projects',
+      type: FacetType.TERMS,
+    },
+    {
+      propertyKey: '@type',
+      key: 'types',
+      label: 'Types',
+      type: FacetType.TERMS,
+    },
+  ];
+  const workingFacets = facets.length ? facets : DEFAULT_FACETS;
   const facetMap = new Map();
-  facetMap.set('Schemas', {
-    propertyKey: '_constrainedBy',
-    key: 'Schemas',
-    label: 'Schemas',
-    type: 'terms',
-    value: new Set(),
-  });
-  facetMap.set('Projects', {
-    propertyKey: '_project',
-    key: 'Projects',
-    label: 'Projects',
-    type: 'terms',
-    value: new Set(),
-  });
-  facetMap.set('Types', {
-    propertyKey: '@type',
-    key: 'Types',
-    label: 'Types',
-    type: 'terms',
-    value: new Set(),
+  workingFacets.forEach(facet => {
+    facetMap.set(facet.key, {
+      ...facet,
+      value: new Set(),
+    });
   });
   return facetMap;
 };
@@ -68,12 +75,15 @@ const SearchView: React.FC = () => {
     preferedSearchConfig,
     searchConfigs,
     searchConfigProject,
+    setSearchPreference,
   } = useSearchConfigs();
 
   const [
     searchResponse,
     { searchProps, setSearchProps, query },
-  ] = useSearchQuery(preferedSearchConfig?.view);
+  ] = useSearchQuery({
+    selfURL: preferedSearchConfig?.view,
+  });
   const [queryParams, setQueryString] = useQueryString();
 
   const [searchViewType, setSearchViewType] = useLocalStorage<
@@ -85,6 +95,15 @@ const SearchView: React.FC = () => {
   >([]);
 
   const results = searchResponse.data;
+
+  React.useEffect(() => {
+    setSearchProps({
+      ...searchProps,
+      facetMap: generateDefaultSearchFilterMap(
+        preferedSearchConfig?.facets || []
+      ),
+    });
+  }, [preferedSearchConfig?.facets]);
 
   React.useEffect(() => {
     applyQueryParamsToSearchProps();
@@ -108,10 +127,10 @@ const SearchView: React.FC = () => {
   const applyQueryParamsToSearchProps = () => {
     const facetMap = queryParams.facetMap
       ? parseSerializedSearchFacets(
-          generateDefaultSearchFilterMap(),
+          generateDefaultSearchFilterMap(preferedSearchConfig?.facets || []),
           queryParams.facetMap as SerializedFacetMap
         )
-      : generateDefaultSearchFilterMap();
+      : generateDefaultSearchFilterMap(preferedSearchConfig?.facets || []);
     const newProps = { ...searchProps, ...queryParams, facetMap };
     if (!queryParams.query) {
       delete newProps.query;
@@ -208,7 +227,12 @@ const SearchView: React.FC = () => {
   };
 
   const handleClearFilters = () => {
-    changeSearchProps(DEFAULT_SEARCH_PROPS);
+    changeSearchProps({
+      ...DEFAULT_SEARCH_PROPS,
+      facetMap: generateDefaultSearchFilterMap(
+        preferedSearchConfig?.facets || []
+      ),
+    });
   };
 
   const handleClearQuery = () => {
@@ -234,6 +258,10 @@ const SearchView: React.FC = () => {
       ...searchProps,
       sort,
     });
+  };
+
+  const handlePreferredSearchConfigChange = (value: string) => {
+    setSearchPreference(value);
   };
 
   // Pagination Props
@@ -300,7 +328,10 @@ const SearchView: React.FC = () => {
               if (!searchProps.facetMap) {
                 return null;
               }
-              searchProps.facetMap.get(aggKey);
+              const facetConfig = searchProps.facetMap.get(aggKey);
+              if (!facetConfig) {
+                return null;
+              }
 
               const facets =
                 results?.aggregations[aggKey]?.buckets.map((bucket: any) => {
@@ -319,7 +350,7 @@ const SearchView: React.FC = () => {
               return (
                 <FacetItem
                   key={aggKey}
-                  title={aggKey.toLocaleUpperCase()}
+                  title={facetConfig.label.toLocaleUpperCase()}
                   facets={facets}
                   onChange={handleFacetChanged(aggKey)}
                 />
@@ -340,10 +371,18 @@ const SearchView: React.FC = () => {
                 dataset={{ ids: selectedRowKeys.map(key => key.toString()) }}
                 csv={{
                   data: (searchResponse.data?.hits.hits || []).map(
-                    ({ _source }) => ({
-                      ..._source,
-                      ...JSON.parse(_source._original_source),
-                    })
+                    ({ _source }) => {
+                      let parsedSource = {};
+                      try {
+                        parsedSource = JSON.parse(_source._original_source);
+                      } catch (error) {
+                        console.warn(_source._original_source);
+                      }
+                      return {
+                        ..._source,
+                        ...parsedSource,
+                      };
+                    }
                   ),
                   fields: fields.map(field => ({
                     label: field.title,
@@ -354,6 +393,17 @@ const SearchView: React.FC = () => {
                   })),
                 }}
               />
+              {/* Select Search Config */}
+              <Select
+                value={preferedSearchConfig?.id}
+                loading={searchConfigs.isFetching}
+                onChange={handlePreferredSearchConfigChange}
+                style={{ marginLeft: '2px' }}
+              >
+                {searchConfigs.data?.map(searchConfig => (
+                  <Option value={searchConfig.id}>{searchConfig.label}</Option>
+                ))}
+              </Select>
             </ActiveFilters>
           </Row>
           <Row>
