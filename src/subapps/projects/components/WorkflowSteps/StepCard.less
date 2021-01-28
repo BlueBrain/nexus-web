@@ -1,12 +1,13 @@
 @import '../../../../shared/lib.less';
 
 .step-card {
-  margin: 1em;
+  margin: 1em 2em 1em;
   background-color: rgb(247, 245, 245);
   width: 270px;
   border-radius: 10px;
   padding: 0.5em;
   box-shadow: @box-shadow-base;
+  z-index: 2;
 
   &--blocked {
     border-top: 10px solid @blocked-color;
@@ -80,4 +81,17 @@
     background-color: @not-started-color;
     border-radius: 10px;
   }
+}
+
+#svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.link-line {
+  stroke-width: 3px;
+  stroke: rgba(103, 108, 114, 0.61);
 }
