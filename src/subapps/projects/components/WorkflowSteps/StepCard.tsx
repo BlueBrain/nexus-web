@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Tooltip } from 'antd';
+import Draggable from 'react-draggable';
 
 import StatusIcon from '../StatusIcon';
 import SubStepItem from './SubStepItem';
@@ -51,62 +52,80 @@ const StepCard: React.FC<{
     }
   }, []);
 
+  const handleDrag = (event: any) => {
+    const line = document.getElementById(`was-informed-link-${stepId}`);
+    const card = document.getElementById(`card-${stepId}`);
+
+    if (card && line) {
+      const x1 = event.clientX + card.getBoundingClientRect().width / 2;
+      const y1 = event.clientY + card.getBoundingClientRect().height / 2;
+
+      line.setAttribute('x1', x1.toString());
+      line.setAttribute('y1', y1.toString());
+    }
+
+    console.log('moving...', event);
+  };
+
   return (
     <>
-      <div
-        id={`card-${stepId}`}
-        className={`step-card step-card--${status && status.replace(' ', '-')}`}
-      >
-        <div className="step-card__main">
-          <div className="step-card__title">
-            {status && <StatusIcon status={status} mini={true} />}
-            <Link to={`/workflow/${orgLabel}/${projectLabel}/${stepId}`}>
-              {name.length > MAX_TITLE_LENGTH ? (
-                <Tooltip placement="topRight" title={name}>
-                  <h3 className="step-card__name">
-                    {`${name.slice(0, MAX_TITLE_LENGTH)}...`}
-                  </h3>
-                </Tooltip>
-              ) : (
-                <h3 className="step-card__name">{name}</h3>
-              )}
-            </Link>
-            <img src={editIcon} />
+      <Draggable onDrag={handleDrag}>
+        <div
+          id={`card-${stepId}`}
+          className={`step-card step-card--${status &&
+            status.replace(' ', '-')}`}
+        >
+          <div className="step-card__main">
+            <div className="step-card__title">
+              {status && <StatusIcon status={status} mini={true} />}
+              <Link to={`/workflow/${orgLabel}/${projectLabel}/${stepId}`}>
+                {name.length > MAX_TITLE_LENGTH ? (
+                  <Tooltip placement="topRight" title={name}>
+                    <h3 className="step-card__name">
+                      {`${name.slice(0, MAX_TITLE_LENGTH)}...`}
+                    </h3>
+                  </Tooltip>
+                ) : (
+                  <h3 className="step-card__name">{name}</h3>
+                )}
+              </Link>
+              <img src={editIcon} />
+            </div>
+            <div className="step-card__info">
+              <div className="step-card__info-line">
+                <img src={codeIcon} className="step-card__info-icon" />
+                <span>Code resources: 0</span>
+              </div>
+              <div className="step-card__info-line">
+                <img src={dataIcon} className="step-card__info-icon" />
+                <span>Data resources: 0</span>
+              </div>
+              <div className="step-card__info-line">
+                <img src={noteIcon} className="step-card__info-icon" />
+                <span>{description || '-'}</span>
+              </div>
+            </div>
           </div>
-          <div className="step-card__info">
-            <div className="step-card__info-line">
-              <img src={codeIcon} className="step-card__info-icon" />
-              <span>Code resources: 0</span>
+          <div className="step-card__subactivities">
+            <div className="step-card__substeps-total">
+              <img src={settingIcon} className="step-card__info-icon" />
+              <span>Workflow steps: {(substeps && substeps.length) || 0}</span>
             </div>
-            <div className="step-card__info-line">
-              <img src={dataIcon} className="step-card__info-icon" />
-              <span>Data resources: 0</span>
-            </div>
-            <div className="step-card__info-line">
-              <img src={noteIcon} className="step-card__info-icon" />
-              <span>{description || '-'}</span>
+            <div className="step-card__list-container">
+              {substeps &&
+                substeps.length > 0 &&
+                substeps.map(substep => (
+                  <SubStepItem
+                    substep={substep}
+                    key={substep['@id']}
+                    orgLabel={orgLabel}
+                    projectLabel={projectLabel}
+                  />
+                ))}
             </div>
           </div>
         </div>
-        <div className="step-card__subactivities">
-          <div className="step-card__substeps-total">
-            <img src={settingIcon} className="step-card__info-icon" />
-            <span>Workflow steps: {(substeps && substeps.length) || 0}</span>
-          </div>
-          <div className="step-card__list-container">
-            {substeps &&
-              substeps.length > 0 &&
-              substeps.map(substep => (
-                <SubStepItem
-                  substep={substep}
-                  key={substep['@id']}
-                  orgLabel={orgLabel}
-                  projectLabel={projectLabel}
-                />
-              ))}
-          </div>
-        </div>
-      </div>
+      </Draggable>
       {step.wasInformedBy && (
         <svg id="svg">
           <line className="link-line" id={`was-informed-link-${stepId}`} />
