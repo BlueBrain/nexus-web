@@ -34,7 +34,7 @@ export const useLinkedActivities = (
   const activitiesQuery = `
     PREFIX nxv: <https://bluebrain.github.io/nexus/vocabulary/>
     PREFIX prov: <http://www.w3.org/ns/prov#>
-    SELECT ?self ?resource ?name ?createdBy ?createdAt ?used ?generated ?resourceType
+    SELECT ?self ?resource ?name ?createdBy ?createdAt ?used ?generated
     WHERE {
       ?resource nxv:self ?self ;
                 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> prov:Activity ;
@@ -45,8 +45,8 @@ export const useLinkedActivities = (
                 nxv:activities ?resource .
                 
       OPTIONAL { ?resource <http://schema.org/name> ?name }
-      OPTIONAL { ?resource nxv:used ?used }
-      OPTIONAL { ?resource nxv:generated ?generated }
+      OPTIONAL { ?resource prov:Generation|prov:generated|prov:wasGeneratedBy ?generated }
+      OPTIONAL { ?resource prov:Generation|prov:generated|prov:wasGeneratedBy ?used }
     }
     LIMIT 100
   `;
