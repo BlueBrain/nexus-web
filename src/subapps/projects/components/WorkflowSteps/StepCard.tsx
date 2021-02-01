@@ -35,7 +35,7 @@ const StepCard: React.FC<{
       const div2 = document.getElementById(`card-${step.wasInformedBy['@id']}`);
 
       if (div1 && div2) {
-        const x1 = div1.offsetLeft + div1.getBoundingClientRect().width / 2;
+        const x1 = div1.offsetLeft + div1.getBoundingClientRect().width;
         const y1 = div1.offsetTop + div1.getBoundingClientRect().height / 2;
         const x2 = div2.offsetLeft + div2.getBoundingClientRect().width / 2;
         const y2 = div2.offsetTop + div2.getBoundingClientRect().height / 2;
@@ -52,19 +52,22 @@ const StepCard: React.FC<{
     }
   }, []);
 
-  const handleDrag = (event: any) => {
+  const handleDrag = (event: any, data: any) => {
     const line = document.getElementById(`was-informed-link-${stepId}`);
-    const card = document.getElementById(`card-${stepId}`);
+    const div1 = document.getElementById(`card-${stepId}`);
+    const div2 = document.getElementById(
+      `card-${step.wasInformedBy && step.wasInformedBy['@id']}`
+    );
 
-    if (card && line) {
-      const x1 = event.clientX + card.getBoundingClientRect().width / 2;
-      const y1 = event.clientY + card.getBoundingClientRect().height / 2;
+    if (line && div1 && div2) {
+      const x1 =
+        div1.offsetLeft + div1.getBoundingClientRect().width / 2 + data.x;
+      const y1 =
+        div1.offsetTop + div1.getBoundingClientRect().height / 2 + data.y;
 
       line.setAttribute('x1', x1.toString());
       line.setAttribute('y1', y1.toString());
     }
-
-    console.log('moving...', event);
   };
 
   return (
@@ -128,7 +131,25 @@ const StepCard: React.FC<{
       </Draggable>
       {step.wasInformedBy && (
         <svg id="svg">
-          <line className="link-line" id={`was-informed-link-${stepId}`} />
+          <line
+            className="link-line"
+            id={`was-informed-link-${stepId}`}
+            marker-start="url(#arrowhead)"
+          />
+          <marker
+            id="arrowhead"
+            markerWidth="13"
+            markerHeight="13"
+            refX="2"
+            refY="6"
+            orient="auto"
+          >
+            <path
+              d="M5,4 L5,8 L2,6 L5,4"
+              fill="#676c71"
+              style={{ strokeWidth: '1px' }}
+            />
+          </marker>
         </svg>
       )}
     </>
