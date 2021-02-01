@@ -27,6 +27,7 @@ import ResultGridActions from '../components/ResultGridActions';
 
 import './SearchView.less';
 import { FacetConfig, FacetType } from '../../../shared/store/reducers/search';
+import { parseJsonMaybe } from '../../../shared/utils';
 
 export enum SEARCH_VIEW_TYPES {
   TABLE = 'TABLE',
@@ -371,18 +372,12 @@ const SearchView: React.FC = () => {
                 dataset={{ ids: selectedRowKeys.map(key => key.toString()) }}
                 csv={{
                   data: (searchResponse.data?.hits.hits || []).map(
-                    ({ _source }) => {
-                      let parsedSource = {};
-                      try {
-                        parsedSource = JSON.parse(_source._original_source);
-                      } catch (error) {
-                        console.warn(_source._original_source);
-                      }
-                      return {
-                        ..._source,
-                        ...parsedSource,
-                      };
-                    }
+                    ({ _source }) => ({
+                      ..._source,
+                      ...(parseJsonMaybe<object>(
+                        _source._original_source || {}
+                      ) || {}),
+                    })
                   ),
                   fields: fields.map(field => ({
                     label: field.title,

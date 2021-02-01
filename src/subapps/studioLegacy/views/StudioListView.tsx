@@ -99,7 +99,7 @@ const StudioListView: React.FC = () => {
 
     if (results && results.hits && results.hits.length) {
       return results.hits.map((studio: any) => {
-        const source = JSON.parse(studio._source._original_source);
+        const source = JSON.parse(studio._source._original_source || {});
         const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(
           studio._source._project
         );

@@ -10,7 +10,7 @@ import {
   UseSearchResponse,
 } from '../../hooks/useSearchQuery';
 import TypesIconList from '../Types/TypesIcon';
-import { getResourceLabel } from '../../utils';
+import { getResourceLabel, parseJsonMaybe } from '../../utils';
 import { convertMarkdownHandlebarStringWithData } from '../../utils/markdownTemplate';
 import { parseURL } from '../../utils/nexusParse';
 import { SorterResult, TableRowSelection } from 'antd/lib/table/interface';
@@ -76,16 +76,10 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
   const [searchValue, setSearchValue] = React.useState<string>('');
 
   const results = (searchResponse.data?.hits.hits || []).map(({ _source }) => {
-    const { _original_source, ...everythingElse } = _source;
+    const { _original_source = {}, ...everythingElse } = _source;
 
-    let parsedSource = {};
-    try {
-      parsedSource = JSON.parse(_original_source);
-    } catch (error) {
-      console.warn(_original_source);
-    }
     const resource = {
-      ...parsedSource,
+      ...(parseJsonMaybe(_original_source) || {}),
       ...everythingElse,
     };
 
