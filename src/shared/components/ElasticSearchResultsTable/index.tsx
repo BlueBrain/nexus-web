@@ -176,7 +176,12 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
         ...field,
         sorter: !!field.sortable && sorter(field.key),
         render: (text: string, resource: Resource) =>
-          get(resource, field.dataIndex),
+          get(
+            resource,
+            Array.isArray(field.dataIndex)
+              ? field.dataIndex
+              : field.dataIndex.split('.')
+          ),
       }));
   });
 
