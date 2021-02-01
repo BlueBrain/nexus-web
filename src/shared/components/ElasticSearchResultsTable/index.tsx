@@ -50,13 +50,6 @@ export const DEFAULT_FIELDS = [
     displayIndex: 1,
   },
   {
-    title: 'Schema',
-    dataIndex: '_constrainedBy',
-    sortable: true,
-    key: 'schema',
-    displayIndex: 2,
-  },
-  {
     title: 'Types',
     dataIndex: '@type',
     sortable: true,

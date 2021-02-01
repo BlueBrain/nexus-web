@@ -19,6 +19,7 @@ export type FacetConfig = {
   key: string;
   label: string;
   type: FacetType;
+  displayIndex?: number;
 };
 
 export type SearchConfig = {
