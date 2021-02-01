@@ -326,9 +326,10 @@ const SearchView: React.FC = () => {
             <Input
               size="small"
               className="search"
-              placeholder="filter facets"
+              placeholder="type a term to narrow down..."
               value={filterSearchValue}
               style={{ marginBottom: '1em' }}
+              allowClear
               onChange={(e: React.FormEvent<HTMLInputElement>) => {
                 setFilterSearchValue(e.currentTarget.value);
               }}

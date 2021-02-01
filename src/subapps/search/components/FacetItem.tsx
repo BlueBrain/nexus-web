@@ -3,6 +3,7 @@ import { Checkbox, Badge, Tooltip } from 'antd';
 import { TOTAL_HITS_TRACKING } from '../../../shared/hooks/useSearchQuery';
 
 import './FacetItem.less';
+import { DownOutlined, RightOutlined } from '@ant-design/icons';
 
 const OVERFLOW_COUNT = TOTAL_HITS_TRACKING;
 
@@ -19,13 +20,32 @@ const FacetItem: React.FC<{
   filter?: string;
   onChange?: (key: string, value: boolean) => void;
 }> = ({ title, filter = '', facets = [], onChange }) => {
+  const [hidden, setHidden] = React.useState(false);
+
   const handleSelect = (key: string, selected: boolean) => () => {
     onChange && onChange(key, !selected);
   };
 
+  const handleSetHidden = () => {
+    setHidden(!hidden);
+  };
+
+  const filteredItems = facets.filter(
+    ({ key, label }) =>
+      key.toLowerCase().includes(filter.toLowerCase()) ||
+      label.toLowerCase().includes(filter.toLowerCase())
+  );
+
   return (
     <div className="facet-group">
-      <h4>
+      <h4 onClick={handleSetHidden}>
+        <span
+          className={`chevron ${
+            hidden ? 'hidden' : ''
+          } ${!filteredItems.length && 'empty'}`}
+        >
+          <DownOutlined />
+        </span>
         {title}{' '}
         <Badge
           count={facets.length}
@@ -33,13 +53,8 @@ const FacetItem: React.FC<{
           style={{ backgroundColor: '#fff', color: '#999' }}
         />
       </h4>
-      {facets
-        .filter(
-          ({ key, label }) =>
-            key.toLowerCase().includes(filter.toLowerCase()) ||
-            label.toLowerCase().includes(filter.toLowerCase())
-        )
-        .map(({ label, key, count, selected }) => {
+      {!hidden &&
+        filteredItems.map(({ label, key, count, selected }) => {
           return (
             <div
               className="item"
