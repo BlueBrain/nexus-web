@@ -2,8 +2,9 @@ import * as React from 'react';
 import { Table, Tooltip, Button, Input, Select } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
 import { match } from 'ts-pattern';
-
+import { get, sortBy } from 'lodash';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
+
 import {
   SortDirection,
   UseSearchProps,
@@ -15,8 +16,8 @@ import { convertMarkdownHandlebarStringWithData } from '../../utils/markdownTemp
 import { parseURL } from '../../utils/nexusParse';
 import { SorterResult, TableRowSelection } from 'antd/lib/table/interface';
 import { ResultTableFields } from '../../types/search';
+
 import './../../styles/result-table.less';
-import { sortBy } from 'lodash';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -174,9 +175,8 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
       .otherwise(() => ({
         ...field,
         sorter: !!field.sortable && sorter(field.key),
-        render: (text: string, resource: Resource) => {
-          return text;
-        },
+        render: (text: string, resource: Resource) =>
+          get(resource, field.dataIndex),
       }));
   });
 
