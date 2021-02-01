@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Row, Spin, Select, Card, Result, Switch } from 'antd';
+import { Layout, Row, Spin, Select, Card, Result, Switch, Input } from 'antd';
 import { useHistory, useLocation } from 'react-router-dom';
 import { match } from 'ts-pattern';
 import { omit, sortBy } from 'lodash';
@@ -90,6 +90,8 @@ const SearchView: React.FC = () => {
   const [selectedRowKeys, setSelectedRowKeys] = React.useState<
     React.ReactText[]
   >([]);
+
+  const [filterSearchValue, setFilterSearchValue] = React.useState<string>('');
 
   const results = searchResponse.data;
 
@@ -321,6 +323,16 @@ const SearchView: React.FC = () => {
             <h2 style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>Filter</span> <Spin spinning={searchResponse.loading} />
             </h2>
+            <Input
+              size="small"
+              className="search"
+              placeholder="filter facets"
+              value={filterSearchValue}
+              style={{ marginBottom: '1em' }}
+              onChange={(e: React.FormEvent<HTMLInputElement>) => {
+                setFilterSearchValue(e.currentTarget.value);
+              }}
+            />
             {sortBy(
               Object.keys(results?.aggregations || {}).map(aggKey => {
                 if (!searchProps.facetMap) {
@@ -349,6 +361,7 @@ const SearchView: React.FC = () => {
                   displayIndex: facetConfig.displayIndex,
                   component: (
                     <FacetItem
+                      filter={filterSearchValue}
                       key={aggKey}
                       title={facetConfig.label.toLocaleUpperCase()}
                       facets={facets}

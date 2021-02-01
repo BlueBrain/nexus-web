@@ -16,8 +16,9 @@ export type Facet = {
 const FacetItem: React.FC<{
   title: string;
   facets: Facet[];
+  filter?: string;
   onChange?: (key: string, value: boolean) => void;
-}> = ({ title, facets = [], onChange }) => {
+}> = ({ title, filter = '', facets = [], onChange }) => {
   const handleSelect = (key: string, selected: boolean) => () => {
     onChange && onChange(key, !selected);
   };
@@ -32,26 +33,36 @@ const FacetItem: React.FC<{
           style={{ backgroundColor: '#fff', color: '#999' }}
         />
       </h4>
-      {facets.map(({ label, key, count, selected }) => {
-        return (
-          <div className="item" key={key} onClick={handleSelect(key, selected)}>
-            <Checkbox checked={selected} />
-            <Tooltip title={key} className="label">
-              <span>{label}</span>{' '}
-            </Tooltip>
-            <Badge
+      {facets
+        .filter(
+          ({ key, label }) =>
+            key.toLowerCase().includes(filter.toLowerCase()) ||
+            label.toLowerCase().includes(filter.toLowerCase())
+        )
+        .map(({ label, key, count, selected }) => {
+          return (
+            <div
+              className="item"
               key={key}
-              count={count}
-              overflowCount={OVERFLOW_COUNT}
-              style={
-                selected
-                  ? { backgroundColor: '#44c7f4', color: '#fff' }
-                  : { backgroundColor: '#b8babb', color: '#fff' }
-              }
-            />
-          </div>
-        );
-      })}
+              onClick={handleSelect(key, selected)}
+            >
+              <Checkbox checked={selected} />
+              <Tooltip title={key} className="label">
+                <span>{label}</span>{' '}
+              </Tooltip>
+              <Badge
+                key={key}
+                count={count}
+                overflowCount={OVERFLOW_COUNT}
+                style={
+                  selected
+                    ? { backgroundColor: '#44c7f4', color: '#fff' }
+                    : { backgroundColor: '#b8babb', color: '#fff' }
+                }
+              />
+            </div>
+          );
+        })}
     </div>
   );
 };
