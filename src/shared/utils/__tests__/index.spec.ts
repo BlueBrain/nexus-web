@@ -13,6 +13,7 @@ import {
   matchPlugins,
   pluginsMap,
   makeStudioUri,
+  parseJsonMaybe,
 } from '..';
 
 const identities: Identity[] = [
@@ -622,6 +623,21 @@ describe('utils functions', () => {
       expect(makeStudioUri(orgLabel, projectLabel, studioId)).toEqual(
         studioUri
       );
+    });
+  });
+
+  describe('parseJsonMaybe()', () => {
+    it('returns parsed JSON from a json string', () => {
+      const test = {
+        banana: 'fruit',
+      };
+      expect(parseJsonMaybe(JSON.stringify(test))).toEqual(test);
+    });
+
+    it('gracefully returns a null object if the JSON is bad', () => {
+      expect(parseJsonMaybe('')).toBe(null);
+      expect(parseJsonMaybe('thisisnotjson')).toBe(null);
+      expect(parseJsonMaybe(undefined)).toBe(null);
     });
   });
 });

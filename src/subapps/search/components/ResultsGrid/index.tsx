@@ -6,6 +6,7 @@ import ResultPreviewItemContainer from '../../containers/ResultPreviewItemContai
 import { Resource } from '@bbp/nexus-sdk';
 
 import DefaultResourcePreviewCard from '!!raw-loader!../../templates/DefaultResourcePreviewCard.hbs';
+import { parseJsonMaybe } from '../../../../shared/utils';
 
 const DEFAULT_GRID_DIMENSIONS = { gutter: 16, column: 4 };
 
@@ -34,10 +35,10 @@ const ResultsGrid: React.FC<ResultsGridProps> = ({
       dataSource={results?.hits.hits || []}
       pagination={pagination}
       renderItem={hit => {
-        const { _original_source, ...resourceMetadata } = hit._source;
+        const { _original_source = {}, ...resourceMetadata } = hit._source;
         const resource = {
           ...resourceMetadata,
-          ...JSON.parse(_original_source),
+          ...(parseJsonMaybe(_original_source) || {}),
         };
         return (
           <List.Item>
