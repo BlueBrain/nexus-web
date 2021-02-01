@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Layout, Row, Spin, Select, Card, Result, Switch } from 'antd';
+import { Layout, Row, Spin, Select, Card, Result, Switch, Input } from 'antd';
 import { useHistory, useLocation } from 'react-router-dom';
 import { match } from 'ts-pattern';
-import { omit } from 'lodash';
+import { omit, sortBy } from 'lodash';
 
 import { Resource } from '@bbp/nexus-sdk';
 
@@ -24,10 +24,10 @@ import ActiveFilters from '../components/ActiveFilters';
 import ResultsGrid from '../components/ResultsGrid';
 import useLocalStorage from '../../../shared/hooks/useLocalStorage';
 import ResultGridActions from '../components/ResultGridActions';
-
-import './SearchView.less';
 import { FacetConfig, FacetType } from '../../../shared/store/reducers/search';
 import { parseJsonMaybe } from '../../../shared/utils';
+
+import './SearchView.less';
 
 export enum SEARCH_VIEW_TYPES {
   TABLE = 'TABLE',
@@ -37,22 +37,18 @@ export enum SEARCH_VIEW_TYPES {
 const generateDefaultSearchFilterMap = (facets: FacetConfig[]) => {
   const DEFAULT_FACETS = [
     {
-      propertyKey: '_constrainedBy',
-      key: 'schemas',
-      label: 'Schemas',
-      type: FacetType.TERMS,
-    },
-    {
       propertyKey: '_project',
       key: 'projects',
       label: 'Projects',
       type: FacetType.TERMS,
+      displayIndex: 0,
     },
     {
       propertyKey: '@type',
       key: 'types',
       label: 'Types',
       type: FacetType.TERMS,
+      displayIndex: 1,
     },
   ];
   const workingFacets = facets.length ? facets : DEFAULT_FACETS;
@@ -94,6 +90,8 @@ const SearchView: React.FC = () => {
   const [selectedRowKeys, setSelectedRowKeys] = React.useState<
     React.ReactText[]
   >([]);
+
+  const [filterSearchValue, setFilterSearchValue] = React.useState<string>('');
 
   const results = searchResponse.data;
 
@@ -325,38 +323,60 @@ const SearchView: React.FC = () => {
             <h2 style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>Filter</span> <Spin spinning={searchResponse.loading} />
             </h2>
-            {Object.keys(results?.aggregations || {}).map(aggKey => {
-              if (!searchProps.facetMap) {
-                return null;
-              }
-              const facetConfig = searchProps.facetMap.get(aggKey);
-              if (!facetConfig) {
-                return null;
-              }
+            <Input
+              size="small"
+              className="search"
+              placeholder="type a term to narrow down..."
+              value={filterSearchValue}
+              style={{ marginBottom: '1em' }}
+              allowClear
+              onChange={(e: React.FormEvent<HTMLInputElement>) => {
+                setFilterSearchValue(e.currentTarget.value);
+              }}
+            />
+            {sortBy(
+              Object.keys(results?.aggregations || {}).map(aggKey => {
+                if (!searchProps.facetMap) {
+                  return null;
+                }
+                const facetConfig = searchProps.facetMap.get(aggKey);
+                if (!facetConfig) {
+                  return null;
+                }
 
-              const facets =
-                results?.aggregations[aggKey]?.buckets.map((bucket: any) => {
-                  const [label] = bucket.key.split('/').reverse();
-                  const selected = searchProps.facetMap
-                    ?.get(aggKey)
-                    ?.value.has(bucket.key);
+                const facets =
+                  results?.aggregations[aggKey]?.buckets.map((bucket: any) => {
+                    const [label] = bucket.key.split('/').reverse();
+                    const selected = searchProps.facetMap
+                      ?.get(aggKey)
+                      ?.value.has(bucket.key);
 
-                  return {
-                    label,
-                    selected,
-                    count: bucket.doc_count,
-                    key: bucket.key,
-                  };
-                }) || [];
-              return (
-                <FacetItem
-                  key={aggKey}
-                  title={facetConfig.label.toLocaleUpperCase()}
-                  facets={facets}
-                  onChange={handleFacetChanged(aggKey)}
-                />
-              );
-            })}
+                    return {
+                      label,
+                      selected,
+                      count: bucket.doc_count,
+                      key: bucket.key,
+                    };
+                  }) || [];
+                return {
+                  displayIndex: facetConfig.displayIndex,
+                  component: (
+                    <FacetItem
+                      filter={filterSearchValue}
+                      key={aggKey}
+                      title={facetConfig.label.toLocaleUpperCase()}
+                      facets={facets}
+                      onChange={handleFacetChanged(aggKey)}
+                    />
+                  ),
+                };
+              }),
+              ['displayIndex', 'title']
+            )
+              .filter(Boolean)
+              .map(display => {
+                return display?.component ? display.component : null;
+              })}
           </Card>
         </Sider>
         <Content>
