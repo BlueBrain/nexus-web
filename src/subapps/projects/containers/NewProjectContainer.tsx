@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Modal, notification } from 'antd';
-import { useNexusContext } from '@bbp/react-nexus';
+import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../shared/store/reducers';
 
@@ -11,13 +11,13 @@ import { displayError } from '../components/Notifications';
 
 const NewProjectContainer: React.FC<{}> = () => {
   const nexus = useNexusContext();
-
-  const [showForm, setShowForm] = React.useState<boolean>(false);
-  const [busy, setBusy] = React.useState<boolean>(false);
-
   const userName = useSelector(
     (state: RootState) => state.oidc.user?.profile.preferred_username
   );
+  const userOrgLabel = `${fusionConfig.personalOrgPrefix}${userName}`;
+
+  const [showForm, setShowForm] = React.useState<boolean>(false);
+  const [busy, setBusy] = React.useState<boolean>(false);
 
   const identities = useSelector((state: RootState) => state.auth.identities);
   const authenticatedIdentity = identities?.data?.identities.find(i => {
@@ -30,7 +30,6 @@ const NewProjectContainer: React.FC<{}> = () => {
 
   const submitProject = (data: ProjectMetadata) => {
     setBusy(true);
-    const userOrgLabel = `${fusionConfig.personalOrgPrefix}${userName}`;
     const { name, description, type, visibility } = data;
     const createOrganization = () =>
       nexus.Organization.create(userOrgLabel, {
@@ -108,11 +107,14 @@ const NewProjectContainer: React.FC<{}> = () => {
 
   return (
     <div>
-      <ActionButton
-        title="Create new project"
-        onClick={onClickAddProject}
-        icon="add"
-      />
+      <AccessControl path={userOrgLabel} permissions={['projects/write']}>
+        <ActionButton
+          title="Create new project"
+          onClick={onClickAddProject}
+          icon="add"
+        />
+      </AccessControl>
+
       <Modal
         visible={showForm}
         footer={null}
