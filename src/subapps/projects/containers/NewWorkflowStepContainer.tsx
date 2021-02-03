@@ -53,7 +53,11 @@ const NewWorkflowStepContainer: React.FC<{
 
   const [showForm, setShowForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
-  const { subClasses, fetchSubClasses, error } = useActivitySubClasses();
+  // Support only a single type for now.
+  // const { subClasses, fetchSubClasses, error } = useActivitySubClasses();
+
+  // Harcoding activities for now.
+  // Will remove before we merge to main.
 
   const submitNewStep = (data: WorkflowStepMetadata) => {
     setBusy(true);
@@ -84,11 +88,11 @@ const NewWorkflowStepContainer: React.FC<{
   };
 
   const onClickAddStep = () => {
-    fetchSubClasses();
+    // fetchSubClasses();
     setShowForm(true);
   };
 
-  if (error) displayError(error, 'Failed to load activities');
+  // if (error) displayError(error, 'Failed to load activities');
 
   return (
     <>
@@ -97,7 +101,7 @@ const NewWorkflowStepContainer: React.FC<{
         visible={showForm}
         footer={null}
         onCancel={() => setShowForm(false)}
-        width={1150}
+        width={800}
         destroyOnClose={true}
       >
         <WorkflowStepWithActivityForm
@@ -107,7 +111,7 @@ const NewWorkflowStepContainer: React.FC<{
           busy={busy}
           parentLabel={parentStepLabel}
           siblings={siblings}
-          activityList={subClasses}
+          activityList={[]}
         />
       </Modal>
     </>

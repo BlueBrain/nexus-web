@@ -118,6 +118,7 @@ const StepInfoContainer: React.FC<{
           workflowStep={step}
           activityList={[]}
           allowActivitySearch={false}
+          isFullForm
         />
       </Drawer>
     </div>
