@@ -9,19 +9,19 @@
   box-shadow: @box-shadow-base;
 
   &--blocked {
-    border-top: 10px solid @blocked-color;
+    border-top: 25px solid @blocked-color;
   }
 
   &--in-progress {
-    border-top: 10px solid @in-progress-color;
+    border-top: 25px solid @in-progress-color;
   }
 
   &--done {
-    border-top: 10px solid @success-color;
+    border-top: 25px solid @success-color;
   }
 
   &--not-started {
-    border-top: 10px solid @not-started-color;
+    border-top: 25px solid @not-started-color;
   }
 
   &__main {
@@ -33,7 +33,7 @@
   }
 
   &__name {
-    margin: 0 10px;
+    margin: 0;
     line-height: 18px;
   }
 
@@ -47,12 +47,15 @@
   }
 
   &__title {
-    display: flex;
-    align-items: center;
-    height: 36px;
+    h3 {
+      font-size: 16px;
+    }
+
+    max-height: 34px;
   }
 
   &__info {
+    line-height: 16px;
     padding: 5px 0;
     margin: 0.5em 0;
     border-top: 1px solid rgb(220, 220, 220);
