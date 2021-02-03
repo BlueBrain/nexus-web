@@ -5,27 +5,46 @@
   background-color: rgb(247, 245, 245);
   width: 270px;
   border-radius: 10px;
-  padding: 0.5em;
+  padding: 0;
   box-shadow: @box-shadow-base;
 
-  &--blocked {
-    border-top: 25px solid @blocked-color;
+  &__status {
+    text-align: center;
+    background-color: @blocked-color;
+    border-radius: 10px 10px 0 0;
+
+    &--blocked {
+      background-color: @blocked-color;
+    }
+
+    &--in-progress {
+      background-color: @in-progress-color;
+    }
+
+    &--done {
+      background-color: @success-color;
+    }
+
+    &--not-started {
+      background-color: @not-started-color;
+    }
   }
 
-  &--in-progress {
-    border-top: 25px solid @in-progress-color;
+  &__status-button {
+    text-transform: uppercase;
+    color: #fff;
   }
 
-  &--done {
-    border-top: 25px solid @success-color;
+  &__status-item {
+    text-transform: uppercase;
   }
 
-  &--not-started {
-    border-top: 25px solid @not-started-color;
+  .anticon.anticon-down {
+    color: #fff;
   }
 
   &__main {
-    padding: 0 8px;
+    padding: 0.5rem;
   }
 
   &__substeps-total {
@@ -37,7 +56,6 @@
     line-height: 18px;
   }
 
-  &__info-line,
   &__substeps-total {
     margin: 0;
     font-size: 12px;
@@ -56,7 +74,7 @@
 
   &__info {
     line-height: 16px;
-    padding: 5px 0;
+    padding: 5px 0 6px;
     margin: 0.5em 0;
     border-top: 1px solid rgb(220, 220, 220);
     border-bottom: 1px solid rgb(220, 220, 220);
