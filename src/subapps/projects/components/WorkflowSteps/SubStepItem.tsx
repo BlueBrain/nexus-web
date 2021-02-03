@@ -7,7 +7,7 @@ import { StepResource } from '../../views/WorkflowStepView';
 
 import './SubStepItem.less';
 
-const MAX_TITLE_LENGTH = 25;
+const MAX_TITLE_LENGTH = 50;
 
 const SubActivityItem: React.FC<{
   orgLabel: string;

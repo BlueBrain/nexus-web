@@ -23,12 +23,10 @@ const StepCard: React.FC<{
   const { name, description, status } = step;
   const stepId = step['@id'];
 
-  console.log('Status', Object.keys(Status));
-
   const handleMenuClick = (option: any) => {
     console.log('data', option.key);
 
-    //update status here
+    // update status here
   };
 
   const menu = (
