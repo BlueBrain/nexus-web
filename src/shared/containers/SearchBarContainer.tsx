@@ -34,9 +34,7 @@ const SearchBarContainer: React.FC = () => {
 
   const goToProject = (orgLabel: string, projectLabel: string) => {
     const path = `/admin/${orgLabel}/${projectLabel}`;
-    history.push(path, {
-      background: location,
-    });
+    history.push(path);
   };
 
   const goToSearch = () => {

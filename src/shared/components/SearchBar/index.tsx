@@ -9,12 +9,10 @@ import ResourceHit from './ResourceHit';
 import Hit, { HitType } from './Hit';
 
 import './SearchBar.less';
-import { OptionType } from 'antd/lib/select';
-import { stringify } from 'query-string';
 
 export enum SearchQuickActions {
   VISIT = 'visit',
-  VISIT_PROJECT = 'visit project',
+  VISIT_PROJECT = 'visit-project',
 }
 
 const SearchBar: React.FC<{
@@ -78,6 +76,11 @@ const SearchBar: React.FC<{
       document.removeEventListener('keypress', focusSearch);
     };
   });
+
+  // Reset default value if query changes
+  React.useEffect(() => {
+    setValue(query || '');
+  }, [query]);
 
   const options: (
     | {
@@ -177,7 +180,6 @@ const SearchBar: React.FC<{
       className={`search-bar ${!!focused && 'focused'}`}
       onFocus={handleSetFocused(true)}
       onBlur={handleSetFocused(false)}
-      defaultValue={value}
       options={options}
       onChange={handleChange}
       onSelect={handleSelect}
