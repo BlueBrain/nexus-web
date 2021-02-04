@@ -19,14 +19,15 @@ const StepCard: React.FC<{
   projectLabel: string;
   orgLabel: string;
   substeps: StepResource[];
-}> = ({ step, projectLabel, orgLabel, substeps }) => {
-  const { name, description, status } = step;
+  onStatusChange: (stepId: string, rev: number, status: string) => void;
+}> = ({ step, projectLabel, orgLabel, substeps, onStatusChange }) => {
+  const [stepStatus, setStepStatus] = React.useState<string>(step.status);
+  const { name, description } = step;
   const stepId = step['@id'];
 
   const handleMenuClick = (option: any) => {
-    console.log('data', option.key);
-
-    // update status here
+    setStepStatus(option.key);
+    onStatusChange(stepId, step._rev, option.key);
   };
 
   const menu = (
@@ -44,12 +45,12 @@ const StepCard: React.FC<{
       className={`step-card step-card--${status && status.replace(' ', '-')}`}
     >
       <div
-        className={`step-card__status step-card__status--${status &&
-          status.replace(' ', '-')}`}
+        className={`step-card__status step-card__status--${stepStatus &&
+          stepStatus.replace(' ', '-')}`}
       >
         <Dropdown overlay={menu}>
           <Button type="text">
-            <span className="step-card__status-button">{status}</span>
+            <span className="step-card__status-button">{stepStatus}</span>
             <DownOutlined />
           </Button>
         </Dropdown>
