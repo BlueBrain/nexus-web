@@ -105,7 +105,7 @@ const WorkflowStepView: React.FC = () => {
       .catch(error => displayError(error, 'Failed to load activity'));
 
     fetchChildren(stepId);
-  }, [refreshSteps, stepId]);
+  }, [refreshSteps, stepId, activeTab]);
 
   const fetchChildren = async (stepId: string) => {
     const children = (await fetchChildrenForStep(

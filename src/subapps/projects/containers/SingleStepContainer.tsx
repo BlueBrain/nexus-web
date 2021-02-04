@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { displayError } from '../components/Notifications';
 
+import { displayError, successNotification } from '../components/Notifications';
 import StepCard from '../components/WorkflowSteps/StepCard';
 import { StepResource } from '../views/WorkflowStepView';
 import { isParentLink } from '../utils';
+import { useStepStatus } from '../hooks/useStepStatus';
 
 const SignleStepContainer: React.FC<{
   projectLabel: string;
@@ -13,6 +14,10 @@ const SignleStepContainer: React.FC<{
 }> = ({ projectLabel, orgLabel, step }) => {
   const nexus = useNexusContext();
   const [children, setChildren] = React.useState<any[]>([]);
+  const { updateStatus, success, error } = useStepStatus(
+    orgLabel,
+    projectLabel
+  );
 
   React.useEffect(() => {
     fetchChildren();
@@ -45,6 +50,18 @@ const SignleStepContainer: React.FC<{
       .catch(error => displayError(error, 'Failed to load Workflow Steps'));
   };
 
+  const onStatusChange = (stepId: string, rev: number, status: string) => {
+    updateStatus(stepId, rev, status);
+  };
+
+  if (error) {
+    displayError(error, 'Failed to update status');
+  }
+
+  if (success) {
+    successNotification('Status was updates successfully');
+  }
+
   if (!step) return null;
 
   return (
@@ -54,6 +71,7 @@ const SignleStepContainer: React.FC<{
       key={step['@id']}
       projectLabel={projectLabel}
       orgLabel={orgLabel}
+      onStatusChange={onStatusChange}
     />
   );
 };

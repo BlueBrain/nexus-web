@@ -1,37 +1,62 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Tooltip } from 'antd';
+import { Tooltip, Dropdown, Button, Menu } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 
-import StatusIcon from '../StatusIcon';
 import SubStepItem from './SubStepItem';
 import { StepResource } from '../../views/WorkflowStepView';
+import { Status } from '../StatusIcon';
 
 import './StepCard.less';
 
-const editIcon = require('../../../../shared/images/pencil.svg');
-const codeIcon = require('../../../../shared/images/codeIcon.svg');
-const dataIcon = require('../../../../shared/images/dataIcon.svg');
-const noteIcon = require('../../../../shared/images/noteIcon.svg');
 const settingIcon = require('../../../../shared/images/settingIcon.svg');
 
-const MAX_TITLE_LENGTH = 45;
+const MAX_TITLE_LENGTH = 57;
+const MAX_DESCRIPTION_LENGTH = 100;
 
 const StepCard: React.FC<{
   step: StepResource;
   projectLabel: string;
   orgLabel: string;
   substeps: StepResource[];
-}> = ({ step, projectLabel, orgLabel, substeps }) => {
-  const { name, description, status } = step;
+  onStatusChange: (stepId: string, rev: number, status: string) => void;
+}> = ({ step, projectLabel, orgLabel, substeps, onStatusChange }) => {
+  const [stepStatus, setStepStatus] = React.useState<string>(step.status);
+  const { name, description } = step;
   const stepId = step['@id'];
+
+  const handleMenuClick = (option: any) => {
+    setStepStatus(option.key);
+    onStatusChange(stepId, step._rev, option.key);
+  };
+
+  const menu = (
+    <Menu onClick={handleMenuClick}>
+      {Object.values(Status).map(status => (
+        <Menu.Item key={status}>
+          <span className="step-card__status-item">{status}</span>
+        </Menu.Item>
+      ))}
+    </Menu>
+  );
 
   return (
     <div
       className={`step-card step-card--${status && status.replace(' ', '-')}`}
     >
+      <div
+        className={`step-card__status step-card__status--${stepStatus &&
+          stepStatus.replace(' ', '-')}`}
+      >
+        <Dropdown overlay={menu}>
+          <Button type="text">
+            <span className="step-card__status-button">{stepStatus}</span>
+            <DownOutlined />
+          </Button>
+        </Dropdown>
+      </div>
       <div className="step-card__main">
         <div className="step-card__title">
-          {status && <StatusIcon status={status} mini={true} />}
           <Link to={`/workflow/${orgLabel}/${projectLabel}/${stepId}`}>
             {name.length > MAX_TITLE_LENGTH ? (
               <Tooltip placement="topRight" title={name}>
@@ -43,39 +68,38 @@ const StepCard: React.FC<{
               <h3 className="step-card__name">{name}</h3>
             )}
           </Link>
-          <img src={editIcon} />
         </div>
         <div className="step-card__info">
-          <div className="step-card__info-line">
-            <img src={codeIcon} className="step-card__info-icon" />
-            <span>Code resources: 0</span>
-          </div>
-          <div className="step-card__info-line">
-            <img src={dataIcon} className="step-card__info-icon" />
-            <span>Data resources: 0</span>
-          </div>
-          <div className="step-card__info-line">
-            <img src={noteIcon} className="step-card__info-icon" />
+          {description && description.length > MAX_DESCRIPTION_LENGTH ? (
+            <Tooltip placement="topRight" title={description}>
+              <span>
+                {`${description.slice(0, MAX_DESCRIPTION_LENGTH)}...`}
+              </span>
+            </Tooltip>
+          ) : (
             <span>{description || '-'}</span>
+          )}
+        </div>
+        <div className="step-card__subactivities">
+          <div className="step-card__substeps-total">
+            <img src={settingIcon} className="step-card__info-icon" />
+            <span>
+              {(substeps && substeps.length) || 'No'}{' '}
+              {substeps && substeps.length === 1 ? 'sub-step' : 'sub-steps'}
+            </span>
           </div>
-        </div>
-      </div>
-      <div className="step-card__subactivities">
-        <div className="step-card__substeps-total">
-          <img src={settingIcon} className="step-card__info-icon" />
-          <span>Workflow steps: {(substeps && substeps.length) || 0}</span>
-        </div>
-        <div className="step-card__list-container">
-          {substeps &&
-            substeps.length > 0 &&
-            substeps.map(substep => (
-              <SubStepItem
-                substep={substep}
-                key={substep['@id']}
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-              />
-            ))}
+          <div className="step-card__list-container">
+            {substeps &&
+              substeps.length > 0 &&
+              substeps.map(substep => (
+                <SubStepItem
+                  substep={substep}
+                  key={substep['@id']}
+                  orgLabel={orgLabel}
+                  projectLabel={projectLabel}
+                />
+              ))}
+          </div>
         </div>
       </div>
     </div>
