@@ -19,7 +19,7 @@ export const useStepStatus = (orgLabel: string, projectLabel: string) => {
       encodeURIComponent(stepId)
     )
       .then(response => {
-        let originalPayload = response;
+        const originalPayload = response;
 
         return nexus.Resource.update(orgLabel, projectLabel, stepId, rev, {
           ...originalPayload,
