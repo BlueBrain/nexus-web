@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Modal, notification } from 'antd';
+import { Modal } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
@@ -7,7 +7,6 @@ import ActioButton from '../components/ActionButton';
 import { Status } from '../components/StatusIcon';
 import { displayError, successNotification } from '../components/Notifications';
 import fusionConfig from '../config';
-import { useActivitySubClasses } from '../hooks/useActivitySubClasses';
 
 export type WorkflowStepMetadata = {
   name: string;
@@ -53,7 +52,6 @@ const NewWorkflowStepContainer: React.FC<{
 
   const [showForm, setShowForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
-  const { subClasses, fetchSubClasses, error } = useActivitySubClasses();
 
   const submitNewStep = (data: WorkflowStepMetadata) => {
     setBusy(true);
@@ -84,11 +82,8 @@ const NewWorkflowStepContainer: React.FC<{
   };
 
   const onClickAddStep = () => {
-    fetchSubClasses();
     setShowForm(true);
   };
-
-  if (error) displayError(error, 'Failed to load activities');
 
   return (
     <>
@@ -97,7 +92,7 @@ const NewWorkflowStepContainer: React.FC<{
         visible={showForm}
         footer={null}
         onCancel={() => setShowForm(false)}
-        width={1150}
+        width={800}
         destroyOnClose={true}
       >
         <WorkflowStepWithActivityForm
@@ -107,7 +102,7 @@ const NewWorkflowStepContainer: React.FC<{
           busy={busy}
           parentLabel={parentStepLabel}
           siblings={siblings}
-          activityList={subClasses}
+          activityList={[]}
         />
       </Modal>
     </>

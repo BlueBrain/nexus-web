@@ -9,17 +9,14 @@ import {
   Button,
   Spin,
   Select,
-  AutoComplete,
 } from 'antd';
-import { CloseCircleOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import * as moment from 'moment';
 
 import { Status } from '../StatusIcon';
 import { WorkflowStepMetadata } from '../../containers/NewWorkflowStepContainer';
 import { StepResource } from '../../views/WorkflowStepView';
 import { isEmptyInput } from '../../utils';
-import TypesIconList from '../../../../shared/components/Types/TypesIcon';
-import { labelOf } from '../../../../shared/utils';
 
 import './WorkflowStepWithActivityForm.less';
 
@@ -42,6 +39,7 @@ const WorkflowStepWithActivityForm: React.FC<{
   }[];
   allowActivitySearch?: boolean;
   defaultActivityType?: string;
+  isFullForm?: boolean;
 }> = ({
   onClickCancel,
   onSubmit,
@@ -52,9 +50,7 @@ const WorkflowStepWithActivityForm: React.FC<{
   workflowStep,
   informedByIds,
   siblings,
-  activityList,
-  allowActivitySearch = true,
-  defaultActivityType,
+  isFullForm,
 }) => {
   const [name, setName] = React.useState<string>(
     (workflowStep && workflowStep.name) || ''
@@ -74,32 +70,12 @@ const WorkflowStepWithActivityForm: React.FC<{
   const [dueDate, setDueDate] = React.useState<any>(
     (workflowStep && workflowStep.dueDate) || null
   );
-  const [dateError, setDateError] = React.useState<boolean>(false);
+
   const [nameError, setNameError] = React.useState<boolean>(false);
-  const [descriptionError, setDescriptionError] = React.useState<boolean>(
-    false
-  );
 
   const [informedBy, setInformedBy] = React.useState<string[]>(
     informedByIds ? informedByIds : []
   );
-
-  const activityOptions = activityList.map(activity => ({
-    value: activity.label,
-  }));
-
-  React.useEffect(() => {
-    if (defaultActivityType) {
-      const defaultOption = activityList.find(activity =>
-        activity['@id'].includes(defaultActivityType)
-      );
-
-      if (defaultOption) {
-        setName(defaultOption.label);
-        setActivityType(defaultOption['@id']);
-      }
-    }
-  }, [activityList]);
 
   const formItemLayout =
     layout === 'vertical'
@@ -115,7 +91,7 @@ const WorkflowStepWithActivityForm: React.FC<{
       : {
           xs: 24,
           sm: 24,
-          md: 12,
+          md: 24,
         };
 
   const isValidInput = () => {
@@ -128,20 +104,6 @@ const WorkflowStepWithActivityForm: React.FC<{
       setNameError(false);
     }
 
-    if (isEmptyInput(description)) {
-      setDescriptionError(true);
-      isValid = false;
-    } else {
-      setDescriptionError(false);
-    }
-
-    if (!dueDate) {
-      setDateError(true);
-      isValid = false;
-    } else {
-      setDateError(false);
-    }
-
     return isValid;
   };
 
@@ -152,12 +114,10 @@ const WorkflowStepWithActivityForm: React.FC<{
 
   const onChangeDescription = (event: any) => {
     setDescription(event.target.value);
-    setDescriptionError(false);
   };
 
   const onChangeDate = (date: any) => {
     setDueDate(moment(date).format());
-    setDateError(false);
   };
 
   const onChangeInformedBy = (selected: string[]) => {
@@ -165,16 +125,6 @@ const WorkflowStepWithActivityForm: React.FC<{
       setInformedBy(selected);
     } else {
       setInformedBy([]);
-    }
-  };
-
-  const onSelectActivity = (value: string) => {
-    setName(value);
-
-    const selected = activityList.find(activity => activity.label === value);
-
-    if (selected) {
-      setActivityType(selected['@id']);
     }
   };
 
@@ -201,7 +151,6 @@ const WorkflowStepWithActivityForm: React.FC<{
   };
 
   const { Item } = Form;
-  const { Search } = Input;
 
   return (
     <Form {...formItemLayout} className="workflow-step-form">
@@ -209,56 +158,22 @@ const WorkflowStepWithActivityForm: React.FC<{
       <Spin spinning={busy} tip="Please wait...">
         <Row gutter={24}>
           <Col {...columnLayout}>
-            {allowActivitySearch && (
-              <AutoComplete
-                style={{ width: '100%', marginBottom: 30 }}
-                options={activityOptions}
-                filterOption={(inputValue, option) =>
-                  option!.value
-                    .toUpperCase()
-                    .indexOf(inputValue.toUpperCase()) !== -1
-                }
-                onSelect={onSelectActivity}
-              >
-                <Search size="large" placeholder="Search exisiting activity" />
-              </AutoComplete>
-            )}
-          </Col>
-        </Row>
-        <Row gutter={24}>
-          <Col {...columnLayout}>
             <Item
               label="Name *"
               validateStatus={nameError ? 'error' : ''}
               help={nameError && 'Please enter a name'}
+              tooltip={{
+                title: '',
+                icon: <InfoCircleOutlined />,
+              }}
             >
-              <Input value={name} onChange={onChangeName} />
-            </Item>
-            <Item label="Activity Type">
-              {activityType && (
-                <div className="workflow-step-form__activity-type">
-                  <TypesIconList type={[activityType]} />
-                  <Button
-                    shape="circle"
-                    type="default"
-                    icon={<CloseCircleOutlined />}
-                    onClick={() => setActivityType('')}
-                  />
-                </div>
-              )}
-            </Item>
-            <Item
-              label="Provisional End Date *"
-              validateStatus={dateError ? 'error' : ''}
-              help={dateError && 'Please select a due date'}
-            >
-              <DatePicker
-                allowClear={false}
-                value={dueDate ? moment(dueDate) : null}
-                onChange={onChangeDate}
+              <Input
+                value={name}
+                onChange={onChangeName}
+                placeholder={'<step-name>'}
               />
             </Item>
-            <Item label="Informed By">
+            <Item label="Previous Steps">
               <Select
                 mode="multiple"
                 onChange={onChangeInformedBy}
@@ -266,7 +181,7 @@ const WorkflowStepWithActivityForm: React.FC<{
                 defaultValue={informedBy}
                 allowClear
                 size={'middle'}
-                placeholder="Please select"
+                placeholder="<step-name>"
               >
                 {siblings && siblings.length > 0 ? (
                   siblings.map(sibling => (
@@ -287,43 +202,52 @@ const WorkflowStepWithActivityForm: React.FC<{
               </Select>
             </Item>
           </Col>
-          <Col {...columnLayout}>
-            <Item label="Status">
-              <Radio.Group
-                value={status}
-                onChange={event => setStatus(event.target.value)}
-              >
-                {Object.values(Status).map(status => (
-                  <Radio.Button key={`option-${status}`} value={status}>
-                    {status}
-                  </Radio.Button>
-                ))}
-              </Radio.Group>
-            </Item>
-            <Item
-              label="Description *"
-              validateStatus={descriptionError ? 'error' : ''}
-              help={descriptionError && 'Please enter a description'}
-            >
-              <Input.TextArea
-                value={description}
-                onChange={onChangeDescription}
-              />
-            </Item>
-            <Item label="Summary">
-              <Input.TextArea
-                value={summary}
-                onChange={event => setSummary(event.target.value)}
-              />
-            </Item>
-          </Col>
+          {isFullForm ? (
+            <Col {...columnLayout}>
+              <Item label="Provisional End Date">
+                <DatePicker
+                  allowClear={false}
+                  value={dueDate ? moment(dueDate) : null}
+                  onChange={onChangeDate}
+                />
+              </Item>
+              <Item label="Status">
+                <Radio.Group
+                  value={status}
+                  onChange={event => setStatus(event.target.value)}
+                >
+                  {Object.values(Status).map(status => (
+                    <Radio.Button key={`option-${status}`} value={status}>
+                      {status}
+                    </Radio.Button>
+                  ))}
+                </Radio.Group>
+              </Item>
+              <Item label="Description">
+                <Input.TextArea
+                  value={description}
+                  onChange={onChangeDescription}
+                />
+              </Item>
+              <Item label="Summary">
+                <Input.TextArea
+                  value={summary}
+                  onChange={event => setSummary(event.target.value)}
+                />
+              </Item>
+            </Col>
+          ) : null}
         </Row>
         <Row>
           <Col {...columnLayout} style={{ textAlign: 'left' }}>
             <em>* Mandatory fields</em>
           </Col>
-          <Col {...columnLayout} style={{ textAlign: 'right' }}>
-            <Button onClick={onClickCancel}>Cancel</Button>
+        </Row>
+        <Row>
+          <Col>
+            <Button style={{ margin: '1px' }} onClick={onClickCancel}>
+              Cancel
+            </Button>
             <Button onClick={onClickSubmit} type="primary">
               Save
             </Button>

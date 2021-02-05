@@ -9,7 +9,7 @@ import LinkActivityForm from '../components/LinkActivityForm';
 import fusionConfig from '../config';
 import { displayError, successNotification } from '../components/Notifications';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
-import { useActivitySubClasses } from '../hooks/useActivitySubClasses';
+
 import { labelOf } from '../../../shared/utils';
 import { WorkflowStepMetadata } from './NewWorkflowStepContainer';
 
@@ -27,7 +27,7 @@ const ActivitiesLinkingContainer: React.FC<{
   );
   const [selectedActivity, setSelectedActivity] = React.useState<any>();
   const [steps, setSteps] = React.useState<any[]>([]);
-  const { subClasses, fetchSubClasses, error } = useActivitySubClasses();
+
   const [busy, setBusy] = React.useState<boolean>(false);
   const nexus = useNexusContext();
 
@@ -128,9 +128,6 @@ const ActivitiesLinkingContainer: React.FC<{
     setSelectedActivity(
       unlinkedActivities.find(activity => activity.resourceId === id)
     );
-
-    fetchSubClasses();
-    setshowCreateStepForm(true);
   };
 
   const createNewStep = (data: WorkflowStepMetadata) => {
@@ -231,8 +228,9 @@ const ActivitiesLinkingContainer: React.FC<{
           busy={false}
           parentLabel={''}
           siblings={[]}
-          activityList={subClasses}
+          activityList={[]}
           defaultActivityType={defaultActivityType()}
+          isFullForm
         />
       </Modal>
     </>
