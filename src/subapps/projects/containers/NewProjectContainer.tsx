@@ -119,7 +119,7 @@ const NewProjectContainer: React.FC<{}> = () => {
         visible={showForm}
         footer={null}
         onCancel={handleCancel}
-        width={1000}
+        width={600}
         destroyOnClose={true}
       >
         <ProjectForm

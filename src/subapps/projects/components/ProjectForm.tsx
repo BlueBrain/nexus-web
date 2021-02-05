@@ -25,7 +25,8 @@ const ProjectForm: React.FC<{
   onSubmit(data: ProjectMetadata): void;
   busy: boolean;
   project?: ProjectMetadata;
-}> = ({ onClickCancel, onSubmit, busy, project }) => {
+  isFullForm?: boolean;
+}> = ({ onClickCancel, onSubmit, busy, project, isFullForm }) => {
   const [name, setName] = React.useState<string>(project ? project.name : '');
   const [nameError, setNameError] = React.useState<boolean>(false);
   const [description, setDescription] = React.useState<string>(
@@ -67,7 +68,7 @@ const ProjectForm: React.FC<{
     : {
         xs: 24,
         sm: 24,
-        md: 12,
+        md: 24,
       };
 
   const isValidInput = () => {
@@ -77,18 +78,6 @@ const ProjectForm: React.FC<{
       isValid = false;
     } else {
       setNameError(false);
-    }
-    if (isEmptyInput(description)) {
-      setDescriptionError(true);
-      isValid = false;
-    } else {
-      setDescriptionError(false);
-    }
-    if (!dueDate) {
-      setDateError(true);
-      isValid = false;
-    } else {
-      setDateError(false);
     }
     return isValid;
   };
@@ -132,14 +121,6 @@ const ProjectForm: React.FC<{
       <Spin spinning={busy} tip="Please wait...">
         <Row gutter={24}>
           <Col {...formColumnLayOut}>
-            <Item label="Project Type">
-              <Radio.Group value="personal">
-                <Radio.Button value="personal">Personal</Radio.Button>
-                <Radio.Button value="organization" disabled={true}>
-                  Organization
-                </Radio.Button>
-              </Radio.Group>
-            </Item>
             <Item
               label="Project Name *"
               validateStatus={nameError ? 'error' : ''}
@@ -151,30 +132,14 @@ const ProjectForm: React.FC<{
                 disabled={!!project}
               />
             </Item>
-            <Item
-              label="Project Description *"
-              validateStatus={descriptionError ? 'error' : ''}
-              help={descriptionError && 'Please enter a description'}
-            >
-              <Input.TextArea
-                value={description}
-                onChange={onChangeDescription}
-              />
+            <Item label="Project Type">
+              <Radio.Group value="personal">
+                <Radio.Button value="personal">Personal</Radio.Button>
+                <Radio.Button value="organization" disabled={true}>
+                  Organization
+                </Radio.Button>
+              </Radio.Group>
             </Item>
-            <Item label="Research Topic">
-              <Input
-                value={topic}
-                onChange={event => setTopic(event.target.value)}
-              />
-            </Item>
-            <Item label="Research Question(s)">
-              <Input.TextArea
-                value={questions}
-                onChange={event => setQuestions(event.target.value)}
-              />
-            </Item>
-          </Col>
-          <Col {...formColumnLayOut}>
             <Item label="Project Visibility">
               <Radio.Group
                 value={visibility}
@@ -184,35 +149,55 @@ const ProjectForm: React.FC<{
                 <Radio.Button value="private">Private</Radio.Button>
               </Radio.Group>
             </Item>
-            <Item
-              label="Provisional End Date *"
-              validateStatus={dateError ? 'error' : ''}
-              help={dateError && 'Please select a due date'}
-            >
-              <DatePicker
-                value={dueDate ? moment(dueDate) : null}
-                onChange={onChangeDate}
-                allowClear={false}
-              />
-            </Item>
-            <Item label="Hypotheses">
-              <Input.TextArea
-                value={hypotheses}
-                onChange={event => setHypotheses(event.target.value)}
-              />
-            </Item>
-            <Item label="Goals and deliverables">
-              <Input.TextArea
-                value={goals}
-                onChange={event => setGoals(event.target.value)}
-              />
-            </Item>
           </Col>
+          {isFullForm ? (
+            <Col {...formColumnLayOut}>
+              <Item label="Project Description">
+                <Input.TextArea
+                  value={description}
+                  onChange={onChangeDescription}
+                />
+              </Item>
+              <Item label="Research Topic">
+                <Input
+                  value={topic}
+                  onChange={event => setTopic(event.target.value)}
+                />
+              </Item>
+              <Item label="Research Question(s)">
+                <Input.TextArea
+                  value={questions}
+                  onChange={event => setQuestions(event.target.value)}
+                />
+              </Item>
+              <Item label="Provisional End Date">
+                <DatePicker
+                  value={dueDate ? moment(dueDate) : null}
+                  onChange={onChangeDate}
+                  allowClear={false}
+                />
+              </Item>
+              <Item label="Hypotheses">
+                <Input.TextArea
+                  value={hypotheses}
+                  onChange={event => setHypotheses(event.target.value)}
+                />
+              </Item>
+              <Item label="Goals and deliverables">
+                <Input.TextArea
+                  value={goals}
+                  onChange={event => setGoals(event.target.value)}
+                />
+              </Item>
+            </Col>
+          ) : null}
         </Row>
         <Row>
           <Col {...formColumnLayOut} style={{ textAlign: 'left' }}>
             <em>* Mandatory fields</em>
           </Col>
+        </Row>
+        <Row>
           <Col {...formColumnLayOut} style={{ textAlign: 'right' }}>
             <Button onClick={onClickCancel}>Cancel</Button>
             <Button onClick={onClickSave} type="primary">

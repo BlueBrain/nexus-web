@@ -138,6 +138,7 @@ const ProjectMetaContaier: React.FC<{
           onSubmit={submitProject}
           busy={busy}
           project={projectMetaData}
+          isFullForm
         />
       </Drawer>
     </div>
