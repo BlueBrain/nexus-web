@@ -27,7 +27,7 @@ const ActivitiesLinkingContainer: React.FC<{
   );
   const [selectedActivity, setSelectedActivity] = React.useState<any>();
   const [steps, setSteps] = React.useState<any[]>([]);
-  // const { subClasses, fetchSubClasses, error } = useActivitySubClasses();
+
   const [busy, setBusy] = React.useState<boolean>(false);
   const nexus = useNexusContext();
 

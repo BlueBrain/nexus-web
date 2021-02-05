@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Modal, notification } from 'antd';
+import { Modal } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
@@ -7,7 +7,6 @@ import ActioButton from '../components/ActionButton';
 import { Status } from '../components/StatusIcon';
 import { displayError, successNotification } from '../components/Notifications';
 import fusionConfig from '../config';
-import { useActivitySubClasses } from '../hooks/useActivitySubClasses';
 
 export type WorkflowStepMetadata = {
   name: string;
@@ -53,11 +52,6 @@ const NewWorkflowStepContainer: React.FC<{
 
   const [showForm, setShowForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
-  // Support only a single type for now.
-  // const { subClasses, fetchSubClasses, error } = useActivitySubClasses();
-
-  // Harcoding activities for now.
-  // Will remove before we merge to main.
 
   const submitNewStep = (data: WorkflowStepMetadata) => {
     setBusy(true);
@@ -88,11 +82,8 @@ const NewWorkflowStepContainer: React.FC<{
   };
 
   const onClickAddStep = () => {
-    // fetchSubClasses();
     setShowForm(true);
   };
-
-  // if (error) displayError(error, 'Failed to load activities');
 
   return (
     <>
