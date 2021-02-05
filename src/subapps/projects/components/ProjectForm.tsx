@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Form, Input, DatePicker, Radio, Row, Col, Button, Spin } from 'antd';
 import * as moment from 'moment';
-
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { isEmptyInput } from '../utils';
 
 import './ProjectForm.less';
@@ -125,11 +125,16 @@ const ProjectForm: React.FC<{
               label="Project Name *"
               validateStatus={nameError ? 'error' : ''}
               help={nameError && 'Please enter a project name'}
+              tooltip={{
+                title: 'Name of your project',
+                icon: <InfoCircleOutlined />,
+              }}
             >
               <Input
                 value={name}
                 onChange={onChangeName}
                 disabled={!!project}
+                placeholder="<project-name>"
               />
             </Item>
             <Item label="Project Type">
