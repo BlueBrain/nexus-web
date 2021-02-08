@@ -8,6 +8,7 @@ import fusionConfig from '../config';
 import ProjectForm, { ProjectMetadata } from '../components/ProjectForm';
 import ActionButton from '../components/ActionButton';
 import { displayError } from '../components/Notifications';
+import { userOrgLabel } from '../utils';
 
 const NewProjectContainer: React.FC<{}> = () => {
   const nexus = useNexusContext();
@@ -24,7 +25,7 @@ const NewProjectContainer: React.FC<{}> = () => {
     return i['@type'] === 'Authenticated';
   });
 
-  const userOrgLabel = `${fusionConfig.personalOrgPrefix}${authenticatedIdentity?.realm}-${userName}`;
+  const userOrg = userOrgLabel(authenticatedIdentity?.realm, userName);
 
   const onClickAddProject = () => {
     setShowForm(true);
@@ -34,7 +35,7 @@ const NewProjectContainer: React.FC<{}> = () => {
     setBusy(true);
     const { name, description, type, visibility } = data;
     const createOrganization = () =>
-      nexus.Organization.create(userOrgLabel, {
+      nexus.Organization.create(userOrg, {
         description: 'Personal projects storage',
       })
         .then(() => {
@@ -46,14 +47,14 @@ const NewProjectContainer: React.FC<{}> = () => {
         });
 
     const createProject = () =>
-      nexus.Project.create(userOrgLabel, name, {
+      nexus.Project.create(userOrg, name, {
         description,
         apiMappings: fusionConfig.defaultAPIMappings,
       })
         .then(() => {
           createResource();
           if (type === 'personal' && visibility === 'public') {
-            makeProjectPublic(userOrgLabel, name);
+            makeProjectPublic(userOrg, name);
           }
         })
         .catch(error => {
@@ -66,7 +67,7 @@ const NewProjectContainer: React.FC<{}> = () => {
         });
 
     const createResource = () =>
-      nexus.Resource.create(userOrgLabel, name, {
+      nexus.Resource.create(userOrg, name, {
         '@type': fusionConfig.fusionProjectTypes,
         ...data,
       })
@@ -109,7 +110,7 @@ const NewProjectContainer: React.FC<{}> = () => {
 
   return (
     <div>
-      <AccessControl path={userOrgLabel} permissions={['projects/write']}>
+      <AccessControl path={userOrg} permissions={['projects/write']}>
         <ActionButton
           title="Create new project"
           onClick={onClickAddProject}
