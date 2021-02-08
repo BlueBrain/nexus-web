@@ -44,7 +44,7 @@ export const useInputs = (
 									<http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?resourceType .
 					<${workflowStepId}> nxv:inputs ?resource .
 					OPTIONAL { ?resource <http://schema.org/name> ?name }
-					OPTIONAL { ?resource nxv:description ?description }
+					OPTIONAL { ?resource <http://schema.org/description> ?description }
 			}
 			LIMIT 100
     `;

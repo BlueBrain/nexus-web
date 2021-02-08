@@ -1,12 +1,15 @@
 import * as React from 'react';
-import { Button, notification } from 'antd';
+import { Button, notification, Modal, Input } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
-
+import AddInputContainer from './AddInputContainer';
+import { Storage, NexusFile, Resource } from '@bbp/nexus-sdk';
 import { useInputs } from '../hooks/useInputs';
 import InputsTable from '../components/InputsTable';
 import useLocalStorage from '../../../shared/hooks/useLocalStorage';
 import { DATASET_KEY } from '../../search/components/ResultGridActions';
 import { forceAsArray } from '../../../shared/utils';
+import FileUploader from '../../../shared/components/FileUpload';
+import './InputsContainer.less';
 
 const InputsContainer: React.FC<{
   orgLabel: string;
@@ -14,8 +17,109 @@ const InputsContainer: React.FC<{
   stepId: string;
 }> = ({ orgLabel, projectLabel, stepId }) => {
   const { inputs, fetchInputs } = useInputs(orgLabel, projectLabel, stepId);
+  const [showDataSetModal, setShowDataSet] = React.useState<boolean>(false);
   const [collection, setCollection] = useLocalStorage(DATASET_KEY);
   const nexus = useNexusContext();
+  const [storages, setStorages] = React.useState<Storage[]>([]);
+  const [dataSetName, setDataSetName] = React.useState<string>('');
+  const [dataSetDescription, setDataSetDescription] = React.useState<string>(
+    ''
+  );
+  const [nexusFiles, setNexusFiles] = React.useState<NexusFile[]>([]);
+
+  const makeResourceUri = (resourceId: string) => {
+    return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+      resourceId
+    )}`;
+  };
+  const createDataSetResource = async (
+    description: string,
+    datasetName: string,
+    distribution: any[]
+  ) => {
+    const datasetResource = await nexus.Resource.create(
+      orgLabel,
+      projectLabel,
+      {
+        '@type': [
+          'http://schema.org/Dataset',
+          'http://www.w3.org/ns/prov#Entity',
+        ],
+        'http://schema.org/description': `${description}`,
+        'http://schema.org/distribution': distribution,
+        'http://schema.org/name': `${datasetName}`,
+      }
+    );
+    return datasetResource;
+  };
+
+  const saveDataSet = async () => {
+    if (nexusFiles) {
+      const distribution = nexusFiles.map(file => {
+        return {
+          '@type': 'http://schema.org/DataDownload',
+          'http://schema.org/contentUrl': {
+            '@id': `${file['@id']}`,
+          },
+          'http://schema.org/name': `${file._filename}`,
+        };
+      });
+      const dataSetResource = await createDataSetResource(
+        dataSetDescription,
+        dataSetName,
+        distribution
+      );
+      const resourceUpdated = await updateStepResource(dataSetResource);
+      if (resourceUpdated) {
+        notification.success({
+          message: 'DataSet Saved!',
+        });
+        setShowDataSet(false);
+      }
+    } else {
+      notification.info({ message: 'Please upload a file' });
+    }
+  };
+
+  const updateStepResource = async (datasetResource: Resource) => {
+    const workflowStep = await nexus.Resource.get<{
+      'nxv:inputs': [];
+      _rev: number;
+    }>(orgLabel, projectLabel, encodeURIComponent(stepId));
+    const updatedInputs = [
+      ...forceAsArray(workflowStep['nxv:inputs']),
+      {
+        '@id': datasetResource['@id'],
+      },
+    ];
+    const resourceUpdated = await nexus.Resource.update(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(stepId),
+      workflowStep._rev,
+      {
+        ...workflowStep,
+        'nxv:inputs': updatedInputs,
+      }
+    );
+    setTimeout(fetchInputs, 3 * 1000);
+    // TODO: because there is a delay in indexing for SPARQL, this function
+    // might not return the updated list in time.
+    // We might have to implement a memo-ized polling solution
+    // fetchInputs();
+    return resourceUpdated;
+  };
+
+  const onFileUpload = async (file: File, storageId?: string) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const nexusFile = await nexus.File.create(orgLabel, projectLabel, {
+      file: formData,
+      storage: storageId,
+    });
+    setNexusFiles([...nexusFiles, nexusFile]);
+    return nexusFile;
+  };
 
   React.useEffect(() => {
     if (!collection || !collection?.ids.length) {
@@ -26,10 +130,6 @@ const InputsContainer: React.FC<{
 
     const createInputInWorkflowStep = async () => {
       try {
-        const workflowStep = await nexus.Resource.get<{
-          'nxv:inputs': [];
-          _rev: number;
-        }>(orgLabel, projectLabel, encodeURIComponent(stepId));
         const datasetResource = await nexus.Resource.create(
           orgLabel,
           projectLabel,
@@ -41,29 +141,12 @@ const InputsContainer: React.FC<{
           }
         );
 
-        const updatedInputs = [
-          ...forceAsArray(workflowStep['nxv:inputs']),
-          { '@id': datasetResource['@id'] },
-        ];
+        updateStepResource(datasetResource);
 
-        await nexus.Resource.update(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(stepId),
-          workflowStep._rev,
-          {
-            ...workflowStep,
-            'nxv:inputs': updatedInputs,
-          }
-        );
         notification.close(key);
         setCollection(null);
-        // TODO: because there is a delay in indexing for SPARQL, this function
-        // might not return the updated list in time.
-        // We might have to implement a memo-ized polling solution
-        fetchInputs();
         notification.open({
-          message: 'Inputs succesfully updated',
+          message: 'Inputs successfully updated',
           description: 'You may have to refresh the page to see changes.',
         });
       } catch (error) {
@@ -104,7 +187,83 @@ const InputsContainer: React.FC<{
     };
   }, [collection, orgLabel, projectLabel, stepId]);
 
-  return <InputsTable inputs={inputs} />;
+  React.useEffect(() => {
+    nexus.Storage.list(orgLabel, projectLabel)
+      .then(data => setStorages(data._results))
+      .catch(e => setStorages([]));
+  }, [orgLabel, projectLabel]);
+
+  return (
+    <div className="inputs-container">
+      <Modal
+        title="Add Data Set"
+        visible={showDataSetModal}
+        onCancel={() => setShowDataSet(false)}
+        footer={null}
+        width={600}
+      >
+        <div className="dataset-container">
+          <div className="dataset-inputs">
+            <label>Name</label>
+            <Input
+              placeholder="<dataset_name>"
+              onChange={e => {
+                setDataSetName(e.target.value);
+              }}
+            ></Input>
+          </div>
+          <div className="dataset-inputs">
+            <label>Description</label>
+            <Input
+              style={{ margin: '0px 10px 0xp 10px' }}
+              placeholder="<dataset_description>"
+              onChange={e => {
+                setDataSetDescription(e.target.value);
+              }}
+            ></Input>
+          </div>
+
+          <FileUploader
+            {...{
+              onFileUpload,
+              projectLabel,
+              storages,
+              orgLabel,
+              makeFileLink: (nexusFile: NexusFile) =>
+                makeResourceUri(nexusFile['@id']),
+              goToFile: (nexusFile: NexusFile) => {},
+            }}
+          />
+          <div className="save-dataset">
+            <Button
+              onClick={() => {
+                setShowDataSet(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => {
+                saveDataSet();
+              }}
+            >
+              Save
+            </Button>
+          </div>
+        </div>
+      </Modal>
+      <InputsTable inputs={inputs} />
+      <Button
+        className="save-button"
+        type="primary"
+        size="large"
+        onClick={() => setShowDataSet(true)}
+      >
+        Add Inputs
+      </Button>
+    </div>
+  );
 };
 
 export default InputsContainer;
