@@ -109,13 +109,13 @@ const NewProjectContainer: React.FC<{}> = () => {
 
   return (
     <div>
-      {/* <AccessControl path={userOrgLabel} permissions={['projects/write']}> */}
-      <ActionButton
-        title="Create new project"
-        onClick={onClickAddProject}
-        icon="add"
-      />
-      {/* </AccessControl> */}
+      <AccessControl path={userOrgLabel} permissions={['projects/write']}>
+        <ActionButton
+          title="Create new project"
+          onClick={onClickAddProject}
+          icon="add"
+        />
+      </AccessControl>
 
       <Modal
         visible={showForm}
