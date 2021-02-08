@@ -14,15 +14,17 @@ const NewProjectContainer: React.FC<{}> = () => {
   const userName = useSelector(
     (state: RootState) => state.oidc.user?.profile.preferred_username
   );
-  const userOrgLabel = `${fusionConfig.personalOrgPrefix}${userName}`;
 
   const [showForm, setShowForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
 
   const identities = useSelector((state: RootState) => state.auth.identities);
+
   const authenticatedIdentity = identities?.data?.identities.find(i => {
     return i['@type'] === 'Authenticated';
   });
+
+  const userOrgLabel = `${fusionConfig.personalOrgPrefix}${authenticatedIdentity?.realm}-${userName}`;
 
   const onClickAddProject = () => {
     setShowForm(true);
@@ -107,13 +109,13 @@ const NewProjectContainer: React.FC<{}> = () => {
 
   return (
     <div>
-      <AccessControl path={userOrgLabel} permissions={['projects/write']}>
-        <ActionButton
-          title="Create new project"
-          onClick={onClickAddProject}
-          icon="add"
-        />
-      </AccessControl>
+      {/* <AccessControl path={userOrgLabel} permissions={['projects/write']}> */}
+      <ActionButton
+        title="Create new project"
+        onClick={onClickAddProject}
+        icon="add"
+      />
+      {/* </AccessControl> */}
 
       <Modal
         visible={showForm}
