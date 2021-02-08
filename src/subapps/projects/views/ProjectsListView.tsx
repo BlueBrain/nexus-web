@@ -7,6 +7,7 @@ import ProjectsListContainer from '../containers/ProjectsListContainer';
 import NewProjectContainer from '../containers/NewProjectContainer';
 import { RootState } from '../../../shared/store/reducers';
 import fusionConfig from '../config';
+import { userOrgLabel } from '../utils';
 
 import './ProjectsListView.less';
 
@@ -27,10 +28,16 @@ const ProjectsListView: React.FC<{}> = () => {
     (state: RootState) => state.oidc.user?.profile.preferred_username
   );
 
+  const identities = useSelector((state: RootState) => state.auth.identities);
+
+  const authenticatedIdentity = identities?.data?.identities.find(i => {
+    return i['@type'] === 'Authenticated';
+  });
+
   const { personalOrgPrefix } = fusionConfig;
 
   React.useEffect(() => {
-    const personalOrg = `${personalOrgPrefix}${userName}`;
+    const personalOrg = userOrgLabel(authenticatedIdentity?.realm, userName);
     // TODO: Implement pagination.
     nexus.Project.list(personalOrg, {
       size: 1000,

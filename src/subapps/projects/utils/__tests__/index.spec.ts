@@ -1,4 +1,9 @@
-import { isParentLink, isActivityResourceLink, isSubClass } from '..';
+import {
+  isParentLink,
+  isActivityResourceLink,
+  isSubClass,
+  userOrgLabel,
+} from '..';
 import { ResourceLink } from '@bbp/nexus-sdk';
 
 const linkToSibling: ResourceLink = {
@@ -124,5 +129,11 @@ describe('isActivityResource', () => {
 describe('isSubClass', () => {
   it("checks if link's path is subClassOf", () => {
     expect(isSubClass(subClassLink)).toEqual(true);
+  });
+});
+
+describe('userOrgLabel', () => {
+  it('constructs user org label', () => {
+    expect(userOrgLabel('testrealm', 'user')).toEqual('fusion-testrealm-user');
   });
 });

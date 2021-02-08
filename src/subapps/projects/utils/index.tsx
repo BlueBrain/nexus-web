@@ -152,3 +152,14 @@ export async function fetchTopLevelSteps(
 
   return children;
 }
+
+/**
+ * Returns user org label
+ *
+ * @param realm {string}
+ * @param userName {string}
+ * @returns {string}
+ */
+export const userOrgLabel = (realm?: string, userName?: string) => {
+  return `${fusionConfig.personalOrgPrefix}${realm}-${userName}`;
+};
