@@ -110,7 +110,7 @@ const NewProjectContainer: React.FC<{}> = () => {
 
   return (
     <div>
-      <AccessControl path={userOrg} permissions={['projects/write']}>
+      <AccessControl permissions={['organizations/create']} path="/">
         <ActionButton
           title="Create new project"
           onClick={onClickAddProject}
