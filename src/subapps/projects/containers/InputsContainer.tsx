@@ -102,11 +102,9 @@ const InputsContainer: React.FC<{
         'nxv:inputs': updatedInputs,
       }
     );
+    // TODO: Improve this by using some sort of feed back from backend on indexing.
     setTimeout(fetchInputs, 3 * 1000);
-    // TODO: because there is a delay in indexing for SPARQL, this function
-    // might not return the updated list in time.
-    // We might have to implement a memo-ized polling solution
-    // fetchInputs();
+
     return resourceUpdated;
   };
 
