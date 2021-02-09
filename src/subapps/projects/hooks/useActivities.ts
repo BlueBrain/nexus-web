@@ -46,7 +46,7 @@ export const useLinkedActivities = (
                 
       OPTIONAL { ?resource <http://schema.org/name> ?name }
       OPTIONAL { ?resource prov:Generation|prov:generated|prov:wasGeneratedBy ?generated }
-      OPTIONAL { ?resource prov:Generation|prov:generated|prov:wasGeneratedBy ?used }
+      OPTIONAL { ?resource prov:Usage|prov:used|prov:wasUsedBy ?used }
     }
     LIMIT 100
   `;
