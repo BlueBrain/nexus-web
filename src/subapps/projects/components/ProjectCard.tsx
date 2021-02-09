@@ -47,17 +47,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           </div>
           <p className="description">{description}</p>
         </div>
-        {() => {
-          if (activitiesNumber || collaboratorsNumber) {
-            return (
-              <div className="stats">
-                <p>{activitiesNumber} activities</p>
-                <p>{collaboratorsNumber} collaborators</p>
-              </div>
-            );
-          }
-          return null;
-        }}
+        {activitiesNumber || collaboratorsNumber ? (
+          <div className="stats">
+            <p>{activitiesNumber} activities</p>
+            <p>{collaboratorsNumber} collaborators</p>
+          </div>
+        ) : null}
       </div>
       <div className="card-section arrow">
         <Link to={`/workflow/${orgLabel}/${name}`}>
