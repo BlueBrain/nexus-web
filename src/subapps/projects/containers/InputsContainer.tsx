@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Button, notification, Modal, Input } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
-import AddInputContainer from './AddInputContainer';
 import { Storage, NexusFile, Resource } from '@bbp/nexus-sdk';
 import { useInputs } from '../hooks/useInputs';
 import InputsTable from '../components/InputsTable';
