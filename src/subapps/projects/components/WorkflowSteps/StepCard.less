@@ -7,6 +7,7 @@
   border-radius: 10px;
   padding: 0;
   box-shadow: @box-shadow-base;
+  z-index: 2;
 
   &__status {
     text-align: center;
@@ -101,4 +102,17 @@
     background-color: @not-started-color;
     border-radius: 10px;
   }
+}
+
+#svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.link-line {
+  stroke-width: 2px;
+  stroke: rgba(103, 108, 114, 0.61);
 }
