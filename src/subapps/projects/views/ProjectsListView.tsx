@@ -34,9 +34,11 @@ const ProjectsListView: React.FC<{}> = () => {
     return i['@type'] === 'Authenticated';
   });
 
-  const { personalOrgPrefix } = fusionConfig;
-
   React.useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = () => {
     const personalOrg = userOrgLabel(authenticatedIdentity?.realm, userName);
     // TODO: Implement pagination.
     nexus.Project.list(personalOrg, {
@@ -64,12 +66,16 @@ const ProjectsListView: React.FC<{}> = () => {
     }).then(value => {
       setArchivedProjects(value._results);
     });
-  }, []);
+  };
+
+  const refreshLists = () => {
+    fetchProjects();
+  };
 
   return (
     <div className="view-container projects-subapp-container">
       <div>
-        <NewProjectContainer />
+        <NewProjectContainer onSuccess={refreshLists} />
         {personalProjects ? (
           <ProjectsListContainer
             projectType="Personal Projects"

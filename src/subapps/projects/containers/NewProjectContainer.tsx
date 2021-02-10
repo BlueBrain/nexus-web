@@ -10,7 +10,9 @@ import ActionButton from '../components/ActionButton';
 import { displayError } from '../components/Notifications';
 import { userOrgLabel } from '../utils';
 
-const NewProjectContainer: React.FC<{}> = () => {
+const NewProjectContainer: React.FC<{
+  onSuccess: () => void;
+}> = ({ onSuccess }) => {
   const nexus = useNexusContext();
   const userName = useSelector(
     (state: RootState) => state.oidc.user?.profile.preferred_username
@@ -33,7 +35,9 @@ const NewProjectContainer: React.FC<{}> = () => {
 
   const submitProject = (data: ProjectMetadata) => {
     setBusy(true);
+
     const { name, description, type, visibility } = data;
+
     const createOrganization = () =>
       nexus.Organization.create(userOrg, {
         description: 'Personal projects storage',
@@ -44,6 +48,7 @@ const NewProjectContainer: React.FC<{}> = () => {
         .catch(error => {
           displayError(error, 'An error occurred');
           setShowForm(false);
+          setBusy(false);
         });
 
     const createProject = () =>
@@ -63,6 +68,7 @@ const NewProjectContainer: React.FC<{}> = () => {
           } else {
             displayError(error, 'An error occurred');
             setShowForm(false);
+            setBusy(false);
           }
         });
 
@@ -76,10 +82,13 @@ const NewProjectContainer: React.FC<{}> = () => {
             message: `Project ${name} created successfully`,
           });
           setShowForm(false);
+          setBusy(false);
+          onSuccess();
         })
         .catch(error => {
           displayError(error, 'An error occurred');
           setShowForm(false);
+          setBusy(false);
         });
 
     createProject();
@@ -117,7 +126,6 @@ const NewProjectContainer: React.FC<{}> = () => {
           icon="add"
         />
       </AccessControl>
-
       <Modal
         visible={showForm}
         footer={null}
