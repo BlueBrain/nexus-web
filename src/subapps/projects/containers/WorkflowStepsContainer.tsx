@@ -16,6 +16,7 @@ const WorkflowStepContainer: React.FC<{
 }> = ({ orgLabel, projectLabel }) => {
   const nexus = useNexusContext();
   const [steps, setSteps] = React.useState<StepResource[]>([]);
+  const [orderedSteps, setOrderedSteps] = React.useState<any[]>([]);
   // switch to trigger step list update
   const [refreshSteps, setRefreshSteps] = React.useState<boolean>(false);
   const { updateStatus, success, error } = useStepStatus(
@@ -29,6 +30,34 @@ const WorkflowStepContainer: React.FC<{
   React.useEffect(() => {
     fetchAllSteps(nexus, orgLabel, projectLabel);
   }, [refreshSteps]);
+
+  React.useEffect(() => {
+    const firstSteps = steps.filter(step => !step.wasInformedBy);
+
+    const findNextSteps = (id: string) => {
+      return steps.filter(
+        step => (step.wasInformedBy && step.wasInformedBy['@id']) === id
+      );
+    };
+
+    const orderedNext: any[] = [];
+
+    firstSteps.forEach(step => {
+      const nextSteps = findNextSteps(step['@id']);
+
+      console.log('nextSteps', nextSteps);
+
+      nextSteps.forEach(step => {
+        orderedNext.push({ step, order: 2 });
+      });
+    });
+
+    console.log('orderedNext', orderedNext);
+
+    setOrderedSteps([...orderedSteps, ...orderedNext]);
+  }, [steps]);
+
+  console.log('orderedSteps', orderedSteps);
 
   const fetchAllSteps = async (
     nexus: NexusClient,

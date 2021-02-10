@@ -27,15 +27,11 @@ const StepCard: React.FC<{
 
   React.useEffect(() => {
     if (step.wasInformedBy) {
-      console.log('step', step.wasInformedBy && step.wasInformedBy['@id']);
-
       const line = document.getElementById(`was-informed-link-${stepId}`);
       const div1 = document.getElementById(`card-${stepId}`);
       const div2 = document.getElementById(`card-${step.wasInformedBy['@id']}`);
 
       if (div1 && div2) {
-        console.log('setting divs');
-
         const x1 = div1.offsetLeft + div1.getBoundingClientRect().width;
         const y1 = div1.offsetTop + div1.getBoundingClientRect().height / 2;
         const x2 = div2.offsetLeft + div2.getBoundingClientRect().width / 2;
