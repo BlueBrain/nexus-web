@@ -52,6 +52,8 @@ const MarkdownViewerContainer: React.FC<{
   };
   useAsyncCall<void, Error>(processImages(), [wrapperRef, template, data]);
 
+  console.log('markdownData', markdownData);
+
   return match(markdownData)
     .with({ loading: true, error: null }, () => (
       <div>
@@ -68,6 +70,18 @@ const MarkdownViewerContainer: React.FC<{
           ref={wrapperRef}
           dangerouslySetInnerHTML={{ __html: markdownData.data || '' }}
         ></div>
+      )
+    )
+    .with(
+      {
+        error: when(error => !error),
+        data: '',
+      },
+      () => (
+        <div>
+          <p>No description provided</p>
+          <div ref={wrapperRef} dangerouslySetInnerHTML={{ __html: '' }} />
+        </div>
       )
     )
     .run();
