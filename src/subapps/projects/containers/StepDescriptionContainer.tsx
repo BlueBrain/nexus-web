@@ -54,8 +54,6 @@ const StepDescriptionContainer: React.FC<{
     setIsEditing(false);
   };
 
-  console.log('description', step.description);
-
   return (
     <div>
       {isEditing ? (

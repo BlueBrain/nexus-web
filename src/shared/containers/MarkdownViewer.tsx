@@ -52,8 +52,6 @@ const MarkdownViewerContainer: React.FC<{
   };
   useAsyncCall<void, Error>(processImages(), [wrapperRef, template, data]);
 
-  console.log('markdownData', markdownData);
-
   return match(markdownData)
     .with({ loading: true, error: null }, () => (
       <div>
