@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Tooltip, Dropdown, Button, Menu } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
+import Draggable from 'react-draggable';
 
 import SubStepItem from './SubStepItem';
 import { StepResource } from '../../views/WorkflowStepView';
@@ -54,6 +55,24 @@ const StepCard: React.FC<{
     onStatusChange(stepId, step._rev, option.key);
   };
 
+  const handleDrag = (event: any, data: any) => {
+    const line = document.getElementById(`was-informed-link-${stepId}`);
+    const div1 = document.getElementById(`card-${stepId}`);
+    const div2 = document.getElementById(
+      `card-${step.wasInformedBy && step.wasInformedBy['@id']}`
+    );
+
+    if (line && div1 && div2) {
+      const x1 =
+        div1.offsetLeft + div1.getBoundingClientRect().width / 2 + data.x;
+      const y1 =
+        div1.offsetTop + div1.getBoundingClientRect().height / 2 + data.y;
+
+      line.setAttribute('x1', x1.toString());
+      line.setAttribute('y1', y1.toString());
+    }
+  };
+
   const menu = (
     <Menu onClick={handleMenuClick}>
       {Object.values(Status).map(status => (
@@ -66,69 +85,72 @@ const StepCard: React.FC<{
 
   return (
     <>
-      <div
-        id={`card-${stepId}`}
-        className={`step-card step-card--${status && status.replace(' ', '-')}`}
-      >
+      <Draggable onDrag={handleDrag}>
         <div
-          className={`step-card__status step-card__status--${stepStatus &&
-            stepStatus.replace(' ', '-')}`}
+          id={`card-${stepId}`}
+          className={`step-card step-card--${status &&
+            status.replace(' ', '-')}`}
         >
-          <Dropdown overlay={menu}>
-            <Button type="text">
-              <span className="step-card__status-button">{stepStatus}</span>
-              <DownOutlined />
-            </Button>
-          </Dropdown>
-        </div>
-        <div className="step-card__main">
-          <div className="step-card__title">
-            <Link to={`/workflow/${orgLabel}/${projectLabel}/${stepId}`}>
-              {name.length > MAX_TITLE_LENGTH ? (
-                <Tooltip placement="topRight" title={name}>
-                  <h3 className="step-card__name">
-                    {`${name.slice(0, MAX_TITLE_LENGTH)}...`}
-                  </h3>
+          <div
+            className={`step-card__status step-card__status--${stepStatus &&
+              stepStatus.replace(' ', '-')}`}
+          >
+            <Dropdown overlay={menu}>
+              <Button type="text">
+                <span className="step-card__status-button">{stepStatus}</span>
+                <DownOutlined />
+              </Button>
+            </Dropdown>
+          </div>
+          <div className="step-card__main">
+            <div className="step-card__title">
+              <Link to={`/workflow/${orgLabel}/${projectLabel}/${stepId}`}>
+                {name.length > MAX_TITLE_LENGTH ? (
+                  <Tooltip placement="topRight" title={name}>
+                    <h3 className="step-card__name">
+                      {`${name.slice(0, MAX_TITLE_LENGTH)}...`}
+                    </h3>
+                  </Tooltip>
+                ) : (
+                  <h3 className="step-card__name">{name}</h3>
+                )}
+              </Link>
+            </div>
+            <div className="step-card__info">
+              {description && description.length > MAX_DESCRIPTION_LENGTH ? (
+                <Tooltip placement="topRight" title={description}>
+                  <span>
+                    {`${description.slice(0, MAX_DESCRIPTION_LENGTH)}...`}
+                  </span>
                 </Tooltip>
               ) : (
-                <h3 className="step-card__name">{name}</h3>
+                <span>{description || '-'}</span>
               )}
-            </Link>
-          </div>
-          <div className="step-card__info">
-            {description && description.length > MAX_DESCRIPTION_LENGTH ? (
-              <Tooltip placement="topRight" title={description}>
-                <span>
-                  {`${description.slice(0, MAX_DESCRIPTION_LENGTH)}...`}
-                </span>
-              </Tooltip>
-            ) : (
-              <span>{description || '-'}</span>
-            )}
-          </div>
-          <div className="step-card__subactivities">
-            <div className="step-card__substeps-total">
-              <img src={settingIcon} className="step-card__info-icon" />
-              <span>
-                {(substeps && substeps.length) || 'No'}{' '}
-                {substeps && substeps.length === 1 ? 'sub-step' : 'sub-steps'}
-              </span>
             </div>
-            <div className="step-card__list-container">
-              {substeps &&
-                substeps.length > 0 &&
-                substeps.map(substep => (
-                  <SubStepItem
-                    substep={substep}
-                    key={substep['@id']}
-                    orgLabel={orgLabel}
-                    projectLabel={projectLabel}
-                  />
-                ))}
+            <div className="step-card__subactivities">
+              <div className="step-card__substeps-total">
+                <img src={settingIcon} className="step-card__info-icon" />
+                <span>
+                  {(substeps && substeps.length) || 'No'}{' '}
+                  {substeps && substeps.length === 1 ? 'sub-step' : 'sub-steps'}
+                </span>
+              </div>
+              <div className="step-card__list-container">
+                {substeps &&
+                  substeps.length > 0 &&
+                  substeps.map(substep => (
+                    <SubStepItem
+                      substep={substep}
+                      key={substep['@id']}
+                      orgLabel={orgLabel}
+                      projectLabel={projectLabel}
+                    />
+                  ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </Draggable>
       {step.wasInformedBy && (
         <svg id="svg">
           <line className="link-line" id={`was-informed-link-${stepId}`} />
