@@ -27,8 +27,14 @@ const StepCard: React.FC<{
   const stepId = step['@id'];
 
   React.useEffect(() => {
+    placeLines();
+  }, []);
+
+  const placeLines = () => {
     if (step.wasInformedBy) {
-      const line = document.getElementById(`was-informed-link-${stepId}`);
+      const line = document.getElementById(
+        `link-${stepId}-to-${step.wasInformedBy['@id']}`
+      );
       const div1 = document.getElementById(`card-${stepId}`);
       const div2 = document.getElementById(`card-${step.wasInformedBy['@id']}`);
 
@@ -48,7 +54,7 @@ const StepCard: React.FC<{
         }
       }
     }
-  }, []);
+  };
 
   const handleMenuClick = (option: any) => {
     setStepStatus(option.key);
@@ -56,20 +62,39 @@ const StepCard: React.FC<{
   };
 
   const handleDrag = (event: any, data: any) => {
-    const line = document.getElementById(`was-informed-link-${stepId}`);
+    const incomingLine = document.getElementById(
+      `link-${stepId}-to-${step.wasInformedBy && step.wasInformedBy['@id']}`
+    );
     const div1 = document.getElementById(`card-${stepId}`);
     const div2 = document.getElementById(
       `card-${step.wasInformedBy && step.wasInformedBy['@id']}`
     );
 
-    if (line && div1 && div2) {
+    if (incomingLine && div1 && div2) {
       const x1 =
         div1.offsetLeft + div1.getBoundingClientRect().width / 2 + data.x;
       const y1 =
         div1.offsetTop + div1.getBoundingClientRect().height / 2 + data.y;
 
-      line.setAttribute('x1', x1.toString());
-      line.setAttribute('y1', y1.toString());
+      incomingLine.setAttribute('x1', x1.toString());
+      incomingLine.setAttribute('y1', y1.toString());
+    }
+
+    const selector = `[id$=-to-${stepId}]`;
+    console.log('selector', selector);
+
+    const outgoingLines = document.querySelectorAll(selector);
+
+    if (outgoingLines.length > 0 && div1) {
+      outgoingLines.forEach(line => {
+        const x1 =
+          div1.offsetLeft + div1.getBoundingClientRect().width / 2 + data.x;
+        const y1 =
+          div1.offsetTop + div1.getBoundingClientRect().height / 2 + data.y;
+
+        line.setAttribute('x2', x1.toString());
+        line.setAttribute('y2', y1.toString());
+      });
     }
   };
 
@@ -153,7 +178,11 @@ const StepCard: React.FC<{
       </Draggable>
       {step.wasInformedBy && (
         <svg id="svg">
-          <line className="link-line" id={`was-informed-link-${stepId}`} />
+          <line
+            className="link-line"
+            id={`link-${stepId}-to-${step.wasInformedBy &&
+              step.wasInformedBy['@id']}`}
+          />
         </svg>
       )}
     </>
