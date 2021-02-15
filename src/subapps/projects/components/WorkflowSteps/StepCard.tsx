@@ -21,7 +21,20 @@ const StepCard: React.FC<{
   orgLabel: string;
   substeps: StepResource[];
   onStatusChange: (stepId: string, rev: number, status: string) => void;
-}> = ({ step, projectLabel, orgLabel, substeps, onStatusChange }) => {
+  onPostionChange: (
+    stepId: string,
+    rev: number,
+    positionX: number,
+    positionY: number
+  ) => void;
+}> = ({
+  step,
+  projectLabel,
+  orgLabel,
+  substeps,
+  onStatusChange,
+  onPostionChange,
+}) => {
   const [stepStatus, setStepStatus] = React.useState<string>(step.status);
   const { name, description } = step;
   const stepId = step['@id'];
@@ -43,8 +56,6 @@ const StepCard: React.FC<{
         const y1 = div1.offsetTop + div1.getBoundingClientRect().height / 2;
         const x2 = div2.offsetLeft + div2.getBoundingClientRect().width / 2;
         const y2 = div2.offsetTop + div2.getBoundingClientRect().height / 2;
-
-        console.log(x1, x2, y1, y2);
 
         if (line) {
           line.setAttribute('x1', x1.toString());
@@ -81,7 +92,6 @@ const StepCard: React.FC<{
     }
 
     const selector = `[id$=-to-${stepId}]`;
-    console.log('selector', selector);
 
     const outgoingLines = document.querySelectorAll(selector);
 
@@ -98,6 +108,17 @@ const StepCard: React.FC<{
     }
   };
 
+  const handleStop = (event: any, data: any) => {
+    console.log('stopped...');
+
+    console.log('event', event);
+    console.log('data', data);
+    // save posistion
+    const { x, y } = data;
+
+    onPostionChange(stepId, step._rev, x, y);
+  };
+
   const menu = (
     <Menu onClick={handleMenuClick}>
       {Object.values(Status).map(status => (
@@ -110,7 +131,15 @@ const StepCard: React.FC<{
 
   return (
     <>
-      <Draggable onDrag={handleDrag}>
+      <Draggable
+        onDrag={handleDrag}
+        onStop={handleStop}
+        defaultPosition={
+          step.positionY && step.positionY
+            ? { x: step.positionY, y: step.positionY }
+            : undefined
+        }
+      >
         <div
           id={`card-${stepId}`}
           className={`step-card step-card--${status &&

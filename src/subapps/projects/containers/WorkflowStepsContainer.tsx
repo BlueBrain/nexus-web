@@ -79,6 +79,30 @@ const WorkflowStepContainer: React.FC<{
     successNotification('Status was updates successfully');
   }
 
+  const updatePosition = async (
+    stepId: string,
+    rev: number,
+    positionX: number,
+    positionY: number
+  ) => {
+    await nexus.Resource.getSource(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(stepId)
+    )
+      .then(response => {
+        const originalPayload = response;
+
+        return nexus.Resource.update(orgLabel, projectLabel, stepId, rev, {
+          ...originalPayload,
+          positionX,
+          positionY,
+        });
+      })
+      .then(response => console.log('resp'))
+      .catch(error => console.log('err'));
+  };
+
   return (
     <>
       <ProjectPanel
@@ -97,6 +121,7 @@ const WorkflowStepContainer: React.FC<{
               projectLabel={projectLabel}
               orgLabel={orgLabel}
               onStatusChange={onStatusChange}
+              onPostionChange={updatePosition}
             />
           ))}
       </StepsBoard>

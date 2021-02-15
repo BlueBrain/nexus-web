@@ -72,6 +72,7 @@ const SignleStepContainer: React.FC<{
       projectLabel={projectLabel}
       orgLabel={orgLabel}
       onStatusChange={onStatusChange}
+      onPostionChange={() => {}}
     />
   );
 };

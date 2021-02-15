@@ -50,6 +50,8 @@ export type StepResource = Resource<{
       '@id': string;
     };
   };
+  positionX?: number;
+  positionY?: number;
 }>;
 
 type BreadcrumbItem = {
