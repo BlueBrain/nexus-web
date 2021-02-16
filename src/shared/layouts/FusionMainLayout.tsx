@@ -21,6 +21,7 @@ import useLocalStorage from '../hooks/useLocalStorage';
 
 import './FusionMainLayout.less';
 import SearchBarContainer from '../containers/SearchBarContainer';
+import DataCartContainer from '../containers/DataCartContainer';
 
 const { Sider, Content } = Layout;
 
@@ -295,6 +296,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
             commitHash={COMMIT_HASH}
             onClickRemoveConsent={() => setConsent(undefined)}
             onClickSideBarToggle={() => setCollapsed(!collapsed)}
+            dataCart={<DataCartContainer />}
           >
             <SearchBarContainer />
           </Header>
