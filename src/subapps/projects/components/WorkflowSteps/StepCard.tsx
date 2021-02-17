@@ -132,11 +132,12 @@ const StepCard: React.FC<{
   return (
     <>
       <Draggable
+        bounds="parent"
         onDrag={handleDrag}
         onStop={handleStop}
         defaultPosition={
-          step.positionY && step.positionY
-            ? { x: step.positionY, y: step.positionY }
+          step.positionX && step.positionY
+            ? { x: step.positionX, y: step.positionY }
             : undefined
         }
       >
