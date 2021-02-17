@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Tooltip, Dropdown, Button, Menu } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
-
 import SubStepItem from './SubStepItem';
 import { StepResource } from '../../views/WorkflowStepView';
 import { Status } from '../StatusIcon';
+import MarkdownViewerContainer from '../../../../shared/containers/MarkdownViewer';
 
 import './StepCard.less';
 
@@ -70,15 +70,16 @@ const StepCard: React.FC<{
           </Link>
         </div>
         <div className="step-card__info">
-          {description && description.length > MAX_DESCRIPTION_LENGTH ? (
-            <Tooltip placement="topRight" title={description}>
-              <span>
-                {`${description.slice(0, MAX_DESCRIPTION_LENGTH)}...`}
-              </span>
-            </Tooltip>
-          ) : (
-            <span>{description || '-'}</span>
-          )}
+          <Tooltip placement="topRight" title={description}>
+            <MarkdownViewerContainer
+              template={
+                step.description
+                  ? step.description.slice(0, MAX_DESCRIPTION_LENGTH)
+                  : ''
+              }
+              data={step}
+            />
+          </Tooltip>
         </div>
         <div className="step-card__subactivities">
           <div className="step-card__substeps-total">
