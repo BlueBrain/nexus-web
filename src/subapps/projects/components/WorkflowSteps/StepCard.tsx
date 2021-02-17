@@ -40,52 +40,47 @@ const StepCard: React.FC<{
   const stepId = step['@id'];
 
   React.useEffect(() => {
-    placeLines();
+    if (step.wasInformedBy) {
+      if (Array.isArray(step.wasInformedBy)) {
+        step.wasInformedBy.forEach(card => placeLines(card['@id']));
+      } else {
+        placeLines(step.wasInformedBy['@id']);
+      }
+    }
   }, []);
 
-  const placeLines = () => {
-    if (step.wasInformedBy) {
-      const line = document.getElementById(
-        `link-${stepId}-to-${step.wasInformedBy['@id']}`
-      );
-      const div1 = document.getElementById(`card-${stepId}`);
-      const div2 = document.getElementById(`card-${step.wasInformedBy['@id']}`);
-      const transform1 = div1?.style.transform;
-      const transform2 = div2?.style.transform;
+  const placeLines = (cardId: string) => {
+    const line = document.getElementById(`link-${stepId}-to-${cardId}`);
+    const div1 = document.getElementById(`card-${stepId}`);
+    const div2 = document.getElementById(`card-${cardId}`);
 
-      const matrix1 = new DOMMatrix(transform1);
-      const matrix2 = new DOMMatrix(transform2);
+    const transform1 = div1?.style.transform;
+    const transform2 = div2?.style.transform;
 
-      const translateX1 = matrix1.m41;
-      const translateY1 = matrix1.m42;
+    const matrix1 = new DOMMatrix(transform1);
+    const matrix2 = new DOMMatrix(transform2);
 
-      const translateX2 = matrix2.m41;
-      const translateY2 = matrix2.m42;
+    const translateX1 = matrix1.m41;
+    const translateY1 = matrix1.m42;
 
-      if (div1 && div2) {
-        const x1 =
-          div1.offsetLeft +
-          translateX1 +
-          div1.getBoundingClientRect().width / 2;
-        const y1 =
-          div1.offsetTop +
-          translateY1 +
-          div1.getBoundingClientRect().height / 2;
-        const x2 =
-          div2.offsetLeft +
-          translateX2 +
-          div2.getBoundingClientRect().width / 2;
-        const y2 =
-          div2.offsetTop +
-          translateY2 +
-          div2.getBoundingClientRect().height / 2;
+    const translateX2 = matrix2.m41;
+    const translateY2 = matrix2.m42;
 
-        if (line) {
-          line.setAttribute('x1', x1.toString());
-          line.setAttribute('y1', y1.toString());
-          line.setAttribute('x2', x2.toString());
-          line.setAttribute('y2', y2.toString());
-        }
+    if (div1 && div2) {
+      const x1 =
+        div1.offsetLeft + translateX1 + div1.getBoundingClientRect().width / 2;
+      const y1 =
+        div1.offsetTop + translateY1 + div1.getBoundingClientRect().height / 2;
+      const x2 =
+        div2.offsetLeft + translateX2 + div2.getBoundingClientRect().width / 2;
+      const y2 =
+        div2.offsetTop + translateY2 + div2.getBoundingClientRect().height / 2;
+
+      if (line) {
+        line.setAttribute('x1', x1.toString());
+        line.setAttribute('y1', y1.toString());
+        line.setAttribute('x2', x2.toString());
+        line.setAttribute('y2', y2.toString());
       }
     }
   };
@@ -223,7 +218,16 @@ const StepCard: React.FC<{
           </div>
         </div>
       </Draggable>
-      {step.wasInformedBy && (
+      {step.wasInformedBy && Array.isArray(step.wasInformedBy) ? (
+        step.wasInformedBy.map(step => (
+          <svg id="svg">
+            <line
+              className="link-line"
+              id={`link-${stepId}-to-${step['@id']}`}
+            />
+          </svg>
+        ))
+      ) : (
         <svg id="svg">
           <line
             className="link-line"
