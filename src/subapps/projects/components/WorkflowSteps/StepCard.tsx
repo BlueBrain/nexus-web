@@ -50,12 +50,35 @@ const StepCard: React.FC<{
       );
       const div1 = document.getElementById(`card-${stepId}`);
       const div2 = document.getElementById(`card-${step.wasInformedBy['@id']}`);
+      const transform1 = div1?.style.transform;
+      const transform2 = div2?.style.transform;
+
+      const matrix1 = new DOMMatrix(transform1);
+      const matrix2 = new DOMMatrix(transform2);
+
+      const translateX1 = matrix1.m41;
+      const translateY1 = matrix1.m42;
+
+      const translateX2 = matrix2.m41;
+      const translateY2 = matrix2.m42;
 
       if (div1 && div2) {
-        const x1 = div1.offsetLeft + div1.getBoundingClientRect().width;
-        const y1 = div1.offsetTop + div1.getBoundingClientRect().height / 2;
-        const x2 = div2.offsetLeft + div2.getBoundingClientRect().width / 2;
-        const y2 = div2.offsetTop + div2.getBoundingClientRect().height / 2;
+        const x1 =
+          div1.offsetLeft +
+          translateX1 +
+          div1.getBoundingClientRect().width / 2;
+        const y1 =
+          div1.offsetTop +
+          translateY1 +
+          div1.getBoundingClientRect().height / 2;
+        const x2 =
+          div2.offsetLeft +
+          translateX2 +
+          div2.getBoundingClientRect().width / 2;
+        const y2 =
+          div2.offsetTop +
+          translateY2 +
+          div2.getBoundingClientRect().height / 2;
 
         if (line) {
           line.setAttribute('x1', x1.toString());
@@ -92,7 +115,6 @@ const StepCard: React.FC<{
     }
 
     const selector = `[id$=-to-${stepId}]`;
-
     const outgoingLines = document.querySelectorAll(selector);
 
     if (outgoingLines.length > 0 && div1) {
@@ -109,11 +131,6 @@ const StepCard: React.FC<{
   };
 
   const handleStop = (event: any, data: any) => {
-    console.log('stopped...');
-
-    console.log('event', event);
-    console.log('data', data);
-    // save posistion
     const { x, y } = data;
 
     onPostionChange(stepId, step._rev, x, y);
