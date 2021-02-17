@@ -74,6 +74,9 @@ const WorkflowStepView: React.FC = () => {
   const [siblings, setSiblings] = React.useState<
     { name: string; '@id': string }[]
   >([]);
+  const [availableTabs, setAvailableTabs] = React.useState<Tabs[]>(
+    Object.values(Tabs)
+  );
   const [activeTab, setActiveTab] = React.useState<string>();
   const [queryParams, setQueryString] = useQueryString();
 
@@ -82,16 +85,6 @@ const WorkflowStepView: React.FC = () => {
   const stepId = match?.params.stepId || '';
 
   React.useEffect(() => {
-    if (queryParams.view) {
-      setActiveTab(queryParams.view);
-    } else {
-      setActiveTab('Overview');
-      setQueryString({
-        ...queryParams,
-        view: 'Overview',
-      });
-    }
-
     nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(stepId))
       .then(response => {
         setStep(response as StepResource);
@@ -107,6 +100,35 @@ const WorkflowStepView: React.FC = () => {
     fetchChildren(stepId);
   }, [refreshSteps, stepId, activeTab]);
 
+  const setTabs = (numberOfChildren: number) => {
+    if (numberOfChildren <= 0) {
+      const tabs = Object.values(Tabs).filter(tab => {
+        return tab !== Tabs.OVERVIEW;
+      });
+      setAvailableTabs(tabs);
+      if (queryParams.view) {
+        setActiveTab(queryParams.view);
+      } else {
+        setActiveTab(Tabs.ACTIVITIES);
+      }
+      setQueryString({
+        ...queryParams,
+        view: 'Activities',
+      });
+    } else {
+      setAvailableTabs(Object.values(Tabs));
+      if (queryParams.view) {
+        setActiveTab(queryParams.view);
+      } else {
+        setActiveTab(Tabs.OVERVIEW);
+      }
+      setQueryString({
+        ...queryParams,
+        view: 'Overview',
+      });
+    }
+  };
+
   const fetchChildren = async (stepId: string) => {
     const children = (await fetchChildrenForStep(
       nexus,
@@ -115,6 +137,7 @@ const WorkflowStepView: React.FC = () => {
       stepId
     )) as StepResource[];
     setSteps(children);
+    setTabs(children.length);
     setSiblings(
       children.map(child => ({
         name: child.name,
@@ -238,8 +261,12 @@ const WorkflowStepView: React.FC = () => {
           />
         )}
       </div>
-      <StepViewTabs activeTab={activeTab} onSelectTab={onClickTab} />
-      {activeTab === Tabs.OVERVIEW && (
+      <StepViewTabs
+        tabs={availableTabs}
+        activeTab={activeTab}
+        onSelectTab={onClickTab}
+      />
+      {activeTab === Tabs.OVERVIEW && steps && steps.length > 0 && (
         <StepsBoard>
           {steps && steps.length > 0 ? (
             steps.map(substep => (
