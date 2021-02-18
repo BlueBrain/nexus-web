@@ -15,9 +15,6 @@ const StepViewTabs: React.FC<{
   activeTab?: string;
   tabs?: Tabs[];
 }> = ({ onSelectTab, activeTab, tabs }) => {
-  // console.log('======');
-  // console.log(tabs);
-  // console.log('======');
   const availableTabs = tabs ? tabs : Object.values(Tabs);
   return (
     <div className="step-view-tabs">
