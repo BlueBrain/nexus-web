@@ -24,8 +24,9 @@ const StepCard: React.FC<{
   onPostionChange: (
     stepId: string,
     rev: number,
-    positionX: number,
-    positionY: number
+    data: {
+      [key: string]: any;
+    }
   ) => void;
 }> = ({
   step,
@@ -139,7 +140,10 @@ const StepCard: React.FC<{
   const handleStop = (event: any, data: any) => {
     const { x, y } = data;
 
-    onPostionChange(stepId, step._rev, x, y);
+    onPostionChange(stepId, step._rev, {
+      positionX: x,
+      positionY: y,
+    });
   };
 
   const menu = (
@@ -173,7 +177,7 @@ const StepCard: React.FC<{
             className={`step-card__status step-card__status--${stepStatus &&
               stepStatus.replace(' ', '-')}`}
           >
-            <Dropdown overlay={menu}>
+            <Dropdown overlay={menu} trigger={['click']}>
               <Button type="text">
                 <span className="step-card__status-button">{stepStatus}</span>
                 <DownOutlined />

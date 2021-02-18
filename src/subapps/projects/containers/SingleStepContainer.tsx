@@ -5,7 +5,7 @@ import { displayError, successNotification } from '../components/Notifications';
 import StepCard from '../components/WorkflowSteps/StepCard';
 import { StepResource } from '../views/WorkflowStepView';
 import { isParentLink } from '../utils';
-import { useStepStatus } from '../hooks/useStepStatus';
+import { useUpdateStep } from '../hooks/useUpdateStep';
 
 const SignleStepContainer: React.FC<{
   projectLabel: string;
@@ -14,10 +14,7 @@ const SignleStepContainer: React.FC<{
 }> = ({ projectLabel, orgLabel, step }) => {
   const nexus = useNexusContext();
   const [children, setChildren] = React.useState<any[]>([]);
-  const { updateStatus, success, error } = useStepStatus(
-    orgLabel,
-    projectLabel
-  );
+  const { updateStep, success, error } = useUpdateStep(orgLabel, projectLabel);
 
   React.useEffect(() => {
     fetchChildren();
@@ -50,16 +47,20 @@ const SignleStepContainer: React.FC<{
       .catch(error => displayError(error, 'Failed to load Workflow Steps'));
   };
 
-  const onStatusChange = (stepId: string, rev: number, status: string) => {
-    updateStatus(stepId, rev, status);
+  const onStatusChange = (stepId: string, rev: number, newStatus: string) => {
+    updateStep(stepId, rev, { status: newStatus });
+  };
+
+  const onPositionChange = (stepId: string, rev: number, data: any) => {
+    updateStep(stepId, rev, data);
   };
 
   if (error) {
-    displayError(error, 'Failed to update status');
+    displayError(error, 'Failed to update');
   }
 
   if (success) {
-    successNotification('Status was updates successfully');
+    successNotification('Workflow Step updated successfully');
   }
 
   if (!step) return null;
@@ -72,7 +73,7 @@ const SignleStepContainer: React.FC<{
       projectLabel={projectLabel}
       orgLabel={orgLabel}
       onStatusChange={onStatusChange}
-      onPostionChange={() => {}}
+      onPostionChange={onPositionChange}
     />
   );
 };

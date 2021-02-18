@@ -8,7 +8,7 @@ import { StepResource } from '../views/WorkflowStepView';
 import StepCard from '../components/WorkflowSteps/StepCard';
 import ProjectPanel from '../components/ProjectPanel';
 import { fetchTopLevelSteps } from '../utils';
-import { useStepStatus } from '../hooks/useStepStatus';
+import { useUpdateStep } from '../hooks/useUpdateStep';
 
 const WorkflowStepContainer: React.FC<{
   orgLabel: string;
@@ -18,10 +18,7 @@ const WorkflowStepContainer: React.FC<{
   const [steps, setSteps] = React.useState<StepResource[]>([]);
   // switch to trigger step list update
   const [refreshSteps, setRefreshSteps] = React.useState<boolean>(false);
-  const { updateStatus, success, error } = useStepStatus(
-    orgLabel,
-    projectLabel
-  );
+  const { updateStep, success, error } = useUpdateStep(orgLabel, projectLabel);
 
   const waitAntReloadActivities = () =>
     setTimeout(() => setRefreshSteps(!refreshSteps), 3500);
@@ -67,41 +64,21 @@ const WorkflowStepContainer: React.FC<{
     '@id': sibling._self,
   }));
 
-  const onStatusChange = (stepId: string, rev: number, status: string) => {
-    updateStatus(stepId, rev, status);
+  const onStatusChange = (stepId: string, rev: number, newStatus: string) => {
+    updateStep(stepId, rev, { status: newStatus });
+  };
+
+  const onPositionChange = (stepId: string, rev: number, data: any) => {
+    updateStep(stepId, rev, data);
   };
 
   if (error) {
-    displayError(error, 'Failed to update status');
+    displayError(error, 'Failed to update');
   }
 
   if (success) {
-    successNotification('Status was updates successfully');
+    successNotification('Workflow Step updated successfully');
   }
-
-  const updatePosition = async (
-    stepId: string,
-    rev: number,
-    positionX: number,
-    positionY: number
-  ) => {
-    await nexus.Resource.getSource(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(stepId)
-    )
-      .then(response => {
-        const originalPayload = response;
-
-        return nexus.Resource.update(orgLabel, projectLabel, stepId, rev, {
-          ...originalPayload,
-          positionX,
-          positionY,
-        });
-      })
-      .then(response => console.log('resp'))
-      .catch(error => console.log('err'));
-  };
 
   return (
     <>
@@ -121,7 +98,7 @@ const WorkflowStepContainer: React.FC<{
               projectLabel={projectLabel}
               orgLabel={orgLabel}
               onStatusChange={onStatusChange}
-              onPostionChange={updatePosition}
+              onPostionChange={onPositionChange}
             />
           ))}
       </StepsBoard>

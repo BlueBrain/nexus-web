@@ -3,15 +3,17 @@ import { useNexusContext } from '@bbp/react-nexus';
 
 import fusionConfig from '../config';
 
-export const useStepStatus = (orgLabel: string, projectLabel: string) => {
+export const useUpdateStep = (orgLabel: string, projectLabel: string) => {
   const nexus = useNexusContext();
   const [error, setError] = React.useState<Error>();
   const [success, setSuccess] = React.useState<boolean>();
 
-  const updateStatus = async (
+  const updateStep = async (
     stepId: string,
     rev: number,
-    newStatus: string
+    data: {
+      [key: string]: any;
+    }
   ) => {
     await nexus.Resource.getSource(
       orgLabel,
@@ -23,7 +25,7 @@ export const useStepStatus = (orgLabel: string, projectLabel: string) => {
 
         return nexus.Resource.update(orgLabel, projectLabel, stepId, rev, {
           ...originalPayload,
-          status: newStatus,
+          ...data,
           '@type': fusionConfig.workflowStepType,
         });
       })
@@ -32,7 +34,7 @@ export const useStepStatus = (orgLabel: string, projectLabel: string) => {
   };
 
   return {
-    updateStatus,
+    updateStep,
     success,
     error,
   };
