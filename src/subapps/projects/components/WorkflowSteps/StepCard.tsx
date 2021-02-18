@@ -90,14 +90,12 @@ const StepCard: React.FC<{
     onStatusChange(stepId, step._rev, option.key);
   };
 
-  const handleDrag = (event: any, data: any) => {
+  const updateLines = (linkTostepId: string, data: any) => {
     const incomingLine = document.getElementById(
-      `link-${stepId}-to-${step.wasInformedBy && step.wasInformedBy['@id']}`
+      `link-${stepId}-to-${linkTostepId}`
     );
     const div1 = document.getElementById(`card-${stepId}`);
-    const div2 = document.getElementById(
-      `card-${step.wasInformedBy && step.wasInformedBy['@id']}`
-    );
+    const div2 = document.getElementById(`card-${linkTostepId}`);
 
     if (incomingLine && div1 && div2) {
       const x1 =
@@ -108,9 +106,22 @@ const StepCard: React.FC<{
       incomingLine.setAttribute('x1', x1.toString());
       incomingLine.setAttribute('y1', y1.toString());
     }
+  };
+
+  const handleDrag = (event: any, data: any) => {
+    if (step.wasInformedBy) {
+      if (Array.isArray(step.wasInformedBy)) {
+        step.wasInformedBy.forEach(card => {
+          updateLines(card['@id'], data);
+        });
+      } else {
+        updateLines(step.wasInformedBy['@id'], data);
+      }
+    }
 
     const selector = `[id$=-to-${stepId}]`;
     const outgoingLines = document.querySelectorAll(selector);
+    const div1 = document.getElementById(`card-${stepId}`);
 
     if (outgoingLines.length > 0 && div1) {
       outgoingLines.forEach(line => {
@@ -220,7 +231,7 @@ const StepCard: React.FC<{
       </Draggable>
       {step.wasInformedBy && Array.isArray(step.wasInformedBy) ? (
         step.wasInformedBy.map(step => (
-          <svg id="svg">
+          <svg id="svg" key={`link-${stepId}-to-${step['@id']}`}>
             <line
               className="link-line"
               id={`link-${stepId}-to-${step['@id']}`}
