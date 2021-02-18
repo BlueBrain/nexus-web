@@ -56,11 +56,11 @@ const SignleStepContainer: React.FC<{
   };
 
   if (error) {
-    displayError(error, 'Failed to update');
+    displayError(error, 'Failed to update Workflow Step');
   }
 
   if (success) {
-    successNotification('Workflow Step updated successfully');
+    successNotification('Workflow Step updated');
   }
 
   if (!step) return null;
