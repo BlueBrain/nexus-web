@@ -71,7 +71,7 @@ const InputsContainer: React.FC<{
       const resourceUpdated = await updateStepResource(dataSetResource);
       if (resourceUpdated) {
         notification.success({
-          message: 'DataSet Saved!',
+          message: 'Dataset created',
         });
         setShowDataSet(false);
       }

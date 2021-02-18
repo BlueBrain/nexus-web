@@ -1,12 +1,12 @@
 import * as React from 'react';
+import Draggable from 'react-draggable';
 import { Link } from 'react-router-dom';
 import { Tooltip, Dropdown, Button, Menu } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
-import Draggable from 'react-draggable';
-
 import SubStepItem from './SubStepItem';
 import { StepResource } from '../../views/WorkflowStepView';
 import { Status } from '../StatusIcon';
+import MarkdownViewerContainer from '../../../../shared/containers/MarkdownViewer';
 
 import './StepCard.less';
 
@@ -185,6 +185,41 @@ const StepCard: React.FC<{
                 <DownOutlined />
               </Button>
             </Dropdown>
+          </div>
+      </div>
+      <div className="step-card__main">
+        <div className="step-card__title">
+          <Link to={`/workflow/${orgLabel}/${projectLabel}/${stepId}`}>
+            {name.length > MAX_TITLE_LENGTH ? (
+              <Tooltip placement="topRight" title={name}>
+                <h3 className="step-card__name">
+                  {`${name.slice(0, MAX_TITLE_LENGTH)}...`}
+                </h3>
+              </Tooltip>
+            ) : (
+              <h3 className="step-card__name">{name}</h3>
+            )}
+          </Link>
+        </div>
+        <div className="step-card__info">
+          <Tooltip placement="topRight" title={description}>
+            <MarkdownViewerContainer
+              template={
+                step.description
+                  ? step.description.slice(0, MAX_DESCRIPTION_LENGTH)
+                  : ''
+              }
+              data={step}
+            />
+          </Tooltip>
+        </div>
+        <div className="step-card__subactivities">
+          <div className="step-card__substeps-total">
+            <img src={settingIcon} className="step-card__info-icon" />
+            <span>
+              {(substeps && substeps.length) || 'No'}{' '}
+              {substeps && substeps.length === 1 ? 'sub-step' : 'sub-steps'}
+            </span>
           </div>
           <div className="step-card__main">
             <div className="step-card__title">
