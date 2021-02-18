@@ -10,16 +10,16 @@ export enum Tabs {
   INPUTS = 'Inputs',
 }
 
-const tabs = Object.values(Tabs);
-
 const StepViewTabs: React.FC<{
   onSelectTab: (tab: string) => void;
   activeTab?: string;
-}> = ({ onSelectTab, activeTab }) => {
+  tabs?: Tabs[];
+}> = ({ onSelectTab, activeTab, tabs }) => {
+  const availableTabs = tabs ? tabs : Object.values(Tabs);
   return (
     <div className="step-view-tabs">
       <div>
-        {tabs.map((tab: string) => (
+        {availableTabs.map((tab: string) => (
           <ActionButton
             key={tab}
             highlighted={activeTab === tab}

@@ -76,7 +76,7 @@ const WorkflowStepContainer: React.FC<{
   }
 
   if (success) {
-    successNotification('Status was updates successfully');
+    successNotification('Status updated');
   }
 
   return (
