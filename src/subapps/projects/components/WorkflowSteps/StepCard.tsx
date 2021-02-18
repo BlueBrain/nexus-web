@@ -140,6 +140,8 @@ const StepCard: React.FC<{
   const handleStop = (event: any, data: any) => {
     const { x, y } = data;
 
+    if (step.positionX == x && step.positionY == y) return;
+
     onPostionChange(stepId, step._rev, {
       positionX: x,
       positionY: y,
