@@ -137,7 +137,6 @@ const WorkflowStepWithActivityForm: React.FC<{
         summary,
         dueDate,
         status,
-        informedBy,
       };
 
       if (informedBy) {
@@ -244,14 +243,21 @@ const WorkflowStepWithActivityForm: React.FC<{
           </Col>
         </Row>
         <Row>
-          <Col>
-            <Button style={{ margin: '1px' }} onClick={onClickCancel}>
+          <div className="workflow-step-form__buttons">
+            <Button
+              style={{ margin: '10px 10px 10px 0' }}
+              onClick={onClickCancel}
+            >
               Cancel
             </Button>
-            <Button onClick={onClickSubmit} type="primary">
+            <Button
+              style={{ margin: '10px 10px 10px 0' }}
+              onClick={onClickSubmit}
+              type="primary"
+            >
               Save
             </Button>
-          </Col>
+          </div>
         </Row>
       </Spin>
     </Form>
