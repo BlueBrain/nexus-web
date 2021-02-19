@@ -23,7 +23,9 @@ const NotififcationsPopover: React.FC<{
   return (
     <div className="notifications-popover">
       <p>
-        There are activities in your project that are not grouped in any step.
+        {activities && activities.length > 0
+          ? 'There are activities in your project that are not grouped in any step.'
+          : 'No detached activities'}
       </p>
       {activities.map(activity => (
         <div
