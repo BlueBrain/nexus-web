@@ -6,6 +6,7 @@ import { DownOutlined } from '@ant-design/icons';
 import { StepResource } from '../../views/WorkflowStepView';
 import { Status } from '../StatusIcon';
 import MarkdownViewerContainer from '../../../../shared/containers/MarkdownViewer';
+import SubStepItem from './SubStepItem';
 
 import './StepCard.less';
 
@@ -217,6 +218,18 @@ const StepCard: React.FC<{
                   {(substeps && substeps.length) || 'No'}{' '}
                   {substeps && substeps.length === 1 ? 'sub-step' : 'sub-steps'}
                 </span>
+              </div>
+              <div className="step-card__list-container">
+                {substeps &&
+                  substeps.length > 0 &&
+                  substeps.map(substep => (
+                    <SubStepItem
+                      substep={substep}
+                      key={substep['@id']}
+                      orgLabel={orgLabel}
+                      projectLabel={projectLabel}
+                    />
+                  ))}
               </div>
             </div>
           </div>
