@@ -3,7 +3,6 @@ import Draggable from 'react-draggable';
 import { Link } from 'react-router-dom';
 import { Tooltip, Dropdown, Button, Menu } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
-import SubStepItem from './SubStepItem';
 import { StepResource } from '../../views/WorkflowStepView';
 import { Status } from '../StatusIcon';
 import MarkdownViewerContainer from '../../../../shared/containers/MarkdownViewer';
@@ -20,10 +19,9 @@ const StepCard: React.FC<{
   projectLabel: string;
   orgLabel: string;
   substeps: StepResource[];
-  onStatusChange: (stepId: string, rev: number, status: string) => void;
+  onStatusChange: (stepId: string, status: string) => void;
   onPostionChange: (
     stepId: string,
-    rev: number,
     data: {
       [key: string]: any;
     }
@@ -88,7 +86,7 @@ const StepCard: React.FC<{
 
   const handleMenuClick = (option: any) => {
     setStepStatus(option.key);
-    onStatusChange(stepId, step._rev, option.key);
+    onStatusChange(stepId, option.key);
   };
 
   const updateLines = (linkTostepId: string, data: any) => {
@@ -142,7 +140,7 @@ const StepCard: React.FC<{
 
     if (step.positionX === x && step.positionY === y) return;
 
-    onPostionChange(stepId, step._rev, {
+    onPostionChange(stepId, {
       positionX: x,
       positionY: y,
     });

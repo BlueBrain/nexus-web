@@ -1,36 +1,47 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-
+import { StepResource } from '../views/WorkflowStepView';
 import fusionConfig from '../config';
 
-export const useUpdateStep = (orgLabel: string, projectLabel: string) => {
+export const useUpdateStep = (
+  orgLabel: string,
+  projectLabel: string,
+  rev: number
+) => {
   const nexus = useNexusContext();
   const [error, setError] = React.useState<Error>();
   const [success, setSuccess] = React.useState<boolean>();
+  const [localCopy, setLocalCopy] = React.useState<number>(rev);
 
   const updateStep = async (
     stepId: string,
-    rev: number,
     data: {
       [key: string]: any;
     }
   ) => {
-    await nexus.Resource.getSource(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(stepId)
-    )
-      .then(response => {
-        const originalPayload = response;
+    try {
+      const originalPayload = await nexus.Resource.getSource(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(stepId)
+      );
 
-        return nexus.Resource.update(orgLabel, projectLabel, stepId, rev, {
+      const updateResource = await nexus.Resource.update(
+        orgLabel,
+        projectLabel,
+        stepId,
+        localCopy,
+        {
           ...originalPayload,
           ...data,
           '@type': fusionConfig.workflowStepType,
-        });
-      })
-      .then(() => setSuccess(true))
-      .catch(error => setError(error));
+        }
+      );
+      setLocalCopy(updateResource._rev);
+      setSuccess(true);
+    } catch (err) {
+      setError(error);
+    }
   };
 
   return {
