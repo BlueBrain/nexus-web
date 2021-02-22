@@ -203,7 +203,7 @@ const ActivitiesLinkingContainer: React.FC<{
         visible={showLinkForm}
         footer={null}
         onCancel={() => setShowLinkForm(false)}
-        width={1000}
+        width={600}
         destroyOnClose={true}
       >
         <LinkActivityForm

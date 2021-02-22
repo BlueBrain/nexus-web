@@ -15,8 +15,6 @@ const LinkActivityForm: React.FC<{
     resourceId: string;
     createdAt: string;
     createdBy: string;
-    usedList?: string[];
-    generatedList?: string[];
     resourceType: string;
   };
   stepsList: {
@@ -27,15 +25,7 @@ const LinkActivityForm: React.FC<{
   onCancel: () => void;
 }> = ({ activity, stepsList, onSubmit, onCancel }) => {
   const [selectedStep, setSelectedStep] = React.useState<string>('');
-  const {
-    name,
-    createdBy,
-    createdAt,
-    usedList,
-    generatedList,
-    resourceType,
-    resourceId,
-  } = activity;
+  const { name, createdBy, createdAt, resourceType, resourceId } = activity;
 
   const renderOptions = () => {
     return stepsList.map(step => (
@@ -54,102 +44,54 @@ const LinkActivityForm: React.FC<{
       <h2 className="link-activity-form__title">
         Link Activity to Workflow Step
       </h2>
-      <Row gutter={24}>
-        <Col xs={24} sm={24} md={12}>
-          <Row>
-            <Col xs={5} sm={5} md={5}>
-              <p>
-                <b>Resource</b>
-              </p>
-            </Col>
-            <Col>
-              <p>{name || labelOf(resourceId)}</p>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={5} sm={5} md={5}>
-              <p>
-                <b>Activity type</b>
-              </p>
-            </Col>
-            {/* TODO: manage multiple types */}
-            <Col>
-              <p className="link-activity-form__types">
-                {resourceType && Array.from(resourceType).length > 0 ? (
-                  <TypesIconList
-                    type={Array.from(resourceType).map(type => labelOf(type))}
-                  />
-                ) : (
-                  'No data'
-                )}
-              </p>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={5} sm={5} md={5}>
-              {/* TODO: fetch an agent */}
-              <p>
-                <b>Created by</b>
-              </p>
-            </Col>
-            <Col>
-              <p>{getUsername(createdBy)}</p>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={5} sm={5} md={5}>
-              <p>
-                <b>Created on</b>
-              </p>
-            </Col>
-            <Col>
-              <p>{moment(createdAt).format('L')}</p>
-            </Col>
-          </Row>
+      <Row>
+        <Col xs={9} sm={9} md={9}>
+          <p>
+            <b>Resource</b>
+          </p>
         </Col>
-        <Col xs={24} sm={24} md={12}>
-          <Row>
-            <Col xs={5} sm={5} md={5}>
-              <p>
-                <b>Input data</b>
-              </p>
-            </Col>
-            <Col>
-              <p>
-                {usedList && Array.from(usedList).length > 0
-                  ? Array.from(usedList).map(outputId => (
-                      <p>{labelOf(outputId)}</p>
-                    ))
-                  : 'No data'}
-              </p>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={5} sm={5} md={5}>
-              <p>
-                <b>Output data</b>
-              </p>
-            </Col>
-            <Col>
-              <p>
-                {generatedList && Array.from(generatedList).length > 0
-                  ? Array.from(generatedList).map(outputId => (
-                      <p>{labelOf(outputId)}</p>
-                    ))
-                  : 'No data'}
-              </p>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={5} sm={5} md={5}>
-              <p>
-                <b>Code</b>
-              </p>
-            </Col>
-            <Col>
-              <p>Coming soon...</p>
-            </Col>
-          </Row>
+        <Col xs={15} sm={15} md={15}>
+          <p>{name || labelOf(resourceId)}</p>
+        </Col>
+      </Row>
+      <Row>
+        <Col xs={9} sm={9} md={9}>
+          <p>
+            <b>Activity type</b>
+          </p>
+        </Col>
+        {/* TODO: manage multiple types */}
+        <Col xs={15} sm={15} md={15}>
+          <p className="link-activity-form__types">
+            {resourceType && Array.from(resourceType).length > 0 ? (
+              <TypesIconList
+                type={Array.from(resourceType).map(type => labelOf(type))}
+              />
+            ) : (
+              'No data'
+            )}
+          </p>
+        </Col>
+      </Row>
+      <Row>
+        <Col xs={9} sm={9} md={9}>
+          {/* TODO: fetch an agent */}
+          <p>
+            <b>Created by</b>
+          </p>
+        </Col>
+        <Col xs={15} sm={15} md={15}>
+          <p>{getUsername(createdBy)}</p>
+        </Col>
+      </Row>
+      <Row>
+        <Col xs={9} sm={9} md={9}>
+          <p>
+            <b>Created on</b>
+          </p>
+        </Col>
+        <Col xs={15} sm={15} md={15}>
+          <p>{moment(createdAt).format('L')}</p>
         </Col>
       </Row>
       <br />
