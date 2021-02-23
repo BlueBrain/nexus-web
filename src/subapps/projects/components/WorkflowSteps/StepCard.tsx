@@ -47,7 +47,7 @@ const StepCard: React.FC<{
         placeLines(step.wasInformedBy['@id']);
       }
     }
-  }, []);
+  });
 
   const placeLines = (cardId: string) => {
     const line = document.getElementById(`link-${stepId}-to-${cardId}`);
@@ -77,10 +77,10 @@ const StepCard: React.FC<{
         div2.offsetTop + translateY2 + div2.getBoundingClientRect().height / 2;
 
       if (line) {
-        line.setAttribute('x1', x1.toString());
-        line.setAttribute('y1', y1.toString());
-        line.setAttribute('x2', x2.toString());
-        line.setAttribute('y2', y2.toString());
+        line.setAttribute(
+          'points',
+          `${x2},${y2} ${(x1 + x2) / 2}, ${(y1 + y2) / 2} ${x1},${y1}`
+        );
       }
     }
   };
@@ -97,14 +97,23 @@ const StepCard: React.FC<{
     const div1 = document.getElementById(`card-${stepId}`);
     const div2 = document.getElementById(`card-${linkTostepId}`);
 
+    const matrix2 = new DOMMatrix(div2?.style.transform);
+
     if (incomingLine && div1 && div2) {
       const x1 =
         div1.offsetLeft + div1.getBoundingClientRect().width / 2 + data.x;
       const y1 =
         div1.offsetTop + div1.getBoundingClientRect().height / 2 + data.y;
 
-      incomingLine.setAttribute('x1', x1.toString());
-      incomingLine.setAttribute('y1', y1.toString());
+      const x2 =
+        div2.offsetLeft + matrix2.m41 + div2.getBoundingClientRect().width / 2;
+      const y2 =
+        div2.offsetTop + matrix2.m42 + div2.getBoundingClientRect().height / 2;
+
+      incomingLine.setAttribute(
+        'points',
+        `${x2},${y2} ${(x1 + x2) / 2}, ${(y1 + y2) / 2} ${x1},${y1}`
+      );
     }
   };
 
@@ -238,7 +247,20 @@ const StepCard: React.FC<{
       {step.wasInformedBy && Array.isArray(step.wasInformedBy) ? (
         step.wasInformedBy.map(step => (
           <svg id="svg" key={`link-${stepId}-to-${step['@id']}`}>
-            <line
+            <marker
+              id="black-arrow"
+              viewBox="0 0 10 10"
+              refX="0"
+              refY="5"
+              orient="auto"
+              fill="#676c72"
+              markerWidth="6"
+              markerHeight="6"
+            >
+              <path d="M 0 0 L 10 5 L 0 10 z" />
+            </marker>
+            <polyline
+              markerMid="url(#black-arrow)"
               className="link-line"
               id={`link-${stepId}-to-${step['@id']}`}
             />
@@ -246,7 +268,20 @@ const StepCard: React.FC<{
         ))
       ) : (
         <svg id="svg">
-          <line
+          <marker
+            id="black-arrow"
+            viewBox="0 0 10 10"
+            refX="0"
+            refY="5"
+            orient="auto"
+            fill="#676c72"
+            markerWidth="6"
+            markerHeight="6"
+          >
+            <path d="M 0 0 L 10 5 L 0 10 z" />
+          </marker>
+          <polyline
+            markerMid="url(#black-arrow)"
             className="link-line"
             id={`link-${stepId}-to-${step.wasInformedBy &&
               step.wasInformedBy['@id']}`}
