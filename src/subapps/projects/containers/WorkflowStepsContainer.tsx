@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { NexusClient } from '@bbp/nexus-sdk';
-
+import SingleStepContainer from './SingleStepContainer';
 import StepsBoard from '../components/WorkflowSteps/StepsBoard';
-import { displayError, successNotification } from '../components/Notifications';
+import { displayError } from '../components/Notifications';
 import { StepResource } from '../views/WorkflowStepView';
-import StepCard from '../components/WorkflowSteps/StepCard';
 import ProjectPanel from '../components/ProjectPanel';
 import { fetchTopLevelSteps } from '../utils';
-import { useStepStatus } from '../hooks/useStepStatus';
 
 const WorkflowStepContainer: React.FC<{
   orgLabel: string;
@@ -18,10 +16,6 @@ const WorkflowStepContainer: React.FC<{
   const [steps, setSteps] = React.useState<StepResource[]>([]);
   // switch to trigger step list update
   const [refreshSteps, setRefreshSteps] = React.useState<boolean>(false);
-  const { updateStatus, success, error } = useStepStatus(
-    orgLabel,
-    projectLabel
-  );
 
   const waitAntReloadActivities = () =>
     setTimeout(() => setRefreshSteps(!refreshSteps), 3500);
@@ -67,18 +61,6 @@ const WorkflowStepContainer: React.FC<{
     '@id': sibling._self,
   }));
 
-  const onStatusChange = (stepId: string, rev: number, status: string) => {
-    updateStatus(stepId, rev, status);
-  };
-
-  if (error) {
-    displayError(error, 'Failed to update status');
-  }
-
-  if (success) {
-    successNotification('Status updated');
-  }
-
   return (
     <>
       <ProjectPanel
@@ -90,13 +72,11 @@ const WorkflowStepContainer: React.FC<{
       <StepsBoard>
         {steps &&
           stepsWithChildren.map(step => (
-            <StepCard
+            <SingleStepContainer
               step={step}
-              substeps={step.substeps}
               key={step['@id']}
               projectLabel={projectLabel}
               orgLabel={orgLabel}
-              onStatusChange={onStatusChange}
             />
           ))}
       </StepsBoard>
