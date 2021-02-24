@@ -135,19 +135,13 @@ const StepCard: React.FC<{
     if (outgoingLines.length > 0 && div1) {
       outgoingLines.forEach(line => {
         const points = line.getAttribute('points');
-        console.log('points', points);
-
         const [start, middle, end] = points?.split(' ') as string[];
 
         const x1 =
           div1.offsetLeft + div1.getBoundingClientRect().width / 2 + data.x;
         const y1 =
           div1.offsetTop + div1.getBoundingClientRect().height / 2 + data.y;
-
         const [x2, y2] = end.split(',');
-
-        console.log(parseInt(x2, 10), parseInt(y2, 10));
-        console.log(x1, y1);
 
         line.setAttribute(
           'points',
