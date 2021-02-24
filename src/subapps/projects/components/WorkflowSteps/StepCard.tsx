@@ -79,7 +79,7 @@ const StepCard: React.FC<{
       if (line) {
         line.setAttribute(
           'points',
-          `${x2},${y2} ${(x1 + x2) / 2}, ${(y1 + y2) / 2} ${x1},${y1}`
+          `${x2},${y2} ${(x1 + x2) / 2},${(y1 + y2) / 2} ${x1},${y1}`
         );
       }
     }
@@ -134,13 +134,27 @@ const StepCard: React.FC<{
 
     if (outgoingLines.length > 0 && div1) {
       outgoingLines.forEach(line => {
+        const points = line.getAttribute('points');
+        console.log('points', points);
+
+        const [start, middle, end] = points?.split(' ') as string[];
+
         const x1 =
           div1.offsetLeft + div1.getBoundingClientRect().width / 2 + data.x;
         const y1 =
           div1.offsetTop + div1.getBoundingClientRect().height / 2 + data.y;
 
-        line.setAttribute('x2', x1.toString());
-        line.setAttribute('y2', y1.toString());
+        const [x2, y2] = end.split(',');
+
+        console.log(parseInt(x2, 10), parseInt(y2, 10));
+        console.log(x1, y1);
+
+        line.setAttribute(
+          'points',
+          `${x1},${y1} ${(parseInt(x2, 10) + x1) / 2},${(parseInt(y2, 10) +
+            y1) /
+            2} ${x2},${y2}`
+        );
       });
     }
   };
