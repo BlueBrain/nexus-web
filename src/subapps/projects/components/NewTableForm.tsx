@@ -9,7 +9,8 @@ const { Item } = Form;
 
 const NewTableForm: React.FC<{
   onSave: (name: string, description: string) => void;
-}> = ({ onSave }) => {
+  onClose: () => void;
+}> = ({ onSave, onClose }) => {
   const [name, setName] = React.useState<string>('');
   const [nameError, setNameError] = React.useState<boolean>(false);
   const [description, setDescription] = React.useState<string>('');
@@ -49,7 +50,7 @@ const NewTableForm: React.FC<{
         />
       </Item>
       <div className="new-table-form__buttons">
-        <Button style={{ margin: '10px' }} onClick={() => {}}>
+        <Button style={{ margin: '10px' }} onClick={onClose}>
           Cancel
         </Button>
         <Button onClick={onClickSave} type="primary">

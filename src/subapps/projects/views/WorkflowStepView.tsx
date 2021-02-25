@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
-import { Button, Modal } from 'antd';
+import { Button } from 'antd';
 
 import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
@@ -19,7 +19,6 @@ import useQueryString from '../../../shared/hooks/useQueryString';
 import StepDescriptionContainer from '../containers/StepDescriptionContainer';
 import InputsContainer from '../containers/InputsContainer';
 
-import NewTableForm from '../components/NewTableForm';
 import EditTableForm from '../components/EditTableForm';
 
 import './WorkflowStepView.less';
@@ -253,20 +252,11 @@ const WorkflowStepView: React.FC = () => {
         visible={true}
         footer={null}
         onCancel={() => {}}
-        width={400}
-        destroyOnClose={true}
-      >
-        <NewTableForm onSave={() => {}} />
-      </Modal> */}
-      <Modal
-        visible={true}
-        footer={null}
-        onCancel={() => {}}
         width={700}
         destroyOnClose={true}
       >
         <EditTableForm onSave={() => {}} />
-      </Modal>
+      </Modal> */}
 
       <ProjectPanel
         orgLabel={orgLabel}
