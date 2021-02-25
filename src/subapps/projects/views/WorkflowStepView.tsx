@@ -20,6 +20,7 @@ import StepDescriptionContainer from '../containers/StepDescriptionContainer';
 import InputsContainer from '../containers/InputsContainer';
 
 import NewTableForm from '../components/NewTableForm';
+import EditTableForm from '../components/EditTableForm';
 
 import './WorkflowStepView.less';
 
@@ -248,7 +249,7 @@ const WorkflowStepView: React.FC = () => {
 
   return (
     <div className="workflow-step-view">
-      <Modal
+      {/* <Modal
         visible={true}
         footer={null}
         onCancel={() => {}}
@@ -256,6 +257,15 @@ const WorkflowStepView: React.FC = () => {
         destroyOnClose={true}
       >
         <NewTableForm onSave={() => {}} />
+      </Modal> */}
+      <Modal
+        visible={true}
+        footer={null}
+        onCancel={() => {}}
+        width={700}
+        destroyOnClose={true}
+      >
+        <EditTableForm onSave={() => {}} />
       </Modal>
 
       <ProjectPanel
