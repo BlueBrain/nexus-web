@@ -26,8 +26,6 @@ const NewTableForm: React.FC<{
   const onClickSave = () => {
     if (isEmptyInput(name)) {
       setNameError(true);
-
-      return;
     } else {
       onSave(name, description);
     }
