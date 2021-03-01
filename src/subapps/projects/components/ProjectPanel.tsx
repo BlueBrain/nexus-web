@@ -33,7 +33,11 @@ const ProjectPanel: React.FC<{
     <div className="project-panel">
       <span className="project-panel__name">{projectLabel}</span>
       <div className="project-panel__actions">
-        <NewTableContainer />
+        <NewTableContainer
+          projectLabel={projectLabel}
+          orgLabel={orgLabel}
+          parentId={workflowStepSelfUrl}
+        />
         <NewWorkflowStepContainer
           projectLabel={projectLabel}
           orgLabel={orgLabel}
