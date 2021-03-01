@@ -53,9 +53,9 @@ const NewTableContainer: React.FC<{
     setBusy(true);
 
     const table = {
-      '@type': 'nxv:FusionTable',
       name,
       description,
+      '@type': 'nxv:FusionTable',
       parent: {
         '@id': parentId,
       },
