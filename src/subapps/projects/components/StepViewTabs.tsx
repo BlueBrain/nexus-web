@@ -5,6 +5,7 @@ import './StepViewTabs.less';
 
 export enum Tabs {
   OVERVIEW = 'Overview',
+  DATA = 'Data',
   ACTIVITIES = 'Activities',
   DESCRIPTION = 'Description',
   INPUTS = 'Inputs',
