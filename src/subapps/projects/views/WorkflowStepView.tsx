@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 
 import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
@@ -18,8 +18,7 @@ import StepViewTabs, { Tabs } from '../components/StepViewTabs';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import StepDescriptionContainer from '../containers/StepDescriptionContainer';
 import InputsContainer from '../containers/InputsContainer';
-
-import EditTableForm from '../components/EditTableForm';
+import TableContainer from '../containers/TableContainer';
 
 import './WorkflowStepView.less';
 
@@ -244,20 +243,8 @@ const WorkflowStepView: React.FC = () => {
     });
   };
 
-  const onClickSaveTable = (name: string, description: string) => {};
-
   return (
     <div className="workflow-step-view">
-      {/* <Modal
-        visible={true}
-        footer={null}
-        onCancel={() => {}}
-        width={700}
-        destroyOnClose={true}
-      >
-        <EditTableForm onSave={() => {}} />
-      </Modal> */}
-
       <ProjectPanel
         orgLabel={orgLabel}
         projectLabel={projectLabel}
@@ -328,6 +315,13 @@ const WorkflowStepView: React.FC = () => {
       )}
       {activeTab === Tabs.INPUTS && step && (
         <InputsContainer
+          orgLabel={orgLabel}
+          projectLabel={projectLabel}
+          stepId={step._self}
+        />
+      )}
+      {activeTab === Tabs.DATA && step && (
+        <TableContainer
           orgLabel={orgLabel}
           projectLabel={projectLabel}
           stepId={step._self}

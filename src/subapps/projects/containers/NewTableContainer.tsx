@@ -22,7 +22,7 @@ export type TableComponent = Resource<{
   '@type': string;
   name: string;
   description: string;
-  parent?: {
+  tableOf?: {
     '@id': string;
   };
   view: string;
@@ -56,7 +56,7 @@ const NewTableContainer: React.FC<{
       name,
       description,
       '@type': 'nxv:FusionTable',
-      parent: {
+      tableOf: {
         '@id': parentId,
       },
       view: 'nxv:defaultSparqlIndex',
@@ -97,10 +97,12 @@ const NewTableContainer: React.FC<{
     await nexus.Resource.create(orgLabel, projectLabel, table)
       .then(success => {
         setBusy(false);
+        setShowForm(false);
         // TODO: refresh page to show Table
       })
       .catch(error => {
         setBusy(false);
+        setShowForm(false);
         // TODO: display error
       });
   };
@@ -115,7 +117,11 @@ const NewTableContainer: React.FC<{
         width={400}
         destroyOnClose={true}
       >
-        <NewTableForm onSave={saveTable} onClose={() => setShowForm(false)} />
+        <NewTableForm
+          onSave={saveTable}
+          onClose={() => setShowForm(false)}
+          busy={busy}
+        />
       </Modal>
     </>
   );

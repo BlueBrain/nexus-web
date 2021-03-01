@@ -19,6 +19,22 @@ export const isParentLink = (link: ResourceLink) => {
 };
 
 /**
+ * isTable function - checks if a link has a property 'tableOf'
+ * @param {Object}
+ * @returns {boolean}
+ */
+export const isTable = (link: ResourceLink) => {
+  if (Array.isArray(link.paths)) {
+    return (
+      link.paths.filter((path: string) => labelOf(path) === 'tableOf').length >
+      0
+    );
+  }
+
+  return labelOf(link.paths) === 'tableOf';
+};
+
+/**
  * isSubClass function - checks if a link resource is linked by path "subClassOf"
  * @param {Object}
  * @returns {boolean}
