@@ -63,7 +63,6 @@ const NewTableForm: React.FC<{
             Save
           </Button>
         </div>
-
         <p>
           <em>* Mandatory field</em>
         </p>
