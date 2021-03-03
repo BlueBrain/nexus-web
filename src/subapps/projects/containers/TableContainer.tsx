@@ -35,11 +35,11 @@ const TableContainer: React.FC<{
             console.log('response', response);
           })
           .catch(error => {
-            //display error
+            // display error
           })
       )
       .catch(error => {
-        //display error
+        // display error
       });
   }, []);
 
