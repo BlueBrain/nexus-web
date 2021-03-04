@@ -1,13 +1,32 @@
 import * as React from 'react';
-import { Form, Input, Button, Spin, Dropdown, Menu, Checkbox } from 'antd';
+import {
+  Form,
+  Input,
+  Button,
+  Spin,
+  Dropdown,
+  Menu,
+  Checkbox,
+  Row,
+  Col,
+} from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 
 import { isEmptyInput } from '../utils';
+import './EditTableForm.less';
+
+export enum ColumnTypes {
+  DATE = 'date',
+  RESOURCE = 'resource',
+  TEXT = 'text',
+  URL = 'url',
+  NUMBER = 'number',
+  BOOLEAN = 'boolean',
+  IMAGE = 'image',
+}
 
 const { Item } = Form;
-
-import './EditTableForm.less';
 
 const EditTableForm: React.FC<{
   onSave: () => void;
@@ -151,8 +170,49 @@ const EditTableForm: React.FC<{
         </Button>
       </div>
       {showColumnConfiguration && (
-        <div>
-          <h3>Column configuration</h3>
+        <div className="edit-table-form__config">
+          <h3>Columns configuration</h3>
+          {table.configuration &&
+            table.configuration.map((column: any) => (
+              <div
+                className="edit-table-form__column"
+                key={`column-${column.name}`}
+              >
+                <Row style={{ margin: '15px 0' }}>
+                  <Col xs={8} sm={8} md={8}>
+                    <h4>{column.name}</h4>
+                    <Checkbox checked={column.enableSearch}>
+                      Enable Search
+                    </Checkbox>
+                    <br />
+                    <Checkbox checked={column.enableSort}>Enable Sort</Checkbox>
+                    <br />
+                    <Checkbox checked={column.enableFilter}>
+                      Enable Filter
+                    </Checkbox>
+                  </Col>
+                  <Col xs={16} sm={16} md={16}>
+                    Column Type{' '}
+                    <Dropdown
+                      overlay={
+                        <Menu
+                          selectedKeys={[`${column.format}`]}
+                          onClick={() => {}}
+                        >
+                          {Object.values(ColumnTypes).map(type => (
+                            <Menu.Item key={type}>{type}</Menu.Item>
+                          ))}
+                        </Menu>
+                      }
+                    >
+                      <Button>
+                        {column.format} <DownOutlined />
+                      </Button>
+                    </Dropdown>
+                  </Col>
+                </Row>
+              </div>
+            ))}
         </div>
       )}
       <div className="edit-table-form__buttons">
