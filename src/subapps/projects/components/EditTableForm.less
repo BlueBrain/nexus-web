@@ -9,10 +9,20 @@
     text-align: right;
   }
 
-  .ant-form-item-label {
-    label {
-      font-size: 18px;
-    }
+  &__actions {
+    margin: 24px 0;
+  }
+
+  &__actions-title {
+    margin-bottom: 12px;
+  }
+
+  &__action-items {
+    padding-left: 30px;
+  }
+
+  &__query {
+    margin: 24px 0;
   }
 
   &__config {
@@ -20,11 +30,15 @@
   }
 
   &__column {
-    padding: 0px 20px 10px;
-    border-bottom: 1px solid @edge-color;
+    margin: 0px 30px 10px;
+    border-bottom: 1px solid @box-shadow-color;
 
     &:last-child {
       border: none;
     }
+  }
+
+  .react-codemirror2 {
+    border: 1px solid @box-shadow-color;
   }
 }
