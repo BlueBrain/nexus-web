@@ -1,3 +1,5 @@
+@import '../../../shared/lib.less';
+
 .edit-table-form {
   &__title {
     margin-bottom: 1em;
@@ -10,6 +12,19 @@
   .ant-form-item-label {
     label {
       font-size: 18px;
+    }
+  }
+
+  &__config {
+    margin-top: 20px;
+  }
+
+  &__column {
+    padding: 0px 20px 10px;
+    border-bottom: 1px solid @edge-color;
+
+    &:last-child {
+      border: none;
     }
   }
 }
