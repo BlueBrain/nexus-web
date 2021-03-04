@@ -53,9 +53,6 @@ const EditTableForm: React.FC<{
     table.resultsPerPage
   );
   const [dataQuery, setDataQuery] = React.useState<string>(table.dataQuery);
-  const [showColumnConfiguration, setShowColumnConfiguration] = React.useState<
-    boolean
-  >(false);
 
   const viewOptions = (
     <Menu selectedKeys={['1']} onClick={() => {}}>
@@ -86,135 +83,164 @@ const EditTableForm: React.FC<{
 
   const handleQueryChange = () => {};
 
+  const onClickPreview = () => {
+    // fetch new query
+    // update config
+  };
+
   return (
     <Form className="edit-table-form">
       <h2 className="edit-table-form__title">Edit Table</h2>
-      <Item
-        label="Table Name *"
-        validateStatus={nameError ? 'error' : ''}
-        help={nameError && 'Please enter a table name'}
-      >
-        <Input value={name} onChange={onChangeName} placeholder="Table name" />
-      </Item>
-      <Item label="Description">
-        <Input.TextArea
-          value={description}
-          onChange={onChangeDescription}
-          placeholder="Table description"
-        />
-      </Item>
-      <h3>View</h3>
-      <Dropdown overlay={viewOptions}>
-        <Button>
-          {view} <DownOutlined />
-        </Button>
-      </Dropdown>
-      <div>
-        <h3>Actions</h3>
-        <Checkbox
-          onChange={() => setEnableSearch(!enableSearch)}
-          checked={enableSearch}
-        >
-          Enable Local Search
-        </Checkbox>
-        <br />
-        <Checkbox
-          onChange={() => setEnableInteractiveRows(!enableInteractiveRows)}
-          checked={enableInteractiveRows}
-        >
-          Interactive Row
-        </Checkbox>
-        <br />
-        <Checkbox
-          onChange={() => setEnableDownload(!enableDownload)}
-          checked={enableDownload}
-        >
-          Enable 'Download as CSV'
-        </Checkbox>
-        <br />
-        <Checkbox
-          onChange={() => setEnableSave(!enableSave)}
-          checked={enableSave}
-        >
-          Enable 'Save to Data Cart'
-        </Checkbox>
-        <br />
+      <Row>
+        <Col xs={6} sm={6} md={6}>
+          <h3>Name*</h3>
+        </Col>
+        <Col xs={12} sm={12} md={12}>
+          <Item
+            validateStatus={nameError ? 'error' : ''}
+            help={nameError && 'Please enter a table name'}
+          >
+            <Input
+              value={name}
+              onChange={onChangeName}
+              placeholder="Table name"
+            />
+          </Item>
+        </Col>
+      </Row>
+      <Row>
+        <Col xs={6} sm={6} md={6}>
+          <h3>Description</h3>
+        </Col>
+        <Col xs={12} sm={12} md={12}>
+          <Input.TextArea
+            value={description}
+            onChange={onChangeDescription}
+            placeholder="Table description"
+          />
+        </Col>
+      </Row>
+      <Row style={{ marginTop: '24px' }}>
+        <Col xs={6} sm={6} md={6}>
+          <h3>View</h3>
+        </Col>
+        <Col xs={12} sm={12} md={12}>
+          <Dropdown overlay={viewOptions}>
+            <Button>
+              {view} <DownOutlined />
+            </Button>
+          </Dropdown>
+        </Col>
+      </Row>
+      <div className="edit-table-form__actions">
+        <h3 className="edit-table-form__actions-title">Actions</h3>
+        <div className="edit-table-form__action-items">
+          <Checkbox
+            onChange={() => setEnableSearch(!enableSearch)}
+            checked={enableSearch}
+          >
+            Enable Local Search
+          </Checkbox>
+          <br />
+          <Checkbox
+            onChange={() => setEnableInteractiveRows(!enableInteractiveRows)}
+            checked={enableInteractiveRows}
+          >
+            Interactive Row
+          </Checkbox>
+          <br />
+          <Checkbox
+            onChange={() => setEnableDownload(!enableDownload)}
+            checked={enableDownload}
+          >
+            Enable 'Download as CSV'
+          </Checkbox>
+          <br />
+          <Checkbox
+            onChange={() => setEnableSave(!enableSave)}
+            checked={enableSave}
+          >
+            Enable 'Save to Data Cart'
+          </Checkbox>
+          <br />
+        </div>
       </div>
-      <Item label="Results per page">
-        <Dropdown overlay={viewOptions}>
-          <Button>
-            {resultsPerPage} <DownOutlined />
-          </Button>
-        </Dropdown>
-      </Item>
-      <h3>Query</h3>
-      <CodeMirror
-        value={dataQuery}
-        options={{
-          mode: { name: 'sparql' },
-          theme: 'base16-light',
-          placeholder: 'Enter a valid SPARQL query',
-          lineNumbers: true,
-          viewportMargin: Infinity,
-        }}
-        onBeforeChange={handleQueryChange}
-      />
-      <div>
-        <Button
-          onClick={() => {
-            setShowColumnConfiguration(true);
+      <Row>
+        <Col xs={6} sm={6} md={6}>
+          <h3>Results per page</h3>
+        </Col>
+        <Col>
+          <Dropdown overlay={viewOptions}>
+            <Button>
+              {resultsPerPage} <DownOutlined />
+            </Button>
+          </Dropdown>
+        </Col>
+      </Row>
+      <div className="edit-table-form__query">
+        <h3>Query</h3>
+        <CodeMirror
+          value={dataQuery}
+          options={{
+            mode: { name: 'sparql' },
+            theme: 'base16-light',
+            placeholder: 'Enter a valid SPARQL query',
+            lineNumbers: true,
+            viewportMargin: Infinity,
           }}
-          type="primary"
-        >
+          onBeforeChange={handleQueryChange}
+        />
+      </div>
+
+      <div>
+        <Button onClick={onClickPreview} type="primary">
           Preview
         </Button>
       </div>
-      {showColumnConfiguration && (
-        <div className="edit-table-form__config">
-          <h3>Columns configuration</h3>
-          {table.configuration &&
-            table.configuration.map((column: any) => (
-              <div
-                className="edit-table-form__column"
-                key={`column-${column.name}`}
-              >
-                <Row style={{ margin: '15px 0' }}>
-                  <Col xs={8} sm={8} md={8}>
-                    <h4>{column.name}</h4>
-                    <Checkbox checked={column.enableSearch}>
-                      Enable Search
-                    </Checkbox>
-                    <br />
-                    <Checkbox checked={column.enableSort}>Enable Sort</Checkbox>
-                    <br />
-                    <Checkbox checked={column.enableFilter}>
-                      Enable Filter
-                    </Checkbox>
-                  </Col>
-                  <Col xs={16} sm={16} md={16}>
-                    Column Type{' '}
-                    <Dropdown
-                      overlay={
-                        <Menu
-                          selectedKeys={[`${column.format}`]}
-                          onClick={() => {}}
-                        >
-                          {Object.values(ColumnTypes).map(type => (
-                            <Menu.Item key={type}>{type}</Menu.Item>
-                          ))}
-                        </Menu>
-                      }
-                    >
-                      <Button>
-                        {column.format} <DownOutlined />
-                      </Button>
-                    </Dropdown>
-                  </Col>
-                </Row>
-              </div>
-            ))}
-        </div>
-      )}
+      <div className="edit-table-form__config">
+        <h3>Columns configuration</h3>
+        {table.configuration &&
+          table.configuration.map((column: any) => (
+            <div
+              className="edit-table-form__column"
+              key={`column-${column.name}`}
+            >
+              <Row style={{ margin: '15px 0' }}>
+                <Col xs={8} sm={8} md={8}>
+                  <h4>{column.name}</h4>
+                  <Checkbox checked={column.enableSearch}>
+                    Enable Search
+                  </Checkbox>
+                  <br />
+                  <Checkbox checked={column.enableSort}>Enable Sort</Checkbox>
+                  <br />
+                  <Checkbox checked={column.enableFilter}>
+                    Enable Filter
+                  </Checkbox>
+                </Col>
+                <Col xs={16} sm={16} md={16}>
+                  Column Type{' '}
+                  <Dropdown
+                    overlay={
+                      <Menu
+                        selectedKeys={[`${column.format}`]}
+                        onClick={() => {}}
+                      >
+                        {Object.values(ColumnTypes).map(type => (
+                          <Menu.Item key={type}>{type}</Menu.Item>
+                        ))}
+                      </Menu>
+                    }
+                  >
+                    <Button>
+                      {column.format} <DownOutlined />
+                    </Button>
+                  </Dropdown>
+                </Col>
+              </Row>
+            </div>
+          ))}
+      </div>
       <div className="edit-table-form__buttons">
         <Button style={{ margin: '10px' }} onClick={onClose}>
           Cancel
