@@ -9,6 +9,7 @@ import {
   Checkbox,
   Row,
   Col,
+  Select,
 } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { Controlled as CodeMirror } from 'react-codemirror2';
@@ -26,7 +27,15 @@ export enum ColumnTypes {
   IMAGE = 'image',
 }
 
+export enum ViewOptions {
+  SPARQL_VIEW = 'nxv:defaultSparqlIndex',
+  ES_VIEW = 'nxv:defaultElasticSearchIndex',
+}
+
+const PAGES_OPTIONS = [10, 20, 50, 100];
+
 const { Item } = Form;
+const { Option } = Select;
 
 const EditTableForm: React.FC<{
   onSave: () => void;
@@ -53,14 +62,6 @@ const EditTableForm: React.FC<{
     table.resultsPerPage
   );
   const [dataQuery, setDataQuery] = React.useState<string>(table.dataQuery);
-
-  const viewOptions = (
-    <Menu selectedKeys={['1']} onClick={() => {}}>
-      <Menu.Item key="1">1st menu item</Menu.Item>
-      <Menu.Item key="2">2nd menu item</Menu.Item>
-      <Menu.Item key="3">3rd menu item</Menu.Item>
-    </Menu>
-  );
 
   console.log('table', table);
 
@@ -125,11 +126,15 @@ const EditTableForm: React.FC<{
           <h3>View</h3>
         </Col>
         <Col xs={12} sm={12} md={12}>
-          <Dropdown overlay={viewOptions}>
-            <Button>
-              {view} <DownOutlined />
-            </Button>
-          </Dropdown>
+          <Select
+            value={view}
+            style={{ width: 220 }}
+            onChange={value => setView(value)}
+          >
+            {Object.values(ViewOptions).map(view => (
+              <Option value={view}>{view}</Option>
+            ))}
+          </Select>
         </Col>
       </Row>
       <div className="edit-table-form__actions">
@@ -170,11 +175,16 @@ const EditTableForm: React.FC<{
           <h3>Results per page</h3>
         </Col>
         <Col>
-          <Dropdown overlay={viewOptions}>
-            <Button>
-              {resultsPerPage} <DownOutlined />
-            </Button>
-          </Dropdown>
+          <Select
+            value={resultsPerPage}
+            onChange={value => {
+              setResultsPerPage(value);
+            }}
+          >
+            {PAGES_OPTIONS.map(pages => (
+              <Option value={pages}>{pages}</Option>
+            ))}
+          </Select>
         </Col>
       </Row>
       <div className="edit-table-form__query">
@@ -191,9 +201,8 @@ const EditTableForm: React.FC<{
           onBeforeChange={handleQueryChange}
         />
       </div>
-
       <div>
-        <Button onClick={onClickPreview} type="primary">
+        <Button disabled onClick={onClickPreview} type="primary">
           Preview
         </Button>
       </div>
@@ -220,22 +229,15 @@ const EditTableForm: React.FC<{
                 </Col>
                 <Col xs={16} sm={16} md={16}>
                   Column Type{' '}
-                  <Dropdown
-                    overlay={
-                      <Menu
-                        selectedKeys={[`${column.format}`]}
-                        onClick={() => {}}
-                      >
-                        {Object.values(ColumnTypes).map(type => (
-                          <Menu.Item key={type}>{type}</Menu.Item>
-                        ))}
-                      </Menu>
-                    }
+                  <Select
+                    value={column.format}
+                    style={{ width: 120 }}
+                    onChange={() => {}}
                   >
-                    <Button>
-                      {column.format} <DownOutlined />
-                    </Button>
-                  </Dropdown>
+                    {Object.values(ColumnTypes).map(type => (
+                      <Option value={type}>{type}</Option>
+                    ))}
+                  </Select>
                 </Col>
               </Row>
             </div>
