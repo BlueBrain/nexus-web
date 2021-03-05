@@ -11,21 +11,13 @@ import {
   Col,
   Select,
 } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 
 import { isEmptyInput } from '../utils';
-import './EditTableForm.less';
+import { TableColumn } from '../containers/NewTableContainer';
+import ColumnConfig from './ColumnConfig';
 
-export enum ColumnTypes {
-  DATE = 'date',
-  RESOURCE = 'resource',
-  TEXT = 'text',
-  URL = 'url',
-  NUMBER = 'number',
-  BOOLEAN = 'boolean',
-  IMAGE = 'image',
-}
+import './EditTableForm.less';
 
 export enum ViewOptions {
   SPARQL_VIEW = 'nxv:defaultSparqlIndex',
@@ -62,6 +54,9 @@ const EditTableForm: React.FC<{
     table.resultsPerPage
   );
   const [dataQuery, setDataQuery] = React.useState<string>(table.dataQuery);
+  const [configuration, setConfiguration] = React.useState<
+    TableColumn | TableColumn[]
+  >(table.configuration);
 
   console.log('table', table);
 
@@ -78,15 +73,59 @@ const EditTableForm: React.FC<{
     if (isEmptyInput(name)) {
       setNameError(true);
     } else {
-      onSave();
+      const data = {
+        ...table,
+        name,
+        description,
+        view,
+        enableSearch,
+        enableInteractiveRows,
+        enableDownload,
+        enableSave,
+        resultsPerPage,
+        dataQuery,
+        configuration,
+      };
+      // onSave();
     }
   };
 
-  const handleQueryChange = () => {};
+  const handleQueryChange = () => {
+    // TODO: save new data query
+  };
 
   const onClickPreview = () => {
     // fetch new query
     // update config
+  };
+
+  const updateColumnConfig = (name: string, data: any) => {
+    console.log(name, data);
+    if (Array.isArray(configuration)) {
+      const currentConfig = configuration;
+
+      const column = currentConfig.find(column => column.name === name);
+
+      const updatedColumn = {
+        ...column,
+        ...data,
+      };
+
+      const columnIndex = currentConfig.findIndex(
+        column => column.name === name
+      );
+
+      currentConfig[columnIndex] = updatedColumn;
+
+      setConfiguration(currentConfig);
+    } else {
+      const column = {
+        ...configuration,
+        ...data,
+      };
+
+      setConfiguration(column);
+    }
   };
 
   return (
@@ -208,40 +247,22 @@ const EditTableForm: React.FC<{
       </div>
       <div className="edit-table-form__config">
         <h3>Columns configuration</h3>
-        {table.configuration &&
-          table.configuration.map((column: any) => (
-            <div
-              className="edit-table-form__column"
-              key={`column-${column.name}`}
-            >
-              <Row style={{ margin: '15px 0' }}>
-                <Col xs={8} sm={8} md={8}>
-                  <h4>{column.name}</h4>
-                  <Checkbox checked={column.enableSearch}>
-                    Enable Search
-                  </Checkbox>
-                  <br />
-                  <Checkbox checked={column.enableSort}>Enable Sort</Checkbox>
-                  <br />
-                  <Checkbox checked={column.enableFilter}>
-                    Enable Filter
-                  </Checkbox>
-                </Col>
-                <Col xs={16} sm={16} md={16}>
-                  Column Type{' '}
-                  <Select
-                    value={column.format}
-                    style={{ width: 120 }}
-                    onChange={() => {}}
-                  >
-                    {Object.values(ColumnTypes).map(type => (
-                      <Option value={type}>{type}</Option>
-                    ))}
-                  </Select>
-                </Col>
-              </Row>
-            </div>
-          ))}
+        {configuration ? (
+          Array.isArray(configuration) ? (
+            configuration.map((column: TableColumn) => (
+              <ColumnConfig
+                column={column}
+                onChange={updateColumnConfig}
+                key={column.name}
+              />
+            ))
+          ) : (
+            <ColumnConfig
+              column={configuration}
+              onChange={updateColumnConfig}
+            />
+          )
+        ) : null}
       </div>
       <div className="edit-table-form__buttons">
         <Button style={{ margin: '10px' }} onClick={onClose}>

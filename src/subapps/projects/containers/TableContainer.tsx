@@ -51,29 +51,27 @@ const TableContainer: React.FC<{
   // this is temporary so we can test things
   return (
     <div>
-      {tables &&
-        tables.length > 0 &&
-        tables.map(table => (
-          <div key={`table-${table['@id']}`}>
-            {table.name}
-            <Button onClick={() => setShowEditForm(true)} type="link">
-              Edit Table
-            </Button>
-            <Modal
-              visible={showEditForm}
-              footer={null}
-              onCancel={() => setShowEditForm(false)}
-              width={800}
-              destroyOnClose={true}
-            >
-              <EditTableForm
-                onSave={updateTable}
-                onClose={() => setShowEditForm(true)}
-                table={table}
-              />
-            </Modal>
-          </div>
-        ))}
+      {tables && tables.length > 0 && (
+        <div key={`table-${tables[0]['@id']}`}>
+          {tables[0].name}
+          <Button onClick={() => setShowEditForm(true)} type="link">
+            Edit Table
+          </Button>
+          <Modal
+            visible={showEditForm}
+            footer={null}
+            onCancel={() => setShowEditForm(false)}
+            width={800}
+            destroyOnClose={true}
+          >
+            <EditTableForm
+              onSave={updateTable}
+              onClose={() => setShowEditForm(false)}
+              table={tables[0]}
+            />
+          </Modal>
+        </div>
+      )}
     </div>
   );
 };
