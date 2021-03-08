@@ -4,8 +4,10 @@ import { Modal, Button } from 'antd';
 
 import EditTableForm from '../components/EditTableForm';
 import { isTable } from '../utils';
-import { TableComponent } from './NewTableContainer';
+import { TableComponentType } from './NewTableContainer';
 import { displayError, successNotification } from '../components/Notifications';
+import TableComponent from '../components/TableComponent';
+import { Item, useSparqlQuery } from '../hooks/useSparqlQuery';
 
 const TableContainer: React.FC<{
   orgLabel: string;
@@ -16,6 +18,10 @@ const TableContainer: React.FC<{
   const [tables, setTables] = React.useState<any[] | undefined>([]);
   const [showEditForm, setShowEditForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
+  const { fetchDataQithSparql, items, headerProperties } = useSparqlQuery(
+    orgLabel,
+    projectLabel
+  );
 
   React.useEffect(() => {
     // this is temporary so we can test things
@@ -40,6 +46,10 @@ const TableContainer: React.FC<{
         )
           .then(response => {
             setTables(response);
+
+            let table = response[0] as TableComponentType;
+
+            fetchDataQithSparql(table.dataQuery);
           })
           .catch(error => {
             displayError(error, 'Failed to load tables');
@@ -50,7 +60,7 @@ const TableContainer: React.FC<{
       });
   }, []);
 
-  const updateTable = (data: TableComponent) => {
+  const updateTable = (data: TableComponentType) => {
     setBusy(true);
 
     nexus.Resource.update(
@@ -94,6 +104,12 @@ const TableContainer: React.FC<{
               busy={busy}
             />
           </Modal>
+          <TableComponent
+            tableLabel="Data"
+            headerProperties={headerProperties}
+            items={items ? (items as Item[]) : []}
+            handleClick={() => {}}
+          />
         </div>
       )}
     </div>

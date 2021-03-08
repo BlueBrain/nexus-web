@@ -7,7 +7,7 @@ import ActioButton from '../components/ActionButton';
 import NewTableForm from '../components/NewTableForm';
 
 const DEFAULT_SPARQL_QUERY =
-  'SELECT ?subject ?predicate ?object WHERE {?subject ?predicate ?object} LIMIT 20';
+  'PREFIX nxv: <https://bluebrain.github.io/nexus/vocabulary/> SELECT DISTINCT ?self ?s WHERE { ?s nxv:self ?self } LIMIT 20';
 
 export type TableColumn = {
   '@type': string;
@@ -18,7 +18,7 @@ export type TableColumn = {
   enableFilter: boolean;
 };
 
-export type TableComponent = Resource<{
+export type TableComponentType = Resource<{
   '@type': string;
   name: string;
   description: string;

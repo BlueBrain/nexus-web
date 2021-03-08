@@ -3,7 +3,10 @@ import { Form, Input, Button, Spin, Checkbox, Row, Col, Select } from 'antd';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 
 import { isEmptyInput } from '../utils';
-import { TableColumn, TableComponent } from '../containers/NewTableContainer';
+import {
+  TableColumn,
+  TableComponentType,
+} from '../containers/NewTableContainer';
 import ColumnConfig from './ColumnConfig';
 
 import './EditTableForm.less';
@@ -19,7 +22,7 @@ const { Item } = Form;
 const { Option } = Select;
 
 const EditTableForm: React.FC<{
-  onSave: (data: TableComponent) => void;
+  onSave: (data: TableComponentType) => void;
   onClose: () => void;
   table: any;
   busy: boolean;
