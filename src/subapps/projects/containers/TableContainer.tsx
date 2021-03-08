@@ -47,7 +47,7 @@ const TableContainer: React.FC<{
           .then(response => {
             setTables(response);
 
-            let table = response[0] as TableComponentType;
+            const table = response[0] as TableComponentType;
 
             fetchDataQithSparql(table.dataQuery);
           })
