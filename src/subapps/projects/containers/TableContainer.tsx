@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Modal, Button } from 'antd';
 
+import EditTableForm from '../components/EditTableForm';
 import { isTable } from '../utils';
+import { TableComponent } from './NewTableContainer';
+import { displayError, successNotification } from '../components/Notifications';
 
 const TableContainer: React.FC<{
   orgLabel: string;
@@ -10,8 +14,12 @@ const TableContainer: React.FC<{
 }> = ({ orgLabel, projectLabel, stepId }) => {
   const nexus = useNexusContext();
   const [tables, setTables] = React.useState<any[] | undefined>([]);
+  const [showEditForm, setShowEditForm] = React.useState<boolean>(false);
+  const [busy, setBusy] = React.useState<boolean>(false);
 
   React.useEffect(() => {
+    // this is temporary so we can test things
+    // not sure where we place a Table yet
     nexus.Resource.links(
       orgLabel,
       projectLabel,
@@ -32,18 +40,64 @@ const TableContainer: React.FC<{
         )
           .then(response => {
             setTables(response);
-            console.log('response', response);
           })
           .catch(error => {
-            // display error
+            displayError(error, 'Failed to load tables');
           })
       )
       .catch(error => {
-        // display error
+        displayError(error, 'Failed to load tables');
       });
   }, []);
 
-  return <div>test</div>;
+  const updateTable = (data: TableComponent) => {
+    setBusy(true);
+
+    nexus.Resource.update(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(data['@id']),
+      data._rev,
+      data
+    )
+      .then(success => {
+        setBusy(false);
+        setShowEditForm(false);
+        successNotification('The table is updated successfully');
+      })
+      .catch(error => {
+        displayError(error, 'Failed to update the Table');
+        setBusy(false);
+      });
+  };
+
+  // this is temporary so we can test things
+  return (
+    <div>
+      {tables && tables.length > 0 && (
+        <div key={`table-${tables[0]['@id']}`}>
+          {tables[0].name}
+          <Button onClick={() => setShowEditForm(true)} type="link">
+            Edit Table
+          </Button>
+          <Modal
+            visible={showEditForm}
+            footer={null}
+            onCancel={() => setShowEditForm(false)}
+            width={800}
+            destroyOnClose={true}
+          >
+            <EditTableForm
+              onSave={updateTable}
+              onClose={() => setShowEditForm(false)}
+              table={tables[0]}
+              busy={busy}
+            />
+          </Modal>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default TableContainer;
