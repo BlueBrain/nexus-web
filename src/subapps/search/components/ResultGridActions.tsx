@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Menu, Dropdown, notification } from 'antd';
 import { MenuProps } from 'antd/lib/menu';
 import { match } from 'ts-pattern';
-import { Parser } from 'json2csv';
+import json2csv, { Parser } from 'json2csv';
 
 import { download } from '../../../shared/utils/download';
 import { triggerCopy } from '../../../shared/utils/copy';
@@ -31,7 +31,10 @@ const handleExportAsDatset = (dataset: DatasetCollectionSave) => () => {
   notification.info({ message: 'Saved selected items as dataset for later.' });
 };
 
-const handleExportAsCSV = (object: object, fields: string[]) => () => {
+const handleExportAsCSV = (
+  object: object,
+  fields: json2csv.Options<any>['fields']
+) => () => {
   const json2csvParser = new Parser({ fields });
   const csv = json2csvParser.parse(object);
   download(EXPORT_CSV_FILENAME, CSV_MEDIATYPE, csv);
@@ -42,7 +45,7 @@ const ResultGridActions: React.FC<{
   dataset: DatasetCollectionSave;
   csv: {
     data: object;
-    fields: string[];
+    fields: json2csv.Options<any>['fields'];
   };
 }> = ({ query, dataset, csv }) => {
   const handleMenuClick: MenuProps['onClick'] = e => {

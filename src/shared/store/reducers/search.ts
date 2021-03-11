@@ -10,12 +10,25 @@ import { ResultTableFields } from '../../types/search';
 
 export const SearchConfigType = 'nxv:SearchConfig';
 
+export enum FacetType {
+  TERMS = 'terms',
+}
+
+export type FacetConfig = {
+  propertyKey: string;
+  key: string;
+  label: string;
+  type: FacetType;
+  displayIndex?: number;
+};
+
 export type SearchConfig = {
   id: string;
   label: string;
   view: string;
   description?: string;
   fields?: ResultTableFields[];
+  facets?: FacetConfig[];
 };
 
 export const DEFAULT_SEARCH_STATE = {

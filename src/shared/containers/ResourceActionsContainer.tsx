@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { Button, Tooltip, notification } from 'antd';
-import { DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  DownloadOutlined,
+  ShoppingCartOutlined,
+} from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import { Resource } from '@bbp/nexus-sdk';
@@ -18,6 +22,7 @@ import {
   toPromise,
 } from '../utils/nexusMaybe';
 import Copy from '../components/Copy';
+import useDataCart from '../hooks/useDataCart';
 
 const ResourceActionsContainer: React.FunctionComponent<{
   resource: Resource;
@@ -38,6 +43,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
   const resourceId = resource['@id'];
   const self = resource._self;
   const nexus = useNexusContext();
+  const { addResourceToCart } = useDataCart();
 
   const isLatestResource = async (resource: Resource) => {
     // TODO: remove this if / when
@@ -162,6 +168,10 @@ const ResourceActionsContainer: React.FunctionComponent<{
     },
   };
 
+  const handleAddToCart = async () => {
+    await addResourceToCart(resource);
+  };
+
   return (
     <div className="resource-actions-container">
       <div className="resource-actions">
@@ -197,6 +207,9 @@ const ResourceActionsContainer: React.FunctionComponent<{
             </Tooltip>
           )}
         />
+        <Button onClick={handleAddToCart} icon={<ShoppingCartOutlined />}>
+          Add to Data Cart
+        </Button>
         <ResourceDownloadButton
           orgLabel={orgLabel}
           projectLabel={projectLabel}

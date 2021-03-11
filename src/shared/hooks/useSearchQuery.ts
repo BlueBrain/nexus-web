@@ -6,6 +6,7 @@ import { Resource } from '@bbp/nexus-sdk';
 import useAsyncCall, { AsyncCall } from './useAsynCall';
 import { parseURL } from '../utils/nexusParse';
 import { SearchResponse } from '../types/search';
+import { FacetConfig, FacetType } from '../store/reducers/search';
 
 // TODO move to global default list
 const DEFAULT_PAGE_SIZE = 20;
@@ -50,23 +51,20 @@ export enum SortDirection {
 
 export type UseSearchProps = {
   query?: string;
-  sort?: {
-    key: string;
-    direction: SortDirection;
-  };
+  sort?:
+    | {
+        key: string;
+        direction: SortDirection;
+      }
+    | {
+        key: string;
+        direction: SortDirection;
+      }[];
   pagination?: {
     from: number;
     size: number;
   };
-  facetMap?: Map<
-    string,
-    {
-      propertyKey: string;
-      label: string;
-      type: 'terms';
-      value: Set<string>;
-    }
-  >;
+  facetMap?: Map<string, FacetConfig & { value: Set<string> }>;
 };
 
 export const DEFAULT_SEARCH_PROPS = {
@@ -77,23 +75,20 @@ export const DEFAULT_SEARCH_PROPS = {
   },
 };
 
-export default function useSearchQuery(selfURL?: string | null) {
+export interface UseSearchQueryProps {
+  selfURL?: string | null;
+}
+
+export default function useSearchQuery(props: UseSearchQueryProps) {
+  const { selfURL } = props;
   const [searchProps, setSearchProps] = React.useState<UseSearchProps>({
     ...DEFAULT_SEARCH_PROPS,
   });
   const {
     query,
-    sort = DEFAULT_SEARCH_PROPS.sort,
+    sort,
     pagination = DEFAULT_SEARCH_PROPS.pagination,
-    facetMap = new Map<
-      string,
-      {
-        propertyKey: string;
-        label: string;
-        type: 'terms';
-        value: Set<string>;
-      }
-    >(),
+    facetMap,
   } = searchProps;
 
   const nexus = useNexusContext();
@@ -101,6 +96,8 @@ export default function useSearchQuery(selfURL?: string | null) {
   const makeBodyQuery = () => {
     // TODO fix query to match @id's as well
     // might need backend support
+    // TODO allow configurable query target
+    // not all ES View mappings will have this property.
     const matchQuery = query
       ? ['wildcard', '_original_source', `${query}*`]
       : ['match_all', {}];
@@ -111,15 +108,32 @@ export default function useSearchQuery(selfURL?: string | null) {
       // TODO upgrade typescript to enable spread arguments
       // @ts-ignore
       .filter(...matchQuery)
-      .filter('term', '_deprecated', false)
-      .sort(sort.key, sort.direction);
+      .filter('term', '_deprecated', false);
 
-    facetMap.forEach(({ propertyKey, type, label, value }) => {
-      value.forEach(item => {
-        body.filter('term', propertyKey, item);
+    // Sorting
+    if (Array.isArray(sort)) {
+      sort.forEach(sort => {
+        body.sort(sort.key, sort.direction);
       });
-      body.aggregation(type, propertyKey, { size: TOTAL_HITS_TRACKING }, label);
-    });
+    } else {
+      sort && body.sort(sort.key, sort.direction);
+    }
+
+    if (facetMap) {
+      facetMap.forEach(({ propertyKey, key, type, value }) => {
+        if (type === FacetType.TERMS) {
+          value.forEach(item => {
+            body.filter('term', propertyKey, item);
+          });
+          body.aggregation(
+            type,
+            propertyKey,
+            { size: TOTAL_HITS_TRACKING },
+            key
+          );
+        }
+      });
+    }
 
     body
       .size(pagination.size)
@@ -137,10 +151,13 @@ export default function useSearchQuery(selfURL?: string | null) {
     }
     const { org, project, id } = parseURL(selfURL);
 
+    const encodedID = encodeURIComponent(id);
+    const usefulId = encodedID === id ? id : encodedID;
+
     return await nexus.View.elasticSearchQuery<SearchResponse<Resource>>(
       org,
       project,
-      encodeURIComponent(id),
+      usefulId,
       body
     );
   };

@@ -90,6 +90,7 @@ export interface HeaderProps {
   children?: React.ReactChild;
   consent?: ConsentType;
   commitHash?: string;
+  dataCart?: React.ReactNode;
   onClickRemoveConsent?(): void;
   onClickSideBarToggle(): void;
   performLogin(realmName: string): void;
@@ -107,6 +108,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   forgeLink,
   consent,
   commitHash,
+  dataCart,
   onClickRemoveConsent,
   performLogin,
 }) => {
@@ -166,6 +168,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             )}
           />
         )}
+        {dataCart}
         <Popover
           content={
             <InformationContent

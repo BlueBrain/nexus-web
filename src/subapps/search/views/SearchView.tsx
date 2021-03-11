@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Layout, Row, Spin, Select, Card, Result, Switch } from 'antd';
+import { Layout, Row, Spin, Select, Card, Result, Switch, Input } from 'antd';
 import { useHistory, useLocation } from 'react-router-dom';
 import { match } from 'ts-pattern';
-import { omit } from 'lodash';
+import { omit, sortBy } from 'lodash';
 
 import { Resource } from '@bbp/nexus-sdk';
 
@@ -24,6 +24,8 @@ import ActiveFilters from '../components/ActiveFilters';
 import ResultsGrid from '../components/ResultsGrid';
 import useLocalStorage from '../../../shared/hooks/useLocalStorage';
 import ResultGridActions from '../components/ResultGridActions';
+import { FacetConfig, FacetType } from '../../../shared/store/reducers/search';
+import { parseJsonMaybe } from '../../../shared/utils';
 
 import './SearchView.less';
 
@@ -32,28 +34,30 @@ export enum SEARCH_VIEW_TYPES {
   GRID = 'GRID',
 }
 
-const generateDefaultSearchFilterMap = () => {
+const generateDefaultSearchFilterMap = (facets: FacetConfig[]) => {
+  const DEFAULT_FACETS = [
+    {
+      propertyKey: '_project',
+      key: 'projects',
+      label: 'Projects',
+      type: FacetType.TERMS,
+      displayIndex: 0,
+    },
+    {
+      propertyKey: '@type',
+      key: 'types',
+      label: 'Types',
+      type: FacetType.TERMS,
+      displayIndex: 1,
+    },
+  ];
+  const workingFacets = facets.length ? facets : DEFAULT_FACETS;
   const facetMap = new Map();
-  facetMap.set('Schemas', {
-    propertyKey: '_constrainedBy',
-    key: 'Schemas',
-    label: 'Schemas',
-    type: 'terms',
-    value: new Set(),
-  });
-  facetMap.set('Projects', {
-    propertyKey: '_project',
-    key: 'Projects',
-    label: 'Projects',
-    type: 'terms',
-    value: new Set(),
-  });
-  facetMap.set('Types', {
-    propertyKey: '@type',
-    key: 'Types',
-    label: 'Types',
-    type: 'terms',
-    value: new Set(),
+  workingFacets.forEach(facet => {
+    facetMap.set(facet.key, {
+      ...facet,
+      value: new Set(),
+    });
   });
   return facetMap;
 };
@@ -68,12 +72,15 @@ const SearchView: React.FC = () => {
     preferedSearchConfig,
     searchConfigs,
     searchConfigProject,
+    setSearchPreference,
   } = useSearchConfigs();
 
   const [
     searchResponse,
     { searchProps, setSearchProps, query },
-  ] = useSearchQuery(preferedSearchConfig?.view);
+  ] = useSearchQuery({
+    selfURL: preferedSearchConfig?.view,
+  });
   const [queryParams, setQueryString] = useQueryString();
 
   const [searchViewType, setSearchViewType] = useLocalStorage<
@@ -84,7 +91,18 @@ const SearchView: React.FC = () => {
     React.ReactText[]
   >([]);
 
+  const [filterSearchValue, setFilterSearchValue] = React.useState<string>('');
+
   const results = searchResponse.data;
+
+  React.useEffect(() => {
+    setSearchProps({
+      ...searchProps,
+      facetMap: generateDefaultSearchFilterMap(
+        preferedSearchConfig?.facets || []
+      ),
+    });
+  }, [preferedSearchConfig?.facets]);
 
   React.useEffect(() => {
     applyQueryParamsToSearchProps();
@@ -108,10 +126,10 @@ const SearchView: React.FC = () => {
   const applyQueryParamsToSearchProps = () => {
     const facetMap = queryParams.facetMap
       ? parseSerializedSearchFacets(
-          generateDefaultSearchFilterMap(),
+          generateDefaultSearchFilterMap(preferedSearchConfig?.facets || []),
           queryParams.facetMap as SerializedFacetMap
         )
-      : generateDefaultSearchFilterMap();
+      : generateDefaultSearchFilterMap(preferedSearchConfig?.facets || []);
     const newProps = { ...searchProps, ...queryParams, facetMap };
     if (!queryParams.query) {
       delete newProps.query;
@@ -208,7 +226,12 @@ const SearchView: React.FC = () => {
   };
 
   const handleClearFilters = () => {
-    changeSearchProps(DEFAULT_SEARCH_PROPS);
+    changeSearchProps({
+      ...DEFAULT_SEARCH_PROPS,
+      facetMap: generateDefaultSearchFilterMap(
+        preferedSearchConfig?.facets || []
+      ),
+    });
   };
 
   const handleClearQuery = () => {
@@ -227,6 +250,17 @@ const SearchView: React.FC = () => {
 
   const handleSearchViewSwitchChanged = (value: boolean) => {
     setSearchViewType(value ? SEARCH_VIEW_TYPES.GRID : SEARCH_VIEW_TYPES.TABLE);
+  };
+
+  const handleSort = (sort: UseSearchProps['sort']) => {
+    setSearchProps({
+      ...searchProps,
+      sort,
+    });
+  };
+
+  const handlePreferredSearchConfigChange = (value: string) => {
+    setSearchPreference(value);
   };
 
   // Pagination Props
@@ -291,35 +325,60 @@ const SearchView: React.FC = () => {
             <h2 style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>Filter</span> <Spin spinning={searchResponse.loading} />
             </h2>
-            {Object.keys(results?.aggregations || {}).map(aggKey => {
-              if (!searchProps.facetMap) {
-                return null;
-              }
-              searchProps.facetMap.get(aggKey);
+            <Input
+              size="small"
+              className="search"
+              placeholder="type a term to narrow down..."
+              value={filterSearchValue}
+              style={{ marginBottom: '1em' }}
+              allowClear
+              onChange={(e: React.FormEvent<HTMLInputElement>) => {
+                setFilterSearchValue(e.currentTarget.value);
+              }}
+            />
+            {sortBy(
+              Object.keys(results?.aggregations || {}).map(aggKey => {
+                if (!searchProps.facetMap) {
+                  return null;
+                }
+                const facetConfig = searchProps.facetMap.get(aggKey);
+                if (!facetConfig) {
+                  return null;
+                }
 
-              const facets =
-                results?.aggregations[aggKey]?.buckets.map((bucket: any) => {
-                  const [label] = bucket.key.split('/').reverse();
-                  const selected = searchProps.facetMap
-                    ?.get(aggKey)
-                    ?.value.has(bucket.key);
+                const facets =
+                  results?.aggregations[aggKey]?.buckets.map((bucket: any) => {
+                    const [label] = bucket.key.split('/').reverse();
+                    const selected = searchProps.facetMap
+                      ?.get(aggKey)
+                      ?.value.has(bucket.key);
 
-                  return {
-                    label,
-                    selected,
-                    count: bucket.doc_count,
-                    key: bucket.key,
-                  };
-                }) || [];
-              return (
-                <FacetItem
-                  key={aggKey}
-                  title={aggKey.toLocaleUpperCase()}
-                  facets={facets}
-                  onChange={handleFacetChanged(aggKey)}
-                />
-              );
-            })}
+                    return {
+                      label,
+                      selected,
+                      count: bucket.doc_count,
+                      key: bucket.key,
+                    };
+                  }) || [];
+                return {
+                  displayIndex: facetConfig.displayIndex,
+                  component: (
+                    <FacetItem
+                      filter={filterSearchValue}
+                      key={aggKey}
+                      title={facetConfig.label.toLocaleUpperCase()}
+                      facets={facets}
+                      onChange={handleFacetChanged(aggKey)}
+                    />
+                  ),
+                };
+              }),
+              ['displayIndex', 'title']
+            )
+              .filter(Boolean)
+              .map(display => {
+                return display?.component ? display.component : null;
+              })}
           </Card>
         </Sider>
         <Content>
@@ -337,12 +396,31 @@ const SearchView: React.FC = () => {
                   data: (searchResponse.data?.hits.hits || []).map(
                     ({ _source }) => ({
                       ..._source,
-                      ...JSON.parse(_source._original_source),
+                      ...(parseJsonMaybe<object>(
+                        _source._original_source || {}
+                      ) || {}),
                     })
                   ),
-                  fields: fields.map(field => field.key),
+                  fields: fields.map(field => ({
+                    label: field.title,
+                    value: (Array.isArray(field.dataIndex)
+                      ? field.dataIndex
+                      : [field.dataIndex]
+                    ).join('.'),
+                  })),
                 }}
               />
+              {/* Select Search Config */}
+              <Select
+                value={preferedSearchConfig?.id}
+                loading={searchConfigs.isFetching}
+                onChange={handlePreferredSearchConfigChange}
+                style={{ marginLeft: '2px' }}
+              >
+                {searchConfigs.data?.map(searchConfig => (
+                  <Option value={searchConfig.id}>{searchConfig.label}</Option>
+                ))}
+              </Select>
             </ActiveFilters>
           </Row>
           <Row>
@@ -448,6 +526,7 @@ const SearchView: React.FC = () => {
                     fields={fields}
                     searchResponse={searchResponse}
                     onClickItem={handleClickItem}
+                    onSort={handleSort}
                     pagination={
                       shouldShowPagination
                         ? {

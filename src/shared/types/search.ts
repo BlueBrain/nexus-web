@@ -26,6 +26,8 @@ export interface SearchResponse<T> {
 
 export type ResultTableFields = {
   title: string;
-  dataIndex: string | string[];
+  dataIndex: string;
+  sortable?: boolean;
   key: string;
+  displayIndex: number;
 };

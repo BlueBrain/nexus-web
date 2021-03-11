@@ -1,7 +1,10 @@
+@import '../../../shared/lib.less';
+
 .facet-group {
   h4 {
     display: flex;
     justify-content: space-between;
+    cursor: pointer;
   }
   .item {
     cursor: pointer;
@@ -16,6 +19,16 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+  }
+
+  .chevron {
+    transition: @transition-all-bouncy;
+    &.hidden {
+      transform: rotate(-90deg);
+    }
+    &.empty {
+      color: @disabled-color;
     }
   }
 }

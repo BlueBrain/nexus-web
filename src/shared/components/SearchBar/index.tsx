@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Resource } from '@bbp/nexus-sdk';
+import { ProjectResponseCommon, Resource } from '@bbp/nexus-sdk';
 import { LoadingOutlined } from '@ant-design/icons';
 import { AutoComplete, Input } from 'antd';
 import { SearchConfig } from '../../store/reducers/search';
@@ -12,9 +12,11 @@ import './SearchBar.less';
 
 export enum SearchQuickActions {
   VISIT = 'visit',
+  VISIT_PROJECT = 'visit-project',
 }
 
 const SearchBar: React.FC<{
+  projectList: ProjectResponseCommon[];
   query?: string;
   searchResponse: AsyncCall<
     SearchResponse<
@@ -31,6 +33,7 @@ const SearchBar: React.FC<{
   onClear: () => void;
 }> = ({
   query,
+  projectList,
   searchResponse,
   searchConfigLoading,
   searchConfigPreference,
@@ -74,7 +77,26 @@ const SearchBar: React.FC<{
     };
   });
 
-  const options = !!query
+  // Reset default value if query changes
+  React.useEffect(() => {
+    setValue(query || '');
+  }, [query]);
+
+  const options: (
+    | {
+        value: string;
+        key: string;
+        label: JSX.Element;
+      }
+    | {
+        label: string;
+        options: {
+          value: string;
+          key: string;
+          label: JSX.Element;
+        }[];
+      }
+  )[] = !!query
     ? [
         {
           value,
@@ -85,7 +107,14 @@ const SearchBar: React.FC<{
             </Hit>
           ),
         },
-        ...(searchResponse.data?.hits.hits.map(hit => {
+      ]
+    : [];
+
+  if (!!searchResponse.data?.hits.total.value) {
+    options.push({
+      label: 'Resources',
+      options:
+        searchResponse.data?.hits.hits.map(hit => {
           const { _source } = hit;
           return {
             key: _source._self,
@@ -96,9 +125,31 @@ const SearchBar: React.FC<{
             ),
             value: `${SearchQuickActions.VISIT}:${_source._self}`,
           };
-        }) || []),
-      ]
-    : [];
+        }) || [],
+    });
+  }
+
+  if (projectList.length) {
+    options.push({
+      label: 'Projects',
+      options: projectList.map(project => {
+        return {
+          // @ts-ignore
+          // TODO update nexus-sdk to add this property
+          // to types
+          key: project._uuid,
+          label: (
+            <Hit type={HitType.PROJECT}>
+              <span>
+                {project._organizationLabel}/{project._label}
+              </span>
+            </Hit>
+          ),
+          value: `${SearchQuickActions.VISIT_PROJECT}:${project._organizationLabel}/${project._label}`,
+        };
+      }),
+    });
+  }
 
   const handleChange = (value: string) => {
     setValue(value);
@@ -129,7 +180,6 @@ const SearchBar: React.FC<{
       className={`search-bar ${!!focused && 'focused'}`}
       onFocus={handleSetFocused(true)}
       onBlur={handleSetFocused(false)}
-      defaultValue={value}
       options={options}
       onChange={handleChange}
       onSelect={handleSelect}
