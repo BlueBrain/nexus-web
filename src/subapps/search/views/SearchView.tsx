@@ -273,7 +273,9 @@ const SearchView: React.FC = () => {
   const shouldShowPagination = totalPages > 1;
 
   // Fields
-  const fields = preferedSearchConfig?.fields || DEFAULT_FIELDS;
+  const fields = preferedSearchConfig?.fields?.length
+    ? preferedSearchConfig?.fields
+    : DEFAULT_FIELDS;
 
   const rowSelection = {
     selectedRowKeys,

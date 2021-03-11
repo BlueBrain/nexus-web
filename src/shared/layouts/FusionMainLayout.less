@@ -35,6 +35,7 @@
 
   .menu-icon {
     padding-right: 0.7rem;
+    background-color: inherit;
   }
 
   .menu-wrapper {
@@ -90,14 +91,14 @@
   .ant-menu-inline .ant-menu-item:not(:last-child) {
     margin: 0;
     height: 50px;
-    border-left: 4px solid #001529;
+    border-left: 4px solid @fusion-dark-bg;
     font-weight: 300;
     display: flex;
     align-items: center;
   }
 
   .ant-menu.ant-menu-dark .ant-menu-item-selected {
-    background: linear-gradient(45deg, #001529, #2a414b);
+    background: linear-gradient(45deg, @fusion-dark-bg, #2a414b);
     border-left: 4px solid @primary-color;
     height: 50px;
     margin: 0;

@@ -476,6 +476,7 @@ function filterPlugins(
   return newPlugins;
 }
 
+
 export const parseJsonMaybe = <T = object>(
   str: string | null | undefined,
   errorCallback?: (error: Error) => void
@@ -487,4 +488,12 @@ export const parseJsonMaybe = <T = object>(
     errorCallback && errorCallback(error);
   }
   return parsedJson;
+};
+
+export const forceAsArray = <T>(objectOrArray: T | T[] | null | undefined) => {
+  return !!objectOrArray
+    ? Array.isArray(objectOrArray)
+      ? objectOrArray
+      : [objectOrArray]
+    : [];
 };

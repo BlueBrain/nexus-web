@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as packageJson from '../../../../package.json';
 import { Menu, Dropdown, Popover } from 'antd';
 import {
   BookOutlined,
@@ -82,6 +81,7 @@ const InformationContent = (props: InformationContentProps) => {
 export interface HeaderProps {
   version: string;
   githubIssueURL: string;
+  forgeLink: string;
   name?: string;
   token?: string;
   links?: React.ReactNode[];
@@ -105,11 +105,11 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   children,
   version,
   githubIssueURL,
+  forgeLink,
   consent,
   commitHash,
   dataCart,
   onClickRemoveConsent,
-  onClickSideBarToggle,
   performLogin,
 }) => {
   const menu = (
@@ -145,6 +145,11 @@ const Header: React.FunctionComponent<HeaderProps> = ({
     <header className="Header">
       <div className="selectors">{children}</div>
       <div className="menu-block">
+        {name && forgeLink !== '' && (
+          <a href={forgeLink} target="_blank" className="forge-button">
+            Forge Templates
+          </a>
+        )}
         {token && (
           <Copy
             textToCopy={token}
