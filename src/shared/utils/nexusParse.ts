@@ -1,4 +1,4 @@
-interface ParsedNexusUrl {
+export interface ParsedNexusUrl {
   url: string;
   deployment: string;
   apiVersion: string;
@@ -56,12 +56,13 @@ export const parseURL = (nexusUrl: string): ParsedNexusUrl => {
   if (!nexusUrl) throw new Error('selfUrl should be defined');
 
   const matches = nexusUrl.match(nexusUrlRegex);
+
   if (!matches || matches.length <= 5) {
     throw new Error('Error while parsing selfUrl');
   }
 
   if (matches[7] === undefined) {
-    // we dont have a schema in this case because the self url was cosntructed via a
+    // we don,t have a schema in this case because the self url was constructed via a
     // non-resource path such as views
     const [url, deployment, apiVersion, entityType, org, project, id] = matches;
     return {

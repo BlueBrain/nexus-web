@@ -8,6 +8,11 @@ export const DATACART_KEY = 'NEXUS_DATACART';
 
 const useDataCart = () => {
   const [resources, setResources] = React.useState<Resource[]>([]);
+  const [length, setLength] = React.useState<number>(0);
+  React.useEffect(() => {
+    setLength(resources.length);
+  }, [resources]);
+
   const storage = React.useMemo(() => {
     return localforage.createInstance({
       name: DATACART_KEY,
@@ -26,20 +31,39 @@ const useDataCart = () => {
     setResources(resources);
   };
 
+  const emptyCart = async () => {
+    await storage.clear();
+    await iterateThroughResource();
+    notification.success({
+      key: '',
+      message: 'Data cart is now empty',
+    });
+  };
+
   const addResourceToCart = async (resource: Resource) => {
     const notificationKey = `${DATACART_KEY}-${resource._self}`;
     const item = await storage.getItem(resource._self);
     if (item) {
       return notification.info({
         key: notificationKey,
-        message: "You've already put this resource in your data cart",
+        message: "You've already added this resource in your data cart",
       });
     }
     await storage.setItem(resource._self, resource);
+    setResources([...resources, resource]);
+    notification.success({
+      key: notificationKey,
+      message: 'Selected resource is added to your data cart.',
+    });
+  };
+
+  const removeCartItem = async (selfUrl: string) => {
+    const notificationKey = `${DATACART_KEY}-${selfUrl}`;
+    await storage.removeItem(selfUrl);
     await iterateThroughResource();
     notification.success({
       key: notificationKey,
-      message: 'Put selected resource to your data cart.',
+      message: 'Resource removed',
     });
   };
 
@@ -49,16 +73,30 @@ const useDataCart = () => {
     });
     await iterateThroughResource();
     notification.info({
-      message: 'Put selected items as a dataset to your data cart.',
+      message: 'Selected items are added as a dataset to your data cart.',
     });
   };
 
   return {
     addResourceToCart,
     addResourceCollectionToCart,
+    emptyCart,
+    removeCartItem,
     resources,
-    length: resources.length,
+    length,
   };
 };
 
 export default useDataCart;
+
+export type CartType = {
+  addResourceToCart: (resource: Resource) => Promise<void>;
+  addResourceCollectionToCart: (resources: Resource[]) => Promise<void>;
+  emptyCart: () => Promise<void>;
+  removeCartItem: (selfUrl: string) => Promise<void>;
+  resources: Resource<{
+    [key: string]: any;
+  }>[];
+  length: number;
+};
+export const CartContext = React.createContext<Partial<CartType>>({});

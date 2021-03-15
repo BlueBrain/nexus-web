@@ -3,7 +3,7 @@ import { Resource } from '@bbp/nexus-sdk';
 import * as prettyBytes from 'pretty-bytes';
 import { convertMarkdownHandlebarStringWithData } from '../../../shared/utils/markdownTemplate';
 import { getResourceLabel } from '../../../shared/utils';
-import { parseURL } from '../../../shared/utils/nexusParse';
+import { parseURL, ParsedNexusUrl } from '../../../shared/utils/nexusParse';
 import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
 import { FILE_SCHEMA } from '../../../shared/types/nexus';
 
@@ -13,6 +13,15 @@ const ResultPreviewItemContainer: React.FC<{
 }> = ({ resource, defaultPreviewItemTemplate }) => {
   const markdownHandlebarTemplate =
     resource.previewTemplate || defaultPreviewItemTemplate;
+
+  let parsedUrl: ParsedNexusUrl | undefined;
+
+  try {
+    parsedUrl = parseURL(resource._self);
+  } catch {
+    // fail silently
+    console.error(resource._self);
+  }
 
   return (
     <MarkdownViewerContainer
@@ -28,7 +37,7 @@ const ResultPreviewItemContainer: React.FC<{
           : [resource['@type']]
         ).map(typeURL => typeURL?.split('/').reverse()[0]),
         resourceLabel: getResourceLabel(resource),
-        resourceAdminData: parseURL(resource._self),
+        resourceAdminData: parsedUrl ? parsedUrl : '',
         fileData: resource._constrainedBy === FILE_SCHEMA && {
           humanReadableFileSize: prettyBytes(resource._bytes),
         },
