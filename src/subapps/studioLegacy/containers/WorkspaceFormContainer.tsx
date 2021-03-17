@@ -303,13 +303,11 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
         >
           <Form layout="vertical">
             <Form.Item label={'Select View for the Dashboards(s)'}>
-              {viewToAdd ? (
-                <SelectViews
-                  views={views}
-                  setView={(view: string) => setViewToAdd(view)}
-                  selectedView={viewToAdd}
-                />
-              ) : null}
+              <SelectViews
+                views={views}
+                setView={(view: string) => setViewToAdd(view)}
+                selectedView={viewToAdd}
+              />
             </Form.Item>
             <Form.Item label={'Add or Remove Dashboards'}>
               <Transfer

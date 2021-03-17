@@ -1,4 +1,5 @@
 import { ElasticSearchView, Resource } from '@bbp/nexus-sdk';
+import { Empty } from 'antd';
 import * as React from 'react';
 import ElasticSearchResultsTable, {
   DEFAULT_FIELDS,
@@ -13,9 +14,16 @@ const DashboardElasticSearchQueryContainer: React.FC<{
   dataQuery: string;
   goToStudioResource: (selfUrl: string) => void;
 }> = ({ view, dataQuery, fields, goToStudioResource }) => {
+  const queryJSON = React.useMemo(() => {
+    try {
+      return JSON.parse(dataQuery);
+    } catch (ex) {
+      return {};
+    }
+  }, [dataQuery]);
   const [searchResponse, { searchProps, setSearchProps }] = useSearchQuery(
     view._self,
-    JSON.parse(dataQuery)
+    queryJSON
   );
 
   const handleClickItem = (resource: Resource) => {
@@ -49,24 +57,30 @@ const DashboardElasticSearchQueryContainer: React.FC<{
   const shouldShowPagination = totalPages > 1;
 
   return (
-    <ElasticSearchResultsTable
-      isStudio={true}
-      fields={fields || DEFAULT_FIELDS}
-      searchResponse={searchResponse}
-      onClickItem={handleClickItem}
-      onSort={handleSort}
-      pagination={
-        shouldShowPagination
-          ? {
-              total,
-              current,
-              pageSize: size,
-              showSizeChanger: false,
-              onChange: handlePaginationChange,
-            }
-          : {}
-      }
-    />
+    <>
+      {Object.keys(queryJSON).length > 0 ? (
+        <ElasticSearchResultsTable
+          isStudio={true}
+          fields={fields || DEFAULT_FIELDS}
+          searchResponse={searchResponse}
+          onClickItem={handleClickItem}
+          onSort={handleSort}
+          pagination={
+            shouldShowPagination
+              ? {
+                  total,
+                  current,
+                  pageSize: size,
+                  showSizeChanger: false,
+                  onChange: handlePaginationChange,
+                }
+              : {}
+          }
+        />
+      ) : (
+        <Empty></Empty>
+      )}
+    </>
   );
 };
 
