@@ -8587,15 +8587,7 @@ loader-utils@^2.0.0:
     emojis-list "^3.0.0"
     json5 "^2.1.2"
 
-localforage-observable@^2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/localforage-observable/-/localforage-observable-2.1.1.tgz#a30c8a8aec72d59a1b138238f3c4b9356264fc99"
-  integrity sha512-p4E9FtopJlOa2ENk9Pw5puVOaOJ7tnLCJ+54iJXlG76wrmDAifDdbIcQc6QNAHJNIGLr+YKg0O3PeA77dEgD/w==
-  dependencies:
-    localforage "^1.5.0"
-    zen-observable "^0.2.1"
-
-localforage@^1.5.0, localforage@^1.9.0:
+localforage@^1.9.0:
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/localforage/-/localforage-1.9.0.tgz#f3e4d32a8300b362b4634cc4e066d9d00d2f09d1"
   integrity sha512-rR1oyNrKulpe+VM9cYmcFn6tsHuokyVHFaCM3+osEmxaHTbEk8oQu6eGDfS6DQLWi/N67XRmB8ECG37OES368g==
@@ -14317,8 +14309,3 @@ yn@3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/yn/-/yn-3.1.1.tgz#1e87401a09d767c1d5eab26a6e4c185182d2eb50"
   integrity sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==
-
-zen-observable@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/zen-observable/-/zen-observable-0.2.1.tgz#c47676a64132b8475a61aa49e514755b5b9663f3"
-  integrity sha1-xHZ2pkEyuEdaYapJ5RR1W1uWY/M=
