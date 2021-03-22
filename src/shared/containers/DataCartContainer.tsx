@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ArchivePayload, NexusClient } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { getResourceLabel, uuidv4 } from '../../shared/utils';
 import { parseURL, ParsedNexusUrl } from '../../shared/utils/nexusParse';
@@ -21,10 +22,34 @@ import {
 import { CartContext } from '../hooks/useDataCart';
 import ResultPreviewItemContainer from '../../subapps/search/containers/ResultPreviewItemContainer';
 import DefaultResourcePreviewCard from '!!raw-loader!../../subapps/search/templates/DefaultResourcePreviewCard.hbs';
-import { ArchivePayload } from '@bbp/nexus-sdk';
+
+async function downloadTarFile(
+  nexus: NexusClient,
+  parsedData: ParsedNexusUrl,
+  payload: ArchivePayload,
+  archiveId: string,
+  setDownloadUrl: React.Dispatch<any>,
+  refContainer: React.MutableRefObject<any>
+) {
+  await nexus.Archive.create(parsedData.org, parsedData.project, payload);
+  const archive = await nexus.Archive.get(
+    parsedData.org,
+    parsedData.project,
+    archiveId,
+    {
+      as: 'x-tar',
+    }
+  );
+  const blob = new Blob([archive.toString()]);
+  const url = window.URL.createObjectURL(blob);
+  setDownloadUrl(url);
+  refContainer.current.click();
+}
 
 const DataCartContainer = () => {
   const nexus = useNexusContext();
+  const [downloadUrl, setDownloadUrl] = React.useState<any>(null);
+  const refContainer = React.useRef<any>(null);
   const { emptyCart, removeCartItem, length, resources } = React.useContext(
     CartContext
   );
@@ -68,15 +93,53 @@ const DataCartContainer = () => {
         .join(',')
     : '';
 
-  const downLoadFiles = () => {};
+  const downLoadFiles = async () => {
+    if (filteredResources && filteredResources.length > 0) {
+      const parsedData: ParsedNexusUrl = parseURL(filteredResources[0]._self);
+      const resourcesPayload = filteredResources
+        .filter(r => {
+          return r['@type'] === 'File';
+        })
+        .map(r => {
+          const parsedSelf = parseURL(r._self);
+          return {
+            '@type': 'File',
+            resourceId: r['@id'],
+            project: parsedSelf.project,
+          };
+        });
+      const archiveId = uuidv4();
+      const payload: ArchivePayload = {
+        archiveId,
+        resources: resourcesPayload,
+      };
+      try {
+        await downloadTarFile(
+          nexus,
+          parsedData,
+          payload,
+          archiveId,
+          setDownloadUrl,
+          refContainer
+        );
+      } catch (ex) {
+        console.log(ex);
+        notification.error({
+          message: `Download failed`,
+        });
+      }
+    }
+  };
 
   const downLoadAll = async () => {
     if (filteredResources && filteredResources.length > 0) {
       const parsedData: ParsedNexusUrl = parseURL(filteredResources[0]._self);
       const resourcesPayload = filteredResources.map(r => {
+        const parsedSelf = parseURL(r._self);
         return {
           '@type': r['@type'] === 'File' ? 'File' : 'Resource',
           resourceId: r['@id'],
+          project: parsedSelf.project,
         };
       });
       const archiveId = uuidv4();
@@ -85,35 +148,64 @@ const DataCartContainer = () => {
         resources: resourcesPayload,
       };
       try {
-        const response = await nexus.Archive.create(
-          parsedData.org,
-          parsedData.project,
-          payload
-        );
-
-        const archive = await nexus.Archive.get(
-          parsedData.org,
-          parsedData.project,
+        await downloadTarFile(
+          nexus,
+          parsedData,
+          payload,
           archiveId,
-          {
-            as: 'json',
-          }
+          setDownloadUrl,
+          refContainer
         );
-        console.log(archive);
       } catch (ex) {
+        console.log(ex);
         notification.error({
-          message: `Download failed ${ex}`,
+          message: `Download failed`,
         });
       }
     }
   };
 
-  const downLoadMetaData = () => {};
+  const downLoadMetaData = async (): Promise<void> => {
+    if (filteredResources && filteredResources.length > 0) {
+      const parsedData: ParsedNexusUrl = parseURL(filteredResources[0]._self);
+      const resourcesPayload = filteredResources
+        .filter(r => {
+          return r['@type'] === 'File';
+        })
+        .map(r => {
+          const parsedSelf = parseURL(r._self);
+          return {
+            '@type': 'File',
+            resourceId: r['@id'],
+            project: parsedSelf.project,
+          };
+        });
+      const archiveId = uuidv4();
+      const payload: ArchivePayload = {
+        archiveId,
+        resources: resourcesPayload,
+      };
+      try {
+        await downloadTarFile(
+          nexus,
+          parsedData,
+          payload,
+          archiveId,
+          setDownloadUrl,
+          refContainer
+        );
+      } catch (ex) {
+        console.log(ex);
+        notification.error({
+          message: `Download failed`,
+        });
+      }
+    }
+  };
 
   const menu = (
     <Menu
       onClick={clicked => {
-        console.log(clicked);
         clicked.key === 'both'
           ? downLoadAll()
           : clicked.key === 'files'
@@ -135,6 +227,14 @@ const DataCartContainer = () => {
           onClick={handleToggleCart}
         ></Button>
       </Badge>
+      <a
+        href={downloadUrl}
+        ref={refContainer}
+        download={'data-cart.tar'}
+        style={{ display: 'none' }}
+      >
+        download
+      </a>
       <Drawer
         width={400}
         title="Data Cart"

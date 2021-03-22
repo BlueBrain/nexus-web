@@ -914,27 +914,27 @@
   resolved "https://registry.yarnpkg.com/@base2/pretty-print-object/-/pretty-print-object-1.0.0.tgz#860ce718b0b73f4009e153541faff2cb6b85d047"
   integrity sha512-4Th98KlMHr5+JkxfcoDT//6vY8vM+iSPrLNpHhRyLx2CFYi8e2RfqPLdpbnpo0Q5lQC5hNB79yes07zb02fvCw==
 
-"@bbp/nexus-link@^1.3.1":
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/@bbp/nexus-link/-/nexus-link-1.3.1.tgz#58df911359401cf6016925c6bdf4bd42a6118638"
-  integrity sha512-OWQwS0fcmvNmc0o4xrquLXeNgHy3wfa+f2hiOSpFowGAhbZMshlGABsQzRBj25Rnp/7jPnYZKkS44et5HKKg5Q==
+"@bbp/nexus-link@^1.3.0", "@bbp/nexus-link@^1.3.3":
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/@bbp/nexus-link/-/nexus-link-1.3.3.tgz#33393fff9c756be57afb7491984b861cbe2d6313"
+  integrity sha512-cNc508meohTRNxaISUoLhzt6kc79LwJKK6+c+6zVxp/ofeMwJQe5yw80lxZ1oWF8pitPL5kqzYwJ29vzW7MLLw==
   dependencies:
     rxjs "^6.5.2"
 
-"@bbp/nexus-sdk@1.3.1":
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/@bbp/nexus-sdk/-/nexus-sdk-1.3.1.tgz#8e9df0a9c27e3f13362573a1f0e5927d733605ba"
-  integrity sha512-WgTdw+Y/+9O68oqEdQ0F/v5NqryWAiDNmLkb+mLOVZUgFgnmHHSa1r1m/5n1lDw+OAldhMHTFJid1CB/7Xzo1A==
+"@bbp/nexus-sdk@1.3.3":
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/@bbp/nexus-sdk/-/nexus-sdk-1.3.3.tgz#4a5a084b2331e8a8239d15103d4ff39bbd627091"
+  integrity sha512-7cBBcK9BgMxzuua754ULDin+j8YAT4lnqbbqd5mrAhYp3cDMLEZ+K2khjajkSSOJ9DBQIvu7hszNEXXG6WButg==
   dependencies:
-    "@bbp/nexus-link" "^1.3.1"
+    "@bbp/nexus-link" "^1.3.3"
     query-string "^6.9.0"
 
-"@bbp/react-nexus@1.3.1":
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/@bbp/react-nexus/-/react-nexus-1.3.1.tgz#b0a1b922bb3bb94e248d78c949e90297f46a16ed"
-  integrity sha512-S5lKERwSAMHplIy3GSNI971Sw+D42xEEw3srSYXpWcdoJtDvYG/xJPdWiDOFHB5yfql20DB5JJX61joOPPJqrA==
+"@bbp/react-nexus@1.3.3":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@bbp/react-nexus/-/react-nexus-1.3.0.tgz#6cc57f1c9666a1a4e1731fe50caea18bf104e8eb"
+  integrity sha512-BBj6GrvQFyumRrwCM6ryVN1j0tDefiCrjxZKW2AazjHO936cHRnmmVtxCgyfrbfWed5vq5nVjYblw9oNKQcyFQ==
   dependencies:
-    "@bbp/nexus-link" "^1.3.1"
+    "@bbp/nexus-link" "^1.3.0"
     ts-invariant "0.4.1"
 
 "@chromaui/localtunnel@1.10.1":
