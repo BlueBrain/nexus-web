@@ -62,7 +62,7 @@ export const parseURL = (nexusUrl: string): ParsedNexusUrl => {
   }
 
   if (matches[7] === undefined) {
-    // we don,t have a schema in this case because the self url was constructed via a
+    // we don't have a schema in this case because the self url was constructed via a
     // non-resource path such as views
     const [url, deployment, apiVersion, entityType, org, project, id] = matches;
     return {

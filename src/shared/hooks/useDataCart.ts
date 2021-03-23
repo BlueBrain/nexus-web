@@ -35,7 +35,6 @@ const useDataCart = () => {
     await storage.clear();
     await iterateThroughResource();
     notification.success({
-      key: '',
       message: 'Data cart is now empty',
     });
   };
@@ -46,14 +45,14 @@ const useDataCart = () => {
     if (item) {
       return notification.info({
         key: notificationKey,
-        message: "You've already added this resource in your data cart",
+        message: "You've already added this resource to your data cart",
       });
     }
     await storage.setItem(resource._self, resource);
     setResources([...resources, resource]);
     notification.success({
       key: notificationKey,
-      message: 'Selected resource is added to your data cart.',
+      message: 'Selected resource has been added to your data cart.',
     });
   };
 

@@ -37,7 +37,7 @@ const ResultPreviewItemContainer: React.FC<{
           : [resource['@type']]
         ).map(typeURL => typeURL?.split('/').reverse()[0]),
         resourceLabel: getResourceLabel(resource),
-        resourceAdminData: parsedUrl ? parsedUrl : '',
+        resourceAdminData: parsedUrl || '',
         fileData: resource._constrainedBy === FILE_SCHEMA && {
           humanReadableFileSize: prettyBytes(resource._bytes),
         },
