@@ -123,7 +123,6 @@ const DataCartContainer = () => {
           refContainer
         );
       } catch (ex) {
-        console.log(ex);
         notification.error({
           message: `Download failed`,
         });
