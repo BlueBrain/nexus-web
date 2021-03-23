@@ -105,7 +105,7 @@ const DataCartContainer = () => {
           return {
             '@type': 'File',
             resourceId: r['@id'],
-            project: parsedSelf.project,
+            project: `${parsedSelf.org}/${parsedSelf.project}`,
           };
         });
       const archiveId = uuidv4();
@@ -139,7 +139,7 @@ const DataCartContainer = () => {
         return {
           '@type': r['@type'] === 'File' ? 'File' : 'Resource',
           resourceId: r['@id'],
-          project: parsedSelf.project,
+          project: `${parsedSelf.org}/${parsedSelf.project}`,
         };
       });
       const archiveId = uuidv4();
@@ -170,12 +170,12 @@ const DataCartContainer = () => {
       const parsedData: ParsedNexusUrl = parseURL(filteredResources[0]._self);
       const resourcesPayload = filteredResources
         .filter(r => {
-          return r['@type'] === 'File';
+          return r['@type'] !== 'File';
         })
         .map(r => {
           const parsedSelf = parseURL(r._self);
           return {
-            '@type': 'File',
+            '@type': 'Resource',
             resourceId: r['@id'],
             project: parsedSelf.project,
           };
