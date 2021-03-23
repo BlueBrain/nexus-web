@@ -294,10 +294,7 @@ const DataCartContainer = () => {
               renderItem={resource => {
                 return (
                   <List.Item>
-                    <div
-                      className="result-preview-card"
-                      // onClick={handleClickItem(resource)}
-                    >
+                    <div className="result-preview-card">
                       <div>
                         <CloseCircleFilled
                           onClick={e => {
