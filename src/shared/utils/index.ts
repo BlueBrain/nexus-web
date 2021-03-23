@@ -476,7 +476,6 @@ function filterPlugins(
   return newPlugins;
 }
 
-
 export const parseJsonMaybe = <T = object>(
   str: string | null | undefined,
   errorCallback?: (error: Error) => void

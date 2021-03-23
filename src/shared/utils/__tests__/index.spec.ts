@@ -627,7 +627,6 @@ describe('utils functions', () => {
     });
   });
 
-
   describe('parseJsonMaybe()', () => {
     it('returns parsed JSON from a json string', () => {
       const test = {

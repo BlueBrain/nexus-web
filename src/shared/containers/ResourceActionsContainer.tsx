@@ -22,7 +22,7 @@ import {
   toPromise,
 } from '../utils/nexusMaybe';
 import Copy from '../components/Copy';
-import useDataCart from '../hooks/useDataCart';
+import { CartContext } from '../hooks/useDataCart';
 
 const ResourceActionsContainer: React.FunctionComponent<{
   resource: Resource;
@@ -43,7 +43,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
   const resourceId = resource['@id'];
   const self = resource._self;
   const nexus = useNexusContext();
-  const { addResourceToCart } = useDataCart();
+  const { addResourceToCart } = React.useContext(CartContext);
 
   const isLatestResource = async (resource: Resource) => {
     // TODO: remove this if / when
@@ -169,7 +169,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
   };
 
   const handleAddToCart = async () => {
-    await addResourceToCart(resource);
+    addResourceToCart ? await addResourceToCart(resource) : null;
   };
 
   return (
