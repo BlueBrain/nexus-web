@@ -23,13 +23,14 @@ import { CartContext } from '../hooks/useDataCart';
 import ResultPreviewItemContainer from '../../subapps/search/containers/ResultPreviewItemContainer';
 import DefaultResourcePreviewCard from '!!raw-loader!../../subapps/search/templates/DefaultResourcePreviewCard.hbs';
 
-async function downloadTarFile(
+async function downloadArchive(
   nexus: NexusClient,
   parsedData: ParsedNexusUrl,
   payload: ArchivePayload,
   archiveId: string,
   setDownloadUrl: React.Dispatch<any>,
-  refContainer: React.MutableRefObject<any>
+  refContainer: React.MutableRefObject<any>,
+  format?: 'x-tar' | 'json'
 ) {
   await nexus.Archive.create(parsedData.org, parsedData.project, payload);
   const archive = await nexus.Archive.get(
@@ -37,10 +38,14 @@ async function downloadTarFile(
     parsedData.project,
     archiveId,
     {
-      as: 'x-tar',
+      as: format || 'x-tar',
     }
   );
-  const blob = new Blob([archive.toString()]);
+  const blob = new Blob([
+    !format || format === 'x-tar'
+      ? archive.toString()
+      : JSON.stringify(archive),
+  ]);
   const url = window.URL.createObjectURL(blob);
   setDownloadUrl(url);
   refContainer.current.click();
@@ -49,6 +54,7 @@ async function downloadTarFile(
 const DataCartContainer = () => {
   const nexus = useNexusContext();
   const [downloadUrl, setDownloadUrl] = React.useState<any>(null);
+  const [extension, setExtension] = React.useState<string>('.tar.gz');
   const refContainer = React.useRef<any>(null);
   const { emptyCart, removeCartItem, length, resources } = React.useContext(
     CartContext
@@ -108,13 +114,16 @@ const DataCartContainer = () => {
             project: `${parsedSelf.org}/${parsedSelf.project}`,
           };
         });
-      const archiveId = uuidv4();
-      const payload: ArchivePayload = {
+      setExtension('tar.gz');
+      const {
+        payload,
         archiveId,
-        resources: resourcesPayload,
-      };
+      }: { payload: ArchivePayload; archiveId: string } = makePayload(
+        resourcesPayload
+      );
+
       try {
-        await downloadTarFile(
+        await downloadArchive(
           nexus,
           parsedData,
           payload,
@@ -141,13 +150,15 @@ const DataCartContainer = () => {
           project: `${parsedSelf.org}/${parsedSelf.project}`,
         };
       });
-      const archiveId = uuidv4();
-      const payload: ArchivePayload = {
+      const {
+        payload,
         archiveId,
-        resources: resourcesPayload,
-      };
+      }: { payload: ArchivePayload; archiveId: string } = makePayload(
+        resourcesPayload
+      );
+      setExtension('tar.gz');
       try {
-        await downloadTarFile(
+        await downloadArchive(
           nexus,
           parsedData,
           payload,
@@ -176,22 +187,25 @@ const DataCartContainer = () => {
           return {
             '@type': 'Resource',
             resourceId: r['@id'],
-            project: parsedSelf.project,
+            project: `${parsedSelf.org}/${parsedSelf.project}`,
           };
         });
-      const archiveId = uuidv4();
-      const payload: ArchivePayload = {
+      const {
+        payload,
         archiveId,
-        resources: resourcesPayload,
-      };
+      }: { payload: ArchivePayload; archiveId: string } = makePayload(
+        resourcesPayload
+      );
+      setExtension('json');
       try {
-        await downloadTarFile(
+        await downloadArchive(
           nexus,
           parsedData,
           payload,
           archiveId,
           setDownloadUrl,
-          refContainer
+          refContainer,
+          'json'
         );
       } catch (ex) {
         console.log(ex);
@@ -229,7 +243,7 @@ const DataCartContainer = () => {
       <a
         href={downloadUrl}
         ref={refContainer}
-        download={'data-cart.tar'}
+        download={`data-cart.${extension}`}
         style={{ display: 'none' }}
       >
         download
@@ -332,3 +346,13 @@ const DataCartContainer = () => {
 };
 
 export default DataCartContainer;
+function makePayload(
+  resourcesPayload: { '@type': string; resourceId: string; project: string }[]
+) {
+  const archiveId = uuidv4();
+  const payload: ArchivePayload = {
+    archiveId,
+    resources: resourcesPayload,
+  };
+  return { payload, archiveId };
+}
