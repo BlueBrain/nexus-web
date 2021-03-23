@@ -23,6 +23,17 @@ import { CartContext } from '../hooks/useDataCart';
 import ResultPreviewItemContainer from '../../subapps/search/containers/ResultPreviewItemContainer';
 import DefaultResourcePreviewCard from '!!raw-loader!../../subapps/search/templates/DefaultResourcePreviewCard.hbs';
 
+function makePayload(
+  resourcesPayload: { '@type': string; resourceId: string; project: string }[]
+) {
+  const archiveId = uuidv4();
+  const payload: ArchivePayload = {
+    archiveId,
+    resources: resourcesPayload,
+  };
+  return { payload, archiveId };
+}
+
 async function downloadArchive(
   nexus: NexusClient,
   parsedData: ParsedNexusUrl,
@@ -346,13 +357,3 @@ const DataCartContainer = () => {
 };
 
 export default DataCartContainer;
-function makePayload(
-  resourcesPayload: { '@type': string; resourceId: string; project: string }[]
-) {
-  const archiveId = uuidv4();
-  const payload: ArchivePayload = {
-    archiveId,
-    resources: resourcesPayload,
-  };
-  return { payload, archiveId };
-}
