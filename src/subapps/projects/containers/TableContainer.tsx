@@ -6,6 +6,7 @@ import EditTableForm from '../components/EditTableForm';
 import { isTable } from '../utils';
 import { TableComponent } from './NewTableContainer';
 import { displayError, successNotification } from '../components/Notifications';
+import DataTableContainer from '../../../shared/containers/DataTableContainer';
 
 const TableContainer: React.FC<{
   orgLabel: string;
@@ -76,7 +77,11 @@ const TableContainer: React.FC<{
     <div>
       {tables && tables.length > 0 && (
         <div key={`table-${tables[0]['@id']}`}>
-          {tables[0].name}
+          <DataTableContainer
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+            tableResourceId={tables[0]['@id']}
+          ></DataTableContainer>
           <Button onClick={() => setShowEditForm(true)} type="link">
             Edit Table
           </Button>
