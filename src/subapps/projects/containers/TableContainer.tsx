@@ -81,10 +81,11 @@ const TableContainer: React.FC<{
             orgLabel={orgLabel}
             projectLabel={projectLabel}
             tableResourceId={tables[0]['@id']}
+            editTableHandler={() => {
+              setShowEditForm(true);
+            }}
           ></DataTableContainer>
-          <Button onClick={() => setShowEditForm(true)} type="link">
-            Edit Table
-          </Button>
+
           <Modal
             visible={showEditForm}
             footer={null}
