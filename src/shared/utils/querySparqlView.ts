@@ -50,6 +50,7 @@ export const sparqlQueryExecutor = async (
     }));
   const headerProperties = tempHeaderProperties;
   // build items
+
   const items = data.results.bindings
     // we only want resources
     .filter((binding: Binding) => binding.self)
@@ -72,6 +73,7 @@ export const sparqlQueryExecutor = async (
         key: index.toString(), // used by react component (unique key)
       };
     });
+
   return {
     headerProperties,
     items,
@@ -83,54 +85,5 @@ export const querySparqlView = ({
   dataQuery,
   view,
 }: QuerySparqlViewProps) => async () => {
-  const { org: orgLabel, project: projectLabel, id: viewId } = parseURL(
-    view._self
-  );
-  const result: SparqlViewQueryResponse = await nexus.View.sparqlQuery(
-    orgLabel,
-    projectLabel,
-    encodeURIComponent(viewId),
-    dataQuery
-  );
-  const data: SelectQueryResponse = result as SelectQueryResponse;
-  const tempHeaderProperties: {
-    title: string;
-    dataIndex: string;
-  }[] = data.head.vars
-    .filter(
-      // we don't want to display total or self url in result table
-      (headVar: string) => !(headVar === 'total' || headVar === 'self')
-    )
-    .map((headVar: string) => ({
-      title: camelCaseToLabelString(headVar),
-      dataIndex: headVar,
-    }));
-  const headerProperties = tempHeaderProperties;
-  // build items
-  const items = data.results.bindings
-    // we only want resources
-    .filter((binding: Binding) => binding.self)
-    .map((binding: Binding, index: number) => {
-      // let's get the value for each headerProperties
-      const properties = tempHeaderProperties.reduce(
-        (prev, curr) => ({
-          ...prev,
-          [curr.dataIndex]:
-            (binding[curr.dataIndex] && binding[curr.dataIndex].value) ||
-            undefined,
-        }),
-        {}
-      );
-      // return item data
-      return {
-        ...properties,
-        id: index.toString(),
-        self: binding.self,
-        key: index.toString(), // used by react component (unique key)
-      };
-    });
-  return {
-    headerProperties,
-    items,
-  };
+  return await sparqlQueryExecutor(nexus, dataQuery, view);
 };

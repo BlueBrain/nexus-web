@@ -2,10 +2,9 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, View, SparqlView } from '@bbp/nexus-sdk';
 import * as React from 'react';
 import { Table, Button, Input, Space } from 'antd';
-import { ColumnsType } from 'antd/es/table';
 import '../styles/data-table.less';
-import { useSparQLQuery } from '../hooks/useSparQLQuery';
-import { response } from 'express';
+import { useAccessDataForTable } from '../hooks/useAccessDataForTable';
+import { result } from 'lodash';
 
 export type TableColumn = {
   '@type': string;
@@ -50,7 +49,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   tableResourceId,
   editTableHandler,
 }) => {
-  const nexus = useNexusContext();
+  const query = useAccessDataForTable(orgLabel, projectLabel, tableResourceId);
 
   const renderTitle = () => {
     return (
@@ -65,13 +64,13 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             onSearch={() => {}}
             style={{ width: '100%' }}
           ></Input.Search>
-          <Button onClick={editTableHandler} type="primary">
+          <Button onClick={query.downloadCSV} type="primary">
             Download CSV
           </Button>
-          <Button onClick={editTableHandler} type="primary">
+          <Button onClick={query.addFromDataCart} type="primary">
             Add from DataCart
           </Button>
-          <Button onClick={editTableHandler} type="primary">
+          <Button onClick={query.addToDataCart} type="primary">
             Add to DataCart
           </Button>
         </Space>
@@ -79,15 +78,21 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     );
   };
 
-  const data = useSparQLQuery(nexus, orgLabel, projectLabel, tableResourceId);
-
   return (
     <>
-      {data ? (
+      {query.result.isSuccess ? (
         <Table
           title={renderTitle}
-          columns={data.headerProperties}
-          dataSource={data.items}
+          columns={query.result.data?.headerProperties}
+          dataSource={query.result.data?.items}
+          rowSelection={{
+            type: 'checkbox',
+            onChange: (selectedRowKeys, selectedRows) => {
+              console.log(selectedRows);
+              console.log(selectedRowKeys);
+            },
+          }}
+          pagination={{ ...query.pagination, total: query.result.data.total }}
         />
       ) : null}
     </>

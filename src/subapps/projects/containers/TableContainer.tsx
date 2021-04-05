@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Modal, Button } from 'antd';
-
+import { QueryClient, QueryClientProvider } from 'react-query';
 import EditTableForm from '../components/EditTableForm';
 import { isTable } from '../utils';
 import { TableComponent } from './NewTableContainer';
@@ -14,6 +14,7 @@ const TableContainer: React.FC<{
   stepId: string;
 }> = ({ orgLabel, projectLabel, stepId }) => {
   const nexus = useNexusContext();
+  const queryClient = new QueryClient();
   const [tables, setTables] = React.useState<any[] | undefined>([]);
   const [showEditForm, setShowEditForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
@@ -77,14 +78,17 @@ const TableContainer: React.FC<{
     <div>
       {tables && tables.length > 0 && (
         <div key={`table-${tables[0]['@id']}`}>
-          <DataTableContainer
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
-            tableResourceId={tables[0]['@id']}
-            editTableHandler={() => {
-              setShowEditForm(true);
-            }}
-          ></DataTableContainer>
+          <QueryClientProvider client={queryClient}>
+            {' '}
+            <DataTableContainer
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              tableResourceId={tables[0]['@id']}
+              editTableHandler={() => {
+                setShowEditForm(true);
+              }}
+            ></DataTableContainer>
+          </QueryClientProvider>
 
           <Modal
             visible={showEditForm}

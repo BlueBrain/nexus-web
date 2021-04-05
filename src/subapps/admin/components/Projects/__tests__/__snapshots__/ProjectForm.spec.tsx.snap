@@ -50,6 +50,7 @@ exports[`Project Form component should render correctly 1`] = `
             >
               <form
                 className="ant-form ant-form-horizontal"
+                onReset={[Function]}
                 onSubmit={[Function]}
               >
                 <FormItem
@@ -131,6 +132,31 @@ exports[`Project Form component should render correctly 1`] = `
                     }
                   >
                     <Field
+                      fieldContext={
+                        Object {
+                          "__INTERNAL__": Object {
+                            "itemRef": [Function],
+                            "name": undefined,
+                          },
+                          "getFieldError": [Function],
+                          "getFieldInstance": [Function],
+                          "getFieldValue": [Function],
+                          "getFieldsError": [Function],
+                          "getFieldsValue": [Function],
+                          "getInternalHooks": [Function],
+                          "isFieldTouched": [Function],
+                          "isFieldValidating": [Function],
+                          "isFieldsTouched": [Function],
+                          "isFieldsValidating": [Function],
+                          "resetFields": [Function],
+                          "scrollToField": [Function],
+                          "setFields": [Function],
+                          "setFieldsValue": [Function],
+                          "submit": [Function],
+                          "validateFields": [Function],
+                          "validateTrigger": "onChange",
+                        }
+                      }
                       initialValue=""
                       key="__label"
                       label="Label"
@@ -386,7 +412,7 @@ exports[`Project Form component should render correctly 1`] = `
                                   <CSSMotion
                                     motionAppear={true}
                                     motionDeadline={500}
-                                    motionName="show-help"
+                                    motionName="ant-show-help"
                                     onLeaveEnd={[Function]}
                                     removeOnLeave={true}
                                     visible={false}
@@ -475,6 +501,31 @@ exports[`Project Form component should render correctly 1`] = `
                     }
                   >
                     <Field
+                      fieldContext={
+                        Object {
+                          "__INTERNAL__": Object {
+                            "itemRef": [Function],
+                            "name": undefined,
+                          },
+                          "getFieldError": [Function],
+                          "getFieldInstance": [Function],
+                          "getFieldValue": [Function],
+                          "getFieldsError": [Function],
+                          "getFieldsValue": [Function],
+                          "getInternalHooks": [Function],
+                          "isFieldTouched": [Function],
+                          "isFieldValidating": [Function],
+                          "isFieldsTouched": [Function],
+                          "isFieldsValidating": [Function],
+                          "resetFields": [Function],
+                          "scrollToField": [Function],
+                          "setFields": [Function],
+                          "setFieldsValue": [Function],
+                          "submit": [Function],
+                          "validateFields": [Function],
+                          "validateTrigger": "onChange",
+                        }
+                      }
                       initialValue=""
                       key="_description"
                       label="Description"
@@ -717,7 +768,7 @@ exports[`Project Form component should render correctly 1`] = `
                                   <CSSMotion
                                     motionAppear={true}
                                     motionDeadline={500}
-                                    motionName="show-help"
+                                    motionName="ant-show-help"
                                     onLeaveEnd={[Function]}
                                     removeOnLeave={true}
                                     visible={false}
@@ -815,9 +866,7 @@ exports[`Project Form component should render correctly 1`] = `
                               <div
                                 className="ant-form-item-control-input-content"
                               >
-                                <Collapse
-                                  bordered={true}
-                                >
+                                <Collapse>
                                   <Collapse
                                     accordion={false}
                                     bordered={true}
@@ -825,11 +874,21 @@ exports[`Project Form component should render correctly 1`] = `
                                     destroyInactivePanel={false}
                                     expandIcon={[Function]}
                                     onChange={[Function]}
-                                    openAnimation={
+                                    openMotion={
                                       Object {
-                                        "appear": [Function],
-                                        "enter": [Function],
-                                        "leave": [Function],
+                                        "leavedClassName": "ant-collapse-content-hidden",
+                                        "motionAppear": false,
+                                        "motionDeadline": 500,
+                                        "motionName": "ant-motion-collapse",
+                                        "onAppearActive": [Function],
+                                        "onAppearEnd": [Function],
+                                        "onAppearStart": [Function],
+                                        "onEnterActive": [Function],
+                                        "onEnterEnd": [Function],
+                                        "onEnterStart": [Function],
+                                        "onLeaveActive": [Function],
+                                        "onLeaveEnd": [Function],
+                                        "onLeaveStart": [Function],
                                       }
                                     }
                                     prefixCls="ant-collapse"
@@ -846,11 +905,21 @@ exports[`Project Form component should render correctly 1`] = `
                                         isActive={false}
                                         key="1"
                                         onItemClick={[Function]}
-                                        openAnimation={
+                                        openMotion={
                                           Object {
-                                            "appear": [Function],
-                                            "enter": [Function],
-                                            "leave": [Function],
+                                            "leavedClassName": "ant-collapse-content-hidden",
+                                            "motionAppear": false,
+                                            "motionDeadline": 500,
+                                            "motionName": "ant-motion-collapse",
+                                            "onAppearActive": [Function],
+                                            "onAppearEnd": [Function],
+                                            "onAppearStart": [Function],
+                                            "onEnterActive": [Function],
+                                            "onEnterEnd": [Function],
+                                            "onEnterStart": [Function],
+                                            "onLeaveActive": [Function],
+                                            "onLeaveEnd": [Function],
+                                            "onLeaveStart": [Function],
                                           }
                                         }
                                         panelKey="1"
@@ -866,11 +935,21 @@ exports[`Project Form component should render correctly 1`] = `
                                           headerClass=""
                                           isActive={false}
                                           onItemClick={[Function]}
-                                          openAnimation={
+                                          openMotion={
                                             Object {
-                                              "appear": [Function],
-                                              "enter": [Function],
-                                              "leave": [Function],
+                                              "leavedClassName": "ant-collapse-content-hidden",
+                                              "motionAppear": false,
+                                              "motionDeadline": 500,
+                                              "motionName": "ant-motion-collapse",
+                                              "onAppearActive": [Function],
+                                              "onAppearEnd": [Function],
+                                              "onAppearStart": [Function],
+                                              "onEnterActive": [Function],
+                                              "onEnterEnd": [Function],
+                                              "onEnterStart": [Function],
+                                              "onLeaveActive": [Function],
+                                              "onLeaveEnd": [Function],
+                                              "onLeaveStart": [Function],
                                             }
                                           }
                                           panelKey="1"
@@ -881,7 +960,7 @@ exports[`Project Form component should render correctly 1`] = `
                                             className="ant-collapse-item"
                                           >
                                             <div
-                                              aria-expanded="false"
+                                              aria-expanded={false}
                                               className="ant-collapse-header"
                                               onClick={[Function]}
                                               onKeyPress={[Function]}
@@ -921,7 +1000,6 @@ exports[`Project Form component should render correctly 1`] = `
                                                     role="img"
                                                   >
                                                     <IconReact
-                                                      className=""
                                                       icon={
                                                         Object {
                                                           "icon": Object {
@@ -946,7 +1024,6 @@ exports[`Project Form component should render correctly 1`] = `
                                                     >
                                                       <svg
                                                         aria-hidden="true"
-                                                        className=""
                                                         data-icon="right"
                                                         fill="currentColor"
                                                         focusable="false"
@@ -966,49 +1043,34 @@ exports[`Project Form component should render correctly 1`] = `
                                               </ForwardRef(RightOutlined)>
                                               Advanced settings
                                             </div>
-                                            <Animate
-                                              animation={
-                                                Object {
-                                                  "appear": [Function],
-                                                  "enter": [Function],
-                                                  "leave": [Function],
-                                                }
-                                              }
-                                              component=""
-                                              componentProps={Object {}}
-                                              exclusive={true}
-                                              onAppear={[Function]}
-                                              onEnd={[Function]}
-                                              onEnter={[Function]}
-                                              onLeave={[Function]}
-                                              showProp="isActive"
-                                              transitionAppear={false}
-                                              transitionEnter={true}
-                                              transitionLeave={true}
+                                            <CSSMotion
+                                              forceRender={false}
+                                              leavedClassName="ant-collapse-content-hidden"
+                                              motionAppear={false}
+                                              motionDeadline={500}
+                                              motionName="ant-motion-collapse"
+                                              onAppearActive={[Function]}
+                                              onAppearEnd={[Function]}
+                                              onAppearStart={[Function]}
+                                              onEnterActive={[Function]}
+                                              onEnterEnd={[Function]}
+                                              onEnterStart={[Function]}
+                                              onLeaveActive={[Function]}
+                                              onLeaveEnd={[Function]}
+                                              onLeaveStart={[Function]}
+                                              removeOnLeave={false}
+                                              visible={false}
                                             >
-                                              <AnimateChild
-                                                animation={
-                                                  Object {
-                                                    "appear": [Function],
-                                                    "enter": [Function],
-                                                    "leave": [Function],
-                                                  }
-                                                }
-                                                key="rc_animate_1234567890123"
-                                                transitionAppear={false}
-                                                transitionEnter={true}
-                                                transitionLeave={true}
-                                              >
+                                              <DomWrapper>
                                                 <PanelContent
-                                                  destroyInactivePanel={false}
+                                                  className="ant-collapse-content-hidden"
                                                   forceRender={false}
                                                   isActive={false}
-                                                  key="rc_animate_1234567890123"
                                                   prefixCls="ant-collapse"
                                                   role={null}
                                                 />
-                                              </AnimateChild>
-                                            </Animate>
+                                              </DomWrapper>
+                                            </CSSMotion>
                                           </div>
                                         </CollapsePanel>
                                       </CollapsePanel>
@@ -1024,7 +1086,7 @@ exports[`Project Form component should render correctly 1`] = `
                               <CSSMotion
                                 motionAppear={true}
                                 motionDeadline={500}
-                                motionName="show-help"
+                                motionName="ant-show-help"
                                 onLeaveEnd={[Function]}
                                 removeOnLeave={true}
                                 visible={false}
@@ -1144,10 +1206,7 @@ exports[`Project Form component should render correctly 1`] = `
                                         }
                                       >
                                         <Button
-                                          block={false}
-                                          ghost={false}
                                           htmlType="submit"
-                                          loading={false}
                                           type="primary"
                                         >
                                           <Wave>
@@ -1196,7 +1255,7 @@ exports[`Project Form component should render correctly 1`] = `
                               <CSSMotion
                                 motionAppear={true}
                                 motionDeadline={500}
-                                motionName="show-help"
+                                motionName="ant-show-help"
                                 onLeaveEnd={[Function]}
                                 removeOnLeave={true}
                                 visible={false}

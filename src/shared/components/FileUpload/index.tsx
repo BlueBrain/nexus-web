@@ -5,7 +5,7 @@ import {
   FolderOpenOutlined,
   FileAddOutlined,
 } from '@ant-design/icons';
-import { UploadFile, RcCustomRequestOptions } from 'antd/lib/upload/interface';
+import { UploadFile } from 'antd/lib/upload/interface';
 import { NexusFile, Storage } from '@bbp/nexus-sdk';
 
 import { labelOf } from '../../utils';
@@ -62,7 +62,7 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
   }>({});
   const [fileList, setFileList] = React.useState<UploadFile[]>([]);
 
-  const handleFileUpload = (customFileRequest: RcCustomRequestOptions) => {
+  const handleFileUpload = (customFileRequest: any) => {
     onFileUpload(customFileRequest.file, storageId)
       .then((nexusFile: NexusFile) => {
         setFileIndex({
