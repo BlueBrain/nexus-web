@@ -70,6 +70,18 @@ const MarkdownViewerContainer: React.FC<{
         ></div>
       )
     )
+    .with(
+      {
+        error: when(error => !error),
+        data: '',
+      },
+      () => (
+        <div>
+          <p>No description provided</p>
+          <div ref={wrapperRef} dangerouslySetInnerHTML={{ __html: '' }} />
+        </div>
+      )
+    )
     .run();
 };
 
