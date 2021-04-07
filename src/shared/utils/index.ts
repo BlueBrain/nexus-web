@@ -421,6 +421,21 @@ export const pluginsMap = (pluginManifest: any) =>
   }, {} as PluginMapping);
 
 /*
+ * Returns plugins that should be excluded
+ *
+ * @param {object} plugin Manifest
+ * @returns {array} plugins
+ */
+export const pluginsExcludeMap = (pluginManifest: any) =>
+  Object.keys(pluginManifest || {}).reduce((mapping, pluginManifestKey) => {
+    if (!pluginManifest) {
+      return mapping;
+    }
+    mapping[pluginManifestKey] = pluginManifest[pluginManifestKey].exclude;
+    return mapping;
+  }, {} as PluginMapping);
+
+/*
  * Returns studio uri
  *
  * @param {string} orgLabel
