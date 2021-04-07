@@ -34,8 +34,6 @@ const ResourcePlugins: React.FunctionComponent<{
     plugin => !excludedPlugins?.includes(plugin)
   );
 
-  console.log('filteredPlugins', filteredPlugins);
-
   const pluginDataMap = filteredPlugins
     ? filteredPlugins
         .map(pluginName => {
