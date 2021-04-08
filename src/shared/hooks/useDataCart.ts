@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import * as localforage from 'localforage';
 import { notification } from 'antd';
-import { uuidv4 } from '../utils';
 
 export const DATACART_KEY = 'NEXUS_DATACART';
 
@@ -66,13 +65,20 @@ const useDataCart = () => {
     });
   };
 
-  const addResourceCollectionToCart = async (resources: Resource[]) => {
-    await storage.setItem(uuidv4(), {
-      collection: resources,
-    });
-    await iterateThroughResource();
-    notification.info({
-      message: 'Selected items are added as a dataset to your data cart.',
+  const addResourceCollectionToCart = async (inputResources: Resource[]) => {
+    const uniqueResources: Resource[] = [];
+
+    for (let i = 0; i < inputResources.length; i += 1) {
+      const item = await storage.getItem(inputResources[i]._self);
+      if (!item) {
+        uniqueResources.push(inputResources[i]);
+        await storage.setItem(inputResources[i]._self, inputResources[i]);
+      }
+    }
+
+    setResources([...resources, ...uniqueResources]);
+    notification.success({
+      message: 'Selected resources has been added to your data cart.',
     });
   };
 

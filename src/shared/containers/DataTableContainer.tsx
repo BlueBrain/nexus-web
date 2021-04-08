@@ -1,10 +1,9 @@
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, View, SparqlView } from '@bbp/nexus-sdk';
 import * as React from 'react';
-import { Table, Button, Input, Space } from 'antd';
+import { Table, Button, Input, Space, Spin } from 'antd';
 import '../styles/data-table.less';
 import { useAccessDataForTable } from '../hooks/useAccessDataForTable';
-import { result } from 'lodash';
 
 export type TableColumn = {
   '@type': string;
@@ -32,10 +31,6 @@ export type TableResource = Resource<{
   configuration: TableColumn | TableColumn[];
 }>;
 
-const useEsQuery = () => {
-  return {};
-};
-
 type DataTableProps = {
   orgLabel: string;
   projectLabel: string;
@@ -61,7 +56,9 @@ const DataTableContainer: React.FC<DataTableProps> = ({
           <Input.Search
             placeholder="input search text"
             allowClear
-            onSearch={() => {}}
+            onSearch={value => {
+              query.setSearchValue(value);
+            }}
             style={{ width: '100%' }}
           ></Input.Search>
           <Button onClick={query.downloadCSV} type="primary">
@@ -79,23 +76,21 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   };
 
   return (
-    <>
-      {query.result.isSuccess ? (
+    <div>
+      {query.result.isLoading ? (
+        <Spin />
+      ) : query.result.isSuccess ? (
         <Table
           title={renderTitle}
           columns={query.result.data?.headerProperties}
           dataSource={query.result.data?.items}
           rowSelection={{
             type: 'checkbox',
-            onChange: (selectedRowKeys, selectedRows) => {
-              console.log(selectedRows);
-              console.log(selectedRowKeys);
-            },
+            onChange: query.onSelect,
           }}
-          pagination={{ ...query.pagination, total: query.result.data.total }}
         />
       ) : null}
-    </>
+    </div>
   );
 };
 
