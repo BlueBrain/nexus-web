@@ -277,6 +277,7 @@ const WorkflowStepView: React.FC = () => {
                 orgLabel={orgLabel}
                 projectLabel={projectLabel}
                 step={substep}
+                onUpdate={waitAntReload}
               />
             ))
           ) : (

@@ -45,7 +45,32 @@
   }
 
   &__main {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__main-body {
+    width: 95%;
     padding: 0.5rem;
+  }
+
+  &__add-button-container {
+    width: 20px;
+    background-color: @medium-gray;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 0 10px 0;
+  }
+
+  &__add-button {
+    border: 0;
+    padding: 0;
+    background-color: inherit;
+    font-weight: 500;
+    color: #fff;
+    font-size: 1.5em;
+    cursor: pointer;
   }
 
   &__substeps-total {
@@ -53,7 +78,7 @@
   }
 
   &__name {
-    margin: 2px 0;
+    margin: 1px 0;
     line-height: 18px;
   }
 
@@ -75,10 +100,12 @@
 
   &__info {
     line-height: 16px;
-    padding: 5px 0 6px;
     margin: 0.5em 0;
-    border-top: 1px solid rgb(220, 220, 220);
-    border-bottom: 1px solid rgb(220, 220, 220);
+    opacity: 0.9;
+
+    p {
+      margin-bottom: 0;
+    }
   }
 
   &__info-icon {

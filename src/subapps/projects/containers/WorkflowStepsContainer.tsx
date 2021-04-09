@@ -17,7 +17,7 @@ const WorkflowStepContainer: React.FC<{
   // switch to trigger step list update
   const [refreshSteps, setRefreshSteps] = React.useState<boolean>(false);
 
-  const waitAntReloadActivities = () =>
+  const waitAntReloadSteps = () =>
     setTimeout(() => setRefreshSteps(!refreshSteps), 3500);
 
   React.useEffect(() => {
@@ -66,7 +66,7 @@ const WorkflowStepContainer: React.FC<{
       <ProjectPanel
         orgLabel={orgLabel}
         projectLabel={projectLabel}
-        onUpdate={waitAntReloadActivities}
+        onUpdate={waitAntReloadSteps}
         siblings={siblings}
       />
       <StepsBoard>
@@ -77,6 +77,7 @@ const WorkflowStepContainer: React.FC<{
               key={step['@id']}
               projectLabel={projectLabel}
               orgLabel={orgLabel}
+              onUpdate={waitAntReloadSteps}
             />
           ))}
       </StepsBoard>

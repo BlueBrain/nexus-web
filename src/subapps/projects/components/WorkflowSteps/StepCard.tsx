@@ -27,6 +27,7 @@ const StepCard: React.FC<{
       [key: string]: any;
     }
   ) => void;
+  onClickAddCard: (previousStepId: string) => void;
 }> = ({
   step,
   projectLabel,
@@ -34,6 +35,7 @@ const StepCard: React.FC<{
   substeps,
   onStatusChange,
   onPostionChange,
+  onClickAddCard,
 }) => {
   const [stepStatus, setStepStatus] = React.useState<string>(step.status);
   const { name, description } = step;
@@ -203,51 +205,63 @@ const StepCard: React.FC<{
             </Dropdown>
           </div>
           <div className="step-card__main">
-            <div className="step-card__title">
-              <Link to={`/workflow/${orgLabel}/${projectLabel}/${stepId}`}>
-                {name.length > MAX_TITLE_LENGTH ? (
-                  <Tooltip placement="topRight" title={name}>
-                    <h3 className="step-card__name">
-                      {`${name.slice(0, MAX_TITLE_LENGTH)}...`}
-                    </h3>
-                  </Tooltip>
-                ) : (
-                  <h3 className="step-card__name">{name}</h3>
-                )}
-              </Link>
-            </div>
-            <div className="step-card__info">
-              <Tooltip placement="topRight" title={description}>
-                <MarkdownViewerContainer
-                  template={
-                    step.description
-                      ? step.description.slice(0, MAX_DESCRIPTION_LENGTH)
-                      : ''
-                  }
-                  data={step}
-                />
-              </Tooltip>
-            </div>
-            <div className="step-card__subactivities">
-              <div className="step-card__substeps-total">
-                <img src={settingIcon} className="step-card__info-icon" />
-                <span>
-                  {(substeps && substeps.length) || 'No'}{' '}
-                  {substeps && substeps.length === 1 ? 'sub-step' : 'sub-steps'}
-                </span>
+            <div className="step-card__main-body">
+              <div className="step-card__title">
+                <Link to={`/workflow/${orgLabel}/${projectLabel}/${stepId}`}>
+                  {name.length > MAX_TITLE_LENGTH ? (
+                    <Tooltip placement="topRight" title={name}>
+                      <h3 className="step-card__name">
+                        {`${name.slice(0, MAX_TITLE_LENGTH)}...`}
+                      </h3>
+                    </Tooltip>
+                  ) : (
+                    <h3 className="step-card__name">{name}</h3>
+                  )}
+                </Link>
               </div>
-              <div className="step-card__list-container">
-                {substeps &&
-                  substeps.length > 0 &&
-                  substeps.map(substep => (
-                    <SubStepItem
-                      substep={substep}
-                      key={substep['@id']}
-                      orgLabel={orgLabel}
-                      projectLabel={projectLabel}
-                    />
-                  ))}
+              <div className="step-card__info">
+                <Tooltip placement="topRight" title={description}>
+                  <MarkdownViewerContainer
+                    template={
+                      step.description
+                        ? step.description.slice(0, MAX_DESCRIPTION_LENGTH)
+                        : ''
+                    }
+                    data={step}
+                  />
+                </Tooltip>
               </div>
+              {substeps && substeps.length > 0 && (
+                <div className="step-card__subactivities">
+                  <div className="step-card__substeps-total">
+                    <img src={settingIcon} className="step-card__info-icon" />
+                    <span>
+                      {substeps && substeps.length}{' '}
+                      {substeps && substeps.length === 1
+                        ? 'sub-step'
+                        : 'sub-steps'}
+                    </span>
+                  </div>
+                  <div className="step-card__list-container">
+                    {substeps.map(substep => (
+                      <SubStepItem
+                        substep={substep}
+                        key={substep['@id']}
+                        orgLabel={orgLabel}
+                        projectLabel={projectLabel}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="step-card__add-button-container">
+              <button
+                className="step-card__add-button"
+                onClick={() => onClickAddCard(stepId)}
+              >
+                +
+              </button>
             </div>
           </div>
         </div>
