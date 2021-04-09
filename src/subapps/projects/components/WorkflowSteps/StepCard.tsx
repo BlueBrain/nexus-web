@@ -42,6 +42,8 @@ const StepCard: React.FC<{
   const stepId = step['@id'];
 
   React.useEffect(() => {
+    console.log('rendering');
+
     if (step.wasInformedBy) {
       if (Array.isArray(step.wasInformedBy)) {
         step.wasInformedBy.forEach(card => placeLines(card['@id']));
@@ -49,7 +51,7 @@ const StepCard: React.FC<{
         placeLines(step.wasInformedBy['@id']);
       }
     }
-  });
+  }, [step]);
 
   const placeLines = (cardId: string) => {
     const line = document.getElementById(`link-${stepId}-to-${cardId}`);
@@ -137,7 +139,10 @@ const StepCard: React.FC<{
     if (outgoingLines.length > 0 && div1) {
       outgoingLines.forEach(line => {
         const points = line.getAttribute('points');
+        console.log('points', points);
+
         const [start, middle, end] = points?.split(' ') as string[];
+        console.log('end', end);
 
         const x1 =
           div1.offsetLeft + div1.getBoundingClientRect().width / 2 + data.x;
