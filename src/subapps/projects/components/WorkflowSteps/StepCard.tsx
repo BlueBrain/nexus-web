@@ -78,10 +78,6 @@ const StepCard: React.FC<{
     const translateY2 = matrix2.m42;
 
     if (div1 && div2 && line) {
-      console.log('div1.offsetHeight', div1.offsetHeight);
-      console.log('div1.offsetHeight', div1.offsetHeight);
-      console.log('div1.clientHeight', div1.clientHeight);
-
       const x1 =
         div1.offsetLeft + translateX1 + div1.getBoundingClientRect().width / 2;
       const y1 = div1.offsetTop + translateY1 + BOX_OFFSET_Y;
@@ -183,12 +179,6 @@ const StepCard: React.FC<{
     </Menu>
   );
 
-  const onClickEdit = () => {
-    console.log('name', name);
-
-    showEditName(true);
-  };
-
   const enterNewName = () => {
     if (isEmptyInput(name)) {
       setNameError(true);
@@ -270,7 +260,7 @@ const StepCard: React.FC<{
                 )}
                 <button
                   className="step-card__edit-button"
-                  onClick={onClickEdit}
+                  onClick={() => showEditName(true)}
                 >
                   <img src={editIcon} />
                 </button>
