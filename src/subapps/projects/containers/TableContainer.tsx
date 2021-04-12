@@ -6,6 +6,7 @@ import EditTableForm from '../components/EditTableForm';
 import { isTable } from '../utils';
 import { TableComponent } from './NewTableContainer';
 import { displayError, successNotification } from '../components/Notifications';
+import DataTableContainer from '../../../shared/containers/DataTableContainer';
 
 const TableContainer: React.FC<{
   orgLabel: string;
@@ -13,6 +14,7 @@ const TableContainer: React.FC<{
   stepId: string;
 }> = ({ orgLabel, projectLabel, stepId }) => {
   const nexus = useNexusContext();
+
   const [tables, setTables] = React.useState<any[] | undefined>([]);
   const [showEditForm, setShowEditForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
@@ -48,7 +50,7 @@ const TableContainer: React.FC<{
       .catch(error => {
         displayError(error, 'Failed to load tables');
       });
-  }, []);
+  }, [orgLabel, projectLabel, stepId]);
 
   const updateTable = (data: TableComponent) => {
     setBusy(true);
@@ -76,10 +78,15 @@ const TableContainer: React.FC<{
     <div>
       {tables && tables.length > 0 && (
         <div key={`table-${tables[0]['@id']}`}>
-          {tables[0].name}
-          <Button onClick={() => setShowEditForm(true)} type="link">
-            Edit Table
-          </Button>
+          {' '}
+          <DataTableContainer
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+            tableResourceId={tables[0]['@id']}
+            editTableHandler={() => {
+              setShowEditForm(true);
+            }}
+          ></DataTableContainer>
           <Modal
             visible={showEditForm}
             footer={null}

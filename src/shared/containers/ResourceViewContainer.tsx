@@ -31,6 +31,9 @@ const ResourceViewContainer: React.FunctionComponent<{
     }> | null
   ) => React.ReactElement | null;
 }> = ({ render }) => {
+  const x = useParams();
+
+  // @ts-ignore
   const { orgLabel = '', projectLabel = '', resourceId = '' } = useParams();
   const nexus = useNexusContext();
   const location = useLocation();

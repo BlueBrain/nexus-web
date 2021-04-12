@@ -42,10 +42,7 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
     HeaderProperties | undefined
   >(headerProperties);
   const [searchValue, setSearchValue] = React.useState<string>('');
-  const [filteredValues, setFilteredValues] = React.useState<Record<
-    string,
-    React.ReactText[] | null
-  > | null>(null);
+  const [filteredValues, setFilteredValues] = React.useState<any>(null);
 
   const filteredItems = items.filter(item => {
     return (
