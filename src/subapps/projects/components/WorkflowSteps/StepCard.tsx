@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Draggable from 'react-draggable';
 import { Link } from 'react-router-dom';
-import { Tooltip, Dropdown, Button, Menu } from 'antd';
+import { Tooltip, Dropdown, Button, Menu, Input } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { StepResource } from '../../views/WorkflowStepView';
 import { Status } from '../StatusIcon';
@@ -11,6 +11,7 @@ import SubStepItem from './SubStepItem';
 import './StepCard.less';
 
 const settingIcon = require('../../../../shared/images/settingIcon.svg');
+const editIcon = require('../../../../shared/images/pencil.svg');
 
 const MAX_TITLE_LENGTH = 57;
 const MAX_DESCRIPTION_LENGTH = 100;
@@ -28,6 +29,7 @@ const StepCard: React.FC<{
     }
   ) => void;
   onClickAddCard: (previousStepId: string) => void;
+  onNameChange: (name: string) => void;
 }> = ({
   step,
   projectLabel,
@@ -36,14 +38,15 @@ const StepCard: React.FC<{
   onStatusChange,
   onPostionChange,
   onClickAddCard,
+  onNameChange,
 }) => {
   const [stepStatus, setStepStatus] = React.useState<string>(step.status);
-  const { name, description } = step;
+  const [editName, showEditName] = React.useState<boolean>(false);
+  const [name, setName] = React.useState<string>(step.name);
+  const { description } = step;
   const stepId = step['@id'];
 
   React.useEffect(() => {
-    console.log('rendering');
-
     if (step.wasInformedBy) {
       if (Array.isArray(step.wasInformedBy)) {
         step.wasInformedBy.forEach(card => placeLines(card['@id']));
@@ -181,6 +184,15 @@ const StepCard: React.FC<{
     </Menu>
   );
 
+  const enterNewName = () => {
+    onNameChange(name);
+    showEditName(false);
+  };
+
+  const onChangeName = (event: any) => {
+    setName(event.target.value);
+  };
+
   return (
     <>
       <Draggable
@@ -212,17 +224,31 @@ const StepCard: React.FC<{
           <div className="step-card__main">
             <div className="step-card__main-body">
               <div className="step-card__title">
-                <Link to={`/workflow/${orgLabel}/${projectLabel}/${stepId}`}>
-                  {name.length > MAX_TITLE_LENGTH ? (
-                    <Tooltip placement="topRight" title={name}>
-                      <h3 className="step-card__name">
-                        {`${name.slice(0, MAX_TITLE_LENGTH)}...`}
-                      </h3>
-                    </Tooltip>
-                  ) : (
-                    <h3 className="step-card__name">{name}</h3>
-                  )}
-                </Link>
+                {editName ? (
+                  <Input
+                    defaultValue={name}
+                    onPressEnter={enterNewName}
+                    onChange={onChangeName}
+                  />
+                ) : (
+                  <Link to={`/workflow/${orgLabel}/${projectLabel}/${stepId}`}>
+                    {name.length > MAX_TITLE_LENGTH ? (
+                      <Tooltip placement="topRight" title={name}>
+                        <h3 className="step-card__name">
+                          {`${name.slice(0, MAX_TITLE_LENGTH)}...`}
+                        </h3>
+                      </Tooltip>
+                    ) : (
+                      <h3 className="step-card__name">{name}</h3>
+                    )}
+                  </Link>
+                )}
+                <button
+                  className="step-card__edit-button"
+                  onClick={() => showEditName(true)}
+                >
+                  <img src={editIcon} />
+                </button>
               </div>
               <div className="step-card__info">
                 <Tooltip placement="topRight" title={description}>

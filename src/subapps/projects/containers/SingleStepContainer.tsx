@@ -89,6 +89,10 @@ const SingleStepContainer: React.FC<{
       });
   };
 
+  const updateName = (newName: string) => {
+    updateStep(step['@id'], { name: newName });
+  };
+
   if (!step) return null;
 
   return (
@@ -102,6 +106,7 @@ const SingleStepContainer: React.FC<{
         onStatusChange={onStatusChange}
         onPostionChange={onPositionChange}
         onClickAddCard={() => setShowAddForm(true)}
+        onNameChange={updateName}
       />
       <Modal
         visible={showAddForm}
