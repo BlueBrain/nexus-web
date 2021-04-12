@@ -1,19 +1,21 @@
 import * as React from 'react';
 import Draggable from 'react-draggable';
 import { Link } from 'react-router-dom';
-import { Tooltip, Dropdown, Button, Menu, Input } from 'antd';
+import { Tooltip, Dropdown, Button, Menu, Form, Input } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
+
 import { StepResource } from '../../views/WorkflowStepView';
 import { Status } from '../StatusIcon';
 import MarkdownViewerContainer from '../../../../shared/containers/MarkdownViewer';
 import SubStepItem from './SubStepItem';
+import { isEmptyInput } from '../../utils';
 
 import './StepCard.less';
 
 const settingIcon = require('../../../../shared/images/settingIcon.svg');
 const editIcon = require('../../../../shared/images/pencil.svg');
 
-const MAX_TITLE_LENGTH = 57;
+const MAX_TITLE_LENGTH = 45;
 const MAX_DESCRIPTION_LENGTH = 100;
 
 const StepCard: React.FC<{
@@ -43,8 +45,11 @@ const StepCard: React.FC<{
   const [stepStatus, setStepStatus] = React.useState<string>(step.status);
   const [editName, showEditName] = React.useState<boolean>(false);
   const [name, setName] = React.useState<string>(step.name);
+  const [nameError, setNameError] = React.useState<boolean>(false);
   const { description } = step;
   const stepId = step['@id'];
+
+  const inputNode = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     if (step.wasInformedBy) {
@@ -184,13 +189,29 @@ const StepCard: React.FC<{
     </Menu>
   );
 
+  const onClickEdit = () => {
+    console.log('name', name);
+
+    showEditName(true);
+  };
+
   const enterNewName = () => {
-    onNameChange(name);
-    showEditName(false);
+    if (isEmptyInput(name)) {
+      setNameError(true);
+    } else {
+      onNameChange(name);
+      showEditName(false);
+    }
   };
 
   const onChangeName = (event: any) => {
+    setNameError(false);
     setName(event.target.value);
+  };
+
+  const cancelNameChange = () => {
+    showEditName(false);
+    setName(step.name);
   };
 
   return (
@@ -225,11 +246,21 @@ const StepCard: React.FC<{
             <div className="step-card__main-body">
               <div className="step-card__title">
                 {editName ? (
-                  <Input
-                    defaultValue={name}
-                    onPressEnter={enterNewName}
-                    onChange={onChangeName}
-                  />
+                  <Form preserve={false}>
+                    <Form.Item
+                      validateStatus={nameError ? 'error' : ''}
+                      help={nameError && 'Please enter a name'}
+                    >
+                      <Input
+                        autoFocus
+                        allowClear
+                        defaultValue={name}
+                        onPressEnter={enterNewName}
+                        onChange={onChangeName}
+                        onBlur={() => cancelNameChange()}
+                      />
+                    </Form.Item>
+                  </Form>
                 ) : (
                   <Link to={`/workflow/${orgLabel}/${projectLabel}/${stepId}`}>
                     {name.length > MAX_TITLE_LENGTH ? (
@@ -245,7 +276,7 @@ const StepCard: React.FC<{
                 )}
                 <button
                   className="step-card__edit-button"
-                  onClick={() => showEditName(true)}
+                  onClick={onClickEdit}
                 >
                   <img src={editIcon} />
                 </button>
