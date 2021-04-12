@@ -17,6 +17,7 @@ const editIcon = require('../../../../shared/images/pencil.svg');
 
 const MAX_TITLE_LENGTH = 45;
 const MAX_DESCRIPTION_LENGTH = 100;
+const BOX_OFFSET_Y = 60;
 
 const StepCard: React.FC<{
   step: StepResource;
@@ -49,8 +50,6 @@ const StepCard: React.FC<{
   const { description } = step;
   const stepId = step['@id'];
 
-  const inputNode = React.useRef<HTMLDivElement>(null);
-
   React.useEffect(() => {
     if (step.wasInformedBy) {
       if (Array.isArray(step.wasInformedBy)) {
@@ -78,22 +77,23 @@ const StepCard: React.FC<{
     const translateX2 = matrix2.m41;
     const translateY2 = matrix2.m42;
 
-    if (div1 && div2) {
+    if (div1 && div2 && line) {
+      console.log('div1.offsetHeight', div1.offsetHeight);
+      console.log('div1.offsetHeight', div1.offsetHeight);
+      console.log('div1.clientHeight', div1.clientHeight);
+
       const x1 =
         div1.offsetLeft + translateX1 + div1.getBoundingClientRect().width / 2;
-      const y1 =
-        div1.offsetTop + translateY1 + div1.getBoundingClientRect().height / 2;
+      const y1 = div1.offsetTop + translateY1 + BOX_OFFSET_Y;
+
       const x2 =
         div2.offsetLeft + translateX2 + div2.getBoundingClientRect().width / 2;
-      const y2 =
-        div2.offsetTop + translateY2 + div2.getBoundingClientRect().height / 2;
+      const y2 = div2.offsetTop + translateY2 + BOX_OFFSET_Y;
 
-      if (line) {
-        line.setAttribute(
-          'points',
-          `${x2},${y2} ${(x1 + x2) / 2},${(y1 + y2) / 2} ${x1},${y1}`
-        );
-      }
+      line.setAttribute(
+        'points',
+        `${x2},${y2} ${(x1 + x2) / 2},${(y1 + y2) / 2} ${x1},${y1}`
+      );
     }
   };
 
@@ -114,13 +114,11 @@ const StepCard: React.FC<{
     if (incomingLine && div1 && div2) {
       const x1 =
         div1.offsetLeft + div1.getBoundingClientRect().width / 2 + data.x;
-      const y1 =
-        div1.offsetTop + div1.getBoundingClientRect().height / 2 + data.y;
+      const y1 = div1.offsetTop + BOX_OFFSET_Y + data.y;
 
       const x2 =
         div2.offsetLeft + matrix2.m41 + div2.getBoundingClientRect().width / 2;
-      const y2 =
-        div2.offsetTop + matrix2.m42 + div2.getBoundingClientRect().height / 2;
+      const y2 = div2.offsetTop + matrix2.m42 + BOX_OFFSET_Y / 2;
 
       incomingLine.setAttribute(
         'points',
@@ -147,15 +145,11 @@ const StepCard: React.FC<{
     if (outgoingLines.length > 0 && div1) {
       outgoingLines.forEach(line => {
         const points = line.getAttribute('points');
-        console.log('points', points);
-
         const [start, middle, end] = points?.split(' ') as string[];
-        console.log('end', end);
 
         const x1 =
           div1.offsetLeft + div1.getBoundingClientRect().width / 2 + data.x;
-        const y1 =
-          div1.offsetTop + div1.getBoundingClientRect().height / 2 + data.y;
+        const y1 = div1.offsetTop + BOX_OFFSET_Y + data.y;
         const [x2, y2] = end.split(',');
 
         line.setAttribute(
