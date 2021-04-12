@@ -78,7 +78,7 @@ const useDataCart = () => {
 
     setResources([...resources, ...uniqueResources]);
     notification.success({
-      message: 'Selected resources has been added to your data cart.',
+      message: 'Selected resources have been added to your data cart.',
     });
   };
 
