@@ -1,9 +1,12 @@
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, View, SparqlView } from '@bbp/nexus-sdk';
+
 import * as React from 'react';
-import { Table, Button, Input, Space, Spin } from 'antd';
+import { Table, Button, Input, Space, Spin, Modal } from 'antd';
 import '../styles/data-table.less';
 import { useAccessDataForTable } from '../hooks/useAccessDataForTable';
+import EditTableForm, { TableComponent } from '../components/EditTableForm';
+import { useMutation } from 'react-query';
 
 export type TableColumn = {
   '@type': string;
@@ -35,39 +38,67 @@ type DataTableProps = {
   orgLabel: string;
   projectLabel: string;
   tableResourceId: string;
-  editTableHandler: () => void;
 };
 
 const DataTableContainer: React.FC<DataTableProps> = ({
   orgLabel,
   projectLabel,
   tableResourceId,
-  editTableHandler,
 }) => {
-  const query = useAccessDataForTable(orgLabel, projectLabel, tableResourceId);
+  const [showEditForm, setShowEditForm] = React.useState<boolean>(false);
+  const nexus = useNexusContext();
+
+  const updateTable = (data: TableComponent) => {
+    return nexus.Resource.update(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(data['@id']),
+      data._rev,
+      data
+    );
+  };
+
+  const changeTableResource = useMutation(updateTable, {
+    onMutate: (data: TableResource) => {},
+    onSuccess: data => {
+      setShowEditForm(false);
+    },
+  });
+
+  const tableData = useAccessDataForTable(
+    orgLabel,
+    projectLabel,
+    tableResourceId,
+    changeTableResource.data
+  );
 
   const renderTitle = () => {
     return (
       <div className="data-table-controls">
         <Space align="center" direction="horizontal" size="large">
-          <Button onClick={editTableHandler} type="primary">
+          <Button
+            onClick={() => {
+              setShowEditForm(true);
+            }}
+            type="primary"
+          >
             Edit Table
           </Button>
           <Input.Search
             placeholder="input search text"
             allowClear
             onSearch={value => {
-              query.setSearchValue(value);
+              tableData.setSearchValue(value);
             }}
             style={{ width: '100%' }}
           ></Input.Search>
-          <Button onClick={query.downloadCSV} type="primary">
+          <Button onClick={tableData.downloadCSV} type="primary">
             Download CSV
           </Button>
-          <Button onClick={query.addFromDataCart} type="primary">
+          <Button onClick={tableData.addFromDataCart} type="primary">
             Add from DataCart
           </Button>
-          <Button onClick={query.addToDataCart} type="primary">
+          <Button onClick={tableData.addToDataCart} type="primary">
             Add to DataCart
           </Button>
         </Space>
@@ -77,18 +108,38 @@ const DataTableContainer: React.FC<DataTableProps> = ({
 
   return (
     <div>
-      {query.result.isLoading ? (
+      {tableData.result.isLoading ? (
         <Spin />
-      ) : query.result.isSuccess ? (
-        <Table
-          title={renderTitle}
-          columns={query.result.data?.headerProperties}
-          dataSource={query.result.data?.items}
-          rowSelection={{
-            type: 'checkbox',
-            onChange: query.onSelect,
-          }}
-        />
+      ) : tableData.result.isSuccess ? (
+        <>
+          <Table
+            bordered
+            title={renderTitle}
+            columns={tableData.result.data?.headerProperties}
+            dataSource={tableData.result.data?.items}
+            scroll={{ x: 1000 }}
+            rowSelection={{
+              type: 'checkbox',
+              onChange: tableData.onSelect,
+            }}
+          />
+          <Modal
+            visible={showEditForm}
+            footer={null}
+            onCancel={() => setShowEditForm(false)}
+            width={800}
+            destroyOnClose={true}
+          >
+            <EditTableForm
+              onSave={changeTableResource.mutate}
+              onClose={() => setShowEditForm(false)}
+              table={tableData.result.data.tableResource}
+              busy={changeTableResource.isLoading}
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+            />
+          </Modal>
+        </>
       ) : null}
     </div>
   );

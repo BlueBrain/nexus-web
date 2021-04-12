@@ -1,6 +1,6 @@
 import { SparqlView, Resource, View, NexusClient } from '@bbp/nexus-sdk';
 import { sparqlQueryExecutor } from '../utils/querySparqlView';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 import * as bodybuilder from 'bodybuilder';
 import { useNexusContext } from '@bbp/react-nexus';
 import { addColumnsForES } from '../utils/parseESResults';
@@ -11,6 +11,31 @@ import * as React from 'react';
 export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
 export const CSV_MEDIATYPE = 'text/csv';
 import { CartContext } from '../hooks/useDataCart';
+
+export type TableResource = Resource<{
+  '@type': string;
+  name: string;
+  description: string;
+  tableOf?: {
+    '@id': string;
+  };
+  view: string;
+  enableSearch: boolean;
+  enableInteractiveRows: boolean;
+  enableDownload: boolean;
+  enableSave: boolean;
+  resultsPerPage: number;
+  dataQuery: string;
+  configuration: TableColumn | TableColumn[];
+}>;
+export type TableColumn = {
+  '@type': string;
+  name: string;
+  format: string;
+  enableSearch: boolean;
+  enableSort: boolean;
+  enableFilter: boolean;
+};
 
 const exportAsCSV = (
   object: object,
@@ -55,7 +80,11 @@ export const DEFAULT_FIELDS = [
   },
 ];
 
-async function querySparql(nexus: NexusClient, dataQuery: string, view: View) {
+export async function querySparql(
+  nexus: NexusClient,
+  dataQuery: string,
+  view: View
+) {
   const result = await sparqlQueryExecutor(
     nexus,
     dataQuery,
@@ -87,7 +116,7 @@ const sorter = (dataIndex: string) => {
   };
 };
 
-function parseESResults(result: any) {
+export function parseESResults(result: any) {
   const total = result.hits.total.value || 0;
   const parsedResult = (result.hits.hits || []).map((hit: any) => {
     const { _original_source = {}, ...everythingElse } = hit._source;
@@ -104,7 +133,8 @@ function parseESResults(result: any) {
   });
   return { total, items: parsedResult };
 }
-const queryES = async (
+
+export const queryES = async (
   query: Object,
   nexus: NexusClient,
   orgLabel: string,
@@ -159,6 +189,7 @@ const accessData = async (
   )) as View;
 
   const dataQuery: string = tableResource.dataQuery;
+  const columnConfig = tableResource.configuration as TableColumn[];
   if (view['@type']?.includes('ElasticSearchView')) {
     const result = await queryES(
       {},
@@ -170,21 +201,44 @@ const accessData = async (
 
     const { items, total } = parseESResults(result);
 
-    const headerProperties = DEFAULT_FIELDS.map(field => {
+    const fields =
+      columnConfig.map((x, index) => ({
+        title: x.name,
+        dataIndex: x.name,
+        key: x.name,
+        displayIndex: index,
+      })) || DEFAULT_FIELDS;
+
+    console.log(fields);
+
+    const headerProperties = fields.map(field => {
       // Enrich certain fields with custom rendering
+
       return addColumnsForES(field, sorter);
     });
 
-    return { headerProperties, items, total };
+    const h2 = fields.map(field => {
+      // Enrich certain fields with custom rendering
+
+      return addColumnsForES(field, sorter);
+    });
+    console.log(h2);
+    console.log(headerProperties);
+    console.log(items);
+
+    return { items, total, tableResource, view, headerProperties };
   }
-  return await querySparql(nexus, dataQuery, view);
+  const result = await querySparql(nexus, dataQuery, view);
+  return { ...result, tableResource };
 };
 
 export const useAccessDataForTable = (
   orgLabel: string,
   projectLabel: string,
-  tableResourceId: string
+  tableResourceId: string,
+  tableResource?: Resource
 ) => {
+  const revision = tableResource ? tableResource._rev : 0;
   const nexus = useNexusContext();
   const [selectedResources, setSelectedResources] = React.useState<Resource[]>(
     []
@@ -193,11 +247,22 @@ export const useAccessDataForTable = (
   const [searchValue, setSearchValue] = React.useState<string>('');
   const { addResourceCollectionToCart } = React.useContext(CartContext);
   const onSelect = (selectedRowKeys: React.Key[], selectedRows: Resource[]) => {
-    setSelectedResources(selectedRows);
+    if (
+      result?.data?.view &&
+      result?.data?.view['@type']?.includes('ElasticSearchView')
+    ) {
+      setSelectedResources(selectedRows);
+    } else {
+      const resources = selectedRows.map(s => ({
+        '@id': s.self['value'],
+        _self: decodeURIComponent(s.self['value']),
+      })) as Resource[];
+      setSelectedResources(resources);
+    }
   };
 
   const result = useQuery(
-    [tableResourceId],
+    [tableResourceId, revision],
     async () => {
       const result = await accessData(
         orgLabel,

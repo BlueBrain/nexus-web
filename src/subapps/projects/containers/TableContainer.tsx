@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Modal, Button } from 'antd';
 
-import EditTableForm from '../components/EditTableForm';
 import { isTable } from '../utils';
 import { TableComponent } from './NewTableContainer';
 import { displayError, successNotification } from '../components/Notifications';
@@ -83,24 +82,7 @@ const TableContainer: React.FC<{
             orgLabel={orgLabel}
             projectLabel={projectLabel}
             tableResourceId={tables[0]['@id']}
-            editTableHandler={() => {
-              setShowEditForm(true);
-            }}
           ></DataTableContainer>
-          <Modal
-            visible={showEditForm}
-            footer={null}
-            onCancel={() => setShowEditForm(false)}
-            width={800}
-            destroyOnClose={true}
-          >
-            <EditTableForm
-              onSave={updateTable}
-              onClose={() => setShowEditForm(false)}
-              table={tables[0]}
-              busy={busy}
-            />
-          </Modal>
         </div>
       )}
     </div>
