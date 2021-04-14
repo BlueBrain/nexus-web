@@ -1,19 +1,23 @@
 import * as React from 'react';
 import Draggable from 'react-draggable';
 import { Link } from 'react-router-dom';
-import { Tooltip, Dropdown, Button, Menu } from 'antd';
+import { Tooltip, Dropdown, Button, Menu, Form, Input } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
+
 import { StepResource } from '../../views/WorkflowStepView';
 import { Status } from '../StatusIcon';
 import MarkdownViewerContainer from '../../../../shared/containers/MarkdownViewer';
 import SubStepItem from './SubStepItem';
+import { isEmptyInput } from '../../utils';
 
 import './StepCard.less';
 
 const settingIcon = require('../../../../shared/images/settingIcon.svg');
+const editIcon = require('../../../../shared/images/pencil.svg');
 
-const MAX_TITLE_LENGTH = 57;
+const MAX_TITLE_LENGTH = 45;
 const MAX_DESCRIPTION_LENGTH = 100;
+const BOX_OFFSET_Y = 60;
 
 const StepCard: React.FC<{
   step: StepResource;
@@ -27,6 +31,8 @@ const StepCard: React.FC<{
       [key: string]: any;
     }
   ) => void;
+  onClickAddCard: (previousStepId: string) => void;
+  onNameChange: (name: string) => void;
 }> = ({
   step,
   projectLabel,
@@ -34,9 +40,14 @@ const StepCard: React.FC<{
   substeps,
   onStatusChange,
   onPostionChange,
+  onClickAddCard,
+  onNameChange,
 }) => {
   const [stepStatus, setStepStatus] = React.useState<string>(step.status);
-  const { name, description } = step;
+  const [editName, showEditName] = React.useState<boolean>(false);
+  const [name, setName] = React.useState<string>(step.name);
+  const [nameError, setNameError] = React.useState<boolean>(false);
+  const { description } = step;
   const stepId = step['@id'];
 
   React.useEffect(() => {
@@ -47,7 +58,7 @@ const StepCard: React.FC<{
         placeLines(step.wasInformedBy['@id']);
       }
     }
-  });
+  }, [step]);
 
   const placeLines = (cardId: string) => {
     const line = document.getElementById(`link-${stepId}-to-${cardId}`);
@@ -66,22 +77,19 @@ const StepCard: React.FC<{
     const translateX2 = matrix2.m41;
     const translateY2 = matrix2.m42;
 
-    if (div1 && div2) {
+    if (div1 && div2 && line) {
       const x1 =
         div1.offsetLeft + translateX1 + div1.getBoundingClientRect().width / 2;
-      const y1 =
-        div1.offsetTop + translateY1 + div1.getBoundingClientRect().height / 2;
+      const y1 = div1.offsetTop + translateY1 + BOX_OFFSET_Y;
+
       const x2 =
         div2.offsetLeft + translateX2 + div2.getBoundingClientRect().width / 2;
-      const y2 =
-        div2.offsetTop + translateY2 + div2.getBoundingClientRect().height / 2;
+      const y2 = div2.offsetTop + translateY2 + BOX_OFFSET_Y;
 
-      if (line) {
-        line.setAttribute(
-          'points',
-          `${x2},${y2} ${(x1 + x2) / 2},${(y1 + y2) / 2} ${x1},${y1}`
-        );
-      }
+      line.setAttribute(
+        'points',
+        `${x2},${y2} ${(x1 + x2) / 2},${(y1 + y2) / 2} ${x1},${y1}`
+      );
     }
   };
 
@@ -102,13 +110,11 @@ const StepCard: React.FC<{
     if (incomingLine && div1 && div2) {
       const x1 =
         div1.offsetLeft + div1.getBoundingClientRect().width / 2 + data.x;
-      const y1 =
-        div1.offsetTop + div1.getBoundingClientRect().height / 2 + data.y;
+      const y1 = div1.offsetTop + BOX_OFFSET_Y + data.y;
 
       const x2 =
         div2.offsetLeft + matrix2.m41 + div2.getBoundingClientRect().width / 2;
-      const y2 =
-        div2.offsetTop + matrix2.m42 + div2.getBoundingClientRect().height / 2;
+      const y2 = div2.offsetTop + matrix2.m42 + BOX_OFFSET_Y / 2;
 
       incomingLine.setAttribute(
         'points',
@@ -139,8 +145,7 @@ const StepCard: React.FC<{
 
         const x1 =
           div1.offsetLeft + div1.getBoundingClientRect().width / 2 + data.x;
-        const y1 =
-          div1.offsetTop + div1.getBoundingClientRect().height / 2 + data.y;
+        const y1 = div1.offsetTop + BOX_OFFSET_Y + data.y;
         const [x2, y2] = end.split(',');
 
         line.setAttribute(
@@ -174,6 +179,25 @@ const StepCard: React.FC<{
     </Menu>
   );
 
+  const enterNewName = () => {
+    if (isEmptyInput(name)) {
+      setNameError(true);
+    } else {
+      onNameChange(name);
+      showEditName(false);
+    }
+  };
+
+  const onChangeName = (event: any) => {
+    setNameError(false);
+    setName(event.target.value);
+  };
+
+  const cancelNameChange = () => {
+    showEditName(false);
+    setName(step.name);
+  };
+
   return (
     <>
       <Draggable
@@ -203,51 +227,87 @@ const StepCard: React.FC<{
             </Dropdown>
           </div>
           <div className="step-card__main">
-            <div className="step-card__title">
-              <Link to={`/workflow/${orgLabel}/${projectLabel}/${stepId}`}>
-                {name.length > MAX_TITLE_LENGTH ? (
-                  <Tooltip placement="topRight" title={name}>
-                    <h3 className="step-card__name">
-                      {`${name.slice(0, MAX_TITLE_LENGTH)}...`}
-                    </h3>
-                  </Tooltip>
+            <div className="step-card__main-body">
+              <div className="step-card__title">
+                {editName ? (
+                  <Form preserve={false}>
+                    <Form.Item
+                      validateStatus={nameError ? 'error' : ''}
+                      help={nameError && 'Please enter a name'}
+                    >
+                      <Input
+                        autoFocus
+                        allowClear
+                        defaultValue={name}
+                        onPressEnter={enterNewName}
+                        onChange={onChangeName}
+                        onBlur={() => cancelNameChange()}
+                      />
+                    </Form.Item>
+                  </Form>
                 ) : (
-                  <h3 className="step-card__name">{name}</h3>
+                  <Link to={`/workflow/${orgLabel}/${projectLabel}/${stepId}`}>
+                    {name.length > MAX_TITLE_LENGTH ? (
+                      <Tooltip placement="topRight" title={name}>
+                        <h3 className="step-card__name">
+                          {`${name.slice(0, MAX_TITLE_LENGTH)}...`}
+                        </h3>
+                      </Tooltip>
+                    ) : (
+                      <h3 className="step-card__name">{name}</h3>
+                    )}
+                  </Link>
                 )}
-              </Link>
-            </div>
-            <div className="step-card__info">
-              <Tooltip placement="topRight" title={description}>
-                <MarkdownViewerContainer
-                  template={
-                    step.description
-                      ? step.description.slice(0, MAX_DESCRIPTION_LENGTH)
-                      : ''
-                  }
-                  data={step}
-                />
-              </Tooltip>
-            </div>
-            <div className="step-card__subactivities">
-              <div className="step-card__substeps-total">
-                <img src={settingIcon} className="step-card__info-icon" />
-                <span>
-                  {(substeps && substeps.length) || 'No'}{' '}
-                  {substeps && substeps.length === 1 ? 'sub-step' : 'sub-steps'}
-                </span>
+                <button
+                  className="step-card__edit-button"
+                  onClick={() => showEditName(true)}
+                >
+                  <img src={editIcon} />
+                </button>
               </div>
-              <div className="step-card__list-container">
-                {substeps &&
-                  substeps.length > 0 &&
-                  substeps.map(substep => (
-                    <SubStepItem
-                      substep={substep}
-                      key={substep['@id']}
-                      orgLabel={orgLabel}
-                      projectLabel={projectLabel}
-                    />
-                  ))}
+              <div className="step-card__info">
+                <Tooltip placement="topRight" title={description}>
+                  <MarkdownViewerContainer
+                    template={
+                      step.description
+                        ? step.description.slice(0, MAX_DESCRIPTION_LENGTH)
+                        : ''
+                    }
+                    data={step}
+                  />
+                </Tooltip>
               </div>
+              {substeps && substeps.length > 0 && (
+                <div className="step-card__subactivities">
+                  <div className="step-card__substeps-total">
+                    <img src={settingIcon} className="step-card__info-icon" />
+                    <span>
+                      {substeps && substeps.length}{' '}
+                      {substeps && substeps.length === 1
+                        ? 'sub-step'
+                        : 'sub-steps'}
+                    </span>
+                  </div>
+                  <div className="step-card__list-container">
+                    {substeps.map(substep => (
+                      <SubStepItem
+                        substep={substep}
+                        key={substep['@id']}
+                        orgLabel={orgLabel}
+                        projectLabel={projectLabel}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="step-card__add-button-container">
+              <button
+                className="step-card__add-button"
+                onClick={() => onClickAddCard(stepId)}
+              >
+                +
+              </button>
             </div>
           </div>
         </div>
