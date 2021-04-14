@@ -71,20 +71,18 @@ const WorkflowStepContainer: React.FC<{
         onUpdate={waitAntReloadSteps}
         siblings={siblings}
       />
+      <AddComponentButton />
       <StepsBoard>
-        <>
-          {steps &&
-            stepsWithChildren.map(step => (
-              <SingleStepContainer
-                step={step}
-                key={step['@id']}
-                projectLabel={projectLabel}
-                orgLabel={orgLabel}
-                onUpdate={waitAntReloadSteps}
-              />
-            ))}
-          <AddComponentButton />
-        </>
+        {steps &&
+          stepsWithChildren.map(step => (
+            <SingleStepContainer
+              step={step}
+              key={step['@id']}
+              projectLabel={projectLabel}
+              orgLabel={orgLabel}
+              onUpdate={waitAntReloadSteps}
+            />
+          ))}
       </StepsBoard>
     </>
   );
