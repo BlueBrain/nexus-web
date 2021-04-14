@@ -8,6 +8,8 @@ import { StepResource } from '../views/WorkflowStepView';
 import ProjectPanel from '../components/ProjectPanel';
 import { fetchTopLevelSteps } from '../utils';
 
+import AddComponentButton from '../components/AddComponentButton';
+
 const WorkflowStepContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
@@ -70,16 +72,19 @@ const WorkflowStepContainer: React.FC<{
         siblings={siblings}
       />
       <StepsBoard>
-        {steps &&
-          stepsWithChildren.map(step => (
-            <SingleStepContainer
-              step={step}
-              key={step['@id']}
-              projectLabel={projectLabel}
-              orgLabel={orgLabel}
-              onUpdate={waitAntReloadSteps}
-            />
-          ))}
+        <>
+          {steps &&
+            stepsWithChildren.map(step => (
+              <SingleStepContainer
+                step={step}
+                key={step['@id']}
+                projectLabel={projectLabel}
+                orgLabel={orgLabel}
+                onUpdate={waitAntReloadSteps}
+              />
+            ))}
+          <AddComponentButton />
+        </>
       </StepsBoard>
     </>
   );
