@@ -121,8 +121,14 @@ const SingleStepContainer: React.FC<{
           onSubmit={submitNewStep}
           busy={busy}
           activityList={[]}
-          informedByIds={[step['@id']]}
+          informedByIds={[step._self]}
           parentLabel={step.hasParent && step.hasParent['@id']}
+          siblings={[
+            {
+              name: step.name,
+              '@id': step._self,
+            },
+          ]}
         />
       </Modal>
     </>
