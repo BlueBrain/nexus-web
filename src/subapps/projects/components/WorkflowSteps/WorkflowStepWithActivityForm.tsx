@@ -77,10 +77,6 @@ const WorkflowStepWithActivityForm: React.FC<{
     informedByIds ? informedByIds : []
   );
 
-  console.log('informedByIds', informedByIds);
-
-  console.log('siblings', siblings);
-
   const formItemLayout =
     layout === 'vertical'
       ? {}
