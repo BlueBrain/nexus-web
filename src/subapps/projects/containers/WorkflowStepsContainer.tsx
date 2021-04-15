@@ -1,14 +1,18 @@
 import * as React from 'react';
+import { Modal } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 import { NexusClient } from '@bbp/nexus-sdk';
+
 import SingleStepContainer from './SingleStepContainer';
 import StepsBoard from '../components/WorkflowSteps/StepsBoard';
-import { displayError } from '../components/Notifications';
+import { displayError, successNotification } from '../components/Notifications';
 import { StepResource } from '../views/WorkflowStepView';
 import ProjectPanel from '../components/ProjectPanel';
 import { fetchTopLevelSteps } from '../utils';
-
 import AddComponentButton from '../components/AddComponentButton';
+import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
+import fusionConfig from '../config';
+import { WorkflowStepMetadata } from './NewWorkflowStepContainer';
 
 const WorkflowStepContainer: React.FC<{
   orgLabel: string;
@@ -16,6 +20,7 @@ const WorkflowStepContainer: React.FC<{
 }> = ({ orgLabel, projectLabel }) => {
   const nexus = useNexusContext();
   const [steps, setSteps] = React.useState<StepResource[]>([]);
+  const [showAddForm, setShowAddForm] = React.useState<boolean>(false);
   // switch to trigger step list update
   const [refreshSteps, setRefreshSteps] = React.useState<boolean>(false);
 
@@ -63,6 +68,25 @@ const WorkflowStepContainer: React.FC<{
     '@id': sibling._self,
   }));
 
+  // TODO: refactor ProjectPanel, SingleStepContainer and NewWorkflowStepsContainer
+  const submitNewStep = (data: WorkflowStepMetadata) => {
+    const { name } = data;
+
+    nexus.Resource.create(orgLabel, projectLabel, {
+      '@type': fusionConfig.workflowStepType,
+      ...data,
+    })
+      .then(() => {
+        setShowAddForm(false);
+        successNotification(`New step ${name} created successfully`);
+        waitAntReloadSteps();
+      })
+      .catch(error => {
+        setShowAddForm(false);
+        displayError(error, 'An error occurred');
+      });
+  };
+
   return (
     <>
       <ProjectPanel
@@ -71,7 +95,12 @@ const WorkflowStepContainer: React.FC<{
         onUpdate={waitAntReloadSteps}
         siblings={siblings}
       />
-      <AddComponentButton />
+      <AddComponentButton
+        addNewStep={() => setShowAddForm(true)}
+        addDataTable={() => {}}
+        addCode={() => {}}
+        addDataset={() => {}}
+      />
       <StepsBoard>
         {steps &&
           stepsWithChildren.map(step => (
@@ -84,6 +113,22 @@ const WorkflowStepContainer: React.FC<{
             />
           ))}
       </StepsBoard>
+      <Modal
+        visible={showAddForm}
+        footer={null}
+        onCancel={() => setShowAddForm(false)}
+        width={800}
+        destroyOnClose={true}
+      >
+        <WorkflowStepWithActivityForm
+          title="Create New Step"
+          onClickCancel={() => setShowAddForm(false)}
+          onSubmit={submitNewStep}
+          busy={false}
+          siblings={siblings}
+          activityList={[]}
+        />
+      </Modal>
     </>
   );
 };

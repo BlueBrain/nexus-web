@@ -5,33 +5,22 @@ import './AddComponentButton.less';
 
 const addIcon = require('../../../shared/images/addIcon.svg');
 
-const AddComponentButton: React.FC<{}> = () => {
-  const onClickAddNewStep = () => {
-    console.log('clicked...');
-  };
-
-  const onClickAddDataTable = () => {
-    console.log('clicked... onClickAddDataTable');
-  };
-
-  const onClickAddCode = () => {
-    console.log('clicked... onClickAddCode');
-  };
-
-  const onClickAddDataset = () => {
-    console.log('clicked... onClickAddDataset');
-  };
-
+const AddComponentButton: React.FC<{
+  addNewStep: () => void;
+  addDataTable: () => void;
+  addCode: () => void;
+  addDataset: () => void;
+}> = ({ addNewStep, addDataTable, addCode, addDataset }) => {
   const menu = (
     <Menu>
-      <Menu.Item onClick={onClickAddNewStep}>Canvas: Add a New Step</Menu.Item>
-      <Menu.Item onClick={onClickAddDataTable}>
-        Canvas: Add a Data Table
+      <Menu.Item onClick={addNewStep}>Canvas: Add a New Step</Menu.Item>
+      <Menu.Item disabled onClick={addDataTable}>
+        Canvas: Add a Data Table - coming soon
       </Menu.Item>
-      <Menu.Item onClick={onClickAddCode}>
+      <Menu.Item disabled onClick={addCode}>
         Project: Create a New Code Resource
       </Menu.Item>
-      <Menu.Item onClick={onClickAddDataset}>
+      <Menu.Item disabled onClick={addDataset}>
         Project: Create a New Dataset Resource
       </Menu.Item>
     </Menu>

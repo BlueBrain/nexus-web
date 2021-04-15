@@ -4,11 +4,16 @@
   background-color: rgb(247, 245, 245);
   border-radius: 10px;
   box-shadow: @box-shadow-base;
-  width: 150px;
-  height: 150px;
+  width: 70px;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: center;
+  // temporary until we update canvas
+  position: absolute;
+  z-index: 10;
+  margin: 10px;
+  right: 0;
 
   &__icon {
     cursor: pointer;
