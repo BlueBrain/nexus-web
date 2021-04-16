@@ -7,7 +7,15 @@
     letter-spacing: 1px;
     color: #ffffff;
     height: 52px;
-    border-bottom: 1px solid @icon-color;
+  }
+
+  &__content {
+    margin-left: 200px;
+    transition: all 0.3s ease-out;
+
+    &--collapsed {
+      margin-left: 80px;
+    }
   }
 
   .menu-item {

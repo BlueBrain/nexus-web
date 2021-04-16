@@ -307,7 +307,13 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
               </div>
             </div>
           </Sider>
-          <Content className="site-layout-background">{children}</Content>
+          <Content
+            className={`${
+              collapsed ? `fusion-main-layout__content--collapsed` : ''
+            } site-layout-background fusion-main-layout__content`}
+          >
+            {children}
+          </Content>
         </Layout>
       </Layout>
     </>
