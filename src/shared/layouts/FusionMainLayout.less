@@ -86,6 +86,10 @@
     font-weight: 300;
   }
 
+  .ant-layout-content {
+    margin-top: 52px;
+  }
+
   .ant-menu-item,
   .ant-menu-inline .ant-menu-item,
   .ant-menu-inline .ant-menu-item:not(:last-child) {
@@ -121,4 +125,10 @@
 // hides menu item tooltip
 .ant-tooltip.ant-menu-inline-collapsed-tooltip.ant-tooltip-placement-right {
   display: none !important;
+}
+
+.ant-layout-sider {
+  // overrides default `position: relative`
+  position: fixed !important;
+  z-index: 21;
 }
