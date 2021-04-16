@@ -126,7 +126,7 @@ const EditTableForm: React.FC<{
 
       return result.headerProperties.map(x => ({
         '@type': 'text',
-        name: x.title,
+        name: x.dataIndex,
         format: '',
         enableSearch: false,
         enableSort: false,
@@ -198,6 +198,7 @@ const EditTableForm: React.FC<{
       );
 
       currentConfig[columnIndex] = updatedColumn;
+      console.log(currentConfig);
 
       setConfiguration(currentConfig);
     } else {
@@ -351,16 +352,19 @@ const EditTableForm: React.FC<{
         </div>
         <div className="edit-table-form__config">
           <h3>Columns configuration</h3>
-          {!updateColumConfig.isLoading ? (
+          {!updateColumConfig ||
+          (updateColumConfig && !updateColumConfig.isLoading) ? (
             configuration ? (
               Array.isArray(configuration) ? (
-                configuration.map((column: TableColumn) => (
-                  <ColumnConfig
-                    column={column}
-                    onChange={updateColumnConfig}
-                    key={column.name}
-                  />
-                ))
+                configuration.map((column: TableColumn) => {
+                  return (
+                    <ColumnConfig
+                      column={column}
+                      onChange={updateColumnConfig}
+                      key={column.name}
+                    />
+                  );
+                })
               ) : (
                 <ColumnConfig
                   column={configuration}

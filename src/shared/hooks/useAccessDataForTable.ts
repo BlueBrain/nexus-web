@@ -11,6 +11,7 @@ import * as React from 'react';
 export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
 export const CSV_MEDIATYPE = 'text/csv';
 import { CartContext } from '../hooks/useDataCart';
+import { pick } from 'lodash';
 
 export type TableResource = Resource<{
   '@type': string;
@@ -207,24 +208,14 @@ const accessData = async (
         dataIndex: x.name,
         key: x.name,
         displayIndex: index,
+        sortable: x.enableSort,
       })) || DEFAULT_FIELDS;
-
-    console.log(fields);
 
     const headerProperties = fields.map(field => {
       // Enrich certain fields with custom rendering
 
       return addColumnsForES(field, sorter);
     });
-
-    const h2 = fields.map(field => {
-      // Enrich certain fields with custom rendering
-
-      return addColumnsForES(field, sorter);
-    });
-    console.log(h2);
-    console.log(headerProperties);
-    console.log(items);
 
     return { items, total, tableResource, view, headerProperties };
   }
@@ -243,10 +234,12 @@ export const useAccessDataForTable = (
   const [selectedResources, setSelectedResources] = React.useState<Resource[]>(
     []
   );
+  const [selectedRows, setSelectedRows] = React.useState<React.Key[]>([]);
 
   const [searchValue, setSearchValue] = React.useState<string>('');
   const { addResourceCollectionToCart } = React.useContext(CartContext);
   const onSelect = (selectedRowKeys: React.Key[], selectedRows: Resource[]) => {
+    setSelectedRows(selectedRowKeys);
     if (
       result?.data?.view &&
       result?.data?.view['@type']?.includes('ElasticSearchView')
@@ -276,9 +269,15 @@ export const useAccessDataForTable = (
     {
       cacheTime: 100000,
       select: data => {
+        const table = data.tableResource as TableResource;
+        const columnConfig = table.configuration as TableColumn[];
+        const searchable = columnConfig
+          .filter(t => t.enableSearch)
+          .map(t => t.name);
         const items = data.items.filter((item: any) => {
+          const searchableProp = pick(item, ...searchable);
           return (
-            Object.values(item)
+            Object.values(searchableProp)
               .join(' ')
               .toLowerCase()
               .search((searchValue || '').toLowerCase()) >= 0
@@ -296,8 +295,17 @@ export const useAccessDataForTable = (
   const downloadCSV = React.useMemo(
     () => () => {
       if (result.isSuccess) {
+        // download only selected rows or,
+        // download everything, when nothing is selected.
+        const selectedItems =
+          selectedRows.length > 0
+            ? result.data.items.filter((item: any) => {
+                return selectedRows.includes(item.key);
+              })
+            : result.data.items;
+
         exportAsCSV(
-          result.data.items,
+          selectedItems,
           result.data.headerProperties.map((h: any) => {
             return {
               label: h.title,
