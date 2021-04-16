@@ -3,7 +3,6 @@ import ReactMde, { SaveImageHandler } from 'react-mde';
 import { Button, Spin } from 'antd';
 import { CloseCircleOutlined, SaveOutlined } from '@ant-design/icons';
 import { Resource } from '@bbp/nexus-sdk';
-import { convertMarkdownHandlebarStringWithData } from '../../utils/markdownTemplate';
 
 import 'react-mde/lib/styles/css/react-mde-all.css';
 

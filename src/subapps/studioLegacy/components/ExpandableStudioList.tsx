@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { Collapse, Button, Empty } from 'antd';
+import { Resource } from '@bbp/nexus-sdk';
 
 import StudioListItem from './StudioListItem';
 import { StudioItem } from '../views/StudioListView';
+import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
 
 /*
  * Returns studio uri
@@ -77,9 +79,14 @@ const ExpandableStudioList: React.FC<{
               studio={studio}
               header={
                 <div className="studio-title-panel">
-                  <div>
+                  <div className="studio-item-content">
                     <h3 className="studio-name">{studio.label}</h3>
-                    <p className="studio-description">{studio.description}</p>
+                    <div className="studio-description">
+                      <MarkdownViewerContainer
+                        template={studio.description || ''}
+                        data={studio}
+                      />
+                    </div>
                   </div>
                   {studioUrlButton(studio)}
                 </div>
