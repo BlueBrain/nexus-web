@@ -12,6 +12,7 @@ import {
   isISODate,
   matchPlugins,
   pluginsMap,
+  pluginsExcludeMap,
   makeStudioUri,
   parseJsonMaybe,
   forceAsArray,
@@ -303,6 +304,17 @@ describe('utils functions', () => {
         },
       };
       expect(matchPlugins(pluginsMap, plugins, resource)).toEqual(['plugin1']);
+    });
+
+    it('matches a resource when pluginsExcludedMap has a type', () => {
+      const pluginsExcludedMap = {
+        plugin1: {
+          '@type': ['type1'],
+        },
+      };
+      expect(matchPlugins(pluginsExcludedMap, plugins, resource)).toEqual([
+        'plugin1',
+      ]);
     });
 
     it('matches a resource with multiple plugins', () => {
@@ -611,6 +623,44 @@ describe('utils functions', () => {
       expect(matchPlugins(pluginsMap, plugins, distributionResource)).toEqual([
         'plugin1',
       ]);
+    });
+  });
+
+  describe('pluginToExclude', () => {
+    const manifestWithPluginsToExclude = {
+      'sim-writer-config': {
+        modulePath: 'sim-writer-config.66e2aa60be278e26091a.js',
+        name: 'Sim writer config',
+        description: '',
+        version: '',
+        tags: [],
+        author: '',
+        license: '',
+        mapping: {
+          '@type': ['SimWriterConfiguration'],
+        },
+        exclude: {
+          '@type': ['Dataset'],
+        },
+      },
+      'simulation-campaign': {
+        modulePath: 'simulation-campaign.11f235ae73390d34a43b.js',
+        name: 'Simulation campaign',
+        description: '',
+        version: '',
+        tags: [],
+        author: '',
+        license: '',
+        mapping: {
+          '@type': ['SimulationCampaign'],
+        },
+      },
+    };
+
+    it('returns plugin mappings array of plugins to exclude', () => {
+      expect(pluginsExcludeMap(manifestWithPluginsToExclude)).toEqual({
+        'sim-writer-config': { '@type': ['Dataset'] },
+      });
     });
   });
 
