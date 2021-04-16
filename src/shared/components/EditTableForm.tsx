@@ -1,17 +1,57 @@
 import * as React from 'react';
+import { useNexusContext } from '@bbp/react-nexus';
 import { Form, Input, Button, Spin, Checkbox, Row, Col, Select } from 'antd';
 import { Controlled as CodeMirror } from 'react-codemirror2';
-
-import { isEmptyInput } from '../utils';
-import { TableColumn, TableComponent } from '../containers/NewTableContainer';
+import { IInstance } from 'react-codemirror2/index';
+import { Resource, View, SparqlView } from '@bbp/nexus-sdk';
+import { useQuery } from 'react-query';
 import ColumnConfig from './ColumnConfig';
-
+import {
+  queryES,
+  parseESResults,
+  querySparql,
+} from '../hooks/useAccessDataForTable';
 import './EditTableForm.less';
+
+/**
+ * isEmptyInput function - checks if a given input empty
+ * @param {string}
+ * @returns {boolean}
+ */
+export const isEmptyInput = (value: string) => {
+  return value.split(' ').join('') === '';
+};
 
 export enum ViewOptions {
   SPARQL_VIEW = 'nxv:defaultSparqlIndex',
   ES_VIEW = 'nxv:defaultElasticSearchIndex',
 }
+
+export type TableColumn = {
+  '@type': string;
+  name: string;
+  format: string;
+  enableSearch: boolean;
+  enableSort: boolean;
+  enableFilter: boolean;
+};
+
+export type TableComponent = Resource<{
+  '@type': string;
+  name: string;
+  description: string;
+  tableOf?: {
+    '@id': string;
+  };
+  view: string;
+  enableSearch: boolean;
+  enableInteractiveRows: boolean;
+  enableDownload: boolean;
+  enableSave: boolean;
+  resultsPerPage: number;
+  dataQuery: string;
+  configuration: TableColumn | TableColumn[];
+}>;
 
 const PAGES_OPTIONS = [10, 20, 50, 100];
 
@@ -23,7 +63,9 @@ const EditTableForm: React.FC<{
   onClose: () => void;
   table: any;
   busy: boolean;
-}> = ({ onSave, onClose, table, busy }) => {
+  orgLabel: string;
+  projectLabel: string;
+}> = ({ onSave, onClose, table, orgLabel, projectLabel, busy }) => {
   const [name, setName] = React.useState<string>(table.name);
   const [nameError, setNameError] = React.useState<boolean>(false);
   const [description, setDescription] = React.useState<string>(
@@ -44,9 +86,62 @@ const EditTableForm: React.FC<{
     table.resultsPerPage
   );
   const [dataQuery, setDataQuery] = React.useState<string>(table.dataQuery);
+
+  // Copy for codemirror text editor.
+  const [queryCopy, setQueryCopy] = React.useState<string>(dataQuery);
+
   const [configuration, setConfiguration] = React.useState<
     TableColumn | TableColumn[]
   >(table.configuration);
+  const nexus = useNexusContext();
+
+  const updateColumConfig = useQuery(
+    [view, dataQuery],
+    async () => {
+      const viewResource = await nexus.View.get(orgLabel, projectLabel, view);
+      if (viewResource['@type']?.includes('ElasticSearchView')) {
+        const result = await queryES(
+          {},
+          nexus,
+          orgLabel,
+          projectLabel,
+          viewResource['@id']
+        );
+
+        const { items } = parseESResults(result);
+        const mergedItem = items.reduce((result: any, current: any) => {
+          return Object.assign(result, current);
+        }, {});
+
+        return Object.keys(mergedItem).map(title => ({
+          '@type': '',
+          name: title,
+          format: '',
+          enableSearch: false,
+          enableSort: false,
+          enableFilter: false,
+        }));
+      }
+      const result = await querySparql(nexus, dataQuery, viewResource);
+
+      return result.headerProperties.map(x => ({
+        '@type': 'text',
+        name: x.title,
+        format: '',
+        enableSearch: false,
+        enableSort: false,
+        enableFilter: false,
+      }));
+    },
+    {
+      onSuccess: data => {
+        setConfiguration(data);
+      },
+      onError: error => {
+        console.error(error);
+      },
+    }
+  );
 
   const onChangeName = (event: any) => {
     setName(event.target.value);
@@ -79,12 +174,12 @@ const EditTableForm: React.FC<{
     }
   };
 
-  const handleQueryChange = () => {
-    // TODO: save new data query
+  const handleQueryChange = (editor: IInstance, data: any, value: string) => {
+    setQueryCopy(value);
   };
 
   const onClickPreview = () => {
-    // coming soon
+    setDataQuery(queryCopy);
   };
 
   const updateColumnConfig = (name: string, data: any) => {
@@ -156,7 +251,20 @@ const EditTableForm: React.FC<{
             <Select
               value={view}
               style={{ width: 220 }}
-              onChange={value => setView(value)}
+              onChange={value => {
+                setView(value);
+                if (value === ViewOptions.ES_VIEW) {
+                  setDataQuery('{}');
+                  setQueryCopy('{}');
+                } else {
+                  setDataQuery(
+                    'prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/> SELECT DISTINCT ?self ?s WHERE { ?s nxv:self ?self } LIMIT 21'
+                  );
+                  setQueryCopy(
+                    'prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/> SELECT DISTINCT ?self ?s WHERE { ?s nxv:self ?self } LIMIT 21'
+                  );
+                }
+              }}
             >
               {Object.values(ViewOptions).map(view => (
                 <Option value={view}>{view}</Option>
@@ -217,41 +325,52 @@ const EditTableForm: React.FC<{
         <div className="edit-table-form__query">
           <h3>Query</h3>
           <CodeMirror
-            value={dataQuery}
+            value={queryCopy}
+            autoCursor={true}
             options={{
-              mode: { name: 'sparql' },
+              mode: { name: 'javascript', json: true },
+              readOnly: false,
               theme: 'base16-light',
               placeholder: 'Enter a valid SPARQL query',
               lineNumbers: true,
               viewportMargin: Infinity,
             }}
-            onBeforeChange={handleQueryChange}
+            onBeforeChange={(editor, data, value) => {
+              handleQueryChange(editor, data, value);
+            }}
           />
         </div>
         <div>
-          {/* TODO: save new data query */}
-          <Button disabled onClick={onClickPreview} type="primary">
-            Preview
-          </Button>
+          {updateColumConfig.isLoading ? (
+            <Spin></Spin>
+          ) : (
+            <Button onClick={onClickPreview} type="primary">
+              Preview
+            </Button>
+          )}
         </div>
         <div className="edit-table-form__config">
           <h3>Columns configuration</h3>
-          {configuration ? (
-            Array.isArray(configuration) ? (
-              configuration.map((column: TableColumn) => (
+          {!updateColumConfig.isLoading ? (
+            configuration ? (
+              Array.isArray(configuration) ? (
+                configuration.map((column: TableColumn) => (
+                  <ColumnConfig
+                    column={column}
+                    onChange={updateColumnConfig}
+                    key={column.name}
+                  />
+                ))
+              ) : (
                 <ColumnConfig
-                  column={column}
+                  column={configuration}
                   onChange={updateColumnConfig}
-                  key={column.name}
                 />
-              ))
-            ) : (
-              <ColumnConfig
-                column={configuration}
-                onChange={updateColumnConfig}
-              />
-            )
-          ) : null}
+              )
+            ) : null
+          ) : (
+            <Spin />
+          )}
         </div>
         <div className="edit-table-form__buttons">
           <Button style={{ margin: '10px' }} onClick={onClose}>

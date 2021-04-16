@@ -95,12 +95,22 @@ export function addColumnsForES(
     .otherwise(() => ({
       ...field,
       sorter: !!field.sortable && sorter(field.key),
-      render: (text: string, resource: Resource) =>
-        get(
-          resource,
-          Array.isArray(field.dataIndex)
-            ? field.dataIndex
-            : field.dataIndex.split('.')
-        ),
+      render: (text: string, resource: Resource) => {
+        if (text) {
+          try {
+            const x = JSON.parse(text);
+            return <pre>{JSON.stringify(x, null, 2)}</pre>;
+          } catch {
+            return <pre>{text.toString()}</pre>;
+          }
+        }
+        return '';
+      },
+      // get(
+      //   resource,
+      //   Array.isArray(field.dataIndex)
+      //     ? field.dataIndex
+      //     : field.dataIndex.split('.')
+      // ),
     }));
 }
