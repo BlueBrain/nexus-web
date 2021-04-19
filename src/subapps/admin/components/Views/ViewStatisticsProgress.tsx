@@ -35,7 +35,7 @@ export type ViewStatisticsContainerProps = {
 
 export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsContainerProps> = props => {
   const nexus = useNexusContext();
-  const [eventsAtMount, setEventsAtMount] = React.useState();
+  const [eventsAtMount, setEventsAtMount] = React.useState<number>();
   const [{ loading, error, data }, setState] = React.useState<{
     error: Error | null;
     data: Statistics | null;

@@ -5,6 +5,7 @@ import NewWorkflowStepContainer from '../containers/NewWorkflowStepContainer';
 import TemplatesContainer from '../containers/TemplatesContainer';
 import ProjectMetaContaier from '../containers/ProjectMetaContainer';
 import ActivitiesLinkingContainer from '../containers/ActivitiesLinkingContainer';
+import NewTableContainer from '../containers/NewTableContainer';
 
 import './ProjectPanel.less';
 
@@ -32,6 +33,11 @@ const ProjectPanel: React.FC<{
     <div className="project-panel">
       <span className="project-panel__name">{projectLabel}</span>
       <div className="project-panel__actions">
+        <NewTableContainer
+          projectLabel={projectLabel}
+          orgLabel={orgLabel}
+          parentId={workflowStepSelfUrl}
+        />
         <NewWorkflowStepContainer
           projectLabel={projectLabel}
           orgLabel={orgLabel}

@@ -6,7 +6,7 @@ import ElasticSearchResultsTable, {
 } from '../../../../shared/components/ElasticSearchResultsTable';
 import { UseSearchProps } from '../../../../shared/hooks/useSearchQuery';
 import { ResultTableFields } from '../../../../shared/types/search';
-import useSearchQuery from '../../../hooks/useSearchQuery';
+import useSearchQueryFromStudio from '../../../hooks/useSearchQuery';
 
 const DashboardElasticSearchQueryContainer: React.FC<{
   fields?: ResultTableFields[];
@@ -23,10 +23,10 @@ const DashboardElasticSearchQueryContainer: React.FC<{
   }, [dataQuery]);
 
   const renderResults = () => {
-    const [searchResponse, { searchProps, setSearchProps }] = useSearchQuery(
-      view._self,
-      queryJSON
-    );
+    const [
+      searchResponse,
+      { searchProps, setSearchProps },
+    ] = useSearchQueryFromStudio(view._self, queryJSON);
 
     const handleClickItem = (resource: Resource) => {
       goToStudioResource(resource._self);

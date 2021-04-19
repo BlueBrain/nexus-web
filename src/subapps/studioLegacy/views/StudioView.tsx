@@ -26,6 +26,7 @@ export const StudioContext = React.createContext<StudioContextType>({
 });
 
 const StudioView: React.FunctionComponent<{}> = () => {
+  // @ts-ignore
   const { orgLabel, projectLabel, studioId } = useParams();
   const [queryParams, setQueryString] = useQueryString();
   const { workspaceId, dashboardId } = queryParams;
@@ -56,7 +57,12 @@ const StudioView: React.FunctionComponent<{}> = () => {
 
   return (
     <>
-      <div className="project-banner no-bg" style={{ marginBottom: 20 }}>
+      <div
+        className="project-banner no-bg"
+        style={{
+          marginBottom: 20,
+        }}
+      >
         <div className="label">
           <h1 className="name">
             <span>

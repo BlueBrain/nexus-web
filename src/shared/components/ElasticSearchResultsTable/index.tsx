@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Table, Tooltip, Button, Input, Select } from 'antd';
+import { Table, Button, Input, Select } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
-import { match } from 'ts-pattern';
-import { get, sortBy } from 'lodash';
+import { sortBy } from 'lodash';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 
 import {
@@ -10,14 +9,11 @@ import {
   UseSearchProps,
   UseSearchResponse,
 } from '../../hooks/useSearchQuery';
-import TypesIconList from '../Types/TypesIcon';
-import { getResourceLabel, parseJsonMaybe } from '../../utils';
-import { convertMarkdownHandlebarStringWithData } from '../../utils/markdownTemplate';
-import { parseURL } from '../../utils/nexusParse';
 import { SorterResult, TableRowSelection } from 'antd/lib/table/interface';
 import { ResultTableFields } from '../../types/search';
 
 import './../../styles/result-table.less';
+import { parseESResults, addColumnsForES } from '../../utils/parseESResults';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -69,19 +65,7 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
 }) => {
   const [searchValue, setSearchValue] = React.useState<string>('');
 
-  const results = (searchResponse.data?.hits.hits || []).map(({ _source }) => {
-    const { _original_source = {}, ...everythingElse } = _source;
-
-    const resource = {
-      ...(parseJsonMaybe(_original_source) || {}),
-      ...everythingElse,
-    };
-
-    return {
-      ...resource,
-      key: _source._self,
-    };
-  });
+  const results = parseESResults(searchResponse);
 
   const filteredItems = results.filter(item => {
     return (
@@ -115,67 +99,7 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
 
   const columns: ColumnsType<any> = fields.map(field => {
     // Enrich certain fields with custom rendering
-    return match(field.key)
-      .with('label', () => ({
-        ...field,
-        sorter: !!field.sortable && sorter('label'),
-        render: (text: string, resource: Resource) => {
-          return getResourceLabel(resource);
-        },
-      }))
-      .with('description', () => ({
-        ...field,
-        sorter: !!field.sortable && sorter('description'),
-        render: (text: string, resource: Resource) =>
-          convertMarkdownHandlebarStringWithData(
-            resource.description || '',
-            resource
-          ),
-      }))
-      .with('project', () => ({
-        ...field,
-        sorter: !!field.sortable && sorter('project'),
-        render: (text: string, resource: Resource) => {
-          const { org, project } = parseURL(resource._self);
-          return `${org} | ${project}`;
-        },
-      }))
-      .with('schema', () => ({
-        ...field,
-        sorter: !!field.sortable && sorter('schema'),
-        render: (text: string, resource: Resource) => {
-          return (
-            <Tooltip title={resource._constrainedBy}>
-              {text.split('/').reverse()[0]}
-            </Tooltip>
-          );
-        },
-      }))
-      .with('@type', () => ({
-        ...field,
-        sorter: !!field.sortable && sorter('@type'),
-        render: (text: string, resource: Resource) => {
-          const typeList =
-            !!resource['@type'] &&
-            (Array.isArray(resource['@type']) ? (
-              <TypesIconList type={resource['@type']} />
-            ) : (
-              <TypesIconList type={[resource['@type']]} />
-            ));
-          return typeList;
-        },
-      }))
-      .otherwise(() => ({
-        ...field,
-        sorter: !!field.sortable && sorter(field.key),
-        render: (text: string, resource: Resource) =>
-          get(
-            resource,
-            Array.isArray(field.dataIndex)
-              ? field.dataIndex
-              : field.dataIndex.split('.')
-          ),
-      }));
+    return addColumnsForES(field, sorter);
   });
 
   const [selectedColumns, setSelectedColumns] = React.useState(columns);
@@ -195,7 +119,7 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
 
   const handleTableChange = (
     pagination: TablePaginationConfig,
-    filters: Record<string, React.ReactText[] | null>,
+    filters: any,
     sorter: SorterResult<any> | SorterResult<any>[]
   ) => {
     const toSortBy = Array.isArray(sorter) ? sorter : [sorter];

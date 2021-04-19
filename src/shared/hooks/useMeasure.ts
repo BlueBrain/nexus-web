@@ -16,8 +16,10 @@ export default function useMeasure() {
     width: 0,
     height: 0,
   });
+
   const [ro] = React.useState(
-    new ResizeObserver(([entry]) => set(entry.contentRect))
+    // @ts-ignore
+    new ResizeObserver(([entry]) => set(entry.contentRect as Bounds))
   );
   React.useEffect(() => {
     if (ref && ref.current) {

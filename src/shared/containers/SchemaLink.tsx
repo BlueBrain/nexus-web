@@ -15,7 +15,7 @@ const SchemaLinkContainer: React.FunctionComponent<{
   const history = useHistory();
   const nexus = useNexusContext();
   const { orgLabel, projectLabel } = getOrgAndProjectFromResource(resource);
-  const [goToSchema, setGoToSchema] = React.useState();
+  const [goToSchema, setGoToSchema] = React.useState<any>();
 
   React.useEffect(() => {
     // First get the expanded resource

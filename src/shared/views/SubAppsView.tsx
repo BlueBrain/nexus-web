@@ -20,6 +20,7 @@ const SubAppsView: React.FC<{
   const loginUrl = `/login?destination=${location.pathname.replace('/', '')}`;
 
   return (
+    // @ts-ignore
     <Switch location={background ? background : location}>
       {routesWithSubApps.map(
         ({ path, component: SubAppComponent, requireLogin, ...rest }) => (

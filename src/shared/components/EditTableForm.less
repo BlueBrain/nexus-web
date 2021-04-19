@@ -1,0 +1,44 @@
+@import './../lib.less';
+
+.edit-table-form {
+  &__title {
+    margin-bottom: 1em;
+  }
+
+  &__buttons {
+    text-align: right;
+  }
+
+  &__actions {
+    margin: 24px 0;
+  }
+
+  &__actions-title {
+    margin-bottom: 12px;
+  }
+
+  &__action-items {
+    padding-left: 30px;
+  }
+
+  &__query {
+    margin: 24px 0;
+  }
+
+  &__config {
+    margin-top: 20px;
+  }
+
+  &__column {
+    margin: 0px 30px 10px;
+    border-bottom: 1px solid @box-shadow-color;
+
+    &:last-child {
+      border: none;
+    }
+  }
+
+  .react-codemirror2 {
+    border: 1px solid @box-shadow-color;
+  }
+}
