@@ -1,8 +1,8 @@
-FROM tarampampam/node:13.1-alpine as builder
+FROM tarampampam/node:15-alpine as builder
 
 WORKDIR /tmp/nexus-web
 COPY . /tmp/nexus-web
-RUN yarn && yarn build
+RUN yarn  --ignore-engines && yarn build
 
 FROM node:10-alpine
 WORKDIR /opt/nexus
