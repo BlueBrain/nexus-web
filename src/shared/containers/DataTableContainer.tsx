@@ -73,6 +73,9 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   );
 
   const renderTitle = () => {
+    const tableResource = tableData.result.data
+      ?.tableResource as TableComponent;
+
     return (
       <div className="data-table-controls">
         <Space align="center" direction="horizontal" size="large">
@@ -84,23 +87,31 @@ const DataTableContainer: React.FC<DataTableProps> = ({
           >
             Edit Table
           </Button>
-          <Input.Search
-            placeholder="input search text"
-            allowClear
-            onSearch={value => {
-              tableData.setSearchValue(value);
-            }}
-            style={{ width: '100%' }}
-          ></Input.Search>
-          <Button onClick={tableData.downloadCSV} type="primary">
-            Download CSV
-          </Button>
-          <Button onClick={tableData.addFromDataCart} type="primary">
-            Add from DataCart
-          </Button>
-          <Button onClick={tableData.addToDataCart} type="primary">
-            Add to DataCart
-          </Button>
+          {tableResource.enableSearch ? (
+            <Input.Search
+              placeholder="input search text"
+              allowClear
+              onSearch={value => {
+                tableData.setSearchValue(value);
+              }}
+              style={{ width: '100%' }}
+            ></Input.Search>
+          ) : null}
+          {tableResource.enableDownload ? (
+            <Button onClick={tableData.downloadCSV} type="primary">
+              Download CSV
+            </Button>
+          ) : null}
+          {tableResource.enableSave ? (
+            <Button onClick={tableData.addFromDataCart} type="primary">
+              Add from DataCart
+            </Button>
+          ) : null}
+          {tableResource.enableSave ? (
+            <Button onClick={tableData.addToDataCart} type="primary">
+              Add to DataCart
+            </Button>
+          ) : null}
         </Space>
       </div>
     );
