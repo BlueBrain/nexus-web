@@ -31,8 +31,6 @@ const SideMenu: React.FC<{
         target="_blank"
       >
         <div className="side-menu__logo">
-          {/* must add inline styling to prevent this big svg from flashing
-           the screen on dev mode before styles are loaded */}
           <img
             height="33"
             src={
