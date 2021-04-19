@@ -1,89 +1,17 @@
 @import '../lib.less';
 
 .fusion-main-layout {
-  .logo {
-    padding: 0.6rem 1.7rem;
-    display: flex;
-    letter-spacing: 1px;
-    color: #ffffff;
-    height: 52px;
-    border-bottom: 1px solid @icon-color;
-  }
+  &__content {
+    margin-left: 200px;
+    transition: all 0.3s ease-out;
 
-  .menu-item {
-    display: flex;
-    position: relative;
-    a {
-      color: inherit;
+    &--collapsed {
+      margin-left: 80px;
     }
   }
 
-  .indicator {
-    background-color: #283d47;
-    height: 17px;
-    width: 17px;
-    transform: rotate(45deg);
-    position: absolute;
-    right: -8px;
-    top: 33%;
-  }
-
-  .collapsed {
-    background: linear-gradient(45deg, #1b2e39, #2a414b);
-    right: -6px;
-  }
-
-  .menu-icon {
-    padding-right: 0.7rem;
-    background-color: inherit;
-  }
-
-  .menu-wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-  .menu-extras-container {
-    padding: 0 25px;
-    height: 100%;
-    width: 100%;
-    position: relative;
-  }
-
-  .menu-collapse-button {
-    border: none;
-    background-color: inherit;
-    outline-style: none;
-    padding: 0;
-    text-align: right;
-    color: rgba(255, 255, 255, 0.65);
-    cursor: pointer;
-    width: 30px;
-    height: 30px;
-
-    svg {
-      width: 30px;
-      height: 30px;
-    }
-  }
-
-  .bottom-item-wrapper {
-    position: fixed;
-    bottom: 10px;
-    width: 155px;
-  }
-
-  .bottom-item {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-  }
-
-  .footer-note {
-    color: @subtle-white;
-    font-size: 1em;
-    font-weight: 300;
+  .ant-layout-content {
+    margin-top: 52px;
   }
 
   .ant-menu-item,
@@ -116,9 +44,4 @@
     margin: 0;
     height: 50px;
   }
-}
-
-// hides menu item tooltip
-.ant-tooltip.ant-menu-inline-collapsed-tooltip.ant-tooltip-placement-right {
-  display: none !important;
 }

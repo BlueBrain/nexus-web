@@ -18,10 +18,11 @@ import getUserManager from '../../client/userManager';
 import { getLogoutUrl } from '../utils';
 import { url as githubIssueURL } from '../../../package.json';
 import useLocalStorage from '../hooks/useLocalStorage';
-
-import './FusionMainLayout.less';
 import SearchBarContainer from '../containers/SearchBarContainer';
 import DataCartContainer from '../containers/DataCartContainer';
+import SideMenu from './SideMenu';
+
+import './FusionMainLayout.less';
 
 const { Sider, Content } = Layout;
 
@@ -176,135 +177,54 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
     <>
       <SeoHeaders />
       <Layout className="fusion-main-layout">
-        <Sider trigger={null} collapsible collapsed={collapsed}>
-          <a
-            className="logo-link"
-            href={layoutSettings.logoLink}
-            target="_blank"
-          >
-            <div className="logo">
-              {/* must add inline styling to prevent this big svg from flashing
-               the screen on dev mode before styles are loaded */}
-              <img
-                height="33"
-                src={
-                  layoutSettings.logoImg === ''
-                    ? require('../images/fusion_logo.png')
-                    : layoutSettings.logoImg
-                }
-                alt="Logo"
-              />
-            </div>
-          </a>
-          <div className="menu-wrapper">
-            <Menu
-              style={{ height: '100vh' }}
-              theme="dark"
-              mode="inline"
-              defaultSelectedKeys={
-                selectedItem ? [selectedItem.key] : [subApps[0].key]
-              }
-              selectedKeys={[selectedItem.key]}
-              onClick={onSelectSubAbpp}
+        <Header
+          name={authenticated ? name : undefined}
+          token={token}
+          realms={realms}
+          performLogin={login}
+          links={[
+            <a
+              href="/user"
+              onClick={(e: React.SyntheticEvent) => {
+                e.preventDefault();
+                goTo(`/user`);
+              }}
             >
-              {subApps.map(subApp => {
-                return subApp.subAppType === 'external' ? (
-                  <Menu.Item key={subApp.key}>
-                    <div className="menu-item">
-                      <a
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        href={subApp.url ? subApp.url : ''}
-                      >
-                        <img className="menu-icon" src={subApp.icon} />
-                        {!collapsed && <span>{subApp.label}</span>}
-                      </a>
-                    </div>
-                    {selectedItem.key === subApp.key && (
-                      <div
-                        className={`indicator${collapsed ? ' collapsed' : ''}`}
-                      />
-                    )}
-                  </Menu.Item>
-                ) : subApp.requireLogin && !authenticated ? null : (
-                  <Menu.Item key={subApp.key}>
-                    <div className="menu-item">
-                      <img className="menu-icon" src={subApp.icon} />
-                      {!collapsed && <span>{subApp.label}</span>}
-                    </div>
-                    {selectedItem.key === subApp.key && (
-                      <div
-                        className={`indicator${collapsed ? ' collapsed' : ''}`}
-                      />
-                    )}
-                  </Menu.Item>
-                );
-              })}
-            </Menu>
-            <div className="menu-extras-container">
-              <div className="bottom-item-wrapper">
-                <div className="bottom-item">
-                  {!collapsed && (
-                    <>
-                      <span className="footer-note">Powered by </span>
-                      <a href="https://bluebrainnexus.io/" target="_blank">
-                        <img
-                          height="27px"
-                          src={require('../images/logoDarkBg.svg')}
-                        />
-                      </a>
-                    </>
-                  )}
-                  <button
-                    className="menu-collapse-button"
-                    onClick={() => setCollapsed(!collapsed)}
-                  >
-                    {collapsed ? (
-                      <RightCircleOutlined />
-                    ) : (
-                      <LeftCircleOutlined />
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Sider>
-        <Layout className="site-layout">
-          <Header
-            name={authenticated ? name : undefined}
-            token={token}
-            realms={realms}
-            performLogin={login}
-            links={[
-              <a
-                href="/user"
-                onClick={(e: React.SyntheticEvent) => {
-                  e.preventDefault();
-                  goTo(`/user`);
-                }}
-              >
-                User Info
-              </a>,
-              <a href="" onClick={handleLogout}>
-                Log out
-              </a>,
-            ]}
-            displayLogin={canLogin}
-            version={deltaVersion}
-            githubIssueURL={githubIssueURL}
-            forgeLink={layoutSettings.forgeLink}
-            consent={consent}
-            commitHash={COMMIT_HASH}
-            onClickRemoveConsent={() => setConsent(undefined)}
-            onClickSideBarToggle={() => setCollapsed(!collapsed)}
-            dataCart={<DataCartContainer />}
-          >
-            <SearchBarContainer />
-          </Header>
-          <ConsentContainer consent={consent} updateConsent={setConsent} />
-          <Content className="site-layout-background">{children}</Content>
-        </Layout>
+              User Info
+            </a>,
+            <a href="" onClick={handleLogout}>
+              Log out
+            </a>,
+          ]}
+          displayLogin={canLogin}
+          version={deltaVersion}
+          githubIssueURL={githubIssueURL}
+          forgeLink={layoutSettings.forgeLink}
+          consent={consent}
+          commitHash={COMMIT_HASH}
+          onClickRemoveConsent={() => setConsent(undefined)}
+          onClickSideBarToggle={() => setCollapsed(!collapsed)}
+          dataCart={<DataCartContainer />}
+        >
+          <SearchBarContainer />
+        </Header>
+        <ConsentContainer consent={consent} updateConsent={setConsent} />
+        <SideMenu
+          selectedItem={selectedItem}
+          collapsed={collapsed}
+          onSelectSubAbpp={onSelectSubAbpp}
+          subApps={subApps}
+          authenticated={authenticated}
+          onClickCollapse={() => setCollapsed(!collapsed)}
+          layoutSettings={layoutSettings}
+        />
+        <Content
+          className={`${
+            collapsed ? `fusion-main-layout__content--collapsed` : ''
+          } site-layout-background fusion-main-layout__content`}
+        >
+          {children}
+        </Content>
       </Layout>
     </>
   );
