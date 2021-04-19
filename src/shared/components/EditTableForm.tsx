@@ -13,6 +13,10 @@ import {
 } from '../hooks/useAccessDataForTable';
 import './EditTableForm.less';
 
+const DEFAULT_SPARQL_QUERY =
+  'prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/> SELECT DISTINCT ?self ?s WHERE { ?s nxv:self ?self } LIMIT 20';
+const DEFAULT_ES_QUERY = '{}';
+
 /**
  * isEmptyInput function - checks if a given input empty
  * @param {string}
@@ -198,7 +202,6 @@ const EditTableForm: React.FC<{
       );
 
       currentConfig[columnIndex] = updatedColumn;
-      console.log(currentConfig);
 
       setConfiguration(currentConfig);
     } else {
@@ -255,15 +258,11 @@ const EditTableForm: React.FC<{
               onChange={value => {
                 setView(value);
                 if (value === ViewOptions.ES_VIEW) {
-                  setDataQuery('{}');
-                  setQueryCopy('{}');
+                  setDataQuery(DEFAULT_ES_QUERY);
+                  setQueryCopy(DEFAULT_ES_QUERY);
                 } else {
-                  setDataQuery(
-                    'prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/> SELECT DISTINCT ?self ?s WHERE { ?s nxv:self ?self } LIMIT 21'
-                  );
-                  setQueryCopy(
-                    'prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/> SELECT DISTINCT ?self ?s WHERE { ?s nxv:self ?self } LIMIT 21'
-                  );
+                  setDataQuery(DEFAULT_SPARQL_QUERY);
+                  setQueryCopy(DEFAULT_SPARQL_QUERY);
                 }
               }}
             >

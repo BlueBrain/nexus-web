@@ -106,11 +106,5 @@ export function addColumnsForES(
         }
         return '';
       },
-      // get(
-      //   resource,
-      //   Array.isArray(field.dataIndex)
-      //     ? field.dataIndex
-      //     : field.dataIndex.split('.')
-      // ),
     }));
 }
