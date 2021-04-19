@@ -5,20 +5,8 @@ describe('Header', () => {
     cy.visit(homePage);
   });
 
-  it('contains a logo', () => {
-    cy.get('.logo').should('be.visible');
-  });
-
   it('contains the information button', () => {
     cy.get('.ui-header-info-button').should('be.visible');
-  });
-
-  it('contains the default link to bluebrainnexus page', () => {
-    cy.get('.logo-link').should(
-      'have.attr',
-      'href',
-      'https://bluebrainnexus.io/'
-    );
   });
 
   it('contains the link to docs', () => {
