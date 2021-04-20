@@ -9,7 +9,7 @@
   "url": "https://github.com/BlueBrain/nexus/issues/new?labels=frontend,nexus-web",
   "scripts": {
     "start": "NODE_ENV=development  DEBUG=* webpack --mode development --config-name server && node dist/server.js",
-    "build": "NODE_ENV=production webpack --mode production",
+    "build": "NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192  webpack --mode production",
     "test": "jest",
     "cy:run": "cypress run",
     "test-ui": "API_ENDPOINT=http://test start-server-and-test start http://localhost:8000 cy:run",
