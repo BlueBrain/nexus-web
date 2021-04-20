@@ -5,7 +5,8 @@
   background-color: #fff;
   background-image: url('../../../shared/images/projectGrid.png');
   position: relative;
-  margin-bottom: 52px;
+  margin-top: 104px;
+  width: 1800px;
 
   &__panel {
     display: flex;
@@ -15,6 +16,13 @@
     background-color: #fff;
     box-shadow: @box-shadow-base;
     padding: 0 1.5em 0 1em;
+
+    // sticky step view panel
+    position: fixed;
+    top: 104px;
+    right: 0;
+    left: 200px;
+    z-index: 21;
   }
 
   .ant-btn {
