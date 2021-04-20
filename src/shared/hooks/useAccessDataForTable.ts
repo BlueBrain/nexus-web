@@ -193,7 +193,7 @@ const accessData = async (
   const columnConfig = tableResource.configuration as TableColumn[];
   if (view['@type']?.includes('ElasticSearchView')) {
     const result = await queryES(
-      {},
+      JSON.parse(dataQuery),
       nexus,
       orgLabel,
       projectLabel,
