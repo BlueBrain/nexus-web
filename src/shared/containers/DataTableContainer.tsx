@@ -1,12 +1,13 @@
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, View, SparqlView } from '@bbp/nexus-sdk';
-
+import { useHistory, useLocation } from 'react-router-dom';
 import * as React from 'react';
-import { Table, Button, Input, Space, Spin, Modal } from 'antd';
+import { Table, Button, Input, Space, Spin, Modal, notification } from 'antd';
 import '../styles/data-table.less';
 import { useAccessDataForTable } from '../hooks/useAccessDataForTable';
 import EditTableForm, { TableComponent } from '../components/EditTableForm';
 import { useMutation } from 'react-query';
+import { parseProjectUrl } from '../utils';
 
 export type TableColumn = {
   '@type': string;
@@ -47,6 +48,28 @@ const DataTableContainer: React.FC<DataTableProps> = ({
 }) => {
   const [showEditForm, setShowEditForm] = React.useState<boolean>(false);
   const nexus = useNexusContext();
+  const history = useHistory();
+  const location = useLocation();
+
+  const goToStudioResource = (selfUrl: string) => {
+    nexus
+      .httpGet({
+        path: selfUrl,
+        headers: { Accept: 'application/json' },
+      })
+      .then((resource: Resource) => {
+        const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
+        history.push(
+          `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+            resource['@id']
+          )}`,
+          { background: location }
+        );
+      })
+      .catch(error => {
+        notification.error({ message: `Resource ${self} could not be found` });
+      });
+  };
 
   const updateTable = (data: TableComponent) => {
     return nexus.Resource.update(
@@ -129,6 +152,13 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             columns={tableData.result.data?.headerProperties}
             dataSource={tableData.result.data?.items}
             scroll={{ x: 1000 }}
+            onRow={data => ({
+              onClick: event => {
+                event.preventDefault();
+                console.log(data);
+                goToStudioResource(data.self.value);
+              },
+            })}
             rowSelection={{
               type: 'checkbox',
               onChange: tableData.onSelect,

@@ -157,6 +157,7 @@ const EditTableForm: React.FC<{
   };
 
   const onClickSave = () => {
+    console.log(configuration);
     if (isEmptyInput(name)) {
       setNameError(true);
     } else {
@@ -202,9 +203,12 @@ const EditTableForm: React.FC<{
       );
 
       currentConfig[columnIndex] = updatedColumn;
-
+      console.log('here ...');
+      console.log(currentConfig);
+      console.log('here ...');
       setConfiguration(currentConfig);
     } else {
+      console.log('here ...');
       const column = {
         ...configuration,
         ...data,
@@ -356,6 +360,7 @@ const EditTableForm: React.FC<{
             configuration ? (
               Array.isArray(configuration) ? (
                 configuration.map((column: TableColumn) => {
+                  console.log(column);
                   return (
                     <ColumnConfig
                       column={column}
