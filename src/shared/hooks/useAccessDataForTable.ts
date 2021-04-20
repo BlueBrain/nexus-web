@@ -270,7 +270,9 @@ export const useAccessDataForTable = (
       cacheTime: 100000,
       select: data => {
         const table = data.tableResource as TableResource;
-        const columnConfig = table.configuration as TableColumn[];
+        const columnConfig = Array.isArray(table.configuration)
+          ? (table.configuration as TableColumn[])
+          : ([table.configuration] as TableColumn[]);
         const searchable = columnConfig
           .filter(t => t.enableSearch)
           .map(t => t.name);
