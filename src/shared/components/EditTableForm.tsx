@@ -105,7 +105,7 @@ const EditTableForm: React.FC<{
       const viewResource = await nexus.View.get(orgLabel, projectLabel, view);
       if (viewResource['@type']?.includes('ElasticSearchView')) {
         const result = await queryES(
-          {},
+          JSON.parse(dataQuery),
           nexus,
           orgLabel,
           projectLabel,
