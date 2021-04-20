@@ -175,7 +175,7 @@ const ActivitiesLinkingContainer: React.FC<{
   return (
     <>
       <Popover
-        placement="topLeft"
+        placement="bottomRight"
         title={
           <h3
             style={{ marginTop: '7px' }}

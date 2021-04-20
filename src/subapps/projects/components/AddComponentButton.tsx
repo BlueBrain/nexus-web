@@ -28,7 +28,7 @@ const AddComponentButton: React.FC<{
 
   return (
     <div className="add-component-button">
-      <Dropdown overlay={menu}>
+      <Dropdown overlay={menu} placement="bottomRight">
         <img className="add-component-button__icon" src={addIcon} />
       </Dropdown>
     </div>
