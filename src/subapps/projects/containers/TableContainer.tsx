@@ -77,7 +77,10 @@ const TableContainer: React.FC<{
       {tables &&
         tables.length > 0 &&
         tables.map(table => (
-          <div key={`table-${table['@id']}`}>
+          <div
+            key={`table-${table['@id']}`}
+            style={{ margin: 20, width: '1200' }}
+          >
             <DataTableContainer
               orgLabel={orgLabel}
               projectLabel={projectLabel}

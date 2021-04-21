@@ -237,12 +237,14 @@ const WorkflowStepView: React.FC = () => {
             projectLabel={projectLabel}
             stepId={step._self}
           />
+          <h3>Activities</h3>
           <ActivityResourcesContainer
             orgLabel={orgLabel}
             projectLabel={projectLabel}
             linkCodeToActivity={linkCodeToActivity}
             workflowStep={step}
           />
+          <h3>Inputs</h3>
           <InputsContainer
             orgLabel={orgLabel}
             projectLabel={projectLabel}
