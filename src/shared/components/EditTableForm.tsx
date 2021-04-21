@@ -57,7 +57,7 @@ export type TableComponent = Resource<{
   configuration: TableColumn | TableColumn[];
 }>;
 
-const PAGES_OPTIONS = [10, 20, 50, 100];
+const PAGES_OPTIONS = [5, 10, 20, 50, 100];
 
 const { Item } = Form;
 const { Option } = Select;

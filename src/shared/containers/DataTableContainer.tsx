@@ -159,6 +159,11 @@ const DataTableContainer: React.FC<DataTableProps> = ({
                 goToStudioResource(self);
               },
             })}
+            pagination={{
+              pageSize: tableData.result.data.tableResource['resultsPerPage'],
+              responsive: true,
+              showLessItems: true,
+            }}
             rowSelection={{
               type: 'checkbox',
               onChange: tableData.onSelect,
