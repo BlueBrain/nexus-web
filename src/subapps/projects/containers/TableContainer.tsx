@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Modal, Button } from 'antd';
 
 import { isTable } from '../utils';
-import { TableComponent } from './NewTableContainer';
-import { displayError, successNotification } from '../components/Notifications';
+import { displayError } from '../components/Notifications';
 import DataTableContainer from '../../../shared/containers/DataTableContainer';
 
 const TableContainer: React.FC<{
@@ -13,14 +11,9 @@ const TableContainer: React.FC<{
   stepId: string;
 }> = ({ orgLabel, projectLabel, stepId }) => {
   const nexus = useNexusContext();
-
   const [tables, setTables] = React.useState<any[] | undefined>([]);
-  const [showEditForm, setShowEditForm] = React.useState<boolean>(false);
-  const [busy, setBusy] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    // this is temporary so we can test things
-    // not sure where we place a Table yet
     nexus.Resource.links(
       orgLabel,
       projectLabel,
@@ -51,41 +44,23 @@ const TableContainer: React.FC<{
       });
   }, [orgLabel, projectLabel, stepId]);
 
-  const updateTable = (data: TableComponent) => {
-    setBusy(true);
-
-    nexus.Resource.update(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(data['@id']),
-      data._rev,
-      data
-    )
-      .then(success => {
-        setBusy(false);
-        setShowEditForm(false);
-        successNotification('The table is updated successfully');
-      })
-      .catch(error => {
-        displayError(error, 'Failed to update the Table');
-        setBusy(false);
-      });
-  };
-
-  // this is temporary so we can test things
   return (
-    <div>
-      {tables && tables.length > 0 && (
-        <div key={`table-${tables[0]['@id']}`}>
-          {' '}
-          <DataTableContainer
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
-            tableResourceId={tables[0]['@id']}
-          ></DataTableContainer>
-        </div>
-      )}
-    </div>
+    <>
+      {tables &&
+        tables.length > 0 &&
+        tables.map(table => (
+          <div
+            key={`table-${table['@id']}`}
+            style={{ margin: 20, width: '1200' }}
+          >
+            <DataTableContainer
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              tableResourceId={table['@id']}
+            ></DataTableContainer>
+          </div>
+        ))}
+    </>
   );
 };
 
