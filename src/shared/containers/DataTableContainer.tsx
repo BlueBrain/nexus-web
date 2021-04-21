@@ -155,8 +155,8 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             onRow={data => ({
               onClick: event => {
                 event.preventDefault();
-                console.log(data);
-                goToStudioResource(data.self.value);
+                const self = data._self || data.self.value;
+                goToStudioResource(self);
               },
             })}
             rowSelection={{
