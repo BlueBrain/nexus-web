@@ -72,20 +72,20 @@ const TableContainer: React.FC<{
       });
   };
 
-  // this is temporary so we can test things
   return (
-    <div>
-      {tables && tables.length > 0 && (
-        <div key={`table-${tables[0]['@id']}`}>
-          {' '}
-          <DataTableContainer
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
-            tableResourceId={tables[0]['@id']}
-          ></DataTableContainer>
-        </div>
-      )}
-    </div>
+    <>
+      {tables &&
+        tables.length > 0 &&
+        tables.map(table => (
+          <div key={`table-${table['@id']}`}>
+            <DataTableContainer
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              tableResourceId={table['@id']}
+            ></DataTableContainer>
+          </div>
+        ))}
+    </>
   );
 };
 
