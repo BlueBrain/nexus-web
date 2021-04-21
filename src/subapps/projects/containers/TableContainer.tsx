@@ -45,7 +45,7 @@ const TableContainer: React.FC<{
       });
   }, [orgLabel, projectLabel, stepId]);
 
-  const onPostionChange = (
+  const onPostionChange = async (
     table: any,
     position: {
       positionX: number;
@@ -55,13 +55,17 @@ const TableContainer: React.FC<{
     table.positionX = position.positionX;
     table.positionY = position.positionY;
 
-    return nexus.Resource.update(
+    await nexus.Resource.update(
       orgLabel,
       projectLabel,
       encodeURIComponent(table['@id']),
       table._rev,
       table
-    );
+    )
+      .then(() => {
+        // do nothing
+      })
+      .catch(error => displayError(error, 'Failed to save new position'));
   };
 
   return (
