@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Modal, Button } from 'antd';
 
 import { isTable } from '../utils';
-import { TableComponent } from './NewTableContainer';
-import { displayError, successNotification } from '../components/Notifications';
+import { displayError } from '../components/Notifications';
 import DataTableContainer from '../../../shared/containers/DataTableContainer';
 
 const TableContainer: React.FC<{
@@ -13,14 +11,9 @@ const TableContainer: React.FC<{
   stepId: string;
 }> = ({ orgLabel, projectLabel, stepId }) => {
   const nexus = useNexusContext();
-
   const [tables, setTables] = React.useState<any[] | undefined>([]);
-  const [showEditForm, setShowEditForm] = React.useState<boolean>(false);
-  const [busy, setBusy] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    // this is temporary so we can test things
-    // not sure where we place a Table yet
     nexus.Resource.links(
       orgLabel,
       projectLabel,
@@ -50,27 +43,6 @@ const TableContainer: React.FC<{
         displayError(error, 'Failed to load tables');
       });
   }, [orgLabel, projectLabel, stepId]);
-
-  const updateTable = (data: TableComponent) => {
-    setBusy(true);
-
-    nexus.Resource.update(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(data['@id']),
-      data._rev,
-      data
-    )
-      .then(success => {
-        setBusy(false);
-        setShowEditForm(false);
-        successNotification('The table is updated successfully');
-      })
-      .catch(error => {
-        displayError(error, 'Failed to update the Table');
-        setBusy(false);
-      });
-  };
 
   return (
     <>
