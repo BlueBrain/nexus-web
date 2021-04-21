@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
-import { Button, Modal } from 'antd';
 
 import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
@@ -14,9 +13,6 @@ import SingleStepContainer from '../containers/SingleStepContainer';
 import StepInfoContainer from '../containers/StepInfoContainer';
 import { fetchChildrenForStep } from '../utils';
 import ActivityResourcesContainer from '../containers/ActivityResourcesContainer';
-import StepViewTabs, { Tabs } from '../components/StepViewTabs';
-import useQueryString from '../../../shared/hooks/useQueryString';
-import StepDescriptionContainer from '../containers/StepDescriptionContainer';
 import InputsContainer from '../containers/InputsContainer';
 import TableContainer from '../containers/TableContainer';
 
@@ -77,11 +73,6 @@ const WorkflowStepView: React.FC = () => {
   const [siblings, setSiblings] = React.useState<
     { name: string; '@id': string }[]
   >([]);
-  const [availableTabs, setAvailableTabs] = React.useState<Tabs[]>(
-    Object.values(Tabs)
-  );
-  const [activeTab, setActiveTab] = React.useState<string>();
-  const [queryParams, setQueryString] = useQueryString();
 
   const projectLabel = match?.params.projectLabel || '';
   const orgLabel = match?.params.orgLabel || '';
@@ -101,36 +92,7 @@ const WorkflowStepView: React.FC = () => {
       .catch(error => displayError(error, 'Failed to load activity'));
 
     fetchChildren(stepId);
-  }, [refreshSteps, stepId, activeTab]);
-
-  const setTabs = (numberOfChildren: number) => {
-    if (numberOfChildren <= 0) {
-      const tabs = Object.values(Tabs).filter(tab => {
-        return tab !== Tabs.OVERVIEW;
-      });
-      setAvailableTabs(tabs);
-      if (queryParams.view) {
-        setActiveTab(queryParams.view);
-      } else {
-        setActiveTab(Tabs.ACTIVITIES);
-      }
-      setQueryString({
-        ...queryParams,
-        view: 'Activities',
-      });
-    } else {
-      setAvailableTabs(Object.values(Tabs));
-      if (queryParams.view) {
-        setActiveTab(queryParams.view);
-      } else {
-        setActiveTab(Tabs.OVERVIEW);
-      }
-      setQueryString({
-        ...queryParams,
-        view: 'Overview',
-      });
-    }
-  };
+  }, [refreshSteps, stepId]);
 
   const fetchChildren = async (stepId: string) => {
     const children = (await fetchChildrenForStep(
@@ -140,7 +102,6 @@ const WorkflowStepView: React.FC = () => {
       stepId
     )) as StepResource[];
     setSteps(children);
-    setTabs(children.length);
     setSiblings(
       children.map(child => ({
         name: child.name,
@@ -235,14 +196,6 @@ const WorkflowStepView: React.FC = () => {
       .catch(error => displayError(error, 'Failed to load original payload'));
   };
 
-  const onClickTab = (tab: string) => {
-    setActiveTab(tab);
-    setQueryString({
-      ...queryParams,
-      view: tab,
-    });
-  };
-
   return (
     <div className="workflow-step-view">
       <ProjectPanel
@@ -264,69 +217,38 @@ const WorkflowStepView: React.FC = () => {
           />
         )}
       </div>
-      <StepViewTabs
-        tabs={availableTabs}
-        activeTab={activeTab}
-        onSelectTab={onClickTab}
-      />
-      {activeTab === Tabs.OVERVIEW && steps && steps.length > 0 && (
-        <StepsBoard>
-          {steps && steps.length > 0 ? (
-            steps.map(substep => (
-              <SingleStepContainer
-                key={`step-${substep['@id']}`}
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-                step={substep}
-                onUpdate={waitAntReload}
-              />
-            ))
-          ) : (
-            <div className="workflow-step-view__tab-container">
-              <h2>This Workflow step does not have any sub-steps.</h2>
-              <h4>
-                Add one from the menu above by clicking on "Add Step" or browse
-                this Step by going to the Activities section.
-              </h4>
-              <br />
-              <Button onClick={() => setActiveTab(Tabs.ACTIVITIES)}>
-                View Activities
-              </Button>
-            </div>
-          )}
-        </StepsBoard>
-      )}
-      {activeTab === Tabs.ACTIVITIES && step && (
-        <ActivityResourcesContainer
-          orgLabel={orgLabel}
-          projectLabel={projectLabel}
-          linkCodeToActivity={linkCodeToActivity}
-          workflowStep={step}
-        />
-      )}
-      {activeTab === Tabs.DESCRIPTION && step && (
-        <div className="workflow-step-view__tab-container">
-          <StepDescriptionContainer
-            step={step as Resource}
+      <StepsBoard>
+        {steps &&
+          steps.length > 0 &&
+          steps.map(substep => (
+            <SingleStepContainer
+              key={`step-${substep['@id']}`}
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              step={substep}
+              onUpdate={waitAntReload}
+            />
+          ))}
+      </StepsBoard>
+      {step && (
+        <>
+          <TableContainer
             orgLabel={orgLabel}
             projectLabel={projectLabel}
-            onUpdate={waitAntReload}
+            stepId={step._self}
           />
-        </div>
-      )}
-      {activeTab === Tabs.INPUTS && step && (
-        <InputsContainer
-          orgLabel={orgLabel}
-          projectLabel={projectLabel}
-          stepId={step._self}
-        />
-      )}
-      {activeTab === Tabs.DATA && step && (
-        <TableContainer
-          orgLabel={orgLabel}
-          projectLabel={projectLabel}
-          stepId={step._self}
-        />
+          <ActivityResourcesContainer
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+            linkCodeToActivity={linkCodeToActivity}
+            workflowStep={step}
+          />
+          <InputsContainer
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+            stepId={step._self}
+          />
+        </>
       )}
     </div>
   );
