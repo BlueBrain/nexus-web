@@ -229,29 +229,30 @@ const WorkflowStepView: React.FC = () => {
               onUpdate={waitAntReload}
             />
           ))}
+        {step && (
+          <>
+            <TableContainer
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              stepId={step._self}
+            />
+            {/* TODO: update activities and inputs tables */}
+            {/*
+           <ActivityResourcesContainer
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              linkCodeToActivity={linkCodeToActivity}
+              workflowStep={step}
+            />
+            <InputsContainer
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              stepId={step._self}
+            />
+           */}
+          </>
+        )}
       </StepsBoard>
-      {step && (
-        <>
-          <TableContainer
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
-            stepId={step._self}
-          />
-          <h3 style={{ marginLeft: 20 }}>Activities</h3>
-          <ActivityResourcesContainer
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
-            linkCodeToActivity={linkCodeToActivity}
-            workflowStep={step}
-          />
-          <h3 style={{ marginLeft: 20 }}>Inputs</h3>
-          <InputsContainer
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
-            stepId={step._self}
-          />
-        </>
-      )}
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
+import Draggable from 'react-draggable';
 
 import { isTable } from '../utils';
 import { displayError } from '../components/Notifications';
@@ -44,23 +45,84 @@ const TableContainer: React.FC<{
       });
   }, [orgLabel, projectLabel, stepId]);
 
+  const onPostionChange = (
+    table: any,
+    position: {
+      positionX: number;
+      positionY: number;
+    }
+  ) => {
+    table.positionX = position.positionX;
+    table.positionY = position.positionY;
+
+    return nexus.Resource.update(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(table['@id']),
+      table._rev,
+      table
+    );
+  };
+
   return (
     <>
       {tables &&
         tables.length > 0 &&
         tables.map(table => (
-          <div
-            key={`table-${table['@id']}`}
-            style={{ margin: 20, width: '1200' }}
+          <DraggableTable
+            table={table}
+            onPostionChange={onPostionChange}
+            key={`table-${table['@id']}}`}
           >
-            <DataTableContainer
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-              tableResourceId={table['@id']}
-            ></DataTableContainer>
-          </div>
+            <div
+              key={`table-${table['@id']}`}
+              style={{ margin: 20, width: '1200' }}
+            >
+              <DataTableContainer
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+                tableResourceId={table['@id']}
+              />
+            </div>
+          </DraggableTable>
         ))}
     </>
+  );
+};
+
+const DraggableTable: React.FC<{
+  table: any;
+  onPostionChange: (
+    table: any,
+    position: {
+      positionX: number;
+      positionY: number;
+    }
+  ) => void;
+}> = ({ table, onPostionChange, children }) => {
+  const handleStop = (event: any, data: any) => {
+    const { x, y } = data;
+
+    if (table.positionX === x && table.positionY === y) return;
+
+    onPostionChange(table, {
+      positionX: x,
+      positionY: y,
+    });
+  };
+
+  return (
+    <Draggable
+      bounds=".steps-board"
+      onStop={handleStop}
+      defaultPosition={
+        table.positionX && table.positionY
+          ? { x: table.positionX, y: table.positionY }
+          : undefined
+      }
+    >
+      {children}
+    </Draggable>
   );
 };
 
