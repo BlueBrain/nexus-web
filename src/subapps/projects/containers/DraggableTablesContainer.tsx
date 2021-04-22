@@ -2,48 +2,15 @@ import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import Draggable from 'react-draggable';
 
-import { isTable } from '../utils';
 import { displayError } from '../components/Notifications';
 import DataTableContainer from '../../../shared/containers/DataTableContainer';
 
-const TableContainer: React.FC<{
+const DraggableTablesContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
-  stepId: string;
-}> = ({ orgLabel, projectLabel, stepId }) => {
+  tables: any[];
+}> = ({ orgLabel, projectLabel, tables }) => {
   const nexus = useNexusContext();
-  const [tables, setTables] = React.useState<any[] | undefined>([]);
-
-  React.useEffect(() => {
-    nexus.Resource.links(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(stepId),
-      'incoming'
-    )
-      .then(response =>
-        Promise.all(
-          response._results
-            .filter(link => isTable(link))
-            .map(link => {
-              return nexus.Resource.get(
-                orgLabel,
-                projectLabel,
-                encodeURIComponent(link['@id'])
-              );
-            })
-        )
-          .then(response => {
-            setTables(response);
-          })
-          .catch(error => {
-            displayError(error, 'Failed to load tables');
-          })
-      )
-      .catch(error => {
-        displayError(error, 'Failed to load tables');
-      });
-  }, [orgLabel, projectLabel, stepId]);
 
   const onPostionChange = async (
     table: any,
@@ -130,4 +97,4 @@ const DraggableTable: React.FC<{
   );
 };
 
-export default TableContainer;
+export default DraggableTablesContainer;

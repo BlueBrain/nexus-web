@@ -10,10 +10,10 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import { displayError, successNotification } from '../components/Notifications';
 import SingleStepContainer from '../containers/SingleStepContainer';
 import StepInfoContainer from '../containers/StepInfoContainer';
-import { fetchChildrenForStep } from '../utils';
+import { fetchChildrenForStep, isTable } from '../utils';
 import ActivityResourcesContainer from '../containers/ActivityResourcesContainer';
 import InputsContainer from '../containers/InputsContainer';
-import TableContainer from '../containers/TableContainer';
+import TableContainer from '../containers/DraggableTablesContainer';
 import AddComponentButton from '../components/AddComponentButton';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 import fusionConfig from '../config';
@@ -37,10 +37,12 @@ const WorkflowStepView: React.FC = () => {
   }>(`/${subapp.namespace}/:orgLabel/:projectLabel/:stepId`);
 
   const [steps, setSteps] = React.useState<StepResource[]>([]);
+  const [tables, setTables] = React.useState<any[] | undefined>([]);
   const [step, setStep] = React.useState<StepResource>();
   const [breadcrumbs, setBreadcrumbs] = React.useState<BreadcrumbItem[]>([]);
-  // switch to trigger step list update
+  // switch to trigger updates
   const [refreshSteps, setRefreshSteps] = React.useState<boolean>(false);
+  const [refreshTables, setRefreshTables] = React.useState<boolean>(false);
   const [siblings, setSiblings] = React.useState<
     { name: string; '@id': string }[]
   >([]);
@@ -68,6 +70,37 @@ const WorkflowStepView: React.FC = () => {
 
     fetchChildren(stepId);
   }, [refreshSteps, stepId]);
+
+  React.useEffect(() => {
+    nexus.Resource.links(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(stepId),
+      'incoming'
+    )
+      .then(response =>
+        Promise.all(
+          response._results
+            .filter(link => isTable(link))
+            .map(link => {
+              return nexus.Resource.get(
+                orgLabel,
+                projectLabel,
+                encodeURIComponent(link['@id'])
+              );
+            })
+        )
+          .then(response => {
+            setTables(response);
+          })
+          .catch(error => {
+            displayError(error, 'Failed to load tables');
+          })
+      )
+      .catch(error => {
+        displayError(error, 'Failed to load tables');
+      });
+  }, [refreshTables, stepId]);
 
   const fetchChildren = async (stepId: string) => {
     const children = (await fetchChildrenForStep(
@@ -134,9 +167,16 @@ const WorkflowStepView: React.FC = () => {
   };
 
   // TODO: find better sollution for this in future, for example, optimistic update
-  const waitAntReload = () => {
+  const waitAntReloadSteps = () => {
     const reloadTimer = setTimeout(() => {
       setRefreshSteps(!refreshSteps);
+      clearTimeout(reloadTimer);
+    }, 3500);
+  };
+
+  const waitAndReloadTables = () => {
+    const reloadTimer = setTimeout(() => {
+      setRefreshTables(!refreshTables);
       clearTimeout(reloadTimer);
     }, 3500);
   };
@@ -187,7 +227,7 @@ const WorkflowStepView: React.FC = () => {
       .then(() => {
         setShowStepForm(false);
         successNotification(`New step ${name} created successfully`);
-        waitAntReload();
+        waitAntReloadSteps();
       })
       .catch(error => {
         setShowStepForm(false);
@@ -196,7 +236,7 @@ const WorkflowStepView: React.FC = () => {
   };
 
   const addNewTable = () => {
-    waitAntReload();
+    waitAndReloadTables();
     setShowNewTableForm(false);
   };
 
@@ -227,15 +267,15 @@ const WorkflowStepView: React.FC = () => {
               orgLabel={orgLabel}
               projectLabel={projectLabel}
               step={substep}
-              onUpdate={waitAntReload}
+              onUpdate={waitAntReloadSteps}
             />
           ))}
-        {step && (
+        {step && tables && (
           <>
             <TableContainer
               orgLabel={orgLabel}
               projectLabel={projectLabel}
-              stepId={step._self}
+              tables={tables}
             />
             {/* TODO: update activities and inputs tables */}
             {/*
