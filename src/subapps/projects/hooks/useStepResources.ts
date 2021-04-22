@@ -3,7 +3,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
 
 import { displayError } from '../components/Notifications';
-import { StepResource } from '../views/WorkflowStepView';
+import { StepResource } from '../types';
 
 export const useActivityResources = (
   step: StepResource,

@@ -1,55 +1,25 @@
 import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk';
+import { Modal } from 'antd';
 
 import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
 import StepsBoard from '../components/WorkflowSteps/StepsBoard';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { displayError, successNotification } from '../components/Notifications';
-import { Status } from '../components/StatusIcon';
 import SingleStepContainer from '../containers/SingleStepContainer';
 import StepInfoContainer from '../containers/StepInfoContainer';
 import { fetchChildrenForStep } from '../utils';
 import ActivityResourcesContainer from '../containers/ActivityResourcesContainer';
 import InputsContainer from '../containers/InputsContainer';
 import TableContainer from '../containers/TableContainer';
+import AddComponentButton from '../components/AddComponentButton';
+import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
+import fusionConfig from '../config';
+import { StepResource, WorkflowStepMetadata } from '../types';
 
 import './WorkflowStepView.less';
-
-export type StepResource = Resource<{
-  hasParent?: {
-    '@id': string;
-  };
-  activityType?: string;
-  name: string;
-  _self: string;
-  status: Status;
-  description?: string;
-  summary?: string;
-  dueDate?: string;
-  wasInformedBy?: {
-    '@id': string;
-  };
-  used?: {
-    '@id': string;
-  };
-  wasAssociatedWith?:
-    | {
-        '@id': string;
-      }
-    | {
-        '@id': string;
-      }[];
-  contribution?: {
-    agent: {
-      '@id': string;
-    };
-  };
-  positionX?: number;
-  positionY?: number;
-}>;
 
 type BreadcrumbItem = {
   label: string;
@@ -73,6 +43,7 @@ const WorkflowStepView: React.FC = () => {
   const [siblings, setSiblings] = React.useState<
     { name: string; '@id': string }[]
   >([]);
+  const [showStepForm, setShowStepForm] = React.useState<boolean>(false);
 
   const projectLabel = match?.params.projectLabel || '';
   const orgLabel = match?.params.orgLabel || '';
@@ -196,8 +167,36 @@ const WorkflowStepView: React.FC = () => {
       .catch(error => displayError(error, 'Failed to load original payload'));
   };
 
+  const submitNewStep = (data: WorkflowStepMetadata) => {
+    const { name } = data;
+
+    if (step?._self) {
+      data.hasParent = {
+        '@id': step._self,
+      };
+    }
+
+    nexus.Resource.create(orgLabel, projectLabel, {
+      '@type': fusionConfig.workflowStepType,
+      ...data,
+    })
+      .then(() => {
+        setShowStepForm(false);
+        successNotification(`New step ${name} created successfully`);
+        waitAntReload();
+      })
+      .catch(error => {
+        setShowStepForm(false);
+        displayError(error, 'An error occurred');
+      });
+  };
+
   return (
     <div className="workflow-step-view">
+      <AddComponentButton
+        addNewStep={() => setShowStepForm(true)}
+        addDataTable={() => {}}
+      />
       <ProjectPanel
         orgLabel={orgLabel}
         projectLabel={projectLabel}
@@ -253,6 +252,23 @@ const WorkflowStepView: React.FC = () => {
           </>
         )}
       </StepsBoard>
+      <Modal
+        visible={showStepForm}
+        footer={null}
+        onCancel={() => setShowStepForm(false)}
+        width={800}
+        destroyOnClose={true}
+      >
+        <WorkflowStepWithActivityForm
+          title="Create New Step"
+          onClickCancel={() => setShowStepForm(false)}
+          onSubmit={submitNewStep}
+          busy={false}
+          siblings={siblings}
+          activityList={[]}
+          parentLabel={step?.name}
+        />
+      </Modal>
     </div>
   );
 };

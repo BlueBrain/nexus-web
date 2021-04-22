@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { StepResource } from '../views/WorkflowStepView';
 import fusionConfig from '../config';
 
 export const useUpdateStep = (

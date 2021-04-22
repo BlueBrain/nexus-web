@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Tooltip } from 'antd';
-import StatusIcon, { Status } from './StatusIcon';
+
+import StatusIcon from './StatusIcon';
+import { Status } from '../types';
 
 import './ProjectCard.less';
 

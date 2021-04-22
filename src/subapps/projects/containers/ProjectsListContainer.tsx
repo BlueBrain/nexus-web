@@ -9,7 +9,7 @@ import {
 
 import ProjectMetaContainer from '../containers/ProjectMetaContainer';
 import ProjectCard from '../components/ProjectCard';
-import { Status } from '../components/StatusIcon';
+import { Status } from '../types';
 
 type ProjectsListContainerType = {
   projects: ProjectResponseCommon[];

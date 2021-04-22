@@ -3,7 +3,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Drawer, Button } from 'antd';
 import { fetchChildrenForStep, fetchTopLevelSteps } from '../utils';
 import { displayError, successNotification } from '../components/Notifications';
-import { StepResource } from '../views/WorkflowStepView';
+import { StepResource } from '../types';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 import fusionConfig from '../config';
 

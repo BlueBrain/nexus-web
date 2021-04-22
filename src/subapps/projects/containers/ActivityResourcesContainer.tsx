@@ -5,9 +5,9 @@ import ResultsTable from '../../../shared/components/SparqlResultsTable';
 import { displayError } from '../components/Notifications';
 import fusionConfig from '../config';
 import { CodeResourceData } from '../components/LinkCodeForm';
-import { StepResource } from '../views/WorkflowStepView';
 import { useLinkedActivities, ActivityItem } from '../hooks/useActivities';
 import { createWorkflowBase } from '../utils/index';
+import { StepResource } from '../types';
 
 const ActivityResourcesContainer: React.FC<{
   orgLabel: string;

@@ -4,12 +4,11 @@ import { Modal } from 'antd';
 
 import { displayError } from '../components/Notifications';
 import StepCard from '../components/WorkflowSteps/StepCard';
-import { StepResource } from '../views/WorkflowStepView';
 import { isParentLink } from '../utils';
 import { useUpdateStep } from '../hooks/useUpdateStep';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 import fusionConfig from '../config';
-import { WorkflowStepMetadata } from './NewWorkflowStepContainer';
+import { StepResource, WorkflowStepMetadata } from '../types';
 
 const SingleStepContainer: React.FC<{
   projectLabel: string;

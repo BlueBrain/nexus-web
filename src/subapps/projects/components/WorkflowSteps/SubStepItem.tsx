@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Tooltip } from 'antd';
 
 import StatusIcon from '../StatusIcon';
-import { StepResource } from '../../views/WorkflowStepView';
+import { StepResource } from '../../types';
 
 import './SubStepItem.less';
 

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Button } from 'antd';
 
-import NewWorkflowStepContainer from '../containers/NewWorkflowStepContainer';
 import TemplatesContainer from '../containers/TemplatesContainer';
 import ProjectMetaContaier from '../containers/ProjectMetaContainer';
 import ActivitiesLinkingContainer from '../containers/ActivitiesLinkingContainer';
@@ -37,14 +36,6 @@ const ProjectPanel: React.FC<{
           projectLabel={projectLabel}
           orgLabel={orgLabel}
           parentId={workflowStepSelfUrl}
-        />
-        <NewWorkflowStepContainer
-          projectLabel={projectLabel}
-          orgLabel={orgLabel}
-          onSuccess={onUpdate}
-          parentStepLabel={workflowStepLabel}
-          parentStepSelfUrl={workflowStepSelfUrl}
-          siblings={siblings}
         />
         <TemplatesContainer />
         <Button onClick={() => setShowInfo(true)}>Project Info</Button>
