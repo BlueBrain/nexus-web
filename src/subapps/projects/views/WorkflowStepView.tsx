@@ -72,7 +72,11 @@ const WorkflowStepView: React.FC = () => {
   }, [refreshSteps, stepId]);
 
   React.useEffect(() => {
-    nexus.Resource.links(
+    fetchTables();
+  }, [refreshTables, stepId]);
+
+  const fetchTables = async () => {
+    await nexus.Resource.links(
       orgLabel,
       projectLabel,
       encodeURIComponent(stepId),
@@ -100,7 +104,7 @@ const WorkflowStepView: React.FC = () => {
       .catch(error => {
         displayError(error, 'Failed to load tables');
       });
-  }, [refreshTables, stepId]);
+  };
 
   const fetchChildren = async (stepId: string) => {
     const children = (await fetchChildrenForStep(
