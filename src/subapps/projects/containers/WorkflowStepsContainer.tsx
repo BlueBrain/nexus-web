@@ -6,13 +6,12 @@ import { NexusClient } from '@bbp/nexus-sdk';
 import SingleStepContainer from './SingleStepContainer';
 import StepsBoard from '../components/WorkflowSteps/StepsBoard';
 import { displayError, successNotification } from '../components/Notifications';
-import { StepResource } from '../views/WorkflowStepView';
+import { StepResource, WorkflowStepMetadata } from '../views/WorkflowStepView';
 import ProjectPanel from '../components/ProjectPanel';
 import { fetchTopLevelSteps } from '../utils';
 import AddComponentButton from '../components/AddComponentButton';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 import fusionConfig from '../config';
-import { WorkflowStepMetadata } from './NewWorkflowStepContainer';
 
 const WorkflowStepContainer: React.FC<{
   orgLabel: string;
@@ -95,11 +94,7 @@ const WorkflowStepContainer: React.FC<{
         onUpdate={waitAntReloadSteps}
         siblings={siblings}
       />
-      <AddComponentButton
-        addNewStep={() => setShowAddForm(true)}
-        addCode={() => {}}
-        addDataset={() => {}}
-      />
+      <AddComponentButton addNewStep={() => setShowAddForm(true)} />
       <StepsBoard>
         {steps &&
           stepsWithChildren.map(step => (

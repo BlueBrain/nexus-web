@@ -8,8 +8,8 @@ const addIcon = require('../../../shared/images/addIcon.svg');
 const AddComponentButton: React.FC<{
   addNewStep: () => void;
   addDataTable?: () => void;
-  addCode: () => void;
-  addDataset: () => void;
+  addCode?: () => void;
+  addDataset?: () => void;
 }> = ({ addNewStep, addDataTable, addCode, addDataset }) => {
   const menu = (
     <Menu>
@@ -19,12 +19,16 @@ const AddComponentButton: React.FC<{
           Canvas: Add a Data Table
         </Menu.Item>
       )}
-      <Menu.Item disabled onClick={addCode}>
-        Project: Create a New Code Resource
-      </Menu.Item>
-      <Menu.Item disabled onClick={addDataset}>
-        Project: Create a New Dataset Resource
-      </Menu.Item>
+      {addCode && (
+        <Menu.Item disabled onClick={addCode}>
+          Project: Create a New Code Resource
+        </Menu.Item>
+      )}
+      {addDataset && (
+        <Menu.Item disabled onClick={addDataset}>
+          Project: Create a New Dataset Resource
+        </Menu.Item>
+      )}
     </Menu>
   );
 

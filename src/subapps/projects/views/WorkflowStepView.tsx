@@ -18,7 +18,6 @@ import InputsContainer from '../containers/InputsContainer';
 import TableContainer from '../containers/TableContainer';
 import AddComponentButton from '../components/AddComponentButton';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
-import { WorkflowStepMetadata } from '../containers/NewWorkflowStepContainer';
 import fusionConfig from '../config';
 
 import './WorkflowStepView.less';
@@ -55,6 +54,28 @@ export type StepResource = Resource<{
   positionX?: number;
   positionY?: number;
 }>;
+
+export type WorkflowStepMetadata = {
+  name: string;
+  activityType?: string;
+  description: string;
+  summary?: string;
+  dueDate: string;
+  status: Status;
+  hasParent?: {
+    '@id': string;
+  };
+  wasInformedBy?: {
+    '@id': string;
+  };
+  'nxv:activities':
+    | {
+        '@id': string;
+      }
+    | {
+        '@id': string;
+      }[];
+};
 
 type BreadcrumbItem = {
   label: string;
@@ -231,8 +252,6 @@ const WorkflowStepView: React.FC = () => {
       <AddComponentButton
         addNewStep={() => setShowStepForm(true)}
         addDataTable={() => {}}
-        addCode={() => {}}
-        addDataset={() => {}}
       />
       <ProjectPanel
         orgLabel={orgLabel}
