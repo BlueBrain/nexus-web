@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk';
 import { Modal } from 'antd';
 
 import { useProjectsSubappContext } from '..';
@@ -9,7 +8,6 @@ import ProjectPanel from '../components/ProjectPanel';
 import StepsBoard from '../components/WorkflowSteps/StepsBoard';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { displayError, successNotification } from '../components/Notifications';
-import { Status } from '../components/StatusIcon';
 import SingleStepContainer from '../containers/SingleStepContainer';
 import StepInfoContainer from '../containers/StepInfoContainer';
 import { fetchChildrenForStep } from '../utils';
@@ -19,63 +17,9 @@ import TableContainer from '../containers/TableContainer';
 import AddComponentButton from '../components/AddComponentButton';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 import fusionConfig from '../config';
+import { StepResource, WorkflowStepMetadata } from '../types';
 
 import './WorkflowStepView.less';
-
-export type StepResource = Resource<{
-  hasParent?: {
-    '@id': string;
-  };
-  activityType?: string;
-  name: string;
-  _self: string;
-  status: Status;
-  description?: string;
-  summary?: string;
-  dueDate?: string;
-  wasInformedBy?: {
-    '@id': string;
-  };
-  used?: {
-    '@id': string;
-  };
-  wasAssociatedWith?:
-    | {
-        '@id': string;
-      }
-    | {
-        '@id': string;
-      }[];
-  contribution?: {
-    agent: {
-      '@id': string;
-    };
-  };
-  positionX?: number;
-  positionY?: number;
-}>;
-
-export type WorkflowStepMetadata = {
-  name: string;
-  activityType?: string;
-  description: string;
-  summary?: string;
-  dueDate: string;
-  status: Status;
-  hasParent?: {
-    '@id': string;
-  };
-  wasInformedBy?: {
-    '@id': string;
-  };
-  'nxv:activities':
-    | {
-        '@id': string;
-      }
-    | {
-        '@id': string;
-      }[];
-};
 
 type BreadcrumbItem = {
   label: string;

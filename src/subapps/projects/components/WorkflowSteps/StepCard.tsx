@@ -4,8 +4,7 @@ import { Link } from 'react-router-dom';
 import { Tooltip, Dropdown, Button, Menu, Form, Input } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 
-import { StepResource } from '../../views/WorkflowStepView';
-import { Status } from '../StatusIcon';
+import { Status, StepResource } from '../../types';
 import MarkdownViewerContainer from '../../../../shared/containers/MarkdownViewer';
 import SubStepItem from './SubStepItem';
 import { isEmptyInput } from '../../utils';

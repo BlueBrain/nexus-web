@@ -13,9 +13,7 @@ import {
 import { InfoCircleOutlined } from '@ant-design/icons';
 import * as moment from 'moment';
 
-import { Status } from '../StatusIcon';
-import { WorkflowStepMetadata } from '../../containers/NewWorkflowStepContainer';
-import { StepResource } from '../../views/WorkflowStepView';
+import { Status, StepResource, WorkflowStepMetadata } from '../../types';
 import { isEmptyInput } from '../../utils';
 
 import './WorkflowStepWithActivityForm.less';

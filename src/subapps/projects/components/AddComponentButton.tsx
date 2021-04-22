@@ -3,7 +3,7 @@ import { Menu, Dropdown } from 'antd';
 
 import './AddComponentButton.less';
 
-const addIcon = require('../../../shared/images/addIcon.svg');
+const addIconClear = require('../../../shared/images/addIconClear.svg');
 
 const AddComponentButton: React.FC<{
   addNewStep: () => void;
@@ -35,7 +35,7 @@ const AddComponentButton: React.FC<{
   return (
     <div className="add-component-button">
       <Dropdown overlay={menu} placement="topRight">
-        <img className="add-component-button__icon" src={addIcon} />
+        <img className="add-component-button__icon" src={addIconClear} />
       </Dropdown>
     </div>
   );

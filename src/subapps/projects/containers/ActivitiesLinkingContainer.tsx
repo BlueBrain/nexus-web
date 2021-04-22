@@ -10,7 +10,7 @@ import fusionConfig from '../config';
 import { displayError, successNotification } from '../components/Notifications';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 import { labelOf } from '../../../shared/utils';
-import { WorkflowStepMetadata } from '../views/WorkflowStepView';
+import { WorkflowStepMetadata } from '../types';
 
 const ActivitiesLinkingContainer: React.FC<{
   orgLabel: string;
