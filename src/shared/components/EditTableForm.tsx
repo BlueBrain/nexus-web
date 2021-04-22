@@ -97,6 +97,7 @@ const EditTableForm: React.FC<{
   const [configuration, setConfiguration] = React.useState<
     TableColumn | TableColumn[]
   >(table.configuration);
+
   const nexus = useNexusContext();
 
   const updateColumConfig = useQuery(
@@ -186,9 +187,9 @@ const EditTableForm: React.FC<{
     setDataQuery(queryCopy);
   };
 
-  const updateColumnConfig = (name: string, data: any) => {
-    if (Array.isArray(configuration)) {
-      const currentConfig = configuration;
+  const updateColumnConfigArray = React.useMemo(
+    () => (name: string, data: any) => {
+      const currentConfig = [...(configuration as TableColumn[])];
 
       const column = currentConfig.find(column => column.name === name);
 
@@ -204,15 +205,21 @@ const EditTableForm: React.FC<{
       currentConfig[columnIndex] = updatedColumn;
 
       setConfiguration(currentConfig);
-    } else {
-      const column = {
+    },
+    [configuration]
+  );
+
+  const updateColumnConfig = React.useMemo(
+    () => (name: string, data: any) => {
+      const updatedColumn = {
         ...configuration,
         ...data,
       };
 
-      setConfiguration(column);
-    }
-  };
+      setConfiguration(updatedColumn);
+    },
+    [configuration]
+  );
 
   return (
     <Form className="edit-table-form">
@@ -267,7 +274,9 @@ const EditTableForm: React.FC<{
               }}
             >
               {Object.values(ViewOptions).map(view => (
-                <Option value={view}>{view}</Option>
+                <Option key={view} value={view}>
+                  {view}
+                </Option>
               ))}
             </Select>
           </Col>
@@ -317,7 +326,9 @@ const EditTableForm: React.FC<{
               }}
             >
               {PAGES_OPTIONS.map(pages => (
-                <Option value={pages}>{pages}</Option>
+                <Option key={pages} value={pages}>
+                  {pages}
+                </Option>
               ))}
             </Select>
           </Col>
@@ -351,28 +362,22 @@ const EditTableForm: React.FC<{
         </div>
         <div className="edit-table-form__config">
           <h3>Columns configuration</h3>
-          {!updateColumConfig ||
-          (updateColumConfig && !updateColumConfig.isLoading) ? (
-            configuration ? (
-              Array.isArray(configuration) ? (
-                configuration.map((column: TableColumn) => {
-                  return (
-                    <ColumnConfig
-                      column={column}
-                      onChange={updateColumnConfig}
-                      key={column.name}
-                    />
-                  );
-                })
-              ) : (
+
+          {Array.isArray(configuration) ? (
+            configuration.map((column: TableColumn) => {
+              return (
                 <ColumnConfig
-                  column={configuration}
-                  onChange={updateColumnConfig}
+                  column={column}
+                  onChange={updateColumnConfigArray}
+                  key={column.name}
                 />
-              )
-            ) : null
+              );
+            })
           ) : (
-            <Spin />
+            <ColumnConfig
+              column={configuration}
+              onChange={updateColumnConfig}
+            />
           )}
         </div>
         <div className="edit-table-form__buttons">

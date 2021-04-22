@@ -96,7 +96,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   );
 
   const renderTitle = () => {
-    const tableResource = tableData.result.data
+    const tableResource = tableData.tableResult.data
       ?.tableResource as TableComponent;
 
     return (
@@ -142,15 +142,15 @@ const DataTableContainer: React.FC<DataTableProps> = ({
 
   return (
     <div>
-      {tableData.result.isLoading ? (
-        <Spin />
-      ) : tableData.result.isSuccess ? (
+      {tableData.tableResult.isError ? (
+        tableData.tableResult.error.message
+      ) : tableData.tableResult.isSuccess ? (
         <>
           <Table
             bordered
             title={renderTitle}
-            columns={tableData.result.data?.headerProperties}
-            dataSource={tableData.result.data?.items}
+            columns={tableData.dataResult.data?.headerProperties}
+            dataSource={tableData.dataResult.data?.items}
             scroll={{ x: 1000 }}
             onRow={data => ({
               onClick: event => {
@@ -160,7 +160,8 @@ const DataTableContainer: React.FC<DataTableProps> = ({
               },
             })}
             pagination={{
-              pageSize: tableData.result.data.tableResource['resultsPerPage'],
+              pageSize:
+                tableData.tableResult.data.tableResource['resultsPerPage'],
               responsive: true,
               showLessItems: true,
             }}
@@ -176,17 +177,21 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             width={800}
             destroyOnClose={true}
           >
-            <EditTableForm
-              onSave={changeTableResource.mutate}
-              onClose={() => setShowEditForm(false)}
-              table={tableData.result.data.tableResource}
-              busy={changeTableResource.isLoading}
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-            />
+            {tableData.tableResult.isSuccess ? (
+              <EditTableForm
+                onSave={changeTableResource.mutate}
+                onClose={() => setShowEditForm(false)}
+                table={tableData.tableResult.data.tableResource}
+                busy={changeTableResource.isLoading}
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+              />
+            ) : null}
           </Modal>
         </>
-      ) : null}
+      ) : (
+        <Spin></Spin>
+      )}
     </div>
   );
 };
