@@ -7,16 +7,18 @@ const addIcon = require('../../../shared/images/addIcon.svg');
 
 const AddComponentButton: React.FC<{
   addNewStep: () => void;
-  addDataTable: () => void;
+  addDataTable?: () => void;
   addCode: () => void;
   addDataset: () => void;
 }> = ({ addNewStep, addDataTable, addCode, addDataset }) => {
   const menu = (
     <Menu>
       <Menu.Item onClick={addNewStep}>Canvas: Add a New Step</Menu.Item>
-      <Menu.Item disabled onClick={addDataTable}>
-        Canvas: Add a Data Table - coming soon
-      </Menu.Item>
+      {addDataTable && (
+        <Menu.Item disabled onClick={addDataTable}>
+          Canvas: Add a Data Table
+        </Menu.Item>
+      )}
       <Menu.Item disabled onClick={addCode}>
         Project: Create a New Code Resource
       </Menu.Item>
@@ -28,7 +30,7 @@ const AddComponentButton: React.FC<{
 
   return (
     <div className="add-component-button">
-      <Dropdown overlay={menu} placement="bottomRight">
+      <Dropdown overlay={menu} placement="topRight">
         <img className="add-component-button__icon" src={addIcon} />
       </Dropdown>
     </div>

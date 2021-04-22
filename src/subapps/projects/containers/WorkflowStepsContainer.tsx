@@ -97,7 +97,6 @@ const WorkflowStepContainer: React.FC<{
       />
       <AddComponentButton
         addNewStep={() => setShowAddForm(true)}
-        addDataTable={() => {}}
         addCode={() => {}}
         addDataset={() => {}}
       />
