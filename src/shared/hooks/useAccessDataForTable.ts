@@ -174,21 +174,10 @@ export const queryES = async (
 const accessData = async (
   orgLabel: string,
   projectLabel: string,
-  tableResourceId: string,
+  tableResource: TableResource,
+  view: View,
   nexus: NexusClient
 ) => {
-  const tableResource = (await nexus.Resource.get(
-    orgLabel,
-    projectLabel,
-    tableResourceId
-  )) as Resource;
-
-  const view: View = (await nexus.View.get(
-    orgLabel,
-    projectLabel,
-    tableResource.view
-  )) as View;
-
   const dataQuery: string = tableResource.dataQuery;
   const columnConfig = tableResource.configuration as TableColumn[];
   if (view['@type']?.includes('ElasticSearchView')) {
@@ -211,11 +200,13 @@ const accessData = async (
         sortable: x.enableSort,
       })) || DEFAULT_FIELDS;
 
-    const headerProperties = fields.map(field => {
-      // Enrich certain fields with custom rendering
+    const headerProperties = fields
+      .map(field => {
+        // Enrich certain fields with custom rendering
 
-      return addColumnsForES(field, sorter);
-    });
+        return addColumnsForES(field, sorter);
+      })
+      .sort((a, b) => (a.title > b.title ? 1 : 0));
 
     return { items, total, tableResource, view, headerProperties };
   }
@@ -241,8 +232,8 @@ export const useAccessDataForTable = (
   const onSelect = (selectedRowKeys: React.Key[], selectedRows: Resource[]) => {
     setSelectedRows(selectedRowKeys);
     if (
-      result?.data?.view &&
-      result?.data?.view['@type']?.includes('ElasticSearchView')
+      dataResult?.data?.view &&
+      dataResult?.data?.view['@type']?.includes('ElasticSearchView')
     ) {
       setSelectedResources(selectedRows);
     } else {
@@ -254,61 +245,87 @@ export const useAccessDataForTable = (
     }
   };
 
-  const result = useQuery(
-    [tableResourceId, revision],
-    async () => {
-      const result = await accessData(
-        orgLabel,
-        projectLabel,
-        tableResourceId,
-        nexus
-      );
+  const tableResult = useQuery<any, Error>([revision], async () => {
+    const tableResource = (await nexus.Resource.get(
+      orgLabel,
+      projectLabel,
+      tableResourceId
+    )) as TableResource;
 
-      return result;
+    const view: View = (await nexus.View.get(
+      orgLabel,
+      projectLabel,
+      tableResource.view
+    )) as View;
+    return { tableResource, view };
+  });
+
+  const dataResult = useQuery<any, Error>(
+    [tableResult.data],
+    async () => {
+      if (tableResult.isSuccess) {
+        const result = await accessData(
+          orgLabel,
+          projectLabel,
+          tableResult.data.tableResource,
+          tableResult.data.view,
+          nexus
+        );
+
+        return result;
+      }
+      return {};
     },
     {
       cacheTime: 100000,
+      retry: false,
       select: data => {
         const table = data.tableResource as TableResource;
-        const columnConfig = Array.isArray(table.configuration)
-          ? (table.configuration as TableColumn[])
-          : ([table.configuration] as TableColumn[]);
-        const searchable = columnConfig
-          .filter(t => t.enableSearch)
-          .map(t => t.name);
-        const items = data.items.filter((item: any) => {
-          const searchableProp = pick(item, ...searchable);
-          return (
-            Object.values(searchableProp)
-              .join(' ')
-              .toLowerCase()
-              .search((searchValue || '').toLowerCase()) >= 0
-          );
-        });
+        if (table) {
+          const columnConfig = table.configuration
+            ? Array.isArray(table.configuration)
+              ? (table.configuration as TableColumn[])
+              : ([table.configuration] as TableColumn[])
+            : [];
 
-        return {
-          ...data,
-          items,
-        };
+          const searchable = columnConfig
+            .filter(t => t.enableSearch)
+            .map(t => t.name);
+          const items = data.items.filter((item: any) => {
+            const searchableProp = pick(item, ...searchable);
+            return (
+              Object.values(searchableProp)
+                .join(' ')
+                .toLowerCase()
+                .search((searchValue || '').toLowerCase()) >= 0
+            );
+          });
+
+          return {
+            ...data,
+            items,
+          };
+        }
+        return data;
       },
     }
   );
 
   const downloadCSV = React.useMemo(
     () => () => {
-      if (result.isSuccess) {
+      if (dataResult.isSuccess) {
         // download only selected rows or,
         // download everything, when nothing is selected.
         const selectedItems =
           selectedRows.length > 0
-            ? result.data.items.filter((item: any) => {
+            ? dataResult.data.items.filter((item: any) => {
                 return selectedRows.includes(item.key);
               })
-            : result.data.items;
+            : dataResult.data.items;
 
         exportAsCSV(
           selectedItems,
-          result.data.headerProperties.map((h: any) => {
+          dataResult.data.headerProperties.map((h: any) => {
             return {
               label: h.title,
               value: h.dataIndex,
@@ -317,7 +334,7 @@ export const useAccessDataForTable = (
         );
       }
     },
-    [result]
+    [dataResult]
   );
   const addToDataCart = React.useMemo(
     () => () => {
@@ -337,6 +354,7 @@ export const useAccessDataForTable = (
     addFromDataCart,
     onSelect,
     setSearchValue,
-    result,
+    tableResult,
+    dataResult,
   };
 };

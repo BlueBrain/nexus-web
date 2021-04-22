@@ -23,7 +23,7 @@ type AdminProps = {
   activeTabKey: string;
   defaultActiveKey: string;
   expandedFromQuery: string | string[] | null | undefined;
-  ref: React.MutableRefObject<HTMLDivElement>;
+  refProp: React.MutableRefObject<HTMLDivElement>;
   goToResource: (
     orgLabel: string,
     projectLabel: string,
@@ -50,7 +50,7 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
   activeTabKey,
   defaultActiveKey,
   expandedFromQuery,
-  ref,
+  refProp: ref,
   goToResource,
   handleTabChange,
   handleGoToInternalLink,

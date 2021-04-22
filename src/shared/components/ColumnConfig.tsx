@@ -79,7 +79,9 @@ const ColumnConfig: React.FC<{
         <Col xs={12} sm={12} md={12}>
           <Select value={type} style={{ width: 120 }} onChange={onChangeType}>
             {Object.values(ColumnTypes).map(type => (
-              <Option value={type}>{type}</Option>
+              <Option key={type} value={type}>
+                {type}
+              </Option>
             ))}
           </Select>
         </Col>

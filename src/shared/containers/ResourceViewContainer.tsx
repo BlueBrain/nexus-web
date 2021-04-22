@@ -309,7 +309,7 @@ const ResourceViewContainer: React.FunctionComponent<{
                         activeTabKey={activeTabKey}
                         defaultActiveKey={'1'}
                         expandedFromQuery={expandedFromQuery}
-                        ref={ref}
+                        refProp={ref}
                         goToResource={goToResource}
                         handleTabChange={handleTabChange}
                         handleGoToInternalLink={handleGoToInternalLink}
@@ -338,7 +338,7 @@ const ResourceViewContainer: React.FunctionComponent<{
                   activeTabKey={activeTabKey}
                   defaultActiveKey={'1'}
                   expandedFromQuery={expandedFromQuery}
-                  ref={ref}
+                  refProp={ref}
                   goToResource={goToResource}
                   handleTabChange={handleTabChange}
                   handleGoToInternalLink={handleGoToInternalLink}
