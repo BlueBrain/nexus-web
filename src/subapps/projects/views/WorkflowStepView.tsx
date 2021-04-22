@@ -10,14 +10,15 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import { displayError, successNotification } from '../components/Notifications';
 import SingleStepContainer from '../containers/SingleStepContainer';
 import StepInfoContainer from '../containers/StepInfoContainer';
-import { fetchChildrenForStep } from '../utils';
+import { fetchChildrenForStep, isTable } from '../utils';
 import ActivityResourcesContainer from '../containers/ActivityResourcesContainer';
 import InputsContainer from '../containers/InputsContainer';
-import TableContainer from '../containers/TableContainer';
+import TableContainer from '../containers/DraggableTablesContainer';
 import AddComponentButton from '../components/AddComponentButton';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 import fusionConfig from '../config';
 import { StepResource, WorkflowStepMetadata } from '../types';
+import NewTableContainer from '../containers/NewTableContainer';
 
 import './WorkflowStepView.less';
 
@@ -36,14 +37,19 @@ const WorkflowStepView: React.FC = () => {
   }>(`/${subapp.namespace}/:orgLabel/:projectLabel/:stepId`);
 
   const [steps, setSteps] = React.useState<StepResource[]>([]);
+  const [tables, setTables] = React.useState<any[] | undefined>([]);
   const [step, setStep] = React.useState<StepResource>();
   const [breadcrumbs, setBreadcrumbs] = React.useState<BreadcrumbItem[]>([]);
-  // switch to trigger step list update
+  // switch to trigger updates
   const [refreshSteps, setRefreshSteps] = React.useState<boolean>(false);
+  const [refreshTables, setRefreshTables] = React.useState<boolean>(false);
   const [siblings, setSiblings] = React.useState<
     { name: string; '@id': string }[]
   >([]);
   const [showStepForm, setShowStepForm] = React.useState<boolean>(false);
+  const [showNewTableForm, setShowNewTableForm] = React.useState<boolean>(
+    false
+  );
 
   const projectLabel = match?.params.projectLabel || '';
   const orgLabel = match?.params.orgLabel || '';
@@ -64,6 +70,41 @@ const WorkflowStepView: React.FC = () => {
 
     fetchChildren(stepId);
   }, [refreshSteps, stepId]);
+
+  React.useEffect(() => {
+    fetchTables();
+  }, [refreshTables, stepId]);
+
+  const fetchTables = async () => {
+    await nexus.Resource.links(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(stepId),
+      'incoming'
+    )
+      .then(response =>
+        Promise.all(
+          response._results
+            .filter(link => isTable(link))
+            .map(link => {
+              return nexus.Resource.get(
+                orgLabel,
+                projectLabel,
+                encodeURIComponent(link['@id'])
+              );
+            })
+        )
+          .then(response => {
+            setTables(response);
+          })
+          .catch(error => {
+            displayError(error, 'Failed to load tables');
+          })
+      )
+      .catch(error => {
+        displayError(error, 'Failed to load tables');
+      });
+  };
 
   const fetchChildren = async (stepId: string) => {
     const children = (await fetchChildrenForStep(
@@ -130,9 +171,16 @@ const WorkflowStepView: React.FC = () => {
   };
 
   // TODO: find better sollution for this in future, for example, optimistic update
-  const waitAntReload = () => {
+  const waitAndReloadSteps = () => {
     const reloadTimer = setTimeout(() => {
       setRefreshSteps(!refreshSteps);
+      clearTimeout(reloadTimer);
+    }, 3500);
+  };
+
+  const waitAndReloadTables = () => {
+    const reloadTimer = setTimeout(() => {
+      setRefreshTables(!refreshTables);
       clearTimeout(reloadTimer);
     }, 3500);
   };
@@ -183,7 +231,7 @@ const WorkflowStepView: React.FC = () => {
       .then(() => {
         setShowStepForm(false);
         successNotification(`New step ${name} created successfully`);
-        waitAntReload();
+        waitAndReloadSteps();
       })
       .catch(error => {
         setShowStepForm(false);
@@ -191,20 +239,18 @@ const WorkflowStepView: React.FC = () => {
       });
   };
 
+  const addNewTable = () => {
+    waitAndReloadTables();
+    setShowNewTableForm(false);
+  };
+
   return (
     <div className="workflow-step-view">
       <AddComponentButton
         addNewStep={() => setShowStepForm(true)}
-        addDataTable={() => {}}
+        addDataTable={() => setShowNewTableForm(true)}
       />
-      <ProjectPanel
-        orgLabel={orgLabel}
-        projectLabel={projectLabel}
-        onUpdate={waitAntReload}
-        workflowStepLabel={step?.name}
-        workflowStepSelfUrl={step?._self}
-        siblings={siblings}
-      />
+      <ProjectPanel orgLabel={orgLabel} projectLabel={projectLabel} />
       <div className="workflow-step-view__panel">
         <Breadcrumbs crumbs={breadcrumbs} />
         {step && (
@@ -225,15 +271,15 @@ const WorkflowStepView: React.FC = () => {
               orgLabel={orgLabel}
               projectLabel={projectLabel}
               step={substep}
-              onUpdate={waitAntReload}
+              onUpdate={waitAndReloadSteps}
             />
           ))}
-        {step && (
+        {step && tables && (
           <>
             <TableContainer
               orgLabel={orgLabel}
               projectLabel={projectLabel}
-              stepId={step._self}
+              tables={tables}
             />
             {/* TODO: update activities and inputs tables */}
             {/*
@@ -267,6 +313,21 @@ const WorkflowStepView: React.FC = () => {
           siblings={siblings}
           activityList={[]}
           parentLabel={step?.name}
+        />
+      </Modal>
+      <Modal
+        visible={showNewTableForm}
+        footer={null}
+        onCancel={() => setShowNewTableForm(false)}
+        width={400}
+        destroyOnClose={true}
+      >
+        <NewTableContainer
+          orgLabel={orgLabel}
+          projectLabel={projectLabel}
+          parentId={step?._self}
+          onClickClose={() => setShowNewTableForm(false)}
+          onSuccess={addNewTable}
         />
       </Modal>
     </div>
