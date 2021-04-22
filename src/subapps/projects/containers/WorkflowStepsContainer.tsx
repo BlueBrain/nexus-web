@@ -88,12 +88,7 @@ const WorkflowStepContainer: React.FC<{
 
   return (
     <>
-      <ProjectPanel
-        orgLabel={orgLabel}
-        projectLabel={projectLabel}
-        onUpdate={waitAntReloadSteps}
-        siblings={siblings}
-      />
+      <ProjectPanel orgLabel={orgLabel} projectLabel={projectLabel} />
       <AddComponentButton addNewStep={() => setShowAddForm(true)} />
       <StepsBoard>
         {steps &&

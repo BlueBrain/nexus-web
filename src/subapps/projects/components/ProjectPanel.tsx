@@ -11,32 +11,13 @@ import './ProjectPanel.less';
 const ProjectPanel: React.FC<{
   projectLabel: string;
   orgLabel: string;
-  onUpdate(): void;
-  workflowStepLabel?: string;
-  workflowStepSelfUrl?: string;
-  siblings?: {
-    name: string;
-    '@id': string;
-  }[];
-}> = ({
-  projectLabel,
-  orgLabel,
-  onUpdate,
-  workflowStepLabel,
-  workflowStepSelfUrl,
-  siblings,
-}) => {
+}> = ({ projectLabel, orgLabel }) => {
   const [showInfo, setShowInfo] = React.useState<boolean>(false);
 
   return (
     <div className="project-panel">
       <span className="project-panel__name">{projectLabel}</span>
       <div className="project-panel__actions">
-        <NewTableContainer
-          projectLabel={projectLabel}
-          orgLabel={orgLabel}
-          parentId={workflowStepSelfUrl}
-        />
         <TemplatesContainer />
         <Button onClick={() => setShowInfo(true)}>Project Info</Button>
         {showInfo && (

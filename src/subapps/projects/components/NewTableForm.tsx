@@ -36,7 +36,7 @@ const NewTableForm: React.FC<{
   return (
     <Form className="new-table-form">
       <h2 className="new-table-form__title">Create New Table</h2>
-      <Spin spinning={false} tip="Please wait...">
+      <Spin spinning={busy} tip="Please wait...">
         <Item
           label="Table Name *"
           validateStatus={nameError ? 'error' : ''}

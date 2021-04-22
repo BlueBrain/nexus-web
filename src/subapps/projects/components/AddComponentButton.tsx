@@ -13,20 +13,18 @@ const AddComponentButton: React.FC<{
 }> = ({ addNewStep, addDataTable, addCode, addDataset }) => {
   const menu = (
     <Menu>
-      <Menu.Item onClick={addNewStep}>Canvas: Add a New Step</Menu.Item>
+      <Menu.Item onClick={addNewStep}>Canvas: Add New Step</Menu.Item>
       {addDataTable && (
-        <Menu.Item disabled onClick={addDataTable}>
-          Canvas: Add a Data Table
-        </Menu.Item>
+        <Menu.Item onClick={addDataTable}>Canvas: Add Data Table</Menu.Item>
       )}
       {addCode && (
         <Menu.Item disabled onClick={addCode}>
-          Project: Create a New Code Resource
+          Project: Create New Code Resource
         </Menu.Item>
       )}
       {addDataset && (
         <Menu.Item disabled onClick={addDataset}>
-          Project: Create a New Dataset Resource
+          Project: Create New Dataset Resource
         </Menu.Item>
       )}
     </Menu>

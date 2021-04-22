@@ -18,6 +18,7 @@ import AddComponentButton from '../components/AddComponentButton';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 import fusionConfig from '../config';
 import { StepResource, WorkflowStepMetadata } from '../types';
+import NewTableContainer from '../containers/NewTableContainer';
 
 import './WorkflowStepView.less';
 
@@ -44,6 +45,9 @@ const WorkflowStepView: React.FC = () => {
     { name: string; '@id': string }[]
   >([]);
   const [showStepForm, setShowStepForm] = React.useState<boolean>(false);
+  const [showNewTableForm, setShowNewTableForm] = React.useState<boolean>(
+    false
+  );
 
   const projectLabel = match?.params.projectLabel || '';
   const orgLabel = match?.params.orgLabel || '';
@@ -191,20 +195,18 @@ const WorkflowStepView: React.FC = () => {
       });
   };
 
+  const addNewTable = () => {
+    waitAntReload();
+    setShowNewTableForm(false);
+  };
+
   return (
     <div className="workflow-step-view">
       <AddComponentButton
         addNewStep={() => setShowStepForm(true)}
-        addDataTable={() => {}}
+        addDataTable={() => setShowNewTableForm(true)}
       />
-      <ProjectPanel
-        orgLabel={orgLabel}
-        projectLabel={projectLabel}
-        onUpdate={waitAntReload}
-        workflowStepLabel={step?.name}
-        workflowStepSelfUrl={step?._self}
-        siblings={siblings}
-      />
+      <ProjectPanel orgLabel={orgLabel} projectLabel={projectLabel} />
       <div className="workflow-step-view__panel">
         <Breadcrumbs crumbs={breadcrumbs} />
         {step && (
@@ -267,6 +269,21 @@ const WorkflowStepView: React.FC = () => {
           siblings={siblings}
           activityList={[]}
           parentLabel={step?.name}
+        />
+      </Modal>
+      <Modal
+        visible={showNewTableForm}
+        footer={null}
+        onCancel={() => setShowNewTableForm(false)}
+        width={400}
+        destroyOnClose={true}
+      >
+        <NewTableContainer
+          orgLabel={orgLabel}
+          projectLabel={projectLabel}
+          parentId={step?._self}
+          onClickClose={() => setShowNewTableForm(false)}
+          onSuccess={addNewTable}
         />
       </Modal>
     </div>
