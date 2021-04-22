@@ -167,7 +167,7 @@ const WorkflowStepView: React.FC = () => {
   };
 
   // TODO: find better sollution for this in future, for example, optimistic update
-  const waitAntReloadSteps = () => {
+  const waitAndReloadSteps = () => {
     const reloadTimer = setTimeout(() => {
       setRefreshSteps(!refreshSteps);
       clearTimeout(reloadTimer);
@@ -227,7 +227,7 @@ const WorkflowStepView: React.FC = () => {
       .then(() => {
         setShowStepForm(false);
         successNotification(`New step ${name} created successfully`);
-        waitAntReloadSteps();
+        waitAndReloadSteps();
       })
       .catch(error => {
         setShowStepForm(false);
@@ -267,7 +267,7 @@ const WorkflowStepView: React.FC = () => {
               orgLabel={orgLabel}
               projectLabel={projectLabel}
               step={substep}
-              onUpdate={waitAntReloadSteps}
+              onUpdate={waitAndReloadSteps}
             />
           ))}
         {step && tables && (
