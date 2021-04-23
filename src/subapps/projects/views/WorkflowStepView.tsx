@@ -50,6 +50,7 @@ const WorkflowStepView: React.FC = () => {
   const [showNewTableForm, setShowNewTableForm] = React.useState<boolean>(
     false
   );
+  const [showDataSetForm, setShowDataSetForm] = React.useState<boolean>(false);
 
   const projectLabel = match?.params.projectLabel || '';
   const orgLabel = match?.params.orgLabel || '';
@@ -244,11 +245,17 @@ const WorkflowStepView: React.FC = () => {
     setShowNewTableForm(false);
   };
 
+  const addNewDataset = () => {
+    // TODO: display Inputs in this view
+    setShowDataSetForm(false);
+  };
+
   return (
     <div className="workflow-step-view">
       <AddComponentButton
         addNewStep={() => setShowStepForm(true)}
         addDataTable={() => setShowNewTableForm(true)}
+        addDataset={() => setShowDataSetForm(true)}
       />
       <ProjectPanel orgLabel={orgLabel} projectLabel={projectLabel} />
       <div className="workflow-step-view__panel">
@@ -281,20 +288,30 @@ const WorkflowStepView: React.FC = () => {
               projectLabel={projectLabel}
               tables={tables}
             />
-            {/* TODO: update activities and inputs tables */}
+            {/* TODO: update activities table */}
             {/*
-           <ActivityResourcesContainer
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-              linkCodeToActivity={linkCodeToActivity}
-              workflowStep={step}
-            />
-            <InputsContainer
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-              stepId={step._self}
-            />
+            <ActivityResourcesContainer
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+                linkCodeToActivity={linkCodeToActivity}
+                workflowStep={step}
+              />
            */}
+            <Modal
+              title="Add Data Set"
+              visible={showDataSetForm}
+              onCancel={() => setShowDataSetForm(false)}
+              footer={null}
+              width={600}
+            >
+              <InputsContainer
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+                stepId={step._self}
+                onCancel={() => setShowDataSetForm(false)}
+                onSuccess={addNewDataset}
+              />
+            </Modal>
           </>
         )}
       </StepsBoard>

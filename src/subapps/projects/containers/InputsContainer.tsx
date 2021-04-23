@@ -14,9 +14,10 @@ const InputsContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
   stepId: string;
-}> = ({ orgLabel, projectLabel, stepId }) => {
+  onSuccess: () => void;
+  onCancel: () => void;
+}> = ({ orgLabel, projectLabel, stepId, onSuccess, onCancel }) => {
   const { inputs, fetchInputs } = useInputs(orgLabel, projectLabel, stepId);
-  const [showDataSetModal, setShowDataSet] = React.useState<boolean>(false);
   const [collection, setCollection] = useLocalStorage(DATASET_KEY);
   const nexus = useNexusContext();
   const [storages, setStorages] = React.useState<Storage[]>([]);
@@ -73,7 +74,7 @@ const InputsContainer: React.FC<{
         notification.success({
           message: 'Dataset created',
         });
-        setShowDataSet(false);
+        onSuccess();
       }
     } else {
       notification.info({ message: 'Please upload a file' });
@@ -192,73 +193,51 @@ const InputsContainer: React.FC<{
 
   return (
     <div className="inputs-container">
-      <Modal
-        title="Add Data Set"
-        visible={showDataSetModal}
-        onCancel={() => setShowDataSet(false)}
-        footer={null}
-        width={600}
-      >
-        <div className="dataset-container">
-          <div className="dataset-inputs">
-            <label>Name</label>
-            <Input
-              placeholder="<dataset_name>"
-              onChange={e => {
-                setDataSetName(e.target.value);
-              }}
-            ></Input>
-          </div>
-          <div className="dataset-inputs">
-            <label>Description</label>
-            <Input
-              style={{ margin: '0px 10px 0xp 10px' }}
-              placeholder="<dataset_description>"
-              onChange={e => {
-                setDataSetDescription(e.target.value);
-              }}
-            ></Input>
-          </div>
-
-          <FileUploader
-            {...{
-              onFileUpload,
-              projectLabel,
-              storages,
-              orgLabel,
-              makeFileLink: (nexusFile: NexusFile) =>
-                makeResourceUri(nexusFile['@id']),
-              goToFile: (nexusFile: NexusFile) => {},
+      <div className="dataset-container">
+        <div className="dataset-inputs">
+          <label>Name</label>
+          <Input
+            placeholder="<dataset_name>"
+            onChange={e => {
+              setDataSetName(e.target.value);
+            }}
+          ></Input>
+        </div>
+        <div className="dataset-inputs">
+          <label>Description</label>
+          <Input
+            style={{ margin: '0px 10px 0xp 10px' }}
+            placeholder="<dataset_description>"
+            onChange={e => {
+              setDataSetDescription(e.target.value);
             }}
           />
-          <div className="save-dataset">
-            <Button
-              onClick={() => {
-                setShowDataSet(false);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="primary"
-              onClick={() => {
-                saveDataSet();
-              }}
-            >
-              Save
-            </Button>
-          </div>
         </div>
-      </Modal>
-      <InputsTable inputs={inputs} />
-      <Button
-        className="save-button"
-        type="primary"
-        size="large"
-        onClick={() => setShowDataSet(true)}
-      >
-        Add Inputs
-      </Button>
+        <FileUploader
+          {...{
+            onFileUpload,
+            projectLabel,
+            storages,
+            orgLabel,
+            makeFileLink: (nexusFile: NexusFile) =>
+              makeResourceUri(nexusFile['@id']),
+            goToFile: (nexusFile: NexusFile) => {},
+          }}
+        />
+        <div className="save-dataset">
+          <Button onClick={onCancel}>Cancel</Button>
+          <Button
+            type="primary"
+            onClick={() => {
+              saveDataSet();
+            }}
+          >
+            Save
+          </Button>
+        </div>
+      </div>
+      {/* TODO: display in WF Step View when updated
+      <InputsTable inputs={inputs} /> */}
     </div>
   );
 };
