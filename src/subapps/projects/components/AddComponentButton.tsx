@@ -23,9 +23,7 @@ const AddComponentButton: React.FC<{
         </Menu.Item>
       )}
       {addDataset && (
-        <Menu.Item disabled onClick={addDataset}>
-          Project: Create New Dataset Resource
-        </Menu.Item>
+        <Menu.Item onClick={addDataset}>Project: Add New Dataset</Menu.Item>
       )}
     </Menu>
   );
