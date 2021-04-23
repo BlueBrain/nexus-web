@@ -117,7 +117,7 @@ const StepCard: React.FC<{
 
       incomingLine.setAttribute(
         'points',
-        `${x2},${y2} ${(x1 + x2) / 2}, ${(y1 + y2) / 2} ${x1},${y1}`
+        `${x2},${y2} ${(x1 + x2) / 2},${(y1 + y2) / 2} ${x1},${y1}`
       );
     }
   };
@@ -135,6 +135,7 @@ const StepCard: React.FC<{
 
     const selector = `[id$=-to-${stepId}]`;
     const outgoingLines = document.querySelectorAll(selector);
+
     const div1 = document.getElementById(`card-${stepId}`);
 
     if (outgoingLines.length > 0 && div1) {
