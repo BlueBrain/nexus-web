@@ -279,6 +279,7 @@ const WorkflowStepView: React.FC = () => {
               projectLabel={projectLabel}
               step={substep}
               onUpdate={waitAndReloadSteps}
+              parentLabel={step?.name}
             />
           ))}
         {step && tables && (

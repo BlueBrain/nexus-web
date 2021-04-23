@@ -15,7 +15,8 @@ const SingleStepContainer: React.FC<{
   orgLabel: string;
   step: StepResource;
   onUpdate: () => void;
-}> = ({ projectLabel, orgLabel, step, onUpdate }) => {
+  parentLabel?: string;
+}> = ({ projectLabel, orgLabel, step, onUpdate, parentLabel }) => {
   const nexus = useNexusContext();
   const [children, setChildren] = React.useState<any[]>([]);
   const [showAddForm, setShowAddForm] = React.useState<boolean>(false);
@@ -121,7 +122,7 @@ const SingleStepContainer: React.FC<{
           busy={busy}
           activityList={[]}
           informedByIds={[step._self]}
-          parentLabel={step.hasParent && step.hasParent['@id']}
+          parentLabel={parentLabel}
           siblings={[
             {
               name: step.name,
