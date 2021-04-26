@@ -1,11 +1,15 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Drawer, Button } from 'antd';
+import { Resource } from '@bbp/nexus-sdk';
+
 import { fetchChildrenForStep, fetchTopLevelSteps } from '../utils';
 import { displayError, successNotification } from '../components/Notifications';
 import { StepResource } from '../types';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 import fusionConfig from '../config';
+import MarkdownEditorComponent from '../../../shared/components/MarkdownEditor';
+import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
 
 const StepInfoContainer: React.FC<{
   step: StepResource;
@@ -23,6 +27,7 @@ const StepInfoContainer: React.FC<{
   const [siblings, setSiblings] = React.useState<
     { name: string; '@id': string }[]
   >([]);
+  const [isEditingDescription, setIsEditingDescription] = React.useState(false);
 
   React.useEffect(() => {
     nexus.Resource.getSource(
@@ -81,18 +86,42 @@ const StepInfoContainer: React.FC<{
     );
   };
 
+  const updateStepInfo = (data: any) => {
+    return nexus.Resource.update(
+      orgLabel,
+      projectLabel,
+      step['@id'],
+      step._rev,
+      {
+        ...originalPayload,
+        ...data,
+        '@type': fusionConfig.workflowStepType,
+      }
+    );
+  };
+
   const updateStep = (data: any) => {
-    nexus.Resource.update(orgLabel, projectLabel, step['@id'], step._rev, {
-      ...originalPayload,
-      ...data,
-      '@type': fusionConfig.workflowStepType,
-    })
+    updateStepInfo(data)
       .then(response => {
         onUpdate();
         setShowForm(false);
         successNotification(`Workflow Step ${data.name} updated successfully`);
       })
       .catch(error => displayError(error, 'Failed to update Workflow Step'));
+  };
+
+  const saveDescription = (value: string) => {
+    const data = {
+      description: value,
+    };
+
+    updateStepInfo(data)
+      .then(response => {
+        onUpdate();
+        setIsEditingDescription(false);
+        successNotification(`Workflow Step ${step.name} updated successfully`);
+      })
+      .catch(error => displayError(error, 'Failed to update description'));
   };
 
   return (
@@ -102,24 +131,54 @@ const StepInfoContainer: React.FC<{
         visible={showForm}
         destroyOnClose={true}
         onClose={() => setShowForm(false)}
-        title="Edit Workflow Step information"
+        title={step.name}
         placement="right"
         closable
         width={600}
       >
-        <WorkflowStepWithActivityForm
-          onClickCancel={() => setShowForm(false)}
-          onSubmit={updateStep}
-          busy={busy}
-          parentLabel={parentLabel}
-          informedByIds={informedByIds}
-          siblings={siblings}
-          layout="vertical"
-          workflowStep={step}
-          activityList={[]}
-          allowActivitySearch={false}
-          isFullForm
-        />
+        <div style={{ marginBottom: 40 }}>
+          <h3>Description</h3>
+          {isEditingDescription ? (
+            <MarkdownEditorComponent
+              resource={step as Resource}
+              readOnly={false}
+              loading={false}
+              onSave={saveDescription}
+              onCancel={() => setIsEditingDescription(false)}
+              markdownViewer={MarkdownViewerContainer}
+            />
+          ) : (
+            <MarkdownViewerContainer
+              template={step.description || ''}
+              data={step as Resource}
+            />
+          )}
+          {!isEditingDescription && (
+            <Button
+              type="primary"
+              onClick={() => setIsEditingDescription(!isEditingDescription)}
+            >
+              Edit Description
+            </Button>
+          )}
+        </div>
+        <div>
+          <h3>Edit Workflow Step Information</h3>
+          <WorkflowStepWithActivityForm
+            onClickCancel={() => setShowForm(false)}
+            onSubmit={updateStep}
+            busy={busy}
+            parentLabel={parentLabel}
+            informedByIds={informedByIds}
+            siblings={siblings}
+            layout="vertical"
+            workflowStep={step}
+            activityList={[]}
+            allowActivitySearch={false}
+            isFullForm
+            hideDescription
+          />
+        </div>
       </Drawer>
     </div>
   );
