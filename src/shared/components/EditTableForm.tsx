@@ -27,8 +27,8 @@ export const isEmptyInput = (value: string) => {
 };
 
 export enum ViewOptions {
-  SPARQL_VIEW = 'nxv:defaultSparqlIndex',
-  ES_VIEW = 'nxv:defaultElasticSearchIndex',
+  SPARQL_VIEW = 'graph',
+  ES_VIEW = 'documents',
 }
 
 export type TableColumn = {
@@ -65,7 +65,7 @@ const { Option } = Select;
 const EditTableForm: React.FC<{
   onSave: (data: TableComponent) => void;
   onClose: () => void;
-  table: any;
+  table: TableComponent;
   busy: boolean;
   orgLabel: string;
   projectLabel: string;
@@ -167,6 +167,9 @@ const EditTableForm: React.FC<{
     if (isEmptyInput(name)) {
       setNameError(true);
     } else {
+      console.log('-------------');
+      console.log(configuration);
+      console.log('-------------');
       const data = {
         ...table,
         name,
@@ -216,24 +219,6 @@ const EditTableForm: React.FC<{
     [configuration]
   );
 
-  const renderColumnConfig = () => {
-    return Array.isArray(configuration) ? (
-      configuration
-        .sort((a, b) => (a.name > b.name ? 1 : -1))
-        .map((column: TableColumn) => {
-          return (
-            <ColumnConfig
-              column={column}
-              onChange={updateColumnConfigArray}
-              key={column.name}
-            />
-          );
-        })
-    ) : (
-      <ColumnConfig column={configuration} onChange={updateColumnConfig} />
-    );
-  };
-
   const updateColumnConfig = React.useMemo(
     () => (name: string, data: any) => {
       const updatedColumn = {
@@ -244,6 +229,26 @@ const EditTableForm: React.FC<{
       setConfiguration(updatedColumn);
     },
     [configuration]
+  );
+
+  const renderColumnConfig = React.useMemo(
+    () => () => {
+      return Array.isArray(configuration) ? (
+        configuration.map((column: TableColumn) => {
+          console.log(column);
+          return (
+            <ColumnConfig
+              column={column}
+              onChange={updateColumnConfigArray}
+              key={column.name}
+            />
+          );
+        })
+      ) : (
+        <ColumnConfig column={configuration} onChange={updateColumnConfig} />
+      );
+    },
+    [configuration, updateColumConfig, updateColumnConfigArray]
   );
 
   return (

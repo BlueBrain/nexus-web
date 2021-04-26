@@ -29,7 +29,7 @@ const NewTableContainer: React.FC<{
       tableOf: {
         '@id': parentId,
       },
-      view: 'nxv:defaultSparqlIndex',
+      view: 'graph',
       enableSearch: true,
       enableInteractiveRows: true,
       enableDownload: true,

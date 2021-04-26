@@ -83,7 +83,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
 
   const getNewResource = async () => {
     if (expanded) {
-      return await nexus.Resource.get(
+      const expandedResource = (await nexus.Resource.get(
         orgLabel,
         projectLabel,
         encodeURIComponent(resourceId),
@@ -91,7 +91,8 @@ const ResourceEditorContainer: React.FunctionComponent<{
           rev,
           format: 'expanded',
         }
-      );
+      )) as ExpandedResource[];
+      return expandedResource[0];
     }
     if (showMetadata) {
       return await nexus.Resource.get(
@@ -112,6 +113,41 @@ const ResourceEditorContainer: React.FunctionComponent<{
     );
   };
 
+<<<<<<< HEAD
+=======
+  useAsyncEffect(
+    async isMounted => {
+      if (!isMounted()) {
+        return;
+      }
+      try {
+        setResource({
+          resource,
+          error: null,
+          busy: true,
+        });
+
+        const newResource = await getNewResource();
+        console.log(newResource);
+
+        setResource({
+          resource: newResource,
+          error: null,
+          busy: false,
+        });
+      } catch (error) {
+        console.log(error);
+        setResource({
+          error,
+          resource,
+          busy: false,
+        });
+      }
+    },
+    [resourceId, projectLabel, orgLabel, rev, expanded, showMetadata]
+  );
+
+>>>>>>> Fix issue  with expanded resources
   return (
     resource && (
       <ResourceEditor

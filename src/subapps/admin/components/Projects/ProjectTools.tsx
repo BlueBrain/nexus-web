@@ -31,12 +31,12 @@ const ProjectTools: React.FC<{
           />
         </AccessControl>
         <Link
-          to={`/${subApp.namespace}/${orgLabel}/${projectLabel}/nxv:defaultSparqlIndex/sparql`}
+          to={`/${subApp.namespace}/${orgLabel}/${projectLabel}/graph/sparql`}
         >
           Sparql Query Editor
         </Link>
         <Link
-          to={`/${subApp.namespace}/${orgLabel}/${projectLabel}/nxv:defaultElasticSearchIndex/_search`}
+          to={`/${subApp.namespace}/${orgLabel}/${projectLabel}/documents/_search`}
         >
           ElasticSearch Query Editor
         </Link>

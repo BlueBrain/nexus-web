@@ -106,7 +106,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
 
   const versions: any = useNexus<any>((nexus: NexusClient) =>
     nexus.httpGet({
-      path: `${apiBase}/version`,
+      path: `${apiBase}/v1/version`,
       context: { as: 'json' },
     })
   );

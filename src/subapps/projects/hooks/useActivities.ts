@@ -29,7 +29,7 @@ export const useLinkedActivities = (
   const [items, setItems] = React.useState<any[]>();
   const [headerProperties, setHeaderProperties] = React.useState<any[]>([]);
 
-  const viewId = 'nxv:defaultSparqlIndex';
+  const viewId = 'graph';
 
   const activitiesQuery = `
     PREFIX nxv: <https://bluebrain.github.io/nexus/vocabulary/>

@@ -180,8 +180,9 @@ const ResourceViewContainer: React.FunctionComponent<{
           format: 'expanded',
         });
       })
-      .then(resource => {
-        expandedResource = resource;
+      .then(resources => {
+        console.log(resources);
+        expandedResource = resources[0];
 
         setResource({
           // Note: we must fetch the proper, expanded @id. The @id that comes from a normal request or from the URL
