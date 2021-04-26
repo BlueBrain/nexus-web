@@ -42,6 +42,7 @@ const WorkflowStepContainer: React.FC<{
         orgLabel,
         projectLabel
       )) as StepResource[];
+
       setSteps(allSteps);
     } catch (e) {
       displayError(e, 'Failed to fetch workflow steps');

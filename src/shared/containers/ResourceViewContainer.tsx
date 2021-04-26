@@ -181,7 +181,6 @@ const ResourceViewContainer: React.FunctionComponent<{
         });
       })
       .then(resources => {
-        console.log(resources);
         expandedResource = resources[0];
 
         setResource({

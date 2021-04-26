@@ -58,7 +58,7 @@ const WorkflowStepView: React.FC = () => {
   const stepId = match?.params.stepId || '';
 
   React.useEffect(() => {
-    nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(stepId))
+    nexus.Resource.get(orgLabel, projectLabel, stepId)
       .then(response => {
         setStep(response as StepResource);
         fetchBreadcrumbs(
@@ -78,31 +78,32 @@ const WorkflowStepView: React.FC = () => {
   }, [refreshTables, stepId]);
 
   const fetchTables = async () => {
-    await nexus.Resource.links(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(stepId),
-      'incoming'
-    )
-      .then(response =>
+    await nexus.Resource.links(orgLabel, projectLabel, stepId, 'incoming')
+      .then(response => {
+        // There may be duplicates in the link.
+        const uniq = [
+          ...new Set(
+            response._results
+              .filter(link => isTable(link))
+              .map(link => link['@id'])
+          ),
+        ];
         Promise.all(
-          response._results
-            .filter(link => isTable(link))
-            .map(link => {
-              return nexus.Resource.get(
-                orgLabel,
-                projectLabel,
-                encodeURIComponent(link['@id'])
-              );
-            })
+          uniq.map(link => {
+            return nexus.Resource.get(
+              orgLabel,
+              projectLabel,
+              encodeURIComponent(link)
+            );
+          })
         )
           .then(response => {
             setTables(response);
           })
           .catch(error => {
             displayError(error, 'Failed to load tables');
-          })
-      )
+          });
+      })
       .catch(error => {
         displayError(error, 'Failed to load tables');
       });
@@ -126,7 +127,9 @@ const WorkflowStepView: React.FC = () => {
 
   const stepToBreadcrumbItem = (step: StepResource) => ({
     label: step.name,
-    url: `/workflow/${orgLabel}/${projectLabel}/${step['@id']}`,
+    url: `/workflow/${orgLabel}/${projectLabel}/${encodeURIComponent(
+      step['@id']
+    )}`,
   });
 
   const fetchBreadcrumbs = (

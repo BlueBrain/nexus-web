@@ -113,41 +113,6 @@ const ResourceEditorContainer: React.FunctionComponent<{
     );
   };
 
-<<<<<<< HEAD
-=======
-  useAsyncEffect(
-    async isMounted => {
-      if (!isMounted()) {
-        return;
-      }
-      try {
-        setResource({
-          resource,
-          error: null,
-          busy: true,
-        });
-
-        const newResource = await getNewResource();
-        console.log(newResource);
-
-        setResource({
-          resource: newResource,
-          error: null,
-          busy: false,
-        });
-      } catch (error) {
-        console.log(error);
-        setResource({
-          error,
-          resource,
-          busy: false,
-        });
-      }
-    },
-    [resourceId, projectLabel, orgLabel, rev, expanded, showMetadata]
-  );
-
->>>>>>> Fix issue  with expanded resources
   return (
     resource && (
       <ResourceEditor

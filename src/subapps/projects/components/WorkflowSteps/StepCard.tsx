@@ -246,7 +246,11 @@ const StepCard: React.FC<{
                     </Form.Item>
                   </Form>
                 ) : (
-                  <Link to={`/workflow/${orgLabel}/${projectLabel}/${stepId}`}>
+                  <Link
+                    to={`/workflow/${orgLabel}/${projectLabel}/${encodeURIComponent(
+                      stepId
+                    )}`}
+                  >
                     {name.length > MAX_TITLE_LENGTH ? (
                       <Tooltip placement="topRight" title={name}>
                         <h3 className="step-card__name">

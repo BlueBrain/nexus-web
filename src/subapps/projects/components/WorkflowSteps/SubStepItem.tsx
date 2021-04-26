@@ -20,7 +20,11 @@ const SubActivityItem: React.FC<{
     <div className="substep-item">
       <StatusIcon status={status} mini={true} />
       <div className="substep-item__content">
-        <Link to={`/workflow/${orgLabel}/${projectLabel}/${substep['@id']}`}>
+        <Link
+          to={`/workflow/${orgLabel}/${projectLabel}/${encodeURIComponent(
+            substep['@id']
+          )}`}
+        >
           {name.length > MAX_TITLE_LENGTH ? (
             <Tooltip placement="topRight" title={name}>
               <h3 className="substep-item__title">

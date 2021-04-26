@@ -10,8 +10,9 @@ export const fusionConfig = {
   personalOrgPrefix: 'fusion-',
 
   // resource types
-  workflowStepType: 'nxv:WorkflowStep',
-  activityWorkflowLink: 'nxv:activities',
+  workflowStepType: 'https://bluebrain.github.io/nexus/vocabulary/WorkflowStep',
+  activityWorkflowLink:
+    'https://bluebrain.github.io/nexus/vocabulary/activities',
   templateType: 'FusionTemplate',
   activityType: 'prov:Activity',
   projectMetadataType: 'FusionMetadata',
@@ -41,6 +42,10 @@ export const fusionConfig = {
     {
       prefix: 'schemaorg',
       namespace: 'http://schema.org/',
+    },
+    {
+      prefix: 'nxv',
+      namespace: 'https://bluebrain.github.io/nexus/vocabulary',
     },
   ],
 };

@@ -26,6 +26,9 @@ const ProjectMetaContaier: React.FC<{
 
   React.useEffect(() => {
     fetchProjectMetadata();
+    nexus.Resource.list(orgLabel, projectLabel, {
+      type: 'nxv:View',
+    }).then(x => console.log(x));
   }, [orgLabel, projectLabel]);
 
   const fetchProjectMetadata = () => {

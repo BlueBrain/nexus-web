@@ -90,7 +90,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
 
   const viewData = useAsyncCall<View, Error>(
     nexus.View.get(orgLabel, projectLabel, viewId),
-    [orgLabel, projectLabel, viewId]
+    [orgLabel, projectLabel, encodeURIComponent(viewId)]
   );
 
   return (

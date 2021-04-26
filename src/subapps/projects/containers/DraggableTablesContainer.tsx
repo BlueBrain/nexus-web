@@ -48,7 +48,7 @@ const DraggableTablesContainer: React.FC<{
           <DraggableTable
             table={table}
             onPostionChange={onPostionChange}
-            key={`table-${table['@id']}}`}
+            key={`drag-table-${table['@id']}}`}
           >
             <div
               key={`table-${table['@id']}`}
@@ -58,6 +58,7 @@ const DraggableTablesContainer: React.FC<{
                 orgLabel={orgLabel}
                 projectLabel={projectLabel}
                 tableResourceId={table['@id']}
+                key={`data-table-${table['@id']}}`}
               />
             </div>
           </DraggableTable>

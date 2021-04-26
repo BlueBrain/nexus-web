@@ -23,6 +23,7 @@ export default function useAsyncCall<T, E>(
       data: (keepDataOnLoading && remoteCall.data) || null,
       error: null,
     });
+
     remoteAction
       .then(data => {
         setRemoteCall({

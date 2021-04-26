@@ -167,9 +167,6 @@ const EditTableForm: React.FC<{
     if (isEmptyInput(name)) {
       setNameError(true);
     } else {
-      console.log('-------------');
-      console.log(configuration);
-      console.log('-------------');
       const data = {
         ...table,
         name,
