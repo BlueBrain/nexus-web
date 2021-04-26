@@ -1061,15 +1061,7 @@ exports[`Project Form component should render correctly 1`] = `
                                               removeOnLeave={false}
                                               visible={false}
                                             >
-                                              <DomWrapper>
-                                                <PanelContent
-                                                  className="ant-collapse-content-hidden"
-                                                  forceRender={false}
-                                                  isActive={false}
-                                                  prefixCls="ant-collapse"
-                                                  role={null}
-                                                />
-                                              </DomWrapper>
+                                              <DomWrapper />
                                             </CSSMotion>
                                           </div>
                                         </CollapsePanel>

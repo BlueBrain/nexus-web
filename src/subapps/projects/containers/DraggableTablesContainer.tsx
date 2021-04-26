@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import Draggable from 'react-draggable';
 
@@ -21,18 +22,22 @@ const DraggableTablesContainer: React.FC<{
   ) => {
     table.positionX = position.positionX;
     table.positionY = position.positionY;
-
-    await nexus.Resource.update(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(table['@id']),
-      table._rev,
-      table
-    )
-      .then(() => {
-        // do nothing
-      })
-      .catch(error => displayError(error, 'Failed to save new position'));
+    try {
+      const latest = (await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(table['@id'])
+      )) as Resource;
+      const update = await nexus.Resource.update(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(table['@id']),
+        latest._rev,
+        { ...latest, ...table }
+      );
+    } catch (error) {
+      displayError(error, 'Failed to save new position');
+    }
   };
 
   return (
