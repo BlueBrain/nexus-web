@@ -71,13 +71,18 @@ const DataTableContainer: React.FC<DataTableProps> = ({
       });
   };
 
-  const updateTable = (data: TableComponent) => {
+  const updateTable = async (data: TableComponent) => {
+    const latest = (await nexus.Resource.get(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(data['@id'])
+    )) as Resource;
     return nexus.Resource.update(
       orgLabel,
       projectLabel,
       encodeURIComponent(data['@id']),
-      data._rev,
-      data
+      latest._rev,
+      { ...latest, ...data }
     );
   };
 
@@ -85,6 +90,11 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     onMutate: (data: TableResource) => {},
     onSuccess: data => {
       setShowEditForm(false);
+    },
+    onError: error => {
+      notification.error({
+        message: 'Failed to save table data',
+      });
     },
   });
 
