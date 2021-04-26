@@ -38,6 +38,7 @@ const WorkflowStepWithActivityForm: React.FC<{
   allowActivitySearch?: boolean;
   defaultActivityType?: string;
   isFullForm?: boolean;
+  hideDescription?: boolean;
 }> = ({
   onClickCancel,
   onSubmit,
@@ -49,6 +50,7 @@ const WorkflowStepWithActivityForm: React.FC<{
   informedByIds,
   siblings,
   isFullForm,
+  hideDescription = false,
 }) => {
   const [name, setName] = React.useState<string>(
     (workflowStep && workflowStep.name) || ''
@@ -220,12 +222,14 @@ const WorkflowStepWithActivityForm: React.FC<{
                   ))}
                 </Radio.Group>
               </Item>
-              <Item label="Description">
-                <Input.TextArea
-                  value={description}
-                  onChange={onChangeDescription}
-                />
-              </Item>
+              {!hideDescription && (
+                <Item label="Description">
+                  <Input.TextArea
+                    value={description}
+                    onChange={onChangeDescription}
+                  />
+                </Item>
+              )}
               <Item label="Summary">
                 <Input.TextArea
                   value={summary}
