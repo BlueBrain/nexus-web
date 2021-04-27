@@ -76,6 +76,7 @@ const EditTableForm: React.FC<{
     table.description
   );
   const [view, setView] = React.useState<string>(table.view);
+  const [preview, setPreview] = React.useState<boolean>(false);
   const [enableSearch, setEnableSearch] = React.useState<boolean>(
     table.enableSearch
   );
@@ -145,6 +146,7 @@ const EditTableForm: React.FC<{
       onError: error => {
         console.error(error);
       },
+      enabled: preview,
     }
   );
 
@@ -184,6 +186,7 @@ const EditTableForm: React.FC<{
   };
 
   const onClickPreview = () => {
+    setPreview(true);
     setDataQuery(queryCopy);
   };
 
@@ -208,6 +211,22 @@ const EditTableForm: React.FC<{
     },
     [configuration]
   );
+
+  const renderColumnConfig = () => {
+    return Array.isArray(configuration) ? (
+      configuration.map((column: TableColumn) => {
+        return (
+          <ColumnConfig
+            column={column}
+            onChange={updateColumnConfigArray}
+            key={column.name}
+          />
+        );
+      })
+    ) : (
+      <ColumnConfig column={configuration} onChange={updateColumnConfig} />
+    );
+  };
 
   const updateColumnConfig = React.useMemo(
     () => (name: string, data: any) => {
@@ -363,22 +382,7 @@ const EditTableForm: React.FC<{
         <div className="edit-table-form__config">
           <h3>Columns configuration</h3>
 
-          {Array.isArray(configuration) ? (
-            configuration.map((column: TableColumn) => {
-              return (
-                <ColumnConfig
-                  column={column}
-                  onChange={updateColumnConfigArray}
-                  key={column.name}
-                />
-              );
-            })
-          ) : (
-            <ColumnConfig
-              column={configuration}
-              onChange={updateColumnConfig}
-            />
-          )}
+          {renderColumnConfig()}
         </div>
         <div className="edit-table-form__buttons">
           <Button style={{ margin: '10px' }} onClick={onClose}>
