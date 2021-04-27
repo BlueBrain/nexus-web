@@ -130,14 +130,18 @@ const EditTableForm: React.FC<{
       }
       const result = await querySparql(nexus, dataQuery, viewResource);
 
-      return result.headerProperties.map(x => ({
-        '@type': 'text',
-        name: x.dataIndex,
-        format: '',
-        enableSearch: false,
-        enableSort: false,
-        enableFilter: false,
-      }));
+      return result.headerProperties
+        .sort((a, b) => {
+          return a.title > b.title ? 1 : -1;
+        })
+        .map(x => ({
+          '@type': 'text',
+          name: x.dataIndex,
+          format: '',
+          enableSearch: false,
+          enableSort: false,
+          enableFilter: false,
+        }));
     },
     {
       onSuccess: data => {
@@ -214,15 +218,17 @@ const EditTableForm: React.FC<{
 
   const renderColumnConfig = () => {
     return Array.isArray(configuration) ? (
-      configuration.map((column: TableColumn) => {
-        return (
-          <ColumnConfig
-            column={column}
-            onChange={updateColumnConfigArray}
-            key={column.name}
-          />
-        );
-      })
+      configuration
+        .sort((a, b) => (a.name > b.name ? 1 : -1))
+        .map((column: TableColumn) => {
+          return (
+            <ColumnConfig
+              column={column}
+              onChange={updateColumnConfigArray}
+              key={column.name}
+            />
+          );
+        })
     ) : (
       <ColumnConfig column={configuration} onChange={updateColumnConfig} />
     );
