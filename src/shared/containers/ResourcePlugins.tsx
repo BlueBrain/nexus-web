@@ -54,12 +54,7 @@ const ResourcePlugins: React.FunctionComponent<{
     : [];
 
   return filteredPlugins && filteredPlugins.length > 0 ? (
-    <Collapse
-      defaultActiveKey={[...Array(filteredPlugins.length).keys()].map(i =>
-        (i + 1).toString()
-      )}
-      onChange={() => {}}
-    >
+    <Collapse onChange={() => {}}>
       {pluginDataMap.map((pluginData, index) => {
         return pluginData ? (
           <Panel

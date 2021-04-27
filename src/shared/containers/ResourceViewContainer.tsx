@@ -307,7 +307,6 @@ const ResourceViewContainer: React.FunctionComponent<{
                         resource={resource}
                         latestResource={latestResource}
                         activeTabKey={activeTabKey}
-                        defaultActiveKey={'1'}
                         expandedFromQuery={expandedFromQuery}
                         refProp={ref}
                         goToResource={goToResource}
@@ -336,7 +335,6 @@ const ResourceViewContainer: React.FunctionComponent<{
                   resource={resource}
                   latestResource={latestResource}
                   activeTabKey={activeTabKey}
-                  defaultActiveKey={'1'}
                   expandedFromQuery={expandedFromQuery}
                   refProp={ref}
                   goToResource={goToResource}

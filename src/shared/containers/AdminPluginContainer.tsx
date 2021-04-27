@@ -21,7 +21,6 @@ type AdminProps = {
   resource: Resource;
   latestResource: Resource;
   activeTabKey: string;
-  defaultActiveKey: string;
   expandedFromQuery: string | string[] | null | undefined;
   refProp: React.MutableRefObject<HTMLDivElement>;
   goToResource: (
@@ -48,7 +47,6 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
   resource,
   latestResource,
   activeTabKey,
-  defaultActiveKey,
   expandedFromQuery,
   refProp: ref,
   goToResource,
@@ -58,7 +56,7 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
   handleExpanded,
 }) => {
   return (
-    <Collapse defaultActiveKey={defaultActiveKey} onChange={() => {}}>
+    <Collapse onChange={() => {}}>
       <Panel header="Admin" key="1">
         <ResourceActionsContainer resource={resource} />
         <ResourceMetadata
