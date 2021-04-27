@@ -2,7 +2,16 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, View, SparqlView } from '@bbp/nexus-sdk';
 import { useHistory, useLocation } from 'react-router-dom';
 import * as React from 'react';
-import { Table, Button, Input, Space, Spin, Modal, notification } from 'antd';
+import {
+  Tag,
+  Table,
+  Button,
+  Input,
+  Space,
+  Spin,
+  Modal,
+  notification,
+} from 'antd';
 import '../styles/data-table.less';
 import { useAccessDataForTable } from '../hooks/useAccessDataForTable';
 import EditTableForm, { TableComponent } from '../components/EditTableForm';
@@ -112,6 +121,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     return (
       <div className="data-table-controls">
         <Space align="center" direction="horizontal" size="large">
+          {tableResource.name}{' '}
           <Button
             onClick={() => {
               setShowEditForm(true);
@@ -158,6 +168,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
         <>
           <Table
             bordered
+            rowClassName={'data-table-row'}
             title={renderTitle}
             columns={tableData.dataResult.data?.headerProperties}
             dataSource={tableData.dataResult.data?.items}
