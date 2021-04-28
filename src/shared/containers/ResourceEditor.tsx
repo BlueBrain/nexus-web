@@ -14,6 +14,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
   defaultEditable?: boolean;
   onSubmit: (value: object) => void;
   onExpanded?: (expanded: boolean) => void;
+  tabChange?: boolean;
 }> = ({
   resourceId,
   orgLabel,
@@ -23,6 +24,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
   defaultExpanded = false,
   onSubmit,
   onExpanded,
+  tabChange,
 }) => {
   const nexus = useNexusContext();
   const [expanded, setExpanded] = React.useState(defaultExpanded);
@@ -36,6 +38,34 @@ const ResourceEditorContainer: React.FunctionComponent<{
     resource: null,
     error: null,
   });
+
+  React.useEffect(() => {
+    setResource({
+      resource,
+      error: null,
+      busy: true,
+    });
+
+    getNewResource()
+      .then(response =>
+        setResource({
+          resource: response,
+          error: null,
+          busy: false,
+        })
+      )
+      .catch(error => {
+        // do smth
+      });
+  }, [
+    resourceId,
+    projectLabel,
+    orgLabel,
+    rev,
+    expanded,
+    showMetadata,
+    tabChange,
+  ]);
 
   const handleFormatChange = () => {
     onExpanded && onExpanded(!expanded);
