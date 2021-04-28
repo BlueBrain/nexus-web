@@ -4,6 +4,7 @@ import { ExpandedResource, ResourceSource, Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import ResourceEditor from '../components/ResourceEditor';
+import { displayError } from '../../subapps/projects/components/Notifications';
 
 const ResourceEditorContainer: React.FunctionComponent<{
   resourceId: string;
@@ -55,7 +56,12 @@ const ResourceEditorContainer: React.FunctionComponent<{
         })
       )
       .catch(error => {
-        // do smth
+        displayError(error, 'Failed to load JSON payload');
+        setResource({
+          resource: null,
+          error,
+          busy: false,
+        });
       });
   }, [
     resourceId,
@@ -106,36 +112,6 @@ const ResourceEditorContainer: React.FunctionComponent<{
       { rev }
     );
   };
-
-  useAsyncEffect(
-    async isMounted => {
-      if (!isMounted()) {
-        return;
-      }
-      try {
-        setResource({
-          resource,
-          error: null,
-          busy: true,
-        });
-
-        const newResource = await getNewResource();
-
-        setResource({
-          resource: newResource,
-          error: null,
-          busy: false,
-        });
-      } catch (error) {
-        setResource({
-          error,
-          resource,
-          busy: false,
-        });
-      }
-    },
-    [resourceId, projectLabel, orgLabel, rev, expanded, showMetadata]
-  );
 
   return (
     resource && (
