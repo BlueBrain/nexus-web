@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useAsyncEffect } from 'use-async-effect';
 import { ExpandedResource, ResourceSource, Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import ResourceEditor from '../components/ResourceEditor';
+import { displayError } from '../../subapps/projects/components/Notifications';
 
 const ResourceEditorContainer: React.FunctionComponent<{
   resourceId: string;
@@ -14,6 +14,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
   defaultEditable?: boolean;
   onSubmit: (value: object) => void;
   onExpanded?: (expanded: boolean) => void;
+  tabChange?: boolean;
 }> = ({
   resourceId,
   orgLabel,
@@ -23,6 +24,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
   defaultExpanded = false,
   onSubmit,
   onExpanded,
+  tabChange,
 }) => {
   const nexus = useNexusContext();
   const [expanded, setExpanded] = React.useState(defaultExpanded);
@@ -36,6 +38,39 @@ const ResourceEditorContainer: React.FunctionComponent<{
     resource: null,
     error: null,
   });
+
+  React.useEffect(() => {
+    setResource({
+      resource,
+      error: null,
+      busy: true,
+    });
+
+    getNewResource()
+      .then(response =>
+        setResource({
+          resource: response,
+          error: null,
+          busy: false,
+        })
+      )
+      .catch(error => {
+        displayError(error, 'Failed to load JSON payload');
+        setResource({
+          error,
+          resource: null,
+          busy: false,
+        });
+      });
+  }, [
+    resourceId,
+    projectLabel,
+    orgLabel,
+    rev,
+    expanded,
+    showMetadata,
+    tabChange,
+  ]);
 
   const handleFormatChange = () => {
     onExpanded && onExpanded(!expanded);
@@ -76,36 +111,6 @@ const ResourceEditorContainer: React.FunctionComponent<{
       { rev }
     );
   };
-
-  useAsyncEffect(
-    async isMounted => {
-      if (!isMounted()) {
-        return;
-      }
-      try {
-        setResource({
-          resource,
-          error: null,
-          busy: true,
-        });
-
-        const newResource = await getNewResource();
-
-        setResource({
-          resource: newResource,
-          error: null,
-          busy: false,
-        });
-      } catch (error) {
-        setResource({
-          error,
-          resource,
-          busy: false,
-        });
-      }
-    },
-    [resourceId, projectLabel, orgLabel, rev, expanded, showMetadata]
-  );
 
   return (
     resource && (

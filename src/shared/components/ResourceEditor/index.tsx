@@ -117,8 +117,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         <div>
           {!editable && (
             <div className="feedback">
-              <InfoCircleOutlined />
-              This resource cannot be edited
+              <InfoCircleOutlined /> This resource cannot be edited
             </div>
           )}
           {editable && !isEditing && valid && (

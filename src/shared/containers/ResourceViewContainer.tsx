@@ -293,9 +293,9 @@ const ResourceViewContainer: React.FunctionComponent<{
                 noAccessComponent={() => (
                   <div>
                     <div>
-                      <p>
+                      <p style={{ marginTop: 15 }}>
                         <Alert
-                          message="This resource does not have plugins configured yet, and you don't have access to edit the resource. You can nonetheless see the resource metadata below."
+                          message="You don't have access to edit the resource. You can nonetheless see the resource metadata below."
                           type="info"
                         />
                       </p>
@@ -307,7 +307,6 @@ const ResourceViewContainer: React.FunctionComponent<{
                         resource={resource}
                         latestResource={latestResource}
                         activeTabKey={activeTabKey}
-                        defaultActiveKey={'1'}
                         expandedFromQuery={expandedFromQuery}
                         refProp={ref}
                         goToResource={goToResource}
@@ -336,7 +335,6 @@ const ResourceViewContainer: React.FunctionComponent<{
                   resource={resource}
                   latestResource={latestResource}
                   activeTabKey={activeTabKey}
-                  defaultActiveKey={'1'}
                   expandedFromQuery={expandedFromQuery}
                   refProp={ref}
                   goToResource={goToResource}
