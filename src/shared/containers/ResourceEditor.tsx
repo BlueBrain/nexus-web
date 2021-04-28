@@ -57,8 +57,8 @@ const ResourceEditorContainer: React.FunctionComponent<{
       .catch(error => {
         displayError(error, 'Failed to load JSON payload');
         setResource({
-          resource: null,
           error,
+          resource: null,
           busy: false,
         });
       });
