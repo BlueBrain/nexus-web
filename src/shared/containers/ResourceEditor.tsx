@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useAsyncEffect } from 'use-async-effect';
 import { ExpandedResource, ResourceSource, Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
