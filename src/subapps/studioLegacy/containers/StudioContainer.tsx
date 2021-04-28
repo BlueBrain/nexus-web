@@ -9,6 +9,7 @@ import { StudioContext } from '../views/StudioView';
 import WorkspaceList from '../containers/WorkspaceListContainer';
 import { saveImage } from '../../../shared/containers/MarkdownEditorContainer';
 import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
+import { getDestinationParam } from '../../../shared/utils';
 
 const resourcesWritePermissionsWrapper = (
   child: React.ReactNode,
@@ -21,11 +22,6 @@ const resourcesWritePermissionsWrapper = (
     children: [child],
   });
 };
-
-function getDestinationParam(): string {
-  const destinationPath = encodeURIComponent(window.location.pathname.slice(1));
-  return destinationPath ? `?destination=${destinationPath}` : '';
-}
 
 type StudioResource = Resource<{
   label: string;
