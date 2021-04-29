@@ -9,7 +9,7 @@ const requireLogin = false;
 const description =
   'Search through data added to Nexus Delta by you and others';
 const subAppType = 'internal';
-const version = 'β'; // beta
+const version = 'β';
 
 const subappProps = {
   subAppType,
