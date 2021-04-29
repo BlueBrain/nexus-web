@@ -9,6 +9,7 @@ const requireLogin = false;
 const description =
   'Search through data added to Nexus Delta by you and others';
 const subAppType = 'internal';
+const version = 'β'; // beta
 
 const subappProps = {
   subAppType,
@@ -17,12 +18,14 @@ const subappProps = {
   icon,
   requireLogin,
   description,
+  version,
 };
 
 export const SearchSubappContext = React.createContext<{
   title: string;
   namespace: string;
   icon: string;
+  version: string;
 }>(subappProps);
 
 export function useSubappContext() {

@@ -78,7 +78,12 @@ const SideMenu: React.FC<{
               <Menu.Item key={subApp.key}>
                 <div className="side-menu__menu-item">
                   <img className="side-menu__menu-icon" src={subApp.icon} />
-                  {!collapsed && <span>{subApp.label}</span>}
+                  {!collapsed && (
+                    <span>
+                      {subApp.label}
+                      {subApp.version && <sup> {subApp.version}</sup>}
+                    </span>
+                  )}
                 </div>
                 {selectedItem.key === subApp.key && (
                   <div

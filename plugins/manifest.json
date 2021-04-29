@@ -1,1 +1,156 @@
-{}
+{
+  "circuit": {
+    "modulePath": "circuit.daf2af3b0048e48eeba1.js",
+    "name": "Circuit",
+    "description": "Displays circuit details",
+    "version": "0.0.2",
+    "tags": [],
+    "author": "NSE(Neuroscientific Software Engineering) <bbp-ou-nse@groupes.epfl.ch>",
+    "license": "BSD-3-Clause",
+    "mapping": {
+      "@type": ["DetailedCircuit"]
+    },
+    "displayPriority": "2"
+  },
+  "image-collection-viewer": {
+    "modulePath": "image-collection-viewer.ada527022b3afb08c08c.js",
+    "name": "Image Gallery",
+    "description": "View image files in Nexus Web",
+    "version": "1.2.0",
+    "tags": [],
+    "author": "Dhanesh Neela Mana <dhanesh.neelamana@epfl.ch>",
+    "license": "ISC",
+    "mapping": [
+      {
+        "image": {}
+      },
+      {
+        "distribution": {
+          "@type": "File",
+          "_mediaType": ["image/*"]
+        }
+      }
+    ],
+    "displayPriority": "2"
+  },
+  "markdown": {
+    "modulePath": "markdown.ae466160044b1ca4d75e.js",
+    "name": "Description",
+    "description": "View decriptions written in markdown",
+    "version": "1.0.0",
+    "tags": [],
+    "author": "Kenneth Pirman <kenneth.pirman@epfl.ch>",
+    "license": "ISC",
+    "mapping": {
+      "description": {}
+    },
+    "displayPriority": "1"
+  },
+  "metadata": {
+    "modulePath": "metadata.95e877e9b35332bc1dfa.js",
+    "name": "Metadata",
+    "description": "View MINDS metadata in a table",
+    "version": "1.0.0",
+    "tags": [],
+    "author": "Kenneth Pirman <kenneth.pirman@epfl.ch>",
+    "license": "ISC",
+    "mapping": {
+      "@type": ["Entity", "Dataset"]
+    },
+    "displayPriority": "1"
+  },
+  "neuron-electrophysiology": {
+    "modulePath": "neuron-electrophysiology.d11fc386e55fae292728.js",
+    "name": "Electrophysiological Recording Viewer",
+    "description": "Displays neuron electrophysiological data",
+    "version": "1.0.5",
+    "tags": [],
+    "author": "Kenneth Pirman <kenneth.pirman@epfl.ch>",
+    "license": "ISC",
+    "mapping": {
+      "@type": ["Trace"]
+    },
+    "displayPriority": "2"
+  },
+  "neuron-morphology": {
+    "modulePath": "neuron-morphology.0427f1a3dead0d7e64f4.js",
+    "name": "Neuron Morphology",
+    "description": "Displays neuron morphology data in a 3D view",
+    "version": "1.0.2",
+    "tags": [],
+    "author": "Kenneth Pirman <kenneth.pirman@epfl.ch>",
+    "license": "ISC",
+    "mapping": {
+      "@type": ["ReconstructedCell"]
+    },
+    "displayPriority": "2"
+  },
+  "nexus-data-access": {
+    "modulePath": "nexus-data-access.748506b7b9259ad5bb9a.js",
+    "name": "Data Download",
+    "description": "Download or copy urls of distributions in Entity Resources",
+    "version": "1.1.0",
+    "tags": [],
+    "author": "Dhanesh Neela Mana <dhanesh.neelamana@epfl.ch>",
+    "license": "ISC",
+    "mapping": {
+      "distribution": {}
+    },
+    "exclude": {
+      "@type": ["Entity"]
+    },
+    "displayPriority": "2"
+  },
+  "notebook-preview": {
+    "modulePath": "notebook-preview.dfe381d90db91b3b177f.js",
+    "name": "Jupyter Notebook Preview",
+    "description": "Preview Jupyter Notebooks in Fusion",
+    "version": "1.0.0",
+    "tags": [],
+    "author": "Natalia Stafeeva <natalia.stafeeva@epfl.ch>",
+    "license": "ISC",
+    "mapping": {
+      "@type": ["SoftwareSourceCode"]
+    },
+    "displayPriority": "2"
+  },
+  "sim-writer-config": {
+    "modulePath": "sim-writer-config.77c8df2ebb9431c983b5.js",
+    "name": "Sim Writer Config",
+    "description": "Displays SimWriter configuration",
+    "version": "0.0.2",
+    "tags": [],
+    "author": "NSE(Neuroscientific Software Engineering) <bbp-ou-nse@groupes.epfl.ch>",
+    "license": "BSD-3-Clause",
+    "mapping": {
+      "@type": ["SimulationCampaignConfiguration"]
+    },
+    "displayPriority": "2"
+  },
+  "simulation-campaign": {
+    "modulePath": "simulation-campaign.4cb30b0c852a9ff4162f.js",
+    "name": "Simulation Campaign",
+    "description": "Displays simulation campaign details",
+    "version": "0.0.2",
+    "tags": [],
+    "author": "NSE(Neuroscientific Software Engineering) <bbp-ou-nse@groupes.epfl.ch>",
+    "license": "BSD-3-Clause",
+    "mapping": {
+      "@type": ["SimulationCampaign"]
+    },
+    "displayPriority": "2"
+  },
+  "simulation": {
+    "modulePath": "simulation.966b1e66283cb60150d5.js",
+    "name": "Simulation",
+    "description": "Displays simulation details",
+    "version": "0.0.2",
+    "tags": [],
+    "author": "NSE(Neuroscientific Software Engineering) <bbp-ou-nse@groupes.epfl.ch>",
+    "license": "BSD-3-Clause",
+    "mapping": {
+      "@type": ["Simulation"]
+    },
+    "displayPriority": "2"
+  }
+}
