@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Resource, Identity } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { notification, Empty, message } from 'antd';
 import { useHistory } from 'react-router';
@@ -9,6 +9,7 @@ import { StudioContext } from '../views/StudioView';
 import WorkspaceList from '../containers/WorkspaceListContainer';
 import { saveImage } from '../../../shared/containers/MarkdownEditorContainer';
 import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
+import { getDestinationParam } from '../../../shared/utils';
 
 const resourcesWritePermissionsWrapper = (
   child: React.ReactNode,
@@ -21,11 +22,6 @@ const resourcesWritePermissionsWrapper = (
     children: [child],
   });
 };
-
-function getDestinationParam(): string {
-  const destinationPath = encodeURIComponent(window.location.pathname.slice(1));
-  return destinationPath ? `?destination=${destinationPath}` : '';
-}
 
 type StudioResource = Resource<{
   label: string;
@@ -48,16 +44,8 @@ const StudioContainer: React.FunctionComponent = () => {
     fetchAndSetupStudio();
   }, [orgLabel, projectLabel, studioId]);
 
-  const [identities, setIdentities] = React.useState<Identity[]>([]);
-
-  React.useEffect(() => {
-    nexus.Identity.list().then(({ identities }) => {
-      setIdentities(identities);
-    });
-  }, []); // Run only once.
-
   const fetchAndSetupStudio = async () => {
-    nexus.Resource.get(orgLabel, projectLabel, studioId)
+    await nexus.Resource.get(orgLabel, projectLabel, studioId)
       .then(value => {
         const studioResource: StudioResource = value as StudioResource;
         setStudioResource(studioResource);
@@ -68,18 +56,31 @@ const StudioContainer: React.FunctionComponent = () => {
       })
       .catch(e => {
         if (e['@type'] === 'AuthorizationFailed') {
-          const user = identities.find(i => i['@type'] === 'User');
-          const message = user
-            ? "You don't have the permissions to view the studio"
-            : 'Please login to view the studio';
+          nexus.Identity.list().then(({ identities }) => {
+            const user = identities.find(i => i['@type'] === 'User');
+
+            if (!user) {
+              history.push(`/login${getDestinationParam()}`);
+            }
+
+            const message = user
+              ? "You don't have the permissions to view the studio"
+              : 'Please login to view the studio';
+
+            notification.error({
+              key: 'access-error',
+              message: 'Access error',
+              description: message,
+              duration: 4,
+            });
+          });
+        } else {
           notification.error({
-            message: 'Authentication error',
-            description: message,
+            key: 'fetch-error',
+            message: 'Failed to load the studio',
+            description: e.message || e.reason,
             duration: 4,
           });
-          if (!user) {
-            history.push(`/login${getDestinationParam()}`);
-          }
         }
       });
   };
