@@ -13,6 +13,7 @@ export type SubAppObject = {
   url?: string;
   requireLogin?: boolean;
   description?: string;
+  version?: string;
 };
 
 export type SubApp = () => SubAppObject;

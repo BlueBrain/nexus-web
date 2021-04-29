@@ -10,6 +10,7 @@ const namespace = 'workflow';
 const description = 'Create activities to support you data driven pipeline';
 const subAppType = 'internal';
 const icon = require('../../shared/images/flowIcon.svg');
+const version = 'α';
 
 const projectsSubappProps = {
   title,
@@ -17,12 +18,14 @@ const projectsSubappProps = {
   namespace,
   icon,
   subAppType,
+  version,
 };
 
 export const ProjectsSubappContext = React.createContext<{
   title: string;
   namespace: string;
   icon: string;
+  version: string;
 }>(projectsSubappProps);
 
 export function useProjectsSubappContext() {
