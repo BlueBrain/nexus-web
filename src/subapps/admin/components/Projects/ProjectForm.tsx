@@ -10,79 +10,125 @@ export interface PrefixMappingGroupInputState {
   prefix: string;
   namespace: string;
 }
+
 export interface PrefixMappingGroupInputProps {
-  groupId: string | number;
+  groupId: any;
   value?: any;
   onChange?(state: PrefixMappingGroupInputState): void;
 }
-class PrefixMappingGroupInput extends React.Component<
-  PrefixMappingGroupInputProps,
-  PrefixMappingGroupInputState
-> {
-  // Static method called by Form component
-  static getDerivedStateFromProps(nextProps: PrefixMappingGroupInputProps) {
-    if ('value' in nextProps) {
-      return {
-        ...(nextProps.value || {}),
-      };
-    }
-    return null;
-  }
 
-  constructor(props: PrefixMappingGroupInputProps) {
-    super(props);
-    const value = props.value || {};
-    this.state = {
-      prefix: value.prefix || '',
-      namespace: value.namespace || '',
-    };
-  }
+const PrefixMappingGroupInput: React.FC<{
+  groupId: number;
+  value?: any;
+}> = ({ groupId, value }) => {
+  console.log('value', value);
 
-  handlePrefixChange = (e: React.FormEvent<HTMLInputElement>) => {
-    const prefix = e.currentTarget.value;
-    this.setState({
-      prefix,
-    });
-    this.props.onChange && this.props.onChange({ ...this.state, prefix });
-  };
-
-  handleNamespaceChange = (e: React.FormEvent<HTMLInputElement>) => {
-    const namespace = e.currentTarget.value;
-    this.setState({
-      namespace,
-    });
-    this.props.onChange && this.props.onChange({ ...this.state, namespace });
-  };
-
-  render() {
-    return (
-      <Input.Group
-        compact
-        style={
+  return (
+    <Input.Group
+      compact
+      style={{
+        width: 'calc(100% - 22px)',
+        marginRight: 8,
+      }}
+    >
+      <Form.Item
+        noStyle
+        name={['apiMappings', `apiMappings[${groupId - 1}]`, 'prefix']}
+        rules={[
           {
-            width: 'calc(100% - 22px)',
-            marginRight: 8,
-          } /* icon is 14px + 8px margin-right = 22px*/
-        }
+            required: true,
+            message: 'You need to specify prefix',
+          },
+        ]}
+        initialValue={value.prefix}
       >
-        <Input
-          style={{ width: '20%' }}
-          name={`prefix[${this.props.groupId}]`}
-          placeholder="prefix"
-          onChange={this.handlePrefixChange}
-          value={this.state.prefix}
-        />
-        <Input
-          style={{ width: '80%' }}
-          name={`namespace[${this.props.groupId}]`}
-          placeholder="namespace"
-          onChange={this.handleNamespaceChange}
-          value={this.state.namespace}
-        />
-      </Input.Group>
-    );
-  }
-}
+        <Input style={{ width: '30%' }} placeholder="prefix" />
+      </Form.Item>
+      <Form.Item
+        noStyle
+        name={['apiMappings', `apiMappings[${groupId - 1}]`, 'namespace']}
+        rules={[
+          {
+            required: true,
+            message: 'You need to specify namespace',
+          },
+        ]}
+        initialValue={value.namespace}
+      >
+        <Input style={{ width: '70%' }} placeholder="namespace" />
+      </Form.Item>
+    </Input.Group>
+  );
+};
+
+// class PrefixMappingGroupInput extends React.Component<
+//   PrefixMappingGroupInputProps,
+//   PrefixMappingGroupInputState
+// > {
+//   // Static method called by Form component
+//   static getDerivedStateFromProps(nextProps: PrefixMappingGroupInputProps) {
+//     if ('value' in nextProps) {
+//       return {
+//         ...(nextProps.value || {}),
+//       };
+//     }
+//     return null;
+//   }
+
+//   constructor(props: PrefixMappingGroupInputProps) {
+//     super(props);
+//     const value = props.value || {};
+//     this.state = {
+//       prefix: value.prefix || '',
+//       namespace: value.namespace || '',
+//     };
+//   }
+
+//   handlePrefixChange = (e: React.FormEvent<HTMLInputElement>) => {
+//     const prefix = e.currentTarget.value;
+//     this.setState({
+//       prefix,
+//     });
+//     this.props.onChange && this.props.onChange({ ...this.state, prefix });
+//   };
+
+//   handleNamespaceChange = (e: React.FormEvent<HTMLInputElement>) => {
+//     const namespace = e.currentTarget.value;
+//     this.setState({
+//       namespace,
+//     });
+//     this.props.onChange && this.props.onChange({ ...this.state, namespace });
+//   };
+
+//   render() {
+//     return (
+//       <Input.Group
+//         compact
+//         style={
+//           {
+//             width: 'calc(100% - 22px)',
+//             marginRight: 8,
+//           } /* icon is 14px + 8px margin-right = 22px*/
+//         }
+//       >
+//         <Input
+//           style={{ width: '20%' }}
+//           name={`prefix[${this.props.groupId}]`}
+//           placeholder="prefix"
+//           onChange={this.handlePrefixChange}
+//           value={this.state.prefix}
+//         />
+//         <Input
+//           style={{ width: '80%' }}
+//           name={`namespace[${this.props.groupId}]`}
+//           placeholder="namespace"
+//           onChange={this.handleNamespaceChange}
+//           value={this.state.namespace}
+//         />
+//       </Input.Group>
+//     );
+//   }
+// }
 
 export interface ProjectFormProps {
   project?: {
@@ -110,14 +156,24 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   onDeprecate = () => {},
   mode = 'create',
 }) => {
+  console.log('project', project);
+
   // logic for generating dynamic prefix mapping fields in form
   const currentId =
     project && project.apiMappings ? project.apiMappings.length : 0;
+
+  console.log('currentId', currentId);
+
   const activeKeys = [...Array(currentId + 1).keys()].slice(1);
+
+  console.log('activeKeys', activeKeys);
+
   const [prefixMappingKeys, setPrefixMappingKeys] = React.useState({
     currentId,
     activeKeys,
   });
+
+  console.log('prefixMappingKeys', prefixMappingKeys);
 
   const formItemLayout = {
     labelCol: {
@@ -154,12 +210,14 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
     });
   };
 
-  const handleSubmit = (values: any) => {
+  const handleSubmit = (data: any) => {
+    const apiMappings = Object.keys(data.apiMappings).map(
+      (mapping: any) => data.apiMappings[mapping]
+    );
+
     onSubmit({
-      ...values,
-      apiMappings:
-        (values.apiMappings && values.apiMappings.filter((p: any) => !!p)) ||
-        [],
+      ...data,
+      apiMappings,
     });
   };
 
@@ -168,7 +226,11 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
     value: PrefixMappingGroupInputState,
     callback: (message?: string) => void
   ) => {
+    console.log('value', value, value.prefix && value.namespace);
+
     if (value.prefix && value.namespace) {
+      console.log('got mappings');
+
       callback();
       return;
     }
@@ -190,24 +252,24 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
         label={index === 0 ? 'API Mappings' : ''}
         {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
         key={key}
-        name={`apiMappings[${key - 1}]`}
-        initialValue={{
-          prefix:
-            (project &&
-              project.apiMappings &&
-              project.apiMappings[key - 1] &&
-              project.apiMappings[key - 1].prefix) ||
-            '',
-          namespace:
-            (project &&
-              project.apiMappings &&
-              project.apiMappings[key - 1] &&
-              project.apiMappings[key - 1].namespace) ||
-            '',
-        }}
-        rules={[{ validator: checkPrefix, required: true }]}
       >
-        <PrefixMappingGroupInput groupId={`${key}`} />
+        <PrefixMappingGroupInput
+          groupId={key}
+          value={{
+            prefix:
+              (project &&
+                project.apiMappings &&
+                project.apiMappings[key - 1] &&
+                project.apiMappings[key - 1].prefix) ||
+              '',
+            namespace:
+              (project &&
+                project.apiMappings &&
+                project.apiMappings[key - 1] &&
+                project.apiMappings[key - 1].namespace) ||
+              '',
+          }}
+        />
         {prefixMappingKeys.activeKeys.length > 0 ? (
           <MinusCircleOutlined
             className="dynamic-delete-button"
@@ -217,6 +279,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
       </Form.Item>
     )
   );
+
   return (
     <Spin
       spinning={busy}
