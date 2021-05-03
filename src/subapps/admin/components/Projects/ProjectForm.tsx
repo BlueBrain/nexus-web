@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Collapse, Form, Input, Button, Spin, Modal, Row, Col } from 'antd';
 import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
 
+import './ProjectForm.less';
+
 export interface PrefixMappingGroupInputState {
   prefix: string;
   namespace: string;
@@ -12,7 +14,7 @@ const PrefixMappingGroupInput: React.FC<{
   value?: any;
 }> = ({ groupId, value }) => {
   return (
-    <Input.Group compact>
+    <Input.Group className="project-form__item-inputs">
       <Form.Item
         noStyle
         name={['apiMappings', `apiMappings[${groupId - 1}]`, 'prefix']}
@@ -24,7 +26,7 @@ const PrefixMappingGroupInput: React.FC<{
         ]}
         initialValue={value.prefix}
       >
-        <Input style={{ width: '30%' }} placeholder="prefix" />
+        <Input style={{ width: '33%' }} placeholder="prefix" />
       </Form.Item>
       <Form.Item
         noStyle
@@ -37,7 +39,7 @@ const PrefixMappingGroupInput: React.FC<{
         ]}
         initialValue={value.namespace}
       >
-        <Input style={{ width: '70%' }} placeholder="namespace" />
+        <Input style={{ width: '65%' }} placeholder="namespace" />
       </Form.Item>
     </Input.Group>
   );
@@ -77,23 +79,6 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
     currentId,
     activeKeys,
   });
-
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 4 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 20 },
-    },
-  };
-  const formItemLayoutWithOutLabel = {
-    wrapperCol: {
-      xs: { span: 24, offset: 0 },
-      sm: { span: 20, offset: 4 },
-    },
-  };
 
   const add = (k: any) => {
     const { currentId, activeKeys } = prefixMappingKeys;
@@ -135,11 +120,8 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   // Dynamic form fields
   const apiMappingsItems = prefixMappingKeys.activeKeys.map(
     (key: number, index: number) => (
-      <Form.Item
-        {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-        key={key}
-      >
-        <div style={{ display: 'flex' }}>
+      <Form.Item key={key}>
+        <div className="project-form__form-item">
           <PrefixMappingGroupInput
             groupId={key}
             value={{
@@ -158,10 +140,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
             }}
           />
           {prefixMappingKeys.activeKeys.length > 0 ? (
-            <MinusCircleOutlined
-              className="dynamic-delete-button"
-              onClick={() => remove(key)}
-            />
+            <MinusCircleOutlined onClick={() => remove(key)} />
           ) : null}
         </div>
       </Form.Item>
@@ -173,7 +152,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
       spinning={busy}
       tip="Please be patient while the project is scaffolded."
     >
-      <Form onFinish={handleSubmit}>
+      <Form onFinish={handleSubmit} className="project-form">
         <Form.Item
           label="Label"
           name="_label"
@@ -186,7 +165,6 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
               message: 'Label must be a phrase without spaces',
             },
           ]}
-          {...formItemLayout}
         >
           <Input placeholder="Label" disabled={mode === 'edit'} />
         </Form.Item>
@@ -195,11 +173,10 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
           name="description"
           initialValue={project ? project.description : ''}
           rules={[{ required: false }]}
-          {...formItemLayout}
         >
           <Input placeholder="Description" />
         </Form.Item>
-        <Form.Item {...formItemLayoutWithOutLabel}>
+        <Form.Item>
           <Collapse>
             <Collapse.Panel header="Advanced settings" key="1">
               <Form.Item
@@ -207,31 +184,32 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
                 name="base"
                 initialValue={project ? project.base : ''}
                 rules={[{ required: false }]}
-                {...formItemLayout}
               >
                 <Input placeholder="Base" />
               </Form.Item>
               <Form.Item
                 label="Vocab"
                 name="vocab"
-                initialValue={project ? project.vocab : ''}
+                initialValue={project ? project.vocab : undefined}
                 rules={[{ required: false }]}
-                {...formItemLayout}
               >
                 <Input placeholder="Vocab" />
               </Form.Item>
               <h4>API Mappings</h4>
               {apiMappingsItems}
-              <Form.Item {...formItemLayoutWithOutLabel}>
-                <Button type="dashed" onClick={add} style={{ width: '100%' }}>
+              <Form.Item>
+                <Button
+                  type="dashed"
+                  onClick={add}
+                  className="project-form__add-button"
+                >
                   <PlusCircleOutlined /> Add API mapping
                 </Button>
               </Form.Item>
             </Collapse.Panel>
           </Collapse>
         </Form.Item>
-        <Form.Item {...formItemLayoutWithOutLabel}>
-          {/* TODO replace flex */}
+        <Form.Item>
           <Row justify="end" gutter={16}>
             <Col>
               <Button type="primary" htmlType="submit">
