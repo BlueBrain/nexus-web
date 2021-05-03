@@ -190,7 +190,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
               <Form.Item
                 label="Vocab"
                 name="vocab"
-                initialValue={project ? project.vocab : undefined}
+                initialValue={project ? project.vocab : ''}
                 rules={[{ required: false }]}
               >
                 <Input placeholder="Vocab" />
