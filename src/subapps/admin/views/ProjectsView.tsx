@@ -38,7 +38,14 @@ const ProjectsView: React.FunctionComponent = () => {
       return;
     }
     if (!activeOrg) {
+      loadprojects();
+    }
+  }, [match?.path, activeOrg]);
+
+  const loadprojects = () => {
+    if (match) {
       setOrgLoadingBusy(true);
+
       nexus.Organization.get(match.params.orgLabel)
         .then((org: OrgResponseCommon) => {
           setOrgLoadingBusy(false);
@@ -53,7 +60,7 @@ const ProjectsView: React.FunctionComponent = () => {
           });
         });
     }
-  }, [match?.path, activeOrg]);
+  };
 
   const saveAndCreate = (newProject: ProjectResponseCommon) => {
     setFormBusy(true);
@@ -111,6 +118,7 @@ const ProjectsView: React.FunctionComponent = () => {
         setFormBusy(false);
         setModalVisible(false);
         setSelectedProject(null);
+        loadprojects();
       })
       .catch((error: Error) => {
         setFormBusy(false);
@@ -245,7 +253,7 @@ const ProjectsView: React.FunctionComponent = () => {
             />
           </Modal>
           <Drawer
-            width={640}
+            width={750}
             visible={!!(selectedProject && selectedProject._label)}
             onClose={() => setSelectedProject(null)}
             title={`Project: ${selectedProject && selectedProject._label}`}
