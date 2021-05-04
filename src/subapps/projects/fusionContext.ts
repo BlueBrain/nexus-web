@@ -10,44 +10,46 @@ export const WORKFLOW_STEP_CONTEXT = {
         '@id': 'http://schema.org/description',
       },
       hasParent: {
-        '@id': 'http://schema.org/hasParent',
+        '@id': 'https://bluebrainnexus.io/workflowstep/vocabulary/hasParent',
         '@type': '@id',
       },
       dueDate: {
-        '@id': 'https://bluebrainnexus.io/workflowstep/dueDate',
+        '@id': 'https://bluebrainnexus.io/workflowstep/vocabulary/dueDate',
       },
       positionX: {
-        '@id': 'https://bluebrainnexus.io/workflowstep/positionX',
+        '@id': 'https://bluebrainnexus.io/workflowstep/vocabulary/positionX',
       },
       positionY: {
-        '@id': 'https://bluebrainnexus.io/workflowstep/positionY',
+        '@id': 'https://bluebrainnexus.io/workflowstep/vocabulary/positionY',
       },
       status: {
-        '@id': 'https://bluebrainnexus.io/workflowstep/status',
+        '@id': 'https://bluebrainnexus.io/workflowstep/vocabulary/status',
       },
       summary: {
-        '@id': 'https://bluebrainnexus.io/workflowstep/summary',
+        '@id': 'https://bluebrainnexus.io/workflowstep/vocabulary/summary',
       },
       activityType: {
-        '@id': 'https://bluebrainnexus.io/workflowstep/activityType',
+        '@id': 'https://bluebrainnexus.io/workflowstep/vocabulary/activityType',
       },
       wasInformedBy: {
-        '@id': 'https://bluebrainnexus.io/workflowstep/wasInformedBy',
+        '@id':
+          'https://bluebrainnexus.io/workflowstep/vocabulary/wasInformedBy',
         '@container': '@set',
         '@type': '@id',
       },
       activities: {
-        '@id': 'https://bluebrainnexus.io/workflowstep/activities',
+        '@id': 'https://bluebrainnexus.io/workflowstep/vocabulary/activities',
         '@container': '@set',
         '@type': '@id',
       },
       inputs: {
-        '@id': 'https://bluebrainnexus.io/workflowstep/inputs',
+        '@id': 'https://bluebrainnexus.io/workflowstep/vocabulary/inputs',
         '@container': '@set',
         '@type': '@id',
       },
       wasAssociatedWith: {
-        '@id': 'https://bluebrainnexus.io/workflowstep/wasAssociatedWith',
+        '@id':
+          'https://bluebrainnexus.io/workflowstep/vocabulary/wasAssociatedWith',
         '@container': '@set',
         '@type': '@id',
       },
