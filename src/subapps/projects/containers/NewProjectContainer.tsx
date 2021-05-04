@@ -9,6 +9,7 @@ import ProjectForm, { ProjectMetadata } from '../components/ProjectForm';
 import ActionButton from '../components/ActionButton';
 import { displayError } from '../components/Notifications';
 import { userOrgLabel } from '../utils';
+import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
 
 const NewProjectContainer: React.FC<{
   onSuccess: () => void;
@@ -51,6 +52,16 @@ const NewProjectContainer: React.FC<{
           setBusy(false);
         });
 
+    const createContext = () => {
+      nexus.Resource.create(userOrg, name, {
+        ...WORKFLOW_STEP_CONTEXT,
+      })
+        .then(() => {})
+        .catch(error =>
+          displayError(error, 'Failed to create Workflow Step Context')
+        );
+    };
+
     const createProject = () =>
       nexus.Project.create(userOrg, name, {
         description,
@@ -58,6 +69,7 @@ const NewProjectContainer: React.FC<{
       })
         .then(() => {
           createResource();
+          createContext();
           if (type === 'personal' && visibility === 'public') {
             makeProjectPublic(userOrg, name);
           }

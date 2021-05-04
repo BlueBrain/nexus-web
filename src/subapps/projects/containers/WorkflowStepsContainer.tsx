@@ -12,6 +12,7 @@ import AddComponentButton from '../components/AddComponentButton';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 import fusionConfig from '../config';
 import { StepResource, WorkflowStepMetadata } from '../types';
+import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
 
 const WorkflowStepContainer: React.FC<{
   orgLabel: string;
@@ -67,12 +68,12 @@ const WorkflowStepContainer: React.FC<{
     '@id': sibling._self,
   }));
 
-  // TODO: refactor ProjectPanel, SingleStepContainer and NewWorkflowStepsContainer
   const submitNewStep = (data: WorkflowStepMetadata) => {
     const { name } = data;
 
     nexus.Resource.create(orgLabel, projectLabel, {
       '@type': fusionConfig.workflowStepType,
+      '@context': WORKFLOW_STEP_CONTEXT['@id'],
       ...data,
     })
       .then(() => {
