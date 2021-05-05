@@ -3,6 +3,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 
 import { displayError } from '../components/Notifications';
 import NewTableForm from '../components/NewTableForm';
+import { FUSION_TABLE_CONTEXT } from '../fusionContext';
 
 const DEFAULT_SPARQL_QUERY =
   'prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/> SELECT DISTINCT ?self ?s WHERE { ?s nxv:self ?self } LIMIT 20';
@@ -24,6 +25,7 @@ const NewTableContainer: React.FC<{
       name,
       description,
       '@type': 'nxv:FusionTable',
+      '@context': FUSION_TABLE_CONTEXT['@id'],
       tableOf: {
         '@id': parentId,
       },

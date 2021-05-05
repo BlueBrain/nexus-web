@@ -19,6 +19,7 @@ import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowSt
 import fusionConfig from '../config';
 import { StepResource, WorkflowStepMetadata } from '../types';
 import NewTableContainer from '../containers/NewTableContainer';
+import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
 
 import './WorkflowStepView.less';
 
@@ -227,6 +228,7 @@ const WorkflowStepView: React.FC = () => {
 
     nexus.Resource.create(orgLabel, projectLabel, {
       '@type': fusionConfig.workflowStepType,
+      '@context': WORKFLOW_STEP_CONTEXT['@id'],
       ...data,
     })
       .then(() => {
