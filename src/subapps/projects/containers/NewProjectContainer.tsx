@@ -67,9 +67,7 @@ const NewProjectContainer: React.FC<{
         ...FUSION_TABLE_CONTEXT,
       })
         .then(() => {})
-        .catch(error =>
-          displayError(error, 'Failed to create Workflow Step Context')
-        );
+        .catch(error => displayError(error, 'Failed to create Table Context'));
     };
 
     const createProject = () =>

@@ -9,6 +9,7 @@ import { useUpdateStep } from '../hooks/useUpdateStep';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 import fusionConfig from '../config';
 import { StepResource, WorkflowStepMetadata } from '../types';
+import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
 
 const SingleStepContainer: React.FC<{
   projectLabel: string;
@@ -75,6 +76,7 @@ const SingleStepContainer: React.FC<{
 
     nexus.Resource.create(orgLabel, projectLabel, {
       '@type': fusionConfig.workflowStepType,
+      '@context': WORKFLOW_STEP_CONTEXT['@id'],
       ...data,
     })
       .then(() => {
