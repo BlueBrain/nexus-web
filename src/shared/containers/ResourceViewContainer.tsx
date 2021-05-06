@@ -205,7 +205,6 @@ const ResourceViewContainer: React.FunctionComponent<{
       });
     } catch (error) {
       let errorMessage;
-      console.log(error);
 
       if (error['@type'] === 'AuthorizationFailed') {
         nexus.Identity.list().then(({ identities }) => {

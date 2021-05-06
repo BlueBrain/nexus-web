@@ -25,7 +25,6 @@ export const isParentLink = (link: ResourceLink) => {
  * @returns {boolean}
  */
 export const isTable = (link: ResourceLink) => {
-  console.log(link.paths);
   if (Array.isArray(link.paths)) {
     return (
       link.paths.filter((path: string) => labelOf(path).indexOf('tableOf') >= 0)
