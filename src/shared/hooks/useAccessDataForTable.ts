@@ -248,7 +248,6 @@ export const useAccessDataForTable = (
   const tableResult = useQuery<any, Error>(
     [tableResourceId, revision],
     async () => {
-      console.log(tableResourceId);
       const tableResource = (await nexus.Resource.get(
         orgLabel,
         projectLabel,

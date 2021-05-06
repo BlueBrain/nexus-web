@@ -232,7 +232,6 @@ const EditTableForm: React.FC<{
     () => () => {
       return Array.isArray(configuration) ? (
         configuration.map((column: TableColumn) => {
-          console.log(column);
           return (
             <ColumnConfig
               column={column}

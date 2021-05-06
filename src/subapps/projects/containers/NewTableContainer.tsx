@@ -27,7 +27,7 @@ const NewTableContainer: React.FC<{
       '@type': 'FusionTable',
       '@context': FUSION_TABLE_CONTEXT['@id'],
       tableOf: {
-        '@id': decodeURIComponent(parentId ? parentId : ''),
+        '@id': decodeURIComponent(parentId || ''),
       },
       view: 'graph',
       enableSearch: true,
