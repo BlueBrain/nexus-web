@@ -313,7 +313,7 @@ const SearchView: React.FC = () => {
   }
 
   return (
-    <Content style={{ padding: '1em' }}>
+    <Content style={{ padding: '1em', marginTop: '0' }}>
       <Layout>
         <Sider
           width={280}
