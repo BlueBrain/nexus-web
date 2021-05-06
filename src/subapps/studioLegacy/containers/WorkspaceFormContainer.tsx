@@ -239,7 +239,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
         );
       })
       .catch(e => {
-        console.log(e);
+        setError(e);
       });
   }, [workspaceId, orgLabel, projectLabel]);
 
