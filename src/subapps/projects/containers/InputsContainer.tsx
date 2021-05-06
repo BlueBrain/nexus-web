@@ -82,10 +82,10 @@ const InputsContainer: React.FC<{
   };
 
   const updateStepResource = async (datasetResource: Resource) => {
-    const workflowStep = await nexus.Resource.get<{
+    const workflowStep = (await nexus.Resource.get<{
       'nxv:inputs': [];
       _rev: number;
-    }>(orgLabel, projectLabel, encodeURIComponent(stepId));
+    }>(orgLabel, projectLabel, encodeURIComponent(stepId))) as Resource;
     const updatedInputs = [
       ...forceAsArray(workflowStep['nxv:inputs']),
       {

@@ -49,7 +49,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
     getNewResource()
       .then(response =>
         setResource({
-          resource: response,
+          resource: response as Resource,
           error: null,
           busy: false,
         })

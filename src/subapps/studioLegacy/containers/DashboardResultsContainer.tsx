@@ -60,7 +60,9 @@ const DashboardResultsContainer: React.FunctionComponent<{
     .with(
       {
         error: null,
-        data: when(data => !!(data && data['@type']?.includes('SparqlView'))),
+        data: when(
+          (data: any) => !!(data && data['@type']?.includes('SparqlView'))
+        ),
       },
       () => (
         <DashboardSparqlQueryContainer

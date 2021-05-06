@@ -4,7 +4,13 @@ import { useLocation, useHistory, useParams } from 'react-router';
 import { Spin, Card, Empty, Tabs, notification, Alert, Collapse } from 'antd';
 import * as queryString from 'query-string';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { Resource, ResourceLink, IncomingLink, Identity } from '@bbp/nexus-sdk';
+import {
+  Resource,
+  ResourceLink,
+  IncomingLink,
+  Identity,
+  ExpandedResource,
+} from '@bbp/nexus-sdk';
 import AdminPlugin from '../containers/AdminPluginContainer';
 import ResourcePlugins from './ResourcePlugins';
 import usePlugins from '../hooks/usePlugins';
@@ -17,6 +23,7 @@ import {
   getDestinationParam,
 } from '../utils';
 import { isDeprecated } from '../utils/nexusMaybe';
+import { response } from 'express';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -155,82 +162,87 @@ const ResourceViewContainer: React.FunctionComponent<{
     });
   };
 
-  React.useEffect(() => {
+  const setResources = async () => {
     setResource({
       resource,
       error: null,
       busy: true,
     });
-    let latestResource: Resource | null = null;
-    let newResource: Resource | null = null;
-    let expandedResource: Resource | null = null;
+    try {
+      const resource = (await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        resourceId
+      )) as Resource;
+      let latestResource: Resource = rev
+        ? ((await nexus.Resource.get(orgLabel, projectLabel, resourceId, {
+            rev: Number(rev),
+          })) as Resource)
+        : resource;
 
-    nexus.Resource.get(orgLabel, projectLabel, resourceId)
-      .then(resource => {
-        latestResource = resource as Resource;
-        return rev
-          ? nexus.Resource.get(orgLabel, projectLabel, resourceId, {
-              rev: Number(rev),
-            })
-          : latestResource;
-      })
-      .then(resource => {
-        newResource = resource as Resource;
-        return nexus.Resource.get(orgLabel, projectLabel, resourceId, {
+      let expandedResources = (await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        resourceId,
+        {
           format: 'expanded',
-        });
-      })
-      .then(resources => {
-        expandedResource = resources[0];
-
-        setResource({
-          // Note: we must fetch the proper, expanded @id. The @id that comes from a normal request or from the URL
-          // could be the contracted one, if the resource was created with a context that has a @base property.
-          // this would make the contracted @id unresolvable. See issue: https://github.com/BlueBrain/nexus/issues/966
-          resource: {
-            ...newResource,
-            '@id': expandedResource['@id'],
-          } as Resource,
-          error: null,
-          busy: false,
-        });
-        setLatestResource(latestResource);
-      })
-      .catch(error => {
-        let errorMessage;
-
-        if (error['@type'] === 'AuthorizationFailed') {
-          nexus.Identity.list().then(({ identities }) => {
-            const user = identities.find(i => i['@type'] === 'User');
-
-            if (!user) {
-              history.push(`/login${getDestinationParam()}`);
-            }
-
-            const message = user
-              ? "You don't have the permissions to view the resource"
-              : 'Please login to view the resource';
-
-            notification.error({
-              message: 'Authentication error',
-              description: message,
-              duration: 4,
-            });
-          });
-
-          errorMessage = `You don't have the access rights for this resource located in ${orgLabel} / ${projectLabel}.`;
-        } else {
-          errorMessage = error.reason;
         }
+      )) as ExpandedResource[];
 
-        const jsError = new Error(errorMessage);
+      const expandedResource = expandedResources[0];
 
-        setResource({
-          resource,
-          error: jsError,
-          busy: false,
-        });
+      setLatestResource(latestResource);
+      setResource({
+        // Note: we must fetch the proper, expanded @id. The @id that comes from a normal request or from the URL
+        // could be the contracted one, if the resource was created with a context that has a @base property.
+        // this would make the contracted @id unresolvable. See issue: https://github.com/BlueBrain/nexus/issues/966
+        resource: {
+          ...latestResource,
+          '@id': expandedResource['@id'],
+        } as Resource,
+        error: null,
+        busy: false,
       });
+    } catch (error) {
+      let errorMessage;
+      console.log(error);
+
+      if (error['@type'] === 'AuthorizationFailed') {
+        nexus.Identity.list().then(({ identities }) => {
+          const user = identities.find(i => i['@type'] === 'User');
+
+          if (!user) {
+            history.push(`/login${getDestinationParam()}`);
+          }
+
+          const message = user
+            ? "You don't have the permissions to view the resource"
+            : 'Please login to view the resource';
+
+          notification.error({
+            message: 'Authentication error',
+            description: message,
+            duration: 4,
+          });
+        });
+
+        errorMessage = `You don't have the access rights for this resource located in ${orgLabel} / ${projectLabel}.`;
+      } else {
+        errorMessage = error.reason;
+      }
+
+      const jsError = new Error(errorMessage);
+
+      setResource({
+        resource,
+        error: jsError,
+        busy: false,
+      });
+    }
+  };
+
+  React.useEffect(() => {
+    setResources();
   }, [orgLabel, projectLabel, resourceId, rev]);
 
   return (

@@ -53,11 +53,11 @@ const CreateDashboardContainer: React.FunctionComponent<{
         '@type': DASHBOARD_TYPE,
       });
       // Add dashboard to workspace
-      const workspace = await nexus.Resource.get<Resource>(
+      const workspace = (await nexus.Resource.get<Resource>(
         orgLabel,
         projectLabel,
         encodeURIComponent(workspaceId)
-      );
+      )) as Resource;
       const workspaceSource = await nexus.Resource.getSource<{
         [key: string]: any;
       }>(orgLabel, projectLabel, encodeURIComponent(workspaceId));
