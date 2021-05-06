@@ -110,25 +110,6 @@ const SearchBar: React.FC<{
       ]
     : [];
 
-  if (!!searchResponse.data?.hits.total.value) {
-    options.push({
-      label: 'Resources',
-      options:
-        searchResponse.data?.hits.hits.map(hit => {
-          const { _source } = hit;
-          return {
-            key: _source._self,
-            label: (
-              <Hit type={HitType.RESOURCE}>
-                <ResourceHit resource={_source} />
-              </Hit>
-            ),
-            value: `${SearchQuickActions.VISIT}:${_source._self}`,
-          };
-        }) || [],
-    });
-  }
-
   if (projectList.length) {
     options.push({
       label: 'Projects',
@@ -148,6 +129,25 @@ const SearchBar: React.FC<{
           value: `${SearchQuickActions.VISIT_PROJECT}:${project._organizationLabel}/${project._label}`,
         };
       }),
+    });
+  }
+
+  if (!!searchResponse.data?.hits.total.value) {
+    options.push({
+      label: 'Resources',
+      options:
+        searchResponse.data?.hits.hits.map(hit => {
+          const { _source } = hit;
+          return {
+            key: _source._self,
+            label: (
+              <Hit type={HitType.RESOURCE}>
+                <ResourceHit resource={_source} />
+              </Hit>
+            ),
+            value: `${SearchQuickActions.VISIT}:${_source._self}`,
+          };
+        }) || [],
     });
   }
 

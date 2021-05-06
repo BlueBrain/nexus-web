@@ -9,8 +9,8 @@ import useSearchConfigs from '../hooks/useSearchConfigs';
 import useSearchQuery, { DEFAULT_SEARCH_PROPS } from '../hooks/useSearchQuery';
 import { parseURL } from '../utils/nexusParse';
 
-const DEFAULT_SEARCH_BAR_RESULT_SIZE = 10;
-const PROJECT_RESULTS_DEFAULT_SIZE = 5;
+const DEFAULT_SEARCH_BAR_RESULT_SIZE = 50;
+const PROJECT_RESULTS_DEFAULT_SIZE = 100;
 
 const SearchBarContainer: React.FC = () => {
   const { preferedSearchConfig, searchConfigs } = useSearchConfigs();
@@ -22,7 +22,13 @@ const SearchBarContainer: React.FC = () => {
   const history = useHistory();
   const location = useLocation();
   const [queryParams, setQueryString] = useQueryString();
-  const projectData = useAsyncCall(nexus.Project.list(), []);
+  const projectData = useAsyncCall(
+    nexus.Project.list(undefined, {
+      size: 100,
+      deprecated: false,
+    }),
+    []
+  );
 
   const goToResource = (resourceSelfURL: string) => {
     const { org, project, id } = parseURL(resourceSelfURL);
@@ -103,6 +109,8 @@ const SearchBarContainer: React.FC = () => {
     }),
     PROJECT_RESULTS_DEFAULT_SIZE
   );
+
+  console.log('projectList', projectList);
 
   return !!searchConfigs.data?.length ? (
     <SearchBar
