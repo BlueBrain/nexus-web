@@ -381,7 +381,7 @@ const SearchView: React.FC = () => {
               })}
           </Card>
         </Sider>
-        <Content>
+        <Content style={{ marginLeft: '280px', marginTop: '0' }}>
           <Row style={{ padding: '0 1em' }}>
             <ActiveFilters
               searchProps={searchProps}
