@@ -29,6 +29,7 @@ export const sparqlQueryExecutor = async (
   const { org: orgLabel, project: projectLabel, id: viewId } = parseURL(
     view._self
   );
+
   const result: SparqlViewQueryResponse = await nexus.View.sparqlQuery(
     orgLabel,
     projectLabel,

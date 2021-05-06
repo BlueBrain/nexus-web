@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   Resource,
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+  DEFAULT_SPARQL_VIEW_ID,
   ElasticSearchViewQueryResponse,
 } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
@@ -237,7 +238,9 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
           })
         );
       })
-      .catch(e => {});
+      .catch(e => {
+        setError(e);
+      });
   }, [workspaceId, orgLabel, projectLabel]);
 
   React.useEffect(() => {

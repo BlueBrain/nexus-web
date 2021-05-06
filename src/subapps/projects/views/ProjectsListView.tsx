@@ -42,7 +42,7 @@ const ProjectsListView: React.FC<{}> = () => {
     const personalOrg = userOrgLabel(authenticatedIdentity?.realm, userName);
     // TODO: Implement pagination.
     nexus.Project.list(personalOrg, {
-      size: 1000,
+      size: 99,
       deprecated: false,
     }).then(value => {
       setPersonalProjects(value._results);
@@ -50,7 +50,7 @@ const ProjectsListView: React.FC<{}> = () => {
 
     // TODO: Implement pagination.
     nexus.Project.list(undefined, {
-      size: 1000,
+      size: 99,
       deprecated: false,
     }).then(value => {
       const shared = value._results.filter((v: ProjectResponseCommon) => {
@@ -61,7 +61,7 @@ const ProjectsListView: React.FC<{}> = () => {
 
     // TODO: Implement pagination.
     nexus.Project.list(undefined, {
-      size: 1000,
+      size: 99,
       deprecated: true,
     }).then(value => {
       setArchivedProjects(value._results);

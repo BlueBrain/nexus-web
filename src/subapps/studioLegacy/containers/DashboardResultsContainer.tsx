@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { message, Skeleton } from 'antd';
+import { Empty, message, Skeleton } from 'antd';
 import { ElasticSearchView, Resource, SparqlView, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { match, when } from 'ts-pattern';
@@ -51,7 +51,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
   };
 
   const viewResult = useAsyncCall<View, Error>(
-    nexus.View.get(orgLabel, projectLabel, viewId),
+    nexus.View.get(orgLabel, projectLabel, encodeURIComponent(viewId)),
     [orgLabel, projectLabel, viewId]
   );
 
@@ -60,7 +60,9 @@ const DashboardResultsContainer: React.FunctionComponent<{
     .with(
       {
         error: null,
-        data: when(data => !!(data && data['@type']?.includes('SparqlView'))),
+        data: when(
+          (data: any) => !!(data && data['@type']?.includes('SparqlView'))
+        ),
       },
       () => (
         <DashboardSparqlQueryContainer
@@ -87,7 +89,9 @@ const DashboardResultsContainer: React.FunctionComponent<{
         />
       )
     )
-    .run();
+    .otherwise(() => {
+      return <Empty description={viewResult.error?.message}></Empty>;
+    });
 };
 
 export default DashboardResultsContainer;

@@ -131,15 +131,15 @@ Example:
   "views": [
     {
       "project": "c7d70552-4305-111a-trtr-75d757ed9a49",
-      "viewId": "nxv:defaultElasticSearchIndex"
+      "viewId": "documents"
     },
     {
       "project": "86b0ee1e-a6a5-111b-rtrt-938b3c38dfc0",
-      "viewId": "nxv:defaultElasticSearchIndex"
+      "viewId": "documents"
     },
     {
       "project": "a7d693345-8d1d-rtrt-111a-90b6b6ab94ee",
-      "viewId": "nxv:defaultElasticSearchIndex"
+      "viewId": "documents"
     },
   ]
 }

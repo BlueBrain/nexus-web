@@ -49,7 +49,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
     getNewResource()
       .then(response =>
         setResource({
-          resource: response,
+          resource: response as Resource,
           error: null,
           busy: false,
         })
@@ -83,7 +83,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
 
   const getNewResource = async () => {
     if (expanded) {
-      return await nexus.Resource.get(
+      const expandedResource = (await nexus.Resource.get(
         orgLabel,
         projectLabel,
         encodeURIComponent(resourceId),
@@ -91,7 +91,8 @@ const ResourceEditorContainer: React.FunctionComponent<{
           rev,
           format: 'expanded',
         }
-      );
+      )) as ExpandedResource[];
+      return expandedResource[0];
     }
     if (showMetadata) {
       return await nexus.Resource.get(

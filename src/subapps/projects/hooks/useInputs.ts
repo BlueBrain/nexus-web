@@ -4,7 +4,7 @@ import { SelectQueryResponse, SparqlViewQueryResponse } from '@bbp/nexus-sdk';
 
 import { displayError } from '../components/Notifications';
 
-const VIEW_ID = 'nxv:defaultSparqlIndex';
+const VIEW_ID = 'graph';
 
 export type Item = {
   [key: string]: {

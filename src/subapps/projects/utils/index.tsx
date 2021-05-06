@@ -1,6 +1,7 @@
 import { labelOf } from '../../../shared/utils';
 import { ResourceLink, Resource, NexusClient } from '@bbp/nexus-sdk';
 import fusionConfig from '../config';
+import { StepResource } from '../types';
 
 /**
  * isParentLink function - checks if a link created with a property 'hasParent'
@@ -26,8 +27,8 @@ export const isParentLink = (link: ResourceLink) => {
 export const isTable = (link: ResourceLink) => {
   if (Array.isArray(link.paths)) {
     return (
-      link.paths.filter((path: string) => labelOf(path) === 'tableOf').length >
-      0
+      link.paths.filter((path: string) => labelOf(path).indexOf('tableOf') >= 0)
+        .length > 0
     );
   }
 
@@ -152,11 +153,11 @@ export async function fetchTopLevelSteps(
 ) {
   const allSteps = await nexus.Resource.list(orgLabel, projectLabel, {
     type: fusionConfig.workflowStepType,
-    size: 200,
+    size: 99,
     deprecated: false,
   });
 
-  const children = await Promise.all(
+  const children = (await Promise.all(
     allSteps._results.map((step: any) => {
       return nexus.Resource.get(
         orgLabel,
@@ -164,7 +165,7 @@ export async function fetchTopLevelSteps(
         encodeURIComponent(step['@id'])
       );
     })
-  );
+  )) as StepResource[];
 
   return children;
 }

@@ -245,20 +245,23 @@ export const useAccessDataForTable = (
     }
   };
 
-  const tableResult = useQuery<any, Error>([revision], async () => {
-    const tableResource = (await nexus.Resource.get(
-      orgLabel,
-      projectLabel,
-      tableResourceId
-    )) as TableResource;
+  const tableResult = useQuery<any, Error>(
+    [tableResourceId, revision],
+    async () => {
+      const tableResource = (await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(tableResourceId)
+      )) as TableResource;
 
-    const view: View = (await nexus.View.get(
-      orgLabel,
-      projectLabel,
-      tableResource.view
-    )) as View;
-    return { tableResource, view };
-  });
+      const view: View = (await nexus.View.get(
+        orgLabel,
+        projectLabel,
+        tableResource.view
+      )) as View;
+      return { tableResource, view };
+    }
+  );
 
   const dataResult = useQuery<any, Error>(
     [tableResult.data],

@@ -49,7 +49,7 @@ export const useUnlinkedActivities = (
     await nexus.View.sparqlQuery(
       orgLabel,
       projectLabel,
-      DEFAULT_SPARQL_VIEW_ID,
+      encodeURIComponent(DEFAULT_SPARQL_VIEW_ID),
       unlinkedActivitiesQuery
     )
       .then((response: any) => {

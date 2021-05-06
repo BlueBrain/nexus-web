@@ -24,12 +24,12 @@ const NewTableContainer: React.FC<{
     const table = {
       name,
       description,
-      '@type': 'nxv:FusionTable',
+      '@type': 'FusionTable',
       '@context': FUSION_TABLE_CONTEXT['@id'],
       tableOf: {
-        '@id': parentId,
+        '@id': decodeURIComponent(parentId || ''),
       },
-      view: 'nxv:defaultSparqlIndex',
+      view: 'graph',
       enableSearch: true,
       enableInteractiveRows: true,
       enableDownload: true,
@@ -38,7 +38,7 @@ const NewTableContainer: React.FC<{
       dataQuery: DEFAULT_SPARQL_QUERY,
       configuration: [
         {
-          '@type': 'nxv:FusionTableColumn',
+          '@type': 'FusionTableColumn',
           name: 'subject',
           format: 'Text',
           enableSearch: true,
@@ -46,7 +46,7 @@ const NewTableContainer: React.FC<{
           enableFilter: false,
         },
         {
-          '@type': 'nxv:FusionTableColumn',
+          '@type': 'FusionTableColumn',
           name: 'predicate',
           format: 'Text',
           enableSearch: true,
@@ -54,7 +54,7 @@ const NewTableContainer: React.FC<{
           enableFilter: false,
         },
         {
-          '@type': 'nxv:FusionTableColumn',
+          '@type': 'FusionTableColumn',
           name: 'object',
           format: 'Text',
           enableSearch: true,

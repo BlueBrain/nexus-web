@@ -117,7 +117,9 @@ const NewProjectContainer: React.FC<{
 
   const makeProjectPublic = async (userOrgLabel: string, name: string) => {
     try {
-      const response = await nexus.ACL.append(`${userOrgLabel}/${name}`, 0, {
+      const currentACL = await nexus.ACL.list(`${userOrgLabel}/${name}`);
+      const rev = currentACL._results[0] ? currentACL._results[0]._rev : 0;
+      const response = await nexus.ACL.append(`${userOrgLabel}/${name}`, rev, {
         acl: [
           {
             permissions: ['resources/read', 'projects/read', 'projects/write'],

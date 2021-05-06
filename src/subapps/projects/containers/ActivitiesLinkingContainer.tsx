@@ -53,7 +53,7 @@ const ActivitiesLinkingContainer: React.FC<{
 
     nexus.Resource.list(orgLabel, projectLabel, {
       type: fusionConfig.workflowStepType,
-      size: 200,
+      size: 99,
       deprecated: false,
     })
       .then(response => {

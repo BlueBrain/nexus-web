@@ -44,14 +44,10 @@ const ProjectMenuContainer: React.FunctionComponent<{
             projectLabel={projectLabel}
           />
         </AccessControl>
-        <Link
-          to={`/admin/${orgLabel}/${projectLabel}/nxv:defaultSparqlIndex/sparql`}
-        >
+        <Link to={`/admin/${orgLabel}/${projectLabel}/graph/sparql`}>
           Sparql Query Editor
         </Link>
-        <Link
-          to={`/admin/${orgLabel}/${projectLabel}/nxv:defaultElasticSearchIndex/_search`}
-        >
+        <Link to={`/admin/${orgLabel}/${projectLabel}/documents/_search`}>
           ElasticSearch Query Editor
         </Link>
         <Link to={`/admin/${orgLabel}/${projectLabel}/_settings/acls`}>
