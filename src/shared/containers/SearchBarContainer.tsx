@@ -110,8 +110,6 @@ const SearchBarContainer: React.FC = () => {
     PROJECT_RESULTS_DEFAULT_SIZE
   );
 
-  console.log('projectList', projectList);
-
   return !!searchConfigs.data?.length ? (
     <SearchBar
       projectList={projectList}
