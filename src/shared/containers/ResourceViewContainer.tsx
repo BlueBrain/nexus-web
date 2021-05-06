@@ -174,13 +174,13 @@ const ResourceViewContainer: React.FunctionComponent<{
         projectLabel,
         resourceId
       )) as Resource;
-      let latestResource: Resource = rev
+      const latestResource: Resource = rev
         ? ((await nexus.Resource.get(orgLabel, projectLabel, resourceId, {
             rev: Number(rev),
           })) as Resource)
         : resource;
 
-      let expandedResources = (await nexus.Resource.get(
+      const expandedResources = (await nexus.Resource.get(
         orgLabel,
         projectLabel,
         resourceId,

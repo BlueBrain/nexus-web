@@ -99,7 +99,8 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   };
 
   const handleSubmit = (data: any) => {
-    const apiMappings = Object.keys(data.apiMappings).map(
+    const mappingObject = data.apiMappings ? data.apiMappings : {};
+    const apiMappings = Object.keys(mappingObject).map(
       (mapping: any) => data.apiMappings[mapping]
     );
 
