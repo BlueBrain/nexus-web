@@ -8,7 +8,8 @@ import {
 } from '../actions/search';
 import { ResultTableFields } from '../../types/search';
 
-export const SearchConfigType = 'nxv:SearchConfig';
+export const SearchConfigType =
+  'https://bluebrain.github.io/nexus/vocabulary/SearchConfig';
 
 export enum FacetType {
   TERMS = 'terms',
