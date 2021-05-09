@@ -162,7 +162,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
     nexus.View.elasticSearchQuery(
       orgLabel,
       projectLabel,
-      DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+      encodeURIComponent(DEFAULT_ELASTIC_SEARCH_VIEW_ID),
       {
         query: {
           bool: {
@@ -195,7 +195,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
     nexus.View.elasticSearchQuery(
       orgLabel,
       projectLabel,
-      DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+      encodeURIComponent(DEFAULT_ELASTIC_SEARCH_VIEW_ID),
       {
         query: {
           bool: {

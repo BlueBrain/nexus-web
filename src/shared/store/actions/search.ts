@@ -102,11 +102,11 @@ export const fetchSearchConfigs: ActionCreator<ThunkAction> = () => {
         const searchConfigs = await Promise.all(
           _results.map(
             async ({ '@id': id }) =>
-              await nexus.Resource.get(
+              (await nexus.Resource.get(
                 orgLabel,
                 projectLabel,
                 encodeURIComponent(id)
-              )
+              )) as Resource
           ) as Promise<
             Resource<{
               label: String;
