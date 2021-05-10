@@ -4,7 +4,7 @@ import { DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
 
 import ElasticSearchQueryForm from '../components/ViewForm/ElasticSearchQueryForm';
 
-const DEFAULT_PAGE_SIZE = 20;
+const DEFAULT_PAGE_SIZE = 5;
 const DEFAULT_QUERY = {
   query: {
     term: {
@@ -83,6 +83,13 @@ const ElasticSearchQueryContainer: React.FunctionComponent<{
     setQuery(query);
   };
 
+  const onChangePageSize = (size: number) => {
+    setPagination({
+      size,
+      from: 0,
+    });
+  };
+
   return (
     <ElasticSearchQueryForm
       query={query}
@@ -93,6 +100,7 @@ const ElasticSearchQueryContainer: React.FunctionComponent<{
       size={size}
       onPaginationChange={onPaginationChange}
       onQueryChange={onQueryChange}
+      onChangePageSize={onChangePageSize}
     />
   );
 };
