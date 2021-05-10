@@ -12,7 +12,6 @@ import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/javascript/javascript';
 
 import './view-form.less';
-import { ViewOptions } from '../../../../shared/components/EditTableForm';
 
 const FormItem = Form.Item;
 const ListItem = List.Item;
