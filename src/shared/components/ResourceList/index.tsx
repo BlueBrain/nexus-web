@@ -178,8 +178,8 @@ const ResourceListComponent: React.FunctionComponent<{
             <Dropdown overlay={sortOptions} trigger={['hover', 'click']}>
               <Tooltip title="Sort resources">
                 <Button
-                  type="primary"
                   ghost
+                  type="primary"
                   icon={
                     sortOption == '_createdAt' ? (
                       <SortAscendingOutlined />
