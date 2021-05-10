@@ -23,7 +23,7 @@ const SchemaDropdownFilterContainer: React.FunctionComponent<{
     nexus.View.elasticSearchQuery(
       orgLabel,
       projectLabel,
-      DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+      encodeURIComponent(DEFAULT_ELASTIC_SEARCH_VIEW_ID),
       {
         aggregations: {
           schemas: {
