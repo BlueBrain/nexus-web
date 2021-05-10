@@ -181,7 +181,7 @@ const ResourceListComponent: React.FunctionComponent<{
                   ghost
                   type="primary"
                   icon={
-                    sortOption == '_createdAt' ? (
+                    sortOption === '_createdAt' ? (
                       <SortAscendingOutlined />
                     ) : (
                       <SortDescendingOutlined />
