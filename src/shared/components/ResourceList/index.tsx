@@ -16,6 +16,7 @@ import {
   LinkOutlined,
   ReloadOutlined,
   SortAscendingOutlined,
+  SortDescendingOutlined,
   SwitcherOutlined,
 } from '@ant-design/icons';
 import { ResourceList, Resource } from '@bbp/nexus-sdk';
@@ -176,7 +177,17 @@ const ResourceListComponent: React.FunctionComponent<{
           {!list.query.q && (
             <Dropdown overlay={sortOptions} trigger={['hover', 'click']}>
               <Tooltip title="Sort resources">
-                <Button icon={<SortAscendingOutlined />} />
+                <Button
+                  type="primary"
+                  ghost
+                  icon={
+                    sortOption == '_createdAt' ? (
+                      <SortAscendingOutlined />
+                    ) : (
+                      <SortDescendingOutlined />
+                    )
+                  }
+                />
               </Tooltip>
             </Dropdown>
           )}
