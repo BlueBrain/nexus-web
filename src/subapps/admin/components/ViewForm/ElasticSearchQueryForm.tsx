@@ -12,6 +12,7 @@ import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/javascript/javascript';
 
 import './view-form.less';
+import { ViewOptions } from '../../../../shared/components/EditTableForm';
 
 const FormItem = Form.Item;
 const ListItem = List.Item;
@@ -38,6 +39,7 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
   size: number;
   onPaginationChange: (page: number) => void;
   onQueryChange: (query: object) => void;
+  onChangePageSize: (size: number) => void;
 }> = ({
   query,
   response,
@@ -47,10 +49,12 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
   size,
   onPaginationChange,
   onQueryChange,
+  onChangePageSize,
 }): JSX.Element => {
   const [initialQuery, setInitialQuery] = React.useState('');
   const [valid, setValid] = React.useState(true);
   const [value, setValue] = React.useState<string>();
+  const [pageSize, setPageSize] = React.useState<number>(size);
 
   React.useEffect(() => {
     // only on first render!
@@ -73,6 +77,11 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
     } catch (error) {
       setValid(false);
     }
+  };
+
+  const changePageSize = (current: number, size: number) => {
+    setPageSize(size);
+    onChangePageSize(size);
   };
 
   return (
@@ -136,9 +145,11 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
             pagination={{
               total,
               current,
-              pageSize: size,
+              pageSize,
               onChange: onPaginationChange,
               position: 'both',
+              showSizeChanger: true,
+              onShowSizeChange: changePageSize,
             }}
             renderItem={(result?: object) => (
               <ListItem>
