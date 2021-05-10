@@ -85,7 +85,9 @@ const ProjectView: React.FunctionComponent = () => {
                 <ViewStatisticsContainer
                   orgLabel={orgLabel}
                   projectLabel={project._label}
-                  resourceId={DEFAULT_ELASTIC_SEARCH_VIEW_ID}
+                  resourceId={encodeURIComponent(
+                    DEFAULT_ELASTIC_SEARCH_VIEW_ID
+                  )}
                   onClickRefresh={() => {
                     setRefreshLists(!refreshLists);
                   }}

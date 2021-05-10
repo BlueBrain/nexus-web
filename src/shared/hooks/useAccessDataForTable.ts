@@ -165,10 +165,15 @@ export const queryES = async (
 
   const bodyQuery = body.build();
 
-  return await nexus.View.elasticSearchQuery(orgLabel, projectLabel, viewId, {
-    ...bodyQuery,
-    ...query,
-  });
+  return await nexus.View.elasticSearchQuery(
+    orgLabel,
+    projectLabel,
+    encodeURIComponent(viewId),
+    {
+      ...bodyQuery,
+      ...query,
+    }
+  );
 };
 
 const accessData = async (
