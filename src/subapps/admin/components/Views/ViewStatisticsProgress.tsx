@@ -103,7 +103,7 @@ export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsCont
     const poll = nexus.View.pollStatistics(
       props.orgLabel,
       props.projectLabel,
-      encodeURIComponent(props.resourceId),
+      props.resourceId,
       { pollIntervalMs: 3000 }
     ).subscribe(
       (statistics: Statistics) => {

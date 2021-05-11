@@ -44,16 +44,10 @@ const ElasticSearchQueryContainer: React.FunctionComponent<{
       busy: true,
       error: null,
     });
-    nexus.View.elasticSearchQuery(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(viewId),
-      query,
-      {
-        from,
-        size,
-      }
-    )
+    nexus.View.elasticSearchQuery(orgLabel, projectLabel, viewId, query, {
+      from,
+      size,
+    })
       .then(response => {
         setResponse({
           response,

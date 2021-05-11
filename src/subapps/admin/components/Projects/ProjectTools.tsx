@@ -2,6 +2,10 @@ import * as React from 'react';
 import { AccessControl } from '@bbp/react-nexus';
 import { Link } from 'react-router-dom';
 import { Divider } from 'antd';
+import {
+  DEFAULT_SPARQL_VIEW_ID,
+  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+} from '@bbp/nexus-sdk';
 
 import FileUploadContainer from '../../../../shared/containers/FileUploadContainer';
 import ResourceFormContainer from '../../../../shared/containers/ResourceFormContainer';
@@ -31,12 +35,20 @@ const ProjectTools: React.FC<{
           />
         </AccessControl>
         <Link
-          to={`/${subApp.namespace}/${orgLabel}/${projectLabel}/graph/sparql`}
+          to={`/${
+            subApp.namespace
+          }/${orgLabel}/${projectLabel}/${encodeURIComponent(
+            DEFAULT_SPARQL_VIEW_ID
+          )}/sparql`}
         >
           Sparql Query Editor
         </Link>
         <Link
-          to={`/${subApp.namespace}/${orgLabel}/${projectLabel}/documents/_search`}
+          to={`/${
+            subApp.namespace
+          }/${orgLabel}/${projectLabel}/${encodeURIComponent(
+            DEFAULT_ELASTIC_SEARCH_VIEW_ID
+          )}/_search`}
         >
           ElasticSearch Query Editor
         </Link>

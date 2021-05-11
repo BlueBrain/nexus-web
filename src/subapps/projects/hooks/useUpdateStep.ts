@@ -28,7 +28,7 @@ export const useUpdateStep = (
       const updateResource = await nexus.Resource.update(
         orgLabel,
         projectLabel,
-        stepId,
+        encodeURIComponent(stepId),
         localCopy,
         {
           ...originalPayload,
