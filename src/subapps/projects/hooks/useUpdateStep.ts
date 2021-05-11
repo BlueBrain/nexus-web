@@ -36,6 +36,7 @@ export const useUpdateStep = (
           '@type': fusionConfig.workflowStepType,
         }
       );
+      console.log('updateResource._rev', updateResource._rev);
       setLocalCopy(updateResource._rev);
       setSuccess(true);
     } catch (err) {

@@ -47,6 +47,13 @@ const StepCard: React.FC<{
   const [editName, showEditName] = React.useState<boolean>(false);
   const [name, setName] = React.useState<string>(step.name);
   const [nameError, setNameError] = React.useState<boolean>(false);
+  const [currentPosition, setCurrentPosition] = React.useState<{
+    x?: number;
+    y?: number;
+  }>({
+    x: step.positionX,
+    y: step.positionY,
+  });
   const { description } = step;
 
   const stepId = labelOf(step['@id']);
@@ -163,7 +170,9 @@ const StepCard: React.FC<{
   const handleStop = (event: any, data: any) => {
     const { x, y } = data;
 
-    if (step.positionX === x && step.positionY === y) return;
+    if (currentPosition.x === x && currentPosition.y === y) return;
+
+    setCurrentPosition({ x, y });
 
     onPostionChange(stepId, {
       positionX: x,
