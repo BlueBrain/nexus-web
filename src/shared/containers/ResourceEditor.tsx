@@ -15,6 +15,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
   onSubmit: (value: object) => void;
   onExpanded?: (expanded: boolean) => void;
   tabChange?: boolean;
+  showMetadataToggle?: boolean;
 }> = ({
   resourceId,
   orgLabel,
@@ -25,6 +26,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
   onSubmit,
   onExpanded,
   tabChange,
+  showMetadataToggle,
 }) => {
   const nexus = useNexusContext();
   const [expanded, setExpanded] = React.useState(defaultExpanded);
@@ -124,6 +126,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
         editable={defaultEditable && !expanded && !showMetadata}
         expanded={expanded}
         showMetadata={showMetadata}
+        showMetadataToggle={showMetadataToggle}
       />
     )
   );
