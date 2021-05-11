@@ -43,7 +43,11 @@ async function downloadArchive(
   refContainer: React.MutableRefObject<any>,
   format?: 'x-tar' | 'json'
 ) {
-  await nexus.Archive.create(parsedData.org, parsedData.project, payload);
+  try {
+    await nexus.Archive.create(parsedData.org, parsedData.project, payload);
+  } catch {
+    // Fail silently. This needs to be fixed in API.
+  }
   const archive = await nexus.Archive.get(
     parsedData.org,
     parsedData.project,
