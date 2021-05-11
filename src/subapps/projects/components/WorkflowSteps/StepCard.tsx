@@ -8,6 +8,7 @@ import { Status, StepResource } from '../../types';
 import MarkdownViewerContainer from '../../../../shared/containers/MarkdownViewer';
 import SubStepItem from './SubStepItem';
 import { isEmptyInput } from '../../utils';
+import { labelOf } from '../../../../shared/utils';
 
 import './StepCard.less';
 
@@ -16,7 +17,7 @@ const editIcon = require('../../../../shared/images/pencil.svg');
 
 const MAX_TITLE_LENGTH = 45;
 const MAX_DESCRIPTION_LENGTH = 100;
-const BOX_OFFSET_Y = 60;
+const BOX_OFFSET_Y = 54; // half of the default step card height (108px)
 
 const StepCard: React.FC<{
   step: StepResource;
@@ -46,15 +47,23 @@ const StepCard: React.FC<{
   const [editName, showEditName] = React.useState<boolean>(false);
   const [name, setName] = React.useState<string>(step.name);
   const [nameError, setNameError] = React.useState<boolean>(false);
+  const [currentPosition, setCurrentPosition] = React.useState<{
+    x?: number;
+    y?: number;
+  }>({
+    x: step.positionX,
+    y: step.positionY,
+  });
   const { description } = step;
-  const stepId = step['@id'];
+
+  const stepId = labelOf(step['@id']);
 
   React.useEffect(() => {
     if (step.wasInformedBy) {
       if (Array.isArray(step.wasInformedBy)) {
-        step.wasInformedBy.forEach(card => placeLines(card['@id']));
+        step.wasInformedBy.forEach(card => placeLines(labelOf(card['@id'])));
       } else {
-        placeLines(step.wasInformedBy['@id']);
+        placeLines(labelOf(step.wasInformedBy['@id']));
       }
     }
   }, [step]);
@@ -113,7 +122,7 @@ const StepCard: React.FC<{
 
       const x2 =
         div2.offsetLeft + matrix2.m41 + div2.getBoundingClientRect().width / 2;
-      const y2 = div2.offsetTop + matrix2.m42 + BOX_OFFSET_Y / 2;
+      const y2 = div2.offsetTop + matrix2.m42 + BOX_OFFSET_Y;
 
       incomingLine.setAttribute(
         'points',
@@ -126,10 +135,10 @@ const StepCard: React.FC<{
     if (step.wasInformedBy) {
       if (Array.isArray(step.wasInformedBy)) {
         step.wasInformedBy.forEach(card => {
-          updateLines(card['@id'], data);
+          updateLines(labelOf(card['@id']), data);
         });
       } else {
-        updateLines(step.wasInformedBy['@id'], data);
+        updateLines(labelOf(step.wasInformedBy['@id']), data);
       }
     }
 
@@ -161,7 +170,9 @@ const StepCard: React.FC<{
   const handleStop = (event: any, data: any) => {
     const { x, y } = data;
 
-    if (step.positionX === x && step.positionY === y) return;
+    if (currentPosition.x === x && currentPosition.y === y) return;
+
+    setCurrentPosition({ x, y });
 
     onPostionChange(stepId, {
       positionX: x,
@@ -318,7 +329,7 @@ const StepCard: React.FC<{
       </Draggable>
       {step.wasInformedBy && Array.isArray(step.wasInformedBy) ? (
         step.wasInformedBy.map(step => (
-          <svg id="svg" key={`link-${stepId}-to-${step['@id']}`}>
+          <svg id="svg" key={`link-${stepId}-to-${labelOf(step['@id'])}`}>
             <marker
               id="black-arrow"
               viewBox="0 0 10 10"
@@ -356,7 +367,7 @@ const StepCard: React.FC<{
             markerMid="url(#black-arrow)"
             className="link-line"
             id={`link-${stepId}-to-${step.wasInformedBy &&
-              step.wasInformedBy['@id']}`}
+              labelOf(step.wasInformedBy['@id'])}`}
           />
         </svg>
       )}
