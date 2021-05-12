@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Modal } from 'antd';
 
-import { displayError } from '../components/Notifications';
+import { displayError, successNotification } from '../components/Notifications';
 import StepCard from '../components/WorkflowSteps/StepCard';
 import { isParentLink } from '../utils';
 import { useUpdateStep } from '../hooks/useUpdateStep';
@@ -83,6 +83,7 @@ const SingleStepContainer: React.FC<{
         onUpdate();
         setShowAddForm(false);
         setBusy(false);
+        successNotification(`New step ${data.name} created successfully`);
       })
       .catch(error => {
         setShowAddForm(false);

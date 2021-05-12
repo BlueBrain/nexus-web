@@ -8,6 +8,8 @@ import './ProjectForm.less';
 
 const { Item } = Form;
 
+const VALID_PROJECT_NAME = /^[0-9a-zA-Z_-]+$/;
+
 export type ProjectMetadata = {
   name: string;
   description: string;
@@ -71,19 +73,21 @@ const ProjectForm: React.FC<{
         md: 24,
       };
 
-  const isValidInput = () => {
+  const isValidProjectName = () => {
     let isValid = true;
-    if (isEmptyInput(name)) {
+
+    if (isEmptyInput(name) || !name.match(VALID_PROJECT_NAME)) {
       setNameError(true);
       isValid = false;
     } else {
       setNameError(false);
     }
+
     return isValid;
   };
 
   const onClickSave = () => {
-    if (isValidInput()) {
+    if (isValidProjectName()) {
       const data: ProjectMetadata = {
         visibility,
         name,
@@ -124,7 +128,10 @@ const ProjectForm: React.FC<{
             <Item
               label="Project Name *"
               validateStatus={nameError ? 'error' : ''}
-              help={nameError && 'Please enter a project name'}
+              help={
+                nameError &&
+                "Please enter a valid project name: only letters, numbers, '-' and '_' are allowed"
+              }
               tooltip={{
                 title: 'Name of your project',
                 icon: <InfoCircleOutlined />,
