@@ -29,3 +29,19 @@ export const FUSION_TABLE_CONTEXT = {
   ],
   '@id': 'https://bluebrainnexus.io/workflowStep/table-context',
 };
+
+export const PROJECT_METADATA_CONTEXT = {
+  '@context': [
+    {
+      '@base': 'https://bluebrainnexus.io/projectMetadata/',
+      '@vocab': 'https://bluebrainnexus.io/projectMetadata/vocabulary/',
+      name: {
+        '@id': 'http://schema.org/name',
+      },
+      description: {
+        '@id': 'http://schema.org/description',
+      },
+    },
+  ],
+  '@id': 'https://bluebrainnexus.io/workflowStep/project-metadata-context',
+};

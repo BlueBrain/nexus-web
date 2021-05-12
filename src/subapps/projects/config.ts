@@ -15,7 +15,8 @@ export const fusionConfig = {
     'https://bluebrain.github.io/nexus/vocabulary/activities',
   templateType: 'FusionTemplate',
   activityType: 'prov:Activity',
-  projectMetadataType: 'FusionMetadata',
+  projectMetadataType:
+    'https://bluebrainnexus.io/projectMetadata/vocabulary/FusionMetadata',
   fusionProjectTypes: ['FusionMetadata', 'FusionProject'],
   codeType: ['SoftwareSourceCode', 'Entity'],
   noteType: ['FusionNote', 'Entity'],

@@ -9,7 +9,11 @@ import ProjectForm, { ProjectMetadata } from '../components/ProjectForm';
 import ActionButton from '../components/ActionButton';
 import { displayError } from '../components/Notifications';
 import { userOrgLabel } from '../utils';
-import { WORKFLOW_STEP_CONTEXT, FUSION_TABLE_CONTEXT } from '../fusionContext';
+import {
+  WORKFLOW_STEP_CONTEXT,
+  FUSION_TABLE_CONTEXT,
+  PROJECT_METADATA_CONTEXT,
+} from '../fusionContext';
 
 const NewProjectContainer: React.FC<{
   onSuccess: () => void;
@@ -93,24 +97,30 @@ const NewProjectContainer: React.FC<{
           }
         });
 
-    const createResource = () =>
+    const createResource = () => {
       nexus.Resource.create(userOrg, name, {
-        '@type': fusionConfig.fusionProjectTypes,
-        ...data,
-      })
-        .then(() => {
-          notification.success({
-            message: `Project ${name} created successfully`,
-          });
-          setShowForm(false);
-          setBusy(false);
-          onSuccess();
+        ...PROJECT_METADATA_CONTEXT,
+      }).then(success => {
+        nexus.Resource.create(userOrg, name, {
+          '@type': fusionConfig.fusionProjectTypes,
+          '@context': PROJECT_METADATA_CONTEXT['@id'],
+          ...data,
         })
-        .catch(error => {
-          displayError(error, 'An error occurred');
-          setShowForm(false);
-          setBusy(false);
-        });
+          .then(() => {
+            notification.success({
+              message: `Project ${name} created successfully`,
+            });
+            setShowForm(false);
+            setBusy(false);
+            onSuccess();
+          })
+          .catch(error => {
+            displayError(error, 'An error occurred');
+            setShowForm(false);
+            setBusy(false);
+          });
+      });
+    };
 
     createProject();
   };
