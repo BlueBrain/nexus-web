@@ -10,6 +10,7 @@ import {
   successNotification,
   warning,
 } from '../components/Notifications';
+import { PROJECT_METADATA_CONTEXT } from '../fusionContext';
 
 const ProjectMetaContaier: React.FC<{
   orgLabel: string;
@@ -26,9 +27,6 @@ const ProjectMetaContaier: React.FC<{
 
   React.useEffect(() => {
     fetchProjectMetadata();
-    nexus.Resource.list(orgLabel, projectLabel, {
-      type: 'nxv:View',
-    }).then(x => console.log(x));
   }, [orgLabel, projectLabel]);
 
   const fetchProjectMetadata = () => {
@@ -89,11 +87,12 @@ const ProjectMetaContaier: React.FC<{
                 return nexus.Resource.update(
                   project._organizationLabel,
                   project._label,
-                  metaDataResource['@id'],
+                  encodeURIComponent(metaDataResource['@id']),
                   metaDataResource._rev,
                   {
                     ...data,
-                    '@type': fusionConfig.projectMetadataType,
+                    '@type': fusionConfig.fusionProjectTypes,
+                    '@context': PROJECT_METADATA_CONTEXT['@id'],
                   }
                 )
                   .then(result => {
