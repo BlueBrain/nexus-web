@@ -1,5 +1,4 @@
 import { ElasticSearchView, Resource } from '@bbp/nexus-sdk';
-import { number } from '@storybook/addon-knobs';
 import { Empty } from 'antd';
 import * as React from 'react';
 import ElasticSearchResultsTable, {
