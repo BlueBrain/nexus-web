@@ -24,6 +24,7 @@ const SparqlQueryInput: React.FunctionComponent<{
             theme: 'base16-light',
             placeholder: 'Enter a valid SPARQL query',
             lineNumbers: true,
+            lineWrapping: false,
             viewportMargin: Infinity,
           }}
           onBeforeChange={handleChange}
