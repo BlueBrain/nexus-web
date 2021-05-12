@@ -1,4 +1,5 @@
 import { ElasticSearchView, Resource } from '@bbp/nexus-sdk';
+import { number } from '@storybook/addon-knobs';
 import { Empty } from 'antd';
 import * as React from 'react';
 import ElasticSearchResultsTable, {
@@ -22,62 +23,76 @@ const DashboardElasticSearchQueryContainer: React.FC<{
     }
   }, [dataQuery]);
 
-  const renderResults = () => {
-    const [
-      searchResponse,
-      { searchProps, setSearchProps },
-    ] = useSearchQueryFromStudio(view._self, queryJSON);
+  const [paginationState, setPaginationState] = React.useState<{
+    from: number;
+    size: number;
+  }>({
+    from: 0,
+    size: 20,
+  });
 
-    const handleClickItem = (resource: Resource) => {
-      goToStudioResource(resource._self);
-    };
+  const [
+    searchResponse,
+    { searchProps, setSearchProps },
+  ] = useSearchQueryFromStudio(
+    view._self,
+    queryJSON,
+    paginationState.from,
+    paginationState.size
+  );
 
-    const handlePaginationChange = (page: number, pageSize?: number) => {
-      const size = searchProps.pagination?.size || 0;
-      setSearchProps({
-        ...searchProps,
-        pagination: {
-          from: (page - 1) * size,
-          size: pageSize || size,
-        },
-      });
-    };
+  const renderResults = React.useMemo(
+    () => () => {
+      const handleClickItem = (resource: Resource) => {
+        goToStudioResource(resource._self);
+      };
 
-    const handleSort = (sort: UseSearchProps['sort']) => {
-      setSearchProps({
-        ...searchProps,
-        sort,
-      });
-    };
+      const handlePaginationChange = (page: number, pageSize?: number) => {
+        setPaginationState({
+          from: page,
+          size: pageSize || 20,
+        });
+      };
 
-    // Pagination Props
-    const total = searchResponse.data?.hits.total.value || 0;
-    const size = searchProps.pagination?.size || 0;
-    const from = searchProps.pagination?.from || 0;
-    const totalPages = Math.ceil(total / size);
-    const current = Math.floor((totalPages / total) * from + 1);
-    const shouldShowPagination = totalPages > 1;
-    return (
-      <ElasticSearchResultsTable
-        isStudio={true}
-        fields={fields || DEFAULT_FIELDS}
-        searchResponse={searchResponse}
-        onClickItem={handleClickItem}
-        onSort={handleSort}
-        pagination={
-          shouldShowPagination
-            ? {
-                total,
-                current,
-                pageSize: size,
-                showSizeChanger: false,
-                onChange: handlePaginationChange,
-              }
-            : {}
-        }
-      />
-    );
-  };
+      const handleSort = (sort: UseSearchProps['sort']) => {
+        setSearchProps({
+          ...searchProps,
+          sort,
+        });
+      };
+
+      const [shouldShowPagination, paginationProp] = React.useMemo(() => {
+        // Pagination Props
+        const total = searchResponse.data?.hits.total.value || 0;
+        const size = paginationState.size;
+        const totalPages = Math.ceil(total / size);
+        const current = paginationState.from;
+        const shouldShowPagination = totalPages || 0 > 1;
+        return [
+          shouldShowPagination,
+          {
+            total,
+            current,
+            pageSize: size,
+            showSizeChanger: false,
+            onChange: handlePaginationChange,
+          },
+        ];
+      }, [paginationState, searchResponse]);
+
+      return (
+        <ElasticSearchResultsTable
+          isStudio={true}
+          fields={fields || DEFAULT_FIELDS}
+          searchResponse={searchResponse}
+          onClickItem={handleClickItem}
+          onSort={handleSort}
+          pagination={shouldShowPagination ? paginationProp : {}}
+        />
+      );
+    },
+    [searchResponse]
+  );
 
   return (
     <>
