@@ -122,7 +122,9 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
     filters: any,
     sorter: SorterResult<any> | SorterResult<any>[]
   ) => {
-    if (!pagination) {
+    if (pagination && pagination.onChange) {
+      pagination.onChange(pagination.current || 0, pagination.pageSize || 20);
+    } else {
       const toSortBy = Array.isArray(sorter) ? sorter : [sorter];
       if (toSortBy[0].column) {
         onSort &&
