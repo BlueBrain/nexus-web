@@ -70,11 +70,7 @@ export const makeInputTable = async (
     view: DEFAULT_SPARQL_VIEW_ID,
   };
   try {
-    const response = await nexus.Resource.create(
-      orgLabel,
-      projectLabel,
-      activityTable
-    );
+    await nexus.Resource.create(orgLabel, projectLabel, activityTable);
     notification.success({ message: 'Created Input table successfully' });
   } catch (ex) {
     notification.error({ message: 'Failed to create Input table' });
@@ -156,11 +152,7 @@ export const makeActivityTable = async (
     view: DEFAULT_SPARQL_VIEW_ID,
   };
   try {
-    const response = await nexus.Resource.create(
-      orgLabel,
-      projectLabel,
-      activityTable
-    );
+    await nexus.Resource.create(orgLabel, projectLabel, activityTable);
     notification.success({ message: 'Created activity table successfully' });
   } catch (ex) {
     notification.error({ message: 'Failed to create activity table' });

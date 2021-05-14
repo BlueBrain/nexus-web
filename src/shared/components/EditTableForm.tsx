@@ -4,11 +4,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Form, Input, Button, Spin, Checkbox, Row, Col, Select } from 'antd';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import { IInstance } from 'react-codemirror2/index';
-import {
-  Resource,
-  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-  DEFAULT_SPARQL_VIEW_ID,
-} from '@bbp/nexus-sdk';
+import { Resource, DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
 import { useQuery } from 'react-query';
 import ColumnConfig from './ColumnConfig';
 import {
