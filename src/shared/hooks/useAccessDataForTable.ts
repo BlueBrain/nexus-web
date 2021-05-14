@@ -262,7 +262,7 @@ export const useAccessDataForTable = (
       const view: View = (await nexus.View.get(
         orgLabel,
         projectLabel,
-        tableResource.view
+        encodeURIComponent(tableResource.view)
       )) as View;
       return { tableResource, view };
     }

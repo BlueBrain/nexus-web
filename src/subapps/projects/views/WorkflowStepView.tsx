@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Modal } from 'antd';
-
 import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
 import StepsBoard from '../components/WorkflowSteps/StepsBoard';
@@ -11,7 +10,7 @@ import { displayError, successNotification } from '../components/Notifications';
 import SingleStepContainer from '../containers/SingleStepContainer';
 import StepInfoContainer from '../containers/StepInfoContainer';
 import { fetchChildrenForStep, isTable } from '../utils';
-import ActivityResourcesContainer from '../containers/ActivityResourcesContainer';
+
 import InputsContainer from '../containers/InputsContainer';
 import TableContainer from '../containers/DraggableTablesContainer';
 import AddComponentButton from '../components/AddComponentButton';
@@ -22,6 +21,7 @@ import NewTableContainer from '../containers/NewTableContainer';
 import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
 
 import './WorkflowStepView.less';
+import { makeInputTable, makeActivityTable } from '../utils/makeDefaultTables';
 
 type BreadcrumbItem = {
   label: string;
@@ -78,7 +78,9 @@ const WorkflowStepView: React.FC = () => {
   }, [refreshTables, stepId]);
 
   const fetchTables = async () => {
-    await nexus.Resource.links(orgLabel, projectLabel, stepId, 'incoming')
+    await nexus.Resource.links(orgLabel, projectLabel, stepId, 'incoming', {
+      deprecated: false,
+    })
       .then(response => {
         // There may be duplicates in the link.
         const uniq = [
@@ -255,12 +257,34 @@ const WorkflowStepView: React.FC = () => {
     setShowDataSetForm(false);
   };
 
+  const addInputTable = React.useMemo(() => {
+    return () =>
+      step
+        ? () => {
+            makeInputTable(step['@id'], nexus, orgLabel, projectLabel);
+            setRefreshTables(true);
+          }
+        : () => {};
+  }, [step]);
+
+  const addActivityTable = React.useMemo(() => {
+    return () =>
+      step
+        ? () => {
+            makeActivityTable(step['@id'], nexus, orgLabel, projectLabel);
+            setRefreshTables(true);
+          }
+        : () => {};
+  }, [step]);
+
   return (
     <div className="workflow-step-view">
       <AddComponentButton
         addNewStep={() => setShowStepForm(true)}
         addDataTable={() => setShowNewTableForm(true)}
         addDataset={() => setShowDataSetForm(true)}
+        addInputTable={addInputTable()}
+        addActivityTable={addActivityTable()}
       />
       <ProjectPanel orgLabel={orgLabel} projectLabel={projectLabel} />
       <div className="workflow-step-view__panel">
@@ -294,15 +318,7 @@ const WorkflowStepView: React.FC = () => {
               projectLabel={projectLabel}
               tables={tables}
             />
-            {/* TODO: update activities table */}
-            {/*
-            <ActivityResourcesContainer
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-                linkCodeToActivity={linkCodeToActivity}
-                workflowStep={step}
-              />
-           */}
+
             <Modal
               title="Add Data Set"
               visible={showDataSetForm}

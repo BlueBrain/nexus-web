@@ -1,5 +1,5 @@
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource, View, SparqlView } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk';
 import { useHistory, useLocation } from 'react-router-dom';
 import * as React from 'react';
 import {
