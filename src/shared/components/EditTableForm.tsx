@@ -1,9 +1,14 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
+
 import { Form, Input, Button, Spin, Checkbox, Row, Col, Select } from 'antd';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import { IInstance } from 'react-codemirror2/index';
-import { Resource, View, SparqlView } from '@bbp/nexus-sdk';
+import {
+  Resource,
+  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+  DEFAULT_SPARQL_VIEW_ID,
+} from '@bbp/nexus-sdk';
 import { useQuery } from 'react-query';
 import ColumnConfig from './ColumnConfig';
 import {
@@ -104,7 +109,11 @@ const EditTableForm: React.FC<{
   const updateColumConfig = useQuery(
     [view, dataQuery],
     async () => {
-      const viewResource = await nexus.View.get(orgLabel, projectLabel, view);
+      const viewResource = await nexus.View.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(view)
+      );
       if (viewResource['@type']?.includes('ElasticSearchView')) {
         const result = await queryES(
           JSON.parse(dataQuery),
@@ -247,6 +256,15 @@ const EditTableForm: React.FC<{
     [configuration, updateColumConfig, updateColumnConfigArray]
   );
 
+  const viewLabel = (view: string) => {
+    if (view !== ViewOptions.ES_VIEW && view !== ViewOptions.SPARQL_VIEW) {
+      return view === DEFAULT_ELASTIC_SEARCH_VIEW_ID
+        ? ViewOptions.ES_VIEW
+        : ViewOptions.SPARQL_VIEW;
+    }
+    return view;
+  };
+
   return (
     <Form className="edit-table-form">
       <h2 className="edit-table-form__title">Edit Table</h2>
@@ -286,7 +304,7 @@ const EditTableForm: React.FC<{
           </Col>
           <Col xs={12} sm={12} md={12}>
             <Select
-              value={view}
+              value={viewLabel(view)}
               style={{ width: 220 }}
               onChange={value => {
                 setView(value);
@@ -301,7 +319,7 @@ const EditTableForm: React.FC<{
             >
               {Object.values(ViewOptions).map(view => (
                 <Option key={view} value={view}>
-                  {view}
+                  {viewLabel(view)}
                 </Option>
               ))}
             </Select>

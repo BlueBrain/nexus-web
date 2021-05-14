@@ -10,9 +10,29 @@ const AddComponentButton: React.FC<{
   addDataTable?: () => void;
   addCode?: () => void;
   addDataset?: () => void;
-}> = ({ addNewStep, addDataTable, addCode, addDataset }) => {
+  addInputTable?: () => void;
+  addActivityTable?: () => void;
+}> = ({
+  addNewStep,
+  addDataTable,
+  addCode,
+  addDataset,
+  addInputTable,
+  addActivityTable,
+}) => {
   const menu = (
     <Menu>
+      {addInputTable && (
+        <Menu.Item onClick={addInputTable}>
+          Canvas: Add New Input Table
+        </Menu.Item>
+      )}
+      {addActivityTable && (
+        <Menu.Item onClick={addActivityTable}>
+          Canvas: Add New Activity Table
+        </Menu.Item>
+      )}
+
       <Menu.Item onClick={addNewStep}>Canvas: Add New Step</Menu.Item>
       {addDataTable && (
         <Menu.Item onClick={addDataTable}>Canvas: Add Data Table</Menu.Item>
