@@ -23,7 +23,7 @@ const makeProjectPublic = async (
   try {
     const currentACL = await nexus.ACL.list(`${userOrgLabel}/${name}`);
     const rev = currentACL._results[0] ? currentACL._results[0]._rev : 0;
-    const response = await nexus.ACL.append(`${userOrgLabel}/${name}`, rev, {
+    await nexus.ACL.append(`${userOrgLabel}/${name}`, rev, {
       acl: [
         {
           permissions: ['resources/read', 'projects/read', 'projects/write'],

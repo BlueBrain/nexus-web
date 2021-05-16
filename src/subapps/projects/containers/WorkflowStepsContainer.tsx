@@ -5,11 +5,7 @@ import { NexusClient } from '@bbp/nexus-sdk';
 
 import SingleStepContainer from './SingleStepContainer';
 import StepsBoard from '../components/WorkflowSteps/StepsBoard';
-import {
-  displayError,
-  NexusError,
-  successNotification,
-} from '../components/Notifications';
+import { displayError, successNotification } from '../components/Notifications';
 import ProjectPanel from '../components/ProjectPanel';
 import { fetchTopLevelSteps } from '../utils';
 import AddComponentButton from '../components/AddComponentButton';
@@ -60,7 +56,7 @@ const WorkflowStepContainer: React.FC<{
 
   const checkForContext = async () => {
     try {
-      const response = await nexus.Resource.get(
+      await nexus.Resource.get(
         orgLabel,
         projectLabel,
         encodeURIComponent(WORKFLOW_STEP_CONTEXT['@id'])
