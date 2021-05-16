@@ -5,7 +5,11 @@ import { NexusClient } from '@bbp/nexus-sdk';
 
 import SingleStepContainer from './SingleStepContainer';
 import StepsBoard from '../components/WorkflowSteps/StepsBoard';
-import { displayError, successNotification } from '../components/Notifications';
+import {
+  displayError,
+  NexusError,
+  successNotification,
+} from '../components/Notifications';
 import ProjectPanel from '../components/ProjectPanel';
 import { fetchTopLevelSteps } from '../utils';
 import AddComponentButton from '../components/AddComponentButton';
@@ -13,6 +17,10 @@ import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowSt
 import fusionConfig from '../config';
 import { StepResource, WorkflowStepMetadata } from '../types';
 import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
+import {
+  createTableContext,
+  createWorkflowStepContext,
+} from '../utils/workFlowMetadataUtils';
 
 const WorkflowStepContainer: React.FC<{
   orgLabel: string;
@@ -28,6 +36,7 @@ const WorkflowStepContainer: React.FC<{
     setTimeout(() => setRefreshSteps(!refreshSteps), 3500);
 
   React.useEffect(() => {
+    checkForContext();
     fetchAllSteps(nexus, orgLabel, projectLabel);
   }, [refreshSteps]);
 
@@ -46,6 +55,22 @@ const WorkflowStepContainer: React.FC<{
       setSteps(allSteps);
     } catch (e) {
       displayError(e, 'Failed to fetch workflow steps');
+    }
+  };
+
+  const checkForContext = async () => {
+    try {
+      const response = await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(WORKFLOW_STEP_CONTEXT['@id'])
+      );
+    } catch (ex) {
+      if (ex['@type'] === 'ResourceNotFound') {
+        console.log('here ...');
+        createWorkflowStepContext(orgLabel, projectLabel, nexus);
+        createTableContext(orgLabel, projectLabel, nexus);
+      }
     }
   };
 

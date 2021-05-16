@@ -4,16 +4,11 @@ import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../shared/store/reducers';
 
-import fusionConfig from '../config';
 import ProjectForm, { ProjectMetadata } from '../components/ProjectForm';
 import ActionButton from '../components/ActionButton';
 import { displayError } from '../components/Notifications';
 import { userOrgLabel } from '../utils';
-import {
-  WORKFLOW_STEP_CONTEXT,
-  FUSION_TABLE_CONTEXT,
-  PROJECT_METADATA_CONTEXT,
-} from '../fusionContext';
+import { createProject } from '../utils/workFlowMetadataUtils';
 
 const NewProjectContainer: React.FC<{
   onSuccess: () => void;
@@ -33,6 +28,7 @@ const NewProjectContainer: React.FC<{
   });
 
   const userOrg = userOrgLabel(authenticatedIdentity?.realm, userName);
+  const realm = authenticatedIdentity?.realm || undefined;
 
   const onClickAddProject = () => {
     setShowForm(true);
@@ -41,106 +37,18 @@ const NewProjectContainer: React.FC<{
   const submitProject = (data: ProjectMetadata) => {
     setBusy(true);
 
-    const { name, description, type, visibility } = data;
-
-    const createOrganization = () =>
-      nexus.Organization.create(userOrg, {
-        description: 'Personal projects storage',
-      })
-        .then(() => {
-          createProject();
-        })
-        .catch(error => {
-          displayError(error, 'An error occurred');
-          setShowForm(false);
-          setBusy(false);
-        });
-
-    const createWorkflowStepContext = () => {
-      nexus.Resource.create(userOrg, name, {
-        ...WORKFLOW_STEP_CONTEXT,
-      })
-        .then(() => {})
-        .catch(error =>
-          displayError(error, 'Failed to create Workflow Step Context')
-        );
-    };
-
-    const createTableContext = () => {
-      nexus.Resource.create(userOrg, name, {
-        ...FUSION_TABLE_CONTEXT,
-      })
-        .then(() => {})
-        .catch(error => displayError(error, 'Failed to create Table Context'));
-    };
-
-    const createProject = () =>
-      nexus.Project.create(userOrg, name, {
-        description,
-        apiMappings: fusionConfig.defaultAPIMappings,
-      })
-        .then(() => {
-          createResource();
-          createWorkflowStepContext();
-          createTableContext();
-          if (type === 'personal' && visibility === 'public') {
-            makeProjectPublic(userOrg, name);
-          }
-        })
-        .catch(error => {
-          if (error['@type'] === 'OrganizationNotFound') {
-            createOrganization();
-          } else {
-            displayError(error, 'An error occurred');
-            setShowForm(false);
-            setBusy(false);
-          }
-        });
-
-    const createResource = () => {
-      nexus.Resource.create(userOrg, name, {
-        ...PROJECT_METADATA_CONTEXT,
-      }).then(success => {
-        nexus.Resource.create(userOrg, name, {
-          '@type': fusionConfig.fusionProjectTypes,
-          '@context': PROJECT_METADATA_CONTEXT['@id'],
-          ...data,
-        })
-          .then(() => {
-            notification.success({
-              message: `Project ${name} created successfully`,
-            });
-            setShowForm(false);
-            setBusy(false);
-            onSuccess();
-          })
-          .catch(error => {
-            displayError(error, 'An error occurred');
-            setShowForm(false);
-            setBusy(false);
-          });
-      });
-    };
-
-    createProject();
-  };
-
-  const makeProjectPublic = async (userOrgLabel: string, name: string) => {
     try {
-      const currentACL = await nexus.ACL.list(`${userOrgLabel}/${name}`);
-      const rev = currentACL._results[0] ? currentACL._results[0]._rev : 0;
-      const response = await nexus.ACL.append(`${userOrgLabel}/${name}`, rev, {
-        acl: [
-          {
-            permissions: ['resources/read', 'projects/read', 'projects/write'],
-            identity: {
-              realm: authenticatedIdentity?.realm,
-            },
-          },
-        ],
+      createProject(userOrg, data, realm, nexus);
+      notification.success({
+        message: `Project ${data.name} created successfully`,
       });
+      setShowForm(false);
+      setBusy(false);
+      onSuccess();
     } catch (error) {
-      displayError(error, 'Failed to make project public');
+      displayError(error, 'An error occurred');
+      setShowForm(false);
+      setBusy(false);
     }
   };
 

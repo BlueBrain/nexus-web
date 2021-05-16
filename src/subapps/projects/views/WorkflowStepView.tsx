@@ -21,7 +21,7 @@ import NewTableContainer from '../containers/NewTableContainer';
 import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
 
 import './WorkflowStepView.less';
-import { makeInputTable, makeActivityTable } from '../utils/makeDefaultTables';
+import { makeInputTable, makeActivityTable } from '../utils/tableUtils';
 
 type BreadcrumbItem = {
   label: string;
