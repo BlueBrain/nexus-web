@@ -90,7 +90,7 @@ const StepInfoContainer: React.FC<{
     return nexus.Resource.update(
       orgLabel,
       projectLabel,
-      step['@id'],
+      encodeURIComponent(step['@id']),
       step._rev,
       {
         ...originalPayload,

@@ -13,6 +13,10 @@ import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowSt
 import fusionConfig from '../config';
 import { StepResource, WorkflowStepMetadata } from '../types';
 import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
+import {
+  createTableContext,
+  createWorkflowStepContext,
+} from '../utils/workFlowMetadataUtils';
 
 const WorkflowStepContainer: React.FC<{
   orgLabel: string;
@@ -28,6 +32,7 @@ const WorkflowStepContainer: React.FC<{
     setTimeout(() => setRefreshSteps(!refreshSteps), 3500);
 
   React.useEffect(() => {
+    checkForContext();
     fetchAllSteps(nexus, orgLabel, projectLabel);
   }, [refreshSteps]);
 
@@ -46,6 +51,21 @@ const WorkflowStepContainer: React.FC<{
       setSteps(allSteps);
     } catch (e) {
       displayError(e, 'Failed to fetch workflow steps');
+    }
+  };
+
+  const checkForContext = async () => {
+    try {
+      await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(WORKFLOW_STEP_CONTEXT['@id'])
+      );
+    } catch (ex) {
+      if (ex['@type'] === 'ResourceNotFound') {
+        createWorkflowStepContext(orgLabel, projectLabel, nexus);
+        createTableContext(orgLabel, projectLabel, nexus);
+      }
     }
   };
 

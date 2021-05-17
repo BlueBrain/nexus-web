@@ -11,6 +11,7 @@ import {
   warning,
 } from '../components/Notifications';
 import { PROJECT_METADATA_CONTEXT } from '../fusionContext';
+import { createResource } from '../utils/workFlowMetadataUtils';
 
 const ProjectMetaContaier: React.FC<{
   orgLabel: string;
@@ -60,7 +61,21 @@ const ProjectMetaContaier: React.FC<{
               displayError(error, 'An error occured');
             });
         } else {
-          warning('No metadata file found for this project');
+          const emptyMetadata = {
+            '@type': fusionConfig.projectMetadataType,
+            name: projectLabel,
+            description: '',
+            dueDate: '',
+            topic: '',
+            hypotheses: '',
+            visibility: '',
+            questions: '',
+            goals: '',
+          };
+          createResource(orgLabel, projectLabel, emptyMetadata, nexus);
+          warning(
+            'Metadata file is being created, please try after few seconds..'
+          );
         }
       })
       .catch(error => {
