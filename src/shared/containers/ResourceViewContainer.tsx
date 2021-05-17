@@ -156,8 +156,6 @@ const ResourceViewContainer: React.FunctionComponent<{
       (link as IncomingLink)._project
     );
 
-    console.log('link', link['@id']);
-
     goToResource(orgLabel, projectLabel, encodeURIComponent(link['@id']), {
       tab: '#links',
     });
