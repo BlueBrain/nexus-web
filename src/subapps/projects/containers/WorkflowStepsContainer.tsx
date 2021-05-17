@@ -63,7 +63,6 @@ const WorkflowStepContainer: React.FC<{
       );
     } catch (ex) {
       if (ex['@type'] === 'ResourceNotFound') {
-        console.log('here ...');
         createWorkflowStepContext(orgLabel, projectLabel, nexus);
         createTableContext(orgLabel, projectLabel, nexus);
       }
