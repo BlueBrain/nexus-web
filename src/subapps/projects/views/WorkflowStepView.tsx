@@ -22,6 +22,7 @@ import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
 
 import './WorkflowStepView.less';
 import { makeInputTable, makeActivityTable } from '../utils/tableUtils';
+import { labelOf } from '../../../shared/utils';
 
 type BreadcrumbItem = {
   label: string;
@@ -129,9 +130,7 @@ const WorkflowStepView: React.FC = () => {
 
   const stepToBreadcrumbItem = (step: StepResource) => ({
     label: step.name,
-    url: `/workflow/${orgLabel}/${projectLabel}/${encodeURIComponent(
-      step['@id']
-    )}`,
+    url: `/workflow/${orgLabel}/${projectLabel}/${labelOf(step['@id'])}`,
   });
 
   const fetchBreadcrumbs = (
