@@ -57,7 +57,11 @@ export const createNodesAndEdgesFromResourceLinks = (
 ) => {
   return resourceLinks.reduce(
     (pathNodes: cytoscape.ElementDefinition[], link) => {
-      const paths = Array.isArray(link.paths) ? link.paths : [link.paths];
+      const paths = link.paths
+        ? Array.isArray(link.paths)
+          ? link.paths
+          : [link.paths]
+        : [];
 
       if (collapsed) {
         return [
