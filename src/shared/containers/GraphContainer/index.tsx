@@ -218,8 +218,8 @@ const GraphContainer: React.FunctionComponent<{
   };
 
   const showResourcePreview = (id: string, data: ElementNodeData) => {
-    const { isBlankNode, isOrigin, isExternal, resourceData } = data;
-    if (isBlankNode || isOrigin) {
+    const { isBlankNode, resourceData } = data;
+    if (isBlankNode) {
       return;
     }
     setSelectedResource({
