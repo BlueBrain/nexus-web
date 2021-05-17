@@ -94,7 +94,7 @@ const ActivitiesLinkingContainer: React.FC<{
     return nexus.Resource.update(
       orgLabel,
       projectLabel,
-      stepId,
+      encodeURIComponent(stepId),
       steps.find(step => step['@id'] === stepId)._rev,
       {
         ...updatedPayload,
