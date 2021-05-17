@@ -12,7 +12,11 @@ const ResourceLinkItem: React.FunctionComponent<{
   onInternalClick?: (internalLink: ResourceLink) => void;
 }> = ({ link, onInternalClick }) => {
   const isInternal = !!(link as Resource)._self;
-  const paths = Array.isArray(link.paths) ? link.paths : [link.paths];
+  const paths = link.paths
+    ? Array.isArray(link.paths)
+      ? link.paths
+      : [link.paths]
+    : [];
 
   return (
     <div

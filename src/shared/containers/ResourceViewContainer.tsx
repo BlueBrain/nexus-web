@@ -1,14 +1,13 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { useLocation, useHistory, useParams } from 'react-router';
-import { Spin, Card, Empty, Tabs, notification, Alert, Collapse } from 'antd';
+import { Spin, Card, Empty, notification, Alert } from 'antd';
 import * as queryString from 'query-string';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import {
   Resource,
   ResourceLink,
   IncomingLink,
-  Identity,
   ExpandedResource,
 } from '@bbp/nexus-sdk';
 import AdminPlugin from '../containers/AdminPluginContainer';
@@ -23,7 +22,6 @@ import {
   getDestinationParam,
 } from '../utils';
 import { isDeprecated } from '../utils/nexusMaybe';
-import { response } from 'express';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -157,6 +155,7 @@ const ResourceViewContainer: React.FunctionComponent<{
     const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(
       (link as IncomingLink)._project
     );
+
     goToResource(orgLabel, projectLabel, encodeURIComponent(link['@id']), {
       tab: '#links',
     });
