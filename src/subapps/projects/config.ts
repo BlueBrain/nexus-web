@@ -11,10 +11,8 @@ export const fusionConfig = {
 
   // resource types
   workflowStepType: 'https://bluebrain.github.io/nexus/vocabulary/WorkflowStep',
-  activityWorkflowLink:
-    'https://bluebrain.github.io/nexus/vocabulary/activities',
+  activityWorkflowLink: 'https://bluebrain.github.io/nexus/vocabulary/activity',
   templateType: 'FusionTemplate',
-  activityType: 'prov:Activity',
   projectMetadataType:
     'https://bluebrainnexus.io/projectMetadata/vocabulary/FusionMetadata',
   fusionProjectTypes: ['FusionMetadata', 'FusionProject'],

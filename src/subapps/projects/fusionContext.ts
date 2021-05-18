@@ -3,6 +3,9 @@ export const WORKFLOW_STEP_CONTEXT = {
     {
       '@base': 'https://bluebrainnexus.io/workflowStep/',
       '@vocab': 'https://bluebrainnexus.io/workflowStep/vocabulary/',
+      nxv: 'https://bluebrain.github.io/nexus/vocabulary/',
+      input: 'nxv:input',
+      activity: 'nxv:activity',
       name: {
         '@id': 'http://schema.org/name',
       },
