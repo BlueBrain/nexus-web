@@ -11,7 +11,7 @@ const subAppType = 'internal';
 const title = 'Admin';
 const namespace = 'admin';
 const icon = require('../../shared/images/dbIcon.svg');
-const requireLogin = false;
+const requireLogin = true;
 const description = 'Manage, edit, and query your Nexus Delta knowledge graph';
 
 const adminSubappProps = {
