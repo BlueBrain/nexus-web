@@ -83,11 +83,11 @@ const InputsContainer: React.FC<{
 
   const updateStepResource = async (datasetResource: Resource) => {
     const workflowStep = (await nexus.Resource.get<{
-      'nxv:inputs': [];
+      'nxv:input': [];
       _rev: number;
     }>(orgLabel, projectLabel, encodeURIComponent(stepId))) as Resource;
     const updatedInputs = [
-      ...forceAsArray(workflowStep['nxv:inputs']),
+      ...forceAsArray(workflowStep['nxv:input']),
       {
         '@id': datasetResource['@id'],
       },
@@ -99,7 +99,7 @@ const InputsContainer: React.FC<{
       workflowStep._rev,
       {
         ...workflowStep,
-        'nxv:inputs': updatedInputs,
+        'nxv:input': updatedInputs,
       }
     );
     // TODO: Improve this by using some sort of feed back from backend on indexing.

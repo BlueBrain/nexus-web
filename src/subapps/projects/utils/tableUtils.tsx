@@ -24,7 +24,7 @@ export const makeInputTable = async (
                 nxv:createdAt ?CreationDate ;
                 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?resourceType .
     BIND (STR(?createdBy) AS ?createdBy_str) .
-      <${stepId}> nxv:inputs ?resource .
+      <${stepId}> nxv:input ?resource .
       OPTIONAL { ?resource <http://schema.org/name> ?name } .
       OPTIONAL { ?resource <http://schema.org/description> ?description } .
   }
@@ -105,7 +105,7 @@ export const makeActivityTable = async (
           <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?resourceType .
       BIND (STR(?createdBy) AS ?createdBy_str) .
           <${stepId}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> nxv:WorkflowStep ;
-          nxv:activities ?resource .  
+          nxv:activity ?resource .  
         OPTIONAL { ?resource <http://schema.org/name> ?ActivityName } .
         OPTIONAL { ?resource prov:Generation|prov:generated|prov:wasGeneratedBy ?generated_id .
                  ?generated_id <http://schema.org/name> ?GeneratedDataset .} .
