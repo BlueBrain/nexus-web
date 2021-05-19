@@ -17,7 +17,7 @@ export const makeInputTable = async (
   const inputsQuery = `
   PREFIX nxv: <https://bluebrain.github.io/nexus/vocabulary/>
   PREFIX prov: <http://www.w3.org/ns/prov#>
-  SELECT ?resource ?name ?description ?CreatedBy ?CreationDate (group_concat(distinct ?resourceType;separator=", ") as ?resourceTypes)
+  SELECT ?self ?resource ?name ?description ?CreatedBy ?CreationDate (group_concat(distinct ?resourceType;separator=", ") as ?resourceTypes)
   WHERE {
     ?resource nxv:self ?self ;
                 nxv:createdBy ?createdBy ;
@@ -28,7 +28,7 @@ export const makeInputTable = async (
       OPTIONAL { ?resource <http://schema.org/name> ?name } .
       OPTIONAL { ?resource <http://schema.org/description> ?description } .
   }
-  GROUP BY ?resource ?name ?description ?resourceType (STRAFTER(?createdBy_str, "users/") AS ?CreatedBy) ?CreationDate
+  GROUP BY ?self ?resource ?name ?description (STRAFTER(?createdBy_str, "users/") AS ?CreatedBy) ?CreationDate
     `;
   const activityTable = {
     '@context': 'https://bluebrainnexus.io/workflowStep/table-context',
@@ -95,24 +95,25 @@ export const makeActivityTable = async (
 ) => {
   const activitiesQuery = `
   PREFIX nxv: <https://bluebrain.github.io/nexus/vocabulary/>
-  PREFIX prov: <http://www.w3.org/ns/prov#>
-  SELECT ?resource ?ActivityName ?CreatedBy ?CreationDate (group_concat(distinct ?UsedDataset;separator=", ") as ?UsedDatasets) (group_concat(distinct ?GeneratedDataset;separator=", ") as ?GeneratedDatasets)
-  WHERE {
-    ?resource nxv:self ?self ;
-          <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> prov:Activity ;
-          nxv:createdBy ?createdBy ;
-          nxv:createdAt ?CreationDate ;
-          <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?resourceType .
-      BIND (STR(?createdBy) AS ?createdBy_str) .
-          <${stepId}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> nxv:WorkflowStep ;
-          nxv:activity ?resource .  
-        OPTIONAL { ?resource <http://schema.org/name> ?ActivityName } .
-        OPTIONAL { ?resource prov:Generation|prov:generated|prov:wasGeneratedBy ?generated_id .
-                 ?generated_id <http://schema.org/name> ?GeneratedDataset .} .
-        OPTIONAL { ?resource prov:Usage|prov:used|prov:wasUsedBy ?used_id .
-                 ?used_id <http://schema.org/name> ?UsedDataset .} .
-  }
-  GROUP BY ?resource ?ActivityName (STRAFTER(?createdBy_str, "users/") AS ?CreatedBy) ?CreationDate
+PREFIX prov: <http://www.w3.org/ns/prov#>
+SELECT ?self ?resource ?ActivityName ?CreatedBy ?CreationDate (group_concat(distinct ?UsedDataset;separator=", ") as ?UsedDatasets) (group_concat(distinct ?GeneratedDataset;separator=", ") as ?GeneratedDatasets)
+WHERE {
+	?resource nxv:self ?self ;
+			  <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> prov:Activity ;
+			  nxv:createdBy ?createdBy ;
+			  nxv:createdAt ?CreationDate ;
+			  <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?resourceType .
+  	BIND (STR(?createdBy) AS ?createdBy_str) .
+			  <${stepId}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> nxv:WorkflowStep ;
+			  nxv:activities ?resource .  
+      OPTIONAL { ?resource <http://schema.org/name> ?ActivityName } .
+      OPTIONAL { ?resource prov:Generation|prov:generated|prov:wasGeneratedBy ?generated_id .
+               ?generated_id <http://schema.org/name> ?GeneratedDataset .} .
+      OPTIONAL { ?resource prov:Usage|prov:used|prov:wasUsedBy ?used_id .
+               ?used_id <http://schema.org/name> ?UsedDataset .} .
+}
+GROUP BY ?self ?resource ?ActivityName (STRAFTER(?createdBy_str, "users/") AS ?CreatedBy) ?CreationDate
+
   `;
   const activityTable = {
     '@context': 'https://bluebrainnexus.io/workflowStep/table-context',
