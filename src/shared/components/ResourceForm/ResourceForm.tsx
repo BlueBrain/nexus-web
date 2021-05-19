@@ -101,11 +101,12 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
     try {
       form.setFieldsValue({ editorContent: rawData });
       const values = await form.validateFields();
+      console.log(values);
       const { resourceTypes, editorContent } = values;
       const selectedSchema: string =
-        resourceTypes.find((type: string) =>
-          Object.keys(RESOURCES_SCHEMA_URI).includes(type)
-        ) || '_';
+        resourceTypes.find((type: string) => {
+          return Object.keys(RESOURCES_SCHEMA_URI).includes(type);
+        }) || '_';
       const payload = {
         ...editorContent,
       };

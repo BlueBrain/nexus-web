@@ -37,7 +37,7 @@ export const S3_STORAGE = {
 };
 
 export const SPARQL_VIEW = {
-  '@context': {}, // optional
+  '@context': 'https://bluebrain.github.io/nexus/contexts/sparql.json', // optional
   '@id': '', // optional
   '@type': 'SparqlView',
   resourceSchemas: [],
@@ -48,7 +48,7 @@ export const SPARQL_VIEW = {
 };
 
 export const ELASTIC_SEARCH_VIEW = {
-  '@context': {}, // optional
+  '@context': 'https://bluebrain.github.io/nexus/contexts/elasticsearch.json', // optional
   '@id': '', // optional
   '@type': 'ElasticSearchView',
   resourceSchemas: [],
@@ -114,8 +114,8 @@ export const DEFAULT_RESOURCES: { [key: string]: any } = {
 };
 
 export const RESOURCES_SCHEMA_URI: { [key: string]: string } = {
-  Storage: 'https://bluebrain.github.io/nexus/schemas/storage.json',
-  View: 'https://bluebrain.github.io/nexus/schemas/view.json',
-  Resolver: 'https://bluebrain.github.io/nexus/schemas/resolver.json',
+  Storage: 'https://bluebrain.github.io/nexus/schemas/storages.json',
+  View: 'https://bluebrain.github.io/nexus/schemas/views.json',
+  Resolver: 'https://bluebrain.github.io/nexus/schemas/resolvers.json',
   _: '_',
 };
