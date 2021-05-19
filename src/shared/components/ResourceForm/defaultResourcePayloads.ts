@@ -114,8 +114,8 @@ export const DEFAULT_RESOURCES: { [key: string]: any } = {
 };
 
 export const RESOURCES_SCHEMA_URI: { [key: string]: string } = {
-  Storage: 'https://bluebrain.github.io/nexus/schemas/storage.json',
-  View: 'https://bluebrain.github.io/nexus/schemas/view.json',
-  Resolver: 'https://bluebrain.github.io/nexus/schemas/resolver.json',
+  Storage: 'https://bluebrain.github.io/nexus/schemas/storages.json',
+  View: 'https://bluebrain.github.io/nexus/schemas/views.json',
+  Resolver: 'https://bluebrain.github.io/nexus/schemas/resolvers.json',
   _: '_',
 };
