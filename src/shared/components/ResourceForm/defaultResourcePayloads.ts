@@ -37,7 +37,7 @@ export const S3_STORAGE = {
 };
 
 export const SPARQL_VIEW = {
-  '@context': {}, // optional
+  '@context': 'https://bluebrain.github.io/nexus/contexts/sparql.json', // optional
   '@id': '', // optional
   '@type': 'SparqlView',
   resourceSchemas: [],
@@ -48,7 +48,7 @@ export const SPARQL_VIEW = {
 };
 
 export const ELASTIC_SEARCH_VIEW = {
-  '@context': {}, // optional
+  '@context': 'https://bluebrain.github.io/nexus/contexts/elasticsearch.json', // optional
   '@id': '', // optional
   '@type': 'ElasticSearchView',
   resourceSchemas: [],

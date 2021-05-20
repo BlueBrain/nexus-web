@@ -11,6 +11,7 @@ import { displayError, successNotification } from '../components/Notifications';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 import { labelOf } from '../../../shared/utils';
 import { WorkflowStepMetadata } from '../types';
+import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
 
 const ActivitiesLinkingContainer: React.FC<{
   orgLabel: string;
@@ -30,9 +31,23 @@ const ActivitiesLinkingContainer: React.FC<{
   const [busy, setBusy] = React.useState<boolean>(false);
   const nexus = useNexusContext();
 
-  const fetchWorkflowSteps = (activities: any) => {
+  const fetchSiblings = () => {
+    nexus.Resource.list(orgLabel, projectLabel, {
+      type: fusionConfig.workflowStepType,
+      size: 99,
+      deprecated: false,
+    })
+      .then(response => {
+        fetchWorkflowSteps(response._results);
+      })
+      .catch(error => {
+        displayError(error, 'Failed to load the list of Workflow Steps');
+      });
+  };
+
+  const fetchWorkflowSteps = (workFlowSteps: any) => {
     Promise.all(
-      activities.map((activity: any) => {
+      workFlowSteps.map((activity: any) => {
         return nexus.Resource.get(
           orgLabel,
           projectLabel,
@@ -50,19 +65,7 @@ const ActivitiesLinkingContainer: React.FC<{
     setSelectedActivity(
       unlinkedActivities.find(activity => activity.resourceId === id)
     );
-
-    nexus.Resource.list(orgLabel, projectLabel, {
-      type: fusionConfig.workflowStepType,
-      size: 99,
-      deprecated: false,
-    })
-      .then(response => {
-        fetchWorkflowSteps(response._results);
-      })
-      .catch(error => {
-        displayError(error, 'Failed to load the list of Workflow Steps');
-      });
-
+    fetchSiblings();
     setShowLinkForm(true);
   };
 
@@ -124,22 +127,32 @@ const ActivitiesLinkingContainer: React.FC<{
   };
 
   const addNew = (id: string) => {
-    setSelectedActivity(
-      unlinkedActivities.find(activity => activity.resourceId === id)
+    const selectedUnlinkedActivities = unlinkedActivities.find(
+      activity => activity.resourceId === id
     );
+
+    fetchSiblings();
+
+    if (selectedUnlinkedActivities) {
+      setSelectedActivity(selectedUnlinkedActivities);
+      setshowCreateStepForm(true);
+    }
   };
 
   const createNewStep = (data: WorkflowStepMetadata) => {
     setBusy(true);
 
-    data['nxv:activities'] = {
-      '@id': selectedActivity.resourceId,
-    };
+    data['nxv:activities'] = [
+      {
+        '@id': selectedActivity.resourceId,
+      },
+    ];
 
     const { name } = data;
 
     nexus.Resource.create(orgLabel, projectLabel, {
       '@type': fusionConfig.workflowStepType,
+      '@context': WORKFLOW_STEP_CONTEXT['@id'],
       ...data,
     })
       .then(() => {
@@ -170,6 +183,10 @@ const ActivitiesLinkingContainer: React.FC<{
 
     return undefined;
   };
+
+  const sibilings = React.useMemo(() => {
+    return steps.map(s => ({ '@id': s._self, name: s.name }));
+  }, [steps]);
 
   return (
     <>
@@ -226,7 +243,7 @@ const ActivitiesLinkingContainer: React.FC<{
           onSubmit={createNewStep}
           busy={false}
           parentLabel={''}
-          siblings={[]}
+          siblings={sibilings}
           activityList={[]}
           defaultActivityType={defaultActivityType()}
           isFullForm

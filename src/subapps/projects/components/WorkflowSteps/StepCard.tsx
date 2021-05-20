@@ -45,7 +45,7 @@ const StepCard: React.FC<{
 }) => {
   const [stepStatus, setStepStatus] = React.useState<string>(step.status);
   const [editName, showEditName] = React.useState<boolean>(false);
-  const [name, setName] = React.useState<string>(step.name);
+  const [name, setName] = React.useState<string>(step.name || '');
   const [nameError, setNameError] = React.useState<boolean>(false);
   const [currentPosition, setCurrentPosition] = React.useState<{
     x?: number;
