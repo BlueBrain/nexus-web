@@ -38,7 +38,6 @@ const ActivitiesLinkingContainer: React.FC<{
       deprecated: false,
     })
       .then(response => {
-        console.log(response);
         fetchWorkflowSteps(response._results);
       })
       .catch(error => {
@@ -185,6 +184,10 @@ const ActivitiesLinkingContainer: React.FC<{
     return undefined;
   };
 
+  const sibilings = React.useMemo(() => {
+    return steps.map(s => ({ '@id': s._self, name: s.name }));
+  }, [steps]);
+
   return (
     <>
       <Popover
@@ -240,7 +243,7 @@ const ActivitiesLinkingContainer: React.FC<{
           onSubmit={createNewStep}
           busy={false}
           parentLabel={''}
-          siblings={steps.map(s => ({ '@id': s._self, name: s.name }))}
+          siblings={sibilings}
           activityList={[]}
           defaultActivityType={defaultActivityType()}
           isFullForm
