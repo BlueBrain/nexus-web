@@ -63,7 +63,6 @@ const ActivitiesLinkingContainer: React.FC<{
   };
 
   const onClickLinkActivity = (id: string) => {
-    console.log('here .....');
     setSelectedActivity(
       unlinkedActivities.find(activity => activity.resourceId === id)
     );
