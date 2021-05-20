@@ -101,7 +101,6 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
     try {
       form.setFieldsValue({ editorContent: rawData });
       const values = await form.validateFields();
-      console.log(values);
       const { resourceTypes, editorContent } = values;
       const selectedSchema: string =
         resourceTypes.find((type: string) => {
