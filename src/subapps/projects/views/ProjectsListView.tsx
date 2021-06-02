@@ -6,10 +6,11 @@ import { ProjectResponseCommon } from '@bbp/nexus-sdk';
 import ProjectsListContainer from '../containers/ProjectsListContainer';
 import NewProjectContainer from '../containers/NewProjectContainer';
 import { RootState } from '../../../shared/store/reducers';
-import fusionConfig from '../config';
 import { userOrgLabel } from '../utils';
 
 import './ProjectsListView.less';
+
+const MAX_PROJECTS = 300;
 
 const ProjectsListView: React.FC<{}> = () => {
   const nexus = useNexusContext();
@@ -42,7 +43,7 @@ const ProjectsListView: React.FC<{}> = () => {
     const personalOrg = userOrgLabel(authenticatedIdentity?.realm, userName);
     // TODO: Implement pagination.
     nexus.Project.list(personalOrg, {
-      size: 99,
+      size: MAX_PROJECTS,
       deprecated: false,
     }).then(value => {
       setPersonalProjects(value._results);
@@ -50,9 +51,10 @@ const ProjectsListView: React.FC<{}> = () => {
 
     // TODO: Implement pagination.
     nexus.Project.list(undefined, {
-      size: 99,
+      size: MAX_PROJECTS,
       deprecated: false,
     }).then(value => {
+      console.log(value._results.length);
       const shared = value._results.filter((v: ProjectResponseCommon) => {
         return v._organizationLabel !== personalOrg;
       });
@@ -61,7 +63,7 @@ const ProjectsListView: React.FC<{}> = () => {
 
     // TODO: Implement pagination.
     nexus.Project.list(undefined, {
-      size: 99,
+      size: MAX_PROJECTS,
       deprecated: true,
     }).then(value => {
       setArchivedProjects(value._results);
