@@ -5,13 +5,25 @@ import * as React from 'react';
 import {
   Tag,
   Table,
+  Col,
+  Row,
   Button,
+  Typography,
   Input,
   Space,
   Spin,
   Modal,
+  Divider,
+  Popover,
   notification,
 } from 'antd';
+import {
+  DownloadOutlined,
+  ShoppingCartOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  SmallDashOutlined,
+} from '@ant-design/icons';
 import '../styles/data-table.less';
 import { useAccessDataForTable } from '../hooks/useAccessDataForTable';
 import EditTableForm, { TableComponent } from '../components/EditTableForm';
@@ -40,26 +52,28 @@ export type TableResource = Resource<{
   enableDownload: boolean;
   enableSave: boolean;
   resultsPerPage: number;
-	dataQuery: string;
+  dataQuery: string;
   configuration: TableColumn | TableColumn[];
 }>;
 
 type DataTableProps = {
-	orgLabel: string;
+  orgLabel: string;
   projectLabel: string;
-	tableResourceId: string;
+  tableResourceId: string;
 };
+
+const { Title } = Typography;
 
 const DataTableContainer: React.FC<DataTableProps> = ({
   orgLabel,
   projectLabel,
-	tableResourceId,
+  tableResourceId,
 }) => {
   const [showEditForm, setShowEditForm] = React.useState<boolean>(false);
+  const [showOptions, setShowOptions] = React.useState<boolean>(false);
   const nexus = useNexusContext();
   const history = useHistory();
-	const location = useLocation();
-
+  const location = useLocation();
 
   const goToStudioResource = (selfUrl: string) => {
     nexus
@@ -79,59 +93,60 @@ const DataTableContainer: React.FC<DataTableProps> = ({
       .catch(error => {
         notification.error({ message: `Resource ${self} could not be found` });
       });
-	};
-	const confirmDeprecate = () => {
+  };
+
+  const confirmDeprecate = () => {
     Modal.confirm({
       title: 'Deprecate Table',
       content: 'Are you sure?',
-      onOk: deprecateTable
+      onOk: deprecateTable,
     });
-	};
+  };
 
-	const deprecateTable = async () => {
-		const latest = await nexus.Resource.get(
-			orgLabel,
-			projectLabel,
-			encodeURIComponent(tableResourceId)
-		) as Resource;
-		const deprecated = nexus.Resource.deprecate(
+  const deprecateTable = async () => {
+    const latest = (await nexus.Resource.get(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(tableResourceId)
+    )) as Resource;
+    const deprecated = nexus.Resource.deprecate(
       orgLabel,
       projectLabel,
       encodeURIComponent(tableResourceId),
-			latest._rev
-		);
-		console.log("latest deprecated table function");
-		// console.log(latest);
-		console.log(deprecated);
-		return deprecated;
-	};
-	const deprecateTableResource = useMutation(deprecateTable, {
+      latest._rev
+    );
+    console.log('latest deprecated table function');
+    // console.log(latest);
+    console.log(deprecated);
+    return deprecated;
+  };
+  const deprecateTableResource = useMutation(deprecateTable, {
     onMutate: (data: TableResource) => {},
     onSuccess: data => {
       notification.success({
-				message: 'Table deprecated',
-				duration: 2,
-			});
+        message: 'Table deprecated',
+        duration: 2,
+      });
     },
-		onError: error => {
-			console.log("error");
-			console.log(error);
+    onError: error => {
+      console.log('error');
+      console.log(error);
       notification.error({
-          message: 'Failed to delete table',
-          duration: 0,
-        });
+        message: 'Failed to delete table',
+        duration: 0,
+      });
     },
-	});
+  });
 
-	const latestResource = async (data: TableComponent) => {
-		return await(nexus.Resource.get(
+  const latestResource = async (data: TableComponent) => {
+    return (await nexus.Resource.get(
       orgLabel,
       projectLabel,
       encodeURIComponent(data['@id'])
-		)) as Resource;
-	}
+    )) as Resource;
+  };
   const updateTable = async (data: TableComponent) => {
-		const latest = await latestResource(data);
+    const latest = await latestResource(data);
     return nexus.Resource.update(
       orgLabel,
       projectLabel,
@@ -139,7 +154,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
       latest._rev,
       { ...latest, ...data }
     );
-	};
+  };
 
   const changeTableResource = useMutation(updateTable, {
     onMutate: (data: TableResource) => {},
@@ -163,48 +178,101 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   const renderTitle = () => {
     const tableResource = tableData.tableResult.data
       ?.tableResource as TableComponent;
-    return (
-      <div className="data-table-controls">
-        <Space align="center" direction="horizontal" size="large">
-          {tableResource.name}{' '}
-          {tableResource._deprecated ? 'yes' : 'no'}{' '}
-          <Button
-            onClick={() => {
-              setShowEditForm(true);
-            }}
-            type="primary"
-          >
-            Edit Table
-					</Button>
-					<Button danger onClick={confirmDeprecate}>
-						Deprecate
-					</Button>
-					{tableResource.enableSave ? (
-            <Button onClick={tableData.addFromDataCart} type="primary">
-              Add from DataCart
-            </Button>
-          ) : null}
-          {tableResource.enableSearch ? (
-            <Input.Search
-              placeholder="input search text"
-              allowClear
-              onSearch={value => {
-                tableData.setSearchValue(value);
+    const content = (
+      <>
+        <Row gutter={[16, 16]}>
+          <Col>
+            <Button
+              shape="round"
+              type="default"
+              icon={<EditOutlined />}
+              onClick={() => {
+                setShowEditForm(true);
               }}
-              style={{ width: '100%' }}
-            ></Input.Search>
+            >
+              Edit Table
+            </Button>
+          </Col>
+          {tableResource.enableSave ? (
+            <Col>
+              <Button
+                shape="round"
+                type="primary"
+                icon={<ShoppingCartOutlined />}
+                onClick={tableData.addFromDataCart}
+              >
+                Import
+              </Button>
+            </Col>
           ) : null}
           {tableResource.enableDownload ? (
-            <Button onClick={tableData.downloadCSV} type="primary">
-              Download CSV
-            </Button>
+            <Col>
+              <Button
+                shape="round"
+                type="primary"
+                icon={<DownloadOutlined />}
+                onClick={tableData.downloadCSV}
+              >
+                CSV
+              </Button>
+            </Col>
           ) : null}
           {tableResource.enableSave ? (
-            <Button onClick={tableData.addToDataCart} type="primary">
-              Add to DataCart
-            </Button>
+            <Col>
+              <Button
+                shape="round"
+                type="primary"
+                icon={<ShoppingCartOutlined />}
+                onClick={tableData.addToDataCart}
+              >
+                Export
+              </Button>
+            </Col>
           ) : null}
-        </Space>
+          <Col>
+            <Button
+              shape="round"
+              danger
+              icon={<DeleteOutlined />}
+              onClick={confirmDeprecate}
+            >
+              Deprecate
+            </Button>
+          </Col>
+        </Row>
+      </>
+    );
+    const options = (
+      <Popover
+        style={{ background: 'none' }}
+        placement="leftTop"
+        content={content}
+        trigger="click"
+      >
+        <Button shape="round" type="default" icon={<SmallDashOutlined />} />
+      </Popover>
+    );
+    const search = (
+      <Input.Search
+        placeholder="input search text"
+        allowClear
+        onSearch={value => {
+          tableData.setSearchValue(value);
+        }}
+        style={{ width: '100%' }}
+      ></Input.Search>
+    );
+    return (
+      <div>
+        <Row gutter={[16, 16]}>
+          <Col flex="none">
+            <Title level={4} style={{ textTransform: 'capitalize' }}>
+              {tableResource.name}
+            </Title>
+          </Col>
+          <Col flex="auto">{tableResource.enableSearch ? search : null}</Col>
+          <Col flex="none">{options}</Col>
+        </Row>
       </div>
     );
   };
