@@ -40,25 +40,26 @@ export type TableResource = Resource<{
   enableDownload: boolean;
   enableSave: boolean;
   resultsPerPage: number;
-  dataQuery: string;
+	dataQuery: string;
   configuration: TableColumn | TableColumn[];
 }>;
 
 type DataTableProps = {
-  orgLabel: string;
+	orgLabel: string;
   projectLabel: string;
-  tableResourceId: string;
+	tableResourceId: string;
 };
 
 const DataTableContainer: React.FC<DataTableProps> = ({
   orgLabel,
   projectLabel,
-  tableResourceId,
+	tableResourceId,
 }) => {
   const [showEditForm, setShowEditForm] = React.useState<boolean>(false);
   const nexus = useNexusContext();
   const history = useHistory();
-  const location = useLocation();
+	const location = useLocation();
+
 
   const goToStudioResource = (selfUrl: string) => {
     nexus
@@ -78,14 +79,59 @@ const DataTableContainer: React.FC<DataTableProps> = ({
       .catch(error => {
         notification.error({ message: `Resource ${self} could not be found` });
       });
-  };
+	};
+	const confirmDeprecate = () => {
+    Modal.confirm({
+      title: 'Deprecate Table',
+      content: 'Are you sure?',
+      onOk: deprecateTable
+    });
+	};
 
-  const updateTable = async (data: TableComponent) => {
-    const latest = (await nexus.Resource.get(
+	const deprecateTable = async () => {
+		const latest = await nexus.Resource.get(
+			orgLabel,
+			projectLabel,
+			encodeURIComponent(tableResourceId)
+		) as Resource;
+		const deprecated = nexus.Resource.deprecate(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(tableResourceId),
+			latest._rev
+		);
+		console.log("latest deprecated table function");
+		// console.log(latest);
+		console.log(deprecated);
+		return deprecated;
+	};
+	const deprecateTableResource = useMutation(deprecateTable, {
+    onMutate: (data: TableResource) => {},
+    onSuccess: data => {
+      notification.success({
+				message: 'Table deprecated',
+				duration: 2,
+			});
+    },
+		onError: error => {
+			console.log("error");
+			console.log(error);
+      notification.error({
+          message: 'Failed to delete table',
+          duration: 0,
+        });
+    },
+	});
+
+	const latestResource = async (data: TableComponent) => {
+		return await(nexus.Resource.get(
       orgLabel,
       projectLabel,
       encodeURIComponent(data['@id'])
-    )) as Resource;
+		)) as Resource;
+	}
+  const updateTable = async (data: TableComponent) => {
+		const latest = await latestResource(data);
     return nexus.Resource.update(
       orgLabel,
       projectLabel,
@@ -93,7 +139,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
       latest._rev,
       { ...latest, ...data }
     );
-  };
+	};
 
   const changeTableResource = useMutation(updateTable, {
     onMutate: (data: TableResource) => {},
@@ -117,11 +163,11 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   const renderTitle = () => {
     const tableResource = tableData.tableResult.data
       ?.tableResource as TableComponent;
-
     return (
       <div className="data-table-controls">
         <Space align="center" direction="horizontal" size="large">
           {tableResource.name}{' '}
+          {tableResource._deprecated ? 'yes' : 'no'}{' '}
           <Button
             onClick={() => {
               setShowEditForm(true);
@@ -129,7 +175,15 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             type="primary"
           >
             Edit Table
-          </Button>
+					</Button>
+					<Button danger onClick={confirmDeprecate}>
+						Deprecate
+					</Button>
+					{tableResource.enableSave ? (
+            <Button onClick={tableData.addFromDataCart} type="primary">
+              Add from DataCart
+            </Button>
+          ) : null}
           {tableResource.enableSearch ? (
             <Input.Search
               placeholder="input search text"
@@ -143,11 +197,6 @@ const DataTableContainer: React.FC<DataTableProps> = ({
           {tableResource.enableDownload ? (
             <Button onClick={tableData.downloadCSV} type="primary">
               Download CSV
-            </Button>
-          ) : null}
-          {tableResource.enableSave ? (
-            <Button onClick={tableData.addFromDataCart} type="primary">
-              Add from DataCart
             </Button>
           ) : null}
           {tableResource.enableSave ? (
