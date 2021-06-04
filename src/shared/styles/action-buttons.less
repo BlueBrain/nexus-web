@@ -1,43 +1,10 @@
 @import 'shadow-variables.less';
 
-@edit: edit;
-@addTo: addTo;
-@addFrom: addFrom;
-@csv: csv;
-@delete: delete;
-
-@edit: {
-  one: rgba(50, 204, 188, 1);
-  two: rgba(144, 247, 236, 1);
-};
-@addTo: {
-  one: rgba(206, 159, 252, 1);
-  two: rgba(115, 103, 240, 1);
-};
-
-@addFrom: {
-  one: rgba(0, 212, 255, 1);
-  two: rgba(115, 103, 240, 1);
-};
-@csv: {
-  one: rgba(250, 178, 126, 1);
-  two: rgba(247, 144, 187, 1);
-};
-@delete: {
-  one: rgba(207, 19, 34, 1);
-  two: rgba(255, 122, 69, 1);
-};
-
-.actionMixin(@x) {
-  @c: @x;
-  color: @c[one];
-  background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)),
-    linear-gradient(90deg, @c[two], 10%, @c[one], 100%);
-  ::hover {
-    --actionColor: $color;
-    box-shadow: @glow;
-  }
-}
+@editColor: #32ccbc;
+@addToColor: #ce9ffc;
+@addFromColor: #00d4ff;
+@csvColor: rgb(250, 178, 126);
+@deleteColor: #cf1322;
 
 .wrapper {
   display: grid;
@@ -47,36 +14,80 @@
   .button {
     width: 100%;
     height: auto;
+    background: @bgColor;
+    opacity: 1;
     border: solid 4px transparent;
     background-origin: border-box;
     background-clip: content-box, border-box;
-    box-shadow: @shortShadow;
-    border-image-slice: 100 0 0;
+    border-image-slice: 100 20 0;
     text-align: left;
     cursor: pointer;
+    box-shadow: @shortShadow;
+    width: 100%;
 
-    &::hover {
+    &:hover {
       transition: all 1s ease-out;
-      box-shadow: @longShadow;
+      border-style: outset;
+      box-shadow: @hoverShadow;
     }
-    &::active {
+    &:active {
       box-shadow: @activeShadow;
     }
 
     &.edit {
-      .actionMixin(@edit);
+      color: @editColor;
+      border-image-source: linear-gradient(90deg, #90f7ec 10%, @editColor 100%);
+      .actionIcon {
+        border-color: @editColor;
+      }
     }
-    &.csv {
-      .actionMixin(@csv);
-    }
+
     &.addTo {
-      .actionMixin(@addTo);
+      color: @addToColor;
+      border-image-source: linear-gradient(
+        90deg,
+        @addToColor 10%,
+        #7367f0 100%
+      );
+      .actionIcon {
+        border-color: @addToColor;
+      }
     }
+
     &.addFrom {
-      .actionMixin(@addFrom);
+      color: @addFromColor;
+      border-image-source: linear-gradient(
+        90deg,
+        @addFromColor 10%,
+        #3e3efb 100%
+      );
+      .actionIcon {
+        border-color: @addFromColor;
+      }
     }
+
     &.delete {
-      .actionMixin(@delete);
+      color: @deleteColor;
+      border-image-source: linear-gradient(
+        90deg,
+        #ff7a45 10%,
+        @deleteColor 100%
+      );
+      .actionIcon {
+        border-color: @deleteColor;
+      }
+    }
+
+    &.csv {
+      color: @csvColor;
+      border-image-source: linear-gradient(
+        90deg,
+        rgb(247, 144, 187) 10%,
+        @csvColor 100%
+      );
+      .actionIcon {
+        border-color: @csvColor;
+      }
     }
 
     .actionIcon {
