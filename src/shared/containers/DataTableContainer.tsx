@@ -24,7 +24,9 @@ import {
   EditOutlined,
   SmallDashOutlined,
 } from '@ant-design/icons';
+
 import '../styles/data-table.less';
+import '../styles/action-buttons.less';
 import { useAccessDataForTable } from '../hooks/useAccessDataForTable';
 import EditTableForm, { TableComponent } from '../components/EditTableForm';
 import { useMutation } from 'react-query';
@@ -179,73 +181,91 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     const tableResource = tableData.tableResult.data
       ?.tableResource as TableComponent;
     const content = (
-      <>
-        <Row gutter={[16, 16]}>
-          <Col>
+      <div className="wrapper">
+        <div>
+          <Button
+            block
+            type="default"
+            className="button edit"
+            onClick={() => {
+              setShowEditForm(true);
+            }}
+          >
+            <Row gutter={[30, 0]} justify="start">
+              <Col flex="none" className="actionIcon">
+                <EditOutlined />
+              </Col>
+              <Col flex="auto">Edit Table</Col>
+            </Row>
+          </Button>
+        </div>
+        {tableResource.enableSave ? (
+          <div>
             <Button
-              shape="round"
+              block
+              className="button addFrom"
               type="default"
-              icon={<EditOutlined />}
-              onClick={() => {
-                setShowEditForm(true);
-              }}
+              onClick={tableData.addFromDataCart}
             >
-              Edit Table
+              <Row gutter={[30, 0]} justify="start">
+                <Col flex="none" className="actionIcon">
+                  <ShoppingCartOutlined />
+                </Col>
+                <Col flex="auto">Add From Cart</Col>
+              </Row>
             </Button>
-          </Col>
-          {tableResource.enableSave ? (
-            <Col>
-              <Button
-                shape="round"
-                type="primary"
-                icon={<ShoppingCartOutlined />}
-                onClick={tableData.addFromDataCart}
-              >
-                Import
-              </Button>
-            </Col>
-          ) : null}
-          {tableResource.enableDownload ? (
-            <Col>
-              <Button
-                shape="round"
-                type="primary"
-                icon={<DownloadOutlined />}
-                onClick={tableData.downloadCSV}
-              >
-                CSV
-              </Button>
-            </Col>
-          ) : null}
-          {tableResource.enableSave ? (
-            <Col>
-              <Button
-                shape="round"
-                type="primary"
-                icon={<ShoppingCartOutlined />}
-                onClick={tableData.addToDataCart}
-              >
-                Export
-              </Button>
-            </Col>
-          ) : null}
-          <Col>
+          </div>
+        ) : null}
+        {tableResource.enableDownload ? (
+          <div>
             <Button
-              shape="round"
-              danger
-              icon={<DeleteOutlined />}
-              onClick={confirmDeprecate}
+              block
+              className="button csv"
+              type="default"
+              onClick={tableData.downloadCSV}
             >
-              Deprecate
+              <Row gutter={[30, 0]} justify="start">
+                <Col flex="none" className="actionIcon">
+                  <DownloadOutlined />
+                </Col>
+                <Col flex="auto">Download CSV</Col>
+              </Row>
             </Button>
-          </Col>
-        </Row>
-      </>
+          </div>
+        ) : null}
+        {tableResource.enableSave ? (
+          <div>
+            <Button
+              block
+              className="button addTo"
+              type="default"
+              onClick={tableData.addToDataCart}
+            >
+              <Row gutter={[30, 0]} justify="start">
+                <Col flex="none" className="actionIcon">
+                  <ShoppingCartOutlined />
+								</Col>
+                <Col flex="auto">Add To Cart</Col>
+              </Row>
+            </Button>
+          </div>
+        ) : null}
+        <div>
+          <Button block className="button delete" onClick={confirmDeprecate}>
+            <Row gutter={[30, 0]} justify="start">
+              <Col flex="none" className="actionIcon">
+                <DeleteOutlined />
+              </Col>
+              <Col flex="auto">Delete</Col>
+            </Row>
+          </Button>
+        </div>
+      </div>
     );
     const options = (
       <Popover
         style={{ background: 'none' }}
-        placement="leftTop"
+        placement="rightTop"
         content={content}
         trigger="click"
       >
@@ -264,12 +284,11 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     );
     return (
       <div>
+        <Title level={4} className="tableTitle">
+          {tableResource.name}
+        </Title>
         <Row gutter={[16, 16]}>
-          <Col flex="none">
-            <Title level={4} style={{ textTransform: 'capitalize' }}>
-              {tableResource.name}
-            </Title>
-          </Col>
+          <Col flex="none"></Col>
           <Col flex="auto">{tableResource.enableSearch ? search : null}</Col>
           <Col flex="none">{options}</Col>
         </Row>
