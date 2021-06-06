@@ -56,6 +56,50 @@ const ResourceListContainer: React.FunctionComponent<{
     total: 0,
   });
 
+  const DEFAULT_PAGE_SIZE = 7;
+  const [paginationState, setPaginationState] = React.useState<{
+    currentPage: number;
+    pageSize: number;
+  }>({
+    currentPage: 1,
+    pageSize: DEFAULT_PAGE_SIZE,
+  });
+
+  const handlePaginationChange = (searchValue: string, page: number, pageSize?: number) => {
+    const query = {
+      ...list.query,
+      q: searchValue,
+    };
+
+    if (searchValue) {
+      query.sort = undefined;
+    }
+    
+
+    if (searchValue !== list.query.q) {
+      return setList({
+        ...list,
+        query,
+      });
+    }
+    
+    if (busy) {
+      return;
+    }
+
+    query.from = (page-1)*paginationState.pageSize;
+    query.size = pageSize;
+    setList({
+      ...list,
+      query
+    });
+
+    setPaginationState({
+      currentPage: page,
+      pageSize: pageSize || DEFAULT_PAGE_SIZE,
+    });
+  };
+
   const makeResourceUri = (resourceId: string) => {
     return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
       resourceId
@@ -81,7 +125,7 @@ const ResourceListContainer: React.FunctionComponent<{
       .then(response => {
         resourceListResponse = response;
         setResources({
-          next: resourceListResponse._next || null,
+          next: null,
           resources: resourceListResponse._results,
           total: resourceListResponse._total,
           busy: false,
@@ -104,6 +148,7 @@ const ResourceListContainer: React.FunctionComponent<{
     JSON.stringify(list.query),
     toggleForceReload,
     refreshList,
+    paginationState
   ]);
 
   const handleLoadMore = async ({ searchValue }: { searchValue: string }) => {
@@ -211,9 +256,12 @@ const ResourceListContainer: React.FunctionComponent<{
       list={list}
       resources={resources}
       total={total}
+      pageSize={paginationState.pageSize}
+      currentPage={paginationState.currentPage}
+      onPaginationChange={handlePaginationChange}
+      hasSearch={true}
       error={error}
       onUpdate={handleUpdate}
-      onLoadMore={handleLoadMore}
       onDelete={handleDelete}
       onClone={handleClone}
       onRefresh={handleRefreshList}
