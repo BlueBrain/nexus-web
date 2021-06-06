@@ -65,7 +65,6 @@ const ResourceListComponent: React.FunctionComponent<{
   total?: number;
   currentPage: number;
   pageSize: number;
-  defaultSearchValue?: string;
   hasSearch?: boolean;
   onPaginationChange(searchValue: string | undefined, page: number, pageSize?: number ): void;
   error: Error | null;
@@ -84,7 +83,6 @@ const ResourceListComponent: React.FunctionComponent<{
   currentPage,
   pageSize,
   onPaginationChange,
-  defaultSearchValue,
   hasSearch,
   error,
   resources,
@@ -99,6 +97,7 @@ const ResourceListComponent: React.FunctionComponent<{
   schemaLinkContainer,
   shareableLink,
 }) => {
+  const defaultSearchValue=list.query.q;
   const [{ ref: wrapperHeightRef }, { height: wrapperHeight }] = useMeasure();
   const { name } = list;
   const [sortOption, setSortOption] = React.useState(DEFAULT_SORT_OPTION);
