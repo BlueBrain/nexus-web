@@ -65,7 +65,11 @@ const ResourceListContainer: React.FunctionComponent<{
     pageSize: DEFAULT_PAGE_SIZE,
   });
 
-  const handlePaginationChange = (searchValue: string, page: number, pageSize?: number) => {
+  const handlePaginationChange = (
+    searchValue: string,
+    page: number,
+    pageSize?: number
+  ) => {
     const query = {
       ...list.query,
       q: searchValue,
@@ -74,7 +78,6 @@ const ResourceListContainer: React.FunctionComponent<{
     if (searchValue) {
       query.sort = undefined;
     }
-    
 
     if (searchValue !== list.query.q) {
       return setList({
@@ -82,16 +85,16 @@ const ResourceListContainer: React.FunctionComponent<{
         query,
       });
     }
-    
+
     if (busy) {
       return;
     }
 
-    query.from = (page-1)*paginationState.pageSize;
+    query.from = (page - 1) * paginationState.pageSize;
     query.size = pageSize;
     setList({
       ...list,
-      query
+      query,
     });
 
     setPaginationState({
@@ -113,7 +116,7 @@ const ResourceListContainer: React.FunctionComponent<{
   React.useEffect(() => {
     // Reset pagination on first load
     list.query.from = 0;
-    }, []);
+  }, []);
 
   React.useEffect(() => {
     setResources({
@@ -153,7 +156,7 @@ const ResourceListContainer: React.FunctionComponent<{
     JSON.stringify(list.query),
     toggleForceReload,
     refreshList,
-    paginationState
+    paginationState,
   ]);
 
   const handleLoadMore = async ({ searchValue }: { searchValue: string }) => {

@@ -66,7 +66,11 @@ const ResourceListComponent: React.FunctionComponent<{
   currentPage: number;
   pageSize: number;
   hasSearch?: boolean;
-  onPaginationChange(searchValue: string | undefined, page: number, pageSize?: number ): void;
+  onPaginationChange(
+    searchValue: string | undefined,
+    page: number,
+    pageSize?: number
+  ): void;
   error: Error | null;
   onDelete(): void;
   onClone(): void;
@@ -97,7 +101,7 @@ const ResourceListComponent: React.FunctionComponent<{
   schemaLinkContainer,
   shareableLink,
 }) => {
-  const defaultSearchValue=list.query.q;
+  const defaultSearchValue = list.query.q;
   const [{ ref: wrapperHeightRef }, { height: wrapperHeight }] = useMeasure();
   const { name } = list;
   const [sortOption, setSortOption] = React.useState(DEFAULT_SORT_OPTION);
@@ -148,9 +152,9 @@ const ResourceListComponent: React.FunctionComponent<{
   }, [defaultSearchValue]);
 
   const handlePaginationChange = (pageNumber: number, pageSize?: number) => {
-        const searchValue = list.query.q;
-        onPaginationChange(searchValue, pageNumber, pageSize);
-  }
+    const searchValue = list.query.q;
+    onPaginationChange(searchValue, pageNumber, pageSize);
+  };
 
   const sortOptions = (
     <Menu onClick={onChangeSort} selectedKeys={[sortOption]}>
@@ -234,73 +238,69 @@ const ResourceListComponent: React.FunctionComponent<{
         </div>
         <div className="controls">{children}</div>
         {hasSearch && (
-        <div className="search">
-          <Search
-            placeholder={'Search...'}
-            allowClear={true}
-            value={searchValue}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setSearchValue(e.currentTarget.value);
-              onPaginationChange(e.currentTarget.value,1,pageSize);
-            }}
-          />
-        </div>
-      )}
+          <div className="search">
+            <Search
+              placeholder={'Search...'}
+              allowClear={true}
+              value={searchValue}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setSearchValue(e.currentTarget.value);
+                onPaginationChange(e.currentTarget.value, 1, pageSize);
+              }}
+            />
+          </div>
+        )}
         <Spin spinning={busy}>
           {!!error && <Empty description={error.message} />}
           {!error && (
-              <List
-                  dataSource={resources}
-                  pagination={{
-                    total,
-                    pageSize,
-                    current: currentPage,
-                    onChange: handlePaginationChange,
-                    position: 'bottom',
-                    showSizeChanger: false,
-                  }}
-                  renderItem={(
-                    resource => {
-                      return (
-                        <a
-                          href={makeResourceUri(resource['@id'])}
-                          key={resource['@id']}
-                          onClick={e => {
-                            e.preventDefault();
-                            goToResource(resource['@id']);
-                          }}
-                        >
-                          <ListItem
-                            key={resource['@id']}
-                            onClick={() => goToResource(resource['@id'])}
-                          >
-                            <Popover
-                              content={
-                                <div style={{ width: 600 }}>
-                                  <ResourceCardComponent
-                                    resource={resource}
-                                    schemaLink={schemaLinkContainer}
-                                  />
-                                </div>
-                              }
-                              mouseEnterDelay={RESOURCE_CARD_MOUSE_ENTER_DELAY}
-                            >
-                              {getResourceLabel(resource)}
-                              {!!resource['@type'] &&
-                                (Array.isArray(resource['@type']) ? (
-                                  <TypesIconList type={resource['@type']} />
-                                ) : (
-                                  <TypesIconList type={[resource['@type']]} />
-                                ))}
-                            </Popover>
-                          </ListItem>
-                        </a>
-                      );
-                    })
-
-                  }
-                ></List>
-                
+            <List
+              dataSource={resources}
+              pagination={{
+                total,
+                pageSize,
+                current: currentPage,
+                onChange: handlePaginationChange,
+                position: 'bottom',
+                showSizeChanger: false,
+              }}
+              renderItem={resource => {
+                return (
+                  <a
+                    href={makeResourceUri(resource['@id'])}
+                    key={resource['@id']}
+                    onClick={e => {
+                      e.preventDefault();
+                      goToResource(resource['@id']);
+                    }}
+                  >
+                    <ListItem
+                      key={resource['@id']}
+                      onClick={() => goToResource(resource['@id'])}
+                    >
+                      <Popover
+                        content={
+                          <div style={{ width: 600 }}>
+                            <ResourceCardComponent
+                              resource={resource}
+                              schemaLink={schemaLinkContainer}
+                            />
+                          </div>
+                        }
+                        mouseEnterDelay={RESOURCE_CARD_MOUSE_ENTER_DELAY}
+                      >
+                        {getResourceLabel(resource)}
+                        {!!resource['@type'] &&
+                          (Array.isArray(resource['@type']) ? (
+                            <TypesIconList type={resource['@type']} />
+                          ) : (
+                            <TypesIconList type={[resource['@type']]} />
+                          ))}
+                      </Popover>
+                    </ListItem>
+                  </a>
+                );
+              }}
+            ></List>
           )}
         </Spin>
       </div>
