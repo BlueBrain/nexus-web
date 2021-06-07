@@ -56,7 +56,7 @@ const ResourceListContainer: React.FunctionComponent<{
     total: 0,
   });
 
-  const DEFAULT_PAGE_SIZE = 100;
+  const DEFAULT_PAGE_SIZE = 6;
   const [paginationState, setPaginationState] = React.useState<{
     currentPage: number;
     pageSize: number;
@@ -109,6 +109,11 @@ const ResourceListContainer: React.FunctionComponent<{
   const goToResource = (resourceId: string) => {
     history.push(makeResourceUri(resourceId), { background: location });
   };
+
+  React.useEffect(() => {
+    // Reset pagination on first load
+    list.query.from = 0;
+    }, []);
 
   React.useEffect(() => {
     setResources({
