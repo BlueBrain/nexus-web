@@ -248,7 +248,7 @@ const ResourceListComponent: React.FunctionComponent<{
       )}
         <Spin spinning={busy}>
           {!!error && <Empty description={error.message} />}
-
+          <div  style={{height: '100%', overflow: 'auto'}}>
           {!error && (
               <List
                   dataSource={resources}
@@ -301,7 +301,9 @@ const ResourceListComponent: React.FunctionComponent<{
 
                   }
                 ></List>
+                
           )}
+          </div>
         </Spin>
       </div>
     </div>

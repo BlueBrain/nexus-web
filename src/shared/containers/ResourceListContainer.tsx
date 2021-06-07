@@ -56,7 +56,7 @@ const ResourceListContainer: React.FunctionComponent<{
     total: 0,
   });
 
-  const DEFAULT_PAGE_SIZE = 7;
+  const DEFAULT_PAGE_SIZE = 100;
   const [paginationState, setPaginationState] = React.useState<{
     currentPage: number;
     pageSize: number;
