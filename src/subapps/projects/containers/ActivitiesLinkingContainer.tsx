@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Badge, Button, Popover, Modal } from 'antd';
 import { BellOutlined } from '@ant-design/icons';
 import { useNexusContext } from '@bbp/react-nexus';
-
+import { useRouteMatch } from 'react-router';
 import NotififcationsPopover from '../components/NotificationsPopover';
 import { useUnlinkedActivities } from '../hooks/useUnlinkedActivities';
 import LinkActivityForm from '../components/LinkActivityForm';
@@ -21,6 +21,13 @@ const ActivitiesLinkingContainer: React.FC<{
     orgLabel,
     projectLabel
   );
+
+  const match = useRouteMatch<{
+    orgLabel: string;
+    projectLabel: string;
+    stepId: string;
+  }>();
+  const currentStepId = match.params.stepId;
   const [showLinkForm, setShowLinkForm] = React.useState<boolean>(false);
   const [showCreateStepForm, setshowCreateStepForm] = React.useState<boolean>(
     false
@@ -153,6 +160,9 @@ const ActivitiesLinkingContainer: React.FC<{
     nexus.Resource.create(orgLabel, projectLabel, {
       '@type': fusionConfig.workflowStepType,
       '@context': WORKFLOW_STEP_CONTEXT['@id'],
+      hasParent: {
+        '@id': currentStepId,
+      },
       ...data,
     })
       .then(() => {
@@ -187,6 +197,12 @@ const ActivitiesLinkingContainer: React.FC<{
   const sibilings = React.useMemo(() => {
     return steps.map(s => ({ '@id': s._self, name: s.name }));
   }, [steps]);
+
+  const currentStep = React.useMemo(() => {
+    return steps.find(s => {
+      return s['@id'].includes(currentStepId);
+    });
+  }, [steps, currentStepId]);
 
   return (
     <>
@@ -242,7 +258,7 @@ const ActivitiesLinkingContainer: React.FC<{
           onClickCancel={() => setshowCreateStepForm(false)}
           onSubmit={createNewStep}
           busy={false}
-          parentLabel={''}
+          parentLabel={currentStep ? currentStep.name : ''}
           siblings={sibilings}
           activityList={[]}
           defaultActivityType={defaultActivityType()}
