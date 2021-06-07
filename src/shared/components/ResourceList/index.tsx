@@ -253,8 +253,8 @@ const ResourceListComponent: React.FunctionComponent<{
                   dataSource={resources}
                   pagination={{
                     total,
-                    current: currentPage,
                     pageSize,
+                    current: currentPage,
                     onChange: handlePaginationChange,
                     position: 'bottom',
                     showSizeChanger: false,
