@@ -258,7 +258,7 @@ const ActivitiesLinkingContainer: React.FC<{
           onClickCancel={() => setshowCreateStepForm(false)}
           onSubmit={createNewStep}
           busy={false}
-          parentLabel={currentStep ? currentStep['name'] : ''}
+          parentLabel={currentStep ? currentStep.name : ''}
           siblings={sibilings}
           activityList={[]}
           defaultActivityType={defaultActivityType()}
