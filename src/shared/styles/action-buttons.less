@@ -1,11 +1,26 @@
 @import 'shadow-variables.less';
 
-@editColor: #32ccbc;
-@addToColor: #ce9ffc;
-@addFromColor: #00d4ff;
-@csvColor: rgb(250, 178, 126);
-@deleteColor: #cf1322;
+@defaultColor: #cbcccc;
+@defaultColor2: #b3b3b3;
 
+@editColor: #32ccbc;
+@editColor2: #90f7ec;
+
+@addToColor: #ce9ffc;
+@addToColor2: #7367f0;
+
+@addFromColor: #00d4ff;
+@addFromColor2: #3e3efb;
+
+@csvColor: rgb(250, 178, 126);
+@csvColor2: rgba(247, 144, 187, 1);
+
+@deleteColor: #cf1322;
+@deleteColor2: #ff7a45;
+
+.borderMixin(@c1, @c2) {
+	border-image-source: linear-gradient(90deg, @c2 10%, @c1 100%);
+}
 .wrapper {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
@@ -35,59 +50,43 @@
     }
 
     &.edit {
-      color: @editColor;
-      border-image-source: linear-gradient(90deg, #90f7ec 10%, @editColor 100%);
-      .actionIcon {
-        border-color: @editColor;
-      }
+			.borderMixin(@defaultColor2, @defaultColor);
+      // color: @editColor;
+      // .actionIcon {
+      //   border-color: @editColor;
+      // }
     }
 
     &.addTo {
-      color: @addToColor;
-      border-image-source: linear-gradient(
-        90deg,
-        @addToColor 10%,
-        #7367f0 100%
-      );
-      .actionIcon {
-        border-color: @addToColor;
-      }
+      .borderMixin(@defaultColor2, @defaultColor);
+      // color: @addToColor;
+      // .actionIcon {
+      //   border-color: @addToColor;
+      // }
     }
 
     &.addFrom {
-      color: @addFromColor;
-      border-image-source: linear-gradient(
-        90deg,
-        @addFromColor 10%,
-        #3e3efb 100%
-      );
-      .actionIcon {
-        border-color: @addFromColor;
-      }
+      .borderMixin(@defaultColor2, @defaultColor);
+      // color: @addFromColor;
+      // .actionIcon {
+      //   border-color: @addFromColor;
+      // }
     }
 
     &.delete {
+      .borderMixin(@deleteColor2, @deleteColor);
       color: @deleteColor;
-      border-image-source: linear-gradient(
-        90deg,
-        #ff7a45 10%,
-        @deleteColor 100%
-      );
       .actionIcon {
         border-color: @deleteColor;
       }
     }
 
     &.csv {
-      color: @csvColor;
-      border-image-source: linear-gradient(
-        90deg,
-        rgb(247, 144, 187) 10%,
-        @csvColor 100%
-      );
-      .actionIcon {
-        border-color: @csvColor;
-      }
+      .borderMixin(@defaultColor2, @defaultColor);
+      // color: @csvColor;
+      // .actionIcon {
+      //   border-color: @csvColor;
+      // }
     }
 
     .actionIcon {
