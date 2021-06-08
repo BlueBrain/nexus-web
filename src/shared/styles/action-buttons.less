@@ -19,7 +19,7 @@
 @deleteColor2: #ff7a45;
 
 .borderMixin(@c1, @c2) {
-	border-image-source: linear-gradient(90deg, @c2 10%, @c1 100%);
+  border-image-source: linear-gradient(90deg, @c2 10%, @c1 100%);
 }
 .wrapper {
   display: grid;
@@ -50,7 +50,7 @@
     }
 
     &.edit {
-			.borderMixin(@defaultColor2, @defaultColor);
+      .borderMixin(@defaultColor2, @defaultColor);
       // color: @editColor;
       // .actionIcon {
       //   border-color: @editColor;
