@@ -92,7 +92,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
           { background: location }
         );
       })
-      .catch(error => {
+      .catch((error) => {
         notification.error({ message: `Resource ${self} could not be found` });
       });
   };
@@ -124,13 +124,13 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   };
   const deprecateTableResource = useMutation(deprecateTable, {
     onMutate: (data: TableResource) => {},
-    onSuccess: data => {
+    onSuccess: (data) => {
       notification.success({
         message: 'Table deprecated',
         duration: 2,
       });
     },
-    onError: error => {
+    onError: (error) => {
       console.log('error');
       console.log(error);
       notification.error({
@@ -160,10 +160,10 @@ const DataTableContainer: React.FC<DataTableProps> = ({
 
   const changeTableResource = useMutation(updateTable, {
     onMutate: (data: TableResource) => {},
-    onSuccess: data => {
+    onSuccess: (data) => {
       setShowEditForm(false);
     },
-    onError: error => {
+    onError: (error) => {
       notification.error({
         message: 'Failed to save table data',
       });
@@ -244,7 +244,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
               <Row gutter={[30, 0]} justify="start">
                 <Col flex="none" className="actionIcon">
                   <ShoppingCartOutlined />
-								</Col>
+                </Col>
                 <Col flex="auto">Add To Cart</Col>
               </Row>
             </Button>
@@ -276,7 +276,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
       <Input.Search
         placeholder="input search text"
         allowClear
-        onSearch={value => {
+        onSearch={(value) => {
           tableData.setSearchValue(value);
         }}
         style={{ width: '100%' }}
@@ -309,8 +309,8 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             columns={tableData.dataResult.data?.headerProperties}
             dataSource={tableData.dataResult.data?.items}
             scroll={{ x: 1000 }}
-            onRow={data => ({
-              onClick: event => {
+            onRow={(data) => ({
+              onClick: (event) => {
                 event.preventDefault();
                 const self = data._self || data.self.value;
                 goToStudioResource(self);
