@@ -5,6 +5,7 @@ import ProjectView from './views/ProjectView';
 import ElasticSearchQueryView from './views/ElasticSearchQueryView';
 import SparqlQueryView from './views/SparqlQueryView';
 import ACLsView from './views/ACLsView';
+import ProjectStatsView from './views/ProjectStatsView';
 import { SubApp } from '..';
 
 const subAppType = 'internal';
@@ -75,6 +76,10 @@ const Admin: SubApp = () => {
       {
         path: '/:orgLabel/:projectLabel/_settings/acls',
         component: AdminSubappProviderHOC(ACLsView),
+      },
+      {
+        path: '/:orgLabel/:projectLabel/statistics',
+        component: AdminSubappProviderHOC(ProjectStatsView),
       },
     ],
   };

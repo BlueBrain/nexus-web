@@ -33,6 +33,7 @@
     "cookie-parser": "^1.4.4",
     "cytoscape": "^3.18.1",
     "cytoscape-cola": "^2.4.0",
+    "cytoscape-fcose": "^2.0.0",
     "deep-object-diff": "^1.1.0",
     "express": "^4.16.4",
     "express-prom-bundle": "^5.0.2",
