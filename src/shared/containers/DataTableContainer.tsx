@@ -10,7 +10,6 @@ import {
   Button,
   Typography,
   Input,
-  Space,
   Spin,
   Modal,
   Popover,
@@ -188,7 +187,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             Edit Table
           </Button>
         </div>
-        {tableResource.enableSave ? (
+        {tableResource?.enableSave ? (
           <div>
             <Button
               block
@@ -200,7 +199,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             </Button>
           </div>
         ) : null}
-        {tableResource.enableDownload ? (
+        {tableResource?.enableDownload ? (
           <div>
             <Button
               block
@@ -212,7 +211,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             </Button>
           </div>
         ) : null}
-        {tableResource.enableSave ? (
+        {tableResource?.enableSave ? (
           <div>
             <Button
               block
