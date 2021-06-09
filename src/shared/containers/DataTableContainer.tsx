@@ -187,7 +187,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             Edit Table
           </Button>
         </div>
-        {tableResource?.enableSave? ? (
+        {tableResource?.enableSave ? (
           <div>
             <Button
               block
@@ -199,7 +199,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             </Button>
           </div>
         ) : null}
-        {tableResource?.enableDownload? ? (
+        {tableResource?.enableDownload ? (
           <div>
             <Button
               block
@@ -211,7 +211,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             </Button>
           </div>
         ) : null}
-        {tableResource?.enableSave? ? (
+        {tableResource?.enableSave ? (
           <div>
             <Button
               block
@@ -253,7 +253,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     return (
       <div>
         <Title level={4} className="tableTitle">
-          {tableResource?.name?}
+          {tableResource.name}
         </Title>
         <Row gutter={[16, 16]}>
           <Col flex="none"></Col>
