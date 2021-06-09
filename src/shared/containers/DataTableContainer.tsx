@@ -5,14 +5,26 @@ import * as React from 'react';
 import {
   Tag,
   Table,
+  Col,
+  Row,
   Button,
+  Typography,
   Input,
-  Space,
   Spin,
   Modal,
+  Popover,
   notification,
 } from 'antd';
+import {
+  DownloadOutlined,
+  ShoppingCartOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  SmallDashOutlined,
+} from '@ant-design/icons';
+
 import '../styles/data-table.less';
+
 import { useAccessDataForTable } from '../hooks/useAccessDataForTable';
 import EditTableForm, { TableComponent } from '../components/EditTableForm';
 import { useMutation } from 'react-query';
@@ -50,12 +62,15 @@ type DataTableProps = {
   tableResourceId: string;
 };
 
+const { Title } = Typography;
+
 const DataTableContainer: React.FC<DataTableProps> = ({
   orgLabel,
   projectLabel,
   tableResourceId,
 }) => {
   const [showEditForm, setShowEditForm] = React.useState<boolean>(false);
+  const [showOptions, setShowOptions] = React.useState<boolean>(false);
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
@@ -80,12 +95,53 @@ const DataTableContainer: React.FC<DataTableProps> = ({
       });
   };
 
-  const updateTable = async (data: TableComponent) => {
+  const confirmDeprecate = () => {
+    Modal.confirm({
+      title: 'Deprecate Table',
+      content: 'Are you sure?',
+      onOk: deprecateTableResource.mutate,
+    });
+  };
+
+  const deprecateTable = async () => {
     const latest = (await nexus.Resource.get(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(tableResourceId)
+    )) as Resource;
+    const deprecated = nexus.Resource.deprecate(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(tableResourceId),
+      latest._rev
+    );
+    return deprecated;
+  };
+  const deprecateTableResource = useMutation(deprecateTable, {
+    onMutate: (data: TableResource) => {},
+    onSuccess: data => {
+      notification.success({
+        message: 'Table deprecated',
+        duration: 2,
+      });
+    },
+    onError: error => {
+      notification.error({
+        message: 'Failed to delete table',
+        duration: 1,
+      });
+    },
+  });
+
+  const latestResource = async (data: TableComponent) => {
+    return (await nexus.Resource.get(
       orgLabel,
       projectLabel,
       encodeURIComponent(data['@id'])
     )) as Resource;
+  };
+  const updateTable = async (data: TableComponent) => {
+    const latest = await latestResource(data);
     return nexus.Resource.update(
       orgLabel,
       projectLabel,
@@ -117,45 +173,104 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   const renderTitle = () => {
     const tableResource = tableData.tableResult.data
       ?.tableResource as TableComponent;
-
-    return (
-      <div className="data-table-controls">
-        <Space align="center" direction="horizontal" size="large">
-          {tableResource.name}{' '}
+    const content = (
+      <div className="wrapper">
+        <div>
           <Button
+            block
+            type="default"
+            icon={<EditOutlined />}
             onClick={() => {
               setShowEditForm(true);
             }}
-            type="primary"
           >
             Edit Table
           </Button>
-          {tableResource.enableSearch ? (
-            <Input.Search
-              placeholder="input search text"
-              allowClear
-              onSearch={value => {
-                tableData.setSearchValue(value);
-              }}
-              style={{ width: '100%' }}
-            ></Input.Search>
-          ) : null}
-          {tableResource.enableDownload ? (
-            <Button onClick={tableData.downloadCSV} type="primary">
+        </div>
+        {tableResource && tableResource.enableSave ? (
+          tableResource.enableSave
+        ) : null ? (
+          <div>
+            <Button
+              block
+              icon={<ShoppingCartOutlined />}
+              type="default"
+              onClick={tableData.addFromDataCart}
+            >
+              Add From Cart
+            </Button>
+          </div>
+        ) : null}
+        {tableResource && tableResource.enableDownload ? (
+          tableResource.enableDownload
+        ) : null ? (
+          <div>
+            <Button
+              block
+              icon={<DownloadOutlined />}
+              type="default"
+              onClick={tableData.downloadCSV}
+            >
               Download CSV
             </Button>
-          ) : null}
-          {tableResource.enableSave ? (
-            <Button onClick={tableData.addFromDataCart} type="primary">
-              Add from DataCart
+          </div>
+        ) : null}
+        {tableResource && tableResource.enableSave ? (
+          tableResource.enableSave
+        ) : null ? (
+          <div>
+            <Button
+              block
+              icon={<ShoppingCartOutlined />}
+              type="default"
+              onClick={tableData.addToDataCart}
+            >
+              Add To Cart
             </Button>
-          ) : null}
-          {tableResource.enableSave ? (
-            <Button onClick={tableData.addToDataCart} type="primary">
-              Add to DataCart
-            </Button>
-          ) : null}
-        </Space>
+          </div>
+        ) : null}
+        <div>
+          <Button block icon={<DeleteOutlined />} onClick={confirmDeprecate}>
+            Delete
+          </Button>
+        </div>
+      </div>
+    );
+    const options = (
+      <Popover
+        style={{ background: 'none' }}
+        placement="rightTop"
+        content={content}
+        trigger="click"
+      >
+        <Button shape="round" type="default" icon={<SmallDashOutlined />} />
+      </Popover>
+    );
+    const search = (
+      <Input.Search
+        placeholder="input search text"
+        allowClear
+        onSearch={value => {
+          tableData.setSearchValue(value);
+        }}
+        style={{ width: '100%' }}
+      ></Input.Search>
+    );
+    return (
+      <div>
+        <Title level={4} className="tableTitle">
+          {tableResource && tableResource.name ? tableResource.name : null}
+        </Title>
+        <Row gutter={[16, 16]}>
+          <Col flex="none"></Col>
+          <Col flex="auto">
+            {tableResource && tableResource.enableSave
+              ? tableResource.enableSave
+              : null}
+            {search}
+          </Col>
+          <Col flex="none">{options}</Col>
+        </Row>
       </div>
     );
   };
