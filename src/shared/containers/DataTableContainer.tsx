@@ -13,7 +13,6 @@ import {
   Space,
   Spin,
   Modal,
-  Divider,
   Popover,
   notification,
 } from 'antd';
@@ -26,7 +25,7 @@ import {
 } from '@ant-design/icons';
 
 import '../styles/data-table.less';
-import '../styles/action-buttons.less';
+
 import { useAccessDataForTable } from '../hooks/useAccessDataForTable';
 import EditTableForm, { TableComponent } from '../components/EditTableForm';
 import { useMutation } from 'react-query';
@@ -92,7 +91,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
           { background: location }
         );
       })
-      .catch((error) => {
+      .catch(error => {
         notification.error({ message: `Resource ${self} could not be found` });
       });
   };
@@ -101,7 +100,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     Modal.confirm({
       title: 'Deprecate Table',
       content: 'Are you sure?',
-      onOk: deprecateTable,
+      onOk: deprecateTableResource.mutate,
     });
   };
 
@@ -117,20 +116,17 @@ const DataTableContainer: React.FC<DataTableProps> = ({
       encodeURIComponent(tableResourceId),
       latest._rev
     );
-    console.log('latest deprecated table function');
-    // console.log(latest);
-    console.log(deprecated);
     return deprecated;
   };
   const deprecateTableResource = useMutation(deprecateTable, {
     onMutate: (data: TableResource) => {},
-    onSuccess: (data) => {
+    onSuccess: data => {
       notification.success({
         message: 'Table deprecated',
         duration: 2,
       });
     },
-    onError: (error) => {
+    onError: error => {
       console.log('error');
       console.log(error);
       notification.error({
@@ -160,10 +156,10 @@ const DataTableContainer: React.FC<DataTableProps> = ({
 
   const changeTableResource = useMutation(updateTable, {
     onMutate: (data: TableResource) => {},
-    onSuccess: (data) => {
+    onSuccess: data => {
       setShowEditForm(false);
     },
-    onError: (error) => {
+    onError: error => {
       notification.error({
         message: 'Failed to save table data',
       });
@@ -186,33 +182,23 @@ const DataTableContainer: React.FC<DataTableProps> = ({
           <Button
             block
             type="default"
-            className="button edit"
+            icon={<EditOutlined />}
             onClick={() => {
               setShowEditForm(true);
             }}
           >
-            <Row gutter={[30, 0]} justify="start">
-              <Col flex="none" className="actionIcon">
-                <EditOutlined />
-              </Col>
-              <Col flex="auto">Edit Table</Col>
-            </Row>
+            Edit Table
           </Button>
         </div>
         {tableResource.enableSave ? (
           <div>
             <Button
               block
-              className="button addFrom"
+              icon={<ShoppingCartOutlined />}
               type="default"
               onClick={tableData.addFromDataCart}
             >
-              <Row gutter={[30, 0]} justify="start">
-                <Col flex="none" className="actionIcon">
-                  <ShoppingCartOutlined />
-                </Col>
-                <Col flex="auto">Add From Cart</Col>
-              </Row>
+              Add From Cart
             </Button>
           </div>
         ) : null}
@@ -220,16 +206,11 @@ const DataTableContainer: React.FC<DataTableProps> = ({
           <div>
             <Button
               block
-              className="button csv"
+              icon={<DownloadOutlined />}
               type="default"
               onClick={tableData.downloadCSV}
             >
-              <Row gutter={[30, 0]} justify="start">
-                <Col flex="none" className="actionIcon">
-                  <DownloadOutlined />
-                </Col>
-                <Col flex="auto">Download CSV</Col>
-              </Row>
+              Download CSV
             </Button>
           </div>
         ) : null}
@@ -237,27 +218,17 @@ const DataTableContainer: React.FC<DataTableProps> = ({
           <div>
             <Button
               block
-              className="button addTo"
+              icon={<ShoppingCartOutlined />}
               type="default"
               onClick={tableData.addToDataCart}
             >
-              <Row gutter={[30, 0]} justify="start">
-                <Col flex="none" className="actionIcon">
-                  <ShoppingCartOutlined />
-                </Col>
-                <Col flex="auto">Add To Cart</Col>
-              </Row>
+              Add To Cart
             </Button>
           </div>
         ) : null}
         <div>
-          <Button block className="button delete" onClick={confirmDeprecate}>
-            <Row gutter={[30, 0]} justify="start">
-              <Col flex="none" className="actionIcon">
-                <DeleteOutlined />
-              </Col>
-              <Col flex="auto">Delete</Col>
-            </Row>
+          <Button block icon={<DeleteOutlined />} onClick={confirmDeprecate}>
+            Delete
           </Button>
         </div>
       </div>
@@ -276,7 +247,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
       <Input.Search
         placeholder="input search text"
         allowClear
-        onSearch={(value) => {
+        onSearch={value => {
           tableData.setSearchValue(value);
         }}
         style={{ width: '100%' }}
@@ -309,8 +280,8 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             columns={tableData.dataResult.data?.headerProperties}
             dataSource={tableData.dataResult.data?.items}
             scroll={{ x: 1000 }}
-            onRow={(data) => ({
-              onClick: (event) => {
+            onRow={data => ({
+              onClick: event => {
                 event.preventDefault();
                 const self = data._self || data.self.value;
                 goToStudioResource(self);
