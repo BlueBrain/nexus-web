@@ -213,6 +213,7 @@ const StepCard: React.FC<{
     <>
       <Draggable
         bounds="parent"
+        cancel=".step-card__title"
         onDrag={handleDrag}
         onStop={handleStop}
         defaultPosition={

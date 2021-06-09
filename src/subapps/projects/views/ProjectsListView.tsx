@@ -54,7 +54,6 @@ const ProjectsListView: React.FC<{}> = () => {
       size: MAX_PROJECTS,
       deprecated: false,
     }).then(value => {
-      console.log(value._results.length);
       const shared = value._results.filter((v: ProjectResponseCommon) => {
         return v._organizationLabel !== personalOrg;
       });

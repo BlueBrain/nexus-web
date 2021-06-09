@@ -25,11 +25,7 @@ const SideMenu: React.FC<{
 }) => {
   return (
     <Sider trigger={null} collapsible collapsed={collapsed}>
-      <a
-        className="side-menu__logo-link"
-        href={layoutSettings.logoLink}
-        target="_blank"
-      >
+      <a className="side-menu__logo-link" href={layoutSettings.logoLink}>
         <div className="side-menu__logo">
           <img
             height="33"
