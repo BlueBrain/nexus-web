@@ -18,7 +18,7 @@ export const DEFAULT_LIST: ResourceBoardList = {
   view: DEFAULT_ELASTIC_SEARCH_VIEW_ID,
   id: 'default',
   query: {
-    size: 100,
+    size: 6,
     deprecated: false,
     sort: '-_createdAt',
   },

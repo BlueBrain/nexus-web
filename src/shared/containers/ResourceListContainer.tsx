@@ -56,6 +56,53 @@ const ResourceListContainer: React.FunctionComponent<{
     total: 0,
   });
 
+  const DEFAULT_PAGE_SIZE = 6;
+  const [paginationState, setPaginationState] = React.useState<{
+    currentPage: number;
+    pageSize: number;
+  }>({
+    currentPage: 1,
+    pageSize: DEFAULT_PAGE_SIZE,
+  });
+
+  const handlePaginationChange = (
+    searchValue: string,
+    page: number,
+    pageSize?: number
+  ) => {
+    const query = {
+      ...list.query,
+      q: searchValue,
+    };
+
+    if (searchValue) {
+      query.sort = undefined;
+    }
+
+    if (searchValue !== list.query.q) {
+      return setList({
+        ...list,
+        query,
+      });
+    }
+
+    if (busy) {
+      return;
+    }
+
+    query.from = (page - 1) * paginationState.pageSize;
+    query.size = pageSize;
+    setList({
+      ...list,
+      query,
+    });
+
+    setPaginationState({
+      currentPage: page,
+      pageSize: pageSize || DEFAULT_PAGE_SIZE,
+    });
+  };
+
   const makeResourceUri = (resourceId: string) => {
     return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
       resourceId
@@ -65,6 +112,11 @@ const ResourceListContainer: React.FunctionComponent<{
   const goToResource = (resourceId: string) => {
     history.push(makeResourceUri(resourceId), { background: location });
   };
+
+  React.useEffect(() => {
+    // Reset pagination on first load
+    list.query.from = 0;
+  }, []);
 
   React.useEffect(() => {
     setResources({
@@ -81,7 +133,7 @@ const ResourceListContainer: React.FunctionComponent<{
       .then(response => {
         resourceListResponse = response;
         setResources({
-          next: resourceListResponse._next || null,
+          next: null,
           resources: resourceListResponse._results,
           total: resourceListResponse._total,
           busy: false,
@@ -104,55 +156,8 @@ const ResourceListContainer: React.FunctionComponent<{
     JSON.stringify(list.query),
     toggleForceReload,
     refreshList,
+    paginationState,
   ]);
-
-  const handleLoadMore = async ({ searchValue }: { searchValue: string }) => {
-    const query = {
-      ...list.query,
-      q: searchValue,
-    };
-
-    if (searchValue) {
-      query.sort = undefined;
-    }
-
-    if (searchValue !== list.query.q) {
-      return setList({
-        ...list,
-        query,
-      });
-    }
-    if (busy || !next) {
-      return;
-    }
-    try {
-      setResources({
-        next,
-        resources,
-        total,
-        busy: true,
-        error: null,
-      });
-      const response = await nexus.httpGet({
-        path: next,
-      });
-      setResources({
-        next: response._next || null,
-        resources: [...resources, ...response._results],
-        total: response._total,
-        busy: false,
-        error: null,
-      });
-    } catch (error) {
-      setResources({
-        next,
-        error,
-        resources,
-        total,
-        busy: false,
-      });
-    }
-  };
 
   const handleDelete = () => {
     onDeleteList(list.id);
@@ -211,9 +216,12 @@ const ResourceListContainer: React.FunctionComponent<{
       list={list}
       resources={resources}
       total={total}
+      pageSize={paginationState.pageSize}
+      currentPage={paginationState.currentPage}
+      onPaginationChange={handlePaginationChange}
+      hasSearch={true}
       error={error}
       onUpdate={handleUpdate}
-      onLoadMore={handleLoadMore}
       onDelete={handleDelete}
       onClone={handleClone}
       onRefresh={handleRefreshList}
