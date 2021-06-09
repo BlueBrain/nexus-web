@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Resource } from '@bbp/nexus-sdk';
 import { Modal } from 'antd';
 import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
@@ -79,9 +80,7 @@ const WorkflowStepView: React.FC = () => {
   }, [refreshTables, stepId]);
 
   const fetchTables = async () => {
-    await nexus.Resource.links(orgLabel, projectLabel, stepId, 'incoming', {
-      deprecated: false,
-    })
+    await nexus.Resource.links(orgLabel, projectLabel, stepId, 'incoming')
       .then(response => {
         // There may be duplicates in the link.
         const uniq = [
@@ -101,7 +100,11 @@ const WorkflowStepView: React.FC = () => {
           })
         )
           .then(response => {
-            setTables(response);
+            const tables = response.filter(r => {
+              const table = r as Resource;
+              return !table._deprecated;
+            });
+            setTables(tables);
           })
           .catch(error => {
             displayError(error, 'Failed to load tables');
