@@ -127,8 +127,6 @@ const DataTableContainer: React.FC<DataTableProps> = ({
       });
     },
     onError: error => {
-      console.log('error');
-      console.log(error);
       notification.error({
         message: 'Failed to delete table',
         duration: 1,
