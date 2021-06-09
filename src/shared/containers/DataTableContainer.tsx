@@ -267,6 +267,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             {tableResource && tableResource.enableSave
               ? tableResource.enableSave
               : null}
+            {search}
           </Col>
           <Col flex="none">{options}</Col>
         </Row>
