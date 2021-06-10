@@ -65,8 +65,7 @@ const SparqlQueryResults: React.FunctionComponent<{
       {!error && (
         <Table
           dataSource={data}
-          pagination={false}
-          // TODO: maybe use index or something instead of hash
+          pagination={{ position: ['topLeft', 'bottomRight'] }}
           rowKey={record => hash(record)}
           loading={busy}
         >
