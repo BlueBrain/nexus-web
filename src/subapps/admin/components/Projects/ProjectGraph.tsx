@@ -10,16 +10,72 @@ const ProjectGraph: React.FC<{}> = () => {
   const elements = {
     nodes: [
       {
-        data: { id: 'a' },
+        data: { id: 'Cell', label: 'Cell\n500' },
       },
-
       {
-        data: { id: 'b' },
+        data: { id: 'Slice', label: 'Slice\n700' },
+      },
+      {
+        data: { id: 'Trace', label: 'Trace\n3772' },
+      },
+      {
+        data: { id: 'Specimen', label: 'Specimen\n21' },
+      },
+      {
+        data: { id: 'PatchedClamp', label: 'PatchedClamp\n2828' },
+      },
+      {
+        data: { id: 'Person', label: 'Person\n219' },
       },
     ],
     edges: [
       {
-        data: { id: 'ab', source: 'a', target: 'b' },
+        data: {
+          id: 'ab',
+          source: 'Slice',
+          target: 'Cell',
+          name: 'derivedFrom',
+        },
+      },
+      {
+        data: {
+          id: 'bc',
+          source: 'Cell',
+          target: 'Trace',
+          name: 'derivedFrom',
+        },
+      },
+      {
+        data: {
+          id: 'cd',
+          source: 'Slice',
+          target: 'Specimen',
+          name: 'derivedFrom',
+        },
+      },
+      {
+        data: {
+          id: 'tt',
+          source: 'Trace',
+          target: 'PatchedClamp',
+          name: 'generatedBy',
+        },
+      },
+      {
+        data: {
+          id: 'eu',
+          source: 'Cell',
+          target: 'PatchedClamp',
+          name: 'usedBy',
+        },
+      },
+      {
+        data: {
+          id: 'rt',
+          source: 'Person',
+          target: 'PatchedClamp',
+          name: 'agent',
+        },
       },
     ],
   };
@@ -35,6 +91,31 @@ const ProjectGraph: React.FC<{}> = () => {
       layout: {
         name: 'fcose',
       },
+      style: [
+        {
+          selector: 'node',
+          style: {
+            label: 'data(label)',
+            'text-valign': 'center',
+            'text-halign': 'center',
+            height: '90px',
+            width: '90px',
+            backgroundColor: '#fff',
+            'text-wrap': 'wrap',
+            'border-width': 1,
+            'border-color': 'teal',
+          },
+        },
+        {
+          selector: 'edge',
+          style: {
+            label: 'data(name)',
+            'font-size': '12px',
+            width: 2,
+            'line-color': 'teal',
+          },
+        },
+      ],
     });
 
     return () => {
@@ -44,8 +125,24 @@ const ProjectGraph: React.FC<{}> = () => {
     };
   }, [container]);
 
+  React.useEffect(() => {
+    if (!graph.current) {
+      return;
+    }
+    graph.current.on('tap', 'node', (e: cytoscape.EventObject) => {
+      console.log('clicked!');
+    });
+
+    return () => {
+      if (!graph.current) {
+        return;
+      }
+      graph.current.removeListener('tap');
+    };
+  });
+
   return (
-    <div style={{ width: '50%', height: '100%' }}>
+    <div style={{ width: '90%', height: '100%' }}>
       <div
         style={{
           width: '100%',
