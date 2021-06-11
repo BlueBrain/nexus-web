@@ -4,12 +4,24 @@ import ProjectGraph from '../components/Projects/ProjectGraph';
 import ResourceInfoPanel from '../components/Projects/ResourceInfoPanel';
 
 const ProjectStatsContainer: React.FC<{}> = () => {
-  // load some data here from somewhere
+  const [selectedType, setSelectedType] = React.useState<string>();
+
+  React.useEffect(() => {
+    // load graph here
+  }, []);
+
+  React.useEffect(() => {
+    console.log('supposed to fetch data here...');
+  }, [selectedType]);
+
+  const showType = (type?: string) => {
+    setSelectedType(type);
+  };
 
   return (
     <div style={{ display: 'flex' }}>
-      <ProjectGraph />
-      <ResourceInfoPanel />
+      <ProjectGraph viewType={showType} />
+      {selectedType && <ResourceInfoPanel typeInfo={selectedType} />}
     </div>
   );
 };

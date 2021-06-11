@@ -3,7 +3,15 @@ import * as cytoscape from 'cytoscape';
 // @ts-ignore
 import * as fcose from 'cytoscape-fcose';
 
-const ProjectGraph: React.FC<{}> = () => {
+export type ElementNodeData = {
+  label: string;
+  isOrigin?: boolean;
+  id: string;
+};
+
+const ProjectGraph: React.FC<{
+  viewType: (type?: string, data?: ElementNodeData) => void;
+}> = ({ viewType }) => {
   const container = React.useRef<HTMLDivElement>(null);
   const graph = React.useRef<cytoscape.Core>();
 
@@ -132,6 +140,12 @@ const ProjectGraph: React.FC<{}> = () => {
     graph.current.on('tap', 'node', (e: cytoscape.EventObject) => {
       console.log('clicked!');
     });
+    graph.current.on('mouseover', 'node', (e: cytoscape.EventObject) => {
+      viewType && viewType(e.target.id(), e.target.data());
+    });
+    graph.current.on('mouseout', 'node', (e: cytoscape.EventObject) => {
+      viewType(undefined);
+    });
 
     return () => {
       if (!graph.current) {
@@ -142,7 +156,7 @@ const ProjectGraph: React.FC<{}> = () => {
   });
 
   return (
-    <div style={{ width: '90%', height: '100%' }}>
+    <div style={{ width: '80%', height: '100%' }}>
       <div
         style={{
           width: '100%',
