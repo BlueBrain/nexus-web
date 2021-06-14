@@ -77,8 +77,6 @@ const ResourceViewContainer: React.FunctionComponent<{
     location.search
   );
 
-  console.log('tag ...', tag);
-
   const activeTabKey = location.hash || DEFAULT_ACTIVE_TAB_KEY;
 
   const [{ busy, resource, error }, setResource] = React.useState<{
