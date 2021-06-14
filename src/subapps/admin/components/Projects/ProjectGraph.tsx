@@ -10,83 +10,84 @@ export type ElementNodeData = {
 };
 
 const ProjectGraph: React.FC<{
+  elements: any;
   viewType: (type?: string, data?: ElementNodeData) => void;
-}> = ({ viewType }) => {
+}> = ({ viewType, elements }) => {
   const container = React.useRef<HTMLDivElement>(null);
   const graph = React.useRef<cytoscape.Core>();
 
-  const elements = {
-    nodes: [
-      {
-        data: { id: 'Cell', label: 'Cell\n500' },
-      },
-      {
-        data: { id: 'Slice', label: 'Slice\n700' },
-      },
-      {
-        data: { id: 'Trace', label: 'Trace\n3772' },
-      },
-      {
-        data: { id: 'Specimen', label: 'Specimen\n21' },
-      },
-      {
-        data: { id: 'PatchedClamp', label: 'PatchedClamp\n2828' },
-      },
-      {
-        data: { id: 'Person', label: 'Person\n219' },
-      },
-    ],
-    edges: [
-      {
-        data: {
-          id: 'ab',
-          source: 'Slice',
-          target: 'Cell',
-          name: 'derivedFrom',
-        },
-      },
-      {
-        data: {
-          id: 'bc',
-          source: 'Cell',
-          target: 'Trace',
-          name: 'derivedFrom',
-        },
-      },
-      {
-        data: {
-          id: 'cd',
-          source: 'Slice',
-          target: 'Specimen',
-          name: 'derivedFrom',
-        },
-      },
-      {
-        data: {
-          id: 'tt',
-          source: 'Trace',
-          target: 'PatchedClamp',
-          name: 'generatedBy',
-        },
-      },
-      {
-        data: {
-          id: 'eu',
-          source: 'Cell',
-          target: 'PatchedClamp',
-          name: 'usedBy',
-        },
-      },
-      {
-        data: {
-          id: 'rt',
-          source: 'Person',
-          target: 'PatchedClamp',
-          name: 'agent',
-        },
-      },
-    ],
-  };
+  // const elements = {
+  //   nodes: [
+  //     {
+  //       data: { id: 'Cell', label: 'Cell\n500' },
+  //     },
+  //     {
+  //       data: { id: 'Slice', label: 'Slice\n700' },
+  //     },
+  //     {
+  //       data: { id: 'Trace', label: 'Trace\n3772' },
+  //     },
+  //     {
+  //       data: { id: 'Specimen', label: 'Specimen\n21' },
+  //     },
+  //     {
+  //       data: { id: 'PatchedClamp', label: 'PatchedClamp\n2828' },
+  //     },
+  //     {
+  //       data: { id: 'Person', label: 'Person\n219' },
+  //     },
+  //   ],
+  //   edges: [
+  //     {
+  //       data: {
+  //         id: 'ab',
+  //         source: 'Slice',
+  //         target: 'Cell',
+  //         name: 'derivedFrom',
+  //       },
+  //     },
+  //     {
+  //       data: {
+  //         id: 'bc',
+  //         source: 'Cell',
+  //         target: 'Trace',
+  //         name: 'derivedFrom',
+  //       },
+  //     },
+  //     {
+  //       data: {
+  //         id: 'cd',
+  //         source: 'Slice',
+  //         target: 'Specimen',
+  //         name: 'derivedFrom',
+  //       },
+  //     },
+  //     {
+  //       data: {
+  //         id: 'tt',
+  //         source: 'Trace',
+  //         target: 'PatchedClamp',
+  //         name: 'generatedBy',
+  //       },
+  //     },
+  //     {
+  //       data: {
+  //         id: 'eu',
+  //         source: 'Cell',
+  //         target: 'PatchedClamp',
+  //         name: 'usedBy',
+  //       },
+  //     },
+  //     {
+  //       data: {
+  //         id: 'rt',
+  //         source: 'Person',
+  //         target: 'PatchedClamp',
+  //         name: 'agent',
+  //       },
+  //     },
+  //   ],
+  // };
 
   React.useEffect(() => {
     cytoscape.use(fcose);
@@ -131,7 +132,7 @@ const ProjectGraph: React.FC<{
         graph.current.destroy();
       }
     };
-  }, [container]);
+  }, [elements]);
 
   React.useEffect(() => {
     if (!graph.current) {
