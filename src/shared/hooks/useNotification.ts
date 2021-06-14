@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { notification as antdNotification } from 'antd';
-import _ from 'lodash';
 
 export type NotificationContextType = {
   error: (args: { message: string; description?: string }) => void;
