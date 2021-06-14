@@ -73,9 +73,11 @@ const ResourceViewContainer: React.FunctionComponent<{
 
   const goToOrg = (orgLabel: string) => history.push(`/admin/${orgLabel}`);
 
-  const { expanded: expandedFromQuery, rev } = queryString.parse(
+  const { expanded: expandedFromQuery, rev, tag } = queryString.parse(
     location.search
   );
+
+  console.log('tag ...', tag);
 
   const activeTabKey = location.hash || DEFAULT_ACTIVE_TAB_KEY;
 
@@ -168,16 +170,27 @@ const ResourceViewContainer: React.FunctionComponent<{
       busy: true,
     });
     try {
+      const options = tag
+        ? {
+            tag: tag.toString(),
+          }
+        : {
+            rev: Number(rev),
+          };
       const resource = (await nexus.Resource.get(
         orgLabel,
         projectLabel,
         resourceId
       )) as Resource;
-      const latestResource: Resource = rev
-        ? ((await nexus.Resource.get(orgLabel, projectLabel, resourceId, {
-            rev: Number(rev),
-          })) as Resource)
-        : resource;
+      const latestResource: Resource =
+        rev || tag
+          ? ((await nexus.Resource.get(
+              orgLabel,
+              projectLabel,
+              resourceId,
+              options
+            )) as Resource)
+          : resource;
 
       const expandedResources = (await nexus.Resource.get(
         orgLabel,
@@ -241,7 +254,7 @@ const ResourceViewContainer: React.FunctionComponent<{
 
   React.useEffect(() => {
     setResources();
-  }, [orgLabel, projectLabel, resourceId, rev]);
+  }, [orgLabel, projectLabel, resourceId, rev, tag]);
 
   return (
     <>
