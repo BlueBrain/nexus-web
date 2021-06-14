@@ -5,15 +5,17 @@ import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
 } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { notification, Popover, Button } from 'antd';
+import { Popover, Button } from 'antd';
 import { Link } from 'react-router-dom';
 
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
 import ResourceListBoardContainer from '../../../shared/containers/ResourceListBoardContainer';
 import ProjectTools from '../components/Projects/ProjectTools';
 import { useAdminSubappContext } from '..';
+import useNotification from '../../../shared/hooks/useNotification';
 
 const ProjectView: React.FunctionComponent = () => {
+  const notification = useNotification();
   const nexus = useNexusContext();
   const subapp = useAdminSubappContext();
   const match = useRouteMatch<{ orgLabel: string; projectLabel: string }>(

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Drawer, notification, Modal, Button, Empty } from 'antd';
+import { Drawer, Modal, Button, Empty } from 'antd';
 import { PlusSquareOutlined } from '@ant-design/icons';
 import { useHistory, useRouteMatch } from 'react-router';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
@@ -11,8 +11,10 @@ import ProjectForm from '../components/Projects/ProjectForm';
 import ListItem from '../../../shared/components/List/Item';
 import ProjectItem from '../components/Projects/ProjectItem';
 import { useAdminSubappContext } from '..';
+import useNotification from '../../../shared/hooks/useNotification';
 
 const ProjectsView: React.FunctionComponent = () => {
+  const notification = useNotification();
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
   const [orgLoadingBusy, setOrgLoadingBusy] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
@@ -56,7 +58,6 @@ const ProjectsView: React.FunctionComponent = () => {
           notification.error({
             message: `An error occured whilst fetching Organization ${match.params.orgLabel}`,
             description: error.message,
-            duration: 0,
           });
         });
     }
@@ -76,7 +77,6 @@ const ProjectsView: React.FunctionComponent = () => {
       .then(() => {
         notification.success({
           message: 'Project created',
-          duration: 2,
         });
         setFormBusy(false);
         goTo(activeOrg._label, newProject._label);
@@ -86,7 +86,6 @@ const ProjectsView: React.FunctionComponent = () => {
         notification.error({
           message: 'An error occurred',
           description: error.message || error.reason,
-          duration: 0,
         });
       });
   };
@@ -113,7 +112,6 @@ const ProjectsView: React.FunctionComponent = () => {
       .then(() => {
         notification.success({
           message: 'Project saved',
-          duration: 2,
         });
         setFormBusy(false);
         setModalVisible(false);
@@ -125,7 +123,6 @@ const ProjectsView: React.FunctionComponent = () => {
         notification.error({
           message: 'An unknown error occurred',
           description: error.message,
-          duration: 0,
         });
       });
   };
@@ -141,7 +138,6 @@ const ProjectsView: React.FunctionComponent = () => {
         () => {
           notification.success({
             message: 'Project successfully deprecated',
-            duration: 2,
           });
           setFormBusy(false);
           setModalVisible(false);
@@ -151,7 +147,6 @@ const ProjectsView: React.FunctionComponent = () => {
           notification.warning({
             message: 'Project NOT deprecated',
             description: action?.error?.message,
-            duration: 2,
           });
           setFormBusy(false);
         }
@@ -160,7 +155,6 @@ const ProjectsView: React.FunctionComponent = () => {
         notification.error({
           message: 'An unknown error occurred',
           description: error.message,
-          duration: 0,
         });
       });
   };
