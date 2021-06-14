@@ -39,12 +39,13 @@ const DashboardResultsContainer: React.FunctionComponent<{
       })
       .then((resource: Resource) => {
         const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
-        history.push(
-          `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
-            resource['@id']
-          )}?${queryParams}`,
-          { background: location }
-        );
+        let path = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+          resource['@id']
+        )}`;
+        if (queryParams) {
+          path = `${path}?${queryParams}`;
+        }
+        history.push(path, { background: location });
       })
       .catch(error => {
         message.error(`Resource ${self} could not be found`);
