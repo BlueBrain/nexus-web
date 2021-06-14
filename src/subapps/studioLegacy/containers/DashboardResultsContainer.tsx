@@ -31,6 +31,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
   const location = useLocation();
 
   const goToStudioResource = (selfUrl: string) => {
+    const queryParams = selfUrl.split('?')[1];
     nexus
       .httpGet({
         path: selfUrl,
@@ -41,7 +42,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
         history.push(
           `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
             resource['@id']
-          )}`,
+          )}?${queryParams}`,
           { background: location }
         );
       })
