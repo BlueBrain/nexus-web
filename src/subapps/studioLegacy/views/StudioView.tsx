@@ -4,56 +4,69 @@ import { Link } from 'react-router-dom';
 import StudioContainer from '../containers/StudioContainer';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk';
+import { NexusClient, ACL } from '@bbp/nexus-sdk';
+
+const writableStudio = async (permissionsPath: string, nexus: NexusClient) => {
+  const aclList = await nexus.ACL.list(permissionsPath);
+  const acls = aclList._results as ACL[];
+  let isWritable = false;
+  const WRITABLE_ACL = 'resources/write';
+
+  acls.forEach(a => {
+    if (a.acl) {
+      a.acl.forEach(acl => {
+        if (acl.permissions.includes(WRITABLE_ACL)) {
+          isWritable = true;
+        }
+      });
+    }
+  });
+  return isWritable;
+};
 
 type StudioContextType = {
   orgLabel: string;
   projectLabel: string;
   studioId: string;
+  isWritable: boolean;
   workspaceId?: string | undefined;
   dashboardId?: string | undefined;
 };
-type StudioResource = Resource<{
-  label: string;
-  description?: string;
-  workspaces: [string];
-}>;
 
 export const StudioContext = React.createContext<StudioContextType>({
   orgLabel: '',
   projectLabel: '',
   studioId: '',
+  isWritable: false,
 });
 
 const StudioView: React.FunctionComponent<{}> = () => {
   // @ts-ignore
   const { orgLabel, projectLabel, studioId } = useParams();
+  const permissionsPath = `/${orgLabel}/${projectLabel}`;
   const [queryParams, setQueryString] = useQueryString();
   const { workspaceId, dashboardId } = queryParams;
+  const [isWritable, setIsWritable] = React.useState<boolean>(false);
   const nexus = useNexusContext();
-  const [
-    studioResource,
-    setStudioResource,
-  ] = React.useState<StudioResource | null>(null);
 
   React.useEffect(() => {
-    if (orgLabel && projectLabel && studioId) {
-      nexus.Resource.get(orgLabel, projectLabel, studioId).then(
-        (value: any) => {
-          const studioResource: StudioResource = value as StudioResource;
-          setStudioResource(studioResource);
-        }
-      );
-    }
-  }, []);
+    console.log(permissionsPath);
+    writableStudio(permissionsPath, nexus).then(value => {
+      setIsWritable(value);
+    });
+  }, [orgLabel, projectLabel]);
 
-  const contextValue = {
-    workspaceId,
-    dashboardId,
-    orgLabel: orgLabel as string,
-    projectLabel: projectLabel as string,
-    studioId: studioId as string,
-  };
+  const contextValue = React.useMemo(
+    () => ({
+      isWritable,
+      workspaceId,
+      dashboardId,
+      orgLabel: orgLabel as string,
+      projectLabel: projectLabel as string,
+      studioId: studioId as string,
+    }),
+    [orgLabel, projectLabel, workspaceId, dashboardId, studioId, isWritable]
+  );
 
   return (
     <>

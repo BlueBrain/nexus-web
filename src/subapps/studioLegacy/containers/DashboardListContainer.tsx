@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Button } from 'antd';
-import { Resource, DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
+import { Resource, DEFAULT_SPARQL_VIEW_ID, NexusClient } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-
+import useNotification from '../../../shared/hooks/useNotification';
 import TabList from '../../../shared/components/Tabs/TabList';
 import { StudioContext } from '../views/StudioView';
 import DashboardResultsContainer from './DashboardResultsContainer';
@@ -11,6 +11,39 @@ import CreateDashboardContainer from './DashBoardEditor/CreateDashboardContainer
 import useQueryString from '../../../shared/hooks/useQueryString';
 import { resourcesWritePermissionsWrapper } from '../../../shared/utils/permission';
 import { ResultTableFields } from '../../../shared/types/search';
+
+const removeDashBoard = async (
+  nexus: NexusClient,
+  orgLabel: string,
+  projectLabel: string,
+  workspaceId: string,
+  dashboardIndex: number,
+  dashboards: Dashboard[]
+) => {
+  const workspace = (await nexus.Resource.get<Resource>(
+    orgLabel,
+    projectLabel,
+    encodeURIComponent(workspaceId)
+  )) as Resource;
+
+  dashboards.splice(dashboardIndex, 1);
+
+  const workspaceSource = await nexus.Resource.getSource<{
+    [key: string]: any;
+  }>(orgLabel, projectLabel, encodeURIComponent(workspaceId));
+  if (workspace) {
+    await nexus.Resource.update(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(workspaceId),
+      workspace._rev,
+      {
+        ...workspaceSource,
+        dashboards,
+      }
+    );
+  }
+};
 
 export type Dashboard = {
   dashboard: string;
@@ -27,8 +60,16 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   dashboards,
   refreshList,
 }) => {
+  const notification = useNotification();
+  const [showCreateModal, setShowCreateModal] = React.useState(false);
   const studioContext = React.useContext(StudioContext);
-  const { orgLabel, projectLabel, workspaceId, dashboardId } = studioContext;
+  const {
+    orgLabel,
+    projectLabel,
+    workspaceId,
+    dashboardId,
+    isWritable,
+  } = studioContext;
   const [queryParams, setQueryString] = useQueryString();
   const permissionsPath = `/${orgLabel}/${projectLabel}`;
   const [dashboardResources, setDashboardResources] = React.useState<
@@ -138,6 +179,8 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
 
   const tabAction = (
     <CreateDashboardContainer
+      showCreateModal={showCreateModal}
+      onCancel={() => setShowCreateModal(false)}
       orgLabel={orgLabel}
       projectLabel={projectLabel}
       workspaceId={workspaceId as string}
@@ -166,6 +209,43 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     );
     return resourcesWritePermissionsWrapper(editButton, permissionsPath);
   };
+
+  const OnEdit = React.useCallback(
+    async (e, action) => {
+      if (action === 'add') {
+        setShowCreateModal(true);
+      } else {
+        if (workspaceId && refreshList) {
+          const index = e.toString();
+          const dashboardToRemove = dashboardResources[index];
+          const indexToRemove = dashboards
+            .map(d => d.dashboard)
+            .indexOf(dashboardToRemove['@id']);
+
+          await removeDashBoard(
+            nexus,
+            orgLabel,
+            projectLabel,
+            workspaceId,
+            indexToRemove,
+            [...dashboards]
+          );
+          notification.success({
+            message: `Removed ${dashboardToRemove.label}`,
+          });
+          refreshList();
+        }
+      }
+    },
+    [
+      nexus,
+      orgLabel,
+      projectLabel,
+      workspaceId,
+      dashboardResources,
+      refreshList,
+    ]
+  );
 
   return (
     <>
@@ -197,10 +277,12 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         onSelected={(stringiedIndex: string) => {
           selectDashboard(Number(stringiedIndex));
         }}
+        tabType={isWritable ? 'editable-card' : 'card'}
         position="left"
         activeKey={`${selectedDashboardResourcesIndex}`}
         tabAction={resourcesWritePermissionsWrapper(tabAction, permissionsPath)}
         editButton={editButtonWrapper}
+        OnEdit={OnEdit}
       >
         {!!dashboardResources.length &&
           !!dashboardResources[selectedDashboardResourcesIndex] && (
