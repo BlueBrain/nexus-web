@@ -177,10 +177,25 @@ const ActivitiesLinkingContainer: React.FC<{
       });
   };
 
-  const stepsList = steps.map(step => ({
-    id: step['@id'],
-    name: step.name,
-  }));
+  const stepsList = steps.map(step => {
+    const parentSteps: { id: string; name: string }[] = [];
+    let stepTraversal = step;
+    while (stepTraversal.hasParent) {
+      stepTraversal = steps.find(
+        step => step['@id'] === stepTraversal.hasParent['@id']
+      );
+      parentSteps.push({ id: stepTraversal['@id'], name: stepTraversal.name });
+    }
+    return {
+      parentSteps,
+      id: step['@id'],
+      name: step.name,
+    } as {
+      id: string;
+      name: string;
+      parentSteps: { id: string; name: string }[];
+    };
+  });
 
   const defaultActivityType = () => {
     if (selectedActivity) {
