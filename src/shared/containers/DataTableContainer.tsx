@@ -173,7 +173,6 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   const renderTitle = () => {
     const tableResource = tableData.tableResult.data
       ?.tableResource as TableComponent;
-    console.log(tableResource.enableSave);
     const content = (
       <div className="wrapper">
         <div>
@@ -188,7 +187,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             Edit Table
           </Button>
         </div>
-        {tableResource && tableResource.enableSave ? (
+        {tableResource ? (
           tableResource.enableSave ? (
             <div>
               <Button
@@ -202,7 +201,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             </div>
           ) : null
         ) : null}
-        {tableResource && tableResource.enableDownload ? (
+        {tableResource ? (
           tableResource.enableDownload ? (
             <div>
               <Button
@@ -216,7 +215,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             </div>
           ) : null
         ) : null}
-        {tableResource && tableResource.enableSave ? (
+        {tableResource ? (
           tableResource.enableSave ? (
             <div>
               <Button
