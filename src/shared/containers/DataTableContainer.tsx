@@ -187,50 +187,55 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             Edit Table
           </Button>
         </div>
-        {tableResource && tableResource.enableSave ? (
-          tableResource.enableSave
-        ) : null ? (
-          <div>
-            <Button
-              block
-              icon={<ShoppingCartOutlined />}
-              type="default"
-              onClick={tableData.addFromDataCart}
-            >
-              Add From Cart
-            </Button>
-          </div>
+        {tableResource ? (
+          tableResource.enableSave ? (
+            <div>
+              <Button
+                block
+                icon={<ShoppingCartOutlined />}
+                type="default"
+                onClick={tableData.addFromDataCart}
+              >
+                Add From Cart
+              </Button>
+            </div>
+          ) : null
         ) : null}
-        {tableResource && tableResource.enableDownload ? (
-          tableResource.enableDownload
-        ) : null ? (
-          <div>
-            <Button
-              block
-              icon={<DownloadOutlined />}
-              type="default"
-              onClick={tableData.downloadCSV}
-            >
-              Download CSV
-            </Button>
-          </div>
+        {tableResource ? (
+          tableResource.enableDownload ? (
+            <div>
+              <Button
+                block
+                icon={<DownloadOutlined />}
+                type="default"
+                onClick={tableData.downloadCSV}
+              >
+                Download CSV
+              </Button>
+            </div>
+          ) : null
         ) : null}
-        {tableResource && tableResource.enableSave ? (
-          tableResource.enableSave
-        ) : null ? (
-          <div>
-            <Button
-              block
-              icon={<ShoppingCartOutlined />}
-              type="default"
-              onClick={tableData.addToDataCart}
-            >
-              Add To Cart
-            </Button>
-          </div>
+        {tableResource ? (
+          tableResource.enableSave ? (
+            <div>
+              <Button
+                block
+                icon={<ShoppingCartOutlined />}
+                type="default"
+                onClick={tableData.addToDataCart}
+              >
+                Add To Cart
+              </Button>
+            </div>
+          ) : null
         ) : null}
         <div>
-          <Button block icon={<DeleteOutlined />} onClick={confirmDeprecate}>
+          <Button
+            block
+            danger
+            icon={<DeleteOutlined />}
+            onClick={confirmDeprecate}
+          >
             Delete
           </Button>
         </div>
