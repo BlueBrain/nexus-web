@@ -4,13 +4,15 @@ import ProjectGraph from '../components/Projects/ProjectGraph';
 import ResourceInfoPanel from '../components/Projects/ResourceInfoPanel';
 
 const ProjectStatsContainer: React.FC<{}> = () => {
-  const [selectedType, setSelectedType] = React.useState<string>();
+  const [selectedType, setSelectedType] = React.useState<any>();
   const [elements, setElements] = React.useState<any>();
+  const [relations, setRelations] = React.useState<any>();
+  const [graphData, setGraphData] = React.useState<any>();
 
   React.useEffect(() => {
     console.log('fetching graph....');
 
-    const response = {
+    const graphRresponse = {
       _nodes: [
         {
           '@id': 'https://neuroshapes.org/Trace',
@@ -90,17 +92,74 @@ const ProjectStatsContainer: React.FC<{}> = () => {
       ],
     };
 
-    const elements = constructGraphData(response);
+    const elements = constructGraphData(graphRresponse);
 
     setElements(elements);
+    setGraphData(graphRresponse);
   }, []);
 
-  React.useEffect(() => {
-    console.log('supposed to fetch resource here...', selectedType);
-  }, [selectedType]);
-
   const showType = (type?: string) => {
-    setSelectedType(type);
+    if (type) {
+      const exampleResponse = {
+        '@id': 'https://neuroshapes.org/Trace',
+        _name: 'Trace',
+        _count: 3567,
+        _properties: [
+          {
+            '@id': 'http://schema.org/name',
+            _name: 'name',
+            _count: 3000,
+          },
+          {
+            '@id': 'https://neuroshapes.org/brainLocation',
+            _name: 'brainLocation',
+            _count: 2000,
+            _types: [
+              {
+                '@id': 'https://neuroshapes.org/BrainLocation',
+                _name: 'BrainLocation',
+                _count: 100,
+              },
+            ],
+            _properties: [
+              {
+                '@id': 'https://neuroshapes.org/brainRegion',
+                _name: 'brainRegion',
+                _count: 1500,
+                _types: [
+                  {
+                    '@id': 'https://neuroshapes.org/BrainRegion',
+                    _name: 'BrainRegion',
+                    _count: 2000,
+                  },
+                  {
+                    '@id': 'https://neuroshapes.org/Thalamus',
+                    _name: 'Thalamus',
+                    _count: 1000,
+                  },
+                  {
+                    '@id': 'https://neuroshapes.org/Hipocampus',
+                    _name: 'Hipocampus',
+                    _count: 500,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+
+      setSelectedType(exampleResponse);
+
+      const links = graphData._edges.filter(
+        (relation: any) =>
+          relation._source === type || relation._target === type
+      );
+
+      setRelations(links);
+    } else {
+      setSelectedType(undefined);
+    }
   };
 
   const constructPathName = (path: any[]) => {
@@ -134,7 +193,9 @@ const ProjectStatsContainer: React.FC<{}> = () => {
   return (
     <div style={{ display: 'flex' }}>
       <ProjectGraph elements={elements} viewType={showType} />
-      {selectedType && <ResourceInfoPanel typeInfo={selectedType} />}
+      {selectedType && (
+        <ResourceInfoPanel typeStats={selectedType} relations={relations} />
+      )}
     </div>
   );
 };
