@@ -34,12 +34,8 @@ const ProjectGraph: React.FC<{
             label: 'data(label)',
             'text-valign': 'center',
             'text-halign': 'center',
-            height: '90px',
-            width: '90px',
-            backgroundColor: '#fff',
+            backgroundColor: 'PowderBlue',
             'text-wrap': 'wrap',
-            'border-width': 1,
-            'border-color': 'teal',
           },
         },
         {
@@ -47,8 +43,7 @@ const ProjectGraph: React.FC<{
           style: {
             label: 'data(name)',
             'font-size': '12px',
-            width: 2,
-            'line-color': 'teal',
+            'line-color': 'PowderBlue',
           },
         },
       ],

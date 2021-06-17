@@ -55,7 +55,7 @@ const ProjectStatsContainer: React.FC<{}> = () => {
         {
           _source: 'https://neuroshapes.org/Trace',
           _target: 'https://neuroshapes.org/Person',
-          _count: 3000,
+          _count: 100,
           _path: [
             {
               '@id': 'https://neuroshapes.org/contribution',
@@ -70,7 +70,7 @@ const ProjectStatsContainer: React.FC<{}> = () => {
         {
           _source: 'https://neuroshapes.org/Slice',
           _target: 'https://neuroshapes.org/Trace',
-          _count: 188,
+          _count: 100,
           _path: [
             {
               '@id': 'https://neuroshapes.org/derivedFrom',
@@ -81,7 +81,7 @@ const ProjectStatsContainer: React.FC<{}> = () => {
         {
           _source: 'https://neuroshapes.org/Slice',
           _target: 'https://neuroshapes.org/Specimen',
-          _count: 789,
+          _count: 8,
           _path: [
             {
               '@id': 'https://neuroshapes.org/derivedFrom',
@@ -166,6 +166,28 @@ const ProjectStatsContainer: React.FC<{}> = () => {
     return path.map((singlePath: any) => singlePath._name).join('/');
   };
 
+  const getDiameter = (count: number) => {
+    const min = 20;
+    const max = 200;
+
+    const maxCount = 10000;
+
+    const diameter = (count / maxCount) * max;
+
+    return diameter < min ? min : diameter;
+  };
+
+  const getLineWidth = (count: number) => {
+    const min = 1;
+    const max = 20;
+
+    const maxCount = 10000;
+
+    const width = (count / maxCount) * max;
+
+    return width < min ? min : width;
+  };
+
   const getEdgeId = (edge: any) => {
     return edge._target + '-' + edge._source;
   };
@@ -173,6 +195,10 @@ const ProjectStatsContainer: React.FC<{}> = () => {
   const constructGraphData = (response: any) => {
     const nodes = response._nodes.map((node: any) => ({
       data: { id: node['@id'], label: node._name + '\n' + node._count },
+      style: {
+        width: `${getDiameter(node._count)} px`,
+        height: `${getDiameter(node._count)} px`,
+      },
     }));
 
     const edges = response._edges.map((edge: any) => ({
@@ -181,6 +207,9 @@ const ProjectStatsContainer: React.FC<{}> = () => {
         source: edge._source,
         target: edge._target,
         name: constructPathName(edge._path),
+      },
+      style: {
+        width: getLineWidth(edge._count),
       },
     }));
 
