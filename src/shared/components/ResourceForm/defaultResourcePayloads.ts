@@ -1,66 +1,50 @@
 export const DEFAULT_RESOURCE = {
-  '@context': {}, // optional
   '@id': '', // optional
   '@type': [], // optional
 };
 
 export const DISK_STORAGE = {
-  '@context': {}, // optional
   '@id': '', // optional
   '@type': 'DiskStorage',
   default: false,
   volume: '',
-  readPermission: [], // optional
-  writePermission: [], // optional
 };
 
 export const REMOTE_STORAGE = {
-  '@context': {}, // optional
   '@id': '', // optional
   '@type': 'RemoteDiskStorage',
   default: false,
-  endpoint: '',
-  credentials: '', // optional
-  readPermission: [], // optional
-  writePermission: [], // optional
+  folder: '',
 };
 
 export const S3_STORAGE = {
-  '@context': {}, // optional
   '@id': '', // optional
   '@type': 'S3Storage',
   default: false,
-  bucket: '', // optional
-  endpoint: '', // optional
-  accessKey: '', // optional
-  secretKey: '', // optional
+  bucket: '', // optiona
 };
 
 export const SPARQL_VIEW = {
-  '@context': 'https://bluebrain.github.io/nexus/contexts/sparql.json', // optional
   '@id': '', // optional
   '@type': 'SparqlView',
   resourceSchemas: [],
   resourceTypes: [],
-  resourceTag: '',
   includeMetadata: true,
   includeDeprecated: false,
 };
 
 export const ELASTIC_SEARCH_VIEW = {
-  '@context': 'https://bluebrain.github.io/nexus/contexts/elasticsearch.json', // optional
   '@id': '', // optional
   '@type': 'ElasticSearchView',
   resourceSchemas: [],
   resourceTypes: [],
-  resourceTag: '',
+  sourceAsText: false,
   includeMetadata: true,
   includeDeprecated: false,
   mapping: {},
 };
 
 export const COMPOSITE_VIEW = {
-  '@context': {}, // optional
   '@id': '', // optional
   '@type': ['CompositeView', 'Beta', 'View'],
   sources: [],
@@ -69,34 +53,30 @@ export const COMPOSITE_VIEW = {
 };
 
 export const AGGREGATE_ES_VIEW = {
-  '@context': {}, // optional
   '@id': '', // optional
   '@type': 'AggregateElasticSearchView',
   views: [{ project: '', viewId: '' }],
 };
 
 export const AGGREGATE_SPARQL_VIEW = {
-  '@context': {}, // optional
   '@id': '', // optional
   '@type': 'AggregateSparqlView',
   views: [{ project: '', viewId: '' }],
 };
 
 export const IN_PROJECT = {
-  '@context': {}, // optional
   '@id': '', // optional
   '@type': 'InProject',
-  priority: 0,
+  priority: 2,
 };
 
 export const CROSS_PROJECT = {
-  '@context': {}, // optional
   '@id': '', // optional
   '@type': 'CrossProject',
   resourceTypes: [],
   projects: [],
   identities: [],
-  priority: 0,
+  priority: 2,
 };
 
 export const DEFAULT_RESOURCES: { [key: string]: any } = {
@@ -118,4 +98,25 @@ export const RESOURCES_SCHEMA_URI: { [key: string]: string } = {
   View: 'https://bluebrain.github.io/nexus/schemas/views.json',
   Resolver: 'https://bluebrain.github.io/nexus/schemas/resolvers.json',
   _: '_',
+};
+
+export const RESOURCES_TYPES_URLS: { [key: string]: string } = {
+  DiskStorage:
+    'https://bluebrainnexus.io/docs/api/current/kg/kg-storages-api.html#local-disk-storage',
+  RemoteDiskStorage:
+    'https://bluebrainnexus.io/docs/api/current/kg/kg-storages-api.html#remote-disk-storage',
+  S3Storage:
+    'https://bluebrainnexus.io/docs/api/current/kg/kg-storages-api.html#amazon-s3-compatible-storage',
+  SparqlView:
+    'https://bluebrainnexus.io/docs/api/current/kg/kg-views-api.html#sparqlview',
+  ElasticSearchView:
+    'https://bluebrainnexus.io/docs/api/current/kg/kg-views-api.html#elasticsearchview',
+  AggregateSparqlView:
+    'https://bluebrainnexus.io/docs/api/current/kg/kg-views-api.html#aggregatesparqlview',
+  AggregateElasticSearchView:
+    'https://bluebrainnexus.io/docs/api/current/kg/kg-views-api.html#aggregateelasticsearchview',
+  InProject:
+    'https://bluebrainnexus.io/docs/api/current/kg/kg-resolvers-api.html#inproject-resolver',
+  CrossProject:
+    'https://bluebrainnexus.io/docs/api/current/kg/kg-resolvers-api.html#crossproject-resolver',
 };
