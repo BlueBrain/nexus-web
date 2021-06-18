@@ -281,7 +281,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
         }}
         onOk={deleteWorkSpaceCallBack}
       >
-        <p>Are you sure you want to delete this work from this studio?</p>
+        <p>Are you sure you want to delete ?</p>
       </Modal>
       {showEdit && !!workspaceToEdit ? (
         <WorkspaceForm
