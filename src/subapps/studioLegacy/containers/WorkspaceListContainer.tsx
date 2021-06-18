@@ -49,7 +49,7 @@ const removeWorkSpace = async (
     projectLabel,
     encodeURIComponent(workspaceId)
   )) as Resource;
-  const done = await nexus.Resource.deprecate(
+  await nexus.Resource.deprecate(
     orgLabel,
     projectLabel,
     encodeURIComponent(workspaceId),

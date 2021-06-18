@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Modal, notification, message } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { PlusSquareOutlined } from '@ant-design/icons';
 
 import WorkspaceEditorForm from '../components/WorkspaceEditorForm';
 
