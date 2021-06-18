@@ -12,9 +12,9 @@ const writableStudio = async (permissionsPath: string, nexus: NexusClient) => {
   let isWritable = false;
   const WRITABLE_ACL = 'resources/write';
 
-  acls.forEach(a => {
-    if (a.acl) {
-      a.acl.forEach(acl => {
+  acls.forEach(aclContainer => {
+    if (aclContainer.acl) {
+      aclContainer.acl.forEach(acl => {
         if (acl.permissions.includes(WRITABLE_ACL)) {
           isWritable = true;
         }

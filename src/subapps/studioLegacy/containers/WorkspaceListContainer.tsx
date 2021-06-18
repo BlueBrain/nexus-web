@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { NexusClient, Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 import useNotification from '../../../shared/hooks/useNotification';
 import TabList from '../../../shared/components/Tabs/TabList';
 import AddWorkspaceContainer from './AddWorkspaceContainer';
@@ -19,34 +19,42 @@ const removeWorkSpace = async (
   orgLabel: string,
   studioResourceId: string
 ) => {
-  try {
-    const workspaces = studio.workspaces;
-    if (workspaces) {
-      const index = workspaces.indexOf(workspaceId);
-      if (index !== -1) {
-        workspaces.splice(index, 1);
-      }
+  const workspaces = studio.workspaces;
+  if (workspaces) {
+    const index = workspaces.indexOf(workspaceId);
+    if (index !== -1) {
+      workspaces.splice(index, 1);
     }
-    const studioSource = await nexus.Resource.getSource<StudioResource>(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(studio['@id'])
-    );
-    const studioUpdatePayload = {
-      ...studioSource,
-      workspaces,
-    };
-
-    await nexus.Resource.update(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(studioResourceId),
-      studio._rev,
-      studioUpdatePayload
-    );
-  } catch (ex) {
-    console.log(ex);
   }
+  const studioSource = await nexus.Resource.getSource<StudioResource>(
+    orgLabel,
+    projectLabel,
+    encodeURIComponent(studio['@id'])
+  );
+  const studioUpdatePayload = {
+    ...studioSource,
+    workspaces,
+  };
+
+  await nexus.Resource.update(
+    orgLabel,
+    projectLabel,
+    encodeURIComponent(studioResourceId),
+    studio._rev,
+    studioUpdatePayload
+  );
+
+  const latestWorkspace = (await nexus.Resource.get(
+    orgLabel,
+    projectLabel,
+    encodeURIComponent(workspaceId)
+  )) as Resource;
+  const done = await nexus.Resource.deprecate(
+    orgLabel,
+    projectLabel,
+    encodeURIComponent(workspaceId),
+    Number(latestWorkspace._rev)
+  );
 };
 
 type StudioResource = Resource<{
@@ -67,6 +75,10 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   onListUpdate,
 }) => {
   const notification = useNotification();
+  const [deleteConfirmation, setDeleteConfirmation] = React.useState<boolean>(
+    false
+  );
+  const [deleteWokspaceId, setDeleteWorkspaceId] = React.useState<string>();
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const [queryParams, setQueryString] = useQueryString();
   const studioContext = React.useContext(StudioContext);
@@ -187,22 +199,46 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
       if (action === 'add') {
         setShowModal(true);
       } else {
-        await removeWorkSpace(
-          nexus,
-          e.toString(),
-          studioResource,
-          projectLabel,
-          orgLabel,
-          studioResource['@id']
-        );
-        onListUpdate();
-        notification.success({
-          message: 'Removed workspace succesfully!',
-        });
+        setDeleteWorkspaceId(e.toString());
+        setDeleteConfirmation(true);
       }
     },
     [orgLabel, projectLabel, studioResource, nexus]
   );
+
+  const deleteWorkSpaceCallBack = React.useCallback(async () => {
+    if (!deleteWokspaceId) {
+      return;
+    }
+    try {
+      await removeWorkSpace(
+        nexus,
+        deleteWokspaceId,
+        studioResource,
+        projectLabel,
+        orgLabel,
+        studioResource['@id']
+      );
+      onListUpdate();
+      notification.success({
+        message: 'Removed workspace succesfully!',
+      });
+    } catch (ex) {
+      notification.error({
+        message: 'Failed to remove workspace!',
+      });
+    } finally {
+      setDeleteConfirmation(false);
+      setDeleteWorkspaceId(undefined);
+    }
+  }, [
+    deleteConfirmation,
+    deleteWokspaceId,
+    orgLabel,
+    projectLabel,
+    studioResource,
+    nexus,
+  ]);
 
   return (
     <>
@@ -237,6 +273,17 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
           </div>
         ) : null}
       </TabList>
+      <Modal
+        title="Delete Workspace"
+        visible={deleteConfirmation}
+        onCancel={() => {
+          setDeleteConfirmation(false);
+          setDeleteWorkspaceId(undefined);
+        }}
+        onOk={deleteWorkSpaceCallBack}
+      >
+        <p>Are you sure you want to delete this work from this studio?</p>
+      </Modal>
       {showEdit && !!workspaceToEdit ? (
         <WorkspaceForm
           orgLabel={orgLabel}
