@@ -211,6 +211,8 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
       return;
     }
     try {
+      setDeleteConfirmation(false);
+      setDeleteWorkspaceId(undefined);
       await removeWorkSpace(
         nexus,
         deleteWokspaceId,
@@ -227,9 +229,6 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
       notification.error({
         message: 'Failed to remove workspace!',
       });
-    } finally {
-      setDeleteConfirmation(false);
-      setDeleteWorkspaceId(undefined);
     }
   }, [
     deleteConfirmation,
