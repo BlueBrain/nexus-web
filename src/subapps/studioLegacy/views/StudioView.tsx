@@ -50,7 +50,6 @@ const StudioView: React.FunctionComponent<{}> = () => {
   const nexus = useNexusContext();
 
   React.useEffect(() => {
-    console.log(permissionsPath);
     writableStudio(permissionsPath, nexus).then(value => {
       setIsWritable(value);
     });
