@@ -17,13 +17,6 @@ export const REMOTE_STORAGE = {
   folder: '',
 };
 
-export const S3_STORAGE = {
-  '@id': '', // optional
-  '@type': 'S3Storage',
-  default: false,
-  bucket: '', // optiona
-};
-
 export const SPARQL_VIEW = {
   '@id': '', // optional
   '@type': 'SparqlView',
@@ -105,8 +98,6 @@ export const RESOURCES_TYPES_URLS: { [key: string]: string } = {
     'https://bluebrainnexus.io/docs/api/current/kg/kg-storages-api.html#local-disk-storage',
   RemoteDiskStorage:
     'https://bluebrainnexus.io/docs/api/current/kg/kg-storages-api.html#remote-disk-storage',
-  S3Storage:
-    'https://bluebrainnexus.io/docs/api/current/kg/kg-storages-api.html#amazon-s3-compatible-storage',
   SparqlView:
     'https://bluebrainnexus.io/docs/api/current/kg/kg-views-api.html#sparqlview',
   ElasticSearchView:
