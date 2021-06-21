@@ -48,6 +48,12 @@ const ProjectGraph: React.FC<{
             color: '#fff',
           },
         },
+        {
+          selector: 'node:selected',
+          style: {
+            'background-color': 'Goldenrod',
+          },
+        },
       ],
     });
 
