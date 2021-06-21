@@ -3,7 +3,11 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { SelectQueryResponse, SparqlViewQueryResponse } from '@bbp/nexus-sdk';
 
 import { camelCaseToLabelString } from '../../../shared/utils';
-import { displayError } from '../components/Notifications';
+import { notification } from 'antd';
+import {
+  distanceFromTopToDisplay,
+  parseNexusError,
+} from '../../../shared/hooks/useNotification';
 
 export type Binding = {
   [key: string]: {
@@ -99,7 +103,11 @@ export const useLinkedActivities = (
         setItems(tempItems);
       })
       .catch(error => {
-        displayError(error, 'Failed to fetch linked Activities');
+        notification.error({
+          message: 'Failed to fetch linked Activities',
+          description: parseNexusError(error),
+          top: distanceFromTopToDisplay,
+        });
       });
   }, []);
 

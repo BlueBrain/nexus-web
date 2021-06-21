@@ -13,7 +13,6 @@ import {
   Spin,
   Modal,
   Popover,
-  notification,
 } from 'antd';
 import {
   DownloadOutlined,
@@ -29,6 +28,7 @@ import { useAccessDataForTable } from '../hooks/useAccessDataForTable';
 import EditTableForm, { TableComponent } from '../components/EditTableForm';
 import { useMutation } from 'react-query';
 import { parseProjectUrl } from '../utils';
+import useNotification from '../hooks/useNotification';
 
 export type TableColumn = {
   '@type': string;
@@ -74,6 +74,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
+  const notification = useNotification();
 
   const goToStudioResource = (selfUrl: string) => {
     nexus
@@ -122,13 +123,11 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     onSuccess: data => {
       notification.success({
         message: 'Table deprecated',
-        duration: 2,
       });
     },
     onError: error => {
       notification.error({
         message: 'Failed to delete table',
-        duration: 1,
       });
     },
   });

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Drawer, notification } from 'antd';
+import { Button, Modal, Drawer } from 'antd';
 import { PlusSquareOutlined } from '@ant-design/icons';
 import { OrgResponseCommon } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
@@ -10,6 +10,7 @@ import OrgItem from '../components/Orgs/OrgItem';
 import ListItem from '../../../shared/components/List/Item';
 import { useHistory } from 'react-router';
 import { useAdminSubappContext } from '..';
+import useNotification from '../../../shared/hooks/useNotification';
 
 type NewOrg = {
   label: string;
@@ -26,6 +27,7 @@ const OrgsListView: React.FunctionComponent = () => {
   const history = useHistory();
   const subapp = useAdminSubappContext();
   const goTo = (org: string) => history.push(`/${subapp.namespace}/${org}`);
+  const notification = useNotification();
 
   const saveAndCreate = (newOrg: NewOrg) => {
     setFormBusy(true);
@@ -33,7 +35,6 @@ const OrgsListView: React.FunctionComponent = () => {
       .then(() => {
         notification.success({
           message: 'Organization created',
-          duration: 5,
         });
         setFormBusy(false);
         goTo(newOrg.label);
@@ -43,7 +44,6 @@ const OrgsListView: React.FunctionComponent = () => {
         notification.error({
           message: 'An unknown error occurred',
           description: error.message,
-          duration: 0,
         });
       });
   };
@@ -57,7 +57,6 @@ const OrgsListView: React.FunctionComponent = () => {
         () => {
           notification.success({
             message: 'Organization saved',
-            duration: 2,
           });
           setFormBusy(false);
           setModalVisible(false);
@@ -67,7 +66,6 @@ const OrgsListView: React.FunctionComponent = () => {
           notification.warning({
             message: 'Organization NOT saved',
             description: action?.error?.message,
-            duration: 2,
           });
           setFormBusy(false);
         }
@@ -76,7 +74,6 @@ const OrgsListView: React.FunctionComponent = () => {
         notification.error({
           message: 'An unknown error occurred',
           description: error.message,
-          duration: 0,
         });
       });
   };
@@ -88,7 +85,6 @@ const OrgsListView: React.FunctionComponent = () => {
       .then(() => {
         notification.success({
           message: 'Organization deprecated',
-          duration: 2,
         });
         setFormBusy(false);
         setModalVisible(false);
@@ -99,7 +95,6 @@ const OrgsListView: React.FunctionComponent = () => {
         notification.error({
           message: 'An unknown error occurred',
           description: error.message,
-          duration: 0,
         });
       });
   };

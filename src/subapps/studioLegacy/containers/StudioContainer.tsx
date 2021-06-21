@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { notification, Empty, message } from 'antd';
+import { Empty, message } from 'antd';
 import { useHistory } from 'react-router';
 import EditStudio from '../components/EditStudio';
 import StudioHeader from '../components/StudioHeader';
@@ -10,6 +10,9 @@ import WorkspaceList from '../containers/WorkspaceListContainer';
 import { saveImage } from '../../../shared/containers/MarkdownEditorContainer';
 import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
 import { getDestinationParam } from '../../../shared/utils';
+import useNotification, {
+  parseNexusError,
+} from '../../../shared/hooks/useNotification';
 
 const resourcesWritePermissionsWrapper = (
   child: React.ReactNode,
@@ -39,6 +42,7 @@ const StudioContainer: React.FunctionComponent = () => {
   const history = useHistory();
   const studioContext = React.useContext(StudioContext);
   const { orgLabel, projectLabel, studioId } = studioContext;
+  const notification = useNotification();
 
   React.useEffect(() => {
     fetchAndSetupStudio();
@@ -68,18 +72,14 @@ const StudioContainer: React.FunctionComponent = () => {
               : 'Please login to view the studio';
 
             notification.error({
-              key: 'access-error',
               message: 'Access error',
               description: message,
-              duration: 4,
             });
           });
         } else {
           notification.error({
-            key: 'fetch-error',
             message: 'Failed to load the studio',
-            description: e.message || e.reason,
-            duration: 4,
+            description: parseNexusError(e),
           });
         }
       });
@@ -110,8 +110,7 @@ const StudioContainer: React.FunctionComponent = () => {
         .catch(error => {
           notification.error({
             message: 'An error occurred',
-            description: error.reason || error.message,
-            duration: 3,
+            description: parseNexusError(error),
           });
         });
     }

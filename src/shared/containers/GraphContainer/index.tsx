@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { notification } from 'antd';
 import { useHistory, useLocation } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { ResourceLink, Resource } from '@bbp/nexus-sdk';
@@ -16,6 +15,7 @@ import {
   getListOfChildrenRecursive,
 } from './Graph';
 import { DEFAULT_LAYOUT } from '../../components/Graph/LayoutDefinitions';
+import useNotification from '../../hooks/useNotification';
 
 const GraphContainer: React.FunctionComponent<{
   resource: Resource;
@@ -23,6 +23,7 @@ const GraphContainer: React.FunctionComponent<{
   const history = useHistory();
   const nexus = useNexusContext();
   const location = useLocation();
+  const notification = useNotification();
   const activeTabKey = location.hash || DEFAULT_ACTIVE_TAB_KEY;
   const [reset, setReset] = React.useState(false);
   const [centered, setCentered] = React.useState(false);

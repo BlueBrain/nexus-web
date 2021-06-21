@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Modal } from 'antd';
-
-import { displayError, successNotification } from '../components/Notifications';
 import StepCard from '../components/WorkflowSteps/StepCard';
 import { isParentLink } from '../utils';
 import { useUpdateStep } from '../hooks/useUpdateStep';
@@ -10,6 +8,9 @@ import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowSt
 import fusionConfig from '../config';
 import { StepResource, WorkflowStepMetadata } from '../types';
 import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
+import useNotification, {
+  parseNexusError,
+} from '../../../shared/hooks/useNotification';
 
 const SingleStepContainer: React.FC<{
   projectLabel: string;
@@ -19,6 +20,7 @@ const SingleStepContainer: React.FC<{
   parentLabel?: string;
 }> = ({ projectLabel, orgLabel, step, onUpdate, parentLabel }) => {
   const nexus = useNexusContext();
+  const notification = useNotification();
   const [children, setChildren] = React.useState<any[]>([]);
   const [showAddForm, setShowAddForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
@@ -54,9 +56,19 @@ const SingleStepContainer: React.FC<{
           .then(response => {
             setChildren(response);
           })
-          .catch(error => displayError(error, 'Failed to load Workflow Steps'))
+          .catch(error =>
+            notification.error({
+              message: 'Failed to load Workflow Steps',
+              description: parseNexusError(error),
+            })
+          )
       )
-      .catch(error => displayError(error, 'Failed to load Workflow Steps'));
+      .catch(error =>
+        notification.error({
+          message: 'Failed to load Workflow Steps',
+          description: parseNexusError(error),
+        })
+      );
   };
 
   const onStatusChange = (stepId: string, newStatus: string) => {
@@ -83,12 +95,17 @@ const SingleStepContainer: React.FC<{
         onUpdate();
         setShowAddForm(false);
         setBusy(false);
-        successNotification(`New step ${data.name} created successfully`);
+        notification.success({
+          message: `New step ${data.name} created successfully`,
+        });
       })
       .catch(error => {
         setShowAddForm(false);
         setBusy(false);
-        displayError(error, 'An error occurred');
+        notification.error({
+          message: 'An error occurred',
+          description: parseNexusError(error),
+        });
       });
   };
 

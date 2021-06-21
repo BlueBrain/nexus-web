@@ -1,15 +1,18 @@
 import * as React from 'react';
-import { Modal, notification, Button } from 'antd';
+import { Modal } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
-import { displayError } from '../components/Notifications';
 
 import ActioButton from '../components/ActionButton';
 import TemplatesList from '../components/Templates/TemplatesList';
 import { Template } from '../components/Templates/TemplateCard';
 import fusionConfig from '../config';
+import useNotification, {
+  parseNexusError,
+} from '../../../shared/hooks/useNotification';
 
 const TemplatesContainer: React.FC<{}> = () => {
   const nexus = useNexusContext();
+  const notification = useNotification();
 
   const [showTemplates, setShowTemplates] = React.useState<boolean>(false);
   const [templates, setTemplates] = React.useState<Template[]>([]);
@@ -25,7 +28,12 @@ const TemplatesContainer: React.FC<{}> = () => {
         .then(response => {
           fetchTemplates(response._results);
         })
-        .catch(error => displayError(error, 'An error occurred'));
+        .catch(error =>
+          notification.error({
+            message: 'An error occurred',
+            description: parseNexusError(error),
+          })
+        );
     }
   }, [showTemplates]);
 
@@ -40,7 +48,12 @@ const TemplatesContainer: React.FC<{}> = () => {
       })
     )
       .then(response => setTemplates(response as Template[]))
-      .catch(error => displayError(error, 'An error occurred'));
+      .catch(error =>
+        notification.error({
+          message: 'An error occurred',
+          description: parseNexusError(error),
+        })
+      );
   };
 
   const addActivitiesFromTemplate = (id: string) => {

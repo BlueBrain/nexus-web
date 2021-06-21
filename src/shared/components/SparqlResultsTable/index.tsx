@@ -1,11 +1,12 @@
 import * as React from 'react';
 import * as moment from 'moment';
-import { Input, Table, Button, Tooltip, notification, Select } from 'antd';
+import { Input, Table, Button, Tooltip, Select } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { omit, difference } from 'lodash';
 import { parseProjectUrl, isISODate } from '../../utils/index';
 import { download } from '../../utils/download';
 import './../../styles/result-table.less';
+import useNotification from '../../hooks/useNotification';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -43,6 +44,7 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
   >(headerProperties);
   const [searchValue, setSearchValue] = React.useState<string>('');
   const [filteredValues, setFilteredValues] = React.useState<any>(null);
+  const notification = useNotification();
 
   const filteredItems = items.filter(item => {
     return (
@@ -188,7 +190,6 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
 
       notification.success({
         message: 'Tabled is saved successfully',
-        duration: 5,
       });
     }
   };

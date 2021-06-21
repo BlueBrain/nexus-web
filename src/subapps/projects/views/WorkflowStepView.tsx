@@ -6,7 +6,6 @@ import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
 import StepsBoard from '../components/WorkflowSteps/StepsBoard';
 import Breadcrumbs from '../components/Breadcrumbs';
-import { displayError, successNotification } from '../components/Notifications';
 import SingleStepContainer from '../containers/SingleStepContainer';
 import StepInfoContainer from '../containers/StepInfoContainer';
 import { fetchChildrenForStep, isTable } from '../utils';
@@ -23,6 +22,9 @@ import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
 import './WorkflowStepView.less';
 import { makeInputTable, makeActivityTable } from '../utils/tableUtils';
 import { labelOf } from '../../../shared/utils';
+import useNotification, {
+  parseNexusError,
+} from '../../../shared/hooks/useNotification';
 
 type BreadcrumbItem = {
   label: string;
@@ -37,6 +39,7 @@ const WorkflowStepView: React.FC = () => {
     projectLabel: string;
     stepId: string;
   }>(`/${subapp.namespace}/:orgLabel/:projectLabel/:stepId`);
+  const notification = useNotification();
 
   const [steps, setSteps] = React.useState<StepResource[]>([]);
   const [tables, setTables] = React.useState<any[] | undefined>([]);
@@ -69,7 +72,12 @@ const WorkflowStepView: React.FC = () => {
           setBreadcrumbs
         );
       })
-      .catch(error => displayError(error, 'Failed to load activity'));
+      .catch(error =>
+        notification.error({
+          message: 'Failed to load activity',
+          description: parseNexusError(error),
+        })
+      );
 
     fetchChildren(stepId);
   }, [refreshSteps, stepId]);
@@ -104,11 +112,17 @@ const WorkflowStepView: React.FC = () => {
             setTables(response);
           })
           .catch(error => {
-            displayError(error, 'Failed to load tables');
+            notification.error({
+              message: 'Failed to load tables',
+              description: parseNexusError(error),
+            });
           });
       })
       .catch(error => {
-        displayError(error, 'Failed to load tables');
+        notification.error({
+          message: 'Failed to load tables',
+          description: parseNexusError(error),
+        });
       });
   };
 
@@ -216,9 +230,16 @@ const WorkflowStepView: React.FC = () => {
         );
       })
       .then(() =>
-        successNotification('The code resource is added successfully')
+        notification.success({
+          message: 'The code resource is added successfully',
+        })
       )
-      .catch(error => displayError(error, 'Failed to load original payload'));
+      .catch(error =>
+        notification.error({
+          message: 'Failed to load original payload',
+          description: parseNexusError(error),
+        })
+      );
   };
 
   const submitNewStep = (data: WorkflowStepMetadata) => {
@@ -237,12 +258,17 @@ const WorkflowStepView: React.FC = () => {
     })
       .then(() => {
         setShowStepForm(false);
-        successNotification(`New step ${name} created successfully`);
+        notification.success({
+          message: `New step ${name} created successfully`,
+        });
         waitAndReloadSteps();
       })
       .catch(error => {
         setShowStepForm(false);
-        displayError(error, 'An error occurred');
+        notification.error({
+          message: 'An error occurred',
+          description: parseNexusError(error),
+        });
       });
   };
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Upload, message, Switch, Select, notification } from 'antd';
+import { Upload, message, Switch, Select } from 'antd';
 import {
   InboxOutlined,
   FolderOpenOutlined,
@@ -9,6 +9,7 @@ import { UploadFile } from 'antd/lib/upload/interface';
 import { NexusFile, Storage } from '@bbp/nexus-sdk';
 
 import { labelOf } from '../../utils';
+import useNotification from '../../hooks/useNotification';
 
 const Dragger = Upload.Dragger;
 
@@ -61,6 +62,7 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
     [uid: string]: NexusFile;
   }>({});
   const [fileList, setFileList] = React.useState<UploadFile[]>([]);
+  const notification = useNotification();
 
   const handleFileUpload = (customFileRequest: any) => {
     onFileUpload(customFileRequest.file, storageId)

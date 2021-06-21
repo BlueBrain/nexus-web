@@ -2,7 +2,11 @@ import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 
-import { displayError } from '../components/Notifications';
+import { notification } from 'antd';
+import {
+  distanceFromTopToDisplay,
+  parseNexusError,
+} from '../../../shared/hooks/useNotification';
 
 export type UnlinkedActivity = {
   name?: string;
@@ -129,10 +133,11 @@ export const useUnlinkedActivities = (
         setUnlinkedActivities(parsedActivities);
       })
       .catch(error => {
-        displayError(
-          error,
-          'An error occurred while fetching detached activities'
-        );
+        notification.error({
+          message: 'An error occurred while fetching detached activities',
+          description: parseNexusError(error),
+          top: distanceFromTopToDisplay,
+        });
       });
   };
 
