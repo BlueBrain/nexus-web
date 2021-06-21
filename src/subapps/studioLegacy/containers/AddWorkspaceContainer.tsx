@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Button, Modal, notification, message } from 'antd';
+import { Modal, notification, message } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { PlusSquareOutlined } from '@ant-design/icons';
 
 import WorkspaceEditorForm from '../components/WorkspaceEditorForm';
 
@@ -21,9 +20,17 @@ const AddWorkspaceContainer: React.FC<{
   projectLabel: string;
   studio: StudioResource;
   onAddWorkspace?(): void;
-}> = ({ orgLabel, projectLabel, studio, onAddWorkspace }) => {
+  showModal: boolean;
+  onCancel(): void;
+}> = ({
+  orgLabel,
+  projectLabel,
+  studio,
+  onAddWorkspace,
+  showModal,
+  onCancel,
+}) => {
   const nexus = useNexusContext();
-  const [showModal, setShowModal] = React.useState(false);
 
   const generateWorkspaceResource = (label: string, description?: string) => ({
     label,
@@ -52,7 +59,7 @@ const AddWorkspaceContainer: React.FC<{
   };
 
   const saveWorkspace = async (label: string, description?: string) => {
-    setShowModal(false);
+    onCancel();
     try {
       const createWorkspaceResponse = await createWorkspaceResource(
         label,
@@ -97,14 +104,11 @@ const AddWorkspaceContainer: React.FC<{
 
   return (
     <>
-      <Button icon={<PlusSquareOutlined />} onClick={() => setShowModal(true)}>
-        Add Workspace
-      </Button>
       <Modal
         title="Create a new Workspace"
         visible={showModal}
         footer={null}
-        onCancel={() => setShowModal(false)}
+        onCancel={onCancel}
         destroyOnClose={true}
       >
         <WorkspaceEditorForm saveWorkspace={saveWorkspace} />

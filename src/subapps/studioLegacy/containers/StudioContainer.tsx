@@ -44,8 +44,8 @@ const StudioContainer: React.FunctionComponent = () => {
     fetchAndSetupStudio();
   }, [orgLabel, projectLabel, studioId]);
 
-  const fetchAndSetupStudio = async () => {
-    await nexus.Resource.get(orgLabel, projectLabel, studioId)
+  const fetchAndSetupStudio = React.useCallback(() => {
+    nexus.Resource.get(orgLabel, projectLabel, studioId)
       .then(value => {
         const studioResource: StudioResource = value as StudioResource;
         setStudioResource(studioResource);
@@ -83,7 +83,7 @@ const StudioContainer: React.FunctionComponent = () => {
           });
         }
       });
-  };
+  }, [orgLabel, projectLabel, studioId]);
 
   const updateStudio = async (label: string, description?: string) => {
     if (studioResource) {
@@ -117,10 +117,6 @@ const StudioContainer: React.FunctionComponent = () => {
     }
   };
 
-  const reloadWorkspaces = () => {
-    fetchAndSetupStudio();
-  };
-
   const editButton = (
     <EditStudio
       key={studioId}
@@ -146,7 +142,7 @@ const StudioContainer: React.FunctionComponent = () => {
           <WorkspaceList
             workspaceIds={workspaceIds}
             studioResource={studioResource}
-            onListUpdate={reloadWorkspaces}
+            onListUpdate={fetchAndSetupStudio}
           />
         </>
       ) : (

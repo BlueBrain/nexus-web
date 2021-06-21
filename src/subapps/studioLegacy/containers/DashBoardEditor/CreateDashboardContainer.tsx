@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID, Resource } from '@bbp/nexus-sdk';
-import { notification, Modal, Button, message } from 'antd';
-import { PlusSquareOutlined } from '@ant-design/icons';
+import { notification, Modal, message } from 'antd';
 import DashboardConfigEditor, {
   DashboardPayload,
 } from '../../components/DashboardEditor/DashboardConfigEditor';
@@ -17,15 +16,18 @@ const CreateDashboardContainer: React.FunctionComponent<{
   projectLabel: string;
   workspaceId: string;
   viewId?: string;
+  showCreateModal: boolean;
+  onCancel(): void;
   onSuccess?(): void;
 }> = ({
   orgLabel,
   projectLabel,
   workspaceId,
+  showCreateModal,
   viewId = DEFAULT_SPARQL_VIEW_ID,
+  onCancel,
   onSuccess,
 }) => {
-  const [showCreateModal, setShowCreateModal] = React.useState(false);
   const nexus = useNexusContext();
   const [busy, setBusy] = React.useState(false);
 
@@ -39,14 +41,13 @@ const CreateDashboardContainer: React.FunctionComponent<{
 
   const onSubmit = () => {
     setBusy(false);
-    setShowCreateModal(false);
     !!onSuccess && onSuccess();
   };
 
   const handleSubmit = async (dashboardPayload: DashboardPayload) => {
     try {
       setBusy(true);
-
+      onCancel();
       const dashboard = await nexus.Resource.create(orgLabel, projectLabel, {
         ...dashboardPayload,
         '@context': STUDIO_CONTEXT['@id'],
@@ -99,31 +100,23 @@ const CreateDashboardContainer: React.FunctionComponent<{
   };
 
   return (
-    <>
-      <Button
-        icon={<PlusSquareOutlined />}
-        onClick={() => setShowCreateModal(true)}
-      >
-        Add Dashboard
-      </Button>
-      <Modal
-        title="Create Dashboard"
-        visible={showCreateModal}
-        onCancel={() => setShowCreateModal(false)}
-        style={{ minWidth: '75%' }}
-        confirmLoading={busy}
-        footer={null}
-        destroyOnClose={true}
-        key={workspaceId}
-      >
-        <DashboardConfigEditor
-          availablePlugins={availablePlugins}
-          onSubmit={handleSubmit}
-          linkToSparqlQueryEditor={linkQueryEditor}
-          view={view}
-        ></DashboardConfigEditor>
-      </Modal>
-    </>
+    <Modal
+      title="Create Dashboard"
+      visible={showCreateModal}
+      onCancel={onCancel}
+      style={{ minWidth: '75%' }}
+      confirmLoading={busy}
+      footer={null}
+      destroyOnClose={true}
+      key={workspaceId}
+    >
+      <DashboardConfigEditor
+        availablePlugins={availablePlugins}
+        onSubmit={handleSubmit}
+        linkToSparqlQueryEditor={linkQueryEditor}
+        view={view}
+      ></DashboardConfigEditor>
+    </Modal>
   );
 };
 
