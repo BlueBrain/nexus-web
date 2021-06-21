@@ -20,6 +20,7 @@ const LinkActivityForm: React.FC<{
   stepsList: {
     id: string;
     name: string;
+    parentSteps: { id: string; name: string }[];
   }[];
   onSubmit: (value: string) => void;
   onCancel: () => void;
@@ -30,6 +31,11 @@ const LinkActivityForm: React.FC<{
   const renderOptions = () => {
     return stepsList.map(step => (
       <Option key={step.id} value={step.id}>
+        {step.parentSteps
+          .reverse()
+          .map(parentStep => parentStep.name)
+          .join(' > ')}
+        {step.parentSteps.length > 0 ? ' > ' : ''}
         {step.name}
       </Option>
     ));
