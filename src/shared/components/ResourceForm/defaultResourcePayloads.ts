@@ -75,7 +75,6 @@ export const CROSS_PROJECT = {
 export const DEFAULT_RESOURCES: { [key: string]: any } = {
   DiskStorage: DISK_STORAGE,
   RemoteStorage: REMOTE_STORAGE,
-  S3Storage: S3_STORAGE,
   SparqlView: SPARQL_VIEW,
   ElasticSearchView: ELASTIC_SEARCH_VIEW,
   CompositeView: COMPOSITE_VIEW,
