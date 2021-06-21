@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import ProjectGraph from '../components/Projects/ProjectGraph';
 import ResourceInfoPanel from '../components/Projects/ResourceInfoPanel';
+import { labelOf } from '../../../shared/utils';
 
 const ProjectStatsContainer: React.FC<{}> = () => {
   const [selectedType, setSelectedType] = React.useState<any>();
@@ -17,12 +18,12 @@ const ProjectStatsContainer: React.FC<{}> = () => {
         {
           '@id': 'https://neuroshapes.org/Trace',
           _name: 'Trace',
-          _count: 3567,
+          _count: 4567,
         },
         {
           '@id': 'https://neuroshapes.org/PatchClamp',
           _name: 'PatchClamp',
-          _count: 2578,
+          _count: 3567,
         },
         {
           '@id': 'https://neuroshapes.org/Person',
@@ -32,12 +33,22 @@ const ProjectStatsContainer: React.FC<{}> = () => {
         {
           '@id': 'https://neuroshapes.org/Slice',
           _name: 'Slice',
-          _count: 1789,
+          _count: 500,
         },
         {
           '@id': 'https://neuroshapes.org/Specimen',
           _name: 'Specimen',
-          _count: 4,
+          _count: 57,
+        },
+        {
+          '@id': 'https://neuroshapes.org/Cell',
+          _name: 'Cell',
+          _count: 1242,
+        },
+        {
+          '@id': 'https://neuroshapes.org/ReconstructedCell',
+          _name: 'ReconstructedCell',
+          _count: 1100,
         },
       ],
       _edges: [
@@ -53,7 +64,29 @@ const ProjectStatsContainer: React.FC<{}> = () => {
           ],
         },
         {
-          _source: 'https://neuroshapes.org/Trace',
+          _source: 'https://neuroshapes.org/Cell',
+          _target: 'https://neuroshapes.org/ReconstructedCell',
+          _count: 3000,
+          _path: [
+            {
+              '@id': 'https://neuroshapes.org/usedBy',
+              _name: 'usedBy',
+            },
+          ],
+        },
+        {
+          _source: 'https://neuroshapes.org/Cell',
+          _target: 'https://neuroshapes.org/PatchClamp',
+          _count: 3000,
+          _path: [
+            {
+              '@id': 'https://neuroshapes.org/generatedBy',
+              _name: 'usedBy',
+            },
+          ],
+        },
+        {
+          _source: 'https://neuroshapes.org/PatchClamp',
           _target: 'https://neuroshapes.org/Person',
           _count: 100,
           _path: [
@@ -68,8 +101,8 @@ const ProjectStatsContainer: React.FC<{}> = () => {
           ],
         },
         {
-          _source: 'https://neuroshapes.org/Slice',
-          _target: 'https://neuroshapes.org/Trace',
+          _source: 'https://neuroshapes.org/Cell',
+          _target: 'https://neuroshapes.org/Slice',
           _count: 100,
           _path: [
             {
@@ -100,9 +133,11 @@ const ProjectStatsContainer: React.FC<{}> = () => {
 
   const showType = (type?: string) => {
     if (type) {
+      console.log('type', type);
+
       const exampleResponse = {
-        '@id': 'https://neuroshapes.org/Trace',
-        _name: 'Trace',
+        '@id': type,
+        _name: labelOf(type),
         _count: 3567,
         _properties: [
           {

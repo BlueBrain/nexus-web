@@ -34,8 +34,9 @@ const ProjectGraph: React.FC<{
             label: 'data(label)',
             'text-valign': 'center',
             'text-halign': 'center',
-            backgroundColor: 'PowderBlue',
+            backgroundColor: 'DarkMagenta',
             'text-wrap': 'wrap',
+            color: '#fff',
           },
         },
         {
@@ -43,7 +44,8 @@ const ProjectGraph: React.FC<{
           style: {
             label: 'data(name)',
             'font-size': '12px',
-            'line-color': 'PowderBlue',
+            'line-color': 'MediumPurple',
+            color: '#fff',
           },
         },
       ],
@@ -85,7 +87,8 @@ const ProjectGraph: React.FC<{
       <div
         style={{
           width: '100%',
-          height: '400px',
+          height: '600px',
+          backgroundColor: 'black',
         }}
         className="graph"
         ref={container}

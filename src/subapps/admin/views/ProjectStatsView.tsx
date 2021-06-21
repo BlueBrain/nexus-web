@@ -23,8 +23,8 @@ const ProjectStatsView: React.FC<{}> = () => {
   };
 
   return (
-    <div className="project-stats-view view-container">
-      <h1>
+    <div className="project-stats-view">
+      <h1 className="project-stats-view__title">
         {orgLabel} &gt; {projectLabel}
       </h1>
       <ProjectStatsContainer />

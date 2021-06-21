@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Drawer } from 'antd';
 
+import { labelOf } from '../../../../shared/utils';
+
 import './ResourceInfoPanel.less';
 
 const ResourceInfoPanel: React.FC<{ typeStats: any; relations: any }> = ({
@@ -10,12 +12,18 @@ const ResourceInfoPanel: React.FC<{ typeStats: any; relations: any }> = ({
   console.log('relations', relations);
 
   return (
-    <Drawer visible={true} title={typeStats._name} mask={false} width={400}>
+    <Drawer
+      visible={true}
+      title={<h2 className="resource-info-panel__title">{typeStats._name}</h2>}
+      mask={false}
+      width={400}
+      style={{ marginTop: '52px' }}
+    >
       <div className="resource-info-panel">
         <p>{typeStats['@id']}</p>
         <p>{typeStats._count} resources</p>
         <br />
-        <h4>Properties (coverage in resources)</h4>
+        <h3>Properties (coverage in resources)</h3>
         <ul>
           {typeStats._properties &&
             typeStats._properties.map((property: any) => {
@@ -38,7 +46,7 @@ const ResourceInfoPanel: React.FC<{ typeStats: any; relations: any }> = ({
             })}
         </ul>
         <br />
-        <h4>Relationships</h4>
+        <h3>Relationships</h3>
         <ul>
           {relations &&
             relations.map((relation: any) => (
@@ -46,8 +54,8 @@ const ResourceInfoPanel: React.FC<{ typeStats: any; relations: any }> = ({
                 {relation._path.map((path: any) => path._name).join('/')}{' '}
                 {'-->'}{' '}
                 {relation._source === typeStats['@id']
-                  ? relation._target
-                  : relation._source}{' '}
+                  ? labelOf(relation._target)
+                  : labelOf(relation._source)}{' '}
               </li>
             ))}
         </ul>
