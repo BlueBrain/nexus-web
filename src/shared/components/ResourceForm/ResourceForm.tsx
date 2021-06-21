@@ -8,6 +8,7 @@ import {
   DEFAULT_RESOURCE,
   RESOURCES_SCHEMA_URI,
   DEFAULT_RESOURCES,
+  RESOURCES_TYPES_URLS,
 } from './defaultResourcePayloads';
 
 import './ResourceForm.less';
