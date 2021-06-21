@@ -346,7 +346,7 @@ const StepCard: React.FC<{
             <polyline
               markerMid="url(#black-arrow)"
               className="link-line"
-              id={`link-${stepId}-to-${step['@id']}`}
+              id={`link-${stepId}-to-${labelOf(step['@id'])}`}
             />
           </svg>
         ))
