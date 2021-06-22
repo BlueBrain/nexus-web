@@ -3,7 +3,7 @@ import { ExpandedResource, ResourceSource, Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import ResourceEditor from '../components/ResourceEditor';
-import { displayError } from '../../subapps/projects/components/Notifications';
+import useNotification, { parseNexusError } from '../hooks/useNotification';
 
 const ResourceEditorContainer: React.FunctionComponent<{
   resourceId: string;
@@ -29,6 +29,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
   showMetadataToggle,
 }) => {
   const nexus = useNexusContext();
+  const notification = useNotification();
   const [expanded, setExpanded] = React.useState(defaultExpanded);
   const [showMetadata, setShowMetadata] = React.useState<boolean>(false);
   const [{ busy, resource, error }, setResource] = React.useState<{
@@ -57,7 +58,10 @@ const ResourceEditorContainer: React.FunctionComponent<{
         })
       )
       .catch(error => {
-        displayError(error, 'Failed to load JSON payload');
+        notification.error({
+          message: 'Failed to load JSON payload',
+          description: parseNexusError(error),
+        });
         setResource({
           error,
           resource: null,

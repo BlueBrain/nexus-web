@@ -17,11 +17,11 @@ import {
   Menu,
   Dropdown,
   Input,
-  notification,
 } from 'antd';
 import { CartContext } from '../hooks/useDataCart';
 import ResultPreviewItemContainer from '../../subapps/search/containers/ResultPreviewItemContainer';
 import DefaultResourcePreviewCard from '!!raw-loader!../../subapps/search/templates/DefaultResourcePreviewCard.hbs';
+import useNotification from '../hooks/useNotification';
 
 function makePayload(
   resourcesPayload: { '@type': string; resourceId: string; project: string }[]
@@ -74,6 +74,7 @@ const DataCartContainer = () => {
   const { emptyCart, removeCartItem, length, resources } = React.useContext(
     CartContext
   );
+  const notification = useNotification();
 
   const [search, setSearch] = React.useState<string>('');
   const filteredResources = React.useMemo(() => {
@@ -277,7 +278,6 @@ const DataCartContainer = () => {
                 onClick={() => {
                   navigator.clipboard.writeText(ids).then(() => {
                     notification.info({
-                      key: '',
                       message: 'Ids copied to the clipboard',
                     });
                   });

@@ -5,7 +5,6 @@ import { NexusClient } from '@bbp/nexus-sdk';
 
 import SingleStepContainer from './SingleStepContainer';
 import StepsBoard from '../components/WorkflowSteps/StepsBoard';
-import { displayError, successNotification } from '../components/Notifications';
 import ProjectPanel from '../components/ProjectPanel';
 import { fetchTopLevelSteps } from '../utils';
 import AddComponentButton from '../components/AddComponentButton';
@@ -17,12 +16,16 @@ import {
   createTableContext,
   createWorkflowStepContext,
 } from '../utils/workFlowMetadataUtils';
+import useNotification, {
+  parseNexusError,
+} from '../../../shared/hooks/useNotification';
 
 const WorkflowStepContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
 }> = ({ orgLabel, projectLabel }) => {
   const nexus = useNexusContext();
+  const notification = useNotification();
   const [steps, setSteps] = React.useState<StepResource[]>([]);
   const [showAddForm, setShowAddForm] = React.useState<boolean>(false);
   // switch to trigger step list update
@@ -50,7 +53,10 @@ const WorkflowStepContainer: React.FC<{
 
       setSteps(allSteps);
     } catch (e) {
-      displayError(e, 'Failed to fetch workflow steps');
+      notification.error({
+        message: 'Failed to fetch workflow steps',
+        description: parseNexusError(e),
+      });
     }
   };
 
@@ -99,12 +105,17 @@ const WorkflowStepContainer: React.FC<{
     })
       .then(() => {
         setShowAddForm(false);
-        successNotification(`New step ${name} created successfully`);
+        notification.success({
+          message: `New step ${name} created successfully`,
+        });
         waitAntReloadSteps();
       })
       .catch(error => {
         setShowAddForm(false);
-        displayError(error, 'An error occurred');
+        notification.error({
+          message: 'An error occurred',
+          description: parseNexusError(error),
+        });
       });
   };
 

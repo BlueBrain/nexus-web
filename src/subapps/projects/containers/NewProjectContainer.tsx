@@ -1,14 +1,16 @@
 import * as React from 'react';
-import { Modal, notification } from 'antd';
+import { Modal } from 'antd';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../shared/store/reducers';
 
 import ProjectForm, { ProjectMetadata } from '../components/ProjectForm';
 import ActionButton from '../components/ActionButton';
-import { displayError } from '../components/Notifications';
 import { userOrgLabel } from '../utils';
 import { createProject } from '../utils/workFlowMetadataUtils';
+import useNotification, {
+  parseNexusError,
+} from '../../../shared/hooks/useNotification';
 
 const NewProjectContainer: React.FC<{
   onSuccess: () => void;
@@ -33,6 +35,7 @@ const NewProjectContainer: React.FC<{
   const onClickAddProject = () => {
     setShowForm(true);
   };
+  const notification = useNotification();
 
   const submitProject = (data: ProjectMetadata) => {
     setBusy(true);
@@ -46,7 +49,10 @@ const NewProjectContainer: React.FC<{
       setBusy(false);
       onSuccess();
     } catch (error) {
-      displayError(error, 'An error occurred');
+      notification.error({
+        message: 'An error occurred',
+        description: parseNexusError(error),
+      });
       setShowForm(false);
       setBusy(false);
     }

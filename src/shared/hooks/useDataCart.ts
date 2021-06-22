@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import * as localforage from 'localforage';
 import { notification } from 'antd';
+import { distanceFromTopToDisplay } from './useNotification';
 
 export const DATACART_KEY = 'NEXUS_DATACART';
 
@@ -33,9 +34,7 @@ const useDataCart = () => {
   const emptyCart = async () => {
     await storage.clear();
     await iterateThroughResource();
-    notification.success({
-      message: 'Data cart is now empty',
-    });
+    notification.success({ message: 'Data cart is now empty' });
   };
 
   const addResourceToCart = async (resource: Resource) => {
@@ -45,6 +44,7 @@ const useDataCart = () => {
       return notification.info({
         key: notificationKey,
         message: "You've already added this resource to your data cart",
+        top: distanceFromTopToDisplay,
       });
     }
     await storage.setItem(resource._self, resource);
@@ -52,6 +52,7 @@ const useDataCart = () => {
     notification.success({
       key: notificationKey,
       message: 'Selected resource has been added to your data cart.',
+      top: distanceFromTopToDisplay,
     });
   };
 
@@ -62,6 +63,7 @@ const useDataCart = () => {
     notification.success({
       key: notificationKey,
       message: 'Resource removed',
+      top: distanceFromTopToDisplay,
     });
   };
 
@@ -79,6 +81,7 @@ const useDataCart = () => {
     setResources([...resources, ...uniqueResources]);
     notification.success({
       message: 'Selected resources have been added to your data cart.',
+      top: distanceFromTopToDisplay,
     });
   };
 
