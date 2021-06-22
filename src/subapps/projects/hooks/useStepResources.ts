@@ -2,7 +2,11 @@ import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
 
-import { displayError } from '../components/Notifications';
+import { notification } from 'antd';
+import {
+  distanceFromTopToDisplay,
+  parseNexusError,
+} from '../../../shared/hooks/useNotification';
 import { StepResource } from '../types';
 
 export const useActivityResources = (
@@ -135,7 +139,11 @@ export const useActivityResources = (
         })
         .catch(error => {
           setBusy(false);
-          displayError(error, 'An error occurred');
+          notification.error({
+            message: 'An error occurred',
+            description: parseNexusError(error),
+            top: distanceFromTopToDisplay,
+          });
         });
     }
   };

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
-import { notification } from 'antd';
 
 import ResourceCard from '../components/ResourceCard';
 import ResourceCardCollapsed from '../components/ResourceCard/ResourceCardCollapsed';
 import ResourcePreviewCard from '../components/ResourceCard/ResourcePreviewCard';
 import { labelOf, getResourceLabel } from '../utils';
 import { ElementNodeData } from '../components/Graph';
+import useNotification from '../hooks/useNotification';
 
 const ResourcePreviewCardContainer: React.FunctionComponent<{
   resourceData?: ElementNodeData['resourceData'];
@@ -25,6 +25,7 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
     resource: null,
     error: null,
   });
+  const notification = useNotification();
 
   React.useEffect(() => {
     if (isExternal) {
@@ -56,7 +57,6 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
           notification.error({
             message: "Couldn't load a resource info",
             description: error.message,
-            duration: 5,
           });
 
           setResource({

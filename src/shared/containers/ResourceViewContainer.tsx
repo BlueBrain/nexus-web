@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { useLocation, useHistory, useParams } from 'react-router';
-import { Spin, Card, Empty, notification, Alert } from 'antd';
+import { Spin, Card, Empty, Alert } from 'antd';
 import * as queryString from 'query-string';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import {
@@ -22,6 +22,7 @@ import {
   getDestinationParam,
 } from '../utils';
 import { isDeprecated } from '../utils/nexusMaybe';
+import useNotification from '../hooks/useNotification';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -43,6 +44,7 @@ const ResourceViewContainer: React.FunctionComponent<{
   const nexus = useNexusContext();
   const location = useLocation();
   const history = useHistory();
+  const notification = useNotification();
   const [{ ref }] = useMeasure();
   const { data: pluginManifest } = usePlugins();
   const availablePlugins = Object.keys(pluginManifest || {});
@@ -134,13 +136,11 @@ const ResourceViewContainer: React.FunctionComponent<{
         notification.success({
           message: 'Resource saved',
           description: getResourceLabel(resource),
-          duration: 2,
         });
       } catch (error) {
         notification.error({
           message: 'An unknown error occurred',
           description: error.message,
-          duration: 0,
         });
         setResource({
           error,
@@ -231,7 +231,6 @@ const ResourceViewContainer: React.FunctionComponent<{
           notification.error({
             message: 'Authentication error',
             description: message,
-            duration: 4,
           });
         });
 

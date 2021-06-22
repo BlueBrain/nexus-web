@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Tooltip, notification } from 'antd';
+import { Button, Tooltip } from 'antd';
 import {
   DeleteOutlined,
   DownloadOutlined,
@@ -23,6 +23,7 @@ import {
 } from '../utils/nexusMaybe';
 import Copy from '../components/Copy';
 import { CartContext } from '../hooks/useDataCart';
+import useNotification from '../hooks/useNotification';
 
 const ResourceActionsContainer: React.FunctionComponent<{
   resource: Resource;
@@ -44,6 +45,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
   const self = resource._self;
   const nexus = useNexusContext();
   const { addResourceToCart } = React.useContext(CartContext);
+  const notification = useNotification();
 
   const isLatestResource = async (resource: Resource) => {
     // TODO: remove this if / when

@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID, Resource } from '@bbp/nexus-sdk';
-import { notification, Modal, message } from 'antd';
+import { Modal, message } from 'antd';
 import DashboardConfigEditor, {
   DashboardPayload,
 } from '../../components/DashboardEditor/DashboardConfigEditor';
 import useLinkToDashboardQueryEditor from './hooks/useLinkToDashboardQueryEditor';
 import STUDIO_CONTEXT from '../../components/StudioContext';
 import usePlugins from '../../../../shared/hooks/usePlugins';
+import useNotification from '../../../../shared/hooks/useNotification';
 
 export const DASHBOARD_TYPE = 'StudioDashboard';
 
@@ -30,6 +31,7 @@ const CreateDashboardContainer: React.FunctionComponent<{
 }) => {
   const nexus = useNexusContext();
   const [busy, setBusy] = React.useState(false);
+  const notification = useNotification();
 
   const pluginManifest = usePlugins();
   const availablePlugins = Object.keys(pluginManifest || {});

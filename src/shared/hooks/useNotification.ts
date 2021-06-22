@@ -2,15 +2,25 @@ import * as React from 'react';
 import { notification as antdNotification } from 'antd';
 
 export type NotificationContextType = {
-  error: (args: { message: string; description?: string }) => void;
-  success: (args: { message: string; description?: string }) => void;
-  info: (args: { message: string; description?: string }) => void;
-  warning: (args: { message: string; description?: string }) => void;
+  error: (args: { message: string; description?: React.ReactNode }) => void;
+  success: (args: { message: string; description?: React.ReactNode }) => void;
+  info: (args: { message: string; description?: React.ReactNode }) => void;
+  warning: (args: { message: string; description?: React.ReactNode }) => void;
 };
 
 export const NotificationContext = React.createContext<NotificationContextType>(
   {} as NotificationContextType
 );
+
+type NexusError = {
+  reason?: string;
+  message?: string;
+  [key: string]: any;
+};
+
+export const parseNexusError = (error: NexusError) => {
+  return error.message || error.reason || 'An unknown error occurred';
+};
 
 /**
  * Custom hook providing convenient access to our context value
@@ -37,7 +47,7 @@ const errorDuration = 5;
 const infoDuration = 3;
 const warningDuration = 3;
 const successDuration = 3;
-const distanceFromTopToDisplay = 110;
+export const distanceFromTopToDisplay = 110;
 
 const messageDuration = (type: MessageType) => {
   switch (type) {
@@ -55,7 +65,7 @@ const messageDuration = (type: MessageType) => {
 interface NotificationDict {
   [key: string]: {
     type: MessageType;
-    description?: string;
+    description?: React.ReactNode;
     number: number;
   };
 }
@@ -92,7 +102,11 @@ export const getNotificationContextValue = () => {
     });
   }, [notifications]);
 
-  const notify = (type: MessageType, message: string, description?: string) => {
+  const notify = (
+    type: MessageType,
+    message: string,
+    description?: React.ReactNode
+  ) => {
     setNotifications(notifications => {
       const { ...notificationsToUpdate } = notifications;
       if (message in notifications) {
@@ -109,16 +123,22 @@ export const getNotificationContextValue = () => {
     });
   };
 
-  const error = (args: { message: string; description?: string }) => {
+  const error = (args: { message: string; description?: React.ReactNode }) => {
     notify('error', args.message, args.description);
   };
-  const success = (args: { message: string; description?: string }) => {
+  const success = (args: {
+    message: string;
+    description?: React.ReactNode;
+  }) => {
     notify('success', args.message, args.description);
   };
-  const info = (args: { message: string; description?: string }) => {
+  const info = (args: { message: string; description?: React.ReactNode }) => {
     notify('info', args.message, args.description);
   };
-  const warning = (args: { message: string; description?: string }) => {
+  const warning = (args: {
+    message: string;
+    description?: React.ReactNode;
+  }) => {
     notify('warning', args.message, args.description);
   };
 

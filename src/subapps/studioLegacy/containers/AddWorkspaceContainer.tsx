@@ -1,9 +1,12 @@
 import * as React from 'react';
-import { Modal, notification, message } from 'antd';
+import { Modal, message } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import WorkspaceEditorForm from '../components/WorkspaceEditorForm';
+import useNotification, {
+  parseNexusError,
+} from '../../../shared/hooks/useNotification';
 
 const DEFAULT_WORKSPACE_TYPE = 'StudioWorkspace';
 
@@ -31,6 +34,7 @@ const AddWorkspaceContainer: React.FC<{
   onCancel,
 }) => {
   const nexus = useNexusContext();
+  const notification = useNotification();
 
   const generateWorkspaceResource = (label: string, description?: string) => ({
     label,
@@ -96,8 +100,7 @@ const AddWorkspaceContainer: React.FC<{
     } catch (error) {
       notification.error({
         message: 'An error occurred',
-        description: error.reason || error.message,
-        duration: 3,
+        description: parseNexusError(error),
       });
     }
   };

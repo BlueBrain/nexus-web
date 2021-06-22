@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Tooltip, Button, Popconfirm, notification } from 'antd';
+import { Tooltip, Button, Popconfirm } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
 
 import './ResourceActions.less';
+import useNotification from '../../hooks/useNotification';
 
 export type ActionType = {
   name: string; // A unique name for your action type
@@ -87,6 +88,7 @@ const ResourceActions: React.FunctionComponent<{
   const [actionButtons, setActionButtons] = React.useState<
     React.ReactElement[]
   >([]);
+  const notification = useNotification();
 
   React.useEffect(() => {
     makeActionButtons(resource, actions, actionTypes)

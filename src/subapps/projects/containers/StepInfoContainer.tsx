@@ -4,12 +4,14 @@ import { Drawer, Button } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
 
 import { fetchChildrenForStep, fetchTopLevelSteps } from '../utils';
-import { displayError, successNotification } from '../components/Notifications';
 import { StepResource } from '../types';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 import fusionConfig from '../config';
 import MarkdownEditorComponent from '../../../shared/components/MarkdownEditor';
 import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
+import useNotification, {
+  parseNexusError,
+} from '../../../shared/hooks/useNotification';
 
 const StepInfoContainer: React.FC<{
   step: StepResource;
@@ -18,6 +20,7 @@ const StepInfoContainer: React.FC<{
   onUpdate(): void;
 }> = ({ step, projectLabel, orgLabel, onUpdate }) => {
   const nexus = useNexusContext();
+  const notification = useNotification();
 
   const [showForm, setShowForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
@@ -36,7 +39,12 @@ const StepInfoContainer: React.FC<{
       encodeURIComponent(step['@id'])
     )
       .then(response => setOriginalPayload(response as StepResource))
-      .catch(error => displayError(error, 'Failed to load original payload'));
+      .catch(error =>
+        notification.error({
+          message: 'Failed to load original payload',
+          description: parseNexusError(error),
+        })
+      );
 
     if (step.hasParent) {
       nexus.Resource.get(
@@ -48,7 +56,12 @@ const StepInfoContainer: React.FC<{
           const parent = response as StepResource;
           setParentLabel(parent.name);
         })
-        .catch(error => displayError(error, 'Failed to load parent activity'));
+        .catch(error =>
+          notification.error({
+            message: 'Failed to load parent activity',
+            description: parseNexusError(error),
+          })
+        );
     }
 
     setInformedByIds(parseWasInformedById(step));
@@ -105,9 +118,16 @@ const StepInfoContainer: React.FC<{
       .then(response => {
         onUpdate();
         setShowForm(false);
-        successNotification(`Workflow Step ${data.name} updated successfully`);
+        notification.success({
+          message: `Workflow Step ${data.name} updated successfully`,
+        });
       })
-      .catch(error => displayError(error, 'Failed to update Workflow Step'));
+      .catch(error =>
+        notification.error({
+          message: 'Failed to update Workflow Step',
+          description: parseNexusError(error),
+        })
+      );
   };
 
   const saveDescription = (value: string) => {
@@ -119,9 +139,16 @@ const StepInfoContainer: React.FC<{
       .then(response => {
         onUpdate();
         setIsEditingDescription(false);
-        successNotification(`Workflow Step ${step.name} updated successfully`);
+        notification.success({
+          message: `Workflow Step ${step.name} updated successfully`,
+        });
       })
-      .catch(error => displayError(error, 'Failed to update description'));
+      .catch(error =>
+        notification.error({
+          message: 'Failed to update description',
+          description: parseNexusError(error),
+        })
+      );
   };
 
   return (
