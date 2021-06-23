@@ -224,12 +224,12 @@ const ProjectStatsContainer: React.FC<{}> = () => {
   };
 
   const getEdgeId = (edge: any) => {
-    return edge._target + '-' + edge._source;
+    return `${edge._target}-${edge._source}`;
   };
 
   const constructGraphData = (response: any) => {
     const nodes = response._nodes.map((node: any) => ({
-      data: { id: node['@id'], label: node._name + '\n' + node._count },
+      data: { id: node['@id'], label: `${node._name}\n${node._count}` },
       style: {
         width: `${getDiameter(node._count)} px`,
         height: `${getDiameter(node._count)} px`,
