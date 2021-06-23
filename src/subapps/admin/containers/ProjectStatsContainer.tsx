@@ -258,7 +258,11 @@ const ProjectStatsContainer: React.FC<{}> = () => {
     <div style={{ display: 'flex' }}>
       <ProjectGraph elements={elements} viewType={showType} />
       {selectedType && (
-        <ResourceInfoPanel onClickClose={() => setSelectedType(undefined)} typeStats={selectedType} relations={relations} />
+        <ResourceInfoPanel
+          onClickClose={() => setSelectedType(undefined)}
+          typeStats={selectedType}
+          relations={relations}
+        />
       )}
     </div>
   );
