@@ -11,6 +11,7 @@ import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
 import useNotification, {
   parseNexusError,
 } from '../../../shared/hooks/useNotification';
+import { Resource } from '@bbp/nexus-sdk';
 
 const SingleStepContainer: React.FC<{
   projectLabel: string;
@@ -34,41 +35,36 @@ const SingleStepContainer: React.FC<{
     fetchChildren();
   }, []);
 
-  const fetchChildren = () => {
-    nexus.Resource.links(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(step['@id']),
-      'incoming'
-    )
-      .then(response =>
-        Promise.all(
-          response._results
-            .filter(link => isParentLink(link))
-            .map(link => {
-              return nexus.Resource.get(
-                orgLabel,
-                projectLabel,
-                encodeURIComponent(link['@id'])
-              );
-            })
-        )
-          .then(response => {
-            setChildren(response);
-          })
-          .catch(error =>
-            notification.error({
-              message: 'Failed to load Workflow Steps',
-              description: parseNexusError(error),
-            })
-          )
-      )
-      .catch(error =>
-        notification.error({
-          message: 'Failed to load Workflow Steps',
-          description: parseNexusError(error),
-        })
+  const fetchChildren = async () => {
+    try {
+      const links = await nexus.Resource.links(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(step['@id']),
+        'incoming',
+        {
+          deprecated: false,
+        }
       );
+      const resources = ((await Promise.all(
+        links._results
+          .filter(link => isParentLink(link))
+          .map(link =>
+            nexus.Resource.get(
+              orgLabel,
+              projectLabel,
+              encodeURIComponent(link['@id'])
+            )
+          )
+        // additional filter as links deprecated parameter not working
+      )) as Resource[]).filter(resource => !resource._deprecated);
+      setChildren(resources);
+    } catch (error) {
+      notification.error({
+        message: 'Failed to load Workflow Steps',
+        description: parseNexusError(error),
+      });
+    }
   };
 
   const onStatusChange = (stepId: string, newStatus: string) => {

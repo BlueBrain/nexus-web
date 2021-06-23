@@ -9,8 +9,9 @@ import {
   Button,
   Spin,
   Select,
+  Modal,
 } from 'antd';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import * as moment from 'moment';
 
 import { Status, StepResource, WorkflowStepMetadata } from '../../types';
@@ -21,6 +22,7 @@ import './WorkflowStepWithActivityForm.less';
 const WorkflowStepWithActivityForm: React.FC<{
   onClickCancel(): void;
   onSubmit(data: WorkflowStepMetadata): void;
+  onDeprecate?(): any;
   busy: boolean;
   parentLabel?: string | undefined;
   layout?: 'vertical' | 'horisontal';
@@ -42,6 +44,7 @@ const WorkflowStepWithActivityForm: React.FC<{
 }> = ({
   onClickCancel,
   onSubmit,
+  onDeprecate,
   busy,
   parentLabel,
   layout,
@@ -245,21 +248,58 @@ const WorkflowStepWithActivityForm: React.FC<{
           </Col>
         </Row>
         <Row>
-          <div className="workflow-step-form__buttons">
-            <Button
-              style={{ margin: '10px 10px 10px 0' }}
-              onClick={onClickCancel}
+          <Col span={4}>
+            {workflowStep ? (
+              <Button
+                style={{ margin: '10px 10px 10px 0' }}
+                onClick={() => {
+                  Modal.confirm({
+                    title: 'Deprecate Resource',
+                    content: (
+                      <>
+                        Are you sure you want to deprecate this step? <br />
+                        <br />
+                        <em>
+                          This will result in all substeps and associated tables
+                          also being deprecated.
+                        </em>
+                      </>
+                    ),
+                    onOk: () => {
+                      onDeprecate && onDeprecate();
+                    },
+                  });
+                }}
+                type="default"
+                icon={<DeleteOutlined />}
+                danger={true}
+              >
+                Deprecate
+              </Button>
+            ) : (
+              <></>
+            )}
+          </Col>
+          <Col span={10} offset={10}>
+            <div
+              style={{ textAlign: 'right', width: '100%' }}
+              className="workflow-step-form__buttons"
             >
-              Cancel
-            </Button>
-            <Button
-              style={{ margin: '10px 10px 10px 0' }}
-              onClick={onClickSubmit}
-              type="primary"
-            >
-              Save
-            </Button>
-          </div>
+              <Button
+                style={{ margin: '10px 10px 10px 0' }}
+                onClick={onClickCancel}
+              >
+                Cancel
+              </Button>
+              <Button
+                style={{ margin: '10px 10px 10px 0' }}
+                onClick={onClickSubmit}
+                type="primary"
+              >
+                Save
+              </Button>
+            </div>
+          </Col>
         </Row>
       </Spin>
     </Form>
