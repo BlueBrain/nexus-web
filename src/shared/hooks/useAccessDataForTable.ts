@@ -80,22 +80,6 @@ export const DEFAULT_FIELDS = [
     displayIndex: 3,
   },
 ];
-
-export async function querySparql(
-  nexus: NexusClient,
-  dataQuery: string,
-  view: View
-) {
-  const result = await sparqlQueryExecutor(
-    nexus,
-    dataQuery,
-    view as SparqlView
-  );
-  const headerProperties = result.headerProperties;
-  const items = result.items;
-  return { headerProperties, items, total: items.length };
-}
-
 const sorter = (dataIndex: string) => {
   return (
     a: {
@@ -116,6 +100,23 @@ const sorter = (dataIndex: string) => {
     return 0;
   };
 };
+
+export async function querySparql(
+  nexus: NexusClient,
+  dataQuery: string,
+  view: View
+) {
+  const result = await sparqlQueryExecutor(
+    nexus,
+    dataQuery,
+    view as SparqlView
+  );
+
+  const headerProperties = result.headerProperties;
+
+  const items = result.items;
+  return { headerProperties, items, total: items.length };
+}
 
 export function parseESResults(result: any) {
   const total = result.hits.total.value || 0;
@@ -216,7 +217,22 @@ const accessData = async (
     return { items, total, tableResource, view, headerProperties };
   }
   const result = await querySparql(nexus, dataQuery, view);
-  return { ...result, tableResource };
+  const headerProperties: {
+    title: string;
+    dataIndex: string;
+    sorter?: (dataIndex: string) => any;
+  }[] = result.headerProperties.map(h => {
+    const c = columnConfig.find(c => c.name === h.title);
+    if (c && c.enableSort) {
+      return {
+        ...h,
+        sorter,
+      };
+    }
+    return h;
+  });
+
+  return { ...result, headerProperties, tableResource };
 };
 
 export const useAccessDataForTable = (
