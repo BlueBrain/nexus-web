@@ -121,21 +121,67 @@ export async function fetchChildrenForStep(
     orgLabel,
     projectLabel,
     encodeURIComponent(stepId),
-    'incoming'
+    'incoming',
+    {
+      deprecated: false,
+    }
   );
 
-  const children = await Promise.all(
+  const children = ((await Promise.all(
     links._results
       .filter(link => isParentLink(link))
-      .map(async step => {
-        const resource = await nexus.Resource.get(
+      .map(step =>
+        nexus.Resource.get(
           orgLabel,
           projectLabel,
           encodeURIComponent(step['@id'])
-        );
-        return resource;
-      })
+        )
+      )
+    // additional filter as ResouceListOptions deprecated option not working
+  )) as Resource[]).filter(resource => !resource._deprecated);
+
+  return children;
+}
+
+/**
+ * Fetch all tables of a given work flow step, represented by the stepId param.
+ *
+ * @param nexus
+ * @param orgLabel
+ * @param projectLabel
+ * @param stepId
+ */
+export async function fetchTablesForStep(
+  nexus: NexusClient,
+  orgLabel: string,
+  projectLabel: string,
+  stepId: string
+) {
+  const links = await nexus.Resource.links(
+    orgLabel,
+    projectLabel,
+    encodeURIComponent(stepId),
+    'incoming',
+    {
+      deprecated: false,
+    }
   );
+  const uniq = [
+    ...new Set(
+      links._results.filter(link => isTable(link)).map(link => link['@id'])
+    ),
+  ];
+  const children = ((await Promise.all(
+    uniq.map(async step => {
+      const resource = await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(step)
+      );
+      return resource;
+    })
+    // additional filter as ResouceListOptions deprecated option not working
+  )) as Resource[]).filter(resource => !resource._deprecated);
   return children;
 }
 
