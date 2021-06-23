@@ -5,16 +5,16 @@ import { labelOf } from '../../../../shared/utils';
 
 import './ResourceInfoPanel.less';
 
-const ResourceInfoPanel: React.FC<{ typeStats: any; relations: any; onClickClose: () => void }> = ({
-  typeStats,
-  relations,
-  onClickClose,
-}) => {
+const ResourceInfoPanel: React.FC<{
+  typeStats: any;
+  relations: any;
+  onClickClose: () => void;
+}> = ({ typeStats, relations, onClickClose }) => {
   console.log('relations', relations);
 
   return (
     <Drawer
-    onClose={onClickClose}
+      onClose={onClickClose}
       visible={true}
       title={<h2 className="resource-info-panel__title">{typeStats._name}</h2>}
       mask={false}
