@@ -3,7 +3,6 @@ import { Resource } from '@bbp/nexus-sdk';
 import { useHistory, useLocation } from 'react-router-dom';
 import * as React from 'react';
 import {
-  Tag,
   Table,
   Col,
   Row,
@@ -119,7 +118,9 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     return deprecated;
   };
   const deprecateTableResource = useMutation(deprecateTable, {
-    onMutate: (data: TableResource) => {},
+    onMutate: (data: TableResource) => {
+      Modal.destroyAll();
+    },
     onSuccess: data => {
       notification.success({
         message: 'Table deprecated',
@@ -237,6 +238,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
           >
             Delete
           </Button>
+          <Modal></Modal>
         </div>
       </div>
     );

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Resource } from '@bbp/nexus-sdk';
 import { Modal } from 'antd';
 import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
@@ -108,8 +109,9 @@ const WorkflowStepView: React.FC = () => {
             );
           })
         )
-          .then(response => {
-            setTables(response);
+          .then(responses => {
+            const allTables = responses as Resource[];
+            setTables(allTables.filter(t => !t._deprecated));
           })
           .catch(error => {
             notification.error({
