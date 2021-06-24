@@ -351,7 +351,7 @@ const ResourceViewContainer: React.FunctionComponent<{
                 )}
                 {!!resource &&
                   !!resource['@type'] &&
-                  typeof resource['@type'] == 'string' &&
+                  typeof resource['@type'] === 'string' &&
                   nonEditableResourceTypes.includes(resource['@type']) && (
                     <p>
                       <Alert
