@@ -347,6 +347,12 @@ const ResourceViewContainer: React.FunctionComponent<{
                     />
                   </p>
                 )}
+                <p>
+                  <Alert
+                    message="Please not for the time being this resource is not editable. For further information please contact the BBP NISE team."
+                    type="info"
+                  />
+                </p>
                 <AdminPlugin
                   editable={isLatest && !isDeprecated(resource)}
                   orgLabel={orgLabel}
