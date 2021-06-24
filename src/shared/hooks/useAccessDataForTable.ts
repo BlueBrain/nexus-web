@@ -221,15 +221,15 @@ const accessData = async (
     title: string;
     dataIndex: string;
     sorter?: (dataIndex: string) => any;
-  }[] = result.headerProperties.map(h => {
-    const c = columnConfig.find(c => c.name === h.title);
-    if (c && c.enableSort) {
+  }[] = result.headerProperties.map(headerProp => {
+    const currentConfig = columnConfig.find(c => c.name === headerProp.title);
+    if (currentConfig && currentConfig.enableSort) {
       return {
-        ...h,
+        ...headerProp,
         sorter,
       };
     }
-    return h;
+    return headerProp;
   });
 
   return { ...result, headerProperties, tableResource };
