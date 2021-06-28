@@ -57,7 +57,11 @@ const DraggableTablesContainer: React.FC<{
           >
             <div
               key={`table-${table['@id']}`}
-              style={{ margin: 20, width: '1200' }}
+              style={{
+                marginLeft: 20,
+                marginTop: 50,
+                width: '1200',
+              }}
             >
               <DataTableContainer
                 orgLabel={orgLabel}
