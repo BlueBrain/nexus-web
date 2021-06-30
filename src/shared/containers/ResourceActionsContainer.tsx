@@ -114,16 +114,16 @@ const ResourceActionsContainer: React.FunctionComponent<{
   const actions = {
     deprecateResource: async () => {
       try {
-        let depricateMethod = nexus.Resource.deprecate;
+        let deprecateMethod = nexus.Resource.deprecate;
         if (isView(resource)) {
-          depricateMethod = nexus.View.deprecate;
+          deprecateMethod = nexus.View.deprecate;
         }
 
         if (isFile(resource)) {
-          depricateMethod = nexus.File.deprecate;
+          deprecateMethod = nexus.File.deprecate;
         }
 
-        const deprectatedResource = await depricateMethod(
+        const deprectatedResource = await deprecateMethod(
           orgLabel,
           projectLabel,
           encodeURIComponent(resourceId),
