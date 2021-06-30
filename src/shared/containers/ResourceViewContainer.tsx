@@ -249,6 +249,8 @@ const ResourceViewContainer: React.FunctionComponent<{
     }
   };
 
+  const nonEditableResourceTypes = ['File', 'View'];
+
   React.useEffect(() => {
     setResources();
   }, [orgLabel, projectLabel, resourceId, rev, tag]);
@@ -347,6 +349,16 @@ const ResourceViewContainer: React.FunctionComponent<{
                     />
                   </p>
                 )}
+                {!!resource['@type'] &&
+                  typeof resource['@type'] === 'string' &&
+                  nonEditableResourceTypes.includes(resource['@type']) && (
+                    <p>
+                      <Alert
+                        message="Please not for the time being this resource is not editable. For further information please contact the administrator."
+                        type="info"
+                      />
+                    </p>
+                  )}
                 <AdminPlugin
                   editable={isLatest && !isDeprecated(resource)}
                   orgLabel={orgLabel}
