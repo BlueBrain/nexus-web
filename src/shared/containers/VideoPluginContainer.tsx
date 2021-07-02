@@ -14,14 +14,14 @@ import MarkdownEditorContainer from './MarkdownEditorContainer';
 const { Panel } = Collapse;
 const TabPane = Tabs.TabPane;
 
-type YoutubeProps = {
+type VideoProps = {
   editable: boolean;
   orgLabel: string;
   projectLabel: string;
   embedId: string;
 };
 
-const YoutubePlugin: React.FunctionComponent<YoutubeProps> = ({
+const VideoPlugin: React.FunctionComponent<VideoProps> = ({
   editable,
   projectLabel,
   orgLabel,
@@ -44,3 +44,5 @@ const YoutubePlugin: React.FunctionComponent<YoutubeProps> = ({
     </div>
   );
 };
+
+export default VideoPlugin;
