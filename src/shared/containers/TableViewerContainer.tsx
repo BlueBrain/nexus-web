@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Collapse } from 'antd';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource, NexusFile } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
+import * as csvParser from 'csv-string';
 
 import TableViewer from '../components/TableViewer';
 
@@ -13,29 +14,39 @@ const TableViewerContainer: React.FC<{
   projectLabel: string;
 }> = ({ resource, orgLabel, projectLabel }) => {
   const nexus = useNexusContext();
+  const [tableData, setTableData] = React.useState<any>('');
 
-  if (resource['@type'] !== 'File') {
-    return null;
-  } else {
-    if (resource._mediaType === 'text/csv') {
-      //download and parse
-      const id = '???';
+  React.useEffect(() => {
+    if (resource['@type'] !== 'File') {
+      return;
+    } else {
+      if (resource._mediaType === 'text/csv') {
+        nexus.File.get(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(resource['@id']),
+          { as: 'text' }
+        )
+          .then(response => {
+            console.log('response', response);
 
-      nexus.File.get(
-        orgLabel,
-        projectLabel,
-        encodeURIComponent(resource['@id']),
-        { as: 'text' }
-      )
-        .then(response => console.log('response', response))
-        .catch(error => console.log('error'));
+            parseCSV(response as string);
+          })
+          .catch(error => console.log('error'));
+      }
     }
-  }
+  }, []);
+
+  const parseCSV = (rawData: string) => {
+    const tableData = csvParser.parse(rawData);
+
+    setTableData(tableData);
+  };
 
   return (
     <Collapse onChange={() => {}}>
       <Panel header="Table Viewer" key="1">
-        <TableViewer />
+        <TableViewer name={resource._filename} data={tableData} />
       </Panel>
     </Collapse>
   );
