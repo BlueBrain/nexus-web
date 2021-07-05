@@ -338,7 +338,6 @@ const ResourceViewContainer: React.FunctionComponent<{
                         handleEditFormSubmit={handleEditFormSubmit}
                         handleExpanded={handleExpanded}
                       />
-											<VideoPlugin resource />
                     </div>
                   </div>
                 )}
@@ -376,6 +375,12 @@ const ResourceViewContainer: React.FunctionComponent<{
                   handleGoToInternalLink={handleGoToInternalLink}
                   handleEditFormSubmit={handleEditFormSubmit}
                   handleExpanded={handleExpanded}
+                />
+                <VideoPlugin
+									handleExpanded={handleExpanded}
+                  resource={resource}
+                  goToResource={goToResource}
+                  handleTabChange={handleTabChange}
                 />
               </AccessControl>
             </>

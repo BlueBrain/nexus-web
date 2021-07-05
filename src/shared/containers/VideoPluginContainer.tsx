@@ -1,47 +1,56 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
-import { Resource, ResourceLink } from '@bbp/nexus-sdk';
-import { Tabs, Collapse } from 'antd';
-import HistoryContainer from '../containers/HistoryContainer';
-import ResourceLinksContainer from '../containers/ResourceLinks';
-import ResourceActionsContainer from '../containers/ResourceActionsContainer';
-import ResourceEditorContainer from '../containers/ResourceEditor';
-import SchemaLinkContainer from '../containers/SchemaLink';
-import GraphContainer from '../containers/GraphContainer';
 import ResourceMetadata from '../components/ResourceMetadata';
-import MarkdownEditorContainer from './MarkdownEditorContainer';
+import { Resource, ResourceLink } from '@bbp/nexus-sdk';
+import { Collapse } from 'antd';
 
 const { Panel } = Collapse;
-const TabPane = Tabs.TabPane;
 
 type VideoProps = {
-  editable: boolean;
-  orgLabel: string;
-  projectLabel: string;
-  embedId: string;
+  resource: Resource;
+	goToResource: (
+    orgLabel: string,
+    projectLabel: string,
+    resourceId: string,
+    opt: {
+      revision?: number;
+      tab?: string;
+      expanded?: boolean;
+    }
+  ) => void;
+	handleExpanded: (expanded: boolean) => void;
+	handleTabChange: (activeTabKey: string) => void;
 };
 
 const VideoPlugin: React.FunctionComponent<VideoProps> = ({
-  editable,
-  projectLabel,
-  orgLabel,
-  embedId,
+	resource,
+	goToResource,
+	handleExpanded,
+	handleTabChange,
 }) => {
+	const [tabChange, setTabChange] = React.useState<boolean>(false);
+	const onTabChange = (tab: string) => {
+    // forces a tab to rerender - otherwise RecourceEditor shifts its content left (codemirror issue)
+    setTabChange(!tabChange);
+    handleTabChange(tab);
+  };
   return (
-    <div className="App">
-      <h1>Youtube Embed</h1>
-      <div className="video-responsive">
+    <Collapse onChange={() => {}}>
+      <Panel header="Video" key="1">
+        <ResourceMetadata
+          resource={resource}
+        />
+
         <iframe
           width="853"
           height="480"
-          src={`https://www.youtube.com/embed/${embedId}`}
+          src={resource['video']['emberdUrl']}
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
           title="Embedded youtube"
         />
-      </div>
-    </div>
+      </Panel>
+    </Collapse>
   );
 };
 
