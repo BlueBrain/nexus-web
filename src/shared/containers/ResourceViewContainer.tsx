@@ -377,7 +377,7 @@ const ResourceViewContainer: React.FunctionComponent<{
                   handleExpanded={handleExpanded}
                 />
                 <VideoPlugin
-									handleExpanded={handleExpanded}
+                  handleExpanded={handleExpanded}
                   resource={resource}
                   goToResource={goToResource}
                   handleTabChange={handleTabChange}

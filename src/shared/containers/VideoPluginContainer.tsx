@@ -7,7 +7,7 @@ const { Panel } = Collapse;
 
 type VideoProps = {
   resource: Resource;
-	goToResource: (
+  goToResource: (
     orgLabel: string,
     projectLabel: string,
     resourceId: string,
@@ -17,18 +17,18 @@ type VideoProps = {
       expanded?: boolean;
     }
   ) => void;
-	handleExpanded: (expanded: boolean) => void;
-	handleTabChange: (activeTabKey: string) => void;
+  handleExpanded: (expanded: boolean) => void;
+  handleTabChange: (activeTabKey: string) => void;
 };
 
 const VideoPlugin: React.FunctionComponent<VideoProps> = ({
-	resource,
-	goToResource,
-	handleExpanded,
-	handleTabChange,
+  resource,
+  goToResource,
+  handleExpanded,
+  handleTabChange,
 }) => {
-	const [tabChange, setTabChange] = React.useState<boolean>(false);
-	const onTabChange = (tab: string) => {
+  const [tabChange, setTabChange] = React.useState<boolean>(false);
+  const onTabChange = (tab: string) => {
     // forces a tab to rerender - otherwise RecourceEditor shifts its content left (codemirror issue)
     setTabChange(!tabChange);
     handleTabChange(tab);
@@ -36,9 +36,7 @@ const VideoPlugin: React.FunctionComponent<VideoProps> = ({
   return (
     <Collapse onChange={() => {}}>
       <Panel header="Video" key="1">
-        <ResourceMetadata
-          resource={resource}
-        />
+        <ResourceMetadata resource={resource} />
 
         <iframe
           width="853"
