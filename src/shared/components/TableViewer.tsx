@@ -4,7 +4,7 @@ import { Table } from 'antd';
 const TableViewer: React.FC<{ name: string; data: any }> = ({ name, data }) => {
   console.log('DATA', data);
 
-  const columnTitles = data[0];
+  const columnTitles = data.shift();
 
   const columns = columnTitles.map((header: any) => ({
     title: header,

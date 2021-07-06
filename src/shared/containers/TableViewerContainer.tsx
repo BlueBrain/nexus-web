@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { Collapse } from 'antd';
+import { Modal } from 'antd';
 import { Resource, NexusFile } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as csvParser from 'csv-string';
 
 import TableViewer from '../components/TableViewer';
-
-const { Panel } = Collapse;
 
 const TableViewerContainer: React.FC<{
   resource: Resource;
@@ -14,7 +12,8 @@ const TableViewerContainer: React.FC<{
   projectLabel: string;
 }> = ({ resource, orgLabel, projectLabel }) => {
   const nexus = useNexusContext();
-  const [tableData, setTableData] = React.useState<any>('');
+  const [tableData, setTableData] = React.useState<any>();
+  const [showTable, setShowTable] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     if (resource['@type'] !== 'File') {
@@ -28,27 +27,27 @@ const TableViewerContainer: React.FC<{
           { as: 'text' }
         )
           .then(response => {
-            console.log('response', response);
+            const tableData = csvParser.parse(response as string);
 
-            parseCSV(response as string);
+            setTableData(tableData);
           })
           .catch(error => console.log('error'));
       }
     }
   }, []);
 
-  const parseCSV = (rawData: string) => {
-    const tableData = csvParser.parse(rawData);
-
-    setTableData(tableData);
-  };
+  if (!tableData) return null;
 
   return (
-    <Collapse onChange={() => {}}>
-      <Panel header="Table Viewer" key="1">
-        <TableViewer name={resource._filename} data={tableData} />
-      </Panel>
-    </Collapse>
+    <Modal
+      visible={showTable}
+      width={900}
+      footer={null}
+      onCancel={() => setShowTable(false)}
+      maskClosable={true}
+    >
+      <TableViewer name={resource._filename} data={tableData} />
+    </Modal>
   );
 };
 
