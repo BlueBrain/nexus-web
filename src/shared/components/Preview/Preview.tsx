@@ -35,26 +35,8 @@ const Preview: React.FC<{
 }> = ({ resource, nexus }) => {
   const notification = useNotification();
   const [previewAsset, setPreviewAsset] = React.useState<any | undefined>();
-  const previewDivRef = React.useRef<HTMLDivElement>(null);
+
   const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
-
-  /* close preview when anywhere outside the preview is clicked */
-  React.useEffect(() => {
-    document.addEventListener('mousedown', e => {
-      function handleClickOutside(event: any) {
-        if (
-          previewDivRef.current &&
-          !previewDivRef.current.contains(event.target)
-        ) {
-          setPreviewAsset(undefined);
-        }
-      }
-
-      document.addEventListener('mousedown', handleClickOutside);
-      return () =>
-        document.removeEventListener('mousedown', handleClickOutside);
-    });
-  }, [previewDivRef]);
 
   const columns = [
     {
@@ -183,19 +165,11 @@ const Preview: React.FC<{
 
   return (
     <div>
-      {previewAsset ? (
-        previewAsset.encodingFormat === 'application/pdf' ? (
-          <PDFViewer
-            resource={resource}
-            nexus={nexus}
-            url={previewAsset.url}
-            previewDivRef={previewDivRef}
-          />
-        ) : (
-          <></>
-        )
-      ) : (
-        <></>
+      {previewAsset && previewAsset.encodingFormat === 'application/pdf' && (
+        <PDFViewer
+          url={previewAsset.url}
+          closePreview={() => setPreviewAsset(undefined)}
+        />
       )}
       <Collapse onChange={() => {}}>
         <Collapse.Panel header="Preview" key="99">

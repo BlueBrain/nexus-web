@@ -321,10 +321,8 @@ const ResourceViewContainer: React.FunctionComponent<{
                         message="You don't have access to edit the resource. You can nonetheless see the resource metadata below."
                         type="info"
                       />
-                      {resource.distribution ? (
+                      {resource.distribution && (
                         <Preview nexus={nexus} resource={resource} />
-                      ) : (
-                        <></>
                       )}
                       <AdminPlugin
                         editable={false}
@@ -356,14 +354,12 @@ const ResourceViewContainer: React.FunctionComponent<{
                   typeof resource['@type'] === 'string' &&
                   nonEditableResourceTypes.includes(resource['@type']) && (
                     <Alert
-                      message="Please not for the time being this resource is not editable. For further information please contact the administrator."
+                      message="Please note for the time being this resource is not editable. For further information please contact the administrator."
                       type="info"
                     />
                   )}
-                {resource.distribution ? (
+                {resource.distribution && (
                   <Preview nexus={nexus} resource={resource} />
-                ) : (
-                  <></>
                 )}
                 <AdminPlugin
                   editable={isLatest && !isDeprecated(resource)}

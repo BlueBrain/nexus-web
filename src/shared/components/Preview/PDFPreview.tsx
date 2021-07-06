@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Button } from 'antd';
-import { Resource, NexusClient } from '@bbp/nexus-sdk';
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
 import './PDFPreview.less';
 import {
@@ -10,13 +9,27 @@ import {
 } from '@ant-design/icons';
 
 const PDFViewer: React.FC<{
-  resource: Resource;
-  nexus: NexusClient;
   url: string;
-  previewDivRef: React.RefObject<HTMLDivElement>;
-}> = ({ resource, nexus, previewDivRef, url }) => {
+  closePreview: () => void;
+}> = ({ url, closePreview }) => {
   const [numPages, setNumPages] = React.useState<number>(0);
   const [pageNumber, setPageNumber] = React.useState<number>(1);
+
+  const previewDivRef = React.useRef<HTMLDivElement>(null);
+  /* close preview when anywhere outside the preview is clicked */
+  React.useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (
+        previewDivRef.current &&
+        !previewDivRef.current.contains(event.target)
+      ) {
+        closePreview();
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [previewDivRef]);
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) =>
     setNumPages(numPages);
