@@ -8,9 +8,7 @@ type VideoProps = {
   resource: Resource;
 };
 
-const VideoPlugin: React.FunctionComponent<VideoProps> = ({
-  resource,
-}) => {
+const VideoPlugin: React.FunctionComponent<VideoProps> = ({ resource }) => {
   return (
     <Collapse onChange={() => {}}>
       <Panel header="Video" key="1">
