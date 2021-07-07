@@ -354,7 +354,7 @@ const ResourceViewContainer: React.FunctionComponent<{
                   nonEditableResourceTypes.includes(resource['@type']) && (
                     <p>
                       <Alert
-                        message="Please not for the time being this resource is not editable. For further information please contact the administrator."
+                        message="This resource is not editable because it is of the type 'File'. For further information please contact the administrator."
                         type="info"
                       />
                     </p>
