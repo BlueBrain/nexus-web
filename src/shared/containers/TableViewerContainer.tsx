@@ -18,21 +18,20 @@ const TableViewerContainer: React.FC<{
   React.useEffect(() => {
     if (resource['@type'] !== 'File') {
       return;
-    } else {
-      if (resource._mediaType === 'text/csv') {
-        nexus.File.get(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(resource['@id']),
-          { as: 'text' }
-        )
-          .then(response => {
-            const tableData = csvParser.parse(response as string);
+    }
+    if (resource._mediaType === 'text/csv') {
+      nexus.File.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(resource['@id']),
+        { as: 'text' }
+      )
+        .then(response => {
+          const tableData = csvParser.parse(response as string);
 
-            setTableData(tableData);
-          })
-          .catch(error => console.log('error'));
-      }
+          setTableData(tableData);
+        })
+        .catch(error => console.log('error'));
     }
   }, []);
 
