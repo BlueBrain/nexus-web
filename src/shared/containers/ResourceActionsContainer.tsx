@@ -14,6 +14,7 @@ import ResourceActions from '../components/ResourceActions';
 import { getResourceLabel, getOrgAndProjectFromResource } from '../utils';
 import { download } from '../utils/download';
 import {
+  isView,
   isFile,
   chainPredicates,
   not,
@@ -113,7 +114,16 @@ const ResourceActionsContainer: React.FunctionComponent<{
   const actions = {
     deprecateResource: async () => {
       try {
-        const deprectatedResource = await nexus.Resource.deprecate(
+        let deprecateMethod = nexus.Resource.deprecate;
+        if (isView(resource)) {
+          deprecateMethod = nexus.View.deprecate;
+        }
+
+        if (isFile(resource)) {
+          deprecateMethod = nexus.File.deprecate;
+        }
+
+        const deprectatedResource = await deprecateMethod(
           orgLabel,
           projectLabel,
           encodeURIComponent(resourceId),

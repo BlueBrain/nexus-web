@@ -69,7 +69,10 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   tableResourceId,
 }) => {
   const [showEditForm, setShowEditForm] = React.useState<boolean>(false);
-  const [showOptions, setShowOptions] = React.useState<boolean>(false);
+  const [searchboxValue, setSearchboxValue] = React.useState<string>('');
+  const [searchboxFocused, setSearchboxFocused] = React.useState<boolean>(
+    false
+  );
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
@@ -254,28 +257,41 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     );
     const search = (
       <Input.Search
-        placeholder="input search text"
+        placeholder="Search"
         allowClear
+        value={searchboxValue}
+        onChange={e => setSearchboxValue(e.target.value)}
         onSearch={value => {
           tableData.setSearchValue(value);
         }}
-        style={{ width: '100%' }}
+        onFocus={() => setSearchboxFocused(true)}
+        onBlur={() => setSearchboxFocused(false)}
+        style={{
+          width: searchboxValue === '' && !searchboxFocused ? '50%' : '100%',
+          transition: 'width 0.5s',
+        }}
       ></Input.Search>
     );
     return (
       <div>
-        <Title level={4} className="tableTitle">
-          {tableResource && tableResource.name ? tableResource.name : null}
-        </Title>
-        <Row gutter={[16, 16]}>
-          <Col flex="none"></Col>
-          <Col flex="auto">
-            {tableResource && tableResource.enableSave
-              ? tableResource.enableSave
-              : null}
+        <Row gutter={[16, 16]} align="middle">
+          <Col span={12}>
+            <Title
+              className="table-title"
+              level={3}
+              title={
+                tableResource && tableResource.name
+                  ? tableResource.name
+                  : undefined
+              }
+            >
+              {tableResource && tableResource.name ? tableResource.name : null}
+            </Title>
+          </Col>
+          <Col span={10} className="table-search">
             {search}
           </Col>
-          <Col flex="none">{options}</Col>
+          <Col span={1}>{options}</Col>
         </Row>
       </div>
     );

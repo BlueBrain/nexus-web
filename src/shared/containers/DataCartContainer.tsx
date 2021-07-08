@@ -23,9 +23,14 @@ import ResultPreviewItemContainer from '../../subapps/search/containers/ResultPr
 import DefaultResourcePreviewCard from '!!raw-loader!../../subapps/search/templates/DefaultResourcePreviewCard.hbs';
 import useNotification from '../hooks/useNotification';
 
-function makePayload(
-  resourcesPayload: { '@type': string; resourceId: string; project: string }[]
-) {
+type DownloadResourcePayload = {
+  '@type': string;
+  resourceId: string;
+  project: string;
+  path: string;
+};
+
+function makePayload(resourcesPayload: DownloadResourcePayload[]) {
   const archiveId = uuidv4();
   const payload: ArchivePayload = {
     archiveId,
@@ -128,6 +133,7 @@ const DataCartContainer = () => {
             '@type': 'File',
             resourceId: r['@id'],
             project: `${parsedSelf.org}/${parsedSelf.project}`,
+            path: `/${parsedSelf.project}/${parsedSelf.id}`,
           };
         });
       setExtension('tar.gz');
@@ -164,6 +170,7 @@ const DataCartContainer = () => {
           '@type': r['@type'] === 'File' ? 'File' : 'Resource',
           resourceId: r['@id'],
           project: `${parsedSelf.org}/${parsedSelf.project}`,
+          path: `/${parsedSelf.project}/${parsedSelf.id}`,
         };
       });
       const {
@@ -204,6 +211,7 @@ const DataCartContainer = () => {
             '@type': 'Resource',
             resourceId: r['@id'],
             project: `${parsedSelf.org}/${parsedSelf.project}`,
+            path: `/${parsedSelf.project}/${parsedSelf.id}`,
           };
         });
       const {
