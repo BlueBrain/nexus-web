@@ -353,7 +353,6 @@ const ResourceViewContainer: React.FunctionComponent<{
                 {!!resource['@type'] &&
                   typeof resource['@type'] === 'string' &&
                   nonEditableResourceTypes.includes(resource['@type']) && (
-
                     <p>
                       <Alert
                         message="This resource is not editable because it is of the type 'File'. For further information please contact the administrator."
