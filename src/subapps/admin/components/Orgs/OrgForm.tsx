@@ -5,6 +5,7 @@ export interface OrgFormProps {
   org?: {
     label: string;
     description?: string;
+    isDeprecated?: boolean;
   };
   busy?: boolean;
   onSubmit?(org: OrgFormProps['org']): any;
@@ -77,7 +78,11 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
           <Input placeholder="Description" />
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>
-          <Button type="primary" htmlType="submit">
+          <Button
+            type="primary"
+            htmlType="submit"
+            disabled={org && org.isDeprecated}
+          >
             {mode === 'edit' ? 'Save' : 'Create'}
           </Button>
           {mode === 'edit' && (
@@ -85,6 +90,7 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
               danger
               onClick={confirmDeprecate}
               style={{ float: 'right' }}
+              disabled={org && org.isDeprecated}
             >
               Deprecate
             </Button>

@@ -29,6 +29,18 @@ const OrgsListView: React.FunctionComponent = () => {
   const goTo = (org: string) => history.push(`/${subapp.namespace}/${org}`);
   const notification = useNotification();
 
+  const DEFAULT_PAGE_SIZE = 20;
+  const [orgs, setOrgs] = React.useState<{
+    total: number;
+    items: OrgResponseCommon[];
+    searchValue?: string;
+    includeDeprecated?: boolean;
+  }>({
+    total: 0,
+    items: [],
+    includeDeprecated: false,
+  });
+
   const saveAndCreate = (newOrg: NewOrg) => {
     setFormBusy(true);
     nexus.Organization.create(newOrg.label, { description: newOrg.description })
@@ -48,6 +60,18 @@ const OrgsListView: React.FunctionComponent = () => {
       });
   };
 
+  const updateOrganization = (org: OrgResponseCommon) => {
+    const newState = {
+      total: orgs.total,
+      items: (orgs.items as OrgResponseCommon[]).map(o => {
+        return o['@id'] === org['@id'] ? org : o;
+      }),
+      searchValue: orgs.searchValue,
+      includeDeprecated: orgs.includeDeprecated,
+    };
+    setOrgs(newState);
+  };
+
   const saveAndModify = (selectedOrg: OrgResponseCommon, newOrg: NewOrg) => {
     setFormBusy(true);
     nexus.Organization.update(newOrg.label, selectedOrg._rev, {
@@ -61,6 +85,11 @@ const OrgsListView: React.FunctionComponent = () => {
           setFormBusy(false);
           setModalVisible(false);
           setSelectedOrg(undefined);
+          updateOrganization({
+            ...selectedOrg,
+            description: newOrg.description,
+            _rev: selectedOrg._rev + 1,
+          });
         },
         (action: { type: string; error: Error }) => {
           notification.warning({
@@ -89,6 +118,11 @@ const OrgsListView: React.FunctionComponent = () => {
         setFormBusy(false);
         setModalVisible(false);
         setSelectedOrg(undefined);
+        updateOrganization({
+          ...selectedOrg,
+          _deprecated: true,
+          _rev: selectedOrg._rev + 1,
+        });
       })
       .catch((error: Error) => {
         setFormBusy(false);
@@ -97,6 +131,37 @@ const OrgsListView: React.FunctionComponent = () => {
           description: error.message,
         });
       });
+  };
+
+  // initial load
+  React.useEffect(() => {
+    nexus.Organization.list({
+      size: DEFAULT_PAGE_SIZE,
+      label: orgs.searchValue,
+      deprecated: orgs.includeDeprecated,
+    }).then(res =>
+      setOrgs({ ...orgs, total: res._total, items: res._results })
+    );
+  }, []);
+
+  const loadMore = ({ searchValue }: { searchValue: string }) => {
+    // if filters have changed, we need to reset:
+    // - the entire list back to []
+    // - the from index back to 0
+    const newFilter: boolean = searchValue !== orgs.searchValue;
+
+    nexus.Organization.list({
+      size: DEFAULT_PAGE_SIZE,
+      from: newFilter ? 0 : orgs.items.length,
+      label: searchValue,
+      deprecated: orgs.includeDeprecated,
+    }).then(res => {
+      setOrgs({
+        searchValue,
+        total: res._total,
+        items: newFilter ? res._results : [...orgs.items, ...res._results],
+      });
+    });
   };
 
   return (
@@ -116,7 +181,7 @@ const OrgsListView: React.FunctionComponent = () => {
           </AccessControl>
         </div>
 
-        <OrgList>
+        <OrgList orgs={orgs} loadMore={loadMore}>
           {({ items }: { items: OrgResponseCommon[] }) =>
             items.map(i => (
               <ListItem
@@ -169,6 +234,7 @@ const OrgsListView: React.FunctionComponent = () => {
               org={{
                 label: selectedOrg._label,
                 description: selectedOrg.description,
+                isDeprecated: selectedOrg._deprecated,
               }}
               onSubmit={(o: NewOrg) => saveAndModify(selectedOrg, o)}
               onDeprecate={() => saveAndDeprecate(selectedOrg)}

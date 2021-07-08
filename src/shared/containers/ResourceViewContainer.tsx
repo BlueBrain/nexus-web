@@ -353,10 +353,13 @@ const ResourceViewContainer: React.FunctionComponent<{
                 {!!resource['@type'] &&
                   typeof resource['@type'] === 'string' &&
                   nonEditableResourceTypes.includes(resource['@type']) && (
-                    <Alert
-                      message="Please note for the time being this resource is not editable. For further information please contact the administrator."
-                      type="info"
-                    />
+
+                    <p>
+                      <Alert
+                        message="This resource is not editable because it is of the type 'File'. For further information please contact the administrator."
+                        type="info"
+                      />
+                    </p>
                   )}
                 {resource.distribution && (
                   <Preview nexus={nexus} resource={resource} />
