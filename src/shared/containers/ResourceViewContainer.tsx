@@ -182,6 +182,9 @@ const ResourceViewContainer: React.FunctionComponent<{
         projectLabel,
         resourceId
       )) as Resource;
+
+      console.log('resource', resource);
+
       const latestResource: Resource =
         rev || tag
           ? ((await nexus.Resource.get(
@@ -361,7 +364,7 @@ const ResourceViewContainer: React.FunctionComponent<{
                       />
                     </p>
                   )}
-                {resource.distribution && (
+                {resource['http://schema.org/distribution'] && (
                   <Preview nexus={nexus} resource={resource} />
                 )}
                 <AdminPlugin
@@ -381,11 +384,6 @@ const ResourceViewContainer: React.FunctionComponent<{
                   handleExpanded={handleExpanded}
                 />
               </AccessControl>
-              <TableViewerContainer
-                resource={resource}
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-              />
             </>
           )}
         </Spin>

@@ -8,6 +8,7 @@ import {
 import { Button, Collapse, Table } from 'antd';
 import PDFViewer from './PDFPreview';
 import useNotification from '../../hooks/useNotification';
+import TableViewerContainer from '../../containers/TableViewerContainer';
 
 const parseResourceId = (url: string) => {
   const fileUrlPattern = /files\/([\w-]+)\/([\w-]+)\/(.*)/;
@@ -142,16 +143,24 @@ const Preview: React.FC<{
     let data: any = [];
 
     /* get assets dependening on type of resource */
-    if (resource.distribution) {
-      const { distribution } = resource;
+    if (resource['http://schema.org/distribution']) {
+      console.log(
+        'we have a distribution',
+        resource['http://schema.org/distribution']
+      );
+
+      const distribution = resource['http://schema.org/distribution'];
       data = data.concat(
         [distribution].flat().map((d, i) => {
           return {
             key: i,
-            name: d.name || d.repository.name || d.repository['@id'],
+            name:
+              d['http://schema.org/name'] ||
+              d.repository.name ||
+              d.repository['@id'],
             asset: {
-              url: d.contentUrl || d.url,
-              name: d.name,
+              url: d['http://schema.org/contentUrl']['@id'] || d.url,
+              name: d['http://schema.org/name'],
               encodingFormat: d.encodingFormat,
             },
             encodingFormat: d.encodingFormat || '-',
@@ -160,8 +169,13 @@ const Preview: React.FC<{
         })
       );
     }
+
+    console.log('data', data);
+
     return data;
   };
+
+  console.log('rendering....');
 
   return (
     <div>
@@ -169,6 +183,14 @@ const Preview: React.FC<{
         <PDFViewer
           url={previewAsset.url}
           closePreview={() => setPreviewAsset(undefined)}
+        />
+      )}
+      {previewAsset && (
+        <TableViewerContainer
+          resourceUrl={previewAsset.url}
+          name={'test'}
+          orgLabel={orgLabel}
+          projectLabel={projectLabel}
         />
       )}
       <Collapse onChange={() => {}}>

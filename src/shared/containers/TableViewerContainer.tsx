@@ -7,45 +7,39 @@ import * as csvParser from 'csv-string';
 import TableViewer from '../components/TableViewer';
 
 const TableViewerContainer: React.FC<{
-  resource: Resource;
+  resourceUrl: string;
+  name: string;
   orgLabel: string;
   projectLabel: string;
-}> = ({ resource, orgLabel, projectLabel }) => {
+}> = ({ resourceUrl, orgLabel, projectLabel, name }) => {
   const nexus = useNexusContext();
   const [tableData, setTableData] = React.useState<any>();
   const [showTable, setShowTable] = React.useState<boolean>(true);
 
   React.useEffect(() => {
-    if (resource['@type'] !== 'File') {
-      return;
-    }
-    if (resource._mediaType === 'text/csv') {
-      nexus.File.get(
-        orgLabel,
-        projectLabel,
-        encodeURIComponent(resource['@id']),
-        { as: 'text' }
-      )
-        .then(response => {
-          const tableData = csvParser.parse(response as string);
+    nexus.File.get(orgLabel, projectLabel, encodeURIComponent(resourceUrl), {
+      as: 'text',
+    })
+      .then(response => {
+        const tableData = csvParser.parse(response as string);
 
-          setTableData(tableData);
-        })
-        .catch(error => console.log('error'));
-    }
+        setTableData(tableData);
+      })
+      .catch(error => console.log('error'));
   }, []);
 
   if (!tableData) return null;
 
   return (
     <Modal
+      destroyOnClose
+      maskClosable
       visible={showTable}
       width={900}
       footer={null}
       onCancel={() => setShowTable(false)}
-      maskClosable={true}
     >
-      <TableViewer name={resource._filename} data={tableData} />
+      <TableViewer name={name} data={tableData} />
     </Modal>
   );
 };
