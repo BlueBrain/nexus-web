@@ -14,7 +14,7 @@ const TableViewer: React.FC<{ name: string; data: any }> = ({ name, data }) => {
 
   const dataSource = () => {
     return data.map((line: any[]) => {
-      let tableEntry: any = {};
+      const tableEntry: any = {};
 
       columnTitles.forEach((title: string, index: number) => {
         tableEntry[title] = line[index];
