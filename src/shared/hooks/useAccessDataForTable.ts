@@ -335,41 +335,35 @@ export const useAccessDataForTable = (
     }
   );
 
-  const downloadCSV = React.useMemo(
-    () => () => {
-      if (dataResult.isSuccess) {
-        // download only selected rows or,
-        // download everything, when nothing is selected.
-        const selectedItems =
-          selectedRows.length > 0
-            ? dataResult.data.items.filter((item: any) => {
-                return selectedRows.includes(item.key);
-              })
-            : dataResult.data.items;
+  const downloadCSV = React.useCallback(() => {
+    if (dataResult.isSuccess) {
+      // download only selected rows or,
+      // download everything, when nothing is selected.
+      const selectedItems =
+        selectedRows.length > 0
+          ? dataResult.data.items.filter((item: any) => {
+              return selectedRows.includes(item.key);
+            })
+          : dataResult.data.items;
 
-        exportAsCSV(
-          selectedItems,
-          dataResult.data.headerProperties.map((h: any) => {
-            return {
-              label: h.title,
-              value: h.dataIndex,
-            };
-          })
-        );
-      }
-    },
-    [dataResult]
-  );
-  const addToDataCart = React.useMemo(
-    () => () => {
-      if (selectedResources && addResourceCollectionToCart) {
-        addResourceCollectionToCart(selectedResources).then(response => {
-          // succeed silently.
-        });
-      }
-    },
-    [selectedResources, addResourceCollectionToCart]
-  );
+      exportAsCSV(
+        selectedItems,
+        dataResult.data.headerProperties.map((h: any) => {
+          return {
+            label: h.title,
+            value: h.dataIndex,
+          };
+        })
+      );
+    }
+  }, [dataResult]);
+  const addToDataCart = React.useCallback(() => {
+    if (selectedResources && addResourceCollectionToCart) {
+      addResourceCollectionToCart(selectedResources).then(response => {
+        // succeed silently.
+      });
+    }
+  }, [selectedResources, addResourceCollectionToCart]);
   const addFromDataCart = () => {};
 
   return {
