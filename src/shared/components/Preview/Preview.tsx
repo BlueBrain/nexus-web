@@ -6,6 +6,7 @@ import {
   NexusFile,
 } from '@bbp/nexus-sdk';
 import { Button, Collapse, Table } from 'antd';
+
 import PDFViewer from './PDFPreview';
 import useNotification from '../../hooks/useNotification';
 import TableViewerContainer from '../../containers/TableViewerContainer';
@@ -36,7 +37,6 @@ const Preview: React.FC<{
 }> = ({ resource, nexus }) => {
   const notification = useNotification();
   const [previewAsset, setPreviewAsset] = React.useState<any | undefined>();
-
   const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
 
   const columns = [
@@ -44,13 +44,13 @@ const Preview: React.FC<{
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: (text: string) => (text ? text : '-'),
+      render: (text: string) => text || '-',
     },
     {
-      title: 'Asset Type',
+      title: 'Asset Type / Format',
       dataIndex: 'encodingFormat',
       key: 'encodingFormat',
-      render: (text: string) => (text ? text : '-'),
+      render: (text: string) => text || '-',
     },
     {
       title: '',
@@ -155,7 +155,7 @@ const Preview: React.FC<{
               name: d.name,
               encodingFormat: d.encodingFormat,
             },
-            encodingFormat: d.encodingFormat || '-',
+            encodingFormat: d.encodingFormat || d.name.split('.').pop() || '-',
             contentSize: d.contentSize,
           };
         })
