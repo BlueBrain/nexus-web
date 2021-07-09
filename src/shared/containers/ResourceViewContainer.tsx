@@ -11,7 +11,6 @@ import {
   ExpandedResource,
 } from '@bbp/nexus-sdk';
 import AdminPlugin from '../containers/AdminPluginContainer';
-import TableViewerContainer from '../containers/TableViewerContainer';
 import ResourcePlugins from './ResourcePlugins';
 import usePlugins from '../hooks/usePlugins';
 import useMeasure from '../hooks/useMeasure';
