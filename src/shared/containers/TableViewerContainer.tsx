@@ -14,13 +14,22 @@ const TableViewerContainer: React.FC<{
   onClickClose: () => void;
 }> = ({ resourceUrl, orgLabel, projectLabel, name, onClickClose }) => {
   const nexus = useNexusContext();
-  const [tableData, setTableData] = React.useState<any>();
+  const [tableData, setTableData] = React.useState<string[][]>();
   const notification = useNotification();
 
   React.useEffect(() => {
-    nexus.File.get(orgLabel, projectLabel, encodeURIComponent(resourceUrl), {
-      as: 'text',
-    })
+    loadTable();
+  }, []);
+
+  const loadTable = async () => {
+    await nexus.File.get(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(resourceUrl),
+      {
+        as: 'text',
+      }
+    )
       .then(response => {
         const tableData = csvParser.parse(response as string);
 
@@ -31,7 +40,7 @@ const TableViewerContainer: React.FC<{
           message: 'Failed to load file',
         })
       );
-  }, []);
+  };
 
   if (!tableData) return null;
 

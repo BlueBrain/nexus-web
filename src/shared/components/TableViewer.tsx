@@ -1,22 +1,28 @@
 import * as React from 'react';
 import { Table } from 'antd';
 
-const TableViewer: React.FC<{ name: string; data: any }> = ({ name, data }) => {
+const TableViewer: React.FC<{ name: string; data: string[][] }> = ({
+  name,
+  data,
+}) => {
   const columnTitles = data.shift();
 
-  const columns = columnTitles.map((header: any) => ({
-    title: header,
-    dataIndex: header,
-    key: header,
-  }));
+  const columns =
+    columnTitles &&
+    columnTitles.map((header: string) => ({
+      title: header,
+      dataIndex: header,
+      key: header,
+    }));
 
   const dataSource = () => {
-    return data.map((line: any[]) => {
+    return data.map((line: string[]) => {
       const tableEntry: any = {};
 
-      columnTitles.forEach((title: string, index: number) => {
-        tableEntry[title] = line[index];
-      });
+      columnTitles &&
+        columnTitles.forEach((title: string, index: number) => {
+          tableEntry[title] = line[index];
+        });
 
       return tableEntry;
     });
