@@ -183,8 +183,6 @@ const ResourceViewContainer: React.FunctionComponent<{
         resourceId
       )) as Resource;
 
-      console.log('resource', resource);
-
       const latestResource: Resource =
         rev || tag
           ? ((await nexus.Resource.get(
