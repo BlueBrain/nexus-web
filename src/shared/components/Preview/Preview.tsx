@@ -143,24 +143,16 @@ const Preview: React.FC<{
     let data: any = [];
 
     /* get assets dependening on type of resource */
-    if (resource['http://schema.org/distribution']) {
-      console.log(
-        'we have a distribution',
-        resource['http://schema.org/distribution']
-      );
-
-      const distribution = resource['http://schema.org/distribution'];
+    if (resource.distribution) {
+      const { distribution } = resource;
       data = data.concat(
         [distribution].flat().map((d, i) => {
           return {
             key: i,
-            name:
-              d['http://schema.org/name'] ||
-              d.repository.name ||
-              d.repository['@id'],
+            name: d.name || d.repository.name || d.repository['@id'],
             asset: {
-              url: d['http://schema.org/contentUrl']['@id'] || d.url,
-              name: d['http://schema.org/name'],
+              url: d.contentUrl || d.url,
+              name: d.name,
               encodingFormat: d.encodingFormat,
             },
             encodingFormat: d.encodingFormat || '-',
@@ -170,12 +162,10 @@ const Preview: React.FC<{
       );
     }
 
-    console.log('data', data);
-
     return data;
   };
 
-  console.log('rendering....');
+  const fileFormat = previewAsset && previewAsset.name.split('.').pop();
 
   return (
     <div>
@@ -185,12 +175,13 @@ const Preview: React.FC<{
           closePreview={() => setPreviewAsset(undefined)}
         />
       )}
-      {previewAsset && (
+      {previewAsset && (fileFormat === 'csv' || fileFormat === 'tsv') && (
         <TableViewerContainer
           resourceUrl={previewAsset.url}
-          name={'test'}
+          name={previewAsset.name}
           orgLabel={orgLabel}
           projectLabel={projectLabel}
+          onClickClose={() => setPreviewAsset(undefined)}
         />
       )}
       <Collapse onChange={() => {}}>

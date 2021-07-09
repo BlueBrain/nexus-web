@@ -1,20 +1,21 @@
 import * as React from 'react';
 import { Modal } from 'antd';
-import { Resource, NexusFile } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as csvParser from 'csv-string';
 
 import TableViewer from '../components/TableViewer';
+import useNotification from '../hooks/useNotification';
 
 const TableViewerContainer: React.FC<{
   resourceUrl: string;
   name: string;
   orgLabel: string;
   projectLabel: string;
-}> = ({ resourceUrl, orgLabel, projectLabel, name }) => {
+  onClickClose: () => void;
+}> = ({ resourceUrl, orgLabel, projectLabel, name, onClickClose }) => {
   const nexus = useNexusContext();
   const [tableData, setTableData] = React.useState<any>();
-  const [showTable, setShowTable] = React.useState<boolean>(true);
+  const notification = useNotification();
 
   React.useEffect(() => {
     nexus.File.get(orgLabel, projectLabel, encodeURIComponent(resourceUrl), {
@@ -25,7 +26,11 @@ const TableViewerContainer: React.FC<{
 
         setTableData(tableData);
       })
-      .catch(error => console.log('error'));
+      .catch(error =>
+        notification.error({
+          message: 'Failed to load file',
+        })
+      );
   }, []);
 
   if (!tableData) return null;
@@ -34,10 +39,10 @@ const TableViewerContainer: React.FC<{
     <Modal
       destroyOnClose
       maskClosable
-      visible={showTable}
+      visible
       width={900}
       footer={null}
-      onCancel={() => setShowTable(false)}
+      onCancel={onClickClose}
     >
       <TableViewer name={name} data={tableData} />
     </Modal>

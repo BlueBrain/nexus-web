@@ -364,7 +364,7 @@ const ResourceViewContainer: React.FunctionComponent<{
                       />
                     </p>
                   )}
-                {resource['http://schema.org/distribution'] && (
+                {resource.distribution && (
                   <Preview nexus={nexus} resource={resource} />
                 )}
                 <AdminPlugin
