@@ -38,7 +38,6 @@ const history = createBrowserHistory({ basename: base });
 // OR
 // Keep the state, so we can have the same context loaded (will be slower performance)
 history.location.state = {};
-
 // Grab preloaded state (that comes from the server)
 const preloadedState: RootState = (window as any).__PRELOADED_STATE__;
 // let's report all the nasty errors id sentry dsn is present

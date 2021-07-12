@@ -12,6 +12,9 @@ import { useHistory } from 'react-router';
 import { useAdminSubappContext } from '..';
 import useNotification from '../../../shared/hooks/useNotification';
 
+const DEFAULT_PAGE_SIZE = 20;
+const SHOULD_INCLUDE_DEPRECATED = false;
+
 type NewOrg = {
   label: string;
   description?: string;
@@ -29,17 +32,45 @@ const OrgsListView: React.FunctionComponent = () => {
   const goTo = (org: string) => history.push(`/${subapp.namespace}/${org}`);
   const notification = useNotification();
 
-  const DEFAULT_PAGE_SIZE = 20;
   const [orgs, setOrgs] = React.useState<{
     total: number;
     items: OrgResponseCommon[];
     searchValue?: string;
-    includeDeprecated?: boolean;
   }>({
     total: 0,
     items: [],
-    includeDeprecated: false,
   });
+
+  // initial load
+  React.useEffect(() => {
+    nexus.Organization.list({
+      size: DEFAULT_PAGE_SIZE,
+      label: orgs.searchValue,
+      deprecated: SHOULD_INCLUDE_DEPRECATED,
+    }).then(res =>
+      setOrgs({ ...orgs, total: res._total, items: res._results })
+    );
+  }, []);
+
+  const loadMore = ({ searchValue }: { searchValue: string }) => {
+    // if filters have changed, we need to reset:
+    // - the entire list back to []
+    // - the from index back to 0
+    const newFilter: boolean = searchValue !== orgs.searchValue;
+
+    nexus.Organization.list({
+      size: DEFAULT_PAGE_SIZE,
+      from: newFilter ? 0 : orgs.items.length,
+      label: searchValue,
+      deprecated: SHOULD_INCLUDE_DEPRECATED,
+    }).then(res => {
+      setOrgs({
+        searchValue,
+        total: res._total,
+        items: newFilter ? res._results : [...orgs.items, ...res._results],
+      });
+    });
+  };
 
   const saveAndCreate = (newOrg: NewOrg) => {
     setFormBusy(true);
@@ -67,7 +98,6 @@ const OrgsListView: React.FunctionComponent = () => {
         return o['@id'] === org['@id'] ? org : o;
       }),
       searchValue: orgs.searchValue,
-      includeDeprecated: orgs.includeDeprecated,
     };
     setOrgs(newState);
   };
@@ -131,37 +161,6 @@ const OrgsListView: React.FunctionComponent = () => {
           description: error.message,
         });
       });
-  };
-
-  // initial load
-  React.useEffect(() => {
-    nexus.Organization.list({
-      size: DEFAULT_PAGE_SIZE,
-      label: orgs.searchValue,
-      deprecated: orgs.includeDeprecated,
-    }).then(res =>
-      setOrgs({ ...orgs, total: res._total, items: res._results })
-    );
-  }, []);
-
-  const loadMore = ({ searchValue }: { searchValue: string }) => {
-    // if filters have changed, we need to reset:
-    // - the entire list back to []
-    // - the from index back to 0
-    const newFilter: boolean = searchValue !== orgs.searchValue;
-
-    nexus.Organization.list({
-      size: DEFAULT_PAGE_SIZE,
-      from: newFilter ? 0 : orgs.items.length,
-      label: searchValue,
-      deprecated: orgs.includeDeprecated,
-    }).then(res => {
-      setOrgs({
-        searchValue,
-        total: res._total,
-        items: newFilter ? res._results : [...orgs.items, ...res._results],
-      });
-    });
   };
 
   return (
