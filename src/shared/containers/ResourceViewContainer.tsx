@@ -181,6 +181,7 @@ const ResourceViewContainer: React.FunctionComponent<{
         projectLabel,
         resourceId
       )) as Resource;
+
       const latestResource: Resource =
         rev || tag
           ? ((await nexus.Resource.get(
