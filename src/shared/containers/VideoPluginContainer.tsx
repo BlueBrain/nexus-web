@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { Collapse } from 'antd';
+import { useNexusContext } from '@bbp/react-nexus';
+import ReactPlayer from 'react-player';
+
+import useNotification from '../hooks/useNotification';
 
 const { Panel } = Collapse;
 
@@ -17,15 +21,34 @@ type VideoObject = {
   embedUrl: String;
 };
 
-const VideoPlugin: React.FunctionComponent<VideoProps> = ({ resource }) => {
+const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
+  resource,
+}) => {
+  const nexus = useNexusContext();
+  const [videoData, setVideoData] = React.useState<string>();
+  const notification = useNotification();
+
+  React.useEffect(() => {
+    loadVideo();
+  }, []);
+
+  const loadVideo = async () => {
+    console.log('RESOURCE');
+    console.log(resource);
+    const videoData = 'https://www.youtube.com/watch?v=ysz5S6PUM-U';
+    setVideoData(videoData);
+  };
+
+  if (!videoData) return null;
   return (
     <Collapse onChange={() => {}}>
       <Panel header="Video" key="1">
-        {resource['video'].map((v: VideoObject, k: number) => (
+        {/* {resource['video'].map((v: VideoObject, k: number) => (
           <li key={k}>{v.name}</li>
-        ))}
+        ))} */}
+        <ReactPlayer url={videoData} />
         {/* <iframe
-          width="853"
+          width="853"\
           height="480"
           src={resource['video']['embedUrl']}
           frameBorder="0"
@@ -38,4 +61,4 @@ const VideoPlugin: React.FunctionComponent<VideoProps> = ({ resource }) => {
   );
 };
 
-export default VideoPlugin;
+export default VideoPluginContainer;
