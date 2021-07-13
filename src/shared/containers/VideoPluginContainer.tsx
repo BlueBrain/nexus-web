@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
-import { Collapse } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 import ReactPlayer from 'react-player';
-import { Modal } from 'antd';
+import { Collapse, Modal } from 'antd';
 import useNotification from '../hooks/useNotification';
 
 const { Panel } = Collapse;
