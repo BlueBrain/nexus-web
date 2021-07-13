@@ -106,6 +106,7 @@ const useSubApps = () => {
       icon: subApp.icon,
       requireLogin: subApp.requireLogin,
       description: subApp.description,
+      version: subApp.version,
     }));
   }, [subAppsState]);
 

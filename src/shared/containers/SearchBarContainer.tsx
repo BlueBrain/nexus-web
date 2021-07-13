@@ -1,4 +1,4 @@
-import { useNexus, useNexusContext } from '@bbp/react-nexus';
+import { useNexusContext } from '@bbp/react-nexus';
 import { take } from 'lodash';
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router';
@@ -9,8 +9,9 @@ import useSearchConfigs from '../hooks/useSearchConfigs';
 import useSearchQuery, { DEFAULT_SEARCH_PROPS } from '../hooks/useSearchQuery';
 import { parseURL } from '../utils/nexusParse';
 
-const DEFAULT_SEARCH_BAR_RESULT_SIZE = 10;
-const PROJECT_RESULTS_DEFAULT_SIZE = 5;
+const DEFAULT_SEARCH_BAR_RESULT_SIZE = 50;
+const PROJECT_RESULTS_DEFAULT_SIZE = 100;
+const SHOULD_INCLUDE_DEPRECATED = false;
 
 const SearchBarContainer: React.FC = () => {
   const { preferedSearchConfig, searchConfigs } = useSearchConfigs();
@@ -22,7 +23,13 @@ const SearchBarContainer: React.FC = () => {
   const history = useHistory();
   const location = useLocation();
   const [queryParams, setQueryString] = useQueryString();
-  const projectData = useAsyncCall(nexus.Project.list(), []);
+  const projectData = useAsyncCall(
+    nexus.Project.list(undefined, {
+      size: 100,
+      deprecated: SHOULD_INCLUDE_DEPRECATED,
+    }),
+    []
+  );
 
   const goToResource = (resourceSelfURL: string) => {
     const { org, project, id } = parseURL(resourceSelfURL);

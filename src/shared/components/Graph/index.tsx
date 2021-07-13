@@ -46,6 +46,7 @@ const Graph: React.FunctionComponent<{
   const [cursorPointer, setCursorPointer] = React.useState<string | null>(null);
   const layoutInstance = React.useRef<cytoscape.Layouts>();
   const graph = React.useRef<cytoscape.Core>();
+  const graphStyle = style as cytoscape.Stylesheet[];
 
   const forceLayout = () => {
     if (graph.current) {
@@ -195,10 +196,10 @@ const Graph: React.FunctionComponent<{
     cytoscape.use(cola);
     graph.current = cytoscape({
       elements,
-      style,
       maxZoom: 1,
       wheelSensitivity: 0.2,
       container: container.current,
+      style: graphStyle,
     });
 
     return () => {

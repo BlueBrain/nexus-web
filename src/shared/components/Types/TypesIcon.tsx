@@ -15,9 +15,7 @@ export const TypesIcon: React.SFC<TypesIconProps> = ({ type }) => {
   return (
     <div className="types-icon">
       <Tooltip title={typeString}>
-        <Tag>
-          <span className="label">{typeLabel}</span>
-        </Tag>
+        <Tag color="blue">{typeLabel}</Tag>
       </Tooltip>
     </div>
   );

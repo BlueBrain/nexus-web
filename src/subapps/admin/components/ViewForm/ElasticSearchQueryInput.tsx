@@ -43,16 +43,11 @@ const ElasticSearchQueryInput: React.FunctionComponent<{
       <div className="code">
         <CodeMirror
           value={value}
-          autoCursor={false}
-          detach={false}
           options={{
             mode: { name: 'javascript', json: true },
             theme: 'base16-light',
             lineNumbers: true,
-            lineWrapping: true,
             viewportMargin: Infinity,
-            foldGutter: true,
-            foldCode: true,
             placeholder: 'Enter a valid ElasticSearch query',
           }}
           onChange={handleChange}

@@ -11,7 +11,6 @@ import {
 } from './defaultResourcePayloads';
 
 import './ResourceForm.less';
-import { format } from 'url';
 
 const AVAILABLE_SCHEMAS: CascaderOptionType[] = [
   {
@@ -104,9 +103,9 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
       const values = await form.validateFields();
       const { resourceTypes, editorContent } = values;
       const selectedSchema: string =
-        resourceTypes.find((type: string) =>
-          Object.keys(RESOURCES_SCHEMA_URI).includes(type)
-        ) || '_';
+        resourceTypes.find((type: string) => {
+          return Object.keys(RESOURCES_SCHEMA_URI).includes(type);
+        }) || '_';
       const payload = {
         ...editorContent,
       };
@@ -164,6 +163,7 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
             rawData={jsonValue}
             onSubmit={handleSubmit}
             showExpanded={false}
+            showMetadataToggle={false}
           />
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>

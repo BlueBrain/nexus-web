@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { Button, Menu, Dropdown, notification } from 'antd';
+import { Menu, Dropdown } from 'antd';
 import { MenuProps } from 'antd/lib/menu';
 import { match } from 'ts-pattern';
 import json2csv, { Parser } from 'json2csv';
 
 import { download } from '../../../shared/utils/download';
 import { triggerCopy } from '../../../shared/utils/copy';
+import useNotification from '../../../shared/hooks/useNotification';
 
 export const DATASET_KEY = 'nexus-dataset';
 export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
@@ -21,25 +22,6 @@ export enum EXPORT_ACTIONS {
   AS_CSV = 'As CSV',
 }
 
-const handleExportAsESQuery = (query: object) => () => {
-  triggerCopy(JSON.stringify(query, null, 2));
-  notification.info({ message: 'Query saved to clipboard' });
-};
-
-const handleExportAsDatset = (dataset: DatasetCollectionSave) => () => {
-  localStorage.setItem(DATASET_KEY, JSON.stringify(dataset));
-  notification.info({ message: 'Saved selected items as dataset for later.' });
-};
-
-const handleExportAsCSV = (
-  object: object,
-  fields: json2csv.Options<any>['fields']
-) => () => {
-  const json2csvParser = new Parser({ fields });
-  const csv = json2csvParser.parse(object);
-  download(EXPORT_CSV_FILENAME, CSV_MEDIATYPE, csv);
-};
-
 const ResultGridActions: React.FC<{
   query: object;
   dataset: DatasetCollectionSave;
@@ -48,6 +30,29 @@ const ResultGridActions: React.FC<{
     fields: json2csv.Options<any>['fields'];
   };
 }> = ({ query, dataset, csv }) => {
+  const notification = useNotification();
+
+  const handleExportAsESQuery = (query: object) => () => {
+    triggerCopy(JSON.stringify(query, null, 2));
+    notification.info({ message: 'Query saved to clipboard' });
+  };
+
+  const handleExportAsDatset = (dataset: DatasetCollectionSave) => () => {
+    localStorage.setItem(DATASET_KEY, JSON.stringify(dataset));
+    notification.info({
+      message: 'Saved selected items as dataset for later.',
+    });
+  };
+
+  const handleExportAsCSV = (
+    object: object,
+    fields: json2csv.Options<any>['fields']
+  ) => () => {
+    const json2csvParser = new Parser({ fields });
+    const csv = json2csvParser.parse(object);
+    download(EXPORT_CSV_FILENAME, CSV_MEDIATYPE, csv);
+  };
+
   const handleMenuClick: MenuProps['onClick'] = e => {
     match(e.key)
       .with(EXPORT_ACTIONS.AS_ES_QUERY, () => handleExportAsESQuery(query)())

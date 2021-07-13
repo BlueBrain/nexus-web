@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Progress, Tooltip, notification, Button } from 'antd';
+import { Progress, Tooltip, Button } from 'antd';
+import { ReloadOutlined } from '@ant-design/icons';
 import * as moment from 'moment';
 import { Statistics } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
@@ -8,6 +9,8 @@ type ViewStatisticsProgressProps = {
   processedEvents: number;
   totalEvents: number;
   lastIndexed: string; // UTC Date
+  hasNewlyIndexedResources: boolean;
+  onClickRefresh?: VoidFunction;
 };
 
 export const ViewStatisticsProgress: React.FunctionComponent<ViewStatisticsProgressProps> = props => {
@@ -20,9 +23,21 @@ export const ViewStatisticsProgress: React.FunctionComponent<ViewStatisticsProgr
       : 'indexing...';
 
   return (
-    <Tooltip title={label}>
-      <Progress type="circle" width={25} percent={percent} />
-    </Tooltip>
+    <>
+      {props.hasNewlyIndexedResources ? (
+        <Button
+          type="link"
+          onClick={() => props.onClickRefresh && props.onClickRefresh()}
+          icon={<ReloadOutlined spin={true} />}
+        >
+          New Resources indexed. Click to reload
+        </Button>
+      ) : (
+        <Tooltip title={label}>
+          <Progress type="circle" width={25} percent={percent} />
+        </Tooltip>
+      )}
+    </>
   );
 };
 
@@ -35,7 +50,7 @@ export type ViewStatisticsContainerProps = {
 
 export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsContainerProps> = props => {
   const nexus = useNexusContext();
-  const [eventsAtMount, setEventsAtMount] = React.useState();
+  const [eventsAtMount, setEventsAtMount] = React.useState<number>();
   const [{ loading, error, data }, setState] = React.useState<{
     error: Error | null;
     data: Statistics | null;
@@ -46,46 +61,18 @@ export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsCont
     loading: false,
   });
 
+  const onRefreshResources = () => {
+    setHasNewlyIndexedResources(false);
+    props.onClickRefresh && props.onClickRefresh();
+  };
+
+  const [
+    hasNewlyIndexedResources,
+    setHasNewlyIndexedResources,
+  ] = React.useState(false);
+
   const indexCompleteNotification = () => {
-    const key = 'IndexComplete';
-    const time = Date.now();
-    const btn = props.onClickRefresh ? (
-      <Button
-        type="primary"
-        size="small"
-        onClick={() => {
-          notification.close(key);
-          props.onClickRefresh && props.onClickRefresh();
-        }}
-      >
-        Refresh
-      </Button>
-    ) : (
-      <Button
-        type="primary"
-        size="small"
-        onClick={() => {
-          notification.close(key);
-        }}
-      >
-        Got it
-      </Button>
-    );
-    notification.open({
-      btn,
-      key,
-      message: 'This project has finished indexing new Resources ',
-      description: (
-        <div>
-          Last updated{' '}
-          <span className="flash" key={time}>
-            {moment(time).format('h:mm:ss a')}
-          </span>
-        </div>
-      ),
-      duration: null, // don't auto-close
-      onClose: close,
-    });
+    setHasNewlyIndexedResources(true);
   };
 
   React.useEffect(() => {
@@ -135,6 +122,8 @@ export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsCont
         totalEvents={data.totalEvents}
         processedEvents={data.processedEvents}
         lastIndexed={data.lastProcessedEventDateTime}
+        hasNewlyIndexedResources={hasNewlyIndexedResources}
+        onClickRefresh={onRefreshResources}
       />
     );
   }

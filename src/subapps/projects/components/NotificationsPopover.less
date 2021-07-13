@@ -1,0 +1,38 @@
+.notifications-popover {
+  max-height: 600px;
+  overflow-y: scroll;
+  width: 500px;
+
+  h4 {
+    margin-bottom: 0;
+  }
+
+  &__item {
+    display: flex;
+    justify-content: space-between;
+    margin: 1em 1em 0 0;
+
+    p {
+      margin: 0;
+      font-size: 12px;
+    }
+
+    button {
+      margin: 0px 0.5em;
+    }
+  }
+
+  &__main {
+    width: 75%;
+  }
+
+  &__actions {
+    width: 25%;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__types {
+    padding: 4px 0;
+  }
+}

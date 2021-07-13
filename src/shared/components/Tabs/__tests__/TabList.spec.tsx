@@ -3,7 +3,9 @@ import { shallow } from 'enzyme';
 
 import TabList from '../TabList';
 
-const tabListComponent = <TabList items={[]} onSelected={jest.fn} />;
+const tabListComponent = (
+  <TabList items={[]} tabType={'editable-card'} onSelected={jest.fn} />
+);
 const wrapper = shallow(tabListComponent);
 
 describe('TabList component', () => {

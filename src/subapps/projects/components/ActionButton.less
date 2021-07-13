@@ -1,0 +1,35 @@
+@import '../../../shared/lib.less';
+
+.action-button {
+  border: none;
+  outline-style: none;
+  cursor: pointer;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  background-color: inherit;
+  opacity: 0.8;
+
+  &__body {
+    display: flex;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 15px;
+    margin: 0;
+    align-items: center;
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &__icon {
+    margin-right: 0.7em;
+    height: 30px;
+    width: 30px;
+  }
+
+  &--highlighted {
+    opacity: 1;
+    text-decoration: underline;
+  }
+}

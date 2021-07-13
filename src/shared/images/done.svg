@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="34" height="32" viewBox="0 0 34 32">
+  <g id="Group_1949" data-name="Group 1949" transform="translate(-346.639 -347.367)">
+    <path id="Path_5516" data-name="Path 5516" d="M0,1.6Z" transform="translate(366.913 362.068)" fill="#3bb43f"/>
+    <g id="Component_1_1" data-name="Component 1 – 1" transform="translate(346.639 347.367)">
+      <path id="Path_5515" data-name="Path 5515" d="M362.639,347.367a16,16,0,1,0,16,16,15.822,15.822,0,0,0-5-12A16.762,16.762,0,0,0,362.639,347.367Zm0,26a10,10,0,1,1,10-10,10.277,10.277,0,0,1-4,8A9.363,9.363,0,0,1,362.639,373.367Z" transform="translate(-346.639 -347.367)" fill="#3bb43f"/>
+      <path id="Icon_material-done" data-name="Icon material-done" d="M13.639,22.367l-6-5-3,3,9,8,18-18-3-3Z" transform="translate(2.361 -5.367)" fill="#3bb43f"/>
+    </g>
+  </g>
+</svg>

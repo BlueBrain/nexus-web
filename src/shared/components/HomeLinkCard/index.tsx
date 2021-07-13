@@ -8,7 +8,8 @@ const HomeLinkCard: React.FunctionComponent<{
   route: string;
   label: string;
   description?: string;
-}> = ({ route, label, description }) => {
+  version?: string;
+}> = ({ route, label, description, version }) => {
   const { Meta } = Card;
 
   return (
@@ -23,7 +24,14 @@ const HomeLinkCard: React.FunctionComponent<{
             ></div>
           }
         >
-          <Meta title={label} description={description} />
+          <Meta
+            title={
+              <span>
+                {label} {<sup> {version}</sup>}
+              </span>
+            }
+            description={description}
+          />
         </Card>
       </Link>
     </div>

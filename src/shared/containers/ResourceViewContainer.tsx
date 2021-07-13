@@ -1,10 +1,15 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { useLocation, useHistory, useParams } from 'react-router';
-import { Spin, Card, Empty, Tabs, notification, Alert, Collapse } from 'antd';
+import { Spin, Card, Empty, Alert } from 'antd';
 import * as queryString from 'query-string';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { Resource, ResourceLink, IncomingLink, Identity } from '@bbp/nexus-sdk';
+import {
+  Resource,
+  ResourceLink,
+  IncomingLink,
+  ExpandedResource,
+} from '@bbp/nexus-sdk';
 import AdminPlugin from '../containers/AdminPluginContainer';
 import ResourcePlugins from './ResourcePlugins';
 import usePlugins from '../hooks/usePlugins';
@@ -17,6 +22,8 @@ import {
   getDestinationParam,
 } from '../utils';
 import { isDeprecated } from '../utils/nexusMaybe';
+import useNotification from '../hooks/useNotification';
+import Preview from '../components/Preview/Preview';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -31,10 +38,14 @@ const ResourceViewContainer: React.FunctionComponent<{
     }> | null
   ) => React.ReactElement | null;
 }> = ({ render }) => {
+  const x = useParams();
+
+  // @ts-ignore
   const { orgLabel = '', projectLabel = '', resourceId = '' } = useParams();
   const nexus = useNexusContext();
   const location = useLocation();
   const history = useHistory();
+  const notification = useNotification();
   const [{ ref }] = useMeasure();
   const { data: pluginManifest } = usePlugins();
   const availablePlugins = Object.keys(pluginManifest || {});
@@ -65,7 +76,7 @@ const ResourceViewContainer: React.FunctionComponent<{
 
   const goToOrg = (orgLabel: string) => history.push(`/admin/${orgLabel}`);
 
-  const { expanded: expandedFromQuery, rev } = queryString.parse(
+  const { expanded: expandedFromQuery, rev, tag } = queryString.parse(
     location.search
   );
 
@@ -126,13 +137,11 @@ const ResourceViewContainer: React.FunctionComponent<{
         notification.success({
           message: 'Resource saved',
           description: getResourceLabel(resource),
-          duration: 2,
         });
       } catch (error) {
         notification.error({
           message: 'An unknown error occurred',
           description: error.message,
-          duration: 0,
         });
         setResource({
           error,
@@ -147,88 +156,106 @@ const ResourceViewContainer: React.FunctionComponent<{
     const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(
       (link as IncomingLink)._project
     );
+
     goToResource(orgLabel, projectLabel, encodeURIComponent(link['@id']), {
       tab: '#links',
     });
   };
 
-  React.useEffect(() => {
+  const setResources = async () => {
     setResource({
       resource,
       error: null,
       busy: true,
     });
-    let latestResource: Resource | null = null;
-    let newResource: Resource | null = null;
-    let expandedResource: Resource | null = null;
+    try {
+      const options = tag
+        ? {
+            tag: tag.toString(),
+          }
+        : {
+            rev: Number(rev),
+          };
+      const resource = (await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        resourceId
+      )) as Resource;
 
-    nexus.Resource.get(orgLabel, projectLabel, resourceId)
-      .then(resource => {
-        latestResource = resource as Resource;
-        return rev
-          ? nexus.Resource.get(orgLabel, projectLabel, resourceId, {
-              rev: Number(rev),
-            })
-          : latestResource;
-      })
-      .then(resource => {
-        newResource = resource as Resource;
-        return nexus.Resource.get(orgLabel, projectLabel, resourceId, {
+      const latestResource: Resource =
+        rev || tag
+          ? ((await nexus.Resource.get(
+              orgLabel,
+              projectLabel,
+              resourceId,
+              options
+            )) as Resource)
+          : resource;
+
+      const expandedResources = (await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        resourceId,
+        {
           format: 'expanded',
-        });
-      })
-      .then(resource => {
-        expandedResource = resource;
-
-        setResource({
-          // Note: we must fetch the proper, expanded @id. The @id that comes from a normal request or from the URL
-          // could be the contracted one, if the resource was created with a context that has a @base property.
-          // this would make the contracted @id unresolvable. See issue: https://github.com/BlueBrain/nexus/issues/966
-          resource: {
-            ...newResource,
-            '@id': expandedResource['@id'],
-          } as Resource,
-          error: null,
-          busy: false,
-        });
-        setLatestResource(latestResource);
-      })
-      .catch(error => {
-        let errorMessage;
-
-        if (error['@type'] === 'AuthorizationFailed') {
-          nexus.Identity.list().then(({ identities }) => {
-            const user = identities.find(i => i['@type'] === 'User');
-
-            if (!user) {
-              history.push(`/login${getDestinationParam()}`);
-            }
-
-            const message = user
-              ? "You don't have the permissions to view the resource"
-              : 'Please login to view the resource';
-
-            notification.error({
-              message: 'Authentication error',
-              description: message,
-              duration: 4,
-            });
-          });
-
-          errorMessage = `You don't have the access rights for this resource located in ${orgLabel} / ${projectLabel}.`;
-        } else {
-          errorMessage = error.reason;
         }
+      )) as ExpandedResource[];
 
-        const jsError = new Error(errorMessage);
+      const expandedResource = expandedResources[0];
 
-        setResource({
-          resource,
-          error: jsError,
-          busy: false,
-        });
+      setLatestResource(latestResource);
+      setResource({
+        // Note: we must fetch the proper, expanded @id. The @id that comes from a normal request or from the URL
+        // could be the contracted one, if the resource was created with a context that has a @base property.
+        // this would make the contracted @id unresolvable. See issue: https://github.com/BlueBrain/nexus/issues/966
+        resource: {
+          ...latestResource,
+          '@id': expandedResource['@id'],
+        } as Resource,
+        error: null,
+        busy: false,
       });
-  }, [orgLabel, projectLabel, resourceId, rev]);
+    } catch (error) {
+      let errorMessage;
+
+      if (error['@type'] === 'AuthorizationFailed') {
+        nexus.Identity.list().then(({ identities }) => {
+          const user = identities.find(i => i['@type'] === 'User');
+
+          if (!user) {
+            history.push(`/login${getDestinationParam()}`);
+          }
+
+          const message = user
+            ? "You don't have the permissions to view the resource"
+            : 'Please login to view the resource';
+
+          notification.error({
+            message: 'Authentication error',
+            description: message,
+          });
+        });
+
+        errorMessage = `You don't have the access rights for this resource located in ${orgLabel} / ${projectLabel}.`;
+      } else {
+        errorMessage = error.reason;
+      }
+
+      const jsError = new Error(errorMessage);
+
+      setResource({
+        resource,
+        error: jsError,
+        busy: false,
+      });
+    }
+  };
+
+  const nonEditableResourceTypes = ['File', 'View'];
+
+  React.useEffect(() => {
+    setResources();
+  }, [orgLabel, projectLabel, resourceId, rev, tag]);
 
   return (
     <>
@@ -284,18 +311,20 @@ const ResourceViewContainer: React.FunctionComponent<{
                   goToResource={goToSelfResource}
                 />
               )}
+
               <AccessControl
                 path={`/${orgLabel}/${projectLabel}`}
                 permissions={['resources/write']}
                 noAccessComponent={() => (
                   <div>
-                    <div>
-                      <p>
-                        <Alert
-                          message="This resource does not have plugins configured yet, and you don't have access to edit the resource. You can nonetheless see the resource metadata below."
-                          type="info"
-                        />
-                      </p>
+                    <div style={{ marginTop: 15 }}>
+                      <Alert
+                        message="You don't have access to edit the resource. You can nonetheless see the resource metadata below."
+                        type="info"
+                      />
+                      {resource.distribution && (
+                        <Preview nexus={nexus} resource={resource} />
+                      )}
                       <AdminPlugin
                         editable={false}
                         orgLabel={orgLabel}
@@ -304,9 +333,8 @@ const ResourceViewContainer: React.FunctionComponent<{
                         resource={resource}
                         latestResource={latestResource}
                         activeTabKey={activeTabKey}
-                        defaultActiveKey={'1'}
                         expandedFromQuery={expandedFromQuery}
-                        ref={ref}
+                        refProp={ref}
                         goToResource={goToResource}
                         handleTabChange={handleTabChange}
                         handleGoToInternalLink={handleGoToInternalLink}
@@ -318,12 +346,23 @@ const ResourceViewContainer: React.FunctionComponent<{
                 )}
               >
                 {(!filteredPlugins || filteredPlugins.length === 0) && (
-                  <p>
-                    <Alert
-                      message="This resource does not have plugins configured yet. You can nonetheless edit the resource metadata below."
-                      type="info"
-                    />
-                  </p>
+                  <Alert
+                    message="This resource does not have plugins configured yet. You can nonetheless edit the resource metadata below."
+                    type="info"
+                  />
+                )}
+                {!!resource['@type'] &&
+                  typeof resource['@type'] === 'string' &&
+                  nonEditableResourceTypes.includes(resource['@type']) && (
+                    <p>
+                      <Alert
+                        message="This resource is not editable because it is of the type 'File'. For further information please contact the administrator."
+                        type="info"
+                      />
+                    </p>
+                  )}
+                {resource.distribution && (
+                  <Preview nexus={nexus} resource={resource} />
                 )}
                 <AdminPlugin
                   editable={isLatest && !isDeprecated(resource)}
@@ -333,9 +372,8 @@ const ResourceViewContainer: React.FunctionComponent<{
                   resource={resource}
                   latestResource={latestResource}
                   activeTabKey={activeTabKey}
-                  defaultActiveKey={'1'}
                   expandedFromQuery={expandedFromQuery}
-                  ref={ref}
+                  refProp={ref}
                   goToResource={goToResource}
                   handleTabChange={handleTabChange}
                   handleGoToInternalLink={handleGoToInternalLink}

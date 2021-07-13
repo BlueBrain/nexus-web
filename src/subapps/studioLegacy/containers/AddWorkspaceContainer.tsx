@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { Button, Modal, notification, message } from 'antd';
+import { Modal, message } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { PlusSquareOutlined } from '@ant-design/icons';
 
 import WorkspaceEditorForm from '../components/WorkspaceEditorForm';
+import useNotification, {
+  parseNexusError,
+} from '../../../shared/hooks/useNotification';
 
 const DEFAULT_WORKSPACE_TYPE = 'StudioWorkspace';
 
@@ -21,9 +23,18 @@ const AddWorkspaceContainer: React.FC<{
   projectLabel: string;
   studio: StudioResource;
   onAddWorkspace?(): void;
-}> = ({ orgLabel, projectLabel, studio, onAddWorkspace }) => {
+  showModal: boolean;
+  onCancel(): void;
+}> = ({
+  orgLabel,
+  projectLabel,
+  studio,
+  onAddWorkspace,
+  showModal,
+  onCancel,
+}) => {
   const nexus = useNexusContext();
-  const [showModal, setShowModal] = React.useState(false);
+  const notification = useNotification();
 
   const generateWorkspaceResource = (label: string, description?: string) => ({
     label,
@@ -52,7 +63,7 @@ const AddWorkspaceContainer: React.FC<{
   };
 
   const saveWorkspace = async (label: string, description?: string) => {
-    setShowModal(false);
+    onCancel();
     try {
       const createWorkspaceResponse = await createWorkspaceResource(
         label,
@@ -89,22 +100,18 @@ const AddWorkspaceContainer: React.FC<{
     } catch (error) {
       notification.error({
         message: 'An error occurred',
-        description: error.reason || error.message,
-        duration: 3,
+        description: parseNexusError(error),
       });
     }
   };
 
   return (
     <>
-      <Button icon={<PlusSquareOutlined />} onClick={() => setShowModal(true)}>
-        Add Workspace
-      </Button>
       <Modal
         title="Create a new Workspace"
         visible={showModal}
         footer={null}
-        onCancel={() => setShowModal(false)}
+        onCancel={onCancel}
         destroyOnClose={true}
       >
         <WorkspaceEditorForm saveWorkspace={saveWorkspace} />

@@ -19,7 +19,9 @@ export interface ConfigState {
   layoutSettings: {
     logoImg: string;
     logoLink: string;
+    forgeLink: string;
   };
+  dataModelsLocation: string;
 }
 
 const initialState: ConfigState = {
@@ -33,10 +35,12 @@ const initialState: ConfigState = {
   layoutSettings: {
     logoImg: '',
     logoLink: '',
+    forgeLink: '',
   },
   searchSettings: {
     searchConfigProject: DEFAULT_SEARCH_CONFIG_PROJECT,
   },
+  dataModelsLocation: '',
 };
 
 export default function configReducer(

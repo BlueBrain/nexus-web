@@ -14,11 +14,11 @@ You can label a `Workspace` and add a description to help users understand what 
   "dashboards": [
     {
       "dashboard": "https://bbp.epfl.ch/neurosciencegraph/data/8751df37-a75f-4858-b174-742264deb4e9",
-      "view": "nxv:defaultSparqlIndex"
+      "view": "graph"
     },
     {
       "dashboard": "https://bbp.epfl.ch/neurosciencegraph/data/99982da8-ec3a-4f18-9388-a0cc81bfff0c",
-      "view": "nxv:defaultSparqlIndex"
+      "view": "graph"
     }
   ],
   "description": "",

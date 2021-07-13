@@ -24,6 +24,7 @@ const shallowHeader = shallow(
     realms={[]}
     links={links}
     githubIssueURL=""
+    forgeLink=""
     version=""
     onClickSideBarToggle={() => {}}
     performLogin={(name: string) => {}}
@@ -37,6 +38,7 @@ const wrapper = mount(
       realms={[]}
       links={links}
       githubIssueURL=""
+      forgeLink=""
       version=""
       onClickSideBarToggle={() => {}}
       performLogin={(name: string) => {}}
@@ -67,6 +69,7 @@ describe('Header component', () => {
             realms={[]}
             links={links}
             githubIssueURL=""
+            forgeLink=""
             version=""
             onClickSideBarToggle={() => {}}
             performLogin={(name: string) => {}}
@@ -85,6 +88,7 @@ describe('Header component', () => {
             realms={[]}
             links={links}
             githubIssueURL=""
+            forgeLink=""
             version=""
             displayLogin={false}
             onClickSideBarToggle={() => {}}

@@ -273,7 +273,9 @@ const SearchView: React.FC = () => {
   const shouldShowPagination = totalPages > 1;
 
   // Fields
-  const fields = preferedSearchConfig?.fields || DEFAULT_FIELDS;
+  const fields = preferedSearchConfig?.fields?.length
+    ? preferedSearchConfig?.fields
+    : DEFAULT_FIELDS;
 
   const rowSelection = {
     selectedRowKeys,
@@ -311,7 +313,7 @@ const SearchView: React.FC = () => {
   }
 
   return (
-    <Content style={{ padding: '1em' }}>
+    <Content style={{ padding: '1em', marginTop: '0' }}>
       <Layout>
         <Sider
           width={280}
@@ -379,7 +381,7 @@ const SearchView: React.FC = () => {
               })}
           </Card>
         </Sider>
-        <Content>
+        <Content style={{ marginLeft: '280px', marginTop: '0' }}>
           <Row style={{ padding: '0 1em' }}>
             <ActiveFilters
               searchProps={searchProps}

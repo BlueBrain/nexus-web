@@ -1,11 +1,12 @@
 import * as React from 'react';
 import * as moment from 'moment';
-import { Input, Table, Button, Tooltip, notification, Select } from 'antd';
+import { Input, Table, Button, Tooltip, Select } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { omit, difference } from 'lodash';
 import { parseProjectUrl, isISODate } from '../../utils/index';
 import { download } from '../../utils/download';
 import './../../styles/result-table.less';
+import useNotification from '../../hooks/useNotification';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -15,10 +16,11 @@ const MAX_FILTER_LIMIT = 20;
 const MIN_FILTER_LIMIT = 1;
 const DATE_FORMAT = 'DD-MM-YYYY, HH:mm';
 
-type HeaderProperties = {
+export type HeaderProperties = {
   title: string;
   dataIndex: string;
 }[];
+
 export type ResultTableProps = {
   headerProperties?: HeaderProperties;
   items: {
@@ -27,7 +29,7 @@ export type ResultTableProps = {
   }[];
   pageSize?: number;
   handleClick: (self: string) => void;
-  tableLabel: string;
+  tableLabel?: string;
 };
 
 const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
@@ -41,10 +43,8 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
     HeaderProperties | undefined
   >(headerProperties);
   const [searchValue, setSearchValue] = React.useState<string>('');
-  const [filteredValues, setFilteredValues] = React.useState<Record<
-    string,
-    React.ReactText[] | null
-  > | null>(null);
+  const [filteredValues, setFilteredValues] = React.useState<any>(null);
+  const notification = useNotification();
 
   const filteredItems = items.filter(item => {
     return (
@@ -58,9 +58,13 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
   const tableItems = searchValue ? filteredItems : items;
   const total = tableItems.length;
   const showPagination = total > pageSize;
+  const columnsToSelect =
+    selectedColumns && selectedColumns.length > 0
+      ? selectedColumns
+      : headerProperties;
   const columnList = [
-    ...(selectedColumns
-      ? selectedColumns.map(({ title, dataIndex }) => {
+    ...(columnsToSelect
+      ? columnsToSelect.map(({ title, dataIndex }) => {
           // We can create special renderers for the cells here
           let render;
           switch (title) {
@@ -186,7 +190,6 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
 
       notification.success({
         message: 'Tabled is saved successfully',
-        duration: 5,
       });
     }
   };

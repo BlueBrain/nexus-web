@@ -3,6 +3,10 @@ import { AccessControl } from '@bbp/react-nexus';
 import { Link } from 'react-router-dom';
 import { Divider, Button } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
+import {
+  DEFAULT_SPARQL_VIEW_ID,
+  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+} from '@bbp/nexus-sdk';
 
 import SideMenu from '../components/Menu/SideMenu';
 import FileUploadContainer from '../containers/FileUploadContainer';
@@ -45,12 +49,16 @@ const ProjectMenuContainer: React.FunctionComponent<{
           />
         </AccessControl>
         <Link
-          to={`/admin/${orgLabel}/${projectLabel}/nxv:defaultSparqlIndex/sparql`}
+          to={`/admin/${orgLabel}/${projectLabel}/${encodeURIComponent(
+            DEFAULT_SPARQL_VIEW_ID
+          )}/sparql`}
         >
           Sparql Query Editor
         </Link>
         <Link
-          to={`/admin/${orgLabel}/${projectLabel}/nxv:defaultElasticSearchIndex/_search`}
+          to={`/admin/${orgLabel}/${projectLabel}/${encodeURIComponent(
+            DEFAULT_ELASTIC_SEARCH_VIEW_ID
+          )}/_search`}
         >
           ElasticSearch Query Editor
         </Link>

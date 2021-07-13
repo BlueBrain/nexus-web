@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useAsyncEffect } from 'use-async-effect';
 import { ExpandedResource, ResourceSource, Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import ResourceEditor from '../components/ResourceEditor';
+import useNotification, { parseNexusError } from '../hooks/useNotification';
 
 const ResourceEditorContainer: React.FunctionComponent<{
   resourceId: string;
@@ -14,6 +14,8 @@ const ResourceEditorContainer: React.FunctionComponent<{
   defaultEditable?: boolean;
   onSubmit: (value: object) => void;
   onExpanded?: (expanded: boolean) => void;
+  tabChange?: boolean;
+  showMetadataToggle?: boolean;
 }> = ({
   resourceId,
   orgLabel,
@@ -23,8 +25,11 @@ const ResourceEditorContainer: React.FunctionComponent<{
   defaultExpanded = false,
   onSubmit,
   onExpanded,
+  tabChange,
+  showMetadataToggle,
 }) => {
   const nexus = useNexusContext();
+  const notification = useNotification();
   const [expanded, setExpanded] = React.useState(defaultExpanded);
   const [showMetadata, setShowMetadata] = React.useState<boolean>(false);
   const [{ busy, resource, error }, setResource] = React.useState<{
@@ -37,6 +42,42 @@ const ResourceEditorContainer: React.FunctionComponent<{
     error: null,
   });
 
+  React.useEffect(() => {
+    setResource({
+      resource,
+      error: null,
+      busy: true,
+    });
+
+    getNewResource()
+      .then(response =>
+        setResource({
+          resource: response as Resource,
+          error: null,
+          busy: false,
+        })
+      )
+      .catch(error => {
+        notification.error({
+          message: 'Failed to load JSON payload',
+          description: parseNexusError(error),
+        });
+        setResource({
+          error,
+          resource: null,
+          busy: false,
+        });
+      });
+  }, [
+    resourceId,
+    projectLabel,
+    orgLabel,
+    rev,
+    expanded,
+    showMetadata,
+    tabChange,
+  ]);
+
   const handleFormatChange = () => {
     onExpanded && onExpanded(!expanded);
     setExpanded(!expanded);
@@ -48,7 +89,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
 
   const getNewResource = async () => {
     if (expanded) {
-      return await nexus.Resource.get(
+      const expandedResource = (await nexus.Resource.get(
         orgLabel,
         projectLabel,
         encodeURIComponent(resourceId),
@@ -56,7 +97,8 @@ const ResourceEditorContainer: React.FunctionComponent<{
           rev,
           format: 'expanded',
         }
-      );
+      )) as ExpandedResource[];
+      return expandedResource[0];
     }
     if (showMetadata) {
       return await nexus.Resource.get(
@@ -77,36 +119,6 @@ const ResourceEditorContainer: React.FunctionComponent<{
     );
   };
 
-  useAsyncEffect(
-    async isMounted => {
-      if (!isMounted()) {
-        return;
-      }
-      try {
-        setResource({
-          resource,
-          error: null,
-          busy: true,
-        });
-
-        const newResource = await getNewResource();
-
-        setResource({
-          resource: newResource,
-          error: null,
-          busy: false,
-        });
-      } catch (error) {
-        setResource({
-          error,
-          resource,
-          busy: false,
-        });
-      }
-    },
-    [resourceId, projectLabel, orgLabel, rev, expanded, showMetadata]
-  );
-
   return (
     resource && (
       <ResourceEditor
@@ -118,6 +130,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
         editable={defaultEditable && !expanded && !showMetadata}
         expanded={expanded}
         showMetadata={showMetadata}
+        showMetadataToggle={showMetadataToggle}
       />
     )
   );

@@ -1,0 +1,76 @@
+@import '../../../../shared/lib.less';
+
+.template-card {
+  opacity: 0.8;
+  width: 300px;
+  box-shadow: @box-shadow-base;
+  border-radius: 10px;
+  margin: 0 0.3em 0.7em 0.3em;
+  border: 1px solid @fusion-dark-bg;
+
+  &:hover {
+    opacity: 1;
+    cursor: pointer;
+  }
+
+  &--selected {
+    opacity: 1;
+  }
+
+  &__header {
+    background-color: @fusion-dark-bg;
+    color: #fff;
+    padding: 0.7em;
+    border-radius: 9px 9px 0 0;
+  }
+
+  &__icon {
+    background-color: #fff;
+    padding: 5px;
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+    margin-right: 12px;
+  }
+
+  &__title {
+    font-size: 17px;
+    display: flex;
+    align-items: center;
+  }
+
+  &__title-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-top: 0.7em;
+    font-weight: 300;
+  }
+
+  &__content {
+    padding: 0.7em 0.7em 0 0.7em;
+  }
+
+  .ant-btn.ant-btn-link {
+    padding: 0;
+    float: right;
+    opacity: 0.8;
+    font-size: 12px;
+    color: @fusion-dark-bg;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &__description,
+  &__contributors {
+    margin: 0;
+    font-size: 12px;
+  }
+
+  &__details-button {
+    display: flex;
+    justify-content: flex-end;
+  }
+}

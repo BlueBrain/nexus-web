@@ -1,6 +1,10 @@
 import * as React from 'react';
-import { Button, Tooltip, notification } from 'antd';
-import { DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
+import { Button, Tooltip } from 'antd';
+import {
+  DeleteOutlined,
+  DownloadOutlined,
+  ShoppingCartOutlined,
+} from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import { Resource } from '@bbp/nexus-sdk';
@@ -10,6 +14,7 @@ import ResourceActions from '../components/ResourceActions';
 import { getResourceLabel, getOrgAndProjectFromResource } from '../utils';
 import { download } from '../utils/download';
 import {
+  isView,
   isFile,
   chainPredicates,
   not,
@@ -18,6 +23,8 @@ import {
   toPromise,
 } from '../utils/nexusMaybe';
 import Copy from '../components/Copy';
+import { CartContext } from '../hooks/useDataCart';
+import useNotification from '../hooks/useNotification';
 
 const ResourceActionsContainer: React.FunctionComponent<{
   resource: Resource;
@@ -38,6 +45,8 @@ const ResourceActionsContainer: React.FunctionComponent<{
   const resourceId = resource['@id'];
   const self = resource._self;
   const nexus = useNexusContext();
+  const { addResourceToCart } = React.useContext(CartContext);
+  const notification = useNotification();
 
   const isLatestResource = async (resource: Resource) => {
     // TODO: remove this if / when
@@ -105,7 +114,16 @@ const ResourceActionsContainer: React.FunctionComponent<{
   const actions = {
     deprecateResource: async () => {
       try {
-        const deprectatedResource = await nexus.Resource.deprecate(
+        let deprecateMethod = nexus.Resource.deprecate;
+        if (isView(resource)) {
+          deprecateMethod = nexus.View.deprecate;
+        }
+
+        if (isFile(resource)) {
+          deprecateMethod = nexus.File.deprecate;
+        }
+
+        const deprectatedResource = await deprecateMethod(
           orgLabel,
           projectLabel,
           encodeURIComponent(resourceId),
@@ -162,6 +180,10 @@ const ResourceActionsContainer: React.FunctionComponent<{
     },
   };
 
+  const handleAddToCart = async () => {
+    addResourceToCart ? await addResourceToCart(resource) : null;
+  };
+
   return (
     <div className="resource-actions-container">
       <div className="resource-actions">
@@ -197,6 +219,9 @@ const ResourceActionsContainer: React.FunctionComponent<{
             </Tooltip>
           )}
         />
+        <Button onClick={handleAddToCart} icon={<ShoppingCartOutlined />}>
+          Add to Data Cart
+        </Button>
         <ResourceDownloadButton
           orgLabel={orgLabel}
           projectLabel={projectLabel}
