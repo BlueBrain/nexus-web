@@ -3,13 +3,17 @@ import { Resource } from '@bbp/nexus-sdk';
 import { Collapse } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 import ReactPlayer from 'react-player';
-
+import { Modal } from 'antd';
 import useNotification from '../hooks/useNotification';
 
 const { Panel } = Collapse;
 
 type VideoProps = {
+  orgLabel: string;
+  projectLabel: string;
+  resourceId: string;
   resource: Resource;
+  latestResource: Resource;
 };
 
 type VideoObject = {
@@ -23,9 +27,13 @@ type VideoObject = {
 
 const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
   resource,
+  latestResource,
+  orgLabel,
+  resourceId,
+  projectLabel,
 }) => {
   const nexus = useNexusContext();
-  const [videoData, setVideoData] = React.useState<string>();
+  const [videoData, setVideoData] = React.useState<any>();
   const notification = useNotification();
 
   React.useEffect(() => {
@@ -33,29 +41,31 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
   }, []);
 
   const loadVideo = async () => {
-    console.log('RESOURCE');
-    console.log(resource);
-    const videoData = 'https://www.youtube.com/watch?v=ysz5S6PUM-U';
-    setVideoData(videoData);
+    await nexus.Resource.get(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(resource['@id'])
+    )
+      .then(response => {
+        const resource = response as Resource;
+        console.log(resource);
+        const videoData = response;
+        setVideoData(videoData);
+      })
+      .catch(error =>
+        notification.error({
+          message: 'Failed to load file',
+        })
+      );
   };
-
   if (!videoData) return null;
   return (
     <Collapse onChange={() => {}}>
       <Panel header="Video" key="1">
-        {/* {resource['video'].map((v: VideoObject, k: number) => (
+        {videoData.map((v: any, k: number) => (
           <li key={k}>{v.name}</li>
-        ))} */}
-        <ReactPlayer url={videoData} />
-        {/* <iframe
-          width="853"\
-          height="480"
-          src={resource['video']['embedUrl']}
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          title="Embedded youtube"
-        /> */}
+        ))}
+        {/* <ReactPlayer url={videoData} /> */}
       </Panel>
     </Collapse>
   );

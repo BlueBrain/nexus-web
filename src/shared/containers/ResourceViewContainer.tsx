@@ -376,7 +376,13 @@ const ResourceViewContainer: React.FunctionComponent<{
                   handleEditFormSubmit={handleEditFormSubmit}
                   handleExpanded={handleExpanded}
                 />
-                <VideoPluginContainer resource={resource} />
+                <VideoPluginContainer
+                  resource={resource}
+                  latestResource={latestResource}
+                  orgLabel={orgLabel}
+                  resourceId={resourceId}
+                  projectLabel={projectLabel}
+                />
               </AccessControl>
             </>
           )}
