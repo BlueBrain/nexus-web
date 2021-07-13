@@ -4,7 +4,7 @@ import { Collapse } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 import { NexusPlugin } from '../containers/NexusPlugin';
 import PluginInfo from '../components/PluginInfo';
-import { matchPlugins, pluginsMap } from '../utils';
+import { matchPlugins, pluginsMap, pluginsExcludeMap } from '../utils';
 import usePlugins from '../hooks/usePlugins';
 
 const { Panel } = Collapse;
@@ -22,9 +22,17 @@ const ResourcePlugins: React.FunctionComponent<{
     return null;
   }
 
-  const filteredPlugins =
+  const includedPlugins =
     pluginManifest &&
     matchPlugins(pluginsMap(pluginManifest), availablePlugins, resource);
+
+  const excludedPlugins =
+    pluginManifest &&
+    matchPlugins(pluginsExcludeMap(pluginManifest), availablePlugins, resource);
+
+  const filteredPlugins = includedPlugins?.filter(
+    plugin => !excludedPlugins?.includes(plugin)
+  );
 
   const pluginDataMap = filteredPlugins
     ? filteredPlugins
@@ -46,12 +54,7 @@ const ResourcePlugins: React.FunctionComponent<{
     : [];
 
   return filteredPlugins && filteredPlugins.length > 0 ? (
-    <Collapse
-      defaultActiveKey={[...Array(filteredPlugins.length).keys()].map(i =>
-        (i + 1).toString()
-      )}
-      onChange={() => {}}
-    >
+    <Collapse onChange={() => {}}>
       {pluginDataMap.map((pluginData, index) => {
         return pluginData ? (
           <Panel

@@ -26,6 +26,7 @@ const pluginsManifestPath =
 const layoutSettings = {
   logoImg: process.env.LOGO_IMG || '',
   logoLink: process.env.LOGO_LINK || 'https://bluebrainnexus.io/',
+  forgeLink: process.env.FORGE_LINK || '',
 };
 
 // configure search settings
@@ -33,6 +34,9 @@ const searchSettings = {
   searchConfigProject:
     process.env.SEARCH_CONFIG_PROJECT || DEFAULT_SEARCH_CONFIG_PROJECT,
 };
+
+// configure datamodels projects
+const dataModelsLocation = process.env.DATA_MODELS || '';
 
 const subAppsManifestPath =
   process.env.SUB_APPS_MANIFEST_PATH || '/public/sub-apps';
@@ -74,6 +78,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       layoutSettings,
       pluginsManifestPath,
       subAppsManifestPath,
+      dataModelsLocation,
       apiEndpoint: process.env.API_ENDPOINT || '/',
       basePath: base,
       clientId: process.env.CLIENT_ID || 'nexus-web',

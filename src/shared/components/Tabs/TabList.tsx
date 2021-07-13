@@ -14,22 +14,29 @@ type TabItem = {
 type TabListProps = {
   items: TabItem[];
   onSelected: (activeKey: string) => void;
+  tabType: 'line' | 'card' | 'editable-card';
   defaultActiveId?: string;
   activeKey?: string;
   position?: 'left' | 'right' | 'top' | 'bottom' | undefined;
   tabAction?: React.ReactElement;
   editButton?: (id: string) => React.ReactNode;
+  OnEdit?: (
+    e: React.MouseEvent | React.KeyboardEvent | string,
+    action: 'add' | 'remove'
+  ) => void;
 };
 
 const TabList: React.FunctionComponent<TabListProps> = ({
   items,
   onSelected,
   defaultActiveId,
+  tabType,
   activeKey,
   position = 'left',
   children,
   tabAction,
   editButton,
+  OnEdit,
 }) => {
   return (
     <div className="tab-list">
@@ -39,6 +46,8 @@ const TabList: React.FunctionComponent<TabListProps> = ({
         defaultActiveKey={defaultActiveId}
         activeKey={activeKey}
         tabBarExtraContent={{ left: tabAction }}
+        type={tabType}
+        onEdit={OnEdit}
       >
         {items.map(({ label, description, id }) => (
           <TabPane

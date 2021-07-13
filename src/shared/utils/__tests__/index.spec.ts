@@ -12,8 +12,10 @@ import {
   isISODate,
   matchPlugins,
   pluginsMap,
+  pluginsExcludeMap,
   makeStudioUri,
   parseJsonMaybe,
+  forceAsArray,
 } from '..';
 
 const identities: Identity[] = [
@@ -302,6 +304,17 @@ describe('utils functions', () => {
         },
       };
       expect(matchPlugins(pluginsMap, plugins, resource)).toEqual(['plugin1']);
+    });
+
+    it('matches a resource when pluginsExcludedMap has a type', () => {
+      const pluginsExcludedMap = {
+        plugin1: {
+          '@type': ['type1'],
+        },
+      };
+      expect(matchPlugins(pluginsExcludedMap, plugins, resource)).toEqual([
+        'plugin1',
+      ]);
     });
 
     it('matches a resource with multiple plugins', () => {
@@ -613,6 +626,44 @@ describe('utils functions', () => {
     });
   });
 
+  describe('pluginToExclude', () => {
+    const manifestWithPluginsToExclude = {
+      'sim-writer-config': {
+        modulePath: 'sim-writer-config.66e2aa60be278e26091a.js',
+        name: 'Sim writer config',
+        description: '',
+        version: '',
+        tags: [],
+        author: '',
+        license: '',
+        mapping: {
+          '@type': ['SimWriterConfiguration'],
+        },
+        exclude: {
+          '@type': ['Dataset'],
+        },
+      },
+      'simulation-campaign': {
+        modulePath: 'simulation-campaign.11f235ae73390d34a43b.js',
+        name: 'Simulation campaign',
+        description: '',
+        version: '',
+        tags: [],
+        author: '',
+        license: '',
+        mapping: {
+          '@type': ['SimulationCampaign'],
+        },
+      },
+    };
+
+    it('returns plugin mappings array of plugins to exclude', () => {
+      expect(pluginsExcludeMap(manifestWithPluginsToExclude)).toEqual({
+        'sim-writer-config': { '@type': ['Dataset'] },
+      });
+    });
+  });
+
   describe('makeStudioUri', () => {
     it('returns studio uri with encoded studio id', () => {
       const orgLabel = 'org';
@@ -638,6 +689,21 @@ describe('utils functions', () => {
       expect(parseJsonMaybe('')).toBe(null);
       expect(parseJsonMaybe('thisisnotjson')).toBe(null);
       expect(parseJsonMaybe(undefined)).toBe(null);
+    });
+  });
+
+  describe('forceAsArray()', () => {
+    it('returns an array if the input is an object', () => {
+      expect(forceAsArray({ thing: 1 })).toEqual([{ thing: 1 }]);
+      expect(forceAsArray({ thing: 1 })).not.toEqual([]);
+    });
+    it('returns an array if the input is an array', () => {
+      expect(forceAsArray([{ thing: 1 }])).toEqual([{ thing: 1 }]);
+      expect(forceAsArray({ thing: 1 })).not.toEqual([]);
+    });
+    it('returns an empty array if the input is null or undefined', () => {
+      expect(forceAsArray(null)).toEqual([]);
+      expect(forceAsArray(undefined)).toEqual([]);
     });
   });
 });

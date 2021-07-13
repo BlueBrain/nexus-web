@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { EnterOutlined, FileOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  BookOutlined,
+  EnterOutlined,
+  FileOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import { match } from 'ts-pattern';
 import { SearchQuickActions } from '.';
 
@@ -8,6 +13,7 @@ import './Hit.less';
 export enum HitType {
   UNCERTAIN = 'UNCERTAIN',
   RESOURCE = 'RESOURCE',
+  PROJECT = 'PROJECT',
 }
 
 const Hit: React.FC<{ type: HitType }> = ({ type, children }) => {
@@ -28,6 +34,14 @@ const Hit: React.FC<{ type: HitType }> = ({ type, children }) => {
       actionTip: (
         <span className="enter">
           search <EnterOutlined />
+        </span>
+      ),
+    }))
+    .with(HitType.PROJECT, () => ({
+      icon: <BookOutlined />,
+      actionTip: (
+        <span className="enter">
+          visit project <EnterOutlined />
         </span>
       ),
     }))

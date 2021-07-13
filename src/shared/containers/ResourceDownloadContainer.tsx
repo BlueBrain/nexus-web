@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Button, Dropdown, Menu, notification } from 'antd';
+import { Button, Dropdown, Menu } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 import { DownOutlined } from '@ant-design/icons';
+import useNotification from '../hooks/useNotification';
 
 type formatType = 'vnd.graph-viz' | 'n-triples' | 'json';
 
@@ -17,6 +18,7 @@ const ResourceDownloadButton: React.FunctionComponent<{
     resourceId: string,
     format: formatType
   ) => {
+    const notification = useNotification();
     nexus.Resource.get(orgLabel, projectLabel, resourceId, { as: format })
       .then(result => {
         const extension = {

@@ -8,6 +8,8 @@ import {
   Popover,
   Menu,
   Dropdown,
+  List,
+  Input,
 } from 'antd';
 import {
   CloseCircleOutlined,
@@ -16,12 +18,12 @@ import {
   LinkOutlined,
   ReloadOutlined,
   SortAscendingOutlined,
+  SortDescendingOutlined,
   SwitcherOutlined,
 } from '@ant-design/icons';
 import { ResourceList, Resource } from '@bbp/nexus-sdk';
 
 import RenameableItem from '../Renameable';
-import InfiniteSearch from '../List/InfiniteSearch';
 import ListItem from '../List/Item';
 import ResourceCardComponent from '../ResourceCard';
 import { getResourceLabel } from '../../utils';
@@ -30,6 +32,8 @@ import useMeasure from '../../hooks/useMeasure';
 import Copy from '../Copy';
 
 import './ResourceList.less';
+
+const { Search } = Input;
 
 export type ResourceBoardList = {
   name: string;
@@ -58,11 +62,18 @@ const ResourceListComponent: React.FunctionComponent<{
   resources: ResourceList<{}>['_results'];
   schemaLinkContainer?: React.FunctionComponent<{ resource: Resource }>;
   total?: number;
+  currentPage: number;
+  pageSize: number;
+  hasSearch?: boolean;
+  onPaginationChange(
+    searchValue: string | undefined,
+    page: number,
+    pageSize?: number
+  ): void;
   error: Error | null;
   onDelete(): void;
   onClone(): void;
   onUpdate(list: ResourceBoardList): void;
-  onLoadMore({ searchValue }: { searchValue: string }): void;
   onRefresh(): void;
   onSortBy(option: string): void;
   makeResourceUri(resourceId: string): string;
@@ -72,9 +83,12 @@ const ResourceListComponent: React.FunctionComponent<{
   busy,
   list,
   total,
+  currentPage,
+  pageSize,
+  onPaginationChange,
+  hasSearch,
   error,
   resources,
-  onLoadMore,
   onUpdate,
   onDelete,
   onClone,
@@ -86,6 +100,7 @@ const ResourceListComponent: React.FunctionComponent<{
   schemaLinkContainer,
   shareableLink,
 }) => {
+  const defaultSearchValue = list.query.q;
   const [{ ref: wrapperHeightRef }, { height: wrapperHeight }] = useMeasure();
   const { name } = list;
   const [sortOption, setSortOption] = React.useState(DEFAULT_SORT_OPTION);
@@ -127,7 +142,18 @@ const ResourceListComponent: React.FunctionComponent<{
     onSortBy(key);
   };
 
-  const hasMore = resources.length < Number(total || 0);
+  const [searchValue, setSearchValue] = React.useState<string | undefined>(
+    defaultSearchValue
+  );
+
+  React.useEffect(() => {
+    setSearchValue(defaultSearchValue);
+  }, [defaultSearchValue]);
+
+  const handlePaginationChange = (pageNumber: number, pageSize?: number) => {
+    const searchValue = list.query.q;
+    onPaginationChange(searchValue, pageNumber, pageSize);
+  };
 
   const sortOptions = (
     <Menu onClick={onChangeSort} selectedKeys={[sortOption]}>
@@ -146,11 +172,6 @@ const ResourceListComponent: React.FunctionComponent<{
             size="small"
           />
           <div className="count">
-            {!!resources.length && (
-              <>
-                <b>{resources.length.toLocaleString()}</b> /{' '}
-              </>
-            )}
             {!!total &&
               `${total.toLocaleString()} result${total > 1 ? 's' : ''}`}
           </div>
@@ -176,7 +197,17 @@ const ResourceListComponent: React.FunctionComponent<{
           {!list.query.q && (
             <Dropdown overlay={sortOptions} trigger={['hover', 'click']}>
               <Tooltip title="Sort resources">
-                <Button icon={<SortAscendingOutlined />} />
+                <Button
+                  ghost
+                  type="primary"
+                  icon={
+                    sortOption === '_createdAt' ? (
+                      <SortAscendingOutlined />
+                    ) : (
+                      <SortDescendingOutlined />
+                    )
+                  }
+                />
               </Tooltip>
             </Dropdown>
           )}
@@ -205,17 +236,36 @@ const ResourceListComponent: React.FunctionComponent<{
           </Tooltip>
         </div>
         <div className="controls">{children}</div>
+        {hasSearch && (
+          <div className="search">
+            <Search
+              placeholder={'Search...'}
+              allowClear={true}
+              value={searchValue}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setSearchValue(e.currentTarget.value);
+                onPaginationChange(e.currentTarget.value, 1, pageSize);
+              }}
+            />
+          </div>
+        )}
         <Spin spinning={busy}>
           {!!error && <Empty description={error.message} />}
           {!error && (
-            <InfiniteSearch
-              dataLength={resources.length}
-              onLoadMore={onLoadMore}
-              hasMore={hasMore}
-              height={wrapperHeight - 200} // additional padding for extra chonky list items
-              defaultSearchValue={list.query.q}
-            >
-              {resources.map(resource => {
+            <List
+              style={{ height: wrapperHeight - 200 }}
+              dataSource={resources}
+              pagination={{
+                total,
+                pageSize,
+                current: currentPage,
+                onChange: handlePaginationChange,
+                position: 'bottom',
+                showSizeChanger: false,
+                responsive: true,
+                showLessItems: true,
+              }}
+              renderItem={resource => {
                 return (
                   <a
                     href={makeResourceUri(resource['@id'])}
@@ -251,8 +301,8 @@ const ResourceListComponent: React.FunctionComponent<{
                     </ListItem>
                   </a>
                 );
-              })}
-            </InfiniteSearch>
+              }}
+            ></List>
           )}
         </Spin>
       </div>

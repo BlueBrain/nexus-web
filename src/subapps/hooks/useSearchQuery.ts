@@ -30,10 +30,6 @@ export type UseSearchProps = {
         key: string;
         direction: SortDirection;
       }[];
-  pagination?: {
-    from: number;
-    size: number;
-  };
 };
 
 export const DEFAULT_SEARCH_PROPS = {
@@ -46,15 +42,14 @@ export const DEFAULT_SEARCH_PROPS = {
 
 export default function useSearchQueryFromStudio(
   selfURL: string | null,
-  query: object = {}
+  query: object = {},
+  paginationFrom: number,
+  paginationSize: number
 ) {
   const [searchProps, setSearchProps] = React.useState<UseSearchProps>({
     ...DEFAULT_SEARCH_PROPS,
   });
-  const {
-    sort = DEFAULT_SEARCH_PROPS.sort,
-    pagination = DEFAULT_SEARCH_PROPS.pagination,
-  } = searchProps;
+  const { sort = DEFAULT_SEARCH_PROPS.sort } = searchProps;
 
   const nexus = useNexusContext();
 
@@ -67,8 +62,8 @@ export default function useSearchQueryFromStudio(
 
     body
       .filter('term', '_deprecated', false)
-      .size(pagination.size)
-      .from(pagination.from)
+      .size(paginationSize)
+      .from(paginationFrom)
       .rawOption('track_total_hits', TOTAL_HITS_TRACKING);
 
     // Sorting

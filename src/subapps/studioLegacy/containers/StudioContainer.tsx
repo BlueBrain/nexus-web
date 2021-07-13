@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Resource, Identity } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { notification, Empty, message } from 'antd';
+import { Empty, message } from 'antd';
 import { useHistory } from 'react-router';
 import EditStudio from '../components/EditStudio';
 import StudioHeader from '../components/StudioHeader';
@@ -9,6 +9,10 @@ import { StudioContext } from '../views/StudioView';
 import WorkspaceList from '../containers/WorkspaceListContainer';
 import { saveImage } from '../../../shared/containers/MarkdownEditorContainer';
 import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
+import { getDestinationParam } from '../../../shared/utils';
+import useNotification, {
+  parseNexusError,
+} from '../../../shared/hooks/useNotification';
 
 const resourcesWritePermissionsWrapper = (
   child: React.ReactNode,
@@ -21,11 +25,6 @@ const resourcesWritePermissionsWrapper = (
     children: [child],
   });
 };
-
-function getDestinationParam(): string {
-  const destinationPath = encodeURIComponent(window.location.pathname.slice(1));
-  return destinationPath ? `?destination=${destinationPath}` : '';
-}
 
 type StudioResource = Resource<{
   label: string;
@@ -43,20 +42,13 @@ const StudioContainer: React.FunctionComponent = () => {
   const history = useHistory();
   const studioContext = React.useContext(StudioContext);
   const { orgLabel, projectLabel, studioId } = studioContext;
+  const notification = useNotification();
 
   React.useEffect(() => {
     fetchAndSetupStudio();
   }, [orgLabel, projectLabel, studioId]);
 
-  const [identities, setIdentities] = React.useState<Identity[]>([]);
-
-  React.useEffect(() => {
-    nexus.Identity.list().then(({ identities }) => {
-      setIdentities(identities);
-    });
-  }, []); // Run only once.
-
-  const fetchAndSetupStudio = async () => {
+  const fetchAndSetupStudio = React.useCallback(() => {
     nexus.Resource.get(orgLabel, projectLabel, studioId)
       .then(value => {
         const studioResource: StudioResource = value as StudioResource;
@@ -68,21 +60,30 @@ const StudioContainer: React.FunctionComponent = () => {
       })
       .catch(e => {
         if (e['@type'] === 'AuthorizationFailed') {
-          const user = identities.find(i => i['@type'] === 'User');
-          const message = user
-            ? "You don't have the permissions to view the studio"
-            : 'Please login to view the studio';
-          notification.error({
-            message: 'Authentication error',
-            description: message,
-            duration: 4,
+          nexus.Identity.list().then(({ identities }) => {
+            const user = identities.find(i => i['@type'] === 'User');
+
+            if (!user) {
+              history.push(`/login${getDestinationParam()}`);
+            }
+
+            const message = user
+              ? "You don't have the permissions to view the studio"
+              : 'Please login to view the studio';
+
+            notification.error({
+              message: 'Access error',
+              description: message,
+            });
           });
-          if (!user) {
-            history.push(`/login${getDestinationParam()}`);
-          }
+        } else {
+          notification.error({
+            message: 'Failed to load the studio',
+            description: parseNexusError(e),
+          });
         }
       });
-  };
+  }, [orgLabel, projectLabel, studioId]);
 
   const updateStudio = async (label: string, description?: string) => {
     if (studioResource) {
@@ -109,15 +110,10 @@ const StudioContainer: React.FunctionComponent = () => {
         .catch(error => {
           notification.error({
             message: 'An error occurred',
-            description: error.reason || error.message,
-            duration: 3,
+            description: parseNexusError(error),
           });
         });
     }
-  };
-
-  const reloadWorkspaces = () => {
-    fetchAndSetupStudio();
   };
 
   const editButton = (
@@ -145,7 +141,7 @@ const StudioContainer: React.FunctionComponent = () => {
           <WorkspaceList
             workspaceIds={workspaceIds}
             studioResource={studioResource}
-            onListUpdate={reloadWorkspaces}
+            onListUpdate={fetchAndSetupStudio}
           />
         </>
       ) : (

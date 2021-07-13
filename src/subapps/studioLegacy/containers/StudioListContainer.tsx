@@ -15,7 +15,7 @@ const StudioListContainer: React.FunctionComponent<{
 }> = ({ orgLabel, projectLabel }) => {
   const nexus = useNexusContext();
   const history = useHistory();
-  const [searchQuery, setSearchQuery] = React.useState();
+  const [searchQuery, setSearchQuery] = React.useState<string>('');
   const [
     { busy, error, resources, total, next },
     setResources,

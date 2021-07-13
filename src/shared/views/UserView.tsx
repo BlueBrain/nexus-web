@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { notification, Button, Descriptions, List, Typography } from 'antd';
+import { Button, Descriptions, List, Typography } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import { RootState } from '../store/reducers';
 import { useHistory } from 'react-router';
+import useNotification from '../hooks/useNotification';
 
 export type UserPageData = {
   user?: string;
@@ -23,6 +24,7 @@ const UserView: React.FunctionComponent<{}> = props => {
   const history = useHistory();
 
   const nexus = useNexusContext();
+  const notification = useNotification();
 
   React.useEffect(() => {
     nexus.Identity.list()

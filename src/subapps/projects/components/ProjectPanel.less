@@ -1,0 +1,60 @@
+@import '../../../shared/lib.less';
+
+.project-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  padding: 0 1.5em;
+  background-color: #fff;
+  box-shadow: @box-shadow-base;
+  transition: all 0.2s ease-out;
+
+  // sticky project panel
+  position: fixed;
+  top: 52px;
+  right: 0;
+  left: 200px;
+  z-index: 21;
+
+  @media (max-width: 900px) {
+    height: 92px;
+  }
+
+  &__name {
+    font-size: 24px;
+    margin-right: 0.5em;
+
+    @media (max-width: 1130px) {
+      font-size: 18px;
+      line-height: 20px;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    @media (max-width: 1130px) {
+      line-height: 20px;
+    }
+  }
+
+  .ant-btn {
+    border-radius: 6px;
+    opacity: 0.9;
+
+    &:hover {
+      opacity: 1;
+      color: @text-color;
+      border-color: @text-color;
+    }
+
+    &:focus {
+      color: @text-color;
+      border-color: @text-color;
+      opacity: 0.9;
+    }
+  }
+}

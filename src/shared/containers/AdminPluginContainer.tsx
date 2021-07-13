@@ -21,9 +21,8 @@ type AdminProps = {
   resource: Resource;
   latestResource: Resource;
   activeTabKey: string;
-  defaultActiveKey: string;
   expandedFromQuery: string | string[] | null | undefined;
-  ref: React.MutableRefObject<HTMLDivElement>;
+  refProp: React.MutableRefObject<HTMLDivElement>;
   goToResource: (
     orgLabel: string,
     projectLabel: string,
@@ -48,24 +47,31 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
   resource,
   latestResource,
   activeTabKey,
-  defaultActiveKey,
   expandedFromQuery,
-  ref,
+  refProp: ref,
   goToResource,
   handleTabChange,
   handleGoToInternalLink,
   handleEditFormSubmit,
   handleExpanded,
 }) => {
+  const [tabChange, setTabChange] = React.useState<boolean>(false);
+
+  const onTabChange = (tab: string) => {
+    // forces a tab to rerender - otherwise RecourceEditor shifts its content left (codemirror issue)
+    setTabChange(!tabChange);
+    handleTabChange(tab);
+  };
+
   return (
-    <Collapse defaultActiveKey={defaultActiveKey} onChange={() => {}}>
+    <Collapse onChange={() => {}}>
       <Panel header="Admin" key="1">
         <ResourceActionsContainer resource={resource} />
         <ResourceMetadata
           resource={resource}
           schemaLink={SchemaLinkContainer}
         />
-        <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
+        <Tabs activeKey={activeTabKey} onChange={onTabChange}>
           <TabPane tab="JSON" key="#JSON">
             <ResourceEditorContainer
               resourceId={resource['@id']}
@@ -78,6 +84,7 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
               defaultEditable={editable}
               onSubmit={handleEditFormSubmit}
               onExpanded={handleExpanded}
+              tabChange={tabChange}
             />
           </TabPane>
           <TabPane tab="Description" key="#mde">

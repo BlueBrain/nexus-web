@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID, View } from '@bbp/nexus-sdk';
-import { notification, Modal, message, Spin } from 'antd';
+import { Modal, message, Spin } from 'antd';
 
 import useLinkToDashboardQueryEditor from './hooks/useLinkToDashboardQueryEditor';
 
@@ -12,6 +12,7 @@ import STUDIO_CONTEXT from '../../components/StudioContext';
 import { DASHBOARD_TYPE } from './CreateDashboardContainer';
 import usePlugins from '../../../../shared/hooks/usePlugins';
 import useAsyncCall from '../../../../shared/hooks/useAsynCall';
+import useNotification from '../../../../shared/hooks/useNotification';
 
 const DashboardEditorContainer: React.FunctionComponent<{
   orgLabel: string;
@@ -36,6 +37,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
 }) => {
   const nexus = useNexusContext();
   const { label, description, dataQuery, plugins } = dashboard;
+  const notification = useNotification();
 
   const [busy, setBusy] = React.useState(false);
   const pluginManifest = usePlugins();
@@ -90,7 +92,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
 
   const viewData = useAsyncCall<View, Error>(
     nexus.View.get(orgLabel, projectLabel, viewId),
-    [orgLabel, projectLabel, viewId]
+    [orgLabel, projectLabel, encodeURIComponent(viewId)]
   );
 
   return (

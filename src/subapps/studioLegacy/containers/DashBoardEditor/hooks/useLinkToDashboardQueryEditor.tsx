@@ -18,9 +18,11 @@ const useLinkToDashboardQueryEditor = (
   const [view, setView] = React.useState<View>();
 
   React.useEffect(() => {
-    nexus.View.get(orgLabel, projectLabel, viewId).then(result => {
-      setView(result);
-    });
+    nexus.View.get(orgLabel, projectLabel, encodeURIComponent(viewId)).then(
+      result => {
+        setView(result);
+      }
+    );
   }, [viewId]);
 
   const linkQueryEditor = React.useMemo<

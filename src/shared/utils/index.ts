@@ -138,8 +138,8 @@ export const stripBasename = (basename: string, path: string) => {
 };
 
 // For getting the last part of a uri path as a title or label
-export const labelOf = (string: string) => {
-  const slash = string.substring(string.lastIndexOf('/') + 1);
+export const labelOf = (inputString: string) => {
+  const slash = inputString.substring(inputString.lastIndexOf('/') + 1);
   const title = slash.substring(slash.lastIndexOf('#') + 1);
   return title;
 };
@@ -421,6 +421,21 @@ export const pluginsMap = (pluginManifest: any) =>
   }, {} as PluginMapping);
 
 /*
+ * Returns plugins that should be excluded
+ *
+ * @param {object} plugin Manifest
+ * @returns {array} plugins
+ */
+export const pluginsExcludeMap = (pluginManifest: any) =>
+  Object.keys(pluginManifest || {}).reduce((mapping, pluginManifestKey) => {
+    if (!pluginManifest) {
+      return mapping;
+    }
+    mapping[pluginManifestKey] = pluginManifest[pluginManifestKey].exclude;
+    return mapping;
+  }, {} as PluginMapping);
+
+/*
  * Returns studio uri
  *
  * @param {string} orgLabel
@@ -487,4 +502,12 @@ export const parseJsonMaybe = <T = object>(
     errorCallback && errorCallback(error);
   }
   return parsedJson;
+};
+
+export const forceAsArray = <T>(objectOrArray: T | T[] | null | undefined) => {
+  return !!objectOrArray
+    ? Array.isArray(objectOrArray)
+      ? objectOrArray
+      : [objectOrArray]
+    : [];
 };

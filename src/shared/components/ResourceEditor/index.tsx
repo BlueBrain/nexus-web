@@ -25,6 +25,7 @@ export interface ResourceEditorProps {
   expanded?: boolean;
   showMetadata?: boolean;
   showExpanded?: boolean;
+  showMetadataToggle?: boolean;
 }
 
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
@@ -39,6 +40,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     expanded = false,
     showMetadata = false,
     showExpanded = true,
+    showMetadataToggle = true,
   } = props;
 
   const [isEditing, setEditing] = React.useState(editing);
@@ -117,8 +119,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         <div>
           {!editable && (
             <div className="feedback">
-              <InfoCircleOutlined />
-              This resource cannot be edited
+              <InfoCircleOutlined /> This resource cannot be edited
             </div>
           )}
           {editable && !isEditing && valid && (
@@ -139,7 +140,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         </div>
 
         <div className="controls">
-          {!expanded && !isEditing && valid && (
+          {!expanded && !isEditing && valid && showMetadataToggle && (
             <>
               <Switch
                 checkedChildren="Metadata"

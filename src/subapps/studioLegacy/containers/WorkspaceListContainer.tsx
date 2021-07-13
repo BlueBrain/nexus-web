@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Resource } from '@bbp/nexus-sdk';
+import { NexusClient, Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
+import useNotification from '../../../shared/hooks/useNotification';
 import TabList from '../../../shared/components/Tabs/TabList';
 import AddWorkspaceContainer from './AddWorkspaceContainer';
 import WorkspaceForm from './WorkspaceFormContainer';
@@ -9,6 +10,52 @@ import useQueryString from '../../../shared/hooks/useQueryString';
 import { StudioContext } from '../views/StudioView';
 import DashboardList from '../containers/DashboardListContainer';
 import { resourcesWritePermissionsWrapper } from '../../../shared/utils/permission';
+
+const removeWorkSpace = async (
+  nexus: NexusClient,
+  workspaceId: string,
+  studio: StudioResource,
+  projectLabel: string,
+  orgLabel: string,
+  studioResourceId: string
+) => {
+  const workspaces = studio.workspaces;
+  if (workspaces) {
+    const index = workspaces.indexOf(workspaceId);
+    if (index !== -1) {
+      workspaces.splice(index, 1);
+    }
+  }
+  const studioSource = await nexus.Resource.getSource<StudioResource>(
+    orgLabel,
+    projectLabel,
+    encodeURIComponent(studio['@id'])
+  );
+  const studioUpdatePayload = {
+    ...studioSource,
+    workspaces,
+  };
+
+  await nexus.Resource.update(
+    orgLabel,
+    projectLabel,
+    encodeURIComponent(studioResourceId),
+    studio._rev,
+    studioUpdatePayload
+  );
+
+  const latestWorkspace = (await nexus.Resource.get(
+    orgLabel,
+    projectLabel,
+    encodeURIComponent(workspaceId)
+  )) as Resource;
+  await nexus.Resource.deprecate(
+    orgLabel,
+    projectLabel,
+    encodeURIComponent(workspaceId),
+    Number(latestWorkspace._rev)
+  );
+};
 
 type StudioResource = Resource<{
   label: string;
@@ -19,7 +66,7 @@ type StudioResource = Resource<{
 type WorkspaceListProps = {
   workspaceIds: string[];
   studioResource: StudioResource;
-  onListUpdate?(): void;
+  onListUpdate(): void;
 };
 
 const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
@@ -27,9 +74,15 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   studioResource,
   onListUpdate,
 }) => {
+  const notification = useNotification();
+  const [deleteConfirmation, setDeleteConfirmation] = React.useState<boolean>(
+    false
+  );
+  const [deleteWokspaceId, setDeleteWorkspaceId] = React.useState<string>();
+  const [showModal, setShowModal] = React.useState<boolean>(false);
   const [queryParams, setQueryString] = useQueryString();
   const studioContext = React.useContext(StudioContext);
-  const { orgLabel, projectLabel, workspaceId } = studioContext;
+  const { orgLabel, projectLabel, workspaceId, isWritable } = studioContext;
   const permissionsPath = `/${orgLabel}/${projectLabel}`;
   const [workspaces, setWorkspaces] = React.useState<Resource<any>[]>([]);
   const [selectedWorkspace, setSelectedWorkspace] = React.useState<
@@ -111,6 +164,10 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
       orgLabel={orgLabel}
       projectLabel={projectLabel}
       studio={studioResource}
+      showModal={showModal}
+      onCancel={() => {
+        setShowModal(false);
+      }}
       onAddWorkspace={onListUpdate}
     />
   );
@@ -134,6 +191,54 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
     return resourcesWritePermissionsWrapper(editButton, permissionsPath);
   };
 
+  const editWorkspace = React.useCallback(
+    async (
+      e: React.MouseEvent | React.KeyboardEvent | string,
+      action: 'add' | 'remove'
+    ) => {
+      if (action === 'add') {
+        setShowModal(true);
+      } else {
+        setDeleteWorkspaceId(e.toString());
+        setDeleteConfirmation(true);
+      }
+    },
+    [orgLabel, projectLabel, studioResource, nexus]
+  );
+
+  const deleteWorkSpaceCallBack = React.useCallback(async () => {
+    if (!deleteWokspaceId) {
+      return;
+    }
+    try {
+      setDeleteConfirmation(false);
+      setDeleteWorkspaceId(undefined);
+      await removeWorkSpace(
+        nexus,
+        deleteWokspaceId,
+        studioResource,
+        projectLabel,
+        orgLabel,
+        studioResource['@id']
+      );
+      onListUpdate();
+      notification.success({
+        message: 'Removed workspace succesfully!',
+      });
+    } catch (ex) {
+      notification.error({
+        message: 'Failed to remove workspace!',
+      });
+    }
+  }, [
+    deleteConfirmation,
+    deleteWokspaceId,
+    orgLabel,
+    projectLabel,
+    studioResource,
+    nexus,
+  ]);
+
   return (
     <>
       <TabList
@@ -145,6 +250,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
         onSelected={(id: string) => {
           selectWorkspace(id, workspaces);
         }}
+        tabType={isWritable ? 'editable-card' : 'card'}
         activeKey={
           workspaces.length
             ? (selectedWorkspace && selectedWorkspace['@id']) ||
@@ -154,6 +260,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
         position="top"
         tabAction={resourcesWritePermissionsWrapper(tabAction, permissionsPath)}
         editButton={editButtonWrapper}
+        OnEdit={editWorkspace}
       >
         {selectedWorkspace ? (
           <div className="workspace">
@@ -165,6 +272,17 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
           </div>
         ) : null}
       </TabList>
+      <Modal
+        title="Delete Workspace"
+        visible={deleteConfirmation}
+        onCancel={() => {
+          setDeleteConfirmation(false);
+          setDeleteWorkspaceId(undefined);
+        }}
+        onOk={deleteWorkSpaceCallBack}
+      >
+        <p>Are you sure you want to delete ?</p>
+      </Modal>
       {showEdit && !!workspaceToEdit ? (
         <WorkspaceForm
           orgLabel={orgLabel}

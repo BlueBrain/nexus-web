@@ -11,7 +11,7 @@ import { parseJsonMaybe } from '../../../../shared/utils';
 const DEFAULT_GRID_DIMENSIONS = { gutter: 16, column: 4 };
 
 export interface ResultsGridProps {
-  pagination: ListProps<any>['pagination'];
+  pagination?: ListProps<any>['pagination'];
   searchResponse: UseSearchResponse;
   onClickItem: (resource: Resource) => void;
 }

@@ -149,6 +149,7 @@ export default function useSearchQuery(props: UseSearchQueryProps) {
     if (!selfURL) {
       return null;
     }
+
     const { org, project, id } = parseURL(selfURL);
 
     const encodedID = encodeURIComponent(id);

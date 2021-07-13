@@ -1,7 +1,9 @@
 import * as React from 'react';
+import { labelOf } from '../../../shared/utils';
 import {
   Resource,
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+  DEFAULT_SPARQL_VIEW_ID,
   ElasticSearchViewQueryResponse,
 } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
@@ -50,10 +52,6 @@ const SelectViews: React.FunctionComponent<{
   setView: (view: string) => void;
 }> = ({ selectedView, views, setView }) => {
   const { Option } = Select;
-  const getViewName = (id: string) => {
-    const values = id.split('/');
-    return values[values.length - 1];
-  };
   const viewOptions: any[] = views.map(d => d['@id']);
   return (
     <>
@@ -61,12 +59,12 @@ const SelectViews: React.FunctionComponent<{
         onChange={(value: string) => {
           setView(value);
         }}
-        value={selectedView}
+        value={labelOf(selectedView)}
       >
         {viewOptions.map((d, index) => {
           return (
             <Option key={index.toString()} value={d}>
-              {getViewName(d)}
+              {labelOf(d)}
             </Option>
           );
         })}
@@ -92,6 +90,12 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
   const [error, setError] = React.useState<NexusSparqlError | Error>();
   const [namePrompt, setNamePrompt] = React.useState<boolean>(false);
   const nexus = useNexusContext();
+  const currentDashboards = React.useMemo(() => {
+    if (workspace) {
+      return workspace['dashboards'] as any[];
+    }
+    return [];
+  }, [workspace]);
 
   const saveDashBoards = (workspace: Resource) => {
     const newList: dashboard[] = [
@@ -161,7 +165,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
     nexus.View.elasticSearchQuery(
       orgLabel,
       projectLabel,
-      DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+      encodeURIComponent(DEFAULT_ELASTIC_SEARCH_VIEW_ID),
       {
         query: {
           bool: {
@@ -194,7 +198,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
     nexus.View.elasticSearchQuery(
       orgLabel,
       projectLabel,
-      DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+      encodeURIComponent(DEFAULT_ELASTIC_SEARCH_VIEW_ID),
       {
         query: {
           bool: {
@@ -237,7 +241,9 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
           })
         );
       })
-      .catch(e => {});
+      .catch(e => {
+        setError(e);
+      });
   }, [workspaceId, orgLabel, projectLabel]);
 
   React.useEffect(() => {
@@ -302,15 +308,15 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
           width={700}
         >
           <Form layout="vertical">
-            <Form.Item label={'Select View for the Dashboards(s)'}>
-              {viewToAdd ? (
+            {currentDashboards.length > 0 ? (
+              <Form.Item label={'Select View for the Dashboards(s)'}>
                 <SelectViews
                   views={views}
                   setView={(view: string) => setViewToAdd(view)}
                   selectedView={viewToAdd}
                 />
-              ) : null}
-            </Form.Item>
+              </Form.Item>
+            ) : null}
             <Form.Item label={'Add or Remove Dashboards'}>
               <Transfer
                 targetKeys={targetKeys}

@@ -49,9 +49,6 @@ exports[`login component should render correctly 1`] = `
           <Button
             block={true}
             className="login-button"
-            ghost={false}
-            htmlType="button"
-            loading={false}
             onClick={[Function]}
             type="primary"
           >
@@ -247,11 +244,7 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
             className="actions"
           >
             <Button
-              block={false}
               className="login-button"
-              ghost={false}
-              htmlType="button"
-              loading={false}
               onClick={[Function]}
               type="primary"
             >
@@ -426,7 +419,7 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                   overlayClassName=""
                   placement="bottomLeft"
                   prefixCls="ant-dropdown"
-                  transitionName="slide-up"
+                  transitionName="ant-slide-up"
                   trigger={
                     Array [
                       "click",
@@ -574,7 +567,7 @@ exports[`login component with more than 1 realm should render correctly 1`] = `
                     popupClassName=""
                     popupPlacement="bottomLeft"
                     popupStyle={Object {}}
-                    popupTransitionName="slide-up"
+                    popupTransitionName="ant-slide-up"
                     prefixCls="ant-dropdown"
                     showAction={Array []}
                     stretch="minWidth"

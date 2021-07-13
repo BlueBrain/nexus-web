@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, notification, message } from 'antd';
+import { Button, Modal, message } from 'antd';
 import { PlusSquareOutlined } from '@ant-design/icons';
 import { useNexusContext } from '@bbp/react-nexus';
 
@@ -7,6 +7,9 @@ import StudioEditorForm from '../components/StudioEditorForm';
 import STUDIO_CONTEXT from '../components/StudioContext';
 import { saveImage } from '../../../shared/containers/MarkdownEditorContainer';
 import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
+import useNotification, {
+  parseNexusError,
+} from '../../../shared/hooks/useNotification';
 
 export const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';
@@ -18,6 +21,7 @@ const CreateStudioContainer: React.FC<{
 }> = ({ orgLabel, projectLabel, goToStudio }) => {
   const nexus = useNexusContext();
   const [showModal, setShowModal] = React.useState(false);
+  const notification = useNotification();
 
   const generateStudioResource = (label: string, description?: string) => ({
     label,
@@ -34,7 +38,7 @@ const CreateStudioContainer: React.FC<{
         encodeURIComponent(STUDIO_CONTEXT['@id'])
       );
     } catch (error) {
-      if (error['@type'] === 'NotFound') {
+      if (error['@type'] === 'ResourceNotFound') {
         // @ts-ignore TODO: update resource type in SDK to allow nested objects
         // https://github.com/BlueBrain/nexus/issues/937
         await nexus.Resource.create(orgLabel, projectLabel, {
@@ -71,8 +75,7 @@ const CreateStudioContainer: React.FC<{
       .catch(error => {
         notification.error({
           message: 'An error occurred',
-          description: error.reason || error.message,
-          duration: 3,
+          description: parseNexusError(error),
         });
       });
   };

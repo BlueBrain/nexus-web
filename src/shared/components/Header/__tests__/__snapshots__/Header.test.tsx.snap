@@ -22,7 +22,6 @@ exports[`Header component Should render correctly 1`] = `
       overlayStyle={Object {}}
       placement="bottomRight"
       title="Information"
-      transitionName="zoom-big"
       trigger="click"
     >
       <img

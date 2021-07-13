@@ -1,6 +1,6 @@
 import { Resource } from '@bbp/nexus-sdk';
 
-const DEFAULT_ELASTIC_SEARCH_VIEW_ID = 'nxv:defaultElasticSearchIndex';
+const DEFAULT_ELASTIC_SEARCH_VIEW_ID = 'documents';
 const NEXUS_FILE_TYPE = 'File';
 const VIEW = 'View';
 const ES_VIEW = 'ElasticSearchView';
