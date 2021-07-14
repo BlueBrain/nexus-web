@@ -2,8 +2,17 @@ import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import ReactPlayer from 'react-player';
-import { Collapse, Modal, Button } from 'antd';
-
+import {
+  Descriptions,
+  Collapse,
+  Modal,
+  Button,
+  Image,
+  List,
+  Avatar,
+  Space,
+} from 'antd';
+import { MessageOutlined, LikeOutlined, StarOutlined } from '@ant-design/icons';
 const { Panel } = Collapse;
 
 type VideoProps = {
@@ -45,6 +54,7 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
 
   const handleSelectedVideo = (video: any) => {
     const selectedVideo = video;
+    console.log(selectedVideo);
     setSelectedVideo(selectedVideo);
     setIsModalVisible(true);
   };
@@ -62,13 +72,32 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
   return (
     <Collapse onChange={() => {}}>
       <Panel header="Video" key="1">
-        {videoData.map((v: any, k: number) => (
-          <li key={k}>
-            <Button type="link" onClick={() => handleSelectedVideo(v)}>
-              {v.name}
-            </Button>
-          </li>
-        ))}
+        {videoData ? (
+          <List
+            itemLayout="vertical"
+            dataSource={videoData}
+            renderItem={(item: any) => (
+              <List.Item
+                extra={
+                  <img
+                    width={272}
+                    alt="logo"
+                    src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
+                  />
+                }
+              >
+                <List.Item.Meta
+                  avatar={
+                    <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                  }
+                  title={<a href="https://ant.design">{item.name}</a>}
+                  description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                />
+              </List.Item>
+            )}
+          />
+        ) : null}
+
         {selectedVideo && !!selectedVideo['name'] ? (
           <Modal
             title={selectedVideo['name']}
