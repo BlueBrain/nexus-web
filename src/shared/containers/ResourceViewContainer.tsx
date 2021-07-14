@@ -378,9 +378,7 @@ const ResourceViewContainer: React.FunctionComponent<{
                 />
                 <VideoPluginContainer
                   resource={resource}
-                  latestResource={latestResource}
                   orgLabel={orgLabel}
-                  resourceId={resourceId}
                   projectLabel={projectLabel}
                 />
               </AccessControl>
