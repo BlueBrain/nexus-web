@@ -80,22 +80,6 @@ export const DEFAULT_FIELDS = [
     displayIndex: 3,
   },
 ];
-
-export async function querySparql(
-  nexus: NexusClient,
-  dataQuery: string,
-  view: View
-) {
-  const result = await sparqlQueryExecutor(
-    nexus,
-    dataQuery,
-    view as SparqlView
-  );
-  const headerProperties = result.headerProperties;
-  const items = result.items;
-  return { headerProperties, items, total: items.length };
-}
-
 const sorter = (dataIndex: string) => {
   return (
     a: {
@@ -116,6 +100,23 @@ const sorter = (dataIndex: string) => {
     return 0;
   };
 };
+
+export async function querySparql(
+  nexus: NexusClient,
+  dataQuery: string,
+  view: View
+) {
+  const result = await sparqlQueryExecutor(
+    nexus,
+    dataQuery,
+    view as SparqlView
+  );
+
+  const headerProperties = result.headerProperties;
+
+  const items = result.items;
+  return { headerProperties, items, total: items.length };
+}
 
 export function parseESResults(result: any) {
   const total = result.hits.total.value || 0;
@@ -216,7 +217,22 @@ const accessData = async (
     return { items, total, tableResource, view, headerProperties };
   }
   const result = await querySparql(nexus, dataQuery, view);
-  return { ...result, tableResource };
+  const headerProperties: {
+    title: string;
+    dataIndex: string;
+    sorter?: (dataIndex: string) => any;
+  }[] = result.headerProperties.map(headerProp => {
+    const currentConfig = columnConfig.find(c => c.name === headerProp.title);
+    if (currentConfig && currentConfig.enableSort) {
+      return {
+        ...headerProp,
+        sorter,
+      };
+    }
+    return headerProp;
+  });
+
+  return { ...result, headerProperties, tableResource };
 };
 
 export const useAccessDataForTable = (
@@ -319,41 +335,35 @@ export const useAccessDataForTable = (
     }
   );
 
-  const downloadCSV = React.useMemo(
-    () => () => {
-      if (dataResult.isSuccess) {
-        // download only selected rows or,
-        // download everything, when nothing is selected.
-        const selectedItems =
-          selectedRows.length > 0
-            ? dataResult.data.items.filter((item: any) => {
-                return selectedRows.includes(item.key);
-              })
-            : dataResult.data.items;
+  const downloadCSV = React.useCallback(() => {
+    if (dataResult.isSuccess) {
+      // download only selected rows or,
+      // download everything, when nothing is selected.
+      const selectedItems =
+        selectedRows.length > 0
+          ? dataResult.data.items.filter((item: any) => {
+              return selectedRows.includes(item.key);
+            })
+          : dataResult.data.items;
 
-        exportAsCSV(
-          selectedItems,
-          dataResult.data.headerProperties.map((h: any) => {
-            return {
-              label: h.title,
-              value: h.dataIndex,
-            };
-          })
-        );
-      }
-    },
-    [dataResult]
-  );
-  const addToDataCart = React.useMemo(
-    () => () => {
-      if (selectedResources && addResourceCollectionToCart) {
-        addResourceCollectionToCart(selectedResources).then(response => {
-          // succeed silently.
-        });
-      }
-    },
-    [selectedResources, addResourceCollectionToCart]
-  );
+      exportAsCSV(
+        selectedItems,
+        dataResult.data.headerProperties.map((h: any) => {
+          return {
+            label: h.title,
+            value: h.dataIndex,
+          };
+        })
+      );
+    }
+  }, [dataResult]);
+  const addToDataCart = React.useCallback(() => {
+    if (selectedResources && addResourceCollectionToCart) {
+      addResourceCollectionToCart(selectedResources).then(response => {
+        // succeed silently.
+      });
+    }
+  }, [selectedResources, addResourceCollectionToCart]);
   const addFromDataCart = () => {};
 
   return {

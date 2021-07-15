@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { useLocation, useHistory, useParams } from 'react-router';
-import { Spin, Card, Empty, notification, Alert } from 'antd';
+import { Spin, Card, Empty, Alert } from 'antd';
 import * as queryString from 'query-string';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import {
@@ -22,6 +22,8 @@ import {
   getDestinationParam,
 } from '../utils';
 import { isDeprecated } from '../utils/nexusMaybe';
+import useNotification from '../hooks/useNotification';
+import Preview from '../components/Preview/Preview';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -43,6 +45,7 @@ const ResourceViewContainer: React.FunctionComponent<{
   const nexus = useNexusContext();
   const location = useLocation();
   const history = useHistory();
+  const notification = useNotification();
   const [{ ref }] = useMeasure();
   const { data: pluginManifest } = usePlugins();
   const availablePlugins = Object.keys(pluginManifest || {});
@@ -134,13 +137,11 @@ const ResourceViewContainer: React.FunctionComponent<{
         notification.success({
           message: 'Resource saved',
           description: getResourceLabel(resource),
-          duration: 2,
         });
       } catch (error) {
         notification.error({
           message: 'An unknown error occurred',
           description: error.message,
-          duration: 0,
         });
         setResource({
           error,
@@ -180,6 +181,7 @@ const ResourceViewContainer: React.FunctionComponent<{
         projectLabel,
         resourceId
       )) as Resource;
+
       const latestResource: Resource =
         rev || tag
           ? ((await nexus.Resource.get(
@@ -231,7 +233,6 @@ const ResourceViewContainer: React.FunctionComponent<{
           notification.error({
             message: 'Authentication error',
             description: message,
-            duration: 4,
           });
         });
 
@@ -249,6 +250,8 @@ const ResourceViewContainer: React.FunctionComponent<{
       });
     }
   };
+
+  const nonEditableResourceTypes = ['File', 'View'];
 
   React.useEffect(() => {
     setResources();
@@ -308,18 +311,20 @@ const ResourceViewContainer: React.FunctionComponent<{
                   goToResource={goToSelfResource}
                 />
               )}
+
               <AccessControl
                 path={`/${orgLabel}/${projectLabel}`}
                 permissions={['resources/write']}
                 noAccessComponent={() => (
                   <div>
-                    <div>
-                      <p style={{ marginTop: 15 }}>
-                        <Alert
-                          message="You don't have access to edit the resource. You can nonetheless see the resource metadata below."
-                          type="info"
-                        />
-                      </p>
+                    <div style={{ marginTop: 15 }}>
+                      <Alert
+                        message="You don't have access to edit the resource. You can nonetheless see the resource metadata below."
+                        type="info"
+                      />
+                      {resource.distribution && (
+                        <Preview nexus={nexus} resource={resource} />
+                      )}
                       <AdminPlugin
                         editable={false}
                         orgLabel={orgLabel}
@@ -341,12 +346,23 @@ const ResourceViewContainer: React.FunctionComponent<{
                 )}
               >
                 {(!filteredPlugins || filteredPlugins.length === 0) && (
-                  <p>
-                    <Alert
-                      message="This resource does not have plugins configured yet. You can nonetheless edit the resource metadata below."
-                      type="info"
-                    />
-                  </p>
+                  <Alert
+                    message="This resource does not have plugins configured yet. You can nonetheless edit the resource metadata below."
+                    type="info"
+                  />
+                )}
+                {!!resource['@type'] &&
+                  typeof resource['@type'] === 'string' &&
+                  nonEditableResourceTypes.includes(resource['@type']) && (
+                    <p>
+                      <Alert
+                        message="This resource is not editable because it is of the type 'File'. For further information please contact the administrator."
+                        type="info"
+                      />
+                    </p>
+                  )}
+                {resource.distribution && (
+                  <Preview nexus={nexus} resource={resource} />
                 )}
                 <AdminPlugin
                   editable={isLatest && !isDeprecated(resource)}

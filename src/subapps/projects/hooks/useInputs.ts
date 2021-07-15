@@ -1,8 +1,11 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { SelectQueryResponse, SparqlViewQueryResponse } from '@bbp/nexus-sdk';
-
-import { displayError } from '../components/Notifications';
+import { notification } from 'antd';
+import {
+  distanceFromTopToDisplay,
+  parseNexusError,
+} from '../../../shared/hooks/useNotification';
 
 const VIEW_ID = 'graph';
 
@@ -86,7 +89,11 @@ export const useInputs = (
         setInputs(parsedList);
       })
       .catch(error => {
-        displayError(error, 'Failed to fetch Workflow Step inputs');
+        notification.error({
+          message: 'Failed to fetch Workflow Step inputs',
+          description: parseNexusError(error),
+          top: distanceFromTopToDisplay,
+        });
       });
   };
 

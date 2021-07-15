@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { notification } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, NexusFile } from '@bbp/nexus-sdk';
 
 import { isFile } from '../utils/nexusMaybe';
 import ImagePreviewComponent from '../components/Images/Preview';
 import { getOrgAndProjectFromResource } from '../utils';
+import useNotification from '../hooks/useNotification';
 
 // Only preview images lower than 3MB in size
 const MAX_BYTES_TO_PREVIEW = 3000000;
@@ -15,6 +15,7 @@ const ImagePreviewContainer: React.FunctionComponent<{
   maxBytes?: number;
 }> = props => {
   const nexus = useNexusContext();
+  const notification = useNotification();
   const { resource, maxBytes = MAX_BYTES_TO_PREVIEW } = props;
   const { orgLabel, projectLabel } = getOrgAndProjectFromResource(resource);
   const resourceId = resource['@id'];

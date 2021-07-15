@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 
-import { displayError } from '../components/Notifications';
 import NewTableForm from '../components/NewTableForm';
 import { FUSION_TABLE_CONTEXT } from '../fusionContext';
+import useNotification, {
+  parseNexusError,
+} from '../../../shared/hooks/useNotification';
 
 const DEFAULT_SPARQL_QUERY =
   'prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/> SELECT DISTINCT ?self ?s WHERE { ?s nxv:self ?self } LIMIT 20';
@@ -17,6 +19,7 @@ const NewTableContainer: React.FC<{
 }> = ({ orgLabel, projectLabel, parentId, onClickClose, onSuccess }) => {
   const nexus = useNexusContext();
   const [busy, setBusy] = React.useState<boolean>(false);
+  const notification = useNotification();
 
   const saveTable = async (name: string, description: string) => {
     setBusy(true);
@@ -71,7 +74,10 @@ const NewTableContainer: React.FC<{
       })
       .catch(error => {
         setBusy(false);
-        displayError(error, 'Failed to add a new table');
+        notification.error({
+          message: 'Failed to add a new table',
+          description: parseNexusError(error),
+        });
       });
   };
 

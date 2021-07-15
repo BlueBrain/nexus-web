@@ -5,8 +5,7 @@ import { useLocation } from 'react-router-dom';
 import { NexusClient, Identity, Realm } from '@bbp/nexus-sdk';
 import { useNexus } from '@bbp/react-nexus';
 import { UserManager } from 'oidc-client';
-import { Layout, Menu, notification } from 'antd';
-import { RightCircleOutlined, LeftCircleOutlined } from '@ant-design/icons';
+import { Layout } from 'antd';
 
 import Header from '../components/Header';
 import SeoHeaders from './SeoHeaders';
@@ -23,6 +22,7 @@ import DataCartContainer from '../containers/DataCartContainer';
 import SideMenu from './SideMenu';
 
 import './FusionMainLayout.less';
+import useNotification from '../hooks/useNotification';
 
 const { Sider, Content } = Layout;
 
@@ -96,6 +96,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   const subApps = [homeApp, ...propSubApps];
   const location = useLocation();
   const dispatch = useDispatch();
+  const notification = useNotification();
   //   TODO: collapsed version https://github.com/BlueBrain/nexus/issues/1322
   const [collapsed, setCollapsed] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState<SubAppProps>(
@@ -137,7 +138,6 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
             <p>Please contact your system administrators.</p>
           </div>
         ),
-        duration: 0,
       });
     }
   }, [loginError]);

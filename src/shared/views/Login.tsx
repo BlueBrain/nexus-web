@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { notification } from 'antd';
 import { Realm } from '@bbp/nexus-sdk';
 import { push } from 'connected-react-router';
 import { UserManager } from 'oidc-client';
@@ -9,6 +8,7 @@ import LoginBox from '../components/Login';
 import getUserManager from '../../client/userManager';
 import { RootState } from '../store/reducers';
 import * as configActions from '../store/actions/config';
+import useNotification from '../hooks/useNotification';
 
 export interface LoginViewProps {
   realms: Realm[];
@@ -24,6 +24,7 @@ const Login: React.FunctionComponent<LoginViewProps> = props => {
     realms.find(r => r._label === props.preferredRealm) || props.realms[0];
 
   const [preferredRealm, setPreferredRealm] = React.useState(defaultRealm.name);
+  const notification = useNotification();
 
   if (realms.length === 0 || !realms) {
     redirect();
@@ -61,7 +62,6 @@ const Login: React.FunctionComponent<LoginViewProps> = props => {
                     <p>Please contact your system administrators.</p>
                   </div>
                 ),
-                duration: 0,
               });
               break;
             default:
@@ -73,7 +73,6 @@ const Login: React.FunctionComponent<LoginViewProps> = props => {
                     <p>Please contact your system administrators.</p>
                   </div>
                 ),
-                duration: 0,
               });
               break;
           }

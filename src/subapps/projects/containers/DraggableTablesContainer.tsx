@@ -2,9 +2,10 @@ import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import Draggable from 'react-draggable';
-
-import { displayError } from '../components/Notifications';
 import DataTableContainer from '../../../shared/containers/DataTableContainer';
+import useNotification, {
+  parseNexusError,
+} from '../../../shared/hooks/useNotification';
 
 const DraggableTablesContainer: React.FC<{
   orgLabel: string;
@@ -12,6 +13,7 @@ const DraggableTablesContainer: React.FC<{
   tables: any[];
 }> = ({ orgLabel, projectLabel, tables }) => {
   const nexus = useNexusContext();
+  const notification = useNotification();
 
   const onPostionChange = async (
     table: any,
@@ -36,7 +38,10 @@ const DraggableTablesContainer: React.FC<{
         { ...latest, ...table }
       );
     } catch (error) {
-      displayError(error, 'Failed to save new position');
+      notification.error({
+        message: 'Failed to save new position',
+        description: parseNexusError(error),
+      });
     }
   };
 
@@ -52,7 +57,11 @@ const DraggableTablesContainer: React.FC<{
           >
             <div
               key={`table-${table['@id']}`}
-              style={{ margin: 20, width: '1200' }}
+              style={{
+                marginLeft: 20,
+                marginTop: 50,
+                width: '1200',
+              }}
             >
               <DataTableContainer
                 orgLabel={orgLabel}

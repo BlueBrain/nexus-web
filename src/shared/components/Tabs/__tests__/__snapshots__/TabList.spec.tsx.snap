@@ -12,6 +12,7 @@ exports[`TabList component should render correctly 1`] = `
       }
     }
     tabPosition="left"
+    type="editable-card"
   />
 </div>
 `;

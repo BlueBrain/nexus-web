@@ -4,6 +4,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import InfiniteSearch from '../../../shared/components/List/InfiniteSearch';
 
 const DEFAULT_PAGE_SIZE = 20;
+const SHOULD_INCLUDE_DEPRECATED = false;
 
 const ProjectListContainer: React.FunctionComponent<{
   orgLabel: string;
@@ -16,7 +17,6 @@ const ProjectListContainer: React.FunctionComponent<{
     total: 0,
     items: [],
     searchValue: props.defaultSearchValue,
-    includeDeprecated: false,
   });
 
   // initial load
@@ -24,7 +24,7 @@ const ProjectListContainer: React.FunctionComponent<{
     nexus.Project.list(props.orgLabel, {
       size: DEFAULT_PAGE_SIZE,
       label: projects.searchValue,
-      deprecated: projects.includeDeprecated,
+      deprecated: SHOULD_INCLUDE_DEPRECATED,
     }).then(res =>
       setProjects({ ...projects, total: res._total, items: res._results })
     );
@@ -35,11 +35,12 @@ const ProjectListContainer: React.FunctionComponent<{
     // - the entire list back to []
     // - the from index back to 0
     const newFilter: boolean = searchValue !== projects.searchValue;
+
     nexus.Project.list(props.orgLabel, {
       size: DEFAULT_PAGE_SIZE,
       from: newFilter ? 0 : projects.items.length,
       label: searchValue,
-      deprecated: projects.includeDeprecated,
+      deprecated: SHOULD_INCLUDE_DEPRECATED,
     }).then(res => {
       setProjects({
         searchValue,

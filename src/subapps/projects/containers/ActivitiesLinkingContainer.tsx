@@ -7,11 +7,13 @@ import NotififcationsPopover from '../components/NotificationsPopover';
 import { useUnlinkedActivities } from '../hooks/useUnlinkedActivities';
 import LinkActivityForm from '../components/LinkActivityForm';
 import fusionConfig from '../config';
-import { displayError, successNotification } from '../components/Notifications';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 import { labelOf } from '../../../shared/utils';
 import { WorkflowStepMetadata } from '../types';
 import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
+import useNotification, {
+  parseNexusError,
+} from '../../../shared/hooks/useNotification';
 
 const ActivitiesLinkingContainer: React.FC<{
   orgLabel: string;
@@ -21,7 +23,7 @@ const ActivitiesLinkingContainer: React.FC<{
     orgLabel,
     projectLabel
   );
-
+  const notification = useNotification();
   const match = useRouteMatch<{
     orgLabel: string;
     projectLabel: string;
@@ -48,7 +50,10 @@ const ActivitiesLinkingContainer: React.FC<{
         fetchWorkflowSteps(response._results);
       })
       .catch(error => {
-        displayError(error, 'Failed to load the list of Workflow Steps');
+        notification.error({
+          message: 'Failed to load the list of Workflow Steps',
+          description: parseNexusError(error),
+        });
       });
   };
 
@@ -64,7 +69,10 @@ const ActivitiesLinkingContainer: React.FC<{
     )
       .then(response => setSteps(response))
       .catch(error => {
-        displayError(error, 'Failed to fetch Activities');
+        notification.error({
+          message: 'Failed to fetch Activities',
+          description: parseNexusError(error),
+        });
       });
   };
 
@@ -118,7 +126,9 @@ const ActivitiesLinkingContainer: React.FC<{
     nexus.Resource.getSource(orgLabel, projectLabel, encodeURIComponent(stepId))
       .then(response => updateWorkflowStep(stepId, response))
       .then(() => {
-        successNotification('The activity is linked successfully');
+        notification.success({
+          message: 'The activity is linked successfully',
+        });
         //  TODO: find a better solution
         const reloadTimer = setTimeout(() => {
           fetchUnlinkedActivities();
@@ -126,10 +136,10 @@ const ActivitiesLinkingContainer: React.FC<{
         }, 4000);
       })
       .catch(error =>
-        displayError(
-          error,
-          'Oops! Something got wrong - the Activity was not linked'
-        )
+        notification.error({
+          message: 'Oops! Something went wrong - the Activity was not linked',
+          description: parseNexusError(error),
+        })
       );
   };
 
@@ -168,19 +178,39 @@ const ActivitiesLinkingContainer: React.FC<{
       .then(() => {
         setshowCreateStepForm(false);
         setBusy(false);
-        successNotification(`New step ${name} created successfully`);
+        notification.success({
+          message: `New step ${name} created successfully`,
+        });
       })
       .catch(error => {
         setshowCreateStepForm(false);
         setBusy(false);
-        displayError(error, 'An error occurred');
+        notification.error({
+          message: 'An error occurred',
+          description: parseNexusError(error),
+        });
       });
   };
 
-  const stepsList = steps.map(step => ({
-    id: step['@id'],
-    name: step.name,
-  }));
+  const stepsList = steps.map(step => {
+    const parentSteps: { id: string; name: string }[] = [];
+    let stepTraversal = step;
+    while (stepTraversal.hasParent) {
+      stepTraversal = steps.find(
+        step => step['@id'] === stepTraversal.hasParent['@id']
+      );
+      parentSteps.push({ id: stepTraversal['@id'], name: stepTraversal.name });
+    }
+    return {
+      parentSteps,
+      id: step['@id'],
+      name: step.name,
+    } as {
+      id: string;
+      name: string;
+      parentSteps: { id: string; name: string }[];
+    };
+  });
 
   const defaultActivityType = () => {
     if (selectedActivity) {

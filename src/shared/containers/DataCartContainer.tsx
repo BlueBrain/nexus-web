@@ -17,15 +17,20 @@ import {
   Menu,
   Dropdown,
   Input,
-  notification,
 } from 'antd';
 import { CartContext } from '../hooks/useDataCart';
 import ResultPreviewItemContainer from '../../subapps/search/containers/ResultPreviewItemContainer';
 import DefaultResourcePreviewCard from '!!raw-loader!../../subapps/search/templates/DefaultResourcePreviewCard.hbs';
+import useNotification from '../hooks/useNotification';
 
-function makePayload(
-  resourcesPayload: { '@type': string; resourceId: string; project: string }[]
-) {
+type DownloadResourcePayload = {
+  '@type': string;
+  resourceId: string;
+  project: string;
+  path: string;
+};
+
+function makePayload(resourcesPayload: DownloadResourcePayload[]) {
   const archiveId = uuidv4();
   const payload: ArchivePayload = {
     archiveId,
@@ -74,6 +79,7 @@ const DataCartContainer = () => {
   const { emptyCart, removeCartItem, length, resources } = React.useContext(
     CartContext
   );
+  const notification = useNotification();
 
   const [search, setSearch] = React.useState<string>('');
   const filteredResources = React.useMemo(() => {
@@ -127,6 +133,7 @@ const DataCartContainer = () => {
             '@type': 'File',
             resourceId: r['@id'],
             project: `${parsedSelf.org}/${parsedSelf.project}`,
+            path: `/${parsedSelf.project}/${parsedSelf.id}`,
           };
         });
       setExtension('tar.gz');
@@ -163,6 +170,7 @@ const DataCartContainer = () => {
           '@type': r['@type'] === 'File' ? 'File' : 'Resource',
           resourceId: r['@id'],
           project: `${parsedSelf.org}/${parsedSelf.project}`,
+          path: `/${parsedSelf.project}/${parsedSelf.id}`,
         };
       });
       const {
@@ -203,6 +211,7 @@ const DataCartContainer = () => {
             '@type': 'Resource',
             resourceId: r['@id'],
             project: `${parsedSelf.org}/${parsedSelf.project}`,
+            path: `/${parsedSelf.project}/${parsedSelf.id}`,
           };
         });
       const {
@@ -277,7 +286,6 @@ const DataCartContainer = () => {
                 onClick={() => {
                   navigator.clipboard.writeText(ids).then(() => {
                     notification.info({
-                      key: '',
                       message: 'Ids copied to the clipboard',
                     });
                   });

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, Empty, Table, Tooltip, notification } from 'antd';
+import { Card, Empty, Table, Tooltip } from 'antd';
 import Column from 'antd/lib/table/Column';
 import * as hash from 'object-hash';
 import { matchResultUrls } from '../../../../shared/utils';
@@ -10,6 +10,7 @@ import {
 } from '@bbp/nexus-sdk';
 
 import './view-form.less';
+import useNotification from '../../../../shared/hooks/useNotification';
 
 export type NexusSparqlError =
   | string
@@ -22,18 +23,6 @@ export type Entry = {
   datatype: string;
   value: string;
   type: string;
-};
-
-const getUrl = (entry: string) => {
-  try {
-    return matchResultUrls(entry);
-  } catch (error) {
-    notification.error({
-      message: `Could not parse ${entry}`,
-      description: error.message,
-    });
-  }
-  return entry;
 };
 
 const SparqlQueryResults: React.FunctionComponent<{
@@ -56,6 +45,20 @@ const SparqlQueryResults: React.FunctionComponent<{
         ? [(response as AskQueryResponse).boolean.toString()]
         : (response as SelectQueryResponse).results.bindings)) ||
     [];
+
+  const notification = useNotification();
+
+  const getUrl = (entry: string) => {
+    try {
+      return matchResultUrls(entry);
+    } catch (error) {
+      notification.error({
+        message: `Could not parse ${entry}`,
+        description: error.message,
+      });
+    }
+    return entry;
+  };
 
   return (
     <Card bordered className="results">

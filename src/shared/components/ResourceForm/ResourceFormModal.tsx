@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { Modal, notification } from 'antd';
+import { Modal } from 'antd';
 import { Resource, ResourcePayload } from '@bbp/nexus-sdk';
 
 import ResourceForm from './ResourceForm';
 import { camelCaseToTitleCase } from '../../utils';
+import useNotification from '../../hooks/useNotification';
 
 interface ResourceFormModalProps {
   createResource: (
@@ -21,6 +22,7 @@ const ResourceFormModal: React.FunctionComponent<ResourceFormModalProps> = ({
 }) => {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [formBusy, setFormBusy] = React.useState(false);
+  const notification = useNotification();
   const saveAndCreate = async (resourceToCreate: any) => {
     const { schemaId, payload } = resourceToCreate;
     setFormBusy(true);
@@ -32,7 +34,6 @@ const ResourceFormModal: React.FunctionComponent<ResourceFormModalProps> = ({
       notification.success({
         message: 'Resource saved',
         description: resource.name,
-        duration: 2,
       });
       onSuccess();
       setFormBusy(false);
@@ -43,7 +44,6 @@ const ResourceFormModal: React.FunctionComponent<ResourceFormModalProps> = ({
           ? camelCaseToTitleCase(error['@type'])
           : 'Error creating resource',
         description: error.reason,
-        duration: 0,
       });
       setFormBusy(false);
     }

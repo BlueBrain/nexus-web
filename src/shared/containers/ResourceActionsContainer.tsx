@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Tooltip, notification } from 'antd';
+import { Button, Tooltip } from 'antd';
 import {
   DeleteOutlined,
   DownloadOutlined,
@@ -14,6 +14,7 @@ import ResourceActions from '../components/ResourceActions';
 import { getResourceLabel, getOrgAndProjectFromResource } from '../utils';
 import { download } from '../utils/download';
 import {
+  isView,
   isFile,
   chainPredicates,
   not,
@@ -23,6 +24,7 @@ import {
 } from '../utils/nexusMaybe';
 import Copy from '../components/Copy';
 import { CartContext } from '../hooks/useDataCart';
+import useNotification from '../hooks/useNotification';
 
 const ResourceActionsContainer: React.FunctionComponent<{
   resource: Resource;
@@ -44,6 +46,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
   const self = resource._self;
   const nexus = useNexusContext();
   const { addResourceToCart } = React.useContext(CartContext);
+  const notification = useNotification();
 
   const isLatestResource = async (resource: Resource) => {
     // TODO: remove this if / when
@@ -111,7 +114,16 @@ const ResourceActionsContainer: React.FunctionComponent<{
   const actions = {
     deprecateResource: async () => {
       try {
-        const deprectatedResource = await nexus.Resource.deprecate(
+        let deprecateMethod = nexus.Resource.deprecate;
+        if (isView(resource)) {
+          deprecateMethod = nexus.View.deprecate;
+        }
+
+        if (isFile(resource)) {
+          deprecateMethod = nexus.File.deprecate;
+        }
+
+        const deprectatedResource = await deprecateMethod(
           orgLabel,
           projectLabel,
           encodeURIComponent(resourceId),
