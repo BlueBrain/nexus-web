@@ -48,7 +48,6 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
 
   const handleSelectedVideo = (video: any) => {
     const selectedVideo = video;
-    console.log(selectedVideo);
     setSelectedVideo(selectedVideo);
     setIsModalVisible(true);
   };
@@ -66,47 +65,45 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
   return (
     <Collapse onChange={() => {}}>
       <Panel header="Video" key="1">
-        {videoData ? (
-          <List
-            itemLayout="horizontal"
-            dataSource={videoData}
-            renderItem={(item: any) => (
-              <List.Item
-                extra={
-                  <div>
-                    <p>{moment.duration(item.duration).humanize()}</p>
-                    <p>{moment(item.uploadDate).format('DD/MM/YYYY')}</p>
-                  </div>
+        <List
+          itemLayout="horizontal"
+          dataSource={videoData}
+          renderItem={(item: any) => (
+            <List.Item
+              extra={
+                <div>
+                  <p>{moment.duration(item.duration).humanize()}</p>
+                  <p>{moment(item.uploadDate).format('DD/MM/YYYY')}</p>
+                </div>
+              }
+            >
+              <List.Item.Meta
+                avatar={
+                  <Avatar
+                    style={{
+                      width: '100%',
+                    }}
+                    src={item.thumbnailUrl[0]}
+                    shape="square"
+                    size={100}
+                  />
                 }
-              >
-                <List.Item.Meta
-                  avatar={
-                    <Avatar
-                      style={{
-                        width: '100%',
-                      }}
-                      src={item.thumbnailUrl[0]}
-                      shape="square"
-                      size={100}
-                    />
-                  }
-                  title={
-                    <Button
-                      type="link"
-                      onClick={() => {
-                        handleSelectedVideo(item);
-                      }}
-                    >
-                      {item.name}
-                    </Button>
-                  }
-                  description={item.description}
-                />
-              </List.Item>
-            )}
-          />
-        ) : null}
-
+                title={
+                  <Button
+                    type="link"
+                    onClick={() => {
+                      handleSelectedVideo(item);
+                    }}
+                  >
+                    {item.name}
+                  </Button>
+                }
+                description={item.description}
+              />
+            </List.Item>
+          )}
+        />
+        )
         {selectedVideo && !!selectedVideo['name'] ? (
           <Modal
             title={selectedVideo['name']}
@@ -117,7 +114,7 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
             width={640}
             footer={null}
           >
-            {selectedVideo && !!selectedVideo['embedUrl'] ? (
+            {!!selectedVideo['embedUrl'] ? (
               <ReactPlayer url={selectedVideo['embedUrl']} />
             ) : null}
           </Modal>
