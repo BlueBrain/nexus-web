@@ -103,7 +103,6 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
             </List.Item>
           )}
         />
-        )
         {selectedVideo && !!selectedVideo['name'] ? (
           <Modal
             title={selectedVideo['name']}
