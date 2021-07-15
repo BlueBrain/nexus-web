@@ -2,24 +2,8 @@ import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import ReactPlayer from 'react-player';
-import {
-  Descriptions,
-  Collapse,
-  Modal,
-  Button,
-  Image,
-  List,
-  Carousel,
-  Avatar,
-  Space,
-} from 'antd';
-import {
-  MessageOutlined,
-  LikeOutlined,
-  YoutubeOutlined,
-  YoutubeFilled,
-  PlaySquareOutlined,
-} from '@ant-design/icons';
+import * as moment from 'moment';
+import { Collapse, Modal, Button, List, Avatar } from 'antd';
 
 import '../styles/video-plugin.less';
 
@@ -84,10 +68,17 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
       <Panel header="Video" key="1">
         {videoData ? (
           <List
-            itemLayout="vertical"
+            itemLayout="horizontal"
             dataSource={videoData}
             renderItem={(item: any) => (
-              <List.Item>
+              <List.Item
+                extra={
+                  <div>
+                    <p>{moment.duration(item.duration).humanize()}</p>
+                    <p>{moment(item.uploadDate).format('DD/MM/YYYY')}</p>
+                  </div>
+                }
+              >
                 <List.Item.Meta
                   avatar={
                     <Avatar
