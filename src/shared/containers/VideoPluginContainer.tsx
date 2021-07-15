@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import ReactPlayer from 'react-player';
-import ytImage from '../images/yt_icon_rgb.png';
 import {
   Descriptions,
   Collapse,
@@ -10,15 +9,20 @@ import {
   Button,
   Image,
   List,
+  Carousel,
   Avatar,
   Space,
 } from 'antd';
 import {
   MessageOutlined,
   LikeOutlined,
-  StarOutlined,
+  YoutubeOutlined,
+  YoutubeFilled,
   PlaySquareOutlined,
 } from '@ant-design/icons';
+
+import '../styles/video-plugin.less';
+
 const { Panel } = Collapse;
 
 type VideoProps = {
@@ -83,17 +87,16 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
             itemLayout="vertical"
             dataSource={videoData}
             renderItem={(item: any) => (
-              <List.Item
-                extra={
-                  <img width={272} alt="logo" src={item.thumbnailUrl[0]} />
-                }
-              >
+              <List.Item>
                 <List.Item.Meta
                   avatar={
                     <Avatar
+                      style={{
+                        width: '100%',
+                      }}
+                      src={item.thumbnailUrl[0]}
                       shape="square"
-                      size="large"
-                      icon={<PlaySquareOutlined />}
+                      size={100}
                     />
                   }
                   title={
@@ -124,8 +127,7 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
             footer={null}
           >
             {selectedVideo && !!selectedVideo['embedUrl'] ? (
-              // <ReactPlayer url={selectedVideo['embedUrl']} />
-              <ReactPlayer url="https://www.youtube.com/watch?v=ysz5S6PUM-U" />
+              <ReactPlayer url={selectedVideo['embedUrl']} />
             ) : null}
           </Modal>
         ) : null}
