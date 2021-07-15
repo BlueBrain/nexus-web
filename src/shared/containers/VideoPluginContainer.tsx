@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import ReactPlayer from 'react-player';
+import ytImage from '../images/yt_icon_rgb.png';
 import {
   Descriptions,
   Collapse,
@@ -12,7 +13,12 @@ import {
   Avatar,
   Space,
 } from 'antd';
-import { MessageOutlined, LikeOutlined, StarOutlined } from '@ant-design/icons';
+import {
+  MessageOutlined,
+  LikeOutlined,
+  StarOutlined,
+  PlaySquareOutlined,
+} from '@ant-design/icons';
 const { Panel } = Collapse;
 
 type VideoProps = {
@@ -79,19 +85,28 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
             renderItem={(item: any) => (
               <List.Item
                 extra={
-                  <img
-                    width={272}
-                    alt="logo"
-                    src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-                  />
+                  <img width={272} alt="logo" src={item.thumbnailUrl[0]} />
                 }
               >
                 <List.Item.Meta
                   avatar={
-                    <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                    <Avatar
+                      shape="square"
+                      size="large"
+                      icon={<PlaySquareOutlined />}
+                    />
                   }
-                  title={<a href="https://ant.design">{item.name}</a>}
-                  description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                  title={
+                    <Button
+                      type="link"
+                      onClick={() => {
+                        handleSelectedVideo(item);
+                      }}
+                    >
+                      {item.name}
+                    </Button>
+                  }
+                  description={item.description}
                 />
               </List.Item>
             )}
