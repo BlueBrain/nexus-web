@@ -56,11 +56,15 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
       orgLabel,
       projectLabel,
       encodeURIComponent(resource['@id'])
-    )) as Resource;
-
-    const videoData = [...[], videoResource['video'] || []];
+    )) as Resource<{
+      video: VideoObject[];
+    }>;
+    const videoData = videoResource['video']
+      ? (videoResource['video'] as VideoObject[])
+      : undefined;
     setVideoData(videoData);
   };
+
   if (!videoData) return null;
   return (
     <Collapse onChange={() => {}}>
