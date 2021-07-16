@@ -24,6 +24,7 @@ import {
 } from '../utils';
 import { isDeprecated } from '../utils/nexusMaybe';
 import useNotification from '../hooks/useNotification';
+import Preview from '../components/Preview/Preview';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -181,6 +182,7 @@ const ResourceViewContainer: React.FunctionComponent<{
         projectLabel,
         resourceId
       )) as Resource;
+
       const latestResource: Resource =
         rev || tag
           ? ((await nexus.Resource.get(
@@ -310,18 +312,20 @@ const ResourceViewContainer: React.FunctionComponent<{
                   goToResource={goToSelfResource}
                 />
               )}
+
               <AccessControl
                 path={`/${orgLabel}/${projectLabel}`}
                 permissions={['resources/write']}
                 noAccessComponent={() => (
                   <div>
-                    <div>
-                      <p style={{ marginTop: 15 }}>
-                        <Alert
-                          message="You don't have access to edit the resource. You can nonetheless see the resource metadata below."
-                          type="info"
-                        />
-                      </p>
+                    <div style={{ marginTop: 15 }}>
+                      <Alert
+                        message="You don't have access to edit the resource. You can nonetheless see the resource metadata below."
+                        type="info"
+                      />
+                      {resource.distribution && (
+                        <Preview nexus={nexus} resource={resource} />
+                      )}
                       <AdminPlugin
                         editable={false}
                         orgLabel={orgLabel}
@@ -343,23 +347,24 @@ const ResourceViewContainer: React.FunctionComponent<{
                 )}
               >
                 {(!filteredPlugins || filteredPlugins.length === 0) && (
-                  <p>
-                    <Alert
-                      message="This resource does not have plugins configured yet. You can nonetheless edit the resource metadata below."
-                      type="info"
-                    />
-                  </p>
+                  <Alert
+                    message="This resource does not have plugins configured yet. You can nonetheless edit the resource metadata below."
+                    type="info"
+                  />
                 )}
                 {!!resource['@type'] &&
                   typeof resource['@type'] === 'string' &&
                   nonEditableResourceTypes.includes(resource['@type']) && (
                     <p>
                       <Alert
-                        message="Please not for the time being this resource is not editable. For further information please contact the administrator."
+                        message="This resource is not editable because it is of the type 'File'. For further information please contact the administrator."
                         type="info"
                       />
                     </p>
                   )}
+                {resource.distribution && (
+                  <Preview nexus={nexus} resource={resource} />
+                )}
                 <AdminPlugin
                   editable={isLatest && !isDeprecated(resource)}
                   orgLabel={orgLabel}
