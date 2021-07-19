@@ -28,7 +28,7 @@ const ProjectGraph: React.FC<{
       wheelSensitivity: 0.2,
       container: container.current,
       layout: {
-        //@ts-ignore
+        // @ts-ignore
         name: 'avsdf',
       },
       style: [
