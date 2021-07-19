@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as cytoscape from 'cytoscape';
 // @ts-ignore
+import * as avsdf from 'cytoscape-avsdf';
+// @ts-ignore
 import * as fcose from 'cytoscape-fcose';
 
 export type ElementNodeData = {
@@ -17,7 +19,8 @@ const ProjectGraph: React.FC<{
   const graph = React.useRef<cytoscape.Core>();
 
   React.useEffect(() => {
-    cytoscape.use(fcose);
+    // cytoscape.use(fcose);
+    cytoscape.use(avsdf);
 
     graph.current = cytoscape({
       elements,
@@ -25,7 +28,8 @@ const ProjectGraph: React.FC<{
       wheelSensitivity: 0.2,
       container: container.current,
       layout: {
-        name: 'fcose',
+        //@ts-ignore
+        name: 'avsdf',
       },
       style: [
         {
@@ -93,7 +97,7 @@ const ProjectGraph: React.FC<{
       <div
         style={{
           width: '100%',
-          height: '600px',
+          height: '1000px',
           backgroundColor: 'black',
         }}
         className="graph"
