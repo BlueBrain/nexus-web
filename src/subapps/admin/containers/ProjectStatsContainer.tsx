@@ -3,9 +3,11 @@ import { useNexusContext } from '@bbp/react-nexus';
 
 import ProjectGraph from '../components/Projects/ProjectGraph';
 import ResourceInfoPanel from '../components/Projects/ResourceInfoPanel';
-import { labelOf } from '../../../shared/utils';
 
-const ProjectStatsContainer: React.FC<{}> = () => {
+const ProjectStatsContainer: React.FC<{
+  orgLabel: string;
+  projectLabel: string;
+}> = ({ orgLabel, projectLabel }) => {
   const nexus = useNexusContext();
 
   const [selectedType, setSelectedType] = React.useState<any>();
@@ -14,15 +16,16 @@ const ProjectStatsContainer: React.FC<{}> = () => {
   const [graphData, setGraphData] = React.useState<any>();
 
   const loadRelationships = async () => {
+    // TODO update nexus.js
     return await nexus.httpGet({
-      path:
-        'https://dev.nexus.ocp.bbp.epfl.ch/v1/statistics/copies/sscx/relationships',
+      path: `https://dev.nexus.ocp.bbp.epfl.ch/v1/statistics/${orgLabel}/${projectLabel}/relationships`,
     });
   };
 
   const loadTypeStats = async (type: string) => {
+    // TODO update nexus.js
     return await nexus.httpGet({
-      path: `https://dev.nexus.ocp.bbp.epfl.ch/v1/statistics/copies/sscx/properties/${encodeURIComponent(
+      path: `https://dev.nexus.ocp.bbp.epfl.ch/v1/statistics/${orgLabel}/${projectLabel}/properties/${encodeURIComponent(
         type
       )}`,
     });

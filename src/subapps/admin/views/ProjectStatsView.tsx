@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useRouteMatch } from 'react-router';
-import { useNexusContext } from '@bbp/react-nexus';
 
 import { useAdminSubappContext } from '..';
 import ProjectStatsContainer from '../containers/ProjectStatsContainer';
@@ -8,7 +7,6 @@ import ProjectStatsContainer from '../containers/ProjectStatsContainer';
 import './ProjectStatsView.less';
 
 const ProjectStatsView: React.FC<{}> = () => {
-  const nexus = useNexusContext();
   const subapp = useAdminSubappContext();
   const match = useRouteMatch<{ orgLabel: string; projectLabel: string }>(
     `/${subapp.namespace}/:orgLabel/:projectLabel`
@@ -27,7 +25,7 @@ const ProjectStatsView: React.FC<{}> = () => {
       <h1 className="project-stats-view__title">
         {orgLabel} &gt; {projectLabel}
       </h1>
-      <ProjectStatsContainer />
+      <ProjectStatsContainer orgLabel={orgLabel} projectLabel={projectLabel} />
     </div>
   );
 };
