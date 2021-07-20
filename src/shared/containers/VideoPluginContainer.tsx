@@ -61,9 +61,11 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
     )) as Resource<{
       video: VideoObject[];
     }>;
+
     const videoData = videoResource.video
-      ? (videoResource.video as VideoObject[])
+      ? ([videoResource.video].flat() as VideoObject[])
       : undefined;
+
     setVideoData(videoData);
   };
 
