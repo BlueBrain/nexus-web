@@ -70,7 +70,7 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
   if (!videoData) return null;
   return (
     <Collapse onChange={() => {}}>
-      {!!videoData && videoData[0]['embedUrl'] ? (
+      {videoData[0]['embedUrl'] ? (
         <Panel header="Video" key="1">
           <List
             itemLayout="horizontal"
