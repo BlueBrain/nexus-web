@@ -35,11 +35,13 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
   const [selectedVideo, setSelectedVideo] = React.useState<any>();
 
   const handleOk = () => {
-    setIsModalVisible(false);
+    const isModalVisible = false;
+    setIsModalVisible(isModalVisible);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setSelectedVideo(null);
   };
 
   React.useEffect(() => {
