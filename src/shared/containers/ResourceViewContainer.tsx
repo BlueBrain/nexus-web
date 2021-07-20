@@ -11,6 +11,7 @@ import {
   ExpandedResource,
 } from '@bbp/nexus-sdk';
 import AdminPlugin from '../containers/AdminPluginContainer';
+import VideoPluginContainer from '../containers/VideoPluginContainer';
 import ResourcePlugins from './ResourcePlugins';
 import usePlugins from '../hooks/usePlugins';
 import useMeasure from '../hooks/useMeasure';
@@ -379,6 +380,11 @@ const ResourceViewContainer: React.FunctionComponent<{
                   handleGoToInternalLink={handleGoToInternalLink}
                   handleEditFormSubmit={handleEditFormSubmit}
                   handleExpanded={handleExpanded}
+                />
+                <VideoPluginContainer
+                  resource={resource}
+                  orgLabel={orgLabel}
+                  projectLabel={projectLabel}
                 />
               </AccessControl>
             </>
