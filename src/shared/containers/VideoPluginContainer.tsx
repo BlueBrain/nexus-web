@@ -68,61 +68,63 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
   if (!videoData) return null;
   return (
     <Collapse onChange={() => {}}>
-      <Panel header="Video" key="1">
-        <List
-          itemLayout="horizontal"
-          dataSource={videoData}
-          renderItem={(item: any) => (
-            <List.Item
-              extra={
-                <div>
-                  <p>{moment.duration(item.duration).humanize()}</p>
-                  <p>{moment(item.uploadDate).format('DD/MM/YYYY')}</p>
-                </div>
-              }
+      {videoData && videoData[0]['embedUrl'] ? (
+        <Panel header="Video" key="1">
+          <List
+            itemLayout="horizontal"
+            dataSource={videoData}
+            renderItem={(item: any) => (
+              <List.Item
+                extra={
+                  <div>
+                    <p>{moment.duration(item.duration).humanize()}</p>
+                    <p>{moment(item.uploadDate).format('DD/MM/YYYY')}</p>
+                  </div>
+                }
+              >
+                <List.Item.Meta
+                  avatar={
+                    <Avatar
+                      style={{
+                        width: '100%',
+                      }}
+                      src={item.thumbnailUrl[0]}
+                      shape="square"
+                      size={100}
+                    />
+                  }
+                  title={
+                    <Button
+                      type="link"
+                      onClick={() => {
+                        handleSelectedVideo(item);
+                      }}
+                    >
+                      {item.name}
+                    </Button>
+                  }
+                  description={item.description}
+                />
+              </List.Item>
+            )}
+          />
+          {selectedVideo && !!selectedVideo['name'] ? (
+            <Modal
+              title={selectedVideo['name']}
+              bodyStyle={{ padding: 0 }}
+              visible={isModalVisible && !!selectedVideo}
+              onOk={handleOk}
+              onCancel={handleCancel}
+              width={640}
+              footer={null}
             >
-              <List.Item.Meta
-                avatar={
-                  <Avatar
-                    style={{
-                      width: '100%',
-                    }}
-                    src={item.thumbnailUrl[0]}
-                    shape="square"
-                    size={100}
-                  />
-                }
-                title={
-                  <Button
-                    type="link"
-                    onClick={() => {
-                      handleSelectedVideo(item);
-                    }}
-                  >
-                    {item.name}
-                  </Button>
-                }
-                description={item.description}
-              />
-            </List.Item>
-          )}
-        />
-        {selectedVideo && !!selectedVideo['name'] ? (
-          <Modal
-            title={selectedVideo['name']}
-            bodyStyle={{ padding: 0 }}
-            visible={isModalVisible && !!selectedVideo}
-            onOk={handleOk}
-            onCancel={handleCancel}
-            width={640}
-            footer={null}
-          >
-            {!!selectedVideo['embedUrl'] ? (
-              <ReactPlayer url={selectedVideo['embedUrl']} />
-            ) : null}
-          </Modal>
-        ) : null}
-      </Panel>
+              {!!selectedVideo['embedUrl'] ? (
+                <ReactPlayer url={selectedVideo['embedUrl']} />
+              ) : null}
+            </Modal>
+          ) : null}
+        </Panel>
+      ) : null}
     </Collapse>
   );
 };
