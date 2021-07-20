@@ -16,12 +16,12 @@ type VideoProps = {
 };
 
 type VideoObject = {
-  name: String;
-  description: String;
+  name: string;
+  description: string;
   thumbnailUrl: [];
   uploadDate: Date;
-  duration: String;
-  embedUrl: String;
+  duration: string;
+  embedUrl: string;
 };
 
 const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
@@ -61,8 +61,8 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
     )) as Resource<{
       video: VideoObject[];
     }>;
-    const videoData = videoResource['video']
-      ? (videoResource['video'] as VideoObject[])
+    const videoData = videoResource.video
+      ? (videoResource.video as VideoObject[])
       : undefined;
     setVideoData(videoData);
   };
@@ -70,7 +70,7 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
   if (!videoData) return null;
   return (
     <Collapse onChange={() => {}}>
-      {videoData[0]['embedUrl'] ? (
+      {videoData[0].embedUrl ? (
         <Panel header="Video" key="1">
           <List
             itemLayout="horizontal"
@@ -110,9 +110,9 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
               </List.Item>
             )}
           />
-          {selectedVideo && !!selectedVideo['name'] ? (
+          {selectedVideo && !!selectedVideo.name ? (
             <Modal
-              title={selectedVideo['name']}
+              title={selectedVideo.name}
               bodyStyle={{ padding: 0 }}
               visible={isModalVisible && !!selectedVideo}
               onOk={handleOk}
@@ -120,8 +120,8 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
               width={640}
               footer={null}
             >
-              {!!selectedVideo['embedUrl'] ? (
-                <ReactPlayer url={selectedVideo['embedUrl']} />
+              {!!selectedVideo.embedUrl ? (
+                <ReactPlayer url={selectedVideo.embedUrl} />
               ) : null}
             </Modal>
           ) : null}
