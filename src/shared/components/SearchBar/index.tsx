@@ -1,11 +1,6 @@
 import * as React from 'react';
-import { ProjectResponseCommon, Resource } from '@bbp/nexus-sdk';
-import { LoadingOutlined } from '@ant-design/icons';
+import { ProjectResponseCommon } from '@bbp/nexus-sdk';
 import { AutoComplete, Input } from 'antd';
-import { SearchConfig } from '../../store/reducers/search';
-import { AsyncCall } from '../../hooks/useAsynCall';
-import { SearchResponse } from '../../types/search';
-import ResourceHit from './ResourceHit';
 import Hit, { HitType } from './Hit';
 
 import './SearchBar.less';
@@ -18,29 +13,10 @@ export enum SearchQuickActions {
 const SearchBar: React.FC<{
   projectList: ProjectResponseCommon[];
   query?: string;
-  searchResponse: AsyncCall<
-    SearchResponse<
-      Resource<{
-        [key: string]: any;
-      }>
-    >,
-    Error
-  >;
-  searchConfigLoading: boolean;
-  searchConfigPreference?: SearchConfig;
   onSearch: (value: string) => void;
   onSubmit: (value: string) => void;
   onClear: () => void;
-}> = ({
-  query,
-  projectList,
-  searchResponse,
-  searchConfigLoading,
-  searchConfigPreference,
-  onSearch,
-  onSubmit,
-  onClear,
-}) => {
+}> = ({ query, projectList, onSearch, onSubmit, onClear }) => {
   const [value, setValue] = React.useState(query || '');
   const [focused, setFocused] = React.useState(false);
   const handleSetFocused = (val: boolean) => () => {
@@ -82,72 +58,33 @@ const SearchBar: React.FC<{
     setValue(query || '');
   }, [query]);
 
-  const options: (
-    | {
-        value: string;
-        key: string;
-        label: JSX.Element;
-      }
-    | {
-        label: string;
-        options: {
-          value: string;
-          key: string;
-          label: JSX.Element;
-        }[];
-      }
-  )[] = !!query
-    ? [
-        {
-          value,
-          key: `search-${value}`,
-          label: (
-            <Hit type={HitType.UNCERTAIN}>
-              <em>{value}</em>
-            </Hit>
-          ),
-        },
-      ]
-    : [];
+  let options: {
+    value: string;
+    key: string;
+    label: JSX.Element;
+  }[] = [];
 
   if (projectList.length) {
-    options.push({
-      label: 'Projects',
-      options: projectList.map(project => {
-        return {
-          // @ts-ignore
-          // TODO update nexus-sdk to add this property
-          // to types
-          key: project._uuid,
-          label: (
-            <Hit type={HitType.PROJECT}>
-              <span>
-                {project._organizationLabel}/{project._label}
-              </span>
-            </Hit>
-          ),
-          value: `${SearchQuickActions.VISIT_PROJECT}:${project._organizationLabel}/${project._label}`,
-        };
-      }),
-    });
-  }
-
-  if (!!searchResponse.data?.hits.total.value) {
-    options.push({
-      label: 'Resources',
-      options:
-        searchResponse.data?.hits.hits.map(hit => {
-          const { _source } = hit;
-          return {
-            key: _source._self,
-            label: (
-              <Hit type={HitType.RESOURCE}>
-                <ResourceHit resource={_source} />
-              </Hit>
-            ),
-            value: `${SearchQuickActions.VISIT}:${_source._self}`,
-          };
-        }) || [],
+    // we display only 5 projects
+    options = projectList.splice(0, 5).map(project => {
+      return {
+        // @ts-ignore
+        // TODO update nexus-sdk to add this property
+        // to types
+        key: project._uuid,
+        label: (
+          <Hit
+            type={HitType.PROJECT}
+            orgLabel={project._organizationLabel}
+            projectLabel={project._label}
+          >
+            <span>
+              {project._organizationLabel}/{project._label}
+            </span>
+          </Hit>
+        ),
+        value: `${SearchQuickActions.VISIT_PROJECT}:${project._organizationLabel}/${project._label}`,
+      };
     });
   }
 
@@ -157,9 +94,6 @@ const SearchBar: React.FC<{
 
   const handleSelect = (value: string) => {
     onSubmit(value);
-    if (value.includes(`${SearchQuickActions.VISIT}:`)) {
-      setValue('');
-    }
   };
 
   const handleSearch = (searchText: string) => {
@@ -190,20 +124,9 @@ const SearchBar: React.FC<{
     >
       <Input.Search
         ref={inputRef}
-        className={'search-bar-input'}
-        placeholder="Search or Visit"
+        className="search-bar-input"
+        placeholder="Visit Project"
         enterButton
-        suffix={
-          searchConfigLoading ? (
-            <LoadingOutlined />
-          ) : (
-            !!searchConfigPreference && (
-              <div>
-                <b>{searchConfigPreference.label}</b>
-              </div>
-            )
-          )
-        }
       />
     </AutoComplete>
   );

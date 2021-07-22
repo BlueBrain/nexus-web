@@ -44,20 +44,6 @@ const SearchBarContainer: React.FC = () => {
     history.push(path);
   };
 
-  const goToSearch = () => {
-    if (searchProps.query) {
-      // reset pagination if we have a search query
-      setQueryString(
-        {
-          ...queryParams,
-          pagination: DEFAULT_SEARCH_PROPS.pagination,
-          query: searchProps.query,
-        },
-        '/search'
-      );
-    }
-  };
-
   const handleSearch = (searchText: string) => {
     setSearchProps({
       query: searchText,
@@ -69,22 +55,13 @@ const SearchBarContainer: React.FC = () => {
   };
 
   const handleSubmit = (value: string) => {
-    if (value.includes(`${SearchQuickActions.VISIT}:`)) {
-      const [action, resourceSelfURL] = value.split(
-        `${SearchQuickActions.VISIT}:`
-      );
-      handleSearch('');
-      return goToResource(resourceSelfURL);
-    }
-    if (value.includes(`${SearchQuickActions.VISIT_PROJECT}:`)) {
-      const [action, orgAndProject] = value.split(
-        `${SearchQuickActions.VISIT_PROJECT}:`
-      );
-      const [orgLabel, projectLabel] = orgAndProject.split('/');
-      handleSearch('');
-      return goToProject(orgLabel, projectLabel);
-    }
-    return goToSearch();
+    const [action, orgAndProject] = value.split(
+      `${SearchQuickActions.VISIT_PROJECT}:`
+    );
+    const [orgLabel, projectLabel] = orgAndProject.split('/');
+    handleSearch('');
+
+    return goToProject(orgLabel, projectLabel);
   };
 
   const handleClear = () => {
@@ -111,18 +88,15 @@ const SearchBarContainer: React.FC = () => {
     PROJECT_RESULTS_DEFAULT_SIZE
   );
 
-  return !!searchConfigs.data?.length ? (
+  return (
     <SearchBar
       projectList={projectList}
       query={searchProps.query}
-      searchResponse={searchResponse}
       onSearch={handleSearch}
       onSubmit={handleSubmit}
       onClear={handleClear}
-      searchConfigLoading={searchConfigs.isFetching}
-      searchConfigPreference={preferedSearchConfig}
     />
-  ) : null;
+  );
 };
 
 export default SearchBarContainer;
