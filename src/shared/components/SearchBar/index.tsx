@@ -67,6 +67,8 @@ const SearchBar: React.FC<{
   if (projectList.length) {
     // we display only 5 projects
     options = projectList.splice(0, 5).map(project => {
+      const label = `${project._organizationLabel}/${project._label}`;
+
       return {
         // @ts-ignore
         // TODO update nexus-sdk to add this property
@@ -79,7 +81,7 @@ const SearchBar: React.FC<{
             projectLabel={project._label}
           >
             <span>
-              {project._organizationLabel}/{project._label}
+              {label.length > 25 ? label.slice(0, 25) + '...' : label}
             </span>
           </Hit>
         ),
