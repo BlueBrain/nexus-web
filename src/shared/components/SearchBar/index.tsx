@@ -10,6 +10,8 @@ export enum SearchQuickActions {
   VISIT_PROJECT = 'visit-project',
 }
 
+const LABEL_MAX_LENGTH = 25;
+
 const SearchBar: React.FC<{
   projectList: ProjectResponseCommon[];
   query?: string;
@@ -81,7 +83,9 @@ const SearchBar: React.FC<{
             projectLabel={project._label}
           >
             <span>
-              {label.length > 25 ? label.slice(0, 25) + '...' : label}
+              {label.length > LABEL_MAX_LENGTH
+                ? `${label.slice(0, LABEL_MAX_LENGTH)}...`
+                : label}
             </span>
           </Hit>
         ),
