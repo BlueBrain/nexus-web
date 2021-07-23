@@ -1,24 +1,21 @@
 import * as React from 'react';
 import { ProjectResponseCommon } from '@bbp/nexus-sdk';
 import { AutoComplete, Input } from 'antd';
-import Hit, { HitType } from './Hit';
+
+import Hit from './Hit';
 
 import './SearchBar.less';
-
-export enum SearchQuickActions {
-  VISIT = 'visit',
-  VISIT_PROJECT = 'visit-project',
-}
 
 const LABEL_MAX_LENGTH = 25;
 
 const SearchBar: React.FC<{
   projectList: ProjectResponseCommon[];
   query?: string;
+  defaultQuery: string | undefined;
   onSearch: (value: string) => void;
   onSubmit: (value: string) => void;
   onClear: () => void;
-}> = ({ query, projectList, onSearch, onSubmit, onClear }) => {
+}> = ({ query, projectList, onSearch, onSubmit, onClear, defaultQuery }) => {
   const [value, setValue] = React.useState(query || '');
   const [focused, setFocused] = React.useState(false);
   const handleSetFocused = (val: boolean) => () => {
@@ -78,7 +75,6 @@ const SearchBar: React.FC<{
         key: project._uuid,
         label: (
           <Hit
-            type={HitType.PROJECT}
             orgLabel={project._organizationLabel}
             projectLabel={project._label}
           >
@@ -89,7 +85,7 @@ const SearchBar: React.FC<{
             </span>
           </Hit>
         ),
-        value: `${SearchQuickActions.VISIT_PROJECT}:${project._organizationLabel}/${project._label}`,
+        value: `${project._organizationLabel}/${project._label}`,
       };
     });
   }
@@ -132,7 +128,7 @@ const SearchBar: React.FC<{
         allowClear
         ref={inputRef}
         className="search-bar-input"
-        placeholder="Visit Project"
+        placeholder={defaultQuery || 'Visit Project'}
         enterButton
       />
     </AutoComplete>

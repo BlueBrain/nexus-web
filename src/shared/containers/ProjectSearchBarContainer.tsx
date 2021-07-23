@@ -1,8 +1,9 @@
 import { useNexusContext } from '@bbp/react-nexus';
 import { take } from 'lodash';
 import * as React from 'react';
-import { useHistory, useLocation } from 'react-router';
-import SearchBar, { SearchQuickActions } from '../components/ProjectSearchBar';
+import { useHistory } from 'react-router';
+
+import ProjectSearchBar from '../components/ProjectSearchBar';
 import useAsyncCall from '../hooks/useAsynCall';
 
 const PROJECT_RESULTS_DEFAULT_SIZE = 100;
@@ -11,8 +12,9 @@ const SHOULD_INCLUDE_DEPRECATED = false;
 const SearchBarContainer: React.FC = () => {
   const nexus = useNexusContext();
   const history = useHistory();
-  const location = useLocation();
   const [query, setQuery] = React.useState<string>();
+  const [defaultQuery, setDefaultQuery] = React.useState<string | undefined>();
+
   const projectData = useAsyncCall(
     nexus.Project.list(undefined, {
       size: 100,
@@ -22,7 +24,9 @@ const SearchBarContainer: React.FC = () => {
   );
 
   React.useEffect(() => {
-    const lastVisited = localStorage.getItem('last_visited_project');
+    const lastVisited = localStorage.getItem('last_visited_project') || '';
+
+    setDefaultQuery(lastVisited);
 
     console.log('lastVisited', lastVisited);
   }, []);
@@ -37,12 +41,11 @@ const SearchBarContainer: React.FC = () => {
   };
 
   const handleSubmit = (value: string) => {
-    const [action, orgAndProject] = value.split(
-      `${SearchQuickActions.VISIT_PROJECT}:`
-    );
+    const orgAndProject = value;
     console.log('submitted', orgAndProject);
     // save selection
     localStorage.setItem('last_visited_project', orgAndProject);
+    setDefaultQuery(orgAndProject);
 
     const [orgLabel, projectLabel] = orgAndProject.split('/');
     handleSearch('');
@@ -70,7 +73,8 @@ const SearchBarContainer: React.FC = () => {
   );
 
   return (
-    <SearchBar
+    <ProjectSearchBar
+      defaultQuery={defaultQuery}
       projectList={projectList}
       query={query}
       onSearch={handleSearch}
