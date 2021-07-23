@@ -192,22 +192,11 @@ const WorkflowStepView: React.FC = () => {
     fetchNext(step, [stepToBreadcrumbItem(step)]);
   };
 
-  // TODO: find better sollution for this in future, for example, optimistic update
-  const waitAndReloadSteps = () => {
-    const reloadTimer = setTimeout(() => {
-      setRefreshSteps(!refreshSteps);
-      clearTimeout(reloadTimer);
-    }, 3500);
+  const reloadTables = () => {
+    setRefreshTables(!refreshTables);
   };
 
-  const waitAndReloadTables = () => {
-    const reloadTimer = setTimeout(() => {
-      setRefreshTables(!refreshTables);
-      clearTimeout(reloadTimer);
-    }, 3500);
-  };
-
-  const reload = () => {
+  const reloadSteps = () => {
     setRefreshSteps(!refreshSteps);
   };
 
@@ -263,7 +252,7 @@ const WorkflowStepView: React.FC = () => {
         notification.success({
           message: `New step ${name} created successfully`,
         });
-        waitAndReloadSteps();
+        reloadSteps();
       })
       .catch(error => {
         setShowStepForm(false);
@@ -275,34 +264,29 @@ const WorkflowStepView: React.FC = () => {
   };
 
   const addNewTable = () => {
-    waitAndReloadTables();
+    reloadTables();
     setShowNewTableForm(false);
   };
 
   const addNewDataset = () => {
     // TODO: display Inputs in this view
     setShowDataSetForm(false);
+    reloadSteps();
   };
 
-  const addInputTable = React.useMemo(() => {
-    return () =>
-      step
-        ? () => {
-            makeInputTable(step['@id'], nexus, orgLabel, projectLabel);
-            setRefreshTables(true);
-          }
-        : () => {};
-  }, [step]);
+  const addInputTable = async () => {
+    if (step) {
+      await makeInputTable(step['@id'], nexus, orgLabel, projectLabel);
+      reloadTables();
+    }
+  };
 
-  const addActivityTable = React.useMemo(() => {
-    return () =>
-      step
-        ? () => {
-            makeActivityTable(step['@id'], nexus, orgLabel, projectLabel);
-            setRefreshTables(true);
-          }
-        : () => {};
-  }, [step]);
+  const addActivityTable = async () => {
+    if (step) {
+      await makeActivityTable(step['@id'], nexus, orgLabel, projectLabel);
+      reloadTables();
+    }
+  };
 
   return (
     <div className="workflow-step-view">
@@ -310,8 +294,8 @@ const WorkflowStepView: React.FC = () => {
         addNewStep={() => setShowStepForm(true)}
         addDataTable={() => setShowNewTableForm(true)}
         addDataset={() => setShowDataSetForm(true)}
-        addInputTable={addInputTable()}
-        addActivityTable={addActivityTable()}
+        addInputTable={addInputTable}
+        addActivityTable={addActivityTable}
       />
       <ProjectPanel orgLabel={orgLabel} projectLabel={projectLabel} />
       <div className="workflow-step-view__panel">
@@ -321,7 +305,7 @@ const WorkflowStepView: React.FC = () => {
             step={step}
             projectLabel={projectLabel}
             orgLabel={orgLabel}
-            onUpdate={reload}
+            onUpdate={reloadSteps}
           />
         )}
       </div>
@@ -334,7 +318,7 @@ const WorkflowStepView: React.FC = () => {
               orgLabel={orgLabel}
               projectLabel={projectLabel}
               step={substep}
-              onUpdate={waitAndReloadSteps}
+              onUpdate={reloadSteps}
               parentLabel={step?.name}
             />
           ))}
@@ -344,6 +328,7 @@ const WorkflowStepView: React.FC = () => {
               orgLabel={orgLabel}
               projectLabel={projectLabel}
               tables={tables}
+              onDeprecate={reloadTables}
             />
 
             <Modal

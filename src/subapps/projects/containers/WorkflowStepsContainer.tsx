@@ -31,8 +31,7 @@ const WorkflowStepContainer: React.FC<{
   // switch to trigger step list update
   const [refreshSteps, setRefreshSteps] = React.useState<boolean>(false);
 
-  const waitAntReloadSteps = () =>
-    setTimeout(() => setRefreshSteps(!refreshSteps), 3500);
+  const reloadSteps = () => setRefreshSteps(!refreshSteps);
 
   React.useEffect(() => {
     checkForContext();
@@ -108,7 +107,7 @@ const WorkflowStepContainer: React.FC<{
         notification.success({
           message: `New step ${name} created successfully`,
         });
-        waitAntReloadSteps();
+        reloadSteps();
       })
       .catch(error => {
         setShowAddForm(false);
@@ -131,7 +130,7 @@ const WorkflowStepContainer: React.FC<{
               key={step['@id']}
               projectLabel={projectLabel}
               orgLabel={orgLabel}
-              onUpdate={waitAntReloadSteps}
+              onUpdate={reloadSteps}
             />
           ))}
       </StepsBoard>
