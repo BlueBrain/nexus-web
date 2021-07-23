@@ -129,6 +129,7 @@ const SearchBar: React.FC<{
       value={value}
     >
       <Input.Search
+        allowClear
         ref={inputRef}
         className="search-bar-input"
         placeholder="Visit Project"

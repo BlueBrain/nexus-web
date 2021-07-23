@@ -17,7 +17,7 @@ import getUserManager from '../../client/userManager';
 import { getLogoutUrl } from '../utils';
 import { url as githubIssueURL } from '../../../package.json';
 import useLocalStorage from '../hooks/useLocalStorage';
-import SearchBarContainer from '../containers/SearchBarContainer';
+import ProjectSearchBarContainer from '../containers/ProjectSearchBarContainer';
 import DataCartContainer from '../containers/DataCartContainer';
 import SideMenu from './SideMenu';
 
@@ -206,7 +206,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
           onClickSideBarToggle={() => setCollapsed(!collapsed)}
           dataCart={<DataCartContainer />}
         >
-          <SearchBarContainer />
+          <ProjectSearchBarContainer />
         </Header>
         <ConsentContainer consent={consent} updateConsent={setConsent} />
         <SideMenu
