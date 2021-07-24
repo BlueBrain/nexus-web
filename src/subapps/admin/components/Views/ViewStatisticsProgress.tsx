@@ -30,7 +30,7 @@ export const ViewStatisticsProgress: React.FunctionComponent<ViewStatisticsProgr
           onClick={() => props.onClickRefresh && props.onClickRefresh()}
           icon={<ReloadOutlined spin={true} />}
         >
-          New Resources indexed. Click to reload
+          Resources indexed. Click to reload
         </Button>
       ) : (
         <Tooltip title={label}>
@@ -46,6 +46,7 @@ export type ViewStatisticsContainerProps = {
   projectLabel: string;
   resourceId: string;
   onClickRefresh?: VoidFunction;
+  statisticsOnMount?: Statistics;
 };
 
 export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsContainerProps> = props => {
@@ -60,6 +61,18 @@ export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsCont
     data: null,
     loading: false,
   });
+
+  React.useEffect(() => {
+    if (props.statisticsOnMount) {
+      setEventsAtMount(props.statisticsOnMount.totalEvents);
+      setState({
+        error: null,
+        data: props.statisticsOnMount,
+        loading: false,
+      });
+      setHasNewlyIndexedResources(false);
+    }
+  }, [props.statisticsOnMount]);
 
   const onRefreshResources = () => {
     setHasNewlyIndexedResources(false);

@@ -13,10 +13,14 @@ import ResourceListBoardContainer from '../../../shared/containers/ResourceListB
 import ProjectTools from '../components/Projects/ProjectTools';
 import { useAdminSubappContext } from '..';
 import useNotification from '../../../shared/hooks/useNotification';
+import { useHistory, useLocation } from 'react-router-dom';
+import { Statistics } from '@bbp/nexus-sdk';
 
 const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
   const nexus = useNexusContext();
+  const location = useLocation();
+  const history = useHistory();
   const subapp = useAdminSubappContext();
   const match = useRouteMatch<{ orgLabel: string; projectLabel: string }>(
     `/${subapp.namespace}/:orgLabel/:projectLabel`
@@ -69,6 +73,33 @@ const ProjectView: React.FunctionComponent = () => {
       });
   }, [orgLabel, projectLabel, nexus, setState]);
 
+  React.useEffect(() => {
+    /* if location has changed, check to see if we should refresh our
+    resources and reset initial statistics state */
+    const refresh =
+      location.state && (location.state as { refresh?: boolean }).refresh;
+    if (refresh) {
+      setRefreshLists(!refreshLists);
+      fetchAndSetStatistics();
+      history.replace(location.pathname, {});
+    }
+  }, [location]);
+
+  const [statistics, setStatistics] = React.useState<Statistics>();
+
+  const fetchAndSetStatistics = async () => {
+    const stats = ((await nexus.View.statistics(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(DEFAULT_ELASTIC_SEARCH_VIEW_ID)
+    )) as unknown) as Statistics;
+    setStatistics(stats);
+  };
+
+  React.useEffect(() => {
+    fetchAndSetStatistics();
+  }, []);
+
   return (
     <div className="project-view">
       {!!project && (
@@ -84,16 +115,20 @@ const ProjectView: React.FunctionComponent = () => {
                 {'  '}
               </h1>
               <div style={{ marginLeft: 10 }}>
-                <ViewStatisticsContainer
-                  orgLabel={orgLabel}
-                  projectLabel={project._label}
-                  resourceId={encodeURIComponent(
-                    DEFAULT_ELASTIC_SEARCH_VIEW_ID
-                  )}
-                  onClickRefresh={() => {
-                    setRefreshLists(!refreshLists);
-                  }}
-                />
+                {statistics && (
+                  <ViewStatisticsContainer
+                    orgLabel={orgLabel}
+                    projectLabel={project._label}
+                    resourceId={encodeURIComponent(
+                      DEFAULT_ELASTIC_SEARCH_VIEW_ID
+                    )}
+                    onClickRefresh={() => {
+                      fetchAndSetStatistics();
+                      setRefreshLists(!refreshLists);
+                    }}
+                    statisticsOnMount={statistics}
+                  />
+                )}
               </div>
               {!!project.description && (
                 <Popover
@@ -119,7 +154,13 @@ const ProjectView: React.FunctionComponent = () => {
                 projectLabel={projectLabel}
                 refreshLists={refreshLists}
               />
-              <ProjectTools orgLabel={orgLabel} projectLabel={projectLabel} />
+              <ProjectTools
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+                onUpdate={() =>
+                  fetchAndSetStatistics() && setRefreshLists(!refreshLists)
+                }
+              />
             </div>
           </div>
         </>
