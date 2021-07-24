@@ -47,6 +47,7 @@ export type ViewStatisticsContainerProps = {
   resourceId: string;
   onClickRefresh?: VoidFunction;
   statisticsOnMount?: Statistics;
+  paused?: boolean;
 };
 
 export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsContainerProps> = props => {
@@ -100,6 +101,8 @@ export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsCont
       error: null,
       data: null,
     });
+    if (props.paused) return;
+
     const poll = nexus.View.pollStatistics(
       props.orgLabel,
       props.projectLabel,
@@ -127,9 +130,9 @@ export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsCont
     return () => {
       poll.unsubscribe();
     };
-  }, [props.orgLabel, props.projectLabel, props.resourceId]);
+  }, [props.orgLabel, props.projectLabel, props.resourceId, props.paused]);
 
-  if (!loading && !error && data) {
+  if (!loading && !error && data && !props.paused) {
     return (
       <ViewStatisticsProgress
         totalEvents={data.totalEvents}

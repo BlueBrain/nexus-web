@@ -45,6 +45,9 @@ const ProjectView: React.FunctionComponent = () => {
   });
 
   const [refreshLists, setRefreshLists] = React.useState(false);
+  const [statisticsPollingPaused, setStatisticsPollingPaused] = React.useState(
+    false
+  );
 
   React.useEffect(() => {
     setState({
@@ -73,6 +76,20 @@ const ProjectView: React.FunctionComponent = () => {
       });
   }, [orgLabel, projectLabel, nexus, setState]);
 
+  React.useEffect(() => console.log({ statisticsPollingPaused }), [
+    statisticsPollingPaused,
+  ]);
+
+  const pauseStatisticsPolling = (durationInMs: number) => {
+    setStatisticsPollingPaused(true);
+    setTimeout(() => {
+      (async () => {
+        await fetchAndSetStatistics();
+        setStatisticsPollingPaused(false);
+      })();
+    }, durationInMs);
+  };
+
   React.useEffect(() => {
     /* if location has changed, check to see if we should refresh our
     resources and reset initial statistics state */
@@ -80,7 +97,8 @@ const ProjectView: React.FunctionComponent = () => {
       location.state && (location.state as { refresh?: boolean }).refresh;
     if (refresh) {
       setRefreshLists(!refreshLists);
-      fetchAndSetStatistics();
+      // Statistics aren't immediately updated so pause polling briefly
+      pauseStatisticsPolling(5000);
       history.replace(location.pathname, {});
     }
   }, [location]);
@@ -127,6 +145,7 @@ const ProjectView: React.FunctionComponent = () => {
                       setRefreshLists(!refreshLists);
                     }}
                     statisticsOnMount={statistics}
+                    paused={statisticsPollingPaused}
                   />
                 )}
               </div>
@@ -157,9 +176,11 @@ const ProjectView: React.FunctionComponent = () => {
               <ProjectTools
                 orgLabel={orgLabel}
                 projectLabel={projectLabel}
-                onUpdate={() =>
-                  fetchAndSetStatistics() && setRefreshLists(!refreshLists)
-                }
+                onUpdate={() => {
+                  setRefreshLists(!refreshLists);
+                  // Statistics aren't immediately updated so pause polling briefly
+                  pauseStatisticsPolling(5000);
+                }}
               />
             </div>
           </div>
