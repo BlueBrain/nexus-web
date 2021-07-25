@@ -3,18 +3,16 @@ import { useRouteMatch } from 'react-router';
 import {
   ProjectResponseCommon,
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+  Statistics,
 } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Popover, Button } from 'antd';
-import { Link } from 'react-router-dom';
-
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
 import ResourceListBoardContainer from '../../../shared/containers/ResourceListBoardContainer';
 import ProjectTools from '../components/Projects/ProjectTools';
 import { useAdminSubappContext } from '..';
 import useNotification from '../../../shared/hooks/useNotification';
-import { useHistory, useLocation } from 'react-router-dom';
-import { Statistics } from '@bbp/nexus-sdk';
 
 const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
@@ -76,10 +74,6 @@ const ProjectView: React.FunctionComponent = () => {
       });
   }, [orgLabel, projectLabel, nexus, setState]);
 
-  React.useEffect(() => console.log({ statisticsPollingPaused }), [
-    statisticsPollingPaused,
-  ]);
-
   const pauseStatisticsPolling = (durationInMs: number) => {
     setStatisticsPollingPaused(true);
     setTimeout(() => {
@@ -96,10 +90,11 @@ const ProjectView: React.FunctionComponent = () => {
     const refresh =
       location.state && (location.state as { refresh?: boolean }).refresh;
     if (refresh) {
+      // remove refresh from state
+      history.replace(location.pathname, {});
       setRefreshLists(!refreshLists);
       // Statistics aren't immediately updated so pause polling briefly
       pauseStatisticsPolling(5000);
-      history.replace(location.pathname, {});
     }
   }, [location]);
 

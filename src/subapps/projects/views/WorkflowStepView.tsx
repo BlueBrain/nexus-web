@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
-import { Modal } from 'antd';
+import { Modal, Spin } from 'antd';
 import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';
 import StepsBoard from '../components/WorkflowSteps/StepsBoard';
@@ -57,13 +57,14 @@ const WorkflowStepView: React.FC = () => {
     false
   );
   const [showDataSetForm, setShowDataSetForm] = React.useState<boolean>(false);
+  const [busy, setBusy] = React.useState<boolean>(false);
 
   const projectLabel = match?.params.projectLabel || '';
   const orgLabel = match?.params.orgLabel || '';
   const stepId = match?.params.stepId || '';
 
-  React.useEffect(() => {
-    nexus.Resource.get(orgLabel, projectLabel, stepId)
+  const setupStepView = async () => {
+    await nexus.Resource.get(orgLabel, projectLabel, stepId)
       .then(response => {
         setStep(response as StepResource);
         fetchBreadcrumbs(
@@ -80,12 +81,31 @@ const WorkflowStepView: React.FC = () => {
         })
       );
 
-    fetchChildren(stepId);
-  }, [refreshSteps, stepId]);
+    await fetchChildren(stepId);
+  };
 
   React.useEffect(() => {
-    fetchTables();
-  }, [refreshTables, stepId]);
+    setBusy(true);
+    Promise.all([setupStepView(), fetchTables()]).then(() => {
+      setBusy(false);
+    });
+  }, [stepId]);
+
+  React.useEffect(() => {
+    setBusy(true);
+    (async () => {
+      await setupStepView();
+      setBusy(false);
+    })();
+  }, [refreshSteps]);
+
+  React.useEffect(() => {
+    setBusy(true);
+    (async () => {
+      await fetchTables();
+      setBusy(false);
+    })();
+  }, [refreshTables]);
 
   const fetchTables = async () => {
     await nexus.Resource.links(orgLabel, projectLabel, stepId, 'incoming', {
@@ -289,99 +309,101 @@ const WorkflowStepView: React.FC = () => {
   };
 
   return (
-    <div className="workflow-step-view">
-      <AddComponentButton
-        addNewStep={() => setShowStepForm(true)}
-        addDataTable={() => setShowNewTableForm(true)}
-        addDataset={() => setShowDataSetForm(true)}
-        addInputTable={addInputTable}
-        addActivityTable={addActivityTable}
-      />
-      <ProjectPanel orgLabel={orgLabel} projectLabel={projectLabel} />
-      <div className="workflow-step-view__panel">
-        <Breadcrumbs crumbs={breadcrumbs} />
-        {step && (
-          <StepInfoContainer
-            step={step}
-            projectLabel={projectLabel}
-            orgLabel={orgLabel}
-            onUpdate={reloadSteps}
-          />
-        )}
-      </div>
-      <StepsBoard>
-        {steps &&
-          steps.length > 0 &&
-          steps.map(substep => (
-            <SingleStepContainer
-              key={`step-${substep['@id']}`}
-              orgLabel={orgLabel}
+    <Spin spinning={busy} tip="Please wait...">
+      <div className="workflow-step-view">
+        <AddComponentButton
+          addNewStep={() => setShowStepForm(true)}
+          addDataTable={() => setShowNewTableForm(true)}
+          addDataset={() => setShowDataSetForm(true)}
+          addInputTable={addInputTable}
+          addActivityTable={addActivityTable}
+        />
+        <ProjectPanel orgLabel={orgLabel} projectLabel={projectLabel} />
+        <div className="workflow-step-view__panel">
+          <Breadcrumbs crumbs={breadcrumbs} />
+          {step && (
+            <StepInfoContainer
+              step={step}
               projectLabel={projectLabel}
-              step={substep}
+              orgLabel={orgLabel}
               onUpdate={reloadSteps}
-              parentLabel={step?.name}
             />
-          ))}
-        {step && tables && (
-          <>
-            <TableContainer
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-              tables={tables}
-              onDeprecate={reloadTables}
-            />
-
-            <Modal
-              title="Add Data Set"
-              visible={showDataSetForm}
-              onCancel={() => setShowDataSetForm(false)}
-              footer={null}
-              width={600}
-            >
-              <InputsContainer
+          )}
+        </div>
+        <StepsBoard>
+          {steps &&
+            steps.length > 0 &&
+            steps.map(substep => (
+              <SingleStepContainer
+                key={`step-${substep['@id']}`}
                 orgLabel={orgLabel}
                 projectLabel={projectLabel}
-                stepId={step._self}
-                onCancel={() => setShowDataSetForm(false)}
-                onSuccess={addNewDataset}
+                step={substep}
+                onUpdate={reloadSteps}
+                parentLabel={step?.name}
               />
-            </Modal>
-          </>
-        )}
-      </StepsBoard>
-      <Modal
-        visible={showStepForm}
-        footer={null}
-        onCancel={() => setShowStepForm(false)}
-        width={800}
-        destroyOnClose={true}
-      >
-        <WorkflowStepWithActivityForm
-          title="Create New Step"
-          onClickCancel={() => setShowStepForm(false)}
-          onSubmit={submitNewStep}
-          busy={false}
-          siblings={siblings}
-          activityList={[]}
-          parentLabel={step?.name}
-        />
-      </Modal>
-      <Modal
-        visible={showNewTableForm}
-        footer={null}
-        onCancel={() => setShowNewTableForm(false)}
-        width={400}
-        destroyOnClose={true}
-      >
-        <NewTableContainer
-          orgLabel={orgLabel}
-          projectLabel={projectLabel}
-          parentId={step?._self}
-          onClickClose={() => setShowNewTableForm(false)}
-          onSuccess={addNewTable}
-        />
-      </Modal>
-    </div>
+            ))}
+          {step && tables && (
+            <>
+              <TableContainer
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+                tables={tables}
+                onDeprecate={reloadTables}
+              />
+
+              <Modal
+                title="Add Data Set"
+                visible={showDataSetForm}
+                onCancel={() => setShowDataSetForm(false)}
+                footer={null}
+                width={600}
+              >
+                <InputsContainer
+                  orgLabel={orgLabel}
+                  projectLabel={projectLabel}
+                  stepId={step._self}
+                  onCancel={() => setShowDataSetForm(false)}
+                  onSuccess={addNewDataset}
+                />
+              </Modal>
+            </>
+          )}
+        </StepsBoard>
+        <Modal
+          visible={showStepForm}
+          footer={null}
+          onCancel={() => setShowStepForm(false)}
+          width={800}
+          destroyOnClose={true}
+        >
+          <WorkflowStepWithActivityForm
+            title="Create New Step"
+            onClickCancel={() => setShowStepForm(false)}
+            onSubmit={submitNewStep}
+            busy={false}
+            siblings={siblings}
+            activityList={[]}
+            parentLabel={step?.name}
+          />
+        </Modal>
+        <Modal
+          visible={showNewTableForm}
+          footer={null}
+          onCancel={() => setShowNewTableForm(false)}
+          width={400}
+          destroyOnClose={true}
+        >
+          <NewTableContainer
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+            parentId={step?._self}
+            onClickClose={() => setShowNewTableForm(false)}
+            onSuccess={addNewTable}
+          />
+        </Modal>
+      </div>
+    </Spin>
   );
 };
 
