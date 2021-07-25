@@ -206,14 +206,14 @@ const StepInfoContainer: React.FC<{
 
   const deprecateSteps = async (steps: Resource[]) =>
     await Promise.all(
-      steps.map(step => {
+      steps.map(step =>
         nexus.Resource.deprecate(
           orgLabel,
           projectLabel,
           encodeURIComponent(step['@id']),
           step._rev
-        );
-      })
+        )
+      )
     );
 
   const removePreviousStepLink = async (
