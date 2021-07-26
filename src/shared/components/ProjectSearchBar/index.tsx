@@ -11,17 +11,35 @@ const LABEL_MAX_LENGTH = 25;
 const SearchBar: React.FC<{
   projectList: ProjectResponseCommon[];
   query?: string;
-  defaultQuery: string | undefined;
   onSearch: (value: string) => void;
   onSubmit: (value: string) => void;
+  onFocus: () => void;
   onClear: () => void;
-}> = ({ query, projectList, onSearch, onSubmit, onClear, defaultQuery }) => {
+  onBlur: () => void;
+  inputOnPressEnter: () => void;
+}> = ({
+  query,
+  projectList,
+  onSearch,
+  onSubmit,
+  onClear,
+  onFocus,
+  onBlur,
+  inputOnPressEnter,
+}) => {
   const [value, setValue] = React.useState(query || '');
   const [focused, setFocused] = React.useState(false);
+  const inputRef = React.useRef<Input>(null);
+
   const handleSetFocused = (val: boolean) => () => {
     setFocused(val);
+
+    if (val) {
+      onFocus();
+    } else {
+      onBlur();
+    }
   };
-  const inputRef = React.useRef<Input>(null);
 
   // We can use the convention of / for web search
   // to highlight our search bar
@@ -125,11 +143,11 @@ const SearchBar: React.FC<{
       value={value}
     >
       <Input.Search
+        onPressEnter={inputOnPressEnter}
         allowClear
         ref={inputRef}
         className="search-bar-input"
-        placeholder={defaultQuery || 'Visit Project'}
-        enterButton
+        placeholder="Visit Project"
       />
     </AutoComplete>
   );

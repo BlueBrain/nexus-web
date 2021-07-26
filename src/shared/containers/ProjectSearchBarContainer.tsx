@@ -2,63 +2,69 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { take } from 'lodash';
 import * as React from 'react';
 import { useHistory } from 'react-router';
+import { useQuery } from 'react-query';
 
 import ProjectSearchBar from '../components/ProjectSearchBar';
-import useAsyncCall from '../hooks/useAsynCall';
 
-const PROJECT_RESULTS_DEFAULT_SIZE = 100;
+const PROJECT_RESULTS_DEFAULT_SIZE = 300;
 const SHOULD_INCLUDE_DEPRECATED = false;
+const STORAGE_ITEM = 'last_visited_project';
 
 const SearchBarContainer: React.FC = () => {
   const nexus = useNexusContext();
   const history = useHistory();
   const [query, setQuery] = React.useState<string>();
-  const [defaultQuery, setDefaultQuery] = React.useState<string | undefined>();
+  const [lastVisited, setLastVisited] = React.useState<string>();
 
-  const projectData = useAsyncCall(
-    nexus.Project.list(undefined, {
-      size: 100,
-      deprecated: SHOULD_INCLUDE_DEPRECATED,
-    }),
-    []
+  const { isLoading, error, data } = useQuery(
+    'projects',
+    async () =>
+      await nexus.Project.list(undefined, {
+        size: PROJECT_RESULTS_DEFAULT_SIZE,
+        deprecated: SHOULD_INCLUDE_DEPRECATED,
+      })
   );
 
-  React.useEffect(() => {
-    const lastVisited = localStorage.getItem('last_visited_project') || '';
+  const onFocus = () => {
+    const lastVisited = localStorage.getItem(STORAGE_ITEM) || '';
 
-    setDefaultQuery(lastVisited);
-
-    console.log('lastVisited', lastVisited);
-  }, []);
+    setLastVisited(lastVisited);
+    setQuery(lastVisited);
+  };
 
   const goToProject = (orgLabel: string, projectLabel: string) => {
     const path = `/admin/${orgLabel}/${projectLabel}`;
+
     history.push(path);
   };
 
   const handleSearch = (searchText: string) => {
+    setLastVisited(undefined);
     setQuery(searchText);
   };
 
   const handleSubmit = (value: string) => {
     const orgAndProject = value;
-    console.log('submitted', orgAndProject);
-    // save selection
-    localStorage.setItem('last_visited_project', orgAndProject);
-    setDefaultQuery(orgAndProject);
-
+    localStorage.setItem(STORAGE_ITEM, value);
     const [orgLabel, projectLabel] = orgAndProject.split('/');
-    handleSearch('');
 
     return goToProject(orgLabel, projectLabel);
   };
 
   const handleClear = () => {
     setQuery(undefined);
+    setLastVisited(undefined);
+    localStorage.removeItem(STORAGE_ITEM);
+  };
+
+  const inputOnPressEnter = () => {
+    if (lastVisited) {
+      handleSubmit(lastVisited);
+    }
   };
 
   const projectList = take(
-    (projectData.data?._results || []).filter(project => {
+    (data?._results || []).filter((project: any) => {
       if (query) {
         return (
           project._label.toLowerCase().includes(query?.toLowerCase()) ||
@@ -74,12 +80,14 @@ const SearchBarContainer: React.FC = () => {
 
   return (
     <ProjectSearchBar
-      defaultQuery={defaultQuery}
       projectList={projectList}
       query={query}
       onSearch={handleSearch}
       onSubmit={handleSubmit}
       onClear={handleClear}
+      onFocus={onFocus}
+      onBlur={() => setQuery('')}
+      inputOnPressEnter={inputOnPressEnter}
     />
   );
 };
