@@ -74,7 +74,9 @@ const GalleryView: React.FC = () => {
               footer={null}
               onCancel={() => {
                 // @ts-ignore
-                history.push(`${background.pathname}${background.search}`, {});
+                history.push(`${background.pathname}${background.search}`, {
+                  refresh: true,
+                });
               }}
               className="modal-view"
               width="inherit"

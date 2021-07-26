@@ -16,7 +16,8 @@ import { useAdminSubappContext } from '../..';
 const ProjectTools: React.FC<{
   orgLabel: string;
   projectLabel: string;
-}> = ({ orgLabel, projectLabel }) => {
+  onUpdate: () => void;
+}> = ({ orgLabel, projectLabel, onUpdate }) => {
   const subApp = useAdminSubappContext();
   return (
     <div className="project-tools">
@@ -32,6 +33,7 @@ const ProjectTools: React.FC<{
           <ResourceFormContainer
             orgLabel={orgLabel}
             projectLabel={projectLabel}
+            onResourceCreated={onUpdate}
           />
         </AccessControl>
         <Link

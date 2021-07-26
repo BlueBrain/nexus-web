@@ -11,7 +11,8 @@ const DraggableTablesContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
   tables: any[];
-}> = ({ orgLabel, projectLabel, tables }) => {
+  onDeprecate: () => void;
+}> = ({ orgLabel, projectLabel, tables, onDeprecate }) => {
   const nexus = useNexusContext();
   const notification = useNotification();
 
@@ -68,6 +69,7 @@ const DraggableTablesContainer: React.FC<{
                 projectLabel={projectLabel}
                 tableResourceId={table['@id']}
                 key={`data-table-${table['@id']}}`}
+                onDeprecate={onDeprecate}
               />
             </div>
           </DraggableTable>

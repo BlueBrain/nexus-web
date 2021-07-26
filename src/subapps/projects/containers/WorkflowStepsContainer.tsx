@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Modal } from 'antd';
+import { Modal, Spin } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 import { NexusClient } from '@bbp/nexus-sdk';
 
@@ -19,6 +19,7 @@ import {
 import useNotification, {
   parseNexusError,
 } from '../../../shared/hooks/useNotification';
+import './WorkflowStepsContainer.less';
 
 const WorkflowStepContainer: React.FC<{
   orgLabel: string;
@@ -30,13 +31,16 @@ const WorkflowStepContainer: React.FC<{
   const [showAddForm, setShowAddForm] = React.useState<boolean>(false);
   // switch to trigger step list update
   const [refreshSteps, setRefreshSteps] = React.useState<boolean>(false);
+  const [busy, setBusy] = React.useState<boolean>(false);
 
-  const waitAntReloadSteps = () =>
-    setTimeout(() => setRefreshSteps(!refreshSteps), 3500);
+  const reloadSteps = () => setRefreshSteps(!refreshSteps);
 
   React.useEffect(() => {
-    checkForContext();
-    fetchAllSteps(nexus, orgLabel, projectLabel);
+    setBusy(true);
+    Promise.all([
+      checkForContext(),
+      fetchAllSteps(nexus, orgLabel, projectLabel),
+    ]).then(() => setBusy(false));
   }, [refreshSteps]);
 
   const fetchAllSteps = async (
@@ -108,7 +112,7 @@ const WorkflowStepContainer: React.FC<{
         notification.success({
           message: `New step ${name} created successfully`,
         });
-        waitAntReloadSteps();
+        reloadSteps();
       })
       .catch(error => {
         setShowAddForm(false);
@@ -121,20 +125,26 @@ const WorkflowStepContainer: React.FC<{
 
   return (
     <>
-      <ProjectPanel orgLabel={orgLabel} projectLabel={projectLabel} />
-      <AddComponentButton addNewStep={() => setShowAddForm(true)} />
-      <StepsBoard>
-        {steps &&
-          stepsWithChildren.map(step => (
-            <SingleStepContainer
-              step={step}
-              key={step['@id']}
-              projectLabel={projectLabel}
-              orgLabel={orgLabel}
-              onUpdate={waitAntReloadSteps}
-            />
-          ))}
-      </StepsBoard>
+      <Spin
+        spinning={busy}
+        tip="Please wait..."
+        wrapperClassName="workflow_board_spin_wrapper"
+      >
+        <ProjectPanel orgLabel={orgLabel} projectLabel={projectLabel} />
+        <AddComponentButton addNewStep={() => setShowAddForm(true)} />
+        <StepsBoard>
+          {steps &&
+            stepsWithChildren.map(step => (
+              <SingleStepContainer
+                step={step}
+                key={step['@id']}
+                projectLabel={projectLabel}
+                orgLabel={orgLabel}
+                onUpdate={reloadSteps}
+              />
+            ))}
+        </StepsBoard>
+      </Spin>
       <Modal
         visible={showAddForm}
         footer={null}
@@ -146,7 +156,7 @@ const WorkflowStepContainer: React.FC<{
           title="Create New Step"
           onClickCancel={() => setShowAddForm(false)}
           onSubmit={submitNewStep}
-          busy={false}
+          busy={busy}
           siblings={siblings}
           activityList={[]}
         />
