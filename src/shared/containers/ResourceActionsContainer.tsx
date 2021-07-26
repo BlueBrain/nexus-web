@@ -114,7 +114,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
   const actions = {
     deprecateResource: async () => {
       try {
-        let deprecateMethod = nexus.Resource.deprecate;
+        let deprecateMethod: any = nexus.Resource.deprecate;
         if (isView(resource)) {
           deprecateMethod = nexus.View.deprecate;
         }
