@@ -143,6 +143,7 @@ const SearchBar: React.FC<{
       value={value}
     >
       <Input.Search
+        enterButton
         onPressEnter={inputOnPressEnter}
         allowClear
         ref={inputRef}

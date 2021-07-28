@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useHistory } from 'react-router';
 import { useQuery } from 'react-query';
 
-import ProjectSearchBar from '../components/ProjectSearchBar';
+import SearchBar from '../components/SearchBar';
 
 const PROJECT_RESULTS_DEFAULT_SIZE = 300;
 const SHOULD_INCLUDE_DEPRECATED = false;
@@ -79,7 +79,7 @@ const SearchBarContainer: React.FC = () => {
   );
 
   return (
-    <ProjectSearchBar
+    <SearchBar
       projectList={projectList}
       query={query}
       onSearch={handleSearch}
