@@ -20,7 +20,7 @@ const Hit: React.FC<{
       </div>
       <div className="hit__body">{children}</div>
       <div className="hit__action">
-        <span className="enter">
+        <span>
           <EnterOutlined style={{ transform: 'scaleX(-1)' }} /> jump to project{' '}
           {orgLabel && projectLabel && (
             <AccessControl

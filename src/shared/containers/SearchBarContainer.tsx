@@ -18,7 +18,7 @@ const SearchBarContainer: React.FC = () => {
   const [query, setQuery] = React.useState<string>();
   const [lastVisited, setLastVisited] = React.useState<string>();
 
-  const { isLoading, error, data } = useQuery(
+  const { data } = useQuery(
     'projects',
     async () =>
       await nexus.Project.list(undefined, {

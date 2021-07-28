@@ -135,9 +135,9 @@ const SearchBar: React.FC<{
       value={value}
     >
       <Input.Search
+        allowClear
         enterButton
         onPressEnter={inputOnPressEnter}
-        allowClear
         ref={inputRef}
         className="search-bar-input"
         placeholder="Visit Project"
