@@ -9,7 +9,7 @@ import './SearchBar.less';
 const LABEL_MAX_LENGTH = 25;
 
 const SearchBar: React.FC<{
-  projectList: ProjectResponseCommon[];
+  projectList: string[];
   query?: string;
   onSearch: (value: string) => void;
   onSubmit: (value: string) => void;
@@ -82,28 +82,21 @@ const SearchBar: React.FC<{
   }[] = [];
 
   if (projectList.length) {
-    // we display only 5 projects
-    options = projectList.splice(0, 5).map(project => {
-      const label = `${project._organizationLabel}/${project._label}`;
+    options = projectList.map((project: string) => {
+      const [orgLabel, projectLabel] = project.split('/');
 
       return {
-        // @ts-ignore
-        // TODO update nexus-sdk to add this property
-        // to types
-        key: project._uuid,
+        key: project,
         label: (
-          <Hit
-            orgLabel={project._organizationLabel}
-            projectLabel={project._label}
-          >
+          <Hit orgLabel={orgLabel} projectLabel={projectLabel}>
             <span>
-              {label.length > LABEL_MAX_LENGTH
-                ? `${label.slice(0, LABEL_MAX_LENGTH)}...`
-                : label}
+              {project.length > LABEL_MAX_LENGTH
+                ? `${project.slice(0, LABEL_MAX_LENGTH)}...`
+                : project}
             </span>
           </Hit>
         ),
-        value: `${project._organizationLabel}/${project._label}`,
+        value: `${orgLabel}/${projectLabel}`,
       };
     });
   }

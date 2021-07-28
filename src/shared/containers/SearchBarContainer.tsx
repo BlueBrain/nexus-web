@@ -5,10 +5,12 @@ import { useHistory } from 'react-router';
 import { useQuery } from 'react-query';
 
 import SearchBar from '../components/SearchBar';
+import { sortStringsBySimilarity } from '../utils/stringSimilarity';
 
 const PROJECT_RESULTS_DEFAULT_SIZE = 300;
 const SHOULD_INCLUDE_DEPRECATED = false;
 const STORAGE_ITEM = 'last_visited_project';
+const SHOW_PROJECTS_NUMBER = 5;
 
 const SearchBarContainer: React.FC = () => {
   const nexus = useNexusContext();
@@ -45,6 +47,7 @@ const SearchBarContainer: React.FC = () => {
 
   const handleSubmit = (value: string) => {
     const orgAndProject = value;
+
     localStorage.setItem(STORAGE_ITEM, value);
     const [orgLabel, projectLabel] = orgAndProject.split('/');
 
@@ -63,24 +66,27 @@ const SearchBarContainer: React.FC = () => {
     }
   };
 
-  const projectList = take(
-    (data?._results || []).filter((project: any) => {
-      if (query) {
-        return (
-          project._label.toLowerCase().includes(query?.toLowerCase()) ||
-          project._organizationLabel
-            .toLowerCase()
-            .includes(query?.toLowerCase())
-        );
-      }
-      return false;
-    }),
-    PROJECT_RESULTS_DEFAULT_SIZE
-  );
+  const matchedProjects: () => any = () => {
+    const labels = data?._results.map(
+      project =>
+        `${project._organizationLabel.toLowerCase()}/${project._label.toLowerCase()}`
+    );
+
+    if (query && labels && labels.length > 0) {
+      const results = take(
+        sortStringsBySimilarity(query, labels),
+        SHOW_PROJECTS_NUMBER
+      );
+
+      return results;
+    }
+
+    return [];
+  };
 
   return (
     <SearchBar
-      projectList={projectList}
+      projectList={matchedProjects()}
       query={query}
       onSearch={handleSearch}
       onSubmit={handleSubmit}
