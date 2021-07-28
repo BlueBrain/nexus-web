@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { ProjectResponseCommon } from '@bbp/nexus-sdk';
 import { AutoComplete, Input } from 'antd';
 
 import Hit from './Hit';
