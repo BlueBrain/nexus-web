@@ -60,6 +60,9 @@ const SearchBar: React.FC<{
 
       if (e.key === '/' && !focused) {
         inputRef.current && inputRef.current.focus();
+        inputRef.current && inputRef.current.input.select();
+        console.log('inputRef.current', inputRef);
+
         e.preventDefault();
       }
     };
@@ -67,7 +70,7 @@ const SearchBar: React.FC<{
     return () => {
       document.removeEventListener('keypress', focusSearch);
     };
-  });
+  }, []);
 
   // Reset default value if query changes
   React.useEffect(() => {
@@ -123,7 +126,7 @@ const SearchBar: React.FC<{
 
   return (
     <AutoComplete
-      className={`search-bar ${!!focused && 'focused'}`}
+      className={`search-bar ${!!focused && 'search-bar__focused'}`}
       onFocus={handleSetFocused(true)}
       onBlur={handleSetFocused(false)}
       options={options}
@@ -131,16 +134,17 @@ const SearchBar: React.FC<{
       onSelect={handleSelect}
       onSearch={handleSearch}
       onKeyDown={handleKeyDown}
-      dropdownClassName="search-drop"
+      dropdownClassName="search-bar__drop"
       value={value}
+      dropdownMatchSelectWidth={false}
     >
-      <Input.Search
+      <Input
         allowClear
-        enterButton
         onPressEnter={inputOnPressEnter}
         ref={inputRef}
-        className="search-bar-input"
+        className="search-bar__input"
         placeholder="Visit Project"
+        suffix={<div className="search-bar__icon">/</div>}
       />
     </AutoComplete>
   );
