@@ -2,6 +2,7 @@ import * as React from 'react';
 import { AutoComplete, Input } from 'antd';
 
 import Hit from './Hit';
+import { focusOnSlash } from '../../utils/keyboardShortcuts';
 
 import './SearchBar.less';
 
@@ -30,46 +31,8 @@ const SearchBar: React.FC<{
   const [focused, setFocused] = React.useState(false);
   const inputRef = React.useRef<Input>(null);
 
-  const handleSetFocused = (val: boolean) => () => {
-    setFocused(val);
-
-    if (val) {
-      onFocus();
-    } else {
-      onBlur();
-    }
-  };
-
-  // We can use the convention of / for web search
-  // to highlight our search bar
-  // TODO: in the future it would be beautiful
-  // to have a central place to attach keyboard
-  // shortcuts
   React.useEffect(() => {
-    const focusSearch = (e: KeyboardEvent) => {
-      // only focus the search bar if there's no currently focused input element
-      // or if there's not a modal
-      if (
-        document.activeElement instanceof HTMLTextAreaElement ||
-        document.activeElement instanceof HTMLInputElement ||
-        document.activeElement instanceof HTMLSelectElement ||
-        document.querySelectorAll("[class*='modal']").length
-      ) {
-        return;
-      }
-
-      if (e.key === '/' && !focused) {
-        inputRef.current && inputRef.current.focus();
-        inputRef.current && inputRef.current.input.select();
-        console.log('inputRef.current', inputRef);
-
-        e.preventDefault();
-      }
-    };
-    document.addEventListener('keypress', focusSearch);
-    return () => {
-      document.removeEventListener('keypress', focusSearch);
-    };
+    focusOnSlash(focused, inputRef);
   }, []);
 
   // Reset default value if query changes
@@ -77,31 +40,15 @@ const SearchBar: React.FC<{
     setValue(query || '');
   }, [query]);
 
-  let options: {
-    value: string;
-    key: string;
-    label: JSX.Element;
-  }[] = [];
+  const handleSetFocused = (value: boolean) => () => {
+    setFocused(value);
 
-  if (projectList.length) {
-    options = projectList.map((project: string) => {
-      const [orgLabel, projectLabel] = project.split('/');
-
-      return {
-        key: project,
-        label: (
-          <Hit orgLabel={orgLabel} projectLabel={projectLabel}>
-            <span>
-              {project.length > LABEL_MAX_LENGTH
-                ? `${project.slice(0, LABEL_MAX_LENGTH)}...`
-                : project}
-            </span>
-          </Hit>
-        ),
-        value: `${orgLabel}/${projectLabel}`,
-      };
-    });
-  }
+    if (value) {
+      onFocus();
+    } else {
+      onBlur();
+    }
+  };
 
   const handleChange = (value: string) => {
     setValue(value);
@@ -124,12 +71,42 @@ const SearchBar: React.FC<{
     }
   };
 
+  const generateOptions = () => {
+    let options: {
+      value: string;
+      key: string;
+      label: JSX.Element;
+    }[] = [];
+
+    if (projectList.length) {
+      options = projectList.map((project: string) => {
+        const [orgLabel, projectLabel] = project.split('/');
+
+        return {
+          key: project,
+          label: (
+            <Hit orgLabel={orgLabel} projectLabel={projectLabel}>
+              <span>
+                {project.length > LABEL_MAX_LENGTH
+                  ? `${project.slice(0, LABEL_MAX_LENGTH)}...`
+                  : project}
+              </span>
+            </Hit>
+          ),
+          value: `${orgLabel}/${projectLabel}`,
+        };
+      });
+    }
+
+    return options;
+  };
+
   return (
     <AutoComplete
       className={`search-bar ${!!focused && 'search-bar__focused'}`}
       onFocus={handleSetFocused(true)}
       onBlur={handleSetFocused(false)}
-      options={options}
+      options={generateOptions()}
       onChange={handleChange}
       onSelect={handleSelect}
       onSearch={handleSearch}
