@@ -71,3 +71,5 @@ declare module 'express-prom-bundle' {
 declare module 'cytoscape-cola';
 
 declare module 'react-google-tag-manager';
+
+declare module 'string-similarity';

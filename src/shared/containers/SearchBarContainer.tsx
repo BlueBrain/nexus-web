@@ -1,128 +1,101 @@
 import { useNexusContext } from '@bbp/react-nexus';
 import { take } from 'lodash';
 import * as React from 'react';
-import { useHistory, useLocation } from 'react-router';
-import SearchBar, { SearchQuickActions } from '../components/SearchBar';
-import useAsyncCall from '../hooks/useAsynCall';
-import useQueryString from '../hooks/useQueryString';
-import useSearchConfigs from '../hooks/useSearchConfigs';
-import useSearchQuery, { DEFAULT_SEARCH_PROPS } from '../hooks/useSearchQuery';
-import { parseURL } from '../utils/nexusParse';
+import { useHistory } from 'react-router';
+import { useQuery } from 'react-query';
 
-const DEFAULT_SEARCH_BAR_RESULT_SIZE = 50;
-const PROJECT_RESULTS_DEFAULT_SIZE = 100;
+import SearchBar from '../components/SearchBar';
+import { sortStringsBySimilarity } from '../utils/stringSimilarity';
+
+const PROJECT_RESULTS_DEFAULT_SIZE = 300;
 const SHOULD_INCLUDE_DEPRECATED = false;
+const STORAGE_ITEM = 'last_visited_project';
+const SHOW_PROJECTS_NUMBER = 5;
 
 const SearchBarContainer: React.FC = () => {
-  const { preferedSearchConfig, searchConfigs } = useSearchConfigs();
-
-  const [searchResponse, { searchProps, setSearchProps }] = useSearchQuery({
-    selfURL: preferedSearchConfig?.view,
-  });
   const nexus = useNexusContext();
   const history = useHistory();
-  const location = useLocation();
-  const [queryParams, setQueryString] = useQueryString();
-  const projectData = useAsyncCall(
-    nexus.Project.list(undefined, {
-      size: 100,
-      deprecated: SHOULD_INCLUDE_DEPRECATED,
-    }),
-    []
+  const [query, setQuery] = React.useState<string>();
+  const [lastVisited, setLastVisited] = React.useState<string>();
+
+  const { data } = useQuery(
+    'projects',
+    async () =>
+      await nexus.Project.list(undefined, {
+        size: PROJECT_RESULTS_DEFAULT_SIZE,
+        deprecated: SHOULD_INCLUDE_DEPRECATED,
+      })
   );
 
-  const goToResource = (resourceSelfURL: string) => {
-    const { org, project, id } = parseURL(resourceSelfURL);
-    const path = `/${org}/${project}/resources/${encodeURIComponent(id)}`;
-    history.push(path, {
-      background: location,
-    });
+  const onFocus = () => {
+    const lastVisited = localStorage.getItem(STORAGE_ITEM) || '';
+
+    setLastVisited(lastVisited);
+    setQuery(lastVisited);
   };
 
   const goToProject = (orgLabel: string, projectLabel: string) => {
     const path = `/admin/${orgLabel}/${projectLabel}`;
+
     history.push(path);
   };
 
-  const goToSearch = () => {
-    if (searchProps.query) {
-      // reset pagination if we have a search query
-      setQueryString(
-        {
-          ...queryParams,
-          pagination: DEFAULT_SEARCH_PROPS.pagination,
-          query: searchProps.query,
-        },
-        '/search'
-      );
-    }
-  };
-
   const handleSearch = (searchText: string) => {
-    setSearchProps({
-      query: searchText,
-      pagination: {
-        from: 0,
-        size: DEFAULT_SEARCH_BAR_RESULT_SIZE,
-      },
-    });
+    setLastVisited(undefined);
+    setQuery(searchText);
   };
 
   const handleSubmit = (value: string) => {
-    if (value.includes(`${SearchQuickActions.VISIT}:`)) {
-      const [action, resourceSelfURL] = value.split(
-        `${SearchQuickActions.VISIT}:`
-      );
-      handleSearch('');
-      return goToResource(resourceSelfURL);
-    }
-    if (value.includes(`${SearchQuickActions.VISIT_PROJECT}:`)) {
-      const [action, orgAndProject] = value.split(
-        `${SearchQuickActions.VISIT_PROJECT}:`
-      );
-      const [orgLabel, projectLabel] = orgAndProject.split('/');
-      handleSearch('');
-      return goToProject(orgLabel, projectLabel);
-    }
-    return goToSearch();
+    const orgAndProject = value;
+
+    localStorage.setItem(STORAGE_ITEM, value);
+    const [orgLabel, projectLabel] = orgAndProject.split('/');
+
+    return goToProject(orgLabel, projectLabel);
   };
 
   const handleClear = () => {
-    setSearchProps({
-      ...searchProps,
-      query: undefined,
-    });
+    setQuery(undefined);
+    setLastVisited(undefined);
+    localStorage.removeItem(STORAGE_ITEM);
   };
 
-  const projectList = take(
-    (projectData.data?._results || []).filter(project => {
-      if (searchProps.query) {
-        return (
-          project._label
-            .toLowerCase()
-            .includes(searchProps.query?.toLowerCase()) ||
-          project._organizationLabel
-            .toLowerCase()
-            .includes(searchProps.query?.toLowerCase())
-        );
-      }
-      return false;
-    }),
-    PROJECT_RESULTS_DEFAULT_SIZE
-  );
+  const inputOnPressEnter = () => {
+    if (lastVisited) {
+      handleSubmit(lastVisited);
+    }
+  };
 
-  return !!searchConfigs.data?.length ? (
+  const matchedProjects: () => any = () => {
+    const labels = data?._results.map(
+      project =>
+        `${project._organizationLabel.toLowerCase()}/${project._label.toLowerCase()}`
+    );
+
+    if (query && labels && labels.length > 0) {
+      const results = take(
+        sortStringsBySimilarity(query, labels),
+        SHOW_PROJECTS_NUMBER
+      );
+
+      return results;
+    }
+
+    return [];
+  };
+
+  return (
     <SearchBar
-      projectList={projectList}
-      query={searchProps.query}
-      searchResponse={searchResponse}
+      projectList={matchedProjects()}
+      query={query}
       onSearch={handleSearch}
       onSubmit={handleSubmit}
       onClear={handleClear}
-      searchConfigLoading={searchConfigs.isFetching}
-      searchConfigPreference={preferedSearchConfig}
+      onFocus={onFocus}
+      onBlur={() => setQuery('')}
+      inputOnPressEnter={inputOnPressEnter}
     />
-  ) : null;
+  );
 };
 
 export default SearchBarContainer;

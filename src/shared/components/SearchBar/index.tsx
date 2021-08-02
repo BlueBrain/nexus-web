@@ -1,155 +1,54 @@
 import * as React from 'react';
-import { ProjectResponseCommon, Resource } from '@bbp/nexus-sdk';
-import { LoadingOutlined } from '@ant-design/icons';
 import { AutoComplete, Input } from 'antd';
-import { SearchConfig } from '../../store/reducers/search';
-import { AsyncCall } from '../../hooks/useAsynCall';
-import { SearchResponse } from '../../types/search';
-import ResourceHit from './ResourceHit';
-import Hit, { HitType } from './Hit';
+
+import Hit from './Hit';
+import { focusOnSlash } from '../../utils/keyboardShortcuts';
 
 import './SearchBar.less';
 
-export enum SearchQuickActions {
-  VISIT = 'visit',
-  VISIT_PROJECT = 'visit-project',
-}
+const LABEL_MAX_LENGTH = 25;
 
 const SearchBar: React.FC<{
-  projectList: ProjectResponseCommon[];
+  projectList: string[];
   query?: string;
-  searchResponse: AsyncCall<
-    SearchResponse<
-      Resource<{
-        [key: string]: any;
-      }>
-    >,
-    Error
-  >;
-  searchConfigLoading: boolean;
-  searchConfigPreference?: SearchConfig;
   onSearch: (value: string) => void;
   onSubmit: (value: string) => void;
+  onFocus: () => void;
   onClear: () => void;
+  onBlur: () => void;
+  inputOnPressEnter: () => void;
 }> = ({
   query,
   projectList,
-  searchResponse,
-  searchConfigLoading,
-  searchConfigPreference,
   onSearch,
   onSubmit,
   onClear,
+  onFocus,
+  onBlur,
+  inputOnPressEnter,
 }) => {
   const [value, setValue] = React.useState(query || '');
   const [focused, setFocused] = React.useState(false);
-  const handleSetFocused = (val: boolean) => () => {
-    setFocused(val);
-  };
   const inputRef = React.useRef<Input>(null);
 
-  // We can use the convention of / for web search
-  // to highlight our search bar
-  // TODO: in the future it would be beautiful
-  // to have a central place to attach keyboard
-  // shortcuts
   React.useEffect(() => {
-    const focusSearch = (e: KeyboardEvent) => {
-      // only focus the search bar if there's no currently focused input element
-      // or if there's not a modal
-      if (
-        document.activeElement instanceof HTMLTextAreaElement ||
-        document.activeElement instanceof HTMLInputElement ||
-        document.activeElement instanceof HTMLSelectElement ||
-        document.querySelectorAll("[class*='modal']").length
-      ) {
-        return;
-      }
-
-      if (e.key === '/' && !focused) {
-        inputRef.current && inputRef.current.focus();
-        e.preventDefault();
-      }
-    };
-    document.addEventListener('keypress', focusSearch);
-    return () => {
-      document.removeEventListener('keypress', focusSearch);
-    };
-  });
+    focusOnSlash(focused, inputRef);
+  }, []);
 
   // Reset default value if query changes
   React.useEffect(() => {
     setValue(query || '');
   }, [query]);
 
-  const options: (
-    | {
-        value: string;
-        key: string;
-        label: JSX.Element;
-      }
-    | {
-        label: string;
-        options: {
-          value: string;
-          key: string;
-          label: JSX.Element;
-        }[];
-      }
-  )[] = !!query
-    ? [
-        {
-          value,
-          key: `search-${value}`,
-          label: (
-            <Hit type={HitType.UNCERTAIN}>
-              <em>{value}</em>
-            </Hit>
-          ),
-        },
-      ]
-    : [];
+  const handleSetFocused = (value: boolean) => () => {
+    setFocused(value);
 
-  if (projectList.length) {
-    options.push({
-      label: 'Projects',
-      options: projectList.map(project => {
-        return {
-          // @ts-ignore
-          // TODO update nexus-sdk to add this property
-          // to types
-          key: project._uuid,
-          label: (
-            <Hit type={HitType.PROJECT}>
-              <span>
-                {project._organizationLabel}/{project._label}
-              </span>
-            </Hit>
-          ),
-          value: `${SearchQuickActions.VISIT_PROJECT}:${project._organizationLabel}/${project._label}`,
-        };
-      }),
-    });
-  }
-
-  if (!!searchResponse.data?.hits.total.value) {
-    options.push({
-      label: 'Resources',
-      options:
-        searchResponse.data?.hits.hits.map(hit => {
-          const { _source } = hit;
-          return {
-            key: _source._self,
-            label: (
-              <Hit type={HitType.RESOURCE}>
-                <ResourceHit resource={_source} />
-              </Hit>
-            ),
-            value: `${SearchQuickActions.VISIT}:${_source._self}`,
-          };
-        }) || [],
-    });
-  }
+    if (value) {
+      onFocus();
+    } else {
+      onBlur();
+    }
+  };
 
   const handleChange = (value: string) => {
     setValue(value);
@@ -157,9 +56,6 @@ const SearchBar: React.FC<{
 
   const handleSelect = (value: string) => {
     onSubmit(value);
-    if (value.includes(`${SearchQuickActions.VISIT}:`)) {
-      setValue('');
-    }
   };
 
   const handleSearch = (searchText: string) => {
@@ -175,35 +71,57 @@ const SearchBar: React.FC<{
     }
   };
 
+  const generateOptions = () => {
+    let options: {
+      value: string;
+      key: string;
+      label: JSX.Element;
+    }[] = [];
+
+    if (projectList.length) {
+      options = projectList.map((project: string) => {
+        const [orgLabel, projectLabel] = project.split('/');
+
+        return {
+          key: project,
+          label: (
+            <Hit orgLabel={orgLabel} projectLabel={projectLabel}>
+              <span>
+                {project.length > LABEL_MAX_LENGTH
+                  ? `${project.slice(0, LABEL_MAX_LENGTH)}...`
+                  : project}
+              </span>
+            </Hit>
+          ),
+          value: `${orgLabel}/${projectLabel}`,
+        };
+      });
+    }
+
+    return options;
+  };
+
   return (
     <AutoComplete
-      className={`search-bar ${!!focused && 'focused'}`}
+      className={`search-bar ${!!focused && 'search-bar__focused'}`}
       onFocus={handleSetFocused(true)}
       onBlur={handleSetFocused(false)}
-      options={options}
+      options={generateOptions()}
       onChange={handleChange}
       onSelect={handleSelect}
       onSearch={handleSearch}
       onKeyDown={handleKeyDown}
-      dropdownClassName="search-drop"
+      dropdownClassName="search-bar__drop"
       value={value}
+      dropdownMatchSelectWidth={false}
     >
-      <Input.Search
+      <Input
+        allowClear
+        onPressEnter={inputOnPressEnter}
         ref={inputRef}
-        className={'search-bar-input'}
-        placeholder="Search or Visit"
-        enterButton
-        suffix={
-          searchConfigLoading ? (
-            <LoadingOutlined />
-          ) : (
-            !!searchConfigPreference && (
-              <div>
-                <b>{searchConfigPreference.label}</b>
-              </div>
-            )
-          )
-        }
+        className="search-bar__input"
+        placeholder="Visit Project"
+        suffix={<div className="search-bar__icon">/</div>}
       />
     </AutoComplete>
   );
