@@ -45,13 +45,17 @@ const SearchBarContainer: React.FC = () => {
     setQuery(searchText);
   };
 
-  const handleSubmit = (value: string) => {
-    const orgAndProject = value;
+  const handleSubmit = (value: string, option: any) => {
+    if (option && option.key === 'global-search') {
+      history.push(`/search/?query=${value}`);
+    } else {
+      const orgAndProject = value;
 
-    localStorage.setItem(STORAGE_ITEM, value);
-    const [orgLabel, projectLabel] = orgAndProject.split('/');
+      localStorage.setItem(STORAGE_ITEM, value);
+      const [orgLabel, projectLabel] = orgAndProject.split('/');
 
-    return goToProject(orgLabel, projectLabel);
+      return goToProject(orgLabel, projectLabel);
+    }
   };
 
   const handleClear = () => {
@@ -62,7 +66,7 @@ const SearchBarContainer: React.FC = () => {
 
   const inputOnPressEnter = () => {
     if (lastVisited) {
-      handleSubmit(lastVisited);
+      handleSubmit(lastVisited, undefined);
     }
   };
 

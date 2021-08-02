@@ -1,0 +1,57 @@
+@import './../lib.less';
+.ant-tooltip-inner {
+  color: rgba(0, 0, 0, 0.65) !important;
+  background: #fcfdfd !important;
+}
+.result-table {
+  width: auto;
+  margin-right: 10px;
+  .ant-table {
+    line-height: 1.2em;
+    .ant-table-content {
+      table {
+        background: #fcfdfd;
+        thead.ant-table-thead > tr > th {
+          background: #f7f7f7;
+          border: 1px #b2b2b2 solid;
+        }
+        .ant-table-thead
+          th.ant-table-column-has-sorters
+          .ant-table-column-sorters {
+          padding: 0;
+        }
+        .ant-table-thead > tr > th {
+          padding: 7px 15px;
+        }
+        td.ant-table-cell {
+          padding: 5px 15px;
+          border: 1px #b2b2b2 solid;
+          max-width: 200px;
+          pre {
+            margin: unset;
+          }
+        }
+        td.ant-table-cell,
+        td.ant-table-cell > pre {
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+        }
+      }
+      // OVERRIDING THE ICON TAG DISPLAY FOR THIS TABLE ONLY, ACTUAL STLYING FOUND IN Types.less
+      .types-list {
+        display: inline;
+        list-style: none;
+        .types-icon {
+          display: inline;
+        }
+        .types-icon:after {
+          content: ', ';
+        }
+        .types-icon:last-child:after {
+          content: '';
+        }
+      }
+    }
+  }
+}
