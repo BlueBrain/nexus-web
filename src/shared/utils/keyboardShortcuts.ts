@@ -14,8 +14,6 @@ export const focusOnSlash = (focused: boolean, inputRef: any) => {
     if (e.key === '/' && !focused) {
       inputRef.current && inputRef.current.focus();
       inputRef.current && inputRef.current.input.select();
-      console.log('inputRef.current', inputRef);
-
       e.preventDefault();
     }
   };
