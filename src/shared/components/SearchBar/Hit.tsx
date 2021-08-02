@@ -1,57 +1,43 @@
 import * as React from 'react';
+import { Spin, Tooltip } from 'antd';
 import {
-  BookOutlined,
+  DatabaseOutlined,
   EnterOutlined,
-  FileOutlined,
-  SearchOutlined,
+  LockOutlined,
 } from '@ant-design/icons';
-import { match } from 'ts-pattern';
-import { SearchQuickActions } from '.';
+import { AccessControl } from '@bbp/react-nexus';
 
 import './Hit.less';
 
-export enum HitType {
-  UNCERTAIN = 'UNCERTAIN',
-  RESOURCE = 'RESOURCE',
-  PROJECT = 'PROJECT',
-}
-
-const Hit: React.FC<{ type: HitType }> = ({ type, children }) => {
-  const { icon, actionTip } = match<
-    HitType,
-    { icon: JSX.Element; actionTip: JSX.Element }
-  >(type)
-    .with(HitType.RESOURCE, () => ({
-      icon: <FileOutlined />,
-      actionTip: (
-        <span className="enter">
-          {SearchQuickActions.VISIT} <EnterOutlined />
-        </span>
-      ),
-    }))
-    .with(HitType.UNCERTAIN, () => ({
-      icon: <SearchOutlined />,
-      actionTip: (
-        <span className="enter">
-          search <EnterOutlined />
-        </span>
-      ),
-    }))
-    .with(HitType.PROJECT, () => ({
-      icon: <BookOutlined />,
-      actionTip: (
-        <span className="enter">
-          visit project <EnterOutlined />
-        </span>
-      ),
-    }))
-    .run();
-
+const Hit: React.FC<{
+  orgLabel?: string;
+  projectLabel?: string;
+}> = ({ children, orgLabel, projectLabel }) => {
   return (
     <div className="hit">
-      <div className="icon">{icon}</div>
-      <div className="body">{children}</div>
-      <div className="action">{actionTip}</div>
+      <div className="hit__icon">
+        <DatabaseOutlined />
+      </div>
+      <div className="hit__body">{children}</div>
+      <div className="hit__action">
+        <span>
+          <EnterOutlined style={{ transform: 'scaleX(-1)' }} /> jump to project{' '}
+          {orgLabel && projectLabel && (
+            <AccessControl
+              permissions={['resources/read']}
+              path={`/${orgLabel}/${projectLabel}`}
+              noAccessComponent={() => (
+                <Tooltip title="No read access to data in this project">
+                  <LockOutlined />
+                </Tooltip>
+              )}
+              loadingComponent={<Spin spinning={true} size="small" />}
+            >
+              <span />
+            </AccessControl>
+          )}
+        </span>
+      </div>
     </div>
   );
 };
