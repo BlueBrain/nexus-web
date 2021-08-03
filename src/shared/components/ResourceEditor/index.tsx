@@ -87,9 +87,10 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   }, [rawData]); // only runs when Editor receives new resource to edit
 
   const handleChange = (editor: any, data: any, value: any) => {
-    if (!editable || value === JSON.stringify(rawData, null, 2)) {
+    if (!editable) {
       return;
     }
+
     try {
       const parsedVal = JSON.parse(value);
       setParsedValue(parsedVal);
@@ -97,8 +98,8 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     } catch (error) {
       setValid(false);
     }
-    setEditing(true);
     setStringValue(value);
+    setEditing(value !== JSON.stringify(rawData, null, 2));
   };
 
   const handleSubmit = () => {
