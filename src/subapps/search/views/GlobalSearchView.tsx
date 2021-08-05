@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Layout, Table, Tooltip } from 'antd';
 import * as bodybuilder from 'bodybuilder';
-import TypesIconList from '../../../shared/components/Types/TypesIcon';
+import { labelOf } from '../../../shared/utils';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import './SearchView.less';
 import '../../../shared/styles/search-tables.less';
@@ -88,7 +88,6 @@ type SearchConfig = {
 };
 
 function makeColumnConfig(searchConfig: SearchConfig) {
-  console.log(searchConfig);
   return searchConfig.fields.map((field: any) => {
     return {
       title: field.label,
@@ -117,13 +116,13 @@ function makeColumnConfig(searchConfig: SearchConfig) {
               </div>
             );
           }
-          return value ? (
-            <div>
-              <TypesIconList type={value}></TypesIconList>
-            </div>
-          ) : (
-            ''
-          );
+          const valueArray = value as Array<string>;
+          const labels = valueArray
+            .map((item: string) => {
+              return labelOf(item);
+            })
+            .join(', ');
+          return <Tooltip title={labels}>{labels}</Tooltip>;
         }
 
         // Single link
@@ -143,6 +142,7 @@ function makeColumnConfig(searchConfig: SearchConfig) {
           return '';
         }
 
+        // Single value
         return (
           <Tooltip placement="topLeft" title={value}>
             {value}
