@@ -1096,18 +1096,27 @@
   dependencies:
     rxjs "^6.5.2"
 
-"@bbp/nexus-sdk@file:../nexus-js/packages/nexus-sdk":
-  version "1.3.5"
+"@bbp/nexus-link@^1.3.6":
+  version "1.3.6"
+  resolved "https://registry.yarnpkg.com/@bbp/nexus-link/-/nexus-link-1.3.6.tgz#186424928d02dc4a2017b6e3ee82234c45e58854"
+  integrity sha512-24dHXOI+85Sn7o0RYkO+T9+An9zmPe1/ClRRzog1dScQNiZ/EPgRnHgBo+jZKIvb3V7+lrPWqAD3qgEfsFDZAA==
+  dependencies:
+    rxjs "^6.5.2"
+
+"@bbp/nexus-sdk@1.3.6":
+  version "1.3.6"
+  resolved "https://registry.yarnpkg.com/@bbp/nexus-sdk/-/nexus-sdk-1.3.6.tgz#54a65f448499e46629997674f13b1e9a2ca07a5d"
+  integrity sha512-xlTSip/O9vkWQBIZ/1rFjgfqTtI009DGITSgZkpivHj9Hn0yJKi/Em2YITQV2d9/EflUAiGa6GRrzXF5nkkkYw==
   dependencies:
     "@bbp/nexus-link" "^1.3.5"
     query-string "^6.9.0"
 
-"@bbp/react-nexus@1.3.5":
-  version "1.3.5"
-  resolved "https://registry.yarnpkg.com/@bbp/react-nexus/-/react-nexus-1.3.5.tgz#c44952c1ffd3505e12581593999cfaa1861af73c"
-  integrity sha512-UazN4f0894FMSlM4iNFwLeGxVnTVcMyt7+B57BY5XIPsMkfK8Pln2/TDY/itsd6Z7bRkrH/QZE8EOwt1gKMdUQ==
+"@bbp/react-nexus@1.3.6":
+  version "1.3.6"
+  resolved "https://registry.yarnpkg.com/@bbp/react-nexus/-/react-nexus-1.3.6.tgz#130f7ed4edd663ec3962e8d31684253773665e40"
+  integrity sha512-ZTy2UI9Lx32BAVqyI+SgxJ3W5BPAm9xPVCJsS7FXE5RmnN6to7F6XqFJKTwJMF8gW3Zdbm/Vr4u5EAfTy9OkPQ==
   dependencies:
-    "@bbp/nexus-link" "^1.3.5"
+    "@bbp/nexus-link" "^1.3.6"
     ts-invariant "0.4.1"
 
 "@cnakazawa/watch@^1.0.3":
