@@ -184,21 +184,22 @@ const ResourceViewContainer: React.FunctionComponent<{
           const expandedResource = expandedResources[0];
 
           setResource({
+            error,
             resource: {
               ...potentiallyUpdatedResource,
               '@id': expandedResource['@id'],
             } as Resource,
-            error,
             busy: false,
           });
 
           setLatestResource(potentiallyUpdatedResource);
-        } else
+        } else {
           setResource({
             resource,
             error,
             busy: false,
           });
+        }
       }
     }
   };
@@ -368,8 +369,8 @@ const ResourceViewContainer: React.FunctionComponent<{
                           {
                             <>
                               <ul>
-                                {error.rejections.map(el => (
-                                  <li>{el.reason}</li>
+                                {error.rejections.map((el, ix) => (
+                                  <li key={ix}>{el.reason}</li>
                                 ))}
                               </ul>
 

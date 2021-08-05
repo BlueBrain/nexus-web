@@ -1,20 +1,19 @@
 import { NexusClient } from '@bbp/nexus-sdk/lib/types';
 
-/*
-
-Update a resource using the specific endpoint for that resource.
-
-Organization
-Project
-Realm
-Resolver
-Schema
-Storage
-View
-File - not implemented
-* Resource (default to this if no other type matches)
-
-*/
+/**
+ * Use specific resource endpoints when we have a "@type"
+ * with a specific Nexus resource type. If no specific
+ * Nexus resource then will default to the resource
+ * endpoint.
+ * @param nexus
+ * @param revision
+ * @param resource
+ * @param originalResource
+ * @param orgLabel
+ * @param projectLabel
+ * @param resourceId
+ * @returns Nexus SDK function to call to perform update to resource
+ */
 export const getUpdateResourceFunction = (
   nexus: NexusClient,
   revision: number,
