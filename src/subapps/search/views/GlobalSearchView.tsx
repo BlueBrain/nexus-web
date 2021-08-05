@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Layout, Table, Tooltip } from 'antd';
 import * as bodybuilder from 'bodybuilder';
@@ -6,11 +7,14 @@ import { labelOf } from '../../../shared/utils';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import './SearchView.less';
 import '../../../shared/styles/search-tables.less';
+import _ from 'lodash';
 
 const { Content } = Layout;
 
 const GlobalSearchView: React.FC = () => {
   const nexus = useNexusContext();
+  const history = useHistory();
+  const location = useLocation();
   const [queryParams, setQueryString] = useQueryString();
   const { query } = queryParams;
 
@@ -23,6 +27,18 @@ const GlobalSearchView: React.FC = () => {
   const columns = React.useMemo(() => {
     return config ? makeColumnConfig(config) : undefined;
   }, [config]);
+
+  const onRowClick = (record: any): { onClick: () => void } => {
+    return {
+      onClick: () => {
+        const projectLabel = record.project.label;
+        const resourceId = encodeURIComponent(record['@id']);
+        history.push(`/${projectLabel}/resources/${resourceId}`, {
+          background: location,
+        });
+      },
+    };
+  };
 
   const data = React.useMemo(() => {
     if (result.hits && result.hits.hits) {
@@ -58,6 +74,7 @@ const GlobalSearchView: React.FC = () => {
               columns={columns}
               dataSource={data}
               pagination={false}
+              onRow={onRowClick}
             ></Table>
           </div>
         </Content>
@@ -166,4 +183,26 @@ const constructQuery = (searchText: string) => {
     .from(0);
 
   return body.build();
+};
+
+const makeResourceUri = (
+  orgLabel: string,
+  projectLabel: string,
+  resourceId: string
+) => {
+  return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+    resourceId
+  )}`;
+};
+
+const goToResource = (
+  orgLabel: string,
+  projectLabel: string,
+  resourceId: string
+) => {
+  const newURL = makeResourceUri(orgLabel, projectLabel, resourceId);
+
+  // history.push(newURL, {
+  //   background: location,
+  // });
 };
