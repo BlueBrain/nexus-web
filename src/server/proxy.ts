@@ -228,7 +228,6 @@ function setUpDeltaProxy(app: express.Express, apiEndpoint: string) {
   };
 
   const filter = function(pathname: string, req: express.Request) {
-    console.log(`${req.method} ${pathname}`);
     const query =
       pathname.match('^/proxy/search/query') && req.method === 'POST';
     const config =
