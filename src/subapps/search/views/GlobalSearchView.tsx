@@ -149,10 +149,15 @@ function makeColumnConfig(searchConfig: SearchConfig) {
             const link = value[fields[0].name];
             const text = value[fields[1].name];
             return (
-              <Tooltip placement="topLeft" title={link}>
-                <a href={link} target="_blank">
-                  {text}
-                </a>
+              <Tooltip
+                placement="topLeft"
+                title={() => (
+                  <a href={link} target="_blank">
+                    {text}
+                  </a>
+                )}
+              >
+                {text}
               </Tooltip>
             );
           }
@@ -183,26 +188,4 @@ const constructQuery = (searchText: string) => {
     .from(0);
 
   return body.build();
-};
-
-const makeResourceUri = (
-  orgLabel: string,
-  projectLabel: string,
-  resourceId: string
-) => {
-  return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
-    resourceId
-  )}`;
-};
-
-const goToResource = (
-  orgLabel: string,
-  projectLabel: string,
-  resourceId: string
-) => {
-  const newURL = makeResourceUri(orgLabel, projectLabel, resourceId);
-
-  // history.push(newURL, {
-  //   background: location,
-  // });
 };
