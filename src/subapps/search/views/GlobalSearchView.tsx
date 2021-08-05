@@ -7,7 +7,6 @@ import { labelOf } from '../../../shared/utils';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import './SearchView.less';
 import '../../../shared/styles/search-tables.less';
-import _ from 'lodash';
 
 const { Content } = Layout;
 
@@ -122,13 +121,7 @@ function makeColumnConfig(searchConfig: SearchConfig) {
             return (
               <div>
                 {value
-                  ? value
-                      .map((item: any) => {
-                        const link = item[fields[0].name];
-                        const text = item[fields[1].name];
-                        return text;
-                      })
-                      .join(', ')
+                  ? value.map((item: any) => item[fields[1].name]).join(', ')
                   : ''}
               </div>
             );
