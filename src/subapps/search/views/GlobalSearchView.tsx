@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Layout, Table, Tooltip } from 'antd';
 import * as bodybuilder from 'bodybuilder';
+import TypesIconList from '../../../shared/components/Types/TypesIcon';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import './SearchView.less';
 import '../../../shared/styles/search-tables.less';
@@ -117,9 +118,9 @@ function makeColumnConfig(searchConfig: SearchConfig) {
             );
           }
           return value ? (
-            <Tooltip placement="topLeft" title={value}>
-              {value}
-            </Tooltip>
+            <div>
+              <TypesIconList type={value}></TypesIconList>
+            </div>
           ) : (
             ''
           );
