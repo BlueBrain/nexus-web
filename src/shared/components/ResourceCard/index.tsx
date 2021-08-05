@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as moment from 'moment';
 import { Card, Button, Tooltip, Divider, Descriptions } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, CheckOutlined, CopyOutlined } from '@ant-design/icons';
 import { Resource } from '@bbp/nexus-sdk';
 
 import TypesIcon from '../Types/TypesIcon';
@@ -47,7 +47,7 @@ const ResourceCardComponent: React.FunctionComponent<{
               <Tooltip title={copySuccess ? 'Copied!' : `Copy ${id}`}>
                 <Button
                   size="small"
-                  icon={copySuccess ? 'check' : 'copy'}
+                  icon={copySuccess ? <CheckOutlined /> : <CopyOutlined />}
                   onClick={(e: React.MouseEvent) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -65,7 +65,7 @@ const ResourceCardComponent: React.FunctionComponent<{
               <Tooltip title={copySuccess ? 'Copied!' : `Copy ${self}`}>
                 <Button
                   size="small"
-                  icon={copySuccess ? 'check' : 'copy'}
+                  icon={copySuccess ? <CheckOutlined /> : <CopyOutlined />}
                   onClick={(e: React.MouseEvent) => {
                     e.preventDefault();
                     e.stopPropagation();
