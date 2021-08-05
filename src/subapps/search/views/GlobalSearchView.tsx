@@ -133,7 +133,7 @@ function makeColumnConfig(searchConfig: SearchConfig) {
               </div>
             );
           }
-          const valueArray = value as Array<string>;
+          const valueArray = value as string[];
           const labels = valueArray
             .map((item: string) => {
               return labelOf(item);
