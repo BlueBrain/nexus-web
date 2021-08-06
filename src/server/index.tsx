@@ -1,11 +1,11 @@
-import { resolve, join } from 'path';
-import { readFileSync } from 'fs';
+import { join } from 'path';
 import * as express from 'express';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
 import * as promBundle from 'express-prom-bundle';
 import Helmet from 'react-helmet';
 import html from './html';
+import setUpDeltaProxy from './proxy';
 import silentRefreshHtml from './silent_refresh';
 import { RootState } from '../shared/store/reducers';
 import { DEFAULT_UI_SETTINGS } from '../shared/store/reducers/ui-settings';
@@ -57,6 +57,9 @@ app.use(`${base}/public`, express.static(join(__dirname, 'public')));
 // if in Dev mode, setup HMR and all the fancy stuff
 if (process.env.NODE_ENV !== 'production') {
   const { setupDevEnvironment } = require('./dev');
+  if (process.env.PROXY) {
+    setUpDeltaProxy(app, process.env.API_ENDPOINT || '');
+  }
   setupDevEnvironment(app);
 }
 
@@ -79,7 +82,9 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       pluginsManifestPath,
       subAppsManifestPath,
       dataModelsLocation,
-      apiEndpoint: process.env.API_ENDPOINT || '/',
+      apiEndpoint: process.env.PROXY
+        ? '/proxy'
+        : process.env.API_ENDPOINT || '',
       basePath: base,
       clientId: process.env.CLIENT_ID || 'nexus-web',
       redirectHostName: `${process.env.HOST_NAME ||
