@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { AutoComplete, Input } from 'antd';
 
-import Hit from './Hit';
+import Hit, { globalSearchOption } from './Hit';
 import { focusOnSlash } from '../../utils/keyboardShortcuts';
 
 import './SearchBar.less';
@@ -12,7 +12,7 @@ const SearchBar: React.FC<{
   projectList: string[];
   query?: string;
   onSearch: (value: string) => void;
-  onSubmit: (value: string) => void;
+  onSubmit: (value: string, option: any) => void;
   onFocus: () => void;
   onClear: () => void;
   onBlur: () => void;
@@ -54,8 +54,8 @@ const SearchBar: React.FC<{
     setValue(value);
   };
 
-  const handleSelect = (value: string) => {
-    onSubmit(value);
+  const handleSelect = (value: string, option: any) => {
+    onSubmit(value, option);
   };
 
   const handleSearch = (searchText: string) => {
@@ -97,7 +97,14 @@ const SearchBar: React.FC<{
         };
       });
     }
-
+    options = [
+      {
+        value,
+        key: 'global-search',
+        label: globalSearchOption(value),
+      },
+      ...options,
+    ];
     return options;
   };
 

@@ -4,10 +4,29 @@ import {
   DatabaseOutlined,
   EnterOutlined,
   LockOutlined,
+  SearchOutlined,
 } from '@ant-design/icons';
 import { AccessControl } from '@bbp/react-nexus';
 
 import './Hit.less';
+
+export const globalSearchOption = (value: string | undefined) => {
+  return (
+    <div className="hit">
+      <div className="hit__icon">
+        <SearchOutlined />
+      </div>
+      <div className="hit__body">
+        <span>{value}</span>
+      </div>
+      <div className="hit__action">
+        <span className="enter">
+          <EnterOutlined style={{ transform: 'scaleX(-1)' }} /> Search Nexus{' '}
+        </span>
+      </div>
+    </div>
+  );
+};
 
 const Hit: React.FC<{
   orgLabel?: string;
