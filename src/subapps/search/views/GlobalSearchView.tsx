@@ -8,9 +8,12 @@ import useQueryString from '../../../shared/hooks/useQueryString';
 import './SearchView.less';
 import '../../../shared/styles/search-tables.less';
 import useMeasure from '../../../shared/hooks/useMeasure';
-import { number } from '@storybook/addon-knobs';
 
 const { Content } = Layout;
+
+/* ElasticSearch's index.max_result_window setting (default to 10k)
+determines how far we can page into results */
+const ESMaxResultWindowSize = 10000;
 
 const GlobalSearchView: React.FC = () => {
   const nexus = useNexusContext();
@@ -19,7 +22,6 @@ const GlobalSearchView: React.FC = () => {
   const [queryParams, setQueryString] = useQueryString();
   const { query } = queryParams;
   const [{ ref: wrapperHeightRef }, wrapperDOMProps] = useMeasure();
-  const [{ ref: tempTableHeightRef }, tempTableDOMProps] = useMeasure();
   const [pagination, setPagination] = React.useState({
     numRowsFitOnPage: 0,
     currentPage: 1,
@@ -28,17 +30,23 @@ const GlobalSearchView: React.FC = () => {
     totalRowSpace: 0,
     pageSize: 0,
     pageSizeOptions: [] as string[],
+    pageSizeFixed: false,
   });
 
-  // set page size from local storage if it has been set
-  if (localStorage.getItem('searchPageSize')) {
-    setPagination({
-      ...pagination,
-      pageSize: Number.parseInt(
-        localStorage.getItem('searchPageSize') as string
-      ),
-    });
-  }
+  const defaultPageSizeOptions = [10, 20, 50, 100];
+
+  React.useEffect(() => {
+    if (localStorage.getItem('searchPageSize')) {
+      setPagination({
+        ...pagination,
+        pageSize: Number.parseInt(
+          localStorage.getItem('searchPageSize') as string,
+          10
+        ),
+        pageSizeFixed: true,
+      });
+    }
+  }, []);
 
   const calculateNumberOfRowsFitOnPage = () => {
     // set height tester table to visible to calculate height
@@ -46,7 +54,7 @@ const GlobalSearchView: React.FC = () => {
       'heightTest'
     )[0] as HTMLElement).style.display = '';
 
-    const whatTheDifference = document
+    const heightTesterDivClientRects = document
       .getElementsByClassName('height-tester')[0]
       .getClientRects()[0];
 
@@ -57,26 +65,17 @@ const GlobalSearchView: React.FC = () => {
       'ant-table-row'
     )[0].clientHeight;
 
-    const totalRowSpace = whatTheDifference.bottom - searchResultsTableBodyTop;
+    const totalRowSpace =
+      heightTesterDivClientRects.bottom - searchResultsTableBodyTop;
     const numRowsFitOnPage = Math.floor(
       totalRowSpace / searchResultsTableSingleRowHeight
     );
-    console.log('calculateNumberOfRowsFitOnPage', {
-      searchResultsTableBodyTop,
-      searchResultsTableSingleRowHeight,
-      wrapperDOMProps,
-      whatTheDifference,
-    });
     // hide height tester table
     (document.getElementsByClassName(
       'heightTest'
     )[0] as HTMLElement).style.display = 'None';
 
-    if (Number.isInteger(numRowsFitOnPage)) {
-      return { totalRowSpaceInPx: totalRowSpace, numRowsFitOnPage };
-    } else {
-      return { totalRowSpaceInPx: totalRowSpace, numRowsFitOnPage: 0 };
-    }
+    return { numRowsFitOnPage, totalRowSpaceInPx: totalRowSpace };
   };
 
   React.useEffect(() => {
@@ -86,19 +85,26 @@ const GlobalSearchView: React.FC = () => {
     } = calculateNumberOfRowsFitOnPage();
 
     if (numRows > 0) {
-      setPagination({
-        ...pagination,
-        numRowsFitOnPage: numRows,
-        totalRowSpace: totalRowSpaceInPx,
-        currentPage: 1, // reset to first page
+      const lastPageOfResults = Math.ceil(
+        pagination.totalNumberOfResults / numRows
+      );
+
+      setPagination(prevPagination => {
+        return {
+          ...prevPagination,
+          numRowsFitOnPage: numRows,
+          totalRowSpace: totalRowSpaceInPx,
+          currentPage:
+            prevPagination.currentPage > lastPageOfResults &&
+            lastPageOfResults !== 0
+              ? lastPageOfResults
+              : prevPagination.currentPage,
+        };
       });
     }
   }, [wrapperDOMProps.height]);
 
-  const defaultPageSizeOptions = [10, 20, 50, 100];
-
   React.useEffect(() => {
-    console.log('num rows fit on page changed', pagination.numRowsFitOnPage);
     if (pagination.numRowsFitOnPage > 0) {
       const sortedPageSizeOptions = [pagination.numRowsFitOnPage]
         .concat(defaultPageSizeOptions)
@@ -108,15 +114,14 @@ const GlobalSearchView: React.FC = () => {
       const sortedPageSizeOptionsWithoutPotentialDupes = [
         ...new Set(sortedPageSizeOptions),
       ];
-      console.log('setting pagination', {
-        ...pagination,
-        pageSizeOptions: sortedPageSizeOptionsWithoutPotentialDupes,
-        pageSize: pagination.numRowsFitOnPage,
-      });
-      setPagination({
-        ...pagination,
-        pageSizeOptions: sortedPageSizeOptionsWithoutPotentialDupes,
-        pageSize: pagination.numRowsFitOnPage,
+      setPagination(prevPagination => {
+        return {
+          ...prevPagination,
+          pageSizeOptions: sortedPageSizeOptionsWithoutPotentialDupes,
+          pageSize: pagination.pageSizeFixed
+            ? prevPagination.pageSize
+            : prevPagination.numRowsFitOnPage,
+        };
       });
     }
   }, [pagination.numRowsFitOnPage]);
@@ -125,10 +130,13 @@ const GlobalSearchView: React.FC = () => {
     page: number,
     pageSize?: number | undefined
   ) => {
-    setPagination({
-      ...pagination,
-      currentPage: page,
-      pageSize: pageSize ? pageSize : pagination.pageSize,
+    setPagination(prevPagination => {
+      return {
+        ...prevPagination,
+        currentPage: page,
+        pageSizeFixed: prevPagination.pageSizeFixed,
+        pageSize: pageSize ? pageSize : prevPagination.pageSize,
+      };
     });
   };
 
@@ -136,12 +144,10 @@ const GlobalSearchView: React.FC = () => {
   const [config, setConfig] = React.useState<SearchConfig>();
 
   const esQuery = React.useMemo(() => {
-    console.log('construct query...', { pagination });
-    if (pagination.currentPage && pagination.pageSize) {
-      return constructQuery(query, pagination.currentPage, pagination.pageSize);
-    } else {
+    if (pagination.currentPage === 0 || pagination.pageSize === 0) {
       return {};
     }
+    return constructQuery(query, pagination.currentPage, pagination.pageSize);
   }, [
     query,
     pagination.currentPage,
@@ -167,17 +173,23 @@ const GlobalSearchView: React.FC = () => {
 
   const data = React.useMemo(() => {
     if (result.hits) {
-      setPagination({
-        ...pagination,
-        totalNumberOfResults:
-          result.hits.total.value > 10000 ? 10000 : result.hits.total.value,
-        trueTotalNumberOfResults: result.hits.total.value,
+      setPagination(prevPagination => {
+        return {
+          ...prevPagination,
+          totalNumberOfResults:
+            result.hits.total.value > ESMaxResultWindowSize
+              ? ESMaxResultWindowSize
+              : result.hits.total.value,
+          trueTotalNumberOfResults: result.hits.total.value,
+        };
       });
     } else {
-      setPagination({
-        ...pagination,
-        totalNumberOfResults: 0,
-        trueTotalNumberOfResults: 0,
+      setPagination(prevPagination => {
+        return {
+          ...prevPagination,
+          totalNumberOfResults: 0,
+          trueTotalNumberOfResults: 0,
+        };
       });
     }
 
@@ -196,9 +208,7 @@ const GlobalSearchView: React.FC = () => {
 
   React.useEffect(() => {
     if (pagination.pageSize > 0 && pagination.currentPage > 0) {
-      console.log('searching...');
       nexus.Search.query(esQuery).then((result: any) => {
-        console.log({ result });
         setResult(result);
       });
     }
@@ -213,14 +223,11 @@ const GlobalSearchView: React.FC = () => {
     >
       <Layout>
         <Content style={{ marginLeft: '0px', marginTop: '0' }}>
-          <div
-            style={{ height: 'calc(100vh - 82px)', border: '1px solid green' }}
-          >
+          <div style={{ height: 'calc(100vh - 82px)' }}>
             <div
               style={{
                 display: 'flex',
                 height: '100%',
-                border: '1px dashed orange',
               }}
             >
               <div
@@ -230,7 +237,7 @@ const GlobalSearchView: React.FC = () => {
               >
                 <div
                   className={'result-table heightTest'}
-                  style={{ display: 'none' }}
+                  style={{ display: 'none', opacity: '0' }}
                 >
                   <Table
                     dataSource={[
@@ -254,64 +261,69 @@ const GlobalSearchView: React.FC = () => {
                 </div>
                 <div
                   className={'result-table'}
-                  style={
-                    {
-                      //height: wrapperDOMProps.height,
-                      //overflow: 'auto',
-                    }
-                  }
+                  style={{
+                    height: wrapperDOMProps.height,
+                    overflow: 'auto',
+                  }}
                 >
-                  {pagination.currentPage > 0 &&
-                    pagination.pageSizeOptions.length > 0 &&
-                    pagination.pageSize > 0 && (
-                      <Table
-                        columns={columns}
-                        dataSource={data}
-                        pagination={{
-                          total: pagination.totalNumberOfResults,
-                          pageSize: pagination.pageSize,
-                          current: pagination.currentPage,
-                          onChange: handlePaginationChange,
-                          position: ['topRight'],
-                          showTotal: (total: number, range: [number, number]) =>
-                            pagination.trueTotalNumberOfResults <= 10000 ? (
-                              <>
-                                Showing {total.toLocaleString('en-US')}{' '}
-                                {total === 1 ? 'result' : 'results'}
-                              </>
-                            ) : (
-                              <>
-                                Showing {total.toLocaleString('en-US')} of{' '}
-                                {pagination.trueTotalNumberOfResults.toLocaleString(
-                                  'en-US'
-                                )}{' '}
-                                results
-                              </>
-                            ),
-                          locale: { items_per_page: '' },
-                          showSizeChanger: true,
-                          pageSizeOptions: pagination.pageSizeOptions,
-                          onShowSizeChange: (current, size) => {
-                            // if (pagination.pageSize) {
-                            //   if (
-                            //     pagination.pageSize ===
-                            //     pagination.numRowsFitOnPage
-                            //   ) {
-                            //     localStorage.removeItem('searchPageSize');
-                            //   } else {
-                            //     localStorage.setItem(
-                            //       'searchPageSize',
-                            //       size.toString()
-                            //     );
-                            //   }
-                            // }
-                          },
-                          responsive: true, // what does this do?
-                          showLessItems: true,
-                        }}
-                        onRow={onRowClick}
-                      ></Table>
-                    )}
+                  {
+                    <Table
+                      columns={columns}
+                      dataSource={data}
+                      pagination={{
+                        total: pagination.totalNumberOfResults,
+                        pageSize: pagination.pageSize,
+                        current: pagination.currentPage,
+                        onChange: handlePaginationChange,
+                        position: ['topRight'],
+                        showTotal: (total: number, range: [number, number]) =>
+                          pagination.trueTotalNumberOfResults <=
+                          ESMaxResultWindowSize ? (
+                            <>
+                              Showing {total.toLocaleString('en-US')}{' '}
+                              {total === 1 ? 'result' : 'results'}
+                            </>
+                          ) : (
+                            <>
+                              Showing {total.toLocaleString('en-US')} of{' '}
+                              {pagination.trueTotalNumberOfResults.toLocaleString(
+                                'en-US'
+                              )}{' '}
+                              results
+                            </>
+                          ),
+                        locale: { items_per_page: '' },
+                        showSizeChanger: true,
+                        pageSizeOptions: pagination.pageSizeOptions,
+                        onShowSizeChange: (current, size) => {
+                          if (defaultPageSizeOptions.includes(size)) {
+                            localStorage.setItem(
+                              'searchPageSize',
+                              size.toString()
+                            );
+                            setPagination(prevPagination => {
+                              return {
+                                ...prevPagination,
+                                pageSizeFixed: true,
+                              };
+                            });
+                          } else {
+                            localStorage.removeItem('searchPageSize');
+                            setPagination(prevPagination => {
+                              return {
+                                ...prevPagination,
+                                pageSizeFixed: false,
+                              };
+                            });
+                          }
+                        },
+                        responsive: true, // what does this do?
+                        showLessItems: true,
+                      }}
+                      rowKey="@id"
+                      onRow={onRowClick}
+                    ></Table>
+                  }
                 </div>
               </div>
             </div>
@@ -410,6 +422,10 @@ function makeColumnConfig(searchConfig: SearchConfig) {
 
 const constructQuery = (searchText: string, page: number, pageSize: number) => {
   const from = (page - 1) * pageSize;
+  const pageSizeToNotExceedLimit =
+    from + pageSize > ESMaxResultWindowSize
+      ? ESMaxResultWindowSize - from
+      : pageSize;
 
   const body = bodybuilder();
   body
@@ -419,8 +435,8 @@ const constructQuery = (searchText: string, page: number, pageSize: number) => {
       prefix_length: 0,
       fields: ['*'],
     })
-    .rawOption('track_total_hits', true) // accurate total
-    .size(pageSize)
+    .rawOption('track_total_hits', true) // accurate total, could cache for performance
+    .size(pageSizeToNotExceedLimit)
     .from(from);
 
   return body.build();
