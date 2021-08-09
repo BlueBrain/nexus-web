@@ -12,6 +12,7 @@ import ListItem from '../../../shared/components/List/Item';
 import ProjectItem from '../components/Projects/ProjectItem';
 import { useAdminSubappContext } from '..';
 import useNotification from '../../../shared/hooks/useNotification';
+import ProjectQuotas from '../components/Projects/ProjectQuotas';
 
 const ProjectsView: React.FunctionComponent = () => {
   const notification = useNotification();
@@ -253,22 +254,27 @@ const ProjectsView: React.FunctionComponent = () => {
             title={`Project: ${selectedProject && selectedProject._label}`}
           >
             {selectedProject && (
-              <ProjectForm
-                project={{
-                  _label: selectedProject._label,
-                  _rev: selectedProject._rev,
-                  description: selectedProject.description || '',
-                  base: selectedProject.base,
-                  vocab: selectedProject.vocab,
-                  apiMappings: selectedProject.apiMappings,
-                }}
-                onSubmit={(p: ProjectResponseCommon) =>
-                  saveAndModify(selectedProject, p)
-                }
-                onDeprecate={() => saveAndDeprecate(selectedProject)}
-                busy={formBusy}
-                mode="edit"
-              />
+              <>
+                <ProjectQuotas quotaResources={1000} totalResources={845} />
+                <h3>Settings</h3>
+                <br />
+                <ProjectForm
+                  project={{
+                    _label: selectedProject._label,
+                    _rev: selectedProject._rev,
+                    description: selectedProject.description || '',
+                    base: selectedProject.base,
+                    vocab: selectedProject.vocab,
+                    apiMappings: selectedProject.apiMappings,
+                  }}
+                  onSubmit={(p: ProjectResponseCommon) =>
+                    saveAndModify(selectedProject, p)
+                  }
+                  onDeprecate={() => saveAndDeprecate(selectedProject)}
+                  busy={formBusy}
+                  mode="edit"
+                />
+              </>
             )}
           </Drawer>
         </div>
