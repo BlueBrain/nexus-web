@@ -22,6 +22,10 @@ const GlobalSearchView: React.FC = () => {
   const [queryParams, setQueryString] = useQueryString();
   const { query } = queryParams;
   const [{ ref: wrapperHeightRef }, wrapperDOMProps] = useMeasure();
+  const [
+    { ref: resultTableHeightTestRef },
+    resultTableHeightTestRefDOMProps,
+  ] = useMeasure();
   const [pagination, setPagination] = React.useState({
     numRowsFitOnPage: 0,
     currentPage: 1,
@@ -51,14 +55,8 @@ const GlobalSearchView: React.FC = () => {
 
   const calculateNumberOfRowsFitOnPage = () => {
     // set height tester table to visible to calculate height
-    (document.getElementsByClassName(
-      'heightTest'
-    )[0] as HTMLElement).style.display = '';
-
-    const heightTesterDivClientRects = document
-      .getElementsByClassName('height-tester')[0]
-      .getClientRects()[0];
-
+    resultTableHeightTestRef.current.style.display = '';
+    const heightTesterDivClientRects = wrapperHeightRef.current.getClientRects()[0];
     const searchResultsTableBodyTop = wrapperHeightRef.current
       .getElementsByTagName('tbody')[0]
       .getClientRects()[0].top;
@@ -72,9 +70,7 @@ const GlobalSearchView: React.FC = () => {
       totalRowSpace / searchResultsTableSingleRowHeight
     );
     // hide height tester table
-    (document.getElementsByClassName(
-      'heightTest'
-    )[0] as HTMLElement).style.display = 'None';
+    resultTableHeightTestRef.current.style.display = 'None';
 
     return { numRowsFitOnPage, totalRowSpaceInPx: totalRowSpace };
   };
@@ -227,6 +223,7 @@ const GlobalSearchView: React.FC = () => {
                 style={{ margin: '0' }}
               >
                 <div
+                  ref={resultTableHeightTestRef}
                   className={'result-table heightTest'}
                   style={{ display: 'none', opacity: '0' }}
                 >
