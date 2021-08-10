@@ -31,6 +31,7 @@ const GlobalSearchView: React.FC = () => {
     pageSize: 0,
     pageSizeOptions: [] as string[],
     pageSizeFixed: false,
+    isInitialized: false,
   });
 
   const defaultPageSizeOptions = [10, 20, 50, 100];
@@ -172,27 +173,6 @@ const GlobalSearchView: React.FC = () => {
   };
 
   const data = React.useMemo(() => {
-    if (result.hits) {
-      setPagination(prevPagination => {
-        return {
-          ...prevPagination,
-          totalNumberOfResults:
-            result.hits.total.value > ESMaxResultWindowSize
-              ? ESMaxResultWindowSize
-              : result.hits.total.value,
-          trueTotalNumberOfResults: result.hits.total.value,
-        };
-      });
-    } else {
-      setPagination(prevPagination => {
-        return {
-          ...prevPagination,
-          totalNumberOfResults: 0,
-          trueTotalNumberOfResults: 0,
-        };
-      });
-    }
-
     if (result.hits && result.hits.hits) {
       return result.hits.hits.map((hit: any) => hit._source);
     }
@@ -207,9 +187,20 @@ const GlobalSearchView: React.FC = () => {
   }, []);
 
   React.useEffect(() => {
-    if (pagination.pageSize > 0 && pagination.currentPage > 0) {
+    if (pagination.pageSize > 0) {
       nexus.Search.query(esQuery).then((result: any) => {
         setResult(result);
+        setPagination(prevPagination => {
+          return {
+            ...prevPagination,
+            isInitialized: true,
+            totalNumberOfResults:
+              result.hits.total.value > ESMaxResultWindowSize
+                ? ESMaxResultWindowSize
+                : result.hits.total.value,
+            trueTotalNumberOfResults: result.hits.total.value,
+          };
+        });
       });
     }
   }, [esQuery]);
@@ -266,7 +257,7 @@ const GlobalSearchView: React.FC = () => {
                     overflow: 'auto',
                   }}
                 >
-                  {
+                  {columns && result && pagination.isInitialized && (
                     <Table
                       columns={columns}
                       dataSource={data}
@@ -317,13 +308,12 @@ const GlobalSearchView: React.FC = () => {
                             });
                           }
                         },
-                        responsive: true, // what does this do?
                         showLessItems: true,
                       }}
                       rowKey="@id"
                       onRow={onRowClick}
                     ></Table>
-                  }
+                  )}
                 </div>
               </div>
             </div>
