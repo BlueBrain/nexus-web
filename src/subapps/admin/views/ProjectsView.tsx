@@ -33,6 +33,8 @@ const ProjectsView: React.FunctionComponent = () => {
   const match = useRouteMatch<{ orgLabel: string }>(
     `/${subapp.namespace}/:orgLabel`
   );
+  const [quota, setQuota] = React.useState<any>();
+  const [projectStats, setProjectStats] = React.useState<any>();
   const goTo = (org: string, project: string) =>
     history.push(`${org}/${project}`);
 
@@ -44,6 +46,42 @@ const ProjectsView: React.FunctionComponent = () => {
       loadprojects();
     }
   }, [match?.path, activeOrg]);
+
+  React.useEffect(() => {
+    // load project quotas
+    console.log('loading quotas....');
+    console.log('selected', selectedProject);
+    loadQuotas();
+    loadStats();
+  }, [selectedProject]);
+
+  const loadQuotas = async () => {
+    if (selectedProject) {
+      await nexus
+        .httpGet({
+          path: `http://delta.dev.nexus.ocp.bbp.epfl.ch/v1/quotas/${selectedProject._organizationLabel}/${selectedProject._label}`,
+        })
+        .then(resp => {
+          console.log('resp', resp.resources);
+
+          setQuota(resp);
+        });
+    }
+  };
+
+  const loadStats = async () => {
+    if (selectedProject) {
+      await nexus
+        .httpGet({
+          path: `http://delta.dev.nexus.ocp.bbp.epfl.ch/v1/projects/${selectedProject._organizationLabel}/${selectedProject._label}/statistics`,
+        })
+        .then(resp => {
+          console.log('resp', resp);
+
+          setProjectStats(resp);
+        });
+    }
+  };
 
   const loadprojects = () => {
     if (match) {
@@ -177,6 +215,8 @@ const ProjectsView: React.FunctionComponent = () => {
     );
   }
 
+  console.log('quota', quota);
+
   return (
     <div className="projects-view view-container">
       {activeOrg ? (
@@ -255,8 +295,10 @@ const ProjectsView: React.FunctionComponent = () => {
           >
             {selectedProject && (
               <>
-                <ProjectQuotas quotaResources={1000} totalResources={845} />
-                <h3>Settings</h3>
+                {quota && projectStats && (
+                  <ProjectQuotas quota={quota} statistics={projectStats} />
+                )}
+                <h3>Project Settings</h3>
                 <br />
                 <ProjectForm
                   project={{

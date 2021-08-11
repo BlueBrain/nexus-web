@@ -4,22 +4,45 @@ import { Progress } from 'antd';
 import './ProjectQuotas.less';
 
 const ProjectQuotas: React.FC<{
-  quotaResources: number;
-  totalResources: number;
-}> = ({ quotaResources, totalResources }) => {
-  const percent = (totalResources / quotaResources) * 100;
-
-  console.log('percent', percent);
+  quota: {
+    resources: number;
+    events: number;
+  };
+  statistics: any;
+}> = ({ quota, statistics }) => {
+  const percentOfResources = Math.ceil(
+    (statistics.resourcesCount / quota.resources) * 100
+  );
+  const percentOfEvents = Math.ceil(
+    (statistics.eventsCount / quota.events) * 100
+  );
 
   return (
     <div className="project-quotas">
       <h3>Data Volume</h3>
-      <div className="project-quotas__dashboard">
-        {/* <Progress percent={75} /> */}
-        <Progress strokeLinecap="square" type="dashboard" percent={percent} />
+      <div className="project-quotas__dashboards">
+        <div className="project-quotas__dashboard">
+          {/* <Progress percent={75} /> */}
+          <Progress
+            strokeLinecap="square"
+            type="dashboard"
+            percent={percentOfResources}
+            status="normal"
+          />
+          <h4>Total: {statistics.resourcesCount} Resources</h4>
+          <h4>Quota: {quota.resources} Resources</h4>
+        </div>
+        <div className="project-quotas__dashboard">
+          <Progress
+            strokeLinecap="square"
+            type="dashboard"
+            percent={percentOfEvents}
+            status="normal"
+          />
+          <h4>Total: {statistics.eventsCount} Events</h4>
+          <h4>Quota: {quota.events} Events</h4>
+        </div>
       </div>
-      <h4>Total: {totalResources} Resources</h4>
-      <h4>Quota: {quotaResources} Resources</h4>
     </div>
   );
 };
