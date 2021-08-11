@@ -8,6 +8,7 @@ import useQueryString from '../../../shared/hooks/useQueryString';
 import './SearchView.less';
 import '../../../shared/styles/search-tables.less';
 import useMeasure from '../../../shared/hooks/useMeasure';
+import { debounce } from 'lodash';
 
 const { Content } = Layout;
 
@@ -31,7 +32,6 @@ const GlobalSearchView: React.FC = () => {
     currentPage: 1,
     totalNumberOfResults: 0,
     trueTotalNumberOfResults: 0,
-    totalRowSpace: 0,
     pageSize: 0,
     pageSizeOptions: [] as string[],
     pageSizeFixed: false,
@@ -53,33 +53,32 @@ const GlobalSearchView: React.FC = () => {
     }
   }, []);
 
-  const calculateNumberOfRowsFitOnPage = () => {
-    // set height tester table to visible to calculate height
+  const calculateNumberOfTableRowsFitOnPage = () => {
+    // make our height tester table visible in the DOM to perform our calculations
     resultTableHeightTestRef.current.style.display = '';
-    const heightTesterDivClientRects = wrapperHeightRef.current.getClientRects()[0];
-    const searchResultsTableBodyTop = wrapperHeightRef.current
+    const heightTesterDivBottomPosition = wrapperHeightRef.current.getClientRects()[0]
+      .bottom;
+    const searchResultsTableBodyTopPosition = wrapperHeightRef.current
       .getElementsByTagName('tbody')[0]
       .getClientRects()[0].top;
     const searchResultsTableSingleRowHeight = wrapperHeightRef.current.getElementsByClassName(
       'ant-table-row'
     )[0].clientHeight;
 
-    const totalRowSpace =
-      heightTesterDivClientRects.bottom - searchResultsTableBodyTop;
+    const totalTableRowsSpaceAvailable =
+      heightTesterDivBottomPosition - searchResultsTableBodyTopPosition;
     const numRowsFitOnPage = Math.floor(
-      totalRowSpace / searchResultsTableSingleRowHeight
+      totalTableRowsSpaceAvailable / searchResultsTableSingleRowHeight
     );
-    // hide height tester table
+
+    // finished calculations, hide our height tester table
     resultTableHeightTestRef.current.style.display = 'None';
 
-    return { numRowsFitOnPage, totalRowSpaceInPx: totalRowSpace };
+    return numRowsFitOnPage;
   };
 
-  React.useEffect(() => {
-    const {
-      totalRowSpaceInPx,
-      numRowsFitOnPage: numRows,
-    } = calculateNumberOfRowsFitOnPage();
+  const updateNumberOfRowsFitOnPage = () => {
+    const numRows = calculateNumberOfTableRowsFitOnPage();
 
     if (numRows > 0) {
       const lastPageOfResults = Math.ceil(
@@ -90,7 +89,6 @@ const GlobalSearchView: React.FC = () => {
         return {
           ...prevPagination,
           numRowsFitOnPage: numRows,
-          totalRowSpace: totalRowSpaceInPx,
           currentPage:
             prevPagination.currentPage > lastPageOfResults &&
             lastPageOfResults !== 0
@@ -99,6 +97,19 @@ const GlobalSearchView: React.FC = () => {
         };
       });
     }
+  };
+
+  /* height changes a few times when resizing a window so debounce */
+  const debounceHeightChange = React.useRef(
+    debounce(() => updateNumberOfRowsFitOnPage(), 300)
+  ).current;
+
+  React.useLayoutEffect(() => {
+    debounceHeightChange();
+
+    return () => {
+      debounceHeightChange.cancel();
+    };
   }, [wrapperDOMProps.height]);
 
   React.useEffect(() => {
@@ -145,12 +156,7 @@ const GlobalSearchView: React.FC = () => {
       return {};
     }
     return constructQuery(query, pagination.currentPage, pagination.pageSize);
-  }, [
-    query,
-    pagination.currentPage,
-    pagination.pageSize,
-    pagination.numRowsFitOnPage,
-  ]);
+  }, [query, pagination.currentPage, pagination.pageSize]);
 
   const columns = React.useMemo(() => {
     return config ? makeColumnConfig(config) : undefined;
@@ -228,6 +234,7 @@ const GlobalSearchView: React.FC = () => {
                   style={{ display: 'none', opacity: '0' }}
                 >
                   <Table
+                    key="HeightTestTable"
                     dataSource={[
                       {
                         key: '1',
