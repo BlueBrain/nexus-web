@@ -12,7 +12,7 @@ import ListItem from '../../../shared/components/List/Item';
 import ProjectItem from '../components/Projects/ProjectItem';
 import { useAdminSubappContext } from '..';
 import useNotification from '../../../shared/hooks/useNotification';
-import ProjectQuotas from '../components/Projects/ProjectQuotas';
+import QuotasContainer from '../containers/QuotasContainer';
 
 const ProjectsView: React.FunctionComponent = () => {
   const notification = useNotification();
@@ -33,8 +33,6 @@ const ProjectsView: React.FunctionComponent = () => {
   const match = useRouteMatch<{ orgLabel: string }>(
     `/${subapp.namespace}/:orgLabel`
   );
-  const [quota, setQuota] = React.useState<any>();
-  const [projectStats, setProjectStats] = React.useState<any>();
   const goTo = (org: string, project: string) =>
     history.push(`${org}/${project}`);
 
@@ -46,42 +44,6 @@ const ProjectsView: React.FunctionComponent = () => {
       loadprojects();
     }
   }, [match?.path, activeOrg]);
-
-  React.useEffect(() => {
-    // load project quotas
-    console.log('loading quotas....');
-    console.log('selected', selectedProject);
-    loadQuotas();
-    loadStats();
-  }, [selectedProject]);
-
-  const loadQuotas = async () => {
-    if (selectedProject) {
-      await nexus
-        .httpGet({
-          path: `http://delta.dev.nexus.ocp.bbp.epfl.ch/v1/quotas/${selectedProject._organizationLabel}/${selectedProject._label}`,
-        })
-        .then(resp => {
-          console.log('resp', resp.resources);
-
-          setQuota(resp);
-        });
-    }
-  };
-
-  const loadStats = async () => {
-    if (selectedProject) {
-      await nexus
-        .httpGet({
-          path: `http://delta.dev.nexus.ocp.bbp.epfl.ch/v1/projects/${selectedProject._organizationLabel}/${selectedProject._label}/statistics`,
-        })
-        .then(resp => {
-          console.log('resp', resp);
-
-          setProjectStats(resp);
-        });
-    }
-  };
 
   const loadprojects = () => {
     if (match) {
@@ -215,8 +177,6 @@ const ProjectsView: React.FunctionComponent = () => {
     );
   }
 
-  console.log('quota', quota);
-
   return (
     <div className="projects-view view-container">
       {activeOrg ? (
@@ -295,9 +255,10 @@ const ProjectsView: React.FunctionComponent = () => {
           >
             {selectedProject && (
               <>
-                {quota && projectStats && (
-                  <ProjectQuotas quota={quota} statistics={projectStats} />
-                )}
+                <QuotasContainer
+                  orgLabel={selectedProject._organizationLabel}
+                  projectLabel={selectedProject._label}
+                />
                 <h3>Project Settings</h3>
                 <br />
                 <ProjectForm
