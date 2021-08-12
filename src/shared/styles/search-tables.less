@@ -1,19 +1,49 @@
 @import './../lib.less';
+// Variables
+@border-color: rgba(178, 178, 178, 1); //light grey
+@bg: rgba(252, 253, 253, 1); //white
+@thead-bg: rgba(244, 244, 244, 1); //tbody
+@black: rgba(0, 0, 0, 0.65);
+
+.thead-borders() {
+  border-top: 1px @border-color outset;
+  border-right: 1px @border-color inset;
+  border-bottom: 2px @border-color outset;
+  &:nth-child(1) {
+    border-left: 1px @border-color outset;
+  }
+  &:nth-child(2) {
+    border-left: 1px @border-color inset;
+  }
+}
+
+.td-borders() {
+  border-right: 1px @border-color solid;
+  border-bottom: 1px @border-color solid;
+  &:nth-child(1) {
+    border-left: 1px @border-color outset;
+  }
+  &:nth-child(2) {
+    border-left: 1px @border-color inset;
+  }
+}
 .ant-tooltip-inner {
-  color: rgba(0, 0, 0, 0.65) !important;
-  background: #fcfdfd !important;
+  color: @black !important;
+  background: @bg !important;
 }
 .result-table {
   width: auto;
+  font-weight: 200;
   margin-right: 10px;
   .ant-table {
     line-height: 1.2em;
     .ant-table-content {
       table {
-        background: #fcfdfd;
+        background: @bg;
         thead.ant-table-thead > tr > th {
-          background: #f7f7f7;
-          border: 1px #b2b2b2 solid;
+          font-weight: 400;
+          background: @thead-bg;
+          .thead-borders();
         }
         .ant-table-thead
           th.ant-table-column-has-sorters
@@ -21,17 +51,18 @@
           padding: 0;
         }
         .ant-table-thead > tr > th {
-          padding: 7px 15px;
+          padding: 10px 15px;
         }
         td.ant-table-cell {
-          padding: 5px 15px;
-          border: 1px #b2b2b2 solid;
+          padding: 7px 15px;
           max-width: 200px;
           pre {
             margin: unset;
           }
+         .td-borders()
         }
         td.ant-table-cell,
+				td.ant-table-cell > div,
         td.ant-table-cell > pre {
           text-overflow: ellipsis;
           white-space: nowrap;
