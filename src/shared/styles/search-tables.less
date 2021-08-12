@@ -43,7 +43,38 @@
         thead.ant-table-thead > tr > th {
           font-weight: 400;
           background: @thead-bg;
+          min-width: max-content;
           .thead-borders();
+
+          // FILTER ICON PLAYGROUND
+          .ant-table-filter-column {
+            display: grid;
+            margin: unset;
+            grid-template-columns: 20px 1fr;
+            grid-auto-flow: dense;
+            .ant-table-filter-column-title {
+              grid-column: 2;
+              grid-row: 1;
+              padding: 0;
+							.ant-table-column-sorter {
+								position:absolute;
+								right:20px;
+							}
+            }
+            .ant-table-filter-trigger-container {
+              grid-column: 1;
+              grid-row: 1;
+              position: unset;
+              right: unset;
+              display: unset;
+              &:hover {
+                background: none;
+              }
+              .ant-table-filter-trigger > .anticon {
+                left: 20px;
+              }
+            }
+          }
         }
         .ant-table-thead
           th.ant-table-column-has-sorters
@@ -55,14 +86,15 @@
         }
         td.ant-table-cell {
           padding: 7px 15px;
-          max-width: 200px;
+          min-width: auto;
+          max-width: 250px;
           pre {
             margin: unset;
           }
-         .td-borders()
+          .td-borders();
         }
         td.ant-table-cell,
-				td.ant-table-cell > div,
+        td.ant-table-cell > div,
         td.ant-table-cell > pre {
           text-overflow: ellipsis;
           white-space: nowrap;

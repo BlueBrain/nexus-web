@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Layout, Table, Tooltip } from 'antd';
+import { Layout, Table, Tooltip, Checkbox } from 'antd';
 import * as bodybuilder from 'bodybuilder';
 import { labelOf } from '../../../shared/utils';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import './SearchView.less';
 import '../../../shared/styles/search-tables.less';
-
+import { MenuOutlined } from '@ant-design/icons';
 const { Content } = Layout;
 
 const GlobalSearchView: React.FC = () => {
@@ -17,6 +17,7 @@ const GlobalSearchView: React.FC = () => {
   const [queryParams, setQueryString] = useQueryString();
   const { query } = queryParams;
 
+  const [selectedRowKeys, setSelectedRowKeys] = React.useState<any>([]);
   const [result, setResult] = React.useState<any>({});
   const [config, setConfig] = React.useState<SearchConfig>();
 
@@ -38,10 +39,29 @@ const GlobalSearchView: React.FC = () => {
       },
     };
   };
+  const handleSelect = (record: any, selected: any) => {
+    if (selected) {
+      setSelectedRowKeys((keys: any) => [...keys, record.id]);
+    } else {
+      setSelectedRowKeys((keys: any) => {
+        const index = keys.indexOf(record.id);
+        return [...keys.slice(0, index), ...keys.slice(index + 1)];
+      });
+    }
+  };
+
+  const toggleSelectAll = () => {
+    setSelectedRowKeys((keys: any) =>
+      keys.length === data.length ? [] : data.map((r: any) => r.id)
+    );
+  };
 
   const data = React.useMemo(() => {
     if (result.hits && result.hits.hits) {
-      return result.hits.hits.map((hit: any) => hit._source);
+      return result.hits.hits.map((hit: any, i: number) => ({
+        ...hit._source,
+        ...{ id: i },
+      }));
     }
     return [];
   }, [result]);
@@ -59,6 +79,22 @@ const GlobalSearchView: React.FC = () => {
     });
   }, [esQuery]);
 
+  const headerCheckbox = (
+    <Checkbox
+      checked={selectedRowKeys.length}
+      indeterminate={
+        selectedRowKeys.length > 0 && selectedRowKeys.length < data.length
+      }
+      onChange={toggleSelectAll}
+    />
+  );
+
+  const rowSelection = {
+    selectedRowKeys,
+    onSelect: handleSelect,
+    columnTitle: headerCheckbox,
+  };
+
   return (
     <Content
       style={{
@@ -73,6 +109,8 @@ const GlobalSearchView: React.FC = () => {
               columns={columns}
               dataSource={data}
               pagination={false}
+              rowKey={(record: any) => record.id}
+              rowSelection={rowSelection}
               onRow={onRowClick}
             ></Table>
           </div>
@@ -109,6 +147,20 @@ function makeColumnConfig(searchConfig: SearchConfig) {
       title: field.label,
       dataIndex: field.name,
       key: field.name,
+      filters: [
+        {
+          text: 'Joe',
+          value: 'Joe',
+        },
+        {
+          text: 'Jim',
+          value: 'Jim',
+        },
+      ],
+      sorter: (a: any, b: any) => a.name.length - b.name.length,
+      filterIcon: (filtered: any) => (
+        <MenuOutlined style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
+      ),
       render: (value: any | any[]) => {
         // cases :
         // 1. value is text.
