@@ -1,9 +1,12 @@
 @import './../lib.less';
+
 // Variables
 @border-color: rgba(178, 178, 178, 1); //light grey
 @bg: rgba(252, 253, 253, 1); //white
 @thead-bg: rgba(244, 244, 244, 1); //tbody
 @black: rgba(0, 0, 0, 0.65);
+@select-blue: rgba(217, 230, 248, 1);
+@select-black: rgba(51, 51, 51, 0.8);
 
 .thead-borders() {
   border-top: 1px @border-color outset;
@@ -27,10 +30,27 @@
     border-left: 1px @border-color inset;
   }
 }
-.ant-tooltip-inner {
-  color: @black !important;
-  background: @bg !important;
+
+html {
+	.ant-tooltip {
+		.ant-tooltip-content {
+			border-radius: 4px;
+
+			.ant-tooltip-arrow {
+				visibility: hidden;
+			}
+			.ant-tooltip-inner {
+				font-weight: 200;
+				color: @black;
+				background: @bg;
+				padding: 10px 15px;
+				box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px,
+					rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 56px;
+			}
+		}
+	}
 }
+
 .result-table {
   width: auto;
   font-weight: 200;
@@ -44,6 +64,7 @@
           font-weight: 400;
           background: @thead-bg;
           min-width: max-content;
+          padding: 10px 15px;
           .thead-borders();
 
           // FILTER ICON PLAYGROUND
@@ -81,10 +102,11 @@
           .ant-table-column-sorters {
           padding: 0;
         }
-        .ant-table-thead > tr > th {
-          padding: 10px 15px;
-        }
+
         td.ant-table-cell {
+					&:hover {
+						background: @thead-bg !important;
+					}
           padding: 7px 15px;
           min-width: auto;
           max-width: 250px;
@@ -99,6 +121,26 @@
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
+        }
+
+        // Overriding select background color
+        .ant-checkbox-indeterminate .ant-checkbox-inner::after {
+          background: @bg;
+        }
+        .ant-checkbox-wrapper:hover .ant-checkbox-inner,
+        .ant-checkbox:hover .ant-checkbox-inner,
+        .ant-checkbox-input:focus + .ant-checkbox-inner {
+          border-color: @select-black;
+        }
+        .ant-checkbox-checked::after {
+          border: 1px solid @select-black;
+        }
+        .ant-checkbox-checked .ant-checkbox-inner {
+          background: @select-black;
+          border: 1px solid @select-black;
+        }
+        .ant-table-tbody > tr.ant-table-row-selected > td {
+          background: @select-blue;
         }
       }
       // OVERRIDING THE ICON TAG DISPLAY FOR THIS TABLE ONLY, ACTUAL STLYING FOUND IN Types.less
