@@ -6,6 +6,8 @@ interface Bounds {
   top: number;
   width: number;
   height: number;
+  bottom: number;
+  right: number;
 }
 
 export default function useMeasure() {
@@ -15,6 +17,8 @@ export default function useMeasure() {
     top: 0,
     width: 0,
     height: 0,
+    bottom: 0,
+    right: 0,
   });
 
   const [ro] = React.useState(
@@ -24,8 +28,15 @@ export default function useMeasure() {
   React.useEffect(() => {
     if (ref && ref.current) {
       ro.observe(ref.current);
-      const { height, width, top, left } = ref.current.getBoundingClientRect();
-      set({ height, width, top, left });
+      const {
+        height,
+        width,
+        top,
+        left,
+        bottom,
+        right,
+      } = ref.current.getBoundingClientRect();
+      set({ height, width, top, left, bottom, right });
     }
     return () => {
       if (ref && ref.current) {
