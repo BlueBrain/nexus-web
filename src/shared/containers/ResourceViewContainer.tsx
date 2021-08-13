@@ -268,7 +268,6 @@ const ResourceViewContainer: React.FunctionComponent<{
         busy: false,
       });
     } catch (error) {
-      console.log({ error });
       let errorMessage;
 
       if (error['@type'] === 'AuthorizationFailed') {
@@ -295,7 +294,6 @@ const ResourceViewContainer: React.FunctionComponent<{
       } else {
         errorMessage = error.reason;
       }
-      console.log(errorMessage);
       const jsError = new Error(errorMessage);
 
       setResource({
@@ -315,36 +313,34 @@ const ResourceViewContainer: React.FunctionComponent<{
   return (
     <>
       <div className="resource-details">
-        {
-          <>
-            <Helmet
-              title={`${
-                resource ? getResourceLabel(resource) : resourceId
-              } | ${projectLabel} | ${orgLabel} | Nexus Web`}
-              meta={[
-                {
-                  name: 'description',
-                  content: resource
-                    ? getResourceLabel(resource)
-                    : labelOf(decodeURIComponent(resourceId)),
-                },
-              ]}
-            />
+        <>
+          <Helmet
+            title={`${
+              resource ? getResourceLabel(resource) : resourceId
+            } | ${projectLabel} | ${orgLabel} | Nexus Web`}
+            meta={[
+              {
+                name: 'description',
+                content: resource
+                  ? getResourceLabel(resource)
+                  : labelOf(decodeURIComponent(resourceId)),
+              },
+            ]}
+          />
 
-            <h1 className="name">
-              <span>
-                <a onClick={() => goToOrg(orgLabel)}>{orgLabel}</a> |{' '}
-                <a onClick={() => goToProject(orgLabel, projectLabel)}>
-                  {projectLabel}
-                </a>{' '}
-                |{' '}
-              </span>
-              {resource
-                ? getResourceLabel(resource)
-                : labelOf(decodeURIComponent(resourceId))}
-            </h1>
-          </>
-        }
+          <h1 className="name">
+            <span>
+              <a onClick={() => goToOrg(orgLabel)}>{orgLabel}</a> |{' '}
+              <a onClick={() => goToProject(orgLabel, projectLabel)}>
+                {projectLabel}
+              </a>{' '}
+              |{' '}
+            </span>
+            {resource
+              ? getResourceLabel(resource)
+              : labelOf(decodeURIComponent(resourceId))}
+          </h1>
+        </>
 
         <Spin spinning={busy}>
           {!!error && (
@@ -366,26 +362,24 @@ const ResourceViewContainer: React.FunctionComponent<{
                     {error.rejections && (
                       <Collapse bordered={false} ghost>
                         <Collapse.Panel key={1} header="More detail...">
-                          {
-                            <>
-                              <ul>
-                                {error.rejections.map((el, ix) => (
-                                  <li key={ix}>{el.reason}</li>
-                                ))}
-                              </ul>
+                          <>
+                            <ul>
+                              {error.rejections.map((el, ix) => (
+                                <li key={ix}>{el.reason}</li>
+                              ))}
+                            </ul>
 
-                              <p>
-                                For further information please refer to the API
-                                documentation,{' '}
-                                <a
-                                  target="_blank"
-                                  href="https://bluebrainnexus.io/docs/delta/api/"
-                                >
-                                  https://bluebrainnexus.io/docs/delta/api/
-                                </a>
-                              </p>
-                            </>
-                          }
+                            <p>
+                              For further information please refer to the API
+                              documentation,{' '}
+                              <a
+                                target="_blank"
+                                href="https://bluebrainnexus.io/docs/delta/api/"
+                              >
+                                https://bluebrainnexus.io/docs/delta/api/
+                              </a>
+                            </p>
+                          </>
                         </Collapse.Panel>
                       </Collapse>
                     )}
