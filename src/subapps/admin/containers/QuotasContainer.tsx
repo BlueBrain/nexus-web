@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
+import { ProjectStatistics } from '@bbp/nexus-sdk';
 
 import ProjectQuotas from '../components/Projects/ProjectQuotas';
 
@@ -9,7 +10,7 @@ const QuotasContainer: React.FC<{ orgLabel: string; projectLabel: string }> = ({
 }) => {
   const nexus = useNexusContext();
   const [quota, setQuota] = React.useState<any>();
-  const [projectStats, setProjectStats] = React.useState<any>();
+  const [projectStats, setProjectStats] = React.useState<ProjectStatistics>();
 
   React.useEffect(() => {
     // load project quotas
@@ -19,27 +20,21 @@ const QuotasContainer: React.FC<{ orgLabel: string; projectLabel: string }> = ({
   }, []);
 
   const loadQuotas = async () => {
-    await nexus
-      .httpGet({
-        path: `http://delta.dev.nexus.ocp.bbp.epfl.ch/v1/quotas/${orgLabel}/${projectLabel}`,
-      })
-      .then(resp => {
-        console.log('resp', resp.resources);
+    await nexus.Quotas.get(orgLabel, projectLabel).then((response: any) => {
+      console.log('resp', response);
 
-        setQuota(resp);
-      });
+      setQuota(response);
+    });
   };
 
   const loadStats = async () => {
-    await nexus
-      .httpGet({
-        path: `http://delta.dev.nexus.ocp.bbp.epfl.ch/v1/projects/${orgLabel}/${projectLabel}/statistics`,
-      })
-      .then(resp => {
-        console.log('resp', resp);
+    await nexus.Project.statistics(orgLabel, projectLabel).then(
+      (response: ProjectStatistics) => {
+        console.log('resp', response);
 
-        setProjectStats(resp);
-      });
+        setProjectStats(response);
+      }
+    );
   };
 
   if (!quota || !projectStats) return null;

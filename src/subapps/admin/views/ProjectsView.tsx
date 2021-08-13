@@ -255,10 +255,17 @@ const ProjectsView: React.FunctionComponent = () => {
           >
             {selectedProject && (
               <>
-                <QuotasContainer
-                  orgLabel={selectedProject._organizationLabel}
-                  projectLabel={selectedProject._label}
-                />
+                <AccessControl
+                  key="quotas-access-control"
+                  path={`/${selectedProject._organizationLabel}/${selectedProject._label}`}
+                  permissions={['quotas/read']}
+                >
+                  <QuotasContainer
+                    orgLabel={selectedProject._organizationLabel}
+                    projectLabel={selectedProject._label}
+                  />
+                </AccessControl>
+
                 <h3>Project Settings</h3>
                 <br />
                 <ProjectForm

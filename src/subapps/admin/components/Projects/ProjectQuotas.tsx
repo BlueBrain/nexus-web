@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { Progress } from 'antd';
+import { ProjectStatistics } from '@bbp/nexus-sdk';
 
 import './ProjectQuotas.less';
 
 const ProjectQuotas: React.FC<{
-  quota: {
-    resources: number;
-    events: number;
-  };
-  statistics: any;
+  quota: any;
+  statistics: ProjectStatistics;
 }> = ({ quota, statistics }) => {
   const percentOfResources = Math.ceil(
     (statistics.resourcesCount / quota.resources) * 100
