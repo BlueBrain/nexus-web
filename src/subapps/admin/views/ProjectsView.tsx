@@ -13,6 +13,7 @@ import ProjectItem from '../components/Projects/ProjectItem';
 import { useAdminSubappContext } from '..';
 import useNotification from '../../../shared/hooks/useNotification';
 import QuotasContainer from '../containers/QuotasContainer';
+import StoragesContainer from '../containers/StoragesContainer';
 
 const ProjectsView: React.FunctionComponent = () => {
   const notification = useNotification();
@@ -224,7 +225,7 @@ const ProjectsView: React.FunctionComponent = () => {
                           setSelectedProject(i);
                         }}
                       >
-                        Edit
+                        Settings
                       </Button>
                     </AccessControl>,
                   ]}
@@ -264,8 +265,11 @@ const ProjectsView: React.FunctionComponent = () => {
                     orgLabel={selectedProject._organizationLabel}
                     projectLabel={selectedProject._label}
                   />
+                  <StoragesContainer
+                    orgLabel={selectedProject._organizationLabel}
+                    projectLabel={selectedProject._label}
+                  />
                 </AccessControl>
-
                 <h3>Project Settings</h3>
                 <br />
                 <ProjectForm
