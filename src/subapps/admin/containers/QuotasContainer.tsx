@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { ProjectStatistics } from '@bbp/nexus-sdk';
+import { ProjectStatistics, Quota } from '@bbp/nexus-sdk';
 
 import ProjectQuotas from '../components/Projects/ProjectQuotas';
 
@@ -9,20 +9,16 @@ const QuotasContainer: React.FC<{ orgLabel: string; projectLabel: string }> = ({
   projectLabel,
 }) => {
   const nexus = useNexusContext();
-  const [quota, setQuota] = React.useState<any>();
+  const [quota, setQuota] = React.useState<Quota>();
   const [projectStats, setProjectStats] = React.useState<ProjectStatistics>();
 
   React.useEffect(() => {
-    // load project quotas
-    console.log('loading quotas....');
     loadQuotas();
     loadStats();
   }, []);
 
   const loadQuotas = async () => {
     await nexus.Quotas.get(orgLabel, projectLabel).then((response: any) => {
-      console.log('resp', response);
-
       setQuota(response);
     });
   };
@@ -30,8 +26,6 @@ const QuotasContainer: React.FC<{ orgLabel: string; projectLabel: string }> = ({
   const loadStats = async () => {
     await nexus.Project.statistics(orgLabel, projectLabel).then(
       (response: ProjectStatistics) => {
-        console.log('resp', response);
-
         setProjectStats(response);
       }
     );

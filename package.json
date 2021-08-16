@@ -21,8 +21,8 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.4.0",
-    "@bbp/nexus-sdk": "1.3.7",
-    "@bbp/react-nexus": "1.3.7",
+    "@bbp/nexus-sdk": "1.3.8",
+    "@bbp/react-nexus": "1.3.8",
     "@sentry/browser": "5.9.1",
     "@types/cytoscape": "^3.14.2",
     "@types/lodash": "^4.14.149",

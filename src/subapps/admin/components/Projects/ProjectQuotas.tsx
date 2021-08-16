@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Progress } from 'antd';
-import { ProjectStatistics } from '@bbp/nexus-sdk';
+import { ProjectStatistics, Quota } from '@bbp/nexus-sdk';
 
 import './ProjectQuotas.less';
 
 const ProjectQuotas: React.FC<{
-  quota: any;
+  quota: Quota;
   statistics: ProjectStatistics;
 }> = ({ quota, statistics }) => {
   const percentOfResources = Math.ceil(
@@ -20,7 +20,6 @@ const ProjectQuotas: React.FC<{
       <h3>Data Volume</h3>
       <div className="project-quotas__dashboards">
         <div className="project-quotas__dashboard">
-          {/* <Progress percent={75} /> */}
           <Progress
             strokeLinecap="square"
             type="dashboard"
