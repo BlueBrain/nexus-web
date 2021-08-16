@@ -1,4 +1,6 @@
-## Nexus Fusion
+<img src="docs/Blue-Brain-Nexus-Fusion-Github-banner.jpg"/>
+
+# Nexus Fusion
 
 > Note: expect this repo to be renamed to https://github.com/BlueBrain/nexus-fusion to match the new application name and Nexus component branding scheme.
 
