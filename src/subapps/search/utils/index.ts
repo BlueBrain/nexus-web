@@ -8,16 +8,6 @@ export const constructQuery = (searchText: string) => {
     prefix_length: 0,
     fields: ['*'],
   });
-  // .addFilter('exists', 'name')
-  // .addFilter('exists', 'description')
-  // // .addFilter('prefix', 'name', 'vd101')
-  // // .addFilter('prefix', 'brainRegion.label', 'prima')
-  // .addFilter('prefix', 'subjectSpecies.label.keyword', 'Rat')
-  // // .addFilter(
-  // //   'term',
-  // //   'description',
-  // //   'This dataset is about an in vitro-filled neuron morphology from layer 4 with m-type L4_SSC. The distribution contains the neuron morphology in ASC and in SWC file format.'
-  // // )
   return body;
 };
 
