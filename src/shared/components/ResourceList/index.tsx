@@ -30,6 +30,7 @@ import { getResourceLabel } from '../../utils';
 import TypesIconList from '../Types/TypesIcon';
 import useMeasure from '../../hooks/useMeasure';
 import Copy from '../Copy';
+import { debounce } from 'lodash';
 
 import './ResourceList.less';
 
@@ -63,13 +64,14 @@ const ResourceListComponent: React.FunctionComponent<{
   schemaLinkContainer?: React.FunctionComponent<{ resource: Resource }>;
   total?: number;
   currentPage: number;
-  pageSize: number;
+  pageSize?: number;
   hasSearch?: boolean;
   onPaginationChange(
     searchValue: string | undefined,
     page: number,
     pageSize?: number
   ): void;
+  onPageSizeChange(pageSize: number): void;
   error: Error | null;
   onDelete(): void;
   onClone(): void;
@@ -86,6 +88,7 @@ const ResourceListComponent: React.FunctionComponent<{
   currentPage,
   pageSize,
   onPaginationChange,
+  onPageSizeChange,
   hasSearch,
   error,
   resources,
@@ -104,6 +107,8 @@ const ResourceListComponent: React.FunctionComponent<{
   const [{ ref: wrapperHeightRef }, { height: wrapperHeight }] = useMeasure();
   const { name } = list;
   const [sortOption, setSortOption] = React.useState(DEFAULT_SORT_OPTION);
+
+  const hiddenHeightTestListItemRef = React.useRef<HTMLDivElement>(null);
 
   const handleUpdate = (value: string) => {
     onUpdate({ ...list, name: value });
@@ -127,6 +132,7 @@ const ResourceListComponent: React.FunctionComponent<{
       query: {
         ...list.query,
         deprecated: !list.query.deprecated,
+        from: 0,
       },
     });
   };
@@ -162,9 +168,86 @@ const ResourceListComponent: React.FunctionComponent<{
     </Menu>
   );
 
+  const hiddenListForCalculatingDimensionsForPageSize = (
+    // use to calculate dimensions of list item
+    <div
+      ref={hiddenHeightTestListItemRef}
+      style={{ display: 'none', height: '100%' }}
+    >
+      <List
+        pagination={{ position: 'bottom', showSizeChanger: false }}
+        style={{ height: '100%' }}
+      >
+        <a
+          id="testListItem"
+          key={'testListItemLink'}
+          className="testListItemLink"
+        >
+          <ListItem key={'testListItem'}>
+            Test Dimension
+            <div className="resource-type-list">
+              <TypesIconList type={['Testing']} />
+            </div>
+          </ListItem>
+        </a>
+      </List>
+    </div>
+  );
+
+  const calculateNumberOfListItemsThatFit = React.useCallback(() => {
+    const listItemDiv = hiddenHeightTestListItemRef.current;
+    if (!listItemDiv) return;
+
+    listItemDiv.style.display = ''; // show our hidden list to perform calculations
+    const listItemTopPosition = listItemDiv.getBoundingClientRect().top;
+    const paginationTopPosition = listItemDiv
+      .getElementsByClassName('ant-list-pagination')[0]
+      .getBoundingClientRect().top;
+
+    const availableHeightForListItems =
+      paginationTopPosition - listItemTopPosition;
+
+    const listItemHeight = listItemDiv
+      .getElementsByClassName('testListItemLink')[0]
+      .getBoundingClientRect().height;
+    const listItemMarginTop = parseInt(
+      window.getComputedStyle(
+        listItemDiv
+          .getElementsByClassName('testListItemLink')[0]
+          .getElementsByClassName('ListItem')[0] as HTMLElement
+      ).marginTop,
+      10
+    );
+
+    /* include top margin in list item height, top and bottom margins collapse */
+    const numberOfListItemsThatFit = Math.floor(
+      availableHeightForListItems / (listItemHeight + listItemMarginTop)
+    );
+
+    listItemDiv.style.display = 'none'; // finished calculations, hide height test div
+
+    return numberOfListItemsThatFit;
+  }, [wrapperHeight]);
+
+  const updatePageSize = () => {
+    const numberOfListItemsToFit = calculateNumberOfListItemsThatFit();
+    if (pageSize !== numberOfListItemsToFit) {
+      numberOfListItemsToFit && onPageSizeChange(numberOfListItemsToFit);
+    }
+  };
+
+  /* height changes a few times when resizing a window so debounce */
+  const debounceHeightChange = React.useRef(
+    debounce(() => updatePageSize(), 300)
+  ).current;
+
+  React.useLayoutEffect(() => {
+    debounceHeightChange();
+  }, [wrapperHeight]);
+
   return (
     <div className="resource-list-height-tester" ref={wrapperHeightRef}>
-      <div className="resource-list">
+      <div className="resource-list" style={{ height: '100%' }}>
         <h3 className={`header ${busy ? '-fetching' : ''}`}>
           <RenameableItem
             defaultValue={name || 'Unnamed List'}
@@ -251,9 +334,10 @@ const ResourceListComponent: React.FunctionComponent<{
         )}
         <Spin spinning={busy}>
           {!!error && <Empty description={error.message} />}
-          {!error && (
+          {hiddenListForCalculatingDimensionsForPageSize}
+          {!error && pageSize && (
             <List
-              style={{ height: wrapperHeight - 200 }}
+              style={{ height: '100%' }}
               dataSource={resources}
               pagination={{
                 total,
@@ -291,12 +375,11 @@ const ResourceListComponent: React.FunctionComponent<{
                         mouseEnterDelay={RESOURCE_CARD_MOUSE_ENTER_DELAY}
                       >
                         {getResourceLabel(resource)}
-                        {!!resource['@type'] &&
-                          (Array.isArray(resource['@type']) ? (
-                            <TypesIconList type={resource['@type']} />
-                          ) : (
-                            <TypesIconList type={[resource['@type']]} />
-                          ))}
+                        <div className="resource-type-list">
+                          {!!resource['@type'] && (
+                            <TypesIconList type={[resource['@type']].flat()} />
+                          )}
+                        </div>
                       </Popover>
                     </ListItem>
                   </a>

@@ -56,23 +56,28 @@ const ResourceListContainer: React.FunctionComponent<{
     total: 0,
   });
 
-  const DEFAULT_PAGE_SIZE = 6;
   const [paginationState, setPaginationState] = React.useState<{
     currentPage: number;
-    pageSize: number;
+    pageSize?: number;
   }>({
     currentPage: 1,
-    pageSize: DEFAULT_PAGE_SIZE,
   });
 
   const handlePaginationChange = (
     searchValue: string,
     page: number,
-    pageSize?: number
+    pageSize: number
   ) => {
+    setPaginationState({
+      pageSize,
+      currentPage: page,
+    });
+
     const query = {
       ...list.query,
       q: searchValue,
+      from: (page - 1) * pageSize,
+      size: pageSize,
     };
 
     if (searchValue) {
@@ -90,16 +95,9 @@ const ResourceListContainer: React.FunctionComponent<{
       return;
     }
 
-    query.from = (page - 1) * paginationState.pageSize;
-    query.size = pageSize;
     setList({
       ...list,
       query,
-    });
-
-    setPaginationState({
-      currentPage: page,
-      pageSize: pageSize || DEFAULT_PAGE_SIZE,
     });
   };
 
@@ -150,13 +148,11 @@ const ResourceListContainer: React.FunctionComponent<{
         });
       });
   }, [
-    // Reset pagination and reload based on these props
     orgLabel,
     projectLabel,
     JSON.stringify(list.query),
     toggleForceReload,
     refreshList,
-    paginationState,
   ]);
 
   const handleDelete = () => {
@@ -164,6 +160,7 @@ const ResourceListContainer: React.FunctionComponent<{
   };
 
   const handleUpdate = (list: ResourceBoardList) => {
+    setPaginationState({ ...paginationState, currentPage: 1 });
     setList(list);
   };
 
@@ -181,7 +178,12 @@ const ResourceListContainer: React.FunctionComponent<{
       query: {
         ...list.query,
         type: !!value ? value : undefined,
+        from: 0,
       },
+    });
+    setPaginationState({
+      ...paginationState,
+      currentPage: 1,
     });
   };
 
@@ -191,7 +193,12 @@ const ResourceListContainer: React.FunctionComponent<{
       query: {
         ...list.query,
         schema: !!value ? value : undefined,
+        from: 0,
       },
+    });
+    setPaginationState({
+      ...paginationState,
+      currentPage: 1,
     });
   };
 
@@ -210,6 +217,18 @@ const ResourceListContainer: React.FunctionComponent<{
     window.location.href
   }?shareList=${encodeShareableList(list)}`;
 
+  const handlePageSizeChange = (pageSize: number) => {
+    const query = {
+      ...list.query,
+    };
+    query.size = pageSize;
+    setList({
+      ...list,
+      query,
+    });
+    setPaginationState({ ...paginationState, pageSize });
+  };
+
   return (
     <ResourceListComponent
       busy={busy}
@@ -219,6 +238,7 @@ const ResourceListContainer: React.FunctionComponent<{
       pageSize={paginationState.pageSize}
       currentPage={paginationState.currentPage}
       onPaginationChange={handlePaginationChange}
+      onPageSizeChange={handlePageSizeChange}
       hasSearch={true}
       error={error}
       onUpdate={handleUpdate}
