@@ -27,7 +27,7 @@ const FilterOptions: React.FC<{
       <Form.Item name="filters">
         <Checkbox.Group>
           {fields.map(({ text, value }) => (
-            <Row>
+            <Row key={value}>
               <Checkbox value={`${value}.label.keyword`}>{text}</Checkbox>
             </Row>
           ))}
