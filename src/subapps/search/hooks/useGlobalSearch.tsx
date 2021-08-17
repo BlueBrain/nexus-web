@@ -15,7 +15,7 @@ const FilterOptions: React.FC<{
   return (
     <Form onFinish={onFinish}>
       <Form.Item label="value" name="filterType">
-        <Select defaultValue={'allof'} dropdownStyle={{ zIndex: 1100 }}>
+        <Select dropdownStyle={{ zIndex: 1100 }}>
           <Select.Option value="allof">All Of</Select.Option>
           <Select.Option value="anyof">Any Of</Select.Option>
           <Select.Option value="noneof">None Of</Select.Option>
@@ -214,6 +214,8 @@ function useGlobalSearchData(
       filterState.filterTerm
     );
     const withPagination = addPagination(withFilter, from, size);
+    const yo = withPagination.build();
+    console.log(yo);
     return withPagination.build();
   }, [query, filterState, from, size]);
 
