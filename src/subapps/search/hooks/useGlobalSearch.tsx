@@ -187,7 +187,6 @@ function useGlobalSearchData(
   );
 
   const onFilterSubmit = (values: FilterState) => {
-    console.log('onFilterSubmit', values);
     dispatchFilter({ type: 'add', payload: values });
   };
 
@@ -214,8 +213,6 @@ function useGlobalSearchData(
       filterState.filterTerm
     );
     const withPagination = addPagination(withFilter, from, size);
-    const yo = withPagination.build();
-    console.log(yo);
     return withPagination.build();
   }, [query, filterState, from, size]);
 

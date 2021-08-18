@@ -20,7 +20,7 @@ export const ESMaxResultWindowSize = 10000;
 export const defaultPageSizeOptions = [10, 20, 50, 100];
 
 function useSearchPagination(query: any, nexus: NexusClient) {
-  const defaulpagination: SearchPagination = {
+  const defaultpagination: SearchPagination = {
     numRowsFitOnPage: 0,
     currentPage: 1,
     totalNumberOfResults: 0,
@@ -31,7 +31,7 @@ function useSearchPagination(query: any, nexus: NexusClient) {
     isInitialized: false,
   };
   const [pagination, setPagination] = React.useState<SearchPagination>(
-    defaulpagination
+    defaultpagination
   );
 
   const handlePaginationChange = (
