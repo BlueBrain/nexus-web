@@ -172,18 +172,19 @@ const ResourceListComponent: React.FunctionComponent<{
     // use to calculate dimensions of list item
     <div
       ref={hiddenHeightTestListItemRef}
-      style={{ display: 'none', height: '100%' }}
+      className="dummy-height-test-list-item"
+      style={{ display: 'none' }}
     >
       <List
         pagination={{ position: 'bottom', showSizeChanger: false }}
-        style={{ height: '100%' }}
+        className="list-item"
       >
         <a
           id="testListItem"
-          key={'testListItemLink'}
-          className="testListItemLink"
+          key="testListItemLink"
+          className="test-list-item-link"
         >
-          <ListItem key={'testListItem'}>
+          <ListItem key="testListItem">
             Test Dimension
             <div className="resource-type-list">
               <TypesIconList type={['Testing']} />
@@ -208,12 +209,12 @@ const ResourceListComponent: React.FunctionComponent<{
       paginationTopPosition - listItemTopPosition;
 
     const listItemHeight = listItemDiv
-      .getElementsByClassName('testListItemLink')[0]
+      .getElementsByClassName('test-list-item-link')[0]
       .getBoundingClientRect().height;
     const listItemMarginTop = parseInt(
       window.getComputedStyle(
         listItemDiv
-          .getElementsByClassName('testListItemLink')[0]
+          .getElementsByClassName('test-list-item-link')[0]
           .getElementsByClassName('ListItem')[0] as HTMLElement
       ).marginTop,
       10
@@ -247,7 +248,7 @@ const ResourceListComponent: React.FunctionComponent<{
 
   return (
     <div className="resource-list-height-tester" ref={wrapperHeightRef}>
-      <div className="resource-list" style={{ height: '100%' }}>
+      <div className="resource-list">
         <h3 className={`header ${busy ? '-fetching' : ''}`}>
           <RenameableItem
             defaultValue={name || 'Unnamed List'}
