@@ -13,7 +13,7 @@ const Storages: React.FC<{ storages: StorageData[] }> = ({ storages }) => {
       dataIndex: 'storage',
     },
     {
-      title: 'Max file size',
+      title: 'Max file size, GB',
       dataIndex: 'maxFileSize',
     },
     {
@@ -21,20 +21,26 @@ const Storages: React.FC<{ storages: StorageData[] }> = ({ storages }) => {
       dataIndex: 'files',
     },
     {
-      title: 'Space used',
+      title: 'Space used, GB',
       dataIndex: 'spaceUsed',
     },
     {
-      title: 'Capacity',
+      title: 'Capacity, GB',
       dataIndex: 'capacity',
     },
   ];
 
+  const bytesToGb = (bytes: number) => {
+    return bytes / 1073741824;
+  };
+
   const data = storages.map(storage => ({
-    capacity: storage.capacity || 'Undefined',
-    maxFileSize: storage.maxFileSize,
+    capacity: storage.capacity ? bytesToGb(storage.capacity) : 'Undefined',
+    maxFileSize: storage.maxFileSize
+      ? bytesToGb(storage.maxFileSize)
+      : 'Undefined',
     files: storage.files,
-    spaceUsed: storage.spaceUsed,
+    spaceUsed: bytesToGb(storage.spaceUsed),
     key: storage['@id'],
     storage: labelOf(storage['@id']),
   }));

@@ -4,7 +4,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import Storages from '../components/Projects/Storages';
 
 export type StorageData = {
-  maxFileSize: number;
+  maxFileSize?: number;
   capacity?: number;
   files: number;
   spaceUsed: number;
