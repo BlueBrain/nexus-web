@@ -1,9 +1,12 @@
 import * as React from 'react';
 import { Table, Progress } from 'antd';
+import { Storage } from '@bbp/nexus-sdk';
 
 import './Storages.less';
 
-const Storages: React.FC<{}> = () => {
+const Storages: React.FC<{ storages: any[] }> = ({ storages }) => {
+  console.log('storages', storages);
+
   const columns = [
     {
       title: 'Storage',
@@ -21,7 +24,11 @@ const Storages: React.FC<{}> = () => {
       title: 'Space used',
       dataIndex: 'spaceUsed',
       render: (spaceUsed: number) => (
-        <Progress percent={20 / spaceUsed} format={() => `${spaceUsed} GB`} />
+        <Progress
+          percent={(spaceUsed / 20) * 100}
+          format={() => `${spaceUsed} GB`}
+          status="normal"
+        />
       ),
       className: 'storages__space-used-column',
     },
@@ -33,7 +40,7 @@ const Storages: React.FC<{}> = () => {
       storage: 'diskStorageDefault',
       maxFileSize: `${(10737418240 / 1073741824).toFixed(2)} GB`,
       capacity: '20.00 GB',
-      spaceUsed: (50000 / 1024).toFixed(2),
+      spaceUsed: (5000 / 1024).toFixed(2),
     },
     {
       key: '2',
@@ -43,6 +50,8 @@ const Storages: React.FC<{}> = () => {
       spaceUsed: (11000 / 1024).toFixed(2),
     },
   ];
+
+  if (!storages) return null;
 
   return (
     <div className="storages">

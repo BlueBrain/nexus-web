@@ -8,31 +8,42 @@ const StoragesContainer: React.FC<{
   projectLabel: string;
 }> = ({ orgLabel, projectLabel }) => {
   const nexus = useNexusContext();
+  const [storages, setStorages] = React.useState<any[]>();
 
   React.useEffect(() => {
-    nexus.Storage.list(orgLabel, projectLabel)
-      .then(response => {
-        console.log('response', response);
+    loadStorages();
+  }, []);
 
-        return Promise.all(
-          response._results.map(storage => {
-            return nexus.Storage.get(
+  const loadStorages = async () => {
+    await nexus.Storage.list(orgLabel, projectLabel).then(response => {
+      Promise.all(
+        response._results.map(storage => {
+          return Promise.all([
+            nexus.Storage.get(
               orgLabel,
               projectLabel,
               encodeURIComponent(storage['@id'])
-            );
+            ),
+            nexus.httpGet({
+              path: `https://dev.nexus.ocp.bbp.epfl.ch/v1/storages/${orgLabel}/${projectLabel}/${encodeURIComponent(
+                storage['@id']
+              )}/statistics`,
+            }),
+          ]);
+        })
+      )
+        .then(results => {
+          setStorages(results);
+        })
+        .catch(error => {
+          // fail to load silently
+        });
+    });
+  };
 
-            // return nexus.httpGet({
-            //   path: `https://dev.nexus.ocp.bbp.epfl.ch/v1/storages/${orgLabel}/${projectLabel}/${encodeURIComponent(
-            //     storage['@id']
-            //   )}/statistics`,
-            // });
-          })
-        );
-      })
-      .then(resps => console.log(resps));
-  });
-  return <Storages />;
+  if (!storages) return null;
+
+  return <Storages storages={storages} />;
 };
 
 export default StoragesContainer;
