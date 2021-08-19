@@ -31,7 +31,7 @@ const Storages: React.FC<{ storages: StorageData[] }> = ({ storages }) => {
   ];
 
   const bytesToGb = (bytes: number) => {
-    return bytes / 1073741824;
+    return (bytes / 1073741824).toFixed(2);
   };
 
   const data = storages.map(storage => ({
