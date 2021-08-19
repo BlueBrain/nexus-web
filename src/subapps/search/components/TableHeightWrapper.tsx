@@ -13,7 +13,7 @@ const TableHeightWrapper: React.FC<{
   children,
 }) => {
   return (
-    <div style={{ height: 'calc(100vh - 82px)' }}>
+    <div className="height-test-wrapper">
       <div
         style={{
           display: 'flex',
