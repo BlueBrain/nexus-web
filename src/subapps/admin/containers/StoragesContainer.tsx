@@ -1,5 +1,8 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
+// add optional field Capacity
+import { Storage } from '@bbp/nexus-sdk';
+// add type StorageStatistics
 
 import Storages from '../components/Projects/Storages';
 
@@ -43,7 +46,7 @@ const StoragesContainer: React.FC<{
 
   const parseResponses = (storagesData: any[][]) => {
     return storagesData.map(storage => {
-      const { maxFileSize, capacity } = storage[0];
+      const { maxFileSize, capacity } = storage[0] as Storage;
       const { files, spaceUsed } = storage[1];
       return {
         maxFileSize,
