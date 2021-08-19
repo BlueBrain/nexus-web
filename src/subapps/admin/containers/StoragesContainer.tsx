@@ -64,7 +64,7 @@ const StoragesContainer: React.FC<{
     });
   };
 
-  if (!storages || storages.length < 1) return null;
+  if (storages.length < 1) return null;
 
   return <Storages storages={storages} />;
 };
