@@ -18,17 +18,23 @@ const QuotasContainer: React.FC<{ orgLabel: string; projectLabel: string }> = ({
   }, []);
 
   const loadQuotas = async () => {
-    await nexus.Quotas.get(orgLabel, projectLabel).then((response: any) => {
-      setQuota(response);
-    });
+    await nexus.Quotas.get(orgLabel, projectLabel)
+      .then((response: any) => {
+        setQuota(response);
+      })
+      .catch(error => {
+        // fail silently
+      });
   };
 
   const loadStats = async () => {
-    await nexus.Project.statistics(orgLabel, projectLabel).then(
-      (response: ProjectStatistics) => {
+    await nexus.Project.statistics(orgLabel, projectLabel)
+      .then((response: ProjectStatistics) => {
         setProjectStats(response);
-      }
-    );
+      })
+      .catch(error => {
+        // fail silently
+      });
   };
 
   if (!quota || !projectStats) return null;

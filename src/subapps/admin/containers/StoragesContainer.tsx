@@ -1,53 +1,59 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-// add optional field Capacity
-import { Storage } from '@bbp/nexus-sdk';
-// add type StorageStatistics
 
 import Storages from '../components/Projects/Storages';
+
+export type StorageData = {
+  maxFileSize: number;
+  capacity?: number;
+  files: number;
+  spaceUsed: number;
+  '@id': string;
+};
 
 const StoragesContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
 }> = ({ orgLabel, projectLabel }) => {
   const nexus = useNexusContext();
-  const [storages, setStorages] = React.useState<any[]>();
+  const [storages, setStorages] = React.useState<StorageData[]>([]);
 
   React.useEffect(() => {
     loadStorages();
   }, []);
 
   const loadStorages = async () => {
-    await nexus.Storage.list(orgLabel, projectLabel).then(response => {
-      Promise.all(
-        response._results.map(storage => {
-          return Promise.all([
-            nexus.Storage.get(
-              orgLabel,
-              projectLabel,
-              encodeURIComponent(storage['@id'])
-            ),
-            nexus.httpGet({
-              path: `https://dev.nexus.ocp.bbp.epfl.ch/v1/storages/${orgLabel}/${projectLabel}/${encodeURIComponent(
-                storage['@id']
-              )}/statistics`,
-            }),
-          ]);
-        })
-      )
-        .then(results => {
+    await nexus.Storage.list(orgLabel, projectLabel)
+      .then(response => {
+        Promise.all(
+          response._results.map(storage => {
+            return Promise.all([
+              nexus.Storage.get(
+                orgLabel,
+                projectLabel,
+                encodeURIComponent(storage['@id'])
+              ),
+              nexus.Storage.statistics(
+                orgLabel,
+                projectLabel,
+                encodeURIComponent(storage['@id'])
+              ),
+            ]);
+          })
+        ).then(results => {
           setStorages(parseResponses(results));
-        })
-        .catch(error => {
-          // fail silently
         });
-    });
+      })
+      .catch(error => {
+        // fail silently
+      });
   };
 
   const parseResponses = (storagesData: any[][]) => {
     return storagesData.map(storage => {
-      const { maxFileSize, capacity } = storage[0] as Storage;
+      const { maxFileSize, capacity } = storage[0];
       const { files, spaceUsed } = storage[1];
+
       return {
         maxFileSize,
         capacity,
@@ -58,7 +64,7 @@ const StoragesContainer: React.FC<{
     });
   };
 
-  if (!storages) return null;
+  if (!storages || storages.length < 1) return null;
 
   return <Storages storages={storages} />;
 };

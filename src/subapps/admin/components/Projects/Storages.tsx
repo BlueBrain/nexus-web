@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { Table } from 'antd';
 
-import './Storages.less';
 import { labelOf } from '../../../../shared/utils';
+import { StorageData } from '../../containers/StoragesContainer';
 
-const Storages: React.FC<{ storages: any[] }> = ({ storages }) => {
+import './Storages.less';
+
+const Storages: React.FC<{ storages: StorageData[] }> = ({ storages }) => {
   const columns = [
     {
       title: 'Storage',
@@ -37,7 +39,7 @@ const Storages: React.FC<{ storages: any[] }> = ({ storages }) => {
     storage: labelOf(storage['@id']),
   }));
 
-  if (!storages) return null;
+  if (!storages || storages.length < 1) return null;
 
   return (
     <div className="storages">
