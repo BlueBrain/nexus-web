@@ -33,11 +33,25 @@ const StoragesContainer: React.FC<{
         })
       )
         .then(results => {
-          setStorages(results);
+          setStorages(parseResponses(results));
         })
         .catch(error => {
-          // fail to load silently
+          // fail silently
         });
+    });
+  };
+
+  const parseResponses = (storagesData: any[][]) => {
+    return storagesData.map(storage => {
+      const { maxFileSize, capacity } = storage[0];
+      const { files, spaceUsed } = storage[1];
+      return {
+        maxFileSize,
+        capacity,
+        files,
+        spaceUsed,
+        '@id': storage[0]['@id'],
+      };
     });
   };
 
