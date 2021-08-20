@@ -11,6 +11,27 @@ export const constructQuery = (searchText: string) => {
   return body;
 };
 
+export const constructFilterSet = (
+  body: bodybuilder.Bodybuilder,
+  filterSet: {
+    filters: string[];
+    filterType: string;
+    filterTerm: string;
+  }[]
+) => {
+  filterSet.forEach(filter => {
+    if (filter.filters.length > 0) {
+      constructFilter(
+        body,
+        filter.filters,
+        filter.filterType,
+        filter.filterTerm
+      );
+    }
+  });
+  return body;
+};
+
 export const constructFilter = (
   body: bodybuilder.Bodybuilder,
   filters: string[],
@@ -19,11 +40,11 @@ export const constructFilter = (
 ) => {
   filters.forEach((item: string) => {
     if (filterType === 'anyof') {
-      body.orFilter('prefix', item, filterTerm);
+      body.orFilter('prefix', filterTerm, item);
     } else if (filterType === 'noneof') {
-      body.notFilter('prefix', item, filterTerm);
+      body.notFilter('prefix', filterTerm, item);
     } else if (filterType === 'allof') {
-      body.addFilter('prefix', item, filterTerm);
+      body.addFilter('prefix', filterTerm, item);
     }
   });
   return body;
@@ -39,4 +60,12 @@ export const addPagination = (
     .size(size)
     .from(from);
   return body;
+};
+
+export const constructAggregations = (
+  body: bodybuilder.Bodybuilder,
+  field: string,
+  aggregateType: string
+) => {
+  body.aggregation(aggregateType, field);
 };
