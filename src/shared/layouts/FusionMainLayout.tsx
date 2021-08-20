@@ -244,7 +244,7 @@ const mapStateToProps = (state: RootState) => {
   return {
     realms,
     layoutSettings,
-    authenticated: oidc.user !== undefined,
+    authenticated: !!oidc.user,
     token: oidc.user && oidc.user.access_token,
     name:
       oidc.user && oidc.user.profile && oidc.user.profile.preferred_username,
