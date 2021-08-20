@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { useLocation, useHistory, useParams } from 'react-router';
-import { Spin, Card, Empty, Alert } from 'antd';
+import { Spin, Alert, Collapse, Typography } from 'antd';
 import * as queryString from 'query-string';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import {
@@ -21,10 +21,12 @@ import {
   matchPlugins,
   pluginsMap,
   getDestinationParam,
+  labelOf,
 } from '../utils';
 import { isDeprecated } from '../utils/nexusMaybe';
 import useNotification from '../hooks/useNotification';
 import Preview from '../components/Preview/Preview';
+import { getUpdateResourceFunction } from '../utils/updateResource';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -86,7 +88,13 @@ const ResourceViewContainer: React.FunctionComponent<{
   const [{ busy, resource, error }, setResource] = React.useState<{
     busy: boolean;
     resource: Resource | null;
-    error: Error | null;
+    error:
+      | (Error & {
+          action?: 'update' | 'view';
+          rejections?: { reason: string }[];
+          wasUpdated?: boolean;
+        })
+      | null;
   }>({
     busy: false,
     resource: null,
@@ -127,28 +135,71 @@ const ResourceViewContainer: React.FunctionComponent<{
           error: null,
           busy: true,
         });
-        const { _rev } = await nexus.Resource.update(
+        const updateFn = getUpdateResourceFunction(
+          nexus,
+          resource._rev,
+          value,
+          resource,
           orgLabel,
           projectLabel,
-          resourceId,
-          resource._rev,
-          value
+          resourceId
         );
+
+        const { _rev } = await updateFn();
         goToResource(orgLabel, projectLabel, resourceId, { revision: _rev });
         notification.success({
           message: 'Resource saved',
           description: getResourceLabel(resource),
         });
       } catch (error) {
+        const potentiallyUpdatedResource = (await nexus.Resource.get(
+          orgLabel,
+          projectLabel,
+          resourceId
+        )) as Resource;
+        error.wasUpdated = potentiallyUpdatedResource._rev !== resource._rev;
+
+        error.action = 'update';
+        if ('@context' in error) {
+          if ('rejections' in error) {
+            error.message = 'An error occurred whilst updating the resource';
+          } else {
+            error.message = error.reason;
+          }
+        }
+
         notification.error({
-          message: 'An unknown error occurred',
-          description: error.message,
+          message: 'An error occurred whilst updating the resource',
         });
-        setResource({
-          error,
-          resource: null,
-          busy: false,
-        });
+        if (error.wasUpdated) {
+          const expandedResources = (await nexus.Resource.get(
+            orgLabel,
+            projectLabel,
+            resourceId,
+            {
+              format: 'expanded',
+            }
+          )) as ExpandedResource[];
+
+          const expandedResource = expandedResources[0];
+
+          setResource({
+            error,
+            resource: {
+              ...potentiallyUpdatedResource,
+              '@id': expandedResource['@id'],
+            } as Resource,
+            busy: false,
+          });
+
+          setLatestResource(potentiallyUpdatedResource);
+        } else {
+          setResource({
+            resource,
+            error,
+            busy: false,
+          });
+        }
       }
     }
   };
@@ -238,10 +289,11 @@ const ResourceViewContainer: React.FunctionComponent<{
         });
 
         errorMessage = `You don't have the access rights for this resource located in ${orgLabel} / ${projectLabel}.`;
+      } else if (error['@type'] === 'ResourceNotFound') {
+        errorMessage = `Resource '${resourceId}' not found`;
       } else {
         errorMessage = error.reason;
       }
-
       const jsError = new Error(errorMessage);
 
       setResource({
@@ -252,7 +304,7 @@ const ResourceViewContainer: React.FunctionComponent<{
     }
   };
 
-  const nonEditableResourceTypes = ['File', 'View'];
+  const nonEditableResourceTypes = ['File'];
 
   React.useEffect(() => {
     setResources();
@@ -261,37 +313,84 @@ const ResourceViewContainer: React.FunctionComponent<{
   return (
     <>
       <div className="resource-details">
-        {!!resource && (
+        <>
           <Helmet
-            title={`${getResourceLabel(
-              resource
-            )} | ${projectLabel} | ${orgLabel} | Nexus Web`}
+            title={`${
+              resource ? getResourceLabel(resource) : resourceId
+            } | ${projectLabel} | ${orgLabel} | Nexus Web`}
             meta={[
               {
                 name: 'description',
-                content: getResourceLabel(resource),
+                content: resource
+                  ? getResourceLabel(resource)
+                  : labelOf(decodeURIComponent(resourceId)),
               },
             ]}
           />
-        )}
+
+          <h1 className="name">
+            <span>
+              <a onClick={() => goToOrg(orgLabel)}>{orgLabel}</a> |{' '}
+              <a onClick={() => goToProject(orgLabel, projectLabel)}>
+                {projectLabel}
+              </a>{' '}
+              |{' '}
+            </span>
+            {resource
+              ? getResourceLabel(resource)
+              : labelOf(decodeURIComponent(resourceId))}
+          </h1>
+        </>
+
         <Spin spinning={busy}>
           {!!error && (
-            <Card>
-              <Empty description={error.message} />
-            </Card>
-          )}
-          {!!resource && !!latestResource && !error && (
             <>
-              <h1 className="name">
-                <span>
-                  <a onClick={() => goToOrg(orgLabel)}>{orgLabel}</a> |{' '}
-                  <a onClick={() => goToProject(orgLabel, projectLabel)}>
-                    {projectLabel}
-                  </a>{' '}
-                  |{' '}
-                </span>
-                {getResourceLabel(resource)}
-              </h1>
+              <Alert
+                message={
+                  error.wasUpdated ? 'Resource updated with errors' : 'Error'
+                }
+                showIcon
+                closable
+                type="error"
+                description={
+                  <>
+                    <Typography.Paragraph
+                      ellipsis={{ rows: 2, expandable: true }}
+                    >
+                      {error.message}
+                    </Typography.Paragraph>
+                    {error.rejections && (
+                      <Collapse bordered={false} ghost>
+                        <Collapse.Panel key={1} header="More detail...">
+                          <>
+                            <ul>
+                              {error.rejections.map((el, ix) => (
+                                <li key={ix}>{el.reason}</li>
+                              ))}
+                            </ul>
+
+                            <p>
+                              For further information please refer to the API
+                              documentation,{' '}
+                              <a
+                                target="_blank"
+                                href="https://bluebrainnexus.io/docs/delta/api/"
+                              >
+                                https://bluebrainnexus.io/docs/delta/api/
+                              </a>
+                            </p>
+                          </>
+                        </Collapse.Panel>
+                      </Collapse>
+                    )}
+                  </>
+                }
+              />
+              <br />
+            </>
+          )}
+          {!!resource && !!latestResource && (
+            <>
               {!isLatest && (
                 <Alert
                   type="warning"
@@ -346,12 +445,6 @@ const ResourceViewContainer: React.FunctionComponent<{
                   </div>
                 )}
               >
-                {(!filteredPlugins || filteredPlugins.length === 0) && (
-                  <Alert
-                    message="This resource does not have plugins configured yet. You can nonetheless edit the resource metadata below."
-                    type="info"
-                  />
-                )}
                 {!!resource['@type'] &&
                   typeof resource['@type'] === 'string' &&
                   nonEditableResourceTypes.includes(resource['@type']) && (

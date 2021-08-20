@@ -1,50 +1,14 @@
 import { DownOutlined } from '@ant-design/icons';
-import { constructQuery, constructFilter, addPagination } from '../utils';
+import { constructQuery, constructFilterSet, addPagination } from '../utils';
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
-import { Tooltip, Form, Input, Select, Checkbox, Button, Row } from 'antd';
+import { Tooltip } from 'antd';
 import { labelOf } from '../../../shared/utils';
-
-const FilterOptions: React.FC<{
-  fields: {
-    text: string;
-    value: string;
-  }[];
-  onFinish: (values: any) => void;
-}> = ({ fields, onFinish }) => {
-  return (
-    <Form onFinish={onFinish}>
-      <Form.Item label="value" name="filterType">
-        <Select dropdownStyle={{ zIndex: 1100 }}>
-          <Select.Option value="allof">All Of</Select.Option>
-          <Select.Option value="anyof">Any Of</Select.Option>
-          <Select.Option value="noneof">None Of</Select.Option>
-        </Select>
-      </Form.Item>
-      <Form.Item name="filterTerm">
-        <Input.Search style={{ width: '100%' }} />
-      </Form.Item>
-      <Form.Item name="filters">
-        <Checkbox.Group>
-          {fields.map(({ text, value }) => (
-            <Row key={value}>
-              <Checkbox value={`${value}.label.keyword`}>{text}</Checkbox>
-            </Row>
-          ))}
-        </Checkbox.Group>
-      </Form.Item>
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Apply
-        </Button>
-      </Form.Item>
-    </Form>
-  );
-};
+import FilterOptions from '../containers/FilterOptions';
 
 type actionType = {
   type: 'add';
-  payload?: FilterState;
+  payload: FilterState;
 };
 
 type FilterState = {
@@ -53,10 +17,13 @@ type FilterState = {
   filterTerm: string;
 };
 
-function filterReducer(state: FilterState, action: actionType) {
+function filterReducer(
+  state: FilterState[],
+  action: actionType
+): FilterState[] {
   switch (action.type) {
     case 'add':
-      return { ...state, ...action.payload };
+      return [...state, action.payload];
     default:
       return state;
   }
@@ -84,13 +51,18 @@ type SearchConfig = {
 
 function renderColumnTitle(
   field: ConfigField,
-  filterMenu: JSX.Element
+  filterMenu: (field: ConfigField) => JSX.Element
 ): () => JSX.Element {
   return () => {
     return (
       <div>
         <span>{`${field.label}`}</span>
-        <Tooltip trigger="click" placement="topLeft" title={filterMenu}>
+        <Tooltip
+          trigger="click"
+          placement="topLeft"
+          title={filterMenu(field)}
+          overlayInnerStyle={{ width: '400px' }}
+        >
           <DownOutlined style={{ float: 'right' }} />
         </Tooltip>
       </div>
@@ -156,7 +128,10 @@ function rowRenderer(field: ConfigField) {
   };
 }
 
-function makeColumnConfig(searchConfig: SearchConfig, filterMenu: JSX.Element) {
+function makeColumnConfig(
+  searchConfig: SearchConfig,
+  filterMenu: (field: ConfigField) => JSX.Element
+) {
   return searchConfig.fields.map((field: ConfigField) => {
     return {
       title: renderColumnTitle(field, filterMenu),
@@ -176,11 +151,7 @@ function useGlobalSearchData(
 ) {
   const [result, setResult] = React.useState<any>({});
   const [config, setConfig] = React.useState<SearchConfig>();
-  const defaultFilter: FilterState = {
-    filters: [],
-    filterType: '',
-    filterTerm: '',
-  };
+  const defaultFilter: FilterState[] = [];
   const [filterState, dispatchFilter] = React.useReducer(
     filterReducer,
     defaultFilter
@@ -190,28 +161,19 @@ function useGlobalSearchData(
     dispatchFilter({ type: 'add', payload: values });
   };
 
-  const filterMenu = React.useMemo(() => {
-    const fields = config
-      ? config.fields.map((field: ConfigField) => {
-          return {
-            text: field.label,
-            value: field.name,
-          };
-        })
-      : [];
+  const filterMenu = React.useCallback((field: ConfigField) => {
     return (
-      <FilterOptions fields={fields} onFinish={onFilterSubmit}></FilterOptions>
+      <FilterOptions
+        nexusClient={nexus}
+        field={field}
+        onFinish={onFilterSubmit}
+      ></FilterOptions>
     );
-  }, [config]);
+  }, []);
 
   const esQuery = React.useMemo(() => {
     const baseQuery = constructQuery(query);
-    const withFilter = constructFilter(
-      baseQuery,
-      filterState.filters,
-      filterState.filterType,
-      filterState.filterTerm
-    );
+    const withFilter = constructFilterSet(baseQuery, filterState);
     const withPagination = addPagination(withFilter, from, size);
     return withPagination.build();
   }, [query, filterState, from, size]);
