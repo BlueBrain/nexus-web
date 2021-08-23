@@ -17,8 +17,6 @@ const GlobalSearchView: React.FC = () => {
   const [queryParams, setQueryString] = useQueryString();
   const { query } = queryParams;
 
-  const onlyHeight = useWindowHeight();
-
   const [selectedRowKeys, setSelectedRowKeys] = React.useState<any>([]);
   const [result, setResult] = React.useState<any>({});
   const [config, setConfig] = React.useState<SearchConfig>();
