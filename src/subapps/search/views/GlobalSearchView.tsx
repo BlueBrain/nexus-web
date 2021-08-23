@@ -10,8 +10,6 @@ import '../../../shared/styles/search-tables.less';
 import { MenuOutlined } from '@ant-design/icons';
 const { Content } = Layout;
 
-import { useWindowHeight } from '@react-hook/window-size';
-
 const GlobalSearchView: React.FC = () => {
   const nexus = useNexusContext();
   const history = useHistory();
