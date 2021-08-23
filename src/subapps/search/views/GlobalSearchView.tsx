@@ -10,12 +10,16 @@ import '../../../shared/styles/search-tables.less';
 import { MenuOutlined } from '@ant-design/icons';
 const { Content } = Layout;
 
+import { useWindowHeight } from '@react-hook/window-size';
+
 const GlobalSearchView: React.FC = () => {
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
   const [queryParams, setQueryString] = useQueryString();
   const { query } = queryParams;
+
+  const onlyHeight = useWindowHeight();
 
   const [selectedRowKeys, setSelectedRowKeys] = React.useState<any>([]);
   const [result, setResult] = React.useState<any>({});
