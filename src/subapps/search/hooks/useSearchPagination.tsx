@@ -1,4 +1,3 @@
-import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
 import useMeasure from '../../../shared/hooks/useMeasure';
 import { debounce } from 'lodash';
@@ -19,7 +18,7 @@ determines how far we can page into results */
 export const ESMaxResultWindowSize = 10000;
 export const defaultPageSizeOptions = [10, 20, 50, 100];
 
-function useSearchPagination(query: any, nexus: NexusClient) {
+function useSearchPagination() {
   const defaultpagination: SearchPagination = {
     numRowsFitOnPage: 0,
     currentPage: 1,
@@ -48,7 +47,7 @@ function useSearchPagination(query: any, nexus: NexusClient) {
     });
   };
 
-  const onShowSizeChange = React.useCallback(
+  const onPageSizeOptionChanged = React.useCallback(
     (current, size) => {
       if (defaultPageSizeOptions.includes(size)) {
         localStorage.setItem('searchPageSize', size.toString());
@@ -71,7 +70,7 @@ function useSearchPagination(query: any, nexus: NexusClient) {
     [pagination]
   );
 
-  const showTotal = React.useCallback(
+  const renderShowTotal = React.useCallback(
     (total: number, range: [number, number]) =>
       pagination.trueTotalNumberOfResults <= ESMaxResultWindowSize ? (
         <>
@@ -91,15 +90,15 @@ function useSearchPagination(query: any, nexus: NexusClient) {
     pagination,
     setPagination,
     handlePaginationChange,
-    onShowSizeChange,
-    showTotal,
+    onPageSizeOptionChanged,
+    renderShowTotal,
   };
 }
 
 export function useAdjustTableHeight(
   pagination: SearchPagination,
-  tableHeightCallBack: (numRows: number, lastPageOfResults: number) => void,
-  updateRowsCallBack: (
+  onTableHeightChanged: (numRows: number, lastPageOfResults: number) => void,
+  onPageSizeOptionsChanged: (
     sortedPageSizeOptionsWithoutPotentialDupes: string[],
     pagination: SearchPagination
   ) => void
@@ -138,7 +137,7 @@ export function useAdjustTableHeight(
         pagination.totalNumberOfResults / numRows
       );
 
-      tableHeightCallBack(numRows, lastPageOfResults);
+      onTableHeightChanged(numRows, lastPageOfResults);
     }
   };
 
@@ -165,7 +164,7 @@ export function useAdjustTableHeight(
       const sortedPageSizeOptionsWithoutPotentialDupes = [
         ...new Set(sortedPageSizeOptions),
       ];
-      updateRowsCallBack(
+      onPageSizeOptionsChanged(
         sortedPageSizeOptionsWithoutPotentialDupes,
         pagination
       );

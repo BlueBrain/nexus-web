@@ -1,8 +1,8 @@
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import { constructQuery, constructFilterSet, addPagination } from '../utils';
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
-import { Tooltip } from 'antd';
+import { Button, Tooltip } from 'antd';
 import { labelOf } from '../../../shared/utils';
 import FilterOptions from '../containers/FilterOptions';
 
@@ -138,9 +138,15 @@ function makeColumnConfig(
       dataIndex: field.name,
       key: field.name,
       render: rowRenderer(field),
+      label: field.label,
     };
   });
 }
+export type ColumnVisibility = {
+  key: string;
+  name: string;
+  visible: boolean;
+};
 
 function useGlobalSearchData(
   query: string,
@@ -157,19 +163,63 @@ function useGlobalSearchData(
     defaultFilter
   );
 
+  const [fieldsVisibility, setFieldsVisibility] = React.useState<
+    ColumnVisibility[]
+  >([]);
+
+  const updateFieldsVisibility = (field: ColumnVisibility) => {
+    setFieldsVisibility(
+      Object.assign([], fieldsVisibility, {
+        [fieldsVisibility.findIndex(el => el.key === field.key)]: field,
+      })
+    );
+  };
+
+  const updateAllColumnsToVisible = () => {
+    setFieldsVisibility(
+      fieldsVisibility.map(el => {
+        return { key: el.key, name: el.name, visible: true };
+      })
+    );
+  };
+
+  React.useEffect(() => {
+    if (localStorage.getItem('searchColumnVisibility')) {
+      const cachedColumnVisibility = JSON.parse(
+        localStorage.getItem('searchColumnVisibility') as string
+      ) as ColumnVisibility[];
+      setFieldsVisibility(cachedColumnVisibility);
+    }
+  }, []);
+
   const onFilterSubmit = (values: FilterState) => {
     dispatchFilter({ type: 'add', payload: values });
   };
 
-  const filterMenu = React.useCallback((field: ConfigField) => {
+  const fieldMenu = (field: ConfigField) => {
     return (
-      <FilterOptions
-        nexusClient={nexus}
-        field={field}
-        onFinish={onFilterSubmit}
-      ></FilterOptions>
+      <>
+        <Button
+          onClick={() => {
+            updateFieldsVisibility({
+              key: field.name,
+              name: field.label,
+              visible: false,
+            });
+          }}
+          type="link"
+        >
+          <EyeInvisibleOutlined />
+          Hide column
+        </Button>
+        <FilterOptions
+          nexusClient={nexus}
+          field={field}
+          onFinish={onFilterSubmit}
+        />
+      </>
     );
-  }, []);
+  };
 
   const esQuery = React.useMemo(() => {
     const baseQuery = constructQuery(query);
@@ -179,8 +229,22 @@ function useGlobalSearchData(
   }, [query, filterState, from, size]);
 
   const columns = React.useMemo(() => {
-    return config ? makeColumnConfig(config, filterMenu) : undefined;
-  }, [config]);
+    return config ? makeColumnConfig(config, fieldMenu) : undefined;
+  }, [config, fieldsVisibility]);
+
+  const visibleColumns = React.useMemo(
+    () =>
+      columns &&
+      columns.filter(
+        col =>
+          !fieldsVisibility?.find(
+            colVisibility =>
+              col.key === colVisibility.key && !colVisibility.visible
+          )
+      ),
+    [columns, fieldsVisibility]
+  );
+
   const data = React.useMemo(() => {
     if (result.hits && result.hits.hits) {
       return result.hits.hits.map((hit: any) => hit._source);
@@ -201,7 +265,16 @@ function useGlobalSearchData(
       onSuccess(queryResponse);
     });
   }, [esQuery]);
-  return { columns, data, dispatchFilter };
+  return {
+    columns,
+    data,
+    dispatchFilter,
+    updateFieldsVisibility,
+    updateAllColumnsToVisible,
+    fieldsVisibility,
+    setFieldsVisibility,
+    visibleColumns,
+  };
 }
 
 export default useGlobalSearchData;
