@@ -23,7 +23,6 @@
     "@ant-design/icons": "^4.4.0",
     "@bbp/nexus-sdk": "1.3.6",
     "@bbp/react-nexus": "1.3.6",
-    "@react-hook/window-size": "^3.0.7",
     "@sentry/browser": "5.9.1",
     "@types/cytoscape": "^3.14.2",
     "@types/lodash": "^4.14.149",
