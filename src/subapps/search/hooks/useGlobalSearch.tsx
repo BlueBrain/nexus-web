@@ -216,7 +216,7 @@ function useGlobalSearchData(
           nexusClient={nexus}
           field={field}
           onFinish={onFilterSubmit}
-        ></FilterOptions>
+        />
       </>
     );
   };

@@ -133,14 +133,14 @@ const SearchContainer: React.FC = () => {
     >
       {visibleColumns && data && (
         <>
-          <div className="searchTableHeader">
-            <div className="searchTableOptions">
+          <div className="search-table-header">
+            <div className="search-table-options">
               {
                 <ColumnsVisibilityConfig
                   columns={fieldsVisibility}
                   onSetAllColumnVisibile={updateAllColumnsToVisible}
                   onSetColumnVisibility={updateFieldsVisibility}
-                ></ColumnsVisibilityConfig>
+                />
               }
             </div>
             <Pagination
@@ -154,7 +154,7 @@ const SearchContainer: React.FC = () => {
               showSizeChanger={true}
               pageSizeOptions={pagination.pageSizeOptions}
               showLessItems={true}
-              className="tablePaginator"
+              className="table-paginator"
             />
           </div>
           <div ref={tableRef}>
@@ -164,7 +164,7 @@ const SearchContainer: React.FC = () => {
               pagination={false}
               rowKey="@id"
               onRow={onRowClick}
-            ></Table>
+            />
           </div>
         </>
       )}

@@ -1,6 +1,5 @@
 import { EyeInvisibleOutlined } from '@ant-design/icons';
-import { Button, Form, Switch } from 'antd';
-import Modal from 'antd/lib/modal/Modal';
+import { Button, Form, Modal, Switch } from 'antd';
 import * as React from 'react';
 import './ColumnsVisibility.less';
 
@@ -14,17 +13,16 @@ const ColumnsVisibilityConfig: React.FunctionComponent<{
   columns: ColumnVisibility[];
   onSetColumnVisibility: (columnVisibility: ColumnVisibility) => void;
   onSetAllColumnVisibile: () => void;
-}> = props => {
+}> = ({ columns, onSetColumnVisibility, onSetAllColumnVisibile }) => {
   const isAllColumnsVisible = () =>
-    props.columns.filter(el => !el.visible).length === 0;
+    columns.filter(el => !el.visible).length === 0;
 
   const [
     isColumnsVisiblilityConfigVisible,
     setIsColumnsVisiblilityConfigVisible,
   ] = React.useState(false);
 
-  const countHiddenFields = () =>
-    props.columns.filter(el => !el.visible).length;
+  const countHiddenFields = () => columns.filter(el => !el.visible).length;
 
   const buttonRef = React.useRef<HTMLButtonElement>(null);
 
@@ -56,29 +54,29 @@ const ColumnsVisibilityConfig: React.FunctionComponent<{
           mask={false}
           footer={null}
           closable={false}
-          width="250px"
+          className="column-visibility-config-modal"
         >
-          <div style={{ height: '450px', overflow: 'auto' }}>
+          <div className="column-visibility-container">
             <Form>
               <Form.Item style={{ marginBottom: 0 }}>
                 <label>
                   <Switch
                     size="small"
-                    onChange={() => props.onSetAllColumnVisibile()}
+                    onChange={() => onSetAllColumnVisibile()}
                     disabled={isAllColumnsVisible()}
                     checked={isAllColumnsVisible()}
                   />{' '}
                   (Show all Columns)
                 </label>
               </Form.Item>
-              {props.columns.map((el, ix) => (
+              {columns.map((el, ix) => (
                 <Form.Item key={el.key} style={{ marginBottom: 0 }}>
                   <label>
                     <Switch
                       size="small"
                       checked={el.visible}
                       onChange={checked =>
-                        props.onSetColumnVisibility({
+                        onSetColumnVisibility({
                           key: el.key,
                           name: el.name,
                           visible: checked,
