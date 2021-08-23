@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import TableHeightWrapper from '../components/TableHeightWrapper';
-import { Table } from 'antd';
+import { Pagination, Table } from 'antd';
 import useGlobalSearchData from '../hooks/useGlobalSearch';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import useSearchPagination, {
@@ -10,7 +10,9 @@ import useSearchPagination, {
   SearchPagination,
   ESMaxResultWindowSize,
 } from '../hooks/useSearchPagination';
-
+import ColumnsVisibilityConfig from '../components/ColumnsVisibilityConfig';
+import './SearchContainer.less';
+import useColumnsToFitPage from '../hooks/useColumnsToFitPage';
 const SearchContainer: React.FC = () => {
   const nexus = useNexusContext();
   const history = useHistory();
@@ -34,11 +36,11 @@ const SearchContainer: React.FC = () => {
     pagination,
     setPagination,
     handlePaginationChange,
-    showTotal,
-    onShowSizeChange,
-  } = useSearchPagination(query, nexus);
+    renderShowTotal,
+    onPageSizeOptionChanged,
+  } = useSearchPagination();
 
-  function updateRowsCallBack(
+  function onPageSizeOptionsChanged(
     sortedPageSizeOptionsWithoutPotentialDupes: string[],
     pagination: SearchPagination
   ) {
@@ -53,7 +55,7 @@ const SearchContainer: React.FC = () => {
     });
   }
 
-  function updatePagination(numRows: number, lastPageOfResults: number) {
+  function onTableHeightChanged(numRows: number, lastPageOfResults: number) {
     setPagination((prevPagination: SearchPagination) => {
       return {
         ...prevPagination,
@@ -71,7 +73,11 @@ const SearchContainer: React.FC = () => {
     wrapperHeightRef,
     resultTableHeightTestRef,
     wrapperDOMProps,
-  } = useAdjustTableHeight(pagination, updatePagination, updateRowsCallBack);
+  } = useAdjustTableHeight(
+    pagination,
+    onTableHeightChanged,
+    onPageSizeOptionsChanged
+  );
 
   function onQuerySuccess(queryResponse: any) {
     setPagination((prevPagination: SearchPagination) => {
@@ -87,12 +93,36 @@ const SearchContainer: React.FC = () => {
     });
   }
 
-  const { columns, data } = useGlobalSearchData(
+  const {
+    columns,
+    data,
+    updateFieldsVisibility,
+    updateAllColumnsToVisible,
+    fieldsVisibility,
+    setFieldsVisibility,
+    visibleColumns,
+  } = useGlobalSearchData(
     query,
     pagination.currentPage,
     pagination.pageSize,
     onQuerySuccess,
     nexus
+  );
+
+  function onUpdateColumnVisibilityFromPageSize(columnCount: number) {
+    const columnVisibilities = columns?.map((el, ix) => {
+      return {
+        name: el.label,
+        key: el.key,
+        visible: ix < columnCount,
+      };
+    });
+    columnVisibilities && setFieldsVisibility(columnVisibilities);
+  }
+
+  const { tableRef } = useColumnsToFitPage(
+    wrapperDOMProps,
+    onUpdateColumnVisibilityFromPageSize
   );
 
   return (
@@ -101,26 +131,42 @@ const SearchContainer: React.FC = () => {
       resultTableHeightTestRef={resultTableHeightTestRef}
       wrapperDOMProps={wrapperDOMProps}
     >
-      {columns && data && (
-        <Table
-          columns={columns}
-          dataSource={data}
-          pagination={{
-            showTotal,
-            onShowSizeChange,
-            total: pagination.totalNumberOfResults,
-            pageSize: pagination.pageSize,
-            current: pagination.currentPage,
-            onChange: handlePaginationChange,
-            position: ['topRight'],
-            locale: { items_per_page: '' },
-            showSizeChanger: true,
-            pageSizeOptions: pagination.pageSizeOptions,
-            showLessItems: true,
-          }}
-          rowKey="@id"
-          onRow={onRowClick}
-        ></Table>
+      {visibleColumns && data && (
+        <>
+          <div className="searchTableHeader">
+            <div className="searchTableOptions">
+              {
+                <ColumnsVisibilityConfig
+                  columns={fieldsVisibility}
+                  onSetAllColumnVisibile={updateAllColumnsToVisible}
+                  onSetColumnVisibility={updateFieldsVisibility}
+                ></ColumnsVisibilityConfig>
+              }
+            </div>
+            <Pagination
+              showTotal={renderShowTotal}
+              onShowSizeChange={onPageSizeOptionChanged}
+              total={pagination.totalNumberOfResults}
+              pageSize={pagination.pageSize}
+              current={pagination.currentPage}
+              onChange={handlePaginationChange}
+              locale={{ items_per_page: '' }}
+              showSizeChanger={true}
+              pageSizeOptions={pagination.pageSizeOptions}
+              showLessItems={true}
+              className="tablePaginator"
+            />
+          </div>
+          <div ref={tableRef}>
+            <Table
+              columns={visibleColumns}
+              dataSource={data}
+              pagination={false}
+              rowKey="@id"
+              onRow={onRowClick}
+            ></Table>
+          </div>
+        </>
       )}
     </TableHeightWrapper>
   );
