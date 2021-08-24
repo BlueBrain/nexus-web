@@ -13,6 +13,7 @@ import useSearchPagination, {
 import ColumnsVisibilityConfig from '../components/ColumnsVisibilityConfig';
 import './SearchContainer.less';
 import useColumnsToFitPage from '../hooks/useColumnsToFitPage';
+import FiltersConfig from '../components/FiltersConfig';
 const SearchContainer: React.FC = () => {
   const nexus = useNexusContext();
   const history = useHistory();
@@ -101,6 +102,8 @@ const SearchContainer: React.FC = () => {
     fieldsVisibility,
     setFieldsVisibility,
     visibleColumns,
+    filterState,
+    dispatchFilter,
   } = useGlobalSearchData(
     query,
     pagination.currentPage,
@@ -136,11 +139,20 @@ const SearchContainer: React.FC = () => {
           <div className="search-table-header">
             <div className="search-table-options">
               {
-                <ColumnsVisibilityConfig
-                  columns={fieldsVisibility}
-                  onSetAllColumnVisibile={updateAllColumnsToVisible}
-                  onSetColumnVisibility={updateFieldsVisibility}
-                />
+                <>
+                  <ColumnsVisibilityConfig
+                    columns={fieldsVisibility}
+                    onSetAllColumnVisibile={updateAllColumnsToVisible}
+                    onSetColumnVisibility={updateFieldsVisibility}
+                  />
+                  <FiltersConfig
+                    filters={filterState}
+                    columns={columns}
+                    onRemoveFilter={filter =>
+                      dispatchFilter({ type: 'remove', payload: filter })
+                    }
+                  />
+                </>
               }
             </div>
             <Pagination
