@@ -1,17 +1,32 @@
-import { DownOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
+import {
+  DownOutlined,
+  EyeInvisibleOutlined,
+  FunnelPlotOutlined,
+} from '@ant-design/icons';
 import { constructQuery, constructFilterSet, addPagination } from '../utils';
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
 import { Button, Tooltip } from 'antd';
 import { labelOf } from '../../../shared/utils';
-import FilterOptions from '../containers/FilterOptions';
+import FilterOptions, { extractFieldName } from '../containers/FilterOptions';
+import '../containers/SearchContainer.less';
+
+export type SearchConfigField =
+  | {
+      title: () => JSX.Element;
+      dataIndex: string;
+      key: string;
+      render: (value: any) => JSX.Element | '';
+      label: string;
+    }[]
+  | undefined;
 
 type actionType = {
-  type: 'add';
+  type: 'add' | 'remove';
   payload: FilterState;
 };
 
-type FilterState = {
+export type FilterState = {
   filters: string[];
   filterType: string;
   filterTerm: string;
@@ -23,7 +38,16 @@ function filterReducer(
 ): FilterState[] {
   switch (action.type) {
     case 'add':
-      return [...state, action.payload];
+      return [
+        ...state.filter(
+          fieldFilter => fieldFilter.filterTerm !== action.payload.filterTerm
+        ),
+        action.payload,
+      ];
+    case 'remove':
+      return state.filter(
+        fieldFilter => fieldFilter.filterTerm !== action.payload.filterTerm
+      );
     default:
       return state;
   }
@@ -51,11 +75,12 @@ type SearchConfig = {
 
 function renderColumnTitle(
   field: ConfigField,
-  filterMenu: (field: ConfigField) => JSX.Element
+  filterMenu: (field: ConfigField) => JSX.Element,
+  hasFilterApplied: boolean
 ): () => JSX.Element {
   return () => {
     return (
-      <div>
+      <div className="column-header">
         <span>{`${field.label}`}</span>
         <Tooltip
           trigger="click"
@@ -63,7 +88,10 @@ function renderColumnTitle(
           title={filterMenu(field)}
           overlayInnerStyle={{ width: '400px' }}
         >
-          <DownOutlined style={{ float: 'right' }} />
+          <div className="column-header__options">
+            {hasFilterApplied && <FunnelPlotOutlined />}
+            <DownOutlined />
+          </div>
         </Tooltip>
       </div>
     );
@@ -130,11 +158,16 @@ function rowRenderer(field: ConfigField) {
 
 function makeColumnConfig(
   searchConfig: SearchConfig,
-  filterMenu: (field: ConfigField) => JSX.Element
+  filterMenu: (field: ConfigField) => JSX.Element,
+  filteredFields: string[]
 ) {
   return searchConfig.fields.map((field: ConfigField) => {
     return {
-      title: renderColumnTitle(field, filterMenu),
+      title: renderColumnTitle(
+        field,
+        filterMenu,
+        filteredFields.includes(field.name)
+      ),
       dataIndex: field.name,
       key: field.name,
       render: rowRenderer(field),
@@ -162,6 +195,8 @@ function useGlobalSearchData(
     filterReducer,
     defaultFilter
   );
+
+  const filteredFields = filterState.map(el => extractFieldName(el.filterTerm));
 
   const [fieldsVisibility, setFieldsVisibility] = React.useState<
     ColumnVisibility[]
@@ -213,6 +248,9 @@ function useGlobalSearchData(
           Hide column
         </Button>
         <FilterOptions
+          filter={filterState.find(
+            filter => extractFieldName(filter.filterTerm) === field.name
+          )}
           nexusClient={nexus}
           field={field}
           onFinish={onFilterSubmit}
@@ -228,9 +266,11 @@ function useGlobalSearchData(
     return withPagination.build();
   }, [query, filterState, from, size]);
 
-  const columns = React.useMemo(() => {
-    return config ? makeColumnConfig(config, fieldMenu) : undefined;
-  }, [config, fieldsVisibility]);
+  const columns: SearchConfigField = React.useMemo(() => {
+    return config
+      ? makeColumnConfig(config, fieldMenu, filteredFields)
+      : undefined;
+  }, [config, fieldsVisibility, filteredFields]);
 
   const visibleColumns = React.useMemo(
     () =>
@@ -274,6 +314,7 @@ function useGlobalSearchData(
     fieldsVisibility,
     setFieldsVisibility,
     visibleColumns,
+    filterState,
   };
 }
 
