@@ -201,6 +201,9 @@ function useGlobalSearchData(
   const [fieldsVisibility, setFieldsVisibility] = React.useState<
     ColumnVisibility[]
   >([]);
+  const [userSetFieldVisibility, setUserSetFieldVisibility] = React.useState(
+    false
+  );
 
   const updateFieldsVisibility = (field: ColumnVisibility) => {
     setFieldsVisibility(
@@ -208,6 +211,7 @@ function useGlobalSearchData(
         [fieldsVisibility.findIndex(el => el.key === field.key)]: field,
       })
     );
+    setUserSetFieldVisibility(true);
   };
 
   const updateAllColumnsToVisible = () => {
@@ -216,14 +220,29 @@ function useGlobalSearchData(
         return { key: el.key, name: el.name, visible: true };
       })
     );
+    setUserSetFieldVisibility(true);
   };
 
   React.useEffect(() => {
-    if (localStorage.getItem('searchColumnVisibility')) {
-      const cachedColumnVisibility = JSON.parse(
+    if (!userSetFieldVisibility) return;
+
+    localStorage.setItem(
+      'searchColumnVisibility',
+      JSON.stringify(fieldsVisibility)
+    );
+  }, [fieldsVisibility, userSetFieldVisibility]);
+
+  const [
+    visibleFieldsFromStorage,
+    setVisibleFieldsFromStorage,
+  ] = React.useState(!!localStorage.getItem('searchColumnVisibility'));
+
+  React.useEffect(() => {
+    if (visibleFieldsFromStorage) {
+      const columnVisibilities = JSON.parse(
         localStorage.getItem('searchColumnVisibility') as string
       ) as ColumnVisibility[];
-      setFieldsVisibility(cachedColumnVisibility);
+      setFieldsVisibility(columnVisibilities);
     }
   }, []);
 
@@ -313,6 +332,7 @@ function useGlobalSearchData(
     updateAllColumnsToVisible,
     fieldsVisibility,
     setFieldsVisibility,
+    visibleFieldsFromStorage,
     visibleColumns,
     filterState,
   };

@@ -101,6 +101,7 @@ const SearchContainer: React.FC = () => {
     updateAllColumnsToVisible,
     fieldsVisibility,
     setFieldsVisibility,
+    visibleFieldsFromStorage,
     visibleColumns,
     filterState,
     dispatchFilter,
@@ -120,12 +121,15 @@ const SearchContainer: React.FC = () => {
         visible: ix < columnCount,
       };
     });
+
     columnVisibilities && setFieldsVisibility(columnVisibilities);
   }
 
   const { tableRef } = useColumnsToFitPage(
     wrapperDOMProps,
-    onUpdateColumnVisibilityFromPageSize
+    columnCount =>
+      !visibleFieldsFromStorage &&
+      onUpdateColumnVisibilityFromPageSize(columnCount)
   );
 
   return (
