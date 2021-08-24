@@ -182,6 +182,8 @@ function makeColumnConfig(
   filteredFields: string[],
   sortedFields: ESSortField[]
 ) {
+  console.log('searchConfig', searchConfig);
+
   return searchConfig.fields.map((field: ConfigField) => {
     const sorted = sortedFields.find(s => s.fieldName === field.name);
 

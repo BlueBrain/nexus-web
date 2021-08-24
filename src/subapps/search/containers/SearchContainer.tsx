@@ -150,6 +150,7 @@ const SearchContainer: React.FC = () => {
   const clearAllCustomisation = () => {
     console.log('clicked clear all');
     clearAllFilters();
+    handlePaginationChange(1);
   };
 
   const { tableRef } = useColumnsToFitPage(
