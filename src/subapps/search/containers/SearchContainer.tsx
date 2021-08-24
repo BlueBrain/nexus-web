@@ -2,7 +2,8 @@ import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import TableHeightWrapper from '../components/TableHeightWrapper';
-import { Pagination, Table } from 'antd';
+import { Pagination, Table, Button } from 'antd';
+import { CloseCircleOutlined } from '@ant-design/icons';
 import useGlobalSearchData from '../hooks/useGlobalSearch';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import useSearchPagination, {
@@ -15,6 +16,7 @@ import './SearchContainer.less';
 import useColumnsToFitPage from '../hooks/useColumnsToFitPage';
 import FiltersConfig from '../components/FiltersConfig';
 import SortConfig from '../components/SortConfig';
+
 const SearchContainer: React.FC = () => {
   const nexus = useNexusContext();
   const history = useHistory();
@@ -139,6 +141,17 @@ const SearchContainer: React.FC = () => {
     columnVisibilities && setFieldsVisibility(columnVisibilities);
   }
 
+  const clearAllFilters = () => {
+    filterState.forEach(filter => {
+      dispatchFilter({ type: 'remove', payload: filter });
+    });
+  };
+
+  const clearAllCustomisation = () => {
+    console.log('clicked clear all');
+    clearAllFilters();
+  };
+
   const { tableRef } = useColumnsToFitPage(
     wrapperDOMProps,
     columnCount =>
@@ -179,6 +192,10 @@ const SearchContainer: React.FC = () => {
                       changeSortOption(sortToChange)
                     }
                   />
+                  <Button type="link" onClick={() => clearAllCustomisation()}>
+                    <CloseCircleOutlined />
+                    Reset
+                  </Button>
                 </>
               }
             </div>
