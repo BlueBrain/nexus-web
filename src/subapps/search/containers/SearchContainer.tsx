@@ -4,6 +4,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import TableHeightWrapper from '../components/TableHeightWrapper';
 import { Pagination, Table } from 'antd';
 import useGlobalSearchData from '../hooks/useGlobalSearch';
+
 import useQueryString from '../../../shared/hooks/useQueryString';
 import useSearchPagination, {
   useAdjustTableHeight,
@@ -13,11 +14,14 @@ import useSearchPagination, {
 import ColumnsVisibilityConfig from '../components/ColumnsVisibilityConfig';
 import './SearchContainer.less';
 import useColumnsToFitPage from '../hooks/useColumnsToFitPage';
+
 const SearchContainer: React.FC = () => {
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
   const [queryParams] = useQueryString();
+  const [selectedRowKeys, setSelectedRowKeys] = React.useState<any>([]);
+
   const { query } = queryParams;
 
   const onRowClick = (record: any): { onClick: () => void } => {
@@ -92,6 +96,38 @@ const SearchContainer: React.FC = () => {
       };
     });
   }
+  const handleSelect = (record: any, selected: any) => {
+    if (selected) {
+      setSelectedRowKeys((keys: any) => [...keys, record.id]);
+    } else {
+      setSelectedRowKeys((keys: any) => {
+        const index = keys.indexOf(record.id);
+        return [...keys.slice(0, index), ...keys.slice(index + 1)];
+      });
+    }
+  };
+
+  const toggleSelectAll = () => {
+    setSelectedRowKeys((keys: any) =>
+      keys.length === data.length ? [] : data.map((r: any) => r.id)
+    );
+  };
+
+  const headerCheckbox = (
+    <Checkbox
+      checked={selectedRowKeys.length}
+      indeterminate={
+        selectedRowKeys.length > 0 && selectedRowKeys.length < data.length
+      }
+      onChange={toggleSelectAll}
+    />
+  );
+
+  const rowSelection = {
+    selectedRowKeys,
+    onSelect: handleSelect,
+    columnTitle: headerCheckbox,
+  };
 
   const {
     columns,
@@ -157,14 +193,15 @@ const SearchContainer: React.FC = () => {
               className="table-paginator"
             />
           </div>
-          <div ref={tableRef}>
+          <div className={'result-table'} ref={tableRef}>
             <Table
               columns={visibleColumns}
               dataSource={data}
               pagination={false}
-              rowKey="@id"
+              rowKey={'@id'}
+              rowSelection={rowSelection}
               onRow={onRowClick}
-            />
+            ></Table>
           </div>
         </>
       )}
