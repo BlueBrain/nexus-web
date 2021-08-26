@@ -120,6 +120,7 @@ const SearchContainer: React.FC = () => {
     sortState,
     removeSortOption,
     changeSortOption,
+    resetColumns,
   } = useGlobalSearchData(
     query,
     pagination.currentPage,
@@ -148,9 +149,9 @@ const SearchContainer: React.FC = () => {
   };
 
   const clearAllCustomisation = () => {
-    console.log('clicked clear all');
     clearAllFilters();
     handlePaginationChange(1);
+    resetColumns();
   };
 
   const { tableRef } = useColumnsToFitPage(

@@ -262,10 +262,6 @@ function useGlobalSearchData(
   );
 
   const updateFieldsVisibility = (field: ColumnVisibility) => {
-    console.log('updating...', field);
-
-    console.log('fieldsVisibility', fieldsVisibility);
-
     setFieldsVisibility(
       Object.assign([], fieldsVisibility, {
         [fieldsVisibility.findIndex(el => el.key === field.key)]: field,
@@ -401,6 +397,11 @@ function useGlobalSearchData(
     });
   }, [esQuery]);
 
+  const resetColumns = () => {
+    localStorage.removeItem('searchColumnVisibility');
+    // TODO: reset visible columns
+  };
+
   return {
     columns,
     data,
@@ -415,6 +416,7 @@ function useGlobalSearchData(
     sortState,
     removeSortOption,
     changeSortOption,
+    resetColumns,
   };
 }
 
