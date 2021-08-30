@@ -1,14 +1,20 @@
 .search-table-header {
   margin-bottom: 10px;
   display: flex;
-  .table-paginator {
-    margin-left: auto;
+  &__paginator {
+    margin-left: auto !important;
   }
 }
 
 .column-header {
   display: flex;
+  & span {
+    white-space: nowrap;
+  }
   &__options {
-    margin-left: auto;
+    min-width: 50px;
+    margin-left: auto !important;
+    display: flex;
+    justify-content: right;
   }
 }

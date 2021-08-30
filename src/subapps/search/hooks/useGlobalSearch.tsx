@@ -2,14 +2,26 @@ import {
   DownOutlined,
   EyeInvisibleOutlined,
   FunnelPlotOutlined,
+  SortAscendingOutlined,
+  SortDescendingOutlined,
 } from '@ant-design/icons';
-import { constructQuery, constructFilterSet, addPagination } from '../utils';
+import {
+  constructQuery,
+  constructFilterSet,
+  addPagination,
+  addSorting,
+} from '../utils';
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
-import { Button, Tooltip } from 'antd';
+import { Button, Divider, Tooltip } from 'antd';
 import { labelOf } from '../../../shared/utils';
-import FilterOptions, { extractFieldName } from '../containers/FilterOptions';
+import FilterOptions, {
+  createKeyWord,
+  extractFieldName,
+} from '../containers/FilterOptions';
 import '../containers/SearchContainer.less';
+import { SortDirection } from '../../../shared/hooks/useAccessDataForTable';
+import SortMenuOptions from '../components/SortMenuOptions';
 
 export type SearchConfigField =
   | {
@@ -53,7 +65,7 @@ function filterReducer(
   }
 }
 
-type ConfigField =
+export type ConfigField =
   | {
       name: string;
       label: string;
@@ -76,7 +88,9 @@ type SearchConfig = {
 function renderColumnTitle(
   field: ConfigField,
   filterMenu: (field: ConfigField) => JSX.Element,
-  hasFilterApplied: boolean
+  hasFilterApplied: boolean,
+  isSorted: boolean,
+  sortDirection?: SortDirection
 ): () => JSX.Element {
   return () => {
     return (
@@ -86,9 +100,15 @@ function renderColumnTitle(
           trigger="click"
           placement="topLeft"
           title={filterMenu(field)}
-          overlayInnerStyle={{ width: '400px' }}
+          overlayInnerStyle={{ width: '450px' }}
         >
           <div className="column-header__options">
+            {isSorted && sortDirection === SortDirection.ASCENDING && (
+              <SortAscendingOutlined />
+            )}
+            {isSorted && sortDirection === SortDirection.DESCENDING && (
+              <SortDescendingOutlined />
+            )}
             {hasFilterApplied && <FunnelPlotOutlined />}
             <DownOutlined />
           </div>
@@ -159,14 +179,19 @@ function rowRenderer(field: ConfigField) {
 function makeColumnConfig(
   searchConfig: SearchConfig,
   filterMenu: (field: ConfigField) => JSX.Element,
-  filteredFields: string[]
+  filteredFields: string[],
+  sortedFields: ESSortField[]
 ) {
   return searchConfig.fields.map((field: ConfigField) => {
+    const sorted = sortedFields.find(s => s.fieldName === field.name);
+
     return {
       title: renderColumnTitle(
         field,
         filterMenu,
-        filteredFields.includes(field.name)
+        filteredFields.includes(field.name),
+        !!sorted,
+        sorted?.direction
       ),
       dataIndex: field.name,
       key: field.name,
@@ -180,12 +205,19 @@ export type ColumnVisibility = {
   name: string;
   visible: boolean;
 };
+export type ESSortField = {
+  label: string;
+  term: string;
+  fieldName: string;
+  direction: SortDirection;
+};
 
 function useGlobalSearchData(
   query: string,
-  from: number,
-  size: number,
+  page: number,
+  pageSize: number,
   onSuccess: (queryResponse: any) => void,
+  onSortOptionsChanged: () => void,
   nexus: NexusClient
 ) {
   const [result, setResult] = React.useState<any>({});
@@ -195,6 +227,28 @@ function useGlobalSearchData(
     filterReducer,
     defaultFilter
   );
+
+  const [sortState, setSortState] = React.useState<ESSortField[]>([]);
+
+  const removeSortOption = (sortFieldOption: ESSortField) => {
+    setSortState(sort =>
+      sort.filter(s => s.fieldName !== sortFieldOption.fieldName)
+    );
+    onSortOptionsChanged();
+  };
+
+  const changeSortOption = (sortFieldOption: ESSortField) => {
+    if (sortState.find(s => s.fieldName === sortFieldOption.fieldName)) {
+      setSortState(sort =>
+        sort.map(s =>
+          s.fieldName === sortFieldOption.fieldName ? sortFieldOption : s
+        )
+      );
+    } else {
+      setSortState(sort => [...sort, sortFieldOption]);
+    }
+    onSortOptionsChanged();
+  };
 
   const filteredFields = filterState.map(el => extractFieldName(el.filterTerm));
 
@@ -266,6 +320,19 @@ function useGlobalSearchData(
           <EyeInvisibleOutlined />
           Hide column
         </Button>
+        <SortMenuOptions
+          sortField={sortState.find(s => s.fieldName === field.name)}
+          onSortField={sortOption => {
+            changeSortOption({
+              fieldName: field.name,
+              term: createKeyWord(field),
+              label: field.label,
+              direction: sortOption,
+            });
+          }}
+          onRemoveSort={sortOption => removeSortOption(sortOption)}
+        />
+        <Divider />
         <FilterOptions
           filter={filterState.find(
             filter => extractFieldName(filter.filterTerm) === field.name
@@ -281,15 +348,16 @@ function useGlobalSearchData(
   const esQuery = React.useMemo(() => {
     const baseQuery = constructQuery(query);
     const withFilter = constructFilterSet(baseQuery, filterState);
-    const withPagination = addPagination(withFilter, from, size);
-    return withPagination.build();
-  }, [query, filterState, from, size]);
+    const withPagination = addPagination(withFilter, page, pageSize);
+    const withSorting = addSorting(withPagination, sortState);
+    return withSorting.build();
+  }, [query, filterState, page, pageSize, sortState]);
 
   const columns: SearchConfigField = React.useMemo(() => {
     return config
-      ? makeColumnConfig(config, fieldMenu, filteredFields)
+      ? makeColumnConfig(config, fieldMenu, filteredFields, sortState)
       : undefined;
-  }, [config, fieldsVisibility, filteredFields]);
+  }, [config, fieldsVisibility, filteredFields, sortState]);
 
   const visibleColumns = React.useMemo(
     () =>
@@ -306,7 +374,9 @@ function useGlobalSearchData(
 
   const data = React.useMemo(() => {
     if (result.hits && result.hits.hits) {
-      return result.hits.hits.map((hit: any) => hit._source);
+      return result.hits.hits.map((hit: any, ix: number) => {
+        return { ...hit._source, key: ix };
+      });
     }
     return [];
   }, [result]);
@@ -324,6 +394,7 @@ function useGlobalSearchData(
       onSuccess(queryResponse);
     });
   }, [esQuery]);
+
   return {
     columns,
     data,
@@ -335,6 +406,9 @@ function useGlobalSearchData(
     visibleFieldsFromStorage,
     visibleColumns,
     filterState,
+    sortState,
+    removeSortOption,
+    changeSortOption,
   };
 }
 

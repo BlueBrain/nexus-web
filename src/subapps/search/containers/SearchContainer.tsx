@@ -14,6 +14,7 @@ import ColumnsVisibilityConfig from '../components/ColumnsVisibilityConfig';
 import './SearchContainer.less';
 import useColumnsToFitPage from '../hooks/useColumnsToFitPage';
 import FiltersConfig from '../components/FiltersConfig';
+import SortConfig from '../components/SortConfig';
 const SearchContainer: React.FC = () => {
   const nexus = useNexusContext();
   const history = useHistory();
@@ -70,6 +71,15 @@ const SearchContainer: React.FC = () => {
     });
   }
 
+  function onSortOptionsChanged() {
+    setPagination((prevPagination: SearchPagination) => {
+      return {
+        ...prevPagination,
+        currentPage: 1,
+      };
+    });
+  }
+
   const {
     wrapperHeightRef,
     resultTableHeightTestRef,
@@ -105,11 +115,15 @@ const SearchContainer: React.FC = () => {
     visibleColumns,
     filterState,
     dispatchFilter,
+    sortState,
+    removeSortOption,
+    changeSortOption,
   } = useGlobalSearchData(
     query,
     pagination.currentPage,
     pagination.pageSize,
     onQuerySuccess,
+    onSortOptionsChanged,
     nexus
   );
 
@@ -141,7 +155,7 @@ const SearchContainer: React.FC = () => {
       {visibleColumns && data && (
         <>
           <div className="search-table-header">
-            <div className="search-table-options">
+            <div className="search-table-header__options">
               {
                 <>
                   <ColumnsVisibilityConfig
@@ -154,6 +168,15 @@ const SearchContainer: React.FC = () => {
                     columns={columns}
                     onRemoveFilter={filter =>
                       dispatchFilter({ type: 'remove', payload: filter })
+                    }
+                  />
+                  <SortConfig
+                    sortedFields={sortState}
+                    onRemoveSort={sortToRemove =>
+                      removeSortOption(sortToRemove)
+                    }
+                    onChangeSortDirection={sortToChange =>
+                      changeSortOption(sortToChange)
                     }
                   />
                 </>
@@ -170,15 +193,15 @@ const SearchContainer: React.FC = () => {
               showSizeChanger={true}
               pageSizeOptions={pagination.pageSizeOptions}
               showLessItems={true}
-              className="table-paginator"
+              className="search-table-header__paginator"
             />
           </div>
           <div ref={tableRef}>
             <Table
+              rowKey="key"
               columns={visibleColumns}
               dataSource={data}
               pagination={false}
-              rowKey="@id"
               onRow={onRowClick}
             />
           </div>
