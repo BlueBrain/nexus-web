@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { ExpandedResource, ResourceSource, Resource } from '@bbp/nexus-sdk';
+import {
+  ExpandedResource,
+  ResourceSource,
+  Resource,
+  NexusClient,
+} from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import ResourceEditor from '../components/ResourceEditor';
@@ -30,7 +35,8 @@ const ResourceEditorContainer: React.FunctionComponent<{
 }) => {
   const nexus = useNexusContext();
   const notification = useNotification();
-  const [expanded, setExpanded] = React.useState(defaultExpanded);
+  const [expanded, setExpanded] = React.useState(defaultEditable);
+  const [editable, setEditable] = React.useState(defaultExpanded);
   const [showMetadata, setShowMetadata] = React.useState<boolean>(false);
   const [{ busy, resource, error }, setResource] = React.useState<{
     busy: boolean;
@@ -48,6 +54,9 @@ const ResourceEditorContainer: React.FunctionComponent<{
       error: null,
       busy: true,
     });
+    if (resource?.['@type']?.includes('File')) {
+      setEditable(false);
+    }
 
     getNewResource()
       .then(response =>
@@ -87,6 +96,26 @@ const ResourceEditorContainer: React.FunctionComponent<{
     setShowMetadata(!showMetadata);
   };
 
+  async function getResourceSource(
+    nexus: NexusClient,
+    orgLabel: string,
+    projectLabel: string,
+    resourceId: string,
+    rev: number
+  ) {
+    try {
+      return await nexus.Resource.getSource(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(resourceId),
+        undefined,
+        { rev }
+      );
+    } catch {
+      return {} as ResourceSource;
+    }
+  }
+
   const getNewResource = async () => {
     if (expanded) {
       const expandedResource = (await nexus.Resource.get(
@@ -110,12 +139,13 @@ const ResourceEditorContainer: React.FunctionComponent<{
         }
       );
     }
-    return await nexus.Resource.getSource(
+
+    return await getResourceSource(
+      nexus,
       orgLabel,
       projectLabel,
-      encodeURIComponent(resourceId),
-      undefined,
-      { rev }
+      resourceId,
+      rev
     );
   };
 
@@ -127,7 +157,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
         onSubmit={onSubmit}
         onFormatChange={handleFormatChange}
         onMetadataChange={handleMetaDataChange}
-        editable={defaultEditable && !expanded && !showMetadata}
+        editable={editable && !expanded && !showMetadata}
         expanded={expanded}
         showMetadata={showMetadata}
         showMetadataToggle={showMetadataToggle}
