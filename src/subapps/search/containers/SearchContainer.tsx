@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import TableHeightWrapper from '../components/TableHeightWrapper';
-import { Pagination, Table } from 'antd';
+import { Pagination, Table, Checkbox } from 'antd';
 import useGlobalSearchData from '../hooks/useGlobalSearch';
 
 import useQueryString from '../../../shared/hooks/useQueryString';
@@ -107,6 +107,22 @@ const SearchContainer: React.FC = () => {
     }
   };
 
+  const {
+    columns,
+    data,
+    updateFieldsVisibility,
+    updateAllColumnsToVisible,
+    fieldsVisibility,
+    setFieldsVisibility,
+    visibleColumns,
+  } = useGlobalSearchData(
+    query,
+    pagination.currentPage,
+    pagination.pageSize,
+    onQuerySuccess,
+    nexus
+  );
+
   const toggleSelectAll = () => {
     setSelectedRowKeys((keys: any) =>
       keys.length === data.length ? [] : data.map((r: any) => r.id)
@@ -128,22 +144,6 @@ const SearchContainer: React.FC = () => {
     onSelect: handleSelect,
     columnTitle: headerCheckbox,
   };
-
-  const {
-    columns,
-    data,
-    updateFieldsVisibility,
-    updateAllColumnsToVisible,
-    fieldsVisibility,
-    setFieldsVisibility,
-    visibleColumns,
-  } = useGlobalSearchData(
-    query,
-    pagination.currentPage,
-    pagination.pageSize,
-    onQuerySuccess,
-    nexus
-  );
 
   function onUpdateColumnVisibilityFromPageSize(columnCount: number) {
     const columnVisibilities = columns?.map((el, ix) => {
