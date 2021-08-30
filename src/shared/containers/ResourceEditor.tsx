@@ -35,8 +35,8 @@ const ResourceEditorContainer: React.FunctionComponent<{
 }) => {
   const nexus = useNexusContext();
   const notification = useNotification();
-  const [expanded, setExpanded] = React.useState(defaultEditable);
-  const [editable, setEditable] = React.useState(defaultExpanded);
+  const [expanded, setExpanded] = React.useState(defaultExpanded);
+  const [editable, setEditable] = React.useState(defaultEditable);
   const [showMetadata, setShowMetadata] = React.useState<boolean>(false);
   const [{ busy, resource, error }, setResource] = React.useState<{
     busy: boolean;
