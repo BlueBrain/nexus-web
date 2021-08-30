@@ -5,6 +5,7 @@ import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
 import { RuleObject } from 'antd/lib/form';
+import './FilterOptions.less';
 
 type ConfigField =
   | {
@@ -25,6 +26,13 @@ type ConfigField =
 export const extractFieldName = (filterKeyword: string) =>
   filterKeyword.replace('.label.keyword', '').replace('.keyword', '');
 
+export const createKeyWord = (field: ConfigField) => {
+  if (field.fields) {
+    return `${field.name}.label.keyword`;
+  }
+
+  return `${field.name}.keyword`;
+};
 const FilterOptions: React.FC<{
   field: ConfigField;
   onFinish: (values: any) => void;
@@ -46,13 +54,6 @@ const FilterOptions: React.FC<{
 
   const [form] = Form.useForm();
 
-  const createKeyWord = (field: ConfigField) => {
-    if (field.fields) {
-      return `${field.name}.label.keyword`;
-    }
-
-    return `${field.name}.keyword`;
-  };
   const filterKeyWord = createKeyWord(field);
 
   React.useEffect(() => {
@@ -102,17 +103,20 @@ const FilterOptions: React.FC<{
 
   return (
     <Form
+      requiredMark="optional"
       form={form}
       onFinish={(values: any) => {
         onFinish({ ...values, filterTerm: filterKeyWord });
       }}
-      style={{ width: '100%' }}
+      className="field-filter-menu"
       validateTrigger={['onSubmit']}
     >
       <Form.Item
         label="Operator"
         name="filterType"
-        rules={[{ required: true }]}
+        rules={[
+          { required: true, message: 'Operator is required to apply a filter' },
+        ]}
       >
         <Select dropdownStyle={{ zIndex: 1100 }}>
           <Select.Option value="allof">is all Of (AND)</Select.Option>
@@ -134,7 +138,7 @@ const FilterOptions: React.FC<{
         }}
       ></Input.Search>
       <Form.Item name="filters" rules={[{ validator: validateFilterSelected }]}>
-        <Checkbox.Group style={{ width: '300px' }}>
+        <Checkbox.Group className="field-filter-menu__filterValue">
           {filterValues}
         </Checkbox.Group>
       </Form.Item>
