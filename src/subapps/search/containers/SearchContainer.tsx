@@ -3,7 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import TableHeightWrapper from '../components/TableHeightWrapper';
 import { Pagination, Table } from 'antd';
-import useGlobalSearchData from '../hooks/useGlobalSearch';
+import useGlobalSearchData, { FieldVisibility } from '../hooks/useGlobalSearch';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import useSearchPagination, {
   useAdjustTableHeight,
@@ -107,17 +107,14 @@ const SearchContainer: React.FC = () => {
   const {
     columns,
     data,
-    updateFieldsVisibility,
-    updateAllColumnsToVisible,
-    fieldsVisibility,
-    setFieldsVisibility,
-    visibleFieldsFromStorage,
     visibleColumns,
     filterState,
     dispatchFilter,
     sortState,
     removeSortOption,
     changeSortOption,
+    fieldsVisibilityState,
+    dispatchFieldVisibility,
   } = useGlobalSearchData(
     query,
     pagination.currentPage,
@@ -127,7 +124,7 @@ const SearchContainer: React.FC = () => {
     nexus
   );
 
-  function onUpdateColumnVisibilityFromPageSize(columnCount: number) {
+  function makeColumnsVisible(columnCount: number) {
     const columnVisibilities = columns?.map((el, ix) => {
       return {
         name: el.label,
@@ -135,16 +132,17 @@ const SearchContainer: React.FC = () => {
         visible: ix < columnCount,
       };
     });
-
-    columnVisibilities && setFieldsVisibility(columnVisibilities);
+    dispatchFieldVisibility({
+      type: 'initialize',
+      payload: columnVisibilities as FieldVisibility[],
+    });
   }
 
-  const { tableRef } = useColumnsToFitPage(
-    wrapperDOMProps,
-    columnCount =>
-      !visibleFieldsFromStorage &&
-      onUpdateColumnVisibilityFromPageSize(columnCount)
-  );
+  const { tableRef } = useColumnsToFitPage(columnCount => {
+    if (columns && !fieldsVisibilityState.isPersistent) {
+      makeColumnsVisible(columnCount);
+    }
+  });
 
   return (
     <TableHeightWrapper
@@ -159,9 +157,8 @@ const SearchContainer: React.FC = () => {
               {
                 <>
                   <ColumnsVisibilityConfig
-                    columns={fieldsVisibility}
-                    onSetAllColumnVisibile={updateAllColumnsToVisible}
-                    onSetColumnVisibility={updateFieldsVisibility}
+                    columnsVisibility={fieldsVisibilityState}
+                    dispatchFieldVisibility={dispatchFieldVisibility}
                   />
                   <FiltersConfig
                     filters={filterState}
@@ -198,6 +195,7 @@ const SearchContainer: React.FC = () => {
           </div>
           <div ref={tableRef}>
             <Table
+              tableLayout="fixed"
               rowKey="key"
               columns={visibleColumns}
               dataSource={data}
