@@ -120,7 +120,6 @@ const SearchContainer: React.FC = () => {
     sortState,
     removeSortOption,
     changeSortOption,
-    resetColumns,
   } = useGlobalSearchData(
     query,
     pagination.currentPage,
@@ -148,10 +147,10 @@ const SearchContainer: React.FC = () => {
     });
   };
 
-  const clearAllCustomisation = () => {
-    clearAllFilters();
-    handlePaginationChange(1);
-    resetColumns();
+  const clearSort = () => {
+    sortState.forEach(sort => {
+      removeSortOption(sort);
+    });
   };
 
   const { tableRef } = useColumnsToFitPage(
@@ -160,6 +159,17 @@ const SearchContainer: React.FC = () => {
       !visibleFieldsFromStorage &&
       onUpdateColumnVisibilityFromPageSize(columnCount)
   );
+
+  const clearAllCustomisation = () => {
+    clearAllFilters();
+    handlePaginationChange(1);
+    clearSort();
+
+    // updateAllColumnsToVisible();
+    // localStorage.removeItem('searchColumnVisibility');
+    // const columnsToDisplay = calculateColumnsThatFit();
+    // onUpdateColumnVisibilityFromPageSize(columnsToDisplay);
+  };
 
   return (
     <TableHeightWrapper

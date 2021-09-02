@@ -395,11 +395,6 @@ function useGlobalSearchData(
     });
   }, [esQuery]);
 
-  const resetColumns = () => {
-    localStorage.removeItem('searchColumnVisibility');
-    // TODO: reset visible columns
-  };
-
   return {
     columns,
     data,
@@ -414,7 +409,6 @@ function useGlobalSearchData(
     sortState,
     removeSortOption,
     changeSortOption,
-    resetColumns,
   };
 }
 
