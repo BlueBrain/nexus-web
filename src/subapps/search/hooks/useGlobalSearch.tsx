@@ -71,7 +71,6 @@ function fieldVisibilityReducer(
 ): FieldsVisibilityState {
   switch (action.type) {
     case 'initialize':
-      localStorage.removeItem('search-field-visibility');
       return {
         isPersistent: false,
         fields: action.payload,
@@ -80,10 +79,6 @@ function fieldVisibilityReducer(
       const fieldsAllVisibile = state.fields.map(el => {
         return { key: el.key, name: el.name, visible: true };
       });
-      localStorage.setItem(
-        'search-field-visibility',
-        JSON.stringify(fieldsAllVisibile)
-      );
       return {
         isPersistent: true,
         fields: fieldsAllVisibile,
@@ -94,10 +89,6 @@ function fieldVisibilityReducer(
           el => el.key === action.payload.key
         )]: action.payload,
       });
-      localStorage.setItem(
-        'search-field-visibility',
-        JSON.stringify(updatedFields)
-      );
       return { isPersistent: true, fields: updatedFields };
   }
 }
@@ -407,6 +398,17 @@ function useGlobalSearchData(
       ),
     [columns, fieldsVisibilityState]
   );
+
+  React.useEffect(() => {
+    if (fieldsVisibilityState.isPersistent) {
+      localStorage.setItem(
+        'search-field-visibility',
+        JSON.stringify(fieldsVisibilityState.fields)
+      );
+    } else {
+      localStorage.removeItem('search-field-visibility');
+    }
+  }, [fieldsVisibilityState]);
 
   const data = React.useMemo(() => {
     if (result.hits && result.hits.hits) {
