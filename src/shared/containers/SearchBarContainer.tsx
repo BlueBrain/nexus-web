@@ -9,7 +9,7 @@ import { sortStringsBySimilarity } from '../utils/stringSimilarity';
 
 const PROJECT_RESULTS_DEFAULT_SIZE = 300;
 const SHOULD_INCLUDE_DEPRECATED = false;
-const STORAGE_ITEM = 'last_visited_project';
+const STORAGE_ITEM = 'last_seacrh';
 const SHOW_PROJECTS_NUMBER = 5;
 
 const SearchBarContainer: React.FC = () => {
@@ -46,12 +46,12 @@ const SearchBarContainer: React.FC = () => {
   };
 
   const handleSubmit = (value: string, option: any) => {
+    localStorage.setItem(STORAGE_ITEM, value);
+
     if (option && option.key === 'global-search') {
       history.push(`/search/?query=${value}`);
     } else {
       const orgAndProject = value;
-
-      localStorage.setItem(STORAGE_ITEM, value);
       const [orgLabel, projectLabel] = orgAndProject.split('/');
 
       return goToProject(orgLabel, projectLabel);
