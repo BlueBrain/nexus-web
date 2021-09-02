@@ -1,6 +1,10 @@
 import { EyeInvisibleOutlined } from '@ant-design/icons';
 import { Button, Form, Modal, Switch } from 'antd';
 import * as React from 'react';
+import {
+  fieldVisibilityActionType,
+  FieldsVisibilityState,
+} from '../../hooks/useGlobalSearch';
 import './ColumnsVisibility.less';
 
 export type ColumnVisibility = {
@@ -10,19 +14,19 @@ export type ColumnVisibility = {
 };
 
 const ColumnsVisibilityConfig: React.FunctionComponent<{
-  columns: ColumnVisibility[];
-  onSetColumnVisibility: (columnVisibility: ColumnVisibility) => void;
-  onSetAllColumnVisibile: () => void;
-}> = ({ columns, onSetColumnVisibility, onSetAllColumnVisibile }) => {
+  columnsVisibility: FieldsVisibilityState;
+  dispatchFieldVisibility: React.Dispatch<fieldVisibilityActionType>;
+}> = ({ columnsVisibility, dispatchFieldVisibility }) => {
   const isAllColumnsVisible = () =>
-    columns.filter(el => !el.visible).length === 0;
+    columnsVisibility.fields.filter(el => !el.visible).length === 0;
 
   const [
     isColumnsVisiblilityConfigVisible,
     setIsColumnsVisiblilityConfigVisible,
   ] = React.useState(false);
 
-  const countHiddenFields = () => columns.filter(el => !el.visible).length;
+  const countHiddenFields = () =>
+    columnsVisibility.fields.filter(el => !el.visible).length;
 
   const buttonRef = React.useRef<HTMLButtonElement>(null);
 
@@ -62,24 +66,31 @@ const ColumnsVisibilityConfig: React.FunctionComponent<{
                 <label>
                   <Switch
                     size="small"
-                    onChange={() => onSetAllColumnVisibile()}
+                    onChange={() =>
+                      dispatchFieldVisibility({
+                        type: 'setAllVisible',
+                      })
+                    }
                     disabled={isAllColumnsVisible()}
                     checked={isAllColumnsVisible()}
                   />{' '}
                   (Show all Columns)
                 </label>
               </Form.Item>
-              {columns.map((el, ix) => (
+              {columnsVisibility.fields.map((el, ix) => (
                 <Form.Item key={el.key} style={{ marginBottom: 0 }}>
                   <label>
                     <Switch
                       size="small"
                       checked={el.visible}
                       onChange={checked =>
-                        onSetColumnVisibility({
-                          key: el.key,
-                          name: el.name,
-                          visible: checked,
+                        dispatchFieldVisibility({
+                          type: 'update',
+                          payload: {
+                            key: el.key,
+                            name: el.name,
+                            visible: checked,
+                          },
                         })
                       }
                     />{' '}
