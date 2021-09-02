@@ -65,6 +65,70 @@ function filterReducer(
   }
 }
 
+function fieldVisibilityReducer(
+  state: FieldsVisibilityState,
+  action: fieldVisibilityActionType
+): FieldsVisibilityState {
+  switch (action.type) {
+    case 'initialize':
+      localStorage.removeItem('search-field-visibility');
+      return {
+        isPersistent: false,
+        fields: action.payload,
+      };
+    case 'setAllVisible':
+      const fieldsAllVisibile = state.fields.map(el => {
+        return { key: el.key, name: el.name, visible: true };
+      });
+      localStorage.setItem(
+        'search-field-visibility',
+        JSON.stringify(fieldsAllVisibile)
+      );
+      return {
+        isPersistent: true,
+        fields: fieldsAllVisibile,
+      };
+    case 'update':
+      const updatedFields = Object.assign([], state.fields, {
+        [state.fields.findIndex(
+          el => el.key === action.payload.key
+        )]: action.payload,
+      });
+      localStorage.setItem(
+        'search-field-visibility',
+        JSON.stringify(updatedFields)
+      );
+      return { isPersistent: true, fields: updatedFields };
+  }
+}
+
+export type FieldVisibility = {
+  key: string;
+  name: string;
+  visible: boolean;
+};
+
+export type FieldsVisibilityState = {
+  isPersistent: boolean;
+  fields: FieldVisibility[];
+};
+
+type fieldVisibilityInitializeActionType = {
+  type: 'initialize';
+  payload: FieldVisibility[];
+};
+type fieldVisibilityUpdateActionType = {
+  type: 'update';
+  payload: FieldVisibility;
+};
+type fieldVisibilitySetAllVisibleActionType = {
+  type: 'setAllVisible';
+};
+export type fieldVisibilityActionType =
+  | fieldVisibilityInitializeActionType
+  | fieldVisibilityUpdateActionType
+  | fieldVisibilitySetAllVisibleActionType;
+
 export type ConfigField =
   | {
       name: string;
@@ -200,11 +264,7 @@ function makeColumnConfig(
     };
   });
 }
-export type ColumnVisibility = {
-  key: string;
-  name: string;
-  visible: boolean;
-};
+
 export type ESSortField = {
   label: string;
   term: string;
@@ -252,53 +312,26 @@ function useGlobalSearchData(
 
   const filteredFields = filterState.map(el => extractFieldName(el.filterTerm));
 
-  const [fieldsVisibility, setFieldsVisibility] = React.useState<
-    ColumnVisibility[]
-  >([]);
-  const [userSetFieldVisibility, setUserSetFieldVisibility] = React.useState(
-    false
-  );
-
-  const updateFieldsVisibility = (field: ColumnVisibility) => {
-    setFieldsVisibility(
-      Object.assign([], fieldsVisibility, {
-        [fieldsVisibility.findIndex(el => el.key === field.key)]: field,
-      })
+  const fieldVisibilityInitialState = React.useMemo(() => {
+    const fieldVisibilityFromStorage = localStorage.getItem(
+      'search-field-visibility'
     );
-    setUserSetFieldVisibility(true);
-  };
-
-  const updateAllColumnsToVisible = () => {
-    setFieldsVisibility(
-      fieldsVisibility.map(el => {
-        return { key: el.key, name: el.name, visible: true };
-      })
-    );
-    setUserSetFieldVisibility(true);
-  };
-
-  React.useEffect(() => {
-    if (!userSetFieldVisibility) return;
-
-    localStorage.setItem(
-      'searchColumnVisibility',
-      JSON.stringify(fieldsVisibility)
-    );
-  }, [fieldsVisibility, userSetFieldVisibility]);
-
-  const [
-    visibleFieldsFromStorage,
-    setVisibleFieldsFromStorage,
-  ] = React.useState(!!localStorage.getItem('searchColumnVisibility'));
-
-  React.useEffect(() => {
-    if (visibleFieldsFromStorage) {
-      const columnVisibilities = JSON.parse(
-        localStorage.getItem('searchColumnVisibility') as string
-      ) as ColumnVisibility[];
-      setFieldsVisibility(columnVisibilities);
+    if (!!fieldVisibilityFromStorage) {
+      return {
+        isPersistent: true,
+        fields: JSON.parse(fieldVisibilityFromStorage),
+      };
     }
+    return {
+      isPersistent: false,
+      fields: [],
+    };
   }, []);
+
+  const [fieldsVisibilityState, dispatchFieldVisibility] = React.useReducer(
+    fieldVisibilityReducer,
+    fieldVisibilityInitialState
+  );
 
   const onFilterSubmit = (values: FilterState) => {
     dispatchFilter({ type: 'add', payload: values });
@@ -309,10 +342,13 @@ function useGlobalSearchData(
       <>
         <Button
           onClick={() => {
-            updateFieldsVisibility({
-              key: field.name,
-              name: field.label,
-              visible: false,
+            dispatchFieldVisibility({
+              type: 'update',
+              payload: {
+                key: field.name,
+                name: field.label,
+                visible: false,
+              },
             });
           }}
           type="link"
@@ -357,19 +393,19 @@ function useGlobalSearchData(
     return config
       ? makeColumnConfig(config, fieldMenu, filteredFields, sortState)
       : undefined;
-  }, [config, fieldsVisibility, filteredFields, sortState]);
+  }, [config, fieldsVisibilityState, filteredFields, sortState]);
 
   const visibleColumns = React.useMemo(
     () =>
       columns &&
       columns.filter(
         col =>
-          !fieldsVisibility?.find(
+          !fieldsVisibilityState?.fields.find(
             colVisibility =>
               col.key === colVisibility.key && !colVisibility.visible
           )
       ),
-    [columns, fieldsVisibility]
+    [columns, fieldsVisibilityState]
   );
 
   const data = React.useMemo(() => {
@@ -399,16 +435,13 @@ function useGlobalSearchData(
     columns,
     data,
     dispatchFilter,
-    updateFieldsVisibility,
-    updateAllColumnsToVisible,
-    fieldsVisibility,
-    setFieldsVisibility,
-    visibleFieldsFromStorage,
+    fieldsVisibilityState,
     visibleColumns,
     filterState,
     sortState,
     removeSortOption,
     changeSortOption,
+    dispatchFieldVisibility,
   };
 }
 
