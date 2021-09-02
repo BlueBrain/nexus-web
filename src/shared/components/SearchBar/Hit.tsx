@@ -40,7 +40,7 @@ const Hit: React.FC<{
       <div className="hit__body">{children}</div>
       <div className="hit__action">
         <span>
-          <EnterOutlined style={{ transform: 'scaleX(-1)' }} /> jump to project{' '}
+          <EnterOutlined style={{ transform: 'scaleX(-1)' }} /> Jump to Project{' '}
           {orgLabel && projectLabel && (
             <AccessControl
               permissions={['resources/read']}

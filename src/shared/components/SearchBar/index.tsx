@@ -127,7 +127,7 @@ const SearchBar: React.FC<{
         onPressEnter={inputOnPressEnter}
         ref={inputRef}
         className="search-bar__input"
-        placeholder="Visit Project"
+        placeholder="Search or jump to..."
         suffix={<div className="search-bar__icon">/</div>}
       />
     </AutoComplete>
