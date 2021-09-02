@@ -431,6 +431,23 @@ function useGlobalSearchData(
     });
   }, [esQuery]);
 
+  const clearAllFilters = () => {
+    filterState.forEach(filter => {
+      dispatchFilter({ type: 'remove', payload: filter });
+    });
+  };
+
+  const clearSort = () => {
+    sortState.forEach(sort => {
+      removeSortOption(sort);
+    });
+  };
+
+  const resetAll = () => {
+    clearAllFilters();
+    clearSort();
+  };
+
   return {
     columns,
     data,
@@ -441,6 +458,7 @@ function useGlobalSearchData(
     sortState,
     removeSortOption,
     changeSortOption,
+    resetAll,
     dispatchFieldVisibility,
   };
 }
