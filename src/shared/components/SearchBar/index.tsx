@@ -99,12 +99,13 @@ const SearchBar: React.FC<{
     }
     options = [
       {
-        value,
         key: 'global-search',
         label: globalSearchOption(value),
+        value,
       },
       ...options,
     ];
+
     return options;
   };
 
@@ -121,6 +122,7 @@ const SearchBar: React.FC<{
       dropdownClassName="search-bar__drop"
       value={value}
       dropdownMatchSelectWidth={false}
+      defaultActiveFirstOption
     >
       <Input
         allowClear
