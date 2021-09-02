@@ -141,15 +141,20 @@ const SearchContainer: React.FC = () => {
     });
   }
 
-  const { tableRef } = useColumnsToFitPage(columnCount => {
-    if (columns && !fieldsVisibilityState.isPersistent) {
-      makeColumnsVisible(columnCount);
+  const { tableRef, calculateNumberOfColumnsToFit } = useColumnsToFitPage(
+    columnCount => {
+      if (columns && !fieldsVisibilityState.isPersistent) {
+        makeColumnsVisible(columnCount);
+      }
     }
-  });
+  );
 
   const clearAllCustomisation = () => {
     handlePaginationChange(1);
     resetAll();
+
+    const numColumnsFit = calculateNumberOfColumnsToFit();
+    makeColumnsVisible(numColumnsFit);
   };
 
   return (
