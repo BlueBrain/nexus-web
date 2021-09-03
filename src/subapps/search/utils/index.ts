@@ -1,4 +1,6 @@
 import * as bodybuilder from 'bodybuilder';
+import { ESSortField } from '../hooks/useGlobalSearch';
+import { ESMaxResultWindowSize } from '../hooks/useSearchPagination';
 
 export const constructQuery = (searchText: string) => {
   const body = bodybuilder();
@@ -50,15 +52,30 @@ export const constructFilter = (
   return body;
 };
 
+export const addSorting = (
+  body: bodybuilder.Bodybuilder,
+  sort: ESSortField[]
+) => {
+  sort.forEach(s => body.sort(s.term, s.direction));
+  return body;
+};
+
 export const addPagination = (
   body: bodybuilder.Bodybuilder,
-  from: number,
-  size: number
+  page: number,
+  pageSize: number
 ) => {
+  /* Make sure we don't exceed the ElasticSearch paging limit */
+  const from = (page - 1) * pageSize;
+  const pageSizeRespectingLimit =
+    from + pageSize > ESMaxResultWindowSize
+      ? ESMaxResultWindowSize - from
+      : pageSize;
+
   body
     .rawOption('track_total_hits', true) // accurate total, could cache for performance
-    .size(size)
-    .from(from);
+    .size(pageSizeRespectingLimit)
+    .from((page - 1) * pageSize);
   return body;
 };
 
