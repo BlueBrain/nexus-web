@@ -9,7 +9,7 @@ import { sortStringsBySimilarity } from '../utils/stringSimilarity';
 
 const PROJECT_RESULTS_DEFAULT_SIZE = 300;
 const SHOULD_INCLUDE_DEPRECATED = false;
-const STORAGE_ITEM = 'last_seacrh';
+const STORAGE_ITEM = 'last_search';
 const SHOW_PROJECTS_NUMBER = 5;
 
 const SearchBarContainer: React.FC = () => {

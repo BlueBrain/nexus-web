@@ -112,7 +112,7 @@ const SearchBar: React.FC<{
   return (
     <AutoComplete
       defaultActiveFirstOption
-      className={`search-bar ${!!focused && 'search-bar__focused'}`}
+      className="search-bar"
       onFocus={handleSetFocused(true)}
       onBlur={handleSetFocused(false)}
       options={generateOptions()}
