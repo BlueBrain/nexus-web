@@ -111,6 +111,7 @@ const SearchBar: React.FC<{
 
   return (
     <AutoComplete
+      defaultActiveFirstOption
       className={`search-bar ${!!focused && 'search-bar__focused'}`}
       onFocus={handleSetFocused(true)}
       onBlur={handleSetFocused(false)}
@@ -122,7 +123,6 @@ const SearchBar: React.FC<{
       dropdownClassName="search-bar__drop"
       value={value}
       dropdownMatchSelectWidth={false}
-      defaultActiveFirstOption
     >
       <Input
         allowClear
