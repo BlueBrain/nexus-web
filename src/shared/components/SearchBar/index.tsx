@@ -105,12 +105,14 @@ const SearchBar: React.FC<{
       },
       ...options,
     ];
+
     return options;
   };
 
   return (
     <AutoComplete
-      className={`search-bar ${!!focused && 'search-bar__focused'}`}
+      defaultActiveFirstOption
+      className="search-bar"
       onFocus={handleSetFocused(true)}
       onBlur={handleSetFocused(false)}
       options={generateOptions()}
@@ -127,7 +129,7 @@ const SearchBar: React.FC<{
         onPressEnter={inputOnPressEnter}
         ref={inputRef}
         className="search-bar__input"
-        placeholder="Visit Project"
+        placeholder="Search or jump to..."
         suffix={<div className="search-bar__icon">/</div>}
       />
     </AutoComplete>

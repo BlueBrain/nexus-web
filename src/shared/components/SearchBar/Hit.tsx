@@ -20,8 +20,8 @@ export const globalSearchOption = (value: string | undefined) => {
         <span>{value}</span>
       </div>
       <div className="hit__action">
-        <span className="enter">
-          <EnterOutlined style={{ transform: 'scaleX(-1)' }} /> Search Nexus{' '}
+        <span>
+          <EnterOutlined className="hit__arrow" /> Search Nexus{' '}
         </span>
       </div>
     </div>
@@ -40,7 +40,7 @@ const Hit: React.FC<{
       <div className="hit__body">{children}</div>
       <div className="hit__action">
         <span>
-          <EnterOutlined style={{ transform: 'scaleX(-1)' }} /> jump to project{' '}
+          <EnterOutlined className="hit__arrow" /> Jump to Project{' '}
           {orgLabel && projectLabel && (
             <AccessControl
               permissions={['resources/read']}
