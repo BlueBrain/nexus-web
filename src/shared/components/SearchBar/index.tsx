@@ -99,9 +99,9 @@ const SearchBar: React.FC<{
     }
     options = [
       {
+        value,
         key: 'global-search',
         label: globalSearchOption(value),
-        value,
       },
       ...options,
     ];
