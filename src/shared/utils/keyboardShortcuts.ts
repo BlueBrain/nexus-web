@@ -12,7 +12,13 @@ export const focusOnSlash = (focused: boolean, inputRef: any) => {
     }
 
     if (e.key === '/' && !focused) {
-      inputRef.current && inputRef.current.focus();
+      // https://github.com/BlueBrain/nexus/issues/2609#issuecomment-906995492
+      // the content of the Search bar is not selected properly, bacause <Input /> is wrapped in <Autocmplete />
+      // and doesn't have its own value or defaultValue to select
+      inputRef.current &&
+        inputRef.current.focus({
+          cursor: 'all',
+        });
       inputRef.current && inputRef.current.input.select();
       e.preventDefault();
     }
