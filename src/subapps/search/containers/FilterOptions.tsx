@@ -122,6 +122,7 @@ const FilterOptions: React.FC<{
           <Select.Option value="allof">is all Of (AND)</Select.Option>
           <Select.Option value="anyof">is any Of (OR)</Select.Option>
           <Select.Option value="noneof">is none Of (NOT)</Select.Option>
+          <Select.Option value="missing">is missing</Select.Option>
         </Select>
       </Form.Item>
       <Input.Search
