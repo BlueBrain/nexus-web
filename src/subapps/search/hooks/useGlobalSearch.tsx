@@ -414,13 +414,13 @@ function useGlobalSearchData(
             )
         )
         .sort((a, b) => {
-          if (!fieldsVisibilityState?.fields) {
-            return 0;
+          if (fieldsVisibilityState && fieldsVisibilityState.fields) {
+            const fileds = fieldsVisibilityState?.fields;
+            const aIndex = fileds.findIndex(f => f.key === a.key);
+            const bIndex = fileds.findIndex(f => f.key === b.key);
+            return aIndex - bIndex;
           }
-          const fileds = fieldsVisibilityState?.fields;
-          const aIndex = fileds.findIndex(f => f.key === a.key);
-          const bIndex = fileds.findIndex(f => f.key === b.key);
-          return aIndex - bIndex;
+          return 0;
         }), // sort by the order of the columns
     [columns, fieldsVisibilityState]
   );
