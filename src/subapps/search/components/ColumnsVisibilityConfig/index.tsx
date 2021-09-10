@@ -76,8 +76,6 @@ const ColumnsVisibilityConfig: React.FunctionComponent<{
                 type: 'reOrder',
                 payload: fields,
               });
-
-              // dispatchFieldVisibility({})
             }}
           >
             <Droppable droppableId="droppable">
