@@ -156,6 +156,7 @@ function renderColumnTitle(
           placement="topLeft"
           title={filterMenu(field)}
           overlayInnerStyle={{ width: '450px' }}
+          destroyTooltipOnHide={true}
         >
           <div className="column-header__options">
             {isSorted && sortDirection === SortDirection.ASCENDING && (
@@ -361,9 +362,8 @@ function useGlobalSearchData(
         />
         <Divider />
         <FilterOptions
-          filter={filterState.find(
-            filter => extractFieldName(filter.filterTerm) === field.name
-          )}
+          query={query}
+          filter={filterState}
           nexusClient={nexus}
           field={field}
           onFinish={onFilterSubmit}
