@@ -415,7 +415,7 @@ function useGlobalSearchData(
         )
         .sort((a, b) => {
           if (fieldsVisibilityState && fieldsVisibilityState.fields) {
-            const fileds = fieldsVisibilityState?.fields;
+            const fileds = fieldsVisibilityState.fields;
             const aIndex = fileds.findIndex(f => f.key === a.key);
             const bIndex = fileds.findIndex(f => f.key === b.key);
             return aIndex - bIndex;
