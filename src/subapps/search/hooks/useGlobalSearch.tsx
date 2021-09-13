@@ -75,9 +75,18 @@ function fieldVisibilityReducer(
         isPersistent: false,
         fields: action.payload,
       };
+    case 'reOrder':
+      return {
+        isPersistent: true,
+        fields: action.payload,
+      };
     case 'setAllVisible':
       const fieldsAllVisibile = state.fields.map(el => {
-        return { key: el.key, name: el.name, visible: true };
+        return {
+          key: el.key,
+          name: el.name,
+          visible: true,
+        };
       });
       return {
         isPersistent: true,
@@ -108,6 +117,12 @@ type fieldVisibilityInitializeActionType = {
   type: 'initialize';
   payload: FieldVisibility[];
 };
+
+type fieldVisibilityReOrderType = {
+  type: 'reOrder';
+  payload: FieldVisibility[];
+};
+
 type fieldVisibilityUpdateActionType = {
   type: 'update';
   payload: FieldVisibility;
@@ -117,6 +132,7 @@ type fieldVisibilitySetAllVisibleActionType = {
 };
 export type fieldVisibilityActionType =
   | fieldVisibilityInitializeActionType
+  | fieldVisibilityReOrderType
   | fieldVisibilityUpdateActionType
   | fieldVisibilitySetAllVisibleActionType;
 
@@ -156,6 +172,7 @@ function renderColumnTitle(
           placement="bottomLeft"
           title={filterMenu(field)}
           overlayInnerStyle={{ width: '450px' }}
+          destroyTooltipOnHide={true}
         >
           <div className="column-header__options">
             {isSorted && sortDirection === SortDirection.ASCENDING && (
@@ -380,6 +397,7 @@ function useGlobalSearchData(
             />
           </>
         )}
+
       </>
     );
   };
@@ -401,13 +419,23 @@ function useGlobalSearchData(
   const visibleColumns = React.useMemo(
     () =>
       columns &&
-      columns.filter(
-        col =>
-          !fieldsVisibilityState?.fields.find(
-            colVisibility =>
-              col.key === colVisibility.key && !colVisibility.visible
-          )
-      ),
+      columns
+        .filter(
+          col =>
+            !fieldsVisibilityState?.fields.find(
+              colVisibility =>
+                col.key === colVisibility.key && !colVisibility.visible
+            )
+        )
+        .sort((a, b) => {
+          if (fieldsVisibilityState && fieldsVisibilityState.fields) {
+            const fileds = fieldsVisibilityState.fields;
+            const aIndex = fileds.findIndex(f => f.key === a.key);
+            const bIndex = fileds.findIndex(f => f.key === b.key);
+            return aIndex - bIndex;
+          }
+          return 0;
+        }), // sort by the order of the columns
     [columns, fieldsVisibilityState]
   );
 
