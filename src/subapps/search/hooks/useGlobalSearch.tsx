@@ -388,16 +388,16 @@ function useGlobalSearchData(
             />
             <Divider />
             <FilterOptions
-              filter={filterState.find(
+              filter={filterState.filter(
                 filter => extractFieldName(filter.filterTerm) === field.name
               )}
+              query={query}
               nexusClient={nexus}
               field={field}
               onFinish={onFilterSubmit}
             />
           </>
         )}
-
       </>
     );
   };
