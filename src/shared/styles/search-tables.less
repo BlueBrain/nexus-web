@@ -109,8 +109,22 @@ html {
         }
 
         td.ant-table-cell {
+          .row-select {
+            display: none;
+          }
+
+          .row-index {
+            display: block;
+          }
+
           &:hover {
             background: @thead-bg !important;
+            .row-select {
+              display: block;
+            }
+            .row-index {
+              display: none;
+            }
           }
           padding: 7px 15px;
           width: 200px;
