@@ -1,6 +1,7 @@
 import { EyeInvisibleOutlined } from '@ant-design/icons';
 import { Button, Form, Modal, Switch } from 'antd';
 import * as React from 'react';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import {
   fieldVisibilityActionType,
   FieldsVisibilityState,
@@ -60,46 +61,83 @@ const ColumnsVisibilityConfig: React.FunctionComponent<{
           closable={false}
           className="column-visibility-config-modal"
         >
-          <div className="column-visibility-container">
-            <Form>
-              <Form.Item style={{ marginBottom: 0 }}>
-                <label>
-                  <Switch
-                    size="small"
-                    onChange={() =>
-                      dispatchFieldVisibility({
-                        type: 'setAllVisible',
-                      })
-                    }
-                    disabled={isAllColumnsVisible()}
-                    checked={isAllColumnsVisible()}
-                  />{' '}
-                  (Show all Columns)
-                </label>
-              </Form.Item>
-              {columnsVisibility.fields.map((el, ix) => (
-                <Form.Item key={el.key} style={{ marginBottom: 0 }}>
-                  <label>
-                    <Switch
-                      size="small"
-                      checked={el.visible}
-                      onChange={checked =>
-                        dispatchFieldVisibility({
-                          type: 'update',
-                          payload: {
-                            key: el.key,
-                            name: el.name,
-                            visible: checked,
-                          },
-                        })
-                      }
-                    />{' '}
-                    {el.name}
-                  </label>
-                </Form.Item>
-              ))}
-            </Form>
-          </div>
+          <DragDropContext
+            onDragEnd={result => {
+              const { destination, source } = result;
+              if (!destination) {
+                return;
+              }
+              console.log(destination, source);
+              const fields = columnsVisibility.fields;
+              const saved = fields[destination.index];
+              fields[destination.index] = fields[source.index];
+              fields[source.index] = saved;
+              dispatchFieldVisibility({
+                type: 'reOrder',
+                payload: fields,
+              });
+            }}
+          >
+            <Droppable droppableId="droppable">
+              {(provided, snapshot) => (
+                <div
+                  className="column-visibility-container"
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                >
+                  <Form>
+                    <Form.Item style={{ marginBottom: 0 }}>
+                      <label>
+                        <Switch
+                          size="small"
+                          onChange={() =>
+                            dispatchFieldVisibility({
+                              type: 'setAllVisible',
+                            })
+                          }
+                          disabled={isAllColumnsVisible()}
+                          checked={isAllColumnsVisible()}
+                        />{' '}
+                        (Show all Columns)
+                      </label>
+                    </Form.Item>
+                    {columnsVisibility.fields.map((el, ix) => (
+                      <Draggable key={el.key} draggableId={el.key} index={ix}>
+                        {(provided, snapshot) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <Form.Item key={el.key} style={{ marginBottom: 0 }}>
+                              <label>
+                                <Switch
+                                  size="small"
+                                  checked={el.visible}
+                                  onChange={checked =>
+                                    dispatchFieldVisibility({
+                                      type: 'update',
+                                      payload: {
+                                        key: el.key,
+                                        name: el.name,
+                                        visible: checked,
+                                      },
+                                    })
+                                  }
+                                />{' '}
+                                {el.name}
+                              </label>
+                            </Form.Item>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                  </Form>
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
         </Modal>
       )}
     </>
