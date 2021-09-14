@@ -90,19 +90,7 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
                 }
               >
                 <List.Item.Meta
-                  avatar={
-                    item.thumbnailUrl &&
-                    item.thumbnailUrl[0] && (
-                      <Avatar
-                        style={{
-                          width: '100%',
-                        }}
-                        src={item.thumbnailUrl[0]}
-                        shape="square"
-                        size={100}
-                      />
-                    )
-                  }
+                  avatar={<ReactPlayer url={item.embedUrl} light={true} />}
                   title={
                     <Button
                       type="link"
