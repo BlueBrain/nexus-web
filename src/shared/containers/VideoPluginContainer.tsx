@@ -3,7 +3,7 @@ import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import ReactPlayer from 'react-player';
 import * as moment from 'moment';
-import { Collapse, Modal, Button, List, Avatar } from 'antd';
+import { Collapse, Modal, Button, List } from 'antd';
 
 import '../styles/video-plugin.less';
 
