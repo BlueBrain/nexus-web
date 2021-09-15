@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import TableHeightWrapper from '../components/TableHeightWrapper';
-import { Pagination, Table, Button } from 'antd';
+import { Pagination, Table, Button, Checkbox } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import useGlobalSearchData, { FieldVisibility } from '../hooks/useGlobalSearch';
 import useQueryString from '../../../shared/hooks/useQueryString';
@@ -23,6 +23,7 @@ const SearchContainer: React.FC = () => {
   const location = useLocation();
   const [queryParams] = useQueryString();
   const { query } = queryParams;
+  const [selectedRowKeys, setSelectedRowKeys] = React.useState<any>([]);
 
   const onRowClick = (record: any): { onClick: () => void } => {
     return {
@@ -157,6 +158,54 @@ const SearchContainer: React.FC = () => {
     makeColumnsVisible(numColumnsFit);
   };
 
+  const handleSelect = (record: any, selected: any) => {
+    if (selected) {
+      console.log(record);
+      setSelectedRowKeys((keys: any) => [...keys, record.key]);
+    } else {
+      setSelectedRowKeys((keys: any) => {
+        const index = keys.indexOf(record.key);
+        return [...keys.slice(0, index), ...keys.slice(index + 1)];
+      });
+    }
+  };
+
+  const toggleSelectAll = () => {
+    setSelectedRowKeys((keys: any) =>
+      keys.length === data.length ? [] : data.map((r: any) => r.key)
+    );
+  };
+
+  const headerCheckbox = (
+    <Checkbox
+      checked={selectedRowKeys.length}
+      indeterminate={
+        selectedRowKeys.length > 0 && selectedRowKeys.length < data.length
+      }
+      onChange={toggleSelectAll}
+    />
+  );
+
+  const rowSelection = {
+    selectedRowKeys,
+    columnTitle: headerCheckbox,
+    columnWidth: 50,
+    renderCell: (checked: any, record: any, index: number, originNode: any) => {
+      return (
+        <div
+          onClick={e => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleSelect(record, !checked);
+          }}
+        >
+          {checked ? null : <span className="row-index">{index + 1}</span>}
+          <Checkbox className={checked ? '' : 'row-select'} checked={checked} />
+        </div>
+      );
+    },
+  };
+
   return (
     <TableHeightWrapper
       wrapperHeightRef={wrapperHeightRef}
@@ -212,6 +261,7 @@ const SearchContainer: React.FC = () => {
           </div>
           <div ref={tableRef}>
             <Table
+              rowSelection={rowSelection}
               tableLayout="fixed"
               rowKey="key"
               columns={visibleColumns}
