@@ -206,6 +206,11 @@ const SearchContainer: React.FC = () => {
     },
   };
 
+  console.log(
+    'pagination.totalNumberOfResults',
+    pagination.totalNumberOfResults
+  );
+
   return (
     <TableHeightWrapper
       wrapperHeightRef={wrapperHeightRef}
@@ -240,6 +245,7 @@ const SearchContainer: React.FC = () => {
               </Button>
             </div>
             <Pagination
+              disabled={pagination.totalNumberOfResults === 0}
               showTotal={renderShowTotal}
               onShowSizeChange={onPageSizeOptionChanged}
               total={pagination.totalNumberOfResults}

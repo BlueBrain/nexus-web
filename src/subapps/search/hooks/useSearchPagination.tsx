@@ -71,19 +71,15 @@ function useSearchPagination() {
   );
 
   const renderShowTotal = React.useCallback(
-    (total: number, range: [number, number]) => {
-      console.log('total', total);
-      if (total === 0) return <>No results</>;
-
-      return pagination.trueTotalNumberOfResults <= ESMaxResultWindowSize ? (
-        <>{total === 1 ? 'result' : 'results'}</>
-      ) : (
+    (total: number, range: [number, number]) =>
+      pagination.trueTotalNumberOfResults <= ESMaxResultWindowSize ? (
         <>
-          {pagination.trueTotalNumberOfResults.toLocaleString('en-US')} results
+          {total === 0 ? 'No' : total.toLocaleString('en-US')}{' '}
+          {total === 1 ? 'result' : 'results'}
         </>
-      );
-    },
-
+      ) : (
+        <>{total.toLocaleString('en-US')} results</>
+      ),
     [pagination]
   );
 
