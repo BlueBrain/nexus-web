@@ -216,36 +216,31 @@ const SearchContainer: React.FC = () => {
         <>
           <div className="search-table-header">
             <div className="search-table-header__options">
-              {
-                <>
-                  <ColumnsVisibilityConfig
-                    columnsVisibility={fieldsVisibilityState}
-                    dispatchFieldVisibility={dispatchFieldVisibility}
-                  />
-                  <FiltersConfig
-                    filters={filterState}
-                    columns={columns}
-                    onRemoveFilter={filter =>
-                      dispatchFilter({ type: 'remove', payload: filter })
-                    }
-                  />
-                  <SortConfig
-                    sortedFields={sortState}
-                    onRemoveSort={sortToRemove =>
-                      removeSortOption(sortToRemove)
-                    }
-                    onChangeSortDirection={sortToChange =>
-                      changeSortOption(sortToChange)
-                    }
-                  />
-                  <Button type="link" onClick={() => clearAllCustomisation()}>
-                    <CloseCircleOutlined />
-                    Reset
-                  </Button>
-                </>
-              }
+              <ColumnsVisibilityConfig
+                columnsVisibility={fieldsVisibilityState}
+                dispatchFieldVisibility={dispatchFieldVisibility}
+              />
+              <FiltersConfig
+                filters={filterState}
+                columns={columns}
+                onRemoveFilter={filter =>
+                  dispatchFilter({ type: 'remove', payload: filter })
+                }
+              />
+              <SortConfig
+                sortedFields={sortState}
+                onRemoveSort={sortToRemove => removeSortOption(sortToRemove)}
+                onChangeSortDirection={sortToChange =>
+                  changeSortOption(sortToChange)
+                }
+              />
+              <Button type="link" onClick={() => clearAllCustomisation()}>
+                <CloseCircleOutlined />
+                Reset
+              </Button>
             </div>
             <Pagination
+              disabled={pagination.totalNumberOfResults === 0}
               showTotal={renderShowTotal}
               onShowSizeChange={onPageSizeOptionChanged}
               total={pagination.totalNumberOfResults}
@@ -259,7 +254,7 @@ const SearchContainer: React.FC = () => {
               className="search-table-header__paginator"
             />
           </div>
-          <div ref={tableRef}>
+          <div ref={tableRef} className="search-table">
             <Table
               rowSelection={rowSelection}
               tableLayout="fixed"
