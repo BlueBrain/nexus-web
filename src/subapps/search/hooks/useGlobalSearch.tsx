@@ -343,11 +343,15 @@ function useGlobalSearchData(
 
   const onFilterSubmit = (values: FilterState) => {
     dispatchFilter({ type: 'add', payload: values });
+    onSortOptionsChanged();
   };
 
   const hasKeywordFormatField = (field: ConfigField) => {
     if (field.format && field.format.includes('keyword')) return true;
-    if (field.fields && field.fields.find(f => f.format.includes('keyword'))) {
+    if (
+      (field.fields && field.fields.find(f => f.format.includes('keyword'))) ||
+      field.name === '@type'
+    ) {
       return true;
     }
     return false;

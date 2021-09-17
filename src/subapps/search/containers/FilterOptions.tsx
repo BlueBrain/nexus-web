@@ -60,9 +60,7 @@ const FilterOptions: React.FC<{
     }[]
   >([]);
 
-  const [filterType, setFilterType] = React.useState(
-    fieldFilter?.filterType || 'allof'
-  );
+  const [filterType, setFilterType] = React.useState(fieldFilter?.filterType);
 
   const [form] = Form.useForm();
 
@@ -162,12 +160,16 @@ const FilterOptions: React.FC<{
       >
         <Select
           dropdownStyle={{ zIndex: 1100 }}
+          defaultValue={field.array ? 'anyof' : 'allof'}
+          defaultActiveFirstOption
           value={filterType}
           onChange={v => setFilterType(v)}
         >
-          <Select.Option value="allof">is all Of (AND)</Select.Option>
-          <Select.Option value="anyof">is any Of (OR)</Select.Option>
-          <Select.Option value="noneof">is none Of (NOT)</Select.Option>
+          {!field.array ? (
+            <Select.Option value="allof">is all of (AND)</Select.Option>
+          ) : null}
+          <Select.Option value="anyof">is any of (OR)</Select.Option>
+          <Select.Option value="noneof">is none of (NOT)</Select.Option>
         </Select>
       </Form.Item>
       <Input.Search
@@ -184,7 +186,9 @@ const FilterOptions: React.FC<{
           setAggregations(filteredSuggestions);
         }}
       ></Input.Search>
-      <Form.Item>{filterValues}</Form.Item>
+      <Form.Item style={{ maxHeight: '91px', overflow: 'scroll' }}>
+        {filterValues}
+      </Form.Item>
       <Form.Item></Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit">
