@@ -1,16 +1,43 @@
 .search-table-header {
-  margin-bottom: 10px;
+  // margin-bottom: 10px;
+  // display: flex;
+  // justify-content: space-between;
+  // position: fixed;
+  // top: 52px;
+  // right: 0;
+  // left: 0;
+
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 43px;
+  padding: 0 1.5em;
+  transition: all 0.2s ease-out;
+  background-color: #f0f2f5;
+
+  // sticky project panel
+  position: fixed;
+  top: 55px;
+  right: 0;
+  left: 200px;
+  z-index: 21;
+
   &__paginator {
     margin-left: auto !important;
   }
 }
 
+.search-table {
+  margin-top: 43px;
+}
+
 .column-header {
   display: flex;
+
   & span {
     white-space: nowrap;
   }
+
   &__options {
     min-width: 50px;
     margin-left: auto !important;
