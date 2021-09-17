@@ -206,11 +206,6 @@ const SearchContainer: React.FC = () => {
     },
   };
 
-  console.log(
-    'pagination.totalNumberOfResults',
-    pagination.totalNumberOfResults
-  );
-
   return (
     <TableHeightWrapper
       wrapperHeightRef={wrapperHeightRef}
