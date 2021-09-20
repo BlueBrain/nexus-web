@@ -172,7 +172,7 @@ function renderColumnTitle(
           trigger="click"
           placement="bottom"
           title={filterMenu(field)}
-          overlayInnerStyle={{ width: '310px', marginLeft: '-215px' }}
+          overlayInnerStyle={{ width: '310px', marginLeft: '-220px' }}
           destroyTooltipOnHide={true}
         >
           <div className="column-header__options">
