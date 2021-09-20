@@ -392,9 +392,7 @@ function useGlobalSearchData(
             />
             <Divider />
             <FilterOptions
-              filter={filterState.filter(
-                filter => extractFieldName(filter.filterTerm) === field.name
-              )}
+              filter={filterState}
               query={query}
               nexusClient={nexus}
               field={field}
