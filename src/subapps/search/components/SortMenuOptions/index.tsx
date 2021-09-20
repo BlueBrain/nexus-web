@@ -25,9 +25,10 @@ const SortMenuOptions: React.FC<{
         icon={<SortAscendingOutlined />}
         size="small"
         onClick={() => onSortField(SortDirection.ASCENDING)}
+        style={{ fontSize: '12px' }}
       >
         Sort Ascending
-      </Button>
+      </Button>{' '}
       <Button
         type={
           sortField?.direction === SortDirection.DESCENDING
@@ -38,6 +39,7 @@ const SortMenuOptions: React.FC<{
         icon={<SortDescendingOutlined />}
         size="small"
         onClick={() => onSortField(SortDirection.DESCENDING)}
+        style={{ fontSize: '12px' }}
       >
         Sort Descending
       </Button>
