@@ -3,7 +3,7 @@ import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import ReactPlayer from 'react-player';
 import * as moment from 'moment';
-import { Collapse, Modal, Button, List, Avatar } from 'antd';
+import { Collapse, Modal, Button, List } from 'antd';
 
 import '../styles/video-plugin.less';
 
@@ -80,23 +80,17 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
             renderItem={(item: any) => (
               <List.Item
                 extra={
-                  <div>
-                    <p>{moment.duration(item.duration).humanize()}</p>
-                    <p>{moment(item.uploadDate).format('DD/MM/YYYY')}</p>
-                  </div>
+                  item.duration &&
+                  item.uploadDate && (
+                    <div>
+                      <p>{moment.duration(item.duration).humanize()}</p>
+                      <p>{moment(item.uploadDate).format('DD/MM/YYYY')}</p>
+                    </div>
+                  )
                 }
               >
                 <List.Item.Meta
-                  avatar={
-                    <Avatar
-                      style={{
-                        width: '100%',
-                      }}
-                      src={item.thumbnailUrl[0]}
-                      shape="square"
-                      size={100}
-                    />
-                  }
+                  avatar={<ReactPlayer url={item.embedUrl} light={true} />}
                   title={
                     <Button
                       type="link"
@@ -104,10 +98,14 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
                         handleSelectedVideo(item);
                       }}
                     >
-                      {item.name}
+                      {item.name ? item.name : 'Video Name'}
                     </Button>
                   }
-                  description={item.description}
+                  description={
+                    item.description
+                      ? item.description
+                      : 'Description of video when information available'
+                  }
                 />
               </List.Item>
             )}
