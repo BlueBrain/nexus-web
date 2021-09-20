@@ -60,7 +60,9 @@ const FilterOptions: React.FC<{
     }[]
   >([]);
 
-  const [filterType, setFilterType] = React.useState(fieldFilter?.filterType);
+  const [filterType, setFilterType] = React.useState(
+    fieldFilter?.filterType || field.array ? 'anyof' : 'allof'
+  );
 
   const [form] = Form.useForm();
 
@@ -160,8 +162,6 @@ const FilterOptions: React.FC<{
       >
         <Select
           dropdownStyle={{ zIndex: 1100 }}
-          defaultValue={field.array ? 'anyof' : 'allof'}
-          defaultActiveFirstOption
           value={filterType}
           onChange={v => setFilterType(v)}
         >
