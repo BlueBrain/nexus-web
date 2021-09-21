@@ -168,10 +168,11 @@ function renderColumnTitle(
       <div className="column-header">
         <span>{`${field.label}`}</span>
         <Tooltip
+          autoAdjustOverflow
           trigger="click"
-          placement="bottomLeft"
+          placement="bottom"
           title={filterMenu(field)}
-          overlayInnerStyle={{ width: '450px' }}
+          overlayInnerStyle={{ width: '310px', marginLeft: '-220px' }}
           destroyTooltipOnHide={true}
         >
           <div className="column-header__options">
