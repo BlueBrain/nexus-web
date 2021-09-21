@@ -55,7 +55,8 @@ const FilterOptions: React.FC<{
   const [form] = Form.useForm();
 
   const filterKeyWord = createKeyWord(field);
-
+  console.log('filterKeyWord');
+  console.log(filterKeyWord);
   React.useEffect(() => {
     !filter && form.resetFields();
   });
@@ -65,8 +66,18 @@ const FilterOptions: React.FC<{
 
     const filterSuggestions = body
       .aggregation('terms', filterKeyWord, 'suggestions')
+      .aggregation('missing', filterKeyWord, 'missing.' + filterKeyWord)
       .build();
+
+    console.log('filterSuggestions');
+    console.log(filterSuggestions);
+
     nexusClient.Search.query(filterSuggestions).then((filterResult: any) => {
+      filterResult.aggregations['suggestions'].buckets.push({
+        key: 'Missing',
+        doc_count:
+          filterResult.aggregations['missing.' + filterKeyWord].doc_count,
+      });
       setSuggestions(
         filterResult.aggregations['suggestions'].buckets.map(
           (suggest: any) => ({
