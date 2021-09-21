@@ -70,6 +70,7 @@ const DraggableTablesContainer: React.FC<{
                 tableResourceId={table['@id']}
                 key={`data-table-${table['@id']}}`}
                 onDeprecate={onDeprecate}
+                options={{ disableDelete: false }}
               />
             </div>
           </DraggableTable>

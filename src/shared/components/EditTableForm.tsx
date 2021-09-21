@@ -4,7 +4,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Form, Input, Button, Spin, Checkbox, Row, Col, Select } from 'antd';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import { IInstance } from 'react-codemirror2/index';
-import { Resource, DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
+import { View } from '@bbp/nexus-sdk';
 import { useQuery } from 'react-query';
 import ColumnConfig from './ColumnConfig';
 import {
@@ -13,6 +13,12 @@ import {
   querySparql,
 } from '../hooks/useAccessDataForTable';
 import './EditTableForm.less';
+import {
+  TableResource,
+  TableColumn,
+  UnsavedTableResource,
+} from '../containers/DataTableContainer';
+import { FUSION_TABLE_CONTEXT } from '../../subapps/projects/fusionContext';
 
 const DEFAULT_SPARQL_QUERY =
   'prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/> SELECT DISTINCT ?self ?s WHERE { ?s nxv:self ?self } LIMIT 20';
@@ -27,36 +33,22 @@ export const isEmptyInput = (value: string) => {
   return value.split(' ').join('') === '';
 };
 
-export enum ViewOptions {
-  SPARQL_VIEW = 'graph',
-  ES_VIEW = 'documents',
-}
-
-export type TableColumn = {
-  '@type': string;
-  name: string;
-  format: string;
-  enableSearch: boolean;
-  enableSort: boolean;
-  enableFilter: boolean;
-};
-
-export type TableComponent = Resource<{
-  '@type': string;
-  name: string;
-  description: string;
-  tableOf?: {
-    '@id': string;
-  };
-  view: string;
-  enableSearch: boolean;
-  enableInteractiveRows: boolean;
-  enableDownload: boolean;
-  enableSave: boolean;
-  resultsPerPage: number;
-  dataQuery: string;
-  configuration: TableColumn | TableColumn[];
-}>;
+export type Projection =
+  | {
+      '@id':
+        | string
+        | (string & ['SparqlView', 'View'])
+        | (string & ['AggregatedElasticSearchView', 'View'])
+        | (string & ['AggregatedSparqlView', 'View'])
+        | undefined;
+      '@type':
+        | string
+        | string[]
+        | ((string | string[] | undefined) & ['ElasticSearchView', 'View'])
+        | ((string | string[] | undefined) & ['CompositeView', 'Beta', 'View'])
+        | undefined;
+    }
+  | undefined;
 
 const PAGES_OPTIONS = [5, 10, 20, 50, 100];
 
@@ -64,59 +56,164 @@ const { Item } = Form;
 const { Option } = Select;
 
 const EditTableForm: React.FC<{
-  onSave: (data: TableComponent) => void;
+  onSave: (data: TableResource | UnsavedTableResource) => void;
   onClose: () => void;
-  table: TableComponent;
+  table?: TableResource;
   busy: boolean;
   orgLabel: string;
   projectLabel: string;
-}> = ({ onSave, onClose, table, orgLabel, projectLabel, busy }) => {
-  const [name, setName] = React.useState<string>(table.name);
+  formName?: string;
+  options?: { disableDelete: boolean };
+}> = ({ onSave, onClose, table, orgLabel, projectLabel, busy, formName }) => {
+  formName = formName ? formName : 'Edit';
+  const [name, setName] = React.useState<string | undefined>(table?.name);
   const [nameError, setNameError] = React.useState<boolean>(false);
   const [description, setDescription] = React.useState<string>(
-    table.description
+    table?.description || ''
   );
-  const [view, setView] = React.useState<string>(table.view);
+  const [viewName, setViewName] = React.useState<string | undefined>(
+    table?.view
+  );
+  const [view, setView] = React.useState<View>();
+
   const [preview, setPreview] = React.useState<boolean>(false);
   const [enableSearch, setEnableSearch] = React.useState<boolean>(
-    table.enableSearch
+    table?.enableSearch || true
   );
   const [enableInteractiveRows, setEnableInteractiveRows] = React.useState<
     boolean
-  >(table.enableInteractiveRows);
+  >(table?.enableInteractiveRows || true);
   const [enableDownload, setEnableDownload] = React.useState<boolean>(
-    table.enableDownload
+    table?.enableDownload || true
   );
-  const [enableSave, setEnableSave] = React.useState<boolean>(table.enableSave);
+  const [enableSave, setEnableSave] = React.useState<boolean>(
+    table?.enableSave || true
+  );
   const [resultsPerPage, setResultsPerPage] = React.useState<number>(
-    table.resultsPerPage
+    table?.resultsPerPage || PAGES_OPTIONS[0]
   );
-  const [dataQuery, setDataQuery] = React.useState<string>(table.dataQuery);
+  const [dataQuery, setDataQuery] = React.useState<string>(
+    table?.dataQuery || ''
+  );
 
   // Copy for codemirror text editor.
   const [queryCopy, setQueryCopy] = React.useState<string>(dataQuery);
 
   const [configuration, setConfiguration] = React.useState<
     TableColumn | TableColumn[]
-  >(table.configuration);
+  >(table?.configuration || []);
 
   const nexus = useNexusContext();
 
-  const updateColumConfig = useQuery(
-    [view, dataQuery],
+  const [projectionId, setProjectionId] = React.useState<string>();
+
+  /* Available views for project */
+  const [availableViews, setAvailableViews] = React.useState<View[]>();
+
+  const initializeAvailableViews = async () =>
+    setAvailableViews((await nexus.View.list(orgLabel, projectLabel))._results);
+
+  // set the available views on load and set view to that specified on TableResource
+  React.useEffect(() => {
+    (async () => {
+      await initializeAvailableViews();
+      table && (await asyncCallToSetView(table.view));
+
+      if (table?.projection) {
+        if (table.projection['@id']) {
+          setProjectionId(table.projection['@id']);
+        } else {
+          /* 
+          when no projection id it means search all of the
+          specified projection type
+          */
+          setProjectionId(`All_${table.projection['@type']}`);
+        }
+      } else {
+        setProjectionId(undefined);
+      }
+    })();
+  }, []);
+
+  const asyncCallToSetView = async (viewId: string) => {
+    const viewDetails = await getView(viewId);
+    setView(viewDetails);
+    setProjectionId(undefined);
+  };
+
+  const getView = async (viewId: string) =>
+    await nexus.View.get(orgLabel, projectLabel, encodeURIComponent(viewId));
+
+  /* when the selected view details changes, set the default query appropriately */
+  React.useEffect(() => {
+    const viewTypes = [view?.['@type']].flat();
+    const projection =
+      view &&
+      view.projections &&
+      (view.projections as {
+        '@id': string;
+        '@type': string;
+      }[])
+        .map(o => ({ '@id': o['@id'], '@type': o['@type'] }))
+        .find(o => o['@id'] === projectionId);
+
+    if (
+      viewTypes.includes('SparqlView') ||
+      viewTypes.includes('AggregateSparqlView') ||
+      (projection && projection['@type'].includes('SparqlProjection')) ||
+      projectionId === 'All_SparqlProjection'
+    ) {
+      setDataQuery(DEFAULT_SPARQL_QUERY);
+      setQueryCopy(DEFAULT_SPARQL_QUERY);
+    } else if (
+      viewTypes.includes('ElasticSearchView') ||
+      viewTypes.includes('AggregateElasticSearchView') ||
+      (projection && projection['@type'].includes('ElasticSearchProjection')) ||
+      projectionId === 'All_ElasticSearchProjection'
+    ) {
+      setDataQuery(DEFAULT_ES_QUERY);
+      setQueryCopy(DEFAULT_ES_QUERY);
+    }
+  }, [view, projectionId]);
+
+  const queryColumnConfig = useQuery(
+    [viewName, dataQuery, projectionId],
     async () => {
+      if (!viewName || !dataQuery) return [] as TableColumn[];
+
       const viewResource = await nexus.View.get(
         orgLabel,
         projectLabel,
-        encodeURIComponent(view)
+        encodeURIComponent(viewName)
       );
-      if (viewResource['@type']?.includes('ElasticSearchView')) {
+
+      const projection =
+        view &&
+        view.projections &&
+        (view.projections as {
+          '@id': string;
+          '@type': string;
+        }[])
+          .map(o => ({ '@id': o['@id'], '@type': o['@type'] }))
+          .find(o => o['@id'] === projectionId);
+      if (
+        view &&
+        (view['@type']?.includes('ElasticSearchView') ||
+          view['@type']?.includes('AggregateElasticSearchView') ||
+          (projection &&
+            projection['@type'].includes('ElasticSearchProjection')) ||
+          projectionId === 'All_ElasticSearchProjection')
+      ) {
         const result = await queryES(
           JSON.parse(dataQuery),
           nexus,
           orgLabel,
           projectLabel,
-          viewResource['@id']
+          viewResource['@id'],
+          !!projectionId,
+          projectionId === 'All_ElasticSearchProjection'
+            ? undefined
+            : projectionId
         );
 
         const { items } = parseESResults(result);
@@ -132,21 +229,35 @@ const EditTableForm: React.FC<{
           enableSort: false,
           enableFilter: false,
         }));
-      }
-      const result = await querySparql(nexus, dataQuery, viewResource);
+      } else if (
+        view &&
+        (view['@type']?.includes('SparqlView') ||
+          view['@type']?.includes('AggregateSparqlView') ||
+          (projection && projection['@type'].includes('SparqlProjection')))
+      ) {
+        const result = await querySparql(
+          nexus,
+          dataQuery,
+          viewResource,
+          !!projectionId,
+          projectionId === 'All_SparqlProjection' ? undefined : projectionId
+        );
 
-      return result.headerProperties
-        .sort((a, b) => {
-          return a.title > b.title ? 1 : -1;
-        })
-        .map(x => ({
-          '@type': 'text',
-          name: x.dataIndex,
-          format: '',
-          enableSearch: false,
-          enableSort: false,
-          enableFilter: false,
-        }));
+        return result.headerProperties
+          .sort((a, b) => {
+            return a.title > b.title ? 1 : -1;
+          })
+          .map(x => ({
+            '@type': 'text',
+            name: x.dataIndex,
+            format: '',
+            enableSearch: false,
+            enableSort: false,
+            enableFilter: false,
+          }));
+      } else {
+        return [] as TableColumn[];
+      }
     },
     {
       onSuccess: data => {
@@ -169,14 +280,40 @@ const EditTableForm: React.FC<{
   };
 
   const onClickSave = () => {
-    if (isEmptyInput(name)) {
+    if (!name || isEmptyInput(name)) {
       setNameError(true);
-    } else {
-      const data = {
+      return;
+    }
+    if (!viewName) {
+      //setViewError(true);
+      return;
+    }
+
+    let projection =
+      view &&
+      view.projections &&
+      (view.projections as {
+        '@id'?: string;
+        '@type': string;
+      }[])
+        .map(o => ({ '@id': o['@id'], '@type': o['@type'] }))
+        .find(o => o['@id'] === projectionId);
+
+    // No @id when we search all projections of a particular type
+    if (projectionId === 'All_ElasticSearchProjection') {
+      projection = { '@type': 'ElasticSearchProjection' };
+    } else if (projectionId === 'All_SparqlProjection') {
+      projection = { '@type': 'ElasticSearchProjection' };
+    }
+
+    let data: any;
+    if (table && viewName) {
+      data = {
         ...table,
         name,
         description,
-        view,
+        view: viewName,
+        projection,
         enableSearch,
         enableInteractiveRows,
         enableDownload,
@@ -185,9 +322,24 @@ const EditTableForm: React.FC<{
         dataQuery,
         configuration,
       };
-
-      onSave(data);
+    } else {
+      data = {
+        name,
+        description,
+        '@type': 'FusionTable',
+        '@context': FUSION_TABLE_CONTEXT['@id'],
+        view: viewName,
+        projection,
+        enableSearch,
+        enableInteractiveRows,
+        enableDownload,
+        enableSave,
+        resultsPerPage,
+        dataQuery,
+        configuration,
+      };
     }
+    onSave(data);
   };
 
   const handleQueryChange = (editor: IInstance, data: any, value: string) => {
@@ -249,21 +401,12 @@ const EditTableForm: React.FC<{
         <ColumnConfig column={configuration} onChange={updateColumnConfig} />
       );
     },
-    [configuration, updateColumConfig, updateColumnConfigArray]
+    [configuration, queryColumnConfig, updateColumnConfigArray]
   );
-
-  const viewLabel = (view: string) => {
-    if (view !== ViewOptions.ES_VIEW && view !== ViewOptions.SPARQL_VIEW) {
-      return view === DEFAULT_ELASTIC_SEARCH_VIEW_ID
-        ? ViewOptions.ES_VIEW
-        : ViewOptions.SPARQL_VIEW;
-    }
-    return view;
-  };
 
   return (
     <Form className="edit-table-form">
-      <h2 className="edit-table-form__title">Edit Table</h2>
+      <h2 className="edit-table-form__title">{formName}</h2>
       <Spin spinning={busy} tip="Please wait...">
         <Row>
           <Col xs={6} sm={6} md={6}>
@@ -272,13 +415,9 @@ const EditTableForm: React.FC<{
           <Col xs={12} sm={12} md={12}>
             <Item
               validateStatus={nameError ? 'error' : ''}
-              help={nameError && 'Please enter a table name'}
+              help={nameError && 'Please enter a name'}
             >
-              <Input
-                value={name}
-                onChange={onChangeName}
-                placeholder="Table name"
-              />
+              <Input value={name} onChange={onChangeName} placeholder="Name" />
             </Item>
           </Col>
         </Row>
@@ -290,7 +429,7 @@ const EditTableForm: React.FC<{
             <Input.TextArea
               value={description}
               onChange={onChangeDescription}
-              placeholder="Table description"
+              placeholder="Description"
             />
           </Col>
         </Row>
@@ -300,27 +439,69 @@ const EditTableForm: React.FC<{
           </Col>
           <Col xs={12} sm={12} md={12}>
             <Select
-              value={viewLabel(view)}
-              style={{ width: 220 }}
+              value={viewName}
+              style={{ width: 650 }}
               onChange={value => {
-                setView(value);
-                if (value === ViewOptions.ES_VIEW) {
-                  setDataQuery(DEFAULT_ES_QUERY);
-                  setQueryCopy(DEFAULT_ES_QUERY);
-                } else {
-                  setDataQuery(DEFAULT_SPARQL_QUERY);
-                  setQueryCopy(DEFAULT_SPARQL_QUERY);
-                }
+                value && setViewName(value);
+                asyncCallToSetView(value);
               }}
             >
-              {Object.values(ViewOptions).map(view => (
-                <Option key={view} value={view}>
-                  {viewLabel(view)}
-                </Option>
-              ))}
+              {availableViews &&
+                availableViews.map(view => (
+                  <Option key={view['@id']} value={view['@id']}>
+                    {view['@id']}
+                  </Option>
+                ))}
             </Select>
           </Col>
         </Row>
+        {view && view.projections && (
+          <Row>
+            <Col xs={6} sm={6} md={6}>
+              <h3>Projection</h3>
+            </Col>
+            <Col>
+              <Select
+                style={{ width: 650 }}
+                value={projectionId}
+                onChange={value => {
+                  setProjectionId(value);
+                }}
+              >
+                {(view.projections as {
+                  '@id': string;
+                  '@type': string;
+                }[]).some(o => o['@type'] === 'ElasticSearchProjection') && (
+                  <Option
+                    key="All_ElasticSearchProjection"
+                    value="All_ElasticSearchProjection"
+                  >
+                    All ElasticSearch
+                  </Option>
+                )}
+                {(view.projections as {
+                  '@id': string;
+                  '@type': string;
+                }[]).some(o => o['@type'] === 'SparqlProjection') && (
+                  <Option
+                    key="All_SparqlProjection"
+                    value="All_SparqlProjection"
+                  >
+                    All Sparql
+                  </Option>
+                )}
+                {(view.projections as {
+                  '@id': string;
+                  '@type': string;
+                }[]).map(o => (
+                  <Option key={o['@id']} value={o['@id']}>
+                    {o['@id']}
+                  </Option>
+                ))}
+              </Select>
+            </Col>
+          </Row>
+        )}
         <div className="edit-table-form__actions">
           <h3 className="edit-table-form__actions-title">Actions</h3>
           <div className="edit-table-form__action-items">
@@ -382,7 +563,7 @@ const EditTableForm: React.FC<{
               mode: { name: 'javascript', json: true },
               readOnly: false,
               theme: 'base16-light',
-              placeholder: 'Enter a valid SPARQL query',
+              placeholder: '',
               lineNumbers: true,
               viewportMargin: Infinity,
             }}
@@ -392,7 +573,7 @@ const EditTableForm: React.FC<{
           />
         </div>
         <div>
-          {updateColumConfig.isLoading ? (
+          {queryColumnConfig.isLoading ? (
             <Spin></Spin>
           ) : (
             <Button onClick={onClickPreview} type="primary">
