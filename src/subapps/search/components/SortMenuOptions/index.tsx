@@ -8,14 +8,17 @@ import * as React from 'react';
 import { SortDirection } from '../../../hooks/useSearchQuery';
 import { ESSortField } from '../../hooks/useGlobalSearch';
 
+import './SortMenuOptions.less';
+
 const SortMenuOptions: React.FC<{
   sortField?: ESSortField;
   onSortField: (sortOption: SortDirection) => void;
   onRemoveSort: (sortOption: ESSortField) => void;
 }> = ({ sortField, onSortField, onRemoveSort }) => {
   return (
-    <div>
+    <div className="sort-menu-options">
       <Button
+        className="sort-menu-options__sort-button"
         type={
           sortField?.direction === SortDirection.ASCENDING
             ? 'primary'
@@ -25,11 +28,11 @@ const SortMenuOptions: React.FC<{
         icon={<SortAscendingOutlined />}
         size="small"
         onClick={() => onSortField(SortDirection.ASCENDING)}
-        style={{ fontSize: '12px' }}
       >
         Sort Ascending
       </Button>{' '}
       <Button
+        className="sort-menu-options__sort-button"
         type={
           sortField?.direction === SortDirection.DESCENDING
             ? 'primary'
@@ -39,7 +42,6 @@ const SortMenuOptions: React.FC<{
         icon={<SortDescendingOutlined />}
         size="small"
         onClick={() => onSortField(SortDirection.DESCENDING)}
-        style={{ fontSize: '12px' }}
       >
         Sort Descending
       </Button>
