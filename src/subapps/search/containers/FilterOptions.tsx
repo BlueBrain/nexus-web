@@ -66,7 +66,7 @@ const FilterOptions: React.FC<{
 
     const filterSuggestions = body
       .aggregation('terms', filterKeyWord, 'suggestions')
-      .aggregation('missing', filterKeyWord, 'missing.' + filterKeyWord)
+      .aggregation('missing', filterKeyWord, 'missing')
       .build();
 
     console.log('filterSuggestions');
@@ -75,8 +75,7 @@ const FilterOptions: React.FC<{
     nexusClient.Search.query(filterSuggestions).then((filterResult: any) => {
       filterResult.aggregations['suggestions'].buckets.push({
         key: 'Missing',
-        doc_count:
-          filterResult.aggregations['missing.' + filterKeyWord].doc_count,
+        doc_count: filterResult.aggregations['missing'].doc_count,
       });
       setSuggestions(
         filterResult.aggregations['suggestions'].buckets.map(
