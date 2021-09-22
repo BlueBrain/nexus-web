@@ -310,17 +310,18 @@ const DataTableContainer: React.FC<DataTableProps> = ({
         }}
         onFocus={() => setSearchboxFocused(true)}
         onBlur={() => setSearchboxFocused(false)}
+        className="table-options__search"
         style={{
-          width: searchboxValue === '' && !searchboxFocused ? '50%' : '100%',
+          width: searchboxValue === '' && !searchboxFocused ? '150px' : '330px',
           transition: 'width 0.5s',
-          maxWidth: '320px',
+          maxWidth: '100%',
         }}
       ></Input.Search>
     );
     return (
       <div>
         <Row gutter={[16, 16]} align="middle">
-          <Col span={12}>
+          <Col span={16}>
             <Title
               className="table-title"
               level={3}
@@ -333,10 +334,10 @@ const DataTableContainer: React.FC<DataTableProps> = ({
               {tableResource && tableResource.name ? tableResource.name : null}
             </Title>
           </Col>
-          <Col span={10} className="table-search">
+          <Col span={8} className="table-options">
             {search}
+            {options}
           </Col>
-          <Col span={1}>{options}</Col>
         </Row>
       </div>
     );
