@@ -157,10 +157,11 @@ export const queryES = async (
   const PAGE_START = 0;
 
   /* removed as causing issues */
-  // body.filter('term', '_deprecated', false);
-  // .size(PAGE_SIZE)
-  // .from(PAGE_START)
-  // .rawOption('track_total_hits', TOTAL_HITS_TRACKING);
+  body
+    .filter('term', '_deprecated', false)
+    .size(PAGE_SIZE)
+    .from(PAGE_START)
+    .rawOption('track_total_hits', TOTAL_HITS_TRACKING);
 
   // Sorting
   if (Array.isArray(sort)) {
@@ -205,7 +206,7 @@ const accessData = async (
   nexus: NexusClient
 ) => {
   const dataQuery: string = tableResource.dataQuery;
-  const columnConfig = tableResource.configuration as TableColumn[];
+  const columnConfig: TableColumn[] = [tableResource.configuration].flat();
   if (
     view['@type']?.includes('ElasticSearchView') ||
     view['@type']?.includes('AggregateElasticSearchView') ||
@@ -227,13 +228,15 @@ const accessData = async (
     const { items, total } = parseESResults(result);
 
     const fields =
-      columnConfig.map((x, index) => ({
-        title: x.name,
-        dataIndex: x.name,
-        key: x.name,
-        displayIndex: index,
-        sortable: x.enableSort,
-      })) || DEFAULT_FIELDS;
+      columnConfig.length > 0
+        ? columnConfig.map((x, index) => ({
+            title: x.name,
+            dataIndex: x.name,
+            key: x.name,
+            displayIndex: index,
+            sortable: x.enableSort,
+          }))
+        : DEFAULT_FIELDS;
 
     const headerProperties = fields
       .map(field => {
@@ -359,9 +362,7 @@ export const useAccessDataForTable = (
         const table = data.tableResource as TableResource;
         if (table) {
           const columnConfig = table.configuration
-            ? Array.isArray(table.configuration)
-              ? (table.configuration as TableColumn[])
-              : ([table.configuration] as TableColumn[])
+            ? ([table.configuration].flat() as TableColumn[])
             : [];
 
           const searchable = columnConfig
