@@ -308,6 +308,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
           width={700}
         >
           <Form layout="vertical">
+            TODO: only show when a dashboard with the old structure exists
             {currentDashboards.length > 0 ? (
               <Form.Item label={'Select View for the Dashboards(s)'}>
                 <SelectViews
