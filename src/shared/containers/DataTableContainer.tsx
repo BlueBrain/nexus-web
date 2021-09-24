@@ -82,7 +82,13 @@ type DataTableProps = {
   tableResourceId: string;
   onDeprecate?: () => void;
   onSave?: (data: TableResource | UnsavedTableResource) => void;
-  options: { disableDelete: boolean };
+  options: {
+    disableDelete: boolean;
+    disableAddFromCart: boolean;
+    disableEdit: boolean;
+  };
+  showEdit?: boolean;
+  toggledEdit?: (show: boolean) => void;
 };
 
 const { Title } = Typography;
@@ -94,8 +100,21 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   onDeprecate,
   onSave,
   options,
+  showEdit,
+  toggledEdit,
 }) => {
-  const [showEditForm, setShowEditForm] = React.useState<boolean>(false);
+  const [showEditForm, setShowEditForm] = React.useState<boolean>(
+    showEdit || false
+  );
+
+  React.useEffect(() => {
+    setShowEditForm(showEdit || false);
+  }, [showEdit]);
+
+  React.useEffect(() => {
+    toggledEdit && toggledEdit(showEditForm);
+  }, [showEditForm]);
+
   const [searchboxValue, setSearchboxValue] = React.useState<string>('');
   const [searchboxFocused, setSearchboxFocused] = React.useState<boolean>(
     false
@@ -215,37 +234,45 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     changeTableResource.data
   );
 
-  const renderTitle = ({ disableDelete }: { disableDelete: boolean }) => {
+  const renderTitle = ({
+    disableDelete,
+    disableAddFromCart,
+    disableEdit,
+  }: {
+    disableDelete: boolean;
+    disableAddFromCart: boolean;
+    disableEdit: boolean;
+  }) => {
     const tableResource = tableData.tableResult.data
       ?.tableResource as TableResource;
-    const content = (
+    const tableOptionsContent = (
       <div className="wrapper">
-        <div>
-          <Button
-            block
-            type="default"
-            icon={<EditOutlined />}
-            onClick={() => {
-              setShowEditForm(true);
-            }}
-          >
-            Edit
-          </Button>
-        </div>
-        {tableResource ? (
-          tableResource.enableSave ? (
-            <div>
-              <Button
-                block
-                icon={<ShoppingCartOutlined />}
-                type="default"
-                onClick={tableData.addFromDataCart}
-              >
-                Add From Cart
-              </Button>
-            </div>
-          ) : null
-        ) : null}
+        {!disableEdit && (
+          <div>
+            <Button
+              block
+              type="default"
+              icon={<EditOutlined />}
+              onClick={() => {
+                setShowEditForm(true);
+              }}
+            >
+              Edit
+            </Button>
+          </div>
+        )}
+        {tableResource && tableResource.enableSave && !disableAddFromCart && (
+          <div>
+            <Button
+              block
+              icon={<ShoppingCartOutlined />}
+              type="default"
+              onClick={tableData.addFromDataCart}
+            >
+              Add From Cart
+            </Button>
+          </div>
+        )}
         {tableResource ? (
           tableResource.enableDownload ? (
             <div>
@@ -293,7 +320,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
       <Popover
         style={{ background: 'none' }}
         placement="rightTop"
-        content={content}
+        content={tableOptionsContent}
         trigger="click"
       >
         <Button shape="round" type="default" icon={<SmallDashOutlined />} />
@@ -310,7 +337,6 @@ const DataTableContainer: React.FC<DataTableProps> = ({
         }}
         onFocus={() => setSearchboxFocused(true)}
         onBlur={() => setSearchboxFocused(false)}
-        className="table-options__search"
         style={{
           width: searchboxValue === '' && !searchboxFocused ? '150px' : '330px',
           transition: 'width 0.5s',
@@ -335,8 +361,15 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             </Title>
           </Col>
           <Col span={8} className="table-options">
-            {search}
-            {options}
+            <div className="table-options__inner">
+              {tableResource?.enableSearch && search}
+              {(!disableEdit ||
+                !disableAddFromCart ||
+                tableResource.enableDownload ||
+                tableResource.enableSave ||
+                !disableDelete) &&
+                options}
+            </div>
           </Col>
         </Row>
       </div>

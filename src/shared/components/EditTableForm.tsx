@@ -78,22 +78,23 @@ const EditTableForm: React.FC<{
 
   const [preview, setPreview] = React.useState<boolean>(false);
   const [enableSearch, setEnableSearch] = React.useState<boolean>(
-    table?.enableSearch || true
+    table ? table.enableSearch : true
   );
+
   const [enableInteractiveRows, setEnableInteractiveRows] = React.useState<
     boolean
-  >(table?.enableInteractiveRows || true);
+  >(table ? table.enableInteractiveRows : true);
   const [enableDownload, setEnableDownload] = React.useState<boolean>(
-    table?.enableDownload || true
+    table ? table.enableDownload : true
   );
   const [enableSave, setEnableSave] = React.useState<boolean>(
-    table?.enableSave || true
+    table ? table.enableSave : true
   );
   const [resultsPerPage, setResultsPerPage] = React.useState<number>(
-    table?.resultsPerPage || PAGES_OPTIONS[0]
+    table ? table.resultsPerPage : PAGES_OPTIONS[0]
   );
   const [dataQuery, setDataQuery] = React.useState<string>(
-    table?.dataQuery || ''
+    table ? table.dataQuery : ''
   );
 
   // Copy for codemirror text editor.

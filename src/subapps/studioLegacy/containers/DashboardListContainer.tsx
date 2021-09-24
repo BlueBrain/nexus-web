@@ -69,6 +69,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   dashboards,
   refreshList,
 }) => {
+  const [showDataTableEdit, setShowDataTableEdit] = React.useState(false);
   const notification = useNotification();
   const [showCreateModal, setShowCreateModal] = React.useState(false);
   const studioContext = React.useContext(StudioContext);
@@ -131,14 +132,14 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         // assume already exists
       }
       // create table
-      console.log('about to create table');
+
       const resource = (await nexus.Resource.create(
         orgLabel,
         projectLabel,
         table
       )) as TableResource;
       const tableId = resource['@id'];
-      console.log('created table');
+
       // create dashboard, linking it to the table
       const dashboard = await nexus.Resource.create(orgLabel, projectLabel, {
         '@context': STUDIO_CONTEXT['@id'],
@@ -300,14 +301,14 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         type="link"
         size="small"
         onClick={e => {
-          handleElementClick(id);
-          e.stopPropagation();
+          if ('dataTable' in dashboardResources[Number(id)]) {
+            setShowDataTableEdit(true);
+          } else {
+            handleElementClick(id);
+            e.stopPropagation();
+          }
         }}
         key={id}
-        style={{
-          display:
-            'dataTable' in dashboardResources[Number(id)] ? 'none' : undefined,
-        }}
       >
         Edit
       </Button>
@@ -386,20 +387,9 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         position="left"
         activeKey={`${selectedDashboardResourcesIndex}`}
         tabAction={resourcesWritePermissionsWrapper(tabAction, permissionsPath)}
-        editButton={
-          editButtonWrapper
-          // (id: string) => {
-          // const dashboardResource = dashboardResources[Number(id)];
-          // console.log('editButton', dashboardResource);
-          // if (!('dataTable' in dashboardResource)) {
-          //   console.log('return editButton wrapper');
-          //   return editButtonWrapper;
-          // }
-          // return undefined; }
-        } // TODO: only show edit button for old style dashboards
+        editButton={editButtonWrapper}
         OnEdit={OnEdit}
       >
-        {console.log(dashboardResources[selectedDashboardResourcesIndex])}
         {!!dashboardResources.length &&
           !!dashboardResources[selectedDashboardResourcesIndex] &&
           // TODO: if old format show DashboardResultsContainer otherwise show DataTableContainer
@@ -416,7 +406,13 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
               }
               onSave={updateDashboard}
               key={`data-table-${dashboardResources[selectedDashboardResourcesIndex]['dataTable']['@id']}}`}
-              options={{ disableDelete: true }}
+              options={{
+                disableDelete: true,
+                disableAddFromCart: true,
+                disableEdit: true,
+              }}
+              showEdit={showDataTableEdit}
+              toggledEdit={show => setShowDataTableEdit(show)}
             />
           ) : (
             <DashboardResultsContainer
