@@ -11,6 +11,7 @@ const LABEL_MAX_LENGTH = 25;
 const SearchBar: React.FC<{
   projectList: string[];
   query?: string;
+  lastVisited?: string;
   onSearch: (value: string) => void;
   onSubmit: (value: string, option: any) => void;
   onFocus: () => void;
@@ -18,6 +19,7 @@ const SearchBar: React.FC<{
   onBlur: () => void;
   inputOnPressEnter: () => void;
 }> = ({
+  lastVisited,
   query,
   projectList,
   onSearch,
@@ -42,7 +44,6 @@ const SearchBar: React.FC<{
 
   const handleSetFocused = (value: boolean) => () => {
     setFocused(value);
-
     if (value) {
       onFocus();
     } else {
@@ -50,12 +51,13 @@ const SearchBar: React.FC<{
     }
   };
 
-  const handleChange = (value: string) => {
-    setValue(value);
+  const handleChange = (currentValue: string) => {
+    setValue(currentValue);
   };
 
-  const handleSelect = (value: string, option: any) => {
-    onSubmit(value, option);
+  const handleSelect = (currentValue: string, option: any) => {
+    setValue(currentValue);
+    onSubmit(currentValue, option);
   };
 
   const handleSearch = (searchText: string) => {
@@ -71,21 +73,27 @@ const SearchBar: React.FC<{
     }
   };
 
-  const generateOptions = () => {
+  const optionsList = React.useMemo(() => {
     let options: {
       value: string;
       key: string;
       label: JSX.Element;
-    }[] = [];
+    }[] = [
+      {
+        value,
+        key: 'global-search',
+        label: globalSearchOption(value),
+      },
+    ];
 
     if (projectList.length) {
-      options = projectList.map((project: string) => {
+      const projectOptions = projectList.map((project: string) => {
         const [orgLabel, projectLabel] = project.split('/');
 
         return {
           key: project,
           label: (
-            <Hit orgLabel={orgLabel} projectLabel={projectLabel}>
+            <Hit key={project} orgLabel={orgLabel} projectLabel={projectLabel}>
               <span>
                 {project.length > LABEL_MAX_LENGTH
                   ? `${project.slice(0, LABEL_MAX_LENGTH)}...`
@@ -96,35 +104,28 @@ const SearchBar: React.FC<{
           value: `${orgLabel}/${projectLabel}`,
         };
       });
+      options = [...options, ...projectOptions];
     }
-    options = [
-      {
-        value,
-        key: 'global-search',
-        label: globalSearchOption(value),
-      },
-      ...options,
-    ];
-
     return options;
-  };
+  }, [value, projectList]);
 
   return (
     <AutoComplete
+      backfill
       defaultActiveFirstOption
       className="search-bar"
       onFocus={handleSetFocused(true)}
       onBlur={handleSetFocused(false)}
-      options={generateOptions()}
+      options={optionsList}
       onChange={handleChange}
       onSelect={handleSelect}
       onSearch={handleSearch}
       onKeyDown={handleKeyDown}
       dropdownClassName="search-bar__drop"
-      value={value}
       dropdownMatchSelectWidth={false}
     >
       <Input
+        value={value === lastVisited ? '' : value}
         allowClear
         onPressEnter={inputOnPressEnter}
         ref={inputRef}

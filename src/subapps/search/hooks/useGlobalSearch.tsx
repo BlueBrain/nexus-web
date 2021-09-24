@@ -81,6 +81,7 @@ function fieldVisibilityReducer(
         fields: action.payload,
       };
     case 'setAllVisible':
+      console.log(state.fields);
       const fieldsAllVisibile = state.fields.map(el => {
         return {
           key: el.key,
@@ -208,13 +209,17 @@ function rowRenderer(field: ConfigField) {
           </div>
         );
       }
-      const valueArray = value as string[];
-      const labels = valueArray
-        .map((item: string) => {
-          return labelOf(item);
-        })
-        .join(', ');
-      return <Tooltip title={labels}>{labels}</Tooltip>;
+      // Value may not be an array, due to bad data.
+      if (Array.isArray(value)) {
+        const valueArray = value as string[];
+        const labels = valueArray
+          .map((item: string) => {
+            return labelOf(item);
+          })
+          .join(', ');
+        return <Tooltip title={labels}>{labels}</Tooltip>;
+      }
+      return <Tooltip title={labelOf(value)}>{labelOf(value)}</Tooltip>;
     }
 
     // Single link
