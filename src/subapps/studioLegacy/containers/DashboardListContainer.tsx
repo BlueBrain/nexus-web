@@ -127,7 +127,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     try {
       if (!workspaceId) throw new Error();
       try {
-        createTableContext(orgLabel, projectLabel, nexus);
+        await createTableContext(orgLabel, projectLabel, nexus);
       } catch (ex) {
         // assume already exists
       }

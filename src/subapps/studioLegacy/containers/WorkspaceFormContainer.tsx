@@ -297,6 +297,22 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
     );
   }
 
+  const [hasOldDashboard, setHasOldDashboard] = React.useState<boolean>(false);
+  React.useEffect(() => {
+    Promise.all(
+      currentDashboards.map(d =>
+        nexus.Resource.get(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(d.dashboard)
+        )
+      )
+    ).then(results => {
+      const hasOldDashboard = !!results.find(d => !('dataTable' in d));
+      setHasOldDashboard(hasOldDashboard);
+    });
+  }, [currentDashboards]);
+
   return (
     <>
       {workspace ? (
@@ -308,8 +324,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
           width={700}
         >
           <Form layout="vertical">
-            TODO: only show when a dashboard with the old structure exists
-            {currentDashboards.length > 0 ? (
+            {hasOldDashboard && currentDashboards.length > 0 && (
               <Form.Item label={'Select View for the Dashboards(s)'}>
                 <SelectViews
                   views={views}
@@ -317,7 +332,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
                   selectedView={viewToAdd}
                 />
               </Form.Item>
-            ) : null}
+            )}
             <Form.Item label={'Add or Remove Dashboards'}>
               <Transfer
                 targetKeys={targetKeys}
