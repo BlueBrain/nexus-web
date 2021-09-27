@@ -12,8 +12,6 @@ Fixes #
 <!--- Include details of your testing environment, tests ran to see how -->
 <!--- your change affects other areas of the code, etc. -->
 
-## Screenshots (if appropriate):
-
 ## Types of changes
 
 <!--- What types of changes does your code introduce? Put an `x` in all the boxes that apply: -->
@@ -30,3 +28,4 @@ Fixes #
 - [ ] My change requires a change to the documentation.
 - [ ] I have updated the documentation accordingly.
 - [ ] I have added necessary unit and integration tests.
+- [ ] I have added screenshots (if applicable), in the comment section.
