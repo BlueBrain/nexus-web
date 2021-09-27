@@ -13,7 +13,7 @@ import ResourceListBoardContainer from '../../../shared/containers/ResourceListB
 import ProjectTools from '../components/Projects/ProjectTools';
 import { useAdminSubappContext } from '..';
 import useNotification from '../../../shared/hooks/useNotification';
-import ProjectWarning from '../components/Projects/ProjectWarning';
+import ProjectToDeleteContainer from '../containers/ProjectToDeleteContainer';
 
 const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
@@ -162,7 +162,10 @@ const ProjectView: React.FunctionComponent = () => {
               </Link>
             </Button>
           </div>
-          <ProjectWarning />
+          <ProjectToDeleteContainer
+            orgLabel={orgLabel}
+            projectLabel={project._label}
+          />
           <div className="list-board">
             <div className="wrapper">
               <ResourceListBoardContainer
