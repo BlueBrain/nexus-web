@@ -1,41 +1,35 @@
-# Maintainers
+Dhanesh Neela Mana (maintainer)
+Natalia Stafeeva (maintainer)
+Nick Smit (maintainer)
+Nicholas Wells (maintainer)
 
- - Dhanesh Neela Mana
- - Natalia Stafeeva
- - Nick Smit
- - Nicholas Wells
+Alejandra Garcia Rojas Martinez (author)
+Alexander Ulbrich (author)
+Anna-Kristin Kaufmann (author)
+Bogdan Roman (author)
+Carolina Lindqvist (author)
+Dhanesh Neela Mana (author)
+Didac Montero (author)
+Henry Genet (author)
+Ian Lavriushev (author)
+Jonathan Lurie (author)
+Julien Machon (author)
+Kenneth Pirman (author)
+Michaël Dupont (author)
+Mohameth François Sy (author)
+Natalia Stafeeva (author)
+Nick Smit (author)
+Nicholas Wells (author)
+Pavlo Getta (author)
+Pierre-Alexandre Fonta (author)
+Samuel Kerrien (author)
+Sean Hill (author)
+Simon Dumas (author)
+Wojciech Wajerowicz (author)
 
-# Authors
-
- - Alejandra Garcia Rojas Martinez
- - Alexander Ulbrich
- - Anna-Kristin Kaufmann
- - Bogdan Roman
- - Carolina Lindqvist
- - Dhanesh Neela Mana
- - Didac Montero
- - Henry Genet
- - Ian Lavriushev
- - Jonathan Lurie
- - Julien Machon
- - Kenneth Pirman
- - Michaël Dupont 
- - Mohameth François Sy
- - Natalia Stafeeva
- - Nick Smit
- - Nicholas Wells
- - Pierre-Alexandre Fonta
- - Samuel Kerrien
- - Sean Hill
- - Simon Dumas
- - Wojciech Wajerowicz
-
-# Contributors
-
- - Alexander Dietz
- - Benoit Coste
- - Huanxiang Lu
- - Jean-Denis Courcol
- - Pavlo Getta
- - Silvia Jimenez
- 
+Alexander Dietz (contributor)
+Benoit Coste (contributor)
+Huanxiang Lu (contributor)
+Jean-Denis Courcol (contributor)
+Pavlo Getta (contributor)
+Silvia Jimenez (contributor)
