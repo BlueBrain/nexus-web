@@ -91,6 +91,7 @@ const SearchBarContainer: React.FC = () => {
   return (
     <SearchBar
       projectList={matchedProjects()}
+      lastVisited={lastVisited}
       query={query}
       onSearch={handleSearch}
       onSubmit={handleSubmit}
