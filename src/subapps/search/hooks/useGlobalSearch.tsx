@@ -81,7 +81,6 @@ function fieldVisibilityReducer(
         fields: action.payload,
       };
     case 'setAllVisible':
-      console.log(state.fields);
       const fieldsAllVisibile = state.fields.map(el => {
         return {
           key: el.key,
