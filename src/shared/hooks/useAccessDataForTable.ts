@@ -185,17 +185,16 @@ export const queryES = async (
         ...query,
       }
     );
-  } else {
-    return await nexus.View.elasticSearchQuery(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(viewId),
-      {
-        ...bodyQuery,
-        ...query,
-      }
-    );
   }
+  return await nexus.View.elasticSearchQuery(
+    orgLabel,
+    projectLabel,
+    encodeURIComponent(viewId),
+    {
+      ...bodyQuery,
+      ...query,
+    }
+  );
 };
 
 const accessData = async (
@@ -210,8 +209,7 @@ const accessData = async (
   if (
     view['@type']?.includes('ElasticSearchView') ||
     view['@type']?.includes('AggregateElasticSearchView') ||
-    (tableResource.projection &&
-      tableResource.projection['@type'].includes('ElasticSearchProjection'))
+    tableResource.projection?.['@type'].includes('ElasticSearchProjection')
   ) {
     const result = await queryES(
       JSON.parse(dataQuery),
@@ -239,48 +237,39 @@ const accessData = async (
         : DEFAULT_FIELDS;
 
     const headerProperties = fields
-      .map(field => {
+      .map(field =>
         // Enrich certain fields with custom rendering
-
-        return addColumnsForES(field, sorter);
-      })
+        addColumnsForES(field, sorter)
+      )
       .sort((a, b) => (a.title > b.title ? 1 : 0));
 
     return { items, total, tableResource, view, headerProperties };
-  } else if (
-    view['@type']?.includes('SparqlView') ||
-    view['@type']?.includes('AggregateSparqlView') ||
-    (tableResource.projection &&
-      tableResource.projection['@type'].includes('SparqlProjection'))
-  ) {
-    const result = await querySparql(
-      nexus,
-      dataQuery,
-      view,
-      !!tableResource.projection,
-      tableResource.projection?.['@id'] === 'All_SparqlProjection'
-        ? undefined
-        : tableResource.projection?.['@id']
-    );
-    const headerProperties: {
-      title: string;
-      dataIndex: string;
-      sorter?: (dataIndex: string) => any;
-    }[] = result.headerProperties.map(headerProp => {
-      const currentConfig = columnConfig.find(c => c.name === headerProp.title);
-      if (currentConfig && currentConfig.enableSort) {
-        return {
-          ...headerProp,
-          sorter,
-        };
-      }
-      return headerProp;
-    });
-
-    return { ...result, headerProperties, tableResource };
   }
+  const result = await querySparql(
+    nexus,
+    dataQuery,
+    view,
+    !!tableResource.projection,
+    tableResource.projection?.['@id'] === 'All_SparqlProjection'
+      ? undefined
+      : tableResource.projection?.['@id']
+  );
+  const headerProperties: {
+    title: string;
+    dataIndex: string;
+    sorter?: (dataIndex: string) => any;
+  }[] = result.headerProperties.map(headerProp => {
+    const currentConfig = columnConfig.find(c => c.name === headerProp.title);
+    if (currentConfig && currentConfig.enableSort) {
+      return {
+        ...headerProp,
+        sorter,
+      };
+    }
+    return headerProp;
+  });
 
-  return {};
+  return { ...result, headerProperties, tableResource };
 };
 
 export const useAccessDataForTable = (

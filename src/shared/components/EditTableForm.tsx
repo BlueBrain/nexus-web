@@ -3,7 +3,6 @@ import { useNexusContext } from '@bbp/react-nexus';
 
 import { Form, Input, Button, Spin, Checkbox, Row, Col, Select } from 'antd';
 import { Controlled as CodeMirror } from 'react-codemirror2';
-import { IInstance } from 'react-codemirror2/index';
 import { View } from '@bbp/nexus-sdk';
 import { useQuery } from 'react-query';
 import ColumnConfig from './ColumnConfig';
@@ -64,8 +63,15 @@ const EditTableForm: React.FC<{
   projectLabel: string;
   formName?: string;
   options?: { disableDelete: boolean };
-}> = ({ onSave, onClose, table, orgLabel, projectLabel, busy, formName }) => {
-  formName = formName ? formName : 'Edit';
+}> = ({
+  onSave,
+  onClose,
+  table,
+  orgLabel,
+  projectLabel,
+  busy,
+  formName = 'Edit',
+}) => {
   const [name, setName] = React.useState<string | undefined>(table?.name);
   const [nameError, setNameError] = React.useState<boolean>(false);
   const [description, setDescription] = React.useState<string>(
@@ -179,7 +185,7 @@ const EditTableForm: React.FC<{
 
   const queryColumnConfig = useQuery(
     [viewName, dataQuery, projectionId],
-    async () => {
+    async (): Promise<TableColumn[]> => {
       if (!viewName || !dataQuery) return [] as TableColumn[];
 
       const viewResource = await nexus.View.get(
@@ -201,8 +207,7 @@ const EditTableForm: React.FC<{
         view &&
         (view['@type']?.includes('ElasticSearchView') ||
           view['@type']?.includes('AggregateElasticSearchView') ||
-          (projection &&
-            projection['@type'].includes('ElasticSearchProjection')) ||
+          projection?.['@type'].includes('ElasticSearchProjection') ||
           projectionId === 'All_ElasticSearchProjection')
       ) {
         const result = await queryES(
@@ -230,35 +235,27 @@ const EditTableForm: React.FC<{
           enableSort: false,
           enableFilter: false,
         }));
-      } else if (
-        view &&
-        (view['@type']?.includes('SparqlView') ||
-          view['@type']?.includes('AggregateSparqlView') ||
-          (projection && projection['@type'].includes('SparqlProjection')))
-      ) {
-        const result = await querySparql(
-          nexus,
-          dataQuery,
-          viewResource,
-          !!projectionId,
-          projectionId === 'All_SparqlProjection' ? undefined : projectionId
-        );
-
-        return result.headerProperties
-          .sort((a, b) => {
-            return a.title > b.title ? 1 : -1;
-          })
-          .map(x => ({
-            '@type': 'text',
-            name: x.dataIndex,
-            format: '',
-            enableSearch: false,
-            enableSort: false,
-            enableFilter: false,
-          }));
-      } else {
-        return [] as TableColumn[];
       }
+      const result = await querySparql(
+        nexus,
+        dataQuery,
+        viewResource,
+        !!projectionId,
+        projectionId === 'All_SparqlProjection' ? undefined : projectionId
+      );
+
+      return result.headerProperties
+        .sort((a, b) => {
+          return a.title > b.title ? 1 : -1;
+        })
+        .map(x => ({
+          '@type': 'text',
+          name: x.dataIndex,
+          format: '',
+          enableSearch: false,
+          enableSort: false,
+          enableFilter: false,
+        }));
     },
     {
       onSuccess: data => {
@@ -286,7 +283,6 @@ const EditTableForm: React.FC<{
       return;
     }
     if (!viewName) {
-      //setViewError(true);
       return;
     }
 
@@ -308,12 +304,11 @@ const EditTableForm: React.FC<{
     }
 
     let data: any;
-    if (table && viewName) {
+    if (table) {
       data = {
         ...table,
         name,
         description,
-        view: viewName,
         projection,
         enableSearch,
         enableInteractiveRows,
@@ -322,14 +317,12 @@ const EditTableForm: React.FC<{
         resultsPerPage,
         dataQuery,
         configuration,
+        view: viewName,
       };
     } else {
       data = {
         name,
         description,
-        '@type': 'FusionTable',
-        '@context': FUSION_TABLE_CONTEXT['@id'],
-        view: viewName,
         projection,
         enableSearch,
         enableInteractiveRows,
@@ -338,12 +331,15 @@ const EditTableForm: React.FC<{
         resultsPerPage,
         dataQuery,
         configuration,
+        '@type': 'FusionTable',
+        '@context': FUSION_TABLE_CONTEXT['@id'],
+        view: viewName,
       };
     }
     onSave(data);
   };
 
-  const handleQueryChange = (editor: IInstance, data: any, value: string) => {
+  const handleQueryChange = (value: string) => {
     setQueryCopy(value);
   };
 
@@ -569,7 +565,7 @@ const EditTableForm: React.FC<{
               viewportMargin: Infinity,
             }}
             onBeforeChange={(editor, data, value) => {
-              handleQueryChange(editor, data, value);
+              handleQueryChange(value);
             }}
           />
         </div>

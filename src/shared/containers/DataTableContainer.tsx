@@ -203,14 +203,9 @@ const DataTableContainer: React.FC<DataTableProps> = ({
         latest._rev,
         { ...latest, ...data }
       );
-    } else {
-      const resource = await nexus.Resource.create(
-        orgLabel,
-        projectLabel,
-        data
-      );
-      return resource;
     }
+    const resource = await nexus.Resource.create(orgLabel, projectLabel, data);
+    return resource;
   };
 
   const changeTableResource = useMutation(updateTable, {
