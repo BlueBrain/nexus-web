@@ -75,9 +75,18 @@ function fieldVisibilityReducer(
         isPersistent: false,
         fields: action.payload,
       };
+    case 'reOrder':
+      return {
+        isPersistent: true,
+        fields: action.payload,
+      };
     case 'setAllVisible':
       const fieldsAllVisibile = state.fields.map(el => {
-        return { key: el.key, name: el.name, visible: true };
+        return {
+          key: el.key,
+          name: el.name,
+          visible: true,
+        };
       });
       return {
         isPersistent: true,
@@ -108,6 +117,12 @@ type fieldVisibilityInitializeActionType = {
   type: 'initialize';
   payload: FieldVisibility[];
 };
+
+type fieldVisibilityReOrderType = {
+  type: 'reOrder';
+  payload: FieldVisibility[];
+};
+
 type fieldVisibilityUpdateActionType = {
   type: 'update';
   payload: FieldVisibility;
@@ -117,6 +132,7 @@ type fieldVisibilitySetAllVisibleActionType = {
 };
 export type fieldVisibilityActionType =
   | fieldVisibilityInitializeActionType
+  | fieldVisibilityReOrderType
   | fieldVisibilityUpdateActionType
   | fieldVisibilitySetAllVisibleActionType;
 
@@ -152,10 +168,12 @@ function renderColumnTitle(
       <div className="column-header">
         <span>{`${field.label}`}</span>
         <Tooltip
+          autoAdjustOverflow
           trigger="click"
-          placement="topLeft"
+          placement="bottom"
           title={filterMenu(field)}
-          overlayInnerStyle={{ width: '450px' }}
+          overlayInnerStyle={{ width: '310px', marginLeft: '-220px' }}
+          destroyTooltipOnHide={true}
         >
           <div className="column-header__options">
             {isSorted && sortDirection === SortDirection.ASCENDING && (
@@ -191,13 +209,17 @@ function rowRenderer(field: ConfigField) {
           </div>
         );
       }
-      const valueArray = value as string[];
-      const labels = valueArray
-        .map((item: string) => {
-          return labelOf(item);
-        })
-        .join(', ');
-      return <Tooltip title={labels}>{labels}</Tooltip>;
+      // Value may not be an array, due to bad data.
+      if (Array.isArray(value)) {
+        const valueArray = value as string[];
+        const labels = valueArray
+          .map((item: string) => {
+            return labelOf(item);
+          })
+          .join(', ');
+        return <Tooltip title={labels}>{labels}</Tooltip>;
+      }
+      return <Tooltip title={labelOf(value)}>{labelOf(value)}</Tooltip>;
     }
 
     // Single link
@@ -326,6 +348,18 @@ function useGlobalSearchData(
 
   const onFilterSubmit = (values: FilterState) => {
     dispatchFilter({ type: 'add', payload: values });
+    onSortOptionsChanged();
+  };
+
+  const hasKeywordFormatField = (field: ConfigField) => {
+    if (field.format && field.format.includes('keyword')) return true;
+    if (
+      (field.fields && field.fields.find(f => f.format.includes('keyword'))) ||
+      field.name === '@type'
+    ) {
+      return true;
+    }
+    return false;
   };
 
   const fieldMenu = (field: ConfigField) => {
@@ -347,27 +381,30 @@ function useGlobalSearchData(
           <EyeInvisibleOutlined />
           Hide column
         </Button>
-        <SortMenuOptions
-          sortField={sortState.find(s => s.fieldName === field.name)}
-          onSortField={sortOption => {
-            changeSortOption({
-              fieldName: field.name,
-              term: createKeyWord(field),
-              label: field.label,
-              direction: sortOption,
-            });
-          }}
-          onRemoveSort={sortOption => removeSortOption(sortOption)}
-        />
-        <Divider />
-        <FilterOptions
-          filter={filterState.find(
-            filter => extractFieldName(filter.filterTerm) === field.name
-          )}
-          nexusClient={nexus}
-          field={field}
-          onFinish={onFilterSubmit}
-        />
+        {hasKeywordFormatField(field) && (
+          <>
+            <SortMenuOptions
+              sortField={sortState.find(s => s.fieldName === field.name)}
+              onSortField={sortOption => {
+                changeSortOption({
+                  fieldName: field.name,
+                  term: createKeyWord(field),
+                  label: field.label,
+                  direction: sortOption,
+                });
+              }}
+              onRemoveSort={sortOption => removeSortOption(sortOption)}
+            />
+            <Divider />
+            <FilterOptions
+              filter={filterState}
+              query={query}
+              nexusClient={nexus}
+              field={field}
+              onFinish={onFilterSubmit}
+            />
+          </>
+        )}
       </>
     );
   };
@@ -389,13 +426,23 @@ function useGlobalSearchData(
   const visibleColumns = React.useMemo(
     () =>
       columns &&
-      columns.filter(
-        col =>
-          !fieldsVisibilityState?.fields.find(
-            colVisibility =>
-              col.key === colVisibility.key && !colVisibility.visible
-          )
-      ),
+      columns
+        .filter(
+          col =>
+            !fieldsVisibilityState?.fields.find(
+              colVisibility =>
+                col.key === colVisibility.key && !colVisibility.visible
+            )
+        )
+        .sort((a, b) => {
+          if (fieldsVisibilityState && fieldsVisibilityState.fields) {
+            const fileds = fieldsVisibilityState.fields;
+            const aIndex = fileds.findIndex(f => f.key === a.key);
+            const bIndex = fileds.findIndex(f => f.key === b.key);
+            return aIndex - bIndex;
+          }
+          return 0;
+        }), // sort by the order of the columns
     [columns, fieldsVisibilityState]
   );
 

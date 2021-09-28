@@ -1,11 +1,10 @@
 import { Form, Select, Checkbox, Button, Row, Input } from 'antd';
-import * as bodybuilder from 'bodybuilder';
 import { labelOf } from '../../../shared/utils';
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
-import { RuleObject } from 'antd/lib/form';
 import './FilterOptions.less';
+import { constructFilterSet, constructQuery } from '../utils';
 
 type ConfigField =
   | {
@@ -33,121 +32,167 @@ export const createKeyWord = (field: ConfigField) => {
 
   return `${field.name}.keyword`;
 };
+
 const FilterOptions: React.FC<{
   field: ConfigField;
   onFinish: (values: any) => void;
   nexusClient: NexusClient;
-  filter?: FilterState;
-}> = ({ filter, field, onFinish, nexusClient }) => {
-  const [result, setResult] = React.useState<
+  filter: FilterState[];
+  query: string;
+}> = ({ filter, field, onFinish, nexusClient, query }) => {
+  const baseQuery = constructQuery(query);
+  const withOtherFilters = constructFilterSet(
+    baseQuery,
+    filter.filter(f => extractFieldName(f.filterTerm) !== field.name)
+  );
+
+  const fieldFilter = filter.find(
+    filter =>
+      extractFieldName(extractFieldName(filter.filterTerm)) === field.name
+  );
+
+  const [aggregations, setAggregations] = React.useState<
     {
-      key: string;
-      doc_count: string;
+      filterValue: string;
+      count: number;
+      selected: boolean;
+      matching: boolean;
     }[]
   >([]);
-  const [suggestions, setSuggestions] = React.useState<
-    {
-      key: string;
-      doc_count: string;
-    }[]
-  >([]);
+
+  const [filterType, setFilterType] = React.useState(
+    fieldFilter?.filterType || field.array ? 'anyof' : 'allof'
+  );
 
   const [form] = Form.useForm();
 
   const filterKeyWord = createKeyWord(field);
   React.useEffect(() => {
-    !filter && form.resetFields();
-  });
+    const allSuggestions = constructQuery(query)
+      .aggregation('terms', filterKeyWord, 'suggestions')
+      .build();
 
-  React.useEffect(() => {
-    const body = bodybuilder();
+    const allSuggestionsPromise = nexusClient.Search.query(allSuggestions);
 
-    const filterSuggestions = body
+    const filterSuggestions = withOtherFilters
       .aggregation('terms', filterKeyWord, 'suggestions')
       .aggregation('missing', filterKeyWord, 'missing')
       .build();
 
-    nexusClient.Search.query(filterSuggestions).then((filterResult: any) => {
-      filterResult.aggregations['suggestions'].buckets.push({
-        key: 'Missing',
-        doc_count: filterResult.aggregations['missing'].doc_count,
-      });
-      setSuggestions(
-        filterResult.aggregations['suggestions'].buckets.map(
-          (suggest: any) => ({
-            key: suggest.key,
-            doc_count: suggest.doc_count,
-          })
-        )
-      );
-    });
+    const filedSuggesetionsPromise = nexusClient.Search.query(
+      filterSuggestions
+    );
+    
+    Promise.all([allSuggestionsPromise, filedSuggesetionsPromise]).then(
+      ([all, filtered]) => {
+        const aggs = all.aggregations['suggestions'].buckets.map(
+          (bucket: any) => {
+            const filteredBucket = filtered.aggregations[
+              'suggestions'
+            ].buckets.find((f: any) => f.key === bucket.key);
+
+            return {
+              filterValue: bucket.key,
+              count: filteredBucket ? filteredBucket.doc_count : 0,
+              selected: fieldFilter?.filters.includes(
+                extractFieldName(bucket.key)
+              ),
+              matching: true,
+            };
+          }
+        );
+        setAggregations(aggs);
+      }
+    );
   }, [field]);
 
-  const filterValues = React.useMemo(() => {
-    const filterableValues = result.length > 0 ? result : suggestions;
-    return filterableValues.map(({ key, doc_count }) => (
-      <Row key={key}>
-        <Checkbox value={`${key}`} style={{ width: '300px' }}>
-          {`${field.label === 'Types' ? labelOf(key) : key}`}({doc_count})
-        </Checkbox>
-      </Row>
-    ));
-  }, [suggestions, result]);
-
-  const validateFilterSelected = (
-    rule: RuleObject,
-    value: string[],
-    callback: (error?: string) => void
-  ) => {
-    if (!value || value.length === 0) {
-      return callback('At least one value to filter on must be selected');
-    }
-
-    return callback();
+  const changeFilterSelection = (filterValue: string, selected: boolean) => {
+    const aggs = aggregations.map(a => ({
+      ...a,
+      selected: a.filterValue === filterValue ? selected : a.selected,
+    }));
+    setAggregations(aggs);
   };
+
+  const filterValues = React.useMemo(
+    () =>
+      aggregations
+        .filter(a => a.matching)
+        .map(({ filterValue, selected, count }) => {
+          return (
+            <Row key={filterValue} className="filter-value-row">
+              <Checkbox
+                key={`chk${filterValue}`}
+                value={`${filterValue}`}
+                className="filter-value-row__chk"
+                checked={selected ? true : false}
+                disabled={count === 0}
+                onChange={e =>
+                  changeFilterSelection(filterValue, e.target.checked)
+                }
+              >
+                {`${
+                  field.label === 'Types' ? labelOf(filterValue) : filterValue
+                }`}
+              </Checkbox>
+              <span className="filter-value-row__count">
+                {count > 10000 ? '10K+' : count.toLocaleString('en-US')}
+              </span>
+            </Row>
+          );
+        }),
+    [aggregations]
+  );
 
   return (
     <Form
-      requiredMark="optional"
       form={form}
       onFinish={(values: any) => {
-        onFinish({ ...values, filterTerm: filterKeyWord });
+        onFinish({
+          filterType,
+          filters: aggregations.filter(a => a.selected).map(a => a.filterValue),
+          filterTerm: filterKeyWord,
+        });
       }}
       className="field-filter-menu"
-      validateTrigger={['onSubmit']}
     >
       <Form.Item
         label="Operator"
-        name="filterType"
         rules={[
           { required: true, message: 'Operator is required to apply a filter' },
         ]}
       >
-        <Select dropdownStyle={{ zIndex: 1100 }}>
-          <Select.Option value="allof">is all Of (AND)</Select.Option>
-          <Select.Option value="anyof">is any Of (OR)</Select.Option>
-          <Select.Option value="noneof">is none Of (NOT)</Select.Option>
+        <Select
+          dropdownStyle={{ zIndex: 1100 }}
+          value={filterType}
+          onChange={v => setFilterType(v)}
+        >
+          {!field.array ? (
+            <Select.Option value="allof">is all of (AND)</Select.Option>
+          ) : null}
+          <Select.Option value="anyof">is any of (OR)</Select.Option>
+          <Select.Option value="noneof">is none of (NOT)</Select.Option>
           <Select.Option value="missing">is missing</Select.Option>
         </Select>
       </Form.Item>
       <Input.Search
         onChange={event => {
           const val = event.target.value;
-          if (val && val.length > 0) {
-            const filteredSuggestions = suggestions.filter(
-              x => x.key.indexOf(val) > -1
-            );
-            setResult(filteredSuggestions);
-          } else {
-            setResult(suggestions);
-          }
+
+          const filteredSuggestions = aggregations.map(a => ({
+            ...a,
+            matching:
+              val && val.length > 0
+                ? a.filterValue.toLowerCase().indexOf(val.toLowerCase()) > -1
+                : true,
+          }));
+          setAggregations(filteredSuggestions);
         }}
       ></Input.Search>
-      <Form.Item name="filters" rules={[{ validator: validateFilterSelected }]}>
-        <Checkbox.Group className="field-filter-menu__filterValue">
-          {filterValues}
-        </Checkbox.Group>
+      <Form.Item style={{ maxHeight: '91px', overflow: 'scroll' }}>
+        {filterValues}
       </Form.Item>
+      <Form.Item></Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit">
           Apply
