@@ -48,7 +48,7 @@ export const constructFilter = (
     } else if (filterType === 'allof') {
       body.addFilter('prefix', filterTerm, item);
     } else if (filterType === 'missing') {
-      body.missingFilter('prefix', filterTerm, item);
+      body.filter('match', filterTerm, 'Chandrashekarj Jayaram');
     }
   });
   return body;
