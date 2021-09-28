@@ -85,11 +85,6 @@ const FilterOptions: React.FC<{
 
     Promise.all([allSuggestionsPromise, filedSuggesetionsPromise]).then(
       ([all, filtered]) => {
-        all.aggregations['suggestions'].buckets.push({
-          key: 'Missing',
-          doc_count: all.aggregations['missing'].doc_count,
-        });
-
         const aggs = all.aggregations['suggestions'].buckets.map(
           (bucket: any) => {
             const filteredBucket = filtered.aggregations[
@@ -106,6 +101,12 @@ const FilterOptions: React.FC<{
             };
           }
         );
+        aggs.push({
+          filterValue: 'Missing',
+          count: filtered.aggregations['missing'].doc_count,
+          selected: fieldFilter?.filters.includes('Missing'),
+          matching: true,
+        });
         setAggregations(aggs);
       }
     );
