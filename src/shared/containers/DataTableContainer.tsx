@@ -335,7 +335,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
         style={{
           width: searchboxValue === '' && !searchboxFocused ? '150px' : '330px',
           transition: 'width 0.5s',
-          maxWidth: '100%',
+          maxWidth: '70%',
         }}
       ></Input.Search>
     );
