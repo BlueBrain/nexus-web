@@ -82,9 +82,14 @@ const FilterOptions: React.FC<{
     const filedSuggesetionsPromise = nexusClient.Search.query(
       filterSuggestions
     );
-    
+
     Promise.all([allSuggestionsPromise, filedSuggesetionsPromise]).then(
       ([all, filtered]) => {
+        all.aggregations['suggestions'].buckets.push({
+          key: 'Missing',
+          doc_count: all.aggregations['missing'].doc_count,
+        });
+
         const aggs = all.aggregations['suggestions'].buckets.map(
           (bucket: any) => {
             const filteredBucket = filtered.aggregations[
