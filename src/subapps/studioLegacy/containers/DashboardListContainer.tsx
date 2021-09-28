@@ -171,7 +171,6 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
               ...workspaceSource.dashboards,
               {
                 dashboard: dashboard['@id'],
-                // view: 'graph',
               },
             ],
           }

@@ -306,7 +306,6 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             >
               Delete
             </Button>
-            <Modal></Modal>
           </div>
         )}
       </div>

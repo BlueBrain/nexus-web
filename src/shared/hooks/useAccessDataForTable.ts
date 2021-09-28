@@ -12,6 +12,7 @@ export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
 export const CSV_MEDIATYPE = 'text/csv';
 import { CartContext } from '../hooks/useDataCart';
 import { pick } from 'lodash';
+import { Projection } from '../components/EditTableForm';
 
 export type TableResource = Resource<{
   '@type': string;
@@ -21,7 +22,7 @@ export type TableResource = Resource<{
     '@id': string;
   };
   view: string;
-  projection?: { '@id'?: string; '@type': string };
+  projection?: Projection;
   enableSearch: boolean;
   enableInteractiveRows: boolean;
   enableDownload: boolean;
@@ -135,7 +136,6 @@ export function parseESResults(result: any) {
 
     return {
       ...resource,
-      // key: hit._source._self,
     };
   });
   return { total, items: parsedResult };
@@ -209,7 +209,7 @@ const accessData = async (
   if (
     view['@type']?.includes('ElasticSearchView') ||
     view['@type']?.includes('AggregateElasticSearchView') ||
-    tableResource.projection?.['@type'].includes('ElasticSearchProjection')
+    tableResource.projection?.['@type']?.includes('ElasticSearchProjection')
   ) {
     const result = await queryES(
       JSON.parse(dataQuery),
