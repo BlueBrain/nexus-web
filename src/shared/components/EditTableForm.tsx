@@ -74,6 +74,8 @@ const EditTableForm: React.FC<{
 }) => {
   const [name, setName] = React.useState<string | undefined>(table?.name);
   const [nameError, setNameError] = React.useState<boolean>(false);
+  const [viewError, setViewError] = React.useState<boolean>(false);
+  const [projectionError, setProjectionError] = React.useState<boolean>(false);
   const [description, setDescription] = React.useState<string>(
     table?.description || ''
   );
@@ -278,11 +280,22 @@ const EditTableForm: React.FC<{
   };
 
   const onClickSave = () => {
-    if (!name || isEmptyInput(name)) {
-      setNameError(true);
-      return;
-    }
-    if (!viewName) {
+    if (
+      !name ||
+      isEmptyInput(name) ||
+      !viewName ||
+      (view && view.projections && !projectionId)
+    ) {
+      if (!name || isEmptyInput(name)) {
+        setNameError(true);
+      }
+      if (!viewName) {
+        setViewError(true);
+      }
+      if (view && view.projections && !projectionId) {
+        setProjectionError(true);
+      }
+
       return;
     }
 
@@ -435,21 +448,27 @@ const EditTableForm: React.FC<{
             <h3>View</h3>
           </Col>
           <Col xs={12} sm={12} md={12}>
-            <Select
-              value={viewName}
-              style={{ width: 650 }}
-              onChange={value => {
-                value && setViewName(value);
-                asyncCallToSetView(value);
-              }}
+            <Item
+              validateStatus={viewError ? 'error' : ''}
+              help={viewError && 'Please select a view'}
             >
-              {availableViews &&
-                availableViews.map(view => (
-                  <Option key={view['@id']} value={view['@id']}>
-                    {view['@id']}
-                  </Option>
-                ))}
-            </Select>
+              <Select
+                value={viewName}
+                style={{ width: 650 }}
+                onChange={value => {
+                  value && setViewName(value);
+                  setViewError(false);
+                  asyncCallToSetView(value);
+                }}
+              >
+                {availableViews &&
+                  availableViews.map(view => (
+                    <Option key={view['@id']} value={view['@id']}>
+                      {view['@id']}
+                    </Option>
+                  ))}
+              </Select>
+            </Item>
           </Col>
         </Row>
         {view && view.projections && (
@@ -458,44 +477,50 @@ const EditTableForm: React.FC<{
               <h3>Projection</h3>
             </Col>
             <Col>
-              <Select
-                style={{ width: 650 }}
-                value={projectionId}
-                onChange={value => {
-                  setProjectionId(value);
-                }}
+              <Item
+                validateStatus={projectionError ? 'error' : ''}
+                help={projectionError && 'Please select a projection'}
               >
-                {(view.projections as {
-                  '@id': string;
-                  '@type': string;
-                }[]).some(o => o['@type'] === 'ElasticSearchProjection') && (
-                  <Option
-                    key="All_ElasticSearchProjection"
-                    value="All_ElasticSearchProjection"
-                  >
-                    All ElasticSearch
-                  </Option>
-                )}
-                {(view.projections as {
-                  '@id': string;
-                  '@type': string;
-                }[]).some(o => o['@type'] === 'SparqlProjection') && (
-                  <Option
-                    key="All_SparqlProjection"
-                    value="All_SparqlProjection"
-                  >
-                    All Sparql
-                  </Option>
-                )}
-                {(view.projections as {
-                  '@id': string;
-                  '@type': string;
-                }[]).map(o => (
-                  <Option key={o['@id']} value={o['@id']}>
-                    {o['@id']}
-                  </Option>
-                ))}
-              </Select>
+                <Select
+                  style={{ width: 650 }}
+                  value={projectionId}
+                  onChange={value => {
+                    setProjectionId(value);
+                    setProjectionError(false);
+                  }}
+                >
+                  {(view.projections as {
+                    '@id': string;
+                    '@type': string;
+                  }[]).some(o => o['@type'] === 'ElasticSearchProjection') && (
+                    <Option
+                      key="All_ElasticSearchProjection"
+                      value="All_ElasticSearchProjection"
+                    >
+                      All ElasticSearch
+                    </Option>
+                  )}
+                  {(view.projections as {
+                    '@id': string;
+                    '@type': string;
+                  }[]).some(o => o['@type'] === 'SparqlProjection') && (
+                    <Option
+                      key="All_SparqlProjection"
+                      value="All_SparqlProjection"
+                    >
+                      All Sparql
+                    </Option>
+                  )}
+                  {(view.projections as {
+                    '@id': string;
+                    '@type': string;
+                  }[]).map(o => (
+                    <Option key={o['@id']} value={o['@id']}>
+                      {o['@id']}
+                    </Option>
+                  ))}
+                </Select>
+              </Item>
             </Col>
           </Row>
         )}
