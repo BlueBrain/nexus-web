@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { ProjectStatistics } from '@bbp/nexus-sdk';
+import { ProjectStatistics, ProjectDeletionConfig } from '@bbp/nexus-sdk';
 
 import ProjectWarning from '../components/Projects/ProjectWarning';
 
@@ -17,16 +17,16 @@ const ProjectToDeleteContainer: React.FC<{
     loadStatistics();
   });
 
-  const temp = {
-    '@context':
-      'https://bluebrain.github.io/nexus/contexts/project-deletion.json',
-    '@type': 'ProjectDeletionConfig',
-    _idleIntervalInSeconds: 600,
-    _idleCheckPeriodInSeconds: 5,
-    _deleteDeprecatedProjects: true,
-    _includedProjects: ['some.+'],
-    _excludedProjects: ['.+'],
-  };
+  // const temp = {
+  //   '@context':
+  //     'https://bluebrain.github.io/nexus/contexts/project-deletion.json',
+  //   '@type': 'ProjectDeletionConfig',
+  //   _idleIntervalInSeconds: 2592000,
+  //   _idleCheckPeriodInSeconds: 5,
+  //   _deleteDeprecatedProjects: true,
+  //   _includedProjects: ['some.+'],
+  //   _excludedProjects: ['.+'],
+  // };
 
   const loadStatistics = async () => {
     await nexus.Project.statistics(orgLabel, projectLabel)
@@ -40,13 +40,10 @@ const ProjectToDeleteContainer: React.FC<{
   };
 
   const loadDeletionConfig = async () => {
-    // @ts-ignore
     await nexus.Project.deletionConfig()
-      .then((response: any) => {
-        // @ts-ignore
-        setIdleInterval(temp._idleIntervalInSeconds);
+      .then((response: ProjectDeletionConfig) => {
+        setIdleInterval(response._idleIntervalInSeconds);
       })
-      // @ts-ignore
       .catch(error => {
         // fail silently
       });

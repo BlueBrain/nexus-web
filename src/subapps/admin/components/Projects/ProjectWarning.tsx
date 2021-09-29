@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Alert } from 'antd';
-import moment from 'moment';
+import * as moment from 'moment';
 
 import './ProjectWarning.less';
 
@@ -8,9 +8,18 @@ const ProjectWarning: React.FC<{
   projectLastUpdatedAt: string;
   duration: number;
 }> = ({ projectLastUpdatedAt, duration }) => {
-  const deletionTime = moment(projectLastUpdatedAt)
-    .add(duration, 'seconds')
-    .format('LLL');
+  console.log('projectLastUpdatedAt', projectLastUpdatedAt);
+  console.log('duration', duration);
+
+  let deletionTime;
+
+  if (projectLastUpdatedAt && duration) {
+    deletionTime = moment(projectLastUpdatedAt)
+      .add(duration, 'seconds')
+      .format('LLL');
+  } else {
+    deletionTime = '';
+  }
 
   const message = `Your project and data will be automatically deleted on ${deletionTime} if you don't update any resources until then. After deletion, a new empty project will be created for you if you connect to Nexus again.`;
 
