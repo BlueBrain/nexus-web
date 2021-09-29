@@ -131,7 +131,7 @@ const ProjectView: React.FunctionComponent = () => {
       })
       .then(versions => setDeltaPlugins(versions.plugins))
       .catch(error => {
-        //do nothing
+        // do nothing
       });
   };
 

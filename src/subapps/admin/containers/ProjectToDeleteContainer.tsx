@@ -8,8 +8,8 @@ const ProjectToDeleteContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
 }> = ({ orgLabel, projectLabel }) => {
-  const [idleInterval, setIdleInterval] = React.useState<any>();
-  const [lastUpdated, setLastUpdated] = React.useState<any>();
+  const [idleInterval, setIdleInterval] = React.useState<number>();
+  const [lastUpdated, setLastUpdated] = React.useState<string>();
   const nexus = useNexusContext();
 
   React.useEffect(() => {
@@ -31,7 +31,6 @@ const ProjectToDeleteContainer: React.FC<{
   const loadStatistics = async () => {
     await nexus.Project.statistics(orgLabel, projectLabel)
       .then((response: ProjectStatistics) => {
-        // @ts-ignore
         setLastUpdated(response.lastProcessedEventDateTime);
       })
       .catch(error => {
@@ -48,6 +47,8 @@ const ProjectToDeleteContainer: React.FC<{
         // fail silently
       });
   };
+
+  if (!lastUpdated || !idleInterval) return null;
 
   return (
     <ProjectWarning
