@@ -409,9 +409,11 @@ exports[`Organisation Form component should render correctly 1`] = `
                                   onDomErrorVisibleChange={[Function]}
                                 >
                                   <CSSMotion
+                                    motionAppear={true}
                                     motionDeadline={500}
                                     motionName="ant-show-help"
                                     onLeaveEnd={[Function]}
+                                    removeOnLeave={true}
                                     visible={false}
                                   >
                                     <DomWrapper />
@@ -763,9 +765,11 @@ exports[`Organisation Form component should render correctly 1`] = `
                                   onDomErrorVisibleChange={[Function]}
                                 >
                                   <CSSMotion
+                                    motionAppear={true}
                                     motionDeadline={500}
                                     motionName="ant-show-help"
                                     onLeaveEnd={[Function]}
+                                    removeOnLeave={true}
                                     visible={false}
                                   >
                                     <DomWrapper />
@@ -905,9 +909,11 @@ exports[`Organisation Form component should render correctly 1`] = `
                               onDomErrorVisibleChange={[Function]}
                             >
                               <CSSMotion
+                                motionAppear={true}
                                 motionDeadline={500}
                                 motionName="ant-show-help"
                                 onLeaveEnd={[Function]}
+                                removeOnLeave={true}
                                 visible={false}
                               >
                                 <DomWrapper />
