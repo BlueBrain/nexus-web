@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useRouteMatch } from 'react-router';
+import { useSelector } from 'react-redux';
 import {
   ProjectResponseCommon,
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
@@ -8,11 +9,14 @@ import {
 import { useNexusContext } from '@bbp/react-nexus';
 import { Popover, Button } from 'antd';
 import { Link, useHistory, useLocation } from 'react-router-dom';
+
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
 import ResourceListBoardContainer from '../../../shared/containers/ResourceListBoardContainer';
 import ProjectTools from '../components/Projects/ProjectTools';
 import { useAdminSubappContext } from '..';
 import useNotification from '../../../shared/hooks/useNotification';
+import ProjectToDeleteContainer from '../containers/ProjectToDeleteContainer';
+import { RootState } from '../../../shared/store/reducers';
 
 const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
@@ -46,6 +50,11 @@ const ProjectView: React.FunctionComponent = () => {
   const [statisticsPollingPaused, setStatisticsPollingPaused] = React.useState(
     false
   );
+  const [deltaPlugins, setDeltaPlugins] = React.useState<{
+    [key: string]: string;
+  }>();
+
+  const { apiEndpoint } = useSelector((state: RootState) => state.config);
 
   React.useEffect(() => {
     setState({
@@ -111,7 +120,22 @@ const ProjectView: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     fetchAndSetStatistics();
+    fetchDeltaVersion();
   }, []);
+
+  const fetchDeltaVersion = async () => {
+    await nexus
+      .httpGet({
+        path: `${apiEndpoint}/version`,
+        context: { as: 'json' },
+      })
+      .then(versions => setDeltaPlugins(versions.plugins))
+      .catch(error => {
+        // do nothing
+      });
+  };
+
+  const showDeletionBanner = deltaPlugins && 'project-deletion' in deltaPlugins;
 
   return (
     <div className="project-view">
@@ -161,6 +185,12 @@ const ProjectView: React.FunctionComponent = () => {
               </Link>
             </Button>
           </div>
+          {showDeletionBanner && (
+            <ProjectToDeleteContainer
+              orgLabel={orgLabel}
+              projectLabel={project._label}
+            />
+          )}
           <div className="list-board">
             <div className="wrapper">
               <ResourceListBoardContainer
