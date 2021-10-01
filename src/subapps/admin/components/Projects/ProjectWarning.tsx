@@ -8,9 +8,6 @@ const ProjectWarning: React.FC<{
   projectLastUpdatedAt: string;
   duration: number;
 }> = ({ projectLastUpdatedAt, duration }) => {
-  console.log('projectLastUpdatedAt', projectLastUpdatedAt);
-  console.log('duration', duration);
-
   let deletionTime;
 
   if (projectLastUpdatedAt && duration) {

@@ -8,25 +8,16 @@ const ProjectToDeleteContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
 }> = ({ orgLabel, projectLabel }) => {
-  const [idleInterval, setIdleInterval] = React.useState<number>();
+  const [deletionConfig, setDeletionConfig] = React.useState<
+    ProjectDeletionConfig
+  >();
   const [lastUpdated, setLastUpdated] = React.useState<string>();
   const nexus = useNexusContext();
 
   React.useEffect(() => {
     loadDeletionConfig();
     loadStatistics();
-  });
-
-  // const temp = {
-  //   '@context':
-  //     'https://bluebrain.github.io/nexus/contexts/project-deletion.json',
-  //   '@type': 'ProjectDeletionConfig',
-  //   _idleIntervalInSeconds: 2592000,
-  //   _idleCheckPeriodInSeconds: 5,
-  //   _deleteDeprecatedProjects: true,
-  //   _includedProjects: ['some.+'],
-  //   _excludedProjects: ['.+'],
-  // };
+  }, []);
 
   const loadStatistics = async () => {
     await nexus.Project.statistics(orgLabel, projectLabel)
@@ -41,21 +32,47 @@ const ProjectToDeleteContainer: React.FC<{
   const loadDeletionConfig = async () => {
     await nexus.Project.deletionConfig()
       .then((response: ProjectDeletionConfig) => {
-        setIdleInterval(response._idleIntervalInSeconds);
+        setDeletionConfig(response);
       })
       .catch(error => {
         // fail silently
       });
   };
 
-  if (!lastUpdated || !idleInterval) return null;
+  const projectName = `${orgLabel}/${projectLabel}`;
 
-  return (
-    <ProjectWarning
-      projectLastUpdatedAt={lastUpdated}
-      duration={idleInterval}
-    />
-  );
+  const isIncluded = () => {
+    let included = false;
+
+    deletionConfig?._excludedProjects.forEach(excludedProject => {
+      if (new RegExp(excludedProject).test(projectName)) included = true;
+    });
+
+    return included;
+  };
+
+  const isExcluded = () => {
+    let excluded = false;
+
+    deletionConfig?._excludedProjects.forEach(excludedProject => {
+      if (new RegExp(excludedProject).test(projectName)) excluded = true;
+    });
+
+    return excluded;
+  };
+
+  if (!lastUpdated || !deletionConfig || isExcluded()) return null;
+
+  if (isIncluded()) {
+    return (
+      <ProjectWarning
+        projectLastUpdatedAt={lastUpdated}
+        duration={deletionConfig._idleIntervalInSeconds}
+      />
+    );
+  }
+
+  return null;
 };
 
 export default ProjectToDeleteContainer;

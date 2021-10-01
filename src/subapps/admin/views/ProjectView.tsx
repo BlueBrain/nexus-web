@@ -135,9 +135,7 @@ const ProjectView: React.FunctionComponent = () => {
       });
   };
 
-  const showBanner = deltaPlugins && 'project-deletion' in deltaPlugins;
-
-  console.log('showBanner', showBanner);
+  const showDeletionBanner = deltaPlugins && 'project-deletion' in deltaPlugins;
 
   return (
     <div className="project-view">
@@ -187,10 +185,12 @@ const ProjectView: React.FunctionComponent = () => {
               </Link>
             </Button>
           </div>
-          <ProjectToDeleteContainer
-            orgLabel={orgLabel}
-            projectLabel={project._label}
-          />
+          {showDeletionBanner && (
+            <ProjectToDeleteContainer
+              orgLabel={orgLabel}
+              projectLabel={project._label}
+            />
+          )}
           <div className="list-board">
             <div className="wrapper">
               <ResourceListBoardContainer
