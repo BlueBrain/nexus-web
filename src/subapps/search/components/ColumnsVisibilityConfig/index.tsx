@@ -1,4 +1,4 @@
-import { EyeInvisibleOutlined } from '@ant-design/icons';
+import { EyeInvisibleOutlined, MoreOutlined } from '@ant-design/icons';
 import { Button, Form, Modal, Switch } from 'antd';
 import * as React from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
@@ -87,6 +87,7 @@ const ColumnsVisibilityConfig: React.FunctionComponent<{
                 >
                   <Form>
                     <Form.Item style={{ marginBottom: 0 }}>
+                      <MoreOutlined className="drag-icon-spacer" />
                       <label>
                         <Switch
                           size="small"
@@ -110,6 +111,7 @@ const ColumnsVisibilityConfig: React.FunctionComponent<{
                             {...provided.dragHandleProps}
                           >
                             <Form.Item key={el.key} style={{ marginBottom: 0 }}>
+                              <MoreOutlined />
                               <label>
                                 <Switch
                                   size="small"
