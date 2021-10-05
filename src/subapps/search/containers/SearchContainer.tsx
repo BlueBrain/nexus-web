@@ -193,6 +193,7 @@ const SearchContainer: React.FC = () => {
     renderCell: (checked: any, record: any, index: number, originNode: any) => {
       return (
         <div
+          className="row-selection-checkbox"
           onClick={e => {
             e.preventDefault();
             e.stopPropagation();
