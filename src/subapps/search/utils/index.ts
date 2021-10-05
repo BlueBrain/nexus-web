@@ -47,6 +47,8 @@ export const constructFilter = (
       body.notFilter('prefix', filterTerm, item);
     } else if (filterType === 'allof') {
       body.addFilter('prefix', filterTerm, item);
+    } else if (filterType === 'missing') {
+      body.notQuery('exists', filterTerm);
     }
   });
   return body;

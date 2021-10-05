@@ -24,6 +24,7 @@ const FiltersConfig: React.FC<{
     allof: { friendlyName: 'is all of' },
     anyof: { friendlyName: 'is any of' },
     noneof: { friendlyName: 'is any of' },
+    missing: { friendlyName: 'is missing' },
   };
 
   const countFilters = () => filters.length;

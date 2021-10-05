@@ -67,7 +67,6 @@ const FilterOptions: React.FC<{
   const [form] = Form.useForm();
 
   const filterKeyWord = createKeyWord(field);
-
   React.useEffect(() => {
     const allSuggestions = constructQuery(query)
       .aggregation('terms', filterKeyWord, 'suggestions')
@@ -77,10 +76,13 @@ const FilterOptions: React.FC<{
 
     const filterSuggestions = withOtherFilters
       .aggregation('terms', filterKeyWord, 'suggestions')
+      .aggregation('missing', filterKeyWord, 'missing')
       .build();
+
     const filedSuggesetionsPromise = nexusClient.Search.query(
       filterSuggestions
     );
+
     Promise.all([allSuggestionsPromise, filedSuggesetionsPromise]).then(
       ([all, filtered]) => {
         const aggs = all.aggregations['suggestions'].buckets.map(
@@ -99,6 +101,12 @@ const FilterOptions: React.FC<{
             };
           }
         );
+        aggs.push({
+          filterValue: 'Missing',
+          count: filtered.aggregations['missing'].doc_count,
+          selected: fieldFilter?.filters.includes('Missing'),
+          matching: true,
+        });
         setAggregations(aggs);
       }
     );
@@ -170,6 +178,7 @@ const FilterOptions: React.FC<{
           ) : null}
           <Select.Option value="anyof">is any of (OR)</Select.Option>
           <Select.Option value="noneof">is none of (NOT)</Select.Option>
+          <Select.Option value="missing">is missing</Select.Option>
         </Select>
       </Form.Item>
       <Input.Search
