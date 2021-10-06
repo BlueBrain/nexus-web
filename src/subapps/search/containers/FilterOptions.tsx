@@ -11,6 +11,7 @@ type ConfigField =
       name: string;
       label: string;
       array: boolean;
+      optional: boolean;
       fields: { name: string; format: string }[];
       format?: undefined;
     }
@@ -19,6 +20,7 @@ type ConfigField =
       label: string;
       format: string;
       array: boolean;
+      optional: boolean;
       fields?: undefined;
     };
 
@@ -133,6 +135,10 @@ const FilterOptions: React.FC<{
                 className="filter-value-row__chk"
                 checked={selected ? true : false}
                 disabled={count === 0}
+                style={{
+                  display:
+                    filterValue == 'Missing' && count == 0 ? 'inherit' : 'none',
+                }}
                 onChange={e =>
                   changeFilterSelection(filterValue, e.target.checked)
                 }
@@ -178,7 +184,9 @@ const FilterOptions: React.FC<{
           ) : null}
           <Select.Option value="anyof">is any of (OR)</Select.Option>
           <Select.Option value="noneof">is none of (NOT)</Select.Option>
-          <Select.Option value="missing">is missing</Select.Option>
+          {field.optional ? (
+            <Select.Option value="missing">is missing</Select.Option>
+          ) : null}
         </Select>
       </Form.Item>
       <Input.Search

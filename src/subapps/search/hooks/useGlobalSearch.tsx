@@ -141,6 +141,7 @@ export type ConfigField =
       name: string;
       label: string;
       array: boolean;
+      optional: boolean;
       fields: { name: string; format: string }[];
       format?: undefined;
     }
@@ -149,6 +150,7 @@ export type ConfigField =
       label: string;
       format: string;
       array: boolean;
+      optional: boolean;
       fields?: undefined;
     };
 
