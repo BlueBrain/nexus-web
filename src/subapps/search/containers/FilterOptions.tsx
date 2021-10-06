@@ -137,7 +137,9 @@ const FilterOptions: React.FC<{
                 disabled={count === 0}
                 style={{
                   display:
-                    filterValue == 'Missing' && count == 0 ? 'inherit' : 'none',
+                    filterValue === 'Missing' && count === 0
+                      ? 'inherit'
+                      : 'none',
                 }}
                 onChange={e =>
                   changeFilterSelection(filterValue, e.target.checked)
