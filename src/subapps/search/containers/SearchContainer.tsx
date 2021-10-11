@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import TableHeightWrapper from '../components/TableHeightWrapper';
-import { Pagination, Table, Button, Checkbox } from 'antd';
+import { Pagination, Table, Button, Checkbox, Result } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import useGlobalSearchData, { FieldVisibility } from '../hooks/useGlobalSearch';
 import useQueryString from '../../../shared/hooks/useQueryString';
@@ -108,6 +108,7 @@ const SearchContainer: React.FC = () => {
   }
 
   const {
+    searchError,
     columns,
     data,
     visibleColumns,
@@ -207,7 +208,9 @@ const SearchContainer: React.FC = () => {
     },
   };
 
-  return (
+  return searchError ? (
+    <Result status="500" title="500" subTitle="Sorry, something went wrong." />
+  ) : (
     <TableHeightWrapper
       wrapperHeightRef={wrapperHeightRef}
       resultTableHeightTestRef={resultTableHeightTestRef}
