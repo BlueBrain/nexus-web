@@ -490,7 +490,6 @@ function useGlobalSearchData(
           setSearchError(null);
         })
         .catch(e => {
-          console.log(e);
           setSearchError(e);
         });
     }

@@ -102,6 +102,7 @@ export function useAdjustTableHeight(
 ) {
   const [{ ref: wrapperHeightRef }, wrapperDOMProps] = useMeasure();
   const [{ ref: resultTableHeightTestRef }] = useMeasure();
+  const defaultNumberOfRows = 50;
   const calculateNumberOfTableRowsFitOnPage = () => {
     if (resultTableHeightTestRef.current) {
       // make our height tester table visible in the DOM to perform our calculations
@@ -126,7 +127,7 @@ export function useAdjustTableHeight(
 
       return numRowsFitOnPage;
     }
-    return 50;
+    return defaultNumberOfRows;
   };
 
   const updateNumberOfRowsFitOnPage = () => {
