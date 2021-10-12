@@ -206,7 +206,9 @@ const FilterOptions: React.FC<{
           setAggregations(filteredSuggestions);
         }}
       ></Input.Search>
-      <Form.Item style={{ maxHeight: '91px', overflow: 'scroll' }}>
+      <Form.Item
+        style={{ maxHeight: '91px', overflow: 'scroll', width: '105%' }}
+      >
         {filterValues}
       </Form.Item>
       <Form.Item></Form.Item>
