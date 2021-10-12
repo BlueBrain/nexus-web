@@ -71,13 +71,13 @@ const FilterOptions: React.FC<{
   const filterKeyWord = createKeyWord(field);
   React.useEffect(() => {
     const allSuggestions = constructQuery(query)
-      .aggregation('terms', filterKeyWord, 'suggestions')
+      .aggregation('terms', filterKeyWord, 'suggestions', { size: 1000 })
       .build();
 
     const allSuggestionsPromise = nexusClient.Search.query(allSuggestions);
 
     const filterSuggestions = withOtherFilters
-      .aggregation('terms', filterKeyWord, 'suggestions')
+      .aggregation('terms', filterKeyWord, 'suggestions', { size: 1000 })
       .aggregation('missing', filterKeyWord, 'missing')
       .build();
 
