@@ -499,7 +499,7 @@ export const parseJsonMaybe = <T = object>(
   try {
     parsedJson = JSON.parse(str || '');
   } catch (error) {
-    errorCallback && errorCallback(error);
+    errorCallback && errorCallback(error as Error);
   }
   return parsedJson;
 };

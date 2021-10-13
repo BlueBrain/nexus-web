@@ -44,8 +44,8 @@ const ProjectToDeleteContainer: React.FC<{
   const isIncluded = () => {
     let included = false;
 
-    deletionConfig?._excludedProjects.forEach(excludedProject => {
-      if (new RegExp(excludedProject).test(projectName)) included = true;
+    deletionConfig?._includedProjects.forEach(includedProject => {
+      if (new RegExp(includedProject).test(projectName)) included = true;
     });
 
     return included;
