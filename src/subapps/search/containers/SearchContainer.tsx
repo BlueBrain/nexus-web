@@ -209,7 +209,11 @@ const SearchContainer: React.FC = () => {
   };
 
   return searchError ? (
-    <Result status="500" title="500" subTitle="Sorry, something went wrong." />
+    <Result status="500" title="500" subTitle="Sorry, something went wrong.">
+      {searchError.message}
+      {searchError.name}
+      {searchError.stack}
+    </Result>
   ) : (
     <TableHeightWrapper
       wrapperHeightRef={wrapperHeightRef}

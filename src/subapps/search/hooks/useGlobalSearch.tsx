@@ -295,7 +295,7 @@ function useGlobalSearchData(
   onSortOptionsChanged: () => void,
   nexus: NexusClient
 ) {
-  const [searchError, setSearchError] = React.useState<Error>();
+  const [searchError, setSearchError] = React.useState<Error | null>(null);
   const [result, setResult] = React.useState<any>({});
   const [config, setConfig] = React.useState<SearchConfig>();
   const defaultFilter: FilterState[] = [];
@@ -474,6 +474,7 @@ function useGlobalSearchData(
       .then((response: any) => {
         const searchConfig = response as SearchConfig;
         setConfig(searchConfig);
+        setSearchError(null);
       })
       .catch(e => {
         setSearchError(e);
@@ -481,15 +482,18 @@ function useGlobalSearchData(
   }, []);
 
   React.useEffect(() => {
-    nexus.Search.query(esQuery)
-      .then((queryResponse: any) => {
-        setResult(queryResponse);
-        onSuccess(queryResponse);
-      })
-      .catch(e => {
-        setSearchError(e);
-      });
-  }, [esQuery]);
+    if (query) {
+      nexus.Search.query(esQuery)
+        .then((queryResponse: any) => {
+          setResult(queryResponse);
+          onSuccess(queryResponse);
+          setSearchError(null);
+        })
+        .catch(e => {
+          setSearchError(e);
+        });
+    }
+  }, [esQuery, query]);
 
   const clearAllFilters = () => {
     filterState.forEach(filter => {

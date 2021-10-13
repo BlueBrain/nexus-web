@@ -102,28 +102,32 @@ export function useAdjustTableHeight(
 ) {
   const [{ ref: wrapperHeightRef }, wrapperDOMProps] = useMeasure();
   const [{ ref: resultTableHeightTestRef }] = useMeasure();
+  const defaultNumberOfRows = 50;
   const calculateNumberOfTableRowsFitOnPage = () => {
-    // make our height tester table visible in the DOM to perform our calculations
-    resultTableHeightTestRef.current.style.display = '';
-    const heightTesterDivBottomPosition = wrapperHeightRef.current.getClientRects()[0]
-      .bottom;
-    const searchResultsTableBodyTopPosition = wrapperHeightRef.current
-      .getElementsByTagName('tbody')[0]
-      .getClientRects()[0].top;
-    const searchResultsTableSingleRowHeight = wrapperHeightRef.current.getElementsByClassName(
-      'ant-table-row'
-    )[0].clientHeight;
+    if (resultTableHeightTestRef.current) {
+      // make our height tester table visible in the DOM to perform our calculations
+      resultTableHeightTestRef.current.style.display = '';
+      const heightTesterDivBottomPosition = wrapperHeightRef.current.getClientRects()[0]
+        .bottom;
+      const searchResultsTableBodyTopPosition = wrapperHeightRef.current
+        .getElementsByTagName('tbody')[0]
+        .getClientRects()[0].top;
+      const searchResultsTableSingleRowHeight = wrapperHeightRef.current.getElementsByClassName(
+        'ant-table-row'
+      )[0].clientHeight;
 
-    const totalTableRowsSpaceAvailable =
-      heightTesterDivBottomPosition - searchResultsTableBodyTopPosition;
-    const numRowsFitOnPage = Math.floor(
-      totalTableRowsSpaceAvailable / searchResultsTableSingleRowHeight
-    );
+      const totalTableRowsSpaceAvailable =
+        heightTesterDivBottomPosition - searchResultsTableBodyTopPosition;
+      const numRowsFitOnPage = Math.floor(
+        totalTableRowsSpaceAvailable / searchResultsTableSingleRowHeight
+      );
 
-    // finished calculations, hide our height tester table
-    resultTableHeightTestRef.current.style.display = 'None';
+      // finished calculations, hide our height tester table
+      resultTableHeightTestRef.current.style.display = 'None';
 
-    return numRowsFitOnPage;
+      return numRowsFitOnPage;
+    }
+    return defaultNumberOfRows;
   };
 
   const updateNumberOfRowsFitOnPage = () => {
