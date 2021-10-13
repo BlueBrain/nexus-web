@@ -25,25 +25,20 @@ const SearchContainer: React.FC = () => {
   const [queryParams] = useQueryString();
   const { query } = queryParams;
   const [selectedRowKeys, setSelectedRowKeys] = React.useState<any>([]);
-  const [rowSelected, setRowSelected] = React.useState<any | undefined>();
+  const [rowSelected, setRowSelected] = React.useState<boolean>(false);
 
   const onRowClick = (record: any): { onClick: () => void } => {
     console.log('clicked record', record);
 
     return {
       onClick: () => {
-        // const projectLabel = record.project.label;
-        // const resourceId = encodeURIComponent(record['@id']);
-        // history.push(`/${projectLabel}/resources/${resourceId}`, {
-        //   background: location,
+        setRowSelected(true);
+        const [orgLabel, projectLabel] = record.project.label.split('/');
+        const resourceId = encodeURIComponent(record['@id']);
+        // location.search = `?orgLabel=${orgLabel}&projectLabel=${projectLabel}&resourceId=${resourceId}`;
+        // history.replace({
+        //   search: `?orgLabel=${orgLabel}&projectLabel=${projectLabel}&resourceId=${resourceId}`,
         // });
-        setRowSelected({
-          org: record.project.label.split('/')[0],
-          project: record.project.label.split('/')[1],
-          resourceId: encodeURIComponent(record['@id']),
-        });
-
-        return null;
       },
     };
   };
@@ -291,16 +286,10 @@ const SearchContainer: React.FC = () => {
       <Drawer
         width="60%"
         visible={rowSelected}
-        onClose={() => setRowSelected(undefined)}
+        onClose={() => setRowSelected(false)}
         title="Hello"
       >
-        {rowSelected && (
-          <ResourceViewContainer
-            org={rowSelected.org}
-            project={rowSelected.project}
-            resourceIdd={rowSelected.resourceIdd}
-          />
-        )}
+        {rowSelected && <ResourceViewContainer />}
       </Drawer>
     </>
   );

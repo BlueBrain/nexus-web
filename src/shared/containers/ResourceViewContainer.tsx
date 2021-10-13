@@ -40,25 +40,13 @@ const ResourceViewContainer: React.FunctionComponent<{
       [key: string]: any;
     }> | null
   ) => React.ReactElement | null;
-  org?: string;
-  project?: string;
-  resourceIdd?: string;
-}> = ({ render, org, project, resourceIdd }) => {
+}> = ({ render }) => {
   const resourceToView: {
     orgLabel: string;
     projectLabel: string;
     resourceId: string;
   } = useParams();
-
-  const [orgLabel, setOrgLabel] = React.useState<string>(
-    org || resourceToView.orgLabel || ''
-  );
-  const [projectLabel, setProjectLabel] = React.useState<string>(
-    project || resourceToView.projectLabel || ''
-  );
-  const [resourceId, setResourceId] = React.useState<string>(
-    resourceIdd || resourceToView.resourceId || ''
-  );
+  const { orgLabel = '', projectLabel = '', resourceId = '' } = resourceToView;
 
   const nexus = useNexusContext();
   const location = useLocation();
@@ -329,7 +317,7 @@ const ResourceViewContainer: React.FunctionComponent<{
     <>
       <div className="resource-details">
         <>
-          {/* <Helmet
+          <Helmet
             title={`${
               resource ? getResourceLabel(resource) : resourceId
             } | ${projectLabel} | ${orgLabel} | Nexus Web`}
@@ -354,7 +342,7 @@ const ResourceViewContainer: React.FunctionComponent<{
             {resource
               ? getResourceLabel(resource)
               : labelOf(decodeURIComponent(resourceId))}
-          </h1> */}
+          </h1>
         </>
 
         <Spin spinning={busy}>
