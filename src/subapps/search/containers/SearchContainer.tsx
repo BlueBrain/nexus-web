@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import TableHeightWrapper from '../components/TableHeightWrapper';
-import { Pagination, Table, Button, Checkbox, Result } from 'antd';
+import { Pagination, Table, Button, Checkbox, Result, Drawer } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import useGlobalSearchData, { FieldVisibility } from '../hooks/useGlobalSearch';
 import useQueryString from '../../../shared/hooks/useQueryString';
@@ -16,6 +16,7 @@ import './SearchContainer.less';
 import useColumnsToFitPage from '../hooks/useColumnsToFitPage';
 import FiltersConfig from '../components/FiltersConfig';
 import SortConfig from '../components/SortConfig';
+import ResourceViewContainer from '../../../shared/containers/ResourceViewContainer';
 
 const SearchContainer: React.FC = () => {
   const nexus = useNexusContext();
@@ -24,15 +25,25 @@ const SearchContainer: React.FC = () => {
   const [queryParams] = useQueryString();
   const { query } = queryParams;
   const [selectedRowKeys, setSelectedRowKeys] = React.useState<any>([]);
+  const [rowSelected, setRowSelected] = React.useState<any | undefined>();
 
   const onRowClick = (record: any): { onClick: () => void } => {
+    console.log('clicked record', record);
+
     return {
       onClick: () => {
-        const projectLabel = record.project.label;
-        const resourceId = encodeURIComponent(record['@id']);
-        history.push(`/${projectLabel}/resources/${resourceId}`, {
-          background: location,
+        // const projectLabel = record.project.label;
+        // const resourceId = encodeURIComponent(record['@id']);
+        // history.push(`/${projectLabel}/resources/${resourceId}`, {
+        //   background: location,
+        // });
+        setRowSelected({
+          org: record.project.label.split('/')[0],
+          project: record.project.label.split('/')[1],
+          resourceId: encodeURIComponent(record['@id']),
         });
+
+        return null;
       },
     };
   };
@@ -215,67 +226,83 @@ const SearchContainer: React.FC = () => {
       {searchError.stack}
     </Result>
   ) : (
-    <TableHeightWrapper
-      wrapperHeightRef={wrapperHeightRef}
-      resultTableHeightTestRef={resultTableHeightTestRef}
-      wrapperDOMProps={wrapperDOMProps}
-    >
-      {visibleColumns && data && (
-        <>
-          <div className="search-table-header">
-            <div className="search-table-header__options">
-              <ColumnsVisibilityConfig
-                columnsVisibility={fieldsVisibilityState}
-                dispatchFieldVisibility={dispatchFieldVisibility}
+    <>
+      <TableHeightWrapper
+        wrapperHeightRef={wrapperHeightRef}
+        resultTableHeightTestRef={resultTableHeightTestRef}
+        wrapperDOMProps={wrapperDOMProps}
+      >
+        {visibleColumns && data && (
+          <>
+            <div className="search-table-header">
+              <div className="search-table-header__options">
+                <ColumnsVisibilityConfig
+                  columnsVisibility={fieldsVisibilityState}
+                  dispatchFieldVisibility={dispatchFieldVisibility}
+                />
+                <FiltersConfig
+                  filters={filterState}
+                  columns={columns}
+                  onRemoveFilter={filter =>
+                    dispatchFilter({ type: 'remove', payload: filter })
+                  }
+                />
+                <SortConfig
+                  sortedFields={sortState}
+                  onRemoveSort={sortToRemove => removeSortOption(sortToRemove)}
+                  onChangeSortDirection={sortToChange =>
+                    changeSortOption(sortToChange)
+                  }
+                />
+                <Button type="link" onClick={() => clearAllCustomisation()}>
+                  <CloseCircleOutlined />
+                  Reset
+                </Button>
+              </div>
+              <Pagination
+                disabled={pagination.totalNumberOfResults === 0}
+                showTotal={renderShowTotal}
+                onShowSizeChange={onPageSizeOptionChanged}
+                total={pagination.totalNumberOfResults}
+                pageSize={pagination.pageSize}
+                current={pagination.currentPage}
+                onChange={handlePaginationChange}
+                locale={{ items_per_page: '' }}
+                showSizeChanger={true}
+                pageSizeOptions={pagination.pageSizeOptions}
+                showLessItems={true}
+                className="search-table-header__paginator"
               />
-              <FiltersConfig
-                filters={filterState}
-                columns={columns}
-                onRemoveFilter={filter =>
-                  dispatchFilter({ type: 'remove', payload: filter })
-                }
-              />
-              <SortConfig
-                sortedFields={sortState}
-                onRemoveSort={sortToRemove => removeSortOption(sortToRemove)}
-                onChangeSortDirection={sortToChange =>
-                  changeSortOption(sortToChange)
-                }
-              />
-              <Button type="link" onClick={() => clearAllCustomisation()}>
-                <CloseCircleOutlined />
-                Reset
-              </Button>
             </div>
-            <Pagination
-              disabled={pagination.totalNumberOfResults === 0}
-              showTotal={renderShowTotal}
-              onShowSizeChange={onPageSizeOptionChanged}
-              total={pagination.totalNumberOfResults}
-              pageSize={pagination.pageSize}
-              current={pagination.currentPage}
-              onChange={handlePaginationChange}
-              locale={{ items_per_page: '' }}
-              showSizeChanger={true}
-              pageSizeOptions={pagination.pageSizeOptions}
-              showLessItems={true}
-              className="search-table-header__paginator"
-            />
-          </div>
-          <div ref={tableRef} className="search-table">
-            <Table
-              rowSelection={rowSelection}
-              tableLayout="fixed"
-              rowKey="key"
-              columns={visibleColumns}
-              dataSource={data}
-              pagination={false}
-              onRow={onRowClick}
-            />
-          </div>
-        </>
-      )}
-    </TableHeightWrapper>
+            <div ref={tableRef} className="search-table">
+              <Table
+                rowSelection={rowSelection}
+                tableLayout="fixed"
+                rowKey="key"
+                columns={visibleColumns}
+                dataSource={data}
+                pagination={false}
+                onRow={onRowClick}
+              />
+            </div>
+          </>
+        )}
+      </TableHeightWrapper>
+      <Drawer
+        width="60%"
+        visible={rowSelected}
+        onClose={() => setRowSelected(undefined)}
+        title="Hello"
+      >
+        {rowSelected && (
+          <ResourceViewContainer
+            org={rowSelected.org}
+            project={rowSelected.project}
+            resourceIdd={rowSelected.resourceIdd}
+          />
+        )}
+      </Drawer>
+    </>
   );
 };
 
