@@ -30,6 +30,7 @@ const ProjectGraph: React.FC<{
       layout: {
         // @ts-ignore
         name: 'avsdf',
+        // name: 'fcose'
       },
       style: [
         {

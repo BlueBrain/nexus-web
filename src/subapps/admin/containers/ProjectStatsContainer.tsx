@@ -18,14 +18,14 @@ const ProjectStatsContainer: React.FC<{
   const loadRelationships = async () => {
     // TODO update nexus.js
     return await nexus.httpGet({
-      path: `https://dev.nexus.ocp.bbp.epfl.ch/v1/statistics/${orgLabel}/${projectLabel}/relationships`,
+      path: `https://dev.nexus.ocp.bbp.epfl.ch/v1/graph-analytics/${orgLabel}/${projectLabel}/relationships`,
     });
   };
 
   const loadTypeStats = async (type: string) => {
     // TODO update nexus.js
     return await nexus.httpGet({
-      path: `https://dev.nexus.ocp.bbp.epfl.ch/v1/statistics/${orgLabel}/${projectLabel}/properties/${encodeURIComponent(
+      path: `https://dev.nexus.ocp.bbp.epfl.ch/v1/graph-analytics/${orgLabel}/${projectLabel}/properties/${encodeURIComponent(
         type
       )}`,
     });
@@ -103,7 +103,7 @@ const ProjectStatsContainer: React.FC<{
       data: {
         id: getEdgeId(edge),
         source: edge._source,
-        target: edge._target,
+        target: edge._target || edge._source,
         name: constructPathName(edge._path),
       },
       style: {
@@ -113,7 +113,9 @@ const ProjectStatsContainer: React.FC<{
 
     return {
       nodes,
-      edges,
+      // edges,
+      // are not constructed properly because of this: https://github.com/BlueBrain/nexus/issues/2871
+      edges: [],
     };
   };
 
