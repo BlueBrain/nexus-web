@@ -20,6 +20,8 @@ const GalleryView: React.FC = () => {
   const history = useHistory();
   const nexus = useNexusContext();
 
+  const [drawerVisible, setDrawerVisible] = React.useState<boolean>(true);
+
   // The following provides the logic
   // To search for a self url using
   // a query param from any app path
@@ -60,6 +62,27 @@ const GalleryView: React.FC = () => {
   const background =
     location.state && (location.state as { background?: Location }).background;
 
+  const wrapperRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const handleClickOutsideWrapper = (event: Event) => {
+      // @ts-ignore
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        console.log('yup', background, event);
+        setDrawerVisible(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutsideWrapper);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideWrapper);
+    };
+  }, [wrapperRef, background]);
+
+  React.useEffect(() => {
+    setDrawerVisible(true);
+  }, [location]);
+
   // This is where special routes should go
   // that are placed inside a modal
   // when the background state is provided
@@ -69,21 +92,21 @@ const GalleryView: React.FC = () => {
         <Route
           key="resource-modal"
           path={'/:orgLabel/:projectLabel/resources/:resourceId'}
-          render={routeProps => (
-            <Drawer
-              visible={true}
-              onClose={() => {
-                // @ts-ignore
-                history.push(`${background.pathname}${background.search}`, {
-                  refresh: true,
-                });
-              }}
-              className="resource-drawer"
-              width="" // intentionally blank, specified in css
-            >
-              <ResourceViewContainer />
-            </Drawer>
-          )}
+          render={routeProps =>
+            drawerVisible && (
+              <Drawer
+                maskClosable={false}
+                destroyOnClose={false}
+                visible={true}
+                className="resource-drawer"
+                width="" // intentionally blank, specified in css
+              >
+                <div ref={wrapperRef} style={{ width: '100%', height: '100%' }}>
+                  <ResourceViewContainer />
+                </div>
+              </Drawer>
+            )
+          }
         />,
       ]}
     </>
