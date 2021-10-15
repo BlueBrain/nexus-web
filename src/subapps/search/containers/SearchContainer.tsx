@@ -233,69 +233,67 @@ const SearchContainer: React.FC = () => {
       {searchError.stack}
     </Result>
   ) : (
-    <>
-      <TableHeightWrapper
-        wrapperHeightRef={wrapperHeightRef}
-        resultTableHeightTestRef={resultTableHeightTestRef}
-        wrapperDOMProps={wrapperDOMProps}
-      >
-        {visibleColumns && data && (
-          <>
-            <div className="search-table-header">
-              <div className="search-table-header__options">
-                <ColumnsVisibilityConfig
-                  columnsVisibility={fieldsVisibilityState}
-                  dispatchFieldVisibility={dispatchFieldVisibility}
-                />
-                <FiltersConfig
-                  filters={filterState}
-                  columns={columns}
-                  onRemoveFilter={filter =>
-                    dispatchFilter({ type: 'remove', payload: filter })
-                  }
-                />
-                <SortConfig
-                  sortedFields={sortState}
-                  onRemoveSort={sortToRemove => removeSortOption(sortToRemove)}
-                  onChangeSortDirection={sortToChange =>
-                    changeSortOption(sortToChange)
-                  }
-                />
-                <Button type="link" onClick={() => clearAllCustomisation()}>
-                  <CloseCircleOutlined />
-                  Reset
-                </Button>
-              </div>
-              <Pagination
-                disabled={pagination.totalNumberOfResults === 0}
-                showTotal={renderShowTotal}
-                onShowSizeChange={onPageSizeOptionChanged}
-                total={pagination.totalNumberOfResults}
-                pageSize={pagination.pageSize}
-                current={pagination.currentPage}
-                onChange={handlePaginationChange}
-                locale={{ items_per_page: '' }}
-                showSizeChanger={true}
-                pageSizeOptions={pagination.pageSizeOptions}
-                showLessItems={true}
-                className="search-table-header__paginator"
+    <TableHeightWrapper
+      wrapperHeightRef={wrapperHeightRef}
+      resultTableHeightTestRef={resultTableHeightTestRef}
+      wrapperDOMProps={wrapperDOMProps}
+    >
+      {visibleColumns && data && (
+        <>
+          <div className="search-table-header">
+            <div className="search-table-header__options">
+              <ColumnsVisibilityConfig
+                columnsVisibility={fieldsVisibilityState}
+                dispatchFieldVisibility={dispatchFieldVisibility}
               />
-            </div>
-            <div ref={tableRef} className="search-table">
-              <Table
-                rowSelection={rowSelection}
-                tableLayout="fixed"
-                rowKey="key"
-                columns={visibleColumns}
-                dataSource={data}
-                pagination={false}
-                onRow={onRowClick}
+              <FiltersConfig
+                filters={filterState}
+                columns={columns}
+                onRemoveFilter={filter =>
+                  dispatchFilter({ type: 'remove', payload: filter })
+                }
               />
+              <SortConfig
+                sortedFields={sortState}
+                onRemoveSort={sortToRemove => removeSortOption(sortToRemove)}
+                onChangeSortDirection={sortToChange =>
+                  changeSortOption(sortToChange)
+                }
+              />
+              <Button type="link" onClick={() => clearAllCustomisation()}>
+                <CloseCircleOutlined />
+                Reset
+              </Button>
             </div>
-          </>
-        )}
-      </TableHeightWrapper>
-    </>
+            <Pagination
+              disabled={pagination.totalNumberOfResults === 0}
+              showTotal={renderShowTotal}
+              onShowSizeChange={onPageSizeOptionChanged}
+              total={pagination.totalNumberOfResults}
+              pageSize={pagination.pageSize}
+              current={pagination.currentPage}
+              onChange={handlePaginationChange}
+              locale={{ items_per_page: '' }}
+              showSizeChanger={true}
+              pageSizeOptions={pagination.pageSizeOptions}
+              showLessItems={true}
+              className="search-table-header__paginator"
+            />
+          </div>
+          <div ref={tableRef} className="search-table">
+            <Table
+              rowSelection={rowSelection}
+              tableLayout="fixed"
+              rowKey="key"
+              columns={visibleColumns}
+              dataSource={data}
+              pagination={false}
+              onRow={onRowClick}
+            />
+          </div>
+        </>
+      )}
+    </TableHeightWrapper>
   );
 };
 

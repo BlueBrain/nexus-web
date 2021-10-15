@@ -64,6 +64,7 @@ const GalleryView: React.FC = () => {
 
   const wrapperRef = React.useRef<HTMLDivElement>(null);
 
+  /* custom logic for hiding drawer component when clicking outside of it */
   React.useEffect(() => {
     const handleClickOutsideWrapper = (event: Event) => {
       if (wrapperRef.current) {
