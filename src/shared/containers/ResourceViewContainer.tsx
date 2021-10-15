@@ -41,13 +41,10 @@ const ResourceViewContainer: React.FunctionComponent<{
     }> | null
   ) => React.ReactElement | null;
 }> = ({ render }) => {
-  const resourceToView: {
-    orgLabel: string;
-    projectLabel: string;
-    resourceId: string;
-  } = useParams();
-  const { orgLabel = '', projectLabel = '', resourceId = '' } = resourceToView;
+  const x = useParams();
 
+  // @ts-ignore
+  const { orgLabel = '', projectLabel = '', resourceId = '' } = useParams();
   const nexus = useNexusContext();
   const location = useLocation();
   const history = useHistory();
