@@ -1,11 +1,12 @@
 import { Route, useLocation, useHistory } from 'react-router-dom';
 import { Location } from 'history';
 import * as React from 'react';
-import { Modal, message } from 'antd';
+import { message, Drawer } from 'antd';
 import ResourceViewContainer from '../containers/ResourceViewContainer';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
 import { parseProjectUrl } from '../utils';
+import './GalleryView.less';
 
 const getUrlParameter = (name: string) => {
   const filteredName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -69,20 +70,19 @@ const GalleryView: React.FC = () => {
           key="resource-modal"
           path={'/:orgLabel/:projectLabel/resources/:resourceId'}
           render={routeProps => (
-            <Modal
+            <Drawer
               visible={true}
-              footer={null}
-              onCancel={() => {
+              onClose={() => {
                 // @ts-ignore
                 history.push(`${background.pathname}${background.search}`, {
                   refresh: true,
                 });
               }}
-              className="modal-view"
-              width="inherit"
+              className="resource-drawer"
+              width="" // intentionally blank, specified in css
             >
               <ResourceViewContainer />
-            </Modal>
+            </Drawer>
           )}
         />,
       ]}

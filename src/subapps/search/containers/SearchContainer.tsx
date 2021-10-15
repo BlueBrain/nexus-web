@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import TableHeightWrapper from '../components/TableHeightWrapper';
-import { Pagination, Table, Button, Checkbox, Result, Drawer } from 'antd';
+import { Pagination, Table, Button, Checkbox, Result } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import useGlobalSearchData, { FieldVisibility } from '../hooks/useGlobalSearch';
 import useQueryString from '../../../shared/hooks/useQueryString';
@@ -16,7 +16,6 @@ import './SearchContainer.less';
 import useColumnsToFitPage from '../hooks/useColumnsToFitPage';
 import FiltersConfig from '../components/FiltersConfig';
 import SortConfig from '../components/SortConfig';
-import ResourceViewContainer from '../../../shared/containers/ResourceViewContainer';
 
 const SearchContainer: React.FC = () => {
   const nexus = useNexusContext();
@@ -25,20 +24,33 @@ const SearchContainer: React.FC = () => {
   const [queryParams] = useQueryString();
   const { query } = queryParams;
   const [selectedRowKeys, setSelectedRowKeys] = React.useState<any>([]);
-  const [rowSelected, setRowSelected] = React.useState<boolean>(false);
+
+  const makeResourceUri = (
+    orgLabel: string,
+    projectLabel: string,
+    resourceId: string
+  ) => {
+    return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+      resourceId
+    )}`;
+  };
+
+  const goToResource = (
+    orgLabel: string,
+    projectLabel: string,
+    resourceId: string
+  ) => {
+    history.push(makeResourceUri(orgLabel, projectLabel, resourceId), {
+      background: location,
+    });
+  };
 
   const onRowClick = (record: any): { onClick: () => void } => {
-    console.log('clicked record', record);
-
     return {
       onClick: () => {
-        setRowSelected(true);
         const [orgLabel, projectLabel] = record.project.label.split('/');
         const resourceId = encodeURIComponent(record['@id']);
-        // location.search = `?orgLabel=${orgLabel}&projectLabel=${projectLabel}&resourceId=${resourceId}`;
-        // history.replace({
-        //   search: `?orgLabel=${orgLabel}&projectLabel=${projectLabel}&resourceId=${resourceId}`,
-        // });
+        goToResource(orgLabel, projectLabel, resourceId);
       },
     };
   };
@@ -283,14 +295,6 @@ const SearchContainer: React.FC = () => {
           </>
         )}
       </TableHeightWrapper>
-      <Drawer
-        width="60%"
-        visible={rowSelected}
-        onClose={() => setRowSelected(false)}
-        title="Hello"
-      >
-        {rowSelected && <ResourceViewContainer />}
-      </Drawer>
     </>
   );
 };
