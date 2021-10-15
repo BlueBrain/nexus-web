@@ -62,14 +62,20 @@ const GalleryView: React.FC = () => {
   const background =
     location.state && (location.state as { background?: Location }).background;
 
-  const wrapperRef = React.useRef(null);
+  const wrapperRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const handleClickOutsideWrapper = (event: Event) => {
-      // @ts-ignore
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-        console.log('yup', background, event);
-        setDrawerVisible(false);
+      if (wrapperRef.current) {
+        const currentWrapperRef = wrapperRef.current;
+        if (
+          event.target &&
+          !currentWrapperRef.contains(event.target as Node) &&
+          // @ts-ignore
+          event.target.getAttribute('role') !== 'menuitem'
+        ) {
+          setDrawerVisible(false);
+        }
       }
     };
 
@@ -98,7 +104,6 @@ const GalleryView: React.FC = () => {
                 maskClosable={false}
                 destroyOnClose={false}
                 visible={true}
-                className="resource-drawer"
                 width="" // intentionally blank, specified in css
               >
                 <div ref={wrapperRef} style={{ width: '100%', height: '100%' }}>
