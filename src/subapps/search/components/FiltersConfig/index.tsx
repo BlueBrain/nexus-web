@@ -29,7 +29,6 @@ const FiltersConfig: React.FC<{
 
   const countFilters = () => filters.length;
   const filterTypeFriendlyName = (filterType: string) => {
-    console.log(filterType);
     return filterTypeFriendlyNames[filterType].friendlyName;
   };
 
