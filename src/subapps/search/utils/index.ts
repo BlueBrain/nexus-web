@@ -5,7 +5,7 @@ import { ESMaxResultWindowSize } from '../hooks/useSearchPagination';
 export const constructQuery = (searchText: string) => {
   const body = bodybuilder();
   body.query('multi_match', {
-    query: searchText,
+    query: searchText ? searchText : '*',
     fuzziness: 5,
     prefix_length: 0,
     fields: ['*'],
