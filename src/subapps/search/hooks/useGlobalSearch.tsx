@@ -482,18 +482,16 @@ function useGlobalSearchData(
   }, []);
 
   React.useEffect(() => {
-    if (query) {
-      nexus.Search.query(esQuery)
-        .then((queryResponse: any) => {
-          setResult(queryResponse);
-          onSuccess(queryResponse);
-          setSearchError(null);
-        })
-        .catch(e => {
-          setSearchError(e);
-        });
-    }
-  }, [esQuery, query]);
+    nexus.Search.query(esQuery)
+      .then((queryResponse: any) => {
+        setResult(queryResponse);
+        onSuccess(queryResponse);
+        setSearchError(null);
+      })
+      .catch(e => {
+        setSearchError(e);
+      });
+  }, [esQuery]);
 
   const clearAllFilters = () => {
     filterState.forEach(filter => {
