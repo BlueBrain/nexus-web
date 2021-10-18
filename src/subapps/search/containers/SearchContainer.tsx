@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import TableHeightWrapper from '../components/TableHeightWrapper';
-import { Pagination, Table, Button, Checkbox, Result } from 'antd';
+import { Spin, Pagination, Table, Button, Checkbox, Result } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import useGlobalSearchData, { FieldVisibility } from '../hooks/useGlobalSearch';
 import useQueryString from '../../../shared/hooks/useQueryString';
@@ -108,6 +108,7 @@ const SearchContainer: React.FC = () => {
   }
 
   const {
+    isLoading,
     searchError,
     columns,
     data,
@@ -208,74 +209,84 @@ const SearchContainer: React.FC = () => {
     },
   };
 
-  return searchError ? (
-    <Result status="500" title="500" subTitle="Sorry, something went wrong.">
-      {searchError.message}
-      {searchError.name}
-      {searchError.stack}
-    </Result>
-  ) : (
-    <TableHeightWrapper
-      wrapperHeightRef={wrapperHeightRef}
-      resultTableHeightTestRef={resultTableHeightTestRef}
-      wrapperDOMProps={wrapperDOMProps}
-    >
-      {visibleColumns && data && (
-        <>
-          <div className="search-table-header">
-            <div className="search-table-header__options">
-              <ColumnsVisibilityConfig
-                columnsVisibility={fieldsVisibilityState}
-                dispatchFieldVisibility={dispatchFieldVisibility}
-              />
-              <FiltersConfig
-                filters={filterState}
-                columns={columns}
-                onRemoveFilter={filter =>
-                  dispatchFilter({ type: 'remove', payload: filter })
-                }
-              />
-              <SortConfig
-                sortedFields={sortState}
-                onRemoveSort={sortToRemove => removeSortOption(sortToRemove)}
-                onChangeSortDirection={sortToChange =>
-                  changeSortOption(sortToChange)
-                }
-              />
-              <Button type="link" onClick={() => clearAllCustomisation()}>
-                <CloseCircleOutlined />
-                Reset
-              </Button>
-            </div>
-            <Pagination
-              disabled={pagination.totalNumberOfResults === 0}
-              showTotal={renderShowTotal}
-              onShowSizeChange={onPageSizeOptionChanged}
-              total={pagination.totalNumberOfResults}
-              pageSize={pagination.pageSize}
-              current={pagination.currentPage}
-              onChange={handlePaginationChange}
-              locale={{ items_per_page: '' }}
-              showSizeChanger={true}
-              pageSizeOptions={pagination.pageSizeOptions}
-              showLessItems={true}
-              className="search-table-header__paginator"
-            />
-          </div>
-          <div ref={tableRef} className="search-table">
-            <Table
-              rowSelection={rowSelection}
-              tableLayout="fixed"
-              rowKey="key"
-              columns={visibleColumns}
-              dataSource={data}
-              pagination={false}
-              onRow={onRowClick}
-            />
-          </div>
-        </>
+  return (
+    <Spin spinning={isLoading}>
+      {searchError ? (
+        <Result
+          status="500"
+          title="500"
+          subTitle="Sorry, something went wrong."
+        >
+          {searchError.message}
+          {searchError.name}
+          {searchError.stack}
+        </Result>
+      ) : (
+        <TableHeightWrapper
+          wrapperHeightRef={wrapperHeightRef}
+          resultTableHeightTestRef={resultTableHeightTestRef}
+          wrapperDOMProps={wrapperDOMProps}
+        >
+          {visibleColumns && data && (
+            <>
+              <div className="search-table-header">
+                <div className="search-table-header__options">
+                  <ColumnsVisibilityConfig
+                    columnsVisibility={fieldsVisibilityState}
+                    dispatchFieldVisibility={dispatchFieldVisibility}
+                  />
+                  <FiltersConfig
+                    filters={filterState}
+                    columns={columns}
+                    onRemoveFilter={filter =>
+                      dispatchFilter({ type: 'remove', payload: filter })
+                    }
+                  />
+                  <SortConfig
+                    sortedFields={sortState}
+                    onRemoveSort={sortToRemove =>
+                      removeSortOption(sortToRemove)
+                    }
+                    onChangeSortDirection={sortToChange =>
+                      changeSortOption(sortToChange)
+                    }
+                  />
+                  <Button type="link" onClick={() => clearAllCustomisation()}>
+                    <CloseCircleOutlined />
+                    Reset
+                  </Button>
+                </div>
+                <Pagination
+                  disabled={pagination.totalNumberOfResults === 0}
+                  showTotal={renderShowTotal}
+                  onShowSizeChange={onPageSizeOptionChanged}
+                  total={pagination.totalNumberOfResults}
+                  pageSize={pagination.pageSize}
+                  current={pagination.currentPage}
+                  onChange={handlePaginationChange}
+                  locale={{ items_per_page: '' }}
+                  showSizeChanger={true}
+                  pageSizeOptions={pagination.pageSizeOptions}
+                  showLessItems={true}
+                  className="search-table-header__paginator"
+                />
+              </div>
+              <div ref={tableRef} className="search-table">
+                <Table
+                  rowSelection={rowSelection}
+                  tableLayout="fixed"
+                  rowKey="key"
+                  columns={visibleColumns}
+                  dataSource={data}
+                  pagination={false}
+                  onRow={onRowClick}
+                />
+              </div>
+            </>
+          )}
+        </TableHeightWrapper>
       )}
-    </TableHeightWrapper>
+    </Spin>
   );
 };
 
