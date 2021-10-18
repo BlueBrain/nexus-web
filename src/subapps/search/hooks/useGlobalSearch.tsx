@@ -420,6 +420,7 @@ function useGlobalSearchData(
     return withSorting.build();
   }, [query, filterState, page, pageSize, sortState]);
 
+  const [isLoading, setIsLoading] = React.useState(false);
   const columns: SearchConfigField = React.useMemo(() => {
     return config
       ? makeColumnConfig(config, fieldMenu, filteredFields, sortState)
@@ -470,6 +471,7 @@ function useGlobalSearchData(
   }, [result]);
 
   React.useEffect(() => {
+    setIsLoading(true);
     nexus.Search.config()
       .then((response: any) => {
         const searchConfig = response as SearchConfig;
@@ -478,10 +480,14 @@ function useGlobalSearchData(
       })
       .catch(e => {
         setSearchError(e);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, []);
 
   React.useEffect(() => {
+    setIsLoading(true);
     nexus.Search.query(esQuery)
       .then((queryResponse: any) => {
         setResult(queryResponse);
@@ -490,6 +496,9 @@ function useGlobalSearchData(
       })
       .catch(e => {
         setSearchError(e);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, [esQuery]);
 
@@ -511,6 +520,7 @@ function useGlobalSearchData(
   };
 
   return {
+    isLoading,
     searchError,
     columns,
     data,
