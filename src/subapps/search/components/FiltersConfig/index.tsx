@@ -23,7 +23,7 @@ const FiltersConfig: React.FC<{
   const filterTypeFriendlyNames: { [any: string]: { friendlyName: string } } = {
     allof: { friendlyName: 'is all of' },
     anyof: { friendlyName: 'is any of' },
-    noneof: { friendlyName: 'is any of' },
+    noneof: { friendlyName: 'is none of' },
     missing: { friendlyName: 'is missing' },
   };
 

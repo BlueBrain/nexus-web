@@ -67,7 +67,6 @@ const ColumnsVisibilityConfig: React.FunctionComponent<{
               if (!destination) {
                 return;
               }
-              console.log(destination, source);
               const fields = columnsVisibility.fields;
               const saved = fields[destination.index];
               fields[destination.index] = fields[source.index];
