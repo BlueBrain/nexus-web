@@ -25,14 +25,32 @@ const SearchContainer: React.FC = () => {
   const { query } = queryParams;
   const [selectedRowKeys, setSelectedRowKeys] = React.useState<any>([]);
 
+  const makeResourceUri = (
+    orgLabel: string,
+    projectLabel: string,
+    resourceId: string
+  ) => {
+    return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+      resourceId
+    )}`;
+  };
+
+  const goToResource = (
+    orgLabel: string,
+    projectLabel: string,
+    resourceId: string
+  ) => {
+    history.push(makeResourceUri(orgLabel, projectLabel, resourceId), {
+      background: location,
+    });
+  };
+
   const onRowClick = (record: any): { onClick: () => void } => {
     return {
       onClick: () => {
-        const projectLabel = record.project.label;
+        const [orgLabel, projectLabel] = record.project.label.split('/');
         const resourceId = encodeURIComponent(record['@id']);
-        history.push(`/${projectLabel}/resources/${resourceId}`, {
-          background: location,
-        });
+        goToResource(orgLabel, projectLabel, resourceId);
       },
     };
   };
