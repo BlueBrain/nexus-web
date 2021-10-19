@@ -6,6 +6,7 @@ import { useQuery } from 'react-query';
 
 import SearchBar from '../components/SearchBar';
 import { sortStringsBySimilarity } from '../utils/stringSimilarity';
+import useQueryString from '../hooks/useQueryString';
 
 const PROJECT_RESULTS_DEFAULT_SIZE = 300;
 const SHOULD_INCLUDE_DEPRECATED = false;
@@ -17,6 +18,17 @@ const SearchBarContainer: React.FC = () => {
   const history = useHistory();
   const [query, setQuery] = React.useState<string>();
   const [lastVisited, setLastVisited] = React.useState<string>();
+
+  const [queryParams] = useQueryString();
+  const { query: searchQueryParam } = queryParams;
+
+  React.useEffect(() => {
+    setQuery(searchQueryParam);
+    if (searchQueryParam) {
+      setLastVisited(searchQueryParam);
+      localStorage.setItem(STORAGE_ITEM, searchQueryParam);
+    }
+  }, [searchQueryParam]);
 
   const { data } = useQuery(
     'projects',
@@ -97,7 +109,7 @@ const SearchBarContainer: React.FC = () => {
       onSubmit={handleSubmit}
       onClear={handleClear}
       onFocus={onFocus}
-      onBlur={() => setQuery('')}
+      onBlur={() => setQuery(searchQueryParam)}
       inputOnPressEnter={inputOnPressEnter}
     />
   );
