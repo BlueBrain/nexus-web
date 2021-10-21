@@ -82,14 +82,14 @@ const FilterOptions: React.FC<{
 
     const filterSuggestions = withOtherFilters
       .aggregation('terms', filterKeyWord, 'suggestions', { size: 1000 })
-      .aggregation('missing', filterKeyWord, 'missing')
+      .aggregation('missing', filterKeyWord, '(missing)')
       .build();
 
-    const filedSuggesetionsPromise = nexusClient.Search.query(
+    const filteredSuggesetionsPromise = nexusClient.Search.query(
       filterSuggestions
     );
 
-    Promise.all([allSuggestionsPromise, filedSuggesetionsPromise]).then(
+    Promise.all([allSuggestionsPromise, filteredSuggesetionsPromise]).then(
       ([all, filtered]) => {
         const aggs = all.aggregations['suggestions'].buckets.map(
           (bucket: any) => {
@@ -108,9 +108,9 @@ const FilterOptions: React.FC<{
           }
         );
         aggs.push({
-          filterValue: 'Missing',
-          count: filtered.aggregations['missing'].doc_count,
-          selected: fieldFilter?.filters.includes('Missing'),
+          filterValue: '(Missing)',
+          count: filtered.aggregations['(missing)'].doc_count,
+          selected: fieldFilter?.filters.includes('(Missing)'),
           matching: true,
         });
         setAggregations(aggs);

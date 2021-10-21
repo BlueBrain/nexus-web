@@ -49,7 +49,7 @@ export const constructFilter = (
     }
     filters.forEach((item: string) => {
       if (filterType === 'anyof') {
-        if (item !== 'Missing') {
+        if (item !== '(Missing)') {
           b.orFilter('term', filterTerm, item);
         } else {
           b.orFilter('bool', missing => {
@@ -57,7 +57,7 @@ export const constructFilter = (
           });
         }
       } else if (filterType === 'noneof') {
-        if (item !== 'Missing') {
+        if (item !== '(Missing)') {
           b.notFilter('term', filterTerm, item);
         } else {
           b.notFilter('bool', missing => {
@@ -65,7 +65,7 @@ export const constructFilter = (
           });
         }
       } else if (filterType === 'allof') {
-        if (item !== 'Missing') {
+        if (item !== '(Missing)') {
           b.addFilter('term', filterTerm, item);
         } else {
           b.addFilter('bool', missing => {
