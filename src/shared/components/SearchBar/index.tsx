@@ -123,9 +123,9 @@ const SearchBar: React.FC<{
       onKeyDown={handleKeyDown}
       dropdownClassName="search-bar__drop"
       dropdownMatchSelectWidth={false}
+      value={value}
     >
       <Input
-        value={value === lastVisited ? '' : value}
         allowClear
         onPressEnter={inputOnPressEnter}
         ref={inputRef}
