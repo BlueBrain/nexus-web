@@ -62,13 +62,13 @@ const FilterOptions: React.FC<{
     }[]
   >([]);
 
-  const [filterType, setFilterType] = React.useState(
-    fieldFilter?.filterType
-      ? fieldFilter?.filterType
-      : field.array
-      ? 'anyof'
-      : 'allof'
-  );
+  const filterTypeDefault = () => {
+    if (fieldFilter?.filterType) {
+      return fieldFilter?.filterType;
+    }
+    return field.array ? 'anyof' : 'allof';
+  };
+  const [filterType, setFilterType] = React.useState(filterTypeDefault);
 
   const [form] = Form.useForm();
 
