@@ -63,7 +63,11 @@ const FilterOptions: React.FC<{
   >([]);
 
   const [filterType, setFilterType] = React.useState(
-    fieldFilter?.filterType || field.array ? 'anyof' : 'allof'
+    fieldFilter?.filterType
+      ? fieldFilter?.filterType
+      : field.array
+      ? 'anyof'
+      : 'allof'
   );
 
   const [form] = Form.useForm();
@@ -165,7 +169,10 @@ const FilterOptions: React.FC<{
       onFinish={(values: any) => {
         onFinish({
           filterType,
-          filters: aggregations.filter(a => a.selected).map(a => a.filterValue),
+          filters:
+            filterType === 'missing'
+              ? []
+              : aggregations.filter(a => a.selected).map(a => a.filterValue),
           filterTerm: filterKeyWord,
         });
       }}
@@ -192,26 +199,30 @@ const FilterOptions: React.FC<{
           ) : null}
         </Select>
       </Form.Item>
-      <Input.Search
-        onChange={event => {
-          const val = event.target.value;
+      {filterType !== 'missing' && (
+        <>
+          <Input.Search
+            onChange={event => {
+              const val = event.target.value;
 
-          const filteredSuggestions = aggregations.map(a => ({
-            ...a,
-            matching:
-              val && val.length > 0
-                ? a.filterValue.toLowerCase().indexOf(val.toLowerCase()) > -1
-                : true,
-          }));
-          setAggregations(filteredSuggestions);
-        }}
-      ></Input.Search>
-      <Form.Item
-        style={{ maxHeight: '91px', overflow: 'scroll', width: '105%' }}
-      >
-        {filterValues}
-      </Form.Item>
-      <Form.Item></Form.Item>
+              const filteredSuggestions = aggregations.map(a => ({
+                ...a,
+                matching:
+                  val && val.length > 0
+                    ? a.filterValue.toLowerCase().indexOf(val.toLowerCase()) >
+                      -1
+                    : true,
+              }));
+              setAggregations(filteredSuggestions);
+            }}
+          ></Input.Search>
+          <Form.Item
+            style={{ maxHeight: '91px', overflow: 'scroll', width: '105%' }}
+          >
+            {filterValues}
+          </Form.Item>
+        </>
+      )}
       <Form.Item>
         <Button type="primary" htmlType="submit">
           Apply

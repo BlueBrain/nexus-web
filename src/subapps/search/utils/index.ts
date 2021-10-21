@@ -24,7 +24,7 @@ export const constructFilterSet = (
   }[]
 ) => {
   filterSet.forEach(filter => {
-    if (filter.filters.length > 0) {
+    if (filter.filters.length > 0 || filter.filterType === 'missing') {
       constructFilter(
         body,
         filter.filters,
@@ -42,17 +42,41 @@ export const constructFilter = (
   filterType: string,
   filterTerm: string
 ) => {
-  filters.forEach((item: string) => {
-    if (filterType === 'anyof') {
-      body.orFilter('prefix', filterTerm, item);
-    } else if (filterType === 'noneof') {
-      body.notFilter('prefix', filterTerm, item);
-    } else if (filterType === 'allof') {
-      body.addFilter('prefix', filterTerm, item);
-    } else if (filterType === 'missing') {
-      body.notQuery('exists', filterTerm);
+  body.andFilter('bool', b => {
+    if (filterType === 'missing') {
+      b.notFilter('exists', filterTerm);
+      return b;
     }
+    filters.forEach((item: string) => {
+      if (filterType === 'anyof') {
+        if (item !== 'Missing') {
+          b.orFilter('term', filterTerm, item);
+        } else {
+          b.orFilter('bool', missing => {
+            return missing.notFilter('exists', filterTerm);
+          });
+        }
+      } else if (filterType === 'noneof') {
+        if (item !== 'Missing') {
+          b.notFilter('term', filterTerm, item);
+        } else {
+          b.notFilter('bool', missing => {
+            return missing.notFilter('exists', filterTerm);
+          });
+        }
+      } else if (filterType === 'allof') {
+        if (item !== 'Missing') {
+          b.addFilter('term', filterTerm, item);
+        } else {
+          b.addFilter('bool', missing => {
+            return missing.notFilter('exists', filterTerm);
+          });
+        }
+      }
+    });
+    return b;
   });
+
   return body;
 };
 
