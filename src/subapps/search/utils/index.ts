@@ -36,6 +36,11 @@ export const constructFilterSet = (
   return body;
 };
 
+const missingFilterValueAdder = (filterTerm: string) => {
+  return (missing: bodybuilder.FilterSubFilterBuilder) =>
+    missing.notFilter('exists', filterTerm);
+};
+
 export const constructFilter = (
   body: bodybuilder.Bodybuilder,
   filters: string[],
@@ -52,25 +57,19 @@ export const constructFilter = (
         if (item !== '(Missing)') {
           b.orFilter('term', filterTerm, item);
         } else {
-          b.orFilter('bool', missing => {
-            return missing.notFilter('exists', filterTerm);
-          });
+          b.orFilter('bool', missingFilterValueAdder(filterTerm));
         }
       } else if (filterType === 'noneof') {
         if (item !== '(Missing)') {
           b.notFilter('term', filterTerm, item);
         } else {
-          b.notFilter('bool', missing => {
-            return missing.notFilter('exists', filterTerm);
-          });
+          b.notFilter('bool', missingFilterValueAdder(filterTerm));
         }
       } else if (filterType === 'allof') {
         if (item !== '(Missing)') {
           b.addFilter('term', filterTerm, item);
         } else {
-          b.addFilter('bool', missing => {
-            return missing.notFilter('exists', filterTerm);
-          });
+          b.addFilter('bool', missingFilterValueAdder(filterTerm));
         }
       }
     });
