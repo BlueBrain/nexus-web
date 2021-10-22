@@ -62,9 +62,13 @@ const FilterOptions: React.FC<{
     }[]
   >([]);
 
-  const [filterType, setFilterType] = React.useState(
-    fieldFilter?.filterType || field.array ? 'anyof' : 'allof'
-  );
+  const filterTypeDefault = () => {
+    if (fieldFilter?.filterType) {
+      return fieldFilter?.filterType;
+    }
+    return field.array ? 'anyof' : 'allof';
+  };
+  const [filterType, setFilterType] = React.useState(filterTypeDefault);
 
   const [form] = Form.useForm();
 
@@ -78,14 +82,14 @@ const FilterOptions: React.FC<{
 
     const filterSuggestions = withOtherFilters
       .aggregation('terms', filterKeyWord, 'suggestions', { size: 1000 })
-      .aggregation('missing', filterKeyWord, 'missing')
+      .aggregation('missing', filterKeyWord, '(missing)')
       .build();
 
-    const filedSuggesetionsPromise = nexusClient.Search.query(
+    const filteredSuggesetionsPromise = nexusClient.Search.query(
       filterSuggestions
     );
 
-    Promise.all([allSuggestionsPromise, filedSuggesetionsPromise]).then(
+    Promise.all([allSuggestionsPromise, filteredSuggesetionsPromise]).then(
       ([all, filtered]) => {
         const aggs = all.aggregations['suggestions'].buckets.map(
           (bucket: any) => {
@@ -104,9 +108,9 @@ const FilterOptions: React.FC<{
           }
         );
         aggs.push({
-          filterValue: 'Missing',
-          count: filtered.aggregations['missing'].doc_count,
-          selected: fieldFilter?.filters.includes('Missing'),
+          filterValue: '(Missing)',
+          count: filtered.aggregations['(missing)'].doc_count,
+          selected: fieldFilter?.filters.includes('(Missing)'),
           matching: true,
         });
         setAggregations(aggs);
@@ -165,7 +169,10 @@ const FilterOptions: React.FC<{
       onFinish={(values: any) => {
         onFinish({
           filterType,
-          filters: aggregations.filter(a => a.selected).map(a => a.filterValue),
+          filters:
+            filterType === 'missing'
+              ? []
+              : aggregations.filter(a => a.selected).map(a => a.filterValue),
           filterTerm: filterKeyWord,
         });
       }}
@@ -192,26 +199,30 @@ const FilterOptions: React.FC<{
           ) : null}
         </Select>
       </Form.Item>
-      <Input.Search
-        onChange={event => {
-          const val = event.target.value;
+      {filterType !== 'missing' && (
+        <>
+          <Input.Search
+            onChange={event => {
+              const val = event.target.value;
 
-          const filteredSuggestions = aggregations.map(a => ({
-            ...a,
-            matching:
-              val && val.length > 0
-                ? a.filterValue.toLowerCase().indexOf(val.toLowerCase()) > -1
-                : true,
-          }));
-          setAggregations(filteredSuggestions);
-        }}
-      ></Input.Search>
-      <Form.Item
-        style={{ maxHeight: '91px', overflow: 'scroll', width: '105%' }}
-      >
-        {filterValues}
-      </Form.Item>
-      <Form.Item></Form.Item>
+              const filteredSuggestions = aggregations.map(a => ({
+                ...a,
+                matching:
+                  val && val.length > 0
+                    ? a.filterValue.toLowerCase().indexOf(val.toLowerCase()) >
+                      -1
+                    : true,
+              }));
+              setAggregations(filteredSuggestions);
+            }}
+          ></Input.Search>
+          <Form.Item
+            style={{ maxHeight: '91px', overflow: 'scroll', width: '105%' }}
+          >
+            {filterValues}
+          </Form.Item>
+        </>
+      )}
       <Form.Item>
         <Button type="primary" htmlType="submit">
           Apply
