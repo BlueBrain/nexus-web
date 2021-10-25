@@ -31,6 +31,11 @@ const parseProjectUrl = (projectUrl: string) => {
   return [org, proj];
 };
 
+const isSupportedFile = (asset: any) =>
+  asset.encodingFormat === 'application/pdf' ||
+  asset.name?.endsWith('.csv') ||
+  asset.name?.endsWith('.tsv');
+
 const Preview: React.FC<{
   resource: Resource;
   nexus: NexusClient;
@@ -63,7 +68,12 @@ const Preview: React.FC<{
       }) => {
         return (
           <>
-            <Button onClick={() => setPreviewAsset(asset)}>Preview</Button>
+            <Button
+              onClick={() => setPreviewAsset(asset)}
+              disabled={!isSupportedFile(asset)}
+            >
+              Preview
+            </Button>
             <Button onClick={() => copyURI(asset.url)}>Copy URI</Button>
             <Button
               onClick={() => download(nexus, orgLabel, projectLabel, asset)}
@@ -155,7 +165,9 @@ const Preview: React.FC<{
               name: d.name,
               encodingFormat: d.encodingFormat,
             },
-            encodingFormat: d.encodingFormat || d.name.split('.').pop() || '-',
+            encodingFormat:
+              d.encodingFormat ||
+              (d.name?.includes('.') ? d.name.split('.').pop() : '-'),
             contentSize: d.contentSize,
           };
         })
@@ -165,7 +177,10 @@ const Preview: React.FC<{
     return data;
   };
 
-  const fileFormat = previewAsset && previewAsset.name.split('.').pop();
+  const fileFormat =
+    previewAsset && previewAsset.name?.includes('.')
+      ? previewAsset.name.split('.').pop()
+      : '-';
 
   return (
     <div>
