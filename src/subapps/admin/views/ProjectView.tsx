@@ -311,8 +311,13 @@ const ProjectView: React.FunctionComponent = () => {
               <TabPane
                 tab={
                   <span>
-                    <SelectOutlined />
-                    Studios
+                    <Link
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      to={`/studios/${orgLabel}/${projectLabel}/studios`}
+                    >
+                      <SelectOutlined /> Studios
+                    </Link>
                   </span>
                 }
                 key="studios"
@@ -320,8 +325,13 @@ const ProjectView: React.FunctionComponent = () => {
               <TabPane
                 tab={
                   <span>
-                    <SelectOutlined />
-                    Workflows
+                    <Link
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      to={`/workflow/${orgLabel}/${projectLabel}`}
+                    >
+                      <SelectOutlined /> Workflows
+                    </Link>
                   </span>
                 }
                 key="workflows"
