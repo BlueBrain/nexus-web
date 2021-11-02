@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import * as queryString from 'query-string';
 import { Menu, Dropdown } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
-import { ViewList, View } from '@bbp/nexus-sdk';
+import { ViewList, View, DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
@@ -12,7 +12,6 @@ import SparqlQueryContainer from '../containers/SparqlQuery';
 import { getResourceLabel, labelOf } from '../../../shared/utils';
 import { useAdminSubappContext } from '..';
 import useNotification from '../../../shared/hooks/useNotification';
-import { DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 
 const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
   const match = useRouteMatch<{

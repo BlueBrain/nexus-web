@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import * as queryString from 'query-string';
 import { Menu, Dropdown } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
-import { ViewList, View } from '@bbp/nexus-sdk';
+import { ViewList, View, DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
@@ -81,7 +81,9 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
           orgLabel={orgLabel}
           projectLabel={projectLabel}
           initialQuery={query ? JSON.parse(`${query}`) : null}
-          viewId={viewId}
+          viewId={
+            viewId ? viewId : encodeURIComponent(DEFAULT_ELASTIC_SEARCH_VIEW_ID)
+          }
         />
       </div>
     </>
