@@ -8,6 +8,7 @@ import {
 } from '@bbp/nexus-sdk';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { Tabs, Popover, Button, Divider } from 'antd';
+import { SelectOutlined } from '@ant-design/icons';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
 import StoragesContainer from '../containers/StoragesContainer';
@@ -307,19 +308,24 @@ const ProjectView: React.FunctionComponent = () => {
                   <br />
                 </>
               </TabPane>
-              <TabPane tab="Studios" key="studios"></TabPane>
-              <TabPane tab="Workflows" key="workflows"></TabPane>
-              <TabPane tab="Tools" key="2">
-                <ProjectTools
-                  orgLabel={orgLabel}
-                  projectLabel={projectLabel}
-                  onUpdate={() => {
-                    setRefreshLists(!refreshLists);
-                    // Statistics aren't immediately updated so pause polling briefly
-                    pauseStatisticsPolling(5000);
-                  }}
-                />
-              </TabPane>
+              <TabPane
+                tab={
+                  <span>
+                    <SelectOutlined />
+                    Studios
+                  </span>
+                }
+                key="studios"
+              ></TabPane>
+              <TabPane
+                tab={
+                  <span>
+                    <SelectOutlined />
+                    Workflows
+                  </span>
+                }
+                key="workflows"
+              ></TabPane>
             </Tabs>
           </div>
         </>
