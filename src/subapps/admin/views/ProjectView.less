@@ -1,0 +1,20 @@
+@import '../../../shared/lib.less';
+
+.project-view {
+  padding: 0 @default-pad;
+
+  .tabs-container {
+	  .ant-tabs-top > .ant-tabs-nav {
+		  margin: 0 !important;
+	  }
+    .ant-tabs-content-holder {
+      background: #fff;
+    }
+    .ant-tabs-nav {
+      padding: 0 1rem;
+      .ant-tabs-tab-active .ant-tabs-tab-btn {
+        text-shadow: unset;
+      }
+    }
+  }
+}

@@ -7,7 +7,7 @@ import {
   Statistics,
 } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Popover, Button } from 'antd';
+import { Tabs, Popover, Button } from 'antd';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
@@ -17,6 +17,7 @@ import { useAdminSubappContext } from '..';
 import useNotification from '../../../shared/hooks/useNotification';
 import ProjectToDeleteContainer from '../containers/ProjectToDeleteContainer';
 import { RootState } from '../../../shared/store/reducers';
+import './ProjectView.less';
 
 const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
@@ -24,6 +25,7 @@ const ProjectView: React.FunctionComponent = () => {
   const location = useLocation();
   const history = useHistory();
   const subapp = useAdminSubappContext();
+  const { TabPane } = Tabs;
   const match = useRouteMatch<{ orgLabel: string; projectLabel: string }>(
     `/${subapp.namespace}/:orgLabel/:projectLabel`
   );
@@ -191,23 +193,37 @@ const ProjectView: React.FunctionComponent = () => {
               projectLabel={project._label}
             />
           )}
-          <div className="list-board">
-            <div className="wrapper">
-              <ResourceListBoardContainer
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-                refreshLists={refreshLists}
-              />
-              <ProjectTools
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-                onUpdate={() => {
-                  setRefreshLists(!refreshLists);
-                  // Statistics aren't immediately updated so pause polling briefly
-                  pauseStatisticsPolling(5000);
-                }}
-              />
-            </div>
+          <div className="tabs-container">
+            <Tabs defaultActiveKey="browse">
+              <TabPane tab="Browse" key="browse">
+                <div className="list-board">
+                  <div className="wrapper">
+                    <ResourceListBoardContainer
+                      orgLabel={orgLabel}
+                      projectLabel={projectLabel}
+                      refreshLists={refreshLists}
+                    />
+                  </div>
+                </div>
+              </TabPane>
+              <TabPane tab="Query" key="query"></TabPane>
+              <TabPane tab="Create and Upload" key="create_upload"></TabPane>
+              <TabPane tab="Statistics" key="stats"></TabPane>
+              <TabPane tab="Settings" key="settings"></TabPane>
+              <TabPane tab="Studios" key="studios"></TabPane>
+              <TabPane tab="Workflows" key="workflows"></TabPane>
+              <TabPane tab="Tools" key="2">
+                <ProjectTools
+                  orgLabel={orgLabel}
+                  projectLabel={projectLabel}
+                  onUpdate={() => {
+                    setRefreshLists(!refreshLists);
+                    // Statistics aren't immediately updated so pause polling briefly
+                    pauseStatisticsPolling(5000);
+                  }}
+                />
+              </TabPane>
+            </Tabs>
           </div>
         </>
       )}
