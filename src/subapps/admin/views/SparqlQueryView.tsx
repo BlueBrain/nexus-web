@@ -12,6 +12,7 @@ import SparqlQueryContainer from '../containers/SparqlQuery';
 import { getResourceLabel, labelOf } from '../../../shared/utils';
 import { useAdminSubappContext } from '..';
 import useNotification from '../../../shared/hooks/useNotification';
+import { DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 
 const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
   const match = useRouteMatch<{
@@ -25,6 +26,7 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
   const {
     params: { orgLabel, projectLabel, viewId },
   } = match;
+
   const [{ _results: views }, setViews] = React.useState<ViewList>({
     '@context': {},
     _total: 0,
@@ -57,8 +59,6 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
           ? '_search'
           : 'sparql';
 
-        console.log('encodeURIComponent');
-        console.log(encodeURIComponent(view['@id']));
         return (
           <Menu.Item key={index}>
             <Link
@@ -81,7 +81,7 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
           orgLabel={orgLabel}
           projectLabel={projectLabel}
           initialQuery={Array.isArray(query) ? query.join(',') : query}
-          viewId={viewId}
+          viewId={viewId ? viewId : encodeURIComponent(DEFAULT_SPARQL_VIEW_ID)}
         />
       </div>
     </>
