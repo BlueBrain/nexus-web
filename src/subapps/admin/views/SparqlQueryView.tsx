@@ -56,6 +56,9 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
           .includes('elastic')
           ? '_search'
           : 'sparql';
+
+        console.log('encodeURIComponent');
+        console.log(encodeURIComponent(view['@id']));
         return (
           <Menu.Item key={index}>
             <Link

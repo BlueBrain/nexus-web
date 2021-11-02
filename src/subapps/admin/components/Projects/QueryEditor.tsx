@@ -3,19 +3,11 @@ import SparqlQueryView from '../../views/SparqlQueryView';
 import ElasticSearchQueryView from '../../views/ElasticSearchQueryView';
 import { Tabs } from 'antd';
 
-import {
-  DEFAULT_SPARQL_VIEW_ID,
-  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-} from '@bbp/nexus-sdk';
-
-import { useAdminSubappContext } from '../..';
-
 const QueryEditor: React.FC<{
   orgLabel: string;
   projectLabel: string;
   onUpdate: () => void;
 }> = ({ orgLabel, projectLabel, onUpdate }) => {
-  const subApp = useAdminSubappContext();
   const { TabPane } = Tabs;
   return (
     <div className="query-editor">
