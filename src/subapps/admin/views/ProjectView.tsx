@@ -17,6 +17,8 @@ import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress'
 import ResourceListBoardContainer from '../../../shared/containers/ResourceListBoardContainer';
 import FileUploadContainer from '../../../shared/containers/FileUploadContainer';
 import ProjectTools from '../components/Projects/ProjectTools';
+import ACLsForm from '../components/ACLs/ACLsForm';
+import ACLsView from './ACLsView';
 import QueryEditor from '../components/Projects/QueryEditor';
 import { useAdminSubappContext } from '..';
 import useNotification from '../../../shared/hooks/useNotification';
@@ -280,23 +282,27 @@ const ProjectView: React.FunctionComponent = () => {
               </TabPane>
               <TabPane tab="Settings" key="settings">
                 <>
-                  <h3>Project Settings</h3>
+									<br />
+									<h3>Settings</h3>
+                  <div style={{ flexGrow: 1 }}>
+                    <ProjectForm
+                      project={{
+                        _label: project._label,
+                        _rev: project._rev,
+                        description: project.description || '',
+                        base: project.base,
+                        vocab: project.vocab,
+                        apiMappings: project.apiMappings,
+                      }}
+                      onSubmit={(p: ProjectResponseCommon) =>
+                        saveAndModify(project, p)
+                      }
+                      busy={formBusy}
+                      mode="edit"
+                    />
+                  </div>
                   <br />
-                  <ProjectForm
-                    project={{
-                      _label: project._label,
-                      _rev: project._rev,
-                      description: project.description || '',
-                      base: project.base,
-                      vocab: project.vocab,
-                      apiMappings: project.apiMappings,
-                    }}
-                    onSubmit={(p: ProjectResponseCommon) =>
-                      saveAndModify(project, p)
-                    }
-                    busy={formBusy}
-                    mode="edit"
-                  />
+                  <ACLsView />
                   <br />
                 </>
               </TabPane>

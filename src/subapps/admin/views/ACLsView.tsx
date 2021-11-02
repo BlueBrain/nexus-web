@@ -61,41 +61,24 @@ const ACLs: React.FunctionComponent = () => {
   }, [orgLabel, projectLabel]);
 
   return (
-    <div className="acl-view view-container">
-      <div style={{ flexGrow: 1 }}>
-        <h1 className="name">
-          <span>
-            <Link to={`/${namespace}`}>
-              <Tooltip title="Back to all organizations" placement="right">
-                <HomeOutlined />
-              </Tooltip>
-            </Link>
-            {' | '}
-            <Link to={`/${namespace}/${orgLabel}`}>{orgLabel}</Link>
-            {' | '}
-            <Link to={`/${namespace}/${orgLabel}/${projectLabel}`}>
-              {projectLabel}
-            </Link>
-          </span>
-        </h1>
-        {busy && <Spin tip="Loading ACLs..." />}
-        {error && (
+    <div style={{ flexGrow: 1 }}>
+      {busy && <Spin tip="Loading ACLs..." />}
+      {error && (
+        <Empty
+          style={{ marginTop: '22vh' }}
+          description={
+            <span>Error while retrieving ALCs: {error.message}</span>
+          }
+        />
+      )}
+      {!acls ||
+        (acls.length === 0 && (
           <Empty
             style={{ marginTop: '22vh' }}
-            description={
-              <span>Error while retrieving ALCs: {error.message}</span>
-            }
+            description={'No ACLs to display...'}
           />
-        )}
-        {!acls ||
-          (acls.length === 0 && (
-            <Empty
-              style={{ marginTop: '22vh' }}
-              description={'No ACLs to display...'}
-            />
-          ))}
-        {acls && <ACLsForm acls={acls} path={path} />}
-      </div>
+        ))}
+      {acls && <ACLsForm acls={acls} path={path} />}
     </div>
   );
 };
