@@ -6,12 +6,16 @@ import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
   Statistics,
 } from '@bbp/nexus-sdk';
-import { useNexusContext } from '@bbp/react-nexus';
-import { Tabs, Popover, Button } from 'antd';
+import { useNexusContext, AccessControl } from '@bbp/react-nexus';
+import { Tabs, Popover, Button, Divider } from 'antd';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
+import StoragesContainer from '../containers/StoragesContainer';
+import QuotasContainer from '../containers/QuotasContainer';
+import ProjectForm from '../components/Projects/ProjectForm';
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
 import ResourceListBoardContainer from '../../../shared/containers/ResourceListBoardContainer';
+import FileUploadContainer from '../../../shared/containers/FileUploadContainer';
 import ProjectTools from '../components/Projects/ProjectTools';
 import QueryEditor from '../components/Projects/QueryEditor';
 import { useAdminSubappContext } from '..';
@@ -48,6 +52,7 @@ const ProjectView: React.FunctionComponent = () => {
     busy: false,
     error: null,
   });
+  const [formBusy, setFormBusy] = React.useState<boolean>(false);
 
   const [refreshLists, setRefreshLists] = React.useState(false);
   const [statisticsPollingPaused, setStatisticsPollingPaused] = React.useState(
@@ -139,7 +144,34 @@ const ProjectView: React.FunctionComponent = () => {
   };
 
   const showDeletionBanner = deltaPlugins && 'project-deletion' in deltaPlugins;
-
+  const saveAndModify = (
+    selectedProject: ProjectResponseCommon,
+    newProject: ProjectResponseCommon
+  ) => {
+    if (!project) {
+      return;
+    }
+    setFormBusy(true);
+    nexus.Project.update(orgLabel, projectLabel, project._rev, {
+      base: newProject.base,
+      vocab: newProject.vocab,
+      description: newProject.description,
+      apiMappings: newProject.apiMappings || [],
+    })
+      .then(() => {
+        notification.success({
+          message: 'Project saved',
+        });
+        setFormBusy(false);
+      })
+      .catch((error: Error) => {
+        setFormBusy(false);
+        notification.error({
+          message: 'An unknown error occurred',
+          description: error.message,
+        });
+      });
+  };
   return (
     <div className="project-view">
       {!!project && (
@@ -218,9 +250,56 @@ const ProjectView: React.FunctionComponent = () => {
                   }}
                 />
               </TabPane>
-              <TabPane tab="Create and Upload" key="create_upload"></TabPane>
-              <TabPane tab="Statistics" key="stats"></TabPane>
-              <TabPane tab="Settings" key="settings"></TabPane>
+              <TabPane tab="Create and Upload" key="create_upload">
+                <AccessControl
+                  path={`/${orgLabel}/${projectLabel}`}
+                  permissions={['files/write']}
+                >
+                  <Divider />
+                  <FileUploadContainer
+                    projectLabel={projectLabel}
+                    orgLabel={orgLabel}
+                  />
+                </AccessControl>
+              </TabPane>
+              <TabPane tab="Statistics" key="stats">
+                <AccessControl
+                  key="quotas-access-control"
+                  path={`/${orgLabel}/${projectLabel}`}
+                  permissions={['quotas/read']}
+                >
+                  <QuotasContainer
+                    orgLabel={orgLabel}
+                    projectLabel={projectLabel}
+                  />
+                  <StoragesContainer
+                    orgLabel={orgLabel}
+                    projectLabel={projectLabel}
+                  />
+                </AccessControl>
+              </TabPane>
+              <TabPane tab="Settings" key="settings">
+                <>
+                  <h3>Project Settings</h3>
+                  <br />
+                  <ProjectForm
+                    project={{
+                      _label: project._label,
+                      _rev: project._rev,
+                      description: project.description || '',
+                      base: project.base,
+                      vocab: project.vocab,
+                      apiMappings: project.apiMappings,
+                    }}
+                    onSubmit={(p: ProjectResponseCommon) =>
+                      saveAndModify(project, p)
+                    }
+                    busy={formBusy}
+                    mode="edit"
+                  />
+                  <br />
+                </>
+              </TabPane>
               <TabPane tab="Studios" key="studios"></TabPane>
               <TabPane tab="Workflows" key="workflows"></TabPane>
               <TabPane tab="Tools" key="2">
