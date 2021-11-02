@@ -13,6 +13,7 @@ import { Link, useHistory, useLocation } from 'react-router-dom';
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
 import ResourceListBoardContainer from '../../../shared/containers/ResourceListBoardContainer';
 import ProjectTools from '../components/Projects/ProjectTools';
+import QueryEditor from '../components/Projects/QueryEditor';
 import { useAdminSubappContext } from '..';
 import useNotification from '../../../shared/hooks/useNotification';
 import ProjectToDeleteContainer from '../containers/ProjectToDeleteContainer';
@@ -206,7 +207,17 @@ const ProjectView: React.FunctionComponent = () => {
                   </div>
                 </div>
               </TabPane>
-              <TabPane tab="Query" key="query"></TabPane>
+              <TabPane tab="Query" key="query">
+                <QueryEditor
+                  orgLabel={orgLabel}
+                  projectLabel={projectLabel}
+                  onUpdate={() => {
+                    setRefreshLists(!refreshLists);
+                    // Statistics aren't immediately updated so pause polling briefly
+                    pauseStatisticsPolling(5000);
+                  }}
+                />
+              </TabPane>
               <TabPane tab="Create and Upload" key="create_upload"></TabPane>
               <TabPane tab="Statistics" key="stats"></TabPane>
               <TabPane tab="Settings" key="settings"></TabPane>
