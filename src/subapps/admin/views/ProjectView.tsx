@@ -17,7 +17,6 @@ import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress'
 import ResourceListBoardContainer from '../../../shared/containers/ResourceListBoardContainer';
 import FileUploadContainer from '../../../shared/containers/FileUploadContainer';
 import ProjectTools from '../components/Projects/ProjectTools';
-import ACLsForm from '../components/ACLs/ACLsForm';
 import ACLsView from './ACLsView';
 import QueryEditor from '../components/Projects/QueryEditor';
 import { useAdminSubappContext } from '..';
@@ -242,15 +241,17 @@ const ProjectView: React.FunctionComponent = () => {
                 </div>
               </TabPane>
               <TabPane tab="Query" key="query">
-                <QueryEditor
-                  orgLabel={orgLabel}
-                  projectLabel={projectLabel}
-                  onUpdate={() => {
-                    setRefreshLists(!refreshLists);
-                    // Statistics aren't immediately updated so pause polling briefly
-                    pauseStatisticsPolling(5000);
-                  }}
-                />
+                <div style={{ flexGrow: 1 }}>
+                  <QueryEditor
+                    orgLabel={orgLabel}
+                    projectLabel={projectLabel}
+                    onUpdate={() => {
+                      setRefreshLists(!refreshLists);
+                      // Statistics aren't immediately updated so pause polling briefly
+                      pauseStatisticsPolling(5000);
+                    }}
+                  />
+                </div>
               </TabPane>
               <TabPane tab="Create and Upload" key="create_upload">
                 <AccessControl
@@ -282,8 +283,8 @@ const ProjectView: React.FunctionComponent = () => {
               </TabPane>
               <TabPane tab="Settings" key="settings">
                 <>
-									<br />
-									<h3>Settings</h3>
+                  <br />
+                  <h3>Settings</h3>
                   <div style={{ flexGrow: 1 }}>
                     <ProjectForm
                       project={{

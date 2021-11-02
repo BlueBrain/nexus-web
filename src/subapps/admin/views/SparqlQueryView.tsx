@@ -73,33 +73,6 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
 
   return (
     <>
-      <div className="project-banner no-bg" style={{ marginBottom: 20 }}>
-        <div className="label">
-          <h1 className="name">
-            <span>
-              <Link to={`/${namespace}/${orgLabel}`}>{orgLabel}</Link>
-              {' | '}
-              <Link to={`/${namespace}/${orgLabel}/${projectLabel}`}>
-                {projectLabel}
-              </Link>
-              {' | '}
-            </span>
-            <Dropdown overlay={menu}>
-              <span>
-                {labelOf(decodedViewId)}
-                <DownOutlined />
-              </span>
-            </Dropdown>{' '}
-          </h1>
-          <div style={{ marginLeft: 10 }}>
-            <ViewStatisticsProgress
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-              resourceId={viewId}
-            />
-          </div>
-        </div>
-      </div>
       <div className="view-view view-container -unconstrained-width">
         <SparqlQueryContainer
           orgLabel={orgLabel}
