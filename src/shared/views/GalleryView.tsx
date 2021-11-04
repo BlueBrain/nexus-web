@@ -78,6 +78,10 @@ const GalleryView: React.FC = () => {
           // @ts-ignore
           !event.target.parentNode.classList.contains('ant-btn')
         ) {
+          // @ts-ignore
+          history.push(`${background.pathname}${background.search}`, {
+            refresh: true,
+          });
           setDrawerVisible(false);
         }
       }
