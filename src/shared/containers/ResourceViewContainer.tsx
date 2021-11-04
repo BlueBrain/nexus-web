@@ -1,9 +1,9 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { useLocation, useHistory, useParams } from 'react-router';
-import { Spin, Alert, Collapse, Typography } from 'antd';
+import { Spin, Alert, Collapse, Typography, Divider } from 'antd';
 import * as queryString from 'query-string';
-import { useNexusContext, AccessControl } from '@bbp/react-nexus';
+import { useNexusContext } from '@bbp/react-nexus';
 import {
   Resource,
   ResourceLink,
@@ -22,11 +22,16 @@ import {
   pluginsMap,
   getDestinationParam,
   labelOf,
+  makeResourceUri,
 } from '../utils';
 import { isDeprecated } from '../utils/nexusMaybe';
 import useNotification from '../hooks/useNotification';
 import Preview from '../components/Preview/Preview';
 import { getUpdateResourceFunction } from '../utils/updateResource';
+import { DeleteOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
+import ResourceViewActionsContainer from './ResourceViewActionsContainer';
+import ResourceViewMetadata from './ResourceViewMetadata';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -74,11 +79,6 @@ const ResourceViewContainer: React.FunctionComponent<{
     history.push(`/?_self=${selfUrl}`, location.state);
   };
 
-  const goToProject = (orgLabel: string, projectLabel: string) =>
-    history.push(`/admin/${orgLabel}/${projectLabel}`);
-
-  const goToOrg = (orgLabel: string) => history.push(`/admin/${orgLabel}`);
-
   const { expanded: expandedFromQuery, rev, tag } = queryString.parse(
     location.search
   );
@@ -104,9 +104,7 @@ const ResourceViewContainer: React.FunctionComponent<{
     (Resource & { [key: string]: any }) | null
   >(null);
 
-  const isLatest =
-    (latestResource && latestResource._rev) === (resource && resource._rev);
-
+  const isLatest = latestResource?._rev === resource?._rev;
   const filteredPlugins =
     resource &&
     pluginManifest &&
@@ -234,7 +232,7 @@ const ResourceViewContainer: React.FunctionComponent<{
         resourceId
       )) as Resource;
 
-      const latestResource: Resource =
+      const selectedResource: Resource =
         rev || tag
           ? ((await nexus.Resource.get(
               orgLabel,
@@ -255,13 +253,13 @@ const ResourceViewContainer: React.FunctionComponent<{
 
       const expandedResource = expandedResources[0];
 
-      setLatestResource(latestResource);
+      setLatestResource(resource);
       setResource({
         // Note: we must fetch the proper, expanded @id. The @id that comes from a normal request or from the URL
         // could be the contracted one, if the resource was created with a context that has a @base property.
         // this would make the contracted @id unresolvable. See issue: https://github.com/BlueBrain/nexus/issues/966
         resource: {
-          ...latestResource,
+          ...selectedResource,
           '@id': expandedResource['@id'],
         } as Resource,
         error: null,
@@ -327,18 +325,29 @@ const ResourceViewContainer: React.FunctionComponent<{
               },
             ]}
           />
-
+          {resource && (
+            <ResourceViewActionsContainer
+              resource={resource}
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              revision={resource._rev}
+            />
+          )}
           <h1 className="name">
-            <span>
-              <a onClick={() => goToOrg(orgLabel)}>{orgLabel}</a> |{' '}
-              <a onClick={() => goToProject(orgLabel, projectLabel)}>
-                {projectLabel}
-              </a>{' '}
-              |{' '}
-            </span>
-            {resource
-              ? getResourceLabel(resource)
-              : labelOf(decodeURIComponent(resourceId))}
+            <Link
+              to={makeResourceUri(
+                orgLabel,
+                projectLabel,
+                decodeURIComponent(resourceId),
+                {}
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {resource
+                ? getResourceLabel(resource)
+                : labelOf(decodeURIComponent(resourceId))}
+            </Link>
           </h1>
         </>
 
@@ -389,6 +398,14 @@ const ResourceViewContainer: React.FunctionComponent<{
               <br />
             </>
           )}
+          {resource && (
+            <ResourceViewMetadata
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              resource={resource}
+            />
+          )}
+          <Divider />
           {!!resource && !!latestResource && (
             <>
               {!isLatest && (
@@ -399,11 +416,18 @@ const ResourceViewContainer: React.FunctionComponent<{
                 />
               )}
               {isDeprecated(resource) && (
-                <Alert
-                  type="warning"
-                  message="This is a deprecated resource."
-                  closable
-                />
+                <>
+                  <Alert
+                    type="error"
+                    message={
+                      <>
+                        <DeleteOutlined /> This resource is deprecated. You
+                        cannot modify it.
+                      </>
+                    }
+                  />
+                  <br />
+                </>
               )}
               {filteredPlugins && filteredPlugins.length > 0 && (
                 <ResourcePlugins
@@ -412,74 +436,40 @@ const ResourceViewContainer: React.FunctionComponent<{
                 />
               )}
 
-              <AccessControl
-                path={`/${orgLabel}/${projectLabel}`}
-                permissions={['resources/write']}
-                noAccessComponent={() => (
-                  <div>
-                    <div style={{ marginTop: 15 }}>
-                      <Alert
-                        message="You don't have access to edit the resource. You can nonetheless see the resource metadata below."
-                        type="info"
-                      />
-                      {resource.distribution && (
-                        <Preview nexus={nexus} resource={resource} />
-                      )}
-                      <AdminPlugin
-                        editable={false}
-                        orgLabel={orgLabel}
-                        projectLabel={projectLabel}
-                        resourceId={resourceId}
-                        resource={resource}
-                        latestResource={latestResource}
-                        activeTabKey={activeTabKey}
-                        expandedFromQuery={expandedFromQuery}
-                        refProp={ref}
-                        goToResource={goToResource}
-                        handleTabChange={handleTabChange}
-                        handleGoToInternalLink={handleGoToInternalLink}
-                        handleEditFormSubmit={handleEditFormSubmit}
-                        handleExpanded={handleExpanded}
-                      />
-                    </div>
-                  </div>
+              {!!resource['@type'] &&
+                typeof resource['@type'] === 'string' &&
+                nonEditableResourceTypes.includes(resource['@type']) && (
+                  <p>
+                    <Alert
+                      message="This resource is not editable because it is of the type 'File'. For further information please contact the administrator."
+                      type="info"
+                    />
+                  </p>
                 )}
-              >
-                {!!resource['@type'] &&
-                  typeof resource['@type'] === 'string' &&
-                  nonEditableResourceTypes.includes(resource['@type']) && (
-                    <p>
-                      <Alert
-                        message="This resource is not editable because it is of the type 'File'. For further information please contact the administrator."
-                        type="info"
-                      />
-                    </p>
-                  )}
-                {resource.distribution && (
-                  <Preview nexus={nexus} resource={resource} />
-                )}
-                <AdminPlugin
-                  editable={isLatest && !isDeprecated(resource)}
-                  orgLabel={orgLabel}
-                  projectLabel={projectLabel}
-                  resourceId={resourceId}
-                  resource={resource}
-                  latestResource={latestResource}
-                  activeTabKey={activeTabKey}
-                  expandedFromQuery={expandedFromQuery}
-                  refProp={ref}
-                  goToResource={goToResource}
-                  handleTabChange={handleTabChange}
-                  handleGoToInternalLink={handleGoToInternalLink}
-                  handleEditFormSubmit={handleEditFormSubmit}
-                  handleExpanded={handleExpanded}
-                />
-                <VideoPluginContainer
-                  resource={resource}
-                  orgLabel={orgLabel}
-                  projectLabel={projectLabel}
-                />
-              </AccessControl>
+              {resource.distribution && (
+                <Preview nexus={nexus} resource={resource} />
+              )}
+              <AdminPlugin
+                editable={isLatest && !isDeprecated(resource)}
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+                resourceId={resourceId}
+                resource={resource}
+                latestResource={latestResource}
+                activeTabKey={activeTabKey}
+                expandedFromQuery={expandedFromQuery}
+                refProp={ref}
+                goToResource={goToResource}
+                handleTabChange={handleTabChange}
+                handleGoToInternalLink={handleGoToInternalLink}
+                handleEditFormSubmit={handleEditFormSubmit}
+                handleExpanded={handleExpanded}
+              />
+              <VideoPluginContainer
+                resource={resource}
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+              />
             </>
           )}
         </Spin>

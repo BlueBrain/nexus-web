@@ -452,6 +452,34 @@ export const makeStudioUri = (
 };
 
 /**
+ * Returns Resource uri
+ *
+ * @param orgLabel Organisation label
+ * @param projectLabel Project label
+ * @param resourceId Resource ID
+ * @param options Optional additional options including revision, tab, expanded.
+ * @returns
+ */
+export const makeResourceUri = (
+  orgLabel: string,
+  projectLabel: string,
+  resourceId: string,
+  options: {
+    revision?: number;
+    tab?: string;
+    expanded?: boolean;
+  } = {}
+) => {
+  const { revision, tab, expanded } = options;
+  const route = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+    resourceId
+  )}${revision ? `?rev=${revision}` : ''}${expanded ? '&expanded=true' : ''}${
+    tab ? tab : ''
+  }`;
+  return route;
+};
+
+/**
  *
  * @param pluginMap
  * @param plugins
