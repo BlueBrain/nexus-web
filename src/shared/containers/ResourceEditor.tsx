@@ -6,7 +6,6 @@ import {
   NexusClient,
 } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-
 import ResourceEditor from '../components/ResourceEditor';
 import useNotification, { parseNexusError } from '../hooks/useNotification';
 

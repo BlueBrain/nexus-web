@@ -31,7 +31,7 @@ import { getUpdateResourceFunction } from '../utils/updateResource';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import ResourceViewActionsContainer from './ResourceViewActionsContainer';
-import ResourceViewMetadata from './ResourceViewMetadata';
+import ResourceMetadata from '../components/ResourceMetadata';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -328,9 +328,10 @@ const ResourceViewContainer: React.FunctionComponent<{
           {resource && (
             <ResourceViewActionsContainer
               resource={resource}
+              latestResource={latestResource as Resource}
+              isLatest={isLatest}
               orgLabel={orgLabel}
               projectLabel={projectLabel}
-              revision={resource._rev}
             />
           )}
           <h1 className="name">
@@ -399,7 +400,7 @@ const ResourceViewContainer: React.FunctionComponent<{
             </>
           )}
           {resource && (
-            <ResourceViewMetadata
+            <ResourceMetadata
               orgLabel={orgLabel}
               projectLabel={projectLabel}
               resource={resource}

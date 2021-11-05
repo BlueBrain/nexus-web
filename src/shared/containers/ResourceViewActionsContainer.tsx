@@ -10,11 +10,12 @@ import { triggerCopy } from '../utils/copy';
 
 const ResourceViewActionsContainer: React.FC<{
   resource: Resource;
+  latestResource: Resource;
+  isLatest: boolean;
   orgLabel: string;
   projectLabel: string;
-  revision: number;
-}> = ({ resource, orgLabel, projectLabel, revision }) => {
-  const resourceId = encodeURIComponent(resource['@id']);
+}> = ({ resource, orgLabel, projectLabel, latestResource, isLatest }) => {
+  const encodedResourceId = encodeURIComponent(resource['@id']);
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
@@ -23,16 +24,6 @@ const ResourceViewActionsContainer: React.FC<{
   const handleAddToCart = async () => {
     addResourceToCart ? await addResourceToCart(resource as Resource) : null;
   };
-
-  const [latestResource, setLatestResource] = React.useState<Resource>();
-
-  React.useEffect(() => {
-    nexus.Resource.get(orgLabel, projectLabel, resourceId).then(d => {
-      setLatestResource(d as Resource);
-    });
-  }, [resource]);
-
-  const isLatest = resource._rev === latestResource?._rev;
 
   const [tags, setTags] = React.useState<{
     '@context'?: Context;
@@ -50,10 +41,12 @@ const ResourceViewActionsContainer: React.FC<{
   };
 
   React.useEffect(() => {
-    nexus.Resource.tags(orgLabel, projectLabel, resourceId).then(data => {
-      setTags(data);
-    });
-  }, [resource, revision]);
+    nexus.Resource.tags(orgLabel, projectLabel, encodedResourceId).then(
+      data => {
+        setTags(data);
+      }
+    );
+  }, [resource, latestResource]);
 
   const self = resource._self;
 
@@ -79,30 +72,33 @@ const ResourceViewActionsContainer: React.FC<{
     return labels;
   };
 
+  const revisionMenuItems = React.useMemo(
+    () => (
+      <Menu>
+        {[...Array(latestResource?._rev).keys()]
+          .map(k => k + 1)
+          .sort((a, b) => b - a)
+          .map(rev => (
+            <Menu.Item
+              key={rev}
+              onClick={() => {
+                goToResource(orgLabel, projectLabel, encodedResourceId, rev);
+              }}
+            >
+              Revision {rev}
+              {revisionLabels(rev).length > 0 &&
+                ` (${revisionLabels(rev).join(', ')})`}
+            </Menu.Item>
+          ))}
+      </Menu>
+    ),
+    [resource, latestResource, tags]
+  );
+
   return (
     <Row>
       <Col>
-        <Dropdown
-          overlay={
-            <Menu>
-              {[...Array(latestResource?._rev).keys()]
-                .map(k => k + 1)
-                .sort((a, b) => b - a)
-                .map(rev => (
-                  <Menu.Item
-                    key={rev}
-                    onClick={() => {
-                      goToResource(orgLabel, projectLabel, resourceId, rev);
-                    }}
-                  >
-                    Revision {rev}
-                    {revisionLabels(rev).length > 0 &&
-                      ` (${revisionLabels(rev).join(', ')})`}
-                  </Menu.Item>
-                ))}
-            </Menu>
-          }
-        >
+        <Dropdown overlay={revisionMenuItems}>
           <Button>
             Revision {resource._rev}{' '}
             {revisionLabels(resource._rev).length > 0 &&
@@ -119,7 +115,7 @@ const ResourceViewActionsContainer: React.FC<{
               {
                 orgLabel,
                 projectLabel,
-                resourceId,
+                resourceId: encodedResourceId,
               }
             );
 
@@ -144,7 +140,7 @@ const ResourceViewActionsContainer: React.FC<{
                     {
                       orgLabel,
                       projectLabel,
-                      resourceId,
+                      resourceId: encodedResourceId,
                     }
                   );
 
@@ -162,7 +158,7 @@ const ResourceViewActionsContainer: React.FC<{
                     {
                       orgLabel,
                       projectLabel,
-                      resourceId,
+                      resourceId: encodedResourceId,
                     }
                   );
 
