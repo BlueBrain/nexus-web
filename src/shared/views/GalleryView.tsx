@@ -69,12 +69,19 @@ const GalleryView: React.FC = () => {
     const handleClickOutsideWrapper = (event: Event) => {
       if (wrapperRef.current) {
         const currentWrapperRef = wrapperRef.current;
+
         if (
           event.target &&
           !currentWrapperRef.contains(event.target as Node) &&
           // @ts-ignore
-          event.target.getAttribute('role') !== 'menuitem'
+          event.target.getAttribute('role') !== 'menuitem' &&
+          // @ts-ignore
+          !event.target.parentNode.classList.contains('ant-btn')
         ) {
+          // @ts-ignore
+          history.push(`${background.pathname}${background.search}`, {
+            refresh: true,
+          });
           setDrawerVisible(false);
         }
       }

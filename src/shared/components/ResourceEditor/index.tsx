@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Button, Switch, Spin } from 'antd';
 import {
-  InfoCircleOutlined,
   CheckCircleOutlined,
   ExclamationCircleOutlined,
   SaveOutlined,
@@ -118,16 +117,6 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     <div className={valid ? 'resource-editor' : 'resource-editor _invalid'}>
       <div className="control-panel">
         <div>
-          {!editable && (
-            <div className="feedback">
-              <InfoCircleOutlined /> This resource cannot be edited
-            </div>
-          )}
-          {editable && !isEditing && valid && (
-            <div className="feedback">
-              <InfoCircleOutlined /> Directly edit this resource
-            </div>
-          )}
           {editable && isEditing && valid && (
             <div className="feedback _positive">
               <CheckCircleOutlined /> Valid

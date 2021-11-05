@@ -3,7 +3,7 @@ import ResourceViewContainer from '../containers/ResourceViewContainer';
 
 const ResourceView: React.FunctionComponent = props => {
   return (
-    <div className="resource-view view-container -unconstrained-width">
+    <div className="resource-view view-container">
       <ResourceViewContainer />
     </div>
   );
