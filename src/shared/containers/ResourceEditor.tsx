@@ -6,7 +6,6 @@ import {
   NexusClient,
 } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-
 import ResourceEditor from '../components/ResourceEditor';
 import useNotification, { parseNexusError } from '../hooks/useNotification';
 
@@ -54,6 +53,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
       error: null,
       busy: true,
     });
+    setEditable(defaultEditable);
     if (resource?.['@type']?.includes('File')) {
       setEditable(false);
     }
@@ -85,6 +85,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
     expanded,
     showMetadata,
     tabChange,
+    defaultEditable,
   ]);
 
   const handleFormatChange = () => {

@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Resource, ResourceLink } from '@bbp/nexus-sdk';
-import { Tabs, Collapse } from 'antd';
+import { Tabs, Collapse, Alert } from 'antd';
 import HistoryContainer from '../containers/HistoryContainer';
 import ResourceLinksContainer from '../containers/ResourceLinks';
 import ResourceActionsContainer from '../containers/ResourceActionsContainer';
 import ResourceEditorContainer from '../containers/ResourceEditor';
-import SchemaLinkContainer from '../containers/SchemaLink';
 import GraphContainer from '../containers/GraphContainer';
-import ResourceMetadata from '../components/ResourceMetadata';
 import MarkdownEditorContainer from './MarkdownEditorContainer';
+import { AccessControl } from '@bbp/react-nexus';
+import { EditOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
 const TabPane = Tabs.TabPane;
@@ -65,12 +65,25 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
 
   return (
     <Collapse onChange={() => {}}>
-      <Panel header="Admin" key="1">
+      <Panel header="Advanced View" key="1">
+        <AccessControl
+          path={`/${orgLabel}/${projectLabel}`}
+          permissions={['resources/write']}
+          noAccessComponent={() => <></>}
+        >
+          {editable && (
+            <Alert
+              message={
+                <>
+                  <EditOutlined /> You can edit this resource.
+                </>
+              }
+              type="success"
+            />
+          )}
+        </AccessControl>
+
         <ResourceActionsContainer resource={resource} />
-        <ResourceMetadata
-          resource={resource}
-          schemaLink={SchemaLinkContainer}
-        />
         <Tabs activeKey={activeTabKey} onChange={onTabChange}>
           <TabPane tab="JSON" key="#JSON">
             <ResourceEditorContainer
@@ -146,9 +159,7 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
             <div className="graph-wrapper-container">
               <div className="fixed-minus-header">
                 <div ref={ref} className="graph-wrapper">
-                  {resource ? (
-                    <GraphContainer resource={resource as Resource} />
-                  ) : null}
+                  <GraphContainer resource={resource as Resource} />
                 </div>
               </div>
             </div>
