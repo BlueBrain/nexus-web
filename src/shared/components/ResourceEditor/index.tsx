@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Button, Switch, Spin } from 'antd';
 import {
-  InfoCircleOutlined,
   CheckCircleOutlined,
   ExclamationCircleOutlined,
   SaveOutlined,
