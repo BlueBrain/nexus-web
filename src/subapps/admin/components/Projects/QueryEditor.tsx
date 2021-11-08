@@ -1,6 +1,7 @@
 import * as React from 'react';
 import SparqlQueryView from '../../views/SparqlQueryView';
 import ElasticSearchQueryView from '../../views/ElasticSearchQueryView';
+import './QueryEditor.less';
 import { Tabs } from 'antd';
 
 const QueryEditor: React.FC<{
@@ -18,12 +19,12 @@ const QueryEditor: React.FC<{
       <div className="project-menu__controls">
         <Tabs defaultActiveKey="browse" tabPosition="left">
           <TabPane tab="SparQL" key="browse">
-            <div style={{ flexGrow: 1 }}>
+            <div>
               <SparqlQueryView />
             </div>
           </TabPane>
           <TabPane tab="ElasticSearch" key="query">
-            <div style={{ flexGrow: 1 }}>
+            <div>
               <ElasticSearchQueryView />
             </div>
           </TabPane>
