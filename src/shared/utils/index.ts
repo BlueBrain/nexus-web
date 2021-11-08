@@ -570,11 +570,13 @@ export const deltaUrlToFusionUrl = (url: string, nexusWebBase: string) => {
 
   if (projectUrl) {
     return `${nexusWebBase}/admin/${projectUrl[1]}/${projectUrl[2]}`;
-  } else if (resourceUrl) {
+  }
+  if (resourceUrl) {
     return `${nexusWebBase}/admin/${resourceUrl[1]}/${
       resourceUrl[2]
     }/${encodeURIComponent(url)}`;
-  } else if (fileUrl) {
+  }
+  if (fileUrl) {
     return `${nexusWebBase}/admin/${fileUrl[1]}/${
       fileUrl[2]
     }/${encodeURIComponent(url)}`;
