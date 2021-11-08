@@ -5,7 +5,6 @@ import { ViewList, DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import ElasticSearchQueryContainer from '../containers/ElasticSearchQuery';
-import { useAdminSubappContext } from '..';
 
 const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
   const match = useRouteMatch<{
