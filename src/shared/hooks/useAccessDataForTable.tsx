@@ -3,14 +3,14 @@ import { sparqlQueryExecutor } from '../utils/querySparqlView';
 import { useQuery } from 'react-query';
 import * as bodybuilder from 'bodybuilder';
 import { useNexusContext } from '@bbp/react-nexus';
-import { addColumnsForES } from '../utils/parseESResults';
+import { addColumnsForES, rowRender } from '../utils/parseESResults';
 import { parseJsonMaybe } from '../utils/index';
 import { download } from '../utils/download';
 import json2csv, { Parser } from 'json2csv';
 import * as React from 'react';
 export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
 export const CSV_MEDIATYPE = 'text/csv';
-import { CartContext } from '../hooks/useDataCart';
+import { CartContext } from './useDataCart';
 import { pick } from 'lodash';
 
 export type TableResource = Resource<{
@@ -64,6 +64,7 @@ export const DEFAULT_FIELDS = [
     dataIndex: 'label',
     key: 'label',
     displayIndex: 0,
+    render: rowRender,
   },
   {
     title: 'Project',
@@ -187,6 +188,7 @@ const accessData = async (
   const dataQuery: string = tableResource.dataQuery;
   const columnConfig = tableResource.configuration as TableColumn[];
   if (view['@type']?.includes('ElasticSearchView')) {
+    console.log('here ..2');
     const result = await queryES(
       JSON.parse(dataQuery),
       nexus,
@@ -229,9 +231,8 @@ const accessData = async (
         sorter,
       };
     }
-    return headerProp;
+    return { ...headerProp, render: rowRender };
   });
-
   return { ...result, headerProperties, tableResource };
 };
 

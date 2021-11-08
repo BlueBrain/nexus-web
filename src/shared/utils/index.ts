@@ -539,3 +539,45 @@ export const forceAsArray = <T>(objectOrArray: T | T[] | null | undefined) => {
       : [objectOrArray]
     : [];
 };
+
+/**
+ * Checks if a string is a valid URL.
+ * @param {string} url
+ */
+export const isURL = (url: string) => {
+  try {
+    new URL(url);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
+/**
+ * Converts delta url to a fusion url
+ * @param url
+ * @returns
+ */
+
+export const deltaUrlToFusionUrl = (url: string, nexusWebBase: string) => {
+  const projectUrlPattern = /projects\/([\w-]+)\/([\w-]+)\/?$/;
+  const resourceUrlPattern = /resources\/(.[^/]*)\/(.[^/]*)\/(.[^/]*)\/(.*)/;
+  const fileUrlPattern = /files(\/([\w-]+)\/([\w-]+))/;
+
+  const projectUrl = projectUrlPattern.exec(url);
+  const resourceUrl = resourceUrlPattern.exec(url);
+  const fileUrl = fileUrlPattern.exec(url);
+
+  if (projectUrl) {
+    return `${nexusWebBase}/admin/${projectUrl[1]}/${projectUrl[2]}`;
+  } else if (resourceUrl) {
+    return `${nexusWebBase}/admin/${resourceUrl[1]}/${
+      resourceUrl[2]
+    }/${encodeURIComponent(url)}`;
+  } else if (fileUrl) {
+    return `${nexusWebBase}/admin/${fileUrl[1]}/${
+      fileUrl[2]
+    }/${encodeURIComponent(url)}`;
+  }
+  return url;
+};
