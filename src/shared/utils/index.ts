@@ -577,9 +577,7 @@ export const deltaUrlToFusionUrl = (url: string, nexusWebBase: string) => {
     }/${encodeURIComponent(url)}`;
   }
   if (fileUrl) {
-    return `${nexusWebBase}/admin/${fileUrl[1]}/${
-      fileUrl[2]
-    }/${encodeURIComponent(url)}`;
+    return `${nexusWebBase}/admin${fileUrl[1]}/${encodeURIComponent(url)}`;
   }
   return url;
 };
