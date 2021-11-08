@@ -209,26 +209,6 @@ const ProjectsView: React.FunctionComponent = () => {
                 <ListItem
                   key={i['@id']}
                   onClick={() => goTo(i._organizationLabel, i._label)}
-                  actions={[
-                    <AccessControl
-                      key={`access-control-${i['@id']}`}
-                      path={`/${i._organizationLabel}/${i._label}`}
-                      permissions={['projects/write']}
-                    >
-                      <Button
-                        className="edit-button"
-                        size="small"
-                        type="primary"
-                        tabIndex={1}
-                        onClick={(e: React.SyntheticEvent) => {
-                          e.stopPropagation();
-                          setSelectedProject(i);
-                        }}
-                      >
-                        Settings
-                      </Button>
-                    </AccessControl>,
-                  ]}
                 >
                   <ProjectItem {...i} />
                 </ListItem>
