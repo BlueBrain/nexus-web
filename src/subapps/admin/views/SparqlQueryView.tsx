@@ -1,13 +1,10 @@
 import * as React from 'react';
 import { useLocation, useRouteMatch } from 'react-router';
-import { Link } from 'react-router-dom';
 import * as queryString from 'query-string';
-import { Menu } from 'antd';
-import { ViewList, View, DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
+import { ViewList, DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import SparqlQueryContainer from '../containers/SparqlQuery';
-import { getResourceLabel } from '../../../shared/utils';
 import { useAdminSubappContext } from '..';
 import useNotification from '../../../shared/hooks/useNotification';
 
@@ -19,7 +16,6 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
   }>();
   const location = useLocation();
   const notification = useNotification();
-  const { namespace } = useAdminSubappContext();
   const {
     params: { orgLabel, projectLabel, viewId },
   } = match;
