@@ -1,13 +1,15 @@
 @import '~antd/dist/antd.less';
 
-.ant-drawer-left.ant-drawer-open,
-.ant-drawer-right.ant-drawer-open {
-  width: 60% !important;
-  margin-top: 52px; // do not overlay app header
-}
-@media only screen and (max-width: @screen-sm-max) {
-  .ant-drawer-left.ant-drawer-open,
-  .ant-drawer-right.ant-drawer-open {
-    width: 100% !important;
+.gallery-drawer {
+  &.ant-drawer-left.ant-drawer-open,
+  &.ant-drawer-right.ant-drawer-open {
+    width: 60% !important;
+    margin-top: 52px; // do not overlay app header
+  }
+  @media only screen and (max-width: @screen-sm-max) {
+    &.ant-drawer-left.ant-drawer-open,
+    &.ant-drawer-right.ant-drawer-open {
+      width: 100% !important;
+    }
   }
 }
