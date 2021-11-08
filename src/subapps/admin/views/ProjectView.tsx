@@ -56,6 +56,7 @@ const ProjectView: React.FunctionComponent = () => {
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
 
   const [refreshLists, setRefreshLists] = React.useState(false);
+  const [activeKey, setActiveKey] = React.useState('browse');
   const [statisticsPollingPaused, setStatisticsPollingPaused] = React.useState(
     false
   );
@@ -104,7 +105,7 @@ const ProjectView: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     /* if location has changed, check to see if we should refresh our
-    resources and reset initial statistics state */
+		resources and reset initial statistics state */
     const refresh =
       location.state && (location.state as { refresh?: boolean }).refresh;
     if (refresh) {
@@ -173,6 +174,10 @@ const ProjectView: React.FunctionComponent = () => {
         });
       });
   };
+  const handleTabChange = (activeKey: string) => {
+    const key = activeKey === 'studios' ? 'browse' : `${activeKey}`;
+    setActiveKey(key);
+  };
   return (
     <div className="project-view">
       {!!project && (
@@ -228,7 +233,11 @@ const ProjectView: React.FunctionComponent = () => {
             />
           )}
           <div className="tabs-container">
-            <Tabs defaultActiveKey="browse">
+            <Tabs
+              onChange={handleTabChange}
+              activeKey={activeKey}
+              defaultActiveKey="browse"
+            >
               <TabPane tab="Browse" key="browse">
                 <div className="list-board">
                   <div className="wrapper">
