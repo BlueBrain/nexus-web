@@ -14,7 +14,6 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
     viewId: string;
   }>();
   const location = useLocation();
-  const { namespace } = useAdminSubappContext();
   const {
     params: { orgLabel, projectLabel, viewId },
   } = match || {

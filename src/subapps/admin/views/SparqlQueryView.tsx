@@ -5,7 +5,6 @@ import { ViewList, DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import SparqlQueryContainer from '../containers/SparqlQuery';
-import { useAdminSubappContext } from '..';
 import useNotification from '../../../shared/hooks/useNotification';
 
 const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
