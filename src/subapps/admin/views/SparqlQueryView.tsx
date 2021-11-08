@@ -2,14 +2,12 @@ import * as React from 'react';
 import { useLocation, useRouteMatch } from 'react-router';
 import { Link } from 'react-router-dom';
 import * as queryString from 'query-string';
-import { Menu, Dropdown } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import { Menu } from 'antd';
 import { ViewList, View, DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
-import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 import SparqlQueryContainer from '../containers/SparqlQuery';
-import { getResourceLabel, labelOf } from '../../../shared/utils';
+import { getResourceLabel } from '../../../shared/utils';
 import { useAdminSubappContext } from '..';
 import useNotification from '../../../shared/hooks/useNotification';
 
@@ -26,13 +24,12 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
     params: { orgLabel, projectLabel, viewId },
   } = match;
 
-  const [{ _results: views }, setViews] = React.useState<ViewList>({
+  const [, setViews] = React.useState<ViewList>({
     '@context': {},
     _total: 0,
     _results: [],
   });
   const nexus = useNexusContext();
-  const decodedViewId = decodeURIComponent(viewId);
   const query = queryString.parse(location.search).query;
 
   React.useEffect(() => {
@@ -45,33 +42,6 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
         });
       });
   }, [orgLabel, projectLabel]);
-
-  const menu = (
-    <Menu>
-      {views.map((view: View, index: number) => {
-        const stringifiedViewType = Array.isArray(view['@type'])
-          ? view['@type'].join('')
-          : view['@type'];
-        const pathAppendage = (stringifiedViewType || '')
-          .toLowerCase()
-          .includes('elastic')
-          ? '_search'
-          : 'sparql';
-
-        return (
-          <Menu.Item key={index}>
-            <Link
-              to={`/${namespace}/${orgLabel}/${projectLabel}/${encodeURIComponent(
-                view['@id']
-              )}/${pathAppendage}`}
-            >
-              {getResourceLabel(view)}
-            </Link>
-          </Menu.Item>
-        );
-      })}
-    </Menu>
-  );
 
   return (
     <>

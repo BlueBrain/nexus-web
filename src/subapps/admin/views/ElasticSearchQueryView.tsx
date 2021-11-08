@@ -2,14 +2,12 @@ import * as React from 'react';
 import { useRouteMatch, useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import * as queryString from 'query-string';
-import { Menu, Dropdown } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import { Menu } from 'antd';
 import { ViewList, View, DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
-import ViewStatisticsProgress from '../components/Views/ViewStatisticsProgress';
 import ElasticSearchQueryContainer from '../containers/ElasticSearchQuery';
-import { getResourceLabel, labelOf } from '../../../shared/utils';
+import { getResourceLabel } from '../../../shared/utils';
 import { useAdminSubappContext } from '..';
 
 const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {

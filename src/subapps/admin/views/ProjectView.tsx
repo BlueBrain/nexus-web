@@ -17,7 +17,6 @@ import ProjectForm from '../components/Projects/ProjectForm';
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
 import ResourceListBoardContainer from '../../../shared/containers/ResourceListBoardContainer';
 import FileUploadContainer from '../../../shared/containers/FileUploadContainer';
-import ProjectTools from '../components/Projects/ProjectTools';
 import ACLsView from './ACLsView';
 import QueryEditor from '../components/Projects/QueryEditor';
 import { useAdminSubappContext } from '..';
