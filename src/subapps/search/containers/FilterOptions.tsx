@@ -1,4 +1,4 @@
-import { Form, Select, Checkbox, Button, Row, Input } from 'antd';
+import { Form, Select, Checkbox, Row, Input } from 'antd';
 import { labelOf } from '../../../shared/utils';
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
