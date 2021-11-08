@@ -71,12 +71,12 @@ const GalleryView: React.FC = () => {
         const currentWrapperRef = wrapperRef.current;
 
         if (
-          event.target &&
-          !currentWrapperRef.contains(event.target as Node) &&
+          (event.target &&
+            !currentWrapperRef.contains(event.target as Node) &&
+            // @ts-ignore
+            event.target.closest('#app')) ||
           // @ts-ignore
-          event.target.getAttribute('role') !== 'menuitem' &&
-          // @ts-ignore
-          !event.target.parentNode.classList.contains('ant-btn')
+          event.target.closest('.ant-drawer-close')
         ) {
           // @ts-ignore
           history.push(`${background.pathname}${background.search}`, {
@@ -109,6 +109,7 @@ const GalleryView: React.FC = () => {
           render={routeProps =>
             drawerVisible && (
               <Drawer
+                className="gallery-drawer"
                 maskClosable={false}
                 destroyOnClose={false}
                 visible={true}
