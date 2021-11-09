@@ -15,7 +15,11 @@ const ACLsForm: React.FunctionComponent<ACLsFormProps> = (
   props: ACLsFormProps
 ) => {
   return (
-    <Tabs defaultActiveKey={`${props.path}-0`} className="ACLs-form">
+    <Tabs
+      defaultActiveKey={`${props.path}-0`}
+      className="ACLs-form"
+      tabPosition="left"
+    >
       {props.acls.map((acl: ACL, index: number) => (
         <Tabs.TabPane
           tab={
