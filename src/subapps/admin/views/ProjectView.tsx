@@ -6,17 +6,24 @@ import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
   Statistics,
 } from '@bbp/nexus-sdk';
-import { useNexusContext } from '@bbp/react-nexus';
-import { Popover, Button } from 'antd';
+import { useNexusContext, AccessControl } from '@bbp/react-nexus';
+import { Tabs, Popover, Button, Divider } from 'antd';
+import { SelectOutlined } from '@ant-design/icons';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
+import StoragesContainer from '../containers/StoragesContainer';
+import QuotasContainer from '../containers/QuotasContainer';
+import ProjectForm from '../components/Projects/ProjectForm';
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
 import ResourceListBoardContainer from '../../../shared/containers/ResourceListBoardContainer';
-import ProjectTools from '../components/Projects/ProjectTools';
+import FileUploadContainer from '../../../shared/containers/FileUploadContainer';
+import ACLsView from './ACLsView';
+import QueryEditor from '../components/Projects/QueryEditor';
 import { useAdminSubappContext } from '..';
 import useNotification from '../../../shared/hooks/useNotification';
 import ProjectToDeleteContainer from '../containers/ProjectToDeleteContainer';
 import { RootState } from '../../../shared/store/reducers';
+import './ProjectView.less';
 
 const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
@@ -24,6 +31,7 @@ const ProjectView: React.FunctionComponent = () => {
   const location = useLocation();
   const history = useHistory();
   const subapp = useAdminSubappContext();
+  const { TabPane } = Tabs;
   const match = useRouteMatch<{ orgLabel: string; projectLabel: string }>(
     `/${subapp.namespace}/:orgLabel/:projectLabel`
   );
@@ -45,8 +53,10 @@ const ProjectView: React.FunctionComponent = () => {
     busy: false,
     error: null,
   });
+  const [formBusy, setFormBusy] = React.useState<boolean>(false);
 
   const [refreshLists, setRefreshLists] = React.useState(false);
+  const [activeKey, setActiveKey] = React.useState('browse');
   const [statisticsPollingPaused, setStatisticsPollingPaused] = React.useState(
     false
   );
@@ -95,7 +105,7 @@ const ProjectView: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     /* if location has changed, check to see if we should refresh our
-    resources and reset initial statistics state */
+		resources and reset initial statistics state */
     const refresh =
       location.state && (location.state as { refresh?: boolean }).refresh;
     if (refresh) {
@@ -136,7 +146,38 @@ const ProjectView: React.FunctionComponent = () => {
   };
 
   const showDeletionBanner = deltaPlugins && 'project-deletion' in deltaPlugins;
-
+  const saveAndModify = (
+    selectedProject: ProjectResponseCommon,
+    newProject: ProjectResponseCommon
+  ) => {
+    if (!project) {
+      return;
+    }
+    setFormBusy(true);
+    nexus.Project.update(orgLabel, projectLabel, project._rev, {
+      base: newProject.base,
+      vocab: newProject.vocab,
+      description: newProject.description,
+      apiMappings: newProject.apiMappings || [],
+    })
+      .then(() => {
+        notification.success({
+          message: 'Project saved',
+        });
+        setFormBusy(false);
+      })
+      .catch((error: Error) => {
+        setFormBusy(false);
+        notification.error({
+          message: 'An unknown error occurred',
+          description: error.message,
+        });
+      });
+  };
+  const handleTabChange = (activeKey: string) => {
+    const key = activeKey === 'studios' ? 'browse' : `${activeKey}`;
+    setActiveKey(key);
+  };
   return (
     <div className="project-view">
       {!!project && (
@@ -191,23 +232,119 @@ const ProjectView: React.FunctionComponent = () => {
               projectLabel={project._label}
             />
           )}
-          <div className="list-board">
-            <div className="wrapper">
-              <ResourceListBoardContainer
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-                refreshLists={refreshLists}
-              />
-              <ProjectTools
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-                onUpdate={() => {
-                  setRefreshLists(!refreshLists);
-                  // Statistics aren't immediately updated so pause polling briefly
-                  pauseStatisticsPolling(5000);
-                }}
-              />
-            </div>
+          <div className="tabs-container">
+            <Tabs
+              onChange={handleTabChange}
+              activeKey={activeKey}
+              defaultActiveKey="browse"
+            >
+              <TabPane tab="Browse" key="browse">
+                <div className="list-board">
+                  <div className="wrapper">
+                    <ResourceListBoardContainer
+                      orgLabel={orgLabel}
+                      projectLabel={projectLabel}
+                      refreshLists={refreshLists}
+                    />
+                  </div>
+                </div>
+              </TabPane>
+              <TabPane tab="Query" key="query">
+                <div style={{ flexGrow: 1 }}>
+                  <QueryEditor
+                    orgLabel={orgLabel}
+                    projectLabel={projectLabel}
+                    onUpdate={() => {
+                      setRefreshLists(!refreshLists);
+                      // Statistics aren't immediately updated so pause polling briefly
+                      pauseStatisticsPolling(5000);
+                    }}
+                  />
+                </div>
+              </TabPane>
+              <TabPane tab="Create and Upload" key="create_upload">
+                <AccessControl
+                  path={`/${orgLabel}/${projectLabel}`}
+                  permissions={['files/write']}
+                >
+                  <Divider />
+                  <FileUploadContainer
+                    projectLabel={projectLabel}
+                    orgLabel={orgLabel}
+                  />
+                </AccessControl>
+              </TabPane>
+              <TabPane tab="Statistics" key="stats">
+                <AccessControl
+                  key="quotas-access-control"
+                  path={`/${orgLabel}/${projectLabel}`}
+                  permissions={['quotas/read']}
+                >
+                  <QuotasContainer
+                    orgLabel={orgLabel}
+                    projectLabel={projectLabel}
+                  />
+                  <StoragesContainer
+                    orgLabel={orgLabel}
+                    projectLabel={projectLabel}
+                  />
+                </AccessControl>
+              </TabPane>
+              <TabPane tab="Settings" key="settings">
+                <>
+                  <br />
+                  <h3>Settings</h3>
+                  <div style={{ flexGrow: 1 }}>
+                    <ProjectForm
+                      project={{
+                        _label: project._label,
+                        _rev: project._rev,
+                        description: project.description || '',
+                        base: project.base,
+                        vocab: project.vocab,
+                        apiMappings: project.apiMappings,
+                      }}
+                      onSubmit={(p: ProjectResponseCommon) =>
+                        saveAndModify(project, p)
+                      }
+                      busy={formBusy}
+                      mode="edit"
+                    />
+                  </div>
+                  <br />
+                  <ACLsView />
+                  <br />
+                </>
+              </TabPane>
+              <TabPane
+                tab={
+                  <span>
+                    <Link
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      to={`/studios/${orgLabel}/${projectLabel}/studios`}
+                    >
+                      <SelectOutlined /> Studios
+                    </Link>
+                  </span>
+                }
+                key="studios"
+              ></TabPane>
+              <TabPane
+                tab={
+                  <span>
+                    <Link
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      to={`/workflow/${orgLabel}/${projectLabel}`}
+                    >
+                      <SelectOutlined /> Workflows
+                    </Link>
+                  </span>
+                }
+                key="workflows"
+              ></TabPane>
+            </Tabs>
           </div>
         </>
       )}
