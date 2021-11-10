@@ -164,20 +164,7 @@ const FilterOptions: React.FC<{
   );
 
   return (
-    <Form
-      form={form}
-      onFinish={(values: any) => {
-        onFinish({
-          filterType,
-          filters:
-            filterType === 'missing'
-              ? []
-              : aggregations.filter(a => a.selected).map(a => a.filterValue),
-          filterTerm: filterKeyWord,
-        });
-      }}
-      className="field-filter-menu"
-    >
+    <Form form={form} className="field-filter-menu">
       <Form.Item
         label="Operator"
         rules={[
