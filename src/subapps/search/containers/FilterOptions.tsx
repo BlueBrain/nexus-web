@@ -186,6 +186,7 @@ const FilterOptions: React.FC<{
           )}
         </Select>
       </Form.Item>
+<<<<<<< HEAD
       {filterType !== 'missing' && (
         <>
           <Input.Search
@@ -215,6 +216,26 @@ const FilterOptions: React.FC<{
           Apply
         </Button>
       </Form.Item>
+=======
+      <Input.Search
+        onChange={event => {
+          const val = event.target.value;
+
+          const filteredSuggestions = aggregations.map(a => ({
+            ...a,
+            matching:
+              val && val.length > 0
+                ? a.filterValue.toLowerCase().indexOf(val.toLowerCase()) > -1
+                : true,
+          }));
+          setAggregations(filteredSuggestions);
+        }}
+      ></Input.Search>
+      <Form.Item style={{ maxHeight: '91px', overflow: 'scroll' }}>
+        {filterValues}
+      </Form.Item>
+      <Form.Item></Form.Item>
+>>>>>>> 78c9962... removed button
     </Form>
   );
 };
