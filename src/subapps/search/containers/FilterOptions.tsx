@@ -62,6 +62,14 @@ const FilterOptions: React.FC<{
     }[]
   >([]);
 
+  React.useEffect(() => {
+    onFinish({
+      filterType,
+      filters: aggregations.filter(a => a.selected).map(a => a.filterValue),
+      filterTerm: filterKeyWord,
+    });
+  }, [aggregations]);
+
   const filterTypeDefault = () => {
     if (fieldFilter?.filterType) {
       return fieldFilter?.filterType;
