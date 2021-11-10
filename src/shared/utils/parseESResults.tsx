@@ -17,7 +17,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store/reducers';
 
 export const rowRender = (value: string) => {
-  console.log('here ....');
   if (isURL(value)) {
     const basePath =
       useSelector((state: RootState) => state.config.basePath) || '';
