@@ -560,24 +560,32 @@ export const isURL = (url: string) => {
  */
 
 export const deltaUrlToFusionUrl = (url: string, nexusWebBase: string) => {
-  const projectUrlPattern = /projects\/([\w-]+)\/([\w-]+)\/?$/;
-  const resourceUrlPattern = /resources\/(.[^/]*)\/(.[^/]*)\/(.[^/]*)\/(.*)/;
-  const fileUrlPattern = /files(\/([\w-]+)\/([\w-]+))/;
+  const projectUrlPattern = new RegExp(
+    /projects\/(?<org>[\w-]+)\/(?<project>[\w-]+)\/?$/
+  );
+  const resourceUrlPattern = new RegExp(
+    /resources\/(?<org>.[^/]*)\/(?<project>.[^/]*)\/(.[^/]*)\/(.*)/
+  );
+  const fileUrlPattern = new RegExp(
+    /files(\/(?<org>[\w-]+)\/(?<project>[\w-]+))/
+  );
 
   const projectUrl = projectUrlPattern.exec(url);
   const resourceUrl = resourceUrlPattern.exec(url);
   const fileUrl = fileUrlPattern.exec(url);
 
   if (projectUrl) {
-    return `${nexusWebBase}/admin/${projectUrl[1]}/${projectUrl[2]}`;
+    return `${nexusWebBase}/admin/${projectUrl.groups?.org}/${projectUrl.groups?.project}`;
   }
   if (resourceUrl) {
-    return `${nexusWebBase}/admin/${resourceUrl[1]}/${
-      resourceUrl[2]
+    return `${nexusWebBase}/admin/${resourceUrl.groups?.org}/${
+      resourceUrl.groups?.project
     }/${encodeURIComponent(url)}`;
   }
   if (fileUrl) {
-    return `${nexusWebBase}/admin${fileUrl[1]}/${encodeURIComponent(url)}`;
+    return `${nexusWebBase}/admin/${fileUrl.groups?.org}/${
+      fileUrl.groups?.project
+    }/${encodeURIComponent(url)}`;
   }
   return url;
 };

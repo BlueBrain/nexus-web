@@ -188,7 +188,6 @@ const accessData = async (
   const dataQuery: string = tableResource.dataQuery;
   const columnConfig = tableResource.configuration as TableColumn[];
   if (view['@type']?.includes('ElasticSearchView')) {
-    console.log('here ..2');
     const result = await queryES(
       JSON.parse(dataQuery),
       nexus,
