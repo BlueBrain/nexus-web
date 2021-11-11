@@ -11,10 +11,12 @@ import {
   addPagination,
   addSorting,
 } from '../utils';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../shared/store/reducers';
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
 import { Button, Divider, Tooltip } from 'antd';
-import { labelOf } from '../../../shared/utils';
+import { deltaUrlToFusionUrl, labelOf } from '../../../shared/utils';
 import FilterOptions, {
   createKeyWord,
   extractFieldName,
@@ -229,12 +231,15 @@ function rowRenderer(field: ConfigField) {
       if (value) {
         const fields = field.fields as any[];
         const link = value[fields[0].name];
+        const basePath =
+          useSelector((state: RootState) => state.config.basePath) || '';
+        const sanitizedLink = deltaUrlToFusionUrl(link, basePath);
         const text = value[fields[1].name];
         return (
           <Tooltip
             placement="topLeft"
             title={() => (
-              <a href={link} target="_blank">
+              <a href={sanitizedLink} target="_blank">
                 {text}
               </a>
             )}
