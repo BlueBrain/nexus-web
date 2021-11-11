@@ -53,7 +53,7 @@ const config = [
           ],
         },
         {
-          test: /\.(jpg|png|svg)$/,
+          test: /\.(jpg|png|svg|ttf)$/,
           use: {
             loader: 'file-loader',
             options: {
@@ -103,7 +103,7 @@ const config = [
           loader: 'null-loader',
         },
         {
-          test: /\.(jpg|png|svg)$/,
+          test: /\.(jpg|png|svg|ttf)$/,
           use: {
             loader: 'file-loader',
             options: {
