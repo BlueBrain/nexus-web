@@ -2,13 +2,33 @@ import * as React from 'react';
 import { Tooltip } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
 import { match } from 'ts-pattern';
-import { get } from 'lodash';
 import { UseSearchResponse } from '../hooks/useSearchQuery';
 import TypesIconList from '../components/Types/TypesIcon';
-import { getResourceLabel, parseJsonMaybe } from '.';
+import {
+  getResourceLabel,
+  parseJsonMaybe,
+  isURL,
+  deltaUrlToFusionUrl,
+} from '.';
 import { convertMarkdownHandlebarStringWithData } from './markdownTemplate';
 import { parseURL } from './nexusParse';
 import { ResultTableFields } from '../types/search';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/reducers';
+
+export const rowRender = (value: string) => {
+  if (isURL(value)) {
+    const basePath =
+      useSelector((state: RootState) => state.config.basePath) || '';
+    const sanitizedURL = deltaUrlToFusionUrl(value, basePath);
+    return (
+      <a href={sanitizedURL} target="_blank" rel="noopener noreferrer">
+        {value}
+      </a>
+    );
+  }
+  return value;
+};
 
 export function parseESResults(searchResponse: UseSearchResponse) {
   return (searchResponse.data?.hits.hits || []).map(({ _source }) => {
@@ -101,7 +121,7 @@ export function addColumnsForES(
             const x = JSON.parse(text);
             return <pre>{JSON.stringify(x, null, 2)}</pre>;
           } catch {
-            return <pre>{text.toString()}</pre>;
+            return rowRender(text.toString());
           }
         }
         return '';

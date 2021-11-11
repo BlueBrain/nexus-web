@@ -539,3 +539,53 @@ export const forceAsArray = <T>(objectOrArray: T | T[] | null | undefined) => {
       : [objectOrArray]
     : [];
 };
+
+/**
+ * Checks if a string is a valid URL.
+ * @param {string} url
+ */
+export const isURL = (url: string) => {
+  try {
+    new URL(url);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
+/**
+ * Converts delta url to a fusion url
+ * @param url
+ * @returns
+ */
+
+export const deltaUrlToFusionUrl = (url: string, nexusWebBase: string) => {
+  const projectUrlPattern = new RegExp(
+    /projects\/(?<org>[\w-]+)\/(?<project>[\w-]+)\/?$/
+  );
+  const resourceUrlPattern = new RegExp(
+    /resources\/(?<org>.[^/]*)\/(?<project>.[^/]*)\/(.[^/]*)\/(.*)/
+  );
+  const fileUrlPattern = new RegExp(
+    /files(\/(?<org>[\w-]+)\/(?<project>[\w-]+))/
+  );
+
+  const projectUrl = projectUrlPattern.exec(url);
+  const resourceUrl = resourceUrlPattern.exec(url);
+  const fileUrl = fileUrlPattern.exec(url);
+
+  if (projectUrl) {
+    return `${nexusWebBase}/admin/${projectUrl.groups?.org}/${projectUrl.groups?.project}`;
+  }
+  if (resourceUrl) {
+    return `${nexusWebBase}/admin/${resourceUrl.groups?.org}/${
+      resourceUrl.groups?.project
+    }/${encodeURIComponent(url)}`;
+  }
+  if (fileUrl) {
+    return `${nexusWebBase}/admin/${fileUrl.groups?.org}/${
+      fileUrl.groups?.project
+    }/${encodeURIComponent(url)}`;
+  }
+  return url;
+};
