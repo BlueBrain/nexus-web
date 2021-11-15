@@ -1089,27 +1089,27 @@
   resolved "https://registry.yarnpkg.com/@base2/pretty-print-object/-/pretty-print-object-1.0.0.tgz#860ce718b0b73f4009e153541faff2cb6b85d047"
   integrity sha512-4Th98KlMHr5+JkxfcoDT//6vY8vM+iSPrLNpHhRyLx2CFYi8e2RfqPLdpbnpo0Q5lQC5hNB79yes07zb02fvCw==
 
-"@bbp/nexus-link@^1.3.11":
-  version "1.3.11"
-  resolved "https://registry.yarnpkg.com/@bbp/nexus-link/-/nexus-link-1.3.11.tgz#a718f353145802a830c587cdc8e384504f41abfc"
-  integrity sha512-tyFWs2A+muhR4Vg3QgcJAFy73LG9pv+NsTR+EQ1Y7AxcQYR6jFZDeJTcI02jD5rPGixkTsxm6ZnhIJql2CmbdQ==
+"@bbp/nexus-link@^1.3.12":
+  version "1.3.12"
+  resolved "https://registry.yarnpkg.com/@bbp/nexus-link/-/nexus-link-1.3.12.tgz#0b15ff0970561b9e4afcfccb794b1bcd53982a55"
+  integrity sha512-uv/nr+eK8+xtuvqjTCNxoKmun0MoY467ib7plkqRZt8GKy5jS+vj+bj/uiqhGDJAZMQbUb/tzfGUYUEX8xv+Tg==
   dependencies:
     rxjs "^6.5.2"
 
-"@bbp/nexus-sdk@1.3.11":
-  version "1.3.11"
-  resolved "https://registry.yarnpkg.com/@bbp/nexus-sdk/-/nexus-sdk-1.3.11.tgz#40816124535d4aeba34c462f1d2fb87d0aa25de1"
-  integrity sha512-zQ0LkEN1Wes8gvot0VqJMumGbJ2zAZa47C/yAVWWEV+pJ0Tuo3x9kz3S2kJKlWr3sIcROgH0rOz8vKGrQFKZhg==
+"@bbp/nexus-sdk@1.3.12":
+  version "1.3.12"
+  resolved "https://registry.yarnpkg.com/@bbp/nexus-sdk/-/nexus-sdk-1.3.12.tgz#0e632b4817ca72c9c0d12d4406f69c5c39238c1e"
+  integrity sha512-U+N6Jpt7kjd8Ka4zH0JM59IcQ+tGR1O0tp0C4/0LaOe63R0CFcJVVKToaTpprWUvj26rPu7v5k2gmHp8zQGOXA==
   dependencies:
-    "@bbp/nexus-link" "^1.3.11"
+    "@bbp/nexus-link" "^1.3.12"
     query-string "^6.9.0"
 
-"@bbp/react-nexus@1.3.11":
-  version "1.3.11"
-  resolved "https://registry.yarnpkg.com/@bbp/react-nexus/-/react-nexus-1.3.11.tgz#6ef021858df1bb369980dd6fa59b52befe00cbc9"
-  integrity sha512-z3iRXQH0hlwgpR1KPVNQQE6y9FeKx8TvnhxOKEZUTT0R7c2rn61RTYq0wXhLMJqrLRYZvrrwESWPxYsmiPQ/LQ==
+"@bbp/react-nexus@1.3.12":
+  version "1.3.12"
+  resolved "https://registry.yarnpkg.com/@bbp/react-nexus/-/react-nexus-1.3.12.tgz#81f290cd29fb0fbfe7b3814f7ed30dfe432ef838"
+  integrity sha512-Gknop0KiSf4kamnoOiiiDayaEUjlv7jOkZNUecS7sKA4QPDRXT5dZ6oDAlxuQ1rMtc5ZFMkRvzlPkkk8ko3M1g==
   dependencies:
-    "@bbp/nexus-link" "^1.3.11"
+    "@bbp/nexus-link" "^1.3.12"
     ts-invariant "0.4.1"
 
 "@cnakazawa/watch@^1.0.3":
@@ -3255,6 +3255,11 @@
   dependencies:
     "@types/react" "*"
     "@types/webpack-env" "*"
+
+"@types/string-similarity@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@types/string-similarity/-/string-similarity-4.0.0.tgz#8cc03d5d1baad2b74530fe6c7d849d5768d391ad"
+  integrity sha512-dMS4S07fbtY1AILG/RhuwmptmzK1Ql8scmAebOTJ/8iBtK/KI17NwGwKzu1uipjj8Kk+3mfPxum56kKZE93mzQ==
 
 "@types/tapable@^1", "@types/tapable@^1.0.5":
   version "1.0.7"
