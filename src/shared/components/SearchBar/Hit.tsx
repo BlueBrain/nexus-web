@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Spin, Tooltip } from 'antd';
 import {
+  AppstoreOutlined,
   DatabaseOutlined,
   EnterOutlined,
   LockOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
 import { AccessControl } from '@bbp/react-nexus';
-
 import './Hit.less';
 
 export const globalSearchOption = (value: string | undefined) => {
@@ -31,16 +31,18 @@ export const globalSearchOption = (value: string | undefined) => {
 const Hit: React.FC<{
   orgLabel?: string;
   projectLabel?: string;
-}> = ({ children, orgLabel, projectLabel }) => {
+  type: 'project' | 'studio';
+}> = ({ children, orgLabel, projectLabel, type }) => {
   return (
     <div className="hit">
       <div className="hit__icon">
-        <DatabaseOutlined />
+        {type === 'project' && <DatabaseOutlined />}
+        {type === 'studio' && <AppstoreOutlined />}
       </div>
       <div className="hit__body">{children}</div>
       <div className="hit__action">
         <span>
-          <EnterOutlined className="hit__arrow" /> Jump to Project{' '}
+          <EnterOutlined className="hit__arrow" /> Jump to {type}{' '}
           {orgLabel && projectLabel && (
             <AccessControl
               permissions={['resources/read']}

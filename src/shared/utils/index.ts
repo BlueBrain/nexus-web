@@ -451,6 +451,27 @@ export const makeStudioUri = (
   return `/${orgLabel}/${projectLabel}/studios/${encodeURIComponent(studioId)}`;
 };
 
+/*
+ * Returns project uri
+ *
+ * @param {string} orgLabel
+ * @param {string} projectLabel
+ * @returns {string} project uri
+ */
+export const makeProjectUri = (orgLabel: string, projectLabel: string) => {
+  return `/admin/${orgLabel}/${projectLabel}`;
+};
+
+/*
+ * Returns search uri
+ *
+ * @param {string} searchQueryParam
+ * @returns {string} search uri
+ */
+export const makeSearchUri = (searchQueryParam: string) => {
+  return `/search/?query=${searchQueryParam}`;
+};
+
 /**
  * Returns Resource uri
  *

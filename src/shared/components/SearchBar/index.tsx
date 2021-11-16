@@ -5,13 +5,18 @@ import Hit, { globalSearchOption } from './Hit';
 import { focusOnSlash } from '../../utils/keyboardShortcuts';
 
 import './SearchBar.less';
+import {
+  ProjectSearchHit,
+  StudioSearchHit,
+} from '../../containers/SearchBarContainer';
+import { makeProjectUri, makeStudioUri } from '../../utils';
 
 const LABEL_MAX_LENGTH = 25;
 
 const SearchBar: React.FC<{
-  projectList: string[];
+  projectList: ProjectSearchHit[];
+  studioList: StudioSearchHit[];
   query?: string;
-  lastVisited?: string;
   onSearch: (value: string) => void;
   onSubmit: (value: string, option: any) => void;
   onFocus: () => void;
@@ -19,8 +24,8 @@ const SearchBar: React.FC<{
   onBlur: () => void;
   inputOnPressEnter: () => void;
 }> = ({
-  lastVisited,
   query,
+  studioList,
   projectList,
   onSearch,
   onSubmit,
@@ -58,6 +63,7 @@ const SearchBar: React.FC<{
   const handleSelect = (currentValue: string, option: any) => {
     setValue(currentValue);
     onSubmit(currentValue, option);
+    inputRef.current?.blur();
   };
 
   const handleSearch = (searchText: string) => {
@@ -77,37 +83,76 @@ const SearchBar: React.FC<{
     let options: {
       value: string;
       key: string;
+      path: string;
+      type: 'search' | 'project' | 'studio';
       label: JSX.Element;
     }[] = [
       {
         value,
-        key: 'global-search',
+        key: 'search',
+        path: `/search/?query=${value}`,
+        type: 'search',
         label: globalSearchOption(value),
       },
     ];
 
     if (projectList.length) {
-      const projectOptions = projectList.map((project: string) => {
-        const [orgLabel, projectLabel] = project.split('/');
-
+      const projectOptions = projectList.map((projectHit, ix) => {
         return {
-          key: project,
+          key: `project-${projectHit.label}${ix}`,
+          path: makeProjectUri(projectHit.organisation, projectHit.project),
+          type: 'project' as 'project',
           label: (
-            <Hit key={project} orgLabel={orgLabel} projectLabel={projectLabel}>
+            <Hit
+              key={projectHit.label}
+              orgLabel={projectHit.organisation}
+              projectLabel={projectHit.project}
+              type="project"
+            >
               <span>
-                {project.length > LABEL_MAX_LENGTH
-                  ? `${project.slice(0, LABEL_MAX_LENGTH)}...`
-                  : project}
+                {projectHit.label.length > LABEL_MAX_LENGTH
+                  ? `${projectHit.label.slice(0, LABEL_MAX_LENGTH)}...`
+                  : projectHit.label}
               </span>
             </Hit>
           ),
-          value: `${orgLabel}/${projectLabel}`,
+          value: `${projectHit.organisation}/${projectHit.project}`,
         };
       });
       options = [...options, ...projectOptions];
     }
+
+    if (studioList.length) {
+      const studioOptions = studioList.map((studioHit, ix) => {
+        return {
+          key: `studio-${studioHit.label}${ix}`,
+          path: makeStudioUri(
+            studioHit.organisation,
+            studioHit.project,
+            studioHit.studioId
+          ),
+          type: 'studio' as 'studio',
+          label: (
+            <Hit
+              key={studioHit.label}
+              orgLabel={studioHit.organisation}
+              projectLabel={studioHit.project}
+              type="studio"
+            >
+              <span>
+                {studioHit.label.length > LABEL_MAX_LENGTH
+                  ? `${studioHit.label.slice(0, LABEL_MAX_LENGTH)}...`
+                  : studioHit.label}
+              </span>
+            </Hit>
+          ),
+          value: `${studioHit.project}/${studioHit.label}`,
+        };
+      });
+      options = [...options, ...studioOptions];
+    }
     return options;
-  }, [value, projectList]);
+  }, [value, projectList, studioList]);
 
   return (
     <AutoComplete
@@ -124,6 +169,7 @@ const SearchBar: React.FC<{
       dropdownClassName="search-bar__drop"
       dropdownMatchSelectWidth={false}
       value={value}
+      listHeight={300}
     >
       <Input
         allowClear
