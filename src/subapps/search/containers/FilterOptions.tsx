@@ -66,7 +66,7 @@ const FilterOptions: React.FC<{
     if (fieldFilter?.filterType) {
       return fieldFilter?.filterType;
     }
-    return field.array ? 'anyof' : 'allof';
+    return 'anyof';
   };
   const [filterType, setFilterType] = React.useState(filterTypeDefault);
 
@@ -189,14 +189,14 @@ const FilterOptions: React.FC<{
           value={filterType}
           onChange={v => setFilterType(v)}
         >
-          {!field.array ? (
+          {field.array && (
             <Select.Option value="allof">is all of (AND)</Select.Option>
-          ) : null}
+          )}
           <Select.Option value="anyof">is any of (OR)</Select.Option>
           <Select.Option value="noneof">is none of (NOT)</Select.Option>
-          {field.optional ? (
+          {field.optional && (
             <Select.Option value="missing">is missing</Select.Option>
-          ) : null}
+          )}
         </Select>
       </Form.Item>
       {filterType !== 'missing' && (
