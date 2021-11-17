@@ -24,6 +24,7 @@ import useNotification from '../../../shared/hooks/useNotification';
 import ProjectToDeleteContainer from '../containers/ProjectToDeleteContainer';
 import { RootState } from '../../../shared/store/reducers';
 import './ProjectView.less';
+import ResourceCreateUploadContainer from '../../../shared/containers/ResourceCreateUploadContainer';
 
 const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
@@ -267,10 +268,9 @@ const ProjectView: React.FunctionComponent = () => {
                   path={`/${orgLabel}/${projectLabel}`}
                   permissions={['files/write']}
                 >
-                  <Divider />
-                  <FileUploadContainer
-                    projectLabel={projectLabel}
+                  <ResourceCreateUploadContainer
                     orgLabel={orgLabel}
+                    projectLabel={projectLabel}
                   />
                 </AccessControl>
               </TabPane>
