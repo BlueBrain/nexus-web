@@ -148,23 +148,19 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
               onChange={onFormatChange}
             />
           )}
-
+          <Button
+            icon={<SaveOutlined />}
+            type="primary"
+            size="small"
+            onClick={handleSubmit}
+            disabled={!valid || !editable || !isEditing}
+          >
+            Save
+          </Button>{' '}
           {editable && isEditing && (
-            <>
-              {valid ? (
-                <Button
-                  icon={<SaveOutlined />}
-                  type="primary"
-                  size="small"
-                  onClick={handleSubmit}
-                >
-                  Save
-                </Button>
-              ) : null}{' '}
-              <Button danger size="small" onClick={handleCancel}>
-                Cancel
-              </Button>
-            </>
+            <Button danger size="small" onClick={handleCancel}>
+              Cancel
+            </Button>
           )}
         </div>
       </div>

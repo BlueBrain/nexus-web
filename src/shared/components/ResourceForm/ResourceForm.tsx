@@ -77,7 +77,10 @@ export interface ResourceFormProps {
     payload: ResourcePayload;
   };
   busy?: boolean;
-  onSubmit?(resource: { schemaId: string; payload: ResourcePayload }): any;
+  onSubmit(resource: {
+    schemaId: string;
+    payload: ResourcePayload;
+  }): Promise<boolean>;
   onDeprecate?(): any;
   mode?: 'create' | 'edit';
 }
@@ -88,7 +91,7 @@ export interface ResourceFormProps {
  */
 const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
   busy = false,
-  onSubmit = () => {},
+  onSubmit,
   onDeprecate = () => {},
   mode = 'create',
 }) => {
@@ -96,6 +99,11 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
     DEFAULT_RESOURCE
   );
   const [form] = Form.useForm();
+
+  const reset = () => {
+    setJsonValue(DEFAULT_RESOURCE);
+    form.resetFields();
+  };
 
   const handleSubmit = async (rawData: any) => {
     try {
@@ -109,10 +117,11 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
       const payload = {
         ...editorContent,
       };
-      onSubmit({
+      await onSubmit({
         payload,
         schemaId: RESOURCES_SCHEMA_URI[selectedSchema],
       });
+      reset();
     } catch (error) {
       // TODO: do something with error
     }

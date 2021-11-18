@@ -7,7 +7,7 @@ import {
   Statistics,
 } from '@bbp/nexus-sdk';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { Tabs, Popover, Button, Divider } from 'antd';
+import { Tabs, Popover, Button } from 'antd';
 import { SelectOutlined } from '@ant-design/icons';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
@@ -16,7 +16,6 @@ import QuotasContainer from '../containers/QuotasContainer';
 import ProjectForm from '../components/Projects/ProjectForm';
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
 import ResourceListBoardContainer from '../../../shared/containers/ResourceListBoardContainer';
-import FileUploadContainer from '../../../shared/containers/FileUploadContainer';
 import ACLsView from './ACLsView';
 import QueryEditor from '../components/Projects/QueryEditor';
 import { useAdminSubappContext } from '..';
@@ -24,6 +23,7 @@ import useNotification from '../../../shared/hooks/useNotification';
 import ProjectToDeleteContainer from '../containers/ProjectToDeleteContainer';
 import { RootState } from '../../../shared/store/reducers';
 import './ProjectView.less';
+import ResourceCreateUploadContainer from '../../../shared/containers/ResourceCreateUploadContainer';
 
 const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
@@ -175,8 +175,11 @@ const ProjectView: React.FunctionComponent = () => {
       });
   };
   const handleTabChange = (activeKey: string) => {
-    const key = activeKey === 'studios' ? 'browse' : `${activeKey}`;
-    setActiveKey(key);
+    if (activeKey === 'studios' || activeKey === 'workflows') {
+      setActiveKey('browse');
+      return;
+    }
+    setActiveKey(activeKey);
   };
   return (
     <div className="project-view">
@@ -267,10 +270,9 @@ const ProjectView: React.FunctionComponent = () => {
                   path={`/${orgLabel}/${projectLabel}`}
                   permissions={['files/write']}
                 >
-                  <Divider />
-                  <FileUploadContainer
-                    projectLabel={projectLabel}
+                  <ResourceCreateUploadContainer
                     orgLabel={orgLabel}
+                    projectLabel={projectLabel}
                   />
                 </AccessControl>
               </TabPane>
