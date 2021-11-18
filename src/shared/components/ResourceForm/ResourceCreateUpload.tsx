@@ -1,28 +1,21 @@
 import * as React from 'react';
-import { Modal } from 'antd';
-import { Resource, ResourcePayload } from '@bbp/nexus-sdk';
-
+import FileUploadContainer from '../../containers/FileUploadContainer';
 import ResourceForm from './ResourceForm';
+import './ResourceCreateUpload.less';
+import { Resource, ResourcePayload } from '@bbp/nexus-sdk';
+import { notification } from 'antd';
 import { camelCaseToTitleCase } from '../../utils';
-import useNotification from '../../hooks/useNotification';
 
-interface ResourceFormModalProps {
+const ResourceCreateUpload: React.FunctionComponent<{
+  orgLabel: string;
+  projectLabel: string;
   createResource: (
     schemaId: string,
     payload: ResourcePayload
   ) => Promise<Resource>;
-  render: (updateFormVisible: () => void) => React.ReactElement<any>;
-  onSuccess?: () => void;
-}
-
-const ResourceFormModal: React.FunctionComponent<ResourceFormModalProps> = ({
-  createResource,
-  render,
-  onSuccess = () => {},
-}) => {
-  const [modalVisible, setModalVisible] = React.useState(false);
+}> = ({ orgLabel, projectLabel, createResource }) => {
   const [formBusy, setFormBusy] = React.useState(false);
-  const notification = useNotification();
+
   const saveAndCreate = async (resourceToCreate: any) => {
     const { schemaId, payload } = resourceToCreate;
     setFormBusy(true);
@@ -35,9 +28,9 @@ const ResourceFormModal: React.FunctionComponent<ResourceFormModalProps> = ({
         message: 'Resource saved',
         description: resource.name,
       });
-      onSuccess();
+      //   onSuccess();
       setFormBusy(false);
-      setModalVisible(false);
+      //   setModalVisible(false);
       return true;
     } catch (error) {
       notification.error({
@@ -47,28 +40,19 @@ const ResourceFormModal: React.FunctionComponent<ResourceFormModalProps> = ({
         description: error.reason,
       });
       setFormBusy(false);
+      return false;
     }
-    return false;
-  };
-  const updateFormVisible = () => {
-    setModalVisible(!modalVisible);
   };
   return (
-    <>
-      <Modal
-        title="New Resource"
-        visible={modalVisible}
-        destroyOnClose={true}
-        onCancel={() => setModalVisible(false)}
-        confirmLoading={formBusy}
-        footer={null}
-        width={800}
-      >
+    <div className="add-resource">
+      <div className="add-resource__editor">
         <ResourceForm onSubmit={(r: any) => saveAndCreate(r)} busy={formBusy} />
-      </Modal>
-      {render(updateFormVisible)}
-    </>
+      </div>
+      <div className="add-resource__upload">
+        <FileUploadContainer orgLabel={orgLabel} projectLabel={projectLabel} />
+      </div>
+    </div>
   );
 };
 
-export default ResourceFormModal;
+export default ResourceCreateUpload;
