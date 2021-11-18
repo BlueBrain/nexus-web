@@ -7,7 +7,7 @@ import {
   Statistics,
 } from '@bbp/nexus-sdk';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { Tabs, Popover, Button, Divider } from 'antd';
+import { Tabs, Popover, Button } from 'antd';
 import { SelectOutlined } from '@ant-design/icons';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
@@ -16,7 +16,6 @@ import QuotasContainer from '../containers/QuotasContainer';
 import ProjectForm from '../components/Projects/ProjectForm';
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
 import ResourceListBoardContainer from '../../../shared/containers/ResourceListBoardContainer';
-import FileUploadContainer from '../../../shared/containers/FileUploadContainer';
 import ACLsView from './ACLsView';
 import QueryEditor from '../components/Projects/QueryEditor';
 import { useAdminSubappContext } from '..';
