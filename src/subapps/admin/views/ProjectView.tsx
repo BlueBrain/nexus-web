@@ -176,8 +176,11 @@ const ProjectView: React.FunctionComponent = () => {
       });
   };
   const handleTabChange = (activeKey: string) => {
-    const key = activeKey === 'studios' ? 'browse' : `${activeKey}`;
-    setActiveKey(key);
+    if (activeKey === 'studios' || activeKey === 'workflows') {
+      setActiveKey('browse');
+      return;
+    }
+    setActiveKey(activeKey);
   };
   return (
     <div className="project-view">
