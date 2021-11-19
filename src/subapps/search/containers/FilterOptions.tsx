@@ -81,6 +81,20 @@ const FilterOptions: React.FC<{
   const [form] = Form.useForm();
 
   const filterKeyWord = createKeyWord(field);
+
+  React.useEffect(() => {
+    const selectedFilters = aggregations
+      .filter(a => a.selected)
+      .map(a => a.filterValue);
+    if (selectedFilters.length > 0) {
+      onFinish({
+        filterType,
+        filters: selectedFilters,
+        filterTerm: filterKeyWord,
+      });
+    }
+  }, [filterType]);
+
   React.useEffect(() => {
     const allSuggestions = constructQuery(query)
       .aggregation('terms', filterKeyWord, 'suggestions', { size: 1000 })
