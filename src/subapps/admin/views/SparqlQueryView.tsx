@@ -1,11 +1,14 @@
 import * as React from 'react';
-import { useLocation, useRouteMatch } from 'react-router';
+import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import * as queryString from 'query-string';
-import { ViewList, DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
+import { ViewList, DEFAULT_SPARQL_VIEW_ID, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import SparqlQueryContainer from '../containers/SparqlQuery';
 import useNotification from '../../../shared/hooks/useNotification';
+import { Col, Row, Select } from 'antd';
+import { getResourceLabel } from '../../../shared/utils';
+import { useAdminSubappContext } from '..';
 
 const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
   const match = useRouteMatch<{
@@ -14,12 +17,14 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
     viewId: string;
   }>();
   const location = useLocation();
+  const history = useHistory();
+  const subapp = useAdminSubappContext();
   const notification = useNotification();
   const {
     params: { orgLabel, projectLabel, viewId },
   } = match;
 
-  const [, setViews] = React.useState<ViewList>({
+  const [{ _results: views }, setViews] = React.useState<ViewList>({
     '@context': {},
     _total: 0,
     _results: [],
@@ -27,9 +32,49 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
   const nexus = useNexusContext();
   const query = queryString.parse(location.search).query;
 
+  const { Option } = Select;
+
+  const [selectedView, setSelectedView] = React.useState<string>(
+    viewId ? decodeURIComponent(viewId) : DEFAULT_SPARQL_VIEW_ID
+  );
+
+  React.useEffect(() => {
+    history.replace(
+      `/${
+        subapp.namespace
+      }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}`
+    );
+  }, [selectedView]);
+
+  const menu = (
+    <Row>
+      <Col span={24}>
+        <Select
+          value={selectedView as string}
+          onChange={v => setSelectedView(v)}
+          style={{ width: '100%' }}
+          defaultActiveFirstOption={false}
+        >
+          {[views]
+            .flat()
+            .filter(v => v['@type']?.includes('SparqlView'))
+            .map((view: View, index: number) => {
+              return (
+                <Option key={index} value={view['@id']}>
+                  {getResourceLabel(view)}
+                </Option>
+              );
+            })}
+        </Select>
+      </Col>
+    </Row>
+  );
+
   React.useEffect(() => {
     nexus.View.list(orgLabel, projectLabel)
-      .then(setViews)
+      .then(result => {
+        setViews(result);
+      })
       .catch(error => {
         notification.error({
           message: 'Problem loading Views',
@@ -40,12 +85,13 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
 
   return (
     <>
+      {menu}
       <div className="view-view view-container -unconstrained-width">
         <SparqlQueryContainer
           orgLabel={orgLabel}
           projectLabel={projectLabel}
           initialQuery={Array.isArray(query) ? query.join(',') : query}
-          viewId={viewId ? viewId : encodeURIComponent(DEFAULT_SPARQL_VIEW_ID)}
+          viewId={encodeURIComponent(selectedView)}
         />
       </div>
     </>

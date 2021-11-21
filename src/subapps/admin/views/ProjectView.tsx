@@ -32,16 +32,59 @@ const ProjectView: React.FunctionComponent = () => {
   const history = useHistory();
   const subapp = useAdminSubappContext();
   const { TabPane } = Tabs;
-  const match = useRouteMatch<{ orgLabel: string; projectLabel: string }>(
-    `/${subapp.namespace}/:orgLabel/:projectLabel`
-  );
+
+  const match = useRouteMatch<{
+    orgLabel: string;
+    projectLabel: string;
+    viewId?: string;
+  }>();
+
   const {
     params: { orgLabel, projectLabel },
-  } = match || {
-    params: {
-      orgLabel: '',
-      projectLabel: '',
-    },
+  } = match;
+
+  const tabFromPath = (path: string) => {
+    const base = `/${subapp.namespace}/:orgLabel/:projectLabel/`;
+
+    switch (path) {
+      case `${base}`:
+        return 'browse';
+
+      case `${base}create`:
+        return 'create_upload';
+
+      case `${base}query/:viewId?`:
+        return 'query';
+
+      case `${base}statistics`:
+        return 'stats';
+
+      case `${base}settings`:
+        return 'settings';
+    }
+    return 'browse';
+  };
+
+  const pathFromTab = (tab: string | undefined) => {
+    const base = `/${subapp.namespace}/${orgLabel}/${projectLabel}/`;
+
+    switch (tab) {
+      case 'browse':
+        return `${base}`;
+
+      case 'query':
+        return `${base}query`;
+
+      case 'create_upload':
+        return `${base}create`;
+
+      case 'stats':
+        return `${base}statistics`;
+
+      case 'settings':
+        return `${base}settings`;
+    }
+    return `${base}browse`;
   };
 
   const [{ project, busy, error }, setState] = React.useState<{
@@ -56,7 +99,10 @@ const ProjectView: React.FunctionComponent = () => {
   const [formBusy, setFormBusy] = React.useState<boolean>(false);
 
   const [refreshLists, setRefreshLists] = React.useState(false);
-  const [activeKey, setActiveKey] = React.useState('browse');
+  const [activeKey, setActiveKey] = React.useState<string>(
+    tabFromPath(match.path)
+  );
+
   const [statisticsPollingPaused, setStatisticsPollingPaused] = React.useState(
     false
   );
@@ -65,6 +111,10 @@ const ProjectView: React.FunctionComponent = () => {
   }>();
 
   const { apiEndpoint } = useSelector((state: RootState) => state.config);
+
+  React.useEffect(() => {
+    setActiveKey(tabFromPath(match.path));
+  }, [match.path]);
 
   React.useEffect(() => {
     setState({
@@ -175,11 +225,8 @@ const ProjectView: React.FunctionComponent = () => {
       });
   };
   const handleTabChange = (activeKey: string) => {
-    if (activeKey === 'studios' || activeKey === 'workflows') {
-      setActiveKey('browse');
-      return;
-    }
-    setActiveKey(activeKey);
+    if (activeKey === 'studios' || activeKey === 'workflows') return;
+    history.push(pathFromTab(activeKey));
   };
   return (
     <div className="project-view">
@@ -236,11 +283,7 @@ const ProjectView: React.FunctionComponent = () => {
             />
           )}
           <div className="tabs-container">
-            <Tabs
-              onChange={handleTabChange}
-              activeKey={activeKey}
-              defaultActiveKey="browse"
-            >
+            <Tabs onChange={handleTabChange} activeKey={activeKey}>
               <TabPane tab="Browse" key="browse">
                 <div className="list-board">
                   <div className="wrapper">
