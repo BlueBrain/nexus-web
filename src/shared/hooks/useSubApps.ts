@@ -86,7 +86,14 @@ const useSubApps = () => {
     return Array.from(subAppsState.values())
       .map((subApp: SubAppObject) => {
         return subApp.routes.map((route: any) => {
-          route.path = `/${subApp.namespace}${route.path}`;
+          if (Array.isArray(route.path)) {
+            route.path = route.path.map(
+              (p: string) => `/${subApp.namespace}${p}`
+            );
+          } else {
+            route.path = `/${subApp.namespace}${route.path}`;
+          }
+
           route.requireLogin = subApp.requireLogin;
           return route;
         });
