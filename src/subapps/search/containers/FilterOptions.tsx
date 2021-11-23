@@ -62,14 +62,6 @@ const FilterOptions: React.FC<{
     }[]
   >([]);
 
-  React.useEffect(() => {
-    onFinish({
-      filterType,
-      filters: aggregations.filter(a => a.selected).map(a => a.filterValue),
-      filterTerm: filterKeyWord,
-    });
-  }, [aggregations]);
-
   const filterTypeDefault = () => {
     if (fieldFilter?.filterType) {
       return fieldFilter?.filterType;
@@ -86,6 +78,7 @@ const FilterOptions: React.FC<{
     const selectedFilters = aggregations
       .filter(a => a.selected)
       .map(a => a.filterValue);
+
     if (selectedFilters.length > 0) {
       onFinish({
         filterType,
@@ -93,7 +86,7 @@ const FilterOptions: React.FC<{
         filterTerm: filterKeyWord,
       });
     }
-  }, [filterType]);
+  }, [aggregations, filterType]);
 
   React.useEffect(() => {
     const allSuggestions = constructQuery(query)
