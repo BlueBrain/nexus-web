@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ArchivePayload, NexusClient } from '@bbp/nexus-sdk';
-import { useNexusContext } from '@bbp/react-nexus';
-import { getResourceLabel, uuidv4 } from '../../shared/utils';
+import { AccessControl, useNexusContext } from '@bbp/react-nexus';
+import { getResourceLabel, parseProjectUrl, uuidv4 } from '../../shared/utils';
 import { parseURL, ParsedNexusUrl } from '../../shared/utils/nexusParse';
 import {
   ShoppingCartOutlined,
@@ -17,6 +17,7 @@ import {
   Menu,
   Dropdown,
   Input,
+  Tooltip,
 } from 'antd';
 import { CartContext } from '../hooks/useDataCart';
 import ResultPreviewItemContainer from '../../subapps/search/containers/ResultPreviewItemContainer';
@@ -80,6 +81,18 @@ const DataCartContainer = () => {
     CartContext
   );
   const notification = useNotification();
+
+  const resourceProjectPaths = React.useMemo(
+    () => [
+      ...new Set(
+        resources?.map(r => {
+          const [orgLabel, projectLabel] = parseProjectUrl(r._project);
+          return `/${orgLabel}/${projectLabel}`;
+        })
+      ),
+    ],
+    [resources]
+  );
 
   const [search, setSearch] = React.useState<string>('');
   const filteredResources = React.useMemo(() => {
@@ -256,6 +269,30 @@ const DataCartContainer = () => {
     </Menu>
   );
 
+  const downloadButton = (disabled: boolean) => {
+    const btn = (
+      <Button
+        style={{
+          marginRight: '2px',
+        }}
+        icon={<DownloadOutlined />}
+        disabled={disabled}
+      >
+        Download
+      </Button>
+    );
+
+    if (disabled) {
+      return (
+        <Tooltip title="You don't have the required permissions to create an archive for some resources in your cart. Please contact your project administrator to request to be granted the required archives/write permission.">
+          {btn}
+        </Tooltip>
+      );
+    }
+
+    return btn;
+  };
+
   return (
     <>
       <Badge size="small" count={length}>
@@ -297,16 +334,14 @@ const DataCartContainer = () => {
                 {' '}
                 Copy IDs
               </Button>
-              <Dropdown overlay={menu}>
-                <Button
-                  style={{
-                    marginRight: '2px',
-                  }}
-                  icon={<DownloadOutlined />}
-                >
-                  Download
-                </Button>
-              </Dropdown>
+              <AccessControl
+                path={resourceProjectPaths}
+                permissions={['archives/write']}
+                noAccessComponent={() => downloadButton(true)}
+                loadingComponent={downloadButton(false)}
+              >
+                <Dropdown overlay={menu}>{downloadButton(false)}</Dropdown>
+              </AccessControl>
               <Button onClick={onEmptyCart}>Empty Cart</Button>
             </div>
             <div
