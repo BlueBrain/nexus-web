@@ -1,4 +1,4 @@
-import { Form, Select, Checkbox, Button, Row, Input } from 'antd';
+import { Form, Select, Checkbox, Row, Input } from 'antd';
 import { labelOf } from '../../../shared/utils';
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
@@ -73,6 +73,21 @@ const FilterOptions: React.FC<{
   const [form] = Form.useForm();
 
   const filterKeyWord = createKeyWord(field);
+
+  React.useEffect(() => {
+    const selectedFilters = aggregations
+      .filter(a => a.selected)
+      .map(a => a.filterValue);
+
+    if (selectedFilters.length > 0) {
+      onFinish({
+        filterType,
+        filters: selectedFilters,
+        filterTerm: filterKeyWord,
+      });
+    }
+  }, [aggregations, filterType]);
+
   React.useEffect(() => {
     const allSuggestions = constructQuery(query)
       .aggregation('terms', filterKeyWord, 'suggestions', { size: 1000 })
@@ -164,20 +179,7 @@ const FilterOptions: React.FC<{
   );
 
   return (
-    <Form
-      form={form}
-      onFinish={(values: any) => {
-        onFinish({
-          filterType,
-          filters:
-            filterType === 'missing'
-              ? []
-              : aggregations.filter(a => a.selected).map(a => a.filterValue),
-          filterTerm: filterKeyWord,
-        });
-      }}
-      className="field-filter-menu"
-    >
+    <Form form={form} className="field-filter-menu">
       <Form.Item
         label="Operator"
         rules={[
@@ -223,11 +225,6 @@ const FilterOptions: React.FC<{
           </Form.Item>
         </>
       )}
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Apply
-        </Button>
-      </Form.Item>
     </Form>
   );
 };
