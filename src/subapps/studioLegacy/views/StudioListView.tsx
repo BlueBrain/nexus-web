@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Spin, Empty, List, Input } from 'antd';
+import { Spin, List, Input } from 'antd';
 import { useHistory } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { getOrgAndProjectFromProjectId } from '../../../shared/utils';
 import '../studio.less';
-import { classNames } from 'react-mde/lib/definitions/util/ClassNames';
+
 const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';
 const STUDIO_RESULTS_DEFAULT_SIZE = 1000;
@@ -57,7 +57,7 @@ const StudioListView: React.FC = () => {
 
   React.useEffect(() => {
     if (data) {
-      const list: StudioItem[] = data?._results
+      const list: StudioItem[] = data._results
         .map(r => {
           const labels = getOrgAndProjectFromProjectId(r._project);
           return {
