@@ -7,7 +7,6 @@ export const constructQuery = (searchText: string) => {
   searchText
     ? body.query('multi_match', {
         query: searchText,
-        fuzziness: 5,
         prefix_length: 0,
         fields: ['*'],
       })
