@@ -101,9 +101,6 @@ const StudioListView: React.FC = () => {
             <List
               pagination={{
                 total: studioList.length,
-                onChange: page => {
-                  console.log(page);
-                },
                 showTotal: total => ` ${total} results`,
                 pageSize: 10,
               }}
