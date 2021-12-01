@@ -3,28 +3,15 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Spin, List, Input } from 'antd';
 import { useHistory } from 'react-router-dom';
 import { useQuery } from 'react-query';
-import { getOrgAndProjectFromProjectId } from '../../../shared/utils';
+import {
+  getOrgAndProjectFromProjectId,
+  makeStudioUri,
+} from '../../../shared/utils';
 import '../studio.less';
 
 const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';
 const STUDIO_RESULTS_DEFAULT_SIZE = 1000;
-
-/*
- * Returns studio uri
- *
- * @param {string} orgLabel
- * @param {string} projectLabel
- * @param {string} studioId
- * @returns {string} studio uri
- */
-export const makeStudioUri = (
-  orgLabel: string,
-  projectLabel: string,
-  studioId: string
-) => {
-  return `/${orgLabel}/${projectLabel}/studios/${encodeURIComponent(studioId)}`;
-};
 
 export type StudioItem = {
   id: string;
