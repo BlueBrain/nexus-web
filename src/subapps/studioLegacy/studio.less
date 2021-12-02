@@ -1,0 +1,39 @@
+@import '../../shared/lib.less';
+
+.studio-header {
+  max-width: 600px;
+  display: flex;
+  margin-bottom: 2px;
+  h1 {
+    max-width: 200px;
+  }
+  .studio-search {
+    max-width: 400px;
+  }
+}
+.studio-description {
+  width: 600px;
+}
+
+.studio-list {
+  padding: 2em 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  .studio-list-item {
+    list-style: none;
+    background-color: @fusion-component-background-color;
+    border-radius: 2px;
+    cursor: pointer;
+    margin: 2em 0;
+    padding: 0.5em;
+    position: relative;
+    justify-content: space-between;
+    max-width: 100%;
+    .studio {
+      font-weight: 900;
+      .studio-name {
+        color: @fusion-primary-color;
+      }
+    }
+  }
+}
