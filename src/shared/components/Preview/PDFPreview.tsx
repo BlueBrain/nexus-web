@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Button } from 'antd';
-import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
+import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
+pdfjs.GlobalWorkerOptions.workerSrc = 'public/pdf.worker.min.js';
+
 import './PDFPreview.less';
 import {
   LeftOutlined,
