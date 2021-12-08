@@ -207,7 +207,7 @@ function rowRenderer(field: ConfigField) {
         const fields = field.fields as any[];
         return (
           <div>
-            {value
+            {value && Array.isArray(value)
               ? value.map((item: any) => item[fields[1].name]).join(', ')
               : ''}
           </div>
