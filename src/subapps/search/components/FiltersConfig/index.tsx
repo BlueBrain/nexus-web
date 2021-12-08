@@ -43,7 +43,7 @@ const FiltersConfig: React.FC<{
         type="link"
       >
         <FunnelPlotOutlined />
-        {countFilters() > 0 ? (
+        {countFilters() > 0 && filters[0].filters.length > 0 ? (
           <>
             {` ${countFilters()} ${
               countFilters() > 1 ? ' filters' : ' filter'

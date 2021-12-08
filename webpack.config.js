@@ -53,12 +53,22 @@ const config = [
           ],
         },
         {
-          test: /\.(jpg|png|svg|ttf)$/,
+          test: /\.(jpg|png|svg)$/,
           use: {
             loader: 'file-loader',
             options: {
               outputPath: 'assets/',
               publicPath: 'public/assets/',
+            },
+          },
+        },
+        {
+          test: /\.(ttf)$/,
+          use: {
+            loader: 'file-loader',
+            options: {
+              outputPath: 'assets/',
+              publicPath: 'assets/',
             },
           },
         },
@@ -103,7 +113,7 @@ const config = [
           loader: 'null-loader',
         },
         {
-          test: /\.(jpg|png|svg|ttf)$/,
+          test: /\.(jpg|png|svg)$/,
           use: {
             loader: 'file-loader',
             options: {
@@ -126,6 +136,10 @@ const config = [
             from: 'plugins/',
             to: 'public/plugins/',
             ignore: ['.gitkeep'],
+          },
+          {
+            from: 'node_modules/pdfjs-dist/build/pdf.worker.min.js',
+            to: 'public/pdf.worker.min.js',
           },
         ],
         { debug: true }
