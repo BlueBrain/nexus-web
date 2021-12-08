@@ -169,13 +169,13 @@ const SearchBar: React.FC<{
       dropdownClassName="search-bar__drop"
       dropdownMatchSelectWidth={false}
       value={value}
-      listHeight={300}
+      listHeight={310}
     >
       <Input
         allowClear
         onPressEnter={inputOnPressEnter}
         ref={inputRef}
-        className="search-bar__input"
+        className={`search-bar__input ${focused ? 'focused' : ''}`}
         placeholder="Search or jump to..."
         suffix={<div className="search-bar__icon">/</div>}
       />

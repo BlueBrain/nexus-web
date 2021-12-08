@@ -68,7 +68,7 @@ const config = [
             loader: 'file-loader',
             options: {
               outputPath: 'assets/',
-              publicPath: 'assets/',
+              publicPath: devMode ? 'public/assets' : 'assets/',
             },
           },
         },

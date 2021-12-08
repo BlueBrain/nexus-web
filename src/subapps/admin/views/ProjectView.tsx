@@ -270,11 +270,6 @@ const ProjectView: React.FunctionComponent = () => {
                 </Popover>
               )}
             </div>
-            <Button type="primary">
-              <Link to={`/studios/${orgLabel}/${projectLabel}/studios`}>
-                Manage Studios for this project
-              </Link>
-            </Button>
           </div>
           {showDeletionBanner && (
             <ProjectToDeleteContainer
