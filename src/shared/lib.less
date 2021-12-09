@@ -98,8 +98,11 @@
   253
 ); // for sublte highlighting in lists
 
-//@component-background: @fusion-background-color;
 @component-background: @fusion-component-background-color;
+
+.ant-tabs-nav {
+  background-color: @fusion-component-background-color;
+}
 
 // Top-level styles
 
@@ -137,6 +140,12 @@ h1 {
 
 .unstyleList() {
   list-style: none;
+}
+
+.ant-tag-blue {
+  background-color: fade(@fusion-secondary-color, 10%);
+  color: @fusion-secondary-color;
+  border-color: @fusion-secondary-color;
 }
 
 .textLoadingGradient () {

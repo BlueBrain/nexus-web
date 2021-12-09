@@ -260,6 +260,7 @@ const DataCartContainer = () => {
     <>
       <Badge size="small" count={length}>
         <Button
+          className="cart"
           icon={<ShoppingCartOutlined />}
           onClick={handleToggleCart}
         ></Button>
