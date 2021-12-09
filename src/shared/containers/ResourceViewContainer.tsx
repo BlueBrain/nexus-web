@@ -304,6 +304,8 @@ const ResourceViewContainer: React.FunctionComponent<{
 
   const nonEditableResourceTypes = ['File'];
 
+  const refreshResource = () => setResources();
+
   React.useEffect(() => {
     setResources();
   }, [orgLabel, projectLabel, resourceId, rev, tag]);
@@ -465,6 +467,7 @@ const ResourceViewContainer: React.FunctionComponent<{
                 handleGoToInternalLink={handleGoToInternalLink}
                 handleEditFormSubmit={handleEditFormSubmit}
                 handleExpanded={handleExpanded}
+                refreshResource={refreshResource}
               />
               <VideoPluginContainer
                 resource={resource}
