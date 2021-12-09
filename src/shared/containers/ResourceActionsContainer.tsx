@@ -18,9 +18,12 @@ import {
   toPromise,
 } from '../utils/nexusMaybe';
 import useNotification from '../hooks/useNotification';
+import RemoveTagButton from './RemoveTagButtonContainer';
 
 const ResourceActionsContainer: React.FunctionComponent<{
   resource: Resource;
+  editable: boolean;
+  refreshResource: () => void;
   goToView: (
     orgLabel: string,
     projectLabel: string,
@@ -33,7 +36,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
     resourceId: string,
     revision: number
   ) => void;
-}> = ({ resource, goToView, goToResource }) => {
+}> = ({ resource, editable, refreshResource, goToView, goToResource }) => {
   const { orgLabel, projectLabel } = getOrgAndProjectFromResource(resource);
   const resourceId = resource['@id'];
   const self = resource._self;
@@ -185,6 +188,15 @@ const ResourceActionsContainer: React.FunctionComponent<{
           actions={actions}
           actionTypes={actionTypes}
         />
+        {editable && (
+          <RemoveTagButton
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+            resourceId={encodeURIComponent(resourceId)}
+            revision={resource._rev}
+            refreshResource={refreshResource}
+          />
+        )}
       </div>
     </div>
   );
