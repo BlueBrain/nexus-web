@@ -7,7 +7,7 @@ import {
   Statistics,
 } from '@bbp/nexus-sdk';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { Tabs, Popover, Button } from 'antd';
+import { Tabs, Popover } from 'antd';
 import { SelectOutlined } from '@ant-design/icons';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
@@ -196,10 +196,7 @@ const ProjectView: React.FunctionComponent = () => {
   };
 
   const showDeletionBanner = deltaPlugins && 'project-deletion' in deltaPlugins;
-  const saveAndModify = (
-    selectedProject: ProjectResponseCommon,
-    newProject: ProjectResponseCommon
-  ) => {
+  const saveAndModify = (newProject: ProjectResponseCommon) => {
     if (!project) {
       return;
     }
@@ -270,11 +267,6 @@ const ProjectView: React.FunctionComponent = () => {
                 </Popover>
               )}
             </div>
-            <Button type="primary">
-              <Link to={`/studios/${orgLabel}/${projectLabel}/studios`}>
-                Manage Studios for this project
-              </Link>
-            </Button>
           </div>
           {showDeletionBanner && (
             <ProjectToDeleteContainer
@@ -349,9 +341,7 @@ const ProjectView: React.FunctionComponent = () => {
                         vocab: project.vocab,
                         apiMappings: project.apiMappings,
                       }}
-                      onSubmit={(p: ProjectResponseCommon) =>
-                        saveAndModify(project, p)
-                      }
+                      onSubmit={(p: ProjectResponseCommon) => saveAndModify(p)}
                       busy={formBusy}
                       mode="edit"
                     />
