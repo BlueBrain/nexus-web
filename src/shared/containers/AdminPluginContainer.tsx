@@ -37,6 +37,7 @@ type AdminProps = {
   handleGoToInternalLink: (link: ResourceLink) => void;
   handleEditFormSubmit: (value: any) => void;
   handleExpanded: (expanded: boolean) => void;
+  refreshResource: () => void;
 };
 
 const AdminPlugin: React.FunctionComponent<AdminProps> = ({
@@ -54,6 +55,7 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
   handleGoToInternalLink,
   handleEditFormSubmit,
   handleExpanded,
+  refreshResource,
 }) => {
   const [tabChange, setTabChange] = React.useState<boolean>(false);
 
@@ -83,7 +85,11 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
           )}
         </AccessControl>
 
-        <ResourceActionsContainer resource={resource} />
+        <ResourceActionsContainer
+          editable={editable}
+          resource={resource}
+          refreshResource={refreshResource}
+        />
         <Tabs activeKey={activeTabKey} onChange={onTabChange}>
           <TabPane tab="JSON" key="#JSON">
             <ResourceEditorContainer
