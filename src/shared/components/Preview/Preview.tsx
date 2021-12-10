@@ -39,7 +39,14 @@ const isSupportedFile = (asset: any) =>
 const Preview: React.FC<{
   resource: Resource;
   nexus: NexusClient;
-}> = ({ resource, nexus }) => {
+  collapsed: boolean;
+  handleCollapseChanged: () => void;
+}> = ({
+  resource,
+  nexus,
+  collapsed,
+  handleCollapseChanged: handleCollapsedChanged,
+}) => {
   const notification = useNotification();
   const [previewAsset, setPreviewAsset] = React.useState<any | undefined>();
   const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
@@ -199,8 +206,11 @@ const Preview: React.FC<{
           onClickClose={() => setPreviewAsset(undefined)}
         />
       )}
-      <Collapse onChange={() => {}}>
-        <Collapse.Panel header="Preview" key="99">
+      <Collapse
+        onChange={handleCollapsedChanged}
+        activeKey={collapsed ? 'preview' : undefined}
+      >
+        <Collapse.Panel header="Preview" key="preview">
           <Table
             columns={columns}
             dataSource={getResourceAssets(resource)}

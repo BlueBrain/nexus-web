@@ -310,6 +310,37 @@ const ResourceViewContainer: React.FunctionComponent<{
     setResources();
   }, [orgLabel, projectLabel, resourceId, rev, tag]);
 
+  const [openPlugins, setOpenPlugins] = React.useState<string[]>([]);
+
+  const LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME = 'expanded_plugins';
+
+  React.useEffect(() => {
+    if (localStorage.getItem(LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME)) {
+      setOpenPlugins(
+        JSON.parse(
+          localStorage.getItem(
+            LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME
+          ) as string
+        )
+      );
+    }
+  }, []);
+
+  React.useEffect(() => {
+    localStorage.setItem(
+      LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME,
+      JSON.stringify(openPlugins)
+    );
+  }, [openPlugins]);
+
+  const pluginCollapsedToggle = (pluginName: string) => {
+    setOpenPlugins(
+      openPlugins.includes(pluginName)
+        ? openPlugins.filter(p => p !== pluginName)
+        : [...openPlugins, pluginName]
+    );
+  };
+
   return (
     <>
       <div className="resource-details">
@@ -436,6 +467,10 @@ const ResourceViewContainer: React.FunctionComponent<{
                 <ResourcePlugins
                   resource={resource}
                   goToResource={goToSelfResource}
+                  openPlugins={openPlugins}
+                  handleCollapseChange={pluginName =>
+                    pluginCollapsedToggle(pluginName)
+                  }
                 />
               )}
 
@@ -450,7 +485,14 @@ const ResourceViewContainer: React.FunctionComponent<{
                   </p>
                 )}
               {resource.distribution && (
-                <Preview nexus={nexus} resource={resource} />
+                <Preview
+                  nexus={nexus}
+                  resource={resource}
+                  collapsed={openPlugins.includes('preview')}
+                  handleCollapseChanged={() => {
+                    pluginCollapsedToggle('preview');
+                  }}
+                />
               )}
               <AdminPlugin
                 editable={isLatest && !isDeprecated(resource)}
@@ -468,11 +510,19 @@ const ResourceViewContainer: React.FunctionComponent<{
                 handleEditFormSubmit={handleEditFormSubmit}
                 handleExpanded={handleExpanded}
                 refreshResource={refreshResource}
+                collapsed={openPlugins.includes('advanced')}
+                handleCollapseChanged={() => {
+                  pluginCollapsedToggle('advanced');
+                }}
               />
               <VideoPluginContainer
                 resource={resource}
                 orgLabel={orgLabel}
                 projectLabel={projectLabel}
+                collapsed={openPlugins.includes('video')}
+                handleCollapseChanged={() => {
+                  pluginCollapsedToggle('video');
+                }}
               />
             </>
           )}
