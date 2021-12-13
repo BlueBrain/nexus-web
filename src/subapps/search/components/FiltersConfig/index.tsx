@@ -28,6 +28,12 @@ const FiltersConfig: React.FC<{
   };
 
   const countFilters = () => filters.length;
+
+  /**
+   * @param {string} filterType
+   * @param {string[]} filters
+   * @returns {string}
+   */
   const filterTypeFriendlyName = (filterType: string, filters: string[]) => {
     if (filterType === 'date') {
       if (filters[0] && filters[1] && filters[0] !== '' && filters[1] !== '') {
