@@ -1,4 +1,5 @@
 import * as bodybuilder from 'bodybuilder';
+import { filter } from 'lodash';
 import { ESSortField } from '../hooks/useGlobalSearch';
 import { ESMaxResultWindowSize } from '../hooks/useSearchPagination';
 
@@ -23,7 +24,14 @@ export const constructFilterSet = (
   }[]
 ) => {
   filterSet.forEach(filter => {
-    if (filter.filters.length > 0 || filter.filterType === 'missing') {
+    if (filter.filterType === 'date') {
+      constructDateFilter(
+        body,
+        filter.filters,
+        filter.filterType,
+        filter.filterTerm
+      );
+    } else if (filter.filters.length > 0 || filter.filterType === 'missing') {
       constructFilter(
         body,
         filter.filters,
@@ -38,6 +46,23 @@ export const constructFilterSet = (
 const missingFilterValueAdder = (filterTerm: string) => {
   return (missing: bodybuilder.FilterSubFilterBuilder) =>
     missing.notFilter('exists', filterTerm);
+};
+
+export const constructDateFilter = (
+  body: bodybuilder.Bodybuilder,
+  filters: string[],
+  filterType: string,
+  filterTerm: string
+) => {
+  const filterObject: any = {};
+  if (filters[0] && filters[0] !== '') {
+    filterObject['gte'] = filters[0];
+  }
+  if (filters[1] && filters[1] !== '') {
+    filterObject['lte'] = filters[1];
+  }
+  body.addFilter('range', filterTerm, filterObject);
+  return body;
 };
 
 export const constructFilter = (
@@ -82,7 +107,12 @@ export const addSorting = (
   body: bodybuilder.Bodybuilder,
   sort: ESSortField[]
 ) => {
-  sort.forEach(s => body.sort(s.term, s.direction));
+  sort.forEach(s => {
+    if (s.fieldName === 'createdAt' || s.fieldName === 'updatedAt') {
+      return body.sort(s.fieldName, s.direction);
+    }
+    return body.sort(s.term, s.direction);
+  });
   return body;
 };
 
