@@ -36,10 +36,10 @@ const FiltersConfig: React.FC<{
    */
   const filterTypeFriendlyName = (filterType: string, filters: string[]) => {
     if (filterType === 'date') {
-      if (filters[0] && filters[1] && filters[0] !== '' && filters[1] !== '') {
+      if (filters.length > 1 && filters[0] !== '' && filters[1] !== '') {
         return 'between';
       }
-      if (filters[0] && filters[1] && filters[1] === '') {
+      if (filters.length > 1 && filters[1] === '') {
         return 'on or after';
       }
       if (filters.length > 1 && filters[0] === '') {

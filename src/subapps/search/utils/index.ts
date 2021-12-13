@@ -1,5 +1,4 @@
 import * as bodybuilder from 'bodybuilder';
-import { filter } from 'lodash';
 import { ESSortField } from '../hooks/useGlobalSearch';
 import { ESMaxResultWindowSize } from '../hooks/useSearchPagination';
 
@@ -55,10 +54,10 @@ export const constructDateFilter = (
   filterTerm: string
 ) => {
   const filterObject: any = {};
-  if (filters[0] && filters[0] !== '') {
+  if (filters[0] !== undefined && filters[0] !== null && filters[0] !== '') {
     filterObject['gte'] = filters[0];
   }
-  if (filters[1] && filters[1] !== '') {
+  if (filters.length > 1 && filters[1] !== '') {
     filterObject['lte'] = filters[1];
   }
   body.addFilter('range', filterTerm, filterObject);
