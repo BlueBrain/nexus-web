@@ -1,8 +1,3 @@
-.data-table-controls {
-  width: 100%;
-  background-color: aliceblue;
-}
-
 .data-table-row {
   max-height: 40px;
 }
@@ -13,13 +8,16 @@ h3.ant-typography.table-title {
   font-size: 16px;
 }
 
-.ant-col.ant-col-10.table-search {
-  text-align: right;
-}
-
 .wrapper {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   column-gap: 10px;
   row-gap: 1em;
+}
+
+.table-options {
+  display: flex !important;
+  &__inner {
+    margin-left: auto;
+  }
 }
