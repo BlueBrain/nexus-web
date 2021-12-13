@@ -45,9 +45,9 @@ const DateFilterOptions: React.FC<{
   const [form] = Form.useForm();
 
   React.useEffect(() => {
-    let currentFilters = [];
+    const currentFilters = [];
     if (isToday) {
-      let now = new Date(Date.now()).toISOString().split('T')[0];
+      const now = new Date(Date.now()).toISOString().split('T')[0];
       currentFilters.push(now);
     } else {
       currentFilters.push(dateStart);
