@@ -108,7 +108,7 @@ export const addSorting = (
   sort: ESSortField[]
 ) => {
   sort.forEach(s => {
-    if (s.fieldName === 'createdAt' || s.fieldName === 'updatedAt') {
+    if (s.format?.includes('date')) {
       return body.sort(s.fieldName, s.direction);
     }
     return body.sort(s.term, s.direction);

@@ -291,6 +291,7 @@ export type ESSortField = {
   term: string;
   fieldName: string;
   direction: SortDirection;
+  format?: string;
 };
 
 function useGlobalSearchData(
@@ -402,6 +403,7 @@ function useGlobalSearchData(
                   fieldName: field.name,
                   term: createKeyWord(field),
                   label: field.label,
+                  format: field.format,
                   direction: sortOption,
                 });
               }}
