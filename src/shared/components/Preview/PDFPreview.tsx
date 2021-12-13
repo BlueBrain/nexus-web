@@ -39,6 +39,18 @@ const PDFViewer: React.FC<{
   const previousPage = () => setPageNumber(page => page - 1);
   const nextPage = () => setPageNumber(page => page + 1);
 
+  const pdfFile = React.useMemo(
+    () => ({
+      url,
+      withCredentials: true,
+      httpHeaders: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('nexus__token')}`,
+      },
+    }),
+    [url]
+  );
+
   return (
     <div className="asset-preview-mask">
       <div className="asset-preview-wrap">
@@ -51,14 +63,7 @@ const PDFViewer: React.FC<{
                 <LoadingOutlined />
               </div>
             }
-            file={{
-              url,
-              withCredentials: true,
-              httpHeaders: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('nexus__token')}`,
-              },
-            }}
+            file={pdfFile}
             onLoadSuccess={onDocumentLoadSuccess}
           >
             <Page pageNumber={pageNumber} height={window.innerHeight - 150} />
