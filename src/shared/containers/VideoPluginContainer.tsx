@@ -13,6 +13,8 @@ type VideoProps = {
   orgLabel: string;
   projectLabel: string;
   resource: Resource;
+  collapsed: boolean;
+  handleCollapseChanged: () => void;
 };
 
 type VideoObject = {
@@ -28,6 +30,8 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
   resource,
   orgLabel,
   projectLabel,
+  collapsed,
+  handleCollapseChanged,
 }) => {
   const nexus = useNexusContext();
   const [videoData, setVideoData] = React.useState<any>();
@@ -71,9 +75,12 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
 
   if (!videoData) return null;
   return (
-    <Collapse onChange={() => {}}>
+    <Collapse
+      activeKey={collapsed ? 'video' : undefined}
+      onChange={e => handleCollapseChanged()}
+    >
       {videoData[0] && videoData[0].embedUrl ? (
-        <Panel header="Video" key="1">
+        <Panel header="Video" key="video">
           <List
             itemLayout="horizontal"
             dataSource={videoData}
