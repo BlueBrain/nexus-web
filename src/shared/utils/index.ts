@@ -463,6 +463,16 @@ export const makeProjectUri = (orgLabel: string, projectLabel: string) => {
 };
 
 /*
+ * Returns organization uri
+ *
+ * @param {string} orgLabel
+ * @returns {string} organization uri
+ */
+export const makeOrganizationUri = (orgLabel: string) => {
+  return `/admin/${orgLabel}`;
+};
+
+/*
  * Returns search uri
  *
  * @param {string} searchQueryParam

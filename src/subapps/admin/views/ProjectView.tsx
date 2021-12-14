@@ -19,11 +19,14 @@ import ResourceListBoardContainer from '../../../shared/containers/ResourceListB
 import ACLsView from './ACLsView';
 import QueryEditor from '../components/Projects/QueryEditor';
 import { useAdminSubappContext } from '..';
-import useNotification from '../../../shared/hooks/useNotification';
+import useNotification, {
+  NexusError,
+} from '../../../shared/hooks/useNotification';
 import ProjectToDeleteContainer from '../containers/ProjectToDeleteContainer';
 import { RootState } from '../../../shared/store/reducers';
 import './ProjectView.less';
 import ResourceCreateUploadContainer from '../../../shared/containers/ResourceCreateUploadContainer';
+import { makeOrganizationUri } from '../../../shared/utils';
 
 const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
@@ -221,6 +224,30 @@ const ProjectView: React.FunctionComponent = () => {
         });
       });
   };
+
+  const deprecateProject = () => {
+    if (!project) {
+      return;
+    }
+    setFormBusy(true);
+    nexus.Project.deprecate(orgLabel, projectLabel, project._rev)
+      .then(() => {
+        history.push(makeOrganizationUri(orgLabel));
+        notification.success({
+          message: 'Project deprecated',
+        });
+      })
+      .catch((error: NexusError) => {
+        notification.error({
+          message: 'Error deprecating project',
+          description: error.reason,
+        });
+      })
+      .finally(() => {
+        setFormBusy(false);
+      });
+  };
+
   const handleTabChange = (activeKey: string) => {
     if (activeKey === 'studios' || activeKey === 'workflows') return;
     history.push(pathFromTab(activeKey));
@@ -342,6 +369,7 @@ const ProjectView: React.FunctionComponent = () => {
                         apiMappings: project.apiMappings,
                       }}
                       onSubmit={(p: ProjectResponseCommon) => saveAndModify(p)}
+                      onDeprecate={deprecateProject}
                       busy={formBusy}
                       mode="edit"
                     />
