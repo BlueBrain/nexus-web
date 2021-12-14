@@ -252,8 +252,10 @@ function rowRenderer(field: ConfigField) {
       return '';
     }
 
-    const displayValue = JSON.stringify(value);
     // Single value
+    const displayValue =
+      typeof value === 'string' ? value : JSON.stringify(value);
+
     return (
       <Tooltip placement="topLeft" title={displayValue}>
         {displayValue}
