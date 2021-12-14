@@ -251,10 +251,11 @@ function rowRenderer(field: ConfigField) {
       return '';
     }
 
+    const displayValue = JSON.stringify(value);
     // Single value
     return (
-      <Tooltip placement="topLeft" title={value}>
-        {value}
+      <Tooltip placement="topLeft" title={displayValue}>
+        {displayValue}
       </Tooltip>
     );
   };
