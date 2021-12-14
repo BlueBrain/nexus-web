@@ -9,6 +9,7 @@ import {
   LoadingOutlined,
   RightOutlined,
 } from '@ant-design/icons';
+import useMeasure from '../../hooks/useMeasure';
 
 const PDFViewer: React.FC<{
   url: string;
@@ -23,7 +24,8 @@ const PDFViewer: React.FC<{
     const handleClickOutside = (event: any) => {
       if (
         previewDivRef.current &&
-        !previewDivRef.current.contains(event.target)
+        !previewDivRef.current.contains(event.target) &&
+        !event.target.closest('.page-controls')
       ) {
         closePreview();
       }
@@ -50,13 +52,13 @@ const PDFViewer: React.FC<{
     }),
     [url]
   );
+  const [{ ref: wrapperHeightRef }, bounds] = useMeasure();
 
   return (
-    <div className="asset-preview-mask">
+    <div className="asset-preview-mask" ref={wrapperHeightRef}>
       <div className="asset-preview-wrap">
         <div className="asset-preview">
           <Document
-            inputRef={previewDivRef}
             className="document"
             loading={
               <div className="loadingMessage">
@@ -66,7 +68,14 @@ const PDFViewer: React.FC<{
             file={pdfFile}
             onLoadSuccess={onDocumentLoadSuccess}
           >
-            <Page pageNumber={pageNumber} height={window.innerHeight - 150} />
+            <Page
+              pageNumber={pageNumber}
+              inputRef={previewDivRef}
+              renderMode="svg"
+              renderTextLayer={false}
+              renderAnnotationLayer={false}
+              width={Math.floor(bounds.width * 0.9)}
+            />
             <div className="page-controls">
               <Button
                 disabled={pageNumber <= 1}
