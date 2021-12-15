@@ -58,7 +58,7 @@ const ProjectsView: React.FunctionComponent = () => {
         .catch((error: Error) => {
           setOrgLoadingBusy(false);
           notification.error({
-            message: `An error occured whilst fetching Organization ${match.params.orgLabel}`,
+            message: `Error fetching organization ${match.params.orgLabel}`,
             description: error.message,
           });
         });
@@ -86,8 +86,8 @@ const ProjectsView: React.FunctionComponent = () => {
       .catch(error => {
         setFormBusy(false);
         notification.error({
-          message: 'An error occurred',
-          description: error.message || error.reason,
+          message: 'Error creating project',
+          description: error.reason || error.message,
         });
       });
   };
