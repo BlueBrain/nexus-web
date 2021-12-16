@@ -21,6 +21,7 @@ import FilterOptions, {
   createKeyWord,
   extractFieldName,
 } from '../containers/FilterOptions';
+import DateFilterOptions from '../containers/DateFilterOptions';
 import '../containers/SearchContainer.less';
 import { SortDirection } from '../../../shared/hooks/useAccessDataForTable';
 import SortMenuOptions from '../components/SortMenuOptions';
@@ -207,7 +208,7 @@ function rowRenderer(field: ConfigField) {
         const fields = field.fields as any[];
         return (
           <div>
-            {value && Array.isArray(value)
+            {value
               ? value.map((item: any) => item[fields[1].name]).join(', ')
               : ''}
           </div>
@@ -252,9 +253,12 @@ function rowRenderer(field: ConfigField) {
     }
 
     // Single value
+    const displayValue =
+      typeof value === 'string' ? value : JSON.stringify(value);
+
     return (
-      <Tooltip placement="topLeft" title={value}>
-        {value}
+      <Tooltip placement="topLeft" title={displayValue}>
+        {displayValue}
       </Tooltip>
     );
   };
@@ -290,6 +294,7 @@ export type ESSortField = {
   term: string;
   fieldName: string;
   direction: SortDirection;
+  format?: string;
 };
 
 function useGlobalSearchData(
@@ -367,6 +372,9 @@ function useGlobalSearchData(
     ) {
       return true;
     }
+
+    // show sort/filter for date.
+    if (field.format && field.format.includes('date')) return true;
     return false;
   };
 
@@ -398,19 +406,30 @@ function useGlobalSearchData(
                   fieldName: field.name,
                   term: createKeyWord(field),
                   label: field.label,
+                  format: field.format,
                   direction: sortOption,
                 });
               }}
               onRemoveSort={sortOption => removeSortOption(sortOption)}
             />
             <Divider />
-            <FilterOptions
-              filter={filterState}
-              query={query}
-              nexusClient={nexus}
-              field={field}
-              onFinish={onFilterSubmit}
-            />
+            {field.format?.includes('date') ? (
+              <DateFilterOptions
+                filter={filterState}
+                query={query}
+                nexusClient={nexus}
+                field={field}
+                onFinish={onFilterSubmit}
+              />
+            ) : (
+              <FilterOptions
+                filter={filterState}
+                query={query}
+                nexusClient={nexus}
+                field={field}
+                onFinish={onFilterSubmit}
+              />
+            )}
           </>
         )}
       </>

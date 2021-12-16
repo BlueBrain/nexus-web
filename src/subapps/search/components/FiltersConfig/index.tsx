@@ -28,7 +28,26 @@ const FiltersConfig: React.FC<{
   };
 
   const countFilters = () => filters.length;
-  const filterTypeFriendlyName = (filterType: string) => {
+
+  /**
+   * @param {string} filterType
+   * @param {string[]} filters
+   * @returns {string}
+   */
+  const filterTypeFriendlyName = (filterType: string, filters: string[]) => {
+    if (filterType === 'date') {
+      if (filters.length > 1 && filters[0] !== '' && filters[1] !== '') {
+        return 'between';
+      }
+      if (filters.length > 1 && filters[1] === '') {
+        return 'on or after';
+      }
+      if (filters.length > 1 && filters[0] === '') {
+        return 'on or before';
+      }
+      return 'on';
+    }
+
     return filterTypeFriendlyNames[filterType].friendlyName;
   };
 
@@ -74,14 +93,16 @@ const FiltersConfig: React.FC<{
                 {filterTermFriendlyName(el.filterTerm)}
               </div>
               <div className="filter__type">
-                {filterTypeFriendlyName(el.filterType)}
+                {filterTypeFriendlyName(el.filterType, el.filters)}
               </div>
               <div className="filter__values">
-                {el.filters.map(fieldFilter => (
-                  <Tag key={`${ix}${fieldFilter}`} className="filter__value">
-                    {labelOf(fieldFilter)}
-                  </Tag>
-                ))}
+                {el.filters
+                  .filter(f => f !== '')
+                  .map(fieldFilter => (
+                    <Tag key={`${ix}${fieldFilter}`} className="filter__value">
+                      {fieldFilter ? labelOf(fieldFilter) : null}
+                    </Tag>
+                  ))}
               </div>
             </div>
           ))}

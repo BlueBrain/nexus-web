@@ -38,6 +38,8 @@ type AdminProps = {
   handleEditFormSubmit: (value: any) => void;
   handleExpanded: (expanded: boolean) => void;
   refreshResource: () => void;
+  collapsed: boolean;
+  handleCollapseChanged: () => void;
 };
 
 const AdminPlugin: React.FunctionComponent<AdminProps> = ({
@@ -56,6 +58,8 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
   handleEditFormSubmit,
   handleExpanded,
   refreshResource,
+  collapsed,
+  handleCollapseChanged,
 }) => {
   const [tabChange, setTabChange] = React.useState<boolean>(false);
 
@@ -66,8 +70,11 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
   };
 
   return (
-    <Collapse onChange={() => {}}>
-      <Panel header="Advanced View" key="1">
+    <Collapse
+      onChange={handleCollapseChanged}
+      activeKey={collapsed ? 'admin' : undefined}
+    >
+      <Panel header="Advanced View" key="admin">
         <AccessControl
           path={`/${orgLabel}/${projectLabel}`}
           permissions={['resources/write']}
