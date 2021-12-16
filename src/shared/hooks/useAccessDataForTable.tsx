@@ -12,6 +12,7 @@ export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
 export const CSV_MEDIATYPE = 'text/csv';
 import { CartContext } from './useDataCart';
 import { pick } from 'lodash';
+import { Projection } from '../components/EditTableForm';
 
 export type TableResource = Resource<{
   '@type': string;
@@ -21,6 +22,7 @@ export type TableResource = Resource<{
     '@id': string;
   };
   view: string;
+  projection?: Projection;
   enableSearch: boolean;
   enableInteractiveRows: boolean;
   enableDownload: boolean;
@@ -105,12 +107,16 @@ const sorter = (dataIndex: string) => {
 export async function querySparql(
   nexus: NexusClient,
   dataQuery: string,
-  view: View
+  view: View,
+  hasProjection: boolean,
+  projectionId?: string
 ) {
   const result = await sparqlQueryExecutor(
     nexus,
     dataQuery,
-    view as SparqlView
+    view as SparqlView,
+    hasProjection,
+    projectionId
   );
 
   const headerProperties = result.headerProperties;
@@ -131,7 +137,6 @@ export function parseESResults(result: any) {
 
     return {
       ...resource,
-      key: hit._source._self,
     };
   });
   return { total, items: parsedResult };
@@ -143,6 +148,8 @@ export const queryES = async (
   orgLabel: string,
   projectLabel: string,
   viewId: string,
+  hasProjection: boolean,
+  projectionId?: string,
   sort?: TableSort
 ) => {
   const body = bodybuilder();
@@ -150,6 +157,7 @@ export const queryES = async (
   const PAGE_SIZE = 10000;
   const PAGE_START = 0;
 
+  /* removed as causing issues */
   body
     .filter('term', '_deprecated', false)
     .size(PAGE_SIZE)
@@ -167,6 +175,18 @@ export const queryES = async (
 
   const bodyQuery = body.build();
 
+  if (hasProjection) {
+    return await nexus.View.compositeElasticSearchQuery(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(viewId),
+      encodeURIComponent(projectionId || '_'), // _ for all projections
+      {
+        ...bodyQuery,
+        ...query,
+      }
+    );
+  }
   return await nexus.View.elasticSearchQuery(
     orgLabel,
     projectLabel,
@@ -186,38 +206,56 @@ const accessData = async (
   nexus: NexusClient
 ) => {
   const dataQuery: string = tableResource.dataQuery;
-  const columnConfig = tableResource.configuration as TableColumn[];
-  if (view['@type']?.includes('ElasticSearchView')) {
+  const columnConfig: TableColumn[] = [tableResource.configuration].flat();
+  if (
+    view['@type']?.includes('ElasticSearchView') ||
+    view['@type']?.includes('AggregateElasticSearchView') ||
+    tableResource.projection?.['@type']?.includes('ElasticSearchProjection')
+  ) {
     const result = await queryES(
       JSON.parse(dataQuery),
       nexus,
       orgLabel,
       projectLabel,
-      view['@id']
+      view['@id'],
+      !!tableResource.projection,
+      tableResource.projection?.['@id'] === 'All_ElasticSearchProjection'
+        ? undefined
+        : tableResource.projection?.['@id']
     );
 
     const { items, total } = parseESResults(result);
 
     const fields =
-      columnConfig.map((x, index) => ({
-        title: x.name,
-        dataIndex: x.name,
-        key: x.name,
-        displayIndex: index,
-        sortable: x.enableSort,
-      })) || DEFAULT_FIELDS;
+      columnConfig.length > 0
+        ? columnConfig.map((x, index) => ({
+            title: x.name,
+            dataIndex: x.name,
+            key: x.name,
+            displayIndex: index,
+            sortable: x.enableSort,
+          }))
+        : DEFAULT_FIELDS;
 
     const headerProperties = fields
-      .map(field => {
+      .map((field: any) =>
         // Enrich certain fields with custom rendering
-
-        return addColumnsForES(field, sorter);
-      })
+        addColumnsForES(field, sorter)
+      )
       .sort((a, b) => (a.title > b.title ? 1 : 0));
 
     return { items, total, tableResource, view, headerProperties };
   }
-  const result = await querySparql(nexus, dataQuery, view);
+
+  const result = await querySparql(
+    nexus,
+    dataQuery,
+    view,
+    !!tableResource.projection,
+    tableResource.projection?.['@id'] === 'All_SparqlProjection'
+      ? undefined
+      : tableResource.projection?.['@id']
+  );
   const headerProperties: {
     title: string;
     dataIndex: string;
@@ -230,8 +268,9 @@ const accessData = async (
         sorter,
       };
     }
-    return { ...headerProp, render: rowRender };
+    return headerProp;
   });
+
   return { ...result, headerProperties, tableResource };
 };
 
@@ -254,7 +293,14 @@ export const useAccessDataForTable = (
     setSelectedRows(selectedRowKeys);
     if (
       dataResult?.data?.view &&
-      dataResult?.data?.view['@type']?.includes('ElasticSearchView')
+      (dataResult?.data?.view['@type']?.includes('ElasticSearchView') ||
+        dataResult?.data?.view['@type']?.includes(
+          'AggregateElasticSearchView'
+        ) ||
+        (tableResource?.projection &&
+          tableResource.projection['@type'].includes(
+            'ElasticSearchProjection'
+          )))
     ) {
       setSelectedResources(selectedRows);
     } else {
@@ -307,9 +353,7 @@ export const useAccessDataForTable = (
         const table = data.tableResource as TableResource;
         if (table) {
           const columnConfig = table.configuration
-            ? Array.isArray(table.configuration)
-              ? (table.configuration as TableColumn[])
-              : ([table.configuration] as TableColumn[])
+            ? ([table.configuration].flat() as TableColumn[])
             : [];
 
           const searchable = columnConfig
