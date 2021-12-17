@@ -206,10 +206,14 @@ function rowRenderer(field: ConfigField) {
     if (field.array) {
       if (field.fields) {
         const fields = field.fields as any[];
+        // Value may not be an array, due to bad data.
+        const sanitizedValue = value && Array.isArray(value) ? value : [value];
         return (
           <div>
-            {value
-              ? value.map((item: any) => item[fields[1].name]).join(', ')
+            {sanitizedValue
+              ? sanitizedValue
+                  .map((item: any) => (item ? item[fields[1].name] : ''))
+                  .join(', ')
               : ''}
           </div>
         );
