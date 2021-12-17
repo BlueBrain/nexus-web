@@ -211,10 +211,8 @@ function rowRenderer(field: ConfigField) {
         return (
           <div>
             {sanitizedValue
-              ? sanitizedValue
-                  .map((item: any) => (item ? item[fields[1].name] : ''))
-                  .join(', ')
-              : ''}
+              .map((item: any) => (item ? item[fields[1].name] : ''))
+              .join(', ')}
           </div>
         );
       }
