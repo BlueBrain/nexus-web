@@ -45,7 +45,7 @@ type actionType =
 
 export type FilterState = {
   filters: string[];
-  filterType: string;
+  filterType: 'anyof' | 'allof' | 'date' | 'missing';
   filterTerm: string;
 };
 
@@ -349,9 +349,11 @@ function useGlobalSearchData(
 
   React.useEffect(() => {
     if (config && config.layouts.length > 0) {
+      // default to first search layout
       setSelectedSearchLayout(config.layouts[0].name);
+    } else {
+      setSelectedSearchLayout('');
     }
-    setSelectedSearchLayout(undefined);
   }, [config]);
 
   const [sortState, setSortState] = React.useState<ESSortField[]>([]);
