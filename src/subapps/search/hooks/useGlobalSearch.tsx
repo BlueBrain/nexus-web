@@ -102,6 +102,11 @@ function fieldVisibilityReducer(
         )]: action.payload,
       });
       return { isPersistent: true, fields: updatedFields };
+    case 'fromLayout':
+      return {
+        isPersistent: true,
+        fields: action.payload,
+      };
   }
 }
 
@@ -133,11 +138,16 @@ type fieldVisibilityUpdateActionType = {
 type fieldVisibilitySetAllVisibleActionType = {
   type: 'setAllVisible';
 };
+type fieldVisibilityFromLayout = {
+  type: 'fromLayout';
+  payload: FieldVisibility[];
+};
 export type fieldVisibilityActionType =
   | fieldVisibilityInitializeActionType
   | fieldVisibilityReOrderType
   | fieldVisibilityUpdateActionType
-  | fieldVisibilitySetAllVisibleActionType;
+  | fieldVisibilitySetAllVisibleActionType
+  | fieldVisibilityFromLayout;
 
 export type ConfigField =
   | {
@@ -157,8 +167,24 @@ export type ConfigField =
       fields?: undefined;
     };
 
+export type SearchLayout = {
+  name: string;
+  visibleFields: string[];
+  filters: {
+    field: string;
+    operator:
+      | 'and' // maps to allof
+      | 'or' // maps to anyof
+      | 'none' // maps to noneof
+      | 'missing'; // map to missing.  Perhaps we should use same operator names?
+    values: string[];
+  }[];
+  sort: { field: string; order: 'asc' | 'desc' }[];
+};
+
 type SearchConfig = {
   fields: ConfigField[];
+  layouts: SearchLayout[];
 };
 
 function renderColumnTitle(
@@ -208,7 +234,7 @@ function rowRenderer(field: ConfigField) {
         const fields = field.fields as any[];
         return (
           <div>
-            {value
+            {value && Array.isArray(value)
               ? value.map((item: any) => item[fields[1].name]).join(', ')
               : ''}
           </div>
@@ -313,6 +339,16 @@ function useGlobalSearchData(
     filterReducer,
     defaultFilter
   );
+  const [selectedSearchLayout, setSelectedSearchLayout] = React.useState<
+    string
+  >();
+
+  React.useEffect(() => {
+    if (config && config.layouts.length > 0) {
+      setSelectedSearchLayout(config.layouts[0].name);
+    }
+    setSelectedSearchLayout(undefined);
+  }, [config]);
 
   const [sortState, setSortState] = React.useState<ESSortField[]>([]);
 
@@ -543,6 +579,42 @@ function useGlobalSearchData(
     clearSort();
   };
 
+  const applySearchLayout = (display: string) => {
+    setSelectedSearchLayout(display);
+    const layout = config?.layouts.find(l => l.name === display);
+    if (!layout || !columns) return;
+    // apply layout
+    // visible fields and order
+    dispatchFieldVisibility({
+      type: 'fromLayout',
+      payload: columns.map(col => {
+        return {
+          name: col.label,
+          key: col.key,
+          visible: layout.visibleFields.includes(col.key),
+        };
+      }),
+    });
+    // sorting
+    if (layout.sort) {
+      const sorting = layout.sort
+        .map(s => {
+          const field = config?.fields.find(f => f.name === s.field);
+          if (!field) return;
+          return {
+            fieldName: field.name,
+            term: createKeyWord(field),
+            label: field.label,
+            format: field.format,
+            direction: s.order,
+          };
+        })
+        .filter(s => s !== undefined);
+      sorting && setSortState(sorting as ESSortField[]);
+    }
+    // filtering
+  };
+
   return {
     isLoading,
     searchError,
@@ -557,6 +629,9 @@ function useGlobalSearchData(
     changeSortOption,
     resetAll,
     dispatchFieldVisibility,
+    config,
+    applySearchLayout,
+    selectedSearchLayout,
   };
 }
 

@@ -16,6 +16,7 @@ import './SearchContainer.less';
 import useColumnsToFitPage from '../hooks/useColumnsToFitPage';
 import FiltersConfig from '../components/FiltersConfig';
 import SortConfig from '../components/SortConfig';
+import SearchLayouts from '../components/Layouts';
 
 const SearchContainer: React.FC = () => {
   const nexus = useNexusContext();
@@ -139,6 +140,9 @@ const SearchContainer: React.FC = () => {
     resetAll,
     fieldsVisibilityState,
     dispatchFieldVisibility,
+    config,
+    applySearchLayout,
+    selectedSearchLayout,
   } = useGlobalSearchData(
     query,
     pagination.currentPage,
@@ -249,6 +253,13 @@ const SearchContainer: React.FC = () => {
             <>
               <div className="search-table-header">
                 <div className="search-table-header__options">
+                  <SearchLayouts
+                    layouts={config?.layouts}
+                    selectedLayout={selectedSearchLayout}
+                    onChangeLayout={layoutName => {
+                      applySearchLayout(layoutName);
+                    }}
+                  />
                   <ColumnsVisibilityConfig
                     columnsVisibility={fieldsVisibilityState}
                     dispatchFieldVisibility={dispatchFieldVisibility}
