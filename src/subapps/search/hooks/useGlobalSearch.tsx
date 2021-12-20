@@ -36,10 +36,12 @@ export type SearchConfigField =
     }[]
   | undefined;
 
-type actionType = {
-  type: 'add' | 'remove';
-  payload: FilterState;
-};
+type actionType =
+  | {
+      type: 'add' | 'remove';
+      payload: FilterState;
+    }
+  | { type: 'fromLayout'; payload: FilterState[] };
 
 export type FilterState = {
   filters: string[];
@@ -63,6 +65,8 @@ function filterReducer(
       return state.filter(
         fieldFilter => fieldFilter.filterTerm !== action.payload.filterTerm
       );
+    case 'fromLayout':
+      return action.payload;
     default:
       return state;
   }
@@ -579,6 +583,18 @@ function useGlobalSearchData(
     clearSort();
   };
 
+  const mapFilterType = (configFilterType: string) => {
+    switch (configFilterType) {
+      case 'and':
+        return 'allof';
+      case 'or':
+        return 'anyof';
+      // others
+      default:
+        return 'and';
+    }
+  };
+
   const applySearchLayout = (display: string) => {
     setSelectedSearchLayout(display);
     const layout = config?.layouts.find(l => l.name === display);
@@ -611,8 +627,26 @@ function useGlobalSearchData(
         })
         .filter(s => s !== undefined);
       sorting && setSortState(sorting as ESSortField[]);
+    } else {
+      setSortState([]);
     }
     // filtering
+    if (layout.filters) {
+      const filters = layout.filters
+        .map(s => {
+          const field = config?.fields.find(f => f.name === s.field);
+          if (!field) return;
+          return {
+            filters: s.values,
+            filterType: mapFilterType(s.operator),
+            filterTerm: createKeyWord(field),
+          };
+        })
+        .filter(s => s !== undefined);
+      dispatchFilter({ type: 'fromLayout', payload: filters as FilterState[] });
+    } else {
+      dispatchFilter({ type: 'fromLayout', payload: [] });
+    }
   };
 
   return {
