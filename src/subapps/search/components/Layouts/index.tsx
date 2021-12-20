@@ -1,3 +1,4 @@
+import { TableOutlined } from '@ant-design/icons';
 import { Select } from 'antd';
 import * as React from 'react';
 import { SearchLayout } from '../../hooks/useGlobalSearch';
@@ -10,9 +11,10 @@ const SearchLayouts: React.FC<{
   return (
     <>
       <Select
-        style={{ width: '100px' }}
+        suffixIcon={<TableOutlined />}
         onChange={layout => onChangeLayout(layout as string)}
         value={selectedLayout}
+        dropdownMatchSelectWidth={false}
       >
         {layouts?.map(layout => {
           return (
