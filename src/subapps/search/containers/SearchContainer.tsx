@@ -253,13 +253,15 @@ const SearchContainer: React.FC = () => {
             <>
               <div className="search-table-header">
                 <div className="search-table-header__options">
-                  <SearchLayouts
-                    layouts={config?.layouts}
-                    selectedLayout={selectedSearchLayout}
-                    onChangeLayout={layoutName => {
-                      applySearchLayout(layoutName);
-                    }}
-                  />
+                  {config?.layouts && (
+                    <SearchLayouts
+                      layouts={config?.layouts}
+                      selectedLayout={selectedSearchLayout}
+                      onChangeLayout={layoutName => {
+                        applySearchLayout(layoutName);
+                      }}
+                    />
+                  )}
                   <ColumnsVisibilityConfig
                     columnsVisibility={fieldsVisibilityState}
                     dispatchFieldVisibility={dispatchFieldVisibility}

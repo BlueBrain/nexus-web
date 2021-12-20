@@ -348,12 +348,9 @@ function useGlobalSearchData(
   >();
 
   React.useEffect(() => {
-    if (config && config.layouts.length > 0) {
-      // default to first search layout
-      setSelectedSearchLayout(config.layouts[0].name);
-    } else {
-      setSelectedSearchLayout('');
-    }
+    if (!(config && config.layouts && config.layouts.length > 0)) return;
+    // default to first search layout
+    setSelectedSearchLayout(config.layouts[0].name);
   }, [config]);
 
   const [sortState, setSortState] = React.useState<ESSortField[]>([]);
