@@ -141,7 +141,7 @@ const SearchContainer: React.FC = () => {
     fieldsVisibilityState,
     dispatchFieldVisibility,
     config,
-    applySearchLayout,
+    handleChangeSearchLayout,
     selectedSearchLayout,
   } = useGlobalSearchData(
     query,
@@ -258,7 +258,7 @@ const SearchContainer: React.FC = () => {
                       layouts={config?.layouts}
                       selectedLayout={selectedSearchLayout}
                       onChangeLayout={layoutName => {
-                        applySearchLayout(layoutName);
+                        handleChangeSearchLayout(layoutName);
                       }}
                     />
                   )}

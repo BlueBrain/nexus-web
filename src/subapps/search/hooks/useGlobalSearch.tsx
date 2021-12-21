@@ -579,6 +579,7 @@ function useGlobalSearchData(
 
   const resetAll = () => {
     if (config?.layouts && config.layouts.length > 0) {
+      // default to first layout
       setSelectedSearchLayout(config.layouts[0].name);
       return;
     }
@@ -586,8 +587,13 @@ function useGlobalSearchData(
     clearSort();
   };
 
-  const mapFilterType = (configFilterType: string) => {
-    switch (configFilterType) {
+  /**
+   *
+   * @param operator
+   * @returns Search Config Layout operator name
+   */
+  const mapFilterOperator = (operator: 'and' | 'or' | 'none' | 'missing') => {
+    switch (operator) {
       case 'and':
         return 'allof';
       case 'or':
@@ -602,57 +608,63 @@ function useGlobalSearchData(
     setSelectedSearchLayout(layoutName);
   };
 
-  React.useEffect(() => {
-    const layout = config?.layouts.find(l => l.name === selectedSearchLayout);
-    if (!layout || !columns) return;
-    // apply layout
+  const applyLayout = (layout: SearchLayout, columns: SearchConfigField) => {
+    if (!columns) return;
+
     // visible fields and order
     dispatchFieldVisibility({
       type: 'fromLayout',
-      payload: columns.map(col => {
-        return {
-          name: col.label,
-          key: col.key,
-          visible: layout.visibleFields.includes(col.key),
-        };
-      }),
+      payload: columns.map(col => ({
+        name: col.label,
+        key: col.key,
+        visible: layout.visibleFields.includes(col.key),
+      })),
     });
+
     // sorting
     if (layout.sort) {
       const sorting = layout.sort
-        .map(s => {
-          const field = config?.fields.find(f => f.name === s.field);
+        .map(sort => {
+          const field = config?.fields.find(f => f.name === sort.field);
           if (!field) return;
           return {
             fieldName: field.name,
             term: createKeyWord(field),
             label: field.label,
             format: field.format,
-            direction: s.order,
+            direction: sort.order,
           };
         })
-        .filter(s => s !== undefined);
+        .filter(sort => sort !== undefined);
       sorting && setSortState(sorting as ESSortField[]);
     } else {
       setSortState([]);
     }
+
     // filtering
     if (layout.filters) {
       const filters = layout.filters
-        .map(s => {
-          const field = config?.fields.find(f => f.name === s.field);
+        .map(filter => {
+          const field = config?.fields.find(f => f.name === filter.field);
           if (!field) return;
           return {
-            filters: s.values,
-            filterType: mapFilterType(s.operator),
+            filters: filter.values,
+            filterType: mapFilterOperator(filter.operator),
             filterTerm: createKeyWord(field),
           };
         })
-        .filter(s => s !== undefined);
+        .filter(filter => filter !== undefined);
       dispatchFilter({ type: 'fromLayout', payload: filters as FilterState[] });
     } else {
       dispatchFilter({ type: 'fromLayout', payload: [] });
     }
+  };
+
+  React.useEffect(() => {
+    const layout = config?.layouts.find(l => l.name === selectedSearchLayout);
+    if (!layout) return;
+
+    applyLayout(layout, columns);
   }, [selectedSearchLayout]);
 
   return {
@@ -670,7 +682,7 @@ function useGlobalSearchData(
     resetAll,
     dispatchFieldVisibility,
     config,
-    applySearchLayout: handleChangeSearchLayout,
+    handleChangeSearchLayout,
     selectedSearchLayout,
   };
 }
