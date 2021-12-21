@@ -578,6 +578,10 @@ function useGlobalSearchData(
   };
 
   const resetAll = () => {
+    if (config?.layouts && config.layouts.length > 0) {
+      setSelectedSearchLayout(config.layouts[0].name);
+      return;
+    }
     clearAllFilters();
     clearSort();
   };
@@ -594,9 +598,12 @@ function useGlobalSearchData(
     }
   };
 
-  const applySearchLayout = (display: string) => {
-    setSelectedSearchLayout(display);
-    const layout = config?.layouts.find(l => l.name === display);
+  const handleChangeSearchLayout = (layoutName: string) => {
+    setSelectedSearchLayout(layoutName);
+  };
+
+  React.useEffect(() => {
+    const layout = config?.layouts.find(l => l.name === selectedSearchLayout);
     if (!layout || !columns) return;
     // apply layout
     // visible fields and order
@@ -646,7 +653,7 @@ function useGlobalSearchData(
     } else {
       dispatchFilter({ type: 'fromLayout', payload: [] });
     }
-  };
+  }, [selectedSearchLayout]);
 
   return {
     isLoading,
@@ -663,7 +670,7 @@ function useGlobalSearchData(
     resetAll,
     dispatchFieldVisibility,
     config,
-    applySearchLayout,
+    applySearchLayout: handleChangeSearchLayout,
     selectedSearchLayout,
   };
 }
