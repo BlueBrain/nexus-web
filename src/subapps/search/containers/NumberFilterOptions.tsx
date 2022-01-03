@@ -76,10 +76,10 @@ const NumberFilterOptions: React.FC<{
 
   React.useEffect(() => {
 		const allSuggestions = constructQuery(query)
-      .aggregation('terms', field.name + '.value', 'suggestions', {
+      .aggregation('terms', `${field.name}.value`, 'suggestions', {
         size: 1000,
       })
-      .aggregation('stats', field.name + '.value', 'stats')
+      .aggregation('stats', `${field.name}.value`, 'stats')
       .aggregation('missing', filterKeyWord, '(missing)')
       .build();
 
