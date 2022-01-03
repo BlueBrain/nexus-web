@@ -499,10 +499,9 @@ function useGlobalSearchData(
 
   const data = React.useMemo(() => {
     if (result.hits && result.hits.hits) {
-      const dres = result.hits.hits.map((hit: any, ix: number) => {
+      return result.hits.hits.map((hit: any, ix: number) => {
         return { ...hit._source, key: ix };
-			});
-			return dres;
+      });
 		}
     return [];
   }, [result]);
