@@ -47,8 +47,8 @@ const NumberFilterOptions: React.FC<{
     return f.filterTerm === field.name;
   });
 
-  const [rangeMin, setRangeMin] = React.useState<number>(0);
-  const [rangeMax, setRangeMax] = React.useState<number>(100000);
+  const [rangeMin, setRangeMin] = React.useState<number>();
+  const [rangeMax, setRangeMax] = React.useState<number>();
 
   const [rangeStart, setRangeStart] = React.useState<number>(
     fieldFilter?.filters[0] ? parseFloat(fieldFilter?.filters[0]) : rangeMin
@@ -96,10 +96,10 @@ const NumberFilterOptions: React.FC<{
         }
       );
       aggs.sort((a: any, b: any) => a.value - b.value);
+      setAggregations(aggs);
       setMissingCount(all.aggregations['(missing)'].doc_count);
       setRangeMin(aggs[0].value);
       setRangeMax(aggs[aggs.length - 1].value);
-      setAggregations(aggs);
     });
   }, [field]);
 
@@ -136,7 +136,7 @@ const NumberFilterOptions: React.FC<{
               min={rangeMin}
               max={rangeMax}
               range={{ draggableTrack: true }}
-              step={(rangeMax - rangeMin) / 20}
+              step={(rangeMax - rangeMin) / 100}
               value={[rangeStart, rangeEnd]}
               onChange={onSliderChange}
             />
