@@ -46,12 +46,15 @@ const NumberFilterOptions: React.FC<{
   const fieldFilter = filter.find(f => {
     return f.filterTerm === field.name;
   });
-  const [rangeStart, setRangeStart] = React.useState<number>(
-    fieldFilter?.filters[0] ? parseInt(fieldFilter?.filters[0]) : 0
-  );
-  const [rangeEnd, setRangeEnd] = React.useState<number>(
-    fieldFilter?.filters[1] ? parseInt(fieldFilter?.filters[1]) : 40
-  );
+
+  console.log(field);
+
+  const [rangeMin, setRangeMin] = React.useState<number>(0);
+  const [rangeMax, setRangeMax] = React.useState<number>(100);
+
+  const [rangeStart, setRangeStart] = React.useState<number>(rangeMin);
+  const [rangeEnd, setRangeEnd] = React.useState<number>(rangeMax);
+
   const [missingCount, setMissingCount] = React.useState<number>();
 
   const onSliderChange = (value: Array<number>) => {
@@ -63,10 +66,9 @@ const NumberFilterOptions: React.FC<{
 
   const [aggregations, setAggregations] = React.useState<
     {
-      filterValue: string;
-      count: number;
-      selected: boolean;
-      matching: boolean;
+      value: number;
+      unit: string;
+      stringValue: string;
     }[]
   >([]);
 
@@ -89,8 +91,16 @@ const NumberFilterOptions: React.FC<{
           };
         }
       );
-      setMissingCount(all.aggregations['(missing)'].doc_count);
+      aggs.sort((a: any, b: any) => a.value - b.value);
+
       setAggregations(aggs);
+      setMissingCount(all.aggregations['(missing)'].doc_count);
+      setRangeMin(aggs[0].value);
+      setRangeStart(aggs[0].value);
+      setRangeMax(aggs[aggs.length - 1].value);
+      setRangeEnd(aggs[aggs.length - 1].value);
+
+      console.log(aggs);
     });
   }, [field]);
 
@@ -112,9 +122,8 @@ const NumberFilterOptions: React.FC<{
           <Col flex={1}>
             <Row>
               <InputNumber
-                min={0}
-                max={99}
-                style={{ margin: '0 16px' }}
+                min={rangeMin}
+                max={rangeMax}
                 value={rangeStart}
                 onChange={value => {
                   setRangeStart(value);
@@ -125,6 +134,8 @@ const NumberFilterOptions: React.FC<{
           </Col>
           <Col flex={20}>
             <Slider
+              min={rangeMin}
+              max={rangeMax}
               range={{ draggableTrack: true }}
               step={1}
               value={[rangeStart, rangeEnd]}
@@ -134,9 +145,8 @@ const NumberFilterOptions: React.FC<{
           <Col flex={1}>
             <Row>
               <InputNumber
-                min={1}
-                max={100}
-                style={{ margin: '0 16px' }}
+                min={rangeMin}
+                max={rangeMax}
                 value={rangeEnd}
                 onChange={value => {
                   setRangeStart(value);
