@@ -34,7 +34,7 @@ const NumberFilterOptions: React.FC<{
 }> = ({ filter, field, onFinish, nexusClient, query }) => {
   const fieldFilter = filter.find(f => {
     return f.filterTerm === field.name;
-	});
+  });
 
   const [aggregations, setAggregations] = React.useState<
     {
