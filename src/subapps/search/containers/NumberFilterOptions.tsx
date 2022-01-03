@@ -51,10 +51,10 @@ const NumberFilterOptions: React.FC<{
   const [rangeMax, setRangeMax] = React.useState<number>(100000);
 
   const [rangeStart, setRangeStart] = React.useState<number>(
-    fieldFilter?.filters[0] ? parseInt(fieldFilter?.filters[0]) : rangeMin
+    fieldFilter?.filters[0] ? parseFloat(fieldFilter?.filters[0]) : rangeMin
   );
   const [rangeEnd, setRangeEnd] = React.useState<number>(
-    fieldFilter?.filters[1] ? parseInt(fieldFilter?.filters[1]) : rangeMax
+    fieldFilter?.filters[1] ? parseFloat(fieldFilter?.filters[1]) : rangeMax
   );
 
   const [missingCount, setMissingCount] = React.useState<number>();
@@ -96,10 +96,10 @@ const NumberFilterOptions: React.FC<{
         }
       );
       aggs.sort((a: any, b: any) => a.value - b.value);
-      setAggregations(aggs);
       setMissingCount(all.aggregations['(missing)'].doc_count);
       setRangeMin(aggs[0].value);
       setRangeMax(aggs[aggs.length - 1].value);
+      setAggregations(aggs);
     });
   }, [field]);
 
