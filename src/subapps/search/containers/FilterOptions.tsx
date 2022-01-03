@@ -58,11 +58,12 @@ const FilterOptions: React.FC<{
     baseQuery,
     filter.filter(f => extractFieldName(f.filterTerm) !== field.name)
   );
-
   const fieldFilter = filter.find(
     filter =>
       extractFieldName(extractFieldName(filter.filterTerm)) === field.name
   );
+
+  const [missingCount, setMissingCount] = React.useState<number>();
 
   const [aggregations, setAggregations] = React.useState<
     {
@@ -140,6 +141,7 @@ const FilterOptions: React.FC<{
           matching: true,
         });
         setAggregations(aggs);
+        setMissingCount(filtered.aggregations['(missing)'].doc_count);
       }
     );
   }, [field]);
@@ -247,13 +249,22 @@ const FilterOptions: React.FC<{
         </>
       )}
       {field.fields && field.fields.find(f => f.format.includes('number')) && (
-        <NumberFilterOptions
-          filter={filter}
-          query={query}
-          nexusClient={nexusClient}
-          field={field}
-          onFinish={onFinish}
-        />
+        <>
+          <NumberFilterOptions
+            filter={filter}
+            query={query}
+            nexusClient={nexusClient}
+            field={field}
+            onFinish={onFinish}
+          />
+          {missingCount && (
+            <Form.Item>
+              <Checkbox disabled={missingCount === 0}>
+                Show Missing Values Only ({missingCount})
+              </Checkbox>
+            </Form.Item>
+          )}
+        </>
       )}
     </Form>
   );
