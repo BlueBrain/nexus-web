@@ -35,7 +35,7 @@ const FiltersConfig: React.FC<{
    * @returns {string}
    */
   const filterTypeFriendlyName = (filterType: string, filters: string[]) => {
-    if (filterType === 'date') {
+    if (filterType === 'date' || filterType === 'number') {
       if (filters.length > 1 && filters[0] !== '' && filters[1] !== '') {
         return 'between';
       }

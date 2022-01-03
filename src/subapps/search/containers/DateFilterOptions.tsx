@@ -41,6 +41,14 @@ const DateFilterOptions: React.FC<{
   );
 
   const [isToday, setIsToday] = React.useState<boolean>(false);
+  console.log(
+    'DATE FIELD FILTER initial Values: filter field fieldFilter dateStart dateEnd'
+  );
+  console.log(filter);
+  console.log(field);
+  console.log(fieldFilter);
+  console.log(dateStart);
+  console.log(dateEnd);
 
   const [form] = Form.useForm();
 

@@ -23,7 +23,7 @@ export const constructFilterSet = (
   }[]
 ) => {
   filterSet.forEach(filter => {
-    if (filter.filterType === 'date') {
+    if (filter.filterType === 'date' || filter.filterType === 'number') {
       constructDateFilter(
         body,
         filter.filters,
