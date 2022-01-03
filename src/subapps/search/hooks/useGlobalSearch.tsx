@@ -502,7 +502,7 @@ function useGlobalSearchData(
       return result.hits.hits.map((hit: any, ix: number) => {
         return { ...hit._source, key: ix };
       });
-		}
+    }
     return [];
   }, [result]);
 
