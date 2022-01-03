@@ -3,7 +3,6 @@ import { labelOf } from '../../../shared/utils';
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
-import NumberFilterOptions from './NumberFilterOptions';
 import './FilterOptions.less';
 import { constructFilterSet, constructQuery } from '../utils';
 
@@ -36,16 +35,6 @@ export const createKeyWord = (field: ConfigField) => {
   return `${field.name}.keyword`;
 };
 
-export const extractUnitAndNumber = (filterValue: string) => {
-  const result = filterValue.match(/(-?[\d.]+)([a-z%]*)/);
-  if (result && result.length > 1) {
-    return {
-      val: parseFloat(result[1]),
-      unit: result[2],
-    };
-  }
-  return filterValue;
-};
 const FilterOptions: React.FC<{
   field: ConfigField;
   onFinish: (values: any) => void;
@@ -62,8 +51,6 @@ const FilterOptions: React.FC<{
     filter =>
       extractFieldName(extractFieldName(filter.filterTerm)) === field.name
   );
-
-  const [missingCount, setMissingCount] = React.useState<number>();
 
   const [aggregations, setAggregations] = React.useState<
     {
@@ -141,7 +128,6 @@ const FilterOptions: React.FC<{
           matching: true,
         });
         setAggregations(aggs);
-        setMissingCount(filtered.aggregations['(missing)'].doc_count);
       }
     );
   }, [field]);
@@ -245,24 +231,6 @@ const FilterOptions: React.FC<{
                 {filterValues}
               </Form.Item>
             </>
-          )}
-        </>
-      )}
-      {field.fields && field.fields.find(f => f.format.includes('number')) && (
-        <>
-          <NumberFilterOptions
-            filter={filter}
-            query={query}
-            nexusClient={nexusClient}
-            field={field}
-            onFinish={onFinish}
-          />
-          {missingCount && (
-            <Form.Item>
-              <Checkbox disabled={missingCount === 0}>
-                Show Missing Values Only ({missingCount})
-              </Checkbox>
-            </Form.Item>
           )}
         </>
       )}

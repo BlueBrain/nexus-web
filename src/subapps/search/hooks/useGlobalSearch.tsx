@@ -424,6 +424,15 @@ function useGlobalSearchData(
                 field={field}
                 onFinish={onFilterSubmit}
               />
+            ) : field.fields &&
+              field.fields.find(f => f.format.includes('number')) ? (
+              <NumberFilterOptions
+                filter={filterState}
+                query={query}
+                nexusClient={nexus}
+                field={field}
+                onFinish={onFilterSubmit}
+              />
             ) : (
               <FilterOptions
                 filter={filterState}
