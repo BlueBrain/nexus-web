@@ -34,7 +34,7 @@ const NumberFilterOptions: React.FC<{
 }> = ({ filter, field, onFinish, nexusClient, query }) => {
   const fieldFilter = filter.find(f => {
     return f.filterTerm === field.name;
-  });
+	});
 
   const [aggregations, setAggregations] = React.useState<
     {
@@ -52,8 +52,13 @@ const NumberFilterOptions: React.FC<{
     sum: number;
   }>();
 
-  const [rangeMin, setRangeMin] = React.useState<number>(stats?.min || 0);
-  const [rangeMax, setRangeMax] = React.useState<number>(stats?.max || 100000);
+  const [rangeMin, setRangeMin] = React.useState<number>(
+    fieldFilter?.filters[2] ? parseFloat(fieldFilter?.filters[2]) : 0
+  );
+
+  const [rangeMax, setRangeMax] = React.useState<number>(
+    fieldFilter?.filters[3] ? parseFloat(fieldFilter?.filters[3]) : 100000
+  );
 
   const [rangeStart, setRangeStart] = React.useState<number>(
     fieldFilter?.filters[0] ? parseFloat(fieldFilter?.filters[0]) : rangeMin
@@ -91,25 +96,35 @@ const NumberFilterOptions: React.FC<{
           };
         }
       );
-      console.log(all);
+
       setAggregations(aggs);
       setStats(all.aggregations.stats);
       setRangeMin(all.aggregations.stats.min);
       setRangeMax(all.aggregations.stats.max);
       setMissingCount(all.aggregations['(missing)'].doc_count);
+
+      if (!fieldFilter?.filters[0]) {
+        setRangeStart(all.aggregations.stats.min);
+        setRangeEnd(all.aggregations.stats.max);
+      }
     });
   }, [field]);
 
+  const setFilters = () => {
+    return [rangeStart, rangeEnd, rangeMin, rangeMax].map((value: number) =>
+      value.toString()
+    );
+  };
+
   React.useEffect(() => {
-    const currentRange = [];
-    currentRange.push(rangeStart.toString());
-    currentRange.push(rangeEnd.toString());
+    const currentRange = setFilters();
+
     onFinish({
       filterType: 'number',
       filters: currentRange,
       filterTerm: field.name,
     });
-  }, [rangeStart, rangeEnd]);
+  }, [rangeStart, rangeEnd, rangeMin, rangeMax]);
 
   return (
     <>
