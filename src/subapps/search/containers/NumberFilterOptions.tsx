@@ -35,8 +35,27 @@ const NumberFilterOptions: React.FC<{
   const fieldFilter = filter.find(f => {
     return f.filterTerm === field.name;
   });
-  const [rangeMin, setRangeMin] = React.useState<number>(0);
-  const [rangeMax, setRangeMax] = React.useState<number>(100000);
+
+	const [aggregations, setAggregations] = React.useState<
+    {
+			value: number;
+      unit: string;
+      stringValue: string;
+    }[]
+  >([]);
+
+	const [stats, setStats] = React.useState<
+    {
+      avg: number;
+      min: number;
+      max: number;
+      count: number;
+      sum: number;
+    }
+  >();
+
+	const [rangeMin, setRangeMin] = React.useState<number>(stats?.min || 0);
+  const [rangeMax, setRangeMax] = React.useState<number>(stats?.max || 100000);
 
   const [rangeStart, setRangeStart] = React.useState<number>(
     fieldFilter?.filters[0] ? parseFloat(fieldFilter?.filters[0]) : rangeMin
@@ -54,16 +73,8 @@ const NumberFilterOptions: React.FC<{
 
   const filterKeyWord = createKeyWord(field);
 
-  const [aggregations, setAggregations] = React.useState<
-    {
-      value: number;
-      unit: string;
-      stringValue: string;
-    }[]
-  >([]);
 
   React.useEffect(() => {
-    if (fieldFilter?.filters[0]) return;
 		const allSuggestions = constructQuery(query)
       .aggregation('terms', field.name + '.value', 'suggestions', {
         size: 1000,
@@ -85,9 +96,10 @@ const NumberFilterOptions: React.FC<{
       );
       console.log(all);
       setAggregations(aggs);
-      setMissingCount(all.aggregations['(missing)'].doc_count);
+      setStats(all.aggregations.stats);
       setRangeMin(all.aggregations.stats.min);
       setRangeMax(all.aggregations.stats.max);
+      setMissingCount(all.aggregations['(missing)'].doc_count);
     });
   }, [field]);
 
