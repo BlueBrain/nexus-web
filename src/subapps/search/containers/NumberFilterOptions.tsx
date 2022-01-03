@@ -47,8 +47,8 @@ const NumberFilterOptions: React.FC<{
     return f.filterTerm === field.name;
   });
 
-  const [rangeMin, setRangeMin] = React.useState<number>();
-  const [rangeMax, setRangeMax] = React.useState<number>();
+  const [rangeMin, setRangeMin] = React.useState<number>(0);
+  const [rangeMax, setRangeMax] = React.useState<number>(100);
 
   const [rangeStart, setRangeStart] = React.useState<number>(
     fieldFilter?.filters[0] ? parseFloat(fieldFilter?.filters[0]) : rangeMin
