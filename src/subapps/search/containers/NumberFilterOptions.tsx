@@ -36,25 +36,23 @@ const NumberFilterOptions: React.FC<{
     return f.filterTerm === field.name;
   });
 
-	const [aggregations, setAggregations] = React.useState<
+  const [aggregations, setAggregations] = React.useState<
     {
-			value: number;
+      value: number;
       unit: string;
       stringValue: string;
     }[]
   >([]);
 
-	const [stats, setStats] = React.useState<
-    {
-      avg: number;
-      min: number;
-      max: number;
-      count: number;
-      sum: number;
-    }
-  >();
+  const [stats, setStats] = React.useState<{
+    avg: number;
+    min: number;
+    max: number;
+    count: number;
+    sum: number;
+  }>();
 
-	const [rangeMin, setRangeMin] = React.useState<number>(stats?.min || 0);
+  const [rangeMin, setRangeMin] = React.useState<number>(stats?.min || 0);
   const [rangeMax, setRangeMax] = React.useState<number>(stats?.max || 100000);
 
   const [rangeStart, setRangeStart] = React.useState<number>(
@@ -73,9 +71,8 @@ const NumberFilterOptions: React.FC<{
 
   const filterKeyWord = createKeyWord(field);
 
-
   React.useEffect(() => {
-		const allSuggestions = constructQuery(query)
+    const allSuggestions = constructQuery(query)
       .aggregation('terms', `${field.name}.value`, 'suggestions', {
         size: 1000,
       })
@@ -87,7 +84,7 @@ const NumberFilterOptions: React.FC<{
 
     Promise.all([allSuggestionsPromise]).then(([all]) => {
       const aggs = all.aggregations['suggestions'].buckets.map(
-				(bucket: any) => {
+        (bucket: any) => {
           return {
             value: bucket.key,
             stringValue: bucket.key,
