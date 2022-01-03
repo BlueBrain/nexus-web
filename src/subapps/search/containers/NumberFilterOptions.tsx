@@ -137,7 +137,7 @@ const NumberFilterOptions: React.FC<{
               min={rangeMin}
               max={rangeMax}
               range={{ draggableTrack: true }}
-              step={1}
+              step={(rangeMax - rangeMin) / 20}
               value={[rangeStart, rangeEnd]}
               onChange={onSliderChange}
             />
