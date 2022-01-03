@@ -25,17 +25,6 @@ type ConfigField =
       fields?: undefined;
     };
 
-export const extractUnitAndNumber = (filterValue: string) => {
-  const result = filterValue.match(/(-?[\d.]+)([a-z%]*)/);
-  if (result && result.length > 1) {
-    return {
-      val: parseFloat(result[1]),
-      unit: result[2],
-    };
-  }
-  return { val: filterValue, unit: '' };
-};
-
 const NumberFilterOptions: React.FC<{
   field: ConfigField;
   onFinish: (values: any) => void;
@@ -46,7 +35,6 @@ const NumberFilterOptions: React.FC<{
   const fieldFilter = filter.find(f => {
     return f.filterTerm === field.name;
   });
-
   const [rangeMin, setRangeMin] = React.useState<number>(0);
   const [rangeMax, setRangeMax] = React.useState<number>(100000);
 
@@ -76,9 +64,11 @@ const NumberFilterOptions: React.FC<{
 
   React.useEffect(() => {
     if (fieldFilter?.filters[0]) return;
-
-    const allSuggestions = constructQuery(query)
-      .aggregation('terms', filterKeyWord, 'suggestions', { size: 1000 })
+		const allSuggestions = constructQuery(query)
+      .aggregation('terms', field.name + '.value', 'suggestions', {
+        size: 1000,
+      })
+      .aggregation('stats', field.name + '.value', 'stats')
       .aggregation('missing', filterKeyWord, '(missing)')
       .build();
 
@@ -86,20 +76,18 @@ const NumberFilterOptions: React.FC<{
 
     Promise.all([allSuggestionsPromise]).then(([all]) => {
       const aggs = all.aggregations['suggestions'].buckets.map(
-        (bucket: any) => {
-          const parsed = extractUnitAndNumber(bucket.key);
+				(bucket: any) => {
           return {
-            value: parsed.val,
-            unit: parsed.unit,
+            value: bucket.key,
             stringValue: bucket.key,
           };
         }
       );
-      aggs.sort((a: any, b: any) => a.value - b.value);
+      console.log(all);
       setAggregations(aggs);
       setMissingCount(all.aggregations['(missing)'].doc_count);
-      setRangeMin(aggs[0].value);
-      setRangeMax(aggs[aggs.length - 1].value);
+      setRangeMin(all.aggregations.stats.min);
+      setRangeMax(all.aggregations.stats.max);
     });
   }, [field]);
 
