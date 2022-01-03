@@ -34,13 +34,10 @@ const NumberFilterOptions: React.FC<{
     return f.filterTerm === field.name;
   });
   const [rangeStart, setRangeStart] = React.useState<number>(
-    fieldFilter?.filters[0] ? parseInt(fieldFilter?.filters[0]) : 1
+    fieldFilter?.filters[0] ? parseInt(fieldFilter?.filters[0]) : 0
   );
   const [rangeEnd, setRangeEnd] = React.useState<number>(
-    fieldFilter?.filters[1] ? parseInt(fieldFilter?.filters[1]) : 10
-  );
-  console.log(
-    'NUMBER FIELD FILTER initial Values: filter field fieldFilter dateStart dateEnd'
+    fieldFilter?.filters[1] ? parseInt(fieldFilter?.filters[1]) : 40
   );
 
   const onSliderChange = (value: Array<number>) => {
@@ -62,39 +59,46 @@ const NumberFilterOptions: React.FC<{
   }, [rangeStart, rangeEnd]);
 
   return (
-    <Row>
-      <Col flex={1}>
-        <InputNumber
-          min={0}
-          max={99}
-          style={{ margin: '0 16px' }}
-          value={rangeStart}
-          onChange={value => {
-            setRangeStart(value);
-          }}
-        />
-      </Col>
-      <Col flex={10}>
-        <Slider
-          range={{ draggableTrack: true }}
-          step={1}
-          value={[rangeStart, rangeEnd]}
-          onChange={onSliderChange}
-        />
-        {/* <Slider range={{ draggableTrack: true }} defaultValue={[20, 50]} /> */}
-      </Col>
-      <Col flex={1}>
-        <InputNumber
-          min={1}
-          max={100}
-          style={{ margin: '0 16px' }}
-          value={rangeEnd}
-          onChange={value => {
-            setRangeStart(value);
-          }}
-        />
-      </Col>
-    </Row>
+    <Form.Item>
+      <Row>
+        <Col flex={1}>
+          <Row>
+            <InputNumber
+              min={0}
+              max={99}
+              style={{ margin: '0 16px' }}
+              value={rangeStart}
+              onChange={value => {
+                setRangeStart(value);
+              }}
+            />
+          </Row>
+          <Row>Minimum</Row>
+        </Col>
+        <Col flex={20}>
+          <Slider
+            range={{ draggableTrack: true }}
+            step={1}
+            value={[rangeStart, rangeEnd]}
+            onChange={onSliderChange}
+          />
+        </Col>
+        <Col flex={1}>
+          <Row>
+            <InputNumber
+              min={1}
+              max={100}
+              style={{ margin: '0 16px' }}
+              value={rangeEnd}
+              onChange={value => {
+                setRangeStart(value);
+              }}
+            />
+          </Row>
+          <Row>Maximum</Row>
+        </Col>
+      </Row>
+    </Form.Item>
   );
 };
 

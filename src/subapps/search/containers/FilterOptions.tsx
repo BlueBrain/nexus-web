@@ -3,6 +3,7 @@ import { labelOf } from '../../../shared/utils';
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
+import NumberFilterOptions from './NumberFilterOptions';
 import './FilterOptions.less';
 import { constructFilterSet, constructQuery } from '../utils';
 
@@ -35,6 +36,16 @@ export const createKeyWord = (field: ConfigField) => {
   return `${field.name}.keyword`;
 };
 
+export const extractUnitAndNumber = (filterValue: string) => {
+  const result = filterValue.match(/(-?[\d.]+)([a-z%]*)/);
+  if (result && result.length > 1) {
+    return {
+      val: parseFloat(result[1]),
+      unit: result[2],
+    };
+  }
+  return filterValue;
+};
 const FilterOptions: React.FC<{
   field: ConfigField;
   onFinish: (values: any) => void;
@@ -180,50 +191,69 @@ const FilterOptions: React.FC<{
 
   return (
     <Form form={form} className="field-filter-menu">
-      <Form.Item
-        label="Operator"
-        rules={[
-          { required: true, message: 'Operator is required to apply a filter' },
-        ]}
-      >
-        <Select
-          dropdownStyle={{ zIndex: 1100 }}
-          value={filterType}
-          onChange={v => setFilterType(v)}
-        >
-          {field.array && (
-            <Select.Option value="allof">is all of (AND)</Select.Option>
-          )}
-          <Select.Option value="anyof">is any of (OR)</Select.Option>
-          <Select.Option value="noneof">is none of (NOT)</Select.Option>
-          {field.optional && (
-            <Select.Option value="missing">is missing</Select.Option>
-          )}
-        </Select>
-      </Form.Item>
-      {filterType !== 'missing' && (
+      {!(
+        field.fields && field.fields.find(f => f.format.includes('number'))
+      ) && (
         <>
-          <Input.Search
-            onChange={event => {
-              const val = event.target.value;
-
-              const filteredSuggestions = aggregations.map(a => ({
-                ...a,
-                matching:
-                  val && val.length > 0
-                    ? a.filterValue.toLowerCase().indexOf(val.toLowerCase()) >
-                      -1
-                    : true,
-              }));
-              setAggregations(filteredSuggestions);
-            }}
-          ></Input.Search>
           <Form.Item
-            style={{ maxHeight: '91px', overflow: 'scroll', width: '105%' }}
+            label="Operator"
+            rules={[
+              {
+                required: true,
+                message: 'Operator is required to apply a filter',
+              },
+            ]}
           >
-            {filterValues}
+            <Select
+              dropdownStyle={{ zIndex: 1100 }}
+              value={filterType}
+              onChange={v => setFilterType(v)}
+            >
+              {field.array && (
+                <Select.Option value="allof">is all of (AND)</Select.Option>
+              )}
+              <Select.Option value="anyof">is any of (OR)</Select.Option>
+              <Select.Option value="noneof">is none of (NOT)</Select.Option>
+              {field.optional && (
+                <Select.Option value="missing">is missing</Select.Option>
+              )}
+            </Select>
           </Form.Item>
+          {filterType !== 'missing' && (
+            <>
+              <Input.Search
+                onChange={event => {
+                  const val = event.target.value;
+
+                  const filteredSuggestions = aggregations.map(a => ({
+                    ...a,
+                    matching:
+                      val && val.length > 0
+                        ? a.filterValue
+                            .toLowerCase()
+                            .indexOf(val.toLowerCase()) > -1
+                        : true,
+                  }));
+                  setAggregations(filteredSuggestions);
+                }}
+              ></Input.Search>
+              <Form.Item
+                style={{ maxHeight: '91px', overflow: 'scroll', width: '105%' }}
+              >
+                {filterValues}
+              </Form.Item>
+            </>
+          )}
         </>
+      )}
+      {field.fields && field.fields.find(f => f.format.includes('number')) && (
+        <NumberFilterOptions
+          filter={filter}
+          query={query}
+          nexusClient={nexusClient}
+          field={field}
+          onFinish={onFinish}
+        />
       )}
     </Form>
   );
