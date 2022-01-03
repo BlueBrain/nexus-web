@@ -48,10 +48,14 @@ const NumberFilterOptions: React.FC<{
   });
 
   const [rangeMin, setRangeMin] = React.useState<number>(0);
-  const [rangeMax, setRangeMax] = React.useState<number>(100);
+  const [rangeMax, setRangeMax] = React.useState<number>(100000);
 
-  const [rangeStart, setRangeStart] = React.useState<number>(rangeMin);
-  const [rangeEnd, setRangeEnd] = React.useState<number>(rangeMax);
+  const [rangeStart, setRangeStart] = React.useState<number>(
+    fieldFilter?.filters[0] ? parseInt(fieldFilter?.filters[0]) : rangeMin
+  );
+  const [rangeEnd, setRangeEnd] = React.useState<number>(
+    fieldFilter?.filters[1] ? parseInt(fieldFilter?.filters[1]) : rangeMax
+  );
 
   const [missingCount, setMissingCount] = React.useState<number>();
 
@@ -71,6 +75,8 @@ const NumberFilterOptions: React.FC<{
   >([]);
 
   React.useEffect(() => {
+    if (fieldFilter?.filters[0]) return;
+
     const allSuggestions = constructQuery(query)
       .aggregation('terms', filterKeyWord, 'suggestions', { size: 1000 })
       .aggregation('missing', filterKeyWord, '(missing)')
@@ -90,15 +96,10 @@ const NumberFilterOptions: React.FC<{
         }
       );
       aggs.sort((a: any, b: any) => a.value - b.value);
-
       setAggregations(aggs);
       setMissingCount(all.aggregations['(missing)'].doc_count);
       setRangeMin(aggs[0].value);
-      setRangeStart(aggs[0].value);
       setRangeMax(aggs[aggs.length - 1].value);
-      setRangeEnd(aggs[aggs.length - 1].value);
-
-      console.log(aggs);
     });
   }, [field]);
 
@@ -145,6 +146,7 @@ const NumberFilterOptions: React.FC<{
               <InputNumber
                 min={rangeMin}
                 max={rangeMax}
+                style={{ margin: '0 0 0 16px' }}
                 value={rangeEnd}
                 onChange={value => {
                   setRangeStart(value);

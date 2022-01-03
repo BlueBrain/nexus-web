@@ -40,7 +40,8 @@ const DateFilterOptions: React.FC<{
     fieldFilter?.filters[1] ? fieldFilter?.filters[1] : ''
   );
 
-  const [isToday, setIsToday] = React.useState<boolean>(false);
+	const [isToday, setIsToday] = React.useState<boolean>(false);
+
   const [form] = Form.useForm();
 
   React.useEffect(() => {
