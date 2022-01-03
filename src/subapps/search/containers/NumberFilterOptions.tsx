@@ -47,8 +47,6 @@ const NumberFilterOptions: React.FC<{
     return f.filterTerm === field.name;
   });
 
-  console.log(field);
-
   const [rangeMin, setRangeMin] = React.useState<number>(0);
   const [rangeMax, setRangeMax] = React.useState<number>(100);
 
@@ -57,7 +55,7 @@ const NumberFilterOptions: React.FC<{
 
   const [missingCount, setMissingCount] = React.useState<number>();
 
-  const onSliderChange = (value: Array<number>) => {
+  const onSliderChange = (value: number[]) => {
     setRangeStart(value[0]);
     setRangeEnd(value[1]);
   };
