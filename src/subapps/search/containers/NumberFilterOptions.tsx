@@ -3,6 +3,7 @@ import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
 import './FilterOptions.less';
+import './NumberFilterOptionsContainer.less';
 
 type ConfigField =
   | {
@@ -39,13 +40,13 @@ const NumberFilterOptions: React.FC<{
     fieldFilter?.filters[1] ? parseInt(fieldFilter?.filters[1]) : 10
   );
   console.log(
-    'DATE FIELD FILTER initial Values: filter field fieldFilter dateStart dateEnd'
+    'NUMBER FIELD FILTER initial Values: filter field fieldFilter dateStart dateEnd'
   );
-  console.log(filter);
-  console.log(field);
-  console.log(fieldFilter);
-  console.log(rangeStart);
-  console.log(rangeEnd);
+
+  const onSliderChange = (value: Array<number>) => {
+    setRangeStart(value[0]);
+    setRangeEnd(value[1]);
+  };
 
   const [form] = Form.useForm();
 
@@ -61,45 +62,39 @@ const NumberFilterOptions: React.FC<{
   }, [rangeStart, rangeEnd]);
 
   return (
-    <Form form={form} className="field-filter-menu">
-      <Form.Item>
-        <Row>
-          <Col span={3}>
-            <InputNumber
-              min={0}
-              max={99}
-              style={{ margin: '0 16px' }}
-              value={rangeStart}
-              onChange={() => {
-                setRangeStart(rangeStart);
-              }}
-            />
-          </Col>
-          <Col span={10}>
-            <Slider
-              range
-              step={10}
-              value={[rangeStart, rangeEnd]}
-              onChange={() => {
-                setRangeStart(rangeStart);
-                setRangeEnd(rangeEnd);
-              }}
-            />
-          </Col>
-          <Col span={3}>
-            <InputNumber
-              min={1}
-              max={100}
-              style={{ margin: '0 16px' }}
-              value={rangeEnd}
-              onChange={() => {
-                setRangeStart(rangeStart);
-              }}
-            />
-          </Col>
-        </Row>
-      </Form.Item>
-    </Form>
+    <Row>
+      <Col flex={1}>
+        <InputNumber
+          min={0}
+          max={99}
+          style={{ margin: '0 16px' }}
+          value={rangeStart}
+          onChange={value => {
+            setRangeStart(value);
+          }}
+        />
+      </Col>
+      <Col flex={10}>
+        <Slider
+          range={{ draggableTrack: true }}
+          step={1}
+          value={[rangeStart, rangeEnd]}
+          onChange={onSliderChange}
+        />
+        {/* <Slider range={{ draggableTrack: true }} defaultValue={[20, 50]} /> */}
+      </Col>
+      <Col flex={1}>
+        <InputNumber
+          min={1}
+          max={100}
+          style={{ margin: '0 16px' }}
+          value={rangeEnd}
+          onChange={value => {
+            setRangeStart(value);
+          }}
+        />
+      </Col>
+    </Row>
   );
 };
 
