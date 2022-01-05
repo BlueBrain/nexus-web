@@ -24,7 +24,13 @@ type ConfigField =
       optional: boolean;
       fields?: undefined;
     };
-
+type NumericStats = {
+  avg: number;
+  min: number;
+  max: number;
+  count: number;
+  sum: number;
+}
 const NumberFilterOptions: React.FC<{
   field: ConfigField;
   onFinish: (values: any) => void;
@@ -35,6 +41,9 @@ const NumberFilterOptions: React.FC<{
   const fieldFilter = filter.find(f => {
     return f.filterTerm === field.name;
   });
+	console.log(filter);
+	console.log(fieldFilter);
+	console.log(fieldFilter?.filters[1]);
 
   const [aggregations, setAggregations] = React.useState<
     {
@@ -44,27 +53,20 @@ const NumberFilterOptions: React.FC<{
     }[]
   >([]);
 
-  const [stats, setStats] = React.useState<{
-    avg: number;
-    min: number;
-    max: number;
-    count: number;
-    sum: number;
-  }>();
-
-  const [rangeMin, setRangeMin] = React.useState<number>(
-    fieldFilter?.filters[2] ? parseFloat(fieldFilter?.filters[2]) : 0
-  );
-
-  const [rangeMax, setRangeMax] = React.useState<number>(
-    fieldFilter?.filters[3] ? parseFloat(fieldFilter?.filters[3]) : 100000
-  );
+	const initialStatsState = {
+		avg: 50,
+    min: 1,
+    max: 100,
+    count: 10,
+    sum: 500,
+	}
+  const [stats, setStats] = React.useState<NumericStats>(initialStatsState);
 
   const [rangeStart, setRangeStart] = React.useState<number>(
-    fieldFilter?.filters[0] ? parseFloat(fieldFilter?.filters[0]) : rangeMin
+    fieldFilter?.filters[0] ? parseFloat(fieldFilter?.filters[0]) : stats.min
   );
   const [rangeEnd, setRangeEnd] = React.useState<number>(
-    fieldFilter?.filters[1] ? parseFloat(fieldFilter?.filters[1]) : rangeMax
+    fieldFilter?.filters[1] ? parseFloat(fieldFilter?.filters[1]) : stats.max
   );
 
   const [missingCount, setMissingCount] = React.useState<number>();
@@ -76,7 +78,8 @@ const NumberFilterOptions: React.FC<{
 
   const filterKeyWord = createKeyWord(field);
 
-  React.useEffect(() => {
+	React.useEffect(() => {
+		console.log('useEffect aggregations');
     const allSuggestions = constructQuery(query)
       .aggregation('terms', `${field.name}.value`, 'suggestions', {
         size: 1000,
@@ -98,33 +101,49 @@ const NumberFilterOptions: React.FC<{
       );
 
       setAggregations(aggs);
-      setStats(all.aggregations.stats);
-      setRangeMin(all.aggregations.stats.min);
-      setRangeMax(all.aggregations.stats.max);
-      setMissingCount(all.aggregations['(missing)'].doc_count);
-
+			// setStats(all.aggregations.stats);
+			console.log('STATS YOLOYOYOY');
+			console.log(all.aggregations.stats);
+			// console.log(all.aggregations.stats);
+			setMissingCount(all.aggregations['(missing)'].doc_count);
       if (!fieldFilter?.filters[0]) {
-        setRangeStart(all.aggregations.stats.min);
-        setRangeEnd(all.aggregations.stats.max);
-      }
+        console.log(fieldFilter?.filters[0])
+        console.log(fieldFilter?.filters[1])
+        // console.log(parseFloat(fieldFilter?.filters[0]));
+        // console.log(parseFloat(fieldFilter?.filters[1]));
+				setRangeStart(all.aggregations.stats.min);
+				setRangeEnd(all.aggregations.stats.max);
+			};
     });
   }, [field]);
 
   const setFilters = () => {
-    return [rangeStart, rangeEnd, rangeMin, rangeMax].map((value: number) =>
+    return [rangeStart, rangeEnd].map((value: number) =>
       value.toString()
     );
   };
 
-  React.useEffect(() => {
-    const currentRange = setFilters();
-
-    onFinish({
-      filterType: 'number',
-      filters: currentRange,
-      filterTerm: field.name,
-    });
-  }, [rangeStart, rangeEnd, rangeMin, rangeMax]);
+	React.useEffect(() => {
+		// console.log(fieldFilter?.filters[0]);
+		// console.log(fieldFilter?.filters[1]);
+		// console.log((rangeStart !== stats.min || rangeEnd !== stats.max));
+			if (
+				rangeStart !== stats.min || rangeEnd !== stats.max
+      ) {
+        console.log(rangeStart !== stats.min, rangeStart, stats.min);
+        console.log(rangeEnd !== stats.max, rangeEnd, stats.max);
+        console.log(
+          'fieldFilter.filters but WIHIN CONDITION range min max condition'
+        );
+        const currentRange = setFilters();
+        console.log('useEffect filter values');
+        onFinish({
+          filterType: 'number',
+          filters: currentRange,
+          filterTerm: field.name,
+        });
+      }
+  }, [rangeStart, rangeEnd]);
 
   return (
     <>
@@ -133,22 +152,20 @@ const NumberFilterOptions: React.FC<{
           <Col flex={1}>
             <Row>
               <InputNumber
-                min={rangeMin}
-                max={rangeMax}
+                min={stats.min}
+                max={stats.max}
                 value={rangeStart}
-                onChange={value => {
-                  setRangeStart(value);
-                }}
+                onChange={setRangeStart}
               />
             </Row>
             <Row>Minimum</Row>
           </Col>
           <Col flex={20}>
             <Slider
-              min={rangeMin}
-              max={rangeMax}
+              min={stats.min}
+              max={stats.max}
               range={{ draggableTrack: true }}
-              step={(rangeMax - rangeMin) / 100}
+              step={(stats.max - stats.min) / 100}
               value={[rangeStart, rangeEnd]}
               onChange={onSliderChange}
             />
@@ -156,13 +173,11 @@ const NumberFilterOptions: React.FC<{
           <Col flex={1}>
             <Row>
               <InputNumber
-                min={rangeMin}
-                max={rangeMax}
+                min={stats.min}
+                max={stats.max}
                 style={{ margin: '0 0 0 16px' }}
                 value={rangeEnd}
-                onChange={value => {
-                  setRangeStart(value);
-                }}
+                onChange={setRangeEnd}
               />
             </Row>
             <Row>Maximum</Row>
