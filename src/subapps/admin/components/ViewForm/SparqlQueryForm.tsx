@@ -7,8 +7,6 @@ import SparqlQueryInput from './SparqlQueryInput';
 
 import './view-form.less';
 
-const FormItem = Form.Item;
-
 const SparqlQueryForm: React.FunctionComponent<{
   query: string;
   response: SparqlViewQueryResponse | null;
