@@ -145,6 +145,7 @@ function performLogin() {
       const destination = new URL(window.location.href).searchParams.get(
         'destination'
       );
+
       const redirectUri = destination
         ? `${window.location.origin}/${destination}`
         : null;
