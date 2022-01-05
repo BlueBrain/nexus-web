@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Button } from 'antd';
+import { Button } from 'antd';
 import { SparqlViewQueryResponse } from '@bbp/nexus-sdk';
 
 import SparqlQueryResults, { NexusSparqlError } from './SparqlQueryResults';
