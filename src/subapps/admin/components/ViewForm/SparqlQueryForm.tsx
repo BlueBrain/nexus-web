@@ -28,22 +28,27 @@ const SparqlQueryForm: React.FunctionComponent<{
   onQueryChange,
   resultsComponent = SparqlQueryResults,
 }): JSX.Element => {
-  const handleFormSubmit = ({ input }: { input: string }) => {
-    input && onQueryChange(input);
-  };
-
+  const [input, setInput] = React.useState<string>(query);
   return (
     <div className="view-form">
-      <Form onFinish={handleFormSubmit} layout="vertical">
-        <FormItem name="input" initialValue={query}>
-          <SparqlQueryInput />
-        </FormItem>
-        <FormItem>
-          <Button type="primary" htmlType="submit">
-            Execute SPARQL query
-          </Button>
-        </FormItem>
-      </Form>
+      <SparqlQueryInput
+        value={query}
+        onChange={text => {
+          setInput(text);
+        }}
+      />
+      <Button
+        type="primary"
+        onClick={() => {
+          onQueryChange(input);
+        }}
+      >
+        Execute SPARQL query
+      </Button>
+      {/* <Form onFinish={handleFormSubmit} layout="vertical">
+        <FormItem name="input" initialValue={query}></FormItem>
+        <FormItem></FormItem>
+      </Form> */}
       {resultsComponent({ error, busy, response })}
     </div>
   );
