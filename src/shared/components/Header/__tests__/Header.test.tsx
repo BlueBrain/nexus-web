@@ -26,8 +26,9 @@ const shallowHeader = shallow(
     githubIssueURL=""
     forgeLink=""
     version=""
-    onClickSideBarToggle={() => {}}
     performLogin={(name: string) => {}}
+    subApps={[]}
+    authenticated={false}
   />
 );
 
@@ -40,8 +41,9 @@ const wrapper = mount(
       githubIssueURL=""
       forgeLink=""
       version=""
-      onClickSideBarToggle={() => {}}
       performLogin={(name: string) => {}}
+      subApps={[]}
+      authenticated={false}
     />
   </MemoryRouter>
 );
@@ -71,8 +73,9 @@ describe('Header component', () => {
             githubIssueURL=""
             forgeLink=""
             version=""
-            onClickSideBarToggle={() => {}}
             performLogin={(name: string) => {}}
+            subApps={[]}
+            authenticated={false}
           />
         </MemoryRouter>
       );
@@ -91,8 +94,9 @@ describe('Header component', () => {
             forgeLink=""
             version=""
             displayLogin={false}
-            onClickSideBarToggle={() => {}}
             performLogin={(name: string) => {}}
+            subApps={[]}
+            authenticated={false}
           />
         </MemoryRouter>
       );

@@ -20,9 +20,9 @@ export type SubApp = () => SubAppObject;
 
 const SubApps: Map<string, SubApp> = new Map();
 
-SubApps.set('Admin', Admin);
+SubApps.set('Search', Search);
 SubApps.set('StudioLegacy', StudioLegacy);
 SubApps.set('Workflow', Workflow);
-SubApps.set('Search', Search);
+SubApps.set('Admin', Admin);
 
 export default SubApps;

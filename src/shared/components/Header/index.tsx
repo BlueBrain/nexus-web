@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { Menu, Dropdown, Popover } from 'antd';
+import { Menu, Dropdown, Popover, Button } from 'antd';
 import {
   BookOutlined,
   GithubOutlined,
   DownOutlined,
   LoginOutlined,
+  AppstoreFilled,
 } from '@ant-design/icons';
 import { Realm } from '@bbp/nexus-sdk';
 import Copy from '../Copy';
@@ -12,6 +13,7 @@ import ConsentPreferences from '../ConsentPreferences';
 import { ConsentType } from '../../layouts/FusionMainLayout';
 
 import './Header.less';
+import { Link } from 'react-router-dom';
 
 declare var Version: string;
 
@@ -92,8 +94,9 @@ export interface HeaderProps {
   commitHash?: string;
   dataCart?: React.ReactNode;
   onClickRemoveConsent?(): void;
-  onClickSideBarToggle(): void;
   performLogin(realmName: string): void;
+  subApps: any;
+  authenticated: boolean;
 }
 
 const Header: React.FunctionComponent<HeaderProps> = ({
@@ -111,6 +114,8 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   dataCart,
   onClickRemoveConsent,
   performLogin,
+  subApps,
+  authenticated,
 }) => {
   const menu = (
     <Menu>
@@ -140,6 +145,8 @@ const Header: React.FunctionComponent<HeaderProps> = ({
       ))}
     </Menu>
   );
+
+  const [navMenuVisible, setNavMenuVisible] = React.useState(false);
 
   return (
     <header className="Header">
@@ -188,6 +195,58 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             className="ui-header-info-button"
             alt="Information"
           />
+        </Popover>
+        <Popover
+          visible={navMenuVisible}
+          onVisibleChange={visible => setNavMenuVisible(visible)}
+          content={
+            <div>
+              <div className="navigation">
+                {subApps.map((app: any) => {
+                  return app.subAppType === 'external' ? (
+                    <div key={app.key} className="app-icon">
+                      <Button>
+                        <a
+                          title=""
+                          target="_blank"
+                          href={app.url || ''}
+                          onClick={() => setNavMenuVisible(false)}
+                        >
+                          <img src={app.icon} height="20px" width="25px" />
+                          <div className="navigation-text">
+                            {app.label}
+                            {<>&#x2197;</>}
+                          </div>
+                        </a>
+                      </Button>
+                    </div>
+                  ) : app.requireLogin && !authenticated ? (
+                    <></>
+                  ) : (
+                    <div key={app.key} className="app-icon">
+                      <Button>
+                        <Link
+                          to={app.route}
+                          title=""
+                          onClick={() => setNavMenuVisible(false)}
+                        >
+                          <img src={app.icon} height="20px" width="25px" />
+                          <div className="navigation-text">{app.label}</div>
+                        </Link>
+                      </Button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          }
+          trigger="click"
+          placement="bottomRight"
+        >
+          <Button
+            icon={<AppstoreFilled style={{ color: '#fff' }} />}
+            style={{ backgroundColor: 'transparent' }}
+          ></Button>
         </Popover>
         {name ? (
           <Dropdown overlay={menu}>
