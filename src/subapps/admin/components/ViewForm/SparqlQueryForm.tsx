@@ -43,10 +43,6 @@ const SparqlQueryForm: React.FunctionComponent<{
       >
         Execute SPARQL query
       </Button>
-      {/* <Form onFinish={handleFormSubmit} layout="vertical">
-        <FormItem name="input" initialValue={query}></FormItem>
-        <FormItem></FormItem>
-      </Form> */}
       {resultsComponent({ error, busy, response })}
     </div>
   );
