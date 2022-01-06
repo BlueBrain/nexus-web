@@ -37,14 +37,16 @@ export type SearchConfigField =
     }[]
   | undefined;
 
-type actionType = {
-  type: 'add' | 'remove';
-  payload: FilterState;
-};
+type actionType =
+  | {
+      type: 'add' | 'remove';
+      payload: FilterState;
+    }
+  | { type: 'fromLayout'; payload: FilterState[] };
 
 export type FilterState = {
   filters: string[];
-  filterType: string;
+  filterType: 'anyof' | 'allof' | 'date' | 'missing';
   filterTerm: string;
 };
 
@@ -64,6 +66,8 @@ function filterReducer(
       return state.filter(
         fieldFilter => fieldFilter.filterTerm !== action.payload.filterTerm
       );
+    case 'fromLayout':
+      return action.payload;
     default:
       return state;
   }
@@ -103,6 +107,11 @@ function fieldVisibilityReducer(
         )]: action.payload,
       });
       return { isPersistent: true, fields: updatedFields };
+    case 'fromLayout':
+      return {
+        isPersistent: true,
+        fields: action.payload,
+      };
   }
 }
 
@@ -134,11 +143,16 @@ type fieldVisibilityUpdateActionType = {
 type fieldVisibilitySetAllVisibleActionType = {
   type: 'setAllVisible';
 };
+type fieldVisibilityFromLayout = {
+  type: 'fromLayout';
+  payload: FieldVisibility[];
+};
 export type fieldVisibilityActionType =
   | fieldVisibilityInitializeActionType
   | fieldVisibilityReOrderType
   | fieldVisibilityUpdateActionType
-  | fieldVisibilitySetAllVisibleActionType;
+  | fieldVisibilitySetAllVisibleActionType
+  | fieldVisibilityFromLayout;
 
 export type ConfigField =
   | {
@@ -158,8 +172,24 @@ export type ConfigField =
       fields?: undefined;
     };
 
+export type SearchLayout = {
+  name: string;
+  visibleFields: string[];
+  filters: {
+    field: string;
+    operator:
+      | 'and' // maps to allof
+      | 'or' // maps to anyof
+      | 'none' // maps to noneof
+      | 'missing'; // map to missing.  Perhaps we should use same operator names?
+    values: string[];
+  }[];
+  sort: { field: string; order: 'asc' | 'desc' }[];
+};
+
 type SearchConfig = {
   fields: ConfigField[];
+  layouts: SearchLayout[];
 };
 
 function renderColumnTitle(
@@ -316,6 +346,15 @@ function useGlobalSearchData(
     filterReducer,
     defaultFilter
   );
+  const [selectedSearchLayout, setSelectedSearchLayout] = React.useState<
+    string
+  >();
+
+  React.useEffect(() => {
+    if (!(config && config.layouts && config.layouts.length > 0)) return;
+    // default to first search layout
+    setSelectedSearchLayout(config.layouts[0].name);
+  }, [config]);
 
   const [sortState, setSortState] = React.useState<ESSortField[]>([]);
 
@@ -551,9 +590,94 @@ function useGlobalSearchData(
   };
 
   const resetAll = () => {
+    if (config?.layouts && config.layouts.length > 0) {
+      // default to first layout
+      setSelectedSearchLayout(config.layouts[0].name);
+      return;
+    }
     clearAllFilters();
     clearSort();
   };
+
+  /**
+   *
+   * @param operator
+   * @returns Search Config Layout operator name
+   */
+  const mapFilterOperator = (operator: 'and' | 'or' | 'none' | 'missing') => {
+    switch (operator) {
+      case 'and':
+        return 'allof';
+      case 'or':
+        return 'anyof';
+      // others
+      default:
+        return 'and';
+    }
+  };
+
+  const handleChangeSearchLayout = (layoutName: string) => {
+    setSelectedSearchLayout(layoutName);
+  };
+
+  const applyLayout = (layout: SearchLayout, columns: SearchConfigField) => {
+    if (!columns) return;
+
+    // visible fields and order
+    dispatchFieldVisibility({
+      type: 'fromLayout',
+      payload: columns.map(col => ({
+        name: col.label,
+        key: col.key,
+        visible: layout.visibleFields.includes(col.key),
+      })),
+    });
+
+    // sorting
+    if (layout.sort) {
+      const sorting = layout.sort
+        .map(sort => {
+          const field = config?.fields.find(f => f.name === sort.field);
+          if (!field) return;
+          return {
+            fieldName: field.name,
+            term: createKeyWord(field),
+            label: field.label,
+            format: field.format,
+            direction: sort.order,
+          };
+        })
+        .filter(sort => sort !== undefined);
+      sorting && setSortState(sorting as ESSortField[]);
+    } else {
+      setSortState([]);
+    }
+
+    // filtering
+    if (layout.filters) {
+      const filters = layout.filters
+        .map(filter => {
+          const field = config?.fields.find(f => f.name === filter.field);
+          if (!field) return;
+          return {
+            filters: filter.values,
+            filterType: mapFilterOperator(filter.operator),
+            filterTerm: createKeyWord(field),
+          };
+        })
+        .filter(filter => filter !== undefined);
+      dispatchFilter({ type: 'fromLayout', payload: filters as FilterState[] });
+    } else {
+      dispatchFilter({ type: 'fromLayout', payload: [] });
+    }
+  };
+
+  React.useEffect(() => {
+    const layout = config?.layouts.find(l => l.name === selectedSearchLayout);
+    if (!layout) return;
+
+    applyLayout(layout, columns);
+  }, [selectedSearchLayout]);
 
   return {
     isLoading,
@@ -569,6 +693,9 @@ function useGlobalSearchData(
     changeSortOption,
     resetAll,
     dispatchFieldVisibility,
+    config,
+    handleChangeSearchLayout,
+    selectedSearchLayout,
   };
 }
 
