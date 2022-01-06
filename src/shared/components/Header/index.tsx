@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { Menu, Dropdown, Popover, Button } from 'antd';
+import { Menu, Dropdown, Popover } from 'antd';
 import {
   BookOutlined,
   GithubOutlined,
   DownOutlined,
   LoginOutlined,
-  AppstoreFilled,
 } from '@ant-design/icons';
 import { Realm } from '@bbp/nexus-sdk';
 import Copy from '../Copy';
@@ -13,7 +12,7 @@ import ConsentPreferences from '../ConsentPreferences';
 import { ConsentType } from '../../layouts/FusionMainLayout';
 
 import './Header.less';
-import { Link } from 'react-router-dom';
+import Navigation from './Navigation';
 
 declare var Version: string;
 
@@ -146,8 +145,6 @@ const Header: React.FunctionComponent<HeaderProps> = ({
     </Menu>
   );
 
-  const [navMenuVisible, setNavMenuVisible] = React.useState(false);
-
   return (
     <header className="Header">
       <div className="selectors">{children}</div>
@@ -196,58 +193,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             alt="Information"
           />
         </Popover>
-        <Popover
-          visible={navMenuVisible}
-          onVisibleChange={visible => setNavMenuVisible(visible)}
-          content={
-            <div>
-              <div className="navigation">
-                {subApps.map((app: any) => {
-                  return app.subAppType === 'external' ? (
-                    <div key={app.key} className="app-icon">
-                      <Button>
-                        <a
-                          title=""
-                          target="_blank"
-                          href={app.url || ''}
-                          onClick={() => setNavMenuVisible(false)}
-                        >
-                          <img src={app.icon} height="20px" width="25px" />
-                          <div className="navigation-text">
-                            {app.label}
-                            {<>&#x2197;</>}
-                          </div>
-                        </a>
-                      </Button>
-                    </div>
-                  ) : app.requireLogin && !authenticated ? (
-                    <></>
-                  ) : (
-                    <div key={app.key} className="app-icon">
-                      <Button>
-                        <Link
-                          to={app.route}
-                          title=""
-                          onClick={() => setNavMenuVisible(false)}
-                        >
-                          <img src={app.icon} height="20px" width="25px" />
-                          <div className="navigation-text">{app.label}</div>
-                        </Link>
-                      </Button>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          }
-          trigger="click"
-          placement="bottomRight"
-        >
-          <Button
-            icon={<AppstoreFilled style={{ color: '#fff' }} />}
-            style={{ backgroundColor: 'transparent' }}
-          ></Button>
-        </Popover>
+        <Navigation authenticated={authenticated} subApps={subApps} />
         {name ? (
           <Dropdown overlay={menu}>
             <a className="menu-dropdown ant-dropdown-link">
