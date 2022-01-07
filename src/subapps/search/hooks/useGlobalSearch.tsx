@@ -203,11 +203,16 @@ function renderColumnTitle(
       <div className="column-header">
         <span>{`${field.label}`}</span>
         <Tooltip
+          overlayStyle={{ width: '350px', maxWidth: '350px' }}
           autoAdjustOverflow
           trigger="click"
           placement="bottom"
           title={filterMenu(field)}
-          overlayInnerStyle={{ width: '310px', marginLeft: '-220px' }}
+          getTooltipContainer={node =>
+            document.getElementsByClassName(
+              'tooltipContainer'
+            )[0] as HTMLElement
+          }
           destroyTooltipOnHide={true}
         >
           <div className="column-header__options">
@@ -421,7 +426,7 @@ function useGlobalSearchData(
 
   const fieldMenu = (field: ConfigField) => {
     return (
-      <>
+      <div>
         <Button
           onClick={() => {
             dispatchFieldVisibility({
@@ -473,7 +478,7 @@ function useGlobalSearchData(
             )}
           </>
         )}
-      </>
+      </div>
     );
   };
 
