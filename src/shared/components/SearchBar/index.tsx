@@ -6,6 +6,7 @@ import { focusOnSlash } from '../../utils/keyboardShortcuts';
 
 import './SearchBar.less';
 import {
+  LastVisited,
   ProjectSearchHit,
   StudioSearchHit,
 } from '../../containers/SearchBarContainer';
@@ -17,6 +18,7 @@ const SearchBar: React.FC<{
   projectList: ProjectSearchHit[];
   studioList: StudioSearchHit[];
   query?: string;
+  lastVisited?: LastVisited;
   onSearch: (value: string) => void;
   onSubmit: (value: string, option: any) => void;
   onFocus: () => void;
@@ -25,6 +27,7 @@ const SearchBar: React.FC<{
   inputOnPressEnter: () => void;
 }> = ({
   query,
+  lastVisited,
   studioList,
   projectList,
   onSearch,
@@ -56,12 +59,7 @@ const SearchBar: React.FC<{
     }
   };
 
-  const handleChange = (currentValue: string) => {
-    setValue(currentValue);
-  };
-
   const handleSelect = (currentValue: string, option: any) => {
-    setValue(currentValue);
     onSubmit(currentValue, option);
     inputRef.current?.blur();
   };
@@ -74,9 +72,6 @@ const SearchBar: React.FC<{
     if (e.key !== 'Enter') {
       return;
     }
-    if (!value) {
-      return onClear();
-    }
   };
 
   const optionsList = React.useMemo(() => {
@@ -86,15 +81,28 @@ const SearchBar: React.FC<{
       path: string;
       type: 'search' | 'project' | 'studio';
       label: JSX.Element;
-    }[] = [
-      {
+    }[] = [];
+    if (
+      (!query || query === '') &&
+      lastVisited &&
+      lastVisited.type === 'search'
+    ) {
+      options.push({
+        value: lastVisited.value,
+        key: 'search',
+        path: lastVisited.path,
+        type: 'search',
+        label: globalSearchOption(lastVisited.value),
+      });
+    } else {
+      options.push({
         value,
         key: 'search',
         path: `/search/?query=${value}`,
         type: 'search',
         label: globalSearchOption(value),
-      },
-    ];
+      });
+    }
 
     if (projectList.length) {
       const projectOptions = projectList.map((projectHit, ix) => {
@@ -162,7 +170,6 @@ const SearchBar: React.FC<{
       onFocus={handleSetFocused(true)}
       onBlur={handleSetFocused(false)}
       options={optionsList}
-      onChange={handleChange}
       onSelect={handleSelect}
       onSearch={handleSearch}
       onKeyDown={handleKeyDown}
@@ -173,6 +180,13 @@ const SearchBar: React.FC<{
     >
       <Input
         allowClear
+        onKeyDown={handleKeyDown}
+        onChange={e => {
+          if (e.type === 'click') {
+            // clicked clear button
+            onClear();
+          }
+        }}
         onPressEnter={inputOnPressEnter}
         ref={inputRef}
         className={`search-bar__input ${focused ? 'focused' : ''}`}
