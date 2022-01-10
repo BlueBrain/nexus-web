@@ -41,9 +41,6 @@ const NumberFilterOptions: React.FC<{
   const fieldFilter = filter.find(f => {
     return f.filterTerm === field.name;
   });
-  console.log(filter);
-  console.log(fieldFilter);
-  console.log(fieldFilter?.filters[1]);
 
   const [aggregations, setAggregations] = React.useState<
     {
@@ -79,7 +76,6 @@ const NumberFilterOptions: React.FC<{
   const filterKeyWord = createKeyWord(field);
 
   React.useEffect(() => {
-    console.log('useEffect aggregations');
     const allSuggestions = constructQuery(query)
       .aggregation('terms', `${field.name}.value`, 'suggestions', {
         size: 1000,
@@ -101,19 +97,12 @@ const NumberFilterOptions: React.FC<{
       );
 
       setAggregations(aggs);
-      // setStats(all.aggregations.stats);
-      console.log('STATS YOLOYOYOY');
-      console.log(all.aggregations.stats);
-      // console.log(all.aggregations.stats);
       setMissingCount(all.aggregations['(missing)'].doc_count);
       if (!fieldFilter?.filters[0]) {
-        console.log(fieldFilter?.filters[0]);
-        console.log(fieldFilter?.filters[1]);
-        // console.log(parseFloat(fieldFilter?.filters[0]));
-        // console.log(parseFloat(fieldFilter?.filters[1]));
         setRangeStart(all.aggregations.stats.min);
         setRangeEnd(all.aggregations.stats.max);
       }
+      setStats(all.aggregations.stats);
     });
   }, [field]);
 
@@ -121,18 +110,17 @@ const NumberFilterOptions: React.FC<{
     return [rangeStart, rangeEnd].map((value: number) => value.toString());
   };
 
+  const onShowMissingChange = () => {
+    onFinish({
+      filterType: 'missing',
+      filters: [],
+      filterTerm: filterKeyWord,
+    });
+  };
+
   React.useEffect(() => {
-    // console.log(fieldFilter?.filters[0]);
-    // console.log(fieldFilter?.filters[1]);
-    // console.log((rangeStart !== stats.min || rangeEnd !== stats.max));
     if (rangeStart !== stats.min || rangeEnd !== stats.max) {
-      console.log(rangeStart !== stats.min, rangeStart, stats.min);
-      console.log(rangeEnd !== stats.max, rangeEnd, stats.max);
-      console.log(
-        'fieldFilter.filters but WIHIN CONDITION range min max condition'
-      );
       const currentRange = setFilters();
-      console.log('useEffect filter values');
       onFinish({
         filterType: 'number',
         filters: currentRange,
@@ -182,7 +170,10 @@ const NumberFilterOptions: React.FC<{
       </Form.Item>
       {missingCount && (
         <Form.Item>
-          <Checkbox disabled={missingCount === 0}>
+          <Checkbox
+            disabled={missingCount === 0}
+            onChange={onShowMissingChange}
+          >
             Show Missing Values Only ({missingCount})
           </Checkbox>
         </Form.Item>
