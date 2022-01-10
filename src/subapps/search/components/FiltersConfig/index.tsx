@@ -10,7 +10,6 @@ const FiltersConfig: React.FC<{
   filters: FilterState[];
   columns: SearchConfigField;
 }> = ({ onRemoveFilter, filters, columns }) => {
-  console.log(filters);
   const [isFiltersConfigVisible, setIsFiltersConfigVisible] = React.useState(
     false
   );
