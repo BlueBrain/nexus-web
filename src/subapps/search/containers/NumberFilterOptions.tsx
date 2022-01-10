@@ -24,13 +24,7 @@ type ConfigField =
       optional: boolean;
       fields?: undefined;
     };
-type NumericStats = {
-  avg: number;
-  min: number;
-  max: number;
-  count: number;
-  sum: number;
-};
+
 const NumberFilterOptions: React.FC<{
   field: ConfigField;
   onFinish: (values: any) => void;
@@ -42,28 +36,23 @@ const NumberFilterOptions: React.FC<{
     return f.filterTerm === field.name;
   });
 
-  const [aggregations, setAggregations] = React.useState<
-    {
-      value: number;
-      unit: string;
-      stringValue: string;
-    }[]
-  >([]);
+  const firstRender = React.useRef<boolean>(true);
 
-  const initialStatsState = {
-    avg: 50,
-    min: 1,
-    max: 100,
-    count: 10,
-    sum: 500,
-  };
-  const [stats, setStats] = React.useState<NumericStats>(initialStatsState);
+  const [missingValues, setMissingValues] = React.useState<boolean>(false);
 
-  const [rangeStart, setRangeStart] = React.useState<number>(
-    fieldFilter?.filters[0] ? parseFloat(fieldFilter?.filters[0]) : stats.min
+  const [rangeMin, setRangeMin] = React.useState<number>(
+    fieldFilter?.filters[2] ? parseFloat(fieldFilter?.filters[2]) : 0
   );
-  const [rangeEnd, setRangeEnd] = React.useState<number>(
-    fieldFilter?.filters[1] ? parseFloat(fieldFilter?.filters[1]) : stats.max
+
+  const [rangeMax, setRangeMax] = React.useState<number>(
+    fieldFilter?.filters[3] ? parseFloat(fieldFilter?.filters[3]) : 100000
+  );
+
+  const [rangeStart, setRangeStart] = React.useState<number | undefined>(
+    fieldFilter?.filters[0] ? parseFloat(fieldFilter?.filters[0]) : undefined
+  );
+  const [rangeEnd, setRangeEnd] = React.useState<number | undefined>(
+    fieldFilter?.filters[1] ? parseFloat(fieldFilter?.filters[1]) : undefined
   );
 
   const [missingCount, setMissingCount] = React.useState<number>();
@@ -87,47 +76,40 @@ const NumberFilterOptions: React.FC<{
     const allSuggestionsPromise = nexusClient.Search.query(allSuggestions);
 
     Promise.all([allSuggestionsPromise]).then(([all]) => {
-      const aggs = all.aggregations['suggestions'].buckets.map(
-        (bucket: any) => {
-          return {
-            value: bucket.key,
-            stringValue: bucket.key,
-          };
-        }
-      );
+      all.aggregations['suggestions'].buckets.map((bucket: any) => {
+        return {
+          value: bucket.key,
+          stringValue: bucket.key,
+        };
+      });
 
-      setAggregations(aggs);
+      setRangeMin(all.aggregations.stats.min);
+      setRangeMax(all.aggregations.stats.max);
       setMissingCount(all.aggregations['(missing)'].doc_count);
-      if (!fieldFilter?.filters[0]) {
-        setRangeStart(all.aggregations.stats.min);
-        setRangeEnd(all.aggregations.stats.max);
-      }
-      setStats(all.aggregations.stats);
     });
-  }, [field]);
-
-  const setFilters = () => {
-    return [rangeStart, rangeEnd].map((value: number) => value.toString());
-  };
-
-  const onShowMissingChange = () => {
-    onFinish({
-      filterType: 'missing',
-      filters: [],
-      filterTerm: filterKeyWord,
-    });
-  };
+  }, []);
 
   React.useEffect(() => {
-    if (rangeStart !== stats.min || rangeEnd !== stats.max) {
-      const currentRange = setFilters();
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+
+    if (missingValues) {
       onFinish({
         filterType: 'number',
-        filters: currentRange,
+        filters: ['isMissing'],
+        filterTerm: field.name,
+      });
+    } else {
+      const filters = [rangeStart || rangeMin, rangeEnd || rangeMax];
+      onFinish({
+        filters,
+        filterType: 'number',
         filterTerm: field.name,
       });
     }
-  }, [rangeStart, rangeEnd]);
+  }, [rangeStart, rangeEnd, missingValues]);
 
   return (
     <>
@@ -136,32 +118,36 @@ const NumberFilterOptions: React.FC<{
           <Col flex={1}>
             <Row>
               <InputNumber
-                min={stats.min}
-                max={stats.max}
-                value={rangeStart}
-                onChange={setRangeStart}
+                min={rangeMin}
+                max={rangeMax}
+                value={rangeStart || rangeMin}
+                onChange={value => {
+                  setRangeStart(value);
+                }}
               />
             </Row>
             <Row>Minimum</Row>
           </Col>
           <Col flex={20}>
             <Slider
-              min={stats.min}
-              max={stats.max}
+              min={rangeMin}
+              max={rangeMax}
               range={{ draggableTrack: true }}
-              step={(stats.max - stats.min) / 100}
-              value={[rangeStart, rangeEnd]}
+              step={(rangeMax - rangeMin) / 100}
+              value={[rangeStart || rangeMin, rangeEnd || rangeMax]}
               onChange={onSliderChange}
             />
           </Col>
           <Col flex={1}>
             <Row>
               <InputNumber
-                min={stats.min}
-                max={stats.max}
+                min={rangeMin}
+                max={rangeMax}
                 style={{ margin: '0 0 0 16px' }}
-                value={rangeEnd}
-                onChange={setRangeEnd}
+                value={rangeEnd || rangeMax}
+                onChange={value => {
+                  setRangeStart(value);
+                }}
               />
             </Row>
             <Row>Maximum</Row>
@@ -172,7 +158,9 @@ const NumberFilterOptions: React.FC<{
         <Form.Item>
           <Checkbox
             disabled={missingCount === 0}
-            onChange={onShowMissingChange}
+            onChange={e => {
+              setMissingValues(e.target.checked);
+            }}
           >
             Show Missing Values Only ({missingCount})
           </Checkbox>

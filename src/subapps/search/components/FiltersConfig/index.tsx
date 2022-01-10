@@ -54,6 +54,14 @@ const FiltersConfig: React.FC<{
   const filterTermFriendlyName = (filterTerm: string) =>
     columns?.find(el => el.key === filterTerm.split('.')[0])?.label;
 
+  const filterText = (fieldFilter: string) => {
+    try {
+      return fieldFilter ? labelOf(fieldFilter) : null;
+    } catch {
+      return fieldFilter;
+    }
+  };
+
   return (
     <>
       <Button
@@ -100,7 +108,7 @@ const FiltersConfig: React.FC<{
                   .filter(f => f !== '')
                   .map(fieldFilter => (
                     <Tag key={`${ix}${fieldFilter}`} className="filter__value">
-                      {fieldFilter ? labelOf(fieldFilter) : null}
+                      {filterText(fieldFilter)}
                     </Tag>
                   ))}
               </div>

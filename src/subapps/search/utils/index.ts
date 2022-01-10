@@ -60,6 +60,11 @@ export const constructNumberFilter = (
   filterType: string,
   filterTerm: string
 ) => {
+  console.log(filters);
+  if (filters[0] === 'isMissing') {
+    body.orFilter('bool', missingFilterValueAdder(filterTerm));
+    return body;
+  }
   const filterObject: any = {};
   if (filters[0] !== undefined && filters[0] !== null && filters[0] !== '') {
     filterObject['gte'] = parseFloat(filters[0]);

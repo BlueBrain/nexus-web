@@ -30,6 +30,7 @@ const DateFilterOptions: React.FC<{
   filter: FilterState[];
   query: string;
 }> = ({ filter, field, onFinish }) => {
+  const firstRender = React.useRef<boolean>(true);
   const fieldFilter = filter.find(f => {
     return f.filterTerm === field.name;
   });
@@ -45,6 +46,10 @@ const DateFilterOptions: React.FC<{
   const [form] = Form.useForm();
 
   React.useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
     const currentFilters = [];
     if (isToday) {
       const now = new Date(Date.now()).toISOString().split('T')[0];
