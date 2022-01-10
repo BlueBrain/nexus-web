@@ -158,7 +158,13 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   };
 
   const login = async (realmName: string) => {
-    history.push(`${location.pathname}/${getDestinationParam()}`);
+    try {
+      const destinationParams = getDestinationParam();
+      history.push(`${location.pathname}/${destinationParams}`);
+    } catch (ex) {
+      // do nothing.
+    }
+
     setPreferredRealm(realmName);
     performLogin();
   };
