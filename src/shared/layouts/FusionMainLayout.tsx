@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { NexusClient, Identity, Realm } from '@bbp/nexus-sdk';
 import { useNexus } from '@bbp/react-nexus';
 import { UserManager } from 'oidc-client';
@@ -14,7 +14,7 @@ import * as configActions from '../store/actions/config';
 import * as authActions from '../store/actions/auth';
 import { RootState } from '../store/reducers';
 import getUserManager from '../../client/userManager';
-import { getLogoutUrl } from '../utils';
+import { getLogoutUrl, getDestinationParam } from '../utils';
 import { url as githubIssueURL } from '../../../package.json';
 import useLocalStorage from '../hooks/useLocalStorage';
 import SearchBarContainer from '../containers/SearchBarContainer';
@@ -95,6 +95,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
 }) => {
   const subApps = [homeApp, ...propSubApps];
   const location = useLocation();
+  const history = useHistory();
   const dispatch = useDispatch();
   const notification = useNotification();
   //   TODO: collapsed version https://github.com/BlueBrain/nexus/issues/1322
@@ -157,6 +158,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   };
 
   const login = async (realmName: string) => {
+    history.push(`${location.pathname}/${getDestinationParam()}`);
     setPreferredRealm(realmName);
     performLogin();
   };

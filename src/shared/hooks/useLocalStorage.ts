@@ -9,19 +9,16 @@ export default function useLocalStorage<T = any>(
     !!val ? JSON.parse(val) : defaultValue
   );
 
-  const setLocalStorage = (value: T | undefined) => {
+  React.useEffect(() => {
     if (value === undefined) {
       localStorage.removeItem(key);
-      setValue(value);
       return;
     }
-
     localStorage.setItem(key, JSON.stringify(value));
-    setValue(value);
-  };
+  }, [value]);
 
-  return [value, setLocalStorage] as [
+  return [value, setValue] as [
     T | undefined,
-    (value: T | undefined) => void
+    React.Dispatch<React.SetStateAction<T | undefined>>
   ];
 }

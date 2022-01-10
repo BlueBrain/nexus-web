@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Controlled as CodeMirror } from 'react-codemirror2';
+import { UnControlled as CodeMirror } from 'react-codemirror2';
 
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/sparql/sparql';
@@ -27,7 +27,7 @@ const SparqlQueryInput: React.FunctionComponent<{
             lineWrapping: false,
             viewportMargin: Infinity,
           }}
-          onBeforeChange={handleChange}
+          onChange={handleChange}
         />
       </div>
     </div>

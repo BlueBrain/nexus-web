@@ -103,6 +103,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEdi
         <TextArea className="ui-dashboard-description-input" />
       </Form.Item>
       <Form.Item
+        noStyle={true}
         name="dataQuery"
         label={
           linkToSparqlQueryEditor &&
