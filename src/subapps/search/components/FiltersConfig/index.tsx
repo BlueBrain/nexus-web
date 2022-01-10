@@ -35,7 +35,7 @@ const FiltersConfig: React.FC<{
    * @returns {string}
    */
   const filterTypeFriendlyName = (filterType: string, filters: string[]) => {
-    if (filterType === 'date') {
+    if (filterType === 'date' || filterType === 'number') {
       if (filters.length > 1 && filters[0] !== '' && filters[1] !== '') {
         return 'between';
       }
@@ -53,6 +53,14 @@ const FiltersConfig: React.FC<{
 
   const filterTermFriendlyName = (filterTerm: string) =>
     columns?.find(el => el.key === filterTerm.split('.')[0])?.label;
+
+  const filterText = (fieldFilter: string) => {
+    try {
+      return fieldFilter ? labelOf(fieldFilter) : null;
+    } catch {
+      return fieldFilter;
+    }
+  };
 
   return (
     <>
@@ -100,7 +108,7 @@ const FiltersConfig: React.FC<{
                   .filter(f => f !== '')
                   .map(fieldFilter => (
                     <Tag key={`${ix}${fieldFilter}`} className="filter__value">
-                      {fieldFilter ? labelOf(fieldFilter) : null}
+                      {filterText(fieldFilter)}
                     </Tag>
                   ))}
               </div>
