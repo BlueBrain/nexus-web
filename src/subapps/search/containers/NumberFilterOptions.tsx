@@ -30,7 +30,7 @@ type NumericStats = {
   max: number;
   count: number;
   sum: number;
-}
+};
 const NumberFilterOptions: React.FC<{
   field: ConfigField;
   onFinish: (values: any) => void;
@@ -41,9 +41,9 @@ const NumberFilterOptions: React.FC<{
   const fieldFilter = filter.find(f => {
     return f.filterTerm === field.name;
   });
-	console.log(filter);
-	console.log(fieldFilter);
-	console.log(fieldFilter?.filters[1]);
+  console.log(filter);
+  console.log(fieldFilter);
+  console.log(fieldFilter?.filters[1]);
 
   const [aggregations, setAggregations] = React.useState<
     {
@@ -53,13 +53,13 @@ const NumberFilterOptions: React.FC<{
     }[]
   >([]);
 
-	const initialStatsState = {
-		avg: 50,
+  const initialStatsState = {
+    avg: 50,
     min: 1,
     max: 100,
     count: 10,
     sum: 500,
-	}
+  };
   const [stats, setStats] = React.useState<NumericStats>(initialStatsState);
 
   const [rangeStart, setRangeStart] = React.useState<number>(
@@ -78,8 +78,8 @@ const NumberFilterOptions: React.FC<{
 
   const filterKeyWord = createKeyWord(field);
 
-	React.useEffect(() => {
-		console.log('useEffect aggregations');
+  React.useEffect(() => {
+    console.log('useEffect aggregations');
     const allSuggestions = constructQuery(query)
       .aggregation('terms', `${field.name}.value`, 'suggestions', {
         size: 1000,
@@ -101,48 +101,44 @@ const NumberFilterOptions: React.FC<{
       );
 
       setAggregations(aggs);
-			// setStats(all.aggregations.stats);
-			console.log('STATS YOLOYOYOY');
-			console.log(all.aggregations.stats);
-			// console.log(all.aggregations.stats);
-			setMissingCount(all.aggregations['(missing)'].doc_count);
+      // setStats(all.aggregations.stats);
+      console.log('STATS YOLOYOYOY');
+      console.log(all.aggregations.stats);
+      // console.log(all.aggregations.stats);
+      setMissingCount(all.aggregations['(missing)'].doc_count);
       if (!fieldFilter?.filters[0]) {
-        console.log(fieldFilter?.filters[0])
-        console.log(fieldFilter?.filters[1])
+        console.log(fieldFilter?.filters[0]);
+        console.log(fieldFilter?.filters[1]);
         // console.log(parseFloat(fieldFilter?.filters[0]));
         // console.log(parseFloat(fieldFilter?.filters[1]));
-				setRangeStart(all.aggregations.stats.min);
-				setRangeEnd(all.aggregations.stats.max);
-			};
+        setRangeStart(all.aggregations.stats.min);
+        setRangeEnd(all.aggregations.stats.max);
+      }
     });
   }, [field]);
 
   const setFilters = () => {
-    return [rangeStart, rangeEnd].map((value: number) =>
-      value.toString()
-    );
+    return [rangeStart, rangeEnd].map((value: number) => value.toString());
   };
 
-	React.useEffect(() => {
-		// console.log(fieldFilter?.filters[0]);
-		// console.log(fieldFilter?.filters[1]);
-		// console.log((rangeStart !== stats.min || rangeEnd !== stats.max));
-			if (
-				rangeStart !== stats.min || rangeEnd !== stats.max
-      ) {
-        console.log(rangeStart !== stats.min, rangeStart, stats.min);
-        console.log(rangeEnd !== stats.max, rangeEnd, stats.max);
-        console.log(
-          'fieldFilter.filters but WIHIN CONDITION range min max condition'
-        );
-        const currentRange = setFilters();
-        console.log('useEffect filter values');
-        onFinish({
-          filterType: 'number',
-          filters: currentRange,
-          filterTerm: field.name,
-        });
-      }
+  React.useEffect(() => {
+    // console.log(fieldFilter?.filters[0]);
+    // console.log(fieldFilter?.filters[1]);
+    // console.log((rangeStart !== stats.min || rangeEnd !== stats.max));
+    if (rangeStart !== stats.min || rangeEnd !== stats.max) {
+      console.log(rangeStart !== stats.min, rangeStart, stats.min);
+      console.log(rangeEnd !== stats.max, rangeEnd, stats.max);
+      console.log(
+        'fieldFilter.filters but WIHIN CONDITION range min max condition'
+      );
+      const currentRange = setFilters();
+      console.log('useEffect filter values');
+      onFinish({
+        filterType: 'number',
+        filters: currentRange,
+        filterTerm: field.name,
+      });
+    }
   }, [rangeStart, rangeEnd]);
 
   return (
