@@ -17,8 +17,8 @@ export interface ConfigState {
     searchConfigProject: string;
   };
   layoutSettings: {
+    docsLink: string;
     logoImg: string;
-    logoLink: string;
     forgeLink: string;
   };
   dataModelsLocation: string;
@@ -33,8 +33,8 @@ const initialState: ConfigState = {
   subAppsManifestPath: '/public/sub-apps',
   gtmCode: '',
   layoutSettings: {
+    docsLink: '',
     logoImg: '',
-    logoLink: '',
     forgeLink: '',
   },
   searchSettings: {

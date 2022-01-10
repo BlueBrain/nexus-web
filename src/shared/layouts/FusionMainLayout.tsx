@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation, useHistory, Link } from 'react-router-dom';
 import { NexusClient, Identity, Realm } from '@bbp/nexus-sdk';
 import { useNexus } from '@bbp/react-nexus';
 import { UserManager } from 'oidc-client';
@@ -19,12 +19,10 @@ import { url as githubIssueURL } from '../../../package.json';
 import useLocalStorage from '../hooks/useLocalStorage';
 import SearchBarContainer from '../containers/SearchBarContainer';
 import DataCartContainer from '../containers/DataCartContainer';
-import SideMenu from './SideMenu';
-
 import './FusionMainLayout.less';
 import useNotification from '../hooks/useNotification';
 
-const { Sider, Content } = Layout;
+const { Content } = Layout;
 
 declare var COMMIT_HASH: string;
 
@@ -44,7 +42,7 @@ export interface FusionMainLayoutProps {
   setPreferredRealm(name: string): void;
   performLogin(): void;
   layoutSettings: {
-    logoLink: string;
+    docsLink: string;
     logoImg: string;
     forgeLink: string;
   };
@@ -66,18 +64,6 @@ export type SubAppProps = {
   description?: string;
 };
 
-const homeIcon = require('../images/homeIcon.svg');
-
-const homeApp = {
-  label: 'Home',
-  key: 'home',
-  route: '/',
-  icon: homeIcon,
-  subAppType: 'internal',
-  url: undefined,
-  requireLogin: false,
-};
-
 const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   authenticated,
   realms,
@@ -93,7 +79,21 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   performLogin,
   layoutSettings,
 }) => {
-  const subApps = [homeApp, ...propSubApps];
+  const docsIcon = require('../images/logo.svg');
+  const docsApp = {
+    label: 'Docs',
+    key: 'docs',
+    route: '/',
+    icon: docsIcon,
+    subAppType: 'external',
+    url:
+      layoutSettings.docsLink === ''
+        ? 'https://bluebrainnexus.io/docs/'
+        : layoutSettings.docsLink,
+    requireLogin: false,
+  };
+
+  const subApps = [...propSubApps, docsApp];
   const location = useLocation();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -173,14 +173,6 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   const splits = apiEndpoint.split('/');
   const apiBase = splits.slice(0, splits.length - 1).join('/');
 
-  const onSelectSubAbpp = (data: any) => {
-    const item = subApps.find(subApp => subApp.key === data.key);
-    setSelectedItem(item as SubAppProps);
-    if (item && item.subAppType === 'internal') {
-      goTo(item.route);
-    }
-  };
-
   return (
     <>
       <SeoHeaders />
@@ -211,26 +203,29 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
           consent={consent}
           commitHash={COMMIT_HASH}
           onClickRemoveConsent={() => setConsent(undefined)}
-          onClickSideBarToggle={() => setCollapsed(!collapsed)}
           dataCart={<DataCartContainer />}
+          subApps={subApps}
+          authenticated={authenticated}
         >
           <SearchBarContainer />
         </Header>
         <ConsentContainer consent={consent} updateConsent={setConsent} />
-        <SideMenu
-          selectedItem={selectedItem}
-          collapsed={collapsed}
-          onSelectSubAbpp={onSelectSubAbpp}
-          subApps={subApps}
-          authenticated={authenticated}
-          onClickCollapse={() => setCollapsed(!collapsed)}
-          layoutSettings={layoutSettings}
-        />
-        <Content
-          className={`${
-            collapsed ? `fusion-main-layout__content--collapsed` : ''
-          } site-layout-background fusion-main-layout__content`}
-        >
+        <div className="logo-container">
+          <Link to="/">
+            <div className="logo-container__logo">
+              <img
+                src={
+                  layoutSettings.logoImg === ''
+                    ? require('../images/fusion_logo.png')
+                    : layoutSettings.logoImg
+                }
+                alt="Logo"
+              />
+            </div>
+          </Link>
+        </div>
+
+        <Content className="site-layout-background fusion-main-layout__content">
           {children}
         </Content>
       </Layout>
