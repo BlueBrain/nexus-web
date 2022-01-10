@@ -60,7 +60,6 @@ export const constructNumberFilter = (
   filterType: string,
   filterTerm: string
 ) => {
-  console.log(filters);
   if (filters[0] === 'isMissing') {
     body.orFilter('bool', missingFilterValueAdder(filterTerm));
     return body;
