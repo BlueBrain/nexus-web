@@ -30,6 +30,10 @@ exports[`Header component Should render correctly 1`] = `
         src="/mock/path"
       />
     </Popover>
+    <Navigation
+      authenticated={false}
+      subApps={Array []}
+    />
     <Dropdown
       mouseEnterDelay={0.15}
       mouseLeaveDelay={0.1}
