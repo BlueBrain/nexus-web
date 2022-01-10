@@ -12,6 +12,7 @@ import ConsentPreferences from '../ConsentPreferences';
 import { ConsentType } from '../../layouts/FusionMainLayout';
 
 import './Header.less';
+import Navigation from './Navigation';
 
 declare var Version: string;
 
@@ -92,8 +93,9 @@ export interface HeaderProps {
   commitHash?: string;
   dataCart?: React.ReactNode;
   onClickRemoveConsent?(): void;
-  onClickSideBarToggle(): void;
   performLogin(realmName: string): void;
+  subApps: any;
+  authenticated: boolean;
 }
 
 const Header: React.FunctionComponent<HeaderProps> = ({
@@ -111,6 +113,8 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   dataCart,
   onClickRemoveConsent,
   performLogin,
+  subApps,
+  authenticated,
 }) => {
   const menu = (
     <Menu>
@@ -189,6 +193,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             alt="Information"
           />
         </Popover>
+        <Navigation authenticated={authenticated} subApps={subApps} />
         {name ? (
           <Dropdown overlay={menu}>
             <a className="menu-dropdown ant-dropdown-link">
