@@ -18,6 +18,15 @@ const GlobalSearchView: React.FC = () => {
         <Layout>
           <Content style={{ marginLeft: '0px', marginTop: '0' }}>
             <SearchContainer />
+            <div
+              className="tooltipContainer"
+              style={{
+                position: 'fixed',
+                top: '0',
+                right: '200',
+                zIndex: 999,
+              }}
+            ></div>
           </Content>
         </Layout>
       </Content>
