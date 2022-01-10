@@ -30,6 +30,13 @@ export const constructFilterSet = (
         filter.filterType,
         filter.filterTerm
       );
+    } else if (filter.filterType === 'number') {
+      constructNumberFilter(
+        body,
+        filter.filters,
+        filter.filterType,
+        filter.filterTerm
+      );
     } else if (filter.filters.length > 0 || filter.filterType === 'missing') {
       constructFilter(
         body,
@@ -45,6 +52,27 @@ export const constructFilterSet = (
 const missingFilterValueAdder = (filterTerm: string) => {
   return (missing: bodybuilder.FilterSubFilterBuilder) =>
     missing.notFilter('exists', filterTerm);
+};
+
+export const constructNumberFilter = (
+  body: bodybuilder.Bodybuilder,
+  filters: string[],
+  filterType: string,
+  filterTerm: string
+) => {
+  if (filters[0] === 'isMissing') {
+    body.orFilter('bool', missingFilterValueAdder(filterTerm));
+    return body;
+  }
+  const filterObject: any = {};
+  if (filters[0] !== undefined && filters[0] !== null && filters[0] !== '') {
+    filterObject['gte'] = parseFloat(filters[0]);
+  }
+  if (filters.length > 1 && filters[1] !== '') {
+    filterObject['lte'] = parseFloat(filters[1]);
+  }
+  body.addFilter('range', `${filterTerm}.value`, filterObject);
+  return body;
 };
 
 export const constructDateFilter = (

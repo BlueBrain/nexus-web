@@ -47,7 +47,6 @@ const FilterOptions: React.FC<{
     baseQuery,
     filter.filter(f => extractFieldName(f.filterTerm) !== field.name)
   );
-
   const fieldFilter = filter.find(
     filter =>
       extractFieldName(extractFieldName(filter.filterTerm)) === field.name
@@ -180,49 +179,59 @@ const FilterOptions: React.FC<{
 
   return (
     <Form form={form} className="field-filter-menu">
-      <Form.Item
-        label="Operator"
-        rules={[
-          { required: true, message: 'Operator is required to apply a filter' },
-        ]}
-      >
-        <Select
-          dropdownStyle={{ zIndex: 1100 }}
-          value={filterType}
-          onChange={v => setFilterType(v)}
-        >
-          {field.array && (
-            <Select.Option value="allof">is all of (AND)</Select.Option>
-          )}
-          <Select.Option value="anyof">is any of (OR)</Select.Option>
-          <Select.Option value="noneof">is none of (NOT)</Select.Option>
-          {field.optional && (
-            <Select.Option value="missing">is missing</Select.Option>
-          )}
-        </Select>
-      </Form.Item>
-      {filterType !== 'missing' && (
+      {!(
+        field.fields && field.fields.find(f => f.format.includes('number'))
+      ) && (
         <>
-          <Input.Search
-            onChange={event => {
-              const val = event.target.value;
-
-              const filteredSuggestions = aggregations.map(a => ({
-                ...a,
-                matching:
-                  val && val.length > 0
-                    ? a.filterValue.toLowerCase().indexOf(val.toLowerCase()) >
-                      -1
-                    : true,
-              }));
-              setAggregations(filteredSuggestions);
-            }}
-          ></Input.Search>
           <Form.Item
-            style={{ maxHeight: '91px', overflow: 'scroll', width: '105%' }}
+            label="Operator"
+            rules={[
+              {
+                required: true,
+                message: 'Operator is required to apply a filter',
+              },
+            ]}
           >
-            {filterValues}
+            <Select
+              dropdownStyle={{ zIndex: 1100 }}
+              value={filterType}
+              onChange={v => setFilterType(v)}
+            >
+              {field.array && (
+                <Select.Option value="allof">is all of (AND)</Select.Option>
+              )}
+              <Select.Option value="anyof">is any of (OR)</Select.Option>
+              <Select.Option value="noneof">is none of (NOT)</Select.Option>
+              {field.optional && (
+                <Select.Option value="missing">is missing</Select.Option>
+              )}
+            </Select>
           </Form.Item>
+          {filterType !== 'missing' && (
+            <>
+              <Input.Search
+                onChange={event => {
+                  const val = event.target.value;
+
+                  const filteredSuggestions = aggregations.map(a => ({
+                    ...a,
+                    matching:
+                      val && val.length > 0
+                        ? a.filterValue
+                            .toLowerCase()
+                            .indexOf(val.toLowerCase()) > -1
+                        : true,
+                  }));
+                  setAggregations(filteredSuggestions);
+                }}
+              ></Input.Search>
+              <Form.Item
+                style={{ maxHeight: '91px', overflow: 'scroll', width: '105%' }}
+              >
+                {filterValues}
+              </Form.Item>
+            </>
+          )}
         </>
       )}
     </Form>

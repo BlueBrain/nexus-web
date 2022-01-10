@@ -22,6 +22,7 @@ import FilterOptions, {
   extractFieldName,
 } from '../containers/FilterOptions';
 import DateFilterOptions from '../containers/DateFilterOptions';
+import NumberFilterOptions from '../containers/NumberFilterOptions';
 import '../containers/SearchContainer.less';
 import { SortDirection } from '../../../shared/hooks/useAccessDataForTable';
 import SortMenuOptions from '../components/SortMenuOptions';
@@ -461,6 +462,15 @@ function useGlobalSearchData(
             <Divider />
             {field.format?.includes('date') ? (
               <DateFilterOptions
+                filter={filterState}
+                query={query}
+                nexusClient={nexus}
+                field={field}
+                onFinish={onFilterSubmit}
+              />
+            ) : field.fields &&
+              field.fields.find(f => f.format.includes('number')) ? (
+              <NumberFilterOptions
                 filter={filterState}
                 query={query}
                 nexusClient={nexus}
