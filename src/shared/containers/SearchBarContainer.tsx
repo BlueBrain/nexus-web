@@ -1,7 +1,7 @@
 import { useNexusContext } from '@bbp/react-nexus';
 import { take } from 'lodash';
 import * as React from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { useQuery } from 'react-query';
 import SearchBar from '../components/SearchBar';
 import { sortObjectsBySimilarity } from '../utils/stringSimilarity';
@@ -32,7 +32,7 @@ export type StudioSearchHit = SearchHit & {
   studioId: string;
 };
 
-type LastVisited = {
+export type LastVisited = {
   value: string;
   path: string;
   type: 'studio' | 'project' | 'search';
@@ -43,7 +43,7 @@ const SearchBarContainer: React.FC = () => {
   const history = useHistory();
   const [query, setQuery] = React.useState<string>();
   const [lastVisited, setLastVisited] = React.useState<LastVisited>();
-
+  const location = useLocation();
   const [queryParams] = useQueryString();
   const { query: searchQueryParam } = queryParams;
 
@@ -56,9 +56,16 @@ const SearchBarContainer: React.FC = () => {
         path: makeSearchUri(searchQueryParam),
       };
       setLastVisited(searchLastVisit);
-      localStorage.setItem(STORAGE_ITEM, JSON.stringify(searchLastVisit));
     }
   }, [searchQueryParam]);
+
+  React.useEffect(() => {
+    if (lastVisited) {
+      localStorage.setItem(STORAGE_ITEM, JSON.stringify(lastVisited));
+    } else {
+      localStorage.removeItem(STORAGE_ITEM);
+    }
+  }, [lastVisited]);
 
   const { data: projects } = useQuery(
     'projects',
@@ -79,25 +86,14 @@ const SearchBarContainer: React.FC = () => {
       })
   );
 
-  const onFocus = () => {
-    const lastVisited: LastVisited = JSON.parse(
-      localStorage.getItem(STORAGE_ITEM) || ''
-    );
-
-    setLastVisited(lastVisited);
-    setQuery(lastVisited.value);
-  };
-
   const handleSearch = (searchText: string) => {
-    setLastVisited(undefined);
     setQuery(searchText);
   };
 
   const handleSubmit = (value: string, option: any) => {
-    localStorage.setItem(
-      STORAGE_ITEM,
-      JSON.stringify({ value, path: option.path, type: option.type })
-    );
+    if (option.type === 'search') {
+      setQuery(value === '' ? option.value : value);
+    }
 
     if (option.type === 'search') {
       history.push(makeSearchUri(value));
@@ -110,9 +106,19 @@ const SearchBarContainer: React.FC = () => {
   };
 
   const handleClear = () => {
-    setQuery(undefined);
-    setLastVisited(undefined);
-    localStorage.removeItem(STORAGE_ITEM);
+    // reset search
+    history.push('/search');
+    return;
+  };
+
+  const isCurrentPageSearchPage = () =>
+    location.pathname.substring(0, 7) === '/search';
+  const isQueryParamMatchingQuery = () => query === searchQueryParam;
+
+  const handleBlur = () => {
+    if (isCurrentPageSearchPage() && !isQueryParamMatchingQuery()) {
+      setQuery(searchQueryParam);
+    }
   };
 
   const inputOnPressEnter = () => {
@@ -177,11 +183,12 @@ const SearchBarContainer: React.FC = () => {
       projectList={matchedProjects()}
       studioList={matchedStudios()}
       query={query}
+      lastVisited={lastVisited}
       onSearch={handleSearch}
       onSubmit={handleSubmit}
       onClear={handleClear}
-      onFocus={onFocus}
-      onBlur={() => setQuery(searchQueryParam)}
+      onFocus={() => {}}
+      onBlur={handleBlur}
       inputOnPressEnter={inputOnPressEnter}
     />
   );
