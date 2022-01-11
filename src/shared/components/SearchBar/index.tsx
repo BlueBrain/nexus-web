@@ -40,6 +40,8 @@ const SearchBar: React.FC<{
   const [value, setValue] = React.useState(query || '');
   const [focused, setFocused] = React.useState(false);
   const inputRef = React.useRef<Input>(null);
+  const projectOptionValueSuffix = '______project';
+  const studioOptionValueSuffix = '______studio';
 
   React.useEffect(() => {
     focusOnSlash(focused, inputRef);
@@ -124,7 +126,8 @@ const SearchBar: React.FC<{
               </span>
             </Hit>
           ),
-          value: `${projectHit.organisation}/${projectHit.project}`,
+          // add suffix to value to differentiate from search term
+          value: `${projectHit.organisation}/${projectHit.project}${projectOptionValueSuffix}`,
         };
       });
       options = [...options, ...projectOptions];
@@ -154,7 +157,8 @@ const SearchBar: React.FC<{
               </span>
             </Hit>
           ),
-          value: `${studioHit.project}/${studioHit.label}`,
+          // add suffix to value to differentiate from search term
+          value: `${studioHit.project}/${studioHit.label}${studioOptionValueSuffix}`,
         };
       });
       options = [...options, ...studioOptions];
@@ -164,7 +168,7 @@ const SearchBar: React.FC<{
 
   return (
     <AutoComplete
-      backfill
+      backfill={false}
       defaultActiveFirstOption
       className="search-bar"
       onFocus={handleSetFocused(true)}
@@ -175,7 +179,18 @@ const SearchBar: React.FC<{
       onKeyDown={handleKeyDown}
       dropdownClassName="search-bar__drop"
       dropdownMatchSelectWidth={false}
-      value={value}
+      /**
+       * Autocomplete uses option value rather than key to differentiate so if there are multiple
+       * options with the same value it's as if the last one was selected always which results in
+       * us not being able to search when the search term matches a project or studio value. We add
+       * a suffix to project and studio values to prevent this and remove it here for display. Bit
+       * hacky!
+       *
+       * See Antd autocomplete bug here https://github.com/ant-design/ant-design/issues/11909
+       */
+      value={value
+        .replace(projectOptionValueSuffix, '')
+        .replace(studioOptionValueSuffix, '')}
       listHeight={310}
     >
       <Input
