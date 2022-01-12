@@ -16,19 +16,11 @@ const ProjectStatsContainer: React.FC<{
   const [graphData, setGraphData] = React.useState<any>();
 
   const loadRelationships = async () => {
-    // TODO update nexus.js
-    return await nexus.httpGet({
-      path: `https://dev.nexus.ocp.bbp.epfl.ch/v1/graph-analytics/${orgLabel}/${projectLabel}/relationships`,
-    });
+    return nexus.GraphAnalytics.relationships(projectLabel, orgLabel);
   };
 
   const loadTypeStats = async (type: string) => {
-    // TODO update nexus.js
-    return await nexus.httpGet({
-      path: `https://dev.nexus.ocp.bbp.epfl.ch/v1/graph-analytics/${orgLabel}/${projectLabel}/properties/${encodeURIComponent(
-        type
-      )}`,
-    });
+    return nexus.GraphAnalytics.properties(projectLabel, orgLabel, type);
   };
 
   React.useEffect(() => {

@@ -1089,27 +1089,27 @@
   resolved "https://registry.yarnpkg.com/@base2/pretty-print-object/-/pretty-print-object-1.0.0.tgz#860ce718b0b73f4009e153541faff2cb6b85d047"
   integrity sha512-4Th98KlMHr5+JkxfcoDT//6vY8vM+iSPrLNpHhRyLx2CFYi8e2RfqPLdpbnpo0Q5lQC5hNB79yes07zb02fvCw==
 
-"@bbp/nexus-link@^1.3.13":
-  version "1.3.13"
-  resolved "https://registry.yarnpkg.com/@bbp/nexus-link/-/nexus-link-1.3.13.tgz#db9144c16c011118539d7a2737ada95a19fd26df"
-  integrity sha512-YWJqABsnnEZxOH11fm+WES6JqjwVRIZOh7pc+THHT5UhizKCOfmx5z/Fo9yloQ7eLIC9UV5jvuKjjXGwf3IQpw==
+"@bbp/nexus-link@^1.3.14":
+  version "1.3.14"
+  resolved "https://registry.yarnpkg.com/@bbp/nexus-link/-/nexus-link-1.3.14.tgz#9d551e22623721084f24baacdced873b718f398f"
+  integrity sha512-6sLKl4vX1rvsq1MSX5H1SgS09a86jNpuBKnJD2hlk3QGBJAgj6OJNHICtmmPBcyfww9hyzqMKspU1B+ydPB1Lg==
   dependencies:
     rxjs "^6.5.2"
 
-"@bbp/nexus-sdk@1.3.13":
-  version "1.3.13"
-  resolved "https://registry.yarnpkg.com/@bbp/nexus-sdk/-/nexus-sdk-1.3.13.tgz#a22d537cc0345e8cb5f66974144c2255c0c63a22"
-  integrity sha512-wszlZD1GsGaptmnNLMmMAd1+HtQBM5lYjDPC2I71OK8m4WmGTz/VyKBwdGoObICqqajLfnx6f1tGq4JCCR1EAQ==
+"@bbp/nexus-sdk@1.3.14":
+  version "1.3.14"
+  resolved "https://registry.yarnpkg.com/@bbp/nexus-sdk/-/nexus-sdk-1.3.14.tgz#7314673be8e0c871ef6cf340961fb37040007d05"
+  integrity sha512-2RsyKehCYm3M+lnIEK8NCm3td7DqCmktkEigvLigB/Iku9RS3daGyig4Wa3OGgF2QccG3YGKfqRUqTe4wjArGw==
   dependencies:
-    "@bbp/nexus-link" "^1.3.13"
+    "@bbp/nexus-link" "^1.3.14"
     query-string "^6.9.0"
 
-"@bbp/react-nexus@1.3.13":
-  version "1.3.13"
-  resolved "https://registry.yarnpkg.com/@bbp/react-nexus/-/react-nexus-1.3.13.tgz#421aa14f6263e90c9c9b85fcb0ceac93fb2e86e6"
-  integrity sha512-Flld2/N/tFLHEug3pM2brBbJJN9/0d89N64Cv2rd7tl55T8lHgqKwiK7Aa1SLhGcffBE/UZdACQC3cjoWsEZIg==
+"@bbp/react-nexus@1.3.14":
+  version "1.3.14"
+  resolved "https://registry.yarnpkg.com/@bbp/react-nexus/-/react-nexus-1.3.14.tgz#42ef3f1360731495a95fd2ed28e7d6c773c7319a"
+  integrity sha512-pPjVvoQYKJTPsXTSy7RJ8A1Jto2cNulL2HSNQqZ4P3rFzQi1KZC+rkur5d5bRmQtXPRSIAtPWFrp+X6s6EeIhw==
   dependencies:
-    "@bbp/nexus-link" "^1.3.13"
+    "@bbp/nexus-link" "^1.3.14"
     ts-invariant "0.4.1"
 
 "@cnakazawa/watch@^1.0.3":
