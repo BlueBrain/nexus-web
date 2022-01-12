@@ -148,11 +148,9 @@ const FilterOptions: React.FC<{
           return (
             <Row
               key={filterValue}
-              style={{
-                display:
-                  filterValue === 'Missing' && count === 0 ? 'none' : 'inherit',
-              }}
-              className="filter-value-row"
+              className={`filter-value-row${
+                filterValue === 'Missing' && count === 0 ? '--missing' : ''
+              }`}
             >
               <Checkbox
                 key={`chk${filterValue}`}
@@ -225,9 +223,7 @@ const FilterOptions: React.FC<{
                   setAggregations(filteredSuggestions);
                 }}
               ></Input.Search>
-              <Form.Item
-                style={{ maxHeight: '91px', overflow: 'scroll', width: '105%' }}
-              >
+              <Form.Item style={{ maxHeight: '91px', overflow: 'scroll' }}>
                 {filterValues}
               </Form.Item>
             </>
