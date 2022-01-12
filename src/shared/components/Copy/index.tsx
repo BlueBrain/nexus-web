@@ -27,6 +27,7 @@ const Copy: React.FunctionComponent<CopyProps> = ({
   const handleTriggerCopy = () => {
     if (document && document.queryCommandSupported('copy')) {
       triggerCopy(textToCopy);
+      setCopySuccess(true);
       setTimeout(() => {
         setCopySuccess(false);
       }, revertDelay);
