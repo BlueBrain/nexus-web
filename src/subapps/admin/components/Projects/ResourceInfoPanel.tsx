@@ -8,8 +8,9 @@ import './ResourceInfoPanel.less';
 const ResourceInfoPanel: React.FC<{
   typeStats: any;
   relations: any;
+  drawerContainer?: HTMLDivElement | null;
   onClickClose: () => void;
-}> = ({ typeStats, relations, onClickClose }) => {
+}> = ({ typeStats, relations, drawerContainer, onClickClose }) => {
   return (
     <Drawer
       onClose={onClickClose}
@@ -17,6 +18,7 @@ const ResourceInfoPanel: React.FC<{
       title={<h2 className="resource-info-panel__title">{typeStats._name}</h2>}
       mask={false}
       width={400}
+      getContainer={drawerContainer ? drawerContainer : false}
       style={{ marginTop: '52px' }}
     >
       <div className="resource-info-panel">

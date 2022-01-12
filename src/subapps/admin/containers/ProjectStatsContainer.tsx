@@ -10,6 +10,7 @@ const ProjectStatsContainer: React.FC<{
 }> = ({ orgLabel, projectLabel }) => {
   const nexus = useNexusContext();
 
+  const drawerContainer = React.useRef<HTMLDivElement>(null);
   const [selectedType, setSelectedType] = React.useState<any>();
   const [elements, setElements] = React.useState<any>();
   const [relations, setRelations] = React.useState<any>();
@@ -32,12 +33,14 @@ const ProjectStatsContainer: React.FC<{
         setGraphData(data);
       })
       .catch(error => console.log('error'));
+    return () => {
+      setSelectedType(undefined);
+    };
   }, []);
 
   const showType = (type?: string) => {
     if (type) {
       loadTypeStats(type).then(response => {
-        console.log('response', response);
         setSelectedType(response);
 
         const links = graphData._edges.filter(
@@ -81,10 +84,11 @@ const ProjectStatsContainer: React.FC<{
   };
 
   return (
-    <div style={{ display: 'flex' }}>
+    <div style={{ display: 'flex' }} ref={drawerContainer}>
       <ProjectGraph elements={elements} viewType={showType} />
       {selectedType && (
         <ResourceInfoPanel
+          drawerContainer={drawerContainer.current}
           onClickClose={() => setSelectedType(undefined)}
           typeStats={selectedType}
           relations={relations}
