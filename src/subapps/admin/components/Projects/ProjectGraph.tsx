@@ -2,8 +2,6 @@ import * as React from 'react';
 import * as cytoscape from 'cytoscape';
 // @ts-ignore
 import * as avsdf from 'cytoscape-avsdf';
-// @ts-ignore
-import * as fcose from 'cytoscape-fcose';
 
 export type ElementNodeData = {
   label: string;

@@ -99,18 +99,6 @@ const ProjectStatsContainer: React.FC<{
       },
     }));
 
-    const edges = response._edges.map((edge: any) => ({
-      data: {
-        id: getEdgeId(edge),
-        source: edge._source,
-        target: edge._target || edge._source,
-        name: constructPathName(edge._path),
-      },
-      style: {
-        width: getLineWidth(edge._count),
-      },
-    }));
-
     return {
       nodes,
       // edges,

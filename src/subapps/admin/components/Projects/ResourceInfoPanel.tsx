@@ -10,8 +10,6 @@ const ResourceInfoPanel: React.FC<{
   relations: any;
   onClickClose: () => void;
 }> = ({ typeStats, relations, onClickClose }) => {
-  console.log('relations', relations);
-
   return (
     <Drawer
       onClose={onClickClose}
@@ -30,14 +28,14 @@ const ResourceInfoPanel: React.FC<{
           {typeStats._properties &&
             typeStats._properties.map((property: any) => {
               return (
-                <li>
+                <li key={property._name}>
                   <span>
                     {property._name}: {property._count} resources
                   </span>
                   {property._properties && (
                     <ul>
                       {property._properties.map((subProperty: any) => (
-                        <li>
+                        <li key={subProperty._name}>
                           {subProperty._name}: {subProperty._count} resources
                         </li>
                       ))}
@@ -51,8 +49,8 @@ const ResourceInfoPanel: React.FC<{
         <h3>Relationships</h3>
         <ul>
           {relations &&
-            relations.map((relation: any) => (
-              <li>
+            relations.map((relation: any, index: number) => (
+              <li key={index}>
                 {relation._path.map((path: any) => path._name).join('/')}{' '}
                 {'-->'}{' '}
                 {relation._source === typeStats['@id']
