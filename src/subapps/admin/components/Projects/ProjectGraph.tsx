@@ -17,7 +17,6 @@ const ProjectGraph: React.FC<{
   const graph = React.useRef<cytoscape.Core>();
 
   React.useEffect(() => {
-    // cytoscape.use(fcose);
     cytoscape.use(avsdf);
 
     graph.current = cytoscape({
@@ -78,10 +77,6 @@ const ProjectGraph: React.FC<{
     graph.current.on('tap', 'edge', (e: cytoscape.EventObject) => {
       console.log('clicked on an edge!', e.target.id());
     });
-    // graph.current.on('mouseover', 'node', (e: cytoscape.EventObject) => {});
-    // graph.current.on('mouseout', 'node', (e: cytoscape.EventObject) => {
-    //   viewType(undefined);
-    // });
 
     return () => {
       if (!graph.current) {

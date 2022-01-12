@@ -60,10 +60,6 @@ const ProjectStatsContainer: React.FC<{
     }
   };
 
-  const constructPathName = (path: any[]) => {
-    return path.map((singlePath: any) => singlePath._name).join('/');
-  };
-
   const getDiameter = (count: number) => {
     const min = 20;
     const max = 120;
@@ -73,21 +69,6 @@ const ProjectStatsContainer: React.FC<{
     const diameter = (count / maxCount) * max;
 
     return diameter < min ? min : diameter;
-  };
-
-  const getLineWidth = (count: number) => {
-    const min = 1;
-    const max = 20;
-
-    const maxCount = 10000;
-
-    const width = (count / maxCount) * max;
-
-    return width < min ? min : width;
-  };
-
-  const getEdgeId = (edge: any) => {
-    return `${edge._target}-${edge._source}`;
   };
 
   const constructGraphData = (response: any) => {
