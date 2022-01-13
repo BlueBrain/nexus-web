@@ -27,7 +27,6 @@ const ProjectGraph: React.FC<{
       layout: {
         // @ts-ignore
         name: 'avsdf',
-        // name: 'fcose'
       },
       style: [
         {
@@ -73,9 +72,6 @@ const ProjectGraph: React.FC<{
     graph.current.on('tap', 'node', (e: cytoscape.EventObject) => {
       viewType && viewType(e.target.id(), e.target.data());
       // change node's color here
-    });
-    graph.current.on('tap', 'edge', (e: cytoscape.EventObject) => {
-      console.log('clicked on an edge!', e.target.id());
     });
 
     return () => {
