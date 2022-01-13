@@ -12,6 +12,7 @@ import { SelectOutlined } from '@ant-design/icons';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
 import StoragesContainer from '../containers/StoragesContainer';
+import ProjectStatsContainer from '../containers/ProjectStatsContainer';
 import QuotasContainer from '../containers/QuotasContainer';
 import ProjectForm from '../components/Projects/ProjectForm';
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
@@ -64,6 +65,8 @@ const ProjectView: React.FunctionComponent = () => {
 
       case `${base}settings`:
         return 'settings';
+      case `${base}graph-analytics`:
+        return 'graph-analytics';
     }
     return 'browse';
   };
@@ -86,6 +89,8 @@ const ProjectView: React.FunctionComponent = () => {
 
       case 'settings':
         return `${base}settings`;
+      case 'graph-analytics':
+        return `${base}graph-analytics`;
     }
     return `${base}browse`;
   };
@@ -378,6 +383,12 @@ const ProjectView: React.FunctionComponent = () => {
                   <ACLsView />
                   <br />
                 </>
+              </TabPane>
+              <TabPane tab="Graph Analytics" key="graph-analytics">
+                <ProjectStatsContainer
+                  orgLabel={orgLabel}
+                  projectLabel={projectLabel}
+                />
               </TabPane>
               <TabPane
                 tab={
