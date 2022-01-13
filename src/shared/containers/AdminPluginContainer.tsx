@@ -9,6 +9,7 @@ import GraphContainer from '../containers/GraphContainer';
 import MarkdownEditorContainer from './MarkdownEditorContainer';
 import { AccessControl } from '@bbp/react-nexus';
 import { EditOutlined } from '@ant-design/icons';
+import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
 
 const { Panel } = Collapse;
 const TabPane = Tabs.TabPane;
@@ -34,7 +35,7 @@ type AdminProps = {
     }
   ) => void;
   handleTabChange: (activeTabKey: string) => void;
-  handleGoToInternalLink: (link: ResourceLink) => void;
+  handleGoToInternalLink: (link: ResourceLinkAugmented) => void;
   handleEditFormSubmit: (value: any) => void;
   handleExpanded: (expanded: boolean) => void;
   refreshResource: () => void;

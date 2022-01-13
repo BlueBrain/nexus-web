@@ -4,12 +4,7 @@ import { useLocation, useHistory, useParams } from 'react-router';
 import { Spin, Alert, Collapse, Typography, Divider } from 'antd';
 import * as queryString from 'query-string';
 import { useNexusContext } from '@bbp/react-nexus';
-import {
-  Resource,
-  ResourceLink,
-  IncomingLink,
-  ExpandedResource,
-} from '@bbp/nexus-sdk';
+import { Resource, IncomingLink, ExpandedResource } from '@bbp/nexus-sdk';
 import AdminPlugin from '../containers/AdminPluginContainer';
 import VideoPluginContainer from '../containers/VideoPluginContainer';
 import ResourcePlugins from './ResourcePlugins';
@@ -32,6 +27,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import ResourceViewActionsContainer from './ResourceViewActionsContainer';
 import ResourceMetadata from '../components/ResourceMetadata';
+import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -202,12 +198,17 @@ const ResourceViewContainer: React.FunctionComponent<{
     }
   };
 
-  const handleGoToInternalLink = (link: ResourceLink) => {
+  const handleGoToInternalLink = (link: ResourceLinkAugmented) => {
     const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(
       (link as IncomingLink)._project
     );
 
+    const revisionOption = link.isRevisionSpecific
+      ? { revision: link._rev }
+      : {};
+
     goToResource(orgLabel, projectLabel, encodeURIComponent(link['@id']), {
+      ...revisionOption,
       tab: '#links',
     });
   };
