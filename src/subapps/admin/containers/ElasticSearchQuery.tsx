@@ -67,10 +67,10 @@ const ElasticSearchQueryContainer: React.FunctionComponent<{
   const onPaginationChange = (pageNumber: number) => {
     // NOTE: AntD Page numbers start from 1!
     const from = size * (pageNumber - 1);
-    setPagination({
-      size,
+    setPagination(p => ({
+      size: p.size,
       from,
-    });
+    }));
   };
 
   const onQueryChange = (query: object) => {
