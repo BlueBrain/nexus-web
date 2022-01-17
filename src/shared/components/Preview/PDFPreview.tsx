@@ -10,6 +10,7 @@ import {
   RightOutlined,
 } from '@ant-design/icons';
 import useMeasure from '../../hooks/useMeasure';
+import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 
 const PDFViewer: React.FC<{
   url: string;
@@ -53,47 +54,76 @@ const PDFViewer: React.FC<{
     [url]
   );
   const [{ ref: wrapperHeightRef }, bounds] = useMeasure();
+  const [pdfDimensions, setPdfDimensions] = React.useState<{
+    height: number;
+    width: number;
+  }>();
+  const calcAdjustedDimensions = React.useMemo(() => {
+    if (!pdfDimensions) {
+      return {};
+    }
+    if (
+      bounds.height / pdfDimensions.height <
+      bounds.width / pdfDimensions.width
+    ) {
+      return { height: Math.floor(bounds.height * 0.8) };
+    } else {
+      return { width: Math.floor(bounds.width * 0.8) };
+    }
+  }, [bounds, pdfDimensions]);
 
   return (
-    <div className="asset-preview-mask" ref={wrapperHeightRef}>
-      <div className="asset-preview-wrap">
-        <div className="asset-preview">
-          <Document
-            className="document"
-            loading={
-              <div className="loadingMessage">
-                <LoadingOutlined />
+    <div className="pdf-preview">
+      <div className="asset-preview-mask" ref={wrapperHeightRef}>
+        <div className="asset-preview-wrap">
+          <div className="asset-preview">
+            <Document
+              className="document"
+              loading={
+                <div className="loadingMessage">
+                  <LoadingOutlined />
+                </div>
+              }
+              file={pdfFile}
+              onLoadSuccess={onDocumentLoadSuccess}
+            >
+              <TransformWrapper>
+                <TransformComponent>
+                  <Page
+                    pageNumber={pageNumber}
+                    inputRef={previewDivRef}
+                    renderMode="svg"
+                    renderTextLayer={false}
+                    renderAnnotationLayer={false}
+                    onLoadSuccess={page => {
+                      setPdfDimensions({
+                        height: page.originalHeight,
+                        width: page.originalWidth,
+                      });
+                    }}
+                    {...calcAdjustedDimensions}
+                  />
+                </TransformComponent>
+              </TransformWrapper>
+              <div className="page-controls">
+                <Button
+                  disabled={pageNumber <= 1}
+                  onClick={previousPage}
+                  icon={<LeftOutlined />}
+                  size="large"
+                />
+                <span>
+                  {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}
+                </span>
+                <Button
+                  disabled={pageNumber >= numPages}
+                  onClick={nextPage}
+                  icon={<RightOutlined />}
+                  size="large"
+                />
               </div>
-            }
-            file={pdfFile}
-            onLoadSuccess={onDocumentLoadSuccess}
-          >
-            <Page
-              pageNumber={pageNumber}
-              inputRef={previewDivRef}
-              renderMode="svg"
-              renderTextLayer={false}
-              renderAnnotationLayer={false}
-              width={Math.floor(bounds.width * 0.9)}
-            />
-            <div className="page-controls">
-              <Button
-                disabled={pageNumber <= 1}
-                onClick={previousPage}
-                icon={<LeftOutlined />}
-                size="large"
-              />
-              <span>
-                {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}
-              </span>
-              <Button
-                disabled={pageNumber >= numPages}
-                onClick={nextPage}
-                icon={<RightOutlined />}
-                size="large"
-              />
-            </div>
-          </Document>
+            </Document>
+          </div>
         </div>
       </div>
     </div>
