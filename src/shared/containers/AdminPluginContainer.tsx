@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Resource, ResourceLink } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk';
 import { Tabs, Collapse, Alert } from 'antd';
 import HistoryContainer from '../containers/HistoryContainer';
 import ResourceLinksContainer from '../containers/ResourceLinks';
@@ -9,6 +9,7 @@ import GraphContainer from '../containers/GraphContainer';
 import MarkdownEditorContainer from './MarkdownEditorContainer';
 import { AccessControl } from '@bbp/react-nexus';
 import { EditOutlined } from '@ant-design/icons';
+import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
 
 const { Panel } = Collapse;
 const TabPane = Tabs.TabPane;
@@ -34,7 +35,7 @@ type AdminProps = {
     }
   ) => void;
   handleTabChange: (activeTabKey: string) => void;
-  handleGoToInternalLink: (link: ResourceLink) => void;
+  handleGoToInternalLink: (link: ResourceLinkAugmented) => void;
   handleEditFormSubmit: (value: any) => void;
   handleExpanded: (expanded: boolean) => void;
   refreshResource: () => void;
