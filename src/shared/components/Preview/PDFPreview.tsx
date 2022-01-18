@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button } from 'antd';
+import { Alert, Button } from 'antd';
 import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
 pdfjs.GlobalWorkerOptions.workerSrc = 'public/pdf.worker.min.js';
 
@@ -86,6 +86,17 @@ const PDFViewer: React.FC<{
               }
               file={pdfFile}
               onLoadSuccess={onDocumentLoadSuccess}
+              error={
+                <Alert
+                  showIcon
+                  message="Error"
+                  description="An error occurred whilst trying to load the pdf."
+                  className="errorMessage"
+                  type="error"
+                  closable
+                  onClose={() => closePreview()}
+                />
+              }
             >
               <TransformWrapper>
                 <TransformComponent>
@@ -112,9 +123,9 @@ const PDFViewer: React.FC<{
                   icon={<LeftOutlined />}
                   size="large"
                 />
-                <span>
+                <div className="page-controls__page-number">
                   {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}
-                </span>
+                </div>
                 <Button
                   disabled={pageNumber >= numPages}
                   onClick={nextPage}
