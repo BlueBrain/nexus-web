@@ -58,7 +58,13 @@ const PDFViewer: React.FC<{
     height: number;
     width: number;
   }>();
-  const calcAdjustedDimensions = React.useMemo(() => {
+
+  /**
+   * Returns either height or width prop for specifying
+   * size of PDF document for display on screen depending
+   * on which axis is the limiting one.
+   */
+  const calculatePDFSizingProp = React.useMemo(() => {
     if (!pdfDimensions) {
       return {};
     }
@@ -67,9 +73,8 @@ const PDFViewer: React.FC<{
       bounds.width / pdfDimensions.width
     ) {
       return { height: Math.floor(bounds.height * 0.8) };
-    } else {
-      return { width: Math.floor(bounds.width * 0.8) };
     }
+    return { width: Math.floor(bounds.width * 0.8) };
   }, [bounds, pdfDimensions]);
 
   return (
@@ -112,7 +117,7 @@ const PDFViewer: React.FC<{
                         width: page.originalWidth,
                       });
                     }}
-                    {...calcAdjustedDimensions}
+                    {...calculatePDFSizingProp}
                   />
                 </TransformComponent>
               </TransformWrapper>
