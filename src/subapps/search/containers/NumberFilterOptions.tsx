@@ -1,4 +1,4 @@
-import { Slider, InputNumber, Form, Col, Row, Checkbox } from 'antd';
+import { Slider, InputNumber, Form, Col, Row, Checkbox, Descriptions } from 'antd';
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
@@ -82,7 +82,7 @@ const NumberFilterOptions: React.FC<{
           stringValue: bucket.key,
         };
       });
-
+      console.log(all.aggregations.stats);
       setRangeMin(all.aggregations.stats.min);
       setRangeMax(all.aggregations.stats.max);
       setMissingCount(all.aggregations['(missing)'].doc_count);
@@ -166,6 +166,24 @@ const NumberFilterOptions: React.FC<{
           </Checkbox>
         </Form.Item>
       )}
+      <Form.Item>
+        <Row>
+          <Col flex={1}>
+            <Descriptions title="User Info">
+              <Descriptions.Item label="Average">
+                6.8
+              </Descriptions.Item>
+              <Descriptions.Item label="Max">
+                10
+              </Descriptions.Item>
+              <Descriptions.Item label="Min">100</Descriptions.Item>
+              <Descriptions.Item label="Sum">
+                10
+              </Descriptions.Item>
+            </Descriptions>
+          </Col>
+        </Row>
+      </Form.Item>
     </>
   );
 };
