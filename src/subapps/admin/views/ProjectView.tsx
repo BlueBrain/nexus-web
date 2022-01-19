@@ -384,12 +384,14 @@ const ProjectView: React.FunctionComponent = () => {
                   <br />
                 </>
               </TabPane>
-              <TabPane tab="Graph Analytics" key="graph-analytics">
-                <ProjectStatsContainer
-                  orgLabel={orgLabel}
-                  projectLabel={projectLabel}
-                />
-              </TabPane>
+              {deltaPlugins && 'graph-analytics' in deltaPlugins && (
+                <TabPane tab="Graph Analytics" key="graph-analytics">
+                  <ProjectStatsContainer
+                    orgLabel={orgLabel}
+                    projectLabel={projectLabel}
+                  />
+                </TabPane>
+              )}
               <TabPane
                 tab={
                   <span>
