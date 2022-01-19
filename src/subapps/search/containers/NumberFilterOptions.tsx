@@ -6,6 +6,7 @@ import { constructQuery } from '../utils';
 import './FilterOptions.less';
 import { createKeyWord } from './FilterOptions';
 import './NumberFilterOptionsContainer.less';
+import { Line, Bar } from '@ant-design/charts';
 
 type ConfigField =
   | {
@@ -24,6 +25,7 @@ type ConfigField =
       optional: boolean;
       fields?: undefined;
     };
+
 
 const NumberFilterOptions: React.FC<{
   field: ConfigField;
@@ -56,6 +58,7 @@ const NumberFilterOptions: React.FC<{
   );
 
   const [missingCount, setMissingCount] = React.useState<number>();
+  const [histoValues, setHistoValues] = React.useState<any>([]);
 
   const onSliderChange = (value: number[]) => {
     setRangeStart(value[0]);
@@ -70,6 +73,7 @@ const NumberFilterOptions: React.FC<{
         size: 1000,
       })
       .aggregation('stats', `${field.name}.value`, 'stats')
+      .aggregation('histogram', `${field.name}.value`, 'histo', {interval: 5000})
       .aggregation('missing', filterKeyWord, '(missing)')
       .build();
 
@@ -82,7 +86,7 @@ const NumberFilterOptions: React.FC<{
           stringValue: bucket.key,
         };
       });
-      console.log(all.aggregations.stats);
+      setHistoValues(all.aggregations.histo.buckets);
       setRangeMin(all.aggregations.stats.min);
       setRangeMax(all.aggregations.stats.max);
       setMissingCount(all.aggregations['(missing)'].doc_count);
@@ -169,7 +173,7 @@ const NumberFilterOptions: React.FC<{
       <Form.Item>
         <Row>
           <Col flex={1}>
-            <Descriptions title="User Info">
+            <Descriptions title="Statistics">
               <Descriptions.Item label="Average">
                 6.8
               </Descriptions.Item>
@@ -183,6 +187,21 @@ const NumberFilterOptions: React.FC<{
             </Descriptions>
           </Col>
         </Row>
+      </Form.Item>
+      <Form.Item>
+        <Line
+        data={histoValues}
+        height={100}
+        xField="key"
+        yField="doc_count"
+        point={{ size: 5, shape: 'diamon' }}
+        color='blue'
+        />
+        <Bar
+          data={histoValues}
+          xField= 'doc_count'
+          yField= 'key'
+        />
       </Form.Item>
     </>
   );
