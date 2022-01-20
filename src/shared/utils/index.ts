@@ -180,6 +180,18 @@ export function hasExpired(timestamp: number): Boolean {
 }
 
 /**
+ * Get data string to display
+ *
+ * @param date
+ * @returns date string
+ */
+export function getDateString(date: Date | moment.Moment, noTime?: boolean) {
+  if (noTime) {
+    return moment(date).format('YYYY-MM-DD');
+  }
+  return moment(date).toISOString();
+}
+/**
  *
  * @param historicalDate The date in the past to measure against
  * @param now The datetime now, defaults to current timestamp

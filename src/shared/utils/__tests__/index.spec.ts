@@ -18,6 +18,7 @@ import {
   forceAsArray,
   deltaUrlToFusionUrl,
   getFriendlyTimeAgoString,
+  getDateString,
 } from '..';
 import * as moment from 'moment';
 
@@ -149,6 +150,23 @@ describe('utils functions', () => {
     });
     it('should NOT be expired', () => {
       expect(hasExpired(future)).toBeFalsy();
+    });
+  });
+  describe('dateString()', () => {
+    it('should for a date defined with a UTC string should return the same string', () => {
+      expect(getDateString(new Date('2022-01-20T09:10:22.149Z'))).toEqual(
+        '2022-01-20T09:10:22.149Z'
+      );
+    });
+    it('should for a date defined with a time offset string to return a time in UTC format', () => {
+      expect(getDateString(new Date('2022-01-20T09:10:22.149-07:00'))).toEqual(
+        '2022-01-20T16:10:22.149Z'
+      );
+    });
+    it('should only include date when optional noTime param is set to true', () => {
+      expect(getDateString(new Date('2022-01-20T09:10:22.149Z'), true)).toEqual(
+        '2022-01-20'
+      );
     });
   });
   describe('userFriendlyHistoricalDateString()', () => {
