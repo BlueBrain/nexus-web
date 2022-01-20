@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import { Input, Table, Button, Tooltip, Select } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { omit, difference } from 'lodash';
-import { parseProjectUrl, isISODate } from '../../utils/index';
+import { parseProjectUrl, isISODate, getDateString } from '../../utils/index';
 import { download } from '../../utils/download';
 import './../../styles/result-table.less';
 import useNotification from '../../hooks/useNotification';
@@ -15,7 +15,6 @@ const { Option } = Select;
 const PAGE_SIZE = 10;
 const MAX_FILTER_LIMIT = 20;
 const MIN_FILTER_LIMIT = 1;
-const DATE_FORMAT = 'DD-MM-YYYY, HH:mm';
 
 export type HeaderProperties = {
   title: string;
@@ -98,7 +97,7 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
                 if (isISODate(value)) {
                   return (
                     <a href={studioResourceViewLink}>
-                      {moment(value).format(DATE_FORMAT)}
+                      {getDateString(moment(value))}
                     </a>
                   );
                 }

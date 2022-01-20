@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Table, Tag, Button } from 'antd';
 import * as moment from 'moment';
 
-import { labelOf } from '../../../shared/utils';
+import { getDateString } from '../../../shared/utils';
 import Copy from '../../../shared/components/Copy';
 import { Input } from '../hooks/useInputs';
 import TypesIconList from '../../../shared/components/Types/TypesIcon';
@@ -13,7 +13,7 @@ const InputsTable: React.FC<{ inputs: Input[] }> = ({ inputs }) => {
   const tableData = inputs.map(input => ({
     key: input.resourceId,
     resourceId: input.resourceId,
-    createdAt: moment(input.createdAt).format('DD.MM.YYYY - HH:MM'),
+    createdAt: getDateString(moment(input.createdAt)),
     name: input.name,
     description: input.description,
     types: input.types,
