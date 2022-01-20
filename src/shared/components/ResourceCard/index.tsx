@@ -6,7 +6,11 @@ import { Resource } from '@bbp/nexus-sdk';
 
 import TypesIcon from '../Types/TypesIcon';
 import Copy from '../Copy';
-import { getUsername, getResourceLabel } from '../../utils';
+import {
+  getUsername,
+  getResourceLabel,
+  getFriendlyTimeAgoString,
+} from '../../utils';
 
 import './ResourceCard.less';
 import SchemaLink from '../SchemaLink';
@@ -94,7 +98,12 @@ const ResourceCardComponent: React.FunctionComponent<{
       <div>
         <Descriptions size={'small'}>
           <Descriptions.Item label="Created">
-            {moment(createdAt).format('DD/MM/YYYY')} by <b>{userName}</b>
+            {
+              <Tooltip title={moment(createdAt).format()}>
+                {getFriendlyTimeAgoString(moment(createdAt))}
+              </Tooltip>
+            }
+            by <b>{userName}</b>
           </Descriptions.Item>
           <Descriptions.Item label="Updated">
             {moment(updatedAt).fromNow()}
