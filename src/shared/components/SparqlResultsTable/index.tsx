@@ -7,6 +7,7 @@ import { parseProjectUrl, isISODate } from '../../utils/index';
 import { download } from '../../utils/download';
 import './../../styles/result-table.less';
 import useNotification from '../../hooks/useNotification';
+import FriendlyTimeAgo from '../FriendlyDate';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -69,7 +70,11 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
           let render;
           switch (title) {
             case 'Created At':
-              render = (date: string) => <span>{moment(date).fromNow()}</span>;
+              render = (date: string) => (
+                <span>
+                  <FriendlyTimeAgo date={moment(date)} />
+                </span>
+              );
               break;
             case 'Project':
               render = (projectURI: string) => {

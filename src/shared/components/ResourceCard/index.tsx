@@ -99,7 +99,7 @@ const ResourceCardComponent: React.FunctionComponent<{
             by <b>{userName}</b>
           </Descriptions.Item>
           <Descriptions.Item label="Updated">
-            {moment(updatedAt).fromNow()}
+            <FriendlyTimeAgo date={moment(updatedAt)} />
           </Descriptions.Item>
           <Descriptions.Item label="Revision">{rev}</Descriptions.Item>
           <Descriptions.Item label="Schema">
