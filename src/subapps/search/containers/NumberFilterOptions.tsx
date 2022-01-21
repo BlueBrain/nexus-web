@@ -213,7 +213,8 @@ const NumberFilterOptions: React.FC<{
             yField="doc_count"
             point={{ size: 5, shape: 'diamon' }}
             color="blue"
-          />)}
+          />
+        )}
         {graphValue === 'bar' && (
           <Bar data={histoValues} xField="doc_count" yField="key" />
         )}
