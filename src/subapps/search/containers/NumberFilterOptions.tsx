@@ -211,7 +211,7 @@ const NumberFilterOptions: React.FC<{
               </Descriptions.Item>
               <Descriptions.Item label="Max">{stats.max}</Descriptions.Item>
               <Descriptions.Item label="Min">{stats.min}</Descriptions.Item>
-              <Descriptions.Item label="Sum">{stats.sum}g</Descriptions.Item>
+              <Descriptions.Item label="Sum">{stats.sum}</Descriptions.Item>
             </Descriptions>
           </Col>
         </Row>
