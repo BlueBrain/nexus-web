@@ -25,10 +25,6 @@ const TemplateCard: React.FC<{
 }> = ({ template, selected }) => {
   const { name, description, _rev, _updatedAt, _updatedBy } = template;
 
-  const parsedTime = moment(_updatedAt)
-    .startOf('hour')
-    .fromNow();
-
   const onClickDetails = (event: any) => {
     event.stopPropagation();
     // TODO: create details page/modal/etc
