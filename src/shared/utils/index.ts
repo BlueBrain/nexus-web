@@ -185,8 +185,11 @@ export function hasExpired(timestamp: number): Boolean {
  * @param date
  * @returns date string
  */
-export function getDateString(date: Date | moment.Moment, noTime?: boolean) {
-  if (noTime) {
+export function getDateString(
+  date: Date | moment.Moment,
+  options?: { noTime?: boolean }
+) {
+  if (options?.noTime) {
     return moment(date).format('YYYY-MM-DD');
   }
   return moment(date).toISOString();
@@ -201,33 +204,33 @@ export function getFriendlyTimeAgoString(
   historicalDate: Date | moment.Moment,
   now?: Date | moment.Moment
 ) {
-  if (!now) {
-    now = new Date();
-  }
+  const dateMoment = moment(historicalDate);
+  const nowMoment = moment(now ? now : new Date());
 
-  if (historicalDate > now) {
+  if (dateMoment > nowMoment) {
     return 'Sometime in the future...';
   }
-
-  const dateMoment = moment(historicalDate);
-  const nowMoment = moment(now);
 
   const diffInMinutes = nowMoment.diff(dateMoment, 'minutes');
   const diffInHours = nowMoment.diff(dateMoment, 'hours');
   const diffInDays = nowMoment.diff(dateMoment, 'days');
-  const diffInYMonths = nowMoment.diff(dateMoment, 'months');
+  const diffInMonths = nowMoment.diff(dateMoment, 'months');
   const diffInYears = nowMoment.diff(dateMoment, 'years');
 
   if (diffInMinutes < 1) {
     return 'moments ago';
-  } else if (diffInMinutes < 60) {
+  }
+  if (diffInMinutes < 60) {
     return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
-  } else if (diffInHours < 24) {
+  }
+  if (diffInHours < 24) {
     return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
-  } else if (diffInDays < 30) {
+  }
+  if (diffInDays < 30) {
     return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
-  } else if (diffInYears < 1) {
-    return `${diffInYMonths} month${diffInYMonths > 1 ? 's' : ''} ago`;
+  }
+  if (diffInYears < 1) {
+    return `${diffInMonths} month${diffInMonths > 1 ? 's' : ''} ago`;
   }
 
   return `${diffInYears} year${diffInYears > 1 ? 's' : ''} ago`;

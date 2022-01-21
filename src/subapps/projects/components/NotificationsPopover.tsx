@@ -45,7 +45,8 @@ const NotififcationsPopover: React.FC<{
                 )}
             </p>
             <p>
-              Created on {getDateString(moment(activity.createdAt), true)} by{' '}
+              Created on{' '}
+              {getDateString(moment(activity.createdAt), { noTime: true })} by{' '}
               {getUsername(activity.createdBy)}
             </p>
             {/* TODO: fetch an agent */}

@@ -97,7 +97,7 @@ const LinkActivityForm: React.FC<{
           </p>
         </Col>
         <Col xs={15} sm={15} md={15}>
-          <p>{getDateString(moment(createdAt), true)}</p>
+          <p>{getDateString(moment(createdAt), { noTime: true })}</p>
         </Col>
       </Row>
       <br />

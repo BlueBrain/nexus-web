@@ -123,7 +123,7 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
                   filters: distinctValues.map(value => ({
                     value,
                     text: isISODate(value)
-                      ? moment(value).format(DATE_FORMAT)
+                      ? getDateString(moment(value))
                       : value,
                   })),
                   filterMultiple: false,

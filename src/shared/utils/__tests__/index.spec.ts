@@ -164,9 +164,9 @@ describe('utils functions', () => {
       );
     });
     it('should only include date when optional noTime param is set to true', () => {
-      expect(getDateString(new Date('2022-01-20T09:10:22.149Z'), true)).toEqual(
-        '2022-01-20'
-      );
+      expect(
+        getDateString(new Date('2022-01-20T09:10:22.149Z'), { noTime: true })
+      ).toEqual('2022-01-20');
     });
   });
   describe('userFriendlyHistoricalDateString()', () => {

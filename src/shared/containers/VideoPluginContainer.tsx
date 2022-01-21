@@ -92,7 +92,7 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
                   item.uploadDate && (
                     <div>
                       <p>{moment.duration(item.duration).humanize()}</p>
-                      <p>{getDateString(item.uploadDate, true)}</p>
+                      <p>{getDateString(item.uploadDate, { noTime: true })}</p>
                     </div>
                   )
                 }
