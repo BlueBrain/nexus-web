@@ -99,8 +99,22 @@ const NumberFilterOptions: React.FC<{
           stringValue: bucket.key,
         };
       });
-      setHistoValues(all.aggregations.histo.buckets);
       setStats(all.aggregations.stats);
+      const histoInterval = Math.round(
+        all.aggregation.stats.max - all.aggregation.max / 50
+      );
+      const histoQuery = constructQuery(query).aggregation(
+        'histogram',
+        `${field.name}.value`,
+        'histo',
+        {
+          interval: histoInterval,
+        }
+      );
+      const histoPromise = nexusClient.Search.query(histoQuery);
+      Promise.all([histoPromise]).then(([all]) => {
+        setHistoValues(all.aggregations.histo.buckets);
+      });
       setRangeMax(all.aggregations.stats.max);
       setRangeMax(all.aggregations.stats.max);
       setMissingCount(all.aggregations['(missing)'].doc_count);
@@ -197,7 +211,7 @@ const NumberFilterOptions: React.FC<{
               </Descriptions.Item>
               <Descriptions.Item label="Max">{stats.max}</Descriptions.Item>
               <Descriptions.Item label="Min">{stats.min}</Descriptions.Item>
-              <Descriptions.Item label="Sum">{stats.sum}</Descriptions.Item>
+              <Descriptions.Item label="Sum">{stats.sum}g</Descriptions.Item>
             </Descriptions>
           </Col>
         </Row>
