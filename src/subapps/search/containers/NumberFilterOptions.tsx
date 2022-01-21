@@ -69,7 +69,8 @@ const NumberFilterOptions: React.FC<{
 
   const [missingCount, setMissingCount] = React.useState<number>();
   const [histoValues, setHistoValues] = React.useState<any>([]);
-  const [stats, setStats] = React.useState<any>([]);
+  const [average, setAverage] = React.useState<number>(0);
+  const [sum, setSum] = React.useState<number>(0);
 
   const onSliderChange = (value: number[]) => {
     setRangeStart(value[0]);
@@ -97,22 +98,20 @@ const NumberFilterOptions: React.FC<{
         };
       });
 
-      setStats(all.aggregations.stats);
+      setAverage(all.aggregations.stats.average);
+      setSum(all.aggregations.stats.sum);
       setRangeMin(all.aggregations.stats.min);
       setRangeMax(all.aggregations.stats.max);
       setMissingCount(all.aggregations['(missing)'].doc_count);
 
       const histoInterval = Math.round(
-        all.aggregation.stats.max - all.aggregation.max / 50
+        (all.aggregations.stats.max - all.aggregations.stats.min) / 50
       );
-      const histoQuery = constructQuery(query).aggregation(
-        'histogram',
-        `${field.name}.value`,
-        'histo',
-        {
+      const histoQuery = constructQuery(query)
+        .aggregation('histogram', `${field.name}.value`, 'histo', {
           interval: histoInterval,
-        }
-      );
+        })
+        .build();
 
       const histoPromise = nexusClient.Search.query(histoQuery);
       Promise.all([histoPromise]).then(([all]) => {
@@ -206,12 +205,10 @@ const NumberFilterOptions: React.FC<{
         <Row>
           <Col flex={1}>
             <Descriptions title="Statistics">
-              <Descriptions.Item label="Average">
-                {stats.average}
-              </Descriptions.Item>
-              <Descriptions.Item label="Max">{stats.max}</Descriptions.Item>
-              <Descriptions.Item label="Min">{stats.min}</Descriptions.Item>
-              <Descriptions.Item label="Sum">{stats.sum}</Descriptions.Item>
+              <Descriptions.Item label="Average">{average}</Descriptions.Item>
+              <Descriptions.Item label="Max">{rangeMax}</Descriptions.Item>
+              <Descriptions.Item label="Min">{rangeMin}</Descriptions.Item>
+              <Descriptions.Item label="Sum">{sum}</Descriptions.Item>
             </Descriptions>
           </Col>
         </Row>
