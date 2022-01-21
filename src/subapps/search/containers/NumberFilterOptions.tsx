@@ -1,4 +1,13 @@
-import { Slider, InputNumber, Form, Col, Row, Checkbox, Descriptions } from 'antd';
+import {
+  Slider,
+  InputNumber,
+  Radio,
+  Form,
+  Col,
+  Row,
+  Checkbox,
+  Descriptions,
+} from 'antd';
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
@@ -25,7 +34,6 @@ type ConfigField =
       optional: boolean;
       fields?: undefined;
     };
-
 
 const NumberFilterOptions: React.FC<{
   field: ConfigField;
@@ -57,6 +65,8 @@ const NumberFilterOptions: React.FC<{
     fieldFilter?.filters[1] ? parseFloat(fieldFilter?.filters[1]) : undefined
   );
 
+  const [graphValue, setGraphValue] = React.useState<string>('line');
+
   const [missingCount, setMissingCount] = React.useState<number>();
   const [histoValues, setHistoValues] = React.useState<any>([]);
 
@@ -73,7 +83,9 @@ const NumberFilterOptions: React.FC<{
         size: 1000,
       })
       .aggregation('stats', `${field.name}.value`, 'stats')
-      .aggregation('histogram', `${field.name}.value`, 'histo', {interval: 5000})
+      .aggregation('histogram', `${field.name}.value`, 'histo', {
+        interval: 5000,
+      })
       .aggregation('missing', filterKeyWord, '(missing)')
       .build();
 
@@ -92,6 +104,10 @@ const NumberFilterOptions: React.FC<{
       setMissingCount(all.aggregations['(missing)'].doc_count);
     });
   }, []);
+
+  const onChange = (e: any) => {
+    setGraphValue(e.target.value);
+  };
 
   React.useEffect(() => {
     if (firstRender.current) {
@@ -174,34 +190,33 @@ const NumberFilterOptions: React.FC<{
         <Row>
           <Col flex={1}>
             <Descriptions title="Statistics">
-              <Descriptions.Item label="Average">
-                6.8
-              </Descriptions.Item>
-              <Descriptions.Item label="Max">
-                10
-              </Descriptions.Item>
+              <Descriptions.Item label="Average">6.8</Descriptions.Item>
+              <Descriptions.Item label="Max">10</Descriptions.Item>
               <Descriptions.Item label="Min">100</Descriptions.Item>
-              <Descriptions.Item label="Sum">
-                10
-              </Descriptions.Item>
+              <Descriptions.Item label="Sum">10</Descriptions.Item>
             </Descriptions>
           </Col>
         </Row>
       </Form.Item>
       <Form.Item>
-        <Line
-        data={histoValues}
-        height={100}
-        xField="key"
-        yField="doc_count"
-        point={{ size: 5, shape: 'diamon' }}
-        color='blue'
-        />
-        <Bar
-          data={histoValues}
-          xField= 'doc_count'
-          yField= 'key'
-        />
+        <Radio.Group onChange={onChange} value={graphValue}>
+          <Radio value={'bar'}>Bar Graph</Radio>
+          <Radio value={'line'}>Line Graph</Radio>
+        </Radio.Group>
+      </Form.Item>
+      <Form.Item>
+        {graphValue === 'line' && (
+          <Line
+            data={histoValues}
+            height={100}
+            xField="key"
+            yField="doc_count"
+            point={{ size: 5, shape: 'diamon' }}
+            color="blue"
+          />)}
+        {graphValue === 'bar' && (
+          <Bar data={histoValues} xField="doc_count" yField="key" />
+        )}
       </Form.Item>
     </>
   );
