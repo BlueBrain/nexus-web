@@ -69,6 +69,7 @@ const NumberFilterOptions: React.FC<{
 
   const [missingCount, setMissingCount] = React.useState<number>();
   const [histoValues, setHistoValues] = React.useState<any>([]);
+  const [stats, setStats] = React.useState<any>([]);
 
   const onSliderChange = (value: number[]) => {
     setRangeStart(value[0]);
@@ -99,7 +100,8 @@ const NumberFilterOptions: React.FC<{
         };
       });
       setHistoValues(all.aggregations.histo.buckets);
-      setRangeMin(all.aggregations.stats.min);
+      setStats(all.aggregations.stats);
+      setRangeMax(all.aggregations.stats.max);
       setRangeMax(all.aggregations.stats.max);
       setMissingCount(all.aggregations['(missing)'].doc_count);
     });
@@ -190,10 +192,12 @@ const NumberFilterOptions: React.FC<{
         <Row>
           <Col flex={1}>
             <Descriptions title="Statistics">
-              <Descriptions.Item label="Average">6.8</Descriptions.Item>
-              <Descriptions.Item label="Max">10</Descriptions.Item>
-              <Descriptions.Item label="Min">100</Descriptions.Item>
-              <Descriptions.Item label="Sum">10</Descriptions.Item>
+              <Descriptions.Item label="Average">
+                {stats.average}
+              </Descriptions.Item>
+              <Descriptions.Item label="Max">{stats.max}</Descriptions.Item>
+              <Descriptions.Item label="Min">{stats.min}</Descriptions.Item>
+              <Descriptions.Item label="Sum">{stats.sum}</Descriptions.Item>
             </Descriptions>
           </Col>
         </Row>
