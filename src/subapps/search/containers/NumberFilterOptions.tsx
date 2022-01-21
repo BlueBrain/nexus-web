@@ -84,9 +84,6 @@ const NumberFilterOptions: React.FC<{
         size: 1000,
       })
       .aggregation('stats', `${field.name}.value`, 'stats')
-      .aggregation('histogram', `${field.name}.value`, 'histo', {
-        interval: 5000,
-      })
       .aggregation('missing', filterKeyWord, '(missing)')
       .build();
 
@@ -99,7 +96,12 @@ const NumberFilterOptions: React.FC<{
           stringValue: bucket.key,
         };
       });
+
       setStats(all.aggregations.stats);
+      setRangeMin(all.aggregations.stats.min);
+      setRangeMax(all.aggregations.stats.max);
+      setMissingCount(all.aggregations['(missing)'].doc_count);
+
       const histoInterval = Math.round(
         all.aggregation.stats.max - all.aggregation.max / 50
       );
@@ -111,13 +113,11 @@ const NumberFilterOptions: React.FC<{
           interval: histoInterval,
         }
       );
+
       const histoPromise = nexusClient.Search.query(histoQuery);
       Promise.all([histoPromise]).then(([all]) => {
         setHistoValues(all.aggregations.histo.buckets);
       });
-      setRangeMax(all.aggregations.stats.max);
-      setRangeMax(all.aggregations.stats.max);
-      setMissingCount(all.aggregations['(missing)'].doc_count);
     });
   }, []);
 
