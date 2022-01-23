@@ -65,6 +65,23 @@ const ProjectStatsContainer: React.FC<{
 
     return diameter < min ? min : diameter;
   };
+  const constructPathName = (path: any[]) => {
+    return path.map((singlePath: any) => singlePath._name).join('/');
+  };
+  const getLineWidth = (count: number) => {
+    const min = 1;
+    const max = 20;
+
+    const maxCount = 10000;
+
+    const width = (count / maxCount) * max;
+
+    return width < min ? min : width;
+  };
+
+  const getEdgeId = (edge: any) => {
+    return `${edge._target}-${edge._source}`;
+  };
 
   const constructGraphData = (response: any) => {
     const nodes = response._nodes.map((node: any) => ({
@@ -74,12 +91,21 @@ const ProjectStatsContainer: React.FC<{
         height: `${getDiameter(node._count)}px`,
       },
     }));
+    const edges = response._edges.map((edge: any) => ({
+      data: {
+        id: getEdgeId(edge),
+        source: edge._source,
+        target: edge._target || edge._source,
+        name: constructPathName(edge._path),
+      },
+      style: {
+        width: getLineWidth(edge._count),
+      },
+    }));
 
     return {
       nodes,
-      // edges,
-      // are not constructed properly because of this: https://github.com/BlueBrain/nexus/issues/2871
-      edges: [],
+      edges,
     };
   };
 
