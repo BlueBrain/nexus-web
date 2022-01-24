@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as moment from 'moment';
-import { Card, Button, Tooltip, Divider, Descriptions } from 'antd';
+import { Card, Button, Tooltip, Divider } from 'antd';
 import { DownOutlined, CheckOutlined, CopyOutlined } from '@ant-design/icons';
 import { Resource } from '@bbp/nexus-sdk';
 
