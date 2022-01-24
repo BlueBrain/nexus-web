@@ -93,25 +93,38 @@ const ResourceCardComponent: React.FunctionComponent<{
       }
     >
       <div>
-        <Descriptions size={'small'}>
-          <Descriptions.Item label="Created">
-            <FriendlyTimeAgo date={moment(createdAt)} />
-            by <b>{userName}</b>
-          </Descriptions.Item>
-          <Descriptions.Item label="Updated">
-            <FriendlyTimeAgo date={moment(updatedAt)} />
-          </Descriptions.Item>
-          <Descriptions.Item label="Revision">{rev}</Descriptions.Item>
-          <Descriptions.Item label="Schema">
-            {schemaLink({ resource })}
-          </Descriptions.Item>
-        </Descriptions>
-        {!!type && (
-          <>
-            <Divider />
-            <div>{!!type && <TypesIcon type={types} full={true} />}</div>
-          </>
-        )}
+        <div>
+          <span>
+            <b>Created:</b>
+          </span>{' '}
+          <FriendlyTimeAgo date={moment(createdAt)} /> <b>by</b> {userName}
+        </div>
+        <div>
+          <span>
+            <b>Updated:</b>
+          </span>{' '}
+          <FriendlyTimeAgo date={moment(updatedAt)} />
+        </div>
+        <div>
+          <span>
+            <b>Revision:</b>
+          </span>{' '}
+          {rev}
+        </div>
+        <div>
+          <span>
+            <b>Schema:</b>
+          </span>{' '}
+          {schemaLink({ resource })}
+        </div>
+        <div>
+          {!!type && (
+            <>
+              <Divider />
+              <div>{!!type && <TypesIcon type={types} full={true} />}</div>
+            </>
+          )}
+        </div>
       </div>
     </Card>
   );
