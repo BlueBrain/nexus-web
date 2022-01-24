@@ -14,6 +14,27 @@ const ResourceInfoPanel: React.FC<{
   const title = (
     <h2 className="resource-info-panel__title">{typeStats._name}</h2>
   );
+  const renderRelation = (relations: any, typeStats: any) => {
+    return relations.map((relation: any, index: number) => {
+      const destination =
+        relation._source === typeStats['@id']
+          ? relation._target
+          : relation._source;
+      const source = relation._path[0];
+
+      return (
+        <li key={index}>
+          <a href={source['@id']} target="_blank">
+            {source._name}
+          </a>{' '}
+          {'-->'}{' '}
+          <a href={destination} target="_blank">
+            {labelOf(destination)}
+          </a>{' '}
+        </li>
+      );
+    });
+  };
   return (
     <Drawer
       destroyOnClose={true}
@@ -42,13 +63,19 @@ const ResourceInfoPanel: React.FC<{
                   return (
                     <li key={property._name}>
                       <span>
-                        {property._name}: {property._count}
+                        <a href={property['@id']} target="_blank">
+                          {property._name}
+                        </a>
+                        : {property._count}
                       </span>
                       {property._properties && (
                         <ul>
                           {property._properties.map((subProperty: any) => (
                             <li key={subProperty._name}>
-                              {subProperty._name}: {subProperty._count}
+                              <a href={subProperty['@id']} target="_blank">
+                                {subProperty._name}
+                              </a>
+                              : {subProperty._count}
                             </li>
                           ))}
                         </ul>
@@ -59,20 +86,7 @@ const ResourceInfoPanel: React.FC<{
             </ul>
           </Panel>
           <Panel header="Relationships" key="2">
-            <>
-              <ul>
-                {relations &&
-                  relations.map((relation: any, index: number) => (
-                    <li key={index}>
-                      {relation._path.map((path: any) => path._name).join('/')}{' '}
-                      {'-->'}{' '}
-                      {relation._source === typeStats['@id']
-                        ? labelOf(relation._target)
-                        : labelOf(relation._source)}{' '}
-                    </li>
-                  ))}
-              </ul>
-            </>
+            <ul>{relations && renderRelation(relations, typeStats)}</ul>
           </Panel>
         </Collapse>
       </div>
