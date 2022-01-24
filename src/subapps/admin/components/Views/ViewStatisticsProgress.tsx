@@ -4,6 +4,7 @@ import { ReloadOutlined } from '@ant-design/icons';
 import * as moment from 'moment';
 import { Statistics } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
+import FriendlyTimeAgo from '../../../../shared/components/FriendlyDate';
 
 type ViewStatisticsProgressProps = {
   processedEvents: number;
@@ -16,11 +17,13 @@ type ViewStatisticsProgressProps = {
 export const ViewStatisticsProgress: React.FunctionComponent<ViewStatisticsProgressProps> = props => {
   const percent = Math.floor((props.processedEvents / props.totalEvents) * 100);
   const label =
-    percent === 100
-      ? `last indexed: ${moment(props.lastIndexed)
-          .startOf('days')
-          .fromNow()}`
-      : 'indexing...';
+    percent === 100 ? (
+      <>
+        last indexed: <FriendlyTimeAgo date={moment(props.lastIndexed)} />
+      </>
+    ) : (
+      <>indexing...</>
+    );
 
   return (
     <>

@@ -6,6 +6,7 @@ import {
   isMatchWithCustomizer,
   pick,
 } from 'lodash';
+import * as moment from 'moment';
 
 /**
  * getProp utility - an alternative to lodash.get
@@ -176,6 +177,63 @@ export function getLogoutUrl(
 
 export function hasExpired(timestamp: number): Boolean {
   return timestamp < Date.now().valueOf() / 1000;
+}
+
+/**
+ * Get data string to display
+ *
+ * @param date
+ * @returns date string
+ */
+export function getDateString(
+  date: Date | moment.Moment,
+  options?: { noTime?: boolean }
+) {
+  if (options?.noTime) {
+    return moment(date).format('YYYY-MM-DD');
+  }
+  return moment(date).toISOString();
+}
+/**
+ *
+ * @param historicalDate The date in the past to measure against
+ * @param now The datetime now, defaults to current timestamp
+ * @returns a user friendly string
+ */
+export function getFriendlyTimeAgoString(
+  historicalDate: Date | moment.Moment,
+  now?: Date | moment.Moment
+) {
+  const dateMoment = moment(historicalDate);
+  const nowMoment = moment(now ? now : new Date());
+
+  if (dateMoment > nowMoment) {
+    return 'Sometime in the future...';
+  }
+
+  const diffInMinutes = nowMoment.diff(dateMoment, 'minutes');
+  const diffInHours = nowMoment.diff(dateMoment, 'hours');
+  const diffInDays = nowMoment.diff(dateMoment, 'days');
+  const diffInMonths = nowMoment.diff(dateMoment, 'months');
+  const diffInYears = nowMoment.diff(dateMoment, 'years');
+
+  if (diffInMinutes < 1) {
+    return 'moments ago';
+  }
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
+  }
+  if (diffInHours < 24) {
+    return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+  }
+  if (diffInDays < 30) {
+    return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+  }
+  if (diffInYears < 1) {
+    return `${diffInMonths} month${diffInMonths > 1 ? 's' : ''} ago`;
+  }
+
+  return `${diffInYears} year${diffInYears > 1 ? 's' : ''} ago`;
 }
 
 export function getDestinationParam(): string {

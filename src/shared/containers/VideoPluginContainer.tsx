@@ -6,6 +6,7 @@ import * as moment from 'moment';
 import { Collapse, Modal, Button, List } from 'antd';
 
 import '../styles/video-plugin.less';
+import { getDateString } from '../utils';
 
 const { Panel } = Collapse;
 
@@ -91,7 +92,7 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
                   item.uploadDate && (
                     <div>
                       <p>{moment.duration(item.duration).humanize()}</p>
-                      <p>{moment(item.uploadDate).format('DD/MM/YYYY')}</p>
+                      <p>{getDateString(item.uploadDate, { noTime: true })}</p>
                     </div>
                   )
                 }
