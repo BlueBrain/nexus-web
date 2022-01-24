@@ -5,6 +5,7 @@ import * as moment from 'moment';
 import { getUsername } from '../../../../shared/utils';
 
 import './TemplateCard.less';
+import FriendlyTimeAgo from '../../../../shared/components/FriendlyDate';
 
 const activityIcon = require('../../../../shared/images/settingIcon.svg');
 
@@ -24,10 +25,6 @@ const TemplateCard: React.FC<{
 }> = ({ template, selected }) => {
   const { name, description, _rev, _updatedAt, _updatedBy } = template;
 
-  const parsedTime = moment(_updatedAt)
-    .startOf('hour')
-    .fromNow();
-
   const onClickDetails = (event: any) => {
     event.stopPropagation();
     // TODO: create details page/modal/etc
@@ -44,7 +41,8 @@ const TemplateCard: React.FC<{
         </div>
         <div className="template-card__title-info">
           <span>
-            Updated {parsedTime} by {getUsername(_updatedBy)}
+            Updated <FriendlyTimeAgo date={moment(_updatedAt)} /> by{' '}
+            {getUsername(_updatedBy)}
           </span>
           <span>v{_rev}</span>
         </div>

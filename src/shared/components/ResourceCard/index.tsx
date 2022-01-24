@@ -10,6 +10,7 @@ import { getUsername, getResourceLabel } from '../../utils';
 
 import './ResourceCard.less';
 import SchemaLink from '../SchemaLink';
+import FriendlyTimeAgo from '../FriendlyDate';
 
 const ResourceCardComponent: React.FunctionComponent<{
   resource: Resource;
@@ -94,10 +95,11 @@ const ResourceCardComponent: React.FunctionComponent<{
       <div>
         <Descriptions size={'small'}>
           <Descriptions.Item label="Created">
-            {moment(createdAt).format('DD/MM/YYYY')} by <b>{userName}</b>
+            <FriendlyTimeAgo date={moment(createdAt)} />
+            by <b>{userName}</b>
           </Descriptions.Item>
           <Descriptions.Item label="Updated">
-            {moment(updatedAt).fromNow()}
+            <FriendlyTimeAgo date={moment(updatedAt)} />
           </Descriptions.Item>
           <Descriptions.Item label="Revision">{rev}</Descriptions.Item>
           <Descriptions.Item label="Schema">

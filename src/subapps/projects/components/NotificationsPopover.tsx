@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Tooltip } from 'antd';
 import * as moment from 'moment';
 
-import { getUsername, labelOf } from '../../../shared/utils';
+import { getDateString, getUsername, labelOf } from '../../../shared/utils';
 import TypesIconList from '../../../shared/components/Types/TypesIcon';
 
 import './NotificationsPopover.less';
@@ -45,7 +45,8 @@ const NotififcationsPopover: React.FC<{
                 )}
             </p>
             <p>
-              Created on {moment(activity.createdAt).format('L')} by{' '}
+              Created on{' '}
+              {getDateString(moment(activity.createdAt), { noTime: true })} by{' '}
               {getUsername(activity.createdBy)}
             </p>
             {/* TODO: fetch an agent */}
