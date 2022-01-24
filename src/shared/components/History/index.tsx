@@ -4,6 +4,7 @@ import { StarOutlined } from '@ant-design/icons';
 import * as moment from 'moment';
 
 import './History.less';
+import FriendlyTimeAgo from '../FriendlyDate';
 
 const HistoryComponent: React.FunctionComponent<{
   revisions: {
@@ -28,7 +29,7 @@ const HistoryComponent: React.FunctionComponent<{
               <div>
                 {' '}
                 {link && link(index + 1)} created by <b>{revision.userName}</b>{' '}
-                on {moment(revision.createdAt).format('DD/MM/YYYY')}
+                <FriendlyTimeAgo date={moment(revision.createdAt)} />
               </div>
             </Timeline.Item>
           );
@@ -40,8 +41,8 @@ const HistoryComponent: React.FunctionComponent<{
           >
             <div>
               {' '}
-              {link && link(index + 1)} updated by <b>{revision.userName}</b> on{' '}
-              {moment(revision.updatedAt).format('DD/MM/YYYY')}
+              {link && link(index + 1)} updated by <b>{revision.userName}</b>{' '}
+              <FriendlyTimeAgo date={moment(revision.updatedAt)} />
               <div
                 className="changes"
                 style={{ width: 'max-content', marginTop: '1em' }}
