@@ -106,8 +106,9 @@ const NumberFilterOptions: React.FC<{
 
       const histoInterval =
         (all.aggregations.stats.max - all.aggregations.stats.min) / 50;
+
       const histoIntervalFormatted =
-        histoInterval > 0
+        histoInterval > 1
           ? Math.round(histoInterval)
           : histoInterval.toFixed(4);
 
