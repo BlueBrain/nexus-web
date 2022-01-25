@@ -104,12 +104,12 @@ const NumberFilterOptions: React.FC<{
       setRangeMax(all.aggregations.stats.max);
       setMissingCount(all.aggregations['(missing)'].doc_count);
 
-      const histoInterval = Math.round(
-        (all.aggregations.stats.max - all.aggregations.stats.min) / 50
-      );
+      const histoInterval = ((all.aggregations.stats.max - all.aggregations.stats.min) / 50);
+      const histoIntervalFormatted = histoInterval > 0 ? Math.round(histoInterval) : histoInterval.toFixed(4);
+
       const histoQuery = constructQuery(query)
         .aggregation('histogram', `${field.name}.value`, 'histo', {
-          interval: histoInterval,
+          interval: histoIntervalFormatted,
         })
         .build();
 
