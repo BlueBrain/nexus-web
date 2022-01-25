@@ -3,6 +3,35 @@ import * as cytoscape from 'cytoscape';
 // @ts-ignore
 import * as avsdf from 'cytoscape-avsdf';
 
+const GRAPH_STYLE: cytoscape.Stylesheet[] = [
+  {
+    selector: 'node',
+    style: {
+      label: 'data(label)',
+      'text-valign': 'center',
+      'text-halign': 'center',
+      backgroundColor: '#0083cb', // fusion-primary-color
+      'text-wrap': 'wrap',
+      color: '#333333', // fusion-primary-text-color
+    },
+  },
+  {
+    selector: 'edge',
+    style: {
+      label: 'data(name)',
+      'font-size': '12px',
+      'line-color': '#ac1d3b61', // fusion-visited-link-color
+      color: '#333333', // fusion-primary-text-color
+    },
+  },
+  {
+    selector: 'node:selected',
+    style: {
+      'background-color': '#7cb4fa', // fusion-secondary-color
+    },
+  },
+];
+
 export type ElementNodeData = {
   label: string;
   isOrigin?: boolean;
@@ -28,34 +57,7 @@ const ProjectGraph: React.FC<{
         // @ts-ignore
         name: 'avsdf',
       },
-      style: [
-        {
-          selector: 'node',
-          style: {
-            label: 'data(label)',
-            'text-valign': 'center',
-            'text-halign': 'center',
-            backgroundColor: 'DarkMagenta',
-            'text-wrap': 'wrap',
-            color: '#fff',
-          },
-        },
-        {
-          selector: 'edge',
-          style: {
-            label: 'data(name)',
-            'font-size': '12px',
-            'line-color': 'MediumPurple',
-            color: '#fff',
-          },
-        },
-        {
-          selector: 'node:selected',
-          style: {
-            'background-color': 'Goldenrod',
-          },
-        },
-      ],
+      style: GRAPH_STYLE,
     });
 
     return () => {
@@ -88,7 +90,7 @@ const ProjectGraph: React.FC<{
         style={{
           width: '100%',
           height: '1000px',
-          backgroundColor: 'black',
+          backgroundColor: '#fff',
         }}
         className="graph"
         ref={container}
