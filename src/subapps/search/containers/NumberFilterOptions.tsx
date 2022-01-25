@@ -1,4 +1,13 @@
-import { Slider, InputNumber, Form, Col, Row, Checkbox } from 'antd';
+import {
+  Slider,
+  InputNumber,
+  Radio,
+  Form,
+  Col,
+  Row,
+  Checkbox,
+  Descriptions,
+} from 'antd';
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
@@ -6,6 +15,7 @@ import { constructQuery } from '../utils';
 import './FilterOptions.less';
 import { createKeyWord } from './FilterOptions';
 import './NumberFilterOptionsContainer.less';
+import { Line, Bar } from '@ant-design/charts';
 
 type ConfigField =
   | {
@@ -55,7 +65,12 @@ const NumberFilterOptions: React.FC<{
     fieldFilter?.filters[1] ? parseFloat(fieldFilter?.filters[1]) : undefined
   );
 
+  const [graphValue, setGraphValue] = React.useState<string>('line');
+
   const [missingCount, setMissingCount] = React.useState<number>();
+  const [histoValues, setHistoValues] = React.useState<any>([]);
+  const [average, setAverage] = React.useState<number>(0);
+  const [sum, setSum] = React.useState<number>(0);
 
   const onSliderChange = (value: number[]) => {
     setRangeStart(value[0]);
@@ -83,11 +98,31 @@ const NumberFilterOptions: React.FC<{
         };
       });
 
+      setAverage(all.aggregations.stats.average);
+      setSum(all.aggregations.stats.sum);
       setRangeMin(all.aggregations.stats.min);
       setRangeMax(all.aggregations.stats.max);
       setMissingCount(all.aggregations['(missing)'].doc_count);
+
+      const histoInterval = Math.round(
+        (all.aggregations.stats.max - all.aggregations.stats.min) / 50
+      );
+      const histoQuery = constructQuery(query)
+        .aggregation('histogram', `${field.name}.value`, 'histo', {
+          interval: histoInterval,
+        })
+        .build();
+
+      const histoPromise = nexusClient.Search.query(histoQuery);
+      Promise.all([histoPromise]).then(([all]) => {
+        setHistoValues(all.aggregations.histo.buckets);
+      });
     });
   }, []);
+
+  const onChange = (e: any) => {
+    setGraphValue(e.target.value);
+  };
 
   React.useEffect(() => {
     if (firstRender.current) {
@@ -166,6 +201,39 @@ const NumberFilterOptions: React.FC<{
           </Checkbox>
         </Form.Item>
       )}
+      <Form.Item>
+        <Row>
+          <Col flex={1}>
+            <Descriptions title="Statistics">
+              <Descriptions.Item label="Average">{average}</Descriptions.Item>
+              <Descriptions.Item label="Max">{rangeMax}</Descriptions.Item>
+              <Descriptions.Item label="Min">{rangeMin}</Descriptions.Item>
+              <Descriptions.Item label="Sum">{sum}</Descriptions.Item>
+            </Descriptions>
+          </Col>
+        </Row>
+      </Form.Item>
+      <Form.Item>
+        <Radio.Group onChange={onChange} value={graphValue}>
+          <Radio value={'bar'}>Bar Graph</Radio>
+          <Radio value={'line'}>Line Graph</Radio>
+        </Radio.Group>
+      </Form.Item>
+      <Form.Item>
+        {graphValue === 'line' && (
+          <Line
+            data={histoValues}
+            height={100}
+            xField="key"
+            yField="doc_count"
+            point={{ size: 5, shape: 'diamon' }}
+            color="blue"
+          />
+        )}
+        {graphValue === 'bar' && (
+          <Bar data={histoValues} xField="doc_count" yField="key" />
+        )}
+      </Form.Item>
     </>
   );
 };
