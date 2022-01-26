@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { getUsername } from '../../utils';
 import { Resource } from '@bbp/nexus-sdk/lib/types';
 import * as moment from 'moment';
+import FriendlyTimeAgo from '../FriendlyDate';
 
 const ResourceMetadata: React.FC<{
   resource: Resource;
@@ -49,7 +50,8 @@ const ResourceMetadata: React.FC<{
       <Col span={12}>
         <Row>
           <Col>
-            <b>Created At:</b> {moment(resource._createdAt).format()}
+            <b>Created:</b>{' '}
+            <FriendlyTimeAgo date={moment(resource._createdAt)} />
           </Col>
         </Row>
         <Row>
@@ -60,7 +62,8 @@ const ResourceMetadata: React.FC<{
 
         <Row>
           <Col>
-            <b>Updated At:</b> {moment(resource._updatedAt).format()}
+            <b>Updated:</b>{' '}
+            <FriendlyTimeAgo date={moment(resource._updatedAt)} />
           </Col>
         </Row>
         <Row>

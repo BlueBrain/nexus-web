@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Col, Row, Button, Select } from 'antd';
 import * as moment from 'moment';
 
-import { getUsername, labelOf } from '../../../shared/utils';
+import { getDateString, getUsername, labelOf } from '../../../shared/utils';
 import TypesIconList from '../../../shared/components/Types/TypesIcon';
 
 import './LinkActivityForm.less';
@@ -97,7 +97,7 @@ const LinkActivityForm: React.FC<{
           </p>
         </Col>
         <Col xs={15} sm={15} md={15}>
-          <p>{moment(createdAt).format('L')}</p>
+          <p>{getDateString(moment(createdAt), { noTime: true })}</p>
         </Col>
       </Row>
       <br />

@@ -3,6 +3,7 @@ import { Alert } from 'antd';
 import * as moment from 'moment';
 
 import './ProjectWarning.less';
+import { getDateString } from '../../../../shared/utils';
 
 const ProjectWarning: React.FC<{
   projectLastUpdatedAt: string;
@@ -11,9 +12,9 @@ const ProjectWarning: React.FC<{
   let deletionTime;
 
   if (projectLastUpdatedAt && duration) {
-    deletionTime = moment(projectLastUpdatedAt)
-      .add(duration, 'seconds')
-      .format('LLL');
+    deletionTime = getDateString(
+      moment(projectLastUpdatedAt).add(duration, 'seconds')
+    );
   } else {
     deletionTime = '';
   }
