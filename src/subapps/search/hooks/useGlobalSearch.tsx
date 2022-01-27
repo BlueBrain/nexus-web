@@ -15,14 +15,13 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../shared/store/reducers';
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
-import { Button, Divider, Tooltip } from 'antd';
+import { Button, Divider, Tooltip, Spin } from 'antd';
 import { deltaUrlToFusionUrl, labelOf } from '../../../shared/utils';
 import FilterOptions, {
   createKeyWord,
   extractFieldName,
 } from '../containers/FilterOptions';
 import DateFilterOptions from '../containers/DateFilterOptions';
-import NumberFilterOptions from '../containers/NumberFilterOptions';
 import '../containers/SearchContainer.less';
 import { SortDirection } from '../../../shared/hooks/useAccessDataForTable';
 import SortMenuOptions from '../components/SortMenuOptions';
@@ -426,6 +425,9 @@ function useGlobalSearchData(
   };
 
   const fieldMenu = (field: ConfigField) => {
+    const NumberFilterOptions = React.lazy(() => {
+      return import('../containers/NumberFilterOptions');
+    });
     return (
       <div>
         <Button
@@ -470,13 +472,15 @@ function useGlobalSearchData(
               />
             ) : field.fields &&
               field.fields.find(f => f.format.includes('number')) ? (
-              <NumberFilterOptions
-                filter={filterState}
-                query={query}
-                nexusClient={nexus}
-                field={field}
-                onFinish={onFilterSubmit}
-              />
+              <React.Suspense fallback={<Spin />}>
+                <NumberFilterOptions
+                  filter={filterState}
+                  query={query}
+                  nexusClient={nexus}
+                  field={field}
+                  onFinish={onFilterSubmit}
+                />
+              </React.Suspense>
             ) : (
               <FilterOptions
                 filter={filterState}

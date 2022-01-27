@@ -30,9 +30,9 @@ const config = [
     },
     devtool: 'source-map',
     mode: 'production',
-    optimization: {
-      minimizer: [new TerserPlugin()],
-    },
+    // optimization: {
+    //   minimizer: [new TerserPlugin()],
+    // },
     module: {
       rules: [
         {
