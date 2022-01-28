@@ -16,6 +16,10 @@ const config = [
     name: 'client',
     entry: {
       bundle: ['./src/client/index.tsx'],
+      search: ['./src/subapps/search/index.tsx'],
+      admin: ['./src/subapps/admin/index.tsx'],
+      studio: ['./src/subapps/studioLegacy/index.tsx'],
+      workflows: ['./src/subapps/projects/index.tsx'],
       silent_refresh: ['./src/client/silent_refresh.ts'],
     },
     output: {
@@ -30,9 +34,12 @@ const config = [
     },
     devtool: 'source-map',
     mode: 'production',
-    // optimization: {
-    //   minimizer: [new TerserPlugin()],
-    // },
+    optimization: {
+      minimizer: [new TerserPlugin()],
+      splitChunks: {
+        chunks: 'all',
+      },
+    },
     module: {
       rules: [
         {
