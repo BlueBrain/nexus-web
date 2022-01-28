@@ -43,7 +43,6 @@ const ResourceCardComponent: React.FunctionComponent<{
       extra={
         <div className="actions">
           <Copy
-            textToCopy={id}
             render={(copySuccess, triggerCopy) => (
               <Tooltip title={copySuccess ? 'Copied!' : `Copy ${id}`}>
                 <Button
@@ -52,7 +51,7 @@ const ResourceCardComponent: React.FunctionComponent<{
                   onClick={(e: React.MouseEvent) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    triggerCopy();
+                    triggerCopy(id);
                   }}
                 >
                   Identifier
@@ -61,7 +60,6 @@ const ResourceCardComponent: React.FunctionComponent<{
             )}
           />{' '}
           <Copy
-            textToCopy={self}
             render={(copySuccess, triggerCopy) => (
               <Tooltip title={copySuccess ? 'Copied!' : `Copy ${self}`}>
                 <Button
@@ -70,7 +68,7 @@ const ResourceCardComponent: React.FunctionComponent<{
                   onClick={(e: React.MouseEvent) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    triggerCopy();
+                    triggerCopy(self);
                   }}
                 >
                   Nexus Address

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Table, Tag, Button } from 'antd';
+import { Table, Button } from 'antd';
 import * as moment from 'moment';
 
 import { getDateString } from '../../../shared/utils';
@@ -37,13 +37,12 @@ const InputsTable: React.FC<{ inputs: Input[] }> = ({ inputs }) => {
         render={text => {
           return (
             <Copy
-              textToCopy={text}
               render={(copySuccess, triggerCopy) => (
                 <Button
                   onClick={(e: React.MouseEvent) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    triggerCopy();
+                    triggerCopy(text);
                   }}
                 >
                   {copySuccess ? 'Copied!' : 'Copy ID'}

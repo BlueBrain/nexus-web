@@ -4,9 +4,9 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Button, Col, Dropdown, Menu, Row } from 'antd';
 import * as React from 'react';
 import { generatePath, useHistory, useLocation } from 'react-router-dom';
+import Copy from '../components/Copy';
 import { CartContext } from '../hooks/useDataCart';
 import { makeResourceUri } from '../utils';
-import { triggerCopy } from '../utils/copy';
 
 const ResourceViewActionsContainer: React.FC<{
   resource: Resource;
@@ -108,96 +108,104 @@ const ResourceViewActionsContainer: React.FC<{
         </Dropdown>
       </Col>
       <Col>
-        <Dropdown.Button
-          onClick={() => {
-            const pathToResource = generatePath(
-              '/:orgLabel/:projectLabel/resources/:resourceId',
-              {
-                orgLabel,
-                projectLabel,
-                resourceId: encodedResourceId,
-              }
+        <Copy
+          render={(copySuccess, triggerCopy) => {
+            return (
+              <Dropdown.Button
+                onClick={() => {
+                  const pathToResource = generatePath(
+                    '/:orgLabel/:projectLabel/resources/:resourceId',
+                    {
+                      orgLabel,
+                      projectLabel,
+                      resourceId: encodedResourceId,
+                    }
+                  );
+
+                  if (!isLatest) {
+                    triggerCopy(
+                      `${window.location.origin.toString()}${pathToResource}?rev=${
+                        resource._rev
+                      }`
+                    );
+                  } else {
+                    triggerCopy(
+                      `${window.location.origin.toString()}${pathToResource}`
+                    );
+                  }
+                }}
+                overlay={
+                  <Menu>
+                    <Menu.Item
+                      onClick={() => {
+                        const pathToResource = generatePath(
+                          '/:orgLabel/:projectLabel/resources/:resourceId',
+                          {
+                            orgLabel,
+                            projectLabel,
+                            resourceId: encodedResourceId,
+                          }
+                        );
+
+                        triggerCopy(
+                          `${window.location.origin.toString()}${pathToResource}`
+                        );
+                      }}
+                    >
+                      URL
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() => {
+                        const pathToResource = generatePath(
+                          '/:orgLabel/:projectLabel/resources/:resourceId',
+                          {
+                            orgLabel,
+                            projectLabel,
+                            resourceId: encodedResourceId,
+                          }
+                        );
+
+                        triggerCopy(
+                          `${window.location.origin.toString()}${pathToResource}?rev=${
+                            resource._rev
+                          }`
+                        );
+                      }}
+                    >
+                      URL (with revision)
+                    </Menu.Item>
+                    <Menu.Item onClick={() => triggerCopy(resource['@id'])}>
+                      ID
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() =>
+                        triggerCopy(`${resource['@id']}?rev=${resource._rev}`)
+                      }
+                    >
+                      ID (with revision)
+                    </Menu.Item>
+                    <Menu.Item onClick={() => triggerCopy(self ? self : '')}>
+                      Nexus address
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() =>
+                        triggerCopy(
+                          self
+                            ? `${self}?rev=${resource ? resource._rev : ''}`
+                            : ''
+                        )
+                      }
+                    >
+                      Nexus address (with revision)
+                    </Menu.Item>
+                  </Menu>
+                }
+              >
+                {copySuccess ? 'Copied!' : 'Copy'}
+              </Dropdown.Button>
             );
-
-            if (!isLatest) {
-              triggerCopy(
-                `${window.location.origin.toString()}${pathToResource}?rev=${
-                  resource._rev
-                }`
-              );
-            } else {
-              triggerCopy(
-                `${window.location.origin.toString()}${pathToResource}`
-              );
-            }
           }}
-          overlay={
-            <Menu>
-              <Menu.Item
-                onClick={() => {
-                  const pathToResource = generatePath(
-                    '/:orgLabel/:projectLabel/resources/:resourceId',
-                    {
-                      orgLabel,
-                      projectLabel,
-                      resourceId: encodedResourceId,
-                    }
-                  );
-
-                  triggerCopy(
-                    `${window.location.origin.toString()}${pathToResource}`
-                  );
-                }}
-              >
-                URL
-              </Menu.Item>
-              <Menu.Item
-                onClick={() => {
-                  const pathToResource = generatePath(
-                    '/:orgLabel/:projectLabel/resources/:resourceId',
-                    {
-                      orgLabel,
-                      projectLabel,
-                      resourceId: encodedResourceId,
-                    }
-                  );
-
-                  triggerCopy(
-                    `${window.location.origin.toString()}${pathToResource}?rev=${
-                      resource._rev
-                    }`
-                  );
-                }}
-              >
-                URL (with revision)
-              </Menu.Item>
-              <Menu.Item onClick={() => triggerCopy(resource['@id'])}>
-                ID
-              </Menu.Item>
-              <Menu.Item
-                onClick={() =>
-                  triggerCopy(`${resource['@id']}%3Frev=${resource._rev}`)
-                }
-              >
-                ID (with revision)
-              </Menu.Item>
-              <Menu.Item onClick={() => triggerCopy(self ? self : '')}>
-                Nexus address
-              </Menu.Item>
-              <Menu.Item
-                onClick={() =>
-                  triggerCopy(
-                    self ? `${self}%3Frev=${resource ? resource._rev : ''}` : ''
-                  )
-                }
-              >
-                Nexus address (with revision)
-              </Menu.Item>
-            </Menu>
-          }
-        >
-          Copy
-        </Dropdown.Button>
+        ></Copy>
       </Col>
       <Col>
         <Button onClick={handleAddToCart}>Add to Cart</Button>
