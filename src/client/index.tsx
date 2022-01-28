@@ -188,8 +188,7 @@ if (module.hot) {
   // tslint:disable-next-line:no-console
   console.log("🔥It's hot!🔥");
   module.hot.accept('../shared/App', () => {
-    const NextApp: React.StatelessComponent<{}> = require('../shared/App')
-      .default;
+    const NextApp: React.FC<{}> = require('../shared/App').default;
     ReactDOM.hydrate(
       <Provider store={store}>
         <BrowserRouter basename={base}>
