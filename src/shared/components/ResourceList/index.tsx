@@ -263,13 +263,12 @@ const ResourceListComponent: React.FunctionComponent<{
         </h3>
         <div className="controls -squished">
           <Copy
-            textToCopy={shareableLink}
             render={(copySuccess, triggerCopy) => (
               <a
                 href={shareableLink}
                 onClick={e => {
                   e.preventDefault();
-                  triggerCopy();
+                  triggerCopy(shareableLink);
                 }}
               >
                 <Tooltip title={copySuccess ? 'Copied' : 'Copy shareable link'}>
