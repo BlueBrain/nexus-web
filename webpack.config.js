@@ -31,7 +31,25 @@ const config = [
     devtool: 'source-map',
     mode: 'production',
     optimization: {
-      minimizer: [new TerserPlugin()],
+      splitChunks: {
+        cacheGroups: {
+          react: {
+            test: /[\\/]node_modules[\\/]((react).*)[\\/]/,
+            name: 'react',
+            chunks: 'all',
+          },
+          antd: {
+            test: /[\\/]node_modules[\\/]((@ant-design).*)[\\/]/,
+            name: 'antd',
+            chunks: 'all',
+          },
+          antv: {
+            test: /[\\/]node_modules[\\/]((@antv).*)[\\/]/,
+            name: 'antv',
+            chunks: 'all',
+          },
+        },
+      },
     },
     module: {
       rules: [

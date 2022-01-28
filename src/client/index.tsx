@@ -190,7 +190,7 @@ if (module.hot) {
   module.hot.accept('../shared/App', () => {
     const NextApp: React.StatelessComponent<{}> = require('../shared/App')
       .default;
-    ReactDOM.render(
+    ReactDOM.hydrate(
       <Provider store={store}>
         <BrowserRouter basename={base}>
           <NexusProvider nexusClient={nexus}>
