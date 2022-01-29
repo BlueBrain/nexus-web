@@ -33,11 +33,6 @@ const config = [
     optimization: {
       splitChunks: {
         cacheGroups: {
-          react: {
-            test: /[\\/]node_modules[\\/]((react).*)[\\/]/,
-            name: 'react',
-            chunks: 'all',
-          },
           antd: {
             test: /[\\/]node_modules[\\/]((@ant-design).*)[\\/]/,
             name: 'antd',

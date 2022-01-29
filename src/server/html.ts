@@ -53,10 +53,9 @@ const html = ({
           '\\u003c'
         )};
       </script>
-      <script src="${base}public/antd.js" defer></script>
-      <script src="${base}public/react.js" defer></script>
-      <script src="${base}public/antv.js" defer></script>
-      <script src="${base}public/bundle.js" defer></script>
+      <script src="${base}public/antd.js" ></script>
+      <script src="${base}public/antv.js" ></script>
+      <script src="${base}public/bundle.js" ></script>
     </body>
   </html>
 `;
