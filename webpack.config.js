@@ -31,6 +31,7 @@ const config = [
     devtool: 'source-map',
     mode: 'production',
     optimization: {
+      minimizer: [new TerserPlugin()],
       splitChunks: {
         cacheGroups: {
           antd: {
