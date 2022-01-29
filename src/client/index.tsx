@@ -169,7 +169,7 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
 };
 
 const renderApp = () => {
-  return ReactDOM.render(
+  return ReactDOM.hydrate(
     <Provider store={store}>
       <ConnectedRouter history={history}>
         <NexusProvider nexusClient={nexus}>
