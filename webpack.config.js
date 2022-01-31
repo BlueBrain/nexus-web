@@ -32,6 +32,20 @@ const config = [
     mode: 'production',
     optimization: {
       minimizer: [new TerserPlugin()],
+      splitChunks: {
+        cacheGroups: {
+          antd: {
+            test: /[\\/]node_modules[\\/]((@ant-design).*)[\\/]/,
+            name: 'antd',
+            chunks: 'all',
+          },
+          antv: {
+            test: /[\\/]node_modules[\\/]((@antv).*)[\\/]/,
+            name: 'antv',
+            chunks: 'all',
+          },
+        },
+      },
     },
     module: {
       rules: [
