@@ -156,12 +156,11 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         )}
         {token && (
           <Copy
-            textToCopy={token}
             render={(copySuccess, triggerCopy) => (
               <button
                 className="copy-token-button"
                 onClick={() => {
-                  triggerCopy();
+                  triggerCopy(token);
                 }}
               >
                 <img src={copyIcon} />{' '}
