@@ -177,6 +177,7 @@ const NumberFilterOptions: React.FC<{
               step={(rangeMax - rangeMin) / 100}
               value={[rangeStart || rangeMin, rangeEnd || rangeMax]}
               onChange={onSliderChange}
+              className="filter-slider"
             />
           </Col>
           <Col flex={1}>
@@ -266,7 +267,7 @@ const NumberFilterOptions: React.FC<{
             xField="key"
             yField="doc_count"
             point={{ size: 5, shape: 'diamon' }}
-            color="blue"
+            color="#0083cb" // @fusion-primary-color
           />
         )}
         {graphValue === 'bar' && (
@@ -275,6 +276,7 @@ const NumberFilterOptions: React.FC<{
             data={histoValues}
             yField="doc_count"
             xField="key"
+            color="#0083cb" // @fusion-primary-color
           />
         )}
       </Form.Item>

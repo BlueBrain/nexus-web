@@ -1,3 +1,5 @@
+@import '../../../shared/lib.less';
+
 .ant-tooltip-inner {
   .ant-input-number {
     padding: 0px;
@@ -6,6 +8,28 @@
     background-color: #fff;
   }
 }
-.ant-slider {
+.filter-slider.ant-slider {
   margin: 10px 15px 10px 10px !important;
+
+  .ant-slider-track {
+    background-color: @fusion-primary-color;
+    &:hover {
+      background-color: @fusion-secondary-color;
+    }
+  }
+  .ant-slider-handle {
+    border-color: @fusion-primary-color;
+    &:hover {
+      border-color: @fusion-secondary-color;
+    }
+  }
+
+  &:hover {
+    .ant-slider-track {
+      background-color: @fusion-secondary-color;
+    }
+    .ant-slider-handle:not(.ant-tooltip-open) {
+      border-color: @fusion-secondary-color;
+    }
+  }
 }
