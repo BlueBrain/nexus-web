@@ -16,7 +16,7 @@ import { constructQuery } from '../utils';
 import './FilterOptions.less';
 import { createKeyWord } from './FilterOptions';
 import './NumberFilterOptionsContainer.less';
-import { Line, Bar } from '@ant-design/charts';
+import { Line, Column } from '@ant-design/charts';
 
 type ConfigField =
   | {
@@ -270,7 +270,12 @@ const NumberFilterOptions: React.FC<{
           />
         )}
         {graphValue === 'bar' && (
-          <Bar data={histoValues} xField="doc_count" yField="key" />
+          <Column
+            height={100}
+            data={histoValues}
+            yField="doc_count"
+            xField="key"
+          />
         )}
       </Form.Item>
     </>
