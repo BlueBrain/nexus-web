@@ -19,9 +19,18 @@ const GRAPH_STYLE: cytoscape.Stylesheet[] = [
     selector: 'edge',
     style: {
       label: 'data(name)',
+      'curve-style': 'bezier',
       'font-size': '12px',
       'line-color': '#ac1d3b61', // fusion-visited-link-color
       color: '#333333', // fusion-primary-text-color
+      'target-arrow-color': '#333333', // fusion-primary-text-color
+      'target-arrow-shape': 'triangle',
+    },
+  },
+  {
+    selector: 'edge:selected',
+    style: {
+      'target-arrow-color': '#0070C9', // fusion-active-link-color
     },
   },
   {
