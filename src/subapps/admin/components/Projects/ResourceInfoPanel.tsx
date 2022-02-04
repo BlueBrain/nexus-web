@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Collapse, Drawer } from 'antd';
+import { Collapse, Drawer, Popover, Button } from 'antd';
 import { labelOf } from '../../../../shared/utils';
-
+import { InfoCircleOutlined } from '@ant-design/icons';
 import './ResourceInfoPanel.less';
 
 const ResourceInfoPanel: React.FC<{
@@ -56,7 +56,23 @@ const ResourceInfoPanel: React.FC<{
         <p>{typeStats._count} resources</p>
         <br />
         <Collapse>
-          <Panel header="Properties (coverage in resources)" key="1">
+          <Panel
+            header="Properties (coverage in resources)"
+            key="1"
+            extra={
+              <Popover
+                content="These are the properties that are used to describe a resource of this type. It also include how many resources use them and overall coverage."
+                trigger="click"
+                placement="bottomRight"
+              >
+                <Button
+                  onClick={event => event.stopPropagation()}
+                  size="small"
+                  icon={<InfoCircleOutlined />}
+                />
+              </Popover>
+            }
+          >
             <ul>
               {typeStats._properties &&
                 typeStats._properties.map((property: any) => {
@@ -85,7 +101,23 @@ const ResourceInfoPanel: React.FC<{
                 })}
             </ul>
           </Panel>
-          <Panel header="Relationships" key="2">
+          <Panel
+            header="Relationships"
+            key="2"
+            extra={
+              <Popover
+                content="These are the known relations between resources of this type and other resources in this project. It also shows how many time these relations are observed."
+                trigger="click"
+                placement="bottomRight"
+              >
+                <Button
+                  onClick={event => event.stopPropagation()}
+                  size="small"
+                  icon={<InfoCircleOutlined />}
+                />
+              </Popover>
+            }
+          >
             <ul>{relations && renderRelation(relations, typeStats)}</ul>
           </Panel>
         </Collapse>

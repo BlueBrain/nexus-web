@@ -7,6 +7,7 @@ import {
   Row,
   Checkbox,
   Descriptions,
+  Statistic,
 } from 'antd';
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
@@ -209,12 +210,45 @@ const NumberFilterOptions: React.FC<{
       <Form.Item>
         <Row>
           <Col flex={1}>
-            <Descriptions title="Statistics">
-              <Descriptions.Item label="Average">{average}</Descriptions.Item>
-              <Descriptions.Item label="Max">{rangeMax}</Descriptions.Item>
-              <Descriptions.Item label="Min">{rangeMin}</Descriptions.Item>
-              <Descriptions.Item label="Sum">{sum}</Descriptions.Item>
-            </Descriptions>
+            <Descriptions title="Statistics"></Descriptions>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Statistic
+                  title="Sum"
+                  value={sum}
+                  precision={5}
+                  valueStyle={{
+                    fontSize: 20,
+                  }}
+                />
+                <Statistic
+                  title="Average"
+                  value={average}
+                  precision={5}
+                  valueStyle={{
+                    fontSize: 20,
+                  }}
+                />
+              </Col>
+              <Col span={12}>
+                <Statistic
+                  title="Max"
+                  value={rangeMax}
+                  precision={5}
+                  valueStyle={{
+                    fontSize: 20,
+                  }}
+                />
+                <Statistic
+                  title="Min"
+                  value={rangeMin}
+                  precision={5}
+                  valueStyle={{
+                    fontSize: 20,
+                  }}
+                />
+              </Col>
+            </Row>
           </Col>
         </Row>
       </Form.Item>
