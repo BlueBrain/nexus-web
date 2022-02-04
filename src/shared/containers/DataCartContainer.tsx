@@ -7,6 +7,8 @@ import {
   ShoppingCartOutlined,
   DownloadOutlined,
   CloseCircleFilled,
+  WarningFilled,
+  ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import {
   Badge,
@@ -18,6 +20,7 @@ import {
   Dropdown,
   Input,
   Tooltip,
+  Popconfirm,
 } from 'antd';
 import { CartContext } from '../hooks/useDataCart';
 import ResultPreviewItemContainer from '../../subapps/search/containers/ResultPreviewItemContainer';
@@ -403,5 +406,32 @@ const DataCartContainer = () => {
     </>
   );
 };
+
+const FallbackCart: React.FC<{ resetErrorState?: () => void }> = ({
+  resetErrorState,
+}) => {
+  const { emptyCart } = React.useContext(CartContext);
+  return (
+    <Popconfirm
+      title="An error has occurred and the data cart is unavailable. Do you want to try re-initializing the cart?"
+      icon={<ExclamationCircleOutlined style={{ color: '#f5222d' }} />}
+      onConfirm={() => {
+        if (!emptyCart) return;
+        emptyCart().then(() => resetErrorState && resetErrorState());
+      }}
+      okText="Yes"
+      cancelText="No"
+    >
+      <Badge
+        size="small"
+        count={<WarningFilled style={{ color: '#f5222d' }} />}
+      >
+        <Button className="cart" icon={<ShoppingCartOutlined />}></Button>
+      </Badge>
+    </Popconfirm>
+  );
+};
+
+export { FallbackCart };
 
 export default DataCartContainer;
