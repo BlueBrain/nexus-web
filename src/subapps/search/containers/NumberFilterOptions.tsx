@@ -16,7 +16,7 @@ import { constructQuery } from '../utils';
 import './FilterOptions.less';
 import { createKeyWord } from './FilterOptions';
 import './NumberFilterOptionsContainer.less';
-import { Line, Bar } from '@ant-design/charts';
+import { Line, Column } from '@ant-design/charts';
 
 type ConfigField =
   | {
@@ -177,6 +177,7 @@ const NumberFilterOptions: React.FC<{
               step={(rangeMax - rangeMin) / 100}
               value={[rangeStart || rangeMin, rangeEnd || rangeMax]}
               onChange={onSliderChange}
+              className="filter-slider"
             />
           </Col>
           <Col flex={1}>
@@ -266,11 +267,17 @@ const NumberFilterOptions: React.FC<{
             xField="key"
             yField="doc_count"
             point={{ size: 5, shape: 'diamon' }}
-            color="blue"
+            color="#0083cb" // @fusion-primary-color
           />
         )}
         {graphValue === 'bar' && (
-          <Bar data={histoValues} xField="doc_count" yField="key" />
+          <Column
+            height={100}
+            data={histoValues}
+            yField="doc_count"
+            xField="key"
+            color="#0083cb" // @fusion-primary-color
+          />
         )}
       </Form.Item>
     </>
