@@ -18,9 +18,12 @@ import { getLogoutUrl, getDestinationParam } from '../utils';
 import { url as githubIssueURL } from '../../../package.json';
 import useLocalStorage from '../hooks/useLocalStorage';
 import SearchBarContainer from '../containers/SearchBarContainer';
-import DataCartContainer from '../containers/DataCartContainer';
+import DataCartContainer, {
+  FallbackCart,
+} from '../containers/DataCartContainer';
 import './FusionMainLayout.less';
 import useNotification from '../hooks/useNotification';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 const { Content } = Layout;
 
@@ -203,7 +206,11 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
           consent={consent}
           commitHash={COMMIT_HASH}
           onClickRemoveConsent={() => setConsent(undefined)}
-          dataCart={<DataCartContainer />}
+          dataCart={
+            <ErrorBoundary fallback={FallbackCart}>
+              <DataCartContainer />
+            </ErrorBoundary>
+          }
           subApps={subApps}
           authenticated={authenticated}
         >
