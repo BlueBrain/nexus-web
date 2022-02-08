@@ -15,6 +15,7 @@ const ProjectStatsContainer: React.FC<{
   const [elements, setElements] = React.useState<any>();
   const [relations, setRelations] = React.useState<any>();
   const [graphData, setGraphData] = React.useState<any>();
+  const [panelVisible, setPanelVisible] = React.useState<boolean>(true);
 
   const loadRelationships = async () => {
     return nexus.GraphAnalytics.relationships(projectLabel, orgLabel);
@@ -39,6 +40,7 @@ const ProjectStatsContainer: React.FC<{
   }, []);
 
   const showType = (type?: string) => {
+    setPanelVisible(true);
     if (type) {
       loadTypeStats(type).then(response => {
         setSelectedType(response);
@@ -112,12 +114,13 @@ const ProjectStatsContainer: React.FC<{
   return (
     <div style={{ display: 'flex' }} ref={drawerContainer}>
       <ProjectGraph elements={elements} viewType={showType} />
-      {selectedType && (
+      {selectedType && panelVisible && (
         <ResourceInfoPanel
           drawerContainer={drawerContainer.current}
           onClickClose={() => setSelectedType(undefined)}
           typeStats={selectedType}
           relations={relations}
+          panelVisibility={panelVisible}
         />
       )}
     </div>

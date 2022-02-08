@@ -7,9 +7,16 @@ import './ResourceInfoPanel.less';
 const ResourceInfoPanel: React.FC<{
   typeStats: any;
   relations: any;
+  panelVisibility: boolean;
   drawerContainer?: HTMLDivElement | null;
   onClickClose: () => void;
-}> = ({ typeStats, relations, drawerContainer, onClickClose }) => {
+}> = ({
+  typeStats,
+  relations,
+  panelVisibility,
+  drawerContainer,
+  onClickClose,
+}) => {
   const { Panel } = Collapse;
   const title = (
     <h2 className="resource-info-panel__title">{typeStats._name}</h2>
@@ -23,6 +30,9 @@ const ResourceInfoPanel: React.FC<{
     });
 
     const displayRelations = (relation: any, index: number) => {
+      const formattedCount = new Intl.NumberFormat('en-IN', {
+        maximumSignificantDigits: 3,
+      }).format(relation._count);
       const destination =
         relation._source === typeStats['@id']
           ? relation._target
@@ -46,7 +56,7 @@ const ResourceInfoPanel: React.FC<{
           <a href={destination} target="_blank">
             {labelOf(destination)}
           </a>
-          {`: ${relation._count}`}
+          {`: ${formattedCount}`}
         </li>
       );
     };
@@ -54,12 +64,12 @@ const ResourceInfoPanel: React.FC<{
     const renderDestination = destinationRelations.map(displayRelations);
 
     return (
-      <div>
+      <>
         <h2 className="resource-info-panel__title">Outgoing</h2>
         <ul>{renderSource}</ul>
         <h2 className="resource-info-panel__title">Incoming</h2>
         <ul>{renderDestination}</ul>
-      </div>
+      </>
     );
   };
 
@@ -67,10 +77,10 @@ const ResourceInfoPanel: React.FC<{
     <Drawer
       destroyOnClose={true}
       onClose={onClickClose}
-      visible={true}
+      visible={panelVisibility}
       title={title}
       mask={false}
-      width={400}
+      width={500}
       height={'80%'}
       getContainer={drawerContainer ? drawerContainer : false}
       style={{ marginTop: '52px', overflow: 'auto' }}
@@ -115,13 +125,16 @@ const ResourceInfoPanel: React.FC<{
             <ul>
               {typeStats._properties &&
                 typeStats._properties.map((property: any) => {
+                  const formattedProCount = new Intl.NumberFormat('en-IN', {
+                    maximumSignificantDigits: 3,
+                  }).format(property._count);
                   return (
                     <li key={property._name}>
                       <span>
                         <a href={property['@id']} target="_blank">
                           {property._name}
                         </a>
-                        : {property._count}{' '}
+                        : {formattedProCount}{' '}
                         {`(${(
                           (property._count / typeStats._count) *
                           100
@@ -172,7 +185,7 @@ const ResourceInfoPanel: React.FC<{
               </Popover>
             }
           >
-            <ul>{relations && renderRelation(relations, typeStats)}</ul>
+            {relations && renderRelation(relations, typeStats)}
           </Panel>
         </Collapse>
       </div>
