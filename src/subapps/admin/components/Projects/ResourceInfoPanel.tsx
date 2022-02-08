@@ -15,26 +15,54 @@ const ResourceInfoPanel: React.FC<{
     <h2 className="resource-info-panel__title">{typeStats._name}</h2>
   );
   const renderRelation = (relations: any, typeStats: any) => {
-    return relations.map((relation: any, index: number) => {
+    const sourcesRelations = relations.filter((relation: any) => {
+      return relation._source === typeStats['@id'];
+    });
+    const destinationRelations = relations.filter((relation: any) => {
+      return relation._target === typeStats['@id'];
+    });
+
+    const displayRelations = (relation: any, index: number) => {
       const destination =
         relation._source === typeStats['@id']
           ? relation._target
           : relation._source;
       const source = relation._path[0];
-
+      let arrow = '⟵';
+      if (
+        relation._source === typeStats['@id'] &&
+        relation._target === typeStats['@id']
+      ) {
+        arrow = '⟷';
+      } else if (relation._source === typeStats['@id']) {
+        arrow = '⟶';
+      }
       return (
         <li key={index}>
           <a href={source['@id']} target="_blank">
             {source._name}
           </a>{' '}
-          {'-->'}{' '}
+          {arrow}{' '}
           <a href={destination} target="_blank">
             {labelOf(destination)}
-          </a>{' '}
+          </a>
+          {`: ${relation._count}`}
         </li>
       );
-    });
+    };
+    const renderSource = sourcesRelations.map(displayRelations);
+    const renderDestination = destinationRelations.map(displayRelations);
+
+    return (
+      <div>
+        <h2 className="resource-info-panel__title">Outgoing</h2>
+        <ul>{renderSource}</ul>
+        <h2 className="resource-info-panel__title">Incoming</h2>
+        <ul>{renderDestination}</ul>
+      </div>
+    );
   };
+
   return (
     <Drawer
       destroyOnClose={true}
@@ -61,7 +89,18 @@ const ResourceInfoPanel: React.FC<{
             key="1"
             extra={
               <Popover
-                content="These are the properties that are used to describe a resource of this type. It also include how many resources use them and overall coverage."
+                content={() => {
+                  return (
+                    <div>
+                      <p>
+                        These are the properties that are used to describe a
+                        resource of this type. <br />
+                        It also include how many resources use them and overall
+                        coverage.
+                      </p>
+                    </div>
+                  );
+                }}
                 trigger="click"
                 placement="bottomRight"
               >
@@ -82,7 +121,11 @@ const ResourceInfoPanel: React.FC<{
                         <a href={property['@id']} target="_blank">
                           {property._name}
                         </a>
-                        : {property._count}
+                        : {property._count}{' '}
+                        {`(${(
+                          (property._count / typeStats._count) *
+                          100
+                        ).toPrecision(4)}%)`}
                       </span>
                       {property._properties && (
                         <ul>
@@ -106,7 +149,18 @@ const ResourceInfoPanel: React.FC<{
             key="2"
             extra={
               <Popover
-                content="These are the known relations between resources of this type and other resources in this project. It also shows how many time these relations are observed."
+                content={() => {
+                  return (
+                    <div>
+                      <p>
+                        These are the known relations between resources of this
+                        type and other resources in this project.
+                        <br /> It also shows how many times these relations are
+                        observed.
+                      </p>
+                    </div>
+                  );
+                }}
                 trigger="click"
                 placement="bottomRight"
               >
