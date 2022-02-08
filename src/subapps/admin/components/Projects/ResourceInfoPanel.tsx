@@ -28,13 +28,21 @@ const ResourceInfoPanel: React.FC<{
           ? relation._target
           : relation._source;
       const source = relation._path[0];
-
+      let arrow = '⟵';
+      if (
+        relation._source === typeStats['@id'] &&
+        relation._target === typeStats['@id']
+      ) {
+        arrow = '⟷';
+      } else if (relation._source === typeStats['@id']) {
+        arrow = '⟶';
+      }
       return (
         <li key={index}>
           <a href={source['@id']} target="_blank">
             {source._name}
           </a>{' '}
-          {'-->'}{' '}
+          {arrow}{' '}
           <a href={destination} target="_blank">
             {labelOf(destination)}
           </a>
