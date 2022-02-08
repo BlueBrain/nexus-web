@@ -47,7 +47,7 @@ const ResourceInfoPanel: React.FC<{
 
     return (
       <div>
-        <h2>Out going</h2>
+        <h2>Outgoing</h2>
         {renderSource}
         <h2>Incoming</h2>
         {renderDestination}
