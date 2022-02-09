@@ -65,9 +65,9 @@ const ResourceInfoPanel: React.FC<{
 
     return (
       <>
-        <h2 className="resource-info-panel__title">Outgoing</h2>
+        <h4>Outgoing</h4>
         <ul>{renderSource}</ul>
-        <h2 className="resource-info-panel__title">Incoming</h2>
+        <h4>Incoming</h4>
         <ul>{renderDestination}</ul>
       </>
     );
