@@ -60,7 +60,7 @@ const DropdownFilter: React.FunctionComponent<{
         placeholder={placeholder}
         onChange={handleInputChange}
         onSelect={handleChange}
-        value={inputValue}
+        value={inputValue ? inputValue : ''}
         allowClear={true}
         filterOption={(inputValue, option) => {
           return getProp(option, 'props.value', '')

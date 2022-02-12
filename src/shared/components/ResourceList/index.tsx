@@ -119,6 +119,7 @@ const ResourceListComponent: React.FunctionComponent<{
   };
 
   const handleClear = () => {
+    setSortOption(DEFAULT_SORT_OPTION);
     onUpdate({ ...list, query: {} });
   };
 
