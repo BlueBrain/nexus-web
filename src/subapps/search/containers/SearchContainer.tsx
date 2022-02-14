@@ -79,6 +79,14 @@ const SearchContainer: React.FC = () => {
     });
   }
 
+  const paginationWithRowSelection = (
+    page: number,
+    pageSize?: number | undefined
+  ) => {
+    setSelectedRowKeys([]);
+    handlePaginationChange(page, pageSize);
+  };
+
   function onTableHeightChanged(numRows: number, lastPageOfResults: number) {
     setPagination((prevPagination: SearchPagination) => {
       return {
@@ -184,7 +192,6 @@ const SearchContainer: React.FC = () => {
 
   const handleSelect = (record: any, selected: any) => {
     if (selected) {
-      console.log(record);
       setSelectedRowKeys((keys: any) => [...keys, record.key]);
     } else {
       setSelectedRowKeys((keys: any) => {
@@ -213,7 +220,7 @@ const SearchContainer: React.FC = () => {
   const rowSelection = {
     selectedRowKeys,
     columnTitle: headerCheckbox,
-    columnWidth: 50,
+    columnWidth: 70,
     renderCell: (checked: any, record: any, index: number, originNode: any) => {
       return (
         <div
@@ -224,7 +231,11 @@ const SearchContainer: React.FC = () => {
             handleSelect(record, !checked);
           }}
         >
-          {checked ? null : <span className="row-index">{index + 1}</span>}
+          {checked ? null : (
+            <span className="row-index">
+              {(pagination.currentPage - 1) * pagination.pageSize + index + 1}
+            </span>
+          )}
           <Checkbox className={checked ? '' : 'row-select'} checked={checked} />
         </div>
       );
@@ -294,7 +305,7 @@ const SearchContainer: React.FC = () => {
                   total={pagination.totalNumberOfResults}
                   pageSize={pagination.pageSize}
                   current={pagination.currentPage}
-                  onChange={handlePaginationChange}
+                  onChange={paginationWithRowSelection}
                   locale={{ items_per_page: '' }}
                   showSizeChanger={true}
                   pageSizeOptions={pagination.pageSizeOptions}
