@@ -15,6 +15,7 @@ const SearchLayouts: React.FC<{
         onChange={layout => onChangeLayout(layout as string)}
         value={selectedLayout}
         dropdownMatchSelectWidth={false}
+        className="search-layout"
       >
         {layouts?.map(layout => {
           return (
