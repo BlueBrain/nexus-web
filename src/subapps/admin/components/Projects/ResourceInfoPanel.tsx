@@ -53,11 +53,14 @@ const ResourceInfoPanel: React.FC<{
       );
     };
 
+    const leftArrow = '⟵';
+    const rightArrow = '⟶';
     const renderSource = sourcesRelations.map((relation: any, index: number) =>
-      displayRelations(relation, index, '⟶')
+      displayRelations(relation, index, rightArrow)
     );
     const renderDestination = destinationRelations.map(
-      (relation: any, index: number) => displayRelations(relation, index, '⟵')
+      (relation: any, index: number) =>
+        displayRelations(relation, index, leftArrow)
     );
 
     return (
