@@ -12,7 +12,7 @@ import {
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
-import { constructQuery } from '../utils';
+import { constructQuery, constructFilterSet } from '../utils';
 import './FilterOptions.less';
 import { createKeyWord } from './FilterOptions';
 import './NumberFilterOptionsContainer.less';
@@ -80,13 +80,17 @@ const NumberFilterOptions: React.FC<{
 
   const filterKeyWord = createKeyWord(field);
 
+  // for missing count.
+  React.useEffect(() => {
+    missingQuery();
+  }, []);
+
   React.useEffect(() => {
     const allSuggestions = constructQuery(query)
       .aggregation('terms', `${field.name}.value`, 'suggestions', {
         size: 1000,
       })
       .aggregation('stats', `${field.name}.value`, 'stats')
-      .aggregation('missing', filterKeyWord, '(missing)')
       .build();
 
     const allSuggestionsPromise = nexusClient.Search.query(allSuggestions);
@@ -103,7 +107,6 @@ const NumberFilterOptions: React.FC<{
       setSum(all.aggregations.stats.sum);
       setRangeMin(all.aggregations.stats.min);
       setRangeMax(all.aggregations.stats.max);
-      setMissingCount(all.aggregations['(missing)'].doc_count);
 
       const histoInterval =
         (all.aggregations.stats.max - all.aggregations.stats.min) / 50;
@@ -129,7 +132,17 @@ const NumberFilterOptions: React.FC<{
   const onChange = (e: any) => {
     setGraphValue(e.target.value);
   };
+	const missingQuery = () => {
+		const allSuggestions = constructQuery(query);
+    const withFilter = constructFilterSet(allSuggestions, filter)
+      .aggregation('missing', filterKeyWord, '(missing)')
+      .build();
 
+    const allSuggestionsPromise = nexusClient.Search.query(withFilter);
+    allSuggestionsPromise.then(response => {
+      setMissingCount(response.aggregations['(missing)'].doc_count);
+    });
+	};
   React.useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
@@ -143,6 +156,14 @@ const NumberFilterOptions: React.FC<{
         filterTerm: field.name,
       });
     } else {
+      const missingQuery = constructQuery(query)
+        .aggregation('missing', filterKeyWord, '(missing)')
+        .build();
+      nexusClient.Search.query(missingQuery).then(response => {
+        console.log('response');
+        console.log(response.aggregations);
+        setMissingCount(response.aggregations['(missing)'].doc_count);
+      });
       const filters = [rangeStart || rangeMin, rangeEnd || rangeMax];
       onFinish({
         filters,
@@ -173,7 +194,9 @@ const NumberFilterOptions: React.FC<{
             <Slider
               min={rangeMin}
               max={rangeMax}
-              range={{ draggableTrack: true }}
+              range={{
+                draggableTrack: true,
+              }}
               step={(rangeMax - rangeMin) / 100}
               value={[rangeStart || rangeMin, rangeEnd || rangeMax]}
               onChange={onSliderChange}
@@ -185,7 +208,9 @@ const NumberFilterOptions: React.FC<{
               <InputNumber
                 min={rangeMin}
                 max={rangeMax}
-                style={{ margin: '0 0 0 16px' }}
+                style={{
+                  margin: '0 0 0 16px',
+                }}
                 value={rangeEnd || rangeMax}
                 onChange={value => {
                   setRangeStart(value);
@@ -266,7 +291,10 @@ const NumberFilterOptions: React.FC<{
             height={100}
             xField="key"
             yField="doc_count"
-            point={{ size: 5, shape: 'diamon' }}
+            point={{
+              size: 5,
+              shape: 'diamon',
+            }}
             color="#0083cb" // @fusion-primary-color
           />
         )}
