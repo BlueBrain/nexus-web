@@ -29,7 +29,7 @@ const ResourceInfoPanel: React.FC<{
       return relation._target === typeStats['@id'];
     });
 
-    const displayRelations = (relation: any, index: number) => {
+    const displayRelations = (relation: any, index: number, arrow: string) => {
       const formattedCount = new Intl.NumberFormat('en-IN', {
         maximumSignificantDigits: 3,
       }).format(relation._count);
@@ -38,15 +38,7 @@ const ResourceInfoPanel: React.FC<{
           ? relation._target
           : relation._source;
       const source = relation._path[0];
-      let arrow = '⟵';
-      if (
-        relation._source === typeStats['@id'] &&
-        relation._target === typeStats['@id']
-      ) {
-        arrow = '⟷';
-      } else if (relation._source === typeStats['@id']) {
-        arrow = '⟶';
-      }
+
       return (
         <li key={index}>
           <a href={source['@id']} target="_blank">
@@ -60,8 +52,13 @@ const ResourceInfoPanel: React.FC<{
         </li>
       );
     };
-    const renderSource = sourcesRelations.map(displayRelations);
-    const renderDestination = destinationRelations.map(displayRelations);
+
+    const renderSource = sourcesRelations.map((relation: any, index: number) =>
+      displayRelations(relation, index, '⟶')
+    );
+    const renderDestination = destinationRelations.map(
+      (relation: any, index: number) => displayRelations(relation, index, '⟵')
+    );
 
     return (
       <>
