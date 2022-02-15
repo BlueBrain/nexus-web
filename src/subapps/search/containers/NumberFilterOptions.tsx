@@ -82,7 +82,7 @@ const NumberFilterOptions: React.FC<{
 
   // for missing count.
   React.useEffect(() => {
-    missingQuery();
+		missingQuery();
   }, []);
 
   React.useEffect(() => {
