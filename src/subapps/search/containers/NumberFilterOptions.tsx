@@ -82,7 +82,7 @@ const NumberFilterOptions: React.FC<{
 
   // for missing count.
   React.useEffect(() => {
-		missingQuery();
+    missingQuery();
   }, []);
 
   React.useEffect(() => {
@@ -132,8 +132,8 @@ const NumberFilterOptions: React.FC<{
   const onChange = (e: any) => {
     setGraphValue(e.target.value);
   };
-	const missingQuery = () => {
-		const allSuggestions = constructQuery(query);
+  const missingQuery = () => {
+    const allSuggestions = constructQuery(query);
     const withFilter = constructFilterSet(allSuggestions, filter)
       .aggregation('missing', filterKeyWord, '(missing)')
       .build();
@@ -142,7 +142,7 @@ const NumberFilterOptions: React.FC<{
     allSuggestionsPromise.then(response => {
       setMissingCount(response.aggregations['(missing)'].doc_count);
     });
-	};
+  };
   React.useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
