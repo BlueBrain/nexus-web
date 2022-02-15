@@ -21,6 +21,9 @@ const ResourceInfoPanel: React.FC<{
   const title = (
     <h2 className="resource-info-panel__title">{typeStats._name}</h2>
   );
+  const leftArrow = '⟵';
+  const rightArrow = '⟶';
+
   const renderRelation = (relations: any, typeStats: any) => {
     const sourcesRelations = relations.filter((relation: any) => {
       return relation._source === typeStats['@id'];
@@ -53,8 +56,6 @@ const ResourceInfoPanel: React.FC<{
       );
     };
 
-    const leftArrow = '⟵';
-    const rightArrow = '⟶';
     const renderSource = sourcesRelations.map((relation: any, index: number) =>
       displayRelations(relation, index, rightArrow)
     );
