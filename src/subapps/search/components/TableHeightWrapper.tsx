@@ -30,26 +30,31 @@ const TableHeightWrapper: React.FC<{
             className={'result-table heightTest'}
             style={{ display: 'none', opacity: '0' }}
           >
-            <Table
-              key="HeightTestTable"
-              dataSource={[
-                {
-                  key: '1',
-                  name: 'HeightTest',
-                },
-              ]}
-              columns={[
-                {
-                  title: 'Name',
-                  dataIndex: 'name',
-                  key: 'name',
-                },
-              ]}
-              pagination={{
-                position: ['topRight'],
-                showSizeChanger: true,
-              }}
-            ></Table>
+            <div className="search-table">
+              <Table
+                key="HeightTestTable"
+                dataSource={[
+                  {
+                    key: '1',
+                    name: 'HeightTest',
+                  },
+                ]}
+                columns={[
+                  {
+                    title: 'Name',
+                    dataIndex: 'name',
+                    key: 'name',
+                    render: value => (
+                      <div className="row-selection-checkbox">
+                        <span className="row-index">1</span>
+                      </div>
+                    ),
+                  },
+                ]}
+                rowSelection={{}}
+                pagination={false}
+              ></Table>
+            </div>
           </div>
           <div
             className="result-table"

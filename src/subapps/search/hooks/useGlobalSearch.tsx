@@ -596,8 +596,8 @@ function useGlobalSearchData(
 
   const resetAll = () => {
     if (config?.layouts && config.layouts.length > 0) {
-      // default to first layout
-      setSelectedSearchLayout(config.layouts[0].name);
+      const layout = config.layouts.find(l => l.name === selectedSearchLayout);
+      layout && applyLayout(layout, columns);
       return;
     }
     clearAllFilters();
