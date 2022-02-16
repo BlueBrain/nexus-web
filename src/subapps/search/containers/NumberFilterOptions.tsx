@@ -156,14 +156,7 @@ const NumberFilterOptions: React.FC<{
         filterTerm: field.name,
       });
     } else {
-      const missingQuery = constructQuery(query)
-        .aggregation('missing', filterKeyWord, '(missing)')
-        .build();
-      nexusClient.Search.query(missingQuery).then(response => {
-        console.log('response');
-        console.log(response.aggregations);
-        setMissingCount(response.aggregations['(missing)'].doc_count);
-      });
+      missingQuery();
       const filters = [rangeStart || rangeMin, rangeEnd || rangeMax];
       onFinish({
         filters,
@@ -172,7 +165,20 @@ const NumberFilterOptions: React.FC<{
       });
     }
   }, [rangeStart, rangeEnd, missingValues]);
-
+	const renderMissing = () => {
+		return missingCount ?
+			<Form.Item>
+          <Checkbox
+            disabled={missingCount === 0}
+            onChange={e => {
+              setMissingValues(e.target.checked);
+            }}
+          >
+            Show Missing Values Only ({missingCount})
+          </Checkbox>
+        </Form.Item>
+		: null
+	}
   return (
     <>
       <Form.Item>
@@ -221,18 +227,7 @@ const NumberFilterOptions: React.FC<{
           </Col>
         </Row>
       </Form.Item>
-      {missingCount && (
-        <Form.Item>
-          <Checkbox
-            disabled={missingCount === 0}
-            onChange={e => {
-              setMissingValues(e.target.checked);
-            }}
-          >
-            Show Missing Values Only ({missingCount})
-          </Checkbox>
-        </Form.Item>
-      )}
+      {renderMissing()}
       <Form.Item>
         <Row>
           <Col flex={1}>
