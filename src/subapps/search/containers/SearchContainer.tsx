@@ -4,7 +4,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import TableHeightWrapper from '../components/TableHeightWrapper';
 import { Spin, Pagination, Table, Button, Checkbox, Result } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
-import useGlobalSearchData, { FieldVisibility } from '../hooks/useGlobalSearch';
+import useGlobalSearchData from '../hooks/useGlobalSearch';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import useSearchPagination, {
   useAdjustTableHeight,
@@ -13,7 +13,6 @@ import useSearchPagination, {
 } from '../hooks/useSearchPagination';
 import ColumnsVisibilityConfig from '../components/ColumnsVisibilityConfig';
 import './SearchContainer.less';
-import useColumnsToFitPage from '../hooks/useColumnsToFitPage';
 import FiltersConfig from '../components/FiltersConfig';
 import SortConfig from '../components/SortConfig';
 import SearchLayouts from '../components/Layouts';
@@ -160,34 +159,9 @@ const SearchContainer: React.FC = () => {
     nexus
   );
 
-  function makeColumnsVisible(columnCount: number) {
-    const columnVisibilities = columns?.map((el, ix) => {
-      return {
-        name: el.label,
-        key: el.key,
-        visible: ix < columnCount,
-      };
-    });
-    dispatchFieldVisibility({
-      type: 'initialize',
-      payload: columnVisibilities as FieldVisibility[],
-    });
-  }
-
-  const { tableRef, calculateNumberOfColumnsToFit } = useColumnsToFitPage(
-    columnCount => {
-      if (columns && !fieldsVisibilityState.isPersistent) {
-        makeColumnsVisible(columnCount);
-      }
-    }
-  );
-
   const clearAllCustomisation = () => {
     handlePaginationChange(1);
     resetAll();
-
-    const numColumnsFit = calculateNumberOfColumnsToFit();
-    makeColumnsVisible(numColumnsFit);
   };
 
   const handleSelect = (record: any, selected: any) => {
@@ -313,7 +287,7 @@ const SearchContainer: React.FC = () => {
                   className="search-table-header__paginator"
                 />
               </div>
-              <div ref={tableRef} className="search-table">
+              <div className="search-table">
                 <Table
                   rowSelection={rowSelection}
                   tableLayout="fixed"
