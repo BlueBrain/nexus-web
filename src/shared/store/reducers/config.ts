@@ -1,6 +1,7 @@
 import { ConfigActions } from '../actions/config';
 
 export const DEFAULT_SEARCH_CONFIG_PROJECT = 'webapps/nexus-web';
+export const DEFAULT_SERVICE_ACCOUNTS_REALM = 'serviceaccounts';
 
 export interface ConfigState {
   apiEndpoint: string;
@@ -8,6 +9,7 @@ export interface ConfigState {
   clientId: string;
   redirectHostName: string;
   preferredRealm?: string;
+  serviceAccountsRealm: string;
   sentryDsn?: string;
   pluginsManifestPath: string;
   subAppsManifestPath: string;
@@ -31,6 +33,7 @@ const initialState: ConfigState = {
   redirectHostName: '',
   pluginsManifestPath: '/public/plugins',
   subAppsManifestPath: '/public/sub-apps',
+  serviceAccountsRealm: DEFAULT_SERVICE_ACCOUNTS_REALM,
   gtmCode: '',
   layoutSettings: {
     docsLink: '',

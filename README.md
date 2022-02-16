@@ -80,6 +80,7 @@ docker build . --tag=nexus-web
 - `HOST_NAME`: name of host where application is available from: i.e. `https://bbp-nexus.epfl.ch` (default is protocol + host where server is running from)
 - `CLIENT_ID`: The application name used for _OpenID Connect_ authentication (default is `nexus-web`)
 - `API_ENDPOINT`: The URL pointing to Nexus API. Default is '/'
+- `SERVICE_ACCOUNTS_REALM`: The realm that is configured for service accounts that should be hidden for Login. Default is 'serviceaccounts'.
 - `SECURE`: Is Nexus Fusion running in https or not. Default is `false`
 - `GTM_CODE`: The Google Analytics Identifier. GA won't be present unless an ID is specified.
 - `SENTRY_DSN`: The sentry URL Nexus Fusion needs to report errors to. Default is undefined.
