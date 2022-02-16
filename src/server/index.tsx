@@ -9,7 +9,10 @@ import setUpDeltaProxy from './proxy';
 import silentRefreshHtml from './silent_refresh';
 import { RootState } from '../shared/store/reducers';
 import { DEFAULT_UI_SETTINGS } from '../shared/store/reducers/ui-settings';
-import { DEFAULT_SEARCH_CONFIG_PROJECT } from '../shared/store/reducers/config';
+import {
+  DEFAULT_SEARCH_CONFIG_PROJECT,
+  DEFAULT_SERVICE_ACCOUNTS_REALM,
+} from '../shared/store/reducers/config';
 import { DEFAULT_SEARCH_STATE } from '../shared/store/reducers/search';
 
 const PORT_NUMBER = 8000;
@@ -87,8 +90,11 @@ app.get('*', async (req: express.Request, res: express.Response) => {
         : process.env.API_ENDPOINT || '',
       basePath: base,
       clientId: process.env.CLIENT_ID || 'nexus-web',
-      redirectHostName: `${process.env.HOST_NAME ||
-        `${req.protocol}://${req.headers.host}`}${base}`,
+      redirectHostName: `${
+        process.env.HOST_NAME || `${req.protocol}://${req.headers.host}`
+      }${base}`,
+      serviceAccountsRealm:
+        process.env.SERVICE_ACCOUNTS_REALM || DEFAULT_SERVICE_ACCOUNTS_REALM,
       sentryDsn: process.env.SENTRY_DSN,
       gtmCode: process.env.GTM_CODE,
       studioView: process.env.STUDIO_VIEW || '',

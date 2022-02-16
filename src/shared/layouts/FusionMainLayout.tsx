@@ -32,6 +32,7 @@ declare var COMMIT_HASH: string;
 export interface FusionMainLayoutProps {
   authenticated: boolean;
   realms: Realm[];
+  serviceAccountsRealm: string;
   token?: string;
   name?: string;
   canLogin?: boolean;
@@ -70,6 +71,7 @@ export type SubAppProps = {
 const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   authenticated,
   realms,
+  serviceAccountsRealm,
   token,
   name,
   children,
@@ -184,6 +186,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
           name={authenticated ? name : undefined}
           token={token}
           realms={realms}
+          serviceAccountsRealm={serviceAccountsRealm}
           performLogin={login}
           links={[
             <a
@@ -249,10 +252,11 @@ const mapStateToProps = (state: RootState) => {
       auth.identities.data &&
       auth.identities.data.identities) ||
     [];
-  const { layoutSettings } = config;
+  const { layoutSettings, serviceAccountsRealm } = config;
 
   return {
     realms,
+    serviceAccountsRealm,
     layoutSettings,
     authenticated: !!oidc.user,
     token: oidc.user && oidc.user.access_token,

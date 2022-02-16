@@ -87,6 +87,7 @@ export interface HeaderProps {
   token?: string;
   links?: React.ReactNode[];
   realms: Realm[];
+  serviceAccountsRealm: string;
   displayLogin?: boolean;
   children?: React.ReactChild;
   consent?: ConsentType;
@@ -101,6 +102,7 @@ export interface HeaderProps {
 const Header: React.FunctionComponent<HeaderProps> = ({
   name,
   realms,
+  serviceAccountsRealm,
   token,
   displayLogin = true,
   links = [],
@@ -125,7 +127,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   );
 
   const realmsFilter = realms.filter(
-    r => r._label !== 'serviceaccounts' && !r._deprecated
+    r => r._label !== serviceAccountsRealm && !r._deprecated
   );
 
   const realmMenu = (

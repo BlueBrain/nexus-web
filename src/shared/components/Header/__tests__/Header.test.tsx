@@ -22,6 +22,7 @@ const shallowHeader = shallow(
   <Header
     name="Mark Hamill"
     realms={[]}
+    serviceAccountsRealm="serviceaccounts"
     links={links}
     githubIssueURL=""
     forgeLink=""
@@ -37,6 +38,7 @@ const wrapper = mount(
     <Header
       name="Mark Hamill"
       realms={[]}
+      serviceAccountsRealm="serviceaccounts"
       links={links}
       githubIssueURL=""
       forgeLink=""
@@ -69,6 +71,7 @@ describe('Header component', () => {
           <Header
             name=""
             realms={[]}
+            serviceAccountsRealm="serviceaccounts"
             links={links}
             githubIssueURL=""
             forgeLink=""
@@ -89,6 +92,7 @@ describe('Header component', () => {
           <Header
             name=""
             realms={[]}
+            serviceAccountsRealm="serviceaccounts"
             links={links}
             githubIssueURL=""
             forgeLink=""
