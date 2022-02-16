@@ -165,20 +165,20 @@ const NumberFilterOptions: React.FC<{
       });
     }
   }, [rangeStart, rangeEnd, missingValues]);
-	const renderMissing = () => {
-		return missingCount ?
-			<Form.Item>
-          <Checkbox
-            disabled={missingCount === 0}
-            onChange={e => {
-              setMissingValues(e.target.checked);
-            }}
-          >
-            Show Missing Values Only ({missingCount})
-          </Checkbox>
-        </Form.Item>
-		: null
-	}
+  const renderMissing = () => {
+    return missingCount ? (
+      <Form.Item>
+        <Checkbox
+          disabled={missingCount === 0}
+          onChange={e => {
+            setMissingValues(e.target.checked);
+          }}
+        >
+          Show Missing Values Only ({missingCount})
+        </Checkbox>
+      </Form.Item>
+    ) : null;
+  };
   return (
     <>
       <Form.Item>
@@ -227,7 +227,7 @@ const NumberFilterOptions: React.FC<{
           </Col>
         </Row>
       </Form.Item>
-			{renderMissing()}
+      {renderMissing()}
       <Form.Item>
         <Row>
           <Col flex={1}>
