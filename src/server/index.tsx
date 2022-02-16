@@ -90,9 +90,8 @@ app.get('*', async (req: express.Request, res: express.Response) => {
         : process.env.API_ENDPOINT || '',
       basePath: base,
       clientId: process.env.CLIENT_ID || 'nexus-web',
-      redirectHostName: `${
-        process.env.HOST_NAME || `${req.protocol}://${req.headers.host}`
-      }${base}`,
+      redirectHostName: `${process.env.HOST_NAME ||
+        `${req.protocol}://${req.headers.host}`}${base}`,
       serviceAccountsRealm:
         process.env.SERVICE_ACCOUNTS_REALM || DEFAULT_SERVICE_ACCOUNTS_REALM,
       sentryDsn: process.env.SENTRY_DSN,
