@@ -227,7 +227,7 @@ const NumberFilterOptions: React.FC<{
           </Col>
         </Row>
       </Form.Item>
-      {renderMissing()}
+			{renderMissing()}
       <Form.Item>
         <Row>
           <Col flex={1}>
