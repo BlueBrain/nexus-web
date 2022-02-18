@@ -273,17 +273,22 @@ function rowRenderer(field: ConfigField) {
         const basePath =
           useSelector((state: RootState) => state.config.basePath) || '';
         const sanitizedLink = deltaUrlToFusionUrl(link, basePath);
-        const text = value[fields[1].name];
+        const labels = [value[fields[1].name]].flat().sort();
+
         return (
           <Tooltip
             placement="topLeft"
-            title={() => (
-              <a href={sanitizedLink} target="_blank">
-                {text}
-              </a>
-            )}
+            title={() =>
+              labels.map((label, ix) => (
+                <div key={ix}>
+                  <a href={sanitizedLink} target="_blank">
+                    {label}
+                  </a>
+                </div>
+              ))
+            }
           >
-            {text}
+            {labels.join(', ')}
           </Tooltip>
         );
       }
