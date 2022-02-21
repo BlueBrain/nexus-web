@@ -197,8 +197,8 @@ const SearchBar: React.FC<{
         allowClear
         onKeyDown={handleKeyDown}
         onChange={e => {
-          if (e.type === 'click') {
-            // clicked clear button
+          // clicked clear button or removed the search text.
+          if (e.type === 'click' || e.target.value === '') {
             onClear();
           }
         }}
