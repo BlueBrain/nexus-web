@@ -72,20 +72,32 @@ const FilterOptions: React.FC<{
   const [form] = Form.useForm();
 
   const filterKeyWord = createKeyWord(field);
+  const firstRender = React.useRef(true);
 
-  React.useEffect(() => {
-    const selectedFilters = aggregations
+  const applyFilters = (
+    filters: {
+      filterValue: string;
+      count: number;
+      selected: boolean;
+      matching: boolean;
+    }[]
+  ) => {
+    const selectedFilters = filters
       .filter(a => a.selected)
       .map(a => a.filterValue);
+    onFinish({
+      filterType,
+      filters: selectedFilters,
+      filterTerm: filterKeyWord,
+    });
+  };
 
-    if (selectedFilters.length > 0) {
-      onFinish({
-        filterType,
-        filters: selectedFilters,
-        filterTerm: filterKeyWord,
-      });
+  React.useEffect(() => {
+    if (!firstRender.current) {
+      applyFilters(aggregations);
     }
-  }, [aggregations, filterType]);
+    firstRender.current = false;
+  }, [filterType]);
 
   React.useEffect(() => {
     const allSuggestions = constructQuery(query)
@@ -137,6 +149,7 @@ const FilterOptions: React.FC<{
       ...a,
       selected: a.filterValue === filterValue ? selected : a.selected,
     }));
+    applyFilters(aggs);
     setAggregations(aggs);
   };
 
