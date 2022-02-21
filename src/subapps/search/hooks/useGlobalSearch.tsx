@@ -407,7 +407,12 @@ function useGlobalSearchData(
   );
 
   const onFilterSubmit = (values: FilterState) => {
-    dispatchFilter({ type: 'add', payload: values });
+    if (values.filters.length === 0) {
+      dispatchFilter({ type: 'remove', payload: values });
+    } else {
+      dispatchFilter({ type: 'add', payload: values });
+    }
+
     onSortOptionsChanged();
   };
 
