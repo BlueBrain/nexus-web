@@ -6,6 +6,8 @@ import useJIRA from '../../hooks/useJIRA';
 
 type JIRAPluginContainerProps = {
   resource: Resource;
+  projectLabel: string;
+  orgLabel: string;
   nexus: NexusClient;
   collapsed: boolean;
   handleCollapseChanged: () => void;
@@ -13,12 +15,16 @@ type JIRAPluginContainerProps = {
 
 const JIRAPluginContainer = ({
   resource,
+  projectLabel,
+  orgLabel,
   nexus,
   collapsed,
   handleCollapseChanged,
 }: JIRAPluginContainerProps) => {
   const { linkedIssues, jiraWebBaseUrl } = useJIRA({
     resourceID: resource['@id'],
+    projectLabel: projectLabel,
+    orgLabel: orgLabel,
   });
   const tableIssues = linkedIssues?.map(issue => ({
     key: issue.id,

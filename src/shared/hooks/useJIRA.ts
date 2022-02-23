@@ -1,5 +1,6 @@
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
+import { generatePath } from 'react-router-dom';
 
 /* TODO: move this out of here */
 const jiraAPIBaseUrl = 'http://localhost:8000/jira/rest/api/2/';
@@ -10,7 +11,15 @@ const jiraWebBaseUrl = 'http://localhost:8080/';
  *
  * @returns
  */
-function useJIRA({ resourceID }: { resourceID: string }) {
+function useJIRA({
+  resourceID,
+  orgLabel,
+  projectLabel,
+}: {
+  resourceID: string;
+  orgLabel: string;
+  projectLabel: string;
+}) {
   const nexus = useNexusContext();
 
   /**
@@ -18,12 +27,22 @@ function useJIRA({ resourceID }: { resourceID: string }) {
    * @param resourceID
    * @returns
    */
-  const getIssues = (resourceID: string) => {
-    /* TODO: search on custom field in Jira where resource ID is stored */
+  const getIssues = () => {
+    const encodedResourceId = encodeURIComponent(resourceID);
+    const pathToResource = generatePath(
+      '/:orgLabel/:projectLabel/resources/:resourceId',
+      {
+        orgLabel,
+        projectLabel,
+        resourceId: encodedResourceId,
+      }
+    );
+    const resourceUrl = `${window.location.origin.toString()}${pathToResource}`;
+
     return nexus.httpPost({
       path: `${jiraAPIBaseUrl}search`,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ jql: '"key" = "TEST1-01"' }),
+      body: JSON.stringify({ jql: `"Nexus Resource Url" = "${resourceUrl}"` }),
     });
 
     /* alternative using Fetch API */
@@ -45,7 +64,7 @@ function useJIRA({ resourceID }: { resourceID: string }) {
   React.useEffect(() => {
     (async () => {
       console.log('about to do request');
-      const issues = await getIssues(resourceID);
+      const issues = await getIssues();
       console.log({ issues });
       if (issues.issues) {
         setLinkedIssues(

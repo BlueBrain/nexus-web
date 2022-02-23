@@ -499,6 +499,8 @@ const ResourceViewContainer: React.FunctionComponent<{
               <JIRAPluginContainer
                 nexus={nexus}
                 resource={resource}
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
                 collapsed={openPlugins.includes('jira')}
                 handleCollapseChanged={() => {
                   pluginCollapsedToggle('jira');
