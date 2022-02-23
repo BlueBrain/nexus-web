@@ -99,9 +99,6 @@ const DataCartContainer = () => {
 
   const [search, setSearch] = React.useState<string>('');
   const filteredResources = React.useMemo(() => {
-    if (search.length <= 2) {
-      return resources;
-    }
     return resources
       ? resources.filter(resource => {
           const label: string = getResourceLabel(resource);
@@ -356,12 +353,11 @@ const DataCartContainer = () => {
             >
               <Input.Search
                 type="search"
-                onSearch={e => {
-                  setSearch(e);
+                onChange={e => {
+                  setSearch(e.target.value);
                 }}
                 placeholder="Search cart locally"
                 allowClear
-                enterButton
               ></Input.Search>
             </div>
             <List
