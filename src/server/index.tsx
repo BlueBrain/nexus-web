@@ -14,6 +14,9 @@ import {
   DEFAULT_SERVICE_ACCOUNTS_REALM,
 } from '../shared/store/reducers/config';
 import { DEFAULT_SEARCH_STATE } from '../shared/store/reducers/search';
+import { createProxyMiddleware } from 'http-proxy-middleware';
+import { ClientRequest, IncomingMessage, ServerResponse } from 'http';
+// var cors = require('cors');
 
 const PORT_NUMBER = 8000;
 
@@ -65,6 +68,42 @@ if (process.env.NODE_ENV !== 'production') {
   }
   setupDevEnvironment(app);
 }
+
+app.use(
+  '/jira',
+
+  createProxyMiddleware({
+    target: 'http://localhost:8080',
+    changeOrigin: true,
+    logLevel: 'debug',
+    pathRewrite: {
+      '^/jira': '',
+    },
+    onProxyReq: (
+      proxyReq: ClientRequest,
+      req: IncomingMessage,
+      res: ServerResponse,
+      options: any
+    ) => {
+      /* Hard-code authorization header here for now if needed */
+      // proxyReq.setHeader(
+      //   'Authorization',
+      //   'Basic ' +
+      //     Buffer.from('username:password').toString('base64')
+      // );
+    },
+    // onProxyRes: (
+    //   proxyRes: IncomingMessage,
+    //   req: IncomingMessage,
+    //   res: ServerResponse
+    // ) => {
+    //   console.log('response from server', res);
+    // },
+    // onError: (err, req, res, target) => {
+    //   console.log('Proxy Error', err, req);
+    // },
+  })
+);
 
 // silent refresh
 app.get(

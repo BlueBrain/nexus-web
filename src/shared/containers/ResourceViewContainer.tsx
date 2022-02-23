@@ -28,6 +28,7 @@ import { Link } from 'react-router-dom';
 import ResourceViewActionsContainer from './ResourceViewActionsContainer';
 import ResourceMetadata from '../components/ResourceMetadata';
 import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
+import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -495,6 +496,14 @@ const ResourceViewContainer: React.FunctionComponent<{
                   }}
                 />
               )}
+              <JIRAPluginContainer
+                nexus={nexus}
+                resource={resource}
+                collapsed={openPlugins.includes('jira')}
+                handleCollapseChanged={() => {
+                  pluginCollapsedToggle('jira');
+                }}
+              />
               <AdminPlugin
                 editable={isLatest && !isDeprecated(resource)}
                 orgLabel={orgLabel}
