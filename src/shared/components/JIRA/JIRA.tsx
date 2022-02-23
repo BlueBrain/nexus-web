@@ -18,11 +18,12 @@ const CreateIssueUI = ({
         onOk={() => onOk(summary)}
         onCancel={() => onCancel()}
       >
-        Create new issue
+        <p>A Jira issue will be created and linked to this Nexus resource.</p>
         <Input
           type="text"
           value={summary}
           onChange={e => setSummary(e.currentTarget.value)}
+          placeholder="Issue Summary"
         />
       </Modal>
     </>
@@ -48,13 +49,13 @@ const LinkIssueUI = ({
         onCancel={() => onCancel()}
       >
         <a href={searchJiraLink} target="_blank">
-          Search in Jira
+          Find my issue in Jira
         </a>
-        Link issue
         <Input
           type="text"
           value={issueKey}
           onChange={e => setIssueKey(e.currentTarget.value)}
+          placeholder="Jira Issue URL or Key"
         />
       </Modal>
     </>
@@ -144,6 +145,7 @@ const JIRAPluginUI = ({
 
       {issues.length > 0 && (
         <Table
+          size="small"
           dataSource={issues}
           columns={[
             { title: 'Name', dataIndex: 'name', key: 'name' },
