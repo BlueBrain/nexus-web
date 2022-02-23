@@ -22,12 +22,7 @@ function useJIRA({
 }) {
   const nexus = useNexusContext();
 
-  /**
-   * Return Jira issues with a given Nexus resource ID
-   * @param resourceID
-   * @returns
-   */
-  const getIssues = () => {
+  const getResourceUrl = () => {
     const encodedResourceId = encodeURIComponent(resourceID);
     const pathToResource = generatePath(
       '/:orgLabel/:projectLabel/resources/:resourceId',
@@ -38,6 +33,16 @@ function useJIRA({
       }
     );
     const resourceUrl = `${window.location.origin.toString()}${pathToResource}`;
+    return resourceUrl;
+  };
+
+  /**
+   * Return Jira issues with a given Nexus resource ID
+   * @param resourceID
+   * @returns
+   */
+  const getIssues = () => {
+    const resourceUrl = getResourceUrl();
 
     return nexus.httpPost({
       path: `${jiraAPIBaseUrl}search`,
@@ -59,9 +64,31 @@ function useJIRA({
     // });
   };
 
+  const createIssue = (summary: string) => {
+    return nexus
+      .httpPost({
+        path: `${jiraAPIBaseUrl}issue`,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fields: {
+            project: {
+              key: 'TEST1', // TODO: need to allow option to specify project
+            },
+            issuetype: { name: 'Task' }, // TODO: allow selection of issue type
+            description: 'I was created using Fusion, get me.', // TODO: set to something sensible
+            summary,
+            customfield_10113: getResourceUrl(), // TODO: get custom field name
+          },
+        }),
+      })
+      .then(v => {
+        fetchLinkedIssues();
+      });
+  };
+
   const [linkedIssues, setLinkedIssues] = React.useState<any[]>([]);
 
-  React.useEffect(() => {
+  const fetchLinkedIssues = () => {
     (async () => {
       console.log('about to do request');
       const issues = await getIssues();
@@ -81,11 +108,15 @@ function useJIRA({
         );
       }
     })();
+  };
+  React.useEffect(() => {
+    fetchLinkedIssues();
   }, []);
 
   return {
     linkedIssues,
     jiraWebBaseUrl,
+    createIssue,
   };
 }
 

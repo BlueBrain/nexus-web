@@ -21,7 +21,7 @@ const JIRAPluginContainer = ({
   collapsed,
   handleCollapseChanged,
 }: JIRAPluginContainerProps) => {
-  const { linkedIssues, jiraWebBaseUrl } = useJIRA({
+  const { linkedIssues, jiraWebBaseUrl, createIssue } = useJIRA({
     resourceID: resource['@id'],
     projectLabel: projectLabel,
     orgLabel: orgLabel,
@@ -31,13 +31,17 @@ const JIRAPluginContainer = ({
     name: issue.summary,
     url: `${jiraWebBaseUrl}browse/${issue.key}`,
   }));
+
   return (
     <Collapse
       onChange={handleCollapseChanged}
       activeKey={collapsed ? 'jira' : undefined}
     >
       <Collapse.Panel header="JIRA" key="jira">
-        <JIRAPluginUI issues={tableIssues} />
+        <JIRAPluginUI
+          issues={tableIssues}
+          onCreateIssue={summary => createIssue(summary)}
+        />
       </Collapse.Panel>
     </Collapse>
   );
