@@ -85,6 +85,67 @@ function useJIRA({
         fetchLinkedIssues();
       });
   };
+  const linkIssue = (issueKey: string) => {
+    // return nexus
+    //   .httpPut({
+    //     path: `${jiraAPIBaseUrl}issue/${issueKey}`,
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({
+    //       fields: {
+    //         customfield_10113: getResourceUrl(), // TODO: get custom field name
+    //       },
+    //     }),
+    //   })
+    //   .then(v => {
+    //     fetchLinkedIssues();
+    //   });
+    return fetch(`${jiraAPIBaseUrl}issue/${issueKey}`, {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        fields: {
+          customfield_10113: getResourceUrl(), // TODO: get custom field name
+        },
+      }),
+    }).then(response => {
+      console.log('jira response', response);
+      fetchLinkedIssues();
+    });
+  };
+  const unlinkIssue = (issueKey: string) => {
+    // return nexus
+    //   .httpPut({
+    //     path: `${jiraAPIBaseUrl}issue/${issueKey}`,
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({
+    //       fields: {
+    //         customfield_10113: '', // TODO: get custom field name
+    //       },
+    //     }),
+    //   })
+    //   .then(v => {
+    //     console.log('unlinked issue i guess', v);
+    //     fetchLinkedIssues();
+    //   });
+    return fetch(`${jiraAPIBaseUrl}issue/${issueKey}`, {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        fields: {
+          customfield_10113: '', // TODO: get custom field name
+        },
+      }),
+    }).then(response => {
+      console.log('jira response', response);
+      fetchLinkedIssues();
+    });
+  };
 
   const [linkedIssues, setLinkedIssues] = React.useState<any[]>([]);
 
@@ -117,6 +178,8 @@ function useJIRA({
     linkedIssues,
     jiraWebBaseUrl,
     createIssue,
+    linkIssue,
+    unlinkIssue,
   };
 }
 
