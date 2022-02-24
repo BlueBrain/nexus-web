@@ -49,13 +49,15 @@ const LinkIssueUI = ({
         onCancel={() => onCancel()}
       >
         <a href={searchJiraLink} target="_blank">
-          Find my issue in Jira
+          Search for issue in Jira
         </a>
+        <br />
+        <br />
         <Input
           type="text"
           value={issueKey}
           onChange={e => setIssueKey(e.currentTarget.value)}
-          placeholder="Jira Issue URL or Key"
+          placeholder="Jira Issue Key"
         />
       </Modal>
     </>
@@ -142,7 +144,10 @@ const JIRAPluginUI = ({
           <Button type="primary" onClick={() => setCreateIssueVisible(true)}>
             Create Issue
           </Button>{' '}
-          or <Button type="default">Link Existing Issue</Button>
+          or{' '}
+          <Button type="default" onClick={() => setLinkIssueVisible(true)}>
+            Link Existing Issue
+          </Button>
         </Empty>
       )}
 
