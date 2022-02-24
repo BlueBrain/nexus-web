@@ -34,7 +34,10 @@ const JIRAPluginContainer = ({
   });
   const tableIssues = linkedIssues?.map(issue => ({
     key: issue.id,
-    name: issue.summary,
+    summary: issue.summary,
+    description: issue.description,
+    updated: issue.updated,
+    status: issue.status,
     url: `${jiraWebBaseUrl}browse/${issue.key}`,
   }));
 

@@ -112,26 +112,29 @@ const JIRAPluginUI = ({
           onCancel={() => setLinkIssueVisible(false)}
         />
       )}
+
       {issues.length > 0 && (
-        <Dropdown
-          overlay={
-            <Menu>
-              <Menu.Item
-                key="create"
-                onClick={() => setCreateIssueVisible(true)}
-              >
-                Create issue
-              </Menu.Item>
-              <Menu.Item key="link" onClick={() => setLinkIssueVisible(true)}>
-                Link issue
-              </Menu.Item>
-            </Menu>
-          }
-        >
-          <Button>
-            Add <DownOutlined />
-          </Button>
-        </Dropdown>
+        <div style={{ width: '100%', display: 'flex', marginBottom: '10px' }}>
+          <Dropdown
+            overlay={
+              <Menu>
+                <Menu.Item
+                  key="create"
+                  onClick={() => setCreateIssueVisible(true)}
+                >
+                  Create issue
+                </Menu.Item>
+                <Menu.Item key="link" onClick={() => setLinkIssueVisible(true)}>
+                  Link issue
+                </Menu.Item>
+              </Menu>
+            }
+          >
+            <Button type="primary" style={{ marginLeft: 'auto' }}>
+              Add <DownOutlined />
+            </Button>
+          </Dropdown>
+        </div>
       )}
 
       {issues.length === 0 && (
@@ -148,7 +151,28 @@ const JIRAPluginUI = ({
           size="small"
           dataSource={issues}
           columns={[
-            { title: 'Name', dataIndex: 'name', key: 'name' },
+            {
+              title: 'Issue',
+              render: issue => {
+                return (
+                  <>
+                    {issue.summary} ({issue.key})
+                  </>
+                );
+              },
+            },
+            {
+              title: 'Last updated',
+              render: issue => {
+                return <>{issue.updated}</>;
+              },
+            },
+            {
+              title: 'Status',
+              render: issue => {
+                return <>{issue.status}</>;
+              },
+            },
             {
               key: 'id',
               render: issue => {

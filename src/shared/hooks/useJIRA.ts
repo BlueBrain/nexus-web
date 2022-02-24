@@ -1,6 +1,7 @@
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { generatePath } from 'react-router-dom';
+import { makeProjectUri } from '../utils';
 
 /* TODO: move this out of here */
 const jiraAPIBaseUrl = 'http://localhost:8000/jira/rest/api/2/';
@@ -75,9 +76,13 @@ function useJIRA({
               key: 'TEST1', // TODO: need to allow option to specify project
             },
             issuetype: { name: 'Task' }, // TODO: allow selection of issue type
-            description: 'I was created using Fusion, get me.', // TODO: set to something sensible
+            description: '* Created by Nexus Fusion - add some detail.', // TODO: set to something sensible
             summary,
             customfield_10113: getResourceUrl(), // TODO: get custom field name
+            customfield_10115: `${window.location.origin.toString()}${makeProjectUri(
+              orgLabel,
+              projectLabel
+            )}`, // TODO: get custom field name
           },
         }),
       })
@@ -99,6 +104,7 @@ function useJIRA({
     //   .then(v => {
     //     fetchLinkedIssues();
     //   });
+
     return fetch(`${jiraAPIBaseUrl}issue/${issueKey}`, {
       method: 'PUT',
       headers: {
@@ -108,6 +114,10 @@ function useJIRA({
       body: JSON.stringify({
         fields: {
           customfield_10113: getResourceUrl(), // TODO: get custom field name
+          customfield_10115: `${window.location.origin.toString()}${makeProjectUri(
+            orgLabel,
+            projectLabel
+          )}`, // TODO: get custom field name
         },
       }),
     }).then(response => {
@@ -139,6 +149,7 @@ function useJIRA({
       body: JSON.stringify({
         fields: {
           customfield_10113: '', // TODO: get custom field name
+          customfield_10115: '', // TODO: get custom field name
         },
       }),
     }).then(response => {
@@ -161,6 +172,8 @@ function useJIRA({
               key: issue.key,
               id: issue.id,
               summary: issue.fields.summary,
+              status: issue.fields.status.name,
+              description: issue.fields.description,
               updated: issue.fields.updated,
               self: issue.self,
               commentsCount: 0, // not available in response
