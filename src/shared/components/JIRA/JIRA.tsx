@@ -1,30 +1,91 @@
 import { DownOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Empty, Input, Menu, Modal, Table } from 'antd';
+import {
+  Button,
+  Dropdown,
+  Empty,
+  Form,
+  Input,
+  Menu,
+  Modal,
+  Select,
+  Table,
+} from 'antd';
+import { Option } from 'antd/lib/mentions';
 import * as React from 'react';
+import { getDateString } from '../../utils';
 
 const CreateIssueUI = ({
+  projects,
   onOk,
   onCancel,
 }: {
-  onOk: (summary: string) => void;
+  projects: any[];
+  onOk: (project: string, summary: string) => void;
   onCancel: () => void;
 }) => {
   const [summary, setSummary] = React.useState('');
+  const [project, setProject] = React.useState('');
+
+  const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 5 },
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 19 },
+    },
+  };
+
   return (
     <>
       <Modal
         title="Create Issue"
         visible={true}
-        onOk={() => onOk(summary)}
+        onOk={() => onOk(project, summary)}
         onCancel={() => onCancel()}
       >
         <p>A Jira issue will be created and linked to this Nexus resource.</p>
-        <Input
-          type="text"
-          value={summary}
-          onChange={e => setSummary(e.currentTarget.value)}
-          placeholder="Issue Summary"
-        />
+        <Form onFinish={() => onOk(project, summary)}>
+          <Form.Item
+            label="Project"
+            name="project"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+            {...formItemLayout}
+          >
+            <Select
+              style={{ width: 120 }}
+              onChange={(value: string) => setProject(value)}
+            >
+              {projects.map(project => (
+                <Option key={project.key} value={project.key}>
+                  {project.name}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="Summary"
+            name="summary"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+            {...formItemLayout}
+          >
+            <Input
+              type="text"
+              value={summary}
+              onChange={e => setSummary(e.currentTarget.value)}
+              placeholder="Issue Summary"
+            />
+          </Form.Item>
+        </Form>
       </Modal>
     </>
   );
@@ -65,13 +126,15 @@ const LinkIssueUI = ({
 };
 
 type JIRAPluginUIProps = {
+  projects: any[];
   issues: any[];
-  onCreateIssue: (summary: string) => void;
+  onCreateIssue: (project: string, summary: string) => void;
   onLinkIssue: (issueKey: string) => void;
   onUnlinkIssue: (issueKey: string) => void;
   searchJiraLink: string;
 };
 const JIRAPluginUI = ({
+  projects,
   issues,
   onCreateIssue,
   onLinkIssue,
@@ -97,8 +160,9 @@ const JIRAPluginUI = ({
     <>
       {createIssueVisible && (
         <CreateIssueUI
-          onOk={summary => {
-            onCreateIssue(summary);
+          projects={projects}
+          onOk={(project, summary) => {
+            onCreateIssue(project, summary);
             setCreateIssueVisible(false);
           }}
           onCancel={() => setCreateIssueVisible(false)}
@@ -161,7 +225,11 @@ const JIRAPluginUI = ({
               render: issue => {
                 return (
                   <>
-                    {issue.summary} ({issue.key})
+                    {issue.summary} (
+                    <a href={issue.url} target="_blank">
+                      {issue.key}
+                    </a>
+                    )
                   </>
                 );
               },
@@ -169,7 +237,7 @@ const JIRAPluginUI = ({
             {
               title: 'Last updated',
               render: issue => {
-                return <>{issue.updated}</>;
+                return <>{getDateString(issue.updated)}</>;
               },
             },
             {
@@ -184,6 +252,7 @@ const JIRAPluginUI = ({
                 return (
                   <>
                     <Dropdown.Button
+                      size="small"
                       overlay={
                         <Menu>
                           <Menu.Item
@@ -194,9 +263,9 @@ const JIRAPluginUI = ({
                           </Menu.Item>
                         </Menu>
                       }
-                      onClick={() => window.open(issue.url, '_blank')}
+                      // onClick={() => window.open(issue.url, '_blank')}
                     >
-                      Open
+                      Options
                     </Dropdown.Button>
                   </>
                 );

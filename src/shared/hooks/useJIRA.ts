@@ -37,6 +37,24 @@ function useJIRA({
     return resourceUrl;
   };
 
+  const getProjects = () => {
+    return nexus.httpGet({
+      path: `${jiraAPIBaseUrl}project`,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  };
+
+  const fetchProjects = () => {
+    (async () => {
+      const projects = await getProjects();
+      setProjects(projects);
+    })();
+  };
+
+  React.useEffect(() => {
+    fetchProjects();
+  }, []);
+
   /**
    * Return Jira issues with a given Nexus resource ID
    * @param resourceID
@@ -65,7 +83,7 @@ function useJIRA({
     // });
   };
 
-  const createIssue = (summary: string) => {
+  const createIssue = (project: string, summary: string) => {
     return nexus
       .httpPost({
         path: `${jiraAPIBaseUrl}issue`,
@@ -73,7 +91,7 @@ function useJIRA({
         body: JSON.stringify({
           fields: {
             project: {
-              key: 'TEST1', // TODO: need to allow option to specify project
+              key: project,
             },
             issuetype: { name: 'Task' }, // TODO: allow selection of issue type
             description: '* Created by Nexus Fusion - add some detail.', // TODO: set to something sensible
@@ -159,6 +177,7 @@ function useJIRA({
   };
 
   const [linkedIssues, setLinkedIssues] = React.useState<any[]>([]);
+  const [projects, setProjects] = React.useState<any[]>([]);
 
   const fetchLinkedIssues = () => {
     (async () => {
@@ -188,6 +207,7 @@ function useJIRA({
   }, []);
 
   return {
+    projects,
     linkedIssues,
     jiraWebBaseUrl,
     createIssue,
