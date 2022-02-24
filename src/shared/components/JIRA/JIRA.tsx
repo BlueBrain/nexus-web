@@ -36,10 +36,17 @@ const CreateIssueUI = ({
       sm: { span: 19 },
     },
   };
+  const formItemLayoutWithOutLabel = {
+    wrapperCol: {
+      xs: { span: 24, offset: 0 },
+      sm: { span: 19, offset: 5 },
+    },
+  };
 
   return (
     <>
       <Modal
+        footer={null}
         title="Create Issue"
         visible={true}
         onOk={() => onOk(project, summary)}
@@ -84,6 +91,14 @@ const CreateIssueUI = ({
               onChange={e => setSummary(e.currentTarget.value)}
               placeholder="Issue Summary"
             />
+          </Form.Item>
+          <Form.Item {...formItemLayoutWithOutLabel}>
+            <Button type="primary" htmlType="submit">
+              Create
+            </Button>
+            <Button danger onClick={() => onCancel()}>
+              Cancel
+            </Button>
           </Form.Item>
         </Form>
       </Modal>
