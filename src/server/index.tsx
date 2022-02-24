@@ -89,7 +89,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
         ? '/proxy'
         : process.env.API_ENDPOINT || '',
       basePath: base,
-      clientId: process.env.CLIENT_ID || 'nexus-web',
+      clientId: process.env.CLIENT_ID || 'bbp-nise-dev-nexus-fusion',
       redirectHostName: `${process.env.HOST_NAME ||
         `${req.protocol}://${req.headers.host}`}${base}`,
       serviceAccountsRealm:
