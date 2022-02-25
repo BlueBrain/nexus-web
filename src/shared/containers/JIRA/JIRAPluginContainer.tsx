@@ -1,6 +1,6 @@
 import { Collapse } from 'antd';
 import * as React from 'react';
-import { Resource, NexusClient } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk';
 import JIRAPluginUI from '../../components/JIRA/JIRA';
 import useJIRA from '../../hooks/useJIRA';
 
@@ -8,7 +8,6 @@ type JIRAPluginContainerProps = {
   resource: Resource;
   projectLabel: string;
   orgLabel: string;
-  nexus: NexusClient;
   collapsed: boolean;
   handleCollapseChanged: () => void;
 };
@@ -17,7 +16,6 @@ const JIRAPluginContainer = ({
   resource,
   projectLabel,
   orgLabel,
-  nexus,
   collapsed,
   handleCollapseChanged,
 }: JIRAPluginContainerProps) => {
@@ -50,6 +48,7 @@ const JIRAPluginContainer = ({
     >
       <Collapse.Panel header="JIRA" key="jira">
         <JIRAPluginUI
+          displayType="resource"
           projects={projects}
           issues={tableIssues}
           onCreateIssue={(project, summary) => createIssue(project, summary)}

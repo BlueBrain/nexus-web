@@ -15,6 +15,7 @@ import * as React from 'react';
 import { getDateString } from '../../utils';
 
 const CreateIssueUI = ({
+  displayType,
   projects,
   onOk,
   onCancel,
@@ -22,6 +23,7 @@ const CreateIssueUI = ({
   projects: any[];
   onOk: (project: string, summary: string) => void;
   onCancel: () => void;
+  displayType: 'project' | 'resource';
 }) => {
   const [summary, setSummary] = React.useState('');
   const [project, setProject] = React.useState('');
@@ -45,14 +47,11 @@ const CreateIssueUI = ({
 
   return (
     <>
-      <Modal
-        footer={null}
-        title="Create Issue"
-        visible={true}
-        onOk={() => onOk(project, summary)}
-        onCancel={() => onCancel()}
-      >
-        <p>A Jira issue will be created and linked to this Nexus resource.</p>
+      <Modal footer={null} title="Create Issue" visible={true}>
+        <p>
+          A Jira issue will be created and linked to this Nexus{' '}
+          {displayType === 'project' ? 'project' : 'resource'}
+        </p>
         <Form onFinish={() => onOk(project, summary)}>
           <Form.Item
             label="Project"
@@ -147,6 +146,7 @@ type JIRAPluginUIProps = {
   onLinkIssue: (issueKey: string) => void;
   onUnlinkIssue: (issueKey: string) => void;
   searchJiraLink: string;
+  displayType: 'resource' | 'project';
 };
 const JIRAPluginUI = ({
   projects,
@@ -155,6 +155,7 @@ const JIRAPluginUI = ({
   onLinkIssue,
   onUnlinkIssue,
   searchJiraLink,
+  displayType,
 }: JIRAPluginUIProps) => {
   const [createIssueVisible, setCreateIssueVisible] = React.useState(false);
   const [linkIssueVisible, setLinkIssueVisible] = React.useState(false);
@@ -175,6 +176,7 @@ const JIRAPluginUI = ({
     <>
       {createIssueVisible && (
         <CreateIssueUI
+          displayType={displayType}
           projects={projects}
           onOk={(project, summary) => {
             onCreateIssue(project, summary);
@@ -235,6 +237,18 @@ const JIRAPluginUI = ({
           size="small"
           dataSource={issues}
           columns={[
+            displayType === 'project'
+              ? {
+                  title: 'Link type',
+                  render: issue => (issue.resourceId ? 'Resource' : 'Project'),
+                }
+              : {},
+            displayType === 'project'
+              ? {
+                  title: 'Resource',
+                  render: issue => issue.resourceId,
+                }
+              : {},
             {
               title: 'Issue',
               render: issue => {

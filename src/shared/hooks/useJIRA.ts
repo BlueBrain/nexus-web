@@ -13,17 +13,20 @@ const jiraWebBaseUrl = 'http://localhost:8080/';
  * @returns
  */
 function useJIRA({
-  resourceID,
   orgLabel,
   projectLabel,
+  resourceID,
 }: {
-  resourceID: string;
   orgLabel: string;
   projectLabel: string;
+  resourceID?: string;
 }) {
   const nexus = useNexusContext();
 
   const getResourceUrl = () => {
+    if (!resourceID) {
+      throw new Error('Resource ID not available in this context');
+    }
     const encodedResourceId = encodeURIComponent(resourceID);
     const pathToResource = generatePath(
       '/:orgLabel/:projectLabel/resources/:resourceId',
@@ -76,7 +79,7 @@ function useJIRA({
    * @param resourceID
    * @returns
    */
-  const getIssues = () => {
+  const getResourceIssues = () => {
     const resourceUrl = getResourceUrl();
 
     return nexus.httpPost({
@@ -84,20 +87,21 @@ function useJIRA({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jql: `"Nexus Resource Url" = "${resourceUrl}"` }),
     });
-
-    /* alternative using Fetch API */
-    // return fetch(url, {
-    //   method: 'POST',
-    //   headers: {
-    //     Accept: 'application/json',
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({ jql: '"key" = "TEST1-01"' }),
-    // }).then(response => {
-    //   console.log('jira response', response);
-    //   return response.json();
-    // });
   };
+
+  const getProjectIssues = () => {
+    return nexus.httpPost({
+      path: `${jiraAPIBaseUrl}search`,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jql: `"Nexus Project" = "${getProjectUrl()}"` }),
+    });
+  };
+
+  const getProjectUrl = () =>
+    `${window.location.origin.toString()}${makeProjectUri(
+      orgLabel,
+      projectLabel
+    )}`;
 
   const createIssue = (project: string, summary: string) => {
     return nexus
@@ -112,11 +116,8 @@ function useJIRA({
             issuetype: { name: 'Task' }, // TODO: allow selection of issue type
             description: '* Created by Nexus Fusion - add some detail.', // TODO: set to something sensible
             summary,
-            customfield_10113: getResourceUrl(), // TODO: get custom field name
-            customfield_10115: `${window.location.origin.toString()}${makeProjectUri(
-              orgLabel,
-              projectLabel
-            )}`, // TODO: get custom field name
+            customfield_10113: resourceID ? getResourceUrl() : '', // TODO: get custom field name
+            customfield_10115: getProjectUrl(), // TODO: get custom field name
             labels: ['discussion'],
           },
         }),
@@ -126,19 +127,6 @@ function useJIRA({
       });
   };
   const linkIssue = (issueUrl: string) => {
-    // return nexus
-    //   .httpPut({
-    //     path: `${jiraAPIBaseUrl}issue/${issueKey}`,
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({
-    //       fields: {
-    //         customfield_10113: getResourceUrl(), // TODO: get custom field name
-    //       },
-    //     }),
-    //   })
-    //   .then(v => {
-    //     fetchLinkedIssues();
-    //   });
     const issueKey = issueUrl.includes('/')
       ? issueUrl.substring(issueUrl.lastIndexOf('/') + 1)
       : issueUrl;
@@ -151,7 +139,7 @@ function useJIRA({
       },
       body: JSON.stringify({
         fields: {
-          customfield_10113: getResourceUrl(), // TODO: get custom field name
+          customfield_10113: resourceID ? getResourceUrl() : '', // TODO: get custom field name
           customfield_10115: `${window.location.origin.toString()}${makeProjectUri(
             orgLabel,
             projectLabel
@@ -164,20 +152,6 @@ function useJIRA({
     });
   };
   const unlinkIssue = (issueKey: string) => {
-    // return nexus
-    //   .httpPut({
-    //     path: `${jiraAPIBaseUrl}issue/${issueKey}`,
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({
-    //       fields: {
-    //         customfield_10113: '', // TODO: get custom field name
-    //       },
-    //     }),
-    //   })
-    //   .then(v => {
-    //     console.log('unlinked issue i guess', v);
-    //     fetchLinkedIssues();
-    //   });
     return fetch(`${jiraAPIBaseUrl}issue/${issueKey}`, {
       method: 'PUT',
       headers: {
@@ -202,7 +176,9 @@ function useJIRA({
 
   const fetchLinkedIssues = () => {
     (async () => {
-      const issuesResponse = await getIssues();
+      const issuesResponse = await (resourceID
+        ? getResourceIssues()
+        : getProjectIssues());
       if (issuesResponse.issues) {
         const issuesOrderedByLastUpdate = issuesResponse.issues.sort(
           (a: any, b: any) =>
@@ -224,6 +200,23 @@ function useJIRA({
               updated: issue.fields.updated,
               self: issue.self,
               commentCount: issue.fields.comment.total,
+              resourceUrl: issue.fields.customfield_10113,
+              resourceId:
+                issue.fields.customfield_10113 === null
+                  ? ''
+                  : decodeURIComponent(
+                      decodeURIComponent(
+                        issue.fields.customfield_10113.replace(
+                          window.location.origin.toString() +
+                            `/${orgLabel}/${projectLabel}/resources/`,
+                          ''
+                        )
+                      ) // TODO: check encoding
+                    ),
+              // how resource is displayed in Fusion
+              // {resource
+              //   ? getResourceLabel(resource)
+              //   : labelOf(decodeURIComponent(resourceId))}
             };
           })
         );
