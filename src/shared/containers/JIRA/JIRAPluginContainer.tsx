@@ -40,6 +40,7 @@ const JIRAPluginContainer = ({
     updated: issue.updated,
     status: issue.status,
     url: `${jiraWebBaseUrl}browse/${issue.key}`,
+    commentCount: issue.commentCount,
   }));
 
   return (

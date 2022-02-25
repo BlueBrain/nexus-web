@@ -56,6 +56,22 @@ function useJIRA({
   }, []);
 
   /**
+   * Given an array of issue objects with just a key attribute
+   * fetch the full issue which includes detail not included
+   * from response of Search API
+   * @param issues array of issue objects with key
+   * @returns
+   */
+  const getFullIssues = async (issues: any[]) =>
+    await Promise.all(issues.map(issue => getIssue(issue.key)));
+  const getIssue = (issueKey: string) => {
+    return nexus.httpGet({
+      path: `${jiraAPIBaseUrl}issue/${issueKey}`,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  };
+
+  /**
    * Return Jira issues with a given Nexus resource ID
    * @param resourceID
    * @returns
@@ -139,7 +155,6 @@ function useJIRA({
         },
       }),
     }).then(response => {
-      console.log('jira response', response);
       fetchLinkedIssues();
     });
   };
@@ -181,12 +196,12 @@ function useJIRA({
 
   const fetchLinkedIssues = () => {
     (async () => {
-      console.log('about to do request');
-      const issues = await getIssues();
-      console.log({ issues });
-      if (issues.issues) {
+      const issuesResponse = await getIssues();
+      if (issuesResponse.issues) {
+        // get full issue objects to include comments
+        const fullIssues = await getFullIssues(issuesResponse.issues);
         setLinkedIssues(
-          issues.issues.map((issue: any) => {
+          fullIssues.map((issue: any) => {
             return {
               key: issue.key,
               id: issue.id,
@@ -195,7 +210,7 @@ function useJIRA({
               description: issue.fields.description,
               updated: issue.fields.updated,
               self: issue.self,
-              commentsCount: 0, // not available in response
+              commentCount: issue.fields.comment.total,
             };
           })
         );

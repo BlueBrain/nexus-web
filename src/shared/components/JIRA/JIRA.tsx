@@ -262,6 +262,12 @@ const JIRAPluginUI = ({
               },
             },
             {
+              title: 'Comments',
+              render: issue => {
+                return <>{issue.commentCount}</>;
+              },
+            },
+            {
               key: 'id',
               render: issue => {
                 return (
