@@ -117,6 +117,7 @@ function useJIRA({
               orgLabel,
               projectLabel
             )}`, // TODO: get custom field name
+            labels: ['discussion'],
           },
         }),
       })
@@ -155,6 +156,7 @@ function useJIRA({
             orgLabel,
             projectLabel
           )}`, // TODO: get custom field name
+          labels: ['discussion'], // TODO: first we should fetch issue to append this label to any existing ones
         },
       }),
     }).then(response => {
@@ -186,6 +188,7 @@ function useJIRA({
         fields: {
           customfield_10113: '', // TODO: get custom field name
           customfield_10115: '', // TODO: get custom field name
+          // TODO: should we also remove discussion label?
         },
       }),
     }).then(response => {
