@@ -198,10 +198,17 @@ function useJIRA({
     (async () => {
       const issuesResponse = await getIssues();
       if (issuesResponse.issues) {
-        // get full issue objects to include comments
-        const fullIssues = await getFullIssues(issuesResponse.issues);
+        const issuesOrderedByLastUpdate = issuesResponse.issues.sort(
+          (a: any, b: any) =>
+            new Date(b.fields.updated).getTime() -
+            new Date(a.fields.updated).getTime()
+        );
+
+        const fullIssuesWithComments = await getFullIssues(
+          issuesOrderedByLastUpdate
+        );
         setLinkedIssues(
-          fullIssues.map((issue: any) => {
+          fullIssuesWithComments.map((issue: any) => {
             return {
               key: issue.key,
               id: issue.id,
