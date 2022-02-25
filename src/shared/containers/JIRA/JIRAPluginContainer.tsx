@@ -53,7 +53,7 @@ const JIRAPluginContainer = ({
           projects={projects}
           issues={tableIssues}
           onCreateIssue={(project, summary) => createIssue(project, summary)}
-          onLinkIssue={issueKey => linkIssue(issueKey)}
+          onLinkIssue={issueUrl => linkIssue(issueUrl)}
           onUnlinkIssue={issueKey => unlinkIssue(issueKey)}
           searchJiraLink="http://localhost:8080/issues/?jql="
         />

@@ -124,7 +124,7 @@ function useJIRA({
         fetchLinkedIssues();
       });
   };
-  const linkIssue = (issueKey: string) => {
+  const linkIssue = (issueUrl: string) => {
     // return nexus
     //   .httpPut({
     //     path: `${jiraAPIBaseUrl}issue/${issueKey}`,
@@ -138,6 +138,9 @@ function useJIRA({
     //   .then(v => {
     //     fetchLinkedIssues();
     //   });
+    const issueKey = issueUrl.includes('/')
+      ? issueUrl.substring(issueUrl.lastIndexOf('/') + 1)
+      : issueUrl;
 
     return fetch(`${jiraAPIBaseUrl}issue/${issueKey}`, {
       method: 'PUT',

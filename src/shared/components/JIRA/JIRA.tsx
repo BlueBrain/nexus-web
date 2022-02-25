@@ -111,11 +111,11 @@ const LinkIssueUI = ({
   onCancel,
   searchJiraLink,
 }: {
-  onOk: (issueKey: string) => void;
+  onOk: (issueUrl: string) => void;
   onCancel: () => void;
   searchJiraLink: string;
 }) => {
-  const [issueKey, setIssueKey] = React.useState('');
+  const [issueKey, setIssueUrl] = React.useState('');
   return (
     <>
       <Modal
@@ -132,8 +132,8 @@ const LinkIssueUI = ({
         <Input
           type="text"
           value={issueKey}
-          onChange={e => setIssueKey(e.currentTarget.value)}
-          placeholder="Jira Issue Key"
+          onChange={e => setIssueUrl(e.currentTarget.value)}
+          placeholder="Jira Issue URL"
         />
       </Modal>
     </>
@@ -186,8 +186,8 @@ const JIRAPluginUI = ({
       {linkIssueVisible && (
         <LinkIssueUI
           searchJiraLink={searchJiraLink}
-          onOk={issueKey => {
-            onLinkIssue(issueKey);
+          onOk={issueUrl => {
+            onLinkIssue(issueUrl);
             setLinkIssueVisible(false);
           }}
           onCancel={() => setLinkIssueVisible(false)}
