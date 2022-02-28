@@ -1,7 +1,7 @@
 import { Collapse } from 'antd';
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
-import JIRAPluginUI from '../../components/JIRA/JIRA';
+import JIRAPluginUI, { AuthorizeJiraUI } from '../../components/JIRA/JIRA';
 import useJIRA from '../../hooks/useJIRA';
 
 type JIRAPluginContainerProps = {
@@ -26,6 +26,9 @@ const JIRAPluginContainer = ({
     createIssue,
     linkIssue,
     unlinkIssue,
+    isJiraConnected,
+    jiraAuthUrl,
+    connectJira,
   } = useJIRA({
     resourceID: resource['@id'],
     projectLabel: projectLabel,
@@ -47,15 +50,25 @@ const JIRAPluginContainer = ({
       activeKey={collapsed ? 'jira' : undefined}
     >
       <Collapse.Panel header="JIRA" key="jira">
-        <JIRAPluginUI
-          displayType="resource"
-          projects={projects}
-          issues={tableIssues}
-          onCreateIssue={(project, summary) => createIssue(project, summary)}
-          onLinkIssue={issueUrl => linkIssue(issueUrl)}
-          onUnlinkIssue={issueKey => unlinkIssue(issueKey)}
-          searchJiraLink="http://localhost:8080/issues/?jql="
-        />
+        {!isJiraConnected ? (
+          <AuthorizeJiraUI
+            jiraAuthUrl={jiraAuthUrl}
+            onSubmitVerificationCode={verificationCode => {
+              connectJira(verificationCode);
+            }}
+          />
+        ) : (
+          <JIRAPluginUI
+            displayType="resource"
+            projects={projects}
+            issues={tableIssues}
+            onCreateIssue={(project, summary) => createIssue(project, summary)}
+            onLinkIssue={issueUrl => linkIssue(issueUrl)}
+            onUnlinkIssue={issueKey => unlinkIssue(issueKey)}
+            // TODO: this url should be determined by config
+            searchJiraLink="http://localhost:8080/issues/?jql="
+          />
+        )}
       </Collapse.Panel>
     </Collapse>
   );

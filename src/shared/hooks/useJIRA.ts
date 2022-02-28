@@ -2,6 +2,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { generatePath } from 'react-router-dom';
 import { makeProjectUri } from '../utils';
+import useLocalStorage from './useLocalStorage';
 
 /* TODO: move this out of here */
 const jiraAPIBaseUrl = 'http://localhost:8000/jira/rest/api/2/';
@@ -22,6 +23,47 @@ function useJIRA({
   resourceID?: string;
 }) {
   const nexus = useNexusContext();
+
+  const [isJiraConnected, setIsJiraConnected] = useLocalStorage<boolean>(
+    'isJiraConnected',
+    false
+  );
+  const [jiraAuthUrl, setJiraAuthUrl] = React.useState('');
+
+  /**
+   * First step in auth flow - get url from App which
+   * will include OAuth request token. User will visit
+   * url to log-in to Jira and authorize access to the
+   * Nexus application to authenticate as the user in
+   * future.
+   */
+  const getRequestToken = async () => {
+    /* TODO: localhost:9001 is our separate auth app
+      This is to updated to the Delta endpoint
+      v1/jira/request-token
+    */
+    fetch(`http://localhost:9001/sessions/connect`, {
+      method: 'GET',
+      mode: 'cors',
+      headers: { 'Content-Type': 'application/json' },
+    }).then(response => {
+      response.json().then(res => setJiraAuthUrl(res.url));
+    });
+  };
+
+  React.useEffect(() => {
+    getRequestToken();
+  }, []);
+
+  const connectJira = (verificationCode: string) => {
+    /* TODO: make request to Delta endpoint v1/jira/access-token
+      which should return 200 if successful. From then on, we
+      can make requests to JIRA via the Delta Jira endpoints
+      which stores our access token for Jira and proxies requests
+      for the user to Jira
+     */
+    setIsJiraConnected(true);
+  };
 
   const getResourceUrl = () => {
     if (!resourceID) {
@@ -166,7 +208,6 @@ function useJIRA({
         },
       }),
     }).then(response => {
-      console.log('jira response', response);
       fetchLinkedIssues();
     });
   };
@@ -228,6 +269,9 @@ function useJIRA({
   }, []);
 
   return {
+    isJiraConnected,
+    jiraAuthUrl,
+    connectJira,
     projects,
     linkedIssues,
     jiraWebBaseUrl,

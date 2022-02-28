@@ -14,6 +14,56 @@ import { Option } from 'antd/lib/mentions';
 import * as React from 'react';
 import { getDateString } from '../../utils';
 
+const AuthorizeJiraUI = ({
+  jiraAuthUrl,
+  onSubmitVerificationCode: connect,
+}: {
+  jiraAuthUrl: string;
+  onSubmitVerificationCode: (verificationCode: string) => void;
+}) => {
+  const [verificationCode, setVerificationCode] = React.useState('');
+  return (
+    <>
+      <h1>We first need to connect your Jira account.</h1>
+
+      <ol>
+        <li>
+          Visit Jira to log-in and authorize access to Jira from Nexus Fusion
+          <br />
+          <br />
+          <a href={jiraAuthUrl} target="_blank">
+            Authorize Jira access
+          </a>
+          <br />
+          <br />
+        </li>
+        <li>
+          Copy the <em>verification code</em> from step 1 into the text box
+          below and click Connect.
+          <br />
+          <br />
+          <div style={{ display: 'flex' }}>
+            <div>
+              <Input
+                type="text"
+                placeholder="Verification code"
+                style={{ backgroundColor: '#fff', width: 200 }}
+                value={verificationCode}
+                onChange={e => setVerificationCode(e.currentTarget.value)}
+              />
+            </div>
+            <div>
+              <Button type="primary" onClick={() => connect(verificationCode)}>
+                Connect
+              </Button>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </>
+  );
+};
+
 const CreateIssueUI = ({
   displayType,
   projects,
@@ -314,3 +364,4 @@ const JIRAPluginUI = ({
 };
 
 export default JIRAPluginUI;
+export { AuthorizeJiraUI };
