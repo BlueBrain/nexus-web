@@ -293,12 +293,6 @@ const JIRAPluginUI = ({
                   render: issue => (issue.resourceId ? 'Resource' : 'Project'),
                 }
               : {},
-            displayType === 'project'
-              ? {
-                  title: 'Resource',
-                  render: issue => issue.resourceId,
-                }
-              : {},
             {
               title: 'Issue',
               render: issue => {
@@ -309,6 +303,12 @@ const JIRAPluginUI = ({
                 );
               },
             },
+            displayType === 'project'
+              ? {
+                  title: 'Resource',
+                  render: issue => issue.resourceId,
+                }
+              : {},
             {
               title: 'Last updated',
               render: issue => {
