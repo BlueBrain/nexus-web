@@ -12,7 +12,7 @@ import {
 } from 'antd';
 import { Option } from 'antd/lib/mentions';
 import * as React from 'react';
-import { getDateString, getFriendlyTimeAgoString } from '../../utils';
+import { getFriendlyTimeAgoString } from '../../utils';
 
 const AuthorizeJiraUI = ({
   jiraAuthUrl,
@@ -197,6 +197,7 @@ type JIRAPluginUIProps = {
   onUnlinkIssue: (issueKey: string) => void;
   searchJiraLink: string;
   displayType: 'resource' | 'project';
+  onNavigateToResource?: (resourceId: string) => void;
 };
 const JIRAPluginUI = ({
   projects,
@@ -206,6 +207,7 @@ const JIRAPluginUI = ({
   onUnlinkIssue,
   searchJiraLink,
   displayType,
+  onNavigateToResource,
 }: JIRAPluginUIProps) => {
   const [createIssueVisible, setCreateIssueVisible] = React.useState(false);
   const [linkIssueVisible, setLinkIssueVisible] = React.useState(false);
@@ -306,7 +308,16 @@ const JIRAPluginUI = ({
             displayType === 'project'
               ? {
                   title: 'Resource',
-                  render: issue => issue.resourceId,
+                  render: issue => (
+                    <a
+                      onClick={() =>
+                        onNavigateToResource &&
+                        onNavigateToResource(issue.resourceId)
+                      }
+                    >
+                      {issue.resourceId}
+                    </a>
+                  ),
                 }
               : {},
             {

@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import JIRAPluginUI from '../../../shared/components/JIRA/JIRA';
 import useJIRA from '../../../shared/hooks/useJIRA';
+import { makeResourceUri } from '../../../shared/utils';
 
 type JiraContainerProps = {
   orgLabel: string;
@@ -11,6 +13,8 @@ const JiraPluginProjectContainer = ({
   orgLabel,
   projectLabel,
 }: JiraContainerProps) => {
+  const history = useHistory();
+  const location = useLocation();
   const {
     projects,
     linkedIssues,
@@ -34,6 +38,19 @@ const JiraPluginProjectContainer = ({
     resourceId: issue.resourceId,
   }));
 
+  const goToResource = (
+    orgLabel: string,
+    projectLabel: string,
+    resourceId: string
+  ) => {
+    history.push(
+      makeResourceUri(orgLabel, projectLabel, encodeURIComponent(resourceId)),
+      {
+        background: location,
+      }
+    );
+  };
+
   return (
     <JIRAPluginUI
       displayType="project"
@@ -43,6 +60,9 @@ const JiraPluginProjectContainer = ({
       onLinkIssue={issueUrl => linkIssue(issueUrl)}
       onUnlinkIssue={issueKey => unlinkIssue(issueKey)}
       searchJiraLink="http://localhost:8080/issues/?jql="
+      onNavigateToResource={resourceId =>
+        goToResource(orgLabel, projectLabel, resourceId)
+      }
     />
   );
 };
