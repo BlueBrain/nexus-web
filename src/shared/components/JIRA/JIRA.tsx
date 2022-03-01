@@ -258,7 +258,14 @@ const JIRAPluginUI = ({
       )}
 
       {issues.length > 0 && (
-        <div style={{ width: '100%', display: 'flex', marginBottom: '10px' }}>
+        <div
+          style={{
+            width: '100%',
+            display: 'flex',
+            marginBottom: '10px',
+            marginTop: '10px',
+          }}
+        >
           <Dropdown
             overlay={
               <Menu>
