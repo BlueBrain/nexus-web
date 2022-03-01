@@ -315,7 +315,7 @@ const JIRAPluginUI = ({
                         onNavigateToResource(issue.resourceId)
                       }
                     >
-                      {issue.resourceId}
+                      {issue.resourceLabel}
                     </a>
                   ),
                 }

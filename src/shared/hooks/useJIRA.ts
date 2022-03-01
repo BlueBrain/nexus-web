@@ -1,7 +1,8 @@
+import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { generatePath } from 'react-router-dom';
-import { makeProjectUri } from '../utils';
+import { getResourceLabel, labelOf, makeProjectUri } from '../utils';
 import useLocalStorage from './useLocalStorage';
 
 /* TODO: move this out of here */
@@ -215,6 +216,34 @@ function useJIRA({
   const [linkedIssues, setLinkedIssues] = React.useState<any[]>([]);
   const [projects, setProjects] = React.useState<any[]>([]);
 
+  const getResourceIdFromFusionUrl = (url: string) => {
+    return decodeURIComponent(
+      decodeURIComponent(
+        url.replace(
+          window.location.origin.toString() +
+            `/${orgLabel}/${projectLabel}/resources/`,
+          ''
+        )
+      ) // TODO: check encoding
+    );
+  };
+
+  const getIssueResources = (issues: any) => {
+    const resources = issues.map((issue: any) => {
+      if (issue.fields.customfield_10113 !== null) {
+        return nexus.Resource.get(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(
+            getResourceIdFromFusionUrl(issue.fields.customfield_10113)
+          )
+        );
+      }
+      return Promise.resolve();
+    });
+    return Promise.all(resources);
+  };
+
   const fetchLinkedIssues = () => {
     (async () => {
       const issuesResponse = await (resourceID
@@ -230,8 +259,23 @@ function useJIRA({
         const fullIssuesWithComments = await getFullIssues(
           issuesOrderedByLastUpdate
         );
+        const resources = (
+          await getIssueResources(issuesOrderedByLastUpdate)
+        ).filter(r => r !== undefined);
+
         setLinkedIssues(
           fullIssuesWithComments.map((issue: any) => {
+            let resourceLabel = '';
+            if (issue.fields.customfield_10113 !== null) {
+              const resource = resources.find(
+                r =>
+                  (r as Resource)['@id'] ===
+                  getResourceIdFromFusionUrl(issue.fields.customfield_10113)
+              );
+              resourceLabel = resource
+                ? getResourceLabel(resource as Resource)
+                : labelOf(decodeURIComponent(issue.fields.customfield_10113));
+            }
             return {
               key: issue.key,
               id: issue.id,
@@ -242,22 +286,8 @@ function useJIRA({
               self: issue.self,
               commentCount: issue.fields.comment.total,
               resourceUrl: issue.fields.customfield_10113,
-              resourceId:
-                issue.fields.customfield_10113 === null
-                  ? ''
-                  : decodeURIComponent(
-                      decodeURIComponent(
-                        issue.fields.customfield_10113.replace(
-                          window.location.origin.toString() +
-                            `/${orgLabel}/${projectLabel}/resources/`,
-                          ''
-                        )
-                      ) // TODO: check encoding
-                    ),
-              // how resource is displayed in Fusion
-              // {resource
-              //   ? getResourceLabel(resource)
-              //   : labelOf(decodeURIComponent(resourceId))}
+              resourceId: issue.fields.customfield_10113 === null ? '' : 'x',
+              resourceLabel: resourceLabel,
             };
           })
         );
