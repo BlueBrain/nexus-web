@@ -17,23 +17,13 @@ const ResourceMetadata: React.FC<{
         <Row>
           <Col>
             <b>Organization:</b>{' '}
-            <Link
-              to={`/admin/${orgLabel}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {orgLabel}
-            </Link>
+            <Link to={`/admin/${orgLabel}`}>{orgLabel}</Link>
           </Col>
         </Row>
         <Row>
           <Col>
             <b>Project:</b>{' '}
-            <Link
-              to={`/admin/${orgLabel}/${projectLabel}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <Link to={`/admin/${orgLabel}/${projectLabel}`}>
               {projectLabel}
             </Link>
           </Col>
