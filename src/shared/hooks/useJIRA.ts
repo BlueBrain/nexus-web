@@ -286,7 +286,10 @@ function useJIRA({
               self: issue.self,
               commentCount: issue.fields.comment.total,
               resourceUrl: issue.fields.customfield_10113,
-              resourceId: issue.fields.customfield_10113 === null ? '' : 'x',
+              resourceId:
+                issue.fields.customfield_10113 === null
+                  ? ''
+                  : getResourceIdFromFusionUrl(issue.fields.customfield_10113),
               resourceLabel: resourceLabel,
             };
           })
