@@ -12,7 +12,7 @@ import {
 } from 'antd';
 import { Option } from 'antd/lib/mentions';
 import * as React from 'react';
-import { getDateString } from '../../utils';
+import { getDateString, getFriendlyTimeAgoString } from '../../utils';
 
 const AuthorizeJiraUI = ({
   jiraAuthUrl,
@@ -312,7 +312,7 @@ const JIRAPluginUI = ({
             {
               title: 'Last updated',
               render: issue => {
-                return <>{getDateString(issue.updated)}</>;
+                return <>{getFriendlyTimeAgoString(issue.updated)}</>;
               },
             },
             {
