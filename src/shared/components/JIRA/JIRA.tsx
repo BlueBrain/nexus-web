@@ -303,13 +303,9 @@ const JIRAPluginUI = ({
               title: 'Issue',
               render: issue => {
                 return (
-                  <>
-                    {issue.summary} (
-                    <a href={issue.url} target="_blank">
-                      {issue.key}
-                    </a>
-                    )
-                  </>
+                  <a href={issue.url} target="_blank">
+                    {issue.summary}
+                  </a>
                 );
               },
             },
