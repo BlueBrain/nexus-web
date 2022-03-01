@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import JIRAPluginUI from '../../../shared/components/JIRA/JIRA';
+import JIRAPluginUI, {
+  AuthorizeJiraUI,
+} from '../../../shared/components/JIRA/JIRA';
 import useJIRA from '../../../shared/hooks/useJIRA';
 import { makeResourceUri } from '../../../shared/utils';
 
@@ -22,6 +24,9 @@ const JiraPluginProjectContainer = ({
     createIssue,
     linkIssue,
     unlinkIssue,
+    isJiraConnected,
+    jiraAuthUrl,
+    connectJira,
   } = useJIRA({
     projectLabel: projectLabel,
     orgLabel: orgLabel,
@@ -53,18 +58,29 @@ const JiraPluginProjectContainer = ({
   };
 
   return (
-    <JIRAPluginUI
-      displayType="project"
-      projects={projects}
-      issues={tableIssues}
-      onCreateIssue={(project, summary) => createIssue(project, summary)}
-      onLinkIssue={issueUrl => linkIssue(issueUrl)}
-      onUnlinkIssue={issueKey => unlinkIssue(issueKey)}
-      searchJiraLink="http://localhost:8080/issues/?jql="
-      onNavigateToResource={resourceId =>
-        goToResource(orgLabel, projectLabel, resourceId)
-      }
-    />
+    <>
+      {!isJiraConnected ? (
+        <AuthorizeJiraUI
+          jiraAuthUrl={jiraAuthUrl}
+          onSubmitVerificationCode={verificationCode => {
+            connectJira(verificationCode);
+          }}
+        />
+      ) : (
+        <JIRAPluginUI
+          displayType="project"
+          projects={projects}
+          issues={tableIssues}
+          onCreateIssue={(project, summary) => createIssue(project, summary)}
+          onLinkIssue={issueUrl => linkIssue(issueUrl)}
+          onUnlinkIssue={issueKey => unlinkIssue(issueKey)}
+          searchJiraLink="http://localhost:8080/issues/?jql="
+          onNavigateToResource={resourceId =>
+            goToResource(orgLabel, projectLabel, resourceId)
+          }
+        />
+      )}
+    </>
   );
 };
 
