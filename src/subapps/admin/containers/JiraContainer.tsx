@@ -27,6 +27,7 @@ const JiraPluginProjectContainer = ({
     isJiraConnected,
     jiraAuthUrl,
     connectJira,
+    isInitialized,
   } = useJIRA({
     projectLabel: projectLabel,
     orgLabel: orgLabel,
@@ -78,6 +79,7 @@ const JiraPluginProjectContainer = ({
           onNavigateToResource={resourceId =>
             goToResource(orgLabel, projectLabel, resourceId)
           }
+          isInitialized={isInitialized}
         />
       )}
     </>

@@ -8,6 +8,7 @@ import {
   Menu,
   Modal,
   Select,
+  Spin,
   Table,
 } from 'antd';
 import { Option } from 'antd/lib/mentions';
@@ -207,6 +208,7 @@ type JIRAPluginUIProps = {
   searchJiraLink: string;
   displayType: 'resource' | 'project';
   onNavigateToResource?: (resourceId: string) => void;
+  isInitialized: boolean;
 };
 const JIRAPluginUI = ({
   projects,
@@ -217,6 +219,7 @@ const JIRAPluginUI = ({
   searchJiraLink,
   displayType,
   onNavigateToResource,
+  isInitialized,
 }: JIRAPluginUIProps) => {
   const [createIssueVisible, setCreateIssueVisible] = React.useState(false);
   const [linkIssueVisible, setLinkIssueVisible] = React.useState(false);
@@ -232,6 +235,24 @@ const JIRAPluginUI = ({
       },
     });
   };
+
+  if (!isInitialized) {
+    return (
+      <div
+        style={{
+          width: '100%',
+          display: 'flex',
+          marginBottom: '10px',
+          marginTop: '10px',
+          height: '200px',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Spin tip="Loading..." spinning={true} size="large"></Spin>
+      </div>
+    );
+  }
 
   return (
     <>

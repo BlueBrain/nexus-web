@@ -30,6 +30,7 @@ function useJIRA({
     false
   );
   const [jiraAuthUrl, setJiraAuthUrl] = React.useState('');
+  const [isInitialized, setIsInitialized] = React.useState(false);
 
   /**
    * First step in auth flow - get url from App which
@@ -294,6 +295,7 @@ function useJIRA({
             };
           })
         );
+        setIsInitialized(true);
       }
     })();
   };
@@ -302,6 +304,7 @@ function useJIRA({
   }, []);
 
   return {
+    isInitialized,
     isJiraConnected,
     jiraAuthUrl,
     connectJira,
