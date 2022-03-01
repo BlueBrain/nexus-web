@@ -97,7 +97,12 @@ const CreateIssueUI = ({
 
   return (
     <>
-      <Modal footer={null} title="Create Issue" visible={true}>
+      <Modal
+        footer={null}
+        title="Create Issue"
+        visible={true}
+        onCancel={() => onCancel()}
+      >
         <p>
           A Jira issue will be created and linked to this Nexus{' '}
           {displayType === 'project' ? 'project' : 'resource'}
@@ -142,11 +147,15 @@ const CreateIssueUI = ({
             />
           </Form.Item>
           <Form.Item {...formItemLayoutWithOutLabel}>
-            <Button type="primary" htmlType="submit">
-              Create
-            </Button>
             <Button danger onClick={() => onCancel()}>
               Cancel
+            </Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{ marginLeft: '20px' }}
+            >
+              Create
             </Button>
           </Form.Item>
         </Form>
