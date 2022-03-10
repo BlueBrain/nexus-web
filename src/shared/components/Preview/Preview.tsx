@@ -9,7 +9,6 @@ import {
 import { Button, Collapse, Table, Tooltip } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { AccessControl } from '@bbp/react-nexus';
-import { parseURL, ParsedNexusUrl } from '../../utils/nexusParse';
 import { uuidv4 } from '../../utils';
 import PDFViewer from './PDFPreview';
 import useNotification from '../../hooks/useNotification';
@@ -80,7 +79,7 @@ const Preview: React.FC<{
 
   const isNexusFile = (url: string) => {
     const resourceId = parseResourceId(url);
-    return !(resourceId === '');
+    return resourceId !== '';
   };
 
   const columns = [
