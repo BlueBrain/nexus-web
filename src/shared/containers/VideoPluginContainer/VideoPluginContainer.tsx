@@ -4,14 +4,10 @@ import { useNexusContext } from '@bbp/react-nexus';
 import ReactPlayer from 'react-player';
 import * as moment from 'moment';
 import { Collapse, Modal, Button, List, Alert } from 'antd';
-import Ajv from 'ajv';
-import addFormats from 'ajv-formats';
-const ajv = new Ajv({ allErrors: true });
-addFormats(ajv);
-require('ajv-errors')(ajv, { singleError: true });
 import '../../styles/video-plugin.less';
 import { getDateString } from '../../utils';
 import * as schema from './schema.json';
+import useJsonSchemaValidation from '../../hooks/useJsonSchemaValidation';
 const { Panel } = Collapse;
 
 type VideoProps = {
@@ -42,8 +38,8 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
   const [videoData, setVideoData] = React.useState<any>();
   const [isModalVisible, setIsModalVisible] = React.useState<boolean>(false);
   const [selectedVideo, setSelectedVideo] = React.useState<any>();
-  const [validationError, setValidationError] = React.useState<any>();
-  const validate = React.useMemo(() => ajv.compile(schema), [
+
+  const { validate, validationError } = useJsonSchemaValidation(schema, [
     resource,
     orgLabel,
     projectLabel,
@@ -64,13 +60,7 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
   }, []);
 
   React.useEffect(() => {
-    if (!validate(resource)) {
-      if (validate.errors && validate.errors.length > 0) {
-        setValidationError(validate.errors);
-      } else {
-        setValidationError('Data does not match pattern required by plugin');
-      }
-    }
+    validate(resource);
   }, [resource, orgLabel, projectLabel]);
 
   const handleSelectedVideo = (video: any) => {
@@ -170,7 +160,7 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
                 <br />
                 <br />
                 <ul>
-                  {validationError.map((e: any, i: number) => (
+                  {validate.errors?.map((e: any, i: number) => (
                     <React.Fragment key={i}>
                       <li>{e.message}</li>
                     </React.Fragment>
