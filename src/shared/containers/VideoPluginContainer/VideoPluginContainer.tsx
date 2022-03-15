@@ -7,7 +7,6 @@ import { Collapse, Modal, Button, List } from 'antd';
 import '../../styles/video-plugin.less';
 import { getDateString } from '../../utils';
 import * as schema from './schema.json';
-import useJsonSchemaValidation from '../../hooks/useJsonSchemaValidation';
 import SchemaValidationFallbackContainer from '../SchemaValidationFallbackContainer';
 const { Panel } = Collapse;
 
@@ -40,12 +39,6 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
   const [isModalVisible, setIsModalVisible] = React.useState<boolean>(false);
   const [selectedVideo, setSelectedVideo] = React.useState<any>();
 
-  const { validate, validationError } = useJsonSchemaValidation(schema, [
-    resource,
-    orgLabel,
-    projectLabel,
-  ]);
-
   const handleOk = () => {
     const isModalVisible = false;
     setIsModalVisible(isModalVisible);
@@ -59,10 +52,6 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
   React.useEffect(() => {
     loadVideo();
   }, []);
-
-  React.useEffect(() => {
-    validate(resource);
-  }, [resource, orgLabel, projectLabel]);
 
   const handleSelectedVideo = (video: any) => {
     const selectedVideo = video;
