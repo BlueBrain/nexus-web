@@ -3,11 +3,12 @@ import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import ReactPlayer from 'react-player';
 import * as moment from 'moment';
-import { Collapse, Modal, Button, List, Alert } from 'antd';
+import { Collapse, Modal, Button, List } from 'antd';
 import '../../styles/video-plugin.less';
 import { getDateString } from '../../utils';
 import * as schema from './schema.json';
 import useJsonSchemaValidation from '../../hooks/useJsonSchemaValidation';
+import SchemaValidationFallbackContainer from '../SchemaValidationFallbackContainer';
 const { Panel } = Collapse;
 
 type VideoProps = {
@@ -84,95 +85,73 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
     setVideoData(videoData);
   };
 
-  if (!videoData) return null;
-
-  const videoJsx = (
-    <>
-      <List
-        itemLayout="horizontal"
-        dataSource={videoData}
-        renderItem={(item: any) => (
-          <List.Item
-            extra={
-              item.duration &&
-              item.uploadDate && (
-                <div>
-                  <p>{moment.duration(item.duration).humanize()}</p>
-                  <p>{getDateString(item.uploadDate, { noTime: true })}</p>
-                </div>
-              )
-            }
-          >
-            <List.Item.Meta
-              avatar={<ReactPlayer url={item.embedUrl} light={true} />}
-              title={
-                <Button
-                  type="link"
-                  onClick={() => {
-                    handleSelectedVideo(item);
-                  }}
-                >
-                  {item.name ? item.name : 'Video Name'}
-                </Button>
-              }
-              description={
-                item.description
-                  ? item.description
-                  : 'Description of video when information available'
-              }
-            />
-          </List.Item>
-        )}
-      />
-      {selectedVideo && !!selectedVideo.name ? (
-        <Modal
-          title={selectedVideo.name}
-          bodyStyle={{ padding: 0 }}
-          visible={isModalVisible && !!selectedVideo}
-          onOk={handleOk}
-          onCancel={handleCancel}
-          width={640}
-          footer={null}
-        >
-          {!!selectedVideo.embedUrl ? (
-            <ReactPlayer url={selectedVideo.embedUrl} />
-          ) : null}
-        </Modal>
-      ) : null}
-    </>
-  );
-  console.log({ validationError });
   return (
     <Collapse
       activeKey={collapsed ? 'video' : undefined}
       onChange={e => handleCollapseChanged()}
     >
       <Panel header="Video" key="video">
-        {validationError ? (
-          <Alert
-            message={
-              <>
-                The shape of the data is not as expected for this plugin, see{' '}
-                <a href="" target="_blank">
-                  README
-                </a>{' '}
-                for expected shape. See below for error details:
-                <br />
-                <br />
-                <ul>
-                  {validate.errors?.map((e: any, i: number) => (
-                    <React.Fragment key={i}>
-                      <li>{e.message}</li>
-                    </React.Fragment>
-                  ))}
-                </ul>
-              </>
-            }
-            type="error"
-          />
-        ) : (
-          videoJsx
-        )}
+        <SchemaValidationFallbackContainer
+          schema={schema}
+          resource={resource}
+          dependencies={[resource, projectLabel, orgLabel]}
+        >
+          <>
+            <List
+              itemLayout="horizontal"
+              dataSource={videoData}
+              renderItem={(item: any) => (
+                <List.Item
+                  extra={
+                    item.duration &&
+                    item.uploadDate && (
+                      <div>
+                        <p>{moment.duration(item.duration).humanize()}</p>
+                        <p>
+                          {getDateString(item.uploadDate, { noTime: true })}
+                        </p>
+                      </div>
+                    )
+                  }
+                >
+                  <List.Item.Meta
+                    avatar={<ReactPlayer url={item.embedUrl} light={true} />}
+                    title={
+                      <Button
+                        type="link"
+                        onClick={() => {
+                          handleSelectedVideo(item);
+                        }}
+                      >
+                        {item.name ? item.name : 'Video Name'}
+                      </Button>
+                    }
+                    description={
+                      item.description
+                        ? item.description
+                        : 'Description of video when information available'
+                    }
+                  />
+                </List.Item>
+              )}
+            />
+            {selectedVideo && !!selectedVideo.name ? (
+              <Modal
+                title={selectedVideo.name}
+                bodyStyle={{ padding: 0 }}
+                visible={isModalVisible && !!selectedVideo}
+                onOk={handleOk}
+                onCancel={handleCancel}
+                width={640}
+                footer={null}
+              >
+                {!!selectedVideo.embedUrl ? (
+                  <ReactPlayer url={selectedVideo.embedUrl} />
+                ) : null}
+              </Modal>
+            ) : null}
+          </>
+        </SchemaValidationFallbackContainer>
       </Panel>
     </Collapse>
   );
