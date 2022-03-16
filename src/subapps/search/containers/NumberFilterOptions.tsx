@@ -103,7 +103,7 @@ const NumberFilterOptions: React.FC<{
         };
       });
 
-      setAverage(all.aggregations.stats.average);
+      setAverage(all.aggregations.stats.avg);
       setSum(all.aggregations.stats.sum);
       setRangeMin(all.aggregations.stats.min);
       setRangeMax(all.aggregations.stats.max);
@@ -237,7 +237,7 @@ const NumberFilterOptions: React.FC<{
                 <Statistic
                   title="Sum"
                   value={sum}
-                  precision={5}
+                  precision={2}
                   valueStyle={{
                     fontSize: 20,
                   }}
@@ -245,7 +245,7 @@ const NumberFilterOptions: React.FC<{
                 <Statistic
                   title="Average"
                   value={average}
-                  precision={5}
+                  precision={2}
                   valueStyle={{
                     fontSize: 20,
                   }}
@@ -255,7 +255,7 @@ const NumberFilterOptions: React.FC<{
                 <Statistic
                   title="Max"
                   value={rangeMax}
-                  precision={5}
+                  precision={2}
                   valueStyle={{
                     fontSize: 20,
                   }}
@@ -263,7 +263,7 @@ const NumberFilterOptions: React.FC<{
                 <Statistic
                   title="Min"
                   value={rangeMin}
-                  precision={5}
+                  precision={2}
                   valueStyle={{
                     fontSize: 20,
                   }}
