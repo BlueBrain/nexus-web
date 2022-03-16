@@ -56,7 +56,7 @@ const NumberFilterOptions: React.FC<{
   );
 
   const [rangeMax, setRangeMax] = React.useState<number>(
-    fieldFilter?.filters[3] ? parseFloat(fieldFilter?.filters[3]) : 100000
+    fieldFilter?.filters[3] ? parseFloat(fieldFilter?.filters[3]) : Infinity
   );
 
   const [rangeStart, setRangeStart] = React.useState<number | undefined>(
