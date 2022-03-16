@@ -7,7 +7,7 @@ import {
   Statistics,
 } from '@bbp/nexus-sdk';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { Tabs, Popover } from 'antd';
+import { Tabs, Popover, Empty } from 'antd';
 import { SelectOutlined } from '@ant-design/icons';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
@@ -347,7 +347,10 @@ const ProjectView: React.FunctionComponent = () => {
                 <AccessControl
                   key="quotas-access-control"
                   path={`/${orgLabel}/${projectLabel}`}
-                  permissions={['quotas/read']}
+                  permissions={['test']}
+                  noAccessComponent={() => (
+                    <Empty>No read access to quotas.</Empty>
+                  )}
                 >
                   <QuotasContainer
                     orgLabel={orgLabel}
