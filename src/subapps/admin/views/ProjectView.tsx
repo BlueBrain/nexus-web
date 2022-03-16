@@ -337,7 +337,10 @@ const ProjectView: React.FunctionComponent = () => {
                   path={`/${orgLabel}/${projectLabel}`}
                   permissions={['files/write']}
                   noAccessComponent={() => (
-                    <Empty>No read access to files.</Empty>
+                    <Empty>
+                      You don't have the access to create/upload. Please contact
+                      the Administrator for access.
+                    </Empty>
                   )}
                 >
                   <ResourceCreateUploadContainer
@@ -352,7 +355,10 @@ const ProjectView: React.FunctionComponent = () => {
                   path={`/${orgLabel}/${projectLabel}`}
                   permissions={['test']}
                   noAccessComponent={() => (
-                    <Empty>No read access to quotas.</Empty>
+                    <Empty>
+                      You don't have read access to quotas. Please contact the
+                      Administrator for access.
+                    </Empty>
                   )}
                 >
                   <QuotasContainer
