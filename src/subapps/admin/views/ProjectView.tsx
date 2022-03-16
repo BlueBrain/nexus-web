@@ -336,6 +336,9 @@ const ProjectView: React.FunctionComponent = () => {
                 <AccessControl
                   path={`/${orgLabel}/${projectLabel}`}
                   permissions={['files/write']}
+                  noAccessComponent={() => (
+                    <Empty>No read access to files.</Empty>
+                  )}
                 >
                   <ResourceCreateUploadContainer
                     orgLabel={orgLabel}
