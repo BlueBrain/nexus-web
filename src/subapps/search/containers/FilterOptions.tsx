@@ -8,21 +8,21 @@ import { constructFilterSet, constructQuery } from '../utils';
 
 type ConfigField =
   | {
-      name: string;
-      label: string;
-      array: boolean;
-      optional: boolean;
-      fields: { name: string; format: string }[];
-      format?: undefined;
-    }
+    name: string;
+    label: string;
+    array: boolean;
+    optional: boolean;
+    fields: { name: string; format: string }[];
+    format?: undefined;
+  }
   | {
-      name: string;
-      label: string;
-      format: string;
-      array: boolean;
-      optional: boolean;
-      fields?: undefined;
-    };
+    name: string;
+    label: string;
+    format: string;
+    array: boolean;
+    optional: boolean;
+    fields?: undefined;
+  };
 
 export const extractFieldName = (filterKeyword: string) =>
   filterKeyword.replace('.label.keyword', '').replace('.keyword', '');
@@ -139,6 +139,9 @@ const FilterOptions: React.FC<{
           selected: fieldFilter?.filters.includes('(Missing)'),
           matching: true,
         });
+        
+        aggs.sort((x: any, y: any) => x.selected === y.selected ? 0 : x.selected ? -1 : 1)
+
         setAggregations(aggs);
       }
     );
@@ -149,6 +152,7 @@ const FilterOptions: React.FC<{
       ...a,
       selected: a.filterValue === filterValue ? selected : a.selected,
     }));
+    aggs.sort((x, y) => x.selected === y.selected ? 0 : x.selected ? -1 : 1)
     applyFilters(aggs);
     setAggregations(aggs);
   };
@@ -161,9 +165,8 @@ const FilterOptions: React.FC<{
           return (
             <Row
               key={filterValue}
-              className={`filter-value-row${
-                filterValue === 'Missing' && count === 0 ? '--missing' : ''
-              }`}
+              className={`filter-value-row${filterValue === 'Missing' && count === 0 ? '--missing' : ''
+                }`}
             >
               <Checkbox
                 key={`chk${filterValue}`}
@@ -175,9 +178,8 @@ const FilterOptions: React.FC<{
                   changeFilterSelection(filterValue, e.target.checked)
                 }
               >
-                {`${
-                  field.label === 'Types' ? labelOf(filterValue) : filterValue
-                }`}
+                {`${field.label === 'Types' ? labelOf(filterValue) : filterValue
+                  }`}
               </Checkbox>
               <span className="filter-value-row__count">
                 {count > 10000 ? '10K+' : count.toLocaleString('en-US')}
@@ -193,56 +195,56 @@ const FilterOptions: React.FC<{
       {!(
         field.fields && field.fields.find(f => f.format.includes('number'))
       ) && (
-        <>
-          <Form.Item
-            label="Operator"
-            rules={[
-              {
-                required: true,
-                message: 'Operator is required to apply a filter',
-              },
-            ]}
-          >
-            <Select
-              dropdownStyle={{ zIndex: 1100 }}
-              value={filterType}
-              onChange={v => setFilterType(v)}
+          <>
+            <Form.Item
+              label="Operator"
+              rules={[
+                {
+                  required: true,
+                  message: 'Operator is required to apply a filter',
+                },
+              ]}
             >
-              {field.array && (
-                <Select.Option value="allof">is all of (AND)</Select.Option>
-              )}
-              <Select.Option value="anyof">is any of (OR)</Select.Option>
-              <Select.Option value="noneof">is none of (NOT)</Select.Option>
-              {field.optional && (
-                <Select.Option value="missing">is missing</Select.Option>
-              )}
-            </Select>
-          </Form.Item>
-          {filterType !== 'missing' && (
-            <>
-              <Input.Search
-                onChange={event => {
-                  const val = event.target.value;
+              <Select
+                dropdownStyle={{ zIndex: 1100 }}
+                value={filterType}
+                onChange={v => setFilterType(v)}
+              >
+                {field.array && (
+                  <Select.Option value="allof">is all of (AND)</Select.Option>
+                )}
+                <Select.Option value="anyof">is any of (OR)</Select.Option>
+                <Select.Option value="noneof">is none of (NOT)</Select.Option>
+                {field.optional && (
+                  <Select.Option value="missing">is missing</Select.Option>
+                )}
+              </Select>
+            </Form.Item>
+            {filterType !== 'missing' && (
+              <>
+                <Input.Search
+                  onChange={event => {
+                    const val = event.target.value;
 
-                  const filteredSuggestions = aggregations.map(a => ({
-                    ...a,
-                    matching:
-                      val && val.length > 0
-                        ? a.filterValue
+                    const filteredSuggestions = aggregations.map(a => ({
+                      ...a,
+                      matching:
+                        val && val.length > 0
+                          ? a.filterValue
                             .toLowerCase()
                             .indexOf(val.toLowerCase()) > -1
-                        : true,
-                  }));
-                  setAggregations(filteredSuggestions);
-                }}
-              ></Input.Search>
-              <Form.Item style={{ maxHeight: '91px', overflow: 'scroll' }}>
-                {filterValues}
-              </Form.Item>
-            </>
-          )}
-        </>
-      )}
+                          : true,
+                    }));
+                    setAggregations(filteredSuggestions);
+                  }}
+                ></Input.Search>
+                <Form.Item style={{ maxHeight: '91px', overflow: 'scroll' }}>
+                  {filterValues}
+                </Form.Item>
+              </>
+            )}
+          </>
+        )}
     </Form>
   );
 };
