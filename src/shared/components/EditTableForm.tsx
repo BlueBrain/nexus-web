@@ -1,8 +1,14 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-
 import { Form, Input, Button, Spin, Checkbox, Row, Col, Select } from 'antd';
 import { Controlled as CodeMirror } from 'react-codemirror2';
+import 'codemirror/addon/display/placeholder';
+import 'codemirror/mode/sparql/sparql';
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/addon/fold/foldcode';
+import 'codemirror/addon/fold/foldgutter';
+import 'codemirror/addon/fold/brace-fold';
+import 'codemirror/lib/codemirror.css';
 import { View } from '@bbp/nexus-sdk';
 import { useQuery } from 'react-query';
 import ColumnConfig from './ColumnConfig';
@@ -20,7 +26,7 @@ import {
 import { FUSION_TABLE_CONTEXT } from '../../subapps/projects/fusionContext';
 
 const DEFAULT_SPARQL_QUERY =
-  'prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/> SELECT DISTINCT ?self ?s WHERE { ?s nxv:self ?self } LIMIT 20';
+  'prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/> \nSELECT DISTINCT ?self ?s WHERE { ?s nxv:self ?self } LIMIT 20';
 const DEFAULT_ES_QUERY = '{}';
 
 /**
@@ -72,6 +78,7 @@ const EditTableForm: React.FC<{
   busy,
   formName = 'Edit',
 }) => {
+  // state
   const [name, setName] = React.useState<string | undefined>(table?.name);
   const [nameError, setNameError] = React.useState<boolean>(false);
   const [viewError, setViewError] = React.useState<boolean>(false);
@@ -83,6 +90,13 @@ const EditTableForm: React.FC<{
     table?.view
   );
   const [view, setView] = React.useState<View>();
+  const [mode, setMode] = React.useState<any>({
+    name: 'javascript',
+    json: true,
+  });
+  const [placeHolder, setPlaceHolder] = React.useState<string>(
+    'Enter a valid ElasticSearch query'
+  );
 
   const [preview, setPreview] = React.useState<boolean>(false);
   const [enableSearch, setEnableSearch] = React.useState<boolean>(
@@ -106,84 +120,81 @@ const EditTableForm: React.FC<{
   );
 
   // Copy for codemirror text editor.
-  const [queryCopy, setQueryCopy] = React.useState<string>(dataQuery);
+  const [queryCopy, setQueryCopy] = React.useState<string>(
+    table ? table.dataQuery : ''
+  );
 
   const [configuration, setConfiguration] = React.useState<
     TableColumn | TableColumn[]
   >(table?.configuration || []);
-
-  const nexus = useNexusContext();
 
   const [projectionId, setProjectionId] = React.useState<string>();
 
   /* Available views for project */
   const [availableViews, setAvailableViews] = React.useState<View[]>();
 
+  // call backs.
+  const nexus = useNexusContext();
   const initializeAvailableViews = async () =>
     setAvailableViews((await nexus.View.list(orgLabel, projectLabel))._results);
 
-  // set the available views on load and set view to that specified on TableResource
-  React.useEffect(() => {
-    (async () => {
-      await initializeAvailableViews();
-      table && (await asyncCallToSetView(table.view));
-
-      if (table?.projection) {
-        if (table.projection['@id']) {
-          setProjectionId(table.projection['@id']);
-        } else {
-          /* 
-          when no projection id it means search all of the
-          specified projection type
-          */
-          setProjectionId(`All_${table.projection['@type']}`);
-        }
-      } else {
-        setProjectionId(undefined);
-      }
-    })();
-  }, []);
-
   const asyncCallToSetView = async (viewId: string) => {
     const viewDetails = await getView(viewId);
+    const placeholder = viewDetails['@type']?.includes('ElasticSearchView')
+      ? 'Enter a valid ElasticSearch query'
+      : 'Enter a valid SPARQL query';
     setView(viewDetails);
+    setMode(
+      viewDetails['@type']?.includes('ElasticSearchView')
+        ? {
+            name: 'javascript',
+            json: true,
+          }
+        : 'SPARQL'
+    );
+
+    setPlaceHolder(placeholder);
     setProjectionId(undefined);
+    return viewDetails;
   };
 
   const getView = async (viewId: string) =>
     await nexus.View.get(orgLabel, projectLabel, encodeURIComponent(viewId));
 
-  /* when the selected view details changes, set the default query appropriately */
-  React.useEffect(() => {
-    const viewTypes = [view?.['@type']].flat();
-    const projection =
-      view &&
-      view.projections &&
-      (view.projections as {
-        '@id': string;
-        '@type': string;
-      }[])
-        .map(o => ({ '@id': o['@id'], '@type': o['@type'] }))
-        .find(o => o['@id'] === projectionId);
+  const setQueries = React.useCallback(
+    (viewDetails: View) => {
+      const viewTypes = [viewDetails['@type']].flat();
+      const projection =
+        view &&
+        view.projections &&
+        (view.projections as {
+          '@id': string;
+          '@type': string;
+        }[])
+          .map(o => ({ '@id': o['@id'], '@type': o['@type'] }))
+          .find(o => o['@id'] === projectionId);
 
-    if (
-      viewTypes.includes('SparqlView') ||
-      viewTypes.includes('AggregateSparqlView') ||
-      (projection && projection['@type'].includes('SparqlProjection')) ||
-      projectionId === 'All_SparqlProjection'
-    ) {
-      setDataQuery(DEFAULT_SPARQL_QUERY);
-      setQueryCopy(DEFAULT_SPARQL_QUERY);
-    } else if (
-      viewTypes.includes('ElasticSearchView') ||
-      viewTypes.includes('AggregateElasticSearchView') ||
-      (projection && projection['@type'].includes('ElasticSearchProjection')) ||
-      projectionId === 'All_ElasticSearchProjection'
-    ) {
-      setDataQuery(DEFAULT_ES_QUERY);
-      setQueryCopy(DEFAULT_ES_QUERY);
-    }
-  }, [view, projectionId]);
+      if (
+        viewTypes.includes('SparqlView') ||
+        viewTypes.includes('AggregateSparqlView') ||
+        (projection && projection['@type'].includes('SparqlProjection')) ||
+        projectionId === 'All_SparqlProjection'
+      ) {
+        setDataQuery(DEFAULT_SPARQL_QUERY);
+        setQueryCopy(DEFAULT_SPARQL_QUERY);
+      } else if (
+        viewTypes.includes('ElasticSearchView') ||
+        viewTypes.includes('AggregateElasticSearchView') ||
+        (projection &&
+          projection['@type'].includes('ElasticSearchProjection')) ||
+        projectionId === 'All_ElasticSearchProjection'
+      ) {
+        setDataQuery(DEFAULT_ES_QUERY);
+        setQueryCopy(DEFAULT_ES_QUERY);
+      }
+    },
+    [projectionId]
+  );
 
   const queryColumnConfig = useQuery(
     [viewName, dataQuery, projectionId],
@@ -356,13 +367,20 @@ const EditTableForm: React.FC<{
     setQueryCopy(value);
   };
 
+  const onChangeViewDropDown = async (value: string) => {
+    value && setViewName(value);
+    setViewError(false);
+    const viewDetails = await asyncCallToSetView(value);
+    setQueries(viewDetails);
+  };
+
   const onClickPreview = () => {
     setPreview(true);
     setDataQuery(queryCopy);
   };
 
-  const updateColumnConfigArray = React.useMemo(
-    () => (name: string, data: any) => {
+  const updateColumnConfigArray = React.useCallback(
+    (name: string, data: any) => {
       const currentConfig = [...(configuration as TableColumn[])];
 
       const column = currentConfig.find(column => column.name === name);
@@ -383,8 +401,8 @@ const EditTableForm: React.FC<{
     [configuration]
   );
 
-  const updateColumnConfig = React.useMemo(
-    () => (name: string, data: any) => {
+  const updateColumnConfig = React.useCallback(
+    (name: string, data: any) => {
       const updatedColumn = {
         ...configuration,
         ...data,
@@ -395,24 +413,44 @@ const EditTableForm: React.FC<{
     [configuration]
   );
 
-  const renderColumnConfig = React.useMemo(
-    () => () => {
-      return Array.isArray(configuration) ? (
-        configuration.map((column: TableColumn) => {
-          return (
-            <ColumnConfig
-              column={column}
-              onChange={updateColumnConfigArray}
-              key={column.name}
-            />
-          );
-        })
-      ) : (
-        <ColumnConfig column={configuration} onChange={updateColumnConfig} />
-      );
-    },
-    [configuration, queryColumnConfig, updateColumnConfigArray]
-  );
+  const renderColumnConfig = React.useCallback(() => {
+    return Array.isArray(configuration) ? (
+      configuration.map((column: TableColumn) => {
+        return (
+          <ColumnConfig
+            column={column}
+            onChange={updateColumnConfigArray}
+            key={column.name}
+          />
+        );
+      })
+    ) : (
+      <ColumnConfig column={configuration} onChange={updateColumnConfig} />
+    );
+  }, [configuration, queryColumnConfig, updateColumnConfigArray]);
+
+  // effects
+  // set the available views on load and set view to that specified on TableResource
+  React.useEffect(() => {
+    (async () => {
+      await initializeAvailableViews();
+      table && (await asyncCallToSetView(table.view));
+
+      if (table?.projection) {
+        if (table.projection['@id']) {
+          setProjectionId(table.projection['@id']);
+        } else {
+          /* 
+          when no projection id it means search all of the
+          specified projection type
+          */
+          setProjectionId(`All_${table.projection['@type']}`);
+        }
+      } else {
+        setProjectionId(undefined);
+      }
+    })();
+  }, []);
 
   return (
     <Form className="edit-table-form">
@@ -456,9 +494,7 @@ const EditTableForm: React.FC<{
                 value={viewName}
                 style={{ width: 650 }}
                 onChange={value => {
-                  value && setViewName(value);
-                  setViewError(false);
-                  asyncCallToSetView(value);
+                  onChangeViewDropDown(value);
                 }}
               >
                 {availableViews &&
@@ -580,14 +616,12 @@ const EditTableForm: React.FC<{
           <h3>Query</h3>
           <CodeMirror
             value={queryCopy}
-            autoCursor={true}
             options={{
-              mode: { name: 'javascript', json: true },
-              readOnly: false,
+              mode,
               theme: 'base16-light',
-              placeholder: '',
               lineNumbers: true,
               viewportMargin: Infinity,
+              placeholder: placeHolder,
             }}
             onBeforeChange={(editor, data, value) => {
               handleQueryChange(value);
