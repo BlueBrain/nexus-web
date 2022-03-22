@@ -150,7 +150,7 @@ const EditTableForm: React.FC<{
             name: 'javascript',
             json: true,
           }
-        : 'SPARQL'
+        : { name: 'sparql' }
     );
 
     setPlaceHolder(placeholder);
@@ -614,19 +614,22 @@ const EditTableForm: React.FC<{
         </Row>
         <div className="edit-table-form__query">
           <h3>Query</h3>
-          <CodeMirror
-            value={queryCopy}
-            options={{
-              mode,
-              theme: 'base16-light',
-              lineNumbers: true,
-              viewportMargin: Infinity,
-              placeholder: placeHolder,
-            }}
-            onBeforeChange={(editor, data, value) => {
-              handleQueryChange(value);
-            }}
-          />
+          <div className="code">
+            <CodeMirror
+              value={queryCopy}
+              options={{
+                mode,
+                theme: 'base16-light',
+                lineNumbers: true,
+                lineWrapping: false,
+                viewportMargin: Infinity,
+                placeholder: placeHolder,
+              }}
+              onBeforeChange={(editor, data, value) => {
+                handleQueryChange(value);
+              }}
+            />
+          </div>
         </div>
         <div>
           {queryColumnConfig.isLoading ? (
