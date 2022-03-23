@@ -9,6 +9,7 @@ import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
 import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/base16-light.css';
 import { View } from '@bbp/nexus-sdk';
 import { useQuery } from 'react-query';
 import ColumnConfig from './ColumnConfig';
@@ -616,13 +617,14 @@ const EditTableForm: React.FC<{
           <h3>Query</h3>
           <div className="code">
             <CodeMirror
+              autoCursor={true}
+              autoScroll={true}
               value={queryCopy}
               options={{
                 mode,
                 theme: 'base16-light',
                 lineNumbers: true,
-                lineWrapping: false,
-                viewportMargin: Infinity,
+                lineWrapping: true,
                 placeholder: placeHolder,
               }}
               onBeforeChange={(editor, data, value) => {
