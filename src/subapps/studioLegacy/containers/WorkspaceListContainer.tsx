@@ -241,7 +241,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   ]);
 
   return (
-    <div className="workspace-list-container">
+    <div className="workspace">
       <TabList
         items={workspaces.map(w => ({
           label: w.label,
@@ -264,13 +264,11 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
         OnEdit={editWorkspace}
       >
         {selectedWorkspace ? (
-          <div className="workspace">
-            <DashboardList
-              key={workspaceId}
-              dashboards={dashboards}
-              refreshList={onListUpdate}
-            />{' '}
-          </div>
+          <DashboardList
+            key={workspaceId}
+            dashboards={dashboards}
+            refreshList={onListUpdate}
+          />
         ) : null}
       </TabList>
       <Modal
