@@ -128,7 +128,11 @@ const StudioContainer: React.FunctionComponent = () => {
   return (
     <>
       {studioResource ? (
-        <>
+        <div
+          style={{
+            minHeight: '800px',
+          }}
+        >
           <StudioHeader
             resource={studioResource}
             markdownViewer={MarkdownViewerContainer}
@@ -143,7 +147,7 @@ const StudioContainer: React.FunctionComponent = () => {
             studioResource={studioResource}
             onListUpdate={fetchAndSetupStudio}
           />
-        </>
+        </div>
       ) : (
         <Empty />
       )}
