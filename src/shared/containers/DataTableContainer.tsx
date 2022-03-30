@@ -378,6 +378,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
         <>
           <Table
             bordered
+            loading={!tableData.dataResult.data?.headerProperties}
             rowClassName={'data-table-row'}
             title={() => renderTitle(options)}
             columns={tableData.dataResult.data?.headerProperties}
