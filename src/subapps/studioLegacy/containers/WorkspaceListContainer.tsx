@@ -5,7 +5,7 @@ import { Button, Modal } from 'antd';
 import useNotification from '../../../shared/hooks/useNotification';
 import TabList from '../../../shared/components/Tabs/TabList';
 import AddWorkspaceContainer from './AddWorkspaceContainer';
-import  './WorkspaceList.less';
+import './WorkspaceList.less';
 import WorkspaceForm from './WorkspaceFormContainer';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import { StudioContext } from '../views/StudioView';
