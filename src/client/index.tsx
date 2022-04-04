@@ -80,7 +80,6 @@ const setToken: Link = (operation: Operation, forward?: Link) => {
   return forward ? forward(nextOperation) : new Observable();
 };
 
-console.log(preloadedState.config);
 // create Nexus instance
 const nexus = createNexusClient({
   fetch,
