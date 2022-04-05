@@ -251,53 +251,27 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
 
   const handleClick = (e: any) => {
     console.log('click ', e)
-    setCurrent(e.key);
-    selectWorkspace(e.key, workspaces);
+    setCurrent(e.key)
+    selectWorkspace(e.key, workspaces)
   }
-
+  console.log('WORKSPACES')
+  console.log(workspaces)
   return (
     <div className='workspace-list-container'>
-      <Menu
-        onClick={handleClick}
-        selectedKeys={[current]}
-        mode='horizontal'
-      >
-        <SubMenu key='mail' icon={<SettingOutlined />} title='W One'>
-          <Menu.ItemGroup title='Search'>
-            <Menu.Item key='setting:1'>DB 1</Menu.Item>
-            <Menu.Item key='setting:2'>DB 2</Menu.Item>
-          </Menu.ItemGroup>
-          <Menu.ItemGroup title='SparQL'>
-            <Menu.Item key='setting:3'>DB 3</Menu.Item>
-            <Menu.Item key='setting:4'>DB 4</Menu.Item>
-          </Menu.ItemGroup>
-          <Menu.ItemGroup title='ElasticSearch'>
-            <Menu.Item key='setting:3'>DB 5</Menu.Item>
-            <Menu.Item key='setting:4'>DB 6</Menu.Item>
-          </Menu.ItemGroup>
-          <Menu.ItemGroup title='Hidden'>
-            <Menu.Item key='setting:3'>DB 7</Menu.Item>
-            <Menu.Item key='setting:4'>DB 8</Menu.Item>
-          </Menu.ItemGroup>
-        </SubMenu>
-        <SubMenu key='two' icon={<SettingOutlined />} title='W Two'>
-          <Menu.ItemGroup title='Search'>
-            <Menu.Item key='setting:5'>DB 1</Menu.Item>
-            <Menu.Item key='setting:6'>DB 2</Menu.Item>
-            <Menu.Item key='setting:7'>DB 3</Menu.Item>
-          </Menu.ItemGroup>
-          <Menu.ItemGroup title='SparQL'>
-            <Menu.Item key='setting:8'>DB 4</Menu.Item>
-          </Menu.ItemGroup>
-          <Menu.ItemGroup title='ElasticSearch'>
-            <Menu.Item key='setting:9'>DB 6</Menu.Item>
-          </Menu.ItemGroup>
-          <Menu.ItemGroup title='Hidden'>
-            <Menu.Item key='setting:10'>DB 7</Menu.Item>
-            <Menu.Item key='setting:11'>DB 8</Menu.Item>
-            <Menu.Item key='setting:12'>DB 9</Menu.Item>
-          </Menu.ItemGroup>
-        </SubMenu>
+      <Menu onClick={handleClick} selectedKeys={[current]} mode='horizontal'>
+        {workspaces.map(function (workspace, index) {
+          return (
+            <SubMenu
+              key={index}
+              icon={<SettingOutlined />}
+              title={workspace.label}
+            >
+              {workspace.dashboards.map(function (d: any, i: any) {
+                return <Menu.Item key={1+(i*index)}>{d.dashboard}</Menu.Item>
+              })}
+            </SubMenu>
+          )
+        })}
       </Menu>
       <div className='dashboard-container'>
         {selectedWorkspace ? (
