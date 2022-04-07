@@ -63,10 +63,12 @@ export type Dashboard = {
 interface DashboardListProps {
   dashboards: Dashboard[];
   refreshList?(): void;
+  dashboard: string;
 }
 
 const DashboardList: React.FunctionComponent<DashboardListProps> = ({
-  dashboards,
+	dashboards,
+	dashboard,
   refreshList,
 }) => {
   const [showDataTableEdit, setShowDataTableEdit] = React.useState(false);
@@ -80,6 +82,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     dashboardId,
     isWritable,
   } = studioContext;
+
   const [queryParams, setQueryString] = useQueryString();
   const permissionsPath = `/${orgLabel}/${projectLabel}`;
   const [dashboardResources, setDashboardResources] = React.useState<
@@ -261,7 +264,33 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
 
   React.useEffect(() => {
     fetchAndSetupDashboards();
-  }, [dashboards]);
+	}, [dashboards]);
+
+	React.useEffect(() => {
+		console.log("useEffect function dashboard and dashboardResources called");
+		if (dashboardResources.length === 0) {
+			console.log('0 exit useffect');
+			return;
+		}
+
+		console.log('dashboard');
+		console.log(dashboard);
+		console.log('dashboardResources');
+		console.log(dashboardResources);
+
+		const dashboardResourceIndex = dashboardResources.findIndex(
+      d => d["@id"] === dashboard
+		);
+		if (dashboardResourceIndex === -1) {
+			console.log('not found in findIndex (-1) useffect');
+			return;
+		}
+
+		console.log("dashboardResourcesIndex");
+		console.log(dashboardResourceIndex);
+    selectDashboard(dashboardResourceIndex);
+
+  }, [dashboard, dashboardResources]);
 
   const handleElementClick = (stringifiedIndex: string) => {
     const dashboardResource = dashboardResources[Number(stringifiedIndex)];

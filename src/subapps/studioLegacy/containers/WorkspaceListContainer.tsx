@@ -90,7 +90,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   const [showModal, setShowModal] = React.useState<boolean>(false)
   const [queryParams, setQueryString] = useQueryString()
   const studioContext = React.useContext(StudioContext)
-  const { orgLabel, projectLabel, workspaceId, isWritable } = studioContext
+  const { orgLabel, projectLabel, workspaceId, isWritable, dashboardId } = studioContext
   const permissionsPath = `/${orgLabel}/${projectLabel}`
   const [workspaces, setWorkspaces] = React.useState<Resource<any>[]>([])
   const [selectedWorkspace, setSelectedWorkspace] = React.useState<
@@ -98,7 +98,9 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   >()
   const [showEdit, setShowEdit] = React.useState<boolean>(false)
   const [workspaceToEdit, setWorkSpaceToEdit] = React.useState<string>()
-  const [current, setCurrent] = React.useState<string>('mail')
+  const [currentDashboard, setCurrentDashboard] = React.useState<string>(
+    'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/users/nick/_/3fb94264-e22b-4aef-8e9d-06a2ee4d348a'
+  );
 
   const nexus = useNexusContext()
   const dashboards =
@@ -251,14 +253,14 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
 
   const handleClick = (e: any) => {
     console.log('click ', e)
-    setCurrent(e.key)
-    selectWorkspace(e.key, workspaces)
+		setCurrentDashboard(e.key)
+		console.log("selectedWorkspace");
+		console.log(selectedWorkspace);
   }
-  console.log('WORKSPACES')
-  console.log(workspaces)
+
   return (
     <div className='workspace-list-container'>
-      <Menu onClick={handleClick} selectedKeys={[current]} mode='horizontal'>
+      <Menu onClick={handleClick} selectedKeys={[currentDashboard]} mode='horizontal'>
         {workspaces.map(function (workspace, index) {
           return (
             <SubMenu
@@ -267,7 +269,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
               title={workspace.label}
             >
               {workspace.dashboards.map(function (d: any, i: any) {
-                return <Menu.Item key={1+(i*index)}>{d.dashboard}</Menu.Item>
+                return <Menu.Item key={d.dashboard}>{d.dashboard}</Menu.Item>
               })}
             </SubMenu>
           )
@@ -279,6 +281,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
             <DashboardList
               key={workspaceId}
               dashboards={dashboards}
+              dashboard={currentDashboard}
               refreshList={onListUpdate}
             />{' '}
           </div>
