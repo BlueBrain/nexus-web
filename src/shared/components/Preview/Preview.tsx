@@ -179,7 +179,7 @@ const Preview: React.FC<{
     const disabledToolTip =
       selectedRows.length <= 0
         ? 'Please Select files to download'
-        : "You don't have the required permissions to create an archive for some resources in your cart. Please contact your project administrator to request to be granted the required archives/write permission.";
+        : 'You don’t have the required permissions to create an archive for some of the selected resources. Please contact your project administrator to request to be granted the required archives/write permission.';
     const btn = (
       <Button
         onClick={() => {
@@ -197,7 +197,7 @@ const Preview: React.FC<{
       </Button>
     );
 
-    if (disabled) {
+    if (isDisabled) {
       return <Tooltip title={disabledToolTip}>{btn}</Tooltip>;
     }
 
@@ -323,7 +323,7 @@ const Preview: React.FC<{
       >
         <Collapse.Panel header="Preview" key="preview">
           <AccessControl
-            path={'/'}
+            path={`/${orgLabel}/${projectLabel}`}
             permissions={['archives/write']}
             noAccessComponent={() => downloadButton(true)}
             loadingComponent={downloadButton(false)}
