@@ -281,6 +281,10 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
 		const dashboardResourceIndex = dashboardResources.findIndex(
       d => d["@id"] === dashboard
 		);
+		if (dashboard === '') {
+			console.log('dashboard is emptystring, useffect');
+			selectDashboard(0);
+    }
 		if (dashboardResourceIndex === -1) {
 			console.log('not found in findIndex (-1) useffect');
 			return;
@@ -402,22 +406,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
           onSuccess={updateDashboards}
         ></DashboardEditorContainer>
       )}
-      <TabList
-        items={dashboardResources.map((w, index) => ({
-          label: w.label,
-          description: w.description,
-          id: `${index}`, // must be a string
-        }))}
-        onSelected={(stringiedIndex: string) => {
-          selectDashboard(Number(stringiedIndex));
-        }}
-        tabType={isWritable ? 'editable-card' : 'card'}
-        position="left"
-        activeKey={`${selectedDashboardResourcesIndex}`}
-        tabAction={resourcesWritePermissionsWrapper(tabAction, permissionsPath)}
-        editButton={editButtonWrapper}
-        OnEdit={OnEdit}
-      >
+
         {!!dashboardResources.length &&
           !!dashboardResources[selectedDashboardResourcesIndex] &&
           ('dataTable' in
@@ -463,7 +452,6 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
               }
             />
           ))}
-      </TabList>
       <Modal
         visible={showEditTableForm}
         footer={null}
