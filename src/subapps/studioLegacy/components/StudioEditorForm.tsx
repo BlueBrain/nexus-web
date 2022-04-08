@@ -43,24 +43,23 @@ const StudioEditorForm: React.FC<{
       expanded: boolean | undefined;
     }[]
   >();
-  console.log(pluginManifest);
 
   React.useEffect(() => {
-    console.log({ plugins });
-  }, [plugins]);
-
-  React.useEffect(() => {
-    const availablePlugins = Object.keys(pluginManifest || {}).map(key => {
-      const savedPlugin = studio?.plugins?.find(s => s.key === key);
-      return {
-        key,
-        name: pluginManifest ? pluginManifest[key].name : '',
-        visible: !!savedPlugin,
-        expanded: savedPlugin?.expanded,
-      };
-    });
-    // console.log({ availablePlugins });
-    setPlugins(availablePlugins);
+    const configuredPlugins =
+      studio && studio.plugins
+        ? studio.plugins.map(p => ({ ...p, visible: true }))
+        : [];
+    const otherAvailablePlugins = Object.keys(pluginManifest || {})
+      .map(key => {
+        return {
+          key,
+          name: pluginManifest ? pluginManifest[key].name : '',
+          visible: false,
+          expanded: false,
+        };
+      })
+      .filter(p => !configuredPlugins.find(c => c.key === p.key));
+    setPlugins([...configuredPlugins, ...otherAvailablePlugins]);
   }, [pluginManifest]);
 
   const handleSubmit = (values: { label: string; description: string }) => {
@@ -82,6 +81,10 @@ const StudioEditorForm: React.FC<{
     <>
       <Tabs>
         <Tabs.TabPane tab="Plugins" key="plugins">
+          <p>
+            Customise which plugins will appear for resources accessed via this
+            Studio.
+          </p>
           <DragDropContext
             onDragEnd={result => {
               const { destination, source } = result;
@@ -89,8 +92,16 @@ const StudioEditorForm: React.FC<{
                 return;
               }
               const pluginsCopy = [...plugins];
-              pluginsCopy[destination.index] = pluginsCopy[source.index];
-              pluginsCopy[source.index] = plugins[destination.index];
+              const pluginToMove = pluginsCopy.splice(source.index, 1);
+
+              if (destination.index === plugins.length - 1) {
+                pluginsCopy.push(pluginToMove[0]);
+              } else if (destination.index < source.index) {
+                pluginsCopy.splice(destination.index, 0, pluginToMove[0]);
+              } else {
+                pluginsCopy.splice(destination.index + 1, 0, pluginToMove[0]);
+              }
+
               setPlugins(pluginsCopy);
             }}
           >
@@ -123,17 +134,35 @@ const StudioEditorForm: React.FC<{
                                     size="small"
                                     checked={el.visible}
                                     onChange={checked => {
-                                      setPlugins(
-                                        plugins.map(p => {
-                                          if (p.key === el.key) {
-                                            return {
-                                              ...p,
-                                              visible: checked,
-                                            };
-                                          }
-                                          return p;
-                                        })
+                                      // Move to end of visible list. Leave where it is if itself is the first non visible
+                                      const pluginsCopy = [...plugins];
+                                      const thisPluginIx = pluginsCopy.findIndex(
+                                        p => p.key === el.key
                                       );
+                                      const thisPluginToMove = pluginsCopy.splice(
+                                        thisPluginIx,
+                                        1
+                                      );
+                                      const firstNonVisiblePluginIx = pluginsCopy.findIndex(
+                                        v => !v.visible
+                                      );
+                                      if (firstNonVisiblePluginIx === -1) {
+                                        pluginsCopy.push({
+                                          ...thisPluginToMove[0],
+                                          visible: false,
+                                        });
+                                      } else {
+                                        pluginsCopy.splice(
+                                          firstNonVisiblePluginIx,
+                                          0,
+                                          {
+                                            ...thisPluginToMove[0],
+                                            visible: false,
+                                          }
+                                        );
+                                      }
+
+                                      setPlugins(pluginsCopy);
                                     }}
                                   />{' '}
                                   {el.name}
@@ -186,24 +215,42 @@ const StudioEditorForm: React.FC<{
                       ?.filter(p => !p.visible)
                       .map((el, ix) => (
                         <Form.Item key={el.key} style={{ marginBottom: 0 }}>
+                          <MoreOutlined style={{ color: 'transparent' }} />
                           <label>
                             <Switch
                               size="small"
                               checked={el.visible}
                               title="Show plugin"
-                              onChange={checked => {
-                                setPlugins(
-                                  plugins.map(p => {
-                                    if (p.key === el.key) {
-                                      return {
-                                        ...p,
-                                        visible: checked,
-                                        expanded: checked ? p.expanded : false,
-                                      };
-                                    }
-                                    return p;
-                                  })
+                              onChange={() => {
+                                // Move to end of visible list. Leave where it is if itself is the first non visible
+                                const pluginsCopy = [...plugins];
+                                const thisPluginIx = pluginsCopy.findIndex(
+                                  p => p.key === el.key
                                 );
+                                const thisPluginToMove = pluginsCopy.splice(
+                                  thisPluginIx,
+                                  1
+                                );
+                                const firstNonVisiblePluginIx = pluginsCopy.findIndex(
+                                  v => !v.visible
+                                );
+                                if (firstNonVisiblePluginIx === -1) {
+                                  pluginsCopy.push({
+                                    ...thisPluginToMove[0],
+                                    visible: true,
+                                  });
+                                } else {
+                                  pluginsCopy.splice(
+                                    firstNonVisiblePluginIx,
+                                    0,
+                                    {
+                                      ...thisPluginToMove[0],
+                                      visible: true,
+                                    }
+                                  );
+                                }
+
+                                setPlugins(pluginsCopy);
                               }}
                             />{' '}
                             {el.name}
