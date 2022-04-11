@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
-import { Input, Form, Tooltip, Button, Tabs, Switch } from 'antd';
+import { Input, Form, Tooltip, Button, Switch, FormInstance } from 'antd';
 import { SaveImageHandler } from 'react-mde';
 import {
   ArrowsAltOutlined,
@@ -10,7 +10,6 @@ import {
 } from '@ant-design/icons';
 
 import { MarkdownEditorFormItemComponent } from '../../../shared/components/MarkdownEditor';
-import TabList from '../../../shared/components/Tabs/TabList';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import usePlugins from '../../../shared/hooks/usePlugins';
 
@@ -19,14 +18,24 @@ type StudioResource = Resource<{
   description?: string;
   workspaces?: [string];
   plugins?: {
-    key: string;
-    name: string;
-    expanded: boolean;
-  }[];
+    customise: boolean;
+    plugins: {
+      key: string;
+      name: string;
+      expanded: boolean;
+    }[];
+  };
 }>;
 
 const StudioEditorForm: React.FC<{
-  saveStudio?(label: string, description?: string): void;
+  saveStudio?(
+    label: string,
+    description?: string,
+    plugins?: {
+      customise: boolean;
+      plugins: { key: string; expanded: boolean }[];
+    }
+  ): void;
   studio?: StudioResource | null;
   onSaveImage: SaveImageHandler;
   markdownViewer: React.FC<{
@@ -46,9 +55,23 @@ const StudioEditorForm: React.FC<{
 
   React.useEffect(() => {
     const configuredPlugins =
-      studio && studio.plugins
-        ? studio.plugins.map(p => ({ ...p, visible: true }))
+      studio &&
+      studio.plugins &&
+      studio.plugins.customise &&
+      studio.plugins.plugins
+        ? studio.plugins.plugins.map(p => ({ ...p, visible: true }))
         : [];
+
+    // replace names
+    if (pluginManifest) {
+      configuredPlugins.forEach(p => {
+        const match = Object.keys(pluginManifest).find(k => p.key === k);
+        if (match) {
+          p.name = pluginManifest[match].name;
+        }
+      });
+    }
+
     const otherAvailablePlugins = Object.keys(pluginManifest || {})
       .map(key => {
         return {
@@ -62,9 +85,21 @@ const StudioEditorForm: React.FC<{
     setPlugins([...configuredPlugins, ...otherAvailablePlugins]);
   }, [pluginManifest]);
 
-  const handleSubmit = (values: { label: string; description: string }) => {
+  const handleSubmit = (values: any) => {
+    const visiblePlugins = plugins
+      ? plugins
+          .filter(p => p.visible)
+          .map(p => {
+            return { key: p.key, expanded: !!p.expanded };
+          })
+      : [];
+
     const { label, description } = values;
-    saveStudio && saveStudio(label, description);
+    saveStudio &&
+      saveStudio(label, description, {
+        customise: isPluginsCustomised,
+        plugins: visiblePlugins,
+      });
   };
 
   const formItemLayout = {
@@ -77,46 +112,113 @@ const StudioEditorForm: React.FC<{
     description: '',
   };
 
+  const [isPluginsCustomised, setIsPluginsCustomised] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsPluginsCustomised(!!(studio?.plugins && studio.plugins.customise));
+  }, [studio]);
+
+  const formRef = React.createRef<FormInstance>();
+
   return (
     <>
-      <Tabs>
-        <Tabs.TabPane tab="Plugins" key="plugins">
-          <p>
-            Customise which plugins will appear for resources accessed via this
-            Studio.
-          </p>
-          <DragDropContext
-            onDragEnd={result => {
-              const { destination, source } = result;
-              if (!destination || !plugins) {
-                return;
-              }
-              const pluginsCopy = [...plugins];
-              const pluginToMove = pluginsCopy.splice(source.index, 1);
+      <Form
+        {...formItemLayout}
+        ref={formRef}
+        onFinish={handleSubmit}
+        layout="vertical"
+      >
+        <Form.Item
+          label={
+            <span>
+              Label{' '}
+              <Tooltip title="A name of your studio">
+                <QuestionCircleOutlined />
+              </Tooltip>
+            </span>
+          }
+          name="label"
+          initialValue={label}
+          rules={[
+            {
+              required: true,
+              message: 'Please input a label!',
+            },
+          ]}
+        >
+          <Input className="ui-studio-label-input" />
+        </Form.Item>
+        <Form.Item
+          label={
+            <span>
+              Description{' '}
+              <Tooltip title="A description of your studio">
+                <QuestionCircleOutlined />
+              </Tooltip>
+            </span>
+          }
+          name="description"
+          initialValue={studio?.description}
+        >
+          <MarkdownEditorFormItemComponent
+            resource={studio as Resource}
+            onSaveImage={onSaveImage}
+            markdownViewer={markdownViewer}
+          />
+        </Form.Item>
 
-              if (destination.index === plugins.length - 1) {
-                pluginsCopy.push(pluginToMove[0]);
-              } else if (destination.index < source.index) {
-                pluginsCopy.splice(destination.index, 0, pluginToMove[0]);
-              } else {
-                pluginsCopy.splice(destination.index + 1, 0, pluginToMove[0]);
-              }
-
-              setPlugins(pluginsCopy);
+        <label>
+          <Switch
+            title="Hide plugin"
+            checked={isPluginsCustomised}
+            onChange={checked => {
+              setIsPluginsCustomised(checked);
             }}
-          >
-            <Droppable droppableId="droppable">
-              {(provided, snapshot) => (
-                <div
-                  className="column-visibility-container"
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                >
-                  <Form>
-                    {plugins
-                      ?.filter(p => p.visible)
-                      .map((el, ix) => (
-                        <Draggable key={el.key} draggableId={el.key} index={ix}>
+          />
+          Customise Studio Plugins
+        </label>
+
+        {isPluginsCustomised && (
+          <>
+            <p>
+              Customise which plugins will appear for resources accessed via
+              this Studio.
+            </p>
+            <DragDropContext
+              onDragEnd={result => {
+                const { destination, source } = result;
+                if (!destination || !plugins) {
+                  return;
+                }
+                const pluginsCopy = [...plugins];
+                const pluginToMove = pluginsCopy.splice(source.index, 1);
+
+                if (destination.index === plugins.length - 1) {
+                  pluginsCopy.push(pluginToMove[0]);
+                } else if (destination.index < source.index) {
+                  pluginsCopy.splice(destination.index, 0, pluginToMove[0]);
+                } else {
+                  pluginsCopy.splice(destination.index + 1, 0, pluginToMove[0]);
+                }
+
+                setPlugins(pluginsCopy);
+              }}
+            >
+              <Droppable droppableId="droppable">
+                {(provided, snapshot) => (
+                  <div
+                    className="column-visibility-container"
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                  >
+                    <>
+                      {plugins?.map((el, ix) => (
+                        <Draggable
+                          isDragDisabled={!el.visible}
+                          key={el.key}
+                          draggableId={el.key}
+                          index={ix}
+                        >
                           {(provided, snapshot) => (
                             <div
                               ref={provided.innerRef}
@@ -124,10 +226,21 @@ const StudioEditorForm: React.FC<{
                               {...provided.dragHandleProps}
                             >
                               <Form.Item
+                                valuePropName="checked"
+                                name={el.key}
                                 key={el.key}
                                 style={{ marginBottom: 0 }}
+                                trigger="onChange"
                               >
-                                <MoreOutlined />
+                                {el.visible ? (
+                                  <>
+                                    <MoreOutlined />
+                                  </>
+                                ) : (
+                                  <MoreOutlined
+                                    style={{ color: 'transparent' }}
+                                  />
+                                )}
                                 <label>
                                   <Switch
                                     title="Hide plugin"
@@ -135,6 +248,7 @@ const StudioEditorForm: React.FC<{
                                     checked={el.visible}
                                     onChange={checked => {
                                       // Move to end of visible list. Leave where it is if itself is the first non visible
+
                                       const pluginsCopy = [...plugins];
                                       const thisPluginIx = pluginsCopy.findIndex(
                                         p => p.key === el.key
@@ -149,7 +263,7 @@ const StudioEditorForm: React.FC<{
                                       if (firstNonVisiblePluginIx === -1) {
                                         pluginsCopy.push({
                                           ...thisPluginToMove[0],
-                                          visible: false,
+                                          visible: checked,
                                         });
                                       } else {
                                         pluginsCopy.splice(
@@ -157,11 +271,10 @@ const StudioEditorForm: React.FC<{
                                           0,
                                           {
                                             ...thisPluginToMove[0],
-                                            visible: false,
+                                            visible: checked,
                                           }
                                         );
                                       }
-
                                       setPlugins(pluginsCopy);
                                     }}
                                   />{' '}
@@ -196,119 +309,33 @@ const StudioEditorForm: React.FC<{
                                     );
                                   }}
                                 >
-                                  {el.expanded && (
+                                  {el.visible && el.expanded && (
                                     <ArrowsAltOutlined
                                       style={{ color: '#239fd9' }}
                                     />
                                   )}
-                                  {!el.expanded && <ShrinkOutlined />}
+                                  {el.visible && !el.expanded && (
+                                    <ShrinkOutlined />
+                                  )}
                                 </Button>
                               </Form.Item>
                             </div>
                           )}
                         </Draggable>
                       ))}
-                  </Form>
-                  {provided.placeholder}
-                  <Form>
-                    {plugins
-                      ?.filter(p => !p.visible)
-                      .map((el, ix) => (
-                        <Form.Item key={el.key} style={{ marginBottom: 0 }}>
-                          <MoreOutlined style={{ color: 'transparent' }} />
-                          <label>
-                            <Switch
-                              size="small"
-                              checked={el.visible}
-                              title="Show plugin"
-                              onChange={() => {
-                                // Move to end of visible list. Leave where it is if itself is the first non visible
-                                const pluginsCopy = [...plugins];
-                                const thisPluginIx = pluginsCopy.findIndex(
-                                  p => p.key === el.key
-                                );
-                                const thisPluginToMove = pluginsCopy.splice(
-                                  thisPluginIx,
-                                  1
-                                );
-                                const firstNonVisiblePluginIx = pluginsCopy.findIndex(
-                                  v => !v.visible
-                                );
-                                if (firstNonVisiblePluginIx === -1) {
-                                  pluginsCopy.push({
-                                    ...thisPluginToMove[0],
-                                    visible: true,
-                                  });
-                                } else {
-                                  pluginsCopy.splice(
-                                    firstNonVisiblePluginIx,
-                                    0,
-                                    {
-                                      ...thisPluginToMove[0],
-                                      visible: true,
-                                    }
-                                  );
-                                }
-
-                                setPlugins(pluginsCopy);
-                              }}
-                            />{' '}
-                            {el.name}
-                          </label>
-                        </Form.Item>
-                      ))}
-                  </Form>
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
-        </Tabs.TabPane>
-        <Tabs.TabPane tab="General" key="general">
-          <Form {...formItemLayout} onFinish={handleSubmit} layout="vertical">
-            <Form.Item
-              label={
-                <span>
-                  Label{' '}
-                  <Tooltip title="A name of your studio">
-                    <QuestionCircleOutlined />
-                  </Tooltip>
-                </span>
-              }
-              name="label"
-              initialValue={label}
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input a label!',
-                },
-              ]}
-            >
-              <Input className="ui-studio-label-input" />
-            </Form.Item>
-            <Form.Item
-              label={
-                <span>
-                  Description{' '}
-                  <Tooltip title="A description of your studio">
-                    <QuestionCircleOutlined />
-                  </Tooltip>
-                </span>
-              }
-              name="description"
-              initialValue={studio?.description}
-            >
-              <MarkdownEditorFormItemComponent
-                resource={studio as Resource}
-                onSaveImage={onSaveImage}
-                markdownViewer={markdownViewer}
-              />
-            </Form.Item>
-          </Form>
-        </Tabs.TabPane>
-      </Tabs>
-      <Button type="primary" htmlType="submit">
-        Save
-      </Button>
+                    </>
+                    {provided.placeholder}
+                    <></>
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </>
+        )}
+        <Button type="primary" htmlType="submit">
+          Save
+        </Button>
+      </Form>
     </>
   );
 };
