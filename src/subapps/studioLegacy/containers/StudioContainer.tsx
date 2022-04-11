@@ -26,7 +26,7 @@ const resourcesWritePermissionsWrapper = (
   });
 };
 
-type StudioResource = Resource<{
+export type StudioResource = Resource<{
   label: string;
   description?: string;
   workspaces: [string];

@@ -14,12 +14,14 @@ const ResourcePlugins: React.FunctionComponent<{
   goToResource?: (selfURL: string) => void;
   empty?: React.ReactElement;
   openPlugins: string[];
+  studioDefinedPluginsToInclude?: string[];
   handleCollapseChange: (pluginName: string) => void;
 }> = ({
   resource,
   goToResource,
   empty = null,
   openPlugins,
+  studioDefinedPluginsToInclude,
   handleCollapseChange,
 }) => {
   const nexus = useNexusContext();
@@ -29,7 +31,6 @@ const ResourcePlugins: React.FunctionComponent<{
   if (!resource) {
     return null;
   }
-
   const includedPlugins =
     pluginManifest &&
     matchPlugins(pluginsMap(pluginManifest), availablePlugins, resource);
@@ -38,9 +39,14 @@ const ResourcePlugins: React.FunctionComponent<{
     pluginManifest &&
     matchPlugins(pluginsExcludeMap(pluginManifest), availablePlugins, resource);
 
-  const filteredPlugins = includedPlugins?.filter(
-    plugin => !excludedPlugins?.includes(plugin)
-  );
+  const filteredPlugins = includedPlugins
+    ?.filter(plugin => !excludedPlugins?.includes(plugin))
+    .filter(plugin => {
+      if (!studioDefinedPluginsToInclude) {
+        return plugin;
+      }
+      return studioDefinedPluginsToInclude.includes(plugin);
+    });
 
   const pluginDataMap = filteredPlugins
     ? filteredPlugins
