@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
-import { useLocation, useHistory, useParams } from 'react-router';
+import { useLocation, useHistory, useParams, matchPath } from 'react-router';
 import { Spin, Alert, Collapse, Typography, Divider } from 'antd';
 import * as queryString from 'query-string';
 import { useNexusContext } from '@bbp/react-nexus';
@@ -28,6 +28,8 @@ import { Link } from 'react-router-dom';
 import ResourceViewActionsContainer from './ResourceViewActionsContainer';
 import ResourceMetadata from '../components/ResourceMetadata';
 import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
+import useQueryString from '../hooks/useQueryString';
+import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -46,8 +48,46 @@ const ResourceViewContainer: React.FunctionComponent<{
 
   // @ts-ignore
   const { orgLabel = '', projectLabel = '', resourceId = '' } = useParams();
+  const [{ studioId }, setQueryParams] = useQueryString();
   const nexus = useNexusContext();
-  const location = useLocation();
+  const location = useLocation<{ background: Location }>();
+
+  const [studioPlugins, setStudioPlugins] = React.useState<{
+    customise: boolean;
+    plugins: { key: string; expanded: boolean }[];
+  }>();
+
+  React.useEffect(() => {
+    if (location.state.background) {
+      const match = matchPath<{ StudioId: string }>(
+        location.state.background.pathname,
+        {
+          path: '/studios/:organisation/:project/studios/:StudioId',
+          exact: true,
+          strict: false,
+        }
+      );
+
+      if (match) {
+        // looks like we have us a studio
+        const studioId = match.params.StudioId;
+        nexus.Resource.get<StudioResource>(
+          orgLabel,
+          projectLabel,
+          studioId
+        ).then(d => {
+          if (Array.isArray((d as StudioResource).plugins)) {
+            //@ts-ignore
+            (d as StudioResource).plugins = (d as StudioResource).plugins[0];
+          }
+          if ((d as StudioResource).plugins) {
+            setStudioPlugins((d as StudioResource).plugins);
+          }
+        });
+      }
+    }
+  }, []);
+
   const history = useHistory();
   const notification = useNotification();
   const [{ ref }] = useMeasure();
@@ -312,7 +352,10 @@ const ResourceViewContainer: React.FunctionComponent<{
   }, [orgLabel, projectLabel, resourceId, rev, tag]);
 
   const [openPlugins, setOpenPlugins] = React.useState<string[]>([]);
-
+  const [
+    studioDefinedPluginsToInclude,
+    setStudioDefinedPluginsToInclude,
+  ] = React.useState<string[]>([]);
   const LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME = 'expanded_plugins';
 
   React.useEffect(() => {
@@ -333,6 +376,25 @@ const ResourceViewContainer: React.FunctionComponent<{
       JSON.stringify(openPlugins)
     );
   }, [openPlugins]);
+
+  React.useEffect(() => {
+    // if coming from studio, override what user has set in localstorage
+    if (studioPlugins?.customise && pluginManifest) {
+      setOpenPlugins(
+        studioPlugins.plugins
+          .filter(p => p.expanded)
+          .map(p => {
+            return pluginManifest[p.key].name;
+          })
+      );
+
+      setStudioDefinedPluginsToInclude(
+        studioPlugins.plugins.map(p => {
+          return p.key;
+        })
+      );
+    }
+  }, [studioPlugins]);
 
   const pluginCollapsedToggle = (pluginName: string) => {
     setOpenPlugins(
@@ -469,6 +531,11 @@ const ResourceViewContainer: React.FunctionComponent<{
                   resource={resource}
                   goToResource={goToSelfResource}
                   openPlugins={openPlugins}
+                  studioDefinedPluginsToInclude={
+                    studioPlugins && studioPlugins.customise
+                      ? studioDefinedPluginsToInclude
+                      : undefined
+                  }
                   handleCollapseChange={pluginName =>
                     pluginCollapsedToggle(pluginName)
                   }
