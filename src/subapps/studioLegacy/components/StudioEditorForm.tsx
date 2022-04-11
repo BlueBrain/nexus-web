@@ -4,6 +4,7 @@ import { Input, Form, Tooltip, Button, Switch, FormInstance } from 'antd';
 import { SaveImageHandler } from 'react-mde';
 import {
   ArrowsAltOutlined,
+  CompassFilled,
   MoreOutlined,
   QuestionCircleOutlined,
   ShrinkOutlined,
@@ -308,13 +309,14 @@ const StudioEditorForm: React.FC<{
                                     );
                                   }}
                                 >
+                                  {' '}
                                   {el.visible && el.expanded && (
-                                    <ArrowsAltOutlined
+                                    <CompassFilled
                                       style={{ color: '#239fd9' }}
                                     />
                                   )}
                                   {el.visible && !el.expanded && (
-                                    <ShrinkOutlined />
+                                    <CompassFilled style={{ color: '#ccc' }} />
                                   )}
                                 </Button>
                               </Form.Item>
