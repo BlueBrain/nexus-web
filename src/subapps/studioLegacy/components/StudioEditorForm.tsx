@@ -63,16 +63,34 @@ const StudioEditorForm: React.FC<{
         ? studio.plugins.plugins.map(p => ({ ...p, visible: true }))
         : [];
 
-    // replace names
-    if (pluginManifest) {
-      configuredPlugins.forEach(p => {
-        const match = Object.keys(pluginManifest).find(k => p.key === k);
-        if (match) {
-          p.name = pluginManifest[match].name;
-        }
-      });
-    }
-
+    // add built-in plugins here and append to configured
+    const nexusPlugins = [
+      {
+        key: 'video',
+        name: 'Video',
+      },
+      {
+        key: 'preview',
+        name: 'Preview',
+      },
+      {
+        key: 'admin',
+        name: 'Advanced',
+      },
+    ];
+    nexusPlugins.forEach(f => {
+      const match = configuredPlugins.find(c => c.key === f.key);
+      if (match) {
+        match.name = f.name;
+      } else {
+        configuredPlugins.push({
+          key: f.key,
+          name: f.name,
+          visible: false,
+          expanded: false,
+        });
+      }
+    });
     const otherAvailablePlugins = Object.keys(pluginManifest || {})
       .map(key => {
         return {
@@ -83,6 +101,17 @@ const StudioEditorForm: React.FC<{
         };
       })
       .filter(p => !configuredPlugins.find(c => c.key === p.key));
+
+    // replace names for configured plugins
+    if (pluginManifest) {
+      configuredPlugins.forEach(p => {
+        const match = Object.keys(pluginManifest).find(k => p.key === k);
+        if (match) {
+          p.name = pluginManifest[match].name;
+        }
+      });
+    }
+
     setPlugins([...configuredPlugins, ...otherAvailablePlugins]);
   }, [pluginManifest]);
 
@@ -179,10 +208,12 @@ const StudioEditorForm: React.FC<{
         </label>
         {isPluginsCustomised && (
           <>
-            <p style={{ marginTop: '8px' }}>
-              Overrides the default resource plugin behaviour. Choose which
-              plugins to enable, the order in which they appear, and whether
-              they display expanded or not.
+            <p style={{ marginTop: '8px', marginLeft: '10px' }}>
+              <em>
+                Overrides the default resource plugin behaviour. Choose which
+                plugins to enable, the order in which they appear, and whether
+                they display expanded or not.
+              </em>
             </p>
             <DragDropContext
               onDragEnd={result => {
