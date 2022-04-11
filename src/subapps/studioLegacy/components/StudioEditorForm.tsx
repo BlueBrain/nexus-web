@@ -166,23 +166,22 @@ const StudioEditorForm: React.FC<{
             markdownViewer={markdownViewer}
           />
         </Form.Item>
-
-        <label>
+        <label style={{ display: 'block' }}>
+          Customise Studio Plugins{' '}
           <Switch
             title="Hide plugin"
             checked={isPluginsCustomised}
             onChange={checked => {
               setIsPluginsCustomised(checked);
             }}
-          />
-          Customise Studio Plugins
+          />{' '}
         </label>
-
         {isPluginsCustomised && (
           <>
-            <p>
-              Customise which plugins will appear for resources accessed via
-              this Studio.
+            <p style={{ marginTop: '8px' }}>
+              Overrides the default resource plugin behaviour. Choose which
+              plugins to enable, the order in which they appear, and whether
+              they display expanded or not.
             </p>
             <DragDropContext
               onDragEnd={result => {
@@ -207,7 +206,7 @@ const StudioEditorForm: React.FC<{
               <Droppable droppableId="droppable">
                 {(provided, snapshot) => (
                   <div
-                    className="column-visibility-container"
+                    style={{ marginBottom: '15px' }}
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
@@ -332,7 +331,7 @@ const StudioEditorForm: React.FC<{
             </DragDropContext>
           </>
         )}
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" htmlType="submit" style={{ marginTop: '25px' }}>
           Save
         </Button>
       </Form>
