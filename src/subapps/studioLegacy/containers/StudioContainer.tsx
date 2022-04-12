@@ -107,7 +107,6 @@ const StudioContainer: React.FunctionComponent = () => {
       plugins: { key: string; expanded: boolean }[];
     }
   ) => {
-    console.log('save these plugins', { plugins });
     if (studioResource) {
       await nexus.Resource.update(
         orgLabel,
