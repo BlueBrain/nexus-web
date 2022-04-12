@@ -457,6 +457,7 @@ const ResourceViewContainer: React.FunctionComponent<{
     );
 
   const videoPlugin = resource &&
+    resource['video'] &&
     ((studioPlugins?.customise &&
       studioDefinedPluginsToInclude.includes('video')) ||
       !studioPlugins?.customise) && (
