@@ -1,25 +1,25 @@
-import * as React from 'react';
-import { Button, Modal } from 'antd';
-import { Resource, DEFAULT_SPARQL_VIEW_ID, NexusClient } from '@bbp/nexus-sdk';
-import { useNexusContext } from '@bbp/react-nexus';
-import useNotification from '../../../shared/hooks/useNotification';
-import TabList from '../../../shared/components/Tabs/TabList';
-import { StudioContext } from '../views/StudioView';
-import DashboardResultsContainer from './DashboardResultsContainer';
-import DashboardEditorContainer from './DashBoardEditor/DashboardEditorContainer';
-import CreateDashboardContainer from './DashBoardEditor/CreateDashboardContainer';
-import useQueryString from '../../../shared/hooks/useQueryString';
-import { resourcesWritePermissionsWrapper } from '../../../shared/utils/permission';
-import { ResultTableFields } from '../../../shared/types/search';
-import EditTableForm from '../../../shared/components/EditTableForm';
+import * as React from 'react'
+import { Button, Modal } from 'antd'
+import { Resource, DEFAULT_SPARQL_VIEW_ID, NexusClient } from '@bbp/nexus-sdk'
+import { useNexusContext } from '@bbp/react-nexus'
+import useNotification from '../../../shared/hooks/useNotification'
+import TabList from '../../../shared/components/Tabs/TabList'
+import { StudioContext } from '../views/StudioView'
+import DashboardResultsContainer from './DashboardResultsContainer'
+import DashboardEditorContainer from './DashBoardEditor/DashboardEditorContainer'
+import CreateDashboardContainer from './DashBoardEditor/CreateDashboardContainer'
+import useQueryString from '../../../shared/hooks/useQueryString'
+import { resourcesWritePermissionsWrapper } from '../../../shared/utils/permission'
+import { ResultTableFields } from '../../../shared/types/search'
+import EditTableForm from '../../../shared/components/EditTableForm'
 import DataTableContainer, {
   TableResource,
   UnsavedTableResource,
-} from '../../../shared/containers/DataTableContainer';
-import STUDIO_CONTEXT from '../components/StudioContext';
-import { createTableContext } from '../../../subapps/projects/utils/workFlowMetadataUtils';
+} from '../../../shared/containers/DataTableContainer'
+import STUDIO_CONTEXT from '../components/StudioContext'
+import { createTableContext } from '../../../subapps/projects/utils/workFlowMetadataUtils'
 
-const DASHBOARD_TYPE = 'StudioDashboard';
+const DASHBOARD_TYPE = 'StudioDashboard'
 
 const removeDashBoard = async (
   nexus: NexusClient,
@@ -33,13 +33,13 @@ const removeDashBoard = async (
     orgLabel,
     projectLabel,
     encodeURIComponent(workspaceId)
-  )) as Resource;
+  )) as Resource
 
-  dashboards.splice(dashboardIndex, 1);
+  dashboards.splice(dashboardIndex, 1)
 
   const workspaceSource = await nexus.Resource.getSource<{
-    [key: string]: any;
-  }>(orgLabel, projectLabel, encodeURIComponent(workspaceId));
+    [key: string]: any
+  }>(orgLabel, projectLabel, encodeURIComponent(workspaceId))
   if (workspace) {
     await nexus.Resource.update(
       orgLabel,
@@ -50,91 +50,91 @@ const removeDashBoard = async (
         ...workspaceSource,
         dashboards,
       }
-    );
+    )
   }
-};
+}
 
 export type Dashboard = {
-  "@id": string;
-  dashboard: string;
-  view: string;
-  fields?: ResultTableFields[];
-};
+  '@id': string
+  dashboard: string
+  view: string
+  fields?: ResultTableFields[]
+}
 
 interface DashboardListProps {
-  dashboards: Resource[];
-  refreshList?(): void;
-  dashboard: string;
+  dashboards: Resource[]
+  refreshList?(): void
+  dashboard: string
 }
 
 const DashboardList: React.FunctionComponent<DashboardListProps> = ({
-	dashboards,
-	dashboard,
+  dashboards,
+  dashboard,
   refreshList,
 }) => {
-  const [showDataTableEdit, setShowDataTableEdit] = React.useState(false);
-  const notification = useNotification();
-  const [showCreateModal, setShowCreateModal] = React.useState(false);
-  const studioContext = React.useContext(StudioContext);
+  const [showDataTableEdit, setShowDataTableEdit] = React.useState(false)
+  const notification = useNotification()
+  const [showCreateModal, setShowCreateModal] = React.useState(false)
+  const studioContext = React.useContext(StudioContext)
   const {
     orgLabel,
     projectLabel,
     workspaceId,
     dashboardId,
     isWritable,
-  } = studioContext;
-  
-  console.log("dashboards");
-  console.log(dashboards);
+  } = studioContext
 
-  const [queryParams, setQueryString] = useQueryString();
-  const permissionsPath = `/${orgLabel}/${projectLabel}`;
+  console.log('dashboards')
+  console.log(dashboards)
+
+  const [queryParams, setQueryString] = useQueryString()
+  const permissionsPath = `/${orgLabel}/${projectLabel}`
   const [dashboardResources, setDashboardResources] = React.useState<
     Resource[]
-  >([]);
+  >([])
   const [selectedDashboardIndex, setSelectedDashboardIndex] = React.useState<
     number
-  >(0);
+  >(0)
   const [
     selectedDashboardResourcesIndex,
     setSelectedDashboardResourcesIndex,
-  ] = React.useState<number>(0);
+  ] = React.useState<number>(0)
   const [
     editingDashboard,
     setEditingDashboard,
-  ] = React.useState<Resource | null>(null);
+  ] = React.useState<Resource | null>(null)
 
   const [editingDashboardView, setEditingDashboardView] = React.useState<
     string
-  >(DEFAULT_SPARQL_VIEW_ID);
-  const [showEditModal, setShowEditModal] = React.useState(false);
-  const nexus = useNexusContext();
+  >(DEFAULT_SPARQL_VIEW_ID)
+  const [showEditModal, setShowEditModal] = React.useState(false)
+  const nexus = useNexusContext()
 
   const selectDashboard = (dashboardResourcesIndex: number) => {
-    const dashboard = dashboards[dashboardResourcesIndex];
-    const dashboardId = dashboard['@id'];
+    const dashboard = dashboards[dashboardResourcesIndex]
+    const dashboardId = dashboard['@id']
     const dashboardsIndex = dashboards.findIndex(
       d => d.dashboard === dashboardId
-    );
-    setSelectedDashboardResourcesIndex(dashboardResourcesIndex);
-    setSelectedDashboardIndex(dashboardsIndex);
+    )
+    setSelectedDashboardResourcesIndex(dashboardResourcesIndex)
+    setSelectedDashboardIndex(dashboardsIndex)
     setQueryString({
       ...queryParams,
       dashboardId,
-    });
-  };
+    })
+  }
 
   const [showEditTableForm, setShowEditTableForm] = React.useState<boolean>(
     false
-  );
+  )
 
   const saveDashboardAndDataTable = async (
     table: TableResource | UnsavedTableResource
   ) => {
     try {
-      if (!workspaceId) throw new Error();
+      if (!workspaceId) throw new Error()
       try {
-        await createTableContext(orgLabel, projectLabel, nexus);
+        await createTableContext(orgLabel, projectLabel, nexus)
       } catch (ex) {
         // assume already exists
       }
@@ -144,8 +144,8 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         orgLabel,
         projectLabel,
         table
-      )) as TableResource;
-      const tableId = resource['@id'];
+      )) as TableResource
+      const tableId = resource['@id']
 
       // create dashboard, linking it to the table
       const dashboard = await nexus.Resource.create(orgLabel, projectLabel, {
@@ -156,16 +156,16 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         },
         label: table.name,
         dataQuery: '',
-      });
+      })
       // Add dashboard to workspace
       const workspace = (await nexus.Resource.get<Resource>(
         orgLabel,
         projectLabel,
         encodeURIComponent(workspaceId)
-      )) as Resource;
+      )) as Resource
       const workspaceSource = await nexus.Resource.getSource<{
-        [key: string]: any;
-      }>(orgLabel, projectLabel, encodeURIComponent(workspaceId));
+        [key: string]: any
+      }>(orgLabel, projectLabel, encodeURIComponent(workspaceId))
       if (workspace) {
         await nexus.Resource.update(
           orgLabel,
@@ -181,15 +181,15 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
               },
             ],
           }
-        );
+        )
       }
 
-      setShowEditTableForm(false);
-      if (refreshList) refreshList();
+      setShowEditTableForm(false)
+      if (refreshList) refreshList()
     } catch (e) {
-      notification.error({ message: 'Failed to save dashboard' });
+      notification.error({ message: 'Failed to save dashboard' })
     }
-  };
+  }
 
   const updateDashboard = async (
     data: TableResource | UnsavedTableResource
@@ -199,7 +199,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         orgLabel,
         projectLabel,
         encodeURIComponent(dashboardId)
-      );
+      )
       await nexus.Resource.update(
         orgLabel,
         projectLabel,
@@ -210,10 +210,10 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
           description: data.description,
           label: data['name'],
         }
-      );
-      if (refreshList) refreshList();
+      )
+      if (refreshList) refreshList()
     }
-  };
+  }
 
   const fetchAndSetupDashboards = () => {
     Promise.all(
@@ -224,97 +224,97 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
           encodeURIComponent(dashboardObject.dashboard)
         ) as Promise<
           Resource<{
-            label: string;
-            description?: string;
-            dataQuery: string;
-            plugins: string[];
+            label: string
+            description?: string
+            dataQuery: string
+            plugins: string[]
           }>
-        >;
+        >
       })
     )
       .then(values => {
         const sortedValues = values.sort(({ label: a }, { label: b }) => {
           if (a < b) {
-            return -1;
+            return -1
           }
           if (a > b) {
-            return 1;
+            return 1
           }
-          return 0;
-        });
-        setDashboardResources(sortedValues);
+          return 0
+        })
+        setDashboardResources(sortedValues)
         if (
           dashboardId &&
           sortedValues[selectedDashboardIndex]['@id'] !== dashboardId
         ) {
           const selectedDashboardIndex = dashboards.findIndex(
             d => d.dashboard === dashboardId
-          );
+          )
           const selectedDashboardResourcesIndex = sortedValues.findIndex(
             d => d['@id'] === dashboardId
-          );
-          setSelectedDashboardIndex(selectedDashboardIndex);
-          setSelectedDashboardResourcesIndex(selectedDashboardResourcesIndex);
+          )
+          setSelectedDashboardIndex(selectedDashboardIndex)
+          setSelectedDashboardResourcesIndex(selectedDashboardResourcesIndex)
           setQueryString({
             ...queryParams,
             dashboardId,
-          });
+          })
         }
       })
       .catch(e => {
         // TODO: show a meaningful error to the user.
-      });
-  };
+      })
+  }
 
   // React.useEffect(() => {
   //   fetchAndSetupDashboards();
-	// }, [dashboards]);
+  // }, [dashboards]);
 
-	React.useEffect(() => {
-		console.log("useEffect function dashboard and dashboards called");
-    console.log(dashboard);
-    console.log(dashboards);
-		if (dashboards.length === 0) {
-			console.log('0 exit useffect');
-			return;
-		}
-
-		const dashboardResourceIndex = dashboards.findIndex(
-      d => d["@id"] === dashboard
-		);
-		if (dashboard === '') {
-			console.log('dashboard is emptystring, useffect');
-			selectDashboard(0);
+  React.useEffect(() => {
+    console.log('useEffect function dashboard and dashboards called')
+    console.log(dashboard)
+    console.log(dashboards)
+    if (dashboards.length === 0) {
+      console.log('0 exit useffect')
       return
     }
-		if (dashboardResourceIndex === -1) {
+
+    const dashboardResourceIndex = dashboards.findIndex(
+      d => d['@id'] === dashboard
+    )
+    if (dashboard === '') {
+      console.log('dashboard is emptystring, useffect')
+      selectDashboard(0)
+      return
+    }
+    if (dashboardResourceIndex === -1) {
       // const dashboardResourceIndex2 = dashboards.findIndex(
       //   d => d["@id"] === dashboard
       // );
-      console.log('not found in findIndex (-1) useffect');
+      console.log('not found in findIndex (-1) useffect')
       // if(dashboardResourceIndex2 !== -1 ){
       //   console.log('SECOND CHECK FOR FINDING AGAINST DASHBOARDS');
       //   selectDashboard(dashboardResourceIndex2);
       // }
-			return;
-		}
-    selectDashboard(dashboardResourceIndex);
-  }, [dashboard]);
+      return
+    }
+    selectDashboard(dashboardResourceIndex)
+  }, [dashboard])
 
   const handleElementClick = (stringifiedIndex: string) => {
-    const dashboardResource = dashboardResources[Number(stringifiedIndex)];
-    const dashboard = dashboards[Number(stringifiedIndex)];
+    const dashboardResource = dashboardResources[Number(stringifiedIndex)]
+    const dashboard = dashboards[Number(stringifiedIndex)]
     if (dashboardResource) {
-      setEditingDashboard(dashboardResource);
-      setEditingDashboardView(dashboard.view);
-      setShowEditModal(true);
+      setEditingDashboard(dashboardResource)
+      setEditingDashboardView(dashboard.view)
+      setShowEditModal(true)
     }
-  };
+  }
 
   const updateDashboards = () => {
-    fetchAndSetupDashboards();
-    setEditingDashboard(null);
-  };
+    fetchAndSetupDashboards()
+    setEditingDashboard(null)
+  }
 
   const tabAction = (
     <CreateDashboardContainer
@@ -329,7 +329,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         dashboards.length > 0 ? dashboards[0].view : DEFAULT_SPARQL_VIEW_ID
       }
     />
-  );
+  )
 
   // const editButtonWrapper = (id: string) => {
   //   const editButton = (
@@ -412,51 +412,42 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         ></DashboardEditorContainer>
       )}
 
-        {!!dashboards.length &&
-          !!dashboards[selectedDashboardResourcesIndex] &&
-          ('dataTable' in
-          dashboards[selectedDashboardResourcesIndex] ? (
-            // New format Studio
-            <DataTableContainer
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-              tableResourceId={
-                dashboards[selectedDashboardResourcesIndex][
-                  'dataTable'
-                ]['@id']
-              }
-              onSave={updateDashboard}
-              key={`data-table-${dashboards[selectedDashboardResourcesIndex]['dataTable']['@id']}}`}
-              options={{
-                disableDelete: true,
-                disableAddFromCart: true,
-                disableEdit: true,
-              }}
-              showEdit={showDataTableEdit}
-              toggledEdit={show => setShowDataTableEdit(show)}
-            />
-          ) : (
-            // Old format Studio
-            <DashboardResultsContainer
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-              dashboardLabel={
-                dashboards[selectedDashboardResourcesIndex].label
-              }
-              key={dashboardId}
-              viewId={
-                (dashboards[selectedDashboardIndex] &&
-                  dashboards[selectedDashboardIndex].view) ||
-                DEFAULT_SPARQL_VIEW_ID
-              }
-              fields={
-                dashboards[selectedDashboardResourcesIndex].fields
-              }
-              dataQuery={
-                dashboards[selectedDashboardResourcesIndex].dataQuery
-              }
-            />
-          ))}
+      {!!dashboards.length &&
+        !!dashboards[selectedDashboardResourcesIndex] &&
+        ('dataTable' in dashboards[selectedDashboardResourcesIndex] ? (
+          // New format Studio
+          <DataTableContainer
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+            tableResourceId={
+              dashboards[selectedDashboardResourcesIndex]['dataTable']['@id']
+            }
+            onSave={updateDashboard}
+            key={`data-table-${dashboards[selectedDashboardResourcesIndex]['dataTable']['@id']}}`}
+            options={{
+              disableDelete: true,
+              disableAddFromCart: true,
+              disableEdit: true,
+            }}
+            showEdit={showDataTableEdit}
+            toggledEdit={show => setShowDataTableEdit(show)}
+          />
+        ) : (
+          // Old format Studio
+          <DashboardResultsContainer
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+            dashboardLabel={dashboards[selectedDashboardResourcesIndex].label}
+            key={dashboardId}
+            viewId={
+              (dashboards[selectedDashboardIndex] &&
+                dashboards[selectedDashboardIndex].view) ||
+              DEFAULT_SPARQL_VIEW_ID
+            }
+            fields={dashboards[selectedDashboardResourcesIndex].fields}
+            dataQuery={dashboards[selectedDashboardResourcesIndex].dataQuery}
+          />
+        ))}
       <Modal
         visible={showEditTableForm}
         footer={null}
@@ -466,17 +457,17 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
       >
         <EditTableForm
           onSave={data => {
-            saveDashboardAndDataTable(data);
+            saveDashboardAndDataTable(data)
           }}
           onClose={() => setShowEditTableForm(false)}
           busy={false}
           orgLabel={orgLabel}
           projectLabel={projectLabel}
-          formName="Create Dashboard"
+          formName='Create Dashboard'
         />
       </Modal>
     </>
-  );
-};
+  )
+}
 
-export default DashboardList;
+export default DashboardList
