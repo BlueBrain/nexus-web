@@ -384,6 +384,15 @@ const ResourceViewContainer: React.FunctionComponent<{
         studioPlugins.plugins
           .filter(p => p.expanded)
           .map(p => {
+            // TODO: this is dumb
+            switch (p.key) {
+              case 'preview':
+                return 'preview';
+              case 'admin':
+                return 'advanced';
+              case 'video':
+                return 'video';
+            }
             return pluginManifest[p.key].name;
           })
       );
@@ -552,46 +561,58 @@ const ResourceViewContainer: React.FunctionComponent<{
                     />
                   </p>
                 )}
-              {resource.distribution && (
-                <Preview
-                  nexus={nexus}
+
+              {((studioPlugins?.customise &&
+                studioDefinedPluginsToInclude.includes('preview')) ||
+                !studioPlugins?.customise) &&
+                resource.distribution && (
+                  <Preview
+                    nexus={nexus}
+                    resource={resource}
+                    collapsed={openPlugins.includes('preview')}
+                    handleCollapseChanged={() => {
+                      pluginCollapsedToggle('preview');
+                    }}
+                  />
+                )}
+              {((studioPlugins?.customise &&
+                studioDefinedPluginsToInclude.includes('admin')) ||
+                !studioPlugins?.customise) && (
+                <AdminPlugin
+                  editable={isLatest && !isDeprecated(resource)}
+                  orgLabel={orgLabel}
+                  projectLabel={projectLabel}
+                  resourceId={resourceId}
                   resource={resource}
-                  collapsed={openPlugins.includes('preview')}
+                  latestResource={latestResource}
+                  activeTabKey={activeTabKey}
+                  expandedFromQuery={expandedFromQuery}
+                  refProp={ref}
+                  goToResource={goToResource}
+                  handleTabChange={handleTabChange}
+                  handleGoToInternalLink={handleGoToInternalLink}
+                  handleEditFormSubmit={handleEditFormSubmit}
+                  handleExpanded={handleExpanded}
+                  refreshResource={refreshResource}
+                  collapsed={openPlugins.includes('advanced')}
                   handleCollapseChanged={() => {
-                    pluginCollapsedToggle('preview');
+                    pluginCollapsedToggle('advanced');
                   }}
                 />
               )}
-              <AdminPlugin
-                editable={isLatest && !isDeprecated(resource)}
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-                resourceId={resourceId}
-                resource={resource}
-                latestResource={latestResource}
-                activeTabKey={activeTabKey}
-                expandedFromQuery={expandedFromQuery}
-                refProp={ref}
-                goToResource={goToResource}
-                handleTabChange={handleTabChange}
-                handleGoToInternalLink={handleGoToInternalLink}
-                handleEditFormSubmit={handleEditFormSubmit}
-                handleExpanded={handleExpanded}
-                refreshResource={refreshResource}
-                collapsed={openPlugins.includes('advanced')}
-                handleCollapseChanged={() => {
-                  pluginCollapsedToggle('advanced');
-                }}
-              />
-              <VideoPluginContainer
-                resource={resource}
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-                collapsed={openPlugins.includes('video')}
-                handleCollapseChanged={() => {
-                  pluginCollapsedToggle('video');
-                }}
-              />
+              {((studioPlugins?.customise &&
+                studioDefinedPluginsToInclude.includes('video')) ||
+                !studioPlugins?.customise) && (
+                <VideoPluginContainer
+                  resource={resource}
+                  orgLabel={orgLabel}
+                  projectLabel={projectLabel}
+                  collapsed={openPlugins.includes('video')}
+                  handleCollapseChanged={() => {
+                    pluginCollapsedToggle('video');
+                  }}
+                />
+              )}
             </>
           )}
         </Spin>
