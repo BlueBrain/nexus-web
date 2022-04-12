@@ -55,13 +55,14 @@ const removeDashBoard = async (
 };
 
 export type Dashboard = {
+  "@id": string;
   dashboard: string;
   view: string;
   fields?: ResultTableFields[];
 };
 
 interface DashboardListProps {
-  dashboards: Dashboard[];
+  dashboards: Resource[];
   refreshList?(): void;
   dashboard: string;
 }
@@ -82,6 +83,9 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     dashboardId,
     isWritable,
   } = studioContext;
+  
+  console.log("dashboards");
+  console.log(dashboards);
 
   const [queryParams, setQueryString] = useQueryString();
   const permissionsPath = `/${orgLabel}/${projectLabel}`;
@@ -107,7 +111,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
   const nexus = useNexusContext();
 
   const selectDashboard = (dashboardResourcesIndex: number) => {
-    const dashboard = dashboardResources[dashboardResourcesIndex];
+    const dashboard = dashboards[dashboardResourcesIndex];
     const dashboardId = dashboard['@id'];
     const dashboardsIndex = dashboards.findIndex(
       d => d.dashboard === dashboardId
@@ -262,39 +266,40 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
       });
   };
 
-  React.useEffect(() => {
-    fetchAndSetupDashboards();
-	}, [dashboards]);
+  // React.useEffect(() => {
+  //   fetchAndSetupDashboards();
+	// }, [dashboards]);
 
 	React.useEffect(() => {
-		console.log("useEffect function dashboard and dashboardResources called");
-		if (dashboardResources.length === 0) {
+		console.log("useEffect function dashboard and dashboards called");
+    console.log(dashboard);
+    console.log(dashboards);
+		if (dashboards.length === 0) {
 			console.log('0 exit useffect');
 			return;
 		}
 
-		console.log('dashboard');
-		console.log(dashboard);
-		console.log('dashboardResources');
-		console.log(dashboardResources);
-
-		const dashboardResourceIndex = dashboardResources.findIndex(
+		const dashboardResourceIndex = dashboards.findIndex(
       d => d["@id"] === dashboard
 		);
 		if (dashboard === '') {
 			console.log('dashboard is emptystring, useffect');
 			selectDashboard(0);
+      return
     }
 		if (dashboardResourceIndex === -1) {
-			console.log('not found in findIndex (-1) useffect');
+      // const dashboardResourceIndex2 = dashboards.findIndex(
+      //   d => d["@id"] === dashboard
+      // );
+      console.log('not found in findIndex (-1) useffect');
+      // if(dashboardResourceIndex2 !== -1 ){
+      //   console.log('SECOND CHECK FOR FINDING AGAINST DASHBOARDS');
+      //   selectDashboard(dashboardResourceIndex2);
+      // }
 			return;
 		}
-
-		console.log("dashboardResourcesIndex");
-		console.log(dashboardResourceIndex);
     selectDashboard(dashboardResourceIndex);
-
-  }, [dashboard, dashboardResources]);
+  }, [dashboard]);
 
   const handleElementClick = (stringifiedIndex: string) => {
     const dashboardResource = dashboardResources[Number(stringifiedIndex)];
@@ -326,64 +331,64 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     />
   );
 
-  const editButtonWrapper = (id: string) => {
-    const editButton = (
-      <Button
-        className="studio-edit-button"
-        type="link"
-        size="small"
-        onClick={e => {
-          if ('dataTable' in dashboardResources[Number(id)]) {
-            setShowDataTableEdit(true);
-          } else {
-            handleElementClick(id);
-            e.stopPropagation();
-          }
-        }}
-        key={id}
-      >
-        Edit
-      </Button>
-    );
-    return resourcesWritePermissionsWrapper(editButton, permissionsPath);
-  };
+  // const editButtonWrapper = (id: string) => {
+  //   const editButton = (
+  //     <Button
+  //       className="studio-edit-button"
+  //       type="link"
+  //       size="small"
+  //       onClick={e => {
+  //         if ('dataTable' in dashboardResources[Number(id)]) {
+  //           setShowDataTableEdit(true);
+  //         } else {
+  //           handleElementClick(id);
+  //           e.stopPropagation();
+  //         }
+  //       }}
+  //       key={id}
+  //     >
+  //       Edit
+  //     </Button>
+  //   );
+  //   return resourcesWritePermissionsWrapper(editButton, permissionsPath);
+  // };
 
-  const OnEdit = React.useCallback(
-    async (e, action) => {
-      if (action === 'add') {
-        setShowEditTableForm(true);
-      } else {
-        if (workspaceId && refreshList) {
-          const index = e.toString();
-          const dashboardToRemove = dashboardResources[index];
-          const indexToRemove = dashboards
-            .map(d => d.dashboard)
-            .indexOf(dashboardToRemove['@id']);
+  // const OnEdit = React.useCallback(
+  //   async (e, action) => {
+  //     if (action === 'add') {
+  //       setShowEditTableForm(true);
+  //     } else {
+  //       if (workspaceId && refreshList) {
+  //         const index = e.toString();
+  //         const dashboardToRemove = dashboardResources[index];
+  //         const indexToRemove = dashboards
+  //           .map(d => d.dashboard)
+  //           .indexOf(dashboardToRemove['@id']);
 
-          await removeDashBoard(
-            nexus,
-            orgLabel,
-            projectLabel,
-            workspaceId,
-            indexToRemove,
-            [...dashboards]
-          );
-          notification.success({
-            message: `Removed ${dashboardToRemove.label}`,
-          });
-          refreshList();
-        }
-      }
-    },
-    [
-      nexus,
-      orgLabel,
-      projectLabel,
-      workspaceId,
-      dashboardResources,
-      refreshList,
-    ]
-  );
+  //         await removeDashBoard(
+  //           nexus,
+  //           orgLabel,
+  //           projectLabel,
+  //           workspaceId,
+  //           indexToRemove,
+  //           [...dashboards]
+  //         );
+  //         notification.success({
+  //           message: `Removed ${dashboardToRemove.label}`,
+  //         });
+  //         refreshList();
+  //       }
+  //     }
+  //   },
+  //   [
+  //     nexus,
+  //     orgLabel,
+  //     projectLabel,
+  //     workspaceId,
+  //     dashboardResources,
+  //     refreshList,
+  //   ]
+  // );
 
   return (
     <>
@@ -407,21 +412,21 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
         ></DashboardEditorContainer>
       )}
 
-        {!!dashboardResources.length &&
-          !!dashboardResources[selectedDashboardResourcesIndex] &&
+        {!!dashboards.length &&
+          !!dashboards[selectedDashboardResourcesIndex] &&
           ('dataTable' in
-          dashboardResources[selectedDashboardResourcesIndex] ? (
+          dashboards[selectedDashboardResourcesIndex] ? (
             // New format Studio
             <DataTableContainer
               orgLabel={orgLabel}
               projectLabel={projectLabel}
               tableResourceId={
-                dashboardResources[selectedDashboardResourcesIndex][
+                dashboards[selectedDashboardResourcesIndex][
                   'dataTable'
                 ]['@id']
               }
               onSave={updateDashboard}
-              key={`data-table-${dashboardResources[selectedDashboardResourcesIndex]['dataTable']['@id']}}`}
+              key={`data-table-${dashboards[selectedDashboardResourcesIndex]['dataTable']['@id']}}`}
               options={{
                 disableDelete: true,
                 disableAddFromCart: true,
@@ -436,7 +441,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
               orgLabel={orgLabel}
               projectLabel={projectLabel}
               dashboardLabel={
-                dashboardResources[selectedDashboardResourcesIndex].label
+                dashboards[selectedDashboardResourcesIndex].label
               }
               key={dashboardId}
               viewId={
@@ -445,10 +450,10 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
                 DEFAULT_SPARQL_VIEW_ID
               }
               fields={
-                dashboardResources[selectedDashboardResourcesIndex].fields
+                dashboards[selectedDashboardResourcesIndex].fields
               }
               dataQuery={
-                dashboardResources[selectedDashboardResourcesIndex].dataQuery
+                dashboards[selectedDashboardResourcesIndex].dataQuery
               }
             />
           ))}
