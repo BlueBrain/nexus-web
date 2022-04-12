@@ -15,6 +15,7 @@ const ResourcePlugins: React.FunctionComponent<{
   empty?: React.ReactElement;
   openPlugins: string[];
   studioDefinedPluginsToInclude?: string[];
+  builtInPlugins: { key: string; pluginComponent: React.FC }[];
   handleCollapseChange: (pluginName: string) => void;
 }> = ({
   resource,
@@ -22,6 +23,7 @@ const ResourcePlugins: React.FunctionComponent<{
   empty = null,
   openPlugins,
   studioDefinedPluginsToInclude,
+  builtInPlugins,
   handleCollapseChange,
 }) => {
   const nexus = useNexusContext();
@@ -57,17 +59,25 @@ const ResourcePlugins: React.FunctionComponent<{
           return null;
         })
         .sort((p1, p2) => {
-          if (p1?.displayPriority && p2?.displayPriority) {
-            return (
-              parseInt(p1.displayPriority, 10) -
-              parseInt(p2.displayPriority, 10)
-            );
+          console.log('hello?');
+          if (studioDefinedPluginsToInclude) {
+            console.log({ p1 });
+            return 0;
+            // if (p1)
+            // return studioDefinedPluginsToInclude.indexOf(p1) - studioDefinedPluginsToInclude.indexOf(p2)
+          } else {
+            if (p1?.displayPriority && p2?.displayPriority) {
+              return (
+                parseInt(p1.displayPriority, 10) -
+                parseInt(p2.displayPriority, 10)
+              );
+            }
+            return 0;
           }
-          return 0;
         })
     : [];
 
-  return filteredPlugins && filteredPlugins.length > 0 ? (
+  return (
     <>
       {pluginDataMap.map((pluginData, index) => {
         return pluginData ? (
@@ -101,9 +111,8 @@ const ResourcePlugins: React.FunctionComponent<{
           </Collapse>
         ) : null;
       })}
+      {builtInPlugins.map(p => p.pluginComponent)}
     </>
-  ) : (
-    empty
   );
 };
 

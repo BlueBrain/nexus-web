@@ -413,6 +413,64 @@ const ResourceViewContainer: React.FunctionComponent<{
     );
   };
 
+  const previewPlugin = resource &&
+    ((studioPlugins?.customise &&
+      studioDefinedPluginsToInclude.includes('preview')) ||
+      !studioPlugins?.customise) &&
+    resource.distribution && (
+      <Preview
+        nexus={nexus}
+        resource={resource}
+        collapsed={openPlugins.includes('preview')}
+        handleCollapseChanged={() => {
+          pluginCollapsedToggle('preview');
+        }}
+      />
+    );
+
+  const adminPlugin = resource &&
+    latestResource &&
+    ((studioPlugins?.customise &&
+      studioDefinedPluginsToInclude.includes('admin')) ||
+      !studioPlugins?.customise) && (
+      <AdminPlugin
+        editable={isLatest && !isDeprecated(resource)}
+        orgLabel={orgLabel}
+        projectLabel={projectLabel}
+        resourceId={resourceId}
+        resource={resource}
+        latestResource={latestResource}
+        activeTabKey={activeTabKey}
+        expandedFromQuery={expandedFromQuery}
+        refProp={ref}
+        goToResource={goToResource}
+        handleTabChange={handleTabChange}
+        handleGoToInternalLink={handleGoToInternalLink}
+        handleEditFormSubmit={handleEditFormSubmit}
+        handleExpanded={handleExpanded}
+        refreshResource={refreshResource}
+        collapsed={openPlugins.includes('advanced')}
+        handleCollapseChanged={() => {
+          pluginCollapsedToggle('advanced');
+        }}
+      />
+    );
+
+  const videoPlugin = resource &&
+    ((studioPlugins?.customise &&
+      studioDefinedPluginsToInclude.includes('video')) ||
+      !studioPlugins?.customise) && (
+      <VideoPluginContainer
+        resource={resource}
+        orgLabel={orgLabel}
+        projectLabel={projectLabel}
+        collapsed={openPlugins.includes('video')}
+        handleCollapseChanged={() => {
+          pluginCollapsedToggle('video');
+        }}
+      />
+    );
+
   return (
     <>
       <div className="resource-details">
@@ -545,6 +603,11 @@ const ResourceViewContainer: React.FunctionComponent<{
                       ? studioDefinedPluginsToInclude
                       : undefined
                   }
+                  builtInPlugins={[
+                    { key: 'preview', pluginComponent: previewPlugin },
+                    { key: 'admin', pluginComponent: adminPlugin },
+                    { key: 'video', pluginComponent: videoPlugin },
+                  ]}
                   handleCollapseChange={pluginName =>
                     pluginCollapsedToggle(pluginName)
                   }
@@ -561,58 +624,6 @@ const ResourceViewContainer: React.FunctionComponent<{
                     />
                   </p>
                 )}
-
-              {((studioPlugins?.customise &&
-                studioDefinedPluginsToInclude.includes('preview')) ||
-                !studioPlugins?.customise) &&
-                resource.distribution && (
-                  <Preview
-                    nexus={nexus}
-                    resource={resource}
-                    collapsed={openPlugins.includes('preview')}
-                    handleCollapseChanged={() => {
-                      pluginCollapsedToggle('preview');
-                    }}
-                  />
-                )}
-              {((studioPlugins?.customise &&
-                studioDefinedPluginsToInclude.includes('admin')) ||
-                !studioPlugins?.customise) && (
-                <AdminPlugin
-                  editable={isLatest && !isDeprecated(resource)}
-                  orgLabel={orgLabel}
-                  projectLabel={projectLabel}
-                  resourceId={resourceId}
-                  resource={resource}
-                  latestResource={latestResource}
-                  activeTabKey={activeTabKey}
-                  expandedFromQuery={expandedFromQuery}
-                  refProp={ref}
-                  goToResource={goToResource}
-                  handleTabChange={handleTabChange}
-                  handleGoToInternalLink={handleGoToInternalLink}
-                  handleEditFormSubmit={handleEditFormSubmit}
-                  handleExpanded={handleExpanded}
-                  refreshResource={refreshResource}
-                  collapsed={openPlugins.includes('advanced')}
-                  handleCollapseChanged={() => {
-                    pluginCollapsedToggle('advanced');
-                  }}
-                />
-              )}
-              {((studioPlugins?.customise &&
-                studioDefinedPluginsToInclude.includes('video')) ||
-                !studioPlugins?.customise) && (
-                <VideoPluginContainer
-                  resource={resource}
-                  orgLabel={orgLabel}
-                  projectLabel={projectLabel}
-                  collapsed={openPlugins.includes('video')}
-                  handleCollapseChanged={() => {
-                    pluginCollapsedToggle('video');
-                  }}
-                />
-              )}
             </>
           )}
         </Spin>
