@@ -28,7 +28,7 @@ const EditStudio: React.FC<{
     data: object;
   }>;
 }> = ({ studio, onSave, onSaveImage, markdownViewer }) => {
-  const [showModal, setShowModal] = React.useState(true);
+  const [showModal, setShowModal] = React.useState(false);
 
   const handleUpdate = (
     label: string,
