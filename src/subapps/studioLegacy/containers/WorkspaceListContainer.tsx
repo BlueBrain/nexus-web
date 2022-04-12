@@ -17,6 +17,7 @@ import {
   AppstoreOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
+import { createNodesAndEdgesFromResourceLinks } from '../../../shared/containers/GraphContainer/Graph';
 
 const { SubMenu } = Menu;
 
@@ -112,16 +113,14 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   const [showEdit, setShowEdit] = React.useState<boolean>(false);
   const [workspaceToEdit, setWorkSpaceToEdit] = React.useState<string>();
   const [currentDashboard, setCurrentDashboard] = React.useState<string>('');
+  const [currentWorkspace, setCurrentWorkspace] = React.useState<string>('');
+  const dashboards = selectedWorkspace && selectedWorkspace['dashboards'] ? selectedWorkspace['dashboards'] : [];
   const [
     workspaceDashboardResources,
     setWorkspaceDashboardResources,
   ] = React.useState<Resource[]>([]);
 
   const nexus = useNexusContext();
-  const dashboards =
-    selectedWorkspace && selectedWorkspace['dashboards']
-      ? selectedWorkspace['dashboards']
-      : [];
 
   const fetchAndSetupDashboards = (dashboards: Dashboard[]) => {
     Promise.all(
@@ -185,8 +184,8 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
               >;
             })
           ).then(dashValues => {
-						console.log("dashValues");
-						console.log(dashValues);
+						// console.log("dashValues");
+						// console.log(dashValues);
 						workspace.dashboards = dashValues;
 					});
         });
@@ -222,6 +221,8 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
             dashboardId: undefined,
           });
         }
+        // console.log("workspaceIds use effect, workspaces, selectedWorkspace");
+        // console.log(workspaces, selectedWorkspace);
       })
       .catch(e => {
         // TODO: show a meaningful error to the user.
@@ -316,7 +317,19 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   ]);
 
   const handleClick = (e: any) => {
-    console.log('click ', e);
+    // console.log('click ', e);
+    const currentWorkspaceId = e.item.node.parentElement.id.slice(0,-5).toString();
+    setCurrentWorkspace(currentWorkspaceId);
+    const workspaceIndex = workspaces.findIndex(
+      w => w['@id'] === currentWorkspaceId
+    );
+    if(workspaceIndex != -1) {
+      setSelectedWorkspace(workspaces[workspaceIndex]);
+    } else {
+      setSelectedWorkspace(workspaces[0]);
+    }
+    // console.log("CLICK selectedWorkspace");
+    // console.log(selectedWorkspace);
     setCurrentDashboard(e.key);
   };
 
@@ -330,8 +343,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
         {workspaces.map(function(workspace, index) {
           return (
             <SubMenu
-              key={index}
-              icon={<SettingOutlined />}
+              key={workspace['@id']}
               title={workspace.label}
             >
               {workspace.dashboards.map(function(d: any, i: any) {
@@ -346,7 +358,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
           <div className="workspace">
             <DashboardList
               key={workspaceId}
-              dashboards={dashboards}
+              dashboards={selectedWorkspace.dashboards}
               dashboard={currentDashboard}
               refreshList={onListUpdate}
             />{' '}
