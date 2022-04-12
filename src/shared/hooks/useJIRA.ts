@@ -6,8 +6,8 @@ import { getResourceLabel, labelOf, makeProjectUri } from '../utils';
 import useLocalStorage from './useLocalStorage';
 
 /* TODO: move this out of here */
-const jiraAPIBaseUrl = 'http://localhost:8000/jira/rest/api/2/';
-const jiraWebBaseUrl = 'http://localhost:8080/';
+const jiraAPIBaseUrl = 'https://dev.nise.bbp.epfl.ch/nexus/v1/jira/';
+const jiraWebBaseUrl = 'https://bbpteam.epfl.ch/project/devissues/';
 
 /**
  * Manages our JIRA data model
@@ -44,13 +44,13 @@ function useJIRA({
       This is to updated to the Delta endpoint
       v1/jira/request-token
     */
-    fetch(`http://localhost:9001/sessions/connect`, {
-      method: 'GET',
-      mode: 'cors',
-      headers: { 'Content-Type': 'application/json' },
-    }).then(response => {
-      response.json().then(res => setJiraAuthUrl(res.url));
-    });
+    nexus
+      .httpPost({
+        path: 'https://dev.nise.bbp.epfl.ch/nexus/v1/jira/request-token',
+      })
+      .then(response => {
+        setJiraAuthUrl(response.value);
+      });
   };
 
   React.useEffect(() => {
@@ -64,7 +64,20 @@ function useJIRA({
       which stores our access token for Jira and proxies requests
       for the user to Jira
      */
-    setIsJiraConnected(true);
+    nexus
+      .httpPost({
+        path: 'https://dev.nise.bbp.epfl.ch/nexus/v1/jira/access-token',
+        body: JSON.stringify({
+          value: verificationCode,
+        }),
+      })
+      .then(response => {
+        setIsJiraConnected(true);
+      })
+      .catch(r => {
+        setIsJiraConnected(false);
+        console.log('An error occured whilst trying to authenticate');
+      });
   };
 
   const getResourceUrl = () => {

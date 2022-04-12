@@ -67,7 +67,7 @@ const JIRAPluginContainer = ({
             onLinkIssue={issueUrl => linkIssue(issueUrl)}
             onUnlinkIssue={issueKey => unlinkIssue(issueKey)}
             // TODO: this url should be determined by config
-            searchJiraLink="http://localhost:8080/issues/?jql="
+            searchJiraLink="https://bbpteam.epfl.ch/project/devissues/issues/?jql="
             isInitialized={isInitialized}
           />
         )}
