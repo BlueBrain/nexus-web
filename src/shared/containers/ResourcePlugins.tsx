@@ -15,7 +15,7 @@ const ResourcePlugins: React.FunctionComponent<{
   empty?: React.ReactElement;
   openPlugins: string[];
   studioDefinedPluginsToInclude?: string[];
-  builtInPlugins: { key: string; pluginComponent: React.FC }[];
+  builtInPlugins: { key: string; name: string; pluginComponent: React.FC }[];
   handleCollapseChange: (pluginName: string) => void;
 }> = ({
   resource,
@@ -69,53 +69,51 @@ const ResourcePlugins: React.FunctionComponent<{
         })
     : [];
 
-  // const orderedPlugins = studioDefinedPluginsToInclude ? studioDefinedPluginsToInclude : pluginDataMap.map(name)
   const pluginsToDisplay = studioDefinedPluginsToInclude
     ? studioDefinedPluginsToInclude
     : [...pluginDataMap.map(p => p?.key), ...builtInPlugins.map(p => p.key)];
 
   return (
     <>
-      {pluginsToDisplay.map((p, index) => {
-        if (!p) return null;
-        if (builtInPlugins.map(p => p.key).includes(p)) {
+      {pluginsToDisplay.map((plugin, index) => {
+        if (!plugin) return null;
+        if (builtInPlugins.map(p => p.key).includes(plugin)) {
           // this is a built in plugin
-          return builtInPlugins.find(b => b.key === p)?.pluginComponent;
-        } else {
-          // standard plugin
-          const pluginData = pluginDataMap.find(pluginX => pluginX?.key === p);
-
-          return pluginData ? (
-            <Collapse
-              key={pluginData.name}
-              onChange={e => handleCollapseChange(pluginData.name)}
-              activeKey={
-                openPlugins.includes(pluginData.name)
-                  ? pluginData.name
-                  : undefined
-              }
-            >
-              <Panel
-                header={pluginData.name}
-                key={`${pluginData.name}`}
-                extra={<PluginInfo plugin={pluginData} />}
-              >
-                <div
-                  className="resource-plugin"
-                  key={`plugin-${pluginData.name}`}
-                >
-                  <NexusPlugin
-                    nexusClient={nexus}
-                    url={pluginData.absoluteModulePath}
-                    pluginName={pluginData.name}
-                    resource={resource}
-                    goToResource={goToResource}
-                  />
-                </div>
-              </Panel>
-            </Collapse>
-          ) : null;
+          return builtInPlugins.find(b => b.key === plugin)?.pluginComponent;
         }
+        // standard plugin
+        const pluginData = pluginDataMap.find(p => p?.key === plugin);
+
+        return pluginData ? (
+          <Collapse
+            key={pluginData.name}
+            onChange={e => handleCollapseChange(pluginData.name)}
+            activeKey={
+              openPlugins.includes(pluginData.name)
+                ? pluginData.name
+                : undefined
+            }
+          >
+            <Panel
+              header={pluginData.name}
+              key={`${pluginData.name}`}
+              extra={<PluginInfo plugin={pluginData} />}
+            >
+              <div
+                className="resource-plugin"
+                key={`plugin-${pluginData.name}`}
+              >
+                <NexusPlugin
+                  nexusClient={nexus}
+                  url={pluginData.absoluteModulePath}
+                  pluginName={pluginData.name}
+                  resource={resource}
+                  goToResource={goToResource}
+                />
+              </div>
+            </Panel>
+          </Collapse>
+        ) : null;
       })}
     </>
   );

@@ -28,7 +28,6 @@ import { Link } from 'react-router-dom';
 import ResourceViewActionsContainer from './ResourceViewActionsContainer';
 import ResourceMetadata from '../components/ResourceMetadata';
 import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
-import useQueryString from '../hooks/useQueryString';
 import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
 
 export type PluginMapping = {
@@ -44,11 +43,8 @@ const ResourceViewContainer: React.FunctionComponent<{
     }> | null
   ) => React.ReactElement | null;
 }> = ({ render }) => {
-  const x = useParams();
-
   // @ts-ignore
   const { orgLabel = '', projectLabel = '', resourceId = '' } = useParams();
-  const [{ studioId }, setQueryParams] = useQueryString();
   const nexus = useNexusContext();
   const location = useLocation<{ background: Location }>();
 
@@ -59,7 +55,7 @@ const ResourceViewContainer: React.FunctionComponent<{
 
   React.useEffect(() => {
     if (location.state.background) {
-      const match = matchPath<{ StudioId: string }>(
+      const studioPathMatch = matchPath<{ StudioId: string }>(
         location.state.background.pathname,
         {
           path: '/studios/:organisation/:project/studios/:StudioId',
@@ -68,16 +64,16 @@ const ResourceViewContainer: React.FunctionComponent<{
         }
       );
 
-      if (match) {
+      if (studioPathMatch) {
         // looks like we have us a studio
-        const studioId = match.params.StudioId;
+        const studioId = studioPathMatch.params.StudioId;
         nexus.Resource.get<StudioResource>(
           orgLabel,
           projectLabel,
           studioId
         ).then(d => {
           if (Array.isArray((d as StudioResource).plugins)) {
-            //@ts-ignore
+            // @ts-ignore
             (d as StudioResource).plugins = (d as StudioResource).plugins[0];
           }
           if ((d as StudioResource).plugins) {
@@ -352,10 +348,6 @@ const ResourceViewContainer: React.FunctionComponent<{
   }, [orgLabel, projectLabel, resourceId, rev, tag]);
 
   const [openPlugins, setOpenPlugins] = React.useState<string[]>([]);
-  const [
-    studioDefinedPluginsToInclude,
-    setStudioDefinedPluginsToInclude,
-  ] = React.useState<string[]>([]);
   const LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME = 'expanded_plugins';
 
   React.useEffect(() => {
@@ -380,27 +372,23 @@ const ResourceViewContainer: React.FunctionComponent<{
   React.useEffect(() => {
     // if coming from studio, override what user has set in localstorage
     if (studioPlugins?.customise && pluginManifest) {
+      console.log(studioPlugins.plugins);
       setOpenPlugins(
         studioPlugins.plugins
           .filter(p => p.expanded)
+          .filter(
+            p =>
+              p.key in pluginManifest ||
+              builtInPlugins.find(b => b.key === p.key)
+          )
           .map(p => {
-            // TODO: this is dumb
-            switch (p.key) {
-              case 'preview':
-                return 'preview';
-              case 'admin':
-                return 'advanced';
-              case 'video':
-                return 'video';
+            if (builtInPlugins.find(b => b.key === p.key)) {
+              const pluginName = builtInPlugins.find(b => b.key === p.key)
+                ?.name;
+              return pluginName ? pluginName : '';
             }
             return pluginManifest[p.key].name;
           })
-      );
-
-      setStudioDefinedPluginsToInclude(
-        studioPlugins.plugins.map(p => {
-          return p.key;
-        })
       );
     }
   }, [studioPlugins]);
@@ -415,7 +403,7 @@ const ResourceViewContainer: React.FunctionComponent<{
 
   const previewPlugin = resource &&
     ((studioPlugins?.customise &&
-      studioDefinedPluginsToInclude.includes('preview')) ||
+      studioPlugins?.plugins.find(p => p.key === 'preview')) ||
       !studioPlugins?.customise) &&
     resource.distribution && (
       <Preview
@@ -432,7 +420,7 @@ const ResourceViewContainer: React.FunctionComponent<{
   const adminPlugin = resource &&
     latestResource &&
     ((studioPlugins?.customise &&
-      studioDefinedPluginsToInclude.includes('admin')) ||
+      studioPlugins?.plugins.find(p => p.key === 'admin')) ||
       !studioPlugins?.customise) && (
       <AdminPlugin
         key="adminPlugin"
@@ -461,7 +449,7 @@ const ResourceViewContainer: React.FunctionComponent<{
   const videoPlugin = resource &&
     resource['video'] &&
     ((studioPlugins?.customise &&
-      studioDefinedPluginsToInclude.includes('video')) ||
+      studioPlugins?.plugins.find(p => p.key === 'video')) ||
       !studioPlugins?.customise) && (
       <VideoPluginContainer
         key="videoPlugin"
@@ -474,6 +462,12 @@ const ResourceViewContainer: React.FunctionComponent<{
         }}
       />
     );
+
+  const builtInPlugins = [
+    { key: 'preview', name: 'preview', pluginComponent: previewPlugin },
+    { key: 'admin', name: 'advanced', pluginComponent: adminPlugin },
+    { key: 'video', name: 'video', pluginComponent: videoPlugin },
+  ];
 
   return (
     <>
@@ -604,14 +598,10 @@ const ResourceViewContainer: React.FunctionComponent<{
                   openPlugins={openPlugins}
                   studioDefinedPluginsToInclude={
                     studioPlugins && studioPlugins.customise
-                      ? studioDefinedPluginsToInclude
+                      ? studioPlugins.plugins.map(p => p.key)
                       : undefined
                   }
-                  builtInPlugins={[
-                    { key: 'preview', pluginComponent: previewPlugin },
-                    { key: 'admin', pluginComponent: adminPlugin },
-                    { key: 'video', pluginComponent: videoPlugin },
-                  ]}
+                  builtInPlugins={builtInPlugins}
                   handleCollapseChange={pluginName =>
                     pluginCollapsedToggle(pluginName)
                   }
