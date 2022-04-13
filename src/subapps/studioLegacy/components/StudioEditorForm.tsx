@@ -53,7 +53,7 @@ const StudioEditorForm: React.FC<{
   >();
 
   React.useEffect(() => {
-    const configuredPlugins =
+    const studioConfiguredPlugins =
       studio &&
       studio.plugins &&
       studio.plugins.customise &&
@@ -61,8 +61,7 @@ const StudioEditorForm: React.FC<{
         ? studio.plugins.plugins.map(p => ({ ...p, visible: true }))
         : [];
 
-    // add built-in plugins here and append to configured
-    const nexusPlugins = [
+    const nexusBuiltInPlugins = [
       {
         key: 'video',
         name: 'Video',
@@ -76,12 +75,16 @@ const StudioEditorForm: React.FC<{
         name: 'Advanced',
       },
     ];
-    nexusPlugins.forEach(f => {
-      const match = configuredPlugins.find(c => c.key === f.key);
+
+    /* update studio configured plugins with built-in */
+    nexusBuiltInPlugins.forEach(f => {
+      const match = studioConfiguredPlugins.find(c => c.key === f.key);
       if (match) {
+        // if configured already, just set the name of it
         match.name = f.name;
       } else {
-        configuredPlugins.push({
+        // not configured, add
+        studioConfiguredPlugins.push({
           key: f.key,
           name: f.name,
           visible: false,
@@ -98,11 +101,11 @@ const StudioEditorForm: React.FC<{
           expanded: false,
         };
       })
-      .filter(p => !configuredPlugins.find(c => c.key === p.key));
+      .filter(p => !studioConfiguredPlugins.find(c => c.key === p.key));
 
-    // replace names for configured plugins
+    // include names for studio configured plugins
     if (pluginManifest) {
-      configuredPlugins.forEach(p => {
+      studioConfiguredPlugins.forEach(p => {
         const match = Object.keys(pluginManifest).find(k => p.key === k);
         if (match) {
           p.name = pluginManifest[match].name;
@@ -110,7 +113,7 @@ const StudioEditorForm: React.FC<{
       });
     }
 
-    setPlugins([...configuredPlugins, ...otherAvailablePlugins]);
+    setPlugins([...studioConfiguredPlugins, ...otherAvailablePlugins]);
   }, [pluginManifest]);
 
   const handleSubmit = (values: any) => {
@@ -269,9 +272,11 @@ const StudioEditorForm: React.FC<{
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
+                              className={`plugin ${!el.name &&
+                                'plugin--error'}`}
                             >
                               <Form.Item
-                                className="plugin-options__switch"
+                                className="plugin__switch"
                                 valuePropName="checked"
                                 key={el.key}
                                 trigger="onChange"
@@ -285,7 +290,7 @@ const StudioEditorForm: React.FC<{
                                     style={{ color: 'transparent' }}
                                   />
                                 )}
-                                <label>
+                                <label className="plugin__label">
                                   <Switch
                                     title="Hide plugin"
                                     size="small"
@@ -322,10 +327,16 @@ const StudioEditorForm: React.FC<{
                                       setPlugins(pluginsCopy);
                                     }}
                                   />{' '}
-                                  {el.name}
+                                  {el.name ? (
+                                    el.name
+                                  ) : (
+                                    <>
+                                      Plugin '<em>{el.key}</em>' not in manifest
+                                    </>
+                                  )}
                                 </label>
                                 <Button
-                                  className="plugin-options__expand"
+                                  className="plugin__expand"
                                   title={
                                     el.expanded
                                       ? 'Collapse plugin on load'
