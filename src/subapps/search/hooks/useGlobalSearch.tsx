@@ -15,7 +15,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../shared/store/reducers';
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
-import { Button, Divider, Tooltip } from 'antd';
+import { Button, Tooltip } from 'antd';
 import { deltaUrlToFusionUrl, labelOf } from '../../../shared/utils';
 import FilterOptions, {
   createKeyWord,
@@ -427,7 +427,8 @@ function useGlobalSearchData(
 
   const fieldMenu = (field: ConfigField) => {
     return (
-      <div>
+      <div className="field-menu">
+        <h1>VISIBILITY</h1>
         <Button
           onClick={() => {
             dispatchFieldVisibility({
@@ -445,23 +446,26 @@ function useGlobalSearchData(
           Hide column
         </Button>
         {field.sortable && (
-          <SortMenuOptions
-            sortField={sortState.find(s => s.fieldName === field.name)}
-            onSortField={sortOption => {
-              changeSortOption({
-                fieldName: field.name,
-                term: createKeyWord(field),
-                label: field.label,
-                format: field.format,
-                direction: sortOption,
-              });
-            }}
-            onRemoveSort={sortOption => removeSortOption(sortOption)}
-          />
+          <>
+            <h1>SORT</h1>
+            <SortMenuOptions
+              sortField={sortState.find(s => s.fieldName === field.name)}
+              onSortField={sortOption => {
+                changeSortOption({
+                  fieldName: field.name,
+                  term: createKeyWord(field),
+                  label: field.label,
+                  format: field.format,
+                  direction: sortOption,
+                });
+              }}
+              onRemoveSort={sortOption => removeSortOption(sortOption)}
+            />
+          </>
         )}
-        {field.sortable && field.filterable && <Divider />}
         {field.filterable && (
           <>
+            <h1>FILTER</h1>
             {field.format?.includes('date') ? (
               <DateFilterOptions
                 filter={filterState}

@@ -201,7 +201,6 @@ const FilterOptions: React.FC<{
       ) && (
         <>
           <Form.Item
-            label="Operator"
             rules={[
               {
                 required: true,
@@ -227,6 +226,7 @@ const FilterOptions: React.FC<{
           {filterType !== 'missing' && (
             <>
               <Input.Search
+                placeholder="Search filter values..."
                 onChange={event => {
                   const val = event.target.value;
 
