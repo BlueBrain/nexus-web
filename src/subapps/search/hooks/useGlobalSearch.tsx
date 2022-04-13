@@ -162,6 +162,8 @@ export type ConfigField =
       optional: boolean;
       fields: { name: string; format: string }[];
       format?: undefined;
+      filterable: boolean;
+      sortable: boolean;
     }
   | {
       name: string;
@@ -170,6 +172,8 @@ export type ConfigField =
       array: boolean;
       optional: boolean;
       fields?: undefined;
+      filterable: boolean;
+      sortable: boolean;
     };
 
 export type SearchLayout = {
@@ -421,20 +425,6 @@ function useGlobalSearchData(
     onSortOptionsChanged();
   };
 
-  const hasKeywordFormatField = (field: ConfigField) => {
-    if (field.format && field.format.includes('keyword')) return true;
-    if (
-      (field.fields && field.fields.find(f => f.format.includes('keyword'))) ||
-      field.name === '@type'
-    ) {
-      return true;
-    }
-
-    // show sort/filter for date.
-    if (field.format && field.format.includes('date')) return true;
-    return false;
-  };
-
   const fieldMenu = (field: ConfigField) => {
     return (
       <div>
@@ -454,22 +444,24 @@ function useGlobalSearchData(
           <EyeInvisibleOutlined />
           Hide column
         </Button>
-        {hasKeywordFormatField(field) && (
+        {field.sortable && (
+          <SortMenuOptions
+            sortField={sortState.find(s => s.fieldName === field.name)}
+            onSortField={sortOption => {
+              changeSortOption({
+                fieldName: field.name,
+                term: createKeyWord(field),
+                label: field.label,
+                format: field.format,
+                direction: sortOption,
+              });
+            }}
+            onRemoveSort={sortOption => removeSortOption(sortOption)}
+          />
+        )}
+        {field.sortable && field.filterable && <Divider />}
+        {field.filterable && (
           <>
-            <SortMenuOptions
-              sortField={sortState.find(s => s.fieldName === field.name)}
-              onSortField={sortOption => {
-                changeSortOption({
-                  fieldName: field.name,
-                  term: createKeyWord(field),
-                  label: field.label,
-                  format: field.format,
-                  direction: sortOption,
-                });
-              }}
-              onRemoveSort={sortOption => removeSortOption(sortOption)}
-            />
-            <Divider />
             {field.format?.includes('date') ? (
               <DateFilterOptions
                 filter={filterState}
