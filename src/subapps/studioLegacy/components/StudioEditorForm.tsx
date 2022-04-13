@@ -7,7 +7,7 @@ import {
   MoreOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
-
+import './StudioEditorForm.less';
 import { MarkdownEditorFormItemComponent } from '../../../shared/components/MarkdownEditor';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import usePlugins from '../../../shared/hooks/usePlugins';
@@ -194,7 +194,7 @@ const StudioEditorForm: React.FC<{
             markdownViewer={markdownViewer}
           />
         </Form.Item>
-        <label style={{ display: 'block' }}>
+        <label className="customise-studio-plugins-label">
           Customise Studio Plugins{' '}
           <Switch
             title="Hide plugin"
@@ -206,7 +206,7 @@ const StudioEditorForm: React.FC<{
         </label>
         {isPluginsCustomised && (
           <>
-            <p style={{ marginTop: '8px', marginLeft: '10px' }}>
+            <p className="custom-plugins">
               <em>
                 Overrides the default resource plugin behaviour. Choose which
                 plugins to enable, the order in which they appear, and whether
@@ -252,7 +252,7 @@ const StudioEditorForm: React.FC<{
               <Droppable droppableId="droppable">
                 {(provided, snapshot) => (
                   <div
-                    style={{ marginBottom: '15px' }}
+                    className="plugin-options"
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
@@ -271,9 +271,9 @@ const StudioEditorForm: React.FC<{
                               {...provided.dragHandleProps}
                             >
                               <Form.Item
+                                className="plugin-options__switch"
                                 valuePropName="checked"
                                 key={el.key}
-                                style={{ marginBottom: 0 }}
                                 trigger="onChange"
                               >
                                 {el.visible ? (
@@ -325,15 +325,7 @@ const StudioEditorForm: React.FC<{
                                   {el.name}
                                 </label>
                                 <Button
-                                  style={{
-                                    border: 'none',
-                                    background: 'transparent',
-                                    width: 'auto',
-                                    height: 'auto',
-                                    padding: 0,
-                                    boxShadow: 'none',
-                                    WebkitAppearance: 'none',
-                                  }}
+                                  className="plugin-options__expand"
                                   title={
                                     el.expanded
                                       ? 'Collapse plugin on load'
