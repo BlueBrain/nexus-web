@@ -3,11 +3,9 @@ import { Resource } from '@bbp/nexus-sdk';
 import { Input, Form, Tooltip, Button, Switch, FormInstance } from 'antd';
 import { SaveImageHandler } from 'react-mde';
 import {
-  ArrowsAltOutlined,
   CompassFilled,
   MoreOutlined,
   QuestionCircleOutlined,
-  ShrinkOutlined,
 } from '@ant-design/icons';
 
 import { MarkdownEditorFormItemComponent } from '../../../shared/components/MarkdownEditor';
@@ -222,14 +220,30 @@ const StudioEditorForm: React.FC<{
                   return;
                 }
                 const pluginsCopy = [...plugins];
-                const pluginToMove = pluginsCopy.splice(source.index, 1);
 
-                if (destination.index === plugins.length - 1) {
-                  pluginsCopy.push(pluginToMove[0]);
-                } else if (destination.index < source.index) {
-                  pluginsCopy.splice(destination.index, 0, pluginToMove[0]);
+                /* enabled plugins should be listed first.
+                 It is possible to drag an item into the area of
+                 disabled plugins, in which case put at end of
+                 enabled list */
+                const indexOfLastEnabledPlugin = pluginsCopy.find(
+                  p => !p.visible
+                )
+                  ? pluginsCopy.findIndex(p => !p.visible) - 1
+                  : pluginsCopy.length - 1;
+
+                const destinationIndex =
+                  destination.index >= indexOfLastEnabledPlugin
+                    ? indexOfLastEnabledPlugin + 1
+                    : destination.index;
+
+                // add item to array
+                pluginsCopy.splice(destinationIndex, 0, plugins[source.index]);
+
+                // remove original item from array
+                if (destination.index > source.index) {
+                  pluginsCopy.splice(source.index, 1);
                 } else {
-                  pluginsCopy.splice(destination.index + 1, 0, pluginToMove[0]);
+                  pluginsCopy.splice(source.index + 1, 1);
                 }
 
                 setPlugins(pluginsCopy);
@@ -258,7 +272,6 @@ const StudioEditorForm: React.FC<{
                             >
                               <Form.Item
                                 valuePropName="checked"
-                                name={el.key}
                                 key={el.key}
                                 style={{ marginBottom: 0 }}
                                 trigger="onChange"
