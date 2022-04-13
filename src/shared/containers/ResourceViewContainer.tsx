@@ -419,6 +419,7 @@ const ResourceViewContainer: React.FunctionComponent<{
       !studioPlugins?.customise) &&
     resource.distribution && (
       <Preview
+        key="previewPlugin"
         nexus={nexus}
         resource={resource}
         collapsed={openPlugins.includes('preview')}
@@ -434,6 +435,7 @@ const ResourceViewContainer: React.FunctionComponent<{
       studioDefinedPluginsToInclude.includes('admin')) ||
       !studioPlugins?.customise) && (
       <AdminPlugin
+        key="adminPlugin"
         editable={isLatest && !isDeprecated(resource)}
         orgLabel={orgLabel}
         projectLabel={projectLabel}
@@ -462,6 +464,7 @@ const ResourceViewContainer: React.FunctionComponent<{
       studioDefinedPluginsToInclude.includes('video')) ||
       !studioPlugins?.customise) && (
       <VideoPluginContainer
+        key="videoPlugin"
         resource={resource}
         orgLabel={orgLabel}
         projectLabel={projectLabel}
