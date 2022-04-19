@@ -323,7 +323,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
     const workspaceIndex = workspaces.findIndex(
       w => w['@id'] === currentWorkspaceId
     )
-    if (workspaceIndex != -1) {
+    if (workspaceIndex !== -1) {
       setSelectedWorkspace(workspaces[workspaceIndex])
     } else {
       setSelectedWorkspace(workspaces[0])
