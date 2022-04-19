@@ -347,7 +347,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
             </SubMenu>
           )
         })}
-        <span className='worksapce-action'>
+        <span className='workspace-action'>
           <Button shape='round' type='default' icon={<SmallDashOutlined />} />
         </span>
       </Menu>
