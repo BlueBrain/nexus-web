@@ -12,12 +12,7 @@ import { StudioContext } from '../views/StudioView'
 import DashboardList from '../containers/DashboardListContainer'
 import { resourcesWritePermissionsWrapper } from '../../../shared/utils/permission'
 import { ResultTableFields } from '../../../shared/types/search'
-import {
-  MailOutlined,
-  DownOutlined,
-  AppstoreOutlined,
-  SettingOutlined,
-} from '@ant-design/icons'
+import { DownOutlined, SmallDashOutlined } from '@ant-design/icons'
 import { createNodesAndEdgesFromResourceLinks } from '../../../shared/containers/GraphContainer/Graph'
 
 const { SubMenu } = Menu
@@ -341,13 +336,20 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
       >
         {workspaces.map(function (workspace, index) {
           return (
-            <SubMenu icon={<DownOutlined/>} key={workspace['@id']} title={workspace.label}>
+            <SubMenu
+              icon={<DownOutlined />}
+              key={workspace['@id']}
+              title={workspace.label}
+            >
               {workspace.dashboards.map(function (d: any, i: any) {
                 return <Menu.Item key={d['@id']}>{d.label}</Menu.Item>
               })}
             </SubMenu>
           )
         })}
+        <span className='worksapce-action'>
+          <Button shape='round' type='default' icon={<SmallDashOutlined />} />
+        </span>
       </Menu>
       <div className='dashboard-container'>
         {selectedWorkspace ? (
