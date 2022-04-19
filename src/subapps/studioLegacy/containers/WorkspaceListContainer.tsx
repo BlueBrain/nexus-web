@@ -14,6 +14,7 @@ import { resourcesWritePermissionsWrapper } from '../../../shared/utils/permissi
 import { ResultTableFields } from '../../../shared/types/search'
 import {
   MailOutlined,
+  DownOutlined,
   AppstoreOutlined,
   SettingOutlined,
 } from '@ant-design/icons'
@@ -340,7 +341,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
       >
         {workspaces.map(function (workspace, index) {
           return (
-            <SubMenu key={workspace['@id']} title={workspace.label}>
+            <SubMenu icon={<DownOutlined/>} key={workspace['@id']} title={workspace.label}>
               {workspace.dashboards.map(function (d: any, i: any) {
                 return <Menu.Item key={d['@id']}>{d.label}</Menu.Item>
               })}
