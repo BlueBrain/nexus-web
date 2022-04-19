@@ -187,8 +187,6 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
               >
             })
           ).then(dashValues => {
-            // console.log("dashValues");
-            // console.log(dashValues);
             workspace.dashboards = dashValues
           })
         })
@@ -224,8 +222,6 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
             dashboardId: undefined,
           })
         }
-        // console.log("workspaceIds use effect, workspaces, selectedWorkspace");
-        // console.log(workspaces, selectedWorkspace);
       })
       .catch(e => {
         // TODO: show a meaningful error to the user.
@@ -320,7 +316,6 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   ])
 
   const handleClick = (e: any) => {
-    // console.log('click ', e);
     const currentWorkspaceId = e.item.node.parentElement.id
       .slice(0, -5)
       .toString()
@@ -333,8 +328,6 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
     } else {
       setSelectedWorkspace(workspaces[0])
     }
-    // console.log("CLICK selectedWorkspace");
-    // console.log(selectedWorkspace);
     setCurrentDashboard(e.key)
   }
 

@@ -84,9 +84,6 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
     isWritable,
   } = studioContext
 
-  console.log('dashboards')
-  console.log(dashboards)
-
   const [queryParams, setQueryString] = useQueryString()
   const permissionsPath = `/${orgLabel}/${projectLabel}`
   const [dashboardResources, setDashboardResources] = React.useState<
@@ -266,16 +263,8 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
       })
   }
 
-  // React.useEffect(() => {
-  //   fetchAndSetupDashboards();
-  // }, [dashboards]);
-
   React.useEffect(() => {
-    console.log('useEffect function dashboard and dashboards called')
-    console.log(dashboard)
-    console.log(dashboards)
     if (dashboards.length === 0) {
-      console.log('0 exit useffect')
       return
     }
 
@@ -283,19 +272,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
       d => d['@id'] === dashboard
     )
     if (dashboard === '') {
-      console.log('dashboard is emptystring, useffect')
       selectDashboard(0)
-      return
-    }
-    if (dashboardResourceIndex === -1) {
-      // const dashboardResourceIndex2 = dashboards.findIndex(
-      //   d => d["@id"] === dashboard
-      // );
-      console.log('not found in findIndex (-1) useffect')
-      // if(dashboardResourceIndex2 !== -1 ){
-      //   console.log('SECOND CHECK FOR FINDING AGAINST DASHBOARDS');
-      //   selectDashboard(dashboardResourceIndex2);
-      // }
       return
     }
     selectDashboard(dashboardResourceIndex)
