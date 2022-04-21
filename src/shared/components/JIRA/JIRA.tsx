@@ -11,7 +11,6 @@ import {
   Spin,
   Table,
 } from 'antd';
-import { Option } from 'antd/lib/mentions';
 import * as React from 'react';
 import { getFriendlyTimeAgoString } from '../../utils';
 
@@ -120,13 +119,13 @@ const CreateIssueUI = ({
             {...formItemLayout}
           >
             <Select
-              style={{ width: 120 }}
+              style={{ width: '100%' }}
               onChange={(value: string) => setProject(value)}
             >
               {projects.map(project => (
-                <Option key={project.key} value={project.key}>
+                <Select.Option key={project.key} value={project.key}>
                   {project.name}
-                </Option>
+                </Select.Option>
               ))}
             </Select>
           </Form.Item>
