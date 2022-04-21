@@ -60,20 +60,6 @@ function useJIRA({
       });
   };
 
-  /**
-   * Use Jira auth url to determine jira URL.
-   * TODO: get this via config
-   */
-  React.useEffect(() => {
-    if (jiraAuthUrl) {
-      const authUrl = jiraAuthUrl.substring(
-        0,
-        jiraAuthUrl.indexOf('/plugins/servlet')
-      );
-      setJiraWebBaseUrl(authUrl + '/');
-    }
-  }, [jiraAuthUrl]);
-
   React.useEffect(() => {
     if (!isJiraConnected) {
       getRequestToken();

@@ -41,7 +41,7 @@ const JIRAPluginContainer = ({
     description: issue.description,
     updated: issue.updated,
     status: issue.status,
-    url: `${jiraWebBaseUrl}browse/${issue.key}`,
+    url: `${jiraWebBaseUrl}/browse/${issue.key}`,
     commentCount: issue.commentCount,
   }));
 
@@ -67,7 +67,7 @@ const JIRAPluginContainer = ({
             onLinkIssue={issueUrl => linkIssue(issueUrl)}
             onUnlinkIssue={issueKey => unlinkIssue(issueKey)}
             // TODO: this url should be determined by config
-            searchJiraLink="https://bbpteam.epfl.ch/project/devissues/issues/?jql="
+            searchJiraLink={`${jiraWebBaseUrl}/issues/?jql=`}
             isInitialized={isInitialized}
           />
         )}
