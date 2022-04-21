@@ -39,9 +39,18 @@ function useJIRA({
   );
   const [jiraAuthUrl, setJiraAuthUrl] = React.useState('');
   const [isInitialized, setIsInitialized] = React.useState(false);
-  const { apiEndpoint } = useSelector((state: RootState) => state.config);
+  const { apiEndpoint, jiraUrl: jiraWebBaseUrl } = useSelector(
+    (state: RootState) => state.config
+  );
   const jiraAPIBaseUrl = `${apiEndpoint}/jira`;
-  const [jiraWebBaseUrl, setJiraWebBaseUrl] = React.useState<string>();
+  const [linkedIssues, setLinkedIssues] = React.useState<any[]>([]);
+  const [projects, setProjects] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    if (isJiraConnected && projects) {
+      setIsInitialized(true);
+    }
+  }, [projects]);
 
   /**
    * First step in auth flow - get url from App which
@@ -102,6 +111,7 @@ function useJIRA({
         resourceId: encodedResourceId,
       }
     );
+
     const resourceUrl = `${fusionBaseUrl}${pathToResource}`;
     return resourceUrl;
   };
@@ -119,6 +129,7 @@ function useJIRA({
 
   const fetchProjects = () => {
     (async () => {
+      setIsInitialized(false);
       const projects = await getProjects();
       setProjects(projects);
     })();
@@ -163,7 +174,7 @@ function useJIRA({
         path: `${jiraAPIBaseUrl}/search`,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          jql: `"Nexus Resource Url" = "${resourceUrl}"`,
+          jql: `"Nexus Resource Url" = "${resourceUrl}"`, // TODO: get field name dynamically
         }),
       })
       .catch(e => {
@@ -176,7 +187,9 @@ function useJIRA({
       .httpPost({
         path: `${jiraAPIBaseUrl}/search`,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ jql: `"Nexus Project" = "${getProjectUrl()}"` }),
+        body: JSON.stringify({
+          jql: `"Nexus Project url" = "${getProjectUrl()}"`, // TODO: get field name dynamically
+        }),
       })
       .catch(e => {
         setIsJiraConnected(false);
@@ -199,8 +212,8 @@ function useJIRA({
             issuetype: { name: 'Task' }, // TODO: allow selection of issue type
             description: '* Created by Nexus Fusion - add some detail.', // TODO: set to something sensible
             summary,
-            [nexusResourceFieldName]: resourceID ? getResourceUrl() : '', // TODO: get custom field name
-            [nexusProjectName]: getProjectUrl(), // TODO: get custom field name
+            [nexusResourceFieldName]: resourceID ? getResourceUrl() : '',
+            [nexusProjectName]: getProjectUrl(),
             labels: ['discussion'],
           },
         }),
@@ -222,6 +235,7 @@ function useJIRA({
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('nexus__token')}`,
       },
       body: JSON.stringify({
         fields: {
@@ -229,7 +243,7 @@ function useJIRA({
           [nexusProjectName]: `${fusionBaseUrl}${makeProjectUri(
             orgLabel,
             projectLabel
-          )}`, // TODO: get custom field name
+          )}`,
           labels: ['discussion'], // TODO: first we should fetch issue to append this label to any existing ones
         },
       }),
@@ -247,11 +261,12 @@ function useJIRA({
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('nexus__token')}`,
       },
       body: JSON.stringify({
         fields: {
-          [nexusResourceFieldName]: '', // TODO: get custom field name
-          [nexusProjectName]: '', // TODO: get custom field name
+          [nexusResourceFieldName]: '',
+          [nexusProjectName]: '',
           // TODO: should we also remove discussion label?
         },
       }),
@@ -264,14 +279,14 @@ function useJIRA({
       });
   };
 
-  const [linkedIssues, setLinkedIssues] = React.useState<any[]>([]);
-  const [projects, setProjects] = React.useState<any[]>([]);
-
   const getResourceIdFromFusionUrl = (url: string) => {
+    if (!url) {
+      return '';
+    }
     return decodeURIComponent(
       decodeURIComponent(
         url.replace(
-          `${fusionBaseUrl}${orgLabel}/${projectLabel}/resources/`,
+          `${fusionBaseUrl}/${orgLabel}/${projectLabel}/resources/`,
           ''
         )
       ) // TODO: check encoding
@@ -310,11 +325,9 @@ function useJIRA({
         const fullIssuesWithComments = await getFullIssues(
           issuesOrderedByLastUpdate
         );
-
         const resources = (
           await getIssueResources(issuesOrderedByLastUpdate)
         ).filter(r => r !== undefined);
-
         setLinkedIssues(
           fullIssuesWithComments.map((issue: any) => {
             let resourceLabel = '';
@@ -326,12 +339,14 @@ function useJIRA({
                     issue.fields[nexusResourceFieldName]
                   )
               );
+
               resourceLabel = resource
                 ? getResourceLabel(resource as Resource)
                 : labelOf(
                     decodeURIComponent(issue.fields[nexusResourceFieldName])
                   );
             }
+
             return {
               key: issue.key,
               id: issue.id,
@@ -352,7 +367,6 @@ function useJIRA({
             };
           })
         );
-        setIsInitialized(true);
       }
     })();
   };

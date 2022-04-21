@@ -39,7 +39,7 @@ const JiraPluginProjectContainer = ({
     description: issue.description,
     updated: issue.updated,
     status: issue.status,
-    url: `${jiraWebBaseUrl}browse/${issue.key}`,
+    url: `${jiraWebBaseUrl}/browse/${issue.key}`,
     commentCount: issue.commentCount,
     resourceId: issue.resourceId,
     resourceLabel: issue.resourceLabel,
