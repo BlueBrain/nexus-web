@@ -344,16 +344,17 @@ const JIRAPluginUI = ({
             displayType === 'project'
               ? {
                   title: 'Resource',
-                  render: issue => (
-                    <a
-                      onClick={() =>
-                        onNavigateToResource &&
-                        onNavigateToResource(issue.resourceId)
-                      }
-                    >
-                      {issue.resourceLabel}
-                    </a>
-                  ),
+                  render: issue =>
+                    issue.resourceId && (
+                      <a
+                        onClick={() =>
+                          onNavigateToResource &&
+                          onNavigateToResource(issue.resourceId)
+                        }
+                      >
+                        {issue.resourceLabel}
+                      </a>
+                    ),
                 }
               : {},
             {
