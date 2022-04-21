@@ -125,6 +125,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       sentryDsn: process.env.SENTRY_DSN,
       gtmCode: process.env.GTM_CODE,
       studioView: process.env.STUDIO_VIEW || '',
+      jiraUrl: process.env.JIRA_URL || '',
       jiraResourceCustomFieldName: process.env.JIRA_RESOURCE_FIELD_NAME || '',
       jiraProjectCustomFieldName: process.env.JIRA_PROJECT_FIELD_NAME || '',
     },
