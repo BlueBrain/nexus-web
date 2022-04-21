@@ -26,6 +26,13 @@ function useJIRA({
     useSelector((state: RootState) => state.config.basePath) || '';
   const fusionBaseUrl = `${window.location.origin.toString()}${basePath}`;
 
+  const nexusResourceFieldName = useSelector(
+    (state: RootState) => state.config.jiraResourceCustomFieldName
+  );
+  const nexusProjectName = useSelector(
+    (state: RootState) => state.config.jiraProjectCustomFieldName
+  );
+
   const [isJiraConnected, setIsJiraConnected] = useLocalStorage<boolean>(
     'isJiraConnected',
     false
@@ -206,8 +213,8 @@ function useJIRA({
             issuetype: { name: 'Task' }, // TODO: allow selection of issue type
             description: '* Created by Nexus Fusion - add some detail.', // TODO: set to something sensible
             summary,
-            customfield_13517: resourceID ? getResourceUrl() : '', // TODO: get custom field name
-            customfield_13518: getProjectUrl(), // TODO: get custom field name
+            [nexusResourceFieldName]: resourceID ? getResourceUrl() : '', // TODO: get custom field name
+            [nexusProjectName]: getProjectUrl(), // TODO: get custom field name
             labels: ['discussion'],
           },
         }),
@@ -232,8 +239,8 @@ function useJIRA({
       },
       body: JSON.stringify({
         fields: {
-          customfield_13517: resourceID ? getResourceUrl() : '', // TODO: get custom field name
-          customfield_13518: `${fusionBaseUrl}${makeProjectUri(
+          [nexusResourceFieldName]: resourceID ? getResourceUrl() : '',
+          [nexusProjectName]: `${fusionBaseUrl}${makeProjectUri(
             orgLabel,
             projectLabel
           )}`, // TODO: get custom field name
@@ -257,8 +264,8 @@ function useJIRA({
       },
       body: JSON.stringify({
         fields: {
-          customfield_13517: '', // TODO: get custom field name
-          customfield_13518: '', // TODO: get custom field name
+          [nexusResourceFieldName]: '', // TODO: get custom field name
+          [nexusProjectName]: '', // TODO: get custom field name
           // TODO: should we also remove discussion label?
         },
       }),
@@ -287,12 +294,12 @@ function useJIRA({
 
   const getIssueResources = (issues: any) => {
     const resources = issues.map((issue: any) => {
-      if (issue.fields.customfield_13517 !== null) {
+      if (issue.fields[nexusResourceFieldName] !== null) {
         return nexus.Resource.get(
           orgLabel,
           projectLabel,
           encodeURIComponent(
-            getResourceIdFromFusionUrl(issue.fields.customfield_13517)
+            getResourceIdFromFusionUrl(issue.fields[nexusResourceFieldName])
           )
         );
       }
@@ -306,6 +313,7 @@ function useJIRA({
       const issuesResponse = await (resourceID
         ? getResourceIssues()
         : getProjectIssues());
+
       if (issuesResponse.issues) {
         const issuesOrderedByLastUpdate = issuesResponse.issues.sort(
           (a: any, b: any) =>
@@ -316,6 +324,7 @@ function useJIRA({
         const fullIssuesWithComments = await getFullIssues(
           issuesOrderedByLastUpdate
         );
+
         const resources = (
           await getIssueResources(issuesOrderedByLastUpdate)
         ).filter(r => r !== undefined);
@@ -323,15 +332,19 @@ function useJIRA({
         setLinkedIssues(
           fullIssuesWithComments.map((issue: any) => {
             let resourceLabel = '';
-            if (issue.fields.customfield_13517 !== null) {
+            if (issue.fields[nexusResourceFieldName] !== null) {
               const resource = resources.find(
                 r =>
                   (r as Resource)['@id'] ===
-                  getResourceIdFromFusionUrl(issue.fields.customfield_13517)
+                  getResourceIdFromFusionUrl(
+                    issue.fields[nexusResourceFieldName]
+                  )
               );
               resourceLabel = resource
                 ? getResourceLabel(resource as Resource)
-                : labelOf(decodeURIComponent(issue.fields.customfield_13517));
+                : labelOf(
+                    decodeURIComponent(issue.fields[nexusResourceFieldName])
+                  );
             }
             return {
               key: issue.key,
@@ -342,11 +355,13 @@ function useJIRA({
               updated: issue.fields.updated,
               self: issue.self,
               commentCount: issue.fields.comment.total,
-              resourceUrl: issue.fields.customfield_13517,
+              resourceUrl: issue.fields[nexusResourceFieldName],
               resourceId:
-                issue.fields.customfield_13517 === null
+                issue.fields[nexusResourceFieldName] === null
                   ? ''
-                  : getResourceIdFromFusionUrl(issue.fields.customfield_13517),
+                  : getResourceIdFromFusionUrl(
+                      issue.fields[nexusResourceFieldName]
+                    ),
               resourceLabel: resourceLabel,
             };
           })

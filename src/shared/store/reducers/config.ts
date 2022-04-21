@@ -24,6 +24,8 @@ export interface ConfigState {
     forgeLink: string;
   };
   dataModelsLocation: string;
+  jiraResourceCustomFieldName: string;
+  jiraProjectCustomFieldName: string;
 }
 
 const initialState: ConfigState = {
@@ -44,6 +46,8 @@ const initialState: ConfigState = {
     searchConfigProject: DEFAULT_SEARCH_CONFIG_PROJECT,
   },
   dataModelsLocation: '',
+  jiraResourceCustomFieldName: '',
+  jiraProjectCustomFieldName: '',
 };
 
 export default function configReducer(
