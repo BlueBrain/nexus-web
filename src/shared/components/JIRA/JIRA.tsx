@@ -11,6 +11,7 @@ import {
   Spin,
   Table,
 } from 'antd';
+import TextArea from 'antd/lib/input/TextArea';
 import * as React from 'react';
 import { getFriendlyTimeAgoString } from '../../utils';
 
@@ -71,12 +72,13 @@ const CreateIssueUI = ({
   onCancel,
 }: {
   projects: any[];
-  onOk: (project: string, summary: string) => void;
+  onOk: (project: string, summary: string, description: string) => void;
   onCancel: () => void;
   displayType: 'project' | 'resource';
 }) => {
   const [summary, setSummary] = React.useState('');
   const [project, setProject] = React.useState('');
+  const [description, setDescription] = React.useState('');
 
   const formItemLayout = {
     labelCol: {
@@ -107,7 +109,7 @@ const CreateIssueUI = ({
           A Jira issue will be created and linked to this Nexus{' '}
           {displayType === 'project' ? 'project' : 'resource'}
         </p>
-        <Form onFinish={() => onOk(project, summary)}>
+        <Form onFinish={() => onOk(project, summary, description)}>
           <Form.Item
             label="Project"
             name="project"
@@ -123,7 +125,7 @@ const CreateIssueUI = ({
               style={{ width: '100%' }}
               onChange={(value: string) => setProject(value)}
               filterOption={(input, option) =>
-                option?.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
             >
               {projects.map(project => (
@@ -149,6 +151,20 @@ const CreateIssueUI = ({
               onChange={e => setSummary(e.currentTarget.value)}
               placeholder="Issue Summary"
             />
+          </Form.Item>
+          <Form.Item>
+            <Form.Item
+              label="Description"
+              name="description"
+              {...formItemLayout}
+            >
+              <TextArea
+                value={description}
+                onChange={e => setDescription(e.currentTarget.value)}
+                placeholder="Issue description"
+                autoSize={{ minRows: 3, maxRows: 5 }}
+              />
+            </Form.Item>
           </Form.Item>
           <Form.Item {...formItemLayoutWithOutLabel}>
             <Button danger onClick={() => onCancel()}>
@@ -205,7 +221,11 @@ const LinkIssueUI = ({
 type JIRAPluginUIProps = {
   projects: any[];
   issues: any[];
-  onCreateIssue: (project: string, summary: string) => void;
+  onCreateIssue: (
+    project: string,
+    summary: string,
+    description: string
+  ) => void;
   onLinkIssue: (issueKey: string) => void;
   onUnlinkIssue: (issueKey: string) => void;
   searchJiraLink: string;
@@ -263,8 +283,8 @@ const JIRAPluginUI = ({
         <CreateIssueUI
           displayType={displayType}
           projects={projects}
-          onOk={(project, summary) => {
-            onCreateIssue(project, summary);
+          onOk={(project, summary, description) => {
+            onCreateIssue(project, summary, description);
             setCreateIssueVisible(false);
           }}
           onCancel={() => setCreateIssueVisible(false)}

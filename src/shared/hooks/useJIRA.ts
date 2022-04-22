@@ -192,7 +192,11 @@ function useJIRA({
   const getProjectUrl = () =>
     `${fusionBaseUrl}${makeProjectUri(orgLabel, projectLabel)}`;
 
-  const createIssue = (project: string, summary: string) => {
+  const createIssue = (
+    project: string,
+    summary: string,
+    description: string
+  ) => {
     return nexus
       .httpPost({
         path: `${jiraAPIBaseUrl}/issue`,
@@ -203,7 +207,7 @@ function useJIRA({
               key: project,
             },
             issuetype: { name: 'Task' }, // TODO: allow selection of issue type
-            description: '* Created by Nexus Fusion - add some detail.', // TODO: set to something sensible
+            description,
             summary,
             [nexusResourceFieldName]: resourceID ? getResourceUrl() : '',
             [nexusProjectName]: getProjectUrl(),

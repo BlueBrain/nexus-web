@@ -63,7 +63,9 @@ const JIRAPluginContainer = ({
             displayType="resource"
             projects={projects}
             issues={tableIssues}
-            onCreateIssue={(project, summary) => createIssue(project, summary)}
+            onCreateIssue={(project, summary, description) =>
+              createIssue(project, summary, description)
+            }
             onLinkIssue={issueUrl => linkIssue(issueUrl)}
             onUnlinkIssue={issueKey => unlinkIssue(issueKey)}
             searchJiraLink={`${jiraWebBaseUrl}/issues/?jql=`}
