@@ -119,8 +119,12 @@ const CreateIssueUI = ({
             {...formItemLayout}
           >
             <Select
+              showSearch
               style={{ width: '100%' }}
               onChange={(value: string) => setProject(value)}
+              filterOption={(input, option) =>
+                option?.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
             >
               {projects.map(project => (
                 <Select.Option key={project.key} value={project.key}>
@@ -207,7 +211,7 @@ type JIRAPluginUIProps = {
   searchJiraLink: string;
   displayType: 'resource' | 'project';
   onNavigateToResource?: (resourceId: string) => void;
-  isInitialized: boolean;
+  isLoading: boolean;
 };
 const JIRAPluginUI = ({
   projects,
@@ -218,7 +222,7 @@ const JIRAPluginUI = ({
   searchJiraLink,
   displayType,
   onNavigateToResource,
-  isInitialized,
+  isLoading,
 }: JIRAPluginUIProps) => {
   const [createIssueVisible, setCreateIssueVisible] = React.useState(false);
   const [linkIssueVisible, setLinkIssueVisible] = React.useState(false);
@@ -235,7 +239,7 @@ const JIRAPluginUI = ({
     });
   };
 
-  if (!isInitialized) {
+  if (isLoading) {
     return (
       <div
         style={{

@@ -29,7 +29,7 @@ const JIRAPluginContainer = ({
     isJiraConnected,
     jiraAuthUrl,
     connectJira,
-    isInitialized,
+    isLoading,
   } = useJIRA({
     resourceID: resource['@id'],
     projectLabel: projectLabel,
@@ -66,9 +66,8 @@ const JIRAPluginContainer = ({
             onCreateIssue={(project, summary) => createIssue(project, summary)}
             onLinkIssue={issueUrl => linkIssue(issueUrl)}
             onUnlinkIssue={issueKey => unlinkIssue(issueKey)}
-            // TODO: this url should be determined by config
             searchJiraLink={`${jiraWebBaseUrl}/issues/?jql=`}
-            isInitialized={isInitialized}
+            isLoading={isLoading}
           />
         )}
       </Collapse.Panel>

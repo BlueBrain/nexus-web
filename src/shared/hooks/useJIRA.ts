@@ -37,7 +37,7 @@ function useJIRA({
     false
   );
   const [jiraAuthUrl, setJiraAuthUrl] = React.useState('');
-  const [isInitialized, setIsInitialized] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
   const { apiEndpoint, jiraUrl: jiraWebBaseUrl } = useSelector(
     (state: RootState) => state.config
   );
@@ -47,7 +47,7 @@ function useJIRA({
 
   React.useEffect(() => {
     if (isJiraConnected && projects) {
-      setIsInitialized(true);
+      setIsLoading(false);
     }
   }, [projects]);
 
@@ -75,12 +75,6 @@ function useJIRA({
   }, [isJiraConnected]);
 
   const connectJira = (verificationCode: string) => {
-    /* TODO: make request to Delta endpoint v1/jira/access-token
-      which should return 200 if successful. From then on, we
-      can make requests to JIRA via the Delta Jira endpoints
-      which stores our access token for Jira and proxies requests
-      for the user to Jira
-     */
     nexus
       .httpPost({
         path: `${jiraAPIBaseUrl}/access-token`,
@@ -118,7 +112,7 @@ function useJIRA({
   const getProjects = () => {
     return nexus
       .httpGet({
-        path: `${jiraAPIBaseUrl}/project`,
+        path: `${jiraAPIBaseUrl}/project/recent`,
         headers: { 'Content-Type': 'application/json' },
       })
       .catch(e => {
@@ -128,7 +122,7 @@ function useJIRA({
 
   const fetchProjects = () => {
     (async () => {
-      setIsInitialized(false);
+      setIsLoading(true);
       const projects = await getProjects();
       setProjects(projects);
     })();
@@ -374,7 +368,7 @@ function useJIRA({
   }, []);
 
   return {
-    isInitialized,
+    isLoading,
     isJiraConnected,
     jiraAuthUrl,
     connectJira,
