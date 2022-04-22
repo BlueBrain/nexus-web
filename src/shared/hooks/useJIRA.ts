@@ -37,7 +37,7 @@ function useJIRA({
     false
   );
   const [jiraAuthUrl, setJiraAuthUrl] = React.useState('');
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [isLoading, setIsLoading] = React.useState(false);
   const { apiEndpoint, jiraUrl: jiraWebBaseUrl } = useSelector(
     (state: RootState) => state.config
   );
@@ -45,11 +45,11 @@ function useJIRA({
   const [linkedIssues, setLinkedIssues] = React.useState<any[]>([]);
   const [projects, setProjects] = React.useState<any[]>([]);
 
-  React.useEffect(() => {
-    if (isJiraConnected && projects) {
-      setIsLoading(false);
-    }
-  }, [projects]);
+  // React.useEffect(() => {
+  //   if (isJiraConnected && projects) {
+  //     setIsLoading(false);
+  //   }
+  // }, [projects]);
 
   /**
    * First step in auth flow - get url from App which
@@ -67,12 +67,6 @@ function useJIRA({
         setJiraAuthUrl(response.value);
       });
   };
-
-  React.useEffect(() => {
-    if (!isJiraConnected) {
-      getRequestToken();
-    }
-  }, [isJiraConnected]);
 
   const connectJira = (verificationCode: string) => {
     nexus
@@ -125,14 +119,9 @@ function useJIRA({
       setIsLoading(true);
       const projects = await getProjects();
       setProjects(projects);
+      setIsLoading(false);
     })();
   };
-
-  React.useEffect(() => {
-    if (isJiraConnected) {
-      fetchProjects();
-    }
-  }, [isJiraConnected]);
 
   /**
    * Given an array of issue objects with just a key attribute
@@ -308,6 +297,7 @@ function useJIRA({
 
   const fetchLinkedIssues = () => {
     (async () => {
+      setIsLoading(true);
       const issuesResponse = await (resourceID
         ? getResourceIssues()
         : getProjectIssues());
@@ -364,12 +354,18 @@ function useJIRA({
             };
           })
         );
+        setIsLoading(false);
       }
     })();
   };
+
   React.useEffect(() => {
+    if (!isJiraConnected) {
+      getRequestToken();
+    }
+    fetchProjects();
     fetchLinkedIssues();
-  }, []);
+  }, [isJiraConnected]);
 
   return {
     isLoading,
