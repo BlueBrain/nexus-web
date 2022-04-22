@@ -26,7 +26,9 @@ export interface ConfigState {
   dataModelsLocation: string;
   jiraUrl: string;
   jiraResourceCustomFieldName: string;
+  jiraResourceCustomFieldLabel: string;
   jiraProjectCustomFieldName: string;
+  jiraProjectCustomFieldLabel: string;
 }
 
 const initialState: ConfigState = {
@@ -49,7 +51,9 @@ const initialState: ConfigState = {
   dataModelsLocation: '',
   jiraUrl: '',
   jiraResourceCustomFieldName: '',
+  jiraResourceCustomFieldLabel: '',
   jiraProjectCustomFieldName: '',
+  jiraProjectCustomFieldLabel: '',
 };
 
 export default function configReducer(

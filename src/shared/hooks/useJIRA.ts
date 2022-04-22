@@ -25,13 +25,12 @@ function useJIRA({
   const basePath =
     useSelector((state: RootState) => state.config.basePath) || '';
   const fusionBaseUrl = `${window.location.origin.toString()}${basePath}`;
-
-  const nexusResourceFieldName = useSelector(
-    (state: RootState) => state.config.jiraResourceCustomFieldName
-  );
-  const nexusProjectName = useSelector(
-    (state: RootState) => state.config.jiraProjectCustomFieldName
-  );
+  const {
+    jiraResourceCustomFieldName: nexusResourceFieldName,
+    jiraProjectCustomFieldName: nexusProjectName,
+    jiraResourceCustomFieldLabel,
+    jiraProjectCustomFieldLabel,
+  } = useSelector((state: RootState) => state.config);
 
   const [isJiraConnected, setIsJiraConnected] = useLocalStorage<boolean>(
     'isJiraConnected',
@@ -174,7 +173,7 @@ function useJIRA({
         path: `${jiraAPIBaseUrl}/search`,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          jql: `"Nexus Resource Url" = "${resourceUrl}"`, // TODO: get field name dynamically
+          jql: `"${jiraResourceCustomFieldLabel}" = "${resourceUrl}"`,
         }),
       })
       .catch(e => {
@@ -188,7 +187,7 @@ function useJIRA({
         path: `${jiraAPIBaseUrl}/search`,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          jql: `"Nexus Project url" = "${getProjectUrl()}"`, // TODO: get field name dynamically
+          jql: `"${jiraProjectCustomFieldLabel}" = "${getProjectUrl()}"`,
         }),
       })
       .catch(e => {

@@ -127,7 +127,11 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       studioView: process.env.STUDIO_VIEW || '',
       jiraUrl: process.env.JIRA_URL || '',
       jiraResourceCustomFieldName: process.env.JIRA_RESOURCE_FIELD_NAME || '',
+      jiraResourceCustomFieldLabel:
+        process.env.JIRA_RESOURCE_FIELD_LABEL || 'Nexus Resource Url',
       jiraProjectCustomFieldName: process.env.JIRA_PROJECT_FIELD_NAME || '',
+      jiraProjectCustomFieldLabel:
+        process.env.JIRA_PROJECT_FIELD_LABEL || 'Nexus Project url',
     },
     uiSettings: DEFAULT_UI_SETTINGS,
     oidc: {
