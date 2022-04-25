@@ -29,8 +29,8 @@ const JiraPluginProjectContainer = ({
     connectJira,
     isLoading,
   } = useJIRA({
-    projectLabel: projectLabel,
-    orgLabel: orgLabel,
+    projectLabel,
+    orgLabel,
   });
 
   const tableIssues = linkedIssues?.map(issue => ({

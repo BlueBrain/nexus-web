@@ -88,7 +88,7 @@ app.use(
       /* Hard-code basic authorization header here for now */
       proxyReq.setHeader(
         'Authorization',
-        'Basic ' + Buffer.from('username:password').toString('base64')
+        `Basic ${Buffer.from('username:password').toString('base64')}`
       );
     },
   })

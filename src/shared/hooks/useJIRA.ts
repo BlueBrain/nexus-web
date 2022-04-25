@@ -219,12 +219,12 @@ function useJIRA({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           fields: {
+            description,
+            summary,
             project: {
               key: project,
             },
             issuetype: { name: 'Task' }, // TODO: allow selection of issue type
-            description,
-            summary,
             [nexusResourceFieldName]: resourceID ? getResourceUrl() : '',
             [nexusProjectName]: getProjectUrl(),
             labels: ['discussion'],
@@ -362,6 +362,7 @@ function useJIRA({
             }
 
             return {
+              resourceLabel,
               key: issue.key,
               id: issue.id,
               summary: issue.fields.summary,
@@ -377,7 +378,6 @@ function useJIRA({
                   : getResourceIdFromFusionUrl(
                       issue.fields[nexusResourceFieldName]
                     ),
-              resourceLabel: resourceLabel,
             };
           })
         );
