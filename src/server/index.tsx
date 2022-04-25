@@ -14,8 +14,6 @@ import {
   DEFAULT_SERVICE_ACCOUNTS_REALM,
 } from '../shared/store/reducers/config';
 import { DEFAULT_SEARCH_STATE } from '../shared/store/reducers/search';
-import { createProxyMiddleware } from 'http-proxy-middleware';
-import { ClientRequest, IncomingMessage, ServerResponse } from 'http';
 
 const PORT_NUMBER = 8000;
 
@@ -68,32 +66,6 @@ if (process.env.NODE_ENV !== 'production') {
   setupDevEnvironment(app);
 }
 
-// TODO: Stop proxying Jira requests and update to use Delta Jira plugin endpoints when available
-app.use(
-  '/jira',
-
-  createProxyMiddleware({
-    target: 'http://localhost:8080',
-    changeOrigin: true,
-    logLevel: 'debug',
-    pathRewrite: {
-      '^/jira': '',
-    },
-    onProxyReq: (
-      proxyReq: ClientRequest,
-      req: IncomingMessage,
-      res: ServerResponse,
-      options: any
-    ) => {
-      /* Hard-code basic authorization header here for now */
-      proxyReq.setHeader(
-        'Authorization',
-        `Basic ${Buffer.from('username:password').toString('base64')}`
-      );
-    },
-  })
-);
-
 // silent refresh
 app.get(
   `${base}/silent_refresh`,
@@ -117,7 +89,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
         ? '/proxy'
         : process.env.API_ENDPOINT || '',
       basePath: base,
-      clientId: process.env.CLIENT_ID || 'nexus-web',
+      clientId: process.env.CLIENT_ID || 'bbp-nise-dev-nexus-fusion',
       redirectHostName: `${process.env.HOST_NAME ||
         `${req.protocol}://${req.headers.host}`}${base}`,
       serviceAccountsRealm:

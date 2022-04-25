@@ -261,7 +261,9 @@ const accessData = async (
     dataIndex: string;
     sorter?: (dataIndex: string) => any;
   }[] = result.headerProperties.map(headerProp => {
-    const currentConfig = columnConfig.find(c => c.name === headerProp.title);
+    const currentConfig = columnConfig.find(
+      c => c.name === headerProp.dataIndex
+    );
     if (currentConfig && currentConfig.enableSort) {
       return {
         ...headerProp,

@@ -7,7 +7,7 @@ import {
   Statistics,
 } from '@bbp/nexus-sdk';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { Tabs, Popover } from 'antd';
+import { Tabs, Popover, Empty } from 'antd';
 import { SelectOutlined } from '@ant-design/icons';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
@@ -341,6 +341,12 @@ const ProjectView: React.FunctionComponent = () => {
                 <AccessControl
                   path={`/${orgLabel}/${projectLabel}`}
                   permissions={['files/write']}
+                  noAccessComponent={() => (
+                    <Empty>
+                      You don't have the access to create/upload. Please contact
+                      the Administrator for access.
+                    </Empty>
+                  )}
                 >
                   <ResourceCreateUploadContainer
                     orgLabel={orgLabel}
@@ -352,7 +358,13 @@ const ProjectView: React.FunctionComponent = () => {
                 <AccessControl
                   key="quotas-access-control"
                   path={`/${orgLabel}/${projectLabel}`}
-                  permissions={['quotas/read']}
+                  permissions={['test']}
+                  noAccessComponent={() => (
+                    <Empty>
+                      You don't have read access to quotas. Please contact the
+                      Administrator for access.
+                    </Empty>
+                  )}
                 >
                   <QuotasContainer
                     orgLabel={orgLabel}

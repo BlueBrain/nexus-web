@@ -6,7 +6,7 @@ import * as queryString from 'query-string';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, IncomingLink, ExpandedResource } from '@bbp/nexus-sdk';
 import AdminPlugin from '../containers/AdminPluginContainer';
-import VideoPluginContainer from '../containers/VideoPluginContainer';
+import VideoPluginContainer from './VideoPluginContainer/VideoPluginContainer';
 import ResourcePlugins from './ResourcePlugins';
 import usePlugins from '../hooks/usePlugins';
 import useMeasure from '../hooks/useMeasure';
@@ -29,7 +29,6 @@ import ResourceViewActionsContainer from './ResourceViewActionsContainer';
 import ResourceMetadata from '../components/ResourceMetadata';
 import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
 import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
-
 export type PluginMapping = {
   [pluginKey: string]: object;
 };

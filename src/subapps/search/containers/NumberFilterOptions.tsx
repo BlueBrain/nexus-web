@@ -49,14 +49,20 @@ const NumberFilterOptions: React.FC<{
 
   const firstRender = React.useRef<boolean>(true);
 
-  const [missingValues, setMissingValues] = React.useState<boolean>(false);
+  // check if 'isMissing' filter is applied
+  const isMissing = filter
+    .find(f => f.filterTerm === field.name)
+    ?.filters.includes('isMissing');
+  const [missingValues, setMissingValues] = React.useState<boolean>(
+    isMissing || false
+  );
 
   const [rangeMin, setRangeMin] = React.useState<number>(
     fieldFilter?.filters[2] ? parseFloat(fieldFilter?.filters[2]) : 0
   );
 
   const [rangeMax, setRangeMax] = React.useState<number>(
-    fieldFilter?.filters[3] ? parseFloat(fieldFilter?.filters[3]) : 100000
+    fieldFilter?.filters[3] ? parseFloat(fieldFilter?.filters[3]) : Infinity
   );
 
   const [rangeStart, setRangeStart] = React.useState<number | undefined>(
@@ -103,7 +109,7 @@ const NumberFilterOptions: React.FC<{
         };
       });
 
-      setAverage(all.aggregations.stats.average);
+      setAverage(all.aggregations.stats.avg);
       setSum(all.aggregations.stats.sum);
       setRangeMin(all.aggregations.stats.min);
       setRangeMax(all.aggregations.stats.max);
@@ -165,11 +171,13 @@ const NumberFilterOptions: React.FC<{
       });
     }
   }, [rangeStart, rangeEnd, missingValues]);
-  const renderMissing = () => {
+
+  const renderMissing = React.useCallback(() => {
     return missingCount ? (
       <Form.Item>
         <Checkbox
           disabled={missingCount === 0}
+          checked={missingValues}
           onChange={e => {
             setMissingValues(e.target.checked);
           }}
@@ -178,7 +186,8 @@ const NumberFilterOptions: React.FC<{
         </Checkbox>
       </Form.Item>
     ) : null;
-  };
+  }, [missingValues, missingCount]);
+
   return (
     <>
       <Form.Item>
@@ -237,7 +246,7 @@ const NumberFilterOptions: React.FC<{
                 <Statistic
                   title="Sum"
                   value={sum}
-                  precision={5}
+                  precision={2}
                   valueStyle={{
                     fontSize: 20,
                   }}
@@ -245,7 +254,7 @@ const NumberFilterOptions: React.FC<{
                 <Statistic
                   title="Average"
                   value={average}
-                  precision={5}
+                  precision={2}
                   valueStyle={{
                     fontSize: 20,
                   }}
@@ -255,7 +264,7 @@ const NumberFilterOptions: React.FC<{
                 <Statistic
                   title="Max"
                   value={rangeMax}
-                  precision={5}
+                  precision={2}
                   valueStyle={{
                     fontSize: 20,
                   }}
@@ -263,7 +272,7 @@ const NumberFilterOptions: React.FC<{
                 <Statistic
                   title="Min"
                   value={rangeMin}
-                  precision={5}
+                  precision={2}
                   valueStyle={{
                     fontSize: 20,
                   }}

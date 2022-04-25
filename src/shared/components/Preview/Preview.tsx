@@ -4,9 +4,12 @@ import {
   NexusClient,
   GetFileOptions,
   NexusFile,
+  ArchivePayload,
 } from '@bbp/nexus-sdk';
-import { Button, Collapse, Table } from 'antd';
-
+import { Button, Collapse, Table, Tooltip } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
+import { AccessControl } from '@bbp/react-nexus';
+import { uuidv4 } from '../../utils';
 import PDFViewer from './PDFPreview';
 import useNotification from '../../hooks/useNotification';
 import TableViewerContainer from '../../containers/TableViewerContainer';
@@ -48,8 +51,36 @@ const Preview: React.FC<{
   handleCollapseChanged: handleCollapsedChanged,
 }) => {
   const notification = useNotification();
+  const [selectedRows, setSelectedRows] = React.useState<any[]>([]);
   const [previewAsset, setPreviewAsset] = React.useState<any | undefined>();
   const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
+  const renderFileSize = (contentSize: {
+    value: string;
+    unitCode?: string;
+  }) => {
+    if (!contentSize) {
+      return '-';
+    }
+    if (contentSize.unitCode) {
+      if (contentSize.unitCode.toLocaleLowerCase() === 'kilo bytes') {
+        return `${contentSize.value} KB`;
+      }
+      if (contentSize.unitCode.toLocaleLowerCase() === 'mega bytes') {
+        return `${contentSize.value} MB`;
+      }
+    }
+    const sizeInMB = (parseInt(contentSize.value, 10) / 1000000).toFixed(2);
+    if (sizeInMB !== '0.00') {
+      return `${sizeInMB} MB`;
+    }
+
+    return `${contentSize.value} Bytes`;
+  };
+
+  const isNexusFile = (url: string) => {
+    const resourceId = parseResourceId(url);
+    return resourceId !== '';
+  };
 
   const columns = [
     {
@@ -59,13 +90,19 @@ const Preview: React.FC<{
       render: (text: string) => text || '-',
     },
     {
-      title: 'Asset Type / Format',
+      title: 'Asset Type / Encoding Format',
       dataIndex: 'encodingFormat',
       key: 'encodingFormat',
       render: (text: string) => text || '-',
     },
     {
-      title: '',
+      title: 'File Size',
+      dataIndex: 'contentSize',
+      key: 'contentSize',
+      render: renderFileSize,
+    },
+    {
+      title: 'Actions',
       dataIndex: 'asset',
       key: 'actions',
       render: (asset: {
@@ -76,22 +113,96 @@ const Preview: React.FC<{
         return (
           <>
             <Button
+              onClick={() =>
+                downloadSingleFile(nexus, orgLabel, projectLabel, asset)
+              }
+              disabled={!isNexusFile(asset.url)}
+            >
+              Download
+            </Button>
+            <Button onClick={() => copyURI(asset.url)}>Copy Location</Button>
+            <Button
               onClick={() => setPreviewAsset(asset)}
               disabled={!isSupportedFile(asset)}
             >
               Preview
-            </Button>
-            <Button onClick={() => copyURI(asset.url)}>Copy URI</Button>
-            <Button
-              onClick={() => download(nexus, orgLabel, projectLabel, asset)}
-            >
-              Download
             </Button>
           </>
         );
       },
     },
   ];
+
+  const downloadMultipleFiles = async () => {
+    console.log(selectedRows);
+    const resourcesPayload = selectedRows
+      .map(row => {
+        return row.asset.url;
+      })
+      .map(url => {
+        const resourceId = parseResourceId(url);
+        return {
+          resourceId,
+          '@type': 'File',
+          project: `${orgLabel}/${projectLabel}`,
+          path: `/${projectLabel}/${encodeURIComponent(resourceId)}`,
+        };
+      });
+    const archiveId = uuidv4();
+    const payload: ArchivePayload = {
+      archiveId,
+      resources: resourcesPayload,
+    };
+
+    try {
+      await nexus.Archive.create(orgLabel, projectLabel, payload);
+    } catch (error) {
+      notification.error({
+        message: 'Failed to download the file',
+        description: error.reason || error.message,
+      });
+    }
+    const archive = (await nexus.Archive.get(
+      orgLabel,
+      projectLabel,
+      archiveId,
+      {
+        as: 'x-tar',
+      }
+    )) as string;
+    const blob = new Blob([archive]);
+    downloadBlobHelper(blob, `${archiveId}.tar.gz`);
+  };
+
+  const downloadButton = (disabled: boolean) => {
+    const isDisabled = disabled || selectedRows.length <= 0;
+    const disabledToolTip =
+      selectedRows.length <= 0
+        ? 'Please Select files to download'
+        : 'You don’t have the required permissions to create an archive for some of the selected resources. Please contact your project administrator to request to be granted the required archives/write permission.';
+    const btn = (
+      <Button
+        onClick={() => {
+          downloadMultipleFiles();
+        }}
+        style={{
+          float: 'right',
+          marginBottom: '10px',
+        }}
+        type={'primary'}
+        icon={<DownloadOutlined />}
+        disabled={isDisabled}
+      >
+        Download Selected File(s)
+      </Button>
+    );
+
+    if (isDisabled) {
+      return <Tooltip title={disabledToolTip}>{btn}</Tooltip>;
+    }
+
+    return btn;
+  };
 
   const copyURI = (id: string) => {
     try {
@@ -104,7 +215,7 @@ const Preview: React.FC<{
     }
   };
 
-  const download = async (
+  const downloadSingleFile = async (
     nexus: NexusClient,
     orgLabel: string,
     projectLabel: string,
@@ -211,9 +322,38 @@ const Preview: React.FC<{
         activeKey={collapsed ? 'preview' : undefined}
       >
         <Collapse.Panel header="Preview" key="preview">
+          <AccessControl
+            path={`/${orgLabel}/${projectLabel}`}
+            permissions={['archives/write']}
+            noAccessComponent={() => downloadButton(true)}
+            loadingComponent={downloadButton(false)}
+          >
+            {downloadButton(false)}
+          </AccessControl>
           <Table
+            rowSelection={{
+              checkStrictly: false,
+              onSelect: (record: any, selected: any) => {
+                if (selected) {
+                  setSelectedRows([...selectedRows, record]);
+                } else {
+                  const currentRows = selectedRows.filter(
+                    s => s.key !== record.key
+                  );
+                  setSelectedRows(currentRows);
+                }
+              },
+              onSelectAll: (select, selectedRows) => {
+                if (select) {
+                  setSelectedRows(selectedRows);
+                } else {
+                  setSelectedRows([]);
+                }
+              },
+            }}
             columns={columns}
             dataSource={getResourceAssets(resource)}
+            bordered={true}
           ></Table>
         </Collapse.Panel>
       </Collapse>
