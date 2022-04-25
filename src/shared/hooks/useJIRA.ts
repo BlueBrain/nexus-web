@@ -6,6 +6,7 @@ import { generatePath } from 'react-router-dom';
 import { RootState } from '../store/reducers';
 import { getResourceLabel, labelOf, makeProjectUri } from '../utils';
 import useLocalStorage from './useLocalStorage';
+import useNotification from './useNotification';
 
 /**
  * Manages our JIRA data model
@@ -32,10 +33,13 @@ function useJIRA({
     jiraProjectCustomFieldLabel,
   } = useSelector((state: RootState) => state.config);
 
+  const notification = useNotification();
+
   const [isJiraConnected, setIsJiraConnected] = useLocalStorage<boolean>(
     'isJiraConnected',
     false
   );
+
   const [jiraAuthUrl, setJiraAuthUrl] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const { apiEndpoint, jiraUrl: jiraWebBaseUrl } = useSelector(
@@ -44,12 +48,6 @@ function useJIRA({
   const jiraAPIBaseUrl = `${apiEndpoint}/jira`;
   const [linkedIssues, setLinkedIssues] = React.useState<any[]>([]);
   const [projects, setProjects] = React.useState<any[]>([]);
-
-  // React.useEffect(() => {
-  //   if (isJiraConnected && projects) {
-  //     setIsLoading(false);
-  //   }
-  // }, [projects]);
 
   /**
    * First step in auth flow - get url from App which
@@ -65,6 +63,12 @@ function useJIRA({
       })
       .then(response => {
         setJiraAuthUrl(response.value);
+      })
+      .catch(e => {
+        notification.error({
+          message: 'Error connecting to Jira',
+          description: e.reason ? e.reason : null,
+        });
       });
   };
 
@@ -79,9 +83,8 @@ function useJIRA({
       .then(response => {
         setIsJiraConnected(true);
       })
-      .catch(r => {
-        setIsJiraConnected(false);
-        console.log('An error occured whilst trying to authenticate');
+      .catch(e => {
+        handleJiraError(e);
       });
   };
 
@@ -110,7 +113,7 @@ function useJIRA({
         headers: { 'Content-Type': 'application/json' },
       })
       .catch(e => {
-        setIsJiraConnected(false);
+        handleJiraError(e);
       });
   };
 
@@ -139,7 +142,7 @@ function useJIRA({
         headers: { 'Content-Type': 'application/json' },
       })
       .catch(e => {
-        setIsJiraConnected(false);
+        handleJiraError(e);
       });
   };
 
@@ -160,8 +163,32 @@ function useJIRA({
         }),
       })
       .catch(e => {
-        setIsJiraConnected(false);
+        handleJiraError(e);
       });
+  };
+
+  const handleJiraError = (e: any) => {
+    if (!isJiraConnected) {
+      // ignore if we are not connected
+      return;
+    }
+    if ('@type' in e) {
+      if (
+        e['@type'] === 'AuthorizationFailed' ||
+        e['@type'] === 'NoTokenError'
+      ) {
+        setIsJiraConnected(false);
+      }
+      notification.error({
+        message: e['@type'],
+        description: 'reason' in e && e.reason,
+      });
+      return;
+    }
+    notification.error({
+      message: 'Unknown error',
+      description: 'An error occurred',
+    });
   };
 
   const getProjectIssues = () => {
@@ -174,7 +201,7 @@ function useJIRA({
         }),
       })
       .catch(e => {
-        setIsJiraConnected(false);
+        handleJiraError(e);
       });
   };
 
@@ -208,7 +235,7 @@ function useJIRA({
         fetchLinkedIssues();
       })
       .catch(e => {
-        setIsJiraConnected(false);
+        handleJiraError(e);
       });
   };
   const linkIssue = (issueUrl: string) => {
@@ -238,7 +265,7 @@ function useJIRA({
         fetchLinkedIssues();
       })
       .catch(e => {
-        setIsJiraConnected(false);
+        handleJiraError(e);
       });
   };
   const unlinkIssue = (issueKey: string) => {
@@ -261,7 +288,7 @@ function useJIRA({
         fetchLinkedIssues();
       })
       .catch(e => {
-        setIsJiraConnected(false);
+        handleJiraError(e);
       });
   };
 
