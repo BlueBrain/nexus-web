@@ -243,6 +243,14 @@ function useJIRA({
       ? issueUrl.substring(issueUrl.lastIndexOf('/') + 1)
       : issueUrl;
 
+    // check issue exists first
+    nexus
+      .httpGet({
+        path: `${jiraAPIBaseUrl}/issue/${issueKey}`,
+        headers: { 'Content-Type': 'application/json' },
+      })
+      .catch(e => handleJiraError(e));
+
     return fetch(`${jiraAPIBaseUrl}/issue/${issueKey}`, {
       method: 'PUT',
       headers: {
