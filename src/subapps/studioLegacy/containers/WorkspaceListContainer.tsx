@@ -5,7 +5,6 @@ import { Button, Modal } from 'antd';
 import useNotification from '../../../shared/hooks/useNotification';
 import TabList from '../../../shared/components/Tabs/TabList';
 import AddWorkspaceContainer from './AddWorkspaceContainer';
-import './WorkspaceList.less';
 import WorkspaceForm from './WorkspaceFormContainer';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import { StudioContext } from '../views/StudioView';
@@ -241,7 +240,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   ]);
 
   return (
-    <div className="workspace-list-container">
+    <div className="workspace">
       <TabList
         items={workspaces.map(w => ({
           label: w.label,
@@ -264,13 +263,11 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
         OnEdit={editWorkspace}
       >
         {selectedWorkspace ? (
-          <div className="workspace">
-            <DashboardList
-              key={workspaceId}
-              dashboards={dashboards}
-              refreshList={onListUpdate}
-            />{' '}
-          </div>
+          <DashboardList
+            key={workspaceId}
+            dashboards={dashboards}
+            refreshList={onListUpdate}
+          />
         ) : null}
       </TabList>
       <Modal
