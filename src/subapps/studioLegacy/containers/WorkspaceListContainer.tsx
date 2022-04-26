@@ -248,9 +248,9 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
     />
   );
 
-	const editButtonWrapper = (id: string) => {
-		if(!id && selectedWorkspace) id = selectedWorkspace["@id"];
-		const editButton = (
+  const editButtonWrapper = (id: string) => {
+    if (!id && selectedWorkspace) id = selectedWorkspace['@id'];
+    const editButton = (
       <Button
         key={id}
         block
