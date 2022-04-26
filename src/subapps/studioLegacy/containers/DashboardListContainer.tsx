@@ -404,7 +404,7 @@ const DashboardList: React.FunctionComponent<DashboardListProps> = ({
             options={{
               disableDelete: true,
               disableAddFromCart: true,
-              disableEdit: true,
+              disableEdit: false,
             }}
             showEdit={showDataTableEdit}
             toggledEdit={show => setShowDataTableEdit(show)}
