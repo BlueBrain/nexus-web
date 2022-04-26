@@ -106,7 +106,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   const [showEditForm, setShowEditForm] = React.useState<boolean>(
     showEdit || false
   );
-
+		
   React.useEffect(() => {
     setShowEditForm(showEdit || false);
   }, [showEdit]);

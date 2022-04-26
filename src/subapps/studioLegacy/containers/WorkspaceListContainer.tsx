@@ -3,7 +3,6 @@ import { NexusClient, Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Button, Popover, Modal, Menu } from 'antd';
 import useNotification from '../../../shared/hooks/useNotification';
-import TabList from '../../../shared/components/Tabs/TabList';
 import AddWorkspaceContainer from './AddWorkspaceContainer';
 import './WorkspaceList.less';
 import WorkspaceForm from './WorkspaceFormContainer';
@@ -256,8 +255,6 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
         block
         type="default"
         icon={<EditOutlined />}
-        className="ant-btn ant-btn-default ant-btn-block"
-        size="large"
         onClick={e => {
           setWorkSpaceToEdit(id);
           setShowEdit(true);
