@@ -169,7 +169,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
       })
     )
       .then(values => {
-        values.map(function(workspace) {
+        values.map(workspace => {
           Promise.all(
             workspace.dashboards.map((dashboardObject: Dashboard) => {
               return nexus.Resource.get(
@@ -248,15 +248,15 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   );
 
   const editButtonWrapper = (id: string) => {
-    if (!id && selectedWorkspace) id = selectedWorkspace['@id'];
+    const tempId = !id && selectedWorkspace ? selectedWorkspace['@id'] : id;
     const editButton = (
       <Button
-        key={id}
+        key={tempId}
         block
         type="default"
         icon={<EditOutlined />}
         onClick={e => {
-          setWorkSpaceToEdit(id);
+          setWorkSpaceToEdit(tempId);
           setShowEdit(true);
           e.stopPropagation();
         }}
@@ -338,14 +338,14 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
         selectedKeys={[currentDashboard]}
         mode="horizontal"
       >
-        {workspaces.map(function(workspace, index) {
+        {workspaces.map(workspace => {
           return (
             <SubMenu
               icon={<DownOutlined />}
               key={workspace['@id']}
               title={workspace.label}
             >
-              {workspace.dashboards.map(function(d: any, i: any) {
+              {workspace.dashboards.map((d: any) => {
                 return <Menu.Item key={d['@id']}>{d.label}</Menu.Item>;
               })}
             </SubMenu>
