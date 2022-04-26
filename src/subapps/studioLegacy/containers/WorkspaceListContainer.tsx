@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { NexusClient, Resource } from '@bbp/nexus-sdk';
+import { NexusClient, Resource, DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Button, Popover, Modal, Menu } from 'antd';
 import useNotification from '../../../shared/hooks/useNotification';
 import AddWorkspaceContainer from './AddWorkspaceContainer';
+import CreateDashboardContainer from './DashBoardEditor/CreateDashboardContainer';
 import './WorkspaceList.less';
 import WorkspaceForm from './WorkspaceFormContainer';
 import useQueryString from '../../../shared/hooks/useQueryString';
@@ -15,6 +16,8 @@ import {
   DownOutlined,
   SmallDashOutlined,
   EditOutlined,
+  PlusOutlined,
+  DeleteOutlined,
 } from '@ant-design/icons';
 import { createNodesAndEdgesFromResourceLinks } from '../../../shared/containers/GraphContainer/Graph';
 
@@ -110,6 +113,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
     Resource<any>
   >();
   const [showEdit, setShowEdit] = React.useState<boolean>(false);
+  const [showCreateModal, setShowCreateModal] = React.useState(false);
   const [workspaceToEdit, setWorkSpaceToEdit] = React.useState<string>();
   const [currentDashboard, setCurrentDashboard] = React.useState<string>('');
   const [currentWorkspace, setCurrentWorkspace] = React.useState<string>('');
@@ -233,36 +237,42 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
     }
   }, [dashboards]);
 
-  const tabAction = (
-    <AddWorkspaceContainer
-      key={studioResource['@id']}
-      orgLabel={orgLabel}
-      projectLabel={projectLabel}
-      studio={studioResource}
-      showModal={showModal}
-      onCancel={() => {
-        setShowModal(false);
-      }}
-      onAddWorkspace={onListUpdate}
-    />
-  );
-
   const editButtonWrapper = (id: string) => {
     const tempId = !id && selectedWorkspace ? selectedWorkspace['@id'] : id;
     const editButton = (
-      <Button
-        key={tempId}
-        block
-        type="default"
-        icon={<EditOutlined />}
-        onClick={e => {
-          setWorkSpaceToEdit(tempId);
-          setShowEdit(true);
-          e.stopPropagation();
-        }}
-      >
-        Edit
-      </Button>
+      <>
+        <Button
+          block
+          type="default"
+          icon={<PlusOutlined />}
+          onClick={e => {
+            setShowModal(true);
+          }}
+        >
+          Add
+        </Button>
+        <Button
+          block
+          type="default"
+          icon={<DeleteOutlined />}
+          onClick={e => {
+            setDeleteConfirmation(true);
+          }}
+        >
+          Remove
+        </Button>
+        <Button
+          block
+          type="default"
+          icon={<EditOutlined />}
+          onClick={e => {
+            setWorkSpaceToEdit(tempId);
+            setShowEdit(true);
+          }}
+        >
+          Edit
+        </Button>
+      </>
     );
     return resourcesWritePermissionsWrapper(editButton, permissionsPath);
   };
@@ -348,6 +358,19 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
               {workspace.dashboards.map((d: any) => {
                 return <Menu.Item key={d['@id']}>{d.label}</Menu.Item>;
               })}
+              <Menu.Item key={`${workspace['@id']}-add`}>
+                <Button
+                  block
+                  type="default"
+                  icon={<PlusOutlined />}
+                  onClick={e => {
+                    setWorkSpaceToEdit(workspace['@id']);
+                    setShowCreateModal(true);
+                  }}
+                >
+                  New Dashboard
+                </Button>
+              </Menu.Item>
             </SubMenu>
           );
         })}
@@ -385,6 +408,39 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
       >
         <p>Are you sure you want to delete ?</p>
       </Modal>
+      <span>
+        {showModal ? (
+          <AddWorkspaceContainer
+            key={studioResource['@id']}
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+            studio={studioResource}
+            showModal={showModal}
+            onCancel={() => {
+              setShowModal(false);
+            }}
+            onAddWorkspace={onListUpdate}
+          />
+        ) : null}
+      </span>
+      <span>
+        {showCreateModal && !!workspaceToEdit ? (
+          <CreateDashboardContainer
+            showCreateModal={showCreateModal}
+            onCancel={() => setShowCreateModal(false)}
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+            workspaceId={workspaceToEdit as string}
+            onSuccess={onListUpdate}
+            key={workspaceToEdit}
+            viewId={
+              dashboards.length > 0
+                ? dashboards[0].view
+                : DEFAULT_SPARQL_VIEW_ID
+            }
+          />
+        ) : null}
+      </span>
       {showEdit && !!workspaceToEdit ? (
         <WorkspaceForm
           orgLabel={orgLabel}
