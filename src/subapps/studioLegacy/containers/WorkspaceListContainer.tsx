@@ -1,21 +1,25 @@
-import * as React from 'react'
-import { NexusClient, Resource } from '@bbp/nexus-sdk'
-import { useNexusContext } from '@bbp/react-nexus'
-import { Button, Modal, Menu } from 'antd'
-import useNotification from '../../../shared/hooks/useNotification'
-import TabList from '../../../shared/components/Tabs/TabList'
-import AddWorkspaceContainer from './AddWorkspaceContainer'
-import './WorkspaceList.less'
-import WorkspaceForm from './WorkspaceFormContainer'
-import useQueryString from '../../../shared/hooks/useQueryString'
-import { StudioContext } from '../views/StudioView'
-import DashboardList from '../containers/DashboardListContainer'
-import { resourcesWritePermissionsWrapper } from '../../../shared/utils/permission'
-import { ResultTableFields } from '../../../shared/types/search'
-import { DownOutlined, SmallDashOutlined } from '@ant-design/icons'
-import { createNodesAndEdgesFromResourceLinks } from '../../../shared/containers/GraphContainer/Graph'
+import * as React from 'react';
+import { NexusClient, Resource } from '@bbp/nexus-sdk';
+import { useNexusContext } from '@bbp/react-nexus';
+import { Button, Popover, Modal, Menu } from 'antd';
+import useNotification from '../../../shared/hooks/useNotification';
+import TabList from '../../../shared/components/Tabs/TabList';
+import AddWorkspaceContainer from './AddWorkspaceContainer';
+import './WorkspaceList.less';
+import WorkspaceForm from './WorkspaceFormContainer';
+import useQueryString from '../../../shared/hooks/useQueryString';
+import { StudioContext } from '../views/StudioView';
+import DashboardList from '../containers/DashboardListContainer';
+import { resourcesWritePermissionsWrapper } from '../../../shared/utils/permission';
+import { ResultTableFields } from '../../../shared/types/search';
+import {
+  DownOutlined,
+  SmallDashOutlined,
+  EditOutlined,
+} from '@ant-design/icons';
+import { createNodesAndEdgesFromResourceLinks } from '../../../shared/containers/GraphContainer/Graph';
 
-const { SubMenu } = Menu
+const { SubMenu } = Menu;
 
 const removeWorkSpace = async (
   nexus: NexusClient,
@@ -25,22 +29,22 @@ const removeWorkSpace = async (
   orgLabel: string,
   studioResourceId: string
 ) => {
-  const workspaces = studio.workspaces
+  const workspaces = studio.workspaces;
   if (workspaces) {
-    const index = workspaces.indexOf(workspaceId)
+    const index = workspaces.indexOf(workspaceId);
     if (index !== -1) {
-      workspaces.splice(index, 1)
+      workspaces.splice(index, 1);
     }
   }
   const studioSource = await nexus.Resource.getSource<StudioResource>(
     orgLabel,
     projectLabel,
     encodeURIComponent(studio['@id'])
-  )
+  );
   const studioUpdatePayload = {
     ...studioSource,
     workspaces,
-  }
+  };
 
   await nexus.Resource.update(
     orgLabel,
@@ -48,78 +52,78 @@ const removeWorkSpace = async (
     encodeURIComponent(studioResourceId),
     studio._rev,
     studioUpdatePayload
-  )
+  );
 
   const latestWorkspace = (await nexus.Resource.get(
     orgLabel,
     projectLabel,
     encodeURIComponent(workspaceId)
-  )) as Resource
+  )) as Resource;
   await nexus.Resource.deprecate(
     orgLabel,
     projectLabel,
     encodeURIComponent(workspaceId),
     Number(latestWorkspace._rev)
-  )
-}
+  );
+};
 
 type StudioResource = Resource<{
-  label: string
-  description?: string
-  workspaces?: [string]
-}>
+  label: string;
+  description?: string;
+  workspaces?: [string];
+}>;
 
 type WorkspaceListProps = {
-  workspaceIds: string[]
-  studioResource: StudioResource
-  onListUpdate(): void
-}
+  workspaceIds: string[];
+  studioResource: StudioResource;
+  onListUpdate(): void;
+};
 export type Dashboard = {
-  dashboard: string
-  label?: string
-  view: string
-  fields?: ResultTableFields[]
-}
+  dashboard: string;
+  label?: string;
+  view: string;
+  fields?: ResultTableFields[];
+};
 
 const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
   workspaceIds = [],
   studioResource,
   onListUpdate,
 }) => {
-  const notification = useNotification()
+  const notification = useNotification();
   const [deleteConfirmation, setDeleteConfirmation] = React.useState<boolean>(
     false
-  )
-  const [deleteWokspaceId, setDeleteWorkspaceId] = React.useState<string>()
-  const [showModal, setShowModal] = React.useState<boolean>(false)
-  const [queryParams, setQueryString] = useQueryString()
-  const studioContext = React.useContext(StudioContext)
+  );
+  const [deleteWokspaceId, setDeleteWorkspaceId] = React.useState<string>();
+  const [showModal, setShowModal] = React.useState<boolean>(false);
+  const [queryParams, setQueryString] = useQueryString();
+  const studioContext = React.useContext(StudioContext);
   const {
     orgLabel,
     projectLabel,
     workspaceId,
     isWritable,
     dashboardId,
-  } = studioContext
-  const permissionsPath = `/${orgLabel}/${projectLabel}`
-  const [workspaces, setWorkspaces] = React.useState<Resource<any>[]>([])
+  } = studioContext;
+  const permissionsPath = `/${orgLabel}/${projectLabel}`;
+  const [workspaces, setWorkspaces] = React.useState<Resource<any>[]>([]);
   const [selectedWorkspace, setSelectedWorkspace] = React.useState<
     Resource<any>
-  >()
-  const [showEdit, setShowEdit] = React.useState<boolean>(false)
-  const [workspaceToEdit, setWorkSpaceToEdit] = React.useState<string>()
-  const [currentDashboard, setCurrentDashboard] = React.useState<string>('')
-  const [currentWorkspace, setCurrentWorkspace] = React.useState<string>('')
+  >();
+  const [showEdit, setShowEdit] = React.useState<boolean>(false);
+  const [workspaceToEdit, setWorkSpaceToEdit] = React.useState<string>();
+  const [currentDashboard, setCurrentDashboard] = React.useState<string>('');
+  const [currentWorkspace, setCurrentWorkspace] = React.useState<string>('');
   const dashboards =
     selectedWorkspace && selectedWorkspace['dashboards']
       ? selectedWorkspace['dashboards']
-      : []
+      : [];
   const [
     workspaceDashboardResources,
     setWorkspaceDashboardResources,
-  ] = React.useState<Resource[]>([])
+  ] = React.useState<Resource[]>([]);
 
-  const nexus = useNexusContext()
+  const nexus = useNexusContext();
 
   const fetchAndSetupDashboards = (dashboards: Dashboard[]) => {
     Promise.all(
@@ -130,30 +134,30 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
           encodeURIComponent(dashboardObject.dashboard)
         ) as Promise<
           Resource<{
-            label: string
-            description?: string
-            dataQuery: string
-            plugins: string[]
+            label: string;
+            description?: string;
+            dataQuery: string;
+            plugins: string[];
           }>
-        >
+        >;
       })
     )
       .then(values => {
         const sortedValues = values.sort(({ label: a }, { label: b }) => {
           if (a < b) {
-            return -1
+            return -1;
           }
           if (a > b) {
-            return 1
+            return 1;
           }
-          return 0
-        })
-        setWorkspaceDashboardResources(sortedValues)
+          return 0;
+        });
+        setWorkspaceDashboardResources(sortedValues);
       })
       .catch(e => {
         // TODO: show a meaningful error to the user.
-      })
-  }
+      });
+  };
 
   React.useEffect(() => {
     Promise.all(
@@ -162,11 +166,11 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
           orgLabel,
           projectLabel,
           encodeURIComponent(workspaceId)
-        ) as Promise<Resource>
+        ) as Promise<Resource>;
       })
     )
       .then(values => {
-        values.map(function (workspace) {
+        values.map(function(workspace) {
           Promise.all(
             workspace.dashboards.map((dashboardObject: Dashboard) => {
               return nexus.Resource.get(
@@ -175,39 +179,39 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
                 encodeURIComponent(dashboardObject.dashboard)
               ) as Promise<
                 Resource<{
-                  label: string
-                  description?: string
-                  dataQuery: string
-                  plugins: string[]
+                  label: string;
+                  description?: string;
+                  dataQuery: string;
+                  plugins: string[];
                 }>
-              >
+              >;
             })
           ).then(dashValues => {
-            workspace.dashboards = dashValues
-          })
-        })
+            workspace.dashboards = dashValues;
+          });
+        });
         setWorkspaces(
           values.sort(({ _createdAt: dateA }, { _createdAt: dateB }) => {
-            const a = new Date(dateA)
-            const b = new Date(dateB)
+            const a = new Date(dateA);
+            const b = new Date(dateB);
             if (a > b) {
-              return 1
+              return 1;
             }
             if (a < b) {
-              return -1
+              return -1;
             }
-            return 0
+            return 0;
           })
-        )
+        );
         if (workspaceId) {
           const workspaceFilteredById = values.find(
             w => w['@id'] === workspaceId
-          )
+          );
           setSelectedWorkspace(
             workspaceFilteredById ? workspaceFilteredById : values[0]
-          )
+          );
         } else {
-          setSelectedWorkspace(values[0])
+          setSelectedWorkspace(values[0]);
           setQueryString({
             ...queryParams,
             workspaceId: values[0]['@id'],
@@ -216,19 +220,19 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
             // remove keys using undefined
             // https://www.npmjs.com/package/query-string#falsy-values
             dashboardId: undefined,
-          })
+          });
         }
       })
       .catch(e => {
         // TODO: show a meaningful error to the user.
-      })
-  }, [workspaceIds])
+      });
+  }, [workspaceIds]);
 
   React.useEffect(() => {
     if (dashboards.length > 0) {
-      fetchAndSetupDashboards(dashboards)
+      fetchAndSetupDashboards(dashboards);
     }
-  }, [dashboards])
+  }, [dashboards]);
 
   const tabAction = (
     <AddWorkspaceContainer
@@ -238,30 +242,33 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
       studio={studioResource}
       showModal={showModal}
       onCancel={() => {
-        setShowModal(false)
+        setShowModal(false);
       }}
       onAddWorkspace={onListUpdate}
     />
-  )
+  );
 
-  const editButtonWrapper = (id: string) => {
-    const editButton = (
+	const editButtonWrapper = (id: string) => {
+		if(!id && selectedWorkspace) id = selectedWorkspace["@id"];
+		const editButton = (
       <Button
         key={id}
-        className='studio-edit-button'
-        type='link'
-        size='small'
+        block
+        type="default"
+        icon={<EditOutlined />}
+        className="ant-btn ant-btn-default ant-btn-block"
+        size="large"
         onClick={e => {
-          setWorkSpaceToEdit(id)
-          setShowEdit(true)
-          e.stopPropagation()
+          setWorkSpaceToEdit(id);
+          setShowEdit(true);
+          e.stopPropagation();
         }}
       >
         Edit
       </Button>
-    )
-    return resourcesWritePermissionsWrapper(editButton, permissionsPath)
-  }
+    );
+    return resourcesWritePermissionsWrapper(editButton, permissionsPath);
+  };
 
   const editWorkspace = React.useCallback(
     async (
@@ -269,22 +276,22 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
       action: 'add' | 'remove'
     ) => {
       if (action === 'add') {
-        setShowModal(true)
+        setShowModal(true);
       } else {
-        setDeleteWorkspaceId(e.toString())
-        setDeleteConfirmation(true)
+        setDeleteWorkspaceId(e.toString());
+        setDeleteConfirmation(true);
       }
     },
     [orgLabel, projectLabel, studioResource, nexus]
-  )
+  );
 
   const deleteWorkSpaceCallBack = React.useCallback(async () => {
     if (!deleteWokspaceId) {
-      return
+      return;
     }
     try {
-      setDeleteConfirmation(false)
-      setDeleteWorkspaceId(undefined)
+      setDeleteConfirmation(false);
+      setDeleteWorkspaceId(undefined);
       await removeWorkSpace(
         nexus,
         deleteWokspaceId,
@@ -292,15 +299,15 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
         projectLabel,
         orgLabel,
         studioResource['@id']
-      )
-      onListUpdate()
+      );
+      onListUpdate();
       notification.success({
         message: 'Removed workspace succesfully!',
-      })
+      });
     } catch (ex) {
       notification.error({
         message: 'Failed to remove workspace!',
-      })
+      });
     }
   }, [
     deleteConfirmation,
@@ -309,51 +316,58 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
     projectLabel,
     studioResource,
     nexus,
-  ])
+  ]);
 
   const handleClick = (e: any) => {
     const currentWorkspaceId = e.item.node.parentElement.id
       .slice(0, -5)
-      .toString()
-    setCurrentWorkspace(currentWorkspaceId)
+      .toString();
+    setCurrentWorkspace(currentWorkspaceId);
     const workspaceIndex = workspaces.findIndex(
       w => w['@id'] === currentWorkspaceId
-    )
+    );
     if (workspaceIndex !== -1) {
-      setSelectedWorkspace(workspaces[workspaceIndex])
+      setSelectedWorkspace(workspaces[workspaceIndex]);
     } else {
-      setSelectedWorkspace(workspaces[0])
+      setSelectedWorkspace(workspaces[0]);
     }
-    setCurrentDashboard(e.key)
-  }
+    setCurrentDashboard(e.key);
+  };
 
   return (
-    <div className='workspace-list-container'>
+    <div className="workspace-list-container">
       <Menu
         onClick={handleClick}
         selectedKeys={[currentDashboard]}
-        mode='horizontal'
+        mode="horizontal"
       >
-        {workspaces.map(function (workspace, index) {
+        {workspaces.map(function(workspace, index) {
           return (
             <SubMenu
               icon={<DownOutlined />}
               key={workspace['@id']}
               title={workspace.label}
             >
-              {workspace.dashboards.map(function (d: any, i: any) {
-                return <Menu.Item key={d['@id']}>{d.label}</Menu.Item>
+              {workspace.dashboards.map(function(d: any, i: any) {
+                return <Menu.Item key={d['@id']}>{d.label}</Menu.Item>;
               })}
             </SubMenu>
-          )
+          );
         })}
-        <span className='workspace-action'>
-          <Button shape='round' type='default' icon={<SmallDashOutlined />} />
+        <span className="workspace-action">
+          <Popover
+            style={{ background: 'none' }}
+            placement="rightTop"
+            content={editButtonWrapper}
+            trigger="click"
+          >
+            <Button shape="round" type="default" icon={<SmallDashOutlined />} />
+          </Popover>
         </span>
       </Menu>
-      <div className='dashboard-container'>
+      <div className="dashboard-container">
         {selectedWorkspace ? (
-          <div className='workspace'>
+          <div className="workspace">
             <DashboardList
               key={workspaceId}
               dashboards={selectedWorkspace.dashboards}
@@ -364,11 +378,11 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
         ) : null}
       </div>
       <Modal
-        title='Delete Workspace'
+        title="Delete Workspace"
         visible={deleteConfirmation}
         onCancel={() => {
-          setDeleteConfirmation(false)
-          setDeleteWorkspaceId(undefined)
+          setDeleteConfirmation(false);
+          setDeleteWorkspaceId(undefined);
         }}
         onOk={deleteWorkSpaceCallBack}
       >
@@ -384,7 +398,7 @@ const WorkspaceList: React.FunctionComponent<WorkspaceListProps> = ({
         />
       ) : null}
     </div>
-  )
-}
+  );
+};
 
-export default WorkspaceList
+export default WorkspaceList;
