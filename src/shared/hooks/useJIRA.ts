@@ -109,7 +109,7 @@ function useJIRA({
   const getProjects = () => {
     return nexus
       .httpGet({
-        path: `${jiraAPIBaseUrl}/project/recent`,
+        path: `${jiraAPIBaseUrl}/project`,
         headers: { 'Content-Type': 'application/json' },
       })
       .catch(e => {
@@ -175,7 +175,8 @@ function useJIRA({
     if ('@type' in e) {
       if (
         e['@type'] === 'AuthorizationFailed' ||
-        e['@type'] === 'NoTokenError'
+        e['@type'] === 'NoTokenError' ||
+        e['@type'] === 'AccessTokenExpected'
       ) {
         setIsJiraConnected(false);
       }
@@ -269,8 +270,12 @@ function useJIRA({
         },
       }),
     })
-      .then(response => {
-        fetchLinkedIssues();
+      .then(async response => {
+        if (!response.ok) {
+          const error = await response.json();
+          return Promise.reject(error);
+        }
+        return fetchLinkedIssues();
       })
       .catch(e => {
         handleJiraError(e);
@@ -292,8 +297,12 @@ function useJIRA({
         },
       }),
     })
-      .then(response => {
-        fetchLinkedIssues();
+      .then(async response => {
+        if (!response.ok) {
+          const error = await response.json();
+          return Promise.reject(error);
+        }
+        return fetchLinkedIssues();
       })
       .catch(e => {
         handleJiraError(e);
