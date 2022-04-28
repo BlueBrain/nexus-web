@@ -29,7 +29,7 @@ const SortMenuOptions: React.FC<{
         size="small"
         onClick={() => onSortField(SortDirection.ASCENDING)}
       >
-        Sort Ascending
+        Ascending
       </Button>{' '}
       <Button
         className="sort-menu-options__sort-button"
@@ -43,7 +43,7 @@ const SortMenuOptions: React.FC<{
         size="small"
         onClick={() => onSortField(SortDirection.DESCENDING)}
       >
-        Sort Descending
+        Descending
       </Button>
       {sortField && (
         <Button
