@@ -406,6 +406,7 @@ function useJIRA({
   React.useEffect(() => {
     if (!isJiraConnected) {
       getRequestToken();
+      return;
     }
     fetchProjects();
     fetchLinkedIssues();
