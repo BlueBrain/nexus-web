@@ -61,7 +61,7 @@ export const constructNumberFilter = (
   filterTerm: string
 ) => {
   if (filters[0] === 'isMissing') {
-    body.orFilter('bool', missingFilterValueAdder(filterTerm));
+    body.andFilter('bool', missingFilterValueAdder(filterTerm));
     return body;
   }
   const filterObject: any = {};

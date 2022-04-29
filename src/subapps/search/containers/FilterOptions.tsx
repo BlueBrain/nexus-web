@@ -139,6 +139,11 @@ const FilterOptions: React.FC<{
           selected: fieldFilter?.filters.includes('(Missing)'),
           matching: true,
         });
+
+        aggs.sort((x: any, y: any) =>
+          x.selected === y.selected ? 0 : x.selected ? -1 : 1
+        );
+
         setAggregations(aggs);
       }
     );
@@ -149,6 +154,7 @@ const FilterOptions: React.FC<{
       ...a,
       selected: a.filterValue === filterValue ? selected : a.selected,
     }));
+    aggs.sort((x, y) => (x.selected === y.selected ? 0 : x.selected ? -1 : 1));
     applyFilters(aggs);
     setAggregations(aggs);
   };
@@ -195,7 +201,6 @@ const FilterOptions: React.FC<{
       ) && (
         <>
           <Form.Item
-            label="Operator"
             rules={[
               {
                 required: true,
@@ -221,6 +226,7 @@ const FilterOptions: React.FC<{
           {filterType !== 'missing' && (
             <>
               <Input.Search
+                placeholder="Search filter values..."
                 onChange={event => {
                   const val = event.target.value;
 

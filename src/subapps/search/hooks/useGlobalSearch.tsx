@@ -15,7 +15,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../shared/store/reducers';
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
-import { Button, Divider, Tooltip } from 'antd';
+import { Button, Tooltip } from 'antd';
 import { deltaUrlToFusionUrl, labelOf } from '../../../shared/utils';
 import FilterOptions, {
   createKeyWord,
@@ -162,6 +162,8 @@ export type ConfigField =
       optional: boolean;
       fields: { name: string; format: string }[];
       format?: undefined;
+      filterable: boolean;
+      sortable: boolean;
     }
   | {
       name: string;
@@ -170,6 +172,8 @@ export type ConfigField =
       array: boolean;
       optional: boolean;
       fields?: undefined;
+      filterable: boolean;
+      sortable: boolean;
     };
 
 export type SearchLayout = {
@@ -421,23 +425,10 @@ function useGlobalSearchData(
     onSortOptionsChanged();
   };
 
-  const hasKeywordFormatField = (field: ConfigField) => {
-    if (field.format && field.format.includes('keyword')) return true;
-    if (
-      (field.fields && field.fields.find(f => f.format.includes('keyword'))) ||
-      field.name === '@type'
-    ) {
-      return true;
-    }
-
-    // show sort/filter for date.
-    if (field.format && field.format.includes('date')) return true;
-    return false;
-  };
-
   const fieldMenu = (field: ConfigField) => {
     return (
-      <div>
+      <div className="field-menu">
+        <h1>VISIBILITY</h1>
         <Button
           onClick={() => {
             dispatchFieldVisibility({
@@ -454,8 +445,9 @@ function useGlobalSearchData(
           <EyeInvisibleOutlined />
           Hide column
         </Button>
-        {hasKeywordFormatField(field) && (
+        {field.sortable && (
           <>
+            <h1>SORT</h1>
             <SortMenuOptions
               sortField={sortState.find(s => s.fieldName === field.name)}
               onSortField={sortOption => {
@@ -469,7 +461,11 @@ function useGlobalSearchData(
               }}
               onRemoveSort={sortOption => removeSortOption(sortOption)}
             />
-            <Divider />
+          </>
+        )}
+        {field.filterable && (
+          <>
+            <h1>FILTER</h1>
             {field.format?.includes('date') ? (
               <DateFilterOptions
                 filter={filterState}

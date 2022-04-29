@@ -135,13 +135,27 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
 
   React.useEffect(() => {
     if (loginError) {
+      const errorDescription =
+        loginError.error.message === 'Network Error' ? (
+          <>
+            Nexus Web could not connect to the authentication provider.
+            <br />
+            <br />
+            Check your network connection
+          </>
+        ) : (
+          <>
+            The following error occurred:
+            <br />
+            <br />
+            {loginError.error.message}
+          </>
+        );
       notification.error({
         message: 'We could not log you in',
         description: (
           <div>
-            <p>We could not log you in due to :</p>{' '}
-            <p>{loginError.error.message}</p>
-            <p>Please contact your system administrators.</p>
+            <p>{errorDescription}</p>
           </div>
         ),
       });
@@ -165,7 +179,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   const login = async (realmName: string) => {
     try {
       const destinationParams = getDestinationParam();
-      history.push(`${location.pathname}/${destinationParams}`);
+      history.push(`/${destinationParams}`);
     } catch (ex) {
       // do nothing.
     }

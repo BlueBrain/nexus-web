@@ -7,7 +7,7 @@ import {
   Statistics,
 } from '@bbp/nexus-sdk';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { Tabs, Popover } from 'antd';
+import { Tabs, Popover, Empty } from 'antd';
 import { SelectOutlined } from '@ant-design/icons';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
@@ -28,6 +28,7 @@ import { RootState } from '../../../shared/store/reducers';
 import './ProjectView.less';
 import ResourceCreateUploadContainer from '../../../shared/containers/ResourceCreateUploadContainer';
 import { makeOrganizationUri } from '../../../shared/utils';
+import JiraPluginProjectContainer from '../containers/JiraContainer';
 
 const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
@@ -67,6 +68,8 @@ const ProjectView: React.FunctionComponent = () => {
         return 'settings';
       case `${base}graph-analytics`:
         return 'graph-analytics';
+      case `${base}jira`:
+        return 'jira';
     }
     return 'browse';
   };
@@ -91,6 +94,8 @@ const ProjectView: React.FunctionComponent = () => {
         return `${base}settings`;
       case 'graph-analytics':
         return `${base}graph-analytics`;
+      case 'jira':
+        return `${base}jira`;
     }
     return `${base}browse`;
   };
@@ -197,7 +202,7 @@ const ProjectView: React.FunctionComponent = () => {
         path: `${apiEndpoint}/version`,
         context: { as: 'json' },
       })
-      .then(versions => setDeltaPlugins(versions.plugins))
+      .then(versions => setDeltaPlugins({ ...versions.plugins, jira: 'poc' })) // TODO: remove hardcoding of delta jira plugin
       .catch(error => {
         // do nothing
       });
@@ -336,6 +341,12 @@ const ProjectView: React.FunctionComponent = () => {
                 <AccessControl
                   path={`/${orgLabel}/${projectLabel}`}
                   permissions={['files/write']}
+                  noAccessComponent={() => (
+                    <Empty>
+                      You don't have the access to create/upload. Please contact
+                      the Administrator for access.
+                    </Empty>
+                  )}
                 >
                   <ResourceCreateUploadContainer
                     orgLabel={orgLabel}
@@ -347,7 +358,13 @@ const ProjectView: React.FunctionComponent = () => {
                 <AccessControl
                   key="quotas-access-control"
                   path={`/${orgLabel}/${projectLabel}`}
-                  permissions={['quotas/read']}
+                  permissions={['test']}
+                  noAccessComponent={() => (
+                    <Empty>
+                      You don't have read access to quotas. Please contact the
+                      Administrator for access.
+                    </Empty>
+                  )}
                 >
                   <QuotasContainer
                     orgLabel={orgLabel}
@@ -384,6 +401,14 @@ const ProjectView: React.FunctionComponent = () => {
                   <br />
                 </>
               </TabPane>
+              {deltaPlugins && 'jira' in deltaPlugins && (
+                <TabPane tab="Jira" key="jira">
+                  <JiraPluginProjectContainer
+                    orgLabel={orgLabel}
+                    projectLabel={projectLabel}
+                  />
+                </TabPane>
+              )}
               {deltaPlugins && 'graph-analytics' in deltaPlugins && (
                 <TabPane tab="Graph Analytics" key="graph-analytics">
                   <ProjectStatsContainer
