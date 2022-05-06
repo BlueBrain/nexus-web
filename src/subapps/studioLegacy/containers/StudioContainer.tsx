@@ -6,7 +6,7 @@ import { useHistory } from 'react-router';
 import EditStudio from '../components/EditStudio';
 import StudioHeader from '../components/StudioHeader';
 import { StudioContext } from '../views/StudioView';
-import WorkspaceList from '../containers/WorkspaceListContainer';
+import WorkspaceMenuContainer from '../containers/WorkspaceMenuContainer';
 import { saveImage } from '../../../shared/containers/MarkdownEditorContainer';
 import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
 import { getDestinationParam } from '../../../shared/utils';
@@ -142,7 +142,7 @@ const StudioContainer: React.FunctionComponent = () => {
               `/${orgLabel}/${projectLabel}`
             )}
           </StudioHeader>
-          <WorkspaceList
+          <WorkspaceMenuContainer
             workspaceIds={workspaceIds}
             studioResource={studioResource}
             onListUpdate={fetchAndSetupStudio}

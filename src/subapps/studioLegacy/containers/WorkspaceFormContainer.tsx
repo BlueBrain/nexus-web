@@ -53,6 +53,7 @@ const SelectViews: React.FunctionComponent<{
 }> = ({ selectedView, views, setView }) => {
   const { Option } = Select;
   const viewOptions: any[] = views.map(d => d['@id']);
+  console.log(selectedView);
   return (
     <>
       <Select
@@ -324,7 +325,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
           width={700}
         >
           <Form layout="vertical">
-            {hasOldDashboard && currentDashboards.length > 0 && (
+            {hasOldDashboard && currentDashboards.length > 0 && viewToAdd && (
               <Form.Item label={'Select View for the Dashboards(s)'}>
                 <SelectViews
                   views={views}
