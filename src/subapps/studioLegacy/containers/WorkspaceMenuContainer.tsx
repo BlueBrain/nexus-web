@@ -2,7 +2,7 @@ import * as React from 'react';
 import { NexusClient, DEFAULT_SPARQL_VIEW_ID, Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Button, Modal, Menu, Popover, Empty } from 'antd';
-import { PlusOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { PlusOutlined, DeleteOutlined, EditOutlined, DownOutlined } from '@ant-design/icons';
 import useNotification from '../../../shared/hooks/useNotification';
 import EditTableForm from '../../../shared/components/EditTableForm';
 import DashboardEditorContainer from './DashBoardEditor/DashboardEditorContainer';
@@ -149,7 +149,6 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
     projectLabel,
     workspaceId,
     dashboardId,
-    isWritable,
   } = studioContext;
   const permissionsPath = `/${orgLabel}/${projectLabel}`;
   const [workspaces, setWorkspaces] = React.useState<Resource<any>[]>([]);
@@ -377,7 +376,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           trigger="click"
         >
           <Button shape="round" type="default" icon={<EditOutlined />}>
-            DashBoard Actions
+            Dashboard Actions
           </Button>
         </Popover>
       </>
@@ -556,6 +555,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
       >
         {workspaces.map(w => (
           <Menu.SubMenu
+            icon={<DownOutlined />}
             title={w.label}
             key={w['@id']}
             onTitleClick={e => {
