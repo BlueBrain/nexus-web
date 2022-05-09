@@ -520,8 +520,8 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
       const dashboardId = selectedDashboard['@id'];
       setQueryString({
         ...queryParams,
-        workspaceId: selectedWorkspace['@id'],
         dashboardId,
+        workspaceId: selectedWorkspace['@id'],
       });
     }
   }, [selectedDashboard]);
