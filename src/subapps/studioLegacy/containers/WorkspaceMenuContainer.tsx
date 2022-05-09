@@ -1,26 +1,31 @@
-import * as React from 'react';
-import { NexusClient, DEFAULT_SPARQL_VIEW_ID, Resource } from '@bbp/nexus-sdk';
-import { useNexusContext } from '@bbp/react-nexus';
-import { Button, Modal, Menu, Popover, Empty } from 'antd';
-import { PlusOutlined, DeleteOutlined, EditOutlined, DownOutlined } from '@ant-design/icons';
-import useNotification from '../../../shared/hooks/useNotification';
-import EditTableForm from '../../../shared/components/EditTableForm';
-import DashboardEditorContainer from './DashBoardEditor/DashboardEditorContainer';
-import AddWorkspaceContainer from './AddWorkspaceContainer';
-import WorkspaceForm from './WorkspaceFormContainer';
-import useQueryString from '../../../shared/hooks/useQueryString';
-import { StudioContext } from '../views/StudioView';
-import { resourcesWritePermissionsWrapper } from '../../../shared/utils/permission';
-import { ResultTableFields } from '../../../shared/types/search';
-import DashboardResultsContainer from './DashboardResultsContainer';
+import * as React from 'react'
+import { NexusClient, DEFAULT_SPARQL_VIEW_ID, Resource } from '@bbp/nexus-sdk'
+import { useNexusContext } from '@bbp/react-nexus'
+import { Button, Modal, Menu, Popover, Empty } from 'antd'
+import {
+  PlusOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  DownOutlined,
+} from '@ant-design/icons'
+import useNotification from '../../../shared/hooks/useNotification'
+import EditTableForm from '../../../shared/components/EditTableForm'
+import DashboardEditorContainer from './DashBoardEditor/DashboardEditorContainer'
+import AddWorkspaceContainer from './AddWorkspaceContainer'
+import WorkspaceForm from './WorkspaceFormContainer'
+import useQueryString from '../../../shared/hooks/useQueryString'
+import { StudioContext } from '../views/StudioView'
+import { resourcesWritePermissionsWrapper } from '../../../shared/utils/permission'
+import { ResultTableFields } from '../../../shared/types/search'
+import DashboardResultsContainer from './DashboardResultsContainer'
 import DataTableContainer, {
   TableResource,
   UnsavedTableResource,
-} from '../../../shared/containers/DataTableContainer';
-import STUDIO_CONTEXT from '../components/StudioContext';
-import { createTableContext } from '../../../subapps/projects/utils/workFlowMetadataUtils';
+} from '../../../shared/containers/DataTableContainer'
+import STUDIO_CONTEXT from '../components/StudioContext'
+import { createTableContext } from '../../../subapps/projects/utils/workFlowMetadataUtils'
 
-const DASHBOARD_TYPE = 'StudioDashboard';
+const DASHBOARD_TYPE = 'StudioDashboard'
 /**
  *
  * @param nexus
@@ -42,13 +47,13 @@ const removeDashBoard = async (
     orgLabel,
     projectLabel,
     encodeURIComponent(workspaceId)
-  )) as Resource;
+  )) as Resource
 
-  dashboards.splice(dashboardIndex, 1);
+  dashboards.splice(dashboardIndex, 1)
 
   const workspaceSource = await nexus.Resource.getSource<{
-    [key: string]: any;
-  }>(orgLabel, projectLabel, encodeURIComponent(workspaceId));
+    [key: string]: any
+  }>(orgLabel, projectLabel, encodeURIComponent(workspaceId))
   if (workspace) {
     await nexus.Resource.update(
       orgLabel,
@@ -59,9 +64,9 @@ const removeDashBoard = async (
         ...workspaceSource,
         dashboards,
       }
-    );
+    )
   }
-};
+}
 
 /**
  *
@@ -80,22 +85,22 @@ const removeWorkSpace = async (
   orgLabel: string,
   studioResourceId: string
 ) => {
-  const workspaces = studio.workspaces;
+  const workspaces = studio.workspaces
   if (workspaces) {
-    const index = workspaces.indexOf(workspaceId);
+    const index = workspaces.indexOf(workspaceId)
     if (index !== -1) {
-      workspaces.splice(index, 1);
+      workspaces.splice(index, 1)
     }
   }
   const studioSource = await nexus.Resource.getSource<StudioResource>(
     orgLabel,
     projectLabel,
     encodeURIComponent(studio['@id'])
-  );
+  )
   const studioUpdatePayload = {
     ...studioSource,
     workspaces,
-  };
+  }
 
   await nexus.Resource.update(
     orgLabel,
@@ -103,87 +108,82 @@ const removeWorkSpace = async (
     encodeURIComponent(studioResourceId),
     studio._rev,
     studioUpdatePayload
-  );
+  )
 
   const latestWorkspace = (await nexus.Resource.get(
     orgLabel,
     projectLabel,
     encodeURIComponent(workspaceId)
-  )) as Resource;
+  )) as Resource
   await nexus.Resource.deprecate(
     orgLabel,
     projectLabel,
     encodeURIComponent(workspaceId),
     Number(latestWorkspace._rev)
-  );
-};
+  )
+}
 
 export type Dashboard = {
-  dashboard: string;
-  view: string;
-  fields?: ResultTableFields[];
-};
+  dashboard: string
+  view: string
+  fields?: ResultTableFields[]
+}
 
 type StudioResource = Resource<{
-  label: string;
-  description?: string;
-  workspaces?: [string];
-}>;
+  label: string
+  description?: string
+  workspaces?: [string]
+}>
 
 type WorkspaceMenuProps = {
-  workspaceIds: string[];
-  studioResource: StudioResource;
-  onListUpdate(): void;
-};
+  workspaceIds: string[]
+  studioResource: StudioResource
+  onListUpdate(): void
+}
 
 const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
   workspaceIds = [],
   studioResource,
   onListUpdate,
 }) => {
-  const nexus = useNexusContext();
-  const notification = useNotification();
-  const studioContext = React.useContext(StudioContext);
-  const {
-    orgLabel,
-    projectLabel,
-    workspaceId,
-    dashboardId,
-  } = studioContext;
-  const permissionsPath = `/${orgLabel}/${projectLabel}`;
-  const [workspaces, setWorkspaces] = React.useState<Resource<any>[]>([]);
+  const nexus = useNexusContext()
+  const notification = useNotification()
+  const studioContext = React.useContext(StudioContext)
+  const { orgLabel, projectLabel, workspaceId, dashboardId } = studioContext
+  const permissionsPath = `/${orgLabel}/${projectLabel}`
+  const [workspaces, setWorkspaces] = React.useState<Resource<any>[]>([])
   const [selectedWorkspace, setSelectedWorkspace] = React.useState<
     Resource<any>
-  >();
+  >()
   const [selectedDashboard, setSelectedDashboard] = React.useState<
     Resource<any>
-  >();
-  const [dashboards, setDashboards] = React.useState<Resource<any>[]>([]);
-  const [queryParams, setQueryString] = useQueryString();
-  const [showDataTableEdit, setShowDataTableEdit] = React.useState(false);
-  const [showDashEditor, setShowDashEditor] = React.useState(false);
-  const [showModal, setShowModal] = React.useState<boolean>(false);
+  >()
+  const [dashboards, setDashboards] = React.useState<Resource<any>[]>([])
+  const [queryParams, setQueryString] = useQueryString()
+  const [showDataTableEdit, setShowDataTableEdit] = React.useState(false)
+  const [showDashEditor, setShowDashEditor] = React.useState(false)
+  const [showModal, setShowModal] = React.useState<boolean>(false)
   const [deleteConfirmation, setDeleteConfirmation] = React.useState<boolean>(
     false
-  );
+  )
   const [
     deleteDashBoardConfirmation,
     setDeleteDashBoardConfirmation,
-  ] = React.useState<boolean>(false);
-  const [showEdit, setShowEdit] = React.useState<boolean>(false);
+  ] = React.useState<boolean>(false)
+  const [showEdit, setShowEdit] = React.useState<boolean>(false)
 
   const [showEditTableForm, setShowEditTableForm] = React.useState<boolean>(
     false
-  );
+  )
 
   const saveDashboardAndDataTable = async (
     table: TableResource | UnsavedTableResource
   ) => {
     try {
-      if (!selectedWorkspace) throw new Error();
-      const workspaceId = selectedWorkspace['@id'];
+      if (!selectedWorkspace) throw new Error()
+      const workspaceId = selectedWorkspace['@id']
       try {
-        await createTableContext(orgLabel, projectLabel, nexus);
+        await createTableContext(orgLabel, projectLabel, nexus)
       } catch (ex) {
         // assume already exists
       }
@@ -193,8 +193,8 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         orgLabel,
         projectLabel,
         table
-      )) as TableResource;
-      const tableId = resource['@id'];
+      )) as TableResource
+      const tableId = resource['@id']
 
       // create dashboard, linking it to the table
       const dashboard = await nexus.Resource.create(orgLabel, projectLabel, {
@@ -205,16 +205,16 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         },
         label: table.name,
         dataQuery: '',
-      });
+      })
       // Add dashboard to workspace
       const workspace = (await nexus.Resource.get<Resource>(
         orgLabel,
         projectLabel,
         encodeURIComponent(workspaceId)
-      )) as Resource;
+      )) as Resource
       const workspaceSource = await nexus.Resource.getSource<{
-        [key: string]: any;
-      }>(orgLabel, projectLabel, encodeURIComponent(workspaceId));
+        [key: string]: any
+      }>(orgLabel, projectLabel, encodeURIComponent(workspaceId))
       if (workspace) {
         await nexus.Resource.update(
           orgLabel,
@@ -230,22 +230,22 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
               },
             ],
           }
-        );
+        )
       }
 
-      setShowEditTableForm(false);
-      onListUpdate();
+      setShowEditTableForm(false)
+      onListUpdate()
     } catch (e) {
-      notification.error({ message: 'Failed to save dashboard' });
+      notification.error({ message: 'Failed to save dashboard' })
     }
-  };
+  }
 
   const deleteWorkSpaceCallBack = React.useCallback(async () => {
     if (!selectedWorkspace) {
-      return;
+      return
     }
     try {
-      setDeleteConfirmation(false);
+      setDeleteConfirmation(false)
       await removeWorkSpace(
         nexus,
         selectedWorkspace['@id'],
@@ -253,28 +253,28 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         projectLabel,
         orgLabel,
         studioResource['@id']
-      );
-      onListUpdate();
-      setSelectedWorkspace(undefined);
+      )
+      onListUpdate()
+      setSelectedWorkspace(undefined)
       notification.success({
         message: 'Removed workspace succesfully!',
-      });
+      })
     } catch (ex) {
       notification.error({
         message: 'Failed to remove workspace!',
-      });
+      })
     }
-  }, [selectedWorkspace]);
+  }, [selectedWorkspace])
 
   const editDhashBoardspaceWrapper = () => {
     const editButton = (
       <>
         <Button
           block
-          type="default"
+          type='default'
           icon={<PlusOutlined />}
           onClick={e => {
-            setShowEditTableForm(true);
+            setShowEditTableForm(true)
           }}
         >
           Add
@@ -283,10 +283,10 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           <>
             <Button
               block
-              type="default"
+              type='default'
               icon={<DeleteOutlined />}
               onClick={e => {
-                setDeleteDashBoardConfirmation(true);
+                setDeleteDashBoardConfirmation(true)
               }}
             >
               Remove
@@ -294,13 +294,13 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
 
             <Button
               block
-              type="default"
+              type='default'
               icon={<EditOutlined />}
               onClick={e => {
                 if (selectedDashboard && 'dataTable' in selectedDashboard) {
-                  setShowDataTableEdit(true);
+                  setShowDataTableEdit(true)
                 } else {
-                  setShowDashEditor(true);
+                  setShowDashEditor(true)
                 }
               }}
             >
@@ -309,20 +309,20 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           </>
         ) : null}
       </>
-    );
+    )
 
-    return resourcesWritePermissionsWrapper(editButton, permissionsPath);
-  };
+    return resourcesWritePermissionsWrapper(editButton, permissionsPath)
+  }
 
   const editWorkspaceWrapper = () => {
     const editButton = (
       <>
         <Button
           block
-          type="default"
+          type='default'
           icon={<PlusOutlined />}
           onClick={e => {
-            setShowModal(true);
+            setShowModal(true)
           }}
         >
           Add
@@ -330,10 +330,10 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
 
         <Button
           block
-          type="default"
+          type='default'
           icon={<DeleteOutlined />}
           onClick={e => {
-            setDeleteConfirmation(true);
+            setDeleteConfirmation(true)
           }}
         >
           Remove
@@ -341,48 +341,48 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
 
         <Button
           block
-          type="default"
+          type='default'
           icon={<EditOutlined />}
           onClick={e => {
-            setShowEdit(true);
+            setShowEdit(true)
           }}
         >
           Edit
         </Button>
       </>
-    );
+    )
 
-    return resourcesWritePermissionsWrapper(editButton, permissionsPath);
-  };
+    return resourcesWritePermissionsWrapper(editButton, permissionsPath)
+  }
 
   const actionButtons = () => {
     const actionsPopovers = (
       <>
         <Popover
           style={{ background: 'none' }}
-          placement="rightTop"
+          placement='rightTop'
           content={editWorkspaceWrapper}
-          trigger="click"
+          trigger='click'
         >
-          <Button shape="round" type="default" icon={<EditOutlined />}>
+          <Button shape='round' type='default' icon={<EditOutlined />}>
             {' '}
             Workspace Actions
           </Button>
         </Popover>
         <Popover
           style={{ background: 'none' }}
-          placement="rightTop"
+          placement='rightTop'
           content={editDhashBoardspaceWrapper}
-          trigger="click"
+          trigger='click'
         >
-          <Button shape="round" type="default" icon={<EditOutlined />}>
+          <Button shape='round' type='default' icon={<EditOutlined />}>
             Dashboard Actions
           </Button>
         </Popover>
       </>
-    );
-    return resourcesWritePermissionsWrapper(actionsPopovers, permissionsPath);
-  };
+    )
+    return resourcesWritePermissionsWrapper(actionsPopovers, permissionsPath)
+  }
 
   const fetchAndSetupDashboards = () => {
     Promise.all(
@@ -393,37 +393,37 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           encodeURIComponent(dashboardObject.dashboard)
         ) as Promise<
           Resource<{
-            label: string;
-            description?: string;
-            dataQuery: string;
-            plugins: string[];
+            label: string
+            description?: string
+            dataQuery: string
+            plugins: string[]
           }>
-        >;
+        >
       })
     )
       .then(values => {
-        setDashboards(values);
+        setDashboards(values)
         const currentDashboards = values as Resource<{
-          label: string;
-          description?: string;
-          dataQuery: string;
-          plugins: string[];
-        }>[];
+          label: string
+          description?: string
+          dataQuery: string
+          plugins: string[]
+        }>[]
         if (currentDashboards.length > 0) {
           const currentSelection = dashboardId
             ? currentDashboards.find(v => v['@id'] === dashboardId)
-            : dashboards[0];
+            : dashboards[0]
           setSelectedDashboard(
             currentSelection ? currentSelection : currentDashboards[0]
-          );
+          )
         }
       })
       .catch(e => {
         notification.error({
           message: 'Failed to fetch dashboards',
-        });
-      });
-  };
+        })
+      })
+  }
 
   const updateDashboard = async (
     data: TableResource | UnsavedTableResource
@@ -433,7 +433,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         orgLabel,
         projectLabel,
         encodeURIComponent(selectedDashboard['@id'])
-      );
+      )
       await nexus.Resource.update(
         orgLabel,
         projectLabel,
@@ -444,17 +444,17 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           description: data.description,
           label: data['name'],
         }
-      );
+      )
     }
-  };
+  }
 
   const removeDashBoardCallback = React.useCallback(async () => {
     if (selectedDashboard && selectedWorkspace) {
-      const currentDashboards: any[] = selectedWorkspace['dashboards'];
+      const currentDashboards: any[] = selectedWorkspace['dashboards']
       if (dashboards) {
         const indexToRemove = currentDashboards.findIndex(
           d => d['@id'] === selectedDashboard['@id']
-        );
+        )
         await removeDashBoard(
           nexus,
           orgLabel,
@@ -462,15 +462,15 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           selectedWorkspace['@id'],
           indexToRemove,
           [...dashboards]
-        );
+        )
         notification.success({
           message: `Removed ${selectedDashboard.label}`,
-        });
-        setDeleteDashBoardConfirmation(false);
-        onListUpdate();
+        })
+        setDeleteDashBoardConfirmation(false)
+        onListUpdate()
       }
     }
-  }, [selectedWorkspace, selectedDashboard]);
+  }, [selectedWorkspace, selectedDashboard])
 
   React.useEffect(() => {
     Promise.all(
@@ -479,74 +479,74 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           orgLabel,
           projectLabel,
           encodeURIComponent(workspaceId)
-        ) as Promise<Resource>;
+        ) as Promise<Resource>
       })
     )
       .then(values => {
         setWorkspaces(
           values.sort(({ _createdAt: dateA }, { _createdAt: dateB }) => {
-            const a = new Date(dateA);
-            const b = new Date(dateB);
+            const a = new Date(dateA)
+            const b = new Date(dateB)
             if (a > b) {
-              return 1;
+              return 1
             }
             if (a < b) {
-              return -1;
+              return -1
             }
-            return 0;
+            return 0
           })
-        );
+        )
         if (workspaceId) {
           const workspaceFilteredById = values.find(
             w => w['@id'] === workspaceId
-          );
+          )
           setSelectedWorkspace(
             workspaceFilteredById ? workspaceFilteredById : values[0]
-          );
+          )
         } else {
-          setSelectedWorkspace(values[0]);
+          setSelectedWorkspace(values[0])
         }
       })
       .catch(e => {
         notification.error({
           message: e.message,
-        });
-      });
-  }, [workspaceIds]);
+        })
+      })
+  }, [workspaceIds])
 
   React.useEffect(() => {
     if (selectedDashboard) {
-      const dashboardId = selectedDashboard['@id'];
+      const dashboardId = selectedDashboard['@id']
       setQueryString({
         ...queryParams,
         dashboardId,
         workspaceId: selectedWorkspace['@id'],
-      });
+      })
     }
-  }, [selectedDashboard]);
+  }, [selectedDashboard])
 
   React.useEffect(() => {
     if (selectedWorkspace) {
       setQueryString({
         ...queryParams,
         workspaceId: selectedWorkspace['@id'],
-      });
-      const currentDashboards = selectedWorkspace['dashboards'] as Dashboard[];
+      })
+      const currentDashboards = selectedWorkspace['dashboards'] as Dashboard[]
       if (currentDashboards && currentDashboards.length > 0) {
-        fetchAndSetupDashboards();
+        fetchAndSetupDashboards()
       } else {
-        setDashboards([]);
-        setSelectedDashboard(undefined);
+        setDashboards([])
+        setSelectedDashboard(undefined)
       }
     }
-  }, [selectedWorkspace]);
+  }, [selectedWorkspace])
 
   return (
-    <div className="workspace-list-container">
+    <div className='workspace-list-container'>
       <Menu
-        theme="dark"
-        mode="horizontal"
-        triggerSubMenuAction="click"
+        theme='dark'
+        mode='horizontal'
+        triggerSubMenuAction='click'
         selectedKeys={[
           selectedWorkspace && selectedDashboard
             ? `${selectedWorkspace['@id']}-${selectedDashboard['@id']}`
@@ -559,7 +559,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             title={w.label}
             key={w['@id']}
             onTitleClick={e => {
-              setSelectedWorkspace(w);
+              setSelectedWorkspace(w)
             }}
           >
             {dashboards.map((d: Resource) => {
@@ -567,16 +567,16 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
                 <Menu.Item
                   key={`${w['@id']}-${d['@id']}`}
                   onClick={() => {
-                    setSelectedDashboard(d);
+                    setSelectedDashboard(d)
                   }}
                 >
                   {d.label}
                 </Menu.Item>
-              );
+              )
             })}
           </Menu.SubMenu>
         ))}
-        <div className="workspace-action">
+        <div className='workspace-action'>
           {selectedWorkspace ? actionButtons() : null}
         </div>
       </Menu>
@@ -624,15 +624,15 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           studio={studioResource}
           showModal={showModal}
           onCancel={() => {
-            setShowModal(false);
+            setShowModal(false)
           }}
           onAddWorkspace={onListUpdate}
         />
         <Modal
-          title="Delete Workspace"
+          title='Delete Workspace'
           visible={deleteConfirmation}
           onCancel={() => {
-            setDeleteConfirmation(false);
+            setDeleteConfirmation(false)
           }}
           onOk={deleteWorkSpaceCallBack}
         >
@@ -649,10 +649,10 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         ) : null}
 
         <Modal
-          title="Remove DashBoard"
+          title='Remove DashBoard'
           visible={deleteDashBoardConfirmation}
           onCancel={() => {
-            setDeleteDashBoardConfirmation(false);
+            setDeleteDashBoardConfirmation(false)
           }}
           onOk={removeDashBoardCallback}
         >
@@ -667,13 +667,13 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         >
           <EditTableForm
             onSave={data => {
-              saveDashboardAndDataTable(data);
+              saveDashboardAndDataTable(data)
             }}
             onClose={() => setShowEditTableForm(false)}
             busy={false}
             orgLabel={orgLabel}
             projectLabel={projectLabel}
-            formName="Create Dashboard"
+            formName='Create Dashboard'
           />
         </Modal>
         {selectedDashboard && showDashEditor && (
@@ -697,7 +697,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default WorkspaceMenu;
+export default WorkspaceMenu
