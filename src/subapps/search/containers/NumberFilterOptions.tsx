@@ -170,8 +170,6 @@ const NumberFilterOptions: React.FC<{
   }, [rangeStart, rangeEnd, missingValues]);
 
   const renderMissing = React.useCallback(() => {
-    // console.log("render missing use callback, missingCount");
-    // console.log(missingCount);
     return missingCount ? (
       <Form.Item>
         <Checkbox
