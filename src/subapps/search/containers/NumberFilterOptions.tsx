@@ -96,6 +96,7 @@ const NumberFilterOptions: React.FC<{
       .aggregation('terms', `${field.name}.value`, 'suggestions', {
         size: 1000,
       })
+      .aggregation('missing', filterKeyWord, '(missing)')
       .aggregation('stats', `${field.name}.value`, 'stats')
       .build();
 
@@ -113,6 +114,7 @@ const NumberFilterOptions: React.FC<{
       setSum(all.aggregations.stats.sum);
       setRangeMin(all.aggregations.stats.min);
       setRangeMax(all.aggregations.stats.max);
+      setMissingCount(all.aggregations['(missing)'].doc_count);
 
       const histoInterval =
         (all.aggregations.stats.max - all.aggregations.stats.min) / 50;
@@ -140,14 +142,9 @@ const NumberFilterOptions: React.FC<{
   };
   const missingQuery = () => {
     const allSuggestions = constructQuery(query);
-    const withFilter = constructFilterSet(allSuggestions, filter)
-      .aggregation('missing', filterKeyWord, '(missing)')
-      .build();
+    const withFilter = constructFilterSet(allSuggestions, filter).build();
 
-    const allSuggestionsPromise = nexusClient.Search.query(withFilter);
-    allSuggestionsPromise.then(response => {
-      setMissingCount(response.aggregations['(missing)'].doc_count);
-    });
+    nexusClient.Search.query(withFilter);
   };
   React.useEffect(() => {
     if (firstRender.current) {
@@ -173,6 +170,8 @@ const NumberFilterOptions: React.FC<{
   }, [rangeStart, rangeEnd, missingValues]);
 
   const renderMissing = React.useCallback(() => {
+    // console.log("render missing use callback, missingCount");
+    // console.log(missingCount);
     return missingCount ? (
       <Form.Item>
         <Checkbox
