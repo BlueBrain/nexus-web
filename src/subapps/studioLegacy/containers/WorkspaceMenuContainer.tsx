@@ -410,12 +410,12 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           plugins: string[];
         }>[];
         if (currentDashboards.length > 0) {
-          const currentSelection = dashboardId
-            ? currentDashboards.find(v => v['@id'] === dashboardId)
-            : dashboards[0];
-          setSelectedDashboard(
-            currentSelection ? currentSelection : currentDashboards[0]
-          );
+          if (dashboardId) {
+            const currentSelection = currentDashboards.find(
+              v => v['@id'] === dashboardId
+            );
+            setSelectedDashboard(currentSelection);
+          }
         }
       })
       .catch(e => {

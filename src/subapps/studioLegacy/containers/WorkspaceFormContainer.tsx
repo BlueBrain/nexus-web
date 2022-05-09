@@ -53,7 +53,7 @@ const SelectViews: React.FunctionComponent<{
 }> = ({ selectedView, views, setView }) => {
   const { Option } = Select;
   const viewOptions: any[] = views.map(d => d['@id']);
-  console.log(selectedView);
+
   return (
     <>
       <Select
