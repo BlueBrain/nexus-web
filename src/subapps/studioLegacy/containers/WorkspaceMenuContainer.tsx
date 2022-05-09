@@ -558,6 +558,8 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             icon={<DownOutlined />}
             title={w.label}
             key={w['@id']}
+            popupOffset={[0, 0]}
+            popupClassName="workspace-popup-classname"
             onTitleClick={e => {
               setSelectedWorkspace(w);
             }}
