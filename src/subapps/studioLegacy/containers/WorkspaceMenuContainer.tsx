@@ -414,7 +414,15 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             const currentSelection = currentDashboards.find(
               v => v['@id'] === dashboardId
             );
-            setSelectedDashboard(currentSelection);
+            if (currentSelection) {
+              setSelectedDashboard(currentSelection);
+            }
+          } else {
+            if (!selectedDashboard) {
+              setSelectedDashboard(currentDashboards[0]);
+            } else {
+              console.log('here ..');
+            }
           }
         }
       })
