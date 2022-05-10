@@ -420,8 +420,6 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           } else {
             if (!selectedDashboard) {
               setSelectedDashboard(currentDashboards[0]);
-            } else {
-              console.log('here ..');
             }
           }
         }
