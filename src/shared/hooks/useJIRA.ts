@@ -162,6 +162,15 @@ function useJIRA({
       ) {
         setIsJiraConnected(false);
       }
+
+      if (e['@type'] === 'JiraResponseError') {
+        notification.error({
+          message: e.reason,
+          description: 'content' in e && e.content,
+        });
+        return;
+      }
+
       notification.error({
         message: e['@type'],
         description: 'reason' in e && e.reason,
