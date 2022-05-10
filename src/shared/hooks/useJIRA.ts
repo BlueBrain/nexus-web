@@ -2,9 +2,8 @@ import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { generatePath } from 'react-router-dom';
 import { RootState } from '../store/reducers';
-import { getResourceLabel, labelOf, makeProjectUri } from '../utils';
+import { getResourceLabel, labelOf } from '../utils';
 import useLocalStorage from './useLocalStorage';
 import useNotification from './useNotification';
 
@@ -16,22 +15,30 @@ import useNotification from './useNotification';
 function useJIRA({
   orgLabel,
   projectLabel,
-  resourceID,
+  resource,
 }: {
   orgLabel: string;
   projectLabel: string;
-  resourceID?: string;
+  resource?: Resource;
 }) {
   const nexus = useNexusContext();
-  const basePath =
-    useSelector((state: RootState) => state.config.basePath) || '';
-  const fusionBaseUrl = `${window.location.origin.toString()}${basePath}`;
   const {
     jiraResourceCustomFieldName: nexusResourceFieldName,
     jiraProjectCustomFieldName: nexusProjectName,
     jiraResourceCustomFieldLabel,
     jiraProjectCustomFieldLabel,
   } = useSelector((state: RootState) => state.config);
+
+  const [projectSelf, setProjectSelf] = React.useState<string>();
+  React.useEffect(() => {
+    nexus.Project.get(orgLabel, projectLabel)
+      .then(d => setProjectSelf(d._self))
+      .catch(e => {
+        notification.error({
+          message: 'An error occurred whilst trying to retrieve project',
+        });
+      });
+  }, [orgLabel, projectLabel]);
 
   const notification = useNotification();
 
@@ -88,24 +95,6 @@ function useJIRA({
       });
   };
 
-  const getResourceUrl = () => {
-    if (!resourceID) {
-      throw new Error('Resource ID not available in this context');
-    }
-    const encodedResourceId = encodeURIComponent(resourceID);
-    const pathToResource = generatePath(
-      '/:orgLabel/:projectLabel/resources/:resourceId',
-      {
-        orgLabel,
-        projectLabel,
-        resourceId: encodedResourceId,
-      }
-    );
-
-    const resourceUrl = `${fusionBaseUrl}${pathToResource}`;
-    return resourceUrl;
-  };
-
   const getProjects = () => {
     return nexus
       .httpGet({
@@ -146,20 +135,13 @@ function useJIRA({
       });
   };
 
-  /**
-   * Return Jira issues with a given Nexus resource ID
-   * @param resourceID
-   * @returns
-   */
-  const getResourceIssues = () => {
-    const resourceUrl = getResourceUrl();
-
+  const getResourceIssues = (resourceSelf: string) => {
     return nexus
       .httpPost({
         path: `${jiraAPIBaseUrl}/search`,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          jql: `"${jiraResourceCustomFieldLabel}" = "${resourceUrl}"`,
+          jql: `"${jiraResourceCustomFieldLabel}" = "${resourceSelf}"`,
         }),
       })
       .catch(e => {
@@ -198,16 +180,13 @@ function useJIRA({
         path: `${jiraAPIBaseUrl}/search`,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          jql: `"${jiraProjectCustomFieldLabel}" = "${getProjectUrl()}"`,
+          jql: `"${jiraProjectCustomFieldLabel}" = "${projectSelf}"`,
         }),
       })
       .catch(e => {
         handleJiraError(e);
       });
   };
-
-  const getProjectUrl = () =>
-    `${fusionBaseUrl}${makeProjectUri(orgLabel, projectLabel)}`;
 
   const createIssue = (
     project: string,
@@ -226,8 +205,8 @@ function useJIRA({
               key: project,
             },
             issuetype: { name: 'Task' }, // TODO: allow selection of issue type
-            [nexusResourceFieldName]: resourceID ? getResourceUrl() : '',
-            [nexusProjectName]: getProjectUrl(),
+            [nexusResourceFieldName]: resource ? resource._self : '',
+            [nexusProjectName]: projectSelf,
             labels: ['discussion'],
           },
         }),
@@ -261,11 +240,8 @@ function useJIRA({
       },
       body: JSON.stringify({
         fields: {
-          [nexusResourceFieldName]: resourceID ? getResourceUrl() : '',
-          [nexusProjectName]: `${fusionBaseUrl}${makeProjectUri(
-            orgLabel,
-            projectLabel
-          )}`,
+          [nexusResourceFieldName]: resource ? resource._self : '',
+          [nexusProjectName]: projectSelf,
           labels: ['discussion'], // TODO: first we should fetch issue to append this label to any existing ones
         },
       }),
@@ -309,30 +285,10 @@ function useJIRA({
       });
   };
 
-  const getResourceIdFromFusionUrl = (url: string) => {
-    if (!url) {
-      return '';
-    }
-    return decodeURIComponent(
-      decodeURIComponent(
-        url.replace(
-          `${fusionBaseUrl}/${orgLabel}/${projectLabel}/resources/`,
-          ''
-        )
-      ) // TODO: check encoding
-    );
-  };
-
   const getIssueResources = (issues: any) => {
     const resources = issues.map((issue: any) => {
       if (issue.fields[nexusResourceFieldName] !== null) {
-        return nexus.Resource.get(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(
-            getResourceIdFromFusionUrl(issue.fields[nexusResourceFieldName])
-          )
-        );
+        return nexus.httpGet({ path: issue.fields[nexusResourceFieldName] });
       }
       return Promise.resolve();
     });
@@ -342,8 +298,8 @@ function useJIRA({
   const fetchLinkedIssues = () => {
     (async () => {
       setIsLoading(true);
-      const issuesResponse = await (resourceID
-        ? getResourceIssues()
+      const issuesResponse = await (resource
+        ? getResourceIssues(resource._self)
         : getProjectIssues());
 
       if (issuesResponse.issues) {
@@ -365,10 +321,8 @@ function useJIRA({
             if (issue.fields[nexusResourceFieldName] !== null) {
               const resource = resources.find(
                 r =>
-                  (r as Resource)['@id'] ===
-                  getResourceIdFromFusionUrl(
-                    issue.fields[nexusResourceFieldName]
-                  )
+                  (r as Resource)['_self'] ===
+                  issue.fields[nexusResourceFieldName]
               );
 
               resourceLabel = resource
@@ -392,9 +346,7 @@ function useJIRA({
               resourceId:
                 issue.fields[nexusResourceFieldName] === null
                   ? ''
-                  : getResourceIdFromFusionUrl(
-                      issue.fields[nexusResourceFieldName]
-                    ),
+                  : issue.fields[nexusResourceFieldName],
             };
           })
         );
@@ -410,7 +362,7 @@ function useJIRA({
     }
     fetchProjects();
     fetchLinkedIssues();
-  }, [isJiraConnected]);
+  }, [isJiraConnected, projectSelf]);
 
   return {
     isLoading,

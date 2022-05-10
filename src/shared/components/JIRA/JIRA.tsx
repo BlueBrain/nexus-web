@@ -230,7 +230,7 @@ type JIRAPluginUIProps = {
   onUnlinkIssue: (issueKey: string) => void;
   searchJiraLink: string;
   displayType: 'resource' | 'project';
-  onNavigateToResource?: (resourceId: string) => void;
+  onNavigateToResource?: (resourceSelfUrl: string) => void;
   isLoading: boolean;
 };
 const JIRAPluginUI = ({
