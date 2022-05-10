@@ -29,6 +29,8 @@ import ResourceViewActionsContainer from './ResourceViewActionsContainer';
 import ResourceMetadata from '../components/ResourceMetadata';
 import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
 import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/reducers';
 export type PluginMapping = {
   [pluginKey: string]: object;
 };
@@ -43,6 +45,28 @@ const ResourceViewContainer: React.FunctionComponent<{
   ) => React.ReactElement | null;
 }> = ({ render }) => {
   const x = useParams();
+
+  const { apiEndpoint } = useSelector((state: RootState) => state.config);
+
+  const [deltaPlugins, setDeltaPlugins] = React.useState<{
+    [key: string]: string;
+  }>();
+
+  const fetchDeltaVersion = async () => {
+    await nexus
+      .httpGet({
+        path: `${apiEndpoint}/version`,
+        context: { as: 'json' },
+      })
+      .then(versions => setDeltaPlugins({ ...versions.plugins }))
+      .catch(error => {
+        // do nothing
+      });
+  };
+
+  React.useEffect(() => {
+    fetchDeltaVersion();
+  }, []);
 
   // @ts-ignore
   const { orgLabel = '', projectLabel = '', resourceId = '' } = useParams();
