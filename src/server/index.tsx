@@ -100,10 +100,10 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       jiraUrl: process.env.JIRA_URL || '',
       jiraResourceCustomFieldName: process.env.JIRA_RESOURCE_FIELD_NAME || '',
       jiraResourceCustomFieldLabel:
-        process.env.JIRA_RESOURCE_FIELD_LABEL || 'Nexus Resource Url',
+        process.env.JIRA_RESOURCE_FIELD_LABEL || 'Nexus Resource',
       jiraProjectCustomFieldName: process.env.JIRA_PROJECT_FIELD_NAME || '',
       jiraProjectCustomFieldLabel:
-        process.env.JIRA_PROJECT_FIELD_LABEL || 'Nexus Project url',
+        process.env.JIRA_PROJECT_FIELD_LABEL || 'Nexus Project',
     },
     uiSettings: DEFAULT_UI_SETTINGS,
     oidc: {
