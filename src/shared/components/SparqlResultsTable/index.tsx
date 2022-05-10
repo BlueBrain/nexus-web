@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as moment from 'moment';
-import { Input, Table, Button, Tooltip, Select } from 'antd';
+import { Input, Table, Button, Tooltip, Select, Typography } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { omit, difference } from 'lodash';
 import { parseProjectUrl, isISODate, getDateString } from '../../utils/index';
@@ -233,6 +233,9 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
         scroll={{ x: '100%' }}
         title={() => (
           <div className="header">
+            <Typography.Title className="title" level={3}>
+              {tableLabel}
+            </Typography.Title>
             <Search
               className="search"
               value={searchValue}
