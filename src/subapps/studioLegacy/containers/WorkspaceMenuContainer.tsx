@@ -366,7 +366,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         >
           <Button shape="round" type="default" icon={<EditOutlined />}>
             {' '}
-            Workspace Actions
+            Workspace
           </Button>
         </Popover>
         <Popover
@@ -376,7 +376,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           trigger="click"
         >
           <Button shape="round" type="default" icon={<EditOutlined />}>
-            Dashboard Actions
+            Dashboard
           </Button>
         </Popover>
       </>
@@ -636,16 +636,18 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           }}
           onAddWorkspace={onListUpdate}
         />
-        <Modal
-          title="Delete Workspace"
-          visible={deleteConfirmation}
-          onCancel={() => {
-            setDeleteConfirmation(false);
-          }}
-          onOk={deleteWorkSpaceCallBack}
-        >
-          <p>Are you sure you want to delete ?</p>
-        </Modal>
+        {selectedWorkspace ? (
+          <Modal
+            title="Delete Workspace"
+            visible={deleteConfirmation}
+            onCancel={() => {
+              setDeleteConfirmation(false);
+            }}
+            onOk={deleteWorkSpaceCallBack}
+          >
+            <p>{`Are you sure you want to delete ${selectedWorkspace?.label}?`}</p>
+          </Modal>
+        ) : null}
         {showEdit ? (
           <WorkspaceForm
             orgLabel={orgLabel}
