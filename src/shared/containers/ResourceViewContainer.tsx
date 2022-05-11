@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
-import { useLocation, useHistory, useParams } from 'react-router';
+import { useLocation, useHistory, useParams, matchPath } from 'react-router';
 import { Spin, Alert, Collapse, Typography, Divider } from 'antd';
 import * as queryString from 'query-string';
 import { useNexusContext } from '@bbp/react-nexus';
@@ -13,8 +13,6 @@ import useMeasure from '../hooks/useMeasure';
 import {
   getResourceLabel,
   getOrgAndProjectFromProjectId,
-  matchPlugins,
-  pluginsMap,
   getDestinationParam,
   labelOf,
   makeResourceUri,
@@ -28,6 +26,7 @@ import { Link } from 'react-router-dom';
 import ResourceViewActionsContainer from './ResourceViewActionsContainer';
 import ResourceMetadata from '../components/ResourceMetadata';
 import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
+import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -42,17 +41,51 @@ const ResourceViewContainer: React.FunctionComponent<{
     }> | null
   ) => React.ReactElement | null;
 }> = ({ render }) => {
-  const x = useParams();
-
   // @ts-ignore
   const { orgLabel = '', projectLabel = '', resourceId = '' } = useParams();
   const nexus = useNexusContext();
-  const location = useLocation();
+  const location = useLocation<{ background: Location }>();
+
+  const [studioPlugins, setStudioPlugins] = React.useState<{
+    customise: boolean;
+    plugins: { key: string; expanded: boolean }[];
+  }>();
+
+  React.useEffect(() => {
+    if (location.state.background) {
+      const studioPathMatch = matchPath<{ StudioId: string }>(
+        location.state.background.pathname,
+        {
+          path: '/studios/:organisation/:project/studios/:StudioId',
+          exact: true,
+          strict: false,
+        }
+      );
+
+      if (studioPathMatch) {
+        // looks like we have us a studio
+        const studioId = studioPathMatch.params.StudioId;
+        nexus.Resource.get<StudioResource>(
+          orgLabel,
+          projectLabel,
+          studioId
+        ).then(d => {
+          if (Array.isArray((d as StudioResource).plugins)) {
+            // @ts-ignore
+            (d as StudioResource).plugins = (d as StudioResource).plugins[0];
+          }
+          if ((d as StudioResource).plugins) {
+            setStudioPlugins((d as StudioResource).plugins);
+          }
+        });
+      }
+    }
+  }, []);
+
   const history = useHistory();
   const notification = useNotification();
   const [{ ref }] = useMeasure();
   const { data: pluginManifest } = usePlugins();
-  const availablePlugins = Object.keys(pluginManifest || {});
 
   const goToResource = (
     orgLabel: string,
@@ -101,10 +134,6 @@ const ResourceViewContainer: React.FunctionComponent<{
   >(null);
 
   const isLatest = latestResource?._rev === resource?._rev;
-  const filteredPlugins =
-    resource &&
-    pluginManifest &&
-    matchPlugins(pluginsMap(pluginManifest), availablePlugins, resource);
 
   const handleTabChange = (activeTabKey: string) => {
     goToResource(orgLabel, projectLabel, resourceId, {
@@ -312,7 +341,6 @@ const ResourceViewContainer: React.FunctionComponent<{
   }, [orgLabel, projectLabel, resourceId, rev, tag]);
 
   const [openPlugins, setOpenPlugins] = React.useState<string[]>([]);
-
   const LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME = 'expanded_plugins';
 
   React.useEffect(() => {
@@ -334,6 +362,30 @@ const ResourceViewContainer: React.FunctionComponent<{
     );
   }, [openPlugins]);
 
+  React.useEffect(() => {
+    // if coming from studio, override what user has set in localstorage
+    if (studioPlugins?.customise && pluginManifest) {
+      console.log(studioPlugins.plugins);
+      setOpenPlugins(
+        studioPlugins.plugins
+          .filter(p => p.expanded)
+          .filter(
+            p =>
+              p.key in pluginManifest ||
+              builtInPlugins.find(b => b.key === p.key)
+          )
+          .map(p => {
+            if (builtInPlugins.find(b => b.key === p.key)) {
+              const pluginName = builtInPlugins.find(b => b.key === p.key)
+                ?.name;
+              return pluginName ? pluginName : '';
+            }
+            return pluginManifest[p.key].name;
+          })
+      );
+    }
+  }, [studioPlugins]);
+
   const pluginCollapsedToggle = (pluginName: string) => {
     setOpenPlugins(
       openPlugins.includes(pluginName)
@@ -341,6 +393,74 @@ const ResourceViewContainer: React.FunctionComponent<{
         : [...openPlugins, pluginName]
     );
   };
+
+  const previewPlugin = resource &&
+    ((studioPlugins?.customise &&
+      studioPlugins?.plugins.find(p => p.key === 'preview')) ||
+      !studioPlugins?.customise) &&
+    resource.distribution && (
+      <Preview
+        key="previewPlugin"
+        nexus={nexus}
+        resource={resource}
+        collapsed={openPlugins.includes('preview')}
+        handleCollapseChanged={() => {
+          pluginCollapsedToggle('preview');
+        }}
+      />
+    );
+
+  const adminPlugin = resource &&
+    latestResource &&
+    ((studioPlugins?.customise &&
+      studioPlugins?.plugins.find(p => p.key === 'admin')) ||
+      !studioPlugins?.customise) && (
+      <AdminPlugin
+        key="adminPlugin"
+        editable={isLatest && !isDeprecated(resource)}
+        orgLabel={orgLabel}
+        projectLabel={projectLabel}
+        resourceId={resourceId}
+        resource={resource}
+        latestResource={latestResource}
+        activeTabKey={activeTabKey}
+        expandedFromQuery={expandedFromQuery}
+        refProp={ref}
+        goToResource={goToResource}
+        handleTabChange={handleTabChange}
+        handleGoToInternalLink={handleGoToInternalLink}
+        handleEditFormSubmit={handleEditFormSubmit}
+        handleExpanded={handleExpanded}
+        refreshResource={refreshResource}
+        collapsed={openPlugins.includes('advanced')}
+        handleCollapseChanged={() => {
+          pluginCollapsedToggle('advanced');
+        }}
+      />
+    );
+
+  const videoPlugin = resource &&
+    resource['video'] &&
+    ((studioPlugins?.customise &&
+      studioPlugins?.plugins.find(p => p.key === 'video')) ||
+      !studioPlugins?.customise) && (
+      <VideoPluginContainer
+        key="videoPlugin"
+        resource={resource}
+        orgLabel={orgLabel}
+        projectLabel={projectLabel}
+        collapsed={openPlugins.includes('video')}
+        handleCollapseChanged={() => {
+          pluginCollapsedToggle('video');
+        }}
+      />
+    );
+
+  const builtInPlugins = [
+    { key: 'preview', name: 'preview', pluginComponent: previewPlugin },
+    { key: 'admin', name: 'advanced', pluginComponent: adminPlugin },
+    { key: 'video', name: 'video', pluginComponent: videoPlugin },
+  ];
 
   return (
     <>
@@ -464,17 +584,20 @@ const ResourceViewContainer: React.FunctionComponent<{
                   <br />
                 </>
               )}
-              {filteredPlugins && filteredPlugins.length > 0 && (
-                <ResourcePlugins
-                  resource={resource}
-                  goToResource={goToSelfResource}
-                  openPlugins={openPlugins}
-                  handleCollapseChange={pluginName =>
-                    pluginCollapsedToggle(pluginName)
-                  }
-                />
-              )}
-
+              <ResourcePlugins
+                resource={resource}
+                goToResource={goToSelfResource}
+                openPlugins={openPlugins}
+                studioDefinedPluginsToInclude={
+                  studioPlugins && studioPlugins.customise
+                    ? studioPlugins.plugins.map(p => p.key)
+                    : undefined
+                }
+                builtInPlugins={builtInPlugins}
+                handleCollapseChange={pluginName =>
+                  pluginCollapsedToggle(pluginName)
+                }
+              />
               {!!resource['@type'] &&
                 typeof resource['@type'] === 'string' &&
                 nonEditableResourceTypes.includes(resource['@type']) && (
@@ -485,46 +608,6 @@ const ResourceViewContainer: React.FunctionComponent<{
                     />
                   </p>
                 )}
-              {resource.distribution && (
-                <Preview
-                  nexus={nexus}
-                  resource={resource}
-                  collapsed={openPlugins.includes('preview')}
-                  handleCollapseChanged={() => {
-                    pluginCollapsedToggle('preview');
-                  }}
-                />
-              )}
-              <AdminPlugin
-                editable={isLatest && !isDeprecated(resource)}
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-                resourceId={resourceId}
-                resource={resource}
-                latestResource={latestResource}
-                activeTabKey={activeTabKey}
-                expandedFromQuery={expandedFromQuery}
-                refProp={ref}
-                goToResource={goToResource}
-                handleTabChange={handleTabChange}
-                handleGoToInternalLink={handleGoToInternalLink}
-                handleEditFormSubmit={handleEditFormSubmit}
-                handleExpanded={handleExpanded}
-                refreshResource={refreshResource}
-                collapsed={openPlugins.includes('advanced')}
-                handleCollapseChanged={() => {
-                  pluginCollapsedToggle('advanced');
-                }}
-              />
-              <VideoPluginContainer
-                resource={resource}
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-                collapsed={openPlugins.includes('video')}
-                handleCollapseChanged={() => {
-                  pluginCollapsedToggle('video');
-                }}
-              />
             </>
           )}
         </Spin>

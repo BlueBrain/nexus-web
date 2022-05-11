@@ -26,10 +26,14 @@ const resourcesWritePermissionsWrapper = (
   });
 };
 
-type StudioResource = Resource<{
+export type StudioResource = Resource<{
   label: string;
   description?: string;
   workspaces: [string];
+  plugins?: {
+    customise: boolean;
+    plugins: { key: string; expanded: boolean }[];
+  };
 }>;
 
 const StudioContainer: React.FunctionComponent = () => {
@@ -52,6 +56,16 @@ const StudioContainer: React.FunctionComponent = () => {
     nexus.Resource.get(orgLabel, projectLabel, studioId)
       .then(value => {
         const studioResource: StudioResource = value as StudioResource;
+        /* TODO: find a better solution to dealing with json-ld's arrays
+         for singular objects when we actually expect type to be singular */
+        if (
+          Array.isArray(studioResource.plugins) &&
+          studioResource.plugins.length > 0
+        ) {
+          studioResource.plugins = studioResource.plugins[0];
+        } else {
+          studioResource.plugins = undefined;
+        }
         setStudioResource(studioResource);
         const workspaceIds: string[] = studioResource['workspaces'];
         setWorkspaceIds(
@@ -85,7 +99,14 @@ const StudioContainer: React.FunctionComponent = () => {
       });
   }, [orgLabel, projectLabel, studioId]);
 
-  const updateStudio = async (label: string, description?: string) => {
+  const updateStudio = async (
+    label: string,
+    description?: string,
+    plugins?: {
+      customise: boolean;
+      plugins: { key: string; expanded: boolean }[];
+    }
+  ) => {
     if (studioResource) {
       await nexus.Resource.update(
         orgLabel,
@@ -96,6 +117,7 @@ const StudioContainer: React.FunctionComponent = () => {
           ...studioResource,
           label,
           description,
+          plugins,
         }
       )
         .then(response => {

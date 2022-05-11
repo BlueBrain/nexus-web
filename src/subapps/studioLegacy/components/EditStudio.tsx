@@ -14,7 +14,14 @@ type StudioResource = Resource<{
 
 const EditStudio: React.FC<{
   studio: StudioResource | null;
-  onSave?(label: string, description?: string): void;
+  onSave?(
+    label: string,
+    description?: string,
+    plugins?: {
+      customise: boolean;
+      plugins: { key: string; expanded: boolean }[];
+    }
+  ): void;
   onSaveImage: SaveImageHandler;
   markdownViewer: React.FC<{
     template: string;
@@ -23,9 +30,16 @@ const EditStudio: React.FC<{
 }> = ({ studio, onSave, onSaveImage, markdownViewer }) => {
   const [showModal, setShowModal] = React.useState(false);
 
-  const handleUpdate = (label: string, description?: string) => {
+  const handleUpdate = (
+    label: string,
+    description?: string,
+    plugins?: {
+      customise: boolean;
+      plugins: { key: string; expanded: boolean }[];
+    }
+  ) => {
     setShowModal(false);
-    onSave && onSave(label, description);
+    onSave && onSave(label, description, plugins);
   };
 
   return (
