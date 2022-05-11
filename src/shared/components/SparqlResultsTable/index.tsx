@@ -197,15 +197,6 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
     }
   };
 
-  const handleColumnSelect = (value: string[]) => {
-    if (value && value.length === 0) {
-      setSelectedColumns(headerProperties);
-    } else {
-      const selected = headerProperties?.filter(x => value.includes(x.title));
-      setSelectedColumns(selected);
-    }
-  };
-
   return (
     <div className="result-table">
       <Table
