@@ -382,8 +382,7 @@ function useJIRA({
                 updated: issue.fields.updated,
                 self: issue.self,
                 commentCount: issue.fields.comment.total,
-                resourceUrl: issue.fields[nexusResourceFieldName],
-                resourceId:
+                resourceSelfUrl:
                   issue.fields[nexusResourceFieldName] === null
                     ? ''
                     : issue.fields[nexusResourceFieldName],
