@@ -327,28 +327,31 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         >
           Add
         </Button>
+        {selectedWorkspace ? (
+          <>
+            <Button
+              block
+              type="default"
+              icon={<DeleteOutlined />}
+              onClick={e => {
+                setDeleteConfirmation(true);
+              }}
+            >
+              Remove
+            </Button>
 
-        <Button
-          block
-          type="default"
-          icon={<DeleteOutlined />}
-          onClick={e => {
-            setDeleteConfirmation(true);
-          }}
-        >
-          Remove
-        </Button>
-
-        <Button
-          block
-          type="default"
-          icon={<EditOutlined />}
-          onClick={e => {
-            setShowEdit(true);
-          }}
-        >
-          Edit
-        </Button>
+            <Button
+              block
+              type="default"
+              icon={<EditOutlined />}
+              onClick={e => {
+                setShowEdit(true);
+              }}
+            >
+              Edit
+            </Button>
+          </>
+        ) : null}
       </>
     );
 
