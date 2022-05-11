@@ -284,6 +284,9 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             <Button
               block
               type="default"
+              style={{
+                marginRight: '10px',
+              }}
               icon={<DeleteOutlined />}
               onClick={e => {
                 setDeleteDashBoardConfirmation(true);
@@ -369,16 +372,18 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             Workspace
           </Button>
         </Popover>
-        <Popover
-          style={{ background: 'none' }}
-          placement="rightTop"
-          content={editDhashBoardspaceWrapper}
-          trigger="click"
-        >
-          <Button shape="round" type="default" icon={<EditOutlined />}>
-            Dashboard
-          </Button>
-        </Popover>
+        {selectedWorkspace ? (
+          <Popover
+            style={{ background: 'none' }}
+            placement="rightTop"
+            content={editDhashBoardspaceWrapper}
+            trigger="click"
+          >
+            <Button shape="round" type="default" icon={<EditOutlined />}>
+              Dashboard
+            </Button>
+          </Popover>
+        ) : null}
       </>
     );
     return resourcesWritePermissionsWrapper(actionsPopovers, permissionsPath);
@@ -558,6 +563,9 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             ? `${selectedWorkspace['@id']}-${selectedDashboard['@id']}`
             : '',
         ]}
+        style={{
+          minHeight: '40px',
+        }}
       >
         {workspaces.map(w => (
           <Menu.SubMenu
@@ -584,9 +592,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             })}
           </Menu.SubMenu>
         ))}
-        <div className="workspace-action">
-          {selectedWorkspace ? actionButtons() : null}
-        </div>
+        <div className="workspace-action">{actionButtons()}</div>
       </Menu>
       <div>
         {selectedDashboard ? (
