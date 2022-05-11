@@ -559,6 +559,45 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
     }
   }, [selectedWorkspace]);
 
+  const renderResults = React.useCallback(() => {
+    return selectedDashboard ? (
+      'dataTable' in selectedDashboard ? (
+        // New format Studio
+        <DataTableContainer
+          orgLabel={orgLabel}
+          projectLabel={projectLabel}
+          tableResourceId={selectedDashboard['dataTable']['@id']}
+          onSave={updateDashboard}
+          key={`data-table-${selectedDashboard['dataTable']['@id']}}`}
+          options={{
+            disableDelete: true,
+            disableAddFromCart: true,
+            disableEdit: true,
+          }}
+          showEdit={showDataTableEdit}
+          toggledEdit={show => setShowDataTableEdit(show)}
+        />
+      ) : (
+        // Old format Studio
+        <DashboardResultsContainer
+          orgLabel={orgLabel}
+          projectLabel={projectLabel}
+          dashboardLabel={selectedDashboard.label}
+          key={selectedDashboard['@id']}
+          viewId={
+            selectedWorkspace?.dashboards[0]?.view || DEFAULT_SPARQL_VIEW_ID
+          }
+          fields={selectedDashboard.fields}
+          dataQuery={selectedDashboard.dataQuery}
+        />
+      )
+    ) : (
+      <Empty
+        description={`No dashboards available for ${selectedWorkspace?.label}`}
+      />
+    );
+  }, [selectedDashboard]);
+
   return (
     <div className="workspace-list-container">
       <Menu
@@ -602,42 +641,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         <div className="workspace-action">{actionButtons()}</div>
       </Menu>
       <div>
-        {selectedDashboard ? (
-          'dataTable' in selectedDashboard ? (
-            // New format Studio
-            <DataTableContainer
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-              tableResourceId={selectedDashboard['dataTable']['@id']}
-              onSave={updateDashboard}
-              key={`data-table-${selectedDashboard['dataTable']['@id']}}`}
-              options={{
-                disableDelete: true,
-                disableAddFromCart: true,
-                disableEdit: true,
-              }}
-              showEdit={showDataTableEdit}
-              toggledEdit={show => setShowDataTableEdit(show)}
-            />
-          ) : (
-            // Old format Studio
-            <DashboardResultsContainer
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-              dashboardLabel={selectedDashboard.label}
-              key={selectedDashboard['@id']}
-              viewId={
-                selectedWorkspace?.dashboards[0]?.view || DEFAULT_SPARQL_VIEW_ID
-              }
-              fields={selectedDashboard.fields}
-              dataQuery={selectedDashboard.dataQuery}
-            />
-          )
-        ) : (
-          <Empty
-            description={`No dashboards available for ${selectedWorkspace?.label}`}
-          />
-        )}
+        {renderResults()}
         <AddWorkspaceContainer
           key={studioResource['@id']}
           orgLabel={orgLabel}
