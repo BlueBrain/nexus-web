@@ -327,28 +327,31 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         >
           Add
         </Button>
+        {selectedWorkspace ? (
+          <>
+            <Button
+              block
+              type="default"
+              icon={<DeleteOutlined />}
+              onClick={e => {
+                setDeleteConfirmation(true);
+              }}
+            >
+              Remove
+            </Button>
 
-        <Button
-          block
-          type="default"
-          icon={<DeleteOutlined />}
-          onClick={e => {
-            setDeleteConfirmation(true);
-          }}
-        >
-          Remove
-        </Button>
-
-        <Button
-          block
-          type="default"
-          icon={<EditOutlined />}
-          onClick={e => {
-            setShowEdit(true);
-          }}
-        >
-          Edit
-        </Button>
+            <Button
+              block
+              type="default"
+              icon={<EditOutlined />}
+              onClick={e => {
+                setShowEdit(true);
+              }}
+            >
+              Edit
+            </Button>
+          </>
+        ) : null}
       </>
     );
 
@@ -364,21 +367,30 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           content={editWorkspaceWrapper}
           trigger="click"
         >
-          <Button shape="round" type="default" icon={<EditOutlined />}>
+          <Button
+            shape="round"
+            type="default"
+            icon={<EditOutlined />}
+            style={{
+              marginRight: '5px',
+            }}
+          >
             {' '}
-            Workspace Actions
+            Workspace
           </Button>
         </Popover>
-        <Popover
-          style={{ background: 'none' }}
-          placement="rightTop"
-          content={editDhashBoardspaceWrapper}
-          trigger="click"
-        >
-          <Button shape="round" type="default" icon={<EditOutlined />}>
-            Dashboard Actions
-          </Button>
-        </Popover>
+        {selectedWorkspace ? (
+          <Popover
+            style={{ background: 'none' }}
+            placement="rightTop"
+            content={editDhashBoardspaceWrapper}
+            trigger="click"
+          >
+            <Button shape="round" type="default" icon={<EditOutlined />}>
+              Dashboard
+            </Button>
+          </Popover>
+        ) : null}
       </>
     );
     return resourcesWritePermissionsWrapper(actionsPopovers, permissionsPath);
@@ -558,6 +570,9 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             ? `${selectedWorkspace['@id']}-${selectedDashboard['@id']}`
             : '',
         ]}
+        style={{
+          minHeight: '40px',
+        }}
       >
         {workspaces.map(w => (
           <Menu.SubMenu
@@ -584,9 +599,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             })}
           </Menu.SubMenu>
         ))}
-        <div className="workspace-action">
-          {selectedWorkspace ? actionButtons() : null}
-        </div>
+        <div className="workspace-action">{actionButtons()}</div>
       </Menu>
       <div>
         {selectedDashboard ? (
@@ -636,16 +649,18 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           }}
           onAddWorkspace={onListUpdate}
         />
-        <Modal
-          title="Delete Workspace"
-          visible={deleteConfirmation}
-          onCancel={() => {
-            setDeleteConfirmation(false);
-          }}
-          onOk={deleteWorkSpaceCallBack}
-        >
-          <p>Are you sure you want to delete ?</p>
-        </Modal>
+        {selectedWorkspace ? (
+          <Modal
+            title="Delete Workspace"
+            visible={deleteConfirmation}
+            onCancel={() => {
+              setDeleteConfirmation(false);
+            }}
+            onOk={deleteWorkSpaceCallBack}
+          >
+            <p>{`Are you sure you want to delete ${selectedWorkspace.label}?`}</p>
+          </Modal>
+        ) : null}
         {showEdit ? (
           <WorkspaceForm
             orgLabel={orgLabel}
