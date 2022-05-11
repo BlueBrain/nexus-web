@@ -13,8 +13,6 @@ import useMeasure from '../hooks/useMeasure';
 import {
   getResourceLabel,
   getOrgAndProjectFromProjectId,
-  matchPlugins,
-  pluginsMap,
   getDestinationParam,
   labelOf,
   makeResourceUri,
@@ -88,7 +86,6 @@ const ResourceViewContainer: React.FunctionComponent<{
   const notification = useNotification();
   const [{ ref }] = useMeasure();
   const { data: pluginManifest } = usePlugins();
-  const availablePlugins = Object.keys(pluginManifest || {});
 
   const goToResource = (
     orgLabel: string,
@@ -137,10 +134,6 @@ const ResourceViewContainer: React.FunctionComponent<{
   >(null);
 
   const isLatest = latestResource?._rev === resource?._rev;
-  const filteredPlugins =
-    resource &&
-    pluginManifest &&
-    matchPlugins(pluginsMap(pluginManifest), availablePlugins, resource);
 
   const handleTabChange = (activeTabKey: string) => {
     goToResource(orgLabel, projectLabel, resourceId, {
@@ -591,23 +584,20 @@ const ResourceViewContainer: React.FunctionComponent<{
                   <br />
                 </>
               )}
-              {filteredPlugins && filteredPlugins.length > 0 && (
-                <ResourcePlugins
-                  resource={resource}
-                  goToResource={goToSelfResource}
-                  openPlugins={openPlugins}
-                  studioDefinedPluginsToInclude={
-                    studioPlugins && studioPlugins.customise
-                      ? studioPlugins.plugins.map(p => p.key)
-                      : undefined
-                  }
-                  builtInPlugins={builtInPlugins}
-                  handleCollapseChange={pluginName =>
-                    pluginCollapsedToggle(pluginName)
-                  }
-                />
-              )}
-
+              <ResourcePlugins
+                resource={resource}
+                goToResource={goToSelfResource}
+                openPlugins={openPlugins}
+                studioDefinedPluginsToInclude={
+                  studioPlugins && studioPlugins.customise
+                    ? studioPlugins.plugins.map(p => p.key)
+                    : undefined
+                }
+                builtInPlugins={builtInPlugins}
+                handleCollapseChange={pluginName =>
+                  pluginCollapsedToggle(pluginName)
+                }
+              />
               {!!resource['@type'] &&
                 typeof resource['@type'] === 'string' &&
                 nonEditableResourceTypes.includes(resource['@type']) && (
