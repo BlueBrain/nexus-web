@@ -651,7 +651,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             }}
             onOk={deleteWorkSpaceCallBack}
           >
-            <p>{`Are you sure you want to delete ${selectedWorkspace?.label}?`}</p>
+            <p>{`Are you sure you want to delete ${selectedWorkspace.label}?`}</p>
           </Modal>
         ) : null}
         {showEdit ? (
