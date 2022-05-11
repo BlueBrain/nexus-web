@@ -138,7 +138,7 @@ const StudioEditorForm: React.FC<{
     wrapperCol: { span: 24 },
   };
 
-  const { label, description } = studio || {
+  const { label } = studio || {
     label: '',
     description: '',
   };
