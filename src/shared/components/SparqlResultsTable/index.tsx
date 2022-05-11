@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as moment from 'moment';
-import { Input, Table, Button, Tooltip, Select, Typography } from 'antd';
+import { Input, Table, Button, Tooltip, Typography } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { omit, difference } from 'lodash';
 import { parseProjectUrl, isISODate, getDateString } from '../../utils/index';
@@ -10,7 +10,6 @@ import useNotification from '../../hooks/useNotification';
 import FriendlyTimeAgo from '../FriendlyDate';
 
 const { Search } = Input;
-const { Option } = Select;
 
 const PAGE_SIZE = 10;
 const MAX_FILTER_LIMIT = 20;
@@ -198,15 +197,6 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
     }
   };
 
-  const handleColumnSelect = (value: string[]) => {
-    if (value && value.length === 0) {
-      setSelectedColumns(headerProperties);
-    } else {
-      const selected = headerProperties?.filter(x => value.includes(x.title));
-      setSelectedColumns(selected);
-    }
-  };
-
   return (
     <div className="result-table">
       <Table
@@ -236,47 +226,15 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
             <Typography.Title className="title" level={3}>
               {tableLabel}
             </Typography.Title>
-            <Search
-              className="search"
-              value={searchValue}
-              onChange={(e: React.FormEvent<HTMLInputElement>) => {
-                setSearchValue(e.currentTarget.value);
-              }}
-            />
-
-            <Select
-              allowClear
-              mode="multiple"
-              size={'middle'}
-              placeholder="Please select columns"
-              defaultValue={selectedColumns?.map(x => x.title)}
-              value={selectedColumns?.map(x => x.title)}
-              onChange={handleColumnSelect}
-              className="select-column"
-            >
-              {headerProperties?.map(x => {
-                return (
-                  <Option key={x.dataIndex} value={x.title}>
-                    {x.title}
-                  </Option>
-                );
-              })}
-            </Select>
-
-            <Button
-              onClick={() => {
-                setFilteredValues(null);
-                setSelectedColumns(headerProperties);
-                setSearchValue('');
-              }}
-              type="primary"
-              className="reset"
-            >
-              {' '}
-              Reset
-            </Button>
 
             <div className="controls">
+              <Search
+                className="search"
+                value={searchValue}
+                onChange={(e: React.FormEvent<HTMLInputElement>) => {
+                  setSearchValue(e.currentTarget.value);
+                }}
+              />
               <div className="total">
                 {total} {`Result${total > 1 ? 's' : ''}`}
               </div>
