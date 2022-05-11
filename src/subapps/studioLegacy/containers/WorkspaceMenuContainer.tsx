@@ -284,9 +284,6 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             <Button
               block
               type="default"
-              style={{
-                marginRight: '10px',
-              }}
               icon={<DeleteOutlined />}
               onClick={e => {
                 setDeleteDashBoardConfirmation(true);
@@ -367,7 +364,14 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           content={editWorkspaceWrapper}
           trigger="click"
         >
-          <Button shape="round" type="default" icon={<EditOutlined />}>
+          <Button
+            shape="round"
+            type="default"
+            icon={<EditOutlined />}
+            style={{
+              marginRight: '5px',
+            }}
+          >
             {' '}
             Workspace
           </Button>
