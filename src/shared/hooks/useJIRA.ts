@@ -44,7 +44,7 @@ function useJIRA({
 
   const [isJiraConnected, setIsJiraConnected] = useLocalStorage<boolean>(
     'isJiraConnected',
-    false
+    true
   );
 
   const [jiraAuthUrl, setJiraAuthUrl] = React.useState('');
@@ -79,6 +79,10 @@ function useJIRA({
       });
   };
 
+  /**
+   * Completes authorization of Nexus user with Jira
+   * @param verificationCode code provided by Jira to user
+   */
   const connectJira = (verificationCode: string) => {
     nexus
       .httpPost({
@@ -164,9 +168,26 @@ function useJIRA({
       }
 
       if (e['@type'] === 'JiraResponseError') {
+        const errorContent = JSON.stringify(e.content);
+
+        if (errorContent.indexOf('not on the appropriate screen') > -1) {
+          notification.error({
+            message: e.reason,
+            description:
+              'It looks as though the Jira project is not configured with the required fields.',
+          });
+          return;
+        }
+        if (errorContent.indexOf('Issue Does Not Exist') > -1) {
+          notification.error({
+            message: e.reason,
+            description: 'Jira issue does not exist.',
+          });
+          return;
+        }
         notification.error({
           message: e.reason,
-          description: 'content' in e && e.content,
+          description: 'content' in e && JSON.stringify(e.content),
         });
         return;
       }
@@ -227,6 +248,7 @@ function useJIRA({
         handleJiraError(e);
       });
   };
+
   const linkIssue = (issueUrl: string) => {
     const issueKey = issueUrl.includes('/')
       ? issueUrl.substring(issueUrl.lastIndexOf('/') + 1)
@@ -238,34 +260,36 @@ function useJIRA({
         path: `${jiraAPIBaseUrl}/issue/${issueKey}`,
         headers: { 'Content-Type': 'application/json' },
       })
-      .catch(e => handleJiraError(e));
-
-    return fetch(`${jiraAPIBaseUrl}/issue/${issueKey}`, {
-      method: 'PUT',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('nexus__token')}`,
-      },
-      body: JSON.stringify({
-        fields: {
-          [nexusResourceFieldName]: resource ? resource._self : '',
-          [nexusProjectName]: projectSelf,
-          labels: ['discussion'], // TODO: first we should fetch issue to append this label to any existing ones
-        },
-      }),
-    })
-      .then(async response => {
-        if (!response.ok) {
-          const error = await response.json();
-          return Promise.reject(error);
-        }
-        return fetchLinkedIssues();
+      .then(() => {
+        fetch(`${jiraAPIBaseUrl}/issue/${issueKey}`, {
+          method: 'PUT',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('nexus__token')}`,
+          },
+          body: JSON.stringify({
+            fields: {
+              [nexusResourceFieldName]: resource ? resource._self : '',
+              [nexusProjectName]: projectSelf,
+              labels: ['discussion'], // TODO: first we should fetch issue to append this label to any existing ones
+            },
+          }),
+        })
+          .then(async response => {
+            if (!response.ok) {
+              const error = await response.json();
+              return Promise.reject(error);
+            }
+            return fetchLinkedIssues();
+          })
+          .catch(e => {
+            handleJiraError(e);
+          });
       })
-      .catch(e => {
-        handleJiraError(e);
-      });
+      .catch(e => handleJiraError(e));
   };
+
   const unlinkIssue = (issueKey: string) => {
     return fetch(`${jiraAPIBaseUrl}/issue/${issueKey}`, {
       method: 'PUT',
@@ -296,69 +320,80 @@ function useJIRA({
 
   const getIssueResources = (issues: any) => {
     const resources = issues.map((issue: any) => {
-      if (issue.fields[nexusResourceFieldName] !== null) {
+      if (
+        issue.fields[nexusResourceFieldName] &&
+        issue.fields[nexusResourceFieldName] !== null
+      ) {
         return nexus.httpGet({ path: issue.fields[nexusResourceFieldName] });
       }
       return Promise.resolve();
     });
+
     return Promise.all(resources);
   };
 
   const fetchLinkedIssues = () => {
     (async () => {
-      setIsLoading(true);
-      const issuesResponse = await (resource
-        ? getResourceIssues(resource._self)
-        : getProjectIssues());
+      try {
+        setIsLoading(true);
+        const issuesResponse = await (resource
+          ? getResourceIssues(resource._self)
+          : getProjectIssues());
 
-      if (issuesResponse.issues) {
-        const issuesOrderedByLastUpdate = issuesResponse.issues.sort(
-          (a: any, b: any) =>
-            new Date(b.fields.updated).getTime() -
-            new Date(a.fields.updated).getTime()
-        );
+        if (issuesResponse.issues) {
+          const issuesOrderedByLastUpdate = issuesResponse.issues.sort(
+            (a: any, b: any) =>
+              new Date(b.fields.updated).getTime() -
+              new Date(a.fields.updated).getTime()
+          );
 
-        const fullIssuesWithComments = await getFullIssues(
-          issuesOrderedByLastUpdate
-        );
-        const resources = (
-          await getIssueResources(issuesOrderedByLastUpdate)
-        ).filter(r => r !== undefined);
-        setLinkedIssues(
-          fullIssuesWithComments.map((issue: any) => {
-            let resourceLabel = '';
-            if (issue.fields[nexusResourceFieldName] !== null) {
-              const resource = resources.find(
-                r =>
-                  (r as Resource)['_self'] ===
-                  issue.fields[nexusResourceFieldName]
-              );
+          const fullIssuesWithComments = await getFullIssues(
+            issuesOrderedByLastUpdate
+          );
 
-              resourceLabel = resource
-                ? getResourceLabel(resource as Resource)
-                : labelOf(
-                    decodeURIComponent(issue.fields[nexusResourceFieldName])
-                  );
-            }
+          const resources = (
+            await getIssueResources(issuesOrderedByLastUpdate)
+          ).filter(r => r !== undefined);
 
-            return {
-              resourceLabel,
-              key: issue.key,
-              id: issue.id,
-              summary: issue.fields.summary,
-              status: issue.fields.status.name,
-              description: issue.fields.description,
-              updated: issue.fields.updated,
-              self: issue.self,
-              commentCount: issue.fields.comment.total,
-              resourceUrl: issue.fields[nexusResourceFieldName],
-              resourceId:
-                issue.fields[nexusResourceFieldName] === null
-                  ? ''
-                  : issue.fields[nexusResourceFieldName],
-            };
-          })
-        );
+          setLinkedIssues(
+            fullIssuesWithComments.map((issue: any) => {
+              let resourceLabel = '';
+              if (issue.fields[nexusResourceFieldName] !== null) {
+                const resource = resources.find(
+                  r =>
+                    (r as Resource)['_self'] ===
+                    issue.fields[nexusResourceFieldName]
+                );
+
+                resourceLabel = resource
+                  ? getResourceLabel(resource as Resource)
+                  : labelOf(
+                      decodeURIComponent(issue.fields[nexusResourceFieldName])
+                    );
+              }
+
+              return {
+                resourceLabel,
+                key: issue.key,
+                id: issue.id,
+                summary: issue.fields.summary,
+                status: issue.fields.status.name,
+                description: issue.fields.description,
+                updated: issue.fields.updated,
+                self: issue.self,
+                commentCount: issue.fields.comment.total,
+                resourceUrl: issue.fields[nexusResourceFieldName],
+                resourceId:
+                  issue.fields[nexusResourceFieldName] === null
+                    ? ''
+                    : issue.fields[nexusResourceFieldName],
+              };
+            })
+          );
+          setIsLoading(false);
+        }
+      } catch (e) {
+        handleJiraError(e);
         setIsLoading(false);
       }
     })();

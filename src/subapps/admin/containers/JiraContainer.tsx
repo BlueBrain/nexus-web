@@ -87,7 +87,7 @@ const JiraPluginProjectContainer = ({
           }
           onLinkIssue={issueUrl => linkIssue(issueUrl)}
           onUnlinkIssue={issueKey => unlinkIssue(issueKey)}
-          searchJiraLink="https://bbpteam.epfl.ch/project/devissues/issues/?jql="
+          searchJiraLink={`${jiraWebBaseUrl}/issues/?jql=`}
           onNavigateToResource={resourceSelfUrl => {
             const resourceId = resourceIDFromSelfUrl(resourceSelfUrl);
             goToResource(orgLabel, projectLabel, resourceId);
