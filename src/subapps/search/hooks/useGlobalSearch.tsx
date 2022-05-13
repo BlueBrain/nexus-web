@@ -394,6 +394,11 @@ function useGlobalSearchData(
 
   const filteredFields = filterState.map(el => extractFieldName(el.filterTerm));
 
+  const isMissing =
+    filterState
+      .find(f => f.filterType === 'missing')
+      ?.filters.includes('isMissing') || false;
+
   const fieldVisibilityInitialState = React.useMemo(() => {
     const fieldVisibilityFromStorage = localStorage.getItem(
       'search-field-visibility'
@@ -449,6 +454,7 @@ function useGlobalSearchData(
           <>
             <h1>SORT</h1>
             <SortMenuOptions
+              disabled={isMissing}
               sortField={sortState.find(s => s.fieldName === field.name)}
               onSortField={sortOption => {
                 changeSortOption({

@@ -1,5 +1,6 @@
 import {
   CloseCircleOutlined,
+  ConsoleSqlOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
 } from '@ant-design/icons';
@@ -12,12 +13,14 @@ import './SortMenuOptions.less';
 
 const SortMenuOptions: React.FC<{
   sortField?: ESSortField;
+  disabled: boolean;
   onSortField: (sortOption: SortDirection) => void;
   onRemoveSort: (sortOption: ESSortField) => void;
-}> = ({ sortField, onSortField, onRemoveSort }) => {
+}> = ({ sortField, disabled, onSortField, onRemoveSort }) => {
   return (
     <div className="sort-menu-options">
       <Button
+        disabled={disabled}
         className="sort-menu-options__sort-button"
         type={
           sortField?.direction === SortDirection.ASCENDING
@@ -32,6 +35,7 @@ const SortMenuOptions: React.FC<{
         Ascending
       </Button>{' '}
       <Button
+        disabled={disabled}
         className="sort-menu-options__sort-button"
         type={
           sortField?.direction === SortDirection.DESCENDING
@@ -47,6 +51,7 @@ const SortMenuOptions: React.FC<{
       </Button>
       {sortField && (
         <Button
+          disabled={disabled}
           type="text"
           shape="round"
           icon={<CloseCircleOutlined />}
