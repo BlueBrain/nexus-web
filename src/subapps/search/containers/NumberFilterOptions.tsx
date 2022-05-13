@@ -148,13 +148,12 @@ const NumberFilterOptions: React.FC<{
     nexusClient.Search.query(withFilter);
   };
   React.useEffect(() => {
-    missingValues
-      ? onFinish({
-          filters: ['isMissing'],
-          filterType: 'missing',
-          filterTerm: field.name,
-        })
-      : missingQuery();
+    const filters = missingValues ? ['isMissing'] : [];
+    onFinish({
+      filters,
+      filterType: 'missing',
+      filterTerm: field.name,
+    });
   }, [missingValues]);
 
   React.useEffect(() => {
