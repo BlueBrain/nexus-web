@@ -399,7 +399,7 @@ function useGlobalSearchData(
       el.filterType === 'missing' && el?.filters.includes('isMissing')
         ? true
         : false;
-    return { filterTerm: el.filterTerm, isMissing: isMissing };
+    return { filterTerm: el.filterTerm, isMissing };
   });
 
   const fieldVisibilityInitialState = React.useMemo(() => {
