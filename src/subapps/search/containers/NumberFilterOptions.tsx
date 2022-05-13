@@ -17,6 +17,7 @@ import './FilterOptions.less';
 import { createKeyWord } from './FilterOptions';
 import './NumberFilterOptionsContainer.less';
 import { Line, Column } from '@ant-design/charts';
+import { remove } from 'lodash';
 
 type ConfigField =
   | {
@@ -87,9 +88,9 @@ const NumberFilterOptions: React.FC<{
   const filterKeyWord = createKeyWord(field);
 
   // for missing count.
-  React.useEffect(() => {
-    missingQuery();
-  }, []);
+  // React.useEffect(() => {
+  //   missingQuery();
+  // }, []);
 
   React.useEffect(() => {
     const allSuggestions = constructQuery(query)
@@ -150,14 +151,7 @@ const NumberFilterOptions: React.FC<{
     if (missingValues) {
       onFinish({
         filters: ['isMissing'],
-        filterType: 'number',
-        filterTerm: field.name,
-      });
-    } else {
-      missingQuery();
-      onFinish({
-        filters: [],
-        filterType: 'number',
+        filterType: 'missing',
         filterTerm: field.name,
       });
     }
@@ -213,6 +207,7 @@ const NumberFilterOptions: React.FC<{
             <Slider
               min={rangeMin}
               max={rangeMax}
+              disabled={missingValues}
               range={{
                 draggableTrack: true,
               }}
