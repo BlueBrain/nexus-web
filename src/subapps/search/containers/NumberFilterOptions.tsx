@@ -94,7 +94,7 @@ const NumberFilterOptions: React.FC<{
 
   React.useEffect(() => {
     if (!firstRender.current) {
-      console.log("FIRST RENDER AND MAJOR USE EFFECT");
+      console.log('FIRST RENDER AND MAJOR USE EFFECT');
       console.log(firstRender.current);
       return;
     }
