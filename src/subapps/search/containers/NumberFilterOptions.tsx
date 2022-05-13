@@ -87,18 +87,7 @@ const NumberFilterOptions: React.FC<{
 
   const filterKeyWord = createKeyWord(field);
 
-  // for missing count.
-  // React.useEffect(() => {
-  //   missingQuery();
-  // }, []);
-
   React.useEffect(() => {
-    if (!firstRender.current) {
-      console.log('FIRST RENDER AND MAJOR USE EFFECT');
-      console.log(firstRender.current);
-      return;
-    }
-
     const allSuggestions = constructQuery(query)
       .aggregation('terms', `${field.name}.value`, 'suggestions', {
         size: 1000,
@@ -106,9 +95,7 @@ const NumberFilterOptions: React.FC<{
       .aggregation('missing', filterKeyWord, '(missing)')
       .aggregation('stats', `${field.name}.value`, 'stats')
       .build();
-    // if(filter.length > 0) {
-    //   const withFilter = constructFilterSet(allSuggestions, filter)
-    // }
+
     const allSuggestionsPromise = nexusClient.Search.query(allSuggestions);
 
     Promise.all([allSuggestionsPromise]).then(([all]) => {
@@ -151,9 +138,7 @@ const NumberFilterOptions: React.FC<{
   };
 
   React.useEffect(() => {
-    if (firstRender.current) {
-      return;
-    }
+    if (firstRender.current) return;
     const filters = missingValues ? ['isMissing'] : [];
     onFinish({
       filters,
