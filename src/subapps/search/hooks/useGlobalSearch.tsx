@@ -394,10 +394,13 @@ function useGlobalSearchData(
 
   const filteredFields = filterState.map(el => extractFieldName(el.filterTerm));
 
-  const isMissing =
-    filterState
-      .find(f => f.filterType === 'missing')
-      ?.filters.includes('isMissing') || false;
+  const filtersWithMissing = filterState.map(el => {
+    const isMissing =
+      el.filterType === 'missing' && el?.filters.includes('isMissing')
+        ? true
+        : false;
+    return { filterTerm: el.filterTerm, isMissing: isMissing };
+  });
 
   const fieldVisibilityInitialState = React.useMemo(() => {
     const fieldVisibilityFromStorage = localStorage.getItem(
@@ -419,6 +422,13 @@ function useGlobalSearchData(
     fieldVisibilityReducer,
     fieldVisibilityInitialState
   );
+
+  function checkDisabled(field: ConfigField) {
+    const res = filtersWithMissing.find(
+      f => f.filterTerm === field.name && f.isMissing
+    );
+    return !!res;
+  }
 
   const onFilterSubmit = (values: FilterState) => {
     if (values.filters.length === 0) {
@@ -454,7 +464,7 @@ function useGlobalSearchData(
           <>
             <h1>SORT</h1>
             <SortMenuOptions
-              disabled={isMissing}
+              disabled={checkDisabled(field)}
               sortField={sortState.find(s => s.fieldName === field.name)}
               onSortField={sortOption => {
                 changeSortOption({
