@@ -149,13 +149,11 @@ const NumberFilterOptions: React.FC<{
   const onChange = (e: any) => {
     setGraphValue(e.target.value);
   };
-  const missingQuery = () => {
-    const allSuggestions = constructQuery(query);
-    const withFilter = constructFilterSet(allSuggestions, filter).build();
 
-    nexusClient.Search.query(withFilter);
-  };
   React.useEffect(() => {
+    if (firstRender.current) {
+      return;
+    }
     const filters = missingValues ? ['isMissing'] : [];
     onFinish({
       filters,
