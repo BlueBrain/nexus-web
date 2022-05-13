@@ -175,10 +175,12 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
   const [showEditTableForm, setShowEditTableForm] = React.useState<boolean>(
     false
   );
+  const [isBusy, setIsBusy] = React.useState(false);
 
   const saveDashboardAndDataTable = async (
     table: TableResource | UnsavedTableResource
   ) => {
+    setIsBusy(true);
     try {
       if (!selectedWorkspace) throw new Error();
       const workspaceId = selectedWorkspace['@id'];
@@ -238,6 +240,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
     } catch (e) {
       notification.error({ message: 'Failed to save dashboard' });
     }
+    setIsBusy(false);
   };
 
   const deleteWorkSpaceCallBack = React.useCallback(async () => {
@@ -697,7 +700,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
               saveDashboardAndDataTable(data);
             }}
             onClose={() => setShowEditTableForm(false)}
-            busy={false}
+            busy={isBusy}
             orgLabel={orgLabel}
             projectLabel={projectLabel}
             formName="Create Dashboard"
