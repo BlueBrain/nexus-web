@@ -147,27 +147,34 @@ const NumberFilterOptions: React.FC<{
     nexusClient.Search.query(withFilter);
   };
   React.useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
-    }
-
     if (missingValues) {
       onFinish({
-        filterType: 'number',
         filters: ['isMissing'],
+        filterType: 'number',
         filterTerm: field.name,
       });
     } else {
       missingQuery();
-      const filters = [rangeStart || rangeMin, rangeEnd || rangeMax];
       onFinish({
-        filters,
+        filters: [],
         filterType: 'number',
         filterTerm: field.name,
       });
     }
-  }, [rangeStart, rangeEnd, missingValues]);
+  }, [missingValues]);
+
+  React.useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    const filters = [rangeStart || rangeMin, rangeEnd || rangeMax];
+    onFinish({
+      filters,
+      filterType: 'number',
+      filterTerm: field.name,
+    });
+  }, [rangeStart, rangeEnd]);
 
   const renderMissing = React.useCallback(() => {
     return missingCount ? (
