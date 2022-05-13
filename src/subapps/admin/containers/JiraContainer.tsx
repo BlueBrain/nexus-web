@@ -1,9 +1,11 @@
 import * as React from 'react';
+import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import JIRAPluginUI, {
   AuthorizeJiraUI,
 } from '../../../shared/components/JIRA/JIRA';
 import useJIRA from '../../../shared/hooks/useJIRA';
+import { RootState } from '../../../shared/store/reducers';
 import { makeResourceUri } from '../../../shared/utils';
 
 type JiraContainerProps = {
@@ -32,6 +34,7 @@ const JiraPluginProjectContainer = ({
     projectLabel,
     orgLabel,
   });
+  const { apiEndpoint } = useSelector((state: RootState) => state.config);
 
   const tableIssues = linkedIssues?.map(issue => ({
     key: issue.key,
@@ -41,7 +44,7 @@ const JiraPluginProjectContainer = ({
     status: issue.status,
     url: `${jiraWebBaseUrl}/browse/${issue.key}`,
     commentCount: issue.commentCount,
-    resourceId: issue.resourceId,
+    resourceSelfUrl: issue.resourceSelfUrl,
     resourceLabel: issue.resourceLabel,
   }));
 
@@ -55,6 +58,13 @@ const JiraPluginProjectContainer = ({
       {
         background: location,
       }
+    );
+  };
+
+  const resourceIDFromSelfUrl = (selfUrl: string) => {
+    return selfUrl.replace(
+      `${apiEndpoint}/resources/${orgLabel}/${projectLabel}/_/`,
+      ''
     );
   };
 
@@ -77,10 +87,11 @@ const JiraPluginProjectContainer = ({
           }
           onLinkIssue={issueUrl => linkIssue(issueUrl)}
           onUnlinkIssue={issueKey => unlinkIssue(issueKey)}
-          searchJiraLink="https://bbpteam.epfl.ch/project/devissues/issues/?jql="
-          onNavigateToResource={resourceId =>
-            goToResource(orgLabel, projectLabel, resourceId)
-          }
+          searchJiraLink={`${jiraWebBaseUrl}/issues/?jql=`}
+          onNavigateToResource={resourceSelfUrl => {
+            const resourceId = resourceIDFromSelfUrl(resourceSelfUrl);
+            goToResource(orgLabel, projectLabel, resourceId);
+          }}
           isLoading={isLoading}
         />
       )}

@@ -230,7 +230,7 @@ type JIRAPluginUIProps = {
   onUnlinkIssue: (issueKey: string) => void;
   searchJiraLink: string;
   displayType: 'resource' | 'project';
-  onNavigateToResource?: (resourceId: string) => void;
+  onNavigateToResource?: (resourceSelfUrl: string) => void;
   isLoading: boolean;
 };
 const JIRAPluginUI = ({
@@ -369,11 +369,11 @@ const JIRAPluginUI = ({
               ? {
                   title: 'Resource',
                   render: issue =>
-                    issue.resourceId && (
+                    issue.resourceSelfUrl && (
                       <a
                         onClick={() =>
                           onNavigateToResource &&
-                          onNavigateToResource(issue.resourceId)
+                          onNavigateToResource(issue.resourceSelfUrl)
                         }
                       >
                         {issue.resourceLabel}
@@ -416,7 +416,6 @@ const JIRAPluginUI = ({
                           </Menu.Item>
                         </Menu>
                       }
-                      // onClick={() => window.open(issue.url, '_blank')}
                     >
                       Options
                     </Dropdown.Button>

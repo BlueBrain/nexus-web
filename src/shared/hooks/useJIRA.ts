@@ -2,9 +2,8 @@ import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { generatePath } from 'react-router-dom';
 import { RootState } from '../store/reducers';
-import { getResourceLabel, labelOf, makeProjectUri } from '../utils';
+import { getResourceLabel, labelOf } from '../utils';
 import useLocalStorage from './useLocalStorage';
 import useNotification from './useNotification';
 
@@ -16,16 +15,13 @@ import useNotification from './useNotification';
 function useJIRA({
   orgLabel,
   projectLabel,
-  resourceID,
+  resource,
 }: {
   orgLabel: string;
   projectLabel: string;
-  resourceID?: string;
+  resource?: Resource;
 }) {
   const nexus = useNexusContext();
-  const basePath =
-    useSelector((state: RootState) => state.config.basePath) || '';
-  const fusionBaseUrl = `${window.location.origin.toString()}${basePath}`;
   const {
     jiraResourceCustomFieldName: nexusResourceFieldName,
     jiraProjectCustomFieldName: nexusProjectName,
@@ -33,11 +29,22 @@ function useJIRA({
     jiraProjectCustomFieldLabel,
   } = useSelector((state: RootState) => state.config);
 
+  const [projectSelf, setProjectSelf] = React.useState<string>();
+  React.useEffect(() => {
+    nexus.Project.get(orgLabel, projectLabel)
+      .then(d => setProjectSelf(d._self))
+      .catch(e => {
+        notification.error({
+          message: 'An error occurred whilst trying to retrieve project',
+        });
+      });
+  }, [orgLabel, projectLabel]);
+
   const notification = useNotification();
 
   const [isJiraConnected, setIsJiraConnected] = useLocalStorage<boolean>(
     'isJiraConnected',
-    false
+    true
   );
 
   const [jiraAuthUrl, setJiraAuthUrl] = React.useState('');
@@ -72,6 +79,10 @@ function useJIRA({
       });
   };
 
+  /**
+   * Completes authorization of Nexus user with Jira
+   * @param verificationCode code provided by Jira to user
+   */
   const connectJira = (verificationCode: string) => {
     nexus
       .httpPost({
@@ -86,24 +97,6 @@ function useJIRA({
       .catch(e => {
         handleJiraError(e);
       });
-  };
-
-  const getResourceUrl = () => {
-    if (!resourceID) {
-      throw new Error('Resource ID not available in this context');
-    }
-    const encodedResourceId = encodeURIComponent(resourceID);
-    const pathToResource = generatePath(
-      '/:orgLabel/:projectLabel/resources/:resourceId',
-      {
-        orgLabel,
-        projectLabel,
-        resourceId: encodedResourceId,
-      }
-    );
-
-    const resourceUrl = `${fusionBaseUrl}${pathToResource}`;
-    return resourceUrl;
   };
 
   const getProjects = () => {
@@ -146,20 +139,13 @@ function useJIRA({
       });
   };
 
-  /**
-   * Return Jira issues with a given Nexus resource ID
-   * @param resourceID
-   * @returns
-   */
-  const getResourceIssues = () => {
-    const resourceUrl = getResourceUrl();
-
+  const getResourceIssues = (resourceSelf: string) => {
     return nexus
       .httpPost({
         path: `${jiraAPIBaseUrl}/search`,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          jql: `"${jiraResourceCustomFieldLabel}" = "${resourceUrl}"`,
+          jql: `"${jiraResourceCustomFieldLabel}" = "${resourceSelf}"`,
         }),
       })
       .catch(e => {
@@ -180,6 +166,32 @@ function useJIRA({
       ) {
         setIsJiraConnected(false);
       }
+
+      if (e['@type'] === 'JiraResponseError') {
+        const errorContent = JSON.stringify(e.content);
+
+        if (errorContent.indexOf('not on the appropriate screen') > -1) {
+          notification.error({
+            message: e.reason,
+            description:
+              'It looks as though the Jira project is not configured with the required fields.',
+          });
+          return;
+        }
+        if (errorContent.indexOf('Issue Does Not Exist') > -1) {
+          notification.error({
+            message: e.reason,
+            description: 'Jira issue does not exist.',
+          });
+          return;
+        }
+        notification.error({
+          message: e.reason,
+          description: 'content' in e && JSON.stringify(e.content),
+        });
+        return;
+      }
+
       notification.error({
         message: e['@type'],
         description: 'reason' in e && e.reason,
@@ -198,16 +210,13 @@ function useJIRA({
         path: `${jiraAPIBaseUrl}/search`,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          jql: `"${jiraProjectCustomFieldLabel}" = "${getProjectUrl()}"`,
+          jql: `"${jiraProjectCustomFieldLabel}" = "${projectSelf}"`,
         }),
       })
       .catch(e => {
         handleJiraError(e);
       });
   };
-
-  const getProjectUrl = () =>
-    `${fusionBaseUrl}${makeProjectUri(orgLabel, projectLabel)}`;
 
   const createIssue = (
     project: string,
@@ -226,8 +235,8 @@ function useJIRA({
               key: project,
             },
             issuetype: { name: 'Task' }, // TODO: allow selection of issue type
-            [nexusResourceFieldName]: resourceID ? getResourceUrl() : '',
-            [nexusProjectName]: getProjectUrl(),
+            [nexusResourceFieldName]: resource ? resource._self : '',
+            [nexusProjectName]: projectSelf,
             labels: ['discussion'],
           },
         }),
@@ -239,6 +248,7 @@ function useJIRA({
         handleJiraError(e);
       });
   };
+
   const linkIssue = (issueUrl: string) => {
     const issueKey = issueUrl.includes('/')
       ? issueUrl.substring(issueUrl.lastIndexOf('/') + 1)
@@ -250,37 +260,36 @@ function useJIRA({
         path: `${jiraAPIBaseUrl}/issue/${issueKey}`,
         headers: { 'Content-Type': 'application/json' },
       })
-      .catch(e => handleJiraError(e));
-
-    return fetch(`${jiraAPIBaseUrl}/issue/${issueKey}`, {
-      method: 'PUT',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('nexus__token')}`,
-      },
-      body: JSON.stringify({
-        fields: {
-          [nexusResourceFieldName]: resourceID ? getResourceUrl() : '',
-          [nexusProjectName]: `${fusionBaseUrl}${makeProjectUri(
-            orgLabel,
-            projectLabel
-          )}`,
-          labels: ['discussion'], // TODO: first we should fetch issue to append this label to any existing ones
-        },
-      }),
-    })
-      .then(async response => {
-        if (!response.ok) {
-          const error = await response.json();
-          return Promise.reject(error);
-        }
-        return fetchLinkedIssues();
+      .then(() => {
+        fetch(`${jiraAPIBaseUrl}/issue/${issueKey}`, {
+          method: 'PUT',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('nexus__token')}`,
+          },
+          body: JSON.stringify({
+            fields: {
+              [nexusResourceFieldName]: resource ? resource._self : '',
+              [nexusProjectName]: projectSelf,
+              labels: ['discussion'], // TODO: first we should fetch issue to append this label to any existing ones
+            },
+          }),
+        })
+          .then(async response => {
+            if (!response.ok) {
+              const error = await response.json();
+              return Promise.reject(error);
+            }
+            return fetchLinkedIssues();
+          })
+          .catch(e => {
+            handleJiraError(e);
+          });
       })
-      .catch(e => {
-        handleJiraError(e);
-      });
+      .catch(e => handleJiraError(e));
   };
+
   const unlinkIssue = (issueKey: string) => {
     return fetch(`${jiraAPIBaseUrl}/issue/${issueKey}`, {
       method: 'PUT',
@@ -309,95 +318,81 @@ function useJIRA({
       });
   };
 
-  const getResourceIdFromFusionUrl = (url: string) => {
-    if (!url) {
-      return '';
-    }
-    return decodeURIComponent(
-      decodeURIComponent(
-        url.replace(
-          `${fusionBaseUrl}/${orgLabel}/${projectLabel}/resources/`,
-          ''
-        )
-      ) // TODO: check encoding
-    );
-  };
-
   const getIssueResources = (issues: any) => {
     const resources = issues.map((issue: any) => {
-      if (issue.fields[nexusResourceFieldName] !== null) {
-        return nexus.Resource.get(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(
-            getResourceIdFromFusionUrl(issue.fields[nexusResourceFieldName])
-          )
-        );
+      if (
+        issue.fields[nexusResourceFieldName] &&
+        issue.fields[nexusResourceFieldName] !== null
+      ) {
+        return nexus.httpGet({ path: issue.fields[nexusResourceFieldName] });
       }
       return Promise.resolve();
     });
+
     return Promise.all(resources);
   };
 
   const fetchLinkedIssues = () => {
     (async () => {
-      setIsLoading(true);
-      const issuesResponse = await (resourceID
-        ? getResourceIssues()
-        : getProjectIssues());
+      try {
+        setIsLoading(true);
+        const issuesResponse = await (resource
+          ? getResourceIssues(resource._self)
+          : getProjectIssues());
 
-      if (issuesResponse.issues) {
-        const issuesOrderedByLastUpdate = issuesResponse.issues.sort(
-          (a: any, b: any) =>
-            new Date(b.fields.updated).getTime() -
-            new Date(a.fields.updated).getTime()
-        );
+        if (issuesResponse.issues) {
+          const issuesOrderedByLastUpdate = issuesResponse.issues.sort(
+            (a: any, b: any) =>
+              new Date(b.fields.updated).getTime() -
+              new Date(a.fields.updated).getTime()
+          );
 
-        const fullIssuesWithComments = await getFullIssues(
-          issuesOrderedByLastUpdate
-        );
-        const resources = (
-          await getIssueResources(issuesOrderedByLastUpdate)
-        ).filter(r => r !== undefined);
-        setLinkedIssues(
-          fullIssuesWithComments.map((issue: any) => {
-            let resourceLabel = '';
-            if (issue.fields[nexusResourceFieldName] !== null) {
-              const resource = resources.find(
-                r =>
-                  (r as Resource)['@id'] ===
-                  getResourceIdFromFusionUrl(
+          const fullIssuesWithComments = await getFullIssues(
+            issuesOrderedByLastUpdate
+          );
+
+          const resources = (
+            await getIssueResources(issuesOrderedByLastUpdate)
+          ).filter(r => r !== undefined);
+
+          setLinkedIssues(
+            fullIssuesWithComments.map((issue: any) => {
+              let resourceLabel = '';
+              if (issue.fields[nexusResourceFieldName] !== null) {
+                const resource = resources.find(
+                  r =>
+                    (r as Resource)['_self'] ===
                     issue.fields[nexusResourceFieldName]
-                  )
-              );
+                );
 
-              resourceLabel = resource
-                ? getResourceLabel(resource as Resource)
-                : labelOf(
-                    decodeURIComponent(issue.fields[nexusResourceFieldName])
-                  );
-            }
+                resourceLabel = resource
+                  ? getResourceLabel(resource as Resource)
+                  : labelOf(
+                      decodeURIComponent(issue.fields[nexusResourceFieldName])
+                    );
+              }
 
-            return {
-              resourceLabel,
-              key: issue.key,
-              id: issue.id,
-              summary: issue.fields.summary,
-              status: issue.fields.status.name,
-              description: issue.fields.description,
-              updated: issue.fields.updated,
-              self: issue.self,
-              commentCount: issue.fields.comment.total,
-              resourceUrl: issue.fields[nexusResourceFieldName],
-              resourceId:
-                issue.fields[nexusResourceFieldName] === null
-                  ? ''
-                  : getResourceIdFromFusionUrl(
-                      issue.fields[nexusResourceFieldName]
-                    ),
-            };
-          })
-        );
+              return {
+                resourceLabel,
+                key: issue.key,
+                id: issue.id,
+                summary: issue.fields.summary,
+                status: issue.fields.status.name,
+                description: issue.fields.description,
+                updated: issue.fields.updated,
+                self: issue.self,
+                commentCount: issue.fields.comment.total,
+                resourceSelfUrl:
+                  issue.fields[nexusResourceFieldName] === null
+                    ? ''
+                    : issue.fields[nexusResourceFieldName],
+              };
+            })
+          );
+          setIsLoading(false);
+        }
+      } catch (e) {
+        handleJiraError(e);
         setIsLoading(false);
       }
     })();
@@ -410,7 +405,7 @@ function useJIRA({
     }
     fetchProjects();
     fetchLinkedIssues();
-  }, [isJiraConnected]);
+  }, [isJiraConnected, projectSelf]);
 
   return {
     isLoading,

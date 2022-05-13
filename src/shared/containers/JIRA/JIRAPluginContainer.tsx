@@ -33,7 +33,7 @@ const JIRAPluginContainer = ({
   } = useJIRA({
     projectLabel,
     orgLabel,
-    resourceID: resource['@id'],
+    resource,
   });
   const tableIssues = linkedIssues?.map(issue => ({
     key: issue.key,
