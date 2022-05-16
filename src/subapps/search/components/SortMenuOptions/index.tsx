@@ -1,6 +1,5 @@
 import {
   CloseCircleOutlined,
-  ConsoleSqlOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
 } from '@ant-design/icons';
