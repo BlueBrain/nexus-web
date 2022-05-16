@@ -12,12 +12,11 @@ import {
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
-import { constructQuery, constructFilterSet } from '../utils';
+import { constructQuery } from '../utils';
 import './FilterOptions.less';
 import { createKeyWord } from './FilterOptions';
 import './NumberFilterOptionsContainer.less';
 import { Line, Column } from '@ant-design/charts';
-import { remove } from 'lodash';
 
 type ConfigField =
   | {

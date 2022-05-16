@@ -396,7 +396,7 @@ function useGlobalSearchData(
 
   const filtersWithMissing = filterState.map(el => {
     const isMissing =
-      el.filterType === 'missing' && el?.filters.includes('isMissing')
+      el?.filterType === 'missing' && el?.filters.includes('isMissing')
         ? true
         : false;
     return { isMissing, filterTerm: el.filterTerm };
