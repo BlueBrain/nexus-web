@@ -12,7 +12,7 @@ import {
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
-import { constructQuery, constructFilterSet } from '../utils';
+import { constructQuery } from '../utils';
 import './FilterOptions.less';
 import { createKeyWord } from './FilterOptions';
 import './NumberFilterOptionsContainer.less';
@@ -86,11 +86,6 @@ const NumberFilterOptions: React.FC<{
 
   const filterKeyWord = createKeyWord(field);
 
-  // for missing count.
-  React.useEffect(() => {
-    missingQuery();
-  }, []);
-
   React.useEffect(() => {
     const allSuggestions = constructQuery(query)
       .aggregation('terms', `${field.name}.value`, 'suggestions', {
@@ -140,34 +135,29 @@ const NumberFilterOptions: React.FC<{
   const onChange = (e: any) => {
     setGraphValue(e.target.value);
   };
-  const missingQuery = () => {
-    const allSuggestions = constructQuery(query);
-    const withFilter = constructFilterSet(allSuggestions, filter).build();
 
-    nexusClient.Search.query(withFilter);
-  };
+  React.useEffect(() => {
+    if (firstRender.current) return;
+    const filters = missingValues ? ['isMissing'] : [];
+    onFinish({
+      filters,
+      filterType: 'missing',
+      filterTerm: field.name,
+    });
+  }, [missingValues]);
+
   React.useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
       return;
     }
-
-    if (missingValues) {
-      onFinish({
-        filterType: 'number',
-        filters: ['isMissing'],
-        filterTerm: field.name,
-      });
-    } else {
-      missingQuery();
-      const filters = [rangeStart || rangeMin, rangeEnd || rangeMax];
-      onFinish({
-        filters,
-        filterType: 'number',
-        filterTerm: field.name,
-      });
-    }
-  }, [rangeStart, rangeEnd, missingValues]);
+    const filters = [rangeStart || rangeMin, rangeEnd || rangeMax];
+    onFinish({
+      filters,
+      filterType: 'number',
+      filterTerm: field.name,
+    });
+  }, [rangeStart, rangeEnd]);
 
   const renderMissing = React.useCallback(() => {
     return missingCount ? (
@@ -206,6 +196,7 @@ const NumberFilterOptions: React.FC<{
             <Slider
               min={rangeMin}
               max={rangeMax}
+              disabled={missingValues}
               range={{
                 draggableTrack: true,
               }}
