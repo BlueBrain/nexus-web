@@ -482,7 +482,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           projectLabel,
           selectedWorkspace['@id'],
           indexToRemove,
-          [...dashboards]
+          [...currentDashboards]
         );
         notification.success({
           message: `Removed ${selectedDashboard.label}`,
@@ -679,14 +679,16 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         ) : null}
 
         <Modal
-          title="Remove DashBoard"
+          title="Remove Dashboard"
           visible={deleteDashBoardConfirmation}
           onCancel={() => {
             setDeleteDashBoardConfirmation(false);
           }}
           onOk={removeDashBoardCallback}
         >
-          <p>Are you sure you want to remove ?</p>
+          <p>
+            Are you sure you want to remove {`${selectedDashboard?.label}`} ?
+          </p>
         </Modal>
         <Modal
           visible={showEditTableForm}
