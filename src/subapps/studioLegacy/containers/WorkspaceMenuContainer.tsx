@@ -24,6 +24,8 @@ import DataTableContainer, {
 } from '../../../shared/containers/DataTableContainer';
 import STUDIO_CONTEXT from '../components/StudioContext';
 import { createTableContext } from '../../../subapps/projects/utils/workFlowMetadataUtils';
+import { usePrevious } from '../../../shared/utils/nexusUsePrevious';
+import { find } from 'lodash';
 
 const DASHBOARD_TYPE = 'StudioDashboard';
 /**
@@ -159,6 +161,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
     Resource<any>
   >();
   const [dashboards, setDashboards] = React.useState<Resource<any>[]>([]);
+  const [selectedKeys, setSelectedKeys] = React.useState<Resource<any>[]>([]);
   const [queryParams, setQueryString] = useQueryString();
   const [showDataTableEdit, setShowDataTableEdit] = React.useState(false);
   const [showDashEditor, setShowDashEditor] = React.useState(false);
@@ -562,6 +565,25 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
     }
   }, [selectedWorkspace]);
 
+  const handleWorkspaceClick = () => {
+    console.log('handleWorkspaceClick selectedKeys', selectedKeys);
+    // console.log(item, key, keyPath, selectedKeys2);
+    if (selectedWorkspace && selectedDashboard) {
+      console.log('if selceted workspace and selected dashboard', true);
+      const foundDb = find(selectedWorkspace.dashboards, db => {
+        return db.dashboard === selectedDashboard['@id'];
+      });
+      if (foundDb) {
+        console.log('FOUND DB', foundDb);
+        setSelectedKeys([
+          `${selectedWorkspace['@id']}-${selectedDashboard['@id']}`,
+        ]);
+      } else {
+        console.log('NOT FOUND DB', foundDb);
+      }
+    }
+  };
+
   const renderResults = React.useCallback(() => {
     return selectedDashboard ? (
       'dataTable' in selectedDashboard ? (
@@ -606,12 +628,10 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
       <Menu
         theme="dark"
         mode="horizontal"
+        selectable={false}
         triggerSubMenuAction="click"
-        selectedKeys={[
-          selectedWorkspace && selectedDashboard
-            ? `${selectedWorkspace['@id']}-${selectedDashboard['@id']}`
-            : '',
-        ]}
+        selectedKeys={selectedKeys}
+        // onOpenChange={handleWorkspaceClick}
         style={{
           minHeight: '40px',
         }}
