@@ -26,6 +26,30 @@ import STUDIO_CONTEXT from '../components/StudioContext';
 import { createTableContext } from '../../../subapps/projects/utils/workFlowMetadataUtils';
 
 const DASHBOARD_TYPE = 'StudioDashboard';
+
+/**
+ *
+ * @param selectedWorkspace
+ * @param dashboards
+ * @param setSelectedDashboard
+ */
+function reSelectDashboard(
+  selectedWorkspace: any,
+  dashboards: any[],
+  setSelectedDashboard: React.Dispatch<any>
+) {
+  if (selectedWorkspace['dashboards'].length > 0) {
+    const newSelectedDashboard = dashboards.find(
+      d => d['@id'] === selectedWorkspace['dashboards'][0]['dashboard']
+    );
+    if (newSelectedDashboard) {
+      setSelectedDashboard(newSelectedDashboard);
+    } else {
+      setSelectedDashboard(undefined);
+    }
+  }
+}
+
 /**
  *
  * @param nexus
@@ -474,21 +498,28 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
       const currentDashboards: any[] = selectedWorkspace['dashboards'];
       if (dashboards) {
         const indexToRemove = currentDashboards.findIndex(
-          d => d['@id'] === selectedDashboard['@id']
+          d => d['dashboard'] === selectedDashboard['@id']
         );
-        await removeDashBoard(
-          nexus,
-          orgLabel,
-          projectLabel,
-          selectedWorkspace['@id'],
-          indexToRemove,
-          [...currentDashboards]
-        );
-        notification.success({
-          message: `Removed ${selectedDashboard.label}`,
-        });
+        if (indexToRemove >= 0) {
+          await removeDashBoard(
+            nexus,
+            orgLabel,
+            projectLabel,
+            selectedWorkspace['@id'],
+            indexToRemove,
+            [...currentDashboards]
+          );
+          notification.success({
+            message: `Removed ${selectedDashboard.label}`,
+          });
+        } else {
+          notification.error({
+            message: `Failed to remove ${selectedDashboard.label}`,
+          });
+        }
         setDeleteDashBoardConfirmation(false);
         onListUpdate();
+        reSelectDashboard(selectedWorkspace, dashboards, setSelectedDashboard);
       }
     }
   }, [selectedWorkspace, selectedDashboard]);
