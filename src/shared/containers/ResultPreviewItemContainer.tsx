@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import * as prettyBytes from 'pretty-bytes';
-import { convertMarkdownHandlebarStringWithData } from '../../../shared/utils/markdownTemplate';
-import { getResourceLabel } from '../../../shared/utils';
-import { parseURL, ParsedNexusUrl } from '../../../shared/utils/nexusParse';
-import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
-import { FILE_SCHEMA } from '../../../shared/types/nexus';
+import { convertMarkdownHandlebarStringWithData } from '../utils/markdownTemplate';
+import { getResourceLabel } from '../utils';
+import { parseURL, ParsedNexusUrl } from '../utils/nexusParse';
+import MarkdownViewerContainer from './MarkdownViewer';
+import { FILE_SCHEMA } from '../types/nexus';
 
 const ResultPreviewItemContainer: React.FC<{
   resource: Resource;
