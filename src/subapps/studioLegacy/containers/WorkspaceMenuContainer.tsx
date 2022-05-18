@@ -24,6 +24,7 @@ import DataTableContainer, {
 } from '../../../shared/containers/DataTableContainer';
 import STUDIO_CONTEXT from '../components/StudioContext';
 import { createTableContext } from '../../../subapps/projects/utils/workFlowMetadataUtils';
+import './WorkspaceMenuContainer.less';
 import { find } from 'lodash';
 
 const DASHBOARD_TYPE = 'StudioDashboard';
@@ -555,6 +556,19 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         workspaceId: selectedWorkspace['@id'],
       });
       const currentDashboards = selectedWorkspace['dashboards'] as Dashboard[];
+      // block to set selected keys for initial load or when not set
+      if (selectedKeys.length === 0) {
+        if (selectedWorkspace && !selectedDashboard) {
+          setSelectedKeys([
+            `${selectedWorkspace['@id']}*${selectedWorkspace.dashboards[0].dashboard}`,
+          ]);
+        } else if (selectedWorkspace && selectedDashboard) {
+          setSelectedKeys([
+            `${selectedWorkspace['@id']}*${selectedDashboard['@id']}`,
+          ]);
+        }
+      }
+
       if (currentDashboards && currentDashboards.length > 0) {
         fetchAndSetupDashboards();
       } else {
@@ -563,25 +577,6 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
       }
     }
   }, [selectedWorkspace]);
-
-  const handleWorkspaceClick = () => {
-    console.log('handleWorkspaceClick selectedKeys', selectedKeys);
-    // console.log(item, key, keyPath, selectedKeys2);
-    if (selectedWorkspace && selectedDashboard) {
-      console.log('if selceted workspace and selected dashboard', true);
-      const foundDb = find(selectedWorkspace.dashboards, db => {
-        return db.dashboard === selectedDashboard['@id'];
-      });
-      if (foundDb) {
-        console.log('FOUND DB', foundDb);
-        setSelectedKeys([
-          `${selectedWorkspace['@id']}-${selectedDashboard['@id']}`,
-        ]);
-      } else {
-        console.log('NOT FOUND DB', foundDb);
-      }
-    }
-  };
 
   const renderResults = React.useCallback(() => {
     return selectedDashboard ? (
@@ -622,6 +617,21 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
     );
   }, [selectedDashboard]);
 
+  function selectKeysHighlight(w: Resource) {
+    if (selectedDashboard) {
+      const found = find(w.dashboards, d => {
+        return selectedDashboard['@id'] === d.dashboard;
+      });
+      if (
+        selectedKeys.length > 0 &&
+        found &&
+        selectedKeys[0].split('*')[0] === w['@id']
+      ) {
+        return 'myHighlightClass';
+      }
+    }
+    return '';
+  }
   return (
     <div className="workspace-list-container">
       <Menu
@@ -630,7 +640,6 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         selectable={false}
         triggerSubMenuAction="click"
         selectedKeys={selectedKeys}
-        // onOpenChange={handleWorkspaceClick}
         style={{
           minHeight: '40px',
         }}
@@ -641,16 +650,16 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             title={w.label}
             key={w['@id']}
             popupOffset={[0, 0]}
+            className={selectKeysHighlight(w)}
+            onTitleClick={() => setSelectedWorkspace(w)}
             popupClassName="workspace-popup-classname"
-            onTitleClick={e => {
-              setSelectedWorkspace(w);
-            }}
           >
             {dashboards.map((d: Resource) => {
               return (
                 <Menu.Item
                   key={`${w['@id']}-${d['@id']}`}
                   onClick={() => {
+                    setSelectedKeys([`${w['@id']}*${d['@id']}`]);
                     setSelectedDashboard(d);
                   }}
                 >
