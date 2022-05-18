@@ -5,10 +5,13 @@ import {
 } from '@ant-design/icons';
 import { Button } from 'antd';
 import * as React from 'react';
-import { SortDirection } from '../../../hooks/useSearchQuery';
 import { ESSortField } from '../../hooks/useGlobalSearch';
-
 import './SortMenuOptions.less';
+
+export enum SortDirection {
+  DESCENDING = 'desc',
+  ASCENDING = 'asc',
+}
 
 const SortMenuOptions: React.FC<{
   sortField?: ESSortField;

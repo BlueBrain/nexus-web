@@ -3,13 +3,11 @@ import { Button, notification, Modal, Input } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Storage, NexusFile, Resource } from '@bbp/nexus-sdk';
 import { useInputs } from '../hooks/useInputs';
-import InputsTable from '../components/InputsTable';
 import useLocalStorage from '../../../shared/hooks/useLocalStorage';
-import { DATASET_KEY } from '../../search/components/ResultGridActions';
 import { forceAsArray } from '../../../shared/utils';
 import FileUploader from '../../../shared/components/FileUpload';
 import './InputsContainer.less';
-
+export const DATASET_KEY = 'nexus-dataset';
 const InputsContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
