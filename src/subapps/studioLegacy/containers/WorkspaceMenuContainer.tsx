@@ -24,7 +24,6 @@ import DataTableContainer, {
 } from '../../../shared/containers/DataTableContainer';
 import STUDIO_CONTEXT from '../components/StudioContext';
 import { createTableContext } from '../../../subapps/projects/utils/workFlowMetadataUtils';
-import { usePrevious } from '../../../shared/utils/nexusUsePrevious';
 import { find } from 'lodash';
 
 const DASHBOARD_TYPE = 'StudioDashboard';
