@@ -24,9 +24,6 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-      - name: running ui test
-        run: |
-          yarn test-ui
       - name: build project 👷
         run: |
           yarn build
