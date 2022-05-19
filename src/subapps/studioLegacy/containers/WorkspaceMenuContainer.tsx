@@ -24,7 +24,6 @@ import DataTableContainer, {
 } from '../../../shared/containers/DataTableContainer';
 import STUDIO_CONTEXT from '../components/StudioContext';
 import { createTableContext } from '../../../subapps/projects/utils/workFlowMetadataUtils';
-import './WorkspaceMenuContainer.less';
 import { find } from 'lodash';
 
 const DASHBOARD_TYPE = 'StudioDashboard';
@@ -627,7 +626,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         found &&
         selectedKeys[0].split('*')[0] === w['@id']
       ) {
-        return 'myHighlightClass';
+        return 'menu-highlight-override';
       }
     }
     return '';
