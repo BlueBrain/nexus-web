@@ -62,11 +62,7 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
         >
           {[views]
             .flat()
-            .filter(
-              v =>
-                v['@type']?.includes('ElasticSearchView') ||
-                v['@type']?.includes('AggregateElasticSearchView')
-            )
+            .filter(v => v['@type']?.includes('ElasticSearchView'))
             .map((view: View, index: number) => {
               return (
                 <Option key={index} value={view['@id']}>

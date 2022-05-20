@@ -57,11 +57,7 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
         >
           {[views]
             .flat()
-            .filter(
-              v =>
-                v['@type']?.includes('SparqlView') ||
-                v['@type']?.includes('AggregateSparqlView')
-            )
+            .filter(v => v['@type']?.includes('SparqlView'))
             .map((view: View, index: number) => {
               return (
                 <Option key={index} value={view['@id']}>
