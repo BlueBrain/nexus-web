@@ -2,7 +2,6 @@ import { TableOutlined } from '@ant-design/icons';
 import { Select } from 'antd';
 import * as React from 'react';
 import { SearchLayout } from '../../hooks/useGlobalSearch';
-import './SearchLayouts.less';
 
 const SearchLayouts: React.FC<{
   layouts?: SearchLayout[];
