@@ -3,9 +3,9 @@ import { useNexusContext } from '@bbp/react-nexus';
 import * as bodybuilder from 'bodybuilder';
 import { Resource } from '@bbp/nexus-sdk';
 
-import useAsyncCall, { AsyncCall } from '../../shared/hooks/useAsynCall';
-import { SearchResponse } from '../../shared/types/search';
-import { parseURL } from '../../shared/utils/nexusParse';
+import useAsyncCall, { AsyncCall } from '../../../shared/hooks/useAsynCall';
+import { SearchResponse } from '../../../shared/types/search';
+import { parseURL } from '../../../shared/utils/nexusParse';
 
 // TODO move to global default list
 const DEFAULT_PAGE_SIZE = 20;

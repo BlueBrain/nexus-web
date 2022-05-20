@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
+import { Controlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/addon/display/autorefresh';
 import 'codemirror/theme/base16-light.css';
@@ -32,7 +32,7 @@ const SparqlQueryInput: React.FunctionComponent<{
             lineWrapping: true,
             autoRefresh: true,
           }}
-          onChange={handleChange}
+          onBeforeChange={handleChange}
         />
       </div>
     </div>

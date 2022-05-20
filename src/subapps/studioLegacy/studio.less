@@ -1,10 +1,41 @@
 @import '../../shared/lib.less';
 
+.menu-highlight-override {
+  color: #fff !important;
+}
+
 .studio-header {
   display: flex;
   margin-bottom: 25px;
   .studio-search {
     max-width: 400px;
+  }
+}
+
+.dashboard-spinner {
+  margin-top: 20px;
+}
+.workspace-popup-classname {
+  .ant-menu-vertical {
+    .ant-menu-item {
+      margin-top: 0px !important;
+      margin-bottom: 0px !important;
+    }
+  }
+}
+div.workspace-list-container {
+  min-height: 800px;
+  div.workspace-action {
+    height: 20px;
+    float: right;
+    padding-right: 10px;
+  }
+}
+div.workspace {
+  margin-top: 10px;
+  padding-left: 10px;
+  > div {
+    width: 2489px;
   }
 }
 

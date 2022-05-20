@@ -23,8 +23,8 @@ import {
   Popconfirm,
 } from 'antd';
 import { CartContext } from '../hooks/useDataCart';
-import ResultPreviewItemContainer from '../../subapps/search/containers/ResultPreviewItemContainer';
-import DefaultResourcePreviewCard from '!!raw-loader!../../subapps/search/templates/DefaultResourcePreviewCard.hbs';
+import ResultPreviewItemContainer from './ResultPreviewItemContainer';
+import DefaultResourcePreviewCard from '!!raw-loader!../templates/DefaultResourcePreviewCard.hbs';
 import useNotification from '../hooks/useNotification';
 
 type DownloadResourcePayload = {

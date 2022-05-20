@@ -7,6 +7,8 @@ import { generatePath, useHistory, useLocation } from 'react-router-dom';
 import Copy from '../components/Copy';
 import { CartContext } from '../hooks/useDataCart';
 import { makeResourceUri } from '../utils';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/reducers';
 
 const ResourceViewActionsContainer: React.FC<{
   resource: Resource;
@@ -24,6 +26,8 @@ const ResourceViewActionsContainer: React.FC<{
   const handleAddToCart = async () => {
     addResourceToCart ? await addResourceToCart(resource as Resource) : null;
   };
+
+  const basePath = useSelector((state: RootState) => state.config.basePath);
 
   const [tags, setTags] = React.useState<{
     '@context'?: Context;
@@ -113,14 +117,15 @@ const ResourceViewActionsContainer: React.FC<{
             return (
               <Dropdown.Button
                 onClick={() => {
-                  const pathToResource = generatePath(
-                    '/:orgLabel/:projectLabel/resources/:resourceId',
-                    {
-                      orgLabel,
-                      projectLabel,
-                      resourceId: encodedResourceId,
-                    }
-                  );
+                  const pathToResource = `${basePath}
+                    ${generatePath(
+                      '/:orgLabel/:projectLabel/resources/:resourceId',
+                      {
+                        orgLabel,
+                        projectLabel,
+                        resourceId: encodedResourceId,
+                      }
+                    )}`;
 
                   if (!isLatest) {
                     triggerCopy(
