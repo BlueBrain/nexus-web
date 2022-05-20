@@ -44,8 +44,6 @@ const ResourceViewContainer: React.FunctionComponent<{
     }> | null
   ) => React.ReactElement | null;
 }> = ({ render }) => {
-  const x = useParams();
-
   const { apiEndpoint } = useSelector((state: RootState) => state.config);
 
   const [deltaPlugins, setDeltaPlugins] = React.useState<{
