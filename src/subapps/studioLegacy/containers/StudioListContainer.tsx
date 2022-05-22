@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, PaginatedList } from '@bbp/nexus-sdk';
-
+import InfiniteSearch from '../../../shared/components/List/InfiniteSearch';
 import StudioList from '../components/StudioList';
 import CreateStudioContainer from './CreateStudioContainer';
 
@@ -148,27 +148,31 @@ const StudioListContainer: React.FunctionComponent<{
   }, [orgLabel, projectLabel, searchQuery]);
 
   return (
-    <StudioList
-      studios={resources.map(r => ({
-        id: r['@id'],
-        name: r.label,
-        description: r.description,
-      }))}
-      onLoadMore={handleLoadMore}
-      searchQuery={searchQuery}
-      makeResourceUri={makeStudioUri}
-      total={total}
-      busy={busy}
-      error={error}
-      goToStudio={(id: string) => goToStudio(id)}
-      createStudioButton={
-        <CreateStudioContainer
-          orgLabel={orgLabel}
-          projectLabel={projectLabel}
-          goToStudio={goToStudio}
-        />
-      }
-    ></StudioList>
+    <div className="studio-list">
+      <CreateStudioContainer
+        orgLabel={orgLabel}
+        projectLabel={projectLabel}
+        goToStudio={goToStudio}
+      />
+      <br />
+      <InfiniteSearch
+        dataLength={resources.length}
+        onLoadMore={handleLoadMore}
+        hasMore={resources.length < Number(total || 0)}
+        defaultSearchValue={searchQuery}
+        height={350}
+      >
+        <StudioList
+          studios={resources.map(r => ({
+            id: r['@id'],
+            name: r.label,
+            description: r.description,
+          }))}
+          makeResourceUri={makeStudioUri}
+          busy={busy}
+        ></StudioList>
+      </InfiniteSearch>
+    </div>
   );
 };
 
