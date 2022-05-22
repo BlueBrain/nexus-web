@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { Spin } from 'antd';
-
 import ListItem from '../../../shared/components/List/Item';
-import InfiniteSearch from '../../../shared/components/List/InfiniteSearch';
 
 import './Studio.less';
 
@@ -24,56 +22,20 @@ const StudioItem: React.FC<StudioItemProps> = ({ name, description }) => {
 const StudioList: React.FC<{
   studios: StudioItemProps[];
   busy?: boolean;
-  error?: Error | null;
-  goToStudio?(studioId: string): void;
-  createStudioButton?: React.ReactElement;
-  onLoadMore({ searchValue }: { searchValue: string }): void;
   makeResourceUri(resourceId: string): string;
-  total: number;
-  searchQuery: string;
-}> = ({
-  studios,
-  busy,
-  error,
-  goToStudio = () => {},
-  createStudioButton = null,
-  onLoadMore,
-  makeResourceUri,
-  total,
-  searchQuery,
-}) => {
-  const hasMore = studios.length < Number(total || 0);
+}> = ({ studios, busy, makeResourceUri }) => {
   return (
-    <div className="studio-list">
-      <Spin spinning={busy}>
-        {createStudioButton}
-        <br />
-        <InfiniteSearch
-          dataLength={studios.length}
-          onLoadMore={onLoadMore}
-          hasMore={hasMore}
-          defaultSearchValue={searchQuery}
-          height={350}
-        >
-          {studios.map(studio => {
-            return (
-              <a
-                href={makeResourceUri(studio.id)}
-                key={studio.id}
-                onClick={e => {
-                  e.preventDefault();
-                  goToStudio(studio.id);
-                }}
-              >
-                <ListItem key={studio.id}>
-                  <StudioItem {...studio} />
-                </ListItem>
-              </a>
-            );
-          })}
-        </InfiniteSearch>
-      </Spin>
-    </div>
+    <Spin spinning={busy}>
+      {studios.map(studio => {
+        return (
+          <a href={makeResourceUri(studio.id)} key={studio.id} role="link">
+            <ListItem key={studio.id}>
+              <StudioItem {...studio} />
+            </ListItem>
+          </a>
+        );
+      })}
+    </Spin>
   );
 };
 
