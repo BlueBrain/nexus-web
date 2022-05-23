@@ -117,8 +117,7 @@ const ResourceViewActionsContainer: React.FC<{
             return (
               <Dropdown.Button
                 onClick={() => {
-                  const pathToResource = `${basePath}
-                    ${generatePath(
+                  const pathToResource = `${basePath}${generatePath(
                       '/:orgLabel/:projectLabel/resources/:resourceId',
                       {
                         orgLabel,
