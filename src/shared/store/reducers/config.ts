@@ -24,6 +24,11 @@ export interface ConfigState {
     forgeLink: string;
   };
   dataModelsLocation: string;
+  jiraUrl: string;
+  jiraResourceCustomFieldName: string;
+  jiraResourceCustomFieldLabel: string;
+  jiraProjectCustomFieldName: string;
+  jiraProjectCustomFieldLabel: string;
 }
 
 const initialState: ConfigState = {
@@ -44,6 +49,11 @@ const initialState: ConfigState = {
     searchConfigProject: DEFAULT_SEARCH_CONFIG_PROJECT,
   },
   dataModelsLocation: '',
+  jiraUrl: '',
+  jiraResourceCustomFieldName: '',
+  jiraResourceCustomFieldLabel: '',
+  jiraProjectCustomFieldName: '',
+  jiraProjectCustomFieldLabel: '',
 };
 
 export default function configReducer(

@@ -26,6 +26,9 @@ import { Link } from 'react-router-dom';
 import ResourceViewActionsContainer from './ResourceViewActionsContainer';
 import ResourceMetadata from '../components/ResourceMetadata';
 import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
+import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/reducers';
 import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
 
 export type PluginMapping = {
@@ -41,6 +44,28 @@ const ResourceViewContainer: React.FunctionComponent<{
     }> | null
   ) => React.ReactElement | null;
 }> = ({ render }) => {
+  const { apiEndpoint } = useSelector((state: RootState) => state.config);
+
+  const [deltaPlugins, setDeltaPlugins] = React.useState<{
+    [key: string]: string;
+  }>();
+
+  const fetchDeltaVersion = async () => {
+    await nexus
+      .httpGet({
+        path: `${apiEndpoint}/version`,
+        context: { as: 'json' },
+      })
+      .then(versions => setDeltaPlugins({ ...versions.plugins }))
+      .catch(error => {
+        // do nothing
+      });
+  };
+
+  React.useEffect(() => {
+    fetchDeltaVersion();
+  }, []);
+
   // @ts-ignore
   const { orgLabel = '', projectLabel = '', resourceId = '' } = useParams();
   const nexus = useNexusContext();
@@ -608,6 +633,55 @@ const ResourceViewContainer: React.FunctionComponent<{
                     />
                   </p>
                 )}
+              {resource.distribution && (
+                <Preview
+                  nexus={nexus}
+                  resource={resource}
+                  collapsed={openPlugins.includes('preview')}
+                  handleCollapseChanged={() => {
+                    pluginCollapsedToggle('preview');
+                  }}
+                />
+              )}
+              <JIRAPluginContainer
+                resource={resource}
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+                collapsed={openPlugins.includes('jira')}
+                handleCollapseChanged={() => {
+                  pluginCollapsedToggle('jira');
+                }}
+              />
+              <AdminPlugin
+                editable={isLatest && !isDeprecated(resource)}
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+                resourceId={resourceId}
+                resource={resource}
+                latestResource={latestResource}
+                activeTabKey={activeTabKey}
+                expandedFromQuery={expandedFromQuery}
+                refProp={ref}
+                goToResource={goToResource}
+                handleTabChange={handleTabChange}
+                handleGoToInternalLink={handleGoToInternalLink}
+                handleEditFormSubmit={handleEditFormSubmit}
+                handleExpanded={handleExpanded}
+                refreshResource={refreshResource}
+                collapsed={openPlugins.includes('advanced')}
+                handleCollapseChanged={() => {
+                  pluginCollapsedToggle('advanced');
+                }}
+              />
+              <VideoPluginContainer
+                resource={resource}
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+                collapsed={openPlugins.includes('video')}
+                handleCollapseChanged={() => {
+                  pluginCollapsedToggle('video');
+                }}
+              />
             </>
           )}
         </Spin>

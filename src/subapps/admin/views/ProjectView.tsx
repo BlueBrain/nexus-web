@@ -28,6 +28,7 @@ import { RootState } from '../../../shared/store/reducers';
 import './ProjectView.less';
 import ResourceCreateUploadContainer from '../../../shared/containers/ResourceCreateUploadContainer';
 import { makeOrganizationUri } from '../../../shared/utils';
+import JiraPluginProjectContainer from '../containers/JiraContainer';
 
 const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
@@ -67,6 +68,8 @@ const ProjectView: React.FunctionComponent = () => {
         return 'settings';
       case `${base}graph-analytics`:
         return 'graph-analytics';
+      case `${base}jira`:
+        return 'jira';
     }
     return 'browse';
   };
@@ -91,6 +94,8 @@ const ProjectView: React.FunctionComponent = () => {
         return `${base}settings`;
       case 'graph-analytics':
         return `${base}graph-analytics`;
+      case 'jira':
+        return `${base}jira`;
     }
     return `${base}browse`;
   };
@@ -197,7 +202,7 @@ const ProjectView: React.FunctionComponent = () => {
         path: `${apiEndpoint}/version`,
         context: { as: 'json' },
       })
-      .then(versions => setDeltaPlugins(versions.plugins))
+      .then(versions => setDeltaPlugins({ ...versions.plugins, jira: 'poc' })) // TODO: remove hardcoding of delta jira plugin
       .catch(error => {
         // do nothing
       });
@@ -396,6 +401,14 @@ const ProjectView: React.FunctionComponent = () => {
                   <br />
                 </>
               </TabPane>
+              {deltaPlugins && 'jira' in deltaPlugins && (
+                <TabPane tab="Jira" key="jira">
+                  <JiraPluginProjectContainer
+                    orgLabel={orgLabel}
+                    projectLabel={projectLabel}
+                  />
+                </TabPane>
+              )}
               {deltaPlugins && 'graph-analytics' in deltaPlugins && (
                 <TabPane tab="Graph Analytics" key="graph-analytics">
                   <ProjectStatsContainer
