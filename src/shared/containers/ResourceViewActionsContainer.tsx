@@ -142,14 +142,14 @@ const ResourceViewActionsContainer: React.FC<{
                   <Menu>
                     <Menu.Item
                       onClick={() => {
-                        const pathToResource = generatePath(
+                        const pathToResource = `${basePath}${generatePath(
                           '/:orgLabel/:projectLabel/resources/:resourceId',
                           {
                             orgLabel,
                             projectLabel,
                             resourceId: encodedResourceId,
                           }
-                        );
+                        )}`;
 
                         triggerCopy(
                           `${window.location.origin.toString()}${pathToResource}`
@@ -160,14 +160,14 @@ const ResourceViewActionsContainer: React.FC<{
                     </Menu.Item>
                     <Menu.Item
                       onClick={() => {
-                        const pathToResource = generatePath(
+                        const pathToResource = `${basePath}${generatePath(
                           '/:orgLabel/:projectLabel/resources/:resourceId',
                           {
                             orgLabel,
                             projectLabel,
                             resourceId: encodedResourceId,
                           }
-                        );
+                        )}`;
 
                         triggerCopy(
                           `${window.location.origin.toString()}${pathToResource}?rev=${
