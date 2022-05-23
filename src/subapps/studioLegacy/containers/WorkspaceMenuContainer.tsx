@@ -645,7 +645,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         description={`No dashboards available for ${selectedWorkspace?.label}`}
       />
     );
-  }, [selectedDashboard]);
+  }, [selectedDashboard, showDataTableEdit]);
 
   function selectKeysHighlight(w: Resource) {
     if (selectedDashboard) {
