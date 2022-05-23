@@ -145,7 +145,6 @@ const Preview: React.FC<{
           resourceId,
           '@type': 'File',
           project: `${orgLabel}/${projectLabel}`,
-          path: `/${projectLabel}/${encodeURIComponent(resourceId)}`,
         };
       });
     const archiveId = uuidv4();
