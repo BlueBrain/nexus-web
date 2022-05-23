@@ -75,7 +75,7 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
   );
 
   React.useEffect(() => {
-    nexus.View.list(orgLabel, projectLabel)
+    nexus.View.list(orgLabel, projectLabel, { deprecated: false })
       .then(result => {
         setViews(result);
       })
