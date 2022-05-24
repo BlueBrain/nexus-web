@@ -170,6 +170,15 @@ function useJIRA({
       if (e['@type'] === 'JiraResponseError') {
         const errorContent = JSON.stringify(e.content);
 
+        if (errorContent.indexOf('oauth_problem=token_rejected')) {
+          notification.error({
+            message: e.reason,
+            description:
+              'Jira access token is invalid. Re-authorize access to reconnect to Jira.',
+          });
+          setIsJiraConnected(false);
+          return;
+        }
         if (errorContent.indexOf('not on the appropriate screen') > -1) {
           notification.error({
             message: e.reason,
