@@ -589,9 +589,11 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
       // block to set selected keys for initial load or when not set
       if (selectedKeys.length === 0) {
         if (!selectedDashboard) {
-          setSelectedKeys([
-            `${selectedWorkspace['@id']}*${selectedWorkspace.dashboards[0].dashboard}`,
-          ]);
+          if (selectedWorkspace.dashboards?.length > 0) {
+            setSelectedKeys([
+              `${selectedWorkspace['@id']}*${selectedWorkspace.dashboards[0].dashboard}`,
+            ]);
+          }
         } else {
           setSelectedKeys([
             `${selectedWorkspace['@id']}*${selectedDashboard['@id']}`,
