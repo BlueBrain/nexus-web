@@ -85,7 +85,9 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
   const [dashboards, setDashBoards] = React.useState<Resource[]>([]);
   const [targetKeys, setTargetKeys] = React.useState<string[]>([]);
   const [views, setViews] = React.useState<Resource[]>([]);
-  const [viewToAdd, setViewToAdd] = React.useState<string>('');
+  const [viewToAdd, setViewToAdd] = React.useState<string>(
+    DEFAULT_SPARQL_VIEW_ID
+  );
   const [label, setLabel] = React.useState<string>();
   const [description, setDescription] = React.useState<string>();
   const [error, setError] = React.useState<NexusSparqlError | Error>();
