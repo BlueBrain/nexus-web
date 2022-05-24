@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { NexusClient, DEFAULT_SPARQL_VIEW_ID, Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Button, Modal, Menu, Popover, Empty } from 'antd';
+import { Button, Modal, Menu, Popover, Empty, Spin } from 'antd';
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -25,6 +25,7 @@ import DataTableContainer, {
 import STUDIO_CONTEXT from '../components/StudioContext';
 import { createTableContext } from '../../../subapps/projects/utils/workFlowMetadataUtils';
 import { find } from 'lodash';
+import { setTimeout } from 'timers';
 
 const DASHBOARD_TYPE = 'StudioDashboard';
 
@@ -184,6 +185,9 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
     Resource<any>
   >();
   const [dashboards, setDashboards] = React.useState<Resource<any>[]>([]);
+  const [dashboardSpinner, setDashboardSpinner] = React.useState<boolean>(
+    false
+  );
   const [selectedKeys, setSelectedKeys] = React.useState<Resource<any>[]>([]);
   const [queryParams, setQueryString] = useQueryString();
   const [showDataTableEdit, setShowDataTableEdit] = React.useState(false);
@@ -426,6 +430,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
   };
 
   const fetchAndSetupDashboards = () => {
+    setDashboardSpinner(true);
     Promise.all(
       selectedWorkspace['dashboards'].map((dashboardObject: Dashboard) => {
         return nexus.Resource.get(
@@ -470,6 +475,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           message: 'Failed to fetch dashboards',
         });
       });
+    setDashboardSpinner(false);
   };
 
   const updateDashboard = async (
@@ -689,19 +695,25 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             onTitleClick={() => setSelectedWorkspace(w)}
             popupClassName="workspace-popup-classname"
           >
-            {dashboards.map((d: Resource) => {
-              return (
-                <Menu.Item
-                  key={`${w['@id']}-${d['@id']}`}
-                  onClick={() => {
-                    setSelectedKeys([`${w['@id']}*${d['@id']}`]);
-                    setSelectedDashboard(d);
-                  }}
-                >
-                  {d.label}
-                </Menu.Item>
-              );
-            })}
+            {dashboardSpinner ? (
+              <Menu.Item>
+                <Spin />
+              </Menu.Item>
+            ) : (
+              dashboards.map((d: Resource) => {
+                return (
+                  <Menu.Item
+                    key={`${w['@id']}-${d['@id']}`}
+                    onClick={() => {
+                      setSelectedKeys([`${w['@id']}*${d['@id']}`]);
+                      setSelectedDashboard(d);
+                    }}
+                  >
+                    {d.label}
+                  </Menu.Item>
+                );
+              })
+            )}
           </Menu.SubMenu>
         ))}
         <div className="workspace-action">{actionButtons()}</div>
