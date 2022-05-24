@@ -643,9 +643,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         />
       )
     ) : (
-      <Empty
-        description={`No dashboards available for ${selectedWorkspace?.label}`}
-      />
+      <Empty description={`No dashboards available`} />
     );
   }, [selectedDashboard, showDataTableEdit]);
 
