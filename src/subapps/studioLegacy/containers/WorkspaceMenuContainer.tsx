@@ -527,45 +527,49 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
   }, [selectedWorkspace, selectedDashboard]);
 
   React.useEffect(() => {
-    Promise.all(
-      workspaceIds.map(workspaceId => {
-        return nexus.Resource.get(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(workspaceId)
-        ) as Promise<Resource>;
-      })
-    )
-      .then(values => {
-        setWorkspaces(
-          values.sort(({ _createdAt: dateA }, { _createdAt: dateB }) => {
-            const a = new Date(dateA);
-            const b = new Date(dateB);
-            if (a > b) {
-              return 1;
-            }
-            if (a < b) {
-              return -1;
-            }
-            return 0;
+    if (workspaceIds.length > 0) {
+      Promise.all(
+        workspaceIds
+          .filter(w => w !== undefined && w !== null)
+          .map(workspaceId => {
+            return nexus.Resource.get(
+              orgLabel,
+              projectLabel,
+              encodeURIComponent(workspaceId)
+            ) as Promise<Resource>;
           })
-        );
-        if (workspaceId) {
-          const workspaceFilteredById = values.find(
-            w => w['@id'] === workspaceId
+      )
+        .then(values => {
+          setWorkspaces(
+            values.sort(({ _createdAt: dateA }, { _createdAt: dateB }) => {
+              const a = new Date(dateA);
+              const b = new Date(dateB);
+              if (a > b) {
+                return 1;
+              }
+              if (a < b) {
+                return -1;
+              }
+              return 0;
+            })
           );
-          setSelectedWorkspace(
-            workspaceFilteredById ? workspaceFilteredById : values[0]
-          );
-        } else {
-          setSelectedWorkspace(values[0]);
-        }
-      })
-      .catch(e => {
-        notification.error({
-          message: e.message,
+          if (workspaceId) {
+            const workspaceFilteredById = values.find(
+              w => w['@id'] === workspaceId
+            );
+            setSelectedWorkspace(
+              workspaceFilteredById ? workspaceFilteredById : values[0]
+            );
+          } else {
+            setSelectedWorkspace(values[0]);
+          }
+        })
+        .catch(e => {
+          notification.error({
+            message: 'Failed to fetch workpaces',
+          });
         });
-      });
+    }
   }, [workspaceIds]);
 
   React.useEffect(() => {
@@ -589,9 +593,11 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
       // block to set selected keys for initial load or when not set
       if (selectedKeys.length === 0) {
         if (!selectedDashboard) {
-          setSelectedKeys([
-            `${selectedWorkspace['@id']}*${selectedWorkspace.dashboards[0].dashboard}`,
-          ]);
+          if (selectedWorkspace.dashboards?.length > 0) {
+            setSelectedKeys([
+              `${selectedWorkspace['@id']}*${selectedWorkspace.dashboards[0].dashboard}`,
+            ]);
+          }
         } else {
           setSelectedKeys([
             `${selectedWorkspace['@id']}*${selectedDashboard['@id']}`,
@@ -641,11 +647,9 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         />
       )
     ) : (
-      <Empty
-        description={`No dashboards available for ${selectedWorkspace?.label}`}
-      />
+      <Empty description={`No dashboards available`} />
     );
-  }, [selectedDashboard]);
+  }, [selectedDashboard, showDataTableEdit]);
 
   function selectKeysHighlight(w: Resource) {
     if (selectedDashboard) {
