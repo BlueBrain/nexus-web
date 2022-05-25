@@ -480,11 +480,23 @@ const ResourceViewContainer: React.FunctionComponent<{
         }}
       />
     );
+  const jiraPlugin = resource && (
+    <JIRAPluginContainer
+      resource={resource}
+      orgLabel={orgLabel}
+      projectLabel={projectLabel}
+      collapsed={openPlugins.includes('jira')}
+      handleCollapseChanged={() => {
+        pluginCollapsedToggle('jira');
+      }}
+    />
+  );
 
   const builtInPlugins = [
     { key: 'preview', name: 'preview', pluginComponent: previewPlugin },
     { key: 'admin', name: 'advanced', pluginComponent: adminPlugin },
     { key: 'video', name: 'video', pluginComponent: videoPlugin },
+    { key: 'jira', name: 'jira', pluginComponent: jiraPlugin },
   ];
 
   return (
