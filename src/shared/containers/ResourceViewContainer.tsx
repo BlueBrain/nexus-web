@@ -480,11 +480,23 @@ const ResourceViewContainer: React.FunctionComponent<{
         }}
       />
     );
+  const jiraPlugin = resource && deltaPlugins && 'jira' in deltaPlugins && (
+    <JIRAPluginContainer
+      resource={resource}
+      orgLabel={orgLabel}
+      projectLabel={projectLabel}
+      collapsed={openPlugins.includes('jira')}
+      handleCollapseChanged={() => {
+        pluginCollapsedToggle('jira');
+      }}
+    />
+  );
 
   const builtInPlugins = [
     { key: 'preview', name: 'preview', pluginComponent: previewPlugin },
     { key: 'admin', name: 'advanced', pluginComponent: adminPlugin },
     { key: 'video', name: 'video', pluginComponent: videoPlugin },
+    { key: 'jira', name: 'jira', pluginComponent: jiraPlugin },
   ];
 
   return (
@@ -633,55 +645,6 @@ const ResourceViewContainer: React.FunctionComponent<{
                     />
                   </p>
                 )}
-              {resource.distribution && (
-                <Preview
-                  nexus={nexus}
-                  resource={resource}
-                  collapsed={openPlugins.includes('preview')}
-                  handleCollapseChanged={() => {
-                    pluginCollapsedToggle('preview');
-                  }}
-                />
-              )}
-              <JIRAPluginContainer
-                resource={resource}
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-                collapsed={openPlugins.includes('jira')}
-                handleCollapseChanged={() => {
-                  pluginCollapsedToggle('jira');
-                }}
-              />
-              <AdminPlugin
-                editable={isLatest && !isDeprecated(resource)}
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-                resourceId={resourceId}
-                resource={resource}
-                latestResource={latestResource}
-                activeTabKey={activeTabKey}
-                expandedFromQuery={expandedFromQuery}
-                refProp={ref}
-                goToResource={goToResource}
-                handleTabChange={handleTabChange}
-                handleGoToInternalLink={handleGoToInternalLink}
-                handleEditFormSubmit={handleEditFormSubmit}
-                handleExpanded={handleExpanded}
-                refreshResource={refreshResource}
-                collapsed={openPlugins.includes('advanced')}
-                handleCollapseChanged={() => {
-                  pluginCollapsedToggle('advanced');
-                }}
-              />
-              <VideoPluginContainer
-                resource={resource}
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-                collapsed={openPlugins.includes('video')}
-                handleCollapseChanged={() => {
-                  pluginCollapsedToggle('video');
-                }}
-              />
             </>
           )}
         </Spin>
