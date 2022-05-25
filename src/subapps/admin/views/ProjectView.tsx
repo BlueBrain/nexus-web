@@ -202,7 +202,7 @@ const ProjectView: React.FunctionComponent = () => {
         path: `${apiEndpoint}/version`,
         context: { as: 'json' },
       })
-      .then(versions => setDeltaPlugins({ ...versions.plugins, jira: 'poc' })) // TODO: remove hardcoding of delta jira plugin
+      .then(versions => setDeltaPlugins({ ...versions.plugins }))
       .catch(error => {
         // do nothing
       });

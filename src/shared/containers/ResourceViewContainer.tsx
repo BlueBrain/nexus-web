@@ -480,7 +480,7 @@ const ResourceViewContainer: React.FunctionComponent<{
         }}
       />
     );
-  const jiraPlugin = resource && (
+  const jiraPlugin = resource && deltaPlugins && 'jira' in deltaPlugins && (
     <JIRAPluginContainer
       resource={resource}
       orgLabel={orgLabel}
