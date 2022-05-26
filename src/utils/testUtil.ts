@@ -1,5 +1,6 @@
 import React, { FC, ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
+import { server } from '../__mocks__/server';
 
 const customRender = (
   ui: ReactElement,
@@ -8,3 +9,4 @@ const customRender = (
 
 export * from '@testing-library/react';
 export { customRender as render };
+export { server };

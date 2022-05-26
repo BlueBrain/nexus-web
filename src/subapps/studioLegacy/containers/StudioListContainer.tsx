@@ -5,7 +5,7 @@ import { Resource, PaginatedList } from '@bbp/nexus-sdk';
 import InfiniteSearch from '../../../shared/components/List/InfiniteSearch';
 import StudioList from '../components/StudioList';
 import CreateStudioContainer from './CreateStudioContainer';
-
+import { Empty } from 'antd';
 const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';
 
@@ -61,6 +61,7 @@ const StudioListContainer: React.FunctionComponent<{
       const response = await nexus.httpGet({
         path: next,
       });
+
       const newResources = await Promise.all(
         response._results.map((resource: Resource) =>
           nexus.Resource.get(
@@ -162,15 +163,21 @@ const StudioListContainer: React.FunctionComponent<{
         defaultSearchValue={searchQuery}
         height={350}
       >
-        <StudioList
-          studios={resources.map(r => ({
-            id: r['@id'],
-            name: r.label,
-            description: r.description,
-          }))}
-          makeResourceUri={makeStudioUri}
-          busy={busy}
-        ></StudioList>
+        {error ? (
+          <Empty description="Sorry, something went wrong">
+            {error.message}
+          </Empty>
+        ) : (
+          <StudioList
+            studios={resources.map(r => ({
+              id: r['@id'],
+              name: r.label,
+              description: r.description,
+            }))}
+            makeResourceUri={makeStudioUri}
+            busy={busy}
+          ></StudioList>
+        )}
       </InfiniteSearch>
     </div>
   );

@@ -39,7 +39,7 @@ const InfiniteSearch: React.FunctionComponent<InfiniteSearchProps> = props => {
   const inputRef = React.useRef<Input>(null);
 
   return (
-    <div className="infinite-search">
+    <div className="infinite-search" data-testid="inifinte-scroll">
       {hasSearch && (
         <div className="search">
           <Search
