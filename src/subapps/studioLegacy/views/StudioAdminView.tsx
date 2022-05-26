@@ -18,9 +18,11 @@ const StudioAdminView: React.FunctionComponent<{}> = () => {
           <div className="label">
             <h1 className="name">
               <span>
-                <Link to={`/admin/${orgLabel}`}>{orgLabel}</Link>
+                <Link role="link" to={`/admin/${orgLabel}`}>
+                  {orgLabel}
+                </Link>
                 {' | '}
-                <Link to={`/admin/${orgLabel}/${projectLabel}`}>
+                <Link role="link" to={`/admin/${orgLabel}/${projectLabel}`}>
                   {projectLabel}
                 </Link>
               </span>

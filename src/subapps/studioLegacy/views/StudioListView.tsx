@@ -90,6 +90,7 @@ const StudioListView: React.FC = () => {
             access. The list is alphabetically sorted.
           </p>
         </div>
+        {status}
         {status === 'error' ? (
           <>A Error Occured</>
         ) : (
@@ -97,6 +98,7 @@ const StudioListView: React.FC = () => {
             spinning={status === 'loading'}
             size={'large'}
             style={{ display: 'flex' }}
+            data-testid={'studio-spinner'}
           >
             <List
               pagination={{
@@ -109,6 +111,7 @@ const StudioListView: React.FC = () => {
               renderItem={item => {
                 return (
                   <List.Item
+                    role="listitem"
                     onClick={() => {
                       const { orgLabel, projectLabel, id } = item;
                       const studioUri = makeStudioUri(
