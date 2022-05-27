@@ -170,7 +170,7 @@ function useJIRA({
       if (e['@type'] === 'JiraResponseError') {
         const errorContent = JSON.stringify(e.content);
 
-        if (errorContent.indexOf('oauth_problem=token_rejected')) {
+        if (errorContent.indexOf('oauth_problem=token_rejected') > -1) {
           notification.error({
             message: e.reason,
             description:
