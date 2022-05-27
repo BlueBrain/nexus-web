@@ -109,7 +109,7 @@ const EditTableForm: React.FC<{
     'Enter a valid ElasticSearch query'
   );
 
-  const [preview, setPreview] = React.useState<boolean>(false);
+  const [preview, setPreview] = React.useState<boolean>(true);
   const [enableSearch, setEnableSearch] = React.useState<boolean>(
     table ? table.enableSearch : true
   );
@@ -599,7 +599,7 @@ const EditTableForm: React.FC<{
               onChange={() => setEnableSave(!enableSave)}
               checked={enableSave}
             >
-              Enable 'Save to Data Cart'ƒ
+              Enable 'Save to Data Cart'
             </Checkbox>
             <br />
           </div>
