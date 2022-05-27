@@ -9,6 +9,7 @@
   <a href="https://codecov.io/gh/BlueBrain/nexus-web">
     <img src="https://codecov.io/gh/BlueBrain/nexus-web/branch/master/graph/badge.svg" alt="Coverage Status">
   </a>
+  [![DeepScan grade](https://deepscan.io/api/teams/17860/projects/21202/branches/601053/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=17860&pid=21202&bid=601053)
   <a href="https://twitter.com/intent/follow?screen_name=bluebrainnexus">
     <img alt="Follow on Twitter" src="https://img.shields.io/twitter/follow/bluebrainnexus.svg?style=social&label=Follow">
   </a>
