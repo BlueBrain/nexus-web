@@ -1,6 +1,16 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Form, Input, Button, Spin, Checkbox, Row, Col, Select } from 'antd';
+import {
+  Form,
+  Input,
+  Button,
+  Spin,
+  Checkbox,
+  Row,
+  Col,
+  Select,
+  Tooltip,
+} from 'antd';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/sparql/sparql';
@@ -291,7 +301,7 @@ const EditTableForm: React.FC<{
     setDescription(event.target.value);
   };
 
-  const onClickSave = () => {
+  const onClickSave = async () => {
     if (
       !name ||
       isEmptyInput(name) ||
@@ -589,7 +599,7 @@ const EditTableForm: React.FC<{
               onChange={() => setEnableSave(!enableSave)}
               checked={enableSave}
             >
-              Enable 'Save to Data Cart'
+              Enable 'Save to Data Cart'ƒ
             </Checkbox>
             <br />
           </div>
@@ -628,6 +638,7 @@ const EditTableForm: React.FC<{
                 placeholder: placeHolder,
               }}
               onBeforeChange={(editor, data, value) => {
+                setPreview(false);
                 handleQueryChange(value);
               }}
             />
@@ -638,7 +649,7 @@ const EditTableForm: React.FC<{
             <Spin></Spin>
           ) : (
             <Button onClick={onClickPreview} type="primary">
-              Preview
+              Configure Columns
             </Button>
           )}
         </div>
@@ -651,9 +662,18 @@ const EditTableForm: React.FC<{
           <Button style={{ margin: '10px' }} onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={onClickSave} type="primary">
-            Save
-          </Button>
+          <Tooltip
+            placement="topLeft"
+            title={
+              preview
+                ? 'Save Changes'
+                : 'You have to click on configure columns to enable save'
+            }
+          >
+            <Button onClick={onClickSave} type="primary" disabled={!preview}>
+              Save
+            </Button>
+          </Tooltip>
         </div>
         <p>
           <em>* Mandatory field</em>
