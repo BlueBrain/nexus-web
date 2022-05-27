@@ -94,4 +94,81 @@ export const handlers = [
       ctx.json(mockResponse)
     );
   }),
+  rest.get('https://localhost:3000/resources', (req, res, ctx) => {
+    const mockResponse = {
+      '@context': [
+        'https://bluebrain.github.io/nexus/contexts/metadata.json',
+        'https://bluebrain.github.io/nexus/contexts/search.json',
+        'https://bluebrain.github.io/nexus/contexts/search-metadata.json',
+      ],
+      _total: 19,
+      _results: [
+        {
+          '@id': 'id-1',
+          label: 'test-label-1',
+          projectLabel: 'project',
+          orgLabel: 'org',
+        },
+        {
+          '@id': 'id-2',
+          label: 'test-label-2',
+          projectLabel: 'project',
+          orgLabel: 'org',
+        },
+        {
+          '@id': 'id-3',
+          label: 'test-label-3',
+          projectLabel: 'project',
+          orgLabel: 'org',
+        },
+        {
+          '@id': 'id-4',
+          label: 'test-label-4',
+          projectLabel: 'project',
+          orgLabel: 'org',
+        },
+        {
+          '@id': 'id-5',
+          label: 'test-label-5',
+          projectLabel: 'project',
+          orgLabel: 'org',
+        },
+        {
+          '@id': 'id-6',
+          label: 'test-label-6',
+          projectLabel: 'project',
+          orgLabel: 'org',
+        },
+        {
+          '@id': 'id-7',
+          label: 'test-label-7',
+          projectLabel: 'project',
+          orgLabel: 'org',
+        },
+        {
+          '@id': 'id-8',
+          label: 'test-label-8',
+          projectLabel: 'project',
+          orgLabel: 'org',
+        },
+        {
+          '@id': 'id-9',
+          label: 'test-label-9',
+          projectLabel: 'project',
+          orgLabel: 'org',
+        },
+        {
+          '@id': 'id-10',
+          label: 'test-label-10',
+          projectLabel: 'project',
+          orgLabel: 'org',
+        },
+      ],
+    };
+    return res(
+      // Respond with a 200 status code
+      ctx.status(200),
+      ctx.json(mockResponse)
+    );
+  }),
 ];

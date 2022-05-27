@@ -47,9 +47,11 @@ const StudioListContainer: React.FunctionComponent<{
     if (searchValue !== searchQuery) {
       return setSearchQuery(searchValue);
     }
+
     if (busy || !next) {
       return;
     }
+
     try {
       setResources({
         next,
@@ -149,7 +151,7 @@ const StudioListContainer: React.FunctionComponent<{
   }, [orgLabel, projectLabel, searchQuery]);
 
   return (
-    <div className="studio-list">
+    <div className="studio-list" id={'studio-list'}>
       <CreateStudioContainer
         orgLabel={orgLabel}
         projectLabel={projectLabel}
@@ -161,7 +163,7 @@ const StudioListContainer: React.FunctionComponent<{
         onLoadMore={handleLoadMore}
         hasMore={resources.length < Number(total || 0)}
         defaultSearchValue={searchQuery}
-        height={350}
+        height={50}
       >
         {error ? (
           <Empty description="Sorry, something went wrong">

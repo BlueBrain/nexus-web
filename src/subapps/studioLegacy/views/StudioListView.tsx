@@ -44,6 +44,7 @@ const StudioListView: React.FC = () => {
 
   React.useEffect(() => {
     if (data) {
+      console.log(data, searchFilter);
       const list: StudioItem[] = data._results
         .map(r => {
           const labels = getOrgAndProjectFromProjectId(r._project);
@@ -109,6 +110,7 @@ const StudioListView: React.FC = () => {
               renderItem={item => {
                 return (
                   <List.Item
+                    role="listitem"
                     onClick={() => {
                       const { orgLabel, projectLabel, id } = item;
                       const studioUri = makeStudioUri(

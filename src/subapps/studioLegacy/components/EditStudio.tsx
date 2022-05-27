@@ -6,7 +6,7 @@ import { EditOutlined } from '@ant-design/icons';
 
 import StudioEditorForm from './StudioEditorForm';
 
-type StudioResource = Resource<{
+export type StudioResource = Resource<{
   label: string;
   description?: string;
   workspaces?: [string];
