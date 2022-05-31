@@ -11,6 +11,7 @@ import {
   render,
   fireEvent,
   waitFor,
+  waitForElementToBeRemoved,
   screen,
   server,
 } from '../../../../utils/testUtil';
@@ -51,12 +52,13 @@ describe('StudioListContainer', () => {
       );
     });
 
-    const studios = screen.getAllByRole('listitem');
-    expect(studios.length).toBe(4);
-    expect(studios[0]).toHaveTextContent('test-label-1');
+    await waitFor(async () => {
+      const studios = await screen.getAllByRole('listitem');
+      expect(studios.length).toBe(14);
+    });
   });
 
-  xit('allows user to filter studio list', async () => {
+  it('allows user to filter studio list', async () => {
     await act(async () => {
       await render(
         <Provider store={store}>
@@ -70,25 +72,24 @@ describe('StudioListContainer', () => {
         </Provider>
       );
     });
-    const studios = screen.getAllByRole('listitem');
-    expect(studios.length).toBe(4);
-    expect(studios[0]).toHaveTextContent('test-label-1');
+
+    await waitFor(async () => {
+      const studios = await screen.getAllByRole('listitem');
+      expect(studios.length).toBe(14);
+    });
 
     const search = screen.getByRole('textbox');
-    await fireEvent.change(search, { target: { value: 'test' } });
+    await fireEvent.change(search, { target: { value: 'org1' } });
 
-    await act(async () => {
-      await fireEvent.change(search, { target: { value: 'label for id-1' } });
-      await waitFor(() => {
-        const items = screen.getAllByText('label for id-1');
-        expect(items[0]).toBeVisible();
-      });
+    // wait spinner to stop spinning.
+    // While spinning it will have two items with testId studio-spinner
+    await waitFor(() => {
+      const items = screen.getAllByTestId('studio-spinner');
+      expect(items.length).toBe(1);
     });
-    waitFor(async () => {
-      await screen.getAllByRole('listitem');
-      const studios2 = await screen.getAllByRole('listitem');
-      expect(studios2[0]).toHaveTextContent('test-label-2');
-      expect(studios2.length).toBe(1);
-    });
+
+    const studios = screen.getAllByRole('listitem');
+    expect(studios[1]).toHaveTextContent('1 results');
+    expect(studios[0]).toHaveTextContent('org1');
   });
 });

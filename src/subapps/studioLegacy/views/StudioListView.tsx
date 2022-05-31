@@ -44,7 +44,6 @@ const StudioListView: React.FC = () => {
 
   React.useEffect(() => {
     if (data) {
-      console.log(data, searchFilter);
       const list: StudioItem[] = data._results
         .map(r => {
           const labels = getOrgAndProjectFromProjectId(r._project);
@@ -91,6 +90,7 @@ const StudioListView: React.FC = () => {
             access. The list is alphabetically sorted.
           </p>
         </div>
+        {status}
         {status === 'error' ? (
           <>A Error Occured</>
         ) : (
@@ -98,6 +98,7 @@ const StudioListView: React.FC = () => {
             spinning={status === 'loading'}
             size={'large'}
             style={{ display: 'flex' }}
+            data-testid={'studio-spinner'}
           >
             <List
               pagination={{
