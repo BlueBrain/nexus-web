@@ -11,6 +11,11 @@ export function useJiraPlugin() {
   const { jiraSupportedRealms } = useSelector(
     (state: RootState) => state.config
   );
+
+  if (jiraSupportedRealms === undefined) {
+    return { isUserInSupportedJiraRealm: true };
+  }
+
   const { identities } = useSelector((state: RootState) => state.auth);
   const isUserInSupportedJiraRealm =
     identities?.data &&
