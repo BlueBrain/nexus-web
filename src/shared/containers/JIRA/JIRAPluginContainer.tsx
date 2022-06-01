@@ -8,16 +8,12 @@ type JIRAPluginContainerProps = {
   resource: Resource;
   projectLabel: string;
   orgLabel: string;
-  collapsed: boolean;
-  handleCollapseChanged: () => void;
 };
 
 const JIRAPluginContainer = ({
   resource,
   projectLabel,
   orgLabel,
-  collapsed,
-  handleCollapseChanged,
 }: JIRAPluginContainerProps) => {
   const {
     projects,
@@ -45,35 +41,26 @@ const JIRAPluginContainer = ({
     commentCount: issue.commentCount,
   }));
 
-  return (
-    <Collapse
-      onChange={handleCollapseChanged}
-      activeKey={collapsed ? 'jira' : undefined}
-    >
-      <Collapse.Panel header="JIRA" key="jira">
-        {!isJiraConnected ? (
-          <AuthorizeJiraUI
-            jiraAuthUrl={jiraAuthUrl}
-            onSubmitVerificationCode={verificationCode => {
-              connectJira(verificationCode);
-            }}
-          />
-        ) : (
-          <JIRAPluginUI
-            displayType="resource"
-            projects={projects}
-            issues={tableIssues}
-            onCreateIssue={(project, summary, description) =>
-              createIssue(project, summary, description)
-            }
-            onLinkIssue={issueUrl => linkIssue(issueUrl)}
-            onUnlinkIssue={issueKey => unlinkIssue(issueKey)}
-            searchJiraLink={`${jiraWebBaseUrl}/issues/?jql=`}
-            isLoading={isLoading}
-          />
-        )}
-      </Collapse.Panel>
-    </Collapse>
+  return !isJiraConnected ? (
+    <AuthorizeJiraUI
+      jiraAuthUrl={jiraAuthUrl}
+      onSubmitVerificationCode={verificationCode => {
+        connectJira(verificationCode);
+      }}
+    />
+  ) : (
+    <JIRAPluginUI
+      displayType="resource"
+      projects={projects}
+      issues={tableIssues}
+      onCreateIssue={(project, summary, description) =>
+        createIssue(project, summary, description)
+      }
+      onLinkIssue={issueUrl => linkIssue(issueUrl)}
+      onUnlinkIssue={issueKey => unlinkIssue(issueKey)}
+      searchJiraLink={`${jiraWebBaseUrl}/issues/?jql=`}
+      isLoading={isLoading}
+    />
   );
 };
 

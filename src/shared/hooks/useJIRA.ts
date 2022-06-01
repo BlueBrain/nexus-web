@@ -3,9 +3,22 @@ import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/reducers';
-import { getResourceLabel, labelOf } from '../utils';
+import { getResourceLabel, isUserInAtLeastOneRealm, labelOf } from '../utils';
 import useLocalStorage from './useLocalStorage';
 import useNotification from './useNotification';
+
+export function useJiraPlugin() {
+  const { jiraSupportedRealms } = useSelector(
+    (state: RootState) => state.config
+  );
+  const { identities } = useSelector((state: RootState) => state.auth);
+  const isUserInSupportedJiraRealm =
+    identities?.data &&
+    jiraSupportedRealms &&
+    isUserInAtLeastOneRealm(identities.data.identities, jiraSupportedRealms);
+
+  return { isUserInSupportedJiraRealm };
+}
 
 /**
  * Manages our JIRA data model
