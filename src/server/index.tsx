@@ -104,6 +104,9 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       jiraProjectCustomFieldName: process.env.JIRA_PROJECT_FIELD_NAME || '',
       jiraProjectCustomFieldLabel:
         process.env.JIRA_PROJECT_FIELD_LABEL || 'Nexus Project',
+      ...(process.env.JIRA_SUPPORTED_REALMS && {
+        jiraSupportedRealms: process.env.JIRA_SUPPORTED_REALMS.split(','),
+      }),
     },
     uiSettings: DEFAULT_UI_SETTINGS,
     oidc: {
