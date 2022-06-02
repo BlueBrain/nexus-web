@@ -1,4 +1,3 @@
-import { Collapse } from 'antd';
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import JIRAPluginUI, { AuthorizeJiraUI } from '../../components/JIRA/JIRA';
