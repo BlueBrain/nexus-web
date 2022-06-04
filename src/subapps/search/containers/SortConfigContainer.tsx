@@ -34,7 +34,7 @@ const SortConfigContainer = ({
         {countOfSortedFields() > 0 ? (
           <>
             {` Sorted on ${countOfSortedFields()} ${
-              countOfSortedFields() > 1 ? ' columns' : ' column'
+              countOfSortedFields() > 1 ? 'columns' : 'column'
             }`}
           </>
         ) : (
