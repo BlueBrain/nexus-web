@@ -6,7 +6,7 @@ Here, uri is the base url for you delta installation. Token is your nexus user t
 
 To migrate a single sudio, run the follwoing command.
 
-`node singleStudioMigration.js --uri={uri} --token={token} --projectLabel={} --orgLabel={} --studioId={}`
+`node singleStudioMigration.js --uri={uri} --token={token} --projectLabel={projectLabel} --orgLabel={orgLabel} --studioId={studioId}`
 
 To reverse the migration on any resource, run the following command.
 
