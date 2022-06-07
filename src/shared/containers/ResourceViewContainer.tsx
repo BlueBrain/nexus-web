@@ -30,6 +30,7 @@ import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/reducers';
 import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
+import { useJiraPlugin } from '../hooks/useJIRA';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -480,17 +481,29 @@ const ResourceViewContainer: React.FunctionComponent<{
         }}
       />
     );
-  const jiraPlugin = resource && deltaPlugins && 'jira' in deltaPlugins && (
-    <JIRAPluginContainer
-      resource={resource}
-      orgLabel={orgLabel}
-      projectLabel={projectLabel}
-      collapsed={openPlugins.includes('jira')}
-      handleCollapseChanged={() => {
-        pluginCollapsedToggle('jira');
-      }}
-    />
-  );
+  const { isUserInSupportedJiraRealm } = useJiraPlugin();
+
+  const jiraPlugin = resource &&
+    deltaPlugins &&
+    'jira' in deltaPlugins &&
+    isUserInSupportedJiraRealm && (
+      <Collapse
+        onChange={() => {
+          pluginCollapsedToggle('jira');
+        }}
+        activeKey={openPlugins.includes('jira') ? 'jira' : undefined}
+      >
+        <Collapse.Panel header="JIRA" key="jira">
+          {openPlugins.includes('jira') && (
+            <JIRAPluginContainer
+              resource={resource}
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+            />
+          )}
+        </Collapse.Panel>
+      </Collapse>
+    );
 
   const builtInPlugins = [
     { key: 'preview', name: 'preview', pluginComponent: previewPlugin },
