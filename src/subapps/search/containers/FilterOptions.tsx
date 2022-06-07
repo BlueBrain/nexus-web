@@ -159,43 +159,42 @@ const FilterOptions: React.FC<{
     setAggregations(aggs);
   };
 
-  const filterValues = React.useMemo(
-    () =>
-      aggregations
-        .filter(a => a.matching)
-        .map(({ filterValue, selected, count }) => {
-          return (
-            <Row
-              key={filterValue}
-              className={`filter-value-row${
-                filterValue === 'Missing' && count === 0 ? '--missing' : ''
-              }`}
+  const filterValues = React.useMemo(() => {
+    return aggregations
+      .filter(a => a.matching)
+      .map(({ filterValue, selected, count }) => {
+        return (
+          <Row
+            key={filterValue}
+            className={`filter-value-row${
+              filterValue === 'Missing' && count === 0 ? '--missing' : ''
+            }`}
+            role="listitem"
+          >
+            <Checkbox
+              key={`chk${filterValue}`}
+              value={`${filterValue}`}
+              className="filter-value-row__chk"
+              checked={selected ? true : false}
+              disabled={count === 0}
+              onChange={e =>
+                changeFilterSelection(filterValue, e.target.checked)
+              }
             >
-              <Checkbox
-                key={`chk${filterValue}`}
-                value={`${filterValue}`}
-                className="filter-value-row__chk"
-                checked={selected ? true : false}
-                disabled={count === 0}
-                onChange={e =>
-                  changeFilterSelection(filterValue, e.target.checked)
-                }
-              >
-                {`${
-                  field.label === 'Types' ? labelOf(filterValue) : filterValue
-                }`}
-              </Checkbox>
-              <span className="filter-value-row__count">
-                {count > 10000 ? '10K+' : count.toLocaleString('en-US')}
-              </span>
-            </Row>
-          );
-        }),
-    [aggregations]
-  );
+              {`${
+                field.label === 'Types' ? labelOf(filterValue) : filterValue
+              }`}
+            </Checkbox>
+            <span className="filter-value-row__count">
+              {count > 10000 ? '10K+' : count.toLocaleString('en-US')}
+            </span>
+          </Row>
+        );
+      });
+  }, [aggregations]);
 
   return (
-    <Form form={form} className="field-filter-menu">
+    <Form form={form} aria-label="Field Filter" className="field-filter-menu">
       {!(
         field.fields && field.fields.find(f => f.format.includes('number'))
       ) && (
@@ -243,7 +242,7 @@ const FilterOptions: React.FC<{
                 }}
               ></Input.Search>
               <Form.Item style={{ maxHeight: '91px', overflow: 'scroll' }}>
-                {filterValues}
+                <div role="list">{filterValues}</div>
               </Form.Item>
             </>
           )}
