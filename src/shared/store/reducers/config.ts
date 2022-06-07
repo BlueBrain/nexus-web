@@ -29,6 +29,7 @@ export interface ConfigState {
   jiraResourceCustomFieldLabel: string;
   jiraProjectCustomFieldName: string;
   jiraProjectCustomFieldLabel: string;
+  jiraSupportedRealms?: string[];
 }
 
 const initialState: ConfigState = {

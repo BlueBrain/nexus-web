@@ -29,6 +29,7 @@ import './ProjectView.less';
 import ResourceCreateUploadContainer from '../../../shared/containers/ResourceCreateUploadContainer';
 import { makeOrganizationUri } from '../../../shared/utils';
 import JiraPluginProjectContainer from '../containers/JiraContainer';
+import { useJiraPlugin } from '../../../shared/hooks/useJIRA';
 
 const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
@@ -262,6 +263,9 @@ const ProjectView: React.FunctionComponent = () => {
     if (activeKey === 'studios' || activeKey === 'workflows') return;
     history.push(pathFromTab(activeKey));
   };
+
+  const { isUserInSupportedJiraRealm } = useJiraPlugin();
+
   return (
     <div className="project-view">
       {!!project && (
@@ -401,14 +405,16 @@ const ProjectView: React.FunctionComponent = () => {
                   <br />
                 </>
               </TabPane>
-              {deltaPlugins && 'jira' in deltaPlugins && (
-                <TabPane tab="Jira" key="jira">
-                  <JiraPluginProjectContainer
-                    orgLabel={orgLabel}
-                    projectLabel={projectLabel}
-                  />
-                </TabPane>
-              )}
+              {deltaPlugins &&
+                'jira' in deltaPlugins &&
+                isUserInSupportedJiraRealm && (
+                  <TabPane tab="Jira" key="jira">
+                    <JiraPluginProjectContainer
+                      orgLabel={orgLabel}
+                      projectLabel={projectLabel}
+                    />
+                  </TabPane>
+                )}
               {deltaPlugins && 'graph-analytics' in deltaPlugins && (
                 <TabPane tab="Graph Analytics" key="graph-analytics">
                   <ProjectStatsContainer
