@@ -31,6 +31,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store/reducers';
 import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
 import { useJiraPlugin } from '../hooks/useJIRA';
+import AnalysisPluginContainer from './AnalysisPlugin/AnalysisPluginContainer';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -505,11 +506,26 @@ const ResourceViewContainer: React.FunctionComponent<{
       </Collapse>
     );
 
+  const showAnalysisPlugin = true;
+  const analysisPlugin = resource && showAnalysisPlugin && (
+    <Collapse
+      onChange={() => {
+        pluginCollapsedToggle('analysis');
+      }}
+      activeKey={openPlugins.includes('analysis') ? 'analysis' : undefined}
+    >
+      <Collapse.Panel header="Analysis" key="analysis">
+        {openPlugins.includes('analysis') && <AnalysisPluginContainer />}
+      </Collapse.Panel>
+    </Collapse>
+  );
+
   const builtInPlugins = [
     { key: 'preview', name: 'preview', pluginComponent: previewPlugin },
     { key: 'admin', name: 'advanced', pluginComponent: adminPlugin },
     { key: 'video', name: 'video', pluginComponent: videoPlugin },
     { key: 'jira', name: 'jira', pluginComponent: jiraPlugin },
+    { key: 'analysis', name: 'Analysis', pluginComponent: analysisPlugin },
   ];
 
   return (
