@@ -1,6 +1,12 @@
 import fetch from 'node-fetch';
-import { performMigrationforAStudio, initNexusClient } from './studioMigration';
+import {
+  performMigrationforAStudio,
+  initNexusClient,
+} from './studioMigration.js';
+import minimist from 'minimist';
+
 const args = minimist(process.argv.slice(2));
+
 if (
   args.uri &&
   args.token &&
@@ -9,6 +15,7 @@ if (
   args.studioId
 ) {
   try {
+    console.log(args);
     const nexus = initNexusClient(args.uri.trim(), args.token.trim(), fetch);
     await performMigrationforAStudio(
       args.studioId.trim(),

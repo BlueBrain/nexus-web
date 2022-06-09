@@ -400,9 +400,9 @@ async function getConfig(view, query, orgLabel, projectLabel, nexus) {
         '@type': 'text',
         name: x.dataIndex,
         format: '',
-        enableSearch: false,
-        enableSort: false,
-        enableFilter: false,
+        enableSearch: true,
+        enableSort: true,
+        enableFilter: true,
       }));
   } catch (ex) {
     console.error(ex);
