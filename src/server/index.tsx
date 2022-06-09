@@ -97,6 +97,16 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       sentryDsn: process.env.SENTRY_DSN,
       gtmCode: process.env.GTM_CODE,
       studioView: process.env.STUDIO_VIEW || '',
+      jiraUrl: process.env.JIRA_URL || '',
+      jiraResourceCustomFieldName: process.env.JIRA_RESOURCE_FIELD_NAME || '',
+      jiraResourceCustomFieldLabel:
+        process.env.JIRA_RESOURCE_FIELD_LABEL || 'Nexus Resource',
+      jiraProjectCustomFieldName: process.env.JIRA_PROJECT_FIELD_NAME || '',
+      jiraProjectCustomFieldLabel:
+        process.env.JIRA_PROJECT_FIELD_LABEL || 'Nexus Project',
+      ...(process.env.JIRA_SUPPORTED_REALMS && {
+        jiraSupportedRealms: process.env.JIRA_SUPPORTED_REALMS.split(','),
+      }),
     },
     uiSettings: DEFAULT_UI_SETTINGS,
     oidc: {
