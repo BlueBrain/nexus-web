@@ -147,6 +147,15 @@ export const labelOf = (inputString: string) => {
 
 export const isBrowser = typeof window !== 'undefined';
 
+export function isUserInAtLeastOneRealm(
+  userIdentities: Identity[],
+  realm: string[]
+) {
+  return (
+    userIdentities.filter(i => i.realm && realm.includes(i.realm)).length > 0
+  );
+}
+
 /**
  * Returns the logout URL of the realm the user is authenticated with
  *
