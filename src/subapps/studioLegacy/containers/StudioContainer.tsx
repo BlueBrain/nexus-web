@@ -6,7 +6,7 @@ import { useHistory } from 'react-router';
 import EditStudio from '../components/EditStudio';
 import StudioHeader from '../components/StudioHeader';
 import { StudioContext } from '../views/StudioView';
-import WorkspaceList from '../containers/WorkspaceListContainer';
+import WorkspaceMenuContainer from '../containers/WorkspaceMenuContainer';
 import { saveImage } from '../../../shared/containers/MarkdownEditorContainer';
 import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
 import { getDestinationParam } from '../../../shared/utils';
@@ -26,10 +26,14 @@ const resourcesWritePermissionsWrapper = (
   });
 };
 
-type StudioResource = Resource<{
+export type StudioResource = Resource<{
   label: string;
   description?: string;
   workspaces: [string];
+  plugins?: {
+    customise: boolean;
+    plugins: { key: string; expanded: boolean }[];
+  };
 }>;
 
 const StudioContainer: React.FunctionComponent = () => {
@@ -52,6 +56,16 @@ const StudioContainer: React.FunctionComponent = () => {
     nexus.Resource.get(orgLabel, projectLabel, studioId)
       .then(value => {
         const studioResource: StudioResource = value as StudioResource;
+        /* TODO: find a better solution to dealing with json-ld's arrays
+         for singular objects when we actually expect type to be singular */
+        if (
+          Array.isArray(studioResource.plugins) &&
+          studioResource.plugins.length > 0
+        ) {
+          studioResource.plugins = studioResource.plugins[0];
+        } else {
+          studioResource.plugins = undefined;
+        }
         setStudioResource(studioResource);
         const workspaceIds: string[] = studioResource['workspaces'];
         setWorkspaceIds(
@@ -85,7 +99,14 @@ const StudioContainer: React.FunctionComponent = () => {
       });
   }, [orgLabel, projectLabel, studioId]);
 
-  const updateStudio = async (label: string, description?: string) => {
+  const updateStudio = async (
+    label: string,
+    description?: string,
+    plugins?: {
+      customise: boolean;
+      plugins: { key: string; expanded: boolean }[];
+    }
+  ) => {
     if (studioResource) {
       await nexus.Resource.update(
         orgLabel,
@@ -96,6 +117,7 @@ const StudioContainer: React.FunctionComponent = () => {
           ...studioResource,
           label,
           description,
+          plugins,
         }
       )
         .then(response => {
@@ -128,7 +150,11 @@ const StudioContainer: React.FunctionComponent = () => {
   return (
     <>
       {studioResource ? (
-        <>
+        <div
+          style={{
+            minHeight: '800px',
+          }}
+        >
           <StudioHeader
             resource={studioResource}
             markdownViewer={MarkdownViewerContainer}
@@ -138,12 +164,12 @@ const StudioContainer: React.FunctionComponent = () => {
               `/${orgLabel}/${projectLabel}`
             )}
           </StudioHeader>
-          <WorkspaceList
+          <WorkspaceMenuContainer
             workspaceIds={workspaceIds}
             studioResource={studioResource}
             onListUpdate={fetchAndSetupStudio}
           />
-        </>
+        </div>
       ) : (
         <Empty />
       )}

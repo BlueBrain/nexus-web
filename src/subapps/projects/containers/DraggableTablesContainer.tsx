@@ -4,6 +4,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import Draggable from 'react-draggable';
 import DataTableContainer from '../../../shared/containers/DataTableContainer';
 import useNotification, {
+  NexusError,
   parseNexusError,
 } from '../../../shared/hooks/useNotification';
 
@@ -11,7 +12,8 @@ const DraggableTablesContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
   tables: any[];
-}> = ({ orgLabel, projectLabel, tables }) => {
+  onDeprecate: () => void;
+}> = ({ orgLabel, projectLabel, tables, onDeprecate }) => {
   const nexus = useNexusContext();
   const notification = useNotification();
 
@@ -30,7 +32,7 @@ const DraggableTablesContainer: React.FC<{
         projectLabel,
         encodeURIComponent(table['@id'])
       )) as Resource;
-      const update = await nexus.Resource.update(
+      await nexus.Resource.update(
         orgLabel,
         projectLabel,
         encodeURIComponent(table['@id']),
@@ -40,7 +42,7 @@ const DraggableTablesContainer: React.FC<{
     } catch (error) {
       notification.error({
         message: 'Failed to save new position',
-        description: parseNexusError(error),
+        description: parseNexusError(error as NexusError),
       });
     }
   };
@@ -68,6 +70,12 @@ const DraggableTablesContainer: React.FC<{
                 projectLabel={projectLabel}
                 tableResourceId={table['@id']}
                 key={`data-table-${table['@id']}}`}
+                onDeprecate={onDeprecate}
+                options={{
+                  disableDelete: false,
+                  disableAddFromCart: false,
+                  disableEdit: false,
+                }}
               />
             </div>
           </DraggableTable>

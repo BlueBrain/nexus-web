@@ -24,18 +24,28 @@ export interface QuerySparqlViewProps {
 export const sparqlQueryExecutor = async (
   nexus: NexusClient,
   dataQuery: string,
-  view: SparqlView
+  view: SparqlView,
+  hasProjection: boolean,
+  projectionId?: string
 ) => {
   const { org: orgLabel, project: projectLabel, id: viewId } = parseURL(
     view._self
   );
 
-  const result: SparqlViewQueryResponse = await nexus.View.sparqlQuery(
-    orgLabel,
-    projectLabel,
-    encodeURIComponent(viewId),
-    dataQuery
-  );
+  const result: SparqlViewQueryResponse = hasProjection
+    ? await nexus.View.compositeSparqlQuery(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(viewId),
+        encodeURIComponent(projectionId || '_'),
+        dataQuery
+      )
+    : await nexus.View.sparqlQuery(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(viewId),
+        dataQuery
+      );
   const data: SelectQueryResponse = result as SelectQueryResponse;
   const tempHeaderProperties: {
     title: string;
@@ -86,5 +96,5 @@ export const querySparqlView = ({
   dataQuery,
   view,
 }: QuerySparqlViewProps) => async () => {
-  return await sparqlQueryExecutor(nexus, dataQuery, view);
+  return await sparqlQueryExecutor(nexus, dataQuery, view, false);
 };

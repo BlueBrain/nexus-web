@@ -12,7 +12,7 @@ export const NotificationContext = React.createContext<NotificationContextType>(
   {} as NotificationContextType
 );
 
-type NexusError = {
+export type NexusError = {
   reason?: string;
   message?: string;
   [key: string]: any;

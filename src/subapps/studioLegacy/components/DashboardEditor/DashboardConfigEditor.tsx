@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Input, Form, Tooltip, Button } from 'antd';
+import { Input, Form, Tooltip, Button, Alert } from 'antd';
 import { View } from '@bbp/nexus-sdk';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import TextArea from 'antd/lib/input/TextArea';
@@ -57,6 +57,12 @@ const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEdi
 
   return (
     <Form onFinish={handleOnFinish} layout="vertical">
+      <Alert
+        message="This dashboard is using an old version of Studio Dashboards. In order to take advantage of the new features of Studio dashboards
+      create a new dashboard from scratch."
+        type="info"
+      />
+      <br />
       <Form.Item
         label={
           <span>
@@ -97,6 +103,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEdi
         <TextArea className="ui-dashboard-description-input" />
       </Form.Item>
       <Form.Item
+        noStyle={true}
         name="dataQuery"
         label={
           linkToSparqlQueryEditor &&

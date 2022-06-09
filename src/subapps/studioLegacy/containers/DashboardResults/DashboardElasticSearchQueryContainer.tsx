@@ -6,7 +6,7 @@ import ElasticSearchResultsTable, {
 } from '../../../../shared/components/ElasticSearchResultsTable';
 import { UseSearchProps } from '../../../../shared/hooks/useSearchQuery';
 import { ResultTableFields } from '../../../../shared/types/search';
-import useSearchQueryFromStudio from '../../../hooks/useSearchQuery';
+import useSearchQueryFromStudio from '../../hooks/useSearchQuery';
 
 const DashboardElasticSearchQueryContainer: React.FC<{
   fields?: ResultTableFields[];

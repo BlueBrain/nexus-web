@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { SubApp } from '..';
-import SearchView from './views/SearchView';
+import GlobalSearchView from './views/GlobalSearchView';
 
 const title = 'Search';
 const namespace = 'search';
 const icon = require('../../shared/images/search.svg');
-const requireLogin = false;
+const requireLogin = true;
 const description =
   'Search through data added to Nexus Delta by you and others';
 const subAppType = 'internal';
@@ -26,6 +26,7 @@ export const SearchSubappContext = React.createContext<{
   namespace: string;
   icon: string;
   version: string;
+  requireLogin: boolean;
 }>(subappProps);
 
 export function useSubappContext() {
@@ -49,7 +50,7 @@ const Search: SubApp = () => {
       {
         path: '/',
         exact: true,
-        component: SearchSubappProviderHOC(SearchView),
+        component: SearchSubappProviderHOC(GlobalSearchView),
       },
     ],
   };

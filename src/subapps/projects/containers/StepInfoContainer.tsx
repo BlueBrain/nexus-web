@@ -204,16 +204,17 @@ const StepInfoContainer: React.FC<{
     return nextSteps;
   };
 
-  const deprecateSteps = async (steps: Resource[]) => {
-    steps.map(async step => {
-      await nexus.Resource.deprecate(
-        orgLabel,
-        projectLabel,
-        encodeURIComponent(step['@id']),
-        step._rev
-      );
-    });
-  };
+  const deprecateSteps = async (steps: Resource[]) =>
+    await Promise.all(
+      steps.map(step =>
+        nexus.Resource.deprecate(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(step['@id']),
+          step._rev
+        )
+      )
+    );
 
   const removePreviousStepLink = async (
     step: StepResource,
@@ -263,6 +264,7 @@ const StepInfoContainer: React.FC<{
         step,
         ...(await fetchSubsteps(step['@id'])),
       ];
+
       const tablesToDeprecate = (
         await Promise.all(
           resultingStepsToDeprecate
@@ -279,7 +281,7 @@ const StepInfoContainer: React.FC<{
         )
       ).flat();
 
-      deprecateSteps(resultingStepsToDeprecate);
+      await deprecateSteps(resultingStepsToDeprecate);
 
       tablesToDeprecate.map(async table => {
         await nexus.Resource.deprecate(
@@ -291,11 +293,11 @@ const StepInfoContainer: React.FC<{
       });
 
       const nextSteps = await fetchNextSteps(step);
-      nextSteps.forEach(async nextStep => {
+      nextSteps.map(async nextStep => {
         await removePreviousStepLink(nextStep, step['@id']);
       });
 
-      setBusy(true);
+      setBusy(false);
       setShowForm(false);
 
       if (step.hasParent) {
@@ -312,7 +314,7 @@ const StepInfoContainer: React.FC<{
         message: 'Workflow step successfully deprecated',
       });
     } catch (error) {
-      setBusy(true);
+      setBusy(false);
       setShowForm(false);
 
       notification.error({

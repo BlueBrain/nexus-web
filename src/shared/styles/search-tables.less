@@ -1,0 +1,182 @@
+@import './../lib.less';
+
+// Variables
+@border-color: rgba(178, 178, 178, 1); //light grey
+@bg: rgba(252, 253, 253, 1); //white
+@thead-bg: rgba(244, 244, 244, 1); //tbody
+@black: rgba(0, 0, 0, 0.65);
+@select-blue: rgba(217, 230, 248, 1);
+@select-black: rgba(51, 51, 51, 0.8);
+
+.height-test-wrapper {
+  height: calc(100vh - 82px);
+}
+
+.thead-borders() {
+  border-top: 1px @border-color outset;
+  border-right: 1px @border-color inset;
+  border-bottom: 2px @border-color outset;
+  &:nth-child(1) {
+    border-left: 1px @border-color outset;
+  }
+}
+
+.td-borders() {
+  border-right: 1px @border-color solid;
+  border-bottom: 1px @border-color solid;
+  &:nth-child(1) {
+    border-left: 1px @border-color outset;
+  }
+}
+
+html {
+  .ant-tooltip {
+    .ant-tooltip-content {
+      border-radius: 4px;
+
+      .ant-tooltip-arrow {
+        visibility: hidden;
+      }
+      .ant-tooltip-inner {
+        font-weight: 200;
+        color: @black;
+        background: @bg;
+        padding: 10px 15px;
+        box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px,
+          rgba(17, 17, 26, 0.1) 0px 8px 24px,
+          rgba(17, 17, 26, 0.1) 0px 16px 56px;
+      }
+    }
+  }
+}
+
+.result-table {
+  width: auto;
+  font-weight: 200;
+  margin-right: 10px;
+  .ant-table {
+    line-height: 1.2em;
+    .ant-table-content {
+      table {
+        background: @bg;
+        thead.ant-table-thead > tr > th {
+          font-weight: 400;
+          background: @thead-bg;
+          width: 200px;
+          padding: 10px 15px;
+          .thead-borders();
+
+          // FILTER ICON PLAYGROUND
+          .ant-table-filter-column {
+            display: grid;
+            margin: unset;
+            grid-template-columns: 20px 1fr;
+            grid-auto-flow: dense;
+            .ant-table-filter-column-title {
+              grid-column: 2;
+              grid-row: 1;
+              padding: 0;
+              .ant-table-column-sorter {
+                position: absolute;
+                right: 20px;
+              }
+            }
+            .ant-table-filter-trigger-container {
+              grid-column: 1;
+              grid-row: 1;
+              position: unset;
+              right: unset;
+              display: unset;
+              &:hover {
+                background: none;
+              }
+              .ant-table-filter-trigger > .anticon {
+                left: 20px;
+              }
+            }
+          }
+        }
+        .ant-table-thead
+          th.ant-table-column-has-sorters
+          .ant-table-column-sorters {
+          padding: 0;
+        }
+
+        td.ant-table-cell {
+          .row-select {
+            display: none;
+          }
+
+          .row-index {
+            display: block;
+            padding-top: 2px;
+          }
+
+          &:hover {
+            background: @thead-bg !important;
+            .row-select {
+              display: block;
+              padding-left: 35%;
+            }
+            .row-index {
+              display: none;
+            }
+          }
+
+          .row-selection-checkbox {
+            height: 20px;
+          }
+
+          padding: 7px 15px;
+          width: 200px;
+
+          pre {
+            margin: unset;
+          }
+          .td-borders();
+        }
+        td.ant-table-cell,
+        td.ant-table-cell > div,
+        td.ant-table-cell > pre {
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+        }
+
+        // Overriding select background color
+        .ant-checkbox-indeterminate .ant-checkbox-inner::after {
+          background: @bg;
+        }
+        .ant-checkbox-wrapper:hover .ant-checkbox-inner,
+        .ant-checkbox:hover .ant-checkbox-inner,
+        .ant-checkbox-input:focus + .ant-checkbox-inner {
+          border-color: @select-black;
+        }
+        .ant-checkbox-checked::after {
+          border: 1px solid @select-black;
+        }
+        .ant-checkbox-checked .ant-checkbox-inner {
+          background: @select-black;
+          border: 1px solid @select-black;
+        }
+        .ant-table-tbody > tr.ant-table-row-selected > td {
+          background: @select-blue;
+        }
+      }
+      // OVERRIDING THE ICON TAG DISPLAY FOR THIS TABLE ONLY, ACTUAL STLYING FOUND IN Types.less
+      .types-list {
+        display: inline;
+        list-style: none;
+        .types-icon {
+          display: inline;
+        }
+        .types-icon:after {
+          content: ', ';
+        }
+        .types-icon:last-child:after {
+          content: '';
+        }
+      }
+    }
+  }
+}

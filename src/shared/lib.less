@@ -1,32 +1,44 @@
-// Antd overrride
-@primary-color: #44c7f4; // primary color for all components
-@link-color: #00adee; // link color
-@success-color: #52c41a; // success state color
-@warning-color: #faad14; // warning state color
-@error-color: #f5222d; // error state color
-@font-size-base: 14px; // major text font size
-@heading-color: rgba(0, 0, 0, 0.72); // heading text color
-@text-color: rgba(0, 0, 0, 0.65); // major text color
-@text-color-secondary: rgba(0, 0, 0, 0.45); // secondary text color
-@disabled-color: rgba(0, 0, 0, 0.25); // disable state color
-@border-radius-base: 2px; // major border radius
-@border-color-base: #d9d9d9; // major border color
-@box-shadow-base: 0 2px 8px rgba(0, 0, 0, 0.15); // major shadow for layers
-@primary-background-subtle: rgb(226, 248, 255);
-@background-color-subtle: rgb(
-  252,
-  253,
-  253
-); // for sublte highlighting in lists
+// BBP Fusion Standard Styling
+
+// Color palette
+@fusion-menu-color: #050a56;
+@fusion-primary-color: #0083cb;
+@fusion-secondary-color: #7cb4fa;
+@fusion-primary-text-color: #333333;
+@fusion-secondary-text-color: #888888;
+@fusion-success-color: #52c41a;
+@fusion-active-link-color: #0070c9;
+@fusion-visited-link-color: #ac1fd3;
+@fusion-hover-link-color: #3ea1d7;
+@fusion-danger-color: #ff4d4f;
+@fusion-background-color: #fff;
+@fusion-component-background-color: #f2f2f2;
+@fusion-warning-color: #faad14;
+
+// additional colors
 @nexus-dark: #1d3b61;
-// Variables
-@header-background-color: fade(black, 5%);
+
+// typography
+@fusion-base-font-size: 14px;
+@fusion-heading-1-size: 28px;
+@fusion-heading-2-size: 23px;
+@fusion-heading-3-size: 19px;
+@fusion-heading-4-size: 16px;
+@fusion-heading-5-size: 14px;
+
+@font-face {
+  font-family: 'Titillium Web';
+  src: url('./fonts/TitilliumWeb-Regular.ttf') format('truetype');
+}
+
+// Fusion Variables
+@header-background-color: fade(@fusion-component-background-color, 50%);
 @box-shadow-color: #abbac9;
 @bounce: cubic-bezier(0.645, 0.045, 0.355, 1);
 @interfaceTransition: 0.3s @bounce;
-@component-background: #fcfdfd;
+
 @maxConstrainedItemWidth: 980px;
-@link-hover-color: #28c9fa;
+
 @primary-card: #f5f6f7;
 @default-card-width: 400px;
 @default-pad: 1rem;
@@ -38,11 +50,14 @@
 @edge-color: #8a8b8b;
 @table-row-highlight-color: rgba(255, 255, 255, 0.1);
 @icon-color: #bcbccb;
-// Fusion
-@fusion-dark-bg: #001529;
-@blocked-color: #ea5055;
-@success-color: #61b576;
-@in-progress-color: #f5ab51;
+
+@layout-body-background: @fusion-background-color;
+@layout-header-background: @fusion-menu-color;
+
+@fusion-dark-bg: @fusion-menu-color;
+@blocked-color: @fusion-danger-color;
+@success-color: @fusion-success-color;
+@in-progress-color: @fusion-warning-color;
 @not-started-color: #828a8e;
 @fusion-dark: #4b4b4b;
 @transition-bouncy: cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -50,19 +65,56 @@
 @alternative-button-color: #2bad4e;
 @medium-gray: #a5afb4;
 
+// Antd style overrride
+
+@font-family: 'Titillium Web', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+  Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
+  'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+@primary-color: @fusion-primary-color; // primary color for all components
+@link-color: @fusion-active-link-color; // link color
+@link-hover-color: @fusion-hover-link-color;
+@success-color: @fusion-success-color; // success state color
+@warning-color: @fusion-warning-color; // warning state color
+@error-color: @fusion-danger-color; // error state color
+
+@font-size-base: @fusion-base-font-size; // major text font size
+@heading-1-size: @fusion-heading-1-size;
+@heading-2-size: @fusion-heading-2-size;
+@heading-3-size: @fusion-heading-3-size;
+@heading-4-size: @fusion-heading-4-size;
+@heading-5-size: @fusion-heading-5-size;
+
+@heading-color: @fusion-primary-text-color; // heading text color
+@text-color: @fusion-primary-text-color; // major text color
+@text-color-secondary: @fusion-secondary-text-color; // secondary text color
+@border-radius-base: 2px; // major border radius
+@border-color-base: #d9d9d9; // major border color
+@box-shadow-base: 0 2px 8px rgba(0, 0, 0, 0.15); // major shadow for layers
+@primary-background-subtle: rgb(226, 248, 255);
+@background-color-subtle: rgb(
+  252,
+  253,
+  253
+); // for sublte highlighting in lists
+
+@component-background: @fusion-component-background-color;
+
+.ant-tabs-nav {
+  background-color: @fusion-component-background-color;
+}
+
+// Top-level styles
+
 body {
-  background-color: #9e9e9e1f;
+  background-color: @fusion-background-color;
   background-size: cover;
   background-repeat: no-repeat;
-  // Just for fun! Try them out!
-  // background-color: pink;
-  // background-image: url('https://source.unsplash.com/random/2560x1842/?snow,nature,mountains');
 }
 
 h1 {
   .ellipsis();
-  font-weight: 200;
-  font-size: 28px;
+  font-size: @heading-1-size;
 }
 
 // Mixins
@@ -88,6 +140,12 @@ h1 {
 
 .unstyleList() {
   list-style: none;
+}
+
+.ant-tag-blue {
+  background-color: fade(@fusion-secondary-color, 10%);
+  color: @fusion-secondary-color;
+  border-color: @fusion-secondary-color;
 }
 
 .textLoadingGradient () {

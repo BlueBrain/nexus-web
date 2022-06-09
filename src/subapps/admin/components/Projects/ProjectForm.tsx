@@ -148,6 +148,17 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
     )
   );
 
+  const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 5 },
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 19 },
+    },
+  };
+
   return (
     <Spin
       spinning={busy}
@@ -155,6 +166,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
     >
       <Form onFinish={handleSubmit} className="project-form">
         <Form.Item
+          {...formItemLayout}
           label="Label"
           name="_label"
           initialValue={project ? project._label : ''}
@@ -170,6 +182,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
           <Input placeholder="Label" disabled={mode === 'edit'} />
         </Form.Item>
         <Form.Item
+          {...formItemLayout}
           label="Description"
           name="description"
           initialValue={project ? project.description : ''}

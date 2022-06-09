@@ -3,17 +3,28 @@
   position: relative;
   display: flex;
   justify-content: space-between;
-  .icon,
-  .action {
+
+  &__icon,
+  &__action {
     .anticon {
       color: inherit;
     }
   }
-  .icon {
+
+  &__action {
+    width: 36%;
+  }
+
+  &__icon {
     margin: 0 0.5em;
     font-size: 1.2em;
   }
-  .body {
+
+  &__body {
     flex-grow: 1;
+  }
+
+  &__arrow {
+    transform: scaleX(-1);
   }
 }

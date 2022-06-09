@@ -24,7 +24,7 @@ import {
 import '../styles/data-table.less';
 
 import { useAccessDataForTable } from '../hooks/useAccessDataForTable';
-import EditTableForm, { TableComponent } from '../components/EditTableForm';
+import EditTableForm, { Projection } from '../components/EditTableForm';
 import { useMutation } from 'react-query';
 import { parseProjectUrl } from '../utils';
 import useNotification from '../hooks/useNotification';
@@ -39,6 +39,7 @@ export type TableColumn = {
 };
 
 export type TableResource = Resource<{
+  '@id': string;
   '@type': string;
   name: string;
   description: string;
@@ -46,6 +47,7 @@ export type TableResource = Resource<{
     '@id': string;
   };
   view: string;
+  projection: Projection;
   enableSearch: boolean;
   enableInteractiveRows: boolean;
   enableDownload: boolean;
@@ -55,10 +57,38 @@ export type TableResource = Resource<{
   configuration: TableColumn | TableColumn[];
 }>;
 
+export type UnsavedTableResource = {
+  '@type': 'FusionTable';
+  '@context': string;
+  name: string;
+  description: string;
+  tableOf?: {
+    '@id': string;
+  };
+  view: string;
+  projection: Projection;
+  enableSearch: boolean;
+  enableInteractiveRows: boolean;
+  enableDownload: boolean;
+  enableSave: boolean;
+  resultsPerPage: number;
+  dataQuery: string;
+  configuration: TableColumn | TableColumn[];
+};
+
 type DataTableProps = {
   orgLabel: string;
   projectLabel: string;
   tableResourceId: string;
+  onDeprecate?: () => void;
+  onSave?: (data: TableResource | UnsavedTableResource) => void;
+  options: {
+    disableDelete: boolean;
+    disableAddFromCart: boolean;
+    disableEdit: boolean;
+  };
+  showEdit?: boolean;
+  toggledEdit?: (show: boolean) => void;
 };
 
 const { Title } = Typography;
@@ -67,8 +97,24 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   orgLabel,
   projectLabel,
   tableResourceId,
+  onDeprecate,
+  onSave,
+  options,
+  showEdit,
+  toggledEdit,
 }) => {
-  const [showEditForm, setShowEditForm] = React.useState<boolean>(false);
+  const [showEditForm, setShowEditForm] = React.useState<boolean>(
+    showEdit || false
+  );
+
+  React.useEffect(() => {
+    setShowEditForm(showEdit || false);
+  }, [showEdit]);
+
+  React.useEffect(() => {
+    toggledEdit && toggledEdit(showEditForm);
+  }, [showEditForm]);
+
   const [searchboxValue, setSearchboxValue] = React.useState<string>('');
   const [searchboxFocused, setSearchboxFocused] = React.useState<boolean>(
     false
@@ -85,6 +131,9 @@ const DataTableContainer: React.FC<DataTableProps> = ({
         headers: { Accept: 'application/json' },
       })
       .then((resource: Resource) => {
+        if (resource['@type'] === 'Project') {
+          return;
+        }
         const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
         history.push(
           `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
@@ -125,6 +174,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
       Modal.destroyAll();
     },
     onSuccess: data => {
+      onDeprecate && onDeprecate();
       notification.success({
         message: 'Table deprecated',
       });
@@ -136,26 +186,32 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     },
   });
 
-  const latestResource = async (data: TableComponent) => {
+  const latestResource = async (data: TableResource) => {
     return (await nexus.Resource.get(
       orgLabel,
       projectLabel,
       encodeURIComponent(data['@id'])
     )) as Resource;
   };
-  const updateTable = async (data: TableComponent) => {
-    const latest = await latestResource(data);
-    return nexus.Resource.update(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(data['@id']),
-      latest._rev,
-      { ...latest, ...data }
-    );
+  const updateTable = async (data: TableResource | UnsavedTableResource) => {
+    if ('@id' in data) {
+      const latest = await latestResource(data);
+      return nexus.Resource.update(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(data['@id']),
+        latest._rev,
+        { ...latest, ...data }
+      );
+    }
+    const resource = await nexus.Resource.create(orgLabel, projectLabel, data);
+    return resource;
   };
 
   const changeTableResource = useMutation(updateTable, {
-    onMutate: (data: TableResource) => {},
+    onMutate: (data: TableResource | UnsavedTableResource) => {
+      onSave && onSave(data);
+    },
     onSuccess: data => {
       setShowEditForm(false);
     },
@@ -173,37 +229,45 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     changeTableResource.data
   );
 
-  const renderTitle = () => {
+  const renderTitle = ({
+    disableDelete,
+    disableAddFromCart,
+    disableEdit,
+  }: {
+    disableDelete: boolean;
+    disableAddFromCart: boolean;
+    disableEdit: boolean;
+  }) => {
     const tableResource = tableData.tableResult.data
-      ?.tableResource as TableComponent;
-    const content = (
+      ?.tableResource as TableResource;
+    const tableOptionsContent = (
       <div className="wrapper">
-        <div>
-          <Button
-            block
-            type="default"
-            icon={<EditOutlined />}
-            onClick={() => {
-              setShowEditForm(true);
-            }}
-          >
-            Edit Table
-          </Button>
-        </div>
-        {tableResource ? (
-          tableResource.enableSave ? (
-            <div>
-              <Button
-                block
-                icon={<ShoppingCartOutlined />}
-                type="default"
-                onClick={tableData.addFromDataCart}
-              >
-                Add From Cart
-              </Button>
-            </div>
-          ) : null
-        ) : null}
+        {!disableEdit && (
+          <div>
+            <Button
+              block
+              type="default"
+              icon={<EditOutlined />}
+              onClick={() => {
+                setShowEditForm(true);
+              }}
+            >
+              Edit
+            </Button>
+          </div>
+        )}
+        {tableResource && tableResource.enableSave && !disableAddFromCart && (
+          <div>
+            <Button
+              block
+              icon={<ShoppingCartOutlined />}
+              type="default"
+              onClick={tableData.addFromDataCart}
+            >
+              Add From Cart
+            </Button>
+          </div>
+        )}
         {tableResource ? (
           tableResource.enableDownload ? (
             <div>
@@ -232,24 +296,25 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             </div>
           ) : null
         ) : null}
-        <div>
-          <Button
-            block
-            danger
-            icon={<DeleteOutlined />}
-            onClick={confirmDeprecate}
-          >
-            Delete
-          </Button>
-          <Modal></Modal>
-        </div>
+        {!disableDelete && (
+          <div>
+            <Button
+              block
+              danger
+              icon={<DeleteOutlined />}
+              onClick={confirmDeprecate}
+            >
+              Delete
+            </Button>
+          </div>
+        )}
       </div>
     );
     const options = (
       <Popover
         style={{ background: 'none' }}
         placement="rightTop"
-        content={content}
+        content={tableOptionsContent}
         trigger="click"
       >
         <Button shape="round" type="default" icon={<SmallDashOutlined />} />
@@ -267,15 +332,16 @@ const DataTableContainer: React.FC<DataTableProps> = ({
         onFocus={() => setSearchboxFocused(true)}
         onBlur={() => setSearchboxFocused(false)}
         style={{
-          width: searchboxValue === '' && !searchboxFocused ? '50%' : '100%',
+          width: searchboxValue === '' && !searchboxFocused ? '150px' : '330px',
           transition: 'width 0.5s',
+          maxWidth: '70%',
         }}
       ></Input.Search>
     );
     return (
       <div>
         <Row gutter={[16, 16]} align="middle">
-          <Col span={12}>
+          <Col span={16}>
             <Title
               className="table-title"
               level={3}
@@ -288,10 +354,17 @@ const DataTableContainer: React.FC<DataTableProps> = ({
               {tableResource && tableResource.name ? tableResource.name : null}
             </Title>
           </Col>
-          <Col span={10} className="table-search">
-            {search}
+          <Col span={8} className="table-options">
+            <div className="table-options__inner">
+              {tableResource?.enableSearch && search}
+              {(!disableEdit ||
+                !disableAddFromCart ||
+                tableResource.enableDownload ||
+                tableResource.enableSave ||
+                !disableDelete) &&
+                options}
+            </div>
           </Col>
-          <Col span={1}>{options}</Col>
         </Row>
       </div>
     );
@@ -305,8 +378,9 @@ const DataTableContainer: React.FC<DataTableProps> = ({
         <>
           <Table
             bordered
+            loading={!tableData.dataResult.data?.headerProperties}
             rowClassName={'data-table-row'}
-            title={renderTitle}
+            title={() => renderTitle(options)}
             columns={tableData.dataResult.data?.headerProperties}
             dataSource={tableData.dataResult.data?.items}
             scroll={{ x: 1000 }}
@@ -327,24 +401,23 @@ const DataTableContainer: React.FC<DataTableProps> = ({
               type: 'checkbox',
               onChange: tableData.onSelect,
             }}
+            rowKey={r => r['s'] || `tr_${r['@id']}`}
           />
           <Modal
             visible={showEditForm}
             footer={null}
             onCancel={() => setShowEditForm(false)}
-            width={800}
+            width={950}
             destroyOnClose={true}
           >
-            {tableData.tableResult.isSuccess ? (
-              <EditTableForm
-                onSave={changeTableResource.mutate}
-                onClose={() => setShowEditForm(false)}
-                table={tableData.tableResult.data.tableResource}
-                busy={changeTableResource.isLoading}
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-              />
-            ) : null}
+            <EditTableForm
+              onSave={changeTableResource.mutate}
+              onClose={() => setShowEditForm(false)}
+              table={tableData.tableResult.data.tableResource}
+              busy={changeTableResource.isLoading}
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+            />
           </Modal>
         </>
       ) : (

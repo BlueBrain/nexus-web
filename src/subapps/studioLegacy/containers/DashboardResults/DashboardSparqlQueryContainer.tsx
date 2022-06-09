@@ -36,7 +36,7 @@ const DashboardSparqlQueryContainer: React.FC<{
   );
 
   return (
-    <Spin spinning={queryResult.loading}>
+    <Spin spinning={queryResult.loading} wrapperClassName="dashboard-spinner">
       {queryResult.error && (
         <Alert
           message="Error loading dashboard"

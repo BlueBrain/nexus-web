@@ -1,10 +1,5 @@
 import * as React from 'react';
-import { Button, Tooltip } from 'antd';
-import {
-  DeleteOutlined,
-  DownloadOutlined,
-  ShoppingCartOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import { Resource } from '@bbp/nexus-sdk';
@@ -22,12 +17,13 @@ import {
   isDeprecated,
   toPromise,
 } from '../utils/nexusMaybe';
-import Copy from '../components/Copy';
-import { CartContext } from '../hooks/useDataCart';
 import useNotification from '../hooks/useNotification';
+import RemoveTagButton from './RemoveTagButtonContainer';
 
 const ResourceActionsContainer: React.FunctionComponent<{
   resource: Resource;
+  editable: boolean;
+  refreshResource: () => void;
   goToView: (
     orgLabel: string,
     projectLabel: string,
@@ -40,12 +36,11 @@ const ResourceActionsContainer: React.FunctionComponent<{
     resourceId: string,
     revision: number
   ) => void;
-}> = ({ resource, goToView, goToResource }) => {
+}> = ({ resource, editable, refreshResource, goToView, goToResource }) => {
   const { orgLabel, projectLabel } = getOrgAndProjectFromResource(resource);
   const resourceId = resource['@id'];
   const self = resource._self;
   const nexus = useNexusContext();
-  const { addResourceToCart } = React.useContext(CartContext);
   const notification = useNotification();
 
   const isLatestResource = async (resource: Resource) => {
@@ -114,7 +109,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
   const actions = {
     deprecateResource: async () => {
       try {
-        let deprecateMethod = nexus.Resource.deprecate;
+        let deprecateMethod: any = nexus.Resource.deprecate;
         if (isView(resource)) {
           deprecateMethod = nexus.View.deprecate;
         }
@@ -180,48 +175,9 @@ const ResourceActionsContainer: React.FunctionComponent<{
     },
   };
 
-  const handleAddToCart = async () => {
-    addResourceToCart ? await addResourceToCart(resource) : null;
-  };
-
   return (
     <div className="resource-actions-container">
       <div className="resource-actions">
-        <Copy
-          textToCopy={resourceId}
-          render={(copySuccess, triggerCopy) => (
-            <Tooltip title={copySuccess ? 'Copied!' : `Copy ${resourceId}`}>
-              <Button
-                onClick={(e: React.MouseEvent) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  triggerCopy();
-                }}
-              >
-                Copy ID
-              </Button>
-            </Tooltip>
-          )}
-        />{' '}
-        <Copy
-          textToCopy={self}
-          render={(copySuccess, triggerCopy) => (
-            <Tooltip title={copySuccess ? 'Copied!' : `Copy ${self}`}>
-              <Button
-                onClick={(e: React.MouseEvent) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  triggerCopy();
-                }}
-              >
-                Copy Nexus Address
-              </Button>
-            </Tooltip>
-          )}
-        />
-        <Button onClick={handleAddToCart} icon={<ShoppingCartOutlined />}>
-          Add to Data Cart
-        </Button>
         <ResourceDownloadButton
           orgLabel={orgLabel}
           projectLabel={projectLabel}
@@ -232,6 +188,15 @@ const ResourceActionsContainer: React.FunctionComponent<{
           actions={actions}
           actionTypes={actionTypes}
         />
+        {editable && (
+          <RemoveTagButton
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+            resourceId={encodeURIComponent(resourceId)}
+            revision={resource._rev}
+            refreshResource={refreshResource}
+          />
+        )}
       </div>
     </div>
   );

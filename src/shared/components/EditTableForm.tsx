@@ -1,10 +1,26 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-
-import { Form, Input, Button, Spin, Checkbox, Row, Col, Select } from 'antd';
+import {
+  Form,
+  Input,
+  Button,
+  Spin,
+  Checkbox,
+  Row,
+  Col,
+  Select,
+  Tooltip,
+} from 'antd';
 import { Controlled as CodeMirror } from 'react-codemirror2';
-import { IInstance } from 'react-codemirror2/index';
-import { Resource, DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
+import 'codemirror/addon/display/placeholder';
+import 'codemirror/mode/sparql/sparql';
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/addon/fold/foldcode';
+import 'codemirror/addon/fold/foldgutter';
+import 'codemirror/addon/fold/brace-fold';
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/base16-light.css';
+import { View } from '@bbp/nexus-sdk';
 import { useQuery } from 'react-query';
 import ColumnConfig from './ColumnConfig';
 import {
@@ -13,9 +29,15 @@ import {
   querySparql,
 } from '../hooks/useAccessDataForTable';
 import './EditTableForm.less';
+import {
+  TableResource,
+  TableColumn,
+  UnsavedTableResource,
+} from '../containers/DataTableContainer';
+import { FUSION_TABLE_CONTEXT } from '../../subapps/projects/fusionContext';
 
 const DEFAULT_SPARQL_QUERY =
-  'prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/> SELECT DISTINCT ?self ?s WHERE { ?s nxv:self ?self } LIMIT 20';
+  'prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/> \nSELECT DISTINCT ?self ?s WHERE { ?s nxv:self ?self } LIMIT 20';
 const DEFAULT_ES_QUERY = '{}';
 
 /**
@@ -27,36 +49,22 @@ export const isEmptyInput = (value: string) => {
   return value.split(' ').join('') === '';
 };
 
-export enum ViewOptions {
-  SPARQL_VIEW = 'graph',
-  ES_VIEW = 'documents',
-}
-
-export type TableColumn = {
-  '@type': string;
-  name: string;
-  format: string;
-  enableSearch: boolean;
-  enableSort: boolean;
-  enableFilter: boolean;
-};
-
-export type TableComponent = Resource<{
-  '@type': string;
-  name: string;
-  description: string;
-  tableOf?: {
-    '@id': string;
-  };
-  view: string;
-  enableSearch: boolean;
-  enableInteractiveRows: boolean;
-  enableDownload: boolean;
-  enableSave: boolean;
-  resultsPerPage: number;
-  dataQuery: string;
-  configuration: TableColumn | TableColumn[];
-}>;
+export type Projection =
+  | {
+      '@id':
+        | string
+        | (string & ['SparqlView', 'View'])
+        | (string & ['AggregatedElasticSearchView', 'View'])
+        | (string & ['AggregatedSparqlView', 'View'])
+        | undefined;
+      '@type':
+        | string
+        | string[]
+        | ((string | string[] | undefined) & ['ElasticSearchView', 'View'])
+        | ((string | string[] | undefined) & ['CompositeView', 'Beta', 'View'])
+        | undefined;
+    }
+  | undefined;
 
 const PAGES_OPTIONS = [5, 10, 20, 50, 100];
 
@@ -64,59 +72,178 @@ const { Item } = Form;
 const { Option } = Select;
 
 const EditTableForm: React.FC<{
-  onSave: (data: TableComponent) => void;
+  onSave: (data: TableResource | UnsavedTableResource) => void;
   onClose: () => void;
-  table: TableComponent;
+  table?: TableResource;
   busy: boolean;
   orgLabel: string;
   projectLabel: string;
-}> = ({ onSave, onClose, table, orgLabel, projectLabel, busy }) => {
-  const [name, setName] = React.useState<string>(table.name);
+  formName?: string;
+  options?: { disableDelete: boolean };
+}> = ({
+  onSave,
+  onClose,
+  table,
+  orgLabel,
+  projectLabel,
+  busy,
+  formName = 'Edit',
+}) => {
+  // state
+  const [name, setName] = React.useState<string | undefined>(table?.name);
   const [nameError, setNameError] = React.useState<boolean>(false);
+  const [viewError, setViewError] = React.useState<boolean>(false);
+  const [projectionError, setProjectionError] = React.useState<boolean>(false);
   const [description, setDescription] = React.useState<string>(
-    table.description
+    table?.description || ''
   );
-  const [view, setView] = React.useState<string>(table.view);
-  const [preview, setPreview] = React.useState<boolean>(false);
+  const [viewName, setViewName] = React.useState<string | undefined>(
+    table?.view
+  );
+  const [view, setView] = React.useState<View>();
+  const [mode, setMode] = React.useState<any>({
+    name: 'javascript',
+    json: true,
+  });
+  const [placeHolder, setPlaceHolder] = React.useState<string>(
+    'Enter a valid ElasticSearch query'
+  );
+
+  const [preview, setPreview] = React.useState<boolean>(true);
   const [enableSearch, setEnableSearch] = React.useState<boolean>(
-    table.enableSearch
+    table ? table.enableSearch : true
   );
+
   const [enableInteractiveRows, setEnableInteractiveRows] = React.useState<
     boolean
-  >(table.enableInteractiveRows);
+  >(table ? table.enableInteractiveRows : true);
   const [enableDownload, setEnableDownload] = React.useState<boolean>(
-    table.enableDownload
+    table ? table.enableDownload : true
   );
-  const [enableSave, setEnableSave] = React.useState<boolean>(table.enableSave);
+  const [enableSave, setEnableSave] = React.useState<boolean>(
+    table ? table.enableSave : true
+  );
   const [resultsPerPage, setResultsPerPage] = React.useState<number>(
-    table.resultsPerPage
+    table ? table.resultsPerPage : PAGES_OPTIONS[0]
   );
-  const [dataQuery, setDataQuery] = React.useState<string>(table.dataQuery);
+  const [dataQuery, setDataQuery] = React.useState<string>(
+    table ? table.dataQuery : ''
+  );
 
   // Copy for codemirror text editor.
-  const [queryCopy, setQueryCopy] = React.useState<string>(dataQuery);
+  const [queryCopy, setQueryCopy] = React.useState<string>(
+    table ? table.dataQuery : ''
+  );
 
   const [configuration, setConfiguration] = React.useState<
     TableColumn | TableColumn[]
-  >(table.configuration);
+  >(table?.configuration || []);
 
+  const [projectionId, setProjectionId] = React.useState<string>();
+
+  /* Available views for project */
+  const [availableViews, setAvailableViews] = React.useState<View[]>();
+
+  // call backs.
   const nexus = useNexusContext();
+  const initializeAvailableViews = async () =>
+    setAvailableViews((await nexus.View.list(orgLabel, projectLabel))._results);
 
-  const updateColumConfig = useQuery(
-    [view, dataQuery],
-    async () => {
+  const asyncCallToSetView = async (viewId: string) => {
+    const viewDetails = await getView(viewId);
+    const placeholder = viewDetails['@type']?.includes('ElasticSearchView')
+      ? 'Enter a valid ElasticSearch query'
+      : 'Enter a valid SPARQL query';
+    setView(viewDetails);
+    setMode(
+      viewDetails['@type']?.includes('ElasticSearchView')
+        ? {
+            name: 'javascript',
+            json: true,
+          }
+        : { name: 'sparql' }
+    );
+
+    setPlaceHolder(placeholder);
+    setProjectionId(undefined);
+    return viewDetails;
+  };
+
+  const getView = async (viewId: string) =>
+    await nexus.View.get(orgLabel, projectLabel, encodeURIComponent(viewId));
+
+  const setQueries = React.useCallback(
+    (viewDetails: View) => {
+      const viewTypes = [viewDetails['@type']].flat();
+      const projection =
+        view &&
+        view.projections &&
+        (view.projections as {
+          '@id': string;
+          '@type': string;
+        }[])
+          .map(o => ({ '@id': o['@id'], '@type': o['@type'] }))
+          .find(o => o['@id'] === projectionId);
+
+      if (
+        viewTypes.includes('SparqlView') ||
+        viewTypes.includes('AggregateSparqlView') ||
+        (projection && projection['@type'].includes('SparqlProjection')) ||
+        projectionId === 'All_SparqlProjection'
+      ) {
+        setDataQuery(DEFAULT_SPARQL_QUERY);
+        setQueryCopy(DEFAULT_SPARQL_QUERY);
+      } else if (
+        viewTypes.includes('ElasticSearchView') ||
+        viewTypes.includes('AggregateElasticSearchView') ||
+        (projection &&
+          projection['@type'].includes('ElasticSearchProjection')) ||
+        projectionId === 'All_ElasticSearchProjection'
+      ) {
+        setDataQuery(DEFAULT_ES_QUERY);
+        setQueryCopy(DEFAULT_ES_QUERY);
+      }
+    },
+    [projectionId]
+  );
+
+  const queryColumnConfig = useQuery(
+    [viewName, dataQuery, projectionId],
+    async (): Promise<TableColumn[]> => {
+      if (!viewName || !dataQuery) return [] as TableColumn[];
+
       const viewResource = await nexus.View.get(
         orgLabel,
         projectLabel,
-        encodeURIComponent(view)
+        encodeURIComponent(viewName)
       );
-      if (viewResource['@type']?.includes('ElasticSearchView')) {
+
+      const projection =
+        view &&
+        view.projections &&
+        (view.projections as {
+          '@id': string;
+          '@type': string;
+        }[])
+          .map(o => ({ '@id': o['@id'], '@type': o['@type'] }))
+          .find(o => o['@id'] === projectionId);
+      if (
+        view &&
+        (view['@type']?.includes('ElasticSearchView') ||
+          view['@type']?.includes('AggregateElasticSearchView') ||
+          projection?.['@type'].includes('ElasticSearchProjection') ||
+          projectionId === 'All_ElasticSearchProjection')
+      ) {
         const result = await queryES(
           JSON.parse(dataQuery),
           nexus,
           orgLabel,
           projectLabel,
-          viewResource['@id']
+          viewResource['@id'],
+          !!projectionId,
+          projectionId === 'All_ElasticSearchProjection'
+            ? undefined
+            : projectionId
         );
 
         const { items } = parseESResults(result);
@@ -133,7 +260,13 @@ const EditTableForm: React.FC<{
           enableFilter: false,
         }));
       }
-      const result = await querySparql(nexus, dataQuery, viewResource);
+      const result = await querySparql(
+        nexus,
+        dataQuery,
+        viewResource,
+        !!projectionId,
+        projectionId === 'All_SparqlProjection' ? undefined : projectionId
+      );
 
       return result.headerProperties
         .sort((a, b) => {
@@ -168,15 +301,50 @@ const EditTableForm: React.FC<{
     setDescription(event.target.value);
   };
 
-  const onClickSave = () => {
-    if (isEmptyInput(name)) {
-      setNameError(true);
-    } else {
-      const data = {
+  const onClickSave = async () => {
+    if (
+      !name ||
+      isEmptyInput(name) ||
+      !viewName ||
+      (view && view.projections && !projectionId)
+    ) {
+      if (!name || isEmptyInput(name)) {
+        setNameError(true);
+      }
+      if (!viewName) {
+        setViewError(true);
+      }
+      if (view && view.projections && !projectionId) {
+        setProjectionError(true);
+      }
+
+      return;
+    }
+
+    let projection =
+      view &&
+      view.projections &&
+      (view.projections as {
+        '@id'?: string;
+        '@type': string;
+      }[])
+        .map(o => ({ '@id': o['@id'], '@type': o['@type'] }))
+        .find(o => o['@id'] === projectionId);
+
+    // No @id when we search all projections of a particular type
+    if (projectionId === 'All_ElasticSearchProjection') {
+      projection = { '@type': 'ElasticSearchProjection' };
+    } else if (projectionId === 'All_SparqlProjection') {
+      projection = { '@type': 'ElasticSearchProjection' };
+    }
+
+    let data: any;
+    if (table) {
+      data = {
         ...table,
         name,
         description,
-        view,
+        projection,
         enableSearch,
         enableInteractiveRows,
         enableDownload,
@@ -184,14 +352,37 @@ const EditTableForm: React.FC<{
         resultsPerPage,
         dataQuery,
         configuration,
+        view: viewName,
       };
-
-      onSave(data);
+    } else {
+      data = {
+        name,
+        description,
+        projection,
+        enableSearch,
+        enableInteractiveRows,
+        enableDownload,
+        enableSave,
+        resultsPerPage,
+        dataQuery,
+        configuration,
+        '@type': 'FusionTable',
+        '@context': FUSION_TABLE_CONTEXT['@id'],
+        view: viewName,
+      };
     }
+    onSave(data);
   };
 
-  const handleQueryChange = (editor: IInstance, data: any, value: string) => {
+  const handleQueryChange = (value: string) => {
     setQueryCopy(value);
+  };
+
+  const onChangeViewDropDown = async (value: string) => {
+    value && setViewName(value);
+    setViewError(false);
+    const viewDetails = await asyncCallToSetView(value);
+    setQueries(viewDetails);
   };
 
   const onClickPreview = () => {
@@ -199,8 +390,8 @@ const EditTableForm: React.FC<{
     setDataQuery(queryCopy);
   };
 
-  const updateColumnConfigArray = React.useMemo(
-    () => (name: string, data: any) => {
+  const updateColumnConfigArray = React.useCallback(
+    (name: string, data: any) => {
       const currentConfig = [...(configuration as TableColumn[])];
 
       const column = currentConfig.find(column => column.name === name);
@@ -221,8 +412,8 @@ const EditTableForm: React.FC<{
     [configuration]
   );
 
-  const updateColumnConfig = React.useMemo(
-    () => (name: string, data: any) => {
+  const updateColumnConfig = React.useCallback(
+    (name: string, data: any) => {
       const updatedColumn = {
         ...configuration,
         ...data,
@@ -233,37 +424,48 @@ const EditTableForm: React.FC<{
     [configuration]
   );
 
-  const renderColumnConfig = React.useMemo(
-    () => () => {
-      return Array.isArray(configuration) ? (
-        configuration.map((column: TableColumn) => {
-          return (
-            <ColumnConfig
-              column={column}
-              onChange={updateColumnConfigArray}
-              key={column.name}
-            />
-          );
-        })
-      ) : (
-        <ColumnConfig column={configuration} onChange={updateColumnConfig} />
-      );
-    },
-    [configuration, updateColumConfig, updateColumnConfigArray]
-  );
+  const renderColumnConfig = React.useCallback(() => {
+    return Array.isArray(configuration) ? (
+      configuration.map((column: TableColumn) => {
+        return (
+          <ColumnConfig
+            column={column}
+            onChange={updateColumnConfigArray}
+            key={column.name}
+          />
+        );
+      })
+    ) : (
+      <ColumnConfig column={configuration} onChange={updateColumnConfig} />
+    );
+  }, [configuration, queryColumnConfig, updateColumnConfigArray]);
 
-  const viewLabel = (view: string) => {
-    if (view !== ViewOptions.ES_VIEW && view !== ViewOptions.SPARQL_VIEW) {
-      return view === DEFAULT_ELASTIC_SEARCH_VIEW_ID
-        ? ViewOptions.ES_VIEW
-        : ViewOptions.SPARQL_VIEW;
-    }
-    return view;
-  };
+  // effects
+  // set the available views on load and set view to that specified on TableResource
+  React.useEffect(() => {
+    (async () => {
+      await initializeAvailableViews();
+      table && (await asyncCallToSetView(table.view));
+
+      if (table?.projection) {
+        if (table.projection['@id']) {
+          setProjectionId(table.projection['@id']);
+        } else {
+          /* 
+          when no projection id it means search all of the
+          specified projection type
+          */
+          setProjectionId(`All_${table.projection['@type']}`);
+        }
+      } else {
+        setProjectionId(undefined);
+      }
+    })();
+  }, []);
 
   return (
     <Form className="edit-table-form">
-      <h2 className="edit-table-form__title">Edit Table</h2>
+      <h2 className="edit-table-form__title">{formName}</h2>
       <Spin spinning={busy} tip="Please wait...">
         <Row>
           <Col xs={6} sm={6} md={6}>
@@ -272,13 +474,9 @@ const EditTableForm: React.FC<{
           <Col xs={12} sm={12} md={12}>
             <Item
               validateStatus={nameError ? 'error' : ''}
-              help={nameError && 'Please enter a table name'}
+              help={nameError && 'Please enter a name'}
             >
-              <Input
-                value={name}
-                onChange={onChangeName}
-                placeholder="Table name"
-              />
+              <Input value={name} onChange={onChangeName} placeholder="Name" />
             </Item>
           </Col>
         </Row>
@@ -290,7 +488,7 @@ const EditTableForm: React.FC<{
             <Input.TextArea
               value={description}
               onChange={onChangeDescription}
-              placeholder="Table description"
+              placeholder="Description"
             />
           </Col>
         </Row>
@@ -299,28 +497,80 @@ const EditTableForm: React.FC<{
             <h3>View</h3>
           </Col>
           <Col xs={12} sm={12} md={12}>
-            <Select
-              value={viewLabel(view)}
-              style={{ width: 220 }}
-              onChange={value => {
-                setView(value);
-                if (value === ViewOptions.ES_VIEW) {
-                  setDataQuery(DEFAULT_ES_QUERY);
-                  setQueryCopy(DEFAULT_ES_QUERY);
-                } else {
-                  setDataQuery(DEFAULT_SPARQL_QUERY);
-                  setQueryCopy(DEFAULT_SPARQL_QUERY);
-                }
-              }}
+            <Item
+              validateStatus={viewError ? 'error' : ''}
+              help={viewError && 'Please select a view'}
             >
-              {Object.values(ViewOptions).map(view => (
-                <Option key={view} value={view}>
-                  {viewLabel(view)}
-                </Option>
-              ))}
-            </Select>
+              <Select
+                value={viewName}
+                style={{ width: 650 }}
+                onChange={value => {
+                  onChangeViewDropDown(value);
+                }}
+              >
+                {availableViews &&
+                  availableViews.map(view => (
+                    <Option key={view['@id']} value={view['@id']}>
+                      {view['@id']}
+                    </Option>
+                  ))}
+              </Select>
+            </Item>
           </Col>
         </Row>
+        {view && view.projections && (
+          <Row>
+            <Col xs={6} sm={6} md={6}>
+              <h3>Projection</h3>
+            </Col>
+            <Col>
+              <Item
+                validateStatus={projectionError ? 'error' : ''}
+                help={projectionError && 'Please select a projection'}
+              >
+                <Select
+                  style={{ width: 650 }}
+                  value={projectionId}
+                  onChange={value => {
+                    setProjectionId(value);
+                    setProjectionError(false);
+                  }}
+                >
+                  {(view.projections as {
+                    '@id': string;
+                    '@type': string;
+                  }[]).some(o => o['@type'] === 'ElasticSearchProjection') && (
+                    <Option
+                      key="All_ElasticSearchProjection"
+                      value="All_ElasticSearchProjection"
+                    >
+                      All ElasticSearch
+                    </Option>
+                  )}
+                  {(view.projections as {
+                    '@id': string;
+                    '@type': string;
+                  }[]).some(o => o['@type'] === 'SparqlProjection') && (
+                    <Option
+                      key="All_SparqlProjection"
+                      value="All_SparqlProjection"
+                    >
+                      All Sparql
+                    </Option>
+                  )}
+                  {(view.projections as {
+                    '@id': string;
+                    '@type': string;
+                  }[]).map(o => (
+                    <Option key={o['@id']} value={o['@id']}>
+                      {o['@id']}
+                    </Option>
+                  ))}
+                </Select>
+              </Item>
+            </Col>
+          </Row>
+        )}
         <div className="edit-table-form__actions">
           <h3 className="edit-table-form__actions-title">Actions</h3>
           <div className="edit-table-form__action-items">
@@ -375,28 +625,31 @@ const EditTableForm: React.FC<{
         </Row>
         <div className="edit-table-form__query">
           <h3>Query</h3>
-          <CodeMirror
-            value={queryCopy}
-            autoCursor={true}
-            options={{
-              mode: { name: 'javascript', json: true },
-              readOnly: false,
-              theme: 'base16-light',
-              placeholder: 'Enter a valid SPARQL query',
-              lineNumbers: true,
-              viewportMargin: Infinity,
-            }}
-            onBeforeChange={(editor, data, value) => {
-              handleQueryChange(editor, data, value);
-            }}
-          />
+          <div className="code">
+            <CodeMirror
+              autoCursor={true}
+              autoScroll={true}
+              value={queryCopy}
+              options={{
+                mode,
+                theme: 'base16-light',
+                lineNumbers: true,
+                lineWrapping: true,
+                placeholder: placeHolder,
+              }}
+              onBeforeChange={(editor, data, value) => {
+                setPreview(false);
+                handleQueryChange(value);
+              }}
+            />
+          </div>
         </div>
         <div>
-          {updateColumConfig.isLoading ? (
+          {queryColumnConfig.isLoading ? (
             <Spin></Spin>
           ) : (
             <Button onClick={onClickPreview} type="primary">
-              Preview
+              Configure Columns
             </Button>
           )}
         </div>
@@ -409,9 +662,18 @@ const EditTableForm: React.FC<{
           <Button style={{ margin: '10px' }} onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={onClickSave} type="primary">
-            Save
-          </Button>
+          <Tooltip
+            placement="topLeft"
+            title={
+              preview
+                ? 'Save Changes'
+                : 'You have to click on configure columns to enable save'
+            }
+          >
+            <Button onClick={onClickSave} type="primary" disabled={!preview}>
+              Save
+            </Button>
+          </Tooltip>
         </div>
         <p>
           <em>* Mandatory field</em>

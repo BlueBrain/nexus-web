@@ -16,7 +16,11 @@ import {
   makeStudioUri,
   parseJsonMaybe,
   forceAsArray,
+  deltaUrlToFusionUrl,
+  getFriendlyTimeAgoString,
+  getDateString,
 } from '..';
+import * as moment from 'moment';
 
 const identities: Identity[] = [
   {
@@ -146,6 +150,81 @@ describe('utils functions', () => {
     });
     it('should NOT be expired', () => {
       expect(hasExpired(future)).toBeFalsy();
+    });
+  });
+  describe('dateString()', () => {
+    it('should for a date defined with a UTC string should return the same string', () => {
+      expect(getDateString(new Date('2022-01-20T09:10:22.149Z'))).toEqual(
+        '2022-01-20T09:10:22.149Z'
+      );
+    });
+    it('should for a date defined with a time offset string to return a time in UTC format', () => {
+      expect(getDateString(new Date('2022-01-20T09:10:22.149-07:00'))).toEqual(
+        '2022-01-20T16:10:22.149Z'
+      );
+    });
+    it('should only include date when optional noTime param is set to true', () => {
+      expect(
+        getDateString(new Date('2022-01-20T09:10:22.149Z'), { noTime: true })
+      ).toEqual('2022-01-20');
+    });
+  });
+  describe('userFriendlyHistoricalDateString()', () => {
+    const now = new Date('2022-01-19T16:43:00Z');
+
+    it('should return "Sometime in the future..." when now is before historicalDate as this isn\'t a valid param', () => {
+      const x = new Date('2022-01-19T16:43:34Z');
+      expect(getFriendlyTimeAgoString(x, now)).toEqual(
+        'Sometime in the future...'
+      );
+    });
+    it('should return "moments ago" when less than 1 minute has elapsed', () => {
+      const x = new Date('2022-01-19T16:42:34Z');
+      expect(getFriendlyTimeAgoString(x, now)).toEqual('moments ago');
+    });
+    it('should return "1 minute ago" when 1 minute has elapsed (and less than 2 minutes)', () => {
+      const x = new Date('2022-01-19T16:42:00Z');
+      expect(getFriendlyTimeAgoString(x, now)).toEqual('1 minute ago');
+    });
+    it('should return "4 minutes ago" when 4 minutes have elapsed (and less than 5 minutes)', () => {
+      const x = new Date('2022-01-19T16:39:00Z');
+      expect(getFriendlyTimeAgoString(x, now)).toEqual('4 minutes ago');
+    });
+    it('should return "1 hour ago" when 1 hour has elapsed', () => {
+      const x = new Date('2022-01-19T15:43:00Z');
+      expect(getFriendlyTimeAgoString(x, now)).toEqual('1 hour ago');
+    });
+    it('should return "2 hours ago" when 2 hours have elapsed (and less than 3 hours)', () => {
+      const x = new Date('2022-01-19T14:21:00Z');
+      expect(getFriendlyTimeAgoString(x, now)).toEqual('2 hours ago');
+    });
+    it('should return "1 day ago" when 24 hours have elapsed (and less than 48 hours)', () => {
+      const x = new Date('2022-01-18T11:36:00Z');
+      expect(getFriendlyTimeAgoString(x, now)).toEqual('1 day ago');
+    });
+    it('should return "2 days ago" when 2 days have elapsed (and less than 3 days)', () => {
+      const x = new Date('2022-01-17T11:36:00Z');
+      expect(getFriendlyTimeAgoString(x, now)).toEqual('2 days ago');
+    });
+    it('should return "1 month ago" when 31 days have elapsed (and less than 2 months)', () => {
+      const x = new Date('2021-12-17T11:36:00Z');
+      expect(getFriendlyTimeAgoString(x, now)).toEqual('1 month ago');
+    });
+    it('should return "2 months ago" when 2 months have elapsed (and less than 3 months)', () => {
+      const x = new Date('2021-11-17T11:36:00Z');
+      expect(getFriendlyTimeAgoString(x, now)).toEqual('2 months ago');
+    });
+    it('should return "1 year ago" when 1 year has elapsed (and less than 2 years)', () => {
+      const x = new Date('2020-11-17T11:36:00Z');
+      expect(getFriendlyTimeAgoString(x, now)).toEqual('1 year ago');
+    });
+    it('should return "2 years ago" when 2 years have elapsed (and less than 3 years)', () => {
+      const x = new Date('2019-11-17T11:36:00Z');
+      expect(getFriendlyTimeAgoString(x, now)).toEqual('2 years ago');
+    });
+    it('should accept a moment date object as parameter and work the same as if supplied Date object', () => {
+      const x = moment('2019-11-17T11:36:00Z');
+      expect(getFriendlyTimeAgoString(x, now)).toEqual('2 years ago');
     });
   });
   describe('camelCaseToLabelString()', () => {
@@ -689,6 +768,37 @@ describe('utils functions', () => {
       expect(parseJsonMaybe('')).toBe(null);
       expect(parseJsonMaybe('thisisnotjson')).toBe(null);
       expect(parseJsonMaybe(undefined)).toBe(null);
+    });
+  });
+
+  describe('deltaUrlToFusionUrl()', () => {
+    it('returns the fusion url from a delta file url', () => {
+      const base = '/web';
+      const deltaUrl =
+        'https://delta.bbp.epfl.ch/v1/files/bbp/somatosensorycortex/f53c7f5e-ce6d-4211-ad75-cf524de4e57c';
+      const fusionUrl =
+        '/web/admin/bbp/somatosensorycortex/https%3A%2F%2Fdelta.bbp.epfl.ch%2Fv1%2Ffiles%2Fbbp%2Fsomatosensorycortex%2Ff53c7f5e-ce6d-4211-ad75-cf524de4e57c';
+      expect(deltaUrlToFusionUrl(deltaUrl, base)).toEqual(fusionUrl);
+    });
+    it('returns the fusion url from a delta resource url', () => {
+      const base = '/web';
+      const deltaUrl =
+        'https://delta.bbp.epfl.ch/v1/resources/bbp/somatosensorycortex/_/f53c7f5e-ce6d-4211-ad75-cf524de4e57c';
+      const fusionUrl =
+        '/web/admin/bbp/somatosensorycortex/https%3A%2F%2Fdelta.bbp.epfl.ch%2Fv1%2Fresources%2Fbbp%2Fsomatosensorycortex%2F_%2Ff53c7f5e-ce6d-4211-ad75-cf524de4e57c';
+      expect(deltaUrlToFusionUrl(deltaUrl, base)).toEqual(fusionUrl);
+    });
+    it('returns the fusion url from a delta project url', () => {
+      const base = '/web';
+      const deltaUrl = 'http://localhost:8080/v1/projects/myorg/myproject';
+      const fusionUrl = '/web/admin/myorg/myproject';
+      expect(deltaUrlToFusionUrl(deltaUrl, base)).toEqual(fusionUrl);
+    });
+    it('does not modify non delta url', () => {
+      const base = '/web';
+      const inputUrl = 'https://www.google.com/';
+      const outputUrl = 'https://www.google.com/';
+      expect(deltaUrlToFusionUrl(inputUrl, base)).toEqual(outputUrl);
     });
   });
 

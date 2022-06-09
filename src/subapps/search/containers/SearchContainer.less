@@ -1,0 +1,72 @@
+@import '../../../shared/lib.less';
+
+.search-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 43px;
+  padding: 0 24px 0 1em;
+  position: fixed;
+  top: 55px;
+  left: 0;
+  width: 100%;
+  z-index: 21;
+  transition: all 0.2s ease-out;
+  /* background-color set here to prevent table overflow
+  on scroll being seen above table header */
+  background-color: @fusion-background-color;
+
+  &__paginator {
+    margin-left: auto !important;
+    flex-shrink: 0;
+  }
+
+  &__options {
+    flex-shrink: 0;
+  }
+
+  .search-layout {
+    min-width: 160px;
+    max-width: 280px;
+  }
+}
+
+.search-table {
+  padding-top: 32px;
+
+  thead {
+    position: sticky;
+    top: 32px;
+    z-index: 20;
+  }
+}
+
+.column-header {
+  display: flex;
+
+  & span {
+    white-space: nowrap;
+  }
+
+  &__options {
+    min-width: 50px;
+    margin-left: auto !important;
+    display: flex;
+    justify-content: right;
+  }
+}
+
+.field-menu {
+  h1 {
+    font-size: 13px;
+    text-transform: capitalize;
+    letter-spacing: 3px;
+    color: #888;
+  }
+  .sort-menu-options {
+    margin-bottom: 10px;
+  }
+  .field-filter-menu .ant-row.ant-form-item {
+    margin-bottom: 10px;
+  }
+}

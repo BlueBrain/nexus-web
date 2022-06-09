@@ -1,18 +1,16 @@
 import * as React from 'react';
 import { Empty, Skeleton } from 'antd';
-import { ResourceLink } from '@bbp/nexus-sdk';
-
 import ListItem from '../List/Item';
-import ResourceLinkItem from './ResourceLinkItem';
+import ResourceLinkItem, { ResourceLinkAugmented } from './ResourceLinkItem';
 import InfiniteSearch from '../List/InfiniteSearch';
 
 const ResourceLinks: React.FunctionComponent<{
   busy: boolean;
   error: Error | null;
-  links: ResourceLink[];
+  links: ResourceLinkAugmented[];
   total: number;
   onLoadMore: () => void;
-  onClick?: (link: ResourceLink) => void;
+  onClick?: (link: ResourceLinkAugmented) => void;
 }> = props => {
   const { busy, error, links, total, onLoadMore, onClick } = props;
   const scrollParent = React.useRef<HTMLDivElement>(null);

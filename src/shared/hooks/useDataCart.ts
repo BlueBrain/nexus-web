@@ -3,6 +3,9 @@ import { Resource } from '@bbp/nexus-sdk';
 import * as localforage from 'localforage';
 import { notification } from 'antd';
 import { distanceFromTopToDisplay } from './useNotification';
+import { useRouteMatch } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/reducers';
 
 export const DATACART_KEY = 'NEXUS_DATACART';
 
@@ -12,6 +15,12 @@ const useDataCart = () => {
   React.useEffect(() => {
     setLength(resources.length);
   }, [resources]);
+  const match = useRouteMatch<{
+    orgLabel: string;
+    projectLabel: string;
+    stepId: string;
+  }>(`/workflow/:orgLabel/:projectLabel`);
+  const { apiEndpoint } = useSelector((state: RootState) => state.config);
 
   const storage = React.useMemo(() => {
     return localforage.createInstance({
@@ -73,6 +82,15 @@ const useDataCart = () => {
     for (let i = 0; i < inputResources.length; i += 1) {
       const item = await storage.getItem(inputResources[i]._self);
       if (!item) {
+        /* _project property may be missing and is required by data cart
+         * therefore lets add it if missing */
+        if (inputResources[i]._project === undefined && match) {
+          if (match.params.projectLabel) {
+            inputResources[
+              i
+            ]._project = `${apiEndpoint}/projects/${match.params.orgLabel}/${match.params.projectLabel}`;
+          }
+        }
         uniqueResources.push(inputResources[i]);
         await storage.setItem(inputResources[i]._self, inputResources[i]);
       }

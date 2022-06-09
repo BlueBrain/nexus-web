@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Controlled as CodeMirror } from 'react-codemirror2';
-
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/addon/display/autorefresh';
+import 'codemirror/theme/base16-light.css';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/sparql/sparql';
 
@@ -19,13 +21,16 @@ const SparqlQueryInput: React.FunctionComponent<{
       <div className="code">
         <CodeMirror
           value={value}
+          autoCursor={true}
+          autoScroll={true}
           options={{
             mode: { name: 'sparql' },
             theme: 'base16-light',
             placeholder: 'Enter a valid SPARQL query',
-            lineNumbers: true,
-            lineWrapping: false,
             viewportMargin: Infinity,
+            lineNumbers: true,
+            lineWrapping: true,
+            autoRefresh: true,
           }}
           onBeforeChange={handleChange}
         />

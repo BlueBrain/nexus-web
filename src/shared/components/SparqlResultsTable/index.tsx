@@ -1,20 +1,19 @@
 import * as React from 'react';
 import * as moment from 'moment';
-import { Input, Table, Button, Tooltip, Select } from 'antd';
+import { Input, Table, Button, Tooltip, Typography } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { omit, difference } from 'lodash';
-import { parseProjectUrl, isISODate } from '../../utils/index';
+import { parseProjectUrl, isISODate, getDateString } from '../../utils/index';
 import { download } from '../../utils/download';
 import './../../styles/result-table.less';
 import useNotification from '../../hooks/useNotification';
+import FriendlyTimeAgo from '../FriendlyDate';
 
 const { Search } = Input;
-const { Option } = Select;
 
 const PAGE_SIZE = 10;
 const MAX_FILTER_LIMIT = 20;
 const MIN_FILTER_LIMIT = 1;
-const DATE_FORMAT = 'DD-MM-YYYY, HH:mm';
 
 export type HeaderProperties = {
   title: string;
@@ -69,7 +68,11 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
           let render;
           switch (title) {
             case 'Created At':
-              render = (date: string) => <span>{moment(date).fromNow()}</span>;
+              render = (date: string) => (
+                <span>
+                  <FriendlyTimeAgo date={moment(date)} />
+                </span>
+              );
               break;
             case 'Project':
               render = (projectURI: string) => {
@@ -93,7 +96,7 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
                 if (isISODate(value)) {
                   return (
                     <a href={studioResourceViewLink}>
-                      {moment(value).format(DATE_FORMAT)}
+                      {getDateString(moment(value))}
                     </a>
                   );
                 }
@@ -119,7 +122,7 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
                   filters: distinctValues.map(value => ({
                     value,
                     text: isISODate(value)
-                      ? moment(value).format(DATE_FORMAT)
+                      ? getDateString(moment(value))
                       : value,
                   })),
                   filterMultiple: false,
@@ -194,15 +197,6 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
     }
   };
 
-  const handleColumnSelect = (value: string[]) => {
-    if (value && value.length === 0) {
-      setSelectedColumns(headerProperties);
-    } else {
-      const selected = headerProperties?.filter(x => value.includes(x.title));
-      setSelectedColumns(selected);
-    }
-  };
-
   return (
     <div className="result-table">
       <Table
@@ -229,47 +223,18 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
         scroll={{ x: '100%' }}
         title={() => (
           <div className="header">
-            <Search
-              className="search"
-              value={searchValue}
-              onChange={(e: React.FormEvent<HTMLInputElement>) => {
-                setSearchValue(e.currentTarget.value);
-              }}
-            />
-
-            <Select
-              allowClear
-              mode="multiple"
-              size={'middle'}
-              placeholder="Please select columns"
-              defaultValue={selectedColumns?.map(x => x.title)}
-              value={selectedColumns?.map(x => x.title)}
-              onChange={handleColumnSelect}
-              className="select-column"
-            >
-              {headerProperties?.map(x => {
-                return (
-                  <Option key={x.dataIndex} value={x.title}>
-                    {x.title}
-                  </Option>
-                );
-              })}
-            </Select>
-
-            <Button
-              onClick={() => {
-                setFilteredValues(null);
-                setSelectedColumns(headerProperties);
-                setSearchValue('');
-              }}
-              type="primary"
-              className="reset"
-            >
-              {' '}
-              Reset
-            </Button>
+            <Typography.Title className="title" level={3}>
+              {tableLabel}
+            </Typography.Title>
 
             <div className="controls">
+              <Search
+                className="search"
+                value={searchValue}
+                onChange={(e: React.FormEvent<HTMLInputElement>) => {
+                  setSearchValue(e.currentTarget.value);
+                }}
+              />
               <div className="total">
                 {total} {`Result${total > 1 ? 's' : ''}`}
               </div>

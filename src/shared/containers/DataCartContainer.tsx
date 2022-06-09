@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { ArchivePayload, NexusClient } from '@bbp/nexus-sdk';
-import { useNexusContext } from '@bbp/react-nexus';
-import { getResourceLabel, uuidv4 } from '../../shared/utils';
+import { AccessControl, useNexusContext } from '@bbp/react-nexus';
+import { getResourceLabel, parseProjectUrl, uuidv4 } from '../../shared/utils';
 import { parseURL, ParsedNexusUrl } from '../../shared/utils/nexusParse';
 import {
   ShoppingCartOutlined,
   DownloadOutlined,
   CloseCircleFilled,
+  WarningFilled,
+  ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import {
   Badge,
@@ -17,10 +19,12 @@ import {
   Menu,
   Dropdown,
   Input,
+  Tooltip,
+  Popconfirm,
 } from 'antd';
 import { CartContext } from '../hooks/useDataCart';
-import ResultPreviewItemContainer from '../../subapps/search/containers/ResultPreviewItemContainer';
-import DefaultResourcePreviewCard from '!!raw-loader!../../subapps/search/templates/DefaultResourcePreviewCard.hbs';
+import ResultPreviewItemContainer from './ResultPreviewItemContainer';
+import DefaultResourcePreviewCard from '!!raw-loader!../templates/DefaultResourcePreviewCard.hbs';
 import useNotification from '../hooks/useNotification';
 
 type DownloadResourcePayload = {
@@ -81,11 +85,20 @@ const DataCartContainer = () => {
   );
   const notification = useNotification();
 
+  const resourceProjectPaths = React.useMemo(
+    () => [
+      ...new Set(
+        resources?.map(r => {
+          const [orgLabel, projectLabel] = parseProjectUrl(r._project);
+          return `/${orgLabel}/${projectLabel}`;
+        })
+      ),
+    ],
+    [resources]
+  );
+
   const [search, setSearch] = React.useState<string>('');
   const filteredResources = React.useMemo(() => {
-    if (search.length <= 2) {
-      return resources;
-    }
     return resources
       ? resources.filter(resource => {
           const label: string = getResourceLabel(resource);
@@ -256,10 +269,35 @@ const DataCartContainer = () => {
     </Menu>
   );
 
+  const downloadButton = (disabled: boolean) => {
+    const btn = (
+      <Button
+        style={{
+          marginRight: '2px',
+        }}
+        icon={<DownloadOutlined />}
+        disabled={disabled}
+      >
+        Download
+      </Button>
+    );
+
+    if (disabled) {
+      return (
+        <Tooltip title="You don't have the required permissions to create an archive for some resources in your cart. Please contact your project administrator to request to be granted the required archives/write permission.">
+          {btn}
+        </Tooltip>
+      );
+    }
+
+    return btn;
+  };
+
   return (
     <>
       <Badge size="small" count={length}>
         <Button
+          className="cart"
           icon={<ShoppingCartOutlined />}
           onClick={handleToggleCart}
         ></Button>
@@ -297,16 +335,14 @@ const DataCartContainer = () => {
                 {' '}
                 Copy IDs
               </Button>
-              <Dropdown overlay={menu}>
-                <Button
-                  style={{
-                    marginRight: '2px',
-                  }}
-                  icon={<DownloadOutlined />}
-                >
-                  Download
-                </Button>
-              </Dropdown>
+              <AccessControl
+                path={resourceProjectPaths}
+                permissions={['archives/write']}
+                noAccessComponent={() => downloadButton(true)}
+                loadingComponent={downloadButton(false)}
+              >
+                <Dropdown overlay={menu}>{downloadButton(false)}</Dropdown>
+              </AccessControl>
               <Button onClick={onEmptyCart}>Empty Cart</Button>
             </div>
             <div
@@ -317,12 +353,11 @@ const DataCartContainer = () => {
             >
               <Input.Search
                 type="search"
-                onSearch={e => {
-                  setSearch(e);
+                onChange={e => {
+                  setSearch(e.target.value);
                 }}
                 placeholder="Search cart locally"
                 allowClear
-                enterButton
               ></Input.Search>
             </div>
             <List
@@ -367,5 +402,32 @@ const DataCartContainer = () => {
     </>
   );
 };
+
+const FallbackCart: React.FC<{ resetErrorState?: () => void }> = ({
+  resetErrorState,
+}) => {
+  const { emptyCart } = React.useContext(CartContext);
+  return (
+    <Popconfirm
+      title="An error has occurred and the data cart is unavailable. Do you want to try re-initializing the cart?"
+      icon={<ExclamationCircleOutlined style={{ color: '#f5222d' }} />}
+      onConfirm={() => {
+        if (!emptyCart) return;
+        emptyCart().then(() => resetErrorState && resetErrorState());
+      }}
+      okText="Yes"
+      cancelText="No"
+    >
+      <Badge
+        size="small"
+        count={<WarningFilled style={{ color: '#f5222d' }} />}
+      >
+        <Button className="cart" icon={<ShoppingCartOutlined />}></Button>
+      </Badge>
+    </Popconfirm>
+  );
+};
+
+export { FallbackCart };
 
 export default DataCartContainer;

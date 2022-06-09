@@ -12,6 +12,7 @@
 
 .resource-list {
   .cardlike();
+  height: 100%;
   background-color: @primary-card;
   width: @default-card-width;
   min-width: @default-card-width;
@@ -101,13 +102,23 @@
       background-color: fade(black, 50%);
     }
   }
-}
+  /* keep paginator at bottom */
+  & .ant-list-pagination {
+    bottom: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    background-color: @primary-card;
+    padding: 10px;
+  }
 
-/* keep paginator at bottom */
-.ant-list-pagination {
-  bottom: 0;
-  position: absolute;
-  left: 0;
-  right: 0;
-  margin: auto;
+  /* ensure consistent height of resource items */
+  & .resource-type-list {
+    height: 18px;
+  }
+
+  & .dummy-height-test-list-item,
+  .list-item {
+    height: 100%;
+  }
 }

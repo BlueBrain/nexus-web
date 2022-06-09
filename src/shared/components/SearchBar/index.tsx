@@ -1,165 +1,69 @@
 import * as React from 'react';
-import { ProjectResponseCommon, Resource } from '@bbp/nexus-sdk';
-import { LoadingOutlined } from '@ant-design/icons';
 import { AutoComplete, Input } from 'antd';
-import { SearchConfig } from '../../store/reducers/search';
-import { AsyncCall } from '../../hooks/useAsynCall';
-import { SearchResponse } from '../../types/search';
-import ResourceHit from './ResourceHit';
-import Hit, { HitType } from './Hit';
+
+import Hit, { globalSearchOption } from './Hit';
+import { focusOnSlash } from '../../utils/keyboardShortcuts';
 
 import './SearchBar.less';
+import {
+  LastVisited,
+  ProjectSearchHit,
+  StudioSearchHit,
+} from '../../containers/SearchBarContainer';
+import { makeProjectUri, makeStudioUri } from '../../utils';
 
-export enum SearchQuickActions {
-  VISIT = 'visit',
-  VISIT_PROJECT = 'visit-project',
-}
+const LABEL_MAX_LENGTH = 25;
 
 const SearchBar: React.FC<{
-  projectList: ProjectResponseCommon[];
+  projectList: ProjectSearchHit[];
+  studioList: StudioSearchHit[];
   query?: string;
-  searchResponse: AsyncCall<
-    SearchResponse<
-      Resource<{
-        [key: string]: any;
-      }>
-    >,
-    Error
-  >;
-  searchConfigLoading: boolean;
-  searchConfigPreference?: SearchConfig;
+  lastVisited?: LastVisited;
   onSearch: (value: string) => void;
-  onSubmit: (value: string) => void;
+  onSubmit: (value: string, option: any) => void;
+  onFocus: () => void;
   onClear: () => void;
+  onBlur: () => void;
+  inputOnPressEnter: () => void;
 }> = ({
   query,
+  lastVisited,
+  studioList,
   projectList,
-  searchResponse,
-  searchConfigLoading,
-  searchConfigPreference,
   onSearch,
   onSubmit,
   onClear,
+  onFocus,
+  onBlur,
+  inputOnPressEnter,
 }) => {
   const [value, setValue] = React.useState(query || '');
   const [focused, setFocused] = React.useState(false);
-  const handleSetFocused = (val: boolean) => () => {
-    setFocused(val);
-  };
   const inputRef = React.useRef<Input>(null);
+  const projectOptionValueSuffix = '______project';
+  const studioOptionValueSuffix = '______studio';
 
-  // We can use the convention of / for web search
-  // to highlight our search bar
-  // TODO: in the future it would be beautiful
-  // to have a central place to attach keyboard
-  // shortcuts
   React.useEffect(() => {
-    const focusSearch = (e: KeyboardEvent) => {
-      // only focus the search bar if there's no currently focused input element
-      // or if there's not a modal
-      if (
-        document.activeElement instanceof HTMLTextAreaElement ||
-        document.activeElement instanceof HTMLInputElement ||
-        document.activeElement instanceof HTMLSelectElement ||
-        document.querySelectorAll("[class*='modal']").length
-      ) {
-        return;
-      }
-
-      if (e.key === '/' && !focused) {
-        inputRef.current && inputRef.current.focus();
-        e.preventDefault();
-      }
-    };
-    document.addEventListener('keypress', focusSearch);
-    return () => {
-      document.removeEventListener('keypress', focusSearch);
-    };
-  });
+    focusOnSlash(focused, inputRef);
+  }, []);
 
   // Reset default value if query changes
   React.useEffect(() => {
     setValue(query || '');
   }, [query]);
 
-  const options: (
-    | {
-        value: string;
-        key: string;
-        label: JSX.Element;
-      }
-    | {
-        label: string;
-        options: {
-          value: string;
-          key: string;
-          label: JSX.Element;
-        }[];
-      }
-  )[] = !!query
-    ? [
-        {
-          value,
-          key: `search-${value}`,
-          label: (
-            <Hit type={HitType.UNCERTAIN}>
-              <em>{value}</em>
-            </Hit>
-          ),
-        },
-      ]
-    : [];
-
-  if (projectList.length) {
-    options.push({
-      label: 'Projects',
-      options: projectList.map(project => {
-        return {
-          // @ts-ignore
-          // TODO update nexus-sdk to add this property
-          // to types
-          key: project._uuid,
-          label: (
-            <Hit type={HitType.PROJECT}>
-              <span>
-                {project._organizationLabel}/{project._label}
-              </span>
-            </Hit>
-          ),
-          value: `${SearchQuickActions.VISIT_PROJECT}:${project._organizationLabel}/${project._label}`,
-        };
-      }),
-    });
-  }
-
-  if (!!searchResponse.data?.hits.total.value) {
-    options.push({
-      label: 'Resources',
-      options:
-        searchResponse.data?.hits.hits.map(hit => {
-          const { _source } = hit;
-          return {
-            key: _source._self,
-            label: (
-              <Hit type={HitType.RESOURCE}>
-                <ResourceHit resource={_source} />
-              </Hit>
-            ),
-            value: `${SearchQuickActions.VISIT}:${_source._self}`,
-          };
-        }) || [],
-    });
-  }
-
-  const handleChange = (value: string) => {
-    setValue(value);
+  const handleSetFocused = (value: boolean) => () => {
+    setFocused(value);
+    if (value) {
+      onFocus();
+    } else {
+      onBlur();
+    }
   };
 
-  const handleSelect = (value: string) => {
-    onSubmit(value);
-    if (value.includes(`${SearchQuickActions.VISIT}:`)) {
-      setValue('');
-    }
+  const handleSelect = (currentValue: string, option: any) => {
+    onSubmit(currentValue, option);
+    inputRef.current?.blur();
   };
 
   const handleSearch = (searchText: string) => {
@@ -170,40 +74,139 @@ const SearchBar: React.FC<{
     if (e.key !== 'Enter') {
       return;
     }
-    if (!value) {
-      return onClear();
-    }
   };
+
+  const optionsList = React.useMemo(() => {
+    let options: {
+      value: string;
+      key: string;
+      path: string;
+      type: 'search' | 'project' | 'studio';
+      label: JSX.Element;
+    }[] = [];
+    if (
+      (!query || query === '') &&
+      lastVisited &&
+      lastVisited.type === 'search'
+    ) {
+      options.push({
+        value: lastVisited.value,
+        key: 'search',
+        path: lastVisited.path,
+        type: 'search',
+        label: globalSearchOption(lastVisited.value),
+      });
+    } else {
+      options.push({
+        value,
+        key: 'search',
+        path: `/search/?query=${value}`,
+        type: 'search',
+        label: globalSearchOption(value),
+      });
+    }
+
+    if (projectList.length) {
+      const projectOptions = projectList.map((projectHit, ix) => {
+        return {
+          key: `project-${projectHit.label}${ix}`,
+          path: makeProjectUri(projectHit.organisation, projectHit.project),
+          type: 'project' as 'project',
+          label: (
+            <Hit
+              key={projectHit.label}
+              orgLabel={projectHit.organisation}
+              projectLabel={projectHit.project}
+              type="project"
+            >
+              <span>
+                {projectHit.label.length > LABEL_MAX_LENGTH
+                  ? `${projectHit.label.slice(0, LABEL_MAX_LENGTH)}...`
+                  : projectHit.label}
+              </span>
+            </Hit>
+          ),
+          // add suffix to value to differentiate from search term
+          value: `${projectHit.organisation}/${projectHit.project}${projectOptionValueSuffix}`,
+        };
+      });
+      options = [...options, ...projectOptions];
+    }
+
+    if (studioList.length) {
+      const studioOptions = studioList.map((studioHit, ix) => {
+        return {
+          key: `studio-${studioHit.label}${ix}`,
+          path: makeStudioUri(
+            studioHit.organisation,
+            studioHit.project,
+            studioHit.studioId
+          ),
+          type: 'studio' as 'studio',
+          label: (
+            <Hit
+              key={studioHit.label}
+              orgLabel={studioHit.organisation}
+              projectLabel={studioHit.project}
+              type="studio"
+            >
+              <span>
+                {studioHit.label.length > LABEL_MAX_LENGTH
+                  ? `${studioHit.label.slice(0, LABEL_MAX_LENGTH)}...`
+                  : studioHit.label}
+              </span>
+            </Hit>
+          ),
+          // add suffix to value to differentiate from search term
+          value: `${studioHit.project}/${studioHit.label}${studioOptionValueSuffix}`,
+        };
+      });
+      options = [...options, ...studioOptions];
+    }
+    return options;
+  }, [value, projectList, studioList]);
 
   return (
     <AutoComplete
-      className={`search-bar ${!!focused && 'focused'}`}
+      backfill={false}
+      defaultActiveFirstOption
+      className="search-bar"
       onFocus={handleSetFocused(true)}
       onBlur={handleSetFocused(false)}
-      options={options}
-      onChange={handleChange}
+      options={optionsList}
       onSelect={handleSelect}
       onSearch={handleSearch}
       onKeyDown={handleKeyDown}
-      dropdownClassName="search-drop"
-      value={value}
+      dropdownClassName="search-bar__drop"
+      dropdownMatchSelectWidth={false}
+      /**
+       * Autocomplete uses option value rather than key to differentiate so if there are multiple
+       * options with the same value it's as if the last one was selected always which results in
+       * us not being able to search when the search term matches a project or studio value. We add
+       * a suffix to project and studio values to prevent this and remove it here for display. Bit
+       * hacky!
+       *
+       * See Antd autocomplete bug here https://github.com/ant-design/ant-design/issues/11909
+       */
+      value={value
+        .replace(projectOptionValueSuffix, '')
+        .replace(studioOptionValueSuffix, '')}
+      listHeight={310}
     >
-      <Input.Search
+      <Input
+        allowClear
+        onKeyDown={handleKeyDown}
+        onChange={e => {
+          // clicked clear button or removed the search text.
+          if (e.type === 'click' || e.target.value === '') {
+            onClear();
+          }
+        }}
+        onPressEnter={inputOnPressEnter}
         ref={inputRef}
-        className={'search-bar-input'}
-        placeholder="Search or Visit"
-        enterButton
-        suffix={
-          searchConfigLoading ? (
-            <LoadingOutlined />
-          ) : (
-            !!searchConfigPreference && (
-              <div>
-                <b>{searchConfigPreference.label}</b>
-              </div>
-            )
-          )
-        }
+        className={`search-bar__input ${focused ? 'focused' : ''}`}
+        placeholder="Search or jump to..."
+        suffix={<div className="search-bar__icon">/</div>}
       />
     </AutoComplete>
   );

@@ -12,13 +12,13 @@ const ResourceDownloadButton: React.FunctionComponent<{
   resourceId: string;
 }> = props => {
   const nexus = useNexusContext();
+  const notification = useNotification();
   const download = (
     orgLabel: string,
     projectLabel: string,
     resourceId: string,
     format: formatType
   ) => {
-    const notification = useNotification();
     nexus.Resource.get(orgLabel, projectLabel, resourceId, { as: format })
       .then(result => {
         const extension = {

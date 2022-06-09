@@ -82,12 +82,13 @@ const ResourceListBoardContainer: React.FunctionComponent<{
   };
 
   const handleListChanged = (updatedList: ResourceBoardList) => {
-    const index = resourceLists.findIndex(list => list.id === updatedList.id);
-
-    const newResourceList = [...resourceLists];
-    newResourceList[index] = updatedList;
-
-    setResourceLists(newResourceList);
+    setResourceLists(lists => {
+      if (lists === undefined) return [updatedList];
+      const index = lists.findIndex(list => list.id === updatedList.id);
+      const newResourceList = [...lists];
+      newResourceList[index] = updatedList;
+      return newResourceList;
+    });
   };
 
   return (

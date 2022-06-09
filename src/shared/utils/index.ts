@@ -6,6 +6,7 @@ import {
   isMatchWithCustomizer,
   pick,
 } from 'lodash';
+import * as moment from 'moment';
 
 /**
  * getProp utility - an alternative to lodash.get
@@ -146,6 +147,15 @@ export const labelOf = (inputString: string) => {
 
 export const isBrowser = typeof window !== 'undefined';
 
+export function isUserInAtLeastOneRealm(
+  userIdentities: Identity[],
+  realm: string[]
+) {
+  return (
+    userIdentities.filter(i => i.realm && realm.includes(i.realm)).length > 0
+  );
+}
+
 /**
  * Returns the logout URL of the realm the user is authenticated with
  *
@@ -176,6 +186,63 @@ export function getLogoutUrl(
 
 export function hasExpired(timestamp: number): Boolean {
   return timestamp < Date.now().valueOf() / 1000;
+}
+
+/**
+ * Get data string to display
+ *
+ * @param date
+ * @returns date string
+ */
+export function getDateString(
+  date: Date | moment.Moment,
+  options?: { noTime?: boolean }
+) {
+  if (options?.noTime) {
+    return moment(date).format('YYYY-MM-DD');
+  }
+  return moment(date).toISOString();
+}
+/**
+ *
+ * @param historicalDate The date in the past to measure against
+ * @param now The datetime now, defaults to current timestamp
+ * @returns a user friendly string
+ */
+export function getFriendlyTimeAgoString(
+  historicalDate: Date | moment.Moment,
+  now?: Date | moment.Moment
+) {
+  const dateMoment = moment(historicalDate);
+  const nowMoment = moment(now ? now : new Date());
+
+  if (dateMoment > nowMoment) {
+    return 'Sometime in the future...';
+  }
+
+  const diffInMinutes = nowMoment.diff(dateMoment, 'minutes');
+  const diffInHours = nowMoment.diff(dateMoment, 'hours');
+  const diffInDays = nowMoment.diff(dateMoment, 'days');
+  const diffInMonths = nowMoment.diff(dateMoment, 'months');
+  const diffInYears = nowMoment.diff(dateMoment, 'years');
+
+  if (diffInMinutes < 1) {
+    return 'moments ago';
+  }
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
+  }
+  if (diffInHours < 24) {
+    return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+  }
+  if (diffInDays < 30) {
+    return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+  }
+  if (diffInYears < 1) {
+    return `${diffInMonths} month${diffInMonths > 1 ? 's' : ''} ago`;
+  }
+
+  return `${diffInYears} year${diffInYears > 1 ? 's' : ''} ago`;
 }
 
 export function getDestinationParam(): string {
@@ -451,6 +518,65 @@ export const makeStudioUri = (
   return `/${orgLabel}/${projectLabel}/studios/${encodeURIComponent(studioId)}`;
 };
 
+/*
+ * Returns project uri
+ *
+ * @param {string} orgLabel
+ * @param {string} projectLabel
+ * @returns {string} project uri
+ */
+export const makeProjectUri = (orgLabel: string, projectLabel: string) => {
+  return `/admin/${orgLabel}/${projectLabel}`;
+};
+
+/*
+ * Returns organization uri
+ *
+ * @param {string} orgLabel
+ * @returns {string} organization uri
+ */
+export const makeOrganizationUri = (orgLabel: string) => {
+  return `/admin/${orgLabel}`;
+};
+
+/*
+ * Returns search uri
+ *
+ * @param {string} searchQueryParam
+ * @returns {string} search uri
+ */
+export const makeSearchUri = (searchQueryParam: string) => {
+  return `/search/?query=${searchQueryParam}`;
+};
+
+/**
+ * Returns Resource uri
+ *
+ * @param orgLabel Organisation label
+ * @param projectLabel Project label
+ * @param resourceId Resource ID
+ * @param options Optional additional options including revision, tab, expanded.
+ * @returns
+ */
+export const makeResourceUri = (
+  orgLabel: string,
+  projectLabel: string,
+  resourceId: string,
+  options: {
+    revision?: number;
+    tab?: string;
+    expanded?: boolean;
+  } = {}
+) => {
+  const { revision, tab, expanded } = options;
+  const route = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+    resourceId
+  )}${revision ? `?rev=${revision}` : ''}${expanded ? '&expanded=true' : ''}${
+    tab ? tab : ''
+  }`;
+  return route;
+};
+
 /**
  *
  * @param pluginMap
@@ -499,7 +625,7 @@ export const parseJsonMaybe = <T = object>(
   try {
     parsedJson = JSON.parse(str || '');
   } catch (error) {
-    errorCallback && errorCallback(error);
+    errorCallback && errorCallback(error as Error);
   }
   return parsedJson;
 };
@@ -510,4 +636,54 @@ export const forceAsArray = <T>(objectOrArray: T | T[] | null | undefined) => {
       ? objectOrArray
       : [objectOrArray]
     : [];
+};
+
+/**
+ * Checks if a string is a valid URL.
+ * @param {string} url
+ */
+export const isURL = (url: string) => {
+  try {
+    new URL(url);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
+/**
+ * Converts delta url to a fusion url
+ * @param url
+ * @returns
+ */
+
+export const deltaUrlToFusionUrl = (url: string, nexusWebBase: string) => {
+  const projectUrlPattern = new RegExp(
+    /projects\/(?<org>[\w-]+)\/(?<project>[\w-]+)\/?$/
+  );
+  const resourceUrlPattern = new RegExp(
+    /resources\/(?<org>.[^/]*)\/(?<project>.[^/]*)\/(.[^/]*)\/(.*)/
+  );
+  const fileUrlPattern = new RegExp(
+    /files(\/(?<org>[\w-]+)\/(?<project>[\w-]+))/
+  );
+
+  const projectUrl = projectUrlPattern.exec(url);
+  const resourceUrl = resourceUrlPattern.exec(url);
+  const fileUrl = fileUrlPattern.exec(url);
+
+  if (projectUrl) {
+    return `${nexusWebBase}/admin/${projectUrl.groups?.org}/${projectUrl.groups?.project}`;
+  }
+  if (resourceUrl) {
+    return `${nexusWebBase}/admin/${resourceUrl.groups?.org}/${
+      resourceUrl.groups?.project
+    }/${encodeURIComponent(url)}`;
+  }
+  if (fileUrl) {
+    return `${nexusWebBase}/admin/${fileUrl.groups?.org}/${
+      fileUrl.groups?.project
+    }/${encodeURIComponent(url)}`;
+  }
+  return url;
 };

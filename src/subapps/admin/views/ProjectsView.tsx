@@ -12,6 +12,8 @@ import ListItem from '../../../shared/components/List/Item';
 import ProjectItem from '../components/Projects/ProjectItem';
 import { useAdminSubappContext } from '..';
 import useNotification from '../../../shared/hooks/useNotification';
+import QuotasContainer from '../containers/QuotasContainer';
+import StoragesContainer from '../containers/StoragesContainer';
 
 const ProjectsView: React.FunctionComponent = () => {
   const notification = useNotification();
@@ -56,7 +58,7 @@ const ProjectsView: React.FunctionComponent = () => {
         .catch((error: Error) => {
           setOrgLoadingBusy(false);
           notification.error({
-            message: `An error occured whilst fetching Organization ${match.params.orgLabel}`,
+            message: `Error fetching organization ${match.params.orgLabel}`,
             description: error.message,
           });
         });
@@ -84,8 +86,8 @@ const ProjectsView: React.FunctionComponent = () => {
       .catch(error => {
         setFormBusy(false);
         notification.error({
-          message: 'An error occurred',
-          description: error.message || error.reason,
+          message: 'Error creating project',
+          description: error.reason || error.message,
         });
       });
   };
@@ -207,26 +209,6 @@ const ProjectsView: React.FunctionComponent = () => {
                 <ListItem
                   key={i['@id']}
                   onClick={() => goTo(i._organizationLabel, i._label)}
-                  actions={[
-                    <AccessControl
-                      key={`access-control-${i['@id']}`}
-                      path={`/${i._organizationLabel}/${i._label}`}
-                      permissions={['projects/write']}
-                    >
-                      <Button
-                        className="edit-button"
-                        size="small"
-                        type="primary"
-                        tabIndex={1}
-                        onClick={(e: React.SyntheticEvent) => {
-                          e.stopPropagation();
-                          setSelectedProject(i);
-                        }}
-                      >
-                        Edit
-                      </Button>
-                    </AccessControl>,
-                  ]}
                 >
                   <ProjectItem {...i} />
                 </ListItem>
@@ -253,22 +235,40 @@ const ProjectsView: React.FunctionComponent = () => {
             title={`Project: ${selectedProject && selectedProject._label}`}
           >
             {selectedProject && (
-              <ProjectForm
-                project={{
-                  _label: selectedProject._label,
-                  _rev: selectedProject._rev,
-                  description: selectedProject.description || '',
-                  base: selectedProject.base,
-                  vocab: selectedProject.vocab,
-                  apiMappings: selectedProject.apiMappings,
-                }}
-                onSubmit={(p: ProjectResponseCommon) =>
-                  saveAndModify(selectedProject, p)
-                }
-                onDeprecate={() => saveAndDeprecate(selectedProject)}
-                busy={formBusy}
-                mode="edit"
-              />
+              <>
+                <AccessControl
+                  key="quotas-access-control"
+                  path={`/${selectedProject._organizationLabel}/${selectedProject._label}`}
+                  permissions={['quotas/read']}
+                >
+                  <QuotasContainer
+                    orgLabel={selectedProject._organizationLabel}
+                    projectLabel={selectedProject._label}
+                  />
+                  <StoragesContainer
+                    orgLabel={selectedProject._organizationLabel}
+                    projectLabel={selectedProject._label}
+                  />
+                </AccessControl>
+                <h3>Project Settings</h3>
+                <br />
+                <ProjectForm
+                  project={{
+                    _label: selectedProject._label,
+                    _rev: selectedProject._rev,
+                    description: selectedProject.description || '',
+                    base: selectedProject.base,
+                    vocab: selectedProject.vocab,
+                    apiMappings: selectedProject.apiMappings,
+                  }}
+                  onSubmit={(p: ProjectResponseCommon) =>
+                    saveAndModify(selectedProject, p)
+                  }
+                  onDeprecate={() => saveAndDeprecate(selectedProject)}
+                  busy={formBusy}
+                  mode="edit"
+                />
+              </>
             )}
           </Drawer>
         </div>

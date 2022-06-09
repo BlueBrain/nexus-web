@@ -1,41 +1,79 @@
 import * as React from 'react';
-import * as moment from 'moment';
-import { Resource } from '@bbp/nexus-sdk';
-
-import SchemaLink from '../SchemaLink';
+import { Col, Row, Tag } from 'antd';
+import { Link } from 'react-router-dom';
 import { getUsername } from '../../utils';
+import { Resource } from '@bbp/nexus-sdk/lib/types';
+import * as moment from 'moment';
+import FriendlyTimeAgo from '../FriendlyDate';
 
-import './ResourceMetadata.less';
-
-const ResourceMetada: React.FC<{
+const ResourceMetadata: React.FC<{
   resource: Resource;
-  schemaLink?: React.FunctionComponent<{
-    resource: Resource;
-  }>;
-}> = ({ resource, schemaLink = SchemaLink }) => {
-  const { _createdBy, _createdAt, _rev } = resource;
-  const userName = getUsername(_createdBy);
-
+  orgLabel: string;
+  projectLabel: string;
+}> = ({ resource, orgLabel, projectLabel }) => {
   return (
-    <div className="resource-metadata">
-      <p>
-        <b>Created by: </b>
-        {userName}
-      </p>
-      <p>
-        <b>Created on: </b>
-        {moment(_createdAt).format('DD/MM/YYYY')}
-      </p>
-      <p>
-        <b>Revision: </b>
-        {_rev}
-      </p>
-      <p>
-        <b>Schema: </b>
-        <span>{schemaLink({ resource })}</span>
-      </p>
-    </div>
+    <Row>
+      <Col span={12}>
+        <Row>
+          <Col>
+            <b>Organization:</b>{' '}
+            <Link
+              to={`/admin/${orgLabel}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {orgLabel}
+            </Link>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <b>Project:</b>{' '}
+            <Link
+              to={`/admin/${orgLabel}/${projectLabel}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {projectLabel}
+            </Link>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <b>Type(s):</b>{' '}
+            {[resource['@type']].flat().map((el, ix) => {
+              return <Tag key={ix}>{el}</Tag>;
+            })}
+          </Col>
+        </Row>
+      </Col>
+      <Col span={12}>
+        <Row>
+          <Col>
+            <b>Created:</b>{' '}
+            <FriendlyTimeAgo date={moment(resource._createdAt)} />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <b>Created By:</b> {getUsername(resource._createdBy)}
+          </Col>
+        </Row>
+
+        <Row>
+          <Col>
+            <b>Updated:</b>{' '}
+            <FriendlyTimeAgo date={moment(resource._updatedAt)} />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <b>Updated By:</b> {getUsername(resource._updatedBy)}
+          </Col>
+        </Row>
+      </Col>
+    </Row>
   );
 };
 
-export default ResourceMetada;
+export default ResourceMetadata;

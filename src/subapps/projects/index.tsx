@@ -11,6 +11,7 @@ const description = 'Create activities to support you data driven pipeline';
 const subAppType = 'internal';
 const icon = require('../../shared/images/flowIcon.svg');
 const version = 'α';
+const requireLogin = true;
 
 const projectsSubappProps = {
   title,
@@ -19,6 +20,7 @@ const projectsSubappProps = {
   icon,
   subAppType,
   version,
+  requireLogin,
 };
 
 export const ProjectsSubappContext = React.createContext<{
@@ -26,6 +28,7 @@ export const ProjectsSubappContext = React.createContext<{
   namespace: string;
   icon: string;
   version: string;
+  requireLogin: boolean;
 }>(projectsSubappProps);
 
 export function useProjectsSubappContext() {

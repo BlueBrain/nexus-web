@@ -1,19 +1,9 @@
 @import '../lib.less';
 
 .fusion-main-layout {
-  &__content {
-    margin-left: 200px;
-    transition: all 0.3s ease-out;
-
-    &--collapsed {
-      margin-left: 80px;
-
-      // expands project and step view panels when side menu is collapsed
-      .project-panel,
-      .workflow-step-view__panel {
-        left: 80px;
-      }
-    }
+  .project-panel,
+  .workflow-step-view__panel {
+    left: 80px;
   }
 
   .ant-layout-content {
@@ -49,5 +39,23 @@
   .ant-menu-vertical .ant-menu-item:not(:last-child) {
     margin: 0;
     height: 50px;
+  }
+
+  .logo-container {
+    // overrides default `position: relative`
+    position: fixed !important;
+    z-index: 21;
+
+    &__logo {
+      padding: 0.6rem 1.7rem;
+      display: flex;
+      letter-spacing: 1px;
+      color: #ffffff;
+      height: 52px;
+
+      img {
+        height: 33px;
+      }
+    }
   }
 }

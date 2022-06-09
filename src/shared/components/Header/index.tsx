@@ -12,6 +12,7 @@ import ConsentPreferences from '../ConsentPreferences';
 import { ConsentType } from '../../layouts/FusionMainLayout';
 
 import './Header.less';
+import Navigation from './Navigation';
 
 declare var Version: string;
 
@@ -86,19 +87,22 @@ export interface HeaderProps {
   token?: string;
   links?: React.ReactNode[];
   realms: Realm[];
+  serviceAccountsRealm: string;
   displayLogin?: boolean;
   children?: React.ReactChild;
   consent?: ConsentType;
   commitHash?: string;
   dataCart?: React.ReactNode;
   onClickRemoveConsent?(): void;
-  onClickSideBarToggle(): void;
   performLogin(realmName: string): void;
+  subApps: any;
+  authenticated: boolean;
 }
 
 const Header: React.FunctionComponent<HeaderProps> = ({
   name,
   realms,
+  serviceAccountsRealm,
   token,
   displayLogin = true,
   links = [],
@@ -111,6 +115,8 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   dataCart,
   onClickRemoveConsent,
   performLogin,
+  subApps,
+  authenticated,
 }) => {
   const menu = (
     <Menu>
@@ -121,7 +127,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   );
 
   const realmsFilter = realms.filter(
-    r => r._label !== 'serviceaccounts' && !r._deprecated
+    r => r._label !== serviceAccountsRealm && !r._deprecated
   );
 
   const realmMenu = (
@@ -152,11 +158,12 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         )}
         {token && (
           <Copy
-            textToCopy={token}
             render={(copySuccess, triggerCopy) => (
               <button
                 className="copy-token-button"
-                onClick={() => triggerCopy()}
+                onClick={() => {
+                  triggerCopy(token);
+                }}
               >
                 <img src={copyIcon} />{' '}
                 {copySuccess ? (
@@ -189,6 +196,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             alt="Information"
           />
         </Popover>
+        <Navigation authenticated={authenticated} subApps={subApps} />
         {name ? (
           <Dropdown overlay={menu}>
             <a className="menu-dropdown ant-dropdown-link">

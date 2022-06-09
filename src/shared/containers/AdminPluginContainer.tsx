@@ -1,14 +1,15 @@
 import * as React from 'react';
-import { Resource, ResourceLink } from '@bbp/nexus-sdk';
-import { Tabs, Collapse } from 'antd';
+import { Resource } from '@bbp/nexus-sdk';
+import { Tabs, Collapse, Alert } from 'antd';
 import HistoryContainer from '../containers/HistoryContainer';
 import ResourceLinksContainer from '../containers/ResourceLinks';
 import ResourceActionsContainer from '../containers/ResourceActionsContainer';
 import ResourceEditorContainer from '../containers/ResourceEditor';
-import SchemaLinkContainer from '../containers/SchemaLink';
 import GraphContainer from '../containers/GraphContainer';
-import ResourceMetadata from '../components/ResourceMetadata';
 import MarkdownEditorContainer from './MarkdownEditorContainer';
+import { AccessControl } from '@bbp/react-nexus';
+import { EditOutlined } from '@ant-design/icons';
+import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
 
 const { Panel } = Collapse;
 const TabPane = Tabs.TabPane;
@@ -34,9 +35,12 @@ type AdminProps = {
     }
   ) => void;
   handleTabChange: (activeTabKey: string) => void;
-  handleGoToInternalLink: (link: ResourceLink) => void;
+  handleGoToInternalLink: (link: ResourceLinkAugmented) => void;
   handleEditFormSubmit: (value: any) => void;
   handleExpanded: (expanded: boolean) => void;
+  refreshResource: () => void;
+  collapsed: boolean;
+  handleCollapseChanged: () => void;
 };
 
 const AdminPlugin: React.FunctionComponent<AdminProps> = ({
@@ -54,6 +58,9 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
   handleGoToInternalLink,
   handleEditFormSubmit,
   handleExpanded,
+  refreshResource,
+  collapsed,
+  handleCollapseChanged,
 }) => {
   const [tabChange, setTabChange] = React.useState<boolean>(false);
 
@@ -64,12 +71,32 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
   };
 
   return (
-    <Collapse onChange={() => {}}>
-      <Panel header="Admin" key="1">
-        <ResourceActionsContainer resource={resource} />
-        <ResourceMetadata
+    <Collapse
+      onChange={handleCollapseChanged}
+      activeKey={collapsed ? 'admin' : undefined}
+    >
+      <Panel header="Advanced View" key="admin">
+        <AccessControl
+          path={`/${orgLabel}/${projectLabel}`}
+          permissions={['resources/write']}
+          noAccessComponent={() => <></>}
+        >
+          {editable && (
+            <Alert
+              message={
+                <>
+                  <EditOutlined /> You can edit this resource.
+                </>
+              }
+              type="success"
+            />
+          )}
+        </AccessControl>
+
+        <ResourceActionsContainer
+          editable={editable}
           resource={resource}
-          schemaLink={SchemaLinkContainer}
+          refreshResource={refreshResource}
         />
         <Tabs activeKey={activeTabKey} onChange={onTabChange}>
           <TabPane tab="JSON" key="#JSON">
@@ -146,9 +173,7 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
             <div className="graph-wrapper-container">
               <div className="fixed-minus-header">
                 <div ref={ref} className="graph-wrapper">
-                  {resource ? (
-                    <GraphContainer resource={resource as Resource} />
-                  ) : null}
+                  <GraphContainer resource={resource as Resource} />
                 </div>
               </div>
             </div>

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Button, Switch, Spin } from 'antd';
 import {
-  InfoCircleOutlined,
   CheckCircleOutlined,
   ExclamationCircleOutlined,
   SaveOutlined,
@@ -87,9 +86,10 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   }, [rawData]); // only runs when Editor receives new resource to edit
 
   const handleChange = (editor: any, data: any, value: any) => {
-    if (!editable || value === JSON.stringify(rawData, null, 2)) {
+    if (!editable) {
       return;
     }
+
     try {
       const parsedVal = JSON.parse(value);
       setParsedValue(parsedVal);
@@ -97,8 +97,8 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     } catch (error) {
       setValid(false);
     }
-    setEditing(true);
     setStringValue(value);
+    setEditing(value !== JSON.stringify(rawData, null, 2));
   };
 
   const handleSubmit = () => {
@@ -117,16 +117,6 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     <div className={valid ? 'resource-editor' : 'resource-editor _invalid'}>
       <div className="control-panel">
         <div>
-          {!editable && (
-            <div className="feedback">
-              <InfoCircleOutlined /> This resource cannot be edited
-            </div>
-          )}
-          {editable && !isEditing && valid && (
-            <div className="feedback">
-              <InfoCircleOutlined /> Directly edit this resource
-            </div>
-          )}
           {editable && isEditing && valid && (
             <div className="feedback _positive">
               <CheckCircleOutlined /> Valid
@@ -158,23 +148,19 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
               onChange={onFormatChange}
             />
           )}
-
+          <Button
+            icon={<SaveOutlined />}
+            type="primary"
+            size="small"
+            onClick={handleSubmit}
+            disabled={!valid || !editable || !isEditing}
+          >
+            Save
+          </Button>{' '}
           {editable && isEditing && (
-            <>
-              {valid ? (
-                <Button
-                  icon={<SaveOutlined />}
-                  type="primary"
-                  size="small"
-                  onClick={handleSubmit}
-                >
-                  Save
-                </Button>
-              ) : null}{' '}
-              <Button danger size="small" onClick={handleCancel}>
-                Cancel
-              </Button>
-            </>
+            <Button danger size="small" onClick={handleCancel}>
+              Cancel
+            </Button>
           )}
         </div>
       </div>

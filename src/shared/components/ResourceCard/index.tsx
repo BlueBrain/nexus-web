@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as moment from 'moment';
-import { Card, Button, Tooltip, Divider, Descriptions } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import { Card, Button, Tooltip, Divider } from 'antd';
+import { DownOutlined, CheckOutlined, CopyOutlined } from '@ant-design/icons';
 import { Resource } from '@bbp/nexus-sdk';
 
 import TypesIcon from '../Types/TypesIcon';
@@ -10,6 +10,7 @@ import { getUsername, getResourceLabel } from '../../utils';
 
 import './ResourceCard.less';
 import SchemaLink from '../SchemaLink';
+import FriendlyTimeAgo from '../FriendlyDate';
 
 const ResourceCardComponent: React.FunctionComponent<{
   resource: Resource;
@@ -42,16 +43,15 @@ const ResourceCardComponent: React.FunctionComponent<{
       extra={
         <div className="actions">
           <Copy
-            textToCopy={id}
             render={(copySuccess, triggerCopy) => (
               <Tooltip title={copySuccess ? 'Copied!' : `Copy ${id}`}>
                 <Button
                   size="small"
-                  icon={copySuccess ? 'check' : 'copy'}
+                  icon={copySuccess ? <CheckOutlined /> : <CopyOutlined />}
                   onClick={(e: React.MouseEvent) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    triggerCopy();
+                    triggerCopy(id);
                   }}
                 >
                   Identifier
@@ -60,16 +60,15 @@ const ResourceCardComponent: React.FunctionComponent<{
             )}
           />{' '}
           <Copy
-            textToCopy={self}
             render={(copySuccess, triggerCopy) => (
               <Tooltip title={copySuccess ? 'Copied!' : `Copy ${self}`}>
                 <Button
                   size="small"
-                  icon={copySuccess ? 'check' : 'copy'}
+                  icon={copySuccess ? <CheckOutlined /> : <CopyOutlined />}
                   onClick={(e: React.MouseEvent) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    triggerCopy();
+                    triggerCopy(self);
                   }}
                 >
                   Nexus Address
@@ -92,24 +91,38 @@ const ResourceCardComponent: React.FunctionComponent<{
       }
     >
       <div>
-        <Descriptions size={'small'}>
-          <Descriptions.Item label="Created">
-            {moment(createdAt).format('DD/MM/YYYY')} by <b>{userName}</b>
-          </Descriptions.Item>
-          <Descriptions.Item label="Updated">
-            {moment(updatedAt).fromNow()}
-          </Descriptions.Item>
-          <Descriptions.Item label="Revision">{rev}</Descriptions.Item>
-          <Descriptions.Item label="Schema">
-            {schemaLink({ resource })}
-          </Descriptions.Item>
-        </Descriptions>
-        {!!type && (
-          <>
-            <Divider />
-            <div>{!!type && <TypesIcon type={types} full={true} />}</div>
-          </>
-        )}
+        <div>
+          <span>
+            <b>Created:</b>
+          </span>{' '}
+          <FriendlyTimeAgo date={moment(createdAt)} /> <b>by</b> {userName}
+        </div>
+        <div>
+          <span>
+            <b>Updated:</b>
+          </span>{' '}
+          <FriendlyTimeAgo date={moment(updatedAt)} />
+        </div>
+        <div>
+          <span>
+            <b>Revision:</b>
+          </span>{' '}
+          {rev}
+        </div>
+        <div>
+          <span>
+            <b>Schema:</b>
+          </span>{' '}
+          {schemaLink({ resource })}
+        </div>
+        <div>
+          {!!type && (
+            <>
+              <Divider />
+              <div>{!!type && <TypesIcon type={types} full={true} />}</div>
+            </>
+          )}
+        </div>
       </div>
     </Card>
   );

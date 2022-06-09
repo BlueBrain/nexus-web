@@ -1,44 +1,70 @@
 @import '../../lib.less';
 
-// avoids an antd issue where it says the first option is selected by default (it's really not)
-.search-drop {
-  .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
-    background-color: transparent;
-  }
-  .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
-    background-color: #f5f5f5;
-  }
-}
-
 .search-bar {
   width: 25%;
   min-width: 400px;
-  transition: @transition-all-bouncy;
-  .anticon {
-    color: @text-color;
-  }
-  .ant-input-affix-wrapper.ant-input-search.ant-select-selection-search-input {
-    background-color: inherit;
-    transition: @transition-all-bouncy;
-    transition-delay: 0s;
-    input {
+
+  &__drop {
+    // avoids an antd issue where it says the first option is selected by default (it's really not)
+    .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
       background-color: transparent;
-      transition: @transition-all-bouncy;
-      transition-delay: 0s;
-      color: white;
+    }
+    background-color: #fff !important;
+    .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+      background-color: @link-color;
+      color: #fff !important;
+      .ant-select-item-option-content {
+        color: #fff !important;
+      }
+    }
+
+    .ant-select-item {
+      border-bottom: 1px solid @fusion-secondary-text-color;
+      margin-bottom: -1px;
+    }
+
+    .ant-select-item-option-content {
+      color: @fusion-secondary-text-color;
     }
   }
-  &.focused {
-    width: 40%;
-    .ant-input-affix-wrapper.ant-input-search.ant-select-selection-search-input {
-      background-color: rgb(252, 253, 253);
-      input {
-        background-color: transparent;
-        color: @text-color;
+
+  &__icon {
+    width: 20px;
+    border: 1px solid white;
+    border-radius: 2px;
+    color: white;
+    text-align: center;
+    opacity: 0.6;
+  }
+
+  &__input {
+    background-color: #ffffff2b !important;
+    color: #fff !important;
+    &.focused {
+      background-color: #fff !important;
+      color: @fusion-primary-text-color !important;
+    }
+  }
+
+  .ant-input-affix-wrapper.ant-select-selection-search-input {
+    background-color: #ffffff2b;
+    padding-right: 4px;
+
+    input {
+      background-color: transparent;
+      color: #fff;
+      &:focus {
+        color: @fusion-primary-text-color;
       }
     }
   }
-}
-.drop-search {
-  overflow-y: hidden;
+
+  .ant-input-clear-icon {
+    color: white;
+    opacity: 0.8;
+  }
+
+  &__drop {
+    overflow-y: hidden;
+  }
 }

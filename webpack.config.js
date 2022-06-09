@@ -32,6 +32,20 @@ const config = [
     mode: 'production',
     optimization: {
       minimizer: [new TerserPlugin()],
+      splitChunks: {
+        cacheGroups: {
+          antd: {
+            test: /[\\/]node_modules[\\/]((@ant-design).*)[\\/]/,
+            name: 'antd',
+            chunks: 'all',
+          },
+          antv: {
+            test: /[\\/]node_modules[\\/]((@antv).*)[\\/]/,
+            name: 'antv',
+            chunks: 'all',
+          },
+        },
+      },
     },
     module: {
       rules: [
@@ -59,6 +73,16 @@ const config = [
             options: {
               outputPath: 'assets/',
               publicPath: 'public/assets/',
+            },
+          },
+        },
+        {
+          test: /\.(ttf)$/,
+          use: {
+            loader: 'file-loader',
+            options: {
+              outputPath: 'assets/',
+              publicPath: devMode ? 'public/assets' : 'assets/',
             },
           },
         },
@@ -126,6 +150,10 @@ const config = [
             from: 'plugins/',
             to: 'public/plugins/',
             ignore: ['.gitkeep'],
+          },
+          {
+            from: 'node_modules/pdfjs-dist/build/pdf.worker.min.js',
+            to: 'public/pdf.worker.min.js',
           },
         ],
         { debug: true }

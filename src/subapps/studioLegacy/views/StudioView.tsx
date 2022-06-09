@@ -7,7 +7,10 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { NexusClient, ACL } from '@bbp/nexus-sdk';
 
 const writableStudio = async (permissionsPath: string, nexus: NexusClient) => {
-  const aclList = await nexus.ACL.list(permissionsPath);
+  const aclList = await nexus.ACL.list(permissionsPath, {
+    ancestors: true,
+    self: true,
+  });
   const acls = aclList._results as ACL[];
   let isWritable = false;
   const WRITABLE_ACL = 'resources/write';

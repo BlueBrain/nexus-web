@@ -1,29 +1,36 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
-import { useLocation, useHistory, useParams } from 'react-router';
-import { Spin, Card, Empty, Alert } from 'antd';
+import { useLocation, useHistory, useParams, matchPath } from 'react-router';
+import { Spin, Alert, Collapse, Typography, Divider } from 'antd';
 import * as queryString from 'query-string';
-import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import {
-  Resource,
-  ResourceLink,
-  IncomingLink,
-  ExpandedResource,
-} from '@bbp/nexus-sdk';
+import { useNexusContext } from '@bbp/react-nexus';
+import { Resource, IncomingLink, ExpandedResource } from '@bbp/nexus-sdk';
 import AdminPlugin from '../containers/AdminPluginContainer';
+import VideoPluginContainer from './VideoPluginContainer/VideoPluginContainer';
 import ResourcePlugins from './ResourcePlugins';
 import usePlugins from '../hooks/usePlugins';
 import useMeasure from '../hooks/useMeasure';
 import {
   getResourceLabel,
   getOrgAndProjectFromProjectId,
-  matchPlugins,
-  pluginsMap,
   getDestinationParam,
+  labelOf,
+  makeResourceUri,
 } from '../utils';
 import { isDeprecated } from '../utils/nexusMaybe';
 import useNotification from '../hooks/useNotification';
 import Preview from '../components/Preview/Preview';
+import { getUpdateResourceFunction } from '../utils/updateResource';
+import { DeleteOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
+import ResourceViewActionsContainer from './ResourceViewActionsContainer';
+import ResourceMetadata from '../components/ResourceMetadata';
+import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
+import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/reducers';
+import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
+import { useJiraPlugin } from '../hooks/useJIRA';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -38,17 +45,73 @@ const ResourceViewContainer: React.FunctionComponent<{
     }> | null
   ) => React.ReactElement | null;
 }> = ({ render }) => {
-  const x = useParams();
+  const { apiEndpoint } = useSelector((state: RootState) => state.config);
+
+  const [deltaPlugins, setDeltaPlugins] = React.useState<{
+    [key: string]: string;
+  }>();
+
+  const fetchDeltaVersion = async () => {
+    await nexus
+      .httpGet({
+        path: `${apiEndpoint}/version`,
+        context: { as: 'json' },
+      })
+      .then(versions => setDeltaPlugins({ ...versions.plugins }))
+      .catch(error => {
+        // do nothing
+      });
+  };
+
+  React.useEffect(() => {
+    fetchDeltaVersion();
+  }, []);
 
   // @ts-ignore
   const { orgLabel = '', projectLabel = '', resourceId = '' } = useParams();
   const nexus = useNexusContext();
-  const location = useLocation();
+  const location = useLocation<{ background: Location }>();
+
+  const [studioPlugins, setStudioPlugins] = React.useState<{
+    customise: boolean;
+    plugins: { key: string; expanded: boolean }[];
+  }>();
+
+  React.useEffect(() => {
+    if (location.state.background) {
+      const studioPathMatch = matchPath<{ StudioId: string }>(
+        location.state.background.pathname,
+        {
+          path: '/studios/:organisation/:project/studios/:StudioId',
+          exact: true,
+          strict: false,
+        }
+      );
+
+      if (studioPathMatch) {
+        // looks like we have us a studio
+        const studioId = studioPathMatch.params.StudioId;
+        nexus.Resource.get<StudioResource>(
+          orgLabel,
+          projectLabel,
+          studioId
+        ).then(d => {
+          if (Array.isArray((d as StudioResource).plugins)) {
+            // @ts-ignore
+            (d as StudioResource).plugins = (d as StudioResource).plugins[0];
+          }
+          if ((d as StudioResource).plugins) {
+            setStudioPlugins((d as StudioResource).plugins);
+          }
+        });
+      }
+    }
+  }, []);
+
   const history = useHistory();
   const notification = useNotification();
   const [{ ref }] = useMeasure();
   const { data: pluginManifest } = usePlugins();
-  const availablePlugins = Object.keys(pluginManifest || {});
 
   const goToResource = (
     orgLabel: string,
@@ -71,11 +134,6 @@ const ResourceViewContainer: React.FunctionComponent<{
     history.push(`/?_self=${selfUrl}`, location.state);
   };
 
-  const goToProject = (orgLabel: string, projectLabel: string) =>
-    history.push(`/admin/${orgLabel}/${projectLabel}`);
-
-  const goToOrg = (orgLabel: string) => history.push(`/admin/${orgLabel}`);
-
   const { expanded: expandedFromQuery, rev, tag } = queryString.parse(
     location.search
   );
@@ -85,7 +143,13 @@ const ResourceViewContainer: React.FunctionComponent<{
   const [{ busy, resource, error }, setResource] = React.useState<{
     busy: boolean;
     resource: Resource | null;
-    error: Error | null;
+    error:
+      | (Error & {
+          action?: 'update' | 'view';
+          rejections?: { reason: string }[];
+          wasUpdated?: boolean;
+        })
+      | null;
   }>({
     busy: false,
     resource: null,
@@ -95,13 +159,7 @@ const ResourceViewContainer: React.FunctionComponent<{
     (Resource & { [key: string]: any }) | null
   >(null);
 
-  const isLatest =
-    (latestResource && latestResource._rev) === (resource && resource._rev);
-
-  const filteredPlugins =
-    resource &&
-    pluginManifest &&
-    matchPlugins(pluginsMap(pluginManifest), availablePlugins, resource);
+  const isLatest = latestResource?._rev === resource?._rev;
 
   const handleTabChange = (activeTabKey: string) => {
     goToResource(orgLabel, projectLabel, resourceId, {
@@ -126,38 +184,86 @@ const ResourceViewContainer: React.FunctionComponent<{
           error: null,
           busy: true,
         });
-        const { _rev } = await nexus.Resource.update(
+        const updateFn = getUpdateResourceFunction(
+          nexus,
+          resource._rev,
+          value,
+          resource,
           orgLabel,
           projectLabel,
-          resourceId,
-          resource._rev,
-          value
+          resourceId
         );
+
+        const { _rev } = await updateFn();
         goToResource(orgLabel, projectLabel, resourceId, { revision: _rev });
         notification.success({
           message: 'Resource saved',
           description: getResourceLabel(resource),
         });
       } catch (error) {
+        const potentiallyUpdatedResource = (await nexus.Resource.get(
+          orgLabel,
+          projectLabel,
+          resourceId
+        )) as Resource;
+        error.wasUpdated = potentiallyUpdatedResource._rev !== resource._rev;
+
+        error.action = 'update';
+        if ('@context' in error) {
+          if ('rejections' in error) {
+            error.message = 'An error occurred whilst updating the resource';
+          } else {
+            error.message = error.reason;
+          }
+        }
+
         notification.error({
-          message: 'An unknown error occurred',
-          description: error.message,
+          message: 'An error occurred whilst updating the resource',
         });
-        setResource({
-          error,
-          resource: null,
-          busy: false,
-        });
+        if (error.wasUpdated) {
+          const expandedResources = (await nexus.Resource.get(
+            orgLabel,
+            projectLabel,
+            resourceId,
+            {
+              format: 'expanded',
+            }
+          )) as ExpandedResource[];
+
+          const expandedResource = expandedResources[0];
+
+          setResource({
+            error,
+            resource: {
+              ...potentiallyUpdatedResource,
+              '@id': expandedResource['@id'],
+            } as Resource,
+            busy: false,
+          });
+
+          setLatestResource(potentiallyUpdatedResource);
+        } else {
+          setResource({
+            resource,
+            error,
+            busy: false,
+          });
+        }
       }
     }
   };
 
-  const handleGoToInternalLink = (link: ResourceLink) => {
+  const handleGoToInternalLink = (link: ResourceLinkAugmented) => {
     const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(
       (link as IncomingLink)._project
     );
 
+    const revisionOption = link.isRevisionSpecific
+      ? { revision: link._rev }
+      : {};
+
     goToResource(orgLabel, projectLabel, encodeURIComponent(link['@id']), {
+      ...revisionOption,
       tab: '#links',
     });
   };
@@ -182,7 +288,7 @@ const ResourceViewContainer: React.FunctionComponent<{
         resourceId
       )) as Resource;
 
-      const latestResource: Resource =
+      const selectedResource: Resource =
         rev || tag
           ? ((await nexus.Resource.get(
               orgLabel,
@@ -203,13 +309,13 @@ const ResourceViewContainer: React.FunctionComponent<{
 
       const expandedResource = expandedResources[0];
 
-      setLatestResource(latestResource);
+      setLatestResource(resource);
       setResource({
         // Note: we must fetch the proper, expanded @id. The @id that comes from a normal request or from the URL
         // could be the contracted one, if the resource was created with a context that has a @base property.
         // this would make the contracted @id unresolvable. See issue: https://github.com/BlueBrain/nexus/issues/966
         resource: {
-          ...latestResource,
+          ...selectedResource,
           '@id': expandedResource['@id'],
         } as Resource,
         error: null,
@@ -237,10 +343,11 @@ const ResourceViewContainer: React.FunctionComponent<{
         });
 
         errorMessage = `You don't have the access rights for this resource located in ${orgLabel} / ${projectLabel}.`;
+      } else if (error['@type'] === 'ResourceNotFound') {
+        errorMessage = `Resource '${resourceId}' not found`;
       } else {
         errorMessage = error.reason;
       }
-
       const jsError = new Error(errorMessage);
 
       setResource({
@@ -251,46 +358,261 @@ const ResourceViewContainer: React.FunctionComponent<{
     }
   };
 
-  const nonEditableResourceTypes = ['File', 'View'];
+  const nonEditableResourceTypes = ['File'];
+
+  const refreshResource = () => setResources();
 
   React.useEffect(() => {
     setResources();
   }, [orgLabel, projectLabel, resourceId, rev, tag]);
 
+  const [openPlugins, setOpenPlugins] = React.useState<string[]>([]);
+  const LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME = 'expanded_plugins';
+
+  React.useEffect(() => {
+    if (localStorage.getItem(LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME)) {
+      setOpenPlugins(
+        JSON.parse(
+          localStorage.getItem(
+            LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME
+          ) as string
+        )
+      );
+    }
+  }, []);
+
+  React.useEffect(() => {
+    localStorage.setItem(
+      LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME,
+      JSON.stringify(openPlugins)
+    );
+  }, [openPlugins]);
+
+  React.useEffect(() => {
+    // if coming from studio, override what user has set in localstorage
+    if (studioPlugins?.customise && pluginManifest) {
+      console.log(studioPlugins.plugins);
+      setOpenPlugins(
+        studioPlugins.plugins
+          .filter(p => p.expanded)
+          .filter(
+            p =>
+              p.key in pluginManifest ||
+              builtInPlugins.find(b => b.key === p.key)
+          )
+          .map(p => {
+            if (builtInPlugins.find(b => b.key === p.key)) {
+              const pluginName = builtInPlugins.find(b => b.key === p.key)
+                ?.name;
+              return pluginName ? pluginName : '';
+            }
+            return pluginManifest[p.key].name;
+          })
+      );
+    }
+  }, [studioPlugins]);
+
+  const pluginCollapsedToggle = (pluginName: string) => {
+    setOpenPlugins(
+      openPlugins.includes(pluginName)
+        ? openPlugins.filter(p => p !== pluginName)
+        : [...openPlugins, pluginName]
+    );
+  };
+
+  const previewPlugin = resource &&
+    ((studioPlugins?.customise &&
+      studioPlugins?.plugins.find(p => p.key === 'preview')) ||
+      !studioPlugins?.customise) &&
+    resource.distribution && (
+      <Preview
+        key="previewPlugin"
+        nexus={nexus}
+        resource={resource}
+        collapsed={openPlugins.includes('preview')}
+        handleCollapseChanged={() => {
+          pluginCollapsedToggle('preview');
+        }}
+      />
+    );
+
+  const adminPlugin = resource &&
+    latestResource &&
+    ((studioPlugins?.customise &&
+      studioPlugins?.plugins.find(p => p.key === 'admin')) ||
+      !studioPlugins?.customise) && (
+      <AdminPlugin
+        key="adminPlugin"
+        editable={isLatest && !isDeprecated(resource)}
+        orgLabel={orgLabel}
+        projectLabel={projectLabel}
+        resourceId={resourceId}
+        resource={resource}
+        latestResource={latestResource}
+        activeTabKey={activeTabKey}
+        expandedFromQuery={expandedFromQuery}
+        refProp={ref}
+        goToResource={goToResource}
+        handleTabChange={handleTabChange}
+        handleGoToInternalLink={handleGoToInternalLink}
+        handleEditFormSubmit={handleEditFormSubmit}
+        handleExpanded={handleExpanded}
+        refreshResource={refreshResource}
+        collapsed={openPlugins.includes('advanced')}
+        handleCollapseChanged={() => {
+          pluginCollapsedToggle('advanced');
+        }}
+      />
+    );
+
+  const videoPlugin = resource &&
+    resource['video'] &&
+    ((studioPlugins?.customise &&
+      studioPlugins?.plugins.find(p => p.key === 'video')) ||
+      !studioPlugins?.customise) && (
+      <VideoPluginContainer
+        key="videoPlugin"
+        resource={resource}
+        orgLabel={orgLabel}
+        projectLabel={projectLabel}
+        collapsed={openPlugins.includes('video')}
+        handleCollapseChanged={() => {
+          pluginCollapsedToggle('video');
+        }}
+      />
+    );
+  const { isUserInSupportedJiraRealm } = useJiraPlugin();
+
+  const jiraPlugin = resource &&
+    deltaPlugins &&
+    'jira' in deltaPlugins &&
+    isUserInSupportedJiraRealm && (
+      <Collapse
+        onChange={() => {
+          pluginCollapsedToggle('jira');
+        }}
+        activeKey={openPlugins.includes('jira') ? 'jira' : undefined}
+      >
+        <Collapse.Panel header="JIRA" key="jira">
+          {openPlugins.includes('jira') && (
+            <JIRAPluginContainer
+              resource={resource}
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+            />
+          )}
+        </Collapse.Panel>
+      </Collapse>
+    );
+
+  const builtInPlugins = [
+    { key: 'preview', name: 'preview', pluginComponent: previewPlugin },
+    { key: 'admin', name: 'advanced', pluginComponent: adminPlugin },
+    { key: 'video', name: 'video', pluginComponent: videoPlugin },
+    { key: 'jira', name: 'jira', pluginComponent: jiraPlugin },
+  ];
+
   return (
     <>
       <div className="resource-details">
-        {!!resource && (
+        <>
           <Helmet
-            title={`${getResourceLabel(
-              resource
-            )} | ${projectLabel} | ${orgLabel} | Nexus Web`}
+            title={`${
+              resource ? getResourceLabel(resource) : resourceId
+            } | ${projectLabel} | ${orgLabel} | Nexus Web`}
             meta={[
               {
                 name: 'description',
-                content: getResourceLabel(resource),
+                content: resource
+                  ? getResourceLabel(resource)
+                  : labelOf(decodeURIComponent(resourceId)),
               },
             ]}
           />
-        )}
+          {resource && (
+            <ResourceViewActionsContainer
+              resource={resource}
+              latestResource={latestResource as Resource}
+              isLatest={isLatest}
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+            />
+          )}
+          <h1 className="name">
+            <Link
+              to={makeResourceUri(
+                orgLabel,
+                projectLabel,
+                decodeURIComponent(resourceId),
+                {}
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {resource
+                ? getResourceLabel(resource)
+                : labelOf(decodeURIComponent(resourceId))}
+            </Link>
+          </h1>
+        </>
+
         <Spin spinning={busy}>
           {!!error && (
-            <Card>
-              <Empty description={error.message} />
-            </Card>
-          )}
-          {!!resource && !!latestResource && !error && (
             <>
-              <h1 className="name">
-                <span>
-                  <a onClick={() => goToOrg(orgLabel)}>{orgLabel}</a> |{' '}
-                  <a onClick={() => goToProject(orgLabel, projectLabel)}>
-                    {projectLabel}
-                  </a>{' '}
-                  |{' '}
-                </span>
-                {getResourceLabel(resource)}
-              </h1>
+              <Alert
+                message={
+                  error.wasUpdated ? 'Resource updated with errors' : 'Error'
+                }
+                showIcon
+                closable
+                type="error"
+                description={
+                  <>
+                    <Typography.Paragraph
+                      ellipsis={{ rows: 2, expandable: true }}
+                    >
+                      {error.message}
+                    </Typography.Paragraph>
+                    {error.rejections && (
+                      <Collapse bordered={false} ghost>
+                        <Collapse.Panel key={1} header="More detail...">
+                          <>
+                            <ul>
+                              {error.rejections.map((el, ix) => (
+                                <li key={ix}>{el.reason}</li>
+                              ))}
+                            </ul>
+
+                            <p>
+                              For further information please refer to the API
+                              documentation,{' '}
+                              <a
+                                target="_blank"
+                                href="https://bluebrainnexus.io/docs/delta/api/"
+                              >
+                                https://bluebrainnexus.io/docs/delta/api/
+                              </a>
+                            </p>
+                          </>
+                        </Collapse.Panel>
+                      </Collapse>
+                    )}
+                  </>
+                }
+              />
+              <br />
+            </>
+          )}
+          {resource && (
+            <ResourceMetadata
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              resource={resource}
+            />
+          )}
+          <Divider />
+          {!!resource && !!latestResource && (
+            <>
               {!isLatest && (
                 <Alert
                   type="warning"
@@ -299,88 +621,43 @@ const ResourceViewContainer: React.FunctionComponent<{
                 />
               )}
               {isDeprecated(resource) && (
-                <Alert
-                  type="warning"
-                  message="This is a deprecated resource."
-                  closable
-                />
-              )}
-              {filteredPlugins && filteredPlugins.length > 0 && (
-                <ResourcePlugins
-                  resource={resource}
-                  goToResource={goToSelfResource}
-                />
-              )}
-
-              <AccessControl
-                path={`/${orgLabel}/${projectLabel}`}
-                permissions={['resources/write']}
-                noAccessComponent={() => (
-                  <div>
-                    <div style={{ marginTop: 15 }}>
-                      <Alert
-                        message="You don't have access to edit the resource. You can nonetheless see the resource metadata below."
-                        type="info"
-                      />
-                      {resource.distribution && (
-                        <Preview nexus={nexus} resource={resource} />
-                      )}
-                      <AdminPlugin
-                        editable={false}
-                        orgLabel={orgLabel}
-                        projectLabel={projectLabel}
-                        resourceId={resourceId}
-                        resource={resource}
-                        latestResource={latestResource}
-                        activeTabKey={activeTabKey}
-                        expandedFromQuery={expandedFromQuery}
-                        refProp={ref}
-                        goToResource={goToResource}
-                        handleTabChange={handleTabChange}
-                        handleGoToInternalLink={handleGoToInternalLink}
-                        handleEditFormSubmit={handleEditFormSubmit}
-                        handleExpanded={handleExpanded}
-                      />
-                    </div>
-                  </div>
-                )}
-              >
-                {(!filteredPlugins || filteredPlugins.length === 0) && (
+                <>
                   <Alert
-                    message="This resource does not have plugins configured yet. You can nonetheless edit the resource metadata below."
-                    type="info"
+                    type="error"
+                    message={
+                      <>
+                        <DeleteOutlined /> This resource is deprecated. You
+                        cannot modify it.
+                      </>
+                    }
                   />
+                  <br />
+                </>
+              )}
+              <ResourcePlugins
+                resource={resource}
+                goToResource={goToSelfResource}
+                openPlugins={openPlugins}
+                studioDefinedPluginsToInclude={
+                  studioPlugins && studioPlugins.customise
+                    ? studioPlugins.plugins.map(p => p.key)
+                    : undefined
+                }
+                builtInPlugins={builtInPlugins}
+                handleCollapseChange={pluginName =>
+                  pluginCollapsedToggle(pluginName)
+                }
+              />
+              {!!resource['@type'] &&
+                typeof resource['@type'] === 'string' &&
+                nonEditableResourceTypes.includes(resource['@type']) && (
+                  <p>
+                    <Alert
+                      message="This resource is not editable because it is of the type 'File'. For further information please contact the administrator."
+                      type="info"
+                    />
+                  </p>
                 )}
-                {!!resource['@type'] &&
-                  typeof resource['@type'] === 'string' &&
-                  nonEditableResourceTypes.includes(resource['@type']) && (
-                    <p>
-                      <Alert
-                        message="This resource is not editable because it is of the type 'File'. For further information please contact the administrator."
-                        type="info"
-                      />
-                    </p>
-                  )}
-                {resource.distribution && (
-                  <Preview nexus={nexus} resource={resource} />
-                )}
-                <AdminPlugin
-                  editable={isLatest && !isDeprecated(resource)}
-                  orgLabel={orgLabel}
-                  projectLabel={projectLabel}
-                  resourceId={resourceId}
-                  resource={resource}
-                  latestResource={latestResource}
-                  activeTabKey={activeTabKey}
-                  expandedFromQuery={expandedFromQuery}
-                  refProp={ref}
-                  goToResource={goToResource}
-                  handleTabChange={handleTabChange}
-                  handleGoToInternalLink={handleGoToInternalLink}
-                  handleEditFormSubmit={handleEditFormSubmit}
-                  handleExpanded={handleExpanded}
-                />
-              </AccessControl>
             </>
           )}
         </Spin>

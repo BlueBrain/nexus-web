@@ -4,6 +4,7 @@ import { ReloadOutlined } from '@ant-design/icons';
 import * as moment from 'moment';
 import { Statistics } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
+import FriendlyTimeAgo from '../../../../shared/components/FriendlyDate';
 
 type ViewStatisticsProgressProps = {
   processedEvents: number;
@@ -16,11 +17,13 @@ type ViewStatisticsProgressProps = {
 export const ViewStatisticsProgress: React.FunctionComponent<ViewStatisticsProgressProps> = props => {
   const percent = Math.floor((props.processedEvents / props.totalEvents) * 100);
   const label =
-    percent === 100
-      ? `last indexed: ${moment(props.lastIndexed)
-          .startOf('days')
-          .fromNow()}`
-      : 'indexing...';
+    percent === 100 ? (
+      <>
+        last indexed: <FriendlyTimeAgo date={moment(props.lastIndexed)} />
+      </>
+    ) : (
+      <>indexing...</>
+    );
 
   return (
     <>
@@ -30,7 +33,7 @@ export const ViewStatisticsProgress: React.FunctionComponent<ViewStatisticsProgr
           onClick={() => props.onClickRefresh && props.onClickRefresh()}
           icon={<ReloadOutlined spin={true} />}
         >
-          New Resources indexed. Click to reload
+          Resources indexed. Click to reload
         </Button>
       ) : (
         <Tooltip title={label}>
@@ -46,6 +49,8 @@ export type ViewStatisticsContainerProps = {
   projectLabel: string;
   resourceId: string;
   onClickRefresh?: VoidFunction;
+  statisticsOnMount?: Statistics;
+  paused?: boolean;
 };
 
 export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsContainerProps> = props => {
@@ -60,6 +65,18 @@ export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsCont
     data: null,
     loading: false,
   });
+
+  React.useEffect(() => {
+    if (props.statisticsOnMount) {
+      setEventsAtMount(props.statisticsOnMount.totalEvents);
+      setState({
+        error: null,
+        data: props.statisticsOnMount,
+        loading: false,
+      });
+      setHasNewlyIndexedResources(false);
+    }
+  }, [props.statisticsOnMount]);
 
   const onRefreshResources = () => {
     setHasNewlyIndexedResources(false);
@@ -87,6 +104,8 @@ export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsCont
       error: null,
       data: null,
     });
+    if (props.paused) return;
+
     const poll = nexus.View.pollStatistics(
       props.orgLabel,
       props.projectLabel,
@@ -114,9 +133,9 @@ export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsCont
     return () => {
       poll.unsubscribe();
     };
-  }, [props.orgLabel, props.projectLabel, props.resourceId]);
+  }, [props.orgLabel, props.projectLabel, props.resourceId, props.paused]);
 
-  if (!loading && !error && data) {
+  if (!loading && !error && data && !props.paused) {
     return (
       <ViewStatisticsProgress
         totalEvents={data.totalEvents}

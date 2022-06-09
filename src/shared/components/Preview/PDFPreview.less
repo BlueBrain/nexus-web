@@ -1,70 +1,77 @@
-.loadingMessage {
-  width: 100%;
-  height: 100%;
-  z-index: 1100;
-  font-size: 50px;
-  text-align: center;
-  color: #008dff;
-}
+@import '../../lib.less';
 
-.asset-preview-mask {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 1000;
-  height: 100%;
-  background-color: #00000073;
-}
+.pdf-preview {
+  .loadingMessage {
+    width: 100%;
+    height: 100%;
+    z-index: 1100;
+    font-size: 50px;
+    text-align: center;
+    color: @fusion-primary-color;
+  }
 
-.asset-preview-wrap {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow: auto;
-  outline: 0;
-  -webkit-overflow-scrolling: touch;
-  z-index: 1080;
-}
+  .asset-preview-mask {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    height: 100%;
+    background-color: #00000073;
 
-.asset-preview {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow: hidden;
-  justify-content: center;
-  display: flex;
-}
+    .asset-preview-wrap {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      overflow: auto;
+      outline: 0;
+      -webkit-overflow-scrolling: touch;
+      z-index: 1080;
 
-.document {
-  margin-top: 60px;
-}
+      .asset-preview {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: hidden;
+        justify-content: center;
+        display: flex;
 
-canvas {
-  height: auto !important;
-}
+        .document {
+          margin: auto;
 
-.page-controls {
-  background: white;
-  opacity: 1;
-  transition: opacity ease-in-out 0.2s;
-  box-shadow: 0 30px 40px 0 rgb(16 36 94 / 20%);
-  border-radius: 4px;
-  font-size: 20px;
-  text-align: center;
-  margin: 8px auto;
-  width: 200px;
-}
+          .page-controls {
+            display: flex;
+            justify-content: space-between;
+            background: @fusion-background-color;
+            opacity: 1;
+            transition: opacity ease-in-out 0.2s;
+            box-shadow: 0 30px 40px 0 rgb(16 36 94 / 20%);
+            border-radius: 4px;
+            font-size: 20px;
+            text-align: center;
+            margin: 8px auto;
+            width: 200px;
+            align-items: center;
 
-.page-controls .ant-btn {
-  border: none;
-}
+            &__page-number {
+              min-width: 110px;
+            }
 
-.page-controls .ant-btn[disabled] {
-  background: transparent !important;
+            .ant-btn {
+              border: none;
+
+              &[disabled] {
+                background: transparent;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }

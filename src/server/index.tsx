@@ -1,15 +1,18 @@
-import { resolve, join } from 'path';
-import { readFileSync } from 'fs';
+import { join } from 'path';
 import * as express from 'express';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
 import * as promBundle from 'express-prom-bundle';
 import Helmet from 'react-helmet';
 import html from './html';
+import setUpDeltaProxy from './proxy';
 import silentRefreshHtml from './silent_refresh';
 import { RootState } from '../shared/store/reducers';
 import { DEFAULT_UI_SETTINGS } from '../shared/store/reducers/ui-settings';
-import { DEFAULT_SEARCH_CONFIG_PROJECT } from '../shared/store/reducers/config';
+import {
+  DEFAULT_SEARCH_CONFIG_PROJECT,
+  DEFAULT_SERVICE_ACCOUNTS_REALM,
+} from '../shared/store/reducers/config';
 import { DEFAULT_SEARCH_STATE } from '../shared/store/reducers/search';
 
 const PORT_NUMBER = 8000;
@@ -24,8 +27,8 @@ const pluginsManifestPath =
 
 // configure instance logo
 const layoutSettings = {
+  docsLink: process.env.DOCS_LINK || '',
   logoImg: process.env.LOGO_IMG || '',
-  logoLink: process.env.LOGO_LINK || 'https://bluebrainnexus.io/',
   forgeLink: process.env.FORGE_LINK || '',
 };
 
@@ -57,6 +60,9 @@ app.use(`${base}/public`, express.static(join(__dirname, 'public')));
 // if in Dev mode, setup HMR and all the fancy stuff
 if (process.env.NODE_ENV !== 'production') {
   const { setupDevEnvironment } = require('./dev');
+  if (process.env.PROXY) {
+    setUpDeltaProxy(app, process.env.API_ENDPOINT || '');
+  }
   setupDevEnvironment(app);
 }
 
@@ -79,14 +85,28 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       pluginsManifestPath,
       subAppsManifestPath,
       dataModelsLocation,
-      apiEndpoint: process.env.API_ENDPOINT || '/',
+      apiEndpoint: process.env.PROXY
+        ? '/proxy'
+        : process.env.API_ENDPOINT || '',
       basePath: base,
-      clientId: process.env.CLIENT_ID || 'nexus-web',
+      clientId: process.env.CLIENT_ID || 'bbp-nise-dev-nexus-fusion',
       redirectHostName: `${process.env.HOST_NAME ||
         `${req.protocol}://${req.headers.host}`}${base}`,
+      serviceAccountsRealm:
+        process.env.SERVICE_ACCOUNTS_REALM || DEFAULT_SERVICE_ACCOUNTS_REALM,
       sentryDsn: process.env.SENTRY_DSN,
       gtmCode: process.env.GTM_CODE,
       studioView: process.env.STUDIO_VIEW || '',
+      jiraUrl: process.env.JIRA_URL || '',
+      jiraResourceCustomFieldName: process.env.JIRA_RESOURCE_FIELD_NAME || '',
+      jiraResourceCustomFieldLabel:
+        process.env.JIRA_RESOURCE_FIELD_LABEL || 'Nexus Resource',
+      jiraProjectCustomFieldName: process.env.JIRA_PROJECT_FIELD_NAME || '',
+      jiraProjectCustomFieldLabel:
+        process.env.JIRA_PROJECT_FIELD_LABEL || 'Nexus Project',
+      ...(process.env.JIRA_SUPPORTED_REALMS && {
+        jiraSupportedRealms: process.env.JIRA_SUPPORTED_REALMS.split(','),
+      }),
     },
     uiSettings: DEFAULT_UI_SETTINGS,
     oidc: {

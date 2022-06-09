@@ -1,4 +1,6 @@
-## Nexus Fusion
+<img src="docs/Blue-Brain-Nexus-Fusion-Github-banner.jpg"/>
+
+# Nexus Fusion
 
 > Note: expect this repo to be renamed to https://github.com/BlueBrain/nexus-fusion to match the new application name and Nexus component branding scheme.
 
@@ -7,6 +9,7 @@
   <a href="https://codecov.io/gh/BlueBrain/nexus-web">
     <img src="https://codecov.io/gh/BlueBrain/nexus-web/branch/master/graph/badge.svg" alt="Coverage Status">
   </a>
+
   <a href="https://twitter.com/intent/follow?screen_name=bluebrainnexus">
     <img alt="Follow on Twitter" src="https://img.shields.io/twitter/follow/bluebrainnexus.svg?style=social&label=Follow">
   </a>
@@ -78,6 +81,7 @@ docker build . --tag=nexus-web
 - `HOST_NAME`: name of host where application is available from: i.e. `https://bbp-nexus.epfl.ch` (default is protocol + host where server is running from)
 - `CLIENT_ID`: The application name used for _OpenID Connect_ authentication (default is `nexus-web`)
 - `API_ENDPOINT`: The URL pointing to Nexus API. Default is '/'
+- `SERVICE_ACCOUNTS_REALM`: The realm that is configured for service accounts that should be hidden for Login. Default is 'serviceaccounts'.
 - `SECURE`: Is Nexus Fusion running in https or not. Default is `false`
 - `GTM_CODE`: The Google Analytics Identifier. GA won't be present unless an ID is specified.
 - `SENTRY_DSN`: The sentry URL Nexus Fusion needs to report errors to. Default is undefined.
@@ -142,4 +146,4 @@ There are several channels provided to address different issues:
 The development of this software was supported by funding to the Blue Brain Project, a research center of the École polytechnique fédérale de
 Lausanne (EPFL), from the Swiss government's ETH Board of the Swiss Federal Institutes of Technology.
 
-Copyright © 2015-2021 Blue Brain Project/EPFL
+Copyright © 2015-2022 Blue Brain Project/EPFL

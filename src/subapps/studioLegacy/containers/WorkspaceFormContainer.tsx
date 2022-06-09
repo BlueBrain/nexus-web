@@ -53,6 +53,7 @@ const SelectViews: React.FunctionComponent<{
 }> = ({ selectedView, views, setView }) => {
   const { Option } = Select;
   const viewOptions: any[] = views.map(d => d['@id']);
+
   return (
     <>
       <Select
@@ -84,7 +85,9 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
   const [dashboards, setDashBoards] = React.useState<Resource[]>([]);
   const [targetKeys, setTargetKeys] = React.useState<string[]>([]);
   const [views, setViews] = React.useState<Resource[]>([]);
-  const [viewToAdd, setViewToAdd] = React.useState<string>('');
+  const [viewToAdd, setViewToAdd] = React.useState<string>(
+    DEFAULT_SPARQL_VIEW_ID
+  );
   const [label, setLabel] = React.useState<string>();
   const [description, setDescription] = React.useState<string>();
   const [error, setError] = React.useState<NexusSparqlError | Error>();
@@ -297,6 +300,22 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
     );
   }
 
+  const [hasOldDashboard, setHasOldDashboard] = React.useState<boolean>(false);
+  React.useEffect(() => {
+    Promise.all(
+      currentDashboards.map(d =>
+        nexus.Resource.get(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(d.dashboard)
+        )
+      )
+    ).then(results => {
+      const hasOldDashboard = !!results.find(d => !('dataTable' in d));
+      setHasOldDashboard(hasOldDashboard);
+    });
+  }, [currentDashboards]);
+
   return (
     <>
       {workspace ? (
@@ -308,7 +327,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
           width={700}
         >
           <Form layout="vertical">
-            {currentDashboards.length > 0 ? (
+            {hasOldDashboard && currentDashboards.length > 0 && viewToAdd && (
               <Form.Item label={'Select View for the Dashboards(s)'}>
                 <SelectViews
                   views={views}
@@ -316,7 +335,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
                   selectedView={viewToAdd}
                 />
               </Form.Item>
-            ) : null}
+            )}
             <Form.Item label={'Add or Remove Dashboards'}>
               <Transfer
                 targetKeys={targetKeys}

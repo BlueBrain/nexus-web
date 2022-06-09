@@ -2,9 +2,6 @@ import * as React from 'react';
 import OrgsListView from './views/OrgsListView';
 import ProjectsView from './views/ProjectsView';
 import ProjectView from './views/ProjectView';
-import ElasticSearchQueryView from './views/ElasticSearchQueryView';
-import SparqlQueryView from './views/SparqlQueryView';
-import ACLsView from './views/ACLsView';
 import { SubApp } from '..';
 
 const subAppType = 'internal';
@@ -60,21 +57,18 @@ const Admin: SubApp = () => {
         component: AdminSubappProviderHOC(ProjectsView),
       },
       {
-        path: '/:orgLabel/:projectLabel',
+        path: [
+          '/:orgLabel/:projectLabel',
+          '/:orgLabel/:projectLabel/browse',
+          '/:orgLabel/:projectLabel/query/:viewId?',
+          '/:orgLabel/:projectLabel/create',
+          '/:orgLabel/:projectLabel/statistics',
+          '/:orgLabel/:projectLabel/settings',
+          '/:orgLabel/:projectLabel/graph-analytics',
+          '/:orgLabel/:projectLabel/jira',
+        ],
         exact: true,
         component: AdminSubappProviderHOC(ProjectView),
-      },
-      {
-        path: '/:orgLabel/:projectLabel/:viewId/_search',
-        component: AdminSubappProviderHOC(ElasticSearchQueryView),
-      },
-      {
-        path: '/:orgLabel/:projectLabel/:viewId/sparql',
-        component: AdminSubappProviderHOC(SparqlQueryView),
-      },
-      {
-        path: '/:orgLabel/:projectLabel/_settings/acls',
-        component: AdminSubappProviderHOC(ACLsView),
       },
     ],
   };

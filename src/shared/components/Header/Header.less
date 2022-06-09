@@ -5,7 +5,7 @@
   justify-content: space-between;
   box-sizing: content-box;
   height: 52px;
-  background-color: #001529;
+  background-color: @fusion-menu-color;
   position: fixed;
   width: 100%;
   z-index: 20;
@@ -13,7 +13,7 @@
 
   .selectors {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     flex-grow: 1;
     margin: 0 4px;
@@ -33,35 +33,32 @@
     a {
       margin: 0 4px;
       font-weight: lighter;
-      opacity: 0.9;
-
-      &:hover {
-        opacity: 1;
-      }
     }
 
     .menu-dropdown {
       align-self: center;
       margin: 5px 5px 4px;
       bottom: 50px;
-      color: @subtle-white;
-      border: 1px solid @subtle-white;
+      color: @fusion-background-color;
+      border: 1px solid @fusion-background-color;
       border-radius: @border-radius-base;
       padding: 3px 5px;
+      height: 32px;
     }
   }
 
   .ui-header-info-button {
     margin: 5px 5px 4px;
     cursor: pointer;
-    border: 1px solid @subtle-white;
+    border: 1px solid @fusion-background-color;
     border-radius: @border-radius-base;
     padding: 5px;
-    opacity: 0.8;
+    height: 32px;
+  }
 
-    &:hover {
-      opacity: 1;
-    }
+  .cart {
+    color: @fusion-background-color;
+    background-color: @fusion-menu-color;
   }
 
   .copy-token-button {
@@ -70,17 +67,18 @@
     border-radius: @border-radius-base;
     outline-style: none;
     line-height: 1rem;
-    cursor: pointer;
+    cursor: pointe r;
     font-size: 0.9rem;
     text-align: left;
-    border: 1px solid @subtle-white;
+    border: 1px solid @fusion-background-color;
     display: flex;
     align-items: center;
     background-color: inherit;
+    cursor: pointer;
 
     .button-text {
       margin-left: 0.4rem;
-      color: @subtle-white;
+      color: @fusion-background-color;
     }
   }
 
@@ -100,8 +98,11 @@
   }
 }
 
-.nav-item {
-  font-size: 16px;
+.ant-popover-inner {
+  background-color: @fusion-background-color !important;
+}
+.ant-popover-inner-content {
+  padding: 6px !important;
 }
 
 .popover-title {

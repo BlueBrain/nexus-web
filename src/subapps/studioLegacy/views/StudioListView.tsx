@@ -1,32 +1,17 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Spin, Empty } from 'antd';
-import { useSelector } from 'react-redux';
+import { Spin, List, Input } from 'antd';
 import { useHistory } from 'react-router-dom';
-
-import { RootState } from '../../../shared/store/reducers';
-import ExpandableStudioList from '../components/ExpandableStudioList';
-import { getOrgAndProjectFromProjectId } from '../../../shared/utils';
+import { useQuery } from 'react-query';
+import {
+  getOrgAndProjectFromProjectId,
+  makeStudioUri,
+} from '../../../shared/utils';
+import '../studio.less';
 
 const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';
-
-const ES_QUERY = {
-  from: 0,
-  size: 100,
-  query: {
-    bool: {
-      must: [
-        {
-          term: { _deprecated: false },
-        },
-        {
-          term: { '@type': DEFAULT_STUDIO_TYPE },
-        },
-      ],
-    },
-  },
-};
+const STUDIO_RESULTS_DEFAULT_SIZE = 1000;
 
 export type StudioItem = {
   id: string;
@@ -38,111 +23,113 @@ export type StudioItem = {
 };
 
 const StudioListView: React.FC = () => {
-  const studioView = useSelector((state: RootState) => state.config.studioView);
   const nexus = useNexusContext();
   const history = useHistory();
+  const [studioList, setStudioList] = React.useState<StudioItem[]>([]);
+  const [searchFilter, setSearchFilter] = React.useState<string>('');
 
-  const [{ busy, error, studios, total }, setStudios] = React.useState<{
-    busy: boolean;
-    error: Error | null;
-    studios: StudioItem[];
-    total: number;
-  }>({
-    busy: false,
-    error: null,
-    studios: [],
-    total: 0,
+  const fetchStudios = async () =>
+    nexus.Resource.list(undefined, undefined, {
+      size: STUDIO_RESULTS_DEFAULT_SIZE,
+      deprecated: false,
+      type: DEFAULT_STUDIO_TYPE,
+    });
+
+  const { data, status } = useQuery({
+    queryKey: 'studios',
+    queryFn: fetchStudios,
+    enabled: true,
+    retry: 2,
   });
 
   React.useEffect(() => {
-    if (studioView && studioView !== '') {
-      setStudios({
-        total: 0,
-        busy: true,
-        error: null,
-        studios: [],
-      });
-      const studioPath = studioView && studioView.split('/');
-      const [studiosOrg, studiosProject, studiosView] = studioPath;
-
-      nexus.View.elasticSearchQuery(
-        studiosOrg,
-        studiosProject,
-        studiosView,
-        ES_QUERY
-      )
-        .then(response => {
-          const total = response.hits.total.value;
-          const studioList = parseStudiosFromES(response);
-
-          setStudios({
-            total,
-            busy: false,
-            error: null,
-            studios: studioList,
-          });
+    if (data) {
+      const list: StudioItem[] = data._results
+        .map(r => {
+          const labels = getOrgAndProjectFromProjectId(r._project);
+          return {
+            id: r['@id'],
+            label: r.label,
+            description: r.description,
+            projectLabel: labels.projectLabel,
+            orgLabel: labels.orgLabel,
+          };
         })
-        .catch(error => {
-          setStudios({
-            error,
-            busy: false,
-            studios: [],
-            total: 0,
-          });
-        });
-    } else {
-    }
-  }, []);
-
-  const parseStudiosFromES = (response: any) => {
-    const results = response.hits;
-
-    if (results && results.hits && results.hits.length) {
-      return results.hits.map((studio: any) => {
-        const source = JSON.parse(studio._source._original_source || {});
-        const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(
-          studio._source._project
+        .filter(
+          s =>
+            s.label.toLowerCase().includes(searchFilter) ||
+            s.orgLabel.includes(searchFilter) ||
+            s.projectLabel.includes(searchFilter)
         );
-        const { label, description, workspaces } = source;
-
-        return {
-          label,
-          description,
-          workspaces,
-          orgLabel,
-          projectLabel,
-          id: studio._id,
-        };
-      });
+      setStudioList(list);
     }
-  };
-
+    return () => {
+      // do nothing
+    };
+  }, [data, searchFilter]);
   const goToStudio = (studioUrl: string) => {
     history.push(studioUrl);
   };
 
-  if (studioView === '') {
-    return (
-      <div className="view-container">
-        <div className="global-studio-list">
-          <h1>Studios</h1>
-          <Empty description="There is no Studio list configured. Please contact your administrator." />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="view-container">
       <div className="global-studio-list">
-        <h1>Studios</h1>
-        <Spin spinning={busy}>
-          <ExpandableStudioList
-            studios={studios}
-            error={error}
-            goToStudio={goToStudio}
-          />
-        </Spin>
+        <div className={'studio-header'}>
+          <h1>Studios</h1>
+          <Input.Search
+            className={'studio-search'}
+            placeholder={'Type to filter'}
+            onChange={e => {
+              setSearchFilter(e.target.value.toLowerCase());
+            }}
+          ></Input.Search>
+        </div>
+        <div className={'studio-description'}>
+          <p>
+            You can see all the studios in Nexus projects where you have read
+            access. The list is alphabetically sorted.
+          </p>
+        </div>
+        {status === 'error' ? (
+          <>A Error Occured</>
+        ) : (
+          <Spin
+            spinning={status === 'loading'}
+            size={'large'}
+            style={{ display: 'flex' }}
+          >
+            <List
+              pagination={{
+                total: studioList.length,
+                showTotal: total => ` ${total} results`,
+                pageSize: 10,
+              }}
+              className={'studio-list'}
+              dataSource={studioList}
+              renderItem={item => {
+                return (
+                  <List.Item
+                    onClick={() => {
+                      const { orgLabel, projectLabel, id } = item;
+                      const studioUri = makeStudioUri(
+                        orgLabel,
+                        projectLabel,
+                        id
+                      );
+                      goToStudio(studioUri);
+                    }}
+                    className={'studio-list-item'}
+                  >
+                    <div className={'studio'}>
+                      {`${item.orgLabel}/${item.projectLabel}/`}
+                      <span className={'studio-name'}>{item.label}</span>
+                    </div>
+                  </List.Item>
+                );
+              }}
+            ></List>
+          </Spin>
+        )}
       </div>
     </div>
   );

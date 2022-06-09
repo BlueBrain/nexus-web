@@ -8,7 +8,7 @@ import { RootState } from '../store/reducers';
 const Home: React.FunctionComponent = () => {
   const { subAppProps } = useSubApps();
   const userLoggedIn = useSelector(
-    ({ oidc }: RootState) => oidc && oidc.user !== undefined
+    ({ oidc }: RootState) => oidc && !!oidc.user
   );
 
   return (

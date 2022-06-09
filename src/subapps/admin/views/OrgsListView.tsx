@@ -10,7 +10,9 @@ import OrgItem from '../components/Orgs/OrgItem';
 import ListItem from '../../../shared/components/List/Item';
 import { useHistory } from 'react-router';
 import { useAdminSubappContext } from '..';
-import useNotification from '../../../shared/hooks/useNotification';
+import useNotification, {
+  NexusError,
+} from '../../../shared/hooks/useNotification';
 
 const DEFAULT_PAGE_SIZE = 20;
 const SHOULD_INCLUDE_DEPRECATED = false;
@@ -82,11 +84,11 @@ const OrgsListView: React.FunctionComponent = () => {
         setFormBusy(false);
         goTo(newOrg.label);
       })
-      .catch((error: Error) => {
+      .catch((error: NexusError) => {
         setFormBusy(false);
         notification.error({
-          message: 'An unknown error occurred',
-          description: error.message,
+          message: 'Error creating organization',
+          description: error.reason,
         });
       });
   };

@@ -1,57 +1,64 @@
 import * as React from 'react';
+import { Spin, Tooltip } from 'antd';
 import {
-  BookOutlined,
+  AppstoreOutlined,
+  DatabaseOutlined,
   EnterOutlined,
-  FileOutlined,
+  LockOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { match } from 'ts-pattern';
-import { SearchQuickActions } from '.';
-
+import { AccessControl } from '@bbp/react-nexus';
 import './Hit.less';
 
-export enum HitType {
-  UNCERTAIN = 'UNCERTAIN',
-  RESOURCE = 'RESOURCE',
-  PROJECT = 'PROJECT',
-}
-
-const Hit: React.FC<{ type: HitType }> = ({ type, children }) => {
-  const { icon, actionTip } = match<
-    HitType,
-    { icon: JSX.Element; actionTip: JSX.Element }
-  >(type)
-    .with(HitType.RESOURCE, () => ({
-      icon: <FileOutlined />,
-      actionTip: (
-        <span className="enter">
-          {SearchQuickActions.VISIT} <EnterOutlined />
-        </span>
-      ),
-    }))
-    .with(HitType.UNCERTAIN, () => ({
-      icon: <SearchOutlined />,
-      actionTip: (
-        <span className="enter">
-          search <EnterOutlined />
-        </span>
-      ),
-    }))
-    .with(HitType.PROJECT, () => ({
-      icon: <BookOutlined />,
-      actionTip: (
-        <span className="enter">
-          visit project <EnterOutlined />
-        </span>
-      ),
-    }))
-    .run();
-
+export const globalSearchOption = (value: string | undefined) => {
   return (
     <div className="hit">
-      <div className="icon">{icon}</div>
-      <div className="body">{children}</div>
-      <div className="action">{actionTip}</div>
+      <div className="hit__icon">
+        <SearchOutlined />
+      </div>
+      <div className="hit__body">
+        <span>{value}</span>
+      </div>
+      <div className="hit__action">
+        <span>
+          <EnterOutlined className="hit__arrow" /> Search Nexus{' '}
+        </span>
+      </div>
+    </div>
+  );
+};
+
+const Hit: React.FC<{
+  orgLabel?: string;
+  projectLabel?: string;
+  type: 'project' | 'studio';
+}> = ({ children, orgLabel, projectLabel, type }) => {
+  return (
+    <div className="hit">
+      <div className="hit__icon">
+        {type === 'project' && <DatabaseOutlined />}
+        {type === 'studio' && <AppstoreOutlined />}
+      </div>
+      <div className="hit__body">{children}</div>
+      <div className="hit__action">
+        <span>
+          <EnterOutlined className="hit__arrow" /> Jump to {type}{' '}
+          {orgLabel && projectLabel && (
+            <AccessControl
+              permissions={['resources/read']}
+              path={`/${orgLabel}/${projectLabel}`}
+              noAccessComponent={() => (
+                <Tooltip title="No read access to data in this project">
+                  <LockOutlined />
+                </Tooltip>
+              )}
+              loadingComponent={<Spin spinning={true} size="small" />}
+            >
+              <span />
+            </AccessControl>
+          )}
+        </span>
+      </div>
     </div>
   );
 };

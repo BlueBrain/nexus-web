@@ -1,15 +1,19 @@
 import * as React from 'react';
 import { Tooltip } from 'antd';
 import { ResourceLink, Resource } from '@bbp/nexus-sdk';
-
 import TypesIconList from '../Types/TypesIcon';
-
 import './ResourceLinkItem.less';
 import { labelOf } from '../../utils';
 
+export type ResourceLinkAugmented = ResourceLink &
+  Resource & {
+    isRevisionSpecific: boolean;
+    originalLinkID: string;
+  };
+
 const ResourceLinkItem: React.FunctionComponent<{
-  link: ResourceLink;
-  onInternalClick?: (internalLink: ResourceLink) => void;
+  link: ResourceLinkAugmented;
+  onInternalClick?: (internalLink: ResourceLinkAugmented) => void;
 }> = ({ link, onInternalClick }) => {
   const isInternal = !!(link as Resource)._self;
   const paths = link.paths
@@ -26,16 +30,16 @@ const ResourceLinkItem: React.FunctionComponent<{
           ? // link inside nexus
             onInternalClick && onInternalClick(link)
           : // normal link to the internet
-            window && window.open(link['@id'], '_blanl');
+            window && window.open(link['@id'], '_blank');
       }}
     >
       <div className="label">
-        <Tooltip title={link['@id']}>
+        <Tooltip title={link['originalLinkID']}>
           {isInternal ? (
-            labelOf(link['@id'])
+            labelOf(link['originalLinkID'])
           ) : (
-            <a href={link['@id']} target="_blank">
-              {link['@id']}
+            <a href={link['originalLinkID']} target="_blank">
+              {link['originalLinkID']}
             </a>
           )}
         </Tooltip>

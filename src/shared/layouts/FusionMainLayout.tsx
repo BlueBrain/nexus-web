@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory, Link } from 'react-router-dom';
 import { NexusClient, Identity, Realm } from '@bbp/nexus-sdk';
 import { useNexus } from '@bbp/react-nexus';
 import { UserManager } from 'oidc-client';
@@ -14,23 +14,25 @@ import * as configActions from '../store/actions/config';
 import * as authActions from '../store/actions/auth';
 import { RootState } from '../store/reducers';
 import getUserManager from '../../client/userManager';
-import { getLogoutUrl } from '../utils';
+import { getLogoutUrl, getDestinationParam } from '../utils';
 import { url as githubIssueURL } from '../../../package.json';
 import useLocalStorage from '../hooks/useLocalStorage';
 import SearchBarContainer from '../containers/SearchBarContainer';
-import DataCartContainer from '../containers/DataCartContainer';
-import SideMenu from './SideMenu';
-
+import DataCartContainer, {
+  FallbackCart,
+} from '../containers/DataCartContainer';
 import './FusionMainLayout.less';
 import useNotification from '../hooks/useNotification';
+import ErrorBoundary from '../components/ErrorBoundary';
 
-const { Sider, Content } = Layout;
+const { Content } = Layout;
 
 declare var COMMIT_HASH: string;
 
 export interface FusionMainLayoutProps {
   authenticated: boolean;
   realms: Realm[];
+  serviceAccountsRealm: string;
   token?: string;
   name?: string;
   canLogin?: boolean;
@@ -44,7 +46,7 @@ export interface FusionMainLayoutProps {
   setPreferredRealm(name: string): void;
   performLogin(): void;
   layoutSettings: {
-    logoLink: string;
+    docsLink: string;
     logoImg: string;
     forgeLink: string;
   };
@@ -66,21 +68,10 @@ export type SubAppProps = {
   description?: string;
 };
 
-const homeIcon = require('../images/homeIcon.svg');
-
-const homeApp = {
-  label: 'Home',
-  key: 'home',
-  route: '/',
-  icon: homeIcon,
-  subAppType: 'internal',
-  url: undefined,
-  requireLogin: false,
-};
-
 const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   authenticated,
   realms,
+  serviceAccountsRealm,
   token,
   name,
   children,
@@ -93,8 +84,23 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   performLogin,
   layoutSettings,
 }) => {
-  const subApps = [homeApp, ...propSubApps];
+  const docsIcon = require('../images/logo.svg');
+  const docsApp = {
+    label: 'Docs',
+    key: 'docs',
+    route: '/',
+    icon: docsIcon,
+    subAppType: 'external',
+    url:
+      layoutSettings.docsLink === ''
+        ? 'https://bluebrainnexus.io/docs/'
+        : layoutSettings.docsLink,
+    requireLogin: false,
+  };
+
+  const subApps = [...propSubApps, docsApp];
   const location = useLocation();
+  const history = useHistory();
   const dispatch = useDispatch();
   const notification = useNotification();
   //   TODO: collapsed version https://github.com/BlueBrain/nexus/issues/1322
@@ -129,13 +135,27 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
 
   React.useEffect(() => {
     if (loginError) {
+      const errorDescription =
+        loginError.error.message === 'Network Error' ? (
+          <>
+            Nexus Web could not connect to the authentication provider.
+            <br />
+            <br />
+            Check your network connection
+          </>
+        ) : (
+          <>
+            The following error occurred:
+            <br />
+            <br />
+            {loginError.error.message}
+          </>
+        );
       notification.error({
         message: 'We could not log you in',
         description: (
           <div>
-            <p>We could not log you in due to :</p>{' '}
-            <p>{loginError.error.message}</p>
-            <p>Please contact your system administrators.</p>
+            <p>{errorDescription}</p>
           </div>
         ),
       });
@@ -157,6 +177,13 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   };
 
   const login = async (realmName: string) => {
+    try {
+      const destinationParams = getDestinationParam();
+      history.push(`/${destinationParams}`);
+    } catch (ex) {
+      // do nothing.
+    }
+
     setPreferredRealm(realmName);
     performLogin();
   };
@@ -164,14 +191,6 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   // Remove version from API URL
   const splits = apiEndpoint.split('/');
   const apiBase = splits.slice(0, splits.length - 1).join('/');
-
-  const onSelectSubAbpp = (data: any) => {
-    const item = subApps.find(subApp => subApp.key === data.key);
-    setSelectedItem(item as SubAppProps);
-    if (item && item.subAppType === 'internal') {
-      goTo(item.route);
-    }
-  };
 
   return (
     <>
@@ -181,6 +200,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
           name={authenticated ? name : undefined}
           token={token}
           realms={realms}
+          serviceAccountsRealm={serviceAccountsRealm}
           performLogin={login}
           links={[
             <a
@@ -203,26 +223,33 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
           consent={consent}
           commitHash={COMMIT_HASH}
           onClickRemoveConsent={() => setConsent(undefined)}
-          onClickSideBarToggle={() => setCollapsed(!collapsed)}
-          dataCart={<DataCartContainer />}
+          dataCart={
+            <ErrorBoundary fallback={FallbackCart}>
+              <DataCartContainer />
+            </ErrorBoundary>
+          }
+          subApps={subApps}
+          authenticated={authenticated}
         >
           <SearchBarContainer />
         </Header>
         <ConsentContainer consent={consent} updateConsent={setConsent} />
-        <SideMenu
-          selectedItem={selectedItem}
-          collapsed={collapsed}
-          onSelectSubAbpp={onSelectSubAbpp}
-          subApps={subApps}
-          authenticated={authenticated}
-          onClickCollapse={() => setCollapsed(!collapsed)}
-          layoutSettings={layoutSettings}
-        />
-        <Content
-          className={`${
-            collapsed ? `fusion-main-layout__content--collapsed` : ''
-          } site-layout-background fusion-main-layout__content`}
-        >
+        <div className="logo-container">
+          <Link to="/">
+            <div className="logo-container__logo">
+              <img
+                src={
+                  layoutSettings.logoImg === ''
+                    ? require('../images/fusion_logo.png')
+                    : layoutSettings.logoImg
+                }
+                alt="Logo"
+              />
+            </div>
+          </Link>
+        </div>
+
+        <Content className="site-layout-background fusion-main-layout__content">
           {children}
         </Content>
       </Layout>
@@ -239,12 +266,13 @@ const mapStateToProps = (state: RootState) => {
       auth.identities.data &&
       auth.identities.data.identities) ||
     [];
-  const { layoutSettings } = config;
+  const { layoutSettings, serviceAccountsRealm } = config;
 
   return {
     realms,
+    serviceAccountsRealm,
     layoutSettings,
-    authenticated: oidc.user !== undefined,
+    authenticated: !!oidc.user,
     token: oidc.user && oidc.user.access_token,
     name:
       oidc.user && oidc.user.profile && oidc.user.profile.preferred_username,
