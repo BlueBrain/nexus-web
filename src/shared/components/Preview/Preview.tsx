@@ -13,6 +13,8 @@ import { uuidv4 } from '../../utils';
 import PDFViewer from './PDFPreview';
 import useNotification from '../../hooks/useNotification';
 import TableViewerContainer from '../../containers/TableViewerContainer';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/reducers';
 
 const parseResourceId = (url: string) => {
   const fileUrlPattern = /files\/([\w-]+)\/([\w-]+)\/(.*)/;
@@ -50,6 +52,7 @@ const Preview: React.FC<{
   collapsed,
   handleCollapseChanged: handleCollapsedChanged,
 }) => {
+  const { apiEndpoint } = useSelector((state: RootState) => state.config);
   const notification = useNotification();
   const [selectedRows, setSelectedRows] = React.useState<any[]>([]);
   const [previewAsset, setPreviewAsset] = React.useState<any | undefined>();
@@ -134,7 +137,6 @@ const Preview: React.FC<{
   ];
 
   const downloadMultipleFiles = async () => {
-    console.log(selectedRows);
     const resourcesPayload = selectedRows
       .map(row => {
         return row.asset.url;
@@ -145,7 +147,6 @@ const Preview: React.FC<{
           resourceId,
           '@type': 'File',
           project: `${orgLabel}/${projectLabel}`,
-          path: `/${projectLabel}/${encodeURIComponent(resourceId)}`,
         };
       });
     const archiveId = uuidv4();
@@ -155,7 +156,18 @@ const Preview: React.FC<{
     };
 
     try {
-      await nexus.Archive.create(orgLabel, projectLabel, payload);
+      // TODO: fix the SDK to handle empty response
+      await fetch(
+        `${apiEndpoint}/archives/${orgLabel}/${projectLabel}/${payload.archiveId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('nexus__token')}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
     } catch (error) {
       notification.error({
         message: 'Failed to download the file',

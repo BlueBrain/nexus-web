@@ -23,9 +23,17 @@ const CreateStudioContainer: React.FC<{
   const [showModal, setShowModal] = React.useState(false);
   const notification = useNotification();
 
-  const generateStudioResource = (label: string, description?: string) => ({
+  const generateStudioResource = (
+    label: string,
+    description?: string,
+    plugins?: {
+      customise: boolean;
+      plugins: { key: string; expanded: boolean }[];
+    }
+  ) => ({
     label,
     description,
+    plugins,
     '@context': STUDIO_CONTEXT['@id'],
     '@type': DEFAULT_STUDIO_TYPE,
   });
@@ -50,19 +58,33 @@ const CreateStudioContainer: React.FC<{
     }
   };
 
-  const createStudioResource = async (label: string, description?: string) => {
+  const createStudioResource = async (
+    label: string,
+    description?: string,
+    plugins?: {
+      customise: boolean;
+      plugins: { key: string; expanded: boolean }[];
+    }
+  ) => {
     await makeStudioContext();
     return await nexus.Resource.create(
       orgLabel,
       projectLabel,
-      generateStudioResource(label, description)
+      generateStudioResource(label, description, plugins)
     );
   };
 
-  const saveStudio = (label: string, description?: string) => {
+  const saveStudio = (
+    label: string,
+    description?: string,
+    plugins?: {
+      customise: boolean;
+      plugins: { key: string; expanded: boolean }[];
+    }
+  ) => {
     setShowModal(false);
 
-    createStudioResource(label, description)
+    createStudioResource(label, description, plugins)
       .then(response => {
         goToStudio && goToStudio(response['@id']);
 
