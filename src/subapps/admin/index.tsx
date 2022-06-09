@@ -65,6 +65,7 @@ const Admin: SubApp = () => {
           '/:orgLabel/:projectLabel/statistics',
           '/:orgLabel/:projectLabel/settings',
           '/:orgLabel/:projectLabel/graph-analytics',
+          '/:orgLabel/:projectLabel/jira',
         ],
         exact: true,
         component: AdminSubappProviderHOC(ProjectView),

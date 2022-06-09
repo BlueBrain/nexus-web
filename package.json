@@ -175,7 +175,8 @@
       "\\.(css|less)$": "<rootDir>/src/__mocks__/styleMock.js"
     },
     "testPathIgnorePatterns": [
-      "<rootDir>/cypress/"
+      "<rootDir>/cypress/",
+      "<rootDir>/migrations/"
     ]
   },
   "prettier": {
