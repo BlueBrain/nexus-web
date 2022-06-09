@@ -21,7 +21,7 @@
     "eslint": "^7.16.0",
     "eslint-plugin-import": "^2.22.1",
     "esm": "^3.2.25",
-    "lodash": "4.17.20",
+    "lodash": "4.17.21",
     "mocha": "^9.2.2"
   }
 }
