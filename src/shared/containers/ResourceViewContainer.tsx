@@ -26,7 +26,11 @@ import { Link } from 'react-router-dom';
 import ResourceViewActionsContainer from './ResourceViewActionsContainer';
 import ResourceMetadata from '../components/ResourceMetadata';
 import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
+import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/reducers';
 import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
+import { useJiraPlugin } from '../hooks/useJIRA';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -41,6 +45,28 @@ const ResourceViewContainer: React.FunctionComponent<{
     }> | null
   ) => React.ReactElement | null;
 }> = ({ render }) => {
+  const { apiEndpoint } = useSelector((state: RootState) => state.config);
+
+  const [deltaPlugins, setDeltaPlugins] = React.useState<{
+    [key: string]: string;
+  }>();
+
+  const fetchDeltaVersion = async () => {
+    await nexus
+      .httpGet({
+        path: `${apiEndpoint}/version`,
+        context: { as: 'json' },
+      })
+      .then(versions => setDeltaPlugins({ ...versions.plugins }))
+      .catch(error => {
+        // do nothing
+      });
+  };
+
+  React.useEffect(() => {
+    fetchDeltaVersion();
+  }, []);
+
   // @ts-ignore
   const { orgLabel = '', projectLabel = '', resourceId = '' } = useParams();
   const nexus = useNexusContext();
@@ -455,11 +481,35 @@ const ResourceViewContainer: React.FunctionComponent<{
         }}
       />
     );
+  const { isUserInSupportedJiraRealm } = useJiraPlugin();
+
+  const jiraPlugin = resource &&
+    deltaPlugins &&
+    'jira' in deltaPlugins &&
+    isUserInSupportedJiraRealm && (
+      <Collapse
+        onChange={() => {
+          pluginCollapsedToggle('jira');
+        }}
+        activeKey={openPlugins.includes('jira') ? 'jira' : undefined}
+      >
+        <Collapse.Panel header="JIRA" key="jira">
+          {openPlugins.includes('jira') && (
+            <JIRAPluginContainer
+              resource={resource}
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+            />
+          )}
+        </Collapse.Panel>
+      </Collapse>
+    );
 
   const builtInPlugins = [
     { key: 'preview', name: 'preview', pluginComponent: previewPlugin },
     { key: 'admin', name: 'advanced', pluginComponent: adminPlugin },
     { key: 'video', name: 'video', pluginComponent: videoPlugin },
+    { key: 'jira', name: 'jira', pluginComponent: jiraPlugin },
   ];
 
   return (
