@@ -9,6 +9,7 @@
   <a href="https://codecov.io/gh/BlueBrain/nexus-web">
     <img src="https://codecov.io/gh/BlueBrain/nexus-web/branch/master/graph/badge.svg" alt="Coverage Status">
   </a>
+
   <a href="https://twitter.com/intent/follow?screen_name=bluebrainnexus">
     <img alt="Follow on Twitter" src="https://img.shields.io/twitter/follow/bluebrainnexus.svg?style=social&label=Follow">
   </a>
