@@ -25,7 +25,6 @@ import DataTableContainer, {
 import STUDIO_CONTEXT from '../components/StudioContext';
 import { createTableContext } from '../../../subapps/projects/utils/workFlowMetadataUtils';
 import { find } from 'lodash';
-import { setTimeout } from 'timers';
 
 const DASHBOARD_TYPE = 'StudioDashboard';
 
