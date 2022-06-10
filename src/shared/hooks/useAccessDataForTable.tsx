@@ -292,8 +292,6 @@ export const useAccessDataForTable = (
   const [searchValue, setSearchValue] = React.useState<string>('');
   const { addResourceCollectionToCart } = React.useContext(CartContext);
   const onSelect = (selectedRowKeys: React.Key[], selectedRows: Resource[]) => {
-    console.log(selectedRowKeys);
-    console.log(selectedRows);
     setSelectedRows(selectedRowKeys);
     if (
       dataResult?.data?.view &&
