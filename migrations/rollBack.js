@@ -1,15 +1,22 @@
 import fetch from 'node-fetch';
-import { initNexusClient } from './studioMigration';
+import { initNexusClient } from './studioMigration.js';
+import minimist from 'minimist';
+
 const args = minimist(process.argv.slice(2));
 
-async function rollBack(orgLabel, projectLabel, reourceId, rev, nexus) {
-  const oldSource = await nexus.Resource.getSource({
-    rev,
-  });
+async function rollBack(orgLabel, projectLabel, resourceId, rev, nexus) {
+  const oldSource = await nexus.Resource.getSource(
+    orgLabel,
+    projectLabel,
+    encodeURIComponent(resourceId),
+    {
+      rev,
+    }
+  );
   const updatedResource = await nexus.Resource.update(
     orgLabel,
     projectLabel,
-    reourceId,
+    encodeURIComponent(resourceId),
     oldSource
   );
   return updatedResource._rev;
