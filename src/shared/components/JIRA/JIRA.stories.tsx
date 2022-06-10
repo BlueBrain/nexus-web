@@ -26,6 +26,21 @@ storiesOf('Components/JIRA', module)
     ~~~js
     ~~~
   `)(() => {
-      return <JIRAPluginUI issues={[]} />;
+      return (
+        <JIRAPluginUI
+          issues={[]}
+          projects={[]}
+          onCreateIssue={(
+            project: string,
+            summary: string,
+            description: string
+          ) => {}}
+          onLinkIssue={(issueKey: string) => {}}
+          onUnlinkIssue={(issueKey: string) => {}}
+          isLoading={true}
+          searchJiraLink=""
+          displayType="resource"
+        />
+      );
     })
   );
