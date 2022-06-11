@@ -492,6 +492,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           label: data['name'],
         }
       );
+      onListUpdate();
     }
   };
 

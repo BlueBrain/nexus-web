@@ -3,9 +3,27 @@ import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/reducers';
-import { getResourceLabel, labelOf } from '../utils';
+import { getResourceLabel, isUserInAtLeastOneRealm, labelOf } from '../utils';
 import useLocalStorage from './useLocalStorage';
 import useNotification from './useNotification';
+
+export function useJiraPlugin() {
+  const { jiraSupportedRealms } = useSelector(
+    (state: RootState) => state.config
+  );
+
+  if (jiraSupportedRealms === undefined) {
+    return { isUserInSupportedJiraRealm: true };
+  }
+
+  const { identities } = useSelector((state: RootState) => state.auth);
+  const isUserInSupportedJiraRealm =
+    identities?.data &&
+    jiraSupportedRealms &&
+    isUserInAtLeastOneRealm(identities.data.identities, jiraSupportedRealms);
+
+  return { isUserInSupportedJiraRealm };
+}
 
 /**
  * Manages our JIRA data model
@@ -170,7 +188,7 @@ function useJIRA({
       if (e['@type'] === 'JiraResponseError') {
         const errorContent = JSON.stringify(e.content);
 
-        if (errorContent.indexOf('oauth_problem=token_rejected')) {
+        if (errorContent.indexOf('oauth_problem=token_rejected') > -1) {
           notification.error({
             message: e.reason,
             description:
