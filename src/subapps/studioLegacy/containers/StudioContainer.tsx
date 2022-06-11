@@ -5,7 +5,7 @@ import { Empty, message } from 'antd';
 import { useHistory } from 'react-router';
 import EditStudio from '../components/EditStudio';
 import StudioHeader from '../components/StudioHeader';
-import { StudioContext } from '../views/StudioView';
+import StudioReactContext from '../contexts/StudioContext';
 import WorkspaceMenuContainer from '../containers/WorkspaceMenuContainer';
 import { saveImage } from '../../../shared/containers/MarkdownEditorContainer';
 import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
@@ -44,7 +44,7 @@ const StudioContainer: React.FunctionComponent = () => {
   const [workspaceIds, setWorkspaceIds] = React.useState<string[]>([]);
   const nexus = useNexusContext();
   const history = useHistory();
-  const studioContext = React.useContext(StudioContext);
+  const studioContext = React.useContext(StudioReactContext);
   const { orgLabel, projectLabel, studioId } = studioContext;
   const notification = useNotification();
 

@@ -164,7 +164,9 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
         setDescription(workspaceResource['description']);
       })
       .catch(error => setError(error));
+  }, []);
 
+  React.useEffect(() => {
     nexus.View.elasticSearchQuery(
       orgLabel,
       projectLabel,
@@ -186,18 +188,27 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
       }
     )
       .then((results: ElasticSearchViewQueryResponse<any>) => {
-        const tempDashbaord = results.hits.hits.map(hit => {
-          return {
-            ...JSON.parse(hit._source['_original_source']),
-            '@id': hit._source['@id'],
-          };
-        });
-        setDashBoards(tempDashbaord);
+        if (results.hits.hits) {
+          try {
+            const tempDashbaord = results.hits.hits.map(hit => {
+              return {
+                ...JSON.parse(hit._source['_original_source']),
+                '@id': hit._source['@id'],
+              };
+            });
+            setDashBoards(tempDashbaord);
+          } catch (e) {
+            setDashBoards([]);
+          }
+        }
       })
       .catch(e => {
-        setError(error);
+        setDashBoards([]);
+        setError(e);
       });
+  }, []);
 
+  React.useEffect(() => {
     nexus.View.elasticSearchQuery(
       orgLabel,
       projectLabel,
@@ -209,7 +220,6 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
               {
                 term: { _deprecated: false },
               },
-
               {
                 term: { '@type': VIEW_TYPE },
               },
@@ -245,9 +255,10 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
         );
       })
       .catch(e => {
+        setViews([]);
         setError(e);
       });
-  }, [workspaceId, orgLabel, projectLabel]);
+  });
 
   React.useEffect(() => {
     if (workspace && dashboards.length > 0) {

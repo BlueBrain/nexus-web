@@ -34,7 +34,7 @@ const StudioListContainer: React.FunctionComponent<{
     queryKey: ['studios', searchQuery],
     queryFn: async () => await fetchStudios(searchQuery),
     enabled: true,
-    retry: 2,
+    retry: 0,
   });
 
   const studios = data?._results || [];

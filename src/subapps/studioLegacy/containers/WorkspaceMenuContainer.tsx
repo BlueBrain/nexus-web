@@ -14,7 +14,7 @@ import DashboardEditorContainer from './DashBoardEditor/DashboardEditorContainer
 import AddWorkspaceContainer from './AddWorkspaceContainer';
 import WorkspaceForm from './WorkspaceFormContainer';
 import useQueryString from '../../../shared/hooks/useQueryString';
-import { StudioContext } from '../views/StudioView';
+import StudioReactContext from './../contexts/StudioContext';
 import { resourcesWritePermissionsWrapper } from '../../../shared/utils/permission';
 import { ResultTableFields } from '../../../shared/types/search';
 import DashboardResultsContainer from './DashboardResultsContainer';
@@ -154,7 +154,7 @@ export type Dashboard = {
   fields?: ResultTableFields[];
 };
 
-type StudioResource = Resource<{
+export type StudioResource = Resource<{
   label: string;
   description?: string;
   workspaces?: [string];
@@ -173,7 +173,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
 }) => {
   const nexus = useNexusContext();
   const notification = useNotification();
-  const studioContext = React.useContext(StudioContext);
+  const studioContext = React.useContext(StudioReactContext);
   const { orgLabel, projectLabel, workspaceId, dashboardId } = studioContext;
   const permissionsPath = `/${orgLabel}/${projectLabel}`;
   const [workspaces, setWorkspaces] = React.useState<Resource<any>[]>([]);
@@ -406,6 +406,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             style={{
               marginRight: '5px',
             }}
+            role="button"
           >
             {' '}
             Workspace
@@ -418,7 +419,12 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             content={editDhashBoardspaceWrapper}
             trigger="click"
           >
-            <Button shape="round" type="default" icon={<EditOutlined />}>
+            <Button
+              shape="round"
+              type="default"
+              icon={<EditOutlined />}
+              role="button"
+            >
               Dashboard
             </Button>
           </Popover>
@@ -428,7 +434,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
     return resourcesWritePermissionsWrapper(actionsPopovers, permissionsPath);
   };
 
-  const fetchAndSetupDashboards = () => {
+  const fetchAndSetupDashboards = async () => {
     setDashboardSpinner(true);
     Promise.all(
       selectedWorkspace['dashboards'].map((dashboardObject: Dashboard) => {
@@ -595,27 +601,31 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         ...queryParams,
         workspaceId: selectedWorkspace['@id'],
       });
-      const currentDashboards = selectedWorkspace['dashboards'] as Dashboard[];
-      // block to set selected keys for initial load or when not set
-      if (selectedKeys.length === 0) {
-        if (!selectedDashboard) {
-          if (selectedWorkspace.dashboards?.length > 0) {
-            setSelectedKeys([
-              `${selectedWorkspace['@id']}*${selectedWorkspace.dashboards[0].dashboard}`,
-            ]);
-          }
-        } else {
-          setSelectedKeys([
-            `${selectedWorkspace['@id']}*${selectedDashboard['@id']}`,
-          ]);
-        }
-      }
 
+      const currentDashboards = selectedWorkspace['dashboards'] as Dashboard[];
       if (currentDashboards && currentDashboards.length > 0) {
         fetchAndSetupDashboards();
       } else {
         setDashboards([]);
         setSelectedDashboard(undefined);
+      }
+      // block to set selected keys for initial load or when not set
+      try {
+        if (selectedKeys.length === 0) {
+          if (!selectedDashboard) {
+            if (selectedWorkspace.dashboards?.length > 0) {
+              setSelectedKeys([
+                `${selectedWorkspace['@id']}*${selectedWorkspace.dashboards[0].dashboard}`,
+              ]);
+            }
+          } else {
+            setSelectedKeys([
+              `${selectedWorkspace['@id']}*${selectedDashboard['@id']}`,
+            ]);
+          }
+        }
+      } catch (e) {
+        console.error(e);
       }
     }
   }, [selectedWorkspace]);
