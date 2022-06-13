@@ -1,7 +1,19 @@
 import { EditTwoTone, MoreOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Input, Menu, Slider, Select, Row, Col } from 'antd';
+import {
+  Button,
+  Dropdown,
+  Input,
+  Menu,
+  Slider,
+  Select,
+  Row,
+  Col,
+  Checkbox,
+} from 'antd';
 import * as React from 'react';
 import { useState, useRef } from 'react';
+import './AnalysisPlugin.less';
+import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import './AnalysisPlugin.less';
 
 export type analyses = {
@@ -253,6 +265,22 @@ export default ({ analyses }: AnalysisPluginProps) => {
                     }}
                   >
                     {asset.preview({ scale: scale, mode: mode })}
+                    {mode === 'edit' && editing === a.id && (
+                      <Checkbox
+                        className="selectedCheckbox"
+                        onChange={() => {
+                          if (!(mode === 'edit' && editing === a.id)) {
+                            console.log('CLICKED checkbox BUT FAILED');
+                            return;
+                          }
+                          console.log('CLICKED checkbox');
+                          dispatch({
+                            type: ActionType.SELECT_ASSET,
+                            payload: { assetId: asset.id },
+                          });
+                        }}
+                      ></Checkbox>
+                    )}
                   </div>
                 ))}
               </section>
