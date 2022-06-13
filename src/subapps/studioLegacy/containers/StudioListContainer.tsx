@@ -70,7 +70,7 @@ const StudioListContainer: React.FunctionComponent<{
       return setSearchQuery(searchValue);
     }
     if (data?._next) {
-      setNext(parseInt(data?._next));
+      setNext(parseInt(data?._next, 10));
     }
   };
 
