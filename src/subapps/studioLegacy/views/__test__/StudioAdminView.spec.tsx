@@ -9,14 +9,7 @@ import { Provider } from 'react-redux';
 
 import configureStore from '../../../../shared/store';
 import fetch from 'node-fetch';
-import {
-  render,
-  fireEvent,
-  waitFor,
-  screen,
-  server,
-} from '../../../../utils/testUtil';
-import { rest } from 'msw';
+import { render, screen, server } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
 
