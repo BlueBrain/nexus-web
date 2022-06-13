@@ -30,7 +30,7 @@ const StudioListContainer: React.FunctionComponent<{
       from: next,
     });
 
-  const { data, status, error: listError } = useQuery({
+  const { data, status } = useQuery({
     queryKey: ['studios', searchQuery],
     queryFn: async () => await fetchStudios(searchQuery),
     enabled: true,
@@ -89,7 +89,7 @@ const StudioListContainer: React.FunctionComponent<{
         defaultSearchValue={searchQuery}
         height={500}
       >
-        {status === 'error' || listError !== null ? (
+        {status === 'error' ? (
           <Empty description="Sorry, something went wrong" />
         ) : (
           <StudioList

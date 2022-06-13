@@ -90,7 +90,7 @@ const StudioListView: React.FC = () => {
             access. The list is alphabetically sorted.
           </p>
         </div>
-        {status}
+
         {status === 'error' ? (
           <>A Error Occured</>
         ) : (
