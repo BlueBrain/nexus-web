@@ -11,7 +11,6 @@ import {
   render,
   fireEvent,
   waitFor,
-  waitForElementToBeRemoved,
   screen,
   server,
 } from '../../../../utils/testUtil';

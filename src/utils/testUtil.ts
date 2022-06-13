@@ -1,4 +1,4 @@
-import React, { FC, ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { server } from '../__mocks__/server';
 

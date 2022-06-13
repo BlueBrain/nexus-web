@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useQuery, useQueries, useInfiniteQuery } from 'react-query';
+import { useQuery, useQueries } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
