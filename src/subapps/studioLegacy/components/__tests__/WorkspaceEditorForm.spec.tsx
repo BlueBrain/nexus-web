@@ -1,5 +1,5 @@
 import WorkspaceEditorForm, { WorkspaceResource } from '../WorkspaceEditorForm';
-import { Resource, Context } from '@bbp/nexus-sdk';
+import { Context } from '@bbp/nexus-sdk';
 import { render, fireEvent, waitFor, screen } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
 

@@ -1,7 +1,7 @@
 import EditStudio, { StudioResource } from '../EditStudio';
 import * as React from 'react';
-import { Resource, Context } from '@bbp/nexus-sdk';
-import { render, fireEvent, screen } from '../../../../utils/testUtil';
+import { Context } from '@bbp/nexus-sdk';
+import { render, screen } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
 
 describe('EditStudio', () => {

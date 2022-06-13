@@ -6,7 +6,7 @@ import StudioAdminView from '../StudioAdminView';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createBrowserHistory } from 'history';
 import { Provider } from 'react-redux';
-import { ConnectedRouter } from 'connected-react-router';
+
 import configureStore from '../../../../shared/store';
 import fetch from 'node-fetch';
 import {

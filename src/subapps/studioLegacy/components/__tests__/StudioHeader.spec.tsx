@@ -1,6 +1,6 @@
 import StudioHeader from '../StudioHeader';
 import { Resource, Context } from '@bbp/nexus-sdk';
-import { render, fireEvent, screen } from '../../../../utils/testUtil';
+import { render, screen } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
 
 describe('StudioHeader', () => {
