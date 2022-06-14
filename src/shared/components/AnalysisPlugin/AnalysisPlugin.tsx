@@ -122,7 +122,7 @@ export default ({ analyses }: AnalysisPluginProps) => {
       <>
         {mode === 'view' && (
           <Row className="analysisTools">
-            <Col span={6}>
+            <Col span={2}>
               <Select
                 showSearch
                 placeholder="Select Analysis"
@@ -140,7 +140,7 @@ export default ({ analyses }: AnalysisPluginProps) => {
                 ))}
               </Select>
             </Col>
-            <Col span={6}>
+            <Col span={2}>
               <Slider
                 tooltipVisible={false}
                 value={scale}
