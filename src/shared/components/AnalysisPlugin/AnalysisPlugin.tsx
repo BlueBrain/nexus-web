@@ -1,5 +1,5 @@
 import { EditTwoTone, MoreOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Input, Menu, Slider } from 'antd';
+import { Button, Dropdown, Input, Menu, Slider, Select, Row, Col } from 'antd';
 import * as React from 'react';
 import { useState, useRef } from 'react';
 import './AnalysisPlugin.less';
@@ -105,23 +105,53 @@ export default ({ analyses }: AnalysisPluginProps) => {
       mode: 'view',
     }
   );
+  const { Option } = Select;
 
+  const onChange = (value: string) => {
+    console.log(`selected ${value}`);
+  };
+
+  const onSearch = (value: string) => {
+    console.log('search:', value);
+  };
   // alert(`editing`);
   return (
-    <>
+    <div className="analysis">
       <label>Selected</label>
       {selected}
       <>
         {mode === 'view' && (
-          <Slider
-            tooltipVisible={false}
-            value={scale}
-            onChange={(value: number) =>
-              dispatch({ type: ActionType.RESCALE, payload: value })
-            }
-            included={false}
-            className="slider-scale"
-          />
+          <Row className="analysisTools">
+            <Col span={6}>
+              <Select
+                showSearch
+                placeholder="Select Analysis"
+                optionFilterProp="children"
+                onChange={onChange}
+                onSearch={onSearch}
+                filterOption={(input, option) =>
+                  ((option!.children as unknown) as string)
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+              >
+                {analyses.map((a, i) => (
+                  <Option value={a.id}>{a.name}</Option>
+                ))}
+              </Select>
+            </Col>
+            <Col span={6}>
+              <Slider
+                tooltipVisible={false}
+                value={scale}
+                onChange={(value: number) =>
+                  dispatch({ type: ActionType.RESCALE, payload: value })
+                }
+                included={false}
+                className="slider-scale"
+              />
+            </Col>
+          </Row>
         )}
         {analyses.map((a, i) => (
           <section key={i}>
@@ -200,6 +230,6 @@ export default ({ analyses }: AnalysisPluginProps) => {
           </section>
         ))}
       </>
-    </>
+    </div>
   );
 };
