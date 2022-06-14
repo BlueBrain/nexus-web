@@ -4,7 +4,7 @@ import { Input, Form, Tooltip, Button } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import TextArea from 'antd/lib/input/TextArea';
 
-type WorkspaceResource = Resource<{
+export type WorkspaceResource = Resource<{
   label: string;
   description?: string;
   dashboards?: [string];
@@ -35,7 +35,12 @@ const WorkspaceEditorForm: React.FC<{
   };
 
   return (
-    <Form {...formItemLayout} onFinish={handleSubmit} layout="vertical">
+    <Form
+      {...formItemLayout}
+      onFinish={handleSubmit}
+      layout="vertical"
+      role="form"
+    >
       <Form.Item
         label={
           <span>

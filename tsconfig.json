@@ -5,7 +5,7 @@
     "module": "commonjs",
     "target": "es2018",
     "moduleResolution": "node",
-    "jsx": "react",
+    "jsx": "react-jsx",
     "experimentalDecorators": true,
     "sourceMap": true,
     "strict": true,
@@ -14,7 +14,11 @@
     "noEmitOnError": true,
     "lib": ["dom", "esnext"],
     "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "baseUrl": "src",
+    "paths": {
+      "testUtil": ["./utils/testUtil"]
+    }
   },
   "files": ["custom.d.ts"],
   "include": ["src/**/*"],

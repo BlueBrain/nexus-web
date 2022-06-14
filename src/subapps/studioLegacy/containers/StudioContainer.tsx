@@ -145,7 +145,7 @@ const StudioContainer: React.FunctionComponent = () => {
       onSave={updateStudio}
       onSaveImage={saveImage(nexus, orgLabel, projectLabel)}
       markdownViewer={MarkdownViewerContainer}
-    />
+    ></EditStudio>
   );
   return (
     <>

@@ -29,13 +29,21 @@ const InfiniteSearch: React.FunctionComponent<InfiniteSearchProps> = props => {
 
   React.useEffect(() => {
     setSearchValue(defaultSearchValue);
+    if (inputRef.current) {
+      inputRef.current.focus({
+        cursor: 'end',
+      });
+    }
   }, [defaultSearchValue]);
 
+  const inputRef = React.useRef<Input>(null);
+
   return (
-    <div className="infinite-search">
+    <div className="infinite-search" data-testid="infinite-search">
       {hasSearch && (
         <div className="search">
           <Search
+            ref={inputRef}
             placeholder={'Search...'}
             allowClear={true}
             value={searchValue}
