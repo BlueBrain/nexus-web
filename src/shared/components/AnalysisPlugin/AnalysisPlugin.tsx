@@ -126,7 +126,7 @@ export default ({ analyses }: AnalysisPluginProps) => {
   };
 
   const onSearch = (value: string) => {
-    let res = analyses.filter(a =>
+    const res = analyses.filter(a =>
       a.name.toLowerCase().includes(value.toLowerCase())
     );
     console.log('SEARCH', res);
