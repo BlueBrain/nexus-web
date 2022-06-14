@@ -1,33 +1,32 @@
 @import '../../lib.less';
 
-
 .analysis {
-	margin-left: 20px;
-	
-	.slider-scale {
-		width: 150px;
-	}
-	
-	.assets {
-		display: flex;
-		flex-wrap: wrap;
-		max-width: 900px;
-		//   max-height: 150px;
-		//   max-width: 150px;
-	}
-	.asset {
-		cursor: pointer;
+  margin-left: 20px;
 
-		&.selected {
-			border: 1px inset #000;
-			color: #fff;
-			opacity: 1;
-			background-color: rgb(0, 0, 0, 0.5);
+  .slider-scale {
+    width: 150px;
+  }
 
-			img {
-				opacity: 0.5;
-				transition: opacity 0.3s;
-			}
-		}
-	}
+  .assets {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 900px;
+    //   max-height: 150px;
+    //   max-width: 150px;
+  }
+  .asset {
+    cursor: pointer;
+
+    &.selected {
+      border: 1px inset #000;
+      color: #fff;
+      opacity: 1;
+      background-color: rgb(0, 0, 0, 0.5);
+
+      img {
+        opacity: 0.5;
+        transition: opacity 0.3s;
+      }
+    }
+  }
 }
