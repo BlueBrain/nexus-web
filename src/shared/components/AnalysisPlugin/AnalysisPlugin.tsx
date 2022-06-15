@@ -87,11 +87,15 @@ export default ({ analyses }: AnalysisPluginProps) => {
           scale: DEFAULT_SCALE,
         };
       case ActionType.SELECT_ASSET:
+        state.selected = state.selected ? state.selected : [];
         const selectedId = state.selected?.findIndex(
           a => a === action.payload.assetId
         );
-
+        console.log("SELECT ASSET EVENT CALLEd, state.selected, select ID, action.payload.assetId");
+        console.log(state.selected, selectedId, action.payload.assetId);
+        
         if (state.selected && selectedId !== undefined && selectedId > -1) {
+          console.log("sate selected true, selectId is defined, selectId is greater than -1")
           const selectedCopy = [...state.selected];
           selectedCopy.splice(selectedId, 1);
           return {
@@ -112,8 +116,6 @@ export default ({ analyses }: AnalysisPluginProps) => {
           activeAnalyses: action.payload.analyses,
         };
       case ActionType.INITIALIZE:
-        console.log('ANALYSES LENGTH', analyses.length > 0);
-        console.log('ANALYSES FIRST', analyses[0].id);
         return analyses.length > 0 ? initState(analyses[0].id) : initState();
       default:
         throw new Error();
