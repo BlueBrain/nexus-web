@@ -4,7 +4,7 @@ import StudioReactContext, {
 } from '../../contexts/StudioContext';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createBrowserHistory } from 'history';
-import { createNexusClient, Resource } from '@bbp/nexus-sdk';
+import { createNexusClient } from '@bbp/nexus-sdk';
 import WorkSpaceMenu, { StudioResource } from '../WorkspaceMenuContainer';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ConnectedRouter } from 'connected-react-router';
