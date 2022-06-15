@@ -1,4 +1,4 @@
-import { EditTwoTone, MoreOutlined } from '@ant-design/icons';
+import { MoreOutlined } from '@ant-design/icons';
 import {
   Button,
   Dropdown,
@@ -11,8 +11,6 @@ import {
   Checkbox,
 } from 'antd';
 import * as React from 'react';
-import { useState, useRef } from 'react';
-import './AnalysisPlugin.less';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import './AnalysisPlugin.less';
 
