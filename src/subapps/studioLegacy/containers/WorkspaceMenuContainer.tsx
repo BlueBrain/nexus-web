@@ -434,7 +434,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
     return resourcesWritePermissionsWrapper(actionsPopovers, permissionsPath);
   };
 
-  const fetchAndSetupDashboards = async () => {
+  const fetchAndSetupDashboards = () => {
     setDashboardSpinner(true);
     Promise.all(
       selectedWorkspace['dashboards'].map((dashboardObject: Dashboard) => {
