@@ -11,3 +11,5 @@ cypress/screenshots/
 cypress/plugins/
 cypress/fixtures/
 cypress/videos/
+*.iml
+.idea
