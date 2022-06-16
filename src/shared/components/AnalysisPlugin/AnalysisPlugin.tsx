@@ -63,10 +63,14 @@ type AnalysesState = {
   selected?: string[];
   activeAnalyses?: string[];
 };
-const initState = (activeAnalysisId?: string): AnalysesState => ({
-  scale: DEFAULT_SCALE,
-  mode: 'view',
-  activeAnalyses: activeAnalysisId ? [activeAnalysisId] : [],
+const initState = ({
+  scale,
+  mode,
+  activeAnalyses,
+}: AnalysesState): AnalysesState => ({
+  scale: scale,
+  mode: mode,
+  activeAnalyses: activeAnalyses,
 });
 
 export default ({ analyses }: AnalysisPluginProps) => {
@@ -82,18 +86,16 @@ export default ({ analyses }: AnalysisPluginProps) => {
           ...state,
           mode: 'edit',
           editing: action.payload.analysisId,
-          scale: DEFAULT_SCALE,
         };
       case ActionType.SELECT_ASSET:
         state.selected = state.selected ? state.selected : [];
         const selectedId = state.selected?.findIndex(
           a => a === action.payload.assetId
         );
-        console.log("SELECT ASSET EVENT CALLEd, state.selected, select ID, action.payload.assetId");
+
         console.log(state.selected, selectedId, action.payload.assetId);
-        
+
         if (state.selected && selectedId !== undefined && selectedId > -1) {
-          console.log("sate selected true, selectId is defined, selectId is greater than -1")
           const selectedCopy = [...state.selected];
           selectedCopy.splice(selectedId, 1);
           return {
@@ -114,19 +116,36 @@ export default ({ analyses }: AnalysisPluginProps) => {
           activeAnalyses: action.payload.analyses,
         };
       case ActionType.INITIALIZE:
-        return analyses.length > 0 ? initState(analyses[0].id) : initState();
+        return analyses.length > 0
+          ? initState({
+              mode: 'view',
+              scale: state.scale,
+              activeAnalyses: firstAnalysis ? [firstAnalysis] : [],
+            })
+          : initState({
+              mode: 'view',
+              scale: state.scale,
+              activeAnalyses: [],
+            });
       default:
         throw new Error();
     }
   };
 
+  const firstAnalysis = analyses.length > 0 ? analyses[0].id : undefined;
+
   const [
     { scale, mode, editing, selected, activeAnalyses },
     dispatch,
-  ] = React.useReducer(reducer, {
-    scale: DEFAULT_SCALE,
-    mode: 'view',
-  });
+  ] = React.useReducer(
+    reducer,
+    {
+      scale: DEFAULT_SCALE,
+      mode: 'view',
+      activeAnalyses: firstAnalysis ? [firstAnalysis] : [],
+    },
+    initState
+  );
 
   const { Option } = Select;
 
@@ -145,18 +164,14 @@ export default ({ analyses }: AnalysisPluginProps) => {
     return res;
   };
 
-  // alert(`editing`);
   return (
     <div className="analysis">
-      <label>Selected</label>
-      {selected}
-      <br />
-      {activeAnalyses}
       <>
         {mode === 'view' && (
           <Row className="analysisTools">
             <Col span={8}>
               <Select
+                value={activeAnalyses}
                 showSearch
                 mode="multiple"
                 placeholder="Please select"
@@ -171,7 +186,9 @@ export default ({ analyses }: AnalysisPluginProps) => {
                 }
               >
                 {analyses.map((a, i) => (
-                  <Option value={a.id}>{a.name}</Option>
+                  <Option key={a.id} value={a.id}>
+                    {a.name}
+                  </Option>
                 ))}
               </Select>
             </Col>
