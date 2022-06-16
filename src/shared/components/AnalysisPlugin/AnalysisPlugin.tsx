@@ -272,9 +272,7 @@ export default ({ analyses }: AnalysisPluginProps) => {
                         : ''
                     }`}
                     onClick={() => {
-                      if (!(mode === 'edit' && editing === a.id)) {
-                        return;
-                      }
+                      console.log('div clicked');
                       dispatch({
                         type: ActionType.SELECT_ASSET,
                         payload: { assetId: asset.id },
@@ -284,13 +282,12 @@ export default ({ analyses }: AnalysisPluginProps) => {
                     {asset.preview({ scale, mode })}
                     {mode === 'edit' && editing === a.id && (
                       <Checkbox
+                        checked={selected && selected.some(v => v === asset.id)}
                         className="selectedCheckbox"
-                        onChange={() => {
-                          if (!(mode === 'edit' && editing === a.id)) {
-                            console.log('CLICKED checkbox BUT FAILED');
-                            return;
-                          }
-                          console.log('CLICKED checkbox');
+                        onClick={e => {
+                          e.stopPropagation();
+                        }}
+                        onChange={e => {
                           dispatch({
                             type: ActionType.SELECT_ASSET,
                             payload: { assetId: asset.id },
