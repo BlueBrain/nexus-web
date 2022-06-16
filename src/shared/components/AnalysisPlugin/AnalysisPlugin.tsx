@@ -68,9 +68,9 @@ const initState = ({
   mode,
   activeAnalyses,
 }: AnalysesState): AnalysesState => ({
-  scale: scale,
-  mode: mode,
-  activeAnalyses: activeAnalyses,
+  scale,
+  mode,
+  activeAnalyses,
 });
 
 export default ({ analyses }: AnalysisPluginProps) => {
@@ -281,7 +281,7 @@ export default ({ analyses }: AnalysisPluginProps) => {
                       });
                     }}
                   >
-                    {asset.preview({ scale: scale, mode: mode })}
+                    {asset.preview({ scale, mode })}
                     {mode === 'edit' && editing === a.id && (
                       <Checkbox
                         className="selectedCheckbox"
