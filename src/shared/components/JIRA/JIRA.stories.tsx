@@ -4,19 +4,6 @@ import { storiesOf } from '@storybook/react';
 import * as React from 'react';
 import JIRAPluginUI from '../JIRA/JIRA';
 
-/**
- * Bunch of errors with Storybook currently. Errors with these stories:
- *
- * Copies.stories.tsx
- * Header.stories.tsx
- * ResourceForm.stories.tsx
- * Views.stories.tsx
- * Studio.stories.tsx
- *
- * Also, issue with the font being bundles in src/shared/lib.less
- *
- */
-
 storiesOf('Components/JIRA', module)
   .addDecorator(withKnobs)
   .add(
@@ -26,6 +13,21 @@ storiesOf('Components/JIRA', module)
     ~~~js
     ~~~
   `)(() => {
-      return <JIRAPluginUI issues={[]} />;
+      return (
+        <JIRAPluginUI
+          issues={[]}
+          projects={[]}
+          onCreateIssue={(
+            project: string,
+            summary: string,
+            description: string
+          ) => {}}
+          onLinkIssue={(issueKey: string) => {}}
+          onUnlinkIssue={(issueKey: string) => {}}
+          isLoading={true}
+          searchJiraLink=""
+          displayType="resource"
+        />
+      );
     })
   );
