@@ -133,11 +133,7 @@ export default ({
             img => img.contentUrl === currentRow.asset_content_url
           );
           return (
-            <Image
-              placeholder={<>Loading...</>}
-              style={{ maxHeight: size }}
-              preview={mode === 'view'}
-            />
+            <Image style={{ maxHeight: size }} preview={mode === 'view'} />
           );
         },
       });
@@ -203,7 +199,6 @@ export default ({
 
                 return (
                   <Image
-                    placeholder={<>Loading...</>}
                     src={img?.src}
                     style={{ maxHeight: size }}
                     preview={mode === 'view'}

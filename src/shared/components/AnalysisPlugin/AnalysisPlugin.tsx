@@ -170,7 +170,7 @@ export default ({ analyses }: AnalysisPluginProps) => {
                 value={activeAnalyses}
                 showSearch
                 mode="multiple"
-                placeholder="Please select"
+                placeholder="Select Analysis"
                 style={{ width: '100%' }}
                 optionFilterProp="children"
                 onChange={onAnalysesChange}
@@ -178,12 +178,12 @@ export default ({ analyses }: AnalysisPluginProps) => {
                 filterOption={(input, option) =>
                   ((option!.children as unknown) as string)
                     .toLowerCase()
-                    .includes(input.toLowerCase())
+                    .indexOf(input.toLowerCase()) > -1
                 }
               >
                 {analyses.map((a, i) => (
                   <Option key={a.id} value={a.id}>
-                    {a.name}
+                    {a.name ? a.name : a.id}
                   </Option>
                 ))}
               </Select>
@@ -211,6 +211,7 @@ export default ({ analyses }: AnalysisPluginProps) => {
                   <>
                     <Input
                       type="text"
+                      placeholder="Analysis Name"
                       value={a.name}
                       style={{ width: '60%' }}
                     />
@@ -266,7 +267,10 @@ export default ({ analyses }: AnalysisPluginProps) => {
               <p aria-label="Analysis Description">
                 {(mode === 'view' || editing !== a.id) && a.description}
                 {mode === 'edit' && editing === a.id && (
-                  <Input.TextArea value={a.description} />
+                  <Input.TextArea
+                    placeholder="Analysis Description"
+                    value={a.description}
+                  />
                 )}
               </p>
               <section aria-label="Analysis Assets" className="assets">
