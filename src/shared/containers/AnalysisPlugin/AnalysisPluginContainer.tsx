@@ -61,7 +61,7 @@ export default ({
     PREFIX prov:<http://www.w3.org/ns/prov#>
     PREFIX nsg:<https://neuroshapes.org/>
     PREFIX nxv:<https://bluebrain.github.io/nexus/vocabulary/>
-    SELECT ?start ?report_id ?report_name ?asset_content_url ?asset_encoding_format ?asset_name ?self
+    SELECT ?start ?report_id ?report_name ?report_description ?asset_content_url ?asset_encoding_format ?asset_name ?self
     WHERE {
       BIND(<${resourceId}> as ?start) .
       BIND(<${resourceId}> as ?self) .
@@ -135,7 +135,6 @@ export default ({
           return (
             <Image
               placeholder={<>Loading...</>}
-              src={imgSrc?.src}
               style={{ maxHeight: size }}
               preview={mode === 'view'}
             />
@@ -188,17 +187,49 @@ export default ({
     }
   );
 
+  const analysesDataWithImages = React.useMemo(
+    () =>
+      analysesData?.map(a => {
+        return {
+          ...a,
+          analyses: a.analyses.map(m => {
+            const img = imageData?.find(img => img.contentUrl === m.filePath);
+
+            return {
+              ...m,
+              preview: ({ scale, mode }: { scale: number; mode: string }) => {
+                const scaledSize = (scale / 100) * 500;
+                const size = scaledSize < 150 ? 150 : scaledSize;
+
+                return (
+                  <Image
+                    placeholder={<>Loading...</>}
+                    src={img?.src}
+                    style={{ maxHeight: size }}
+                    preview={mode === 'view'}
+                  />
+                );
+              },
+            };
+          }),
+        };
+      }),
+    [analysesData, imageData]
+  );
+
   return (
     <>
-      <AnalysisPlugin
-        analyses={analysesData ? analysesData : []}
-        mode="view"
-        onCancel={() => {}}
-        onChangeMode={(mode: 'view' | 'edit') => {
-          setMode(mode);
-        }}
-        onSave={(analyses: analyses) => {}}
-      />
+      {analysesDataWithImages && (
+        <AnalysisPlugin
+          analyses={analysesDataWithImages}
+          mode="view"
+          onCancel={() => {}}
+          onChangeMode={(mode: 'view' | 'edit') => {
+            setMode(mode);
+          }}
+          onSave={(analyses: analyses) => {}}
+        />
+      )}
     </>
   );
 };
