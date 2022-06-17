@@ -515,7 +515,13 @@ const ResourceViewContainer: React.FunctionComponent<{
       activeKey={openPlugins.includes('analysis') ? 'analysis' : undefined}
     >
       <Collapse.Panel header="Analysis" key="analysis">
-        {openPlugins.includes('analysis') && <AnalysisPluginContainer />}
+        {openPlugins.includes('analysis') && (
+          <AnalysisPluginContainer
+            resourceId={resource['@id']}
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
+          />
+        )}
       </Collapse.Panel>
     </Collapse>
   );
