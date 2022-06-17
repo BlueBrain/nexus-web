@@ -1,4 +1,4 @@
-import { MoreOutlined } from '@ant-design/icons';
+import { MoreOutlined, UserOutlined } from '@ant-design/icons';
 import {
   Button,
   Dropdown,
@@ -11,7 +11,6 @@ import {
   Checkbox,
 } from 'antd';
 import * as React from 'react';
-import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import './AnalysisPlugin.less';
 
 export type analyses = {
@@ -105,10 +104,7 @@ export default ({ analyses }: AnalysisPluginProps) => {
         }
         return {
           ...state,
-          selected: [
-            ...(state.selected ? state.selected : []),
-            action.payload.assetId,
-          ],
+          selected: [...state.selected, action.payload.assetId],
         };
       case ActionType.ACTIVATE_ANALYSES:
         return {
@@ -164,12 +160,39 @@ export default ({ analyses }: AnalysisPluginProps) => {
     return res;
   };
 
+  const handleDownloadClick = () => {
+    console.log('Download');
+  };
+
+  const menu = (
+    <Menu
+      onClick={() => {}}
+      items={[
+        {
+          label: 'Edit',
+          key: '1',
+          icon: <UserOutlined />
+        },
+        {
+          label: 'Download',
+          key: '2',
+          icon: <UserOutlined />
+        },
+        {
+          label: 'View',
+          key: '3',
+          icon: <UserOutlined />
+        },
+      ]}
+    />
+  );
+
   return (
     <div className="analysis">
       <>
         {mode === 'view' && (
           <Row className="analysisTools">
-            <Col span={8}>
+            <Col span={12}>
               <Select
                 value={activeAnalyses}
                 showSearch
@@ -192,7 +215,7 @@ export default ({ analyses }: AnalysisPluginProps) => {
                 ))}
               </Select>
             </Col>
-            <Col span={3}>
+            <Col span={8} offset={4}>
               <Slider
                 tooltipVisible={false}
                 value={scale}
@@ -234,23 +257,7 @@ export default ({ analyses }: AnalysisPluginProps) => {
                 )}
                 {mode === 'view' && (
                   <Dropdown.Button
-                    overlay={
-                      <Menu onClick={() => {}}>
-                        <Menu.Item
-                          onClick={() =>
-                            dispatch({
-                              type: ActionType.EDIT,
-                              payload: { analysisId: a.id },
-                            })
-                          }
-                        >
-                          Edit
-                        </Menu.Item>
-                        <Menu.Item onClick={() => console.log('download')}>
-                          Download
-                        </Menu.Item>
-                      </Menu>
-                    }
+                    overlay={menu}
                     icon={<MoreOutlined />}
                   />
                 )}

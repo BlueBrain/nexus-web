@@ -80,6 +80,176 @@ const exampleDataStructure: analyses = [
       },
     ],
   },
+  {
+    id: 'analysis3',
+    name: 'Neuron Density C-type 01.v3-SSCX4',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vehicula at felis at lacinia. Suspendisse bibendum nunc non pulvinar ultrices. Mauris sed dolor suscipit, posuere justo quis, dapibus lorem. Aliquam erat volutpat. Suspendisse pulvinar mollis lacus, eget tristique felis elementum in. ',
+    analyses: [
+      {
+        id: '1',
+        name: 'First one',
+        filePath: 'https://img/here/3',
+        preview: ({ scale, mode }) => (
+          <>
+            <Image
+              preview={mode === 'view'}
+              src={sample1}
+              style={{ maxHeight: scaleImage(scale) }}
+            />
+          </>
+        ),
+      },
+      {
+        id: '2',
+        name: 'Second one',
+        filePath: 'https://img/here/2',
+        preview: ({ scale, mode }) => (
+          <Image
+            src={sample2}
+            style={{ maxHeight: scaleImage(scale) }}
+            preview={mode === 'view'}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: 'analysis3',
+    name: 'Neuron Density C-type 01.v3-SSCX4',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vehicula at felis at lacinia. Suspendisse bibendum nunc non pulvinar ultrices. Mauris sed dolor suscipit, posuere justo quis, dapibus lorem. Aliquam erat volutpat. Suspendisse pulvinar mollis lacus, eget tristique felis elementum in. ',
+    analyses: [
+      {
+        id: '1',
+        name: 'First one',
+        filePath: 'https://img/here/3',
+        preview: ({ scale, mode }) => (
+          <>
+            <Image
+              preview={mode === 'view'}
+              src={sample1}
+              style={{ maxHeight: scaleImage(scale) }}
+            />
+          </>
+        ),
+      },
+      {
+        id: '2',
+        name: 'Second one',
+        filePath: 'https://img/here/2',
+        preview: ({ scale, mode }) => (
+          <Image
+            src={sample2}
+            style={{ maxHeight: scaleImage(scale) }}
+            preview={mode === 'view'}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: 'analysis4',
+    name: 'Neuron Density C-type 01.v3-SSCX4',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vehicula at felis at lacinia. Suspendisse bibendum nunc non pulvinar ultrices. Mauris sed dolor suscipit, posuere justo quis, dapibus lorem. Aliquam erat volutpat. Suspendisse pulvinar mollis lacus, eget tristique felis elementum in. ',
+    analyses: [
+      {
+        id: '1',
+        name: 'First one',
+        filePath: 'https://img/here/3',
+        preview: ({ scale, mode }) => (
+          <>
+            <Image
+              preview={mode === 'view'}
+              src={sample1}
+              style={{ maxHeight: scaleImage(scale) }}
+            />
+          </>
+        ),
+      },
+      {
+        id: '2',
+        name: 'Second one',
+        filePath: 'https://img/here/2',
+        preview: ({ scale, mode }) => (
+          <Image
+            src={sample2}
+            style={{ maxHeight: scaleImage(scale) }}
+            preview={mode === 'view'}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: 'analysis5',
+    name: 'Neuron Density C-type 01.v3-SSCX4',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vehicula at felis at lacinia. Suspendisse bibendum nunc non pulvinar ultrices. Mauris sed dolor suscipit, posuere justo quis, dapibus lorem. Aliquam erat volutpat. Suspendisse pulvinar mollis lacus, eget tristique felis elementum in. ',
+    analyses: [
+      {
+        id: '1',
+        name: 'First one',
+        filePath: 'https://img/here/3',
+        preview: ({ scale, mode }) => (
+          <>
+            <Image
+              preview={mode === 'view'}
+              src={sample1}
+              style={{ maxHeight: scaleImage(scale) }}
+            />
+          </>
+        ),
+      },
+      {
+        id: '2',
+        name: 'Second one',
+        filePath: 'https://img/here/2',
+        preview: ({ scale, mode }) => (
+          <Image
+            src={sample2}
+            style={{ maxHeight: scaleImage(scale) }}
+            preview={mode === 'view'}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: 'analysis5',
+    name: 'Neuron Density C-type 01.v3-SSCX4',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vehicula at felis at lacinia. Suspendisse bibendum nunc non pulvinar ultrices. Mauris sed dolor suscipit, posuere justo quis, dapibus lorem. Aliquam erat volutpat. Suspendisse pulvinar mollis lacus, eget tristique felis elementum in. ',
+    analyses: [
+      {
+        id: '1',
+        name: 'First one',
+        filePath: 'https://img/here/3',
+        preview: ({ scale, mode }) => (
+          <>
+            <Image
+              preview={mode === 'view'}
+              src={sample1}
+              style={{ maxHeight: scaleImage(scale) }}
+            />
+          </>
+        ),
+      },
+      {
+        id: '2',
+        name: 'Second one',
+        filePath: 'https://img/here/2',
+        preview: ({ scale, mode }) => (
+          <Image
+            src={sample2}
+            style={{ maxHeight: scaleImage(scale) }}
+            preview={mode === 'view'}
+          />
+        ),
+      },
+    ],
+  },
 ];
 
 storiesOf('Components/AnalysisPlugin', module)

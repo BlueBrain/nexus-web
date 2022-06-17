@@ -1,25 +1,26 @@
 @import '../../lib.less';
 
+.ant-select-item-option-content {
+  text-overflow: ellipsis !important;
+}
 .analysis {
+  padding-top: 20px;
   margin-left: 20px;
-
-  .slider-scale {
-    width: 150px;
+  max-width:880px;
+  .analysisTools {
+    min-height: 100px;
+    max-height: 500px;
   }
-
   .assets {
     display: flex;
     flex-wrap: wrap;
-    max-width: 900px;
-    //   max-height: 150px;
-    //   max-width: 150px;
   }
   .asset {
     cursor: pointer;
-    border: 1mm ridge rgba(211, 220, 50, 0);
+    border: 1px inset rgba(211, 220, 50, 0);
     &.selected {
       color: #fff;
-      border: 1mm ridge rgba(45, 72, 108, 0.6);
+      border: 1px inset rgba(45, 72, 108, 0.5);
       transition: border 0.3s;
     }
   }
