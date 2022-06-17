@@ -3,63 +3,52 @@ import {
   SortAscendingOutlined,
   SortDescendingOutlined,
 } from '@ant-design/icons';
-import { Button, Modal } from 'antd';
-import * as React from 'react';
+import { Button } from 'antd';
 import { SortDirection } from '../../../../shared/hooks/useAccessDataForTable';
 import { ESSortField } from '../../hooks/useGlobalSearch';
 import './SortConfig.less';
 
-const SortConfig: React.FC<{
+type SortConfigProps = {
   sortedFields: ESSortField[];
   onRemoveSort: (sort: ESSortField) => void;
   onChangeSortDirection: (sort: ESSortField) => void;
-}> = ({ sortedFields, onRemoveSort, onChangeSortDirection }) => {
-  const buttonRef = React.useRef<HTMLButtonElement>(null);
-  const [isSortModalVisible, setIsSortModalVisible] = React.useState(false);
-  const countOfSortedFields = () => sortedFields.length;
+};
 
-  const positionModal = () => {
-    const buttonRects = buttonRef.current?.getBoundingClientRect();
-    return { top: buttonRects?.bottom, left: buttonRects?.left };
-  };
+const SortConfig = ({
+  sortedFields,
+  onRemoveSort,
+  onChangeSortDirection,
+}: SortConfigProps) => {
+  const countOfSortedFields = sortedFields.length;
 
   return (
     <>
-      <Button
-        ref={buttonRef}
-        onClick={() => setIsSortModalVisible(true)}
-        type="link"
-      >
-        <SortAscendingOutlined />
-        {countOfSortedFields() > 0 ? (
-          <>
-            {` Sorted on ${countOfSortedFields()} ${
-              countOfSortedFields() > 1 ? ' columns' : ' column'
-            }`}
-          </>
-        ) : (
-          <> No sorting</>
-        )}
-      </Button>
-      <Modal
-        visible={isSortModalVisible}
-        onCancel={() => setIsSortModalVisible(false)}
-        style={{ ...positionModal() }}
-        className="sort-modal"
-        mask={false}
-        footer={null}
-        closable={false}
-      >
-        {countOfSortedFields() === 0 && 'No sorting applied'}
+      {countOfSortedFields === 0 && 'No sorting applied'}
+      <div role="list">
         {sortedFields.map((s, ix) => (
-          <div key={`${ix}-sort`} className="sort">
+          <div
+            key={`${ix}-sort`}
+            className="sort"
+            role="listitem"
+            aria-label={`Sorted By ${s.label} in ${
+              s.direction === SortDirection.ASCENDING
+                ? 'ascending'
+                : 'descending'
+            } order`}
+          >
             <div className="sort__remove">
-              <Button type="text" onClick={() => onRemoveSort(s)}>
-                <CloseCircleOutlined />
+              <Button
+                type="text"
+                onClick={() => onRemoveSort(s)}
+                aria-label="Remove Sort Criteria"
+              >
+                <CloseCircleOutlined aria-hidden="true" />
               </Button>
-              {ix === 0 ? 'Sort By' : 'then by'}
+              <span aria-hidden="true">{ix === 0 ? 'Sort By' : 'then by'}</span>
             </div>
-            <div className="sort__field-name">{s.label}</div>
+            <div className="sort__field-name" aria-hidden={true}>
+              {s.label}
+            </div>
             <div className="sort__direction">
               <Button
                 type={
@@ -68,7 +57,8 @@ const SortConfig: React.FC<{
                     : 'default'
                 }
                 shape="round"
-                icon={<SortAscendingOutlined />}
+                icon={<SortAscendingOutlined aria-hidden="true" />}
+                aria-label="Sort in Ascending Order"
                 size="small"
                 onClick={() =>
                   onChangeSortDirection({
@@ -86,7 +76,10 @@ const SortConfig: React.FC<{
                     : 'default'
                 }
                 shape="round"
-                icon={<SortDescendingOutlined />}
+                icon={
+                  <SortDescendingOutlined aria-label="Sort in Descending Order" />
+                }
+                aria-label="Sort in Descending Order"
                 size="small"
                 onClick={() =>
                   onChangeSortDirection({
@@ -100,7 +93,7 @@ const SortConfig: React.FC<{
             </div>
           </div>
         ))}
-      </Modal>
+      </div>
     </>
   );
 };
