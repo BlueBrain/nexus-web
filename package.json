@@ -169,12 +169,6 @@
   },
   "jest": {
     "collectCoverage": true,
-    "collectCoverageFrom": [
-      "**/*.{ts,tsx}",
-      "!dist/*",
-      "!**/*.{stories.tsx}",
-      "!node_modules/*"
-    ],
     "preset": "ts-jest",
     "setupFilesAfterEnv": [
       "jest-enzyme",

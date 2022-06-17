@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import StudioListContainer from '../StudioListContainer';
@@ -47,7 +48,7 @@ describe('StudioListContainer', () => {
     expect(studioItems[1]).toHaveTextContent('label for id-2');
   });
 
-  xit('renders empty componenet with error message when server returns an error', async () => {
+  it('renders empty componenet with error message when server returns an error', async () => {
     server.use(
       // override the initial "GET /greeting" request handler
       // to return a 500 Server Error
