@@ -160,33 +160,6 @@ export default ({ analyses }: AnalysisPluginProps) => {
     return res;
   };
 
-  const handleDownloadClick = () => {
-    console.log('Download');
-  };
-
-  const menu = (
-    <Menu
-      onClick={() => {}}
-      items={[
-        {
-          label: 'Edit',
-          key: '1',
-          icon: <UserOutlined />
-        },
-        {
-          label: 'Download',
-          key: '2',
-          icon: <UserOutlined />
-        },
-        {
-          label: 'View',
-          key: '3',
-          icon: <UserOutlined />
-        },
-      ]}
-    />
-  );
-
   return (
     <div className="analysis">
       <>
@@ -257,7 +230,35 @@ export default ({ analyses }: AnalysisPluginProps) => {
                 )}
                 {mode === 'view' && (
                   <Dropdown.Button
-                    overlay={menu}
+                    overlay={
+                      <Menu onClick={() => {}}>
+                        <Menu.Item
+                          icon={<UserOutlined />}
+                          onClick={() =>
+                            dispatch({
+                              type: ActionType.EDIT,
+                              payload: { analysisId: a.id },
+                            })
+                          }
+                        >
+                          Edit
+                        </Menu.Item>
+                        <Menu.Item
+                          onClick={() => console.log('download')}
+                          icon={<UserOutlined />}
+                        >
+                          Download
+                        </Menu.Item>
+                        <Menu.Item
+                          onClick={() =>
+                            console.log('visiting analysis report resource')
+                          }
+                          icon={<UserOutlined />}
+                        >
+                          View
+                        </Menu.Item>
+                      </Menu>
+                    }
                     icon={<MoreOutlined />}
                   />
                 )}
