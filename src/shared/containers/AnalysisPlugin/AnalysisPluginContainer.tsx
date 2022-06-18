@@ -1,4 +1,4 @@
-import { NexusClient, Resource, SparqlView } from '@bbp/nexus-sdk';
+import { NexusClient, NexusFile, Resource, SparqlView } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { useState } from 'react';
@@ -8,6 +8,7 @@ import AnalysisPlugin, {
 } from '../../components/AnalysisPlugin/AnalysisPlugin';
 import { sparqlQueryExecutor } from '../../utils/querySparqlView';
 import { Image } from 'antd';
+import FileUploadContainer from '../FileUploadContainer';
 
 function fetchImageSrc(
   nexus: NexusClient,
@@ -238,10 +239,23 @@ const AnalysisPluginContainer = ({
     }
   );
 
+  const onFileUploaded = (file: NexusFile) => {
+    console.log('file got uploaded', file);
+  };
+
+  const FileUpload = (
+    <FileUploadContainer
+      orgLabel={orgLabel}
+      projectLabel={projectLabel}
+      onFileUploaded={onFileUploaded}
+    />
+  );
+
   return (
     <>
       {analysesDataWithImages && (
         <AnalysisPlugin
+          FileUpload={FileUpload}
           analyses={analysesDataWithImages}
           mode="view"
           onCancel={() => {}}

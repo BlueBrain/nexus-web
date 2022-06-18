@@ -9,6 +9,7 @@ import {
   Row,
   Col,
   Checkbox,
+  Modal,
 } from 'antd';
 import * as React from 'react';
 import './AnalysisPlugin.less';
@@ -39,6 +40,8 @@ enum ActionType {
   ACTIVATE_ANALYSES = 'activate_analyses',
   CHANGE_ANALYSIS_NAME = 'change_analysis_name',
   CHANGE_ANALYSIS_DESCRIPTION = 'change_analysis_description',
+  OPEN_UPLOAD_DIALOG = 'open_upload_dialog',
+  CLOSE_UPLOAD_DIALOG = 'close_upload_dialog',
 }
 
 const DEFAULT_SCALE = 50;
@@ -60,17 +63,24 @@ type AnalysesAction =
   | {
       type: ActionType.CHANGE_ANALYSIS_DESCRIPTION;
       payload: { description: string };
-    };
+    }
+  | { type: ActionType.OPEN_UPLOAD_DIALOG }
+  | { type: ActionType.CLOSE_UPLOAD_DIALOG };
 
 type AnalysisPluginProps = {
   analyses: Analyses;
   mode: 'view' | 'edit';
+  FileUpload: React.ReactNode;
   onSave: (id: string, name: string, description: string) => void;
   onCancel: () => void;
   onChangeMode: (mode: 'view' | 'edit') => void;
 };
 
-const AnalysisPlugin = ({ analyses, onSave }: AnalysisPluginProps) => {
+const AnalysisPlugin = ({
+  analyses,
+  onSave,
+  FileUpload,
+}: AnalysisPluginProps) => {
   type AnalysesState = {
     scale: number;
     mode: 'view' | 'edit';
@@ -79,6 +89,7 @@ const AnalysisPlugin = ({ analyses, onSave }: AnalysisPluginProps) => {
     activeAnalyses?: string[];
     activeAnalysisName?: string;
     activeAnalysisDescription?: string;
+    isUploadAssetDialogOpen?: boolean;
   };
   const initState = ({
     scale,
@@ -152,6 +163,16 @@ const AnalysisPlugin = ({ analyses, onSave }: AnalysisPluginProps) => {
           ...state,
           activeAnalysisDescription: action.payload.description,
         };
+      case ActionType.OPEN_UPLOAD_DIALOG:
+        return {
+          ...state,
+          isUploadAssetDialogOpen: true,
+        };
+      case ActionType.CLOSE_UPLOAD_DIALOG:
+        return {
+          ...state,
+          isUploadAssetDialogOpen: false,
+        };
       default:
         throw new Error();
     }
@@ -168,6 +189,7 @@ const AnalysisPlugin = ({ analyses, onSave }: AnalysisPluginProps) => {
       activeAnalyses,
       activeAnalysisName,
       activeAnalysisDescription,
+      isUploadAssetDialogOpen,
     },
     dispatch,
   ] = React.useReducer(
@@ -197,9 +219,20 @@ const AnalysisPlugin = ({ analyses, onSave }: AnalysisPluginProps) => {
     return res;
   };
 
+  const fileUploadModal = (
+    <Modal
+      visible={isUploadAssetDialogOpen}
+      footer={false}
+      onCancel={() => dispatch({ type: ActionType.CLOSE_UPLOAD_DIALOG })}
+    >
+      {FileUpload}
+    </Modal>
+  );
+
   return (
     <div className="analysis">
       <>
+        {fileUploadModal}
         {mode === 'view' && (
           <Row className="analysisTools">
             <Col span={12}>
@@ -240,11 +273,11 @@ const AnalysisPlugin = ({ analyses, onSave }: AnalysisPluginProps) => {
         )}
         {analyses
           .filter(a => activeAnalyses?.includes(a.id))
-          .map((a, i) => (
+          .map((analysis, i) => (
             <section key={i}>
               <h1 aria-label="Analysis Name">
-                {(mode === 'view' || editing !== a.id) && a.name}
-                {mode === 'edit' && editing === a.id && (
+                {(mode === 'view' || editing !== analysis.id) && analysis.name}
+                {mode === 'edit' && editing === analysis.id && (
                   <>
                     <Input
                       type="text"
@@ -270,7 +303,7 @@ const AnalysisPlugin = ({ analyses, onSave }: AnalysisPluginProps) => {
                         activeAnalysisName &&
                           activeAnalysisDescription &&
                           onSave(
-                            a.id,
+                            analysis.id,
                             activeAnalysisName,
                             activeAnalysisDescription
                           );
@@ -291,9 +324,9 @@ const AnalysisPlugin = ({ analyses, onSave }: AnalysisPluginProps) => {
                             dispatch({
                               type: ActionType.EDIT,
                               payload: {
-                                analysisId: a.id,
-                                analaysisName: a.name,
-                                analysisDescription: a.description,
+                                analysisId: analysis.id,
+                                analaysisName: analysis.name,
+                                analysisDescription: analysis.description,
                               },
                             })
                           }
@@ -321,8 +354,9 @@ const AnalysisPlugin = ({ analyses, onSave }: AnalysisPluginProps) => {
                 )}
               </h1>
               <p aria-label="Analysis Description">
-                {(mode === 'view' || editing !== a.id) && a.description}
-                {mode === 'edit' && editing === a.id && (
+                {(mode === 'view' || editing !== analysis.id) &&
+                  analysis.description}
+                {mode === 'edit' && editing === analysis.id && (
                   <Input.TextArea
                     placeholder="Analysis Description"
                     value={activeAnalysisDescription}
@@ -336,7 +370,16 @@ const AnalysisPlugin = ({ analyses, onSave }: AnalysisPluginProps) => {
                 )}
               </p>
               <section aria-label="Analysis Assets" className="assets">
-                {a.analyses.map((asset, i) => (
+                {mode === 'edit' && editing === analysis.id && (
+                  <Button
+                    onClick={() =>
+                      dispatch({ type: ActionType.OPEN_UPLOAD_DIALOG })
+                    }
+                  >
+                    Add
+                  </Button>
+                )}
+                {analysis.analyses.map((asset, i) => (
                   <div
                     key={i}
                     aria-label="Analysis Asset"
@@ -354,7 +397,7 @@ const AnalysisPlugin = ({ analyses, onSave }: AnalysisPluginProps) => {
                     }}
                   >
                     {asset.preview({ scale, mode })}
-                    {mode === 'edit' && editing === a.id && (
+                    {mode === 'edit' && editing === analysis.id && (
                       <Checkbox
                         checked={selected && selected.some(v => v === asset.id)}
                         className="selectedCheckbox"
