@@ -1,8 +1,8 @@
-import { NexusClient, SparqlView } from '@bbp/nexus-sdk';
+import { NexusClient, Resource, SparqlView } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { useState } from 'react';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import AnalysisPlugin, {
   analyses,
 } from '../../components/AnalysisPlugin/AnalysisPlugin';
@@ -46,7 +46,7 @@ export default ({
   resourceId,
 }: AnalysisPluginContainerProps) => {
   const nexus = useNexusContext();
-  const analyses: analyses = [];
+  const queryClient = useQueryClient();
 
   const [mode, setMode] = useState('view');
 
@@ -123,7 +123,7 @@ export default ({
       const reportIx = reports.findIndex(r => r.id === currentRow['report_id']);
 
       report?.analyses.push({
-        id: `${reportIx}`,
+        id: currentRow.asset_content_url,
         name: currentRow.asset_name,
         filePath: currentRow.asset_content_url,
         preview: ({ scale, mode }) => {
@@ -212,6 +212,28 @@ export default ({
     [analysesData, imageData]
   );
 
+  const mutateAnalysis = useMutation(
+    async (data: { id: string; name: string; description: string }) => {
+      const resource = (await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(data.id)
+      )) as Resource;
+      return nexus.Resource.update(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(data.id),
+        resource['_rev'],
+        { ...resource, name: data.name, 'schema:description': data.description }
+      );
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('analyses');
+      },
+    }
+  );
+
   return (
     <>
       {analysesDataWithImages && (
@@ -222,7 +244,9 @@ export default ({
           onChangeMode={(mode: 'view' | 'edit') => {
             setMode(mode);
           }}
-          onSave={(analyses: analyses) => {}}
+          onSave={(id: string, name: string, description: string) => {
+            mutateAnalysis.mutate({ id, name, description });
+          }}
         />
       )}
     </>

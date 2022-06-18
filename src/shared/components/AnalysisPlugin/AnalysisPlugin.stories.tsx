@@ -265,7 +265,7 @@ storiesOf('Components/AnalysisPlugin', module)
         <AnalysisPlugin
           analyses={exampleDataStructure}
           mode="view"
-          onSave={(analyses: analyses) => {}}
+          onSave={(id: string, name: string) => {}}
           onCancel={() => {}}
           onChangeMode={(mode: 'view' | 'edit') => {}}
         />

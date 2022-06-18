@@ -33,7 +33,7 @@ export type analyses = {
 type AnalysisPluginProps = {
   analyses: analyses;
   mode: 'view' | 'edit';
-  onSave: (analyses: analyses) => void;
+  onSave: (id: string, name: string, description: string) => void;
   onCancel: () => void;
   onChangeMode: (mode: 'view' | 'edit') => void;
 };
@@ -44,16 +44,30 @@ enum ActionType {
   INITIALIZE = 'initialize',
   SELECT_ASSET = 'select_asset',
   ACTIVATE_ANALYSES = 'activate_analyses',
+  CHANGE_ANALYSIS_NAME = 'change_analysis_name',
+  CHANGE_ANALYSIS_DESCRIPTION = 'change_analysis_description',
 }
 
 const DEFAULT_SCALE = 50;
 
 type AnalysesAction =
   | { type: ActionType.RESCALE; payload: number }
-  | { type: ActionType.EDIT; payload: { analysisId: string } }
+  | {
+      type: ActionType.EDIT;
+      payload: {
+        analysisId: string;
+        analaysisName: string;
+        analysisDescription: string;
+      };
+    }
   | { type: ActionType.INITIALIZE }
   | { type: ActionType.SELECT_ASSET; payload: { assetId: string } }
-  | { type: ActionType.ACTIVATE_ANALYSES; payload: { analyses: string[] } };
+  | { type: ActionType.ACTIVATE_ANALYSES; payload: { analyses: string[] } }
+  | { type: ActionType.CHANGE_ANALYSIS_NAME; payload: { name: string } }
+  | {
+      type: ActionType.CHANGE_ANALYSIS_DESCRIPTION;
+      payload: { description: string };
+    };
 
 type AnalysesState = {
   scale: number;
@@ -61,6 +75,8 @@ type AnalysesState = {
   editing?: string;
   selected?: string[];
   activeAnalyses?: string[];
+  activeAnalysisName?: string;
+  activeAnalysisDescription?: string;
 };
 const initState = ({
   scale,
@@ -72,7 +88,7 @@ const initState = ({
   activeAnalyses,
 });
 
-export default ({ analyses }: AnalysisPluginProps) => {
+export default ({ analyses, onSave }: AnalysisPluginProps) => {
   const reducer = (
     state: AnalysesState,
     action: AnalysesAction
@@ -85,6 +101,8 @@ export default ({ analyses }: AnalysisPluginProps) => {
           ...state,
           mode: 'edit',
           editing: action.payload.analysisId,
+          activeAnalysisName: action.payload.analaysisName,
+          activeAnalysisDescription: action.payload.analysisDescription,
         };
       case ActionType.SELECT_ASSET:
         state.selected = state.selected ? state.selected : [];
@@ -123,6 +141,16 @@ export default ({ analyses }: AnalysisPluginProps) => {
               scale: state.scale,
               activeAnalyses: [],
             });
+      case ActionType.CHANGE_ANALYSIS_NAME:
+        return {
+          ...state,
+          activeAnalysisName: action.payload.name,
+        };
+      case ActionType.CHANGE_ANALYSIS_DESCRIPTION:
+        return {
+          ...state,
+          activeAnalysisDescription: action.payload.description,
+        };
       default:
         throw new Error();
     }
@@ -131,7 +159,15 @@ export default ({ analyses }: AnalysisPluginProps) => {
   const firstAnalysis = analyses.length > 0 ? analyses[0].id : undefined;
 
   const [
-    { scale, mode, editing, selected, activeAnalyses },
+    {
+      scale,
+      mode,
+      editing,
+      selected,
+      activeAnalyses,
+      activeAnalysisName,
+      activeAnalysisDescription,
+    },
     dispatch,
   ] = React.useReducer(
     reducer,
@@ -212,7 +248,13 @@ export default ({ analyses }: AnalysisPluginProps) => {
                     <Input
                       type="text"
                       placeholder="Analysis Name"
-                      value={a.name}
+                      value={activeAnalysisName}
+                      onChange={e =>
+                        dispatch({
+                          type: ActionType.CHANGE_ANALYSIS_NAME,
+                          payload: { name: e.target.value },
+                        })
+                      }
                       style={{ width: '60%' }}
                     />
                     <Button
@@ -223,7 +265,16 @@ export default ({ analyses }: AnalysisPluginProps) => {
                     </Button>
                     <Button
                       type="primary"
-                      onClick={() => dispatch({ type: ActionType.INITIALIZE })}
+                      onClick={() => {
+                        activeAnalysisName &&
+                          activeAnalysisDescription &&
+                          onSave(
+                            a.id,
+                            activeAnalysisName,
+                            activeAnalysisDescription
+                          );
+                        dispatch({ type: ActionType.INITIALIZE });
+                      }}
                     >
                       Save
                     </Button>
@@ -238,7 +289,11 @@ export default ({ analyses }: AnalysisPluginProps) => {
                           onClick={() =>
                             dispatch({
                               type: ActionType.EDIT,
-                              payload: { analysisId: a.id },
+                              payload: {
+                                analysisId: a.id,
+                                analaysisName: a.name,
+                                analysisDescription: a.description,
+                              },
                             })
                           }
                         >
@@ -269,7 +324,13 @@ export default ({ analyses }: AnalysisPluginProps) => {
                 {mode === 'edit' && editing === a.id && (
                   <Input.TextArea
                     placeholder="Analysis Description"
-                    value={a.description}
+                    value={activeAnalysisDescription}
+                    onChange={e =>
+                      dispatch({
+                        type: ActionType.CHANGE_ANALYSIS_DESCRIPTION,
+                        payload: { description: e.currentTarget.value },
+                      })
+                    }
                   />
                 )}
               </p>
