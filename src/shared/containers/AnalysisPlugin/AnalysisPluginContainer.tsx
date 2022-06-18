@@ -4,18 +4,12 @@ import * as React from 'react';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import AnalysisPlugin, {
-  analyses,
+  Analyses,
 } from '../../components/AnalysisPlugin/AnalysisPlugin';
 import { sparqlQueryExecutor } from '../../utils/querySparqlView';
 import { Image } from 'antd';
 
-type AnalysisPluginContainerProps = {
-  orgLabel: string;
-  projectLabel: string;
-  resourceId: string;
-};
-
-function fetchImage(
+function fetchImageSrc(
   nexus: NexusClient,
   orgLabel: string,
   projectLabel: string,
@@ -33,14 +27,18 @@ function fetchImage(
       type: 'image/png', // TODO: get this properly
     });
 
-    const imageSrc = URL.createObjectURL(blob);
-
-    return imageSrc;
+    return URL.createObjectURL(blob);
   });
   return ImageItem;
 }
 
-export default ({
+type AnalysisPluginContainerProps = {
+  orgLabel: string;
+  projectLabel: string;
+  resourceId: string;
+};
+
+const AnalysisPluginContainer = ({
   orgLabel,
   projectLabel,
   resourceId,
@@ -83,7 +81,7 @@ export default ({
   `;
 
   const fetchAnalyses = async () => {
-    const reports: analyses = [];
+    const reports: Analyses = [];
     const result = await sparqlQueryExecutor(
       nexus,
       ANALYSIS_QUERY,
@@ -92,7 +90,7 @@ export default ({
       } as SparqlView,
       false
     );
-    type sparqlQueryRow = {
+    type SparqlRowResult = {
       id: string;
       key: string;
       self: {
@@ -109,7 +107,7 @@ export default ({
     };
 
     const analysisData = result.items.reduce((prev, current) => {
-      const currentRow = current as sparqlQueryRow;
+      const currentRow = current as SparqlRowResult;
 
       if (!reports.some(r => r.id === currentRow['report_id'])) {
         prev.push({
@@ -129,9 +127,7 @@ export default ({
         preview: ({ scale, mode }) => {
           const scaledSize = (scale / 100) * 500;
           const size = scaledSize < 150 ? 150 : scaledSize;
-          const imgSrc = imageData?.find(
-            img => img.contentUrl === currentRow.asset_content_url
-          );
+
           return (
             <Image style={{ maxHeight: size }} preview={mode === 'view'} />
           );
@@ -147,7 +143,10 @@ export default ({
     return analysisData;
   };
 
-  const { data: analysesData, status } = useQuery('analyses', fetchAnalyses);
+  const { data: analysesData, status: analysesDataStatus } = useQuery(
+    'analyses',
+    fetchAnalyses
+  );
 
   const fetchImages = async () => {
     const imageSourceInitial: Promise<{
@@ -165,7 +164,12 @@ export default ({
           const imageId = asset.filePath.substring(
             asset.filePath.lastIndexOf('/') + 1
           );
-          const src = await fetchImage(nexus, orgLabel, projectLabel, imageId);
+          const src = await fetchImageSrc(
+            nexus,
+            orgLabel,
+            projectLabel,
+            imageId
+          );
           return { id: asset.id, src: src, contentUrl: asset.filePath };
         });
         return [...prev, ...assets];
@@ -252,3 +256,5 @@ export default ({
     </>
   );
 };
+
+export default AnalysisPluginContainer;

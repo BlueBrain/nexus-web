@@ -13,10 +13,11 @@ import {
 import * as React from 'react';
 import './AnalysisPlugin.less';
 
-export type analyses = {
+export type Analyses = {
+  id: string;
   name: string;
   description: string;
-  id: string;
+
   analyses: {
     id: string;
     name: string;
@@ -29,14 +30,6 @@ export type analyses = {
     }) => React.ReactElement;
   }[];
 }[];
-
-type AnalysisPluginProps = {
-  analyses: analyses;
-  mode: 'view' | 'edit';
-  onSave: (id: string, name: string, description: string) => void;
-  onCancel: () => void;
-  onChangeMode: (mode: 'view' | 'edit') => void;
-};
 
 enum ActionType {
   RESCALE = 'rescale',
@@ -69,26 +62,34 @@ type AnalysesAction =
       payload: { description: string };
     };
 
-type AnalysesState = {
-  scale: number;
+type AnalysisPluginProps = {
+  analyses: Analyses;
   mode: 'view' | 'edit';
-  editing?: string;
-  selected?: string[];
-  activeAnalyses?: string[];
-  activeAnalysisName?: string;
-  activeAnalysisDescription?: string;
+  onSave: (id: string, name: string, description: string) => void;
+  onCancel: () => void;
+  onChangeMode: (mode: 'view' | 'edit') => void;
 };
-const initState = ({
-  scale,
-  mode,
-  activeAnalyses,
-}: AnalysesState): AnalysesState => ({
-  scale,
-  mode,
-  activeAnalyses,
-});
 
-export default ({ analyses, onSave }: AnalysisPluginProps) => {
+const AnalysisPlugin = ({ analyses, onSave }: AnalysisPluginProps) => {
+  type AnalysesState = {
+    scale: number;
+    mode: 'view' | 'edit';
+    editing?: string;
+    selected?: string[];
+    activeAnalyses?: string[];
+    activeAnalysisName?: string;
+    activeAnalysisDescription?: string;
+  };
+  const initState = ({
+    scale,
+    mode,
+    activeAnalyses,
+  }: AnalysesState): AnalysesState => ({
+    scale,
+    mode,
+    activeAnalyses,
+  });
+
   const reducer = (
     state: AnalysesState,
     action: AnalysesAction
@@ -377,3 +378,5 @@ export default ({ analyses, onSave }: AnalysisPluginProps) => {
     </div>
   );
 };
+
+export default AnalysisPlugin;
