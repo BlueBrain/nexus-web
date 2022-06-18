@@ -20,6 +20,7 @@ export type Analyses = {
   description: string;
 
   analyses: {
+    saved: boolean;
     id: string;
     name: string;
     filePath: string; // expect this is an image for now

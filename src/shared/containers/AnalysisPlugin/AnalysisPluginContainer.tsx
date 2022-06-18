@@ -48,6 +48,20 @@ const AnalysisPluginContainer = ({
   const queryClient = useQueryClient();
 
   const [mode, setMode] = useState('view');
+  const [unsavedAssets, setUnsavedAssets] = useState<
+    {
+      saved: boolean;
+      id: string;
+      name: string;
+      filePath: string; // expect this is an image for now
+      preview: ({
+        scale,
+      }: {
+        scale: number;
+        mode: 'edit' | 'view';
+      }) => React.ReactElement;
+    }[]
+  >([]);
 
   // TODO: fetch view to get self url
   // const DEFAULT_VIEW_ID =
@@ -122,6 +136,7 @@ const AnalysisPluginContainer = ({
       const reportIx = reports.findIndex(r => r.id === currentRow['report_id']);
 
       report?.analyses.push({
+        saved: true,
         id: currentRow.asset_content_url,
         name: currentRow.asset_name,
         filePath: currentRow.asset_content_url,
@@ -161,18 +176,20 @@ const AnalysisPluginContainer = ({
 
     const imageSources = Promise.all(
       analysesData.reduce((prev, current) => {
-        const assets = current.analyses.map(async asset => {
-          const imageId = asset.filePath.substring(
-            asset.filePath.lastIndexOf('/') + 1
-          );
-          const src = await fetchImageSrc(
-            nexus,
-            orgLabel,
-            projectLabel,
-            imageId
-          );
-          return { id: asset.id, src: src, contentUrl: asset.filePath };
-        });
+        const assets = current.analyses
+          .concat(unsavedAssets)
+          .map(async asset => {
+            const imageId = asset.filePath.substring(
+              asset.filePath.lastIndexOf('/') + 1
+            );
+            const src = await fetchImageSrc(
+              nexus,
+              orgLabel,
+              projectLabel,
+              imageId
+            );
+            return { id: asset.id, src: src, contentUrl: asset.filePath };
+          });
         return [...prev, ...assets];
       }, imageSourceInitial)
     );
@@ -193,7 +210,7 @@ const AnalysisPluginContainer = ({
       analysesData?.map(a => {
         return {
           ...a,
-          analyses: a.analyses.map(m => {
+          analyses: a.analyses.concat(unsavedAssets).map(m => {
             const img = imageData?.find(img => img.contentUrl === m.filePath);
 
             return {
@@ -214,7 +231,7 @@ const AnalysisPluginContainer = ({
           }),
         };
       }),
-    [analysesData, imageData]
+    [analysesData, imageData, unsavedAssets]
   );
 
   const mutateAnalysis = useMutation(
@@ -240,7 +257,25 @@ const AnalysisPluginContainer = ({
   );
 
   const onFileUploaded = (file: NexusFile) => {
-    console.log('file got uploaded', file);
+    const newlyUploadedAsset = {
+      saved: false,
+      id: file['@id'],
+      name: '',
+      filePath: file['@id'],
+      preview: ({ scale }: { scale: number }) => {
+        const scaledSize = (scale / 100) * 500;
+        const size = scaledSize < 150 ? 150 : scaledSize;
+
+        return (
+          <Image
+            style={{ maxHeight: size }}
+            placeholder="newly uploaded"
+            preview={mode === 'view'}
+          />
+        );
+      },
+    };
+    setUnsavedAssets([...unsavedAssets, newlyUploadedAsset]);
   };
 
   const FileUpload = (
