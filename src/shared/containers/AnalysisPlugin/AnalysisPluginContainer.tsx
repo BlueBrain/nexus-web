@@ -241,6 +241,23 @@ const AnalysisPluginContainer = ({
         projectLabel,
         encodeURIComponent(data.id)
       )) as Resource;
+
+      const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
+        return {
+          '@type': 'DataDownload',
+          contentUrl: a.filePath,
+          encodingFormat: 'image/png', // TODO: stop hardcoding
+          name: '',
+        };
+      });
+
+      const distribution = resource['distribution'];
+      if (distribution) {
+        distribution.push(...unsavedAssetsToAddToDistribution);
+      } else {
+        resource['distribution'] = unsavedAssetsToAddToDistribution;
+      }
+
       return nexus.Resource.update(
         orgLabel,
         projectLabel,
