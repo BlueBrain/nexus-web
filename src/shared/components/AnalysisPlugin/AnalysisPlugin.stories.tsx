@@ -3,7 +3,7 @@ import { withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react';
 import * as React from 'react';
 import { Image } from 'antd';
-import AnalysisPlugin, { Analyses } from './AnalysisPlugin';
+import AnalysisPlugin, { AnalysisReport } from './AnalysisPlugin';
 // import sample1 from './sample-images/sample1.png';
 const sample1 = require('./sample-images/sample1.png');
 const sample2 = require('./sample-images/sample2.png');
@@ -14,13 +14,13 @@ const scaleImage = (scale: number) => {
   return scaledSize < 150 ? 150 : scaledSize;
 };
 
-const exampleDataStructure: Analyses = [
+const exampleDataStructure: AnalysisReport[] = [
   {
     id: 'analysis1',
     name: 'M-Type Factsheet L1_HAC',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vehicula at felis at lacinia. Suspendisse bibendum nunc non pulvinar ultrices. Mauris sed dolor suscipit, posuere justo quis, dapibus lorem. Aliquam erat volutpat. Suspendisse pulvinar mollis lacus, eget tristique felis elementum in. ',
-    analyses: [
+    assets: [
       {
         id: '1',
         name: 'First one',
@@ -55,7 +55,7 @@ const exampleDataStructure: Analyses = [
     id: 'analysis2',
     name: 'Cell Density by m-type O1.v6-RC3',
     description: 'This analyses is about...',
-    analyses: [
+    assets: [
       {
         id: '3',
         name: 'First one',
@@ -89,7 +89,7 @@ const exampleDataStructure: Analyses = [
     name: 'Neuron Density C-type 01.v3-SSCX4',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vehicula at felis at lacinia. Suspendisse bibendum nunc non pulvinar ultrices. Mauris sed dolor suscipit, posuere justo quis, dapibus lorem. Aliquam erat volutpat. Suspendisse pulvinar mollis lacus, eget tristique felis elementum in. ',
-    analyses: [
+    assets: [
       {
         id: '1',
         name: 'First one',
@@ -125,7 +125,7 @@ const exampleDataStructure: Analyses = [
     name: 'Neuron Density C-type 01.v3-SSCX4',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vehicula at felis at lacinia. Suspendisse bibendum nunc non pulvinar ultrices. Mauris sed dolor suscipit, posuere justo quis, dapibus lorem. Aliquam erat volutpat. Suspendisse pulvinar mollis lacus, eget tristique felis elementum in. ',
-    analyses: [
+    assets: [
       {
         id: '1',
         name: 'First one',
@@ -161,7 +161,7 @@ const exampleDataStructure: Analyses = [
     name: 'Neuron Density C-type 01.v3-SSCX4',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vehicula at felis at lacinia. Suspendisse bibendum nunc non pulvinar ultrices. Mauris sed dolor suscipit, posuere justo quis, dapibus lorem. Aliquam erat volutpat. Suspendisse pulvinar mollis lacus, eget tristique felis elementum in. ',
-    analyses: [
+    assets: [
       {
         id: '1',
         name: 'First one',
@@ -197,7 +197,7 @@ const exampleDataStructure: Analyses = [
     name: 'Neuron Density C-type 01.v3-SSCX4',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vehicula at felis at lacinia. Suspendisse bibendum nunc non pulvinar ultrices. Mauris sed dolor suscipit, posuere justo quis, dapibus lorem. Aliquam erat volutpat. Suspendisse pulvinar mollis lacus, eget tristique felis elementum in. ',
-    analyses: [
+    assets: [
       {
         id: '1',
         name: 'First one',
@@ -233,7 +233,7 @@ const exampleDataStructure: Analyses = [
     name: 'Neuron Density C-type 01.v3-SSCX4',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vehicula at felis at lacinia. Suspendisse bibendum nunc non pulvinar ultrices. Mauris sed dolor suscipit, posuere justo quis, dapibus lorem. Aliquam erat volutpat. Suspendisse pulvinar mollis lacus, eget tristique felis elementum in. ',
-    analyses: [
+    assets: [
       {
         id: '1',
         name: 'First one',
@@ -278,7 +278,7 @@ storiesOf('Components/AnalysisPlugin', module)
       return (
         <AnalysisPlugin
           FileUpload={() => <></>}
-          analyses={exampleDataStructure}
+          analysisReports={exampleDataStructure}
           mode="view"
           onSave={(id: string, name: string) => {}}
           onCancel={() => {}}

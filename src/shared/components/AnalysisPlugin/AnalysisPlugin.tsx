@@ -18,12 +18,12 @@ import {
 import * as React from 'react';
 import './AnalysisPlugin.less';
 
-export type Analyses = {
+export type AnalysisReport = {
   id: string;
   name: string;
   description: string;
 
-  analyses: {
+  assets: {
     saved: boolean;
     id: string;
     name: string;
@@ -35,18 +35,18 @@ export type Analyses = {
       mode: 'edit' | 'view';
     }) => React.ReactElement;
   }[];
-}[];
+};
 
 enum ActionType {
   RESCALE = 'rescale',
-  EDIT = 'edit',
+  EDIT_ANALYSIS_REPORT = 'edit_analysis_report',
   INITIALIZE = 'initialize',
   SELECT_ASSET = 'select_asset',
-  ACTIVATE_ANALYSES = 'activate_analyses',
+  CHANGE_SELECTED_ANALYSIS_REPORTS = 'change_selected_analysis_reports',
   CHANGE_ANALYSIS_NAME = 'change_analysis_name',
   CHANGE_ANALYSIS_DESCRIPTION = 'change_analysis_description',
-  OPEN_UPLOAD_DIALOG = 'open_upload_dialog',
-  CLOSE_UPLOAD_DIALOG = 'close_upload_dialog',
+  OPEN_FILE_UPLOAD_DIALOG = 'open_file_upload_dialog',
+  CLOSE_FILE_UPLOAD_DIALOG = 'close_file_upload_dialog',
 }
 
 const DEFAULT_SCALE = 50;
@@ -54,7 +54,7 @@ const DEFAULT_SCALE = 50;
 type AnalysesAction =
   | { type: ActionType.RESCALE; payload: number }
   | {
-      type: ActionType.EDIT;
+      type: ActionType.EDIT_ANALYSIS_REPORT;
       payload: {
         analysisId: string;
         analaysisName: string;
@@ -63,17 +63,20 @@ type AnalysesAction =
     }
   | { type: ActionType.INITIALIZE }
   | { type: ActionType.SELECT_ASSET; payload: { assetId: string } }
-  | { type: ActionType.ACTIVATE_ANALYSES; payload: { analyses: string[] } }
+  | {
+      type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS;
+      payload: { analysisReportIds: string[] };
+    }
   | { type: ActionType.CHANGE_ANALYSIS_NAME; payload: { name: string } }
   | {
       type: ActionType.CHANGE_ANALYSIS_DESCRIPTION;
       payload: { description: string };
     }
-  | { type: ActionType.OPEN_UPLOAD_DIALOG }
-  | { type: ActionType.CLOSE_UPLOAD_DIALOG };
+  | { type: ActionType.OPEN_FILE_UPLOAD_DIALOG }
+  | { type: ActionType.CLOSE_FILE_UPLOAD_DIALOG };
 
 type AnalysisPluginProps = {
-  analyses: Analyses;
+  analysisReports: AnalysisReport[];
   mode: 'view' | 'edit';
   FileUpload: React.ReactNode;
   onSave: (id: string, name: string, description: string) => void;
@@ -82,98 +85,102 @@ type AnalysisPluginProps = {
 };
 
 const AnalysisPlugin = ({
-  analyses,
+  analysisReports,
   onSave,
   FileUpload,
 }: AnalysisPluginProps) => {
   type AnalysesState = {
-    scale: number;
+    imagePreviewScale: number;
     mode: 'view' | 'edit';
-    editing?: string;
-    selected?: string[];
-    activeAnalyses?: string[];
-    activeAnalysisName?: string;
-    activeAnalysisDescription?: string;
+    selectedAnalysisReports?: string[];
+    currentlyBeingEditedAnalysisReportId?: string;
+    currentlyBeingEditingAnalysisReportName?: string;
+    currentlyBeingEditedAnalysisReportDescription?: string;
+    selectedAssets?: string[];
     isUploadAssetDialogOpen?: boolean;
   };
   const initState = ({
-    scale,
+    imagePreviewScale: scale,
     mode,
-    activeAnalyses,
+    selectedAnalysisReports,
   }: AnalysesState): AnalysesState => ({
-    scale,
+    imagePreviewScale: scale,
     mode,
-    activeAnalyses,
+    selectedAnalysisReports,
   });
 
-  const reducer = (
+  const analysisUIReducer = (
     state: AnalysesState,
     action: AnalysesAction
   ): AnalysesState => {
     switch (action.type) {
       case ActionType.RESCALE:
-        return { ...state, scale: action.payload };
-      case ActionType.EDIT:
+        return { ...state, imagePreviewScale: action.payload };
+      case ActionType.EDIT_ANALYSIS_REPORT:
         return {
           ...state,
           mode: 'edit',
-          editing: action.payload.analysisId,
-          activeAnalysisName: action.payload.analaysisName,
-          activeAnalysisDescription: action.payload.analysisDescription,
+          currentlyBeingEditedAnalysisReportId: action.payload.analysisId,
+          currentlyBeingEditingAnalysisReportName: action.payload.analaysisName,
+          currentlyBeingEditedAnalysisReportDescription:
+            action.payload.analysisDescription,
         };
       case ActionType.SELECT_ASSET:
-        state.selected = state.selected ? state.selected : [];
-        const selectedId = state.selected?.findIndex(
+        state.selectedAssets = state.selectedAssets ? state.selectedAssets : [];
+        const selectedId = state.selectedAssets?.findIndex(
           a => a === action.payload.assetId
         );
 
-        console.log(state.selected, selectedId, action.payload.assetId);
-
-        if (state.selected && selectedId !== undefined && selectedId > -1) {
-          const selectedCopy = [...state.selected];
+        if (
+          state.selectedAssets &&
+          selectedId !== undefined &&
+          selectedId > -1
+        ) {
+          const selectedCopy = [...state.selectedAssets];
           selectedCopy.splice(selectedId, 1);
           return {
             ...state,
-            selected: selectedCopy,
+            selectedAssets: selectedCopy,
           };
         }
         return {
           ...state,
-          selected: [...state.selected, action.payload.assetId],
+          selectedAssets: [...state.selectedAssets, action.payload.assetId],
         };
-      case ActionType.ACTIVATE_ANALYSES:
+      case ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS:
         return {
           ...state,
-          activeAnalyses: action.payload.analyses,
+          selectedAnalysisReports: action.payload.analysisReportIds,
         };
       case ActionType.INITIALIZE:
-        return analyses.length > 0
+        return analysisReports.length > 0
           ? initState({
               mode: 'view',
-              scale: state.scale,
-              activeAnalyses: firstAnalysis ? [firstAnalysis] : [],
+              imagePreviewScale: state.imagePreviewScale,
+              selectedAnalysisReports: firstAnalysis ? [firstAnalysis] : [],
             })
           : initState({
               mode: 'view',
-              scale: state.scale,
-              activeAnalyses: [],
+              imagePreviewScale: state.imagePreviewScale,
+              selectedAnalysisReports: [],
             });
       case ActionType.CHANGE_ANALYSIS_NAME:
         return {
           ...state,
-          activeAnalysisName: action.payload.name,
+          currentlyBeingEditingAnalysisReportName: action.payload.name,
         };
       case ActionType.CHANGE_ANALYSIS_DESCRIPTION:
         return {
           ...state,
-          activeAnalysisDescription: action.payload.description,
+          currentlyBeingEditedAnalysisReportDescription:
+            action.payload.description,
         };
-      case ActionType.OPEN_UPLOAD_DIALOG:
+      case ActionType.OPEN_FILE_UPLOAD_DIALOG:
         return {
           ...state,
           isUploadAssetDialogOpen: true,
         };
-      case ActionType.CLOSE_UPLOAD_DIALOG:
+      case ActionType.CLOSE_FILE_UPLOAD_DIALOG:
         return {
           ...state,
           isUploadAssetDialogOpen: false,
@@ -183,44 +190,45 @@ const AnalysisPlugin = ({
     }
   };
 
-  const firstAnalysis = analyses.length > 0 ? analyses[0].id : undefined;
+  const firstAnalysis =
+    analysisReports.length > 0 ? analysisReports[0].id : undefined;
 
   const [
     {
-      scale,
+      imagePreviewScale: scale,
       mode,
-      editing,
-      selected,
-      activeAnalyses,
-      activeAnalysisName,
-      activeAnalysisDescription,
+      currentlyBeingEditedAnalysisReportId: editing,
+      selectedAssets: selected,
+      selectedAnalysisReports,
+      currentlyBeingEditingAnalysisReportName,
+      currentlyBeingEditedAnalysisReportDescription,
       isUploadAssetDialogOpen,
     },
     dispatch,
   ] = React.useReducer(
-    reducer,
+    analysisUIReducer,
     {
-      scale: DEFAULT_SCALE,
+      imagePreviewScale: DEFAULT_SCALE,
       mode: 'view',
-      activeAnalyses: firstAnalysis ? [firstAnalysis] : [],
+      selectedAnalysisReports: firstAnalysis ? [firstAnalysis] : [],
     },
     initState
   );
 
   const { Option } = Select;
 
-  const onAnalysesChange = (value: string[]) => {
+  const onChangeAnalysisReports = (value: string[]) => {
     dispatch({
-      type: ActionType.ACTIVATE_ANALYSES,
-      payload: { analyses: value },
+      type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS,
+      payload: { analysisReportIds: value },
     });
   };
 
   const onSearch = (value: string) => {
-    const res = analyses.filter(a =>
+    const res = analysisReports.filter(a =>
       a.name.toLowerCase().includes(value.toLowerCase())
     );
-    console.log('SEARCH', res);
+
     return res;
   };
 
@@ -228,7 +236,7 @@ const AnalysisPlugin = ({
     <Modal
       visible={isUploadAssetDialogOpen}
       footer={false}
-      onCancel={() => dispatch({ type: ActionType.CLOSE_UPLOAD_DIALOG })}
+      onCancel={() => dispatch({ type: ActionType.CLOSE_FILE_UPLOAD_DIALOG })}
       className="file-upload-modal"
     >
       {FileUpload}
@@ -243,14 +251,14 @@ const AnalysisPlugin = ({
           <Row className="analysisTools">
             <Col span={12}>
               <Select
-                value={activeAnalyses}
+                value={selectedAnalysisReports}
                 showSearch
                 mode="multiple"
                 placeholder="Select Analysis"
                 className="select-analysis"
                 style={{ width: '100%' }}
                 optionFilterProp="children"
-                onChange={onAnalysesChange}
+                onChange={onChangeAnalysisReports}
                 onSearch={onSearch}
                 filterOption={(input, option) =>
                   ((option!.children as unknown) as string)
@@ -258,7 +266,7 @@ const AnalysisPlugin = ({
                     .indexOf(input.toLowerCase()) > -1
                 }
               >
-                {analyses.map((a, i) => (
+                {analysisReports.map((a, i) => (
                   <Option key={a.id} value={a.id}>
                     {a.name ? a.name : a.id}
                   </Option>
@@ -278,20 +286,22 @@ const AnalysisPlugin = ({
             </Col>
           </Row>
         )}
-        {analyses
-          .filter(a => activeAnalyses?.includes(a.id))
-          .map((analysis, i) => (
+        {analysisReports
+          .filter(a => selectedAnalysisReports?.includes(a.id))
+          .map((analysisReport, i) => (
             <section key={i}>
               <h1 aria-label="Analysis Name" style={{ display: 'flex' }}>
-                {(mode === 'view' || editing !== analysis.id) && (
-                  <div style={{ display: 'inline-block' }}>{analysis.name}</div>
+                {(mode === 'view' || editing !== analysisReport.id) && (
+                  <div style={{ display: 'inline-block' }}>
+                    {analysisReport.name}
+                  </div>
                 )}
-                {mode === 'edit' && editing === analysis.id && (
+                {mode === 'edit' && editing === analysisReport.id && (
                   <>
                     <Input
                       type="text"
                       placeholder="Analysis Name"
-                      value={activeAnalysisName}
+                      value={currentlyBeingEditingAnalysisReportName}
                       onChange={e =>
                         dispatch({
                           type: ActionType.CHANGE_ANALYSIS_NAME,
@@ -316,12 +326,12 @@ const AnalysisPlugin = ({
                       <Button
                         type="primary"
                         onClick={() => {
-                          activeAnalysisName &&
-                            activeAnalysisDescription &&
+                          currentlyBeingEditingAnalysisReportName &&
+                            currentlyBeingEditedAnalysisReportDescription &&
                             onSave(
-                              analysis.id,
-                              activeAnalysisName,
-                              activeAnalysisDescription
+                              analysisReport.id,
+                              currentlyBeingEditingAnalysisReportName,
+                              currentlyBeingEditedAnalysisReportDescription
                             );
                           dispatch({ type: ActionType.INITIALIZE });
                         }}
@@ -340,11 +350,11 @@ const AnalysisPlugin = ({
                           icon={<EditOutlined />}
                           onClick={() =>
                             dispatch({
-                              type: ActionType.EDIT,
+                              type: ActionType.EDIT_ANALYSIS_REPORT,
                               payload: {
-                                analysisId: analysis.id,
-                                analaysisName: analysis.name,
-                                analysisDescription: analysis.description,
+                                analysisId: analysisReport.id,
+                                analaysisName: analysisReport.name,
+                                analysisDescription: analysisReport.description,
                               },
                             })
                           }
@@ -367,12 +377,12 @@ const AnalysisPlugin = ({
                 aria-label="Analysis Description"
                 style={{ maxWidth: '900px', marginRight: '50px' }}
               >
-                {(mode === 'view' || editing !== analysis.id) &&
-                  analysis.description}
-                {mode === 'edit' && editing === analysis.id && (
+                {(mode === 'view' || editing !== analysisReport.id) &&
+                  analysisReport.description}
+                {mode === 'edit' && editing === analysisReport.id && (
                   <Input.TextArea
                     placeholder="Analysis Description"
-                    value={activeAnalysisDescription}
+                    value={currentlyBeingEditedAnalysisReportDescription}
                     onChange={e =>
                       dispatch({
                         type: ActionType.CHANGE_ANALYSIS_DESCRIPTION,
@@ -383,20 +393,20 @@ const AnalysisPlugin = ({
                 )}
               </p>
               <section aria-label="Analysis Assets" className="assets">
-                {mode === 'edit' && editing === analysis.id && (
+                {mode === 'edit' && editing === analysisReport.id && (
                   <div style={{ display: 'flex', width: '100%' }}>
                     <Button
                       type="link"
                       style={{ marginLeft: 'auto', marginBottom: '10px' }}
                       onClick={() =>
-                        dispatch({ type: ActionType.OPEN_UPLOAD_DIALOG })
+                        dispatch({ type: ActionType.OPEN_FILE_UPLOAD_DIALOG })
                       }
                     >
                       Add Files to Analysis
                     </Button>
                   </div>
                 )}
-                {analysis.analyses.map((asset, i) => (
+                {analysisReport.assets.map((asset, i) => (
                   <div
                     key={i}
                     aria-label="Analysis Asset"
@@ -413,7 +423,7 @@ const AnalysisPlugin = ({
                     }}
                   >
                     {asset.preview({ scale, mode })}
-                    {mode === 'edit' && editing === analysis.id && (
+                    {mode === 'edit' && editing === analysisReport.id && (
                       <Checkbox
                         checked={selected && selected.some(v => v === asset.id)}
                         className="selectedCheckbox"

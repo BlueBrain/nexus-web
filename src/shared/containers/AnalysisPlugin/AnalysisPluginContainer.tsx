@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import AnalysisPlugin, {
-  Analyses,
+  AnalysisReport,
 } from '../../components/AnalysisPlugin/AnalysisPlugin';
 import { sparqlQueryExecutor } from '../../utils/querySparqlView';
 import { Image } from 'antd';
@@ -71,7 +71,7 @@ const AnalysisPluginContainer = ({
     PREFIX prov:<http://www.w3.org/ns/prov#>
     PREFIX nsg:<https://neuroshapes.org/>
     PREFIX nxv:<https://bluebrain.github.io/nexus/vocabulary/>
-    SELECT ?container_resource_id ?analysis_report_id ?analysis_report_name ?analysis_report_description ?asset_content_url ?asset_encoding_format ?asset_name ?self
+    SELECT ?analysis_report_id ?analysis_report_name ?analysis_report_description ?asset_content_url ?asset_encoding_format ?asset_name ?self
     WHERE {
       BIND(<${resourceId}> as ?start) .
       BIND(<${resourceId}> as ?self) .
@@ -93,7 +93,7 @@ const AnalysisPluginContainer = ({
   `;
 
   const fetchAnalysisData = async () => {
-    const reports: Analyses = [];
+    const analysisReports: AnalysisReport[] = [];
     const result = await sparqlQueryExecutor(
       nexus,
       ANALYSIS_QUERY,
@@ -102,14 +102,13 @@ const AnalysisPluginContainer = ({
       } as SparqlView,
       false
     );
-    type SparqlQueryRowResult = {
+    type AnalysisAssetSparqlQueryRowResult = {
       id: string;
       key: string;
       self: {
         type: string;
         value: string;
       };
-      container_resource_id: string;
       analysis_report_id: string;
       analysis_report_name: string;
       analysis_report_description: string;
@@ -118,25 +117,29 @@ const AnalysisPluginContainer = ({
       asset_encoding_format: string;
     };
 
-    const analysisData = result.items.reduce((prev, current) => {
-      const currentRow = current as SparqlQueryRowResult;
+    const analysisData = result.items.reduce((analysisReports, current) => {
+      const currentRow = current as AnalysisAssetSparqlQueryRowResult;
 
-      if (!reports.some(r => r.id === currentRow['analysis_report_id'])) {
-        prev.push({
+      /* add new entry if report not in array yet */
+      if (
+        !analysisReports.some(r => r.id === currentRow['analysis_report_id'])
+      ) {
+        analysisReports.push({
           id: currentRow['analysis_report_id'],
           description: currentRow['analysis_report_description'],
           name: currentRow['analysis_report_name'],
-          analyses: [],
+          assets: [],
         });
       }
-      const report = reports.find(
+
+      const report = analysisReports.find(
         r => r.id === currentRow['analysis_report_id']
       );
-      const reportIx = reports.findIndex(
+      const reportIx = analysisReports.findIndex(
         r => r.id === currentRow['analysis_report_id']
       );
 
-      report?.analyses.push({
+      report?.assets.push({
         saved: true,
         id: currentRow.asset_content_url,
         name: currentRow.asset_name,
@@ -151,11 +154,11 @@ const AnalysisPluginContainer = ({
         },
       });
       if (report) {
-        prev[reportIx] = report;
+        analysisReports[reportIx] = report;
       }
 
-      return prev;
-    }, reports);
+      return analysisReports;
+    }, analysisReports);
 
     return analysisData;
   };
@@ -177,20 +180,18 @@ const AnalysisPluginContainer = ({
 
     const imageSources = Promise.all(
       analysesData.reduce((prev, current) => {
-        const assets = current.analyses
-          .concat(unsavedAssets)
-          .map(async asset => {
-            const imageId = asset.filePath.substring(
-              asset.filePath.lastIndexOf('/') + 1
-            );
-            const src = await fetchImageObjectUrl(
-              nexus,
-              orgLabel,
-              projectLabel,
-              imageId
-            );
-            return { id: asset.id, src: src, contentUrl: asset.filePath };
-          });
+        const assets = current.assets.concat(unsavedAssets).map(async asset => {
+          const imageId = asset.filePath.substring(
+            asset.filePath.lastIndexOf('/') + 1
+          );
+          const src = await fetchImageObjectUrl(
+            nexus,
+            orgLabel,
+            projectLabel,
+            imageId
+          );
+          return { id: asset.id, src: src, contentUrl: asset.filePath };
+        });
         return [...prev, ...assets];
       }, imageSourceInitial)
     );
@@ -211,9 +212,8 @@ const AnalysisPluginContainer = ({
       analysesData?.map(a => {
         return {
           ...a,
-          analyses: a.analyses.concat(unsavedAssets).map(m => {
+          assets: a.assets.concat(unsavedAssets).map(m => {
             const img = imageData?.find(img => img.contentUrl === m.filePath);
-
             return {
               ...m,
               preview: ({ scale, mode }: { scale: number; mode: string }) => {
@@ -221,11 +221,13 @@ const AnalysisPluginContainer = ({
                 const size = scaledSize < 150 ? 150 : scaledSize;
 
                 return (
-                  <Image
-                    src={img?.src}
-                    style={{ maxHeight: size }}
-                    preview={mode === 'view'}
-                  />
+                  <>
+                    <Image
+                      src={img?.src}
+                      style={{ maxHeight: size }}
+                      preview={mode === 'view'}
+                    />
+                  </>
                 );
               },
             };
@@ -280,17 +282,8 @@ const AnalysisPluginContainer = ({
       id: file['@id'],
       name: '',
       filePath: file['@id'],
-      preview: ({ scale }: { scale: number }) => {
-        const scaledSize = (scale / 100) * 500;
-        const size = scaledSize < 150 ? 150 : scaledSize;
-
-        return (
-          <Image
-            style={{ maxHeight: size }}
-            placeholder="newly uploaded"
-            preview={mode === 'view'}
-          />
-        );
+      preview: () => {
+        return <Image placeholder="Uploading..." preview={mode === 'view'} />;
       },
     };
     setUnsavedAssets([...unsavedAssets, newlyUploadedAsset]);
@@ -309,7 +302,7 @@ const AnalysisPluginContainer = ({
       {analysesDataWithImages && (
         <AnalysisPlugin
           FileUpload={FileUpload}
-          analyses={analysesDataWithImages}
+          analysisReports={analysesDataWithImages}
           mode="view"
           onCancel={() => {}}
           onChangeMode={(mode: 'view' | 'edit') => {
