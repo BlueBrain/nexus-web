@@ -6,22 +6,41 @@
 .analysis {
   padding-top: 20px;
   margin-left: 20px;
-  max-width: 880px;
+  // max-width: 880px;
   .analysisTools {
-    min-height: 100px;
+    min-height: 60px;
     max-height: 500px;
   }
   .assets {
     display: flex;
     flex-wrap: wrap;
+    margin-right: 30px;
   }
   .asset {
     cursor: pointer;
     border: 1px inset rgba(211, 220, 50, 0);
     &.selected {
-      color: #fff;
+      color: @fusion-background-color;
       border: 1px inset rgba(45, 72, 108, 0.5);
       transition: border 0.3s;
     }
+  }
+  .ant-slider.slider-scale {
+    max-width: 150px;
+    .ant-slider-rail {
+      background-color: @fusion-primary-color;
+    }
+  }
+
+  div.select-analysis.ant-select {
+    div.ant-select-selector {
+      background-color: @fusion-background-color;
+    }
+  }
+}
+
+.ant-modal.file-upload-modal {
+  .ant-modal-content .ant-modal-body {
+    padding-top: 50px;
   }
 }

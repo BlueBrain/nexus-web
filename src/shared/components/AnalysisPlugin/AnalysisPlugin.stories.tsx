@@ -3,7 +3,7 @@ import { withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react';
 import * as React from 'react';
 import { Image } from 'antd';
-import AnalysisPlugin, { analyses } from './AnalysisPlugin';
+import AnalysisPlugin, { Analyses } from './AnalysisPlugin';
 // import sample1 from './sample-images/sample1.png';
 const sample1 = require('./sample-images/sample1.png');
 const sample2 = require('./sample-images/sample2.png');
@@ -14,7 +14,7 @@ const scaleImage = (scale: number) => {
   return scaledSize < 150 ? 150 : scaledSize;
 };
 
-const exampleDataStructure: analyses = [
+const exampleDataStructure: Analyses = [
   {
     id: 'analysis1',
     name: 'M-Type Factsheet L1_HAC',
@@ -25,6 +25,7 @@ const exampleDataStructure: analyses = [
         id: '1',
         name: 'First one',
         filePath: 'https://img/here/1',
+        saved: true,
         preview: ({ scale, mode }) => (
           <>
             <Image
@@ -39,6 +40,7 @@ const exampleDataStructure: analyses = [
         id: '2',
         name: 'Second one',
         filePath: 'https://img/here/2',
+        saved: true,
         preview: ({ scale, mode }) => (
           <Image
             src={sample2}
@@ -58,6 +60,7 @@ const exampleDataStructure: analyses = [
         id: '3',
         name: 'First one',
         filePath: 'https://img/here/1',
+        saved: true,
         preview: ({ scale, mode }) => (
           <Image
             src={sample1}
@@ -70,6 +73,7 @@ const exampleDataStructure: analyses = [
         id: '4',
         name: 'Second one',
         filePath: 'https://img/here/2',
+        saved: true,
         preview: ({ scale, mode }) => (
           <Image
             src={sample1}
@@ -90,6 +94,7 @@ const exampleDataStructure: analyses = [
         id: '1',
         name: 'First one',
         filePath: 'https://img/here/3',
+        saved: true,
         preview: ({ scale, mode }) => (
           <>
             <Image
@@ -104,6 +109,7 @@ const exampleDataStructure: analyses = [
         id: '2',
         name: 'Second one',
         filePath: 'https://img/here/2',
+        saved: true,
         preview: ({ scale, mode }) => (
           <Image
             src={sample2}
@@ -124,6 +130,7 @@ const exampleDataStructure: analyses = [
         id: '1',
         name: 'First one',
         filePath: 'https://img/here/3',
+        saved: true,
         preview: ({ scale, mode }) => (
           <>
             <Image
@@ -138,6 +145,7 @@ const exampleDataStructure: analyses = [
         id: '2',
         name: 'Second one',
         filePath: 'https://img/here/2',
+        saved: true,
         preview: ({ scale, mode }) => (
           <Image
             src={sample2}
@@ -158,6 +166,7 @@ const exampleDataStructure: analyses = [
         id: '1',
         name: 'First one',
         filePath: 'https://img/here/3',
+        saved: true,
         preview: ({ scale, mode }) => (
           <>
             <Image
@@ -172,6 +181,7 @@ const exampleDataStructure: analyses = [
         id: '2',
         name: 'Second one',
         filePath: 'https://img/here/2',
+        saved: true,
         preview: ({ scale, mode }) => (
           <Image
             src={sample2}
@@ -192,6 +202,7 @@ const exampleDataStructure: analyses = [
         id: '1',
         name: 'First one',
         filePath: 'https://img/here/3',
+        saved: true,
         preview: ({ scale, mode }) => (
           <>
             <Image
@@ -206,6 +217,7 @@ const exampleDataStructure: analyses = [
         id: '2',
         name: 'Second one',
         filePath: 'https://img/here/2',
+        saved: true,
         preview: ({ scale, mode }) => (
           <Image
             src={sample2}
@@ -226,6 +238,7 @@ const exampleDataStructure: analyses = [
         id: '1',
         name: 'First one',
         filePath: 'https://img/here/3',
+        saved: true,
         preview: ({ scale, mode }) => (
           <>
             <Image
@@ -240,6 +253,7 @@ const exampleDataStructure: analyses = [
         id: '2',
         name: 'Second one',
         filePath: 'https://img/here/2',
+        saved: true,
         preview: ({ scale, mode }) => (
           <Image
             src={sample2}
@@ -263,6 +277,7 @@ storiesOf('Components/AnalysisPlugin', module)
   `)(() => {
       return (
         <AnalysisPlugin
+          FileUpload={() => <></>}
           analyses={exampleDataStructure}
           mode="view"
           onSave={(id: string, name: string) => {}}

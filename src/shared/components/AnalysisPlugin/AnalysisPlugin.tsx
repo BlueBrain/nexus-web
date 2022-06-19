@@ -1,4 +1,8 @@
-import { MoreOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  DownloadOutlined,
+  EditOutlined,
+  MoreOutlined,
+} from '@ant-design/icons';
 import {
   Button,
   Dropdown,
@@ -225,6 +229,7 @@ const AnalysisPlugin = ({
       visible={isUploadAssetDialogOpen}
       footer={false}
       onCancel={() => dispatch({ type: ActionType.CLOSE_UPLOAD_DIALOG })}
+      className="file-upload-modal"
     >
       {FileUpload}
     </Modal>
@@ -242,6 +247,7 @@ const AnalysisPlugin = ({
                 showSearch
                 mode="multiple"
                 placeholder="Select Analysis"
+                className="select-analysis"
                 style={{ width: '100%' }}
                 optionFilterProp="children"
                 onChange={onAnalysesChange}
@@ -276,8 +282,10 @@ const AnalysisPlugin = ({
           .filter(a => activeAnalyses?.includes(a.id))
           .map((analysis, i) => (
             <section key={i}>
-              <h1 aria-label="Analysis Name">
-                {(mode === 'view' || editing !== analysis.id) && analysis.name}
+              <h1 aria-label="Analysis Name" style={{ display: 'flex' }}>
+                {(mode === 'view' || editing !== analysis.id) && (
+                  <div style={{ display: 'inline-block' }}>{analysis.name}</div>
+                )}
                 {mode === 'edit' && editing === analysis.id && (
                   <>
                     <Input
@@ -292,35 +300,44 @@ const AnalysisPlugin = ({
                       }
                       style={{ width: '60%' }}
                     />
-                    <Button
-                      type="default"
-                      onClick={() => dispatch({ type: ActionType.INITIALIZE })}
+                    <div
+                      className="actions"
+                      style={{ marginLeft: 'auto', marginRight: '20px' }}
                     >
-                      Cancel
-                    </Button>
-                    <Button
-                      type="primary"
-                      onClick={() => {
-                        activeAnalysisName &&
-                          activeAnalysisDescription &&
-                          onSave(
-                            analysis.id,
-                            activeAnalysisName,
-                            activeAnalysisDescription
-                          );
-                        dispatch({ type: ActionType.INITIALIZE });
-                      }}
-                    >
-                      Save
-                    </Button>
+                      <Button
+                        style={{ marginRight: '10px' }}
+                        type="default"
+                        onClick={() =>
+                          dispatch({ type: ActionType.INITIALIZE })
+                        }
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        type="primary"
+                        onClick={() => {
+                          activeAnalysisName &&
+                            activeAnalysisDescription &&
+                            onSave(
+                              analysis.id,
+                              activeAnalysisName,
+                              activeAnalysisDescription
+                            );
+                          dispatch({ type: ActionType.INITIALIZE });
+                        }}
+                      >
+                        Save
+                      </Button>
+                    </div>
                   </>
                 )}
                 {mode === 'view' && (
                   <Dropdown.Button
+                    style={{ margin: 'auto 0' }}
                     overlay={
                       <Menu onClick={() => {}}>
                         <Menu.Item
-                          icon={<UserOutlined />}
+                          icon={<EditOutlined />}
                           onClick={() =>
                             dispatch({
                               type: ActionType.EDIT,
@@ -336,17 +353,9 @@ const AnalysisPlugin = ({
                         </Menu.Item>
                         <Menu.Item
                           onClick={() => console.log('download')}
-                          icon={<UserOutlined />}
+                          icon={<DownloadOutlined />}
                         >
                           Download
-                        </Menu.Item>
-                        <Menu.Item
-                          onClick={() =>
-                            console.log('visiting analysis report resource')
-                          }
-                          icon={<UserOutlined />}
-                        >
-                          View
                         </Menu.Item>
                       </Menu>
                     }
@@ -354,7 +363,10 @@ const AnalysisPlugin = ({
                   />
                 )}
               </h1>
-              <p aria-label="Analysis Description">
+              <p
+                aria-label="Analysis Description"
+                style={{ maxWidth: '900px', marginRight: '50px' }}
+              >
                 {(mode === 'view' || editing !== analysis.id) &&
                   analysis.description}
                 {mode === 'edit' && editing === analysis.id && (
@@ -372,13 +384,17 @@ const AnalysisPlugin = ({
               </p>
               <section aria-label="Analysis Assets" className="assets">
                 {mode === 'edit' && editing === analysis.id && (
-                  <Button
-                    onClick={() =>
-                      dispatch({ type: ActionType.OPEN_UPLOAD_DIALOG })
-                    }
-                  >
-                    Add
-                  </Button>
+                  <div style={{ display: 'flex', width: '100%' }}>
+                    <Button
+                      type="link"
+                      style={{ marginLeft: 'auto', marginBottom: '10px' }}
+                      onClick={() =>
+                        dispatch({ type: ActionType.OPEN_UPLOAD_DIALOG })
+                      }
+                    >
+                      Add Files to Analysis
+                    </Button>
+                  </div>
                 )}
                 {analysis.analyses.map((asset, i) => (
                   <div
@@ -390,7 +406,6 @@ const AnalysisPlugin = ({
                         : ''
                     }`}
                     onClick={() => {
-                      console.log('div clicked');
                       dispatch({
                         type: ActionType.SELECT_ASSET,
                         payload: { assetId: asset.id },

@@ -10,27 +10,24 @@ import { sparqlQueryExecutor } from '../../utils/querySparqlView';
 import { Image } from 'antd';
 import FileUploadContainer from '../FileUploadContainer';
 
-function fetchImageSrc(
+async function fetchImageObjectUrl(
   nexus: NexusClient,
   orgLabel: string,
   projectLabel: string,
-  id: string
+  imageResourceId: string
 ) {
-  const ImageItem = nexus.File.get(
+  const rawData = await nexus.File.get(
     orgLabel,
     projectLabel,
-    encodeURIComponent(id),
+    encodeURIComponent(imageResourceId),
     {
       as: 'blob',
     }
-  ).then(rawData => {
-    const blob = new Blob([rawData as string], {
-      type: 'image/png', // TODO: get this properly
-    });
-
-    return URL.createObjectURL(blob);
+  );
+  const blob = new Blob([rawData as string], {
+    type: 'image/png', // TODO: get this properly
   });
-  return ImageItem;
+  return URL.createObjectURL(blob);
 }
 
 type AnalysisPluginContainerProps = {
@@ -74,17 +71,17 @@ const AnalysisPluginContainer = ({
     PREFIX prov:<http://www.w3.org/ns/prov#>
     PREFIX nsg:<https://neuroshapes.org/>
     PREFIX nxv:<https://bluebrain.github.io/nexus/vocabulary/>
-    SELECT ?start ?report_id ?report_name ?report_description ?asset_content_url ?asset_encoding_format ?asset_name ?self
+    SELECT ?container_resource_id ?analysis_report_id ?analysis_report_name ?analysis_report_description ?asset_content_url ?asset_encoding_format ?asset_name ?self
     WHERE {
       BIND(<${resourceId}> as ?start) .
       BIND(<${resourceId}> as ?self) .
       OPTIONAL {
-          ?start        nsg:generated       ?report_id .
+          ?container_resource_id        nsg:generated       ?analysis_report_id .
           OPTIONAL {
-            ?report_id    nsg:name            ?report_name .  
-            ?report_id    s:description       ?report_description .
+            ?analysis_report_id    nsg:name            ?analysis_report_name .  
+            ?analysis_report_id    s:description       ?analysis_report_description .
           }
-          ?report_id    nsg:distribution    ?distribution .
+          ?analysis_report_id    nsg:distribution    ?distribution .
           OPTIONAL {
             ?distribution nsg:name            ?asset_name .
             ?distribution nsg:contentUrl      ?asset_content_url .
@@ -95,7 +92,7 @@ const AnalysisPluginContainer = ({
     LIMIT 100
   `;
 
-  const fetchAnalyses = async () => {
+  const fetchAnalysisData = async () => {
     const reports: Analyses = [];
     const result = await sparqlQueryExecutor(
       nexus,
@@ -105,35 +102,39 @@ const AnalysisPluginContainer = ({
       } as SparqlView,
       false
     );
-    type SparqlRowResult = {
+    type SparqlQueryRowResult = {
       id: string;
       key: string;
       self: {
         type: string;
         value: string;
       };
-      start: string;
-      report_id: string;
-      report_name: string;
-      report_description: string;
+      container_resource_id: string;
+      analysis_report_id: string;
+      analysis_report_name: string;
+      analysis_report_description: string;
       asset_name: string;
       asset_content_url: string;
       asset_encoding_format: string;
     };
 
     const analysisData = result.items.reduce((prev, current) => {
-      const currentRow = current as SparqlRowResult;
+      const currentRow = current as SparqlQueryRowResult;
 
-      if (!reports.some(r => r.id === currentRow['report_id'])) {
+      if (!reports.some(r => r.id === currentRow['analysis_report_id'])) {
         prev.push({
-          id: currentRow['report_id'],
-          description: currentRow['report_description'],
-          name: currentRow['report_name'],
+          id: currentRow['analysis_report_id'],
+          description: currentRow['analysis_report_description'],
+          name: currentRow['analysis_report_name'],
           analyses: [],
         });
       }
-      const report = reports.find(r => r.id === currentRow['report_id']);
-      const reportIx = reports.findIndex(r => r.id === currentRow['report_id']);
+      const report = reports.find(
+        r => r.id === currentRow['analysis_report_id']
+      );
+      const reportIx = reports.findIndex(
+        r => r.id === currentRow['analysis_report_id']
+      );
 
       report?.analyses.push({
         saved: true,
@@ -161,7 +162,7 @@ const AnalysisPluginContainer = ({
 
   const { data: analysesData, status: analysesDataStatus } = useQuery(
     'analyses',
-    fetchAnalyses
+    fetchAnalysisData
   );
 
   const fetchImages = async () => {
@@ -182,7 +183,7 @@ const AnalysisPluginContainer = ({
             const imageId = asset.filePath.substring(
               asset.filePath.lastIndexOf('/') + 1
             );
-            const src = await fetchImageSrc(
+            const src = await fetchImageObjectUrl(
               nexus,
               orgLabel,
               projectLabel,
