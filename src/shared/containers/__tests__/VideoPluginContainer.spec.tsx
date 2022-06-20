@@ -1,16 +1,8 @@
-import * as React from 'react';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient, Resource } from '@bbp/nexus-sdk';
 import VideoPluginContainer from '../VideoPluginContainer/VideoPluginContainer';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import fetch from 'node-fetch';
-import {
-  render,
-  fireEvent,
-  waitFor,
-  screen,
-  server,
-} from '../../../utils/testUtil';
+import { render, server } from '../../../utils/testUtil';
 import { rest } from 'msw';
 import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
