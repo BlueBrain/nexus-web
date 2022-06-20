@@ -163,8 +163,8 @@ const AnalysisPluginContainer = ({
     return analysisData;
   };
 
-  const { data: analysesData, status: analysesDataStatus } = useQuery(
-    'analyses',
+  const { data: analysisData, status: analysisDataStatus } = useQuery(
+    'analysis',
     fetchAnalysisData
   );
 
@@ -174,12 +174,12 @@ const AnalysisPluginContainer = ({
       src: string;
       contentUrl: string;
     }>[] = [];
-    if (!analysesData) {
+    if (!analysisData) {
       return [];
     }
 
     const imageSources = Promise.all(
-      analysesData.reduce((prev, current) => {
+      analysisData.reduce((prev, current) => {
         const assets = current.assets.concat(unsavedAssets).map(async asset => {
           const imageId = asset.filePath.substring(
             asset.filePath.lastIndexOf('/') + 1
@@ -199,17 +199,17 @@ const AnalysisPluginContainer = ({
     return imageSources;
   };
 
-  const { data: imageData, status: imageLoadingStatus } = useQuery(
+  const { data: imageData, status: imageDataStatus } = useQuery(
     'analysesImages',
     fetchImages,
     {
-      enabled: analysesData !== undefined && analysesData.length > 0,
+      enabled: analysisData !== undefined && analysisData.length > 0,
     }
   );
 
-  const analysesDataWithImages = React.useMemo(
+  const analysisDataWithImages = React.useMemo(
     () =>
-      analysesData?.map(a => {
+      analysisData?.map(a => {
         return {
           ...a,
           assets: a.assets.concat(unsavedAssets).map(m => {
@@ -234,7 +234,7 @@ const AnalysisPluginContainer = ({
           }),
         };
       }),
-    [analysesData, imageData, unsavedAssets]
+    [analysisData, imageData, unsavedAssets]
   );
 
   const mutateAnalysis = useMutation(
@@ -247,14 +247,14 @@ const AnalysisPluginContainer = ({
 
       const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
         return {
-          '@type': 'DataDownload',
+          '@type': 'DataDownload', // TODO: use appropriate prefix depending on context
           contentUrl: a.filePath,
           encodingFormat: 'image/png', // TODO: stop hardcoding
           name: '',
         };
       });
 
-      const distribution = resource['distribution'];
+      const distribution = resource['distribution']; // TODO: use appropriate cprefix depending on context
       if (distribution) {
         distribution.push(...unsavedAssetsToAddToDistribution);
       } else {
@@ -271,7 +271,7 @@ const AnalysisPluginContainer = ({
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries('analyses');
+        queryClient.invalidateQueries('analysis');
       },
     }
   );
@@ -289,7 +289,7 @@ const AnalysisPluginContainer = ({
     setUnsavedAssets([...unsavedAssets, newlyUploadedAsset]);
   };
 
-  const FileUpload = (
+  const FileUploadComponent = (
     <FileUploadContainer
       orgLabel={orgLabel}
       projectLabel={projectLabel}
@@ -299,10 +299,10 @@ const AnalysisPluginContainer = ({
 
   return (
     <>
-      {analysesDataWithImages && (
+      {analysisDataWithImages && (
         <AnalysisPlugin
-          FileUpload={FileUpload}
-          analysisReports={analysesDataWithImages}
+          FileUpload={FileUploadComponent}
+          analysisReports={analysisDataWithImages}
           mode="view"
           onCancel={() => {}}
           onChangeMode={(mode: 'view' | 'edit') => {
