@@ -38,8 +38,6 @@ type AnalysisPluginContainerProps = {
   resourceId: string;
 };
 
-const basePath = useSelector((state: RootState) => state.config.basePath);
-
 const AnalysisPluginContainer = ({
   orgLabel,
   projectLabel,
@@ -64,11 +62,16 @@ const AnalysisPluginContainer = ({
     }[]
   >([]);
 
+  const apiEndpoint = useSelector(
+    (state: RootState) => state.config.apiEndpoint
+  );
+
   // TODO: fetch view to get self url
   // const DEFAULT_VIEW_ID =
   //   'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex';
-  const DEFAULT_VIEW_SELF_ID =
-    'https://dev.nise.bbp.epfl.ch/nexus/v1/views/bbp-users/nick/graph';
+  // const DEFAULT_VIEW_SELF_ID =
+  //   'https://dev.nise.bbp.epfl.ch/nexus/v1/views/bbp-users/nick/graph';
+  const DEFAULT_VIEW_SELF_ID = `${apiEndpoint}/nexus/v1/views/${orgLabel}/${projectLabel}/graph`;
 
   const ANALYSIS_QUERY = `
     PREFIX s:<http://schema.org/>
