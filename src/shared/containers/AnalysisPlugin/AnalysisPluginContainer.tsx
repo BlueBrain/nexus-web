@@ -102,16 +102,16 @@ const AnalysisPluginContainer = ({
   type AnalysisAssetSparqlQueryRowResult = {
     id: string;
     key: string;
-    self: {
-      type: string;
-      value: string;
-    };
     analysis_report_id: string;
     analysis_report_name: string;
     analysis_report_description: string;
     asset_name: string;
     asset_content_url: string;
     asset_encoding_format: string;
+    self: {
+      type: string;
+      value: string;
+    };
   };
 
   const fetchAnalysisData = async (
