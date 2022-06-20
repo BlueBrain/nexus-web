@@ -3,6 +3,8 @@ import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/reducers';
 import AnalysisPlugin, {
   AnalysisReport,
 } from '../../components/AnalysisPlugin/AnalysisPlugin';
@@ -36,6 +38,8 @@ type AnalysisPluginContainerProps = {
   resourceId: string;
 };
 
+const basePath = useSelector((state: RootState) => state.config.basePath);
+
 const AnalysisPluginContainer = ({
   orgLabel,
   projectLabel,
@@ -64,7 +68,7 @@ const AnalysisPluginContainer = ({
   // const DEFAULT_VIEW_ID =
   //   'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex';
   const DEFAULT_VIEW_SELF_ID =
-    'https://dev.nise.bbp.epfl.ch/nexus/v1/views/bbp-users/nicholas/graph';
+    'https://dev.nise.bbp.epfl.ch/nexus/v1/views/bbp-users/nick/graph';
 
   const ANALYSIS_QUERY = `
     PREFIX s:<http://schema.org/>
