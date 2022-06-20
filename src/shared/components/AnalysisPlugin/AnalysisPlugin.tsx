@@ -432,7 +432,7 @@ const AnalysisPlugin = ({
                       });
                     }}
                   >
-                    {asset.preview({ scale: imagePreviewScale, mode })}
+                    {asset.preview({ mode, scale: imagePreviewScale })}
                     {mode === 'edit' &&
                       currentlyBeingEditedAnalysisReportId ===
                         analysisReport.id && (
