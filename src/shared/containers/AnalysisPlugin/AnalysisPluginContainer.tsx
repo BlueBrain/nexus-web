@@ -69,9 +69,9 @@ const AnalysisPluginContainer = ({
   // TODO: fetch view to get self url
   // const DEFAULT_VIEW_ID =
   //   'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex';
-  // const DEFAULT_VIEW_SELF_ID =
+  // const viewSelfId =
   //   'https://dev.nise.bbp.epfl.ch/nexus/v1/views/bbp-users/nick/graph';
-  const DEFAULT_VIEW_SELF_ID = `${apiEndpoint}/nexus/v1/views/${orgLabel}/${projectLabel}/graph`;
+  const viewSelfId = `${apiEndpoint}/nexus/v1/views/${orgLabel}/${projectLabel}/graph`;
 
   const ANALYSIS_QUERY = `
     PREFIX s:<http://schema.org/>
@@ -99,30 +99,34 @@ const AnalysisPluginContainer = ({
     LIMIT 100
   `;
 
-  const fetchAnalysisData = async () => {
+  type AnalysisAssetSparqlQueryRowResult = {
+    id: string;
+    key: string;
+    self: {
+      type: string;
+      value: string;
+    };
+    analysis_report_id: string;
+    analysis_report_name: string;
+    analysis_report_description: string;
+    asset_name: string;
+    asset_content_url: string;
+    asset_encoding_format: string;
+  };
+
+  const fetchAnalysisData = async (
+    viewSelfId: string,
+    analysisQuery: string
+  ) => {
     const analysisReports: AnalysisReport[] = [];
     const result = await sparqlQueryExecutor(
       nexus,
       ANALYSIS_QUERY,
       {
-        _self: DEFAULT_VIEW_SELF_ID,
+        _self: viewSelfId,
       } as SparqlView,
       false
     );
-    type AnalysisAssetSparqlQueryRowResult = {
-      id: string;
-      key: string;
-      self: {
-        type: string;
-        value: string;
-      };
-      analysis_report_id: string;
-      analysis_report_name: string;
-      analysis_report_description: string;
-      asset_name: string;
-      asset_content_url: string;
-      asset_encoding_format: string;
-    };
 
     const analysisData = result.items.reduce((analysisReports, current) => {
       const currentRow = current as AnalysisAssetSparqlQueryRowResult;
@@ -170,9 +174,11 @@ const AnalysisPluginContainer = ({
     return analysisData;
   };
 
-  const { data: analysisData, status: analysisDataStatus } = useQuery(
-    'analysis',
-    fetchAnalysisData
+  const {
+    data: analysisData,
+    status: analysisDataStatus,
+  } = useQuery('analysis', async () =>
+    fetchAnalysisData(viewSelfId, ANALYSIS_QUERY)
   );
 
   const fetchImages = async () => {
