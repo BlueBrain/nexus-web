@@ -1,11 +1,6 @@
 import { NexusClient, NexusFile, Resource, SparqlView } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-<<<<<<< HEAD
 import React, {useState} from 'react';
-
-=======
-import React, { useState } from 'react';
->>>>>>> 93c3a0d7 (ran prettier, removed commented self id)
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/reducers';
