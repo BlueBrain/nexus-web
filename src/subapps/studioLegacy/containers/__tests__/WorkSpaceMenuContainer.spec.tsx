@@ -331,7 +331,7 @@ describe('workSpaceMenu', () => {
         await waitFor(async () => {
           // wait for the workspace to load.
           await screen.getAllByText('No dashboards available');
-          const buttons = screen.getAllByRole('button');
+          const buttons = await screen.findAllByRole('button');
           expect(buttons).toHaveLength(1);
         });
       });

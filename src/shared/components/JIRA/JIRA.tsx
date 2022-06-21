@@ -334,11 +334,19 @@ const JIRAPluginUI = ({
 
       {issues.length === 0 && (
         <Empty description="No linked issues.">
-          <Button type="primary" onClick={() => setCreateIssueVisible(true)}>
+          <Button
+            type="primary"
+            onClick={() => setCreateIssueVisible(true)}
+            role="button"
+          >
             Create Issue
           </Button>{' '}
           or{' '}
-          <Button type="default" onClick={() => setLinkIssueVisible(true)}>
+          <Button
+            type="default"
+            onClick={() => setLinkIssueVisible(true)}
+            role="button"
+          >
             Link Existing Issue
           </Button>
         </Empty>
