@@ -9,6 +9,8 @@ import AnalysisPlugin, {
 import { sparqlQueryExecutor } from '../../utils/querySparqlView';
 import { Image } from 'antd';
 import FileUploadContainer from '../FileUploadContainer';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/reducers';
 
 async function fetchImageObjectUrl(
   nexus: NexusClient,
@@ -59,11 +61,12 @@ const AnalysisPluginContainer = ({
     }[]
   >([]);
 
-  // TODO: fetch view to get self url
-  // const DEFAULT_VIEW_ID =
-  //   'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex';
-  const DEFAULT_VIEW_SELF_ID =
-    'https://dev.nise.bbp.epfl.ch/nexus/v1/views/bbp-users/nicholas/graph';
+  const apiEndpoint = useSelector(
+    (state: RootState) => state.config.apiEndpoint
+  );
+  console.log({ apiEndpoint });
+
+  const DEFAULT_VIEW_SELF_ID = `${apiEndpoint}/views/${orgLabel}/${projectLabel}/graph`;
 
   const ANALYSIS_QUERY = `
     PREFIX s:<http://schema.org/>
@@ -270,7 +273,7 @@ const AnalysisPluginContainer = ({
       name: '',
       filePath: file['@id'],
       preview: () => {
-        return <Image placeholder="Loading..." preview={mode === 'view'} />;
+        return <Image placeholder="Loading..." preview={false} />;
       },
     };
     setUnsavedAssets([...unsavedAssets, newlyUploadedAsset]);
