@@ -44,7 +44,6 @@ const AnalysisPluginContainer = ({
   const nexus = useNexusContext();
   const queryClient = useQueryClient();
 
-  const [mode, setMode] = useState('view');
   const [unsavedAssets, setUnsavedAssets] = useState<
     {
       saved: boolean;
@@ -291,11 +290,7 @@ const AnalysisPluginContainer = ({
         <AnalysisPlugin
           FileUpload={FileUploadComponent}
           analysisReports={analysisDataWithImages}
-          mode="view"
           onCancel={() => {}}
-          onChangeMode={(mode: 'view' | 'edit') => {
-            setMode(mode);
-          }}
           onSave={(id: string, name: string, description: string) => {
             mutateAnalysis.mutate({ id, name, description });
           }}

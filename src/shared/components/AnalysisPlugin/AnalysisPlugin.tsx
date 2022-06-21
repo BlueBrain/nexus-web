@@ -77,11 +77,9 @@ type AnalysesAction =
 
 type AnalysisPluginProps = {
   analysisReports: AnalysisReport[];
-  mode: 'view' | 'edit';
   FileUpload: React.ReactNode;
   onSave: (id: string, name: string, description: string) => void;
   onCancel: () => void;
-  onChangeMode: (mode: 'view' | 'edit') => void;
 };
 
 const AnalysisPlugin = ({
