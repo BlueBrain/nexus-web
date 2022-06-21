@@ -83,7 +83,7 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
   return (
     <Collapse
       activeKey={collapsed ? 'video' : undefined}
-      onChange={e => handleCollapseChanged()}
+      onChange={handleCollapseChanged}
     >
       <Panel header="Video" key="video" forceRender={true}>
         <SchemaValidationFallbackContainer

@@ -2,7 +2,7 @@ import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient, Resource } from '@bbp/nexus-sdk';
 import VideoPluginContainer from '../VideoPluginContainer/VideoPluginContainer';
 import fetch from 'node-fetch';
-import { render, server } from '../../../utils/testUtil';
+import { render, server, screen, fireEvent } from '../../../utils/testUtil';
 import { rest } from 'msw';
 import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
@@ -20,126 +20,40 @@ describe('VideoPluginContainer', () => {
     uri: 'https://localhost:3000',
   });
 
+  const resource = ({
+    '@context': [
+      'https://bbp.neuroshapes.org',
+      'https://bluebrain.github.io/nexus/contexts/resource.json',
+    ],
+    '@id': 'videoresourceId',
+    '@type': ['Entity'],
+    video: [
+      {
+        name: 'video',
+        embedUrl: 'https://youtu.be/d4gSor3KyIw',
+      },
+      {
+        name: 'cool brain video',
+        uploadDate: '2020-07-10 15:00:00.000',
+        embedUrl: 'https://www.example.com/embed/123',
+      },
+    ],
+  } as unknown) as Resource;
+  server.use(
+    rest.get(
+      'https://localhost:3000/resources/org/project/_/videoresourceId',
+      (req, res, ctx) => {
+        const mockResponse = resource;
+
+        return res(
+          // Respond with a 200 status code
+          ctx.status(200),
+          ctx.json(mockResponse)
+        );
+      }
+    )
+  );
   it('renders with well formatted data', async () => {
-    const resource = ({
-      '@context': [
-        'https://bbp.neuroshapes.org',
-        'https://bluebrain.github.io/nexus/contexts/resource.json',
-      ],
-      '@id': 'videoresourceId',
-      '@type': [
-        'Entity',
-        'InVitroSliceReconstructedPatchedNeuron',
-        'https://bbp-nexus.epfl.ch/vocabs/bbp/neurosciencegraph/core/v0.1.0/InVitroSliceReconstructedPatchedNeuron',
-        'ReconstructedPatchedCell',
-        'ReconstructedCell',
-        'https://bbp-nexus.epfl.ch/vocabs/bbp/neurosciencegraph/core/v0.1.0/ReconstructedPatchedCell',
-        'https://bbp-nexus.epfl.ch/vocabs/bbp/neurosciencegraph/core/v0.1.0/ReconstructedCell',
-        'Dataset',
-      ],
-      video: [
-        {
-          name: 'video',
-          embedUrl: 'https://youtu.be/d4gSor3KyIw',
-        },
-        {
-          name: 'cool brain video',
-
-          embedUrl: 'https://www.example.com/embed/123',
-        },
-      ],
-      distribution: [
-        {
-          '@type': 'DataDownload',
-          contentSize: {
-            unitCode: 'bytes',
-            value: 245427,
-          },
-          contentUrl:
-            'https://bbp.epfl.ch/neurosciencegraph/data/a91043da-0527-4414-b7e8-3484d426c11f',
-          digest: {
-            algorithm: 'SHA-256',
-            value:
-              '02c666b5ba8ba806470f77f52b5b6b105662bc63f8b3f2da9a560af0bbc6fc07',
-          },
-          encodingFormat: 'application/swc',
-          name: 'file',
-        },
-        {
-          '@type': 'DataDownload',
-          contentUrl: 'http://microcircuits.epfl.ch/#/article/article_3_mph',
-          repository: {
-            '@id': 'http://microcircuits.epfl.ch/#/article/article_3_mph',
-          },
-        },
-      ],
-    } as unknown) as Resource;
-    server.use(
-      rest.get(
-        'https://localhost:3000/resources/org/project/_/videoresourceId',
-        (req, res, ctx) => {
-          const mockResponse = {
-            '@context': [
-              'https://bbp.neuroshapes.org',
-              'https://bluebrain.github.io/nexus/contexts/resource.json',
-            ],
-            '@id': 'video_resource_id',
-            '@type': [
-              'Entity',
-              'InVitroSliceReconstructedPatchedNeuron',
-              'https://bbp-nexus.epfl.ch/vocabs/bbp/neurosciencegraph/core/v0.1.0/InVitroSliceReconstructedPatchedNeuron',
-              'ReconstructedPatchedCell',
-              'ReconstructedCell',
-              'https://bbp-nexus.epfl.ch/vocabs/bbp/neurosciencegraph/core/v0.1.0/ReconstructedPatchedCell',
-              'https://bbp-nexus.epfl.ch/vocabs/bbp/neurosciencegraph/core/v0.1.0/ReconstructedCell',
-              'Dataset',
-            ],
-            video: [
-              {
-                name: 'video',
-                embedUrl: 'https://youtu.be/d4gSor3KyIw',
-              },
-              {
-                name: 'cool brain video',
-                embedUrl: 'https://www.example.com/embed/123',
-              },
-            ],
-            distribution: [
-              {
-                '@type': 'DataDownload',
-                contentSize: {
-                  unitCode: 'bytes',
-                  value: 245427,
-                },
-                contentUrl:
-                  'https://bbp.epfl.ch/neurosciencegraph/data/a91043da-0527-4414-b7e8-3484d426c11f',
-                digest: {
-                  algorithm: 'SHA-256',
-                  value:
-                    '02c666b5ba8ba806470f77f52b5b6b105662bc63f8b3f2da9a560af0bbc6fc07',
-                },
-                encodingFormat: 'application/swc',
-                name: 'file',
-              },
-              {
-                '@type': 'DataDownload',
-                contentUrl:
-                  'http://microcircuits.epfl.ch/#/article/article_3_mph',
-                repository: {
-                  '@id': 'http://microcircuits.epfl.ch/#/article/article_3_mph',
-                },
-              },
-            ],
-          };
-
-          return res(
-            // Respond with a 200 status code
-            ctx.status(200),
-            ctx.json(mockResponse)
-          );
-        }
-      )
-    );
     await act(async () => {
       const { container } = await render(
         <NexusProvider nexusClient={nexus}>
@@ -228,6 +142,27 @@ describe('VideoPluginContainer', () => {
         </NexusProvider>
       );
       expect(container).toMatchSnapshot();
+    });
+  });
+
+  it('When clicked fires collapse event handler', async () => {
+    const collapseHandler = jest.fn();
+    await act(async () => {
+      const { container } = await render(
+        <NexusProvider nexusClient={nexus}>
+          <VideoPluginContainer
+            resource={resource}
+            orgLabel="org"
+            projectLabel="project"
+            collapsed={false}
+            handleCollapseChanged={collapseHandler}
+          ></VideoPluginContainer>
+        </NexusProvider>
+      );
+      const panel = await screen.getByRole('button');
+      expect(panel).toBeVisible();
+      fireEvent.click(panel);
+      expect(collapseHandler).toHaveBeenCalled();
     });
   });
 });
