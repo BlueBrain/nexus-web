@@ -1,6 +1,6 @@
 import { NexusClient, NexusFile, Resource, SparqlView } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/reducers';
@@ -65,11 +65,6 @@ const AnalysisPluginContainer = ({
     (state: RootState) => state.config.apiEndpoint
   );
 
-  // TODO: fetch view to get self url
-  // const DEFAULT_VIEW_ID =
-  //   'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex';
-  // const viewSelfId =
-  //   'https://dev.nise.bbp.epfl.ch/nexus/v1/views/bbp-users/nick/graph';
   const viewSelfId = `${apiEndpoint}/nexus/v1/views/${orgLabel}/${projectLabel}/graph`;
 
   const ANALYSIS_QUERY = `
