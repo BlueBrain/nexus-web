@@ -9,11 +9,6 @@ const sample1 = require('./sample-images/sample1.png');
 const sample2 = require('./sample-images/sample2.png');
 const sample3 = require('./sample-images/sample3.png');
 
-const scaleImage = (scale: number) => {
-  const scaledSize = (scale / 100) * 500;
-  return scaledSize < 150 ? 150 : scaledSize;
-};
-
 const exampleDataStructure: AnalysisReport[] = [
   {
     id: 'analysis1',
@@ -26,13 +21,9 @@ const exampleDataStructure: AnalysisReport[] = [
         name: 'First one',
         filePath: 'https://img/here/1',
         saved: true,
-        preview: ({ scale, mode }) => (
+        preview: ({ mode }) => (
           <>
-            <Image
-              preview={mode === 'view'}
-              src={sample1}
-              style={{ maxHeight: scaleImage(scale) }}
-            />
+            <Image preview={mode === 'view'} src={sample1} />
           </>
         ),
       },
@@ -41,12 +32,8 @@ const exampleDataStructure: AnalysisReport[] = [
         name: 'Second one',
         filePath: 'https://img/here/2',
         saved: true,
-        preview: ({ scale, mode }) => (
-          <Image
-            src={sample2}
-            style={{ maxHeight: scaleImage(scale) }}
-            preview={mode === 'view'}
-          />
+        preview: ({ mode }) => (
+          <Image src={sample2} preview={mode === 'view'} />
         ),
       },
     ],
@@ -61,12 +48,8 @@ const exampleDataStructure: AnalysisReport[] = [
         name: 'First one',
         filePath: 'https://img/here/1',
         saved: true,
-        preview: ({ scale, mode }) => (
-          <Image
-            src={sample1}
-            style={{ maxHeight: scaleImage(scale) }}
-            preview={mode === 'view'}
-          />
+        preview: ({ mode }) => (
+          <Image src={sample1} preview={mode === 'view'} />
         ),
       },
       {
@@ -74,12 +57,8 @@ const exampleDataStructure: AnalysisReport[] = [
         name: 'Second one',
         filePath: 'https://img/here/2',
         saved: true,
-        preview: ({ scale, mode }) => (
-          <Image
-            src={sample1}
-            style={{ maxHeight: scaleImage(scale) }}
-            preview={mode === 'view'}
-          />
+        preview: ({ mode }) => (
+          <Image src={sample1} preview={mode === 'view'} />
         ),
       },
     ],
@@ -110,12 +89,8 @@ const exampleDataStructure: AnalysisReport[] = [
         name: 'Second one',
         filePath: 'https://img/here/2',
         saved: true,
-        preview: ({ scale, mode }) => (
-          <Image
-            src={sample2}
-            style={{ maxHeight: scaleImage(scale) }}
-            preview={mode === 'view'}
-          />
+        preview: ({ mode }) => (
+          <Image src={sample2} preview={mode === 'view'} />
         ),
       },
     ],
@@ -131,13 +106,9 @@ const exampleDataStructure: AnalysisReport[] = [
         name: 'First one',
         filePath: 'https://img/here/3',
         saved: true,
-        preview: ({ scale, mode }) => (
+        preview: ({ mode }) => (
           <>
-            <Image
-              preview={mode === 'view'}
-              src={sample1}
-              style={{ maxHeight: scaleImage(scale) }}
-            />
+            <Image preview={mode === 'view'} src={sample1} />
           </>
         ),
       },
@@ -146,12 +117,8 @@ const exampleDataStructure: AnalysisReport[] = [
         name: 'Second one',
         filePath: 'https://img/here/2',
         saved: true,
-        preview: ({ scale, mode }) => (
-          <Image
-            src={sample2}
-            style={{ maxHeight: scaleImage(scale) }}
-            preview={mode === 'view'}
-          />
+        preview: ({ mode }) => (
+          <Image src={sample2} preview={mode === 'view'} />
         ),
       },
     ],
@@ -167,13 +134,9 @@ const exampleDataStructure: AnalysisReport[] = [
         name: 'First one',
         filePath: 'https://img/here/3',
         saved: true,
-        preview: ({ scale, mode }) => (
+        preview: ({ mode }) => (
           <>
-            <Image
-              preview={mode === 'view'}
-              src={sample1}
-              style={{ maxHeight: scaleImage(scale) }}
-            />
+            <Image preview={mode === 'view'} src={sample1} />
           </>
         ),
       },
@@ -182,12 +145,8 @@ const exampleDataStructure: AnalysisReport[] = [
         name: 'Second one',
         filePath: 'https://img/here/2',
         saved: true,
-        preview: ({ scale, mode }) => (
-          <Image
-            src={sample2}
-            style={{ maxHeight: scaleImage(scale) }}
-            preview={mode === 'view'}
-          />
+        preview: ({ mode }) => (
+          <Image src={sample2} preview={mode === 'view'} />
         ),
       },
     ],
@@ -205,11 +164,7 @@ const exampleDataStructure: AnalysisReport[] = [
         saved: true,
         preview: ({ scale, mode }) => (
           <>
-            <Image
-              preview={mode === 'view'}
-              src={sample1}
-              style={{ maxHeight: scaleImage(scale) }}
-            />
+            <Image preview={mode === 'view'} src={sample1} />
           </>
         ),
       },
@@ -218,12 +173,8 @@ const exampleDataStructure: AnalysisReport[] = [
         name: 'Second one',
         filePath: 'https://img/here/2',
         saved: true,
-        preview: ({ scale, mode }) => (
-          <Image
-            src={sample2}
-            style={{ maxHeight: scaleImage(scale) }}
-            preview={mode === 'view'}
-          />
+        preview: ({ mode }) => (
+          <Image src={sample2} preview={mode === 'view'} />
         ),
       },
     ],
@@ -239,13 +190,9 @@ const exampleDataStructure: AnalysisReport[] = [
         name: 'First one',
         filePath: 'https://img/here/3',
         saved: true,
-        preview: ({ scale, mode }) => (
+        preview: ({ mode }) => (
           <>
-            <Image
-              preview={mode === 'view'}
-              src={sample1}
-              style={{ maxHeight: scaleImage(scale) }}
-            />
+            <Image preview={mode === 'view'} src={sample1} />
           </>
         ),
       },
@@ -254,12 +201,8 @@ const exampleDataStructure: AnalysisReport[] = [
         name: 'Second one',
         filePath: 'https://img/here/2',
         saved: true,
-        preview: ({ scale, mode }) => (
-          <Image
-            src={sample2}
-            style={{ maxHeight: scaleImage(scale) }}
-            preview={mode === 'view'}
-          />
+        preview: ({ mode }) => (
+          <Image src={sample2} preview={mode === 'view'} />
         ),
       },
     ],

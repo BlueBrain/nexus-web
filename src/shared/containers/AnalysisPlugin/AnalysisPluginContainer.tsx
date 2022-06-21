@@ -144,13 +144,8 @@ const AnalysisPluginContainer = ({
         id: currentRow.asset_content_url,
         name: currentRow.asset_name,
         filePath: currentRow.asset_content_url,
-        preview: ({ scale, mode }) => {
-          const scaledSize = (scale / 100) * 500;
-          const size = scaledSize < 150 ? 150 : scaledSize;
-
-          return (
-            <Image style={{ maxHeight: size }} preview={mode === 'view'} />
-          );
+        preview: ({ mode }) => {
+          return <Image preview={mode === 'view'} />;
         },
       });
       if (report) {
@@ -216,17 +211,10 @@ const AnalysisPluginContainer = ({
             const img = imageData?.find(img => img.contentUrl === m.filePath);
             return {
               ...m,
-              preview: ({ scale, mode }: { scale: number; mode: string }) => {
-                const scaledSize = (scale / 100) * 500;
-                const size = scaledSize < 150 ? 150 : scaledSize;
-
+              preview: ({ mode }: { mode: string }) => {
                 return (
                   <>
-                    <Image
-                      src={img?.src}
-                      style={{ maxHeight: size }}
-                      preview={mode === 'view'}
-                    />
+                    <Image src={img?.src} preview={mode === 'view'} />
                   </>
                 );
               },
@@ -283,7 +271,7 @@ const AnalysisPluginContainer = ({
       name: '',
       filePath: file['@id'],
       preview: () => {
-        return <Image placeholder="Uploading..." preview={mode === 'view'} />;
+        return <Image placeholder="Loading..." preview={mode === 'view'} />;
       },
     };
     setUnsavedAssets([...unsavedAssets, newlyUploadedAsset]);

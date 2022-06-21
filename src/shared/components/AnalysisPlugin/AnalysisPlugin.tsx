@@ -415,46 +415,63 @@ const AnalysisPlugin = ({
                       </Button>
                     </div>
                   )}
-                {analysisReport.assets.map((asset, i) => (
-                  <div
-                    key={i}
-                    aria-label="Analysis Asset"
-                    className={`asset ${
-                      selectedAssets &&
-                      selectedAssets.findIndex(v => v === asset.id) > -1
-                        ? 'selected'
-                        : ''
-                    }`}
-                    onClick={() => {
-                      dispatch({
-                        type: ActionType.SELECT_ASSET,
-                        payload: { assetId: asset.id },
-                      });
-                    }}
-                  >
-                    {asset.preview({ scale: imagePreviewScale, mode })}
-                    {mode === 'edit' &&
-                      currentlyBeingEditedAnalysisReportId ===
-                        analysisReport.id && (
-                        <Checkbox
-                          checked={
-                            selectedAssets &&
-                            selectedAssets.some(v => v === asset.id)
-                          }
-                          className="selectedCheckbox"
-                          onClick={e => {
-                            e.stopPropagation();
-                          }}
-                          onChange={e => {
-                            dispatch({
-                              type: ActionType.SELECT_ASSET,
-                              payload: { assetId: asset.id },
-                            });
-                          }}
-                        ></Checkbox>
-                      )}
-                  </div>
-                ))}
+                {analysisReport.assets.map((asset, i) => {
+                  const minThumbnailSize = 100;
+                  return (
+                    <div
+                      key={i}
+                      aria-label="Analysis Asset"
+                      className={`asset ${
+                        selectedAssets &&
+                        selectedAssets.findIndex(v => v === asset.id) > -1
+                          ? 'selected'
+                          : ''
+                      }`}
+                      style={{
+                        height:
+                          minThumbnailSize +
+                          imagePreviewScale * (imagePreviewScale / 30),
+                        width:
+                          minThumbnailSize +
+                          imagePreviewScale * (imagePreviewScale / 30),
+                      }}
+                      onClick={() => {
+                        if (
+                          mode === 'edit' &&
+                          currentlyBeingEditedAnalysisReportId ===
+                            analysisReport.id
+                        ) {
+                          dispatch({
+                            type: ActionType.SELECT_ASSET,
+                            payload: { assetId: asset.id },
+                          });
+                        }
+                      }}
+                    >
+                      {asset.preview({ scale: imagePreviewScale, mode })}
+                      {mode === 'edit' &&
+                        currentlyBeingEditedAnalysisReportId ===
+                          analysisReport.id && (
+                          <Checkbox
+                            checked={
+                              selectedAssets &&
+                              selectedAssets.some(v => v === asset.id)
+                            }
+                            className="selectedCheckbox"
+                            onClick={e => {
+                              e.stopPropagation();
+                            }}
+                            onChange={e => {
+                              dispatch({
+                                type: ActionType.SELECT_ASSET,
+                                payload: { assetId: asset.id },
+                              });
+                            }}
+                          ></Checkbox>
+                        )}
+                    </div>
+                  );
+                })}
               </section>
             </section>
           ))}
