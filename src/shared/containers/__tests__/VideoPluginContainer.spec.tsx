@@ -6,6 +6,13 @@ import { render, server, screen, fireEvent } from '../../../utils/testUtil';
 import { rest } from 'msw';
 import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
+import ReactPlayer from 'react-player';
+
+// Mocks
+jest.mock('react-player');
+const Player = (ReactPlayer as unknown) as jest.Mock;
+Player.mockImplementation(() => 'mock-Player');
+
 describe('VideoPluginContainer', () => {
   // establish API mocking before all tests
   beforeAll(() => server.listen());
@@ -163,6 +170,32 @@ describe('VideoPluginContainer', () => {
       expect(panel).toBeVisible();
       fireEvent.click(panel);
       expect(collapseHandler).toHaveBeenCalled();
+    });
+  });
+
+  it('Renders the video in full screen', async () => {
+    const collapseHandler = jest.fn();
+    await act(async () => {
+      const { container } = await render(
+        <NexusProvider nexusClient={nexus}>
+          <VideoPluginContainer
+            resource={resource}
+            orgLabel="org"
+            projectLabel="project"
+            collapsed={false}
+            handleCollapseChanged={collapseHandler}
+          ></VideoPluginContainer>
+        </NexusProvider>
+      );
+      await waitFor(async () => {
+        await screen.findByText('cool brain video');
+      });
+    });
+    const button = await screen.findByText('cool brain video');
+    await fireEvent.click(button);
+    await waitFor(async () => {
+      const els = await screen.findAllByText('cool brain video');
+      expect(els).toHaveLength(2);
     });
   });
 });
