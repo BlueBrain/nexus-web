@@ -2,7 +2,13 @@ import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient, Resource } from '@bbp/nexus-sdk';
 import VideoPluginContainer from '../VideoPluginContainer/VideoPluginContainer';
 import fetch from 'node-fetch';
-import { render, server, screen, fireEvent, waitFor } from '../../../utils/testUtil';
+import {
+  render,
+  server,
+  screen,
+  fireEvent,
+  waitFor,
+} from '../../../utils/testUtil';
 import { rest } from 'msw';
 import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
@@ -12,7 +18,6 @@ import ReactPlayer from 'react-player';
 jest.mock('react-player');
 const Player = (ReactPlayer as unknown) as jest.Mock;
 Player.mockImplementation(() => 'mock-Player');
-
 
 describe('VideoPluginContainer', () => {
   // establish API mocking before all tests
