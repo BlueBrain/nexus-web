@@ -1,6 +1,7 @@
 import { NexusClient, NexusFile, Resource, SparqlView } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import * as React from 'react';
+import React, {useState} from 'react';
+
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/reducers';
@@ -10,8 +11,6 @@ import AnalysisPlugin, {
 import { sparqlQueryExecutor } from '../../utils/querySparqlView';
 import { Image } from 'antd';
 import FileUploadContainer from '../FileUploadContainer';
-
-const useState = React.useState;
 
 async function fetchImageObjectUrl(
   nexus: NexusClient,
