@@ -11,6 +11,7 @@ import { Image } from 'antd';
 import FileUploadContainer from '../FileUploadContainer';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/reducers';
+import { FileImageOutlined } from '@ant-design/icons';
 
 async function fetchImageObjectUrl(
   nexus: NexusClient,
@@ -48,6 +49,7 @@ const AnalysisPluginContainer = ({
 
   const [unsavedAssets, setUnsavedAssets] = useState<
     {
+      analysisReportId: string;
       saved: boolean;
       id: string;
       name: string;
@@ -64,7 +66,6 @@ const AnalysisPluginContainer = ({
   const apiEndpoint = useSelector(
     (state: RootState) => state.config.apiEndpoint
   );
-  console.log({ apiEndpoint });
 
   const DEFAULT_VIEW_SELF_ID = `${apiEndpoint}/views/${orgLabel}/${projectLabel}/graph`;
 
@@ -75,14 +76,12 @@ const AnalysisPluginContainer = ({
     PREFIX nxv:<https://bluebrain.github.io/nexus/vocabulary/>
     SELECT ?analysis_report_id ?analysis_report_name ?analysis_report_description ?asset_content_url ?asset_encoding_format ?asset_name ?self
     WHERE {
-      BIND(<${resourceId}> as ?start) .
+      BIND(<${resourceId}> as ?container_resource_id) .
       BIND(<${resourceId}> as ?self) .
+      ?container_resource_id        ^prov:wasDerivedFrom       ?analysis_report_id .
+      ?analysis_report_id    nsg:name            ?analysis_report_name .  
+      ?analysis_report_id    s:description       ?analysis_report_description .
       OPTIONAL {
-          ?container_resource_id        nsg:generated       ?analysis_report_id .
-          OPTIONAL {
-            ?analysis_report_id    nsg:name            ?analysis_report_name .  
-            ?analysis_report_id    s:description       ?analysis_report_description .
-          }
           ?analysis_report_id    nsg:distribution    ?distribution .
           OPTIONAL {
             ?distribution nsg:name            ?asset_name .
@@ -141,15 +140,18 @@ const AnalysisPluginContainer = ({
         r => r.id === currentRow['analysis_report_id']
       );
 
-      report?.assets.push({
-        saved: true,
-        id: currentRow.asset_content_url,
-        name: currentRow.asset_name,
-        filePath: currentRow.asset_content_url,
-        preview: ({ mode }) => {
-          return <Image preview={mode === 'view'} />;
-        },
-      });
+      if (currentRow.asset_content_url !== undefined) {
+        report?.assets.push({
+          saved: true,
+          id: currentRow.asset_content_url,
+          name: currentRow.asset_name,
+          filePath: currentRow.asset_content_url,
+          preview: ({ mode }) => {
+            return <Image preview={mode === 'view'} />;
+          },
+        });
+      }
+
       if (report) {
         analysisReports[reportIx] = report;
       }
@@ -161,8 +163,11 @@ const AnalysisPluginContainer = ({
   };
 
   const { data: analysisData, status: analysisDataStatus } = useQuery(
-    'analysis',
-    fetchAnalysisData
+    ['analysis', resourceId],
+    fetchAnalysisData,
+    {
+      refetchOnWindowFocus: false,
+    }
   );
 
   const fetchImages = async () => {
@@ -197,19 +202,30 @@ const AnalysisPluginContainer = ({
   };
 
   const { data: imageData, status: imageDataStatus } = useQuery(
-    'analysesImages',
+    [
+      'analysesImages',
+      {
+        unsavedAssetsLength: unsavedAssets.length,
+        analysisDataLength: analysisData?.length,
+        analysisAssets: analysisData?.map(a => a.assets.map(m => m.id)).flat(),
+      },
+    ],
     fetchImages,
     {
       enabled: analysisData !== undefined && analysisData.length > 0,
+      refetchOnWindowFocus: false,
     }
   );
 
-  const analysisDataWithImages = React.useMemo(
-    () =>
-      analysisData?.map(a => {
-        return {
-          ...a,
-          assets: a.assets.concat(unsavedAssets).map(m => {
+  const analysisDataWithImages = React.useMemo(() => {
+    return analysisData?.map(a => {
+      return {
+        ...a,
+        assets: a.assets
+          .concat(
+            unsavedAssets.filter(unsaved => unsaved.analysisReportId === a.id)
+          )
+          .map(m => {
             const img = imageData?.find(img => img.contentUrl === m.filePath);
             return {
               ...m,
@@ -222,10 +238,9 @@ const AnalysisPluginContainer = ({
               },
             };
           }),
-        };
-      }),
-    [analysisData, imageData, unsavedAssets]
-  );
+      };
+    });
+  }, [analysisData, imageData, unsavedAssets]);
 
   const mutateAnalysis = useMutation(
     async (data: { id: string; name: string; description: string }) => {
@@ -244,12 +259,9 @@ const AnalysisPluginContainer = ({
         };
       });
 
-      const distribution = resource['distribution']; // TODO: use appropriate cprefix depending on context
-      if (distribution) {
-        distribution.push(...unsavedAssetsToAddToDistribution);
-      } else {
-        resource['distribution'] = unsavedAssetsToAddToDistribution;
-      }
+      const distribution = [resource['distribution']].flat(); // TODO: use appropriate cprefix depending on context
+      distribution.push(...unsavedAssetsToAddToDistribution);
+      resource['distribution'] = distribution;
 
       return nexus.Resource.update(
         orgLabel,
@@ -261,31 +273,36 @@ const AnalysisPluginContainer = ({
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries('analysis');
+        queryClient.invalidateQueries(['analysis']);
+        queryClient.invalidateQueries(['analysesImages']);
+        setUnsavedAssets([]);
       },
     }
   );
 
-  const onFileUploaded = (file: NexusFile) => {
+  const onFileUploaded = (file: NexusFile, analysisReportId: string) => {
     const newlyUploadedAsset = {
+      analysisReportId: analysisReportId,
       saved: false,
       id: file['@id'],
       name: '',
       filePath: file['@id'],
       preview: () => {
-        return <Image placeholder="Loading..." preview={false} />;
+        return <Image placeholder={<FileImageOutlined />} preview={false} />;
       },
     };
-    setUnsavedAssets([...unsavedAssets, newlyUploadedAsset]);
+    setUnsavedAssets(assets => [...assets, newlyUploadedAsset]);
   };
 
-  const FileUploadComponent = (
-    <FileUploadContainer
-      orgLabel={orgLabel}
-      projectLabel={projectLabel}
-      onFileUploaded={onFileUploaded}
-    />
-  );
+  const FileUploadComponent = (analysisReportId: string) => {
+    return (
+      <FileUploadContainer
+        orgLabel={orgLabel}
+        projectLabel={projectLabel}
+        onFileUploaded={file => onFileUploaded(file, analysisReportId)}
+      />
+    );
+  };
 
   return (
     <>

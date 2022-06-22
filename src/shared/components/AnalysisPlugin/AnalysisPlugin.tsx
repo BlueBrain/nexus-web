@@ -77,7 +77,7 @@ type AnalysesAction =
 
 type AnalysisPluginProps = {
   analysisReports: AnalysisReport[];
-  FileUpload: React.ReactNode;
+  FileUpload: (analysisReportId: string) => JSX.Element;
   onSave: (id: string, name: string, description: string) => void;
   onCancel: () => void;
 };
@@ -155,7 +155,12 @@ const AnalysisPlugin = ({
           ? initState({
               mode: 'view',
               imagePreviewScale: state.imagePreviewScale,
-              selectedAnalysisReports: firstAnalysis ? [firstAnalysis] : [],
+              selectedAnalysisReports:
+                state.currentlyBeingEditedAnalysisReportId !== undefined
+                  ? [state.currentlyBeingEditedAnalysisReportId]
+                  : firstAnalysis !== undefined
+                  ? [firstAnalysis]
+                  : [],
             })
           : initState({
               mode: 'view',
@@ -236,8 +241,10 @@ const AnalysisPlugin = ({
       footer={false}
       onCancel={() => dispatch({ type: ActionType.CLOSE_FILE_UPLOAD_DIALOG })}
       className="file-upload-modal"
+      destroyOnClose={true}
     >
-      {FileUpload}
+      {currentlyBeingEditedAnalysisReportId &&
+        FileUpload(currentlyBeingEditedAnalysisReportId)}
     </Modal>
   );
 
@@ -287,7 +294,7 @@ const AnalysisPlugin = ({
         {analysisReports
           .filter(a => selectedAnalysisReports?.includes(a.id))
           .map((analysisReport, i) => (
-            <section key={i}>
+            <section key={i} style={{ marginBottom: '40px' }}>
               <h1 aria-label="Analysis Name" style={{ display: 'flex' }}>
                 {(mode === 'view' ||
                   currentlyBeingEditedAnalysisReportId !==
@@ -417,7 +424,7 @@ const AnalysisPlugin = ({
                   const minThumbnailSize = 100;
                   return (
                     <div
-                      key={i}
+                      key={asset.id}
                       aria-label="Analysis Asset"
                       className={`asset ${
                         selectedAssets &&
