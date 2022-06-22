@@ -2,7 +2,7 @@ import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient, Resource } from '@bbp/nexus-sdk';
 import VideoPluginContainer from '../VideoPluginContainer/VideoPluginContainer';
 import fetch from 'node-fetch';
-import { render, server, screen, fireEvent } from '../../../utils/testUtil';
+import { render, server, screen, fireEvent, waitFor } from '../../../utils/testUtil';
 import { rest } from 'msw';
 import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
@@ -13,12 +13,14 @@ jest.mock('react-player');
 const Player = (ReactPlayer as unknown) as jest.Mock;
 Player.mockImplementation(() => 'mock-Player');
 
+
 describe('VideoPluginContainer', () => {
   // establish API mocking before all tests
   beforeAll(() => server.listen());
   // reset any request handlers that are declared as a part of our tests
   // (i.e. for testing one-time error scenarios)
   afterEach(() => server.resetHandlers());
+  beforeEach(() => jest.clearAllMocks());
   // clean up once the tests are done
   afterAll(() => server.close());
 
@@ -60,6 +62,33 @@ describe('VideoPluginContainer', () => {
       }
     )
   );
+
+  it('Renders the video in full screen', async () => {
+    const collapseHandler = jest.fn();
+    await act(async () => {
+      const { container } = await render(
+        <NexusProvider nexusClient={nexus}>
+          <VideoPluginContainer
+            resource={resource}
+            orgLabel="org"
+            projectLabel="project"
+            collapsed={false}
+            handleCollapseChanged={collapseHandler}
+          ></VideoPluginContainer>
+        </NexusProvider>
+      );
+      await waitFor(async () => {
+        await screen.findByText('cool brain video');
+      });
+    });
+    const button = await screen.findByText('cool brain video');
+    await fireEvent.click(button);
+    await waitFor(async () => {
+      const els = await screen.findAllByText('cool brain video');
+      expect(els).toHaveLength(2);
+    });
+  });
+
   it('renders with well formatted data', async () => {
     await act(async () => {
       const { container } = await render(
@@ -170,32 +199,6 @@ describe('VideoPluginContainer', () => {
       expect(panel).toBeVisible();
       fireEvent.click(panel);
       expect(collapseHandler).toHaveBeenCalled();
-    });
-  });
-
-  it('Renders the video in full screen', async () => {
-    const collapseHandler = jest.fn();
-    await act(async () => {
-      const { container } = await render(
-        <NexusProvider nexusClient={nexus}>
-          <VideoPluginContainer
-            resource={resource}
-            orgLabel="org"
-            projectLabel="project"
-            collapsed={false}
-            handleCollapseChanged={collapseHandler}
-          ></VideoPluginContainer>
-        </NexusProvider>
-      );
-      await waitFor(async () => {
-        await screen.findByText('cool brain video');
-      });
-    });
-    const button = await screen.findByText('cool brain video');
-    await fireEvent.click(button);
-    await waitFor(async () => {
-      const els = await screen.findAllByText('cool brain video');
-      expect(els).toHaveLength(2);
     });
   });
 });
