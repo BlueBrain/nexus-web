@@ -199,7 +199,7 @@ const AnalysisPluginContainer = ({
             projectLabel,
             imageId
           );
-          return { id: asset.id, src, contentUrl: asset.filePath };
+          return { src, id: asset.id, contentUrl: asset.filePath };
         });
         return [...prev, ...assets];
       }, imageSourceInitial)
