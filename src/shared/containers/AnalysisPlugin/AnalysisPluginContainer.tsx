@@ -3,14 +3,14 @@ import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/reducers';
 import AnalysisPlugin, {
   AnalysisReport,
 } from '../../components/AnalysisPlugin/AnalysisPlugin';
 import { sparqlQueryExecutor } from '../../utils/querySparqlView';
 import { Image } from 'antd';
 import FileUploadContainer from '../FileUploadContainer';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store/reducers';
 import { FileImageOutlined } from '@ant-design/icons';
 
 async function fetchImageObjectUrl(
@@ -67,9 +67,9 @@ const AnalysisPluginContainer = ({
     (state: RootState) => state.config.apiEndpoint
   );
 
-  const DEFAULT_VIEW_SELF_ID = `${apiEndpoint}/views/${orgLabel}/${projectLabel}/graph`;
+  const viewSelfId = `${apiEndpoint}/nexus/v1/views/${orgLabel}/${projectLabel}/graph`;
 
-  const ANALYSIS_QUERY = `
+  const analysisSparqlQuery = `
     PREFIX s:<http://schema.org/>
     PREFIX prov:<http://www.w3.org/ns/prov#>
     PREFIX nsg:<https://neuroshapes.org/>
@@ -93,30 +93,34 @@ const AnalysisPluginContainer = ({
     LIMIT 100
   `;
 
-  const fetchAnalysisData = async () => {
+  type AnalysisAssetSparqlQueryRowResult = {
+    id: string;
+    key: string;
+    analysis_report_id: string;
+    analysis_report_name: string;
+    analysis_report_description: string;
+    asset_name: string;
+    asset_content_url: string;
+    asset_encoding_format: string;
+    self: {
+      type: string;
+      value: string;
+    };
+  };
+
+  const fetchAnalysisData = async (
+    viewSelfId: string,
+    analysisQuery: string
+  ) => {
     const analysisReports: AnalysisReport[] = [];
     const result = await sparqlQueryExecutor(
       nexus,
-      ANALYSIS_QUERY,
+      analysisSparqlQuery,
       {
-        _self: DEFAULT_VIEW_SELF_ID,
+        _self: viewSelfId,
       } as SparqlView,
       false
     );
-    type AnalysisAssetSparqlQueryRowResult = {
-      id: string;
-      key: string;
-      self: {
-        type: string;
-        value: string;
-      };
-      analysis_report_id: string;
-      analysis_report_name: string;
-      analysis_report_description: string;
-      asset_name: string;
-      asset_content_url: string;
-      asset_encoding_format: string;
-    };
 
     const analysisData = result.items.reduce((analysisReports, current) => {
       const currentRow = current as AnalysisAssetSparqlQueryRowResult;
@@ -164,10 +168,7 @@ const AnalysisPluginContainer = ({
 
   const { data: analysisData, status: analysisDataStatus } = useQuery(
     ['analysis', resourceId],
-    fetchAnalysisData,
-    {
-      refetchOnWindowFocus: false,
-    }
+    async () => fetchAnalysisData(viewSelfId, analysisSparqlQuery)
   );
 
   const fetchImages = async () => {
@@ -192,7 +193,7 @@ const AnalysisPluginContainer = ({
             projectLabel,
             imageId
           );
-          return { id: asset.id, src: src, contentUrl: asset.filePath };
+          return { src, id: asset.id, contentUrl: asset.filePath };
         });
         return [...prev, ...assets];
       }, imageSourceInitial)

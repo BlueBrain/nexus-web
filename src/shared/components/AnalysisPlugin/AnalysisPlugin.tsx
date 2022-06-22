@@ -98,13 +98,13 @@ const AnalysisPlugin = ({
     isUploadAssetDialogOpen?: boolean;
   };
   const initState = ({
-    imagePreviewScale: scale,
     mode,
     selectedAnalysisReports,
+    imagePreviewScale: scale,
   }: AnalysesState): AnalysesState => ({
-    imagePreviewScale: scale,
     mode,
     selectedAnalysisReports,
+    imagePreviewScale: scale,
   });
 
   const analysisUIReducer = (
