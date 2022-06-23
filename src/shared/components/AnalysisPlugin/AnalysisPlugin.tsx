@@ -2,6 +2,8 @@ import {
   DownloadOutlined,
   EditOutlined,
   MoreOutlined,
+  ZoomInOutlined,
+  ZoomOutOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -16,7 +18,10 @@ import {
   Modal,
 } from 'antd';
 import * as React from 'react';
+import { getUsername } from '../../../shared/utils';
+import FriendlyTimeAgo from '../FriendlyDate';
 import './AnalysisPlugin.less';
+import * as moment from 'moment';
 
 export type Asset = {
   analysisReportId: string;
@@ -46,6 +51,8 @@ export type AnalysisReport = {
   id: string;
   name: string;
   description: string;
+  createdBy: string;
+  createdAt: string;
   assets: Asset[];
 };
 
@@ -291,15 +298,22 @@ const AnalysisPlugin = ({
               </Select>
             </Col>
             <Col span={8} offset={4}>
-              <Slider
-                tooltipVisible={false}
-                value={imagePreviewScale}
-                onChange={(value: number) =>
-                  dispatch({ type: ActionType.RESCALE, payload: value })
-                }
-                included={false}
-                className="slider-scale"
-              />
+              <div
+                className="zoom-control"
+                aria-label="Increase/Decrease image thumnbail size"
+              >
+                <ZoomOutOutlined title="Reduce thumbnail size" />
+                <Slider
+                  tooltipVisible={false}
+                  value={imagePreviewScale}
+                  onChange={(value: number) =>
+                    dispatch({ type: ActionType.RESCALE, payload: value })
+                  }
+                  included={false}
+                  className="slider-scale"
+                />
+                <ZoomInOutlined title="Increase thumbnail size" />
+              </div>
             </Col>
           </Row>
         )}
@@ -307,7 +321,13 @@ const AnalysisPlugin = ({
           .filter(a => selectedAnalysisReports?.includes(a.id))
           .map((analysisReport, i) => (
             <section key={i} style={{ marginBottom: '40px' }}>
-              <h1 aria-label="Analysis Name" style={{ display: 'flex' }}>
+              <h1
+                aria-label="Analysis Name"
+                style={{
+                  display: 'flex',
+                  ...(mode === 'view' && { marginBottom: '0.1em' }),
+                }}
+              >
                 {(mode === 'view' ||
                   currentlyBeingEditedAnalysisReportId !==
                     analysisReport.id) && (
@@ -394,6 +414,20 @@ const AnalysisPlugin = ({
                   />
                 )}
               </h1>
+              {mode === 'view' && (
+                <section
+                  aria-label="Analysis Metadata"
+                  className="analysis-metadata"
+                >
+                  <label>
+                    Created{' '}
+                    <FriendlyTimeAgo date={moment(analysisReport.createdAt)} />
+                  </label>{' '}
+                  <label>
+                    by <span>{getUsername(analysisReport.createdBy)}</span>
+                  </label>
+                </section>
+              )}
               <p
                 aria-label="Analysis Description"
                 style={{ maxWidth: '900px', marginRight: '50px' }}

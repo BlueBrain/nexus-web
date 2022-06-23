@@ -17,13 +17,15 @@ export const DEFAULT_ANALYSIS_DATA_SPARQL_QUERY = `PREFIX s:<http://schema.org/>
 PREFIX prov:<http://www.w3.org/ns/prov#>
 PREFIX nsg:<https://neuroshapes.org/>
 PREFIX nxv:<https://bluebrain.github.io/nexus/vocabulary/>
-SELECT ?analysis_report_id ?analysis_report_name ?analysis_report_description ?asset_content_url ?asset_encoding_format ?asset_name ?self
+SELECT ?analysis_report_id ?analysis_report_name ?analysis_report_description ?created_by ?created_at ?asset_content_url ?asset_encoding_format ?asset_name ?self
 WHERE {
   BIND(<{resourceId}> as ?container_resource_id) .
   BIND(<{resourceId}> as ?self) .
   ?container_resource_id        ^prov:wasDerivedFrom       ?analysis_report_id .
   ?analysis_report_id    nsg:name            ?analysis_report_name .
   ?analysis_report_id    s:description       ?analysis_report_description .
+  ?analysis_report_id nxv:createdBy ?created_by .
+  ?analysis_report_id nxv:createdAt ?created_at .
   OPTIONAL {
       ?analysis_report_id    nsg:distribution    ?distribution .
       OPTIONAL {
@@ -93,6 +95,8 @@ const AnalysisPluginContainer = ({
     analysis_report_id: string;
     analysis_report_name: string;
     analysis_report_description: string;
+    created_by: string;
+    created_at: string;
     asset_name: string;
     asset_content_url: string;
     asset_encoding_format: string;
@@ -127,6 +131,8 @@ const AnalysisPluginContainer = ({
           id: currentRow['analysis_report_id'],
           description: currentRow['analysis_report_description'],
           name: currentRow['analysis_report_name'],
+          createdBy: currentRow['created_by'],
+          createdAt: currentRow['created_at'],
           assets: [],
         });
       }
