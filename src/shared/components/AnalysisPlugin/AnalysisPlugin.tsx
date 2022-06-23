@@ -18,23 +18,35 @@ import {
 import * as React from 'react';
 import './AnalysisPlugin.less';
 
+export type Asset = {
+  analysisReportId: string;
+  saved: boolean;
+  id: string;
+  name: string;
+  encodingFormat: string;
+  contentSize?: {
+    unitCode: 'bytes';
+    value: number;
+  };
+  digest?: {
+    algorithm: string;
+    value: string;
+  };
+  filePath: string;
+  preview: ({
+    scale,
+    mode,
+  }: {
+    scale: number;
+    mode: 'view' | 'edit';
+  }) => React.ReactElement;
+};
+
 export type AnalysisReport = {
   id: string;
   name: string;
   description: string;
-
-  assets: {
-    saved: boolean;
-    id: string;
-    name: string;
-    filePath: string; // expect this is an image for now
-    preview: ({
-      scale,
-    }: {
-      scale: number;
-      mode: 'edit' | 'view';
-    }) => React.ReactElement;
-  }[];
+  assets: Asset[];
 };
 
 enum ActionType {

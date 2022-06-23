@@ -6,13 +6,14 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../store/reducers';
 import AnalysisPlugin, {
   AnalysisReport,
+  Asset,
 } from '../../components/AnalysisPlugin/AnalysisPlugin';
 import { sparqlQueryExecutor } from '../../utils/querySparqlView';
 import { Image } from 'antd';
 import FileUploadContainer from '../FileUploadContainer';
 import { FileImageOutlined } from '@ant-design/icons';
 
-export const DEFAULT_ANALYSIS_DATA_SPARQL_QUERY = `PREFIX s:<http://schema.org/>                                 (base) 11:19:00
+export const DEFAULT_ANALYSIS_DATA_SPARQL_QUERY = `PREFIX s:<http://schema.org/>
 PREFIX prov:<http://www.w3.org/ns/prov#>
 PREFIX nsg:<https://neuroshapes.org/>
 PREFIX nxv:<https://bluebrain.github.io/nexus/vocabulary/>
@@ -38,7 +39,8 @@ async function fetchImageObjectUrl(
   nexus: NexusClient,
   orgLabel: string,
   projectLabel: string,
-  imageResourceId: string
+  imageResourceId: string,
+  encodingFormat: string
 ) {
   const rawData = await nexus.File.get(
     orgLabel,
@@ -49,7 +51,7 @@ async function fetchImageObjectUrl(
     }
   );
   const blob = new Blob([rawData as string], {
-    type: 'image/png', // TODO: get this properly
+    type: encodingFormat,
   });
   return URL.createObjectURL(blob);
 }
@@ -68,21 +70,7 @@ const AnalysisPluginContainer = ({
   const nexus = useNexusContext();
   const queryClient = useQueryClient();
 
-  const [unsavedAssets, setUnsavedAssets] = React.useState<
-    {
-      analysisReportId: string;
-      saved: boolean;
-      id: string;
-      name: string;
-      filePath: string; // expect this is an image for now
-      preview: ({
-        scale,
-      }: {
-        scale: number;
-        mode: 'edit' | 'view';
-      }) => React.ReactElement;
-    }[]
-  >([]);
+  const [unsavedAssets, setUnsavedAssets] = React.useState<Asset[]>([]);
 
   const apiEndpoint = useSelector(
     (state: RootState) => state.config.apiEndpoint
@@ -152,10 +140,13 @@ const AnalysisPluginContainer = ({
 
       if (currentRow.asset_content_url !== undefined) {
         report?.assets.push({
+          analysisReportId: currentRow.analysis_report_id,
           saved: true,
           id: currentRow.asset_content_url,
           name: currentRow.asset_name,
           filePath: currentRow.asset_content_url,
+          encodingFormat: currentRow.asset_encoding_format,
+
           preview: ({ mode }) => {
             return <Image preview={mode === 'view'} />;
           },
@@ -197,7 +188,8 @@ const AnalysisPluginContainer = ({
             nexus,
             orgLabel,
             projectLabel,
-            imageId
+            imageId,
+            asset.encodingFormat
           );
           return { src, id: asset.id, contentUrl: asset.filePath };
         });
@@ -259,10 +251,12 @@ const AnalysisPluginContainer = ({
 
       const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
         return {
-          '@type': 'DataDownload', // TODO: use appropriate prefix depending on context
+          '@type': 'DataDownload',
           contentUrl: a.filePath,
-          encodingFormat: 'image/png', // TODO: stop hardcoding
-          name: '',
+          encodingFormat: a.encodingFormat,
+          contentSize: a.contentSize,
+          digest: a.digest,
+          name: a.name,
         };
       });
 
@@ -288,11 +282,20 @@ const AnalysisPluginContainer = ({
   );
 
   const onFileUploaded = (file: NexusFile, analysisReportId: string) => {
-    const newlyUploadedAsset = {
+    const newlyUploadedAsset: Asset = {
       analysisReportId,
       saved: false,
       id: file['@id'],
-      name: '',
+      name: file._filename,
+      encodingFormat: file._mediaType,
+      contentSize: {
+        unitCode: 'bytes',
+        value: file._bytes,
+      },
+      digest: {
+        algorithm: file._digest._algorithm,
+        value: file._digest._value,
+      },
       filePath: file['@id'],
       preview: () => {
         return <Image placeholder={<FileImageOutlined />} preview={false} />;
