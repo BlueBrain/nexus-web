@@ -14,6 +14,7 @@ import {
   DEFAULT_SERVICE_ACCOUNTS_REALM,
 } from '../shared/store/reducers/config';
 import { DEFAULT_SEARCH_STATE } from '../shared/store/reducers/search';
+import { DEFAULT_ANALYSIS_DATA_SPARQL_QUERY } from '../shared/containers/AnalysisPlugin/AnalysisPluginContainer';
 
 const PORT_NUMBER = 8000;
 
@@ -107,6 +108,15 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       ...(process.env.JIRA_SUPPORTED_REALMS && {
         jiraSupportedRealms: process.env.JIRA_SUPPORTED_REALMS.split(','),
       }),
+      analysisPluginShowOnTypes: process.env.ANALYSIS_PLUGIN_SHOW_ON_TYPES
+        ? process.env.ANALYSIS_PLUGIN_SHOW_ON_TYPES.split(',')
+        : [],
+      analysisPluginExcludeTypes: process.env.ANALYSIS_PLUGIN_EXCLUDE_TYPES
+        ? process.env.ANALYSIS_PLUGIN_EXCLUDE_TYPES.split(',')
+        : [],
+      analysisPluginSparqlDataQuery:
+        process.env.ANALYSIS_PLUGIN_SPARQL_DATA_QUERY ||
+        DEFAULT_ANALYSIS_DATA_SPARQL_QUERY,
     },
     uiSettings: DEFAULT_UI_SETTINGS,
     oidc: {

@@ -13,6 +13,28 @@ import { Image } from 'antd';
 import FileUploadContainer from '../FileUploadContainer';
 import { FileImageOutlined } from '@ant-design/icons';
 
+export const DEFAULT_ANALYSIS_DATA_SPARQL_QUERY = `PREFIX s:<http://schema.org/>                                 (base) 11:19:00
+PREFIX prov:<http://www.w3.org/ns/prov#>
+PREFIX nsg:<https://neuroshapes.org/>
+PREFIX nxv:<https://bluebrain.github.io/nexus/vocabulary/>
+SELECT ?analysis_report_id ?analysis_report_name ?analysis_report_description ?asset_content_url ?asset_encoding_format ?asset_name ?self
+WHERE {
+  BIND(<{resourceId}> as ?container_resource_id) .
+  BIND(<{resourceId}> as ?self) .
+  ?container_resource_id        ^prov:wasDerivedFrom       ?analysis_report_id .
+  ?analysis_report_id    nsg:name            ?analysis_report_name .
+  ?analysis_report_id    s:description       ?analysis_report_description .
+  OPTIONAL {
+      ?analysis_report_id    nsg:distribution    ?distribution .
+      OPTIONAL {
+        ?distribution nsg:name            ?asset_name .
+        ?distribution nsg:contentUrl      ?asset_content_url .
+        ?distribution nsg:encodingFormat  ?asset_encoding_format .
+      }
+  }
+}
+LIMIT 1000`;
+
 async function fetchImageObjectUrl(
   nexus: NexusClient,
   orgLabel: string,
@@ -69,29 +91,14 @@ const AnalysisPluginContainer = ({
 
   const viewSelfId = `${apiEndpoint}/nexus/v1/views/${orgLabel}/${projectLabel}/graph`;
 
-  const analysisSparqlQuery = `
-    PREFIX s:<http://schema.org/>
-    PREFIX prov:<http://www.w3.org/ns/prov#>
-    PREFIX nsg:<https://neuroshapes.org/>
-    PREFIX nxv:<https://bluebrain.github.io/nexus/vocabulary/>
-    SELECT ?analysis_report_id ?analysis_report_name ?analysis_report_description ?asset_content_url ?asset_encoding_format ?asset_name ?self
-    WHERE {
-      BIND(<${resourceId}> as ?container_resource_id) .
-      BIND(<${resourceId}> as ?self) .
-      ?container_resource_id        ^prov:wasDerivedFrom       ?analysis_report_id .
-      ?analysis_report_id    nsg:name            ?analysis_report_name .  
-      ?analysis_report_id    s:description       ?analysis_report_description .
-      OPTIONAL {
-          ?analysis_report_id    nsg:distribution    ?distribution .
-          OPTIONAL {
-            ?distribution nsg:name            ?asset_name .
-            ?distribution nsg:contentUrl      ?asset_content_url .
-            ?distribution nsg:encodingFormat  ?asset_encoding_format .
-          }
-      }
-    }
-    LIMIT 100
-  `;
+  const { analysisPluginSparqlDataQuery } = useSelector(
+    (state: RootState) => state.config
+  );
+
+  const analysisSparqlQuery = analysisPluginSparqlDataQuery.replaceAll(
+    '{resourceId}',
+    resourceId
+  );
 
   type AnalysisAssetSparqlQueryRowResult = {
     id: string;

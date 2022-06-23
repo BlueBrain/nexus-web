@@ -30,6 +30,10 @@ export interface ConfigState {
   jiraProjectCustomFieldName: string;
   jiraProjectCustomFieldLabel: string;
   jiraSupportedRealms?: string[];
+
+  analysisPluginShowOnTypes: string[];
+  analysisPluginExcludeTypes: string[];
+  analysisPluginSparqlDataQuery: string;
 }
 
 const initialState: ConfigState = {
@@ -55,6 +59,10 @@ const initialState: ConfigState = {
   jiraResourceCustomFieldLabel: '',
   jiraProjectCustomFieldName: '',
   jiraProjectCustomFieldLabel: '',
+
+  analysisPluginShowOnTypes: [],
+  analysisPluginExcludeTypes: [],
+  analysisPluginSparqlDataQuery: '',
 };
 
 export default function configReducer(
