@@ -109,7 +109,7 @@ const AnalysisPluginContainer = ({
     const analysisReports: AnalysisReport[] = [];
     const result = await sparqlQueryExecutor(
       nexus,
-      analysisSparqlQuery,
+      analysisQuery,
       {
         _self: viewSelfId,
       } as SparqlView,
@@ -163,9 +163,8 @@ const AnalysisPluginContainer = ({
     return analysisData;
   };
 
-  const { data: analysisData, status: analysisDataStatus } = useQuery(
-    ['analysis', resourceId],
-    async () => fetchAnalysisData(viewSelfId, analysisSparqlQuery)
+  const { data: analysisData } = useQuery(['analysis', resourceId], async () =>
+    fetchAnalysisData(viewSelfId, analysisSparqlQuery)
   );
 
   const fetchImages = async () => {
@@ -200,7 +199,7 @@ const AnalysisPluginContainer = ({
     return imageSources;
   };
 
-  const { data: imageData, status: imageDataStatus } = useQuery(
+  const { data: imageData } = useQuery(
     [
       'analysesImages',
       {

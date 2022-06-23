@@ -17,9 +17,11 @@ const exampleDataStructure: AnalysisReport[] = [
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vehicula at felis at lacinia. Suspendisse bibendum nunc non pulvinar ultrices. Mauris sed dolor suscipit, posuere justo quis, dapibus lorem. Aliquam erat volutpat. Suspendisse pulvinar mollis lacus, eget tristique felis elementum in. ',
     assets: [
       {
+        analysisReportId: 'a',
         id: '1',
         name: 'First one',
         filePath: 'https://img/here/1',
+        encodingFormat: 'image/png',
         saved: true,
         preview: ({ mode }) => (
           <>
@@ -28,9 +30,11 @@ const exampleDataStructure: AnalysisReport[] = [
         ),
       },
       {
+        analysisReportId: 'a',
         id: '2',
         name: 'Second one',
         filePath: 'https://img/here/2',
+        encodingFormat: 'image/png',
         saved: true,
         preview: ({ mode }) => (
           <Image src={sample2} preview={mode === 'view'} />
@@ -44,18 +48,22 @@ const exampleDataStructure: AnalysisReport[] = [
     description: 'This analyses is about...',
     assets: [
       {
+        analysisReportId: 'a',
         id: '3',
         name: 'First one',
         filePath: 'https://img/here/1',
+        encodingFormat: 'image/png',
         saved: true,
         preview: ({ mode }) => (
-          <Image src={sample1} preview={mode === 'view'} />
+          <Image src={sample3} preview={mode === 'view'} />
         ),
       },
       {
+        analysisReportId: 'a',
         id: '4',
         name: 'Second one',
         filePath: 'https://img/here/2',
+        encodingFormat: 'image/png',
         saved: true,
         preview: ({ mode }) => (
           <Image src={sample1} preview={mode === 'view'} />
@@ -70,24 +78,24 @@ const exampleDataStructure: AnalysisReport[] = [
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vehicula at felis at lacinia. Suspendisse bibendum nunc non pulvinar ultrices. Mauris sed dolor suscipit, posuere justo quis, dapibus lorem. Aliquam erat volutpat. Suspendisse pulvinar mollis lacus, eget tristique felis elementum in. ',
     assets: [
       {
+        analysisReportId: 'a',
         id: '1',
         name: 'First one',
         filePath: 'https://img/here/3',
+        encodingFormat: 'image/png',
         saved: true,
         preview: ({ scale, mode }) => (
           <>
-            <Image
-              preview={mode === 'view'}
-              src={sample1}
-              style={{ maxHeight: scaleImage(scale) }}
-            />
+            <Image preview={mode === 'view'} src={sample1} />
           </>
         ),
       },
       {
+        analysisReportId: 'a',
         id: '2',
         name: 'Second one',
         filePath: 'https://img/here/2',
+        encodingFormat: 'image/png',
         saved: true,
         preview: ({ mode }) => (
           <Image src={sample2} preview={mode === 'view'} />
@@ -102,9 +110,11 @@ const exampleDataStructure: AnalysisReport[] = [
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vehicula at felis at lacinia. Suspendisse bibendum nunc non pulvinar ultrices. Mauris sed dolor suscipit, posuere justo quis, dapibus lorem. Aliquam erat volutpat. Suspendisse pulvinar mollis lacus, eget tristique felis elementum in. ',
     assets: [
       {
+        analysisReportId: 'a',
         id: '1',
         name: 'First one',
         filePath: 'https://img/here/3',
+        encodingFormat: 'image/png',
         saved: true,
         preview: ({ mode }) => (
           <>
@@ -113,9 +123,11 @@ const exampleDataStructure: AnalysisReport[] = [
         ),
       },
       {
+        analysisReportId: 'a',
         id: '2',
         name: 'Second one',
         filePath: 'https://img/here/2',
+        encodingFormat: 'image/png',
         saved: true,
         preview: ({ mode }) => (
           <Image src={sample2} preview={mode === 'view'} />
@@ -130,9 +142,11 @@ const exampleDataStructure: AnalysisReport[] = [
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vehicula at felis at lacinia. Suspendisse bibendum nunc non pulvinar ultrices. Mauris sed dolor suscipit, posuere justo quis, dapibus lorem. Aliquam erat volutpat. Suspendisse pulvinar mollis lacus, eget tristique felis elementum in. ',
     assets: [
       {
+        analysisReportId: 'a',
         id: '1',
         name: 'First one',
         filePath: 'https://img/here/3',
+        encodingFormat: 'image/png',
         saved: true,
         preview: ({ mode }) => (
           <>
@@ -141,9 +155,11 @@ const exampleDataStructure: AnalysisReport[] = [
         ),
       },
       {
+        analysisReportId: 'a',
         id: '2',
         name: 'Second one',
         filePath: 'https://img/here/2',
+        encodingFormat: 'image/png',
         saved: true,
         preview: ({ mode }) => (
           <Image src={sample2} preview={mode === 'view'} />
@@ -158,9 +174,11 @@ const exampleDataStructure: AnalysisReport[] = [
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vehicula at felis at lacinia. Suspendisse bibendum nunc non pulvinar ultrices. Mauris sed dolor suscipit, posuere justo quis, dapibus lorem. Aliquam erat volutpat. Suspendisse pulvinar mollis lacus, eget tristique felis elementum in. ',
     assets: [
       {
+        analysisReportId: 'a',
         id: '1',
         name: 'First one',
         filePath: 'https://img/here/3',
+        encodingFormat: 'image/png',
         saved: true,
         preview: ({ scale, mode }) => (
           <>
@@ -169,9 +187,11 @@ const exampleDataStructure: AnalysisReport[] = [
         ),
       },
       {
+        analysisReportId: 'a',
         id: '2',
         name: 'Second one',
         filePath: 'https://img/here/2',
+        encodingFormat: 'image/png',
         saved: true,
         preview: ({ mode }) => (
           <Image src={sample2} preview={mode === 'view'} />
@@ -186,9 +206,11 @@ const exampleDataStructure: AnalysisReport[] = [
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vehicula at felis at lacinia. Suspendisse bibendum nunc non pulvinar ultrices. Mauris sed dolor suscipit, posuere justo quis, dapibus lorem. Aliquam erat volutpat. Suspendisse pulvinar mollis lacus, eget tristique felis elementum in. ',
     assets: [
       {
+        analysisReportId: 'a',
         id: '1',
         name: 'First one',
         filePath: 'https://img/here/3',
+        encodingFormat: 'image/png',
         saved: true,
         preview: ({ mode }) => (
           <>
@@ -197,9 +219,11 @@ const exampleDataStructure: AnalysisReport[] = [
         ),
       },
       {
+        analysisReportId: 'a',
         id: '2',
         name: 'Second one',
         filePath: 'https://img/here/2',
+        encodingFormat: 'image/png',
         saved: true,
         preview: ({ mode }) => (
           <Image src={sample2} preview={mode === 'view'} />
@@ -222,10 +246,8 @@ storiesOf('Components/AnalysisPlugin', module)
         <AnalysisPlugin
           FileUpload={() => <></>}
           analysisReports={exampleDataStructure}
-          mode="view"
           onSave={(id: string, name: string) => {}}
           onCancel={() => {}}
-          onChangeMode={(mode: 'view' | 'edit') => {}}
         />
       );
     })
