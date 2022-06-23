@@ -1,7 +1,6 @@
 import { NexusClient, NexusFile, Resource, SparqlView } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
-import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/reducers';
@@ -69,7 +68,7 @@ const AnalysisPluginContainer = ({
   const nexus = useNexusContext();
   const queryClient = useQueryClient();
 
-  const [unsavedAssets, setUnsavedAssets] = useState<
+  const [unsavedAssets, setUnsavedAssets] = React.useState<
     {
       analysisReportId: string;
       saved: boolean;
@@ -290,7 +289,7 @@ const AnalysisPluginContainer = ({
 
   const onFileUploaded = (file: NexusFile, analysisReportId: string) => {
     const newlyUploadedAsset = {
-      analysisReportId: analysisReportId,
+      analysisReportId,
       saved: false,
       id: file['@id'],
       name: '',
