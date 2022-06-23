@@ -14,8 +14,8 @@ import useSearchPagination, {
 import ColumnsVisibilityConfig from '../components/ColumnsVisibilityConfig';
 import './SearchContainer.less';
 import FiltersConfig from '../components/FiltersConfig';
-import SortConfig from '../components/SortConfig';
 import SearchLayouts from '../components/Layouts';
+import SortConfigContainer from './SortConfigContainer';
 
 const SearchContainer: React.FC = () => {
   const nexus = useNexusContext();
@@ -258,7 +258,7 @@ const SearchContainer: React.FC = () => {
                       dispatchFilter({ type: 'remove', payload: filter })
                     }
                   />
-                  <SortConfig
+                  <SortConfigContainer
                     sortedFields={sortState}
                     onRemoveSort={sortToRemove =>
                       removeSortOption(sortToRemove)

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { NexusClient, DEFAULT_SPARQL_VIEW_ID, Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Button, Modal, Menu, Popover, Empty } from 'antd';
+import { Button, Modal, Menu, Popover, Empty, Spin } from 'antd';
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -14,7 +14,7 @@ import DashboardEditorContainer from './DashBoardEditor/DashboardEditorContainer
 import AddWorkspaceContainer from './AddWorkspaceContainer';
 import WorkspaceForm from './WorkspaceFormContainer';
 import useQueryString from '../../../shared/hooks/useQueryString';
-import { StudioContext } from '../views/StudioView';
+import StudioReactContext from './../contexts/StudioContext';
 import { resourcesWritePermissionsWrapper } from '../../../shared/utils/permission';
 import { ResultTableFields } from '../../../shared/types/search';
 import DashboardResultsContainer from './DashboardResultsContainer';
@@ -154,7 +154,7 @@ export type Dashboard = {
   fields?: ResultTableFields[];
 };
 
-type StudioResource = Resource<{
+export type StudioResource = Resource<{
   label: string;
   description?: string;
   workspaces?: [string];
@@ -173,7 +173,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
 }) => {
   const nexus = useNexusContext();
   const notification = useNotification();
-  const studioContext = React.useContext(StudioContext);
+  const studioContext = React.useContext(StudioReactContext);
   const { orgLabel, projectLabel, workspaceId, dashboardId } = studioContext;
   const permissionsPath = `/${orgLabel}/${projectLabel}`;
   const [workspaces, setWorkspaces] = React.useState<Resource<any>[]>([]);
@@ -184,6 +184,9 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
     Resource<any>
   >();
   const [dashboards, setDashboards] = React.useState<Resource<any>[]>([]);
+  const [dashboardSpinner, setDashboardSpinner] = React.useState<boolean>(
+    false
+  );
   const [selectedKeys, setSelectedKeys] = React.useState<Resource<any>[]>([]);
   const [queryParams, setQueryString] = useQueryString();
   const [showDataTableEdit, setShowDataTableEdit] = React.useState(false);
@@ -403,6 +406,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             style={{
               marginRight: '5px',
             }}
+            role="button"
           >
             {' '}
             Workspace
@@ -415,7 +419,12 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             content={editDhashBoardspaceWrapper}
             trigger="click"
           >
-            <Button shape="round" type="default" icon={<EditOutlined />}>
+            <Button
+              shape="round"
+              type="default"
+              icon={<EditOutlined />}
+              role="button"
+            >
               Dashboard
             </Button>
           </Popover>
@@ -426,6 +435,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
   };
 
   const fetchAndSetupDashboards = () => {
+    setDashboardSpinner(true);
     Promise.all(
       selectedWorkspace['dashboards'].map((dashboardObject: Dashboard) => {
         return nexus.Resource.get(
@@ -470,6 +480,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           message: 'Failed to fetch dashboards',
         });
       });
+    setDashboardSpinner(false);
   };
 
   const updateDashboard = async (
@@ -590,7 +601,14 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         ...queryParams,
         workspaceId: selectedWorkspace['@id'],
       });
+
       const currentDashboards = selectedWorkspace['dashboards'] as Dashboard[];
+      if (currentDashboards && currentDashboards.length > 0) {
+        fetchAndSetupDashboards();
+      } else {
+        setDashboards([]);
+        setSelectedDashboard(undefined);
+      }
       // block to set selected keys for initial load or when not set
       if (selectedKeys.length === 0) {
         if (!selectedDashboard) {
@@ -604,13 +622,6 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             `${selectedWorkspace['@id']}*${selectedDashboard['@id']}`,
           ]);
         }
-      }
-
-      if (currentDashboards && currentDashboards.length > 0) {
-        fetchAndSetupDashboards();
-      } else {
-        setDashboards([]);
-        setSelectedDashboard(undefined);
       }
     }
   }, [selectedWorkspace]);
@@ -689,19 +700,25 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             onTitleClick={() => setSelectedWorkspace(w)}
             popupClassName="workspace-popup-classname"
           >
-            {dashboards.map((d: Resource) => {
-              return (
-                <Menu.Item
-                  key={`${w['@id']}-${d['@id']}`}
-                  onClick={() => {
-                    setSelectedKeys([`${w['@id']}*${d['@id']}`]);
-                    setSelectedDashboard(d);
-                  }}
-                >
-                  {d.label}
-                </Menu.Item>
-              );
-            })}
+            {dashboardSpinner ? (
+              <Menu.Item>
+                <Spin />
+              </Menu.Item>
+            ) : (
+              dashboards.map((d: Resource) => {
+                return (
+                  <Menu.Item
+                    key={`${w['@id']}-${d['@id']}`}
+                    onClick={() => {
+                      setSelectedKeys([`${w['@id']}*${d['@id']}`]);
+                      setSelectedDashboard(d);
+                    }}
+                  >
+                    {d.label}
+                  </Menu.Item>
+                );
+              })
+            )}
           </Menu.SubMenu>
         ))}
         <div className="workspace-action">{actionButtons()}</div>

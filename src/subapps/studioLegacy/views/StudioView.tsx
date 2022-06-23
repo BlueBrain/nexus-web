@@ -5,6 +5,7 @@ import StudioContainer from '../containers/StudioContainer';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import { useNexusContext } from '@bbp/react-nexus';
 import { NexusClient, ACL } from '@bbp/nexus-sdk';
+import StudioReactContext from './../contexts/StudioContext';
 
 const writableStudio = async (permissionsPath: string, nexus: NexusClient) => {
   const aclList = await nexus.ACL.list(permissionsPath, {
@@ -26,22 +27,6 @@ const writableStudio = async (permissionsPath: string, nexus: NexusClient) => {
   });
   return isWritable;
 };
-
-type StudioContextType = {
-  orgLabel: string;
-  projectLabel: string;
-  studioId: string;
-  isWritable: boolean;
-  workspaceId?: string | undefined;
-  dashboardId?: string | undefined;
-};
-
-export const StudioContext = React.createContext<StudioContextType>({
-  orgLabel: '',
-  projectLabel: '',
-  studioId: '',
-  isWritable: false,
-});
 
 const StudioView: React.FunctionComponent<{}> = () => {
   // @ts-ignore
@@ -91,9 +76,9 @@ const StudioView: React.FunctionComponent<{}> = () => {
         </div>
       </div>
       <div className="studio-view">
-        <StudioContext.Provider value={contextValue}>
+        <StudioReactContext.Provider value={contextValue}>
           <StudioContainer />
-        </StudioContext.Provider>
+        </StudioReactContext.Provider>
       </div>
     </>
   );
