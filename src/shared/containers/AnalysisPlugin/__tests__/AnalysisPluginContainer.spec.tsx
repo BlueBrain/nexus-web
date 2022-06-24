@@ -47,7 +47,7 @@ describe('Analysis Plugin', () => {
     };
   });
 
-  it('renders with  prop values', async () => {
+  it('renders without data', async () => {
     const store = mockStore(mockState);
     await act(async () => {
       const { container } = await render(
