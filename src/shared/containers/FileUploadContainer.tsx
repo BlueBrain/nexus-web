@@ -8,7 +8,8 @@ import FileUploader from '../components/FileUpload';
 const FileUploadContainer: React.FunctionComponent<{
   projectLabel: string;
   orgLabel: string;
-}> = ({ orgLabel, projectLabel }) => {
+  onFileUploaded?: (file: NexusFile) => void;
+}> = ({ orgLabel, projectLabel, onFileUploaded }) => {
   const nexus = useNexusContext();
   const history = useHistory();
   const [storages, setStorages] = React.useState<Storage[]>([]);
@@ -26,10 +27,12 @@ const FileUploadContainer: React.FunctionComponent<{
   const onFileUpload = async (file: File, storageId?: string) => {
     const formData = new FormData();
     formData.append('file', file);
-    return await nexus.File.create(orgLabel, projectLabel, {
+    const uploadedFile = await nexus.File.create(orgLabel, projectLabel, {
       file: formData,
       storage: storageId,
     });
+    onFileUploaded && onFileUploaded(uploadedFile);
+    return uploadedFile;
   };
 
   React.useEffect(() => {

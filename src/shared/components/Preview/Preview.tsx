@@ -289,7 +289,9 @@ const Preview: React.FC<{
         [distribution].flat().map((d, i) => {
           return {
             key: i,
-            name: d.name || d.repository.name || d.repository['@id'],
+            name:
+              d.name ||
+              (d.repository && (d.repository.name || d.repository['@id'])),
             asset: {
               url: d.contentUrl || d.url,
               name: d.name,

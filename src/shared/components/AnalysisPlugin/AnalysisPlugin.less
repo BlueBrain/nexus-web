@@ -1,0 +1,80 @@
+@import '../../lib.less';
+
+.ant-select-item-option-content {
+  text-overflow: ellipsis !important;
+}
+.analysis {
+  padding-top: 20px;
+  margin-left: 20px;
+
+  .zoom-control {
+    padding: 0px 15px;
+    position: relative;
+    max-width: 190px;
+    .ant-slider.slider-scale {
+      .ant-slider-rail {
+        background-color: @fusion-primary-color;
+      }
+    }
+    .anticon {
+      position: absolute;
+      top: -2px;
+      width: 16px;
+      height: 16px;
+      color: rgba(0, 0, 0, 0.25);
+      font-size: 16px;
+      line-height: 1;
+      &:first-child {
+        left: 0;
+      }
+      &:last-child {
+        right: 0;
+      }
+    }
+  }
+  .analysisTools {
+    min-height: 60px;
+    max-height: 500px;
+  }
+  .analysis-metadata {
+    margin-bottom: 0.3em;
+    label {
+      font-weight: bold;
+      span {
+        font-weight: normal;
+      }
+    }
+  }
+  .assets {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: 30px;
+    gap: 12px;
+  }
+  .asset {
+    cursor: pointer;
+    border: 1px inset rgba(211, 220, 50, 0);
+    &.selected {
+      color: @fusion-background-color;
+      border: 1px inset rgba(45, 72, 108, 0.5);
+      transition: border 0.3s;
+    }
+    display: flex;
+
+    .ant-image {
+      margin: auto;
+    }
+  }
+
+  div.select-analysis.ant-select {
+    div.ant-select-selector {
+      background-color: @fusion-background-color;
+    }
+  }
+}
+
+.ant-modal.file-upload-modal {
+  .ant-modal-content .ant-modal-body {
+    padding-top: 50px;
+  }
+}

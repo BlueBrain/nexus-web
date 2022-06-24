@@ -20,6 +20,10 @@ describe('VideoPluginContainer', () => {
     uri: 'https://localhost:3000',
   });
 
+  // react-player component used by VideoPluginContainer calls window.fetch so specify the node one
+  // @ts-ignore
+  window.fetch = fetch;
+
   const resource = ({
     '@context': [
       'https://bbp.neuroshapes.org',
