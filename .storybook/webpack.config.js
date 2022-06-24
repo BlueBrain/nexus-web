@@ -46,6 +46,16 @@ module.exports = {
           loader: 'file-loader',
         },
       },
+      {
+        test: /\.(ttf)$/,
+        use: {
+          loader: 'file-loader',
+          options: {
+            outputPath: 'assets/',
+            publicPath: 'public/assets',
+          },
+        },
+      },
     ],
   },
   resolve: {

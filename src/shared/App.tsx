@@ -13,6 +13,7 @@ import {
   NotificationContext,
   NotificationContextType,
 } from './hooks/useNotification';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 const App: React.FC = () => {
   // TODO log the error in to sentry.
@@ -28,6 +29,7 @@ const App: React.FC = () => {
     <CartContext.Provider value={cartData}>
       <NotificationContext.Provider value={notificationData}>
         <QueryClientProvider client={queryClient}>
+          <ReactQueryDevtools initialIsOpen={false} />
           <FusionMainLayout subApps={subAppProps}>
             <SubAppsView routesWithSubApps={routesWithSubApps} />
             <GalleryView />

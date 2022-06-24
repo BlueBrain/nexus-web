@@ -3,7 +3,7 @@ import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import ReactPlayer from 'react-player';
 import * as moment from 'moment';
-import { Collapse, Modal, Button, List } from 'antd';
+import { Collapse, Modal, Button, List, notification } from 'antd';
 import '../../styles/video-plugin.less';
 import { getDateString } from '../../utils';
 import * as schema from './schema.json';
@@ -59,27 +59,33 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
     setIsModalVisible(true);
   };
   const loadVideo = async () => {
-    const videoResource = (await nexus.Resource.get(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(resource['@id'])
-    )) as Resource<{
-      video: VideoObject[];
-    }>;
+    try {
+      const videoResource = (await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(resource['@id'])
+      )) as Resource<{
+        video: VideoObject[];
+      }>;
 
-    const videoData = videoResource.video
-      ? ([videoResource.video].flat() as VideoObject[])
-      : undefined;
+      const videoData = videoResource.video
+        ? ([videoResource.video].flat() as VideoObject[])
+        : undefined;
 
-    setVideoData(videoData);
+      setVideoData(videoData);
+    } catch (e) {
+      notification.info({
+        message: 'Error fetching video data',
+      });
+    }
   };
 
   return (
     <Collapse
       activeKey={collapsed ? 'video' : undefined}
-      onChange={e => handleCollapseChanged()}
+      onChange={handleCollapseChanged}
     >
-      <Panel header="Video" key="video">
+      <Panel header="Video" key="video" forceRender={true}>
         <SchemaValidationFallbackContainer
           schema={schema}
           resource={resource}
@@ -89,40 +95,42 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
             <List
               itemLayout="horizontal"
               dataSource={videoData}
-              renderItem={(item: any) => (
-                <List.Item
-                  extra={
-                    item.duration &&
-                    item.uploadDate && (
-                      <div>
-                        <p>{moment.duration(item.duration).humanize()}</p>
-                        <p>
-                          {getDateString(item.uploadDate, { noTime: true })}
-                        </p>
-                      </div>
-                    )
-                  }
-                >
-                  <List.Item.Meta
-                    avatar={<ReactPlayer url={item.embedUrl} light={true} />}
-                    title={
-                      <Button
-                        type="link"
-                        onClick={() => {
-                          handleSelectedVideo(item);
-                        }}
-                      >
-                        {item.name ? item.name : 'Video Name'}
-                      </Button>
+              renderItem={(item: any) => {
+                return (
+                  <List.Item
+                    extra={
+                      item.duration &&
+                      item.uploadDate && (
+                        <div>
+                          <p>{moment.duration(item.duration).humanize()}</p>
+                          <p>
+                            {getDateString(item.uploadDate, { noTime: true })}
+                          </p>
+                        </div>
+                      )
                     }
-                    description={
-                      item.description
-                        ? item.description
-                        : 'Description of video when information available'
-                    }
-                  />
-                </List.Item>
-              )}
+                  >
+                    <List.Item.Meta
+                      avatar={<ReactPlayer url={item.embedUrl} light={true} />}
+                      title={
+                        <Button
+                          type="link"
+                          onClick={() => {
+                            handleSelectedVideo(item);
+                          }}
+                        >
+                          {item.name ? item.name : 'Video Name'}
+                        </Button>
+                      }
+                      description={
+                        item.description
+                          ? item.description
+                          : 'Description of video when information available'
+                      }
+                    />
+                  </List.Item>
+                );
+              }}
             />
             {selectedVideo && !!selectedVideo.name ? (
               <Modal

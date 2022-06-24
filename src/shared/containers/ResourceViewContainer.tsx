@@ -31,6 +31,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store/reducers';
 import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
 import { useJiraPlugin } from '../hooks/useJIRA';
+import AnalysisPluginContainer from './AnalysisPlugin/AnalysisPluginContainer';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -420,10 +422,16 @@ const ResourceViewContainer: React.FunctionComponent<{
     );
   };
 
+  const showPluginConsideringStudioContext = (pluginKey: string) => {
+    return (
+      (studioPlugins?.customise &&
+        studioPlugins?.plugins.find(p => p.key === pluginKey)) ||
+      !studioPlugins?.customise
+    );
+  };
+
   const previewPlugin = resource &&
-    ((studioPlugins?.customise &&
-      studioPlugins?.plugins.find(p => p.key === 'preview')) ||
-      !studioPlugins?.customise) &&
+    showPluginConsideringStudioContext('preview') &&
     resource.distribution && (
       <Preview
         key="previewPlugin"
@@ -505,11 +513,52 @@ const ResourceViewContainer: React.FunctionComponent<{
       </Collapse>
     );
 
+  const { analysisPluginShowOnTypes, analysisPluginExcludeTypes } = useSelector(
+    (state: RootState) => state.config
+  );
+
+  const resourceTypes = resource && [resource['@type']].flat();
+  const resourceHasAnalysisIncludedType = resourceTypes?.some(t =>
+    analysisPluginShowOnTypes.some(showOnType => t === showOnType)
+  );
+  const resourceHasAnalysisExcludedType = resourceTypes?.some(t =>
+    analysisPluginExcludeTypes.some(excludeOnType => t === excludeOnType)
+  );
+
+  const showAnalysisPlugin =
+    resource &&
+    resourceHasAnalysisIncludedType &&
+    !resourceHasAnalysisExcludedType;
+
+  const analysisPlugin = resource &&
+    showAnalysisPlugin &&
+    showPluginConsideringStudioContext('analysis') && (
+      <Collapse
+        onChange={() => {
+          pluginCollapsedToggle('analysis');
+        }}
+        activeKey={openPlugins.includes('analysis') ? 'analysis' : undefined}
+      >
+        <Collapse.Panel header="Analysis" key="analysis">
+          {openPlugins.includes('analysis') && (
+            <ErrorBoundary>
+              <AnalysisPluginContainer
+                resourceId={resource['@id']}
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+              />
+            </ErrorBoundary>
+          )}
+        </Collapse.Panel>
+      </Collapse>
+    );
+
   const builtInPlugins = [
     { key: 'preview', name: 'preview', pluginComponent: previewPlugin },
     { key: 'admin', name: 'advanced', pluginComponent: adminPlugin },
     { key: 'video', name: 'video', pluginComponent: videoPlugin },
     { key: 'jira', name: 'jira', pluginComponent: jiraPlugin },
+    { key: 'analysis', name: 'Analysis', pluginComponent: analysisPlugin },
   ];
 
   return (
