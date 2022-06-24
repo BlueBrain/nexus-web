@@ -2,6 +2,7 @@ import {
   DownloadOutlined,
   EditOutlined,
   MoreOutlined,
+  PlusOutlined,
   ZoomInOutlined,
   ZoomOutOutlined,
 } from '@ant-design/icons';
@@ -12,8 +13,6 @@ import {
   Menu,
   Slider,
   Select,
-  Row,
-  Col,
   Checkbox,
   Modal,
 } from 'antd';
@@ -272,8 +271,8 @@ const AnalysisPlugin = ({
       <>
         {fileUploadModal}
         {mode === 'view' && (
-          <Row className="analysisTools">
-            <Col span={12}>
+          <>
+            <div className="analysisTools">
               <Select
                 value={selectedAnalysisReports}
                 showSearch
@@ -296,26 +295,31 @@ const AnalysisPlugin = ({
                   </Option>
                 ))}
               </Select>
-            </Col>
-            <Col span={8} offset={4}>
-              <div
-                className="zoom-control"
-                aria-label="Increase/Decrease image thumnbail size"
-              >
-                <ZoomOutOutlined title="Reduce thumbnail size" />
-                <Slider
-                  tooltipVisible={false}
-                  value={imagePreviewScale}
-                  onChange={(value: number) =>
-                    dispatch({ type: ActionType.RESCALE, payload: value })
-                  }
-                  included={false}
-                  className="slider-scale"
-                />
-                <ZoomInOutlined title="Increase thumbnail size" />
-              </div>
-            </Col>
-          </Row>
+              <Button
+                shape="circle"
+                type="primary"
+                icon={<PlusOutlined />}
+                title="Add Analysis Report"
+              ></Button>
+            </div>
+
+            <div
+              className="zoom-control"
+              aria-label="Increase/Decrease image thumnbail size"
+            >
+              <ZoomOutOutlined title="Reduce thumbnail size" />
+              <Slider
+                tooltipVisible={false}
+                value={imagePreviewScale}
+                onChange={(value: number) =>
+                  dispatch({ type: ActionType.RESCALE, payload: value })
+                }
+                included={false}
+                className="slider-scale"
+              />
+              <ZoomInOutlined title="Increase thumbnail size" />
+            </div>
+          </>
         )}
         {analysisReports
           .filter(a => selectedAnalysisReports?.includes(a.id))
