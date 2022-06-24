@@ -57,9 +57,9 @@ const StudioListView: React.FC = () => {
         })
         .filter(
           s =>
-            s.label.toLowerCase().includes(searchFilter) ||
-            s.orgLabel.includes(searchFilter) ||
-            s.projectLabel.includes(searchFilter)
+            s.label?.toLowerCase().includes(searchFilter) ||
+            s.orgLabel?.includes(searchFilter) ||
+            s.projectLabel?.includes(searchFilter)
         );
       setStudioList(list);
     }

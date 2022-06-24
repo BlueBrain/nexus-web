@@ -65,7 +65,7 @@ const AuthorizeJiraUI = ({
   );
 };
 
-const CreateIssueUI = ({
+export const CreateIssueUI = ({
   displayType,
   projects,
   onOk,
@@ -98,93 +98,92 @@ const CreateIssueUI = ({
   };
 
   return (
-    <>
-      <Modal
-        footer={null}
-        title="Create Issue"
-        visible={true}
-        onCancel={() => onCancel()}
-      >
-        <p>
-          A Jira issue will be created and linked to this Nexus{' '}
-          {displayType === 'project' ? 'project' : 'resource'}
-        </p>
-        <Form onFinish={() => onOk(project, summary, description)}>
-          <Form.Item
-            label="Project"
-            name="project"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-            {...formItemLayout}
+    <Modal
+      footer={null}
+      title="Create A JIRA Issue"
+      visible={true}
+      forceRender={true}
+      destroyOnClose={true}
+      mask={false}
+      onCancel={() => onCancel()}
+    >
+      <p>
+        A Jira issue will be created and linked to this Nexus{' '}
+        {displayType === 'project' ? 'project' : 'resource'}
+      </p>
+      <Form onFinish={() => onOk(project, summary, description)}>
+        <Form.Item
+          label="Project"
+          name="project"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+          {...formItemLayout}
+        >
+          <Select
+            showSearch
+            style={{ width: '100%' }}
+            onChange={(value: string) => setProject(value)}
+            filterOption={(input, option) =>
+              option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            }
+            data-testid="project-select"
           >
-            <Select
-              showSearch
-              style={{ width: '100%' }}
-              onChange={(value: string) => setProject(value)}
-              filterOption={(input, option) =>
-                option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-            >
-              {projects.map(project => (
-                <Select.Option key={project.key} value={project.key}>
-                  {project.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            label="Summary"
-            name="summary"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-            {...formItemLayout}
-          >
-            <Input
-              type="text"
-              value={summary}
-              onChange={e => setSummary(e.currentTarget.value)}
-              placeholder="Issue Summary"
+            {projects.map(project => (
+              <Select.Option key={project.key} value={project.key}>
+                {project.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+        <Form.Item
+          label="Summary"
+          name="summary"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+          {...formItemLayout}
+        >
+          <Input
+            type="text"
+            value={summary}
+            onChange={e => setSummary(e.currentTarget.value)}
+            placeholder="Issue Summary"
+          />
+        </Form.Item>
+        <Form.Item>
+          <Form.Item label="Description" name="description" {...formItemLayout}>
+            <TextArea
+              value={description}
+              onChange={e => setDescription(e.currentTarget.value)}
+              placeholder="Issue description"
+              autoSize={{ minRows: 3, maxRows: 5 }}
             />
           </Form.Item>
-          <Form.Item>
-            <Form.Item
-              label="Description"
-              name="description"
-              {...formItemLayout}
-            >
-              <TextArea
-                value={description}
-                onChange={e => setDescription(e.currentTarget.value)}
-                placeholder="Issue description"
-                autoSize={{ minRows: 3, maxRows: 5 }}
-              />
-            </Form.Item>
-          </Form.Item>
-          <Form.Item {...formItemLayoutWithOutLabel}>
-            <Button danger onClick={() => onCancel()}>
-              Cancel
-            </Button>
-            <Button
-              type="primary"
-              htmlType="submit"
-              style={{ marginLeft: '20px' }}
-            >
-              Create
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
-    </>
+        </Form.Item>
+        <Form.Item {...formItemLayoutWithOutLabel}>
+          <Button danger onClick={() => onCancel()}>
+            Cancel
+          </Button>
+          <Button
+            type="primary"
+            htmlType="submit"
+            style={{ marginLeft: '20px' }}
+            name="submitIssue"
+          >
+            Create
+          </Button>
+        </Form.Item>
+      </Form>
+    </Modal>
   );
 };
 
-const LinkIssueUI = ({
+export const LinkIssueUI = ({
   onOk,
   onCancel,
   searchJiraLink,
@@ -199,6 +198,9 @@ const LinkIssueUI = ({
       <Modal
         title="Link Issue"
         visible={true}
+        forceRender={true}
+        destroyOnClose={true}
+        mask={false}
         onOk={() => onOk(issueKey)}
         onCancel={() => onCancel()}
       >
@@ -334,11 +336,21 @@ const JIRAPluginUI = ({
 
       {issues.length === 0 && (
         <Empty description="No linked issues.">
-          <Button type="primary" onClick={() => setCreateIssueVisible(true)}>
+          <Button
+            type="primary"
+            onClick={() => setCreateIssueVisible(true)}
+            role="button"
+            name="Create Issue"
+          >
             Create Issue
           </Button>{' '}
           or{' '}
-          <Button type="default" onClick={() => setLinkIssueVisible(true)}>
+          <Button
+            type="default"
+            onClick={() => setLinkIssueVisible(true)}
+            role="button"
+            name="Link Issue"
+          >
             Link Existing Issue
           </Button>
         </Empty>
