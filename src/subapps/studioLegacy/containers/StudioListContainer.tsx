@@ -56,9 +56,8 @@ const StudioListContainer: React.FunctionComponent<{
   );
 
   const makeStudioUri = (resourceId: string) => {
-    return `/${orgLabel}/${projectLabel}/studios/${encodeURIComponent(
-      resourceId
-    )}`;
+    const pathname = history?.location?.pathname || '';
+    return `${pathname}/${encodeURIComponent(resourceId)}`;
   };
 
   const goToStudio = (resourceId: string) => {
