@@ -21,7 +21,6 @@ import {
   Input,
   Tooltip,
   Popconfirm,
-  message,
 } from 'antd';
 import { CartContext } from '../hooks/useDataCart';
 import ResultPreviewItemContainer from './ResultPreviewItemContainer';
