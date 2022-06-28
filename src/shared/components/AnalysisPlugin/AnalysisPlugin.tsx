@@ -23,7 +23,7 @@ import './AnalysisPlugin.less';
 import * as moment from 'moment';
 
 export type Asset = {
-  analysisReportId: string;
+  analysisReportId?: string;
   saved: boolean;
   id: string;
   name: string;
@@ -65,6 +65,7 @@ enum ActionType {
   CHANGE_ANALYSIS_DESCRIPTION = 'change_analysis_description',
   OPEN_FILE_UPLOAD_DIALOG = 'open_file_upload_dialog',
   CLOSE_FILE_UPLOAD_DIALOG = 'close_file_upload_dialog',
+  ADD_ANALYSIS_REPORT = 'add_analysis_report',
 }
 
 const DEFAULT_SCALE = 50;
@@ -91,12 +92,13 @@ type AnalysesAction =
       payload: { description: string };
     }
   | { type: ActionType.OPEN_FILE_UPLOAD_DIALOG }
-  | { type: ActionType.CLOSE_FILE_UPLOAD_DIALOG };
+  | { type: ActionType.CLOSE_FILE_UPLOAD_DIALOG }
+  | { type: ActionType.ADD_ANALYSIS_REPORT };
 
 type AnalysisPluginProps = {
   analysisReports: AnalysisReport[];
   FileUpload: (analysisReportId: string) => JSX.Element;
-  onSave: (id: string, name: string, description: string) => void;
+  onSave: (name: string, description: string, id?: string) => void;
   onCancel: () => void;
 };
 
@@ -107,7 +109,7 @@ const AnalysisPlugin = ({
 }: AnalysisPluginProps) => {
   type AnalysesState = {
     imagePreviewScale: number;
-    mode: 'view' | 'edit';
+    mode: 'view' | 'edit' | 'create';
     selectedAnalysisReports?: string[];
     currentlyBeingEditedAnalysisReportId?: string;
     currentlyBeingEditingAnalysisReportName?: string;
@@ -115,6 +117,7 @@ const AnalysisPlugin = ({
     selectedAssets?: string[];
     isUploadAssetDialogOpen?: boolean;
   };
+
   const initState = ({
     mode,
     selectedAnalysisReports,
@@ -140,6 +143,13 @@ const AnalysisPlugin = ({
           currentlyBeingEditingAnalysisReportName: action.payload.analaysisName,
           currentlyBeingEditedAnalysisReportDescription:
             action.payload.analysisDescription,
+        };
+      case ActionType.ADD_ANALYSIS_REPORT:
+        return {
+          ...state,
+          mode: 'create',
+          currentlyBeingEditingAnalysisReportName: '',
+          currentlyBeingEditedAnalysisReportDescription: '',
         };
       case ActionType.SELECT_ASSET:
         state.selectedAssets = state.selectedAssets ? state.selectedAssets : [];
@@ -253,6 +263,21 @@ const AnalysisPlugin = ({
     return res;
   };
 
+  const newAnalysisReportTemplate: {
+    id?: string;
+    name: string;
+    description: string;
+    createdBy: string;
+    createdAt: string;
+    assets: Asset[];
+  } = {
+    name: '',
+    description: '',
+    createdBy: '',
+    createdAt: '',
+    assets: [],
+  };
+
   const fileUploadModal = (
     <Modal
       visible={isUploadAssetDialogOpen}
@@ -300,6 +325,9 @@ const AnalysisPlugin = ({
                 type="primary"
                 icon={<PlusOutlined />}
                 title="Add Analysis Report"
+                onClick={() =>
+                  dispatch({ type: ActionType.ADD_ANALYSIS_REPORT })
+                }
               ></Button>
             </div>
 
@@ -321,8 +349,14 @@ const AnalysisPlugin = ({
             </div>
           </>
         )}
-        {analysisReports
-          .filter(a => selectedAnalysisReports?.includes(a.id))
+        {[newAnalysisReportTemplate, ...analysisReports]
+          .filter(
+            a =>
+              (mode === 'create' && a.id === undefined) ||
+              (['edit', 'view'].includes(mode) &&
+                a.id !== undefined &&
+                selectedAnalysisReports?.includes(a.id))
+          )
           .map((analysisReport, i) => (
             <section key={i} style={{ marginBottom: '40px' }}>
               <h1
@@ -333,59 +367,62 @@ const AnalysisPlugin = ({
                 }}
               >
                 {(mode === 'view' ||
-                  currentlyBeingEditedAnalysisReportId !==
-                    analysisReport.id) && (
+                  ('id' in analysisReport &&
+                    currentlyBeingEditedAnalysisReportId !==
+                      analysisReport.id)) && (
                   <div style={{ display: 'inline-block' }}>
                     {analysisReport.name}
                   </div>
                 )}
-                {mode === 'edit' &&
-                  currentlyBeingEditedAnalysisReportId ===
-                    analysisReport.id && (
-                    <>
-                      <Input
-                        type="text"
-                        placeholder="Analysis Name"
-                        value={currentlyBeingEditingAnalysisReportName}
-                        onChange={e =>
-                          dispatch({
-                            type: ActionType.CHANGE_ANALYSIS_NAME,
-                            payload: { name: e.target.value },
-                          })
+                {((mode === 'create' && analysisReport.id === undefined) ||
+                  (mode === 'edit' &&
+                    'id' in analysisReport &&
+                    currentlyBeingEditedAnalysisReportId ===
+                      analysisReport.id)) && (
+                  <>
+                    <Input
+                      type="text"
+                      placeholder="Analysis Name"
+                      value={currentlyBeingEditingAnalysisReportName}
+                      onChange={e =>
+                        dispatch({
+                          type: ActionType.CHANGE_ANALYSIS_NAME,
+                          payload: { name: e.target.value },
+                        })
+                      }
+                      style={{ width: '60%' }}
+                    />
+                    <div
+                      className="actions"
+                      style={{ marginLeft: 'auto', marginRight: '20px' }}
+                    >
+                      <Button
+                        style={{ marginRight: '10px' }}
+                        type="default"
+                        onClick={() =>
+                          dispatch({ type: ActionType.INITIALIZE })
                         }
-                        style={{ width: '60%' }}
-                      />
-                      <div
-                        className="actions"
-                        style={{ marginLeft: 'auto', marginRight: '20px' }}
                       >
-                        <Button
-                          style={{ marginRight: '10px' }}
-                          type="default"
-                          onClick={() =>
-                            dispatch({ type: ActionType.INITIALIZE })
-                          }
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          type="primary"
-                          onClick={() => {
-                            currentlyBeingEditingAnalysisReportName &&
-                              currentlyBeingEditedAnalysisReportDescription &&
-                              onSave(
-                                analysisReport.id,
-                                currentlyBeingEditingAnalysisReportName,
-                                currentlyBeingEditedAnalysisReportDescription
-                              );
-                            dispatch({ type: ActionType.INITIALIZE });
-                          }}
-                        >
-                          Save
-                        </Button>
-                      </div>
-                    </>
-                  )}
+                        Cancel
+                      </Button>
+                      <Button
+                        type="primary"
+                        onClick={() => {
+                          currentlyBeingEditingAnalysisReportName &&
+                            currentlyBeingEditedAnalysisReportDescription &&
+                            onSave(
+                              currentlyBeingEditingAnalysisReportName,
+                              currentlyBeingEditedAnalysisReportDescription,
+                              analysisReport.id
+                            );
+                          dispatch({ type: ActionType.INITIALIZE });
+                        }}
+                      >
+                        Save
+                      </Button>
+                    </div>
+                  </>
+                )}
                 {mode === 'view' && (
                   <Dropdown.Button
                     style={{ margin: 'auto 0' }}
@@ -394,6 +431,7 @@ const AnalysisPlugin = ({
                         <Menu.Item
                           icon={<EditOutlined />}
                           onClick={() =>
+                            analysisReport.id &&
                             dispatch({
                               type: ActionType.EDIT_ANALYSIS_REPORT,
                               payload: {
@@ -437,39 +475,45 @@ const AnalysisPlugin = ({
                 style={{ maxWidth: '900px', marginRight: '50px' }}
               >
                 {(mode === 'view' ||
-                  currentlyBeingEditedAnalysisReportId !== analysisReport.id) &&
+                  ('id' in analysisReport &&
+                    currentlyBeingEditedAnalysisReportId !==
+                      analysisReport.id)) &&
                   analysisReport.description}
-                {mode === 'edit' &&
-                  currentlyBeingEditedAnalysisReportId ===
-                    analysisReport.id && (
-                    <Input.TextArea
-                      placeholder="Analysis Description"
-                      value={currentlyBeingEditedAnalysisReportDescription}
-                      onChange={e =>
-                        dispatch({
-                          type: ActionType.CHANGE_ANALYSIS_DESCRIPTION,
-                          payload: { description: e.currentTarget.value },
-                        })
-                      }
-                    />
-                  )}
+                {((mode === 'create' && analysisReport.id === undefined) ||
+                  (mode === 'edit' &&
+                    'id' in analysisReport &&
+                    currentlyBeingEditedAnalysisReportId ===
+                      analysisReport.id)) && (
+                  <Input.TextArea
+                    placeholder="Analysis Description"
+                    value={currentlyBeingEditedAnalysisReportDescription}
+                    onChange={e =>
+                      dispatch({
+                        type: ActionType.CHANGE_ANALYSIS_DESCRIPTION,
+                        payload: { description: e.currentTarget.value },
+                      })
+                    }
+                  />
+                )}
               </p>
               <section aria-label="Analysis Assets" className="assets">
-                {mode === 'edit' &&
-                  currentlyBeingEditedAnalysisReportId ===
-                    analysisReport.id && (
-                    <div style={{ display: 'flex', width: '100%' }}>
-                      <Button
-                        type="link"
-                        style={{ marginLeft: 'auto', marginBottom: '10px' }}
-                        onClick={() =>
-                          dispatch({ type: ActionType.OPEN_FILE_UPLOAD_DIALOG })
-                        }
-                      >
-                        Add Files to Analysis
-                      </Button>
-                    </div>
-                  )}
+                {((mode === 'create' && analysisReport.id === undefined) ||
+                  (mode === 'edit' &&
+                    'id' in analysisReport &&
+                    currentlyBeingEditedAnalysisReportId ===
+                      analysisReport.id)) && (
+                  <div style={{ display: 'flex', width: '100%' }}>
+                    <Button
+                      type="link"
+                      style={{ marginLeft: 'auto', marginBottom: '10px' }}
+                      onClick={() =>
+                        dispatch({ type: ActionType.OPEN_FILE_UPLOAD_DIALOG })
+                      }
+                    >
+                      Add Files to Analysis
+                    </Button>
+                  </div>
+                )}
                 {analysisReport.assets.map((asset, i) => {
                   const minThumbnailSize = 100;
                   return (
@@ -493,6 +537,7 @@ const AnalysisPlugin = ({
                       onClick={() => {
                         if (
                           mode === 'edit' &&
+                          'id' in analysisReport &&
                           currentlyBeingEditedAnalysisReportId ===
                             analysisReport.id
                         ) {
@@ -503,8 +548,12 @@ const AnalysisPlugin = ({
                         }
                       }}
                     >
-                      {asset.preview({ mode, scale: imagePreviewScale })}
+                      {asset.preview({
+                        mode: mode === 'create' ? 'edit' : mode,
+                        scale: imagePreviewScale,
+                      })}
                       {mode === 'edit' &&
+                        'id' in analysisReport &&
                         currentlyBeingEditedAnalysisReportId ===
                           analysisReport.id && (
                           <Checkbox
