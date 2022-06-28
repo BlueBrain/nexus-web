@@ -21,6 +21,10 @@ import { getUsername } from '../../../shared/utils';
 import FriendlyTimeAgo from '../FriendlyDate';
 import './AnalysisPlugin.less';
 import * as moment from 'moment';
+import {
+  ActionType,
+  AnalysesAction,
+} from '../../../shared/containers/AnalysisPlugin/AnalysisPluginContainer';
 
 export type Asset = {
   analysisReportId?: string;
@@ -55,197 +59,36 @@ export type AnalysisReport = {
   assets: Asset[];
 };
 
-enum ActionType {
-  RESCALE = 'rescale',
-  EDIT_ANALYSIS_REPORT = 'edit_analysis_report',
-  INITIALIZE = 'initialize',
-  SELECT_ASSET = 'select_asset',
-  CHANGE_SELECTED_ANALYSIS_REPORTS = 'change_selected_analysis_reports',
-  CHANGE_ANALYSIS_NAME = 'change_analysis_name',
-  CHANGE_ANALYSIS_DESCRIPTION = 'change_analysis_description',
-  OPEN_FILE_UPLOAD_DIALOG = 'open_file_upload_dialog',
-  CLOSE_FILE_UPLOAD_DIALOG = 'close_file_upload_dialog',
-  ADD_ANALYSIS_REPORT = 'add_analysis_report',
-}
-
-const DEFAULT_SCALE = 50;
-
-type AnalysesAction =
-  | { type: ActionType.RESCALE; payload: number }
-  | {
-      type: ActionType.EDIT_ANALYSIS_REPORT;
-      payload: {
-        analysisId: string;
-        analaysisName: string;
-        analysisDescription: string;
-      };
-    }
-  | { type: ActionType.INITIALIZE }
-  | { type: ActionType.SELECT_ASSET; payload: { assetId: string } }
-  | {
-      type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS;
-      payload: { analysisReportIds: string[] };
-    }
-  | { type: ActionType.CHANGE_ANALYSIS_NAME; payload: { name: string } }
-  | {
-      type: ActionType.CHANGE_ANALYSIS_DESCRIPTION;
-      payload: { description: string };
-    }
-  | { type: ActionType.OPEN_FILE_UPLOAD_DIALOG }
-  | { type: ActionType.CLOSE_FILE_UPLOAD_DIALOG }
-  | { type: ActionType.ADD_ANALYSIS_REPORT };
-
 type AnalysisPluginProps = {
   analysisReports: AnalysisReport[];
-  FileUpload: (analysisReportId: string) => JSX.Element;
+  FileUpload: (analysisReportId?: string) => JSX.Element;
   onSave: (name: string, description: string, id?: string) => void;
   onCancel: () => void;
+  imagePreviewScale: number;
+  mode: 'view' | 'edit' | 'create';
+  selectedAnalysisReports?: string[];
+  currentlyBeingEditedAnalysisReportId?: string;
+  currentlyBeingEditingAnalysisReportName?: string;
+  currentlyBeingEditedAnalysisReportDescription?: string;
+  selectedAssets?: string[];
+  isUploadAssetDialogOpen?: boolean;
+  dispatch: (action: AnalysesAction) => void;
 };
 
 const AnalysisPlugin = ({
   analysisReports,
   onSave,
   FileUpload,
+  imagePreviewScale,
+  mode,
+  selectedAnalysisReports,
+  currentlyBeingEditedAnalysisReportDescription,
+  currentlyBeingEditedAnalysisReportId,
+  currentlyBeingEditingAnalysisReportName,
+  selectedAssets,
+  isUploadAssetDialogOpen,
+  dispatch,
 }: AnalysisPluginProps) => {
-  type AnalysesState = {
-    imagePreviewScale: number;
-    mode: 'view' | 'edit' | 'create';
-    selectedAnalysisReports?: string[];
-    currentlyBeingEditedAnalysisReportId?: string;
-    currentlyBeingEditingAnalysisReportName?: string;
-    currentlyBeingEditedAnalysisReportDescription?: string;
-    selectedAssets?: string[];
-    isUploadAssetDialogOpen?: boolean;
-  };
-
-  const initState = ({
-    mode,
-    selectedAnalysisReports,
-    imagePreviewScale: scale,
-  }: AnalysesState): AnalysesState => ({
-    mode,
-    selectedAnalysisReports,
-    imagePreviewScale: scale,
-  });
-
-  const analysisUIReducer = (
-    state: AnalysesState,
-    action: AnalysesAction
-  ): AnalysesState => {
-    switch (action.type) {
-      case ActionType.RESCALE:
-        return { ...state, imagePreviewScale: action.payload };
-      case ActionType.EDIT_ANALYSIS_REPORT:
-        return {
-          ...state,
-          mode: 'edit',
-          currentlyBeingEditedAnalysisReportId: action.payload.analysisId,
-          currentlyBeingEditingAnalysisReportName: action.payload.analaysisName,
-          currentlyBeingEditedAnalysisReportDescription:
-            action.payload.analysisDescription,
-        };
-      case ActionType.ADD_ANALYSIS_REPORT:
-        return {
-          ...state,
-          mode: 'create',
-          currentlyBeingEditingAnalysisReportName: '',
-          currentlyBeingEditedAnalysisReportDescription: '',
-        };
-      case ActionType.SELECT_ASSET:
-        state.selectedAssets = state.selectedAssets ? state.selectedAssets : [];
-        const selectedId = state.selectedAssets?.findIndex(
-          a => a === action.payload.assetId
-        );
-
-        if (
-          state.selectedAssets &&
-          selectedId !== undefined &&
-          selectedId > -1
-        ) {
-          const selectedCopy = [...state.selectedAssets];
-          selectedCopy.splice(selectedId, 1);
-          return {
-            ...state,
-            selectedAssets: selectedCopy,
-          };
-        }
-        return {
-          ...state,
-          selectedAssets: [...state.selectedAssets, action.payload.assetId],
-        };
-      case ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS:
-        return {
-          ...state,
-          selectedAnalysisReports: action.payload.analysisReportIds,
-        };
-      case ActionType.INITIALIZE:
-        return analysisReports.length > 0
-          ? initState({
-              mode: 'view',
-              imagePreviewScale: state.imagePreviewScale,
-              selectedAnalysisReports:
-                state.currentlyBeingEditedAnalysisReportId !== undefined
-                  ? [state.currentlyBeingEditedAnalysisReportId]
-                  : firstAnalysis !== undefined
-                  ? [firstAnalysis]
-                  : [],
-            })
-          : initState({
-              mode: 'view',
-              imagePreviewScale: state.imagePreviewScale,
-              selectedAnalysisReports: [],
-            });
-      case ActionType.CHANGE_ANALYSIS_NAME:
-        return {
-          ...state,
-          currentlyBeingEditingAnalysisReportName: action.payload.name,
-        };
-      case ActionType.CHANGE_ANALYSIS_DESCRIPTION:
-        return {
-          ...state,
-          currentlyBeingEditedAnalysisReportDescription:
-            action.payload.description,
-        };
-      case ActionType.OPEN_FILE_UPLOAD_DIALOG:
-        return {
-          ...state,
-          isUploadAssetDialogOpen: true,
-        };
-      case ActionType.CLOSE_FILE_UPLOAD_DIALOG:
-        return {
-          ...state,
-          isUploadAssetDialogOpen: false,
-        };
-      default:
-        throw new Error();
-    }
-  };
-
-  const firstAnalysis =
-    analysisReports.length > 0 ? analysisReports[0].id : undefined;
-
-  const [
-    {
-      imagePreviewScale,
-      mode,
-      currentlyBeingEditedAnalysisReportId,
-      selectedAssets,
-      selectedAnalysisReports,
-      currentlyBeingEditingAnalysisReportName,
-      currentlyBeingEditedAnalysisReportDescription,
-      isUploadAssetDialogOpen,
-    },
-    dispatch,
-  ] = React.useReducer(
-    analysisUIReducer,
-    {
-      imagePreviewScale: DEFAULT_SCALE,
-      mode: 'view',
-      selectedAnalysisReports: firstAnalysis ? [firstAnalysis] : [],
-    },
-    initState
-  );
-
   const { Option } = Select;
 
   const onChangeAnalysisReports = (value: string[]) => {
@@ -286,8 +129,7 @@ const AnalysisPlugin = ({
       className="file-upload-modal"
       destroyOnClose={true}
     >
-      {currentlyBeingEditedAnalysisReportId &&
-        FileUpload(currentlyBeingEditedAnalysisReportId)}
+      {FileUpload(currentlyBeingEditedAnalysisReportId)}
     </Modal>
   );
 
@@ -400,7 +242,10 @@ const AnalysisPlugin = ({
                         style={{ marginRight: '10px' }}
                         type="default"
                         onClick={() =>
-                          dispatch({ type: ActionType.INITIALIZE })
+                          dispatch({
+                            type: ActionType.INITIALIZE,
+                            payload: { scale: imagePreviewScale },
+                          })
                         }
                       >
                         Cancel
@@ -415,7 +260,6 @@ const AnalysisPlugin = ({
                               currentlyBeingEditedAnalysisReportDescription,
                               analysisReport.id
                             );
-                          dispatch({ type: ActionType.INITIALIZE });
                         }}
                       >
                         Save
