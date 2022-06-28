@@ -247,13 +247,7 @@ const AnalysisPluginContainer = ({
   }, [analysisData, imageData, unsavedAssets]);
 
   const mutateAnalysis = useMutation(
-    async (data: { id: string; name: string; description: string }) => {
-      const resource = (await nexus.Resource.get(
-        orgLabel,
-        projectLabel,
-        encodeURIComponent(data.id)
-      )) as Resource;
-
+    async (data: { id?: string; name: string; description: string }) => {
       const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
         return {
           '@type': 'DataDownload',
@@ -265,17 +259,47 @@ const AnalysisPluginContainer = ({
         };
       });
 
-      const distribution = [resource['distribution']].flat(); // TODO: use appropriate cprefix depending on context
-      distribution.push(...unsavedAssetsToAddToDistribution);
-      resource['distribution'] = distribution;
+      if (data.id) {
+        const resource = (await nexus.Resource.get(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(data.id)
+        )) as Resource;
 
-      return nexus.Resource.update(
-        orgLabel,
-        projectLabel,
-        encodeURIComponent(data.id),
-        resource['_rev'],
-        { ...resource, name: data.name, 'schema:description': data.description }
-      );
+        const distribution = [resource['distribution']].flat(); // TODO: use appropriate cprefix depending on context
+        distribution.push(...unsavedAssetsToAddToDistribution);
+        resource['distribution'] = distribution;
+
+        return nexus.Resource.update(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(data.id),
+          resource['_rev'],
+          {
+            ...resource,
+            name: data.name,
+            'schema:description': data.description,
+          }
+        );
+      }
+
+      // Create new Analysis Report
+      return nexus.Resource.create(orgLabel, projectLabel, {
+        '@context': [
+          {
+            '@vocab': 'https://neuroshapes.org/',
+            nsg: 'https://neuroshapes.org/',
+            nxv: 'https://bluebrain.github.io/nexus/vocabulary/',
+            prov: 'http://www.w3.org/ns/prov#',
+            schema: 'http://schema.org/',
+          },
+        ],
+        '@type': 'AnalysisReport',
+        name: data.name,
+        'schema:description': data.description,
+        distribution: unsavedAssetsToAddToDistribution,
+        'prov:wasDerivedFrom': [{ '@id': resourceId }],
+      });
     },
     {
       onSuccess: () => {
@@ -286,7 +310,7 @@ const AnalysisPluginContainer = ({
     }
   );
 
-  const onFileUploaded = (file: NexusFile, analysisReportId: string) => {
+  const onFileUploaded = (file: NexusFile, analysisReportId?: string) => {
     const newlyUploadedAsset: Asset = {
       analysisReportId,
       saved: false,
@@ -309,7 +333,7 @@ const AnalysisPluginContainer = ({
     setUnsavedAssets(assets => [...assets, newlyUploadedAsset]);
   };
 
-  const FileUploadComponent = (analysisReportId: string) => {
+  const FileUploadComponent = (analysisReportId?: string) => {
     return (
       <FileUploadContainer
         orgLabel={orgLabel}
@@ -326,8 +350,8 @@ const AnalysisPluginContainer = ({
           FileUpload={FileUploadComponent}
           analysisReports={analysisDataWithImages}
           onCancel={() => {}}
-          onSave={(id: string, name: string, description: string) => {
-            mutateAnalysis.mutate({ id, name, description });
+          onSave={(name: string, description: string, id?: string) => {
+            mutateAnalysis.mutate({ name, description, id });
           }}
         />
       )}
