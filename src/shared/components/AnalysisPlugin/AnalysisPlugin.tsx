@@ -167,6 +167,7 @@ const AnalysisPlugin = ({
                 type="primary"
                 icon={<PlusOutlined />}
                 title="Add Analysis Report"
+                aria-label="Add Analysis Report"
                 onClick={() =>
                   dispatch({ type: ActionType.ADD_ANALYSIS_REPORT })
                 }
@@ -225,6 +226,7 @@ const AnalysisPlugin = ({
                     <Input
                       type="text"
                       placeholder="Analysis Name"
+                      aria-label="Analysis Name"
                       value={currentlyBeingEditingAnalysisReportName}
                       onChange={e =>
                         dispatch({
@@ -241,6 +243,7 @@ const AnalysisPlugin = ({
                       <Button
                         style={{ marginRight: '10px' }}
                         type="default"
+                        aria-label="Cancel"
                         onClick={() =>
                           dispatch({
                             type: ActionType.INITIALIZE,
@@ -252,6 +255,7 @@ const AnalysisPlugin = ({
                       </Button>
                       <Button
                         type="primary"
+                        aria-label="Save"
                         onClick={() => {
                           currentlyBeingEditingAnalysisReportName &&
                             currentlyBeingEditedAnalysisReportDescription &&
@@ -330,6 +334,7 @@ const AnalysisPlugin = ({
                       analysisReport.id)) && (
                   <Input.TextArea
                     placeholder="Analysis Description"
+                    aria-label="Analysis Description"
                     value={currentlyBeingEditedAnalysisReportDescription}
                     onChange={e =>
                       dispatch({
