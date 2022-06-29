@@ -25,7 +25,7 @@ import {
 import { CartContext } from '../hooks/useDataCart';
 import ResultPreviewItemContainer from './ResultPreviewItemContainer';
 import DefaultResourcePreviewCard from '!!raw-loader!../templates/DefaultResourcePreviewCard.hbs';
-import useNotification from '../hooks/useNotification';
+import useNotification, { NexusError } from '../hooks/useNotification';
 
 type DownloadResourcePayload = {
   '@type': string;
@@ -65,11 +65,10 @@ async function downloadArchive(
       as: format || 'x-tar',
     }
   );
-  const blob = new Blob([
+  const blob =
     !format || format === 'x-tar'
-      ? archive.toString()
-      : JSON.stringify(archive),
-  ]);
+      ? (archive as Blob)
+      : new Blob([archive.toString()]);
   const url = window.URL.createObjectURL(blob);
   setDownloadUrl(url);
   refContainer.current.click();
@@ -78,7 +77,7 @@ async function downloadArchive(
 const DataCartContainer = () => {
   const nexus = useNexusContext();
   const [downloadUrl, setDownloadUrl] = React.useState<any>(null);
-  const [extension, setExtension] = React.useState<string>('.tar.gz');
+  const [extension, setExtension] = React.useState<string>('tar');
   const refContainer = React.useRef<any>(null);
   const { emptyCart, removeCartItem, length, resources } = React.useContext(
     CartContext
@@ -149,7 +148,13 @@ const DataCartContainer = () => {
             path: `/${parsedSelf.project}/${parsedSelf.id}`,
           };
         });
-      setExtension('tar.gz');
+      if (resourcesPayload.length === 0) {
+        notification.info({
+          message: 'There are no downloadable files in the cart.',
+        });
+        return;
+      }
+      setExtension('tar');
       const {
         payload,
         archiveId,
@@ -169,6 +174,7 @@ const DataCartContainer = () => {
       } catch (ex) {
         notification.error({
           message: `Download failed`,
+          description: (ex as NexusError).reason,
         });
       }
     }
@@ -192,7 +198,7 @@ const DataCartContainer = () => {
       }: { payload: ArchivePayload; archiveId: string } = makePayload(
         resourcesPayload
       );
-      setExtension('tar.gz');
+      setExtension('tar');
       try {
         await downloadArchive(
           nexus,
@@ -203,9 +209,9 @@ const DataCartContainer = () => {
           refContainer
         );
       } catch (ex) {
-        console.log(ex);
         notification.error({
           message: `Download failed`,
+          description: (ex as NexusError).reason,
         });
       }
     }
@@ -233,7 +239,6 @@ const DataCartContainer = () => {
       }: { payload: ArchivePayload; archiveId: string } = makePayload(
         resourcesPayload
       );
-      setExtension('json');
       try {
         await downloadArchive(
           nexus,
@@ -241,13 +246,13 @@ const DataCartContainer = () => {
           payload,
           archiveId,
           setDownloadUrl,
-          refContainer,
-          'json'
+          refContainer
         );
       } catch (ex) {
         console.log(ex);
         notification.error({
           message: `Download failed`,
+          description: (ex as NexusError).reason,
         });
       }
     }
