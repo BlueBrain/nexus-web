@@ -16,6 +16,9 @@ import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+// import { Route, Router } from 'react-router-dom';
+import { Route, Router } from 'react-router';
+import { createMemoryHistory } from 'history';
 
 describe('Analysis Plugin', () => {
   // establish API mocking before all tests
@@ -46,55 +49,6 @@ describe('Analysis Plugin', () => {
         return mockState;
       }),
     };
-  });
-
-  it('renders without data', async () => {
-    server.use(
-      rest.post(
-        'https://localhost:3000/views/orgLabel/projectLabel/graph/sparql',
-        (req, res, ctx) => {
-          const mockResponse = {
-            head: {
-              vars: [
-                'analysis_report_id',
-                'analysis_report_name',
-                'analysis_report_description',
-                'created_by',
-                'created_at',
-                'asset_content_url',
-                'asset_encoding_format',
-                'asset_name',
-                'self',
-              ],
-            },
-            results: { bindings: [] },
-          };
-
-          return res(
-            // Respond with a 200 status code
-            ctx.status(200),
-            ctx.json(mockResponse)
-          );
-        }
-      )
-    );
-    const store = mockStore(mockState);
-    await act(async () => {
-      const { container } = await render(
-        <Provider store={store}>
-          <QueryClientProvider client={queryClient}>
-            <NexusProvider nexusClient={nexus}>
-              <AnalysisPluginContainer
-                projectLabel="projectLabel"
-                orgLabel="orgLabel"
-                resourceId="resourceId"
-              ></AnalysisPluginContainer>
-            </NexusProvider>
-          </QueryClientProvider>
-        </Provider>
-      );
-      expect(container).toMatchSnapshot();
-    });
   });
 
   it('add new Analysis Report button is present', async () => {
@@ -128,20 +82,23 @@ describe('Analysis Plugin', () => {
       )
     );
 
+    const history = createMemoryHistory({});
     const store = mockStore(mockState);
     await act(async () => {
       await render(
-        <Provider store={store}>
-          <QueryClientProvider client={queryClient}>
-            <NexusProvider nexusClient={nexus}>
-              <AnalysisPluginContainer
-                projectLabel="projectLabel"
-                orgLabel="orgLabel"
-                resourceId="resourceId"
-              ></AnalysisPluginContainer>
-            </NexusProvider>
-          </QueryClientProvider>
-        </Provider>
+        <Router history={history}>
+          <Provider store={store}>
+            <QueryClientProvider client={queryClient}>
+              <NexusProvider nexusClient={nexus}>
+                <AnalysisPluginContainer
+                  projectLabel="projectLabel"
+                  orgLabel="orgLabel"
+                  resourceId="resourceId"
+                ></AnalysisPluginContainer>
+              </NexusProvider>
+            </QueryClientProvider>
+          </Provider>
+        </Router>
       );
     });
 
@@ -184,20 +141,23 @@ describe('Analysis Plugin', () => {
       )
     );
 
+    const history = createMemoryHistory({});
     const store = mockStore(mockState);
     await act(async () => {
       await render(
-        <Provider store={store}>
-          <QueryClientProvider client={queryClient}>
-            <NexusProvider nexusClient={nexus}>
-              <AnalysisPluginContainer
-                projectLabel="projectLabel"
-                orgLabel="orgLabel"
-                resourceId="resourceId"
-              ></AnalysisPluginContainer>
-            </NexusProvider>
-          </QueryClientProvider>
-        </Provider>
+        <Router history={history}>
+          <Provider store={store}>
+            <QueryClientProvider client={queryClient}>
+              <NexusProvider nexusClient={nexus}>
+                <AnalysisPluginContainer
+                  projectLabel="projectLabel"
+                  orgLabel="orgLabel"
+                  resourceId="resourceId"
+                ></AnalysisPluginContainer>
+              </NexusProvider>
+            </QueryClientProvider>
+          </Provider>
+        </Router>
       );
     });
 
@@ -272,20 +232,23 @@ describe('Analysis Plugin', () => {
       )
     );
 
+    const history = createMemoryHistory({});
     const store = mockStore(mockState);
     await act(async () => {
       await render(
-        <Provider store={store}>
-          <QueryClientProvider client={queryClient}>
-            <NexusProvider nexusClient={nexus}>
-              <AnalysisPluginContainer
-                projectLabel="projectLabel"
-                orgLabel="orgLabel"
-                resourceId="resourceId"
-              ></AnalysisPluginContainer>
-            </NexusProvider>
-          </QueryClientProvider>
-        </Provider>
+        <Router history={history}>
+          <Provider store={store}>
+            <QueryClientProvider client={queryClient}>
+              <NexusProvider nexusClient={nexus}>
+                <AnalysisPluginContainer
+                  projectLabel="projectLabel"
+                  orgLabel="orgLabel"
+                  resourceId="resourceId"
+                ></AnalysisPluginContainer>
+              </NexusProvider>
+            </QueryClientProvider>
+          </Provider>
+        </Router>
       );
     });
 
@@ -385,20 +348,23 @@ describe('Analysis Plugin', () => {
       )
     );
 
+    const history = createMemoryHistory({});
     const store = mockStore(mockState);
     await act(async () => {
       await render(
-        <Provider store={store}>
-          <QueryClientProvider client={queryClient}>
-            <NexusProvider nexusClient={nexus}>
-              <AnalysisPluginContainer
-                projectLabel="projectLabel"
-                orgLabel="orgLabel"
-                resourceId="resourceId"
-              ></AnalysisPluginContainer>
-            </NexusProvider>
-          </QueryClientProvider>
-        </Provider>
+        <Router history={history}>
+          <Provider store={store}>
+            <QueryClientProvider client={queryClient}>
+              <NexusProvider nexusClient={nexus}>
+                <AnalysisPluginContainer
+                  projectLabel="projectLabel"
+                  orgLabel="orgLabel"
+                  resourceId="resourceId"
+                ></AnalysisPluginContainer>
+              </NexusProvider>
+            </QueryClientProvider>
+          </Provider>
+        </Router>
       );
     });
 
@@ -435,5 +401,321 @@ describe('Analysis Plugin', () => {
       );
       fireEvent.click(saveBtn);
     });
+  });
+
+  it('On Create New Analysis screen, clicking cancel will return to the view mode', async () => {
+    server.use(
+      rest.post(
+        'https://localhost:3000/views/orgLabel/projectLabel/graph/sparql',
+        (req, res, ctx) => {
+          const mockResponse = {
+            head: {
+              vars: [
+                'analysis_report_id',
+                'analysis_report_name',
+                'analysis_report_description',
+                'created_by',
+                'created_at',
+                'asset_content_url',
+                'asset_encoding_format',
+                'asset_name',
+                'self',
+              ],
+            },
+            results: { bindings: [] },
+          };
+
+          return res(
+            // Respond with a 200 status code
+            ctx.status(200),
+            ctx.json(mockResponse)
+          );
+        }
+      )
+    );
+
+    const history = createMemoryHistory({});
+    const store = mockStore(mockState);
+    await act(async () => {
+      await render(
+        <Router history={history}>
+          <Provider store={store}>
+            <QueryClientProvider client={queryClient}>
+              <NexusProvider nexusClient={nexus}>
+                <AnalysisPluginContainer
+                  projectLabel="projectLabel"
+                  orgLabel="orgLabel"
+                  resourceId="resourceId"
+                ></AnalysisPluginContainer>
+              </NexusProvider>
+            </QueryClientProvider>
+          </Provider>
+        </Router>
+      );
+    });
+
+    await waitFor(() => {
+      screen.getByRole('button', {
+        name: 'Add Analysis Report',
+      });
+    });
+
+    await act(async () => {
+      const addButton = await screen.findByRole('button', {
+        name: 'Add Analysis Report',
+      });
+      fireEvent.click(addButton);
+    });
+
+    await act(async () => {
+      const cancelBtn = await waitFor(() =>
+        screen.getByRole('button', { name: 'Cancel' })
+      );
+      fireEvent.click(cancelBtn);
+    });
+
+    await waitFor(() => {
+      screen.getByRole('button', {
+        name: 'Add Analysis Report',
+      });
+    });
+  });
+
+  it('On an individual analysis report, the option to go to navigate to the parent container resource is presented', async () => {
+    server.use(
+      rest.post(
+        'https://localhost:3000/views/orgLabel/projectLabel/graph/sparql',
+        (req, res, ctx) => {
+          const mockResponse = {
+            head: {
+              vars: [
+                'container_resource_id',
+                'container_resource_name',
+                'analysis_report_id',
+                'analysis_report_name',
+                'analysis_report_description',
+                'created_by',
+                'created_at',
+                'asset_content_url',
+                'asset_encoding_format',
+                'asset_name',
+                'self',
+              ],
+            },
+            results: {
+              bindings: [
+                {
+                  analysis_report_description: {
+                    type: 'literal',
+                    value:
+                      "This is our analysis report. Isn't it great! Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. 555",
+                  },
+                  analysis_report_id: {
+                    type: 'uri',
+                    value:
+                      'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1',
+                  },
+                  analysis_report_name: {
+                    type: 'literal',
+                    value: 'Our Very First Analysis Report!',
+                  },
+                  asset_content_url: {
+                    type: 'literal',
+                    value:
+                      'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/d3d1cc48-9547-4c9c-a08f-f281ffb458cc',
+                  },
+                  asset_encoding_format: {
+                    type: 'literal',
+                    value: 'image/png',
+                  },
+                  asset_name: {
+                    type: 'literal',
+                    value: 'insta_logo_large.png',
+                  },
+                  container_resource_id: {
+                    type: 'uri',
+                    value:
+                      'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1',
+                  },
+                  container_resource_name: {
+                    type: 'literal',
+                    value: 'Analysis container',
+                  },
+                  created_at: {
+                    datatype: 'http://www.w3.org/2001/XMLSchema#dateTime',
+                    type: 'literal',
+                    value: '2022-06-17T04:14:06.357Z',
+                  },
+                  created_by: {
+                    type: 'uri',
+                    value:
+                      'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
+                  },
+                  self: {
+                    type: 'uri',
+                    value:
+                      'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1',
+                  },
+                },
+              ],
+            },
+          };
+
+          return res(
+            // Respond with a 200 status code
+            ctx.status(200),
+            ctx.json(mockResponse)
+          );
+        }
+      )
+    );
+    const history = createMemoryHistory({});
+    const store = mockStore(mockState);
+    await act(async () => {
+      await render(
+        <Router history={history}>
+          <Provider store={store}>
+            <QueryClientProvider client={queryClient}>
+              <NexusProvider nexusClient={nexus}>
+                <AnalysisPluginContainer
+                  projectLabel="projectLabel"
+                  orgLabel="orgLabel"
+                  resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1"
+                ></AnalysisPluginContainer>
+              </NexusProvider>
+            </QueryClientProvider>
+          </Provider>
+        </Router>
+      );
+    });
+
+    await waitFor(() => {
+      screen.getByRole('button', {
+        name: 'Go to parent resource',
+      });
+    });
+  });
+
+  it('On a container analysis resource, each individual analysis has an options menu with the option to navigate to the resource', async () => {
+    server.use(
+      rest.post(
+        'https://localhost:3000/views/orgLabel/projectLabel/graph/sparql',
+        (req, res, ctx) => {
+          const mockResponse = {
+            head: {
+              vars: [
+                'container_resource_id',
+                'container_resource_name',
+                'analysis_report_id',
+                'analysis_report_name',
+                'analysis_report_description',
+                'created_by',
+                'created_at',
+                'asset_content_url',
+                'asset_encoding_format',
+                'asset_name',
+                'self',
+              ],
+            },
+            results: {
+              bindings: [
+                {
+                  analysis_report_description: {
+                    type: 'literal',
+                    value:
+                      "This is our analysis report. Isn't it great! Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. 555",
+                  },
+                  analysis_report_id: {
+                    type: 'uri',
+                    value:
+                      'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1',
+                  },
+                  analysis_report_name: {
+                    type: 'literal',
+                    value: 'Our Very First Analysis Report!',
+                  },
+                  asset_content_url: {
+                    type: 'literal',
+                    value:
+                      'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/d3d1cc48-9547-4c9c-a08f-f281ffb458cc',
+                  },
+                  asset_encoding_format: {
+                    type: 'literal',
+                    value: 'image/png',
+                  },
+                  asset_name: {
+                    type: 'literal',
+                    value: 'insta_logo_large.png',
+                  },
+                  container_resource_id: {
+                    type: 'uri',
+                    value:
+                      'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1',
+                  },
+                  container_resource_name: {
+                    type: 'literal',
+                    value: 'Analysis container',
+                  },
+                  created_at: {
+                    datatype: 'http://www.w3.org/2001/XMLSchema#dateTime',
+                    type: 'literal',
+                    value: '2022-06-17T04:14:06.357Z',
+                  },
+                  created_by: {
+                    type: 'uri',
+                    value:
+                      'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
+                  },
+                  self: {
+                    type: 'uri',
+                    value:
+                      'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1',
+                  },
+                },
+              ],
+            },
+          };
+
+          return res(
+            // Respond with a 200 status code
+            ctx.status(200),
+            ctx.json(mockResponse)
+          );
+        }
+      )
+    );
+    const history = createMemoryHistory({});
+
+    const store = mockStore(mockState);
+    await act(async () => {
+      await render(
+        <Router history={history}>
+          <Provider store={store}>
+            <QueryClientProvider client={queryClient}>
+              <NexusProvider nexusClient={nexus}>
+                <AnalysisPluginContainer
+                  projectLabel="projectLabel"
+                  orgLabel="orgLabel"
+                  resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
+                ></AnalysisPluginContainer>
+              </NexusProvider>
+            </QueryClientProvider>
+          </Provider>
+        </Router>
+      );
+    });
+
+    await act(async () => {
+      const optionsButton = await screen.findByRole('button', {
+        name: 'Options',
+      });
+      fireEvent.mouseEnter(optionsButton);
+    });
+
+    expect(
+      await waitFor(() =>
+        screen.getByRole('menuitem', { name: 'Go to resource' })
+      )
+    ).toBeInTheDocument();
   });
 });
