@@ -1,8 +1,9 @@
 import {
-  DownloadOutlined,
   EditOutlined,
+  LeftSquareFilled,
   MoreOutlined,
   PlusOutlined,
+  UpOutlined,
   ZoomInOutlined,
   ZoomOutOutlined,
 } from '@ant-design/icons';
@@ -51,6 +52,8 @@ export type Asset = {
 };
 
 export type AnalysisReport = {
+  containerId: string;
+  containerName: string;
   id: string;
   name: string;
   description: string;
@@ -60,10 +63,14 @@ export type AnalysisReport = {
 };
 
 type AnalysisPluginProps = {
+  analysisResourceType: 'report_container' | 'individual_report';
+  containerId?: string;
+  containerName?: string;
   analysisReports: AnalysisReport[];
   FileUpload: (analysisReportId?: string) => JSX.Element;
   onSave: (name: string, description: string, id?: string) => void;
   onCancel: () => void;
+  onClickRelatedResource: (resourceId: string) => void;
   imagePreviewScale: number;
   mode: 'view' | 'edit' | 'create';
   selectedAnalysisReports?: string[];
@@ -76,6 +83,9 @@ type AnalysisPluginProps = {
 };
 
 const AnalysisPlugin = ({
+  analysisResourceType,
+  containerId,
+  containerName,
   analysisReports,
   onSave,
   FileUpload,
@@ -88,6 +98,7 @@ const AnalysisPlugin = ({
   selectedAssets,
   isUploadAssetDialogOpen,
   dispatch,
+  onClickRelatedResource,
 }: AnalysisPluginProps) => {
   const { Option } = Select;
 
@@ -136,43 +147,59 @@ const AnalysisPlugin = ({
   return (
     <div className="analysis">
       <>
+        {analysisResourceType === 'individual_report' && containerId && (
+          <>
+            {' '}
+            <Button
+              type="link"
+              onClick={() => onClickRelatedResource(containerId)}
+              style={{ padding: 0 }}
+              aria-label="Go to parent resource"
+            >
+              <UpOutlined /> Go to parent resource
+            </Button>
+          </>
+        )}
+
         {fileUploadModal}
         {mode === 'view' && (
           <>
-            <div className="analysisTools">
-              <Select
-                value={selectedAnalysisReports}
-                showSearch
-                mode="multiple"
-                placeholder="Select Analysis"
-                className="select-analysis"
-                style={{ width: '100%' }}
-                optionFilterProp="children"
-                onChange={onChangeAnalysisReports}
-                onSearch={onSearch}
-                filterOption={(input, option) =>
-                  ((option!.children as unknown) as string)
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) > -1
-                }
-              >
-                {analysisReports.map((a, i) => (
-                  <Option key={a.id} value={a.id}>
-                    {a.name ? a.name : a.id}
-                  </Option>
-                ))}
-              </Select>
-              <Button
-                shape="circle"
-                type="primary"
-                icon={<PlusOutlined />}
-                title="Add Analysis Report"
-                aria-label="Add Analysis Report"
-                onClick={() =>
-                  dispatch({ type: ActionType.ADD_ANALYSIS_REPORT })
-                }
-              ></Button>
-            </div>
+            {analysisResourceType === 'report_container' && (
+              <div className="analysisTools">
+                <Select
+                  value={selectedAnalysisReports}
+                  showSearch
+                  mode="multiple"
+                  placeholder="Select Analysis"
+                  className="select-analysis"
+                  style={{ width: '100%' }}
+                  optionFilterProp="children"
+                  onChange={onChangeAnalysisReports}
+                  onSearch={onSearch}
+                  filterOption={(input, option) =>
+                    ((option!.children as unknown) as string)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) > -1
+                  }
+                >
+                  {analysisReports.map((a, i) => (
+                    <Option key={a.id} value={a.id}>
+                      {a.name ? a.name : a.id}
+                    </Option>
+                  ))}
+                </Select>
+                <Button
+                  shape="circle"
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  title="Add Analysis Report"
+                  aria-label="Add Analysis Report"
+                  onClick={() =>
+                    dispatch({ type: ActionType.ADD_ANALYSIS_REPORT })
+                  }
+                ></Button>
+              </div>
+            )}
 
             <div
               className="zoom-control"
@@ -293,14 +320,28 @@ const AnalysisPlugin = ({
                           Edit
                         </Menu.Item>
                         <Menu.Item
+                          hidden={true}
                           onClick={() => console.log('download')}
-                          icon={<DownloadOutlined />}
+                          icon={<LeftSquareFilled />}
                         >
                           Download
                         </Menu.Item>
+                        <Menu.Item
+                          hidden={analysisResourceType === 'individual_report'}
+                          onClick={() =>
+                            analysisReport.id &&
+                            onClickRelatedResource(analysisReport.id)
+                          }
+                        >
+                          Go to resource
+                        </Menu.Item>
                       </Menu>
                     }
-                    icon={<MoreOutlined />}
+                    icon={
+                      <span aria-label="Options">
+                        <MoreOutlined />
+                      </span>
+                    }
                   />
                 )}
               </h1>

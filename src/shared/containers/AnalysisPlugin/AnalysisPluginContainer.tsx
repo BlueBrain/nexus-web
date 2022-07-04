@@ -12,27 +12,54 @@ import { sparqlQueryExecutor } from '../../utils/querySparqlView';
 import { Image } from 'antd';
 import FileUploadContainer from '../FileUploadContainer';
 import { FileImageOutlined } from '@ant-design/icons';
+import { makeResourceUri } from '../../../shared/utils';
+import { useHistory, useLocation } from 'react-router';
 
 export const DEFAULT_ANALYSIS_DATA_SPARQL_QUERY = `PREFIX s:<http://schema.org/>
 PREFIX prov:<http://www.w3.org/ns/prov#>
 PREFIX nsg:<https://neuroshapes.org/>
 PREFIX nxv:<https://bluebrain.github.io/nexus/vocabulary/>
-SELECT ?analysis_report_id ?analysis_report_name ?analysis_report_description ?created_by ?created_at ?asset_content_url ?asset_encoding_format ?asset_name ?self
+SELECT ?container_resource_id ?container_resource_name ?analysis_report_id ?analysis_report_name ?analysis_report_description ?created_by ?created_at ?asset_content_url ?asset_encoding_format ?asset_name ?self
 WHERE {
-  BIND(<{resourceId}> as ?container_resource_id) .
-  BIND(<{resourceId}> as ?self) .
-  ?container_resource_id        ^prov:wasDerivedFrom       ?analysis_report_id .
-  ?analysis_report_id    nsg:name            ?analysis_report_name .
-  ?analysis_report_id    s:description       ?analysis_report_description .
-  ?analysis_report_id nxv:createdBy ?created_by .
-  ?analysis_report_id nxv:createdAt ?created_at .
   OPTIONAL {
-      ?analysis_report_id    nsg:distribution    ?distribution .
-      OPTIONAL {
-        ?distribution nsg:name            ?asset_name .
-        ?distribution nsg:contentUrl      ?asset_content_url .
-        ?distribution nsg:encodingFormat  ?asset_encoding_format .
-      }
+    BIND(<{resourceId}> as ?container_resource_id) .
+    BIND(<{resourceId}> as ?self) .
+    ?container_resource_id        ^prov:wasDerivedFrom       ?analysis_report_id .
+    OPTIONAL {
+      ?container_resource_id        s:name                   ?container_resource_name .
+    }
+    ?analysis_report_id    nsg:name            ?analysis_report_name .
+    ?analysis_report_id    s:description       ?analysis_report_description .
+    ?analysis_report_id nxv:createdBy ?created_by .
+    ?analysis_report_id nxv:createdAt ?created_at .
+    OPTIONAL {
+        ?analysis_report_id    nsg:distribution    ?distribution .
+        OPTIONAL {
+          ?distribution nsg:name            ?asset_name .
+          ?distribution nsg:contentUrl      ?asset_content_url .
+          ?distribution nsg:encodingFormat  ?asset_encoding_format .
+        }
+    }
+  }
+  OPTIONAL {
+    BIND(<{resourceId}> as ?analysis_report_id) .
+    BIND(<{resourceId}> as ?self) .
+    ?container_resource_id        ^prov:wasDerivedFrom       ?analysis_report_id .
+    OPTIONAL {
+      ?container_resource_id        s:name                   ?container_resource_name .
+    }
+    ?analysis_report_id    nsg:name            ?analysis_report_name .
+    ?analysis_report_id    s:description       ?analysis_report_description .
+    ?analysis_report_id nxv:createdBy ?created_by .
+    ?analysis_report_id nxv:createdAt ?created_at .
+    OPTIONAL {
+        ?analysis_report_id    nsg:distribution    ?distribution .
+        OPTIONAL {
+          ?distribution nsg:name            ?asset_name .
+          ?distribution nsg:contentUrl      ?asset_content_url .
+          ?distribution nsg:encodingFormat  ?asset_encoding_format .
+        }
+    }
   }
 }
 LIMIT 1000`;
@@ -75,9 +102,18 @@ export enum ActionType {
   OPEN_FILE_UPLOAD_DIALOG = 'open_file_upload_dialog',
   CLOSE_FILE_UPLOAD_DIALOG = 'close_file_upload_dialog',
   ADD_ANALYSIS_REPORT = 'add_analysis_report',
+  SET_ANALYSIS_RESOURCE_TYPE = 'set_analysis_resource_type',
 }
 
 export type AnalysesAction =
+  | {
+      type: ActionType.SET_ANALYSIS_RESOURCE_TYPE;
+      payload: {
+        resourceType: 'report_container' | 'individual_report';
+        containerId?: string;
+        containerName?: string;
+      };
+    }
   | { type: ActionType.RESCALE; payload: number }
   | {
       type: ActionType.EDIT_ANALYSIS_REPORT;
@@ -115,8 +151,21 @@ const AnalysisPluginContainer = ({
   const apiEndpoint = useSelector(
     (state: RootState) => state.config.apiEndpoint
   );
+  const history = useHistory();
+  const location = useLocation();
 
   const viewSelfId = `${apiEndpoint}/nexus/v1/views/${orgLabel}/${projectLabel}/graph`;
+
+  const handleClickAnalysisResource = (
+    orgLabel: string,
+    projectLabel: string,
+    resourceId: string
+  ) => {
+    history.push(
+      makeResourceUri(orgLabel, projectLabel, resourceId),
+      location.state
+    );
+  };
 
   const { analysisPluginSparqlDataQuery } = useSelector(
     (state: RootState) => state.config
@@ -130,6 +179,8 @@ const AnalysisPluginContainer = ({
   type AnalysisAssetSparqlQueryRowResult = {
     id: string;
     key: string;
+    container_resource_id: string;
+    container_resource_name: string;
     analysis_report_id: string;
     analysis_report_name: string;
     analysis_report_description: string;
@@ -166,6 +217,8 @@ const AnalysisPluginContainer = ({
         !analysisReports.some(r => r.id === currentRow['analysis_report_id'])
       ) {
         analysisReports.push({
+          containerId: currentRow['container_resource_id'],
+          containerName: currentRow['container_resource_name'],
           id: currentRow['analysis_report_id'],
           description: currentRow['analysis_report_description'],
           name: currentRow['analysis_report_name'],
@@ -218,6 +271,23 @@ const AnalysisPluginContainer = ({
             payload: { analysisReportIds: data.length > 0 ? [data[0].id] : [] },
           });
         }
+        dispatch({
+          type: ActionType.SET_ANALYSIS_RESOURCE_TYPE,
+          payload: {
+            resourceType:
+              data.length > 0 && data[0].id === resourceId
+                ? 'individual_report'
+                : 'report_container',
+            containerId:
+              data.length > 0 && data[0].containerId !== ''
+                ? data[0].containerId
+                : undefined,
+            containerName:
+              data.length > 0 && data[0].containerName !== ''
+                ? data[0].containerName
+                : undefined,
+          },
+        });
       },
     }
   );
@@ -392,6 +462,9 @@ const AnalysisPluginContainer = ({
   const DEFAULT_SCALE = 50;
 
   type AnalysesState = {
+    analysisResourceType: 'report_container' | 'individual_report';
+    containerId?: string;
+    containerName?: string;
     imagePreviewScale: number;
     mode: 'view' | 'edit' | 'create';
     selectedAnalysisReports?: string[];
@@ -405,11 +478,13 @@ const AnalysisPluginContainer = ({
 
   const initState = ({
     mode,
+    analysisResourceType,
     selectedAnalysisReports,
     initialFetch: initialized,
     imagePreviewScale: scale,
   }: AnalysesState): AnalysesState => ({
     mode,
+    analysisResourceType,
     selectedAnalysisReports,
     initialFetch: initialized,
     imagePreviewScale: scale,
@@ -420,6 +495,13 @@ const AnalysisPluginContainer = ({
     action: AnalysesAction
   ): AnalysesState => {
     switch (action.type) {
+      case ActionType.SET_ANALYSIS_RESOURCE_TYPE:
+        return {
+          ...state,
+          analysisResourceType: action.payload.resourceType,
+          containerId: action.payload.containerId,
+          containerName: action.payload.containerName,
+        };
       case ActionType.RESCALE:
         return { ...state, imagePreviewScale: action.payload };
       case ActionType.EDIT_ANALYSIS_REPORT:
@@ -470,6 +552,7 @@ const AnalysisPluginContainer = ({
       case ActionType.INITIALIZE:
         return initState({
           mode: 'view',
+          analysisResourceType: 'report_container',
           initialFetch: true,
           selectedAnalysisReports: [],
           imagePreviewScale: action.payload.scale,
@@ -509,6 +592,9 @@ const AnalysisPluginContainer = ({
     {
       imagePreviewScale,
       mode,
+      analysisResourceType,
+      containerId,
+      containerName,
       currentlyBeingEditedAnalysisReportId,
       selectedAssets,
       selectedAnalysisReports,
@@ -522,6 +608,7 @@ const AnalysisPluginContainer = ({
     analysisUIReducer,
     {
       imagePreviewScale: DEFAULT_SCALE,
+      analysisResourceType: 'report_container',
       mode: 'view',
       initialFetch: false,
       selectedAnalysisReports: firstAnalysis ? [firstAnalysis] : [],
@@ -543,12 +630,14 @@ const AnalysisPluginContainer = ({
         <AnalysisPlugin
           FileUpload={FileUploadComponent}
           analysisReports={analysisDataWithImages}
+          containerId={containerId}
           onCancel={() => {}}
           onSave={(name: string, description: string, id?: string) => {
             mutateAnalysis.mutate({ name, description, id });
           }}
           imagePreviewScale={imagePreviewScale}
           mode={mode}
+          analysisResourceType={analysisResourceType}
           currentlyBeingEditedAnalysisReportDescription={
             currentlyBeingEditedAnalysisReportDescription
           }
@@ -564,6 +653,10 @@ const AnalysisPluginContainer = ({
           dispatch={(action: AnalysesAction) => {
             dispatch(action);
           }}
+          onClickRelatedResource={(resourceId: string) =>
+            handleClickAnalysisResource(orgLabel, projectLabel, resourceId)
+          }
+          containerName={containerName}
         />
       )}
     </>
