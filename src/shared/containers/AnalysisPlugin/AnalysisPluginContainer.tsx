@@ -75,19 +75,27 @@ export enum ActionType {
   OPEN_FILE_UPLOAD_DIALOG = 'open_file_upload_dialog',
   CLOSE_FILE_UPLOAD_DIALOG = 'close_file_upload_dialog',
   ADD_ANALYSIS_REPORT = 'add_analysis_report',
+  SET_SELECTED_REPORT_ON_FIRST_LOAD = 'set_selected_report_on_first_load',
 }
 
 export type AnalysesAction =
   | { type: ActionType.RESCALE; payload: number }
   | {
+      type: ActionType.SET_SELECTED_REPORT_ON_FIRST_LOAD;
+      payload?: { analysisReportId: string };
+    }
+  | {
       type: ActionType.EDIT_ANALYSIS_REPORT;
       payload: {
         analysisId: string;
         analaysisName: string;
-        analysisDescription: string;
+        analysisDescription?: string;
       };
     }
-  | { type: ActionType.INITIALIZE; payload: { scale: number } }
+  | {
+      type: ActionType.INITIALIZE;
+      payload: { scale: number; analysisReportId?: string[] };
+    }
   | { type: ActionType.SELECT_ASSET; payload: { assetId: string } }
   | {
       type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS;
@@ -212,10 +220,13 @@ const AnalysisPluginContainer = ({
     async () => fetchAnalysisData(viewSelfId, analysisSparqlQuery),
     {
       onSuccess: data => {
-        if (!initialFetch) {
+        if (!hasInitializedSelectedReports) {
           dispatch({
             type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS,
-            payload: { analysisReportIds: data.length > 0 ? [data[0].id] : [] },
+            payload: {
+              analysisReportIds:
+                data.length > 0 && data[0].id ? [data[0].id] : [],
+            },
           });
         }
       },
@@ -270,33 +281,8 @@ const AnalysisPluginContainer = ({
     }
   );
 
-  const analysisDataWithImages = React.useMemo(() => {
-    return analysisData?.map(a => {
-      return {
-        ...a,
-        assets: a.assets
-          .concat(
-            unsavedAssets.filter(unsaved => unsaved.analysisReportId === a.id)
-          )
-          .map(m => {
-            const img = imageData?.find(img => img.contentUrl === m.filePath);
-            return {
-              ...m,
-              preview: ({ mode }: { mode: string }) => {
-                return (
-                  <>
-                    <Image src={img?.src} preview={mode === 'view'} />
-                  </>
-                );
-              },
-            };
-          }),
-      };
-    });
-  }, [analysisData, imageData, unsavedAssets]);
-
   const mutateAnalysis = useMutation(
-    async (data: { id?: string; name: string; description: string }) => {
+    async (data: { id?: string; name: string; description?: string }) => {
       const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
         return {
           '@type': 'DataDownload',
@@ -400,20 +386,22 @@ const AnalysisPluginContainer = ({
     currentlyBeingEditedAnalysisReportDescription?: string;
     selectedAssets?: string[];
     isUploadAssetDialogOpen?: boolean;
-    initialFetch: boolean;
+    hasInitializedSelectedReports: boolean;
   };
 
   const initState = ({
     mode,
-    selectedAnalysisReports,
-    initialFetch: initialized,
     imagePreviewScale: scale,
-  }: AnalysesState): AnalysesState => ({
-    mode,
+    hasInitializedSelectedReports,
     selectedAnalysisReports,
-    initialFetch: initialized,
-    imagePreviewScale: scale,
-  });
+  }: AnalysesState): AnalysesState => {
+    return {
+      mode,
+      hasInitializedSelectedReports,
+      imagePreviewScale: scale,
+      selectedAnalysisReports,
+    };
+  };
 
   const analysisUIReducer = (
     state: AnalysesState,
@@ -426,6 +414,7 @@ const AnalysisPluginContainer = ({
         return {
           ...state,
           mode: 'edit',
+          selectedAnalysisReports: [action.payload.analysisId],
           currentlyBeingEditedAnalysisReportId: action.payload.analysisId,
           currentlyBeingEditingAnalysisReportName: action.payload.analaysisName,
           currentlyBeingEditedAnalysisReportDescription:
@@ -460,18 +449,25 @@ const AnalysisPluginContainer = ({
           ...state,
           selectedAssets: [...state.selectedAssets, action.payload.assetId],
         };
+      case ActionType.SET_SELECTED_REPORT_ON_FIRST_LOAD:
+        return {
+          ...state,
+          selectedAnalysisReports: action.payload
+            ? [action.payload.analysisReportId]
+            : [],
+          hasInitializedSelectedReports: true,
+        };
       case ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS:
         return {
           ...state,
           mode: 'view',
           selectedAnalysisReports: action.payload.analysisReportIds,
-          initialFetch: false, // TODO: probably change to using new action for this
         };
       case ActionType.INITIALIZE:
         return initState({
           mode: 'view',
-          initialFetch: true,
-          selectedAnalysisReports: [],
+          hasInitializedSelectedReports: true,
+          selectedAnalysisReports: action.payload.analysisReportId,
           imagePreviewScale: action.payload.scale,
         });
       case ActionType.CHANGE_ANALYSIS_NAME:
@@ -500,11 +496,6 @@ const AnalysisPluginContainer = ({
     }
   };
 
-  const firstAnalysis =
-    analysisDataWithImages && analysisDataWithImages.length > 0
-      ? analysisDataWithImages[0].id
-      : undefined;
-
   const [
     {
       imagePreviewScale,
@@ -515,7 +506,7 @@ const AnalysisPluginContainer = ({
       currentlyBeingEditingAnalysisReportName,
       currentlyBeingEditedAnalysisReportDescription,
       isUploadAssetDialogOpen,
-      initialFetch,
+      hasInitializedSelectedReports,
     },
     dispatch,
   ] = React.useReducer(
@@ -523,11 +514,48 @@ const AnalysisPluginContainer = ({
     {
       imagePreviewScale: DEFAULT_SCALE,
       mode: 'view',
-      initialFetch: false,
-      selectedAnalysisReports: firstAnalysis ? [firstAnalysis] : [],
+      hasInitializedSelectedReports: true,
+      selectedAnalysisReports: [],
     },
     initState
   );
+
+  const analysisDataWithImages = React.useMemo(() => {
+    const newAnalysisReports: AnalysisReport[] =
+      mode === 'create'
+        ? [
+            {
+              name: '',
+              description: '',
+              createdBy: '',
+              createdAt: '',
+              assets: [],
+            },
+          ]
+        : [];
+    const savedAndUnsavedAnalysisReports = analysisData
+      ? analysisData.concat(newAnalysisReports)
+      : newAnalysisReports;
+    return savedAndUnsavedAnalysisReports.map(a => {
+      return {
+        ...a,
+        assets: a.assets.concat(unsavedAssets).map(m => {
+          const img = imageData?.find(img => img.contentUrl === m.filePath);
+          console.log('mapping', img, m);
+          return {
+            ...m,
+            preview: ({ mode }: { mode: string }) => {
+              return (
+                <>
+                  <Image src={img?.src} preview={mode === 'view'} />
+                </>
+              );
+            },
+          };
+        }),
+      };
+    });
+  }, [analysisData, imageData, unsavedAssets, mode]);
 
   const FileUploadComponent = (analysisReportId?: string) => (
     <FileUploadContainer
@@ -544,7 +572,7 @@ const AnalysisPluginContainer = ({
           FileUpload={FileUploadComponent}
           analysisReports={analysisDataWithImages}
           onCancel={() => {}}
-          onSave={(name: string, description: string, id?: string) => {
+          onSave={(name: string, description?: string, id?: string) => {
             mutateAnalysis.mutate({ name, description, id });
           }}
           imagePreviewScale={imagePreviewScale}
