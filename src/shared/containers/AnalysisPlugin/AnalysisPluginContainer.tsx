@@ -12,27 +12,54 @@ import { sparqlQueryExecutor } from '../../utils/querySparqlView';
 import { Image } from 'antd';
 import FileUploadContainer from '../FileUploadContainer';
 import { FileImageOutlined } from '@ant-design/icons';
+import { makeResourceUri } from '../../../shared/utils';
+import { useHistory, useLocation } from 'react-router';
 
 export const DEFAULT_ANALYSIS_DATA_SPARQL_QUERY = `PREFIX s:<http://schema.org/>
 PREFIX prov:<http://www.w3.org/ns/prov#>
 PREFIX nsg:<https://neuroshapes.org/>
 PREFIX nxv:<https://bluebrain.github.io/nexus/vocabulary/>
-SELECT ?analysis_report_id ?analysis_report_name ?analysis_report_description ?created_by ?created_at ?asset_content_url ?asset_encoding_format ?asset_name ?self
+SELECT ?container_resource_id ?container_resource_name ?analysis_report_id ?analysis_report_name ?analysis_report_description ?created_by ?created_at ?asset_content_url ?asset_encoding_format ?asset_name ?self
 WHERE {
-  BIND(<{resourceId}> as ?container_resource_id) .
-  BIND(<{resourceId}> as ?self) .
-  ?container_resource_id        ^prov:wasDerivedFrom       ?analysis_report_id .
-  ?analysis_report_id    nsg:name            ?analysis_report_name .
-  ?analysis_report_id    s:description       ?analysis_report_description .
-  ?analysis_report_id nxv:createdBy ?created_by .
-  ?analysis_report_id nxv:createdAt ?created_at .
   OPTIONAL {
-      ?analysis_report_id    nsg:distribution    ?distribution .
-      OPTIONAL {
-        ?distribution nsg:name            ?asset_name .
-        ?distribution nsg:contentUrl      ?asset_content_url .
-        ?distribution nsg:encodingFormat  ?asset_encoding_format .
-      }
+    BIND(<{resourceId}> as ?container_resource_id) .
+    BIND(<{resourceId}> as ?self) .
+    ?container_resource_id        ^prov:wasDerivedFrom       ?analysis_report_id .
+    OPTIONAL {
+      ?container_resource_id        s:name                   ?container_resource_name .
+    }
+    ?analysis_report_id    nsg:name            ?analysis_report_name .
+    ?analysis_report_id    s:description       ?analysis_report_description .
+    ?analysis_report_id nxv:createdBy ?created_by .
+    ?analysis_report_id nxv:createdAt ?created_at .
+    OPTIONAL {
+        ?analysis_report_id    nsg:distribution    ?distribution .
+        OPTIONAL {
+          ?distribution nsg:name            ?asset_name .
+          ?distribution nsg:contentUrl      ?asset_content_url .
+          ?distribution nsg:encodingFormat  ?asset_encoding_format .
+        }
+    }
+  }
+  OPTIONAL {
+    BIND(<{resourceId}> as ?analysis_report_id) .
+    BIND(<{resourceId}> as ?self) .
+    ?container_resource_id        ^prov:wasDerivedFrom       ?analysis_report_id .
+    OPTIONAL {
+      ?container_resource_id        s:name                   ?container_resource_name .
+    }
+    ?analysis_report_id    nsg:name            ?analysis_report_name .
+    ?analysis_report_id    s:description       ?analysis_report_description .
+    ?analysis_report_id nxv:createdBy ?created_by .
+    ?analysis_report_id nxv:createdAt ?created_at .
+    OPTIONAL {
+        ?analysis_report_id    nsg:distribution    ?distribution .
+        OPTIONAL {
+          ?distribution nsg:name            ?asset_name .
+          ?distribution nsg:contentUrl      ?asset_content_url .
+          ?distribution nsg:encodingFormat  ?asset_encoding_format .
+        }
+    }
   }
 }
 LIMIT 1000`;
@@ -64,6 +91,53 @@ type AnalysisPluginContainerProps = {
   resourceId: string;
 };
 
+export enum ActionType {
+  RESCALE = 'rescale',
+  EDIT_ANALYSIS_REPORT = 'edit_analysis_report',
+  INITIALIZE = 'initialize',
+  SELECT_ASSET = 'select_asset',
+  CHANGE_SELECTED_ANALYSIS_REPORTS = 'change_selected_analysis_reports',
+  CHANGE_ANALYSIS_NAME = 'change_analysis_name',
+  CHANGE_ANALYSIS_DESCRIPTION = 'change_analysis_description',
+  OPEN_FILE_UPLOAD_DIALOG = 'open_file_upload_dialog',
+  CLOSE_FILE_UPLOAD_DIALOG = 'close_file_upload_dialog',
+  ADD_ANALYSIS_REPORT = 'add_analysis_report',
+  SET_ANALYSIS_RESOURCE_TYPE = 'set_analysis_resource_type',
+}
+
+export type AnalysesAction =
+  | {
+      type: ActionType.SET_ANALYSIS_RESOURCE_TYPE;
+      payload: {
+        resourceType: 'report_container' | 'individual_report';
+        containerId?: string;
+        containerName?: string;
+      };
+    }
+  | { type: ActionType.RESCALE; payload: number }
+  | {
+      type: ActionType.EDIT_ANALYSIS_REPORT;
+      payload: {
+        analysisId: string;
+        analaysisName: string;
+        analysisDescription: string;
+      };
+    }
+  | { type: ActionType.INITIALIZE; payload: { scale: number } }
+  | { type: ActionType.SELECT_ASSET; payload: { assetId: string } }
+  | {
+      type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS;
+      payload: { analysisReportIds: string[] };
+    }
+  | { type: ActionType.CHANGE_ANALYSIS_NAME; payload: { name: string } }
+  | {
+      type: ActionType.CHANGE_ANALYSIS_DESCRIPTION;
+      payload: { description: string };
+    }
+  | { type: ActionType.OPEN_FILE_UPLOAD_DIALOG }
+  | { type: ActionType.CLOSE_FILE_UPLOAD_DIALOG }
+  | { type: ActionType.ADD_ANALYSIS_REPORT };
+
 const AnalysisPluginContainer = ({
   orgLabel,
   projectLabel,
@@ -77,8 +151,21 @@ const AnalysisPluginContainer = ({
   const apiEndpoint = useSelector(
     (state: RootState) => state.config.apiEndpoint
   );
+  const history = useHistory();
+  const location = useLocation();
 
   const viewSelfId = `${apiEndpoint}/nexus/v1/views/${orgLabel}/${projectLabel}/graph`;
+
+  const handleClickAnalysisResource = (
+    orgLabel: string,
+    projectLabel: string,
+    resourceId: string
+  ) => {
+    history.push(
+      makeResourceUri(orgLabel, projectLabel, resourceId),
+      location.state
+    );
+  };
 
   const { analysisPluginSparqlDataQuery } = useSelector(
     (state: RootState) => state.config
@@ -92,6 +179,8 @@ const AnalysisPluginContainer = ({
   type AnalysisAssetSparqlQueryRowResult = {
     id: string;
     key: string;
+    container_resource_id: string;
+    container_resource_name: string;
     analysis_report_id: string;
     analysis_report_name: string;
     analysis_report_description: string;
@@ -128,6 +217,8 @@ const AnalysisPluginContainer = ({
         !analysisReports.some(r => r.id === currentRow['analysis_report_id'])
       ) {
         analysisReports.push({
+          containerId: currentRow['container_resource_id'],
+          containerName: currentRow['container_resource_name'],
           id: currentRow['analysis_report_id'],
           description: currentRow['analysis_report_description'],
           name: currentRow['analysis_report_name'],
@@ -169,8 +260,36 @@ const AnalysisPluginContainer = ({
     return analysisData;
   };
 
-  const { data: analysisData } = useQuery(['analysis', resourceId], async () =>
-    fetchAnalysisData(viewSelfId, analysisSparqlQuery)
+  const { data: analysisData } = useQuery(
+    ['analysis', resourceId],
+    async () => fetchAnalysisData(viewSelfId, analysisSparqlQuery),
+    {
+      onSuccess: data => {
+        if (!initialFetch) {
+          dispatch({
+            type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS,
+            payload: { analysisReportIds: data.length > 0 ? [data[0].id] : [] },
+          });
+        }
+        dispatch({
+          type: ActionType.SET_ANALYSIS_RESOURCE_TYPE,
+          payload: {
+            resourceType:
+              data.length > 0 && data[0].id === resourceId
+                ? 'individual_report'
+                : 'report_container',
+            containerId:
+              data.length > 0 && data[0].containerId !== ''
+                ? data[0].containerId
+                : undefined,
+            containerName:
+              data.length > 0 && data[0].containerName !== ''
+                ? data[0].containerName
+                : undefined,
+          },
+        });
+      },
+    }
   );
 
   const fetchImages = async () => {
@@ -247,13 +366,7 @@ const AnalysisPluginContainer = ({
   }, [analysisData, imageData, unsavedAssets]);
 
   const mutateAnalysis = useMutation(
-    async (data: { id: string; name: string; description: string }) => {
-      const resource = (await nexus.Resource.get(
-        orgLabel,
-        projectLabel,
-        encodeURIComponent(data.id)
-      )) as Resource;
-
+    async (data: { id?: string; name: string; description: string }) => {
       const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
         return {
           '@type': 'DataDownload',
@@ -265,28 +378,65 @@ const AnalysisPluginContainer = ({
         };
       });
 
-      const distribution = [resource['distribution']].flat(); // TODO: use appropriate cprefix depending on context
-      distribution.push(...unsavedAssetsToAddToDistribution);
-      resource['distribution'] = distribution;
+      if (data.id) {
+        const resource = (await nexus.Resource.get(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(data.id)
+        )) as Resource;
 
-      return nexus.Resource.update(
-        orgLabel,
-        projectLabel,
-        encodeURIComponent(data.id),
-        resource['_rev'],
-        { ...resource, name: data.name, 'schema:description': data.description }
-      );
+        const distribution = [resource['distribution']].flat(); // TODO: use appropriate cprefix depending on context
+        distribution.push(...unsavedAssetsToAddToDistribution);
+        resource['distribution'] = distribution;
+
+        return nexus.Resource.update(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(data.id),
+          resource['_rev'],
+          {
+            ...resource,
+            name: data.name,
+            'schema:description': data.description,
+          }
+        );
+      }
+
+      // Create new Analysis Report
+      return nexus.Resource.create(orgLabel, projectLabel, {
+        '@context': [
+          {
+            '@vocab': 'https://neuroshapes.org/',
+            nsg: 'https://neuroshapes.org/',
+            nxv: 'https://bluebrain.github.io/nexus/vocabulary/',
+            prov: 'http://www.w3.org/ns/prov#',
+            schema: 'http://schema.org/',
+          },
+        ],
+        '@type': 'AnalysisReport',
+        name: data.name,
+        'schema:description': data.description,
+        distribution: unsavedAssetsToAddToDistribution,
+        'prov:wasDerivedFrom': [{ '@id': resourceId }],
+      });
     },
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['analysis']);
-        queryClient.invalidateQueries(['analysesImages']);
+      onSuccess: resource => {
         setUnsavedAssets([]);
+        Promise.all([
+          queryClient.invalidateQueries(['analysis']),
+          queryClient.invalidateQueries(['analysesImages']),
+        ]).then(() => {
+          dispatch({
+            type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS,
+            payload: { analysisReportIds: [resource['@id']] },
+          });
+        });
       },
     }
   );
 
-  const onFileUploaded = (file: NexusFile, analysisReportId: string) => {
+  const onFileUploaded = (file: NexusFile, analysisReportId?: string) => {
     const newlyUploadedAsset: Asset = {
       analysisReportId,
       saved: false,
@@ -309,15 +459,170 @@ const AnalysisPluginContainer = ({
     setUnsavedAssets(assets => [...assets, newlyUploadedAsset]);
   };
 
-  const FileUploadComponent = (analysisReportId: string) => {
-    return (
-      <FileUploadContainer
-        orgLabel={orgLabel}
-        projectLabel={projectLabel}
-        onFileUploaded={file => onFileUploaded(file, analysisReportId)}
-      />
-    );
+  const DEFAULT_SCALE = 50;
+
+  type AnalysesState = {
+    analysisResourceType: 'report_container' | 'individual_report';
+    containerId?: string;
+    containerName?: string;
+    imagePreviewScale: number;
+    mode: 'view' | 'edit' | 'create';
+    selectedAnalysisReports?: string[];
+    currentlyBeingEditedAnalysisReportId?: string;
+    currentlyBeingEditingAnalysisReportName?: string;
+    currentlyBeingEditedAnalysisReportDescription?: string;
+    selectedAssets?: string[];
+    isUploadAssetDialogOpen?: boolean;
+    initialFetch: boolean;
   };
+
+  const initState = ({
+    mode,
+    analysisResourceType,
+    selectedAnalysisReports,
+    initialFetch: initialized,
+    imagePreviewScale: scale,
+  }: AnalysesState): AnalysesState => ({
+    mode,
+    analysisResourceType,
+    selectedAnalysisReports,
+    initialFetch: initialized,
+    imagePreviewScale: scale,
+  });
+
+  const analysisUIReducer = (
+    state: AnalysesState,
+    action: AnalysesAction
+  ): AnalysesState => {
+    switch (action.type) {
+      case ActionType.SET_ANALYSIS_RESOURCE_TYPE:
+        return {
+          ...state,
+          analysisResourceType: action.payload.resourceType,
+          containerId: action.payload.containerId,
+          containerName: action.payload.containerName,
+        };
+      case ActionType.RESCALE:
+        return { ...state, imagePreviewScale: action.payload };
+      case ActionType.EDIT_ANALYSIS_REPORT:
+        return {
+          ...state,
+          mode: 'edit',
+          currentlyBeingEditedAnalysisReportId: action.payload.analysisId,
+          currentlyBeingEditingAnalysisReportName: action.payload.analaysisName,
+          currentlyBeingEditedAnalysisReportDescription:
+            action.payload.analysisDescription,
+        };
+      case ActionType.ADD_ANALYSIS_REPORT:
+        return {
+          ...state,
+          mode: 'create',
+          currentlyBeingEditingAnalysisReportName: '',
+          currentlyBeingEditedAnalysisReportDescription: '',
+        };
+      case ActionType.SELECT_ASSET:
+        state.selectedAssets = state.selectedAssets ? state.selectedAssets : [];
+        const selectedId = state.selectedAssets?.findIndex(
+          a => a === action.payload.assetId
+        );
+
+        if (
+          state.selectedAssets &&
+          selectedId !== undefined &&
+          selectedId > -1
+        ) {
+          const selectedCopy = [...state.selectedAssets];
+          selectedCopy.splice(selectedId, 1);
+          return {
+            ...state,
+            selectedAssets: selectedCopy,
+          };
+        }
+        return {
+          ...state,
+          selectedAssets: [...state.selectedAssets, action.payload.assetId],
+        };
+      case ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS:
+        return {
+          ...state,
+          mode: 'view',
+          selectedAnalysisReports: action.payload.analysisReportIds,
+          initialFetch: false, // TODO: probably change to using new action for this
+        };
+      case ActionType.INITIALIZE:
+        return initState({
+          mode: 'view',
+          analysisResourceType: 'report_container',
+          initialFetch: true,
+          selectedAnalysisReports: [],
+          imagePreviewScale: action.payload.scale,
+        });
+      case ActionType.CHANGE_ANALYSIS_NAME:
+        return {
+          ...state,
+          currentlyBeingEditingAnalysisReportName: action.payload.name,
+        };
+      case ActionType.CHANGE_ANALYSIS_DESCRIPTION:
+        return {
+          ...state,
+          currentlyBeingEditedAnalysisReportDescription:
+            action.payload.description,
+        };
+      case ActionType.OPEN_FILE_UPLOAD_DIALOG:
+        return {
+          ...state,
+          isUploadAssetDialogOpen: true,
+        };
+      case ActionType.CLOSE_FILE_UPLOAD_DIALOG:
+        return {
+          ...state,
+          isUploadAssetDialogOpen: false,
+        };
+      default:
+        throw new Error();
+    }
+  };
+
+  const firstAnalysis =
+    analysisDataWithImages && analysisDataWithImages.length > 0
+      ? analysisDataWithImages[0].id
+      : undefined;
+
+  const [
+    {
+      imagePreviewScale,
+      mode,
+      analysisResourceType,
+      containerId,
+      containerName,
+      currentlyBeingEditedAnalysisReportId,
+      selectedAssets,
+      selectedAnalysisReports,
+      currentlyBeingEditingAnalysisReportName,
+      currentlyBeingEditedAnalysisReportDescription,
+      isUploadAssetDialogOpen,
+      initialFetch,
+    },
+    dispatch,
+  ] = React.useReducer(
+    analysisUIReducer,
+    {
+      imagePreviewScale: DEFAULT_SCALE,
+      analysisResourceType: 'report_container',
+      mode: 'view',
+      initialFetch: false,
+      selectedAnalysisReports: firstAnalysis ? [firstAnalysis] : [],
+    },
+    initState
+  );
+
+  const FileUploadComponent = (analysisReportId?: string) => (
+    <FileUploadContainer
+      orgLabel={orgLabel}
+      projectLabel={projectLabel}
+      onFileUploaded={file => onFileUploaded(file, analysisReportId)}
+    />
+  );
 
   return (
     <>
@@ -325,10 +630,33 @@ const AnalysisPluginContainer = ({
         <AnalysisPlugin
           FileUpload={FileUploadComponent}
           analysisReports={analysisDataWithImages}
+          containerId={containerId}
           onCancel={() => {}}
-          onSave={(id: string, name: string, description: string) => {
-            mutateAnalysis.mutate({ id, name, description });
+          onSave={(name: string, description: string, id?: string) => {
+            mutateAnalysis.mutate({ name, description, id });
           }}
+          imagePreviewScale={imagePreviewScale}
+          mode={mode}
+          analysisResourceType={analysisResourceType}
+          currentlyBeingEditedAnalysisReportDescription={
+            currentlyBeingEditedAnalysisReportDescription
+          }
+          currentlyBeingEditedAnalysisReportId={
+            currentlyBeingEditedAnalysisReportId
+          }
+          currentlyBeingEditingAnalysisReportName={
+            currentlyBeingEditingAnalysisReportName
+          }
+          selectedAssets={selectedAssets}
+          selectedAnalysisReports={selectedAnalysisReports}
+          isUploadAssetDialogOpen={isUploadAssetDialogOpen}
+          dispatch={(action: AnalysesAction) => {
+            dispatch(action);
+          }}
+          onClickRelatedResource={(resourceId: string) =>
+            handleClickAnalysisResource(orgLabel, projectLabel, resourceId)
+          }
+          containerName={containerName}
         />
       )}
     </>

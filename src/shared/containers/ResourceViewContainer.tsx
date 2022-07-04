@@ -393,7 +393,6 @@ const ResourceViewContainer: React.FunctionComponent<{
   React.useEffect(() => {
     // if coming from studio, override what user has set in localstorage
     if (studioPlugins?.customise && pluginManifest) {
-      console.log(studioPlugins.plugins);
       setOpenPlugins(
         studioPlugins.plugins
           .filter(p => p.expanded)
