@@ -117,21 +117,6 @@ const AnalysisPlugin = ({
     return res;
   };
 
-  const newAnalysisReportTemplate: {
-    id?: string;
-    name: string;
-    description: string;
-    createdBy: string;
-    createdAt: string;
-    assets: Asset[];
-  } = {
-    name: '',
-    description: '',
-    createdBy: '',
-    createdAt: '',
-    assets: [],
-  };
-
   const fileUploadModal = (
     <Modal
       visible={isUploadAssetDialogOpen}
