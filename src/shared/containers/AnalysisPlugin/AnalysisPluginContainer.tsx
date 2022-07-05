@@ -473,8 +473,8 @@ const AnalysisPluginContainer = ({
       mode,
       analysisResourceType,
       hasInitializedSelectedReports,
-      imagePreviewScale: scale,
       selectedAnalysisReports,
+      imagePreviewScale: scale,
     };
   };
 
