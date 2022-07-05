@@ -15,10 +15,10 @@ jobs:
           fetch-depth: 0
       - name: Build
         run: |
-          VERSION=`echo "${{ github.ref_name }}" | 's/^v//gi'`
+          VERSION=`echo "${{ github.ref_name }}" | sed 's/^v//gi'`
           docker build -t bluebrain/nexus-web:$VERSION .
       - name: Publish To DockerHub
         run: |
-          VERSION=`echo "${{ github.ref_name }}" | 's/^v//gi'`
+          VERSION=`echo "${{ github.ref_name }}" | sed 's/^v//gi'`
           echo ${{ secrets.DOCKER_PASS }} | docker login --username ${{ secrets.DOCKER_USER }} --password-stdin
           docker push bluebrain/nexus-web:$VERSION
