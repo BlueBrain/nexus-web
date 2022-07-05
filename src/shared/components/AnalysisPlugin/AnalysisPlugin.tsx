@@ -52,13 +52,13 @@ export type Asset = {
 };
 
 export type AnalysisReport = {
-  containerId: string;
-  containerName: string;
-  id: string;
+  id?: string;
+  containerId?: string;
+  containerName?: string;
   name: string;
-  description: string;
-  createdBy: string;
-  createdAt: string;
+  description?: string;
+  createdBy?: string;
+  createdAt?: string;
   assets: Asset[];
 };
 
@@ -68,7 +68,7 @@ type AnalysisPluginProps = {
   containerName?: string;
   analysisReports: AnalysisReport[];
   FileUpload: (analysisReportId?: string) => JSX.Element;
-  onSave: (name: string, description: string, id?: string) => void;
+  onSave: (name: string, description?: string, id?: string) => void;
   onCancel: () => void;
   onClickRelatedResource: (resourceId: string) => void;
   imagePreviewScale: number;
@@ -115,21 +115,6 @@ const AnalysisPlugin = ({
     );
 
     return res;
-  };
-
-  const newAnalysisReportTemplate: {
-    id?: string;
-    name: string;
-    description: string;
-    createdBy: string;
-    createdAt: string;
-    assets: Asset[];
-  } = {
-    name: '',
-    description: '',
-    createdBy: '',
-    createdAt: '',
-    assets: [],
   };
 
   const fileUploadModal = (
@@ -182,11 +167,17 @@ const AnalysisPlugin = ({
                       .indexOf(input.toLowerCase()) > -1
                   }
                 >
-                  {analysisReports.map((a, i) => (
-                    <Option key={a.id} value={a.id}>
-                      {a.name ? a.name : a.id}
-                    </Option>
-                  ))}
+                  {analysisReports
+                    .filter(a => a.id !== undefined)
+                    .map((a, i) => {
+                      return (
+                        a.id && (
+                          <Option key={a.id} value={a.id}>
+                            {a.name ? a.name : a.id}
+                          </Option>
+                        )
+                      );
+                    })}
                 </Select>
                 <Button
                   shape="circle"
@@ -219,7 +210,7 @@ const AnalysisPlugin = ({
             </div>
           </>
         )}
-        {[newAnalysisReportTemplate, ...analysisReports]
+        {analysisReports
           .filter(
             a =>
               (mode === 'create' && a.id === undefined) ||
@@ -254,6 +245,7 @@ const AnalysisPlugin = ({
                       type="text"
                       placeholder="Analysis Name"
                       aria-label="Analysis Name"
+                      required={true}
                       value={currentlyBeingEditingAnalysisReportName}
                       onChange={e =>
                         dispatch({
@@ -274,7 +266,12 @@ const AnalysisPlugin = ({
                         onClick={() =>
                           dispatch({
                             type: ActionType.INITIALIZE,
-                            payload: { scale: imagePreviewScale },
+                            payload: {
+                              scale: imagePreviewScale,
+                              analysisReportId: analysisReport.id
+                                ? [analysisReport.id]
+                                : [],
+                            },
                           })
                         }
                       >
@@ -285,7 +282,6 @@ const AnalysisPlugin = ({
                         aria-label="Save"
                         onClick={() => {
                           currentlyBeingEditingAnalysisReportName &&
-                            currentlyBeingEditedAnalysisReportDescription &&
                             onSave(
                               currentlyBeingEditingAnalysisReportName,
                               currentlyBeingEditedAnalysisReportDescription,
@@ -352,10 +348,18 @@ const AnalysisPlugin = ({
                 >
                   <label>
                     Created{' '}
-                    <FriendlyTimeAgo date={moment(analysisReport.createdAt)} />
+                    {analysisReport.createdAt && (
+                      <FriendlyTimeAgo
+                        date={moment(analysisReport.createdAt)}
+                      />
+                    )}
                   </label>{' '}
                   <label>
-                    by <span>{getUsername(analysisReport.createdBy)}</span>
+                    by{' '}
+                    <span>
+                      {analysisReport.createdBy &&
+                        getUsername(analysisReport.createdBy)}
+                    </span>
                   </label>
                 </section>
               )}

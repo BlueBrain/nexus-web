@@ -705,16 +705,39 @@ describe('Analysis Plugin', () => {
     });
 
     await act(async () => {
-      const optionsButton = await screen.findByRole('button', {
-        name: 'Options',
-      });
-      fireEvent.mouseEnter(optionsButton);
+      fireEvent.mouseDown(screen.getByRole('combobox'));
     });
 
-    expect(
-      await waitFor(() =>
-        screen.getByRole('menuitem', { name: 'Go to resource' })
-      )
-    ).toBeInTheDocument();
+    await act(async () => {
+      const option = screen.getByText(
+        'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1'
+      );
+      fireEvent.click(option, {
+        skipPointerEventsCheck: true,
+      });
+
+      // TODO: work out how to change antd component select option value
+
+      // const select = await screen.findByRole('combobox');
+      // fireEvent.click(select, {
+      //   target: {
+      //     value:
+      //       'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1',
+      //   },
+      // });
+    });
+
+    // await act(async () => {
+    //   const optionsButton = await screen.findByRole('button', {
+    //     name: 'Options',
+    //   });
+    //   fireEvent.mouseEnter(optionsButton);
+    // });
+
+    // expect(
+    //   await waitFor(() =>
+    //     screen.getByRole('menuitem', { name: 'Go to resource' })
+    //   )
+    // ).toBeInTheDocument();
   });
 });
