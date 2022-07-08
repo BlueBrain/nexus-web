@@ -32,7 +32,6 @@ import { RootState } from '../store/reducers';
 import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
 import { useJiraPlugin } from '../hooks/useJIRA';
 import AnalysisPluginContainer from './AnalysisPlugin/AnalysisPluginContainer';
-import ErrorBoundary from '../components/ErrorBoundary';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -540,13 +539,11 @@ const ResourceViewContainer: React.FunctionComponent<{
       >
         <Collapse.Panel header="Analysis" key="analysis">
           {openPlugins.includes('analysis') && (
-            <ErrorBoundary>
-              <AnalysisPluginContainer
-                resourceId={resource['@id']}
-                orgLabel={orgLabel}
-                projectLabel={projectLabel}
-              />
-            </ErrorBoundary>
+            <AnalysisPluginContainer
+              resourceId={resource['@id']}
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+            />
           )}
         </Collapse.Panel>
       </Collapse>

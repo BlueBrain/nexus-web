@@ -705,39 +705,28 @@ describe('Analysis Plugin', () => {
     });
 
     await act(async () => {
+      // Required to populate the list of items in dropdown
       fireEvent.mouseDown(screen.getByRole('combobox'));
-    });
-
-    await act(async () => {
-      const option = screen.getByText(
-        'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1'
+      await waitFor(() =>
+        expect(
+          screen.getByText('Our Very First Analysis Report!')
+        ).toBeInTheDocument()
       );
-      fireEvent.click(option, {
-        skipPointerEventsCheck: true,
+
+      const option = screen.getByTitle('Our Very First Analysis Report!');
+      expect(option).toBeInTheDocument();
+      fireEvent.click(option);
+
+      const optionsButton = await screen.findByRole('button', {
+        name: 'Options',
       });
-
-      // TODO: work out how to change antd component select option value
-
-      // const select = await screen.findByRole('combobox');
-      // fireEvent.click(select, {
-      //   target: {
-      //     value:
-      //       'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1',
-      //   },
-      // });
+      fireEvent.mouseEnter(optionsButton);
     });
 
-    // await act(async () => {
-    //   const optionsButton = await screen.findByRole('button', {
-    //     name: 'Options',
-    //   });
-    //   fireEvent.mouseEnter(optionsButton);
-    // });
-
-    // expect(
-    //   await waitFor(() =>
-    //     screen.getByRole('menuitem', { name: 'Go to resource' })
-    //   )
-    // ).toBeInTheDocument();
+    expect(
+      await waitFor(() =>
+        screen.getByRole('menuitem', { name: 'Go to resource' })
+      )
+    ).toBeInTheDocument();
   });
 });
