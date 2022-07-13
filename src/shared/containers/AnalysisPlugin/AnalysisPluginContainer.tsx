@@ -628,7 +628,6 @@ const AnalysisPluginContainer = ({
         ...a,
         assets: a.assets.concat(unsavedAssets).map(m => {
           const img = imageData?.find(img => img.contentUrl === m.filePath);
-          console.log('mapping', img, m);
           return {
             ...m,
             preview: ({ mode }: { mode: string }) => {

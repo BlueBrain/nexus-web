@@ -117,6 +117,9 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       analysisPluginSparqlDataQuery:
         process.env.ANALYSIS_PLUGIN_SPARQL_DATA_QUERY ||
         DEFAULT_ANALYSIS_DATA_SPARQL_QUERY,
+      httpHeaderForInaccessibleDueToVPN:
+        process.env.HTTP_HEADER_WHERE_INACCESSIBLE_OUTSIDE_OF_VPN ||
+        'x-requires-vpn',
     },
     uiSettings: DEFAULT_UI_SETTINGS,
     oidc: {

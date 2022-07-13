@@ -34,6 +34,8 @@ export interface ConfigState {
   analysisPluginShowOnTypes: string[];
   analysisPluginExcludeTypes: string[];
   analysisPluginSparqlDataQuery: string;
+
+  httpHeaderForInaccessibleDueToVPN?: string;
 }
 
 const initialState: ConfigState = {

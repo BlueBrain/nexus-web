@@ -487,12 +487,16 @@ const ResourceViewContainer: React.FunctionComponent<{
         }}
       />
     );
-  const { isUserInSupportedJiraRealm } = useJiraPlugin();
+  const {
+    isUserInSupportedJiraRealm,
+    jiraInaccessibleBecauseOfVPN,
+  } = useJiraPlugin();
 
   const jiraPlugin = resource &&
     deltaPlugins &&
     'jira' in deltaPlugins &&
-    isUserInSupportedJiraRealm && (
+    isUserInSupportedJiraRealm &&
+    !jiraInaccessibleBecauseOfVPN && (
       <Collapse
         onChange={() => {
           pluginCollapsedToggle('jira');
@@ -505,6 +509,7 @@ const ResourceViewContainer: React.FunctionComponent<{
               resource={resource}
               orgLabel={orgLabel}
               projectLabel={projectLabel}
+              fetch={fetch}
             />
           )}
         </Collapse.Panel>

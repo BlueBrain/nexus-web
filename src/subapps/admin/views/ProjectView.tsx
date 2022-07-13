@@ -264,7 +264,10 @@ const ProjectView: React.FunctionComponent = () => {
     history.push(pathFromTab(activeKey));
   };
 
-  const { isUserInSupportedJiraRealm } = useJiraPlugin();
+  const {
+    isUserInSupportedJiraRealm,
+    jiraInaccessibleBecauseOfVPN,
+  } = useJiraPlugin();
 
   return (
     <div className="project-view">
@@ -407,7 +410,8 @@ const ProjectView: React.FunctionComponent = () => {
               </TabPane>
               {deltaPlugins &&
                 'jira' in deltaPlugins &&
-                isUserInSupportedJiraRealm && (
+                isUserInSupportedJiraRealm &&
+                !jiraInaccessibleBecauseOfVPN && (
                   <TabPane tab="Jira" key="jira">
                     <JiraPluginProjectContainer
                       orgLabel={orgLabel}
