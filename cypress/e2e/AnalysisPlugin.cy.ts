@@ -1,4 +1,4 @@
-import { homePage } from '../../support';
+import { homePage } from '../support';
 
 describe('Analysis Plugin', () => {
   beforeEach(() => {
