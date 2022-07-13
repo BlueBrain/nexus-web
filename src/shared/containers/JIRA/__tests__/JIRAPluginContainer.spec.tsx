@@ -6006,7 +6006,6 @@ describe('Jira Plugin Container', () => {
                     projectLabel="projectLabel"
                     orgLabel="orgLabel"
                     resource={mockResource}
-                    fetch={fetch}
                   ></JIRAPluginContainer>
                 </NexusProvider>
               </QueryClientProvider>

@@ -509,7 +509,6 @@ const ResourceViewContainer: React.FunctionComponent<{
               resource={resource}
               orgLabel={orgLabel}
               projectLabel={projectLabel}
-              fetch={fetch}
             />
           )}
         </Collapse.Panel>
