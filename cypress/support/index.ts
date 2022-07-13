@@ -40,3 +40,21 @@ Cypress.on('uncaught:exception', err => {
     return false;
   }
 });
+
+/// <reference types="cypress" />
+
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      /**
+       * Custom command to select DOM element by data-cy attribute.
+       * @example cy.login('https://dev.nise/','notarealusername','1234')
+       */
+      login(
+        realm: string,
+        username: string,
+        password: string
+      ): Chainable<Element>;
+    }
+  }
+}
