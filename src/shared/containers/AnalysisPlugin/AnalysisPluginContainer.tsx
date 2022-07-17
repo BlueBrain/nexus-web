@@ -540,6 +540,7 @@ const AnalysisPluginContainer = ({
           hasInitializedSelectedReports: true,
         };
       case ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS:
+        console.log('');
         return {
           ...state,
           mode: 'view',
@@ -601,7 +602,7 @@ const AnalysisPluginContainer = ({
       imagePreviewScale: DEFAULT_SCALE,
       analysisResourceType: 'report_container',
       mode: 'view',
-      hasInitializedSelectedReports: true,
+      hasInitializedSelectedReports: false,
       selectedAnalysisReports: [],
     },
     initState
