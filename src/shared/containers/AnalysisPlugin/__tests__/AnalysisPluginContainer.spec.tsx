@@ -6,7 +6,8 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import AnalysisPluginContainer from '../AnalysisPluginContainer';
 import { rest } from 'msw';
 import {
-  render,
+	render,
+	cleanup,
   server,
   fireEvent,
   waitFor,
@@ -25,6 +26,7 @@ describe('Analysis Plugin', () => {
   // reset any request handlers that are declared as a part of our tests
   // (i.e. for testing one-time error scenarios)
   afterEach(() => server.resetHandlers());
+  afterEach(cleanup);
   // clean up once the tests are done
   afterAll(() => server.close());
 
@@ -108,6 +110,121 @@ describe('Analysis Plugin', () => {
       expect(addButton).toBeInTheDocument();
     });
   });
+
+	it('on initial load the first analysis report is visible', async () => {
+    server.use(
+      rest.post(
+        'https://localhost:3000/views/orgLabel/projectLabel/graph/sparql',
+        (req, res, ctx) => {
+          const mockResponse = {
+            head: {
+              vars: [
+                'analysis_report_id',
+                'analysis_report_name',
+                'analysis_report_description',
+                'created_by',
+                'created_at',
+                'asset_content_url',
+                'asset_encoding_format',
+                'asset_name',
+                'self',
+              ],
+            },
+            results: {
+              bindings: [
+                {
+                  analysis_report_description: {
+                    type: 'literal',
+                    value:
+                      "This is a anlysis report for showing on initial load",
+                  },
+                  analysis_report_id: {
+                    type: 'uri',
+                    value:
+                      'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nick/_/MyTestAnalysisReport1',
+                  },
+                  analysis_report_name: {
+                    type: 'literal',
+                    value: 'Initial Analysis Report for default view',
+                  },
+                  asset_content_url: {
+                    type: 'literal',
+                    value:
+                      'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nick/_/d3d1cc48-9547-4c9c-a08f-f281ffb458cc',
+                  },
+                  asset_encoding_format: {
+                    type: 'literal',
+                    value: 'image/png',
+                  },
+                  asset_name: {
+                    type: 'literal',
+                    value: 'insta_logo_large.png',
+                  },
+                  container_resource_id: {
+                    type: 'uri',
+                    value:
+                      'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nick/_/MyTestAnalysis1',
+                  },
+                  container_resource_name: {
+                    type: 'literal',
+                    value: 'Analysis container',
+                  },
+                  created_at: {
+                    datatype: 'http://www.w3.org/2001/XMLSchema#dateTime',
+                    type: 'literal',
+                    value: '2022-06-17T04:14:06.357Z',
+                  },
+                  created_by: {
+                    type: 'uri',
+                    value:
+                      'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
+                  },
+                  self: {
+                    type: 'uri',
+                    value:
+                      'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nick/_/MyTestAnalysisReport1',
+                  },
+                },
+              ],
+            },
+          };
+
+          return res(
+            // Respond with a 200 status code
+            ctx.status(200),
+            ctx.json(mockResponse)
+          );
+        }
+      )
+    );
+
+    const history = createMemoryHistory({});
+    const store = mockStore(mockState);
+    await act(async () => {
+      await render(
+        <Router history={history}>
+          <Provider store={store}>
+            <QueryClientProvider client={queryClient}>
+              <NexusProvider nexusClient={nexus}>
+                <AnalysisPluginContainer
+                  projectLabel="projectLabel"
+                  orgLabel="orgLabel"
+                  resourceId="resourceId"
+                ></AnalysisPluginContainer>
+              </NexusProvider>
+            </QueryClientProvider>
+          </Provider>
+        </Router>
+      );
+    });
+
+    await waitFor(() => {
+      const addButton = screen.getByRole('button', {
+        name: 'Add Analysis Report',
+      });
+      expect(addButton).toBeInTheDocument();
+    });
+	});
 
   it('clicking add New Analysis Report button results in screen displaying all required options to create new Analysis Report', async () => {
     server.use(
