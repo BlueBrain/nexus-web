@@ -1,3 +1,7 @@
+// NOTES FOR BATCH delete
+// run the delete sparql query with selected images
+// use react-query invalidate method to retrigger initial set up query
+
 import { NexusClient, NexusFile, Resource, SparqlView } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
