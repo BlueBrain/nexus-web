@@ -13,20 +13,25 @@ export default defineConfig({
   video: false,
   e2e: {
     experimentalSessionAndOrigin: true,
-    baseUrl: 'http://localhost:8000',
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     setupNodeEvents(on, config) {
       on('task', {
-        'project:setup': async ({ authToken }: { authToken: string }) => {
-          // TODO: these should come from config
-          const orgLabel = 'Cypress-Testing';
+        'project:setup': async function({
+          nexusApiUrl,
+          authToken,
+          orgLabel,
+          projectLabelBase,
+        }: {
+          nexusApiUrl: string;
+          authToken: string;
+          orgLabel: string;
+          projectLabelBase: string;
+        }) {
           const orgDescription =
             'An organization used for Cypress automated tests';
-          const projectLabel = 'e2e-' + uuidv4();
+          const projectLabel = `${projectLabelBase}-${uuidv4()}`;
           const projectDescription =
             'An project used for Cypress automated tests';
-
-          const nexusApiUrl = 'https://dev.nise.bbp.epfl.ch/nexus/v1';
 
           try {
             const nexus = createNexusClient({
@@ -34,7 +39,6 @@ export default defineConfig({
               fetch,
               token: authToken,
             });
-
             await createNexusOrgAndProject({
               nexus,
               orgLabel,
@@ -45,20 +49,20 @@ export default defineConfig({
           } catch (e) {
             console.log('Error encountered in project:setup task.', e);
           }
-          return { orgLabel, projectLabel };
+          return { projectLabel };
         },
         'project:teardown': async ({
+          nexusApiUrl,
           authToken,
           orgLabel,
           projectLabel,
         }: {
+          nexusApiUrl: string;
           authToken: string;
           orgLabel: string;
           projectLabel: string;
         }) => {
           try {
-            const nexusApiUrl = 'https://dev.nise.bbp.epfl.ch/nexus/v1';
-
             const nexus = createNexusClient({
               uri: nexusApiUrl,
               fetch,
@@ -77,19 +81,19 @@ export default defineConfig({
           return null;
         },
         'resource:create': async ({
+          nexusApiUrl,
           authToken,
-          resource,
+          resourcePayload,
           orgLabel,
           projectLabel,
         }: {
+          nexusApiUrl: string;
           authToken: string;
-          resource: ResourcePayload;
+          resourcePayload: ResourcePayload;
           orgLabel: string;
           projectLabel: string;
         }) => {
           try {
-            const nexusApiUrl = 'https://dev.nise.bbp.epfl.ch/nexus/v1';
-
             const nexus = createNexusClient({
               uri: nexusApiUrl,
               fetch,
@@ -100,7 +104,7 @@ export default defineConfig({
               nexus,
               orgLabel,
               projectLabel,
-              resource,
+              resource: resourcePayload,
             });
           } catch (e) {
             console.log(

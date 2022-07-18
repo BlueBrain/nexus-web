@@ -8,8 +8,6 @@ coverage/
 .vscode
 yarn-error.log
 cypress/screenshots/
-cypress/plugins/
-cypress/fixtures/
 cypress/videos/
 *.iml
 .idea
