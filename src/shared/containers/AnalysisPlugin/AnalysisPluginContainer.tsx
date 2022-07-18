@@ -151,7 +151,7 @@ export type AnalysesAction =
   | { type: ActionType.CLOSE_FILE_UPLOAD_DIALOG }
   | {
       type: ActionType.DELETE_IMAGES;
-      payload: { imageResourceIds: string[] };
+      payload: { imageResources: Resource[] };
     }
   | { type: ActionType.ADD_ANALYSIS_REPORT };
 
@@ -430,7 +430,33 @@ const AnalysisPluginContainer = ({
       },
     }
   );
+  
+  const deleteImages = useMutation(
+    async (data: Resource[]) => {
 
+      data.map(d => {
+        nexus.Resource.deprecate(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(d.id),
+          d._rev
+        )
+      });
+    },
+    {
+      onSuccess: resource => {
+        Promise.all([
+          queryClient.invalidateQueries(['analysis']),
+          queryClient.invalidateQueries(['analysesImages']),
+        ]).then(() => {
+          dispatch({
+            type: ActionType.DELETE_IMAGES,
+            payload: { imageResources: [] },
+          });
+        });
+      },
+    }
+  );
   const onFileUploaded = (file: NexusFile, analysisReportId?: string) => {
     const newlyUploadedAsset: Asset = {
       analysisReportId,
@@ -579,10 +605,10 @@ const AnalysisPluginContainer = ({
           isUploadAssetDialogOpen: true,
         };
       case ActionType.DELETE_IMAGES:
+        // TODO must update the selectedAnalysisReports and analysisReports, possibly won't need to do because of invalidateQueries.
         return {
           ...state,
-          mode: 'view',
-          selectedAnalysisReports: action.payload.imageResourceIds,
+          mode: 'view'
         };
       case ActionType.CLOSE_FILE_UPLOAD_DIALOG:
         return {
