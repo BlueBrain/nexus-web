@@ -578,7 +578,7 @@ const AnalysisPluginContainer = ({
         return {
           ...state,
           mode: 'view',
-          selectedAnalysisReports: action.payload.analysisReportIds,
+          selectedAnalysisReports: action.payload.imageResourceIds,
         };
       case ActionType.CLOSE_FILE_UPLOAD_DIALOG:
         return {
