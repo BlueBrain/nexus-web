@@ -826,9 +826,9 @@ describe('Analysis Plugin', () => {
     });
 
     expect(
-        await waitFor(() =>
-            screen.getByRole('heading', { name: 'Analysis Name'}).textContent
-        )
-      ).toBe('Our Very First Analysis Report!');
+      await waitFor(
+        () => screen.getByRole('heading', { name: 'Analysis Name' }).textContent
+      )
+    ).toBe('Our Very First Analysis Report!');
   });
 });
