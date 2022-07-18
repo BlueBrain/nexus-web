@@ -430,17 +430,16 @@ const AnalysisPluginContainer = ({
       },
     }
   );
-  
+
   const deleteImages = useMutation(
     async (data: Resource[]) => {
-
       data.map(d => {
         nexus.Resource.deprecate(
           orgLabel,
           projectLabel,
           encodeURIComponent(d.id),
           d._rev
-        )
+        );
       });
     },
     {
@@ -608,7 +607,7 @@ const AnalysisPluginContainer = ({
         // TODO must update the selectedAnalysisReports and analysisReports, possibly won't need to do because of invalidateQueries.
         return {
           ...state,
-          mode: 'view'
+          mode: 'view',
         };
       case ActionType.CLOSE_FILE_UPLOAD_DIALOG:
         return {
