@@ -1,15 +1,13 @@
 .cache/
 .DS_Store
 dist/
-plugins/
+/plugins/
 node_modules/
 storybook-static/
 coverage/
 .vscode
 yarn-error.log
 cypress/screenshots/
-cypress/plugins/
-cypress/fixtures/
 cypress/videos/
 *.iml
 .idea

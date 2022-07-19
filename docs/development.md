@@ -205,26 +205,50 @@ This means that for development, all we need to run is `ts-node server/index.ts`
 
 We use [ts-lint]() with airbnb rules.
 
-## Test
+## Unit and Integration tests
 
-We use [jest]() with [enzyme]() for shallow component rendering.
+We use [jest]() with [react-testing-library].
 
-### UI Testing
+## End-to-End Testing
 
-UI tests are implemented with [Cypress]('https://www.cypress.io/').
+End-to-testing is implemented with [Cypress]('https://www.cypress.io/'). The [cypress-testing-library] paackage is used to support the same dom-testing queries as used in our unit and integration tests.
 
-To launch Cypress window in order to test UI locally, run:
+Cypress has a desktop application as well as a CLI. The desktop application is useful when browsing and debugging tests.
+
+### Configuration
+
+There are several Cypress environment variables that must be specified in order for the tests to run successfully
+
+- **CYPRESS_AUTH_REALM** the auth realm to which to authenticate the specified nexus user
+- **CYPRESS_AUTH_USERNAME** the Nexus username to use to authenticate
+- **CYPRESS_AUTH_PASSWORD** the Nexus username password to use to authenticate
+- **CYPRESS_NEXUS_API_URL** the url to the Nexus API for which the tests will be run. It is used as part of the setup and teardown process
+- **CYPRESS_BASE_URL** _optional_ Defaults to http://localhost:8000
+- **CYPRESS_ORG_LABEL** _optional_ Defaults to Cypress-Testing
+- **CYPRESS_PROJECT_LABEL_BASE** _optional_ Defaults to e2e
+
+### Cypress desktop app
+
+Make sure the Nexus web app is running locally, then run:
 
 ```sh
-yarn test-ui
+CYPRESS_AUTH_REALM=https://auth.realm.url/ \
+CYPRESS_AUTH_USERNAME=nexus_username \
+CYPRESS_AUTH_PASSWORD=nexus_password \
+CYPRESS_NEXUS_API_URL=https://nexusapi.url/v1 \
+yarn cy:open --e2e --browser chrome
 ```
 
-Make sure Nexus Web app is running locally and you use staging API, otherwise there won't be data available, and tests are likely to fail.
+### CLI
 
-To run in a headless mode, use the following command:
+Make sure the Nexus web app is running locally, then run:
 
 ```sh
-yarn run cypress run --headless --browser chrome
+CYPRESS_AUTH_REALM=https://auth.realm.url/ \
+CYPRESS_AUTH_USERNAME=nexus_username \
+CYPRESS_AUTH_PASSWORD=nexus_password \
+CYPRESS_NEXUS_API_URL=https://nexusapi.url/v1 \
+yarn cy:run --e2e --browser chrome
 ```
 
-It will run all the test scripts.
+All of the tests will run in headless mode.
