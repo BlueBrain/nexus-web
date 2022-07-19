@@ -60,6 +60,7 @@ describe('Analysis Plugin', () => {
         this.projectLabel
       }/resources/${encodeURIComponent(this.fullResourceId)}`
     );
+
     // Open anlaysis plugin
     cy.findByRole('button', { name: /Analysis/i }).click();
     cy.findByRole('button', { name: /Add Analysis Report/i }).click();
@@ -76,5 +77,37 @@ describe('Analysis Plugin', () => {
     cy.findByRole('button', { name: 'Close' }).click();
     cy.findByRole('button', { name: 'Save' }).click();
     expect(cy.findByRole('heading', { name: /Analysis Name/i })).to.exist;
+  });
+
+  it('user can edit an existing analysis report updating its name, description, and adding another image', function() {
+    cy.visit(
+      `${Cypress.env('ORG_LABEL')}/${
+        this.projectLabel
+      }/resources/${encodeURIComponent(this.fullResourceId)}`
+    );
+    // Open anlaysis plugin
+    cy.findByRole('button', { name: /Analysis/i }).click();
+    cy.get('.analysis')
+      .findByRole('combobox')
+      .click();
+    cy.findByTitle('Cell density O1.v6-RC2').click();
+    cy.findByRole('button', {
+      name: 'Options',
+    }).trigger('mouseover');
+    cy.findByRole('menuitem', { name: /Edit/ }).click();
+    cy.findByRole('textbox', { name: 'Analysis Name' }).type('-v2');
+    cy.findByRole('textbox', { name: 'Analysis Description' }).type('-v2');
+    cy.findByRole('button', { name: 'Add Files to Analysis' }).click();
+    cy.findByText(/Click or drag/i).click();
+    cy.get('input[type=file]').attachFile('sample2.png');
+    cy.wait(5000);
+    cy.findByRole('button', { name: 'Close' }).click();
+    cy.findByRole('button', { name: 'Save' }).click();
+    cy.findByRole('heading', { name: /Analysis Name/i }).should(
+      'have.text',
+      'Cell density O1.v6-RC2-v2'
+    );
+    cy.findByLabelText('Analysis Description').should('contain', '-v2');
+    cy.findAllByLabelText('Analysis Asset').should('have.length', 2);
   });
 });

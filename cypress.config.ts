@@ -12,6 +12,8 @@ export default defineConfig({
   viewportWidth: 1200,
   video: false,
   e2e: {
+    baseUrl: 'http://localhost:8000',
+    defaultCommandTimeout: 8000,
     experimentalSessionAndOrigin: true,
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     setupNodeEvents(on, config) {
@@ -115,6 +117,15 @@ export default defineConfig({
           return null;
         },
       });
+
+      if (!config.env.ORG_LABEL) {
+        config.env.ORG_LABEL = 'Cypress-Testing';
+      }
+      if (!config.env.PROJECT_LABEL_BASE) {
+        config.env.PROJECT_LABEL_BASE = 'e2e';
+      }
+
+      return config;
     },
   },
 });
