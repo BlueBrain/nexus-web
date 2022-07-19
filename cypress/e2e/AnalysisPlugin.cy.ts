@@ -87,11 +87,6 @@ describe('Analysis Plugin', () => {
     );
     // Open anlaysis plugin
     cy.findByRole('button', { name: /Analysis/i }).click();
-    // NOT NEEDED because the first report is already visible
-    // cy.get('.analysis')
-    //   .findByRole('combobox')
-    //   .click();
-    // cy.findByTitle('Cell density O1.v6-RC2').click();
     cy.findByRole('button', {
       name: 'Options',
     }).trigger('mouseover');
