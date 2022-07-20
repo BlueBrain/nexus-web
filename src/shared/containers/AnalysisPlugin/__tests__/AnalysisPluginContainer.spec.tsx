@@ -422,7 +422,7 @@ describe('Analysis Plugin', () => {
                 <AnalysisPluginContainer
                   projectLabel="projectLabel"
                   orgLabel="orgLabel"
-                  resourceId="resourceId"
+                  resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
                 ></AnalysisPluginContainer>
               </NexusProvider>
             </QueryClientProvider>
@@ -463,6 +463,33 @@ describe('Analysis Plugin', () => {
       screen.queryByLabelText(/Increase\/Decrease/)
     ).not.toBeInTheDocument();
   });
+
+  // it('analysis report assets show image name (or filename if not present) along with last updated details', async () => {
+  //   server.use(sparqlAnalysisReportSingleResult);
+
+  //   const history = createMemoryHistory({});
+  //   const store = mockStore(mockState);
+  //   await act(async () => {
+  //     await render(
+  //       <Router history={history}>
+  //         <Provider store={store}>
+  //           <QueryClientProvider client={queryClient}>
+  //             <NexusProvider nexusClient={nexus}>
+  //               <AnalysisPluginContainer
+  //                 projectLabel="projectLabel"
+  //                 orgLabel="orgLabel"
+  //                 resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
+  //               ></AnalysisPluginContainer>
+  //             </NexusProvider>
+  //           </QueryClientProvider>
+  //         </Provider>
+  //       </Router>
+  //     );
+  //   });
+  //   // expect asset name to be present
+  //   expect(screen.getByText('insta_logo_large.png')).toBeVisible();
+  //   // TODO: check user and date also exist
+  // });
 
   it('On edit mode image delete button is visible', async () => {
     server.use(sparqlAnalysisReportSingleResult);

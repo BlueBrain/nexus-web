@@ -309,6 +309,9 @@ const AnalysisPluginContainer = ({
       id: string;
       src: string;
       contentUrl: string;
+      filename: string;
+      lastUpdated: string;
+      lastUpdatedBy: string;
     }>[] = [];
     if (!analysisData) {
       return [];
@@ -320,6 +323,12 @@ const AnalysisPluginContainer = ({
           const imageId = asset.filePath.substring(
             asset.filePath.lastIndexOf('/') + 1
           );
+          const imgResource = (await nexus.Resource.get(
+            orgLabel,
+            projectLabel,
+            encodeURIComponent(asset.filePath)
+          )) as Resource;
+
           const src = await fetchImageObjectUrl(
             nexus,
             orgLabel,
@@ -327,7 +336,14 @@ const AnalysisPluginContainer = ({
             imageId,
             asset.encodingFormat
           );
-          return { src, id: asset.id, contentUrl: asset.filePath };
+          return {
+            src,
+            id: asset.id,
+            contentUrl: asset.filePath,
+            filename: imgResource['_filename'],
+            lastUpdated: imgResource['_updatedAt'],
+            lastUpdatedBy: imgResource['_updatedBy'],
+          };
         });
         return [...prev, ...assets];
       }, imageSourceInitial)
@@ -668,6 +684,9 @@ const AnalysisPluginContainer = ({
           const img = imageData?.find(img => img.contentUrl === m.filePath);
           return {
             ...m,
+            filename: img?.filename,
+            lastUpdated: img?.lastUpdated,
+            lastUpdatedBy: img?.lastUpdatedBy,
             preview: ({ mode }: { mode: string }) => {
               return (
                 <>

@@ -1,9 +1,10 @@
 import { withInfo } from '@storybook/addon-info';
-import { withKnobs } from '@storybook/addon-knobs';
+import { number, select, text, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react';
 import * as React from 'react';
 import { Image } from 'antd';
 import AnalysisPlugin, { AnalysisReport } from './AnalysisPlugin';
+import { AnalysesAction } from '../../containers/AnalysisPlugin/AnalysisPluginContainer';
 // import sample1 from './sample-images/sample1.png';
 const sample1 = require('./sample-images/sample1.png');
 const sample2 = require('./sample-images/sample2.png');
@@ -67,7 +68,7 @@ const exampleDataStructure: AnalysisReport[] = [
 storiesOf('Components/AnalysisPlugin', module)
   .addDecorator(withKnobs)
   .add(
-    'AnalysisPlugin',
+    'View mode',
     withInfo(`
 
     ~~~js
@@ -77,8 +78,72 @@ storiesOf('Components/AnalysisPlugin', module)
         <AnalysisPlugin
           FileUpload={() => <></>}
           analysisReports={exampleDataStructure}
-          onSave={(id: string, name: string) => {}}
+          onSave={(name: string, id?: string) => {}}
           onCancel={() => {}}
+          onClickRelatedResource={() => {}}
+          analysisResourceType={'report_container'}
+          imagePreviewScale={number('imagePreviewScale', 50)}
+          mode={'view'}
+          dispatch={(action: AnalysesAction) => {}}
+          selectedAnalysisReports={['report1']}
+        />
+      );
+    })
+  )
+  .add(
+    'Edit mode',
+    withInfo(`
+      Analysis Plugin in Edit mode
+
+    ~~~js
+    ~~~
+  `)(() => {
+      return (
+        <AnalysisPlugin
+          FileUpload={() => <></>}
+          analysisReports={exampleDataStructure}
+          onSave={(name: string, id?: string) => {}}
+          onCancel={() => {}}
+          onClickRelatedResource={() => {}}
+          analysisResourceType={'report_container'}
+          imagePreviewScale={number('imagePreviewScale', 50)}
+          mode={'edit'}
+          dispatch={(action: AnalysesAction) => {}}
+          selectedAnalysisReports={['report1']}
+          currentlyBeingEditedAnalysisReportId="report1"
+        />
+      );
+    })
+  )
+  .add(
+    'Create mode',
+    withInfo(`
+      Analysis Plugin in Create mode
+
+    ~~~js
+    ~~~
+  `)(() => {
+      return (
+        <AnalysisPlugin
+          FileUpload={() => <></>}
+          analysisReports={[
+            {
+              name: '',
+              description: '',
+              createdBy: '',
+              createdAt: '',
+              assets: [],
+            },
+          ]}
+          onSave={(name: string, id?: string) => {}}
+          onCancel={() => {}}
+          onClickRelatedResource={() => {}}
+          analysisResourceType={'report_container'}
+          imagePreviewScale={number('imagePreviewScale', 50)}
+          mode={'create'}
+          dispatch={(action: AnalysesAction) => {}}
+          currentlyBeingEditingAnalysisReportName=""
+          currentlyBeingEditedAnalysisReportDescription=""
         />
       );
     })
