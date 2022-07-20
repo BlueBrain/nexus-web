@@ -76,6 +76,7 @@ storiesOf('Components/AnalysisPlugin', module)
   `)(() => {
       return (
         <AnalysisPlugin
+          onDelete={() => {}}
           FileUpload={() => <></>}
           analysisReports={exampleDataStructure}
           onSave={(name: string, id?: string) => {}}
@@ -100,6 +101,7 @@ storiesOf('Components/AnalysisPlugin', module)
   `)(() => {
       return (
         <AnalysisPlugin
+          onDelete={() => {}}
           FileUpload={() => <></>}
           analysisReports={exampleDataStructure}
           onSave={(name: string, id?: string) => {}}
@@ -125,6 +127,7 @@ storiesOf('Components/AnalysisPlugin', module)
   `)(() => {
       return (
         <AnalysisPlugin
+          onDelete={() => {}}
           FileUpload={() => <></>}
           analysisReports={[
             {
