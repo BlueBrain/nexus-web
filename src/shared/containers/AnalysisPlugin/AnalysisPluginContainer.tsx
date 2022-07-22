@@ -23,7 +23,7 @@ export const DEFAULT_ANALYSIS_DATA_SPARQL_QUERY = `PREFIX s:<http://schema.org/>
 PREFIX prov:<http://www.w3.org/ns/prov#>
 PREFIX nsg:<https://neuroshapes.org/>
 PREFIX nxv:<https://bluebrain.github.io/nexus/vocabulary/>
-SELECT ?container_resource_id ?container_resource_name ?analysis_report_id ?analysis_report_name ?analysis_report_description ?created_by ?created_at ?asset_content_url ?asset_encoding_format ?asset_name ?self
+SELECT ?container_resource_id ?container_resource_name ?analysis_report_id ?analysis_report_name ?analysis_report_description ?created_by ?created_at ?asset_content_url ?asset_deprecated ?asset_encoding_format ?asset_name ?self
 WHERE {
   OPTIONAL {
     BIND(<{resourceId}> as ?container_resource_id) .
@@ -42,6 +42,7 @@ WHERE {
           ?distribution nsg:name            ?asset_name .
           ?distribution nsg:contentUrl      ?asset_content_url .
           ?distribution nsg:encodingFormat  ?asset_encoding_format .
+          ?distribution nsg:deprecated  ?asset_deprecated .
         }
     }
   }
@@ -62,6 +63,7 @@ WHERE {
           ?distribution nsg:name            ?asset_name .
           ?distribution nsg:contentUrl      ?asset_content_url .
           ?distribution nsg:encodingFormat  ?asset_encoding_format .
+					?distribution nsg:deprecated  ?asset_deprecated .
         }
     }
   }
@@ -206,6 +208,7 @@ const AnalysisPluginContainer = ({
     asset_name: string;
     asset_content_url: string;
     asset_encoding_format: string;
+    asset_deprecated: boolean;
     self: {
       type: string;
       value: string;
@@ -260,6 +263,7 @@ const AnalysisPluginContainer = ({
           name: currentRow.asset_name,
           filePath: currentRow.asset_content_url,
           encodingFormat: currentRow.asset_encoding_format,
+          _deprecated: currentRow.asset_deprecated,
 
           preview: ({ mode }) => {
             return <Image preview={mode === 'view'} />;
@@ -443,7 +447,7 @@ const AnalysisPluginContainer = ({
             encodeURIComponent(d)
           )) as Resource;
           console.log('resource');
-          console.log(resource);
+          console.log(resource._deprecated);
           // nexus.Resource.deprecate(
           // 	orgLabel,
           // 	projectLabel,
@@ -473,6 +477,7 @@ const AnalysisPluginContainer = ({
       saved: false,
       id: file['@id'],
       name: file._filename,
+      _deprecated: false,
       encodingFormat: file._mediaType,
       contentSize: {
         unitCode: 'bytes',

@@ -32,6 +32,7 @@ export type Asset = {
   saved: boolean;
   id: string;
   name: string;
+  _deprecated: boolean;
   encodingFormat: string;
   contentSize?: {
     unitCode: 'bytes';
@@ -410,68 +411,70 @@ const AnalysisPlugin = ({
                     </Button>
                   </div>
                 )}
-                {analysisReport.assets.map((asset, i) => {
-                  const minThumbnailSize = 100;
-                  return (
-                    <div
-                      key={asset.id}
-                      aria-label="Analysis Asset"
-                      className={`asset ${
-                        selectedAssets &&
-                        selectedAssets.findIndex(v => v === asset.id) > -1
-                          ? 'selected'
-                          : ''
-                      }`}
-                      style={{
-                        height:
-                          minThumbnailSize +
-                          imagePreviewScale * (imagePreviewScale / 30),
-                        width:
-                          minThumbnailSize +
-                          imagePreviewScale * (imagePreviewScale / 30),
-                      }}
-                      onClick={() => {
-                        if (
-                          mode === 'edit' &&
+                {analysisReport.assets
+                  .filter((a, i) => a._deprecated)
+                  .map((asset, i) => {
+                    const minThumbnailSize = 100;
+                    return (
+                      <div
+                        key={asset.id}
+                        aria-label="Analysis Asset"
+                        className={`asset ${
+                          selectedAssets &&
+                          selectedAssets.findIndex(v => v === asset.id) > -1
+                            ? 'selected'
+                            : ''
+                        }`}
+                        style={{
+                          height:
+                            minThumbnailSize +
+                            imagePreviewScale * (imagePreviewScale / 30),
+                          width:
+                            minThumbnailSize +
+                            imagePreviewScale * (imagePreviewScale / 30),
+                        }}
+                        onClick={() => {
+                          if (
+                            mode === 'edit' &&
+                            'id' in analysisReport &&
+                            currentlyBeingEditedAnalysisReportId ===
+                              analysisReport.id
+                          ) {
+                            dispatch({
+                              type: ActionType.SELECT_ASSET,
+                              payload: { assetId: asset.id },
+                            });
+                          }
+                        }}
+                      >
+                        {asset.preview({
+                          mode: mode === 'create' ? 'edit' : mode,
+                          scale: imagePreviewScale,
+                        })}
+                        {mode === 'edit' &&
                           'id' in analysisReport &&
                           currentlyBeingEditedAnalysisReportId ===
-                            analysisReport.id
-                        ) {
-                          dispatch({
-                            type: ActionType.SELECT_ASSET,
-                            payload: { assetId: asset.id },
-                          });
-                        }
-                      }}
-                    >
-                      {asset.preview({
-                        mode: mode === 'create' ? 'edit' : mode,
-                        scale: imagePreviewScale,
-                      })}
-                      {mode === 'edit' &&
-                        'id' in analysisReport &&
-                        currentlyBeingEditedAnalysisReportId ===
-                          analysisReport.id && (
-                          <Checkbox
-                            checked={
-                              selectedAssets &&
-                              selectedAssets.some(v => v === asset.id)
-                            }
-                            className="selectedCheckbox"
-                            onClick={e => {
-                              e.stopPropagation();
-                            }}
-                            onChange={e => {
-                              dispatch({
-                                type: ActionType.SELECT_ASSET,
-                                payload: { assetId: asset.id },
-                              });
-                            }}
-                          ></Checkbox>
-                        )}
-                    </div>
-                  );
-                })}
+                            analysisReport.id && (
+                            <Checkbox
+                              checked={
+                                selectedAssets &&
+                                selectedAssets.some(v => v === asset.id)
+                              }
+                              className="selectedCheckbox"
+                              onClick={e => {
+                                e.stopPropagation();
+                              }}
+                              onChange={e => {
+                                dispatch({
+                                  type: ActionType.SELECT_ASSET,
+                                  payload: { assetId: asset.id },
+                                });
+                              }}
+                            ></Checkbox>
+                          )}
+                      </div>
+                    );
+                  })}
               </section>
               {mode === 'edit' && (
                 <section>
