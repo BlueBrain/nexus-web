@@ -32,7 +32,7 @@ export type Asset = {
   saved: boolean;
   id: string;
   name: string;
-  _deprecated: boolean;
+  deprecated: Boolean;
   encodingFormat: string;
   contentSize?: {
     unitCode: 'bytes';
@@ -412,7 +412,7 @@ const AnalysisPlugin = ({
                   </div>
                 )}
                 {analysisReport.assets
-                  .filter((a, i) => a._deprecated)
+                  .filter((a, i) => !a.deprecated)
                   .map((asset, i) => {
                     const minThumbnailSize = 100;
                     return (
