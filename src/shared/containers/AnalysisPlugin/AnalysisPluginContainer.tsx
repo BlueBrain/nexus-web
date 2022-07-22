@@ -23,7 +23,7 @@ export const DEFAULT_ANALYSIS_DATA_SPARQL_QUERY = `PREFIX s:<http://schema.org/>
 PREFIX prov:<http://www.w3.org/ns/prov#>
 PREFIX nsg:<https://neuroshapes.org/>
 PREFIX nxv:<https://bluebrain.github.io/nexus/vocabulary/>
-SELECT ?container_resource_id ?container_resource_name ?analysis_report_id ?analysis_report_name ?analysis_report_description ?created_by ?created_at ?asset_deprecated ?asset_content_url ?asset_encoding_format ?asset_name ?self
+SELECT ?container_resource_id ?container_resource_name ?analysis_report_id ?analysis_report_name ?analysis_report_description ?created_by ?created_at ?asset_content_url ?asset_encoding_format ?asset_name ?self
 WHERE {
   OPTIONAL {
     BIND(<{resourceId}> as ?container_resource_id) .
@@ -42,7 +42,7 @@ WHERE {
           ?distribution nsg:name            ?asset_name .
           ?distribution nsg:contentUrl      ?asset_content_url .
           ?distribution nsg:encodingFormat  ?asset_encoding_format .
-					?analysis_report_id nxv:deprecated ?asset_deprecated .
+					?asset_content_url nxv:deprecated false .
         }
     }
   }
@@ -63,7 +63,7 @@ WHERE {
           ?distribution nsg:name            ?asset_name .
           ?distribution nsg:contentUrl      ?asset_content_url .
           ?distribution nsg:encodingFormat  ?asset_encoding_format .
-					?analysis_report_id nxv:deprecated ?asset_deprecated .
+					?asset_content_url nxv:deprecated false .
         }
     }
   }
@@ -208,7 +208,6 @@ const AnalysisPluginContainer = ({
     asset_name: string;
     asset_content_url: string;
     asset_encoding_format: string;
-    asset_deprecated: string;
     self: {
       type: string;
       value: string;
@@ -256,21 +255,17 @@ const AnalysisPluginContainer = ({
       );
 
       if (currentRow.asset_content_url !== undefined) {
-        if (currentRow.asset_deprecated !== 'true') {
-          report?.assets.push({
-            analysisReportId: currentRow.analysis_report_id,
-            saved: true,
-            id: currentRow.asset_content_url,
-            name: currentRow.asset_name,
-            filePath: currentRow.asset_content_url,
-            encodingFormat: currentRow.asset_encoding_format,
-            deprecated: currentRow.asset_deprecated === 'true',
-
-            preview: ({ mode }) => {
-              return <Image preview={mode === 'view'} />;
-            },
-          });
-        }
+        report?.assets.push({
+          analysisReportId: currentRow.analysis_report_id,
+          saved: true,
+          id: currentRow.asset_content_url,
+          name: currentRow.asset_name,
+          filePath: currentRow.asset_content_url,
+          encodingFormat: currentRow.asset_encoding_format,
+          preview: ({ mode }) => {
+            return <Image preview={mode === 'view'} />;
+          },
+        });
       }
 
       if (report) {
@@ -371,7 +366,7 @@ const AnalysisPluginContainer = ({
       const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
         return {
           '@type': 'DataDownload',
-          contentUrl: a.filePath,
+          contentUrl: { '@id': a.filePath },
           encodingFormat: a.encodingFormat,
           contentSize: a.contentSize,
           digest: a.digest,
@@ -463,10 +458,10 @@ const AnalysisPluginContainer = ({
           queryClient.invalidateQueries(['analysis']),
           queryClient.invalidateQueries(['analysesImages']),
         ]).then(() => {
-          dispatch({
-            type: ActionType.DELETE_IMAGES,
-            payload: { imageResources: [] },
-          });
+          // dispatch({
+          //   type: ActionType.DELETE_IMAGES,
+          //   payload: { imageResources: [] },
+          // });
         });
       },
     }
@@ -477,7 +472,6 @@ const AnalysisPluginContainer = ({
       saved: false,
       id: file['@id'],
       name: file._filename,
-      deprecated: false,
       encodingFormat: file._mediaType,
       contentSize: {
         unitCode: 'bytes',
