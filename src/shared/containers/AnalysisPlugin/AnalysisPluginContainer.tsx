@@ -432,15 +432,26 @@ const AnalysisPluginContainer = ({
   );
 
   const deleteImages = useMutation(
-    async (data: Resource[]) => {
-      data.map(d => {
-        nexus.Resource.deprecate(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(d.id),
-          d._rev
-        );
-      });
+    async () => {
+      console.log('selectedAssets', selectedAssets);
+      // console.log('analysisAssets', analysisAssets);
+      if (selectedAssets) {
+        selectedAssets.map(async d => {
+          const resource = (await nexus.Resource.get(
+            orgLabel,
+            projectLabel,
+            encodeURIComponent(d)
+          )) as Resource;
+          console.log('resource');
+          console.log(resource);
+          // nexus.Resource.deprecate(
+          // 	orgLabel,
+          // 	projectLabel,
+          // 	encodeURIComponent(resource.id),
+          // 	resource._rev
+          // );
+        });
+      }
     },
     {
       onSuccess: resource => {
@@ -701,6 +712,9 @@ const AnalysisPluginContainer = ({
           onCancel={() => {}}
           onSave={(name: string, description?: string, id?: string) => {
             mutateAnalysis.mutate({ name, description, id });
+          }}
+          onDelete={() => {
+            deleteImages.mutate();
           }}
           imagePreviewScale={imagePreviewScale}
           mode={mode}
