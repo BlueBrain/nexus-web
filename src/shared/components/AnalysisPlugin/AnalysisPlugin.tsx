@@ -69,6 +69,7 @@ type AnalysisPluginProps = {
   analysisReports: AnalysisReport[];
   FileUpload: (analysisReportId?: string) => JSX.Element;
   onSave: (name: string, description?: string, id?: string) => void;
+  onDelete: () => void;
   onCancel: () => void;
   onClickRelatedResource: (resourceId: string) => void;
   imagePreviewScale: number;
@@ -88,6 +89,7 @@ const AnalysisPlugin = ({
   containerName,
   analysisReports,
   onSave,
+  onDelete,
   FileUpload,
   imagePreviewScale,
   mode,
@@ -471,6 +473,20 @@ const AnalysisPlugin = ({
                   );
                 })}
               </section>
+              {mode === 'edit' && (
+                <section>
+                  <Button
+                    type="primary"
+                    danger
+                    aria-label="Delete"
+                    onClick={() => {
+                      onDelete();
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </section>
+              )}
             </section>
           ))}
       </>
