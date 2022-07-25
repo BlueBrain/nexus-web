@@ -1,7 +1,3 @@
-// NOTES FOR BATCH delete
-// run the delete sparql query with selected images
-// use react-query invalidate method to retrigger initial set up query
-
 import { NexusClient, NexusFile, Resource, SparqlView } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
@@ -278,15 +274,6 @@ const AnalysisPluginContainer = ({
     async () => fetchAnalysisData(viewSelfId, analysisSparqlQuery),
     {
       onSuccess: data => {
-        if (!hasInitializedSelectedReports) {
-          dispatch({
-            type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS,
-            payload: {
-              analysisReportIds:
-                data.length > 0 && data[0].id ? [data[0].id] : [],
-            },
-          });
-        }
         dispatch({
           type: ActionType.SET_ANALYSIS_RESOURCE_TYPE,
           payload: {
@@ -446,13 +433,19 @@ const AnalysisPluginContainer = ({
           })
         );
       }
+      return selectedAnalysisReports;
     },
     {
-      onSuccess: resource => {
+      onSuccess: resourceIds => {
         Promise.all([
           queryClient.invalidateQueries(['analysis']),
           queryClient.invalidateQueries(['analysesImages']),
-        ]).then(() => {});
+        ]).then(() => {
+          dispatch({
+            type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS,
+            payload: { analysisReportIds: resourceIds ? resourceIds : [] },
+          });
+        });
       },
     }
   );
@@ -635,7 +628,7 @@ const AnalysisPluginContainer = ({
       imagePreviewScale: DEFAULT_SCALE,
       analysisResourceType: 'report_container',
       mode: 'view',
-      hasInitializedSelectedReports: false,
+      hasInitializedSelectedReports: true,
       selectedAnalysisReports: [],
     },
     initState
