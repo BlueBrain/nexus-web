@@ -434,20 +434,22 @@ const AnalysisPluginContainer = ({
 
   const deleteImages = useMutation(
     async () => {
-      if (selectedAssets) {
-        selectedAssets.map(async d => {
-          const resource = (await nexus.Resource.get(
-            orgLabel,
-            projectLabel,
-            encodeURIComponent(d)
-          )) as Resource;
-          await nexus.Resource.deprecate(
-            orgLabel,
-            projectLabel,
-            encodeURIComponent(resource['@id']),
-            resource._rev
-          );
-        });
+			if (selectedAssets) {
+				  await Promise.all(
+						selectedAssets.map(async d => {
+							const resource = (await nexus.Resource.get(
+								orgLabel,
+								projectLabel,
+								encodeURIComponent(d)
+							)) as Resource;
+							await nexus.Resource.deprecate(
+								orgLabel,
+								projectLabel,
+								encodeURIComponent(resource['@id']),
+								resource._rev
+							);
+						})
+					)
       }
     },
     {
@@ -455,17 +457,7 @@ const AnalysisPluginContainer = ({
         Promise.all([
           queryClient.invalidateQueries(['analysis']),
           queryClient.invalidateQueries(['analysesImages']),
-        ]).then(() => {
-          dispatch({
-            type: ActionType.INITIALIZE,
-            payload: {
-              scale: 50,
-              analysisReportId: selectedAnalysisReports
-                ? selectedAnalysisReports
-                : [],
-            },
-          });
-        });
+        ]).then(() => {});
       },
     }
   );
