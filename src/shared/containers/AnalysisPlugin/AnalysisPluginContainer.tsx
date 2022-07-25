@@ -110,7 +110,6 @@ export enum ActionType {
   ADD_ANALYSIS_REPORT = 'add_analysis_report',
   SET_SELECTED_REPORT_ON_FIRST_LOAD = 'set_selected_report_on_first_load',
   SET_ANALYSIS_RESOURCE_TYPE = 'set_analysis_resource_type',
-  DELETE_IMAGES = 'delete_images',
 }
 
 export type AnalysesAction =
@@ -151,10 +150,6 @@ export type AnalysesAction =
     }
   | { type: ActionType.OPEN_FILE_UPLOAD_DIALOG }
   | { type: ActionType.CLOSE_FILE_UPLOAD_DIALOG }
-  | {
-      type: ActionType.DELETE_IMAGES;
-      payload: { imageIds: string[] };
-    }
   | { type: ActionType.ADD_ANALYSIS_REPORT };
 
 const AnalysisPluginContainer = ({
@@ -607,11 +602,6 @@ const AnalysisPluginContainer = ({
         return {
           ...state,
           isUploadAssetDialogOpen: true,
-        };
-      case ActionType.DELETE_IMAGES:
-        return {
-          ...state,
-          mode: 'view',
         };
       case ActionType.CLOSE_FILE_UPLOAD_DIALOG:
         return {
