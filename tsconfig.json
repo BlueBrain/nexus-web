@@ -12,7 +12,7 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noEmitOnError": true,
-    "lib": ["dom", "esnext"],
+    "lib": ["dom", "esnext", "dom.iterable"],
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "baseUrl": "src",

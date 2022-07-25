@@ -6,6 +6,7 @@ import { NexusPlugin } from '../containers/NexusPlugin';
 import PluginInfo from '../components/PluginInfo';
 import { matchPlugins, pluginsMap, pluginsExcludeMap } from '../utils';
 import usePlugins from '../hooks/usePlugins';
+import ErrorBoundary from '../../shared/components/ErrorBoundary';
 
 const { Panel } = Collapse;
 
@@ -73,13 +74,31 @@ const ResourcePlugins: React.FunctionComponent<{
     ? studioDefinedPluginsToInclude
     : [...pluginDataMap.map(p => p?.key), ...builtInPlugins.map(p => p.key)];
 
+  const Fallback = () => (
+    <>
+      <h1>Something went wrong</h1>
+      <p>
+        Check that the shape of the resources matches that required by the
+        plugin.
+      </p>
+    </>
+  );
+
   return (
     <>
       {pluginsToDisplay.map((plugin, index) => {
         if (!plugin) return null;
         if (builtInPlugins.map(p => p.key).includes(plugin)) {
-          // this is a built in plugin
-          return builtInPlugins.find(b => b.key === plugin)?.pluginComponent;
+          const builtInComponent = builtInPlugins.find(b => b.key === plugin)
+            ?.pluginComponent;
+          if (builtInComponent) {
+            return (
+              <ErrorBoundary key={plugin} fallback={Fallback}>
+                {builtInComponent}
+              </ErrorBoundary>
+            );
+          }
+          return null;
         }
         // standard plugin
         const pluginData = pluginDataMap.find(p => p?.key === plugin);
@@ -94,24 +113,26 @@ const ResourcePlugins: React.FunctionComponent<{
                 : undefined
             }
           >
-            <Panel
-              header={pluginData.name}
-              key={`${pluginData.name}`}
-              extra={<PluginInfo plugin={pluginData} />}
-            >
-              <div
-                className="resource-plugin"
-                key={`plugin-${pluginData.name}`}
+            <ErrorBoundary fallback={Fallback}>
+              <Panel
+                header={pluginData.name}
+                key={`${pluginData.name}`}
+                extra={<PluginInfo plugin={pluginData} />}
               >
-                <NexusPlugin
-                  nexusClient={nexus}
-                  url={pluginData.absoluteModulePath}
-                  pluginName={pluginData.name}
-                  resource={resource}
-                  goToResource={goToResource}
-                />
-              </div>
-            </Panel>
+                <div
+                  className="resource-plugin"
+                  key={`plugin-${pluginData.name}`}
+                >
+                  <NexusPlugin
+                    nexusClient={nexus}
+                    url={pluginData.absoluteModulePath}
+                    pluginName={pluginData.name}
+                    resource={resource}
+                    goToResource={goToResource}
+                  />
+                </div>
+              </Panel>
+            </ErrorBoundary>
           </Collapse>
         ) : null;
       })}

@@ -8,21 +8,55 @@ import useLocalStorage from './useLocalStorage';
 import useNotification from './useNotification';
 
 export function useJiraPlugin() {
-  const { jiraSupportedRealms } = useSelector(
-    (state: RootState) => state.config
-  );
-
-  if (jiraSupportedRealms === undefined) {
-    return { isUserInSupportedJiraRealm: true };
-  }
+  const [
+    jiraInaccessibleBecauseOfVPN,
+    setJiraInaccessibleBecauseOfVPN,
+  ] = React.useState(false);
+  const {
+    jiraSupportedRealms,
+    apiEndpoint,
+    httpHeaderForInaccessibleDueToVPN,
+  } = useSelector((state: RootState) => state.config);
+  const jiraAPIBaseUrl = `${apiEndpoint}/jira`;
 
   const { identities } = useSelector((state: RootState) => state.auth);
   const isUserInSupportedJiraRealm =
-    identities?.data &&
-    jiraSupportedRealms &&
-    isUserInAtLeastOneRealm(identities.data.identities, jiraSupportedRealms);
+    jiraSupportedRealms === undefined ||
+    (!!identities?.data &&
+      !!jiraSupportedRealms &&
+      isUserInAtLeastOneRealm(identities.data.identities, jiraSupportedRealms));
 
-  return { isUserInSupportedJiraRealm };
+  const isInaccessibleBecauseNotOnVPN = async () => {
+    if (!httpHeaderForInaccessibleDueToVPN) {
+      return false;
+    }
+    try {
+      const response = await fetch(`${jiraAPIBaseUrl}/project`, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('nexus__token')}`,
+        },
+      });
+
+      const hasNoVPNHeader = !![...response.headers].some(
+        (headerKeyValuePair: any) => {
+          const [header, _] = headerKeyValuePair;
+          return header === httpHeaderForInaccessibleDueToVPN;
+        }
+      );
+      return hasNoVPNHeader;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  isInaccessibleBecauseNotOnVPN().then(value => {
+    setJiraInaccessibleBecauseOfVPN(value);
+  });
+
+  return { isUserInSupportedJiraRealm, jiraInaccessibleBecauseOfVPN };
 }
 
 /**
@@ -303,14 +337,14 @@ function useJIRA({
             },
           }),
         })
-          .then(async response => {
+          .then(async (response: any) => {
             if (!response.ok) {
               const error = await response.json();
               return Promise.reject(error);
             }
             return fetchLinkedIssues();
           })
-          .catch(e => {
+          .catch((e: any) => {
             handleJiraError(e);
           });
       })
@@ -333,14 +367,14 @@ function useJIRA({
         },
       }),
     })
-      .then(async response => {
+      .then(async (response: any) => {
         if (!response.ok) {
           const error = await response.json();
           return Promise.reject(error);
         }
         return fetchLinkedIssues();
       })
-      .catch(e => {
+      .catch((e: any) => {
         handleJiraError(e);
       });
   };
