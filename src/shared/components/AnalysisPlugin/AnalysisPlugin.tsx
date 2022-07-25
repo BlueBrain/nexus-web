@@ -476,6 +476,7 @@ const AnalysisPlugin = ({
                   <Button
                     type="primary"
                     danger
+                    style={{ float: 'right', marginRight: '20px' }}
                     aria-label="Delete"
                     onClick={() => {
                       onDelete();
