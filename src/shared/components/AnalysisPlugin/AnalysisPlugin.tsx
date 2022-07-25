@@ -302,7 +302,6 @@ const AnalysisPlugin = ({
                     overlay={
                       <Menu onClick={() => {}}>
                         <Menu.Item
-                          icon={<EditOutlined />}
                           onClick={() =>
                             analysisReport.id &&
                             dispatch({

@@ -441,8 +441,6 @@ const AnalysisPluginContainer = ({
             projectLabel,
             encodeURIComponent(d)
           )) as Resource;
-          console.log('resource to be depracted');
-          console.log(resource);
           await nexus.Resource.deprecate(
             orgLabel,
             projectLabel,
@@ -457,12 +455,7 @@ const AnalysisPluginContainer = ({
         Promise.all([
           queryClient.invalidateQueries(['analysis']),
           queryClient.invalidateQueries(['analysesImages']),
-        ]).then(() => {
-          // dispatch({
-          //   type: ActionType.DELETE_IMAGES,
-          //   payload: { imageResources: [] },
-          // });
-        });
+        ]).then(() => {});
       },
     }
   );
