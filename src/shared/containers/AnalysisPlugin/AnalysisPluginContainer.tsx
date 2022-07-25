@@ -274,6 +274,15 @@ const AnalysisPluginContainer = ({
     async () => fetchAnalysisData(viewSelfId, analysisSparqlQuery),
     {
       onSuccess: data => {
+        if (!hasInitializedSelectedReports) {
+          dispatch({
+            type: ActionType.SET_SELECTED_REPORT_ON_FIRST_LOAD,
+            payload: {
+              analysisReportId:
+                data.length > 0 && data[0].id !== undefined ? data[0].id : '',
+            },
+          });
+        }
         dispatch({
           type: ActionType.SET_ANALYSIS_RESOURCE_TYPE,
           payload: {
@@ -571,6 +580,7 @@ const AnalysisPluginContainer = ({
           ...state,
           mode: 'view',
           selectedAnalysisReports: action.payload.analysisReportIds,
+          selectedAssets: [],
         };
       case ActionType.INITIALIZE:
         return initState({
@@ -628,7 +638,7 @@ const AnalysisPluginContainer = ({
       imagePreviewScale: DEFAULT_SCALE,
       analysisResourceType: 'report_container',
       mode: 'view',
-      hasInitializedSelectedReports: true,
+      hasInitializedSelectedReports: false,
       selectedAnalysisReports: [],
     },
     initState
