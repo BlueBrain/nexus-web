@@ -1,5 +1,4 @@
 import {
-  EditOutlined,
   LeftSquareFilled,
   MoreOutlined,
   PlusOutlined,
@@ -69,6 +68,7 @@ type AnalysisPluginProps = {
   analysisReports: AnalysisReport[];
   FileUpload: (analysisReportId?: string) => JSX.Element;
   onSave: (name: string, description?: string, id?: string) => void;
+  onDelete: () => void;
   onCancel: () => void;
   onClickRelatedResource: (resourceId: string) => void;
   imagePreviewScale: number;
@@ -88,6 +88,7 @@ const AnalysisPlugin = ({
   containerName,
   analysisReports,
   onSave,
+  onDelete,
   FileUpload,
   imagePreviewScale,
   mode,
@@ -300,7 +301,6 @@ const AnalysisPlugin = ({
                     overlay={
                       <Menu onClick={() => {}}>
                         <Menu.Item
-                          icon={<EditOutlined />}
                           onClick={() =>
                             analysisReport.id &&
                             dispatch({
@@ -471,6 +471,21 @@ const AnalysisPlugin = ({
                   );
                 })}
               </section>
+              {mode === 'edit' && selectedAssets && selectedAssets.length > 0 && (
+                <section>
+                  <Button
+                    type="primary"
+                    danger
+                    style={{ float: 'right', marginRight: '20px' }}
+                    aria-label="Delete"
+                    onClick={() => {
+                      onDelete();
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </section>
+              )}
             </section>
           ))}
       </>

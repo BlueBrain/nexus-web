@@ -38,6 +38,7 @@ WHERE {
           ?distribution nsg:name            ?asset_name .
           ?distribution nsg:contentUrl      ?asset_content_url .
           ?distribution nsg:encodingFormat  ?asset_encoding_format .
+					?asset_content_url nxv:deprecated false .
         }
     }
   }
@@ -58,6 +59,7 @@ WHERE {
           ?distribution nsg:name            ?asset_name .
           ?distribution nsg:contentUrl      ?asset_content_url .
           ?distribution nsg:encodingFormat  ?asset_encoding_format .
+					?asset_content_url nxv:deprecated false .
         }
     }
   }
@@ -251,7 +253,6 @@ const AnalysisPluginContainer = ({
           name: currentRow.asset_name,
           filePath: currentRow.asset_content_url,
           encodingFormat: currentRow.asset_encoding_format,
-
           preview: ({ mode }) => {
             return <Image preview={mode === 'view'} />;
           },
@@ -275,10 +276,10 @@ const AnalysisPluginContainer = ({
       onSuccess: data => {
         if (!hasInitializedSelectedReports) {
           dispatch({
-            type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS,
+            type: ActionType.SET_SELECTED_REPORT_ON_FIRST_LOAD,
             payload: {
-              analysisReportIds:
-                data.length > 0 && data[0].id ? [data[0].id] : [],
+              analysisReportId:
+                data.length > 0 && data[0].id !== undefined ? data[0].id : '',
             },
           });
         }
@@ -356,7 +357,7 @@ const AnalysisPluginContainer = ({
       const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
         return {
           '@type': 'DataDownload',
-          contentUrl: a.filePath,
+          contentUrl: { '@id': a.filePath },
           encodingFormat: a.encodingFormat,
           contentSize: a.contentSize,
           digest: a.digest,
@@ -422,6 +423,41 @@ const AnalysisPluginContainer = ({
     }
   );
 
+  const deleteImages = useMutation(
+    async () => {
+      if (selectedAssets) {
+        await Promise.all(
+          selectedAssets.map(async d => {
+            const resource = (await nexus.Resource.get(
+              orgLabel,
+              projectLabel,
+              encodeURIComponent(d)
+            )) as Resource;
+            await nexus.Resource.deprecate(
+              orgLabel,
+              projectLabel,
+              encodeURIComponent(resource['@id']),
+              resource._rev
+            );
+          })
+        );
+      }
+      return selectedAnalysisReports;
+    },
+    {
+      onSuccess: resourceIds => {
+        Promise.all([
+          queryClient.invalidateQueries(['analysis']),
+          queryClient.invalidateQueries(['analysesImages']),
+        ]).then(() => {
+          dispatch({
+            type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS,
+            payload: { analysisReportIds: resourceIds ? resourceIds : [] },
+          });
+        });
+      },
+    }
+  );
   const onFileUploaded = (file: NexusFile, analysisReportId?: string) => {
     const newlyUploadedAsset: Asset = {
       analysisReportId,
@@ -544,6 +580,7 @@ const AnalysisPluginContainer = ({
           ...state,
           mode: 'view',
           selectedAnalysisReports: action.payload.analysisReportIds,
+          selectedAssets: [],
         };
       case ActionType.INITIALIZE:
         return initState({
@@ -661,6 +698,9 @@ const AnalysisPluginContainer = ({
           onCancel={() => {}}
           onSave={(name: string, description?: string, id?: string) => {
             mutateAnalysis.mutate({ name, description, id });
+          }}
+          onDelete={() => {
+            deleteImages.mutate();
           }}
           imagePreviewScale={imagePreviewScale}
           mode={mode}
