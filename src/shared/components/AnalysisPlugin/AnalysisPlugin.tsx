@@ -1,5 +1,4 @@
 import {
-  EditOutlined,
   LeftSquareFilled,
   MoreOutlined,
   PlusOutlined,
