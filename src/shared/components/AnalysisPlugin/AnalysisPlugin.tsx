@@ -471,7 +471,7 @@ const AnalysisPlugin = ({
                   );
                 })}
               </section>
-              {mode === 'edit' && (
+              {mode === 'edit' && selectedAssets && selectedAssets.length > 0 && (
                 <section>
                   <Button
                     type="primary"

@@ -153,7 +153,7 @@ export type AnalysesAction =
   | { type: ActionType.CLOSE_FILE_UPLOAD_DIALOG }
   | {
       type: ActionType.DELETE_IMAGES;
-      payload: { imageResources: Resource[] };
+      payload: { imageIds: string[] };
     }
   | { type: ActionType.ADD_ANALYSIS_REPORT };
 
@@ -455,7 +455,17 @@ const AnalysisPluginContainer = ({
         Promise.all([
           queryClient.invalidateQueries(['analysis']),
           queryClient.invalidateQueries(['analysesImages']),
-        ]).then(() => {});
+        ]).then(() => {
+          dispatch({
+            type: ActionType.INITIALIZE,
+            payload: {
+              scale: 50,
+              analysisReportId: selectedAnalysisReports
+                ? selectedAnalysisReports
+                : [],
+            },
+          });
+        });
       },
     }
   );
@@ -607,7 +617,6 @@ const AnalysisPluginContainer = ({
           isUploadAssetDialogOpen: true,
         };
       case ActionType.DELETE_IMAGES:
-        // TODO must update the selectedAnalysisReports and analysisReports, possibly won't need to do because of invalidateQueries.
         return {
           ...state,
           mode: 'view',
