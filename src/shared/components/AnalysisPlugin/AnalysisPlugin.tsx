@@ -1,6 +1,5 @@
 import {
   CalendarOutlined,
-  EditOutlined,
   LeftSquareFilled,
   MoreOutlined,
   PlusOutlined,
@@ -34,6 +33,7 @@ export type Asset = {
   saved: boolean;
   id: string;
   name: string;
+  description?: string;
   encodingFormat: string;
   contentSize?: {
     unitCode: 'bytes';
