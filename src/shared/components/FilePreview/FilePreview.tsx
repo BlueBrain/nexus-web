@@ -5,6 +5,7 @@ import {
 } from '@ant-design/icons';
 import { Button, Input } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
+import Paragraph from 'antd/lib/typography/Paragraph';
 import * as moment from 'moment';
 import * as React from 'react';
 import { getUsername } from '../../../shared/utils';
@@ -36,7 +37,10 @@ const FilePreview = ({
     <div className="file-preview-wrapper">
       <div className="file-preview">
         <div className="file-metadata">
-          <div aria-label="Name" style={{ minHeight: '1em' }}>
+          <div
+            aria-label="Name"
+            style={{ minHeight: '1em', marginRight: '8px' }}
+          >
             {mode === 'edit' && (
               <Input
                 type="text"
@@ -72,22 +76,31 @@ const FilePreview = ({
         <div className="description-container">
           {(mode === 'minified' || mode === 'expanded') && (
             <>
-              <div
-                aria-label="Description"
-                className={`description-text__${
-                  mode === 'minified' ? 'minified' : 'expanded'
-                }`}
-              >
-                {text}
+              <div key={mode} aria-label="Description">
+                <Paragraph
+                  style={{ color: '#fff' }}
+                  ellipsis={
+                    mode === 'minified'
+                      ? {
+                          symbol: 'Read more',
+                          expandable: true,
+                          rows: 3,
+                          onExpand: () => setMode('expanded'),
+                        }
+                      : false
+                  }
+                >
+                  {text}
+                </Paragraph>
               </div>
-              <Button
-                className="button-blend"
-                onClick={() =>
-                  setMode(mode === 'expanded' ? 'minified' : 'expanded')
-                }
-              >
-                <span>Read {mode === 'minified' ? 'more' : 'less'}</span>
-              </Button>
+              {mode === 'expanded' && (
+                <Button
+                  className="button-blend"
+                  onClick={() => setMode('minified')}
+                >
+                  <span>Read less</span>
+                </Button>
+              )}
             </>
           )}
           {mode === 'edit' && (
@@ -95,32 +108,42 @@ const FilePreview = ({
               <TextArea
                 value={editedText}
                 onChange={e => setEditedText(e.currentTarget.value)}
+                rows={8}
               ></TextArea>
-              <Button
-                type="default"
-                onClick={() => {
-                  setEditedText(text);
-                  setEditedTitle(title);
-                  setMode('expanded');
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="primary"
-                onClick={() => {
-                  onSave(editedTitle, editedText);
-                  setMode('expanded');
-                }}
-              >
-                Save
-              </Button>
+              <div style={{ marginTop: '8px', display: 'flex' }}>
+                <div style={{ marginLeft: 'auto' }}>
+                  <Button
+                    type="default"
+                    onClick={() => {
+                      setEditedText(text);
+                      setEditedTitle(title);
+                      setMode('expanded');
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    style={{ marginLeft: '4px' }}
+                    type="primary"
+                    onClick={() => {
+                      onSave(editedTitle, editedText);
+                      setMode('expanded');
+                    }}
+                  >
+                    Save
+                  </Button>
+                </div>
+              </div>
             </div>
           )}
         </div>
         <div className="file-preview-menu">
           {mode !== 'edit' && (
-            <Button onClick={() => setMode('edit')}>
+            <Button
+              aria-label="Edit name and description"
+              onClick={() => setMode('edit')}
+              className="button-blend"
+            >
               <EditOutlined />
             </Button>
           )}
