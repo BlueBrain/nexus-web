@@ -37,7 +37,7 @@ WHERE {
         ?analysis_report_id    nsg:distribution    ?distribution .
         OPTIONAL {
           ?distribution nsg:name            ?asset_name .
-          ?distribution nsg:description     ?asset_description .
+          OPTIONAL { ?distribution nsg:description     ?asset_description } . 
           ?distribution nsg:contentUrl      ?asset_content_url .
           ?distribution nsg:encodingFormat  ?asset_encoding_format .
 					?asset_content_url nxv:deprecated false .
@@ -59,7 +59,7 @@ WHERE {
         ?analysis_report_id    nsg:distribution    ?distribution .
         OPTIONAL {
           ?distribution nsg:name            ?asset_name .
-          ?distribution nsg:description     ?asset_description .
+          OPTIONAL { ?distribution nsg:description     ?asset_description } .
           ?distribution nsg:contentUrl      ?asset_content_url .
           ?distribution nsg:encodingFormat  ?asset_encoding_format .
 					?asset_content_url nxv:deprecated false .
