@@ -23,6 +23,7 @@ describe('StudioListContainer', () => {
   afterEach(() => server.resetHandlers());
   // clean up once the tests are done
   afterAll(() => server.close());
+
   const nexus = createNexusClient({
     fetch,
     uri: deltaPath(),
