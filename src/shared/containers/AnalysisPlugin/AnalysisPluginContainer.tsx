@@ -570,9 +570,10 @@ const AnalysisPluginContainer = ({
       case ActionType.SET_SELECTED_REPORT_ON_FIRST_LOAD:
         return {
           ...state,
-          selectedAnalysisReports: action.payload
-            ? [action.payload.analysisReportId]
-            : [],
+          selectedAnalysisReports:
+            action.payload && action.payload.analysisReportId !== ''
+              ? [action.payload.analysisReportId]
+              : [],
           hasInitializedSelectedReports: true,
         };
       case ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS:

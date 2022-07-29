@@ -192,23 +192,31 @@ const AnalysisPlugin = ({
                 ></Button>
               </div>
             )}
-
-            <div
-              className="zoom-control"
-              aria-label="Increase/Decrease image thumnbail size"
-            >
-              <ZoomOutOutlined title="Reduce thumbnail size" />
-              <Slider
-                tooltipVisible={false}
-                value={imagePreviewScale}
-                onChange={(value: number) =>
-                  dispatch({ type: ActionType.RESCALE, payload: value })
-                }
-                included={false}
-                className="slider-scale"
-              />
-              <ZoomInOutlined title="Increase thumbnail size" />
-            </div>
+            {selectedAnalysisReports &&
+              selectedAnalysisReports.length > 0 &&
+              analysisReports.filter(
+                r =>
+                  r.id &&
+                  selectedAnalysisReports.includes(r.id) &&
+                  r.assets.length > 0
+              ).length > 0 && (
+                <div
+                  className="zoom-control"
+                  aria-label="Increase/Decrease image thumnbail size"
+                >
+                  <ZoomOutOutlined title="Reduce thumbnail size" />
+                  <Slider
+                    tooltipVisible={false}
+                    value={imagePreviewScale}
+                    onChange={(value: number) =>
+                      dispatch({ type: ActionType.RESCALE, payload: value })
+                    }
+                    included={false}
+                    className="slider-scale"
+                  />
+                  <ZoomInOutlined title="Increase thumbnail size" />
+                </div>
+              )}
           </>
         )}
         {analysisReports
