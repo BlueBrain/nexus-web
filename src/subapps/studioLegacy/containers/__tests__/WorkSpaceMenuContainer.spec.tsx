@@ -21,6 +21,8 @@ import {
 import { rest } from 'msw';
 import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
+import { deltaPath } from '__mocks__/handlers/handlers';
+
 describe('workSpaceMenu', () => {
   const history = createBrowserHistory({ basename: '/' });
   const contextValue: StudioContextType = {
@@ -31,7 +33,7 @@ describe('workSpaceMenu', () => {
   };
   const nexus = createNexusClient({
     fetch,
-    uri: 'https://localhost:3000',
+    uri: deltaPath(),
   });
   const store = configureStore(history, { nexus }, {});
   const resource = ({
@@ -87,61 +89,55 @@ describe('workSpaceMenu', () => {
   // clean up once the tests are done
   afterAll(() => server.close());
   server.use(
-    rest.get(
-      'https://localhost:3000/resources/org/project/_/w1',
-      (req, res, ctx) => {
-        const mockResponse = {
-          '@context': [
-            'https://bluebrain.github.io/nexus/contexts/metadata.json',
-            'https://bluebrainnexus.io/studio/context',
-          ],
-          '@id': 'w1',
-          '@type': 'StudioWorkSpace',
-          description: `A test work space`,
-          label: `w1`,
-          dashboards: [
-            {
-              dashboard: 'd1',
-            },
-          ],
-        };
-        return res(
-          // Respond with a 200 status code
-          ctx.status(200),
-          ctx.json(mockResponse)
-        );
-      }
-    )
+    rest.get(deltaPath('/resources/org/project/_/w1'), (req, res, ctx) => {
+      const mockResponse = {
+        '@context': [
+          'https://bluebrain.github.io/nexus/contexts/metadata.json',
+          'https://bluebrainnexus.io/studio/context',
+        ],
+        '@id': 'w1',
+        '@type': 'StudioWorkSpace',
+        description: `A test work space`,
+        label: `w1`,
+        dashboards: [
+          {
+            dashboard: 'd1',
+          },
+        ],
+      };
+      return res(
+        // Respond with a 200 status code
+        ctx.status(200),
+        ctx.json(mockResponse)
+      );
+    })
   );
 
   server.use(
-    rest.get(
-      'https://localhost:3000/resources/org/project/_/d1',
-      (req, res, ctx) => {
-        const mockResponse = {
-          '@context': [
-            'https://bluebrain.github.io/nexus/contexts/metadata.json',
-            'https://bluebrainnexus.io/studio/context',
-          ],
-          '@id': 'd1',
-          '@type': 'StudioDashboard',
-          description: `A test dashboard`,
-          label: `d1`,
-          dataTable: {
-            '@id': 'dataTable1',
-          },
-        };
-        return res(
-          // Respond with a 200 status code
-          ctx.status(200),
-          ctx.json(mockResponse)
-        );
-      }
-    )
+    rest.get(deltaPath('/resources/org/project/_/d1'), (req, res, ctx) => {
+      const mockResponse = {
+        '@context': [
+          'https://bluebrain.github.io/nexus/contexts/metadata.json',
+          'https://bluebrainnexus.io/studio/context',
+        ],
+        '@id': 'd1',
+        '@type': 'StudioDashboard',
+        description: `A test dashboard`,
+        label: `d1`,
+        dataTable: {
+          '@id': 'dataTable1',
+        },
+      };
+      return res(
+        // Respond with a 200 status code
+        ctx.status(200),
+        ctx.json(mockResponse)
+      );
+    })
   );
   server.use(
     rest.get(
-      'https://localhost:3000/resources/org/project/_/dataTable1',
+      deltaPath('/resources/org/project/_/dataTable1'),
       (req, res, ctx) => {
         const mockResponse = {
           '@context': [
@@ -247,7 +243,7 @@ describe('workSpaceMenu', () => {
     });
   });
   it('hides edit buttons for a user with out edit access', async () => {
-    rest.get('https://localhost:3000/acls/org/project', (req, res, ctx) => {
+    rest.get(deltaPath('/acls/org/project'), (req, res, ctx) => {
       const mockResponse = {
         '@context': [
           'https://bluebrain.github.io/nexus/contexts/metadata.json',
@@ -257,13 +253,12 @@ describe('workSpaceMenu', () => {
         _total: 1,
         _results: [
           {
-            '@id': 'http://localhost:3000/v1/acls/org1',
+            '@id': deltaPath('/v1/acls/org1'),
             '@type': 'AccessControlList',
             acl: [
               {
                 identity: {
-                  '@id':
-                    'http://localhost:3000/v1/realms/myrealm/groups/a-group',
+                  '@id': deltaPath('/v1/realms/myrealm/groups/a-group'),
                   '@type': 'Group',
                   group: 'a-group',
                   realm: 'myrealm',
@@ -272,8 +267,7 @@ describe('workSpaceMenu', () => {
               },
               {
                 identity: {
-                  '@id':
-                    'http://localhost:3000/v1/realms/realm/groups/some-group',
+                  '@id': deltaPath('/v1/realms/realm/groups/some-group'),
                   '@type': 'Group',
                   group: 'some-group',
                   realm: 'realm',
@@ -282,8 +276,7 @@ describe('workSpaceMenu', () => {
               },
               {
                 identity: {
-                  '@id':
-                    'http://localhost:3000/v1/realms/local/users/localuser',
+                  '@id': deltaPath('/v1/realms/local/users/localuser'),
                   '@type': 'User',
                   realm: 'local',
                   subject: 'localuser',
@@ -294,13 +287,13 @@ describe('workSpaceMenu', () => {
             _constrainedBy:
               'https://bluebrain.github.io/nexus/schemas/acls.json',
             _createdAt: '2021-05-11T11:03:06.071Z',
-            _createdBy: 'http://localhost:3000/v1/anonymous',
+            _createdBy: deltaPath('/v1/anonymous'),
             _deprecated: false,
             _path: '/org/project',
             _rev: 1,
-            _self: 'http://localhost:3000/v1/acls/org1',
+            _self: deltaPath('/v1/acls/org1'),
             _updatedAt: '2021-05-11T11:03:06.071Z',
-            _updatedBy: 'http://localhost:3000/v1/anonymous',
+            _updatedBy: deltaPath('/v1/anonymous'),
           },
         ],
       };

@@ -173,6 +173,9 @@
     "webpack-node-externals": "^1.7.2"
   },
   "jest": {
+    "modulePaths": [
+      "<rootDir>/src"
+    ],
     "collectCoverage": true,
     "preset": "ts-jest",
     "setupFilesAfterEnv": [
