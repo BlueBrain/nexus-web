@@ -8,11 +8,11 @@ import TextArea from 'antd/lib/input/TextArea';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import * as moment from 'moment';
 import * as React from 'react';
-import { getUsername } from '../../../shared/utils';
+import { getUsername } from '../../utils';
 import FriendlyTimeAgo from '../FriendlyDate';
-import './FilePreview.less';
+import './FileInfo.less';
 
-type FilePreviewProps = {
+type FileInfoProps = {
   text: string;
   title: string;
   lastUpdated: string;
@@ -20,13 +20,13 @@ type FilePreviewProps = {
   onSave: (title: string, text: string) => void;
 };
 
-const FilePreview = ({
+const FileInfo = ({
   text,
   title,
   lastUpdated,
   lastUpdatedBy,
   onSave,
-}: FilePreviewProps) => {
+}: FileInfoProps) => {
   const [mode, setMode] = React.useState<'minified' | 'expanded' | 'edit'>(
     'minified'
   );
@@ -34,15 +34,13 @@ const FilePreview = ({
   const [editedTitle, setEditedTitle] = React.useState(title);
 
   return (
-    <div className="file-preview-wrapper">
-      <div className="file-preview">
+    <div className="file-info-wrapper">
+      <section aria-label="File Information" className="file-info">
         <div className="file-metadata">
-          <div
-            aria-label="Name"
-            style={{ minHeight: '1em', marginRight: '8px' }}
-          >
+          <div style={{ minHeight: '1em', marginRight: '8px' }}>
             {mode === 'edit' && (
               <Input
+                aria-label="Asset Name"
                 type="text"
                 value={editedTitle}
                 onChange={e => setEditedTitle(e.currentTarget.value)}
@@ -50,6 +48,7 @@ const FilePreview = ({
             )}
             {mode !== 'edit' && (
               <div
+                aria-label="Asset Name"
                 style={{
                   textOverflow: 'ellipsis',
                   maxWidth: '150px',
@@ -63,17 +62,14 @@ const FilePreview = ({
             )}
           </div>
           <div className="last-updated" aria-label="Last Updated">
-            <label
-              className="asset-details__last-updated"
-              aria-label="Last Updated"
-            >
+            <label className="asset-details__last-updated">
               <CalendarOutlined />
               &nbsp;
               <FriendlyTimeAgo
                 date={moment(lastUpdated)}
                 getPopupContainer={() =>
                   document.getElementsByClassName(
-                    'file-preview-wrapper'
+                    'file-info-wrapper'
                   )[0] as HTMLElement
                 }
               />
@@ -88,8 +84,9 @@ const FilePreview = ({
         <div className="description-container">
           {(mode === 'minified' || mode === 'expanded') && (
             <>
-              <div key={mode} aria-label="Description">
+              <div key={mode}>
                 <Paragraph
+                  aria-label="Asset Description"
                   style={{ color: '#fff' }}
                   ellipsis={
                     mode === 'minified'
@@ -118,6 +115,7 @@ const FilePreview = ({
           {mode === 'edit' && (
             <div className={`description-text__expanded`}>
               <TextArea
+                aria-label="Asset Description"
                 value={editedText}
                 onChange={e => setEditedText(e.currentTarget.value)}
                 rows={8}
@@ -149,7 +147,7 @@ const FilePreview = ({
             </div>
           )}
         </div>
-        <div className="file-preview-menu">
+        <div className="file-info-menu">
           {mode !== 'edit' && (
             <Button
               aria-label="Edit name and description"
@@ -160,9 +158,9 @@ const FilePreview = ({
             </Button>
           )}
         </div>
-      </div>
+      </section>
     </div>
   );
 };
 
-export default FilePreview;
+export default FileInfo;

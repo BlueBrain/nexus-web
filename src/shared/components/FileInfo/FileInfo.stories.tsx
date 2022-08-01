@@ -2,13 +2,13 @@ import { withInfo } from '@storybook/addon-info';
 import { number, select, text, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react';
 import * as React from 'react';
-import FilePreview from './FilePreview';
+import FileInfo from './FileInfo';
 
-storiesOf('Components/FilePreview', module)
+storiesOf('Components/FileInfo', module)
   .addDecorator(withKnobs)
   .add('Minifiy', () => {
     return (
-      <FilePreview
+      <FileInfo
         onSave={() => {}}
         text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
         eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim

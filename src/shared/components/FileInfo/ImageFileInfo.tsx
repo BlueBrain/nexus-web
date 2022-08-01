@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import FilePreview from './FilePreview';
+import FileInfo from './FileInfo';
 import { Image } from 'antd';
 
 type ImagePreviewProps = {
@@ -38,7 +38,7 @@ export default ({
               marginRight: 'auto',
             }}
           >
-            <FilePreview
+            <FileInfo
               onSave={(title, text) => onSave(title, text)}
               text={text || ''}
               title={title || ''}

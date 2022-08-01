@@ -14,7 +14,7 @@ import FileUploadContainer from '../FileUploadContainer';
 import { FileImageOutlined } from '@ant-design/icons';
 import { makeResourceUri } from '../../../shared/utils';
 import { useHistory, useLocation } from 'react-router';
-import ImagePreview from '../../../shared/components/FilePreview/ImagePreview';
+import ImageFileInfo from '../../components/FileInfo/ImageFileInfo';
 
 export const DEFAULT_ANALYSIS_DATA_SPARQL_QUERY = `PREFIX s:<http://schema.org/>
 PREFIX prov:<http://www.w3.org/ns/prov#>
@@ -737,7 +737,7 @@ const AnalysisPluginContainer = ({
             preview: ({ mode }: { mode: string }) => {
               return (
                 <>
-                  <ImagePreview
+                  <ImageFileInfo
                     src={img?.src}
                     lastUpdated={img?.lastUpdated}
                     lastUpdatedBy={img?.lastUpdatedBy}

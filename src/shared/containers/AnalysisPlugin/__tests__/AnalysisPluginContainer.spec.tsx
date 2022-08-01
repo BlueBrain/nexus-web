@@ -26,17 +26,6 @@ import {
 } from '__mocks__/handlers/AnalysisPlugin/handlers';
 
 describe('Analysis Plugin', () => {
-  // establish API mocking before all tests
-  beforeAll(() => server.listen());
-  // reset any request handlers that are declared as a part of our tests
-  // (i.e. for testing one-time error scenarios)
-  afterEach(() => server.resetHandlers());
-  // clean up once the tests are done
-  afterAll(() => server.close());
-  const nexus = createNexusClient({
-    fetch,
-    uri: deltaPath(),
-  });
   const mockState = {
     config: {
       apiEndpoint: deltaPath(),
@@ -53,6 +42,21 @@ describe('Analysis Plugin', () => {
         return mockState;
       }),
     };
+  });
+
+  // establish API mocking before all tests
+  beforeAll(() => server.listen());
+  // reset any request handlers that are declared as a part of our tests
+  // (i.e. for testing one-time error scenarios)
+  afterEach(() => {
+    server.resetHandlers();
+    queryClient.clear();
+  });
+  // clean up once the tests are done
+  afterAll(() => server.close());
+  const nexus = createNexusClient({
+    fetch,
+    uri: deltaPath(),
   });
 
   it('add new Analysis Report button is present', async () => {
@@ -310,7 +314,7 @@ describe('Analysis Plugin', () => {
     });
   });
 
-  it('On an individual analysis report, the option to go to navigate to the parent container resource is presented', async () => {
+  it('On an individual analysis report, the option to navigate to the parent container resource is presented', async () => {
     server.use(sparqlAnalysisReportSingleResult);
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
@@ -490,6 +494,40 @@ describe('Analysis Plugin', () => {
     expect(
       await waitFor(() => screen.getByText('insta_logo_large.png'))
     ).toBeVisible();
+  });
+
+  it('clicking analysis report asset opens preview of asset', async () => {
+    server.use(sparqlAnalysisReportSingleResult);
+
+    const history = createMemoryHistory({});
+    const store = mockStore(mockState);
+    await act(async () => {
+      await render(
+        <Router history={history}>
+          <Provider store={store}>
+            <QueryClientProvider client={queryClient}>
+              <NexusProvider nexusClient={nexus}>
+                <AnalysisPluginContainer
+                  projectLabel="projectLabel"
+                  orgLabel="orgLabel"
+                  resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
+                ></AnalysisPluginContainer>
+              </NexusProvider>
+            </QueryClientProvider>
+          </Provider>
+        </Router>
+      );
+    });
+    // expect asset name to be present
+    await act(async () => {
+      const asset = await waitFor(() =>
+        screen.getByLabelText('Analysis Asset')
+      );
+      fireEvent.click(asset);
+      expect(
+        await waitFor(() => screen.getByText('insta_logo_large.png'))
+      ).toBeInTheDocument();
+    });
   });
 
   it('On edit mode image delete button is visible', async () => {
