@@ -48,7 +48,19 @@ const FilePreview = ({
                 onChange={e => setEditedTitle(e.currentTarget.value)}
               />
             )}
-            {mode !== 'edit' && (title || <em>No title</em>)}
+            {mode !== 'edit' && (
+              <div
+                style={{
+                  textOverflow: 'ellipsis',
+                  maxWidth: '150px',
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                }}
+                title={title || 'No title'}
+              >
+                {title || <em>No title</em>}
+              </div>
+            )}
           </div>
           <div className="last-updated" aria-label="Last Updated">
             <label
@@ -127,7 +139,7 @@ const FilePreview = ({
                     type="primary"
                     onClick={() => {
                       onSave(editedTitle, editedText);
-                      setMode('expanded');
+                      setMode('minified');
                     }}
                   >
                     Save
