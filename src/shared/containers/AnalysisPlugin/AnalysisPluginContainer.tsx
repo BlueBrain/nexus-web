@@ -744,11 +744,6 @@ const AnalysisPluginContainer = ({
                     title={m.name}
                     text={m.description}
                     onSave={(name, description) => {
-                      console.log(
-                        'about to save asset name, description',
-                        a.id,
-                        img
-                      );
                       a.id &&
                         img &&
                         mutateAsset.mutate({
