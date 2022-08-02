@@ -1,5 +1,5 @@
 import { withInfo } from '@storybook/addon-info';
-import { number, select, text, withKnobs } from '@storybook/addon-knobs';
+import { number, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react';
 import * as React from 'react';
 import { Image } from 'antd';
