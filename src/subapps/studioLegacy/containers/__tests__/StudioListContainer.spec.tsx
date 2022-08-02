@@ -14,6 +14,7 @@ import {
 import { rest } from 'msw';
 import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
+import { deltaPath } from '__mocks__/handlers/handlers';
 describe('StudioListContainer', () => {
   // establish API mocking before all tests
   beforeAll(() => server.listen());
@@ -22,10 +23,9 @@ describe('StudioListContainer', () => {
   afterEach(() => server.resetHandlers());
   // clean up once the tests are done
   afterAll(() => server.close());
-
   const nexus = createNexusClient({
     fetch,
-    uri: 'https://localhost:3000',
+    uri: deltaPath(),
   });
   const queryClient = new QueryClient();
 
@@ -52,12 +52,9 @@ describe('StudioListContainer', () => {
     server.use(
       // override the initial "GET /greeting" request handler
       // to return a 500 Server Error
-      rest.get(
-        'https://localhost:3000/resources/org/project',
-        (req, res, ctx) => {
-          return res(ctx.status(500));
-        }
-      )
+      rest.get(deltaPath('/resources/org/project'), (req, res, ctx) => {
+        return res(ctx.status(500));
+      })
     );
     await act(async () => {
       await render(
@@ -80,82 +77,23 @@ describe('StudioListContainer', () => {
 
   it('allows pagination of studio list on scroll', async () => {
     server.use(
-      rest.get(
-        'https://localhost:3000/resources/org/project',
-        (req, res, ctx) => {
-          const after = req.url.searchParams.get('after');
-          if (after) {
-            const mockResponse = {
-              '@context': [
-                'https://bluebrain.github.io/nexus/contexts/metadata.json',
-                'https://bluebrain.github.io/nexus/contexts/search.json',
-                'https://bluebrain.github.io/nexus/contexts/search-metadata.json',
-              ],
-              _total: 11,
-              _results: [
-                {
-                  '@id': 'id-11',
-                  label: 'test-label-11',
-                },
-              ],
-              _next: 'https://localhost:3000/resources/org/project?after=id-10',
-            };
-            return res(
-              // Respond with a 200 status code
-              ctx.status(200),
-              ctx.json(mockResponse)
-            );
-          }
+      rest.get(deltaPath('/resources/org/project'), (req, res, ctx) => {
+        const after = req.url.searchParams.get('after');
+        if (after) {
           const mockResponse = {
             '@context': [
               'https://bluebrain.github.io/nexus/contexts/metadata.json',
               'https://bluebrain.github.io/nexus/contexts/search.json',
               'https://bluebrain.github.io/nexus/contexts/search-metadata.json',
             ],
-            _total: 19,
+            _total: 11,
             _results: [
               {
-                '@id': 'id-1',
-                label: 'test-label-1',
-              },
-              {
-                '@id': 'id-2',
-                label: 'test-label-2',
-              },
-              {
-                '@id': 'id-3',
-                label: 'test-label-3',
-              },
-              {
-                '@id': 'id-4',
-                label: 'test-label-4',
-              },
-              {
-                '@id': 'id-5',
-                label: 'test-label-5',
-              },
-              {
-                '@id': 'id-6',
-                label: 'test-label-6',
-              },
-              {
-                '@id': 'id-7',
-                label: 'test-label-7',
-              },
-              {
-                '@id': 'id-8',
-                label: 'test-label-8',
-              },
-              {
-                '@id': 'id-9',
-                label: 'test-label-9',
-              },
-              {
-                '@id': 'id-10',
-                label: 'test-label-10',
+                '@id': 'id-11',
+                label: 'test-label-11',
               },
             ],
-            _next: 'https://localhost:3000/resources/org/project?after=id-10',
+            _next: deltaPath('/resources/org/project?after=id-10'),
           };
           return res(
             // Respond with a 200 status code
@@ -163,7 +101,63 @@ describe('StudioListContainer', () => {
             ctx.json(mockResponse)
           );
         }
-      )
+        const mockResponse = {
+          '@context': [
+            'https://bluebrain.github.io/nexus/contexts/metadata.json',
+            'https://bluebrain.github.io/nexus/contexts/search.json',
+            'https://bluebrain.github.io/nexus/contexts/search-metadata.json',
+          ],
+          _total: 19,
+          _results: [
+            {
+              '@id': 'id-1',
+              label: 'test-label-1',
+            },
+            {
+              '@id': 'id-2',
+              label: 'test-label-2',
+            },
+            {
+              '@id': 'id-3',
+              label: 'test-label-3',
+            },
+            {
+              '@id': 'id-4',
+              label: 'test-label-4',
+            },
+            {
+              '@id': 'id-5',
+              label: 'test-label-5',
+            },
+            {
+              '@id': 'id-6',
+              label: 'test-label-6',
+            },
+            {
+              '@id': 'id-7',
+              label: 'test-label-7',
+            },
+            {
+              '@id': 'id-8',
+              label: 'test-label-8',
+            },
+            {
+              '@id': 'id-9',
+              label: 'test-label-9',
+            },
+            {
+              '@id': 'id-10',
+              label: 'test-label-10',
+            },
+          ],
+          _next: deltaPath('/resources/org/project?after=id-10'),
+        };
+        return res(
+          // Respond with a 200 status code
+          ctx.status(200),
+          ctx.json(mockResponse)
+        );
+      })
     );
     await act(async () => {
       const { container } = await render(
@@ -192,88 +186,85 @@ describe('StudioListContainer', () => {
 
   it('allows  searching on studio list', async () => {
     server.use(
-      rest.get(
-        'https://localhost:3000/resources/org/project',
-        (req, res, ctx) => {
-          const q = req.url.searchParams.getAll('q');
-          if (q[0] === 'label for id-1') {
-            return res(
-              // Respond with a 200 status code
-              ctx.status(200),
-              ctx.json({
-                '@context': [
-                  'https://bluebrain.github.io/nexus/contexts/metadata.json',
-                  'https://bluebrain.github.io/nexus/contexts/search.json',
-                  'https://bluebrain.github.io/nexus/contexts/search-metadata.json',
-                ],
-                _total: 1,
-                _results: [
-                  {
-                    '@id': 'id-1',
-                    label: 'test-label-1',
-                  },
-                ],
-              })
-            );
-          }
-          const mockResponse = {
-            '@context': [
-              'https://bluebrain.github.io/nexus/contexts/metadata.json',
-              'https://bluebrain.github.io/nexus/contexts/search.json',
-              'https://bluebrain.github.io/nexus/contexts/search-metadata.json',
-            ],
-            _total: 19,
-            _results: [
-              {
-                '@id': 'id-1',
-                label: 'test-label-1',
-              },
-              {
-                '@id': 'id-2',
-                label: 'test-label-2',
-              },
-              {
-                '@id': 'id-3',
-                label: 'test-label-3',
-              },
-              {
-                '@id': 'id-4',
-                label: 'test-label-4',
-              },
-              {
-                '@id': 'id-5',
-                label: 'test-label-5',
-              },
-              {
-                '@id': 'id-6',
-                label: 'test-label-6',
-              },
-              {
-                '@id': 'id-7',
-                label: 'test-label-7',
-              },
-              {
-                '@id': 'id-8',
-                label: 'test-label-8',
-              },
-              {
-                '@id': 'id-9',
-                label: 'test-label-9',
-              },
-              {
-                '@id': 'id-10',
-                label: 'test-label-10',
-              },
-            ],
-            _next: 'https://localhost:3000/resources/org/project?after=id10',
-          };
+      rest.get(deltaPath('/resources/org/project'), (req, res, ctx) => {
+        const q = req.url.searchParams.getAll('q');
+        if (q[0] === 'label for id-1') {
           return res(
             // Respond with a 200 status code
             ctx.status(200),
-            ctx.json(mockResponse)
+            ctx.json({
+              '@context': [
+                'https://bluebrain.github.io/nexus/contexts/metadata.json',
+                'https://bluebrain.github.io/nexus/contexts/search.json',
+                'https://bluebrain.github.io/nexus/contexts/search-metadata.json',
+              ],
+              _total: 1,
+              _results: [
+                {
+                  '@id': 'id-1',
+                  label: 'test-label-1',
+                },
+              ],
+            })
           );
         }
-      )
+        const mockResponse = {
+          '@context': [
+            'https://bluebrain.github.io/nexus/contexts/metadata.json',
+            'https://bluebrain.github.io/nexus/contexts/search.json',
+            'https://bluebrain.github.io/nexus/contexts/search-metadata.json',
+          ],
+          _total: 19,
+          _results: [
+            {
+              '@id': 'id-1',
+              label: 'test-label-1',
+            },
+            {
+              '@id': 'id-2',
+              label: 'test-label-2',
+            },
+            {
+              '@id': 'id-3',
+              label: 'test-label-3',
+            },
+            {
+              '@id': 'id-4',
+              label: 'test-label-4',
+            },
+            {
+              '@id': 'id-5',
+              label: 'test-label-5',
+            },
+            {
+              '@id': 'id-6',
+              label: 'test-label-6',
+            },
+            {
+              '@id': 'id-7',
+              label: 'test-label-7',
+            },
+            {
+              '@id': 'id-8',
+              label: 'test-label-8',
+            },
+            {
+              '@id': 'id-9',
+              label: 'test-label-9',
+            },
+            {
+              '@id': 'id-10',
+              label: 'test-label-10',
+            },
+          ],
+          _next: deltaPath('/resources/org/project?after=id10'),
+        };
+        return res(
+          // Respond with a 200 status code
+          ctx.status(200),
+          ctx.json(mockResponse)
+        );
+      })
     );
     await act(async () => {
       await render(
