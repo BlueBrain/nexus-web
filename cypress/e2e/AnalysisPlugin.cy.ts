@@ -106,4 +106,34 @@ describe('Analysis Plugin', () => {
     cy.findByLabelText('Analysis Description').should('contain', '-v2');
     cy.findAllByLabelText('Analysis Asset').should('have.length', 2);
   });
+
+  it('user can edit open preview of existing image asset and edit its name and description', function() {
+    cy.visit(
+      `${Cypress.env('ORG_LABEL')}/${
+        this.projectLabel
+      }/resources/${encodeURIComponent(this.fullResourceId)}`
+    );
+    // Open anlaysis plugin
+    cy.findByRole('button', { name: /Analysis/i }).click();
+    cy.findAllByLabelText('Analysis Asset')
+      .first()
+      .click();
+    cy.findByRole('button', { name: 'Edit name and description' }).click();
+    cy.findByRole('textbox', { name: 'Asset Name' }).should(
+      'contain.value',
+      'sample'
+    );
+    cy.findByRole('textbox', { name: 'Asset Description' }).should(
+      'have.text',
+      ''
+    );
+    cy.findByRole('textbox', { name: 'Asset Name' })
+      .clear()
+      .type('Better name');
+    cy.findByRole('textbox', { name: 'Asset Description' }).type(
+      'This is the asset description'
+    );
+    cy.findByRole('button', { name: /Save/i }).click();
+    expect(cy.findByText('This is the asset description')).to.exist;
+  });
 });

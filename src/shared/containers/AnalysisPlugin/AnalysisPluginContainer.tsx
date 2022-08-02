@@ -14,12 +14,13 @@ import FileUploadContainer from '../FileUploadContainer';
 import { FileImageOutlined } from '@ant-design/icons';
 import { makeResourceUri } from '../../../shared/utils';
 import { useHistory, useLocation } from 'react-router';
+import ImageFileInfo from '../../components/FileInfo/ImageFileInfo';
 
 export const DEFAULT_ANALYSIS_DATA_SPARQL_QUERY = `PREFIX s:<http://schema.org/>
 PREFIX prov:<http://www.w3.org/ns/prov#>
 PREFIX nsg:<https://neuroshapes.org/>
 PREFIX nxv:<https://bluebrain.github.io/nexus/vocabulary/>
-SELECT ?container_resource_id ?container_resource_name ?analysis_report_id ?analysis_report_name ?analysis_report_description ?created_by ?created_at ?asset_content_url ?asset_encoding_format ?asset_name ?self
+SELECT ?container_resource_id ?container_resource_name ?analysis_report_id ?analysis_report_name ?analysis_report_description ?created_by ?created_at ?asset_content_url ?asset_encoding_format ?asset_name ?asset_description ?self
 WHERE {
   OPTIONAL {
     BIND(<{resourceId}> as ?container_resource_id) .
@@ -36,6 +37,7 @@ WHERE {
         ?analysis_report_id    nsg:distribution    ?distribution .
         OPTIONAL {
           ?distribution nsg:name            ?asset_name .
+          OPTIONAL { ?distribution nsg:description     ?asset_description } . 
           ?distribution nsg:contentUrl      ?asset_content_url .
           ?distribution nsg:encodingFormat  ?asset_encoding_format .
 					?asset_content_url nxv:deprecated false .
@@ -57,6 +59,7 @@ WHERE {
         ?analysis_report_id    nsg:distribution    ?distribution .
         OPTIONAL {
           ?distribution nsg:name            ?asset_name .
+          OPTIONAL { ?distribution nsg:description     ?asset_description } .
           ?distribution nsg:contentUrl      ?asset_content_url .
           ?distribution nsg:encodingFormat  ?asset_encoding_format .
 					?asset_content_url nxv:deprecated false .
@@ -197,6 +200,7 @@ const AnalysisPluginContainer = ({
     created_by: string;
     created_at: string;
     asset_name: string;
+    asset_description: string;
     asset_content_url: string;
     asset_encoding_format: string;
     self: {
@@ -251,6 +255,7 @@ const AnalysisPluginContainer = ({
           saved: true,
           id: currentRow.asset_content_url,
           name: currentRow.asset_name,
+          description: currentRow.asset_description,
           filePath: currentRow.asset_content_url,
           encodingFormat: currentRow.asset_encoding_format,
           preview: ({ mode }) => {
@@ -309,6 +314,9 @@ const AnalysisPluginContainer = ({
       id: string;
       src: string;
       contentUrl: string;
+      filename: string;
+      lastUpdated: string;
+      lastUpdatedBy: string;
     }>[] = [];
     if (!analysisData) {
       return [];
@@ -320,6 +328,12 @@ const AnalysisPluginContainer = ({
           const imageId = asset.filePath.substring(
             asset.filePath.lastIndexOf('/') + 1
           );
+          const imgResource = (await nexus.Resource.get(
+            orgLabel,
+            projectLabel,
+            encodeURIComponent(asset.filePath)
+          )) as Resource;
+
           const src = await fetchImageObjectUrl(
             nexus,
             orgLabel,
@@ -327,7 +341,14 @@ const AnalysisPluginContainer = ({
             imageId,
             asset.encodingFormat
           );
-          return { src, id: asset.id, contentUrl: asset.filePath };
+          return {
+            src,
+            id: asset.id,
+            contentUrl: asset.filePath,
+            filename: imgResource['_filename'],
+            lastUpdated: imgResource['_updatedAt'],
+            lastUpdatedBy: imgResource['_updatedBy'],
+          };
         });
         return [...prev, ...assets];
       }, imageSourceInitial)
@@ -352,6 +373,47 @@ const AnalysisPluginContainer = ({
     }
   );
 
+  const mutateAsset = useMutation(
+    async (data: {
+      resourceId: string;
+      assetContentUrl: string;
+      title: string;
+      caption: string;
+    }) => {
+      const resource = (await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(data.resourceId)
+      )) as Resource;
+      resource.distribution = [resource.distribution].flat().map(a => {
+        if (a.contentUrl['@id'] !== data.assetContentUrl) {
+          return a;
+        }
+
+        return {
+          ...a,
+          name: data.title,
+          description: data.caption,
+        };
+      });
+      return nexus.Resource.update(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(data.resourceId),
+        resource._rev,
+        resource
+      );
+    },
+    {
+      onSuccess: () => {
+        return Promise.all([
+          queryClient.invalidateQueries(['analysis']),
+          queryClient.invalidateQueries(['analysesImages']),
+        ]);
+      },
+    }
+  );
+
   const mutateAnalysis = useMutation(
     async (data: { id?: string; name: string; description?: string }) => {
       const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
@@ -362,6 +424,7 @@ const AnalysisPluginContainer = ({
           contentSize: a.contentSize,
           digest: a.digest,
           name: a.name,
+          description: a.description,
         };
       });
 
@@ -668,10 +731,29 @@ const AnalysisPluginContainer = ({
           const img = imageData?.find(img => img.contentUrl === m.filePath);
           return {
             ...m,
+            filename: img?.filename,
+            lastUpdated: img?.lastUpdated,
+            lastUpdatedBy: img?.lastUpdatedBy,
             preview: ({ mode }: { mode: string }) => {
               return (
                 <>
-                  <Image src={img?.src} preview={mode === 'view'} />
+                  <ImageFileInfo
+                    src={img?.src}
+                    lastUpdated={img?.lastUpdated}
+                    lastUpdatedBy={img?.lastUpdatedBy}
+                    title={m.name}
+                    text={m.description}
+                    onSave={(name, description) => {
+                      a.id &&
+                        img &&
+                        mutateAsset.mutate({
+                          resourceId: a.id,
+                          assetContentUrl: img.contentUrl,
+                          title: name,
+                          caption: description,
+                        });
+                    }}
+                  />
                 </>
               );
             },
