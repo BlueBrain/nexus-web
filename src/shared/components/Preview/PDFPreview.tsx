@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Alert, Button } from 'antd';
-import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
+import { Document, Page, pdfjs } from 'react-pdf';
 pdfjs.GlobalWorkerOptions.workerSrc = 'public/pdf.worker.min.js';
 
 import './PDFPreview.less';
