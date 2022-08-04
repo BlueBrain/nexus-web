@@ -13,7 +13,6 @@ import {
   screen,
 } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
-import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { Router } from 'react-router-dom';
@@ -64,23 +63,21 @@ describe('Analysis Plugin', () => {
 
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="resourceId"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="resourceId"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
     await waitFor(() => {
       const addButton = screen.getByRole('button', {
@@ -95,23 +92,21 @@ describe('Analysis Plugin', () => {
 
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="resourceId"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="resourceId"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
     await waitFor(() => {
       screen.getByRole('button', {
@@ -119,12 +114,10 @@ describe('Analysis Plugin', () => {
       });
     });
 
-    await act(async () => {
-      const addButton = await screen.findByRole('button', {
-        name: 'Add Analysis Report',
-      });
-      fireEvent.click(addButton);
+    const addButton = await screen.findByRole('button', {
+      name: 'Add Analysis Report',
     });
+    fireEvent.click(addButton);
 
     expect(
       await waitFor(() => screen.getByRole('button', { name: 'Save' }))
@@ -158,23 +151,21 @@ describe('Analysis Plugin', () => {
 
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="resourceId"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="resourceId"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
     await waitFor(() => {
       screen.getByRole('button', {
@@ -182,19 +173,15 @@ describe('Analysis Plugin', () => {
       });
     });
 
-    await act(async () => {
-      const addButton = await screen.findByRole('button', {
-        name: 'Add Analysis Report',
-      });
-      fireEvent.click(addButton);
+    const addButton = await screen.findByRole('button', {
+      name: 'Add Analysis Report',
     });
+    fireEvent.click(addButton);
 
-    await act(async () => {
-      const cancelBtn = await waitFor(() =>
-        screen.getByRole('button', { name: 'Cancel' })
-      );
-      fireEvent.click(cancelBtn);
-    });
+    const cancelBtn = await waitFor(() =>
+      screen.getByRole('button', { name: 'Cancel' })
+    );
+    fireEvent.click(cancelBtn);
 
     await waitFor(() => {
       screen.getByRole('button', {
@@ -211,23 +198,21 @@ describe('Analysis Plugin', () => {
 
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="resourceId"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="resourceId"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
     await waitFor(() => {
       screen.getByRole('button', {
@@ -235,33 +220,29 @@ describe('Analysis Plugin', () => {
       });
     });
 
-    await act(async () => {
-      const addButton = await screen.findByRole('button', {
-        name: 'Add Analysis Report',
-      });
-      fireEvent.click(addButton);
+    const addButton = await screen.findByRole('button', {
+      name: 'Add Analysis Report',
     });
+    fireEvent.click(addButton);
 
     const analysisNameTextBox = await waitFor(() =>
       screen.getByRole('textbox', { name: 'Analysis Name' })
     );
-    await fireEvent.change(analysisNameTextBox, {
+    fireEvent.change(analysisNameTextBox, {
       target: { value: 'New analysis name' },
     });
 
     const analysisDescriptionTextBox = await waitFor(() =>
       screen.getByRole('textbox', { name: 'Analysis Description' })
     );
-    await fireEvent.change(analysisDescriptionTextBox, {
+    fireEvent.change(analysisDescriptionTextBox, {
       target: { value: 'New analysis description' },
     });
 
-    await act(async () => {
-      const saveBtn = await waitFor(() =>
-        screen.getByRole('button', { name: 'Save' })
-      );
-      fireEvent.click(saveBtn);
-    });
+    const saveBtn = await waitFor(() =>
+      screen.getByRole('button', { name: 'Save' })
+    );
+    fireEvent.click(saveBtn);
   });
 
   it('On Create New Analysis screen, clicking cancel will return to the view mode', async () => {
@@ -269,23 +250,21 @@ describe('Analysis Plugin', () => {
 
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="resourceId"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="resourceId"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
     await waitFor(() => {
       screen.getByRole('button', {
@@ -293,19 +272,15 @@ describe('Analysis Plugin', () => {
       });
     });
 
-    await act(async () => {
-      const addButton = await screen.findByRole('button', {
-        name: 'Add Analysis Report',
-      });
-      fireEvent.click(addButton);
+    const addButton = await screen.findByRole('button', {
+      name: 'Add Analysis Report',
     });
+    fireEvent.click(addButton);
 
-    await act(async () => {
-      const cancelBtn = await waitFor(() =>
-        screen.getByRole('button', { name: 'Cancel' })
-      );
-      fireEvent.click(cancelBtn);
-    });
+    const cancelBtn = await waitFor(() =>
+      screen.getByRole('button', { name: 'Cancel' })
+    );
+    fireEvent.click(cancelBtn);
 
     await waitFor(() => {
       screen.getByRole('button', {
@@ -318,23 +293,21 @@ describe('Analysis Plugin', () => {
     server.use(sparqlAnalysisReportSingleResult);
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
     await waitFor(() => {
       screen.getByRole('button', {
@@ -348,30 +321,26 @@ describe('Analysis Plugin', () => {
     const history = createMemoryHistory({});
 
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
-    await act(async () => {
-      const optionsButton = await screen.findByRole('button', {
-        name: 'Options',
-      });
-      fireEvent.mouseEnter(optionsButton);
+    const optionsButton = await screen.findByRole('button', {
+      name: 'Options',
     });
+    fireEvent.mouseEnter(optionsButton);
 
     expect(
       await waitFor(() =>
@@ -385,23 +354,21 @@ describe('Analysis Plugin', () => {
 
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="resourceId"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="resourceId"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
     expect(
       await waitFor(
@@ -417,23 +384,21 @@ describe('Analysis Plugin', () => {
 
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
     expect(
       await waitFor(() => screen.getByLabelText(/Increase\/Decrease/))
@@ -445,23 +410,21 @@ describe('Analysis Plugin', () => {
 
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="resourceId"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="resourceId"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
     expect(
       screen.queryByLabelText(/Increase\/Decrease/)
@@ -473,23 +436,21 @@ describe('Analysis Plugin', () => {
 
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
     // expect asset name to be present
     expect(
       await waitFor(() => screen.getByText('insta_logo_large.png'))
@@ -535,36 +496,33 @@ describe('Analysis Plugin', () => {
     const history = createMemoryHistory({});
 
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
+
+    const optionsButton = await screen.findByRole('button', {
+      name: 'Options',
+    });
+    fireEvent.mouseEnter(optionsButton);
+    await waitFor(() => {
+      const edit = screen.getByRole('menuitem', { name: 'Edit' });
+      fireEvent.click(edit);
     });
 
-    await act(async () => {
-      const optionsButton = await screen.findByRole('button', {
-        name: 'Options',
-      });
-      fireEvent.mouseEnter(optionsButton);
-      await waitFor(() => {
-        const edit = screen.getByRole('menuitem', { name: 'Edit' });
-        fireEvent.click(edit);
-      });
-    });
     expect(
-      await waitFor(() => screen.getByLabelText('Analysis Asset'))
+      await waitFor(() => screen.getAllByLabelText('Analysis Asset')[0])
     ).toBeInTheDocument();
   });
 });
