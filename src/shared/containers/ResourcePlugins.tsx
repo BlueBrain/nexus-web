@@ -104,16 +104,29 @@ const ResourcePlugins: React.FunctionComponent<{
         const pluginData = pluginDataMap.find(p => p?.key === plugin);
 
         return pluginData ? (
-          <Collapse
+          <ErrorBoundary
+            fallback={() => (
+              <Collapse key={pluginData.name}>
+                <Panel key={pluginData.name} header={pluginData.name}>
+                  <h1>Something went wrong.</h1>
+                  <p>
+                    Check that the shape of the data matches the plugin's
+                    expectations.
+                  </p>
+                </Panel>
+              </Collapse>
+            )}
             key={pluginData.name}
-            onChange={e => handleCollapseChange(pluginData.name)}
-            activeKey={
-              openPlugins.includes(pluginData.name)
-                ? pluginData.name
-                : undefined
-            }
           >
-            <ErrorBoundary fallback={Fallback}>
+            <Collapse
+              key={pluginData.name}
+              onChange={e => handleCollapseChange(pluginData.name)}
+              activeKey={
+                openPlugins.includes(pluginData.name)
+                  ? pluginData.name
+                  : undefined
+              }
+            >
               <Panel
                 header={pluginData.name}
                 key={`${pluginData.name}`}
@@ -132,8 +145,8 @@ const ResourcePlugins: React.FunctionComponent<{
                   />
                 </div>
               </Panel>
-            </ErrorBoundary>
-          </Collapse>
+            </Collapse>
+          </ErrorBoundary>
         ) : null;
       })}
     </>
