@@ -5,19 +5,13 @@ import fetch from 'node-fetch';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import AnalysisPluginContainer from '../AnalysisPluginContainer';
 import { deltaPath } from '__mocks__/handlers/handlers';
-import {
-  render,
-  server,
-  fireEvent,
-  waitFor,
-  screen,
-} from '../../../../utils/testUtil';
+import { render, server, waitFor, screen } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
-
+import userEvent from '@testing-library/user-event';
 import {
   sparqlAnalysisReportNoResultsHandler,
   resourcesAnalysisReportType,
@@ -89,7 +83,7 @@ describe('Analysis Plugin', () => {
 
   it('clicking add New Analysis Report button results in screen displaying all required options to create new Analysis Report', async () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
-
+    const user = userEvent.setup();
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
     render(
@@ -117,7 +111,7 @@ describe('Analysis Plugin', () => {
     const addButton = await screen.findByRole('button', {
       name: 'Add Analysis Report',
     });
-    fireEvent.click(addButton);
+    await user.click(addButton);
 
     expect(
       await waitFor(() => screen.getByRole('button', { name: 'Save' }))
@@ -148,7 +142,7 @@ describe('Analysis Plugin', () => {
 
   it('On Create New Analysis screen, clicking cancel will return to the view mode', async () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
-
+    const user = userEvent.setup();
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
     render(
@@ -176,12 +170,12 @@ describe('Analysis Plugin', () => {
     const addButton = await screen.findByRole('button', {
       name: 'Add Analysis Report',
     });
-    fireEvent.click(addButton);
+    await user.click(addButton);
 
     const cancelBtn = await waitFor(() =>
       screen.getByRole('button', { name: 'Cancel' })
     );
-    fireEvent.click(cancelBtn);
+    await user.click(cancelBtn);
 
     await waitFor(() => {
       screen.getByRole('button', {
@@ -195,7 +189,7 @@ describe('Analysis Plugin', () => {
       sparqlAnalysisReportNoResultsHandler,
       resourcesAnalysisReportType
     );
-
+    const user = userEvent.setup();
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
     render(
@@ -223,31 +217,28 @@ describe('Analysis Plugin', () => {
     const addButton = await screen.findByRole('button', {
       name: 'Add Analysis Report',
     });
-    fireEvent.click(addButton);
+    user.click(addButton);
 
     const analysisNameTextBox = await waitFor(() =>
       screen.getByRole('textbox', { name: 'Analysis Name' })
     );
-    fireEvent.change(analysisNameTextBox, {
-      target: { value: 'New analysis name' },
-    });
+    await user.type(analysisNameTextBox, 'New analysis name');
 
     const analysisDescriptionTextBox = await waitFor(() =>
       screen.getByRole('textbox', { name: 'Analysis Description' })
     );
-    fireEvent.change(analysisDescriptionTextBox, {
-      target: { value: 'New analysis description' },
-    });
+
+    user.type(analysisDescriptionTextBox, 'New analysis description');
 
     const saveBtn = await waitFor(() =>
       screen.getByRole('button', { name: 'Save' })
     );
-    fireEvent.click(saveBtn);
+    user.click(saveBtn);
   });
 
   it('On Create New Analysis screen, clicking cancel will return to the view mode', async () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
-
+    const user = userEvent.setup();
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
     render(
@@ -275,12 +266,12 @@ describe('Analysis Plugin', () => {
     const addButton = await screen.findByRole('button', {
       name: 'Add Analysis Report',
     });
-    fireEvent.click(addButton);
+    user.click(addButton);
 
     const cancelBtn = await waitFor(() =>
       screen.getByRole('button', { name: 'Cancel' })
     );
-    fireEvent.click(cancelBtn);
+    user.click(cancelBtn);
 
     await waitFor(() => {
       screen.getByRole('button', {
@@ -318,8 +309,8 @@ describe('Analysis Plugin', () => {
 
   it('On a container analysis resource, each individual analysis has an options menu with the option to navigate to the resource', async () => {
     server.use(sparqlAnalysisReportSingleResult);
+    const user = userEvent.setup();
     const history = createMemoryHistory({});
-
     const store = mockStore(mockState);
     render(
       <Router history={history}>
@@ -340,7 +331,7 @@ describe('Analysis Plugin', () => {
     const optionsButton = await screen.findByRole('button', {
       name: 'Options',
     });
-    fireEvent.mouseEnter(optionsButton);
+    user.hover(optionsButton);
 
     expect(
       await waitFor(() =>
@@ -351,7 +342,6 @@ describe('Analysis Plugin', () => {
 
   it('on initial load the first analysis report is visible', async () => {
     server.use(sparqlAnalysisReportSingleResult);
-
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
     render(
@@ -381,7 +371,6 @@ describe('Analysis Plugin', () => {
 
   it('when at least one of the selected analysis reports has an asset then the zoom options are visible', async () => {
     server.use(sparqlAnalysisReportSingleResult);
-
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
     render(
@@ -407,7 +396,6 @@ describe('Analysis Plugin', () => {
 
   it('when no analysis report selected, zoom options are hidden', async () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
-
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
     render(
@@ -433,7 +421,6 @@ describe('Analysis Plugin', () => {
 
   it('analysis report assets show image name (or filename if not present) along with last updated details', async () => {
     server.use(sparqlAnalysisReportSingleResult);
-
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
     render(
@@ -493,8 +480,8 @@ describe('Analysis Plugin', () => {
 
   it('On edit mode image delete button is visible', async () => {
     server.use(sparqlAnalysisReportSingleResult);
+    const user = userEvent.setup();
     const history = createMemoryHistory({});
-
     const store = mockStore(mockState);
     render(
       <Router history={history}>
@@ -515,10 +502,11 @@ describe('Analysis Plugin', () => {
     const optionsButton = await screen.findByRole('button', {
       name: 'Options',
     });
-    fireEvent.mouseEnter(optionsButton);
+    user.hover(optionsButton);
+
     await waitFor(() => {
       const edit = screen.getByRole('menuitem', { name: 'Edit' });
-      fireEvent.click(edit);
+      user.click(edit);
     });
 
     expect(

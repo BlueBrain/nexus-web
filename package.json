@@ -106,6 +106,7 @@
     "@testing-library/cypress": "^8.0.3",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "12.1.2",
+    "@testing-library/user-event": "^14.4.2",
     "@types/cookie-parser": "^1.4.1",
     "@types/enzyme": "^3.9.0",
     "@types/express": "^4.16.1",
@@ -144,6 +145,7 @@
     "jest": "^24.3.1",
     "jest-environment-enzyme": "^7.0.2",
     "jest-environment-jsdom-fifteen": "^1.0.2",
+    "jest-environment-jsdom-sixteen": "^2.0.0",
     "jest-enzyme": "^7.0.2",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
@@ -182,7 +184,7 @@
       "jest-enzyme",
       "./jest.setup.js"
     ],
-    "testEnvironment": "jest-environment-jsdom-fifteen",
+    "testEnvironment": "jest-environment-jsdom-sixteen",
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/__mocks__/fileMock.js",
       "\\.(css|less)$": "<rootDir>/src/__mocks__/styleMock.js"
