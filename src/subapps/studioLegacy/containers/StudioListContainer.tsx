@@ -62,11 +62,6 @@ const StudioListContainer: React.FunctionComponent<{
 
   const makeStudioUri = (resourceId: string) => {
     const pathname = history?.location?.pathname || '';
-    // console.log("basePath");
-    // console.log(basePath);
-    // console.log("basePath / PATHNAME STUDIO LIST, encoded resource ID");
-    // console.log(`${basePath}${pathname}`);
-    // console.log(encodeURIComponent(resourceId));
     return `${basePath}${pathname}/${encodeURIComponent(resourceId)}`;
   };
 
