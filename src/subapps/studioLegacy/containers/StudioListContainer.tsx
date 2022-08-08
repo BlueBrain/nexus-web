@@ -8,6 +8,9 @@ import StudioList from '../components/StudioList';
 import CreateStudioContainer from './CreateStudioContainer';
 import { Empty } from 'antd';
 import { parseInt } from 'lodash';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../shared/store/reducers';
+
 const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';
 const STUDIO_RESULTS_DEFAULT_SIZE = 10;
@@ -16,6 +19,8 @@ const StudioListContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
 }> = ({ orgLabel, projectLabel }) => {
+  const basePath = useSelector((state: RootState) => state.config.basePath);
+
   const nexus = useNexusContext();
   const history = useHistory();
   const [searchQuery, setSearchQuery] = React.useState<string>('');
@@ -57,7 +62,12 @@ const StudioListContainer: React.FunctionComponent<{
 
   const makeStudioUri = (resourceId: string) => {
     const pathname = history?.location?.pathname || '';
-    return `${pathname}/${encodeURIComponent(resourceId)}`;
+    // console.log("basePath");
+    // console.log(basePath);
+    // console.log("basePath / PATHNAME STUDIO LIST, encoded resource ID");
+    // console.log(`${basePath}${pathname}`);
+    // console.log(encodeURIComponent(resourceId));
+    return `${basePath}${pathname}/${encodeURIComponent(resourceId)}`;
   };
 
   const goToStudio = (resourceId: string) => {
