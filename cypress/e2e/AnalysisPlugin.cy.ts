@@ -105,7 +105,7 @@ describe('Analysis Plugin', () => {
       'Cell density O1.v6-RC2-v2'
     );
     cy.findByLabelText('Analysis Description').should('contain', '-v2');
-    cy.findAllByLabelText('Analysis Asset').should('have.length', 2);
+    cy.findAllByLabelText('Analysis File').should('have.length', 3);
   });
 
   it('user can open preview of existing image asset and edit its name and description', function() {
@@ -116,8 +116,11 @@ describe('Analysis Plugin', () => {
     );
     // Open anlaysis plugin
     cy.findByRole('button', { name: /Analysis/i }).click();
-    cy.findAllByLabelText('Analysis Asset')
+
+    //cy.findAllByLabelText('Analysis Asset')
+    cy.findAllByRole('listitem', { name: /sample2/ })
       .first()
+      .findByLabelText(/Analysis File/)
       .click();
     cy.findByRole('button', { name: 'Edit name and description' }).click();
     cy.findByRole('textbox', { name: 'Asset Name' }).should(
@@ -138,7 +141,7 @@ describe('Analysis Plugin', () => {
     expect(cy.findByText('This is the asset description')).to.exist;
   });
 
-  it('user can edit open preview of existing image asset and edit its name and description', function() {
+  it('user can open preview of existing pdf asset', function() {
     cy.visit(
       `${Cypress.env('ORG_LABEL')}/${
         this.projectLabel
@@ -146,8 +149,9 @@ describe('Analysis Plugin', () => {
     );
     // Open anlaysis plugin
     cy.findByRole('button', { name: /Analysis/i }).click();
-    cy.findAllByLabelText('Analysis Asset')
-      .first()
+    cy.wait(5000);
+    cy.findByRole('listitem', { name: /sample_pdf/ })
+      .findByLabelText(/Analysis File/)
       .click();
     cy.findByRole('button', { name: 'Edit name and description' }).click();
     cy.findByRole('textbox', { name: 'Asset Name' }).should(
@@ -164,7 +168,5 @@ describe('Analysis Plugin', () => {
     cy.findByRole('textbox', { name: 'Asset Description' }).type(
       'This is the asset description'
     );
-    cy.findByRole('button', { name: /Save/i }).click();
-    expect(cy.findByText('This is the asset description')).to.exist;
   });
 });
