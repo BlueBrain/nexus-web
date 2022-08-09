@@ -47,13 +47,7 @@ export type Asset = {
   filename?: string;
   lastUpdated?: string;
   lastUpdatedBy?: string;
-  preview: ({
-    scale,
-    mode,
-  }: {
-    scale: number;
-    mode: 'view' | 'edit';
-  }) => React.ReactElement;
+  preview: ({ mode }: { mode: 'view' | 'edit' }) => React.ReactElement;
 };
 
 export type AnalysisReport = {
@@ -425,9 +419,15 @@ const AnalysisPlugin = ({
                 {analysisReport.assets.map((asset, i) => {
                   const minThumbnailSize = 100;
                   return (
-                    <div key={asset.id} className="asset-container">
+                    <div
+                      key={asset.id}
+                      className="asset-container"
+                      aria-label={
+                        asset.name !== '' ? asset.name : asset.filename
+                      }
+                    >
                       <div
-                        aria-label="Analysis Asset"
+                        aria-label="Analysis File"
                         className={`asset ${
                           selectedAssets &&
                           selectedAssets.findIndex(v => v === asset.id) > -1
@@ -458,7 +458,6 @@ const AnalysisPlugin = ({
                       >
                         {asset.preview({
                           mode: mode === 'create' ? 'edit' : mode,
-                          scale: imagePreviewScale,
                         })}
                         {mode === 'edit' &&
                           'id' in analysisReport &&

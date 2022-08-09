@@ -32,14 +32,24 @@
       z-index: 1080;
 
       .asset-preview {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        overflow: hidden;
-        justify-content: center;
         display: flex;
+        height: 90%;
+
+        .asset-preview-close {
+          color: #fff;
+          position: fixed;
+          top: 0;
+          right: 0;
+
+          &__button {
+            padding: 12px;
+            color: rgba(255, 255, 255, 0.85);
+            background-color: transparent;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+          }
+        }
 
         .document {
           margin: auto;

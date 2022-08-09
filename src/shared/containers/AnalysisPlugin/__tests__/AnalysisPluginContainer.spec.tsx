@@ -5,7 +5,16 @@ import fetch from 'node-fetch';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import AnalysisPluginContainer from '../AnalysisPluginContainer';
 import { deltaPath } from '__mocks__/handlers/handlers';
-import { render, server, waitFor, screen } from '../../../../utils/testUtil';
+import {
+  render,
+  server,
+  waitFor,
+  screen,
+  cleanup,
+  within,
+  findByRole,
+  fireEvent,
+} from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -16,6 +25,7 @@ import {
   sparqlAnalysisReportNoResultsHandler,
   resourcesAnalysisReportType,
   sparqlAnalysisReportSingleResult,
+  imageResourceFile,
 } from '__mocks__/handlers/AnalysisPlugin/handlers';
 
 describe('Analysis Plugin', () => {
@@ -42,6 +52,7 @@ describe('Analysis Plugin', () => {
   // reset any request handlers that are declared as a part of our tests
   // (i.e. for testing one-time error scenarios)
   afterEach(() => {
+    cleanup();
     server.resetHandlers();
     queryClient.clear();
   });
@@ -111,7 +122,7 @@ describe('Analysis Plugin', () => {
     const addButton = await screen.findByRole('button', {
       name: 'Add Analysis Report',
     });
-    await user.click(addButton);
+    user.click(addButton);
 
     expect(
       await waitFor(() => screen.getByRole('button', { name: 'Save' }))
@@ -140,6 +151,7 @@ describe('Analysis Plugin', () => {
     ).toBeInTheDocument();
   });
 
+  // TODO: Fix warning errors from this test
   it('On Create New Analysis screen, clicking cancel will return to the view mode', async () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
     const user = userEvent.setup();
@@ -170,18 +182,20 @@ describe('Analysis Plugin', () => {
     const addButton = await screen.findByRole('button', {
       name: 'Add Analysis Report',
     });
-    await user.click(addButton);
+    user.click(addButton);
 
     const cancelBtn = await waitFor(() =>
       screen.getByRole('button', { name: 'Cancel' })
     );
-    await user.click(cancelBtn);
+    user.click(cancelBtn);
 
-    await waitFor(() => {
-      screen.getByRole('button', {
-        name: 'Add Analysis Report',
-      });
-    });
+    expect(
+      await waitFor(() =>
+        screen.getByRole('button', {
+          name: 'Add Analysis Report',
+        })
+      )
+    ).toBeInTheDocument();
   });
 
   it('On Create New Analysis screen, clicking save will trigger analysis report to be saved', async () => {
@@ -208,11 +222,11 @@ describe('Analysis Plugin', () => {
       </Router>
     );
 
-    await waitFor(() => {
+    await waitFor(() =>
       screen.getByRole('button', {
         name: 'Add Analysis Report',
-      });
-    });
+      })
+    );
 
     const addButton = await screen.findByRole('button', {
       name: 'Add Analysis Report',
@@ -222,7 +236,8 @@ describe('Analysis Plugin', () => {
     const analysisNameTextBox = await waitFor(() =>
       screen.getByRole('textbox', { name: 'Analysis Name' })
     );
-    await user.type(analysisNameTextBox, 'New analysis name');
+
+    user.type(analysisNameTextBox, 'New analysis name');
 
     const analysisDescriptionTextBox = await waitFor(() =>
       screen.getByRole('textbox', { name: 'Analysis Description' })
@@ -233,6 +248,7 @@ describe('Analysis Plugin', () => {
     const saveBtn = await waitFor(() =>
       screen.getByRole('button', { name: 'Save' })
     );
+
     user.click(saveBtn);
   });
 
@@ -281,7 +297,7 @@ describe('Analysis Plugin', () => {
   });
 
   it('On an individual analysis report, the option to navigate to the parent container resource is presented', async () => {
-    server.use(sparqlAnalysisReportSingleResult);
+    server.use(sparqlAnalysisReportSingleResult, imageResourceFile);
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
     render(
@@ -446,41 +462,38 @@ describe('Analysis Plugin', () => {
 
   it('clicking analysis report asset opens preview of asset', async () => {
     server.use(sparqlAnalysisReportSingleResult);
-
+    const user = userEvent.setup();
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
-    // expect asset name to be present
-    await act(async () => {
-      const asset = await waitFor(() =>
-        screen.getByLabelText('Analysis Asset')
-      );
-      fireEvent.click(asset);
-      expect(
-        await waitFor(() => screen.getByText('insta_logo_large.png'))
-      ).toBeInTheDocument();
-    });
-  });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
-  it('On edit mode image delete button is visible', async () => {
+    // expect asset name to be present
+
+    const asset = await waitFor(() =>
+      screen.getByLabelText(/insta_logo_large/)
+    );
+    user.click(asset);
+    expect(
+      await waitFor(() => screen.getByText('insta_logo_large.png'))
+    ).toBeInTheDocument();
+  });
+  it('In edit mode, image delete button is visible', async () => {
     server.use(sparqlAnalysisReportSingleResult);
-    const user = userEvent.setup();
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
     render(
@@ -509,8 +522,13 @@ describe('Analysis Plugin', () => {
       user.click(edit);
     });
 
+    const analysisFile = await waitFor(
+      () => screen.getAllByLabelText('Analysis File')[0]
+    );
+    user.click(analysisFile);
+
     expect(
-      await waitFor(() => screen.getAllByLabelText('Analysis Asset')[0])
+      await waitFor(() => screen.getByRole('button', { name: 'Delete' }))
     ).toBeInTheDocument();
   });
 });

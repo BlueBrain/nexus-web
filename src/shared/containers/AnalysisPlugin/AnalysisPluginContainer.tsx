@@ -15,6 +15,8 @@ import { FileImageOutlined } from '@ant-design/icons';
 import { makeResourceUri } from '../../../shared/utils';
 import { useHistory, useLocation } from 'react-router';
 import ImageFileInfo from '../../components/FileInfo/ImageFileInfo';
+import { PDFThumbnail } from '../../../shared/components/Preview/PDFPreview';
+import PDFFileInfo from '../../../shared/components/FileInfo/PDFFileInfo';
 
 export const DEFAULT_ANALYSIS_DATA_SPARQL_QUERY = `PREFIX s:<http://schema.org/>
 PREFIX prov:<http://www.w3.org/ns/prov#>
@@ -538,7 +540,20 @@ const AnalysisPluginContainer = ({
       },
       filePath: file['@id'],
       preview: () => {
-        return <Image placeholder={<FileImageOutlined />} preview={false} />;
+        return (
+          <>
+            {file._mediaType.substring(0, 'image'.length) === 'image' && (
+              <Image placeholder={<FileImageOutlined />} preview={false} />
+            )}
+            {file._mediaType === 'application/pdf' && (
+              <PDFThumbnail
+                url={file['@id']}
+                onPreview={() => {}}
+                previewDisabled={true}
+              />
+            )}
+          </>
+        );
       },
     };
     setUnsavedAssets(assets => [...assets, newlyUploadedAsset]);
@@ -737,23 +752,47 @@ const AnalysisPluginContainer = ({
             preview: ({ mode }: { mode: string }) => {
               return (
                 <>
-                  <ImageFileInfo
-                    src={img?.src}
-                    lastUpdated={img?.lastUpdated}
-                    lastUpdatedBy={img?.lastUpdatedBy}
-                    title={m.name}
-                    text={m.description}
-                    onSave={(name, description) => {
-                      a.id &&
-                        img &&
-                        mutateAsset.mutate({
-                          resourceId: a.id,
-                          assetContentUrl: img.contentUrl,
-                          title: name,
-                          caption: description,
-                        });
-                    }}
-                  />
+                  {m.encodingFormat.substring(0, 'image'.length) ===
+                    'image' && (
+                    <ImageFileInfo
+                      previewDisabled={mode === 'edit'}
+                      src={img?.src}
+                      lastUpdated={img?.lastUpdated}
+                      lastUpdatedBy={img?.lastUpdatedBy}
+                      title={m.name}
+                      text={m.description}
+                      onSave={(name, description) => {
+                        a.id &&
+                          img &&
+                          mutateAsset.mutate({
+                            resourceId: a.id,
+                            assetContentUrl: img.contentUrl,
+                            title: name,
+                            caption: description,
+                          });
+                      }}
+                    />
+                  )}
+                  {m.encodingFormat === 'application/pdf' && img?.src && (
+                    <PDFFileInfo
+                      previewDisabled={mode === 'edit'}
+                      src={img?.src}
+                      lastUpdated={img?.lastUpdated}
+                      lastUpdatedBy={img?.lastUpdatedBy}
+                      title={m.name}
+                      text={m.description}
+                      onSave={(name, description) => {
+                        a.id &&
+                          img &&
+                          mutateAsset.mutate({
+                            resourceId: a.id,
+                            assetContentUrl: img.contentUrl,
+                            title: name,
+                            caption: description,
+                          });
+                      }}
+                    />
+                  )}
                 </>
               );
             },
