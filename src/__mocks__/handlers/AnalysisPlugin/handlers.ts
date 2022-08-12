@@ -13,10 +13,6 @@ export const sparqlAnalysisReportNoResultsHandler = rest.post(
           'analysis_report_description',
           'created_by',
           'created_at',
-          'asset_content_url',
-          'asset_encoding_format',
-          'asset_name',
-          'asset_description',
           'self',
         ],
       },
@@ -40,10 +36,6 @@ export const sparqlAnalysisReportSingleResult = rest.post(
           'analysis_report_description',
           'created_by',
           'created_at',
-          'asset_content_url',
-          'asset_encoding_format',
-          'asset_name',
-          'asset_description',
           'self',
         ],
       },
@@ -63,76 +55,6 @@ export const sparqlAnalysisReportSingleResult = rest.post(
             analysis_report_name: {
               type: 'literal',
               value: 'Our Very First Analysis Report!',
-            },
-            asset_content_url: {
-              type: 'literal',
-              value:
-                'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/d3d1cc48-9547-4c9c-a08f-f281ffb458cc',
-            },
-            asset_encoding_format: {
-              type: 'literal',
-              value: 'image/png',
-            },
-            asset_name: {
-              type: 'literal',
-              value: 'insta_logo_large.png',
-            },
-            asset_description: {
-              type: 'literal',
-              value: 'This is a short description about our asset.',
-            },
-            container_resource_id: {
-              type: 'uri',
-              value:
-                'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1',
-            },
-            container_resource_name: {
-              type: 'literal',
-              value: 'Analysis container',
-            },
-            created_at: {
-              datatype: 'http://www.w3.org/2001/XMLSchema#dateTime',
-              type: 'literal',
-              value: '2022-06-17T04:14:06.357Z',
-            },
-            created_by: {
-              type: 'uri',
-              value:
-                'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
-            },
-            self: {
-              type: 'uri',
-              value:
-                'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1',
-            },
-          },
-          {
-            analysis_report_description: {
-              type: 'literal',
-              value:
-                "This is our analysis report. Isn't it great! Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. 555",
-            },
-            analysis_report_id: {
-              type: 'uri',
-              value:
-                'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1',
-            },
-            analysis_report_name: {
-              type: 'literal',
-              value: 'Our Very First Analysis Report!',
-            },
-            asset_content_url: {
-              type: 'literal',
-              value:
-                'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/pdffile',
-            },
-            asset_encoding_format: {
-              type: 'literal',
-              value: 'application/pdf',
-            },
-            asset_name: {
-              type: 'literal',
-              value: 'sample_pdf.pdf',
             },
             container_resource_id: {
               type: 'uri',
@@ -163,6 +85,83 @@ export const sparqlAnalysisReportSingleResult = rest.post(
       },
     };
 
+    return res(ctx.status(200), ctx.json(mockResponse));
+  }
+);
+
+export const reportResource = rest.get(
+  deltaPath(
+    `resources/orgLabel/projectLabel/_/${encodeURIComponent(
+      'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1'
+    )}`
+  ),
+  (req, res, ctx) => {
+    const mockResponse = {
+      '@context': [
+        'https://bluebrain.github.io/nexus/contexts/metadata.json',
+        {
+          '@vocab': 'https://neuroshapes.org/',
+          nsg: 'https://neuroshapes.org/',
+          nxv: 'https://bluebrain.github.io/nexus/vocabulary/',
+          prov: 'http://www.w3.org/ns/prov#',
+          schema: 'http://schema.org/',
+        },
+      ],
+      '@id':
+        'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1',
+      '@type': 'AnalysisReport',
+      hasPart: [
+        {
+          '@id':
+            'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/d3d1cc48-9547-4c9c-a08f-f281ffb458cc',
+          '@type': 'Entity',
+          distribution: {
+            '@type': 'DataDownload',
+            contentSize: { unitCode: 'bytes', value: 60262 },
+            contentUrl: {
+              '@id':
+                'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/d3d1cc48-9547-4c9c-a08f-f281ffb458cc',
+            },
+            digest: {
+              algorithm: 'SHA-256',
+              value:
+                'caeaaba3e0b6db4ddd04d6c775521187e8309b15f60cd5c783afe4bf80fa347c',
+            },
+            encodingFormat: 'image/png',
+          },
+          name: 'insta_logo_large.png',
+          description: 'some kind of description',
+        },
+      ],
+      name: 'Derivation updated',
+      'prov:derivation': {
+        entity: {
+          '@id':
+            'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/TestAnalysisCaption',
+        },
+      },
+      'schema:description': 'Analysis description sample 1',
+      _constrainedBy:
+        'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+      _createdAt: '2022-08-11T12:51:43.983Z',
+      _createdBy:
+        'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
+      _deprecated: false,
+      _incoming:
+        'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1/incoming',
+      _outgoing:
+        'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1/outgoing',
+      _project:
+        'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/bbp-users/nicholas',
+      _rev: 1,
+      _schemaProject:
+        'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/bbp-users/nicholas',
+      _self:
+        'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1',
+      _updatedAt: '2022-08-11T12:51:43.983Z',
+      _updatedBy:
+        'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
+    };
     return res(ctx.status(200), ctx.json(mockResponse));
   }
 );

@@ -22,12 +22,13 @@ export const DEFAULT_ANALYSIS_DATA_SPARQL_QUERY = `PREFIX s:<http://schema.org/>
 PREFIX prov:<http://www.w3.org/ns/prov#>
 PREFIX nsg:<https://neuroshapes.org/>
 PREFIX nxv:<https://bluebrain.github.io/nexus/vocabulary/>
-SELECT ?container_resource_id ?container_resource_name ?analysis_report_id ?analysis_report_name ?analysis_report_description ?created_by ?created_at ?asset_content_url ?asset_encoding_format ?asset_name ?asset_description ?self
+SELECT ?container_resource_id ?container_resource_name ?analysis_report_id ?analysis_report_name ?analysis_report_description ?created_by ?created_at ?self
 WHERE {
   OPTIONAL {
     BIND(<{resourceId}> as ?container_resource_id) .
     BIND(<{resourceId}> as ?self) .
-    ?container_resource_id        ^prov:wasDerivedFrom       ?analysis_report_id .
+    ?derivation_id        ^prov:derivation       ?analysis_report_id .
+    ?derivation_id        nsg:entity             ?container_resource_id .
     OPTIONAL {
       ?container_resource_id        s:name                   ?container_resource_name .
     }
@@ -35,21 +36,12 @@ WHERE {
     ?analysis_report_id    s:description       ?analysis_report_description .
     ?analysis_report_id nxv:createdBy ?created_by .
     ?analysis_report_id nxv:createdAt ?created_at .
-    OPTIONAL {
-        ?analysis_report_id    nsg:distribution    ?distribution .
-        OPTIONAL {
-          ?distribution nsg:name            ?asset_name .
-          OPTIONAL { ?distribution nsg:description     ?asset_description } . 
-          ?distribution nsg:contentUrl      ?asset_content_url .
-          ?distribution nsg:encodingFormat  ?asset_encoding_format .
-					?asset_content_url nxv:deprecated false .
-        }
-    }
   }
   OPTIONAL {
     BIND(<{resourceId}> as ?analysis_report_id) .
     BIND(<{resourceId}> as ?self) .
-    ?container_resource_id        ^prov:wasDerivedFrom       ?analysis_report_id .
+    ?derivation_id        ^prov:derivation       ?analysis_report_id .
+    ?derivation_id        nsg:entity             ?container_resource_id .
     OPTIONAL {
       ?container_resource_id        s:name                   ?container_resource_name .
     }
@@ -57,16 +49,6 @@ WHERE {
     ?analysis_report_id    s:description       ?analysis_report_description .
     ?analysis_report_id nxv:createdBy ?created_by .
     ?analysis_report_id nxv:createdAt ?created_at .
-    OPTIONAL {
-        ?analysis_report_id    nsg:distribution    ?distribution .
-        OPTIONAL {
-          ?distribution nsg:name            ?asset_name .
-          OPTIONAL { ?distribution nsg:description     ?asset_description } .
-          ?distribution nsg:contentUrl      ?asset_content_url .
-          ?distribution nsg:encodingFormat  ?asset_encoding_format .
-					?asset_content_url nxv:deprecated false .
-        }
-    }
   }
 }
 LIMIT 1000`;
@@ -158,6 +140,10 @@ const AnalysisPluginContainer = ({
   projectLabel,
   resourceId,
 }: AnalysisPluginContainerProps) => {
+  const identities = useSelector((state: RootState) => state.auth.identities);
+  const currentUser = identities?.data?.identities.find(
+    id => id['@type'] === 'User'
+  );
   const nexus = useNexusContext();
   const queryClient = useQueryClient();
 
@@ -225,6 +211,23 @@ const AnalysisPluginContainer = ({
       false
     );
 
+    const uniqueReportIds = [
+      ...new Set(
+        result.items.map(
+          r => (r as AnalysisAssetSparqlQueryRowResult).analysis_report_id
+        )
+      ),
+    ];
+    const reportResources = (await Promise.all(
+      uniqueReportIds.map(reportResourceId =>
+        nexus.Resource.get(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(reportResourceId)
+        )
+      )
+    )) as Resource[];
+
     const analysisData = result.items.reduce((analysisReports, current) => {
       const currentRow = current as AnalysisAssetSparqlQueryRowResult;
 
@@ -244,30 +247,31 @@ const AnalysisPluginContainer = ({
         });
       }
 
-      const report = analysisReports.find(
-        r => r.id === currentRow['analysis_report_id']
-      );
       const reportIx = analysisReports.findIndex(
         r => r.id === currentRow['analysis_report_id']
       );
 
-      if (currentRow.asset_content_url !== undefined) {
-        report?.assets.push({
-          analysisReportId: currentRow.analysis_report_id,
-          saved: true,
-          id: currentRow.asset_content_url,
-          name: currentRow.asset_name,
-          description: currentRow.asset_description,
-          filePath: currentRow.asset_content_url,
-          encodingFormat: currentRow.asset_encoding_format,
-          preview: ({ mode }) => {
-            return <Image preview={mode === 'view'} />;
-          },
-        });
-      }
-
-      if (report) {
-        analysisReports[reportIx] = report;
+      const reportResource = reportResources.find(
+        r => r['@id'] === currentRow['analysis_report_id']
+      );
+      if (reportResource === undefined) return analysisReports;
+      if ('hasPart' in reportResource) {
+        analysisReports[reportIx].assets = [reportResource.hasPart]
+          .flat()
+          .map((asset: any) => {
+            return {
+              analysisReportId: currentRow['analysis_report_id'],
+              saved: true,
+              id: asset.distribution.contentUrl['@id'],
+              name: asset.name,
+              description: asset.description,
+              filePath: asset.distribution.contentUrl['@id'],
+              encodingFormat: asset.distribution.encodingFormat,
+              preview: ({ mode }: { mode: 'view' | 'edit' }) => {
+                return <Image preview={mode === 'view'} />;
+              },
+            };
+          });
       }
 
       return analysisReports;
@@ -316,6 +320,7 @@ const AnalysisPluginContainer = ({
       id: string;
       src: string;
       contentUrl: string;
+      deprecated: boolean;
       filename: string;
       lastUpdated: string;
       lastUpdatedBy: string;
@@ -347,6 +352,7 @@ const AnalysisPluginContainer = ({
             src,
             id: asset.id,
             contentUrl: asset.filePath,
+            deprecated: imgResource['_deprecated'],
             filename: imgResource['_filename'],
             lastUpdated: imgResource['_updatedAt'],
             lastUpdatedBy: imgResource['_updatedBy'],
@@ -387,8 +393,8 @@ const AnalysisPluginContainer = ({
         projectLabel,
         encodeURIComponent(data.resourceId)
       )) as Resource;
-      resource.distribution = [resource.distribution].flat().map(a => {
-        if (a.contentUrl['@id'] !== data.assetContentUrl) {
+      resource.hasPart = [resource.hasPart].flat().map(a => {
+        if (a.distribution.contentUrl['@id'] !== data.assetContentUrl) {
           return a;
         }
 
@@ -398,6 +404,23 @@ const AnalysisPluginContainer = ({
           description: data.caption,
         };
       });
+
+      // Add user as contributor if not already
+      const contributions = resource['contribution']
+        ? [resource['contribution']].flat()
+        : [];
+
+      if (!contributions.some(c => c.agent['@id'] === currentUser?.['@id'])) {
+        contributions.push({
+          '@type': 'Contribution',
+          agent: {
+            '@id': currentUser?.['@id'],
+            '@type': ['Person', 'Agent'],
+          },
+        });
+      }
+      resource['contribution'] = contributions;
+
       return nexus.Resource.update(
         orgLabel,
         projectLabel,
@@ -420,13 +443,16 @@ const AnalysisPluginContainer = ({
     async (data: { id?: string; name: string; description?: string }) => {
       const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
         return {
-          '@type': 'DataDownload',
-          contentUrl: { '@id': a.filePath },
-          encodingFormat: a.encodingFormat,
-          contentSize: a.contentSize,
-          digest: a.digest,
+          '@type': 'Entity',
           name: a.name,
           description: a.description,
+          distribution: {
+            '@type': 'DataDownload',
+            contentUrl: { '@id': a.filePath },
+            encodingFormat: a.encodingFormat,
+            contentSize: a.contentSize,
+            digest: a.digest,
+          },
         };
       });
 
@@ -437,9 +463,25 @@ const AnalysisPluginContainer = ({
           encodeURIComponent(data.id)
         )) as Resource;
 
-        const distribution = [resource['distribution']].flat(); // TODO: use appropriate cprefix depending on context
-        distribution.push(...unsavedAssetsToAddToDistribution);
-        resource['distribution'] = distribution;
+        const hasPart = [resource['hasPart']].flat();
+        hasPart.push(...unsavedAssetsToAddToDistribution);
+        resource['hasPart'] = hasPart;
+
+        // Add user as contributor if not already
+        const contributions = resource['contribution']
+          ? [resource['contribution']].flat()
+          : [];
+
+        if (!contributions.some(c => c.agent['@id'] === currentUser?.['@id'])) {
+          contributions.push({
+            '@type': 'Contribution',
+            agent: {
+              '@id': currentUser?.['@id'],
+              '@type': ['Person', 'Agent'],
+            },
+          });
+        }
+        resource['contribution'] = contributions;
 
         return nexus.Resource.update(
           orgLabel,
@@ -468,8 +510,8 @@ const AnalysisPluginContainer = ({
         '@type': 'AnalysisReport',
         name: data.name,
         'schema:description': data.description,
-        distribution: unsavedAssetsToAddToDistribution,
-        'prov:wasDerivedFrom': [{ '@id': resourceId }],
+        hasPart: unsavedAssetsToAddToDistribution,
+        'prov:derivation': { entity: { '@id': resourceId } },
       });
     },
     {
@@ -506,6 +548,43 @@ const AnalysisPluginContainer = ({
             );
           })
         );
+        // TODO: update report contributors
+        if (currentlyBeingEditedAnalysisReportId) {
+          const reportResource = (await nexus.Resource.get(
+            orgLabel,
+            projectLabel,
+            encodeURIComponent(currentlyBeingEditedAnalysisReportId)
+          )) as Resource;
+
+          // Add user as contributor if not already
+          const contributions = reportResource['contribution']
+            ? [reportResource['contribution']].flat()
+            : [];
+
+          if (
+            !contributions.some(c => c.agent['@id'] === currentUser?.['@id'])
+          ) {
+            contributions.push({
+              '@type': 'Contribution',
+              agent: {
+                '@id': currentUser?.['@id'],
+                '@type': ['Person', 'Agent'],
+              },
+            });
+          }
+          reportResource['contribution'] = contributions;
+
+          await nexus.Resource.update(
+            orgLabel,
+            projectLabel,
+            encodeURIComponent(reportResource['@id']),
+            reportResource._rev,
+            {
+              ...reportResource,
+              contribution: contributions,
+            }
+          );
+        }
       }
       return selectedAnalysisReports;
     },
@@ -742,62 +821,66 @@ const AnalysisPluginContainer = ({
     return savedAndUnsavedAnalysisReports.map(a => {
       return {
         ...a,
-        assets: a.assets.concat(unsavedAssets).map(m => {
-          const img = imageData?.find(img => img.contentUrl === m.filePath);
-          return {
-            ...m,
-            filename: img?.filename,
-            lastUpdated: img?.lastUpdated,
-            lastUpdatedBy: img?.lastUpdatedBy,
-            preview: ({ mode }: { mode: string }) => {
-              return (
-                <>
-                  {m.encodingFormat.substring(0, 'image'.length) ===
-                    'image' && (
-                    <ImageFileInfo
-                      previewDisabled={mode === 'edit'}
-                      src={img?.src}
-                      lastUpdated={img?.lastUpdated}
-                      lastUpdatedBy={img?.lastUpdatedBy}
-                      title={m.name}
-                      text={m.description}
-                      onSave={(name, description) => {
-                        a.id &&
-                          img &&
-                          mutateAsset.mutate({
-                            resourceId: a.id,
-                            assetContentUrl: img.contentUrl,
-                            title: name,
-                            caption: description,
-                          });
-                      }}
-                    />
-                  )}
-                  {m.encodingFormat === 'application/pdf' && img?.src && (
-                    <PDFFileInfo
-                      previewDisabled={mode === 'edit'}
-                      src={img?.src}
-                      lastUpdated={img?.lastUpdated}
-                      lastUpdatedBy={img?.lastUpdatedBy}
-                      title={m.name}
-                      text={m.description}
-                      onSave={(name, description) => {
-                        a.id &&
-                          img &&
-                          mutateAsset.mutate({
-                            resourceId: a.id,
-                            assetContentUrl: img.contentUrl,
-                            title: name,
-                            caption: description,
-                          });
-                      }}
-                    />
-                  )}
-                </>
-              );
-            },
-          };
-        }),
+        assets: a.assets
+          .concat(unsavedAssets)
+          .map(m => {
+            const img = imageData?.find(img => img.contentUrl === m.filePath);
+            return {
+              ...m,
+              filename: img?.filename,
+              deprecated: img?.deprecated,
+              lastUpdated: img?.lastUpdated,
+              lastUpdatedBy: img?.lastUpdatedBy,
+              preview: ({ mode }: { mode: string }) => {
+                return (
+                  <>
+                    {m.encodingFormat.substring(0, 'image'.length) ===
+                      'image' && (
+                      <ImageFileInfo
+                        previewDisabled={mode === 'edit'}
+                        src={img?.src}
+                        lastUpdated={img?.lastUpdated}
+                        lastUpdatedBy={img?.lastUpdatedBy}
+                        title={m.name}
+                        text={m.description}
+                        onSave={(name, description) => {
+                          a.id &&
+                            img &&
+                            mutateAsset.mutate({
+                              resourceId: a.id,
+                              assetContentUrl: img.contentUrl,
+                              title: name,
+                              caption: description,
+                            });
+                        }}
+                      />
+                    )}
+                    {m.encodingFormat === 'application/pdf' && img?.src && (
+                      <PDFFileInfo
+                        previewDisabled={mode === 'edit'}
+                        src={img?.src}
+                        lastUpdated={img?.lastUpdated}
+                        lastUpdatedBy={img?.lastUpdatedBy}
+                        title={m.name}
+                        text={m.description}
+                        onSave={(name, description) => {
+                          a.id &&
+                            img &&
+                            mutateAsset.mutate({
+                              resourceId: a.id,
+                              assetContentUrl: img.contentUrl,
+                              title: name,
+                              caption: description,
+                            });
+                        }}
+                      />
+                    )}
+                  </>
+                );
+              },
+            };
+          })
+          .filter(a => a.deprecated === undefined || !a.deprecated),
       };
     });
   }, [analysisData, imageData, unsavedAssets, mode]);
