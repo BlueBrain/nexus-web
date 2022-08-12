@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import PDFViewer, { PDFThumbnail } from '../Preview/PDFPreview';
 import FileInfo from './FileInfo';
-import { Image } from 'antd';
 
-type ImagePreviewProps = {
+type PDFPreviewProps = {
   src?: string;
   onSave: (name: string, description: string) => void;
   text?: string;
@@ -21,7 +21,7 @@ export default ({
   lastUpdated,
   lastUpdatedBy,
   previewDisabled,
-}: ImagePreviewProps) => {
+}: PDFPreviewProps) => {
   const [isVisible, setIsVisible] = React.useState(false);
 
   return (
@@ -50,18 +50,16 @@ export default ({
           </div>,
           document.body
         )}
-
-      <Image
-        src={src}
-        preview={
-          !previewDisabled && {
-            visible: isVisible,
-            onVisibleChange: visible => {
-              setIsVisible(visible);
-            },
-          }
-        }
-      />
+      {src && (
+        <PDFThumbnail
+          previewDisabled={previewDisabled}
+          url={src}
+          onPreview={() => !previewDisabled && setIsVisible(true)}
+        />
+      )}
+      {isVisible && src && (
+        <PDFViewer url={src} closePreview={() => setIsVisible(false)} />
+      )}
     </>
   );
 };

@@ -47,13 +47,7 @@ export type Asset = {
   filename?: string;
   lastUpdated?: string;
   lastUpdatedBy?: string;
-  preview: ({
-    scale,
-    mode,
-  }: {
-    scale: number;
-    mode: 'view' | 'edit';
-  }) => React.ReactElement;
+  preview: ({ mode }: { mode: 'view' | 'edit' }) => React.ReactElement;
 };
 
 export type AnalysisReport = {
@@ -422,103 +416,112 @@ const AnalysisPlugin = ({
                     </Button>
                   </div>
                 )}
-                {analysisReport.assets.map((asset, i) => {
-                  const minThumbnailSize = 100;
-                  return (
-                    <div key={asset.id} className="asset-container">
-                      <div
-                        aria-label="Analysis Asset"
-                        className={`asset ${
-                          selectedAssets &&
-                          selectedAssets.findIndex(v => v === asset.id) > -1
-                            ? 'selected'
-                            : ''
-                        }`}
-                        style={{
-                          height:
-                            minThumbnailSize +
-                            imagePreviewScale * (imagePreviewScale / 30),
-                          width:
-                            minThumbnailSize +
-                            imagePreviewScale * (imagePreviewScale / 30),
-                        }}
-                        onClick={() => {
-                          if (
-                            mode === 'edit' &&
+                <ul>
+                  {analysisReport.assets.map((asset, i) => {
+                    const minThumbnailSize = 100;
+                    return (
+                      <li
+                        key={asset.id}
+                        className="asset-container"
+                        aria-label={
+                          asset.name !== '' ? asset.name : asset.filename
+                        }
+                      >
+                        <div
+                          aria-label="Analysis File"
+                          className={`asset ${
+                            selectedAssets &&
+                            selectedAssets.findIndex(v => v === asset.id) > -1
+                              ? 'selected'
+                              : ''
+                          }`}
+                          style={{
+                            height:
+                              minThumbnailSize +
+                              imagePreviewScale * (imagePreviewScale / 30),
+                            width:
+                              minThumbnailSize +
+                              imagePreviewScale * (imagePreviewScale / 30),
+                          }}
+                          onClick={() => {
+                            if (
+                              mode === 'edit' &&
+                              'id' in analysisReport &&
+                              currentlyBeingEditedAnalysisReportId ===
+                                analysisReport.id
+                            ) {
+                              dispatch({
+                                type: ActionType.SELECT_ASSET,
+                                payload: { assetId: asset.id },
+                              });
+                            }
+                          }}
+                        >
+                          {asset.preview({
+                            mode: mode === 'create' ? 'edit' : mode,
+                          })}
+                          {mode === 'edit' &&
                             'id' in analysisReport &&
                             currentlyBeingEditedAnalysisReportId ===
-                              analysisReport.id
-                          ) {
-                            dispatch({
-                              type: ActionType.SELECT_ASSET,
-                              payload: { assetId: asset.id },
-                            });
-                          }
-                        }}
-                      >
-                        {asset.preview({
-                          mode: mode === 'create' ? 'edit' : mode,
-                          scale: imagePreviewScale,
-                        })}
-                        {mode === 'edit' &&
-                          'id' in analysisReport &&
-                          currentlyBeingEditedAnalysisReportId ===
-                            analysisReport.id && (
-                            <Checkbox
-                              checked={
-                                selectedAssets &&
-                                selectedAssets.some(v => v === asset.id)
-                              }
-                              className="selectedCheckbox"
-                              onClick={e => {
-                                e.stopPropagation();
-                              }}
-                              onChange={e => {
-                                dispatch({
-                                  type: ActionType.SELECT_ASSET,
-                                  payload: { assetId: asset.id },
-                                });
-                              }}
-                            ></Checkbox>
-                          )}
-                      </div>
-                      <div
-                        aria-label="Asset Details"
-                        className="asset-details"
-                        style={{
-                          width:
-                            minThumbnailSize +
-                            imagePreviewScale * (imagePreviewScale / 30),
-                        }}
-                      >
-                        <label
-                          className="asset-details__name"
-                          title={
-                            asset.name !== '' ? asset.name : asset.filename
-                          }
-                        >
-                          {asset.name ? asset.name : asset.filename}
-                        </label>
-                        <div>
-                          <label className="asset-details__last-updated-by">
-                            <UserOutlined />
-                            &nbsp;
-                            {asset.lastUpdatedBy &&
-                              getUsername(asset.lastUpdatedBy)}
-                          </label>
-                          <label
-                            className="asset-details__last-updated"
-                            aria-label="Last Updated"
-                          >
-                            <CalendarOutlined />
-                            &nbsp;
-                            <FriendlyTimeAgo date={moment(asset.lastUpdated)} />
-                          </label>
+                              analysisReport.id && (
+                              <Checkbox
+                                checked={
+                                  selectedAssets &&
+                                  selectedAssets.some(v => v === asset.id)
+                                }
+                                className="selectedCheckbox"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                }}
+                                onChange={e => {
+                                  dispatch({
+                                    type: ActionType.SELECT_ASSET,
+                                    payload: { assetId: asset.id },
+                                  });
+                                }}
+                              ></Checkbox>
+                            )}
                         </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                        <div
+                          aria-label="Asset Details"
+                          className="asset-details"
+                          style={{
+                            width:
+                              minThumbnailSize +
+                              imagePreviewScale * (imagePreviewScale / 30),
+                          }}
+                        >
+                          <label
+                            className="asset-details__name"
+                            title={
+                              asset.name !== '' ? asset.name : asset.filename
+                            }
+                          >
+                            {asset.name ? asset.name : asset.filename}
+                          </label>
+                          <div>
+                            <label className="asset-details__last-updated-by">
+                              <UserOutlined />
+                              &nbsp;
+                              {asset.lastUpdatedBy &&
+                                getUsername(asset.lastUpdatedBy)}
+                            </label>
+                            <label
+                              className="asset-details__last-updated"
+                              aria-label="Last Updated"
+                            >
+                              <CalendarOutlined />
+                              &nbsp;
+                              <FriendlyTimeAgo
+                                date={moment(asset.lastUpdated)}
+                              />
+                            </label>
+                          </div>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
               </section>
               {mode === 'edit' && selectedAssets && selectedAssets.length > 0 && (
                 <section>

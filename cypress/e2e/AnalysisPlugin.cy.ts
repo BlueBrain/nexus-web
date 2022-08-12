@@ -79,7 +79,7 @@ describe('Analysis Plugin', () => {
     expect(cy.findByRole('heading', { name: /Analysis Name/i })).to.exist;
   });
 
-  it('user can edit an existing analysis report updating its name, description, and adding another image', function() {
+  it('user can edit an existing analysis report updating its name, description, and adding another image and pdf file', function() {
     cy.visit(
       `${Cypress.env('ORG_LABEL')}/${
         this.projectLabel
@@ -96,6 +96,7 @@ describe('Analysis Plugin', () => {
     cy.findByRole('button', { name: 'Add Files to Analysis' }).click();
     cy.findByText(/Click or drag/i).click();
     cy.get('input[type=file]').attachFile('sample2.png');
+    cy.get('input[type=file]').attachFile('sample_pdf.pdf');
     cy.wait(5000);
     cy.findByRole('button', { name: 'Close' }).click();
     cy.findByRole('button', { name: 'Save' }).click();
@@ -104,10 +105,10 @@ describe('Analysis Plugin', () => {
       'Cell density O1.v6-RC2-v2'
     );
     cy.findByLabelText('Analysis Description').should('contain', '-v2');
-    cy.findAllByLabelText('Analysis Asset').should('have.length', 2);
+    cy.findAllByLabelText('Analysis File').should('have.length', 3);
   });
 
-  it('user can edit open preview of existing image asset and edit its name and description', function() {
+  it('user can open preview of existing image asset and edit its name and description', function() {
     cy.visit(
       `${Cypress.env('ORG_LABEL')}/${
         this.projectLabel
@@ -115,8 +116,11 @@ describe('Analysis Plugin', () => {
     );
     // Open anlaysis plugin
     cy.findByRole('button', { name: /Analysis/i }).click();
-    cy.findAllByLabelText('Analysis Asset')
+
+    //cy.findAllByLabelText('Analysis Asset')
+    cy.findAllByRole('listitem', { name: /sample2/ })
       .first()
+      .findByLabelText(/Analysis File/)
       .click();
     cy.findByRole('button', { name: 'Edit name and description' }).click();
     cy.findByRole('textbox', { name: 'Asset Name' }).should(
@@ -135,5 +139,34 @@ describe('Analysis Plugin', () => {
     );
     cy.findByRole('button', { name: /Save/i }).click();
     expect(cy.findByText('This is the asset description')).to.exist;
+  });
+
+  it('user can open preview of existing pdf asset', function() {
+    cy.visit(
+      `${Cypress.env('ORG_LABEL')}/${
+        this.projectLabel
+      }/resources/${encodeURIComponent(this.fullResourceId)}`
+    );
+    // Open anlaysis plugin
+    cy.findByRole('button', { name: /Analysis/i }).click();
+    cy.wait(5000);
+    cy.findByRole('listitem', { name: /sample_pdf/ })
+      .findByLabelText(/Analysis File/)
+      .click();
+    cy.findByRole('button', { name: 'Edit name and description' }).click();
+    cy.findByRole('textbox', { name: 'Asset Name' }).should(
+      'contain.value',
+      'sample'
+    );
+    cy.findByRole('textbox', { name: 'Asset Description' }).should(
+      'have.text',
+      ''
+    );
+    cy.findByRole('textbox', { name: 'Asset Name' })
+      .clear()
+      .type('Better name');
+    cy.findByRole('textbox', { name: 'Asset Description' }).type(
+      'This is the asset description'
+    );
   });
 });

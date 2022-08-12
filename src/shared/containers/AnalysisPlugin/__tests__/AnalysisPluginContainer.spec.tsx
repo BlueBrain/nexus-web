@@ -8,21 +8,21 @@ import { deltaPath } from '__mocks__/handlers/handlers';
 import {
   render,
   server,
-  fireEvent,
   waitFor,
   screen,
+  cleanup,
 } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
-import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
-
+import userEvent from '@testing-library/user-event';
 import {
   sparqlAnalysisReportNoResultsHandler,
   resourcesAnalysisReportType,
   sparqlAnalysisReportSingleResult,
+  imageResourceFile,
 } from '__mocks__/handlers/AnalysisPlugin/handlers';
 
 describe('Analysis Plugin', () => {
@@ -49,6 +49,7 @@ describe('Analysis Plugin', () => {
   // reset any request handlers that are declared as a part of our tests
   // (i.e. for testing one-time error scenarios)
   afterEach(() => {
+    cleanup();
     server.resetHandlers();
     queryClient.clear();
   });
@@ -64,23 +65,21 @@ describe('Analysis Plugin', () => {
 
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="resourceId"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="resourceId"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
     await waitFor(() => {
       const addButton = screen.getByRole('button', {
@@ -92,26 +91,24 @@ describe('Analysis Plugin', () => {
 
   it('clicking add New Analysis Report button results in screen displaying all required options to create new Analysis Report', async () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
-
+    const user = userEvent.setup();
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="resourceId"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="resourceId"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
     await waitFor(() => {
       screen.getByRole('button', {
@@ -119,12 +116,10 @@ describe('Analysis Plugin', () => {
       });
     });
 
-    await act(async () => {
-      const addButton = await screen.findByRole('button', {
-        name: 'Add Analysis Report',
-      });
-      fireEvent.click(addButton);
+    const addButton = await screen.findByRole('button', {
+      name: 'Add Analysis Report',
     });
+    user.click(addButton);
 
     expect(
       await waitFor(() => screen.getByRole('button', { name: 'Save' }))
@@ -153,28 +148,27 @@ describe('Analysis Plugin', () => {
     ).toBeInTheDocument();
   });
 
+  // TODO: Fix warning errors from this test
   it('On Create New Analysis screen, clicking cancel will return to the view mode', async () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
-
+    const user = userEvent.setup();
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="resourceId"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="resourceId"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
     await waitFor(() => {
       screen.getByRole('button', {
@@ -182,25 +176,23 @@ describe('Analysis Plugin', () => {
       });
     });
 
-    await act(async () => {
-      const addButton = await screen.findByRole('button', {
-        name: 'Add Analysis Report',
-      });
-      fireEvent.click(addButton);
+    const addButton = await screen.findByRole('button', {
+      name: 'Add Analysis Report',
     });
+    user.click(addButton);
 
-    await act(async () => {
-      const cancelBtn = await waitFor(() =>
-        screen.getByRole('button', { name: 'Cancel' })
-      );
-      fireEvent.click(cancelBtn);
-    });
+    const cancelBtn = await waitFor(() =>
+      screen.getByRole('button', { name: 'Cancel' })
+    );
+    user.click(cancelBtn);
 
-    await waitFor(() => {
-      screen.getByRole('button', {
-        name: 'Add Analysis Report',
-      });
-    });
+    expect(
+      await waitFor(() =>
+        screen.getByRole('button', {
+          name: 'Add Analysis Report',
+        })
+      )
+    ).toBeInTheDocument();
   });
 
   it('On Create New Analysis screen, clicking save will trigger analysis report to be saved', async () => {
@@ -208,84 +200,75 @@ describe('Analysis Plugin', () => {
       sparqlAnalysisReportNoResultsHandler,
       resourcesAnalysisReportType
     );
-
+    const user = userEvent.setup();
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="resourceId"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="resourceId"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
-    await waitFor(() => {
+    await waitFor(() =>
       screen.getByRole('button', {
         name: 'Add Analysis Report',
-      });
-    });
+      })
+    );
 
-    await act(async () => {
-      const addButton = await screen.findByRole('button', {
-        name: 'Add Analysis Report',
-      });
-      fireEvent.click(addButton);
+    const addButton = await screen.findByRole('button', {
+      name: 'Add Analysis Report',
     });
+    user.click(addButton);
 
     const analysisNameTextBox = await waitFor(() =>
       screen.getByRole('textbox', { name: 'Analysis Name' })
     );
-    await fireEvent.change(analysisNameTextBox, {
-      target: { value: 'New analysis name' },
-    });
+
+    user.type(analysisNameTextBox, 'New analysis name');
 
     const analysisDescriptionTextBox = await waitFor(() =>
       screen.getByRole('textbox', { name: 'Analysis Description' })
     );
-    await fireEvent.change(analysisDescriptionTextBox, {
-      target: { value: 'New analysis description' },
-    });
 
-    await act(async () => {
-      const saveBtn = await waitFor(() =>
-        screen.getByRole('button', { name: 'Save' })
-      );
-      fireEvent.click(saveBtn);
-    });
+    user.type(analysisDescriptionTextBox, 'New analysis description');
+
+    const saveBtn = await waitFor(() =>
+      screen.getByRole('button', { name: 'Save' })
+    );
+
+    user.click(saveBtn);
   });
 
   it('On Create New Analysis screen, clicking cancel will return to the view mode', async () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
-
+    const user = userEvent.setup();
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="resourceId"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="resourceId"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
     await waitFor(() => {
       screen.getByRole('button', {
@@ -293,19 +276,15 @@ describe('Analysis Plugin', () => {
       });
     });
 
-    await act(async () => {
-      const addButton = await screen.findByRole('button', {
-        name: 'Add Analysis Report',
-      });
-      fireEvent.click(addButton);
+    const addButton = await screen.findByRole('button', {
+      name: 'Add Analysis Report',
     });
+    user.click(addButton);
 
-    await act(async () => {
-      const cancelBtn = await waitFor(() =>
-        screen.getByRole('button', { name: 'Cancel' })
-      );
-      fireEvent.click(cancelBtn);
-    });
+    const cancelBtn = await waitFor(() =>
+      screen.getByRole('button', { name: 'Cancel' })
+    );
+    user.click(cancelBtn);
 
     await waitFor(() => {
       screen.getByRole('button', {
@@ -315,26 +294,24 @@ describe('Analysis Plugin', () => {
   });
 
   it('On an individual analysis report, the option to navigate to the parent container resource is presented', async () => {
-    server.use(sparqlAnalysisReportSingleResult);
+    server.use(sparqlAnalysisReportSingleResult, imageResourceFile);
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
     await waitFor(() => {
       screen.getByRole('button', {
@@ -345,33 +322,29 @@ describe('Analysis Plugin', () => {
 
   it('On a container analysis resource, each individual analysis has an options menu with the option to navigate to the resource', async () => {
     server.use(sparqlAnalysisReportSingleResult);
+    const user = userEvent.setup();
     const history = createMemoryHistory({});
-
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
-    await act(async () => {
-      const optionsButton = await screen.findByRole('button', {
-        name: 'Options',
-      });
-      fireEvent.mouseEnter(optionsButton);
+    const optionsButton = await screen.findByRole('button', {
+      name: 'Options',
     });
+    user.hover(optionsButton);
 
     expect(
       await waitFor(() =>
@@ -382,26 +355,23 @@ describe('Analysis Plugin', () => {
 
   it('on initial load the first analysis report is visible', async () => {
     server.use(sparqlAnalysisReportSingleResult);
-
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="resourceId"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="resourceId"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
     expect(
       await waitFor(
@@ -414,26 +384,23 @@ describe('Analysis Plugin', () => {
 
   it('when at least one of the selected analysis reports has an asset then the zoom options are visible', async () => {
     server.use(sparqlAnalysisReportSingleResult);
-
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
     expect(
       await waitFor(() => screen.getByLabelText(/Increase\/Decrease/))
@@ -442,26 +409,23 @@ describe('Analysis Plugin', () => {
 
   it('when no analysis report selected, zoom options are hidden', async () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
-
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="resourceId"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="resourceId"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
 
     expect(
       screen.queryByLabelText(/Increase\/Decrease/)
@@ -470,26 +434,23 @@ describe('Analysis Plugin', () => {
 
   it('analysis report assets show image name (or filename if not present) along with last updated details', async () => {
     server.use(sparqlAnalysisReportSingleResult);
-
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
     // expect asset name to be present
     expect(
       await waitFor(() => screen.getByText('insta_logo_large.png'))
@@ -498,73 +459,73 @@ describe('Analysis Plugin', () => {
 
   it('clicking analysis report asset opens preview of asset', async () => {
     server.use(sparqlAnalysisReportSingleResult);
-
+    const user = userEvent.setup();
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
+
     // expect asset name to be present
-    await act(async () => {
-      const asset = await waitFor(() =>
-        screen.getByLabelText('Analysis Asset')
-      );
-      fireEvent.click(asset);
-      expect(
-        await waitFor(() => screen.getByText('insta_logo_large.png'))
-      ).toBeInTheDocument();
-    });
-  });
 
-  it('On edit mode image delete button is visible', async () => {
-    server.use(sparqlAnalysisReportSingleResult);
-    const history = createMemoryHistory({});
-
-    const store = mockStore(mockState);
-    await act(async () => {
-      await render(
-        <Router history={history}>
-          <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <NexusProvider nexusClient={nexus}>
-                <AnalysisPluginContainer
-                  projectLabel="projectLabel"
-                  orgLabel="orgLabel"
-                  resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-                ></AnalysisPluginContainer>
-              </NexusProvider>
-            </QueryClientProvider>
-          </Provider>
-        </Router>
-      );
-    });
-
-    await act(async () => {
-      const optionsButton = await screen.findByRole('button', {
-        name: 'Options',
-      });
-      fireEvent.mouseEnter(optionsButton);
-      await waitFor(() => {
-        const edit = screen.getByRole('menuitem', { name: 'Edit' });
-        fireEvent.click(edit);
-      });
-    });
+    const asset = await waitFor(() =>
+      screen.getByLabelText(/insta_logo_large/)
+    );
+    user.click(asset);
     expect(
-      await waitFor(() => screen.getByLabelText('Analysis Asset'))
+      await waitFor(() => screen.getByText('insta_logo_large.png'))
+    ).toBeInTheDocument();
+  });
+  it('In edit mode, image delete button is visible', async () => {
+    server.use(sparqlAnalysisReportSingleResult);
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
+    const history = createMemoryHistory({});
+    const store = mockStore(mockState);
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
+
+    const optionsButton = await screen.findByRole('button', {
+      name: 'Options',
+    });
+    user.hover(optionsButton);
+
+    await waitFor(() => {
+      const edit = screen.getByRole('menuitem', { name: 'Edit' });
+      user.click(edit);
+    });
+
+    const analysisFile = await waitFor(
+      () => screen.getAllByLabelText('Analysis File')[0]
+    );
+    user.click(analysisFile);
+
+    expect(
+      await waitFor(() => screen.getByRole('button', { name: 'Delete' }))
     ).toBeInTheDocument();
   });
 });

@@ -54,14 +54,21 @@
     }
   }
   .assets {
-    display: flex;
-    flex-wrap: wrap;
-    margin-right: 30px;
-    gap: 12px;
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      margin-right: 30px;
+      gap: 12px;
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      li {
+        display: block;
+      }
+    }
   }
   .asset-container {
     .asset {
-      cursor: pointer;
       border: 1px inset rgba(211, 220, 50, 0);
       &.selected {
         color: @fusion-background-color;

@@ -127,7 +127,7 @@ const FileInfo = ({
                     onClick={() => {
                       setEditedText(text);
                       setEditedTitle(title);
-                      setMode('expanded');
+                      setMode('minified');
                     }}
                   >
                     Cancel

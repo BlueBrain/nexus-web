@@ -1,5 +1,6 @@
 import { rest } from 'msw';
 import { deltaPath } from '__mocks__/handlers/handlers';
+import sample1 from '../../../shared/components/AnalysisPlugin/sample-images/sample1.png';
 
 export const sparqlAnalysisReportNoResultsHandler = rest.post(
   deltaPath('/views/:orgLabel/:projectLabel/graph/sparql'),
@@ -15,6 +16,7 @@ export const sparqlAnalysisReportNoResultsHandler = rest.post(
           'asset_content_url',
           'asset_encoding_format',
           'asset_name',
+          'asset_description',
           'self',
         ],
       },
@@ -41,6 +43,7 @@ export const sparqlAnalysisReportSingleResult = rest.post(
           'asset_content_url',
           'asset_encoding_format',
           'asset_name',
+          'asset_description',
           'self',
         ],
       },
@@ -74,6 +77,63 @@ export const sparqlAnalysisReportSingleResult = rest.post(
               type: 'literal',
               value: 'insta_logo_large.png',
             },
+            asset_description: {
+              type: 'literal',
+              value: 'This is a short description about our asset.',
+            },
+            container_resource_id: {
+              type: 'uri',
+              value:
+                'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1',
+            },
+            container_resource_name: {
+              type: 'literal',
+              value: 'Analysis container',
+            },
+            created_at: {
+              datatype: 'http://www.w3.org/2001/XMLSchema#dateTime',
+              type: 'literal',
+              value: '2022-06-17T04:14:06.357Z',
+            },
+            created_by: {
+              type: 'uri',
+              value:
+                'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
+            },
+            self: {
+              type: 'uri',
+              value:
+                'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1',
+            },
+          },
+          {
+            analysis_report_description: {
+              type: 'literal',
+              value:
+                "This is our analysis report. Isn't it great! Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. 555",
+            },
+            analysis_report_id: {
+              type: 'uri',
+              value:
+                'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1',
+            },
+            analysis_report_name: {
+              type: 'literal',
+              value: 'Our Very First Analysis Report!',
+            },
+            asset_content_url: {
+              type: 'literal',
+              value:
+                'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/pdffile',
+            },
+            asset_encoding_format: {
+              type: 'literal',
+              value: 'application/pdf',
+            },
+            asset_name: {
+              type: 'literal',
+              value: 'sample_pdf.pdf',
+            },
             container_resource_id: {
               type: 'uri',
               value:
@@ -104,6 +164,24 @@ export const sparqlAnalysisReportSingleResult = rest.post(
     };
 
     return res(ctx.status(200), ctx.json(mockResponse));
+  }
+);
+
+export const imageResourceFile = rest.get(
+  deltaPath(
+    '/resources/orgLabel/projectLabel/_/https%3A%2F%2Fdev.nise.bbp.epfl.ch%2Fnexus%2Fv1%2Fresources%2Fbbp-users%2Fnicholas%2F_%2Fd3d1cc48-9547-4c9c-a08f-f281ffb458cc'
+  ),
+  (req, res, ctx) => {
+    return res(ctx.status(200), ctx.body(sample1));
+  }
+);
+
+export const pdfResourceFile = rest.get(
+  deltaPath(
+    'resources/orgLabel/projectLabel/_/https%3A%2F%2Fdev.nise.bbp.epfl.ch%2Fnexus%2Fv1%2Fresources%2Fbbp-users%2Fnicholas%2F_%2Fpdffile'
+  ),
+  (req, res, ctx) => {
+    return res(ctx.status(200), ctx.body(sample1));
   }
 );
 
