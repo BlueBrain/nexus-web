@@ -30,10 +30,10 @@ WHERE {
     ?derivation_id        ^prov:derivation       ?analysis_report_id .
     ?derivation_id        nsg:entity             ?container_resource_id .
     OPTIONAL {
-      ?container_resource_id        s:name                   ?container_resource_name .
+      ?container_resource_id        nsg:name                   ?container_resource_name .
     }
     ?analysis_report_id    nsg:name            ?analysis_report_name .
-    ?analysis_report_id    s:description       ?analysis_report_description .
+    ?analysis_report_id    nsg:description       ?analysis_report_description .
     ?analysis_report_id nxv:createdBy ?created_by .
     ?analysis_report_id nxv:createdAt ?created_at .
   }
@@ -43,10 +43,10 @@ WHERE {
     ?derivation_id        ^prov:derivation       ?analysis_report_id .
     ?derivation_id        nsg:entity             ?container_resource_id .
     OPTIONAL {
-      ?container_resource_id        s:name                   ?container_resource_name .
+      ?container_resource_id        nsg:name                   ?container_resource_name .
     }
     ?analysis_report_id    nsg:name            ?analysis_report_name .
-    ?analysis_report_id    s:description       ?analysis_report_description .
+    ?analysis_report_id    nsg:description       ?analysis_report_description .
     ?analysis_report_id nxv:createdBy ?created_by .
     ?analysis_report_id nxv:createdAt ?created_at .
   }
@@ -491,7 +491,7 @@ const AnalysisPluginContainer = ({
           {
             ...resource,
             name: data.name,
-            'schema:description': data.description,
+            description: data.description,
           }
         );
       }
@@ -501,17 +501,15 @@ const AnalysisPluginContainer = ({
         '@context': [
           {
             '@vocab': 'https://neuroshapes.org/',
-            nsg: 'https://neuroshapes.org/',
             nxv: 'https://bluebrain.github.io/nexus/vocabulary/',
-            prov: 'http://www.w3.org/ns/prov#',
-            schema: 'http://schema.org/',
+            derivation: 'http://www.w3.org/ns/prov#derivation',
           },
         ],
-        '@type': 'AnalysisReport',
+        '@type': 'Report',
         name: data.name,
-        'schema:description': data.description,
+        description: data.description,
         hasPart: unsavedAssetsToAddToDistribution,
-        'prov:derivation': { entity: { '@id': resourceId } },
+        derivation: { entity: { '@id': resourceId } },
       });
     },
     {
