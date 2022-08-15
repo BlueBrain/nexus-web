@@ -429,13 +429,14 @@ const AnalysisPlugin = ({
                       >
                         <div
                           aria-label="Analysis File"
-                          className={`asset ${
+                          className={`center-cropped asset ${
                             selectedAssets &&
                             selectedAssets.findIndex(v => v === asset.id) > -1
                               ? 'selected'
                               : ''
                           }`}
                           style={{
+                            overflow: 'hidden',
                             height:
                               minThumbnailSize +
                               imagePreviewScale * (imagePreviewScale / 30),

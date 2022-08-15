@@ -76,9 +76,16 @@
         transition: border 0.3s;
       }
       display: flex;
-
+      
+      .center-cropped {
+        width: 100px;
+        height: 100px;
+        background-position: center center;
+        background-repeat: no-repeat;
+      }
       .ant-image {
         margin: auto;
+        overflow: hidden;
       }
     }
     .asset-details {
