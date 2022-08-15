@@ -152,7 +152,6 @@ describe('Analysis Plugin', () => {
     ).toBeInTheDocument();
   });
 
-  // TODO: Fix warning errors from this test
   it('On Create New Analysis screen, clicking cancel will return to the view mode', async () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
     const user = userEvent.setup();

@@ -620,7 +620,18 @@ const AnalysisPluginContainer = ({
         return (
           <>
             {file._mediaType.substring(0, 'image'.length) === 'image' && (
-              <Image placeholder={<FileImageOutlined />} preview={false} />
+              <>
+                {file._mediaType.substring(0, 'image'.length) === 'image' && (
+                  <Image placeholder={<FileImageOutlined />} preview={false} />
+                )}
+                {file._mediaType === 'application/pdf' && (
+                  <PDFThumbnail
+                    url={file['@id']}
+                    onPreview={() => {}}
+                    previewDisabled={true}
+                  />
+                )}
+              </>
             )}
             {file._mediaType === 'application/pdf' && (
               <PDFThumbnail
