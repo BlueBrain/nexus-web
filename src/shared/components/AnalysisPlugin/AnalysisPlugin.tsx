@@ -436,7 +436,6 @@ const AnalysisPlugin = ({
                               : ''
                           }`}
                           style={{
-                            overflow: 'hidden',
                             height:
                               minThumbnailSize +
                               imagePreviewScale * (imagePreviewScale / 30),
