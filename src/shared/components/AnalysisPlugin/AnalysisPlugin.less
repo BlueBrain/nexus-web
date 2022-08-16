@@ -77,15 +77,13 @@
       }
       display: flex;
 
-      .center-cropped {
-        width: 100px;
-        height: 100px;
-        background-position: center center;
-        background-repeat: no-repeat;
-      }
       .ant-image {
+        aspect-ratio: 1.61;
         margin: auto;
         overflow: hidden;
+        img {
+          object-fit: fill;
+        }
       }
     }
     .asset-details {

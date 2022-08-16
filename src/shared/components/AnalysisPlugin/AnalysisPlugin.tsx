@@ -429,7 +429,7 @@ const AnalysisPlugin = ({
                       >
                         <div
                           aria-label="Analysis File"
-                          className={`center-cropped asset ${
+                          className={`asset ${
                             selectedAssets &&
                             selectedAssets.findIndex(v => v === asset.id) > -1
                               ? 'selected'
