@@ -181,7 +181,7 @@ const StudioEditorForm: React.FC<{
             },
           ]}
         >
-          <Input className="ui-studio-label-input" />
+          <Input aria-label="Label" className="ui-studio-label-input" />
         </Form.Item>
         <Form.Item
           label={

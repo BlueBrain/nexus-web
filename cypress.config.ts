@@ -13,7 +13,7 @@ export default defineConfig({
   video: false,
   e2e: {
     baseUrl: 'http://localhost:8000',
-    defaultCommandTimeout: 8000,
+    defaultCommandTimeout: 10000,
     experimentalSessionAndOrigin: true,
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     setupNodeEvents(on, config) {
