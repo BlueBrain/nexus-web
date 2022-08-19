@@ -92,6 +92,26 @@ describe('Studios', () => {
 
     cy.findByRole('menuitem', { name: /Test Workspace 1/ }).click();
     cy.wait(2000);
+
+    cy.findAllByRole('menuitem', { name: /Dashboard/ })
+      .should('have.length', 5)
+      .each((dashboardMenuItem, ix) => {
+        expect(dashboardMenuItem.text()).to.equal(`Test Dashboard ${ix + 1}`);
+      });
+
+    cy.wait(3000);
+  });
+
+  it('user can edit a workspace, save it and the dashboards will remain in the sam order', function() {
+    cy.visit(this.studioUrl);
+    cy.findByRole('button', { name: /Workspace/ }).click();
+    cy.findByRole('button', { name: /Edit/ }).click();
+    cy.findByRole('button', { name: /Save/ }).click();
+    cy.wait(3000);
+
+    cy.findByRole('menuitem', { name: /Test Workspace 1/ }).click();
+    cy.wait(2000);
+
     cy.findAllByRole('menuitem', { name: /Dashboard/ })
       .should('have.length', 5)
       .each((dashboardMenuItem, ix) => {
