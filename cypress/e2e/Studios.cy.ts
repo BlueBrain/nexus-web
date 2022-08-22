@@ -1,5 +1,3 @@
-import { Resource } from '@bbp/nexus-sdk';
-
 describe('Studios', () => {
   before(() => {
     cy.login(
