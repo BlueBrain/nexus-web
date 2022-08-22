@@ -23,6 +23,7 @@ import {
   resourcesAnalysisReportType,
   sparqlAnalysisReportSingleResult,
   imageResourceFile,
+  reportResource,
 } from '__mocks__/handlers/AnalysisPlugin/handlers';
 
 describe('Analysis Plugin', () => {
@@ -30,6 +31,9 @@ describe('Analysis Plugin', () => {
     config: {
       apiEndpoint: deltaPath(),
       analysisPluginSparqlDataQuery: 'detailedCircuit',
+    },
+    auth: {
+      identities: [],
     },
   };
   const queryClient = new QueryClient();
@@ -148,7 +152,6 @@ describe('Analysis Plugin', () => {
     ).toBeInTheDocument();
   });
 
-  // TODO: Fix warning errors from this test
   it('On Create New Analysis screen, clicking cancel will return to the view mode', async () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
     const user = userEvent.setup();
@@ -294,7 +297,11 @@ describe('Analysis Plugin', () => {
   });
 
   it('On an individual analysis report, the option to navigate to the parent container resource is presented', async () => {
-    server.use(sparqlAnalysisReportSingleResult, imageResourceFile);
+    server.use(
+      sparqlAnalysisReportSingleResult,
+      reportResource,
+      imageResourceFile
+    );
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
     render(
@@ -321,7 +328,7 @@ describe('Analysis Plugin', () => {
   });
 
   it('On a container analysis resource, each individual analysis has an options menu with the option to navigate to the resource', async () => {
-    server.use(sparqlAnalysisReportSingleResult);
+    server.use(sparqlAnalysisReportSingleResult, reportResource);
     const user = userEvent.setup();
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
@@ -354,7 +361,7 @@ describe('Analysis Plugin', () => {
   });
 
   it('on initial load the first analysis report is visible', async () => {
-    server.use(sparqlAnalysisReportSingleResult);
+    server.use(sparqlAnalysisReportSingleResult, reportResource);
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
     render(
@@ -383,7 +390,7 @@ describe('Analysis Plugin', () => {
   });
 
   it('when at least one of the selected analysis reports has an asset then the zoom options are visible', async () => {
-    server.use(sparqlAnalysisReportSingleResult);
+    server.use(sparqlAnalysisReportSingleResult, reportResource);
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
     render(
@@ -433,7 +440,7 @@ describe('Analysis Plugin', () => {
   });
 
   it('analysis report assets show image name (or filename if not present) along with last updated details', async () => {
-    server.use(sparqlAnalysisReportSingleResult);
+    server.use(sparqlAnalysisReportSingleResult, reportResource);
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
     render(
@@ -458,7 +465,7 @@ describe('Analysis Plugin', () => {
   });
 
   it('clicking analysis report asset opens preview of asset', async () => {
-    server.use(sparqlAnalysisReportSingleResult);
+    server.use(sparqlAnalysisReportSingleResult, reportResource);
     const user = userEvent.setup();
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
@@ -489,7 +496,7 @@ describe('Analysis Plugin', () => {
     ).toBeInTheDocument();
   });
   it('In edit mode, image delete button is visible', async () => {
-    server.use(sparqlAnalysisReportSingleResult);
+    server.use(sparqlAnalysisReportSingleResult, reportResource);
     const user = userEvent.setup({ pointerEventsCheck: 0 });
     const history = createMemoryHistory({});
     const store = mockStore(mockState);

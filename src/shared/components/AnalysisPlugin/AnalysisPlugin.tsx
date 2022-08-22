@@ -47,6 +47,7 @@ export type Asset = {
   filename?: string;
   lastUpdated?: string;
   lastUpdatedBy?: string;
+  deprecated?: boolean;
   preview: ({ mode }: { mode: 'view' | 'edit' }) => React.ReactElement;
 };
 
