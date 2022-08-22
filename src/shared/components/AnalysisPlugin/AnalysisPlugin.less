@@ -78,7 +78,12 @@
       display: flex;
 
       .ant-image {
+        aspect-ratio: 1.61;
         margin: auto;
+        overflow: hidden;
+        img {
+          object-fit: fill;
+        }
       }
     }
     .asset-details {
