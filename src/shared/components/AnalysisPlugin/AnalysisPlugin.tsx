@@ -22,6 +22,7 @@ import {
   Checkbox,
   Modal,
 } from 'antd';
+import { without } from 'lodash';
 import * as React from 'react';
 import { getUsername } from '../../../shared/utils';
 import FriendlyTimeAgo from '../FriendlyDate';
@@ -32,6 +33,7 @@ import {
   ActionType,
   AnalysesAction,
 } from '../../../shared/containers/AnalysisPlugin/AnalysisPluginContainer';
+import { useState } from '@storybook/addons';
 
 const { Panel } = Collapse;
 
@@ -63,6 +65,7 @@ export type AnalysisReport = {
   containerId?: string;
   containerName?: string;
   containerType?: string;
+  containerCategory?: string;
   name: string;
   type?: string;
   description?: string;
@@ -123,6 +126,9 @@ const AnalysisPlugin = ({
   onClickRelatedResource,
 }: AnalysisPluginProps) => {
   const { Option } = Select;
+  const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
+    []
+  );
   const onChangeAnalysisReports = (value: string[]) => {
     console.log('ONCHANGE TRIGGERED');
     dispatch({
@@ -140,11 +146,16 @@ const AnalysisPlugin = ({
   };
 
   const selectCategory = (value: string) => {
-    const res = analysisReports.filter(
-      a => a.type?.toLowerCase() === value.toLowerCase()
-    );
-
-    return res;
+    console.log('selecting cat');
+    if (!selectedCategories.includes(value)) {
+      console.log('does not include');
+      console.log([...selectedCategories, value]);
+      setSelectedCategories([...selectedCategories, value]);
+    } else {
+      console.log('YESinclude');
+      console.log(without(selectedCategories, value));
+      setSelectedCategories(without(selectedCategories, value));
+    }
   };
   const fileUploadModal = (
     <Modal
@@ -157,7 +168,6 @@ const AnalysisPlugin = ({
       {FileUpload(currentlyBeingEditedAnalysisReportId)}
     </Modal>
   );
-  console.log(analysisReports);
   return (
     <div className="analysis">
       <div className="categories">
@@ -175,7 +185,13 @@ const AnalysisPlugin = ({
         </h3>
         <p>you may select one or multiple from the list</p>
         {CATEGORIES.circuit.map((object, i) => (
-          <Button type="default">
+          <Button
+            type="default"
+            onClick={() => selectCategory(object)}
+            className={`group-buttons ${
+              selectedCategories.includes(object) ? 'active' : ''
+            }`}
+          >
             <h5>
               {object}
               <InfoCircleOutlined />
@@ -247,9 +263,7 @@ const AnalysisPlugin = ({
           .filter(
             a =>
               (mode === 'create' && a.id === undefined) ||
-              (['edit', 'view'].includes(mode) &&
-                a.id !== undefined &&
-                selectedAnalysisReports?.includes(a.id))
+              (['edit', 'view'].includes(mode) && a.id !== undefined)
           )
           .map((analysisReport, i) => (
             // <Collapse className="panel">
@@ -258,7 +272,22 @@ const AnalysisPlugin = ({
               key={i}
               style={{ marginBottom: '40px' }}
             >
-              <Panel key={`analysisReport.id`} header={analysisReport.name}>
+              <Panel
+                key={`analysisReport.id`}
+                header={
+                  <>
+                    {analysisReport.name}
+                    <span className="cat-type-tags">
+                      <span className="cat">
+                        {analysisReport.containerCategory}{' '}
+                      </span>
+                      <span className="types">
+                        {analysisReport.containerType}
+                      </span>
+                    </span>
+                  </>
+                }
+              >
                 <h1
                   aria-label="Analysis Name"
                   style={{
@@ -377,7 +406,7 @@ const AnalysisPlugin = ({
                     />
                   )}
                 </p>
-                <section className='actions' aria-label="actions">
+                <section className="actions" aria-label="actions">
                   <Button
                     type="default"
                     onClick={() =>

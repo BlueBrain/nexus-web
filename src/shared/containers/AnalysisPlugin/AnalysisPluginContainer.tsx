@@ -241,7 +241,8 @@ const AnalysisPluginContainer = ({
         analysisReports.push({
           containerId: currentRow['container_resource_id'],
           containerName: currentRow['container_resource_name'],
-          containerType: currentRow['container_resource_type'],
+          containerType: 'Analysis',
+          containerCategory: 'Anatomical',
           id: currentRow['analysis_report_id'],
           description: currentRow['analysis_report_description'],
           name: currentRow['analysis_report_name'],
