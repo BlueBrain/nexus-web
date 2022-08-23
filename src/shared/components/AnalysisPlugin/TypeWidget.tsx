@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { Button } from 'antd';
-import { without, flatten, map, uniq, intersection } from 'lodash';
-import { FolderAddOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { flatten, map, uniq, intersection } from 'lodash';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import './Categories.less';
 import {
-  ActionType,
   AnalysesAction,
 } from '../../containers/AnalysisPlugin/AnalysisPluginContainer';
 
@@ -32,7 +31,7 @@ const TypeWidget = ({
     mode === 'create'
       ? TYPES
       : intersection(
-          uniq(flatten(map(analysisReports, 'containerType'))),
+          uniq(flatten(map(analysisReports, 'types'))),
           TYPES
         );
 

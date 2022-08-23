@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from 'antd';
-import { without, flatten, map, uniq, intersection } from 'lodash';
+import { flatten, map, uniq, intersection } from 'lodash';
 import { FolderAddOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import './Categories.less';
 import {
@@ -42,7 +42,7 @@ const CategoryWidget = ({
     mode === 'create'
       ? CATEGORIES.circuit
       : intersection(
-          uniq(flatten(map(analysisReports, 'containerCategory'))),
+          uniq(flatten(map(analysisReports, 'categories'))),
           CATEGORIES.circuit
         );
 

@@ -4,20 +4,12 @@ import {
   ZoomInOutlined,
   ZoomOutOutlined,
 } from '@ant-design/icons';
-import {
-  Button,
-  Collapse,
-  Input,
-  Slider,
-  Select,
-  Modal,
-} from 'antd';
+import { Button, Collapse, Input, Slider, Select, Modal } from 'antd';
 import { without, flatten, map, uniq, intersection } from 'lodash';
 import * as React from 'react';
 import { getUsername } from '../../../shared/utils';
 import FriendlyTimeAgo from '../FriendlyDate';
 import './AnalysisPlugin.less';
-import './Categories.less';
 import * as moment from 'moment';
 import CategoryWidget from './CategoryWidget';
 import TypeWidget from './TypeWidget';
@@ -60,8 +52,8 @@ export type AnalysisReport = {
   id?: string;
   containerId?: string;
   containerName?: string;
-  containerType?: string[];
-  containerCategory?: string[];
+  types?: string[];
+  categories?: string[];
   name: string;
   type?: string;
   description?: string;
@@ -76,7 +68,13 @@ type AnalysisPluginProps = {
   containerName?: string;
   analysisReports: AnalysisReport[];
   FileUpload: (analysisReportId?: string) => JSX.Element;
-  onSave: (name: string, description?: string, id?: string) => void;
+  onSave: (
+    name: string,
+    description?: string,
+    id?: string,
+    categories?: string[],
+    types?: string[]
+  ) => void;
   onDelete: () => void;
   onCancel: () => void;
   onClickRelatedResource: (resourceId: string) => void;
@@ -86,20 +84,11 @@ type AnalysisPluginProps = {
   currentlyBeingEditedAnalysisReportId?: string;
   currentlyBeingEditingAnalysisReportName?: string;
   currentlyBeingEditedAnalysisReportDescription?: string;
+  currentlyBeingEditedAnalysisReportCategories?: string[];
+  currentlyBeingEditedAnalysisReportTypes?: string[];
   selectedAssets?: string[];
   isUploadAssetDialogOpen?: boolean;
   dispatch: (action: AnalysesAction) => void;
-};
-
-const CATEGORIES = {
-  circuit: [
-    'Anatomical',
-    'Connectivity',
-    'Volumetric',
-    'Morphometric',
-    'Synapse',
-  ],
-  simulation: ['Spiking', 'Soma voltage', 'LFP', 'VSD', 'Plasticity'],
 };
 
 const AnalysisPlugin = ({
@@ -155,11 +144,13 @@ const AnalysisPlugin = ({
       {FileUpload(currentlyBeingEditedAnalysisReportId)}
     </Modal>
   );
+
   return (
     <>
       {mode === 'create' && (
         <NewReportForm
           dispatch={dispatch}
+          onSave={onSave}
           analysisReportId={
             currentlyBeingEditedAnalysisReportId
               ? currentlyBeingEditedAnalysisReportId
@@ -238,15 +229,14 @@ const AnalysisPlugin = ({
                 if (['edit', 'view'].includes(mode) && a.id !== undefined) {
                   if (
                     selectedCategories.length > 0 &&
-                    a.containerCategory !== undefined &&
-                    intersection(selectedCategories, a.containerCategory)
-                      .length === 0
+                    a.categories !== undefined &&
+                    intersection(selectedCategories, a.categories).length === 0
                   )
                     return false;
                   if (
                     selectedTypes.length > 0 &&
-                    a.containerType !== undefined &&
-                    intersection(selectedTypes, a.containerType).length === 0
+                    a.types !== undefined &&
+                    intersection(selectedTypes, a.types).length === 0
                   )
                     return false;
                   else return true;
@@ -266,18 +256,18 @@ const AnalysisPlugin = ({
                     header={
                       <>
                         {analysisReport.name}
-                        {analysisReport.containerCategory &&
-                          analysisReport.containerCategory?.length > 0 && (
+                        {analysisReport.categories &&
+                          analysisReport.categories?.length > 0 && (
                             <span className="cat">
-                              {analysisReport.containerCategory?.map(c => (
+                              {analysisReport.categories?.map(c => (
                                 <span>{c}</span>
                               ))}{' '}
                             </span>
                           )}
-                        {analysisReport.containerType &&
-                          analysisReport.containerType?.length > 0 && (
+                        {analysisReport.types &&
+                          analysisReport.types?.length > 0 && (
                             <span className="types">
-                              {analysisReport.containerType?.map(t => (
+                              {analysisReport.types?.map(t => (
                                 <span>{t}</span>
                               ))}{' '}
                             </span>

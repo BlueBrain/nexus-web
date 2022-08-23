@@ -89,7 +89,10 @@ export enum ActionType {
   SELECT_ASSET = 'select_asset',
   CHANGE_SELECTED_ANALYSIS_REPORTS = 'change_selected_analysis_reports',
   CHANGE_ANALYSIS_NAME = 'change_analysis_name',
+  SAVE_NEW_ANALYSIS_REPORT = 'save_new_analysis_report',
   CHANGE_ANALYSIS_DESCRIPTION = 'change_analysis_description',
+  CHANGE_ANALYSIS_CATEGORIES = 'change_analysis_categories',
+  CHANGE_ANALYSIS_TYPES = 'change_analysis_types',
   OPEN_FILE_UPLOAD_DIALOG = 'open_file_upload_dialog',
   CLOSE_FILE_UPLOAD_DIALOG = 'close_file_upload_dialog',
   ADD_ANALYSIS_REPORT = 'add_analysis_report',
@@ -117,6 +120,17 @@ export type AnalysesAction =
         analysisId: string;
         analaysisName: string;
         analysisDescription?: string;
+        analysisCategories?: string[];
+        analysisTypes?: string[];
+      };
+    }
+  | {
+      type: ActionType.SAVE_NEW_ANALYSIS_REPORT;
+      payload: {
+        name: string;
+        description?: string;
+        categories?: string[];
+        types?: string[];
       };
     }
   | {
@@ -132,6 +146,14 @@ export type AnalysesAction =
   | {
       type: ActionType.CHANGE_ANALYSIS_DESCRIPTION;
       payload: { description: string };
+    }
+  | {
+      type: ActionType.CHANGE_ANALYSIS_CATEGORIES;
+      payload: { categories: string[] };
+    }
+  | {
+      type: ActionType.CHANGE_ANALYSIS_TYPES;
+      payload: { types: string[] };
     }
   | { type: ActionType.OPEN_FILE_UPLOAD_DIALOG }
   | { type: ActionType.CLOSE_FILE_UPLOAD_DIALOG }
@@ -188,6 +210,8 @@ const AnalysisPluginContainer = ({
     analysis_report_id: string;
     analysis_report_name: string;
     analysis_report_description: string;
+    analysis_report_categories: string[];
+    analysis_report_types: string[];
     created_by: string;
     created_at: string;
     asset_name: string;
@@ -241,8 +265,8 @@ const AnalysisPluginContainer = ({
         analysisReports.push({
           containerId: currentRow['container_resource_id'],
           containerName: currentRow['container_resource_name'],
-          containerType: ['Analysis', 'Validation'],
-          containerCategory: ['Anatomical', 'Volumetric'],
+          types: currentRow['analysis_report_types'],
+          categories: currentRow['analysis_report_categories'],
           id: currentRow['analysis_report_id'],
           description: currentRow['analysis_report_description'],
           name: currentRow['analysis_report_name'],
@@ -255,10 +279,11 @@ const AnalysisPluginContainer = ({
       const reportIx = analysisReports.findIndex(
         r => r.id === currentRow['analysis_report_id']
       );
-
+      console.log('reportIx', reportIx);
       const reportResource = reportResources.find(
         r => r['@id'] === currentRow['analysis_report_id']
       );
+      console.log('reportResource', reportResource);
       if (reportResource === undefined) return analysisReports;
       if ('hasPart' in reportResource) {
         analysisReports[reportIx].assets = [reportResource.hasPart]
@@ -290,6 +315,7 @@ const AnalysisPluginContainer = ({
     async () => fetchAnalysisData(viewSelfId, analysisSparqlQuery),
     {
       onSuccess: data => {
+        console.log("onSuccess", data);
         if (!hasInitializedSelectedReports) {
           dispatch({
             type: ActionType.SET_SELECTED_REPORT_ON_FIRST_LOAD,
@@ -445,7 +471,13 @@ const AnalysisPluginContainer = ({
   );
 
   const mutateAnalysis = useMutation(
-    async (data: { id?: string; name: string; description?: string }) => {
+    async (data: {
+      id?: string;
+      name: string;
+      description?: string;
+      categories?: string[];
+      types?: string[];
+    }) => {
       const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
         return {
           '@type': 'Entity',
@@ -460,7 +492,8 @@ const AnalysisPluginContainer = ({
           },
         };
       });
-
+      console.log('MUTATE ANALYSIS', data);
+      
       if (data.id) {
         const resource = (await nexus.Resource.get(
           orgLabel,
@@ -487,7 +520,7 @@ const AnalysisPluginContainer = ({
           });
         }
         resource['contribution'] = contributions;
-
+        console.log('RESOURCE ASSEMBLED', resource);
         return nexus.Resource.update(
           orgLabel,
           projectLabel,
@@ -497,10 +530,12 @@ const AnalysisPluginContainer = ({
             ...resource,
             name: data.name,
             description: data.description,
+            categories: data.categories,
+            types: data.types,
           }
         );
       }
-
+      console.log('CREATING NEW REPORT', data);
       // Create new Analysis Report
       return nexus.Resource.create(orgLabel, projectLabel, {
         '@context': [
@@ -513,12 +548,15 @@ const AnalysisPluginContainer = ({
         '@type': 'Report',
         name: data.name,
         description: data.description,
+        categories: data.categories,
+        types: data.types,
         hasPart: unsavedAssetsToAddToDistribution,
         derivation: { entity: { '@id': resourceId } },
       });
     },
     {
       onSuccess: resource => {
+        console.log('creating new success resource:', resource);
         setUnsavedAssets([]);
         Promise.all([
           queryClient.invalidateQueries(['analysis']),
@@ -661,13 +699,15 @@ const AnalysisPluginContainer = ({
     containerType?: string;
     imagePreviewScale: number;
     mode: 'view' | 'edit' | 'create';
+    hasInitializedSelectedReports: boolean;
     selectedAnalysisReports?: string[];
     currentlyBeingEditedAnalysisReportId?: string;
     currentlyBeingEditingAnalysisReportName?: string;
+    currentlyBeingEditedAnalysisReportCategories?: string[];
+    currentlyBeingEditedAnalysisReportTypes?: string[];
     currentlyBeingEditedAnalysisReportDescription?: string;
     selectedAssets?: string[];
     isUploadAssetDialogOpen?: boolean;
-    hasInitializedSelectedReports: boolean;
   };
 
   const initState = ({
@@ -716,6 +756,18 @@ const AnalysisPluginContainer = ({
           mode: 'create',
           currentlyBeingEditingAnalysisReportName: '',
           currentlyBeingEditedAnalysisReportDescription: '',
+          currentlyBeingEditedAnalysisReportCategories: [],
+          currentlyBeingEditedAnalysisReportTypes: [],
+        };
+      case ActionType.SAVE_NEW_ANALYSIS_REPORT:
+        return {
+          ...state,
+          currentlyBeingEditingAnalysisReportName: action.payload.name,
+          currentlyBeingEditedAnalysisReportDescription:
+            action.payload.description,
+          currentlyBeingEditedAnalysisReportCategories:
+            action.payload.categories,
+          currentlyBeingEditedAnalysisReportTypes: action.payload.types,
         };
       case ActionType.SELECT_ASSET:
         state.selectedAssets = state.selectedAssets ? state.selectedAssets : [];
@@ -774,6 +826,17 @@ const AnalysisPluginContainer = ({
           currentlyBeingEditedAnalysisReportDescription:
             action.payload.description,
         };
+      case ActionType.CHANGE_ANALYSIS_CATEGORIES:
+        return {
+          ...state,
+          currentlyBeingEditedAnalysisReportCategories:
+            action.payload.categories,
+        };
+      case ActionType.CHANGE_ANALYSIS_TYPES:
+        return {
+          ...state,
+          currentlyBeingEditedAnalysisReportTypes: action.payload.types,
+        };
       case ActionType.OPEN_FILE_UPLOAD_DIALOG:
         return {
           ...state,
@@ -801,6 +864,8 @@ const AnalysisPluginContainer = ({
       selectedAnalysisReports,
       currentlyBeingEditingAnalysisReportName,
       currentlyBeingEditedAnalysisReportDescription,
+      currentlyBeingEditedAnalysisReportCategories,
+      currentlyBeingEditedAnalysisReportTypes,
       isUploadAssetDialogOpen,
       hasInitializedSelectedReports,
     },
@@ -816,14 +881,31 @@ const AnalysisPluginContainer = ({
     },
     initState
   );
-
+  const runningMyOwnThing = React.useMemo(() => {
+    console.log(
+      'MY USE MEMO currentlyBeingEditedAnalysisReportCategories, currentlyBeingEditedAnalysisReportTypes currentlyBeingEditedAnalysisReportName currentlyBeingEditedAnalysisReportDescription',
+      [
+        currentlyBeingEditingAnalysisReportName,
+        currentlyBeingEditedAnalysisReportDescription,
+        currentlyBeingEditedAnalysisReportCategories,
+        currentlyBeingEditedAnalysisReportTypes,
+      ]
+    );
+  }, [
+    [
+      currentlyBeingEditedAnalysisReportCategories,
+      currentlyBeingEditedAnalysisReportTypes,
+    ],
+  ]);
   const analysisDataWithImages = React.useMemo(() => {
     const newAnalysisReports: AnalysisReport[] =
       mode === 'create'
         ? [
             {
-              name: '',
-              description: '',
+              name: currentlyBeingEditingAnalysisReportName || '',
+              description: currentlyBeingEditedAnalysisReportDescription || '',
+              categories: currentlyBeingEditedAnalysisReportCategories || [],
+              types: currentlyBeingEditedAnalysisReportTypes || [],
               createdBy: '',
               createdAt: '',
               assets: [],
@@ -833,6 +915,11 @@ const AnalysisPluginContainer = ({
     const savedAndUnsavedAnalysisReports = analysisData
       ? analysisData.concat(newAnalysisReports)
       : newAnalysisReports;
+    console.log('newAnalysisReports USE MEMO:', newAnalysisReports);
+    console.log(
+      'savedAndUnsavedAnalysisReports USE MEMO:',
+      savedAndUnsavedAnalysisReports
+    );
     return savedAndUnsavedAnalysisReports.map(a => {
       return {
         ...a,
@@ -916,8 +1003,14 @@ const AnalysisPluginContainer = ({
           analysisReports={analysisDataWithImages}
           containerId={containerId}
           onCancel={() => {}}
-          onSave={(name: string, description?: string, id?: string) => {
-            mutateAnalysis.mutate({ name, description, id });
+          onSave={(
+            name: string,
+            description?: string,
+            id?: string,
+            categories?: string[],
+            types?: string[]
+          ) => {
+            mutateAnalysis.mutate({ name, description, id, categories, types });
           }}
           onDelete={() => {
             deleteImages.mutate();

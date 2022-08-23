@@ -7,45 +7,78 @@ import {
 import './NewReportForm.less';
 import CategoryWidget from './CategoryWidget';
 import TypeWidget from './TypeWidget';
-import { without } from 'lodash';
+import { values, without } from 'lodash';
 
 const { TextArea } = Input;
 
 type NewReportFormProps = {
   analysisReportId?: string | undefined;
   imagePreviewScale: number;
+  onSave: (
+    name: string,
+    description?: string,
+    id?: string,
+    categories?: string[],
+    types?: string[]
+  ) => void;
   dispatch: (action: AnalysesAction) => void;
 };
 
 const NewReportForm = ({
   analysisReportId,
   dispatch,
+  onSave,
   imagePreviewScale,
 }: NewReportFormProps) => {
   const [form] = Form.useForm();
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
     []
   );
-    const [selectedTypes, setSelectedTypes] = React.useState<
-      string[]
-    >([]);
+  const [selectedTypes, setSelectedTypes] = React.useState<string[]>([]);
 
   const selectCategory = (value: string) => {
     !selectedCategories.includes(value)
       ? setSelectedCategories([...selectedCategories, value])
       : setSelectedCategories(without(selectedCategories, value));
   };
-    const selectType = (value: string) => {
-      !selectedTypes.includes(value)
-        ? setSelectedTypes([...selectedTypes, value])
-        : setSelectedTypes(without(selectedTypes, value));
-    };
+  const selectType = (value: string) => {
+    !selectedTypes.includes(value)
+      ? setSelectedTypes([...selectedTypes, value])
+      : setSelectedTypes(without(selectedTypes, value));
+  };
+  const onFinish = (data: any) => {
+    data.categories = selectedCategories;
+    data.types = selectedTypes;
+    console.log('selectedTypes:', selectedTypes);
+    console.log('on finish', data);
+    // const payload = values(data);
+    // console.log('payload', payload);
+    // let [name, description, id, types, categories] = payload;
+    dispatch({
+      type: ActionType.CHANGE_ANALYSIS_NAME,
+      payload: { name: data.name },
+    });
+    dispatch({
+      type: ActionType.CHANGE_ANALYSIS_DESCRIPTION,
+      payload: { description: data.description },
+    });
+    dispatch({
+      type: ActionType.CHANGE_ANALYSIS_CATEGORIES,
+      payload: { categories: selectedCategories },
+    });
+    dispatch({
+      type: ActionType.CHANGE_ANALYSIS_TYPES,
+      payload: { types: selectedTypes },
+    });
+
+    onSave(data.name, data.description, undefined, selectedCategories, selectedTypes);
+  };
   return (
-    <Form layout={'vertical'} className="new-report-form">
-      <Form.Item label="Report Name">
+    <Form layout={'vertical'} onFinish={onFinish} className="new-report-form">
+      <Form.Item label="Report Name" name="name">
         <Input placeholder="type name here" />
       </Form.Item>
-      <Form.Item label="Report Description">
+      <Form.Item label="Report Description" name="description">
         <TextArea rows={10} />
       </Form.Item>
       <Form.Item label="Categories">
@@ -83,7 +116,13 @@ const NewReportForm = ({
           >
             Cancel
           </Button>
-          <Button type="primary" className="save-button" size="large">
+          <Button
+            aria-label="Save"
+            type="primary"
+            htmlType="submit"
+            className="save-button"
+            size="large"
+          >
             Save
           </Button>
         </span>
