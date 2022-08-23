@@ -1,21 +1,9 @@
-<<<<<<< HEAD
 import { Button } from 'antd'
 import { flatten, map, uniq, intersection } from 'lodash'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import './Categories.less'
 
 import { TypeWidgetProps } from '../../types/plugins/report'
-=======
-import * as React from 'react';
-import { Button } from 'antd';
-import { without, flatten, map, uniq, intersection } from 'lodash';
-import { FolderAddOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import './Categories.less';
-import {
-  ActionType,
-  AnalysesAction,
-} from '../../containers/AnalysisPlugin/AnalysisPluginContainer';
->>>>>>> 2ae36754 (continueing to divide components so we can manage a different view for the new report)
 
 import { REPORT_TYPES as TYPES } from '../../../constants'
 
