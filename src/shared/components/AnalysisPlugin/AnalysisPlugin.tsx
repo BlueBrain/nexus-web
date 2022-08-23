@@ -68,6 +68,10 @@ const AnalysisPlugin = ({
   )
   const [selectedTypes, setSelectedTypes] = React.useState<string[]>([])
 
+  const handleOpenPanel = () => {
+    setOpenPanel(analysisReports.length)
+  }
+
   const selectCategory = (value: string) => {
     !selectedCategories.includes(value)
       ? setSelectedCategories([...selectedCategories, value])
