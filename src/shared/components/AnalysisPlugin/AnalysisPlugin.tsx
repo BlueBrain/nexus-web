@@ -129,6 +129,7 @@ const AnalysisPlugin = ({
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
     []
   );
+  const [selectedTypes, setSelectedTypes] = React.useState<string[]>([]);
   const onChangeAnalysisReports = (value: string[]) => {
     console.log('ONCHANGE TRIGGERED');
     dispatch({
@@ -146,16 +147,14 @@ const AnalysisPlugin = ({
   };
 
   const selectCategory = (value: string) => {
-    console.log('selecting cat');
-    if (!selectedCategories.includes(value)) {
-      console.log('does not include');
-      console.log([...selectedCategories, value]);
-      setSelectedCategories([...selectedCategories, value]);
-    } else {
-      console.log('YESinclude');
-      console.log(without(selectedCategories, value));
-      setSelectedCategories(without(selectedCategories, value));
-    }
+    !selectedCategories.includes(value)
+      ? setSelectedCategories([...selectedCategories, value])
+      : setSelectedCategories(without(selectedCategories, value));
+  };
+  const selectType = (value: string) => {
+    !selectedTypes.includes(value)
+      ? setSelectedTypes([...selectedTypes, value])
+      : setSelectedTypes(without(selectedTypes, value));
   };
   const fileUploadModal = (
     <Modal
@@ -203,7 +202,13 @@ const AnalysisPlugin = ({
         <h3>Report Type</h3>
         <p>you may select one or multiple from the list</p>
         {TYPES.map((object, i) => (
-          <Button type="default">
+          <Button
+            type="default"
+            className={`group-buttons ${
+              selectedTypes.includes(object) ? 'active' : ''
+            }`}
+            onClick={() => selectType(object)}
+          >
             <h5>
               {object}
               <InfoCircleOutlined />
@@ -260,11 +265,27 @@ const AnalysisPlugin = ({
           </>
         )}
         {analysisReports
-          .filter(
-            a =>
-              (mode === 'create' && a.id === undefined) ||
-              (['edit', 'view'].includes(mode) && a.id !== undefined)
-          )
+          .filter(a => {
+            if (mode === 'create' && a.id === undefined) {
+              return true;
+            }
+            if (['edit', 'view'].includes(mode) && a.id !== undefined) {
+              if (
+                selectedCategories.length > 0 &&
+                a.containerCategory !== undefined &&
+                !selectedCategories.includes(a.containerCategory)
+              )
+                return false;
+              if (
+                selectedTypes.length > 0 &&
+                a.containerType !== undefined &&
+                !selectedTypes.includes(a.containerType)
+              )
+                return false;
+              else return true;
+            }
+            return true;
+          })
           .map((analysisReport, i) => (
             // <Collapse className="panel">
             <Collapse
