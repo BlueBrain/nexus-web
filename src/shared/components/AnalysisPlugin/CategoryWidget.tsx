@@ -1,11 +1,11 @@
-import * as React from 'react';
-import { Button } from 'antd';
-import { flatten, map, uniq, intersection } from 'lodash';
-import { InfoCircleOutlined } from '@ant-design/icons';
-import './Categories.less';
-import { CategoryWidgetProps } from '../../types/plugins/report';
+import * as React from 'react'
+import { Button } from 'antd'
+import { flatten, map, uniq, intersection } from 'lodash'
+import { InfoCircleOutlined } from '@ant-design/icons'
+import './Categories.less'
+import { CategoryWidgetProps } from '../../types/plugins/report'
 
-import { REPORT_CATEGORIES as CATEGORIES } from '../../../constants';
+import { REPORT_CATEGORIES as CATEGORIES } from '../../../constants'
 
 const CategoryWidget = ({
   dispatch,
@@ -14,7 +14,7 @@ const CategoryWidget = ({
   mode,
   selectCategory,
 }: CategoryWidgetProps) => {
-  const [openPanel, setOpenPanel] = React.useState<number>();
+  const [openPanel, setOpenPanel] = React.useState<number>()
 
   const availableCategories =
     mode === 'create'
@@ -22,12 +22,12 @@ const CategoryWidget = ({
       : intersection(
           uniq(flatten(map(analysisReports, 'categories'))),
           CATEGORIES.circuit
-        );
+        )
 
   return (
     <>
       {availableCategories && availableCategories.length > 0 && (
-        <div className="categories">
+        <div className='categories'>
           {mode !== 'create' && <h3>Categories</h3>}
           <p>you may select one or multiple from the list</p>
           {CATEGORIES.circuit
@@ -35,7 +35,7 @@ const CategoryWidget = ({
             .map((object, i) => (
               <Button
                 key={i}
-                type="default"
+                type='default'
                 onClick={() => selectCategory(object)}
                 className={`group-buttons ${
                   selectedCategories.includes(object) ? 'active' : ''
@@ -50,7 +50,7 @@ const CategoryWidget = ({
         </div>
       )}
     </>
-  );
-};
+  )
+}
 
-export default CategoryWidget;
+export default CategoryWidget
