@@ -22,7 +22,7 @@ export const DEFAULT_ANALYSIS_DATA_SPARQL_QUERY = `PREFIX s:<http://schema.org/>
 PREFIX prov:<http://www.w3.org/ns/prov#>
 PREFIX nsg:<https://neuroshapes.org/>
 PREFIX nxv:<https://bluebrain.github.io/nexus/vocabulary/>
-SELECT ?container_resource_id ?container_resource_name ?analysis_report_id ?analysis_report_name ?analysis_report_description ?created_by ?created_at ?self
+SELECT ?container_resource_id  ?container_resource_type ?container_resource_name ?analysis_report_id ?analysis_report_name ?analysis_report_description ?created_by ?created_at ?self
 WHERE {
   OPTIONAL {
     BIND(<{resourceId}> as ?container_resource_id) .
@@ -31,6 +31,7 @@ WHERE {
     ?derivation_id        nsg:entity             ?container_resource_id .
     OPTIONAL {
       ?container_resource_id        nsg:name                   ?container_resource_name .
+      ?container_resource_id        nsg:type                   ?container_resource_type .
     }
     ?analysis_report_id    nsg:name            ?analysis_report_name .
     ?analysis_report_id    nsg:description       ?analysis_report_description .
@@ -44,6 +45,7 @@ WHERE {
     ?derivation_id        nsg:entity             ?container_resource_id .
     OPTIONAL {
       ?container_resource_id        nsg:name                   ?container_resource_name .
+      ?container_resource_id        nsg:type                   ?container_resource_type .
     }
     ?analysis_report_id    nsg:name            ?analysis_report_name .
     ?analysis_report_id    nsg:description       ?analysis_report_description .
@@ -182,6 +184,7 @@ const AnalysisPluginContainer = ({
     key: string;
     container_resource_id: string;
     container_resource_name: string;
+    container_resource_type: string;
     analysis_report_id: string;
     analysis_report_name: string;
     analysis_report_description: string;
@@ -238,6 +241,7 @@ const AnalysisPluginContainer = ({
         analysisReports.push({
           containerId: currentRow['container_resource_id'],
           containerName: currentRow['container_resource_name'],
+          containerType: currentRow['container_resource_type'],
           id: currentRow['analysis_report_id'],
           description: currentRow['analysis_report_description'],
           name: currentRow['analysis_report_name'],
@@ -653,6 +657,7 @@ const AnalysisPluginContainer = ({
     analysisResourceType: 'report_container' | 'individual_report';
     containerId?: string;
     containerName?: string;
+    containerType?: string;
     imagePreviewScale: number;
     mode: 'view' | 'edit' | 'create';
     selectedAnalysisReports?: string[];
