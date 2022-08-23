@@ -8,10 +8,12 @@ import {
   ZoomInOutlined,
   ZoomOutOutlined,
   InfoCircleOutlined,
+  RightOutlined,
 } from '@ant-design/icons';
 import {
   Button,
   Dropdown,
+  Collapse,
   Input,
   Menu,
   Slider,
@@ -29,6 +31,8 @@ import {
   ActionType,
   AnalysesAction,
 } from '../../../shared/containers/AnalysisPlugin/AnalysisPluginContainer';
+
+const { Panel } = Collapse;
 
 export type Asset = {
   analysisReportId?: string;
@@ -96,6 +100,8 @@ const CATEGORIES = {
   ],
   simulation: ['Spiking', 'Soma voltage', 'LFP', 'VSD', 'Plasticity'],
 };
+
+const TYPES = ['Validation', 'Prediction', 'Analysis'];
 const AnalysisPlugin = ({
   analysisResourceType,
   containerId,
@@ -117,6 +123,7 @@ const AnalysisPlugin = ({
 }: AnalysisPluginProps) => {
   const { Option } = Select;
   const onChangeAnalysisReports = (value: string[]) => {
+    console.log('ONCHANGE TRIGGERED');
     dispatch({
       type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS,
       payload: { analysisReportIds: value },
@@ -165,6 +172,18 @@ const AnalysisPlugin = ({
           </Button>
         ))}
       </div>
+      <div className="types">
+        <h3>Report Type</h3>
+        <p>you may select one or multiple from the list</p>
+        {TYPES.map((object, i) => (
+          <Button type="default">
+            <h5>
+              {object}
+              <InfoCircleOutlined />
+            </h5>
+          </Button>
+        ))}
+      </div>
       <>
         {analysisResourceType === 'individual_report' && containerId && (
           <>
@@ -185,34 +204,6 @@ const AnalysisPlugin = ({
           <>
             {analysisResourceType === 'report_container' && (
               <div className="analysisTools">
-                <Select
-                  value={selectedAnalysisReports}
-                  showSearch
-                  mode="multiple"
-                  placeholder="Select Analysis"
-                  className="select-analysis"
-                  style={{ width: '100%' }}
-                  optionFilterProp="children"
-                  onChange={onChangeAnalysisReports}
-                  onSearch={onSearch}
-                  filterOption={(input, option) =>
-                    ((option!.children as unknown) as string)
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) > -1
-                  }
-                >
-                  {analysisReports
-                    .filter(a => a.id !== undefined)
-                    .map((a, i) => {
-                      return (
-                        a.id && (
-                          <Option key={a.id} value={a.id}>
-                            {a.name ? a.name : a.id}
-                          </Option>
-                        )
-                      );
-                    })}
-                </Select>
                 <Button
                   shape="circle"
                   type="primary"
@@ -223,6 +214,27 @@ const AnalysisPlugin = ({
                     dispatch({ type: ActionType.ADD_ANALYSIS_REPORT })
                   }
                 ></Button>
+                <div className="reportTitles">
+                  {analysisReports
+                    .filter(analysisReport => analysisReport.id !== undefined)
+                    .map((analysisReport, i) => {
+                      return (
+                        analysisReport.id && (
+                          <button
+                            className="panel"
+                            onClick={() => {
+                              console.log('on change triggerred');
+                            }}
+                          >
+                            <h1 key={analysisReport.id}>
+                              {analysisReport.name}
+                              <RightOutlined />
+                            </h1>
+                          </button>
+                        )
+                      );
+                    })}
+                </div>
               </div>
             )}
             {selectedAnalysisReports &&
