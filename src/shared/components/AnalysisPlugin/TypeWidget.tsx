@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from 'antd';
 import { without, flatten, map, uniq, intersection } from 'lodash';
 import { FolderAddOutlined, InfoCircleOutlined } from '@ant-design/icons';
-
+import './Categories.less';
 import {
   ActionType,
   AnalysesAction,

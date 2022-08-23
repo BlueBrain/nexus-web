@@ -26,7 +26,7 @@ const ReportAssets = ({
   dispatch,
   mode,
   analysisReport,
-    selectedAssets,
+  selectedAssets,
   imagePreviewScale,
   currentlyBeingEditedAnalysisReportId,
 }: ReportAssetProps) => {

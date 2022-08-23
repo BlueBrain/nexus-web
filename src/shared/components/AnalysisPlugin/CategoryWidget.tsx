@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from 'antd';
 import { without, flatten, map, uniq, intersection } from 'lodash';
 import { FolderAddOutlined, InfoCircleOutlined } from '@ant-design/icons';
-
+import './Categories.less';
 import {
   ActionType,
   AnalysesAction,
@@ -22,7 +22,7 @@ const CATEGORIES = {
 };
 
 type CategoryWidgetProps = {
-  analysisReports: AnalysisReport[];
+  analysisReports?: AnalysisReport[];
   mode: 'view' | 'edit' | 'create';
   selectedCategories: string[];
   selectCategory: (value: string) => void;
@@ -33,33 +33,39 @@ const CategoryWidget = ({
   dispatch,
   analysisReports,
   selectedCategories,
+  mode,
   selectCategory,
 }: CategoryWidgetProps) => {
   const [openPanel, setOpenPanel] = React.useState<number>();
 
-  const availableCategories = intersection(
-    uniq(flatten(map(analysisReports, 'containerCategory'))),
-    CATEGORIES.circuit
-  );
+  const availableCategories =
+    mode === 'create'
+      ? CATEGORIES.circuit
+      : intersection(
+          uniq(flatten(map(analysisReports, 'containerCategory'))),
+          CATEGORIES.circuit
+        );
 
   return (
     <div className="categories">
-      <h3>
-        Categories
-        <Button
-          type="primary"
-          title="Add Analysis Report"
-          aria-label="Add Analysis Report"
-          onClick={() => {
-            dispatch({
-              type: ActionType.ADD_ANALYSIS_REPORT,
-            });
-          }}
-        >
-          Add Report
-          <FolderAddOutlined />
-        </Button>
-      </h3>
+      {mode !== 'create' && (
+        <h3>
+          Categories
+          <Button
+            type="primary"
+            title="Add Analysis Report"
+            aria-label="Add Analysis Report"
+            onClick={() => {
+              dispatch({
+                type: ActionType.ADD_ANALYSIS_REPORT,
+              });
+            }}
+          >
+            Add Report
+            <FolderAddOutlined />
+          </Button>
+        </h3>
+      )}
       <p>you may select one or multiple from the list</p>
       {CATEGORIES.circuit
         .filter(o => availableCategories.includes(o))
