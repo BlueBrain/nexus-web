@@ -130,6 +130,7 @@ const AnalysisPlugin = ({
     []
   );
   const [selectedTypes, setSelectedTypes] = React.useState<string[]>([]);
+  const [openPanel, setOpenPanel] = React.useState<number>();
 
   const availableCategories = intersection(
     uniq(flatten(map(analysisReports, 'containerCategory'))),
@@ -154,6 +155,10 @@ const AnalysisPlugin = ({
     );
 
     return res;
+  };
+
+  const handleOpenPanel = () => {
+    setOpenPanel((analysisReports.length));
   };
 
   const selectCategory = (value: string) => {
@@ -181,12 +186,15 @@ const AnalysisPlugin = ({
     <div className="analysis">
       <div className="categories">
         <h3>
-          Categories{' '}
+          Categories
           <Button
             type="primary"
             title="Add Analysis Report"
             aria-label="Add Analysis Report"
-            onClick={() => dispatch({ type: ActionType.ADD_ANALYSIS_REPORT })}
+            onClick={() => {
+              dispatch({ type: ActionType.ADD_ANALYSIS_REPORT });
+              handleOpenPanel();
+            }}
           >
             Add Report
             <FolderAddOutlined />
@@ -301,13 +309,15 @@ const AnalysisPlugin = ({
           })
           .map((analysisReport, i) => (
             // <Collapse className="panel">
+
             <Collapse
               expandIconPosition="right"
               key={i}
+              activeKey={openPanel}
               style={{ marginBottom: '40px' }}
             >
               <Panel
-                key={`analysisReport.id`}
+                key={i}
                 header={
                   <>
                     {analysisReport.name}
