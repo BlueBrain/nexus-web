@@ -311,18 +311,22 @@ const AnalysisPlugin = ({
                 header={
                   <>
                     {analysisReport.name}
-                    <span className="cat-type-tags">
-                      <span className="cat">
-                        {analysisReport.containerCategory?.map(c => (
-                          <span>{c}</span>
-                        ))}{' '}
-                      </span>
-                      <span className="types">
-                        {analysisReport.containerType?.map(t => (
-                          <span>{t}</span>
-                        ))}{' '}
-                      </span>
-                    </span>
+                    {analysisReport.containerCategory &&
+                      analysisReport.containerCategory?.length > 0 && (
+                        <span className="cat">
+                          {analysisReport.containerCategory?.map(c => (
+                            <span>{c}</span>
+                          ))}{' '}
+                        </span>
+                      )}
+                    {analysisReport.containerType &&
+                      analysisReport.containerType?.length > 0 && (
+                        <span className="types">
+                          {analysisReport.containerType?.map(t => (
+                            <span>{t}</span>
+                          ))}{' '}
+                        </span>
+                      )}
                   </>
                 }
               >
