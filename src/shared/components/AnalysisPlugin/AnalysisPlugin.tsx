@@ -7,6 +7,7 @@ import {
   UserOutlined,
   ZoomInOutlined,
   ZoomOutOutlined,
+  InfoCircleOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -22,6 +23,7 @@ import * as React from 'react';
 import { getUsername } from '../../../shared/utils';
 import FriendlyTimeAgo from '../FriendlyDate';
 import './AnalysisPlugin.less';
+import './Categories.less';
 import * as moment from 'moment';
 import {
   ActionType,
@@ -56,6 +58,7 @@ export type AnalysisReport = {
   containerId?: string;
   containerName?: string;
   name: string;
+  type?: string;
   description?: string;
   createdBy?: string;
   createdAt?: string;
@@ -83,6 +86,16 @@ type AnalysisPluginProps = {
   dispatch: (action: AnalysesAction) => void;
 };
 
+const CATEGORIES = {
+  circuit: [
+    'Anatomical',
+    'Connectivity',
+    'Volumetric',
+    'Morphometric',
+    'Synapse',
+  ],
+  simulation: ['Spiking', 'Soma voltage', 'LFP', 'VSD', 'Plasticity'],
+};
 const AnalysisPlugin = ({
   analysisResourceType,
   containerId,
@@ -103,7 +116,6 @@ const AnalysisPlugin = ({
   onClickRelatedResource,
 }: AnalysisPluginProps) => {
   const { Option } = Select;
-
   const onChangeAnalysisReports = (value: string[]) => {
     dispatch({
       type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS,
@@ -119,6 +131,14 @@ const AnalysisPlugin = ({
     return res;
   };
 
+  const selectCategory = (value: string) => {
+    const res = analysisReports.filter(a =>
+      a.type?.toLowerCase() === value.toLowerCase()
+    );
+
+    return res;
+  }
+
   const fileUploadModal = (
     <Modal
       visible={isUploadAssetDialogOpen}
@@ -133,6 +153,18 @@ const AnalysisPlugin = ({
 
   return (
     <div className="analysis">
+      <div className="categories">
+        <h3>Categories</h3>
+        <p>you may select one or multiple from the list</p>
+        {CATEGORIES.circuit.map((object, i) => (
+          <Button type="default">
+            <h5>
+              {object}
+              <InfoCircleOutlined />
+            </h5>
+          </Button>
+        ))}
+      </div>
       <>
         {analysisResourceType === 'individual_report' && containerId && (
           <>
