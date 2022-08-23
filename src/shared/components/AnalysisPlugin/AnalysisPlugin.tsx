@@ -29,6 +29,10 @@ import FriendlyTimeAgo from '../FriendlyDate';
 import './AnalysisPlugin.less';
 import './Categories.less';
 import * as moment from 'moment';
+import CategoryWidget from './CategoryWidget';
+import TypeWidget from './TypeWidget';
+import ReportAssets from './ReportAssets';
+// import NewReportForm from './NewReportForm';
 import {
   ActionType,
   AnalysesAction,
@@ -105,7 +109,7 @@ const CATEGORIES = {
   ],
   simulation: ['Spiking', 'Soma voltage', 'LFP', 'VSD', 'Plasticity'],
 };
-const TYPES = ['Validation', 'Prediction', 'Analysis'];
+
 const AnalysisPlugin = ({
   analysisResourceType,
   containerId,
@@ -130,19 +134,8 @@ const AnalysisPlugin = ({
     []
   );
   const [selectedTypes, setSelectedTypes] = React.useState<string[]>([]);
-  const [openPanel, setOpenPanel] = React.useState<number>();
-
-  const availableCategories = intersection(
-    uniq(flatten(map(analysisReports, 'containerCategory'))),
-    CATEGORIES.circuit
-  );
-  const availableTypes = intersection(
-    uniq(flatten(map(analysisReports, 'containerType'))),
-    TYPES
-  );
 
   const onChangeAnalysisReports = (value: string[]) => {
-    console.log('ONCHANGE TRIGGERED');
     dispatch({
       type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS,
       payload: { analysisReportIds: value },
@@ -155,10 +148,6 @@ const AnalysisPlugin = ({
     );
 
     return res;
-  };
-
-  const handleOpenPanel = () => {
-    setOpenPanel((analysisReports.length));
   };
 
   const selectCategory = (value: string) => {
@@ -184,58 +173,21 @@ const AnalysisPlugin = ({
   );
   return (
     <div className="analysis">
-      <div className="categories">
-        <h3>
-          Categories
-          <Button
-            type="primary"
-            title="Add Analysis Report"
-            aria-label="Add Analysis Report"
-            onClick={() => {
-              dispatch({ type: ActionType.ADD_ANALYSIS_REPORT });
-              handleOpenPanel();
-            }}
-          >
-            Add Report
-            <FolderAddOutlined />
-          </Button>
-        </h3>
-        <p>you may select one or multiple from the list</p>
-        {CATEGORIES.circuit
-          .filter(o => availableCategories.includes(o))
-          .map((object, i) => (
-            <Button
-              type="default"
-              onClick={() => selectCategory(object)}
-              className={`group-buttons ${
-                selectedCategories.includes(object) ? 'active' : ''
-              }`}
-            >
-              <h5>
-                {object}
-                <InfoCircleOutlined />
-              </h5>
-            </Button>
-          ))}
-      </div>
-      <div className="types">
-        <h3>Report Type</h3>
-        <p>you may select one or multiple from the list</p>
-        {TYPES.filter(o => availableTypes.includes(o)).map((object, i) => (
-          <Button
-            type="default"
-            className={`group-buttons ${
-              selectedTypes.includes(object) ? 'active' : ''
-            }`}
-            onClick={() => selectType(object)}
-          >
-            <h5>
-              {object}
-              <InfoCircleOutlined />
-            </h5>
-          </Button>
-        ))}
-      </div>
+      <CategoryWidget
+        dispatch={dispatch}
+        mode={mode}
+        selectedCategories={selectedCategories}
+        selectCategory={selectCategory}
+        analysisReports={analysisReports}
+      />
+      <TypeWidget
+        dispatch={dispatch}
+        mode={mode}
+        selectedTypes={selectedTypes}
+        selectType={selectType}
+        analysisReports={analysisReports}
+      />
+
       <>
         {analysisResourceType === 'individual_report' && containerId && (
           <>
@@ -313,7 +265,6 @@ const AnalysisPlugin = ({
             <Collapse
               expandIconPosition="right"
               key={i}
-              activeKey={openPanel}
               style={{ marginBottom: '40px' }}
             >
               <Panel
@@ -494,131 +445,17 @@ const AnalysisPlugin = ({
                     Go to resource
                   </Button>
                 </section>
-                <section aria-label="Analysis Assets" className="assets">
-                  {((mode === 'create' && analysisReport.id === undefined) ||
-                    (mode === 'edit' &&
-                      'id' in analysisReport &&
-                      currentlyBeingEditedAnalysisReportId ===
-                        analysisReport.id)) && (
-                    <div style={{ display: 'flex', width: '100%' }}>
-                      <Button
-                        type="link"
-                        style={{ marginLeft: 'auto', marginBottom: '10px' }}
-                        onClick={() =>
-                          dispatch({ type: ActionType.OPEN_FILE_UPLOAD_DIALOG })
-                        }
-                      >
-                        Add Files to Analysis
-                      </Button>
-                    </div>
-                  )}
-                  <ul>
-                    {analysisReport.assets.map((asset, i) => {
-                      const minThumbnailSize = 100;
-                      return (
-                        <li
-                          key={asset.id}
-                          className="asset-container"
-                          aria-label={
-                            asset.name !== '' ? asset.name : asset.filename
-                          }
-                        >
-                          <div
-                            aria-label="Analysis File"
-                            className={`asset ${
-                              selectedAssets &&
-                              selectedAssets.findIndex(v => v === asset.id) > -1
-                                ? 'selected'
-                                : ''
-                            }`}
-                            style={{
-                              height:
-                                minThumbnailSize +
-                                imagePreviewScale * (imagePreviewScale / 30),
-                              width:
-                                minThumbnailSize +
-                                imagePreviewScale * (imagePreviewScale / 30),
-                            }}
-                            onClick={() => {
-                              if (
-                                mode === 'edit' &&
-                                'id' in analysisReport &&
-                                currentlyBeingEditedAnalysisReportId ===
-                                  analysisReport.id
-                              ) {
-                                dispatch({
-                                  type: ActionType.SELECT_ASSET,
-                                  payload: { assetId: asset.id },
-                                });
-                              }
-                            }}
-                          >
-                            {asset.preview({
-                              mode: mode === 'create' ? 'edit' : mode,
-                            })}
-                            {mode === 'edit' &&
-                              'id' in analysisReport &&
-                              currentlyBeingEditedAnalysisReportId ===
-                                analysisReport.id && (
-                                <Checkbox
-                                  checked={
-                                    selectedAssets &&
-                                    selectedAssets.some(v => v === asset.id)
-                                  }
-                                  className="selectedCheckbox"
-                                  onClick={e => {
-                                    e.stopPropagation();
-                                  }}
-                                  onChange={e => {
-                                    dispatch({
-                                      type: ActionType.SELECT_ASSET,
-                                      payload: { assetId: asset.id },
-                                    });
-                                  }}
-                                ></Checkbox>
-                              )}
-                          </div>
-                          <div
-                            aria-label="Asset Details"
-                            className="asset-details"
-                            style={{
-                              width:
-                                minThumbnailSize +
-                                imagePreviewScale * (imagePreviewScale / 30),
-                            }}
-                          >
-                            <label
-                              className="asset-details__name"
-                              title={
-                                asset.name !== '' ? asset.name : asset.filename
-                              }
-                            >
-                              {asset.name ? asset.name : asset.filename}
-                            </label>
-                            <div>
-                              <label className="asset-details__last-updated-by">
-                                <UserOutlined />
-                                &nbsp;
-                                {asset.lastUpdatedBy &&
-                                  getUsername(asset.lastUpdatedBy)}
-                              </label>
-                              <label
-                                className="asset-details__last-updated"
-                                aria-label="Last Updated"
-                              >
-                                <CalendarOutlined />
-                                &nbsp;
-                                <FriendlyTimeAgo
-                                  date={moment(asset.lastUpdated)}
-                                />
-                              </label>
-                            </div>
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </section>
+                <ReportAssets
+                  mode={mode}
+                  imagePreviewScale={imagePreviewScale}
+                  dispatch={dispatch}
+                  analysisReport={analysisReport}
+                  currentlyBeingEditedAnalysisReportId={
+                    currentlyBeingEditedAnalysisReportId
+                      ? currentlyBeingEditedAnalysisReportId
+                      : undefined
+                  }
+                />
                 {mode === 'edit' &&
                   selectedAssets &&
                   selectedAssets.length > 0 && (
