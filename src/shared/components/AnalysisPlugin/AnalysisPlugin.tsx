@@ -132,12 +132,12 @@ const AnalysisPlugin = ({
   };
 
   const selectCategory = (value: string) => {
-    const res = analysisReports.filter(a =>
-      a.type?.toLowerCase() === value.toLowerCase()
+    const res = analysisReports.filter(
+      a => a.type?.toLowerCase() === value.toLowerCase()
     );
 
     return res;
-  }
+  };
 
   const fileUploadModal = (
     <Modal
