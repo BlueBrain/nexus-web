@@ -22,7 +22,7 @@ import {
   Checkbox,
   Modal,
 } from 'antd';
-import { without } from 'lodash';
+import { without, flatten, map, uniq, intersection } from 'lodash';
 import * as React from 'react';
 import { getUsername } from '../../../shared/utils';
 import FriendlyTimeAgo from '../FriendlyDate';
@@ -64,8 +64,8 @@ export type AnalysisReport = {
   id?: string;
   containerId?: string;
   containerName?: string;
-  containerType?: string;
-  containerCategory?: string;
+  containerType?: string[];
+  containerCategory?: string[];
   name: string;
   type?: string;
   description?: string;
@@ -130,6 +130,16 @@ const AnalysisPlugin = ({
     []
   );
   const [selectedTypes, setSelectedTypes] = React.useState<string[]>([]);
+
+  const availableCategories = intersection(
+    uniq(flatten(map(analysisReports, 'containerCategory'))),
+    CATEGORIES.circuit
+  );
+  const availableTypes = intersection(
+    uniq(flatten(map(analysisReports, 'containerType'))),
+    TYPES
+  );
+
   const onChangeAnalysisReports = (value: string[]) => {
     console.log('ONCHANGE TRIGGERED');
     dispatch({
@@ -183,25 +193,27 @@ const AnalysisPlugin = ({
           </Button>
         </h3>
         <p>you may select one or multiple from the list</p>
-        {CATEGORIES.circuit.map((object, i) => (
-          <Button
-            type="default"
-            onClick={() => selectCategory(object)}
-            className={`group-buttons ${
-              selectedCategories.includes(object) ? 'active' : ''
-            }`}
-          >
-            <h5>
-              {object}
-              <InfoCircleOutlined />
-            </h5>
-          </Button>
-        ))}
+        {CATEGORIES.circuit
+          .filter(o => availableCategories.includes(o))
+          .map((object, i) => (
+            <Button
+              type="default"
+              onClick={() => selectCategory(object)}
+              className={`group-buttons ${
+                selectedCategories.includes(object) ? 'active' : ''
+              }`}
+            >
+              <h5>
+                {object}
+                <InfoCircleOutlined />
+              </h5>
+            </Button>
+          ))}
       </div>
       <div className="types">
         <h3>Report Type</h3>
         <p>you may select one or multiple from the list</p>
-        {TYPES.map((object, i) => (
+        {TYPES.filter(o => availableTypes.includes(o)).map((object, i) => (
           <Button
             type="default"
             className={`group-buttons ${
@@ -273,13 +285,14 @@ const AnalysisPlugin = ({
               if (
                 selectedCategories.length > 0 &&
                 a.containerCategory !== undefined &&
-                !selectedCategories.includes(a.containerCategory)
+                intersection(selectedCategories, a.containerCategory).length ===
+                  0
               )
                 return false;
               if (
                 selectedTypes.length > 0 &&
                 a.containerType !== undefined &&
-                !selectedTypes.includes(a.containerType)
+                intersection(selectedTypes, a.containerType).length === 0
               )
                 return false;
               else return true;
@@ -300,10 +313,14 @@ const AnalysisPlugin = ({
                     {analysisReport.name}
                     <span className="cat-type-tags">
                       <span className="cat">
-                        {analysisReport.containerCategory}{' '}
+                        {analysisReport.containerCategory?.map(c => (
+                          <span>{c}</span>
+                        ))}{' '}
                       </span>
                       <span className="types">
-                        {analysisReport.containerType}
+                        {analysisReport.containerType?.map(t => (
+                          <span>{t}</span>
+                        ))}{' '}
                       </span>
                     </span>
                   </>
