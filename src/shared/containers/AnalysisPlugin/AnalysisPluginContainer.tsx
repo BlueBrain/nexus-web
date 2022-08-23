@@ -1,26 +1,25 @@
-import { NexusClient, NexusFile, Resource, SparqlView } from '@bbp/nexus-sdk';
-import { useNexusContext } from '@bbp/react-nexus';
-import * as React from 'react';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store/reducers';
-import { sparqlQueryExecutor } from '../../utils/querySparqlView';
-import { Image } from 'antd';
-import FileUploadContainer from '../FileUploadContainer';
-import { FileImageOutlined } from '@ant-design/icons';
-import { makeResourceUri } from '../../../shared/utils';
-import { useHistory, useLocation } from 'react-router';
-import ImageFileInfo from '../../components/FileInfo/ImageFileInfo';
-import { PDFThumbnail } from '../../../shared/components/Preview/PDFPreview';
-import PDFFileInfo from '../../../shared/components/FileInfo/PDFFileInfo';
-import AnalysisPlugin from '../../../shared/components/AnalysisPlugin/AnalysisPlugin';
+import { NexusClient, NexusFile, Resource, SparqlView } from '@bbp/nexus-sdk'
+import { useNexusContext } from '@bbp/react-nexus'
+import * as React from 'react'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store/reducers'
+import { sparqlQueryExecutor } from '../../utils/querySparqlView'
+import { Image } from 'antd'
+import FileUploadContainer from '../FileUploadContainer'
+import { FileImageOutlined } from '@ant-design/icons'
+import { makeResourceUri } from '../../../shared/utils'
+import { useHistory, useLocation } from 'react-router'
+import ImageFileInfo from '../../components/FileInfo/ImageFileInfo'
+import { PDFThumbnail } from '../../../shared/components/Preview/PDFPreview'
+import PDFFileInfo from '../../../shared/components/FileInfo/PDFFileInfo'
+import AnalysisPlugin from '../../../shared/components/AnalysisPlugin/AnalysisPlugin'
 
-<<<<<<< HEAD
 import analysisUIReducer, {
   setReportResourceType,
   setSelectedReportFirstLoad,
   changeSelectedReports,
-} from '../../slices/plugins/report';
+} from '../../slices/plugins/report'
 
 import {
   Asset,
@@ -28,47 +27,9 @@ import {
   AnalysisReport,
   AnalysisPluginContainerProps,
   AnalysisAssetSparqlQueryRowResult,
-} from '../../types/plugins/report';
-=======
-export const DEFAULT_ANALYSIS_DATA_SPARQL_QUERY = `PREFIX s:<http://schema.org/>
-PREFIX prov:<http://www.w3.org/ns/prov#>
-PREFIX nsg:<https://neuroshapes.org/>
-PREFIX nxv:<https://bluebrain.github.io/nexus/vocabulary/>
-SELECT ?container_resource_id  ?container_resource_type ?container_resource_name ?analysis_report_id ?analysis_report_name ?analysis_report_description ?created_by ?created_at ?self
-WHERE {
-  OPTIONAL {
-    BIND(<{resourceId}> as ?container_resource_id) .
-    BIND(<{resourceId}> as ?self) .
-    ?derivation_id        ^prov:derivation       ?analysis_report_id .
-    ?derivation_id        nsg:entity             ?container_resource_id .
-    OPTIONAL {
-      ?container_resource_id        nsg:name                   ?container_resource_name .
-      ?container_resource_id        nsg:type                   ?container_resource_type .
-    }
-    ?analysis_report_id    nsg:name            ?analysis_report_name .
-    ?analysis_report_id    nsg:description       ?analysis_report_description .
-    ?analysis_report_id nxv:createdBy ?created_by .
-    ?analysis_report_id nxv:createdAt ?created_at .
-  }
-  OPTIONAL {
-    BIND(<{resourceId}> as ?analysis_report_id) .
-    BIND(<{resourceId}> as ?self) .
-    ?derivation_id        ^prov:derivation       ?analysis_report_id .
-    ?derivation_id        nsg:entity             ?container_resource_id .
-    OPTIONAL {
-      ?container_resource_id        nsg:name                   ?container_resource_name .
-      ?container_resource_id        nsg:type                   ?container_resource_type .
-    }
-    ?analysis_report_id    nsg:name            ?analysis_report_name .
-    ?analysis_report_id    nsg:description       ?analysis_report_description .
-    ?analysis_report_id nxv:createdBy ?created_by .
-    ?analysis_report_id nxv:createdAt ?created_at .
-  }
-}
-LIMIT 1000`;
->>>>>>> a1d52fea (styles done and rearranged dropdown button to make accordiion workflow work)
+} from '../../types/plugins/report'
 
-async function fetchImageObjectUrl(
+async function fetchImageObjectUrl (
   nexus: NexusClient,
   orgLabel: string,
   projectLabel: string,
@@ -82,11 +43,11 @@ async function fetchImageObjectUrl(
     {
       as: 'blob',
     }
-  );
+  )
   const blob = new Blob([rawData as string], {
     type: encodingFormat,
-  });
-  return URL.createObjectURL(blob);
+  })
+  return URL.createObjectURL(blob)
 }
 
 const AnalysisPluginContainer = ({
@@ -94,22 +55,22 @@ const AnalysisPluginContainer = ({
   projectLabel,
   resourceId,
 }: AnalysisPluginContainerProps) => {
-  const identities = useSelector((state: RootState) => state.auth.identities);
+  const identities = useSelector((state: RootState) => state.auth.identities)
   const currentUser = identities?.data?.identities.find(
     id => id['@type'] === 'User'
-  );
-  const nexus = useNexusContext();
-  const queryClient = useQueryClient();
+  )
+  const nexus = useNexusContext()
+  const queryClient = useQueryClient()
 
-  const [unsavedAssets, setUnsavedAssets] = React.useState<Asset[]>([]);
+  const [unsavedAssets, setUnsavedAssets] = React.useState<Asset[]>([])
 
   const apiEndpoint = useSelector(
     (state: RootState) => state.config.apiEndpoint
-  );
-  const history = useHistory();
-  const location = useLocation();
+  )
+  const history = useHistory()
+  const location = useLocation()
 
-  const viewSelfId = `${apiEndpoint}/nexus/v1/views/${orgLabel}/${projectLabel}/graph`;
+  const viewSelfId = `${apiEndpoint}/nexus/v1/views/${orgLabel}/${projectLabel}/graph`
 
   const handleClickAnalysisResource = (
     orgLabel: string,
@@ -119,47 +80,23 @@ const AnalysisPluginContainer = ({
     history.push(
       makeResourceUri(orgLabel, projectLabel, resourceId),
       location.state
-    );
-  };
+    )
+  }
 
   const { analysisPluginSparqlDataQuery } = useSelector(
     (state: RootState) => state.config
-  );
+  )
 
   const analysisSparqlQuery = analysisPluginSparqlDataQuery.replaceAll(
     '{resourceId}',
     resourceId
-  );
+  )
 
-<<<<<<< HEAD
-=======
-  type AnalysisAssetSparqlQueryRowResult = {
-    id: string;
-    key: string;
-    container_resource_id: string;
-    container_resource_name: string;
-    container_resource_type: string;
-    analysis_report_id: string;
-    analysis_report_name: string;
-    analysis_report_description: string;
-    created_by: string;
-    created_at: string;
-    asset_name: string;
-    asset_description: string;
-    asset_content_url: string;
-    asset_encoding_format: string;
-    self: {
-      type: string;
-      value: string;
-    };
-  };
-
->>>>>>> a1d52fea (styles done and rearranged dropdown button to make accordiion workflow work)
   const fetchAnalysisData = async (
     viewSelfId: string,
     analysisQuery: string
   ) => {
-    const analysisReports: AnalysisReport[] = [];
+    const analysisReports: AnalysisReport[] = []
     const result = await sparqlQueryExecutor(
       nexus,
       analysisQuery,
@@ -167,7 +104,7 @@ const AnalysisPluginContainer = ({
         _self: viewSelfId,
       } as SparqlView,
       false
-    );
+    )
 
     const uniqueReportIds = [
       ...new Set(
@@ -175,7 +112,7 @@ const AnalysisPluginContainer = ({
           r => (r as AnalysisAssetSparqlQueryRowResult).analysis_report_id
         )
       ),
-    ];
+    ]
     const reportResources = (await Promise.all(
       uniqueReportIds.map(reportResourceId =>
         nexus.Resource.get(
@@ -184,10 +121,10 @@ const AnalysisPluginContainer = ({
           encodeURIComponent(reportResourceId)
         )
       )
-    )) as Resource[];
+    )) as Resource[]
 
     const analysisData = result.items.reduce((analysisReports, current) => {
-      const currentRow = current as AnalysisAssetSparqlQueryRowResult;
+      const currentRow = current as AnalysisAssetSparqlQueryRowResult
       /* add new entry if report not in array yet */
       if (
         !analysisReports.some(r => r.id === currentRow['analysis_report_id'])
@@ -195,34 +132,34 @@ const AnalysisPluginContainer = ({
         const types =
           currentRow['analysis_report_types'] !== undefined
             ? [currentRow['analysis_report_types']]
-            : [];
+            : []
         const categories =
           currentRow['analysis_report_categories'] !== undefined
             ? [currentRow['analysis_report_categories']]
-            : [];
+            : []
         analysisReports.push({
           types,
           categories,
           containerId: currentRow['container_resource_id'],
           containerName: currentRow['container_resource_name'],
-          containerType: ['Analysis', 'Validation'],
-          containerCategory: ['Anatomical', 'Volumetric'],
+          types: currentRow['analysis_report_types'],
+          categories: currentRow['analysis_report_categories'],
           id: currentRow['analysis_report_id'],
           description: currentRow['analysis_report_description'],
           name: currentRow['analysis_report_name'],
           createdBy: currentRow['created_by'],
           createdAt: currentRow['created_at'],
           assets: [],
-        });
+        })
 
         const reportIx = analysisReports.findIndex(
           r => r.id === currentRow['analysis_report_id']
-        );
+        )
         const reportResource = reportResources.find(
           r => r['@id'] === currentRow['analysis_report_id']
-        );
+        )
 
-        if (reportResource === undefined) return analysisReports;
+        if (reportResource === undefined) return analysisReports
 
         if ('hasPart' in reportResource) {
           analysisReports[reportIx].assets = [reportResource.hasPart]
@@ -237,57 +174,58 @@ const AnalysisPluginContainer = ({
                 filePath: asset.distribution.contentUrl['@id'],
                 encodingFormat: asset.distribution.encodingFormat,
                 preview: ({ mode }: { mode: 'view' | 'edit' }) => {
-                  return <Image preview={mode === 'view'} />;
+                  return <Image preview={mode === 'view'} />
                 },
-              };
-            });
+              }
+            })
         }
       } else {
         // already exists, just
         const reportIx = analysisReports.findIndex(
           r => r.id === currentRow['analysis_report_id']
-        );
-        const r = analysisReports[reportIx];
+        )
+        const r = analysisReports[reportIx]
         if (r.categories !== undefined) {
           if (
             !r.categories.includes(currentRow['analysis_report_categories'])
           ) {
-            r.categories.push(currentRow['analysis_report_categories']);
+            r.categories.push(currentRow['analysis_report_categories'])
           }
         } else {
           analysisReports[reportIx].categories = [
             currentRow['analysis_report_categories'],
-          ];
+          ]
         }
         if (r.types !== undefined) {
           if (!r.types.includes(currentRow['analysis_report_types'])) {
-            r.types.push(currentRow['analysis_report_types']);
+            r.types.push(currentRow['analysis_report_types'])
           }
         } else {
           analysisReports[reportIx].types = [
             currentRow['analysis_report_types'],
-          ];
+          ]
         }
       }
 
-      return analysisReports;
-    }, analysisReports);
+      return analysisReports
+    }, analysisReports)
 
-    return analysisData;
-  };
+    return analysisData
+  }
 
   const { data: analysisData } = useQuery(
     ['analysis', resourceId],
     async () => fetchAnalysisData(viewSelfId, analysisSparqlQuery),
     {
       onSuccess: data => {
+        console.log('onSuccess', data)
         if (!hasInitializedSelectedReports) {
           dispatch(
             setSelectedReportFirstLoad({
               analysisReportId:
                 data.length > 0 && data[0].id !== undefined ? data[0].id : '',
             })
-          );
+          )
         }
         dispatch(
           setReportResourceType({
@@ -304,23 +242,23 @@ const AnalysisPluginContainer = ({
                 ? data[0].containerName
                 : undefined,
           })
-        );
+        )
       },
     }
-  );
+  )
 
   const fetchImages = async () => {
     const imageSourceInitial: Promise<{
-      id: string;
-      src: string;
-      contentUrl: string;
-      deprecated: boolean;
-      filename: string;
-      lastUpdated: string;
-      lastUpdatedBy: string;
-    }>[] = [];
+      id: string
+      src: string
+      contentUrl: string
+      deprecated: boolean
+      filename: string
+      lastUpdated: string
+      lastUpdatedBy: string
+    }>[] = []
     if (!analysisData) {
-      return [];
+      return []
     }
 
     const imageSources = Promise.all(
@@ -328,12 +266,12 @@ const AnalysisPluginContainer = ({
         const assets = current.assets.concat(unsavedAssets).map(async asset => {
           const imageId = asset.filePath.substring(
             asset.filePath.lastIndexOf('/') + 1
-          );
+          )
           const imgResource = (await nexus.Resource.get(
             orgLabel,
             projectLabel,
             encodeURIComponent(asset.filePath)
-          )) as Resource;
+          )) as Resource
 
           const src = await fetchImageObjectUrl(
             nexus,
@@ -341,7 +279,7 @@ const AnalysisPluginContainer = ({
             projectLabel,
             imageId,
             asset.encodingFormat
-          );
+          )
           return {
             src,
             id: asset.id,
@@ -350,14 +288,14 @@ const AnalysisPluginContainer = ({
             filename: imgResource['_filename'],
             lastUpdated: imgResource['_updatedAt'],
             lastUpdatedBy: imgResource['_updatedBy'],
-          };
-        });
-        return [...prev, ...assets];
+          }
+        })
+        return [...prev, ...assets]
       }, imageSourceInitial)
-    );
+    )
 
-    return imageSources;
-  };
+    return imageSources
+  }
 
   const { data: imageData } = useQuery(
     [
@@ -373,36 +311,36 @@ const AnalysisPluginContainer = ({
       enabled: analysisData !== undefined && analysisData.length > 0,
       refetchOnWindowFocus: false,
     }
-  );
+  )
 
   const mutateAsset = useMutation(
     async (data: {
-      resourceId: string;
-      assetContentUrl: string;
-      title: string;
-      caption: string;
+      resourceId: string
+      assetContentUrl: string
+      title: string
+      caption: string
     }) => {
       const resource = (await nexus.Resource.get(
         orgLabel,
         projectLabel,
         encodeURIComponent(data.resourceId)
-      )) as Resource;
+      )) as Resource
       resource.hasPart = [resource.hasPart].flat().map(a => {
         if (a.distribution.contentUrl['@id'] !== data.assetContentUrl) {
-          return a;
+          return a
         }
 
         return {
           ...a,
           name: data.title,
           description: data.caption,
-        };
-      });
+        }
+      })
 
       // Add user as contributor if not already
       const contributions = resource['contribution']
         ? [resource['contribution']].flat()
-        : [];
+        : []
 
       if (!contributions.some(c => c.agent['@id'] === currentUser?.['@id'])) {
         contributions.push({
@@ -411,9 +349,9 @@ const AnalysisPluginContainer = ({
             '@id': currentUser?.['@id'],
             '@type': ['Person', 'Agent'],
           },
-        });
+        })
       }
-      resource['contribution'] = contributions;
+      resource['contribution'] = contributions
 
       return nexus.Resource.update(
         orgLabel,
@@ -421,25 +359,25 @@ const AnalysisPluginContainer = ({
         encodeURIComponent(data.resourceId),
         resource._rev,
         resource
-      );
+      )
     },
     {
       onSuccess: () => {
         return Promise.all([
           queryClient.invalidateQueries(['analysis']),
           queryClient.invalidateQueries(['analysesImages']),
-        ]);
+        ])
       },
     }
-  );
+  )
 
   const mutateAnalysis = useMutation(
     async (data: {
-      id?: string;
-      name: string;
-      description?: string;
-      categories?: string[];
-      types?: string[];
+      id?: string
+      name: string
+      description?: string
+      categories?: string[]
+      types?: string[]
     }) => {
       const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
         return {
@@ -453,24 +391,25 @@ const AnalysisPluginContainer = ({
             contentSize: a.contentSize,
             digest: a.digest,
           },
-        };
-      });
+        }
+      })
+      console.log('MUTATE ANALYSIS', data)
 
       if (data.id) {
         const resource = (await nexus.Resource.get(
           orgLabel,
           projectLabel,
           encodeURIComponent(data.id)
-        )) as Resource;
+        )) as Resource
 
-        const hasPart = [resource['hasPart']].flat();
-        hasPart.push(...unsavedAssetsToAddToDistribution);
-        resource['hasPart'] = hasPart;
+        const hasPart = [resource['hasPart']].flat()
+        hasPart.push(...unsavedAssetsToAddToDistribution)
+        resource['hasPart'] = hasPart
 
         // Add user as contributor if not already
         const contributions = resource['contribution']
           ? [resource['contribution']].flat()
-          : [];
+          : []
 
         if (!contributions.some(c => c.agent['@id'] === currentUser?.['@id'])) {
           contributions.push({
@@ -479,9 +418,9 @@ const AnalysisPluginContainer = ({
               '@id': currentUser?.['@id'],
               '@type': ['Person', 'Agent'],
             },
-          });
+          })
         }
-        resource['contribution'] = contributions;
+        resource['contribution'] = contributions
         return nexus.Resource.update(
           orgLabel,
           projectLabel,
@@ -494,7 +433,7 @@ const AnalysisPluginContainer = ({
             categories: data.categories,
             types: data.types,
           }
-        );
+        )
       }
       // Create new Analysis Report
       return nexus.Resource.create(orgLabel, projectLabel, {
@@ -512,22 +451,23 @@ const AnalysisPluginContainer = ({
         types: data.types,
         hasPart: unsavedAssetsToAddToDistribution,
         derivation: { entity: { '@id': resourceId } },
-      });
+      })
     },
     {
       onSuccess: resource => {
-        setUnsavedAssets([]);
+        console.log('creating new success resource:', resource)
+        setUnsavedAssets([])
         Promise.all([
           queryClient.invalidateQueries(['analysis']),
           queryClient.invalidateQueries(['analysesImages']),
         ]).then(() => {
           dispatch(
             changeSelectedReports({ analysisReportIds: [resource['@id']] })
-          );
-        });
+          )
+        })
       },
     }
-  );
+  )
 
   const deleteImages = useMutation(
     async () => {
@@ -538,27 +478,27 @@ const AnalysisPluginContainer = ({
               orgLabel,
               projectLabel,
               encodeURIComponent(d)
-            )) as Resource;
+            )) as Resource
             await nexus.Resource.deprecate(
               orgLabel,
               projectLabel,
               encodeURIComponent(resource['@id']),
               resource._rev
-            );
+            )
           })
-        );
+        )
         // TODO: update report contributors
         if (currentlyBeingEditedAnalysisReportId) {
           const reportResource = (await nexus.Resource.get(
             orgLabel,
             projectLabel,
             encodeURIComponent(currentlyBeingEditedAnalysisReportId)
-          )) as Resource;
+          )) as Resource
 
           // Add user as contributor if not already
           const contributions = reportResource['contribution']
             ? [reportResource['contribution']].flat()
-            : [];
+            : []
 
           if (
             !contributions.some(c => c.agent['@id'] === currentUser?.['@id'])
@@ -569,9 +509,9 @@ const AnalysisPluginContainer = ({
                 '@id': currentUser?.['@id'],
                 '@type': ['Person', 'Agent'],
               },
-            });
+            })
           }
-          reportResource['contribution'] = contributions;
+          reportResource['contribution'] = contributions
 
           await nexus.Resource.update(
             orgLabel,
@@ -582,10 +522,10 @@ const AnalysisPluginContainer = ({
               ...reportResource,
               contribution: contributions,
             }
-          );
+          )
         }
       }
-      return selectedAnalysisReports;
+      return selectedAnalysisReports
     },
     {
       onSuccess: resourceIds => {
@@ -597,11 +537,11 @@ const AnalysisPluginContainer = ({
             changeSelectedReports({
               analysisReportIds: resourceIds ? resourceIds : [],
             })
-          );
-        });
+          )
+        })
       },
     }
-  );
+  )
   const onFileUploaded = (file: NexusFile, analysisReportId?: string) => {
     const newlyUploadedAsset: Asset = {
       analysisReportId,
@@ -643,33 +583,14 @@ const AnalysisPluginContainer = ({
               />
             )}
           </>
-        );
+        )
       },
-    };
-    setUnsavedAssets(assets => [...assets, newlyUploadedAsset]);
-  };
+    }
+    setUnsavedAssets(assets => [...assets, newlyUploadedAsset])
+  }
 
-  const DEFAULT_SCALE = 50;
+  const DEFAULT_SCALE = 50
 
-<<<<<<< HEAD
-=======
-  type AnalysesState = {
-    analysisResourceType: 'report_container' | 'individual_report';
-    containerId?: string;
-    containerName?: string;
-    containerType?: string;
-    imagePreviewScale: number;
-    mode: 'view' | 'edit' | 'create';
-    selectedAnalysisReports?: string[];
-    currentlyBeingEditedAnalysisReportId?: string;
-    currentlyBeingEditingAnalysisReportName?: string;
-    currentlyBeingEditedAnalysisReportDescription?: string;
-    selectedAssets?: string[];
-    isUploadAssetDialogOpen?: boolean;
-    hasInitializedSelectedReports: boolean;
-  };
-
->>>>>>> a1d52fea (styles done and rearranged dropdown button to make accordiion workflow work)
   const initState = ({
     mode,
     analysisResourceType,
@@ -683,8 +604,8 @@ const AnalysisPluginContainer = ({
       hasInitializedSelectedReports,
       selectedAnalysisReports,
       imagePreviewScale: scale,
-    };
-  };
+    }
+  }
 
   const [
     {
@@ -714,8 +635,23 @@ const AnalysisPluginContainer = ({
       selectedAnalysisReports: [],
     },
     initState
-  );
-
+  )
+  const runningMyOwnThing = React.useMemo(() => {
+    console.log(
+      'MY USE MEMO currentlyBeingEditedAnalysisReportCategories, currentlyBeingEditedAnalysisReportTypes currentlyBeingEditedAnalysisReportName currentlyBeingEditedAnalysisReportDescription',
+      [
+        currentlyBeingEditingAnalysisReportName,
+        currentlyBeingEditedAnalysisReportDescription,
+        currentlyBeingEditedAnalysisReportCategories,
+        currentlyBeingEditedAnalysisReportTypes,
+      ]
+    )
+  }, [
+    [
+      currentlyBeingEditedAnalysisReportCategories,
+      currentlyBeingEditedAnalysisReportTypes,
+    ],
+  ])
   const analysisDataWithImages = React.useMemo(() => {
     const newAnalysisReports: AnalysisReport[] =
       mode === 'create'
@@ -730,18 +666,17 @@ const AnalysisPluginContainer = ({
               assets: [],
             },
           ]
-        : [];
+        : []
     const savedAndUnsavedAnalysisReports = analysisData
       ? analysisData.concat(newAnalysisReports)
-      : newAnalysisReports;
-
+      : newAnalysisReports
     return savedAndUnsavedAnalysisReports.map(a => {
       return {
         ...a,
         assets: a.assets
           .concat(unsavedAssets)
           .map(m => {
-            const img = imageData?.find(img => img.contentUrl === m.filePath);
+            const img = imageData?.find(img => img.contentUrl === m.filePath)
             return {
               ...m,
               filename: img?.filename,
@@ -768,7 +703,7 @@ const AnalysisPluginContainer = ({
                               assetContentUrl: img.contentUrl,
                               title: name,
                               caption: description,
-                            });
+                            })
                         }}
                       />
                     )}
@@ -788,19 +723,19 @@ const AnalysisPluginContainer = ({
                               assetContentUrl: img.contentUrl,
                               title: name,
                               caption: description,
-                            });
+                            })
                         }}
                       />
                     )}
                   </>
-                );
+                )
               },
-            };
+            }
           })
           .filter(a => a.deprecated === undefined || !a.deprecated),
-      };
-    });
-  }, [analysisData, imageData, unsavedAssets, mode]);
+      }
+    })
+  }, [analysisData, imageData, unsavedAssets, mode])
 
   const FileUploadComponent = (analysisReportId?: string) => (
     <FileUploadContainer
@@ -809,7 +744,7 @@ const AnalysisPluginContainer = ({
       projectLabel={projectLabel}
       onFileUploaded={file => onFileUploaded(file, analysisReportId)}
     />
-  );
+  )
 
   return (
     <>
@@ -826,10 +761,10 @@ const AnalysisPluginContainer = ({
             categories?: string[],
             types?: string[]
           ) => {
-            mutateAnalysis.mutate({ name, description, id, categories, types });
+            mutateAnalysis.mutate({ name, description, id, categories, types })
           }}
           onDelete={() => {
-            deleteImages.mutate();
+            deleteImages.mutate()
           }}
           imagePreviewScale={imagePreviewScale}
           mode={mode}
@@ -860,7 +795,7 @@ const AnalysisPluginContainer = ({
         />
       )}
     </>
-  );
-};
+  )
+}
 
-export default AnalysisPluginContainer;
+export default AnalysisPluginContainer

@@ -10,7 +10,7 @@ import { REPORT_CATEGORIES as CATEGORIES } from '../../../constants'
 =======
 import * as React from 'react';
 import { Button } from 'antd';
-import { without, flatten, map, uniq, intersection } from 'lodash';
+import { flatten, map, uniq, intersection } from 'lodash';
 import { FolderAddOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import './Categories.less';
 import {
@@ -54,6 +54,7 @@ const CategoryWidget = ({
       ? CATEGORIES.circuit
       : intersection(
 <<<<<<< HEAD
+<<<<<<< HEAD
           uniq(flatten(map(analysisReports, 'categories'))),
           CATEGORIES.circuit
         )
@@ -88,6 +89,9 @@ const CategoryWidget = ({
 }
 =======
           uniq(flatten(map(analysisReports, 'containerCategory'))),
+=======
+          uniq(flatten(map(analysisReports, 'categories'))),
+>>>>>>> 4cfff0c0 (save from new screen working)
           CATEGORIES.circuit
         );
 
