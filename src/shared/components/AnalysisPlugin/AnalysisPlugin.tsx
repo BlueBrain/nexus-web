@@ -4,19 +4,21 @@ import {
   ZoomInOutlined,
   FolderAddOutlined,
   ZoomOutOutlined,
-} from '@ant-design/icons';
-import { Button, Collapse, Input, Slider, Modal } from 'antd';
-import { without, intersection } from 'lodash';
-import * as React from 'react';
-import { getUsername } from '../../../shared/utils';
-import FriendlyTimeAgo from '../FriendlyDate';
-import './AnalysisPlugin.less';
-import * as moment from 'moment';
-import CategoryWidget from './CategoryWidget';
-import TypeWidget from './TypeWidget';
-import ReportAssets from './ReportAssets';
+  InfoCircleOutlined,
+} from '@ant-design/icons'
+import { Button, Collapse, Input, Slider, Modal } from 'antd'
+import { without, intersection } from 'lodash'
+import * as React from 'react'
+import { getUsername } from '../../../shared/utils'
+import FriendlyTimeAgo from '../FriendlyDate'
+import './AnalysisPlugin.less'
+import './Categories.less'
+import * as moment from 'moment'
+import CategoryWidget from './CategoryWidget'
+import TypeWidget from './TypeWidget'
+import ReportAssets from './ReportAssets'
 
-import NewReportForm from './NewReportForm';
+import NewReportForm from './NewReportForm'
 import {
   editReport,
   changeAnalysisName,
@@ -25,12 +27,22 @@ import {
   initialize,
   changeAnalysisDescription,
   addReport,
-} from '../../slices/plugins/report';
+} from '../../slices/plugins/report'
 
-const { Panel } = Collapse;
+const { Panel } = Collapse
 
-import { AnalysisPluginProps } from '../../types/plugins/report';
+import { AnalysisPluginProps } from '../../types/plugins/report'
 
+const CATEGORIES = {
+  circuit: [
+    'Anatomical',
+    'Connectivity',
+    'Volumetric',
+    'Morphometric',
+    'Synapse',
+  ],
+  simulation: ['Spiking', 'Soma voltage', 'LFP', 'VSD', 'Plasticity'],
+}
 const AnalysisPlugin = ({
   analysisResourceType,
   containerId,
@@ -53,30 +65,30 @@ const AnalysisPlugin = ({
 }: AnalysisPluginProps) => {
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
     []
-  );
-  const [selectedTypes, setSelectedTypes] = React.useState<string[]>([]);
+  )
+  const [selectedTypes, setSelectedTypes] = React.useState<string[]>([])
 
   const selectCategory = (value: string) => {
     !selectedCategories.includes(value)
       ? setSelectedCategories([...selectedCategories, value])
-      : setSelectedCategories(without(selectedCategories, value));
-  };
+      : setSelectedCategories(without(selectedCategories, value))
+  }
   const selectType = (value: string) => {
     !selectedTypes.includes(value)
       ? setSelectedTypes([...selectedTypes, value])
-      : setSelectedTypes(without(selectedTypes, value));
-  };
+      : setSelectedTypes(without(selectedTypes, value))
+  }
   const fileUploadModal = (
     <Modal
       visible={isUploadAssetDialogOpen}
       footer={false}
       onCancel={() => dispatch(closeFileUploadDialog())}
-      className="file-upload-modal"
+      className='file-upload-modal'
       destroyOnClose={true}
     >
       {FileUpload(currentlyBeingEditedAnalysisReportId)}
     </Modal>
-  );
+  )
 
   return (
     <>
@@ -94,14 +106,14 @@ const AnalysisPlugin = ({
         />
       )}
       {mode !== 'create' && (
-        <div className="analysis">
+        <div className='analysis'>
           <Button
-            type="primary"
-            className="addReportButton"
-            title="Add Analysis Report"
-            aria-label="Add Analysis Report"
+            type='primary'
+            className='addReportButton'
+            title='Add Analysis Report'
+            aria-label='Add Analysis Report'
             onClick={() => {
-              dispatch(addReport());
+              dispatch(addReport())
             }}
           >
             Add Report
@@ -126,10 +138,10 @@ const AnalysisPlugin = ({
               <>
                 {' '}
                 <Button
-                  type="link"
+                  type='link'
                   onClick={() => onClickRelatedResource(containerId)}
                   style={{ padding: 0 }}
-                  aria-label="Go to parent resource"
+                  aria-label='Go to parent resource'
                 >
                   <UpOutlined /> Go to parent resource
                 </Button>
@@ -140,7 +152,7 @@ const AnalysisPlugin = ({
             {mode === 'view' && (
               <>
                 {analysisResourceType === 'report_container' && (
-                  <div className="analysisTools"></div>
+                  <div className='analysisTools'></div>
                 )}
                 {selectedAnalysisReports &&
                   selectedAnalysisReports.length > 0 &&
@@ -151,10 +163,10 @@ const AnalysisPlugin = ({
                       r.assets.length > 0
                   ).length > 0 && (
                     <div
-                      className="zoom-control"
-                      aria-label="Increase/Decrease image thumnbail size"
+                      className='zoom-control'
+                      aria-label='Increase/Decrease image thumnbail size'
                     >
-                      <ZoomOutOutlined title="Reduce thumbnail size" />
+                      <ZoomOutOutlined title='Reduce thumbnail size' />
                       <Slider
                         tooltipVisible={false}
                         value={imagePreviewScale}
@@ -162,9 +174,9 @@ const AnalysisPlugin = ({
                           dispatch(changeScale(value))
                         }
                         included={false}
-                        className="slider-scale"
+                        className='slider-scale'
                       />
-                      <ZoomInOutlined title="Increase thumbnail size" />
+                      <ZoomInOutlined title='Increase thumbnail size' />
                     </div>
                   )}
               </>
@@ -177,23 +189,23 @@ const AnalysisPlugin = ({
                     a.categories !== undefined &&
                     intersection(selectedCategories, a.categories).length === 0
                   ) {
-                    return false;
+                    return false
                   }
                   if (
                     selectedTypes.length > 0 &&
                     a.types !== undefined &&
                     intersection(selectedTypes, a.types).length === 0
                   ) {
-                    return false;
+                    return false
                   }
                 }
-                return true;
+                return true
               })
               .map((analysisReport, i) => (
                 // <Collapse className="panel">
 
                 <Collapse
-                  expandIconPosition="right"
+                  expandIconPosition='right'
                   key={i}
                   style={{ marginBottom: '40px' }}
                 >
@@ -204,7 +216,7 @@ const AnalysisPlugin = ({
                         {analysisReport.name}
                         {!!analysisReport.categories &&
                           analysisReport.categories.length > 0 && (
-                            <span className="cat">
+                            <span className='cat'>
                               {analysisReport.categories.map((c, i) => (
                                 <span key={i}>{c}</span>
                               ))}{' '}
@@ -212,7 +224,7 @@ const AnalysisPlugin = ({
                           )}
                         {!!analysisReport.types &&
                           analysisReport.types.length > 0 && (
-                            <span className="types">
+                            <span className='types'>
                               {analysisReport.types.map((t, i) => (
                                 <span key={i}>{t}</span>
                               ))}{' '}
@@ -222,7 +234,7 @@ const AnalysisPlugin = ({
                     }
                   >
                     <h1
-                      aria-label="Analysis Name"
+                      aria-label='Analysis Name'
                       style={{
                         display: 'flex',
                         ...(mode === 'view' && { marginBottom: '0.1em' }),
@@ -234,9 +246,9 @@ const AnalysisPlugin = ({
                           analysisReport.id && (
                           <>
                             <Input
-                              type="text"
-                              placeholder="Analysis Name"
-                              aria-label="Analysis Name"
+                              type='text'
+                              placeholder='Analysis Name'
+                              aria-label='Analysis Name'
                               required={true}
                               value={currentlyBeingEditedAnalysisReportName}
                               onChange={e =>
@@ -247,7 +259,7 @@ const AnalysisPlugin = ({
                               style={{ width: '60%' }}
                             />
                             <div
-                              className="actions"
+                              className='actions'
                               style={{
                                 marginLeft: 'auto',
                                 marginRight: '20px',
@@ -255,8 +267,8 @@ const AnalysisPlugin = ({
                             >
                               <Button
                                 style={{ marginRight: '10px' }}
-                                type="default"
-                                aria-label="Cancel"
+                                type='default'
+                                aria-label='Cancel'
                                 onClick={() =>
                                   dispatch(
                                     initialize({
@@ -271,8 +283,8 @@ const AnalysisPlugin = ({
                                 Cancel
                               </Button>
                               <Button
-                                type="primary"
-                                aria-label="Save"
+                                type='primary'
+                                aria-label='Save'
                                 onClick={() => {
                                   currentlyBeingEditedAnalysisReportName &&
                                     onSave(
@@ -281,7 +293,7 @@ const AnalysisPlugin = ({
                                       analysisReport.id,
                                       currentlyBeingEditedAnalysisReportCategories,
                                       currentlyBeingEditedAnalysisReportTypes
-                                    );
+                                    )
                                 }}
                               >
                                 Save
@@ -293,8 +305,8 @@ const AnalysisPlugin = ({
                     {mode === 'view' && (
                       <>
                         <section
-                          aria-label="Analysis Metadata"
-                          className="analysis-metadata"
+                          aria-label='Analysis Metadata'
+                          className='analysis-metadata'
                         >
                           <label>
                             Created{' '}
@@ -315,7 +327,7 @@ const AnalysisPlugin = ({
                       </>
                     )}
                     <p
-                      aria-label="Analysis Description"
+                      aria-label='Analysis Description'
                       style={{ maxWidth: '900px', marginRight: '50px' }}
                     >
                       {(mode === 'view' ||
@@ -328,8 +340,8 @@ const AnalysisPlugin = ({
                         currentlyBeingEditedAnalysisReportId ===
                           analysisReport.id && (
                           <Input.TextArea
-                            placeholder="Analysis Description"
-                            aria-label="Analysis Description"
+                            placeholder='Analysis Description'
+                            aria-label='Analysis Description'
                             value={
                               currentlyBeingEditedAnalysisReportDescription
                             }
@@ -343,9 +355,9 @@ const AnalysisPlugin = ({
                           />
                         )}
                     </p>
-                    <section className="actions" aria-label="actions">
+                    <section className='actions' aria-label='actions'>
                       <Button
-                        type="default"
+                        type='default'
                         onClick={() =>
                           analysisReport.id &&
                           dispatch(
@@ -362,7 +374,7 @@ const AnalysisPlugin = ({
                         Edit
                       </Button>
                       <Button
-                        type="default"
+                        type='default'
                         hidden={true}
                         onClick={() => console.log('download')}
                         icon={<LeftSquareFilled />}
@@ -370,7 +382,7 @@ const AnalysisPlugin = ({
                         Download
                       </Button>
                       <Button
-                        type="default"
+                        type='default'
                         hidden={analysisResourceType === 'individual_report'}
                         onClick={() =>
                           analysisReport.id &&
@@ -383,12 +395,12 @@ const AnalysisPlugin = ({
                         selectedAssets &&
                         selectedAssets.length > 0 && (
                           <Button
-                            type="primary"
+                            type='primary'
                             danger
                             style={{ marginLeft: '20px' }}
-                            aria-label="Delete"
+                            aria-label='Delete'
                             onClick={() => {
-                              onDelete();
+                              onDelete()
                             }}
                           >
                             Delete
@@ -414,7 +426,7 @@ const AnalysisPlugin = ({
         </div>
       )}
     </>
-  );
-};
+  )
+}
 
-export default AnalysisPlugin;
+export default AnalysisPlugin
