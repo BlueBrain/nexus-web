@@ -15,6 +15,7 @@ import { PDFThumbnail } from '../../../shared/components/Preview/PDFPreview';
 import PDFFileInfo from '../../../shared/components/FileInfo/PDFFileInfo';
 import AnalysisPlugin from '../../../shared/components/AnalysisPlugin/AnalysisPlugin';
 
+<<<<<<< HEAD
 import analysisUIReducer, {
   setReportResourceType,
   setSelectedReportFirstLoad,
@@ -28,6 +29,44 @@ import {
   AnalysisPluginContainerProps,
   AnalysisAssetSparqlQueryRowResult,
 } from '../../types/plugins/report';
+=======
+export const DEFAULT_ANALYSIS_DATA_SPARQL_QUERY = `PREFIX s:<http://schema.org/>
+PREFIX prov:<http://www.w3.org/ns/prov#>
+PREFIX nsg:<https://neuroshapes.org/>
+PREFIX nxv:<https://bluebrain.github.io/nexus/vocabulary/>
+SELECT ?container_resource_id  ?container_resource_type ?container_resource_name ?analysis_report_id ?analysis_report_name ?analysis_report_description ?created_by ?created_at ?self
+WHERE {
+  OPTIONAL {
+    BIND(<{resourceId}> as ?container_resource_id) .
+    BIND(<{resourceId}> as ?self) .
+    ?derivation_id        ^prov:derivation       ?analysis_report_id .
+    ?derivation_id        nsg:entity             ?container_resource_id .
+    OPTIONAL {
+      ?container_resource_id        nsg:name                   ?container_resource_name .
+      ?container_resource_id        nsg:type                   ?container_resource_type .
+    }
+    ?analysis_report_id    nsg:name            ?analysis_report_name .
+    ?analysis_report_id    nsg:description       ?analysis_report_description .
+    ?analysis_report_id nxv:createdBy ?created_by .
+    ?analysis_report_id nxv:createdAt ?created_at .
+  }
+  OPTIONAL {
+    BIND(<{resourceId}> as ?analysis_report_id) .
+    BIND(<{resourceId}> as ?self) .
+    ?derivation_id        ^prov:derivation       ?analysis_report_id .
+    ?derivation_id        nsg:entity             ?container_resource_id .
+    OPTIONAL {
+      ?container_resource_id        nsg:name                   ?container_resource_name .
+      ?container_resource_id        nsg:type                   ?container_resource_type .
+    }
+    ?analysis_report_id    nsg:name            ?analysis_report_name .
+    ?analysis_report_id    nsg:description       ?analysis_report_description .
+    ?analysis_report_id nxv:createdBy ?created_by .
+    ?analysis_report_id nxv:createdAt ?created_at .
+  }
+}
+LIMIT 1000`;
+>>>>>>> a1d52fea (styles done and rearranged dropdown button to make accordiion workflow work)
 
 async function fetchImageObjectUrl(
   nexus: NexusClient,
@@ -92,6 +131,30 @@ const AnalysisPluginContainer = ({
     resourceId
   );
 
+<<<<<<< HEAD
+=======
+  type AnalysisAssetSparqlQueryRowResult = {
+    id: string;
+    key: string;
+    container_resource_id: string;
+    container_resource_name: string;
+    container_resource_type: string;
+    analysis_report_id: string;
+    analysis_report_name: string;
+    analysis_report_description: string;
+    created_by: string;
+    created_at: string;
+    asset_name: string;
+    asset_description: string;
+    asset_content_url: string;
+    asset_encoding_format: string;
+    self: {
+      type: string;
+      value: string;
+    };
+  };
+
+>>>>>>> a1d52fea (styles done and rearranged dropdown button to make accordiion workflow work)
   const fetchAnalysisData = async (
     viewSelfId: string,
     analysisQuery: string
@@ -142,6 +205,7 @@ const AnalysisPluginContainer = ({
           categories,
           containerId: currentRow['container_resource_id'],
           containerName: currentRow['container_resource_name'],
+          containerType: currentRow['container_resource_type'],
           id: currentRow['analysis_report_id'],
           description: currentRow['analysis_report_description'],
           name: currentRow['analysis_report_name'],
@@ -586,6 +650,25 @@ const AnalysisPluginContainer = ({
 
   const DEFAULT_SCALE = 50;
 
+<<<<<<< HEAD
+=======
+  type AnalysesState = {
+    analysisResourceType: 'report_container' | 'individual_report';
+    containerId?: string;
+    containerName?: string;
+    containerType?: string;
+    imagePreviewScale: number;
+    mode: 'view' | 'edit' | 'create';
+    selectedAnalysisReports?: string[];
+    currentlyBeingEditedAnalysisReportId?: string;
+    currentlyBeingEditingAnalysisReportName?: string;
+    currentlyBeingEditedAnalysisReportDescription?: string;
+    selectedAssets?: string[];
+    isUploadAssetDialogOpen?: boolean;
+    hasInitializedSelectedReports: boolean;
+  };
+
+>>>>>>> a1d52fea (styles done and rearranged dropdown button to make accordiion workflow work)
   const initState = ({
     mode,
     analysisResourceType,
