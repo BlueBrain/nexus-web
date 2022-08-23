@@ -51,27 +51,11 @@ const NewReportForm = ({
     data.types = selectedTypes;
     console.log('selectedTypes:', selectedTypes);
     console.log('on finish', data);
-    // const payload = values(data);
-    // console.log('payload', payload);
-    // let [name, description, id, types, categories] = payload;
     dispatch({
-      type: ActionType.CHANGE_ANALYSIS_NAME,
-      payload: { name: data.name },
+        type: ActionType.SAVE_NEW_ANALYSIS_REPORT,
+        payload: data
     });
-    dispatch({
-      type: ActionType.CHANGE_ANALYSIS_DESCRIPTION,
-      payload: { description: data.description },
-    });
-    dispatch({
-      type: ActionType.CHANGE_ANALYSIS_CATEGORIES,
-      payload: { categories: selectedCategories },
-    });
-    dispatch({
-      type: ActionType.CHANGE_ANALYSIS_TYPES,
-      payload: { types: selectedTypes },
-    });
-
-    onSave(data.name, data.description, undefined, selectedCategories, selectedTypes);
+    onSave(data);
   };
   return (
     <Form layout={'vertical'} onFinish={onFinish} className="new-report-form">

@@ -279,11 +279,9 @@ const AnalysisPluginContainer = ({
       const reportIx = analysisReports.findIndex(
         r => r.id === currentRow['analysis_report_id']
       );
-      console.log('reportIx', reportIx);
       const reportResource = reportResources.find(
         r => r['@id'] === currentRow['analysis_report_id']
       );
-      console.log('reportResource', reportResource);
       if (reportResource === undefined) return analysisReports;
       if ('hasPart' in reportResource) {
         analysisReports[reportIx].assets = [reportResource.hasPart]
@@ -315,7 +313,6 @@ const AnalysisPluginContainer = ({
     async () => fetchAnalysisData(viewSelfId, analysisSparqlQuery),
     {
       onSuccess: data => {
-        console.log("onSuccess", data);
         if (!hasInitializedSelectedReports) {
           dispatch({
             type: ActionType.SET_SELECTED_REPORT_ON_FIRST_LOAD,
@@ -492,7 +489,6 @@ const AnalysisPluginContainer = ({
           },
         };
       });
-      console.log('MUTATE ANALYSIS', data);
       
       if (data.id) {
         const resource = (await nexus.Resource.get(
@@ -520,7 +516,6 @@ const AnalysisPluginContainer = ({
           });
         }
         resource['contribution'] = contributions;
-        console.log('RESOURCE ASSEMBLED', resource);
         return nexus.Resource.update(
           orgLabel,
           projectLabel,
@@ -535,7 +530,6 @@ const AnalysisPluginContainer = ({
           }
         );
       }
-      console.log('CREATING NEW REPORT', data);
       // Create new Analysis Report
       return nexus.Resource.create(orgLabel, projectLabel, {
         '@context': [
@@ -881,22 +875,7 @@ const AnalysisPluginContainer = ({
     },
     initState
   );
-  const runningMyOwnThing = React.useMemo(() => {
-    console.log(
-      'MY USE MEMO currentlyBeingEditedAnalysisReportCategories, currentlyBeingEditedAnalysisReportTypes currentlyBeingEditedAnalysisReportName currentlyBeingEditedAnalysisReportDescription',
-      [
-        currentlyBeingEditingAnalysisReportName,
-        currentlyBeingEditedAnalysisReportDescription,
-        currentlyBeingEditedAnalysisReportCategories,
-        currentlyBeingEditedAnalysisReportTypes,
-      ]
-    );
-  }, [
-    [
-      currentlyBeingEditedAnalysisReportCategories,
-      currentlyBeingEditedAnalysisReportTypes,
-    ],
-  ]);
+
   const analysisDataWithImages = React.useMemo(() => {
     const newAnalysisReports: AnalysisReport[] =
       mode === 'create'
@@ -915,11 +894,6 @@ const AnalysisPluginContainer = ({
     const savedAndUnsavedAnalysisReports = analysisData
       ? analysisData.concat(newAnalysisReports)
       : newAnalysisReports;
-    console.log('newAnalysisReports USE MEMO:', newAnalysisReports);
-    console.log(
-      'savedAndUnsavedAnalysisReports USE MEMO:',
-      savedAndUnsavedAnalysisReports
-    );
     return savedAndUnsavedAnalysisReports.map(a => {
       return {
         ...a,
