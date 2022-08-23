@@ -13,7 +13,7 @@ import { AnalysisReport } from './AnalysisPlugin';
 const TYPES = ['Validation', 'Prediction', 'Analysis'];
 
 type TypeWidgetProps = {
-  analysisReports: AnalysisReport[];
+  analysisReports?: AnalysisReport[];
   mode: 'view' | 'edit' | 'create';
   selectedTypes: string[];
   selectType: (value: string) => void;
@@ -24,20 +24,24 @@ const TypeWidget = ({
   dispatch,
   analysisReports,
   selectedTypes,
+  mode,
   selectType,
 }: TypeWidgetProps) => {
-  const [openPanel, setOpenPanel] = React.useState<number>();
 
-  const availableTypes = intersection(
-    uniq(flatten(map(analysisReports, 'containerType'))),
-    TYPES
-  );
+  const availableTypes =
+    mode === 'create'
+      ? TYPES
+      : intersection(
+          uniq(flatten(map(analysisReports, 'containerType'))),
+          TYPES
+        );
 
   return (
     <div className="types">
-      <h3>
-        Types
-      </h3>
+      {mode !== 'create' && (
+        <h3>
+          Types
+        </h3>)}
       <p>you may select one or multiple from the list</p>
       {TYPES.filter(o => availableTypes.includes(o)).map((object, i) => (
         <Button

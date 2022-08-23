@@ -1,22 +1,27 @@
 .ant-collapse-content {
-    background: #ffffff !important;
-.new-report-form {
-  .ant-col.ant-form-item-label {
-    font-style: normal;
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 32px;
-    /* identical to box height, or 200% */
+  background: #ffffff !important;
+  .new-report-form {
+    .ant-col.ant-form-item-label {
+      font-style: normal;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 32px;
+      /* identical to box height, or 200% */
 
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
 
-    /* Neutral/13 */
+      /* Neutral/13 */
 
-    color: #000000;
-  }
-  .ant-form-item-control-input-content {
-      
+      color: #000000;
+    }
+    .ant-form-item-control-input-content {
+      .action-buttons {
+        display: block;
+        margin-right: 0;
+        margin-left: auto;
+        text-align: end;
+      }
       .ant-input {
         border-top: none;
         border-right: none;
@@ -25,8 +30,29 @@
         background: none;
       }
       textarea.ant-input {
-        background: #F5F5F5;
+        background: #f5f5f5;
       }
-} 
-}
+      .ant-btn.ant-btn-primary.save-button {
+        justify-content: center;
+        align-items: center;
+        padding: 16px 30px;
+        gap: 8px;
+        color:#ffffff;
+        width: 155px;
+        height: 56px;
+
+        /* Polar Green / 7 */
+
+        background: #389e0d;
+        border-radius: 6px;;
+      }
+      .ant-btn.ant-btn-default.cancel-button {
+        font-size: 16px;
+        line-height: 24px;
+        border: none;
+        background: none;
+        color: #8c8c8c;
+      }
+    }
+  }
 }
