@@ -173,8 +173,6 @@ const AnalysisPlugin = ({
                     intersection(selectedTypes, a.types).length === 0
                   ) {
                     return false;
-                  } else {
-                    return true;
                   }
                 }
                 return true;

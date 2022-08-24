@@ -61,8 +61,8 @@ const newReport = {
 };
 
 export const analysisUISlice = createSlice({
-  name: 'analysisUI',
   initialState,
+  name: 'analysisUI',
   reducers: {
     initialize: (state, action) =>
       updateObject(state, {
