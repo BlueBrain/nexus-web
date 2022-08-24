@@ -4,7 +4,7 @@ on: [pull_request]
 
 jobs:
   test-and-build:
-    runs-on: ubuntu-latest
+    runs-on: it
 
     steps:
       - uses: actions/checkout@v1
