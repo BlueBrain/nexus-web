@@ -404,7 +404,7 @@ const AnalysisPluginContainer = ({
           }
         );
       }
-      console.log("NO DATA ID FOUND");
+      console.log('NO DATA ID FOUND');
       // Create new Analysis Report
       return nexus.Resource.create(orgLabel, projectLabel, {
         '@context': [
@@ -431,7 +431,9 @@ const AnalysisPluginContainer = ({
           queryClient.invalidateQueries(['analysis']),
           queryClient.invalidateQueries(['analysesImages']),
         ]).then(() => {
-          dispatch(changeSelectedReports({ analysisReportIds: [resource['@id']] }));
+          dispatch(
+            changeSelectedReports({ analysisReportIds: [resource['@id']] })
+          );
         });
       },
     }
@@ -501,7 +503,11 @@ const AnalysisPluginContainer = ({
           queryClient.invalidateQueries(['analysis']),
           queryClient.invalidateQueries(['analysesImages']),
         ]).then(() => {
-          dispatch(changeSelectedReports({ analysisReportIds: resourceIds ? resourceIds : [] }));
+          dispatch(
+            changeSelectedReports({
+              analysisReportIds: resourceIds ? resourceIds : [],
+            })
+          );
         });
       },
     }
@@ -533,7 +539,7 @@ const AnalysisPluginContainer = ({
                 {file._mediaType === 'application/pdf' && (
                   <PDFThumbnail
                     url={file['@id']}
-                    onPreview={() => { }}
+                    onPreview={() => {}}
                     previewDisabled={true}
                   />
                 )}
@@ -542,7 +548,7 @@ const AnalysisPluginContainer = ({
             {file._mediaType === 'application/pdf' && (
               <PDFThumbnail
                 url={file['@id']}
-                onPreview={() => { }}
+                onPreview={() => {}}
                 previewDisabled={true}
               />
             )}
@@ -602,21 +608,21 @@ const AnalysisPluginContainer = ({
   );
 
   const analysisDataWithImages = React.useMemo(() => {
-    console.log("USE MEMO TRIGGERRED");
+    console.log('USE MEMO TRIGGERRED');
     console.log(mode);
     const newAnalysisReports: AnalysisReport[] =
       mode === 'create'
         ? [
-          {
-            name: currentlyBeingEditedAnalysisReportName || '',
-            description: currentlyBeingEditedAnalysisReportDescription || '',
-            categories: currentlyBeingEditedAnalysisReportCategories || [],
-            types: currentlyBeingEditedAnalysisReportTypes || [],
-            createdBy: '',
-            createdAt: '',
-            assets: [],
-          },
-        ]
+            {
+              name: currentlyBeingEditedAnalysisReportName || '',
+              description: currentlyBeingEditedAnalysisReportDescription || '',
+              categories: currentlyBeingEditedAnalysisReportCategories || [],
+              types: currentlyBeingEditedAnalysisReportTypes || [],
+              createdBy: '',
+              createdAt: '',
+              assets: [],
+            },
+          ]
         : [];
     const savedAndUnsavedAnalysisReports = analysisData
       ? analysisData.concat(newAnalysisReports)
@@ -631,7 +637,7 @@ const AnalysisPluginContainer = ({
       currentlyBeingEditedAnalysisReportDescription,
       currentlyBeingEditedAnalysisReportCategories
     );
-    
+
     return savedAndUnsavedAnalysisReports.map(a => {
       return {
         ...a,
@@ -650,25 +656,25 @@ const AnalysisPluginContainer = ({
                   <>
                     {m.encodingFormat.substring(0, 'image'.length) ===
                       'image' && (
-                        <ImageFileInfo
-                          previewDisabled={mode === 'edit'}
-                          src={img?.src}
-                          lastUpdated={img?.lastUpdated}
-                          lastUpdatedBy={img?.lastUpdatedBy}
-                          title={m.name}
-                          text={m.description}
-                          onSave={(name, description) => {
-                            a.id &&
-                              img &&
-                              mutateAsset.mutate({
-                                resourceId: a.id,
-                                assetContentUrl: img.contentUrl,
-                                title: name,
-                                caption: description,
-                              });
-                          }}
-                        />
-                      )}
+                      <ImageFileInfo
+                        previewDisabled={mode === 'edit'}
+                        src={img?.src}
+                        lastUpdated={img?.lastUpdated}
+                        lastUpdatedBy={img?.lastUpdatedBy}
+                        title={m.name}
+                        text={m.description}
+                        onSave={(name, description) => {
+                          a.id &&
+                            img &&
+                            mutateAsset.mutate({
+                              resourceId: a.id,
+                              assetContentUrl: img.contentUrl,
+                              title: name,
+                              caption: description,
+                            });
+                        }}
+                      />
+                    )}
                     {m.encodingFormat === 'application/pdf' && img?.src && (
                       <PDFFileInfo
                         previewDisabled={mode === 'edit'}
