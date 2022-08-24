@@ -18,7 +18,7 @@ export interface RootState {
 export default {
   auth,
   config,
-  uiSettings: uiSettingsReducer,
   analysisUIReducer,
+  uiSettings: uiSettingsReducer,
   search: searchReducer,
 };
