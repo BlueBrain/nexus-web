@@ -164,15 +164,18 @@ const AnalysisPlugin = ({
                     selectedCategories.length > 0 &&
                     a.categories !== undefined &&
                     intersection(selectedCategories, a.categories).length === 0
-                  )
+                  ) {
                     return false;
+                  }
                   if (
                     selectedTypes.length > 0 &&
                     a.types !== undefined &&
                     intersection(selectedTypes, a.types).length === 0
-                  )
+                  ) {
                     return false;
-                  else return true;
+                  } else {
+                    return true;
+                  }
                 }
                 return true;
               })

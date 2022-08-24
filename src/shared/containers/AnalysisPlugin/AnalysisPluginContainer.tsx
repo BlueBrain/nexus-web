@@ -13,9 +13,8 @@ import { useHistory, useLocation } from 'react-router';
 import ImageFileInfo from '../../components/FileInfo/ImageFileInfo';
 import { PDFThumbnail } from '../../../shared/components/Preview/PDFPreview';
 import PDFFileInfo from '../../../shared/components/FileInfo/PDFFileInfo';
-import analysisUIReducer from '../../slices/plugins/report';
 import AnalysisPlugin from '../../../shared/components/AnalysisPlugin/AnalysisPlugin';
-import {
+import analysisUIReducer, {
   setReportResourceType,
   editReport,
   addReport,

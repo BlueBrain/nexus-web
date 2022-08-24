@@ -19,6 +19,6 @@ export default {
   auth,
   config,
   uiSettings: uiSettingsReducer,
-  analysisUIReducer: analysisUIReducer,
+  analysisUIReducer,
   search: searchReducer,
 };

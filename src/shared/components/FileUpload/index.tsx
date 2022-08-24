@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Upload, message, Switch, Select } from 'antd';
+import { Upload, message, Switch, Select, Typography } from 'antd';
 import {
   InboxOutlined,
   FolderOpenOutlined,
@@ -7,7 +7,6 @@ import {
 } from '@ant-design/icons';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { NexusFile, Storage } from '@bbp/nexus-sdk';
-import { Typography } from 'antd';
 
 import { labelOf } from '../../utils';
 import useNotification from '../../hooks/useNotification';

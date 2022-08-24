@@ -5,8 +5,7 @@ import {
   createReducer,
   PayloadAction,
 } from '@reduxjs/toolkit';
-import { Asset } from '../../types/plugins/report';
-import { AnalysesState } from '../../types/plugins/report';
+import { AnalysesState, Asset } from '../../types/plugins/report';
 import {
   findIndex,
   slice,
