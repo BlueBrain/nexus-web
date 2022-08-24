@@ -20,6 +20,5 @@ export default {
   config,
   analysisUIReducer,
   uiSettings: uiSettingsReducer,
-  analysisUIReducer,
   search: searchReducer,
 };
