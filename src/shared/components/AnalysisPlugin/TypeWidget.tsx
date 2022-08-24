@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Button } from 'antd';
 import { flatten, map, uniq, intersection } from 'lodash';
 import { InfoCircleOutlined } from '@ant-design/icons';
@@ -15,21 +14,14 @@ const TypeWidget = ({
   mode,
   selectType,
 }: TypeWidgetProps) => {
-
   const availableTypes =
     mode === 'create'
       ? TYPES
-      : intersection(
-          uniq(flatten(map(analysisReports, 'types'))),
-          TYPES
-        );
+      : intersection(uniq(flatten(map(analysisReports, 'types'))), TYPES);
 
   return (
     <div className="types">
-      {mode !== 'create' && (
-        <h3>
-          Types
-        </h3>)}
+      {mode !== 'create' && <h3>Types</h3>}
       <p>you may select one or multiple from the list</p>
       {TYPES.filter(o => availableTypes.includes(o)).map((object, i) => (
         <Button

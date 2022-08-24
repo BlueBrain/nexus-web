@@ -1,34 +1,22 @@
 import * as React from 'react';
-import { Form, Button, Input } from 'antd';
+import { Form, Button, Input, Select, Typography } from 'antd';
 import './NewReportForm.less';
 import CategoryWidget from './CategoryWidget';
 import TypeWidget from './TypeWidget';
-import { without } from 'lodash';
+import { without, values } from 'lodash';
+import { NewReportFormProps } from '../../types/plugins/report';
+import { initialize, saveReport } from '../../slices/plugins/report';
+import { StorageMenu } from '../../../shared/components/FileUpload';
 
-import {
-  initialize,
-  saveReport,
-} from '../../slices/plugins/report';
-
+const { Option } = Select;
 const { TextArea } = Input;
-
-type NewReportFormProps = {
-  analysisReportId?: string | undefined;
-  imagePreviewScale: number;
-  onSave: (
-    name: string,
-    description?: string,
-    id?: string,
-    categories?: string[],
-    types?: string[]
-  ) => void;
-  dispatch: (params: any) => void;
-};
+const { Text } = Typography;
 
 const NewReportForm = ({
   analysisReportId,
   dispatch,
   onSave,
+  FileUpload,
   imagePreviewScale,
 }: NewReportFormProps) => {
   const [form] = Form.useForm();
@@ -50,20 +38,19 @@ const NewReportForm = ({
   const onFinish = (data: any) => {
     data.categories = selectedCategories;
     data.types = selectedTypes;
-    console.log('selectedTypes:', selectedTypes);
-    console.log('on finish', data);
-    dispatch(saveReport({ payload: data }));
-    onSave(data);
+
+    dispatch(saveReport(data));
+    onSave(data.name, data.description, data.id, data.categories, data.types);
   };
   return (
     <Form layout={'vertical'} onFinish={onFinish} className="new-report-form">
-      <Form.Item label="Report Name" name="name">
+      <Form.Item label="1. Report Name" name="name">
         <Input placeholder="type name here" />
       </Form.Item>
-      <Form.Item label="Report Description" name="description">
+      <Form.Item label="2. Report Description" name="description">
         <TextArea rows={10} />
       </Form.Item>
-      <Form.Item label="Categories">
+      <Form.Item label="3. Categories">
         <CategoryWidget
           dispatch={dispatch}
           mode={'create'}
@@ -71,13 +58,32 @@ const NewReportForm = ({
           selectCategory={selectCategory}
         />
       </Form.Item>
-      <Form.Item label="Types">
+      <Form.Item label="4. Types">
         <TypeWidget
           dispatch={dispatch}
           mode={'create'}
           selectedTypes={selectedTypes}
           selectType={selectType}
         />
+      </Form.Item>
+      <Form.Item label="5. Add Assets">
+        <p className="smallInfo">
+          the title and the asset description can be edited later while browing
+          throuhg the analysis
+        </p>
+        <div style={{ margin: '10px 0' }}>
+          <Text strong>Source</Text>
+          <Select
+            style={{ display: 'inline-block', margin: '0 10px', width: '20em' }}
+            showSearch
+            placeholder="Select storage"
+            defaultValue={['default']}
+          >
+            <Option value="default">Default</Option>
+            <Option value="other">Other</Option>
+          </Select>
+        </div>
+        {FileUpload()}
       </Form.Item>
       <Form.Item className="action-buttons">
         <span className="action-buttons">

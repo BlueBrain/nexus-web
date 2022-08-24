@@ -349,6 +349,7 @@ const AnalysisPluginContainer = ({
       categories?: string[];
       types?: string[];
     }) => {
+      console.log('MUTATE', data);
       const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
         return {
           '@type': 'Entity',
@@ -404,6 +405,7 @@ const AnalysisPluginContainer = ({
           }
         );
       }
+      console.log("NO DATA ID FOUND");
       // Create new Analysis Report
       return nexus.Resource.create(orgLabel, projectLabel, {
         '@context': [
@@ -532,7 +534,7 @@ const AnalysisPluginContainer = ({
                 {file._mediaType === 'application/pdf' && (
                   <PDFThumbnail
                     url={file['@id']}
-                    onPreview={() => {}}
+                    onPreview={() => { }}
                     previewDisabled={true}
                   />
                 )}
@@ -541,7 +543,7 @@ const AnalysisPluginContainer = ({
             {file._mediaType === 'application/pdf' && (
               <PDFThumbnail
                 url={file['@id']}
-                onPreview={() => {}}
+                onPreview={() => { }}
                 previewDisabled={true}
               />
             )}
@@ -580,7 +582,7 @@ const AnalysisPluginContainer = ({
       currentlyBeingEditedAnalysisReportId,
       selectedAssets,
       selectedAnalysisReports,
-      currentlyBeingEditingAnalysisReportName,
+      currentlyBeingEditedAnalysisReportName,
       currentlyBeingEditedAnalysisReportDescription,
       currentlyBeingEditedAnalysisReportCategories,
       currentlyBeingEditedAnalysisReportTypes,
@@ -601,23 +603,36 @@ const AnalysisPluginContainer = ({
   );
 
   const analysisDataWithImages = React.useMemo(() => {
+    console.log("USE MEMO TRIGGERRED");
+    console.log(mode);
     const newAnalysisReports: AnalysisReport[] =
       mode === 'create'
         ? [
-            {
-              name: currentlyBeingEditingAnalysisReportName || '',
-              description: currentlyBeingEditedAnalysisReportDescription || '',
-              categories: currentlyBeingEditedAnalysisReportCategories || [],
-              types: currentlyBeingEditedAnalysisReportTypes || [],
-              createdBy: '',
-              createdAt: '',
-              assets: [],
-            },
-          ]
+          {
+            name: currentlyBeingEditedAnalysisReportName || '',
+            description: currentlyBeingEditedAnalysisReportDescription || '',
+            categories: currentlyBeingEditedAnalysisReportCategories || [],
+            types: currentlyBeingEditedAnalysisReportTypes || [],
+            createdBy: '',
+            createdAt: '',
+            assets: [],
+          },
+        ]
         : [];
     const savedAndUnsavedAnalysisReports = analysisData
       ? analysisData.concat(newAnalysisReports)
       : newAnalysisReports;
+    console.log(
+      'savedAndUnsavedAnalysisReports:',
+      savedAndUnsavedAnalysisReports
+    );
+    console.log(
+      'currentlyBeingEditedAnalysisReport...:',
+      currentlyBeingEditedAnalysisReportName,
+      currentlyBeingEditedAnalysisReportDescription,
+      currentlyBeingEditedAnalysisReportCategories
+    );
+    
     return savedAndUnsavedAnalysisReports.map(a => {
       return {
         ...a,
@@ -636,25 +651,25 @@ const AnalysisPluginContainer = ({
                   <>
                     {m.encodingFormat.substring(0, 'image'.length) ===
                       'image' && (
-                      <ImageFileInfo
-                        previewDisabled={mode === 'edit'}
-                        src={img?.src}
-                        lastUpdated={img?.lastUpdated}
-                        lastUpdatedBy={img?.lastUpdatedBy}
-                        title={m.name}
-                        text={m.description}
-                        onSave={(name, description) => {
-                          a.id &&
-                            img &&
-                            mutateAsset.mutate({
-                              resourceId: a.id,
-                              assetContentUrl: img.contentUrl,
-                              title: name,
-                              caption: description,
-                            });
-                        }}
-                      />
-                    )}
+                        <ImageFileInfo
+                          previewDisabled={mode === 'edit'}
+                          src={img?.src}
+                          lastUpdated={img?.lastUpdated}
+                          lastUpdatedBy={img?.lastUpdatedBy}
+                          title={m.name}
+                          text={m.description}
+                          onSave={(name, description) => {
+                            a.id &&
+                              img &&
+                              mutateAsset.mutate({
+                                resourceId: a.id,
+                                assetContentUrl: img.contentUrl,
+                                title: name,
+                                caption: description,
+                              });
+                          }}
+                        />
+                      )}
                     {m.encodingFormat === 'application/pdf' && img?.src && (
                       <PDFFileInfo
                         previewDisabled={mode === 'edit'}
@@ -688,6 +703,7 @@ const AnalysisPluginContainer = ({
   const FileUploadComponent = (analysisReportId?: string) => (
     <FileUploadContainer
       orgLabel={orgLabel}
+      showStorageMenu={false}
       projectLabel={projectLabel}
       onFileUploaded={file => onFileUploaded(file, analysisReportId)}
     />
@@ -708,6 +724,7 @@ const AnalysisPluginContainer = ({
             categories?: string[],
             types?: string[]
           ) => {
+            // console.log("ON SAVE TRIGGERRED")
             mutateAnalysis.mutate({ name, description, id, categories, types });
           }}
           onDelete={() => {
@@ -722,11 +739,11 @@ const AnalysisPluginContainer = ({
           currentlyBeingEditedAnalysisReportId={
             currentlyBeingEditedAnalysisReportId
           }
-          currentlyBeingEditingAnalysisReportName={
-            currentlyBeingEditingAnalysisReportName
+          currentlyBeingEditedAnalysisReportName={
+            currentlyBeingEditedAnalysisReportName
           }
           selectedAssets={selectedAssets}
-          dispatch={() => dispatch}
+          dispatch={dispatch}
           selectedAnalysisReports={selectedAnalysisReports}
           isUploadAssetDialogOpen={isUploadAssetDialogOpen}
           onClickRelatedResource={(resourceId: string) =>

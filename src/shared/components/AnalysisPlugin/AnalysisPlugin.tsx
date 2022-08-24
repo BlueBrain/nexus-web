@@ -18,7 +18,6 @@ import ReportAssets from './ReportAssets';
 import NewReportForm from './NewReportForm';
 import {
   editReport,
-  changeSelectedReports,
   changeAnalysisName,
   closeFileUploadDialog,
   changeScale,
@@ -30,9 +29,7 @@ import { useState } from '@storybook/addons';
 
 const { Panel } = Collapse;
 
-import {
-  AnalysisPluginProps,
-} from '../../types/plugins/report';
+import { AnalysisPluginProps } from '../../types/plugins/report';
 
 const AnalysisPlugin = ({
   analysisResourceType,
@@ -47,13 +44,12 @@ const AnalysisPlugin = ({
   selectedAnalysisReports,
   currentlyBeingEditedAnalysisReportDescription,
   currentlyBeingEditedAnalysisReportId,
-  currentlyBeingEditingAnalysisReportName,
+  currentlyBeingEditedAnalysisReportName,
   selectedAssets,
   isUploadAssetDialogOpen,
   dispatch,
   onClickRelatedResource,
 }: AnalysisPluginProps) => {
-  const { Option } = Select;
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
     []
   );
@@ -87,6 +83,7 @@ const AnalysisPlugin = ({
         <NewReportForm
           dispatch={dispatch}
           onSave={onSave}
+          FileUpload={FileUpload}
           analysisReportId={
             currentlyBeingEditedAnalysisReportId
               ? currentlyBeingEditedAnalysisReportId
@@ -228,9 +225,11 @@ const AnalysisPlugin = ({
                               placeholder="Analysis Name"
                               aria-label="Analysis Name"
                               required={true}
-                              value={currentlyBeingEditingAnalysisReportName}
+                              value={currentlyBeingEditedAnalysisReportName}
                               onChange={e =>
-                                dispatch(changeAnalysisName({ name: e.target.value }))
+                                dispatch(
+                                  changeAnalysisName({ name: e.target.value })
+                                )
                               }
                               style={{ width: '60%' }}
                             />
@@ -246,12 +245,14 @@ const AnalysisPlugin = ({
                                 type="default"
                                 aria-label="Cancel"
                                 onClick={() =>
-                                  dispatch(initialize({
+                                  dispatch(
+                                    initialize({
                                       scale: imagePreviewScale,
                                       analysisReportId: analysisReport.id
                                         ? [analysisReport.id]
                                         : [],
-                                    }))
+                                    })
+                                  )
                                 }
                               >
                                 Cancel
@@ -260,9 +261,9 @@ const AnalysisPlugin = ({
                                 type="primary"
                                 aria-label="Save"
                                 onClick={() => {
-                                  currentlyBeingEditingAnalysisReportName &&
+                                  currentlyBeingEditedAnalysisReportName &&
                                     onSave(
-                                      currentlyBeingEditingAnalysisReportName,
+                                      currentlyBeingEditedAnalysisReportName,
                                       currentlyBeingEditedAnalysisReportDescription,
                                       analysisReport.id
                                     );
@@ -318,7 +319,11 @@ const AnalysisPlugin = ({
                               currentlyBeingEditedAnalysisReportDescription
                             }
                             onChange={e =>
-                              dispatch(changeAnalysisDescription({ description: e.currentTarget.value }))
+                              dispatch(
+                                changeAnalysisDescription({
+                                  description: e.currentTarget.value,
+                                })
+                              )
                             }
                           />
                         )}
@@ -328,11 +333,13 @@ const AnalysisPlugin = ({
                         type="default"
                         onClick={() =>
                           analysisReport.id &&
-                          dispatch(editReport({
+                          dispatch(
+                            editReport({
                               analysisId: analysisReport.id,
                               analaysisName: analysisReport.name,
                               analysisDescription: analysisReport.description,
-                            }))
+                            })
+                          )
                         }
                       >
                         Edit

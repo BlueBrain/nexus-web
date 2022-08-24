@@ -1,4 +1,6 @@
 // Report Constants
+export const DEFAULT_SCALE = 50;
+
 export const REPORT_CATEGORIES = {
   circuit: [
     'Anatomical',

@@ -1,17 +1,13 @@
 import * as React from 'react';
 import { Button, Checkbox } from 'antd';
-import { without, flatten, map, uniq, intersection } from 'lodash';
 import { CalendarOutlined, UserOutlined } from '@ant-design/icons';
 import FriendlyTimeAgo from '../FriendlyDate';
 import { getUsername } from '../../../shared/utils';
 import * as moment from 'moment';
 
-import {
-  ActionType,
-  AnalysesAction,
-} from '../../../shared/containers/AnalysisPlugin/AnalysisPluginContainer';
+import { selectAsset, openFileUploadDialog } from '../../slices/plugins/report';
 
-import { AnalysisReport } from '../../../shared/components/AnalysisPlugin/AnalysisPlugin';
+import { AnalysisReport } from '../../types/plugins/report';
 
 type ReportAssetProps = {
   analysisReport: AnalysisReport;
@@ -19,7 +15,7 @@ type ReportAssetProps = {
   selectedAssets?: string[];
   imagePreviewScale: number;
   currentlyBeingEditedAnalysisReportId?: string;
-  dispatch: (action: AnalysesAction) => void;
+  dispatch: (params: any) => void;
 };
 
 const ReportAssets = ({
@@ -40,9 +36,7 @@ const ReportAssets = ({
           <Button
             type="link"
             style={{ marginLeft: 'auto', marginBottom: '10px' }}
-            onClick={() =>
-              dispatch({ type: ActionType.OPEN_FILE_UPLOAD_DIALOG })
-            }
+            onClick={() => dispatch(openFileUploadDialog())}
           >
             Add Files to Analysis
           </Button>
@@ -79,10 +73,7 @@ const ReportAssets = ({
                     'id' in analysisReport &&
                     currentlyBeingEditedAnalysisReportId === analysisReport.id
                   ) {
-                    dispatch({
-                      type: ActionType.SELECT_ASSET,
-                      payload: { assetId: asset.id },
-                    });
+                    dispatch(selectAsset({ assetId: asset.id }));
                   }
                 }}
               >
@@ -103,10 +94,7 @@ const ReportAssets = ({
                         e.stopPropagation();
                       }}
                       onChange={e => {
-                        dispatch({
-                          type: ActionType.SELECT_ASSET,
-                          payload: { assetId: asset.id },
-                        });
+                        dispatch(selectAsset({ assetId: asset.id }));
                       }}
                     ></Checkbox>
                   )}

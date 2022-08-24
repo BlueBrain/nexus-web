@@ -8,7 +8,7 @@ export type AnalysesState = {
   hasInitializedSelectedReports: boolean;
   selectedAnalysisReports?: string[];
   currentlyBeingEditedAnalysisReportId?: string;
-  currentlyBeingEditingAnalysisReportName?: string;
+  currentlyBeingEditedAnalysisReportName?: string;
   currentlyBeingEditedAnalysisReportCategories?: string[];
   currentlyBeingEditedAnalysisReportTypes?: string[];
   currentlyBeingEditedAnalysisReportDescription?: string;
@@ -102,7 +102,7 @@ export type AnalysisPluginProps = {
   mode: 'view' | 'edit' | 'create';
   selectedAnalysisReports?: string[];
   currentlyBeingEditedAnalysisReportId?: string;
-  currentlyBeingEditingAnalysisReportName?: string;
+  currentlyBeingEditedAnalysisReportName?: string;
   currentlyBeingEditedAnalysisReportDescription?: string;
   currentlyBeingEditedAnalysisReportCategories?: string[];
   currentlyBeingEditedAnalysisReportTypes?: string[];
@@ -124,5 +124,19 @@ export type CategoryWidgetProps = {
   mode: 'view' | 'edit' | 'create';
   selectedCategories: string[];
   selectCategory: (value: string) => void;
+  dispatch: (params: any) => void;
+};
+
+export type NewReportFormProps = {
+  analysisReportId?: string | undefined;
+  imagePreviewScale?: number;
+  FileUpload: () => JSX.Element;
+  onSave: (
+    name: string,
+    description?: string,
+    id?: string,
+    categories?: string[],
+    types?: string[]
+  ) => void;
   dispatch: (params: any) => void;
 };
