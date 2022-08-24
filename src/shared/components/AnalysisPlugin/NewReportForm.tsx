@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { Form, Button, Input } from 'antd';
-import {
-  ActionType,
-  AnalysesAction,
-} from '../../../shared/containers/AnalysisPlugin/AnalysisPluginContainer';
 import './NewReportForm.less';
 import CategoryWidget from './CategoryWidget';
 import TypeWidget from './TypeWidget';
-import { values, without } from 'lodash';
+import { without } from 'lodash';
+
+import {
+  initialize,
+  saveReport,
+} from '../../slices/plugins/report';
 
 const { TextArea } = Input;
 
@@ -21,7 +22,7 @@ type NewReportFormProps = {
     categories?: string[],
     types?: string[]
   ) => void;
-  dispatch: (action: AnalysesAction) => void;
+  dispatch: (params: any) => void;
 };
 
 const NewReportForm = ({
@@ -51,10 +52,7 @@ const NewReportForm = ({
     data.types = selectedTypes;
     console.log('selectedTypes:', selectedTypes);
     console.log('on finish', data);
-    dispatch({
-        type: ActionType.SAVE_NEW_ANALYSIS_REPORT,
-        payload: data
-    });
+    dispatch(saveReport({ payload: data }));
     onSave(data);
   };
   return (
@@ -89,13 +87,12 @@ const NewReportForm = ({
             aria-label="Cancel"
             className="cancel-button"
             onClick={() =>
-              dispatch({
-                type: ActionType.INITIALIZE,
-                payload: {
+              dispatch(
+                initialize({
                   scale: imagePreviewScale,
                   analysisReportId: analysisReportId ? [analysisReportId] : [],
-                },
-              })
+                })
+              )
             }
           >
             Cancel

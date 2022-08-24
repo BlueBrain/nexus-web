@@ -4,30 +4,14 @@ import { flatten, map, uniq, intersection } from 'lodash';
 import { FolderAddOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import './Categories.less';
 import {
-  ActionType,
-  AnalysesAction,
-} from '../../../shared/containers/AnalysisPlugin/AnalysisPluginContainer';
+  CategoryWidgetProps,
+} from '../../types/plugins/report';
 
-import { AnalysisReport } from '../../../shared/components/AnalysisPlugin/AnalysisPlugin';
+import { REPORT_CATEGORIES as CATEGORIES } from '../../../constants';
 
-const CATEGORIES = {
-  circuit: [
-    'Anatomical',
-    'Connectivity',
-    'Volumetric',
-    'Morphometric',
-    'Synapse',
-  ],
-  simulation: ['Spiking', 'Soma voltage', 'LFP', 'VSD', 'Plasticity'],
-};
-
-type CategoryWidgetProps = {
-  analysisReports?: AnalysisReport[];
-  mode: 'view' | 'edit' | 'create';
-  selectedCategories: string[];
-  selectCategory: (value: string) => void;
-  dispatch: (action: AnalysesAction) => void;
-};
+import {
+  addReport,
+} from '../../slices/plugins/report';
 
 const CategoryWidget = ({
   dispatch,
@@ -56,9 +40,7 @@ const CategoryWidget = ({
             title="Add Analysis Report"
             aria-label="Add Analysis Report"
             onClick={() => {
-              dispatch({
-                type: ActionType.ADD_ANALYSIS_REPORT,
-              });
+              dispatch(addReport());
             }}
           >
             Add Report

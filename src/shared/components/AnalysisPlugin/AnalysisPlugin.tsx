@@ -5,7 +5,7 @@ import {
   ZoomOutOutlined,
 } from '@ant-design/icons';
 import { Button, Collapse, Input, Slider, Select, Modal } from 'antd';
-import { without, flatten, map, uniq, intersection } from 'lodash';
+import { without, intersection } from 'lodash';
 import * as React from 'react';
 import { getUsername } from '../../../shared/utils';
 import FriendlyTimeAgo from '../FriendlyDate';
@@ -16,80 +16,23 @@ import TypeWidget from './TypeWidget';
 import ReportAssets from './ReportAssets';
 
 import NewReportForm from './NewReportForm';
-
 import {
-  ActionType,
-  AnalysesAction,
-} from '../../../shared/containers/AnalysisPlugin/AnalysisPluginContainer';
+  editReport,
+  changeSelectedReports,
+  changeAnalysisName,
+  closeFileUploadDialog,
+  changeScale,
+  initialize,
+  changeAnalysisDescription,
+} from '../../slices/plugins/report';
+
 import { useState } from '@storybook/addons';
 
 const { Panel } = Collapse;
 
-export type Asset = {
-  analysisReportId?: string;
-  saved: boolean;
-  id: string;
-  name: string;
-  description?: string;
-  encodingFormat: string;
-  contentSize?: {
-    unitCode: 'bytes';
-    value: number;
-  };
-  digest?: {
-    algorithm: string;
-    value: string;
-  };
-  filePath: string;
-  filename?: string;
-  lastUpdated?: string;
-  lastUpdatedBy?: string;
-  deprecated?: boolean;
-  preview: ({ mode }: { mode: 'view' | 'edit' }) => React.ReactElement;
-};
-
-export type AnalysisReport = {
-  id?: string;
-  containerId?: string;
-  containerName?: string;
-  types?: string[];
-  categories?: string[];
-  name: string;
-  type?: string;
-  description?: string;
-  createdBy?: string;
-  createdAt?: string;
-  assets: Asset[];
-};
-
-type AnalysisPluginProps = {
-  analysisResourceType: 'report_container' | 'individual_report';
-  containerId?: string;
-  containerName?: string;
-  analysisReports: AnalysisReport[];
-  FileUpload: (analysisReportId?: string) => JSX.Element;
-  onSave: (
-    name: string,
-    description?: string,
-    id?: string,
-    categories?: string[],
-    types?: string[]
-  ) => void;
-  onDelete: () => void;
-  onCancel: () => void;
-  onClickRelatedResource: (resourceId: string) => void;
-  imagePreviewScale: number;
-  mode: 'view' | 'edit' | 'create';
-  selectedAnalysisReports?: string[];
-  currentlyBeingEditedAnalysisReportId?: string;
-  currentlyBeingEditingAnalysisReportName?: string;
-  currentlyBeingEditedAnalysisReportDescription?: string;
-  currentlyBeingEditedAnalysisReportCategories?: string[];
-  currentlyBeingEditedAnalysisReportTypes?: string[];
-  selectedAssets?: string[];
-  isUploadAssetDialogOpen?: boolean;
-  dispatch: (action: AnalysesAction) => void;
-};
+import {
+  AnalysisPluginProps,
+} from '../../types/plugins/report';
 
 const AnalysisPlugin = ({
   analysisResourceType,
@@ -116,13 +59,6 @@ const AnalysisPlugin = ({
   );
   const [selectedTypes, setSelectedTypes] = React.useState<string[]>([]);
 
-  const onChangeAnalysisReports = (value: string[]) => {
-    dispatch({
-      type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS,
-      payload: { analysisReportIds: value },
-    });
-  };
-
   const selectCategory = (value: string) => {
     !selectedCategories.includes(value)
       ? setSelectedCategories([...selectedCategories, value])
@@ -137,7 +73,7 @@ const AnalysisPlugin = ({
     <Modal
       visible={isUploadAssetDialogOpen}
       footer={false}
-      onCancel={() => dispatch({ type: ActionType.CLOSE_FILE_UPLOAD_DIALOG })}
+      onCancel={() => dispatch(closeFileUploadDialog())}
       className="file-upload-modal"
       destroyOnClose={true}
     >
@@ -214,7 +150,7 @@ const AnalysisPlugin = ({
                         tooltipVisible={false}
                         value={imagePreviewScale}
                         onChange={(value: number) =>
-                          dispatch({ type: ActionType.RESCALE, payload: value })
+                          dispatch(changeScale(value))
                         }
                         included={false}
                         className="slider-scale"
@@ -294,10 +230,7 @@ const AnalysisPlugin = ({
                               required={true}
                               value={currentlyBeingEditingAnalysisReportName}
                               onChange={e =>
-                                dispatch({
-                                  type: ActionType.CHANGE_ANALYSIS_NAME,
-                                  payload: { name: e.target.value },
-                                })
+                                dispatch(changeAnalysisName({ name: e.target.value }))
                               }
                               style={{ width: '60%' }}
                             />
@@ -313,15 +246,12 @@ const AnalysisPlugin = ({
                                 type="default"
                                 aria-label="Cancel"
                                 onClick={() =>
-                                  dispatch({
-                                    type: ActionType.INITIALIZE,
-                                    payload: {
+                                  dispatch(initialize({
                                       scale: imagePreviewScale,
                                       analysisReportId: analysisReport.id
                                         ? [analysisReport.id]
                                         : [],
-                                    },
-                                  })
+                                    }))
                                 }
                               >
                                 Cancel
@@ -388,10 +318,7 @@ const AnalysisPlugin = ({
                               currentlyBeingEditedAnalysisReportDescription
                             }
                             onChange={e =>
-                              dispatch({
-                                type: ActionType.CHANGE_ANALYSIS_DESCRIPTION,
-                                payload: { description: e.currentTarget.value },
-                              })
+                              dispatch(changeAnalysisDescription({ description: e.currentTarget.value }))
                             }
                           />
                         )}
@@ -401,14 +328,11 @@ const AnalysisPlugin = ({
                         type="default"
                         onClick={() =>
                           analysisReport.id &&
-                          dispatch({
-                            type: ActionType.EDIT_ANALYSIS_REPORT,
-                            payload: {
+                          dispatch(editReport({
                               analysisId: analysisReport.id,
                               analaysisName: analysisReport.name,
                               analysisDescription: analysisReport.description,
-                            },
-                          })
+                            }))
                         }
                       >
                         Edit

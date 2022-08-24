@@ -3,21 +3,10 @@ import { Button } from 'antd';
 import { flatten, map, uniq, intersection } from 'lodash';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import './Categories.less';
-import {
-  AnalysesAction,
-} from '../../containers/AnalysisPlugin/AnalysisPluginContainer';
 
-import { AnalysisReport } from './AnalysisPlugin';
+import { TypeWidgetProps } from '../../types/plugins/report';
 
-const TYPES = ['Validation', 'Prediction', 'Analysis'];
-
-type TypeWidgetProps = {
-  analysisReports?: AnalysisReport[];
-  mode: 'view' | 'edit' | 'create';
-  selectedTypes: string[];
-  selectType: (value: string) => void;
-  dispatch: (action: AnalysesAction) => void;
-};
+import { REPORT_TYPES as TYPES } from '../../../constants';
 
 const TypeWidget = ({
   dispatch,
