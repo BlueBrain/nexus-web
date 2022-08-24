@@ -3,6 +3,7 @@ import { Upload, message, Select, Typography } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { NexusFile, Storage } from '@bbp/nexus-sdk';
+import { Typography } from 'antd';
 
 import { labelOf } from '../../utils';
 import useNotification from '../../hooks/useNotification';

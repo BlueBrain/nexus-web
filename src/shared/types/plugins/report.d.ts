@@ -140,6 +140,7 @@ export type NewReportFormProps = {
   ) => void;
   dispatch: (params: any) => void;
 };
+<<<<<<< HEAD
 
 export type ReportAssetProps = {
   analysisReport: AnalysisReport;
@@ -149,3 +150,5 @@ export type ReportAssetProps = {
   currentlyBeingEditedAnalysisReportId?: string;
   dispatch: (params: any) => void;
 };
+=======
+>>>>>>> 2e79313f (file dialog done and a ton of cleaning up too)

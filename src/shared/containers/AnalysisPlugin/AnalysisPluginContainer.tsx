@@ -379,6 +379,7 @@ const AnalysisPluginContainer = ({
       categories?: string[]
       types?: string[]
     }) => {
+      console.log('MUTATE', data)
       const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
         return {
           '@type': 'Entity',
@@ -435,6 +436,7 @@ const AnalysisPluginContainer = ({
           }
         )
       }
+      console.log('NO DATA ID FOUND')
       // Create new Analysis Report
       return nexus.Resource.create(orgLabel, projectLabel, {
         '@context': [
@@ -653,6 +655,8 @@ const AnalysisPluginContainer = ({
     ],
   ])
   const analysisDataWithImages = React.useMemo(() => {
+    console.log('USE MEMO TRIGGERRED')
+    console.log(mode)
     const newAnalysisReports: AnalysisReport[] =
       mode === 'create'
         ? [
