@@ -140,3 +140,12 @@ export type NewReportFormProps = {
   ) => void;
   dispatch: (params: any) => void;
 };
+
+export type ReportAssetProps = {
+  analysisReport: AnalysisReport;
+  mode: 'view' | 'edit' | 'create';
+  selectedAssets?: string[];
+  imagePreviewScale: number;
+  currentlyBeingEditedAnalysisReportId?: string;
+  dispatch: (params: any) => void;
+};

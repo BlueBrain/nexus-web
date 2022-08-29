@@ -7,16 +7,7 @@ import * as moment from 'moment';
 
 import { selectAsset, openFileUploadDialog } from '../../slices/plugins/report';
 
-import { AnalysisReport } from '../../types/plugins/report';
-
-type ReportAssetProps = {
-  analysisReport: AnalysisReport;
-  mode: 'view' | 'edit' | 'create';
-  selectedAssets?: string[];
-  imagePreviewScale: number;
-  currentlyBeingEditedAnalysisReportId?: string;
-  dispatch: (params: any) => void;
-};
+import { AnalysisReport, ReportAssetProps } from '../../types/plugins/report';
 
 const ReportAssets = ({
   dispatch,
