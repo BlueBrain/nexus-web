@@ -1,19 +1,6 @@
-import {
-  createSlice,
-  createEntityAdapter,
-  CaseReducer,
-  createReducer,
-  PayloadAction,
-} from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { AnalysesState, Asset } from '../../types/plugins/report';
-import {
-  findIndex,
-  slice,
-  zipObject,
-  mapKeys,
-  capitalize,
-  assign,
-} from 'lodash';
+import { findIndex, slice, mapKeys, capitalize } from 'lodash';
 import { DEFAULT_SCALE } from '../../../constants';
 
 interface Analyses {
