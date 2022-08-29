@@ -124,7 +124,11 @@ const AnalysisPluginContainer = ({
     )) as Resource[]
 
     const analysisData = result.items.reduce((analysisReports, current) => {
+<<<<<<< HEAD
       const currentRow = current as AnalysisAssetSparqlQueryRowResult
+=======
+      const currentRow = current as AnalysisAssetSparqlQueryRowResult;
+>>>>>>> 88c49700 (randomly assigning types for demo)
       /* add new entry if report not in array yet */
       if (
         !analysisReports.some(r => r.id === currentRow['analysis_report_id'])
@@ -142,8 +146,8 @@ const AnalysisPluginContainer = ({
           categories,
           containerId: currentRow['container_resource_id'],
           containerName: currentRow['container_resource_name'],
-          types: currentRow['analysis_report_types'],
-          categories: currentRow['analysis_report_categories'],
+          types: sampleSize(TYPES, 2),
+          categories: sampleSize(CATEGORIES.circuit, 2),
           id: currentRow['analysis_report_id'],
           description: currentRow['analysis_report_description'],
           name: currentRow['analysis_report_name'],
