@@ -43,6 +43,8 @@ const AnalysisPlugin = ({
   mode,
   selectedAnalysisReports,
   currentlyBeingEditedAnalysisReportDescription,
+  currentlyBeingEditedAnalysisReportCategories,
+  currentlyBeingEditedAnalysisReportTypes,
   currentlyBeingEditedAnalysisReportId,
   currentlyBeingEditedAnalysisReportName,
   selectedAssets,
@@ -76,7 +78,10 @@ const AnalysisPlugin = ({
       {FileUpload(currentlyBeingEditedAnalysisReportId)}
     </Modal>
   );
-
+  console.log('currentlyBeingEditedAnalysisReportCategories');
+  console.log(currentlyBeingEditedAnalysisReportCategories);
+  console.log('currentlyBeingEditedAnalysisReportTypes');
+  console.log(currentlyBeingEditedAnalysisReportTypes);
   return (
     <>
       {mode === 'create' && (
@@ -266,7 +271,9 @@ const AnalysisPlugin = ({
                                     onSave(
                                       currentlyBeingEditedAnalysisReportName,
                                       currentlyBeingEditedAnalysisReportDescription,
-                                      analysisReport.id
+                                      analysisReport.id,
+                                      currentlyBeingEditedAnalysisReportCategories,
+                                      currentlyBeingEditedAnalysisReportTypes
                                     );
                                 }}
                               >
@@ -339,6 +346,8 @@ const AnalysisPlugin = ({
                               analysisId: analysisReport.id,
                               analaysisName: analysisReport.name,
                               analysisDescription: analysisReport.description,
+                              categories: analysisReport.categories,
+                              types: analysisReport.types,
                             })
                           )
                         }

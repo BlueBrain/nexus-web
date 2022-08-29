@@ -79,6 +79,8 @@ export const analysisUISlice = createSlice({
         selectedAnalysisReports: [action.payload.analysisId],
         currentlyBeingEditedAnalysisReportId: action.payload.analysisId,
         currentlyBeingEditedAnalysisReportName: action.payload.analaysisName,
+        currentlyBeingEditedAnalysisReportCategories: action.payload.categories,
+        currentlyBeingEditedAnalysisReportTypes: action.payload.types,
         currentlyBeingEditedAnalysisReportDescription:
           action.payload.analysisDescription,
       }),
