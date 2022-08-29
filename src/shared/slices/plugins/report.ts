@@ -111,7 +111,8 @@ export const analysisUISlice = createSlice({
       }),
     changeAnalysisDescription: (state, action) =>
       updateObject(state, {
-        currentlyBeingEditedAnalysisReportDescription: action.payload.name,
+        currentlyBeingEditedAnalysisReportDescription:
+          action.payload.description,
       }),
     changeAnalysisCategories: (state, action) =>
       updateObject(state, {
