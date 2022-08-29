@@ -31,8 +31,8 @@ export type AnalysisAssetSparqlQueryRowResult = {
   analysis_report_id: string;
   analysis_report_name: string;
   analysis_report_description: string;
-  analysis_report_categories: string[];
-  analysis_report_types: string[];
+  analysis_report_categories: string;
+  analysis_report_types: string;
   created_by: string;
   created_at: string;
   asset_name: string;

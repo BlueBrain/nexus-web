@@ -190,7 +190,7 @@ const AnalysisPlugin = ({
                     header={
                       <>
                         {analysisReport.name}
-                        {analysisReport.categories &&
+                        {!!analysisReport.categories &&
                           analysisReport.categories?.length > 0 && (
                             <span className="cat">
                               {analysisReport.categories?.map(c => (
@@ -198,7 +198,7 @@ const AnalysisPlugin = ({
                               ))}{' '}
                             </span>
                           )}
-                        {analysisReport.types &&
+                        {!!analysisReport.types &&
                           analysisReport.types?.length > 0 && (
                             <span className="types">
                               {analysisReport.types?.map(t => (

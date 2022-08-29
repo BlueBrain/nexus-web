@@ -14,11 +14,6 @@ import ImageFileInfo from '../../components/FileInfo/ImageFileInfo';
 import { PDFThumbnail } from '../../../shared/components/Preview/PDFPreview';
 import PDFFileInfo from '../../../shared/components/FileInfo/PDFFileInfo';
 import AnalysisPlugin from '../../../shared/components/AnalysisPlugin/AnalysisPlugin';
-import { sampleSize } from 'lodash';
-import {
-  REPORT_CATEGORIES as CATEGORIES,
-  REPORT_TYPES as TYPES,
-} from '../../../constants';
 
 import analysisUIReducer, {
   setReportResourceType,
@@ -142,11 +137,19 @@ const AnalysisPluginContainer = ({
       if (
         !analysisReports.some(r => r.id === currentRow['analysis_report_id'])
       ) {
+        const types =
+          currentRow['analysis_report_types'] !== undefined
+            ? [currentRow['analysis_report_types']]
+            : [];
+        const categories =
+          currentRow['analysis_report_categories'] !== undefined
+            ? [currentRow['analysis_report_categories']]
+            : [];
         analysisReports.push({
           containerId: currentRow['container_resource_id'],
           containerName: currentRow['container_resource_name'],
-          types: sampleSize(TYPES, 2),
-          categories: sampleSize(CATEGORIES.circuit, 2),
+          types: types,
+          categories: categories,
           id: currentRow['analysis_report_id'],
           description: currentRow['analysis_report_description'],
           name: currentRow['analysis_report_name'],
@@ -154,32 +157,60 @@ const AnalysisPluginContainer = ({
           createdAt: currentRow['created_at'],
           assets: [],
         });
-      }
 
-      const reportIx = analysisReports.findIndex(
-        r => r.id === currentRow['analysis_report_id']
-      );
-      const reportResource = reportResources.find(
-        r => r['@id'] === currentRow['analysis_report_id']
-      );
-      if (reportResource === undefined) return analysisReports;
-      if ('hasPart' in reportResource) {
-        analysisReports[reportIx].assets = [reportResource.hasPart]
-          .flat()
-          .map((asset: any) => {
-            return {
-              analysisReportId: currentRow['analysis_report_id'],
-              saved: true,
-              id: asset.distribution.contentUrl['@id'],
-              name: asset.name,
-              description: asset.description,
-              filePath: asset.distribution.contentUrl['@id'],
-              encodingFormat: asset.distribution.encodingFormat,
-              preview: ({ mode }: { mode: 'view' | 'edit' }) => {
-                return <Image preview={mode === 'view'} />;
-              },
-            };
-          });
+        const reportIx = analysisReports.findIndex(
+          r => r.id === currentRow['analysis_report_id']
+        );
+        const reportResource = reportResources.find(
+          r => r['@id'] === currentRow['analysis_report_id']
+        );
+
+        if (reportResource === undefined) return analysisReports;
+
+        if ('hasPart' in reportResource) {
+          analysisReports[reportIx].assets = [reportResource.hasPart]
+            .flat()
+            .map((asset: any) => {
+              return {
+                analysisReportId: currentRow['analysis_report_id'],
+                saved: true,
+                id: asset.distribution.contentUrl['@id'],
+                name: asset.name,
+                description: asset.description,
+                filePath: asset.distribution.contentUrl['@id'],
+                encodingFormat: asset.distribution.encodingFormat,
+                preview: ({ mode }: { mode: 'view' | 'edit' }) => {
+                  return <Image preview={mode === 'view'} />;
+                },
+              };
+            });
+        }
+      } else {
+        // already exists, just
+        const reportIx = analysisReports.findIndex(
+          r => r.id === currentRow['analysis_report_id']
+        );
+        const r = analysisReports[reportIx];
+        if (r.categories !== undefined) {
+          if (
+            !r.categories.includes(currentRow['analysis_report_categories'])
+          ) {
+            r.categories.push(currentRow['analysis_report_categories']);
+          }
+        } else {
+          analysisReports[reportIx].categories = [
+            currentRow['analysis_report_categories'],
+          ];
+        }
+        if (r.types !== undefined) {
+          if (!r.types.includes(currentRow['analysis_report_types'])) {
+            r.types.push(currentRow['analysis_report_types']);
+          }
+        } else {
+          analysisReports[reportIx].types = [
+            currentRow['analysis_report_types'],
+          ];
+        }
       }
 
       return analysisReports;
@@ -353,7 +384,6 @@ const AnalysisPluginContainer = ({
       categories?: string[];
       types?: string[];
     }) => {
-      console.log('MUTATE', data);
       const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
         return {
           '@type': 'Entity',
@@ -410,6 +440,7 @@ const AnalysisPluginContainer = ({
         );
       }
       console.log('NO DATA ID FOUND');
+      console.log('CREATE being called', data);
       // Create new Analysis Report
       return nexus.Resource.create(orgLabel, projectLabel, {
         '@context': [
@@ -613,8 +644,6 @@ const AnalysisPluginContainer = ({
   );
 
   const analysisDataWithImages = React.useMemo(() => {
-    console.log('USE MEMO TRIGGERRED');
-    console.log(mode);
     const newAnalysisReports: AnalysisReport[] =
       mode === 'create'
         ? [
@@ -632,16 +661,6 @@ const AnalysisPluginContainer = ({
     const savedAndUnsavedAnalysisReports = analysisData
       ? analysisData.concat(newAnalysisReports)
       : newAnalysisReports;
-    console.log(
-      'savedAndUnsavedAnalysisReports:',
-      savedAndUnsavedAnalysisReports
-    );
-    console.log(
-      'currentlyBeingEditedAnalysisReport...:',
-      currentlyBeingEditedAnalysisReportName,
-      currentlyBeingEditedAnalysisReportDescription,
-      currentlyBeingEditedAnalysisReportCategories
-    );
 
     return savedAndUnsavedAnalysisReports.map(a => {
       return {
@@ -734,7 +753,6 @@ const AnalysisPluginContainer = ({
             categories?: string[],
             types?: string[]
           ) => {
-            // console.log("ON SAVE TRIGGERRED")
             mutateAnalysis.mutate({ name, description, id, categories, types });
           }}
           onDelete={() => {
