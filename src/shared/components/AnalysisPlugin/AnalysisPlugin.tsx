@@ -28,7 +28,7 @@ import {
   changeAnalysisDescription,
   addReport,
 } from '../../slices/plugins/report'
-
+g
 const { Panel } = Collapse
 
 import { AnalysisPluginProps } from '../../types/plugins/report'

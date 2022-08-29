@@ -462,6 +462,7 @@ const AnalysisPluginContainer = ({
           queryClient.invalidateQueries(['analysis']),
           queryClient.invalidateQueries(['analysesImages']),
         ]).then(() => {
+          console.log('Then after onsuccess create');
           dispatch(
             changeSelectedReports({ analysisReportIds: [resource['@id']] })
           )
