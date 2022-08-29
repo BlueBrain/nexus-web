@@ -64,7 +64,6 @@ export const analysisUISlice = createSlice({
         action.payload,
         (v, k) => `currentlyBeingEditedAnalysisReport${capitalize(k)}`
       );
-      console.log('SAVE REPORT', action.payload, mapp);
       updateObject(state, action.payload);
     },
     addReport: state => updateObject(state, newReport),
