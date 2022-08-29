@@ -27,41 +27,45 @@ const CategoryWidget = ({
         );
 
   return (
-    <div className="categories">
-      {mode !== 'create' && (
-        <h3>
-          Categories
-          <Button
-            type="primary"
-            title="Add Analysis Report"
-            aria-label="Add Analysis Report"
-            onClick={() => {
-              dispatch(addReport());
-            }}
-          >
-            Add Report
-            <FolderAddOutlined />
-          </Button>
-        </h3>
+    <>
+      {availableCategories && availableCategories.length > 0 && (
+        <div className="categories">
+          {mode !== 'create' && (
+            <h3>
+              Categories
+              <Button
+                type="primary"
+                title="Add Analysis Report"
+                aria-label="Add Analysis Report"
+                onClick={() => {
+                  dispatch(addReport());
+                }}
+              >
+                Add Report
+                <FolderAddOutlined />
+              </Button>
+            </h3>
+          )}
+          <p>you may select one or multiple from the list</p>
+          {CATEGORIES.circuit
+            .filter(o => availableCategories.includes(o))
+            .map((object, i) => (
+              <Button
+                type="default"
+                onClick={() => selectCategory(object)}
+                className={`group-buttons ${
+                  selectedCategories.includes(object) ? 'active' : ''
+                }`}
+              >
+                <h5>
+                  {object}
+                  <InfoCircleOutlined />
+                </h5>
+              </Button>
+            ))}
+        </div>
       )}
-      <p>you may select one or multiple from the list</p>
-      {CATEGORIES.circuit
-        .filter(o => availableCategories.includes(o))
-        .map((object, i) => (
-          <Button
-            type="default"
-            onClick={() => selectCategory(object)}
-            className={`group-buttons ${
-              selectedCategories.includes(object) ? 'active' : ''
-            }`}
-          >
-            <h5>
-              {object}
-              <InfoCircleOutlined />
-            </h5>
-          </Button>
-        ))}
-    </div>
+    </>
   );
 };
 

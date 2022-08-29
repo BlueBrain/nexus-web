@@ -20,24 +20,29 @@ const TypeWidget = ({
       : intersection(uniq(flatten(map(analysisReports, 'types'))), TYPES);
 
   return (
-    <div className="types">
-      {mode !== 'create' && <h3>Types</h3>}
-      <p>you may select one or multiple from the list</p>
-      {TYPES.filter(o => availableTypes.includes(o)).map((object, i) => (
-        <Button
-          type="default"
-          onClick={() => selectType(object)}
-          className={`group-buttons ${
-            selectedTypes.includes(object) ? 'active' : ''
-          }`}
-        >
-          <h5>
-            {object}
-            <InfoCircleOutlined />
-          </h5>
-        </Button>
-      ))}
-    </div>
+    <>
+      {availableTypes && availableTypes.length > 0 && (
+        <div className="types">
+          {mode !== 'create' && <h3>Types</h3>}
+          <p>you may select one or multiple from the list</p>
+          {TYPES.filter(o => availableTypes.includes(o)).map((object, i) => (
+            <Button
+              type="default"
+              onClick={() => selectType(object)}
+              className={`group-buttons ${
+                selectedTypes.includes(object) ? 'active' : ''
+              }`}
+            >
+              <h5>
+                {object}
+                <InfoCircleOutlined />
+              </h5>
+            </Button>
+          ))}
+        </div>
+      )}
+      ;
+    </>
   );
 };
 
