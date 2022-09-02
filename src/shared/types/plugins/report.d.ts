@@ -119,6 +119,11 @@ export type TypeWidgetProps = {
   dispatch: (params: any) => void;
 };
 
+export type TypeEditWidgetProps = {
+  currentlyBeingEditedAnalysisReportTypes?: string[];
+  dispatch: (params: any) => void;
+};
+
 export type CategoryWidgetProps = {
   analysisReports?: AnalysisReport[];
   mode: 'view' | 'edit' | 'create';

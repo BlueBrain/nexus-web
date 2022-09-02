@@ -4,18 +4,17 @@ import {
   ZoomInOutlined,
   FolderAddOutlined,
   ZoomOutOutlined,
-  InfoCircleOutlined,
 } from '@ant-design/icons'
-import { Button, Collapse, Input, Slider, Modal } from 'antd'
+import { Button, Collapse, Input, Slider, Select, Modal } from 'antd'
 import { without, intersection } from 'lodash'
 import * as React from 'react'
 import { getUsername } from '../../../shared/utils'
 import FriendlyTimeAgo from '../FriendlyDate'
 import './AnalysisPlugin.less'
-import './Categories.less'
 import * as moment from 'moment'
 import CategoryWidget from './CategoryWidget'
 import TypeWidget from './TypeWidget'
+import TypeEditWidget from './TypeEditWidget'
 import ReportAssets from './ReportAssets'
 
 import NewReportForm from './NewReportForm'
@@ -359,42 +358,59 @@ const AnalysisPlugin = ({
                           />
                         )}
                     </p>
+                    {mode === 'edit' && (
+                      <section>
+                        <TypeEditWidget
+                          dispatch={dispatch}
+                          currentlyBeingEditedAnalysisReportTypes={
+                            currentlyBeingEditedAnalysisReportTypes
+                          }
+                        />
+                      </section>
+                    )}
                     <section className='actions' aria-label='actions'>
-                      <Button
-                        type='default'
-                        onClick={() =>
-                          analysisReport.id &&
-                          dispatch(
-                            editReport({
-                              analysisId: analysisReport.id,
-                              analaysisName: analysisReport.name,
-                              analysisDescription: analysisReport.description,
-                              categories: analysisReport.categories,
-                              types: analysisReport.types,
-                            })
-                          )
-                        }
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        type='default'
-                        hidden={true}
-                        onClick={() => console.log('download')}
-                        icon={<LeftSquareFilled />}
-                      >
-                        Download
-                      </Button>
-                      <Button
-                        type='default'
-                        hidden={analysisResourceType === 'individual_report'}
-                        onClick={() =>
-                          analysisReport.id &&
-                          onClickRelatedResource(analysisReport.id)
-                        }
-                      >
-                        Go to resource
-                      </Button>
+                      {mode === 'view' && (
+                        <>
+                          <Button
+                            type='default'
+                            onClick={() =>
+                              analysisReport.id &&
+                              dispatch(
+                                editReport({
+                                  analysisId: analysisReport.id,
+                                  analaysisName: analysisReport.name,
+                                  analysisDescription:
+                                    analysisReport.description,
+                                  categories: analysisReport.categories,
+                                  types: analysisReport.types,
+                                })
+                              )
+                            }
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            type='default'
+                            hidden={true}
+                            onClick={() => console.log('download')}
+                            icon={<LeftSquareFilled />}
+                          >
+                            Download
+                          </Button>
+                          <Button
+                            type='default'
+                            hidden={
+                              analysisResourceType === 'individual_report'
+                            }
+                            onClick={() =>
+                              analysisReport.id &&
+                              onClickRelatedResource(analysisReport.id)
+                            }
+                          >
+                            Go to resource
+                          </Button>
+                        </>
+                      )}
                       {mode === 'edit' &&
                         selectedAssets &&
                         selectedAssets.length > 0 && (
