@@ -15,6 +15,7 @@ import * as moment from 'moment'
 import CategoryWidget from './CategoryWidget'
 import TypeWidget from './TypeWidget'
 import TypeEditWidget from './TypeEditWidget'
+import CategoryEditWidget from './CategoryEditWidget'
 import ReportAssets from './ReportAssets'
 
 import NewReportForm from './NewReportForm'
@@ -259,7 +260,7 @@ const AnalysisPlugin = ({
                                   changeAnalysisName({ name: e.target.value })
                                 )
                               }
-                              style={{ width: '60%' }}
+                              style={{ maxWidth: '900px' }}
                             />
                             <div
                               className='actions'
@@ -366,9 +367,19 @@ const AnalysisPlugin = ({
                             currentlyBeingEditedAnalysisReportTypes
                           }
                         />
+                        <CategoryEditWidget
+                          dispatch={dispatch}
+                          currentlyBeingEditedAnalysisReportCategories={
+                            currentlyBeingEditedAnalysisReportCategories
+                          }
+                        />
                       </section>
                     )}
-                    <section className='actions' aria-label='actions'>
+                    <section
+                      style={{ marginBottom: '50px' }}
+                      className='actionsPanel'
+                      aria-label='actions'
+                    >
                       {mode === 'view' && (
                         <>
                           <Button

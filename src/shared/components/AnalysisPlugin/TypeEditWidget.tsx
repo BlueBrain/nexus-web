@@ -17,17 +17,12 @@ const TypesEditWidget = ({
     ? currentlyBeingEditedAnalysisReportTypes
     : [];
   const current = intersection(TYPES, activeTypes)[0];
-  console.log(
-    'TYPES EDIT WIDGET, selectedtypes, current',
-    activeTypes,
-    current
-  );
   return (
     <>
       {TYPES && TYPES.length > 0 && (
         <div style={{ margin: '20px 0' }}>
           <Form layout={'vertical'}>
-            <Form.Item label="Report Types" aria-label="Analysis Types">
+            <Form.Item label="Report Type" aria-label="Analysis Types">
               {current && (
                 <Radio.Group
                   options={TYPES}
