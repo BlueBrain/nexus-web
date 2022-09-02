@@ -30,22 +30,7 @@ const CategoryWidget = ({
     <>
       {availableCategories && availableCategories.length > 0 && (
         <div className="categories">
-          {mode !== 'create' && (
-            <h3>
-              Categories
-              <Button
-                type="primary"
-                title="Add Analysis Report"
-                aria-label="Add Analysis Report"
-                onClick={() => {
-                  dispatch(addReport());
-                }}
-              >
-                Add Report
-                <FolderAddOutlined />
-              </Button>
-            </h3>
-          )}
+          {mode !== 'create' && <h3>Categories</h3>}
           <p>you may select one or multiple from the list</p>
           {CATEGORIES.circuit
             .filter(o => availableCategories.includes(o))

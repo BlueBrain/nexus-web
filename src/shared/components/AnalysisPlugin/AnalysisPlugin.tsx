@@ -2,6 +2,7 @@ import {
   LeftSquareFilled,
   UpOutlined,
   ZoomInOutlined,
+  FolderAddOutlined,
   ZoomOutOutlined,
 } from '@ant-design/icons';
 import { Button, Collapse, Input, Slider, Select, Modal } from 'antd';
@@ -23,6 +24,7 @@ import {
   changeScale,
   initialize,
   changeAnalysisDescription,
+  addReport,
 } from '../../slices/plugins/report';
 
 import { useState } from '@storybook/addons';
@@ -96,6 +98,18 @@ const AnalysisPlugin = ({
       )}
       {mode !== 'create' && (
         <div className="analysis">
+          <Button
+            type="primary"
+            className="addReportButton"
+            title="Add Analysis Report"
+            aria-label="Add Analysis Report"
+            onClick={() => {
+              dispatch(addReport());
+            }}
+          >
+            Add Report
+            <FolderAddOutlined />
+          </Button>
           <CategoryWidget
             dispatch={dispatch}
             mode={mode}
@@ -110,7 +124,6 @@ const AnalysisPlugin = ({
             selectType={selectType}
             analysisReports={analysisReports}
           />
-
           <>
             {analysisResourceType === 'individual_report' && containerId && (
               <>
