@@ -4,6 +4,8 @@ import {
   ZoomInOutlined,
   FolderAddOutlined,
   ZoomOutOutlined,
+  EditOutlined,
+  LinkOutlined,
 } from '@ant-design/icons'
 import { Button, Collapse, Input, Slider, Select, Modal } from 'antd'
 import { without, intersection } from 'lodash'
@@ -332,7 +334,7 @@ const AnalysisPlugin = ({
                     )}
                     <p
                       aria-label='Analysis Description'
-                      style={{ maxWidth: '900px', marginRight: '50px' }}
+                      style={{ width: '100%', marginRight: '50px' }}
                     >
                       {(mode === 'view' ||
                         ('id' in analysisReport &&
@@ -349,6 +351,7 @@ const AnalysisPlugin = ({
                             value={
                               currentlyBeingEditedAnalysisReportDescription
                             }
+                            rows={10}
                             onChange={e =>
                               dispatch(
                                 changeAnalysisDescription({
@@ -361,29 +364,27 @@ const AnalysisPlugin = ({
                     </p>
                     {mode === 'edit' && (
                       <section>
-                        <TypeEditWidget
-                          dispatch={dispatch}
-                          currentlyBeingEditedAnalysisReportTypes={
-                            currentlyBeingEditedAnalysisReportTypes
-                          }
-                        />
                         <CategoryEditWidget
                           dispatch={dispatch}
                           currentlyBeingEditedAnalysisReportCategories={
                             currentlyBeingEditedAnalysisReportCategories
                           }
                         />
+                        <TypeEditWidget
+                          dispatch={dispatch}
+                          currentlyBeingEditedAnalysisReportTypes={
+                            currentlyBeingEditedAnalysisReportTypes
+                          }
+                        />
                       </section>
                     )}
-                    <section
-                      style={{ marginBottom: '50px' }}
-                      className='actionsPanel'
-                      aria-label='actions'
-                    >
+                    <hr style={{ border: '1px solid #D9D9D9' }} />
+                    <section className='actionsPanel' aria-label='actions'>
                       {mode === 'view' && (
                         <>
                           <Button
                             type='default'
+                            icon={<EditOutlined />}
                             onClick={() =>
                               analysisReport.id &&
                               dispatch(
@@ -410,6 +411,7 @@ const AnalysisPlugin = ({
                           </Button>
                           <Button
                             type='default'
+                            icon={<LinkOutlined />}
                             hidden={
                               analysisResourceType === 'individual_report'
                             }

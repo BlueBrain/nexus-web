@@ -14,8 +14,6 @@ const CategoryWidget = ({
   mode,
   selectCategory,
 }: CategoryWidgetProps) => {
-  const [openPanel, setOpenPanel] = React.useState<number>()
-
   const availableCategories =
     mode === 'create'
       ? CATEGORIES.circuit

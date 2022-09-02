@@ -9,6 +9,15 @@
   .ant-collapse-content {
     background-color: #ffffff;
   }
+  .actionsPanel {
+    text-align: center;
+    margin: 20px auto;
+    button {
+      height: 37px;
+      padding: 0 50px;
+      background-color: #ffffff;
+    }
+  }
   .addReportButton {
     float: right;
     background: #1890ff !important;
@@ -45,10 +54,18 @@
 
     color: #003a8c !important;
 
-    span.cat,
-    span.types {
-      margin-left: 32px;
+    span.cat {
+      margin-left: 16px;
+    }
+    span.cat > span {
       background: #f5f5f5;
+    }
+    span.types > span {
+      outline: 1px solid #bae7ff;
+    }
+    span.cat > span,
+    span.types > span {
+      margin-left: 10px;
       border-radius: 4px;
       padding: 8px 16px;
       font-size: 14px;
@@ -59,18 +76,9 @@
       text-transform: capitalize;
       /* DayBreak Blue/9 */
     }
-    span.cat {
-      font-weight: 600;
-      span {
-        margin-right: 10px;
-      }
-    }
+    span.cat,
     span.types {
-      margin-left: 10px;
       font-weight: 300;
-      span {
-        margin-right: 10px;
-      }
     }
   }
   .zoom-control {

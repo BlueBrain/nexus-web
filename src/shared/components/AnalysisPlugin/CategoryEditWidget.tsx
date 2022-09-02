@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Select, Form } from 'antd';
-import { intersection } from 'lodash';
-import './Categories.less';
+import './CategoryTypeEdits.less';
 import { CategoryEditWidgetProps } from '../../types/plugins/report';
 import { changeAnalysisCategories } from '../../slices/plugins/report';
 import { REPORT_CATEGORIES as CATEGORIES } from '../../../constants';
@@ -10,34 +9,24 @@ const CategoryEditWidget = ({
   dispatch,
   currentlyBeingEditedAnalysisReportCategories,
 }: CategoryEditWidgetProps) => {
-    const activeCategories = currentlyBeingEditedAnalysisReportCategories
-      ? currentlyBeingEditedAnalysisReportCategories
-        : [];
-    const [selectedItems, setSelectedItems] = React.useState<string[]>(
-      activeCategories
-    );
-//   console.log(
-//     'CATEGORIES.circuit EDIT WIDGET, selectedtypes, current',
-//     selectedItems,
-//   );
-    const mysetSelectedItems = (option: any) => {
-        console.log("MY SET active categories ITEMS", activeCategories, option);
-        dispatch(changeAnalysisCategories({ categories: activeCategories }));
-    }
+  const activeCategories = currentlyBeingEditedAnalysisReportCategories
+    ? currentlyBeingEditedAnalysisReportCategories
+    : [];
+
+  const selectedCategories = (items: any) => {
+    dispatch(changeAnalysisCategories({ categories: items }));
+  };
   return (
     <>
       {CATEGORIES.circuit && CATEGORIES.circuit.length > 0 && (
-        <div style={{ margin: '20px 0' }}>
+        <div style={{ margin: '20px 0' }} className={'categoryEdits'}>
           <Form layout={'vertical'}>
-            <Form.Item
-              label="Report Categories"
-              aria-label="Analysis Categories"
-            >
+            <Form.Item label="Categories" aria-label="Analysis Categories">
               <Select
                 mode="multiple"
                 placeholder="Inserted are removed"
                 value={activeCategories}
-                onChange={mysetSelectedItems}
+                onChange={selectedCategories}
                 style={{ maxWidth: '900px' }}
               >
                 {CATEGORIES.circuit.map(item => (

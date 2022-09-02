@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { Radio, Form } from 'antd';
 import { intersection } from 'lodash';
-import './Categories.less';
+import './CategoryTypeEdits.less';
 import { TypeEditWidgetProps } from '../../types/plugins/report';
-
+import { changeAnalysisTypes } from '../../slices/plugins/report';
 import { REPORT_TYPES as TYPES } from '../../../constants';
 
 const TypesEditWidget = ({
   dispatch,
   currentlyBeingEditedAnalysisReportTypes,
 }: TypeEditWidgetProps) => {
-  const onChange1 = ({ target: { value } }: any) => {
-    console.log('radio1 checked', value);
+  const changeType = ({ target: { value } }: any) => {
+    dispatch(changeAnalysisTypes({ types: [value] }));
   };
   const activeTypes = currentlyBeingEditedAnalysisReportTypes
     ? currentlyBeingEditedAnalysisReportTypes
@@ -20,13 +20,13 @@ const TypesEditWidget = ({
   return (
     <>
       {TYPES && TYPES.length > 0 && (
-        <div style={{ margin: '20px 0' }}>
+        <div style={{ margin: '20px 0' }} className={'typeEdits'}>
           <Form layout={'vertical'}>
             <Form.Item label="Report Type" aria-label="Analysis Types">
               {current && (
                 <Radio.Group
                   options={TYPES}
-                  onChange={onChange1}
+                  onChange={changeType}
                   optionType="button"
                   buttonStyle="solid"
                   value={current}
@@ -35,7 +35,7 @@ const TypesEditWidget = ({
               {!current && (
                 <Radio.Group
                   options={TYPES}
-                  onChange={onChange1}
+                  onChange={changeType}
                   optionType="button"
                   buttonStyle="solid"
                 />
