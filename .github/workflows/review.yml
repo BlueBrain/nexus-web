@@ -8,9 +8,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
-      # - name: install dependencies 🚀
-      #   run: |
-      #     yarn
+      - name: install dependencies 🚀
+        run: |
+          yarn
       # - name: linting ✨
       #   run: |
       #     yarn lint
@@ -24,9 +24,9 @@ jobs:
       #   uses: codecov/codecov-action@v1
       #   with:
       #     token: ${{ secrets.CODECOV_TOKEN }}
-      # - name: build project 👷
-      #   run: |
-      #     yarn build
+      - name: build project 👷
+        run: |
+          yarn build
       # - name: build fusion docker image
       #   run: |
       #     docker build . --tag=nexus-web:latest
