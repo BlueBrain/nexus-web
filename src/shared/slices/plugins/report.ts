@@ -35,8 +35,6 @@ interface AnalysisReport {
 }
 
 function updateObject(oldObject: any, newValues: any) {
-  console.log('OBJECT UPDATE, newVAlues');
-  console.log(newValues);
   return Object.assign({}, oldObject, newValues);
 }
 
