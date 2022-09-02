@@ -70,11 +70,31 @@ describe('Analysis Plugin', () => {
     cy.findByRole('textbox', { name: 'Analysis Description' }).type(
       'This is where we can add a nice long description relating to why my analysis is better than yours.'
     );
+    cy.get('div.categories')
+      .find('.group-buttons')
+      .first()
+      .click();
+    cy.get('div.categories')
+      .find('.group-buttons')
+      .last()
+      .click();
+    cy.get('div.types')
+      .find('.group-buttons')
+      .first()
+      .click();
+    cy.get('div.types')
+      .find('.group-buttons')
+      .last()
+      .click();
+
     cy.findByText(/Drag and drop files/i).click();
     cy.get('input[type=file]').attachFile('sample1.png');
     cy.wait(5000);
     cy.findByRole('button', { name: 'Save' }).click();
-    expect(cy.findByText(/Cell density O1.v6-RC2/i)).to.exist;
+    expect(cy.get('div.categories').findByText(/Anatomical/i)).to.exist;
+    expect(cy.get('div.categories').findByText(/Synapse/i)).to.exist;
+    expect(cy.get('div.types').findByText(/Validation/i)).to.exist;
+    expect(cy.get('div.types').findByText(/Analysis/i)).to.exist;
   });
 
   it('user can edit an existing analysis report updating its name, description, categories, types, and adding another image and pdf file', function() {
