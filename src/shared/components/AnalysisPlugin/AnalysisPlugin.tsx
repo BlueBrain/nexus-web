@@ -369,6 +369,21 @@ const AnalysisPlugin = ({
                       >
                         Go to resource
                       </Button>
+                      {mode === 'edit' &&
+                        selectedAssets &&
+                        selectedAssets.length > 0 && (
+                          <Button
+                            type="primary"
+                            danger
+                            style={{ marginLeft: '20px' }}
+                            aria-label="Delete"
+                            onClick={() => {
+                              onDelete();
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        )}
                     </section>
                     <ReportAssets
                       mode={mode}
@@ -382,23 +397,6 @@ const AnalysisPlugin = ({
                           : undefined
                       }
                     />
-                    {mode === 'edit' &&
-                      selectedAssets &&
-                      selectedAssets.length > 0 && (
-                        <section>
-                          <Button
-                            type="primary"
-                            danger
-                            style={{ float: 'right', marginRight: '20px' }}
-                            aria-label="Delete"
-                            onClick={() => {
-                              onDelete();
-                            }}
-                          >
-                            Delete
-                          </Button>
-                        </section>
-                      )}
                   </Panel>
                 </Collapse>
               ))}
