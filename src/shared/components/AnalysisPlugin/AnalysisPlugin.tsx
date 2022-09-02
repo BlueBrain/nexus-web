@@ -161,9 +161,6 @@ const AnalysisPlugin = ({
             {fileUploadModal}
             {mode === 'view' && (
               <>
-                {analysisResourceType === 'report_container' && (
-                  <div className='analysisTools'></div>
-                )}
                 {selectedAnalysisReports &&
                   selectedAnalysisReports.length > 0 &&
                   analysisReports.filter(
