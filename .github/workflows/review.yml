@@ -8,9 +8,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+          cache: 'yarn'
       - name: install dependencies 🚀
         run: |
-          yarn
+          yarn install --frozen-lockfile # optional, --immutable
       # - name: linting ✨
       #   run: |
       #     yarn lint
