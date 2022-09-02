@@ -435,7 +435,10 @@ const AnalysisPluginContainer = ({
           }
         )
       }
+<<<<<<< HEAD
       console.log('NO DATA ID FOUND')
+=======
+>>>>>>> b211fa16 (removed console logs)
       // Create new Analysis Report
       return nexus.Resource.create(orgLabel, projectLabel, {
         '@context': [
@@ -456,13 +459,11 @@ const AnalysisPluginContainer = ({
     },
     {
       onSuccess: resource => {
-        console.log('creating new success resource:', resource)
-        setUnsavedAssets([])
+        setUnsavedAssets([]);
         Promise.all([
           queryClient.invalidateQueries(['analysis']),
           queryClient.invalidateQueries(['analysesImages']),
         ]).then(() => {
-          console.log('Then after onsuccess create');
           dispatch(
             changeSelectedReports({ analysisReportIds: [resource['@id']] })
           )
