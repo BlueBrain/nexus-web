@@ -33,7 +33,7 @@ jobs:
       - name: Start services
         run: docker-compose -f ci/docker-compose.yml up -d && sleep 60
       - name: e2e tests
-        run: docker exec -ti cypress cypress run --config-file cypress.config.ts --browser chrome
+        run: docker-compose exec -T cypress cypress run --config-file cypress.config.ts --browser chrome
       - name: Stop Docker
         if: ${{ always() }}
         run: docker-compose -f ci/docker-compose.yml down -d && sleep 60
