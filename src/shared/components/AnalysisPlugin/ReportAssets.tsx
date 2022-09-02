@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Button, Checkbox } from 'antd';
 import { CalendarOutlined, UserOutlined } from '@ant-design/icons';
 import FriendlyTimeAgo from '../FriendlyDate';
@@ -7,7 +6,7 @@ import * as moment from 'moment';
 
 import { selectAsset, openFileUploadDialog } from '../../slices/plugins/report';
 
-import { AnalysisReport, ReportAssetProps } from '../../types/plugins/report';
+import { ReportAssetProps } from '../../types/plugins/report';
 
 const ReportAssets = ({
   dispatch,
