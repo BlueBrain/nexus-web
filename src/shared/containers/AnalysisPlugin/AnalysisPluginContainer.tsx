@@ -142,8 +142,6 @@ const AnalysisPluginContainer = ({
           categories,
           containerId: currentRow['container_resource_id'],
           containerName: currentRow['container_resource_name'],
-          types,
-          categories,
           id: currentRow['analysis_report_id'],
           description: currentRow['analysis_report_description'],
           name: currentRow['analysis_report_name'],
@@ -435,10 +433,6 @@ const AnalysisPluginContainer = ({
           }
         )
       }
-<<<<<<< HEAD
-      console.log('NO DATA ID FOUND')
-=======
->>>>>>> b211fa16 (removed console logs)
       // Create new Analysis Report
       return nexus.Resource.create(orgLabel, projectLabel, {
         '@context': [
@@ -459,7 +453,7 @@ const AnalysisPluginContainer = ({
     },
     {
       onSuccess: resource => {
-        setUnsavedAssets([]);
+        setUnsavedAssets([])
         Promise.all([
           queryClient.invalidateQueries(['analysis']),
           queryClient.invalidateQueries(['analysesImages']),
