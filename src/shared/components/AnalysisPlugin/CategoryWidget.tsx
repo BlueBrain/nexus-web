@@ -1,13 +1,11 @@
 import * as React from 'react'
 import { Button } from 'antd'
 import { flatten, map, uniq, intersection } from 'lodash'
-import { FolderAddOutlined, InfoCircleOutlined } from '@ant-design/icons'
+import { InfoCircleOutlined } from '@ant-design/icons'
 import './Categories.less'
 import { CategoryWidgetProps } from '../../types/plugins/report'
 
 import { REPORT_CATEGORIES as CATEGORIES } from '../../../constants'
-
-import { addReport } from '../../slices/plugins/report'
 
 const CategoryWidget = ({
   dispatch,
