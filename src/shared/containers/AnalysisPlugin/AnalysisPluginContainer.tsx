@@ -146,10 +146,10 @@ const AnalysisPluginContainer = ({
             ? [currentRow['analysis_report_categories']]
             : [];
         analysisReports.push({
-          containerId: currentRow['container_resource_id'],
-          containerName: currentRow['container_resource_name'],
           types,
           categories,
+          containerId: currentRow['container_resource_id'],
+          containerName: currentRow['container_resource_name'],
           id: currentRow['analysis_report_id'],
           description: currentRow['analysis_report_description'],
           name: currentRow['analysis_report_name'],
