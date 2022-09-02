@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { AnalysesState, Asset } from '../../types/plugins/report';
-import { findIndex, slice, mapKeys, capitalize } from 'lodash';
+import { without, mapKeys, capitalize } from 'lodash';
 import { DEFAULT_SCALE } from '../../../constants';
 
 interface Analyses {
@@ -31,6 +31,7 @@ interface AnalysisReport {
   createdBy?: string;
   createdAt?: string;
   assets: Asset[];
+  selectedaAssets?: string[];
 }
 
 function updateObject(oldObject: any, newValues: any) {
@@ -86,12 +87,14 @@ export const analysisUISlice = createSlice({
       }),
     selectAsset: (state, action) => {
       state.selectedAssets = state.selectedAssets ? state.selectedAssets : [];
-      const selectId = findIndex(state.selectedAssets, action.payload.assetId);
+      const assetPresent = state.selectedAssets.includes(
+        action.payload.assetId
+      );
 
-      selectId
-        ? slice(state.selectedAssets, selectId, selectId + 1)
-        : state.selectedAssets.push(action.payload.assetId);
-      return state;
+      state.selectedAssets =
+        assetPresent && state.selectedAssets?.length > 0
+          ? without(state.selectedAssets, action.payload.assetId)
+          : [...state.selectedAssets, ...[action.payload.assetId]];
     },
     setSelectedReportFirstLoad: (state, action) =>
       updateObject(state, {

@@ -78,10 +78,7 @@ const AnalysisPlugin = ({
       {FileUpload(currentlyBeingEditedAnalysisReportId)}
     </Modal>
   );
-  console.log('currentlyBeingEditedAnalysisReportCategories');
-  console.log(currentlyBeingEditedAnalysisReportCategories);
-  console.log('currentlyBeingEditedAnalysisReportTypes');
-  console.log(currentlyBeingEditedAnalysisReportTypes);
+
   return (
     <>
       {mode === 'create' && (
@@ -378,6 +375,7 @@ const AnalysisPlugin = ({
                       imagePreviewScale={imagePreviewScale}
                       dispatch={dispatch}
                       analysisReport={analysisReport}
+                      selectedAssets={selectedAssets}
                       currentlyBeingEditedAnalysisReportId={
                         currentlyBeingEditedAnalysisReportId
                           ? currentlyBeingEditedAnalysisReportId
