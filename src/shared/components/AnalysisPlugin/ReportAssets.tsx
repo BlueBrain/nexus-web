@@ -32,7 +32,12 @@ const ReportAssets = ({
           </Button>
         </div>
       )}
-      <ul>
+      <ul
+        style={{
+          gridTemplateColumns: `repeat(${10 - imagePreviewScale / 10}, 1fr)`,
+          gridAutoRows: `minmax(100px, auto)`,
+        }}
+      >
         {analysisReport.assets.map((asset, i) => {
           const minThumbnailSize = 100
           return (
@@ -51,8 +56,9 @@ const ReportAssets = ({
                 }`}
                 style={{
                   height:
-                    minThumbnailSize +
-                    imagePreviewScale * (imagePreviewScale / 30),
+                    (minThumbnailSize +
+                      imagePreviewScale * (imagePreviewScale / 30)) /
+                    1.6,
                   width:
                     minThumbnailSize +
                     imagePreviewScale * (imagePreviewScale / 30),
