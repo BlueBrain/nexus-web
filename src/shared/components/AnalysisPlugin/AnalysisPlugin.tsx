@@ -113,32 +113,36 @@ const AnalysisPlugin = ({
       )}
       {mode !== 'create' && (
         <div className='analysis'>
-          <Button
-            type='primary'
-            className='addReportButton'
-            title='Add Analysis Report'
-            aria-label='Add Analysis Report'
-            onClick={() => {
-              dispatch(addReport())
-            }}
-          >
-            Add Report
-            <FolderAddOutlined />
-          </Button>
-          <CategoryWidget
-            dispatch={dispatch}
-            mode={mode}
-            selectedCategories={selectedCategories}
-            selectCategory={selectCategory}
-            analysisReports={analysisReports}
-          />
-          <TypeWidget
-            dispatch={dispatch}
-            mode={mode}
-            selectedTypes={selectedTypes}
-            selectType={selectType}
-            analysisReports={analysisReports}
-          />
+          {analysisResourceType !== 'individual_report' && (
+            <>
+              <Button
+                type='primary'
+                className='addReportButton'
+                title='Add Analysis Report'
+                aria-label='Add Analysis Report'
+                onClick={() => {
+                  dispatch(addReport())
+                }}
+              >
+                Add Report
+                <FolderAddOutlined />
+              </Button>
+              <CategoryWidget
+                dispatch={dispatch}
+                mode={mode}
+                selectedCategories={selectedCategories}
+                selectCategory={selectCategory}
+                analysisReports={analysisReports}
+              />
+              <TypeWidget
+                dispatch={dispatch}
+                mode={mode}
+                selectedTypes={selectedTypes}
+                selectType={selectType}
+                analysisReports={analysisReports}
+              />
+            </>
+          )}
           <>
             {analysisResourceType === 'individual_report' && containerId && (
               <>
@@ -352,6 +356,7 @@ const AnalysisPlugin = ({
                               currentlyBeingEditedAnalysisReportDescription
                             }
                             rows={10}
+                            style={{ maxWidth: '900px' }}
                             onChange={e =>
                               dispatch(
                                 changeAnalysisDescription({
@@ -384,6 +389,7 @@ const AnalysisPlugin = ({
                         <>
                           <Button
                             type='default'
+                            aria-label='editReport'
                             icon={<EditOutlined />}
                             onClick={() =>
                               analysisReport.id &&
@@ -411,6 +417,7 @@ const AnalysisPlugin = ({
                           </Button>
                           <Button
                             type='default'
+                            aria-label='goToResource'
                             icon={<LinkOutlined />}
                             hidden={
                               analysisResourceType === 'individual_report'

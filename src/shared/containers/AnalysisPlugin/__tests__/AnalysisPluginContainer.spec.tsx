@@ -359,9 +359,7 @@ describe('Analysis Plugin', () => {
       user.click(title);
     });
     expect(
-      await waitFor(() =>
-        screen.getByRole('button', { name: 'Go to resource' })
-      )
+      await waitFor(() => screen.getByRole('button', { name: 'goToResource' }))
     ).toBeInTheDocument();
   });
 
@@ -531,7 +529,7 @@ describe('Analysis Plugin', () => {
     });
 
     await waitFor(() => {
-      const edit = screen.getByRole('button', { name: 'Edit' });
+      const edit = screen.getByRole('button', { name: 'editReport' });
       user.click(edit);
     });
 
