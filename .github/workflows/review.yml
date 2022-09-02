@@ -8,35 +8,35 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
-      - name: install dependencies 🚀
-        run: |
-          yarn
-      - name: linting ✨
-        run: |
-          yarn lint
-      - name: style 💅
-        run: |
-          yarn style
-      - name: running test 🛫🛬
-        run: |
-          yarn test --coverage src
-      - name: upload coverage to Codecov 💌
-        uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-      - name: build project 👷
-        run: |
-          yarn build
-      - name: build fusion docker image
-        run: |
-          docker build . --tag=nexus-web:latest
+      # - name: install dependencies 🚀
+      #   run: |
+      #     yarn
+      # - name: linting ✨
+      #   run: |
+      #     yarn lint
+      # - name: style 💅
+      #   run: |
+      #     yarn style
+      # - name: running test 🛫🛬
+      #   run: |
+      #     yarn test --coverage src
+      # - name: upload coverage to Codecov 💌
+      #   uses: codecov/codecov-action@v1
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+      # - name: build project 👷
+      #   run: |
+      #     yarn build
+      # - name: build fusion docker image
+      #   run: |
+      #     docker build . --tag=nexus-web:latest
       - name: Start services
         run: docker-compose -f ci/docker-compose.yml up -d && sleep 60
       - name: e2e tests
         run: docker exec -ti cypress cypress run --config-file cypress.config.ts --browser chrome
       - name: Stop Docker
         if: ${{ always() }}
-        run: docker-compose -f ci/docker-compose.yml down
+        run: docker-compose -f ci/docker-compose.yml down -d && sleep 60
       - name: Cleanup Docker Containers
         if: ${{ always() }}
         run: |
