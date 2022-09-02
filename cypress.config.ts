@@ -6,6 +6,8 @@ import {
   deprecateNexusOrgAndProject,
 } from './cypress/plugins/nexus';
 import { uuidv4 } from './src/shared/utils';
+import setup from './cypress/support/setupRealmsAndUsers';
+
 const fetch = require('node-fetch');
 
 export default defineConfig({
@@ -13,11 +15,20 @@ export default defineConfig({
   video: false,
   e2e: {
     baseUrl: 'http://localhost:8000',
+    fileServerFolder: '/cypress',
     defaultCommandTimeout: 10000,
     experimentalSessionAndOrigin: true,
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     setupNodeEvents(on, config) {
       on('task', {
+        'auth:createRealmsAndUsers': async function() {
+          await setup();
+          return null;
+        },
+        log(message) {
+          console.log(message);
+          return null;
+        },
         'project:setup': async function({
           nexusApiUrl,
           authToken,
