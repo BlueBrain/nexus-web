@@ -45,12 +45,16 @@ const NewReportForm = ({
   return (
     <Form layout={'vertical'} onFinish={onFinish} className="new-report-form">
       <Form.Item label="1. Report Name" name="name">
-        <Input placeholder="type name here" />
+        <Input
+          placeholder="type name here"
+          type="text"
+          aria-label="Analysis Name"
+        />
       </Form.Item>
       <Form.Item label="2. Report Description" name="description">
-        <TextArea rows={10} />
+        <TextArea rows={10} aria-label="Analysis Description" />
       </Form.Item>
-      <Form.Item label="3. Categories">
+      <Form.Item label="3. Categories" aria-label="Analysis Categories">
         <CategoryWidget
           dispatch={dispatch}
           mode={'create'}
@@ -58,7 +62,7 @@ const NewReportForm = ({
           selectCategory={selectCategory}
         />
       </Form.Item>
-      <Form.Item label="4. Types">
+      <Form.Item label="4. Types" aria-label="Analysis Types">
         <TypeWidget
           dispatch={dispatch}
           mode={'create'}
