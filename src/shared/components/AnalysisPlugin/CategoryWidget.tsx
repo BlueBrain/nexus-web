@@ -24,7 +24,7 @@ const CategoryWidget = ({
 
   return (
     <>
-      {availableCategories && availableCategories.length > 0 && (
+      {availableCategories && availableCategories.length > 1 && (
         <div className='categories'>
           {mode !== 'create' && <h3>Categories</h3>}
           <p>you may select one or multiple from the list</p>
