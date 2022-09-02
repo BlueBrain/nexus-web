@@ -54,7 +54,7 @@ describe('Analysis Plugin', () => {
     });
   });
 
-  it('user can add an analysis report with name, description and files', function() {
+  it('user can add an analysis report with name, description and files, categories, types', function() {
     cy.visit(
       `${Cypress.env('ORG_LABEL')}/${
         this.projectLabel
@@ -70,16 +70,14 @@ describe('Analysis Plugin', () => {
     cy.findByRole('textbox', { name: 'Analysis Description' }).type(
       'This is where we can add a nice long description relating to why my analysis is better than yours.'
     );
-    cy.findByRole('button', { name: 'Add Files to Analysis' }).click();
-    cy.findByText(/Click or drag/i).click();
+    cy.findByText(/Drag and drop files/i).click();
     cy.get('input[type=file]').attachFile('sample1.png');
     cy.wait(5000);
-    cy.findByRole('button', { name: 'Close' }).click();
     cy.findByRole('button', { name: 'Save' }).click();
-    expect(cy.findByRole('heading', { name: /Analysis Name/i })).to.exist;
+    expect(cy.findByText(/Cell density O1.v6-RC2/i)).to.exist;
   });
 
-  it('user can edit an existing analysis report updating its name, description, and adding another image and pdf file', function() {
+  it('user can edit an existing analysis report updating its name, description, categories, types, and adding another image and pdf file', function() {
     cy.visit(
       `${Cypress.env('ORG_LABEL')}/${
         this.projectLabel
@@ -87,23 +85,18 @@ describe('Analysis Plugin', () => {
     );
     // Open anlaysis plugin
     cy.findByRole('button', { name: /Analysis/i }).click();
-    cy.findByRole('button', {
-      name: 'Options',
-    }).trigger('mouseover');
-    cy.findByRole('menuitem', { name: /Edit/ }).click();
+    cy.findByText(/Cell density O1.v6-RC2/i).click();
+    cy.findByRole('button', { name: /Edit/ }).click();
     cy.findByRole('textbox', { name: 'Analysis Name' }).type('-v2');
     cy.findByRole('textbox', { name: 'Analysis Description' }).type('-v2');
     cy.findByRole('button', { name: 'Add Files to Analysis' }).click();
-    cy.findByText(/Click or drag/i).click();
+    cy.findByText(/Drag and drop files/i).click();
     cy.get('input[type=file]').attachFile('sample2.png');
     cy.get('input[type=file]').attachFile('sample_pdf.pdf');
     cy.wait(5000);
     cy.findByRole('button', { name: 'Close' }).click();
     cy.findByRole('button', { name: 'Save' }).click();
-    cy.findByRole('heading', { name: /Analysis Name/i }).should(
-      'have.text',
-      'Cell density O1.v6-RC2-v2'
-    );
+    expect(cy.findByText(/Cell density O1.v6-RC2-v2/i)).to.exist;
     cy.findByLabelText('Analysis Description').should('contain', '-v2');
     cy.findAllByLabelText('Analysis File').should('have.length', 3);
   });
@@ -116,11 +109,14 @@ describe('Analysis Plugin', () => {
     );
     // Open anlaysis plugin
     cy.findByRole('button', { name: /Analysis/i }).click();
+    cy.findByText(/Cell density O1.v6-RC2-v2/i).click();
 
     //cy.findAllByLabelText('Analysis Asset')
     cy.findAllByRole('listitem', { name: /sample2/ })
       .first()
       .findByLabelText(/Analysis File/)
+      .find('.ant-image-mask')
+      .first()
       .click();
     cy.findByRole('button', { name: 'Edit name and description' }).click();
     cy.findByRole('textbox', { name: 'Asset Name' }).should(
@@ -150,8 +146,11 @@ describe('Analysis Plugin', () => {
     // Open anlaysis plugin
     cy.findByRole('button', { name: /Analysis/i }).click();
     cy.wait(5000);
+    cy.findByText(/Cell density O1.v6-RC2-V2/i).click();
     cy.findByRole('listitem', { name: /sample_pdf/ })
       .findByLabelText(/Analysis File/)
+      .find('.ant-image-mask')
+      .first()
       .click();
     cy.findByRole('button', { name: 'Edit name and description' }).click();
     cy.findByRole('textbox', { name: 'Asset Name' }).should(
