@@ -15,19 +15,19 @@ jobs:
       - name: install dependencies 🚀
         run: |
           yarn install --frozen-lockfile # optional, --immutable
-      # - name: linting ✨
-      #   run: |
-      #     yarn lint
-      # - name: style 💅
-      #   run: |
-      #     yarn style
-      # - name: running test 🛫🛬
-      #   run: |
-      #     yarn test --coverage src
-      # - name: upload coverage to Codecov 💌
-      #   uses: codecov/codecov-action@v1
-      #   with:
-      #     token: ${{ secrets.CODECOV_TOKEN }}
+      - name: linting ✨
+        run: |
+          yarn lint
+      - name: style 💅
+        run: |
+          yarn style
+      - name: running test 🛫🛬
+        run: |
+          yarn test --coverage src
+      - name: upload coverage to Codecov 💌
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
       - name: build project 👷
         run: |
           yarn build
@@ -40,7 +40,7 @@ jobs:
         run: echo | docker exec -t cypress cypress run --config-file cypress.config.ts --browser chrome
       - name: Stop Docker
         if: ${{ always() }}
-        run: docker-compose -f ci/docker-compose.yml down -d && sleep 60
+        run: docker-compose -f ci/docker-compose.yml down && sleep 60
       - name: Cleanup Docker Containers
         if: ${{ always() }}
         run: |
