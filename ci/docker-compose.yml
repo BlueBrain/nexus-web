@@ -10,9 +10,10 @@ services:
       - CYPRESS_AUTH_REALM=http://keycloak.test:8080/
       - CYPRESS_NEXUS_API_URL=http://delta.test:8080/v1
       - CYPRESS_BASE_URL=http://fusion.test:8000
+
     working_dir: /e2e
-    volumes:
-      - ../:/e2e
+    # volumes:
+    #   - ../:/e2e
     container_name: cypress
     entrypoint: ['bash']
     #command: cy:run --config-file cypress.config.ts
