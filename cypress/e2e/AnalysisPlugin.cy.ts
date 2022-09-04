@@ -1,18 +1,18 @@
 import { Resource } from '@bbp/nexus-sdk';
+import { TestUsers } from '../support/setupRealmsAndUsers';
 
 describe('Analysis Plugin', () => {
   before(() => {
     cy.task('auth:createRealmsAndUsers');
     cy.login(
-      'test1', //'http://keycloak.test:8080',
-      'morty',
-      'morty'
+      TestUsers.morty.realm,
+      TestUsers.morty.username,
+      TestUsers.morty.password
       // Cypress.env('AUTH_REALM'),
       // Cypress.env('AUTH_USERNAME'),
       // Cypress.env('AUTH_PASSWORD')
     ).then(session => {
       cy.window().then(win => {
-        cy.task('log', 'what go on');
         cy.task('log', win.localStorage.getItem('nexus__token'));
         const authToken = win.localStorage.getItem('nexus__token');
         cy.wrap(authToken).as('nexusToken');
@@ -49,23 +49,23 @@ describe('Analysis Plugin', () => {
 
   beforeEach(() => {
     cy.login(
-      'test1', //'http://keycloak.test:8080',
-      'morty',
-      'morty'
+      TestUsers.morty.realm,
+      TestUsers.morty.username,
+      TestUsers.morty.password
       // Cypress.env('AUTH_REALM'),
       // Cypress.env('AUTH_USERNAME'),
       // Cypress.env('AUTH_PASSWORD')
     );
   });
 
-  // after(function() {
-  //   cy.task('project:teardown', {
-  //     nexusApiUrl: Cypress.env('NEXUS_API_URL'),
-  //     authToken: this.nexusToken,
-  //     orgLabel: Cypress.env('ORG_LABEL'),
-  //     projectLabel: this.projectLabel,
-  //   });
-  // });
+  after(function() {
+    cy.task('project:teardown', {
+      nexusApiUrl: Cypress.env('NEXUS_API_URL'),
+      authToken: this.nexusToken,
+      orgLabel: Cypress.env('ORG_LABEL'),
+      projectLabel: this.projectLabel,
+    });
+  });
 
   it('user can add an analysis report with name, description and files', function() {
     cy.visit(

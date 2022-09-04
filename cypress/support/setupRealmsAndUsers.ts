@@ -18,22 +18,37 @@ const adminClient = {
   realm: 'master',
 };
 
-const realm = {
-  name: 'Nexus Dev',
-  openIdConfig: '{{realm}}/.well-known/openid-configuration',
+type Realm = {
+  name: string;
+  baseUrl: string;
+  openIdConfig: string;
+  logo: string;
+};
+
+const internalRealm: Realm = {
+  name: 'internal',
+  baseUrl: `${keycloakUrl}`,
+  openIdConfig: `${keycloakUrl}/realms/internal/.well-known/openid-configuration`,
+  logo: 'http://nexus.example.com/logo.png',
+};
+
+const testRealm: Realm = {
+  name: 'test1',
+  baseUrl: `${keycloakUrl}`,
+  openIdConfig: `${keycloakUrl}/realms/test1/.well-known/openid-configuration`,
   logo: 'http://nexus.example.com/logo.png',
 };
 
 const keycloak = keycloakUrl => {
-  const importRealm = async (realmName, clientCredentials, users) => {
+  const importRealm = async (realm: Realm, clientCredentials, users) => {
     const adminAccessToken = await userToken(keycloakAdmin, adminClient);
 
     const realmImportTemplate = fs
-      .readFileSync('cypress/e2e/keycloak-realm-users.mustache')
+      .readFileSync('ci/config/keycloak-realm-users.mustache')
       .toString();
 
     const realmJson = Mustache.render(realmImportTemplate, {
-      realm: realmName,
+      realm: realm.name,
       client: clientCredentials.id,
       client_secret: clientCredentials.secret,
       users,
@@ -87,7 +102,7 @@ const keycloak = keycloakUrl => {
   return { importRealm };
 };
 
-function getDeltaRealm(realmName) {
+function getDeltaRealm(realmName: string) {
   return fetch(`${deltaBaseUrl}/realms/${realmName}`, {
     method: 'GET',
     headers: {
@@ -96,16 +111,16 @@ function getDeltaRealm(realmName) {
   });
 }
 
-function createDeltaRealm(realmName) {
-  return fetch(`${deltaBaseUrl}/realms/${realmName}`, {
+function createDeltaRealm(realm: Realm) {
+  return fetch(`${deltaBaseUrl}/realms/${realm.name}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      name: realmName,
-      openIdConfig: `${keycloakUrl}/realms/${realmName}/.well-known/openid-configuration`,
-      logo: `${keycloakUrl}/logo.png`,
+      name: realm.name,
+      openIdConfig: realm.openIdConfig,
+      logo: `${realm.baseUrl}/logo.png`,
     }),
   });
 }
@@ -125,37 +140,42 @@ function createDeltaRealm(realmName) {
 // //     });
 // //   }
 
-async function setup() {
-  // TODO: move users into config
-  const users = [
-    {
+type User = {
+  username: string;
+  password: string;
+  realm: { name: string; baseUrl: string };
+};
+
+export const TestUsers: { [key: string]: User } = (() => {
+  return {
+    morty: {
       username: 'Morpheus',
       password: 'neo',
+      realm: { name: 'test1', baseUrl: keycloakUrl },
     },
-    {
+    morpheus: {
       username: 'morty',
       password: 'morty',
+      realm: { name: 'test1', baseUrl: keycloakUrl },
     },
-  ];
+  };
+})();
 
+async function setup() {
   console.log('Setting up Delta with realms and users');
 
   try {
     const kc = keycloak(keycloakUrl);
 
     console.log('Creating internal realm for use by our Service account');
-    await getDeltaRealm('internal').then(async response => {
-      // console.log('what delta say', response.status);
-      // response
-      //   .json()
-      //   .then(response => console.log('delta has this response', response));
+    await getDeltaRealm(internalRealm.name).then(async response => {
       if (response.status !== 200) {
         await kc.importRealm(
-          'internal',
+          internalRealm,
           { id: 'ServiceAccount', secret: '' },
           []
         );
-        await createDeltaRealm('internal').then(response => {
+        await createDeltaRealm(internalRealm).then(response => {
           if (response.status === 201) {
             console.log('internal realm successfully created');
           } else {
@@ -165,18 +185,24 @@ async function setup() {
           }
         });
       } else {
-        console.log('internal realm already exists');
+        console.log('realm already exists');
       }
     });
-    console.log('so done with internal realm, now onto test1');
+    console.log(`Checking if ${testRealm.name} already exists`);
     /* create test realm for use by our test users */
-    await getDeltaRealm('test1').then(async response => {
+    await getDeltaRealm(testRealm.name).then(async response => {
       if (response.status !== 200) {
-        console.log('Creating test realm for use by our authenticated users');
-        await kc.importRealm('test1', { id: 'fusion', secret: '' }, users);
-        await createDeltaRealm('test1').then(response => {
+        console.log(
+          'Realm does not exist. Creating test realm for use by our authenticated users...'
+        );
+        await kc.importRealm(
+          testRealm,
+          { id: 'fusion', secret: '' },
+          Object.values(TestUsers)
+        );
+        await createDeltaRealm(testRealm).then(response => {
           if (response.status === 201) {
-            console.log('test1 realm successfully created');
+            console.log(`Realm successfully created`);
           } else {
             response.text().then(json => {
               throw Error(`Error occured creating realm in Delta\n\n${json}`);
@@ -184,7 +210,7 @@ async function setup() {
           }
         });
       } else {
-        console.log('test1 realm already exists');
+        console.log(`${testRealm.name} already exists`);
       }
     });
   } catch (e) {
@@ -195,5 +221,3 @@ async function setup() {
   // TODO: Configure basic permissions and anonymous user
 }
 export default setup;
-
-// setup();

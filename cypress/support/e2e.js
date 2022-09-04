@@ -4,16 +4,15 @@ import { loginPage } from './index';
 
 Cypress.Commands.add('login', (realm, username, password) => {
   return cy.session(username, () => {
-    // cy.visit(loginPage);
-    cy.visit('http://fusion.test:8000/login');
+    cy.visit(loginPage);
     cy.get('.ant-dropdown-trigger.realm').click();
     cy.get('ul')
-      .contains('test1')
+      .contains(realm.name)
       .click();
 
     cy.get('.login-button').click();
     cy.origin(
-      'http://keycloak.test:8080',
+      realm.baseUrl,
       { args: [username, password] },
       ([username, password]) => {
         cy.get('#username').type(username);

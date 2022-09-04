@@ -1,10 +1,12 @@
+import { TestUsers } from '../support/setupRealmsAndUsers';
+
 describe('Studios', () => {
   before(() => {
     cy.task('auth:createRealmsAndUsers');
     cy.login(
-      'test1', //'http://keycloak.test:8080',
-      'morty',
-      'morty'
+      TestUsers.morty.realm,
+      TestUsers.morty.username,
+      TestUsers.morty.password
       // Cypress.env('AUTH_REALM'),
       // Cypress.env('AUTH_USERNAME'),
       // Cypress.env('AUTH_PASSWORD')\
@@ -30,9 +32,9 @@ describe('Studios', () => {
 
   beforeEach(() => {
     cy.login(
-      'test1', //'http://keycloak.test:8080',
-      'morty',
-      'morty'
+      TestUsers.morty.realm,
+      TestUsers.morty.username,
+      TestUsers.morty.password
       // Cypress.env('AUTH_REALM'),
       // Cypress.env('AUTH_USERNAME'),
       // Cypress.env('AUTH_PASSWORD')\
