@@ -40,7 +40,7 @@ jobs:
         # which we can't then delete easily
         run: docker cp ./. cypress:/e2e
       - name: e2e tests
-        run: echo | docker exec -t cypress cypress run --config-file cypress.config.ts --browser chrome
+        run: echo | docker exec -t cypress cypress run --config-file cypress.config.ts --browser chrome --record --key ${{ secrets.CYPRESS_RECORD_KEY }}
       - name: Stop Docker
         if: ${{ always() }}
         run: docker-compose -f ci/docker-compose.yml down && sleep 60
