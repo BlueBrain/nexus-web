@@ -87,7 +87,7 @@ describe('Analysis Plugin', () => {
     cy.get('input[type=file]').attachFile('sample1.png');
 
     cy.wait(5000);
-    cy.screenshot('withattachedfile');
+    cy.screenshot('with-file-attached');
     cy.findByRole('button', { name: 'Close' }).click();
     cy.findByRole('button', { name: 'Save' }).click();
     cy.screenshot('saving-analysis-report');
@@ -113,21 +113,21 @@ describe('Analysis Plugin', () => {
 
     cy.findByRole('textbox', { name: 'Analysis Name' }).type('-v2');
     cy.findByRole('textbox', { name: 'Analysis Description' }).type('-v2');
-    cy.screenshot('failing');
+    cy.screenshot('updated-text');
     cy.findByRole('button', { name: 'Add Files to Analysis' }).click();
     cy.findByText(/Click or drag/i).click();
     cy.get('input[type=file]').attachFile('sample2.png');
     cy.get('input[type=file]').attachFile('sample_pdf.pdf');
     cy.wait(5000);
-    cy.screenshot('withapdf');
+    cy.screenshot('with-pdf-file-attached');
     cy.findByRole('button', { name: 'Close' }).click();
     cy.findByRole('button', { name: 'Save' }).click();
-    cy.screenshot('andnow');
+    cy.screenshot('save-updated-report');
     cy.findByRole('heading', { name: /Analysis Name/i }).should(
       'have.text',
       'Cell density O1.v6-RC2-v2'
     );
-    cy.screenshot('andnow2');
+    cy.screenshot('updated-report-saved');
     cy.findByLabelText('Analysis Description').should('contain', '-v2');
     cy.findAllByLabelText('Analysis File').should('have.length', 3);
   });
