@@ -11,6 +11,7 @@ import setup from './cypress/support/setupRealmsAndUsers';
 const fetch = require('node-fetch');
 
 export default defineConfig({
+  projectId: '1iihco',
   viewportWidth: 1200,
   video: false,
   e2e: {
