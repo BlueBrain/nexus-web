@@ -27,6 +27,7 @@ const TypeWidget = ({
           <p>you may select one or multiple from the list</p>
           {TYPES.filter(o => availableTypes.includes(o)).map((object, i) => (
             <Button
+              key={i}
               type="default"
               onClick={() => selectType(object)}
               className={`group-buttons ${

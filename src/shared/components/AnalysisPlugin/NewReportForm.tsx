@@ -3,10 +3,9 @@ import { Form, Button, Input, Select, Typography } from 'antd';
 import './NewReportForm.less';
 import CategoryWidget from './CategoryWidget';
 import TypeWidget from './TypeWidget';
-import { without, values } from 'lodash';
+import { without } from 'lodash';
 import { NewReportFormProps } from '../../types/plugins/report';
 import { initialize, saveReport } from '../../slices/plugins/report';
-import { StorageMenu } from '../../../shared/components/FileUpload';
 
 const { Option } = Select;
 const { TextArea } = Input;

@@ -5,7 +5,7 @@ import {
   FolderAddOutlined,
   ZoomOutOutlined,
 } from '@ant-design/icons';
-import { Button, Collapse, Input, Slider, Select, Modal } from 'antd';
+import { Button, Collapse, Input, Slider, Modal } from 'antd';
 import { without, intersection } from 'lodash';
 import * as React from 'react';
 import { getUsername } from '../../../shared/utils';
@@ -27,8 +27,6 @@ import {
   addReport,
 } from '../../slices/plugins/report';
 
-import { useState } from '@storybook/addons';
-
 const { Panel } = Collapse;
 
 import { AnalysisPluginProps } from '../../types/plugins/report';
@@ -36,7 +34,6 @@ import { AnalysisPluginProps } from '../../types/plugins/report';
 const AnalysisPlugin = ({
   analysisResourceType,
   containerId,
-  containerName,
   analysisReports,
   onSave,
   onDelete,
@@ -206,18 +203,18 @@ const AnalysisPlugin = ({
                       <>
                         {analysisReport.name}
                         {!!analysisReport.categories &&
-                          analysisReport.categories?.length > 0 && (
+                          analysisReport.categories.length > 0 && (
                             <span className="cat">
-                              {analysisReport.categories?.map(c => (
-                                <span>{c}</span>
+                              {analysisReport.categories.map((c, i) => (
+                                <span key={i}>{c}</span>
                               ))}{' '}
                             </span>
                           )}
                         {!!analysisReport.types &&
-                          analysisReport.types?.length > 0 && (
+                          analysisReport.types.length > 0 && (
                             <span className="types">
-                              {analysisReport.types?.map(t => (
-                                <span>{t}</span>
+                              {analysisReport.types.map((t, i) => (
+                                <span key={i}>{t}</span>
                               ))}{' '}
                             </span>
                           )}

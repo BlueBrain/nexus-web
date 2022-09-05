@@ -34,6 +34,7 @@ const CategoryWidget = ({
             .filter(o => availableCategories.includes(o))
             .map((object, i) => (
               <Button
+                key={i}
                 type="default"
                 onClick={() => selectCategory(object)}
                 className={`group-buttons ${

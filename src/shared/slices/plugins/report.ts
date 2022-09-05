@@ -59,7 +59,7 @@ export const analysisUISlice = createSlice({
         imagePreviewScale: action.payload.scale,
       }),
     saveReport: (state, action) => {
-      const mapp = mapKeys(
+      mapKeys(
         action.payload,
         (v, k) => `currentlyBeingEditedAnalysisReport${capitalize(k)}`
       );
