@@ -4,10 +4,6 @@ import * as React from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/reducers';
-import AnalysisPlugin, {
-  AnalysisReport,
-  Asset,
-} from '../../components/AnalysisPlugin/AnalysisPlugin';
 import { sparqlQueryExecutor } from '../../utils/querySparqlView';
 import { Image } from 'antd';
 import FileUploadContainer from '../FileUploadContainer';
@@ -17,41 +13,21 @@ import { useHistory, useLocation } from 'react-router';
 import ImageFileInfo from '../../components/FileInfo/ImageFileInfo';
 import { PDFThumbnail } from '../../../shared/components/Preview/PDFPreview';
 import PDFFileInfo from '../../../shared/components/FileInfo/PDFFileInfo';
+import AnalysisPlugin from '../../../shared/components/AnalysisPlugin/AnalysisPlugin';
 
-export const DEFAULT_ANALYSIS_DATA_SPARQL_QUERY = `PREFIX s:<http://schema.org/>
-PREFIX prov:<http://www.w3.org/ns/prov#>
-PREFIX nsg:<https://neuroshapes.org/>
-PREFIX nxv:<https://bluebrain.github.io/nexus/vocabulary/>
-SELECT ?container_resource_id ?container_resource_name ?analysis_report_id ?analysis_report_name ?analysis_report_description ?created_by ?created_at ?self
-WHERE {
-  OPTIONAL {
-    BIND(<{resourceId}> as ?container_resource_id) .
-    BIND(<{resourceId}> as ?self) .
-    ?derivation_id        ^prov:derivation       ?analysis_report_id .
-    ?derivation_id        nsg:entity             ?container_resource_id .
-    OPTIONAL {
-      ?container_resource_id        nsg:name                   ?container_resource_name .
-    }
-    ?analysis_report_id    nsg:name            ?analysis_report_name .
-    ?analysis_report_id    nsg:description       ?analysis_report_description .
-    ?analysis_report_id nxv:createdBy ?created_by .
-    ?analysis_report_id nxv:createdAt ?created_at .
-  }
-  OPTIONAL {
-    BIND(<{resourceId}> as ?analysis_report_id) .
-    BIND(<{resourceId}> as ?self) .
-    ?derivation_id        ^prov:derivation       ?analysis_report_id .
-    ?derivation_id        nsg:entity             ?container_resource_id .
-    OPTIONAL {
-      ?container_resource_id        nsg:name                   ?container_resource_name .
-    }
-    ?analysis_report_id    nsg:name            ?analysis_report_name .
-    ?analysis_report_id    nsg:description       ?analysis_report_description .
-    ?analysis_report_id nxv:createdBy ?created_by .
-    ?analysis_report_id nxv:createdAt ?created_at .
-  }
-}
-LIMIT 1000`;
+import analysisUIReducer, {
+  setReportResourceType,
+  setSelectedReportFirstLoad,
+  changeSelectedReports,
+} from '../../slices/plugins/report';
+
+import {
+  Asset,
+  AnalysesState,
+  AnalysisReport,
+  AnalysisPluginContainerProps,
+  AnalysisAssetSparqlQueryRowResult,
+} from '../../types/plugins/report';
 
 async function fetchImageObjectUrl(
   nexus: NexusClient,
@@ -73,67 +49,6 @@ async function fetchImageObjectUrl(
   });
   return URL.createObjectURL(blob);
 }
-
-type AnalysisPluginContainerProps = {
-  orgLabel: string;
-  projectLabel: string;
-  resourceId: string;
-};
-
-export enum ActionType {
-  RESCALE = 'rescale',
-  EDIT_ANALYSIS_REPORT = 'edit_analysis_report',
-  INITIALIZE = 'initialize',
-  SELECT_ASSET = 'select_asset',
-  CHANGE_SELECTED_ANALYSIS_REPORTS = 'change_selected_analysis_reports',
-  CHANGE_ANALYSIS_NAME = 'change_analysis_name',
-  CHANGE_ANALYSIS_DESCRIPTION = 'change_analysis_description',
-  OPEN_FILE_UPLOAD_DIALOG = 'open_file_upload_dialog',
-  CLOSE_FILE_UPLOAD_DIALOG = 'close_file_upload_dialog',
-  ADD_ANALYSIS_REPORT = 'add_analysis_report',
-  SET_SELECTED_REPORT_ON_FIRST_LOAD = 'set_selected_report_on_first_load',
-  SET_ANALYSIS_RESOURCE_TYPE = 'set_analysis_resource_type',
-}
-
-export type AnalysesAction =
-  | {
-      type: ActionType.SET_ANALYSIS_RESOURCE_TYPE;
-      payload: {
-        resourceType: 'report_container' | 'individual_report';
-        containerId?: string;
-        containerName?: string;
-      };
-    }
-  | { type: ActionType.RESCALE; payload: number }
-  | {
-      type: ActionType.SET_SELECTED_REPORT_ON_FIRST_LOAD;
-      payload?: { analysisReportId: string };
-    }
-  | {
-      type: ActionType.EDIT_ANALYSIS_REPORT;
-      payload: {
-        analysisId: string;
-        analaysisName: string;
-        analysisDescription?: string;
-      };
-    }
-  | {
-      type: ActionType.INITIALIZE;
-      payload: { scale: number; analysisReportId?: string[] };
-    }
-  | { type: ActionType.SELECT_ASSET; payload: { assetId: string } }
-  | {
-      type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS;
-      payload: { analysisReportIds: string[] };
-    }
-  | { type: ActionType.CHANGE_ANALYSIS_NAME; payload: { name: string } }
-  | {
-      type: ActionType.CHANGE_ANALYSIS_DESCRIPTION;
-      payload: { description: string };
-    }
-  | { type: ActionType.OPEN_FILE_UPLOAD_DIALOG }
-  | { type: ActionType.CLOSE_FILE_UPLOAD_DIALOG }
-  | { type: ActionType.ADD_ANALYSIS_REPORT };
 
 const AnalysisPluginContainer = ({
   orgLabel,
@@ -177,26 +92,6 @@ const AnalysisPluginContainer = ({
     resourceId
   );
 
-  type AnalysisAssetSparqlQueryRowResult = {
-    id: string;
-    key: string;
-    container_resource_id: string;
-    container_resource_name: string;
-    analysis_report_id: string;
-    analysis_report_name: string;
-    analysis_report_description: string;
-    created_by: string;
-    created_at: string;
-    asset_name: string;
-    asset_description: string;
-    asset_content_url: string;
-    asset_encoding_format: string;
-    self: {
-      type: string;
-      value: string;
-    };
-  };
-
   const fetchAnalysisData = async (
     viewSelfId: string,
     analysisQuery: string
@@ -230,12 +125,21 @@ const AnalysisPluginContainer = ({
 
     const analysisData = result.items.reduce((analysisReports, current) => {
       const currentRow = current as AnalysisAssetSparqlQueryRowResult;
-
       /* add new entry if report not in array yet */
       if (
         !analysisReports.some(r => r.id === currentRow['analysis_report_id'])
       ) {
+        const types =
+          currentRow['analysis_report_types'] !== undefined
+            ? [currentRow['analysis_report_types']]
+            : [];
+        const categories =
+          currentRow['analysis_report_categories'] !== undefined
+            ? [currentRow['analysis_report_categories']]
+            : [];
         analysisReports.push({
+          types,
+          categories,
           containerId: currentRow['container_resource_id'],
           containerName: currentRow['container_resource_name'],
           id: currentRow['analysis_report_id'],
@@ -245,33 +149,60 @@ const AnalysisPluginContainer = ({
           createdAt: currentRow['created_at'],
           assets: [],
         });
-      }
 
-      const reportIx = analysisReports.findIndex(
-        r => r.id === currentRow['analysis_report_id']
-      );
+        const reportIx = analysisReports.findIndex(
+          r => r.id === currentRow['analysis_report_id']
+        );
+        const reportResource = reportResources.find(
+          r => r['@id'] === currentRow['analysis_report_id']
+        );
 
-      const reportResource = reportResources.find(
-        r => r['@id'] === currentRow['analysis_report_id']
-      );
-      if (reportResource === undefined) return analysisReports;
-      if ('hasPart' in reportResource) {
-        analysisReports[reportIx].assets = [reportResource.hasPart]
-          .flat()
-          .map((asset: any) => {
-            return {
-              analysisReportId: currentRow['analysis_report_id'],
-              saved: true,
-              id: asset.distribution.contentUrl['@id'],
-              name: asset.name,
-              description: asset.description,
-              filePath: asset.distribution.contentUrl['@id'],
-              encodingFormat: asset.distribution.encodingFormat,
-              preview: ({ mode }: { mode: 'view' | 'edit' }) => {
-                return <Image preview={mode === 'view'} />;
-              },
-            };
-          });
+        if (reportResource === undefined) return analysisReports;
+
+        if ('hasPart' in reportResource) {
+          analysisReports[reportIx].assets = [reportResource.hasPart]
+            .flat()
+            .map((asset: any) => {
+              return {
+                analysisReportId: currentRow['analysis_report_id'],
+                saved: true,
+                id: asset.distribution.contentUrl['@id'],
+                name: asset.name,
+                description: asset.description,
+                filePath: asset.distribution.contentUrl['@id'],
+                encodingFormat: asset.distribution.encodingFormat,
+                preview: ({ mode }: { mode: 'view' | 'edit' }) => {
+                  return <Image preview={mode === 'view'} />;
+                },
+              };
+            });
+        }
+      } else {
+        // already exists, just
+        const reportIx = analysisReports.findIndex(
+          r => r.id === currentRow['analysis_report_id']
+        );
+        const r = analysisReports[reportIx];
+        if (r.categories !== undefined) {
+          if (
+            !r.categories.includes(currentRow['analysis_report_categories'])
+          ) {
+            r.categories.push(currentRow['analysis_report_categories']);
+          }
+        } else {
+          analysisReports[reportIx].categories = [
+            currentRow['analysis_report_categories'],
+          ];
+        }
+        if (r.types !== undefined) {
+          if (!r.types.includes(currentRow['analysis_report_types'])) {
+            r.types.push(currentRow['analysis_report_types']);
+          }
+        } else {
+          analysisReports[reportIx].types = [
+            currentRow['analysis_report_types'],
+          ];
+        }
       }
 
       return analysisReports;
@@ -286,17 +217,15 @@ const AnalysisPluginContainer = ({
     {
       onSuccess: data => {
         if (!hasInitializedSelectedReports) {
-          dispatch({
-            type: ActionType.SET_SELECTED_REPORT_ON_FIRST_LOAD,
-            payload: {
+          dispatch(
+            setSelectedReportFirstLoad({
               analysisReportId:
                 data.length > 0 && data[0].id !== undefined ? data[0].id : '',
-            },
-          });
+            })
+          );
         }
-        dispatch({
-          type: ActionType.SET_ANALYSIS_RESOURCE_TYPE,
-          payload: {
+        dispatch(
+          setReportResourceType({
             resourceType:
               data.length > 0 && data[0].id === resourceId
                 ? 'individual_report'
@@ -309,8 +238,8 @@ const AnalysisPluginContainer = ({
               data.length > 0 && data[0].containerName !== ''
                 ? data[0].containerName
                 : undefined,
-          },
-        });
+          })
+        );
       },
     }
   );
@@ -440,7 +369,13 @@ const AnalysisPluginContainer = ({
   );
 
   const mutateAnalysis = useMutation(
-    async (data: { id?: string; name: string; description?: string }) => {
+    async (data: {
+      id?: string;
+      name: string;
+      description?: string;
+      categories?: string[];
+      types?: string[];
+    }) => {
       const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
         return {
           '@type': 'Entity',
@@ -482,7 +417,6 @@ const AnalysisPluginContainer = ({
           });
         }
         resource['contribution'] = contributions;
-
         return nexus.Resource.update(
           orgLabel,
           projectLabel,
@@ -492,10 +426,11 @@ const AnalysisPluginContainer = ({
             ...resource,
             name: data.name,
             description: data.description,
+            categories: data.categories,
+            types: data.types,
           }
         );
       }
-
       // Create new Analysis Report
       return nexus.Resource.create(orgLabel, projectLabel, {
         '@context': [
@@ -508,6 +443,8 @@ const AnalysisPluginContainer = ({
         '@type': 'Report',
         name: data.name,
         description: data.description,
+        categories: data.categories,
+        types: data.types,
         hasPart: unsavedAssetsToAddToDistribution,
         derivation: { entity: { '@id': resourceId } },
       });
@@ -519,10 +456,9 @@ const AnalysisPluginContainer = ({
           queryClient.invalidateQueries(['analysis']),
           queryClient.invalidateQueries(['analysesImages']),
         ]).then(() => {
-          dispatch({
-            type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS,
-            payload: { analysisReportIds: [resource['@id']] },
-          });
+          dispatch(
+            changeSelectedReports({ analysisReportIds: [resource['@id']] })
+          );
         });
       },
     }
@@ -592,10 +528,11 @@ const AnalysisPluginContainer = ({
           queryClient.invalidateQueries(['analysis']),
           queryClient.invalidateQueries(['analysesImages']),
         ]).then(() => {
-          dispatch({
-            type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS,
-            payload: { analysisReportIds: resourceIds ? resourceIds : [] },
-          });
+          dispatch(
+            changeSelectedReports({
+              analysisReportIds: resourceIds ? resourceIds : [],
+            })
+          );
         });
       },
     }
@@ -649,21 +586,6 @@ const AnalysisPluginContainer = ({
 
   const DEFAULT_SCALE = 50;
 
-  type AnalysesState = {
-    analysisResourceType: 'report_container' | 'individual_report';
-    containerId?: string;
-    containerName?: string;
-    imagePreviewScale: number;
-    mode: 'view' | 'edit' | 'create';
-    selectedAnalysisReports?: string[];
-    currentlyBeingEditedAnalysisReportId?: string;
-    currentlyBeingEditingAnalysisReportName?: string;
-    currentlyBeingEditedAnalysisReportDescription?: string;
-    selectedAssets?: string[];
-    isUploadAssetDialogOpen?: boolean;
-    hasInitializedSelectedReports: boolean;
-  };
-
   const initState = ({
     mode,
     analysisResourceType,
@@ -680,109 +602,6 @@ const AnalysisPluginContainer = ({
     };
   };
 
-  const analysisUIReducer = (
-    state: AnalysesState,
-    action: AnalysesAction
-  ): AnalysesState => {
-    switch (action.type) {
-      case ActionType.SET_ANALYSIS_RESOURCE_TYPE:
-        return {
-          ...state,
-          analysisResourceType: action.payload.resourceType,
-          containerId: action.payload.containerId,
-          containerName: action.payload.containerName,
-        };
-      case ActionType.RESCALE:
-        return { ...state, imagePreviewScale: action.payload };
-      case ActionType.EDIT_ANALYSIS_REPORT:
-        return {
-          ...state,
-          mode: 'edit',
-          selectedAnalysisReports: [action.payload.analysisId],
-          currentlyBeingEditedAnalysisReportId: action.payload.analysisId,
-          currentlyBeingEditingAnalysisReportName: action.payload.analaysisName,
-          currentlyBeingEditedAnalysisReportDescription:
-            action.payload.analysisDescription,
-        };
-      case ActionType.ADD_ANALYSIS_REPORT:
-        return {
-          ...state,
-          mode: 'create',
-          currentlyBeingEditingAnalysisReportName: '',
-          currentlyBeingEditedAnalysisReportDescription: '',
-        };
-      case ActionType.SELECT_ASSET:
-        state.selectedAssets = state.selectedAssets ? state.selectedAssets : [];
-        const selectedId = state.selectedAssets?.findIndex(
-          a => a === action.payload.assetId
-        );
-
-        if (
-          state.selectedAssets &&
-          selectedId !== undefined &&
-          selectedId > -1
-        ) {
-          const selectedCopy = [...state.selectedAssets];
-          selectedCopy.splice(selectedId, 1);
-          return {
-            ...state,
-            selectedAssets: selectedCopy,
-          };
-        }
-        return {
-          ...state,
-          selectedAssets: [...state.selectedAssets, action.payload.assetId],
-        };
-      case ActionType.SET_SELECTED_REPORT_ON_FIRST_LOAD:
-        return {
-          ...state,
-          selectedAnalysisReports:
-            action.payload && action.payload.analysisReportId !== ''
-              ? [action.payload.analysisReportId]
-              : [],
-          hasInitializedSelectedReports: true,
-        };
-      case ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS:
-        return {
-          ...state,
-          mode: 'view',
-          selectedAnalysisReports: action.payload.analysisReportIds,
-          selectedAssets: [],
-        };
-      case ActionType.INITIALIZE:
-        return initState({
-          mode: 'view',
-          analysisResourceType: 'report_container',
-          hasInitializedSelectedReports: true,
-          selectedAnalysisReports: action.payload.analysisReportId,
-          imagePreviewScale: action.payload.scale,
-        });
-      case ActionType.CHANGE_ANALYSIS_NAME:
-        return {
-          ...state,
-          currentlyBeingEditingAnalysisReportName: action.payload.name,
-        };
-      case ActionType.CHANGE_ANALYSIS_DESCRIPTION:
-        return {
-          ...state,
-          currentlyBeingEditedAnalysisReportDescription:
-            action.payload.description,
-        };
-      case ActionType.OPEN_FILE_UPLOAD_DIALOG:
-        return {
-          ...state,
-          isUploadAssetDialogOpen: true,
-        };
-      case ActionType.CLOSE_FILE_UPLOAD_DIALOG:
-        return {
-          ...state,
-          isUploadAssetDialogOpen: false,
-        };
-      default:
-        throw new Error();
-    }
-  };
-
   const [
     {
       imagePreviewScale,
@@ -793,8 +612,10 @@ const AnalysisPluginContainer = ({
       currentlyBeingEditedAnalysisReportId,
       selectedAssets,
       selectedAnalysisReports,
-      currentlyBeingEditingAnalysisReportName,
+      currentlyBeingEditedAnalysisReportName,
       currentlyBeingEditedAnalysisReportDescription,
+      currentlyBeingEditedAnalysisReportCategories,
+      currentlyBeingEditedAnalysisReportTypes,
       isUploadAssetDialogOpen,
       hasInitializedSelectedReports,
     },
@@ -816,8 +637,10 @@ const AnalysisPluginContainer = ({
       mode === 'create'
         ? [
             {
-              name: '',
-              description: '',
+              name: currentlyBeingEditedAnalysisReportName || '',
+              description: currentlyBeingEditedAnalysisReportDescription || '',
+              categories: currentlyBeingEditedAnalysisReportCategories || [],
+              types: currentlyBeingEditedAnalysisReportTypes || [],
               createdBy: '',
               createdAt: '',
               assets: [],
@@ -827,6 +650,7 @@ const AnalysisPluginContainer = ({
     const savedAndUnsavedAnalysisReports = analysisData
       ? analysisData.concat(newAnalysisReports)
       : newAnalysisReports;
+
     return savedAndUnsavedAnalysisReports.map(a => {
       return {
         ...a,
@@ -897,6 +721,7 @@ const AnalysisPluginContainer = ({
   const FileUploadComponent = (analysisReportId?: string) => (
     <FileUploadContainer
       orgLabel={orgLabel}
+      showStorageMenu={false}
       projectLabel={projectLabel}
       onFileUploaded={file => onFileUploaded(file, analysisReportId)}
     />
@@ -910,8 +735,14 @@ const AnalysisPluginContainer = ({
           analysisReports={analysisDataWithImages}
           containerId={containerId}
           onCancel={() => {}}
-          onSave={(name: string, description?: string, id?: string) => {
-            mutateAnalysis.mutate({ name, description, id });
+          onSave={(
+            name: string,
+            description?: string,
+            id?: string,
+            categories?: string[],
+            types?: string[]
+          ) => {
+            mutateAnalysis.mutate({ name, description, id, categories, types });
           }}
           onDelete={() => {
             deleteImages.mutate();
@@ -925,15 +756,19 @@ const AnalysisPluginContainer = ({
           currentlyBeingEditedAnalysisReportId={
             currentlyBeingEditedAnalysisReportId
           }
-          currentlyBeingEditingAnalysisReportName={
-            currentlyBeingEditingAnalysisReportName
+          currentlyBeingEditedAnalysisReportName={
+            currentlyBeingEditedAnalysisReportName
+          }
+          currentlyBeingEditedAnalysisReportCategories={
+            currentlyBeingEditedAnalysisReportCategories
+          }
+          currentlyBeingEditedAnalysisReportTypes={
+            currentlyBeingEditedAnalysisReportTypes
           }
           selectedAssets={selectedAssets}
+          dispatch={dispatch}
           selectedAnalysisReports={selectedAnalysisReports}
           isUploadAssetDialogOpen={isUploadAssetDialogOpen}
-          dispatch={(action: AnalysesAction) => {
-            dispatch(action);
-          }}
           onClickRelatedResource={(resourceId: string) =>
             handleClickAnalysisResource(orgLabel, projectLabel, resourceId)
           }

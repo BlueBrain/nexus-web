@@ -14,7 +14,7 @@ import {
   DEFAULT_SERVICE_ACCOUNTS_REALM,
 } from '../shared/store/reducers/config';
 import { DEFAULT_SEARCH_STATE } from '../shared/store/reducers/search';
-import { DEFAULT_ANALYSIS_DATA_SPARQL_QUERY } from '../shared/containers/AnalysisPlugin/AnalysisPluginContainer';
+import { DEFAULT_ANALYSIS_DATA_SPARQL_QUERY } from '../constants';
 
 const PORT_NUMBER = 8000;
 

@@ -11,6 +11,8 @@ export const sparqlAnalysisReportNoResultsHandler = rest.post(
           'analysis_report_id',
           'analysis_report_name',
           'analysis_report_description',
+          'analysis_report_categories',
+          'analysis_report_types',
           'created_by',
           'created_at',
           'self',
@@ -33,6 +35,8 @@ export const sparqlAnalysisReportSingleResult = rest.post(
           'container_resource_name',
           'analysis_report_id',
           'analysis_report_name',
+          'analysis_report_categories',
+          'analysis_report_types',
           'analysis_report_description',
           'created_by',
           'created_at',
@@ -55,6 +59,14 @@ export const sparqlAnalysisReportSingleResult = rest.post(
             analysis_report_name: {
               type: 'literal',
               value: 'Our Very First Analysis Report!',
+            },
+            analysis_report_categories: {
+              type: 'array',
+              value: ['Anatomical'],
+            },
+            analysis_report_types: {
+              type: 'array',
+              value: ['Analysis'],
             },
             container_resource_id: {
               type: 'uri',

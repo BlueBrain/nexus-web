@@ -146,9 +146,15 @@ describe('Analysis Plugin', () => {
     ).toBeInTheDocument();
 
     expect(
-      await waitFor(() =>
-        screen.getByRole('button', { name: 'Add Files to Analysis' })
-      )
+      await waitFor(() => screen.getByText('3. Categories'))
+    ).toBeInTheDocument();
+
+    expect(
+      await waitFor(() => screen.getByText('4. Types'))
+    ).toBeInTheDocument();
+
+    expect(
+      await waitFor(() => screen.getByText('5. Add Assets'))
     ).toBeInTheDocument();
   });
 
@@ -327,7 +333,7 @@ describe('Analysis Plugin', () => {
     });
   });
 
-  it('On a container analysis resource, each individual analysis has an options menu with the option to navigate to the resource', async () => {
+  it('On a container analysis resource, each individual analysis has an option to navigate to the resource', async () => {
     server.use(sparqlAnalysisReportSingleResult, reportResource);
     const user = userEvent.setup();
     const history = createMemoryHistory({});
@@ -348,14 +354,13 @@ describe('Analysis Plugin', () => {
       </Router>
     );
 
-    const optionsButton = await screen.findByRole('button', {
-      name: 'Options',
+    await waitFor(() => {
+      const title = screen.getByText('Our Very First Analysis Report!');
+      user.click(title);
     });
-    user.hover(optionsButton);
-
     expect(
       await waitFor(() =>
-        screen.getByRole('menuitem', { name: 'Go to resource' })
+        screen.getByRole('button', { name: 'Go to resource' })
       )
     ).toBeInTheDocument();
   });
@@ -381,12 +386,8 @@ describe('Analysis Plugin', () => {
     );
 
     expect(
-      await waitFor(
-        () =>
-          screen.getByRole('heading', { name: 'Analysis Name' }).textContent,
-        { timeout: 10000 }
-      )
-    ).toBe('Our Very First Analysis Report!');
+      await waitFor(() => screen.getByText('Our Very First Analysis Report!'))
+    ).toBeInTheDocument();
   });
 
   it('when at least one of the selected analysis reports has an asset then the zoom options are visible', async () => {
@@ -443,6 +444,7 @@ describe('Analysis Plugin', () => {
     server.use(sparqlAnalysisReportSingleResult, reportResource);
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
+    const user = userEvent.setup();
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -458,6 +460,10 @@ describe('Analysis Plugin', () => {
         </Provider>
       </Router>
     );
+    await waitFor(() => {
+      const title = screen.getByText('Our Very First Analysis Report!');
+      user.click(title);
+    });
     // expect asset name to be present
     expect(
       await waitFor(() => screen.getByText('insta_logo_large.png'))
@@ -486,7 +492,10 @@ describe('Analysis Plugin', () => {
     );
 
     // expect asset name to be present
-
+    await waitFor(() => {
+      const title = screen.getByText('Our Very First Analysis Report!');
+      user.click(title);
+    });
     const asset = await waitFor(() =>
       screen.getByLabelText(/insta_logo_large/)
     );
@@ -516,13 +525,13 @@ describe('Analysis Plugin', () => {
       </Router>
     );
 
-    const optionsButton = await screen.findByRole('button', {
-      name: 'Options',
+    await waitFor(() => {
+      const title = screen.getByText('Our Very First Analysis Report!');
+      user.click(title);
     });
-    user.hover(optionsButton);
 
     await waitFor(() => {
-      const edit = screen.getByRole('menuitem', { name: 'Edit' });
+      const edit = screen.getByRole('button', { name: 'Edit' });
       user.click(edit);
     });
 

@@ -1,92 +1,39 @@
 import {
-  CalendarOutlined,
   LeftSquareFilled,
-  MoreOutlined,
-  PlusOutlined,
   UpOutlined,
-  UserOutlined,
   ZoomInOutlined,
+  FolderAddOutlined,
   ZoomOutOutlined,
 } from '@ant-design/icons';
-import {
-  Button,
-  Dropdown,
-  Input,
-  Menu,
-  Slider,
-  Select,
-  Checkbox,
-  Modal,
-} from 'antd';
+import { Button, Collapse, Input, Slider, Modal } from 'antd';
+import { without, intersection } from 'lodash';
 import * as React from 'react';
 import { getUsername } from '../../../shared/utils';
 import FriendlyTimeAgo from '../FriendlyDate';
 import './AnalysisPlugin.less';
 import * as moment from 'moment';
+import CategoryWidget from './CategoryWidget';
+import TypeWidget from './TypeWidget';
+import ReportAssets from './ReportAssets';
+
+import NewReportForm from './NewReportForm';
 import {
-  ActionType,
-  AnalysesAction,
-} from '../../../shared/containers/AnalysisPlugin/AnalysisPluginContainer';
+  editReport,
+  changeAnalysisName,
+  closeFileUploadDialog,
+  changeScale,
+  initialize,
+  changeAnalysisDescription,
+  addReport,
+} from '../../slices/plugins/report';
 
-export type Asset = {
-  analysisReportId?: string;
-  saved: boolean;
-  id: string;
-  name: string;
-  description?: string;
-  encodingFormat: string;
-  contentSize?: {
-    unitCode: 'bytes';
-    value: number;
-  };
-  digest?: {
-    algorithm: string;
-    value: string;
-  };
-  filePath: string;
-  filename?: string;
-  lastUpdated?: string;
-  lastUpdatedBy?: string;
-  deprecated?: boolean;
-  preview: ({ mode }: { mode: 'view' | 'edit' }) => React.ReactElement;
-};
+const { Panel } = Collapse;
 
-export type AnalysisReport = {
-  id?: string;
-  containerId?: string;
-  containerName?: string;
-  name: string;
-  description?: string;
-  createdBy?: string;
-  createdAt?: string;
-  assets: Asset[];
-};
-
-type AnalysisPluginProps = {
-  analysisResourceType: 'report_container' | 'individual_report';
-  containerId?: string;
-  containerName?: string;
-  analysisReports: AnalysisReport[];
-  FileUpload: (analysisReportId?: string) => JSX.Element;
-  onSave: (name: string, description?: string, id?: string) => void;
-  onDelete: () => void;
-  onCancel: () => void;
-  onClickRelatedResource: (resourceId: string) => void;
-  imagePreviewScale: number;
-  mode: 'view' | 'edit' | 'create';
-  selectedAnalysisReports?: string[];
-  currentlyBeingEditedAnalysisReportId?: string;
-  currentlyBeingEditingAnalysisReportName?: string;
-  currentlyBeingEditedAnalysisReportDescription?: string;
-  selectedAssets?: string[];
-  isUploadAssetDialogOpen?: boolean;
-  dispatch: (action: AnalysesAction) => void;
-};
+import { AnalysisPluginProps } from '../../types/plugins/report';
 
 const AnalysisPlugin = ({
   analysisResourceType,
   containerId,
-  containerName,
   analysisReports,
   onSave,
   onDelete,
@@ -95,35 +42,35 @@ const AnalysisPlugin = ({
   mode,
   selectedAnalysisReports,
   currentlyBeingEditedAnalysisReportDescription,
+  currentlyBeingEditedAnalysisReportCategories,
+  currentlyBeingEditedAnalysisReportTypes,
   currentlyBeingEditedAnalysisReportId,
-  currentlyBeingEditingAnalysisReportName,
+  currentlyBeingEditedAnalysisReportName,
   selectedAssets,
   isUploadAssetDialogOpen,
   dispatch,
   onClickRelatedResource,
 }: AnalysisPluginProps) => {
-  const { Option } = Select;
+  const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
+    []
+  );
+  const [selectedTypes, setSelectedTypes] = React.useState<string[]>([]);
 
-  const onChangeAnalysisReports = (value: string[]) => {
-    dispatch({
-      type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS,
-      payload: { analysisReportIds: value },
-    });
+  const selectCategory = (value: string) => {
+    !selectedCategories.includes(value)
+      ? setSelectedCategories([...selectedCategories, value])
+      : setSelectedCategories(without(selectedCategories, value));
   };
-
-  const onSearch = (value: string) => {
-    const res = analysisReports.filter(a =>
-      a.name.toLowerCase().includes(value.toLowerCase())
-    );
-
-    return res;
+  const selectType = (value: string) => {
+    !selectedTypes.includes(value)
+      ? setSelectedTypes([...selectedTypes, value])
+      : setSelectedTypes(without(selectedTypes, value));
   };
-
   const fileUploadModal = (
     <Modal
       visible={isUploadAssetDialogOpen}
       footer={false}
-      onCancel={() => dispatch({ type: ActionType.CLOSE_FILE_UPLOAD_DIALOG })}
+      onCancel={() => dispatch(closeFileUploadDialog())}
       className="file-upload-modal"
       destroyOnClose={true}
     >
@@ -132,417 +79,341 @@ const AnalysisPlugin = ({
   );
 
   return (
-    <div className="analysis">
-      <>
-        {analysisResourceType === 'individual_report' && containerId && (
+    <>
+      {mode === 'create' && (
+        <NewReportForm
+          dispatch={dispatch}
+          onSave={onSave}
+          FileUpload={FileUpload}
+          analysisReportId={
+            currentlyBeingEditedAnalysisReportId
+              ? currentlyBeingEditedAnalysisReportId
+              : undefined
+          }
+          imagePreviewScale={imagePreviewScale}
+        />
+      )}
+      {mode !== 'create' && (
+        <div className="analysis">
+          <Button
+            type="primary"
+            className="addReportButton"
+            title="Add Analysis Report"
+            aria-label="Add Analysis Report"
+            onClick={() => {
+              dispatch(addReport());
+            }}
+          >
+            Add Report
+            <FolderAddOutlined />
+          </Button>
+          <CategoryWidget
+            dispatch={dispatch}
+            mode={mode}
+            selectedCategories={selectedCategories}
+            selectCategory={selectCategory}
+            analysisReports={analysisReports}
+          />
+          <TypeWidget
+            dispatch={dispatch}
+            mode={mode}
+            selectedTypes={selectedTypes}
+            selectType={selectType}
+            analysisReports={analysisReports}
+          />
           <>
-            {' '}
-            <Button
-              type="link"
-              onClick={() => onClickRelatedResource(containerId)}
-              style={{ padding: 0 }}
-              aria-label="Go to parent resource"
-            >
-              <UpOutlined /> Go to parent resource
-            </Button>
-          </>
-        )}
-
-        {fileUploadModal}
-        {mode === 'view' && (
-          <>
-            {analysisResourceType === 'report_container' && (
-              <div className="analysisTools">
-                <Select
-                  value={selectedAnalysisReports}
-                  showSearch
-                  mode="multiple"
-                  placeholder="Select Analysis"
-                  className="select-analysis"
-                  style={{ width: '100%' }}
-                  optionFilterProp="children"
-                  onChange={onChangeAnalysisReports}
-                  onSearch={onSearch}
-                  filterOption={(input, option) =>
-                    ((option!.children as unknown) as string)
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) > -1
-                  }
-                >
-                  {analysisReports
-                    .filter(a => a.id !== undefined)
-                    .map((a, i) => {
-                      return (
-                        a.id && (
-                          <Option key={a.id} value={a.id}>
-                            {a.name ? a.name : a.id}
-                          </Option>
-                        )
-                      );
-                    })}
-                </Select>
+            {analysisResourceType === 'individual_report' && containerId && (
+              <>
+                {' '}
                 <Button
-                  shape="circle"
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  title="Add Analysis Report"
-                  aria-label="Add Analysis Report"
-                  onClick={() =>
-                    dispatch({ type: ActionType.ADD_ANALYSIS_REPORT })
-                  }
-                ></Button>
-              </div>
+                  type="link"
+                  onClick={() => onClickRelatedResource(containerId)}
+                  style={{ padding: 0 }}
+                  aria-label="Go to parent resource"
+                >
+                  <UpOutlined /> Go to parent resource
+                </Button>
+              </>
             )}
-            {selectedAnalysisReports &&
-              selectedAnalysisReports.length > 0 &&
-              analysisReports.filter(
-                r =>
-                  r.id &&
-                  selectedAnalysisReports.includes(r.id) &&
-                  r.assets.length > 0
-              ).length > 0 && (
-                <div
-                  className="zoom-control"
-                  aria-label="Increase/Decrease image thumnbail size"
-                >
-                  <ZoomOutOutlined title="Reduce thumbnail size" />
-                  <Slider
-                    tooltipVisible={false}
-                    value={imagePreviewScale}
-                    onChange={(value: number) =>
-                      dispatch({ type: ActionType.RESCALE, payload: value })
-                    }
-                    included={false}
-                    className="slider-scale"
-                  />
-                  <ZoomInOutlined title="Increase thumbnail size" />
-                </div>
-              )}
-          </>
-        )}
-        {analysisReports
-          .filter(
-            a =>
-              (mode === 'create' && a.id === undefined) ||
-              (['edit', 'view'].includes(mode) &&
-                a.id !== undefined &&
-                selectedAnalysisReports?.includes(a.id))
-          )
-          .map((analysisReport, i) => (
-            <section key={i} style={{ marginBottom: '40px' }}>
-              <h1
-                aria-label="Analysis Name"
-                style={{
-                  display: 'flex',
-                  ...(mode === 'view' && { marginBottom: '0.1em' }),
-                }}
-              >
-                {(mode === 'view' ||
-                  ('id' in analysisReport &&
-                    currentlyBeingEditedAnalysisReportId !==
-                      analysisReport.id)) && (
-                  <div style={{ display: 'inline-block' }}>
-                    {analysisReport.name}
-                  </div>
+
+            {fileUploadModal}
+            {mode === 'view' && (
+              <>
+                {analysisResourceType === 'report_container' && (
+                  <div className="analysisTools"></div>
                 )}
-                {((mode === 'create' && analysisReport.id === undefined) ||
-                  (mode === 'edit' &&
-                    'id' in analysisReport &&
-                    currentlyBeingEditedAnalysisReportId ===
-                      analysisReport.id)) && (
-                  <>
-                    <Input
-                      type="text"
-                      placeholder="Analysis Name"
-                      aria-label="Analysis Name"
-                      required={true}
-                      value={currentlyBeingEditingAnalysisReportName}
-                      onChange={e =>
-                        dispatch({
-                          type: ActionType.CHANGE_ANALYSIS_NAME,
-                          payload: { name: e.target.value },
-                        })
-                      }
-                      style={{ width: '60%' }}
-                    />
+                {selectedAnalysisReports &&
+                  selectedAnalysisReports.length > 0 &&
+                  analysisReports.filter(
+                    r =>
+                      r.id &&
+                      selectedAnalysisReports.includes(r.id) &&
+                      r.assets.length > 0
+                  ).length > 0 && (
                     <div
-                      className="actions"
-                      style={{ marginLeft: 'auto', marginRight: '20px' }}
+                      className="zoom-control"
+                      aria-label="Increase/Decrease image thumnbail size"
                     >
-                      <Button
-                        style={{ marginRight: '10px' }}
-                        type="default"
-                        aria-label="Cancel"
-                        onClick={() =>
-                          dispatch({
-                            type: ActionType.INITIALIZE,
-                            payload: {
-                              scale: imagePreviewScale,
-                              analysisReportId: analysisReport.id
-                                ? [analysisReport.id]
-                                : [],
-                            },
-                          })
+                      <ZoomOutOutlined title="Reduce thumbnail size" />
+                      <Slider
+                        tooltipVisible={false}
+                        value={imagePreviewScale}
+                        onChange={(value: number) =>
+                          dispatch(changeScale(value))
                         }
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        type="primary"
-                        aria-label="Save"
-                        onClick={() => {
-                          currentlyBeingEditingAnalysisReportName &&
-                            onSave(
-                              currentlyBeingEditingAnalysisReportName,
-                              currentlyBeingEditedAnalysisReportDescription,
-                              analysisReport.id
-                            );
-                        }}
-                      >
-                        Save
-                      </Button>
-                    </div>
-                  </>
-                )}
-                {mode === 'view' && (
-                  <Dropdown.Button
-                    style={{ margin: 'auto 0' }}
-                    overlay={
-                      <Menu onClick={() => {}}>
-                        <Menu.Item
-                          onClick={() =>
-                            analysisReport.id &&
-                            dispatch({
-                              type: ActionType.EDIT_ANALYSIS_REPORT,
-                              payload: {
-                                analysisId: analysisReport.id,
-                                analaysisName: analysisReport.name,
-                                analysisDescription: analysisReport.description,
-                              },
-                            })
-                          }
-                        >
-                          Edit
-                        </Menu.Item>
-                        <Menu.Item
-                          hidden={true}
-                          onClick={() => console.log('download')}
-                          icon={<LeftSquareFilled />}
-                        >
-                          Download
-                        </Menu.Item>
-                        <Menu.Item
-                          hidden={analysisResourceType === 'individual_report'}
-                          onClick={() =>
-                            analysisReport.id &&
-                            onClickRelatedResource(analysisReport.id)
-                          }
-                        >
-                          Go to resource
-                        </Menu.Item>
-                      </Menu>
-                    }
-                    icon={
-                      <span aria-label="Options">
-                        <MoreOutlined />
-                      </span>
-                    }
-                  />
-                )}
-              </h1>
-              {mode === 'view' && (
-                <section
-                  aria-label="Analysis Metadata"
-                  className="analysis-metadata"
-                >
-                  <label>
-                    Created{' '}
-                    {analysisReport.createdAt && (
-                      <FriendlyTimeAgo
-                        date={moment(analysisReport.createdAt)}
+                        included={false}
+                        className="slider-scale"
                       />
-                    )}
-                  </label>{' '}
-                  <label>
-                    by{' '}
-                    <span>
-                      {analysisReport.createdBy &&
-                        getUsername(analysisReport.createdBy)}
-                    </span>
-                  </label>
-                </section>
-              )}
-              <p
-                aria-label="Analysis Description"
-                style={{ maxWidth: '900px', marginRight: '50px' }}
-              >
-                {(mode === 'view' ||
-                  ('id' in analysisReport &&
-                    currentlyBeingEditedAnalysisReportId !==
-                      analysisReport.id)) &&
-                  analysisReport.description}
-                {((mode === 'create' && analysisReport.id === undefined) ||
-                  (mode === 'edit' &&
-                    'id' in analysisReport &&
-                    currentlyBeingEditedAnalysisReportId ===
-                      analysisReport.id)) && (
-                  <Input.TextArea
-                    placeholder="Analysis Description"
-                    aria-label="Analysis Description"
-                    value={currentlyBeingEditedAnalysisReportDescription}
-                    onChange={e =>
-                      dispatch({
-                        type: ActionType.CHANGE_ANALYSIS_DESCRIPTION,
-                        payload: { description: e.currentTarget.value },
-                      })
+                      <ZoomInOutlined title="Increase thumbnail size" />
+                    </div>
+                  )}
+              </>
+            )}
+            {analysisReports
+              .filter(a => {
+                if (['edit', 'view'].includes(mode) && a.id !== undefined) {
+                  if (
+                    selectedCategories.length > 0 &&
+                    a.categories !== undefined &&
+                    intersection(selectedCategories, a.categories).length === 0
+                  ) {
+                    return false;
+                  }
+                  if (
+                    selectedTypes.length > 0 &&
+                    a.types !== undefined &&
+                    intersection(selectedTypes, a.types).length === 0
+                  ) {
+                    return false;
+                  }
+                }
+                return true;
+              })
+              .map((analysisReport, i) => (
+                // <Collapse className="panel">
+
+                <Collapse
+                  expandIconPosition="right"
+                  key={i}
+                  style={{ marginBottom: '40px' }}
+                >
+                  <Panel
+                    key={i}
+                    header={
+                      <>
+                        {analysisReport.name}
+                        {!!analysisReport.categories &&
+                          analysisReport.categories.length > 0 && (
+                            <span className="cat">
+                              {analysisReport.categories.map((c, i) => (
+                                <span key={i}>{c}</span>
+                              ))}{' '}
+                            </span>
+                          )}
+                        {!!analysisReport.types &&
+                          analysisReport.types.length > 0 && (
+                            <span className="types">
+                              {analysisReport.types.map((t, i) => (
+                                <span key={i}>{t}</span>
+                              ))}{' '}
+                            </span>
+                          )}
+                      </>
                     }
-                  />
-                )}
-              </p>
-              <section aria-label="Analysis Assets" className="assets">
-                {((mode === 'create' && analysisReport.id === undefined) ||
-                  (mode === 'edit' &&
-                    'id' in analysisReport &&
-                    currentlyBeingEditedAnalysisReportId ===
-                      analysisReport.id)) && (
-                  <div style={{ display: 'flex', width: '100%' }}>
-                    <Button
-                      type="link"
-                      style={{ marginLeft: 'auto', marginBottom: '10px' }}
-                      onClick={() =>
-                        dispatch({ type: ActionType.OPEN_FILE_UPLOAD_DIALOG })
-                      }
+                  >
+                    <h1
+                      aria-label="Analysis Name"
+                      style={{
+                        display: 'flex',
+                        ...(mode === 'view' && { marginBottom: '0.1em' }),
+                      }}
                     >
-                      Add Files to Analysis
-                    </Button>
-                  </div>
-                )}
-                <ul>
-                  {analysisReport.assets.map((asset, i) => {
-                    const minThumbnailSize = 100;
-                    return (
-                      <li
-                        key={asset.id}
-                        className="asset-container"
-                        aria-label={
-                          asset.name !== '' ? asset.name : asset.filename
+                      {mode === 'edit' &&
+                        'id' in analysisReport &&
+                        currentlyBeingEditedAnalysisReportId ===
+                          analysisReport.id && (
+                          <>
+                            <Input
+                              type="text"
+                              placeholder="Analysis Name"
+                              aria-label="Analysis Name"
+                              required={true}
+                              value={currentlyBeingEditedAnalysisReportName}
+                              onChange={e =>
+                                dispatch(
+                                  changeAnalysisName({ name: e.target.value })
+                                )
+                              }
+                              style={{ width: '60%' }}
+                            />
+                            <div
+                              className="actions"
+                              style={{
+                                marginLeft: 'auto',
+                                marginRight: '20px',
+                              }}
+                            >
+                              <Button
+                                style={{ marginRight: '10px' }}
+                                type="default"
+                                aria-label="Cancel"
+                                onClick={() =>
+                                  dispatch(
+                                    initialize({
+                                      scale: imagePreviewScale,
+                                      analysisReportId: analysisReport.id
+                                        ? [analysisReport.id]
+                                        : [],
+                                    })
+                                  )
+                                }
+                              >
+                                Cancel
+                              </Button>
+                              <Button
+                                type="primary"
+                                aria-label="Save"
+                                onClick={() => {
+                                  currentlyBeingEditedAnalysisReportName &&
+                                    onSave(
+                                      currentlyBeingEditedAnalysisReportName,
+                                      currentlyBeingEditedAnalysisReportDescription,
+                                      analysisReport.id,
+                                      currentlyBeingEditedAnalysisReportCategories,
+                                      currentlyBeingEditedAnalysisReportTypes
+                                    );
+                                }}
+                              >
+                                Save
+                              </Button>
+                            </div>
+                          </>
+                        )}
+                    </h1>
+                    {mode === 'view' && (
+                      <>
+                        <section
+                          aria-label="Analysis Metadata"
+                          className="analysis-metadata"
+                        >
+                          <label>
+                            Created{' '}
+                            {analysisReport.createdAt && (
+                              <FriendlyTimeAgo
+                                date={moment(analysisReport.createdAt)}
+                              />
+                            )}
+                          </label>{' '}
+                          <label>
+                            by{' '}
+                            <span>
+                              {analysisReport.createdBy &&
+                                getUsername(analysisReport.createdBy)}
+                            </span>
+                          </label>
+                        </section>
+                      </>
+                    )}
+                    <p
+                      aria-label="Analysis Description"
+                      style={{ maxWidth: '900px', marginRight: '50px' }}
+                    >
+                      {(mode === 'view' ||
+                        ('id' in analysisReport &&
+                          currentlyBeingEditedAnalysisReportId !==
+                            analysisReport.id)) &&
+                        analysisReport.description}
+                      {mode === 'edit' &&
+                        'id' in analysisReport &&
+                        currentlyBeingEditedAnalysisReportId ===
+                          analysisReport.id && (
+                          <Input.TextArea
+                            placeholder="Analysis Description"
+                            aria-label="Analysis Description"
+                            value={
+                              currentlyBeingEditedAnalysisReportDescription
+                            }
+                            onChange={e =>
+                              dispatch(
+                                changeAnalysisDescription({
+                                  description: e.currentTarget.value,
+                                })
+                              )
+                            }
+                          />
+                        )}
+                    </p>
+                    <section className="actions" aria-label="actions">
+                      <Button
+                        type="default"
+                        onClick={() =>
+                          analysisReport.id &&
+                          dispatch(
+                            editReport({
+                              analysisId: analysisReport.id,
+                              analaysisName: analysisReport.name,
+                              analysisDescription: analysisReport.description,
+                              categories: analysisReport.categories,
+                              types: analysisReport.types,
+                            })
+                          )
                         }
                       >
-                        <div
-                          aria-label="Analysis File"
-                          className={`asset ${
-                            selectedAssets &&
-                            selectedAssets.findIndex(v => v === asset.id) > -1
-                              ? 'selected'
-                              : ''
-                          }`}
-                          style={{
-                            height:
-                              minThumbnailSize +
-                              imagePreviewScale * (imagePreviewScale / 30),
-                            width:
-                              minThumbnailSize +
-                              imagePreviewScale * (imagePreviewScale / 30),
-                          }}
-                          onClick={() => {
-                            if (
-                              mode === 'edit' &&
-                              'id' in analysisReport &&
-                              currentlyBeingEditedAnalysisReportId ===
-                                analysisReport.id
-                            ) {
-                              dispatch({
-                                type: ActionType.SELECT_ASSET,
-                                payload: { assetId: asset.id },
-                              });
-                            }
-                          }}
-                        >
-                          {asset.preview({
-                            mode: mode === 'create' ? 'edit' : mode,
-                          })}
-                          {mode === 'edit' &&
-                            'id' in analysisReport &&
-                            currentlyBeingEditedAnalysisReportId ===
-                              analysisReport.id && (
-                              <Checkbox
-                                checked={
-                                  selectedAssets &&
-                                  selectedAssets.some(v => v === asset.id)
-                                }
-                                className="selectedCheckbox"
-                                onClick={e => {
-                                  e.stopPropagation();
-                                }}
-                                onChange={e => {
-                                  dispatch({
-                                    type: ActionType.SELECT_ASSET,
-                                    payload: { assetId: asset.id },
-                                  });
-                                }}
-                              ></Checkbox>
-                            )}
-                        </div>
-                        <div
-                          aria-label="Asset Details"
-                          className="asset-details"
-                          style={{
-                            width:
-                              minThumbnailSize +
-                              imagePreviewScale * (imagePreviewScale / 30),
-                          }}
-                        >
-                          <label
-                            className="asset-details__name"
-                            title={
-                              asset.name !== '' ? asset.name : asset.filename
-                            }
+                        Edit
+                      </Button>
+                      <Button
+                        type="default"
+                        hidden={true}
+                        onClick={() => console.log('download')}
+                        icon={<LeftSquareFilled />}
+                      >
+                        Download
+                      </Button>
+                      <Button
+                        type="default"
+                        hidden={analysisResourceType === 'individual_report'}
+                        onClick={() =>
+                          analysisReport.id &&
+                          onClickRelatedResource(analysisReport.id)
+                        }
+                      >
+                        Go to resource
+                      </Button>
+                      {mode === 'edit' &&
+                        selectedAssets &&
+                        selectedAssets.length > 0 && (
+                          <Button
+                            type="primary"
+                            danger
+                            style={{ marginLeft: '20px' }}
+                            aria-label="Delete"
+                            onClick={() => {
+                              onDelete();
+                            }}
                           >
-                            {asset.name ? asset.name : asset.filename}
-                          </label>
-                          <div>
-                            <label className="asset-details__last-updated-by">
-                              <UserOutlined />
-                              &nbsp;
-                              {asset.lastUpdatedBy &&
-                                getUsername(asset.lastUpdatedBy)}
-                            </label>
-                            <label
-                              className="asset-details__last-updated"
-                              aria-label="Last Updated"
-                            >
-                              <CalendarOutlined />
-                              &nbsp;
-                              <FriendlyTimeAgo
-                                date={moment(asset.lastUpdated)}
-                              />
-                            </label>
-                          </div>
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </section>
-              {mode === 'edit' && selectedAssets && selectedAssets.length > 0 && (
-                <section>
-                  <Button
-                    type="primary"
-                    danger
-                    style={{ float: 'right', marginRight: '20px' }}
-                    aria-label="Delete"
-                    onClick={() => {
-                      onDelete();
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </section>
-              )}
-            </section>
-          ))}
-      </>
-    </div>
+                            Delete
+                          </Button>
+                        )}
+                    </section>
+                    <ReportAssets
+                      mode={mode}
+                      imagePreviewScale={imagePreviewScale}
+                      dispatch={dispatch}
+                      analysisReport={analysisReport}
+                      selectedAssets={selectedAssets}
+                      currentlyBeingEditedAnalysisReportId={
+                        currentlyBeingEditedAnalysisReportId
+                          ? currentlyBeingEditedAnalysisReportId
+                          : undefined
+                      }
+                    />
+                  </Panel>
+                </Collapse>
+              ))}
+          </>
+        </div>
+      )}
+    </>
   );
 };
 
