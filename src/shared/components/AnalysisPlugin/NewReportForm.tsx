@@ -83,7 +83,6 @@ const NewReportForm = ({
             defaultValue={['default']}
           >
             <Option value="default">Default</Option>
-            <Option value="other">Other</Option>
           </Select>
         </div>
         {FileUpload()}
