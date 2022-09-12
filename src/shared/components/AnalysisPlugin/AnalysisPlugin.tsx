@@ -1,13 +1,11 @@
 import {
   LeftSquareFilled,
   UpOutlined,
-  ZoomInOutlined,
   FolderAddOutlined,
-  ZoomOutOutlined,
   EditOutlined,
   LinkOutlined,
 } from '@ant-design/icons'
-import { Button, Collapse, Input, Slider, Select, Modal } from 'antd'
+import { Button, Collapse, Input, Modal } from 'antd'
 import { without, intersection } from 'lodash'
 import * as React from 'react'
 import { getUsername } from '../../../shared/utils'
@@ -159,35 +157,6 @@ const AnalysisPlugin = ({
             )}
 
             {fileUploadModal}
-            {mode === 'view' && (
-              <>
-                {selectedAnalysisReports &&
-                  selectedAnalysisReports.length > 0 &&
-                  analysisReports.filter(
-                    r =>
-                      r.id &&
-                      selectedAnalysisReports.includes(r.id) &&
-                      r.assets.length > 0
-                  ).length > 0 && (
-                    <div
-                      className='zoom-control'
-                      aria-label='Increase/Decrease image thumnbail size'
-                    >
-                      <ZoomOutOutlined title='Reduce thumbnail size' />
-                      <Slider
-                        tooltipVisible={false}
-                        value={imagePreviewScale}
-                        onChange={(value: number) =>
-                          dispatch(changeScale(value))
-                        }
-                        included={false}
-                        className='slider-scale'
-                      />
-                      <ZoomInOutlined title='Increase thumbnail size' />
-                    </div>
-                  )}
-              </>
-            )}
             {analysisReports
               .filter(a => {
                 if (['edit', 'view'].includes(mode) && a.id !== undefined) {
@@ -209,8 +178,6 @@ const AnalysisPlugin = ({
                 return true
               })
               .map((analysisReport, i) => (
-                // <Collapse className="panel">
-
                 <Collapse
                   expandIconPosition='right'
                   key={i}
