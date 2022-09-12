@@ -1,12 +1,12 @@
-import { Button, Checkbox } from 'antd'
-import { CalendarOutlined, UserOutlined } from '@ant-design/icons'
-import FriendlyTimeAgo from '../FriendlyDate'
-import { getUsername } from '../../../shared/utils'
-import * as moment from 'moment'
+import { Button, Checkbox } from 'antd';
+import { CalendarOutlined, UserOutlined } from '@ant-design/icons';
+import FriendlyTimeAgo from '../FriendlyDate';
+import { getUsername } from '../../../shared/utils';
+import * as moment from 'moment';
 
-import { selectAsset, openFileUploadDialog } from '../../slices/plugins/report'
+import { selectAsset, openFileUploadDialog } from '../../slices/plugins/report';
 
-import { ReportAssetProps } from '../../types/plugins/report'
+import { ReportAssetProps } from '../../types/plugins/report';
 
 const ReportAssets = ({
   dispatch,
@@ -17,14 +17,14 @@ const ReportAssets = ({
   currentlyBeingEditedAnalysisReportId,
 }: ReportAssetProps) => {
   return (
-    <section aria-label='Analysis Assets' className='assets'>
+    <section aria-label="Analysis Assets" className="assets">
       {((mode === 'create' && analysisReport.id === undefined) ||
         (mode === 'edit' &&
           'id' in analysisReport &&
           currentlyBeingEditedAnalysisReportId === analysisReport.id)) && (
         <div style={{ display: 'flex', width: '100%' }}>
           <Button
-            type='link'
+            type="link"
             style={{ marginLeft: 'auto', marginBottom: '10px' }}
             onClick={() => dispatch(openFileUploadDialog())}
           >
@@ -39,15 +39,15 @@ const ReportAssets = ({
         }}
       >
         {analysisReport.assets.map((asset, i) => {
-          const minThumbnailSize = 100
+          const minThumbnailSize = 100;
           return (
             <li
               key={asset.id}
-              className='asset-container'
+              className="asset-container"
               aria-label={asset.name !== '' ? asset.name : asset.filename}
             >
               <div
-                aria-label='Analysis File'
+                aria-label="Analysis File"
                 className={`asset ${
                   selectedAssets &&
                   selectedAssets.findIndex(v => v === asset.id) > -1
@@ -69,7 +69,7 @@ const ReportAssets = ({
                     'id' in analysisReport &&
                     currentlyBeingEditedAnalysisReportId === analysisReport.id
                   ) {
-                    dispatch(selectAsset({ assetId: asset.id }))
+                    dispatch(selectAsset({ assetId: asset.id }));
                   }
                 }}
               >
@@ -85,19 +85,19 @@ const ReportAssets = ({
                         selectedAssets &&
                         selectedAssets.some(v => v === asset.id)
                       }
-                      className='selectedCheckbox'
+                      className="selectedCheckbox"
                       onClick={e => {
-                        e.stopPropagation()
+                        e.stopPropagation();
                       }}
                       onChange={e => {
-                        dispatch(selectAsset({ assetId: asset.id }))
+                        dispatch(selectAsset({ assetId: asset.id }));
                       }}
                     ></Checkbox>
                   )}
               </div>
               <div
-                aria-label='Asset Details'
-                className='asset-details'
+                aria-label="Asset Details"
+                className="asset-details"
                 style={{
                   width:
                     minThumbnailSize +
@@ -105,20 +105,20 @@ const ReportAssets = ({
                 }}
               >
                 <label
-                  className='asset-details__name'
+                  className="asset-details__name"
                   title={asset.name !== '' ? asset.name : asset.filename}
                 >
                   {asset.name ? asset.name : asset.filename}
                 </label>
                 <div>
-                  <label className='asset-details__last-updated-by'>
+                  <label className="asset-details__last-updated-by">
                     <UserOutlined />
                     &nbsp;
                     {asset.lastUpdatedBy && getUsername(asset.lastUpdatedBy)}
                   </label>
                   <label
-                    className='asset-details__last-updated'
-                    aria-label='Last Updated'
+                    className="asset-details__last-updated"
+                    aria-label="Last Updated"
                   >
                     <CalendarOutlined />
                     &nbsp;
@@ -127,11 +127,11 @@ const ReportAssets = ({
                 </div>
               </div>
             </li>
-          )
+          );
         })}
       </ul>
     </section>
-  )
-}
+  );
+};
 
-export default ReportAssets
+export default ReportAssets;
