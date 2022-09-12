@@ -27,6 +27,7 @@ import {
   AnalysisReport,
   AnalysisPluginContainerProps,
   AnalysisAssetSparqlQueryRowResult,
+  ReportGeneration,
 } from '../../types/plugins/report';
 
 async function fetchImageObjectUrl(
@@ -159,6 +160,12 @@ const AnalysisPluginContainer = ({
 
         if (reportResource === undefined) return analysisReports;
 
+        if ('contribution' in reportResource) {
+          analysisReports[reportIx].contribution = [
+            reportResource.contribution,
+          ].flat();
+        }
+
         if ('hasPart' in reportResource) {
           analysisReports[reportIx].assets = [reportResource.hasPart]
             .flat()
@@ -178,7 +185,7 @@ const AnalysisPluginContainer = ({
             });
         }
       } else {
-        // already exists, just
+        //@TODO: get this from teh report resource
         const reportIx = analysisReports.findIndex(
           r => r.id === currentRow['analysis_report_id']
         );
@@ -375,6 +382,7 @@ const AnalysisPluginContainer = ({
       description?: string;
       categories?: string[];
       types?: string[];
+      scripts?: ReportGeneration[];
     }) => {
       const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
         return {
@@ -431,6 +439,7 @@ const AnalysisPluginContainer = ({
           }
         );
       }
+
       // Create new Analysis Report
       return nexus.Resource.create(orgLabel, projectLabel, {
         '@context': [
@@ -447,6 +456,14 @@ const AnalysisPluginContainer = ({
         types: data.types,
         hasPart: unsavedAssetsToAddToDistribution,
         derivation: { entity: { '@id': resourceId } },
+        contribution: data.scripts
+          ? data.scripts.map(s => ({
+              '@type': 'Contribution',
+              agent: { '@type': ['Software', 'Agent'] },
+              repository: s.scriptPath,
+              description: s.description,
+            }))
+          : [],
       });
     },
     {
@@ -740,9 +757,17 @@ const AnalysisPluginContainer = ({
             description?: string,
             id?: string,
             categories?: string[],
-            types?: string[]
+            types?: string[],
+            scripts?: ReportGeneration[]
           ) => {
-            mutateAnalysis.mutate({ name, description, id, categories, types });
+            mutateAnalysis.mutate({
+              name,
+              description,
+              id,
+              categories,
+              types,
+              scripts,
+            });
           }}
           onDelete={() => {
             deleteImages.mutate();

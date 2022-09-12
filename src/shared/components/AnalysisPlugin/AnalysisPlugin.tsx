@@ -29,7 +29,11 @@ import {
 
 const { Panel } = Collapse;
 
-import { AnalysisPluginProps } from '../../types/plugins/report';
+import {
+  AnalysisPluginProps,
+  SoftwareContribution,
+} from '../../types/plugins/report';
+import Tools from './Tools';
 
 const AnalysisPlugin = ({
   analysisResourceType,
@@ -395,6 +399,17 @@ const AnalysisPlugin = ({
                           </Button>
                         )}
                     </section>
+
+                    <Tools
+                      tools={
+                        analysisReport.contribution?.filter(c =>
+                          [c.agent]
+                            .flat()
+                            .find(a => [a['@type']].flat().includes('Software'))
+                        ) as SoftwareContribution[]
+                      }
+                    />
+
                     <ReportAssets
                       mode={mode}
                       imagePreviewScale={imagePreviewScale}

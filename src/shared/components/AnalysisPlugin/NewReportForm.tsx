@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { Form, Button, Input, Select, Typography } from 'antd';
+import { Form, Button, Input, Select, Typography, Tooltip } from 'antd';
 import './NewReportForm.less';
 import CategoryWidget from './CategoryWidget';
 import TypeWidget from './TypeWidget';
 import { without } from 'lodash';
 import { NewReportFormProps } from '../../types/plugins/report';
 import { initialize, saveReport } from '../../slices/plugins/report';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -34,12 +35,24 @@ const NewReportForm = ({
       ? setSelectedTypes([...selectedTypes, value])
       : setSelectedTypes(without(selectedTypes, value));
   };
+
+  const [reportGeneration, setReportGeneration] = React.useState([
+    { scriptPath: '', description: '' },
+  ]);
+
   const onFinish = (data: any) => {
     data.categories = selectedCategories;
     data.types = selectedTypes;
 
     dispatch(saveReport(data));
-    onSave(data.name, data.description, data.id, data.categories, data.types);
+    onSave(
+      data.name,
+      data.description,
+      data.id,
+      data.categories,
+      data.types,
+      reportGeneration
+    );
   };
   return (
     <Form layout={'vertical'} onFinish={onFinish} className="new-report-form">
@@ -86,6 +99,98 @@ const NewReportForm = ({
           </Select>
         </div>
         {FileUpload()}
+      </Form.Item>
+      <Form.Item label="6. Report Generation">
+        <p className="smallInfo">
+          Include links to scripts that were used to generate the contents of
+          the report
+        </p>
+        <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+          {reportGeneration.map((g, ix) => (
+            <li key={ix} style={{ margin: 0, padding: 0 }}>
+              <div>
+                <label>
+                  Script Location{' '}
+                  <Tooltip title="URL to the location of your script ideally pointing to a specific revision">
+                    <InfoCircleOutlined />
+                  </Tooltip>
+                  <Input
+                    placeholder="http://github.com/..."
+                    type="text"
+                    aria-label="Script location"
+                    value={g.scriptPath}
+                    onChange={v =>
+                      setReportGeneration(
+                        reportGeneration.map((r, ix2) => {
+                          if (ix === ix2) {
+                            return { ...r, scriptPath: v.target.value };
+                          }
+                          return r;
+                        })
+                      )
+                    }
+                  />
+                </label>
+              </div>
+
+              <div style={{ marginTop: '10px' }}>
+                <label>
+                  How did you run the script?{' '}
+                  <Tooltip title="Any specific guidance for how the script was run">
+                    <InfoCircleOutlined />
+                  </Tooltip>
+                  <TextArea
+                    rows={4}
+                    aria-label="Analysis Description"
+                    value={g.description}
+                    onChange={v =>
+                      setReportGeneration(
+                        reportGeneration.map((r, ix2) => {
+                          if (ix === ix2) {
+                            return {
+                              ...r,
+                              description: v.target.value,
+                            };
+                          }
+                          return r;
+                        })
+                      )
+                    }
+                  />
+                </label>
+              </div>
+              <div style={{ width: '100%', display: 'flex' }}>
+                <Button
+                  onClick={e => {
+                    e.preventDefault();
+                    setReportGeneration(reports =>
+                      reports.filter((r, ix2) => ix !== ix2)
+                    );
+                  }}
+                  style={{ margin: '4px 0 0 auto' }}
+                >
+                  Remove Tool
+                </Button>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <Button
+          aria-label="Add tool"
+          type="primary"
+          htmlType="submit"
+          className="add-button"
+          size="middle"
+          onClick={e => {
+            e.preventDefault();
+            setReportGeneration(g => [
+              ...g,
+              { scriptPath: '', description: '' },
+            ]);
+          }}
+        >
+          Add
+        </Button>
       </Form.Item>
       <Form.Item className="action-buttons">
         <span className="action-buttons">
