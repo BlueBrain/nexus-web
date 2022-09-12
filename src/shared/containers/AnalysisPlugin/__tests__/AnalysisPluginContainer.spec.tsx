@@ -388,31 +388,6 @@ describe('Analysis Plugin', () => {
     ).toBeInTheDocument();
   });
 
-  it('when at least one of the selected analysis reports has an asset then the zoom options are visible', async () => {
-    server.use(sparqlAnalysisReportSingleResult, reportResource);
-    const history = createMemoryHistory({});
-    const store = mockStore(mockState);
-    render(
-      <Router history={history}>
-        <Provider store={store}>
-          <QueryClientProvider client={queryClient}>
-            <NexusProvider nexusClient={nexus}>
-              <AnalysisPluginContainer
-                projectLabel="projectLabel"
-                orgLabel="orgLabel"
-                resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-              ></AnalysisPluginContainer>
-            </NexusProvider>
-          </QueryClientProvider>
-        </Provider>
-      </Router>
-    );
-
-    expect(
-      await waitFor(() => screen.getByLabelText(/Increase\/Decrease/))
-    ).toBeInTheDocument();
-  });
-
   it('when no analysis report selected, zoom options are hidden', async () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
     const history = createMemoryHistory({});
