@@ -23,7 +23,6 @@ import {
   editReport,
   changeAnalysisName,
   closeFileUploadDialog,
-  changeScale,
   initialize,
   changeAnalysisDescription,
   addReport,
@@ -33,16 +32,6 @@ const { Panel } = Collapse;
 
 import { AnalysisPluginProps } from '../../types/plugins/report';
 
-const CATEGORIES = {
-  circuit: [
-    'Anatomical',
-    'Connectivity',
-    'Volumetric',
-    'Morphometric',
-    'Synapse',
-  ],
-  simulation: ['Spiking', 'Soma voltage', 'LFP', 'VSD', 'Plasticity'],
-};
 const AnalysisPlugin = ({
   analysisResourceType,
   containerId,
