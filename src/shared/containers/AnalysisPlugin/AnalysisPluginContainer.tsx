@@ -216,7 +216,6 @@ const AnalysisPluginContainer = ({
     async () => fetchAnalysisData(viewSelfId, analysisSparqlQuery),
     {
       onSuccess: data => {
-        console.log('onSuccess', data);
         if (!hasInitializedSelectedReports) {
           dispatch(
             setSelectedReportFirstLoad({
@@ -391,7 +390,6 @@ const AnalysisPluginContainer = ({
           },
         };
       });
-      console.log('MUTATE ANALYSIS', data);
 
       if (data.id) {
         const resource = (await nexus.Resource.get(
@@ -633,22 +631,7 @@ const AnalysisPluginContainer = ({
     },
     initState
   );
-  const runningMyOwnThing = React.useMemo(() => {
-    console.log(
-      'MY USE MEMO currentlyBeingEditedAnalysisReportCategories, currentlyBeingEditedAnalysisReportTypes currentlyBeingEditedAnalysisReportName currentlyBeingEditedAnalysisReportDescription',
-      [
-        currentlyBeingEditedAnalysisReportName,
-        currentlyBeingEditedAnalysisReportDescription,
-        currentlyBeingEditedAnalysisReportCategories,
-        currentlyBeingEditedAnalysisReportTypes,
-      ]
-    );
-  }, [
-    [
-      currentlyBeingEditedAnalysisReportCategories,
-      currentlyBeingEditedAnalysisReportTypes,
-    ],
-  ]);
+
   const analysisDataWithImages = React.useMemo(() => {
     const newAnalysisReports: AnalysisReport[] =
       mode === 'create'
