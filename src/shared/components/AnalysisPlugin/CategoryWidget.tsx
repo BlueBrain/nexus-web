@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Button } from 'antd';
 import { flatten, map, uniq, intersection } from 'lodash';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import './Categories.less';
 import { CategoryWidgetProps } from '../../types/plugins/report';
 
@@ -39,10 +38,7 @@ const CategoryWidget = ({
                   selectedCategories.includes(object) ? 'active' : ''
                 }`}
               >
-                <h5>
-                  {object}
-                  <InfoCircleOutlined />
-                </h5>
+                <h5>{object}</h5>
               </Button>
             ))}
         </div>
