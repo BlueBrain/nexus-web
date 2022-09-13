@@ -125,12 +125,12 @@ describe('Analysis Plugin', () => {
     // Open anlaysis plugin
     cy.findByRole('button', { name: /Analysis/i }).click();
 
-    cy.findByText(/Cell density O1.v6-RC2/i).click();
-    cy.findByRole('button', { name: /Edit/ }).click();
+    // cy.findByText(/Cell density O1.v6-RC2/i).click();
+    // cy.findByRole('button', { name: /Edit/ }).click();
 
-    cy.findByRole('textbox', { name: 'Analysis Name' }).type('-v2');
-    cy.findByRole('textbox', { name: 'Analysis Description' }).type('-v2');
-    cy.screenshot('updated-text');
+    // cy.findByRole('textbox', { name: 'Analysis Name' }).type('-v2');
+    // cy.findByRole('textbox', { name: 'Analysis Description' }).type('-v2');
+    // cy.screenshot('updated-text');
     // cy.findByRole('button', { name: 'Add Files to Analysis' }).click();
     // cy.findByText(/Drag and drop files/i).click();
     // cy.get('input[type=file]').attachFile('sample2.png');
