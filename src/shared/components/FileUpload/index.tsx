@@ -1,10 +1,6 @@
 import * as React from 'react';
-import { Upload, message, Switch, Select } from 'antd';
-import {
-  InboxOutlined,
-  FolderOpenOutlined,
-  FileAddOutlined,
-} from '@ant-design/icons';
+import { Upload, message, Select, Typography } from 'antd';
+import { InboxOutlined } from '@ant-design/icons';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { NexusFile, Storage } from '@bbp/nexus-sdk';
 
@@ -20,9 +16,12 @@ interface FileUploaderProps {
   orgLabel: string;
   projectLabel: string;
   storages: Storage[];
+  showStorageMenu?: boolean;
 }
 
-const StorageMenu = ({
+const { Text } = Typography;
+
+export const StorageMenu = ({
   onStorageSelected,
   storages,
 }: {
@@ -53,6 +52,7 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
   makeFileLink,
   goToFile,
   storages,
+  showStorageMenu,
 }) => {
   const [directoryMode, setDirectoryMode] = React.useState(false);
   const [storageId, setStorageId] = React.useState<string | undefined>(
@@ -116,19 +116,18 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
         <p className="ant-upload-drag-icon">
           <InboxOutlined />
         </p>
-        <p className="ant-upload-text">
-          Click or drag file to this area to upload
-        </p>
-        {directoryMode ? (
-          <p className="ant-upload-hint">Upload an entire directory.</p>
-        ) : (
-          <p className="ant-upload-hint">Single or bulk upload.</p>
-        )}
+        <Text strong className="ant-upload-text">
+          Drag and drop files
+        </Text>
+        <br />
+        <Text>or</Text>
+        <br />
+        <Text underline>browse your files</Text>
       </Dragger>
       <div
         style={{ display: 'flex', flexDirection: 'column', margin: '0.5em 0' }}
       >
-        <Switch
+        {/* <Switch
           checkedChildren={
             <div>
               <FolderOpenOutlined /> <span>Directories</span>
@@ -140,14 +139,16 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
             </div>
           }
           onChange={setDirectoryMode}
-        />
+        /> */}
       </div>
-      <StorageMenu
-        storages={storages}
-        orgLabel={orgLabel}
-        projectLabel={projectLabel}
-        onStorageSelected={id => setStorageId(id)}
-      />
+      {/* {!showStorageMenu && (
+        <StorageMenu
+          storages={storages}
+          orgLabel={orgLabel}
+          projectLabel={projectLabel}
+          onStorageSelected={id => setStorageId(id)}
+        />
+      )} */}
     </div>
   );
 };
