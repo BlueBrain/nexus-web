@@ -136,6 +136,15 @@ export type TypeWidgetProps = {
   dispatch: (params: any) => void;
 };
 
+export type TypeEditWidgetProps = {
+  currentlyBeingEditedAnalysisReportTypes?: string[];
+  dispatch: (params: any) => void;
+};
+export type CategoryEditWidgetProps = {
+  currentlyBeingEditedAnalysisReportCategories?: string[];
+  dispatch: (params: any) => void;
+};
+
 export type ReportGeneration = {
   scriptPath: string;
   description: string;

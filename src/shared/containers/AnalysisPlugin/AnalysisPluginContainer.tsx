@@ -667,7 +667,6 @@ const AnalysisPluginContainer = ({
     const savedAndUnsavedAnalysisReports = analysisData
       ? analysisData.concat(newAnalysisReports)
       : newAnalysisReports;
-
     return savedAndUnsavedAnalysisReports.map(a => {
       return {
         ...a,
