@@ -1,11 +1,11 @@
 import {
   LeftSquareFilled,
   UpOutlined,
-  ZoomInOutlined,
   FolderAddOutlined,
-  ZoomOutOutlined,
+  EditOutlined,
+  LinkOutlined,
 } from '@ant-design/icons';
-import { Button, Collapse, Input, Slider, Modal } from 'antd';
+import { Button, Collapse, Input, Modal } from 'antd';
 import { without, intersection } from 'lodash';
 import * as React from 'react';
 import { getUsername } from '../../../shared/utils';
@@ -14,6 +14,8 @@ import './AnalysisPlugin.less';
 import * as moment from 'moment';
 import CategoryWidget from './CategoryWidget';
 import TypeWidget from './TypeWidget';
+import TypeEditWidget from './TypeEditWidget';
+import CategoryEditWidget from './CategoryEditWidget';
 import ReportAssets from './ReportAssets';
 
 import NewReportForm from './NewReportForm';
@@ -21,7 +23,6 @@ import {
   editReport,
   changeAnalysisName,
   closeFileUploadDialog,
-  changeScale,
   initialize,
   changeAnalysisDescription,
   addReport,
@@ -95,32 +96,36 @@ const AnalysisPlugin = ({
       )}
       {mode !== 'create' && (
         <div className="analysis">
-          <Button
-            type="primary"
-            className="addReportButton"
-            title="Add Analysis Report"
-            aria-label="Add Analysis Report"
-            onClick={() => {
-              dispatch(addReport());
-            }}
-          >
-            Add Report
-            <FolderAddOutlined />
-          </Button>
-          <CategoryWidget
-            dispatch={dispatch}
-            mode={mode}
-            selectedCategories={selectedCategories}
-            selectCategory={selectCategory}
-            analysisReports={analysisReports}
-          />
-          <TypeWidget
-            dispatch={dispatch}
-            mode={mode}
-            selectedTypes={selectedTypes}
-            selectType={selectType}
-            analysisReports={analysisReports}
-          />
+          {analysisResourceType !== 'individual_report' && (
+            <>
+              <Button
+                type="primary"
+                className="addReportButton"
+                title="Add Analysis Report"
+                aria-label="Add Analysis Report"
+                onClick={() => {
+                  dispatch(addReport());
+                }}
+              >
+                Add Report
+                <FolderAddOutlined />
+              </Button>
+              <CategoryWidget
+                dispatch={dispatch}
+                mode={mode}
+                selectedCategories={selectedCategories}
+                selectCategory={selectCategory}
+                analysisReports={analysisReports}
+              />
+              <TypeWidget
+                dispatch={dispatch}
+                mode={mode}
+                selectedTypes={selectedTypes}
+                selectType={selectType}
+                analysisReports={analysisReports}
+              />
+            </>
+          )}
           <>
             {analysisResourceType === 'individual_report' && containerId && (
               <>
@@ -137,38 +142,6 @@ const AnalysisPlugin = ({
             )}
 
             {fileUploadModal}
-            {mode === 'view' && (
-              <>
-                {analysisResourceType === 'report_container' && (
-                  <div className="analysisTools"></div>
-                )}
-                {selectedAnalysisReports &&
-                  selectedAnalysisReports.length > 0 &&
-                  analysisReports.filter(
-                    r =>
-                      r.id &&
-                      selectedAnalysisReports.includes(r.id) &&
-                      r.assets.length > 0
-                  ).length > 0 && (
-                    <div
-                      className="zoom-control"
-                      aria-label="Increase/Decrease image thumnbail size"
-                    >
-                      <ZoomOutOutlined title="Reduce thumbnail size" />
-                      <Slider
-                        tooltipVisible={false}
-                        value={imagePreviewScale}
-                        onChange={(value: number) =>
-                          dispatch(changeScale(value))
-                        }
-                        included={false}
-                        className="slider-scale"
-                      />
-                      <ZoomInOutlined title="Increase thumbnail size" />
-                    </div>
-                  )}
-              </>
-            )}
             {analysisReports
               .filter(a => {
                 if (['edit', 'view'].includes(mode) && a.id !== undefined) {
@@ -190,8 +163,6 @@ const AnalysisPlugin = ({
                 return true;
               })
               .map((analysisReport, i) => (
-                // <Collapse className="panel">
-
                 <Collapse
                   expandIconPosition="right"
                   key={i}
@@ -244,7 +215,7 @@ const AnalysisPlugin = ({
                                   changeAnalysisName({ name: e.target.value })
                                 )
                               }
-                              style={{ width: '60%' }}
+                              style={{ maxWidth: '900px' }}
                             />
                             <div
                               className="actions"
@@ -316,7 +287,7 @@ const AnalysisPlugin = ({
                     )}
                     <p
                       aria-label="Analysis Description"
-                      style={{ maxWidth: '900px', marginRight: '50px' }}
+                      style={{ width: '100%', marginRight: '50px' }}
                     >
                       {(mode === 'view' ||
                         ('id' in analysisReport &&
@@ -333,6 +304,8 @@ const AnalysisPlugin = ({
                             value={
                               currentlyBeingEditedAnalysisReportDescription
                             }
+                            rows={10}
+                            style={{ maxWidth: '900px' }}
                             onChange={e =>
                               dispatch(
                                 changeAnalysisDescription({
@@ -343,42 +316,70 @@ const AnalysisPlugin = ({
                           />
                         )}
                     </p>
-                    <section className="actions" aria-label="actions">
-                      <Button
-                        type="default"
-                        onClick={() =>
-                          analysisReport.id &&
-                          dispatch(
-                            editReport({
-                              analysisId: analysisReport.id,
-                              analaysisName: analysisReport.name,
-                              analysisDescription: analysisReport.description,
-                              categories: analysisReport.categories,
-                              types: analysisReport.types,
-                            })
-                          )
-                        }
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        type="default"
-                        hidden={true}
-                        onClick={() => console.log('download')}
-                        icon={<LeftSquareFilled />}
-                      >
-                        Download
-                      </Button>
-                      <Button
-                        type="default"
-                        hidden={analysisResourceType === 'individual_report'}
-                        onClick={() =>
-                          analysisReport.id &&
-                          onClickRelatedResource(analysisReport.id)
-                        }
-                      >
-                        Go to resource
-                      </Button>
+                    {mode === 'edit' && (
+                      <section>
+                        <CategoryEditWidget
+                          dispatch={dispatch}
+                          currentlyBeingEditedAnalysisReportCategories={
+                            currentlyBeingEditedAnalysisReportCategories
+                          }
+                        />
+                        <TypeEditWidget
+                          dispatch={dispatch}
+                          currentlyBeingEditedAnalysisReportTypes={
+                            currentlyBeingEditedAnalysisReportTypes
+                          }
+                        />
+                      </section>
+                    )}
+                    <hr style={{ border: '1px solid #D9D9D9' }} />
+                    <section className="actionsPanel" aria-label="actions">
+                      {mode === 'view' && (
+                        <>
+                          <Button
+                            type="default"
+                            aria-label="editReport"
+                            icon={<EditOutlined />}
+                            onClick={() =>
+                              analysisReport.id &&
+                              dispatch(
+                                editReport({
+                                  analysisId: analysisReport.id,
+                                  analaysisName: analysisReport.name,
+                                  analysisDescription:
+                                    analysisReport.description,
+                                  categories: analysisReport.categories,
+                                  types: analysisReport.types,
+                                })
+                              )
+                            }
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            type="default"
+                            hidden={true}
+                            onClick={() => console.log('download')}
+                            icon={<LeftSquareFilled />}
+                          >
+                            Download
+                          </Button>
+                          <Button
+                            type="default"
+                            aria-label="goToResource"
+                            icon={<LinkOutlined />}
+                            hidden={
+                              analysisResourceType === 'individual_report'
+                            }
+                            onClick={() =>
+                              analysisReport.id &&
+                              onClickRelatedResource(analysisReport.id)
+                            }
+                          >
+                            Go to resource
+                          </Button>
+                        </>
+                      )}
                       {mode === 'edit' &&
                         selectedAssets &&
                         selectedAssets.length > 0 && (
