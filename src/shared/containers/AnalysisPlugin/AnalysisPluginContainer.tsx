@@ -412,7 +412,9 @@ const AnalysisPluginContainer = ({
 
         // Add user as contributor if not already
         const contributions = resource['contribution']
-          ? [resource['contribution']].flat()
+          ? [resource['contribution']]
+              .flat()
+              .filter(c => c.agent['@type'].includes('Person'))
           : [];
 
         if (!contributions.some(c => c.agent['@id'] === currentUser?.['@id'])) {
@@ -424,6 +426,20 @@ const AnalysisPluginContainer = ({
             },
           });
         }
+        // add software contributions
+        if (data.scripts) {
+          contributions.push(
+            ...data.scripts.map(s => ({
+              '@type': 'Contribution',
+              agent: {
+                '@type': ['Software', 'Agent'],
+              },
+              repository: s.scriptPath,
+              description: s.description,
+            }))
+          );
+        }
+
         resource['contribution'] = contributions;
         return nexus.Resource.update(
           orgLabel,
@@ -633,6 +649,7 @@ const AnalysisPluginContainer = ({
       currentlyBeingEditedAnalysisReportDescription,
       currentlyBeingEditedAnalysisReportCategories,
       currentlyBeingEditedAnalysisReportTypes,
+      currentlyBeingEditedAnalysisReportTools,
       isUploadAssetDialogOpen,
       hasInitializedSelectedReports,
     },
@@ -788,6 +805,9 @@ const AnalysisPluginContainer = ({
           }
           currentlyBeingEditedAnalysisReportTypes={
             currentlyBeingEditedAnalysisReportTypes
+          }
+          currentlyBeingEditedAnalysisReportTools={
+            currentlyBeingEditedAnalysisReportTools
           }
           selectedAssets={selectedAssets}
           dispatch={dispatch}

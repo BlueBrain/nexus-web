@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 type ToolsProps = {
-  tools: { repository: string; description?: string }[];
+  tools: { scriptPath: string; description: string }[];
 };
 
 const Tools = ({ tools }: ToolsProps) => {
@@ -24,16 +24,16 @@ const Tools = ({ tools }: ToolsProps) => {
                 Code Repository
               </h4>
               <p>
-                {t.repository.startsWith('http') ? (
+                {t.scriptPath.startsWith('http') ? (
                   <a
                     style={{ color: '#262626' }}
-                    href={t.repository}
+                    href={t.scriptPath}
                     target="_blank"
                   >
-                    {t.repository}&nbsp;&#x2197;
+                    {t.scriptPath}&nbsp;&#x2197;
                   </a>
                 ) : (
-                  <>{t.repository}</>
+                  <>{t.scriptPath}</>
                 )}
               </p>
               {t.description && (

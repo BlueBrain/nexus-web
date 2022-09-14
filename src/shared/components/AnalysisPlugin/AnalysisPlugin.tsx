@@ -26,6 +26,7 @@ import {
   initialize,
   changeAnalysisDescription,
   addReport,
+  changeTools,
 } from '../../slices/plugins/report';
 
 const { Panel } = Collapse;
@@ -35,6 +36,7 @@ import {
   SoftwareContribution,
 } from '../../types/plugins/report';
 import Tools from './Tools';
+import ToolsEdit from './ToolsEdit';
 
 const AnalysisPlugin = ({
   analysisResourceType,
@@ -51,6 +53,7 @@ const AnalysisPlugin = ({
   currentlyBeingEditedAnalysisReportTypes,
   currentlyBeingEditedAnalysisReportId,
   currentlyBeingEditedAnalysisReportName,
+  currentlyBeingEditedAnalysisReportTools,
   selectedAssets,
   isUploadAssetDialogOpen,
   dispatch,
@@ -255,7 +258,8 @@ const AnalysisPlugin = ({
                                       currentlyBeingEditedAnalysisReportDescription,
                                       analysisReport.id,
                                       currentlyBeingEditedAnalysisReportCategories,
-                                      currentlyBeingEditedAnalysisReportTypes
+                                      currentlyBeingEditedAnalysisReportTypes,
+                                      currentlyBeingEditedAnalysisReportTools
                                     );
                                 }}
                               >
@@ -354,6 +358,19 @@ const AnalysisPlugin = ({
                                     analysisReport.description,
                                   categories: analysisReport.categories,
                                   types: analysisReport.types,
+                                  tools: (analysisReport.contribution?.filter(
+                                    c =>
+                                      [c.agent]
+                                        .flat()
+                                        .find(a =>
+                                          [a['@type']]
+                                            .flat()
+                                            .includes('Software')
+                                        )
+                                  ) as SoftwareContribution[])?.map(s => ({
+                                    scriptPath: s.repository,
+                                    description: s.description,
+                                  })),
                                 })
                               )
                             }
@@ -401,16 +418,6 @@ const AnalysisPlugin = ({
                         )}
                     </section>
 
-                    <Tools
-                      tools={
-                        analysisReport.contribution?.filter(c =>
-                          [c.agent]
-                            .flat()
-                            .find(a => [a['@type']].flat().includes('Software'))
-                        ) as SoftwareContribution[]
-                      }
-                    />
-
                     <ReportAssets
                       mode={mode}
                       imagePreviewScale={imagePreviewScale}
@@ -423,6 +430,31 @@ const AnalysisPlugin = ({
                           : undefined
                       }
                     />
+
+                    {mode === 'edit' && (
+                      <ToolsEdit
+                        tools={
+                          currentlyBeingEditedAnalysisReportTools !== undefined
+                            ? currentlyBeingEditedAnalysisReportTools
+                            : []
+                        }
+                        onUpdateTools={tools =>
+                          dispatch(changeTools({ tools }))
+                        }
+                      />
+                    )}
+                    {mode === 'view' && (
+                      <Tools
+                        tools={(analysisReport.contribution?.filter(c =>
+                          [c.agent]
+                            .flat()
+                            .find(a => [a['@type']].flat().includes('Software'))
+                        ) as SoftwareContribution[])?.map(s => ({
+                          scriptPath: s.repository,
+                          description: s.description,
+                        }))}
+                      />
+                    )}
                   </Panel>
                 </Collapse>
               ))}

@@ -12,6 +12,10 @@ export type AnalysesState = {
   currentlyBeingEditedAnalysisReportCategories?: string[];
   currentlyBeingEditedAnalysisReportTypes?: string[];
   currentlyBeingEditedAnalysisReportDescription?: string;
+  currentlyBeingEditedAnalysisReportTools?: {
+    scriptPath: string;
+    description: string;
+  }[];
   selectedAssets?: string[];
   isUploadAssetDialogOpen?: boolean;
 };
@@ -110,7 +114,8 @@ export type AnalysisPluginProps = {
     description?: string,
     id?: string,
     categories?: string[],
-    types?: string[]
+    types?: string[],
+    scripts?: { scriptPath: string; description: string }[]
   ) => void;
   onDelete: () => void;
   onCancel: () => void;
@@ -123,6 +128,10 @@ export type AnalysisPluginProps = {
   currentlyBeingEditedAnalysisReportDescription?: string;
   currentlyBeingEditedAnalysisReportCategories?: string[];
   currentlyBeingEditedAnalysisReportTypes?: string[];
+  currentlyBeingEditedAnalysisReportTools?: {
+    scriptPath: string;
+    description: string;
+  }[];
   selectedAssets?: string[];
   isUploadAssetDialogOpen?: boolean;
   dispatch: (params: any) => void;
