@@ -1,16 +1,18 @@
 import { Resource } from '@bbp/nexus-sdk';
-import { TestUsers } from '../support/setupRealmsAndUsers';
 
 describe('Analysis Plugin', () => {
   before(() => {
-    cy.task('auth:createRealmsAndUsers');
+    if (
+      !Cypress.env('use_existing_delta_instance') ||
+      Cypress.env('use_existing_delta_instance') === false
+    ) {
+      cy.task('auth:createRealmsAndUsers', Cypress.env('users'));
+    }
+
     cy.login(
-      TestUsers.morty.realm,
-      TestUsers.morty.username,
-      TestUsers.morty.password
-      // Cypress.env('AUTH_REALM'),
-      // Cypress.env('AUTH_USERNAME'),
-      // Cypress.env('AUTH_PASSWORD')
+      Cypress.env('users').morty.realm,
+      Cypress.env('users').morty.username,
+      Cypress.env('users').morty.password
     ).then(session => {
       cy.window().then(win => {
         cy.task('log', win.localStorage.getItem('nexus__token'));
@@ -49,12 +51,9 @@ describe('Analysis Plugin', () => {
 
   beforeEach(() => {
     cy.login(
-      TestUsers.morty.realm,
-      TestUsers.morty.username,
-      TestUsers.morty.password
-      // Cypress.env('AUTH_REALM'),
-      // Cypress.env('AUTH_USERNAME'),
-      // Cypress.env('AUTH_PASSWORD')
+      Cypress.env('users').morty.realm,
+      Cypress.env('users').morty.username,
+      Cypress.env('users').morty.password
     );
   });
 

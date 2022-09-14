@@ -5,9 +5,6 @@ services:
     depends_on:
       - fusion
     environment:
-      - CYPRESS_AUTH_USERNAME=morty
-      - CYPRESS_AUTH_PASSWORD=morty
-      - CYPRESS_AUTH_REALM=http://keycloak.test:8080/
       - CYPRESS_NEXUS_API_URL=http://delta.test:8080/v1
       - CYPRESS_BASE_URL=http://fusion.test:8000
 

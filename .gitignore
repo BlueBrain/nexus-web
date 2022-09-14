@@ -7,5 +7,8 @@ storybook-static/
 coverage/
 .vscode
 yarn-error.log
+cypress/screenshots/
+cypress/videos/
+cypress.env.json
 *.iml
 .idea

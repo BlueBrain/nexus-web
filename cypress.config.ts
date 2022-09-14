@@ -22,8 +22,14 @@ export default defineConfig({
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     setupNodeEvents(on, config) {
       on('task', {
-        'auth:createRealmsAndUsers': async function() {
-          await setup();
+        'auth:createRealmsAndUsers': async function(users?: {
+          [key: string]: {
+            username: string;
+            password: string;
+            realm: { name: string; baseUrl: string };
+          };
+        }) {
+          await setup(users);
           return null;
         },
         log(message) {

@@ -146,7 +146,7 @@ type User = {
   realm: { name: string; baseUrl: string };
 };
 
-export const TestUsers: { [key: string]: User } = (() => {
+const TestUsers: { [key: string]: User } = (() => {
   return {
     morty: {
       username: 'Morpheus',
@@ -161,7 +161,10 @@ export const TestUsers: { [key: string]: User } = (() => {
   };
 })();
 
-async function setup() {
+async function setup(users?: { [key: string]: User }) {
+  if (!users) {
+    users = TestUsers;
+  }
   console.log('Setting up Delta with realms and users');
 
   try {
@@ -198,7 +201,7 @@ async function setup() {
         await kc.importRealm(
           testRealm,
           { id: 'fusion', secret: '' },
-          Object.values(TestUsers)
+          Object.values(users)
         );
         await createDeltaRealm(testRealm).then(response => {
           if (response.status === 201) {
