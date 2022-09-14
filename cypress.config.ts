@@ -6,7 +6,7 @@ import {
   deprecateNexusOrgAndProject,
 } from './cypress/plugins/nexus';
 import { uuidv4 } from './src/shared/utils';
-import setup from './cypress/support/setupRealmsAndUsers';
+import setup, { TestUsers } from './cypress/support/setupRealmsAndUsers';
 
 const fetch = require('node-fetch');
 
@@ -22,7 +22,7 @@ export default defineConfig({
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     setupNodeEvents(on, config) {
       on('task', {
-        'auth:createRealmsAndUsers': async function(users?: {
+        'auth:createRealmsAndUsers': async function(users: {
           [key: string]: {
             username: string;
             password: string;
@@ -136,6 +136,9 @@ export default defineConfig({
         },
       });
 
+      if (!config.env.users) {
+        config.env.users = TestUsers;
+      }
       if (!config.env.ORG_LABEL) {
         config.env.ORG_LABEL = 'Cypress-Testing';
       }

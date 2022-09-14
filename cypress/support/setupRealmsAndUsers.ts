@@ -146,7 +146,7 @@ type User = {
   realm: { name: string; baseUrl: string };
 };
 
-const TestUsers: { [key: string]: User } = (() => {
+export const TestUsers: { [key: string]: User } = (() => {
   return {
     morty: {
       username: 'Morpheus',
@@ -161,10 +161,7 @@ const TestUsers: { [key: string]: User } = (() => {
   };
 })();
 
-async function setup(users?: { [key: string]: User }) {
-  if (!users) {
-    users = TestUsers;
-  }
+async function setup(users: { [key: string]: User }) {
   console.log('Setting up Delta with realms and users');
 
   try {
