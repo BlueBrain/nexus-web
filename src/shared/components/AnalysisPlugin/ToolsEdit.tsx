@@ -2,6 +2,7 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { Button, Input, Tooltip } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import * as React from 'react';
+import './ToolsEdit.less';
 
 type ToolsEditProps = {
   tools: { scriptPath: string; description: string }[];
@@ -9,9 +10,8 @@ type ToolsEditProps = {
 };
 
 const ToolsEdit = ({ tools, onUpdateTools }: ToolsEditProps) => {
-  console.log('ToolsEdit', tools);
   return (
-    <>
+    <div className="tools-edit">
       <p className="smallInfo">
         Include links to scripts that were used to generate the contents of the
         report
@@ -52,7 +52,6 @@ const ToolsEdit = ({ tools, onUpdateTools }: ToolsEditProps) => {
                 </Tooltip>
                 <TextArea
                   rows={4}
-                  aria-label="Analysis Description"
                   value={g.description}
                   onChange={v =>
                     onUpdateTools(
@@ -92,14 +91,12 @@ const ToolsEdit = ({ tools, onUpdateTools }: ToolsEditProps) => {
         size="middle"
         onClick={e => {
           e.preventDefault();
-          const x = [...tools, { scriptPath: '', description: '' }];
-          console.log('added tools', x);
           onUpdateTools([...tools, { scriptPath: '', description: '' }]);
         }}
       >
         Add
       </Button>
-    </>
+    </div>
   );
 };
 

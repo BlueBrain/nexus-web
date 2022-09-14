@@ -185,7 +185,7 @@ const AnalysisPluginContainer = ({
             });
         }
       } else {
-        //@TODO: get this from teh report resource
+        // @TODO: get this from the report resource
         const reportIx = analysisReports.findIndex(
           r => r.id === currentRow['analysis_report_id']
         );

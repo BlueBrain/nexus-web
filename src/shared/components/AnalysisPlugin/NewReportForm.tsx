@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Button, Input, Select, Typography, Tooltip } from 'antd';
+import { Form, Button, Input, Select, Typography } from 'antd';
 import './NewReportForm.less';
 import CategoryWidget from './CategoryWidget';
 import TypeWidget from './TypeWidget';

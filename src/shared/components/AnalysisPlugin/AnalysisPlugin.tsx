@@ -340,6 +340,43 @@ const AnalysisPlugin = ({
                         />
                       </section>
                     )}
+                    {mode === 'edit' && (
+                      <>
+                        <h4
+                          style={{
+                            fontWeight: 500,
+                            fontSize: '14px',
+                            lineHeight: '136%',
+                            color: '#bfbfbf',
+                          }}
+                        >
+                          Tools
+                        </h4>
+                        <ToolsEdit
+                          tools={
+                            currentlyBeingEditedAnalysisReportTools !==
+                            undefined
+                              ? currentlyBeingEditedAnalysisReportTools
+                              : []
+                          }
+                          onUpdateTools={tools =>
+                            dispatch(changeTools({ tools }))
+                          }
+                        />
+                      </>
+                    )}
+                    {mode === 'view' && (
+                      <Tools
+                        tools={(analysisReport.contribution?.filter(c =>
+                          [c.agent]
+                            .flat()
+                            .find(a => [a['@type']].flat().includes('Software'))
+                        ) as SoftwareContribution[])?.map(s => ({
+                          scriptPath: s.repository,
+                          description: s.description,
+                        }))}
+                      />
+                    )}
                     <hr style={{ border: '1px solid #D9D9D9' }} />
                     <section className="actionsPanel" aria-label="actions">
                       {mode === 'view' && (
@@ -430,31 +467,6 @@ const AnalysisPlugin = ({
                           : undefined
                       }
                     />
-
-                    {mode === 'edit' && (
-                      <ToolsEdit
-                        tools={
-                          currentlyBeingEditedAnalysisReportTools !== undefined
-                            ? currentlyBeingEditedAnalysisReportTools
-                            : []
-                        }
-                        onUpdateTools={tools =>
-                          dispatch(changeTools({ tools }))
-                        }
-                      />
-                    )}
-                    {mode === 'view' && (
-                      <Tools
-                        tools={(analysisReport.contribution?.filter(c =>
-                          [c.agent]
-                            .flat()
-                            .find(a => [a['@type']].flat().includes('Software'))
-                        ) as SoftwareContribution[])?.map(s => ({
-                          scriptPath: s.repository,
-                          description: s.description,
-                        }))}
-                      />
-                    )}
                   </Panel>
                 </Collapse>
               ))}

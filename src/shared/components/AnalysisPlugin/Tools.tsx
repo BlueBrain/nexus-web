@@ -1,3 +1,4 @@
+import { Button } from 'antd';
 import * as React from 'react';
 
 type ToolsProps = {
@@ -5,6 +6,16 @@ type ToolsProps = {
 };
 
 const Tools = ({ tools }: ToolsProps) => {
+  const [toolDescriptionExpanded, setToolDescriptionExpanded] = React.useState<
+    boolean[]
+  >();
+
+  React.useEffect(
+    () => tools && setToolDescriptionExpanded(tools.map((i, ix) => false)),
+    [tools]
+  );
+
+  if (tools === undefined || tools.length === 0) return <></>;
   return (
     <section>
       <h3>Tools</h3>
@@ -20,30 +31,52 @@ const Tools = ({ tools }: ToolsProps) => {
             }}
           >
             <div>
-              <h4 style={{ textTransform: 'uppercase', color: '#BFBFBF' }}>
-                Code Repository
-              </h4>
-              <p>
-                {t.scriptPath.startsWith('http') ? (
-                  <a
-                    style={{ color: '#262626' }}
-                    href={t.scriptPath}
-                    target="_blank"
-                  >
-                    {t.scriptPath}&nbsp;&#x2197;
-                  </a>
-                ) : (
-                  <>{t.scriptPath}</>
-                )}
-              </p>
-              {t.description && (
-                <>
+              <div style={{ display: 'flex' }}>
+                <div>
                   <h4 style={{ textTransform: 'uppercase', color: '#BFBFBF' }}>
-                    How did we run our tool
+                    Code Repository
                   </h4>
-                  <p style={{ color: '#262626' }}>{t.description}</p>
-                </>
-              )}
+                  <p>
+                    {t.scriptPath.startsWith('http') ? (
+                      <a
+                        style={{ color: '#262626' }}
+                        href={t.scriptPath}
+                        target="_blank"
+                      >
+                        {t.scriptPath}&nbsp;&#x2197;
+                      </a>
+                    ) : (
+                      <>{t.scriptPath}</>
+                    )}
+                  </p>
+                </div>
+                {t.description && toolDescriptionExpanded && (
+                  <Button
+                    onClick={() =>
+                      setToolDescriptionExpanded(
+                        toolDescriptionExpanded.map((expanded, ix2) =>
+                          ix === ix2 ? !expanded : expanded
+                        )
+                      )
+                    }
+                    style={{ backgroundColor: '#FFFFFF', margin: '0 0 0 auto' }}
+                  >
+                    Read {toolDescriptionExpanded[ix] ? 'less' : 'more'}
+                  </Button>
+                )}
+              </div>
+              {t.description &&
+                toolDescriptionExpanded &&
+                toolDescriptionExpanded[ix] && (
+                  <>
+                    <h4
+                      style={{ textTransform: 'uppercase', color: '#BFBFBF' }}
+                    >
+                      How did we run our tool
+                    </h4>
+                    <p style={{ color: '#262626' }}>{t.description}</p>
+                  </>
+                )}
             </div>
           </li>
         ))}
