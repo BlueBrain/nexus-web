@@ -27,10 +27,6 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-      # build in fusion docker image so skip building twice
-      # - name: build project 👷
-      #   run: |
-      #     yarn build
       - name: build fusion docker image
         run: |
           docker build . --tag=nexus-web:latest

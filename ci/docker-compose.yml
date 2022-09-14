@@ -9,26 +9,10 @@ services:
       - CYPRESS_BASE_URL=http://fusion.test:8000
 
     working_dir: /e2e
-    # volumes:
-    #   - ../:/e2e
     container_name: cypress
     entrypoint: ['bash']
-    #command: cy:run --config-file cypress.config.ts
     stdin_open: true
     tty: true
-  # nginx-proxy:
-  #   image: nginxproxy/nginx-proxy
-  #   ports:
-  #     - '80:80'
-  #   volumes:
-  #     - /var/run/docker.sock:/tmp/docker.sock:ro
-  #   container_name: test
-  #   networks:
-  #     default:
-  #       aliases:
-  #         - keycloak.test
-  #         - fusion.test
-  #         - delta.test
   fusion:
     depends_on:
       - delta
@@ -36,7 +20,6 @@ services:
       ANALYSIS_PLUGIN_SHOW_ON_TYPES: 'Analysis,DetailedCircuit,AnalysisReport,Report'
       API_ENDPOINT: 'http://delta.test:8080/v1'
       CLIENT_ID: 'fusion'
-      # VIRTUAL_HOST: 'fusion.test'
     image: bluebrain/nexus-web:latest
     expose:
       - 8000
@@ -54,8 +37,6 @@ services:
       DELTA_PLUGINS: '/opt/docker/plugins/'
       DELTA_EXTERNAL_CONF: '/config/delta-postgres.conf'
       KAMON_ENABLED: 'false'
-      # VIRTUAL_HOST: 'delta.test'
-      # VIRTUAL_PORT: 8080
     image: bluebrain/nexus-delta:latest
     entrypoint:
       [
@@ -90,8 +71,6 @@ services:
       KEYCLOAK_ADMIN: 'admin'
       KEYCLOAK_ADMIN_PASSWORD: 'admin'
       DB_VENDOR: H2
-      # VIRTUAL_HOST: 'keycloak.test'
-      # VIRTUAL_PORT: 8080
     command:
       - start-dev
       - --http-port=8080

@@ -15,7 +15,6 @@ describe('Analysis Plugin', () => {
       Cypress.env('users').morty.password
     ).then(session => {
       cy.window().then(win => {
-        cy.task('log', win.localStorage.getItem('nexus__token'));
         const authToken = win.localStorage.getItem('nexus__token');
         cy.wrap(authToken).as('nexusToken');
 
@@ -31,7 +30,6 @@ describe('Analysis Plugin', () => {
           orgLabel,
           projectLabelBase,
         }).then(({ projectLabel }: { projectLabel: string }) => {
-          cy.task('log', `${projectLabel}`);
           cy.wrap(projectLabel).as('projectLabel');
           cy.fixture('AnalysisResource.json').then(resourcePayload => {
             cy.task('resource:create', {
