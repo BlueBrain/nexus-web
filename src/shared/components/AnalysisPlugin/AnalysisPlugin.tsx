@@ -26,11 +26,17 @@ import {
   initialize,
   changeAnalysisDescription,
   addReport,
+  changeTools,
 } from '../../slices/plugins/report';
 
 const { Panel } = Collapse;
 
-import { AnalysisPluginProps } from '../../types/plugins/report';
+import {
+  AnalysisPluginProps,
+  SoftwareContribution,
+} from '../../types/plugins/report';
+import Tools from './Tools';
+import ToolsEdit from './ToolsEdit';
 
 const AnalysisPlugin = ({
   analysisResourceType,
@@ -47,6 +53,7 @@ const AnalysisPlugin = ({
   currentlyBeingEditedAnalysisReportTypes,
   currentlyBeingEditedAnalysisReportId,
   currentlyBeingEditedAnalysisReportName,
+  currentlyBeingEditedAnalysisReportTools,
   selectedAssets,
   isUploadAssetDialogOpen,
   dispatch,
@@ -251,7 +258,8 @@ const AnalysisPlugin = ({
                                       currentlyBeingEditedAnalysisReportDescription,
                                       analysisReport.id,
                                       currentlyBeingEditedAnalysisReportCategories,
-                                      currentlyBeingEditedAnalysisReportTypes
+                                      currentlyBeingEditedAnalysisReportTypes,
+                                      currentlyBeingEditedAnalysisReportTools
                                     );
                                 }}
                               >
@@ -332,6 +340,43 @@ const AnalysisPlugin = ({
                         />
                       </section>
                     )}
+                    {mode === 'edit' && (
+                      <>
+                        <h4
+                          style={{
+                            fontWeight: 500,
+                            fontSize: '14px',
+                            lineHeight: '136%',
+                            color: '#bfbfbf',
+                          }}
+                        >
+                          Tools
+                        </h4>
+                        <ToolsEdit
+                          tools={
+                            currentlyBeingEditedAnalysisReportTools !==
+                            undefined
+                              ? currentlyBeingEditedAnalysisReportTools
+                              : []
+                          }
+                          onUpdateTools={tools =>
+                            dispatch(changeTools({ tools }))
+                          }
+                        />
+                      </>
+                    )}
+                    {mode === 'view' && (
+                      <Tools
+                        tools={(analysisReport.contribution?.filter(c =>
+                          [c.agent]
+                            .flat()
+                            .find(a => [a['@type']].flat().includes('Software'))
+                        ) as SoftwareContribution[])?.map(s => ({
+                          scriptPath: s.repository,
+                          description: s.description,
+                        }))}
+                      />
+                    )}
                     <hr style={{ border: '1px solid #D9D9D9' }} />
                     <section className="actionsPanel" aria-label="actions">
                       {mode === 'view' && (
@@ -350,6 +395,19 @@ const AnalysisPlugin = ({
                                     analysisReport.description,
                                   categories: analysisReport.categories,
                                   types: analysisReport.types,
+                                  tools: (analysisReport.contribution?.filter(
+                                    c =>
+                                      [c.agent]
+                                        .flat()
+                                        .find(a =>
+                                          [a['@type']]
+                                            .flat()
+                                            .includes('Software')
+                                        )
+                                  ) as SoftwareContribution[])?.map(s => ({
+                                    scriptPath: s.repository,
+                                    description: s.description,
+                                  })),
                                 })
                               )
                             }
@@ -396,6 +454,7 @@ const AnalysisPlugin = ({
                           </Button>
                         )}
                     </section>
+
                     <ReportAssets
                       mode={mode}
                       imagePreviewScale={imagePreviewScale}

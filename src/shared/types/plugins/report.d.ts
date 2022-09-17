@@ -12,6 +12,10 @@ export type AnalysesState = {
   currentlyBeingEditedAnalysisReportCategories?: string[];
   currentlyBeingEditedAnalysisReportTypes?: string[];
   currentlyBeingEditedAnalysisReportDescription?: string;
+  currentlyBeingEditedAnalysisReportTools?: {
+    scriptPath: string;
+    description: string;
+  }[];
   selectedAssets?: string[];
   isUploadAssetDialogOpen?: boolean;
 };
@@ -68,6 +72,22 @@ export type Asset = {
   preview: ({ mode }: { mode: 'view' | 'edit' }) => React.ReactElement;
 };
 
+export interface PersonContribution {
+  '@type': 'Contribution';
+  agent:
+    | { '@type': ['Person', 'Agent']; '@id'?: string }
+    | { '@type': ['Person', 'Agent']; '@id'?: string }[];
+}
+
+export interface SoftwareContribution {
+  '@type': 'Contribution';
+  agent:
+    | { '@type': ['Software', 'Agent'] }
+    | { '@type': ['Software', 'Agent'] }[];
+  repository: string;
+  description: string;
+}
+
 export type AnalysisReport = {
   id?: string;
   containerId?: string;
@@ -79,6 +99,7 @@ export type AnalysisReport = {
   description?: string;
   createdBy?: string;
   createdAt?: string;
+  contribution?: (SoftwareContribution | PersonContribution)[];
   assets: Asset[];
 };
 
@@ -93,7 +114,8 @@ export type AnalysisPluginProps = {
     description?: string,
     id?: string,
     categories?: string[],
-    types?: string[]
+    types?: string[],
+    scripts?: { scriptPath: string; description: string }[]
   ) => void;
   onDelete: () => void;
   onCancel: () => void;
@@ -106,6 +128,10 @@ export type AnalysisPluginProps = {
   currentlyBeingEditedAnalysisReportDescription?: string;
   currentlyBeingEditedAnalysisReportCategories?: string[];
   currentlyBeingEditedAnalysisReportTypes?: string[];
+  currentlyBeingEditedAnalysisReportTools?: {
+    scriptPath: string;
+    description: string;
+  }[];
   selectedAssets?: string[];
   isUploadAssetDialogOpen?: boolean;
   dispatch: (params: any) => void;
@@ -128,6 +154,11 @@ export type CategoryEditWidgetProps = {
   dispatch: (params: any) => void;
 };
 
+export type ReportGeneration = {
+  scriptPath: string;
+  description: string;
+};
+
 export type CategoryWidgetProps = {
   analysisReports?: AnalysisReport[];
   mode: 'view' | 'edit' | 'create';
@@ -145,7 +176,8 @@ export type NewReportFormProps = {
     description?: string,
     id?: string,
     categories?: string[],
-    types?: string[]
+    types?: string[],
+    scripts?: ReportGeneration[]
   ) => void;
   dispatch: (params: any) => void;
 };

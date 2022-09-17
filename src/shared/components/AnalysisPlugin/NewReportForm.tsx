@@ -6,6 +6,7 @@ import TypeWidget from './TypeWidget';
 import { without } from 'lodash';
 import { NewReportFormProps } from '../../types/plugins/report';
 import { initialize, saveReport } from '../../slices/plugins/report';
+import ToolsEdit from './ToolsEdit';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -34,12 +35,24 @@ const NewReportForm = ({
       ? setSelectedTypes([...selectedTypes, value])
       : setSelectedTypes(without(selectedTypes, value));
   };
+
+  const [reportGeneration, setReportGeneration] = React.useState([
+    { scriptPath: '', description: '' },
+  ]);
+
   const onFinish = (data: any) => {
     data.categories = selectedCategories;
     data.types = selectedTypes;
 
     dispatch(saveReport(data));
-    onSave(data.name, data.description, data.id, data.categories, data.types);
+    onSave(
+      data.name,
+      data.description,
+      data.id,
+      data.categories,
+      data.types,
+      reportGeneration
+    );
   };
   return (
     <Form layout={'vertical'} onFinish={onFinish} className="new-report-form">
@@ -86,6 +99,12 @@ const NewReportForm = ({
           </Select>
         </div>
         {FileUpload()}
+      </Form.Item>
+      <Form.Item label="6. Report Generation">
+        <ToolsEdit
+          tools={reportGeneration}
+          onUpdateTools={tools => setReportGeneration(tools)}
+        />
       </Form.Item>
       <Form.Item className="action-buttons">
         <span className="action-buttons">
