@@ -6,18 +6,36 @@ import {
   deprecateNexusOrgAndProject,
 } from './cypress/plugins/nexus';
 import { uuidv4 } from './src/shared/utils';
+import setup, { TestUsers } from './cypress/support/setupRealmsAndUsers';
+
 const fetch = require('node-fetch');
 
 export default defineConfig({
+  projectId: '1iihco',
   viewportWidth: 1200,
   video: false,
   e2e: {
     baseUrl: 'http://localhost:8000',
+    fileServerFolder: '/cypress',
     defaultCommandTimeout: 10000,
     experimentalSessionAndOrigin: true,
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     setupNodeEvents(on, config) {
       on('task', {
+        'auth:createRealmsAndUsers': async function(users: {
+          [key: string]: {
+            username: string;
+            password: string;
+            realm: { name: string; baseUrl: string };
+          };
+        }) {
+          await setup(users);
+          return null;
+        },
+        log(message) {
+          console.log(message);
+          return null;
+        },
         'project:setup': async function({
           nexusApiUrl,
           authToken,
@@ -118,6 +136,9 @@ export default defineConfig({
         },
       });
 
+      if (!config.env.users) {
+        config.env.users = TestUsers;
+      }
       if (!config.env.ORG_LABEL) {
         config.env.ORG_LABEL = 'Cypress-Testing';
       }
