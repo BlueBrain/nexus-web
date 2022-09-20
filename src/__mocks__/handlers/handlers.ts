@@ -1,8 +1,22 @@
 import { rest } from 'msw';
 
+const defaultMockDeltaAPIBasePath = 'https://localhost:3000';
+
+export const deltaPath = (
+  path?: string,
+  mockDeltaAPIBasePath = defaultMockDeltaAPIBasePath
+) => {
+  if (!path) {
+    return mockDeltaAPIBasePath;
+  }
+  return new URL(path, mockDeltaAPIBasePath).toString();
+};
+
 export const handlers = [
   rest.post(
-    'https://localhost:3000/views/org/project/https%3A%2F%2Fbluebrain.github.io%2Fnexus%2Fvocabulary%2FdefaultElasticSearchIndex/_search',
+    deltaPath(
+      '/views/org/project/https%3A%2F%2Fbluebrain.github.io%2Fnexus%2Fvocabulary%2FdefaultElasticSearchIndex/_search'
+    ),
     (req, res, ctx) => {
       if (
         req.body
@@ -574,146 +588,134 @@ export const handlers = [
       );
     }
   ),
-  rest.post(
-    'https://localhost:3000/views/org/project/graph/sparql',
-    (req, res, ctx) => {
-      const mockResponse = {
-        head: { vars: ['self', 'p', 'o'] },
-        results: {
-          bindings: [
-            {
-              o: { type: 'bnode', value: 't78' },
-              p: {
-                type: 'uri',
-                value:
-                  'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
-              },
-              self: {
-                type: 'uri',
-                value: 'localhost:3000/nexus/v1/projects/nise/kerrien',
-              },
+  rest.post(deltaPath('/views/org/project/graph/sparql'), (req, res, ctx) => {
+    const mockResponse = {
+      head: { vars: ['self', 'p', 'o'] },
+      results: {
+        bindings: [
+          {
+            o: { type: 'bnode', value: 't78' },
+            p: {
+              type: 'uri',
+              value: 'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
             },
-            {
-              o: { type: 'bnode', value: 't87' },
-              p: {
-                type: 'uri',
-                value:
-                  'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
-              },
-              self: {
-                type: 'uri',
-                value: 'localhost:3000/nexus/v1/projects/nise/kerrien',
-              },
+            self: {
+              type: 'uri',
+              value: deltaPath('/nexus/v1/projects/nise/kerrien'),
             },
-            {
-              o: { type: 'bnode', value: 't91' },
-              p: {
-                type: 'uri',
-                value:
-                  'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
-              },
-              self: {
-                type: 'uri',
-                value: 'localhost:3000/nexus/v1/projects/nise/kerrien',
-              },
+          },
+          {
+            o: { type: 'bnode', value: 't87' },
+            p: {
+              type: 'uri',
+              value: 'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
             },
-            {
-              o: { type: 'bnode', value: 't97' },
-              p: {
-                type: 'uri',
-                value:
-                  'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
-              },
-              self: {
-                type: 'uri',
-                value: 'localhost:3000/nexus/v1/projects/nise/kerrien',
-              },
+            self: {
+              type: 'uri',
+              value: deltaPath('/nexus/v1/projects/nise/kerrien'),
             },
-            {
-              o: { type: 'bnode', value: 't98' },
-              p: {
-                type: 'uri',
-                value:
-                  'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
-              },
-              self: {
-                type: 'uri',
-                value: 'localhost:3000/nexus/v1/projects/nise/kerrien',
-              },
+          },
+          {
+            o: { type: 'bnode', value: 't91' },
+            p: {
+              type: 'uri',
+              value: 'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
             },
-            {
-              o: { type: 'bnode', value: 't100' },
-              p: {
-                type: 'uri',
-                value:
-                  'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
-              },
-              self: {
-                type: 'uri',
-                value: 'localhost:3000/nexus/v1/projects/nise/kerrien',
-              },
+            self: {
+              type: 'uri',
+              value: deltaPath('/nexus/v1/projects/nise/kerrien'),
             },
-            {
-              o: { type: 'bnode', value: 't114' },
-              p: {
-                type: 'uri',
-                value:
-                  'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
-              },
-              self: {
-                type: 'uri',
-                value: 'localhost:3000/nexus/v1/projects/nise/kerrien',
-              },
+          },
+          {
+            o: { type: 'bnode', value: 't97' },
+            p: {
+              type: 'uri',
+              value: 'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
             },
-            {
-              o: { type: 'bnode', value: 't120' },
-              p: {
-                type: 'uri',
-                value:
-                  'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
-              },
-              self: {
-                type: 'uri',
-                value: 'localhost:3000/nexus/v1/projects/nise/kerrien',
-              },
+            self: {
+              type: 'uri',
+              value: deltaPath('/nexus/v1/projects/nise/kerrien'),
             },
-            {
-              o: { type: 'bnode', value: 't127' },
-              p: {
-                type: 'uri',
-                value:
-                  'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
-              },
-              self: {
-                type: 'uri',
-                value: 'localhost:3000/nexus/v1/projects/nise/kerrien',
-              },
+          },
+          {
+            o: { type: 'bnode', value: 't98' },
+            p: {
+              type: 'uri',
+              value: 'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
             },
-            {
-              o: {
-                type: 'uri',
-                value: 'https://bbp.epfl.ch/neurosciencegraph/data/',
-              },
-              p: {
-                type: 'uri',
-                value: 'https://bluebrain.github.io/nexus/vocabulary/base',
-              },
-              self: {
-                type: 'uri',
-                value: 'localhost:3000/nexus/v1/projects/nise/kerrien',
-              },
+            self: {
+              type: 'uri',
+              value: deltaPath('/nexus/v1/projects/nise/kerrien'),
             },
-          ],
-        },
-      };
-      return res(
-        // Respond with a 200 status code
-        ctx.status(200),
-        ctx.json(mockResponse)
-      );
-    }
-  ),
-  rest.get('https://localhost:3000/views/org/project', (req, res, ctx) => {
+          },
+          {
+            o: { type: 'bnode', value: 't100' },
+            p: {
+              type: 'uri',
+              value: 'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
+            },
+            self: {
+              type: 'uri',
+              value: deltaPath('/nexus/v1/projects/nise/kerrien'),
+            },
+          },
+          {
+            o: { type: 'bnode', value: 't114' },
+            p: {
+              type: 'uri',
+              value: 'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
+            },
+            self: {
+              type: 'uri',
+              value: deltaPath('/nexus/v1/projects/nise/kerrien'),
+            },
+          },
+          {
+            o: { type: 'bnode', value: 't120' },
+            p: {
+              type: 'uri',
+              value: 'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
+            },
+            self: {
+              type: 'uri',
+              value: deltaPath('/nexus/v1/projects/nise/kerrien'),
+            },
+          },
+          {
+            o: { type: 'bnode', value: 't127' },
+            p: {
+              type: 'uri',
+              value: 'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
+            },
+            self: {
+              type: 'uri',
+              value: deltaPath('/nexus/v1/projects/nise/kerrien'),
+            },
+          },
+          {
+            o: {
+              type: 'uri',
+              value: 'https://bbp.epfl.ch/neurosciencegraph/data/',
+            },
+            p: {
+              type: 'uri',
+              value: 'https://bluebrain.github.io/nexus/vocabulary/base',
+            },
+            self: {
+              type: 'uri',
+              value: deltaPath('/nexus/v1/projects/nise/kerrien'),
+            },
+          },
+        ],
+      },
+    };
+    return res(
+      // Respond with a 200 status code
+      ctx.status(200),
+      ctx.json(mockResponse)
+    );
+  }),
+  rest.get(deltaPath('/views/org/project'), (req, res, ctx) => {
     const mockResponse = {
       '@context': [
         'https://bluebrain.github.io/nexus/contexts/metadata.json',
@@ -850,7 +852,9 @@ export const handlers = [
   }),
 
   rest.get(
-    'https://localhost:3000/views/org/project/https%3A%2F%2Fbluebrain.github.io%2Fnexus%2Fvocabulary%2FdefaultSparqlIndex',
+    deltaPath(
+      '/views/org/project/https%3A%2F%2Fbluebrain.github.io%2Fnexus%2Fvocabulary%2FdefaultSparqlIndex'
+    ),
     (req, res, ctx) => {
       const mockResponse = {
         '@context': [
@@ -867,15 +871,15 @@ export const handlers = [
         resourceTypes: [],
         _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/views.json',
         _createdAt: '2021-04-01T11:39:02.988Z',
-        _createdBy: 'localhost:3000/nexus/v1/realms/bbp/users/kerrien',
+        _createdBy: deltaPath('/nexus/v1/realms/bbp/users/kerrien'),
         _deprecated: false,
-        _incoming: 'localhost:3000/nexus/v1/views/nise/kerrien/graph/incoming',
-        _outgoing: 'localhost:3000/nexus/v1/views/nise/kerrien/graph/outgoing',
-        _project: 'https://localhost:3000/org/project',
+        _incoming: deltaPath('/nexus/v1/views/nise/kerrien/graph/incoming'),
+        _outgoing: deltaPath('/nexus/v1/views/nise/kerrien/graph/outgoing'),
+        _project: deltaPath('/org/project'),
         _rev: 1,
-        _self: 'https://localhost:3000/v1/views/org/project/graph',
+        _self: deltaPath('/v1/views/org/project/graph'),
         _updatedAt: '2021-04-01T11:39:02.988Z',
-        _updatedBy: 'localhost:3000/nexus/v1/realms/bbp/users/kerrien',
+        _updatedBy: deltaPath('/nexus/v1/realms/bbp/users/kerrien'),
         _uuid: '30a45385-12e3-46f1-a9ba-1246d7232e7e',
       };
       return res(
@@ -885,7 +889,7 @@ export const handlers = [
       );
     }
   ),
-  rest.get('https://localhost:3000/acls/org/project', (req, res, ctx) => {
+  rest.get(deltaPath('/acls/org/project'), (req, res, ctx) => {
     const mockResponse = {
       '@context': [
         'https://bluebrain.github.io/nexus/contexts/metadata.json',
@@ -895,12 +899,12 @@ export const handlers = [
       _total: 1,
       _results: [
         {
-          '@id': 'http://localhost:3000/v1/acls/org1',
+          '@id': deltaPath('/v1/acls/org1'),
           '@type': 'AccessControlList',
           acl: [
             {
               identity: {
-                '@id': 'http://localhost:3000/v1/realms/myrealm/groups/a-group',
+                '@id': deltaPath('/v1/realms/myrealm/groups/a-group'),
                 '@type': 'Group',
                 group: 'a-group',
                 realm: 'myrealm',
@@ -909,8 +913,7 @@ export const handlers = [
             },
             {
               identity: {
-                '@id':
-                  'http://localhost:3000/v1/realms/realm/groups/some-group',
+                '@id': deltaPath('/v1/realms/realm/groups/some-group'),
                 '@type': 'Group',
                 group: 'some-group',
                 realm: 'realm',
@@ -919,7 +922,7 @@ export const handlers = [
             },
             {
               identity: {
-                '@id': 'http://localhost:3000/v1/realms/local/users/localuser',
+                '@id': deltaPath('/v1/realms/local/users/localuser'),
                 '@type': 'User',
                 realm: 'local',
                 subject: 'localuser',
@@ -934,13 +937,13 @@ export const handlers = [
           ],
           _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/acls.json',
           _createdAt: '2021-05-11T11:03:06.071Z',
-          _createdBy: 'http://localhost:3000/v1/anonymous',
+          _createdBy: deltaPath('/v1/anonymous'),
           _deprecated: false,
           _path: '/org1',
           _rev: 1,
-          _self: 'http://localhost:3000/v1/acls/org1',
+          _self: deltaPath('/v1/acls/org1'),
           _updatedAt: '2021-05-11T11:03:06.071Z',
-          _updatedBy: 'http://localhost:3000/v1/anonymous',
+          _updatedBy: deltaPath('/v1/anonymous'),
         },
       ],
     };
@@ -950,43 +953,40 @@ export const handlers = [
       ctx.json(mockResponse)
     );
   }),
-  rest.get(
-    'https://localhost:3000/resources/org/project/_/:Id',
-    (req, res, ctx) => {
-      const { Id } = req.params;
-      const mockResponse = {
-        '@context': [
-          'https://bluebrain.github.io/nexus/contexts/metadata.json',
-          'https://bluebrainnexus.io/studio/context',
-        ],
-        '@id': Id,
-        '@type': 'Studio',
-        description: `test description for ${Id}`,
-        label: `label for ${Id}`,
-        plugins: [
-          {
-            customise: true,
-            plugins: [
-              { expanded: false, key: 'video' },
-              { expanded: false, key: 'preview' },
-              { expanded: false, key: 'admin' },
-              { expanded: false, key: 'circuit' },
-              { expanded: false, key: 'image-collection-viewer' },
-              { expanded: false, key: 'jira' },
-              { expanded: false, key: 'markdown' },
-            ],
-          },
-        ],
-        workspaces: ['id-1', 'id-2', 'id-3', 'id-4'],
-      };
-      return res(
-        // Respond with a 200 status code
-        ctx.status(200),
-        ctx.json(mockResponse)
-      );
-    }
-  ),
-  rest.get('https://localhost:3000/resources/org/project', (req, res, ctx) => {
+  rest.get(deltaPath('/resources/org/project/_/:Id'), (req, res, ctx) => {
+    const { Id } = req.params;
+    const mockResponse = {
+      '@context': [
+        'https://bluebrain.github.io/nexus/contexts/metadata.json',
+        'https://bluebrainnexus.io/studio/context',
+      ],
+      '@id': Id,
+      '@type': 'Studio',
+      description: `test description for ${Id}`,
+      label: `label for ${Id}`,
+      plugins: [
+        {
+          customise: true,
+          plugins: [
+            { expanded: false, key: 'video' },
+            { expanded: false, key: 'preview' },
+            { expanded: false, key: 'admin' },
+            { expanded: false, key: 'circuit' },
+            { expanded: false, key: 'image-collection-viewer' },
+            { expanded: false, key: 'jira' },
+            { expanded: false, key: 'markdown' },
+          ],
+        },
+      ],
+      workspaces: ['id-1', 'id-2', 'id-3', 'id-4'],
+    };
+    return res(
+      // Respond with a 200 status code
+      ctx.status(200),
+      ctx.json(mockResponse)
+    );
+  }),
+  rest.get(deltaPath('/resources/org/project'), (req, res, ctx) => {
     const mockResponse = {
       '@context': [
         'https://bluebrain.github.io/nexus/contexts/metadata.json',
@@ -1044,7 +1044,7 @@ export const handlers = [
       ctx.json(mockResponse)
     );
   }),
-  rest.get('https://localhost:3000/resources', (req, res, ctx) => {
+  rest.get(deltaPath('/resources'), (req, res, ctx) => {
     const mockResponse = {
       '@context': [
         'https://bluebrain.github.io/nexus/contexts/metadata.json',
@@ -1112,7 +1112,7 @@ export const handlers = [
       ctx.json(mockResponse)
     );
   }),
-  rest.get('https://localhost:3000/identities', (req, res, ctx) => {
+  rest.get(deltaPath('/identities'), (req, res, ctx) => {
     const mockResponse = {
       '@context': [
         'https://bluebrain.github.io/nexus/contexts/metadata.json',

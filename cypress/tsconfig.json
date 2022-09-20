@@ -9,5 +9,5 @@
       "cypress-file-upload"
     ]
   },
-  "include": ["**/*.ts", "support/e2e.js"]
+  "include": ["**/*.ts", "support/e2e.js", "support/setupRealmsAndUsers.ts"]
 }

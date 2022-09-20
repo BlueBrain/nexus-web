@@ -8,6 +8,7 @@ import FileUploader from '../components/FileUpload';
 const FileUploadContainer: React.FunctionComponent<{
   projectLabel: string;
   orgLabel: string;
+  showStorageMenu?: boolean;
   onFileUploaded?: (file: NexusFile) => void;
 }> = ({ orgLabel, projectLabel, onFileUploaded }) => {
   const nexus = useNexusContext();

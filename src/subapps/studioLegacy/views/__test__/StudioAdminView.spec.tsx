@@ -12,6 +12,7 @@ import fetch from 'node-fetch';
 import { render, screen, server } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
+import { deltaPath } from '__mocks__/handlers/handlers';
 
 describe('StudioAdminView', () => {
   const queryClient = new QueryClient();
@@ -29,7 +30,7 @@ describe('StudioAdminView', () => {
 
   const nexus = createNexusClient({
     fetch,
-    uri: 'https://localhost:3000',
+    uri: deltaPath(),
   });
   const store = configureStore(history, { nexus }, {});
   it('renders studios in a list', async () => {

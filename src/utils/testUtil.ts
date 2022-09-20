@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { render, RenderOptions } from '@testing-library/react';
+import { cleanup, render, RenderOptions } from '@testing-library/react';
 import { server } from '../__mocks__/server';
 
 const customRender = (
@@ -10,3 +10,4 @@ const customRender = (
 export * from '@testing-library/react';
 export { customRender as render };
 export { server };
+export { cleanup };
