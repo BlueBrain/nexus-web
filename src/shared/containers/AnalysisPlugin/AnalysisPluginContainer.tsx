@@ -4,65 +4,31 @@ import * as React from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/reducers';
-import AnalysisPlugin, {
-  AnalysisReport,
-  Asset,
-} from '../../components/AnalysisPlugin/AnalysisPlugin';
 import { sparqlQueryExecutor } from '../../utils/querySparqlView';
 import { Image } from 'antd';
 import FileUploadContainer from '../FileUploadContainer';
 import { FileImageOutlined } from '@ant-design/icons';
 import { makeResourceUri } from '../../../shared/utils';
 import { useHistory, useLocation } from 'react-router';
+import ImageFileInfo from '../../components/FileInfo/ImageFileInfo';
+import { PDFThumbnail } from '../../../shared/components/Preview/PDFPreview';
+import PDFFileInfo from '../../../shared/components/FileInfo/PDFFileInfo';
+import AnalysisPlugin from '../../../shared/components/AnalysisPlugin/AnalysisPlugin';
 
-export const DEFAULT_ANALYSIS_DATA_SPARQL_QUERY = `PREFIX s:<http://schema.org/>
-PREFIX prov:<http://www.w3.org/ns/prov#>
-PREFIX nsg:<https://neuroshapes.org/>
-PREFIX nxv:<https://bluebrain.github.io/nexus/vocabulary/>
-SELECT ?container_resource_id ?container_resource_name ?analysis_report_id ?analysis_report_name ?analysis_report_description ?created_by ?created_at ?asset_content_url ?asset_encoding_format ?asset_name ?self
-WHERE {
-  OPTIONAL {
-    BIND(<{resourceId}> as ?container_resource_id) .
-    BIND(<{resourceId}> as ?self) .
-    ?container_resource_id        ^prov:wasDerivedFrom       ?analysis_report_id .
-    OPTIONAL {
-      ?container_resource_id        s:name                   ?container_resource_name .
-    }
-    ?analysis_report_id    nsg:name            ?analysis_report_name .
-    ?analysis_report_id    s:description       ?analysis_report_description .
-    ?analysis_report_id nxv:createdBy ?created_by .
-    ?analysis_report_id nxv:createdAt ?created_at .
-    OPTIONAL {
-        ?analysis_report_id    nsg:distribution    ?distribution .
-        OPTIONAL {
-          ?distribution nsg:name            ?asset_name .
-          ?distribution nsg:contentUrl      ?asset_content_url .
-          ?distribution nsg:encodingFormat  ?asset_encoding_format .
-        }
-    }
-  }
-  OPTIONAL {
-    BIND(<{resourceId}> as ?analysis_report_id) .
-    BIND(<{resourceId}> as ?self) .
-    ?container_resource_id        ^prov:wasDerivedFrom       ?analysis_report_id .
-    OPTIONAL {
-      ?container_resource_id        s:name                   ?container_resource_name .
-    }
-    ?analysis_report_id    nsg:name            ?analysis_report_name .
-    ?analysis_report_id    s:description       ?analysis_report_description .
-    ?analysis_report_id nxv:createdBy ?created_by .
-    ?analysis_report_id nxv:createdAt ?created_at .
-    OPTIONAL {
-        ?analysis_report_id    nsg:distribution    ?distribution .
-        OPTIONAL {
-          ?distribution nsg:name            ?asset_name .
-          ?distribution nsg:contentUrl      ?asset_content_url .
-          ?distribution nsg:encodingFormat  ?asset_encoding_format .
-        }
-    }
-  }
-}
-LIMIT 1000`;
+import analysisUIReducer, {
+  setReportResourceType,
+  setSelectedReportFirstLoad,
+  changeSelectedReports,
+} from '../../slices/plugins/report';
+
+import {
+  Asset,
+  AnalysesState,
+  AnalysisReport,
+  AnalysisPluginContainerProps,
+  AnalysisAssetSparqlQueryRowResult,
+  ReportGeneration,
+} from '../../types/plugins/report';
 
 async function fetchImageObjectUrl(
   nexus: NexusClient,
@@ -85,72 +51,15 @@ async function fetchImageObjectUrl(
   return URL.createObjectURL(blob);
 }
 
-type AnalysisPluginContainerProps = {
-  orgLabel: string;
-  projectLabel: string;
-  resourceId: string;
-};
-
-export enum ActionType {
-  RESCALE = 'rescale',
-  EDIT_ANALYSIS_REPORT = 'edit_analysis_report',
-  INITIALIZE = 'initialize',
-  SELECT_ASSET = 'select_asset',
-  CHANGE_SELECTED_ANALYSIS_REPORTS = 'change_selected_analysis_reports',
-  CHANGE_ANALYSIS_NAME = 'change_analysis_name',
-  CHANGE_ANALYSIS_DESCRIPTION = 'change_analysis_description',
-  OPEN_FILE_UPLOAD_DIALOG = 'open_file_upload_dialog',
-  CLOSE_FILE_UPLOAD_DIALOG = 'close_file_upload_dialog',
-  ADD_ANALYSIS_REPORT = 'add_analysis_report',
-  SET_SELECTED_REPORT_ON_FIRST_LOAD = 'set_selected_report_on_first_load',
-  SET_ANALYSIS_RESOURCE_TYPE = 'set_analysis_resource_type',
-}
-
-export type AnalysesAction =
-  | {
-      type: ActionType.SET_ANALYSIS_RESOURCE_TYPE;
-      payload: {
-        resourceType: 'report_container' | 'individual_report';
-        containerId?: string;
-        containerName?: string;
-      };
-    }
-  | { type: ActionType.RESCALE; payload: number }
-  | {
-      type: ActionType.SET_SELECTED_REPORT_ON_FIRST_LOAD;
-      payload?: { analysisReportId: string };
-    }
-  | {
-      type: ActionType.EDIT_ANALYSIS_REPORT;
-      payload: {
-        analysisId: string;
-        analaysisName: string;
-        analysisDescription?: string;
-      };
-    }
-  | {
-      type: ActionType.INITIALIZE;
-      payload: { scale: number; analysisReportId?: string[] };
-    }
-  | { type: ActionType.SELECT_ASSET; payload: { assetId: string } }
-  | {
-      type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS;
-      payload: { analysisReportIds: string[] };
-    }
-  | { type: ActionType.CHANGE_ANALYSIS_NAME; payload: { name: string } }
-  | {
-      type: ActionType.CHANGE_ANALYSIS_DESCRIPTION;
-      payload: { description: string };
-    }
-  | { type: ActionType.OPEN_FILE_UPLOAD_DIALOG }
-  | { type: ActionType.CLOSE_FILE_UPLOAD_DIALOG }
-  | { type: ActionType.ADD_ANALYSIS_REPORT };
-
 const AnalysisPluginContainer = ({
   orgLabel,
   projectLabel,
   resourceId,
 }: AnalysisPluginContainerProps) => {
+  const identities = useSelector((state: RootState) => state.auth.identities);
+  const currentUser = identities?.data?.identities.find(
+    id => id['@type'] === 'User'
+  );
   const nexus = useNexusContext();
   const queryClient = useQueryClient();
 
@@ -184,25 +93,6 @@ const AnalysisPluginContainer = ({
     resourceId
   );
 
-  type AnalysisAssetSparqlQueryRowResult = {
-    id: string;
-    key: string;
-    container_resource_id: string;
-    container_resource_name: string;
-    analysis_report_id: string;
-    analysis_report_name: string;
-    analysis_report_description: string;
-    created_by: string;
-    created_at: string;
-    asset_name: string;
-    asset_content_url: string;
-    asset_encoding_format: string;
-    self: {
-      type: string;
-      value: string;
-    };
-  };
-
   const fetchAnalysisData = async (
     viewSelfId: string,
     analysisQuery: string
@@ -217,14 +107,40 @@ const AnalysisPluginContainer = ({
       false
     );
 
+    const uniqueReportIds = [
+      ...new Set(
+        result.items.map(
+          r => (r as AnalysisAssetSparqlQueryRowResult).analysis_report_id
+        )
+      ),
+    ];
+    const reportResources = (await Promise.all(
+      uniqueReportIds.map(reportResourceId =>
+        nexus.Resource.get(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(reportResourceId)
+        )
+      )
+    )) as Resource[];
+
     const analysisData = result.items.reduce((analysisReports, current) => {
       const currentRow = current as AnalysisAssetSparqlQueryRowResult;
-
       /* add new entry if report not in array yet */
       if (
         !analysisReports.some(r => r.id === currentRow['analysis_report_id'])
       ) {
+        const types =
+          currentRow['analysis_report_types'] !== undefined
+            ? [currentRow['analysis_report_types']]
+            : [];
+        const categories =
+          currentRow['analysis_report_categories'] !== undefined
+            ? [currentRow['analysis_report_categories']]
+            : [];
         analysisReports.push({
+          types,
+          categories,
           containerId: currentRow['container_resource_id'],
           containerName: currentRow['container_resource_name'],
           id: currentRow['analysis_report_id'],
@@ -234,32 +150,66 @@ const AnalysisPluginContainer = ({
           createdAt: currentRow['created_at'],
           assets: [],
         });
-      }
 
-      const report = analysisReports.find(
-        r => r.id === currentRow['analysis_report_id']
-      );
-      const reportIx = analysisReports.findIndex(
-        r => r.id === currentRow['analysis_report_id']
-      );
+        const reportIx = analysisReports.findIndex(
+          r => r.id === currentRow['analysis_report_id']
+        );
+        const reportResource = reportResources.find(
+          r => r['@id'] === currentRow['analysis_report_id']
+        );
 
-      if (currentRow.asset_content_url !== undefined) {
-        report?.assets.push({
-          analysisReportId: currentRow.analysis_report_id,
-          saved: true,
-          id: currentRow.asset_content_url,
-          name: currentRow.asset_name,
-          filePath: currentRow.asset_content_url,
-          encodingFormat: currentRow.asset_encoding_format,
+        if (reportResource === undefined) return analysisReports;
 
-          preview: ({ mode }) => {
-            return <Image preview={mode === 'view'} />;
-          },
-        });
-      }
+        if ('contribution' in reportResource) {
+          analysisReports[reportIx].contribution = [
+            reportResource.contribution,
+          ].flat();
+        }
 
-      if (report) {
-        analysisReports[reportIx] = report;
+        if ('hasPart' in reportResource) {
+          analysisReports[reportIx].assets = [reportResource.hasPart]
+            .flat()
+            .map((asset: any) => {
+              return {
+                analysisReportId: currentRow['analysis_report_id'],
+                saved: true,
+                id: asset.distribution.contentUrl['@id'],
+                name: asset.name,
+                description: asset.description,
+                filePath: asset.distribution.contentUrl['@id'],
+                encodingFormat: asset.distribution.encodingFormat,
+                preview: ({ mode }: { mode: 'view' | 'edit' }) => {
+                  return <Image preview={mode === 'view'} />;
+                },
+              };
+            });
+        }
+      } else {
+        // @TODO: get this from the report resource
+        const reportIx = analysisReports.findIndex(
+          r => r.id === currentRow['analysis_report_id']
+        );
+        const r = analysisReports[reportIx];
+        if (r.categories !== undefined) {
+          if (
+            !r.categories.includes(currentRow['analysis_report_categories'])
+          ) {
+            r.categories.push(currentRow['analysis_report_categories']);
+          }
+        } else {
+          analysisReports[reportIx].categories = [
+            currentRow['analysis_report_categories'],
+          ];
+        }
+        if (r.types !== undefined) {
+          if (!r.types.includes(currentRow['analysis_report_types'])) {
+            r.types.push(currentRow['analysis_report_types']);
+          }
+        } else {
+          analysisReports[reportIx].types = [
+            currentRow['analysis_report_types'],
+          ];
+        }
       }
 
       return analysisReports;
@@ -274,17 +224,15 @@ const AnalysisPluginContainer = ({
     {
       onSuccess: data => {
         if (!hasInitializedSelectedReports) {
-          dispatch({
-            type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS,
-            payload: {
-              analysisReportIds:
-                data.length > 0 && data[0].id ? [data[0].id] : [],
-            },
-          });
+          dispatch(
+            setSelectedReportFirstLoad({
+              analysisReportId:
+                data.length > 0 && data[0].id !== undefined ? data[0].id : '',
+            })
+          );
         }
-        dispatch({
-          type: ActionType.SET_ANALYSIS_RESOURCE_TYPE,
-          payload: {
+        dispatch(
+          setReportResourceType({
             resourceType:
               data.length > 0 && data[0].id === resourceId
                 ? 'individual_report'
@@ -297,8 +245,8 @@ const AnalysisPluginContainer = ({
               data.length > 0 && data[0].containerName !== ''
                 ? data[0].containerName
                 : undefined,
-          },
-        });
+          })
+        );
       },
     }
   );
@@ -308,6 +256,10 @@ const AnalysisPluginContainer = ({
       id: string;
       src: string;
       contentUrl: string;
+      deprecated: boolean;
+      filename: string;
+      lastUpdated: string;
+      lastUpdatedBy: string;
     }>[] = [];
     if (!analysisData) {
       return [];
@@ -319,6 +271,12 @@ const AnalysisPluginContainer = ({
           const imageId = asset.filePath.substring(
             asset.filePath.lastIndexOf('/') + 1
           );
+          const imgResource = (await nexus.Resource.get(
+            orgLabel,
+            projectLabel,
+            encodeURIComponent(asset.filePath)
+          )) as Resource;
+
           const src = await fetchImageObjectUrl(
             nexus,
             orgLabel,
@@ -326,7 +284,15 @@ const AnalysisPluginContainer = ({
             imageId,
             asset.encodingFormat
           );
-          return { src, id: asset.id, contentUrl: asset.filePath };
+          return {
+            src,
+            id: asset.id,
+            contentUrl: asset.filePath,
+            deprecated: imgResource['_deprecated'],
+            filename: imgResource['_filename'],
+            lastUpdated: imgResource['_updatedAt'],
+            lastUpdatedBy: imgResource['_updatedBy'],
+          };
         });
         return [...prev, ...assets];
       }, imageSourceInitial)
@@ -351,16 +317,85 @@ const AnalysisPluginContainer = ({
     }
   );
 
+  const mutateAsset = useMutation(
+    async (data: {
+      resourceId: string;
+      assetContentUrl: string;
+      title: string;
+      caption: string;
+    }) => {
+      const resource = (await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(data.resourceId)
+      )) as Resource;
+      resource.hasPart = [resource.hasPart].flat().map(a => {
+        if (a.distribution.contentUrl['@id'] !== data.assetContentUrl) {
+          return a;
+        }
+
+        return {
+          ...a,
+          name: data.title,
+          description: data.caption,
+        };
+      });
+
+      // Add user as contributor if not already
+      const contributions = resource['contribution']
+        ? [resource['contribution']].flat()
+        : [];
+
+      if (!contributions.some(c => c.agent['@id'] === currentUser?.['@id'])) {
+        contributions.push({
+          '@type': 'Contribution',
+          agent: {
+            '@id': currentUser?.['@id'],
+            '@type': ['Person', 'Agent'],
+          },
+        });
+      }
+      resource['contribution'] = contributions;
+
+      return nexus.Resource.update(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(data.resourceId),
+        resource._rev,
+        resource
+      );
+    },
+    {
+      onSuccess: () => {
+        return Promise.all([
+          queryClient.invalidateQueries(['analysis']),
+          queryClient.invalidateQueries(['analysesImages']),
+        ]);
+      },
+    }
+  );
+
   const mutateAnalysis = useMutation(
-    async (data: { id?: string; name: string; description?: string }) => {
+    async (data: {
+      id?: string;
+      name: string;
+      description?: string;
+      categories?: string[];
+      types?: string[];
+      scripts?: ReportGeneration[];
+    }) => {
       const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
         return {
-          '@type': 'DataDownload',
-          contentUrl: a.filePath,
-          encodingFormat: a.encodingFormat,
-          contentSize: a.contentSize,
-          digest: a.digest,
+          '@type': 'Entity',
           name: a.name,
+          description: a.description,
+          distribution: {
+            '@type': 'DataDownload',
+            contentUrl: { '@id': a.filePath },
+            encodingFormat: a.encodingFormat,
+            contentSize: a.contentSize,
+            digest: a.digest,
+          },
         };
       });
 
@@ -371,10 +406,41 @@ const AnalysisPluginContainer = ({
           encodeURIComponent(data.id)
         )) as Resource;
 
-        const distribution = [resource['distribution']].flat(); // TODO: use appropriate cprefix depending on context
-        distribution.push(...unsavedAssetsToAddToDistribution);
-        resource['distribution'] = distribution;
+        const hasPart = [resource['hasPart']].flat();
+        hasPart.push(...unsavedAssetsToAddToDistribution);
+        resource['hasPart'] = hasPart;
 
+        // Add user as contributor if not already
+        const contributions = resource['contribution']
+          ? [resource['contribution']]
+              .flat()
+              .filter(c => c.agent['@type'].includes('Person'))
+          : [];
+
+        if (!contributions.some(c => c.agent['@id'] === currentUser?.['@id'])) {
+          contributions.push({
+            '@type': 'Contribution',
+            agent: {
+              '@id': currentUser?.['@id'],
+              '@type': ['Person', 'Agent'],
+            },
+          });
+        }
+        // add software contributions
+        if (data.scripts) {
+          contributions.push(
+            ...data.scripts.map(s => ({
+              '@type': 'Contribution',
+              agent: {
+                '@type': ['Software', 'Agent'],
+              },
+              repository: s.scriptPath,
+              description: s.description,
+            }))
+          );
+        }
+
+        resource['contribution'] = contributions;
         return nexus.Resource.update(
           orgLabel,
           projectLabel,
@@ -383,7 +449,9 @@ const AnalysisPluginContainer = ({
           {
             ...resource,
             name: data.name,
-            'schema:description': data.description,
+            description: data.description,
+            categories: data.categories,
+            types: data.types,
           }
         );
       }
@@ -393,17 +461,25 @@ const AnalysisPluginContainer = ({
         '@context': [
           {
             '@vocab': 'https://neuroshapes.org/',
-            nsg: 'https://neuroshapes.org/',
             nxv: 'https://bluebrain.github.io/nexus/vocabulary/',
-            prov: 'http://www.w3.org/ns/prov#',
-            schema: 'http://schema.org/',
+            derivation: 'http://www.w3.org/ns/prov#derivation',
           },
         ],
-        '@type': 'AnalysisReport',
+        '@type': 'Report',
         name: data.name,
-        'schema:description': data.description,
-        distribution: unsavedAssetsToAddToDistribution,
-        'prov:wasDerivedFrom': [{ '@id': resourceId }],
+        description: data.description,
+        categories: data.categories,
+        types: data.types,
+        hasPart: unsavedAssetsToAddToDistribution,
+        derivation: { entity: { '@id': resourceId } },
+        contribution: data.scripts
+          ? data.scripts.map(s => ({
+              '@type': 'Contribution',
+              agent: { '@type': ['Software', 'Agent'] },
+              repository: s.scriptPath,
+              description: s.description,
+            }))
+          : [],
       });
     },
     {
@@ -413,15 +489,87 @@ const AnalysisPluginContainer = ({
           queryClient.invalidateQueries(['analysis']),
           queryClient.invalidateQueries(['analysesImages']),
         ]).then(() => {
-          dispatch({
-            type: ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS,
-            payload: { analysisReportIds: [resource['@id']] },
-          });
+          dispatch(
+            changeSelectedReports({ analysisReportIds: [resource['@id']] })
+          );
         });
       },
     }
   );
 
+  const deleteImages = useMutation(
+    async () => {
+      if (selectedAssets) {
+        await Promise.all(
+          selectedAssets.map(async d => {
+            const resource = (await nexus.Resource.get(
+              orgLabel,
+              projectLabel,
+              encodeURIComponent(d)
+            )) as Resource;
+            await nexus.Resource.deprecate(
+              orgLabel,
+              projectLabel,
+              encodeURIComponent(resource['@id']),
+              resource._rev
+            );
+          })
+        );
+        // TODO: update report contributors
+        if (currentlyBeingEditedAnalysisReportId) {
+          const reportResource = (await nexus.Resource.get(
+            orgLabel,
+            projectLabel,
+            encodeURIComponent(currentlyBeingEditedAnalysisReportId)
+          )) as Resource;
+
+          // Add user as contributor if not already
+          const contributions = reportResource['contribution']
+            ? [reportResource['contribution']].flat()
+            : [];
+
+          if (
+            !contributions.some(c => c.agent['@id'] === currentUser?.['@id'])
+          ) {
+            contributions.push({
+              '@type': 'Contribution',
+              agent: {
+                '@id': currentUser?.['@id'],
+                '@type': ['Person', 'Agent'],
+              },
+            });
+          }
+          reportResource['contribution'] = contributions;
+
+          await nexus.Resource.update(
+            orgLabel,
+            projectLabel,
+            encodeURIComponent(reportResource['@id']),
+            reportResource._rev,
+            {
+              ...reportResource,
+              contribution: contributions,
+            }
+          );
+        }
+      }
+      return selectedAnalysisReports;
+    },
+    {
+      onSuccess: resourceIds => {
+        Promise.all([
+          queryClient.invalidateQueries(['analysis']),
+          queryClient.invalidateQueries(['analysesImages']),
+        ]).then(() => {
+          dispatch(
+            changeSelectedReports({
+              analysisReportIds: resourceIds ? resourceIds : [],
+            })
+          );
+        });
+      },
+    }
+  );
   const onFileUploaded = (file: NexusFile, analysisReportId?: string) => {
     const newlyUploadedAsset: Asset = {
       analysisReportId,
@@ -439,28 +587,37 @@ const AnalysisPluginContainer = ({
       },
       filePath: file['@id'],
       preview: () => {
-        return <Image placeholder={<FileImageOutlined />} preview={false} />;
+        return (
+          <>
+            {file._mediaType.substring(0, 'image'.length) === 'image' && (
+              <>
+                {file._mediaType.substring(0, 'image'.length) === 'image' && (
+                  <Image placeholder={<FileImageOutlined />} preview={false} />
+                )}
+                {file._mediaType === 'application/pdf' && (
+                  <PDFThumbnail
+                    url={file['@id']}
+                    onPreview={() => {}}
+                    previewDisabled={true}
+                  />
+                )}
+              </>
+            )}
+            {file._mediaType === 'application/pdf' && (
+              <PDFThumbnail
+                url={file['@id']}
+                onPreview={() => {}}
+                previewDisabled={true}
+              />
+            )}
+          </>
+        );
       },
     };
     setUnsavedAssets(assets => [...assets, newlyUploadedAsset]);
   };
 
   const DEFAULT_SCALE = 50;
-
-  type AnalysesState = {
-    analysisResourceType: 'report_container' | 'individual_report';
-    containerId?: string;
-    containerName?: string;
-    imagePreviewScale: number;
-    mode: 'view' | 'edit' | 'create';
-    selectedAnalysisReports?: string[];
-    currentlyBeingEditedAnalysisReportId?: string;
-    currentlyBeingEditingAnalysisReportName?: string;
-    currentlyBeingEditedAnalysisReportDescription?: string;
-    selectedAssets?: string[];
-    isUploadAssetDialogOpen?: boolean;
-    hasInitializedSelectedReports: boolean;
-  };
 
   const initState = ({
     mode,
@@ -478,107 +635,6 @@ const AnalysisPluginContainer = ({
     };
   };
 
-  const analysisUIReducer = (
-    state: AnalysesState,
-    action: AnalysesAction
-  ): AnalysesState => {
-    switch (action.type) {
-      case ActionType.SET_ANALYSIS_RESOURCE_TYPE:
-        return {
-          ...state,
-          analysisResourceType: action.payload.resourceType,
-          containerId: action.payload.containerId,
-          containerName: action.payload.containerName,
-        };
-      case ActionType.RESCALE:
-        return { ...state, imagePreviewScale: action.payload };
-      case ActionType.EDIT_ANALYSIS_REPORT:
-        return {
-          ...state,
-          mode: 'edit',
-          selectedAnalysisReports: [action.payload.analysisId],
-          currentlyBeingEditedAnalysisReportId: action.payload.analysisId,
-          currentlyBeingEditingAnalysisReportName: action.payload.analaysisName,
-          currentlyBeingEditedAnalysisReportDescription:
-            action.payload.analysisDescription,
-        };
-      case ActionType.ADD_ANALYSIS_REPORT:
-        return {
-          ...state,
-          mode: 'create',
-          currentlyBeingEditingAnalysisReportName: '',
-          currentlyBeingEditedAnalysisReportDescription: '',
-        };
-      case ActionType.SELECT_ASSET:
-        state.selectedAssets = state.selectedAssets ? state.selectedAssets : [];
-        const selectedId = state.selectedAssets?.findIndex(
-          a => a === action.payload.assetId
-        );
-
-        if (
-          state.selectedAssets &&
-          selectedId !== undefined &&
-          selectedId > -1
-        ) {
-          const selectedCopy = [...state.selectedAssets];
-          selectedCopy.splice(selectedId, 1);
-          return {
-            ...state,
-            selectedAssets: selectedCopy,
-          };
-        }
-        return {
-          ...state,
-          selectedAssets: [...state.selectedAssets, action.payload.assetId],
-        };
-      case ActionType.SET_SELECTED_REPORT_ON_FIRST_LOAD:
-        return {
-          ...state,
-          selectedAnalysisReports: action.payload
-            ? [action.payload.analysisReportId]
-            : [],
-          hasInitializedSelectedReports: true,
-        };
-      case ActionType.CHANGE_SELECTED_ANALYSIS_REPORTS:
-        return {
-          ...state,
-          mode: 'view',
-          selectedAnalysisReports: action.payload.analysisReportIds,
-        };
-      case ActionType.INITIALIZE:
-        return initState({
-          mode: 'view',
-          analysisResourceType: 'report_container',
-          hasInitializedSelectedReports: true,
-          selectedAnalysisReports: action.payload.analysisReportId,
-          imagePreviewScale: action.payload.scale,
-        });
-      case ActionType.CHANGE_ANALYSIS_NAME:
-        return {
-          ...state,
-          currentlyBeingEditingAnalysisReportName: action.payload.name,
-        };
-      case ActionType.CHANGE_ANALYSIS_DESCRIPTION:
-        return {
-          ...state,
-          currentlyBeingEditedAnalysisReportDescription:
-            action.payload.description,
-        };
-      case ActionType.OPEN_FILE_UPLOAD_DIALOG:
-        return {
-          ...state,
-          isUploadAssetDialogOpen: true,
-        };
-      case ActionType.CLOSE_FILE_UPLOAD_DIALOG:
-        return {
-          ...state,
-          isUploadAssetDialogOpen: false,
-        };
-      default:
-        throw new Error();
-    }
-  };
-
   const [
     {
       imagePreviewScale,
@@ -589,8 +645,11 @@ const AnalysisPluginContainer = ({
       currentlyBeingEditedAnalysisReportId,
       selectedAssets,
       selectedAnalysisReports,
-      currentlyBeingEditingAnalysisReportName,
+      currentlyBeingEditedAnalysisReportName,
       currentlyBeingEditedAnalysisReportDescription,
+      currentlyBeingEditedAnalysisReportCategories,
+      currentlyBeingEditedAnalysisReportTypes,
+      currentlyBeingEditedAnalysisReportTools,
       isUploadAssetDialogOpen,
       hasInitializedSelectedReports,
     },
@@ -612,8 +671,10 @@ const AnalysisPluginContainer = ({
       mode === 'create'
         ? [
             {
-              name: '',
-              description: '',
+              name: currentlyBeingEditedAnalysisReportName || '',
+              description: currentlyBeingEditedAnalysisReportDescription || '',
+              categories: currentlyBeingEditedAnalysisReportCategories || [],
+              types: currentlyBeingEditedAnalysisReportTypes || [],
               createdBy: '',
               createdAt: '',
               assets: [],
@@ -626,19 +687,66 @@ const AnalysisPluginContainer = ({
     return savedAndUnsavedAnalysisReports.map(a => {
       return {
         ...a,
-        assets: a.assets.concat(unsavedAssets).map(m => {
-          const img = imageData?.find(img => img.contentUrl === m.filePath);
-          return {
-            ...m,
-            preview: ({ mode }: { mode: string }) => {
-              return (
-                <>
-                  <Image src={img?.src} preview={mode === 'view'} />
-                </>
-              );
-            },
-          };
-        }),
+        assets: a.assets
+          .concat(unsavedAssets)
+          .map(m => {
+            const img = imageData?.find(img => img.contentUrl === m.filePath);
+            return {
+              ...m,
+              filename: img?.filename,
+              deprecated: img?.deprecated,
+              lastUpdated: img?.lastUpdated,
+              lastUpdatedBy: img?.lastUpdatedBy,
+              preview: ({ mode }: { mode: string }) => {
+                return (
+                  <>
+                    {m.encodingFormat.substring(0, 'image'.length) ===
+                      'image' && (
+                      <ImageFileInfo
+                        previewDisabled={mode === 'edit'}
+                        src={img?.src}
+                        lastUpdated={img?.lastUpdated}
+                        lastUpdatedBy={img?.lastUpdatedBy}
+                        title={m.name}
+                        text={m.description}
+                        onSave={(name, description) => {
+                          a.id &&
+                            img &&
+                            mutateAsset.mutate({
+                              resourceId: a.id,
+                              assetContentUrl: img.contentUrl,
+                              title: name,
+                              caption: description,
+                            });
+                        }}
+                      />
+                    )}
+                    {m.encodingFormat === 'application/pdf' && img?.src && (
+                      <PDFFileInfo
+                        previewDisabled={mode === 'edit'}
+                        src={img?.src}
+                        lastUpdated={img?.lastUpdated}
+                        lastUpdatedBy={img?.lastUpdatedBy}
+                        title={m.name}
+                        text={m.description}
+                        onSave={(name, description) => {
+                          a.id &&
+                            img &&
+                            mutateAsset.mutate({
+                              resourceId: a.id,
+                              assetContentUrl: img.contentUrl,
+                              title: name,
+                              caption: description,
+                            });
+                        }}
+                      />
+                    )}
+                  </>
+                );
+              },
+            };
+          })
+          .filter(a => a.deprecated === undefined || !a.deprecated),
       };
     });
   }, [analysisData, imageData, unsavedAssets, mode]);
@@ -646,6 +754,7 @@ const AnalysisPluginContainer = ({
   const FileUploadComponent = (analysisReportId?: string) => (
     <FileUploadContainer
       orgLabel={orgLabel}
+      showStorageMenu={false}
       projectLabel={projectLabel}
       onFileUploaded={file => onFileUploaded(file, analysisReportId)}
     />
@@ -659,8 +768,25 @@ const AnalysisPluginContainer = ({
           analysisReports={analysisDataWithImages}
           containerId={containerId}
           onCancel={() => {}}
-          onSave={(name: string, description?: string, id?: string) => {
-            mutateAnalysis.mutate({ name, description, id });
+          onSave={(
+            name: string,
+            description?: string,
+            id?: string,
+            categories?: string[],
+            types?: string[],
+            scripts?: ReportGeneration[]
+          ) => {
+            mutateAnalysis.mutate({
+              name,
+              description,
+              id,
+              categories,
+              types,
+              scripts,
+            });
+          }}
+          onDelete={() => {
+            deleteImages.mutate();
           }}
           imagePreviewScale={imagePreviewScale}
           mode={mode}
@@ -671,15 +797,22 @@ const AnalysisPluginContainer = ({
           currentlyBeingEditedAnalysisReportId={
             currentlyBeingEditedAnalysisReportId
           }
-          currentlyBeingEditingAnalysisReportName={
-            currentlyBeingEditingAnalysisReportName
+          currentlyBeingEditedAnalysisReportName={
+            currentlyBeingEditedAnalysisReportName
+          }
+          currentlyBeingEditedAnalysisReportCategories={
+            currentlyBeingEditedAnalysisReportCategories
+          }
+          currentlyBeingEditedAnalysisReportTypes={
+            currentlyBeingEditedAnalysisReportTypes
+          }
+          currentlyBeingEditedAnalysisReportTools={
+            currentlyBeingEditedAnalysisReportTools
           }
           selectedAssets={selectedAssets}
+          dispatch={dispatch}
           selectedAnalysisReports={selectedAnalysisReports}
           isUploadAssetDialogOpen={isUploadAssetDialogOpen}
-          dispatch={(action: AnalysesAction) => {
-            dispatch(action);
-          }}
           onClickRelatedResource={(resourceId: string) =>
             handleClickAnalysisResource(orgLabel, projectLabel, resourceId)
           }

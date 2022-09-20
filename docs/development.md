@@ -217,15 +217,13 @@ Cypress has a desktop application as well as a CLI. The desktop application is u
 
 ### Configuration
 
-There are several Cypress environment variables that must be specified in order for the tests to run successfully
+There are several Cypress environment variables that must be specified in order for the tests to run successfully. The cypress.env.json.sample includes these variables. Rename the file to cypress.env.json in order for it be picked up by Cypress and set the variables appropriately. Note that if you specify any Cypress variable at the command line it must be prefixed with CYPRESS\_ and it will override any variables set in the cypress.env.json file.
 
-- **CYPRESS_AUTH_REALM** the auth realm to which to authenticate the specified nexus user
-- **CYPRESS_AUTH_USERNAME** the Nexus username to use to authenticate
-- **CYPRESS_AUTH_PASSWORD** the Nexus username password to use to authenticate
-- **CYPRESS_NEXUS_API_URL** the url to the Nexus API for which the tests will be run. It is used as part of the setup and teardown process
-- **CYPRESS_BASE_URL** _optional_ Defaults to http://localhost:8000
-- **CYPRESS_ORG_LABEL** _optional_ Defaults to Cypress-Testing
-- **CYPRESS_PROJECT_LABEL_BASE** _optional_ Defaults to e2e
+- **use_existing_delta_instance** whether to use an existing instance of Delta or a new one is being set-up
+- **NEXUS_API_URL** the url to the Nexus API for which the tests will be run. It is used as part of the setup and teardown process
+- **BASE_URL** _optional_ Defaults to http://localhost:8000
+- **ORG_LABEL** _optional_ Defaults to Cypress-Testing
+- **PROJECT_LABEL_BASE** _optional_ Defaults to e2e
 
 ### Cypress desktop app
 

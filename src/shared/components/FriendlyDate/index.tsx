@@ -3,11 +3,12 @@ import * as React from 'react';
 import * as moment from 'moment';
 import { getDateString, getFriendlyTimeAgoString } from '../../utils';
 
-const FriendlyTimeAgo: React.FC<{ date: Date | moment.Moment }> = ({
-  date,
-}) => {
+const FriendlyTimeAgo: React.FC<{
+  date: Date | moment.Moment;
+  getPopupContainer?: (trigger: HTMLElement) => HTMLElement;
+}> = ({ date, getPopupContainer }) => {
   return (
-    <Tooltip title={getDateString(date)}>
+    <Tooltip title={getDateString(date)} getPopupContainer={getPopupContainer}>
       {getFriendlyTimeAgoString(moment(date))}
     </Tooltip>
   );

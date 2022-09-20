@@ -18,6 +18,7 @@ import {
   message,
 } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
+import useNotification from '../../../shared/hooks/useNotification';
 
 type NexusSparqlError = {
   reason: string;
@@ -99,15 +100,17 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
     }
     return [];
   }, [workspace]);
+  const notification = useNotification();
 
   const saveDashBoards = (workspace: Resource) => {
-    const newList: dashboard[] = [
-      ...dashboards
-        .filter((value, index) => targetKeys.includes(index.toString()))
-        .map(d => {
-          return { dashboard: d['@id'], view: viewToAdd };
-        }),
-    ];
+    const newList: dashboard[] = targetKeys.map(k => {
+      const dashboard = dashboards.find((d, ix) => k === ix.toString());
+      if (dashboard === undefined) {
+        throw Error('Dashboard not found');
+      }
+      return { dashboard: dashboard['@id'], view: viewToAdd };
+    });
+
     const newWorkspace = {
       ...workspace,
       label,
@@ -300,17 +303,6 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
     setTargetKeys(targetKeys);
   };
 
-  if (error) {
-    return (
-      <Alert
-        message="Error loading dashboard"
-        description={`Something went wrong. ${(error as NexusSparqlError)
-          .reason || (error as Error).message}`}
-        type="error"
-      />
-    );
-  }
-
   const [hasOldDashboard, setHasOldDashboard] = React.useState<boolean>(false);
   React.useEffect(() => {
     Promise.all(
@@ -326,6 +318,17 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
       setHasOldDashboard(hasOldDashboard);
     });
   }, [currentDashboards]);
+
+  if (error) {
+    return (
+      <Alert
+        message="Error loading dashboard"
+        description={`Something went wrong. ${(error as NexusSparqlError)
+          .reason || (error as Error).message}`}
+        type="error"
+      />
+    );
+  }
 
   return (
     <>
@@ -385,7 +388,14 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
               <Button
                 disabled={namePrompt}
                 onClick={e => {
-                  saveDashBoards(workspace);
+                  try {
+                    saveDashBoards(workspace);
+                  } catch (e) {
+                    notification.error({
+                      message: 'Failed to save dashboard',
+                      description: (e as any).message,
+                    });
+                  }
                 }}
               >
                 Save

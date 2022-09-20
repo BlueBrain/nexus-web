@@ -1,12 +1,8 @@
 {
   "@id": "FictionalTestAnalysis1",
   "@context": {
-    "@vocab": "https://neuroshapes.org/",
-    "nsg": "https://neuroshapes.org/",
-    "nxv": "https://bluebrain.github.io/nexus/vocabulary/",
-    "prov": "http://www.w3.org/ns/prov#",
-    "schema": "http://schema.org/"
+    "@vocab": "https://neuroshapes.org/"
   },
   "@type": ["Analysis", "DetailedCircuit"],
-  "schema:name": "Fictional O1.v6-RC2 (Rat)"
+  "name": "Fictional O1.v6-RC2 (Rat)"
 }

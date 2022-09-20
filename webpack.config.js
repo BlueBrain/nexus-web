@@ -142,7 +142,7 @@ const config = [
     node: {
       __dirname: false,
     },
-    externals: devMode ? [nodeExternals()] : [],
+    externals: devMode ? [nodeExternals()] : [{ canvas: {} }],
     plugins: [
       new CopyWebpackPlugin(
         [
