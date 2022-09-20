@@ -27,6 +27,7 @@ import {
   AnalysisReport,
   AnalysisPluginContainerProps,
   AnalysisAssetSparqlQueryRowResult,
+  ReportGeneration,
 } from '../../types/plugins/report';
 
 async function fetchImageObjectUrl(
@@ -159,6 +160,12 @@ const AnalysisPluginContainer = ({
 
         if (reportResource === undefined) return analysisReports;
 
+        if ('contribution' in reportResource) {
+          analysisReports[reportIx].contribution = [
+            reportResource.contribution,
+          ].flat();
+        }
+
         if ('hasPart' in reportResource) {
           analysisReports[reportIx].assets = [reportResource.hasPart]
             .flat()
@@ -178,7 +185,7 @@ const AnalysisPluginContainer = ({
             });
         }
       } else {
-        // already exists, just
+        // @TODO: get this from the report resource
         const reportIx = analysisReports.findIndex(
           r => r.id === currentRow['analysis_report_id']
         );
@@ -375,6 +382,7 @@ const AnalysisPluginContainer = ({
       description?: string;
       categories?: string[];
       types?: string[];
+      scripts?: ReportGeneration[];
     }) => {
       const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
         return {
@@ -404,7 +412,9 @@ const AnalysisPluginContainer = ({
 
         // Add user as contributor if not already
         const contributions = resource['contribution']
-          ? [resource['contribution']].flat()
+          ? [resource['contribution']]
+              .flat()
+              .filter(c => c.agent['@type'].includes('Person'))
           : [];
 
         if (!contributions.some(c => c.agent['@id'] === currentUser?.['@id'])) {
@@ -416,6 +426,20 @@ const AnalysisPluginContainer = ({
             },
           });
         }
+        // add software contributions
+        if (data.scripts) {
+          contributions.push(
+            ...data.scripts.map(s => ({
+              '@type': 'Contribution',
+              agent: {
+                '@type': ['Software', 'Agent'],
+              },
+              repository: s.scriptPath,
+              description: s.description,
+            }))
+          );
+        }
+
         resource['contribution'] = contributions;
         return nexus.Resource.update(
           orgLabel,
@@ -431,6 +455,7 @@ const AnalysisPluginContainer = ({
           }
         );
       }
+
       // Create new Analysis Report
       return nexus.Resource.create(orgLabel, projectLabel, {
         '@context': [
@@ -447,6 +472,14 @@ const AnalysisPluginContainer = ({
         types: data.types,
         hasPart: unsavedAssetsToAddToDistribution,
         derivation: { entity: { '@id': resourceId } },
+        contribution: data.scripts
+          ? data.scripts.map(s => ({
+              '@type': 'Contribution',
+              agent: { '@type': ['Software', 'Agent'] },
+              repository: s.scriptPath,
+              description: s.description,
+            }))
+          : [],
       });
     },
     {
@@ -616,6 +649,7 @@ const AnalysisPluginContainer = ({
       currentlyBeingEditedAnalysisReportDescription,
       currentlyBeingEditedAnalysisReportCategories,
       currentlyBeingEditedAnalysisReportTypes,
+      currentlyBeingEditedAnalysisReportTools,
       isUploadAssetDialogOpen,
       hasInitializedSelectedReports,
     },
@@ -650,7 +684,6 @@ const AnalysisPluginContainer = ({
     const savedAndUnsavedAnalysisReports = analysisData
       ? analysisData.concat(newAnalysisReports)
       : newAnalysisReports;
-
     return savedAndUnsavedAnalysisReports.map(a => {
       return {
         ...a,
@@ -740,9 +773,17 @@ const AnalysisPluginContainer = ({
             description?: string,
             id?: string,
             categories?: string[],
-            types?: string[]
+            types?: string[],
+            scripts?: ReportGeneration[]
           ) => {
-            mutateAnalysis.mutate({ name, description, id, categories, types });
+            mutateAnalysis.mutate({
+              name,
+              description,
+              id,
+              categories,
+              types,
+              scripts,
+            });
           }}
           onDelete={() => {
             deleteImages.mutate();
@@ -764,6 +805,9 @@ const AnalysisPluginContainer = ({
           }
           currentlyBeingEditedAnalysisReportTypes={
             currentlyBeingEditedAnalysisReportTypes
+          }
+          currentlyBeingEditedAnalysisReportTools={
+            currentlyBeingEditedAnalysisReportTools
           }
           selectedAssets={selectedAssets}
           dispatch={dispatch}

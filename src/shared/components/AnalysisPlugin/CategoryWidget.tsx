@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Button } from 'antd';
 import { flatten, map, uniq, intersection } from 'lodash';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import './Categories.less';
 import { CategoryWidgetProps } from '../../types/plugins/report';
 
@@ -14,8 +13,6 @@ const CategoryWidget = ({
   mode,
   selectCategory,
 }: CategoryWidgetProps) => {
-  const [openPanel, setOpenPanel] = React.useState<number>();
-
   const availableCategories =
     mode === 'create'
       ? CATEGORIES.circuit
@@ -26,7 +23,7 @@ const CategoryWidget = ({
 
   return (
     <>
-      {availableCategories && availableCategories.length > 0 && (
+      {availableCategories && availableCategories.length > 1 && (
         <div className="categories">
           {mode !== 'create' && <h3>Categories</h3>}
           <p>you may select one or multiple from the list</p>
@@ -41,10 +38,7 @@ const CategoryWidget = ({
                   selectedCategories.includes(object) ? 'active' : ''
                 }`}
               >
-                <h5>
-                  {object}
-                  <InfoCircleOutlined />
-                </h5>
+                <h5>{object}</h5>
               </Button>
             ))}
         </div>

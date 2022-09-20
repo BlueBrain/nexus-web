@@ -156,6 +156,14 @@ describe('Analysis Plugin', () => {
     expect(
       await waitFor(() => screen.getByText('5. Add Assets'))
     ).toBeInTheDocument();
+
+    expect(
+      await waitFor(() => screen.getByText('6. Report Generation'))
+    ).toBeInTheDocument();
+
+    expect(
+      await waitFor(() => screen.getByRole('button', { name: 'Add tool' }))
+    ).toBeInTheDocument();
   });
 
   it('On Create New Analysis screen, clicking cancel will return to the view mode', async () => {
@@ -359,9 +367,7 @@ describe('Analysis Plugin', () => {
       user.click(title);
     });
     expect(
-      await waitFor(() =>
-        screen.getByRole('button', { name: 'Go to resource' })
-      )
+      await waitFor(() => screen.getByRole('button', { name: 'goToResource' }))
     ).toBeInTheDocument();
   });
 
@@ -387,31 +393,6 @@ describe('Analysis Plugin', () => {
 
     expect(
       await waitFor(() => screen.getByText('Our Very First Analysis Report!'))
-    ).toBeInTheDocument();
-  });
-
-  it('when at least one of the selected analysis reports has an asset then the zoom options are visible', async () => {
-    server.use(sparqlAnalysisReportSingleResult, reportResource);
-    const history = createMemoryHistory({});
-    const store = mockStore(mockState);
-    render(
-      <Router history={history}>
-        <Provider store={store}>
-          <QueryClientProvider client={queryClient}>
-            <NexusProvider nexusClient={nexus}>
-              <AnalysisPluginContainer
-                projectLabel="projectLabel"
-                orgLabel="orgLabel"
-                resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-              ></AnalysisPluginContainer>
-            </NexusProvider>
-          </QueryClientProvider>
-        </Provider>
-      </Router>
-    );
-
-    expect(
-      await waitFor(() => screen.getByLabelText(/Increase\/Decrease/))
     ).toBeInTheDocument();
   });
 
@@ -531,7 +512,7 @@ describe('Analysis Plugin', () => {
     });
 
     await waitFor(() => {
-      const edit = screen.getByRole('button', { name: 'Edit' });
+      const edit = screen.getByRole('button', { name: 'editReport' });
       user.click(edit);
     });
 
@@ -542,6 +523,50 @@ describe('Analysis Plugin', () => {
 
     expect(
       await waitFor(() => screen.getByRole('button', { name: 'Delete' }))
+    ).toBeInTheDocument();
+  });
+
+  it('In edit mode, user can add a new tool to the report', async () => {
+    server.use(sparqlAnalysisReportSingleResult, reportResource);
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
+    const history = createMemoryHistory({});
+    const store = mockStore(mockState);
+    render(
+      <Router history={history}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <AnalysisPluginContainer
+                projectLabel="projectLabel"
+                orgLabel="orgLabel"
+                resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
+              ></AnalysisPluginContainer>
+            </NexusProvider>
+          </QueryClientProvider>
+        </Provider>
+      </Router>
+    );
+
+    await waitFor(() => {
+      const title = screen.getByText('Our Very First Analysis Report!');
+      user.click(title);
+    });
+
+    await waitFor(() => {
+      const edit = screen.getByRole('button', { name: 'editReport' });
+      user.click(edit);
+    });
+
+    await waitFor(() => {
+      const addTool = screen.getByRole('button', { name: 'Add tool' });
+      user.click(addTool);
+    });
+
+    expect(
+      await waitFor(() => screen.getByText('Script Location'))
+    ).toBeInTheDocument();
+    expect(
+      await waitFor(() => screen.getByText('How did you run the script?'))
     ).toBeInTheDocument();
   });
 });

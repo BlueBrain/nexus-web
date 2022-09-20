@@ -82,6 +82,8 @@ export const analysisUISlice = createSlice({
         currentlyBeingEditedAnalysisReportTypes: action.payload.types,
         currentlyBeingEditedAnalysisReportDescription:
           action.payload.analysisDescription,
+        currentlyBeingEditedAnalysisReportTools:
+          action.payload.tools === undefined ? [] : action.payload.tools,
       }),
     selectAsset: (state, action) => {
       state.selectedAssets = state.selectedAssets ? state.selectedAssets : [];
@@ -124,6 +126,10 @@ export const analysisUISlice = createSlice({
       updateObject(state, {
         currentlyBeingEditedAnalysisReportTypes: action.payload.types,
       }),
+    changeTools: (state, action) =>
+      updateObject(state, {
+        currentlyBeingEditedAnalysisReportTools: action.payload.tools,
+      }),
     changeScale: (state, action) =>
       updateObject(state, { imagePreviewScale: action.payload }),
     openFileUploadDialog: state =>
@@ -145,6 +151,7 @@ export const {
   changeAnalysisDescription,
   changeAnalysisCategories,
   changeAnalysisTypes,
+  changeTools,
   openFileUploadDialog,
   closeFileUploadDialog,
   changeScale,

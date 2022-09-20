@@ -20,9 +20,9 @@
 
 import './commands';
 
-export const homePage = 'http://localhost:8000/';
-export const adminSubApp = 'http://localhost:8000/admin';
-export const loginPage = 'http://localhost:8000/login';
+export const homePage = '';
+export const adminSubApp = 'admin';
+export const loginPage = 'login';
 
 export const docLink = 'https://bluebrainnexus.io/docs';
 export const reportIssueLink =
@@ -51,7 +51,7 @@ declare global {
        * @example cy.login('https://dev.nise/','notarealusername','1234')
        */
       login(
-        realm: string,
+        realm: { name: string; baseUrl: string },
         username: string,
         password: string
       ): Chainable<Element>;
