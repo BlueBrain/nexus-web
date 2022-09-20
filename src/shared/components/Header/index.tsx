@@ -37,7 +37,7 @@ const InformationContent = (props: InformationContentProps) => {
     <>
       <p>Nexus is Open Source and available under the Apache 2 License. </p>
       <p>
-        © 2017-2020
+        © 2017-2022
         <a href="https://www.epfl.ch/" target="_blank">
           <img
             style={{ width: '3em', marginBottom: 3 }}
