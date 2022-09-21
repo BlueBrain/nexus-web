@@ -4,7 +4,7 @@ import {
   EditOutlined,
   MessageOutlined,
 } from '@ant-design/icons';
-import { Button, Collapse, Input, Modal, Typography } from 'antd';
+import { Button, Collapse, Input, Modal } from 'antd';
 import { without, intersection } from 'lodash';
 import * as React from 'react';
 import { getUsername } from '../../../shared/utils';
@@ -29,7 +29,6 @@ import {
 } from '../../slices/plugins/report';
 
 const { Panel } = Collapse;
-const { Text } = Typography;
 
 import {
   AnalysisPluginProps,
@@ -37,7 +36,6 @@ import {
 } from '../../types/plugins/report';
 import Tools from './Tools';
 import ToolsEdit from './ToolsEdit';
-import Paragraph from 'antd/lib/skeleton/Paragraph';
 
 const AnalysisPlugin = ({
   analysisResourceType,
