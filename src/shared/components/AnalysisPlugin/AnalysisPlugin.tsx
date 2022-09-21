@@ -348,6 +348,7 @@ const AnalysisPlugin = ({
                               <Button
                                 type="default"
                                 title="Open discussion on report resource"
+                                aria-label="Open discussion on report resource"
                                 icon={<MessageOutlined />}
                                 style={{ background: 'transparent' }}
                                 onClick={() =>
@@ -360,7 +361,6 @@ const AnalysisPlugin = ({
                         </div>
                       </>
                     )}
-
                     <p
                       aria-label="Analysis Description"
                       style={{ width: '100%', marginRight: '50px' }}
@@ -393,7 +393,6 @@ const AnalysisPlugin = ({
                           />
                         )}
                     </p>
-
                     {mode === 'edit' && (
                       <section>
                         <CategoryEditWidget
@@ -477,7 +476,6 @@ const AnalysisPlugin = ({
                           </Button>
                         )}
                     </section>
-
                     <ReportAssets
                       mode={mode}
                       imagePreviewScale={imagePreviewScale}

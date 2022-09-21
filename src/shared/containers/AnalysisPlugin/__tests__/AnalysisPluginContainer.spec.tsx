@@ -316,6 +316,7 @@ describe('Analysis Plugin', () => {
       reportResource,
       imageResourceFile
     );
+    const user = userEvent.setup();
     const history = createMemoryHistory({});
     const store = mockStore(mockState);
     render(
@@ -334,6 +335,10 @@ describe('Analysis Plugin', () => {
       </Router>
     );
 
+    await waitFor(() => {
+      const title = screen.getByText('Our Very First Analysis Report!');
+      user.click(title);
+    });
     await waitFor(() => {
       screen.getByRole('button', {
         name: 'Go to parent resource',
@@ -367,7 +372,11 @@ describe('Analysis Plugin', () => {
       user.click(title);
     });
     expect(
-      await waitFor(() => screen.getByRole('button', { name: 'goToResource' }))
+      await waitFor(() =>
+        screen.getByRole('button', {
+          name: /Open discussion on report resource/,
+        })
+      )
     ).toBeInTheDocument();
   });
 
