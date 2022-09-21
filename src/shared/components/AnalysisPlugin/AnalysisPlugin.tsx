@@ -1,11 +1,10 @@
 import {
   LeftSquareFilled,
-  UpOutlined,
   FolderAddOutlined,
   EditOutlined,
-  LinkOutlined,
+  MessageOutlined,
 } from '@ant-design/icons';
-import { Button, Collapse, Input, Modal } from 'antd';
+import { Button, Collapse, Input, Modal, Typography } from 'antd';
 import { without, intersection } from 'lodash';
 import * as React from 'react';
 import { getUsername } from '../../../shared/utils';
@@ -30,6 +29,7 @@ import {
 } from '../../slices/plugins/report';
 
 const { Panel } = Collapse;
+const { Text } = Typography;
 
 import {
   AnalysisPluginProps,
@@ -37,6 +37,7 @@ import {
 } from '../../types/plugins/report';
 import Tools from './Tools';
 import ToolsEdit from './ToolsEdit';
+import Paragraph from 'antd/lib/skeleton/Paragraph';
 
 const AnalysisPlugin = ({
   analysisResourceType,
@@ -134,20 +135,6 @@ const AnalysisPlugin = ({
             </>
           )}
           <>
-            {analysisResourceType === 'individual_report' && containerId && (
-              <>
-                {' '}
-                <Button
-                  type="link"
-                  onClick={() => onClickRelatedResource(containerId)}
-                  style={{ padding: 0 }}
-                  aria-label="Go to parent resource"
-                >
-                  <UpOutlined /> Go to parent resource
-                </Button>
-              </>
-            )}
-
             {fileUploadModal}
             {analysisReports
               .filter(a => {
@@ -271,28 +258,109 @@ const AnalysisPlugin = ({
                     </h1>
                     {mode === 'view' && (
                       <>
-                        <section
-                          aria-label="Analysis Metadata"
-                          className="analysis-metadata"
+                        <div
+                          className="report-header"
+                          style={{ display: 'flex' }}
                         >
-                          <label>
-                            Created{' '}
-                            {analysisReport.createdAt && (
-                              <FriendlyTimeAgo
-                                date={moment(analysisReport.createdAt)}
-                              />
+                          <section
+                            aria-label="Analysis Metadata"
+                            className="analysis-metadata"
+                          >
+                            <label>
+                              Created{' '}
+                              {analysisReport.createdAt && (
+                                <FriendlyTimeAgo
+                                  date={moment(analysisReport.createdAt)}
+                                />
+                              )}
+                            </label>{' '}
+                            <label>
+                              by{' '}
+                              <span>
+                                {analysisReport.createdBy &&
+                                  getUsername(analysisReport.createdBy)}
+                              </span>
+                            </label>
+                          </section>
+                          <section
+                            className="report-actions"
+                            style={{ marginLeft: 'auto', marginRight: 0 }}
+                          >
+                            <Button
+                              type="default"
+                              aria-label="editReport"
+                              style={{ background: 'transparent' }}
+                              icon={<EditOutlined />}
+                              title="Edit report"
+                              onClick={() =>
+                                analysisReport.id &&
+                                dispatch(
+                                  editReport({
+                                    analysisId: analysisReport.id,
+                                    analaysisName: analysisReport.name,
+                                    analysisDescription:
+                                      analysisReport.description,
+                                    categories: analysisReport.categories,
+                                    types: analysisReport.types,
+                                    tools: (analysisReport.contribution?.filter(
+                                      c =>
+                                        [c.agent]
+                                          .flat()
+                                          .find(a =>
+                                            [a['@type']]
+                                              .flat()
+                                              .includes('Software')
+                                          )
+                                    ) as SoftwareContribution[])?.map(s => ({
+                                      scriptPath: s.repository,
+                                      description: s.description,
+                                    })),
+                                  })
+                                )
+                              }
+                            ></Button>
+                            {analysisResourceType === 'individual_report' &&
+                              containerId && (
+                                <>
+                                  {' '}
+                                  <Button
+                                    type="default"
+                                    onClick={() =>
+                                      onClickRelatedResource(containerId)
+                                    }
+                                    style={{
+                                      padding: '4px',
+                                      maxWidth: '230px',
+                                      overflow: 'hidden',
+                                      background: 'transparent',
+                                    }}
+                                    aria-label="Go to parent resource"
+                                  >
+                                    Navigate to{' '}
+                                    {analysisReport.containerName
+                                      ? analysisReport.containerName
+                                      : 'parent resource'}
+                                    &nbsp;&#x2197;
+                                  </Button>
+                                </>
+                              )}
+                            {analysisResourceType !== 'individual_report' && (
+                              <Button
+                                type="default"
+                                title="Open discussion on report resource"
+                                icon={<MessageOutlined />}
+                                style={{ background: 'transparent' }}
+                                onClick={() =>
+                                  analysisReport.id &&
+                                  onClickRelatedResource(analysisReport.id)
+                                }
+                              ></Button>
                             )}
-                          </label>{' '}
-                          <label>
-                            by{' '}
-                            <span>
-                              {analysisReport.createdBy &&
-                                getUsername(analysisReport.createdBy)}
-                            </span>
-                          </label>
-                        </section>
+                          </section>
+                        </div>
                       </>
                     )}
+
                     <p
                       aria-label="Analysis Description"
                       style={{ width: '100%', marginRight: '50px' }}
@@ -302,6 +370,7 @@ const AnalysisPlugin = ({
                           currentlyBeingEditedAnalysisReportId !==
                             analysisReport.id)) &&
                         analysisReport.description}
+
                       {mode === 'edit' &&
                         'id' in analysisReport &&
                         currentlyBeingEditedAnalysisReportId ===
@@ -324,6 +393,7 @@ const AnalysisPlugin = ({
                           />
                         )}
                     </p>
+
                     {mode === 'edit' && (
                       <section>
                         <CategoryEditWidget
@@ -383,58 +453,11 @@ const AnalysisPlugin = ({
                         <>
                           <Button
                             type="default"
-                            aria-label="editReport"
-                            icon={<EditOutlined />}
-                            onClick={() =>
-                              analysisReport.id &&
-                              dispatch(
-                                editReport({
-                                  analysisId: analysisReport.id,
-                                  analaysisName: analysisReport.name,
-                                  analysisDescription:
-                                    analysisReport.description,
-                                  categories: analysisReport.categories,
-                                  types: analysisReport.types,
-                                  tools: (analysisReport.contribution?.filter(
-                                    c =>
-                                      [c.agent]
-                                        .flat()
-                                        .find(a =>
-                                          [a['@type']]
-                                            .flat()
-                                            .includes('Software')
-                                        )
-                                  ) as SoftwareContribution[])?.map(s => ({
-                                    scriptPath: s.repository,
-                                    description: s.description,
-                                  })),
-                                })
-                              )
-                            }
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            type="default"
                             hidden={true}
                             onClick={() => console.log('download')}
                             icon={<LeftSquareFilled />}
                           >
                             Download
-                          </Button>
-                          <Button
-                            type="default"
-                            aria-label="goToResource"
-                            icon={<LinkOutlined />}
-                            hidden={
-                              analysisResourceType === 'individual_report'
-                            }
-                            onClick={() =>
-                              analysisReport.id &&
-                              onClickRelatedResource(analysisReport.id)
-                            }
-                          >
-                            Go to resource
                           </Button>
                         </>
                       )}
