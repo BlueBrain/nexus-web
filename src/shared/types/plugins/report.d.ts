@@ -31,7 +31,6 @@ export type AnalysisAssetSparqlQueryRowResult = {
   key: string;
   container_resource_id: string;
   container_resource_name: string;
-  container_resource_type: string;
   analysis_report_id: string;
   analysis_report_name: string;
   analysis_report_description: string;
