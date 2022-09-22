@@ -167,9 +167,19 @@ const AnalysisPlugin = ({
                         {analysisReport.name}
                         {!!analysisReport.categories &&
                           analysisReport.categories.length > 0 && (
-                            <span className="cat">
+                            <span
+                              className="cat"
+                              style={{
+                                fontWeight: 'bold',
+                              }}
+                            >
                               {analysisReport.categories.map((c, i) => (
-                                <span key={i}>{c}</span>
+                                <span
+                                  key={i}
+                                  style={{ backgroundColor: '#E6F7FF' }}
+                                >
+                                  {c}
+                                </span>
                               ))}{' '}
                             </span>
                           )}
@@ -177,7 +187,16 @@ const AnalysisPlugin = ({
                           analysisReport.types.length > 0 && (
                             <span className="types">
                               {analysisReport.types.map((t, i) => (
-                                <span key={i}>{t}</span>
+                                <span
+                                  key={i}
+                                  style={{
+                                    backgroundColor: '#F5F5F5',
+                                    borderColor: '#F5F5F5',
+                                    outline: 'none',
+                                  }}
+                                >
+                                  {t}
+                                </span>
                               ))}{' '}
                             </span>
                           )}
