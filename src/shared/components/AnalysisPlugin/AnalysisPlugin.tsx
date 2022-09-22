@@ -158,9 +158,10 @@ const AnalysisPlugin = ({
                 <Collapse
                   expandIconPosition="right"
                   key={i}
-                  style={{ marginBottom: '40px' }}
+                  style={{ marginBottom: '40px', border: '2px solid #d9d9d9' }}
                 >
                   <Panel
+                    style={{ border: 0 }}
                     key={i}
                     header={
                       <>
