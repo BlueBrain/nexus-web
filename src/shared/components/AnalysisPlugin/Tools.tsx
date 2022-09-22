@@ -74,7 +74,9 @@ const Tools = ({ tools }: ToolsProps) => {
                     >
                       How did we run our tool
                     </h4>
-                    <p style={{ color: '#262626' }}>{t.description}</p>
+                    <p style={{ color: '#262626', whiteSpace: 'pre-wrap' }}>
+                      {t.description}
+                    </p>
                   </>
                 )}
             </div>

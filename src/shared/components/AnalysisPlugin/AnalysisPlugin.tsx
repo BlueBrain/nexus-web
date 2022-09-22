@@ -361,7 +361,11 @@ const AnalysisPlugin = ({
                     )}
                     <p
                       aria-label="Analysis Description"
-                      style={{ width: '100%', marginRight: '50px' }}
+                      style={{
+                        width: '100%',
+                        marginRight: '50px',
+                        whiteSpace: 'pre-wrap',
+                      }}
                     >
                       {(mode === 'view' ||
                         ('id' in analysisReport &&
