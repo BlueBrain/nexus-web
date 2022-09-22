@@ -107,8 +107,8 @@ const AnalysisPlugin = ({
               <Button
                 type="primary"
                 className="addReportButton"
-                title="Add Analysis Report"
-                aria-label="Add Analysis Report"
+                title="Add Report"
+                aria-label="Add Report"
                 onClick={() => {
                   dispatch(addReport());
                 }}
@@ -185,7 +185,7 @@ const AnalysisPlugin = ({
                     }
                   >
                     <h1
-                      aria-label="Analysis Name"
+                      aria-label="Report Name"
                       style={{
                         display: 'flex',
                         ...(mode === 'view' && { marginBottom: '0.1em' }),
@@ -198,8 +198,8 @@ const AnalysisPlugin = ({
                           <>
                             <Input
                               type="text"
-                              placeholder="Analysis Name"
-                              aria-label="Analysis Name"
+                              placeholder="Report Name"
+                              aria-label="Report Name"
                               required={true}
                               value={currentlyBeingEditedAnalysisReportName}
                               onChange={e =>
@@ -360,7 +360,7 @@ const AnalysisPlugin = ({
                       </>
                     )}
                     <p
-                      aria-label="Analysis Description"
+                      aria-label="Report Description"
                       style={{
                         width: '100%',
                         marginRight: '50px',
@@ -378,8 +378,8 @@ const AnalysisPlugin = ({
                         currentlyBeingEditedAnalysisReportId ===
                           analysisReport.id && (
                           <Input.TextArea
-                            placeholder="Analysis Description"
-                            aria-label="Analysis Description"
+                            placeholder="Report Description"
+                            aria-label="Report Description"
                             value={
                               currentlyBeingEditedAnalysisReportDescription
                             }
