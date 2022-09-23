@@ -17,7 +17,7 @@ const Tools = ({ tools, onAddTool }: ToolsProps) => {
     [tools]
   );
 
-  if (tools === undefined || tools.length === 0)
+  if (tools === undefined || tools.length === 0) {
     return (
       <section>
         <h3>Tools</h3>
@@ -31,6 +31,7 @@ const Tools = ({ tools, onAddTool }: ToolsProps) => {
         </Button>
       </section>
     );
+  }
 
   return (
     <section>
