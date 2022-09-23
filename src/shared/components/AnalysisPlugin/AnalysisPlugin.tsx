@@ -3,6 +3,8 @@ import {
   FolderAddOutlined,
   EditOutlined,
   MessageOutlined,
+  CalendarOutlined,
+  SyncOutlined,
 } from '@ant-design/icons';
 import { Button, Collapse, Input, Modal } from 'antd';
 import { without, intersection } from 'lodash';
@@ -284,21 +286,41 @@ const AnalysisPlugin = ({
                             aria-label="Analysis Metadata"
                             className="analysis-metadata"
                           >
-                            <label>
-                              Created{' '}
-                              {analysisReport.createdAt && (
-                                <FriendlyTimeAgo
-                                  date={moment(analysisReport.createdAt)}
-                                />
-                              )}
-                            </label>{' '}
-                            <label>
-                              by{' '}
-                              <span>
+                            <span className="created">
+                              <CalendarOutlined />{' '}
+                              <span style={{ fontWeight: 'bold' }}>
                                 {analysisReport.createdBy &&
                                   getUsername(analysisReport.createdBy)}
                               </span>
-                            </label>
+                              <label>
+                                {' '}
+                                {analysisReport.createdAt && (
+                                  <FriendlyTimeAgo
+                                    date={moment(analysisReport.createdAt)}
+                                  />
+                                )}
+                              </label>
+                            </span>
+                            <span
+                              className="updated"
+                              style={{ marginLeft: '8px' }}
+                            >
+                              <span>
+                                <SyncOutlined />{' '}
+                                <span style={{ fontWeight: 'bold' }}>
+                                  {analysisReport.updatedBy &&
+                                    getUsername(analysisReport.updatedBy)}
+                                </span>
+                                <label>
+                                  {' '}
+                                  {analysisReport.updatedAt && (
+                                    <FriendlyTimeAgo
+                                      date={moment(analysisReport.updatedAt)}
+                                    />
+                                  )}
+                                </label>
+                              </span>
+                            </span>
                           </section>
                           <section
                             className="report-actions"

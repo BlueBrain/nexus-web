@@ -15,6 +15,8 @@ export const sparqlAnalysisReportNoResultsHandler = rest.post(
           'analysis_report_types',
           'created_by',
           'created_at',
+          'updated_by',
+          'updated_at',
           'self',
         ],
       },
@@ -40,6 +42,8 @@ export const sparqlAnalysisReportSingleResult = rest.post(
           'analysis_report_description',
           'created_by',
           'created_at',
+          'updated_by',
+          'updated_at',
           'self',
         ],
       },
@@ -83,6 +87,16 @@ export const sparqlAnalysisReportSingleResult = rest.post(
               value: '2022-06-17T04:14:06.357Z',
             },
             created_by: {
+              type: 'uri',
+              value:
+                'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
+            },
+            updated_at: {
+              datatype: 'http://www.w3.org/2001/XMLSchema#dateTime',
+              type: 'literal',
+              value: '2022-06-17T04:14:06.357Z',
+            },
+            updated_by: {
               type: 'uri',
               value:
                 'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
