@@ -20,7 +20,7 @@ services:
       ANALYSIS_PLUGIN_SHOW_ON_TYPES: 'Analysis,DetailedCircuit,AnalysisReport,Report'
       API_ENDPOINT: 'http://delta.test:8080/v1'
       CLIENT_ID: 'fusion'
-    image: bluebrain/nexus-web:latest
+    image: nexus-web:fresh
     expose:
       - 8000
     networks:
