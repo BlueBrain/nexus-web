@@ -379,42 +379,59 @@ const AnalysisPlugin = ({
                         </div>
                       </>
                     )}
-                    <p
-                      aria-label="Report Description"
-                      style={{
-                        width: '100%',
-                        marginRight: '50px',
-                        whiteSpace: 'pre-wrap',
-                      }}
-                    >
-                      {(mode === 'view' ||
-                        ('id' in analysisReport &&
-                          currentlyBeingEditedAnalysisReportId !==
-                            analysisReport.id)) &&
-                        analysisReport.description}
 
-                      {mode === 'edit' &&
-                        'id' in analysisReport &&
-                        currentlyBeingEditedAnalysisReportId ===
-                          analysisReport.id && (
-                          <Input.TextArea
-                            placeholder="Report Description"
-                            aria-label="Report Description"
-                            value={
-                              currentlyBeingEditedAnalysisReportDescription
-                            }
-                            rows={10}
-                            style={{ maxWidth: '900px' }}
-                            onChange={e =>
-                              dispatch(
-                                changeAnalysisDescription({
-                                  description: e.currentTarget.value,
-                                })
-                              )
-                            }
+                    {(mode === 'view' ||
+                      ('id' in analysisReport &&
+                        currentlyBeingEditedAnalysisReportId !==
+                          analysisReport.id)) &&
+                      analysisReport.description !== undefined &&
+                      analysisReport.description !== '' && (
+                        <>
+                          <hr
+                            style={{
+                              border: 0,
+                              borderTop: '1px solid #D9D9D9',
+                            }}
                           />
-                        )}
-                    </p>
+                          <p
+                            aria-label="Report Description"
+                            style={{
+                              width: '100%',
+                              marginRight: '50px',
+                              whiteSpace: 'pre-wrap',
+                            }}
+                          >
+                            {analysisReport.description}
+                          </p>
+                          <hr
+                            style={{
+                              border: 0,
+                              borderTop: '1px solid #D9D9D9',
+                            }}
+                          />
+                        </>
+                      )}
+
+                    {mode === 'edit' &&
+                      'id' in analysisReport &&
+                      currentlyBeingEditedAnalysisReportId ===
+                        analysisReport.id && (
+                        <Input.TextArea
+                          placeholder="Report Description"
+                          aria-label="Report Description"
+                          value={currentlyBeingEditedAnalysisReportDescription}
+                          rows={10}
+                          style={{ maxWidth: '900px' }}
+                          onChange={e =>
+                            dispatch(
+                              changeAnalysisDescription({
+                                description: e.currentTarget.value,
+                              })
+                            )
+                          }
+                        />
+                      )}
+
                     {mode === 'edit' && (
                       <section>
                         <CategoryEditWidget
@@ -481,7 +498,6 @@ const AnalysisPlugin = ({
                         }}
                       />
                     )}
-                    <hr style={{ border: '1px solid #D9D9D9' }} />
                     <section className="actionsPanel" aria-label="actions">
                       {mode === 'view' && (
                         <>
