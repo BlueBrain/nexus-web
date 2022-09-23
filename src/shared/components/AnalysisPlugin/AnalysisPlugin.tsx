@@ -511,6 +511,10 @@ const AnalysisPlugin = ({
                           </Button>
                         )}
                     </section>
+                    <div style={{ color: '#888888' }}>
+                      Total: {analysisReport.assets.length} assets
+                    </div>
+                    <br />
                     <ReportAssets
                       mode={mode}
                       imagePreviewScale={imagePreviewScale}
