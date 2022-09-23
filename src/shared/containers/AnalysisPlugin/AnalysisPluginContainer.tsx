@@ -148,6 +148,8 @@ const AnalysisPluginContainer = ({
           name: currentRow['analysis_report_name'],
           createdBy: currentRow['created_by'],
           createdAt: currentRow['created_at'],
+          updatedBy: currentRow['updated_by'],
+          updatedAt: currentRow['updated_at'],
           assets: [],
         });
 

@@ -18,7 +18,7 @@ export const DEFAULT_ANALYSIS_DATA_SPARQL_QUERY = `PREFIX s:<http://schema.org/>
 PREFIX prov:<http://www.w3.org/ns/prov#>
 PREFIX nsg:<https://neuroshapes.org/>
 PREFIX nxv:<https://bluebrain.github.io/nexus/vocabulary/>
-SELECT ?container_resource_id  ?container_resource_name ?analysis_report_id ?analysis_report_name ?analysis_report_description ?analysis_report_categories ?analysis_report_types ?created_by ?created_at ?self
+SELECT ?container_resource_id  ?container_resource_name ?analysis_report_id ?analysis_report_name ?analysis_report_description ?analysis_report_categories ?analysis_report_types ?created_by ?created_at ?updated_by ?updated_at ?self
 WHERE {
   OPTIONAL {
     BIND(<{resourceId}> as ?container_resource_id) .
@@ -36,6 +36,8 @@ WHERE {
     }
     ?analysis_report_id nxv:createdBy ?created_by .
     ?analysis_report_id nxv:createdAt ?created_at .
+    ?analysis_report_id nxv:updatedBy ?updated_by .
+    ?analysis_report_id nxv:updatedAt ?updated_at .
   }
   OPTIONAL {
     BIND(<{resourceId}> as ?analysis_report_id) .
@@ -53,6 +55,8 @@ WHERE {
     }
     ?analysis_report_id nxv:createdBy ?created_by .
     ?analysis_report_id nxv:createdAt ?created_at .
+    ?analysis_report_id nxv:updatedBy ?updated_by .
+    ?analysis_report_id nxv:updatedAt ?updated_at .
   }
 }
 LIMIT 1000`;

@@ -38,6 +38,8 @@ export type AnalysisAssetSparqlQueryRowResult = {
   analysis_report_types: string;
   created_by: string;
   created_at: string;
+  updated_by: string;
+  updated_at: string;
   asset_name: string;
   asset_description: string;
   asset_content_url: string;
@@ -98,6 +100,8 @@ export type AnalysisReport = {
   description?: string;
   createdBy?: string;
   createdAt?: string;
+  updatedBy?: string;
+  updatedAt?: string;
   contribution?: (SoftwareContribution | PersonContribution)[];
   assets: Asset[];
 };

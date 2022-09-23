@@ -3,6 +3,8 @@ import {
   FolderAddOutlined,
   EditOutlined,
   MessageOutlined,
+  CalendarOutlined,
+  SyncOutlined,
 } from '@ant-design/icons';
 import { Button, Collapse, Input, Modal } from 'antd';
 import { without, intersection } from 'lodash';
@@ -106,7 +108,7 @@ const AnalysisPlugin = ({
             <>
               <Button
                 type="primary"
-                className="addReportButton"
+                className="add-button add-report-button"
                 title="Add Report"
                 aria-label="Add Report"
                 onClick={() => {
@@ -284,21 +286,41 @@ const AnalysisPlugin = ({
                             aria-label="Analysis Metadata"
                             className="analysis-metadata"
                           >
-                            <label>
-                              Created{' '}
-                              {analysisReport.createdAt && (
-                                <FriendlyTimeAgo
-                                  date={moment(analysisReport.createdAt)}
-                                />
-                              )}
-                            </label>{' '}
-                            <label>
-                              by{' '}
-                              <span>
+                            <span className="created">
+                              <CalendarOutlined />{' '}
+                              <span style={{ fontWeight: 'bold' }}>
                                 {analysisReport.createdBy &&
                                   getUsername(analysisReport.createdBy)}
                               </span>
-                            </label>
+                              <label>
+                                {' '}
+                                {analysisReport.createdAt && (
+                                  <FriendlyTimeAgo
+                                    date={moment(analysisReport.createdAt)}
+                                  />
+                                )}
+                              </label>
+                            </span>
+                            <span
+                              className="updated"
+                              style={{ marginLeft: '8px' }}
+                            >
+                              <span>
+                                <SyncOutlined />{' '}
+                                <span style={{ fontWeight: 'bold' }}>
+                                  {analysisReport.updatedBy &&
+                                    getUsername(analysisReport.updatedBy)}
+                                </span>
+                                <label>
+                                  {' '}
+                                  {analysisReport.updatedAt && (
+                                    <FriendlyTimeAgo
+                                      date={moment(analysisReport.updatedAt)}
+                                    />
+                                  )}
+                                </label>
+                              </span>
+                            </span>
                           </section>
                           <section
                             className="report-actions"
@@ -379,42 +401,59 @@ const AnalysisPlugin = ({
                         </div>
                       </>
                     )}
-                    <p
-                      aria-label="Report Description"
-                      style={{
-                        width: '100%',
-                        marginRight: '50px',
-                        whiteSpace: 'pre-wrap',
-                      }}
-                    >
-                      {(mode === 'view' ||
-                        ('id' in analysisReport &&
-                          currentlyBeingEditedAnalysisReportId !==
-                            analysisReport.id)) &&
-                        analysisReport.description}
 
-                      {mode === 'edit' &&
-                        'id' in analysisReport &&
-                        currentlyBeingEditedAnalysisReportId ===
-                          analysisReport.id && (
-                          <Input.TextArea
-                            placeholder="Report Description"
-                            aria-label="Report Description"
-                            value={
-                              currentlyBeingEditedAnalysisReportDescription
-                            }
-                            rows={10}
-                            style={{ maxWidth: '900px' }}
-                            onChange={e =>
-                              dispatch(
-                                changeAnalysisDescription({
-                                  description: e.currentTarget.value,
-                                })
-                              )
-                            }
+                    {(mode === 'view' ||
+                      ('id' in analysisReport &&
+                        currentlyBeingEditedAnalysisReportId !==
+                          analysisReport.id)) &&
+                      analysisReport.description !== undefined &&
+                      analysisReport.description !== '' && (
+                        <>
+                          <hr
+                            style={{
+                              border: 0,
+                              borderTop: '1px solid #D9D9D9',
+                            }}
                           />
-                        )}
-                    </p>
+                          <p
+                            aria-label="Report Description"
+                            style={{
+                              width: '100%',
+                              marginRight: '50px',
+                              whiteSpace: 'pre-wrap',
+                            }}
+                          >
+                            {analysisReport.description}
+                          </p>
+                          <hr
+                            style={{
+                              border: 0,
+                              borderTop: '1px solid #D9D9D9',
+                            }}
+                          />
+                        </>
+                      )}
+
+                    {mode === 'edit' &&
+                      'id' in analysisReport &&
+                      currentlyBeingEditedAnalysisReportId ===
+                        analysisReport.id && (
+                        <Input.TextArea
+                          placeholder="Report Description"
+                          aria-label="Report Description"
+                          value={currentlyBeingEditedAnalysisReportDescription}
+                          rows={10}
+                          style={{ maxWidth: '900px' }}
+                          onChange={e =>
+                            dispatch(
+                              changeAnalysisDescription({
+                                description: e.currentTarget.value,
+                              })
+                            )
+                          }
+                        />
+                      )}
+
                     {mode === 'edit' && (
                       <section>
                         <CategoryEditWidget
@@ -466,9 +505,21 @@ const AnalysisPlugin = ({
                           scriptPath: s.repository,
                           description: s.description,
                         }))}
+                        onAddTool={() => {
+                          analysisReport.id &&
+                            dispatch(
+                              editReport({
+                                analysisId: analysisReport.id,
+                                analaysisName: analysisReport.name,
+                                analysisDescription: analysisReport.description,
+                                categories: analysisReport.categories,
+                                types: analysisReport.types,
+                                tools: [{ scriptPath: '', description: '' }],
+                              })
+                            );
+                        }}
                       />
                     )}
-                    <hr style={{ border: '1px solid #D9D9D9' }} />
                     <section className="actionsPanel" aria-label="actions">
                       {mode === 'view' && (
                         <>
@@ -498,6 +549,10 @@ const AnalysisPlugin = ({
                           </Button>
                         )}
                     </section>
+                    <div style={{ color: '#888888' }}>
+                      Total: {analysisReport.assets.length} assets
+                    </div>
+                    <br />
                     <ReportAssets
                       mode={mode}
                       imagePreviewScale={imagePreviewScale}
