@@ -106,7 +106,7 @@ const AnalysisPlugin = ({
             <>
               <Button
                 type="primary"
-                className="addReportButton"
+                className="add-button add-report-button"
                 title="Add Report"
                 aria-label="Add Report"
                 onClick={() => {
@@ -466,6 +466,19 @@ const AnalysisPlugin = ({
                           scriptPath: s.repository,
                           description: s.description,
                         }))}
+                        onAddTool={() => {
+                          analysisReport.id &&
+                            dispatch(
+                              editReport({
+                                analysisId: analysisReport.id,
+                                analaysisName: analysisReport.name,
+                                analysisDescription: analysisReport.description,
+                                categories: analysisReport.categories,
+                                types: analysisReport.types,
+                                tools: [{ scriptPath: '', description: '' }],
+                              })
+                            );
+                        }}
                       />
                     )}
                     <hr style={{ border: '1px solid #D9D9D9' }} />
