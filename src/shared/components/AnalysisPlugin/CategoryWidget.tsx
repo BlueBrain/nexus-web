@@ -26,7 +26,7 @@ const CategoryWidget = ({
       {availableCategories && availableCategories.length > 1 && (
         <div className="categories">
           {mode !== 'create' && <h3>Categories</h3>}
-          <p>you may select one or multiple from the list</p>
+          <p>You may select one or multiple from the list</p>
           {CATEGORIES.circuit
             .filter(o => availableCategories.includes(o))
             .map((object, i) => (

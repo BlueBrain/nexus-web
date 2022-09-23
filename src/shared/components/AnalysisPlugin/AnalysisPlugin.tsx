@@ -107,8 +107,8 @@ const AnalysisPlugin = ({
               <Button
                 type="primary"
                 className="addReportButton"
-                title="Add Analysis Report"
-                aria-label="Add Analysis Report"
+                title="Add Report"
+                aria-label="Add Report"
                 onClick={() => {
                   dispatch(addReport());
                 }}
@@ -158,18 +158,29 @@ const AnalysisPlugin = ({
                 <Collapse
                   expandIconPosition="right"
                   key={i}
-                  style={{ marginBottom: '40px' }}
+                  style={{ marginBottom: '40px', border: '2px solid #d9d9d9' }}
                 >
                   <Panel
+                    style={{ border: 0 }}
                     key={i}
                     header={
                       <>
                         {analysisReport.name}
                         {!!analysisReport.categories &&
                           analysisReport.categories.length > 0 && (
-                            <span className="cat">
+                            <span
+                              className="cat"
+                              style={{
+                                fontWeight: 'bold',
+                              }}
+                            >
                               {analysisReport.categories.map((c, i) => (
-                                <span key={i}>{c}</span>
+                                <span
+                                  key={i}
+                                  style={{ backgroundColor: '#E6F7FF' }}
+                                >
+                                  {c}
+                                </span>
                               ))}{' '}
                             </span>
                           )}
@@ -177,7 +188,16 @@ const AnalysisPlugin = ({
                           analysisReport.types.length > 0 && (
                             <span className="types">
                               {analysisReport.types.map((t, i) => (
-                                <span key={i}>{t}</span>
+                                <span
+                                  key={i}
+                                  style={{
+                                    backgroundColor: '#F5F5F5',
+                                    borderColor: '#F5F5F5',
+                                    outline: 'none',
+                                  }}
+                                >
+                                  {t}
+                                </span>
                               ))}{' '}
                             </span>
                           )}
@@ -185,7 +205,7 @@ const AnalysisPlugin = ({
                     }
                   >
                     <h1
-                      aria-label="Analysis Name"
+                      aria-label="Report Name"
                       style={{
                         display: 'flex',
                         ...(mode === 'view' && { marginBottom: '0.1em' }),
@@ -198,8 +218,8 @@ const AnalysisPlugin = ({
                           <>
                             <Input
                               type="text"
-                              placeholder="Analysis Name"
-                              aria-label="Analysis Name"
+                              placeholder="Report Name"
+                              aria-label="Report Name"
                               required={true}
                               value={currentlyBeingEditedAnalysisReportName}
                               onChange={e =>
@@ -360,8 +380,12 @@ const AnalysisPlugin = ({
                       </>
                     )}
                     <p
-                      aria-label="Analysis Description"
-                      style={{ width: '100%', marginRight: '50px' }}
+                      aria-label="Report Description"
+                      style={{
+                        width: '100%',
+                        marginRight: '50px',
+                        whiteSpace: 'pre-wrap',
+                      }}
                     >
                       {(mode === 'view' ||
                         ('id' in analysisReport &&
@@ -374,8 +398,8 @@ const AnalysisPlugin = ({
                         currentlyBeingEditedAnalysisReportId ===
                           analysisReport.id && (
                           <Input.TextArea
-                            placeholder="Analysis Description"
-                            aria-label="Analysis Description"
+                            placeholder="Report Description"
+                            aria-label="Report Description"
                             value={
                               currentlyBeingEditedAnalysisReportDescription
                             }

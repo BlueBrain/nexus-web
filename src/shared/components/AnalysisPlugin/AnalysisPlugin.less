@@ -28,14 +28,10 @@
     float: right;
     background: #1890ff !important;
     border-radius: 4px;
-    box-sizing: border-box;
-    padding: 12px 17px;
     gap: 10px;
-    width: 176.4px;
-    height: 48px;
   }
   .ant-collapse {
-    margin-bottom: 0px !important;
+    margin-bottom: -2px !important;
   }
   .ant-collapse-header {
     text-align: left;
@@ -86,6 +82,27 @@
     span.types {
       font-weight: 300;
     }
+  }
+  .ant-collapse-item {
+    border-top: 0;
+  }
+  .ant-collapse-item {
+    .ant-collapse-content.ant-collapse-content-active,
+    .ant-collapse-content-inactive {
+      border-top: 0;
+    }
+  }
+  .ant-collapse-header {
+    border: 0;
+  }
+  .ant-collapse-icon-position-right
+    > .ant-collapse-item
+    > .ant-collapse-header
+    .ant-collapse-arrow,
+  .anticon.anticon-right.ant-collapse-arrow {
+    top: 50%;
+    margin-top: -6px; // half height of icon
+    padding: 0;
   }
   .zoom-control {
     padding: 0px 15px;

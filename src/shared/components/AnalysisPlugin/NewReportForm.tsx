@@ -60,11 +60,11 @@ const NewReportForm = ({
         <Input
           placeholder="type name here"
           type="text"
-          aria-label="Analysis Name"
+          aria-label="Report Name"
         />
       </Form.Item>
       <Form.Item label="2. Report Description" name="description">
-        <TextArea rows={10} aria-label="Analysis Description" />
+        <TextArea rows={10} aria-label="Report Description" />
       </Form.Item>
       <Form.Item label="3. Categories" aria-label="Analysis Categories">
         <CategoryWidget

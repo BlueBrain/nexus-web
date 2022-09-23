@@ -23,7 +23,7 @@ const TypeWidget = ({
       {availableTypes && availableTypes.length > 1 && (
         <div className="types">
           {mode !== 'create' && <h3>Types</h3>}
-          <p>you may select one or multiple from the list</p>
+          <p>You may select one or multiple from the list</p>
           {TYPES.filter(o => availableTypes.includes(o)).map((object, i) => (
             <Button
               key={i}

@@ -71,12 +71,12 @@ describe('Analysis Plugin', () => {
       }/resources/${encodeURIComponent(this.fullResourceId)}`
     );
     // Open anlaysis plugin
-    cy.findByRole('button', { name: /Analysis/i }).click();
-    cy.findByRole('button', { name: /Add Analysis Report/i }).click();
-    cy.findByRole('textbox', { name: 'Analysis Name' }).type(
+    cy.findByRole('button', { name: /Report/i }).click();
+    cy.findByRole('button', { name: /Add Report/i }).click();
+    cy.findByRole('textbox', { name: 'Report Name' }).type(
       'Cell density O1.v6-RC2'
     );
-    cy.findByRole('textbox', { name: 'Analysis Description' }).type(
+    cy.findByRole('textbox', { name: 'Report Description' }).type(
       'This is where we can add a nice long description relating to why my analysis is better than yours.'
     );
     // cy.get('div.categories')
@@ -120,13 +120,13 @@ describe('Analysis Plugin', () => {
     );
     cy.url().then(url => cy.task('log', url));
     // Open anlaysis plugin
-    cy.findByRole('button', { name: /Analysis/i }).click();
+    cy.findByRole('button', { name: /Report/i }).click();
 
     // cy.findByText(/Cell density O1.v6-RC2/i).click();
     // cy.findByRole('button', { name: /Edit/ }).click();
 
-    // cy.findByRole('textbox', { name: 'Analysis Name' }).type('-v2');
-    // cy.findByRole('textbox', { name: 'Analysis Description' }).type('-v2');
+    // cy.findByRole('textbox', { name: 'Report Name' }).type('-v2');
+    // cy.findByRole('textbox', { name: 'Report Description' }).type('-v2');
     // cy.screenshot('updated-text');
     // cy.findByRole('button', { name: 'Add Files to Analysis' }).click();
     // cy.findByText(/Drag and drop files/i).click();
@@ -137,12 +137,12 @@ describe('Analysis Plugin', () => {
     // cy.findByRole('button', { name: 'Close' }).click();
     // cy.findByRole('button', { name: 'Save' }).click();
     // cy.screenshot('save-updated-report');
-    // cy.findByRole('heading', { name: /Analysis Name/i }).should(
+    // cy.findByRole('heading', { name: /Report Name/i }).should(
     //   'have.text',
     //   'Cell density O1.v6-RC2-v2'
     // );
     // cy.screenshot('updated-report-saved');
-    // cy.findByLabelText('Analysis Description').should('contain', '-v2');
+    // cy.findByLabelText('Report Description').should('contain', '-v2');
     // cy.findAllByLabelText('Analysis File').should('have.length', 3);
   });
 
@@ -187,7 +187,7 @@ describe('Analysis Plugin', () => {
       }/resources/${encodeURIComponent(this.fullResourceId)}`
     );
     // Open anlaysis plugin
-    cy.findByRole('button', { name: /Analysis/i }).click();
+    cy.findByRole('button', { name: /Report/i }).click();
     cy.wait(5000);
     // cy.findByText(/Cell density O1.v6-RC2-V2/i).click();
     // cy.findByRole('listitem', { name: /sample_pdf/ })

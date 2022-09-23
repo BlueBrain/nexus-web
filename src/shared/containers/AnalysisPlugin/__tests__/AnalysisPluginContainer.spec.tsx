@@ -87,7 +87,7 @@ describe('Analysis Plugin', () => {
 
     await waitFor(() => {
       const addButton = screen.getByRole('button', {
-        name: 'Add Analysis Report',
+        name: 'Add Report',
       });
       expect(addButton).toBeInTheDocument();
     });
@@ -116,12 +116,12 @@ describe('Analysis Plugin', () => {
 
     await waitFor(() => {
       screen.getByRole('button', {
-        name: 'Add Analysis Report',
+        name: 'Add Report',
       });
     });
 
     const addButton = await screen.findByRole('button', {
-      name: 'Add Analysis Report',
+      name: 'Add Report',
     });
     user.click(addButton);
 
@@ -134,14 +134,12 @@ describe('Analysis Plugin', () => {
     ).toBeInTheDocument();
 
     expect(
-      await waitFor(() =>
-        screen.getByRole('textbox', { name: 'Analysis Name' })
-      )
+      await waitFor(() => screen.getByRole('textbox', { name: 'Report Name' }))
     ).toBeInTheDocument();
 
     expect(
       await waitFor(() =>
-        screen.getByRole('textbox', { name: 'Analysis Description' })
+        screen.getByRole('textbox', { name: 'Report Description' })
       )
     ).toBeInTheDocument();
 
@@ -189,12 +187,12 @@ describe('Analysis Plugin', () => {
 
     await waitFor(() => {
       screen.getByRole('button', {
-        name: 'Add Analysis Report',
+        name: 'Add Report',
       });
     });
 
     const addButton = await screen.findByRole('button', {
-      name: 'Add Analysis Report',
+      name: 'Add Report',
     });
     user.click(addButton);
 
@@ -206,7 +204,7 @@ describe('Analysis Plugin', () => {
     expect(
       await waitFor(() =>
         screen.getByRole('button', {
-          name: 'Add Analysis Report',
+          name: 'Add Report',
         })
       )
     ).toBeInTheDocument();
@@ -238,26 +236,26 @@ describe('Analysis Plugin', () => {
 
     await waitFor(() =>
       screen.getByRole('button', {
-        name: 'Add Analysis Report',
+        name: 'Add Report',
       })
     );
 
     const addButton = await screen.findByRole('button', {
-      name: 'Add Analysis Report',
+      name: 'Add Report',
     });
     user.click(addButton);
 
     const analysisNameTextBox = await waitFor(() =>
-      screen.getByRole('textbox', { name: 'Analysis Name' })
+      screen.getByRole('textbox', { name: 'Report Name' })
     );
 
-    user.type(analysisNameTextBox, 'New analysis name');
+    user.type(analysisNameTextBox, 'New Report Name');
 
     const analysisDescriptionTextBox = await waitFor(() =>
-      screen.getByRole('textbox', { name: 'Analysis Description' })
+      screen.getByRole('textbox', { name: 'Report Description' })
     );
 
-    user.type(analysisDescriptionTextBox, 'New analysis description');
+    user.type(analysisDescriptionTextBox, 'New Report Description');
 
     const saveBtn = await waitFor(() =>
       screen.getByRole('button', { name: 'Save' })
@@ -289,12 +287,12 @@ describe('Analysis Plugin', () => {
 
     await waitFor(() => {
       screen.getByRole('button', {
-        name: 'Add Analysis Report',
+        name: 'Add Report',
       });
     });
 
     const addButton = await screen.findByRole('button', {
-      name: 'Add Analysis Report',
+      name: 'Add Report',
     });
     user.click(addButton);
 
@@ -305,7 +303,7 @@ describe('Analysis Plugin', () => {
 
     await waitFor(() => {
       screen.getByRole('button', {
-        name: 'Add Analysis Report',
+        name: 'Add Report',
       });
     });
   });
