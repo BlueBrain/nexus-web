@@ -24,23 +24,25 @@ const CategoryWidget = ({
   return (
     <>
       {availableCategories && availableCategories.length > 1 && (
-        <div className="categories">
+        <div className="categories-filter">
           {mode !== 'create' && <h3>Categories</h3>}
           <p>You may select one or multiple from the list</p>
-          {CATEGORIES.circuit
-            .filter(o => availableCategories.includes(o))
-            .map((object, i) => (
-              <Button
-                key={i}
-                type="default"
-                onClick={() => selectCategory(object)}
-                className={`group-buttons ${
-                  selectedCategories.includes(object) ? 'active' : ''
-                }`}
-              >
-                <h5>{object}</h5>
-              </Button>
-            ))}
+          <div className="categories">
+            {CATEGORIES.circuit
+              .filter(o => availableCategories.includes(o))
+              .map((object, i) => (
+                <Button
+                  key={i}
+                  type="default"
+                  onClick={() => selectCategory(object)}
+                  className={`group-buttons ${
+                    selectedCategories.includes(object) ? 'active' : ''
+                  }`}
+                >
+                  {object}
+                </Button>
+              ))}
+          </div>
         </div>
       )}
     </>

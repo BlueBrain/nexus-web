@@ -21,7 +21,7 @@ const TypeWidget = ({
   return (
     <>
       {availableTypes && availableTypes.length > 1 && (
-        <div className="types">
+        <div className="types-filter">
           {mode !== 'create' && <h3>Types</h3>}
           <p>You may select one or multiple from the list</p>
           {TYPES.filter(o => availableTypes.includes(o)).map((object, i) => (
@@ -33,7 +33,7 @@ const TypeWidget = ({
                 selectedTypes.includes(object) ? 'active' : ''
               }`}
             >
-              <h5>{object}</h5>
+              {object}
             </Button>
           ))}
         </div>
