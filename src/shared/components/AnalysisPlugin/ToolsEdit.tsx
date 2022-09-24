@@ -1,4 +1,8 @@
-import { InfoCircleOutlined } from '@ant-design/icons';
+import {
+  CloseCircleOutlined,
+  InfoCircleOutlined,
+  PlusCircleOutlined,
+} from '@ant-design/icons';
 import { Button, Input, Tooltip } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import * as React from 'react';
@@ -71,13 +75,14 @@ const ToolsEdit = ({ tools, onUpdateTools }: ToolsEditProps) => {
             </div>
             <div style={{ width: '100%', display: 'flex' }}>
               <Button
+                type="link"
+                style={{ marginRight: 0, marginLeft: 'auto', paddingRight: 0 }}
                 onClick={e => {
                   e.preventDefault();
                   onUpdateTools(tools.filter((r, ix2) => ix !== ix2));
                 }}
-                style={{ margin: '4px 0 0 auto' }}
               >
-                Remove Tool
+                <CloseCircleOutlined /> Remove
               </Button>
             </div>
           </li>
@@ -86,15 +91,14 @@ const ToolsEdit = ({ tools, onUpdateTools }: ToolsEditProps) => {
       <Button
         aria-label="Add tool"
         type="primary"
-        htmlType="submit"
-        className="add-button"
-        size="middle"
+        size="small"
         onClick={e => {
           e.preventDefault();
           onUpdateTools([...tools, { scriptPath: '', description: '' }]);
         }}
       >
-        Add
+        <PlusCircleOutlined />
+        Add Tool
       </Button>
     </div>
   );

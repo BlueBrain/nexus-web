@@ -27,12 +27,17 @@
   .add-button {
     background: #1890ff !important;
     border-radius: 4px;
-    gap: 10px;
   }
   .add-report-button {
     margin-right: 0;
     margin-left: auto;
     display: flex;
+    span {
+      line-height: 1.5715;
+      &[role='img'] {
+        margin-top: 2px;
+      }
+    }
   }
   .ant-collapse {
     margin-bottom: -2px !important;
@@ -66,6 +71,11 @@
     span.cat > span {
       background: #f5f5f5;
     }
+
+    .types-filter {
+      background-color: #002766;
+    }
+
     span.types > span {
       outline: 1px solid #bae7ff;
     }
