@@ -35,7 +35,7 @@ const Tools = ({ tools, onAddTool }: ToolsProps) => {
 
   return (
     <section>
-      <h3>Tools</h3>
+      <h3 style={{ marginTop: '10px', color: '#003A8C' }}>Tools</h3>
       <ul style={{ padding: 0 }}>
         {tools.map((t, ix) => (
           <li

@@ -21,8 +21,9 @@ const TypesEditWidget = ({
     <>
       {TYPES && TYPES.length > 0 && (
         <div style={{ margin: '20px 0' }} className={'typeEdits'}>
+          <h4 style={{ marginTop: '10px', color: '#003A8C' }}>Report Type</h4>
           <Form layout={'vertical'}>
-            <Form.Item label="Report Type" aria-label="Analysis Types">
+            <Form.Item label="" aria-label="Analysis Types">
               {current && (
                 <Radio.Group
                   options={TYPES}
