@@ -206,76 +206,78 @@ const AnalysisPlugin = ({
                       </>
                     }
                   >
-                    <h1
-                      aria-label="Report Name"
-                      style={{
-                        display: 'flex',
-                        ...(mode === 'view' && { marginBottom: '0.1em' }),
-                      }}
-                    >
-                      {mode === 'edit' &&
-                        'id' in analysisReport &&
-                        currentlyBeingEditedAnalysisReportId ===
-                          analysisReport.id && (
-                          <>
-                            <Input
-                              type="text"
-                              placeholder="Report Name"
-                              aria-label="Report Name"
-                              required={true}
-                              value={currentlyBeingEditedAnalysisReportName}
-                              onChange={e =>
+                    {mode === 'edit' &&
+                      'id' in analysisReport &&
+                      currentlyBeingEditedAnalysisReportId ===
+                        analysisReport.id && (
+                        <div style={{ display: 'flex' }}>
+                          <div
+                            className="actions"
+                            style={{
+                              marginLeft: 'auto',
+                              marginRight: '20px',
+                            }}
+                          >
+                            <Button
+                              style={{ marginRight: '10px' }}
+                              type="default"
+                              aria-label="Cancel"
+                              onClick={() =>
                                 dispatch(
-                                  changeAnalysisName({ name: e.target.value })
+                                  initialize({
+                                    scale: imagePreviewScale,
+                                    analysisReportId: analysisReport.id
+                                      ? [analysisReport.id]
+                                      : [],
+                                  })
                                 )
                               }
-                              style={{ maxWidth: '900px' }}
-                            />
-                            <div
-                              className="actions"
-                              style={{
-                                marginLeft: 'auto',
-                                marginRight: '20px',
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              type="primary"
+                              aria-label="Save"
+                              onClick={() => {
+                                currentlyBeingEditedAnalysisReportName &&
+                                  onSave(
+                                    currentlyBeingEditedAnalysisReportName,
+                                    currentlyBeingEditedAnalysisReportDescription,
+                                    analysisReport.id,
+                                    currentlyBeingEditedAnalysisReportCategories,
+                                    currentlyBeingEditedAnalysisReportTypes,
+                                    currentlyBeingEditedAnalysisReportTools
+                                  );
                               }}
                             >
-                              <Button
-                                style={{ marginRight: '10px' }}
-                                type="default"
-                                aria-label="Cancel"
-                                onClick={() =>
-                                  dispatch(
-                                    initialize({
-                                      scale: imagePreviewScale,
-                                      analysisReportId: analysisReport.id
-                                        ? [analysisReport.id]
-                                        : [],
-                                    })
-                                  )
-                                }
-                              >
-                                Cancel
-                              </Button>
-                              <Button
-                                type="primary"
-                                aria-label="Save"
-                                onClick={() => {
-                                  currentlyBeingEditedAnalysisReportName &&
-                                    onSave(
-                                      currentlyBeingEditedAnalysisReportName,
-                                      currentlyBeingEditedAnalysisReportDescription,
-                                      analysisReport.id,
-                                      currentlyBeingEditedAnalysisReportCategories,
-                                      currentlyBeingEditedAnalysisReportTypes,
-                                      currentlyBeingEditedAnalysisReportTools
-                                    );
-                                }}
-                              >
-                                Save
-                              </Button>
-                            </div>
-                          </>
-                        )}
-                    </h1>
+                              Save
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    {mode === 'edit' &&
+                      'id' in analysisReport &&
+                      currentlyBeingEditedAnalysisReportId ===
+                        analysisReport.id && (
+                        <>
+                          <h4 style={{ marginTop: '10px', color: '#003A8C' }}>
+                            Name
+                          </h4>
+                          <Input
+                            type="text"
+                            placeholder="Report Name"
+                            aria-label="Report Name"
+                            required={true}
+                            value={currentlyBeingEditedAnalysisReportName}
+                            onChange={e =>
+                              dispatch(
+                                changeAnalysisName({ name: e.target.value })
+                              )
+                            }
+                            style={{ maxWidth: '900px' }}
+                          />
+                        </>
+                      )}
                     {mode === 'view' && (
                       <>
                         <div
@@ -438,20 +440,27 @@ const AnalysisPlugin = ({
                       'id' in analysisReport &&
                       currentlyBeingEditedAnalysisReportId ===
                         analysisReport.id && (
-                        <Input.TextArea
-                          placeholder="Report Description"
-                          aria-label="Report Description"
-                          value={currentlyBeingEditedAnalysisReportDescription}
-                          rows={10}
-                          style={{ maxWidth: '900px' }}
-                          onChange={e =>
-                            dispatch(
-                              changeAnalysisDescription({
-                                description: e.currentTarget.value,
-                              })
-                            )
-                          }
-                        />
+                        <>
+                          <h4 style={{ marginTop: '10px', color: '#003A8C' }}>
+                            Description
+                          </h4>
+                          <Input.TextArea
+                            placeholder="Report Description"
+                            aria-label="Report Description"
+                            value={
+                              currentlyBeingEditedAnalysisReportDescription
+                            }
+                            rows={10}
+                            style={{ maxWidth: '900px' }}
+                            onChange={e =>
+                              dispatch(
+                                changeAnalysisDescription({
+                                  description: e.currentTarget.value,
+                                })
+                              )
+                            }
+                          />
+                        </>
                       )}
 
                     {mode === 'edit' && (
@@ -477,7 +486,7 @@ const AnalysisPlugin = ({
                             fontWeight: 500,
                             fontSize: '14px',
                             lineHeight: '136%',
-                            color: '#bfbfbf',
+                            color: '#003A8C',
                           }}
                         >
                           Tools

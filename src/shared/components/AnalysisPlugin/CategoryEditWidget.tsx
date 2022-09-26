@@ -20,8 +20,9 @@ const CategoryEditWidget = ({
     <>
       {CATEGORIES.circuit && CATEGORIES.circuit.length > 0 && (
         <div style={{ margin: '20px 0' }} className={'categoryEdits'}>
+          <h4 style={{ marginTop: '10px', color: '#003A8C' }}>Categories</h4>
           <Form layout={'vertical'}>
-            <Form.Item label="Categories" aria-label="Analysis Categories">
+            <Form.Item label="" aria-label="Analysis Categories">
               <Select
                 mode="multiple"
                 placeholder="Inserted are removed"

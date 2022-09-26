@@ -53,7 +53,6 @@ export const analysisUISlice = createSlice({
     initialize: (state, action) =>
       updateObject(state, {
         mode: 'view',
-        analysisResourceType: 'report_container',
         hasInitializedSelectedReports: true,
         selectedAnalysisReports: action.payload.analysisReportId,
         imagePreviewScale: action.payload.scale,
