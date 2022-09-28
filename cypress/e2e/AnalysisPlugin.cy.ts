@@ -219,8 +219,7 @@ describe('Report (formerly Analysis) Plugin', () => {
     cy.wait(3000);
     cy.findByRole('textbox', { name: 'Report Name' }).type('-v3');
     cy.findByRole('button', { name: 'Save' }).click();
-    cy.screenshot('saving-report-on-the-very-resource');
+    cy.wait(3000);
     expect(cy.findByText(/-v3/)).to.exist;
-    cy.wait(5000);
   });
 });
