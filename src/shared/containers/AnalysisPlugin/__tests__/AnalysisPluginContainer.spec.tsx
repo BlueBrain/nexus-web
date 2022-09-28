@@ -519,7 +519,7 @@ describe('Analysis Plugin', () => {
     });
 
     await waitFor(() => {
-      const edit = screen.getByRole('button', { name: 'editReport' });
+      const edit = screen.getByRole('button', { name: 'Edit Report' });
       user.click(edit);
     });
 
@@ -560,7 +560,7 @@ describe('Analysis Plugin', () => {
     });
 
     await waitFor(() => {
-      const edit = screen.getByRole('button', { name: 'editReport' });
+      const edit = screen.getByRole('button', { name: 'Edit Report' });
       user.click(edit);
     });
 
