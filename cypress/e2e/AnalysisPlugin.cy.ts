@@ -103,7 +103,7 @@ describe('Report (formerly Analysis) Plugin', () => {
       }/resources/${encodeURIComponent(this.fullResourceId)}`
     );
     cy.url().then(url => cy.task('log', url));
-    // Open anlaysis plugin
+    // Open report plugin
     cy.findByRole('button', { name: /Report/i }).click();
 
     cy.findByText(/Cell density O1.v6-RC2/i).click();
@@ -194,5 +194,33 @@ describe('Report (formerly Analysis) Plugin', () => {
     cy.findByRole('textbox', { name: 'Asset Description' }).type(
       'This is the asset description'
     );
+  });
+
+  it('user can navigate to report resource and update it directly on the resource', function() {
+    cy.visit(
+      `${Cypress.env('ORG_LABEL')}/${
+        this.projectLabel
+      }/resources/${encodeURIComponent(this.fullResourceId)}`
+    );
+    // Open report plugin
+    cy.findByRole('button', { name: /Report/i }).click();
+    cy.get('.analysis')
+      .findByText(/Cell density O1.v6-RC2-v2/i)
+      .click();
+
+    cy.findByRole('button', {
+      name: /Open discussion on report resource/,
+    }).click();
+    cy.wait(3000);
+    cy.get('.analysis')
+      .findByText(/Cell density O1.v6-RC2-v2/i)
+      .click();
+    cy.findByRole('button', { name: /Edit/ }).click();
+    cy.wait(3000);
+    cy.findByRole('textbox', { name: 'Report Name' }).type('-v3');
+    cy.findByRole('button', { name: 'Save' }).click();
+    cy.screenshot('saving-report-on-the-very-resource');
+    expect(cy.findByText(/-v3/)).to.exist;
+    cy.wait(5000);
   });
 });
