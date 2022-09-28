@@ -330,7 +330,7 @@ const AnalysisPlugin = ({
                           >
                             <Button
                               type="default"
-                              aria-label="editReport"
+                              aria-label="Edit Report"
                               style={{ background: 'transparent' }}
                               icon={<EditOutlined />}
                               title="Edit report"

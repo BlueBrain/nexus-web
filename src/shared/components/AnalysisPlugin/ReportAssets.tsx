@@ -17,7 +17,7 @@ const ReportAssets = ({
   currentlyBeingEditedAnalysisReportId,
 }: ReportAssetProps) => {
   return (
-    <section aria-label="Analysis Assets" className="assets">
+    <section aria-label="Report Assets" className="assets">
       {((mode === 'create' && analysisReport.id === undefined) ||
         (mode === 'edit' &&
           'id' in analysisReport &&
@@ -28,7 +28,7 @@ const ReportAssets = ({
             style={{ marginLeft: 'auto', marginBottom: '10px' }}
             onClick={() => dispatch(openFileUploadDialog())}
           >
-            Add Files to Analysis
+            Add Files to Report
           </Button>
         </div>
       )}
@@ -47,7 +47,7 @@ const ReportAssets = ({
               aria-label={asset.name !== '' ? asset.name : asset.filename}
             >
               <div
-                aria-label="Analysis File"
+                aria-label="Report File"
                 className={`asset ${
                   selectedAssets &&
                   selectedAssets.findIndex(v => v === asset.id) > -1

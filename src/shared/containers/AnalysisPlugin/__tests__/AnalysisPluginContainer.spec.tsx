@@ -524,7 +524,7 @@ describe('Analysis Plugin', () => {
     });
 
     const analysisFile = await waitFor(
-      () => screen.getAllByLabelText('Analysis File')[0]
+      () => screen.getAllByLabelText('Report File')[0]
     );
     user.click(analysisFile);
 
