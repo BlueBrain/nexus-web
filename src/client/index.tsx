@@ -25,6 +25,7 @@ import configureStore from '../shared/store';
 import { RootState } from '../shared/store/reducers';
 import { fetchIdentities, fetchRealms } from '../shared/store/actions/auth';
 import { SEARCH_PREFENCE_LOCAL_STORAGE_KEY } from '../shared/store/actions/search';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 // The app base URL
 const rawBase: string = (window as any)['__BASE__'] || '/';
@@ -86,6 +87,9 @@ const nexus = createNexusClient({
   uri: preloadedState.config.apiEndpoint,
   links: [setToken],
 });
+
+// create react-query client
+const queryClient = new QueryClient();
 
 // create redux store
 const store = configureStore(history, { nexus }, initialState);
@@ -171,11 +175,13 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
 const renderApp = () => {
   return ReactDOM.hydrate(
     <Provider store={store}>
-      <ConnectedRouter history={history}>
-        <NexusProvider nexusClient={nexus}>
-          <App />
-        </NexusProvider>
-      </ConnectedRouter>
+      <QueryClientProvider client={queryClient}>
+        <ConnectedRouter history={history}>
+          <NexusProvider nexusClient={nexus}>
+            <App />
+          </NexusProvider>
+        </ConnectedRouter>
+      </QueryClientProvider>
     </Provider>,
     document.getElementById('app')
   );

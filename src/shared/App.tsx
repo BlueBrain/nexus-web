@@ -6,7 +6,6 @@ import FusionMainLayout from './layouts/FusionMainLayout';
 import SubAppsView from './views/SubAppsView';
 import useSubApps from './hooks/useSubApps';
 import useDataCart, { CartContext, CartType } from './hooks/useDataCart';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import './App.less';
 import {
   getNotificationContextValue,
@@ -19,7 +18,7 @@ const App: React.FC = () => {
   // TODO log the error in to sentry.
   const { subAppProps, subAppRoutes, subAppError } = useSubApps();
   const cartData: CartType = useDataCart();
-  const queryClient = new QueryClient();
+
   const notificationData: NotificationContextType = getNotificationContextValue();
 
   // Apply Subapp routes
@@ -28,13 +27,11 @@ const App: React.FC = () => {
   return (
     <CartContext.Provider value={cartData}>
       <NotificationContext.Provider value={notificationData}>
-        <QueryClientProvider client={queryClient}>
-          <ReactQueryDevtools initialIsOpen={false} />
-          <FusionMainLayout subApps={subAppProps}>
-            <SubAppsView routesWithSubApps={routesWithSubApps} />
-            <GalleryView />
-          </FusionMainLayout>
-        </QueryClientProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
+        <FusionMainLayout subApps={subAppProps}>
+          <SubAppsView routesWithSubApps={routesWithSubApps} />
+          <GalleryView />
+        </FusionMainLayout>
       </NotificationContext.Provider>
     </CartContext.Provider>
   );

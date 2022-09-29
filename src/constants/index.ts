@@ -12,7 +12,7 @@ export const REPORT_CATEGORIES = {
   simulation: ['Spiking', 'Soma voltage', 'LFP', 'VSD', 'Plasticity'],
 };
 
-export const REPORT_TYPES = ['Validation', 'Prediction', 'Analysis'];
+export const REPORT_TYPES = ['Validation', 'Analysis'];
 
 export const DEFAULT_ANALYSIS_DATA_SPARQL_QUERY = `PREFIX s:<http://schema.org/>
 PREFIX prov:<http://www.w3.org/ns/prov#>
