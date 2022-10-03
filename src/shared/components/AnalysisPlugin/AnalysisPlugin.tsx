@@ -64,6 +64,8 @@ const AnalysisPlugin = ({
     []
   );
   const [selectedTypes, setSelectedTypes] = React.useState<string[]>([]);
+  const defaultactivekey =
+    analysisResourceType === 'individual_report' ? '0' : -1;
 
   const selectCategory = (value: string) => {
     !selectedCategories.includes(value)
@@ -160,9 +162,13 @@ const AnalysisPlugin = ({
               })
               .map((analysisReport, i) => (
                 <Collapse
+                  defaultActiveKey={defaultactivekey}
                   expandIconPosition="right"
                   key={i}
-                  style={{ marginBottom: '40px', border: '2px solid #d9d9d9' }}
+                  style={{
+                    marginBottom: '40px',
+                    border: '2px solid #d9d9d9',
+                  }}
                 >
                   <Panel
                     style={{ border: 0 }}
