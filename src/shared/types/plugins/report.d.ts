@@ -103,6 +103,7 @@ export type AnalysisReport = {
   updatedBy?: string;
   updatedAt?: string;
   contribution?: (SoftwareContribution | PersonContribution)[];
+  revision?: number;
   assets: Asset[];
 };
 
