@@ -100,7 +100,7 @@ const NewReportForm = ({
         </div>
         {FileUpload()}
       </Form.Item>
-      <Form.Item label="6. Report Generation">
+      <Form.Item label="6. Tools">
         <ToolsEdit
           tools={reportGeneration}
           onUpdateTools={tools => setReportGeneration(tools)}
