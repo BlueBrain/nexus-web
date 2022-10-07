@@ -156,7 +156,7 @@ describe('Analysis Plugin', () => {
     ).toBeInTheDocument();
 
     expect(
-      await waitFor(() => screen.getByText('6. Report Generation'))
+      await waitFor(() => screen.getByText('6. Tools'))
     ).toBeInTheDocument();
 
     expect(

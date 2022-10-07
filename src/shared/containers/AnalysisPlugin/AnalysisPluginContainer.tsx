@@ -29,6 +29,7 @@ import {
   AnalysisAssetSparqlQueryRowResult,
   ReportGeneration,
 } from '../../types/plugins/report';
+import useNotification from '../../../shared/hooks/useNotification';
 
 async function fetchImageObjectUrl(
   nexus: NexusClient,
@@ -56,6 +57,7 @@ const AnalysisPluginContainer = ({
   projectLabel,
   resourceId,
 }: AnalysisPluginContainerProps) => {
+  const notification = useNotification();
   const identities = useSelector((state: RootState) => state.auth.identities);
   const currentUser = identities?.data?.identities.find(
     id => id['@type'] === 'User'
@@ -164,6 +166,8 @@ const AnalysisPluginContainer = ({
         );
 
         if (reportResource === undefined) return analysisReports;
+
+        analysisReports[reportIx].revision = reportResource._rev;
 
         if ('contribution' in reportResource) {
           analysisReports[reportIx].contribution = [
@@ -333,7 +337,7 @@ const AnalysisPluginContainer = ({
       title: string;
       caption: string;
     }) => {
-      const resource = (await nexus.Resource.get(
+      const resource = (await nexus.Resource.getSource(
         orgLabel,
         projectLabel,
         encodeURIComponent(data.resourceId)
@@ -366,11 +370,18 @@ const AnalysisPluginContainer = ({
       }
       resource['contribution'] = contributions;
 
+      // TODO: maintain current revision with asset rather than fetching anew
+      const { _rev } = (await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(data.resourceId)
+      )) as Resource;
+
       return nexus.Resource.update(
         orgLabel,
         projectLabel,
         encodeURIComponent(data.resourceId),
-        resource._rev,
+        _rev,
         resource
       );
     },
@@ -409,7 +420,7 @@ const AnalysisPluginContainer = ({
       });
 
       if (data.id) {
-        const resource = (await nexus.Resource.get(
+        const resource = (await nexus.Resource.getSource(
           orgLabel,
           projectLabel,
           encodeURIComponent(data.id)
@@ -450,11 +461,22 @@ const AnalysisPluginContainer = ({
         }
 
         resource['contribution'] = contributions;
+
+        const existingReport = analysisData?.find(r => r.id === data.id);
+        if (
+          existingReport === undefined ||
+          existingReport.revision === undefined
+        ) {
+          throw new Error(
+            'Existing report not found, unable to save. Try reloading'
+          );
+        }
+
         return nexus.Resource.update(
           orgLabel,
           projectLabel,
           encodeURIComponent(data.id),
-          resource['_rev'],
+          existingReport.revision,
           {
             ...resource,
             name: data.name,
@@ -526,7 +548,7 @@ const AnalysisPluginContainer = ({
         );
         // TODO: update report contributors
         if (currentlyBeingEditedAnalysisReportId) {
-          const reportResource = (await nexus.Resource.get(
+          const reportResource = (await nexus.Resource.getSource(
             orgLabel,
             projectLabel,
             encodeURIComponent(currentlyBeingEditedAnalysisReportId)
@@ -549,12 +571,23 @@ const AnalysisPluginContainer = ({
             });
           }
           reportResource['contribution'] = contributions;
+          const existingReport = analysisData?.find(
+            r => r.id === currentlyBeingEditedAnalysisReportId
+          );
+          if (
+            existingReport === undefined ||
+            existingReport.revision === undefined
+          ) {
+            throw new Error(
+              'Existing report not found, unable to save. Try reloading'
+            );
+          }
 
           await nexus.Resource.update(
             orgLabel,
             projectLabel,
             encodeURIComponent(reportResource['@id']),
-            reportResource._rev,
+            existingReport.revision,
             {
               ...reportResource,
               contribution: contributions,
@@ -719,14 +752,21 @@ const AnalysisPluginContainer = ({
                         title={m.name}
                         text={m.description}
                         onSave={(name, description) => {
-                          a.id &&
-                            img &&
-                            mutateAsset.mutate({
-                              resourceId: a.id,
-                              assetContentUrl: img.contentUrl,
-                              title: name,
-                              caption: description,
+                          try {
+                            a.id &&
+                              img &&
+                              mutateAsset.mutate({
+                                resourceId: a.id,
+                                assetContentUrl: img.contentUrl,
+                                title: name,
+                                caption: description,
+                              });
+                          } catch (e) {
+                            notification.error({
+                              message:
+                                'An error occurred whilst trying to save. Please try again.',
                             });
+                          }
                         }}
                       />
                     )}
@@ -739,14 +779,21 @@ const AnalysisPluginContainer = ({
                         title={m.name}
                         text={m.description}
                         onSave={(name, description) => {
-                          a.id &&
-                            img &&
-                            mutateAsset.mutate({
-                              resourceId: a.id,
-                              assetContentUrl: img.contentUrl,
-                              title: name,
-                              caption: description,
+                          try {
+                            a.id &&
+                              img &&
+                              mutateAsset.mutate({
+                                resourceId: a.id,
+                                assetContentUrl: img.contentUrl,
+                                title: name,
+                                caption: description,
+                              });
+                          } catch (e) {
+                            notification.error({
+                              message:
+                                'An error occurred whilst trying to save. Please try again.',
                             });
+                          }
                         }}
                       />
                     )}
@@ -785,17 +832,31 @@ const AnalysisPluginContainer = ({
             types?: string[],
             scripts?: ReportGeneration[]
           ) => {
-            mutateAnalysis.mutate({
-              name,
-              description,
-              id,
-              categories,
-              types,
-              scripts,
-            });
+            try {
+              mutateAnalysis.mutate({
+                name,
+                description,
+                id,
+                categories,
+                types,
+                scripts,
+              });
+            } catch (e) {
+              notification.error({
+                message:
+                  'An error occurred whilst trying to save the report. Please try saving again.',
+              });
+            }
           }}
           onDelete={() => {
-            deleteImages.mutate();
+            try {
+              deleteImages.mutate();
+            } catch (e) {
+              notification.error({
+                message:
+                  'An error occurred whilst trying to delete the assets. Please try again.',
+              });
+            }
           }}
           imagePreviewScale={imagePreviewScale}
           mode={mode}
