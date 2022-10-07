@@ -207,6 +207,8 @@ const AnalysisPluginContainer = ({
               currentRow['analysis_report_categories'],
             ];
           }
+        }
+        if (currentRow['analysis_report_types'] !== undefined) {
           if (r.types !== undefined) {
             if (!r.types.includes(currentRow['analysis_report_types'])) {
               r.types.push(currentRow['analysis_report_types']);
