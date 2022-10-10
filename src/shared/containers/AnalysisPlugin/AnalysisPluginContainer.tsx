@@ -140,7 +140,8 @@ const AnalysisPluginContainer = ({
           currentRow['analysis_report_categories'] !== undefined
             ? [currentRow['analysis_report_categories']]
             : [];
-        analysisReports.push({
+
+        const report = {
           types,
           categories,
           containerId: currentRow['container_resource_id'],
@@ -153,7 +154,9 @@ const AnalysisPluginContainer = ({
           updatedBy: currentRow['updated_by'],
           updatedAt: currentRow['updated_at'],
           assets: [],
-        });
+        };
+
+        analysisReports.push(report);
 
         const reportIx = analysisReports.findIndex(
           r => r.id === currentRow['analysis_report_id']
@@ -196,25 +199,29 @@ const AnalysisPluginContainer = ({
           r => r.id === currentRow['analysis_report_id']
         );
         const r = analysisReports[reportIx];
-        if (r.categories !== undefined) {
-          if (
-            !r.categories.includes(currentRow['analysis_report_categories'])
-          ) {
-            r.categories.push(currentRow['analysis_report_categories']);
+        if (currentRow['analysis_report_categories'] !== undefined) {
+          if (r.categories !== undefined) {
+            if (
+              !r.categories.includes(currentRow['analysis_report_categories'])
+            ) {
+              r.categories.push(currentRow['analysis_report_categories']);
+            }
+          } else {
+            analysisReports[reportIx].categories = [
+              currentRow['analysis_report_categories'],
+            ];
           }
-        } else {
-          analysisReports[reportIx].categories = [
-            currentRow['analysis_report_categories'],
-          ];
         }
-        if (r.types !== undefined) {
-          if (!r.types.includes(currentRow['analysis_report_types'])) {
-            r.types.push(currentRow['analysis_report_types']);
+        if (currentRow['analysis_report_types'] !== undefined) {
+          if (r.types !== undefined) {
+            if (!r.types.includes(currentRow['analysis_report_types'])) {
+              r.types.push(currentRow['analysis_report_types']);
+            }
+          } else {
+            analysisReports[reportIx].types = [
+              currentRow['analysis_report_types'],
+            ];
           }
-        } else {
-          analysisReports[reportIx].types = [
-            currentRow['analysis_report_types'],
-          ];
         }
       }
 
