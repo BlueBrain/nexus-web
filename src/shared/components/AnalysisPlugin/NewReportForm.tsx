@@ -88,7 +88,7 @@ const NewReportForm = ({
           throuhg the analysis
         </p>
         <div style={{ margin: '10px 0' }}>
-          <Text strong>Source</Text>
+          <Text strong>Target Storage</Text>
           <Select
             style={{ display: 'inline-block', margin: '0 10px', width: '20em' }}
             showSearch
