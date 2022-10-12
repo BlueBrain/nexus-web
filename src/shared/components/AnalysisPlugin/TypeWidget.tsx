@@ -1,10 +1,11 @@
-import { Button } from 'antd';
+import { Button, Tooltip } from 'antd';
 import { flatten, map, uniq, intersection } from 'lodash';
 import './Categories.less';
 
 import { TypeWidgetProps } from '../../types/plugins/report';
-
-import { REPORT_TYPES as TYPES } from '../../../constants';
+import { useSelector } from 'react-redux';
+import { RootState } from 'shared/store/reducers';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 const TypeWidget = ({
   dispatch,
@@ -13,10 +14,15 @@ const TypeWidget = ({
   mode,
   selectType,
 }: TypeWidgetProps) => {
+  const { analysisPluginTypes } = useSelector(
+    (state: RootState) => state.config
+  );
+  const typeLabels = analysisPluginTypes.map(({ label }) => label);
+
   const availableTypes =
     mode === 'create'
-      ? TYPES
-      : intersection(uniq(flatten(map(analysisReports, 'types'))), TYPES);
+      ? typeLabels
+      : intersection(uniq(flatten(map(analysisReports, 'types'))), typeLabels);
 
   return (
     <>
@@ -24,18 +30,23 @@ const TypeWidget = ({
         <div className="types-filter">
           {mode !== 'create' && <h3>Types</h3>}
           <p>You may select one or multiple from the list</p>
-          {TYPES.filter(o => availableTypes.includes(o)).map((object, i) => (
-            <Button
-              key={i}
-              type="default"
-              onClick={() => selectType(object)}
-              className={`group-buttons ${
-                selectedTypes.includes(object) ? 'active' : ''
-              }`}
-            >
-              {object}
-            </Button>
-          ))}
+          {analysisPluginTypes
+            .filter(reportType => availableTypes.includes(reportType.label))
+            .map((reportType, i) => (
+              <Button
+                key={i}
+                type="default"
+                onClick={() => selectType(reportType.label)}
+                className={`group-buttons ${
+                  selectedTypes.includes(reportType.label) ? 'active' : ''
+                }`}
+              >
+                {reportType.label}
+                <Tooltip title={reportType.description}>
+                  <InfoCircleOutlined />
+                </Tooltip>
+              </Button>
+            ))}
         </div>
       )}
     </>

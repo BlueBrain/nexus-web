@@ -1,18 +1,80 @@
 // Report Constants
 export const DEFAULT_SCALE = 50;
 
-export const REPORT_CATEGORIES = {
-  circuit: [
-    'Anatomical',
-    'Connectivity',
-    'Volumetric',
-    'Morphometric',
-    'Synapse',
-  ],
-  simulation: ['Spiking', 'Soma voltage', 'LFP', 'VSD', 'Plasticity'],
-};
+export const DEFAULT_REPORT_TYPES = [
+  {
+    label: 'Validation',
+    description:
+      'A report that compares a property against a target value that is derived from experimental data.',
+  },
+  {
+    label: 'Prediction',
+    description:
+      'A report that currently has no corresponding experimental data point but can be validated in the future.',
+  },
+  {
+    label: 'Analysis',
+    description:
+      'Any other report that is neither "Validation" not "Prediction".',
+  },
+];
 
-export const REPORT_TYPES = ['Validation', 'Analysis'];
+export const DEFAULT_REPORT_CATEGORIES = {
+  DetailedCircuit: [
+    {
+      label: 'Anatomical',
+      description:
+        'A report relating to the cellular contents and placement of the circuit. For example, to neurons and the locations of their somata or dendrites.',
+    },
+    {
+      label: 'Connectivity',
+      description:
+        'A report relating to the structure and topology of synaptic connections, analyzing the underlying directed connectivity graph',
+    },
+    {
+      label: 'Volumetric',
+      description:
+        'A report that explicitly considers the volume and/or shape of the modeled space. For example, the density of dendrites of synapses within a cubic volume.',
+    },
+    {
+      label: 'Morphometric',
+      description:
+        'A report relating to the shape or morphology of the cells in the circuit. For example, counting the number of dendrite bifurcations.',
+    },
+    {
+      label: 'Synapse',
+      description:
+        'A report relating to properties of synaptic connections. Unlike Connectivity it does not reduce them to a graph and instead considers properties of individual synapses, such as their dendritic locations or physiological parameters',
+    },
+  ],
+  Simulation: [
+    {
+      label: 'Spiking',
+      description:
+        'An analysis report based on the spiking activity of the simulated neurons.',
+    },
+    {
+      label: 'Soma voltage',
+      description:
+        'An analysis report based on the (subthreshold) soma voltage traces of the simulated neurons.',
+    },
+    {
+      label: 'LFP',
+      description:
+        'An analysis report based on traces of extracellular potential calculated from the simulations.',
+    },
+    {
+      label: 'VSD',
+      description:
+        'An analysis report based on predicted VSD images calculated from the simulations.',
+    },
+    {
+      label: 'Plasticity',
+      description:
+        'An analysis report based on the temporal evolution of plasticity-related synapse parameters.',
+    },
+  ],
+};
 
 export const DEFAULT_ANALYSIS_DATA_SPARQL_QUERY = `PREFIX s:<http://schema.org/>
 PREFIX prov:<http://www.w3.org/ns/prov#>
