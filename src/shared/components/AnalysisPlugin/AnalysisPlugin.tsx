@@ -181,7 +181,7 @@ const AnalysisPlugin = ({
                             <span
                               className="cat"
                               style={{
-                                fontWeight: 'bold',
+                                fontWeight: 500,
                               }}
                             >
                               {analysisReport.categories.map((c, i) => (
