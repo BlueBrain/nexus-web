@@ -92,12 +92,13 @@ const ToolsEdit = ({ tools, onUpdateTools }: ToolsEditProps) => {
         aria-label="Add tool"
         type="primary"
         size="small"
+        className="add-button"
+        icon={<PlusCircleOutlined />}
         onClick={e => {
           e.preventDefault();
           onUpdateTools([...tools, { scriptPath: '', description: '' }]);
         }}
       >
-        <PlusCircleOutlined />
         Add Tool
       </Button>
     </div>

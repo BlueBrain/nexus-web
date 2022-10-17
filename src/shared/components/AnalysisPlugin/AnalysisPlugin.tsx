@@ -181,7 +181,7 @@ const AnalysisPlugin = ({
                             <span
                               className="cat"
                               style={{
-                                fontWeight: 'bold',
+                                fontWeight: 500,
                               }}
                             >
                               {analysisReport.categories.map((c, i) => (
@@ -339,7 +339,10 @@ const AnalysisPlugin = ({
                             <Button
                               type="default"
                               aria-label="Edit Report"
-                              style={{ background: 'transparent' }}
+                              style={{
+                                background: 'transparent',
+                                padding: '12px',
+                              }}
                               icon={<EditOutlined />}
                               title="Edit report"
                               onClick={() =>
@@ -400,7 +403,10 @@ const AnalysisPlugin = ({
                                 title="Open discussion on report resource"
                                 aria-label="Open discussion on report resource"
                                 icon={<MessageOutlined />}
-                                style={{ background: 'transparent' }}
+                                style={{
+                                  background: 'transparent',
+                                  padding: '12px',
+                                }}
                                 onClick={() =>
                                   analysisReport.id &&
                                   onClickRelatedResource(analysisReport.id)

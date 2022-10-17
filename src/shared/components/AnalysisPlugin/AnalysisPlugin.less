@@ -42,12 +42,12 @@
   .ant-collapse {
     margin-bottom: -2px !important;
   }
+  .ant-collapse-content {
+    padding: 40px 30px !important;
+  }
+
   .ant-collapse-header {
     text-align: left;
-    padding-left: 66px;
-    padding-bottom: 32px;
-    padding-top: 32px;
-    padding-right: 66px;
     width: 100%;
     background: #ffffff;
     /* Neutral/5 */
@@ -55,7 +55,7 @@
     font-family: 'Titillium Web';
     font-style: normal;
     font-weight: 700;
-    font-size: 36px;
+    font-size: 30px;
     line-height: 100%;
     /* identical to box height, or 36px */
     text-transform: capitalize;
@@ -101,6 +101,12 @@
     border-top: 0;
   }
   .ant-collapse-item {
+    .ant-collapse-content {
+      input:focus,
+      textarea:focus {
+        background: #e6f7ff !important;
+      }
+    }
     .ant-collapse-content.ant-collapse-content-active,
     .ant-collapse-content-inactive {
       border-top: 0;
