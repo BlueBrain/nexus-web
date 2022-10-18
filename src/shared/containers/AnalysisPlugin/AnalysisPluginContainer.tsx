@@ -708,6 +708,30 @@ const AnalysisPluginContainer = ({
     initState
   );
 
+  const { data: containerResource } = useQuery(
+    [containerId, resourceId],
+    async () => {
+      /* container ID will only be populated when there is at least one
+      report. If there is no container Id there must be no reports and
+      therefore we must be on the container, so it's resource Id */
+      const parentId = containerId ? containerId : resourceId;
+      return nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(parentId)
+      );
+    },
+    {
+      enabled: !!containerId || !!resourceId,
+    }
+  );
+
+  const containerResourceTypes = containerResource
+    ? ([
+        ((containerResource as unknown) as Resource)['@type'],
+      ].flat() as string[])
+    : [];
+
   const analysisDataWithImages = React.useMemo(() => {
     const newAnalysisReports: AnalysisReport[] =
       mode === 'create'
@@ -823,6 +847,7 @@ const AnalysisPluginContainer = ({
           FileUpload={FileUploadComponent}
           analysisReports={analysisDataWithImages}
           containerId={containerId}
+          containerResourceTypes={containerResourceTypes}
           onCancel={() => {}}
           onSave={(
             name: string,

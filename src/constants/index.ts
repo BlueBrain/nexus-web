@@ -3,19 +3,14 @@ export const DEFAULT_SCALE = 50;
 
 export const DEFAULT_REPORT_TYPES = [
   {
-    label: 'Validation',
-    description:
-      'A report that compares a property against a target value that is derived from experimental data.',
-  },
-  {
-    label: 'Prediction',
-    description:
-      'A report that currently has no corresponding experimental data point but can be validated in the future.',
-  },
-  {
     label: 'Analysis',
     description:
       'Any other report that is neither "Validation" not "Prediction".',
+  },
+  {
+    label: 'Validation',
+    description:
+      'A report that compares a property against a target value that is derived from experimental data.',
   },
 ];
 
@@ -29,7 +24,7 @@ export const DEFAULT_REPORT_CATEGORIES = {
     {
       label: 'Connectivity',
       description:
-        'A report relating to the structure and topology of synaptic connections, analyzing the underlying directed connectivity graph',
+        'A report relating to the structure and topology of synaptic connections, analyzing the underlying directed connectivity graph.',
     },
     {
       label: 'Volumetric',

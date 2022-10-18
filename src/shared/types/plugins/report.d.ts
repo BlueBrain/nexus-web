@@ -111,6 +111,7 @@ export type AnalysisPluginProps = {
   analysisResourceType: 'report_container' | 'individual_report';
   containerId?: string;
   containerName?: string;
+  containerResourceTypes: string[];
   analysisReports: AnalysisReport[];
   FileUpload: (analysisReportId?: string) => JSX.Element;
   onSave: (
@@ -154,6 +155,7 @@ export type TypeEditWidgetProps = {
   dispatch: (params: any) => void;
 };
 export type CategoryEditWidgetProps = {
+  allCategories: { label: string; description: string }[];
   currentlyBeingEditedAnalysisReportCategories?: string[];
   dispatch: (params: any) => void;
 };
@@ -164,11 +166,11 @@ export type ReportGeneration = {
 };
 
 export type CategoryWidgetProps = {
-  analysisReports?: AnalysisReport[];
+  availableCategories?: { label: string; description: string }[];
+  allCategories: { label: string; description: string }[];
   mode: 'view' | 'edit' | 'create';
   selectedCategories: string[];
-  selectCategory: (value: string) => void;
-  dispatch: (params: any) => void;
+  toggleSelectCategory: (value: string) => void;
 };
 
 export type NewReportFormProps = {
@@ -184,6 +186,8 @@ export type NewReportFormProps = {
     scripts?: ReportGeneration[]
   ) => void;
   dispatch: (params: any) => void;
+  categories: { label: string; description: string }[];
+  types: { label: string; description: string }[];
 };
 
 export type ReportAssetProps = {

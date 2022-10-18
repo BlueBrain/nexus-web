@@ -3,22 +3,12 @@ import { Select, Form } from 'antd';
 import './CategoryTypeEdits.less';
 import { CategoryEditWidgetProps } from '../../types/plugins/report';
 import { changeAnalysisCategories } from '../../slices/plugins/report';
-import { useSelector } from 'react-redux';
-import { RootState } from 'shared/store/reducers';
 
 const CategoryEditWidget = ({
+  allCategories,
   dispatch,
   currentlyBeingEditedAnalysisReportCategories,
 }: CategoryEditWidgetProps) => {
-  const { analysisPluginCategories } = useSelector(
-    (state: RootState) => state.config
-  );
-
-  // TODO: stop hardcoding this and refactor to pass in categories as prop
-  const categoryLabels = analysisPluginCategories['DetailedCircuit'].map(
-    ({ label }) => label
-  );
-
   const activeCategories = currentlyBeingEditedAnalysisReportCategories
     ? currentlyBeingEditedAnalysisReportCategories
     : [];
@@ -28,7 +18,7 @@ const CategoryEditWidget = ({
   };
   return (
     <>
-      {categoryLabels && categoryLabels.length > 0 && (
+      {allCategories && allCategories.length > 0 && (
         <div style={{ margin: '20px 0' }} className={'categoryEdits'}>
           <h4 style={{ marginTop: '10px', color: '#003A8C' }}>Categories</h4>
           <Form layout={'vertical'}>
@@ -40,10 +30,9 @@ const CategoryEditWidget = ({
                 onChange={selectedCategories}
                 style={{ maxWidth: '900px' }}
               >
-                categoryLabels
-                {categoryLabels.map(item => (
-                  <Select.Option key={item} value={item}>
-                    {item}
+                {allCategories.map(cat => (
+                  <Select.Option key={cat.label} value={cat.label}>
+                    {cat.label}
                   </Select.Option>
                 ))}
               </Select>

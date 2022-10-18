@@ -7,8 +7,6 @@ import { without } from 'lodash';
 import { NewReportFormProps } from '../../types/plugins/report';
 import { initialize, saveReport } from '../../slices/plugins/report';
 import ToolsEdit from './ToolsEdit';
-import { useSelector } from 'react-redux';
-import { RootState } from 'shared/store/reducers';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -20,6 +18,8 @@ const NewReportForm = ({
   onSave,
   FileUpload,
   imagePreviewScale,
+  categories,
+  types,
 }: NewReportFormProps) => {
   const [form] = Form.useForm();
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
@@ -57,10 +57,6 @@ const NewReportForm = ({
     );
   };
 
-  const { analysisPluginTypes: allReportTypes } = useSelector(
-    (state: RootState) => state.config
-  );
-
   return (
     <Form layout={'vertical'} onFinish={onFinish} className="new-report-form">
       <Form.Item label="1. Report Name" name="name">
@@ -75,15 +71,15 @@ const NewReportForm = ({
       </Form.Item>
       <Form.Item label="3. Categories" aria-label="Analysis Categories">
         <CategoryWidget
-          dispatch={dispatch}
+          allCategories={categories}
           mode={'create'}
           selectedCategories={selectedCategories}
-          selectCategory={selectCategory}
+          toggleSelectCategory={selectCategory}
         />
       </Form.Item>
       <Form.Item label="4. Types" aria-label="Analysis Types">
         <TypeWidget
-          allTypes={allReportTypes}
+          allTypes={types}
           mode={'create'}
           selectedTypes={selectedTypes}
           toggleSelectType={selectType}
