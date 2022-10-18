@@ -7,7 +7,7 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 import { Button, Collapse, Input, Modal } from 'antd';
-import { without, intersection } from 'lodash';
+import { without, intersection, uniq, flatten, map } from 'lodash';
 import * as React from 'react';
 import { getUsername } from '../../../shared/utils';
 import FriendlyTimeAgo from '../FriendlyDate';
@@ -38,6 +38,8 @@ import {
 } from '../../types/plugins/report';
 import Tools from './Tools';
 import ToolsEdit from './ToolsEdit';
+import { useSelector } from 'react-redux';
+import { RootState } from 'shared/store/reducers';
 
 const AnalysisPlugin = ({
   analysisResourceType,
@@ -88,6 +90,18 @@ const AnalysisPlugin = ({
       {FileUpload(currentlyBeingEditedAnalysisReportId)}
     </Modal>
   );
+  const { analysisPluginTypes: allReportTypes } = useSelector(
+    (state: RootState) => state.config
+  );
+
+  const availableReportTypes = (intersection(
+    uniq(flatten(map(analysisReports, 'types'))),
+    allReportTypes.map(({ label }) => label)
+  ) as string[]).map(l => {
+    const typeDescription = allReportTypes.find(t => t.label === l)
+      ?.description as string;
+    return { label: l, description: typeDescription };
+  });
 
   return (
     <>
@@ -127,12 +141,13 @@ const AnalysisPlugin = ({
                 selectCategory={selectCategory}
                 analysisReports={analysisReports}
               />
+
               <TypeWidget
-                dispatch={dispatch}
+                allTypes={allReportTypes}
+                availableTypes={availableReportTypes}
                 mode={mode}
                 selectedTypes={selectedTypes}
-                selectType={selectType}
-                analysisReports={analysisReports}
+                toggleSelectType={selectType}
               />
             </>
           )}

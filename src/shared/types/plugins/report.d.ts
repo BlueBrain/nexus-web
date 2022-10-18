@@ -142,11 +142,11 @@ export type AnalysisPluginProps = {
 };
 
 export type TypeWidgetProps = {
-  analysisReports?: AnalysisReport[];
+  allTypes: { label: string; description: string }[];
+  availableTypes?: { label: string; description: string }[];
   mode: 'view' | 'edit' | 'create';
   selectedTypes: string[];
-  selectType: (value: string) => void;
-  dispatch: (params: any) => void;
+  toggleSelectType: (value: string) => void;
 };
 
 export type TypeEditWidgetProps = {

@@ -7,6 +7,8 @@ import { without } from 'lodash';
 import { NewReportFormProps } from '../../types/plugins/report';
 import { initialize, saveReport } from '../../slices/plugins/report';
 import ToolsEdit from './ToolsEdit';
+import { useSelector } from 'react-redux';
+import { RootState } from 'shared/store/reducers';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -54,6 +56,11 @@ const NewReportForm = ({
       reportGeneration
     );
   };
+
+  const { analysisPluginTypes: allReportTypes } = useSelector(
+    (state: RootState) => state.config
+  );
+
   return (
     <Form layout={'vertical'} onFinish={onFinish} className="new-report-form">
       <Form.Item label="1. Report Name" name="name">
@@ -76,10 +83,10 @@ const NewReportForm = ({
       </Form.Item>
       <Form.Item label="4. Types" aria-label="Analysis Types">
         <TypeWidget
-          dispatch={dispatch}
+          allTypes={allReportTypes}
           mode={'create'}
           selectedTypes={selectedTypes}
-          selectType={selectType}
+          toggleSelectType={selectType}
         />
       </Form.Item>
       <Form.Item label="5. Add Assets">
