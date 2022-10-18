@@ -6,6 +6,31 @@
 }
 .file-info-wrapper {
   display: flex;
+  .file-info-menu {
+    float:right;
+    :first-child {
+      background: #003A8C;
+    }
+    :last-child {
+      background: #0050B3;
+    }
+    .button-blend {      
+      // background-color: rgba(255, 255, 255, 0.2);
+      border: none;
+      display: block;
+      margin: 4px;
+      :last-child {
+        background: #003A8C;
+      }
+      :first-child {
+        background: #0050B3;
+      }
+      span {
+        background:none;
+        color: rgba(255, 255, 255, 1);
+      }
+    }
+  }
   .file-info {
     width: 100%;
     padding: 20px;
@@ -31,13 +56,6 @@
         }
       }
     }
-    .button-blend {
-      background-color: rgba(255, 255, 255, 0.2);
-      border: none;
-      margin: 4px;
-      span {
-        color: rgba(255, 255, 255, 1);
-      }
-    }
   }
 }
+

@@ -341,7 +341,6 @@ const AnalysisPlugin = ({
                               aria-label="Edit Report"
                               style={{
                                 background: 'transparent',
-                                padding: '12px',
                               }}
                               icon={<EditOutlined />}
                               title="Edit report"
@@ -405,7 +404,6 @@ const AnalysisPlugin = ({
                                 icon={<MessageOutlined />}
                                 style={{
                                   background: 'transparent',
-                                  padding: '12px',
                                 }}
                                 onClick={() =>
                                   analysisReport.id &&

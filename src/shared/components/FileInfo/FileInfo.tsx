@@ -2,6 +2,7 @@ import {
   CalendarOutlined,
   EditOutlined,
   UserOutlined,
+  FileImageOutlined,
 } from '@ant-design/icons';
 import { Button, Input } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
@@ -147,8 +148,10 @@ const FileInfo = ({
             </div>
           )}
         </div>
-        <div className="file-info-menu">
-          {mode !== 'edit' && (
+      </section>
+      <div className="file-info-menu">
+        {mode !== 'edit' && (
+          <>
             <Button
               aria-label="Edit name and description"
               onClick={() => setMode('edit')}
@@ -156,9 +159,16 @@ const FileInfo = ({
             >
               <EditOutlined />
             </Button>
-          )}
-        </div>
-      </section>
+            <Button
+              aria-label="Edit name and description"
+              onClick={() => setMode('edit')}
+              className="button-blend"
+            >
+              <FileImageOutlined />
+            </Button>
+          </>
+        )}
+      </div>
     </div>
   );
 };
