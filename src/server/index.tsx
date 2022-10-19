@@ -14,7 +14,11 @@ import {
   DEFAULT_SERVICE_ACCOUNTS_REALM,
 } from '../shared/store/reducers/config';
 import { DEFAULT_SEARCH_STATE } from '../shared/store/reducers/search';
-import { DEFAULT_ANALYSIS_DATA_SPARQL_QUERY } from '../constants';
+import {
+  DEFAULT_ANALYSIS_DATA_SPARQL_QUERY,
+  DEFAULT_REPORT_CATEGORIES,
+  DEFAULT_REPORT_TYPES,
+} from '../constants';
 
 const PORT_NUMBER = 8000;
 
@@ -117,6 +121,12 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       analysisPluginSparqlDataQuery:
         process.env.ANALYSIS_PLUGIN_SPARQL_DATA_QUERY ||
         DEFAULT_ANALYSIS_DATA_SPARQL_QUERY,
+      analysisPluginCategories: process.env.ANALYSIS_PLUGIN_CATEGORIES
+        ? JSON.parse(process.env.ANALYSIS_PLUGIN_CATEGORIES)
+        : DEFAULT_REPORT_CATEGORIES,
+      analysisPluginTypes: process.env.ANALYSIS_PLUGIN_TYPES
+        ? JSON.parse(process.env.ANALYSIS_PLUGIN_TYPES)
+        : DEFAULT_REPORT_TYPES,
       httpHeaderForInaccessibleDueToVPN:
         process.env.HTTP_HEADER_WHERE_INACCESSIBLE_OUTSIDE_OF_VPN ||
         'x-requires-vpn',

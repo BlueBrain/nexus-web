@@ -34,7 +34,10 @@ export interface ConfigState {
   analysisPluginShowOnTypes: string[];
   analysisPluginExcludeTypes: string[];
   analysisPluginSparqlDataQuery: string;
-
+  analysisPluginCategories: {
+    [resourceType: string]: { label: string; description: string }[];
+  };
+  analysisPluginTypes: { label: string; description: string }[];
   httpHeaderForInaccessibleDueToVPN?: string;
 }
 
@@ -65,6 +68,8 @@ const initialState: ConfigState = {
   analysisPluginShowOnTypes: [],
   analysisPluginExcludeTypes: [],
   analysisPluginSparqlDataQuery: '',
+  analysisPluginCategories: {},
+  analysisPluginTypes: [],
 };
 
 export default function configReducer(

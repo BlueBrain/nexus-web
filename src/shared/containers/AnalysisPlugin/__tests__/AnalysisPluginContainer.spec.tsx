@@ -25,12 +25,18 @@ import {
   imageResourceFile,
   reportResource,
 } from '__mocks__/handlers/AnalysisPlugin/handlers';
+import {
+  DEFAULT_REPORT_CATEGORIES,
+  DEFAULT_REPORT_TYPES,
+} from '../../../../constants';
 
 describe('Analysis Plugin', () => {
   const mockState = {
     config: {
       apiEndpoint: deltaPath(),
       analysisPluginSparqlDataQuery: 'detailedCircuit',
+      analysisPluginTypes: DEFAULT_REPORT_TYPES,
+      analysisPluginCategories: DEFAULT_REPORT_CATEGORIES,
     },
     auth: {
       identities: [],

@@ -4,29 +4,35 @@ import { intersection } from 'lodash';
 import './CategoryTypeEdits.less';
 import { TypeEditWidgetProps } from '../../types/plugins/report';
 import { changeAnalysisTypes } from '../../slices/plugins/report';
-import { REPORT_TYPES as TYPES } from '../../../constants';
+import { useSelector } from 'react-redux';
+import { RootState } from 'shared/store/reducers';
 
 const TypesEditWidget = ({
   dispatch,
   currentlyBeingEditedAnalysisReportTypes,
 }: TypeEditWidgetProps) => {
+  const { analysisPluginTypes } = useSelector(
+    (state: RootState) => state.config
+  );
+  const typeLabels = analysisPluginTypes.map(({ label }) => label);
+
   const changeType = ({ target: { value } }: any) => {
     dispatch(changeAnalysisTypes({ types: [value] }));
   };
   const activeTypes = currentlyBeingEditedAnalysisReportTypes
     ? currentlyBeingEditedAnalysisReportTypes
     : [];
-  const current = intersection(TYPES, activeTypes)[0];
+  const current = intersection(typeLabels, activeTypes)[0];
   return (
     <>
-      {TYPES && TYPES.length > 0 && (
+      {typeLabels && typeLabels.length > 0 && (
         <div style={{ margin: '20px 0' }} className={'typeEdits'}>
           <h4 style={{ marginTop: '10px', color: '#003A8C' }}>Report Type</h4>
           <Form layout={'vertical'}>
             <Form.Item label="" aria-label="Analysis Types">
               {current && (
                 <Radio.Group
-                  options={TYPES}
+                  options={typeLabels}
                   onChange={changeType}
                   optionType="button"
                   buttonStyle="solid"
@@ -35,7 +41,7 @@ const TypesEditWidget = ({
               )}
               {!current && (
                 <Radio.Group
-                  options={TYPES}
+                  options={typeLabels}
                   onChange={changeType}
                   optionType="button"
                   buttonStyle="solid"

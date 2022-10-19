@@ -80,8 +80,8 @@ describe('Report (formerly Analysis) Plugin', () => {
       'This is where we can add a nice long description relating to why my report is better than yours.'
     );
     // set category and type
-    cy.findByRole('button', { name: 'Anatomical' }).click();
-    cy.findByRole('button', { name: 'Analysis' }).click();
+    cy.findByRole('button', { name: /Anatomical/ }).click();
+    cy.findByRole('button', { name: /Analysis/ }).click();
 
     cy.findByText(/Drag and drop files/i).click();
     cy.get('input[type=file]').attachFile('sample1.png');

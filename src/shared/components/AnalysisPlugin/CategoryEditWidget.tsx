@@ -3,9 +3,9 @@ import { Select, Form } from 'antd';
 import './CategoryTypeEdits.less';
 import { CategoryEditWidgetProps } from '../../types/plugins/report';
 import { changeAnalysisCategories } from '../../slices/plugins/report';
-import { REPORT_CATEGORIES as CATEGORIES } from '../../../constants';
 
 const CategoryEditWidget = ({
+  allCategories,
   dispatch,
   currentlyBeingEditedAnalysisReportCategories,
 }: CategoryEditWidgetProps) => {
@@ -18,7 +18,7 @@ const CategoryEditWidget = ({
   };
   return (
     <>
-      {CATEGORIES.circuit && CATEGORIES.circuit.length > 0 && (
+      {allCategories && allCategories.length > 0 && (
         <div style={{ margin: '20px 0' }} className={'categoryEdits'}>
           <h4 style={{ marginTop: '10px', color: '#003A8C' }}>Categories</h4>
           <Form layout={'vertical'}>
@@ -30,9 +30,9 @@ const CategoryEditWidget = ({
                 onChange={selectedCategories}
                 style={{ maxWidth: '900px' }}
               >
-                {CATEGORIES.circuit.map(item => (
-                  <Select.Option key={item} value={item}>
-                    {item}
+                {allCategories.map(cat => (
+                  <Select.Option key={cat.label} value={cat.label}>
+                    {cat.label}
                   </Select.Option>
                 ))}
               </Select>

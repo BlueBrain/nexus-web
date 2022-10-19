@@ -1,39 +1,39 @@
-import { Button } from 'antd';
-import { flatten, map, uniq, intersection } from 'lodash';
+import { Button, Tooltip } from 'antd';
 import './Categories.less';
 
 import { TypeWidgetProps } from '../../types/plugins/report';
-
-import { REPORT_TYPES as TYPES } from '../../../constants';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 const TypeWidget = ({
-  dispatch,
-  analysisReports,
+  allTypes,
+  availableTypes,
   selectedTypes,
   mode,
-  selectType,
+  toggleSelectType,
 }: TypeWidgetProps) => {
-  const availableTypes =
-    mode === 'create'
-      ? TYPES
-      : intersection(uniq(flatten(map(analysisReports, 'types'))), TYPES);
-
+  const typesToDisplay =
+    mode === 'create' || availableTypes === undefined
+      ? allTypes
+      : availableTypes;
   return (
     <>
-      {availableTypes && availableTypes.length > 1 && (
+      {typesToDisplay && typesToDisplay.length > 1 && (
         <div className="types-filter">
           {mode !== 'create' && <h3>Types</h3>}
           <p>You may select one or multiple from the list</p>
-          {TYPES.filter(o => availableTypes.includes(o)).map((object, i) => (
+          {typesToDisplay.map((reportType, i) => (
             <Button
               key={i}
               type="default"
-              onClick={() => selectType(object)}
+              onClick={() => toggleSelectType(reportType.label)}
               className={`group-buttons ${
-                selectedTypes.includes(object) ? 'active' : ''
+                selectedTypes.includes(reportType.label) ? 'active' : ''
               }`}
             >
-              {object}
+              {reportType.label}
+              <Tooltip title={reportType.description}>
+                <InfoCircleOutlined />
+              </Tooltip>
             </Button>
           ))}
         </div>

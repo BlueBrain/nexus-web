@@ -7,7 +7,7 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 import { Button, Collapse, Input, Modal } from 'antd';
-import { without, intersection } from 'lodash';
+import { without, intersection, uniq, flatten, map } from 'lodash';
 import * as React from 'react';
 import { getUsername } from '../../../shared/utils';
 import FriendlyTimeAgo from '../FriendlyDate';
@@ -38,10 +38,13 @@ import {
 } from '../../types/plugins/report';
 import Tools from './Tools';
 import ToolsEdit from './ToolsEdit';
+import { useSelector } from 'react-redux';
+import { RootState } from 'shared/store/reducers';
 
 const AnalysisPlugin = ({
   analysisResourceType,
   containerId,
+  containerResourceTypes,
   analysisReports,
   onSave,
   onDelete,
@@ -88,11 +91,46 @@ const AnalysisPlugin = ({
       {FileUpload(currentlyBeingEditedAnalysisReportId)}
     </Modal>
   );
+  const {
+    analysisPluginTypes: allReportTypes,
+    analysisPluginCategories: allReportCategories,
+  } = useSelector((state: RootState) => state.config);
+
+  const availableReportTypes = (intersection(
+    uniq(flatten(map(analysisReports, 'types'))),
+    allReportTypes.map(({ label }) => label)
+  ) as string[]).map(l => {
+    const typeDescription = allReportTypes.find(t => t.label === l)
+      ?.description as string;
+    return { label: l, description: typeDescription };
+  });
+
+  const categoriesDefinedForContainerTypes = intersection(
+    Object.keys(allReportCategories),
+    containerResourceTypes
+  );
+
+  const allReportCategoriesMatchingContainerType =
+    categoriesDefinedForContainerTypes.length > 0
+      ? allReportCategories[categoriesDefinedForContainerTypes[0]]
+      : [];
+
+  const availableReportCategories = (intersection(
+    uniq(flatten(map(analysisReports, 'categories'))),
+    allReportCategoriesMatchingContainerType.map(({ label }) => label)
+  ) as string[]).map(l => {
+    const categoryDescription = allReportCategoriesMatchingContainerType.find(
+      c => c.label === l
+    )?.description as string;
+    return { label: l, description: categoryDescription };
+  });
 
   return (
     <>
       {mode === 'create' && (
         <NewReportForm
+          categories={allReportCategoriesMatchingContainerType}
+          types={allReportTypes}
           dispatch={dispatch}
           onSave={onSave}
           FileUpload={FileUpload}
@@ -121,18 +159,19 @@ const AnalysisPlugin = ({
                 <FolderAddOutlined />
               </Button>
               <CategoryWidget
-                dispatch={dispatch}
+                allCategories={allReportCategoriesMatchingContainerType}
+                availableCategories={availableReportCategories}
                 mode={mode}
                 selectedCategories={selectedCategories}
-                selectCategory={selectCategory}
-                analysisReports={analysisReports}
+                toggleSelectCategory={selectCategory}
               />
+
               <TypeWidget
-                dispatch={dispatch}
+                allTypes={allReportTypes}
+                availableTypes={availableReportTypes}
                 mode={mode}
                 selectedTypes={selectedTypes}
-                selectType={selectType}
-                analysisReports={analysisReports}
+                toggleSelectType={selectType}
               />
             </>
           )}
@@ -341,7 +380,6 @@ const AnalysisPlugin = ({
                               aria-label="Edit Report"
                               style={{
                                 background: 'transparent',
-                                padding: '12px',
                               }}
                               icon={<EditOutlined />}
                               title="Edit report"
@@ -480,6 +518,9 @@ const AnalysisPlugin = ({
                     {mode === 'edit' && (
                       <section>
                         <CategoryEditWidget
+                          allCategories={
+                            allReportCategoriesMatchingContainerType
+                          }
                           dispatch={dispatch}
                           currentlyBeingEditedAnalysisReportCategories={
                             currentlyBeingEditedAnalysisReportCategories

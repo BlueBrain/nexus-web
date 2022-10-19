@@ -18,6 +18,8 @@ const NewReportForm = ({
   onSave,
   FileUpload,
   imagePreviewScale,
+  categories,
+  types,
 }: NewReportFormProps) => {
   const [form] = Form.useForm();
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
@@ -54,6 +56,7 @@ const NewReportForm = ({
       reportGeneration
     );
   };
+
   return (
     <Form layout={'vertical'} onFinish={onFinish} className="new-report-form">
       <Form.Item label="1. Report Name" name="name">
@@ -68,18 +71,18 @@ const NewReportForm = ({
       </Form.Item>
       <Form.Item label="3. Categories" aria-label="Analysis Categories">
         <CategoryWidget
-          dispatch={dispatch}
+          allCategories={categories}
           mode={'create'}
           selectedCategories={selectedCategories}
-          selectCategory={selectCategory}
+          toggleSelectCategory={selectCategory}
         />
       </Form.Item>
       <Form.Item label="4. Types" aria-label="Analysis Types">
         <TypeWidget
-          dispatch={dispatch}
+          allTypes={types}
           mode={'create'}
           selectedTypes={selectedTypes}
-          selectType={selectType}
+          toggleSelectType={selectType}
         />
       </Form.Item>
       <Form.Item label="5. Add Assets">

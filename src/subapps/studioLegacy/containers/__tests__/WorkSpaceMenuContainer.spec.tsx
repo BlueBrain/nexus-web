@@ -205,7 +205,7 @@ describe('workSpaceMenu', () => {
         </Provider>
       );
       await waitFor(async () => {
-        const dashboardText = await screen.getAllByText('Example');
+        const dashboardText = await screen.getAllByText(/Example/);
         expect(dashboardText.length).toBe(1);
         const text = await screen.getAllByText(
           'https://bluebrain.github.io/nexus/vocabulary/apiMappings'
