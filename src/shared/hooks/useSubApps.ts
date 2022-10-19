@@ -7,10 +7,11 @@ function addExternalSubApps(
   subApps: Map<string, SubAppObject>,
   eSubbApps: ExternalSubApp[]
 ) {
-  const icon = require('../images/gridIcon.svg');
+  const defaultIcon = require('../images/noteIcon.svg');
   eSubbApps.forEach(e => {
     subApps.set(e.title, {
-      icon,
+      icon: e.icon ? e.icon : defaultIcon,
+      description: e.description,
       namespace: e.title,
       routes: [],
       subAppType: 'external',
@@ -23,6 +24,8 @@ function addExternalSubApps(
 type ExternalSubApp = {
   title: string;
   url: string;
+  icon?: string;
+  description?: string;
 };
 
 const useSubApps = () => {

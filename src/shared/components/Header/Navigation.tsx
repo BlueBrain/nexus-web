@@ -27,11 +27,19 @@ const ExternalNavigationItem: React.FC<{
   onClickNavigationItem: () => void;
   appIcon: string;
   appLabel: string;
-}> = ({ appKey, appURL, onClickNavigationItem, appIcon, appLabel }) => {
+  appDescription: string;
+}> = ({
+  appKey,
+  appURL,
+  onClickNavigationItem,
+  appIcon,
+  appLabel,
+  appDescription,
+}) => {
   return (
     <NavigationItemContainer appKey={appKey}>
       <a
-        title=""
+        title={appDescription}
         target="_blank"
         href={appURL || ''}
         onClick={onClickNavigationItem}
@@ -76,6 +84,7 @@ const Navigation: React.FC<{ subApps: any; authenticated: boolean }> = ({
                   appURL={app.url}
                   appIcon={app.icon}
                   appLabel={app.label}
+                  appDescription={app.description}
                   onClickNavigationItem={() => setNavMenuVisible(false)}
                 />
               ) : app.requireLogin && !authenticated ? (
