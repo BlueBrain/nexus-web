@@ -11,14 +11,17 @@ import * as moment from 'moment';
 import * as React from 'react';
 import { getUsername } from '../../utils';
 import FriendlyTimeAgo from '../FriendlyDate';
+
 import './FileInfo.less';
 
 type FileInfoProps = {
   text: string;
   title: string;
+  isVisible?: boolean;
   lastUpdated: string;
   lastUpdatedBy: string;
   onSave: (title: string, text: string) => void;
+  setIsVisible?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const FileInfo = ({
@@ -28,9 +31,9 @@ const FileInfo = ({
   lastUpdatedBy,
   onSave,
 }: FileInfoProps) => {
-  const [mode, setMode] = React.useState<'minified' | 'expanded' | 'edit'>(
-    'minified'
-  );
+  const [mode, setMode] = React.useState<
+    'minified' | 'expanded' | 'edit' | 'revision'
+  >('minified');
   const [editedText, setEditedText] = React.useState(text);
   const [editedTitle, setEditedTitle] = React.useState(title);
 
@@ -161,7 +164,7 @@ const FileInfo = ({
             </Button>
             <Button
               aria-label="Edit name and description"
-              onClick={() => setMode('edit')}
+              onClick={() => setMode('revision')}
               className="button-blend"
             >
               <FileImageOutlined />

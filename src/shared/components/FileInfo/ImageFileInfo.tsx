@@ -44,6 +44,8 @@ export default ({
               onSave={(title, text) => onSave(title, text)}
               text={text || ''}
               title={title || ''}
+              isVisible={isVisible}
+              setIsVisible={setIsVisible}
               lastUpdated={lastUpdated || ''}
               lastUpdatedBy={lastUpdatedBy || ''}
             />
