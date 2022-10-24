@@ -51,7 +51,6 @@ const AnalysisPlugin = ({
   FileUpload,
   imagePreviewScale,
   mode,
-  selectedAnalysisReports,
   currentlyBeingEditedAnalysisReportDescription,
   currentlyBeingEditedAnalysisReportCategories,
   currentlyBeingEditedAnalysisReportTypes,
@@ -420,7 +419,7 @@ const AnalysisPlugin = ({
                                       onClickRelatedResource(containerId)
                                     }
                                     style={{
-                                      padding: '4px',
+                                      padding: '12px',
                                       maxWidth: '230px',
                                       overflow: 'hidden',
                                       background: 'transparent',
@@ -442,8 +441,9 @@ const AnalysisPlugin = ({
                                 aria-label="Open discussion on report resource"
                                 icon={<MessageOutlined />}
                                 style={{
+                                  maxWidth: '230px',
+                                  overflow: 'hidden',
                                   background: 'transparent',
-                                  padding: '12px',
                                 }}
                                 onClick={() =>
                                   analysisReport.id &&
