@@ -97,8 +97,33 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
         : layoutSettings.docsLink,
     requireLogin: false,
   };
+  const atlasApp = {
+    label: 'Atlas',
+    key: 'atlas',
+    route: '/',
+    icon: docsIcon,
+    subAppType: 'external',
+    url:
+      layoutSettings.docsLink === ''
+        ? 'https://bbp.epfl.ch/atlas'
+        : layoutSettings.docsLink,
+    requireLogin: false,
+  };
 
-  const subApps = [...propSubApps, docsApp];
+  const webProtegeApp = {
+    label: 'Web Protege',
+    key: 'web-protege',
+    route: '/',
+    icon: docsIcon,
+    subAppType: 'external',
+    url:
+      layoutSettings.docsLink === ''
+        ? 'https://bbp.epfl.ch/web-protege'
+        : layoutSettings.docsLink,
+    requireLogin: false,
+  };
+
+  const subApps = [...propSubApps, docsApp, atlasApp, webProtegeApp];
   const location = useLocation();
   const history = useHistory();
   const dispatch = useDispatch();
