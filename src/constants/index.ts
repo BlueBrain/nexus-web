@@ -42,7 +42,7 @@ export const DEFAULT_REPORT_CATEGORIES = {
         'A report relating to properties of synaptic connections. Unlike Connectivity it does not reduce them to a graph and instead considers properties of individual synapses, such as their dendritic locations or physiological parameters',
     },
   ],
-  Simulation: [
+  SimulationCampaignConfiguration: [
     {
       label: 'Spiking',
       description:
