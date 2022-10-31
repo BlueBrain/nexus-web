@@ -408,6 +408,8 @@ const AnalysisPluginContainer = ({
       scripts?: ReportGeneration[];
     }) => {
       const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
+        console.log('unsaved assets to add to distribution');
+        console.log(a);
         return {
           '@type': 'Entity',
           name: a.name,
@@ -630,7 +632,7 @@ const AnalysisPluginContainer = ({
         algorithm: file._digest._algorithm,
         value: file._digest._value,
       },
-      filePath: file['@id'],
+      filePath: file['_self'],
       preview: () => {
         return (
           <>
