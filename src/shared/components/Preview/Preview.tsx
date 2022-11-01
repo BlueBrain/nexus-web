@@ -6,7 +6,7 @@ import {
   NexusFile,
   ArchivePayload,
 } from '@bbp/nexus-sdk';
-import { Button, Collapse, Table, Tooltip } from 'antd';
+import { Button, Collapse, Table, Tooltip, Image } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { AccessControl } from '@bbp/react-nexus';
 import { uuidv4 } from '../../utils';
@@ -39,6 +39,8 @@ const parseProjectUrl = (projectUrl: string) => {
 const isSupportedFile = (asset: any) =>
   asset.encodingFormat === 'application/pdf' ||
   asset.name?.endsWith('.csv') ||
+  asset.name?.endsWith('.png') ||
+  asset.name?.endsWith('.jpeg') ||
   asset.name?.endsWith('.tsv');
 
 const Preview: React.FC<{
@@ -52,6 +54,9 @@ const Preview: React.FC<{
   collapsed,
   handleCollapseChanged: handleCollapsedChanged,
 }) => {
+  console.log('preview component, resource');
+  console.log(resource);
+
   const { apiEndpoint } = useSelector((state: RootState) => state.config);
   const notification = useNotification();
   const [selectedRows, setSelectedRows] = React.useState<any[]>([]);
@@ -125,7 +130,10 @@ const Preview: React.FC<{
             </Button>
             <Button onClick={() => copyURI(asset.url)}>Copy Location</Button>
             <Button
-              onClick={() => setPreviewAsset(asset)}
+              onClick={() => {
+                console.log('asset', asset);
+                setPreviewAsset(asset);
+              }}
               disabled={!isSupportedFile(asset)}
             >
               Preview
@@ -287,6 +295,8 @@ const Preview: React.FC<{
       const { distribution } = resource;
       data = data.concat(
         [distribution].flat().map((d, i) => {
+          console.log('looping throuhg resource distribution');
+          console.log(d);
           return {
             key: i,
             name:
@@ -321,6 +331,12 @@ const Preview: React.FC<{
           url={previewAsset.url}
           closePreview={() => setPreviewAsset(undefined)}
         />
+      )}
+      {previewAsset && (fileFormat === 'png' || fileFormat === 'jpg') && (
+        <>
+          <h1>Hello</h1>
+          <Image src={previewAsset.url} />
+        </>
       )}
       {previewAsset && (fileFormat === 'csv' || fileFormat === 'tsv') && (
         <TableViewerContainer
