@@ -49,6 +49,7 @@ async function fetchImageObjectUrl(
   const blob = new Blob([rawData as string], {
     type: encodingFormat,
   });
+
   return URL.createObjectURL(blob);
 }
 
@@ -284,10 +285,11 @@ const AnalysisPluginContainer = ({
           const imageId = asset.filePath.substring(
             asset.filePath.lastIndexOf('/') + 1
           );
-          const imgResource = (await nexus.Resource.get(
+
+          const fileResource = (await nexus.File.get(
             orgLabel,
             projectLabel,
-            encodeURIComponent(asset.filePath)
+            encodeURIComponent(imageId)
           )) as Resource;
 
           const src = await fetchImageObjectUrl(
@@ -297,14 +299,15 @@ const AnalysisPluginContainer = ({
             imageId,
             asset.encodingFormat
           );
+
           return {
             src,
             id: asset.id,
             contentUrl: asset.filePath,
-            deprecated: imgResource['_deprecated'],
-            filename: imgResource['_filename'],
-            lastUpdated: imgResource['_updatedAt'],
-            lastUpdatedBy: imgResource['_updatedBy'],
+            deprecated: fileResource['_deprecated'],
+            filename: fileResource['_filename'],
+            lastUpdated: fileResource['_updatedAt'],
+            lastUpdatedBy: fileResource['_updatedBy'],
           };
         });
         return [...prev, ...assets];
@@ -627,7 +630,7 @@ const AnalysisPluginContainer = ({
         algorithm: file._digest._algorithm,
         value: file._digest._value,
       },
-      filePath: file['@id'],
+      filePath: file['_self'],
       preview: () => {
         return (
           <>
