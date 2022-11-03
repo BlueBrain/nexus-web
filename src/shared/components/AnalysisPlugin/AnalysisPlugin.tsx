@@ -419,7 +419,7 @@ const AnalysisPlugin = ({
                                       onClickRelatedResource(containerId)
                                     }
                                     style={{
-                                      padding: '12px',
+                                      padding: '1',
                                       maxWidth: '230px',
                                       overflow: 'hidden',
                                       background: 'transparent',
