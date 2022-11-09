@@ -625,14 +625,14 @@ const AnalysisPluginContainer = ({
     }
   );
 
-  interface updateAssetImage {
+  interface UpdateAssetImage {
     assetId?: string;
     info: { file: UploadFile; fileList: UploadFile[] };
     storageId?: string;
     src?: string;
   }
   const updateAssetImage = useMutation(
-    async ({ assetId, info, storageId, src }: updateAssetImage) => {
+    async ({ assetId, info, storageId, src }: UpdateAssetImage) => {
       const { file, fileList } = info;
       if (!assetId || !src || (file.percent && file?.percent < 100)) return;
 
