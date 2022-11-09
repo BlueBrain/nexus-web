@@ -64,7 +64,7 @@ const FileUpdater: React.FunctionComponent<FileUpdaterProps> = ({
   const [fileList, setFileList] = React.useState<UploadFile[]>([]);
   const notification = useNotification();
   console.log(assetId);
-  
+
   const handleFileUpdate = (customFileRequest: any) => {
     console.log('handling file update custom request', customFileRequest);
     onFileUpdate(customFileRequest.file)
