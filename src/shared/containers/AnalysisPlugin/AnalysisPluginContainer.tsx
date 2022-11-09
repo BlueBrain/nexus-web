@@ -1,9 +1,4 @@
-import {
-  NexusClient,
-  NexusFile,
-  Resource,
-  SparqlView,
-} from '@bbp/nexus-sdk';
+import { NexusClient, NexusFile, Resource, SparqlView } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -865,73 +860,72 @@ const AnalysisPluginContainer = ({
                   <>
                     {m.encodingFormat.substring(0, 'image'.length) ===
                       'image' && (
-                        <ImageFileInfo
-                          FileUpload={FileUploadComponent}
-                          FileUpdate={FileUpdateComponent}
-                          dispatch={dispatch}
-                          previewDisabled={mode === 'edit'}
-                          src={img?.src}
-                          contentUrl={img?.contentUrl}
-                          assetId={m.id}
-                          lastUpdated={img?.lastUpdated}
-                          lastUpdatedBy={img?.lastUpdatedBy}
-                          title={m.name}
-                          text={m.description}
-                          onSave={(name, description) => {
-                            try {
-                              a.id &&
-                                img &&
-                                mutateAsset.mutate({
-                                  resourceId: a.id,
-                                  assetContentUrl: img.contentUrl,
-                                  title: name,
-                                  caption: description,
-                                });
-                            } catch (e) {
-                              notification.error({
-                                message:
-                                  'An error occurred whilst trying to save. Please try again.',
+                      <ImageFileInfo
+                        FileUpload={FileUploadComponent}
+                        FileUpdate={FileUpdateComponent}
+                        dispatch={dispatch}
+                        previewDisabled={mode === 'edit'}
+                        src={img?.src}
+                        contentUrl={img?.contentUrl}
+                        assetId={m.id}
+                        lastUpdated={img?.lastUpdated}
+                        lastUpdatedBy={img?.lastUpdatedBy}
+                        title={m.name}
+                        text={m.description}
+                        onSave={(name, description) => {
+                          try {
+                            a.id &&
+                              img &&
+                              mutateAsset.mutate({
+                                resourceId: a.id,
+                                assetContentUrl: img.contentUrl,
+                                title: name,
+                                caption: description,
                               });
-                            }
-                          }}
-                        />
-                      )}
-                    {m.encodingFormat === 'application/pdf' &&
-                      img?.src && (
-                        <PDFFileInfo
-                          FileUpload={FileUploadComponent}
-                          FileUpdate={FileUpdateComponent}
-                          assetId={m.id}
-                          dispatch={dispatch}
-                          previewDisabled={mode === 'edit'}
-                          src={img?.src}
-                          contentUrl={img?.contentUrl}
-                          lastUpdated={img?.lastUpdated}
-                          lastUpdatedBy={img?.lastUpdatedBy}
-                          title={m.name}
-                          text={m.description}
-                          onImageRevision={() => {
-                            console.log('PDF REVISION FUNC CALLED');
-                          }}
-                          onSave={(name, description) => {
-                            try {
-                              a.id &&
-                                img &&
-                                mutateAsset.mutate({
-                                  resourceId: a.id,
-                                  assetContentUrl: img.contentUrl,
-                                  title: name,
-                                  caption: description,
-                                });
-                            } catch (e) {
-                              notification.error({
-                                message:
-                                  'An error occurred whilst trying to save. Please try again.',
+                          } catch (e) {
+                            notification.error({
+                              message:
+                                'An error occurred whilst trying to save. Please try again.',
+                            });
+                          }
+                        }}
+                      />
+                    )}
+                    {m.encodingFormat === 'application/pdf' && img?.src && (
+                      <PDFFileInfo
+                        FileUpload={FileUploadComponent}
+                        FileUpdate={FileUpdateComponent}
+                        assetId={m.id}
+                        dispatch={dispatch}
+                        previewDisabled={mode === 'edit'}
+                        src={img?.src}
+                        contentUrl={img?.contentUrl}
+                        lastUpdated={img?.lastUpdated}
+                        lastUpdatedBy={img?.lastUpdatedBy}
+                        title={m.name}
+                        text={m.description}
+                        onImageRevision={() => {
+                          console.log('PDF REVISION FUNC CALLED');
+                        }}
+                        onSave={(name, description) => {
+                          try {
+                            a.id &&
+                              img &&
+                              mutateAsset.mutate({
+                                resourceId: a.id,
+                                assetContentUrl: img.contentUrl,
+                                title: name,
+                                caption: description,
                               });
-                            }
-                          }}
-                        />
-                      )}
+                          } catch (e) {
+                            notification.error({
+                              message:
+                                'An error occurred whilst trying to save. Please try again.',
+                            });
+                          }
+                        }}
+                      />
+                    )}
                   </>
                 );
               },

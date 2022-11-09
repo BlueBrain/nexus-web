@@ -48,7 +48,7 @@ const FileInfo = ({
   >('minified');
   const [editedText, setEditedText] = React.useState(text);
   const [editedTitle, setEditedTitle] = React.useState(title);
-  
+
   return (
     <div className="file-info-wrapper">
       <section aria-label="File Information" className="file-info">
