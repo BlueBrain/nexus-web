@@ -1,4 +1,9 @@
-import { NexusClient, NexusFile, Resource, SparqlView } from '@bbp/nexus-sdk';
+import {
+  NexusClient,
+  NexusFile,
+  Resource,
+  SparqlView,
+} from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -7,6 +12,7 @@ import { RootState } from '../../store/reducers';
 import { sparqlQueryExecutor } from '../../utils/querySparqlView';
 import { Image } from 'antd';
 import FileUploadContainer from '../FileUploadContainer';
+import FileUpdateContainer from '../FileUpdateContainer';
 import { FileImageOutlined } from '@ant-design/icons';
 import { makeResourceUri } from '../../../shared/utils';
 import { useHistory, useLocation } from 'react-router';
@@ -14,6 +20,7 @@ import ImageFileInfo from '../../components/FileInfo/ImageFileInfo';
 import { PDFThumbnail } from '../../../shared/components/Preview/PDFPreview';
 import PDFFileInfo from '../../../shared/components/FileInfo/PDFFileInfo';
 import AnalysisPlugin from '../../../shared/components/AnalysisPlugin/AnalysisPlugin';
+import { UploadFile } from 'antd/lib/upload/interface';
 
 import analysisUIReducer, {
   setReportResourceType,
@@ -49,7 +56,10 @@ async function fetchImageObjectUrl(
   const blob = new Blob([rawData as string], {
     type: encodingFormat,
   });
-  return URL.createObjectURL(blob);
+
+  const urlCreateOBject = URL.createObjectURL(blob);
+
+  return urlCreateOBject;
 }
 
 const AnalysisPluginContainer = ({
@@ -273,6 +283,7 @@ const AnalysisPluginContainer = ({
       filename: string;
       lastUpdated: string;
       lastUpdatedBy: string;
+      // rev: number;
     }>[] = [];
     if (!analysisData) {
       return [];
@@ -343,6 +354,13 @@ const AnalysisPluginContainer = ({
         encodeURIComponent(data.resourceId)
       )) as Resource;
       resource.hasPart = [resource.hasPart].flat().map(a => {
+        const assetContentLastSlash = data.assetContentUrl.substring(
+          data.assetContentUrl.lastIndexOf('/') + 1
+        );
+        const aDistLastSlash = a.distribution.contentUrl['@id'].substring(
+          a.distribution.contentUrl['@id'].lastIndexOf('/') + 1
+        );
+
         if (a.distribution.contentUrl['@id'] !== data.assetContentUrl) {
           return a;
         }
@@ -353,7 +371,6 @@ const AnalysisPluginContainer = ({
           description: data.caption,
         };
       });
-
       // Add user as contributor if not already
       const contributions = resource['contribution']
         ? [resource['contribution']].flat()
@@ -612,6 +629,92 @@ const AnalysisPluginContainer = ({
       },
     }
   );
+
+  interface updateAssetImage {
+    assetId?: string;
+    info: { file: UploadFile; fileList: UploadFile[] };
+    storageId?: string;
+    src?: string;
+  }
+  const updateAssetImage = useMutation(
+    async ({ assetId, info, storageId, src }: updateAssetImage) => {
+      const { file, fileList } = info;
+      if (!assetId || !src || (file.percent && file?.percent < 100)) return;
+
+      const asset = (await nexus.File.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(assetId)
+      )) as NexusFile;
+
+      const n = src.lastIndexOf('/');
+      const result = src.substring(n + 1);
+
+      const test = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+        result
+      )}`;
+
+      const imgObjUrl = await fetchImageObjectUrl(
+        nexus,
+        orgLabel,
+        projectLabel,
+        result,
+        asset._mediaType
+      );
+
+      const myfile = {
+        [(file as File & { uid: string }).uid]: file,
+      };
+      const formData = new FormData();
+      formData.append('file', imgObjUrl);
+
+      console.log(
+        '🚀 ~ updateAssetImage file: AnalysisPluginContainer.tsx ~ line 644 ~ INFO.FILE my file toooo',
+        imgObjUrl,
+        formData,
+        file.uid,
+        myfile,
+        src
+      );
+
+      // console.log(
+      //   '🚀 ~ updateAssetImage file: AnalysisPluginContainer.tsx ~ line 644 ~ asset',
+      //   asset
+      // );
+      // console.log(
+      //   '🚀 ~ updateAssetImage file: AnalysisPluginContainer.tsx ~ line 644 ~ FORMDATA',
+      //   formData
+      // );
+
+      // const updatedFile = await nexus.File.update(orgLabel, projectLabel, {
+      //   '@id': encodeURIComponent(asset['@id']),
+      //   file: formData,
+      //   storage: storageId,
+      //   rev: asset._rev,
+      // }) as NexusFile;
+
+      // console.log(
+      //   '🚀 ~ file: AnalysisPluginContainer.tsx ~ line 666 ~ updatedFile',
+      //   updatedFile
+      // );
+
+      // return updatedFile;
+    },
+    {
+      onSuccess: data => {
+        Promise.all([
+          queryClient.invalidateQueries(['analysis']),
+          queryClient.invalidateQueries(['analysesImages']),
+        ]).then(() => {
+          console.log(
+            '🚀 ~ file: AnalysisPluginContainer.tsx ~ line 675 ~ ]).then ~ onSuccess',
+            data
+          );
+        });
+      },
+    }
+  );
+
   const onFileUploaded = (file: NexusFile, analysisReportId?: string) => {
     const newlyUploadedAsset: Asset = {
       analysisReportId,
@@ -707,7 +810,25 @@ const AnalysisPluginContainer = ({
     },
     initState
   );
-
+  const FileUploadComponent = (assetId?: string, analysisReportId?: string) => (
+    <FileUploadContainer
+      orgLabel={orgLabel}
+      showStorageMenu={false}
+      projectLabel={projectLabel}
+      onFileUploaded={file => onFileUploaded(file, analysisReportId)}
+    />
+  );
+  const FileUpdateComponent = (assetId: string, analysisReportId?: string) => (
+    <FileUpdateContainer
+      orgLabel={orgLabel}
+      showStorageMenu={false}
+      projectLabel={projectLabel}
+      assetId={assetId}
+      onFileUpdated={file =>
+        console.log('ran fileupload component but updated method')
+      }
+    />
+  );
   const analysisDataWithImages = React.useMemo(() => {
     const newAnalysisReports: AnalysisReport[] =
       mode === 'create'
@@ -744,59 +865,73 @@ const AnalysisPluginContainer = ({
                   <>
                     {m.encodingFormat.substring(0, 'image'.length) ===
                       'image' && (
-                      <ImageFileInfo
-                        previewDisabled={mode === 'edit'}
-                        src={img?.src}
-                        lastUpdated={img?.lastUpdated}
-                        lastUpdatedBy={img?.lastUpdatedBy}
-                        title={m.name}
-                        text={m.description}
-                        onSave={(name, description) => {
-                          try {
-                            a.id &&
-                              img &&
-                              mutateAsset.mutate({
-                                resourceId: a.id,
-                                assetContentUrl: img.contentUrl,
-                                title: name,
-                                caption: description,
+                        <ImageFileInfo
+                          FileUpload={FileUploadComponent}
+                          FileUpdate={FileUpdateComponent}
+                          dispatch={dispatch}
+                          previewDisabled={mode === 'edit'}
+                          src={img?.src}
+                          contentUrl={img?.contentUrl}
+                          assetId={m.id}
+                          lastUpdated={img?.lastUpdated}
+                          lastUpdatedBy={img?.lastUpdatedBy}
+                          title={m.name}
+                          text={m.description}
+                          onSave={(name, description) => {
+                            try {
+                              a.id &&
+                                img &&
+                                mutateAsset.mutate({
+                                  resourceId: a.id,
+                                  assetContentUrl: img.contentUrl,
+                                  title: name,
+                                  caption: description,
+                                });
+                            } catch (e) {
+                              notification.error({
+                                message:
+                                  'An error occurred whilst trying to save. Please try again.',
                               });
-                          } catch (e) {
-                            notification.error({
-                              message:
-                                'An error occurred whilst trying to save. Please try again.',
-                            });
-                          }
-                        }}
-                      />
-                    )}
-                    {m.encodingFormat === 'application/pdf' && img?.src && (
-                      <PDFFileInfo
-                        previewDisabled={mode === 'edit'}
-                        src={img?.src}
-                        lastUpdated={img?.lastUpdated}
-                        lastUpdatedBy={img?.lastUpdatedBy}
-                        title={m.name}
-                        text={m.description}
-                        onSave={(name, description) => {
-                          try {
-                            a.id &&
-                              img &&
-                              mutateAsset.mutate({
-                                resourceId: a.id,
-                                assetContentUrl: img.contentUrl,
-                                title: name,
-                                caption: description,
+                            }
+                          }}
+                        />
+                      )}
+                    {m.encodingFormat === 'application/pdf' &&
+                      img?.src && (
+                        <PDFFileInfo
+                          FileUpload={FileUploadComponent}
+                          FileUpdate={FileUpdateComponent}
+                          assetId={m.id}
+                          dispatch={dispatch}
+                          previewDisabled={mode === 'edit'}
+                          src={img?.src}
+                          contentUrl={img?.contentUrl}
+                          lastUpdated={img?.lastUpdated}
+                          lastUpdatedBy={img?.lastUpdatedBy}
+                          title={m.name}
+                          text={m.description}
+                          onImageRevision={() => {
+                            console.log('PDF REVISION FUNC CALLED');
+                          }}
+                          onSave={(name, description) => {
+                            try {
+                              a.id &&
+                                img &&
+                                mutateAsset.mutate({
+                                  resourceId: a.id,
+                                  assetContentUrl: img.contentUrl,
+                                  title: name,
+                                  caption: description,
+                                });
+                            } catch (e) {
+                              notification.error({
+                                message:
+                                  'An error occurred whilst trying to save. Please try again.',
                               });
-                          } catch (e) {
-                            notification.error({
-                              message:
-                                'An error occurred whilst trying to save. Please try again.',
-                            });
-                          }
-                        }}
-                      />
-                    )}
+                            }
+                          }}
+                        />
+                      )}
                   </>
                 );
               },
@@ -806,15 +941,6 @@ const AnalysisPluginContainer = ({
       };
     });
   }, [analysisData, imageData, unsavedAssets, mode]);
-
-  const FileUploadComponent = (analysisReportId?: string) => (
-    <FileUploadContainer
-      orgLabel={orgLabel}
-      showStorageMenu={false}
-      projectLabel={projectLabel}
-      onFileUploaded={file => onFileUploaded(file, analysisReportId)}
-    />
-  );
 
   return (
     <>

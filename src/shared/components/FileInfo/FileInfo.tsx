@@ -2,26 +2,31 @@ import {
   CalendarOutlined,
   EditOutlined,
   UserOutlined,
-  FileImageOutlined,
 } from '@ant-design/icons';
-import { Button, Input } from 'antd';
+import { Input, Button } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import * as moment from 'moment';
 import * as React from 'react';
 import { getUsername } from '../../utils';
 import FriendlyTimeAgo from '../FriendlyDate';
-
 import './FileInfo.less';
 
 type FileInfoProps = {
   text: string;
   title: string;
   isVisible?: boolean;
+  src?: string;
+  contentUrl?: string;
+  assetId: string;
   lastUpdated: string;
   lastUpdatedBy: string;
+  dispatch: (params: any) => void;
   onSave: (title: string, text: string) => void;
+  onImageRevision: () => void;
   setIsVisible?: React.Dispatch<React.SetStateAction<boolean>>;
+  FileUpload: () => JSX.Element;
+  FileUpdate: (assetId: string) => JSX.Element;
 };
 
 const FileInfo = ({
@@ -30,13 +35,20 @@ const FileInfo = ({
   lastUpdated,
   lastUpdatedBy,
   onSave,
+  dispatch,
+  onImageRevision,
+  FileUpload,
+  FileUpdate,
+  contentUrl,
+  assetId,
+  src,
 }: FileInfoProps) => {
   const [mode, setMode] = React.useState<
     'minified' | 'expanded' | 'edit' | 'revision'
   >('minified');
   const [editedText, setEditedText] = React.useState(text);
   const [editedTitle, setEditedTitle] = React.useState(title);
-
+  
   return (
     <div className="file-info-wrapper">
       <section aria-label="File Information" className="file-info">
@@ -162,13 +174,7 @@ const FileInfo = ({
             >
               <EditOutlined />
             </Button>
-            <Button
-              aria-label="Edit name and description"
-              onClick={() => setMode('revision')}
-              className="button-blend"
-            >
-              <FileImageOutlined />
-            </Button>
+            {FileUpdate(assetId)}
           </>
         )}
       </div>

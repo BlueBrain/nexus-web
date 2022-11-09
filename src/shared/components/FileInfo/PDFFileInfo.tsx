@@ -6,21 +6,33 @@ import FileInfo from './FileInfo';
 type PDFPreviewProps = {
   src?: string;
   onSave: (name: string, description: string) => void;
+  onImageRevision: () => void;
   text?: string;
   title?: string;
   lastUpdated?: string;
   lastUpdatedBy?: string;
   previewDisabled: boolean;
+  contentUrl?: string;
+  assetId: string;
+  dispatch: (params: any) => void;
+  FileUpload: (analysisReportId?: string) => JSX.Element;
+  FileUpdate: (assetId: string) => JSX.Element;
 };
 
 export default ({
   src,
   onSave,
+  onImageRevision,
   text,
   title,
   lastUpdated,
   lastUpdatedBy,
   previewDisabled,
+  dispatch,
+  FileUpload,
+  FileUpdate,
+  contentUrl,
+  assetId,
 }: PDFPreviewProps) => {
   const [isVisible, setIsVisible] = React.useState(false);
 
@@ -41,6 +53,12 @@ export default ({
             }}
           >
             <FileInfo
+              dispatch={dispatch}
+              FileUpload={FileUpload}
+              FileUpdate={FileUpdate}
+              assetId={assetId}
+              contentUrl={contentUrl}
+              onImageRevision={() => onImageRevision()}
               onSave={(title, text) => onSave(title, text)}
               text={text || ''}
               title={title || ''}

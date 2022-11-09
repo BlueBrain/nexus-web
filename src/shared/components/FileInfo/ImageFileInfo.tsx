@@ -6,23 +6,36 @@ import { Image } from 'antd';
 type ImagePreviewProps = {
   src?: string;
   onSave: (name: string, description: string) => void;
+  onImageRevision?: () => void;
   text?: string;
   title?: string;
   lastUpdated?: string;
   lastUpdatedBy?: string;
   previewDisabled: boolean;
+  contentUrl?: string;
+  assetId: string;
+  dispatch: (params: any) => void;
+  FileUpload: (img?: string) => JSX.Element;
+  FileUpdate: (assetId: string, img?: string) => JSX.Element;
 };
 
 export default ({
   src,
   onSave,
+  onImageRevision,
   text,
   title,
   lastUpdated,
   lastUpdatedBy,
   previewDisabled,
+  dispatch,
+  FileUpload,
+  FileUpdate,
+  contentUrl,
+  assetId,
 }: ImagePreviewProps) => {
   const [isVisible, setIsVisible] = React.useState(false);
+  const [isRevision, setIsRevision] = React.useState(false);
 
   return (
     <>
@@ -41,6 +54,15 @@ export default ({
             }}
           >
             <FileInfo
+              dispatch={dispatch}
+              FileUpload={FileUpload}
+              FileUpdate={FileUpdate}
+              src={src}
+              contentUrl={contentUrl}
+              assetId={assetId}
+              onImageRevision={() => {
+                setIsRevision(true);
+              }}
               onSave={(title, text) => onSave(title, text)}
               text={text || ''}
               title={title || ''}
@@ -52,18 +74,19 @@ export default ({
           </div>,
           document.body
         )}
-
-      <Image
-        src={src}
-        preview={
-          !previewDisabled && {
-            visible: isVisible,
-            onVisibleChange: visible => {
-              setIsVisible(visible);
-            },
+      {!isRevision && (
+        <Image
+          src={src}
+          preview={
+            !previewDisabled && {
+              visible: isVisible,
+              onVisibleChange: visible => {
+                setIsVisible(visible);
+              },
+            }
           }
-        }
-      />
+        />
+      )}
     </>
   );
 };
