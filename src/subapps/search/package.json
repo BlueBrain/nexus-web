@@ -1,0 +1,47 @@
+{
+    "name": "fusion-search",
+    "version": "1.0.3",
+    "description": "A simple scroll up button built with react",
+    "main": "./searchdist/result.tsx",
+    "keywords": [
+        "react",
+        "scroll"
+    ],
+    "license": "MIT",
+    "scripts": {
+        "build": "webpack"
+    },
+    "author": "Nick Smit",
+    "peerDependencies": {
+        "prop-types": "^15.6.0",
+        "react": "^16.0.0",
+        "react-dom": "^16.0.0"
+    },
+    "devDependencies": {
+         "@babel/core": "^7.8.4",
+        "@babel/plugin-proposal-class-properties": "^7.8.3",
+        "@babel/plugin-transform-typescript": "^7.8.3",
+        "@babel/polyfill": "^7.8.3",
+        "@babel/preset-env": "^7.8.4",
+        "@babel/preset-react": "^7.8.3",
+        "babel-cli": "^6.26.0",
+        "babel-jest": "^25.1.0",
+        "babel-loader": "^8.0.6",
+        "babel-plugin-const-enum": "^0.0.5",
+        "babel-preset-es2015": "^6.24.1",
+        "babel-preset-react-app": "^9.1.1",
+        "css-loader": "^3.5.1",
+        "path": "^0.12.7",
+        "prop-types": "^15.6.0",
+        "react": "^16.0.0",
+        "react-dom": "^16.0.0",
+        "style-loader": "^1.1.3",
+        "webpack": "^4.5.0",
+        "webpack-cli": "^3.2.1"
+    },
+    "dependencies": {
+        "@babel/preset-typescript": "^7.18.6",
+        "@material-ui/core": "^4.11.1",
+        "@material-ui/icons": "^4.9.1"
+    }
+}
