@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
   mode: 'production',
-  entry: './index.tsx',
+  entry: '/views/GlobalSearchView.tsx',
   output: {
     path: path.resolve('searchdist'),
     filename: 'result.tsx',
@@ -12,6 +12,7 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
+        include: path.resolve(__dirname, './'),
         exclude: /(node_modules)/,
         use: 'babel-loader',
       },
