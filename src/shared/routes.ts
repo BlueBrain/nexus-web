@@ -3,6 +3,7 @@ import Login from './views/Login';
 import ResourceView from './views/ResourceView';
 import UserView from './views/UserView';
 import StudioRedirectView from './views/StudioRedirectView';
+import GlobalSearchView from '../subapps/search/views/GlobalSearchView';
 import Home from './views/Home';
 
 const routes: RouteProps[] = [
@@ -18,6 +19,10 @@ const routes: RouteProps[] = [
   {
     path: '/user',
     component: UserView,
+  },
+  {
+    path: '/standalone',
+    component: GlobalSearchView,
   },
   {
     path: '/:orgLabel/:projectLabel/resources/:resourceId',
