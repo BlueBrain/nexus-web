@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as cytoscape from 'cytoscape';
+import cytoscape from 'cytoscape';
 // @ts-ignore
 import * as avsdf from 'cytoscape-avsdf';
 

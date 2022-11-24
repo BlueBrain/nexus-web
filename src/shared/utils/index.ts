@@ -6,7 +6,7 @@ import {
   isMatchWithCustomizer,
   pick,
 } from 'lodash';
-import * as moment from 'moment';
+import moment from 'moment';
 
 /**
  * getProp utility - an alternative to lodash.get

@@ -20,7 +20,7 @@ import {
   getFriendlyTimeAgoString,
   getDateString,
 } from '..';
-import * as moment from 'moment';
+import moment from 'moment';
 
 const identities: Identity[] = [
   {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Card, Empty, Table, Tooltip } from 'antd';
 import Column from 'antd/lib/table/Column';
-import * as hash from 'object-hash';
+import hash from 'object-hash';
 import { matchResultUrls } from '../../../../shared/utils';
 import {
   AskQueryResponse,

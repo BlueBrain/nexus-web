@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as moment from 'moment';
+import moment from 'moment';
 import { Input, Table, Button, Tooltip, Typography } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { omit, difference } from 'lodash';

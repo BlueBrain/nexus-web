@@ -12,7 +12,7 @@ import * as React from 'react';
 import { getUsername } from '../../../shared/utils';
 import FriendlyTimeAgo from '../FriendlyDate';
 import './AnalysisPlugin.less';
-import * as moment from 'moment';
+import moment from 'moment';
 import CategoryWidget from './CategoryWidget';
 import TypeWidget from './TypeWidget';
 import TypeEditWidget from './TypeEditWidget';

@@ -1,8 +1,8 @@
 import { join } from 'path';
-import * as express from 'express';
-import * as cookieParser from 'cookie-parser';
-import * as morgan from 'morgan';
-import * as promBundle from 'express-prom-bundle';
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import morgan from 'morgan';
+import promBundle from 'express-prom-bundle';
 import Helmet from 'react-helmet';
 import html from './html';
 import setUpDeltaProxy from './proxy';

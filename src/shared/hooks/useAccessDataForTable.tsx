@@ -1,7 +1,7 @@
 import { SparqlView, Resource, View, NexusClient } from '@bbp/nexus-sdk';
 import { sparqlQueryExecutor } from '../utils/querySparqlView';
 import { useQuery } from 'react-query';
-import * as bodybuilder from 'bodybuilder';
+import bodybuilder from 'bodybuilder';
 import { useNexusContext } from '@bbp/react-nexus';
 import { addColumnsForES, rowRender } from '../utils/parseESResults';
 import { parseJsonMaybe } from '../utils/index';

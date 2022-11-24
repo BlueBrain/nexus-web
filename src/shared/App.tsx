@@ -22,7 +22,7 @@ const App: React.FC = () => {
   const notificationData: NotificationContextType = getNotificationContextValue();
 
   // Apply Subapp routes
-  const routesWithSubApps = [...routes, ...subAppRoutes];
+  const routesWithSubApps = routes;
 
   return (
     <CartContext.Provider value={cartData}>

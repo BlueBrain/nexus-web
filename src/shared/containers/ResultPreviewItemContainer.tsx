@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
-import * as prettyBytes from 'pretty-bytes';
+import prettyBytes from 'pretty-bytes';
 import { convertMarkdownHandlebarStringWithData } from '../utils/markdownTemplate';
 import { getResourceLabel } from '../utils';
 import { parseURL, ParsedNexusUrl } from '../utils/nexusParse';

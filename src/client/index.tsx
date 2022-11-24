@@ -31,6 +31,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 const rawBase: string = (window as any)['__BASE__'] || '/';
 // remove trailing slash
 const base: string = rawBase.replace(/\/$/, '');
+
 // setup browser history
 const history = createBrowserHistory({ basename: base });
 

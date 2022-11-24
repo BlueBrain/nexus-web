@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "esnext",
+    "jsx": "react-jsx",
+    "sourceMap": true,
+    "outDir": "./searchdist",
+    "rootDir": "./",
+    "baseUrl": "src",
+    "strict": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmitOnError": true,
+    "lib": ["dom", "esnext", "dom.iterable"],
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "types": ["node"]
+  },
+  "files": ["custom.d.ts"],
+  "include": ["src"],
+  "exclude": [
+    "node_modules/**/*",
+    "**/node_modules/**/*",
+    "src/__mocks__/**/*.spec.tsx",
+    "src/__mocks__/**/*.ts",
+    "src/**/*.(test|spec).ts*",
+    "src/**/*.stories.ts*"
+  ],
+  "awesomeTypescriptLoaderOptions": {
+    "errorsAsWarnings": true
+  }
+}
