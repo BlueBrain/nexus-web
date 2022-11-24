@@ -24,7 +24,7 @@
     "types": ["node"]
   },
   "files": ["custom.d.ts"],
-  "include": ["src"],
+  "include": ["searchdist"],
   "exclude": [
     "node_modules/**/*",
     "**/node_modules/**/*",

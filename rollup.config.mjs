@@ -74,10 +74,4 @@ export default [
       terser(),
     ],
   },
-  {
-    input: 'searchdist/esm/index.d.ts',
-    output: [{ file: 'searchdist/index.d.ts', format: 'esm' }],
-    external: [/\.css$/],
-    plugins: [dts.default()],
-  },
 ];
