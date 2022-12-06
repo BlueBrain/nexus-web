@@ -61,7 +61,7 @@
     "oidc-client": "^1.7.0",
     "pretty-bytes": "^5.4.1",
     "prom-client": "^11.2.1",
-    "qs": "^6.9.4",
+    "qs": "^6.10.3",
     "query-string": "^6.3.0",
     "rc-tween-one": "^2.7.3",
     "react": "^16.12.0",
