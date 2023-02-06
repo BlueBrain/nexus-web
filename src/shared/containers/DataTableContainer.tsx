@@ -234,8 +234,6 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     changeTableResource.data
   );
 
-  // if (tableData.dataResult.data && tableData.dataResult.data.items)
-  //   console.log('table data!!!!', tableData.dataResult.data.items)
   const renderTitle = ({
     disableDelete,
     disableAddFromCart,
@@ -247,7 +245,6 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   }) => {
     const tableResource = tableData.tableResult.data
       ?.tableResource as TableResource;
-    // console.log('tableResource', tableResource)
     const tableOptionsContent = (
       <div className="wrapper">
         {!disableEdit && (
@@ -396,11 +393,6 @@ const DataTableContainer: React.FC<DataTableProps> = ({
               onClick: event => {
                 event.preventDefault();
                 const self = data._self || data.self.value;
-                console.log(
-                  'LOGGING SELF WHEN CLICKING ROW (self, data)',
-                  self,
-                  data
-                );
                 goToStudioResource(self);
               },
             })}
