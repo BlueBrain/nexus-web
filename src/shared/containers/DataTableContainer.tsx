@@ -125,7 +125,6 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   const notification = useNotification();
 
   const goToStudioResource = (selfUrl: string) => {
-    console.log('GO TO STUDIO RESORUCE DTABLECONTAINER, selfUrl', selfUrl);
     nexus
       .httpGet({
         path: selfUrl,
@@ -141,27 +140,11 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             headers: { Accept: 'application/json' },
           })
           .then((fullIdResponse: Resource) => {
-            console.log(
-              'SECOND RESPONSE',
-              fullIdResponse,
-              fullIdResponse[0]['@id']
-            );
             const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
             const hist = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
               fullIdResponse[0]['@id']
             )}`;
-            console.log(
-              'HISTORY PUSH vs self resource id',
-              hist,
-              selfUrl,
-              fullIdResponse[0]['@id']
-            );
-            history.push(
-              `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
-                fullIdResponse[0]['@id']
-              )}`,
-              { background: location }
-            );
+            history.push(hist, { background: location });
           });
       })
       .catch(error => {
