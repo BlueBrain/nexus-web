@@ -178,6 +178,7 @@ const ResourceListContainer: React.FunctionComponent<{
       query: {
         ...list.query,
         type: !!value ? value : undefined,
+        deprecated: undefined,
         from: 0,
       },
     });
