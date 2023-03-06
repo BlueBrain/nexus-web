@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Card, Empty, Table, Tooltip } from 'antd';
+import { Card, Empty, Table, Tooltip, Alert } from 'antd';
 import Column from 'antd/lib/table/Column';
 import * as hash from 'object-hash';
 import { matchResultUrls } from '../../../../shared/utils';
+import { CloseCircleFilled } from '@ant-design/icons';
 import {
   AskQueryResponse,
   SelectQueryResponse,
@@ -63,14 +64,24 @@ const SparqlQueryResults: React.FunctionComponent<{
   return (
     <Card bordered className="results">
       {error && (
-        <Empty style={{ textAlign: 'left' }} description={
+        <Empty image={<CloseCircleFilled style={{ fontSize: 70, color: 'red' }} />} description={
           typeof error === 'string' ?
-            <div>{error}</div> : <div>
-              {error.reason}
-              <pre>
-                <code>
-                  {error.details}
-                </code>
+            <Alert
+              message={error}
+              type="error"
+              closable={false}
+              showIcon
+            />
+            : <div>
+              <Alert
+                message={error.reason}
+                type="error"
+                closable={false}
+                showIcon
+                style={{ textAlign: "left" }}
+              />
+              <pre style={{ textAlign: "left", marginTop: 10 }}>
+                {error.details}
               </pre>
             </div>
         } />
