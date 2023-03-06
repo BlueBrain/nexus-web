@@ -24,56 +24,56 @@ const SparqlQueryContainer: React.FunctionComponent<{
   initialQuery,
   viewId = DEFAULT_SPARQL_VIEW_ID,
 }) => {
-  const nexus = useNexusContext();
-  const [query, setQuery] = React.useState<string>(
-    initialQuery || DEFAULT_QUERY
-  );
-  const [{ response, busy, error }, setResponse] = React.useState<{
-    response: SparqlViewQueryResponse | null;
-    busy: boolean;
-    error: string | { reason: string; details: string; } | null;
-  }>({
-    response: null,
-    busy: false,
-    error: null,
-  });
-
-  React.useEffect(() => {
-    setResponse({
+    const nexus = useNexusContext();
+    const [query, setQuery] = React.useState<string>(
+      initialQuery || DEFAULT_QUERY
+    );
+    const [{ response, busy, error }, setResponse] = React.useState<{
+      response: SparqlViewQueryResponse | null;
+      busy: boolean;
+      error: string | { reason: string; details: string; } | null;
+    }>({
       response: null,
-      busy: true,
+      busy: false,
       error: null,
     });
-    nexus.View.sparqlQuery(orgLabel, projectLabel, viewId, query)
-      .then(response => {
-        setResponse({
-          response,
-          busy: false,
-          error: null,
-        });
-      })
-      .catch(error => {
-        setResponse({
-          error,
-          response: null,
-          busy: false,
-        });
+
+    React.useEffect(() => {
+      setResponse({
+        response: null,
+        busy: true,
+        error: null,
       });
-  }, [orgLabel, projectLabel, viewId, query]);
+      nexus.View.sparqlQuery(orgLabel, projectLabel, viewId, query)
+        .then(response => {
+          setResponse({
+            response,
+            busy: false,
+            error: null,
+          });
+        })
+        .catch(error => {
+          setResponse({
+            error,
+            response: null,
+            busy: false,
+          });
+        });
+    }, [orgLabel, projectLabel, viewId, query]);
 
-  const onQueryChange = (query: string) => {
-    setQuery(query);
+    const onQueryChange = (query: string) => {
+      setQuery(query);
+    };
+
+    return (
+      <SparqlQueryForm
+        query={query}
+        response={response}
+        busy={busy}
+        error={error}
+        onQueryChange={onQueryChange}
+      />
+    );
   };
-
-  return (
-    <SparqlQueryForm
-      query={query}
-      response={response}
-      busy={busy}
-      error={error}
-      onQueryChange={onQueryChange}
-    />
-  );
-};
 
 export default SparqlQueryContainer;

@@ -15,9 +15,9 @@ import useNotification from '../../../../shared/hooks/useNotification';
 export type NexusSparqlError =
   | string
   | {
-      reason: string;
-      details: string;
-    };
+    reason: string;
+    details: string;
+  };
 
 export type Entry = {
   [key: string]: string;
@@ -64,15 +64,15 @@ const SparqlQueryResults: React.FunctionComponent<{
     <Card bordered className="results">
       {error && (
         <Empty style={{ textAlign: 'left' }} description={
-          typeof error === 'string' ? 
-          <div>{error}</div> : <div>
-             {error.reason}
-             <pre>
-              <code>
-                  { error.details }
-              </code>
-             </pre>
-          </div>
+          typeof error === 'string' ?
+            <div>{error}</div> : <div>
+              {error.reason}
+              <pre>
+                <code>
+                  {error.details}
+                </code>
+              </pre>
+            </div>
         } />
       )}
       {!error && (
