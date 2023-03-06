@@ -16,6 +16,7 @@ export type NexusSparqlError =
   | string
   | {
       reason: string;
+      details: string;
     };
 
 export type Entry = {
@@ -59,11 +60,20 @@ const SparqlQueryResults: React.FunctionComponent<{
     }
     return entry;
   };
-
   return (
     <Card bordered className="results">
       {error && (
-        <Empty description={typeof error === 'string' ? error : error.reason} />
+        <Empty style={{ textAlign: 'left' }} description={
+          typeof error === 'string' ? 
+          <div>{error}</div> : <div>
+             {error.reason}
+             <pre>
+              <code>
+                  { error.details }
+              </code>
+             </pre>
+          </div>
+        } />
       )}
       {!error && (
         <Table
