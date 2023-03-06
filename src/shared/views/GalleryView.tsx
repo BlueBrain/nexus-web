@@ -70,8 +70,8 @@ const GalleryView: React.FC = () => {
       if (wrapperRef.current) {
         const currentWrapperRef = wrapperRef.current;
         // @ts-ignore
-        if(event.target && event.target.closest(".ListItem")){
-          return
+        if(event.target && event.target.closest('.ListItem')){
+          return;
         }
         if (
           (event.target &&
