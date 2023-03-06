@@ -70,7 +70,7 @@ const GalleryView: React.FC = () => {
       if (wrapperRef.current) {
         const currentWrapperRef = wrapperRef.current;
         // @ts-ignore
-        if(event.target && event.target.closest(".ListItem")){
+        if (event.target && event.target.closest(".ListItem")) {
           return
         }
         if (
@@ -78,14 +78,14 @@ const GalleryView: React.FC = () => {
             !currentWrapperRef.contains(event.target as Node) &&
             // @ts-ignore
             event.target.closest('#app')) ||
-            // @ts-ignore
-            event.target.closest('.ant-drawer-close')
+          // @ts-ignore
+          event.target.closest('.ant-drawer-close')
         ) {
-            // @ts-ignore
-            history.push(`${background.pathname}${background.search}`, {
-              refresh: true,
-            });
-            setDrawerVisible(false);
+          // @ts-ignore
+          history.push(`${background.pathname}${background.search}`, {
+            refresh: true,
+          });
+          setDrawerVisible(false);
         }
       }
     };
@@ -106,25 +106,25 @@ const GalleryView: React.FC = () => {
   // when the background state is provided
   return (
     <>
-        {
-          background && <Drawer
-            className="gallery-drawer"
-            maskClosable={false}
-            destroyOnClose={false}
-            visible={drawerVisible}
-            width="" // intentionally blank, specified in css
-          >
-              <Route
-                  key="resource-modal"
-                  path={'/:orgLabel/:projectLabel/resources/:resourceId'}
-                  render={() => (
-                    <div ref={wrapperRef} style={{ width: '100%', height: '100%' }}>
-                      <ResourceViewContainer />
-                    </div>
-                  )}
-              />
-          </Drawer>
-        }
+      {
+        background && <Drawer
+          className="gallery-drawer"
+          maskClosable={false}
+          destroyOnClose={false}
+          visible={drawerVisible}
+          width="" // intentionally blank, specified in css
+        >
+          <Route
+            key="resource-modal"
+            path={'/:orgLabel/:projectLabel/resources/:resourceId'}
+            render={() => (
+              <div ref={wrapperRef} style={{ width: '100%', height: '100%' }}>
+                <ResourceViewContainer />
+              </div>
+            )}
+          />
+        </Drawer>
+      }
     </>
   );
 };
