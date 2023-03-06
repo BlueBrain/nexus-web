@@ -5,7 +5,8 @@ import {
   ExclamationCircleOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
+import { UnControlled as CodeMirror,  } from 'react-codemirror2';
+import codemiror from 'codemirror';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
@@ -52,6 +53,14 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const keyFoldCode = (cm: any) => {
     cm.foldCode(cm.getCursor());
   };
+  const codeMirorRef = React.useRef<codemiror.Editor>();
+  const [foldCodeMiror, setFoldCodeMiror] = React.useState<boolean>(false)
+  const onFoldChange = () => {
+    if(codeMirorRef.current){
+      codeMirorRef.current.foldCode(0);
+      setFoldCodeMiror((stateFoldCodeMiror) => !stateFoldCodeMiror);
+    }
+  }
   const renderCodeMirror = (value: string) => {
     return (
       <Spin spinning={busy}>
@@ -67,13 +76,17 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             lineWrapping: true,
             viewportMargin: Infinity,
             foldGutter: true,
+            // @ts-ignore
             foldCode: true,
             gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
             extraKeys: {
               'Ctrl-Q': keyFoldCode,
-            },
+            }
           }}
           onChange={handleChange}
+          editorDidMount={editor => {
+            codeMirorRef.current = editor
+          }}
         />
       </Spin>
     );
@@ -130,6 +143,12 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         </div>
 
         <div className="controls">
+          <Switch
+              checkedChildren="fold"
+              unCheckedChildren="unfold"
+              checked={foldCodeMiror}
+              onChange={onFoldChange}
+          />
           {!expanded && !isEditing && valid && showMetadataToggle && (
             <>
               <Switch
