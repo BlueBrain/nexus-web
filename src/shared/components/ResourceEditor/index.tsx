@@ -5,7 +5,7 @@ import {
   ExclamationCircleOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
-import { UnControlled as CodeMirror  } from 'react-codemirror2';
+import { UnControlled as CodeMirror } from 'react-codemirror2';
 import codemiror from 'codemirror';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/fold/foldcode';
@@ -57,17 +57,17 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const codeMirorRef = React.useRef<codemiror.Editor>();
   const [foldCodeMiror, setFoldCodeMiror] = React.useState<boolean>(false);
   const onFoldChange = () => {
-    if(codeMirorRef.current){
-      if(foldCodeMiror){
+    if (codeMirorRef.current) {
+      if (foldCodeMiror) {
         codeMirorRef.current.execCommand('unfoldAll');
-        setFoldCodeMiror((stateFoldCodeMiror) => !stateFoldCodeMiror);
+        setFoldCodeMiror(stateFoldCodeMiror => !stateFoldCodeMiror);
       } else {
         codeMirorRef.current.execCommand('foldAll');
         codeMirorRef.current.foldCode(0);
-        setFoldCodeMiror((stateFoldCodeMiror) => !stateFoldCodeMiror);
+        setFoldCodeMiror(stateFoldCodeMiror => !stateFoldCodeMiror);
       }
     }
-  }
+  };
   const renderCodeMirror = (value: string) => {
     return (
       <Spin spinning={busy}>
@@ -88,11 +88,11 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
             extraKeys: {
               'Ctrl-Q': keyFoldCode,
-            }
+            },
           }}
           onChange={handleChange}
-          editorDidMount={(editor) => {
-            codeMirorRef.current = editor
+          editorDidMount={editor => {
+            codeMirorRef.current = editor;
           }}
         />
       </Spin>
@@ -106,7 +106,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   }, [rawData]); // only runs when Editor receives new resource to edit
 
   const handleChange = (editor: any, data: any, value: any) => {
-    editor
+    editor;
     if (!editable) {
       return;
     }
@@ -152,20 +152,20 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
 
         <div className="controls">
           <Switch
-              checkedChildren="Fold"
-              unCheckedChildren="Unfold"
-              checked={foldCodeMiror}
-              onChange={onFoldChange}
-              style={switchMarginRight}
+            checkedChildren="Fold"
+            unCheckedChildren="Unfold"
+            checked={foldCodeMiror}
+            onChange={onFoldChange}
+            style={switchMarginRight}
           />
           {!expanded && !isEditing && valid && showMetadataToggle && (
-              <Switch
-                checkedChildren="Metadata"
-                unCheckedChildren="Show Metadata"
-                checked={showMetadata}
-                onChange={onMetadataChange}
-                style={switchMarginRight}
-              />
+            <Switch
+              checkedChildren="Metadata"
+              unCheckedChildren="Show Metadata"
+              checked={showMetadata}
+              onChange={onMetadataChange}
+              style={switchMarginRight}
+            />
           )}
           {showExpanded && !isEditing && valid && (
             <Switch
