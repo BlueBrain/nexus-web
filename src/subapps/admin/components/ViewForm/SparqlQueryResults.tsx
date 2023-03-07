@@ -16,9 +16,9 @@ import useNotification from '../../../../shared/hooks/useNotification';
 export type NexusSparqlError =
   | string
   | {
-    reason: string;
-    details: string;
-  };
+      reason: string;
+      details: string;
+    };
 
 export type Entry = {
   [key: string]: string;
@@ -64,27 +64,27 @@ const SparqlQueryResults: React.FunctionComponent<{
   return (
     <Card bordered className="results">
       {error && (
-        <Empty image={<CloseCircleFilled style={{ fontSize: 70, color: 'red' }} />} description={
-          typeof error === 'string' ?
-            <Alert
-              message={error}
-              type="error"
-              closable={false}
-              showIcon
-            />
-            : <div>
-              <Alert
-                message={error.reason}
-                type="error"
-                closable={false}
-                showIcon
-                style={{ textAlign: "left" }}
-              />
-              <pre style={{ textAlign: "left", marginTop: 10 }}>
-                {error.details}
-              </pre>
-            </div>
-        } />
+        <Empty
+          image={<CloseCircleFilled style={{ fontSize: 70, color: 'red' }} />}
+          description={
+            typeof error === 'string' ? (
+              <Alert message={error} type="error" closable={false} showIcon />
+            ) : (
+              <div>
+                <Alert
+                  message={error.reason}
+                  type="error"
+                  closable={false}
+                  showIcon
+                  style={{ textAlign: 'left' }}
+                />
+                <pre style={{ textAlign: 'left', marginTop: 10 }}>
+                  {error.details}
+                </pre>
+              </div>
+            )
+          }
+        />
       )}
       {!error && (
         <Table
