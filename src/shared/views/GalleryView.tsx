@@ -70,8 +70,8 @@ const GalleryView: React.FC = () => {
       if (wrapperRef.current) {
         const currentWrapperRef = wrapperRef.current;
         // @ts-ignore
-        if (event.target && event.target.closest(".ListItem")) {
-          return
+        if (event.target && event.target.closest('.ListItem')) {
+          return;
         }
         if (
           (event.target &&
@@ -100,14 +100,13 @@ const GalleryView: React.FC = () => {
     setDrawerVisible(true);
   }, [location]);
 
-
   // This is where special routes should go
   // that are placed inside a modal
   // when the background state is provided
   return (
     <>
-      {
-        background && <Drawer
+      {background && (
+        <Drawer
           className="gallery-drawer"
           maskClosable={false}
           destroyOnClose={false}
@@ -124,7 +123,7 @@ const GalleryView: React.FC = () => {
             )}
           />
         </Drawer>
-      }
+      )}
     </>
   );
 };
