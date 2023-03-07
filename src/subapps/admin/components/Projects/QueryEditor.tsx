@@ -27,6 +27,7 @@ const QueryEditor: React.FC<{
   const nexus = useNexusContext();
   const notification = useNotification();
   const [activeKey, setActiveKey] = React.useState('sparql');
+  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     if (match.params.viewId) {
@@ -38,14 +39,17 @@ const QueryEditor: React.FC<{
           } else {
             setActiveKey('elasticsearch');
           }
+          setLoading(false);
         })
         .catch(error => {
           notification.error({
             message: 'Problem loading View',
             description: error.message,
           });
+          setLoading(false);
         });
     } else {
+      setLoading(false);
       history.replace(
         `/${
           subapp.namespace
@@ -57,6 +61,8 @@ const QueryEditor: React.FC<{
   }, [orgLabel, projectLabel]);
 
   const { TabPane } = Tabs;
+  if(loading) 
+    return null;
   return (
     <div className="query-editor">
       <h3>Query Browser</h3>

@@ -9,6 +9,9 @@ import { CartContext } from '../hooks/useDataCart';
 import { makeResourceUri } from '../utils';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/reducers';
+import { useAdminSubappContext } from '../../subapps/admin';
+import { intersection as intersect } from 'lodash';
+
 
 const ResourceViewActionsContainer: React.FC<{
   resource: Resource;
@@ -43,14 +46,31 @@ const ResourceViewActionsContainer: React.FC<{
     }
     return [];
   };
-
+  const [view, setView] = React.useState<Resource | null>(null);
+  const subapp = useAdminSubappContext();
   React.useEffect(() => {
     nexus.Resource.tags(orgLabel, projectLabel, encodedResourceId).then(
       data => {
         setTags(data);
       }
     );
+    nexus.Resource.get(orgLabel, projectLabel, encodedResourceId).then(resource => {
+      // @ts-ignore
+      if(resource && resource['@type'].includes('View')){
+        // @ts-ignore
+        setView(resource);
+      }
+    });
   }, [resource, latestResource]);
+
+  const redirectToQueryTab = React.useCallback(() => {
+    if(view){
+      const base = `/${subapp.namespace}/${orgLabel}/${projectLabel}`;
+      const href = `${base}/query/${encodeURIComponent(view['@id'])}?from=browse`;
+      return href;
+    }
+    return;
+  }, [view]);
 
   const self = resource._self;
 
@@ -214,6 +234,15 @@ const ResourceViewActionsContainer: React.FC<{
       <Col>
         <Button onClick={handleAddToCart}>Add to Cart</Button>
       </Col>
+      {
+        view && <Col>
+          <Button
+            href={redirectToQueryTab()}
+          >
+            Query the View
+          </Button>
+        </Col>
+      }
     </Row>
   );
 };

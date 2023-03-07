@@ -79,7 +79,7 @@ const ResourceViewContainer: React.FunctionComponent<{
   }>();
 
   React.useEffect(() => {
-    if (location.state.background) {
+    if (location.state && location.state.background) {
       const studioPathMatch = matchPath<{ StudioId: string }>(
         location.state.background.pathname,
         {
