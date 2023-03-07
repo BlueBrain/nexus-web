@@ -189,10 +189,10 @@ const ResourceListContainer: React.FunctionComponent<{
       } else {
         setResources({
           next,
-          error: resourcesResults.reason,
           resources,
           total,
           busy: false,
+          error: resourcesResults.reason,
         });
       }
     })();
