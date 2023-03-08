@@ -9,7 +9,7 @@ import useNotification from '../../../shared/hooks/useNotification';
 import { Button, Col, Row, Select } from 'antd';
 import { getResourceLabel } from '../../../shared/utils';
 import { useAdminSubappContext } from '..';
-import { has, isNil } from 'lodash';
+import { isNil } from 'lodash';
 
 const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
   const match = useRouteMatch<{
@@ -44,7 +44,6 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
     history.replace(
       `/${
         subapp.namespace
-        //@ts-ignore
       }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}${isNavigateFromBrowse ? `?from=${from}` : ''}`
     );
   }, [selectedView]);
@@ -75,10 +74,8 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
         </Select>
       </Col>
       { isNavigateFromBrowse && (
-        <Col flex={'100px'}>
-          <Button onClick={() => {
-            history.goBack();
-          }}>
+        <Col flex='100px'>
+          <Button onClick={history.goBack}>
               Back to Browse
           </Button>
         </Col>
