@@ -44,14 +44,16 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
     history.replace(
       `/${
         subapp.namespace
-      }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}${isNavigateFromBrowse ? `?from=${from}` : ''}`
+      }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}${
+        isNavigateFromBrowse ? `?from=${from}` : ''
+      }`
     );
   }, [selectedView]);
   const flexProps = isNavigateFromBrowse ? { flex: 'auto' } : { span: 24 };
   const menu = (
     <Row gutter={3} justify="space-between" align="middle">
-      <Col { ...flexProps }>
-      <Select
+      <Col {...flexProps}>
+        <Select
           value={selectedView as string}
           onChange={v => setSelectedView(v)}
           style={{ width: '100%' }}
@@ -73,11 +75,9 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
             })}
         </Select>
       </Col>
-      { isNavigateFromBrowse && (
-        <Col flex='100px'>
-          <Button onClick={history.goBack}>
-              Back to Browse
-          </Button>
+      {isNavigateFromBrowse && (
+        <Col flex="100px">
+          <Button onClick={history.goBack}>Back to Browse</Button>
         </Col>
       )}
     </Row>
@@ -98,9 +98,7 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
 
   return (
     <>
-      <div style={{ paddingLeft: '2em', paddingRight: '2em' }}>
-        {menu}
-      </div>
+      <div style={{ paddingLeft: '2em', paddingRight: '2em' }}>{menu}</div>
       <div className="view-view view-container -unconstrained-width">
         <SparqlQueryContainer
           orgLabel={orgLabel}
