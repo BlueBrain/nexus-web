@@ -187,16 +187,16 @@ const ProjectsView: React.FunctionComponent = () => {
         <div style={{ flexGrow: 1, overflow: 'auto' }}>
           <div>
             <Button
-              size='middle'
-              type='link'
+              size="middle"
+              type="link"
               onClick={backToAdmin}
               icon={<ArrowLeftOutlined />}
               style={{ padding: 0 }}
             >
-                Organizations
+              Organizations
             </Button>
             <h1 style={{ marginBottom: 0, marginRight: 8 }}>
-              { activeOrg._label ?? organisationLabel }
+              {activeOrg._label ?? organisationLabel}
             </h1>
           </div>
           {activeOrg.description && <p>{activeOrg.description}</p>}
