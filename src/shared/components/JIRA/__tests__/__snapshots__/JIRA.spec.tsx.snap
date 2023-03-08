@@ -275,7 +275,7 @@ exports[`JIRA renders with issues 1`] = `
                     <td
                       class="ant-table-cell"
                     >
-                      2 years ago
+                      3 years ago
                     </td>
                     <td
                       class="ant-table-cell"
@@ -541,7 +541,7 @@ exports[`JIRA renders with projects 1`] = `
                     <td
                       class="ant-table-cell"
                     >
-                      2 years ago
+                      3 years ago
                     </td>
                     <td
                       class="ant-table-cell"
