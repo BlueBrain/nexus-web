@@ -47,7 +47,9 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
     history.replace(
       `/${
         subapp.namespace
-      }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}${isNavigateFromBrowse ? `?from=${from}` : ''}`
+      }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}${
+        isNavigateFromBrowse ? `?from=${from}` : ''
+      }`
     );
   }, [selectedView, isNavigateFromBrowse]);
 
@@ -55,7 +57,7 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
   const flexProps = isNavigateFromBrowse ? { flex: 'auto' } : { span: 24 };
   const menu = (
     <Row gutter={3} justify="space-between" align="middle">
-      <Col { ...flexProps }>
+      <Col {...flexProps}>
         <Select
           value={selectedView as string}
           onChange={v => setSelectedView(v)}
@@ -78,15 +80,11 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
             })}
         </Select>
       </Col>
-      {
-        isNavigateFromBrowse && (
-          <Col flex='100px'>
-            <Button onClick={history.goBack}>
-                Back to Browse
-            </Button>
-          </Col>
-        )
-      }
+      {isNavigateFromBrowse && (
+        <Col flex="100px">
+          <Button onClick={history.goBack}>Back to Browse</Button>
+        </Col>
+      )}
     </Row>
   );
 
@@ -105,9 +103,7 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
 
   return (
     <>
-      <div style={{ paddingLeft: '2em', paddingRight: '2em' }}>
-        {menu}
-      </div>
+      <div style={{ paddingLeft: '2em', paddingRight: '2em' }}>{menu}</div>
       <div className="view-view view-container -unconstrained-width">
         <ElasticSearchQueryContainer
           orgLabel={orgLabel}

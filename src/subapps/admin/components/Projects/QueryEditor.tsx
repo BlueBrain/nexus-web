@@ -61,8 +61,10 @@ const QueryEditor: React.FC<{
   }, [orgLabel, projectLabel]);
 
   const { TabPane } = Tabs;
-  if(loading) 
+
+  if (loading) {
     return null;
+  }
   return (
     <div className="query-editor">
       <h3>Query Browser</h3>

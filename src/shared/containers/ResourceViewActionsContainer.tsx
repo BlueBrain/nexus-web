@@ -12,7 +12,6 @@ import { RootState } from '../store/reducers';
 import { useAdminSubappContext } from '../../subapps/admin';
 import { intersection as intersect } from 'lodash';
 
-
 const ResourceViewActionsContainer: React.FC<{
   resource: Resource;
   latestResource: Resource;
@@ -54,19 +53,23 @@ const ResourceViewActionsContainer: React.FC<{
         setTags(data);
       }
     );
-    nexus.Resource.get(orgLabel, projectLabel, encodedResourceId).then(resource => {
-      // @ts-ignore
-      if(resource && resource['@type'].includes('View')){
+    nexus.Resource.get(orgLabel, projectLabel, encodedResourceId).then(
+      resource => {
         // @ts-ignore
-        setView(resource);
+        if (resource && resource['@type'].includes('View')) {
+          // @ts-ignore
+          setView(resource);
+        }
       }
-    });
+    );
   }, [resource, latestResource]);
 
   const redirectToQueryTab = React.useCallback(() => {
-    if(view){
+    if (view) {
       const base = `/${subapp.namespace}/${orgLabel}/${projectLabel}`;
-      const href = `${base}/query/${encodeURIComponent(view['@id'])}?from=browse`;
+      const href = `${base}/query/${encodeURIComponent(
+        view['@id']
+      )}?from=browse`;
       return href;
     }
     return;
@@ -234,15 +237,11 @@ const ResourceViewActionsContainer: React.FC<{
       <Col>
         <Button onClick={handleAddToCart}>Add to Cart</Button>
       </Col>
-      {
-        view && <Col>
-          <Button
-            href={redirectToQueryTab()}
-          >
-            Query the View
-          </Button>
+      {view && (
+        <Col>
+          <Button href={redirectToQueryTab()}>Query the View</Button>
         </Col>
-      }
+      )}
     </Row>
   );
 };
