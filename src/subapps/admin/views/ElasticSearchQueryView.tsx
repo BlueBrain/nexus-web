@@ -9,7 +9,7 @@ import { Button, Col, Row, Select } from 'antd';
 import { getResourceLabel } from '../../../shared/utils';
 import useNotification from '../../../shared/hooks/useNotification';
 import { useAdminSubappContext } from '..';
-import { has, isNil } from 'lodash';
+import { isNil } from 'lodash';
 
 const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
   const subapp = useAdminSubappContext();
@@ -47,7 +47,6 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
     history.replace(
       `/${
         subapp.namespace
-        //@ts-ignore
       }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}${isNavigateFromBrowse ? `?from=${from}` : ''}`
     );
   }, [selectedView, isNavigateFromBrowse]);
@@ -81,10 +80,8 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
       </Col>
       {
         isNavigateFromBrowse && (
-          <Col flex={'100px'}>
-            <Button onClick={() => {
-              history.goBack();
-            }}>
+          <Col flex='100px'>
+            <Button onClick={history.goBack}>
                 Back to Browse
             </Button>
           </Col>
