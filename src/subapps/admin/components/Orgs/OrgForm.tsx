@@ -63,7 +63,10 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
               whitespace: true,
               pattern: /^\S+$/g,
               message: 'Label must be a phrase without spaces',
-            },
+            }, {
+              pattern:/a-zA-Z0-9_-/g,
+              message: 'Label must contains only letters and numbers',
+            }
           ]}
         >
           <Input placeholder="Label" disabled={mode === 'edit'} />
