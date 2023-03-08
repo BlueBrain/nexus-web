@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Drawer, Modal, Button, Empty } from 'antd';
-import { PlusSquareOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, PlusSquareOutlined } from '@ant-design/icons';
 import { useHistory, useRouteMatch } from 'react-router';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { ProjectResponseCommon, OrgResponseCommon } from '@bbp/nexus-sdk';
@@ -161,6 +161,9 @@ const ProjectsView: React.FunctionComponent = () => {
       });
   };
 
+  const organisationLabel = activeOrg?.['@id'].split('/').reverse()?.[0];
+  const backToAdmin = () => history.push(`/admin`);
+
   if (orgLoadingBusy) {
     return (
       <Skeleton
@@ -182,9 +185,20 @@ const ProjectsView: React.FunctionComponent = () => {
     <div className="projects-view view-container">
       {activeOrg ? (
         <div style={{ flexGrow: 1, overflow: 'auto' }}>
-          <h1 style={{ marginBottom: 0, marginRight: 8 }}>
-            {activeOrg._label}
-          </h1>
+          <div>
+            <Button
+              size='middle'
+              type='link'
+              onClick={backToAdmin}
+              icon={<ArrowLeftOutlined />}
+              style={{ padding: 0 }}
+            >
+                Organizations
+            </Button>
+            <h1 style={{ marginBottom: 0, marginRight: 8 }}>
+              { activeOrg._label ?? organisationLabel }
+            </h1>
+          </div>
           {activeOrg.description && <p>{activeOrg.description}</p>}
           <div
             style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}
