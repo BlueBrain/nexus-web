@@ -24,7 +24,7 @@ jobs:
         run: |
           yarn test --coverage src
       - name: upload coverage to Codecov 💌
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: build fusion docker image
