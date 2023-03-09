@@ -56,7 +56,7 @@ const ProjectGraph: React.FC<{
 
   React.useEffect(() => {
     cytoscape.use(avsdf);
-    const cy = graph.current = cytoscape({
+    const cy = (graph.current = cytoscape({
       elements,
       maxZoom: 1,
       wheelSensitivity: 0.2,
@@ -68,7 +68,7 @@ const ProjectGraph: React.FC<{
         nodeSeparation: 100,
       },
       style: GRAPH_STYLE,
-    });
+    }));
 
     return () => {
       if (graph.current) {
