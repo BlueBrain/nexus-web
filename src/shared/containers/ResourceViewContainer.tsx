@@ -257,7 +257,7 @@ const ResourceViewContainer: React.FunctionComponent<{
   const handleGoToInternalLink = (link: ResourceLinkAugmented) => {
     const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(
       (link as IncomingLink)._project
-    );
+    )!;
 
     const revisionOption = link.isRevisionSpecific
       ? { revision: link._rev }

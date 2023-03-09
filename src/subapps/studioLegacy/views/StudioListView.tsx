@@ -46,13 +46,13 @@ const StudioListView: React.FC = () => {
     if (data) {
       const list: StudioItem[] = data._results
         .map(r => {
-          const labels = getOrgAndProjectFromProjectId(r._project);
+          const { projectLabel, orgLabel } = getOrgAndProjectFromProjectId(r._project)!;
           return {
             id: r['@id'],
             label: r.label,
             description: r.description,
-            projectLabel: labels.projectLabel,
-            orgLabel: labels.orgLabel,
+            projectLabel: projectLabel,
+            orgLabel: orgLabel,
           };
         })
         .filter(

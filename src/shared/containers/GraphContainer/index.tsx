@@ -74,7 +74,7 @@ const GraphContainer: React.FunctionComponent<{
 
     let fetchedLinks: ResourceLink[];
 
-    const { orgLabel, projectLabel } = getOrgAndProjectFromResource(resource);
+    const { orgLabel, projectLabel } = getOrgAndProjectFromResource(resource)!;
 
     getResourceLinks(orgLabel, projectLabel, resource['@id'])
       .then(response => {
