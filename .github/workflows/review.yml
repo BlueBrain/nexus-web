@@ -7,7 +7,7 @@ jobs:
     runs-on: it
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           cache: 'yarn'
@@ -24,7 +24,7 @@ jobs:
         run: |
           yarn test --coverage src
       - name: upload coverage to Codecov 💌
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: build fusion docker image
@@ -44,6 +44,7 @@ jobs:
       - name: Cleanup Docker Containers
         if: ${{ always() }}
         run: |
+          docker rm $(docker ps -a -q)
           for container in `docker images | grep none | awk '{print $3}'`; do
             echo "Deleting container: $container";
             docker rmi $container;
