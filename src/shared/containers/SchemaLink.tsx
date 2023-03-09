@@ -21,7 +21,7 @@ const SchemaLinkContainer: React.FunctionComponent<{
     // First get the expanded resource
     // So we can see the expanded
     // _contstrainedBy value
-    if(labels && labels.orgLabel && labels.projectLabel){
+    if (labels && labels.orgLabel && labels.projectLabel) {
       let schemaId = resource._constrainedBy;
       nexus
         .httpGet({
@@ -32,7 +32,7 @@ const SchemaLinkContainer: React.FunctionComponent<{
         })
         .then(({ [EXPANDED_CONSTRAINED_BY_KEY]: constrainedBy }) => {
           schemaId = constrainedBy['@id'];
-  
+
           return nexus.Resolver.getResource(
             labels.orgLabel,
             labels.projectLabel,
