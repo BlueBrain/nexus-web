@@ -10,7 +10,7 @@ services:
 
     working_dir: /e2e
     container_name: cypress
-    entrypoint: ['bash']
+    entrypoint: [ 'bash' ]
     stdin_open: true
     tty: true
   fusion:
@@ -20,7 +20,7 @@ services:
       ANALYSIS_PLUGIN_SHOW_ON_TYPES: 'Analysis,DetailedCircuit,AnalysisReport,Report'
       API_ENDPOINT: 'http://delta.test:8080/v1'
       CLIENT_ID: 'fusion'
-    image: nexus-web:fresh
+    image: bluebrain/nexus-web:latest
     expose:
       - 8000
     networks:
@@ -54,7 +54,7 @@ services:
         '--',
         './bin/delta-app',
         '-Xmx4G',
-        '-Dapp.cluster.remote-interface=delta',
+        '-Dapp.cluster.remote-interface=delta'
       ]
     expose:
       - 8080
@@ -92,7 +92,13 @@ services:
       bootstrap.memory_lock: 'true'
       ELASTIC_PASSWORD: 'password'
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:9200/_cluster/health']
+      test:
+        [
+          'CMD',
+          'curl',
+          '-f',
+          'http://localhost:9200/_cluster/health'
+        ]
       interval: 30s
       timeout: 20s
       retries: 3
