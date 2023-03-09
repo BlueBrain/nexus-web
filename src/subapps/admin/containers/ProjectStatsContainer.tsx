@@ -62,19 +62,29 @@ const ProjectStatsContainer: React.FC<{
     }
   };
 
-  const getDiameter = (count: number, minValueNode: number, maxValueNode: number) => {
+  const getDiameter = (
+    count: number,
+    minValueNode: number,
+    maxValueNode: number
+  ) => {
     const min = 20;
     const max = 60;
-    const diameter = (count - minValueNode) / (maxValueNode - minValueNode) * max;
+    const diameter =
+      ((count - minValueNode) / (maxValueNode - minValueNode)) * max;
     return diameter < min ? min : diameter;
   };
   const constructPathName = (path: any[]) => {
     return path.map((singlePath: any) => singlePath._name).join('/');
   };
-  const getLineWidth = (count: number, minValueNode: number, maxValueNode: number) => {
+  const getLineWidth = (
+    count: number,
+    minValueNode: number,
+    maxValueNode: number
+  ) => {
     const min = 1;
     const max = 8;
-    const width = (count - minValueNode) / (maxValueNode - minValueNode) * max;
+    const width =
+      ((count - minValueNode) / (maxValueNode - minValueNode)) * max;
     return width < min ? min : width;
   };
 
