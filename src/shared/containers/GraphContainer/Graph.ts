@@ -21,7 +21,7 @@ export const makeNode = async (
   if (!isExternal) {
     const { orgLabel, projectLabel } = getOrgAndProjectFromResource(
       link as Resource
-    );
+    )!;
     const resourceId = link['@id'];
     resourceData = {
       orgLabel,
