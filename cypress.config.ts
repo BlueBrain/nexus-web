@@ -20,6 +20,9 @@ export default defineConfig({
     defaultCommandTimeout: 10000,
     experimentalSessionAndOrigin: true,
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
+    env: {
+      ELECTRON_DISABLE_GPU: true,
+    },
     setupNodeEvents(on, config) {
       // @ts-ignore
       on('before:browser:launch', (browser = {}, launchOptions) => {

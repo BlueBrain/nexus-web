@@ -44,7 +44,6 @@ jobs:
       - name: Cleanup Docker Containers
         if: ${{ always() }}
         run: |
-          docker kill $(docker ps -q)
           docker rm $(docker ps -a -q)
           for container in `docker images | grep none | awk '{print $3}'`; do
             echo "Deleting container: $container";
