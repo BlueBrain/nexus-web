@@ -21,120 +21,130 @@ export default defineConfig({
     experimentalSessionAndOrigin: true,
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     setupNodeEvents(on, config) {
-      on('task', {
-        'auth:createRealmsAndUsers': async function(users: {
-          [key: string]: {
-            username: string;
-            password: string;
-            realm: { name: string; baseUrl: string };
-          };
-        }) {
-          await setup(users);
-          return null;
-        },
-        log(message) {
-          console.log(message);
-          return null;
-        },
-        'project:setup': async function({
-          nexusApiUrl,
-          authToken,
-          orgLabel,
-          projectLabelBase,
-        }: {
-          nexusApiUrl: string;
-          authToken: string;
-          orgLabel: string;
-          projectLabelBase: string;
-        }) {
-          const orgDescription =
-            'An organization used for Cypress automated tests';
-          const projectLabel = `${projectLabelBase}-${uuidv4()}`;
-          const projectDescription =
-            'An project used for Cypress automated tests';
+      // @ts-ignore
+      on('before:browser:launch', (browser = {}, launchOptions) => {
+        console.log(launchOptions.args);
 
-          try {
-            const nexus = createNexusClient({
-              uri: nexusApiUrl,
-              fetch,
-              token: authToken,
-            });
-            await createNexusOrgAndProject({
-              nexus,
-              orgLabel,
-              orgDescription,
-              projectLabel,
-              projectDescription,
-            });
-          } catch (e) {
-            console.log('Error encountered in project:setup task.', e);
-          }
-          return { projectLabel };
-        },
-        'project:teardown': async ({
-          nexusApiUrl,
-          authToken,
-          orgLabel,
-          projectLabel,
-        }: {
-          nexusApiUrl: string;
-          authToken: string;
-          orgLabel: string;
-          projectLabel: string;
-        }) => {
-          try {
-            const nexus = createNexusClient({
-              uri: nexusApiUrl,
-              fetch,
-              token: authToken,
-            });
+        if (browser.name == 'chrome') {
+          launchOptions.args.push('--disable-gpu');
+        }
 
-            deprecateNexusOrgAndProject({
-              nexus,
-              orgLabel,
-              projectLabel,
-            });
-          } catch (e) {
-            console.log('Error encountered in project:teardown task.', e);
-          }
+        return launchOptions;
+      }),
+        on('task', {
+          'auth:createRealmsAndUsers': async function(users: {
+            [key: string]: {
+              username: string;
+              password: string;
+              realm: { name: string; baseUrl: string };
+            };
+          }) {
+            await setup(users);
+            return null;
+          },
+          log(message) {
+            console.log(message);
+            return null;
+          },
+          'project:setup': async function({
+            nexusApiUrl,
+            authToken,
+            orgLabel,
+            projectLabelBase,
+          }: {
+            nexusApiUrl: string;
+            authToken: string;
+            orgLabel: string;
+            projectLabelBase: string;
+          }) {
+            const orgDescription =
+              'An organization used for Cypress automated tests';
+            const projectLabel = `${projectLabelBase}-${uuidv4()}`;
+            const projectDescription =
+              'An project used for Cypress automated tests';
 
-          return null;
-        },
-        'resource:create': async ({
-          nexusApiUrl,
-          authToken,
-          resourcePayload,
-          orgLabel,
-          projectLabel,
-        }: {
-          nexusApiUrl: string;
-          authToken: string;
-          resourcePayload: ResourcePayload;
-          orgLabel: string;
-          projectLabel: string;
-        }) => {
-          try {
-            const nexus = createNexusClient({
-              uri: nexusApiUrl,
-              fetch,
-              token: authToken,
-            });
+            try {
+              const nexus = createNexusClient({
+                uri: nexusApiUrl,
+                fetch,
+                token: authToken,
+              });
+              await createNexusOrgAndProject({
+                nexus,
+                orgLabel,
+                orgDescription,
+                projectLabel,
+                projectDescription,
+              });
+            } catch (e) {
+              console.log('Error encountered in project:setup task.', e);
+            }
+            return { projectLabel };
+          },
+          'project:teardown': async ({
+            nexusApiUrl,
+            authToken,
+            orgLabel,
+            projectLabel,
+          }: {
+            nexusApiUrl: string;
+            authToken: string;
+            orgLabel: string;
+            projectLabel: string;
+          }) => {
+            try {
+              const nexus = createNexusClient({
+                uri: nexusApiUrl,
+                fetch,
+                token: authToken,
+              });
 
-            return await createResource({
-              nexus,
-              orgLabel,
-              projectLabel,
-              resource: resourcePayload,
-            });
-          } catch (e) {
-            console.log(
-              'Error encountered in analysisResource:create task.',
-              e
-            );
-          }
-          return null;
-        },
-      });
+              deprecateNexusOrgAndProject({
+                nexus,
+                orgLabel,
+                projectLabel,
+              });
+            } catch (e) {
+              console.log('Error encountered in project:teardown task.', e);
+            }
+
+            return null;
+          },
+          'resource:create': async ({
+            nexusApiUrl,
+            authToken,
+            resourcePayload,
+            orgLabel,
+            projectLabel,
+          }: {
+            nexusApiUrl: string;
+            authToken: string;
+            resourcePayload: ResourcePayload;
+            orgLabel: string;
+            projectLabel: string;
+          }) => {
+            try {
+              const nexus = createNexusClient({
+                uri: nexusApiUrl,
+                fetch,
+                token: authToken,
+              });
+
+              return await createResource({
+                nexus,
+                orgLabel,
+                projectLabel,
+                resource: resourcePayload,
+              });
+            } catch (e) {
+              console.log(
+                'Error encountered in analysisResource:create task.',
+                e
+              );
+            }
+            return null;
+          },
+        });
 
       if (!config.env.users) {
         config.env.users = TestUsers;

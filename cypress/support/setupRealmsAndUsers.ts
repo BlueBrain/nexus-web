@@ -168,26 +168,30 @@ async function setup(users: { [key: string]: User }) {
     const kc = keycloak(keycloakUrl);
 
     console.log('Creating internal realm for use by our Service account');
-    await getDeltaRealm(internalRealm.name).then(async response => {
-      if (response.status !== 200) {
-        await kc.importRealm(
-          internalRealm,
-          { id: 'ServiceAccount', secret: '' },
-          []
-        );
-        await createDeltaRealm(internalRealm).then(response => {
-          if (response.status === 201) {
-            console.log('internal realm successfully created');
-          } else {
-            response.text().then(json => {
-              throw Error(`Error occured creating realm in Delta\n\n${json}`);
-            });
-          }
-        });
-      } else {
-        console.log('realm already exists');
-      }
-    });
+    await getDeltaRealm(internalRealm.name)
+      .then(async response => {
+        if (response.status !== 200) {
+          await kc.importRealm(
+            internalRealm,
+            { id: 'ServiceAccount', secret: '' },
+            []
+          );
+          await createDeltaRealm(internalRealm).then(response => {
+            if (response.status === 201) {
+              console.log('internal realm successfully created');
+            } else {
+              response.text().then(json => {
+                throw Error(`Error occured creating realm in Delta\n\n${json}`);
+              });
+            }
+          });
+        } else {
+          console.log('realm already exists');
+        }
+      })
+      .catch(error => {
+        console.log('error realm', error);
+      });
     console.log(`Checking if ${testRealm.name} already exists`);
     /* create test realm for use by our test users */
     await getDeltaRealm(testRealm.name).then(async response => {
