@@ -40,6 +40,8 @@ jobs:
         # which we can't then delete easily
         run: docker cp ./. cypress:/e2e
       - name: e2e tests
+        env:
+          ELECTRON_EXTRA_LAUNCH_ARGS: '--disable-gpu'
         run: echo | docker exec -t cypress cypress run --config-file cypress.config.ts --browser chrome --record --key ${{ secrets.CYPRESS_RECORD_KEY }}
       - name: Stop Docker
         if: ${{ always() }}
