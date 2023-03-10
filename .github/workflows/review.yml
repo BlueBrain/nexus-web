@@ -11,6 +11,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: 'yarn'
+      - name: Prune containers
+        run: |
+          docker system prune -af
       - name: install dependencies 🚀
         run: |
           yarn install --frozen-lockfile # optional, --immutable

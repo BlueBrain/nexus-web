@@ -21,17 +21,15 @@ export default defineConfig({
     experimentalSessionAndOrigin: true,
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     env: {
-      ELECTRON_DISABLE_GPU: true,
+      ELECTRON_DISABLE_GPU: 'true',
     },
     setupNodeEvents(on, config) {
       // @ts-ignore
       on('before:browser:launch', (browser = {}, launchOptions) => {
         console.log(launchOptions.args);
-
         if (browser.name == 'chrome') {
           launchOptions.args.push('--disable-gpu');
         }
-
         return launchOptions;
       }),
         on('task', {
