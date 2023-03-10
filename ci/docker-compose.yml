@@ -3,8 +3,8 @@ services:
   cypress:
     image: 'cypress/included:10.3.1-typescript'
     depends_on:
-      - delta
       - fusion
+      - delta
     environment:
       - CYPRESS_NEXUS_API_URL=http://delta.test:8080/v1
       - CYPRESS_BASE_URL=http://fusion.test:8000
