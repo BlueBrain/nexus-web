@@ -41,7 +41,7 @@ jobs:
         run: docker cp ./. cypress:/e2e
       - name: Check application availability
         run: |
-          status_code=$(curl --write-out '%{http_code}' --silent  http://fusion.test:8000)
+          status_code=$(curl --fail --silent --show-error http://fusion.test:8000)
           if [[ "$status_code" != "200" ]]; then
             echo "Application is not accessible"
             exit 1
