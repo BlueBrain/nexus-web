@@ -22,6 +22,7 @@ export default defineConfig({
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     env: {
       ELECTRON_DISABLE_GPU: 'true',
+      ELECTRON_EXTRA_LAUNCH_ARGS: '--disable-gpu',
     },
     setupNodeEvents(on, config) {
       // @ts-ignore
