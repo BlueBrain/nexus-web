@@ -39,6 +39,9 @@ jobs:
         # avoids permission issue where cypress writes screenshots to host with root as user
         # which we can't then delete easily
         run: docker cp ./. cypress:/e2e
+      - name: see fusion results
+        run: | 
+          docker-compose -f ci/docker-compose.yml logs fusion delta
       - name: Check application availability
         run: |
           # Enable error tracing and printing
