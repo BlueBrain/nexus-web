@@ -49,7 +49,7 @@ jobs:
           set -x
 
           # Test the availability of the application
-          if curl --fail http://fusion.test:8000; then
+          if curl --fail http://fusion:8000; then
             echo "Application is available"
           else
             echo "Application is not available"
