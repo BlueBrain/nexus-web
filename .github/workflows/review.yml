@@ -30,9 +30,9 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-      # - name: build fusion docker image
-      #   run: |
-      #     docker build . --tag=nexus-web:fresh
+      - name: build fusion docker image
+        run: |
+          docker build . --tag=nexus-web:fresh
       - name: Start services
         run: docker-compose -f ci/docker-compose.yml up -d && sleep 120
       - name: Copy nexus-web into Cypress container
