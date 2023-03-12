@@ -42,7 +42,8 @@ jobs:
       - name: see fusion results
         run: | 
           docker-compose -f ci/docker-compose.yml logs fusion delta
-          docker-compose ps
+          docker-compose ps -f ci/docker-compose.yml
+          docker-compose -f ci/docker-compose.yml network ls
       - name: Check application availability
         run: |
           # Enable error tracing and printing
