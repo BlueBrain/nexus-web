@@ -24,11 +24,10 @@ const TableViewerContainer: React.FC<{
 
   const loadTable = async () => {
     const resourceId = parseResourceId(resourceUrl);
-    let contentUrl = resourceId;
     await nexus.File.get(
       orgLabel,
       projectLabel,
-      encodeURIComponent(contentUrl),
+      encodeURIComponent(resourceId),
       {
         as: 'text',
       }
