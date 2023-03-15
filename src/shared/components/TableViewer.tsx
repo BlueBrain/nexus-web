@@ -33,11 +33,7 @@ const TableViewer: React.FC<{ name: string; data: string[][] }> = ({
   return (
     <div>
       <h2>{name}</h2>
-      <Table
-        scroll={{ x: 1500 }}
-        columns={columns} 
-        dataSource={tableData} 
-      />
+      <Table scroll={{ x: 1500 }} columns={columns} dataSource={tableData} />
     </div>
   );
 };

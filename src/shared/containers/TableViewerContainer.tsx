@@ -34,7 +34,7 @@ const TableViewerContainer: React.FC<{
     )
       .then(response => {
         const tableData = csvParser.parse(response as string);
-        
+
         setTableData(tableData);
       })
       .catch(() => {
