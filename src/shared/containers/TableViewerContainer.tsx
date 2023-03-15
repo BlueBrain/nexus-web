@@ -5,6 +5,7 @@ import * as csvParser from 'csv-string';
 
 import TableViewer from '../components/TableViewer';
 import useNotification from '../hooks/useNotification';
+import { parseResourceId } from '../../shared/components/Preview/Preview';
 
 const TableViewerContainer: React.FC<{
   resourceUrl: string;
@@ -22,24 +23,26 @@ const TableViewerContainer: React.FC<{
   }, []);
 
   const loadTable = async () => {
+    const resourceId = parseResourceId(resourceUrl);
+    let contentUrl = resourceId;
     await nexus.File.get(
       orgLabel,
       projectLabel,
-      encodeURIComponent(resourceUrl),
+      encodeURIComponent(contentUrl),
       {
         as: 'text',
       }
     )
       .then(response => {
         const tableData = csvParser.parse(response as string);
-
+        
         setTableData(tableData);
       })
-      .catch(error =>
+      .catch(() => {
         notification.error({
           message: 'Failed to load file',
-        })
-      );
+        });
+      });
   };
 
   if (!tableData) return null;
