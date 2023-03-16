@@ -67,6 +67,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             lineWrapping: true,
             viewportMargin: Infinity,
             foldGutter: true,
+            // @ts-ignore
             foldCode: true,
             gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
             extraKeys: {
