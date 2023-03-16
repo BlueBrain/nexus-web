@@ -11,6 +11,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: 'yarn'
+      - name: Prune containers
+        run: |
+          docker system prune -af
       - name: install dependencies 🚀
         run: |
           yarn install --frozen-lockfile # optional, --immutable
@@ -38,13 +41,6 @@ jobs:
         run: docker cp ./. cypress:/e2e
       - name: e2e tests
         run: echo | docker exec -t cypress cypress run --config-file cypress.config.ts --browser chrome --record --key ${{ secrets.CYPRESS_RECORD_KEY }}
-      - name: Stop Docker
-        if: ${{ always() }}
-        run: docker-compose -f ci/docker-compose.yml down && sleep 60
       - name: Cleanup Docker Containers
         if: ${{ always() }}
-        run: |
-          for container in `docker images | grep none | awk '{print $3}'`; do
-            echo "Deleting container: $container";
-            docker rmi $container;
-          done
+        run: docker-compose -f ci/docker-compose.yml down --rmi "local" --volumes
