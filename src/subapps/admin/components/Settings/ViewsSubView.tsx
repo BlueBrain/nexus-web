@@ -5,6 +5,7 @@ import { Table, Button, notification } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import './SettingsView.less';
 
+type Props = {};
 type DataType = {
   key: string;
   name: string;
@@ -12,34 +13,7 @@ type DataType = {
   status: string;
 };
 
-const viewsSample: DataType[] = [
-  {
-    key: 'nxv:defaultElasticSearchView',
-    name: 'defaultElasticSearchView',
-    type: 'ElasticSearch',
-    status: '98%',
-  },
-  {
-    key: 'nxv:datatset',
-    name: 'Dataset',
-    type: 'ElasticSearch',
-    status: '81%',
-  },
-  {
-    key: 'nxv:defaultGlobalElasticSearchView',
-    name: 'defaultGlobalElasticSearchView',
-    type: 'ElasticSearch',
-    status: '100%',
-  },
-  {
-    key: 'nxv:defaultSparqlView',
-    name: 'defaultSparqlView',
-    type: 'Sparql',
-    status: '22%',
-  },
-];
-
-const ViewsSubView = () => {
+const ViewsSubView = (props: Props) => {
   const nexus = useNexusContext();
   const match = useRouteMatch<{
     orgLabel: string;

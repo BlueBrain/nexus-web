@@ -9,6 +9,8 @@ import { useAdminSubappContext } from '../../../../subapps/admin';
 
 import './SettingsView.less';
 
+
+type Props = {};
 type DataType = {
   key: string;
   name: string;
@@ -48,7 +50,8 @@ type ACLViewProp =
 
 const { Panel } = Collapse;
 
-const PermissionsAclsSubView: React.FC = () => {
+
+const PermissionsAclsSubView = (props: Props) => {
   const { namespace } = useAdminSubappContext();
   const match = useRouteMatch<{ orgLabel: string; projectLabel: string }>(
     `/${namespace}/:orgLabel/:projectLabel`

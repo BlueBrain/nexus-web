@@ -4,6 +4,7 @@ import { ColumnsType } from 'antd/es/table';
 import { Gauge } from '@ant-design/charts';
 import './SettingsView.less';
 
+type Props = {};
 type GaugeProps = {
   percent: number;
   name: string;
@@ -50,7 +51,7 @@ const GaugeComponent = ({ percent, total, quota, name }: GaugeProps) => {
   );
 };
 
-const QuotasSubView = () => {
+const QuotasSubView = (props: Props) => {
   const resources: GaugeProps = {
     name: 'Resources',
     quota: 100000,

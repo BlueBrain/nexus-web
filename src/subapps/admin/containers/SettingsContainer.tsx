@@ -6,9 +6,15 @@ import { Menu, MenuProps } from 'antd';
 import * as SV from '../components/Settings';
 import './SettingsContainer.less';
 
+type Props = {
+    project?: Partial<Omit<ProjectResponseCommon, 'apiMappings'>>;
+    apiMappings?: ProjectResponseCommon['apiMappings'];
+    mode: string;
+};
+
 type TMenuItem = ItemType & {
   id: string;
-  component: (props: any) => JSX.Element;
+  Component: (props: any) => JSX.Element;
 };
 type OnSelectHandler = MenuProps['onSelect'];
 
@@ -19,7 +25,7 @@ const subViewsMapper = new Map<string, TMenuItem>([
       key: 'setting/general',
       id: 'setting/general',
       label: 'General',
-      component: SV.GeneralSVComponent,
+      Component: SV.GeneralSVComponent,
     },
   ],
   [
@@ -28,7 +34,7 @@ const subViewsMapper = new Map<string, TMenuItem>([
       id: 'setting/apiMappings',
       key: 'setting/apiMappings',
       label: 'API Mappings',
-      component: SV.APIMappinsSVComponent,
+      Component: SV.APIMappinsSVComponent,
     },
   ],
   [
@@ -37,7 +43,7 @@ const subViewsMapper = new Map<string, TMenuItem>([
       id: 'setting/views',
       key: 'setting/views',
       label: 'Views',
-      component: SV.ViewsSVComponent,
+      Component: SV.ViewsSVComponent,
     },
   ],
   [
@@ -46,7 +52,7 @@ const subViewsMapper = new Map<string, TMenuItem>([
       id: 'setting/storages',
       key: 'setting/storages',
       label: 'Storages',
-      component: SV.StoragesSVComponent,
+      Component: SV.StoragesSVComponent,
     },
   ],
   [
@@ -55,7 +61,7 @@ const subViewsMapper = new Map<string, TMenuItem>([
       id: 'setting/quotas',
       key: 'setting/quotas',
       label: 'Quotas',
-      component: SV.QuotasSVComponent,
+      Component: SV.QuotasSVComponent,
     },
   ],
   [
@@ -64,7 +70,7 @@ const subViewsMapper = new Map<string, TMenuItem>([
       id: 'setting/resolvers',
       key: 'setting/resolvers',
       label: 'Resolvers',
-      component: SV.ResolversSVComponent,
+      Component: SV.ResolversSVComponent,
     },
   ],
   [
@@ -73,7 +79,7 @@ const subViewsMapper = new Map<string, TMenuItem>([
       id: 'setting/permissionsAcls',
       key: 'setting/permissionsAcls',
       label: 'Permissions and ACLs',
-      component: SV.PermissionsAclsSVComponent,
+      Component: SV.PermissionsAclsSVComponent,
     },
   ],
   [
@@ -82,16 +88,12 @@ const subViewsMapper = new Map<string, TMenuItem>([
       id: 'setting/dangerZone',
       key: 'setting/dangerZone',
       label: 'Danger Zone',
-      component: SV.DangerZoneSVComponent,
+      Component: SV.DangerZoneSVComponent,
     },
-  ],
+  ]
 ]);
 
-type Props = {
-  project?: Partial<Omit<ProjectResponseCommon, 'apiMappings'>>;
-  apiMappings?: ProjectResponseCommon['apiMappings'];
-  mode: string;
-};
+
 const SettingsContainer: React.FunctionComponent<Props> = ({
   project,
   apiMappings,
@@ -105,7 +107,7 @@ const SettingsContainer: React.FunctionComponent<Props> = ({
     setSelectedKey(key);
   const subViewSelectedComponenet = (props: Props) => {
     const view = subViewsMapper.get(selectedKey.split('/')[1]);
-    const Component = view!.component;
+    const Component = view!.Component;
     const key = view!.key;
     return <Component key={key} {...props} />;
   };

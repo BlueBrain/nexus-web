@@ -1,16 +1,16 @@
+import '@testing-library/jest-dom';
+import * as React from 'react';
+import { rest } from 'msw';
+import fetch from 'node-fetch';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk';
-import * as React from 'react';
-import fetch from 'node-fetch';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import ProjectView from '../ProjectView';
-import { rest } from 'msw';
-import { render, server, screen } from '../../../../utils/testUtil';
-import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { Route, MemoryRouter } from 'react-router-dom';
+import ProjectView from '../ProjectView';
+import { render, server, screen } from '../../../../utils/testUtil';
 import {
   getNotificationContextValue,
   NotificationContext,
