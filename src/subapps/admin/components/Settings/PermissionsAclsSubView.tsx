@@ -9,7 +9,6 @@ import { useAdminSubappContext } from '../../../../subapps/admin';
 
 import './SettingsView.less';
 
-
 type Props = {};
 type DataType = {
   key: string;
@@ -49,7 +48,6 @@ type ACLViewProp =
   | undefined;
 
 const { Panel } = Collapse;
-
 
 const PermissionsAclsSubView = (props: Props) => {
   const { namespace } = useAdminSubappContext();

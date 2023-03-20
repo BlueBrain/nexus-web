@@ -5037,7 +5037,7 @@ ansicolors@~0.2.1:
   resolved "https://registry.yarnpkg.com/ansicolors/-/ansicolors-0.2.1.tgz#be089599097b74a5c9c4a84a0cdbcdb62bd87aef"
   integrity sha1-vgiVmQl7dKXJxKhKDNvNtivYeu8=
 
-antd@4.24.8:
+antd@^4.9.1:
   version "4.24.8"
   resolved "https://registry.yarnpkg.com/antd/-/antd-4.24.8.tgz#22f34de6857556868780dfa5fe7b374b0b71b517"
   integrity sha512-wrNy2Hi27uM3948okG3n2GwzQKBFUn1Qn5mn2I/ALcR28rC6cTjHYOuA248Zl9ECzz3jo4TY2R0SIa+5GZ/zGA==

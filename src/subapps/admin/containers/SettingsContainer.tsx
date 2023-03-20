@@ -7,9 +7,9 @@ import * as SV from '../components/Settings';
 import './SettingsContainer.less';
 
 type Props = {
-    project?: Partial<Omit<ProjectResponseCommon, 'apiMappings'>>;
-    apiMappings?: ProjectResponseCommon['apiMappings'];
-    mode: string;
+  project?: Partial<Omit<ProjectResponseCommon, 'apiMappings'>>;
+  apiMappings?: ProjectResponseCommon['apiMappings'];
+  mode: string;
 };
 
 type TMenuItem = ItemType & {
@@ -90,9 +90,8 @@ const subViewsMapper = new Map<string, TMenuItem>([
       label: 'Danger Zone',
       Component: SV.DangerZoneSVComponent,
     },
-  ]
+  ],
 ]);
-
 
 const SettingsContainer: React.FunctionComponent<Props> = ({
   project,

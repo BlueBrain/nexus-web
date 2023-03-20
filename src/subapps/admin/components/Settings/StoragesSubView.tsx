@@ -3,7 +3,6 @@ import { Table, Input, Button } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import './SettingsView.less';
 
-
 type Props = {};
 type DataType = {
   key: string;
