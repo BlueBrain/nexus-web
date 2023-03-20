@@ -269,7 +269,7 @@ const ProjectView: React.FunctionComponent = () => {
     isUserInSupportedJiraRealm,
     jiraInaccessibleBecauseOfVPN,
   } = useJiraPlugin();
-  console.log('@@project', project)
+  console.log('@@project', project);
   return (
     <div className="project-view">
       {!!project && (
@@ -385,7 +385,7 @@ const ProjectView: React.FunctionComponent = () => {
                 </AccessControl>
               </TabPane>
               <TabPane tab="Settings" key="settings">
-                <SettingsContainer 
+                <SettingsContainer
                   project={{
                     _label: project._label,
                     _rev: project._rev,
