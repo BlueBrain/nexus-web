@@ -30,6 +30,7 @@ import ResourceCreateUploadContainer from '../../../shared/containers/ResourceCr
 import { makeOrganizationUri } from '../../../shared/utils';
 import JiraPluginProjectContainer from '../containers/JiraContainer';
 import { useJiraPlugin } from '../../../shared/hooks/useJIRA';
+import SettingsContainer from '../containers/SettingsContainer';
 
 const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
@@ -268,7 +269,7 @@ const ProjectView: React.FunctionComponent = () => {
     isUserInSupportedJiraRealm,
     jiraInaccessibleBecauseOfVPN,
   } = useJiraPlugin();
-
+  console.log('@@project', project)
   return (
     <div className="project-view">
       {!!project && (
@@ -384,7 +385,18 @@ const ProjectView: React.FunctionComponent = () => {
                 </AccessControl>
               </TabPane>
               <TabPane tab="Settings" key="settings">
-                <>
+                <SettingsContainer 
+                  project={{
+                    _label: project._label,
+                    _rev: project._rev,
+                    description: project.description || '',
+                    base: project.base,
+                    vocab: project.vocab,
+                  }}
+                  apiMappings={project.apiMappings}
+                  mode="edit"
+                />
+                {/* <>
                   <br />
                   <h3>Settings</h3>
                   <div style={{ flexGrow: 1 }}>
@@ -406,7 +418,7 @@ const ProjectView: React.FunctionComponent = () => {
                   <br />
                   <ACLsView />
                   <br />
-                </>
+                </> */}
               </TabPane>
               {deltaPlugins &&
                 'jira' in deltaPlugins &&

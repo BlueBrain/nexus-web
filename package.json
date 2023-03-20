@@ -35,7 +35,7 @@
     "ajv": "^8.10.0",
     "ajv-errors": "^3.0.0",
     "ajv-formats": "^2.1.1",
-    "antd": "^4.9.1",
+    "antd": "4.24.8",
     "bodybuilder": "^2.2.25",
     "codemirror": "^5.58.2",
     "connected-react-router": "^6.3.2",

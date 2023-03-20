@@ -127,6 +127,7 @@ export const CreateIssueUI = ({
             style={{ width: '100%' }}
             onChange={(value: string) => setProject(value)}
             filterOption={(input, option) =>
+              // @ts-ignore
               option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
             }
             data-testid="project-select"

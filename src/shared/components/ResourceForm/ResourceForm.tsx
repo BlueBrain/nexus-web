@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Cascader, Form, Button, Spin, Modal } from 'antd';
-import { CascaderOptionType, CascaderValueType } from 'antd/lib/cascader';
+import { DefaultOptionType } from 'antd/lib/cascader';
 import { ResourcePayload } from '@bbp/nexus-sdk';
 
 import ResourceEditor from '../ResourceEditor';
@@ -12,7 +12,7 @@ import {
 
 import './ResourceForm.less';
 
-const AVAILABLE_SCHEMAS: CascaderOptionType[] = [
+const AVAILABLE_SCHEMAS: DefaultOptionType[] = [
   {
     value: '_',
     label: 'Any Resource',
@@ -128,11 +128,12 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
   };
 
   const handleTypeChange = (
-    value: CascaderValueType,
-    selectedOptions?: CascaderOptionType[] | undefined
+    value: any,
+    selectedOptions?: DefaultOptionType[] | undefined
   ) => {
     const selectedType =
       value
+        // @ts-ignore
         .find(entry => Object.keys(DEFAULT_RESOURCES).includes(`${entry}`))
         ?.toString() || '_';
     setJsonValue(DEFAULT_RESOURCES[selectedType]);

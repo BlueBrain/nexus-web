@@ -1,0 +1,18 @@
+
+.settings-container{
+    // margin-top: 20px;
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 20px;
+    margin-left: -1rem;
+    .ant-menu {
+        min-height: calc(100vh - 140px);
+        height: 100%;
+    }
+    .ant-menu-item {
+        border-left: none !important;
+    }
+    .ant-menu-item-selected {
+        border-right: 3px solid #0985a4 !important;
+    }
+}
