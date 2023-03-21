@@ -1,0 +1,34 @@
+.preview-menu {
+  display: grid;
+  grid-template-columns: 1fr max-content max-content;
+  gap: 5px;
+  .ant-input-search {
+    width: 100% !important;
+  }
+}
+.preview-content {
+  margin: 10px auto;
+  &.grid {
+    .ant-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 10px;
+    }
+    .ant-list-item {
+      margin: 0 !important;
+    }
+  }
+  &.list {
+    .ant-list-item {
+      align-items: flex-start;
+      justify-content: flex-end;
+      .item-content {
+        div:first-child {
+          font-weight: bold;
+          font-size: 17px;
+        }
+        margin: 10px 20px;
+      }
+    }
+  }
+}
