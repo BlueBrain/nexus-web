@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { ProjectResponseCommon } from '@bbp/nexus-sdk';
 import { Menu, MenuProps } from 'antd';
 
@@ -12,8 +11,10 @@ type Props = {
   mode: string;
 };
 
-type TMenuItem = ItemType & {
+type TMenuItem = {
+  key: React.Key;
   id: string;
+  label: string;
   Component: (props: any) => JSX.Element;
 };
 type OnSelectHandler = MenuProps['onSelect'];
@@ -22,8 +23,8 @@ const subViewsMapper = new Map<string, TMenuItem>([
   [
     'general',
     {
-      key: 'setting/general',
       id: 'setting/general',
+      key: 'setting/general',
       label: 'General',
       Component: SV.GeneralSVComponent,
     },
@@ -102,8 +103,8 @@ const SettingsContainer: React.FunctionComponent<Props> = ({
     ([, value]) => value
   );
   const [selectedKey, setSelectedKey] = useState(menuItems[0].id);
-  const handleOnSelectSubMenuItem: OnSelectHandler = ({ key }) =>
-    setSelectedKey(key);
+  //@ts-ignore
+  const handleOnSelectSubMenuItem: OnSelectHandler = (info) => setSelectedKey(info.key);
   const subViewSelectedComponenet = (props: Props) => {
     const view = subViewsMapper.get(selectedKey.split('/')[1]);
     const Component = view!.Component;
@@ -114,13 +115,16 @@ const SettingsContainer: React.FunctionComponent<Props> = ({
   return (
     <div className="settings-container">
       <Menu
-        items={menuItems}
         defaultSelectedKeys={[menuItems[0].id]}
         defaultOpenKeys={[menuItems[0].id]}
         selectedKeys={[selectedKey]}
         onSelect={handleOnSelectSubMenuItem}
         multiple={false}
-      />
+      >
+        { menuItems.map(item => (
+          <Menu.Item key={item.key}>{item.label}</Menu.Item>
+        )) }
+      </Menu>
       <div className="settings-content">
         {subViewSelectedComponenet({ project, apiMappings, mode })}
       </div>

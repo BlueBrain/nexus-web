@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Cascader, Form, Button, Spin, Modal } from 'antd';
-import { DefaultOptionType } from 'antd/lib/cascader';
+import { CascaderOptionType as  DefaultOptionType } from 'antd/lib/cascader';
 import { ResourcePayload } from '@bbp/nexus-sdk';
 
 import ResourceEditor from '../ResourceEditor';

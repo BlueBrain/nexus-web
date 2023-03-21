@@ -1,16 +1,26 @@
-import React from 'react';
-import { Table, Input, Button } from 'antd';
+import React, { useMemo, useState, useEffect } from 'react';
+import { useRouteMatch } from 'react-router';
+import { Table, Button } from 'antd';
 import { ColumnsType } from 'antd/es/table';
+import { useNexusContext } from '@bbp/react-nexus';
+
 import './SettingsView.less';
 
 type Props = {};
+type StorageData = {
+  maxFileSize?: number;
+  capacity?: number;
+  files: number;
+  spaceUsed: number;
+  '@id': string;
+};
 type DataType = {
   key: string;
   location: string;
   type: string;
   default: string;
   endpoint: string;
-  max_file_size: string;
+  maxFileSize: string;
   read: string;
   write: string;
   deprecated: string;
@@ -23,7 +33,7 @@ const viewsSample: DataType[] = [
     type: 'DiskStorageDefault',
     default: 'False',
     endpoint: '-',
-    max_file_size: '10 GB',
+    maxFileSize: '10 GB',
     read: 'resources/read',
     write: 'files/write',
     deprecated: 'files/write',
@@ -34,7 +44,7 @@ const viewsSample: DataType[] = [
     type: 'RemoteStorageDefault',
     default: 'True',
     endpoint: 'http//storage.s3.com/prj109',
-    max_file_size: '33 GB',
+    maxFileSize: '33 GB',
     read: 'gpfs-prj109/read',
     write: 'gpfs-prj109/write',
     deprecated: 'files/write',
@@ -42,9 +52,18 @@ const viewsSample: DataType[] = [
 ];
 
 const StoragesSubView = (props: Props) => {
-  const handleOnEdit = () => {};
-  const createNewStorageHandler = () => {};
-  const columns: ColumnsType<DataType> = [
+  const handleOnEdit = () => { };
+  const createNewStorageHandler = () => { };
+  const nexus = useNexusContext();
+  const [storages, setStorages] = useState<StorageData[]>([]);
+  const match = useRouteMatch<{
+    orgLabel: string;
+    projectLabel: string;
+    viewId?: string;
+  }>();
+
+  const { params: { orgLabel, projectLabel }, } = match;
+  const columns: ColumnsType<DataType> = useMemo(() => [
     {
       key: 'location',
       dataIndex: 'location',
@@ -72,8 +91,8 @@ const StoragesSubView = (props: Props) => {
       render: text => <span>{text}</span>,
     },
     {
-      key: 'max_file_size',
-      dataIndex: 'max_file_size',
+      key: 'maxFileSize',
+      dataIndex: 'maxFileSize',
       title: 'Maximum File Size',
       align: 'center',
       render: text => <span>{text}</span>,
@@ -110,9 +129,46 @@ const StoragesSubView = (props: Props) => {
         </Button>
       ),
     },
-  ];
+  ], []);
 
   const data: DataType[] = viewsSample;
+  
+  useEffect(() => {
+    const loadStorages = async () => {
+      await nexus.Storage.list(orgLabel, projectLabel)
+        .then(response => {
+          Promise.all(
+            response._results.map(storage => {
+              return nexus.Storage.get(
+                orgLabel,
+                projectLabel,
+                encodeURIComponent(storage['@id'])
+              )
+            })
+          ).then(results => {
+            setStorages(parseResponses(results));
+          });
+        })
+        .catch(error => {
+          // fail silently
+        });
+    };
+    const parseResponses = (storagesData: any[]) => {
+      return storagesData.map(storage => {
+        const { maxFileSize, capacity } = storage[0];
+        const { files, spaceUsed } = storage[1];
+  
+        return {
+          maxFileSize,
+          capacity,
+          files,
+          spaceUsed,
+          '@id': storage[0]['@id'],
+        };
+      });
+    };
+    loadStorages();
+  }, []);
 
   return (
     <div className="settings-view settings-storages-view">

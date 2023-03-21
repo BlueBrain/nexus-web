@@ -14,10 +14,8 @@ import { Link, useHistory, useLocation } from 'react-router-dom';
 import StoragesContainer from '../containers/StoragesContainer';
 import ProjectStatsContainer from '../containers/ProjectStatsContainer';
 import QuotasContainer from '../containers/QuotasContainer';
-import ProjectForm from '../components/Projects/ProjectForm';
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
 import ResourceListBoardContainer from '../../../shared/containers/ResourceListBoardContainer';
-import ACLsView from './ACLsView';
 import QueryEditor from '../components/Projects/QueryEditor';
 import { useAdminSubappContext } from '..';
 import useNotification, {
@@ -25,12 +23,12 @@ import useNotification, {
 } from '../../../shared/hooks/useNotification';
 import ProjectToDeleteContainer from '../containers/ProjectToDeleteContainer';
 import { RootState } from '../../../shared/store/reducers';
-import './ProjectView.less';
 import ResourceCreateUploadContainer from '../../../shared/containers/ResourceCreateUploadContainer';
 import { makeOrganizationUri } from '../../../shared/utils';
 import JiraPluginProjectContainer from '../containers/JiraContainer';
 import { useJiraPlugin } from '../../../shared/hooks/useJIRA';
 import SettingsContainer from '../containers/SettingsContainer';
+import './ProjectView.less';
 
 const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
@@ -111,7 +109,6 @@ const ProjectView: React.FunctionComponent = () => {
     busy: false,
     error: null,
   });
-  const [formBusy, setFormBusy] = React.useState<boolean>(false);
 
   const [refreshLists, setRefreshLists] = React.useState(false);
   const [activeKey, setActiveKey] = React.useState<string>(
@@ -211,55 +208,7 @@ const ProjectView: React.FunctionComponent = () => {
   };
 
   const showDeletionBanner = deltaPlugins && 'project-deletion' in deltaPlugins;
-  const saveAndModify = (newProject: ProjectResponseCommon) => {
-    if (!project) {
-      return;
-    }
-    setFormBusy(true);
-    nexus.Project.update(orgLabel, projectLabel, project._rev, {
-      base: newProject.base,
-      vocab: newProject.vocab,
-      description: newProject.description,
-      apiMappings: newProject.apiMappings || [],
-    })
-      .then(() => {
-        notification.success({
-          message: 'Project saved',
-        });
-        setFormBusy(false);
-      })
-      .catch((error: Error) => {
-        setFormBusy(false);
-        notification.error({
-          message: 'An unknown error occurred',
-          description: error.message,
-        });
-      });
-  };
-
-  const deprecateProject = () => {
-    if (!project) {
-      return;
-    }
-    setFormBusy(true);
-    nexus.Project.deprecate(orgLabel, projectLabel, project._rev)
-      .then(() => {
-        history.push(makeOrganizationUri(orgLabel));
-        notification.success({
-          message: 'Project deprecated',
-        });
-      })
-      .catch((error: NexusError) => {
-        notification.error({
-          message: 'Error deprecating project',
-          description: error.reason,
-        });
-      })
-      .finally(() => {
-        setFormBusy(false);
-      });
-  };
-
+  
   const handleTabChange = (activeKey: string) => {
     if (activeKey === 'studios' || activeKey === 'workflows') return;
     history.push(pathFromTab(activeKey));
@@ -396,29 +345,6 @@ const ProjectView: React.FunctionComponent = () => {
                   apiMappings={project.apiMappings}
                   mode="edit"
                 />
-                {/* <>
-                  <br />
-                  <h3>Settings</h3>
-                  <div style={{ flexGrow: 1 }}>
-                    <ProjectForm
-                      project={{
-                        _label: project._label,
-                        _rev: project._rev,
-                        description: project.description || '',
-                        base: project.base,
-                        vocab: project.vocab,
-                        apiMappings: project.apiMappings,
-                      }}
-                      onSubmit={(p: ProjectResponseCommon) => saveAndModify(p)}
-                      onDeprecate={deprecateProject}
-                      busy={formBusy}
-                      mode="edit"
-                    />
-                  </div>
-                  <br />
-                  <ACLsView />
-                  <br />
-                </> */}
               </TabPane>
               {deltaPlugins &&
                 'jira' in deltaPlugins &&

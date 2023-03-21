@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { Gauge } from '@ant-design/charts';
+import { useNexusContext } from '@bbp/react-nexus';
+import { Quota } from '@bbp/nexus-sdk';
+
 import './SettingsView.less';
+import { useRouteMatch } from 'react-router';
+
 
 type Props = {};
 type GaugeProps = {
@@ -52,6 +57,16 @@ const GaugeComponent = ({ percent, total, quota, name }: GaugeProps) => {
 };
 
 const QuotasSubView = (props: Props) => {
+  const nexus = useNexusContext();
+  const match = useRouteMatch<{
+    orgLabel: string;
+    projectLabel: string;
+    viewId?: string;
+  }>();
+
+  const [quota, setQuota] = useState<Quota>();
+  const { params: { orgLabel, projectLabel }, } = match;
+  
   const resources: GaugeProps = {
     name: 'Resources',
     quota: 100000,
@@ -65,7 +80,7 @@ const QuotasSubView = (props: Props) => {
     percent: 0.34,
   };
 
-  const columns: ColumnsType<DataType> = [
+  const columns: ColumnsType<DataType> = useMemo(() => [
     {
       key: 'storage',
       dataIndex: 'storage',
@@ -98,8 +113,8 @@ const QuotasSubView = (props: Props) => {
       title: 'Capacity',
       align: 'center',
       render: text => <span>{text}</span>,
-    },
-  ];
+    }
+  ], []);
   const data: DataType[] = [
     {
       key: 'diskDefaultStorage',
@@ -110,6 +125,20 @@ const QuotasSubView = (props: Props) => {
       capacity: 'Undefined',
     },
   ];
+  useEffect(() => {
+    const loadQuotas = async () => {
+      await nexus.Quotas.get(orgLabel, projectLabel)
+        .then((response: any) => {
+          setQuota(response);
+        })
+        .catch(error => {
+          // fail silently
+        });
+    };
+    loadQuotas();
+  }, []);
+
+
   return (
     <div className="settings-view settings-quotas-view">
       <h2>Quotas</h2>

@@ -6,29 +6,42 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
     class="workspace-list-container"
   >
     <ul
-      class="ant-menu-overflow ant-menu ant-menu-root ant-menu-horizontal ant-menu-dark"
-      data-menu-list="true"
+      class="ant-menu ant-menu-dark ant-menu-root ant-menu-horizontal"
       role="menu"
       style="min-height: 40px;"
-      tabindex="0"
     >
       <li
-        class="ant-menu-overflow-item ant-menu-submenu ant-menu-submenu-horizontal menu-highlight-override"
-        role="none"
-        style="opacity: 1; order: 0;"
+        class="ant-menu-submenu ant-menu-submenu-horizontal ant-menu-overflowed-submenu"
+        role="menuitem"
+        style="display: none;"
       >
         <div
-          aria-controls="rc-menu-uuid-test-w1-popup"
           aria-expanded="false"
           aria-haspopup="true"
           class="ant-menu-submenu-title"
-          data-menu-id="rc-menu-uuid-test-w1"
-          role="menuitem"
-          tabindex="-1"
+          role="button"
+        >
+          <span>
+            ···
+          </span>
+          <i
+            class="ant-menu-submenu-arrow"
+          />
+        </div>
+      </li>
+      <li
+        class="ant-menu-submenu ant-menu-submenu-horizontal menu-highlight-override"
+        role="menuitem"
+      >
+        <div
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="ant-menu-submenu-title"
+          role="button"
         >
           <span
             aria-label="down"
-            class="anticon anticon-down ant-menu-item-icon"
+            class="anticon anticon-down"
             role="img"
           >
             <svg
@@ -45,10 +58,27 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
               />
             </svg>
           </span>
-          <span
-            class="ant-menu-title-content"
-          >
+          <span>
             w1
+          </span>
+          <i
+            class="ant-menu-submenu-arrow"
+          />
+        </div>
+      </li>
+      <li
+        class="ant-menu-submenu ant-menu-submenu-horizontal ant-menu-overflowed-submenu"
+        role="menuitem"
+        style="display: none;"
+      >
+        <div
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="ant-menu-submenu-title"
+          role="button"
+        >
+          <span>
+            ···
           </span>
           <i
             class="ant-menu-submenu-arrow"
@@ -57,10 +87,9 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
       </li>
       <div
         class="workspace-action"
-        eventkey="tmp_key-1"
       >
         <button
-          class="ant-btn ant-btn-round ant-btn-default"
+          class="ant-btn ant-btn-default ant-btn-round"
           role="button"
           style="margin-right: 5px;"
           type="button"
@@ -89,7 +118,7 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
           </span>
         </button>
         <button
-          class="ant-btn ant-btn-round ant-btn-default"
+          class="ant-btn ant-btn-default ant-btn-round"
           role="button"
           type="button"
         >
@@ -118,38 +147,18 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
         </button>
       </div>
       <li
-        aria-hidden="true"
-        class="ant-menu-overflow-item ant-menu-overflow-item-rest ant-menu-submenu ant-menu-submenu-horizontal"
-        role="none"
-        style="opacity: 0; height: 0px; overflow-y: hidden; order: 9007199254740991; pointer-events: none; position: absolute;"
+        class="ant-menu-submenu ant-menu-submenu-horizontal ant-menu-overflowed-submenu"
+        role="menuitem"
+        style="visibility: hidden; position: absolute; display: none;"
       >
         <div
-          aria-controls="rc-menu-uuid-test-rc-menu-more-popup"
           aria-expanded="false"
           aria-haspopup="true"
           class="ant-menu-submenu-title"
-          data-menu-id="rc-menu-uuid-test-rc-menu-more"
-          role="menuitem"
-          tabindex="-1"
+          role="button"
         >
-          <span
-            aria-label="ellipsis"
-            class="anticon anticon-ellipsis"
-            role="img"
-          >
-            <svg
-              aria-hidden="true"
-              data-icon="ellipsis"
-              fill="currentColor"
-              focusable="false"
-              height="1em"
-              viewBox="64 64 896 896"
-              width="1em"
-            >
-              <path
-                d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"
-              />
-            </svg>
+          <span>
+            ···
           </span>
           <i
             class="ant-menu-submenu-arrow"
@@ -157,73 +166,6 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
         </div>
       </li>
     </ul>
-    <div
-      aria-hidden="true"
-      style="display: none;"
-    >
-      <div
-        class="workspace-action"
-        eventkey="tmp_key-1"
-      >
-        <button
-          class="ant-btn ant-btn-round ant-btn-default"
-          role="button"
-          style="margin-right: 5px;"
-          type="button"
-        >
-          <span
-            aria-label="edit"
-            class="anticon anticon-edit"
-            role="img"
-          >
-            <svg
-              aria-hidden="true"
-              data-icon="edit"
-              fill="currentColor"
-              focusable="false"
-              height="1em"
-              viewBox="64 64 896 896"
-              width="1em"
-            >
-              <path
-                d="M257.7 752c2 0 4-.2 6-.5L431.9 722c2-.4 3.9-1.3 5.3-2.8l423.9-423.9a9.96 9.96 0 000-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2a33.5 33.5 0 009.4 29.8c6.6 6.4 14.9 9.9 23.8 9.9zm67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89zM880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z"
-              />
-            </svg>
-          </span>
-          <span>
-             Workspace
-          </span>
-        </button>
-        <button
-          class="ant-btn ant-btn-round ant-btn-default"
-          role="button"
-          type="button"
-        >
-          <span
-            aria-label="edit"
-            class="anticon anticon-edit"
-            role="img"
-          >
-            <svg
-              aria-hidden="true"
-              data-icon="edit"
-              fill="currentColor"
-              focusable="false"
-              height="1em"
-              viewBox="64 64 896 896"
-              width="1em"
-            >
-              <path
-                d="M257.7 752c2 0 4-.2 6-.5L431.9 722c2-.4 3.9-1.3 5.3-2.8l423.9-423.9a9.96 9.96 0 000-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2a33.5 33.5 0 009.4 29.8c6.6 6.4 14.9 9.9 23.8 9.9zm67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89zM880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z"
-              />
-            </svg>
-          </span>
-          <span>
-            Dashboard
-          </span>
-        </button>
-      </div>
-    </div>
     <div>
       <div>
         <div
@@ -232,32 +174,8 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
           <div
             class="ant-spin-nested-loading"
           >
-            <div>
-              <div
-                aria-busy="true"
-                aria-live="polite"
-                class="ant-spin ant-spin-spinning"
-              >
-                <span
-                  class="ant-spin-dot ant-spin-dot-spin"
-                >
-                  <i
-                    class="ant-spin-dot-item"
-                  />
-                  <i
-                    class="ant-spin-dot-item"
-                  />
-                  <i
-                    class="ant-spin-dot-item"
-                  />
-                  <i
-                    class="ant-spin-dot-item"
-                  />
-                </span>
-              </div>
-            </div>
             <div
-              class="ant-spin-container ant-spin-blur"
+              class="ant-spin-container"
             >
               <div
                 class="ant-table ant-table-bordered ant-table-scroll-horizontal"
@@ -308,29 +226,24 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                                   class="ant-input-suffix"
                                 >
                                   <span
-                                    class="ant-input-clear-icon ant-input-clear-icon-hidden"
+                                    aria-label="close-circle"
+                                    class="anticon anticon-close-circle ant-input-clear-icon-hidden ant-input-clear-icon"
                                     role="button"
                                     tabindex="-1"
                                   >
-                                    <span
-                                      aria-label="close-circle"
-                                      class="anticon anticon-close-circle"
-                                      role="img"
+                                    <svg
+                                      aria-hidden="true"
+                                      data-icon="close-circle"
+                                      fill="currentColor"
+                                      focusable="false"
+                                      height="1em"
+                                      viewBox="64 64 896 896"
+                                      width="1em"
                                     >
-                                      <svg
-                                        aria-hidden="true"
-                                        data-icon="close-circle"
-                                        fill="currentColor"
-                                        focusable="false"
-                                        height="1em"
-                                        viewBox="64 64 896 896"
-                                        width="1em"
-                                      >
-                                        <path
-                                          d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm165.4 618.2l-66-.3L512 563.4l-99.3 118.4-66.1.3c-4.4 0-8-3.5-8-8 0-1.9.7-3.7 1.9-5.2l130.1-155L340.5 359a8.32 8.32 0 01-1.9-5.2c0-4.4 3.6-8 8-8l66.1.3L512 464.6l99.3-118.4 66-.3c4.4 0 8 3.5 8 8 0 1.9-.7 3.7-1.9 5.2L553.5 514l130 155c1.2 1.5 1.9 3.3 1.9 5.2 0 4.4-3.6 8-8 8z"
-                                        />
-                                      </svg>
-                                    </span>
+                                      <path
+                                        d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm165.4 618.2l-66-.3L512 563.4l-99.3 118.4-66.1.3c-4.4 0-8-3.5-8-8 0-1.9.7-3.7 1.9-5.2l130.1-155L340.5 359a8.32 8.32 0 01-1.9-5.2c0-4.4 3.6-8 8-8l66.1.3L512 464.6l99.3-118.4 66-.3c4.4 0 8 3.5 8 8 0 1.9-.7 3.7-1.9 5.2L553.5 514l130 155c1.2 1.5 1.9 3.3 1.9 5.2 0 4.4-3.6 8-8 8z"
+                                      />
+                                    </svg>
                                   </span>
                                 </span>
                               </span>
@@ -338,7 +251,7 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                                 class="ant-input-group-addon"
                               >
                                 <button
-                                  class="ant-btn ant-btn-default ant-btn-icon-only ant-input-search-button"
+                                  class="ant-btn ant-btn-icon-only ant-input-search-button"
                                   type="button"
                                 >
                                   <span
@@ -365,7 +278,7 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                             </span>
                           </span>
                           <button
-                            class="ant-btn ant-btn-round ant-btn-default ant-btn-icon-only"
+                            class="ant-btn ant-btn-default ant-btn-round ant-btn-icon-only"
                             type="button"
                           >
                             <span
@@ -425,7 +338,6 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                                   class="ant-checkbox"
                                 >
                                   <input
-                                    aria-label="Select all"
                                     class="ant-checkbox-input"
                                     type="checkbox"
                                     value=""
@@ -667,6 +579,7 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
               </div>
               <ul
                 class="ant-pagination ant-table-pagination ant-table-pagination-right"
+                unselectable="unselectable"
               >
                 <li
                   aria-disabled="true"
