@@ -191,7 +191,7 @@ export type SearchLayout = {
   sort: { field: string; order: 'asc' | 'desc' }[];
 };
 
-type SearchConfig = {
+export type SearchConfig = {
   fields: ConfigField[];
   layouts: SearchLayout[];
 };

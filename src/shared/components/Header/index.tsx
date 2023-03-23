@@ -1,23 +1,17 @@
 import * as React from 'react';
-import { Menu, Dropdown, Popover } from 'antd';
-import {
-  BookOutlined,
-  GithubOutlined,
-  DownOutlined,
-  LoginOutlined,
-} from '@ant-design/icons';
+import { Link } from 'react-router-dom';
+import { Menu, Dropdown, Popover, MenuItemProps } from 'antd';
+import { UserOutlined, LoginOutlined, BookOutlined, SettingOutlined, FileTextOutlined, LinkOutlined, LogoutOutlined, CopyOutlined, MenuOutlined } from '@ant-design/icons';
 import { Realm } from '@bbp/nexus-sdk';
-import Copy from '../Copy';
-import ConsentPreferences from '../ConsentPreferences';
 import { ConsentType } from '../../layouts/FusionMainLayout';
-
+import Copy from '../Copy';
+import { triggerCopy as copyCmd } from '../../utils/copy';
 import './Header.less';
-import Navigation from './Navigation';
+
 
 declare var Version: string;
 
 const epflLogo = require('../../images/EPFL-logo.svg');
-const infoIcon = require('../../images/infoIcon.svg');
 const copyIcon = require('../../images/copyIcon.svg');
 
 const documentationURL = 'https://bluebrainnexus.io/docs';
@@ -32,53 +26,7 @@ interface InformationContentProps {
   onClickRemoveConsent?(): void;
 }
 
-const InformationContent = (props: InformationContentProps) => {
-  return (
-    <>
-      <p>Nexus is Open Source and available under the Apache 2 License. </p>
-      <p>
-        © 2017-2022
-        <a href="https://www.epfl.ch/" target="_blank">
-          <img
-            style={{ width: '3em', marginBottom: 3 }}
-            src={epflLogo}
-            alt="EPFL"
-          />
-        </a>
-        {'| '}
-        <a href="https://bluebrain.epfl.ch/" target="_blank">
-          <span className="bbp-logo">Blue Brain Project</span>
-        </a>
-      </p>
-      <h4>Nexus Services</h4>
-      <p>
-        Nexus Delta v{props.version} <br />
-        <a href={`${repoUrl}/commits/${props.commitHash}`} target="_blank">
-          Nexus Fusion {Version}
-        </a>
-      </p>
-      <p>
-        <a href={documentationURL} target="_blank">
-          <BookOutlined /> Documentation
-        </a>
-        {' | '}
-        <a href={props.githubIssueURL} target="_blank">
-          <GithubOutlined /> Report Issue
-        </a>
-        {' | '}
-        <a href={releaseNoteUrl} target="_blank">
-          <GithubOutlined /> Fusion Release Notes
-        </a>
-      </p>
-      {
-        <ConsentPreferences
-          onClickRemove={props.onClickRemoveConsent}
-          consent={props.consent}
-        />
-      }
-    </>
-  );
-};
+
 export interface HeaderProps {
   version: string;
   githubIssueURL: string;
@@ -97,6 +45,8 @@ export interface HeaderProps {
   performLogin(realmName: string): void;
   subApps: any;
   authenticated: boolean;
+  logoImg: string;
+  handleLogout: MenuItemProps['onClick'];
 }
 
 const Header: React.FunctionComponent<HeaderProps> = ({
@@ -105,7 +55,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   serviceAccountsRealm,
   token,
   displayLogin = true,
-  links = [],
+  // links = [],
   children,
   version,
   githubIssueURL,
@@ -117,12 +67,52 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   performLogin,
   subApps,
   authenticated,
+  logoImg,
+  handleLogout
 }) => {
   const menu = (
     <Menu>
-      {links.map((link, i) => (
-        <Menu.Item key={i}>{link}</Menu.Item>
-      ))}
+      <Menu.Item>
+        <MenuOutlined />
+        My data
+      </Menu.Item>
+      {token &&
+          <Menu.Item
+            onClick={() => {
+              copyCmd(token);
+            }}
+          >
+            <CopyOutlined />
+            Copy token
+          </Menu.Item>
+      }
+      <Menu.SubMenu className='submenu-overlay-custom' popupClassName='submenu-overlay-custom-popup' title={(
+        <>
+          <BookOutlined />
+          <span>Resources</span>
+        </>
+      )}>
+        <Menu.Item>
+          <FileTextOutlined />
+          <span>Documentation</span>
+        </Menu.Item>
+        <Menu.Item>
+          <LinkOutlined />
+          <span>Web Protégé</span>
+        </Menu.Item>
+        <Menu.Item>
+          <LinkOutlined />
+          <span>Atlas</span>
+        </Menu.Item>
+      </Menu.SubMenu>
+      <Menu.Item>
+        <SettingOutlined />
+        About
+      </Menu.Item>
+      <Menu.Item onClick={handleLogout} className='menu-item-logout' key={'logout'}>
+        <LogoutOutlined />
+        Logout
+      </Menu.Item>
     </Menu>
   );
 
@@ -132,81 +122,76 @@ const Header: React.FunctionComponent<HeaderProps> = ({
 
   const realmMenu = (
     <Menu>
-      {realmsFilter.map((r: Realm, i: number) => (
-        <Menu.Item
-          key={i}
-          title={r.name}
-          onClick={e => {
-            e.domEvent.preventDefault();
-            performLogin(realmsFilter[i].name);
-          }}
-        >
-          {r.name}
+      <Menu.SubMenu className='submenu-overlay-custom' popupClassName='submenu-overlay-custom-popup' title={(
+        <>
+          <LoginOutlined />
+          <span>Login</span>
+        </>
+      )}>
+        {realmsFilter.map((r: Realm, i: number) => (
+          <Menu.Item
+            key={i}
+            title={r.name}
+            onClick={e => {
+              e.domEvent.preventDefault();
+              performLogin(realmsFilter[i].name);
+            }}
+          >
+            <LoginOutlined />
+            {r.name}
+          </Menu.Item>
+        ))}
+      </Menu.SubMenu>
+      <Menu.SubMenu className='submenu-overlay-custom' popupClassName='submenu-overlay-custom-popup' title={(
+        <>
+          <BookOutlined />
+          <span>Resources</span>
+        </>
+      )}>
+        <Menu.Item>
+          <FileTextOutlined />
+          <span>Documentation</span>
         </Menu.Item>
-      ))}
+        <Menu.Item>
+          <LinkOutlined />
+          <span>Web Protégé</span>
+        </Menu.Item>
+        <Menu.Item>
+          <LinkOutlined />
+          <span>Atlas</span>
+        </Menu.Item>
+      </Menu.SubMenu>
+      <Menu.Item>
+        <SettingOutlined />
+        <span>About</span>
+      </Menu.Item>
     </Menu>
   );
 
   return (
     <header className="Header">
-      <div className="selectors">{children}</div>
-      <div className="menu-block">
-        {name && forgeLink !== '' && (
-          <a href={forgeLink} target="_blank" className="forge-button">
-            Forge Templates
-          </a>
-        )}
-        {token && (
-          <Copy
-            render={(copySuccess, triggerCopy) => (
-              <button
-                className="copy-token-button"
-                onClick={() => {
-                  triggerCopy(token);
-                }}
-              >
-                <img src={copyIcon} />{' '}
-                {copySuccess ? (
-                  <span className="button-text">Copied!</span>
-                ) : (
-                  <span className="button-text">Copy token</span>
-                )}
-              </button>
-            )}
-          />
-        )}
-        {dataCart}
-        <Popover
-          content={
-            <InformationContent
-              version={version}
-              githubIssueURL={githubIssueURL}
-              consent={consent}
-              onClickRemoveConsent={onClickRemoveConsent}
-              commitHash={commitHash}
+      <div className="logo-container">
+        <Link to="/">
+          <div className="logo-container__logo">
+            <img
+              src={logoImg || require('../../images/fusion_logo.png')}
+              alt="Logo"
             />
-          }
-          trigger="click"
-          title="Information"
-          placement="bottomRight"
-        >
-          <img
-            src={infoIcon}
-            className="ui-header-info-button"
-            alt="Information"
-          />
-        </Popover>
-        <Navigation authenticated={authenticated} subApps={subApps} />
+          </div>
+        </Link>
+      </div>
+      <div className="menu-block">
         {name ? (
-          <Dropdown overlay={menu}>
+          <Dropdown trigger={['click']} overlay={menu} overlayClassName='menu-overlay-custom'>
             <a className="menu-dropdown ant-dropdown-link">
-              {name} <DownOutlined />
+              <UserOutlined />
+              <span>{name}</span>
             </a>
           </Dropdown>
         ) : displayLogin ? (
-          <Dropdown overlay={realmMenu}>
+          <Dropdown trigger={['click']} overlay={realmMenu} overlayClassName='menu-overlay-custom'>
             <a className="menu-dropdown ant-dropdown-link">
-              login <LoginOutlined />
+              Start
             </a>
           </Dropdown>
         ) : null}

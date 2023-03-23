@@ -24,6 +24,7 @@ import DataCartContainer, {
 import './FusionMainLayout.less';
 import useNotification from '../hooks/useNotification';
 import ErrorBoundary from '../components/ErrorBoundary';
+import { MenuItemProps } from 'antd/lib/menu/MenuItem';
 
 const { Content } = Layout;
 
@@ -170,8 +171,8 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
     dispatch(push(url, { previousUrl: window.location.href }));
   };
 
-  const handleLogout = (e: React.SyntheticEvent) => {
-    e.preventDefault();
+  const handleLogout: MenuItemProps['onClick'] = (e) => {
+    e.domEvent.preventDefault();
     localStorage.removeItem('nexus__state');
     userManager && userManager.signoutRedirect();
   };
@@ -195,31 +196,19 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   return (
     <>
       <SeoHeaders />
-      <Layout className="fusion-main-layout">
-        <Header
+      <Layout className={`fusion-main-layout ${token ? 'authed' : 'wall'}`}>
+        { token && <Header
           name={authenticated ? name : undefined}
           token={token}
           realms={realms}
           serviceAccountsRealm={serviceAccountsRealm}
           performLogin={login}
-          links={[
-            <a
-              href="/user"
-              onClick={(e: React.SyntheticEvent) => {
-                e.preventDefault();
-                goTo(`/user`);
-              }}
-            >
-              User Info
-            </a>,
-            <a href="" onClick={handleLogout}>
-              Log out
-            </a>,
-          ]}
+          handleLogout={handleLogout}
           displayLogin={canLogin}
           version={deltaVersion}
           githubIssueURL={githubIssueURL}
           forgeLink={layoutSettings.forgeLink}
+          logoImg={layoutSettings.logoImg}
           consent={consent}
           commitHash={COMMIT_HASH}
           onClickRemoveConsent={() => setConsent(undefined)}
@@ -230,25 +219,8 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
           }
           subApps={subApps}
           authenticated={authenticated}
-        >
-          <SearchBarContainer />
-        </Header>
+        /> }
         <ConsentContainer consent={consent} updateConsent={setConsent} />
-        <div className="logo-container">
-          <Link to="/">
-            <div className="logo-container__logo">
-              <img
-                src={
-                  layoutSettings.logoImg === ''
-                    ? require('../images/fusion_logo.png')
-                    : layoutSettings.logoImg
-                }
-                alt="Logo"
-              />
-            </div>
-          </Link>
-        </div>
-
         <Content className="site-layout-background fusion-main-layout__content">
           {children}
         </Content>
