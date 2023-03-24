@@ -9,10 +9,12 @@ import OrgForm from '../components/Orgs/OrgForm';
 import OrgItem from '../components/Orgs/OrgItem';
 import ListItem from '../../../shared/components/List/Item';
 import { useHistory } from 'react-router';
-import { useAdminSubappContext } from '..';
+import { useAdminSubappContext, useOrganisationsSubappContext } from '..';
 import useNotification, {
   NexusError,
 } from '../../../shared/hooks/useNotification';
+
+
 
 const DEFAULT_PAGE_SIZE = 20;
 const SHOULD_INCLUDE_DEPRECATED = false;
@@ -30,7 +32,7 @@ const OrgsListView: React.FunctionComponent = () => {
   >(undefined);
   const nexus = useNexusContext();
   const history = useHistory();
-  const subapp = useAdminSubappContext();
+  const subapp = useOrganisationsSubappContext();
   const goTo = (org: string) => history.push(`/${subapp.namespace}/${org}`);
   const notification = useNotification();
 

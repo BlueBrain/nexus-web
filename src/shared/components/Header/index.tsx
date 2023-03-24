@@ -71,10 +71,12 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   handleLogout
 }) => {
   const menu = (
-    <Menu>
+    <Menu mode='inline'>
       <Menu.Item>
-        <MenuOutlined />
-        My data
+        <Link to='/my-data'>
+          <MenuOutlined />
+          My data
+        </Link>
       </Menu.Item>
       {token &&
           <Menu.Item
@@ -93,77 +95,33 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         </>
       )}>
         <Menu.Item>
-          <FileTextOutlined />
-          <span>Documentation</span>
+          <a rel="noopener noreferrer" target="_blank" href='https://bluebrainnexus.io/docs/index.html'>
+            <FileTextOutlined />
+            <span>Documentation</span>
+          </a>
         </Menu.Item>
         <Menu.Item>
-          <LinkOutlined />
-          <span>Web Protégé</span>
+          <a  rel="noopener noreferrer" target="_blank"href='https://bluebrainnexus.io/'>
+            <LinkOutlined />
+            <span>Web Protégé</span>
+          </a>
         </Menu.Item>
         <Menu.Item>
-          <LinkOutlined />
-          <span>Atlas</span>
+          <a rel="noopener noreferrer" target="_blank" href="https://portal.bluebrain.epfl.ch/resources/models/cell-atlas/">
+            <LinkOutlined />
+            <span>Atlas</span>
+          </a>
         </Menu.Item>
       </Menu.SubMenu>
       <Menu.Item>
-        <SettingOutlined />
-        About
+        <a rel="noopener noreferrer" target="_blank" href='https://portal.bluebrain.epfl.ch/about-2/'>
+          <SettingOutlined />
+          About
+        </a>
       </Menu.Item>
       <Menu.Item onClick={handleLogout} className='menu-item-logout' key={'logout'}>
         <LogoutOutlined />
         Logout
-      </Menu.Item>
-    </Menu>
-  );
-
-  const realmsFilter = realms.filter(
-    r => r._label !== serviceAccountsRealm && !r._deprecated
-  );
-
-  const realmMenu = (
-    <Menu>
-      <Menu.SubMenu className='submenu-overlay-custom' popupClassName='submenu-overlay-custom-popup' title={(
-        <>
-          <LoginOutlined />
-          <span>Login</span>
-        </>
-      )}>
-        {realmsFilter.map((r: Realm, i: number) => (
-          <Menu.Item
-            key={i}
-            title={r.name}
-            onClick={e => {
-              e.domEvent.preventDefault();
-              performLogin(realmsFilter[i].name);
-            }}
-          >
-            <LoginOutlined />
-            {r.name}
-          </Menu.Item>
-        ))}
-      </Menu.SubMenu>
-      <Menu.SubMenu className='submenu-overlay-custom' popupClassName='submenu-overlay-custom-popup' title={(
-        <>
-          <BookOutlined />
-          <span>Resources</span>
-        </>
-      )}>
-        <Menu.Item>
-          <FileTextOutlined />
-          <span>Documentation</span>
-        </Menu.Item>
-        <Menu.Item>
-          <LinkOutlined />
-          <span>Web Protégé</span>
-        </Menu.Item>
-        <Menu.Item>
-          <LinkOutlined />
-          <span>Atlas</span>
-        </Menu.Item>
-      </Menu.SubMenu>
-      <Menu.Item>
-        <SettingOutlined />
-        <span>About</span>
       </Menu.Item>
     </Menu>
   );
@@ -181,20 +139,14 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         </Link>
       </div>
       <div className="menu-block">
-        {name ? (
+        {name && (
           <Dropdown trigger={['click']} overlay={menu} overlayClassName='menu-overlay-custom'>
             <a className="menu-dropdown ant-dropdown-link">
               <UserOutlined />
               <span>{name}</span>
             </a>
           </Dropdown>
-        ) : displayLogin ? (
-          <Dropdown trigger={['click']} overlay={realmMenu} overlayClassName='menu-overlay-custom'>
-            <a className="menu-dropdown ant-dropdown-link">
-              Start
-            </a>
-          </Dropdown>
-        ) : null}
+        )}
       </div>
     </header>
   );

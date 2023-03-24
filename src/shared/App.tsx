@@ -23,7 +23,7 @@ const App: React.FC = () => {
 
   // Apply Subapp routes
   const routesWithSubApps = [...routes, ...subAppRoutes];
-  console.log("@@@@routesWithSubApps", routesWithSubApps);
+  console.log("@@@@routesWithSubApps", {routes, subAppRoutes});
   return (
     <CartContext.Provider value={cartData}>
       <NotificationContext.Provider value={notificationData}>

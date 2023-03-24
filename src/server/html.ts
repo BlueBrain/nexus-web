@@ -43,7 +43,7 @@ const html = ({
       <base href="${base}" />
     </head>
     <body ${helmet.bodyAttributes.toString()}>
-      <div id="app" style="height:100%">${body}</div>
+      <div id="app">${body}</div>
       <script>
         window.__BASE__ = '${base}';
         // WARNING: See the following for security issues around embedding JSON in HTML:

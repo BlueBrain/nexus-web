@@ -1,5 +1,6 @@
 import React, { CSSProperties } from 'react';
-import './PresetCardItem.less';
+import { Link } from 'react-router-dom';
+import './styles.less';
 
 type Props = {
     containerStyle?: CSSProperties;
@@ -8,6 +9,7 @@ type Props = {
     title: string;
     label?: string;
     stats?: number;
+    to: string;
 }
 
 export default function PresetCardItem({
@@ -17,13 +19,14 @@ export default function PresetCardItem({
     title,
     stats,
     label,
+    to
 }: Props) {
-  return (
-    <button className='preset-card'>
-        <div className='preset-card-container' style={containerStyle}>
-            <div className='preset-card-title' style={titleStyle}>{title}</div>
-            <div className='preset-card-stats' style={statsStyle}>{stats} {label}</div>
-        </div>
-    </button>
-  )
+    return (
+        <Link to={to} className='preset-card'>
+            <div className='preset-card-container' style={containerStyle}>
+                <div className='preset-card-title' style={titleStyle}>{title}</div>
+                <div className='preset-card-stats' style={statsStyle}>{stats} {label}</div>
+            </div>
+        </Link>
+    )
 }

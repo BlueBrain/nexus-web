@@ -1,32 +1,39 @@
-import React, { Fragment, useReducer, useState } from 'react';
-import { Input, Popover, Radio, DatePicker, RadioChangeEvent, DatePickerProps, Tag, Select } from 'antd';
+import React, { Fragment, useRef, useState } from 'react';
+import { Input, Radio, DatePicker, RadioChangeEvent, DatePickerProps, Tag, Select } from 'antd';
 import { CalendarOutlined } from '@ant-design/icons';
 import { isArray } from 'lodash';
 import { RangePickerProps } from 'antd/lib/date-picker';
 import { TagProps } from 'antd/lib/tag';
+import InputMask, { Props as inputprops} from 'react-input-mask';
+import useClickOutside from '../../../shared/hooks/useClickOutside';
+import './styles.less';
 
-import './MyDataHeader.less';
-
-
-type Props = {}
-type TitleProps = {
-    text: string;
-    label: string;
-    count: number;
-}
 type TDateType = 'before' | 'after' | 'range';
-type TFilter = {
+export type TFilterOptions = {
     dateType: TDateType;
     dataType: string[];
     query: string;
     date: string | string[] | null;
+    offset: number,
+    size: number,
+    total?: number,
+}
+type THeaderProps = Omit<TFilterOptions, 'size' | 'offset'> & {
+    setFilterOptions: React.Dispatch<Partial<TFilterOptions>>,
 }
 
-const Title = ({ text, label, count }: TitleProps) => {
+type TitleProps = {
+    text: string;
+    label: string;
+    total?: number;
+}
+type THeaderFilterProps = Omit<THeaderProps, 'total'>;
+
+const Title = ({ text, label, total }: TitleProps) => {
     return (
         <div className='my-data-table-header-title'>
             <span> {text}</span>
-            <span>{count} {label}</span>
+            <span>{total} {label}</span>
         </div>
     )
 }
@@ -52,56 +59,48 @@ const tagRender = (props: TagProps) => {
 };
 const options = [{ value: 'gold' }, { value: 'lime' }, { value: 'green' }, { value: 'cyan' }];
 
-const Filters = () => {
-    const [{ dataType, query, dateType, date }, setFilterOptions ] = useReducer(
-        (data: TFilter, partialData: Partial<TFilter>) => ({
-            ...data,
-            ...partialData   
-        }),
-        { 
-            dateType: 'range',
-            date: null,
-            dataType: [],
-            query: '',
-        }
-    )
-    const onChangeDateType = (e: RadioChangeEvent) => setFilterOptions({dateType: e.target.value });
-    const onChangeDate = (
-        _: DatePickerProps['value'] | RangePickerProps['value'],
-        dateString: string[] | string,
-    ) => setFilterOptions({ date: dateString });
+
+const Filters = ({ dataType, query, dateType, date, setFilterOptions }: THeaderFilterProps) => {
+    const popoverRef = useRef(null);
+    const [dateFilterContainer, setOpenDateFilterContainer] = useState<boolean>(false);
+    const onChangeDateType = (e: RadioChangeEvent) => setFilterOptions({ dateType: e.target.value });
+    const onDatePopoverVisibleChange = () => setOpenDateFilterContainer((state) => !state);
+    const onChangeDate = ( _: DatePickerProps['value'] | RangePickerProps['value'], dateString: string[] | string, ) => setFilterOptions({ date: dateString });
+    const handleQueryChange: React.ChangeEventHandler<HTMLInputElement> = (event) => setFilterOptions({ query: event.target.value});
 
     const DatePickerContainer = (
         <div className='my-data-date-picker-container'>
-            <Radio.Group onChange={onChangeDateType} value={dateType}>
+            <Radio.Group size='small' onChange={onChangeDateType} value={dateType}>
                 <Radio value='before'>Before</Radio>
                 <Radio value='after'>After</Radio>
                 <Radio value='range'>Range</Radio>
             </Radio.Group>
             <div className='date-picker-content'>
                 {dateType === 'range' && <RangePicker showTime allowClear bordered={false} className='my-data-date-picker-range' onChange={onChangeDate} />}
-                {dateType !== 'range' && <DatePicker showTime allowClear bordered={false} className='my-data-date-picker-input' onChange={onChangeDate} />}
+                {dateType !== 'range' && <DatePicker showTime allowClear bordered={false} className='my-data-date-picker-input' onChange={onChangeDate} /> }
             </div>
         </div>
     );
     const selectedDate = dateType === 'range' && isArray(dateType) ? `${date?.[0]} - ${date?.[1]}` : (date as string);
     const countTypes = 5550;
+    
+    useClickOutside(popoverRef, () => {
+        onDatePopoverVisibleChange();
+    });
     return (
         <div className='my-data-table-header-actions'>
-            <Popover
-                content={DatePickerContainer}
-                trigger="click"
-                placement='bottomLeft'
-                overlayClassName='my-data-date-popover'
-                arrowContent={null}
-            >
+            <div className='my-data-date-container'>
                 <Input
                     placeholder="Date"
                     className='my-data-date-picker'
                     value={selectedDate}
                     prefix={<CalendarOutlined />}
+                    onClick={() => setOpenDateFilterContainer((state) => !state)}
                 />
-            </Popover>
+                {dateFilterContainer && <div ref={popoverRef} className='my-data-date-popover'>
+                    {DatePickerContainer}
+                </div>}
+            </div>
             <Select
                 mode="multiple"
                 showArrow
@@ -128,21 +127,19 @@ const Filters = () => {
                 className='my-data-search'
                 placeholder="Search dataset"
                 bordered={false}
+                value={query}
+                onChange={handleQueryChange}
             />
         </div>
     )
 }
 
 
-export default function MyDataHeader({ }: Props) {
+export default function MyDataHeader({ dataType, query, dateType, date, total, setFilterOptions }: THeaderProps) {
     return (
         <div className='my-data-table-header'>
-            <Title
-                text='My data'
-                label='dataset'
-                count={404}
-            />
-            <Filters />
+            <Title text='My data' label='dataset' total={total} />
+            <Filters {... { dataType, query, dateType, date, setFilterOptions }} />
         </div>
     )
 }

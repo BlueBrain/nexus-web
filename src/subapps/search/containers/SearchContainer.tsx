@@ -22,9 +22,9 @@ const SearchContainer: React.FC = () => {
   const history = useHistory();
   const location = useLocation();
   const [queryParams] = useQueryString();
-  const { query } = queryParams;
+  const { query, layout } = queryParams;
   const [selectedRowKeys, setSelectedRowKeys] = React.useState<any>([]);
-
+  
   const makeResourceUri = (
     orgLabel: string,
     projectLabel: string,
@@ -154,6 +154,7 @@ const SearchContainer: React.FC = () => {
     query,
     pagination.currentPage,
     pagination.pageSize,
+    layout,
     onQuerySuccess,
     onSortOptionsChanged,
     nexus

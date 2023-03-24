@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/reducers';
-import { HomeSeachByPresets, HomeSearchByApps, HomeMyData, HomeAuthentication } from '../organisms';
+import { HomeSeachByPresets, HomeSearchByApps, HomeAuthentication } from '../organisms';
+import { MyData } from '../canvas';
 import useSubApps from '../hooks/useSubApps';
 
 const Home: React.FunctionComponent = () => {
@@ -16,13 +17,7 @@ const Home: React.FunctionComponent = () => {
     <div className="home-view view-container">
       <HomeSeachByPresets />
       <HomeSearchByApps />
-      <HomeMyData />
-      {/* {subAppProps.map(subApp => {
-        return subApp.subAppType === 'external' ? null : subApp.requireLogin &&
-          !userLoggedIn ? null : (
-          <HomeLinkCard {...subApp} />
-        );
-      })} */}
+      <MyData />
     </div>
   );
 };

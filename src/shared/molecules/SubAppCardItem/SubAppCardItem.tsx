@@ -1,5 +1,6 @@
 import React, { CSSProperties } from 'react'
-import './SubAppCardItem.less';
+import { Link } from 'react-router-dom';
+import './styles.less';
 
 
 type Props = {
@@ -9,6 +10,7 @@ type Props = {
     title: string;
     subtitle: string;
     tileColor: string;
+    to: string;
 }
 
 export default function SubAppCardItem({
@@ -18,9 +20,10 @@ export default function SubAppCardItem({
     title,
     subtitle,
     tileColor,
+    to
 }: Props) {
   return (
-    <div className='subapp-card-item'>
+    <Link to={to} className='subapp-card-item'>
         <div className='subapp-card-item-container' style={containerStyle}>
             <div className='subapp-card-item-container-title' style={titleStyle}>{title}</div>
             <div className='subapp-card-item-container-subtitle' style={subtitleStyle}>{subtitle}</div>
@@ -28,6 +31,6 @@ export default function SubAppCardItem({
         <div className='subapp-card-item-tile' style={{
             background: tileColor
         }}/>
-    </div>
+    </Link>
   )
 }

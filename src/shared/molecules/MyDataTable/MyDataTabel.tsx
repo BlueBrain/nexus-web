@@ -1,58 +1,43 @@
 import React, { useMemo } from 'react';
 import { Table } from 'antd';
-import './MyDataTable.less';
-import { ColumnsType } from 'antd/lib/table';
+import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
+import { TFilterOptions } from '../MyDataHeader/MyDataHeader';
+import timeago from '../../../utils/timeago';
+import './styles.less';
 
 
-type Props = {}
-type TDataSource = {
+export type TDataSource = {
     key: string;
     name: string;
     project: string;
     description: string;
-    type: string;
+    type?: string | string[];
     updatedAt: string;
     createdAt: string;
 }
-const data: TDataSource[] = [{
-    key: "1",
-    name: "Lorem ipsum dolor sit amet consectetur",
-    project: "Lorem ipsum dolor sit amet consectetur",
-    description: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Optio, dolorem quam perferendis veritatis blanditiis earum similique ipsam commodi provident ipsum nulla, illo obcaecati reiciendis animi dolores, eveniet architecto. Blanditiis, reprehenderit!",
-    type: "Lorem ipsum dolor sit amet consectetur",
-    updatedAt: "Lorem ipsum dolor sit amet consectetur",
-    createdAt: "Lorem ipsum dolor sit amet consectetur",
-}, {
-    key: "1",
-    name: "Lorem ipsum dolor sit amet consectetur",
-    project: "Lorem ipsum dolor sit amet consectetur",
-    description: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Optio, dolorem quam perferendis veritatis blanditiis earum similique ipsam commodi provident ipsum nulla, illo obcaecati reiciendis animi dolores, eveniet architecto. Blanditiis, reprehenderit!",
-    type: "Lorem ipsum dolor sit amet consectetur",
-    updatedAt: "Lorem ipsum dolor sit amet consectetur",
-    createdAt: "Lorem ipsum dolor sit amet consectetur",
-}, {
-    key: "1",
-    name: "Lorem ipsum dolor sit amet consectetur",
-    project: "Lorem ipsum dolor sit amet consectetur",
-    description: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Optio, dolorem quam perferendis veritatis blanditiis earum similique ipsam commodi provident ipsum nulla, illo obcaecati reiciendis animi dolores, eveniet architecto. Blanditiis, reprehenderit!",
-    type: "Lorem ipsum dolor sit amet consectetur",
-    updatedAt: "Lorem ipsum dolor sit amet consectetur",
-    createdAt: "Lorem ipsum dolor sit amet consectetur",
-}, {
-    key: "1",
-    name: "Lorem ipsum dolor sit amet consectetur",
-    project: "Lorem ipsum dolor sit amet consectetur",
-    description: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Optio, dolorem quam perferendis veritatis blanditiis earum similique ipsam commodi provident ipsum nulla, illo obcaecati reiciendis animi dolores, eveniet architecto. Blanditiis, reprehenderit!",
-    type: "Lorem ipsum dolor sit amet consectetur",
-    updatedAt: "Lorem ipsum dolor sit amet consectetur",
-    createdAt: "Lorem ipsum dolor sit amet consectetur",
-}]
-export default function MyDataTabel({ }: Props) {
+type Props = {
+    setFilterOptions: React.Dispatch<Partial<TFilterOptions>>,
+    isLoading: boolean;
+    dataSource: TDataSource[];
+    offset: number;
+    size: number;
+    total?: number;
+}
+
+export default function MyDataTabel({
+    setFilterOptions,
+    isLoading,
+    dataSource,
+    size,
+    offset,
+    total,
+}: Props) {
     const columns: ColumnsType<TDataSource> = useMemo(() => [
         {
             key: 'name',
             title: 'Name',
             dataIndex: 'name',
+            fixed: true,
             sorter: (a, b) => a.name.length - b.name.length,
         }, {
             key: 'project',
@@ -73,23 +58,41 @@ export default function MyDataTabel({ }: Props) {
             key: 'updatedAt',
             title: 'updated date',
             dataIndex: 'updatedAt',
+            width: 140,
+            render: (text) => timeago(new Date(text)),
             sorter: (a, b) => a.name.length - b.name.length,
         }, {
             key: 'createdAt',
             title: 'created date',
             dataIndex: 'createdAt',
+            width: 140,
+            render: (text) => timeago(new Date(text)),
             sorter: (a, b) => a.name.length - b.name.length,
         }
     ], []);
-    // const data: TDataSource[] = []
+    const tablePaginationConfig: TablePaginationConfig = {
+        total,
+        pageSize: size,
+        defaultCurrent: 0,
+        current: (offset / size) + 1,
+        onChange: (page, _) => setFilterOptions({ offset: (page - 1) * size }),
+        onShowSizeChange: (_, size) => setFilterOptions({ size, offset: 0 }),
+        showQuickJumper: true,
+        showSizeChanger: true,
+    }
+
     return (
         <Table
+            sticky
+            loading={isLoading}
             columns={columns}
-            dataSource={data}
+            dataSource={dataSource}
+            pagination={tablePaginationConfig}
             bordered={false}
             showSorterTooltip={false}
             className='my-data-table'
             rowClassName='my-data-table-row'
+            scroll={{ x: 1300 }}
         />
     )
 }

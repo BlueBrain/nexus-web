@@ -26,6 +26,7 @@ import NumberFilterOptions from '../containers/NumberFilterOptions';
 import '../containers/SearchContainer.less';
 import { SortDirection } from '../../../shared/hooks/useAccessDataForTable';
 import SortMenuOptions from '../components/SortMenuOptions';
+import { useHistory, useLocation } from 'react-router';
 
 export type SearchConfigField =
   | {
@@ -342,16 +343,20 @@ export type ESSortField = {
   fieldName: string;
   direction: SortDirection;
   format?: string;
+  
 };
 
 function useGlobalSearchData(
   query: string,
   page: number,
   pageSize: number,
+  queryLayout: string,
   onSuccess: (queryResponse: any) => void,
   onSortOptionsChanged: () => void,
   nexus: NexusClient
 ) {
+  const history = useHistory();
+  const location = useLocation();
   const [searchError, setSearchError] = React.useState<Error | null>(null);
   const [result, setResult] = React.useState<any>({});
   const [config, setConfig] = React.useState<SearchConfig>();
@@ -362,13 +367,13 @@ function useGlobalSearchData(
   );
   const [selectedSearchLayout, setSelectedSearchLayout] = React.useState<
     string
-  >();
+  >(() => queryLayout);
 
   React.useEffect(() => {
     if (!(config && config.layouts && config.layouts.length > 0)) return;
     // default to first search layout
-    setSelectedSearchLayout(config.layouts[0].name);
-  }, [config]);
+    setSelectedSearchLayout(queryLayout ?? config.layouts[0].name);
+  }, [config, queryLayout]);
 
   const [sortState, setSortState] = React.useState<ESSortField[]>([]);
 
@@ -519,9 +524,9 @@ function useGlobalSearchData(
     const withFilter = constructFilterSet(baseQuery, filterState);
     const withPagination = addPagination(withFilter, page, pageSize);
     const withSorting = addSorting(withPagination, sortState);
+    console.log('€€esQuery', query, filterState);
     return withSorting.build();
   }, [query, filterState, page, pageSize, sortState]);
-
   const [isLoading, setIsLoading] = React.useState(false);
   const columns: SearchConfigField = React.useMemo(() => {
     return config
@@ -644,6 +649,9 @@ function useGlobalSearchData(
   };
 
   const handleChangeSearchLayout = (layoutName: string) => {
+    history.replace(
+      `${location.pathname}?layout=${layoutName}`
+    )
     setSelectedSearchLayout(layoutName);
   };
 
@@ -693,6 +701,7 @@ function useGlobalSearchData(
           };
         })
         .filter(filter => filter !== undefined);
+        console.log('fromLayout-filters', filters)
       dispatchFilter({ type: 'fromLayout', payload: filters as FilterState[] });
     } else {
       dispatchFilter({ type: 'fromLayout', payload: [] });
@@ -705,6 +714,13 @@ function useGlobalSearchData(
 
     applyLayout(layout, columns);
   }, [selectedSearchLayout]);
+  React.useEffect(() => {
+    const layout = config?.layouts.find(l => l.name === queryLayout);
+    console.log('@@@@layout', config?.layouts, 'l:', layout, 'q', queryLayout);
+    if (!layout) return;
+
+    applyLayout(layout, columns);
+  }, [queryLayout, config?.layouts]);
 
   return {
     isLoading,

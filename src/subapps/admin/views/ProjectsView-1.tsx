@@ -4,13 +4,12 @@ import { PlusSquareOutlined } from '@ant-design/icons';
 import { useHistory, useRouteMatch } from 'react-router';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { ProjectResponseCommon, OrgResponseCommon } from '@bbp/nexus-sdk';
-
+import { useOrganisationsSubappContext } from '..';
 import ProjectList from '../containers/ProjectList';
 import Skeleton from '../../../shared/components/Skeleton';
 import ProjectForm from '../components/Projects/ProjectForm';
 import ListItem from '../../../shared/components/List/Item';
 import ProjectItem from '../components/Projects/ProjectItem';
-import { useAdminSubappContext } from '..';
 import useNotification from '../../../shared/hooks/useNotification';
 import QuotasContainer from '../containers/QuotasContainer';
 import StoragesContainer from '../containers/StoragesContainer';
@@ -30,7 +29,8 @@ const ProjectsView: React.FunctionComponent = () => {
 
   const nexus = useNexusContext();
   const history = useHistory();
-  const subapp = useAdminSubappContext();
+  // const subapp = useAdminSubappContext();
+  const subapp = useOrganisationsSubappContext();
   const match = useRouteMatch<{ orgLabel: string }>(
     `/${subapp.namespace}/:orgLabel`
   );

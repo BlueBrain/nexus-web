@@ -11,32 +11,32 @@ import { Tabs, Popover, Empty } from 'antd';
 import { SelectOutlined } from '@ant-design/icons';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
-import StoragesContainer from '../containers/StoragesContainer';
-import ProjectStatsContainer from '../containers/ProjectStatsContainer';
-import QuotasContainer from '../containers/QuotasContainer';
-import ProjectForm from '../components/Projects/ProjectForm';
-import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
-import ResourceListBoardContainer from '../../../shared/containers/ResourceListBoardContainer';
-import ACLsView from './ACLsView';
-import QueryEditor from '../components/Projects/QueryEditor';
-import { useAdminSubappContext } from '..';
+import StoragesContainer from '../../containers/StoragesContainer';
+import ProjectStatsContainer from '../../containers/ProjectStatsContainer';
+import QuotasContainer from '../../containers/QuotasContainer';
+import ProjectForm from '../../components/Projects/ProjectForm';
+import ViewStatisticsContainer from '../../components/Views/ViewStatisticsProgress';
+import ResourceListBoardContainer from '../../../../shared/containers/ResourceListBoardContainer';
+import ACLsView from '../ACLsView';
+import QueryEditor from '../../components/Projects/QueryEditor';
+import { useAdminSubappContext, useOrganisationsSubappContext } from '../..';
 import useNotification, {
   NexusError,
-} from '../../../shared/hooks/useNotification';
-import ProjectToDeleteContainer from '../containers/ProjectToDeleteContainer';
-import { RootState } from '../../../shared/store/reducers';
-import './ProjectView.less';
-import ResourceCreateUploadContainer from '../../../shared/containers/ResourceCreateUploadContainer';
-import { makeOrganizationUri } from '../../../shared/utils';
-import JiraPluginProjectContainer from '../containers/JiraContainer';
-import { useJiraPlugin } from '../../../shared/hooks/useJIRA';
+} from '../../../../shared/hooks/useNotification';
+import ProjectToDeleteContainer from '../../containers/ProjectToDeleteContainer';
+import { RootState } from '../../../../shared/store/reducers';
+import ResourceCreateUploadContainer from '../../../../shared/containers/ResourceCreateUploadContainer';
+import { makeOrganizationUri } from '../../../../shared/utils';
+import JiraPluginProjectContainer from '../../containers/JiraContainer';
+import { useJiraPlugin } from '../../../../shared/hooks/useJIRA';
+import './styles.less';
 
 const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
   const nexus = useNexusContext();
   const location = useLocation();
   const history = useHistory();
-  const subapp = useAdminSubappContext();
+  const subapp = useOrganisationsSubappContext();
   const { TabPane } = Tabs;
 
   const match = useRouteMatch<{
@@ -136,6 +136,7 @@ const ProjectView: React.FunctionComponent = () => {
       error: null,
       busy: true,
     });
+    console.log('@@@@@projectpage -->', { orgLabel, projectLabel });
     nexus.Project.get(orgLabel, projectLabel)
       .then(response => {
         setState({
@@ -145,6 +146,7 @@ const ProjectView: React.FunctionComponent = () => {
         });
       })
       .catch(error => {
+        console.log('@@@projectpageerror', error)
         notification.error({
           message: `Could not load project ${projectLabel}`,
           description: error.message,
@@ -155,7 +157,7 @@ const ProjectView: React.FunctionComponent = () => {
           busy: false,
         });
       });
-  }, [orgLabel, projectLabel, nexus, setState]);
+  }, [orgLabel, projectLabel, nexus]);
 
   const pauseStatisticsPolling = (durationInMs: number) => {
     setStatisticsPollingPaused(true);
@@ -169,7 +171,7 @@ const ProjectView: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     /* if location has changed, check to see if we should refresh our
-		resources and reset initial statistics state */
+    resources and reset initial statistics state */
     const refresh =
       location.state && (location.state as { refresh?: boolean }).refresh;
     if (refresh) {

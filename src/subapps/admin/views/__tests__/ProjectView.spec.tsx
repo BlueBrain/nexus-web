@@ -3,7 +3,7 @@ import { createNexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
 import fetch from 'node-fetch';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import ProjectView from '../ProjectView';
+import ProjectView from '../ProjectPage/ProjectPage';
 import { rest } from 'msw';
 import { render, server, screen } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';

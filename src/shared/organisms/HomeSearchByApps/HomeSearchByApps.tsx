@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { SubAppCardItem } from '../../molecules';
-import './HomeSearchByApps.less';
+import './styles.less';
 
 type Props = {}
 type AppDetails = {
@@ -18,7 +18,7 @@ const AppsList = new Map<string, AppDetails>([
             title: 'Organizations',
             subtitle: 'Browse through different  group of datasets gather by those providing datas',
             tileColor: "linear-gradient(90deg, #F4CCA7 1.19%, #CA6666 100%)",
-            link: '/organisations',
+            link: '/orgs',
         }
     ], [
         'projects', {
@@ -37,14 +37,15 @@ const AppsList = new Map<string, AppDetails>([
             link: '/studios'
         }
     ]
-])
+]);
+
 const HomeSearchByApps = (props: Props) => {
     const apps = [...AppsList.values()];
     return (
         <div className='home-searchby-appslist'>
             <h2 className='home-searchby-appslist-title'>Search by Lists</h2>
             <div className='home-searchby-appslist-container'>
-                { apps.map(app => <SubAppCardItem { ...app }/>)}
+                { apps.map(app => <SubAppCardItem { ...app } to={app.link}/>)}
             </div>
         </div>
     )

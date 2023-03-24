@@ -1,5 +1,5 @@
 import { RouteProps } from 'react-router';
-import Admin from './admin';
+import Admin, { Organizations } from './admin';
 import StudioLegacy from './studioLegacy';
 import Workflow from './projects';
 import Search from './search';
@@ -24,5 +24,6 @@ SubApps.set('Search', Search);
 SubApps.set('StudioLegacy', StudioLegacy);
 SubApps.set('Workflow', Workflow);
 SubApps.set('Admin', Admin);
+SubApps.set('Organizations', Organizations);
 
 export default SubApps;

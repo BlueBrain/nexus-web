@@ -1,14 +1,16 @@
 @import '../../lib.less';
 
 
-.my-data-table-header{
+.my-data-table-header {
     // margin: 20px auto;
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    &-title{
+
+    &-title {
         margin: 20px 0 10px;
         margin-right: 20px;
+
         span:first-child {
             font-family: 'Titillium Web';
             font-style: normal;
@@ -17,6 +19,7 @@
             line-height: 110%;
             color: @fusion-main-color;
         }
+
         span:last-child {
             font-family: 'Titillium Web';
             font-style: normal;
@@ -28,6 +31,7 @@
             padding-left: 10px;
         }
     }
+
     &-actions {
         margin: 20px 0 10px;
         display: grid;
@@ -37,35 +41,57 @@
         justify-content: center;
     }
 }
-.my-data-date-popover{
-    padding-top: 0 !important;
-    .ant-popover-arrow{
-        display: none;
 
+.my-data-date {
+    &-container {
+        position: relative;
     }
-    .my-data-date-picker-container{
-        padding: 10px 15px;
-    }
-    .date-picker-content{
-        margin-top: 10px;
-        .my-data-date-picker-range{
-            .ant-picker-range-separator{
-                display: none;
-            }
-            .ant-picker-suffix{
-                display: none;
+
+    &-popover {
+        position: absolute;
+        padding-top: 0 !important;
+        width: calc(100% + 1px);
+        padding-top: 0 !important;
+        top: 38px;
+        left: 0;
+        background-color: #fff;
+        border: 1px solid #fff;
+        z-index: 10;
+        .ant-popover-arrow {
+            display: none;
+        }
+
+        .my-data-date-picker-container {
+            padding: 10px 15px;
+        }
+
+        .date-picker-content {
+            margin-top: 10px;
+
+            .my-data-date-picker-range {
+                .ant-picker-range-separator {
+                    display: none;
+                }
+
+                .ant-picker-suffix {
+                    display: none;
+                }
             }
         }
     }
 }
-.my-data-date-picker, 
+
+.my-data-date-picker,
 .my-data-type-filter {
     background-color: @fusion-main-bg !important;
     border-color: @fusion-neutral-5 !important;
-    .ant-input::placeholder, .ant-select-selection-placeholder{
+
+    .ant-input::placeholder,
+    .ant-select-selection-placeholder {
         color: @fusion-daybreak-10 !important;
     }
 }
+
 .my-data-type-filter {
     &-popover {
         background-color: white !important;
@@ -73,18 +99,21 @@
     }
 }
 
-.my-data-search{
+.my-data-search {
     border-bottom: 1px solid @fusion-neutral-5 !important;
+
     .ant-btn {
         border: none;
     }
 }
+
 .my-data-type-filter-search-container {
     padding: 10px 5px;
     display: flex;
     flex-direction: column;
     gap: 3px;
-    .count{
+
+    .count {
         font-family: 'Titillium Web';
         font-style: normal;
         font-weight: 400;
@@ -94,13 +123,17 @@
         align-self: flex-end;
     }
 }
-.my-data-type-filter-search{
+
+.my-data-type-filter-search {
     background-color: white !important;
     border-bottom: 1px solid @fusion-neutral-5 !important;
-    .ant-input, .ant-btn {
+
+    .ant-input,
+    .ant-btn {
         border: none !important;
         background-color: white !important;
     }
+
     .ant-input:focus {
         outline: none;
         box-shadow: none;

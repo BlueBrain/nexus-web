@@ -2,8 +2,10 @@ import { RouteProps } from 'react-router-dom';
 import Login from './views/Login';
 import ResourceView from './views/ResourceView';
 import UserView from './views/UserView';
+import ProjectsView from './views/ProjectsView';
 import StudioRedirectView from './views/StudioRedirectView';
 import Home from './views/Home';
+import MyDataView from './views/MyDataView';
 
 const routes: RouteProps[] = [
   {
@@ -18,6 +20,14 @@ const routes: RouteProps[] = [
   {
     path: '/user',
     component: UserView,
+  },
+  {
+    path: '/projects',
+    component: ProjectsView,
+  },
+  {
+    path: '/my-data',
+    component: MyDataView,
   },
   {
     path: '/:orgLabel/:projectLabel/resources/:resourceId',
