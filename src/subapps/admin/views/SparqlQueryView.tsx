@@ -6,9 +6,10 @@ import { useNexusContext } from '@bbp/react-nexus';
 
 import SparqlQueryContainer from '../containers/SparqlQuery';
 import useNotification from '../../../shared/hooks/useNotification';
-import { Col, Row, Select } from 'antd';
+import { Button, Col, Row, Select } from 'antd';
 import { getResourceLabel } from '../../../shared/utils';
 import { useAdminSubappContext } from '..';
+import { isNil } from 'lodash';
 
 const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
   const match = useRouteMatch<{
@@ -31,7 +32,8 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
   });
   const nexus = useNexusContext();
   const query = queryString.parse(location.search).query;
-
+  const from = queryString.parse(location.search).from;
+  const isNavigateFromBrowse = !isNil(from);
   const { Option } = Select;
 
   const [selectedView, setSelectedView] = React.useState<string>(
@@ -42,13 +44,15 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
     history.replace(
       `/${
         subapp.namespace
-      }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}`
+      }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}${
+        isNavigateFromBrowse ? `?from=${from}` : ''
+      }`
     );
   }, [selectedView]);
-
+  const flexProps = isNavigateFromBrowse ? { flex: 'auto' } : { span: 24 };
   const menu = (
-    <Row>
-      <Col span={24}>
+    <Row gutter={3} justify="space-between" align="middle">
+      <Col {...flexProps}>
         <Select
           value={selectedView as string}
           onChange={v => setSelectedView(v)}
@@ -71,6 +75,11 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
             })}
         </Select>
       </Col>
+      {isNavigateFromBrowse && (
+        <Col flex="100px">
+          <Button onClick={history.goBack}>Back to Browse</Button>
+        </Col>
+      )}
     </Row>
   );
 
@@ -89,7 +98,7 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
 
   return (
     <>
-      {menu}
+      <div style={{ paddingLeft: '2em', paddingRight: '2em' }}>{menu}</div>
       <div className="view-view view-container -unconstrained-width">
         <SparqlQueryContainer
           orgLabel={orgLabel}
