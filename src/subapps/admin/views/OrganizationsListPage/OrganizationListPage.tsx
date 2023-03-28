@@ -2,7 +2,7 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Link, useLocation } from 'react-router-dom';
-import { useInfiniteQuery } from 'react-query'
+import { useInfiniteQuery, useQueryClient } from 'react-query'
 import { Button, Modal, Drawer, Input, Spin } from 'antd';
 import { PlusSquareOutlined } from '@ant-design/icons';
 import { NexusClient, OrganizationList, OrgResponseCommon } from '@bbp/nexus-sdk';
@@ -52,6 +52,7 @@ function OrgsListView({ }: Props) {
   const notification = useNotification();
   const nexus: NexusClient = useNexusContext();
   const [query, setQueryString] = useState<string>('');
+  const queryClient = useQueryClient();
   const {
     data,
     error,
@@ -88,7 +89,6 @@ function OrgsListView({ }: Props) {
     // @ts-ignore
     data?.pages?.map((page: OrganizationList) => page._results)
   );
-
   const saveAndModify = (selectedOrg: OrgResponseCommon, newOrg: NewOrg) => {
     setFormBusy(true);
     nexus.Organization.update(newOrg.label, selectedOrg._rev, {
@@ -102,6 +102,7 @@ function OrgsListView({ }: Props) {
           setFormBusy(false);
           setModalVisible(false);
           setSelectedOrg(undefined);
+          queryClient.invalidateQueries({ queryKey: ['fusion-projects', { query }] });
         },
         (action: { type: string; error: Error }) => {
           notification.warning({
@@ -130,6 +131,7 @@ function OrgsListView({ }: Props) {
         setFormBusy(false);
         setModalVisible(false);
         setSelectedOrg(undefined);
+        queryClient.invalidateQueries({ queryKey: ['fusion-projects', { query }] });
       })
       .catch((error: Error) => {
         setFormBusy(false);

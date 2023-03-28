@@ -8,7 +8,7 @@ import SparqlQueryContainer from '../containers/SparqlQuery';
 import useNotification from '../../../shared/hooks/useNotification';
 import { Col, Row, Select } from 'antd';
 import { getResourceLabel } from '../../../shared/utils';
-import { useAdminSubappContext } from '..';
+import { useAdminSubappContext, useOrganisationsSubappContext } from '..';
 
 const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
   const match = useRouteMatch<{
@@ -18,7 +18,7 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
   }>();
   const location = useLocation();
   const history = useHistory();
-  const subapp = useAdminSubappContext();
+  const subapp = useOrganisationsSubappContext();
   const notification = useNotification();
   const {
     params: { orgLabel, projectLabel, viewId },

@@ -8,7 +8,7 @@ type Props = {
     statsStyle?: CSSProperties;
     title: string;
     label?: string;
-    stats?: number;
+    stats?: string;
     to: string;
 }
 
@@ -29,4 +29,7 @@ export default function PresetCardItem({
             </div>
         </Link>
     )
+}
+export const PresetCardItemSkeleton = () => {
+    return (<div className='preset-card skeleton'/>)
 }

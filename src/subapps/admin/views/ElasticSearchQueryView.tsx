@@ -8,10 +8,10 @@ import ElasticSearchQueryContainer from '../containers/ElasticSearchQuery';
 import { Col, Row, Select } from 'antd';
 import { getResourceLabel } from '../../../shared/utils';
 import useNotification from '../../../shared/hooks/useNotification';
-import { useAdminSubappContext } from '..';
+import { useAdminSubappContext, useOrganisationsSubappContext } from '..';
 
 const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
-  const subapp = useAdminSubappContext();
+  const subapp = useOrganisationsSubappContext();
   const match = useRouteMatch<{
     orgLabel: string;
     projectLabel: string;

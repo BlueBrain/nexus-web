@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useHistory, useRouteMatch } from 'react-router';
 import { Link, useLocation } from 'react-router-dom';
 import { useInfiniteQuery, useQuery } from 'react-query'
-import { Button, Modal, Drawer, Input, Spin } from 'antd';
+import { Button, Modal, Drawer, Input, Spin, Alert } from 'antd';
 import { PlusSquareOutlined } from '@ant-design/icons';
 import { NexusClient, OrganizationList, OrgResponseCommon, ProjectResponseCommon } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
@@ -73,7 +73,7 @@ function ProjectsView({ }: Props) {
   const goTo = (org: string, project: string) =>
     history.push(`${org}/${project}`);
 
-  const { data: organization, status } = useQuery({
+  const { data: organization, status, error: organisationError } = useQuery({
     enabled: !!orgLabel,
     queryKey: ['organization', { orgLabel }],
     queryFn: () => fetchOrganizationDetails({ nexus, orgLabel: orgLabel! }),
@@ -182,6 +182,7 @@ function ProjectsView({ }: Props) {
     hasNextPage,
     isFetchingNextPage,
     status: projectStatus,
+    error: projectError,
     isLoading,
     isFetching,
   } = useInfiniteQuery({
@@ -228,8 +229,14 @@ function ProjectsView({ }: Props) {
   return (
     <Fragment>
       <div className='org-projects-view view-container'>
-        {status === 'loading' && <div>Loading</div>}
-        {status === 'error' && <div className='org-projects-view-error'>⛔️ Error loading the organizations details</div>}
+        {status === 'loading' && <Spin/>}
+        {status === 'error' && <div className='org-projects-view-error'>
+            <Alert
+              type="error"
+              message="⛔️ Error loading the organizations details"
+              description={JSON.stringify(organisationError, null, 2)}
+            />
+            </div>}
         {status === 'success' && organization && <div className='org-projects-view-container'>
           <Breadcrumb>
             <Breadcrumb.Item>
@@ -269,7 +276,13 @@ function ProjectsView({ }: Props) {
             </AccessControl>
           </div>
           <div className='org-projects-view-list'>
-            {projectStatus === 'error' && <div className='org-projects-view-error'>⛔️ Error loading the organizations projects list</div>}
+            {projectStatus === 'error' && <div className='org-projects-view-error'>
+                <Alert
+                  type="error"
+                  message="⛔️ Error loading the organizations projects list"
+                  description={JSON.stringify(projectError, null, 2)}
+                />
+              </div>}
             <Spin spinning={isLoading}>
               {projectStatus === 'success' &&
                 <List

@@ -4,11 +4,12 @@ import { connect } from 'react-redux';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import { Realm } from '@bbp/nexus-sdk';
 import useClickOutside from '../../hooks/useClickOutside';
+import { RootState } from '../../store/reducers';
 import * as authActions from '../../store/actions/auth';
 import * as configActions from '../../store/actions/config';
-import { RootState } from '../../store/reducers';
 
 import './styles.less';
+import { useHistory } from 'react-router';
 
 type Props = {
     realms: Realm[];
@@ -22,41 +23,66 @@ function HomeAuthentication({
     performLogin
 }: Props) {
     const popoverRef = useRef(null);
+    const history = useHistory();
     const [connectBtnState, setConnectBtnState] = useState<boolean>(false);
     const onPopoverVisibleChange = () => setConnectBtnState((state) => !state);
-    useClickOutside(popoverRef, () => {
-        onPopoverVisibleChange();
-    });
     const realmsFilter = realms.filter(
         r => r._label !== serviceAccountsRealm && !r._deprecated
     );
+    useClickOutside(popoverRef, onPopoverVisibleChange);
     return (
         <div className='home-authentication'>
             <img src={require('../../images/EPFL_BBP_logo.png')} className='home-authentication-epfl' />
-            <img src={require('../../images/fusion.svg')} className='home-authentication-fusion' />
+            <video
+                className='home-authentication-fusion'
+                poster={require('../../images/MOPRO-648_BrainRegionsNexusPage_230321_11.jpg')}
+                loop
+                muted
+                preload='auto'
+                autoPlay
+                controls={false}
+            >
+                <source 
+                    type='video/mp4'
+                    src={require('../../images/MOPRO-648_BrainRegionsNexusPage_230321.mp4')} 
+                />
+            </video>
+            {/* <img src={require('../../images/fusion.svg')} className='home-authentication-fusion' /> */}
             <div className='home-authentication-content'>
                 <div className='title'>Nexus.Fusion</div>
                 <div className='actions'>
                     <div className='home-authentication-content-connect'>
-                        <Button
+                        {realmsFilter.length === 1 ? <Button
+                                onClick={
+                                    (e) => {
+                                        e.preventDefault();
+                                        performLogin(realmsFilter?.[0].name);
+                                    }
+                                }
+                                className='connect-btn'
+                                size='large'
+                                type='link'
+                            >
+                                Connect
+                        </Button>: <Button
                             size='large'
                             onClick={onPopoverVisibleChange}
                         >
                             Connect
                             {connectBtnState ? <DownOutlined size={13} /> : <UpOutlined size={13} />}
-                        </Button>
-                        {connectBtnState && <div ref={popoverRef} className='home-authentication-content-connect-popover'>
-                            {realmsFilter.map(item => (
+                        </Button>}
+                        {connectBtnState && realmsFilter.length > 1 && <div ref={popoverRef} className='home-authentication-content-connect-popover'>
+                            {realmsFilter.length >1  && realmsFilter.map(item => (
                                 <div className='realm-connect'>
-                                    <Button 
+                                    <Button
                                         onClick={
                                             (e) => {
                                                 e.preventDefault();
                                                 performLogin(item.name);
                                             }
-                                        } 
-                                        className='connect-btn' 
-                                        size='large' 
+                                        }
+                                        className='connect-btn'
+                                        size='large'
                                         type='link'
                                     >
                                         {item.name}
@@ -66,6 +92,7 @@ function HomeAuthentication({
                             ))}
                         </div>}
                     </div>
+                    <Button size='large' onClick={() => history.push('/studios')}>View Studios</Button>
                     <Button size='large'>Documentation</Button>
                     <Button size='large'>About</Button>
                 </div>

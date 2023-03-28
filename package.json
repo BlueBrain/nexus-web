@@ -71,6 +71,7 @@
     "react-draggable": "^4.4.3",
     "react-helmet": "^5.2.0",
     "react-image-lightbox": "^5.1.0",
+    "react-imask": "^6.4.3",
     "react-infinite-scroll-component": "^4.5.3",
     "react-input-mask": "^2.0.4",
     "react-json-view": "^1.19.1",

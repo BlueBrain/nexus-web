@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react';
-import { Table } from 'antd';
+import React, { Fragment, useMemo } from 'react';
+import { Table, Tag } from 'antd';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import { TFilterOptions } from '../MyDataHeader/MyDataHeader';
 import timeago from '../../../utils/timeago';
 import './styles.less';
+import { Link } from 'react-router-dom';
 
 
 export type TDataSource = {
@@ -23,7 +24,13 @@ type Props = {
     size: number;
     total?: number;
 }
-
+const makeOrgProjectTuple = (text: string) => {
+    const parts = text.split('/');
+    const [org, project] = parts.slice(-2);
+    return {
+        org, project
+    }
+}
 export default function MyDataTabel({
     setFilterOptions,
     isLoading,
@@ -43,6 +50,21 @@ export default function MyDataTabel({
             key: 'project',
             title: 'project',
             dataIndex: 'project',
+            render: (text, record) => {
+                console.log('text project', text, record)
+                if(text){
+                    const { org, project } = makeOrgProjectTuple(text);
+                    return (
+                        <Fragment>
+                            <Tag className='org-project-tag' color='white'>{org}</Tag>
+                            <Link to={`/orgs/${org}/${project}`}>
+                                {project}
+                            </Link>
+                        </Fragment>
+                    )
+                }
+                return "";
+            },
             sorter: (a, b) => a.name.length - b.name.length,
         }, {
             key: 'description',

@@ -77,7 +77,7 @@ const ProjectView: React.FunctionComponent = () => {
 
   const pathFromTab = (tab: string | undefined) => {
     const base = `/${subapp.namespace}/${orgLabel}/${projectLabel}/`;
-
+    console.log('@@@pathFromTab', base);
     switch (tab) {
       case 'browse':
         return `${base}`;
@@ -279,7 +279,7 @@ const ProjectView: React.FunctionComponent = () => {
             <div className="label">
               <h1 className="name">
                 <span>
-                  <Link to={`/admin/${orgLabel}`}>{orgLabel}</Link>
+                  <Link to={`/orgs/${orgLabel}`}>{orgLabel}</Link>
                   {' | '}
                 </span>{' '}
                 {project._label}

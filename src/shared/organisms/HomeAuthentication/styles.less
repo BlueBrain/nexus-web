@@ -44,11 +44,11 @@
         }
         .actions {
             display: grid;
-            grid-template-columns: repeat(3, minmax(120px, 1fr));
+            grid-template-columns: repeat(4, minmax(120px, 1fr));
             align-items: center;
             justify-content: center;
             margin-top: 35px;
-            button {
+            button, a {
                 border: 1px solid white;
                 border-right: none;
                 display: flex;
@@ -67,14 +67,19 @@
                 width: 100%;
                 user-select: none;
                 border-radius: 0;
-                &:first-child {
-                    color: @fusion-daybreak-10;
-                    background-color: #fff;
-                }
                 svg {
                     width: 11px !important;
                     height: 11px !important;
                 }
+            }
+            button:first-child {
+                color: @fusion-daybreak-10;
+                background-color: #fff;
+            }
+            a {
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
             button:not(:first-child){
                 &:hover {

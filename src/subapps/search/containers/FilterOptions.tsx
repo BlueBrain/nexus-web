@@ -148,7 +148,7 @@ const FilterOptions: React.FC<{
       }
     );
   }, [field]);
-
+  console.log('@@aggregations', aggregations);
   const changeFilterSelection = (filterValue: string, selected: boolean) => {
     const aggs = aggregations.map(a => ({
       ...a,

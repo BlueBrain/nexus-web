@@ -595,6 +595,7 @@ function useGlobalSearchData(
 
   React.useEffect(() => {
     setIsLoading(true);
+    console.log('@@@esQuery', esQuery);
     nexus.Search.query(esQuery)
       .then((queryResponse: any) => {
         setResult(queryResponse);
@@ -651,7 +652,7 @@ function useGlobalSearchData(
   const handleChangeSearchLayout = (layoutName: string) => {
     history.replace(
       `${location.pathname}?layout=${layoutName}`
-    )
+    );
     setSelectedSearchLayout(layoutName);
   };
 

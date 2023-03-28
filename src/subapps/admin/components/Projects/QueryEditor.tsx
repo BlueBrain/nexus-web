@@ -10,14 +10,14 @@ import {
 } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import useNotification from '../../../../shared/hooks/useNotification';
-import { useAdminSubappContext } from '../..';
+import { useAdminSubappContext, useOrganisationsSubappContext } from '../..';
 
 const QueryEditor: React.FC<{
   orgLabel: string;
   projectLabel: string;
   onUpdate: () => void;
 }> = ({ orgLabel, projectLabel, onUpdate }) => {
-  const subapp = useAdminSubappContext();
+  const subapp = useOrganisationsSubappContext();
   const history = useHistory();
   const match = useRouteMatch<{
     orgLabel: string;

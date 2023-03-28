@@ -35,9 +35,9 @@
     &-actions {
         margin: 20px 0 10px;
         display: grid;
-        grid-template-columns: repeat(3, minmax(250px, 1fr));
+        grid-template-columns: max-content repeat(3, minmax(250px, 1fr));
         gap: 5px;
-        align-items: center;
+        align-items: flex-start;
         justify-content: center;
     }
 }
@@ -47,42 +47,67 @@
         position: relative;
     }
 
+    &-type-popover {
+        background-color: #fff !important;
+        border: 1px solid #fff !important;
+        box-shadow: 0 2px 8px rgb(#333, .15) !important;
+        padding: 0px !important;
+    }
+
     &-popover {
-        position: absolute;
-        padding-top: 0 !important;
-        width: calc(100% + 1px);
-        padding-top: 0 !important;
-        top: 38px;
-        left: 0;
+        // position: absolute;
+        // width: calc(100% + 1px);
+        // top: 35px;
+        // left: 0;
         background-color: #fff;
         border: 1px solid #fff;
         z-index: 10;
+        padding: 20px 10px;
+        box-shadow: 0 2px 8px rgb(#333, .15);
+
         .ant-popover-arrow {
             display: none;
         }
+    }
 
-        .my-data-date-picker-container {
-            padding: 10px 15px;
+    &-content {
+        margin-top: 10px;
+
+        p {
+            font-size: 10px;
+            color: red;
+        }
+    }
+
+    &-range {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        justify-content: space-between;
+        // grid-template-rows: repeat(2, 1fr);
+        gap: 3px;
+    }
+
+    &-input {
+        border: none !important;
+        border-bottom: 1px solid;
+        width: 100%;
+        letter-spacing: 1.3px;
+        font-size: 14px;
+
+        &:focus {
+            outline: none;
+            box-shadow: none;
         }
 
-        .date-picker-content {
-            margin-top: 10px;
-
-            .my-data-date-picker-range {
-                .ant-picker-range-separator {
-                    display: none;
-                }
-
-                .ant-picker-suffix {
-                    display: none;
-                }
-            }
+        &:nth-child(2) {
+            text-align: right;
         }
     }
 }
 
 .my-data-date-picker,
-.my-data-type-filter {
+.my-data-type-filter,
+.my-data-type-picker {
     background-color: @fusion-main-bg !important;
     border-color: @fusion-neutral-5 !important;
 
@@ -104,6 +129,30 @@
 
     .ant-btn {
         border: none;
+    }
+}
+
+.my-data-type-filter {
+    &-overlay {
+        background-color: white;
+        box-shadow: 0 2px 8px rgb(#333, .15) !important;
+        padding: 10px 10px;
+        height: 100%;
+    }
+
+    &-content {
+        max-height: inherit;
+        height: 100%;
+        max-height: 200px;
+        overflow-y: scroll;
+        padding: 2px;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        -ms-overflow-style: none;
+        scrollbar-width: none;
     }
 }
 
@@ -138,5 +187,12 @@
         outline: none;
         box-shadow: none;
     }
+}
 
+.my-data-type-picker {
+    width: 100%;
+
+    &::placeholder {
+        color: @fusion-daybreak-10 !important;
+    }
 }
