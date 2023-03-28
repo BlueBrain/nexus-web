@@ -198,11 +198,11 @@ function ProjectsView({ }: Props) {
     getNextPageParam: (lastPage) => lastPage._next ? new URL(lastPage._next).searchParams.get('from') : undefined,
   });
 
-  // useIntersectionObserver({
-  //     target: loadMoreRef,
-  //     onIntersect: fetchNextPage,
-  //     enabled: !!hasNextPage,
-  // });
+  useIntersectionObserver({
+      target: loadMoreRef,
+      onIntersect: fetchNextPage,
+      enabled: !!hasNextPage,
+  });
   const loadMoreFooter = hasNextPage && (<Button
     className='org-projects-view-list-btn-infinitfetch'
     ref={loadMoreRef}
@@ -284,7 +284,7 @@ function ProjectsView({ }: Props) {
                 />
               </div>}
             <Spin spinning={isLoading}>
-              {projectStatus === 'success' &&
+            {/* {projectStatus === 'success' && */}
                 <List
                   itemLayout="horizontal"
                   loadMore={loadMoreFooter}
@@ -313,7 +313,7 @@ function ProjectsView({ }: Props) {
                     )
                   }}
                 />
-              }
+              {/* } */}
             </Spin>
           </div>
         </div>}

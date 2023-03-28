@@ -69,7 +69,7 @@ function HomeAuthentication({
                             onClick={onPopoverVisibleChange}
                         >
                             Connect
-                            {connectBtnState ? <DownOutlined size={13} /> : <UpOutlined size={13} />}
+                            {connectBtnState ? <UpOutlined size={13} /> : <DownOutlined size={13} />}
                         </Button>}
                         {connectBtnState && realmsFilter.length > 1 && <div ref={popoverRef} className='home-authentication-content-connect-popover'>
                             {realmsFilter.length >1  && realmsFilter.map(item => (

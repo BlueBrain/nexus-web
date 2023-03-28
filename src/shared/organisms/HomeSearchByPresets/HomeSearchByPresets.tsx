@@ -59,7 +59,8 @@ const getPresetsStats = async (nexus: NexusClient, layouts: TLayout[]) => {
 const HomeSearchByPresets = (props: Props) => {
     const nexus = useNexusContext();
     const { data, isSuccess } = useQuery('nexus-search-config', {
-        queryFn: () => fetchNexusSearchConfig(nexus)
+        queryFn: () => fetchNexusSearchConfig(nexus),
+        keepPreviousData: true,
     });
     const layouts: TLayout[] = data?.layouts.map(layout => ({
         id: layout.filters?.[0].values?.[0],
@@ -69,6 +70,7 @@ const HomeSearchByPresets = (props: Props) => {
     const { data: layoutsWithStats, status } = useQuery('nexus-search-config-details', {
         enabled: !!data && isSuccess,
         queryFn: () => getPresetsStats(nexus, layouts),
+        keepPreviousData: true,
     });
     const displayLayouts = unionBy(layoutsWithStats, layouts, (i) => i.id);
     return (

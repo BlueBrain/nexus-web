@@ -69,11 +69,11 @@ function OrgsListView({ }: Props) {
     getNextPageParam: (lastPage) => lastPage._next ? new URL(lastPage._next).searchParams.get('from') : undefined,
   });
 
-  // useIntersectionObserver({
-  //     target: loadMoreRef,
-  //     onIntersect: fetchNextPage,
-  //     enabled: !!hasNextPage,
-  // });
+  useIntersectionObserver({
+      target: loadMoreRef,
+      onIntersect: fetchNextPage,
+      enabled: !!hasNextPage,
+  });
   const loadMoreFooter = hasNextPage && (<Button
     className='organizations-view-list-btn-infinitfetch'
     ref={loadMoreRef}
@@ -205,7 +205,6 @@ function OrgsListView({ }: Props) {
           {status === 'success' && <div className='organizations-view-list'>
             <Spin spinning={isLoading} >
               <List
-                // loading={isLoading}
                 itemLayout="horizontal"
                 loadMore={loadMoreFooter}
                 dataSource={dataSource}
