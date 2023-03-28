@@ -4,6 +4,7 @@ services:
     image: 'cypress/included:10.3.1-typescript'
     depends_on:
       - fusion
+      - delta
     environment:
       - CYPRESS_NEXUS_API_URL=http://delta.test:8080/v1
       - CYPRESS_BASE_URL=http://fusion.test:8000
@@ -37,7 +38,7 @@ services:
       DELTA_PLUGINS: '/opt/docker/plugins/'
       DELTA_EXTERNAL_CONF: '/config/delta-postgres.conf'
       KAMON_ENABLED: 'false'
-    image: bluebrain/nexus-delta:latest
+    image: bluebrain/nexus-delta:1.8.0-M5
     entrypoint:
       [
         'bin/wait-for-it.sh',
@@ -107,7 +108,7 @@ services:
       - 9999:9999
 
   postgres:
-    image: library/postgres:12.2
+    image: library/postgres:15.1
     environment:
       POSTGRES_USER: 'postgres'
       POSTGRES_PASSWORD: 'postgres'
