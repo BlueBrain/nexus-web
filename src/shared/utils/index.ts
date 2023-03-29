@@ -258,16 +258,19 @@ export function getDestinationParam(): string {
  */
 export function getUsername(user: string): string {
   let userName;
-  if (user.length === 0) {
-    userName = 'Unknown';
-  } else {
-    try {
-      [userName] = user.split('/').slice(-1);
-    } catch (e) {
-      userName = user;
+  if (user) {
+    if (user.length === 0) {
+      userName = 'Unknown';
+    } else {
+      try {
+        [userName] = user.split('/').slice(-1);
+      } catch (e) {
+        userName = user;
+      }
     }
+    return userName;
   }
-  return userName;
+  return '';
 }
 
 export function blacklistKeys(raw: { [key: string]: any }, keys: string[]) {
