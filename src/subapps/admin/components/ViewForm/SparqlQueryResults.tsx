@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Card, Empty, Table, Tooltip } from 'antd';
+import { Card, Empty, Table, Tooltip, Alert } from 'antd';
 import Column from 'antd/lib/table/Column';
 import * as hash from 'object-hash';
 import { matchResultUrls } from '../../../../shared/utils';
+import { CloseCircleFilled } from '@ant-design/icons';
 import {
   AskQueryResponse,
   SelectQueryResponse,
@@ -16,6 +17,7 @@ export type NexusSparqlError =
   | string
   | {
       reason: string;
+      details: string;
     };
 
 export type Entry = {
@@ -59,11 +61,30 @@ const SparqlQueryResults: React.FunctionComponent<{
     }
     return entry;
   };
-
   return (
     <Card bordered className="results">
       {error && (
-        <Empty description={typeof error === 'string' ? error : error.reason} />
+        <Empty
+          image={<CloseCircleFilled style={{ fontSize: 70, color: 'red' }} />}
+          description={
+            typeof error === 'string' ? (
+              <Alert message={error} type="error" closable={false} showIcon />
+            ) : (
+              <div>
+                <Alert
+                  message={error.reason}
+                  type="error"
+                  closable={false}
+                  showIcon
+                  style={{ textAlign: 'left' }}
+                />
+                <pre style={{ textAlign: 'left', marginTop: 10 }}>
+                  {error.details}
+                </pre>
+              </div>
+            )
+          }
+        />
       )}
       {!error && (
         <Table

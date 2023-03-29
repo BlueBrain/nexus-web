@@ -310,7 +310,9 @@ export function getResourceLabel(
  * projectLabel: string,
  * }}
  */
-export function getOrgAndProjectFromResource(resource: Resource) {
+export function getOrgAndProjectFromResource(
+  resource: Resource
+): TOrgAndProject {
   return getOrgAndProjectFromProjectId(resource._project);
 }
 
@@ -323,12 +325,22 @@ export function getOrgAndProjectFromResource(resource: Resource) {
  * projectLabel: string,
  * }}
  */
-export function getOrgAndProjectFromProjectId(projectId: string) {
-  const [projectLabel, orgLabel, ...rest] = projectId.split('/').reverse();
-  return {
-    orgLabel,
-    projectLabel,
-  };
+type TOrgAndProject = {
+  orgLabel: string;
+  projectLabel: string;
+} | null;
+
+export function getOrgAndProjectFromProjectId(
+  projectId: string
+): TOrgAndProject {
+  if (projectId) {
+    const [projectLabel, orgLabel, ...rest] = projectId.split('/').reverse();
+    return {
+      orgLabel,
+      projectLabel,
+    };
+  }
+  return null;
 }
 
 /**

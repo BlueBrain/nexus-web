@@ -28,7 +28,12 @@ const ProjectStatsContainer: React.FC<{
   React.useEffect(() => {
     loadRelationships()
       .then(data => {
-        const elements = constructGraphData(data);
+        // @ts-ignore
+        const nodesCount = data._nodes.map(node => node._count);
+        const maxValueNode = Math.max(...nodesCount);
+        const minValueNode = Math.min(...nodesCount);
+
+        const elements = constructGraphData(data, minValueNode, maxValueNode);
 
         setElements(elements);
         setGraphData(data);
@@ -57,27 +62,29 @@ const ProjectStatsContainer: React.FC<{
     }
   };
 
-  const getDiameter = (count: number) => {
+  const getDiameter = (
+    count: number,
+    minValueNode: number,
+    maxValueNode: number
+  ) => {
     const min = 20;
-    const max = 120;
-
-    const maxCount = 25000;
-
-    const diameter = (count / maxCount) * max;
-
+    const max = 60;
+    const diameter =
+      ((count - minValueNode) / (maxValueNode - minValueNode)) * max;
     return diameter < min ? min : diameter;
   };
   const constructPathName = (path: any[]) => {
     return path.map((singlePath: any) => singlePath._name).join('/');
   };
-  const getLineWidth = (count: number) => {
+  const getLineWidth = (
+    count: number,
+    minValueNode: number,
+    maxValueNode: number
+  ) => {
     const min = 1;
-    const max = 20;
-
-    const maxCount = 10000;
-
-    const width = (count / maxCount) * max;
-
+    const max = 8;
+    const width =
+      ((count - minValueNode) / (maxValueNode - minValueNode)) * max;
     return width < min ? min : width;
   };
 
@@ -85,12 +92,12 @@ const ProjectStatsContainer: React.FC<{
     return `${edge._target}-${edge._source}`;
   };
 
-  const constructGraphData = (response: any) => {
+  const constructGraphData = (response: any, min: number, max: number) => {
     const nodes = response._nodes.map((node: any) => ({
       data: { id: node['@id'], label: `${node._name}\n${node._count}` },
       style: {
-        width: `${getDiameter(node._count)}px`,
-        height: `${getDiameter(node._count)}px`,
+        width: `${getDiameter(node._count, min, max)}px`,
+        height: `${getDiameter(node._count, min, max)}px`,
       },
     }));
     const edges = response._edges.map((edge: any) => ({
@@ -101,7 +108,7 @@ const ProjectStatsContainer: React.FC<{
         name: constructPathName(edge._path),
       },
       style: {
-        width: getLineWidth(edge._count),
+        width: getLineWidth(edge._count, min, max),
       },
     }));
 

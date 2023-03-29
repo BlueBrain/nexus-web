@@ -134,13 +134,18 @@ const DataTableContainer: React.FC<DataTableProps> = ({
         if (resource['@type'] === 'Project') {
           return;
         }
-        const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
-        history.push(
-          `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
-            resource['@id']
-          )}`,
-          { background: location }
-        );
+        nexus
+          .httpGet({
+            path: `${selfUrl}?format=expanded`,
+            headers: { Accept: 'application/json' },
+          })
+          .then((fullIdResponse: Resource) => {
+            const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
+            const hist = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+              fullIdResponse[0]['@id']
+            )}`;
+            history.push(hist, { background: location });
+          });
       })
       .catch(error => {
         notification.error({ message: `Resource ${self} could not be found` });
