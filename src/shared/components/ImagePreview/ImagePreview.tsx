@@ -85,7 +85,7 @@ const ImagePreview: React.FC<Props> = ({
   const dataSourceRef = useRef<TDataSource[]>([]);
 
   const onSearchChange: React.ChangeEventHandler<HTMLInputElement> = e => {
-    if (isNil(e.target.value)) {
+    if (isNil(e.target.value) || e.target.value === "") {
       return setDataSource(dataSourceRef.current);
     }
     setDataSource(fuzzySearch(e.target.value, dataSource, 0.1));
