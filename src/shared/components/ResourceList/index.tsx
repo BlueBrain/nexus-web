@@ -239,9 +239,7 @@ const ResourceListComponent: React.FunctionComponent<{
   };
 
   /* height changes a few times when resizing a window so debounce */
-  const debounceHeightChange = React.useRef(
-    debounce(() => updatePageSize(), 300)
-  ).current;
+  const debounceHeightChange = debounce(() => updatePageSize(), 300);
 
   React.useLayoutEffect(() => {
     debounceHeightChange();

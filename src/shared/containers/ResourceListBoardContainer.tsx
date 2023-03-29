@@ -19,7 +19,7 @@ export const DEFAULT_LIST: ResourceBoardList = {
   id: 'default',
   query: {
     size: 6,
-    deprecated: false,
+    deprecated: undefined,
     sort: '-_createdAt',
   },
 };

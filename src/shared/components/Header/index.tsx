@@ -157,7 +157,10 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           )}
         </div>
       </header>
-      <AppInfo {... { githubIssueURL, version, commitHash, consent, onClickRemoveConsent, visible, onModalStateChange }} />
+      <AppInfo {... { 
+        githubIssueURL, version, commitHash, consent, visible, 
+        onClickRemoveConsent, onModalStateChange 
+      }} />
     </Fragment>
   );
 };

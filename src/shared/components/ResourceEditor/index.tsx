@@ -6,6 +6,7 @@ import {
   SaveOutlined,
 } from '@ant-design/icons';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
+import codemiror from 'codemirror';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
@@ -27,6 +28,7 @@ export interface ResourceEditorProps {
   showMetadataToggle?: boolean;
 }
 
+const switchMarginRight = { marginRight: 5 };
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const {
     rawData,
@@ -52,6 +54,20 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const keyFoldCode = (cm: any) => {
     cm.foldCode(cm.getCursor());
   };
+  const codeMirorRef = React.useRef<codemiror.Editor>();
+  const [foldCodeMiror, setFoldCodeMiror] = React.useState<boolean>(false);
+  const onFoldChange = () => {
+    if (codeMirorRef.current) {
+      if (foldCodeMiror) {
+        codeMirorRef.current.execCommand('unfoldAll');
+        setFoldCodeMiror(stateFoldCodeMiror => !stateFoldCodeMiror);
+      } else {
+        codeMirorRef.current.execCommand('foldAll');
+        codeMirorRef.current.foldCode(0);
+        setFoldCodeMiror(stateFoldCodeMiror => !stateFoldCodeMiror);
+      }
+    }
+  };
   const renderCodeMirror = (value: string) => {
     return (
       <Spin spinning={busy}>
@@ -75,6 +91,9 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             },
           }}
           onChange={handleChange}
+          editorDidMount={editor => {
+            codeMirorRef.current = editor;
+          }}
         />
       </Spin>
     );
@@ -87,6 +106,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   }, [rawData]); // only runs when Editor receives new resource to edit
 
   const handleChange = (editor: any, data: any, value: any) => {
+    editor;
     if (!editable) {
       return;
     }
@@ -131,22 +151,29 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         </div>
 
         <div className="controls">
+          <Switch
+            checkedChildren="Fold"
+            unCheckedChildren="Unfold"
+            checked={foldCodeMiror}
+            onChange={onFoldChange}
+            style={switchMarginRight}
+          />
           {!expanded && !isEditing && valid && showMetadataToggle && (
-            <>
-              <Switch
-                checkedChildren="Metadata"
-                unCheckedChildren="Show Metadata"
-                checked={showMetadata}
-                onChange={onMetadataChange}
-              />{' '}
-            </>
+            <Switch
+              checkedChildren="Metadata"
+              unCheckedChildren="Show Metadata"
+              checked={showMetadata}
+              onChange={onMetadataChange}
+              style={switchMarginRight}
+            />
           )}
           {showExpanded && !isEditing && valid && (
             <Switch
-              checkedChildren="expanded"
-              unCheckedChildren="expand"
+              checkedChildren="Expanded"
+              unCheckedChildren="Expand"
               checked={expanded}
               onChange={onFormatChange}
+              style={switchMarginRight}
             />
           )}
           <Button
