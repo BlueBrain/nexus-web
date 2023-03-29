@@ -56,15 +56,15 @@ const subViewsMapper = new Map<string, TMenuItem>([
       Component: SV.StoragesSVComponent,
     },
   ],
-  [
-    'quotas',
-    {
-      id: 'setting/quotas',
-      key: 'setting/quotas',
-      label: 'Quotas',
-      Component: SV.QuotasSVComponent,
-    },
-  ],
+  // [
+  //   'quotas',
+  //   {
+  //     id: 'setting/quotas',
+  //     key: 'setting/quotas',
+  //     label: 'Quotas',
+  //     Component: SV.QuotasSVComponent,
+  //   },
+  // ],
   [
     'resolvers',
     {
