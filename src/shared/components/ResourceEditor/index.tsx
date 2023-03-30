@@ -152,8 +152,8 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
 
         <div className="controls">
           <Switch
-            checkedChildren="Fold"
-            unCheckedChildren="Unfold"
+            checkedChildren="Unfold"
+            unCheckedChildren="Fold"
             checked={foldCodeMiror}
             onChange={onFoldChange}
             style={switchMarginRight}
