@@ -65,7 +65,7 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
               message: 'Label must be a phrase without spaces',
             },
             {
-              pattern: /a-zA-Z0-9_-/g,
+              pattern: /^[a-zA-Z0-9_-]+$/,
               message: 'Label must contains only letters and numbers',
             },
           ]}
