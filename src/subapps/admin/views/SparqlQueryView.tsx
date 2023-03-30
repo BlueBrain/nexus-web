@@ -10,7 +10,9 @@ import { Button, Col, Row, Select } from 'antd';
 import { getResourceLabel } from '../../../shared/utils';
 import { useAdminSubappContext } from '..';
 import { isNil } from 'lodash';
+import { Link } from 'react-router-dom';
 
+const { Option } = Select;
 const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
   const match = useRouteMatch<{
     orgLabel: string;
@@ -32,27 +34,18 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
   });
   const nexus = useNexusContext();
   const query = queryString.parse(location.search).query;
-  const from = queryString.parse(location.search).from;
-  const isNavigateFromBrowse = !isNil(from);
-  const { Option } = Select;
-
   const [selectedView, setSelectedView] = React.useState<string>(
     viewId ? decodeURIComponent(viewId) : DEFAULT_SPARQL_VIEW_ID
   );
 
   React.useEffect(() => {
     history.replace(
-      `/${
-        subapp.namespace
-      }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}${
-        isNavigateFromBrowse ? `?from=${from}` : ''
-      }`
+      `/${ subapp.namespace }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}`
     );
   }, [selectedView]);
-  const flexProps = isNavigateFromBrowse ? { flex: 'auto' } : { span: 24 };
   const menu = (
     <Row gutter={3} justify="space-between" align="middle">
-      <Col {...flexProps}>
+      <Col flex='auto'>
         <Select
           value={selectedView as string}
           onChange={v => setSelectedView(v)}
@@ -75,11 +68,11 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
             })}
         </Select>
       </Col>
-      {isNavigateFromBrowse && (
-        <Col flex="100px">
-          <Button onClick={history.goBack}>Back to Browse</Button>
-        </Col>
-      )}
+      <Col flex="100px">
+        <Link to={`/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(viewId)}`}>
+          <Button>Open View Resource</Button>
+        </Link>
+      </Col>
     </Row>
   );
 
