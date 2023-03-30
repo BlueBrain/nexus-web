@@ -13,6 +13,7 @@ import {
   NotificationContextType,
 } from './hooks/useNotification';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import { DataPanelDetailsBar } from './organisms';
 
 const App: React.FC = () => {
   // TODO log the error in to sentry.
@@ -23,7 +24,6 @@ const App: React.FC = () => {
 
   // Apply Subapp routes
   const routesWithSubApps = [...routes, ...subAppRoutes];
-  console.log("@@@@routesWithSubApps", {routes, subAppRoutes});
   return (
     <CartContext.Provider value={cartData}>
       <NotificationContext.Provider value={notificationData}>
@@ -31,6 +31,7 @@ const App: React.FC = () => {
         <FusionMainLayout subApps={subAppProps}>
           <SubAppsView routesWithSubApps={routesWithSubApps} />
           <GalleryView />
+          <DataPanelDetailsBar />
         </FusionMainLayout>
       </NotificationContext.Provider>
     </CartContext.Provider>

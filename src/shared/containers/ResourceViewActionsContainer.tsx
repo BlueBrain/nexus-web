@@ -9,7 +9,7 @@ import { CartContext } from '../hooks/useDataCart';
 import { makeResourceUri } from '../utils';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/reducers';
-import { useAdminSubappContext } from '../../subapps/admin';
+import { useOrganisationsSubappContext } from '../../subapps/admin';
 import { intersection as intersect } from 'lodash';
 
 const ResourceViewActionsContainer: React.FC<{
@@ -46,7 +46,7 @@ const ResourceViewActionsContainer: React.FC<{
     return [];
   };
   const [view, setView] = React.useState<Resource | null>(null);
-  const subapp = useAdminSubappContext();
+  const subapp = useOrganisationsSubappContext();
   React.useEffect(() => {
     nexus.Resource.tags(orgLabel, projectLabel, encodedResourceId).then(
       data => {

@@ -46,6 +46,12 @@ const ResourceViewContainer: React.FunctionComponent<{
     }> | null
   ) => React.ReactElement | null;
 }> = ({ render }) => {
+  const history = useHistory();
+  const nexus = useNexusContext();
+  const notification = useNotification();
+  const location = useLocation<{ background: Location }>();
+  const [{ ref }] = useMeasure();
+  const { data: pluginManifest } = usePlugins();
   const { apiEndpoint } = useSelector((state: RootState) => state.config);
 
   const [deltaPlugins, setDeltaPlugins] = React.useState<{
@@ -69,8 +75,7 @@ const ResourceViewContainer: React.FunctionComponent<{
 
   // @ts-ignore
   const { orgLabel = '', projectLabel = '', resourceId = '' } = useParams();
-  const nexus = useNexusContext();
-  const location = useLocation<{ background: Location }>();
+  
 
   const [studioPlugins, setStudioPlugins] = React.useState<{
     customise: boolean;
@@ -108,10 +113,7 @@ const ResourceViewContainer: React.FunctionComponent<{
     }
   }, []);
 
-  const history = useHistory();
-  const notification = useNotification();
-  const [{ ref }] = useMeasure();
-  const { data: pluginManifest } = usePlugins();
+  
 
   const goToResource = (
     orgLabel: string,
@@ -559,7 +561,13 @@ const ResourceViewContainer: React.FunctionComponent<{
     { key: 'jira', name: 'jira', pluginComponent: jiraPlugin },
     { key: 'analysis', name: 'Analysis', pluginComponent: analysisPlugin },
   ];
-
+  React.useEffect(() => {
+    window.scrollTo({ 
+      top: 0,
+      behavior: 'smooth'
+    });
+  }, []);
+  
   return (
     <>
       <div className="resource-details">

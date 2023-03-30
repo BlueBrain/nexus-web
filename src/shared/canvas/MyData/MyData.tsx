@@ -4,7 +4,6 @@ import { useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
 import { isArray, isString } from 'lodash';
 import { DATE_PATTERN, TDateType, TFilterOptions } from '../../molecules/MyDataHeader/MyDataHeader';
-import { TDataSource } from '../../molecules/MyDataTable/MyDataTabel';
 import { MyDataHeader, MyDataTable } from '../../molecules';
 import './styles.less';
 
@@ -61,23 +60,7 @@ const HomeMyData = (props: Props) => {
         return undefined;
     }
   }
-  const { data: types, isLoading: loadingTypes, error: errorTypes } = useQuery({
-    queryKey: ['global-search-types'],
-    queryFn: () => nexus.Search.query({
-      "query": {
-        "match_all": {}
-      },
-      "aggs": {
-        "suggestions": {
-          "terms": {
-            "field": "@type.keyword",
-            "size": 1000
-          }
-        }
-      }
-    }),
-  })
-  console.log('@@types', types);
+  
   const { data: resources, isLoading, error } = useQuery({
     queryKey: ['my-data-resources', { size, offset, query }],
     queryFn: () => nexus.Resource.list(undefined, undefined, {
@@ -88,24 +71,13 @@ const HomeMyData = (props: Props) => {
       // type: dataType,
     })
   });
-  // @ts-ignore
-  const dataSource: TDataSource[] = resources?._results.map(resource => {
-    return ({
-      key: resource._self,
-      name: resource['@id'],
-      project: resource._project,
-      description: "",
-      type: resource['@type'],
-      createdAt: resource._createdAt,
-      updatedAt: resource._updatedAt,
-    })
-  });
   const total = resources?._total;
-  console.log('@@@fields', { dataType, dateField, query, dateType, date, offset, size })
   return (
     <div className='home-mydata'>
       <MyDataHeader {... { dataType, dateField, query, dateType, date, total, setFilterOptions }} />
-      <MyDataTable {... { dataSource, isLoading, offset, size, total, setFilterOptions }} />
+      <MyDataTable 
+        {... { resources, isLoading, offset, size, total, setFilterOptions }} 
+      />
     </div>
   )
 }

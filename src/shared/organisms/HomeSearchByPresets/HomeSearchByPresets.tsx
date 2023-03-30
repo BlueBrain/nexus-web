@@ -46,7 +46,7 @@ const ConfigQueryBuilder = (id: string) => {
 export const fetchNexusSearchConfig = (nexus: NexusClient): Promise<SearchConfig> => nexus.Search.config();
 const getPresetsStats = async (nexus: NexusClient, layouts: TLayout[]) => {
     const results: TLayout[] = [];
-    for(const layout of layouts.filter(l => l.id)){
+    for (const layout of layouts.filter(l => l.id)) {
         const result = await nexus.Search.query(ConfigQueryBuilder(layout.id));
         results.push({
             id: layout.id,
@@ -76,12 +76,12 @@ const HomeSearchByPresets = (props: Props) => {
     return (
         <div className='home-searchby-presets'>
             <h2 className='home-searchby-presets-title'>Search By</h2>
-            { status === 'loading' && <Spin spinning={status === 'loading'}>
+            {status === 'loading' && <Spin spinning={status === 'loading'}>
                 <div className='home-searchby-presets-container'>
-                    {Array(8).fill('').map(i => <PresetCardItemSkeleton/>)}
+                    {Array(8).fill('').map((_, i) => <PresetCardItemSkeleton key={`preset-card-skeleton-${i}`} />)}
                 </div>
             </Spin>}
-            { status === 'success' && <div className='home-searchby-presets-container'>
+            {status === 'success' && <div className='home-searchby-presets-container'>
                 {(displayLayouts as TLayout[]).map(layout => <PresetCardItem
                     key={`preset-card-${layout.id}`}
                     title={layout.name}
