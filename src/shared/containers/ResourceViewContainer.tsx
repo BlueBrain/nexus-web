@@ -124,8 +124,9 @@ const ResourceViewContainer: React.FunctionComponent<{
     }
   ) => {
     const { revision, tab, expanded } = opt;
-    const pushRoute = `/${orgLabel}/${projectLabel}/resources/${resourceId}${revision ? `?rev=${revision}` : ''
-      }${expanded ? '&expanded=true' : ''}${tab ? tab : ''}`;
+    const pushRoute = `/${orgLabel}/${projectLabel}/resources/${resourceId}${
+      revision ? `?rev=${revision}` : ''
+    }${expanded ? '&expanded=true' : ''}${tab ? tab : ''}`;
     history.push(pushRoute, location.state);
   };
 
@@ -143,12 +144,12 @@ const ResourceViewContainer: React.FunctionComponent<{
     busy: boolean;
     resource: Resource | null;
     error:
-    | (Error & {
-      action?: 'update' | 'view';
-      rejections?: { reason: string }[];
-      wasUpdated?: boolean;
-    })
-    | null;
+      | (Error & {
+          action?: 'update' | 'view';
+          rejections?: { reason: string }[];
+          wasUpdated?: boolean;
+        })
+      | null;
   }>({
     busy: false,
     resource: null,
@@ -274,7 +275,7 @@ const ResourceViewContainer: React.FunctionComponent<{
       busy: true,
     });
     try {
-      const options = tag ? { tag: tag.toString(), } : { rev: Number(rev), };
+      const options = tag ? { tag: tag.toString() } : { rev: Number(rev) };
       const resource = (await nexus.Resource.get(
         orgLabel,
         projectLabel,
@@ -284,11 +285,11 @@ const ResourceViewContainer: React.FunctionComponent<{
       const selectedResource: Resource =
         rev || tag
           ? ((await nexus.Resource.get(
-            orgLabel,
-            projectLabel,
-            resourceId,
-            options
-          )) as Resource)
+              orgLabel,
+              projectLabel,
+              resourceId,
+              options
+            )) as Resource)
           : resource;
 
       const expandedResources = (await nexus.Resource.get(
@@ -556,8 +557,9 @@ const ResourceViewContainer: React.FunctionComponent<{
     <>
       <div className="resource-details">
         <Helmet
-          title={`${resource ? getResourceLabel(resource) : resourceId
-            } | ${projectLabel} | ${orgLabel} | Nexus Web`}
+          title={`${
+            resource ? getResourceLabel(resource) : resourceId
+          } | ${projectLabel} | ${orgLabel} | Nexus Web`}
           meta={[
             {
               name: 'description',
@@ -612,8 +614,8 @@ const ResourceViewContainer: React.FunctionComponent<{
                 </>
               }
             />
-          ) :
-            (<>
+          ) : (
+            <>
               {resource && (
                 <ResourceViewActionsContainer
                   resource={resource}
@@ -696,7 +698,8 @@ const ResourceViewContainer: React.FunctionComponent<{
                     )}
                 </>
               )}
-            </>)}
+            </>
+          )}
         </Spin>
       </div>
     </>

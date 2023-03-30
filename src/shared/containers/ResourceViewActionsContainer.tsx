@@ -66,12 +66,10 @@ const ResourceViewActionsContainer: React.FC<{
   const redirectToQueryTab = React.useCallback(() => {
     if (view) {
       const base = `/${subapp.namespace}/${orgLabel}/${projectLabel}`;
-      const href = `${base}/query/${encodeURIComponent(
-        view['@id']
-      )}`;
+      const href = `${base}/query/${encodeURIComponent(view['@id'])}`;
       return href;
     }
-    return "";
+    return '';
   }, [view]);
 
   const self = resource._self;

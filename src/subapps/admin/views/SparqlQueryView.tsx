@@ -40,12 +40,14 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
 
   React.useEffect(() => {
     history.replace(
-      `/${ subapp.namespace }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}`
+      `/${
+        subapp.namespace
+      }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}`
     );
   }, [selectedView]);
   const menu = (
     <Row gutter={3} justify="space-between" align="middle">
-      <Col flex='auto'>
+      <Col flex="auto">
         <Select
           value={selectedView as string}
           onChange={v => setSelectedView(v)}
@@ -69,7 +71,11 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
         </Select>
       </Col>
       <Col flex="100px">
-        <Link to={`/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(viewId)}`}>
+        <Link
+          to={`/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+            viewId
+          )}`}
+        >
           <Button>Open View Resource</Button>
         </Link>
       </Col>
