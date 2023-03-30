@@ -3,7 +3,7 @@ import { Context, Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Button, Col, Dropdown, Menu, Row } from 'antd';
 import * as React from 'react';
-import { generatePath, useHistory, useLocation } from 'react-router-dom';
+import { generatePath, Link, useHistory, useLocation } from 'react-router-dom';
 import Copy from '../components/Copy';
 import { CartContext } from '../hooks/useDataCart';
 import { makeResourceUri } from '../utils';
@@ -63,7 +63,6 @@ const ResourceViewActionsContainer: React.FC<{
       }
     );
   }, [resource, latestResource]);
-
   const redirectToQueryTab = React.useCallback(() => {
     if (view) {
       const base = `/${subapp.namespace}/${orgLabel}/${projectLabel}`;
@@ -72,7 +71,7 @@ const ResourceViewActionsContainer: React.FC<{
       )}?from=browse`;
       return href;
     }
-    return;
+    return "";
   }, [view]);
 
   const self = resource._self;
@@ -239,7 +238,9 @@ const ResourceViewActionsContainer: React.FC<{
       </Col>
       {view && (
         <Col>
-          <Button href={redirectToQueryTab()}>Query the View</Button>
+          <Link to={redirectToQueryTab()}>
+            <Button>Query the View</Button>
+          </Link>
         </Col>
       )}
     </Row>
