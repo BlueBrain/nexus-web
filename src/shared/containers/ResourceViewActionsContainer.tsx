@@ -68,7 +68,7 @@ const ResourceViewActionsContainer: React.FC<{
       const base = `/${subapp.namespace}/${orgLabel}/${projectLabel}`;
       const href = `${base}/query/${encodeURIComponent(
         view['@id']
-      )}?from=browse`;
+      )}`;
       return href;
     }
     return "";
