@@ -320,7 +320,7 @@ const ResourceListContainer: React.FunctionComponent<{
         shareableLink={shareableLink}
       >
         <TypeDropdownFilterContainer
-          deprecated={!!list.query.deprecated}
+          deprecated={Boolean(list.query.deprecated)}
           orgLabel={orgLabel}
           projectLabel={projectLabel}
           onChange={handleTypeChange}
