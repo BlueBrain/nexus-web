@@ -3,6 +3,7 @@ import { Table, Tag } from 'antd';
 import { Link, useHistory } from 'react-router-dom';
 import { PaginatedList } from '@bbp/nexus-sdk';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
+import { SelectionSelectFn } from 'antd/lib/table/interface';
 import { DataPanelEvent, DATA_PANEL_STORAGE, DATA_PANEL_STORAGE_EVENT } from '../../organisms/DataPanel/DataPanel';
 import { TFilterOptions } from '../MyDataHeader/MyDataHeader';
 import timeago from '../../../utils/timeago';
@@ -183,14 +184,24 @@ export default function MyDataTabel({
         showQuickJumper: true,
         showSizeChanger: true,
     }
-    const onSelectChange = (selectedRowKeys: React.Key[], selectedRows: TDataSource[]) => {
+    const onSelectRowChange: SelectionSelectFn<TDataSource> = (record, selected) => {
+        const dataPanelLS: TResourceTableData = JSON.parse(localStorage.getItem(DATA_PANEL_STORAGE)!);
+        let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
+        let selectedRows = dataPanelLS?.selectedRows || [];
+        if (selected) {
+            selectedRowKeys = [...selectedRowKeys, record.key];
+            selectedRows = [...selectedRows, record];
+        } else {
+            selectedRowKeys = selectedRowKeys.filter(t => t !== record.key);
+            selectedRows = selectedRows.filter(t => t.key !== record.key);
+        }
         localStorage.setItem(DATA_PANEL_STORAGE, JSON.stringify({
             selectedRowKeys,
             selectedRows,
         }));
         window.dispatchEvent(new CustomEvent(DATA_PANEL_STORAGE_EVENT, {
             detail: {
-                datapanel: { selectedRowKeys, selectedRows },
+                datapanel: { selectedRowKeys, selectedRows, }
             }
         }));
     }
@@ -205,17 +216,15 @@ export default function MyDataTabel({
         }
     }, []);
     useEffect(() => {
-        const dataPanelEventListner = (event: DataPanelEvent) => {
+        const dataPanelEventListner = (event: DataPanelEvent<{ datapanel: TResourceTableData }>) => {
             updateTableData({
-                // @ts-ignore
-                selectedRows: event.detail.datapanel.selectedRows,
-                // @ts-ignore
-                selectedRowKeys: event.detail.datapanel.selectedRowKeys,
+                selectedRows: event.detail?.datapanel.selectedRows,
+                selectedRowKeys: event.detail?.datapanel.selectedRowKeys,
             })
         }
-        window.addEventListener(DATA_PANEL_STORAGE_EVENT, dataPanelEventListner);
+        window.addEventListener(DATA_PANEL_STORAGE_EVENT, dataPanelEventListner as EventListener);
         return () => {
-            window.removeEventListener(DATA_PANEL_STORAGE_EVENT, dataPanelEventListner);
+            window.removeEventListener(DATA_PANEL_STORAGE_EVENT, dataPanelEventListner as EventListener);
         }
     }, []);
     return (
@@ -233,8 +242,9 @@ export default function MyDataTabel({
             scroll={{ x: 1300 }}
             rowSelection={{
                 selectedRowKeys,
-                onChange: onSelectChange,
+                onSelect: onSelectRowChange,
             }}
+
         />
     )
 }

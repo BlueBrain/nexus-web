@@ -2,7 +2,6 @@ import * as React from 'react'
 import { Link, useLocation } from 'react-router-dom';
 import { Fragment, useEffect, useMemo, useReducer, useRef } from 'react';
 import { animate, spring } from 'motion';
-import { pull, remove } from 'lodash';
 import { Button, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { FileDoneOutlined, DownloadOutlined, PlusOutlined, CloseOutlined, CloseSquareOutlined } from '@ant-design/icons'
@@ -16,7 +15,9 @@ type TDataPanel = {
     resources: TResourceTableData;
     openDataPanel: boolean;
 }
-export class DataPanelEvent extends Event { }
+export class DataPanelEvent<T> extends Event {
+    detail: T | undefined;
+}
 export const DATA_PANEL_STORAGE_EVENT = 'datapanelupdated';
 export const DATA_PANEL_STORAGE = 'datapanel-storage';
 
@@ -116,13 +117,12 @@ function DataPanel({ }: Props) {
     ];
     const dataSource: TDataSource[] = resources?.selectedRows || [];
     useEffect(() => {
-        const dataPanelEventListner = (event: DataPanelEvent) => {
-            // @ts-ignore
-            updateDataPanel({ resources: event.detail.datapanel, openDataPanel: false })
+        const dataPanelEventListner = (event: DataPanelEvent<{ datapanel: TResourceTableData }>) => {
+            updateDataPanel({ resources: event.detail?.datapanel, openDataPanel: false })
         }
-        window.addEventListener(DATA_PANEL_STORAGE_EVENT, dataPanelEventListner);
+        window.addEventListener(DATA_PANEL_STORAGE_EVENT, dataPanelEventListner as EventListener);
         return () => {
-            window.removeEventListener(DATA_PANEL_STORAGE_EVENT, dataPanelEventListner);
+            window.removeEventListener(DATA_PANEL_STORAGE_EVENT, dataPanelEventListner as EventListener);
         }
     }, []);
     useEffect(() => {
@@ -138,15 +138,16 @@ function DataPanel({ }: Props) {
         }
     }, [datapanelRef.current, openDataPanel]);
     useOnClickOutside(datapanelRef, () => {
-        console.log('@@@@click outtise')
-        if(openDataPanel){
+        if (openDataPanel) {
             handleCloseDataPanel();
         }
     });
     if (
         !(dataSource.length &&
             (location.pathname === '/' ||
-                location.pathname === '/search'))
+                location.pathname === '/search' ||
+                location.pathname === '/my-data'
+            ))
     )
         return null;
     return (
