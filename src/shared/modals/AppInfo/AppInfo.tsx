@@ -2,8 +2,8 @@ import React from 'react'
 import { Divider, Modal } from 'antd';
 import { ConsentType } from '../../layouts/FusionMainLayout';
 import { GithubOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
 import './styles.less';
+
 
 
 declare var Version: string;
@@ -17,7 +17,6 @@ type Props = {
     onClickRemoveConsent?(): void;
 }
 const releaseNoteUrl = 'https://github.com/BlueBrain/nexus-web/releases';
-
 
 const AppInfo = ({
     version, githubIssueURL, commitHash, consent,
@@ -50,11 +49,11 @@ const AppInfo = ({
                 <div className='versions-items'>
                     <div className='version-item'>
                         <div>Nexus Delta</div>
-                        <p>{version}</p>
+                        <p>{Version}</p>
                     </div>
                     <div className='version-item'>
                         <div>Nexus Fusion</div>
-                        <p>{Version}</p>
+                        <p>{version}</p>
                     </div>
                 </div>
             </div>
@@ -72,6 +71,7 @@ const AppInfo = ({
         </Modal>
     )
 }
+
 
 
 export default AppInfo;

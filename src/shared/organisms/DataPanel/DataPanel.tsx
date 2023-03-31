@@ -1,16 +1,20 @@
 import * as React from 'react'
 import { Link, useLocation } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { Fragment, useEffect, useMemo, useReducer, useRef } from 'react';
 import { animate, spring } from 'motion';
 import { Button, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { FileDoneOutlined, DownloadOutlined, PlusOutlined, CloseOutlined, CloseSquareOutlined } from '@ant-design/icons'
 import { makeOrgProjectTuple, TDataSource, TResourceTableData } from '../../molecules/MyDataTable/MyDataTable';
+import { RootState } from '../../../shared/store/reducers';
 import useOnClickOutside from '../../../shared/hooks/useClickOutside';
 import './styles.less';
 
-
-type Props = {}
+type Props = {
+    authenticated?: boolean;
+    token?: string;
+}
 type TDataPanel = {
     resources: TResourceTableData;
     openDataPanel: boolean;
@@ -21,7 +25,7 @@ export class DataPanelEvent<T> extends Event {
 export const DATA_PANEL_STORAGE_EVENT = 'datapanelupdated';
 export const DATA_PANEL_STORAGE = 'datapanel-storage';
 
-function DataPanel({ }: Props) {
+const DataPanel: React.FC<Props> = ({ authenticated, token }) => {
     const location = useLocation();
     const datapanelRef = useRef<HTMLDivElement>(null);
     const dataLS = localStorage.getItem(DATA_PANEL_STORAGE);
@@ -142,7 +146,7 @@ function DataPanel({ }: Props) {
             handleCloseDataPanel();
         }
     });
-    if (
+    if (!(authenticated && token) ||
         !(dataSource.length &&
             (location.pathname === '/' ||
                 location.pathname === '/search' ||
@@ -210,4 +214,11 @@ function DataPanel({ }: Props) {
     )
 }
 
-export default DataPanel
+const mapStateToProps = (state: RootState) => {
+    const { oidc } = state;
+    return {
+        authenticated: !!oidc.user,
+        token: oidc.user && oidc.user.access_token,
+    };
+};
+export default connect(mapStateToProps, null)(DataPanel); 
