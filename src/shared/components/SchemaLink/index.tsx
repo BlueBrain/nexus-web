@@ -5,7 +5,7 @@ const SchemaLink: React.FunctionComponent<{
   resource: Resource;
   goToSchema?(): void;
 }> = ({ resource: { _constrainedBy: constrainedBy }, goToSchema }) =>
-  constrainedBy.includes('unconstrained.json') ? (
+  constrainedBy?.includes('unconstrained.json') ? (
     <span>No schema defined for validation</span>
   ) : (
     <a

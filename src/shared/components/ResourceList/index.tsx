@@ -22,6 +22,7 @@ import {
   SwitcherOutlined,
 } from '@ant-design/icons';
 import { ResourceList, Resource } from '@bbp/nexus-sdk';
+import { debounce } from 'lodash';
 
 import RenameableItem from '../Renameable';
 import ListItem from '../List/Item';
@@ -29,8 +30,8 @@ import ResourceCardComponent from '../ResourceCard';
 import { getResourceLabel } from '../../utils';
 import TypesIconList from '../Types/TypesIcon';
 import useMeasure from '../../hooks/useMeasure';
+import { DEFAULT_LIST } from '../../../shared/containers/ResourceListBoardContainer';
 import Copy from '../Copy';
-import { debounce } from 'lodash';
 
 import './ResourceList.less';
 
@@ -244,7 +245,6 @@ const ResourceListComponent: React.FunctionComponent<{
   React.useLayoutEffect(() => {
     debounceHeightChange();
   }, [wrapperHeight]);
-
   return (
     <div className="resource-list-height-tester" ref={wrapperHeightRef}>
       <div className="resource-list">

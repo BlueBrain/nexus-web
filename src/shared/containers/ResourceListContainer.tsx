@@ -140,13 +140,35 @@ const ResourceListContainer: React.FunctionComponent<{
               bool: {
                 should: [
                   {
-                    term: {
-                      '@id': list.query.q,
+                    bool: {
+                      must: [
+                        {
+                          term: {
+                            _deprecated: list.query.deprecated,
+                          },
+                        },
+                        {
+                          term: {
+                            '@id': list.query.q,
+                          },
+                        },
+                      ],
                     },
                   },
                   {
-                    term: {
-                      _self: list.query.q,
+                    bool: {
+                      must: [
+                        {
+                          term: {
+                            _deprecated: list.query.deprecated,
+                          },
+                        },
+                        {
+                          term: {
+                            _self: list.query.q,
+                          },
+                        },
+                      ],
                     },
                   },
                 ],
@@ -301,7 +323,7 @@ const ResourceListContainer: React.FunctionComponent<{
       shareableLink={shareableLink}
     >
       <TypeDropdownFilterContainer
-        deprecated={!!list.query.deprecated}
+        deprecated={Boolean(list.query.deprecated)}
         orgLabel={orgLabel}
         projectLabel={projectLabel}
         onChange={handleTypeChange}
