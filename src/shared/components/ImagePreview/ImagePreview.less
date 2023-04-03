@@ -1,3 +1,5 @@
+@import '../../lib.less';
+
 .preview-menu {
   display: grid;
   grid-template-columns: 1fr max-content max-content;
@@ -16,6 +18,22 @@
     }
     .ant-list-item {
       margin: 0 !important;
+      .image-grid-container {
+        position: relative;
+        &:hover {
+          .download-image-grid{
+            display: block;
+            background: white !important;
+            color: @fusion-primary-color;
+          }
+        }
+      }
+      .download-image-grid{
+        display: none;
+        position: absolute;
+        top: 4px;
+        right: 4px;
+      }
     }
   }
   &.list {

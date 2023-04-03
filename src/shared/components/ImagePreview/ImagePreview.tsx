@@ -1,5 +1,9 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { NexusClient, Resource } from '@bbp/nexus-sdk';
+import React, { useState, useRef, createRef } from 'react';
+import {
+  NexusClient,
+  NexusFile,
+  Resource,
+} from '@bbp/nexus-sdk';
 import {
   Button,
   Collapse,
@@ -11,13 +15,18 @@ import {
   Tooltip,
   List,
   Image,
+  Spin,
+  Alert,
 } from 'antd';
 import { ListProps } from 'antd/lib/list';
+import { useQuery } from 'react-query';
 import {
   SortAscendingOutlined,
   SortDescendingOutlined,
+  DownloadOutlined,
 } from '@ant-design/icons';
-import { orderBy, isNil } from 'lodash';
+import { orderBy, isNil, create } from 'lodash';
+import { parseProjectUrl, parseResourceId } from '../Preview/Preview';
 
 import './ImagePreview.less';
 
@@ -29,10 +38,13 @@ type Props = {
 };
 type TDataSource = {
   id: string;
-  image: string;
+  image: string | NexusFile | Blob | FormData;
+  imageSrc: string;
   title: string;
   size: string;
   score: number;
+  type: string;
+  donwloadBtnRef?: React.RefObject<typeof Button>;
 };
 
 const { Search } = Input;
@@ -42,6 +54,70 @@ const imageDisplayOptions = [
   { label: 'Grid', value: 'grid' },
   { label: 'List', value: 'list' },
 ];
+
+const renderFileSize = (contentSize: { value: string; unitCode?: string }) => {
+  if (!contentSize) {
+    return '-';
+  }
+  if (contentSize.unitCode) {
+    if (contentSize.unitCode.toLocaleLowerCase() === 'kilo bytes') {
+      return `${contentSize.value} KB`;
+    }
+    if (contentSize.unitCode.toLocaleLowerCase() === 'mega bytes') {
+      return `${contentSize.value} MB`;
+    }
+  }
+  const sizeInMB = (parseInt(contentSize.value, 10) / 1000000).toFixed(2);
+  if (sizeInMB !== '0.00') {
+    return `${sizeInMB} MB`;
+  }
+
+  return `${contentSize.value} Bytes`;
+};
+
+const fetchImageResources = async ({
+  nexus,
+  resource,
+  orgLabel,
+  projectLabel,
+}: {
+  nexus: NexusClient;
+  resource: Resource;
+  orgLabel: string;
+  projectLabel: string;
+}) => {
+  const images: TDataSource[] = [];
+  try {
+    for (const item of resource.distribution) {
+      let contentUrl = item.contentUrl;
+      const rawData = await nexus.File.get(
+        orgLabel,
+        projectLabel,
+        parseResourceId(contentUrl),
+        { as: 'blob' }
+      );
+      const blob = new Blob([rawData as string], {
+        type: item.encodingFormat,
+      });
+      const src = URL.createObjectURL(blob);
+      images.push({
+        id: item.contentUrl,
+        image: rawData,
+        imageSrc: src,
+        title: item.name,
+        size: renderFileSize(item.contentSize),
+        type: item.encodingFormat,
+        score: 1,
+      });
+    }
+    return {
+      error: null,
+      images,
+    };
+  } catch (error) {
+    throw new Error(`@@Error: ${JSON.stringify(error)}`);
+  }
+};
 
 function calculateScore(input: string, text: string) {
   const inputSet = new Set(input.toLowerCase().split(/\W+/));
@@ -83,9 +159,10 @@ const ImagePreview: React.FC<Props> = ({
   const [displayOption, setDisplayOption] = useState(DEFAULT_DISPLAY_OPTION);
   const [dataSource, setDataSource] = useState<TDataSource[]>(() => []);
   const dataSourceRef = useRef<TDataSource[]>([]);
+  const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
 
   const onSearchChange: React.ChangeEventHandler<HTMLInputElement> = e => {
-    if (isNil(e.target.value) || e.target.value === "") {
+    if (isNil(e.target.value) || e.target.value === '') {
       return setDataSource(dataSourceRef.current);
     }
     setDataSource(fuzzySearch(e.target.value, dataSource, 0.1));
@@ -104,52 +181,65 @@ const ImagePreview: React.FC<Props> = ({
   const type: Partial<ListProps<TDataSource>> =
     displayOption === 'list'
       ? {
-          size: 'large',
-          pagination: {
-            pageSize: 3,
-            current: currentListPage,
-            onChange: (page: number, pageSize?: number | undefined) =>
-              setCurrentListPage(page),
-          },
-        }
-      : {
-          grid: {
-            gutter: 16,
-            xs: 1,
-            sm: 2,
-            md: 4,
-            lg: 4,
-            xl: 6,
-            xxl: 3,
-          },
-          pagination: {
-            pageSize: 6,
-            current: currentListPage,
-            onChange: (page: number, pageSize?: number) =>
-              setCurrentListPage(page),
-          },
-        };
-
-  useEffect(() => {
-    const fetchImageResources = async () => {
-      const data: TDataSource[] = [];
-      // @ts-ignore
-      for (const item of resource.distribution) {
-        const response = await fetch(item.contentUrl);
-        const blob = await response.blob();
-        // @ts-ignore
-        data.push({
-          image: URL.createObjectURL(blob),
-          title: item.name,
-          size: `${(item.contentSize.value / 1024).toFixed(2)} mb`,
-          score: 1,
-        });
+        size: 'large',
+        pagination: {
+          pageSize: 3,
+          current: currentListPage,
+          onChange: (page: number, pageSize?: number | undefined) =>
+            setCurrentListPage(page),
+        },
       }
-      dataSourceRef.current = data;
-      setDataSource(data);
-    };
-    fetchImageResources();
-  }, [resource]);
+      : {
+        grid: {
+          gutter: 16,
+          xs: 1,
+          sm: 2,
+          md: 4,
+          lg: 4,
+          xl: 6,
+          xxl: 3,
+        },
+        pagination: {
+          pageSize: 6,
+          current: currentListPage,
+          onChange: (page: number, pageSize?: number) =>
+            setCurrentListPage(page),
+        },
+      };
+
+  const { data, status } = useQuery({
+    queryKey: ['image-preview-set', { resource: resource['@id'] }],
+    queryFn: () =>
+      fetchImageResources({ nexus, resource, orgLabel, projectLabel }),
+    onSuccess: data => {
+      dataSourceRef.current = data.images;
+      setDataSource(data.images.map(t => ({
+        ...t,
+        donwloadBtnRef: createRef(),
+      })));
+    },
+  });
+  const downloadImageHandler = (
+    e: React.MouseEvent<HTMLElement, MouseEvent>,
+    item: TDataSource
+  ) => {
+    e.preventDefault();
+    let link = document.createElement('a');
+    link.style.display = 'none';
+    link.download = item.title;
+    document.body.appendChild(link);
+    link.href = item.imageSrc;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  };
+  console.log('@@items', dataSource);
+  const handleOnPreviewVisibleChange = (value: boolean, ref?: React.RefObject<typeof Button>) => {
+    console.log('@@@hovered', value, ref?.current)
+    if(value && ref?.current) {
+      // @ts-ignore
+      ref.current.style.display = 'block';
+    }
+  }
   return (
     <div>
       <Collapse
@@ -187,46 +277,69 @@ const ImagePreview: React.FC<Props> = ({
             />
           </div>
           <div
-            className={`preview-content ${
-              displayOption === 'grid' ? 'grid' : 'list'
-            }`}
+            className={`preview-content ${displayOption === 'grid' ? 'grid' : 'list'
+              }`}
           >
-            <List
-              {...type}
-              dataSource={dataSource}
-              renderItem={item =>
-                displayOption === 'list' ? (
-                  <List.Item
-                    style={{ flexDirection: 'row-reverse' }}
-                    key={`list-${item.id}`}
-                    extra={
-                      <Image
-                        width={'30%'}
-                        src={item.image}
-                        preview={{ src: item.image }}
-                      />
-                    }
-                  >
-                    <div className="item-content">
-                      <div>{item.title}</div>
-                      <div>{item.size}</div>
-                    </div>
-                  </List.Item>
-                ) : (
-                  <List.Item key={`grid-${item.id}`}>
-                    <Image
-                      src={item.image}
-                      preview={{
-                        src: item.image,
-                        maskStyle: {
-                          'background-color': 'rgba(0, 0, 0, 0.75)',
-                        },
-                      }}
-                    />
-                  </List.Item>
-                )
-              }
-            />
+            <Spin spinning={status === 'loading'}>
+              {status === 'success' && (
+                <List
+                  {...type}
+                  dataSource={dataSource}
+                  renderItem={item =>
+                    displayOption === 'list' ? (
+                      <List.Item
+                        style={{ flexDirection: 'row-reverse' }}
+                        key={`list-${item.id}`}
+                        extra={
+                          <div style={{ width: '30%' }}>
+                            <Image
+                              src={item.imageSrc}
+                              preview={{ src: item.imageSrc }}
+                            />
+                          </div>
+                        }
+                      >
+                        <div className="item-content">
+                          <div>{item.title}</div>
+                          <div>{item.size}</div>
+                          <Button
+                            onClick={e => downloadImageHandler(e, item)}
+                            type="link"
+                          >
+                            <DownloadOutlined />
+                            Download
+                          </Button>
+                        </div>
+                      </List.Item>
+                    ) : (
+                      <List.Item key={`grid-${item.id}`}>
+                        <div className='image-grid-container'>
+                          <Image
+                            src={item.imageSrc}
+                            preview={{
+                              src: item.imageSrc,
+                              maskStyle: { 'background-color': 'rgba(0, 0, 0, 0.75)', },
+                            }}
+                          />
+                          <Button
+                            icon={<DownloadOutlined />}
+                            className='download-image-grid'
+                            onClick={e => downloadImageHandler(e, item)}
+                          />
+                        </div>
+                      </List.Item>
+                    )
+                  }
+                />
+              )}
+              {status === 'error' && (
+                <Alert
+                  message="Error Loading Images"
+                  description={data?.error}
+                  type="error"
+                />
+              )}
+            </Spin>
           </div>
         </Collapse.Panel>
       </Collapse>
