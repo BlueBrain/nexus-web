@@ -1,16 +1,17 @@
 import * as React from 'react';
 import { useHistory, useLocation, useRouteMatch } from 'react-router';
+import { Link } from 'react-router-dom';
 import * as queryString from 'query-string';
 import { ViewList, DEFAULT_SPARQL_VIEW_ID, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { isNil } from 'lodash';
-
 import SparqlQueryContainer from '../containers/SparqlQuery';
 import useNotification from '../../../shared/hooks/useNotification';
 import { Button, Col, Row, Select } from 'antd';
 import { getResourceLabel } from '../../../shared/utils';
 import { useOrganisationsSubappContext } from '..';
 
+
+const { Option } = Select;
 const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
   const match = useRouteMatch<{
     orgLabel: string;
@@ -32,10 +33,6 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
   });
   const nexus = useNexusContext();
   const query = queryString.parse(location.search).query;
-  const from = queryString.parse(location.search).from;
-  const isNavigateFromBrowse = !isNil(from);
-  const { Option } = Select;
-
   const [selectedView, setSelectedView] = React.useState<string>(
     viewId ? decodeURIComponent(viewId) : DEFAULT_SPARQL_VIEW_ID
   );
@@ -44,15 +41,12 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
     history.replace(
       `/${
         subapp.namespace
-      }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}${
-        isNavigateFromBrowse ? `?from=${from}` : ''
-      }`
+      }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}`
     );
   }, [selectedView]);
-  const flexProps = isNavigateFromBrowse ? { flex: 'auto' } : { span: 24 };
   const menu = (
     <Row gutter={3} justify="space-between" align="middle">
-      <Col {...flexProps}>
+      <Col flex="auto">
         <Select
           value={selectedView as string}
           onChange={v => setSelectedView(v)}
@@ -75,11 +69,15 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
             })}
         </Select>
       </Col>
-      {isNavigateFromBrowse && (
-        <Col flex="100px">
-          <Button onClick={history.goBack}>Back to Browse</Button>
-        </Col>
-      )}
+      <Col flex="100px">
+        <Link
+          to={`/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+            viewId
+          )}`}
+        >
+          <Button>Open View Resource</Button>
+        </Link>
+      </Col>
     </Row>
   );
 

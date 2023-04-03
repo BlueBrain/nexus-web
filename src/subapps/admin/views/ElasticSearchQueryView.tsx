@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useRouteMatch, useLocation, useHistory } from 'react-router';
+import { Link } from 'react-router-dom';
 import * as queryString from 'query-string';
 import { ViewList, DEFAULT_ELASTIC_SEARCH_VIEW_ID, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
@@ -11,6 +12,7 @@ import { getResourceLabel } from '../../../shared/utils';
 import useNotification from '../../../shared/hooks/useNotification';
 import { useOrganisationsSubappContext } from '..';
 
+const { Option } = Select;
 const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
   const subapp = useOrganisationsSubappContext();
   const match = useRouteMatch<{
@@ -37,8 +39,6 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
   });
   const nexus = useNexusContext();
   const query = queryString.parse(location.search).query;
-  const from = queryString.parse(location.search).from;
-  const isNavigateFromBrowse = !isNil(from);
   const [selectedView, setSelectedView] = React.useState<string>(
     viewId ? decodeURIComponent(viewId) : DEFAULT_ELASTIC_SEARCH_VIEW_ID
   );
@@ -47,17 +47,12 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
     history.replace(
       `/${
         subapp.namespace
-      }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}${
-        isNavigateFromBrowse ? `?from=${from}` : ''
-      }`
+      }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}`
     );
-  }, [selectedView, isNavigateFromBrowse]);
-
-  const { Option } = Select;
-  const flexProps = isNavigateFromBrowse ? { flex: 'auto' } : { span: 24 };
+  }, [selectedView]);
   const menu = (
     <Row gutter={3} justify="space-between" align="middle">
-      <Col {...flexProps}>
+      <Col flex="auto">
         <Select
           value={selectedView as string}
           onChange={v => setSelectedView(v)}
@@ -80,11 +75,15 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
             })}
         </Select>
       </Col>
-      {isNavigateFromBrowse && (
-        <Col flex="100px">
-          <Button onClick={history.goBack}>Back to Browse</Button>
-        </Col>
-      )}
+      <Col flex="100px">
+        <Link
+          to={`/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+            viewId
+          )}`}
+        >
+          <Button>Open View Resource</Button>
+        </Link>
+      </Col>
     </Row>
   );
 

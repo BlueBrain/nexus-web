@@ -68,6 +68,22 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
       }
     }
   };
+  const onFormatChangeFold = (expanded: boolean) => {
+    if (codeMirorRef.current) {
+      codeMirorRef.current.execCommand('foldAll');
+      codeMirorRef.current.foldCode(0);
+      setFoldCodeMiror(() => false);
+    }
+    onFormatChange?.(expanded);
+  }
+  const onMetadataChangeFold = (checked: boolean) => {
+    if (codeMirorRef.current) {
+      codeMirorRef.current.execCommand('foldAll');
+      codeMirorRef.current.foldCode(0);
+      setFoldCodeMiror(() => false);
+    }
+    onMetadataChange?.(checked);
+  }
   const renderCodeMirror = (value: string) => {
     return (
       <Spin spinning={busy}>
@@ -103,6 +119,11 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     setEditing(false);
     setStringValue(JSON.stringify(rawData, null, 2)); // Update copy of the rawData for the editor.
     setParsedValue(rawData); // Update parsed value for submit.
+    // onFormatChange?.(false);
+    // onMetadataChange?.(false);
+    return () => {
+      setFoldCodeMiror(false);
+    }
   }, [rawData]); // only runs when Editor receives new resource to edit
 
   const handleChange = (editor: any, data: any, value: any) => {
@@ -152,8 +173,8 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
 
         <div className="controls">
           <Switch
-            checkedChildren="Fold"
-            unCheckedChildren="Unfold"
+            checkedChildren="Unfold"
+            unCheckedChildren="Fold"
             checked={foldCodeMiror}
             onChange={onFoldChange}
             style={switchMarginRight}
@@ -163,7 +184,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
               checkedChildren="Metadata"
               unCheckedChildren="Show Metadata"
               checked={showMetadata}
-              onChange={onMetadataChange}
+              onChange={(checked) => onMetadataChangeFold(checked)}
               style={switchMarginRight}
             />
           )}
@@ -172,7 +193,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
               checkedChildren="Expanded"
               unCheckedChildren="Expand"
               checked={expanded}
-              onChange={onFormatChange}
+              onChange={(expaned) => onFormatChangeFold(expanded)}
               style={switchMarginRight}
             />
           )}
