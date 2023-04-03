@@ -208,9 +208,7 @@ const ImagePreview: React.FC<Props> = ({
       fetchImageResources({ nexus, resource, orgLabel, projectLabel }),
     onSuccess: data => {
       dataSourceRef.current = data.images;
-      setDataSource(
-        data.images
-      );
+      setDataSource(data.images);
     },
   });
   const downloadImageHandler = (
