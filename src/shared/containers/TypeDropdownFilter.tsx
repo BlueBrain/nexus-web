@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import {
-  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-  NexusClient,
-} from '@bbp/nexus-sdk';
+import { DEFAULT_ELASTIC_SEARCH_VIEW_ID, NexusClient } from '@bbp/nexus-sdk';
 
 import DropdownFilter from '../components/DropdownFilter';
 import { TypeDropdownItem } from '../components/DropdownFilter/DropdownItem';
@@ -11,36 +8,44 @@ import { useQuery } from 'react-query';
 
 // must be explicitly set for elasticSearch, default is 10
 const RESULTS_SIZE = 10000;
-export const PROJECT_TYPE = "https://bluebrain.github.io/nexus/vocabulary/Project";
-const fetchESVTypes = ({ nexus, orgLabel, projectLabel, deprecated }: { nexus: NexusClient, orgLabel: string, projectLabel: string, deprecated: boolean }) => nexus.View.elasticSearchQuery(
+export const PROJECT_TYPE =
+  'https://bluebrain.github.io/nexus/vocabulary/Project';
+const fetchESVTypes = ({
+  nexus,
   orgLabel,
   projectLabel,
-  encodeURIComponent(DEFAULT_ELASTIC_SEARCH_VIEW_ID),
-  {
-    aggregations: {
-      types: {
-        filter: {
-          bool: {
-            must: [
-              { term: { _deprecated: deprecated } },
-            ],
-            must_not: [
-              { term: { '@type':  PROJECT_TYPE } }
-            ]
-          }
-        },
-        aggregations: {
-          filteredByDeprecation: {
-            terms: {
-              field: '@type',
-              size: RESULTS_SIZE,
+  deprecated,
+}: {
+  nexus: NexusClient;
+  orgLabel: string;
+  projectLabel: string;
+  deprecated: boolean;
+}) =>
+  nexus.View.elasticSearchQuery(
+    orgLabel,
+    projectLabel,
+    encodeURIComponent(DEFAULT_ELASTIC_SEARCH_VIEW_ID),
+    {
+      aggregations: {
+        types: {
+          filter: {
+            bool: {
+              must: [{ term: { _deprecated: deprecated } }],
+              must_not: [{ term: { '@type': PROJECT_TYPE } }],
+            },
+          },
+          aggregations: {
+            filteredByDeprecation: {
+              terms: {
+                field: '@type',
+                size: RESULTS_SIZE,
+              },
             },
           },
         },
       },
-    },
-  }
-)
+    }
+  );
 const TypeDropdownFilterContainer: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
@@ -51,11 +56,19 @@ const TypeDropdownFilterContainer: React.FunctionComponent<{
   const nexus = useNexusContext();
 
   const { data } = useQuery({
-    queryKey: ['resource-list-query-types', { deprecated, orgLabel, projectLabel, desv_id: DEFAULT_ELASTIC_SEARCH_VIEW_ID }],
+    queryKey: [
+      'resource-list-query-types',
+      {
+        deprecated,
+        orgLabel,
+        projectLabel,
+        desv_id: DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+      },
+    ],
     queryFn: () => fetchESVTypes({ nexus, orgLabel, projectLabel, deprecated }),
     refetchOnWindowFocus: true,
   });
-  
+
   return (
     <DropdownFilter
       buckets={
