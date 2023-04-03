@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Link, useLocation } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Fragment, useEffect, useMemo, useReducer, useRef } from 'react';
 import { animate, spring } from 'motion';
 import { Button, Table, Tag } from 'antd';
@@ -25,8 +25,11 @@ export class DataPanelEvent<T> extends Event {
 export const DATA_PANEL_STORAGE_EVENT = 'datapanelupdated';
 export const DATA_PANEL_STORAGE = 'datapanel-storage';
 
-const DataPanel: React.FC<Props> = ({ authenticated, token }) => {
+const DataPanel: React.FC<Props> = ({}) => {
     const location = useLocation();
+    const oidc = useSelector((state: RootState) => state.oidc);
+    const authenticated = !!oidc.user;
+    const token = oidc.user && oidc.user.access_token;
     const datapanelRef = useRef<HTMLDivElement>(null);
     const dataLS = localStorage.getItem(DATA_PANEL_STORAGE);
     const [{ openDataPanel, resources }, updateDataPanel] = useReducer(
@@ -214,11 +217,4 @@ const DataPanel: React.FC<Props> = ({ authenticated, token }) => {
     )
 }
 
-const mapStateToProps = (state: RootState) => {
-    const { oidc } = state;
-    return {
-        authenticated: !!oidc.user,
-        token: oidc.user && oidc.user.access_token,
-    };
-};
-export default connect(mapStateToProps, null)(DataPanel); 
+export default DataPanel;

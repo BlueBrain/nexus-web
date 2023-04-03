@@ -112,10 +112,18 @@
             border-bottom: 1px solid @fusion-daybreak-8 !important;
             color: white !important;
         }
+        &:last-child {
+            td {
+                border-color: @fusion-daybreak-10 !important;
+            }
+        }
         &:hover {
             td {
                 background: rgba(#333, .12) !important;
             }
+        }
+        .ant-table-cell-fix-left, .ant-table-cell-fix-right {
+            background: none !important;
         }
     }
     .ant-table-body {
