@@ -11,7 +11,7 @@ import { useQuery } from 'react-query';
 
 // must be explicitly set for elasticSearch, default is 10
 const RESULTS_SIZE = 10000;
-
+export const PROJECT_TYPE = "https://bluebrain.github.io/nexus/vocabulary/Project";
 const fetchESVTypes = ({ nexus, orgLabel, projectLabel, deprecated }: { nexus: NexusClient, orgLabel: string, projectLabel: string, deprecated: boolean }) => nexus.View.elasticSearchQuery(
   orgLabel,
   projectLabel,
@@ -20,7 +20,14 @@ const fetchESVTypes = ({ nexus, orgLabel, projectLabel, deprecated }: { nexus: N
     aggregations: {
       types: {
         filter: {
-          term: { _deprecated: deprecated },
+          bool: {
+            must: [
+              { term: { _deprecated: deprecated } },
+            ],
+            must_not: [
+              { term: { '@type':  PROJECT_TYPE } }
+            ]
+          }
         },
         aggregations: {
           filteredByDeprecation: {

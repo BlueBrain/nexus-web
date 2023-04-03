@@ -10,7 +10,7 @@ import {
 import ResourceListComponent, {
   ResourceBoardList,
 } from '../components/ResourceList';
-import TypeDropdownFilterContainer from './TypeDropdownFilter';
+import TypeDropdownFilterContainer, { PROJECT_TYPE } from './TypeDropdownFilter';
 import SchemaDropdownFilterContainer from './SchemaDropdownFilters';
 import SchemaLinkContainer from './SchemaLink';
 
@@ -141,32 +141,24 @@ const ResourceListContainer: React.FunctionComponent<{
                   "should": [
                     {
                       "bool": {
-                        "must": [{
-                          "term": {
-                            "_deprecated": list.query.deprecated
-                          }
-                        },
-                        {
-                          "term": {
-                            "@id": list.query.q,
-                          }
-                        }
-                        ]
+                        "must": [
+                          { "term": { "_deprecated": list.query.deprecated } },
+                          { "term": { "@id": list.query.q, } }
+                        ],
+                        "must_not": [{
+                          "term": { "@type": PROJECT_TYPE }
+                        }]
                       }
                     },
                     {
                       "bool": {
-                        "must": [{
-                          "term": {
-                            "_deprecated": list.query.deprecated
-                          }
-                        },
-                        {
-                          "term": {
-                            "_self": list.query.q,
-                          }
-                        }
-                        ]
+                        "must": [
+                          { "term": { "_deprecated": list.query.deprecated } },
+                          { "term": { "_self": list.query.q, } }
+                        ],
+                        "must_not": [{
+                          "term": { "@type": PROJECT_TYPE }
+                        }]
                       }
                     }
                   ]
