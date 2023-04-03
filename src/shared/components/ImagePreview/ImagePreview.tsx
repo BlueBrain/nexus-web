@@ -1,9 +1,5 @@
 import React, { useState, useRef, createRef } from 'react';
-import {
-  NexusClient,
-  NexusFile,
-  Resource,
-} from '@bbp/nexus-sdk';
+import { NexusClient, NexusFile, Resource } from '@bbp/nexus-sdk';
 import {
   Button,
   Collapse,
@@ -44,7 +40,6 @@ type TDataSource = {
   size: string;
   score: number;
   type: string;
-  donwloadBtnRef?: React.RefObject<typeof Button>;
 };
 
 const { Search } = Input;
@@ -89,7 +84,7 @@ const fetchImageResources = async ({
   const images: TDataSource[] = [];
   try {
     for (const item of resource.distribution) {
-      let contentUrl = item.contentUrl;
+      const contentUrl = item.contentUrl;
       const rawData = await nexus.File.get(
         orgLabel,
         projectLabel,
@@ -111,8 +106,8 @@ const fetchImageResources = async ({
       });
     }
     return {
-      error: null,
       images,
+      error: null,
     };
   } catch (error) {
     throw new Error(`@@Error: ${JSON.stringify(error)}`);
@@ -181,31 +176,31 @@ const ImagePreview: React.FC<Props> = ({
   const type: Partial<ListProps<TDataSource>> =
     displayOption === 'list'
       ? {
-        size: 'large',
-        pagination: {
-          pageSize: 3,
-          current: currentListPage,
-          onChange: (page: number, pageSize?: number | undefined) =>
-            setCurrentListPage(page),
-        },
-      }
+          size: 'large',
+          pagination: {
+            pageSize: 3,
+            current: currentListPage,
+            onChange: (page: number, pageSize?: number | undefined) =>
+              setCurrentListPage(page),
+          },
+        }
       : {
-        grid: {
-          gutter: 16,
-          xs: 1,
-          sm: 2,
-          md: 4,
-          lg: 4,
-          xl: 6,
-          xxl: 3,
-        },
-        pagination: {
-          pageSize: 6,
-          current: currentListPage,
-          onChange: (page: number, pageSize?: number) =>
-            setCurrentListPage(page),
-        },
-      };
+          grid: {
+            gutter: 16,
+            xs: 1,
+            sm: 2,
+            md: 4,
+            lg: 4,
+            xl: 6,
+            xxl: 3,
+          },
+          pagination: {
+            pageSize: 6,
+            current: currentListPage,
+            onChange: (page: number, pageSize?: number) =>
+              setCurrentListPage(page),
+          },
+        };
 
   const { data, status } = useQuery({
     queryKey: ['image-preview-set', { resource: resource['@id'] }],
@@ -213,10 +208,9 @@ const ImagePreview: React.FC<Props> = ({
       fetchImageResources({ nexus, resource, orgLabel, projectLabel }),
     onSuccess: data => {
       dataSourceRef.current = data.images;
-      setDataSource(data.images.map(t => ({
-        ...t,
-        donwloadBtnRef: createRef(),
-      })));
+      setDataSource(
+        data.images
+      );
     },
   });
   const downloadImageHandler = (
@@ -224,7 +218,7 @@ const ImagePreview: React.FC<Props> = ({
     item: TDataSource
   ) => {
     e.preventDefault();
-    let link = document.createElement('a');
+    const link = document.createElement('a');
     link.style.display = 'none';
     link.download = item.title;
     document.body.appendChild(link);
@@ -232,14 +226,6 @@ const ImagePreview: React.FC<Props> = ({
     link.click();
     URL.revokeObjectURL(link.href);
   };
-  console.log('@@items', dataSource);
-  const handleOnPreviewVisibleChange = (value: boolean, ref?: React.RefObject<typeof Button>) => {
-    console.log('@@@hovered', value, ref?.current)
-    if(value && ref?.current) {
-      // @ts-ignore
-      ref.current.style.display = 'block';
-    }
-  }
   return (
     <div>
       <Collapse
@@ -277,8 +263,9 @@ const ImagePreview: React.FC<Props> = ({
             />
           </div>
           <div
-            className={`preview-content ${displayOption === 'grid' ? 'grid' : 'list'
-              }`}
+            className={`preview-content ${
+              displayOption === 'grid' ? 'grid' : 'list'
+            }`}
           >
             <Spin spinning={status === 'loading'}>
               {status === 'success' && (
@@ -313,17 +300,19 @@ const ImagePreview: React.FC<Props> = ({
                       </List.Item>
                     ) : (
                       <List.Item key={`grid-${item.id}`}>
-                        <div className='image-grid-container'>
+                        <div className="image-grid-container">
                           <Image
                             src={item.imageSrc}
                             preview={{
                               src: item.imageSrc,
-                              maskStyle: { 'background-color': 'rgba(0, 0, 0, 0.75)', },
+                              maskStyle: {
+                                'background-color': 'rgba(0, 0, 0, 0.75)',
+                              },
                             }}
                           />
                           <Button
                             icon={<DownloadOutlined />}
-                            className='download-image-grid'
+                            className="download-image-grid"
                             onClick={e => downloadImageHandler(e, item)}
                           />
                         </div>
