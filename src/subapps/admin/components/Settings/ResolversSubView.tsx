@@ -15,22 +15,28 @@ type TDataType = {
   priority: number;
 };
 
-
-const fetchResolvers = async ({ nexus, orgLabel, projectLabel }:
-  { nexus: NexusClient, orgLabel: string, projectLabel: string }) => {
+const fetchResolvers = async ({
+  nexus,
+  orgLabel,
+  projectLabel,
+}: {
+  nexus: NexusClient;
+  orgLabel: string;
+  projectLabel: string;
+}) => {
   try {
     const resolvers = await nexus.Resolver.list(orgLabel, projectLabel);
     return resolvers._results.map(item => ({
       // @ts-ignore
-      type: (item['@type']),
+      type: item['@type'].filter(t => t !== 'Resolver'),
       priority: item.priority,
-      id: item['@id']
+      id: item['@id'],
     }));
   } catch (error) {
     // @ts-ignore
     throw new Error('Can not find resolvers', { cause: error });
   }
-}
+};
 const ResolversSubView = (props: Props) => {
   const nexus = useNexusContext();
   const match = useRouteMatch<{
@@ -41,24 +47,26 @@ const ResolversSubView = (props: Props) => {
   const {
     params: { orgLabel, projectLabel },
   } = match;
-  const handleOnEdit = () => { };
-  const createNewResolverHandler = () => { };
+  const handleOnEdit = () => {};
+  const createNewResolverHandler = () => {};
   const columns: ColumnsType<TDataType> = [
     {
       key: 'name',
       dataIndex: 'name',
       title: 'Name',
-      render: (text, record) => <span>{
-        record.id.split('/').pop()
-      }</span>,
+      render: (text, record) => <span>{record.id.split('/').pop()}</span>,
     },
     {
       key: 'type',
       dataIndex: 'type',
       title: 'Type',
-      render: text => <div>{
-        text.map((item: string) => <div>{item}</div>)
-      }</div>,
+      render: text => (
+        <div>
+          {text.map((item: string) => (
+            <div>{item}</div>
+          ))}
+        </div>
+      ),
     },
     {
       key: 'priority',
@@ -80,7 +88,7 @@ const ResolversSubView = (props: Props) => {
     },
   ];
   const { data: resolvers, status } = useQuery({
-    queryKey: ['resolvers', { orgLabel, projectLabel }],
+    queryKey: [`resolvers-${orgLabel}-${projectLabel}`],
     queryFn: () => fetchResolvers({ nexus, orgLabel, projectLabel }),
   });
 
@@ -91,7 +99,7 @@ const ResolversSubView = (props: Props) => {
         <Button
           style={{ maxWidth: 150, margin: 0, marginTop: 20 }}
           type="primary"
-          disabled={false} // TODO: write premission to be enabled
+          disabled={true} // TODO: write premission to be enabled
           htmlType="button"
           onClick={createNewResolverHandler}
         >

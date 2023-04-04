@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { groupBy, sortBy } from 'lodash';
 import { Table, Collapse, Checkbox } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useRouteMatch } from 'react-router';
-import { ACL, Identity } from '@bbp/nexus-sdk';
+import { useQuery } from 'react-query';
+import { ACL, Identity, NexusClient } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useAdminSubappContext } from '../../../../subapps/admin';
-
 import './SettingsView.less';
 
 type Props = {};
@@ -49,6 +49,21 @@ type ACLViewProp =
 
 const { Panel } = Collapse;
 
+const fetchPermissions = async ({
+  nexus,
+  path,
+}: {
+  nexus: NexusClient;
+  path: string;
+}) => {
+  try {
+    const acls = await nexus.ACL.list(path, { ancestors: true, self: false });
+    return acls._results;
+  } catch (error) {
+    // @ts-ignore
+    throw new Error('Can not fetch ACL list', { cause: error });
+  }
+};
 const PermissionsAclsSubView = (props: Props) => {
   const { namespace } = useAdminSubappContext();
   const match = useRouteMatch<{ orgLabel: string; projectLabel: string }>(
@@ -63,42 +78,12 @@ const PermissionsAclsSubView = (props: Props) => {
     },
   };
   const path = `${orgLabel}${projectLabel ? `/${projectLabel}` : ''}`;
-
-  const [{ busy, error, acls }, setACLs] = useState<{
-    busy: Boolean;
-    error: Error | null;
-    acls: ACL[] | null;
-  }>({
-    busy: false,
-    error: null,
-    acls: null,
+  const nexus = useNexusContext();
+  const { data: acls, status } = useQuery({
+    queryKey: [`permissions-${orgLabel}-${projectLabel}`],
+    queryFn: () => fetchPermissions({ nexus, path }),
   });
 
-  const nexus = useNexusContext();
-  useEffect(() => {
-    if (!busy) {
-      setACLs({
-        error: null,
-        acls: null,
-        busy: true,
-      });
-      nexus.ACL.list(path, { ancestors: true, self: false })
-        .then(acls => {
-          setACLs({
-            acls: acls._results,
-            busy: false,
-            error: null,
-          });
-        })
-        .catch(error => {
-          setACLs({
-            error,
-            acls: null,
-            busy: false,
-          });
-        });
-    }
-  }, []);
   const columns: ColumnsType<DataType> = useMemo(
     () => [
       {
@@ -198,6 +183,7 @@ const PermissionsAclsSubView = (props: Props) => {
               key={`${id}:${index}`}
             >
               <Table
+                loading={status === 'loading'}
                 key={`table:${id}:${index}`}
                 className="views-table acls-table"
                 rowClassName="view-item-row"

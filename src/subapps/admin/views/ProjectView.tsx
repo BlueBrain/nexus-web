@@ -11,22 +11,19 @@ import { Tabs, Popover, Empty } from 'antd';
 import { SelectOutlined } from '@ant-design/icons';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
+import { useAdminSubappContext } from '..';
+import { RootState } from '../../../shared/store/reducers';
+import { useJiraPlugin } from '../../../shared/hooks/useJIRA';
 import StoragesContainer from '../containers/StoragesContainer';
 import ProjectStatsContainer from '../containers/ProjectStatsContainer';
 import QuotasContainer from '../containers/QuotasContainer';
 import ViewStatisticsContainer from '../components/Views/ViewStatisticsProgress';
 import ResourceListBoardContainer from '../../../shared/containers/ResourceListBoardContainer';
 import QueryEditor from '../components/Projects/QueryEditor';
-import { useAdminSubappContext } from '..';
-import useNotification, {
-  NexusError,
-} from '../../../shared/hooks/useNotification';
+import useNotification from '../../../shared/hooks/useNotification';
 import ProjectToDeleteContainer from '../containers/ProjectToDeleteContainer';
-import { RootState } from '../../../shared/store/reducers';
 import ResourceCreateUploadContainer from '../../../shared/containers/ResourceCreateUploadContainer';
-import { makeOrganizationUri } from '../../../shared/utils';
 import JiraPluginProjectContainer from '../containers/JiraContainer';
-import { useJiraPlugin } from '../../../shared/hooks/useJIRA';
 import SettingsContainer from '../containers/SettingsContainer';
 import './ProjectView.less';
 
@@ -208,7 +205,7 @@ const ProjectView: React.FunctionComponent = () => {
   };
 
   const showDeletionBanner = deltaPlugins && 'project-deletion' in deltaPlugins;
-  
+
   const handleTabChange = (activeKey: string) => {
     if (activeKey === 'studios' || activeKey === 'workflows') return;
     history.push(pathFromTab(activeKey));
@@ -218,7 +215,7 @@ const ProjectView: React.FunctionComponent = () => {
     isUserInSupportedJiraRealm,
     jiraInaccessibleBecauseOfVPN,
   } = useJiraPlugin();
-  console.log('@@project', project);
+
   return (
     <div className="project-view">
       {!!project && (

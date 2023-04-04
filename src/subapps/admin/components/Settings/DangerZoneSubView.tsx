@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import { Button, Modal, Input } from 'antd';
+import { Button, Modal, Input, Form, Row, Col } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useHistory, useRouteMatch } from 'react-router';
 import { useSelector } from 'react-redux';
+import { useMutation } from 'react-query';
+import { NexusClient } from '@bbp/nexus-sdk';
 
-import useNotification, { NexusError, } from '../../../../shared/hooks/useNotification';
+import useNotification, {
+  NexusError,
+} from '../../../../shared/hooks/useNotification';
 import { makeOrganizationUri } from '../../../../shared/utils';
 import { RootState } from '../../../../shared/store/reducers';
 import './SettingsView.less';
@@ -19,7 +23,24 @@ type Props = {
     mode: string;
   };
 };
-
+const deprecateProject = async ({
+  nexus,
+  orgLabel,
+  projectLabel,
+  rev,
+}: {
+  nexus: NexusClient;
+  orgLabel: string;
+  projectLabel: string;
+  rev: number;
+}) => {
+  try {
+    await nexus.Project.deprecate(orgLabel, projectLabel, rev);
+  } catch (error) {
+    // @ts-ignore
+    throw new Error('Can not deprecate you project', { cause: error });
+  }
+};
 const DangerZoneSubView = ({ project }: Props) => {
   const notification = useNotification();
   const { user } = useSelector((state: RootState) => state.oidc);
@@ -34,54 +55,40 @@ const DangerZoneSubView = ({ project }: Props) => {
   const [openDepModal, setOpenDepModal] = useState<boolean>(false);
   const handleCloseModal = () => setOpenDepModal(false);
   const handleOpenModal = () => setOpenDepModal(true);
-  const handleOnDepProjectValueChange = (e:React.ChangeEvent<HTMLInputElement> ) => setDepValue(e.target.value);
+  const handleOnDepProjectValueChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => setDepValue(e.target.value);
   const {
     params: { orgLabel, projectLabel },
   } = match;
-  const [busyDeprecating, setBusyDeprecating] = useState(false);
 
-  const onDeprecate = () => {
-    if (!project) {
-      return;
-    }
-    setBusyDeprecating(true);
-    nexus.Project.deprecate(orgLabel, projectLabel, project._rev)
-      .then(() => {
+  const { mutateAsync: deprecateProjectAsync, status } = useMutation(
+    deprecateProject,
+    {
+      onSuccess: () => {
         history.push(makeOrganizationUri(orgLabel));
         notification.success({ message: 'Project deprecated' });
-      })
-      .catch((error: NexusError) => {
+      },
+      onError: error => {
         notification.error({
           message: 'Error deprecating project',
-          description: error.reason,
+          // @ts-ignore
+          description: error.cause.message,
         });
-      })
-      .finally(() => {
-        setBusyDeprecating(false);
-      });
-  };
-  const deprecateVerification = `${user?.profile.family_name}/${projectLabel}`.toLowerCase();
-  const handleDeprecateProject = () => {
-    if(depValue.toLowerCase() === deprecateVerification.toLowerCase()){
-      alert(`@@value ${depValue}`);
+      },
     }
-  }
+  );
+  const deprecateVerification = `${orgLabel}/${projectLabel}`.toLowerCase();
+  const handleDeprecateProject = () =>
+    deprecateProjectAsync({ nexus, orgLabel, projectLabel, rev: project._rev });
   return (
     <>
       <div className="settings-view settings-danger-zone-view">
         <h2>Danger Zone</h2>
         <div className="settings-view-container">
-          {/* <div className="danger-text">
-            Delete this Project
-            <br />
-            Once you delete a project, there is no going back. Please be certain.
-            <br />
-            Instead deprecating the project can be undone 🙂
-          </div> */}
           <div className="danger-actions">
             <Button
               danger
-              loading={busyDeprecating}
               style={{ margin: 0, marginRight: 10 }}
               type="primary"
               disabled={false} // TODO: write premission to be enabled
@@ -90,16 +97,6 @@ const DangerZoneSubView = ({ project }: Props) => {
             >
               Deprecate Project
             </Button>
-            {/* <Button
-              danger
-              style={{ margin: 0 }}
-              type="primary"
-              disabled={false} // TODO: write premission to be enabled
-              htmlType="submit"
-              className="project-form__add-button"
-            >
-              Delete Project
-            </Button> */}
           </div>
         </div>
       </div>
@@ -107,18 +104,68 @@ const DangerZoneSubView = ({ project }: Props) => {
         visible={openDepModal}
         onCancel={handleCloseModal}
         maskClosable={false}
-        footer={[
-          <Button type='primary' danger onClick={handleDeprecateProject}>
-            I understand the consequences, deprecate this project
-          </Button>
-        ]}
+        footer={null}
       >
-        <h4>Are you absolutely sure?</h4>
-        <p>
-          This action cannot be undone. This will permanently deprecate the {deprecateVerification}, 
-          Please type {deprecateVerification} to confirm.
-        </p>
-        <Input value={depValue} onChange={handleOnDepProjectValueChange}/>
+        <Form onFinish={handleDeprecateProject}>
+          <Row>
+            <h4>Are you absolutely sure?</h4>
+            <p>
+              This action cannot be undone. This will permanently deprecate the{' '}
+              {deprecateVerification}.
+              <br />
+              Please type <strong>{deprecateVerification}</strong> to confirm.
+            </p>
+          </Row>
+          <Row>
+            <Col span={24}>
+              <Form.Item
+                name="projectName"
+                rules={[
+                  {
+                    required: true,
+                    message: 'This is required field',
+                  },
+                  {
+                    validator: (_, value) => {
+                      if (value.toLowerCase() === deprecateVerification) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject();
+                    },
+                  },
+                ]}
+              >
+                <Input
+                  value={depValue}
+                  onChange={handleOnDepProjectValueChange}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24} style={{ textAlign: 'right' }}>
+              <Form.Item noStyle shouldUpdate>
+                {({ getFieldValue }) => {
+                  const projectName = getFieldValue('projectName');
+                  const disabled =
+                    (projectName as string)?.toLowerCase() !==
+                    deprecateVerification;
+                  return (
+                    <Button
+                      loading={status === 'loading'}
+                      disabled={disabled}
+                      type="primary"
+                      htmlType="submit"
+                      danger
+                    >
+                      I understand the consequences, deprecate this project
+                    </Button>
+                  );
+                }}
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
       </Modal>
     </>
   );

@@ -1,16 +1,16 @@
+import '@testing-library/jest-dom';
 import * as React from 'react';
-import StudioReactContext, {
-  StudioContextType,
-} from '../../contexts/StudioContext';
+import { rest } from 'msw';
+import { act } from 'react-dom/test-utils';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createBrowserHistory } from 'history';
 import { createNexusClient } from '@bbp/nexus-sdk';
-import WorkSpaceMenu, { StudioResource } from '../WorkspaceMenuContainer';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ConnectedRouter } from 'connected-react-router';
-import configureStore from '../../../../shared/store';
 import { Provider } from 'react-redux';
 import fetch from 'node-fetch';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ConnectedRouter } from 'connected-react-router';
+import WorkSpaceMenu, { StudioResource } from '../WorkspaceMenuContainer';
+import configureStore from '../../../../shared/store';
 import {
   render,
   fireEvent,
@@ -18,9 +18,10 @@ import {
   screen,
   server,
 } from '../../../../utils/testUtil';
-import { rest } from 'msw';
-import '@testing-library/jest-dom';
-import { act } from 'react-dom/test-utils';
+import StudioReactContext, {
+  StudioContextType,
+} from '../../contexts/StudioContext';
+
 import { deltaPath } from '__mocks__/handlers/handlers';
 
 describe('workSpaceMenu', () => {

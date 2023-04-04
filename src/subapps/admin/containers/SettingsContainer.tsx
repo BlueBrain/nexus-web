@@ -12,7 +12,7 @@ type Props = {
 };
 
 type TMenuItem = {
-  key: React.Key;
+  key: string;
   id: string;
   label: string;
   Component: (props: any) => JSX.Element;
@@ -93,9 +93,10 @@ const SettingsContainer: React.FunctionComponent<Props> = ({
   const menuItems = Array.from(subViewsMapper.entries()).map(
     ([, value]) => value
   );
-  const [selectedKey, setSelectedKey] = useState(menuItems[0].id);
-  //@ts-ignore
-  const handleOnSelectSubMenuItem: OnSelectHandler = (info) => setSelectedKey(info.key);
+  const [selectedKey, setSelectedKey] = useState(() => menuItems[0].id);
+  const handleOnSelectSubMenuItem: OnSelectHandler = info =>
+    //@ts-ignore
+    setSelectedKey(info.key);
   const subViewSelectedComponenet = (props: Props) => {
     const view = subViewsMapper.get(selectedKey.split('/')[1]);
     const Component = view!.Component;
@@ -112,9 +113,9 @@ const SettingsContainer: React.FunctionComponent<Props> = ({
         onSelect={handleOnSelectSubMenuItem}
         multiple={false}
       >
-        { menuItems.map(item => (
+        {menuItems.map(item => (
           <Menu.Item key={item.key}>{item.label}</Menu.Item>
-        )) }
+        ))}
       </Menu>
       <div className="settings-content">
         {subViewSelectedComponenet({ project, apiMappings, mode })}

@@ -8,7 +8,6 @@ import { Quota } from '@bbp/nexus-sdk';
 import './SettingsView.less';
 import { useRouteMatch } from 'react-router';
 
-
 type Props = {};
 type GaugeProps = {
   percent: number;
@@ -65,8 +64,10 @@ const QuotasSubView = (props: Props) => {
   }>();
 
   const [quota, setQuota] = useState<Quota>();
-  const { params: { orgLabel, projectLabel }, } = match;
-  
+  const {
+    params: { orgLabel, projectLabel },
+  } = match;
+
   const resources: GaugeProps = {
     name: 'Resources',
     quota: 100000,
@@ -80,41 +81,44 @@ const QuotasSubView = (props: Props) => {
     percent: 0.34,
   };
 
-  const columns: ColumnsType<DataType> = useMemo(() => [
-    {
-      key: 'storage',
-      dataIndex: 'storage',
-      title: 'Storage',
-      render: text => <span>{text}</span>,
-    },
-    {
-      key: 'max_file_size',
-      dataIndex: 'max_file_size',
-      title: 'Max File Size (GB)',
-      render: text => <span>{text}</span>,
-    },
-    {
-      key: 'total_files',
-      dataIndex: 'total_files',
-      title: 'Total Files',
-      align: 'center',
-      render: text => <span>{text}</span>,
-    },
-    {
-      key: 'space_used',
-      dataIndex: 'space_used',
-      title: 'Space Used',
-      align: 'center',
-      render: text => <span>{text}</span>,
-    },
-    {
-      key: 'capacity',
-      dataIndex: 'capacity',
-      title: 'Capacity',
-      align: 'center',
-      render: text => <span>{text}</span>,
-    }
-  ], []);
+  const columns: ColumnsType<DataType> = useMemo(
+    () => [
+      {
+        key: 'storage',
+        dataIndex: 'storage',
+        title: 'Storage',
+        render: text => <span>{text}</span>,
+      },
+      {
+        key: 'max_file_size',
+        dataIndex: 'max_file_size',
+        title: 'Max File Size (GB)',
+        render: text => <span>{text}</span>,
+      },
+      {
+        key: 'total_files',
+        dataIndex: 'total_files',
+        title: 'Total Files',
+        align: 'center',
+        render: text => <span>{text}</span>,
+      },
+      {
+        key: 'space_used',
+        dataIndex: 'space_used',
+        title: 'Space Used',
+        align: 'center',
+        render: text => <span>{text}</span>,
+      },
+      {
+        key: 'capacity',
+        dataIndex: 'capacity',
+        title: 'Capacity',
+        align: 'center',
+        render: text => <span>{text}</span>,
+      },
+    ],
+    []
+  );
   const data: DataType[] = [
     {
       key: 'diskDefaultStorage',
@@ -137,7 +141,6 @@ const QuotasSubView = (props: Props) => {
     };
     loadQuotas();
   }, []);
-
 
   return (
     <div className="settings-view settings-quotas-view">

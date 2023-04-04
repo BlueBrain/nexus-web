@@ -15,11 +15,17 @@ type DataType = {
   status: string;
 };
 
-const fetchViewList = async ({ nexus, orgLabel, projectLabel }:
-  { nexus: NexusClient, orgLabel: string, projectLabel: string }
-) => {
+const fetchViewList = async ({
+  nexus,
+  orgLabel,
+  projectLabel,
+}: {
+  nexus: NexusClient;
+  orgLabel: string;
+  projectLabel: string;
+}) => {
   try {
-    const views = await nexus.View.list(orgLabel, projectLabel, {})
+    const views = await nexus.View.list(orgLabel, projectLabel, {});
     const result = views._results.map(item => ({
       key: item['@id'] as string,
       name: (item['@id'] as string).split('/').pop() as string,
@@ -31,7 +37,7 @@ const fetchViewList = async ({ nexus, orgLabel, projectLabel }:
     // @ts-ignore
     throw new Error('Can not fetch views', { cause: error });
   }
-}
+};
 
 const ViewsSubView = (props: Props) => {
   const nexus = useNexusContext();
@@ -43,10 +49,10 @@ const ViewsSubView = (props: Props) => {
   const {
     params: { orgLabel, projectLabel },
   } = match;
-  const handleOnEdit = () => { };
-  const handleOnQuery = () => { };
-  const handleOnDelete = () => { };
-  const createNewViewHandler = () => { };
+  const handleOnEdit = () => {};
+  const handleOnQuery = () => {};
+  const handleOnDelete = () => {};
+  const createNewViewHandler = () => {};
   const columns: ColumnsType<DataType> = [
     {
       key: 'name',
@@ -78,10 +84,20 @@ const ViewsSubView = (props: Props) => {
           <Button disabled type="link" htmlType="button" onClick={handleOnEdit}>
             Edit
           </Button>
-          <Button disabled type="link" htmlType="button" onClick={handleOnQuery}>
+          <Button
+            disabled
+            type="link"
+            htmlType="button"
+            onClick={handleOnQuery}
+          >
             Query
           </Button>
-          <Button disabled type="link" htmlType="button" onClick={handleOnDelete}>
+          <Button
+            disabled
+            type="link"
+            htmlType="button"
+            onClick={handleOnDelete}
+          >
             Delete
           </Button>
         </div>
@@ -89,9 +105,9 @@ const ViewsSubView = (props: Props) => {
     },
   ];
   const { data: views, status } = useQuery({
-    queryKey: ['views', {}],
+    queryKey: [`views-${orgLabel}-${projectLabel}`],
     queryFn: () => fetchViewList({ nexus, orgLabel, projectLabel }),
-  })
+  });
 
   return (
     <div className="settings-view settings-views-view">

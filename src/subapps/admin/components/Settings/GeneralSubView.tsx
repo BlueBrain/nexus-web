@@ -4,11 +4,12 @@ import { useMutation } from 'react-query';
 import { Form, Input, Button, Spin } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useNexusContext } from '@bbp/react-nexus';
-import { ProjectResponseCommon } from '@bbp/nexus-sdk';
+import { NexusClient, ProjectResponseCommon } from '@bbp/nexus-sdk';
 
 import useNotification from '../../../../shared/hooks/useNotification';
 import './SettingsView.less';
-type Props = {
+
+type TProps = {
   project: {
     _label: string;
     _rev: number;
@@ -68,10 +69,40 @@ const PrefixMappingGroupInput: React.FC<{
     </Input.Group>
   );
 };
+
+const submitSettings = async ({
+  nexus,
+  orgLabel,
+  projectLabel,
+  rev,
+  newProject,
+}: {
+  nexus: NexusClient;
+  orgLabel: string;
+  projectLabel: string;
+  rev: number;
+  newProject: ProjectResponseCommon;
+}) => {
+  const mappingObject = newProject.apiMappings ? newProject.apiMappings : {};
+  const apiMappings = Object.keys(mappingObject).map(
+    (mapping: any) => newProject.apiMappings![mapping]
+  );
+  try {
+    return await nexus.Project.update(orgLabel, projectLabel, rev, {
+      base: newProject.base,
+      vocab: newProject.vocab,
+      description: newProject.description,
+      apiMappings: apiMappings,
+    });
+  } catch (error) {
+    // @ts-ignore
+    throw new Error('Can not update project settings', { cause: error });
+  }
+};
 const GeneralSubView = ({
   project: { _label, _rev, description, base, vocab, mode },
   apiMappings,
-}: Props) => {
+}: TProps) => {
   const nexus = useNexusContext();
   const notification = useNotification();
   const match = useRouteMatch<{
@@ -82,18 +113,29 @@ const GeneralSubView = ({
   const {
     params: { orgLabel, projectLabel },
   } = match;
-  const { status: updateSettingStatus, mutateAsync: handleSubmitSettings } = useMutation((newProject: ProjectResponseCommon) => nexus.Project.update(orgLabel, projectLabel, _rev, {
-    base: newProject.base,
-    vocab: newProject.vocab,
-    description: newProject.description,
-    apiMappings: newProject.apiMappings,
-  }), {
-    onSuccess: () => notification.success({ message: 'Project general data saved' }),
-    onError: (error) => notification.error({
-      message: 'An unknown error occurred',
-      description: (error as Error).message,
-    })
-  });
+  const {
+    status: updateSettingStatus,
+    mutateAsync: handleSubmitSettingsAsync,
+  } = useMutation(
+    (newProject: ProjectResponseCommon) =>
+      submitSettings({
+        nexus,
+        orgLabel,
+        projectLabel,
+        rev: _rev,
+        newProject,
+      }),
+    {
+      onSuccess: () =>
+        notification.success({ message: 'Project general data saved' }),
+      onError: error =>
+        notification.error({
+          message: 'An unknown error occurred',
+          // @ts-ignore
+          description: error.cause.message,
+        }),
+    }
+  );
 
   const currentId = apiMappings ? apiMappings.length : 0;
   const activeKeys = [...Array(currentId + 1).keys()].slice(1);
@@ -149,7 +191,7 @@ const GeneralSubView = ({
   );
   return (
     <div className="settings-view settings-general-view">
-      <Form onFinish={handleSubmitSettings} labelAlign="left">
+      <Form onFinish={handleSubmitSettingsAsync} labelAlign="left">
         <h2>General</h2>
         <Spin spinning={updateSettingStatus === 'loading'} tip="Please wait...">
           <div className="settings-view-container">
@@ -201,22 +243,20 @@ const GeneralSubView = ({
               <Input placeholder="Vocab" />
             </Form.Item>
           </div>
-          <div className='api-mapping-title'>
+          <div className="api-mapping-title">
             <h2>API Mappings </h2>
             <Button
               style={{ maxWidth: 150, margin: 0, marginRight: 10 }}
               disabled={false} // TODO: write premission to be enabled
               htmlType="button"
               onClick={add}
-              type='link'
+              type="link"
             >
               Add API Mappings
             </Button>
           </div>
-          <div className='settings-view-container'>
-            <div className="api-mappings-content">
-              {apiMappingsItems}
-            </div>
+          <div className="settings-view-container">
+            <div className="api-mappings-content">{apiMappingsItems}</div>
           </div>
           <Form.Item>
             <Button
