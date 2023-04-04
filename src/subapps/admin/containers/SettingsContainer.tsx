@@ -30,15 +30,6 @@ const subViewsMapper = new Map<string, TMenuItem>([
     },
   ],
   [
-    'apiMappings',
-    {
-      id: 'setting/apiMappings',
-      key: 'setting/apiMappings',
-      label: 'API Mappings',
-      Component: SV.APIMappinsSVComponent,
-    },
-  ],
-  [
     'views',
     {
       id: 'setting/views',

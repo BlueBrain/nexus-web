@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { useRouteMatch } from 'react-router';
-import { Form, Input, Button, Spin, notification } from 'antd';
+import { useMutation } from 'react-query';
+import { Form, Input, Button, Spin } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
 import { useNexusContext } from '@bbp/react-nexus';
-import './SettingsView.less';
 import { ProjectResponseCommon } from '@bbp/nexus-sdk';
 
+import useNotification from '../../../../shared/hooks/useNotification';
+import './SettingsView.less';
 type Props = {
   project: {
     _label: string;
@@ -14,6 +17,7 @@ type Props = {
     vocab?: string;
     mode: string;
   };
+  apiMappings?: PrefixMappingGroupInputState[];
 };
 const formItemLayout = {
   labelCol: {
@@ -25,45 +29,130 @@ const formItemLayout = {
     sm: { span: 20 },
   },
 };
-
+export interface PrefixMappingGroupInputState {
+  prefix: string;
+  namespace: string;
+}
+const PrefixMappingGroupInput: React.FC<{
+  groupId: number;
+  value?: any;
+}> = ({ groupId, value }) => {
+  return (
+    <Input.Group className="project-form__item-inputs">
+      <Form.Item
+        noStyle
+        name={['apiMappings', `apiMappings[${groupId - 1}]`, 'prefix']}
+        rules={[
+          {
+            required: true,
+            message: 'You need to specify prefix',
+          },
+        ]}
+        initialValue={value.prefix}
+      >
+        <Input style={{ width: '33%' }} placeholder="prefix" />
+      </Form.Item>
+      <Form.Item
+        noStyle
+        name={['apiMappings', `apiMappings[${groupId - 1}]`, 'namespace']}
+        rules={[
+          {
+            required: true,
+            message: 'You need to specify namespace',
+          },
+        ]}
+        initialValue={value.namespace}
+      >
+        <Input style={{ width: '65%' }} placeholder="namespace" />
+      </Form.Item>
+    </Input.Group>
+  );
+};
 const GeneralSubView = ({
   project: { _label, _rev, description, base, vocab, mode },
+  apiMappings,
 }: Props) => {
   const nexus = useNexusContext();
+  const notification = useNotification();
   const match = useRouteMatch<{
     orgLabel: string;
     projectLabel: string;
     viewId?: string;
   }>();
-  const [busy, setFormBusy] = useState(false);
   const {
     params: { orgLabel, projectLabel },
   } = match;
-  const handleSubmitSettings = (newProject: ProjectResponseCommon) => {
-    setFormBusy(true);
-    nexus.Project.update(orgLabel, projectLabel, _rev, {
-      base: newProject.base,
-      vocab: newProject.vocab,
-      description: newProject.description,
+  const { status: updateSettingStatus, mutateAsync: handleSubmitSettings } = useMutation((newProject: ProjectResponseCommon) => nexus.Project.update(orgLabel, projectLabel, _rev, {
+    base: newProject.base,
+    vocab: newProject.vocab,
+    description: newProject.description,
+    apiMappings: newProject.apiMappings,
+  }), {
+    onSuccess: () => notification.success({ message: 'Project general data saved' }),
+    onError: (error) => notification.error({
+      message: 'An unknown error occurred',
+      description: (error as Error).message,
     })
-      .then(() => {
-        notification.success({ message: 'Project general data saved' });
-        setFormBusy(false);
-      })
-      .catch((error: Error) => {
-        setFormBusy(false);
-        notification.error({
-          message: 'An unknown error occurred',
-          description: error.message,
-        });
-      });
+  });
+
+  const currentId = apiMappings ? apiMappings.length : 0;
+  const activeKeys = [...Array(currentId + 1).keys()].slice(1);
+  const [prefixMappingKeys, setPrefixMappingKeys] = useState({
+    currentId,
+    activeKeys,
+  });
+  const add = () => {
+    const { currentId, activeKeys } = prefixMappingKeys;
+    const newId: number = currentId + 1;
+    // @ts-ignore
+    setPrefixMappingKeys({
+      currentId: newId,
+      activeKeys: [newId, ...activeKeys],
+    });
   };
+
+  const remove = (k: any) => {
+    const { activeKeys } = prefixMappingKeys;
+    setPrefixMappingKeys({
+      ...prefixMappingKeys,
+      activeKeys: activeKeys.filter((key: any) => key !== k),
+    });
+  };
+  const apiMappingsItems = prefixMappingKeys.activeKeys.map(
+    (key: number, index: number) => (
+      <Form.Item key={key}>
+        <div className="project-form__form-item">
+          <PrefixMappingGroupInput
+            groupId={key}
+            value={{
+              prefix:
+                (apiMappings &&
+                  apiMappings[key - 1] &&
+                  apiMappings[key - 1].prefix) ||
+                '',
+              namespace:
+                (apiMappings &&
+                  apiMappings[key - 1] &&
+                  apiMappings[key - 1].namespace) ||
+                '',
+            }}
+          />
+          {prefixMappingKeys.activeKeys.length > 0 ? (
+            <DeleteOutlined
+              className="delete-api-mapping-item-btn"
+              onClick={() => remove(key)}
+            />
+          ) : null}
+        </div>
+      </Form.Item>
+    )
+  );
   return (
     <div className="settings-view settings-general-view">
-      <h2>General</h2>
-      <div className="settings-view-container">
-        <Form onFinish={handleSubmitSettings} labelAlign="left">
-          <Spin spinning={busy} tip="Please wait...">
+      <Form onFinish={handleSubmitSettings} labelAlign="left">
+        <h2>General</h2>
+        <Spin spinning={updateSettingStatus === 'loading'} tip="Please wait...">
+          <div className="settings-view-container">
             <Form.Item
               {...formItemLayout}
               label="name"
@@ -111,20 +200,37 @@ const GeneralSubView = ({
             >
               <Input placeholder="Vocab" />
             </Form.Item>
-            <Form.Item>
-              <Button
-                style={{ maxWidth: 120, margin: 0 }}
-                type="primary"
-                disabled={false} // TODO: write premission to be enabled
-                htmlType="submit"
-                className="project-form__add-button"
-              >
-                Save changes
-              </Button>
-            </Form.Item>
-          </Spin>
-        </Form>
-      </div>
+          </div>
+          <div className='api-mapping-title'>
+            <h2>API Mappings </h2>
+            <Button
+              style={{ maxWidth: 150, margin: 0, marginRight: 10 }}
+              disabled={false} // TODO: write premission to be enabled
+              htmlType="button"
+              onClick={add}
+              type='link'
+            >
+              Add API Mappings
+            </Button>
+          </div>
+          <div className='settings-view-container'>
+            <div className="api-mappings-content">
+              {apiMappingsItems}
+            </div>
+          </div>
+          <Form.Item>
+            <Button
+              style={{ maxWidth: 120, margin: 0, right: 0 }}
+              type="primary"
+              disabled={false} // TODO: write premission to be enabled
+              htmlType="submit"
+              className="project-form__add-button"
+            >
+              Save changes
+            </Button>
+          </Form.Item>
+        </Spin>
+      </Form>
     </div>
   );
 };

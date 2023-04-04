@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Table, Button, notification } from 'antd';
+import { Table, Button } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import './SettingsView.less';
+import { useMutation, useQuery } from 'react-query';
+import { NexusClient } from '@bbp/nexus-sdk';
 
 type Props = {};
 type DataType = {
@@ -12,6 +14,24 @@ type DataType = {
   type?: string;
   status: string;
 };
+
+const fetchViewList = async ({ nexus, orgLabel, projectLabel }:
+  { nexus: NexusClient, orgLabel: string, projectLabel: string }
+) => {
+  try {
+    const views = await nexus.View.list(orgLabel, projectLabel, {})
+    const result = views._results.map(item => ({
+      key: item['@id'] as string,
+      name: (item['@id'] as string).split('/').pop() as string,
+      type: item['@type']?.[0],
+      status: '100%',
+    }));
+    return result;
+  } catch (error) {
+    // @ts-ignore
+    throw new Error('Can not fetch views', { cause: error });
+  }
+}
 
 const ViewsSubView = (props: Props) => {
   const nexus = useNexusContext();
@@ -23,11 +43,10 @@ const ViewsSubView = (props: Props) => {
   const {
     params: { orgLabel, projectLabel },
   } = match;
-  const [loading, setLoading] = useState(false);
-  const handleOnEdit = () => {};
-  const handleOnQuery = () => {};
-  const handleOnDelete = () => {};
-  const createNewViewHandler = () => {};
+  const handleOnEdit = () => { };
+  const handleOnQuery = () => { };
+  const handleOnDelete = () => { };
+  const createNewViewHandler = () => { };
   const columns: ColumnsType<DataType> = [
     {
       key: 'name',
@@ -56,47 +75,23 @@ const ViewsSubView = (props: Props) => {
       align: 'center',
       render: text => (
         <div className="view-item-actions">
-          <Button type="link" htmlType="button" onClick={handleOnEdit}>
+          <Button disabled type="link" htmlType="button" onClick={handleOnEdit}>
             Edit
           </Button>
-          <Button type="link" htmlType="button" onClick={handleOnQuery}>
+          <Button disabled type="link" htmlType="button" onClick={handleOnQuery}>
             Query
           </Button>
-          <Button type="link" htmlType="button" onClick={handleOnDelete}>
+          <Button disabled type="link" htmlType="button" onClick={handleOnDelete}>
             Delete
           </Button>
         </div>
       ),
     },
   ];
-
-  // const data:  = viewsSample;
-  const [data, setViewsData] = useState<DataType[]>();
-  useEffect(() => {
-    const loadViews = () => {
-      setLoading(true);
-      nexus.View.list(orgLabel, projectLabel, {})
-        .then(response => {
-          console.log('@@response', response);
-          const result = response._results.map(item => ({
-            key: item['@id'] as string,
-            name: (item['@id'] as string).split('/').pop() as string,
-            type: item['@type']?.[0],
-            status: '100%',
-          }));
-          setViewsData(result);
-          setLoading(false);
-        })
-        .catch(e => {
-          setLoading(false);
-          notification.error({
-            message: 'Fetching views failed',
-            description: e.message,
-          });
-        });
-    };
-    loadViews();
-  }, []);
+  const { data: views, status } = useQuery({
+    queryKey: ['views', {}],
+    queryFn: () => fetchViewList({ nexus, orgLabel, projectLabel }),
+  })
 
   return (
     <div className="settings-view settings-views-view">
@@ -105,20 +100,22 @@ const ViewsSubView = (props: Props) => {
         <Button
           style={{ maxWidth: 150, margin: 0, marginTop: 20 }}
           type="primary"
-          disabled={false} // TODO: write premission to be enabled
+          disabled={true} // TODO: write premission to be enabled
           htmlType="button"
           onClick={createNewViewHandler}
         >
           Create View
         </Button>
         <Table
-          loading={loading}
+          loading={status === 'loading'}
           className="views-table"
           rowClassName="view-item-row"
           columns={columns}
-          dataSource={data}
+          dataSource={views}
           sticky={true}
           size="middle"
+          pagination={false}
+          rowKey={r => r.key}
         />
       </div>
     </div>

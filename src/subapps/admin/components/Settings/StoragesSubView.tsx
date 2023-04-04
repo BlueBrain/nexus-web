@@ -1,8 +1,11 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useRouteMatch } from 'react-router';
-import { Table, Button } from 'antd';
+import { Table, Button, Spin } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useNexusContext } from '@bbp/react-nexus';
+import { useQuery } from 'react-query';
+import { NexusClient, Storage } from '@bbp/nexus-sdk';
+import * as moment from 'moment';
 
 import './SettingsView.less';
 
@@ -14,43 +17,64 @@ type StorageData = {
   spaceUsed: number;
   '@id': string;
 };
-type DataType = {
-  key: string;
-  location: string;
-  type: string;
-  default: string;
-  endpoint: string;
-  maxFileSize: string;
-  read: string;
-  write: string;
-  deprecated: string;
+type TDataType = {
+  id: string;
+  name: string;
+  maxFileSize?: string;
+  writePermission: string;
+  type: string[];
+  createdAt: string;
+};
+function formatBytes(bytes: number, decimals = 2) {
+  if (!+bytes) return '0 Bytes'
+
+  const k = 1024
+  const dm = decimals < 0 ? 0 : decimals
+  const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+}
+
+const parseResponses = (storagesData: Storage[]): TDataType[] => {
+  return storagesData.map(storage => {
+    return {
+      name: storage.name,
+      maxFileSize: formatBytes(Number(storage.maxFileSize), 2),
+      writePermission: storage.writePermission,
+      type: storage['@type'].filter((t: string) => t !== "Storage"),
+      createdAt: storage._createdAt,
+      id: storage['@id'],
+    };
+  });
 };
 
-const viewsSample: DataType[] = [
-  {
-    key: 'opt/binaries',
-    location: 'opt/binaries',
-    type: 'DiskStorageDefault',
-    default: 'False',
-    endpoint: '-',
-    maxFileSize: '10 GB',
-    read: 'resources/read',
-    write: 'files/write',
-    deprecated: 'files/write',
-  },
-  {
-    key: 'prj109',
-    location: 'prj109',
-    type: 'RemoteStorageDefault',
-    default: 'True',
-    endpoint: 'http//storage.s3.com/prj109',
-    maxFileSize: '33 GB',
-    read: 'gpfs-prj109/read',
-    write: 'gpfs-prj109/write',
-    deprecated: 'files/write',
-  },
-];
+const fetchStorages = async ({ nexus, orgLabel, projectLabel }: 
+  { nexus: NexusClient, orgLabel: string, projectLabel: string }
+) : Promise<TDataType[] | Error>  => {
+  try {
+    const storagesList  = await nexus.Storage.list(orgLabel, projectLabel);
+    const storages = await Promise.all(
+      storagesList._results.map(storage => {
+        return nexus.Storage.get(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(storage['@id'])
+        )
+      })
+    );
+    console.log('@@@storages', storages);
+    // @ts-ignore
+    const storagesData = parseResponses(storages);
+    return storagesData;
+  } catch (error) {
+    console.log('@@error', error);
+      // @ts-ignore
+      throw new Error("Can not load the storages", { cause: error });
+  }
 
+}
 const StoragesSubView = (props: Props) => {
   const handleOnEdit = () => { };
   const createNewStorageHandler = () => { };
@@ -63,11 +87,11 @@ const StoragesSubView = (props: Props) => {
   }>();
 
   const { params: { orgLabel, projectLabel }, } = match;
-  const columns: ColumnsType<DataType> = useMemo(() => [
+  const columns: ColumnsType<TDataType> = useMemo(() => [
     {
-      key: 'location',
-      dataIndex: 'location',
-      title: 'Location',
+      key: 'name',
+      dataIndex: 'name',
+      title: 'Name',
       render: text => <span>{text}</span>,
     },
     {
@@ -77,9 +101,9 @@ const StoragesSubView = (props: Props) => {
       render: text => <span>{text}</span>,
     },
     {
-      key: 'default',
-      dataIndex: 'default',
-      title: 'Default',
+      key: 'maxFileSize',
+      dataIndex: 'maxFileSize',
+      title: 'Max File Size',
       align: 'center',
       render: text => <span>{text}</span>,
     },
@@ -98,78 +122,27 @@ const StoragesSubView = (props: Props) => {
       render: text => <span>{text}</span>,
     },
     {
-      key: 'read',
-      dataIndex: 'read',
-      title: 'Read',
+      key: 'writePermission',
+      dataIndex: 'writePermission',
+      title: 'Write Permission',
       align: 'center',
       render: text => <span>{text}</span>,
     },
     {
-      key: 'write',
-      dataIndex: 'write',
-      title: 'Write',
+      key: 'createdAt',
+      dataIndex: 'createdAt',
+      title: 'Created Date',
       align: 'center',
-      render: text => <span>{text}</span>,
-    },
-    {
-      key: 'deprecated',
-      dataIndex: 'deprecated',
-      title: 'Deprecated',
-      align: 'center',
-      render: text => <span>{text}</span>,
-    },
-    {
-      key: 'actions',
-      dataIndex: 'actions',
-      title: 'Actions',
-      align: 'center',
-      render: text => (
-        <Button type="link" htmlType="button" onClick={handleOnEdit}>
-          Edit
-        </Button>
-      ),
-    },
+      render: text => <span>{moment(text).fromNow(false)}</span>,
+    }
   ], []);
 
-  const data: DataType[] = viewsSample;
-  
-  useEffect(() => {
-    const loadStorages = async () => {
-      await nexus.Storage.list(orgLabel, projectLabel)
-        .then(response => {
-          Promise.all(
-            response._results.map(storage => {
-              return nexus.Storage.get(
-                orgLabel,
-                projectLabel,
-                encodeURIComponent(storage['@id'])
-              )
-            })
-          ).then(results => {
-            setStorages(parseResponses(results));
-          });
-        })
-        .catch(error => {
-          // fail silently
-        });
-    };
-    const parseResponses = (storagesData: any[]) => {
-      return storagesData.map(storage => {
-        const { maxFileSize, capacity } = storage[0];
-        const { files, spaceUsed } = storage[1];
-  
-        return {
-          maxFileSize,
-          capacity,
-          files,
-          spaceUsed,
-          '@id': storage[0]['@id'],
-        };
-      });
-    };
-    loadStorages();
-  }, []);
+  const { data: storagesData, status } = useQuery({
+    queryKey: ['storages', { orgLabel, projectLabel }],
+    queryFn: () => fetchStorages({ nexus, orgLabel, projectLabel }),
+  });
 
+  console.log('@@ storagesData', storagesData);
   return (
     <div className="settings-view settings-storages-view">
       <h2>Storages</h2>
@@ -177,20 +150,23 @@ const StoragesSubView = (props: Props) => {
         <Button
           style={{ maxWidth: 150, margin: 0, marginTop: 20 }}
           type="primary"
-          disabled={false} // TODO: write premission to be enabled
+          disabled={true} // TODO: write premission to be enabled
           htmlType="button"
           onClick={createNewStorageHandler}
         >
           Create Storage
         </Button>
-        <Table
-          className="views-table"
-          rowClassName="view-item-row"
-          columns={columns}
-          dataSource={data}
-          sticky={true}
-          size="small"
-        />
+        <Spin spinning={status === 'loading'}>
+          { status === 'success' && <Table<TDataType>
+            className="views-table"
+            rowClassName="view-item-row"
+            columns={columns}
+            dataSource={(storagesData as TDataType[]) ?? []}
+            sticky={true}
+            size="small"
+            pagination={false}
+          />}
+        </Spin>
       </div>
     </div>
   );

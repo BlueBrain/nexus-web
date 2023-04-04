@@ -1,58 +1,64 @@
 import React from 'react';
 import { Table, Button } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import './SettingsView.less';
+import { useQuery } from 'react-query';
+import { useNexusContext } from '@bbp/react-nexus';
+import { useRouteMatch } from 'react-router';
+import { NexusClient } from '@bbp/nexus-sdk';
 
+import './SettingsView.less';
 type Props = {};
-type DataType = {
-  key: string;
-  name: string;
-  type: string;
+type TDataType = {
+  id: string;
+  name?: string;
+  type: string[];
   priority: number;
 };
 
-const viewsSample: DataType[] = [
-  {
-    key: 'nxv:defaultElasticSearchView',
-    name: 'defaultElasticSearchView',
-    type: 'ElasticSearch',
-    priority: 1,
-  },
-  {
-    key: 'nxv:datatset',
-    name: 'Dataset',
-    type: 'ElasticSearch',
-    priority: 3,
-  },
-  {
-    key: 'nxv:defaultGlobalElasticSearchView',
-    name: 'defaultGlobalElasticSearchView',
-    type: 'ElasticSearch',
-    priority: 0,
-  },
-  {
-    key: 'nxv:defaultSparqlView',
-    name: 'defaultSparqlView',
-    type: 'Sparql',
-    priority: 5,
-  },
-];
 
+const fetchResolvers = async ({ nexus, orgLabel, projectLabel }:
+  { nexus: NexusClient, orgLabel: string, projectLabel: string }) => {
+  try {
+    const resolvers = await nexus.Resolver.list(orgLabel, projectLabel);
+    return resolvers._results.map(item => ({
+      // @ts-ignore
+      type: (item['@type']),
+      priority: item.priority,
+      id: item['@id']
+    }));
+  } catch (error) {
+    // @ts-ignore
+    throw new Error('Can not find resolvers', { cause: error });
+  }
+}
 const ResolversSubView = (props: Props) => {
-  const handleOnEdit = () => {};
-  const createNewResolverHandler = () => {};
-  const columns: ColumnsType<DataType> = [
+  const nexus = useNexusContext();
+  const match = useRouteMatch<{
+    orgLabel: string;
+    projectLabel: string;
+    viewId?: string;
+  }>();
+  const {
+    params: { orgLabel, projectLabel },
+  } = match;
+  const handleOnEdit = () => { };
+  const createNewResolverHandler = () => { };
+  const columns: ColumnsType<TDataType> = [
     {
       key: 'name',
       dataIndex: 'name',
       title: 'Name',
-      render: text => <span>{text}</span>,
+      render: (text, record) => <span>{
+        record.id.split('/').pop()
+      }</span>,
     },
     {
       key: 'type',
       dataIndex: 'type',
       title: 'Type',
-      render: text => <span>{text}</span>,
+      render: text => <div>{
+        text.map((item: string) => <div>{item}</div>)
+      }</div>,
     },
     {
       key: 'priority',
@@ -67,14 +73,16 @@ const ResolversSubView = (props: Props) => {
       title: 'Actions',
       align: 'center',
       render: text => (
-        <Button type="link" htmlType="button" onClick={handleOnEdit}>
+        <Button disabled type="link" htmlType="button" onClick={handleOnEdit}>
           Edit
         </Button>
       ),
     },
   ];
-
-  const data: DataType[] = viewsSample;
+  const { data: resolvers, status } = useQuery({
+    queryKey: ['resolvers', { orgLabel, projectLabel }],
+    queryFn: () => fetchResolvers({ nexus, orgLabel, projectLabel }),
+  });
 
   return (
     <div className="settings-view settings-resolvers-view">
@@ -89,13 +97,16 @@ const ResolversSubView = (props: Props) => {
         >
           Create Resolver
         </Button>
-        <Table
+        <Table<TDataType>
+          loading={status === 'loading'}
           className="views-table"
           rowClassName="view-item-row"
           columns={columns}
-          dataSource={data}
+          rowKey={r => r.id}
+          dataSource={resolvers}
           sticky={true}
           size="middle"
+          pagination={false}
         />
       </div>
     </div>
