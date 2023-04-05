@@ -3,9 +3,9 @@ import { useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Table, Button } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import './SettingsView.less';
 import { useMutation, useQuery } from 'react-query';
 import { NexusClient } from '@bbp/nexus-sdk';
+import './SettingsView.less';
 
 type Props = {};
 type DataType = {
@@ -116,7 +116,7 @@ const ViewsSubView = (props: Props) => {
         <Button
           style={{ maxWidth: 150, margin: 0, marginTop: 20 }}
           type="primary"
-          disabled={true} // TODO: write premission to be enabled
+          disabled={true}
           htmlType="button"
           onClick={createNewViewHandler}
         >

@@ -5,8 +5,8 @@ import { useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useRouteMatch } from 'react-router';
 import { NexusClient } from '@bbp/nexus-sdk';
-
 import './SettingsView.less';
+
 type Props = {};
 type TDataType = {
   id: string;

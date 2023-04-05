@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Spin, Row, Col } from 'antd';
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Spin, Row } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useRouteMatch } from 'react-router';
 import useNotification from '../../../../shared/hooks/useNotification';

@@ -5,12 +5,9 @@ import { useHistory, useRouteMatch } from 'react-router';
 import { useSelector } from 'react-redux';
 import { useMutation } from 'react-query';
 import { NexusClient } from '@bbp/nexus-sdk';
-
-import useNotification, {
-  NexusError,
-} from '../../../../shared/hooks/useNotification';
 import { makeOrganizationUri } from '../../../../shared/utils';
 import { RootState } from '../../../../shared/store/reducers';
+import useNotification from '../../../../shared/hooks/useNotification';
 import './SettingsView.less';
 
 type Props = {

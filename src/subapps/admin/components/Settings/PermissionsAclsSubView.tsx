@@ -4,7 +4,7 @@ import { Table, Collapse, Checkbox } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useRouteMatch } from 'react-router';
 import { useQuery } from 'react-query';
-import { ACL, Identity, NexusClient } from '@bbp/nexus-sdk';
+import { Identity, NexusClient } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useAdminSubappContext } from '../../../../subapps/admin';
 import './SettingsView.less';

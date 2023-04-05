@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useRouteMatch } from 'react-router';
 import { Table, Button, Spin } from 'antd';
 import { ColumnsType } from 'antd/es/table';
