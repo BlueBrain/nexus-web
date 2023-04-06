@@ -75,7 +75,7 @@ function ProjectsView({ }: Props) {
 
   const { data: organization, status, error: organisationError } = useQuery({
     enabled: !!orgLabel,
-    queryKey: ['organization', { orgLabel }],
+    queryKey: ['organization/projects', { orgLabel }],
     queryFn: () => fetchOrganizationDetails({ nexus, orgLabel: orgLabel! }),
   });
 

@@ -4,7 +4,7 @@ import { useHistory } from 'react-router';
 import { Link, useLocation } from 'react-router-dom';
 import { useInfiniteQuery, useQueryClient } from 'react-query'
 import { Button, Modal, Drawer, Input, Spin } from 'antd';
-import { PlusSquareOutlined } from '@ant-design/icons';
+import { PlusSquareOutlined, RightSquareOutlined } from '@ant-design/icons';
 import { NexusClient, OrganizationList, OrgResponseCommon } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { Avatar, Breadcrumb, List, Tag } from 'antd';
@@ -37,6 +37,34 @@ const fetchOrganizationList = ({ nexus, size, query, from = 0 }: TFetchOrganizat
   deprecated: SHOULD_INCLUDE_DEPRECATED,
 })
 
+const OrganizationItem = ({ title, to, count, description }:
+  { title: string, to: string, description?: string, count: number }
+) => {
+  return (
+    <List.Item className='route-result-list_item'>
+      <div className='route-result-list_item_wrapper'>
+        <div className='org'>
+          <Link to={to}>
+            <h3>{title}</h3>
+          </Link>
+          <p>{description}</p>
+        </div>
+        <div className='statistics'>
+          <div className='statistics_item'>
+            <div>Projects</div>
+            <div>{count}</div>
+          </div>
+        </div>
+        <div className='redirection'>
+          <Link to={to}>
+            View organization projects
+            <RightSquareOutlined />
+          </Link>
+        </div>
+      </div>
+    </List.Item>
+  )
+}
 function OrgsListView({ }: Props) {
   const queryInputRef = useRef<Input>(null);
   const loadMoreRef = useRef(null);
@@ -63,27 +91,28 @@ function OrgsListView({ }: Props) {
     isLoading,
     isFetching,
   } = useInfiniteQuery({
-    queryKey: ['fusion-projects', { query }],
+    queryKey: ['organizations', { query }],
     queryFn: ({ pageParam = 0 }) => fetchOrganizationList({ nexus, query, from: pageParam, size: DEFAULT_PAGE_SIZE }),
     //@ts-ignore
     getNextPageParam: (lastPage) => lastPage._next ? new URL(lastPage._next).searchParams.get('from') : undefined,
   });
 
   useIntersectionObserver({
-      target: loadMoreRef,
-      onIntersect: fetchNextPage,
-      enabled: !!hasNextPage,
+    target: loadMoreRef,
+    onIntersect: fetchNextPage,
+    enabled: !!hasNextPage,
   });
-  const loadMoreFooter = hasNextPage && (<Button
+  const loadMoreFooter = hasNextPage && (<div
     className='organizations-view-list-btn-infinitfetch'
     ref={loadMoreRef}
-    loading={isFetching || isLoading}
     onClick={() => fetchNextPage()}
-    disabled={!hasNextPage || isFetchingNextPage}
+    style={{
+      display: !hasNextPage || isFetchingNextPage ? 'none': 'flex',
+    }}
   >
-    {isFetchingNextPage && <span>Fetching</span>}
+    <Spin spinning={isFetchingNextPage || isFetching || isLoading} />
     {hasNextPage && !isFetchingNextPage && <span>Load more</span>}
-  </Button>)
+  </div>)
 
   const dataSource: OrgResponseCommon[] = flatten<OrgResponseCommon>(
     // @ts-ignore
@@ -160,7 +189,7 @@ function OrgsListView({ }: Props) {
       });
   };
   const handleOnOrgSearch: React.ChangeEventHandler<HTMLInputElement> = (e) => setQueryString(e.target.value);
-  
+
   useEffect(() => {
     setQueryString("");
     if (queryInputRef.current) {
@@ -171,7 +200,88 @@ function OrgsListView({ }: Props) {
   }, []);
   return (
     <Fragment>
-      <div className='organizations-view view-container'>
+      <div className='route-header'>
+        <img src={require('../../../../shared/images/organizations-bg.png')} alt='sscx' />
+        <div className='title'>
+          <h2>Organizations</h2>
+          <p>Total of 32 Projects</p>
+        </div>
+      </div>
+      <div className='route-body'>
+        <div className='route-actions'>
+          <div className='action-search'>
+            <Input.Search
+              allowClear
+              ref={queryInputRef}
+              value={query}
+              onChange={handleOnOrgSearch}
+              placeholder='Search Organisation'
+              className=''
+            />
+          </div>
+          <div className='action-sort'>
+
+          </div>
+        </div>
+        <div className='route-data-container'>
+          {status === 'error' && <div className='route-error'>⛔️ Error loading the organizations list</div>}
+          {status === 'success' && <div className='route-result-list'>
+            <Spin spinning={isLoading} >
+              <List
+                itemLayout="horizontal"
+                loadMore={loadMoreFooter}
+                dataSource={dataSource}
+                renderItem={(item: OrgResponseCommon) => {
+                  const to = `/orgs/${item._label}/`;
+                  const count = 31;
+                  return (
+                    <OrganizationItem
+                      {... { title: item._label, description: item.description, to, count }}
+                    />
+                    // <List.Item
+                    //   className='organizations-view-list-item'
+                    //   actions={[
+                    //     <Link to={to}>
+                    //       <Button type='link'>More</Button>
+                    //     </Link>,
+                    //     <AccessControl
+                    //       key={`access-control-${item['@id']}`}
+                    //       path={`/${item._label}`}
+                    //       permissions={['organizations/write']}
+                    //     >
+                    //       <Button
+                    //         className="edit-button"
+                    //         type="primary"
+                    //         size="small"
+                    //         tabIndex={1}
+                    //         onClick={(e: React.SyntheticEvent) => {
+                    //           e.stopPropagation();
+                    //           setSelectedOrg(item);
+                    //         }}
+                    //       >
+                    //         Edit
+                    //       </Button>
+                    //     </AccessControl>
+                    //   ]}
+                    // >
+                    //   <List.Item.Meta
+                    //     avatar={<Avatar className='organization-initial'>{item._label.substring(0, 2)}</Avatar>}
+                    //     title={
+                    //       <Fragment>
+                    //         <Link to={to} className='organization-link'>{item._label}</Link>
+                    //       </Fragment>
+                    //     }
+                    //     description={item.description}
+                    //   />
+                    // </List.Item>
+                  )
+                }}
+              />
+            </Spin>
+          </div>}
+        </div>
+      </div>
+      {/* <div className='organizations-view view-container'>
         <Breadcrumb>
           <Breadcrumb.Item>
             <Link to={'/'}>Home</Link>
@@ -282,7 +392,7 @@ function OrgsListView({ }: Props) {
             mode="edit"
           />
         )}
-      </Drawer>
+      </Drawer> */}
     </Fragment>
   )
 }

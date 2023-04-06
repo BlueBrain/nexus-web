@@ -4,6 +4,7 @@
     width: 100%;
     display: flex;
     flex-direction: column;
+
     &-error {
         max-width: 900px;
         margin: 10px auto;
@@ -16,6 +17,7 @@
         color: @fusion-danger-color;
         margin: 20px O;
     }
+
     &-title {
         display: flex;
         align-items: flex-start;
@@ -31,6 +33,7 @@
             margin: 20px O;
         }
     }
+
     &-actions {
         display: flex;
         align-items: center;
@@ -40,9 +43,11 @@
         margin: 10px auto;
         width: 100%;
     }
+
     &-create-org {
         margin-left: 10px;
     }
+
     &-list {
         display: flex;
         flex-direction: column;
@@ -56,6 +61,7 @@
             box-shadow: 0px 2px 12px rgba(#333, .12);
             padding: 10px 20px !important;
             margin-bottom: 5px;
+
             .ant-list-item-meta-description {
                 margin-left: 0 !important;
             }
@@ -71,10 +77,12 @@
         font-weight: 700;
         font-size: 14px;
     }
+
     .organization {
         &-initial {
             text-transform: uppercase;
         }
+
         &-link {
             text-transform: capitalize;
             font-family: 'Titillium Web';
@@ -83,6 +91,156 @@
             font-size: 16px;
             line-height: 140%;
             color: @fusion-daybreak-9;
+        }
+    }
+}
+
+.route {
+    &-header {
+        background: @fusion-daybreak-9;
+        position: relative;
+        height: 440px;
+        display: flex;
+        align-items: center;
+
+        img {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: auto;
+        }
+
+        .title {
+            padding-left: 14%;
+
+            h2 {
+                position: relative;
+                font-family: 'Titillium Web';
+                z-index: 10;
+                font-style: normal;
+                font-weight: 700;
+                font-size: 86px;
+                line-height: 110%;
+                color: #FFFFFF;
+                margin-bottom: 10px;
+            }
+
+            p {
+                position: relative;
+                font-family: 'Titillium Web';
+                font-style: normal;
+                font-weight: 400;
+                font-size: 20px;
+                line-height: 155%;
+                color: @fusion-daybreak-3;
+            }
+        }
+    }
+
+    &-body {
+        padding: 20px 10px;
+        max-width: 1240px;
+        margin: 0 auto;
+    }
+
+    &-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 40px;
+        .action {
+            &-search {
+                max-width: 400px;
+                width: 100%;
+
+                .ant-input-affix-wrapper {
+                    border: none;
+                    border-bottom: 1px solid @fusion-neutral-5;
+                }
+            }
+
+            &-sort {}
+        }
+    }
+
+    &-data-container {
+        .route {
+            &-error {}
+
+            &-result-list {
+                padding: 20px;
+                .route-result-list_item {
+                    padding: 5px 20px;
+                    cursor: pointer;
+                    &:hover {
+                        background: rgba(@fusion-daybreak-3, .12);
+                    }
+                    &_wrapper {
+                        width: 100%;
+                        display: grid;
+                        grid-template-columns: 2fr 1fr 1fr;
+                        gap: 10px;
+                        align-items: start;
+                        justify-content: space-between;
+
+                        .org {
+                            h3 {
+                                font-family: 'Titillium Web';
+                                font-style: normal;
+                                font-weight: 600;
+                                font-size: 24px;
+                                line-height: 32px;
+                                color: @fusion-daybreak-9;
+                                text-transform: capitalize;
+                            }
+
+                            p {
+                                font-family: 'Titillium Web';
+                                font-style: normal;
+                                font-weight: 300;
+                                font-size: 14px;
+                                line-height: 145%;
+                                letter-spacing: 0.01em;
+                                color: @fusion-daybreak-9;
+                            }
+                        }
+                        .statistics {
+                            &_item {
+                                div:first-child {
+                                    font-family: 'Titillium Web';
+                                    font-style: normal;
+                                    font-weight: 300;
+                                    font-size: 10px;
+                                    line-height: 32px;
+                                    letter-spacing: 0.02em;
+                                    color: @fusion-daybreak-9;
+                                }
+                                div:nth-child(2) {
+                                    font-family: 'Titillium Web';
+                                    font-style: normal;
+                                    font-weight: 600;
+                                    font-size: 14px;
+                                    line-height: 136%;
+                                    color: @fusion-daybreak-9;
+                                }
+                            }
+                        }
+                        .redirection {
+                            justify-self: end;
+                            font-family: 'Titillium Web';
+                            font-style: normal;
+                            font-weight: 700;
+                            font-size: 12px;
+                            line-height: 32px;
+                            color:  @fusion-daybreak-9;
+                            span {
+                                margin-left: 6px;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
