@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import * as React from 'react';
+import { useState } from 'react';
 import { useRouteMatch } from 'react-router';
 import { useMutation } from 'react-query';
 import { Form, Input, Button, Spin } from 'antd';
@@ -34,10 +35,7 @@ export interface PrefixMappingGroupInputState {
   prefix: string;
   namespace: string;
 }
-const PrefixMappingGroupInput: React.FC<{
-  groupId: number;
-  value?: any;
-}> = ({ groupId, value }) => {
+const PrefixMappingGroupInput = ({ groupId, value }: { groupId: number, value?: any }) => {
   return (
     <Input.Group className="project-form__item-inputs">
       <Form.Item
@@ -99,6 +97,7 @@ const submitSettings = async ({
     throw new Error('Can not update project settings', { cause: error });
   }
 };
+
 const GeneralSubView = ({
   project: { _label, _rev, description, base, vocab, mode },
   apiMappings,

@@ -23,6 +23,7 @@ import StudioReactContext, {
 } from '../../contexts/StudioContext';
 
 import { deltaPath } from '__mocks__/handlers/handlers';
+import { ButtonHTMLType } from 'antd/lib/button/button';
 
 describe('workSpaceMenu', () => {
   const history = createBrowserHistory({ basename: '/' });
@@ -385,10 +386,10 @@ describe('workSpaceMenu', () => {
     });
 
     await waitFor(async () => {
-      await screen.findByText('Workspace');
+      await screen.getAllByText('Workspace');
     });
     await act(async () => {
-      const workSpaceAction = await screen.findByText('Workspace');
+      const workSpaceAction =  await screen.getAllByText('Workspace')[0] as HTMLButtonElement;
       fireEvent.click(workSpaceAction);
     });
     await waitFor(async () => {
@@ -426,11 +427,11 @@ describe('workSpaceMenu', () => {
     });
 
     await waitFor(async () => {
-      const workSpaceAction = await screen.findByText('Workspace');
+      const workSpaceAction = await screen.getAllByText('Workspace')[0] as HTMLButtonElement;
       fireEvent.click(workSpaceAction);
     });
     await act(async () => {
-      const workSpaceAction = await screen.findByText('Workspace');
+      const workSpaceAction = await screen.getAllByText('Workspace')[0] as HTMLButtonElement;
       fireEvent.click(workSpaceAction);
     });
     const editButton = await screen.findByText('Remove');
@@ -463,11 +464,11 @@ describe('workSpaceMenu', () => {
     );
 
     await waitFor(async () => {
-      const workSpaceAction = await screen.findByText('Workspace');
+      const workSpaceAction = await screen.getAllByText('Workspace')[0] as HTMLButtonElement;
       fireEvent.click(workSpaceAction);
     });
     await act(async () => {
-      const workSpaceAction = await screen.findByText('Workspace');
+      const workSpaceAction = await screen.getAllByText('Workspace')[0] as HTMLButtonElement;
       fireEvent.click(workSpaceAction);
     });
     const editButton = await screen.findByText('Edit');

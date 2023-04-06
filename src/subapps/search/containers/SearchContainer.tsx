@@ -25,6 +25,38 @@ const SearchContainer: React.FC = () => {
   const { query } = queryParams;
   const [selectedRowKeys, setSelectedRowKeys] = React.useState<any>([]);
 
+  const {
+    pagination,
+    setPagination,
+    handlePaginationChange,
+    renderShowTotal,
+    onPageSizeOptionChanged,
+  } = useSearchPagination();
+  const {
+    isLoading,
+    searchError,
+    columns,
+    data,
+    visibleColumns,
+    filterState,
+    dispatchFilter,
+    sortState,
+    removeSortOption,
+    changeSortOption,
+    resetAll,
+    fieldsVisibilityState,
+    dispatchFieldVisibility,
+    config,
+    handleChangeSearchLayout,
+    selectedSearchLayout,
+  } = useGlobalSearchData(
+    query,
+    pagination.currentPage,
+    pagination.pageSize,
+    onQuerySuccess,
+    onSortOptionsChanged,
+    nexus
+  );
   const makeResourceUri = (
     orgLabel: string,
     projectLabel: string,
@@ -54,15 +86,6 @@ const SearchContainer: React.FC = () => {
       },
     };
   };
-
-  const {
-    pagination,
-    setPagination,
-    handlePaginationChange,
-    renderShowTotal,
-    onPageSizeOptionChanged,
-  } = useSearchPagination();
-
   function onPageSizeOptionsChanged(
     sortedPageSizeOptionsWithoutPotentialDupes: string[],
     pagination: SearchPagination
@@ -133,32 +156,6 @@ const SearchContainer: React.FC = () => {
     });
   }
 
-  const {
-    isLoading,
-    searchError,
-    columns,
-    data,
-    visibleColumns,
-    filterState,
-    dispatchFilter,
-    sortState,
-    removeSortOption,
-    changeSortOption,
-    resetAll,
-    fieldsVisibilityState,
-    dispatchFieldVisibility,
-    config,
-    handleChangeSearchLayout,
-    selectedSearchLayout,
-  } = useGlobalSearchData(
-    query,
-    pagination.currentPage,
-    pagination.pageSize,
-    onQuerySuccess,
-    onSortOptionsChanged,
-    nexus
-  );
-
   const clearAllCustomisation = () => {
     handlePaginationChange(1);
     resetAll();
@@ -215,7 +212,7 @@ const SearchContainer: React.FC = () => {
       );
     },
   };
-
+  
   return (
     <Spin spinning={isLoading}>
       {searchError ? (

@@ -26,22 +26,23 @@ import NumberFilterOptions from '../containers/NumberFilterOptions';
 import '../containers/SearchContainer.less';
 import { SortDirection } from '../../../shared/hooks/useAccessDataForTable';
 import SortMenuOptions from '../components/SortMenuOptions';
+import { useQueries } from 'react-query';
 
 export type SearchConfigField =
   | {
-      title: () => JSX.Element;
-      dataIndex: string;
-      key: string;
-      render: (value: any) => JSX.Element | '';
-      label: string;
-    }[]
+    title: () => JSX.Element;
+    dataIndex: string;
+    key: string;
+    render: (value: any) => JSX.Element | '';
+    label: string;
+  }[]
   | undefined;
 
 type actionType =
   | {
-      type: 'add' | 'remove';
-      payload: FilterState;
-    }
+    type: 'add' | 'remove';
+    payload: FilterState;
+  }
   | { type: 'fromLayout'; payload: FilterState[] };
 
 export type FilterState = {
@@ -156,25 +157,25 @@ export type fieldVisibilityActionType =
 
 export type ConfigField =
   | {
-      name: string;
-      label: string;
-      array: boolean;
-      optional: boolean;
-      fields: { name: string; format: string }[];
-      format?: undefined;
-      filterable: boolean;
-      sortable: boolean;
-    }
+    name: string;
+    label: string;
+    array: boolean;
+    optional: boolean;
+    fields: { name: string; format: string }[];
+    format?: undefined;
+    filterable: boolean;
+    sortable: boolean;
+  }
   | {
-      name: string;
-      label: string;
-      format: string;
-      array: boolean;
-      optional: boolean;
-      fields?: undefined;
-      filterable: boolean;
-      sortable: boolean;
-    };
+    name: string;
+    label: string;
+    format: string;
+    array: boolean;
+    optional: boolean;
+    fields?: undefined;
+    filterable: boolean;
+    sortable: boolean;
+  };
 
 export type SearchLayout = {
   name: string;
@@ -182,10 +183,10 @@ export type SearchLayout = {
   filters: {
     field: string;
     operator:
-      | 'and' // maps to allof
-      | 'or' // maps to anyof
-      | 'none' // maps to noneof
-      | 'missing'; // map to missing.  Perhaps we should use same operator names?
+    | 'and' // maps to allof
+    | 'or' // maps to anyof
+    | 'none' // maps to noneof
+    | 'missing'; // map to missing.  Perhaps we should use same operator names?
     values: string[];
   }[];
   sort: { field: string; order: 'asc' | 'desc' }[];
@@ -343,7 +344,23 @@ export type ESSortField = {
   direction: SortDirection;
   format?: string;
 };
-
+const fetchNexusSearchConfig = async ({ nexus }: { nexus: NexusClient }) => {
+  try {
+    const response = await nexus.Search.config();
+    const searchConfig = response as SearchConfig;
+    return searchConfig;
+  } catch (error) {
+    return error;
+  }
+}
+const fetchNexusSearchQuery = async ({ nexus, esQuery }: { nexus: NexusClient, esQuery: any }) => {
+  try {
+    const queryResponse = await nexus.Search.query(esQuery);
+    return queryResponse;
+  } catch (error) {
+    return error;
+  }
+}
 function useGlobalSearchData(
   query: string,
   page: number,
@@ -571,38 +588,59 @@ function useGlobalSearchData(
     }
     return [];
   }, [result]);
-
-  React.useEffect(() => {
-    setIsLoading(true);
-    nexus.Search.config()
-      .then((response: any) => {
-        const searchConfig = response as SearchConfig;
-        setConfig(searchConfig);
-        setSearchError(null);
-      })
-      .catch(e => {
-        setSearchError(e);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, []);
-
-  React.useEffect(() => {
-    setIsLoading(true);
-    nexus.Search.query(esQuery)
-      .then((queryResponse: any) => {
+  const [{ isLoading: loadingConfig }, { isLoading: loadingQuery }] = useQueries([
+    {
+      queryKey: 'nexus-search-config',
+      queryFn: () => fetchNexusSearchConfig({ nexus }),
+      // @ts-ignore
+      onSuccess: (searchConfig: SearchConfig) => setConfig(searchConfig),
+      // @ts-ignore
+      onError: (error) => setSearchError(error),
+    },
+    {
+      queryKey: ['nexus-search-query', { esQuery: JSON.stringify(esQuery, null, 2) }],
+      queryFn: () => fetchNexusSearchQuery({ nexus, esQuery }),
+      onSuccess: (queryResponse: any) => {
         setResult(queryResponse);
         onSuccess(queryResponse);
-        setSearchError(null);
-      })
-      .catch(e => {
-        setSearchError(e);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [esQuery]);
+      },
+       // @ts-ignore
+      onError: (error) => setSearchError(error),
+    }
+  ])
+  // React.useEffect(() => {
+  //   setIsLoading(true);
+  //   nexus.Search.config()
+  //     .then((response: any) => {
+  //       const searchConfig = response as SearchConfig;
+  //       setConfig(searchConfig);
+  //       setSearchError(null);
+  //     })
+  //     .catch(e => {
+  //       console.warn('@@error search config', e);
+  //       setSearchError(e);
+  //     })
+  //     .finally(() => {
+  //       setIsLoading(false);
+  //     });
+  // }, []);
+
+  // React.useEffect(() => {
+  //   setIsLoading(true);
+  //   nexus.Search.query(esQuery)
+  //     .then((queryResponse: any) => {
+  //       setResult(queryResponse);
+  //       onSuccess(queryResponse);
+  //       setSearchError(null);
+  //     })
+  //     .catch(e => {
+  //       console.warn('@@error search query', e);
+  //       setSearchError(e);
+  //     })
+  //     .finally(() => {
+  //       setIsLoading(false);
+  //     });
+  // }, [esQuery]);
 
   const clearAllFilters = () => {
     filterState.forEach(filter => {
@@ -707,7 +745,7 @@ function useGlobalSearchData(
   }, [selectedSearchLayout]);
 
   return {
-    isLoading,
+    isLoading: loadingConfig || loadingQuery,
     searchError,
     columns,
     data,

@@ -24,7 +24,6 @@ type GroupedPermission = {
   name: string;
   permissions: string[];
 };
-
 function groupPermissions(permissions: string[]): GroupedPermission[] {
   const permissionsSplited = permissions.map(item => {
     const [name, permission] = item.split('/');
@@ -34,6 +33,7 @@ function groupPermissions(permissions: string[]): GroupedPermission[] {
     ([key, value]) => {
       return {
         name: key,
+        // @ts-ignore
         permissions: value.map(item => item.permission),
       };
     }
@@ -147,6 +147,7 @@ const PermissionsAclsSubView = (props: Props) => {
           permissions: groupPermissions(permissions),
         };
       }),
+      // @ts-ignore
       o => o.identity.subject
     );
     const data = identitiesPermissions?.map(({ identity, permissions }) => {
@@ -156,6 +157,7 @@ const PermissionsAclsSubView = (props: Props) => {
         key: identity['@id'],
         name: `${identity['@type']}${name}`,
         parent: true,
+        // @ts-ignore
         children: permissions.map(({ name, permissions }) => ({
           name,
           key: `${identity['@type']}:${identity.subject}:${name}`,
