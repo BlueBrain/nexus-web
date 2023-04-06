@@ -31,16 +31,14 @@ export interface EnvironmentInfo {
 }
 
 const envInfoForClipboard = (env: EnvironmentInfo) => {
-  return (
-    `
+  return `
       Delta: ${env.deltaVersion}
       Fusion: ${Version}
       Environment Name: ${env.environmentName}
       Operating System: ${env.operatingSystem}
       Browser: ${env.browser}
-    `
-  )
-}
+    `;
+};
 
 const documentationURL = 'https://bluebrainnexus.io/docs';
 const repoUrl = 'https://github.com/BlueBrain/nexus-web';
@@ -58,10 +56,12 @@ const InformationContent = (props: InformationContentProps) => {
   return (
     <div className="information-panel">
       <Subtitle>About</Subtitle>
-      <p className="text">Nexus is Open Source and available under the Apache 2 License. </p>
-      
+      <p className="text">
+        Nexus is Open Source and available under the Apache 2 License.{' '}
+      </p>
+
       <Divider className="divider" />
-      
+
       <p className="subtext">
         © 2017-2022
         <a href="https://www.epfl.ch/" target="_blank">
@@ -79,31 +79,49 @@ const InformationContent = (props: InformationContentProps) => {
       <Divider className="divider" />
 
       <div className="nexus-service-header">
-          <Subtitle className="nexus-services">Nexus Services</Subtitle>
-          <Tag color="blue" className="tag">{props.environment.environmentName}</Tag>
-          <Copy
-            render={(copySuccess, triggerCopy) => (
-              <Tooltip title={copySuccess ? 'Copied!' : 'Copy Environment Information'}>
-                <Button onClick={() => triggerCopy(envInfoForClipboard(props.environment))} type="text" icon={<CopyIcon />} size='small' className="copy-icon" />
-              </Tooltip>
-            )}
-          />
+        <Subtitle className="nexus-services">Nexus Services</Subtitle>
+        <Tag color="blue" className="tag">
+          {props.environment.environmentName}
+        </Tag>
+        <Copy
+          render={(copySuccess, triggerCopy) => (
+            <Tooltip
+              title={copySuccess ? 'Copied!' : 'Copy Environment Information'}
+            >
+              <Button
+                onClick={() =>
+                  triggerCopy(envInfoForClipboard(props.environment))
+                }
+                type="text"
+                icon={<CopyIcon />}
+                size="small"
+                className="copy-icon"
+              />
+            </Tooltip>
+          )}
+        />
       </div>
 
       <div className="flex">
         <div className="info-card">
-          <h5 className='card-title'>Nexus Delta</h5>
-          <p className='card-body'>{props.environment.deltaVersion}</p>
+          <h5 className="card-title">Nexus Delta</h5>
+          <p className="card-body">{props.environment.deltaVersion}</p>
         </div>
         <div className="info-card">
-          <h5 className='card-title'>Nexus Fusion</h5>
-          <a  className="card-body" href={`${repoUrl}/commits/${props.commitHash}`} target="_blank">{Version}</a>
+          <h5 className="card-title">Nexus Fusion</h5>
+          <a
+            className="card-body"
+            href={`${repoUrl}/commits/${props.commitHash}`}
+            target="_blank"
+          >
+            {Version}
+          </a>
         </div>
       </div>
-      
-      <Divider className='divider' />
 
-      <p className='info-links'>
+      <Divider className="divider" />
+
+      <p className="info-links">
         <a href={documentationURL} target="_blank">
           <BookOutlined /> Documentation
         </a>
@@ -120,7 +138,7 @@ const InformationContent = (props: InformationContentProps) => {
           consent={props.consent}
         />
       }
-    </div >
+    </div>
   );
 };
 export interface HeaderProps {
@@ -234,7 +252,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           }
           trigger="click"
           placement="bottomRight"
-          className='information-panel'
+          className="information-panel"
         >
           <img
             src={infoIcon}

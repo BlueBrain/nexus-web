@@ -126,10 +126,12 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
     return '';
   }, [versions]);
 
-  const userPlatform = parseUserAgent(navigator.userAgent)
-  const environmentName = 'dev' // TODO: Replace with correct env info that backend will pass
-  const browser = `${userPlatform.browser?.name ?? ''} ${userPlatform.browser?.version ?? ''}` 
-  const operatingSystem = `${userPlatform.os?.name ?? ''} ${userPlatform.os?.version ?? ''}`
+  const userPlatform = parseUserAgent(navigator.userAgent);
+  const environmentName = 'dev'; // TODO: Replace with correct env info that backend will pass
+  const browser = `${userPlatform.browser?.name ?? ''} ${userPlatform.browser
+    ?.version ?? ''}`;
+  const operatingSystem = `${userPlatform.os?.name ?? ''} ${userPlatform.os
+    ?.version ?? ''}`;
 
   React.useEffect(() => {
     const currentSubApp =
@@ -223,7 +225,12 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
             </a>,
           ]}
           displayLogin={canLogin}
-          environment={{deltaVersion, operatingSystem, browser, environmentName }}
+          environment={{
+            deltaVersion,
+            operatingSystem,
+            browser,
+            environmentName,
+          }}
           githubIssueURL={githubIssueURL}
           forgeLink={layoutSettings.forgeLink}
           consent={consent}
