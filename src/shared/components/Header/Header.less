@@ -98,9 +98,120 @@
   }
 }
 
+.information-panel {
+  padding: 52px;
+
+  .text {
+    font-family: @font-family;
+    font-weight: 300;
+    font-size: @fusion-base-font-size;
+    color: @fusion-base-black;
+  }
+
+
+  .subtext {
+    font-family: @font-family;
+    font-weight: 300;
+    font-size: @fusion-base-font-size;
+    color: @fusion-gray-7;
+  }
+
+  .divider {
+    margin: 16px 0;
+  }
+
+  .bbp-logo {
+    font-family: 'Helvetica', 'Titillium Web', 'Arial';
+    font-weight: 700;
+    font-size: @fusion-base-font-size;
+    color: @fusion-blue-4;
+  }
+
+  .nexus-service-header {
+    position: relative;
+  }
+
+  .nexus-services {
+    color: @fusion-gray-7;
+    font-size: 14px;
+    display: inline-block;
+    margin-right: 12px;
+  }
+
+  .tag {
+    border-radius: 8px;
+  }
+
+  .copy-icon {
+    position: absolute;
+    right: 0px;
+    font-size: 14px;
+  }
+
+  .info-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 16px;
+    background: @fusion-blue-0;
+    box-shadow: 0px 10px 14px -6px rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+    margin-right: 12px;
+    margin-top: 10px;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    color: @fusion-blue-8;
+    font-family: @font-family;
+    font-weight: 700;
+    font-size: @fusion-heading-5-size;
+  }
+
+  .card-body {
+    color: @fusion-blue-8;
+    font-family: @font-family;
+    font-weight: 400;
+    font-size: @fusion-body-small;
+  }
+
+  .info-links {
+    a {
+      font-family: @font-family;
+      font-weight: 300;
+      font-size: @fusion-base-font-size;
+      color: @fusion-gray-7;
+      margin-right: 10px;
+    }
+  }
+}
+
+.flex {
+  display: flex;
+}
+
+.environment-info {
+  padding: 10px;
+  border-radius: 8px;
+  background: #f4f4f5;
+  color: #24292E;
+  font-size: 0.8em;
+
+  .label {
+    color: #0070c9;
+  }
+
+  .copy-icon {
+    position: absolute;
+    right: 16px;
+    font-size: 16px;
+  }
+}
+
 .ant-popover-inner {
   background-color: @fusion-background-color !important;
 }
+
 .ant-popover-inner-content {
   padding: 6px !important;
 }

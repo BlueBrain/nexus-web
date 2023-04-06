@@ -7,6 +7,7 @@ type triggerCopy = (textToCopy: string) => void;
 
 interface CopyProps {
   revertDelay?: number;
+  className?: string;
   render(
     copySuccess: boolean,
     triggerCopy: triggerCopy

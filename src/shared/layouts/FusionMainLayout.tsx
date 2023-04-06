@@ -24,6 +24,7 @@ import DataCartContainer, {
 import './FusionMainLayout.less';
 import useNotification from '../hooks/useNotification';
 import ErrorBoundary from '../components/ErrorBoundary';
+import { parseUserAgent } from 'react-device-detect';
 
 const { Content } = Layout;
 
@@ -125,6 +126,11 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
     return '';
   }, [versions]);
 
+  const userPlatform = parseUserAgent(navigator.userAgent)
+  const environmentName = 'dev' // TODO: Replace with correct env info that backend will pass
+  const browser = `${userPlatform.browser?.name ?? ''} ${userPlatform.browser?.version ?? ''}` 
+  const operatingSystem = `${userPlatform.os?.name ?? ''} ${userPlatform.os?.version ?? ''}`
+
   React.useEffect(() => {
     const currentSubApp =
       subApps.find(({ route }) => {
@@ -217,7 +223,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
             </a>,
           ]}
           displayLogin={canLogin}
-          version={deltaVersion}
+          environment={{deltaVersion, operatingSystem, browser, environmentName }}
           githubIssueURL={githubIssueURL}
           forgeLink={layoutSettings.forgeLink}
           consent={consent}

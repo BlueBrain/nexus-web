@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Menu, Dropdown, Popover } from 'antd';
+import { Menu, Dropdown, Popover, Button, Tooltip, Divider, Tag } from 'antd';
 import {
   BookOutlined,
   GithubOutlined,
@@ -13,6 +13,9 @@ import { ConsentType } from '../../layouts/FusionMainLayout';
 
 import './Header.less';
 import Navigation from './Navigation';
+import { parseUserAgent } from 'react-device-detect';
+import { CopyIcon } from '../../images/CopyIcon';
+import { Subtitle } from '../../styled_components/typography/Subtitle/Subtitle';
 
 declare var Version: string;
 
@@ -20,12 +23,31 @@ const epflLogo = require('../../images/EPFL-logo.svg');
 const infoIcon = require('../../images/infoIcon.svg');
 const copyIcon = require('../../images/copyIcon.svg');
 
+export interface EnvironmentInfo {
+  deltaVersion: string;
+  environmentName: string;
+  operatingSystem: string;
+  browser: string;
+}
+
+const envInfoForClipboard = (env: EnvironmentInfo) => {
+  return (
+    `
+      Delta: ${env.deltaVersion}
+      Fusion: ${Version}
+      Environment Name: ${env.environmentName}
+      Operating System: ${env.operatingSystem}
+      Browser: ${env.browser}
+    `
+  )
+}
+
 const documentationURL = 'https://bluebrainnexus.io/docs';
 const repoUrl = 'https://github.com/BlueBrain/nexus-web';
 const releaseNoteUrl = 'https://github.com/BlueBrain/nexus-web/releases';
 
 interface InformationContentProps {
-  version: string;
+  environment: EnvironmentInfo;
   githubIssueURL: string;
   commitHash?: string;
   consent?: ConsentType;
@@ -34,13 +56,17 @@ interface InformationContentProps {
 
 const InformationContent = (props: InformationContentProps) => {
   return (
-    <>
-      <p>Nexus is Open Source and available under the Apache 2 License. </p>
-      <p>
+    <div className="information-panel">
+      <Subtitle>About</Subtitle>
+      <p className="text">Nexus is Open Source and available under the Apache 2 License. </p>
+      
+      <Divider className="divider" />
+      
+      <p className="subtext">
         © 2017-2022
         <a href="https://www.epfl.ch/" target="_blank">
           <img
-            style={{ width: '3em', marginBottom: 3 }}
+            style={{ width: '3em', marginBottom: 3, marginLeft: '20px' }}
             src={epflLogo}
             alt="EPFL"
           />
@@ -50,22 +76,40 @@ const InformationContent = (props: InformationContentProps) => {
           <span className="bbp-logo">Blue Brain Project</span>
         </a>
       </p>
-      <h4>Nexus Services</h4>
-      <p>
-        Nexus Delta v{props.version} <br />
-        <a href={`${repoUrl}/commits/${props.commitHash}`} target="_blank">
-          Nexus Fusion {Version}
-        </a>
-      </p>
-      <p>
+      <Divider className="divider" />
+
+      <div className="nexus-service-header">
+          <Subtitle className="nexus-services">Nexus Services</Subtitle>
+          <Tag color="blue" className="tag">{props.environment.environmentName}</Tag>
+          <Copy
+            render={(copySuccess, triggerCopy) => (
+              <Tooltip title={copySuccess ? 'Copied!' : 'Copy Environment Information'}>
+                <Button onClick={() => triggerCopy(envInfoForClipboard(props.environment))} type="text" icon={<CopyIcon />} size='small' className="copy-icon" />
+              </Tooltip>
+            )}
+          />
+      </div>
+
+      <div className="flex">
+        <div className="info-card">
+          <h5 className='card-title'>Nexus Delta</h5>
+          <p className='card-body'>{props.environment.deltaVersion}</p>
+        </div>
+        <div className="info-card">
+          <h5 className='card-title'>Nexus Fusion</h5>
+          <a  className="card-body" href={`${repoUrl}/commits/${props.commitHash}`} target="_blank">{Version}</a>
+        </div>
+      </div>
+      
+      <Divider className='divider' />
+
+      <p className='info-links'>
         <a href={documentationURL} target="_blank">
           <BookOutlined /> Documentation
         </a>
-        {' | '}
         <a href={props.githubIssueURL} target="_blank">
           <GithubOutlined /> Report Issue
         </a>
-        {' | '}
         <a href={releaseNoteUrl} target="_blank">
           <GithubOutlined /> Fusion Release Notes
         </a>
@@ -76,11 +120,11 @@ const InformationContent = (props: InformationContentProps) => {
           consent={props.consent}
         />
       }
-    </>
+    </div >
   );
 };
 export interface HeaderProps {
-  version: string;
+  environment: EnvironmentInfo;
   githubIssueURL: string;
   forgeLink: string;
   name?: string;
@@ -107,7 +151,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   displayLogin = true,
   links = [],
   children,
-  version,
+  environment,
   githubIssueURL,
   forgeLink,
   consent,
@@ -147,6 +191,8 @@ const Header: React.FunctionComponent<HeaderProps> = ({
     </Menu>
   );
 
+  const info = parseUserAgent(navigator.userAgent);
+
   return (
     <header className="Header">
       <div className="selectors">{children}</div>
@@ -165,7 +211,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
                   triggerCopy(token);
                 }}
               >
-                <img src={copyIcon} />{' '}
+                <img src={copyIcon} style={{ color: 'red' }} />{' '}
                 {copySuccess ? (
                   <span className="button-text">Copied!</span>
                 ) : (
@@ -179,7 +225,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         <Popover
           content={
             <InformationContent
-              version={version}
+              environment={environment}
               githubIssueURL={githubIssueURL}
               consent={consent}
               onClickRemoveConsent={onClickRemoveConsent}
@@ -187,8 +233,8 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             />
           }
           trigger="click"
-          title="Information"
           placement="bottomRight"
+          className='information-panel'
         >
           <img
             src={infoIcon}
