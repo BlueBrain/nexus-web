@@ -3,12 +3,13 @@ import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Fragment, useEffect, useMemo, useReducer, useRef } from 'react';
 import { animate, spring } from 'motion';
-import { Button, Table, Tag } from 'antd';
+import { Button, Checkbox, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { FileDoneOutlined, DownloadOutlined, PlusOutlined, CloseOutlined, CloseSquareOutlined } from '@ant-design/icons'
 import { makeOrgProjectTuple, TDataSource, TResourceTableData } from '../../molecules/MyDataTable/MyDataTable';
 import { RootState } from '../../../shared/store/reducers';
 import useOnClickOutside from '../../../shared/hooks/useClickOutside';
+import DeprecatedIcon from '../../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
 import './styles.less';
 
 type Props = {
@@ -25,7 +26,7 @@ export class DataPanelEvent<T> extends Event {
 export const DATA_PANEL_STORAGE_EVENT = 'datapanelupdated';
 export const DATA_PANEL_STORAGE = 'datapanel-storage';
 
-const DataPanel: React.FC<Props> = ({}) => {
+const DataPanel: React.FC<Props> = ({ }) => {
     const location = useLocation();
     const oidc = useSelector((state: RootState) => state.oidc);
     const authenticated = !!oidc.user;
@@ -52,7 +53,11 @@ const DataPanel: React.FC<Props> = ({}) => {
         updateDataPanel({ resources: { selectedRowKeys, selectedRows } });
     }
     const totalSelectedResources = resources?.selectedRowKeys?.length;
-    const handleOpenDataPanel = () => updateDataPanel({ openDataPanel: true });
+    const handleOpenDataPanel: React.MouseEventHandler<HTMLDivElement> = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        updateDataPanel({ openDataPanel: true });
+    }
     const handleCloseDataPanel = () => {
         updateDataPanel({ openDataPanel: false })
         datapanelRef.current && animate(datapanelRef.current, {
@@ -195,23 +200,32 @@ const DataPanel: React.FC<Props> = ({}) => {
                     </div>
                 </div>
             </div>
-            <div className='datapanel-bar'>
+            <div className='datapanel-bar' >
                 <div className='left'>
-                    <div className='selected-items'>
+                    <div 
+                        className='selected-items' 
+                        onClick={handleOpenDataPanel}
+                    >
                         <FileDoneOutlined />
                         <span>{totalSelectedResources} elements selected</span>
                     </div>
+                </div>
+                <div className='download-options'>
+                    <Checkbox>ASC</Checkbox>
+                    <Checkbox>SWC</Checkbox>
+                    <Checkbox>H5 <DeprecatedIcon style={{ marginBottom: 5 }} /> </Checkbox>
+                    <Checkbox>OBJ</Checkbox>
                     <Button type='link'>
                         <DownloadOutlined />
                         Download
                     </Button>
                 </div>
-                <Button
+                {/* <Button
                     type='link'
                     className='btn-icon-trigger'
                     icon={<PlusOutlined color='white' />}
                     onClick={handleOpenDataPanel}
-                />
+                /> */}
             </div>
         </div>
     )

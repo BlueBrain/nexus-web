@@ -1,0 +1,261 @@
+@import '../../shared//lib.less';
+
+.organizations-view {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    &-error {
+        max-width: 900px;
+        margin: 10px auto;
+        width: 100%;
+        font-family: 'Titillium Web';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 110%;
+        color: @fusion-danger-color;
+        margin: 20px O;
+    }
+
+    &-title {
+        display: flex;
+        align-items: flex-start;
+        flex-direction: row;
+
+        h2 {
+            font-family: 'Titillium Web';
+            font-style: normal;
+            font-weight: 700;
+            font-size: 30px;
+            line-height: 110%;
+            color: @fusion-main-color;
+            margin: 20px O;
+        }
+    }
+
+    &-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        max-width: 900px;
+        margin: 10px auto;
+        width: 100%;
+    }
+
+    &-create-org {
+        margin-left: 10px;
+    }
+
+    &-list {
+        display: flex;
+        flex-direction: column;
+        max-width: 900px;
+        margin: 0 auto;
+        width: 100%;
+
+        &-item {
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0px 2px 12px rgba(#333, .12);
+            padding: 10px 20px !important;
+            margin-bottom: 5px;
+
+            .ant-list-item-meta-description {
+                margin-left: 0 !important;
+            }
+        }
+    }
+
+    &-list-btn-infinitfetch {
+        align-self: center;
+        width: 100%;
+        background-color: transparent;
+        border: none;
+        letter-spacing: 1.2px;
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    .organization {
+        &-initial {
+            text-transform: uppercase;
+        }
+
+        &-link {
+            text-transform: capitalize;
+            font-family: 'Titillium Web';
+            font-style: normal;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 140%;
+            color: @fusion-daybreak-9;
+        }
+    }
+}
+
+.main-route {
+    position: relative;
+}
+
+.route {
+    &-body {
+        background-color: white !important;
+
+        &-container {
+            padding: 20px 10px;
+            max-width: 1240px;
+            margin: 0 auto;
+        }
+    }
+
+    &-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 40px;
+
+        .action {
+            &-search {
+                max-width: 400px;
+                width: 100%;
+                background-color: white !important;
+
+                input {
+                    background-color: white !important;
+                }
+
+                button {
+                    border: none !important;
+                    box-shadow: none !important;
+                    background-color: white !important;
+                }
+
+                .ant-input-wrapper {
+                    border-bottom: 1px solid @fusion-neutral-5;
+                }
+
+                .ant-input-affix-wrapper {
+                    outline: none !important;
+                    box-shadow: none !important;
+                    border: none !important;
+                    background-color: white !important;
+                    border-bottom: 1px solid @fusion-neutral-5;
+                }
+            }
+
+            &-sort {
+                display: grid;
+                grid-template-columns: repeat(3, max-content);
+                gap: 3px;
+
+                span:first-child {
+                    font-family: 'Titillium Web';
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 14px;
+                    line-height: 22px;
+                    letter-spacing: 0.01em;
+                    color: @fusion-daybreak-9;
+                }
+
+                .anticon {
+                    cursor: pointer;
+                    font-size: 18px;
+                    background-color: @fusion-neutral-6;
+                    padding: 3px;
+                    border-radius: 2px;
+                    color: white;
+                }
+            }
+        }
+    }
+
+    &-data-container {
+        .route {
+            &-error {}
+
+            &-result-list {
+                padding: 20px;
+
+                .route-result-list_item {
+                    padding: 5px 20px;
+                    cursor: pointer;
+
+                    &:hover {
+                        background: rgba(@fusion-daybreak-3, .12);
+                    }
+
+                    &_wrapper {
+                        width: 100%;
+                        display: grid;
+                        grid-template-columns: 2fr 1fr 1fr;
+                        gap: 10px;
+                        align-items: start;
+                        justify-content: space-between;
+
+                        .org {
+                            h3 {
+                                font-family: 'Titillium Web';
+                                font-style: normal;
+                                font-weight: 600;
+                                font-size: 24px;
+                                line-height: 32px;
+                                color: @fusion-daybreak-9;
+                                text-transform: capitalize;
+                            }
+
+                            p {
+                                font-family: 'Titillium Web';
+                                font-style: normal;
+                                font-weight: 300;
+                                font-size: 14px;
+                                line-height: 145%;
+                                letter-spacing: 0.01em;
+                                color: @fusion-daybreak-9;
+                            }
+                        }
+
+                        .statistics {
+                            &_item {
+                                div:first-child {
+                                    font-family: 'Titillium Web';
+                                    font-style: normal;
+                                    font-weight: 300;
+                                    font-size: 10px;
+                                    line-height: 32px;
+                                    letter-spacing: 0.02em;
+                                    color: @fusion-daybreak-9;
+                                }
+
+                                div:nth-child(2) {
+                                    font-family: 'Titillium Web';
+                                    font-style: normal;
+                                    font-weight: 600;
+                                    font-size: 14px;
+                                    line-height: 136%;
+                                    color: @fusion-daybreak-9;
+                                }
+                            }
+                        }
+
+                        .redirection {
+                            justify-self: end;
+                            font-family: 'Titillium Web';
+                            font-style: normal;
+                            font-weight: 700;
+                            font-size: 12px;
+                            line-height: 32px;
+                            color: @fusion-daybreak-9;
+
+                            span {
+                                margin-left: 6px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -2,7 +2,7 @@ import { RouteProps } from 'react-router-dom';
 import Login from './views/Login';
 import ResourceView from './views/ResourceView';
 import UserView from './views/UserView';
-import ProjectsView from './views/ProjectsView';
+import ProjectsPage from '../pages/ProjectsPage/ProjectsPage';
 import StudioRedirectView from './views/StudioRedirectView';
 import Home from './views/Home';
 import MyDataView from './views/MyDataView';
@@ -23,7 +23,7 @@ const routes: RouteProps[] = [
   },
   {
     path: '/projects',
-    component: ProjectsView,
+    component: ProjectsPage,
   },
   {
     path: '/my-data',

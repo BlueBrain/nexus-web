@@ -85,8 +85,7 @@ export default function MyDataTabel({
         }), {
         selectedRowKeys: [],
         selectedRows: [],
-    }
-    );
+    });
     const goToResource = (
         orgLabel: string,
         projectLabel: string,

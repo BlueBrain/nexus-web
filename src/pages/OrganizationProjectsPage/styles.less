@@ -1,27 +1,31 @@
-@import '../../../../shared/lib.less';
+@import '../../shared//lib.less';
 
-.organizations-view {
+.org-projects-view {
     width: 100%;
     display: flex;
     flex-direction: column;
 
     &-error {
-        max-width: 900px;
-        margin: 10px auto;
-        width: 100%;
-        font-family: 'Titillium Web';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 18px;
-        line-height: 110%;
-        color: @fusion-danger-color;
-        margin: 20px O;
+        // max-width: 900px;
+        // margin: 10px auto;
+        // width: 100%;
+        // font-family: 'Titillium Web';
+        // font-style: normal;
+        // font-weight: 400;
+        // font-size: 18px;
+        // line-height: 110%;
+        // color: @fusion-danger-color;
+        // margin: 20px O;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 20px auto;
     }
 
     &-title {
         display: flex;
         align-items: flex-start;
-        flex-direction: row;
+        flex-direction: column;
 
         h2 {
             font-family: 'Titillium Web';
@@ -30,7 +34,27 @@
             font-size: 30px;
             line-height: 110%;
             color: @fusion-main-color;
-            margin: 20px O;
+            margin: 20px 0px 5px;
+        }
+
+        p {
+            font-family: 'Titillium Web';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 50%;
+            color: @fusion-menu-color;
+            margin-top: 5px;
+        }
+
+        h3 {
+            font-family: 'Titillium Web';
+            font-style: normal;
+            font-weight: 700;
+            font-size: 18px;
+            line-height: 70%;
+            color: @fusion-daybreak-9;
+            margin-bottom: 15px
         }
     }
 
@@ -44,7 +68,7 @@
         width: 100%;
     }
 
-    &-create-org {
+    &-create-project {
         margin-left: 10px;
     }
 
@@ -95,53 +119,19 @@
     }
 }
 
+.main-route {
+    position: relative;
+}
+
 .route {
-    &-header {
-        background: @fusion-daybreak-9;
-        position: relative;
-        height: 440px;
-        display: flex;
-        align-items: center;
-
-        img {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100%;
-            height: auto;
-        }
-
-        .title {
-            padding-left: 14%;
-
-            h2 {
-                position: relative;
-                font-family: 'Titillium Web';
-                z-index: 10;
-                font-style: normal;
-                font-weight: 700;
-                font-size: 86px;
-                line-height: 110%;
-                color: #FFFFFF;
-                margin-bottom: 10px;
-            }
-
-            p {
-                position: relative;
-                font-family: 'Titillium Web';
-                font-style: normal;
-                font-weight: 400;
-                font-size: 20px;
-                line-height: 155%;
-                color: @fusion-daybreak-3;
-            }
-        }
-    }
-
     &-body {
-        padding: 20px 10px;
-        max-width: 1240px;
-        margin: 0 auto;
+        background-color: white !important;
+
+        &-container {
+            padding: 20px 10px;
+            max-width: 1240px;
+            margin: 0 auto;
+        }
     }
 
     &-actions {
@@ -149,18 +139,60 @@
         align-items: center;
         justify-content: space-between;
         padding: 40px;
+
         .action {
             &-search {
                 max-width: 400px;
                 width: 100%;
+                background-color: white !important;
+
+                input {
+                    background-color: white !important;
+                }
+
+                button {
+                    border: none !important;
+                    box-shadow: none !important;
+                    background-color: white !important;
+                }
+
+                .ant-input-wrapper {
+                    border-bottom: 1px solid @fusion-neutral-5;
+                }
 
                 .ant-input-affix-wrapper {
-                    border: none;
+                    outline: none !important;
+                    box-shadow: none !important;
+                    border: none !important;
+                    background-color: white !important;
                     border-bottom: 1px solid @fusion-neutral-5;
                 }
             }
 
-            &-sort {}
+            &-sort {
+                display: grid;
+                grid-template-columns: repeat(3, max-content);
+                gap: 3px;
+
+                span:first-child {
+                    font-family: 'Titillium Web';
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 14px;
+                    line-height: 22px;
+                    letter-spacing: 0.01em;
+                    color: @fusion-daybreak-9;
+                }
+
+                .anticon {
+                    cursor: pointer;
+                    font-size: 18px;
+                    background-color: @fusion-neutral-6;
+                    padding: 3px;
+                    border-radius: 2px;
+                    color: white;
+                }
+            }
         }
     }
 
@@ -170,12 +202,15 @@
 
             &-result-list {
                 padding: 20px;
+
                 .route-result-list_item {
                     padding: 5px 20px;
                     cursor: pointer;
+
                     &:hover {
                         background: rgba(@fusion-daybreak-3, .12);
                     }
+
                     &_wrapper {
                         width: 100%;
                         display: grid;
@@ -193,6 +228,15 @@
                                 line-height: 32px;
                                 color: @fusion-daybreak-9;
                                 text-transform: capitalize;
+                                .depreacted-tag {
+                                    font-family: 'Titillium Web';
+                                    font-style: normal;
+                                    font-weight: 700;
+                                    font-size: 10px;
+                                    line-height: 14px;
+                                    letter-spacing: 0.01em;
+                                    color: #E9B328;
+                                }
                             }
 
                             p {
@@ -205,17 +249,23 @@
                                 color: @fusion-daybreak-9;
                             }
                         }
+
                         .statistics {
+                            display: grid;
+                            grid-template-columns: 1fr 1fr;
+                            grid-template-rows: max-content max-content;
+                            gap: 5px;
                             &_item {
                                 div:first-child {
                                     font-family: 'Titillium Web';
                                     font-style: normal;
                                     font-weight: 300;
                                     font-size: 10px;
-                                    line-height: 32px;
+                                    line-height: 14px;
                                     letter-spacing: 0.02em;
                                     color: @fusion-daybreak-9;
                                 }
+
                                 div:nth-child(2) {
                                     font-family: 'Titillium Web';
                                     font-style: normal;
@@ -226,6 +276,7 @@
                                 }
                             }
                         }
+
                         .redirection {
                             justify-self: end;
                             font-family: 'Titillium Web';
@@ -233,7 +284,8 @@
                             font-weight: 700;
                             font-size: 12px;
                             line-height: 32px;
-                            color:  @fusion-daybreak-9;
+                            color: @fusion-daybreak-9;
+
                             span {
                                 margin-left: 6px;
                             }

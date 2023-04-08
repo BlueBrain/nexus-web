@@ -1,6 +1,6 @@
 import * as React from 'react';
-import OrgsListView from './views/OrganizationsListPage/OrganizationListPage';
-import OrgProjectsView from './views/OrganizationProjectsPage/OrganizationProjectsPage';
+import OrganizationListPage from '../../pages/OrganizationsListPage/OrganizationListPage';
+import OrganizationProjectsPage from '../../pages/OrganizationProjectsPage/OrganizationProjectsPage';
 import ProjectView from './views/ProjectPage/ProjectPage';
 import { SubApp } from '..';
 
@@ -50,12 +50,12 @@ const Admin: SubApp = () => {
       {
         path: '/',
         exact: true,
-        component: AdminSubappProviderHOC(OrgsListView),
+        component: AdminSubappProviderHOC(OrganizationListPage),
       },
       {
         path: '/:orgLabel',
         exact: true,
-        component: AdminSubappProviderHOC(OrgProjectsView),
+        component: AdminSubappProviderHOC(OrganizationProjectsPage),
       },
       {
         path: [
@@ -104,11 +104,11 @@ export const Organizations: SubApp = () => {
     routes: [{
       path: '/',
       exact: true,
-      component: OrganizationsSubappProviderHOC(OrgsListView),
+      component: OrganizationsSubappProviderHOC(OrganizationListPage),
     }, {
       path: '/:orgLabel',
       exact: true,
-      component: OrganizationsSubappProviderHOC(OrgProjectsView),
+      component: OrganizationsSubappProviderHOC(OrganizationProjectsPage),
     }, {
       path: [
         '/:orgLabel/:projectLabel',
