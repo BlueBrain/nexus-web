@@ -81,7 +81,7 @@ const StudioItem = (
   TStudioItem
 ) => {
   return (
-      <List.Item className='route-result-list_item'>
+      <List.Item className='route-result-list_item' role="listitem">
           <div className='route-result-list_item_wrapper'>
               <div className='org'>
                   <Link to={to}>
@@ -176,7 +176,6 @@ const FusionStudiosPage: React.FC = () => {
   const dataSource = flatten(
     // @ts-ignore
     data?.pages.map((page: ResourceList<{}>) => page._results.map((item: Resource)=> {
-      console.log('@@@item', item);
       const { projectLabel, orgLabel } = getOrgAndProjectFromProjectId(item._project)!;
       return {
         orgLabel,
@@ -192,7 +191,6 @@ const FusionStudiosPage: React.FC = () => {
   );
   // @ts-ignore
   const _total = (data?.pages?.[0]?._total) as number;
-
   useIntersectionObserver({
     target: loadMoreRef,
     onIntersect: fetchNextPage,

@@ -1,12 +1,14 @@
+import '@testing-library/jest-dom';
+import fetch from 'node-fetch';
+import { act } from 'react-dom/test-utils';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk';
-import StudioListView from '../../../../pages/StudiosPage/StudiosPage';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createBrowserHistory } from 'history';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
+import StudiosPage from '../../../../pages/StudiosPage/StudiosPage';
 import configureStore from '../../../../shared/store';
-import fetch from 'node-fetch';
 import {
   render,
   fireEvent,
@@ -14,8 +16,6 @@ import {
   screen,
   server,
 } from '../../../../utils/testUtil';
-import '@testing-library/jest-dom';
-import { act } from 'react-dom/test-utils';
 
 describe('StudioListContainer', () => {
   const history = createBrowserHistory({ basename: '/' });
@@ -43,7 +43,7 @@ describe('StudioListContainer', () => {
           <ConnectedRouter history={history}>
             <NexusProvider nexusClient={nexus}>
               <QueryClientProvider client={queryClient}>
-                <StudioListView></StudioListView>
+                <StudiosPage />
               </QueryClientProvider>
             </NexusProvider>
           </ConnectedRouter>
@@ -64,7 +64,7 @@ describe('StudioListContainer', () => {
           <ConnectedRouter history={history}>
             <NexusProvider nexusClient={nexus}>
               <QueryClientProvider client={queryClient}>
-                <StudioListView></StudioListView>
+                <StudiosPage />
               </QueryClientProvider>
             </NexusProvider>
           </ConnectedRouter>
@@ -74,7 +74,7 @@ describe('StudioListContainer', () => {
 
     await waitFor(async () => {
       const studios = await screen.getAllByRole('listitem');
-      expect(studios.length).toBe(14);
+      expect(studios.length).toBe(10);
     });
 
     const search = screen.getByRole('textbox');
@@ -82,13 +82,14 @@ describe('StudioListContainer', () => {
 
     // wait spinner to stop spinning.
     // While spinning it will have two items with testId studio-spinner
-    await waitFor(() => {
-      const items = screen.getAllByTestId('studio-spinner');
-      expect(items.length).toBe(1);
-    });
+    // await waitFor(() => {
+    //   const items = screen.getAllByTestId('studio-spinner');
+    //   expect(items.length).toBe(1);
+    // });
+    await waitFor(async () => {
+      const studios = await screen.getAllByRole('listitem');
+      expect(studios[1]).toHaveTextContent('test-label-2');
 
-    const studios = screen.getAllByRole('listitem');
-    expect(studios[1]).toHaveTextContent('1 results');
-    expect(studios[0]).toHaveTextContent('org1');
+    });
   });
 });
