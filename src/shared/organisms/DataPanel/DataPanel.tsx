@@ -86,7 +86,7 @@ const DataPanel: React.FC<Props> = ({ }) => {
             title: 'Name',
             dataIndex: 'name',
             fixed: true,
-            width: '35%'
+            render: (text) => `${text.split('/').pop()}`
         }, {
             key: 'project',
             title: 'project',
@@ -220,12 +220,6 @@ const DataPanel: React.FC<Props> = ({ }) => {
                         Download
                     </Button>
                 </div>
-                {/* <Button
-                    type='link'
-                    className='btn-icon-trigger'
-                    icon={<PlusOutlined color='white' />}
-                    onClick={handleOpenDataPanel}
-                /> */}
             </div>
         </div>
     )

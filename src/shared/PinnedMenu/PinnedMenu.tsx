@@ -14,23 +14,23 @@ type TMenuItem = {
 const ICON_SIZE = 16;
 const Menu = new Map<string, TMenuItem>([
     ['search', {
-        id: 'pinned-menu/search',
-        title: 'Search',
-        url: '/search',
+        id: 'pinned-menu/organizations',
+        title: 'Organizations',
+        url: '/orgs',
         bg: '#003A8C',
         icon: <SearchOutlined style={{ fontSize: ICON_SIZE, color: 'white' }} />,
     }],
     ['organizations', {
-        id: 'pinned-menu/organizations',
-        title: 'Organizations',
-        url: '/orgs',
+        id: 'pinned-menu/projects',
+        title: 'Projects',
+        url: '/projects',
         bg: '#0050B3',
         icon: <FolderOutlined style={{ fontSize: ICON_SIZE, color: 'white' }} />,
     }],
     ['projects', {
-        id: 'pinned-menu/projects',
-        title: 'Projects',
-        url: '/projects',
+        id: 'pinned-menu/studios',
+        title: 'Studios',
+        url: '/studios',
         bg: '#096DD9',
         icon: <WalletOutlined style={{ fontSize: ICON_SIZE, color: 'white' }} />,
     }],

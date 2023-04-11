@@ -4,6 +4,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { PaginatedList } from '@bbp/nexus-sdk';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import { SelectionSelectFn } from 'antd/lib/table/interface';
+import { difference, differenceBy, union } from 'lodash';
 import { DataPanelEvent, DATA_PANEL_STORAGE, DATA_PANEL_STORAGE_EVENT } from '../../organisms/DataPanel/DataPanel';
 import { TFilterOptions } from '../MyDataHeader/MyDataHeader';
 import timeago from '../../../utils/timeago';
@@ -184,6 +185,7 @@ export default function MyDataTabel({
         showSizeChanger: true,
     }
     const onSelectRowChange: SelectionSelectFn<TDataSource> = (record, selected) => {
+        console.log('@@record', { record, selected })
         const dataPanelLS: TResourceTableData = JSON.parse(localStorage.getItem(DATA_PANEL_STORAGE)!);
         let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
         let selectedRows = dataPanelLS?.selectedRows || [];
@@ -204,6 +206,29 @@ export default function MyDataTabel({
             }
         }));
     }
+    
+    const onSelectAllChange = (selected: boolean, tSelectedRows: TDataSource[], changeRows: TDataSource[]) => {
+        const dataPanelLS: TResourceTableData = JSON.parse(localStorage.getItem(DATA_PANEL_STORAGE)!);
+        let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
+        let selectedRows = dataPanelLS?.selectedRows || [];
+        if(selected) {
+            selectedRows = union(selectedRows, changeRows);
+            selectedRowKeys = union(selectedRowKeys, changeRows.map(t => t.key));
+        } else {
+            selectedRows = differenceBy(selectedRows, changeRows, 'key');
+            selectedRowKeys = difference(selectedRowKeys, changeRows.map(t => t.key));
+        }
+        localStorage.setItem(DATA_PANEL_STORAGE, JSON.stringify({
+            selectedRowKeys,
+            selectedRows,
+        }));
+        window.dispatchEvent(new CustomEvent(DATA_PANEL_STORAGE_EVENT, {
+            detail: {
+                datapanel: { selectedRowKeys, selectedRows }
+            }
+        }));
+    }
+
     useEffect(() => {
         const dataLs = localStorage.getItem(DATA_PANEL_STORAGE);
         const dataLsObject: TResourceTableData = JSON.parse(dataLs as string);
@@ -242,6 +267,7 @@ export default function MyDataTabel({
             rowSelection={{
                 selectedRowKeys,
                 onSelect: onSelectRowChange,
+                onSelectAll: onSelectAllChange,
             }}
 
         />

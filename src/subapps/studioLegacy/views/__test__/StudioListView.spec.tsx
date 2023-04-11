@@ -1,6 +1,6 @@
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk';
-import StudioListView from '../StudioListView';
+import StudioListView from '../../../../pages/StudiosPage/StudiosPage';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createBrowserHistory } from 'history';
 import { Provider } from 'react-redux';

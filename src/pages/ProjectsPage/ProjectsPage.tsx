@@ -6,12 +6,14 @@ import { RightSquareOutlined, SortAscendingOutlined, SortDescendingOutlined } fr
 import { NexusClient, ProjectList, ProjectResponseCommon } from '@bbp/nexus-sdk';
 import { Alert, Avatar, Breadcrumb, Button, Card, Input, List, Skeleton, Spin, Tag } from 'antd';
 import { flatten } from 'lodash';
+import { match as pmatch} from 'ts-pattern';
+import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import timeago from '../../utils//timeago';
-import './styles.less';
+import '../../shared/styles/route-layout.less';
 
 type Props = {}
 type TProjectOptions = {
@@ -61,7 +63,7 @@ const ProjectItem = (
             <div className='route-result-list_item_wrapper'>
                 <div className='org'>
                     <Link to={to}>
-                        <h3>{title} { deprected && <span className='depreacted-tag'><DeprecatedIcon/> deprecated</span> }</h3>
+                        <h3>{title} {deprected && <span className='depreacted-tag'><DeprecatedIcon /> deprecated</span>}</h3>
                     </Link>
                     <p>{description}</p>
                 </div>
@@ -94,9 +96,10 @@ const ProjectItem = (
     )
 }
 
-function ProjectView({ }: Props) {
+function FusionProjectsPage({ }: Props) {
     const queryInputRef = useRef<Input>(null);
     const loadMoreRef = useRef(null);
+    const dataContainerRef = useRef<HTMLDivElement>(null);
     const location = useLocation();
     const [query, setQueryString] = useState<string>('');
     const nexus: NexusClient = useNexusContext();
@@ -126,9 +129,8 @@ function ProjectView({ }: Props) {
 
 
     const loadMoreFooter = hasNextPage && (<Button
-        className='projects-view-list-btn-infinitfetch'
+        className='infinitfetch-loader'
         ref={loadMoreRef}
-        loading={isFetching || isLoading}
         onClick={() => fetchNextPage()}
         disabled={!hasNextPage || isFetchingNextPage}
     >
@@ -141,8 +143,18 @@ function ProjectView({ }: Props) {
         data?.pages?.map((page: ProjectList) => page._results)
     );
 
-    // @ts-ignore
-    const handleUpdateSorting = (value: string) => setOptions({ sort: value });
+    const handleUpdateSorting = (value: string) => {
+        // @ts-ignore
+        setOptions({ sort: value })
+        if(dataContainerRef.current){
+			const containerTop = dataContainerRef.current.getBoundingClientRect().top;
+    		const topPosition = containerTop + window.pageYOffset - 80; 
+			window.scrollTo({
+				top: topPosition,
+				behavior: 'smooth',
+			})
+		}
+    };
     const handleOnOrgSearch: React.ChangeEventHandler<HTMLInputElement> = (e) => setQueryString(e.target.value);
 
     useIntersectionObserver({
@@ -152,7 +164,6 @@ function ProjectView({ }: Props) {
     });
     // @ts-ignore
     const _total = (data?.pages?.[0]?._total) as number;
-    console.log('@@@dta', data);
     return (
         <div className='main-route'>
             <PinnedMenu />
@@ -178,25 +189,27 @@ function ProjectView({ }: Props) {
                         <div className='action-sort'>
                             <span>Sort:</span>
                             <SortAscendingOutlined
-                                style={{ backgroundColor: sort === 'asc' ? '#003A8C' : '#BFBFBF' }}
+                                style={{ backgroundColor: sortBackgroundColor(sort, 'asc') }}
                                 onClick={() => handleUpdateSorting('asc')}
                             />
                             <SortDescendingOutlined
-                                style={{ backgroundColor: sort === 'desc' ? '#003A8C' : '#BFBFBF' }}
+                                style={{ backgroundColor: sortBackgroundColor(sort, 'desc') }}
                                 onClick={() => handleUpdateSorting('desc')}
                             />
                         </div>
                     </div>
-                    <div className='route-data-container'>
-                        {status === 'error' && <div className='route-error'>
-                            <Alert
-                                message='⛔️ Error loading the projects list'
-                                // @ts-ignore
-                                description={error.message.reason}
-                            />
-                        </div>}
-                        {status === 'success' && <div className='route-result-list'>
-                            <Spin spinning={isLoading} >
+                    <div className='route-data-container' ref={dataContainerRef}>
+                        {pmatch(status)
+                            .with('loading', () => <Spin spinning={true} />)
+                            .with('error', () => <div className='route-error'>
+                                <Alert
+                                    type='error'
+                                    message='⛔️ Error loading the projects list'
+                                    // @ts-ignore
+                                    description={error?.cause?.message}
+                                />
+                            </div>)
+                            .with('success', () => <div className='route-result-list'>
                                 <List
                                     itemLayout="horizontal"
                                     loadMore={loadMoreFooter}
@@ -205,20 +218,21 @@ function ProjectView({ }: Props) {
                                         const to = `/orgs/${item._organizationLabel}/${item._label}`;
                                         return (
                                             <ProjectItem
-                                                {... { 
-                                                    to, 
-                                                    title: item._label, 
+                                                {... {
+                                                    to,
+                                                    title: item._label,
                                                     deprected: item._deprecated,
                                                     createdAt: new Date(item._createdAt),
                                                     updatedAt: new Date(item._updatedAt),
-                                                    description: item.description, 
-                                                 }}
+                                                    description: item.description,
+                                                }}
                                             />
                                         )
                                     }}
                                 />
-                            </Spin>
-                        </div>}
+                            </div>)
+                            .otherwise(() => <></>)
+                        }
                     </div>
                 </div>
             </div>
@@ -273,4 +287,4 @@ function ProjectView({ }: Props) {
     )
 }
 
-export default ProjectView;
+export default FusionProjectsPage;

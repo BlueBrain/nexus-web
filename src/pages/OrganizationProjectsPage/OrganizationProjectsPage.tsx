@@ -9,6 +9,7 @@ import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { Avatar, Breadcrumb, List, Tag } from 'antd';
 import { flatten } from 'lodash';
 import { useOrganisationsSubappContext } from '../../subapps/admin';
+import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
 import useNotification from '../../shared/hooks/useNotification';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
@@ -18,7 +19,7 @@ import StoragesContainer from '../../subapps/admin/containers/StoragesContainer'
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import timeago from '../../utils//timeago';
-import './styles.less';
+import '../../shared/styles/route-layout.less';
 
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -123,9 +124,10 @@ const ProjectItem = (
 	)
 }
 
-function ProjectsView({ }: Props) {
+function OrganizationProjectsPage({ }: Props) {
 	const queryInputRef = useRef<Input>(null);
 	const loadMoreRef = useRef(null);
+	const dataContainerRef = useRef<HTMLDivElement>(null);
 	const location = useLocation();
 	const notification = useNotification();
 	const [formBusy, setFormBusy] = useState<boolean>(false);
@@ -260,8 +262,18 @@ function ProjectsView({ }: Props) {
 	};
 
 	const handleOnOrgSearch: React.ChangeEventHandler<HTMLInputElement> = (e) => setQueryString(e.target.value);
-	// @ts-ignore
-	const handleUpdateSorting = (value: string) => setOptions({ sort: value });
+	const handleUpdateSorting = (value: string) => {
+		// @ts-ignore
+		setOptions({ sort: value });
+		if(dataContainerRef.current){
+			const containerTop = dataContainerRef.current.getBoundingClientRect().top;
+    		const topPosition = containerTop + window.pageYOffset - 80; 
+			window.scrollTo({
+				top: topPosition,
+				behavior: 'smooth',
+			})
+		}
+	}
 	const {
 		data,
 		fetchNextPage,
@@ -286,9 +298,8 @@ function ProjectsView({ }: Props) {
 
 
 	const loadMoreFooter = hasNextPage && (<Button
-		className='org-projects-view-list-btn-infinitfetch'
+		className='infinitfetch-loader'
 		ref={loadMoreRef}
-		loading={isFetching || isLoading}
 		onClick={() => fetchNextPage()}
 		disabled={!hasNextPage || isFetchingNextPage}
 	>
@@ -339,24 +350,24 @@ function ProjectsView({ }: Props) {
 						<div className='action-sort'>
 							<span>Sort:</span>
 							<SortAscendingOutlined
-								style={{ backgroundColor: sort === 'asc' ? '#003A8C' : '#BFBFBF' }}
+								style={{ backgroundColor: sortBackgroundColor(sort, 'asc') }}
 								onClick={() => handleUpdateSorting('asc')}
 							/>
 							<SortDescendingOutlined
-								style={{ backgroundColor: sort === 'desc' ? '#003A8C' : '#BFBFBF' }}
+								style={{ backgroundColor: sortBackgroundColor(sort, 'desc') }}
 								onClick={() => handleUpdateSorting('desc')}
 							/>
 						</div>
 					</div>
-					<div className='route-data-container'>
+					<div className='route-data-container'  ref={dataContainerRef}>
 						{projectError || organisationError && <div className='route-error'>
 							<Alert
 								message='⛔️ Error loading the projects list'
 								description={
 									// @ts-ignore
-									projectError.message.reason ||
+									organisationError?.cause?.message ||
 									// @ts-ignore
-									organisationError.message.reason
+									projectError?.cause?.message
 								}
 							/>
 						</div>}
@@ -539,4 +550,4 @@ function ProjectsView({ }: Props) {
 	)
 }
 
-export default ProjectsView;
+export default OrganizationProjectsPage;

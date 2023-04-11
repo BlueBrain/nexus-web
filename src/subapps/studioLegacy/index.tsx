@@ -2,7 +2,7 @@ import * as React from 'react';
 import { SubApp } from '..';
 import StudioView from './views/StudioView';
 import StudioAdminView from './views/StudioAdminView';
-import StudioListView from './views/StudioListView';
+import StudioListView from '../../pages/StudiosPage/StudiosPage';
 
 const subAppType = 'internal';
 const title = 'Studios';

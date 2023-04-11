@@ -3,21 +3,22 @@ import React, { Fragment, useEffect, useReducer, useRef, useState } from 'react'
 import { useHistory } from 'react-router';
 import { Link, useLocation } from 'react-router-dom';
 import { useInfiniteQuery, useQueryClient } from 'react-query'
-import { Radio } from 'antd';
+import { Alert, Radio } from 'antd';
 import { Button, Modal, Drawer, Input, Spin } from 'antd';
 import { PlusSquareOutlined, RightSquareOutlined, SortAscendingOutlined, SortDescendingOutlined } from '@ant-design/icons';
 import { NexusClient, OrganizationList, OrgResponseCommon } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { Avatar, Breadcrumb, List, Tag } from 'antd';
 import { Partial, flatten } from 'lodash';
+import { match as pmatch } from 'ts-pattern';
 import { useOrganisationsSubappContext } from '../../subapps/admin';
+import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 import useNotification, { NexusError, } from '../../shared/hooks/useNotification';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import OrgForm from '../../subapps/admin/components/Orgs/OrgForm';
-import './styles.less';
-
+import '../../shared/styles/route-layout.less';
 
 const DEFAULT_PAGE_SIZE = 10;
 const SHOULD_INCLUDE_DEPRECATED = false;
@@ -40,12 +41,22 @@ type TOrganizationOptions = {
 	sort: string;
 }
 type TFetchOrganizationListProps = TOrganizationOptions & { nexus: NexusClient };
-const fetchOrganizationList = ({ nexus, size, query, from = 0, sort }: TFetchOrganizationListProps) => nexus.Organization.list({
-	from, size,
-	label: query,
-	deprecated: SHOULD_INCLUDE_DEPRECATED,
-	sort: `${sort === 'asc' ? '' : '-'}_label`,
-})
+const fetchOrganizationList = async (
+	{ nexus, size, query, from = 0, sort }:
+		TFetchOrganizationListProps
+) => {
+	try {
+		return await nexus.Organization.list({
+			from, size,
+			label: query,
+			deprecated: SHOULD_INCLUDE_DEPRECATED,
+			sort: `${sort === 'asc' ? '' : '-'}_label`,
+		})
+	} catch (error) {
+		// @ts-ignore
+		throw new Error('Can not fetch organization list', { cause: error });
+	}
+}
 
 const OrganizationItem = ({ title, to, count, description }:
 	{ title: string, to: string, description?: string, count: number }
@@ -77,9 +88,10 @@ const OrganizationItem = ({ title, to, count, description }:
 }
 
 
-function OrgsListView({ }: Props) {
+function OrganizationListView({ }: Props) {
 	const queryInputRef = useRef<Input>(null);
 	const loadMoreRef = useRef(null);
+	const dataContainerRef = useRef<HTMLDivElement>(null);
 	const location = useLocation();
 	const [formBusy, setFormBusy] = useState<boolean>(false);
 	const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -119,12 +131,10 @@ function OrgsListView({ }: Props) {
 	});
 
 	const loadMoreFooter = hasNextPage && (<div
-		className='organizations-view-list-btn-infinitfetch'
+		className='infinitfetch-loader'
 		ref={loadMoreRef}
 		onClick={() => fetchNextPage()}
-		style={{
-			display: !hasNextPage || isFetchingNextPage ? 'none' : 'flex',
-		}}
+		style={{ display: !hasNextPage || isFetchingNextPage ? 'none' : 'flex' }}
 	>
 		<Spin spinning={isFetchingNextPage || isFetching || isLoading} />
 		{hasNextPage && !isFetchingNextPage && <span>Load more</span>}
@@ -205,7 +215,17 @@ function OrgsListView({ }: Props) {
 			});
 	};
 	const handleOnOrgSearch: React.ChangeEventHandler<HTMLInputElement> = (e) => setQueryString(e.target.value);
-	const handleUpdateSorting = (value: string) => setOptions({ sort: value });
+	const handleUpdateSorting = (value: string) => {
+		setOptions({ sort: value });
+		if(dataContainerRef.current){
+			const containerTop = dataContainerRef.current.getBoundingClientRect().top;
+    		const topPosition = containerTop + window.pageYOffset - 80; 
+			window.scrollTo({
+				top: topPosition,
+				behavior: 'smooth',
+			})
+		}
+	}
 	useIntersectionObserver({
 		target: loadMoreRef,
 		onIntersect: fetchNextPage,
@@ -220,8 +240,7 @@ function OrgsListView({ }: Props) {
 		}
 	}, []);
 	// @ts-ignore
-    const _total = (data?.pages?.[0]?._total) as number;
-	console.log('####data', data);
+	const _total = (data?.pages?.[0]?._total) as number;
 	return (
 		<div className='main-route'>
 			<PinnedMenu />
@@ -247,19 +266,27 @@ function OrgsListView({ }: Props) {
 						<div className='action-sort'>
 							<span>Sort:</span>
 							<SortAscendingOutlined
-								style={{ backgroundColor: sort === 'asc' ? '#003A8C' : '#BFBFBF' }}
+								style={{ backgroundColor: sortBackgroundColor(sort, 'asc') }}
 								onClick={() => handleUpdateSorting('asc')}
 							/>
 							<SortDescendingOutlined
-								style={{ backgroundColor: sort === 'desc' ? '#003A8C' : '#BFBFBF' }}
+								style={{ backgroundColor: sortBackgroundColor(sort, 'desc') }}
 								onClick={() => handleUpdateSorting('desc')}
 							/>
 						</div>
 					</div>
-					<div className='route-data-container'>
-						{status === 'error' && <div className='route-error'>⛔️ Error loading the organizations list</div>}
-						{status === 'success' && <div className='route-result-list'>
-							<Spin spinning={isLoading} >
+					<div className='route-data-container' ref={dataContainerRef}>
+						{pmatch(status)
+							.with('loading', () => <Spin spinning={true} />)
+							.with('error', () => <div className='route-error'>
+								<Alert
+									type='error'
+									message='⛔️ Error loading the organizations list'
+									// @ts-ignore
+									description={error?.cause?.message}
+								/>
+							</div>)
+							.with('success', () => <div className='route-result-list'>
 								<List
 									itemLayout="horizontal"
 									loadMore={loadMoreFooter}
@@ -271,47 +298,11 @@ function OrgsListView({ }: Props) {
 											<OrganizationItem
 												{... { title: item._label, description: item.description, to, count }}
 											/>
-											// <List.Item
-											//   className='organizations-view-list-item'
-											//   actions={[
-											//     <Link to={to}>
-											//       <Button type='link'>More</Button>
-											//     </Link>,
-											//     <AccessControl
-											//       key={`access-control-${item['@id']}`}
-											//       path={`/${item._label}`}
-											//       permissions={['organizations/write']}
-											//     >
-											//       <Button
-											//         className="edit-button"
-											//         type="primary"
-											//         size="small"
-											//         tabIndex={1}
-											//         onClick={(e: React.SyntheticEvent) => {
-											//           e.stopPropagation();
-											//           setSelectedOrg(item);
-											//         }}
-											//       >
-											//         Edit
-											//       </Button>
-											//     </AccessControl>
-											//   ]}
-											// >
-											//   <List.Item.Meta
-											//     avatar={<Avatar className='organization-initial'>{item._label.substring(0, 2)}</Avatar>}
-											//     title={
-											//       <Fragment>
-											//         <Link to={to} className='organization-link'>{item._label}</Link>
-											//       </Fragment>
-											//     }
-											//     description={item.description}
-											//   />
-											// </List.Item>
 										)
 									}}
 								/>
-							</Spin>
-						</div>}
+							</div>)
+							.otherwise(() => <></>)}
 					</div>
 				</div>
 			</div>
@@ -431,4 +422,4 @@ function OrgsListView({ }: Props) {
 	)
 }
 
-export default OrgsListView;
+export default OrganizationListView;
