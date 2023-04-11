@@ -3,9 +3,9 @@ import { useState, useRef, useReducer } from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Spin, List, Input, Button, Alert } from 'antd';
 import { Link, useHistory } from 'react-router-dom';
-import { useInfiniteQuery } from 'react-query';
+import { useInfiniteQuery, useQuery } from 'react-query';
 import { NexusClient, ResourceList, Resource } from '@bbp/nexus-sdk';
-import { match as pmatch} from 'ts-pattern';
+import { match as pmatch } from 'ts-pattern';
 import { RightSquareOutlined, SortAscendingOutlined, SortDescendingOutlined } from '@ant-design/icons';
 import { flatten } from 'lodash';
 import {
@@ -37,7 +37,7 @@ export type StudioItem = {
   orgLabel: string;
 };
 type TStudiosOptions = {
-  from?: string;
+  from?: number;
   size: number;
   sort?: string;
   query?: string;
@@ -55,15 +55,13 @@ type TStudioItem = {
 type TFetchStudiosListProps = TStudiosOptions & { nexus: NexusClient };
 export const sortBackgroundColor = (sort: string, value: string) => sort === value ? '#003A8C' : '#BFBFBF';
 const fetchStudios = async (
-  { nexus, query, sort, size, from, }:
+  { nexus, query, sort, size }:
     TFetchStudiosListProps
 ) => {
   try {
     const response = await nexus.Resource.list(undefined, undefined, {
-      // @ts-ignore
-      from,
       q: query,
-      size: size ?? STUDIO_RESULTS_DEFAULT_SIZE,
+      size: STUDIO_RESULTS_DEFAULT_SIZE,
       deprecated: false,
       type: DEFAULT_STUDIO_TYPE,
       // sort: `${sort === 'asc' ? '' : '-'}label`,
@@ -78,43 +76,43 @@ const fetchStudios = async (
 
 const StudioItem = (
   { title, to, description, deprected, project, datasets, createdAt, access }:
-  TStudioItem
+    TStudioItem
 ) => {
   return (
-      <List.Item className='route-result-list_item' role="listitem">
-          <div className='route-result-list_item_wrapper'>
-              <div className='org'>
-                  <Link to={to}>
-                      <h3>{title} {deprected && <span className='depreacted-tag'><DeprecatedIcon /> deprecated</span>}</h3>
-                  </Link>
-                  <p>{description}</p>
-              </div>
-              <div className='statistics'>
-                  <div className='statistics_item'>
-                      <div>Project</div>
-                      <div>{project}</div>
-                  </div>
-                  <div className='statistics_item'>
-                      <div>Access</div>
-                      <div>{access}</div>
-                  </div>
-                  <div className='statistics_item'>
-                      <div>Datasets</div>
-                      <div>{datasets || '2M'}</div>
-                  </div>
-                  <div className='statistics_item'>
-                      <div>Created</div>
-                      <div>{timeago(createdAt)}</div>
-                  </div>
-              </div>
-              <div className='redirection'>
-                  <Link to={to}>
-                      Open Studio
-                      <RightSquareOutlined />
-                  </Link>
-              </div>
+    <List.Item className='route-result-list_item' role="listitem">
+      <div className='route-result-list_item_wrapper'>
+        <div className='org'>
+          <Link to={to}>
+            <h3>{title} {deprected && <span className='depreacted-tag'><DeprecatedIcon /> deprecated</span>}</h3>
+          </Link>
+          <p>{description}</p>
+        </div>
+        <div className='statistics'>
+          <div className='statistics_item'>
+            <div>Project</div>
+            <div>{project}</div>
           </div>
-      </List.Item>
+          <div className='statistics_item'>
+            <div>Access</div>
+            <div>{access}</div>
+          </div>
+          <div className='statistics_item'>
+            <div>Datasets</div>
+            <div>{datasets || '2M'}</div>
+          </div>
+          <div className='statistics_item'>
+            <div>Created</div>
+            <div>{timeago(createdAt)}</div>
+          </div>
+        </div>
+        <div className='redirection'>
+          <Link to={to}>
+            Open Studio
+            <RightSquareOutlined />
+          </Link>
+        </div>
+      </div>
+    </List.Item>
   )
 }
 const FusionStudiosPage: React.FC = () => {
@@ -146,56 +144,56 @@ const FusionStudiosPage: React.FC = () => {
       })
     }
   };
-  const {
-    data,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    status,
-    isLoading,
-    isFetching,
-  } = useInfiniteQuery({
-    queryKey: ['fusion-studios', { query, sort }],
-    queryFn: ({ pageParam = undefined }) => fetchStudios({ nexus, query, sort, from: pageParam, size: 10 }),
-    //@ts-ignore
-    getNextPageParam: (lastPage) => lastPage._next ? new URL(lastPage._next).searchParams.get('after') : undefined
-  });
-  // @ts-ignore
+  // const {
+  //   data,
+  //   error,
+  //   fetchNextPage,
+  //   hasNextPage,
+  //   isFetchingNextPage,
+  //   status,
+  //   isLoading,
+  //   isFetching,
+  // } = useInfiniteQuery({
+  //   queryKey: ['fusion-studios', { query, sort }],
+  //   queryFn: ({ pageParam = undefined }) => fetchStudios({ nexus, query, sort, from: pageParam, size: 10 }),
+  //   //@ts-ignore
+  //   getNextPageParam: (lastPage) => lastPage._next ?? undefined
+  // });
 
-  const loadMoreFooter = hasNextPage && (<Button
-    className='infinitfetch-loader'
-    ref={loadMoreRef}
-    onClick={() => fetchNextPage()}
-    disabled={!hasNextPage || isFetchingNextPage}
-  >
-    <Spin spinning={isFetchingNextPage || isFetching || isLoading} />
-    {hasNextPage && !isFetchingNextPage && <span>Load more</span>}
-  </Button>)
-  
-  const dataSource = flatten(
-    // @ts-ignore
-    data?.pages.map((page: ResourceList<{}>) => page._results.map((item: Resource)=> {
-      const { projectLabel, orgLabel } = getOrgAndProjectFromProjectId(item._project)!;
-      return {
-        orgLabel,
-        projectLabel,
-        id: item['@id'],
-        label: item.label,
-        deprecated: item._deprecated,
-        createdAt: item._createdAt,
-        description: item.description,
-        access: "",
-      };
-    }))
-  );
-  // @ts-ignore
-  const _total = (data?.pages?.[0]?._total) as number;
-  useIntersectionObserver({
-    target: loadMoreRef,
-    onIntersect: fetchNextPage,
-    enabled: !!hasNextPage,
+  const { data, status } = useQuery({
+    queryKey: ['fusion-studios', { query, sort }],
+    queryFn: () => fetchStudios({ nexus, query, sort, size: STUDIO_RESULTS_DEFAULT_SIZE }),
   });
+  // const loadMoreFooter = hasNextPage && (<Button
+  //   className='infinitfetch-loader'
+  //   ref={loadMoreRef}
+  //   onClick={() => fetchNextPage()}
+  //   disabled={!hasNextPage || isFetchingNextPage}
+  // >
+  //   <Spin spinning={isFetchingNextPage || isFetching || isLoading} />
+  //   {hasNextPage && !isFetchingNextPage && <span>Load more</span>}
+  // </Button>)
+
+  const dataSource = data?._results.map((item: Resource) => {
+    const { projectLabel, orgLabel } = getOrgAndProjectFromProjectId(item._project)!;
+    return {
+      orgLabel,
+      projectLabel,
+      id: item['@id'],
+      label: item.label,
+      deprecated: item._deprecated,
+      createdAt: item._createdAt,
+      description: item.description,
+      access: "",
+    };
+  });
+  // @ts-ignore
+  const _total = (data?._total) as number;
+  // useIntersectionObserver({
+  //   target: loadMoreRef,
+  //   onIntersect: fetchNextPage,
+  //   enabled: !!hasNextPage,
+  // });
   return (
     <div className='main-route'>
       <PinnedMenu />
@@ -242,12 +240,17 @@ const FusionStudiosPage: React.FC = () => {
               </div>)
               .with('success', () => <div className='route-result-list'>
                 <List
+                  pagination={{
+                    total: _total,
+                    showTotal: total => ` ${total} results`,
+                    pageSize: 10,
+                  }}
                   itemLayout="horizontal"
-                  loadMore={loadMoreFooter}
+                  // loadMore={loadMoreFooter}
                   dataSource={dataSource}
                   renderItem={(item) => {
-                    const {orgLabel, projectLabel, id } = item;
-                    const to = makeStudioUri( orgLabel, projectLabel, id );
+                    const { orgLabel, projectLabel, id } = item;
+                    const to = makeStudioUri(orgLabel, projectLabel, id);
                     return (
                       <StudioItem
                         {... {
