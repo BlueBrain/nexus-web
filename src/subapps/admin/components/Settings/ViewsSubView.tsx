@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRouteMatch } from 'react-router';
+import { useHistory, useRouteMatch } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Table, Button } from 'antd';
@@ -42,6 +42,7 @@ const fetchViewList = async ({
 
 const ViewsSubView = (props: Props) => {
   const nexus = useNexusContext();
+  const history = useHistory();
   const match = useRouteMatch<{
     orgLabel: string;
     projectLabel: string;
@@ -80,28 +81,42 @@ const ViewsSubView = (props: Props) => {
       dataIndex: 'actions',
       title: 'Actions',
       align: 'center',
-      render: (text, record) => (
-        <div className="view-item-actions">
-          {/* <Link 
-            to={}
-          >
-            Edit
-          </Link>
-          <Link
-            to={}
-          >
-            Query
-          </Link> */}
-          <Button
-            disabled
-            type="link"
-            htmlType="button"
-            onClick={handleOnDelete}
-          >
-            Delete
-          </Button>
-        </div>
-      ),
+      render: (text, record) => {
+        console.log('@@@record:', record)
+        const editURI = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(`${record.key}`)}`;
+        const queryURI = `/admin/${orgLabel}/${projectLabel}/query/${encodeURIComponent(`${record.key}`)}`;
+        return (
+          <div className="view-item-actions">
+            <Button 
+              type="link"
+              htmlType="button"
+              onClick={() => history.push(editURI)}
+            >
+              Edit
+            </Button>
+            <Button 
+              type="link"
+              htmlType="button"
+              onClick={() => history.push(queryURI)}
+            >
+              Query
+            </Button>
+            {/* <Link
+              to={resourceURI}
+            >
+              Query
+            </Link> */}
+            {/* <Button
+              disabled
+              type="link"
+              htmlType="button"
+              onClick={handleOnDelete}
+            >
+              Delete
+            </Button> */}
+          </div>
+        )
+      },
     },
   ];
   const { data: views, status } = useQuery({
