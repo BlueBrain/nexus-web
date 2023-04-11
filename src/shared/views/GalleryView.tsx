@@ -69,7 +69,10 @@ const GalleryView: React.FC = () => {
     const handleClickOutsideWrapper = (event: Event) => {
       if (wrapperRef.current) {
         const currentWrapperRef = wrapperRef.current;
-
+        // @ts-ignore
+        if (event.target && event.target.closest('.ListItem')) {
+          return;
+        }
         if (
           (event.target &&
             !currentWrapperRef.contains(event.target as Node) &&
@@ -102,27 +105,26 @@ const GalleryView: React.FC = () => {
   // when the background state is provided
   return (
     <>
-      {background && [
-        <Route
-          key="resource-modal"
-          path={'/:orgLabel/:projectLabel/resources/:resourceId'}
-          render={routeProps =>
-            drawerVisible && (
-              <Drawer
-                className="gallery-drawer"
-                maskClosable={false}
-                destroyOnClose={false}
-                visible={true}
-                width="" // intentionally blank, specified in css
-              >
-                <div ref={wrapperRef} style={{ width: '100%', height: '100%' }}>
-                  <ResourceViewContainer />
-                </div>
-              </Drawer>
-            )
-          }
-        />,
-      ]}
+      {background && (
+        <Drawer
+          className="gallery-drawer"
+          maskClosable={false}
+          destroyOnClose={false}
+          visible={drawerVisible}
+          placement='right'
+          width="" // intentionally blank, specified in css
+        >
+          <Route
+            key="resource-modal"
+            path={'/:orgLabel/:projectLabel/resources/:resourceId'}
+            render={() => (
+              <div ref={wrapperRef} style={{ width: '100%', height: '100%' }}>
+                <ResourceViewContainer />
+              </div>
+            )}
+          />
+        </Drawer>
+      )}
     </>
   );
 };

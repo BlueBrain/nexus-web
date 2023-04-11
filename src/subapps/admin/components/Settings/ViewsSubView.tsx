@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import * as React from 'react';
 import { useRouteMatch } from 'react-router';
+import { Link } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Table, Button } from 'antd';
 import { ColumnsType } from 'antd/es/table';
@@ -79,19 +80,18 @@ const ViewsSubView = (props: Props) => {
       dataIndex: 'actions',
       title: 'Actions',
       align: 'center',
-      render: text => (
+      render: (text, record) => (
         <div className="view-item-actions">
-          <Button disabled type="link" htmlType="button" onClick={handleOnEdit}>
+          {/* <Link 
+            to={}
+          >
             Edit
-          </Button>
-          <Button
-            disabled
-            type="link"
-            htmlType="button"
-            onClick={handleOnQuery}
+          </Link>
+          <Link
+            to={}
           >
             Query
-          </Button>
+          </Link> */}
           <Button
             disabled
             type="link"
@@ -113,15 +113,17 @@ const ViewsSubView = (props: Props) => {
     <div className="settings-view settings-views-view">
       <h2>Views</h2>
       <div className="settings-view-container">
-        <Button
+        {/* <Link
+          to={}
           style={{ maxWidth: 150, margin: 0, marginTop: 20 }}
-          type="primary"
-          disabled={true}
-          htmlType="button"
+          type="link"
+          href=''
+          // disabled={true}
+          // htmlType='button'
           onClick={createNewViewHandler}
         >
           Create View
-        </Button>
+        </Link> */}
         <Table
           loading={status === 'loading'}
           className="views-table"

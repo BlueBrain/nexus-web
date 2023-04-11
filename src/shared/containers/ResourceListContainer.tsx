@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk';
+import {
+  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+  ElasticSearchViewQueryResponse,
+  Resource,
+} from '@bbp/nexus-sdk';
 
 import ResourceListComponent, {
   ResourceBoardList,
@@ -125,28 +129,95 @@ const ResourceListContainer: React.FunctionComponent<{
       error: null,
     });
 
-    let resourceListResponse: any = [];
-
-    nexus.Resource.list(orgLabel, projectLabel, list.query)
-      .then(response => {
-        resourceListResponse = response;
+    (async () => {
+      const [resourcesByIdOrSelf, resourcesResults] = await Promise.allSettled([
+        nexus.View.elasticSearchQuery(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(DEFAULT_ELASTIC_SEARCH_VIEW_ID),
+          {
+            query: {
+              bool: {
+                should: [
+                  {
+                    bool: {
+                      must: [
+                        {
+                          term: {
+                            _deprecated: list.query.deprecated,
+                          },
+                        },
+                        {
+                          term: {
+                            '@id': list.query.q,
+                          },
+                        },
+                      ],
+                    },
+                  },
+                  {
+                    bool: {
+                      must: [
+                        {
+                          term: {
+                            _deprecated: list.query.deprecated,
+                          },
+                        },
+                        {
+                          term: {
+                            _self: list.query.q,
+                          },
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+            size: 10,
+          }
+        ),
+        nexus.Resource.list(orgLabel, projectLabel, list.query),
+      ]);
+      if (resourcesByIdOrSelf.status === 'fulfilled') {
+        const resultsLength = resourcesByIdOrSelf.value.hits.hits.length;
+        const hits = resourcesByIdOrSelf.value.hits.hits;
+        if (resultsLength) {
+          setResources({
+            next: null,
+            // @ts-ignore
+            resources: hits.map(hit => {
+              return {
+                ...JSON.parse(hit._source['_original_source']),
+                '@id': hit._source['@id'],
+              };
+            }),
+            total: resultsLength,
+            busy: false,
+            error: null,
+          });
+          return;
+        }
+      }
+      if (resourcesResults.status === 'fulfilled') {
         setResources({
           next: null,
-          resources: resourceListResponse._results,
-          total: resourceListResponse._total,
+          // @ts-ignore
+          resources: resourcesResults.value._results,
+          total: resourcesResults.value._total,
           busy: false,
           error: null,
         });
-      })
-      .catch(error => {
+      } else {
         setResources({
           next,
-          error,
           resources,
           total,
           busy: false,
+          error: resourcesResults.reason,
         });
-      });
+      }
+    })();
   }, [
     orgLabel,
     projectLabel,
@@ -154,7 +225,6 @@ const ResourceListContainer: React.FunctionComponent<{
     toggleForceReload,
     refreshList,
   ]);
-
   const handleDelete = () => {
     onDeleteList(list.id);
   };
@@ -178,6 +248,7 @@ const ResourceListContainer: React.FunctionComponent<{
       query: {
         ...list.query,
         type: !!value ? value : undefined,
+        deprecated: undefined,
         from: 0,
       },
     });
@@ -252,7 +323,7 @@ const ResourceListContainer: React.FunctionComponent<{
       shareableLink={shareableLink}
     >
       <TypeDropdownFilterContainer
-        deprecated={!!list.query.deprecated}
+        deprecated={Boolean(list.query.deprecated)}
         orgLabel={orgLabel}
         projectLabel={projectLabel}
         onChange={handleTypeChange}

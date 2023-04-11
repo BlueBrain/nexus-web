@@ -6,6 +6,7 @@ import {
   SaveOutlined,
 } from '@ant-design/icons';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
+import codemiror from 'codemirror';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
@@ -27,6 +28,7 @@ export interface ResourceEditorProps {
   showMetadataToggle?: boolean;
 }
 
+const switchMarginRight = { marginRight: 5 };
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const {
     rawData,
@@ -52,6 +54,36 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const keyFoldCode = (cm: any) => {
     cm.foldCode(cm.getCursor());
   };
+  const codeMirorRef = React.useRef<codemiror.Editor>();
+  const [foldCodeMiror, setFoldCodeMiror] = React.useState<boolean>(false);
+  const onFoldChange = () => {
+    if (codeMirorRef.current) {
+      if (foldCodeMiror) {
+        codeMirorRef.current.execCommand('unfoldAll');
+        setFoldCodeMiror(stateFoldCodeMiror => !stateFoldCodeMiror);
+      } else {
+        codeMirorRef.current.execCommand('foldAll');
+        codeMirorRef.current.foldCode(0);
+        setFoldCodeMiror(stateFoldCodeMiror => !stateFoldCodeMiror);
+      }
+    }
+  };
+  const onFormatChangeFold = (expanded: boolean) => {
+    if (codeMirorRef.current) {
+      codeMirorRef.current.execCommand('foldAll');
+      codeMirorRef.current.foldCode(0);
+      setFoldCodeMiror(() => false);
+    }
+    onFormatChange?.(expanded);
+  };
+  const onMetadataChangeFold = (checked: boolean) => {
+    if (codeMirorRef.current) {
+      codeMirorRef.current.execCommand('foldAll');
+      codeMirorRef.current.foldCode(0);
+      setFoldCodeMiror(() => false);
+    }
+    onMetadataChange?.(checked);
+  };
   const renderCodeMirror = (value: string) => {
     return (
       <Spin spinning={busy}>
@@ -75,6 +107,9 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             },
           }}
           onChange={handleChange}
+          editorDidMount={editor => {
+            codeMirorRef.current = editor;
+          }}
         />
       </Spin>
     );
@@ -84,9 +119,15 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     setEditing(false);
     setStringValue(JSON.stringify(rawData, null, 2)); // Update copy of the rawData for the editor.
     setParsedValue(rawData); // Update parsed value for submit.
+    // onFormatChange?.(false);
+    // onMetadataChange?.(false);
+    return () => {
+      setFoldCodeMiror(false);
+    };
   }, [rawData]); // only runs when Editor receives new resource to edit
 
   const handleChange = (editor: any, data: any, value: any) => {
+    editor;
     if (!editable) {
       return;
     }
@@ -131,22 +172,29 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         </div>
 
         <div className="controls">
+          <Switch
+            checkedChildren="Unfold"
+            unCheckedChildren="Fold"
+            checked={foldCodeMiror}
+            onChange={onFoldChange}
+            style={switchMarginRight}
+          />
           {!expanded && !isEditing && valid && showMetadataToggle && (
-            <>
-              <Switch
-                checkedChildren="Metadata"
-                unCheckedChildren="Show Metadata"
-                checked={showMetadata}
-                onChange={onMetadataChange}
-              />{' '}
-            </>
+            <Switch
+              checkedChildren="Metadata"
+              unCheckedChildren="Show Metadata"
+              checked={showMetadata}
+              onChange={checked => onMetadataChangeFold(checked)}
+              style={switchMarginRight}
+            />
           )}
           {showExpanded && !isEditing && valid && (
             <Switch
-              checkedChildren="expanded"
-              unCheckedChildren="expand"
+              checkedChildren="Expanded"
+              unCheckedChildren="Expand"
               checked={expanded}
-              onChange={onFormatChange}
+              onChange={expaned => onFormatChangeFold(expanded)}
+              style={switchMarginRight}
             />
           )}
           <Button
