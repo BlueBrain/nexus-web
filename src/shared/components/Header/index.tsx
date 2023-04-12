@@ -17,15 +17,15 @@ import { parseUserAgent } from 'react-device-detect';
 import { CopyIcon } from '../../images/CopyIcon';
 import { Subtitle } from '../../styled_components/typography/Subtitle/Subtitle';
 
-declare var Version: string;
-
 const epflLogo = require('../../images/EPFL-logo.svg');
 const infoIcon = require('../../images/infoIcon.svg');
 const copyIcon = require('../../images/copyIcon.svg');
 
 export interface EnvironmentInfo {
   deltaVersion: string;
+  fusionVersion: string;
   environmentName: string;
+  
   operatingSystem: string;
   browser: string;
 }
@@ -33,8 +33,10 @@ export interface EnvironmentInfo {
 const envInfoForClipboard = (env: EnvironmentInfo) => {
   return `
       Delta: ${env.deltaVersion}
-      Fusion: ${Version}
-      Environment Name: ${env.environmentName}
+      Fusion: ${env.fusionVersion}
+      Environment: ${env.environmentName}
+
+      Platform Information:
       Operating System: ${env.operatingSystem}
       Browser: ${env.browser}
     `;
@@ -52,7 +54,7 @@ interface InformationContentProps {
   onClickRemoveConsent?(): void;
 }
 
-const InformationContent = (props: InformationContentProps) => {
+export const InformationContent = (props: InformationContentProps) => {
   return (
     <div className="information-panel">
       <Subtitle>About</Subtitle>
@@ -80,7 +82,7 @@ const InformationContent = (props: InformationContentProps) => {
 
       <div className="nexus-service-header">
         <Subtitle className="nexus-services">Nexus Services</Subtitle>
-        <Tag color="blue" className="tag">
+        <Tag color="blue" className="tag" data-testid="environment-name">
           {props.environment.environmentName}
         </Tag>
         <Copy
@@ -89,6 +91,7 @@ const InformationContent = (props: InformationContentProps) => {
               title={copySuccess ? 'Copied!' : 'Copy Environment Information'}
             >
               <Button
+                aria-label='copy-environment-information'
                 onClick={() =>
                   triggerCopy(envInfoForClipboard(props.environment))
                 }
@@ -103,18 +106,18 @@ const InformationContent = (props: InformationContentProps) => {
       </div>
 
       <div className="flex">
-        <div className="info-card">
+        <div className="info-card" data-testid="delta-version">
           <h5 className="card-title">Nexus Delta</h5>
           <p className="card-body">{props.environment.deltaVersion}</p>
         </div>
-        <div className="info-card">
+        <div className="info-card" data-testid="fusion-version">
           <h5 className="card-title">Nexus Fusion</h5>
           <a
             className="card-body"
             href={`${repoUrl}/commits/${props.commitHash}`}
             target="_blank"
           >
-            {Version}
+            {props.environment.fusionVersion}
           </a>
         </div>
       </div>

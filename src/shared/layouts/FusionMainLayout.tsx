@@ -29,6 +29,7 @@ import { parseUserAgent } from 'react-device-detect';
 const { Content } = Layout;
 
 declare var COMMIT_HASH: string;
+declare var FUSION_VERSION: string;
 
 export interface FusionMainLayoutProps {
   authenticated: boolean;
@@ -126,8 +127,14 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
     return '';
   }, [versions]);
 
+  const environmentName = React.useMemo(() => {
+    if (versions.data) {
+      return versions.data.environment as string;
+    }
+    return '';
+  }, [versions]);
+
   const userPlatform = parseUserAgent(navigator.userAgent);
-  const environmentName = 'dev'; // TODO: Replace with correct env info that backend will pass
   const browser = `${userPlatform.browser?.name ?? ''} ${userPlatform.browser
     ?.version ?? ''}`;
   const operatingSystem = `${userPlatform.os?.name ?? ''} ${userPlatform.os
@@ -227,6 +234,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
           displayLogin={canLogin}
           environment={{
             deltaVersion,
+            fusionVersion: FUSION_VERSION,
             operatingSystem,
             browser,
             environmentName,

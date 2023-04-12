@@ -11,6 +11,7 @@
     "start": "NODE_ENV=development  DEBUG=* webpack --mode development --config-name server && node dist/server.js",
     "build": "NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192  webpack --mode production",
     "test": "jest",
+    "test:watch": "jest --watch",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "test-ui": "API_ENDPOINT=http://test start-server-and-test start http://localhost:8000 cy:run",
@@ -197,7 +198,10 @@
     "testPathIgnorePatterns": [
       "<rootDir>/cypress/",
       "<rootDir>/migrations/"
-    ]
+    ],
+    "globals": {
+      "Version": "1.0.0"
+    }
   },
   "prettier": {
     "singleQuote": true,
