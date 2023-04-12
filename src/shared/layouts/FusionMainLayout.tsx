@@ -237,7 +237,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
             operatingSystem,
             browser,
             environmentName,
-            fusionVersion: FUSION_VERSION
+            fusionVersion: FUSION_VERSION,
           }}
           githubIssueURL={githubIssueURL}
           forgeLink={layoutSettings.forgeLink}

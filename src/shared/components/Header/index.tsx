@@ -25,7 +25,7 @@ export interface EnvironmentInfo {
   deltaVersion: string;
   fusionVersion: string;
   environmentName: string;
-  
+
   operatingSystem: string;
   browser: string;
 }
@@ -91,7 +91,7 @@ export const InformationContent = (props: InformationContentProps) => {
               title={copySuccess ? 'Copied!' : 'Copy Environment Information'}
             >
               <Button
-                aria-label='copy-environment-information'
+                aria-label="copy-environment-information"
                 onClick={() =>
                   triggerCopy(envInfoForClipboard(props.environment))
                 }
