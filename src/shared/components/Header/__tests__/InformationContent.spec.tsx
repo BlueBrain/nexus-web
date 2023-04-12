@@ -3,7 +3,6 @@ import { render, screen } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
 
 describe('InformationContent', () => {
-    
     beforeEach(() => {
         render(<InformationContent environment={MOCK_ENVIRONMENT} githubIssueURL='https://mock-issues-url'/>)
     })
