@@ -4051,11 +4051,6 @@
   resolved "https://registry.npmjs.org/@types/parse-json/-/parse-json-4.0.0.tgz"
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
 
-"@types/platform@^1.3.4":
-  version "1.3.4"
-  resolved "https://registry.yarnpkg.com/@types/platform/-/platform-1.3.4.tgz#0d3a4254863afaa89d6f02d73c2806271d13415d"
-  integrity sha512-U0o4K+GNiK0PNxoDwd8xRnvLVe4kzei6opn3/FCjAriqaP+rfrDdSl1kP/hLL6Y3/Y3hhGnBwD4dCkkAqs1W/Q==
-
 "@types/pretty-hrtime@^1.0.0":
   version "1.0.0"
   resolved "https://registry.npmjs.org/@types/pretty-hrtime/-/pretty-hrtime-1.0.0.tgz"
