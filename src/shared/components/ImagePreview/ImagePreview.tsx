@@ -290,6 +290,7 @@ const ImagePreview: React.FC<Props> = ({
                           <Button
                             onClick={e => downloadImageHandler(e, item)}
                             type="link"
+                            style={{ padding: '4px 0px'}}
                           >
                             <DownloadOutlined />
                             Download
