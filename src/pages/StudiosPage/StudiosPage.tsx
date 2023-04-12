@@ -3,15 +3,12 @@ import { useState, useRef, useReducer } from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Spin, List, Input, Button, Alert } from 'antd';
 import { Link, useHistory } from 'react-router-dom';
-import { useInfiniteQuery, useQuery } from 'react-query';
+import { useInfiniteQuery } from 'react-query';
 import { NexusClient, ResourceList, Resource } from '@bbp/nexus-sdk';
 import { match as pmatch } from 'ts-pattern';
 import { RightSquareOutlined, SortAscendingOutlined, SortDescendingOutlined } from '@ant-design/icons';
 import { flatten } from 'lodash';
-import {
-  getOrgAndProjectFromProjectId,
-  makeStudioUri,
-} from '../../shared/utils';
+import { getOrgAndProjectFromProjectId, makeStudioUri, } from '../../shared/utils';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
@@ -52,16 +49,17 @@ type TStudioItem = {
   createdAt: Date;
   access?: string;
 }
-type TFetchStudiosListProps = TStudiosOptions & { nexus: NexusClient };
+type TFetchStudiosListProps = TStudiosOptions & { nexus: NexusClient, after?: string; };
 export const sortBackgroundColor = (sort: string, value: string) => sort === value ? '#003A8C' : '#BFBFBF';
 const fetchStudios = async (
-  { nexus, query, sort, size }:
+  { nexus, query, sort, size, after }:
     TFetchStudiosListProps
 ) => {
   try {
     const response = await nexus.Resource.list(undefined, undefined, {
+      after, 
       q: query,
-      size: STUDIO_RESULTS_DEFAULT_SIZE,
+      size: size ?? STUDIO_RESULTS_DEFAULT_SIZE,
       deprecated: false,
       type: DEFAULT_STUDIO_TYPE,
       // sort: `${sort === 'asc' ? '' : '-'}label`,
@@ -144,37 +142,33 @@ const FusionStudiosPage: React.FC = () => {
       })
     }
   };
-  // const {
-  //   data,
-  //   error,
-  //   fetchNextPage,
-  //   hasNextPage,
-  //   isFetchingNextPage,
-  //   status,
-  //   isLoading,
-  //   isFetching,
-  // } = useInfiniteQuery({
-  //   queryKey: ['fusion-studios', { query, sort }],
-  //   queryFn: ({ pageParam = undefined }) => fetchStudios({ nexus, query, sort, from: pageParam, size: 10 }),
-  //   //@ts-ignore
-  //   getNextPageParam: (lastPage) => lastPage._next ?? undefined
-  // });
-
-  const { data, status } = useQuery({
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+    isLoading,
+    isFetching,
+  } = useInfiniteQuery({
     queryKey: ['fusion-studios', { query, sort }],
-    queryFn: () => fetchStudios({ nexus, query, sort, size: STUDIO_RESULTS_DEFAULT_SIZE }),
+    queryFn: ({ pageParam = undefined }) => fetchStudios({ nexus, query, sort, after: pageParam, size: 10 }),
+    //@ts-ignore
+    getNextPageParam: (lastPage) => lastPage._next ?  new URL(lastPage._next).searchParams.get('after') : undefined,
   });
-  // const loadMoreFooter = hasNextPage && (<Button
-  //   className='infinitfetch-loader'
-  //   ref={loadMoreRef}
-  //   onClick={() => fetchNextPage()}
-  //   disabled={!hasNextPage || isFetchingNextPage}
-  // >
-  //   <Spin spinning={isFetchingNextPage || isFetching || isLoading} />
-  //   {hasNextPage && !isFetchingNextPage && <span>Load more</span>}
-  // </Button>)
+  const loadMoreFooter = hasNextPage && (<Button
+    className='infinitfetch-loader'
+    ref={loadMoreRef}
+    onClick={() => fetchNextPage()}
+    disabled={!hasNextPage || isFetchingNextPage}
+  >
+    <Spin spinning={isFetchingNextPage || isFetching || isLoading} />
+    {hasNextPage && !isFetchingNextPage && <span>Load more</span>}
+  </Button>)
 
-  const dataSource = data?._results.map((item: Resource) => {
+  // @ts-ignore
+  const dataSource = flatten(data?.pages.map((page: ResourceList<{}>) => page?._results.map((item: Resource) => {
     const { projectLabel, orgLabel } = getOrgAndProjectFromProjectId(item._project)!;
     return {
       orgLabel,
@@ -186,14 +180,14 @@ const FusionStudiosPage: React.FC = () => {
       description: item.description,
       access: "",
     };
-  });
+  })));
   // @ts-ignore
   const _total = (data?._total) as number;
-  // useIntersectionObserver({
-  //   target: loadMoreRef,
-  //   onIntersect: fetchNextPage,
-  //   enabled: !!hasNextPage,
-  // });
+  useIntersectionObserver({
+    target: loadMoreRef,
+    onIntersect: fetchNextPage,
+    enabled: !!hasNextPage,
+  });
   return (
     <div className='main-route'>
       <PinnedMenu />
@@ -240,13 +234,8 @@ const FusionStudiosPage: React.FC = () => {
               </div>)
               .with('success', () => <div className='route-result-list'>
                 <List
-                  pagination={{
-                    total: _total,
-                    showTotal: total => ` ${total} results`,
-                    pageSize: 10,
-                  }}
                   itemLayout="horizontal"
-                  // loadMore={loadMoreFooter}
+                  loadMore={loadMoreFooter}
                   dataSource={dataSource}
                   renderItem={(item) => {
                     const { orgLabel, projectLabel, id } = item;
