@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react';
-import { useRouteMatch } from 'react-router';
+import { useHistory, useRouteMatch } from 'react-router';
 import { Table, Button, Spin } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { useNexusContext } from '@bbp/react-nexus';
+import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { useQuery } from 'react-query';
 import { NexusClient, Storage } from '@bbp/nexus-sdk';
 import * as moment from 'moment';
@@ -91,19 +91,22 @@ const fetchStorages = async ({
   }
 };
 const StoragesSubView = (props: Props) => {
-  const handleOnEdit = () => {};
-  const createNewStorageHandler = () => {};
+  const handleOnEdit = () => { };
+  const history = useHistory();
   const nexus = useNexusContext();
-  const [storages, setStorages] = useState<StorageData[]>([]);
   const match = useRouteMatch<{
     orgLabel: string;
     projectLabel: string;
     viewId?: string;
   }>();
-
+  
   const {
     params: { orgLabel, projectLabel },
   } = match;
+  const createNewStorageHandler = () => { 
+    const queryURI = `/admin/${orgLabel}/${projectLabel}/create`;
+    history.push(queryURI);
+  };
   const columns: ColumnsType<TDataType> = useMemo(
     () => [
       {
@@ -162,20 +165,25 @@ const StoragesSubView = (props: Props) => {
     queryFn: () => fetchStorages({ nexus, orgLabel, projectLabel }),
   });
 
-  console.log('@@ storagesData', storagesData);
   return (
     <div className="settings-view settings-storages-view">
       <h2>Storages</h2>
       <div className="settings-view-container">
-        <Button
-          style={{ maxWidth: 150, margin: 0, marginTop: 20 }}
-          type="primary"
-          disabled={true} // TODO: write premission to be enabled
-          htmlType="button"
-          onClick={createNewStorageHandler}
-        >
-          Create Storage
-        </Button>
+        {/* <AccessControl
+          key={`access-control-${i['@id']}`}
+          path={`/${i._label}`}
+          permissions={['']}
+        > */}
+          <Button
+            style={{ maxWidth: 150, margin: 0, marginTop: 20 }}
+            type="primary"
+            // disabled={true} // TODO: write premission to be enabled
+            htmlType="button"
+            onClick={createNewStorageHandler}
+          >
+            Create Storage
+          </Button>
+        {/* </AccessControl> */}
         <Spin spinning={status === 'loading'}>
           {status === 'success' && (
             <Table<TDataType>

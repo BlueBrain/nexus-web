@@ -3,7 +3,7 @@ import { Table, Button } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
-import { useRouteMatch } from 'react-router';
+import { useHistory, useRouteMatch } from 'react-router';
 import { NexusClient } from '@bbp/nexus-sdk';
 import './SettingsView.less';
 
@@ -39,6 +39,7 @@ const fetchResolvers = async ({
 };
 const ResolversSubView = (props: Props) => {
   const nexus = useNexusContext();
+  const history = useHistory();
   const match = useRouteMatch<{
     orgLabel: string;
     projectLabel: string;
@@ -48,7 +49,10 @@ const ResolversSubView = (props: Props) => {
     params: { orgLabel, projectLabel },
   } = match;
   const handleOnEdit = () => {};
-  const createNewResolverHandler = () => {};
+  const createNewResolverHandler = () => {
+    const queryURI = `/admin/${orgLabel}/${projectLabel}/create`;
+    history.push(queryURI);
+  };
   const columns: ColumnsType<TDataType> = [
     {
       key: 'name',
@@ -99,7 +103,7 @@ const ResolversSubView = (props: Props) => {
         <Button
           style={{ maxWidth: 150, margin: 0, marginTop: 20 }}
           type="primary"
-          disabled={true} // TODO: write premission to be enabled
+          // disabled={true} // TODO: write premission to be enabled
           htmlType="button"
           onClick={createNewResolverHandler}
         >

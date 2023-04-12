@@ -54,7 +54,10 @@ const ViewsSubView = (props: Props) => {
   const handleOnEdit = () => {};
   const handleOnQuery = () => {};
   const handleOnDelete = () => {};
-  const createNewViewHandler = () => {};
+  const createNewViewHandler = () => {
+    const queryURI = `/admin/${orgLabel}/${projectLabel}/create`;
+    history.push(queryURI);
+  };
   const columns: ColumnsType<DataType> = [
     {
       key: 'name',
@@ -128,17 +131,14 @@ const ViewsSubView = (props: Props) => {
     <div className="settings-view settings-views-view">
       <h2>Views</h2>
       <div className="settings-view-container">
-        {/* <Link
-          to={}
+        <Button
           style={{ maxWidth: 150, margin: 0, marginTop: 20 }}
-          type="link"
-          href=''
-          // disabled={true}
-          // htmlType='button'
+          type="primary"
+          htmlType='button'
           onClick={createNewViewHandler}
         >
           Create View
-        </Link> */}
+        </Button>
         <Table
           loading={status === 'loading'}
           className="views-table"
