@@ -5,6 +5,7 @@ import { useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useHistory, useRouteMatch } from 'react-router';
 import { NexusClient } from '@bbp/nexus-sdk';
+import { PromisePool } from '@supercharge/promise-pool';
 import './SettingsView.less';
 
 type Props = {};
@@ -25,13 +26,24 @@ const fetchResolvers = async ({
   projectLabel: string;
 }) => {
   try {
-    const resolvers = await nexus.Resolver.list(orgLabel, projectLabel);
-    return resolvers._results.map(item => ({
+    const response = await nexus.Resolver.list(orgLabel, projectLabel);
+    const resolvers = response._results.map(item => ({
       // @ts-ignore
       type: item['@type'].filter(t => t !== 'Resolver'),
       priority: item.priority,
       id: item['@id'],
     }));
+    const { results, errors } = await PromisePool
+      .withConcurrency(4)
+      .for(resolvers!)
+      .process(async (res) => {
+        const iResolver = await nexus.Resolver.get(orgLabel, projectLabel, encodeURIComponent(res.id));
+        return {
+          ...res,
+          priority: iResolver.priority,
+        };
+      });
+    return { results, errors };
   } catch (error) {
     // @ts-ignore
     throw new Error('Can not find resolvers', { cause: error });
@@ -48,7 +60,6 @@ const ResolversSubView = (props: Props) => {
   const {
     params: { orgLabel, projectLabel },
   } = match;
-  const handleOnEdit = () => {};
   const createNewResolverHandler = () => {
     const queryURI = `/admin/${orgLabel}/${projectLabel}/create`;
     history.push(queryURI);
@@ -84,11 +95,14 @@ const ResolversSubView = (props: Props) => {
       dataIndex: 'actions',
       title: 'Actions',
       align: 'center',
-      render: text => (
-        <Button disabled type="link" htmlType="button" onClick={handleOnEdit}>
-          Edit
-        </Button>
-      ),
+      render: (_, record) => {
+        const editURI = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(`${record.id}`)}`;
+        return (
+          <Button type="link" htmlType="button" onClick={() => history.push(editURI)}>
+            Edit
+          </Button>
+        )
+      }
     },
   ];
   const { data: resolvers, status } = useQuery({
@@ -103,7 +117,6 @@ const ResolversSubView = (props: Props) => {
         <Button
           style={{ maxWidth: 150, margin: 0, marginTop: 20 }}
           type="primary"
-          // disabled={true} // TODO: write premission to be enabled
           htmlType="button"
           onClick={createNewResolverHandler}
         >
@@ -115,7 +128,7 @@ const ResolversSubView = (props: Props) => {
           rowClassName="view-item-row"
           columns={columns}
           rowKey={r => r.id}
-          dataSource={resolvers}
+          dataSource={resolvers?.results}
           sticky={true}
           size="middle"
           pagination={false}
