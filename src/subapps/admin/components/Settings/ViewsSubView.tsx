@@ -90,7 +90,7 @@ const ViewsSubView = (props: Props) => {
     }, {
       key: 'status',
       dataIndex: 'status',
-      title: 'Status',
+      title: 'Indexation status',
       align: 'center',
       render: (text) => <span>{text}</span>,
     }, {

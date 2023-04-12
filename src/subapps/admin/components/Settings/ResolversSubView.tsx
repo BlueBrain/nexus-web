@@ -1,4 +1,5 @@
 import React from 'react';
+import { orderBy } from 'lodash';
 import { Table, Button } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useQuery } from 'react-query';
@@ -33,7 +34,7 @@ const fetchResolvers = async ({
       priority: item.priority,
       id: item['@id'],
     }));
-    const { results, errors } = await PromisePool
+    let { results, errors } = await PromisePool
       .withConcurrency(4)
       .for(resolvers!)
       .process(async (res) => {
@@ -43,6 +44,7 @@ const fetchResolvers = async ({
           priority: iResolver.priority,
         };
       });
+    results = orderBy(results, ['priority'], ['asc']);
     return { results, errors };
   } catch (error) {
     // @ts-ignore
