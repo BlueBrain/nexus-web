@@ -234,10 +234,10 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
           displayLogin={canLogin}
           environment={{
             deltaVersion,
-            fusionVersion: FUSION_VERSION,
             operatingSystem,
             browser,
             environmentName,
+            fusionVersion: FUSION_VERSION
           }}
           githubIssueURL={githubIssueURL}
           forgeLink={layoutSettings.forgeLink}
