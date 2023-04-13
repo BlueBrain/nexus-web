@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useState } from 'react';
 import { ProjectResponseCommon } from '@bbp/nexus-sdk';
 import { Menu, MenuProps } from 'antd';
 import GeneralSVComponent from '../components/Settings/GeneralSubView';
@@ -98,10 +97,9 @@ const SettingsContainer: React.FunctionComponent<Props> = ({
   const menuItems = Array.from(subViewsMapper.entries()).map(
     ([, value]) => value
   );
-  const [selectedKey, setSelectedKey] = useState(() => menuItems[0].id);
-  const handleOnSelectSubMenuItem: OnSelectHandler = info =>
-    //@ts-ignore
-    setSelectedKey(info.key);
+  const [selectedKey, setSelectedKey] = React.useState(() => menuItems[0].id);
+  // @ts-ignore
+  const handleOnSelectSubMenuItem: OnSelectHandler = info => setSelectedKey(info.key);
   const subViewSelectedComponenet = (props: Props) => {
     const view = subViewsMapper.get(selectedKey.split('/')[1]);
     const Component = view!.Component;

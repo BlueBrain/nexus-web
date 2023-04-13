@@ -34,7 +34,7 @@ const fetchResolvers = async ({
       priority: item.priority,
       id: item['@id'],
     }));
-    let { results, errors } = await PromisePool
+    const { results, errors } = await PromisePool
       .withConcurrency(4)
       .for(resolvers!)
       .process(async (res) => {
@@ -44,8 +44,11 @@ const fetchResolvers = async ({
           priority: iResolver.priority,
         };
       });
-    results = orderBy(results, ['priority'], ['asc']);
-    return { results, errors };
+    const resultsOrdered = orderBy(results, ['priority'], ['asc']);
+    return { 
+      errors,
+      results: resultsOrdered, 
+    };
   } catch (error) {
     // @ts-ignore
     throw new Error('Can not find resolvers', { cause: error });

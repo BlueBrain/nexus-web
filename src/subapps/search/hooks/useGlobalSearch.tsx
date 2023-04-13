@@ -745,22 +745,22 @@ function useGlobalSearchData(
   }, [selectedSearchLayout]);
 
   return {
-    isLoading: loadingConfig || loadingQuery,
-    searchError,
-    columns,
     data,
-    dispatchFilter,
-    fieldsVisibilityState,
-    visibleColumns,
-    filterState,
+    config,
+    columns,
+    resetAll,
     sortState,
+    filterState,
+    searchError,
+    dispatchFilter,
+    visibleColumns,
     removeSortOption,
     changeSortOption,
-    resetAll,
-    dispatchFieldVisibility,
-    config,
-    handleChangeSearchLayout,
     selectedSearchLayout,
+    fieldsVisibilityState,
+    dispatchFieldVisibility,
+    handleChangeSearchLayout,
+    isLoading: loadingConfig || loadingQuery,
   };
 }
 

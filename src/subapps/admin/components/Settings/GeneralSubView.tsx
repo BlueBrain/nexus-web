@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useState } from 'react';
 import { useRouteMatch } from 'react-router';
 import { useMutation } from 'react-query';
 import { Form, Input, Button, Spin } from 'antd';
@@ -87,10 +86,10 @@ const submitSettings = async ({
   );
   try {
     return await nexus.Project.update(orgLabel, projectLabel, rev, {
+      apiMappings,
       base: newProject.base,
       vocab: newProject.vocab,
       description: newProject.description,
-      apiMappings: apiMappings,
     });
   } catch (error) {
     // @ts-ignore
@@ -120,9 +119,9 @@ const GeneralSubView = ({
       submitSettings({
         nexus,
         orgLabel,
+        newProject,
         projectLabel,
         rev: _rev,
-        newProject,
       }),
     {
       onSuccess: () =>
@@ -138,7 +137,7 @@ const GeneralSubView = ({
 
   const currentId = apiMappings ? apiMappings.length : 0;
   const activeKeys = [...Array(currentId + 1).keys()].slice(1);
-  const [prefixMappingKeys, setPrefixMappingKeys] = useState({
+  const [prefixMappingKeys, setPrefixMappingKeys] = React.useState({
     currentId,
     activeKeys,
   });
