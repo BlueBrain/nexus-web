@@ -133,7 +133,9 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
   ) => {
     const selectedType =
       value
-        ?.find((entry: any) => Object.keys(DEFAULT_RESOURCES).includes(`${entry}`))
+        ?.find((entry: any) =>
+          Object.keys(DEFAULT_RESOURCES).includes(`${entry}`)
+        )
         ?.toString() || '_';
     setJsonValue(DEFAULT_RESOURCES[selectedType]);
   };

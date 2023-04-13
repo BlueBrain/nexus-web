@@ -45,9 +45,8 @@ const fetchViewList = async ({
           ...view,
           // @ts-ignore
           status: iViewStats.totalEvents
-            ? 
-              `${(
-                // @ts-ignore
+            ? `${// @ts-ignore
+              (
                 (iViewStats.processedEvents / iViewStats.totalEvents) *
                 100
               ).toFixed(0)}%`
