@@ -212,7 +212,7 @@ const SearchContainer: React.FC = () => {
       );
     },
   };
-  
+
   return (
     <Spin spinning={isLoading}>
       {searchError ? (

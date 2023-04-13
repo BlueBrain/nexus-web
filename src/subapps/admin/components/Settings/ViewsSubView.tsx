@@ -33,20 +33,26 @@ const fetchViewList = async ({
       type: item['@type']?.[0],
       status: '100%',
     }));
-    const { results, errors } = await PromisePool
-      .withConcurrency(4)
+    const { results, errors } = await PromisePool.withConcurrency(4)
       .for(result!)
-      .process(async (view) => {
-        const iViewStats = await nexus.View.statistics(orgLabel, projectLabel, encodeURIComponent(view.key));
+      .process(async view => {
+        const iViewStats = await nexus.View.statistics(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(view.key)
+        );
         return {
           ...view,
           // @ts-ignore
-          status: iViewStats.totalEvents ?
-            // @ts-ignore
-            `${((iViewStats.processedEvents / iViewStats.totalEvents) * 100).toFixed(0)}%`
+          status: iViewStats.totalEvents
+            ? // @ts-ignore
+              `${(
+                (iViewStats.processedEvents / iViewStats.totalEvents) *
+                100
+              ).toFixed(0)}%`
             : '0%',
         };
-      })
+      });
     return {
       results,
       errors,
@@ -68,9 +74,9 @@ const ViewsSubView = (props: Props) => {
   const {
     params: { orgLabel, projectLabel },
   } = match;
-  const handleOnEdit = () => { };
-  const handleOnQuery = () => { };
-  const handleOnDelete = () => { };
+  const handleOnEdit = () => {};
+  const handleOnQuery = () => {};
+  const handleOnDelete = () => {};
   const createNewViewHandler = () => {
     const queryURI = `/admin/${orgLabel}/${projectLabel}/create`;
     history.push(queryURI);
@@ -81,26 +87,33 @@ const ViewsSubView = (props: Props) => {
       dataIndex: 'name',
       title: 'Name',
       render: text => <span>{text}</span>,
-    }, {
+    },
+    {
       key: 'type',
       dataIndex: 'type',
       title: 'Type',
       align: 'center',
       render: text => <span>{text}</span>,
-    }, {
+    },
+    {
       key: 'status',
       dataIndex: 'status',
       title: 'Indexation status',
       align: 'center',
-      render: (text) => <span>{text}</span>,
-    }, {
+      render: text => <span>{text}</span>,
+    },
+    {
       key: 'actions',
       dataIndex: 'actions',
       title: 'Actions',
       align: 'center',
       render: (_, record) => {
-        const editURI = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(`${record.key}`)}`;
-        const queryURI = `/admin/${orgLabel}/${projectLabel}/query/${encodeURIComponent(`${record.key}`)}`;
+        const editURI = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+          `${record.key}`
+        )}`;
+        const queryURI = `/admin/${orgLabel}/${projectLabel}/query/${encodeURIComponent(
+          `${record.key}`
+        )}`;
 
         return (
           <div className="view-item-actions">
@@ -132,7 +145,7 @@ const ViewsSubView = (props: Props) => {
               Delete
             </Button> */}
           </div>
-        )
+        );
       },
     },
   ];
@@ -148,7 +161,7 @@ const ViewsSubView = (props: Props) => {
         <Button
           style={{ maxWidth: 150, margin: 0, marginTop: 20 }}
           type="primary"
-          htmlType='button'
+          htmlType="button"
           onClick={createNewViewHandler}
         >
           Create View

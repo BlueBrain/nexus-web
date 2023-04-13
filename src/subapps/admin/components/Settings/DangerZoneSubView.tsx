@@ -133,8 +133,14 @@ const DangerZoneSubView = ({ project }: Props) => {
                 ]}
               >
                 <Input
-                  onPaste={(e) => { e.preventDefault(); return false }}
-                  onDrop={(e) => { e.preventDefault(); return false }}
+                  onPaste={e => {
+                    e.preventDefault();
+                    return false;
+                  }}
+                  onDrop={e => {
+                    e.preventDefault();
+                    return false;
+                  }}
                   value={depValue}
                   onChange={handleOnDepProjectValueChange}
                 />

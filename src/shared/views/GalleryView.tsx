@@ -111,7 +111,7 @@ const GalleryView: React.FC = () => {
           maskClosable={false}
           destroyOnClose={false}
           visible={drawerVisible}
-          placement='right'
+          placement="right"
           width="" // intentionally blank, specified in css
         >
           <Route

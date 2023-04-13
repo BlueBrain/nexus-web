@@ -34,20 +34,23 @@ const fetchResolvers = async ({
       priority: item.priority,
       id: item['@id'],
     }));
-    const { results, errors } = await PromisePool
-      .withConcurrency(4)
+    const { results, errors } = await PromisePool.withConcurrency(4)
       .for(resolvers!)
-      .process(async (res) => {
-        const iResolver = await nexus.Resolver.get(orgLabel, projectLabel, encodeURIComponent(res.id));
+      .process(async res => {
+        const iResolver = await nexus.Resolver.get(
+          orgLabel,
+          projectLabel,
+          encodeURIComponent(res.id)
+        );
         return {
           ...res,
           priority: iResolver.priority,
         };
       });
     const resultsOrdered = orderBy(results, ['priority'], ['asc']);
-    return { 
+    return {
       errors,
-      results: resultsOrdered, 
+      results: resultsOrdered,
     };
   } catch (error) {
     // @ts-ignore
@@ -101,13 +104,19 @@ const ResolversSubView = (props: Props) => {
       title: 'Actions',
       align: 'center',
       render: (_, record) => {
-        const editURI = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(`${record.id}`)}`;
+        const editURI = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+          `${record.id}`
+        )}`;
         return (
-          <Button type="link" htmlType="button" onClick={() => history.push(editURI)}>
+          <Button
+            type="link"
+            htmlType="button"
+            onClick={() => history.push(editURI)}
+          >
             Edit
           </Button>
-        )
-      }
+        );
+      },
     },
   ];
   const { data: resolvers, status } = useQuery({

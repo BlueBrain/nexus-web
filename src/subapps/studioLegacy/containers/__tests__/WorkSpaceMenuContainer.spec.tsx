@@ -389,7 +389,9 @@ describe('workSpaceMenu', () => {
       await screen.getAllByText('Workspace');
     });
     await act(async () => {
-      const workSpaceAction =  await screen.getAllByText('Workspace')[0] as HTMLButtonElement;
+      const workSpaceAction = (await screen.getAllByText(
+        'Workspace'
+      )[0]) as HTMLButtonElement;
       fireEvent.click(workSpaceAction);
     });
     await waitFor(async () => {
@@ -427,11 +429,15 @@ describe('workSpaceMenu', () => {
     });
 
     await waitFor(async () => {
-      const workSpaceAction = await screen.getAllByText('Workspace')[0] as HTMLButtonElement;
+      const workSpaceAction = (await screen.getAllByText(
+        'Workspace'
+      )[0]) as HTMLButtonElement;
       fireEvent.click(workSpaceAction);
     });
     await act(async () => {
-      const workSpaceAction = await screen.getAllByText('Workspace')[0] as HTMLButtonElement;
+      const workSpaceAction = (await screen.getAllByText(
+        'Workspace'
+      )[0]) as HTMLButtonElement;
       fireEvent.click(workSpaceAction);
     });
     const editButton = await screen.findByText('Remove');
@@ -464,11 +470,15 @@ describe('workSpaceMenu', () => {
     );
 
     await waitFor(async () => {
-      const workSpaceAction = await screen.getAllByText('Workspace')[0] as HTMLButtonElement;
+      const workSpaceAction = (await screen.getAllByText(
+        'Workspace'
+      )[0]) as HTMLButtonElement;
       fireEvent.click(workSpaceAction);
     });
     await act(async () => {
-      const workSpaceAction = await screen.getAllByText('Workspace')[0] as HTMLButtonElement;
+      const workSpaceAction = (await screen.getAllByText(
+        'Workspace'
+      )[0]) as HTMLButtonElement;
       fireEvent.click(workSpaceAction);
     });
     const editButton = await screen.findByText('Edit');

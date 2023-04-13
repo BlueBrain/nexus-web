@@ -91,7 +91,7 @@ const fetchStorages = async ({
   }
 };
 const StoragesSubView = (props: Props) => {
-  const handleOnEdit = () => { };
+  const handleOnEdit = () => {};
   const history = useHistory();
   const nexus = useNexusContext();
   const match = useRouteMatch<{
@@ -99,11 +99,11 @@ const StoragesSubView = (props: Props) => {
     projectLabel: string;
     viewId?: string;
   }>();
-  
+
   const {
     params: { orgLabel, projectLabel },
   } = match;
-  const createNewStorageHandler = () => { 
+  const createNewStorageHandler = () => {
     const queryURI = `/admin/${orgLabel}/${projectLabel}/create`;
     history.push(queryURI);
   };
@@ -174,15 +174,15 @@ const StoragesSubView = (props: Props) => {
           path={`/${i._label}`}
           permissions={['']}
         > */}
-          <Button
-            style={{ maxWidth: 150, margin: 0, marginTop: 20 }}
-            type="primary"
-            // disabled={true} // TODO: write premission to be enabled
-            htmlType="button"
-            onClick={createNewStorageHandler}
-          >
-            Create Storage
-          </Button>
+        <Button
+          style={{ maxWidth: 150, margin: 0, marginTop: 20 }}
+          type="primary"
+          // disabled={true} // TODO: write premission to be enabled
+          htmlType="button"
+          onClick={createNewStorageHandler}
+        >
+          Create Storage
+        </Button>
         {/* </AccessControl> */}
         <Spin spinning={status === 'loading'}>
           {status === 'success' && (

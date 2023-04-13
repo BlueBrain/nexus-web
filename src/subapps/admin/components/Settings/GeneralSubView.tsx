@@ -34,7 +34,13 @@ export interface PrefixMappingGroupInputState {
   prefix: string;
   namespace: string;
 }
-const PrefixMappingGroupInput = ({ groupId, value }: { groupId: number, value?: any }) => {
+const PrefixMappingGroupInput = ({
+  groupId,
+  value,
+}: {
+  groupId: number;
+  value?: any;
+}) => {
   return (
     <Input.Group className="project-form__item-inputs">
       <Form.Item

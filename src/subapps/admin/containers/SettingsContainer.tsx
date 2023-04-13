@@ -24,7 +24,8 @@ type TMenuItem = {
 type OnSelectHandler = MenuProps['onSelect'];
 const subViewsMapper = new Map<string, TMenuItem>([
   [
-    'general', {
+    'general',
+    {
       id: 'setting/general',
       key: 'setting/general',
       label: 'General',
@@ -99,7 +100,8 @@ const SettingsContainer: React.FunctionComponent<Props> = ({
   );
   const [selectedKey, setSelectedKey] = React.useState(() => menuItems[0].id);
   // @ts-ignore
-  const handleOnSelectSubMenuItem: OnSelectHandler = info => setSelectedKey(info.key);
+  const handleOnSelectSubMenuItem: OnSelectHandler = info =>
+    setSelectedKey(info.key);
   const subViewSelectedComponenet = (props: Props) => {
     const view = subViewsMapper.get(selectedKey.split('/')[1]);
     const Component = view!.Component;

@@ -30,19 +30,19 @@ import { useQueries } from 'react-query';
 
 export type SearchConfigField =
   | {
-    title: () => JSX.Element;
-    dataIndex: string;
-    key: string;
-    render: (value: any) => JSX.Element | '';
-    label: string;
-  }[]
+      title: () => JSX.Element;
+      dataIndex: string;
+      key: string;
+      render: (value: any) => JSX.Element | '';
+      label: string;
+    }[]
   | undefined;
 
 type actionType =
   | {
-    type: 'add' | 'remove';
-    payload: FilterState;
-  }
+      type: 'add' | 'remove';
+      payload: FilterState;
+    }
   | { type: 'fromLayout'; payload: FilterState[] };
 
 export type FilterState = {
@@ -157,25 +157,25 @@ export type fieldVisibilityActionType =
 
 export type ConfigField =
   | {
-    name: string;
-    label: string;
-    array: boolean;
-    optional: boolean;
-    fields: { name: string; format: string }[];
-    format?: undefined;
-    filterable: boolean;
-    sortable: boolean;
-  }
+      name: string;
+      label: string;
+      array: boolean;
+      optional: boolean;
+      fields: { name: string; format: string }[];
+      format?: undefined;
+      filterable: boolean;
+      sortable: boolean;
+    }
   | {
-    name: string;
-    label: string;
-    format: string;
-    array: boolean;
-    optional: boolean;
-    fields?: undefined;
-    filterable: boolean;
-    sortable: boolean;
-  };
+      name: string;
+      label: string;
+      format: string;
+      array: boolean;
+      optional: boolean;
+      fields?: undefined;
+      filterable: boolean;
+      sortable: boolean;
+    };
 
 export type SearchLayout = {
   name: string;
@@ -183,10 +183,10 @@ export type SearchLayout = {
   filters: {
     field: string;
     operator:
-    | 'and' // maps to allof
-    | 'or' // maps to anyof
-    | 'none' // maps to noneof
-    | 'missing'; // map to missing.  Perhaps we should use same operator names?
+      | 'and' // maps to allof
+      | 'or' // maps to anyof
+      | 'none' // maps to noneof
+      | 'missing'; // map to missing.  Perhaps we should use same operator names?
     values: string[];
   }[];
   sort: { field: string; order: 'asc' | 'desc' }[];
@@ -352,15 +352,21 @@ const fetchNexusSearchConfig = async ({ nexus }: { nexus: NexusClient }) => {
   } catch (error) {
     return error;
   }
-}
-const fetchNexusSearchQuery = async ({ nexus, esQuery }: { nexus: NexusClient, esQuery: any }) => {
+};
+const fetchNexusSearchQuery = async ({
+  nexus,
+  esQuery,
+}: {
+  nexus: NexusClient;
+  esQuery: any;
+}) => {
   try {
     const queryResponse = await nexus.Search.query(esQuery);
     return queryResponse;
   } catch (error) {
     return error;
   }
-}
+};
 function useGlobalSearchData(
   query: string,
   page: number,
@@ -588,26 +594,32 @@ function useGlobalSearchData(
     }
     return [];
   }, [result]);
-  const [{ isLoading: loadingConfig }, { isLoading: loadingQuery }] = useQueries([
+  const [
+    { isLoading: loadingConfig },
+    { isLoading: loadingQuery },
+  ] = useQueries([
     {
       queryKey: 'nexus-search-config',
       queryFn: () => fetchNexusSearchConfig({ nexus }),
       // @ts-ignore
       onSuccess: (searchConfig: SearchConfig) => setConfig(searchConfig),
       // @ts-ignore
-      onError: (error) => setSearchError(error),
+      onError: error => setSearchError(error),
     },
     {
-      queryKey: ['nexus-search-query', { esQuery: JSON.stringify(esQuery, null, 2) }],
+      queryKey: [
+        'nexus-search-query',
+        { esQuery: JSON.stringify(esQuery, null, 2) },
+      ],
       queryFn: () => fetchNexusSearchQuery({ nexus, esQuery }),
       onSuccess: (queryResponse: any) => {
         setResult(queryResponse);
         onSuccess(queryResponse);
       },
-       // @ts-ignore
-      onError: (error) => setSearchError(error),
-    }
-  ])
+      // @ts-ignore
+      onError: error => setSearchError(error),
+    },
+  ]);
   // React.useEffect(() => {
   //   setIsLoading(true);
   //   nexus.Search.config()
