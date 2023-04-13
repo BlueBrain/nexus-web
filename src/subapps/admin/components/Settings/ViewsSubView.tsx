@@ -41,16 +41,14 @@ const fetchViewList = async ({
           projectLabel,
           encodeURIComponent(view.key)
         );
+        // @ts-ignore
+        const percentage = iViewStats.totalEvents
+          ? // @ts-ignore
+            iViewStats.processedEvents / iViewStats.totalEvents
+          : 0;
         return {
           ...view,
-          // @ts-ignore
-          status: iViewStats.totalEvents
-            ? `${// @ts-ignore
-              (
-                (iViewStats.processedEvents / iViewStats.totalEvents) *
-                100
-              ).toFixed(0)}%`
-            : '0%',
+          status: percentage ? `${(percentage * 100).toFixed(0)}%` : '0%',
         };
       });
     return {
