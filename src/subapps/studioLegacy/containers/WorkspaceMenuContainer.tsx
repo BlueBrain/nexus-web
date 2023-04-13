@@ -408,7 +408,6 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             }}
             role="button"
           >
-            {' '}
             Workspace
           </Button>
         </Popover>

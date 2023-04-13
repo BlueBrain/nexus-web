@@ -85,7 +85,7 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
             </svg>
           </span>
           <span>
-             Workspace
+            Workspace
           </span>
         </button>
         <button
@@ -191,7 +191,7 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
             </svg>
           </span>
           <span>
-             Workspace
+            Workspace
           </span>
         </button>
         <button
