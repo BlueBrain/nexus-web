@@ -20,8 +20,6 @@ import {
 import useNotification from '../hooks/useNotification';
 import RemoveTagButton from './RemoveTagButtonContainer';
 import { parseResourceId } from '../components/Preview/Preview';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store/reducers';
 
 const ResourceActionsContainer: React.FunctionComponent<{
   resource: Resource;

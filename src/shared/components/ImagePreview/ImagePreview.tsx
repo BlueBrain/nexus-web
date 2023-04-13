@@ -205,31 +205,31 @@ const ImagePreview: React.FC<Props> = ({
   const type: Partial<ListProps<TDataSource>> =
     displayOption === 'list'
       ? {
-        size: 'large',
-        pagination: {
-          pageSize: 3,
-          current: currentListPage,
-          onChange: (page: number, pageSize?: number | undefined) =>
-            setCurrentListPage(page),
-        },
-      }
+          size: 'large',
+          pagination: {
+            pageSize: 3,
+            current: currentListPage,
+            onChange: (page: number, pageSize?: number | undefined) =>
+              setCurrentListPage(page),
+          },
+        }
       : {
-        grid: {
-          gutter: 16,
-          xs: 1,
-          sm: 2,
-          md: 4,
-          lg: 4,
-          xl: 6,
-          xxl: 3,
-        },
-        pagination: {
-          pageSize: 6,
-          current: currentListPage,
-          onChange: (page: number, pageSize?: number) =>
-            setCurrentListPage(page),
-        },
-      };
+          grid: {
+            gutter: 16,
+            xs: 1,
+            sm: 2,
+            md: 4,
+            lg: 4,
+            xl: 6,
+            xxl: 3,
+          },
+          pagination: {
+            pageSize: 6,
+            current: currentListPage,
+            onChange: (page: number, pageSize?: number) =>
+              setCurrentListPage(page),
+          },
+        };
 
   const { status, error } = useQuery({
     queryKey: ['image-preview-set', { resource: resource['@id'] }],
@@ -290,8 +290,9 @@ const ImagePreview: React.FC<Props> = ({
             />
           </div>
           <div
-            className={`preview-content ${displayOption === 'grid' ? 'grid' : 'list'
-              }`}
+            className={`preview-content ${
+              displayOption === 'grid' ? 'grid' : 'list'
+            }`}
           >
             <Spin spinning={status === 'loading'}>
               {status === 'success' && (
