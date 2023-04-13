@@ -38,7 +38,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
     revision: number
   ) => void;
 }> = ({ resource, editable, refreshResource, goToView, goToResource }) => {
-  const { orgLabel, projectLabel } = getOrgAndProjectFromResource(resource);
+  const { orgLabel, projectLabel } = getOrgAndProjectFromResource(resource)!;
   const resourceId = resource['@id'];
   const self = resource._self;
   const nexus = useNexusContext();

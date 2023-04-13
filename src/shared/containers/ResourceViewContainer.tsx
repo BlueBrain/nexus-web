@@ -66,7 +66,6 @@ const ResourceViewContainer: React.FunctionComponent<{
   const [deltaPlugins, setDeltaPlugins] = React.useState<{
     [key: string]: string;
   }>();
-
   const fetchDeltaVersion = async () => {
     await nexus
       .httpGet({
@@ -94,7 +93,7 @@ const ResourceViewContainer: React.FunctionComponent<{
   }>();
 
   React.useEffect(() => {
-    if (location.state.background) {
+    if (location.state && location.state.background) {
       const studioPathMatch = matchPath<{ StudioId: string }>(
         location.state.background.pathname,
         {
@@ -272,7 +271,7 @@ const ResourceViewContainer: React.FunctionComponent<{
   const handleGoToInternalLink = (link: ResourceLinkAugmented) => {
     const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(
       (link as IncomingLink)._project
-    );
+    )!;
 
     const revisionOption = link.isRevisionSpecific
       ? { revision: link._rev }
@@ -291,13 +290,7 @@ const ResourceViewContainer: React.FunctionComponent<{
       busy: true,
     });
     try {
-      const options = tag
-        ? {
-            tag: tag.toString(),
-          }
-        : {
-            rev: Number(rev),
-          };
+      const options = tag ? { tag: tag.toString() } : { rev: Number(rev) };
       const resource = (await nexus.Resource.get(
         orgLabel,
         projectLabel,
@@ -598,153 +591,151 @@ const ResourceViewContainer: React.FunctionComponent<{
     { key: 'jira', name: 'jira', pluginComponent: jiraPlugin },
     { key: 'analysis', name: 'Analysis', pluginComponent: analysisPlugin },
   ];
-
   return (
     <>
       <div className="resource-details">
-        <>
-          <Helmet
-            title={`${
-              resource ? getResourceLabel(resource) : resourceId
-            } | ${projectLabel} | ${orgLabel} | Nexus Web`}
-            meta={[
-              {
-                name: 'description',
-                content: resource
-                  ? getResourceLabel(resource)
-                  : labelOf(decodeURIComponent(resourceId)),
-              },
-            ]}
-          />
-          {resource && (
-            <ResourceViewActionsContainer
-              resource={resource}
-              latestResource={latestResource as Resource}
-              isLatest={isLatest}
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-            />
-          )}
-          <h1 className="name">
-            <Link
-              to={makeResourceUri(
-                orgLabel,
-                projectLabel,
-                decodeURIComponent(resourceId),
-                {}
-              )}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {resource
+        <Helmet
+          title={`${
+            resource ? getResourceLabel(resource) : resourceId
+          } | ${projectLabel} | ${orgLabel} | Nexus Web`}
+          meta={[
+            {
+              name: 'description',
+              content: resource
                 ? getResourceLabel(resource)
-                : labelOf(decodeURIComponent(resourceId))}
-            </Link>
-          </h1>
-        </>
+                : labelOf(decodeURIComponent(resourceId)),
+            },
+          ]}
+        />
 
         <Spin spinning={busy}>
-          {!!error && (
-            <>
-              <Alert
-                message={
-                  error.wasUpdated ? 'Resource updated with errors' : 'Error'
-                }
-                showIcon
-                closable
-                type="error"
-                description={
-                  <>
-                    <Typography.Paragraph
-                      ellipsis={{ rows: 2, expandable: true }}
-                    >
-                      {error.message}
-                    </Typography.Paragraph>
-                    {error.rejections && (
-                      <Collapse bordered={false} ghost>
-                        <Collapse.Panel key={1} header="More detail...">
-                          <>
-                            <ul>
-                              {error.rejections.map((el, ix) => (
-                                <li key={ix}>{el.reason}</li>
-                              ))}
-                            </ul>
+          {!!error ? (
+            <Alert
+              message={
+                error.wasUpdated ? 'Resource updated with errors' : 'Error'
+              }
+              showIcon
+              closable
+              style={{ marginTop: 40 }}
+              type="error"
+              description={
+                <>
+                  <Typography.Paragraph
+                    ellipsis={{ rows: 2, expandable: true }}
+                  >
+                    {error.message}
+                  </Typography.Paragraph>
+                  {error.rejections && (
+                    <Collapse bordered={false} ghost>
+                      <Collapse.Panel key={1} header="More detail...">
+                        <>
+                          <ul>
+                            {error.rejections.map((el, ix) => (
+                              <li key={ix}>{el.reason}</li>
+                            ))}
+                          </ul>
 
-                            <p>
-                              For further information please refer to the API
-                              documentation,{' '}
-                              <a
-                                target="_blank"
-                                href="https://bluebrainnexus.io/docs/delta/api/"
-                              >
-                                https://bluebrainnexus.io/docs/delta/api/
-                              </a>
-                            </p>
-                          </>
-                        </Collapse.Panel>
-                      </Collapse>
-                    )}
-                  </>
-                }
-              />
-              <br />
-            </>
-          )}
-          {resource && (
-            <ResourceMetadata
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-              resource={resource}
+                          <p>
+                            For further information please refer to the API
+                            documentation,{' '}
+                            <a
+                              target="_blank"
+                              href="https://bluebrainnexus.io/docs/delta/api/"
+                            >
+                              https://bluebrainnexus.io/docs/delta/api/
+                            </a>
+                          </p>
+                        </>
+                      </Collapse.Panel>
+                    </Collapse>
+                  )}
+                </>
+              }
             />
-          )}
-          <Divider />
-          {!!resource && !!latestResource && (
+          ) : (
             <>
-              {!isLatest && (
-                <Alert
-                  type="warning"
-                  message="You are viewing an older version of this resource."
-                  closable
+              {resource && (
+                <ResourceViewActionsContainer
+                  resource={resource}
+                  latestResource={latestResource as Resource}
+                  isLatest={isLatest}
+                  orgLabel={orgLabel}
+                  projectLabel={projectLabel}
                 />
               )}
-              {isDeprecated(resource) && (
+              <h1 className="name">
+                <Link
+                  to={makeResourceUri(
+                    orgLabel,
+                    projectLabel,
+                    decodeURIComponent(resourceId),
+                    {}
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {resource
+                    ? getResourceLabel(resource)
+                    : labelOf(decodeURIComponent(resourceId))}
+                </Link>
+              </h1>
+              {resource && (
+                <ResourceMetadata
+                  orgLabel={orgLabel}
+                  projectLabel={projectLabel}
+                  resource={resource}
+                />
+              )}
+              <Divider />
+              {!!resource && !!latestResource && (
                 <>
-                  <Alert
-                    type="error"
-                    message={
-                      <>
-                        <DeleteOutlined /> This resource is deprecated. You
-                        cannot modify it.
-                      </>
+                  {!isLatest && (
+                    <Alert
+                      type="warning"
+                      message="You are viewing an older version of this resource."
+                      closable
+                    />
+                  )}
+                  {isDeprecated(resource) && (
+                    <>
+                      <Alert
+                        type="error"
+                        message={
+                          <>
+                            <DeleteOutlined /> This resource is deprecated. You
+                            cannot modify it.
+                          </>
+                        }
+                      />
+                      <br />
+                    </>
+                  )}
+                  <ResourcePlugins
+                    resource={resource}
+                    goToResource={goToSelfResource}
+                    openPlugins={openPlugins}
+                    studioDefinedPluginsToInclude={
+                      studioPlugins && studioPlugins.customise
+                        ? studioPlugins.plugins.map(p => p.key)
+                        : undefined
+                    }
+                    builtInPlugins={builtInPlugins}
+                    handleCollapseChange={pluginName =>
+                      pluginCollapsedToggle(pluginName)
                     }
                   />
-                  <br />
+                  {!!resource['@type'] &&
+                    typeof resource['@type'] === 'string' &&
+                    nonEditableResourceTypes.includes(resource['@type']) && (
+                      <p>
+                        <Alert
+                          message="This resource is not editable because it is of the type 'File'. For further information please contact the administrator."
+                          type="info"
+                        />
+                      </p>
+                    )}
                 </>
               )}
-              <ResourcePlugins
-                resource={resource}
-                goToResource={goToSelfResource}
-                openPlugins={openPlugins}
-                studioDefinedPluginsToInclude={
-                  studioPlugins && studioPlugins.customise
-                    ? studioPlugins.plugins.map(p => p.key)
-                    : undefined
-                }
-                builtInPlugins={builtInPlugins}
-                handleCollapseChange={pluginName =>
-                  pluginCollapsedToggle(pluginName)
-                }
-              />
-              {!!resource['@type'] &&
-                typeof resource['@type'] === 'string' &&
-                nonEditableResourceTypes.includes(resource['@type']) && (
-                  <p>
-                    <Alert
-                      message="This resource is not editable because it is of the type 'File'. For further information please contact the administrator."
-                      type="info"
-                    />
-                  </p>
-                )}
             </>
           )}
         </Spin>

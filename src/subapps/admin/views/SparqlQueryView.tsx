@@ -6,10 +6,13 @@ import { useNexusContext } from '@bbp/react-nexus';
 
 import SparqlQueryContainer from '../containers/SparqlQuery';
 import useNotification from '../../../shared/hooks/useNotification';
-import { Col, Row, Select } from 'antd';
+import { Button, Col, Row, Select } from 'antd';
 import { getResourceLabel } from '../../../shared/utils';
 import { useAdminSubappContext } from '..';
+import { isNil } from 'lodash';
+import { Link } from 'react-router-dom';
 
+const { Option } = Select;
 const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
   const match = useRouteMatch<{
     orgLabel: string;
@@ -31,9 +34,6 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
   });
   const nexus = useNexusContext();
   const query = queryString.parse(location.search).query;
-
-  const { Option } = Select;
-
   const [selectedView, setSelectedView] = React.useState<string>(
     viewId ? decodeURIComponent(viewId) : DEFAULT_SPARQL_VIEW_ID
   );
@@ -45,10 +45,9 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
       }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}`
     );
   }, [selectedView]);
-
   const menu = (
-    <Row>
-      <Col span={24}>
+    <Row gutter={3} justify="space-between" align="middle">
+      <Col flex="auto">
         <Select
           value={selectedView as string}
           onChange={v => setSelectedView(v)}
@@ -71,6 +70,15 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
             })}
         </Select>
       </Col>
+      <Col flex="100px">
+        <Link
+          to={`/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+            viewId
+          )}`}
+        >
+          <Button>Open View Resource</Button>
+        </Link>
+      </Col>
     </Row>
   );
 
@@ -89,7 +97,7 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
 
   return (
     <>
-      {menu}
+      <div style={{ paddingLeft: '2em', paddingRight: '2em' }}>{menu}</div>
       <div className="view-view view-container -unconstrained-width">
         <SparqlQueryContainer
           orgLabel={orgLabel}
