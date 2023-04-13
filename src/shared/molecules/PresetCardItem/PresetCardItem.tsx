@@ -10,6 +10,7 @@ type Props = {
     label?: string;
     stats?: string;
     to: string;
+
 }
 
 export default function PresetCardItem({
@@ -31,5 +32,5 @@ export default function PresetCardItem({
     )
 }
 export const PresetCardItemSkeleton = () => {
-    return (<div className='preset-card skeleton'/>)
+    return (<div className='preset-card skeleton' />)
 }
