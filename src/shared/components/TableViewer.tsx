@@ -13,7 +13,7 @@ const TableViewer: React.FC<{ name: string; data: string[][] }> = ({
       title: header,
       dataIndex: header,
       key: header,
-      width: "auto"
+      width: 'auto',
     }));
 
   const dataSource = () => {
