@@ -33,12 +33,19 @@ import { RootState } from '../store/reducers';
 import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
 import { useJiraPlugin } from '../hooks/useJIRA';
 import AnalysisPluginContainer from './AnalysisPlugin/AnalysisPluginContainer';
+import { intersection, isArray } from 'lodash';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
 };
 
 export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
+
+const containsImages = (distribution: any[]) => {
+  const encodingFormat = distribution.map(t => t.encodingFormat);
+  const formats = ['image/png', 'image/webp', 'image/bmp', 'image/jpeg', 'image/jpg', 'image/gif'];
+  return intersection(encodingFormat, formats).length !== 0;
+}
 
 const ResourceViewContainer: React.FunctionComponent<{
   render?: (
@@ -442,9 +449,10 @@ const ResourceViewContainer: React.FunctionComponent<{
         }}
       />
     );
+  const resourceContainsImages = resource && isArray(resource.distribution) && containsImages(resource.distribution);
   const imagePreviewPlugin = resource &&
     showPluginConsideringStudioContext('preview') &&
-    resource.distribution && (
+    resource.distribution && resourceContainsImages && (
       <ImagePreview
         key="imagePreviewPlugin"
         nexus={nexus}

@@ -31,7 +31,7 @@ const makeButton = ({
   shortTitle: string;
   danger?: boolean;
 }) => (resource: Resource, actionToDispatch: () => void) => (
-  <div className="action" key={`${resource.id}-${title}`}>
+  <div className="action" key={`${resource['@id']}-${title}`}>
     {danger ? (
       <Popconfirm
         title={
@@ -70,10 +70,14 @@ const makeActionButtons = async (
       return await action.predicate(resource);
     })
   );
+  console.log('@@appliedActions', appliedActions, resource);
   return actionTypes
     .filter((action, index) => appliedActions[index])
     .map(action =>
-      makeButton(action)(resource, actionDispatchers[action.name])
+      {
+        console.log('@@appliedActions @€action', action)
+        return makeButton(action)(resource, actionDispatchers[action.name])
+      }
     );
 };
 
@@ -89,7 +93,7 @@ const ResourceActions: React.FunctionComponent<{
     React.ReactElement[]
   >([]);
   const notification = useNotification();
-
+  console.log('@@actionButtons',actionButtons)
   React.useEffect(() => {
     makeActionButtons(resource, actions, actionTypes)
       .then(setActionButtons)

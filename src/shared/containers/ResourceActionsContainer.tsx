@@ -19,6 +19,9 @@ import {
 } from '../utils/nexusMaybe';
 import useNotification from '../hooks/useNotification';
 import RemoveTagButton from './RemoveTagButtonContainer';
+import { parseResourceId } from '../components/Preview/Preview';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/reducers';
 
 const ResourceActionsContainer: React.FunctionComponent<{
   resource: Resource;
@@ -156,10 +159,8 @@ const ResourceActionsContainer: React.FunctionComponent<{
         const data = await nexus.File.get(
           orgLabel,
           projectLabel,
-          encodeURIComponent(resourceId),
-          {
-            as: 'blob',
-          }
+          parseResourceId(resource._self),
+          { as: 'blob' }
         );
         return download(
           resource._filename || getResourceLabel(resource),
@@ -169,7 +170,6 @@ const ResourceActionsContainer: React.FunctionComponent<{
       } catch (error) {
         notification.error({
           message: `Could not download ${getResourceLabel(resource)}`,
-          description: error,
         });
       }
     },

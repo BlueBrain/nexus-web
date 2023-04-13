@@ -21,7 +21,7 @@ import {
   SortDescendingOutlined,
   DownloadOutlined,
 } from '@ant-design/icons';
-import { orderBy, isNil, create } from 'lodash';
+import { orderBy, isNil, create, isArray, isObject } from 'lodash';
 import { parseProjectUrl, parseResourceId } from '../Preview/Preview';
 
 import './ImagePreview.less';
@@ -83,8 +83,33 @@ const fetchImageResources = async ({
 }) => {
   const images: TDataSource[] = [];
   try {
-    for (const item of resource.distribution) {
-      const contentUrl = item.contentUrl;
+    if (isArray(resource.distribution)) {
+      for (const item of resource.distribution) {
+        const contentUrl = item.contentUrl;
+        const rawData = await nexus.File.get(
+          orgLabel,
+          projectLabel,
+          parseResourceId(contentUrl),
+          { as: 'blob' }
+        );
+        const blob = new Blob([rawData as string], {
+          type: item.encodingFormat,
+        });
+        const src = URL.createObjectURL(blob);
+        images.push({
+          id: item.contentUrl,
+          image: rawData,
+          imageSrc: src,
+          title: item.name,
+          size: renderFileSize(item.contentSize),
+          type: item.encodingFormat,
+          score: 1,
+        });
+      }
+      return images;
+    } else if (isObject(resource.distribution)) {
+      // @ts-ignore
+      const contentUrl = resource.distribution?.contentUrl;
       const rawData = await nexus.File.get(
         orgLabel,
         projectLabel,
@@ -92,25 +117,29 @@ const fetchImageResources = async ({
         { as: 'blob' }
       );
       const blob = new Blob([rawData as string], {
-        type: item.encodingFormat,
+        // @ts-ignore
+        type: resource.distribution.encodingFormat,
       });
       const src = URL.createObjectURL(blob);
       images.push({
-        id: item.contentUrl,
+        // @ts-ignore
+        id: resource.distribution.contentUrl,
         image: rawData,
         imageSrc: src,
-        title: item.name,
-        size: renderFileSize(item.contentSize),
-        type: item.encodingFormat,
+        // @ts-ignore
+        title: resource.distribution.name,
+        // @ts-ignore
+        size: renderFileSize(resource.distribution.contentSize),
+        // @ts-ignore
+        type: resource.distribution.encodingFormat,
         score: 1,
       });
+      return images;
     }
-    return {
-      images,
-      error: null,
-    };
+    return images;
   } catch (error) {
-    throw new Error(`@@Error: ${JSON.stringify(error)}`);
+    // @ts-ignore
+    throw new Error(`Can not fetch the images list`, { cause: error });
   }
 };
 
@@ -128,7 +157,7 @@ function calculateScore(input: string, text: string) {
 }
 
 function fuzzySearch(input: string, data: TDataSource[], threshold: number) {
-  const matches = [];
+  const matches: TDataSource[] = [];
 
   for (const item of data) {
     const score = calculateScore(input, item.title);
@@ -176,39 +205,39 @@ const ImagePreview: React.FC<Props> = ({
   const type: Partial<ListProps<TDataSource>> =
     displayOption === 'list'
       ? {
-          size: 'large',
-          pagination: {
-            pageSize: 3,
-            current: currentListPage,
-            onChange: (page: number, pageSize?: number | undefined) =>
-              setCurrentListPage(page),
-          },
-        }
+        size: 'large',
+        pagination: {
+          pageSize: 3,
+          current: currentListPage,
+          onChange: (page: number, pageSize?: number | undefined) =>
+            setCurrentListPage(page),
+        },
+      }
       : {
-          grid: {
-            gutter: 16,
-            xs: 1,
-            sm: 2,
-            md: 4,
-            lg: 4,
-            xl: 6,
-            xxl: 3,
-          },
-          pagination: {
-            pageSize: 6,
-            current: currentListPage,
-            onChange: (page: number, pageSize?: number) =>
-              setCurrentListPage(page),
-          },
-        };
+        grid: {
+          gutter: 16,
+          xs: 1,
+          sm: 2,
+          md: 4,
+          lg: 4,
+          xl: 6,
+          xxl: 3,
+        },
+        pagination: {
+          pageSize: 6,
+          current: currentListPage,
+          onChange: (page: number, pageSize?: number) =>
+            setCurrentListPage(page),
+        },
+      };
 
-  const { data, status } = useQuery({
+  const { status, error } = useQuery({
     queryKey: ['image-preview-set', { resource: resource['@id'] }],
     queryFn: () =>
       fetchImageResources({ nexus, resource, orgLabel, projectLabel }),
     onSuccess: data => {
-      dataSourceRef.current = data.images;
-      setDataSource(data.images);
+      dataSourceRef.current = data;
+      setDataSource(data);
     },
   });
   const downloadImageHandler = (
@@ -261,9 +290,8 @@ const ImagePreview: React.FC<Props> = ({
             />
           </div>
           <div
-            className={`preview-content ${
-              displayOption === 'grid' ? 'grid' : 'list'
-            }`}
+            className={`preview-content ${displayOption === 'grid' ? 'grid' : 'list'
+              }`}
           >
             <Spin spinning={status === 'loading'}>
               {status === 'success' && (
@@ -290,7 +318,7 @@ const ImagePreview: React.FC<Props> = ({
                           <Button
                             onClick={e => downloadImageHandler(e, item)}
                             type="link"
-                            style={{ padding: '4px 0px'}}
+                            style={{ padding: '4px 0px' }}
                           >
                             <DownloadOutlined />
                             Download
@@ -322,8 +350,10 @@ const ImagePreview: React.FC<Props> = ({
               )}
               {status === 'error' && (
                 <Alert
-                  message="Error Loading Images"
-                  description={data?.error}
+                  // @ts-ignore
+                  message={error.message}
+                  // @ts-ignore
+                  description={error.cause.message}
                   type="error"
                 />
               )}
