@@ -3,10 +3,10 @@ import { Button, Divider } from 'antd';
 import { connect } from 'react-redux';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import { Realm } from '@bbp/nexus-sdk';
-import useClickOutside from '../../hooks/useClickOutside';
-import { RootState } from '../../store/reducers';
-import * as authActions from '../../store/actions/auth';
-import * as configActions from '../../store/actions/config';
+import useClickOutside from '../../shared/hooks/useClickOutside';
+import { RootState } from '../../shared/store/reducers';
+import * as authActions from '../../shared/store/actions/auth';
+import * as configActions from '../../shared/store/actions/config';
 
 import './styles.less';
 import { useHistory } from 'react-router';
@@ -16,7 +16,22 @@ type Props = {
     serviceAccountsRealm: string;
     performLogin(realmName: string): void;
 }
-
+const LandingVideo = () => (
+    <video
+        loop
+        muted
+        autoPlay
+        className='home-authentication-fusion'
+        poster={require('../../shared/images/BrainRegionsNexusPage.jpg')}
+        preload='auto'
+        controls={false}
+    >
+        <source
+            type='video/mp4'
+            src={require('../../shared/images/BrainRegionsNexusPage.mp4')}
+        />
+    </video>
+)
 function HomeAuthentication({
     realms,
     serviceAccountsRealm,
@@ -32,47 +47,39 @@ function HomeAuthentication({
     useClickOutside(popoverRef, onPopoverVisibleChange);
     return (
         <div className='home-authentication'>
-            <img src={require('../../images/EPFL_BBP_logo.png')} className='home-authentication-epfl' />
-            <video
-                className='home-authentication-fusion'
-                poster={require('../../images/MOPRO-648_BrainRegionsNexusPage_230321_11.jpg')}
-                loop
-                muted
-                preload='auto'
-                autoPlay
-                controls={false}
-            >
-                <source 
-                    type='video/mp4'
-                    src={require('../../images/MOPRO-648_BrainRegionsNexusPage_230321.mp4')} 
-                />
-            </video>
-            {/* <img src={require('../../images/fusion.svg')} className='home-authentication-fusion' /> */}
+            <img
+                src={require('../../shared/images/EPFL_BBP_logo.png')}
+                className='home-authentication-epfl'
+            />
+            <LandingVideo />
             <div className='home-authentication-content'>
                 <div className='title'>Nexus.Fusion</div>
                 <div className='actions'>
                     <div className='home-authentication-content-connect'>
                         {realmsFilter.length === 1 ? <Button
-                                onClick={
-                                    (e) => {
-                                        e.preventDefault();
-                                        performLogin(realmsFilter?.[0].name);
-                                    }
+                            onClick={
+                                (e) => {
+                                    e.preventDefault();
+                                    performLogin(realmsFilter?.[0].name);
                                 }
-                                className='connect-btn'
-                                size='large'
-                                type='link'
-                            >
-                                Connect
-                        </Button>: <Button
+                            }
+                            className='connect-btn'
+                            size='large'
+                            type='link'
+                        >
+                            Connect
+                        </Button> : <Button
                             size='large'
                             onClick={onPopoverVisibleChange}
                         >
                             Connect
                             {connectBtnState ? <UpOutlined size={13} /> : <DownOutlined size={13} />}
                         </Button>}
-                        {connectBtnState && realmsFilter.length > 1 && <div ref={popoverRef} className='home-authentication-content-connect-popover'>
-                            {realmsFilter.length >1  && realmsFilter.map(item => (
+                        {connectBtnState && realmsFilter.length > 1 && <div
+                            ref={popoverRef}
+                            className='home-authentication-content-connect-popover'
+                        >
+                            {realmsFilter.length > 1 && realmsFilter.map(item => (
                                 <div className='realm-connect'>
                                     <Button
                                         onClick={

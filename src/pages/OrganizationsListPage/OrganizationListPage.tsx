@@ -19,6 +19,7 @@ import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import OrgForm from '../../subapps/admin/components/Orgs/OrgForm';
 import '../../shared/styles/route-layout.less';
+import CreateOrganization from '../../shared/modals/CreateOrganization/CreateOrganization';
 
 const DEFAULT_PAGE_SIZE = 10;
 const SHOULD_INCLUDE_DEPRECATED = false;
@@ -95,6 +96,8 @@ function OrganizationListView({ }: Props) {
 	const location = useLocation();
 	const [formBusy, setFormBusy] = useState<boolean>(false);
 	const [modalVisible, setModalVisible] = useState<boolean>(false);
+	const [visibleCreateModel, openCreateModel] = useState(false);
+    const updateCreateModelVisibility = (value?: boolean) => openCreateModel((state) => value ?? !state);
 	const [selectedOrg, setSelectedOrg] = useState<
 		OrgResponseCommon | undefined
 	>(undefined);
@@ -242,183 +245,192 @@ function OrganizationListView({ }: Props) {
 	// @ts-ignore
 	const _total = (data?.pages?.[0]?._total) as number;
 	return (
-		<div className='main-route'>
-			<PinnedMenu />
-			<RouteHeader
-				title='Organizations'
-				extra={`Total of ${_total} Projects`}
-				alt='sscx'
-				bg={require('../../shared/images/organizations-bg.png')}
-			/>
-			<div className='route-body'>
-				<div className='route-body-container'>
-					<div className='route-actions'>
-						<div className='action-search'>
-							<Input.Search
-								allowClear
-								ref={queryInputRef}
-								value={query}
-								onChange={handleOnOrgSearch}
-								placeholder='Search Organisation'
-								className=''
-							/>
-						</div>
-						<div className='action-sort'>
-							<span>Sort:</span>
-							<SortAscendingOutlined
-								style={{ backgroundColor: sortBackgroundColor(sort, 'asc') }}
-								onClick={() => handleUpdateSorting('asc')}
-							/>
-							<SortDescendingOutlined
-								style={{ backgroundColor: sortBackgroundColor(sort, 'desc') }}
-								onClick={() => handleUpdateSorting('desc')}
-							/>
-						</div>
-					</div>
-					<div className='route-data-container' ref={dataContainerRef}>
-						{pmatch(status)
-							.with('loading', () => <Spin spinning={true} />)
-							.with('error', () => <div className='route-error'>
-								<Alert
-									type='error'
-									message='⛔️ Error loading the organizations list'
-									// @ts-ignore
-									description={error?.cause?.message}
+		<Fragment>
+			<div className='main-route'>
+				<PinnedMenu />
+				<RouteHeader
+					title='Organizations'
+					extra={`Total of ${_total} Projects`}
+					alt='sscx'
+					bg={require('../../shared/images/organizations-bg.png')}
+					createLabel='Create Orgnanization'
+					onCreateClick={() => updateCreateModelVisibility(true)}
+					permissions={['organizations/create']}
+				/>
+				<div className='route-body'>
+					<div className='route-body-container'>
+						<div className='route-actions'>
+							<div className='action-search'>
+								<Input.Search
+									allowClear
+									ref={queryInputRef}
+									value={query}
+									onChange={handleOnOrgSearch}
+									placeholder='Search Organisation'
+									className=''
 								/>
-							</div>)
-							.with('success', () => <div className='route-result-list'>
-								<List
-									itemLayout="horizontal"
-									loadMore={loadMoreFooter}
-									dataSource={dataSource}
-									renderItem={(item: OrgResponseCommon) => {
-										const to = `/orgs/${item._label}/`;
-										const count = 31;
-										return (
-											<OrganizationItem
-												{... { title: item._label, description: item.description, to, count }}
-											/>
-										)
-									}}
+							</div>
+							<div className='action-sort'>
+								<span>Sort:</span>
+								<SortAscendingOutlined
+									style={{ backgroundColor: sortBackgroundColor(sort, 'asc') }}
+									onClick={() => handleUpdateSorting('asc')}
 								/>
-							</div>)
-							.otherwise(() => <></>)}
+								<SortDescendingOutlined
+									style={{ backgroundColor: sortBackgroundColor(sort, 'desc') }}
+									onClick={() => handleUpdateSorting('desc')}
+								/>
+							</div>
+						</div>
+						<div className='route-data-container' ref={dataContainerRef}>
+							{pmatch(status)
+								.with('loading', () => <Spin spinning={true} />)
+								.with('error', () => <div className='route-error'>
+									<Alert
+										type='error'
+										message='⛔️ Error loading the organizations list'
+										// @ts-ignore
+										description={error?.cause?.message}
+									/>
+								</div>)
+								.with('success', () => <div className='route-result-list'>
+									<List
+										itemLayout="horizontal"
+										loadMore={loadMoreFooter}
+										dataSource={dataSource}
+										renderItem={(item: OrgResponseCommon) => {
+											const to = `/orgs/${item._label}/`;
+											const count = 31;
+											return (
+												<OrganizationItem
+													{... { title: item._label, description: item.description, to, count }}
+												/>
+											)
+										}}
+									/>
+								</div>)
+								.otherwise(() => <></>)}
+						</div>
 					</div>
 				</div>
+				{/* <div className='organizations-view view-container'>
+			<Breadcrumb>
+			<Breadcrumb.Item>
+				<Link to={'/'}>Home</Link>
+			</Breadcrumb.Item>
+			<Breadcrumb.Item>
+				<Link to={location.pathname}>Organisations List</Link>
+			</Breadcrumb.Item>
+			</Breadcrumb>
+			<div className='organizations-view-title'>
+			<h2>Organisations List</h2>
 			</div>
-			{/* <div className='organizations-view view-container'>
-        <Breadcrumb>
-          <Breadcrumb.Item>
-            <Link to={'/'}>Home</Link>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>
-            <Link to={location.pathname}>Organisations List</Link>
-          </Breadcrumb.Item>
-        </Breadcrumb>
-        <div className='organizations-view-title'>
-          <h2>Organisations List</h2>
-        </div>
-        <div className='organizations-view-actions'>
-          <Input.Search 
-            allowClear
-            ref={queryInputRef} 
-            value={query} 
-            onChange={handleOnOrgSearch}
-            placeholder='Search Organisation'
-          />
-          <AccessControl permissions={['organizations/create']} path="/">
-            <Button className='organizations-view-create-org' type="primary" onClick={() => setModalVisible(true)}>
-              <PlusSquareOutlined
-                style={{ fontSize: '16px', color: 'white' }}
-              />
-              Create Organization
-            </Button>
-          </AccessControl>
-        </div>
-        <Fragment>
-          {status === 'error' && <div className='organizations-view-error'>⛔️ Error loading the organizations list</div>}
-          {status === 'success' && <div className='organizations-view-list'>
-            <Spin spinning={isLoading} >
-              <List
-                itemLayout="horizontal"
-                loadMore={loadMoreFooter}
-                dataSource={dataSource}
-                renderItem={item => {
-                  const to = `/orgs/${item._label}/`;
-                  return (
-                    <List.Item
-                      className='organizations-view-list-item'
-                      actions={[
-                        <Link to={to}>
-                          <Button type='link'>More</Button>
-                        </Link>,
-                        <AccessControl
-                          key={`access-control-${item['@id']}`}
-                          path={`/${item._label}`}
-                          permissions={['organizations/write']}
-                        >
-                          <Button
-                            className="edit-button"
-                            type="primary"
-                            size="small"
-                            tabIndex={1}
-                            onClick={(e: React.SyntheticEvent) => {
-                              e.stopPropagation();
-                              setSelectedOrg(item);
-                            }}
-                          >
-                            Edit
-                          </Button>
-                        </AccessControl>
-                      ]}
-                    >
-                      <List.Item.Meta
-                        avatar={<Avatar className='organization-initial'>{item._label.substring(0, 2)}</Avatar>}
-                        title={
-                          <Fragment>
-                            <Link to={to} className='organization-link'>{item._label}</Link>
-                          </Fragment>
-                        }
-                        description={item.description}
-                      />
-                    </List.Item>
-                  )
-                }}
-              />
-            </Spin>
-          </div>}
-        </Fragment>
-      </div>
-      <Modal
-        title="New Organization"
-        visible={modalVisible}
-        onCancel={() => setModalVisible(false)}
-        confirmLoading={formBusy}
-        footer={null}
-      >
-        <OrgForm onSubmit={(o: NewOrg) => saveAndCreate(o)} busy={formBusy} />
-      </Modal>
-      <Drawer
-        width={640}
-        visible={!!(selectedOrg && selectedOrg._label)}
-        onClose={() => setSelectedOrg(undefined)}
-        title={selectedOrg && selectedOrg._label}
-      >
-        {selectedOrg && (
-          <OrgForm
-            org={{
-              label: selectedOrg._label,
-              description: selectedOrg.description,
-              isDeprecated: selectedOrg._deprecated,
-            }}
-            onSubmit={(o: NewOrg) => saveAndModify(selectedOrg, o)}
-            onDeprecate={() => saveAndDeprecate(selectedOrg)}
-            busy={formBusy}
-            mode="edit"
-          />
-        )}
-      </Drawer> */}
+			<div className='organizations-view-actions'>
+			<Input.Search 
+				allowClear
+				ref={queryInputRef} 
+				value={query} 
+				onChange={handleOnOrgSearch}
+				placeholder='Search Organisation'
+			/>
+			<AccessControl permissions={['organizations/create']} path="/">
+				<Button className='organizations-view-create-org' type="primary" onClick={() => setModalVisible(true)}>
+				<PlusSquareOutlined
+					style={{ fontSize: '16px', color: 'white' }}
+				/>
+				Create Organization
+				</Button>
+			</AccessControl>
+			</div>
+			<Fragment>
+			{status === 'error' && <div className='organizations-view-error'>⛔️ Error loading the organizations list</div>}
+			{status === 'success' && <div className='organizations-view-list'>
+				<Spin spinning={isLoading} >
+				<List
+					itemLayout="horizontal"
+					loadMore={loadMoreFooter}
+					dataSource={dataSource}
+					renderItem={item => {
+					const to = `/orgs/${item._label}/`;
+					return (
+						<List.Item
+						className='organizations-view-list-item'
+						actions={[
+							<Link to={to}>
+							<Button type='link'>More</Button>
+							</Link>,
+							<AccessControl
+							key={`access-control-${item['@id']}`}
+							path={`/${item._label}`}
+							permissions={['organizations/write']}
+							>
+							<Button
+								className="edit-button"
+								type="primary"
+								size="small"
+								tabIndex={1}
+								onClick={(e: React.SyntheticEvent) => {
+								e.stopPropagation();
+								setSelectedOrg(item);
+								}}
+							>
+								Edit
+							</Button>
+							</AccessControl>
+						]}
+						>
+						<List.Item.Meta
+							avatar={<Avatar className='organization-initial'>{item._label.substring(0, 2)}</Avatar>}
+							title={
+							<Fragment>
+								<Link to={to} className='organization-link'>{item._label}</Link>
+							</Fragment>
+							}
+							description={item.description}
+						/>
+						</List.Item>
+					)
+					}}
+				/>
+				</Spin>
+			</div>}
+			</Fragment>
 		</div>
+		<Modal
+			title="New Organization"
+			visible={modalVisible}
+			onCancel={() => setModalVisible(false)}
+			confirmLoading={formBusy}
+			footer={null}
+		>
+			<OrgForm onSubmit={(o: NewOrg) => saveAndCreate(o)} busy={formBusy} />
+		</Modal>
+		<Drawer
+			width={640}
+			visible={!!(selectedOrg && selectedOrg._label)}
+			onClose={() => setSelectedOrg(undefined)}
+			title={selectedOrg && selectedOrg._label}
+		>
+			{selectedOrg && (
+			<OrgForm
+				org={{
+				label: selectedOrg._label,
+				description: selectedOrg.description,
+				isDeprecated: selectedOrg._deprecated,
+				}}
+				onSubmit={(o: NewOrg) => saveAndModify(selectedOrg, o)}
+				onDeprecate={() => saveAndDeprecate(selectedOrg)}
+				busy={formBusy}
+				mode="edit"
+			/>
+			)}
+		</Drawer> */}
+			</div>
+			<CreateOrganization
+                visible={visibleCreateModel}
+                updateVisibility={updateCreateModelVisibility}
+            />
+		</Fragment>
 	)
 }
 

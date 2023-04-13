@@ -188,80 +188,83 @@ const FusionStudiosPage: React.FC = () => {
     onIntersect: fetchNextPage,
     enabled: !!hasNextPage,
   });
+  
   return (
-    <div className='main-route'>
-      <PinnedMenu />
-      <RouteHeader
-        title='Studios'
-        extra={_total ? `Total of ${_total} Studios` : ''}
-        alt='hippocampus'
-        bg={require('../../shared/images/studios-bg.png')}
-        imgCss={{ width: '85.5%' }}
-      />
-      <div className='route-body'>
-        <div className='route-body-container'>
-          <div className='route-actions'>
-            <div className='action-search'>
-              <Input.Search
-                allowClear
-                value={query}
-                onChange={handleQueryStringChange}
-                placeholder='Search studios'
-              />
-            </div>
-            <div className='action-sort'>
-              <span>Sort:</span>
-              <SortAscendingOutlined
-                style={{ backgroundColor: sortBackgroundColor(sort, 'asc') }}
-                onClick={() => handleUpdateSorting('asc')}
-              />
-              <SortDescendingOutlined
-                style={{ backgroundColor: sortBackgroundColor(sort, 'desc') }}
-                onClick={() => handleUpdateSorting('desc')}
-              />
-            </div>
-          </div>
-          <div className='route-data-container' ref={dataContainerRef}>
-            {pmatch(status)
-              .with('loading', () => <Spin spinning={true} />)
-              .with('error', () => <div className='route-error'>
-                <Alert
-                  type='error'
-                  message='⛔️ Error loading the studios list'
-                  // @ts-ignore
-                  description={error?.cause?.message}
+    <React.Fragment>
+      <div className='main-route'>
+        <PinnedMenu />
+        <RouteHeader
+          title='Studios'
+          extra={_total ? `Total of ${_total} Studios` : ''}
+          alt='hippocampus'
+          bg={require('../../shared/images/studios-bg.png')}
+          imgCss={{ width: '85.5%' }}
+        />
+        <div className='route-body'>
+          <div className='route-body-container'>
+            <div className='route-actions'>
+              <div className='action-search'>
+                <Input.Search
+                  allowClear
+                  value={query}
+                  onChange={handleQueryStringChange}
+                  placeholder='Search studios'
                 />
-              </div>)
-              .with('success', () => <div className='route-result-list'>
-                <List
-                  itemLayout="horizontal"
-                  loadMore={loadMoreFooter}
-                  dataSource={dataSource}
-                  renderItem={(item) => {
-                    const { orgLabel, projectLabel, id } = item;
-                    const to = makeStudioUri(orgLabel, projectLabel, id);
-                    return (
-                      <StudioItem
-                        {... {
-                          to,
-                          project: projectLabel,
-                          title: item.label,
-                          deprected: item.deprecated,
-                          createdAt: new Date(item.createdAt),
-                          description: item.description,
-                          access: "",
-                        }}
-                      />
-                    )
-                  }}
+              </div>
+              <div className='action-sort'>
+                <span>Sort:</span>
+                <SortAscendingOutlined
+                  style={{ backgroundColor: sortBackgroundColor(sort, 'asc') }}
+                  onClick={() => handleUpdateSorting('asc')}
                 />
-              </div>)
-              .otherwise(() => <></>)
-            }
+                <SortDescendingOutlined
+                  style={{ backgroundColor: sortBackgroundColor(sort, 'desc') }}
+                  onClick={() => handleUpdateSorting('desc')}
+                />
+              </div>
+            </div>
+            <div className='route-data-container' ref={dataContainerRef}>
+              {pmatch(status)
+                .with('loading', () => <Spin spinning={true} />)
+                .with('error', () => <div className='route-error'>
+                  <Alert
+                    type='error'
+                    message='⛔️ Error loading the studios list'
+                    // @ts-ignore
+                    description={error?.cause?.message}
+                  />
+                </div>)
+                .with('success', () => <div className='route-result-list'>
+                  <List
+                    itemLayout="horizontal"
+                    loadMore={loadMoreFooter}
+                    dataSource={dataSource}
+                    renderItem={(item) => {
+                      const { orgLabel, projectLabel, id } = item;
+                      const to = makeStudioUri(orgLabel, projectLabel, id);
+                      return (
+                        <StudioItem
+                          {... {
+                            to,
+                            project: projectLabel,
+                            title: item.label,
+                            deprected: item.deprecated,
+                            createdAt: new Date(item.createdAt),
+                            description: item.description,
+                            access: "",
+                          }}
+                        />
+                      )
+                    }}
+                  />
+                </div>)
+                .otherwise(() => <></>)
+              }
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </React.Fragment>
     // <div className="view-container">
     //   <div className="global-studio-list">
     //     <div className={'studio-header'}>

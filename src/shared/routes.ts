@@ -4,7 +4,7 @@ import ResourceView from './views/ResourceView';
 import UserView from './views/UserView';
 import ProjectsPage from '../pages/ProjectsPage/ProjectsPage';
 import StudioRedirectView from './views/StudioRedirectView';
-import Home from './views/Home';
+import Home from '../pages/HomePage/Home';
 import MyDataView from './views/MyDataView';
 
 const routes: RouteProps[] = [

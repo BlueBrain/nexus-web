@@ -16,6 +16,7 @@ import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver'
 import ProjectForm from '../../subapps/admin/components/Projects/ProjectForm';
 import QuotasContainer from '../../subapps/admin/containers/QuotasContainer';
 import StoragesContainer from '../../subapps/admin/containers/StoragesContainer';
+import CreateProject from '../../shared/modals/CreateProject/CreateProject';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import timeago from '../../utils//timeago';
@@ -132,6 +133,8 @@ function OrganizationProjectsPage({ }: Props) {
 	const notification = useNotification();
 	const [formBusy, setFormBusy] = useState<boolean>(false);
 	const [modalVisible, setModalVisible] = useState<boolean>(false);
+	const [visibleCreateModel, openCreateModel] = useState(false);
+    const updateCreateModelVisibility = (value?: boolean) => openCreateModel((state) => value ?? !state);
 	const [query, setQueryString] = useState<string>('');
 	const [activeOrg, setActiveOrg] = useState<
 		OrgResponseCommon | null | undefined
@@ -326,79 +329,88 @@ function OrganizationProjectsPage({ }: Props) {
 	// @ts-ignore
     const _total = (data?.pages?.[0]?._total) as number;
 	return (
-		<div className='main-route'>
-			<PinnedMenu />
-			<RouteHeader
-				title='Projects'
-				extra={`Total of ${_total} Projects`}
-				alt='hippocampus'
-				bg={require('../../shared/images/projects-bg.png')}
-				imgCss={{ width: '83%' }}
-			/>
-			<div className='route-body'>
-				<div className='route-body-container'>
-					<div className='route-actions'>
-						<div className='action-search'>
-							<Input.Search
-								allowClear
-								ref={queryInputRef}
-								value={query}
-								onChange={handleOnOrgSearch}
-								placeholder='Search Organisation'
-							/>
-						</div>
-						<div className='action-sort'>
-							<span>Sort:</span>
-							<SortAscendingOutlined
-								style={{ backgroundColor: sortBackgroundColor(sort, 'asc') }}
-								onClick={() => handleUpdateSorting('asc')}
-							/>
-							<SortDescendingOutlined
-								style={{ backgroundColor: sortBackgroundColor(sort, 'desc') }}
-								onClick={() => handleUpdateSorting('desc')}
-							/>
-						</div>
-					</div>
-					<div className='route-data-container'  ref={dataContainerRef}>
-						{projectError || organisationError && <div className='route-error'>
-							<Alert
-								message='⛔️ Error loading the projects list'
-								description={
-									// @ts-ignore
-									organisationError?.cause?.message ||
-									// @ts-ignore
-									projectError?.cause?.message
-								}
-							/>
-						</div>}
-						{projectStatus === 'success' && <div className='route-result-list'>
-							<Spin spinning={isLoading} >
-								<List
-									itemLayout="horizontal"
-									loadMore={loadMoreFooter}
-									dataSource={dataSource}
-									renderItem={(item: ProjectResponseCommon) => {
-										const to = `/orgs/${item._organizationLabel}/${item._label}`;
-										return (
-											<ProjectItem
-                                                {... { 
-                                                    to, 
-                                                    title: item._label, 
-													deprected: item._deprecated,
-                                                    createdAt: new Date(item._createdAt),
-                                                    updatedAt: new Date(item._updatedAt),
-                                                    description: item.description, 
-                                                 }}
-                                            />
-										)
-									}}
+		<Fragment>
+			<div className='main-route'>
+				<PinnedMenu />
+				<RouteHeader
+					title='Projects'
+					extra={`Total of ${_total} Projects`}
+					alt='hippocampus'
+					bg={require('../../shared/images/projects-bg.png')}
+					imgCss={{ width: '83%' }}
+					createLabel='Create Project'
+					onCreateClick={() => updateCreateModelVisibility(true)}
+					permissions={['projects/create']}
+				/>
+				<div className='route-body'>
+					<div className='route-body-container'>
+						<div className='route-actions'>
+							<div className='action-search'>
+								<Input.Search
+									allowClear
+									ref={queryInputRef}
+									value={query}
+									onChange={handleOnOrgSearch}
+									placeholder='Search Organisation'
 								/>
-							</Spin>
-						</div>}
+							</div>
+							<div className='action-sort'>
+								<span>Sort:</span>
+								<SortAscendingOutlined
+									style={{ backgroundColor: sortBackgroundColor(sort, 'asc') }}
+									onClick={() => handleUpdateSorting('asc')}
+								/>
+								<SortDescendingOutlined
+									style={{ backgroundColor: sortBackgroundColor(sort, 'desc') }}
+									onClick={() => handleUpdateSorting('desc')}
+								/>
+							</div>
+						</div>
+						<div className='route-data-container'  ref={dataContainerRef}>
+							{projectError || organisationError && <div className='route-error'>
+								<Alert
+									message='⛔️ Error loading the projects list'
+									description={
+										// @ts-ignore
+										organisationError?.cause?.message ||
+										// @ts-ignore
+										projectError?.cause?.message
+									}
+								/>
+							</div>}
+							{projectStatus === 'success' && <div className='route-result-list'>
+								<Spin spinning={isLoading} >
+									<List
+										itemLayout="horizontal"
+										loadMore={loadMoreFooter}
+										dataSource={dataSource}
+										renderItem={(item: ProjectResponseCommon) => {
+											const to = `/orgs/${item._organizationLabel}/${item._label}`;
+											return (
+												<ProjectItem
+													{... { 
+														to, 
+														title: item._label, 
+														deprected: item._deprecated,
+														createdAt: new Date(item._createdAt),
+														updatedAt: new Date(item._updatedAt),
+														description: item.description, 
+													}}
+												/>
+											)
+										}}
+									/>
+								</Spin>
+							</div>}
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+			<CreateProject
+                visible={visibleCreateModel}
+                updateVisibility={updateCreateModelVisibility}
+            />
+		</Fragment>
 		// <Fragment>
 		//   <div className='org-projects-view view-container'>
 		//     {status === 'loading' && <Spin/>}

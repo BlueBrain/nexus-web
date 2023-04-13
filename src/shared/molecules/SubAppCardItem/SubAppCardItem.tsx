@@ -1,8 +1,8 @@
 import React, { Fragment, CSSProperties, useState } from 'react'
 import { Link } from 'react-router-dom';
 import { PlusOutlined } from '@ant-design/icons';
-import { Modal } from 'antd';
-
+import CreateOrganization from '../../modals/CreateOrganization/CreateOrganization';
+import CreateProject from '../../modals/CreateProject/CreateProject';
 import './styles.less';
 
 
@@ -17,29 +17,6 @@ type Props = {
     to: string;
     createLabel?: string;
 }
-type TCreationModal = {
-    visible: boolean;
-    updateVisibility(value?: boolean): void;
-}
-const CreateOrganisation: React.FC<TCreationModal> = ({ visible, updateVisibility }) => {
-    console.log('@@CreateOrganisation')
-    return <Modal
-        visible={visible}
-    />
-}
-const CreateProject: React.FC<TCreationModal> = ({ visible, updateVisibility }) => {
-    console.log('@@CreateProject')
-    return <Modal
-        visible={visible}
-    />
-}
-const CreateStudio: React.FC<TCreationModal> = ({ visible, updateVisibility }) => {
-    console.log('@@CreateStudio')
-    return <Modal
-        visible={visible}
-    />
-}
-
 
 export default function SubAppCardItem({
     to, id,
@@ -49,10 +26,8 @@ export default function SubAppCardItem({
 }: Props) {
     const [modalVisible, setModalVisible] = useState<boolean>(() => false);
     const updateVisibility = (value?: boolean) => {
-        console.log('@@updateVisibility', value);
         setModalVisible((state) => value ?? !state);
     }
-    console.log('@@updateVisibility-2', id, modalVisible);
     return (
         <Fragment>
             <div className='subapp-card-item'>
@@ -73,9 +48,8 @@ export default function SubAppCardItem({
                     <PlusOutlined />
                 </button>
             </div>
-            {id === 'applist/organisations' && <CreateOrganisation visible={modalVisible} updateVisibility={updateVisibility} />}
+            {id === 'applist/organisations' && <CreateOrganization visible={modalVisible} updateVisibility={updateVisibility} />}
             {id === 'applist/projects' && <CreateProject visible={modalVisible} updateVisibility={updateVisibility} />}
-            {id === 'applist/studios' && <CreateStudio visible={modalVisible} updateVisibility={updateVisibility} />}
         </Fragment>
     )
 }

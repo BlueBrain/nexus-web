@@ -6,7 +6,7 @@ import { RightSquareOutlined, SortAscendingOutlined, SortDescendingOutlined } fr
 import { NexusClient, ProjectList, ProjectResponseCommon } from '@bbp/nexus-sdk';
 import { Alert, Avatar, Breadcrumb, Button, Card, Input, List, Skeleton, Spin, Tag } from 'antd';
 import { flatten } from 'lodash';
-import { match as pmatch} from 'ts-pattern';
+import { match as pmatch } from 'ts-pattern';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
@@ -146,14 +146,14 @@ function FusionProjectsPage({ }: Props) {
     const handleUpdateSorting = (value: string) => {
         // @ts-ignore
         setOptions({ sort: value })
-        if(dataContainerRef.current){
-			const containerTop = dataContainerRef.current.getBoundingClientRect().top;
-    		const topPosition = containerTop + window.pageYOffset - 80; 
-			window.scrollTo({
-				top: topPosition,
-				behavior: 'smooth',
-			})
-		}
+        if (dataContainerRef.current) {
+            const containerTop = dataContainerRef.current.getBoundingClientRect().top;
+            const topPosition = containerTop + window.pageYOffset - 80;
+            window.scrollTo({
+                top: topPosition,
+                behavior: 'smooth',
+            })
+        }
     };
     const handleOnOrgSearch: React.ChangeEventHandler<HTMLInputElement> = (e) => setQueryString(e.target.value);
 
