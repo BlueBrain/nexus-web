@@ -101,7 +101,7 @@ const config = [
       new webpack.DefinePlugin({
         __isBrowser__: true,
         COMMIT_HASH: JSON.stringify(gitRevisionPlugin.commithash()),
-        Version: JSON.stringify(gitRevisionPlugin.version()),
+        FUSION_VERSION: JSON.stringify(gitRevisionPlugin.version()),
       }),
       new MiniCssExtractPlugin(),
     ],
