@@ -6,7 +6,7 @@ import './styles.less';
 
 declare var Version: string;
 type Props = {
-  version: string;
+  fusionVersion: string;
   githubIssueURL: string;
   commitHash?: string;
   consent?: ConsentType;
@@ -17,13 +17,10 @@ type Props = {
 const releaseNoteUrl = 'https://github.com/BlueBrain/nexus-web/releases';
 
 const AppInfo = ({
-  version,
+  fusionVersion,
   githubIssueURL,
-  commitHash,
-  consent,
   visible,
   onModalStateChange,
-  onClickRemoveConsent,
 }: Props) => {
   return (
     <Modal
@@ -56,7 +53,7 @@ const AppInfo = ({
           </div>
           <div className="version-item">
             <div>Nexus Fusion</div>
-            <p>{version}</p>
+            <p>{fusionVersion}</p>
           </div>
         </div>
       </div>

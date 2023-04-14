@@ -196,12 +196,12 @@ const Header: React.FunctionComponent<HeaderProps> = ({
       <AppInfo
         {...{
           githubIssueURL,
-          version,
           commitHash,
           consent,
           visible,
           onClickRemoveConsent,
           onModalStateChange,
+          fusionVersion: version,
         }}
       />
     </Fragment>
